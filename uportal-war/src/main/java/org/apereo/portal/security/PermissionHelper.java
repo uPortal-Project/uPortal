@@ -20,16 +20,17 @@ package org.apereo.portal.security;
 
 import org.apache.commons.lang3.Validate;
 import org.apereo.portal.portlet.om.IPortletDefinition;
-import org.apereo.portal.security.IPermission;
 
 /**
  * Stateless static utility convenience methods for working with uPortal permissions.
+ *
  * @since uPortal 4.1
  */
 public class PermissionHelper {
 
     /**
      * Static utility method computing the permission target ID for a portlet definition.
+     *
      * @param portletDefinition a portlet definition
      * @return String permission target ID for the portlet definition.
      * @throws IllegalArgumentException if portletDefinition is null

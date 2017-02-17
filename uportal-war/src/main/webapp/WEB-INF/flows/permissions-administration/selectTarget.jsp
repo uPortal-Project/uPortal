@@ -83,13 +83,13 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                     </div>
                     <ul class="up-autocomplete-matches">
                         <li class="up-autocomplete-match group">
-                            <a href="javascript:;" class="up-autocomplete-match-link" title="&nbsp;">
+                            <a href="#" class="up-autocomplete-match-link" title="&nbsp;">
                                 <span class="up-autocomplete-match-text">&nbsp;</span>
                             </a>
                         </li>
                     </ul>
                     <div class="up-autocomplete-loading"><span><spring:message code="loading"/></span></div>
-                    <div class="up-autocomplete-close"><a href="javascript:;"><spring:message code="close"/></a></div>
+                    <div class="up-autocomplete-close"><a href="#"><spring:message code="close"/></a></div>
                 </div>
             </div>
 

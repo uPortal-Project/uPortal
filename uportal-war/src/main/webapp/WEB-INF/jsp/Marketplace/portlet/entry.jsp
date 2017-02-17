@@ -268,14 +268,15 @@
 
 <script type="text/template" id="${n}options-menu">
     <li>
-        <a href="javascript:;" title='<spring:message code="link.to" text="Link to ..." />' data-toggle="modal" data-target="#${n}copy-modal" id="${n}linkto">
+        <a href="#" title='<spring:message code="link.to" text="Link to ..." />' data-toggle="modal" data-target="#${n}copy-modal" id="${n}linkto">
             <spring:message code="link.to" text="Link to ..."/>
         </a>
     </li>
     <li class="divider"></li>
+    {% if (canFavorite) { %}
     <li>
         <spring:message code="add.this.portlet.to.my.favorite" text="Add this Portlet to My Favorites" var="atptmfTitle"/>
-        <a href="javascript:;" title="${atptmfTitle}"
+        <a href="#" title="${atptmfTitle}"
                 class="{% if (isFavorite) { print('marketplace_remove_favorite'); } else { print('marketplace_add_favorite'); } %}">
             {% if (isFavorite) { %}
                 <i class="fa fa-star"></i>
@@ -287,6 +288,7 @@
             </span>
         </a>
     </li>
+    {% } %}
     <li>
         <a href="javascript://" disabled>
                 <span>
@@ -296,7 +298,7 @@
     </li>
     {% _.each(tabs, function(tab) { %}
         <li>
-            <a href="javascript:;" class="marketplace_add_to_tab_link" data-tab-id="{%= tab.id %}">
+            <a href="#" class="marketplace_add_to_tab_link" data-tab-id="{%= tab.id %}">
                 <span>
                     {%- tab.name %}
                 </span>
@@ -576,6 +578,7 @@
         var MenuModel = Backbone.Model.extend({
             defaults: {
                 loading: true,
+                canFavorite: ${canFavorite},
                 isFavorite: false,
                 fname: null,
                 tabs: []

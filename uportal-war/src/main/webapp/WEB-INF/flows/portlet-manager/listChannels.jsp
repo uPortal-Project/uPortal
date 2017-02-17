@@ -129,8 +129,10 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
       </div>
       <div class="fl-col fl-text-align-right datatable-search-view">
         <form class="portlet-search-form form-inline" style="display:inline">
-          <label><spring:message code="search"/></label>
-          <input type="text" class="portlet-search-input form-control"/>
+          <label for="${n}search">
+            <spring:message code="search"/>
+          </label>
+          <input id="${n}search" type="search" class="portlet-search-input form-control"/>
         </form>
       </div>
     </div>
@@ -187,7 +189,7 @@ up.jQuery(function() {
         return '<a href="' + url + '"><spring:message code="delete" htmlEscape="false" javaScriptEscape="true"/> <span class="pull-right"><i class="fa fa-trash-o"></i></span></a>';
     };
 
-    // Created as its own 
+    // Created as its own
     var initializeTable = function() {
         portletList_configuration.main.table = $("#${n}portletsList").dataTable({
             iDisplayLength: portletList_configuration.main.pageSize,
@@ -197,7 +199,7 @@ up.jQuery(function() {
             sAjaxDataProp: "portlets",
             bDeferRender: false,
             bProcessing: true,
-            bAutoWidth:false,
+            bAutoWidth: false,
             sPaginationType: 'full_numbers',
             oLanguage: {
                 sLengthMenu: '<spring:message code="datatables.length-menu.message" htmlEscape="false" javaScriptEscape="true"/>',
@@ -208,7 +210,7 @@ up.jQuery(function() {
             },
             aoColumns: [
                 { mData: 'name', sType: 'html', sWidth: '30%' },  // Name
-                { mData: 'type', sType: 'html', sWidth: '30%' },  // Type 
+                { mData: 'type', sType: 'html', sWidth: '30%' },  // Type
                 { mData: 'lifecycleState', sType: 'html', sWidth: '20%' },  // Lifecycle State
                 { mData: 'id', sType: 'html', bSearchable: false, sWidth: '10%' },  // Edit Link
                 { mData: 'id', sType: 'html', bSearchable: false, sWidth: '10%' },  // Delete Link
@@ -227,7 +229,7 @@ up.jQuery(function() {
                     bSearchable: true,
                     bVisible: false,
                     asSorting: [ "desc", "asc" ]
-                }  // Categories - hidden 
+                }  // Categories - hidden
             ],
             fnInitComplete: function (oSettings) {
                 //portletList_configuration.main.table.fnDraw();

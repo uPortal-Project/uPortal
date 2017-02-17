@@ -166,7 +166,7 @@ public class PersonImpl implements IPerson {
          * elsewhere -- to initialize a valid IPerson in the portal.  We want
          * to *fail fast* if there's something wrong with that process.
          */
-        validateUsername(); 
+        validateUsername();
     }
 
     /**
@@ -232,25 +232,20 @@ public class PersonImpl implements IPerson {
      * <p>
      * This person is a "guest" if both of the following are true:
      * <ol>
-     *   <li>This person's user name matches the value of the property
-     *       <code>org.apereo.portal.security.PersonImpl.guest_user_name</code>
-     *       in <code>portal.properties</code>.</li>
-     *   <li>This person does not have a live instance ISecurityContext that 
-     *       states he/she has been successfully authenticated.  (It can be 
+     *   <li>This person's user name is listed as a guest user account.</li>
+     *   <li>This person does not have a live instance ISecurityContext that
+     *       states he/she has been successfully authenticated.  (It can be
      *       either null or unauthenticated.)</li>
      * </ol>
-     * 
+     *
      * @return <code>true</code> If person is a guest, otherwise <code>false</code>
      */
     @Override
     public boolean isGuest() {
-        boolean isGuest = false;  // default
         String userName = (String) getAttribute(IPerson.USERNAME);
-        if (PersonFactory.GUEST_USERNAME.equalsIgnoreCase(userName) && 
-                (m_securityContext == null || !m_securityContext.isAuthenticated())) {
-            isGuest = true;
-        }
-        return isGuest;
+        boolean isGuestUsername = PersonFactory.GUEST_USERNAMES.contains(userName);
+        boolean isAuthenticated  = m_securityContext != null && m_securityContext.isAuthenticated();
+        return isGuestUsername && !isAuthenticated;
     }
 
     /**
@@ -311,7 +306,7 @@ public class PersonImpl implements IPerson {
     /**
      * This method helps the PersonImpl <i>fail fast</i> if it is initialized in
      * an invalid state.  An instance of this class that does not have a value
-     * for {@link IPerson.USERNAME} cannot function properly.  It would be
+     * for <code>IPerson.USERNAME</code> cannot function properly.  It would be
      * unusable for groups, permissions, layouts, authenticated status, and
      * probably a whole host of other things.  It's best if we raise the alarm
      * immediately, otherwise the issue may be much more time consuming to

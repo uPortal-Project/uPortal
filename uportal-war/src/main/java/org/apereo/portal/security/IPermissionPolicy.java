@@ -26,6 +26,7 @@ import org.apereo.portal.permission.target.IPermissionTarget;
 /**
  * Defines a pluggable strategy for evaluating the permissions associated
  * with a principal.
+ *
  * @author Dan Ellentuck
  * @see IAuthorizationService
  * @see IPermission

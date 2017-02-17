@@ -80,7 +80,7 @@
  * 2) The value must be on the same line as the variable name and be terminated with a semicolon due to
  *    regex searches by skin manager.
  */
-@color3: #428BCA;  // light muted blue
+@color3: #317ab9;  // light muted blue
 @color3-light: lighten(@color3, 15%);
 
 /*
@@ -145,17 +145,17 @@
 
 @footer-background-color: @color5;
 @footer-secondary-background-color: lighten(@color5, 10%);
-@footer-text-color: @color4;
-@footer-link-color: @color4-light;
-@footer-link-hover-color: @color4-lighter;
+@footer-text-color: @color4-light;
+@footer-link-color: @color4-lighter;
+@footer-link-hover-color: @white;
 
 /**
  * Page-level styles
  */
 @body-background-color: @footer-secondary-background-color;  // default to match footer-second;  prevents 'gaps' at the bottom of short pages
 @body-background-image: none;
-@portal-page-body-background-image: url(./common/images/furley_bg.png);
-/* Using the furley pattern from http://subtlepatterns.com */
+@portal-page-body-background-image: url(./common/images/furley_bg.png); // Using the furley pattern from http://subtlepatterns.com
+@portal-page-body-background-image-filter: none; // for full list of filter effects see: https://developer.mozilla.org/en-US/docs/Web/CSS/filter
 
 /**
  * User bar styles

@@ -1,4 +1,6 @@
-====
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
     Licensed to Apereo under one or more contributor license
     agreements. See the NOTICE file distributed with this work
     for additional information regarding copyright ownership.
@@ -15,18 +17,16 @@
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
     under the License.
-====
 
-Hey!  Where's the documentation?
-
-
-uPortal is documented in its wiki and its manual, not here in source control.
-
-uPortal manual:
-http://www.ja-sig.org/wiki/display/UPM41/Home
-
-(Note: as of this writing the manual is a work in progress.  
-Your patience is appreciated, and your contributions would be most welcome.)
-
-uPortal wiki:
-http://www.ja-sig.org/wiki/display/UPC/Home
+-->
+<permission-set script="classpath://org/jasig/portal/io/import-permission_set_v3-1.crn">
+  <owner>UP_SYSTEM</owner>
+  <principal-type>org.apereo.portal.groups.IEntityGroup</principal-type>
+  <principal>
+    <group>Authenticated Users</group>
+  </principal>
+  <activity>FAVORITE</activity>
+  <target permission-type="GRANT">
+    <literal>ALL_PORTLETS</literal>
+  </target>
+</permission-set>

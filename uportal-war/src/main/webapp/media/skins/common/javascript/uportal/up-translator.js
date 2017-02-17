@@ -20,7 +20,7 @@
 var up = up || {};
 
 (function($, fluid) {
-    
+
     up.TranslatorPortlet = function(container, options) {
         var that = fluid.initView("up.TranslatorPortlet", container, options);
 
@@ -33,8 +33,8 @@ var up = up || {};
         var addMessageHandler = function() {
             that.options.entity = null;
             var data = [
-                    { ID: "code", value: "" }, 
-                    { ID: "locale", value: that.options.locale }, 
+                    { ID: "code", value: "" },
+                    { ID: "locale", value: that.options.locale },
                     { ID: "value", value: "" }
             ];
             var selectorMap = [
@@ -61,7 +61,7 @@ var up = up || {};
                     action: 'getEntity',
                     id: that.options.entity.id,
                     locale: that.options.locale,
-                    entity: that.options.entityType 
+                    entity: that.options.entityType
                 },
                 success: function(json) {
                     var message = json.message;
@@ -96,9 +96,9 @@ var up = up || {};
         var portletFormSubmitHandler = function() {
             var $form = $(this);
             $.ajax({
-                url: $form.attr("action"), 
-                type: "POST", 
-                data: $form.serialize(), 
+                url: $form.attr("action"),
+                type: "POST",
+                data: $form.serialize(),
                 success: function() {
                     var $msg = that.locate("formContainer").find(".portlet-msg-success");
                     $msg.html(that.options.messages.portletTranslationSaved);
@@ -121,7 +121,7 @@ var up = up || {};
                     action: 'getEntity',
                     id: that.options.entity.id,
                     locale: that.options.locale,
-                    entity: that.options.entityType 
+                    entity: that.options.entityType
                 },
                 success: function(json) {
                     var portlet = json.portlet;
@@ -150,10 +150,10 @@ var up = up || {};
                     that.locate("messageForm").hide();
                     that.locate("formContainer").show();
                     fluid.selfRender(that.locate("portletForm").show(), data, { cutpoints: selectorMap });
-                } 
+                }
             });
         };
-        
+
         /**
          * Updates form contents depending on selected entity type and locale.
          */
@@ -180,17 +180,30 @@ var up = up || {};
             }
             var entities = [];
             $(data.entities.sort(up.getStringPropertySortFunction("title"))).each(function(idx, entity) {
-                entities.push({ 
-                    ID: that.options.namespace + "data:", 
-                    value: entity.title, 
-                    decorators: [{
-                        type: "jQuery", 
-                        func: "click", 
-                        args: function() {
-                            that.options.entity = entity;
-                            updateForm();
-                        } 
-                    }]
+                entities.push({
+                    ID: that.options.namespace + "data:",
+                    value: entity.title,
+                    decorators: [
+                        {
+                            type: "jQuery",
+                            func: "click",
+                            args: function() {
+                                that.options.entity = entity;
+                                updateForm();
+                            }
+                        },
+                        {
+                            type: "jQuery",
+                            func: "keydown",
+                            args: function() {
+                                // enter key has been clicked
+                                if (event.keyCode == 13) {
+                                    that.options.entity = entity;
+                                    updateForm();
+                                }
+                            }
+                        }
+                    ]
                 });
             });
 
@@ -219,7 +232,7 @@ var up = up || {};
                     url: that.options.resourceUrl,
                     dataType: "json",
                     data: { entity: entity, action: 'getEntityList' },
-                    success: refreshEntities 
+                    success: refreshEntities
                 });
             }
         };
@@ -229,10 +242,10 @@ var up = up || {};
          */
         var messageFormSubmitHandler = function() {
             var $form = $(this);
-            $.ajax({ 
-                url: $form.attr("action"), 
-                type: "POST", 
-                data: $form.serialize(), 
+            $.ajax({
+                url: $form.attr("action"),
+                type: "POST",
+                data: $form.serialize(),
                 success: function(data) {
                     // if this is a new key (selected entity was null), then we must reload entity list
                     if (that.options.entity == null) {

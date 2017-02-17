@@ -40,7 +40,11 @@
       <div class="portlet-section-body">
 
         <form action="${ formUrl }" method="POST">
-            <input name="query" value="${ fn:escapeXml(query )}"/> <input type="submit" value="<spring:message code='search.directory.submit'/>"/>
+            <label for="query">
+                 <spring:message code='search.directory'/>
+            </label>
+            <input id="query" name="query" value="${ fn:escapeXml(query )}"/>
+            <input type="submit" value="<spring:message code='search.directory.submit'/>"/>            
         </form>
 
         <c:if test="${not empty query}">
@@ -61,7 +65,7 @@
                         </c:if>
                         <c:forEach items="${ people }" var="person">
                             <div class="person-search-result">
-                                <h3><a class="person-link" href="javascript:;">${fn:escapeXml(person.attributes.displayName[0])}</a></h3>
+                                <h3><a class="person-link" href="#">${fn:escapeXml(person.attributes.displayName[0])}</a></h3>
                                 <table>
                                     <c:forEach items="${ attributeNames }" var="attribute">
                                         <c:if test="${ fn:length(person.attributes[attribute.key]) > 0 }">

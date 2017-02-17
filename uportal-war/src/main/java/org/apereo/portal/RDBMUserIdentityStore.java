@@ -159,7 +159,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
         this.transactionOperations.execute(new TransactionCallbackWithoutResult() {
             @Override
             protected void doInTransactionWithoutResult(TransactionStatus arg0) {
-                if (PersonFactory.GUEST_USERNAME.equals(userName)) {
+                if (PersonFactory.GUEST_USERNAMES.contains(userName)) {
                     throw new IllegalArgumentException("CANNOT RESET LAYOUT FOR A GUEST USER");
                 }
 
@@ -240,15 +240,6 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
     }
 
     /**
-     * Return the username to be used for authorization (exit hook)
-     * @param person
-     * @return usernmae
-     */
-    public String getUsername(IPerson person) {
-        return (String)person.getAttribute(IPerson.USERNAME);
-    }
-
-    /**
      * Get the portal user ID for this person object.
      * @param person
      * @param createPortalData indicating whether to try to create all uPortal data for this user from template prototype
@@ -261,7 +252,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
         String username = (String)person.getAttribute(IPerson.USERNAME);
 
         // only synchronize a non-guest request.
-        if (PersonFactory.GUEST_USERNAME.equals(username)) {
+        if (PersonFactory.GUEST_USERNAMES.contains(username)) {
             uid = __getPortalUID(person, createPortalData);
         } else {
             Object lock = getLock(person);
@@ -322,7 +313,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
         PortalUser portalUser = null;
 
         try {
-            String userName = getUsername(person);
+            String userName = person.getUserName();
             String templateName = getTemplateName(person);
             portalUser = getPortalUser(userName);
 
@@ -748,7 +739,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
                                     "INSERT INTO UP_USER (USER_ID, USER_NAME, USER_DFLT_USR_ID, USER_DFLT_LAY_ID, NEXT_STRUCT_ID, LST_CHAN_UPDT_DT)" +
                                             "VALUES (?, ?, ?, ?, null, null)";
 
-                            String userName = getUsername(person);
+                            String userName = person.getUserName();
 
                             insertStmt = con.prepareStatement(insert);
                             insertStmt.setInt(1, newUID);

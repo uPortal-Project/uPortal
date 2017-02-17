@@ -21,27 +21,29 @@
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
 
 <!-- Portlet -->
-<div class="fl-widget portlet imp-exp view-export" role="section">
-    
+<section class="fl-widget portlet imp-exp view-export">
+
     <!-- Portlet Titlebar -->
-    <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
-        <h2 class="title" role="heading"><spring:message code="export.portlet.entities"/></h2>
-        <div class="toolbar" role="toolbar">
+    <header class="fl-widget-titlebar titlebar portlet-titlebar">
+        <h2 class="title">
+            <spring:message code="export.portlet.entities"/>
+        </h2>
+        <nav class="toolbar">
             <ul class="btn-group">
                 <li class="btn"><a class="button btn btn-primary" href="<portlet:renderURL/>"><spring:message code="import"/> <i class="fa fa-upload"></i></a></li>
                 <li class="btn"><a class="button btn btn-default" href="<portlet:renderURL><portlet:param name="action" value="delete"/></portlet:renderURL>"><spring:message code="delete"/> <i class="fa fa-trash-o"></i></a></li>
             </ul>
-        </div>
-    </div>
-    
+        </nav>
+    </header>
+
     <!-- Portlet Content -->
-    <div class="fl-widget-content content portlet-content" role="main">
-        
+    <div class="fl-widget-content content portlet-content">
+
         <!-- Note -->
-        <div class="portlet-note" role="note">
+        <aside class="portlet-note">
             <p>Select an entity to export. You can allow/disallow entity types using Portlet Preferences.  See uPortal's portlet.xml file for details.</p>
-        </div>
-        
+        </aside>
+
         <div class="portlet-form">
             <form id="${n}form" method="POST" class="form-inline" action="javascript:;">
                 <div class="form-group">
@@ -64,25 +66,25 @@
                 </div>
             </form>
         </div>
-        
+
     </div> <!-- end: portlet-content -->
-</div> <!-- end: portlet -->
+</section> <!-- end: portlet -->
 
 <script type="text/javascript">
     up.jQuery(document).ready(function () {
         var $ = up.jQuery;
-        
+
         var updateLink = function () {
             var entityType, sysId, url;
-            
+
             entityType = $("#${n}entityType").val();
             sysId = $("#${n}sysid").val();
-            
+
             $("#${n}exportLink").attr("href", "<c:url value="/api/entity/"/>" + entityType + "/" + sysId + "?download=true");
         };
-        
+
         $("#${n}entityType").change(updateLink);
         $("#${n}sysid").change(updateLink);
-        
+
     });
 </script>

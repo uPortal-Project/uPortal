@@ -21,61 +21,94 @@
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
 
 <!-- Portlet -->
-<div class="fl-widget portlet imp-exp view-delete" role="section">
+<section class="fl-widget portlet imp-exp view-delete">
 
     <!-- Portlet Titlebar -->
-    <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
-        <h2 class="title" role="heading"><spring:message code="delete.portlet.entities"/></h2>
-        <div class="toolbar" role="toolbar">
+    <header class="fl-widget-titlebar titlebar portlet-titlebar">
+        <h2 class="title">
+            <spring:message code="delete.portlet.entities"/>
+        </h2>
+        <nav class="toolbar">
             <ul class="btn-group">
-                <li class="btn"><a class="button btn btn-primary" href="<portlet:renderURL/>"><spring:message code="import"/> <i class="fa fa-upload"></i></a></li>
-                <li class="btn"><a class="button btn btn-primary" href="<portlet:renderURL><portlet:param name="action" value="export"/></portlet:renderURL>"><spring:message code="export"/> <i class="fa fa-download"></i></a></li>
+                <li class="btn">
+                    <a class="button btn btn-primary" href="<portlet:renderURL/>">
+                        <spring:message code="import"/>
+                        <i class="fa fa-upload" aria-hidden="true"></i>
+                    </a>
+                </li>
+                <li class="btn">
+                    <a class="button btn btn-primary" href="<portlet:renderURL><portlet:param name="action" value="export"/></portlet:renderURL>">
+                        <spring:message code="export"/>
+                        <i class="fa fa-download" aria-hidden="true"></i>
+                    </a>
+                </li>
             </ul>
         </div>
     </div>
-    
+
     <!-- Portlet Content -->
-    <div class="fl-widget-content content portlet-content" role="main">   
-        
+    <div class="fl-widget-content content portlet-content" role="main">
+
         <!-- Messages -->
         <div class="portlet-msg-error portlet-msg error alert alert-danger" role="alert">
             <div class="titlebar">
-                <h3 class="title">Warning</h3>
+                <h3 class="title">
+                    <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
+                    <spring:message code="warning"/>
+                    <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
+                </h3>
             </div>
             <div class="content">
-                <p>Deleting some entities can do very bad things to your portal.  By default, all delete operations are disabled;  use this feature with caution.</p>
+                <p>
+                    <spring:message code="delete.portlet.warning.explanations"/>
+                </p>
             </div>
         </div>
-        
+
         <!-- Note -->
         <div class="note" role="note">
-            <p>Select an entity to delete.</p>
+            <p>
+                <spring:message code="delete.portlet.note.select.entity"/>
+            </p>
         </div>
-        
+
         <div class="portlet-form">
             <form id="${n}form" class="form-inline" method="POST">
-                <label class="portlet-form-label" for="entityType"><spring:message code="type"/>:</label>
+                <label class="portlet-form-label" for="entityType">
+                    <spring:message code="type"/>:
+                </label>
                 <select id="entityType" class="form-control" name="entityType">
-                    <option>[<spring:message code="select.type"/>]</option>
+                    <option>
+                        [<spring:message code="select.type"/>]
+                    </option>
                     <c:forEach items="${supportedTypes}" var="type">
-                        <option value="${fn:escapeXml(type.typeId)}"><spring:message code="${type.titleCode}"/></option>
+                        <option value="${fn:escapeXml(type.typeId)}">
+                            <spring:message code="${type.titleCode}"/>
+                        </option>
                     </c:forEach>
                 </select>
-                <label class="portlet-form-label" for="sysid"><spring:message code="id"/>:</label>
-                <button class="button btn primary" type="submit"><spring:message code="delete"/> <i class="fa fa-trash-o"></i></button>
+                <label class="portlet-form-label" for="${n}sysid">
+                    <spring:message code="id"/>:
+                </label>
+                &nbsp;
+                <input type="text" id="${n}sysid" class="form-control" name="sysid"/>
+                <button class="button btn primary" type="submit">
+                    <spring:message code="delete"/>
+                    <i class="fa fa-trash-o" aria-hidden="true"></i>
+                </button>
             </form>
         </div>
-    
+
     </div> <!-- end: portlet-content -->
-</div> <!-- end:portlet -->
+</section> <!-- end:portlet -->
 
 <script type="text/javascript">
     up.jQuery(document).ready(function () {
         var $ = up.jQuery;
-        
+
         $("#${n}form").submit(function () {
            var form, entityType, sysId, href;
-           
+
            form = this;
            entityType = form.entityType.value;
            sysId = form.sysid.value;
@@ -83,7 +116,7 @@
                url: "<c:url value="/api/entity/"/>" + entityType + "/" + sysId,
                type: "DELETE"
            });
-           
+
            return false;
         });
     });

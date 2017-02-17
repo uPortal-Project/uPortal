@@ -41,9 +41,6 @@
         <folder ID="s200" hidden="false" immutable="true" name="Header Bottom folder" type="header-bottom" unremovable="true">
             <channel fname="emergency-alert" unremovable="false" hidden="false" immutable="false" ID="n210"/>
         </folder>
-        <folder ID="s300" hidden="false" immutable="true" name="Customize folder" type="customize" unremovable="true">
-            <channel fname="background-preference" unremovable="true" hidden="false" immutable="false" ID="n310"/>
-        </folder>
         <folder ID="s400" hidden="false" immutable="true" name="Pre Content folder" type="pre-content" unremovable="true">
             <channel fname="tips" unremovable="false" hidden="false" immutable="false" ID="n410"/>
         </folder>

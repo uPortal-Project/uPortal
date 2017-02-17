@@ -20,12 +20,28 @@
 
 #portalPageBody {
     background-color: @content-background-color;
-    background-image: @portal-page-body-background-image;
     min-height: 300px;
     /* Need for the offcanvas open effect */
     position: relative;
-    /* Do not change this z-index value without side effects on bootstrap modal for rate this portlet see comments and further references in defaultSkin/skin.less */ 
+    /* Do not change this z-index value without side effects on bootstrap modal for rate this portlet see comments and further references in defaultSkin/skin.less */
     z-index: auto;
+
+    // add background image in a pseudo dom tag
+    &::before {
+      // empty content
+      content: '';
+
+      // background positioning and sizing
+      display: block;
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background-size: cover;
+
+      // add image and filter(s)
+      background-image: @portal-page-body-background-image;
+      filter: @portal-page-body-background-image-filter;
+    }
 
     .portal-page-column {
         .portal-page-column-inner {

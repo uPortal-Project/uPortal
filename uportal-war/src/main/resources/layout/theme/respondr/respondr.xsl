@@ -399,6 +399,11 @@
                                 <ul>
                                     <xsl:for-each select="tabChannel">
                                         <xsl:variable name="portletLinkUrl">
+                                            <xsl:choose>
+                                                <xsl:when test="@alternativeMaximizedLink and string-length(@alternativeMaximizedLink) > 0">
+                                                  <xsl:value-of select="@alternativeMaximizedLink" />
+                                                </xsl:when>
+                                                <xsl:otherwise>
                                             <xsl:call-template name="portalUrl">
                                                 <xsl:with-param name="url">
                                                     <url:portal-url>
@@ -407,8 +412,19 @@
                                                     </url:portal-url>
                                                 </xsl:with-param>
                                             </xsl:call-template>
+                                                </xsl:otherwise>
+                                              </xsl:choose>
                                         </xsl:variable>
-                                        <li><a href="{$portletLinkUrl}"><xsl:value-of select="@title" /></a></li>
+                                        <li><xsl:element name="a">
+                                        <xsl:attribute name="href"><xsl:value-of select="$portletLinkUrl" /></xsl:attribute>
+                                        <xsl:choose>
+                                            <xsl:when test="@alternativeMaximizedLink and string-length(@alternativeMaximizedLink) > 0">
+                                                <xsl:attribute name="target">_blank</xsl:attribute>
+                                            </xsl:when>
+                                            <xsl:otherwise></xsl:otherwise>
+                                        </xsl:choose>
+                                        <span class="title"><xsl:value-of select="@title" /></span>
+                                      </xsl:element></li>
                                     </xsl:for-each>
                                 </ul>
                             </div>
@@ -766,7 +782,7 @@
                                         <div class="col-md-9"></div>
                                         <div class="col-md-3">
                                             <div id="portalEditPagePermissions" class="fl-fix">
-                                                <a class="button" id="editPagePermissionsLink" href="javascript:;" title="{upMsg:getMessage('edit.page.permissions', $USER_LANG)}">
+                                                <a class="button" id="editPagePermissionsLink" href="#" title="{upMsg:getMessage('edit.page.permissions', $USER_LANG)}">
                                                     <i class="fa fa-align-justify"></i>
                                                     <xsl:value-of select="upMsg:getMessage('edit.page.permissions', $USER_LANG)"/>
                                                 </a>

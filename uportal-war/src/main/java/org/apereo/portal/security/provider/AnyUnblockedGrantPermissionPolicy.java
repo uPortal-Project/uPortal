@@ -96,13 +96,13 @@ public class AnyUnblockedGrantPermissionPolicy implements IPermissionPolicy {
         /*
          * The API states that the service, owner, and activity arguments must
          * not be null. If for some reason they are null, log and fail closed.
-         * The principal must also not be null.
+         * In our case, the principal and target must also be non-null.
          */
-        if (service == null || principal == null || owner == null || activity == null) {
+        if (service == null || principal == null || owner == null || activity == null || target == null) {
             log.error("Null argument to AnyUnblockedGrantPermissionPolicy doesPrincipalHavePermission() method " +
                     "should not be possible.  This is indicative of a potentially serious bug in the permissions " +
-                    "and authorization infrastructure;  service='{}', principal='{}', owner='{}', activity='{}', target='{}'",
-                    service, principal.getKey(), owner.getFname(), activity.getFname(), target.getKey());
+                    "and authorization infrastructure;  service='{}', principal='{}', owner='{}', activity='{}', " +
+                    "target='{}'", service, principal, owner, activity, target);
             // fail closed
             return false;
         }
@@ -155,7 +155,7 @@ public class AnyUnblockedGrantPermissionPolicy implements IPermissionPolicy {
         boolean rslt;
         try {
             // Track groups we've already explored to avoid infinite loop
-            final Set<IGroupMember> seenGroups = new HashSet<IGroupMember>(100);
+            final Set<IGroupMember> seenGroups = new HashSet<>();
             rslt = hasUnblockedPathToGrantWithCache(service, principal, owner, activity, target, seenGroups);
         } catch (Exception e) {
             log.error("Error searching for unblocked path to grant for principal [" + principal + "]", e);

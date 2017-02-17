@@ -32,7 +32,7 @@ var up = up || {};
               $('#up-notification').noty({text: request.response, type: 'success'});
             },
             error: function(request, text, error) {
-              $('#up-notification').noty({text: request.response, type: 'error'});
+              $('#up-notification').noty({text: request.responseJSON.response, type: 'error'});
             }
         });
   };

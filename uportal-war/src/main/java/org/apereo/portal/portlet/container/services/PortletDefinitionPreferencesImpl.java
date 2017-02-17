@@ -114,7 +114,7 @@ public class PortletDefinitionPreferencesImpl extends AbstractPortletPreferences
                     return Boolean.FALSE;
                 }
                 
-                portletDefinitionRegistry.updatePortletDefinition(portletDefinition);
+                portletDefinitionRegistry.savePortletDefinition(portletDefinition);
                 
                 return Boolean.TRUE;
             }

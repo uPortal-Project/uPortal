@@ -43,24 +43,27 @@ public class SimplePersonManager extends AbstractPersonManager {
   public IPerson getPerson (HttpServletRequest request) throws PortalSecurityException {
     HttpSession session = request.getSession(false);
     IPerson person = null;
+
     // Return the person object if it exists in the user's session
-    if (session != null)
+    if (session != null) {
       person = (IPerson)session.getAttribute(PERSON_SESSION_KEY);
+    }
+
     if (person == null) {
       try {
         // Create a guest person
-        person = PersonFactory.createGuestPerson();
+        person = createGuestPerson(request);
       } catch (Exception e) {
         // Log the exception
         log.error("Exception creating guest person.", e);
       }
       // Add this person object to the user's session
-      if (person != null && session != null)
+      if (person != null && session != null) {
         session.setAttribute(PERSON_SESSION_KEY, person);
+      }
     }
+
     return person;
   }
+
 }
-
-
-

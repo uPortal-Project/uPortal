@@ -27,7 +27,7 @@
 <div id="${n}search">
 
     <div data-role="header" class="titlebar portlet-titlebar search-back-div" style="${ empty query ? 'display:none' : '' }">
-        <a data-role="button"  data-icon="back" data-inline="true" class="search-back-link" id="${n}gridViewLink" href="javascript:;"><spring:message code="back"/></a>
+        <a data-role="button"  data-icon="back" data-inline="true" class="search-back-link" id="${n}gridViewLink" href="#"><spring:message code="back"/></a>
         <h2 class="search-engine-name"><spring:message code="search.directory.searchresults"/></h2>
     </div>
 
@@ -56,7 +56,7 @@
                 <ul data-role="listview" class="person-search-results">
                     <c:forEach items="${ people }" var="person" varStatus="status">
                         <li>
-                            <a index="${ status.index }" class="person-result-link" href="javascript:;">
+                            <a index="${ status.index }" class="person-result-link" href="#">
                                 ${fn:escapeXml(person.attributes.displayName[0])}
                             </a>
                         </li>

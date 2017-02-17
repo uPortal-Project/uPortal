@@ -655,6 +655,9 @@
                  into the LESS compilation processing, but preferences below this comment are name/value pairs
                  that are intended to be used within the LESS files. -->
 
+            <!-- WARNING:  If you're not using these colors, and you've taken the corresponding HTML inputs out
+                 of the DynamicRespondrSkin UI, you must also remove these preferences (below).  If you don't you
+                 will get blank values and the LESS won't compile. -->
             <preference>
                 <name>PREFcolor1</name>
                 <value>#4065B0</value>

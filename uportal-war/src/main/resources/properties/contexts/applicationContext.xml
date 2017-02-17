@@ -43,16 +43,16 @@
         <context:include-filter type="regex" expression=".*\.rendering\.PortletEventCoordinatationService"/>
     </context:component-scan>
     <context:component-scan base-package="org.apereo.portal">
-        <context:exclude-filter type="regex" expression="org\.apereo\.portal\.portlets\..*"/>
-        <context:exclude-filter type="regex" expression="org\.apereo\.portal\.security\.mvc\..*"/>
-        <context:exclude-filter type="regex" expression="org\.apereo\.portal\.json\.rendering\..*"/>
-        <context:exclude-filter type="regex" expression="org\.apereo\.portal\.layout\.dlm\.remoting\..*"/>
-        <context:exclude-filter type="regex" expression="org\.apereo\.portal\.security\.remoting\..*"/>
-        <context:exclude-filter type="regex" expression="org\.apereo\.portal\.rest\..*"/>
-        <context:exclude-filter type="regex" expression="org\.apereo\.portal\.redirect\..*"/>
-        <context:exclude-filter type="regex" expression="org\.apereo\.portal\.rendering\..*"/>
+        <context:exclude-filter type="regex" expression="org\.apereo\.portal\.json\.rendering\..+"/>
+        <context:exclude-filter type="regex" expression="org\.apereo\.portal\.layout\.dlm\.remoting\..+"/>
+        <context:exclude-filter type="regex" expression="org\.apereo\.portal\.portlets\..+"/>
+        <context:exclude-filter type="regex" expression="org\.apereo\.portal\.redirect\..+"/>
+        <context:exclude-filter type="regex" expression="org\.apereo\.portal\.rendering\..+"/>
+        <context:exclude-filter type="regex" expression="org\.apereo\.portal\.rest\..+"/>
+        <context:exclude-filter type="regex" expression="org\.apereo\.portal\.security\.mvc\..+"/>
+        <context:exclude-filter type="regex" expression="org\.apereo\.portal\.security\.remoting\..+"/>
     </context:component-scan>
-    
+
     <bean id="primaryPropertyPlaceholderConfigurer" class="org.springframework.context.support.PortalPropertySourcesPlaceholderConfigurer">
         <property name="locations">
             <list>
