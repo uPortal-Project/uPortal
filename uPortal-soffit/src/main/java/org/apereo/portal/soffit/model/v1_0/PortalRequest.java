@@ -31,7 +31,6 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  * three collections:  properties, attributes, and parameters.
  *
  * @since 5.0
- * @author drewwills
  */
 public class PortalRequest extends AbstractTokenizable {
 

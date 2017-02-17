@@ -32,7 +32,6 @@ import org.springframework.context.annotation.Configuration;
  * individual beans.
  *
  * @since 5.0
- * @author drewwills
  */
 @Configuration
 public class SoffitRendererConfiguration {

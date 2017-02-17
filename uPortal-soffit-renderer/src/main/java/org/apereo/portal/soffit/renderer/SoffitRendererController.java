@@ -54,7 +54,6 @@ import org.springframework.web.servlet.ModelAndView;
  * convenience.
  *
  * @since 5.0
- * @author drewwills
  */
 @Controller
 @RequestMapping("/soffit")
@@ -257,12 +256,12 @@ public class SoffitRendererController {
         logger.debug("Selecting cacheScopeValue='{}' for property '{}'", cacheScopeValue, cacheScopeProperty);
 
         final String cacheMaxAgeProperty = String.format(CACHE_MAXAGE_PROPERTY_FORMAT, module);
-        final String cacheMaxAgeValue = environment.getProperty(cacheMaxAgeProperty);
-        logger.debug("Selecting cacheMaxAgeValue='{}' for property '{}'", cacheMaxAgeValue, cacheMaxAgeProperty);
+        final Integer cacheMaxAgeValueSeconds = environment.getProperty(cacheMaxAgeProperty, Integer.class);
+        logger.debug("Selecting cacheMaxAgeValueSeconds='{}' for property '{}'", cacheMaxAgeValueSeconds, cacheMaxAgeProperty);
 
         // Both must be specified, else we just use the default...
-        final String cacheControl = (StringUtils.isNotEmpty(cacheScopeValue) && StringUtils.isNotEmpty(cacheMaxAgeValue))
-                ? cacheScopeValue + ", max-age=" + cacheMaxAgeValue
+        final String cacheControl = (StringUtils.isNotEmpty(cacheScopeValue) && cacheMaxAgeValueSeconds != null)
+                ? cacheScopeValue + ", max-age=" + cacheMaxAgeValueSeconds
                 : CACHE_CONTROL_NOSTORE;
         logger.debug("Setting cache-control='{}' for module '{}'", cacheControl, module);
 

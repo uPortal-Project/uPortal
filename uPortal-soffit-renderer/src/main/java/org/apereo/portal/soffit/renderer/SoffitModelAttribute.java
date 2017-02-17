@@ -37,7 +37,6 @@ import java.lang.annotation.Target;
  * </ul>
  *
  * @since 5.0
- * @author drewwills
  */
 @Target(value={ElementType.TYPE,ElementType.METHOD})
 @Retention(value=RetentionPolicy.RUNTIME)

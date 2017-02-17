@@ -30,7 +30,6 @@ import org.springframework.beans.factory.annotation.Value;
 
 /**
  * @since 5.0
- * @author drewwills
  */
 public abstract class AbstractHeaderProvider implements IHeaderProvider {
 

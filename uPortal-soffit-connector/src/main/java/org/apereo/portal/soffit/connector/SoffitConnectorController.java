@@ -59,7 +59,6 @@ import org.springframework.web.portlet.bind.annotation.RenderMapping;
 
 /**
  * @since 5.0
- * @author drewwills
  */
 @Controller
 @RequestMapping(value={"VIEW","EDIT","HELP"})

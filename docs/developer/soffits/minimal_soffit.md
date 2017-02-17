@@ -8,28 +8,28 @@ develop soffits mostly with [Java][] and [Spring Boot][].
 
 ## Minimal Soffit Setup Instructions Using Spring Boot
 
-1. Use the [Spring Initializer][] to create a new Spring Boot project with the
-   following settings:
+1.  Use the [Spring Initializer][] to create a new Spring Boot project with the
+    following settings:
     * Gradle Project (recommended)
     * Packaging=*War* (recommended)
     * Dependencies=*Cache* (recommended) & *Web* (required)
     * Additional dependencies you intend to use (optional -- you can add them
       later)
-1. Add Soffit as a dependency to your project (see below)
-1. Add the `tomcat-embed-jasper` dependency to your project (see below)
-1. Add the `@SoffitApplication` annotation to your application class (the one
-   annotated with `@SpringBootApplication`)
-1. Create the directory path `src/main/webapp/WEB-INF/soffit/`
-1. Choose a name for your soffit and create a directory with that name inside
-   `/soffit/` (above);  recommended:  use only lowercase letters and dashes
-   ('-') in the name
-1. Create a `view.jsp` file inside the directory named for your soffit;  add
-   your markup (_e.g._ `<h2>Hello World!</h2>`)
-1. In `src/main/resources/application.properties`, define the `server.port`
-   property and set it to an unused port (like 8090)
-1. Run the command `$gradle assemble` to build your application
-1. Run the command `$java -jar build/lib/{filename}.war` to start your
-   application
+2.  Add Soffit as a dependency to your project (see below)
+3.  Add the `tomcat-embed-jasper` dependency to your project (see below)
+4.  Add the `@SoffitApplication` annotation to your application class (the one
+    annotated with `@SpringBootApplication`)
+5.  Create the directory path `src/main/webapp/WEB-INF/soffit/`
+6.  Choose a name for your soffit and create a directory with that name inside
+    `/soffit/` (above);  recommended:  use only lowercase letters and dashes
+    ('-') in the name
+7.  Create a `view.jsp` file inside the directory named for your soffit;  add
+    your markup (_e.g._ `<h2>Hello World!</h2>`)
+8.  In `src/main/resources/application.properties`, define the `server.port`
+    property and set it to an unused port (like 8090)
+9.  Run the command `$ gradle assemble` to build your application
+10. Run the command `$ java -jar build/lib/{filename}.war` to start your
+    application
 
 That's it!  You now have a functioning, minimal Soffit application running on
 `localhost` at `server.port`.

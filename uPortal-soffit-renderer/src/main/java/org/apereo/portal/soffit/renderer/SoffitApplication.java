@@ -28,7 +28,6 @@ import org.springframework.context.annotation.Import;
  * with all required Soffit Renderer technology.
  *
  * @since 5.0
- * @author drewwills
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)

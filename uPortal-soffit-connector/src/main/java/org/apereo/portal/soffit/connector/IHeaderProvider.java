@@ -30,7 +30,6 @@ import org.apache.http.Header;
  * remote Soffit.
  *
  * @since 5.0
- * @author drewwills
  */
 public interface IHeaderProvider {
 

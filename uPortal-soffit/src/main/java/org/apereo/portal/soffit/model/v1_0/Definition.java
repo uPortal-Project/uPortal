@@ -30,7 +30,6 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  * portal.
  *
  * @since 5.0
- * @author drewwills
  */
 public class Definition extends AbstractTokenizable {
 

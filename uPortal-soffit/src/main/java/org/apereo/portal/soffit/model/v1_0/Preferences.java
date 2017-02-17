@@ -30,7 +30,6 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  * typically defined by administrators at publish time.
  *
  * @since 5.0
- * @author drewwills
  */
 public class Preferences extends AbstractTokenizable {
 

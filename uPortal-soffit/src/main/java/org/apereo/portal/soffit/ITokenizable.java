@@ -24,7 +24,6 @@ package org.apereo.portal.soffit;
  * (and deserialized) as JSON Web Tokens (JWT).  https://jwt.io/
  *
  * @since 5.0
- * @author drewwills
  */
 public interface ITokenizable {
 

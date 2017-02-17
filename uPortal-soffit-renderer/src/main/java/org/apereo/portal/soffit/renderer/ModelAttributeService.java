@@ -47,7 +47,6 @@ import org.springframework.context.ApplicationContext;
  * {@link SoffitModelAttribute} annotation.
  *
  * @since 5.0
- * @author drewwills
  */
 public class ModelAttributeService {
 

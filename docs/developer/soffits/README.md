@@ -20,9 +20,9 @@ is not based on JSR-286 or the portlet container.
 ## Topics
 
 1. [Minimal Soffit](minimal_soffit.md)
-1. [Publishing a Soffit](publishing_a_soffit.md)
-1. [Soffit Data Model](soffit_data_model.md)
-1. [Configuration Options](configuration_options.md)
+2. [Publishing a Soffit](publishing_a_soffit.md)
+3. [Soffit Data Model](soffit_data_model.md)
+4. [Configuration Options](configuration_options.md)
 
 ## A Word on Modern Web User Interfaces
 

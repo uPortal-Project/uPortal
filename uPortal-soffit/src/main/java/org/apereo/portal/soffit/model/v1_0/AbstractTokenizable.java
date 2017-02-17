@@ -25,7 +25,6 @@ import org.apereo.portal.soffit.ITokenizable;
  * Base class for model objects that implement {@link ITokenizable}.
  *
  * @since 5.0
- * @author drewwills
  */
 public class AbstractTokenizable implements ITokenizable {
 

@@ -39,7 +39,6 @@ import org.springframework.beans.factory.annotation.Autowired;
  * Prepares the custom 'X-Soffit-Preferences' HTTP header.
  *
  * @since 5.0
- * @author drewwills
  */
 public class PreferencesHeaderProvider extends AbstractHeaderProvider {
 
