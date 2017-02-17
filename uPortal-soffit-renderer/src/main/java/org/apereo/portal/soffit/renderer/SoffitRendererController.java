@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apereo.portal.soffit.renderer;
 
 import java.util.HashMap;
@@ -43,12 +44,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+/**
+ * <code>Controller</code> bean for remote soffits.  This class is provided as a
+ * convenience.
+ *
+ * @since 5.0
+ */
 @Controller
 @RequestMapping("/soffit")
 public class SoffitRendererController {
@@ -83,6 +89,9 @@ public class SoffitRendererController {
     public static final String CACHE_MAXAGE_PROPERTY_FORMAT = PROPERTY_PREFIX + "%s.cache.max-age";
 
     private static final String PORTAL_REQUEST_MODEL_NAME = "portalRequest";
+    private static final String BEARER_MODEL_NAME = "bearer";
+    private static final String PREFERENCES_MODEL_NAME = "preferences";
+    private static final String DEFINITION_MODEL_NAME = "definition";
 
     private static final String DEFAULT_MODE = "view";
     private static final String DEFAULT_WINDOW_STATE = "normal";
@@ -102,6 +111,9 @@ public class SoffitRendererController {
     @Autowired
     private DefinitionService definitionService;
 
+    @Autowired
+    private ModelAttributeService modelAttributeService;
+
     @Value("${soffit.renderer.viewsLocation:/WEB-INF/soffit/}")
     private String viewsLocation;
     private final Map<ViewTuple,String> availableViews = new HashMap<>();
@@ -113,63 +125,51 @@ public class SoffitRendererController {
 
         logger.debug("Rendering for request URI '{}'", req.getRequestURI());
 
-        // PortalRequest
-        final String portalRequestToken = req.getHeader(Headers.PORTAL_REQUEST.getName());
-        final PortalRequest portalRequest = portalRequestService.parsePortalRequest(portalRequestToken);
+        // Soffit Object Model
+        final PortalRequest portalRequest = getPortalRequest(req);
+        final Bearer bearer = getBearer(req);
+        final Preferences preferences = getPreferences(req);
+        final Definition definition = getDefinition(req);
 
         // Select a view
         final String viewName = selectView(req, module, portalRequest);
 
+        final Map<String,Object> model = modelAttributeService.gatherModelAttributes(viewName, req, res, portalRequest, bearer, preferences, definition);
+        model.put(PORTAL_REQUEST_MODEL_NAME, portalRequest);
+        model.put(BEARER_MODEL_NAME, bearer);
+        model.put(PREFERENCES_MODEL_NAME, preferences);
+        model.put(DEFINITION_MODEL_NAME, definition);
+
         // Set up cache headers appropriately
         configureCacheHeaders(res, module);
 
-        return new ModelAndView(viewName.toString(), PORTAL_REQUEST_MODEL_NAME, portalRequest);
+        return new ModelAndView(viewName, model);
 
-    }
-
-    @ModelAttribute("bearer")
-    public Bearer getBearer(final HttpServletRequest req) {
-        final String authorizationHeader = req.getHeader(Headers.AUTHORIZATION.getName());
-        final String bearerToken = authorizationHeader.substring(Headers.BEARER_TOKEN_PREFIX.length());
-        return bearerService.parseBearerToken(bearerToken);
-    }
-
-    @ModelAttribute("preferences")
-    public Preferences getPreferences(final HttpServletRequest req) {
-        final String preferencesToken = req.getHeader(Headers.PREFERECES.getName());
-        return preferencesService.parsePreferences(preferencesToken);
-    }
-
-    @ModelAttribute("definition")
-    public Definition getDefinition(final HttpServletRequest req) {
-        final String definitionToken = req.getHeader(Headers.DEFINITION.getName());
-        return definitionService.parseDefinition(definitionToken);
     }
 
     /*
      * Implementation
      */
 
-    private void configureCacheHeaders(final HttpServletResponse res, final String module) {
+    private PortalRequest getPortalRequest(final HttpServletRequest req) {
+        final String portalRequestToken = req.getHeader(Headers.PORTAL_REQUEST.getName());
+        return portalRequestService.parsePortalRequest(portalRequestToken);
+    }
 
-        final String cacheScopeProperty = String.format(CACHE_SCOPE_PROPERTY_FORMAT, module);
-        final String cacheScopeValue = environment.getProperty(cacheScopeProperty);
-        logger.debug("Selecting cacheScopeValue='{}' for property '{}'", cacheScopeValue, cacheScopeProperty);
+    private Bearer getBearer(final HttpServletRequest req) {
+        final String authorizationHeader = req.getHeader(Headers.AUTHORIZATION.getName());
+        final String bearerToken = authorizationHeader.substring(Headers.BEARER_TOKEN_PREFIX.length());
+        return bearerService.parseBearerToken(bearerToken);
+    }
 
-        final String cacheMaxAgeProperty = String.format(CACHE_MAXAGE_PROPERTY_FORMAT, module);
-        final String cacheMaxAgeValue = environment.getProperty(cacheMaxAgeProperty);
-        logger.debug("Selecting cacheMaxAgeValue='{}' for property '{}'", cacheMaxAgeValue, cacheMaxAgeProperty);
+    private Preferences getPreferences(final HttpServletRequest req) {
+        final String preferencesToken = req.getHeader(Headers.PREFERECES.getName());
+        return preferencesService.parsePreferences(preferencesToken);
+    }
 
-        // Both must be specified, else we just use the default...
-        final String cacheControl = (StringUtils.isNotEmpty(cacheScopeValue) && StringUtils.isNotEmpty(cacheMaxAgeValue))
-                ? cacheScopeValue + ", max-age=" + cacheMaxAgeValue
-                : CACHE_CONTROL_NOSTORE;
-        logger.debug("Setting cache-control='{}' for module '{}'", cacheControl, module);
-
-        // TODO: support validation caching
-
-        res.setHeader(Headers.CACHE_CONTROL.getName(), cacheControl);
-
+    private Definition getDefinition(final HttpServletRequest req) {
+        final String definitionToken = req.getHeader(Headers.DEFINITION.getName());
+        return definitionService.parseDefinition(definitionToken);
     }
 
     private String selectView(final HttpServletRequest req, final String module, final PortalRequest portalRequest) {
@@ -246,6 +246,28 @@ public class SoffitRendererController {
         logger.debug("Calculated path '{}' for parts={}", rslt, parts);
 
         return rslt.toString();
+
+    }
+
+    private void configureCacheHeaders(final HttpServletResponse res, final String module) {
+
+        final String cacheScopeProperty = String.format(CACHE_SCOPE_PROPERTY_FORMAT, module);
+        final String cacheScopeValue = environment.getProperty(cacheScopeProperty);
+        logger.debug("Selecting cacheScopeValue='{}' for property '{}'", cacheScopeValue, cacheScopeProperty);
+
+        final String cacheMaxAgeProperty = String.format(CACHE_MAXAGE_PROPERTY_FORMAT, module);
+        final Integer cacheMaxAgeValueSeconds = environment.getProperty(cacheMaxAgeProperty, Integer.class);
+        logger.debug("Selecting cacheMaxAgeValueSeconds='{}' for property '{}'", cacheMaxAgeValueSeconds, cacheMaxAgeProperty);
+
+        // Both must be specified, else we just use the default...
+        final String cacheControl = (StringUtils.isNotEmpty(cacheScopeValue) && cacheMaxAgeValueSeconds != null)
+                ? cacheScopeValue + ", max-age=" + cacheMaxAgeValueSeconds
+                : CACHE_CONTROL_NOSTORE;
+        logger.debug("Setting cache-control='{}' for module '{}'", cacheControl, module);
+
+        // TODO: support validation caching
+
+        res.setHeader(Headers.CACHE_CONTROL.getName(), cacheControl);
 
     }
 

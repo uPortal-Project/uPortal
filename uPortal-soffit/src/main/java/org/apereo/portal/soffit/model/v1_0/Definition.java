@@ -29,7 +29,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  * Provides information about the publication record of the soffit within the
  * portal.
  *
- * @author drewwills
+ * @since 5.0
  */
 public class Definition extends AbstractTokenizable {
 

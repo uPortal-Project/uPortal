@@ -36,7 +36,6 @@ import org.springframework.beans.factory.annotation.Autowired;
  * Prepares the custom 'X-Soffit-PortalRequest' HTTP header.
  *
  * @since 5.0
- * @author drewwills
  */
 public class PortalRequestHeaderProvider extends AbstractHeaderProvider {
 

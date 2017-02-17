@@ -32,6 +32,7 @@ import org.springframework.stereotype.Service;
  * Responsible for issuing and parsing the {@link PortalRequest} provided by the
  * Soffit Connector.
  *
+ * @since 5.0
  * @author drewwills
  */
 @Service

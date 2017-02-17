@@ -29,7 +29,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  * Collection of preferences for this Soffit and their values.  Preferences are
  * typically defined by administrators at publish time.
  *
- * @author drewwills
+ * @since 5.0
  */
 public class Preferences extends AbstractTokenizable {
 

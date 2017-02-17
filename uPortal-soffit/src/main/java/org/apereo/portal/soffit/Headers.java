@@ -22,7 +22,7 @@ package org.apereo.portal.soffit;
 /**
  * Set of HTTP headers, both standard and custom, in use within Soffit.
  *
- * @author drewwills
+ * @since 5.0
  */
 public enum Headers {
 

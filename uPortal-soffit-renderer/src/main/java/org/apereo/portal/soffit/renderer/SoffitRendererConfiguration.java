@@ -31,15 +31,10 @@ import org.springframework.context.annotation.Configuration;
  * Add this single class to your application context, rather than several
  * individual beans.
  *
- * @author drewwills
+ * @since 5.0
  */
 @Configuration
 public class SoffitRendererConfiguration {
-
-    @Bean
-    public SoffitRendererController soffitRendererController() {
-        return new SoffitRendererController();
-    }
 
     @Bean
     public BearerService bearerService() {
@@ -59,6 +54,16 @@ public class SoffitRendererConfiguration {
     @Bean
     public DefinitionService definitionService() {
         return new DefinitionService();
+    }
+
+    @Bean
+    public ModelAttributeService modelAttributeService() {
+        return new ModelAttributeService();
+    }
+
+    @Bean
+    public SoffitRendererController soffitRendererController() {
+        return new SoffitRendererController();
     }
 
 }

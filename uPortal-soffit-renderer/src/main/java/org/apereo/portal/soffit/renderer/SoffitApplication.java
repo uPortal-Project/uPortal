@@ -27,7 +27,6 @@ import org.springframework.context.annotation.Import;
  * This is a convenience annotation for configuring your Spring Boot application
  * with all required Soffit Renderer technology.
  *
- * @author drewwills
  * @since 5.0
  */
 @Target(ElementType.TYPE)

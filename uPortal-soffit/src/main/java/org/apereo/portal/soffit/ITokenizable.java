@@ -23,7 +23,7 @@ package org.apereo.portal.soffit;
  * Model objects implement this interface, indicating they can be serialized
  * (and deserialized) as JSON Web Tokens (JWT).  https://jwt.io/
  *
- * @author drewwills
+ * @since 5.0
  */
 public interface ITokenizable {
 
