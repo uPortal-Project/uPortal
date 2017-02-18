@@ -34,12 +34,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class ThemeNameRequestPropertiesManager extends BaseRequestPropertiesManager {
-    
-    /**
-     * @deprecated Use {@link IPortletRenderer#THEME_NAME_PROPERTY}
-     */
-    @Deprecated
-    public static final String THEME_NAME_PROPERTY = "themeName";
 
     private IUserInstanceManager userInstanceManager;
 
@@ -71,7 +65,6 @@ public class ThemeNameRequestPropertiesManager extends BaseRequestPropertiesMana
         // set the theme name as a portlet response property
         final String themeName = theme.getName();
         propertiesPopulator.put(IPortletRenderer.THEME_NAME_PROPERTY, themeName);
-        propertiesPopulator.put(THEME_NAME_PROPERTY, themeName);
     }
 
 }

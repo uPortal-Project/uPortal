@@ -31,16 +31,10 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class PortletLinkRequestPropertiesManager extends BaseRequestPropertiesManager {
-    
-    /**
-     * @deprecated use {@link IPortletRenderer#EXTERNAL_PORTLET_LINK_PROPERTY}
-     */
-    @Deprecated
-    protected static final String LINK_PROPERTY = "externalPortletLink";
 
     @Override
     public boolean setResponseProperty(HttpServletRequest portletRequest, IPortletWindow portletWindow, String property, String value) {
-        if ((LINK_PROPERTY.equals(property) || IPortletRenderer.EXTERNAL_PORTLET_LINK_PROPERTY.equals(property)) && StringUtils.isNotBlank(value)) {
+        if (IPortletRenderer.EXTERNAL_PORTLET_LINK_PROPERTY.equals(property) && StringUtils.isNotBlank(value)) {
             portletRequest.setAttribute(IPortletRenderer.ATTRIBUTE__PORTLET_LINK, value);
             return true;
         }
