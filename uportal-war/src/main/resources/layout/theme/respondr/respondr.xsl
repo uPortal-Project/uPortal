@@ -401,30 +401,30 @@
                                         <xsl:variable name="portletLinkUrl">
                                             <xsl:choose>
                                                 <xsl:when test="@alternativeMaximizedLink and string-length(@alternativeMaximizedLink) > 0">
-                                                  <xsl:value-of select="@alternativeMaximizedLink" />
+                                                    <xsl:value-of select="@alternativeMaximizedLink" />
                                                 </xsl:when>
                                                 <xsl:otherwise>
-                                            <xsl:call-template name="portalUrl">
-                                                <xsl:with-param name="url">
-                                                    <url:portal-url>
-                                                        <url:layoutId><xsl:value-of select="@ID" /></url:layoutId>
-                                                        <url:portlet-url state="MAXIMIZED" />
-                                                    </url:portal-url>
-                                                </xsl:with-param>
-                                            </xsl:call-template>
+                                                    <xsl:call-template name="portalUrl">
+                                                        <xsl:with-param name="url">
+                                                            <url:portal-url>
+                                                                <url:layoutId><xsl:value-of select="@ID" /></url:layoutId>
+                                                                <url:portlet-url state="MAXIMIZED" />
+                                                            </url:portal-url>
+                                                        </xsl:with-param>
+                                                    </xsl:call-template>
                                                 </xsl:otherwise>
                                               </xsl:choose>
                                         </xsl:variable>
-                                        <li><xsl:element name="a">
-                                        <xsl:attribute name="href"><xsl:value-of select="$portletLinkUrl" /></xsl:attribute>
-                                        <xsl:choose>
-                                            <xsl:when test="@alternativeMaximizedLink and string-length(@alternativeMaximizedLink) > 0">
-                                                <xsl:attribute name="target">_blank</xsl:attribute>
-                                            </xsl:when>
-                                            <xsl:otherwise></xsl:otherwise>
-                                        </xsl:choose>
-                                        <span class="title"><xsl:value-of select="@title" /></span>
-                                      </xsl:element></li>
+                                        <li>
+                                            <xsl:element name="a">
+                                                <xsl:attribute name="href"><xsl:value-of select="$portletLinkUrl" /></xsl:attribute>
+                                                <xsl:if test="@alternativeMaximizedLink and string-length(@alternativeMaximizedLink) > 0">
+                                                    <xsl:attribute name="target">_blank</xsl:attribute>
+                                                    <xsl:attribute name="rel">noopener noreferrer</xsl:attribute>
+                                                </xsl:if>
+                                                <span class="title"><xsl:value-of select="@title" /></span>
+                                            </xsl:element>
+                                        </li>
                                     </xsl:for-each>
                                 </ul>
                             </div>
