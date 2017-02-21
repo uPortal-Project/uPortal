@@ -43,7 +43,7 @@
 
 <script id="${n}settingsTemplate" type="text/template">
    <div>
-      <label><a href="{{= settingsUrl }}" target="_blank">{{= settingsName }}:</a></label>                        
+      <label><a href="{{= settingsUrl }}" target="_blank" rel="noopener noreferrer">{{= settingsName }}:</a></label>                        
       <input class="settingName" name="settingName" value=""/>:
       <input class="settingValue" name="settingValue" value=""/>
       <button class="addSetting">+</button>

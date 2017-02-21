@@ -28,5 +28,5 @@
 
 <iframe src="${attrs.src}" ${iframeAttrs}>
     This browser does not support inline frames.<br/> 
-    <a href="${attrs.src}" target="_blank">Click here to view content</a> in a separate window.
+    <a href="${attrs.src}" target="_blank" rel="noopener noreferrer">Click here to view content</a> in a separate window.
 </iframe>
