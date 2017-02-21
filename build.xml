@@ -712,7 +712,7 @@
          | uPortal is moving from Ant/Maven to Gradle.  We are porting sources bit by bit.
          | Once we can remove Maven, we can remove this target too.
          +-->
-        <exec executable="./gradlew">
+        <exec executable="./gradlew" failonerror="true">
             <arg value="clean"/>
             <arg value="install"/>
         </exec>
