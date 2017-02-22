@@ -102,13 +102,13 @@ This list of component group services is processed by the composite, or "root" s
   </service>
 -->
 
-<!--  
- | Uncomment to configure a SmartLdap group service component.  Be sure to edit 
+<!--
+ | Uncomment to configure a SmartLdap group service component.  Be sure to edit
  | SmartLdapGroupStoreConfig.xml to apply your settings.
  |
- | SmartLdapGroupStore is a GaP implementation that recognizes groups defined in 
- | an LDAP directory and makes them available in the portal.  You can read about 
- | this technology here:  http://www.ja-sig.org/wiki/x/3QPI   
+ | SmartLdapGroupStore is a GaP implementation that recognizes groups defined in
+ | an LDAP directory and makes them available in the portal.  You can read about
+ | this technology here:  https://wiki.jasig.org/display/UPM43/LDAP+User+Attribute+Sources
  +-->
 <!--
   <service>
@@ -122,15 +122,15 @@ This list of component group services is processed by the composite, or "root" s
   </service>
 -->
 
-<!--  
- | Uncomment to configure a Grouper group service component.  Be sure to edit 
+<!--
+ | Uncomment to configure a Grouper group service component.  Be sure to edit
  | grouper.client.properties and grouper.lib.properties to apply your settings.
  |
- | GrouperEntityGroupStore is a GaP implementation that recognizes groups defined 
- | on a Grouper server and makes them available in the portal.  You can read about 
- | this technology here:  http://www.ja-sig.org/wiki/x/3QPI   
+ | GrouperEntityGroupStore is a GaP implementation that recognizes groups defined
+ | on a Grouper server and makes them available in the portal.  You can read about
+ | this technology here:  https://wiki.jasig.org/display/UPM43/Grouper
  +-->
-<!-- 
+<!--
   <service>
     <name>grouper</name>
     <service_factory>org.apereo.portal.groups.ReferenceIndividualGroupServiceFactory</service_factory>

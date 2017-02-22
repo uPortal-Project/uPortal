@@ -37,7 +37,7 @@
 | For the standards and guidelines that govern the user interface of this portlet
 | including HTML, CSS, JavaScript, accessibility, naming conventions, 3rd Party libraries
 | (like jQuery and the Fluid Skinning System) and more, refer to:
-| http://www.ja-sig.org/wiki/x/cQ
+| docs/SKINNING_UPORTAL.md
 -->
 
 <!--
