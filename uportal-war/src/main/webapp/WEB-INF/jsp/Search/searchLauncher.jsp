@@ -50,7 +50,7 @@
     </div>
 </div>
 
-<script type="text/javascript" src="<rs:resourceURL value="/rs/jquery/1.10.2/jquery-1.10.2.min.js"/>"></script>
+<script type="text/javascript" src="<rs:resourceURL value="/rs/jquery/1.11.0/jquery-1.11.0.min.js"/>"></script>
 <script type="text/javascript" src="<rs:resourceURL value="/rs/jqueryui/1.10.3/jquery-ui-1.10.3.min.js"/>"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/search/autosuggestHandler.js"></script>
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/search/autosuggest.css">
