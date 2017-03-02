@@ -27,7 +27,7 @@
 <project name="uPortal" default="help" basedir="." xmlns:up="urn:up-util-ant" xmlns:artifact="urn:maven-artifact-ant">
 
     <!--
-     | Determine if a named environment has been specified in the command.  
+     | Determine if a named environment has been specified in the command.
      | Examples:  dev, test, prod, local, etc.
      +-->
     <!-- Load build properties here to be able to load the env property if defined -->
@@ -198,7 +198,7 @@
                 </not>
             </condition>
         </fail>
-    	
+
         <antcall target="db-hibernate-gen-update-script">
             <param name="outputDir" value="${outputDir}"/>
         </antcall>
@@ -712,7 +712,11 @@
          | uPortal is moving from Ant/Maven to Gradle.  We are porting sources bit by bit.
          | Once we can remove Maven, we can remove this target too.
          +-->
-        <exec executable="./gradlew" failonerror="true">
+        <exec executable="./gradlew" osfamily="unix" failonerror="true">
+            <arg value="clean"/>
+            <arg value="install"/>
+        </exec>
+        <exec executable="gradlew.bat" osfamily="windows" failonerror="true">
             <arg value="clean"/>
             <arg value="install"/>
         </exec>
@@ -853,7 +857,7 @@
         	logger.info("");
         	logger.info("");
         	logger.info("Update Database " + '${databaseQualifier}');
-        	
+
         	//hibernateUpdate(String target, String databaseQualifier, boolean export, String outputFile)
             portalShellBuildHelper.hibernateUpdate("db-hibernate-update",
         	    '${databaseQualifier}',
@@ -878,7 +882,7 @@
 	            logger.info("");
 	            logger.info("");
 	            logger.info("Generate Update Script for Database " + '${databaseQualifier}');
-	            
+
 	            //hibernateGenerateScript(String target, String databaseQualifier, String outputFile);
 	            portalShellBuildHelper.hibernateGenerateScript(
 	        	    "db-hibernate-update",
@@ -1350,7 +1354,7 @@ IMPORTANT: The '-Dpattern=' property is no longer a regular expression and is a 
             <!--
              | Called via the <ant> task so the install happens in a different classloader. This
              | is required so an initial install which is missing jasig-parent doesn't cause problems
-             | later due to the failed load of jasig-parent being cached.  
+             | later due to the failed load of jasig-parent being cached.
              +-->
             <if>
                 <not>
@@ -1499,7 +1503,7 @@ IMPORTANT: The '-Dpattern=' property is no longer a regular expression and is a 
             </uportal-parent-macro>
         </sequential>
     </macrodef>
-	
+
     <!--
      | The task ensures the uportal-platform-api JAR exists and is up to date.
      |
