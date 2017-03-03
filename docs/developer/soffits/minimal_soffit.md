@@ -15,11 +15,12 @@ develop soffits mostly with [Java][] and [Spring Boot][].
     * Dependencies=*Cache* (recommended) & *Web* (required)
     * Additional dependencies you intend to use (optional -- you can add them
       later)
+
     When you're ready, click the `Generate Project` button and download your new
     project source files as a `.tar.gz` or a `.zip`.  Decompress and copy the
     contents of the archive to a good place in your file system.  Open your
     project files in a suitable tool for editing, such as [IntelliJ IDEA][],
-    [Eclipse][], or [Atom][].
+    [Eclipse][], or possibly [Atom][].
 2.  Add Soffit as a dependency to your project (see _Adding the Soffit dependency_
     below)
 3.  Add the `tomcat-embed-jasper` dependency to your project (see _Adding the
@@ -36,7 +37,8 @@ develop soffits mostly with [Java][] and [Spring Boot][].
     your markup (_e.g._ `<h2>Hello World!</h2>`)
 8.  In `src/main/resources/application.properties`, define the `server.port`
     property and set it to an unused port (like 8090)
-9.  Run the command `$ gradle assemble` to build your application
+9.  Run the command `$ ./gradlew assemble` (on \*-nix) or `$ gradlew.bat assemble`
+    (on Windows) to build your application
 10. Run the command `$ java -jar build/lib/{filename}.war` to start your
     application
 
