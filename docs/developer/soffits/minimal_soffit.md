@@ -39,7 +39,7 @@ develop soffits mostly with [Java][] and [Spring Boot][].
     property and set it to an unused port (like 8090)
 9.  Run the command `$ ./gradlew assemble` (on \*-nix) or `$ gradlew.bat assemble`
     (on Windows) to build your application
-10. Run the command `$ java -jar build/lib/{filename}.war` to start your
+10. Run the command `$ java -jar build/libs/{filename}.war` to start your
     application
 
 That's it!  You now have a functioning, minimal Soffit application running on
