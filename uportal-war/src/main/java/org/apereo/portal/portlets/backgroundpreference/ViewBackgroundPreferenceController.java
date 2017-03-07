@@ -54,7 +54,10 @@ public class ViewBackgroundPreferenceController {
 
         final String[] thumbnailImages = imageSetSelectionStrategy.getImageThumbnailSet(req);
         model.addAttribute("thumbnailImages", thumbnailImages);
-
+        
+        final String[] imageCaptions = imageSetSelectionStrategy.getImageCaptions(req);
+        model.addAttribute("imageCaptions", imageCaptions);
+        
         final String preferredBackgroundImage = imageSetSelectionStrategy.getSelectedImage(req);
         model.addAttribute("backgroundImage", preferredBackgroundImage);
 
