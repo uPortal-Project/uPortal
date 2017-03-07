@@ -4,19 +4,19 @@
 
 uPortal supports **the latest general audience release** and **one prior release** of these major browsers:
 
-+ Chrome (on Android, MacOS, Windows) (including support for TalkBack)
-+ Firefox (on MacOS and on Windows)
-+ Safari (on MacOS and iOS) (including support for VoiceOver)
-+ Internet Explorer (on Windows)
-+ Edge (on Windows)
++   Chrome (on Android, MacOS, Windows) (including support for TalkBack)
++   Firefox (on MacOS and on Windows)
++   Safari (on MacOS and iOS) (including support for VoiceOver)
++   Internet Explorer (on Windows)
++   Edge (on Windows)
 
 ## Practice
 
-This policy means that if there are problems with 
+This policy means that if there are problems with
 
-+ using uPortal ecosystem products out of the box or 
-+ as typically locally implemented 
-+ with supported browsers
++   using uPortal ecosystem products out of the box or
++   as typically locally implemented
++   with supported browsers
 
 the uPortal projects are committed to accepting, triaging, and attempting to address reported issues.
 

@@ -1,5 +1,5 @@
-Guidelines for Contributing
-====
+# Guidelines for Contributing
+
 Contributions from the community are essential in keeping uPortal (any Open Source project really) strong and successful.  While we try to keep requirements for contributing to a minimum, there are a few guidelines we ask that you mind.
 
 ## Individual Contributor License Agreement
@@ -12,11 +12,11 @@ You can learn more about [Apereo licensing generally][], the [contributor licens
 
 If you are just getting started with Git, GitHub and/or contributing to uPortal via GitHub there are a few pre-requisite steps.
 
-* Make sure you have a [Jasig JIRA account](https://issues.jasig.org)
-* Make sure you have a [GitHub account](https://github.com/signup/free)
-* [Fork](http://help.github.com/fork-a-repo) the uPortal repository.  As discussed in the linked page, this also includes:
-    * [Set](https://help.github.com/articles/set-up-git) up your local git install
-    * Clone your fork
+*   Make sure you have a [Jasig JIRA account](https://issues.jasig.org)
+*   Make sure you have a [GitHub account](https://github.com/signup/free)
+*   [Fork](http://help.github.com/fork-a-repo) the uPortal repository.  As discussed in the linked page, this also includes:
+    *   [Set](https://help.github.com/articles/set-up-git) up your local git install
+    *   Clone your fork
 
 ## Communicate first and often
 
@@ -33,7 +33,7 @@ You may be able to find others to collaborate with for mutual benefit.
 
 
 ## Create the working (topic) branch
-Create a "topic" branch on which you will work.  The convention is to name the branch using the JIRA issue key.  If there is not already a JIRA issue covering the work you want to do, create one.  Assuming you will be working from the master branch and working on the JIRA issue UP-123 : 
+Create a "topic" branch on which you will work.  The convention is to name the branch using the JIRA issue key.  If there is not already a JIRA issue covering the work you want to do, create one.  Assuming you will be working from the master branch and working on the JIRA issue UP-123 :
 
     git checkout -b UP-123 master
 
@@ -44,8 +44,8 @@ For a more in-depth description of the git workflow check out the
 
 ## Code
 
-* Apply uPortal [code conventions][] and [architecture][].
-* Write automated unit tests exercising existing code you are touching and exercising your new code.  If you are fixing a bug, first write a unit test demonstrating the bug so as to stave off future regression.
+*   Apply uPortal [code conventions][] and [architecture][].
+*   Write automated unit tests exercising existing code you are touching and exercising your new code.  If you are fixing a bug, first write a unit test demonstrating the bug so as to stave off future regression.
 
 ## Collaborate
 
@@ -53,10 +53,10 @@ Consider pushing your changes to a topic branch in your (public) fork of the rep
 
 ## Commit
 
-* Make commits of logical units.
-* Be sure to use the JIRA issue key in the commit message.  This is how JIRA will pick up the related commits and display them on the JIRA issue.
-* Make sure you have added the necessary tests for your changes.
-* Run _all_ the tests to assure nothing else was accidentally broken.
+*   Make commits of logical units.
+*   Be sure to use the JIRA issue key in the commit message.  This is how JIRA will pick up the related commits and display them on the JIRA issue.
+*   Make sure you have added the necessary tests for your changes.
+*   Run _all_ the tests to assure nothing else was accidentally broken.
 
 _Prior to committing, if you want to pull in the latest upstream changes  (highly appreciated btw), please use rebasing rather than merging.  Merging creates "merge commits" that really muck up the project timeline._
 
@@ -66,10 +66,10 @@ If your change is to a user-facing experience, it should not regress support for
 
 ## Submit
 
-* You submitted a [Contributor License Agreement][], right?  Seriously, Apereo cannot accept your contribution other than under a Contributor License Agreement.
-* Push your changes to a topic branch in your fork of the repository.
-* Initiate a [pull request](http://help.github.com/send-pull-requests/).  Name the Pull Request prefixed with the issue identifier (e.g., "UP-4148 Update contributing guidance").  Mention and link the JIRA issue in the first couple lines of your Pull Request description so it's very convenient for reviewers to get to the JIRA issue from your pull request.  Use the pull request as another opportunity to communicate effectively about what is being changed.  Can your change be shown in before and after screenshots?  Did you make interesting implementation decisions or tradeoffs?
-* Update the JIRA issue, adding a comment including a link to the created pull request.  If the problem or improvement came to be better understood through implementation, update the description and add comments to communicate what was learned.  A release engineer will rely upon the JIRA to summarize release notes for the release including your change and those release notes will link to the JIRA issue, so the JIRA issue as a good place to communicate clearly about what was changed why and how.
+*   You submitted a [Contributor License Agreement][], right?  Seriously, Apereo cannot accept your contribution other than under a Contributor License Agreement.
+*   Push your changes to a topic branch in your fork of the repository.
+*   Initiate a [pull request](http://help.github.com/send-pull-requests/).  Name the Pull Request prefixed with the issue identifier (e.g., "UP-4148 Update contributing guidance").  Mention and link the JIRA issue in the first couple lines of your Pull Request description so it's very convenient for reviewers to get to the JIRA issue from your pull request.  Use the pull request as another opportunity to communicate effectively about what is being changed.  Can your change be shown in before and after screenshots?  Did you make interesting implementation decisions or tradeoffs?
+*   Update the JIRA issue, adding a comment including a link to the created pull request.  If the problem or improvement came to be better understood through implementation, update the description and add comments to communicate what was learned.  A release engineer will rely upon the JIRA to summarize release notes for the release including your change and those release notes will link to the JIRA issue, so the JIRA issue as a good place to communicate clearly about what was changed why and how.
 
 [Apereo licensing generally]: http://www.apereo.org/licensing
 [contributor licensing agreements specifically]: http://www.apereo.org/licensing/agreements

@@ -29,7 +29,7 @@ import org.apache.http.Header;
  * (and their values) sent by the {@link SoffitConnectorController} to the
  * remote Soffit.
  *
- * @author drewwills
+ * @since 5.0
  */
 public interface IHeaderProvider {
 

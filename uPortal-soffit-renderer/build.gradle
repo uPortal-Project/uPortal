@@ -5,5 +5,8 @@ dependencies {
 
     compile "org.springframework:spring-webmvc:${springVersion}"
 
+    testCompile "junit:junit:${junitVersion}"
+    testCompile "org.mockito:mockito-core:${mockitoVersion}"
+
     provided "${servletApiDependency}"
 }

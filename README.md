@@ -9,7 +9,13 @@ or in the [uPortal Wiki](https://wiki.jasig.org/display/UPC/Home)
 
 uPortal uses Travis-CI for lightweight continuous integration.  You can see build statuses at <https://travis-ci.org/Jasig/uPortal>.  This handy image summarizes build status for the master branch:
 
-[![Master Branch Build Status](https://travis-ci.org/Jasig/uPortal.png?branch=master)](https://travis-ci.org/Jasig/uPortal)
+[![Master Branch Build Status](https://travis-ci.org/Jasig/uPortal.svg?branch=master)](https://travis-ci.org/Jasig/uPortal)
+
+## Accessibility
+
+uPortal strives to conform with Web Content Accessibility Guidelines Version 2.0 Level AA. The most recent accessility audit results can be seen in [UP-4735](https://issues.jasig.org/browse/UP-4735).
+
+[![WCAG 2 AA Badge](https://www.w3.org/WAI/wcag2AA-blue-v.svg)](https://www.w3.org/TR/WCAG20/)
 
 ## Requirements
 

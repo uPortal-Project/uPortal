@@ -34,9 +34,11 @@ buildScan {
 }
 
 subprojects {
+    apply plugin: 'checkstyle'
+    apply plugin: 'findbugs'
+    apply plugin: 'idea'
     apply plugin: 'java'
     apply plugin: 'maven'
-    apply plugin: 'checkstyle'
 
     repositories {
         mavenLocal()
@@ -48,6 +50,11 @@ subprojects {
         toolVersion = '6.19'
         showViolations = true
         configFile = file("${project.rootDir}/checkstyle.xml")
+    }
+
+    findbugs {
+        toolVersion = "3.0.1"
+        ignoreFailures = true
     }
 
     configurations {
@@ -62,11 +69,6 @@ subprojects {
          * that works both from the command line and in Buildship.
          */
         compile.extendsFrom provided
-
-        /*
-         * Configure checkstyle
-         */
-        checkstyle
     }
 
 }
