@@ -78,7 +78,7 @@
             </preference>
         </portlet-preferences>
     </portlet>
-    
+
     <portlet>
         <portlet-name>ExitFragmentAdministration</portlet-name>
         <display-name xml:lang="en">Exit Fragment Administration</display-name>
@@ -180,22 +180,22 @@
         </portlet-info>
     </portlet>
 
-    <portlet> 
-        <portlet-name>ImportExportPortlet</portlet-name>  
+    <portlet>
+        <portlet-name>ImportExportPortlet</portlet-name>
         <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
         <init-param>
             <name>contextConfigLocation</name>
             <value>/WEB-INF/classes/properties/contexts/portlet/ImportExportPortlet-portlet.xml</value>
         </init-param>
         <expiration-cache>-1</expiration-cache>
-        <supports> 
-            <mime-type>text/html</mime-type>  
-            <portlet-mode>view</portlet-mode> 
-        </supports>  
-        <portlet-info> 
-            <title>ImportExportPortlet</title> 
-        </portlet-info> 
-    </portlet> 
+        <supports>
+            <mime-type>text/html</mime-type>
+            <portlet-mode>view</portlet-mode>
+        </supports>
+        <portlet-info>
+            <title>ImportExportPortlet</title>
+        </portlet-info>
+    </portlet>
 
     <portlet>
         <portlet-name>IFrame</portlet-name>
@@ -215,7 +215,7 @@
             <title>IFrame</title>
         </portlet-info>
     </portlet>
-    
+
     <portlet>
         <portlet-name>Image</portlet-name>
         <display-name xml:lang="en">Image</display-name>
@@ -234,7 +234,7 @@
             <title>Image</title>
         </portlet-info>
     </portlet>
-    
+
     <portlet>
         <portlet-name>Error</portlet-name>
         <display-name xml:lang="en">Error</display-name>
@@ -253,7 +253,7 @@
             <title>Error</title>
         </portlet-info>
     </portlet>
-    
+
     <portlet>
         <portlet-name>GroupsAdministration</portlet-name>
         <display-name xml:lang="en">Groups Administration Portlet</display-name>
@@ -272,7 +272,7 @@
             <title>Groups Administration Portlet</title>
         </portlet-info>
     </portlet>
-    
+
     <portlet>
         <portlet-name>PortletAdministration</portlet-name>
         <display-name xml:lang="en">Portlet Administration Portlet</display-name>
@@ -310,7 +310,7 @@
             <title>Portal Administration</title>
         </portlet-info>
     </portlet>
-        
+
     <portlet>
         <portlet-name>PermissionsAdministration</portlet-name>
         <display-name xml:lang="en">Permissions Administration Portlet</display-name>
@@ -368,7 +368,7 @@
             </preference>
         </portlet-preferences>
     </portlet>
-    
+
     <portlet>
         <portlet-name>Statistics</portlet-name>
         <display-name xml:lang="en">Statistics</display-name>
@@ -468,7 +468,7 @@
             <title>User Locale</title>
         </portlet-info>
     </portlet>
-    
+
     <portlet>
         <portlet-name>ToggleResourcesAggregation</portlet-name>
         <display-name xml:lang="en">Toggle CSS/JavaScript Aggregation</display-name>
@@ -487,7 +487,7 @@
             <title>Toggle Resources Aggregation</title>
         </portlet-info>
     </portlet>
-    
+
     <portlet>
         <portlet-name>CacheManager</portlet-name>
         <display-name xml:lang="en">Cache Manager</display-name>
@@ -506,7 +506,7 @@
             <title>Cache Manager</title>
         </portlet-info>
     </portlet>
-    
+
     <portlet>
         <portlet-name>Sitemap</portlet-name>
         <display-name xml:lang="en">Sitemap</display-name>
@@ -525,7 +525,7 @@
             <title>Sitemap</title>
         </portlet-info>
     </portlet>
-    
+
     <portlet>
         <portlet-name>UserAdministration</portlet-name>
         <display-name xml:lang="en">User Administration</display-name>
@@ -551,7 +551,7 @@
             </preference>
         </portlet-preferences>
     </portlet>
-    
+
     <portlet>
         <portlet-name>SelfEditAccount</portlet-name>
         <display-name xml:lang="en">Edit My Portal Account</display-name>
@@ -570,7 +570,7 @@
             <title>Edit My Portal Account</title>
         </portlet-info>
     </portlet>
-    
+
     <portlet>
         <portlet-name>ResetMyLayout</portlet-name>
         <display-name xml:lang="en">Reset My Layout</display-name>
@@ -746,14 +746,14 @@
                 <value>default</value>
             </preference>
         </portlet-preferences>
-        
+
         <supported-processing-event>
             <qname xmlns:x="https://source.jasig.org/schemas/uportal/search">x:SearchRequest</qname>
         </supported-processing-event>
         <supported-processing-event>
             <qname xmlns:x="https://source.jasig.org/schemas/uportal/search">x:SearchResults</qname>
         </supported-processing-event>
-        
+
         <supported-publishing-event>
             <qname xmlns:x="https://source.jasig.org/schemas/uportal/search">x:SearchRequest</qname>
         </supported-publishing-event>
@@ -786,16 +786,16 @@
                 <value>true</value>
             </preference>
         </portlet-preferences>
-        
+
         <supported-processing-event>
             <qname xmlns:x="https://source.jasig.org/schemas/uportal/search">x:SearchRequest</qname>
         </supported-processing-event>
-        
+
         <supported-publishing-event>
             <qname xmlns:x="https://source.jasig.org/schemas/uportal/search">x:SearchResults</qname>
         </supported-publishing-event>
     </portlet>
-    
+
     <portlet>
         <portlet-name>PopularPortlets</portlet-name>
         <display-name xml:lang="en">Most Popular Apps</display-name>
@@ -834,9 +834,9 @@
         </portlet-info>
     </portlet>
 
-    <!-- 
-      Simple, Spring Portlet MVC portlet implementation that renders a JSP at a 
-      location specified as a portlet preference.  Very similar to the 
+    <!--
+      Simple, Spring Portlet MVC portlet implementation that renders a JSP at a
+      location specified as a portlet preference.  Very similar to the
       SimpleJspPortlet in the jasig-widget-portlets project.
     -->
     <portlet>
@@ -995,7 +995,7 @@
             <!-- HTML element or class to apply background image to -->
             <preference>
                 <name>defaultBackgroundContainerSelector</name>
-                <value>#portalPageBody</value>
+                <value>body.portal #portalPageBody::before</value>
             </preference>
             <preference>
                 <name>defaultBackgroundImages</name>
@@ -1111,7 +1111,7 @@
     <custom-portlet-mode>
         <description>Allows the portlet to render a preferences edit UI during publishing</description>
         <portlet-mode>config</portlet-mode>
-    </custom-portlet-mode>    
+    </custom-portlet-mode>
 
     <user-attribute>
         <description>The P3P username attribute</description>

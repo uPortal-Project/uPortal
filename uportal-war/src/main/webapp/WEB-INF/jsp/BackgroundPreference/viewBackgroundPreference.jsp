@@ -31,7 +31,7 @@
 
     /* Styles to set the background to the previously-selected image */
     <c:if test="${backgroundImage ne null}">
-    ${backgroundContainerSelector}::before {
+    ${backgroundContainerSelector} {
         background-image: url("${backgroundImage}");
     }
     </c:if>
@@ -149,7 +149,6 @@
 (function(){
     var BackgroundChanger = function() {
         var elements = {
-            coreElement: '',
             button: '',
             menu: '',
             form: '',
@@ -157,11 +156,21 @@
         };
 
         var changeBackground = function() {
+            /*
+             * NOTE:  We've recently started specifying CSS pseudo-elements as
+             * the backgroundContainerSelector (e.g. #portalPageBody::before).
+             * Unfortunately, pseudo-elements aren't technically a part of the
+             * DOM, and (therefore) you can't obtain a jQuery object that wraps
+             * one.  Instead of manipulating CSS with jQuery, we will write a
+             * new <style> element to the bottom of the page.
+             */
             if (elements.background) {
                 $('body').css('background-color','transparent');
-                elements.coreElement.css({'background-image': 'url(' + elements.background + ')'});
+                var styleElement = '<style>${backgroundContainerSelector} { background-image: url(' + elements.background + '); }</style>';
+                $(styleElement).appendTo('body');
             } else {
-                elements.coreElement.css({'background-image': 'none'});
+                var styleElement = '<style>${backgroundContainerSelector} { background-image: none; }</style>';
+                $(styleElement).appendTo('body');
             }
         };
 
@@ -188,7 +197,6 @@
             elements.button = $('#${n}background-edit-control .background-edit-button');
             elements.menu = $('#${n}background-edit-control .background-edit-menu');
             elements.form = $("#${n}background-edit-control .background-edit-form");
-            elements.coreElement = ($('${backgroundContainerSelector}').size() > 0) ? $('${backgroundContainerSelector}') : $('html')
 
             elements.form.submit(function() {
                 $.post(this.action, elements.form.serialize());
