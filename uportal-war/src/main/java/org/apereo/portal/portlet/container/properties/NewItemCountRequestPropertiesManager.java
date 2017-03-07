@@ -30,15 +30,10 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class NewItemCountRequestPropertiesManager extends BaseRequestPropertiesManager {
-    /**
-     * Use {@link IPortletRenderer#NEW_ITEM_COUNT_PROPERTY}
-     */
-    @Deprecated
-    protected static final String NEW_ITEM_COUNT_PROPERTY = "newItemCount";
 
     @Override
     public boolean setResponseProperty(HttpServletRequest portletRequest, IPortletWindow portletWindow, String property, String value) {
-        if (NEW_ITEM_COUNT_PROPERTY.equals(property) || IPortletRenderer.NEW_ITEM_COUNT_PROPERTY.equals(property)) {
+        if (IPortletRenderer.NEW_ITEM_COUNT_PROPERTY.equals(property)) {
             portletRequest.setAttribute(IPortletRenderer.ATTRIBUTE__PORTLET_NEW_ITEM_COUNT, value);
             return true;
         }

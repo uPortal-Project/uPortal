@@ -38,7 +38,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apereo.portal.portlet.container.properties.ThemeNameRequestPropertiesManager;
+import org.apereo.portal.portlet.rendering.IPortletRenderer;
 import org.apereo.portal.portlets.lookup.PersonLookupHelperImpl;
 import org.apereo.portal.portlets.search.DirectoryAttributeType;
 import org.apereo.portal.search.PortletUrl;
@@ -251,7 +251,7 @@ public class DirectoryPortletController {
      * @return
      */
     protected boolean isMobile(PortletRequest request) {
-        final String themeName = request.getProperty(ThemeNameRequestPropertiesManager.THEME_NAME_PROPERTY);
+        final String themeName = request.getProperty(IPortletRenderer.THEME_NAME_PROPERTY);
         return "UniversalityMobile".equals(themeName);
     }
     

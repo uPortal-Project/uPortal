@@ -55,12 +55,12 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.apereo.portal.portlet.PortletUtils;
-import org.apereo.portal.portlet.container.properties.ThemeNameRequestPropertiesManager;
 import org.apereo.portal.portlet.om.IPortletDefinition;
 import org.apereo.portal.portlet.om.IPortletEntity;
 import org.apereo.portal.portlet.om.IPortletWindow;
 import org.apereo.portal.portlet.om.IPortletWindowId;
 import org.apereo.portal.portlet.registry.IPortletWindowRegistry;
+import org.apereo.portal.portlet.rendering.IPortletRenderer;
 import org.apereo.portal.search.PortletUrl;
 import org.apereo.portal.search.PortletUrlParameter;
 import org.apereo.portal.search.PortletUrlType;
@@ -799,7 +799,7 @@ public class SearchPortletController {
     }
  
     public boolean isMobile(PortletRequest request) {
-        String themeName = request.getProperty(ThemeNameRequestPropertiesManager.THEME_NAME_PROPERTY);
+        String themeName = request.getProperty(IPortletRenderer.THEME_NAME_PROPERTY);
         return "UniversalityMobile".equals(themeName);
     }
 
