@@ -159,6 +159,16 @@
     </target>
 
     <!-- Public API -->
+    <target name="spring4-soffit" description="Rebuild uPortal-soffit packages with Spring 4">
+        <property name="spring3version" value="3.2.9.RELEASE" />
+        <property name="spring4version" value="4.2.6.RELEASE" />
+
+        <replace file="gradle.properties" token="${spring3version}" value="${spring4version}"/>
+        <antcall target="gradle-install" />
+        <replace file="gradle.properties" token="${spring4version}" value="${spring3version}"/>
+    </target>
+
+    <!-- Public API -->
     <target name="initportal" depends="prodPrompt" description="Runs all the targets necessary to deploy the portal and prepare the portal database">
         <echo message="Initializing uPortal" />
         <antcall target="deploy-ear">
