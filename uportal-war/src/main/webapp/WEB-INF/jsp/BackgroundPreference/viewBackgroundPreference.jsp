@@ -33,6 +33,8 @@
     <c:if test="${backgroundImage ne null}">
     ${backgroundContainerSelector} {
         background-image: url("${backgroundImage}");
+        background-size: 100%;
+        background-attachment: fixed;
     }
     </c:if>
 
@@ -166,10 +168,10 @@
              */
             if (elements.background) {
                 $('body').css('background-color','transparent');
-                var styleElement = '<style>${backgroundContainerSelector} { background-image: url(' + elements.background + '); }</style>';
+                var styleElement = '<style>${backgroundContainerSelector} { background-image: url(' + elements.background + '); background-size: 100%; background-attachment: fixed; }</style>';
                 $(styleElement).appendTo('body');
             } else {
-                var styleElement = '<style>${backgroundContainerSelector} { background-image: none; }</style>';
+                var styleElement = '<style>${backgroundContainerSelector} { background-image: none; background-size: auto; background-attachment: scroll; }</style>';
                 $(styleElement).appendTo('body');
             }
         };

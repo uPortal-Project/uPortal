@@ -995,7 +995,7 @@
             <!-- HTML element or class to apply background image to -->
             <preference>
                 <name>defaultBackgroundContainerSelector</name>
-                <value>body.portal #portalPageBody::before</value>
+                <value>body.portal #portalPageBody</value>
             </preference>
             <preference>
                 <name>defaultBackgroundImages</name>
