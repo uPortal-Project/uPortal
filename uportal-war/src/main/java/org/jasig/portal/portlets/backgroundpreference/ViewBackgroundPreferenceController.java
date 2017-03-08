@@ -44,7 +44,7 @@ public class ViewBackgroundPreferenceController {
 
     /**
      * Display the main user-facing view of the portlet.
-     * 
+     *
      * @param request
      * @return
      */
@@ -56,6 +56,9 @@ public class ViewBackgroundPreferenceController {
 
         String[] thumbnailImages = imageSetSelectionStrategy.getImageThumbnailSet(req);
         model.addAttribute("thumbnailImages", thumbnailImages);
+
+        final String[] imageCaptions = imageSetSelectionStrategy.getImageCaptions(req);
+        model.addAttribute("imageCaptions", imageCaptions);
 
         String preferredBackgroundImage = imageSetSelectionStrategy.getSelectedImage(req);
         model.addAttribute("backgroundImage", preferredBackgroundImage);

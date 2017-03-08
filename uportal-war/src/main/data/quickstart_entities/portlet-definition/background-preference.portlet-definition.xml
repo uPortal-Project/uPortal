@@ -72,6 +72,12 @@
         <value>false</value>
     </parameter>
     <portlet-preference>
+        <name>backgroundImageCaptions</name>
+        <value>Galaxy</value>
+        <value>Mountain</value>
+        <value>Nebula</value>
+    </portlet-preference>
+    <portlet-preference>
         <name>defaultBackgroundImages</name>
         <value>/uPortal/media/skins/common/backgroundImages/galaxy.jpg</value>
         <value>/uPortal/media/skins/common/backgroundImages/mountain.jpg</value>

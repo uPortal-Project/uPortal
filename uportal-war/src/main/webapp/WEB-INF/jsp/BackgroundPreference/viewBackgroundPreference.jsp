@@ -36,7 +36,7 @@
         background-size: 100%;
         background-attachment: fixed;
     }
-    /* Opacity currently not working; selector drop down appears behind portlets; 
+    /* Opacity currently not working; selector drop down appears behind portlets;
        see http://stackoverflow.com/questions/15558148/possible-opacity-z-index-bug
     ${applyOpacityTo} {
         opacity: ${opacityCssValue};
@@ -139,8 +139,8 @@
         </a>
         <c:forEach var="image" items="${thumbnailImages}" varStatus="status">
             <a href="#">
-                <img src="${image}" />
-                <span class="caption">Background ${status.index + 1}</span>
+                <img src="${image}" alt="" role="presentation"/>
+                <span class="caption">${imageCaptions[status.index]}</span>
             </a>
         </c:forEach>
     </div>
@@ -202,19 +202,19 @@
                 setWidth();
                 toggleMenu();
             });
-            
+
             elements.menu.find('a').click(function(e) {
                 e.preventDefault();
                 setBackground(this);
-                
+
                 toggleMenu();
             });
         };
 
         (function init() {
-            if (typeof up !== 'undefined') { 
+            if (typeof up !== 'undefined') {
                 $ = up.jQuery;
-            } 
+            }
 
             $(function() {
                 privateInit();

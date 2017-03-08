@@ -71,6 +71,12 @@ public class RoleBasedBackgroundSetSelectionStrategy implements BackgroundSetSel
         public String getBackgroundContainerSelectorPreferenceName() {
             return prefix + "BackgroundContainerSelector";
         }
+
+        /**
+         * The portlet-preference containing the image captions.
+         * This preference name will not change.
+         */
+        public static final String IMAGE_CAPTIONS_PREFERENCE_NAME = "backgroundImageCaptions";
     }
 
     private static final String[] EMPTY_STRING_ARRAY = new String[0];
@@ -87,6 +93,13 @@ public class RoleBasedBackgroundSetSelectionStrategy implements BackgroundSetSel
         PreferenceNames names = PreferenceNames.getInstance(req);
         PortletPreferences prefs = req.getPreferences();
         return prefs.getValues(names.getImageThumbnailSetPreferenceName(), null);
+    }
+
+    @Override
+    public String[] getImageCaptions(PortletRequest req) {
+        PreferenceNames names = PreferenceNames.getInstance(req);
+        PortletPreferences prefs = req.getPreferences();
+        return prefs.getValues(names.IMAGE_CAPTIONS_PREFERENCE_NAME, null);
     }
 
     @Override
