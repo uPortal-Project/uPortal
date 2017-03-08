@@ -18,10 +18,11 @@
  */
 @media screen {
     /**
-    * For the moment, please, do not remove max-with:769px media querie, the desktop css rules won t be ok : to much do/undo rules / difference hierarchy in code. will fix that later
+    * For the moment, please, do not remove `max-with: @screen-xs-max` media query, the desktop css rules won't be ok:
+    * to much do/undo rules / difference hierarchy in code. will fix that later
     * This is a special case of mobile first and it can facilate customSkin, see comments in skin.less
     */
-    @media (max-width: 768px) {
+    @media (max-width: @screen-xs-max) {
 
         .row-offcanvas {
             position: relative;
@@ -342,7 +343,7 @@
 
     }
 
-    @media (min-width: 769px) {
+    @media (min-width: @screen-sm-min) {
 
         .row-offcanvas {
             /* Intended to undo the rules for small displays above */

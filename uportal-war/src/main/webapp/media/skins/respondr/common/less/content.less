@@ -287,15 +287,14 @@ section.emergency-alert {
  ========================================================================== */
 
 /*
-* Breakpoints: 240px, 320px, 480px, 600px, 769px, and 992px.
+* Breakpoints: are defined in bootstrap/variables.less
 */
 
 /*
-* When the screen size is larger than 769px wide...
-* (Corresponds to the smallest breakpoint in Bootstrap)
+* When the screen size is larger than small screen size
 */
 
-@media only screen and (min-width: 769px) {
+@media only screen and (min-width: @screen-sm-min) {
   #portalTip,
   #region-customize {
     display: block;
@@ -308,32 +307,33 @@ section.emergency-alert {
 }
 
 /* large screens show all 6 columns. */
-@media only screen and (min-width: 769px) {
+@media only screen and (min-width: @screen-sm-min) {
   .portal-page-column.col-md-2 {
-    width: 16.6666667%;
+    width: percentage(1 / 6);
     float: left;
   }
 }
 
-@media only screen and (max-width: 769px) {
+@media only screen and (max-width: @screen-xs-max) {
   /* collapse from 6 to 3 columns */
   .portal-page-column.col-md-2 {
-    width: 33.3%;
+    width: percentage(1 / 3);
     float: left;
   }
 }
 
-@media only screen and (max-width: 600px) {
+// average between small and extra small
+@media only screen and (max-width: (@screen-xs-max + @screen-xs-min) / 2) {
   /* collapse from 6 to 2 columns */
   .portal-page-column.col-md-2 {
-    width: 50%;
+    width: percentage(1 / 2);
     float: left;
   }
 }
 
-@media only screen and (max-width: 240px) {
+@media only screen and (max-width: @screen-xs-min / 2) {
   /* on really small screen collapse to a single column */
   .portal-page-column.col-md-2 {
-    width: 100%;
+    width: percentage(1 / 1);
   }
 }

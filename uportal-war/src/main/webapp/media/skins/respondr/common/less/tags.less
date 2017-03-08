@@ -20,27 +20,27 @@ html {
     background-color: @body-background-color;
     overflow-x: hidden; /* prevent horizontal scrollbar on desktop */
     min-height: 100%; /* do not use height and width properties on both html and body elements -> bug on chrome and safari with scrollTop effect with overflow-x: hidden */
-    min-width: 100%; 
+    min-width: 100%;
 
     &.touch {
         .portal-navigation-dropdown:after {
             content:'';
             position:absolute;
-            top:0; bottom:-10px; 
+            top:0; bottom:-10px;
             left:-10px; right:-10px;
         }
         @media screen {
-            @media (min-width: 769px) {
+            @media (min-width: @screen-sm-min) {
                 .portal-navigation-gripper:after {
                      content:'';
                      position:absolute;
-                     top:-10px; bottom:0px; 
+                     top:-10px; bottom:0px;
                      left:0px; right:-10px;
                 }
                 .portal-navigation-delete:after {
                      content:'';
                      position:absolute;
-                     top:-10px; bottom:0px; 
+                     top:-10px; bottom:0px;
                      left:-10px; right:0px;
                 }
             }
@@ -59,13 +59,13 @@ html {
 
         #wrapper {
             background-color: @body-background-color;
-            background-image: @body-background-image; 
+            background-image: @body-background-image;
         }
     }
 }
 
 /* ie9 fix */
-@media (max-width: 768px) {
+@media (max-width: @screen-xs-max) {
     html.no-csstransforms3d {
       body {
         background-color: @offcanvas-background-color;
@@ -87,7 +87,7 @@ html {
 }
 
 /* ie9, ie10, ie11 fix */
-@media (max-width: 768px) {
+@media (max-width: @screen-xs-max) {
     html.no-flexboxlegacy {
         .row-offcanvas {
             /* When the sidebar is active */
@@ -96,7 +96,7 @@ html {
                       left: 270px;
 
                 }
-             
+
             }
         }
     }
@@ -113,4 +113,3 @@ a {
     text-decoration: underline;
   }
 }
-
