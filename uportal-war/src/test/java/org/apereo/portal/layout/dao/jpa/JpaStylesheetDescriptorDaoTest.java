@@ -1,20 +1,16 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.layout.dao.jpa;
 
@@ -29,7 +25,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.Callable;
-
 import org.apereo.portal.IUserProfile;
 import org.apereo.portal.layout.dao.IStylesheetDescriptorDao;
 import org.apereo.portal.layout.dao.IStylesheetUserPreferencesDao;
@@ -47,193 +42,246 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-/**
- * @author Eric Dalquist
- */
+/** @author Eric Dalquist */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:jpaPortalTestApplicationContext.xml")
 public class JpaStylesheetDescriptorDaoTest extends BasePortalJpaDaoTest {
-    @Autowired
-    private IStylesheetDescriptorDao stylesheetDescriptorDao;
-    @Autowired
-    private IStylesheetUserPreferencesDao stylesheetUserPreferencesDao;
+  @Autowired private IStylesheetDescriptorDao stylesheetDescriptorDao;
+  @Autowired private IStylesheetUserPreferencesDao stylesheetUserPreferencesDao;
 
-    @Before
-    public void onSetUp() throws Exception {
-        this.execute(new Callable<Object>() {
-            @Override
-            public Object call() throws Exception {
-                for (final IStylesheetDescriptor stylesheetDescriptor : stylesheetDescriptorDao.getStylesheetDescriptors()) {
-                    stylesheetDescriptorDao.deleteStylesheetDescriptor(stylesheetDescriptor);
-                }
-                
-                for (final IStylesheetUserPreferences stylesheetUserPreferences : stylesheetUserPreferencesDao.getStylesheetUserPreferences()) {
-                    stylesheetUserPreferencesDao.deleteStylesheetUserPreferences(stylesheetUserPreferences);
-                }
-                
-                return null;
+  @Before
+  public void onSetUp() throws Exception {
+    this.execute(
+        new Callable<Object>() {
+          @Override
+          public Object call() throws Exception {
+            for (final IStylesheetDescriptor stylesheetDescriptor :
+                stylesheetDescriptorDao.getStylesheetDescriptors()) {
+              stylesheetDescriptorDao.deleteStylesheetDescriptor(stylesheetDescriptor);
             }
-        });
-    }
 
-    @Test
-    public void testStylesheetDescriptorDao() throws Exception {
-        final String ssName1 = this.execute(new Callable<String>() {
-            @Override
-            public String call() throws Exception {
-                final IStylesheetDescriptor stylesheetDescriptor = stylesheetDescriptorDao.createStylesheetDescriptor("columns", "classpath:/layout/struct/columns.xsl");
+            for (final IStylesheetUserPreferences stylesheetUserPreferences :
+                stylesheetUserPreferencesDao.getStylesheetUserPreferences()) {
+              stylesheetUserPreferencesDao.deleteStylesheetUserPreferences(
+                  stylesheetUserPreferences);
+            }
+
+            return null;
+          }
+        });
+  }
+
+  @Test
+  public void testStylesheetDescriptorDao() throws Exception {
+    final String ssName1 =
+        this.execute(
+            new Callable<String>() {
+              @Override
+              public String call() throws Exception {
+                final IStylesheetDescriptor stylesheetDescriptor =
+                    stylesheetDescriptorDao.createStylesheetDescriptor(
+                        "columns", "classpath:/layout/struct/columns.xsl");
                 assertNotSame(-1, stylesheetDescriptor.getId());
 
                 stylesheetDescriptorDao.updateStylesheetDescriptor(stylesheetDescriptor);
 
                 return stylesheetDescriptor.getName();
-            }
-        });
+              }
+            });
 
-        final String ssName2 = this.execute(new Callable<String>() {
-            @Override
-            public String call() throws Exception {
-                final IStylesheetDescriptor stylesheetDescriptor = stylesheetDescriptorDao.createStylesheetDescriptor("lists", "classpath:/layout/struct/lists.xsl");
+    final String ssName2 =
+        this.execute(
+            new Callable<String>() {
+              @Override
+              public String call() throws Exception {
+                final IStylesheetDescriptor stylesheetDescriptor =
+                    stylesheetDescriptorDao.createStylesheetDescriptor(
+                        "lists", "classpath:/layout/struct/lists.xsl");
 
                 assertNotSame(-1, stylesheetDescriptor.getId());
 
                 return stylesheetDescriptor.getName();
-            }
+              }
+            });
+
+    this.execute(
+        new Callable<String>() {
+          @Override
+          public String call() throws Exception {
+            final IStylesheetDescriptor stylesheetDescriptor =
+                stylesheetDescriptorDao.getStylesheetDescriptorByName(ssName1);
+            assertNotNull(stylesheetDescriptor);
+
+            final Collection<IOutputPropertyDescriptor> outputPropertyDescriptors =
+                stylesheetDescriptor.getOutputPropertyDescriptors();
+            assertEquals(0, outputPropertyDescriptors.size());
+            IOutputPropertyDescriptor descriptor =
+                new OutputPropertyDescriptorImpl("propA", Scope.PERSISTENT);
+            stylesheetDescriptor.setOutputPropertyDescriptors(Collections.singleton(descriptor));
+
+            stylesheetDescriptorDao.updateStylesheetDescriptor(stylesheetDescriptor);
+
+            return null;
+          }
         });
 
-        this.execute(new Callable<String>() {
-            @Override
-            public String call() throws Exception {
-                final IStylesheetDescriptor stylesheetDescriptor = stylesheetDescriptorDao.getStylesheetDescriptorByName(ssName1);
-                assertNotNull(stylesheetDescriptor);
+    this.execute(
+        new Callable<String>() {
+          @Override
+          public String call() throws Exception {
+            final IStylesheetDescriptor stylesheetDescriptor =
+                stylesheetDescriptorDao.getStylesheetDescriptorByName(ssName2);
+            assertNotNull(stylesheetDescriptor);
 
-                final Collection<IOutputPropertyDescriptor> outputPropertyDescriptors = stylesheetDescriptor.getOutputPropertyDescriptors();
-                assertEquals(0, outputPropertyDescriptors.size());
-                IOutputPropertyDescriptor descriptor = new OutputPropertyDescriptorImpl("propA", Scope.PERSISTENT);
-                stylesheetDescriptor.setOutputPropertyDescriptors(Collections.singleton(descriptor));
+            final Collection<IOutputPropertyDescriptor> outputPropertyDescriptors =
+                stylesheetDescriptor.getOutputPropertyDescriptors();
+            assertEquals(0, outputPropertyDescriptors.size());
+            IOutputPropertyDescriptor descriptor =
+                new OutputPropertyDescriptorImpl("propA", Scope.SESSION);
+            stylesheetDescriptor.setOutputPropertyDescriptors(Collections.singleton(descriptor));
 
-                stylesheetDescriptorDao.updateStylesheetDescriptor(stylesheetDescriptor);
+            stylesheetDescriptorDao.updateStylesheetDescriptor(stylesheetDescriptor);
 
-                return null;
-            }
+            return null;
+          }
         });
 
-        this.execute(new Callable<String>() {
-            @Override
-            public String call() throws Exception {
-                final IStylesheetDescriptor stylesheetDescriptor = stylesheetDescriptorDao.getStylesheetDescriptorByName(ssName2);
-                assertNotNull(stylesheetDescriptor);
+    this.execute(
+        new Callable<String>() {
+          @Override
+          public String call() throws Exception {
+            final IStylesheetDescriptor stylesheetDescriptor =
+                stylesheetDescriptorDao.getStylesheetDescriptorByName(ssName1);
+            assertNotNull(stylesheetDescriptor);
 
-                final Collection<IOutputPropertyDescriptor> outputPropertyDescriptors = stylesheetDescriptor.getOutputPropertyDescriptors();
-                assertEquals(0, outputPropertyDescriptors.size());
-                IOutputPropertyDescriptor descriptor = new OutputPropertyDescriptorImpl("propA", Scope.SESSION);
-                stylesheetDescriptor.setOutputPropertyDescriptors(Collections.singleton(descriptor));
+            final Collection<IOutputPropertyDescriptor> outputPropertyDescriptors =
+                stylesheetDescriptor.getOutputPropertyDescriptors();
+            assertEquals(1, outputPropertyDescriptors.size());
+            Set<IOutputPropertyDescriptor> set = new HashSet<>(outputPropertyDescriptors);
+            set.add(new OutputPropertyDescriptorImpl("propA", Scope.REQUEST));
+            stylesheetDescriptor.setOutputPropertyDescriptors(set);
 
-                stylesheetDescriptorDao.updateStylesheetDescriptor(stylesheetDescriptor);
+            stylesheetDescriptorDao.updateStylesheetDescriptor(stylesheetDescriptor);
 
-                return null;
-            }
+            return null;
+          }
         });
 
-        this.execute(new Callable<String>() {
-            @Override
-            public String call() throws Exception {
-                final IStylesheetDescriptor stylesheetDescriptor = stylesheetDescriptorDao.getStylesheetDescriptorByName(ssName1);
-                assertNotNull(stylesheetDescriptor);
+    this.execute(
+        new Callable<String>() {
+          @Override
+          public String call() throws Exception {
+            final IStylesheetDescriptor stylesheetDescriptor =
+                stylesheetDescriptorDao.getStylesheetDescriptorByName(ssName1);
+            assertNotNull(stylesheetDescriptor);
 
-                final Collection<IOutputPropertyDescriptor> outputPropertyDescriptors = stylesheetDescriptor.getOutputPropertyDescriptors();
-                assertEquals(1, outputPropertyDescriptors.size());
-                Set<IOutputPropertyDescriptor> set = new HashSet<>(outputPropertyDescriptors);
-                set.add(new OutputPropertyDescriptorImpl("propA", Scope.REQUEST));
-                stylesheetDescriptor.setOutputPropertyDescriptors(set);
+            final Collection<IOutputPropertyDescriptor> outputPropertyDescriptors =
+                stylesheetDescriptor.getOutputPropertyDescriptors();
+            assertEquals(1, outputPropertyDescriptors.size());
 
-                stylesheetDescriptorDao.updateStylesheetDescriptor(stylesheetDescriptor);
-
-                return null;
-            }
+            return null;
+          }
         });
+  }
 
-        this.execute(new Callable<String>() {
-            @Override
-            public String call() throws Exception {
-                final IStylesheetDescriptor stylesheetDescriptor = stylesheetDescriptorDao.getStylesheetDescriptorByName(ssName1);
-                assertNotNull(stylesheetDescriptor);
-                
-                final Collection<IOutputPropertyDescriptor> outputPropertyDescriptors = stylesheetDescriptor.getOutputPropertyDescriptors();
-                assertEquals(1, outputPropertyDescriptors.size());
-                                
-                return null;
-            }
-        });
-    }
-    
+  @Test
+  public void testStylesheetUserPreferencesDao() throws Exception {
+    final long ssdId =
+        this.execute(
+            new Callable<Long>() {
+              @Override
+              public Long call() throws Exception {
+                final IStylesheetDescriptor stylesheetDescriptor =
+                    stylesheetDescriptorDao.createStylesheetDescriptor(
+                        "columns", "classpath:/layout/struct/columns.xsl");
 
-    @Test
-    public void testStylesheetUserPreferencesDao() throws Exception {
-        final long ssdId = this.execute(new Callable<Long>() {
-            @Override
-            public Long call() throws Exception {
-                final IStylesheetDescriptor stylesheetDescriptor = stylesheetDescriptorDao.createStylesheetDescriptor("columns", "classpath:/layout/struct/columns.xsl");
-                
                 final long id = stylesheetDescriptor.getId();
                 assertNotSame(-1, id);
-                
+
                 return id;
-            }
-        });
+              }
+            });
 
-        final IPerson person = mock(IPerson.class);
-        when(person.getID()).thenReturn(1);
+    final IPerson person = mock(IPerson.class);
+    when(person.getID()).thenReturn(1);
 
-        final IUserProfile userProfile = mock(IUserProfile.class);
-        when(userProfile.getProfileId()).thenReturn(1);
+    final IUserProfile userProfile = mock(IUserProfile.class);
+    when(userProfile.getProfileId()).thenReturn(1);
 
-        final long supId = this.execute(new Callable<Long>() {
-            @Override
-            public Long call() throws Exception {
-                final IStylesheetDescriptor stylesheetDescriptor = stylesheetDescriptorDao.getStylesheetDescriptor(ssdId);
+    final long supId =
+        this.execute(
+            new Callable<Long>() {
+              @Override
+              public Long call() throws Exception {
+                final IStylesheetDescriptor stylesheetDescriptor =
+                    stylesheetDescriptorDao.getStylesheetDescriptor(ssdId);
 
-                final IStylesheetUserPreferences stylesheetUserPreferences = stylesheetUserPreferencesDao.createStylesheetUserPreferences(stylesheetDescriptor, person, userProfile);
+                final IStylesheetUserPreferences stylesheetUserPreferences =
+                    stylesheetUserPreferencesDao.createStylesheetUserPreferences(
+                        stylesheetDescriptor, person, userProfile);
 
                 assertNotNull(stylesheetUserPreferences);
 
                 stylesheetUserPreferences.setStylesheetParameter("activeTab", "1");
                 stylesheetUserPreferences.setLayoutAttribute("u1l1n1", "deletable", "false");
 
-                stylesheetUserPreferencesDao.storeStylesheetUserPreferences(stylesheetUserPreferences);
+                stylesheetUserPreferencesDao.storeStylesheetUserPreferences(
+                    stylesheetUserPreferences);
 
                 return stylesheetUserPreferences.getId();
-            }
+              }
+            });
+
+    this.execute(
+        new Callable<Long>() {
+          @Override
+          public Long call() throws Exception {
+            final IStylesheetUserPreferences stylesheetUserPreferences =
+                stylesheetUserPreferencesDao.getStylesheetUserPreferences(supId);
+
+            assertNotNull(stylesheetUserPreferences);
+            assertEquals(
+                Collections.singletonMap("activeTab", "1"),
+                stylesheetUserPreferences
+                    .populateStylesheetParameters(new MapPopulator<String, String>())
+                    .getMap());
+            assertEquals(
+                Collections.singletonMap("deletable", "false"),
+                stylesheetUserPreferences
+                    .populateLayoutAttributes("u1l1n1", new MapPopulator<String, String>())
+                    .getMap());
+
+            return null;
+          }
         });
 
-        this.execute(new Callable<Long>() {
-            @Override
-            public Long call() throws Exception {
-                final IStylesheetUserPreferences stylesheetUserPreferences = stylesheetUserPreferencesDao.getStylesheetUserPreferences(supId);
+    this.execute(
+        new Callable<Long>() {
+          @Override
+          public Long call() throws Exception {
+            final IStylesheetDescriptor stylesheetDescriptor =
+                stylesheetDescriptorDao.getStylesheetDescriptor(ssdId);
 
-                assertNotNull(stylesheetUserPreferences);
-                assertEquals(Collections.singletonMap("activeTab", "1"), stylesheetUserPreferences.populateStylesheetParameters(new MapPopulator<String, String>()).getMap());
-                assertEquals(Collections.singletonMap("deletable", "false"), stylesheetUserPreferences.populateLayoutAttributes("u1l1n1", new MapPopulator<String, String>()).getMap());
+            final IStylesheetUserPreferences stylesheetUserPreferences =
+                stylesheetUserPreferencesDao.getStylesheetUserPreferences(
+                    stylesheetDescriptor, person, userProfile);
 
-                return null;
-            }
+            assertNotNull(stylesheetUserPreferences);
+            assertEquals(
+                Collections.singletonMap("activeTab", "1"),
+                stylesheetUserPreferences
+                    .populateStylesheetParameters(new MapPopulator<String, String>())
+                    .getMap());
+            assertEquals(
+                Collections.singletonMap("deletable", "false"),
+                stylesheetUserPreferences
+                    .populateLayoutAttributes("u1l1n1", new MapPopulator<String, String>())
+                    .getMap());
+
+            stylesheetUserPreferencesDao.deleteStylesheetUserPreferences(stylesheetUserPreferences);
+
+            return null;
+          }
         });
-
-        this.execute(new Callable<Long>() {
-            @Override
-            public Long call() throws Exception {
-                final IStylesheetDescriptor stylesheetDescriptor = stylesheetDescriptorDao.getStylesheetDescriptor(ssdId);
-
-                final IStylesheetUserPreferences stylesheetUserPreferences = stylesheetUserPreferencesDao.getStylesheetUserPreferences(stylesheetDescriptor, person, userProfile);
-
-                assertNotNull(stylesheetUserPreferences);
-                assertEquals(Collections.singletonMap("activeTab", "1"), stylesheetUserPreferences.populateStylesheetParameters(new MapPopulator<String, String>()).getMap());
-                assertEquals(Collections.singletonMap("deletable", "false"), stylesheetUserPreferences.populateLayoutAttributes("u1l1n1", new MapPopulator<String, String>()).getMap());
-
-                stylesheetUserPreferencesDao.deleteStylesheetUserPreferences(stylesheetUserPreferences);
-
-                return null;
-            }
-        });
-    }
+  }
 }

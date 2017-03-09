@@ -1,729 +1,677 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.security.firewall;
-
-import java.io.IOException;
-import java.util.*;
-
-import org.junit.Assert;
-import org.junit.Test;
-
-import javax.servlet.*;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.io.IOException;
+import java.util.*;
+import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import org.junit.Assert;
+import org.junit.Test;
+
 /**
  * Tests the {@link org.apereo.portal.security.firewall.RequestParameterPolicyEnforcementFilter}.
  *
- * There are two kinds of testcases here.
+ * <p>There are two kinds of testcases here.
  *
- * First there are testcases for the Filter as a whole against the Filter API.  The advantage of these is that they
- * are testing at the level we care about, the way the filter will actually be used,
- * against the API it really exposes to adopters.  So, great.  The disadvantage of these is that it's
+ * <p>First there are testcases for the Filter as a whole against the Filter API. The advantage of
+ * these is that they are testing at the level we care about, the way the filter will actually be
+ * used, against the API it really exposes to adopters. So, great. The disadvantage of these is that
+ * it's
  *
- * Then there are testcases for bits of the implementation of the filter (namely, configuration parsing and policy
- * enforcement).
+ * <p>Then there are testcases for bits of the implementation of the filter (namely, configuration
+ * parsing and policy enforcement).
  *
  * @since uPortal 4.0.15
  */
 public final class RequestParameterPolicyEnforcementFilterTests {
 
-    /* ========================================================================================================== */
+  /* ========================================================================================================== */
 
-    /* Tests for the Filter as a whole.
-     */
+  /* Tests for the Filter as a whole.
+   */
 
+  /**
+   * Test that the Filter throws on init when unrecognized Filter init-param.
+   *
+   * @throws ServletException on test success.
+   */
+  @Test(expected = ServletException.class)
+  public void testUnrecognizedInitParamFailsFilterInit() throws ServletException {
 
-    /**
-     * Test that the Filter throws on init when unrecognized Filter init-param.
-     * @throws ServletException on test success.
-     */
-    @Test(expected = ServletException.class)
-    public void testUnrecognizedInitParamFailsFilterInit() throws ServletException {
+    final Set<String> initParameterNames = new HashSet<String>();
+    initParameterNames.add("unrecognizedInitParameterName");
+    final Enumeration parameterNamesEnumeration = Collections.enumeration(initParameterNames);
 
-        final Set<String> initParameterNames = new HashSet<String>();
-        initParameterNames.add("unrecognizedInitParameterName");
-        final Enumeration parameterNamesEnumeration = Collections.enumeration(initParameterNames);
+    final FilterConfig filterConfig = mock(FilterConfig.class);
+    when(filterConfig.getInitParameterNames()).thenReturn(parameterNamesEnumeration);
 
-        final FilterConfig filterConfig = mock(FilterConfig.class);
-        when(filterConfig.getInitParameterNames()).thenReturn(parameterNamesEnumeration);
+    final RequestParameterPolicyEnforcementFilter filter =
+        new RequestParameterPolicyEnforcementFilter();
+    filter.init(filterConfig);
+  }
 
-        final RequestParameterPolicyEnforcementFilter filter = new RequestParameterPolicyEnforcementFilter();
-        filter.init(filterConfig);
+  /**
+   * Test that if you configure the filter to forbid no characters and also to allow multi-valued
+   * parameters, filter init fails because the filter would be a no-op.
+   */
+  @Test(expected = ServletException.class)
+  public void testNoOpConfigurationFailsFilterInit() throws ServletException {
+    final RequestParameterPolicyEnforcementFilter filter =
+        new RequestParameterPolicyEnforcementFilter();
+
+    // mock up filter config.
+    final Set<String> initParameterNames = new HashSet<String>();
+    initParameterNames.add(RequestParameterPolicyEnforcementFilter.ALLOW_MULTI_VALUED_PARAMETERS);
+    initParameterNames.add(RequestParameterPolicyEnforcementFilter.CHARACTERS_TO_FORBID);
+    final Enumeration parameterNamesEnumeration = Collections.enumeration(initParameterNames);
+    final FilterConfig filterConfig = mock(FilterConfig.class);
+    when(filterConfig.getInitParameterNames()).thenReturn(parameterNamesEnumeration);
+
+    when(filterConfig.getInitParameter(
+            RequestParameterPolicyEnforcementFilter.ALLOW_MULTI_VALUED_PARAMETERS))
+        .thenReturn("true");
+    when(filterConfig.getInitParameter(
+            RequestParameterPolicyEnforcementFilter.CHARACTERS_TO_FORBID))
+        .thenReturn("none");
+    when(filterConfig.getInitParameter(RequestParameterPolicyEnforcementFilter.PARAMETERS_TO_CHECK))
+        .thenReturn(null);
+
+    filter.init(filterConfig);
+  }
+
+  /**
+   * Test that, in the default configuration, when presented with a multi-valued parameter that
+   * configured to check and configured to require not multi valued, rejects request.
+   */
+  @Test(expected = ServletException.class)
+  public void testRejectsMultiValuedRequestParameter() throws IOException, ServletException {
+
+    final RequestParameterPolicyEnforcementFilter filter =
+        new RequestParameterPolicyEnforcementFilter();
+
+    // mock up filter config.  Default configuration with no init-params for this use case.
+    final Set<String> initParameterNames = new HashSet<String>();
+    final Enumeration parameterNamesEnumeration = Collections.enumeration(initParameterNames);
+    final FilterConfig filterConfig = mock(FilterConfig.class);
+    when(filterConfig.getInitParameterNames()).thenReturn(parameterNamesEnumeration);
+
+    when(filterConfig.getInitParameter(
+            RequestParameterPolicyEnforcementFilter.ALLOW_MULTI_VALUED_PARAMETERS))
+        .thenReturn(null);
+    when(filterConfig.getInitParameter(
+            RequestParameterPolicyEnforcementFilter.CHARACTERS_TO_FORBID))
+        .thenReturn(null);
+    when(filterConfig.getInitParameter(RequestParameterPolicyEnforcementFilter.PARAMETERS_TO_CHECK))
+        .thenReturn(null);
+
+    // init the filter
+    try {
+      filter.init(filterConfig);
+    } catch (Exception e) {
+      Assert.fail("Should not have failed filter init.");
     }
 
-    /**
-     * Test that if you configure the filter to forbid no characters and also to allow multi-valued parameters,
-     * filter init fails because the filter would be a no-op.
-     */
-    @Test(expected = ServletException.class)
-    public void testNoOpConfigurationFailsFilterInit() throws ServletException {
-        final RequestParameterPolicyEnforcementFilter filter = new RequestParameterPolicyEnforcementFilter();
+    // mock up a request to filter
 
-        // mock up filter config.
-        final Set<String> initParameterNames = new HashSet<String>();
-        initParameterNames.add(RequestParameterPolicyEnforcementFilter.ALLOW_MULTI_VALUED_PARAMETERS);
-        initParameterNames.add(RequestParameterPolicyEnforcementFilter.CHARACTERS_TO_FORBID);
-        final Enumeration parameterNamesEnumeration = Collections.enumeration(initParameterNames);
-        final FilterConfig filterConfig = mock(FilterConfig.class);
-        when(filterConfig.getInitParameterNames()).thenReturn(parameterNamesEnumeration);
+    final Map<String, String[]> requestParameterMap = new HashMap<String, String[]>();
+    requestParameterMap.put("someName", new String[] {"someValue", "someOtherValue"});
 
-        when(filterConfig.getInitParameter(RequestParameterPolicyEnforcementFilter.ALLOW_MULTI_VALUED_PARAMETERS))
-                .thenReturn("true");
-        when(filterConfig.getInitParameter(RequestParameterPolicyEnforcementFilter.CHARACTERS_TO_FORBID))
-                .thenReturn("none");
-        when(filterConfig.getInitParameter(RequestParameterPolicyEnforcementFilter.PARAMETERS_TO_CHECK))
-                .thenReturn(null);
+    final HttpServletRequest request = mock(HttpServletRequest.class);
+    when(request.getParameterMap()).thenReturn(requestParameterMap);
 
-        filter.init(filterConfig);
+    final HttpServletResponse response = mock(HttpServletResponse.class);
 
+    final FilterChain chain = mock(FilterChain.class);
 
+    filter.doFilter(request, response, chain);
+  }
 
+  /**
+   * Test that, when configured to allow multi-valued parameters, when presented with a multi-valued
+   * parameter that configured to check , rejects request.
+   */
+  @Test
+  public void testAcceptsMultiValuedRequestParameter() throws IOException, ServletException {
+
+    final RequestParameterPolicyEnforcementFilter filter =
+        new RequestParameterPolicyEnforcementFilter();
+
+    // mock up filter config. Configure to allow multi-valued parameters.
+    final Set<String> initParameterNames = new HashSet<String>();
+    initParameterNames.add(RequestParameterPolicyEnforcementFilter.ALLOW_MULTI_VALUED_PARAMETERS);
+    final Enumeration parameterNamesEnumeration = Collections.enumeration(initParameterNames);
+    final FilterConfig filterConfig = mock(FilterConfig.class);
+    when(filterConfig.getInitParameterNames()).thenReturn(parameterNamesEnumeration);
+
+    when(filterConfig.getInitParameter(
+            RequestParameterPolicyEnforcementFilter.ALLOW_MULTI_VALUED_PARAMETERS))
+        .thenReturn("true");
+    when(filterConfig.getInitParameter(
+            RequestParameterPolicyEnforcementFilter.CHARACTERS_TO_FORBID))
+        .thenReturn(null);
+    when(filterConfig.getInitParameter(RequestParameterPolicyEnforcementFilter.PARAMETERS_TO_CHECK))
+        .thenReturn(null);
+
+    // init the filter
+    try {
+      filter.init(filterConfig);
+    } catch (Exception e) {
+      Assert.fail("Should not have failed filter init.");
     }
 
-    /**
-     * Test that, in the default configuration, when presented with a multi-valued parameter that configured to check
-     * and configured to require not multi valued, rejects request.
-     */
-    @Test(expected  = ServletException.class)
-    public void testRejectsMultiValuedRequestParameter() throws IOException, ServletException {
+    // mock up a request to filter, with a multi-valued checked parameter
 
-        final RequestParameterPolicyEnforcementFilter filter = new RequestParameterPolicyEnforcementFilter();
+    final Map<String, String[]> requestParameterMap = new HashMap<String, String[]>();
+    requestParameterMap.put("someName", new String[] {"someValue", "someOtherValue"});
 
-        // mock up filter config.  Default configuration with no init-params for this use case.
-        final Set<String> initParameterNames = new HashSet<String>();
-        final Enumeration parameterNamesEnumeration = Collections.enumeration(initParameterNames);
-        final FilterConfig filterConfig = mock(FilterConfig.class);
-        when(filterConfig.getInitParameterNames()).thenReturn(parameterNamesEnumeration);
+    final HttpServletRequest request = mock(HttpServletRequest.class);
+    when(request.getParameterMap()).thenReturn(requestParameterMap);
 
-        when(filterConfig.getInitParameter(RequestParameterPolicyEnforcementFilter.ALLOW_MULTI_VALUED_PARAMETERS))
-                .thenReturn(null);
-        when(filterConfig.getInitParameter(RequestParameterPolicyEnforcementFilter.CHARACTERS_TO_FORBID))
-                .thenReturn(null);
-        when(filterConfig.getInitParameter(RequestParameterPolicyEnforcementFilter.PARAMETERS_TO_CHECK))
-                .thenReturn(null);
+    final HttpServletResponse response = mock(HttpServletResponse.class);
 
+    final FilterChain chain = mock(FilterChain.class);
 
-        // init the filter
-        try {
-            filter.init(filterConfig);
-        } catch (Exception e) {
-            Assert.fail("Should not have failed filter init.");
-        }
+    filter.doFilter(request, response, chain);
+  }
 
-        // mock up a request to filter
+  /**
+   * Test that, in the default configuration, when presented with a request parameter with an
+   * illicit character in it, blocks the request.
+   *
+   * @throws IOException
+   * @throws ServletException
+   */
+  @Test(expected = ServletException.class)
+  public void testRejectsRequestWithIllicitCharacterInCheckedParameter()
+      throws IOException, ServletException {
 
-        final Map<String, String[]> requestParameterMap = new HashMap<String, String[]>();
-        requestParameterMap.put("someName", new String[] {"someValue", "someOtherValue"});
+    final RequestParameterPolicyEnforcementFilter filter =
+        new RequestParameterPolicyEnforcementFilter();
 
-        final HttpServletRequest request = mock(HttpServletRequest.class);
-        when(request.getParameterMap()).thenReturn(requestParameterMap);
+    // mock up filter config.  Default configuration with no init-params for this use case.
+    final Set<String> initParameterNames = new HashSet<String>();
+    final Enumeration parameterNamesEnumeration = Collections.enumeration(initParameterNames);
+    final FilterConfig filterConfig = mock(FilterConfig.class);
+    when(filterConfig.getInitParameterNames()).thenReturn(parameterNamesEnumeration);
 
-        final HttpServletResponse response = mock(HttpServletResponse.class);
+    when(filterConfig.getInitParameter(
+            RequestParameterPolicyEnforcementFilter.ALLOW_MULTI_VALUED_PARAMETERS))
+        .thenReturn(null);
+    when(filterConfig.getInitParameter(
+            RequestParameterPolicyEnforcementFilter.CHARACTERS_TO_FORBID))
+        .thenReturn(null);
+    when(filterConfig.getInitParameter(RequestParameterPolicyEnforcementFilter.PARAMETERS_TO_CHECK))
+        .thenReturn(null);
 
-        final FilterChain chain = mock(FilterChain.class);
-
-        filter.doFilter(request, response, chain);
-
+    // init the filter
+    try {
+      filter.init(filterConfig);
+    } catch (Exception e) {
+      Assert.fail("Should not have failed filter init.");
     }
 
-    /**
-     * Test that, when configured to allow multi-valued parameters,
-     * when presented with a multi-valued parameter that configured to check
-     * , rejects request.
-     */
-    @Test
-    public void testAcceptsMultiValuedRequestParameter() throws IOException, ServletException {
+    // mock up a request to filter
 
-        final RequestParameterPolicyEnforcementFilter filter = new RequestParameterPolicyEnforcementFilter();
+    final Map<String, String[]> requestParameterMap = new HashMap<String, String[]>();
+    // percent character is illicit by default, so, illicit character in this parameter value
+    requestParameterMap.put("someName", new String[] {"someValue%40gmail.com"});
 
-        // mock up filter config. Configure to allow multi-valued parameters.
-        final Set<String> initParameterNames = new HashSet<String>();
-        initParameterNames.add(RequestParameterPolicyEnforcementFilter.ALLOW_MULTI_VALUED_PARAMETERS);
-        final Enumeration parameterNamesEnumeration = Collections.enumeration(initParameterNames);
-        final FilterConfig filterConfig = mock(FilterConfig.class);
-        when(filterConfig.getInitParameterNames()).thenReturn(parameterNamesEnumeration);
+    final HttpServletRequest request = mock(HttpServletRequest.class);
+    when(request.getParameterMap()).thenReturn(requestParameterMap);
 
-        when(filterConfig.getInitParameter(RequestParameterPolicyEnforcementFilter.ALLOW_MULTI_VALUED_PARAMETERS))
-                .thenReturn("true");
-        when(filterConfig.getInitParameter(RequestParameterPolicyEnforcementFilter.CHARACTERS_TO_FORBID))
-                .thenReturn(null);
-        when(filterConfig.getInitParameter(RequestParameterPolicyEnforcementFilter.PARAMETERS_TO_CHECK))
-                .thenReturn(null);
+    final HttpServletResponse response = mock(HttpServletResponse.class);
 
+    final FilterChain chain = mock(FilterChain.class);
 
-        // init the filter
-        try {
-            filter.init(filterConfig);
-        } catch (Exception e) {
-            Assert.fail("Should not have failed filter init.");
-        }
+    filter.doFilter(request, response, chain);
+  }
 
-        // mock up a request to filter, with a multi-valued checked parameter
+  /**
+   * Test that when configured to only check some parameters, does not throw on forbidden character
+   * in unchecked parameter.
+   */
+  @Test
+  public void testAllowsUncheckedParametersToHaveIllicitCharacters()
+      throws IOException, ServletException {
 
-        final Map<String, String[]> requestParameterMap = new HashMap<String, String[]>();
-        requestParameterMap.put("someName", new String[] {"someValue", "someOtherValue"});
+    final RequestParameterPolicyEnforcementFilter filter =
+        new RequestParameterPolicyEnforcementFilter();
 
-        final HttpServletRequest request = mock(HttpServletRequest.class);
-        when(request.getParameterMap()).thenReturn(requestParameterMap);
+    // mock up filter config.  Default configuration with no init-params for this use case.
+    final Set<String> initParameterNames = new HashSet<String>();
+    initParameterNames.add(RequestParameterPolicyEnforcementFilter.PARAMETERS_TO_CHECK);
+    final Enumeration parameterNamesEnumeration = Collections.enumeration(initParameterNames);
+    final FilterConfig filterConfig = mock(FilterConfig.class);
+    when(filterConfig.getInitParameterNames()).thenReturn(parameterNamesEnumeration);
 
-        final HttpServletResponse response = mock(HttpServletResponse.class);
+    when(filterConfig.getInitParameter(
+            RequestParameterPolicyEnforcementFilter.ALLOW_MULTI_VALUED_PARAMETERS))
+        .thenReturn(null);
+    when(filterConfig.getInitParameter(
+            RequestParameterPolicyEnforcementFilter.CHARACTERS_TO_FORBID))
+        .thenReturn(null);
+    when(filterConfig.getInitParameter(RequestParameterPolicyEnforcementFilter.PARAMETERS_TO_CHECK))
+        .thenReturn("ticket");
 
-        final FilterChain chain = mock(FilterChain.class);
-
-        filter.doFilter(request, response, chain);
-
+    // init the filter
+    try {
+      filter.init(filterConfig);
+    } catch (Exception e) {
+      Assert.fail("Should not have failed filter init.");
     }
 
-    /**
-     * Test that, in the default configuration, when presented with a request parameter with an illicit character in
-     * it, blocks the request.
-     * @throws IOException
-     * @throws ServletException
-     */
-    @Test(expected = ServletException.class)
-    public void testRejectsRequestWithIllicitCharacterInCheckedParameter() throws IOException, ServletException {
+    // mock up a request to filter
+
+    final Map<String, String[]> requestParameterMap = new HashMap<String, String[]>();
+    // percent character is illicit by default, so, illicit character in this parameter value
+    // but this parameter name is unchecked
+    requestParameterMap.put("uncheckedName", new String[] {"someValue%40gmail.com"});
+
+    final HttpServletRequest request = mock(HttpServletRequest.class);
+    when(request.getParameterMap()).thenReturn(requestParameterMap);
+
+    final HttpServletResponse response = mock(HttpServletResponse.class);
 
-        final RequestParameterPolicyEnforcementFilter filter = new RequestParameterPolicyEnforcementFilter();
+    final FilterChain chain = mock(FilterChain.class);
+
+    filter.doFilter(request, response, chain);
+  }
 
-        // mock up filter config.  Default configuration with no init-params for this use case.
-        final Set<String> initParameterNames = new HashSet<String>();
-        final Enumeration parameterNamesEnumeration = Collections.enumeration(initParameterNames);
-        final FilterConfig filterConfig = mock(FilterConfig.class);
-        when(filterConfig.getInitParameterNames()).thenReturn(parameterNamesEnumeration);
+  /* ========================================================================================================== */
 
-        when(filterConfig.getInitParameter(RequestParameterPolicyEnforcementFilter.ALLOW_MULTI_VALUED_PARAMETERS))
-                .thenReturn(null);
-        when(filterConfig.getInitParameter(RequestParameterPolicyEnforcementFilter.CHARACTERS_TO_FORBID))
-                .thenReturn(null);
-        when(filterConfig.getInitParameter(RequestParameterPolicyEnforcementFilter.PARAMETERS_TO_CHECK))
-                .thenReturn(null);
+  /* Tests for throwIfUnrecognizedInitParamNames()
+   * These test that the fail-safe on unrecognized (and thus un-honored) configuration works as intended.
+   */
 
+  /**
+   * Tests that the method checking for unrecognized parameters accepts the expected parameters.
+   *
+   * @throws ServletException on test failure
+   */
+  @Test
+  public void testAcceptsExpectedParameterNames() throws ServletException {
 
-        // init the filter
-        try {
-            filter.init(filterConfig);
-        } catch (Exception e) {
-            Assert.fail("Should not have failed filter init.");
-        }
+    final Set<String> parameterNames = new HashSet<String>();
+    parameterNames.add(RequestParameterPolicyEnforcementFilter.CHARACTERS_TO_FORBID);
+    parameterNames.add(RequestParameterPolicyEnforcementFilter.PARAMETERS_TO_CHECK);
+    parameterNames.add(RequestParameterPolicyEnforcementFilter.ALLOW_MULTI_VALUED_PARAMETERS);
+    final Enumeration parameterNamesEnumeration = Collections.enumeration(parameterNames);
 
-        // mock up a request to filter
-
-        final Map<String, String[]> requestParameterMap = new HashMap<String, String[]>();
-        // percent character is illicit by default, so, illicit character in this parameter value
-        requestParameterMap.put("someName", new String[] {"someValue%40gmail.com"});
-
-        final HttpServletRequest request = mock(HttpServletRequest.class);
-        when(request.getParameterMap()).thenReturn(requestParameterMap);
+    RequestParameterPolicyEnforcementFilter.throwIfUnrecognizedParamName(parameterNamesEnumeration);
+  }
 
-        final HttpServletResponse response = mock(HttpServletResponse.class);
+  /**
+   * Test that the method checking for unrecognized parameters throws on an unrecognized parameter.
+   *
+   * @throws ServletException on test success
+   */
+  @Test(expected = ServletException.class)
+  public void testRejectsUnExpectedParameterName() throws ServletException {
 
-        final FilterChain chain = mock(FilterChain.class);
+    final Set<String> parameterNames = new HashSet<String>();
+    parameterNames.add(RequestParameterPolicyEnforcementFilter.CHARACTERS_TO_FORBID);
+    parameterNames.add(RequestParameterPolicyEnforcementFilter.PARAMETERS_TO_CHECK);
+    parameterNames.add(RequestParameterPolicyEnforcementFilter.ALLOW_MULTI_VALUED_PARAMETERS);
+    parameterNames.add("unexpectedParameterName");
+    final Enumeration parameterNamesEnumeration = Collections.enumeration(parameterNames);
 
-        filter.doFilter(request, response, chain);
+    RequestParameterPolicyEnforcementFilter.throwIfUnrecognizedParamName(parameterNamesEnumeration);
+  }
 
-    }
+  /* ========================================================================================================== */
 
-    /**
-     * Test that when configured to only check some parameters, does not throw on forbidden character in unchecked
-     * parameter.
-     */
-    @Test
-    public void testAllowsUncheckedParametersToHaveIllicitCharacters() throws IOException, ServletException {
+  /* Tests for parseStringToBooleanDefaultingToFalse()
+   * These test that the boolean init parameter parsing works properly.
+   */
 
-        final RequestParameterPolicyEnforcementFilter filter = new RequestParameterPolicyEnforcementFilter();
+  /** Test that true parses to true. */
+  @Test
+  public void testParsesTrueToTrue() {
 
-        // mock up filter config.  Default configuration with no init-params for this use case.
-        final Set<String> initParameterNames = new HashSet<String>();
-        initParameterNames.add(RequestParameterPolicyEnforcementFilter.PARAMETERS_TO_CHECK);
-        final Enumeration parameterNamesEnumeration = Collections.enumeration(initParameterNames);
-        final FilterConfig filterConfig = mock(FilterConfig.class);
-        when(filterConfig.getInitParameterNames()).thenReturn(parameterNamesEnumeration);
+    Assert.assertTrue(
+        RequestParameterPolicyEnforcementFilter.parseStringToBooleanDefaultingToFalse("true"));
+  }
 
-        when(filterConfig.getInitParameter(RequestParameterPolicyEnforcementFilter.ALLOW_MULTI_VALUED_PARAMETERS))
-                .thenReturn(null);
-        when(filterConfig.getInitParameter(RequestParameterPolicyEnforcementFilter.CHARACTERS_TO_FORBID))
-                .thenReturn(null);
-        when(filterConfig.getInitParameter(RequestParameterPolicyEnforcementFilter.PARAMETERS_TO_CHECK))
-                .thenReturn("ticket");
+  /** Test that false parses to false. */
+  @Test
+  public void testParsesFalseToFalse() {
 
+    Assert.assertFalse(
+        RequestParameterPolicyEnforcementFilter.parseStringToBooleanDefaultingToFalse("false"));
+  }
 
-        // init the filter
-        try {
-            filter.init(filterConfig);
-        } catch (Exception e) {
-            Assert.fail("Should not have failed filter init.");
-        }
+  /** Test that null parses to false. */
+  @Test
+  public void testParsesNullToFalse() {
 
-        // mock up a request to filter
+    Assert.assertFalse(
+        RequestParameterPolicyEnforcementFilter.parseStringToBooleanDefaultingToFalse(null));
+  }
 
-        final Map<String, String[]> requestParameterMap = new HashMap<String, String[]>();
-        // percent character is illicit by default, so, illicit character in this parameter value
-        // but this parameter name is unchecked
-        requestParameterMap.put("uncheckedName", new String[] {"someValue%40gmail.com"});
+  /** Test that maybe parses to illegal argument exception. */
+  @Test(expected = Exception.class)
+  public void testParsingMaybeYieldsException() {
 
-        final HttpServletRequest request = mock(HttpServletRequest.class);
-        when(request.getParameterMap()).thenReturn(requestParameterMap);
+    RequestParameterPolicyEnforcementFilter.parseStringToBooleanDefaultingToFalse("maybe");
+  }
 
-        final HttpServletResponse response = mock(HttpServletResponse.class);
+  /* ========================================================================================================== */
+  /* Tests for parseParametersToCheck().
+   * Ensure that the Filter properly understands which parameters it ought to be checking.
+   */
 
-        final FilterChain chain = mock(FilterChain.class);
+  /** Test that a null parameter value parses to the empty set. */
+  @Test
+  public void testParsesNullToEmptySet() {
 
-        filter.doFilter(request, response, chain);
+    final Set<String> returnedSet =
+        RequestParameterPolicyEnforcementFilter.parseParametersToCheck(null);
 
-    }
+    Assert.assertTrue(returnedSet.isEmpty());
+  }
 
+  /** Test that a whitespace delimited list of parameter names parses as expected. */
+  @Test
+  public void testParsesWhiteSpaceDelimitedStringToSet() {
 
-    /* ========================================================================================================== */
+    final String parameterValue = "service renew gateway";
 
-    /* Tests for throwIfUnrecognizedInitParamNames()
-     * These test that the fail-safe on unrecognized (and thus un-honored) configuration works as intended.
-     */
+    final Set<String> expectedSet = new HashSet<String>();
+    expectedSet.add("service");
+    expectedSet.add("renew");
+    expectedSet.add("gateway");
 
-    /**
-     * Tests that the method checking for unrecognized parameters accepts the expected parameters.
-     * @throws ServletException on test failure
-     */
-    @Test
-    public void testAcceptsExpectedParameterNames() throws ServletException {
+    final Set<String> returnedSet =
+        RequestParameterPolicyEnforcementFilter.parseParametersToCheck(parameterValue);
 
-        final Set<String> parameterNames = new HashSet<String>();
-        parameterNames.add(RequestParameterPolicyEnforcementFilter.CHARACTERS_TO_FORBID);
-        parameterNames.add(RequestParameterPolicyEnforcementFilter.PARAMETERS_TO_CHECK);
-        parameterNames.add(RequestParameterPolicyEnforcementFilter.ALLOW_MULTI_VALUED_PARAMETERS);
-        final Enumeration parameterNamesEnumeration = Collections.enumeration(parameterNames);
+    Assert.assertEquals(expectedSet, returnedSet);
+  }
 
-         RequestParameterPolicyEnforcementFilter.throwIfUnrecognizedParamName(parameterNamesEnumeration);
-    }
+  /** Test that blank parses to exception. */
+  @Test(expected = Exception.class)
+  public void testParsingBlankParametersToCheckThrowsException() {
 
-    /**
-     * Test that the method checking for unrecognized parameters throws on an unrecognized parameter.
-     * @throws ServletException on test success
-     */
-    @Test(expected = ServletException.class)
-    public void testRejectsUnExpectedParameterName() throws ServletException {
+    RequestParameterPolicyEnforcementFilter.parseParametersToCheck("   ");
+  }
 
-        final Set<String> parameterNames = new HashSet<String>();
-        parameterNames.add(RequestParameterPolicyEnforcementFilter.CHARACTERS_TO_FORBID);
-        parameterNames.add(RequestParameterPolicyEnforcementFilter.PARAMETERS_TO_CHECK);
-        parameterNames.add(RequestParameterPolicyEnforcementFilter.ALLOW_MULTI_VALUED_PARAMETERS);
-        parameterNames.add("unexpectedParameterName");
-        final Enumeration parameterNamesEnumeration = Collections.enumeration(parameterNames);
+  /** Test the special parsing behavior of star parses to empty Set. */
+  @Test
+  public void testAsteriskParsesToEmptySetOfParametersToCheck() {
 
-        RequestParameterPolicyEnforcementFilter.throwIfUnrecognizedParamName(parameterNamesEnumeration);
-    }
+    final Set<String> expectedSet = new HashSet<String>();
 
+    final Set<String> returnedSet =
+        RequestParameterPolicyEnforcementFilter.parseParametersToCheck("*");
 
+    Assert.assertEquals(expectedSet, returnedSet);
+  }
 
-    /* ========================================================================================================== */
+  /** Test that encountering the star token among other tokens yields exception. */
+  @Test(expected = Exception.class)
+  public void testParsingAsteriskWithOtherTokensThrowsException() {
 
-    /* Tests for parseStringToBooleanDefaultingToFalse()
-     * These test that the boolean init parameter parsing works properly.
-     */
+    RequestParameterPolicyEnforcementFilter.parseParametersToCheck("renew * gateway");
+  }
 
-    /**
-     * Test that true parses to true.
-     */
-    @Test
-    public void testParsesTrueToTrue() {
+  /* ========================================================================================================== */
+  /* Tests for parseCharactersToForbid().
+   * Ensure that the Filter properly understands which characters it ought to be forbidding.
+   */
 
-        Assert.assertTrue(RequestParameterPolicyEnforcementFilter.parseStringToBooleanDefaultingToFalse("true"));
+  /** Test that when the parameter is not set (is null) parses to a default set of character. */
+  @Test
+  public void testParsingNullYieldsPercentHashAmpersandAndQuestionMark() {
 
-    }
+    final Set<Character> expected = new HashSet<Character>();
+    expected.add('%');
+    expected.add('#');
+    expected.add('&');
+    expected.add('?');
 
-    /**
-     * Test that false parses to false.
-     */
-    @Test
-    public void testParsesFalseToFalse() {
+    final Set<Character> actual =
+        RequestParameterPolicyEnforcementFilter.parseCharactersToForbid(null);
 
-        Assert.assertFalse(RequestParameterPolicyEnforcementFilter.parseStringToBooleanDefaultingToFalse("false"));
+    Assert.assertEquals(expected, actual);
+  }
 
-    }
+  /** Test that when the parameter is set but blank throws an exception. */
+  @Test(expected = Exception.class)
+  public void testParsingBlankThrowsException() {
+    RequestParameterPolicyEnforcementFilter.parseCharactersToForbid("   ");
+  }
 
-    /**
-     * Test that null parses to false.
-     */
-    @Test
-    public void testParsesNullToFalse() {
+  /** Test that when the parameter is set to the special value "none" returns empty Set. */
+  @Test
+  public void testParsesLiteralNoneToEmptySet() {
 
-        Assert.assertFalse(RequestParameterPolicyEnforcementFilter.parseStringToBooleanDefaultingToFalse(null));
+    final Set<Character> expected = new HashSet<Character>();
 
-    }
+    final Set<Character> actual =
+        RequestParameterPolicyEnforcementFilter.parseCharactersToForbid("none");
 
-    /**
-     * Test that maybe parses to illegal argument exception.
-     */
-    @Test(expected = Exception.class)
-    public void testParsingMaybeYieldsException() {
+    Assert.assertEquals(expected, actual);
+  }
 
-        RequestParameterPolicyEnforcementFilter.parseStringToBooleanDefaultingToFalse("maybe");
+  /** Test that parsing some characters works as expected. */
+  @Test
+  public void testParsingSomeCharactersWorks() {
+    final Set<Character> expected = new HashSet<Character>();
+    expected.add('&');
+    expected.add('%');
+    expected.add('*');
+    expected.add('#');
+    expected.add('@');
 
-    }
+    final Set<Character> actual =
+        RequestParameterPolicyEnforcementFilter.parseCharactersToForbid("& % * # @");
 
+    Assert.assertEquals(expected, actual);
+  }
 
-    /* ========================================================================================================== */
-    /* Tests for parseParametersToCheck().
-     * Ensure that the Filter properly understands which parameters it ought to be checking.
-     */
+  /**
+   * The tokens are supposed to be single characters. If they are longer than that, the deployer may
+   * be confused as to how to configure this filter.
+   */
+  @Test(expected = Exception.class)
+  public void testParsingMulticharacterTokensThrows() {
+    RequestParameterPolicyEnforcementFilter.parseCharactersToForbid("& %*# @");
+  }
 
-    /**
-     * Test that a null parameter value parses to the empty set.
-     */
-    @Test
-    public void testParsesNullToEmptySet() {
+  /* ========================================================================================================== */
 
-        final Set<String> returnedSet  = RequestParameterPolicyEnforcementFilter.parseParametersToCheck(null);
+  /* Tests for requireNotMultiValued().
+   * Ensure that runtime enforcement of not-multi-valued-ness work properly.
+   */
 
-        Assert.assertTrue(returnedSet.isEmpty());
+  /** Test that enforcing no-multi-value detects multi-valued parameter and throws. */
+  @Test(expected = IllegalStateException.class)
+  public void testRequireNotMultiValueBlocksMultiValue() {
 
-    }
+    final Set<String> parametersToCheck = new HashSet<String>();
+    parametersToCheck.add("dogName");
 
-    /**
-     * Test that a whitespace delimited list of parameter names parses as expected.
-     */
-    @Test
-    public void testParsesWhiteSpaceDelimitedStringToSet() {
+    // set up a parameter map with a multi-valued parameter
+    final Map<String, String[]> parameterMap = new HashMap<String, String[]>();
+    parameterMap.put("dogName", new String[] {"Johan", "Cubby"});
 
-        final String parameterValue = "service renew gateway";
+    RequestParameterPolicyEnforcementFilter.requireNotMultiValued(parametersToCheck, parameterMap);
+  }
 
-        final Set<String> expectedSet = new HashSet<String>();
-        expectedSet.add("service");
-        expectedSet.add("renew");
-        expectedSet.add("gateway");
+  /** Test that enforcing no-multi-value allows single-valued parameter. */
+  @Test
+  public void testRequireNotMultiValuedAllowsSingleValued() {
 
-        final Set<String> returnedSet = RequestParameterPolicyEnforcementFilter.parseParametersToCheck(parameterValue);
+    final Set<String> parametersToCheck = new HashSet<String>();
+    parametersToCheck.add("dogName");
 
-        Assert.assertEquals(expectedSet, returnedSet);
-    }
+    // set up a parameter map with single-valued parameter
+    final Map<String, String[]> parameterMap = new HashMap<String, String[]>();
+    parameterMap.put("dogName", new String[] {"Abbie"});
 
-    /**
-     * Test that blank parses to exception.
-     */
-    @Test(expected = Exception.class)
-    public void testParsingBlankParametersToCheckThrowsException() {
+    RequestParameterPolicyEnforcementFilter.requireNotMultiValued(parametersToCheck, parameterMap);
+  }
 
-        RequestParameterPolicyEnforcementFilter.parseParametersToCheck("   ");
+  /** Test that enforcing no-multi-value allows not-present parameter. */
+  @Test
+  public void testRequireNotMultiValuedIgnoresMissingParameter() {
 
-    }
+    final Set<String> parametersToCheck = new HashSet<String>();
+    parametersToCheck.add("dogName");
 
-    /**
-     * Test the special parsing behavior of star parses to empty Set.
-     */
-    @Test
-    public void testAsteriskParsesToEmptySetOfParametersToCheck() {
+    // set up a parameter map with no entries
+    final Map<String, String[]> parameterMap = new HashMap<String, String[]>();
 
-        final Set<String> expectedSet = new HashSet<String>();
+    RequestParameterPolicyEnforcementFilter.requireNotMultiValued(parametersToCheck, parameterMap);
+  }
 
-        final Set<String> returnedSet = RequestParameterPolicyEnforcementFilter.parseParametersToCheck("*");
+  /** Test that enforcing no-multi-value allows multi-valued parameters not among those to check. */
+  @Test
+  public void testRequireNotMultiValueAllowsUncheckedMultiValue() {
 
-        Assert.assertEquals(expectedSet, returnedSet);
+    final Set<String> parametersToCheck = new HashSet<String>();
+    parametersToCheck.add("dogName");
 
-    }
+    // set up a parameter map with a multi-valued parameter with a name not matching those to check
+    final Map<String, String[]> parameterMap = new HashMap<String, String[]>();
+    parameterMap.put("catName", new String[] {"Reggie", "Shenanigans"});
 
-    /**
-     * Test that encountering the star token among other tokens yields exception.
-     */
-    @Test(expected = Exception.class)
-    public void testParsingAsteriskWithOtherTokensThrowsException() {
+    RequestParameterPolicyEnforcementFilter.requireNotMultiValued(parametersToCheck, parameterMap);
+  }
 
-        RequestParameterPolicyEnforcementFilter.parseParametersToCheck("renew * gateway");
+  /* ========================================================================================================== */
 
-    }
+  /* Tests for enforceParameterContentCharacterRestrictions().
+   * Ensure that runtime enforcement of what characters parameters contain works properly.
+   */
 
+  /** Test that allows parameters not containing forbidden characters. */
+  @Test
+  public void testAllowsParametersNotContainingForbiddenCharacters() {
 
-    /* ========================================================================================================== */
-    /* Tests for parseCharactersToForbid().
-     * Ensure that the Filter properly understands which characters it ought to be forbidding.
-     */
+    final Set<String> parametersToCheck = new HashSet<String>();
+    parametersToCheck.add("catName");
+    parametersToCheck.add("dogName");
 
-    /**
-     * Test that when the parameter is not set (is null) parses to a default set of character.
-     */
-    @Test
-    public void testParsingNullYieldsPercentHashAmpersandAndQuestionMark() {
+    final Set<Character> charactersToForbid = new HashSet<Character>();
+    charactersToForbid.add('&');
+    charactersToForbid.add('%');
 
-        final Set<Character> expected = new HashSet<Character>();
-        expected.add('%');
-        expected.add('#');
-        expected.add('&');
-        expected.add('?');
+    final Map<String, String[]> parameterMap = new HashMap<String, String[]>();
+    parameterMap.put("catName", new String[] {"Reggie", "Shenanigans"});
+    parameterMap.put("dogName", new String[] {"Brutus", "Johan", "Cubby", "Abbie"});
+    parameterMap.put("plantName", new String[] {"Rex"});
 
-        final Set<Character> actual = RequestParameterPolicyEnforcementFilter.parseCharactersToForbid(null);
+    RequestParameterPolicyEnforcementFilter.enforceParameterContentCharacterRestrictions(
+        parametersToCheck, charactersToForbid, parameterMap);
+  }
 
-        Assert.assertEquals(expected, actual);
+  /** Test that when a checked parameter contains a forbidden character, throws. */
+  @Test(expected = Exception.class)
+  public void testThrowsOnParameterContainingForbiddenCharacter() {
 
-    }
+    final Set<String> parametersToCheck = new HashSet<String>();
+    parametersToCheck.add("catName");
+    parametersToCheck.add("plantName");
 
-    /**
-     * Test that when the parameter is set but blank throws an exception.
-     */
-    @Test(expected = Exception.class)
-    public void testParsingBlankThrowsException() {
-        RequestParameterPolicyEnforcementFilter.parseCharactersToForbid("   ");
-    }
+    final Set<Character> charactersToForbid = new HashSet<Character>();
+    charactersToForbid.add('&');
+    charactersToForbid.add('%');
 
-    /**
-     * Test that when the parameter is set to the special value "none"  returns empty Set.
-     */
-    @Test
-    public void testParsesLiteralNoneToEmptySet() {
+    final Map<String, String[]> parameterMap = new HashMap<String, String[]>();
+    parameterMap.put("catName", new String[] {"Reggie", "Shenanigans"});
+    parameterMap.put("dogName", new String[] {"Brutus", "Johan", "Cubby", "Abbie"});
+    // plantName is checked, and contains a forbidden character
+    parameterMap.put("plantName", new String[] {"Rex&p0wned=true"});
 
-        final Set<Character> expected = new HashSet<Character>();
+    RequestParameterPolicyEnforcementFilter.enforceParameterContentCharacterRestrictions(
+        parametersToCheck, charactersToForbid, parameterMap);
+  }
 
-        final Set<Character> actual = RequestParameterPolicyEnforcementFilter.parseCharactersToForbid("none");
+  /**
+   * Test that when a checked parameter contains a forbidden character in a non-first value, still
+   * throws.
+   */
+  @Test(expected = Exception.class)
+  public void testThrowsOnMultipleParameterContainingForbiddenCharacter() {
 
-        Assert.assertEquals(expected, actual);
-    }
+    final Set<String> parametersToCheck = new HashSet<String>();
+    parametersToCheck.add("catName");
+    parametersToCheck.add("dogName");
 
-    /**
-     * Test that parsing some characters works as expected.
-     */
-    @Test
-    public void testParsingSomeCharactersWorks() {
-        final Set<Character> expected = new HashSet<Character>();
-        expected.add('&');
-        expected.add('%');
-        expected.add('*');
-        expected.add('#');
-        expected.add('@');
+    final Set<Character> charactersToForbid = new HashSet<Character>();
+    charactersToForbid.add('!');
+    charactersToForbid.add('$');
 
-        final Set<Character> actual = RequestParameterPolicyEnforcementFilter.parseCharactersToForbid("& % * # @");
+    final Map<String, String[]> parameterMap = new HashMap<String, String[]>();
+    parameterMap.put("catName", new String[] {"Reggie", "Shenanigans"});
+    // dogName is checked, and contains a forbidden character
+    parameterMap.put("dogName", new String[] {"Brutus", "Johan", "Cub!by", "Abbie"});
+    parameterMap.put("plantName", new String[] {"Rex"});
 
-        Assert.assertEquals(expected, actual);
-    }
+    RequestParameterPolicyEnforcementFilter.enforceParameterContentCharacterRestrictions(
+        parametersToCheck, charactersToForbid, parameterMap);
+  }
 
-    /**
-     * The tokens are supposed to be single characters.  If they are longer than that, the deployer may be confused as
-     * to how to configure this filter.
-     */
-    @Test(expected = Exception.class)
-    public void testParsingMulticharacterTokensThrows() {
-        RequestParameterPolicyEnforcementFilter.parseCharactersToForbid("& %*# @");
-    }
+  /**
+   * Test that when an unchecked parameter contains a character that would be forbidden were the
+   * parameter checked, does not throw.
+   */
+  @Test
+  public void testAllowsUncheckedParameterContainingForbiddenCharacter() {
 
+    final Set<String> parametersToCheck = new HashSet<String>();
+    parametersToCheck.add("catName");
+    parametersToCheck.add("dogName");
 
-    /* ========================================================================================================== */
+    final Set<Character> charactersToForbid = new HashSet<Character>();
+    charactersToForbid.add('&');
+    charactersToForbid.add('$');
 
-    /* Tests for requireNotMultiValued().
-     * Ensure that runtime enforcement of not-multi-valued-ness work properly.
-     */
+    final Map<String, String[]> parameterMap = new HashMap<String, String[]>();
+    parameterMap.put("catName", new String[] {"Reggie", "Shenanigans"});
+    parameterMap.put("dogName", new String[] {"Brutus", "Johan", "Cubby", "Abbie"});
 
+    // plantName is not checked
+    parameterMap.put("plantName", new String[] {"Rex&ownage=true"});
 
+    RequestParameterPolicyEnforcementFilter.enforceParameterContentCharacterRestrictions(
+        parametersToCheck, charactersToForbid, parameterMap);
+  }
 
+  /** Test that not all parametersToCheck need be present on the request. */
+  @Test
+  public void testAllowsCheckedParameterNotPresent() {
+    // this test added in response to a stupid NullPointerException defect, to prevent regression.
 
-    /**
-     * Test that enforcing no-multi-value detects multi-valued parameter and throws.
-     */
-    @Test(expected = IllegalStateException.class)
-    public void testRequireNotMultiValueBlocksMultiValue() {
+    final Set<String> parametersToCheck = new HashSet<String>();
+    parametersToCheck.add("catName");
+    parametersToCheck.add("dogName");
 
-        final Set<String> parametersToCheck = new HashSet<String>();
-        parametersToCheck.add("dogName");
+    final Set<Character> charactersToForbid = new HashSet<Character>();
+    charactersToForbid.add('&');
+    charactersToForbid.add('$');
 
-        // set up a parameter map with a multi-valued parameter
-        final Map<String, String[]> parameterMap = new HashMap<String, String[]>();
-        parameterMap.put("dogName", new String[] {"Johan", "Cubby"});
+    final Map<String, String[]> parameterMap = new HashMap<String, String[]>();
+    parameterMap.put("dogName", new String[] {"Brutus", "Johan", "Cubby", "Abbie"});
 
-        RequestParameterPolicyEnforcementFilter.requireNotMultiValued(parametersToCheck, parameterMap);
-    }
-
-    /**
-     * Test that enforcing no-multi-value allows single-valued parameter.
-     */
-    @Test
-    public void testRequireNotMultiValuedAllowsSingleValued() {
-
-        final Set<String> parametersToCheck = new HashSet<String>();
-        parametersToCheck.add("dogName");
-
-        // set up a parameter map with single-valued parameter
-        final Map<String, String[]> parameterMap = new HashMap<String, String[]>();
-        parameterMap.put("dogName", new String[] {"Abbie"});
-
-        RequestParameterPolicyEnforcementFilter.requireNotMultiValued(parametersToCheck, parameterMap);
-
-    }
-
-    /**
-     * Test that enforcing no-multi-value allows not-present parameter.
-     */
-    @Test
-    public void testRequireNotMultiValuedIgnoresMissingParameter() {
-
-        final Set<String> parametersToCheck = new HashSet<String>();
-        parametersToCheck.add("dogName");
-
-        // set up a parameter map with no entries
-        final Map<String, String[]> parameterMap = new HashMap<String, String[]>();
-
-        RequestParameterPolicyEnforcementFilter.requireNotMultiValued(parametersToCheck, parameterMap);
-
-    }
-
-    /**
-     * Test that enforcing no-multi-value allows multi-valued parameters not among those to check.
-     */
-    @Test
-    public void testRequireNotMultiValueAllowsUncheckedMultiValue() {
-
-        final Set<String> parametersToCheck = new HashSet<String>();
-        parametersToCheck.add("dogName");
-
-        // set up a parameter map with a multi-valued parameter with a name not matching those to check
-        final Map<String, String[]> parameterMap = new HashMap<String, String[]>();
-        parameterMap.put("catName", new String[] {"Reggie", "Shenanigans"});
-
-        RequestParameterPolicyEnforcementFilter.requireNotMultiValued(parametersToCheck, parameterMap);
-    }
-
-    /* ========================================================================================================== */
-
-    /* Tests for enforceParameterContentCharacterRestrictions().
-     * Ensure that runtime enforcement of what characters parameters contain works properly.
-     */
-
-    /**
-     * Test that allows parameters not containing forbidden characters.
-     */
-    @Test
-    public void testAllowsParametersNotContainingForbiddenCharacters() {
-
-        final Set<String> parametersToCheck = new HashSet<String>();
-        parametersToCheck.add("catName");
-        parametersToCheck.add("dogName");
-
-        final Set<Character> charactersToForbid = new HashSet<Character>();
-        charactersToForbid.add('&');
-        charactersToForbid.add('%');
-
-        final Map<String, String[]> parameterMap = new HashMap<String, String[]>();
-        parameterMap.put("catName", new String[] {"Reggie", "Shenanigans"});
-        parameterMap.put("dogName", new String[] {"Brutus", "Johan", "Cubby", "Abbie"});
-        parameterMap.put("plantName", new String[] {"Rex"});
-
-        RequestParameterPolicyEnforcementFilter.enforceParameterContentCharacterRestrictions(parametersToCheck,
-                charactersToForbid, parameterMap);
-
-    }
-
-    /**
-     * Test that when a checked parameter contains a forbidden character, throws.
-     */
-    @Test(expected = Exception.class)
-    public void testThrowsOnParameterContainingForbiddenCharacter() {
-
-        final Set<String> parametersToCheck = new HashSet<String>();
-        parametersToCheck.add("catName");
-        parametersToCheck.add("plantName");
-
-        final Set<Character> charactersToForbid = new HashSet<Character>();
-        charactersToForbid.add('&');
-        charactersToForbid.add('%');
-
-        final Map<String, String[]> parameterMap = new HashMap<String, String[]>();
-        parameterMap.put("catName", new String[] {"Reggie", "Shenanigans"});
-        parameterMap.put("dogName", new String[] {"Brutus", "Johan", "Cubby", "Abbie"});
-        // plantName is checked, and contains a forbidden character
-        parameterMap.put("plantName", new String[] {"Rex&p0wned=true"});
-
-        RequestParameterPolicyEnforcementFilter.enforceParameterContentCharacterRestrictions(parametersToCheck,
-                charactersToForbid, parameterMap);
-
-    }
-
-    /**
-     * Test that when a checked parameter contains a forbidden character in a non-first value, still throws.
-     */
-    @Test(expected = Exception.class)
-    public void testThrowsOnMultipleParameterContainingForbiddenCharacter() {
-
-        final Set<String> parametersToCheck = new HashSet<String>();
-        parametersToCheck.add("catName");
-        parametersToCheck.add("dogName");
-
-        final Set<Character> charactersToForbid = new HashSet<Character>();
-        charactersToForbid.add('!');
-        charactersToForbid.add('$');
-
-        final Map<String, String[]> parameterMap = new HashMap<String, String[]>();
-        parameterMap.put("catName", new String[] {"Reggie", "Shenanigans"});
-        // dogName is checked, and contains a forbidden character
-        parameterMap.put("dogName", new String[] {"Brutus", "Johan", "Cub!by", "Abbie"});
-        parameterMap.put("plantName", new String[] {"Rex"});
-
-        RequestParameterPolicyEnforcementFilter.enforceParameterContentCharacterRestrictions(parametersToCheck,
-                charactersToForbid, parameterMap);
-
-    }
-
-    /**
-     * Test that when an unchecked parameter contains a character that would be forbidden were the parameter checked,
-     * does not throw.
-     */
-    @Test
-    public void testAllowsUncheckedParameterContainingForbiddenCharacter() {
-
-        final Set<String> parametersToCheck = new HashSet<String>();
-        parametersToCheck.add("catName");
-        parametersToCheck.add("dogName");
-
-        final Set<Character> charactersToForbid = new HashSet<Character>();
-        charactersToForbid.add('&');
-        charactersToForbid.add('$');
-
-        final Map<String, String[]> parameterMap = new HashMap<String, String[]>();
-        parameterMap.put("catName", new String[] {"Reggie", "Shenanigans"});
-        parameterMap.put("dogName", new String[] {"Brutus", "Johan", "Cubby", "Abbie"});
-
-        // plantName is not checked
-        parameterMap.put("plantName", new String[] {"Rex&ownage=true"});
-
-        RequestParameterPolicyEnforcementFilter.enforceParameterContentCharacterRestrictions(parametersToCheck,
-                charactersToForbid, parameterMap);
-
-    }
-
-    /**
-     * Test that not all parametersToCheck need be present on the request.
-     */
-    @Test
-    public void testAllowsCheckedParameterNotPresent() {
-        // this test added in response to a stupid NullPointerException defect, to prevent regression.
-
-        final Set<String> parametersToCheck = new HashSet<String>();
-        parametersToCheck.add("catName");
-        parametersToCheck.add("dogName");
-
-        final Set<Character> charactersToForbid = new HashSet<Character>();
-        charactersToForbid.add('&');
-        charactersToForbid.add('$');
-
-        final Map<String, String[]> parameterMap = new HashMap<String, String[]>();
-        parameterMap.put("dogName", new String[] {"Brutus", "Johan", "Cubby", "Abbie"});
-
-        RequestParameterPolicyEnforcementFilter.enforceParameterContentCharacterRestrictions(parametersToCheck,
-                charactersToForbid, parameterMap);
-
-    }
-
+    RequestParameterPolicyEnforcementFilter.enforceParameterContentCharacterRestrictions(
+        parametersToCheck, charactersToForbid, parameterMap);
+  }
 }

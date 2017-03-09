@@ -1,20 +1,16 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.persondir;
 
@@ -22,53 +18,46 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-/**
- * A person account stored in the local uPortal database
- */
+/** A person account stored in the local uPortal database */
 public interface ILocalAccountPerson {
-    // common attribute names...
-    /**
-     * Attribute name commonly used to retrieve users displayName.
-     * This attribute may not exist for all users, and may be named
-     * differently for some implementations, but this is common.
-     *
-     * @Since uPortal 4.1
-     */
-    public static final String ATTR_DISPLAY_NAME = "displayName";
+  // common attribute names...
+  /**
+   * Attribute name commonly used to retrieve users displayName. This attribute may not exist for
+   * all users, and may be named differently for some implementations, but this is common. @Since
+   * uPortal 4.1
+   */
+  public static final String ATTR_DISPLAY_NAME = "displayName";
 
-    /**
-     * Attribute name commonly used to retrieve users email address.
-     * This attribute may not exist for all users, and may be named
-     * differently for some implementations, but this is common.
-     *
-     * @Since uPortal 4.1
-     */
-    public static final String ATTR_MAIL = "mail";
+  /**
+   * Attribute name commonly used to retrieve users email address. This attribute may not exist for
+   * all users, and may be named differently for some implementations, but this is common. @Since
+   * uPortal 4.1
+   */
+  public static final String ATTR_MAIL = "mail";
 
-    public long getId();
+  public long getId();
 
-    public String getName();
+  public String getName();
 
-    public String getPassword();
+  public String getPassword();
 
-    public void setPassword(String password);
+  public void setPassword(String password);
 
-    public Date getLastPasswordChange();
+  public Date getLastPasswordChange();
 
-    public void setLastPasswordChange(Date lastPasswordChange);
+  public void setLastPasswordChange(Date lastPasswordChange);
 
-    public Object getAttributeValue(String name);
+  public Object getAttributeValue(String name);
 
-    public List<Object> getAttributeValues(String name);
+  public List<Object> getAttributeValues(String name);
 
-    public Map<String, List<Object>> getAttributes();
+  public Map<String, List<Object>> getAttributes();
 
-    public void setAttribute(String name, String... values);
+  public void setAttribute(String name, String... values);
 
-    public void setAttribute(String name, List<String> values);
+  public void setAttribute(String name, List<String> values);
 
-    public void setAttributes(Map<String, List<String>> values);
+  public void setAttributes(Map<String, List<String>> values);
 
-    public boolean removeAttribute(String name);
-
+  public boolean removeAttribute(String name);
 }

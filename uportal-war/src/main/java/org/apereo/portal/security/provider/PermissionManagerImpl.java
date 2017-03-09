@@ -1,20 +1,16 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.security.provider;
 
@@ -27,57 +23,50 @@ import org.apereo.portal.security.IPermissionManager;
  * @author Bernie Durfee (bdurfee@interactivebusiness.com)
  * @author Dan Ellentuck (de3@columbia.edu)
  */
-public class PermissionManagerImpl implements IPermissionManager
-{
-    private AuthorizationImpl authorizationService;
-    private java.lang.String owner;
-    
+public class PermissionManagerImpl implements IPermissionManager {
+  private AuthorizationImpl authorizationService;
+  private java.lang.String owner;
+
   /**
    * This constructor ensures that the PermissionManager will be created with an owner specified
+   *
    * @param newOwner the new owner
    * @param authService the authorization service
    */
-  public PermissionManagerImpl (String newOwner, AuthorizationImpl authService)
-  {
+  public PermissionManagerImpl(String newOwner, AuthorizationImpl authService) {
     super();
     owner = newOwner;
     authorizationService = authService;
   }
 
-/**
- * @return org.apereo.portal.security.provider.AuthorizationImpl
- */
-AuthorizationImpl getAuthorizationService()
-{
+  /** @return org.apereo.portal.security.provider.AuthorizationImpl */
+  AuthorizationImpl getAuthorizationService() {
     return authorizationService;
-}
+  }
 
-/**
- * Returns <code>IAuthorizationPrincipals</code> granted <code>IPermissions</code>
- * by the owner of this <code>IPermissionManager</code>, for the given <code>activity</code>
- * and <code>target</code>.  If either parameter is null, it is ignored.
- *
- * @return IAuthorizationPrincipal[]
- * @param activity String - the Permission activity
- * @param target String - the Permission target
- */
-public IAuthorizationPrincipal[] getAuthorizedPrincipals (String activity, String target)
-throws AuthorizationException
-{
+  /**
+   * Returns <code>IAuthorizationPrincipals</code> granted <code>IPermissions</code> by the owner of
+   * this <code>IPermissionManager</code>, for the given <code>activity</code> and <code>target
+   * </code>. If either parameter is null, it is ignored.
+   *
+   * @return IAuthorizationPrincipal[]
+   * @param activity String - the Permission activity
+   * @param target String - the Permission target
+   */
+  public IAuthorizationPrincipal[] getAuthorizedPrincipals(String activity, String target)
+      throws AuthorizationException {
     return getAuthorizationService().getAuthorizedPrincipals(getOwner(), activity, target);
-}
+  }
 
-/**
- * @return java.lang.String
- */
-public java.lang.String getOwner() {
+  /** @return java.lang.String */
+  public java.lang.String getOwner() {
     return owner;
-}
+  }
 
-    @Override
-    public IPermission[] getPermissionsForTarget(final String target) {
-        return getAuthorizationService().getPermissionsForTarget(getOwner(), target);
-    }
+  @Override
+  public IPermission[] getPermissionsForTarget(final String target) {
+    return getAuthorizationService().getPermissionsForTarget(getOwner(), target);
+  }
 
   /**
    * Retrieve an array of IPermission objects based on the given parameters. Any null parameters
@@ -88,10 +77,8 @@ public java.lang.String getOwner() {
    * @return IPermission[]
    * @exception AuthorizationException
    */
-public IPermission[] getPermissions (String activity, String target)
-throws AuthorizationException
-{
+  public IPermission[] getPermissions(String activity, String target)
+      throws AuthorizationException {
     return getAuthorizationService().getPermissionsForOwner(getOwner(), activity, target);
-}
-
+  }
 }

@@ -1,20 +1,16 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.security.provider;
 
@@ -22,29 +18,31 @@ import org.apereo.portal.security.IOpaqueCredentials;
 import org.apereo.portal.security.PortalSecurityException;
 
 /**
- * <p>This is an implementation of a SecurityContext that checks a user's
- * credentials against an LDAP directory.  It expects to be able to bind
- * to the LDAP directory as the user so that it can authenticate the
- * user.  The user's credentials are cached.</p>
+ * This is an implementation of a SecurityContext that checks a user's credentials against an LDAP
+ * directory. It expects to be able to bind to the LDAP directory as the user so that it can
+ * authenticate the user. The user's credentials are cached.
  *
  * @author Russell Tokuyama (University of Hawaii)
  * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
- * @deprecated As of uPortal 2.1.3, use {@link org.apereo.portal.security.provider.SimpleLdapSecurityContext} chained with {@link org.apereo.portal.security.provider.CacheSecurityContext} instead
+ * @deprecated As of uPortal 2.1.3, use {@link
+ *     org.apereo.portal.security.provider.SimpleLdapSecurityContext} chained with {@link
+ *     org.apereo.portal.security.provider.CacheSecurityContext} instead
  */
 public class CacheLdapSecurityContext extends SimpleLdapSecurityContext {
   private final int CACHELDAPSECURITYAUTHTYPE = 0xFF06;
   private byte[] cachedCredentials;
 
-  CacheLdapSecurityContext () {
+  CacheLdapSecurityContext() {
     super();
   }
 
   /**
    * Returns the type of authentication this class provides.
+   *
    * @return authorization type
    */
-  public int getAuthType () {
+  public int getAuthType() {
     /*
      * What is this for?  No one would know what to do with the
      * value returned.  Subclasses might know but our getAuthType()
@@ -53,58 +51,50 @@ public class CacheLdapSecurityContext extends SimpleLdapSecurityContext {
     return this.CACHELDAPSECURITYAUTHTYPE;
   }
 
-  /**
-   * Authenticates the user.
-   */
-  public synchronized void authenticate () throws PortalSecurityException {
-	// Save our credentials before parent's authenticate() method
-	// destroys them.
-	this.cachedCredentials =
-		new byte[this.myOpaqueCredentials.credentialstring.length];
-	System.arraycopy(this.myOpaqueCredentials.credentialstring, 0,
-					 this.cachedCredentials, 0,
-					 this.myOpaqueCredentials.credentialstring.length);
+  /** Authenticates the user. */
+  public synchronized void authenticate() throws PortalSecurityException {
+    // Save our credentials before parent's authenticate() method
+    // destroys them.
+    this.cachedCredentials = new byte[this.myOpaqueCredentials.credentialstring.length];
+    System.arraycopy(
+        this.myOpaqueCredentials.credentialstring,
+        0,
+        this.cachedCredentials,
+        0,
+        this.myOpaqueCredentials.credentialstring.length);
 
-	super.authenticate();
+    super.authenticate();
 
-	if (!this.isAuthenticated())
-	  this.cachedCredentials = null;
-
+    if (!this.isAuthenticated()) this.cachedCredentials = null;
   }
 
   /**
-   * We need to override this method in order to return a class that implements
-   * the NotSoOpaqueCredentials interface.
+   * We need to override this method in order to return a class that implements the
+   * NotSoOpaqueCredentials interface.
    */
-  public IOpaqueCredentials getOpaqueCredentials () {
+  public IOpaqueCredentials getOpaqueCredentials() {
     if (this.isauth) {
       NotSoOpaqueCredentials oc = new CacheOpaqueCredentials();
       oc.setCredentials(this.cachedCredentials);
-      return  oc;
-    }
-    else
-      return  null;
+      return oc;
+    } else return null;
   }
 
   /**
-   * This is a new implementation of an OpaqueCredentials class that
-   * implements the less-opaque NotSoOpaqueCredentials.
+   * This is a new implementation of an OpaqueCredentials class that implements the less-opaque
+   * NotSoOpaqueCredentials.
    */
   private class CacheOpaqueCredentials extends ChainingSecurityContext.ChainingOpaqueCredentials
       implements NotSoOpaqueCredentials {
 
     /**
      * Gets the credentials
+     *
      * @return the credentials
      */
-    public String getCredentials () {
-      if (this.credentialstring != null)
-        return  new String(this.credentialstring);
-      else
-        return  null;
+    public String getCredentials() {
+      if (this.credentialstring != null) return new String(this.credentialstring);
+      else return null;
     }
   }
 }
-
-
-
