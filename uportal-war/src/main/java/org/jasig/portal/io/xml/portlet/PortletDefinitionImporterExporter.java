@@ -82,8 +82,8 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * @author Eric Dalquist
  */
-public class PortletDefinitionImporterExporter 
-        extends AbstractJaxbDataHandler<ExternalPortletDefinition> 
+public class PortletDefinitionImporterExporter
+        extends AbstractJaxbDataHandler<ExternalPortletDefinition>
         implements IPortletPublishingService {
 
 
@@ -159,7 +159,7 @@ public class PortletDefinitionImporterExporter
     		logger.warn(portletRep.getFname() + " is not a portlet. It was likely an IChannel from a previous version of uPortal and will not be imported.");
     		return;
     	}
-    		
+
         // get the portlet type
         final IPortletType portletType = portletTypeRegistry.getPortletType(portletRep.getType());
         if (portletType == null) {
@@ -204,12 +204,12 @@ public class PortletDefinitionImporterExporter
         IPortletDefinition def = portletDefinitionDao.getPortletDefinitionByFname(fname);
         if (def == null) {
             def = new PortletDefinitionImpl(
-                    portletType, 
-                    fname, 
+                    portletType,
+                    fname,
                     portletRep.getName(),
-                    portletRep.getTitle(), 
-                    portletDescriptor.getWebAppName(), 
-                    portletDescriptor.getPortletName(), 
+                    portletRep.getTitle(),
+                    portletDescriptor.getWebAppName(),
+                    portletDescriptor.getPortletName(),
                     isFramework != null ? isFramework : false);
         }
         else {
@@ -264,16 +264,16 @@ public class PortletDefinitionImporterExporter
         for (ExternalPortletPreference pref : portletRep.getPortletPreferences()) {
             final List<String> valueList = pref.getValues();
             final String[] values = valueList.toArray(new String[valueList.size()]);
-            
+
             final Boolean readOnly = pref.isReadOnly();
             preferenceList.add(
                     new PortletPreferenceImpl(
-                            pref.getName(), 
-                            readOnly != null ? readOnly : false, 
+                            pref.getName(),
+                            readOnly != null ? readOnly : false,
                             values));
         }
         def.setPortletPreferences(preferenceList);
-        
+
         savePortletDefinition(def, systemUser, categories, permissions);
     }
 
@@ -392,7 +392,7 @@ public class PortletDefinitionImporterExporter
     	if(null == def) {
     		return null;
     	}
-    	
+
 		ExternalPortletDefinition result = convert(def);
 		this.portletDefinitionDao.deletePortletDefinition(def);
 		return result;
@@ -496,7 +496,7 @@ public class PortletDefinitionImporterExporter
         }
 
         if (logger.isDebugEnabled()) {
-            logger.debug( "Portlet " + defId + " has been " + 
+            logger.debug( "Portlet " + defId + " has been " +
                     (newChannel ? "published" : "modified") + ".");
         }
 
@@ -536,22 +536,22 @@ public class PortletDefinitionImporterExporter
         if (def == null) {
             return null;
         }
-        
+
         return convert(def);
     }
-    
-    
-    
+
+
+
     @Override
     public String getFileName(ExternalPortletDefinition data) {
         return SafeFilenameUtils.makeSafeFilename(data.getFname());
     }
-    
+
     protected BigInteger convertToBigInteger(Integer i) {
         if (i == null) {
             return null;
         }
-        
+
         return BigInteger.valueOf(i);
     }
 
@@ -564,7 +564,7 @@ public class PortletDefinitionImporterExporter
 
     protected ExternalPortletDefinition convert(IPortletDefinition def) {
         ExternalPortletDefinition rep = new ExternalPortletDefinition();
-         
+
         rep.setFname(def.getFName());
         rep.setDesc(def.getDescription());
         rep.setName(def.getName());
@@ -588,7 +588,11 @@ public class PortletDefinitionImporterExporter
                 published.setValue(getCalendar(def.getPublishDate()));
                 lifecycle.setPublished(published);
             }
-            if (def.getLifecycleState().isEqualToOrAfter(PortletLifecycleState.EXPIRED)) {
+            /* An EXPIRED record in the lifecycle history requires two things:
+             *   - Current lifecycle state >= EXPIRED
+             *   - An expiration date
+             */
+            if (def.getLifecycleState().isEqualToOrAfter(PortletLifecycleState.EXPIRED) && def.getExpirationDate() != null) {
                 LifecycleEntry expired = new LifecycleEntry();
                 expired.setUser(getUsernameForUserId(def.getExpirerId()));
                 expired.setValue(getCalendar(def.getExpirationDate()));
@@ -597,8 +601,8 @@ public class PortletDefinitionImporterExporter
             // Maintenance mode is handled via a portlet publishing parameter and not a lifecycle
             rep.setLifecycle(lifecycle);
         }
-         
-         
+
+
         final org.jasig.portal.xml.PortletDescriptor portletDescriptor = new org.jasig.portal.xml.PortletDescriptor();
         final IPortletDescriptorKey portletDescriptorKey = def.getPortletDescriptorKey();
         if (portletDescriptorKey.isFrameworkPortlet()) {
@@ -609,8 +613,8 @@ public class PortletDefinitionImporterExporter
         }
         portletDescriptor.setPortletName(portletDescriptorKey.getPortletName());
         rep.setPortletDescriptor(portletDescriptor);
-         
-         
+
+
         final List<ExternalPortletParameter> parameterList = rep.getParameters();
         for (IPortletDefinitionParameter param : def.getParameters()) {
             final ExternalPortletParameter externalPortletParameter = new ExternalPortletParameter();
@@ -621,21 +625,21 @@ public class PortletDefinitionImporterExporter
         }
         Collections.sort(parameterList, ExternalPortletParameterNameComparator.INSTANCE);
 
-         
+
         final List<ExternalPortletPreference> portletPreferenceList = rep.getPortletPreferences();
         for (IPortletPreference pref : def.getPortletPreferences()) {
             final ExternalPortletPreference externalPortletPreference = new ExternalPortletPreference();
             externalPortletPreference.setName(pref.getName());
             externalPortletPreference.setReadOnly(pref.isReadOnly());
-             
+
             final List<String> value = externalPortletPreference.getValues();
             value.addAll(Arrays.asList(pref.getValues()));
             //no sorting of preference values, order is specified by the portlet
-             
+
             portletPreferenceList.add(externalPortletPreference);
         }
         Collections.sort(portletPreferenceList, ExternalPortletPreferenceNameComparator.INSTANCE);
-         
+
         final List<String> categoryList = rep.getCategories();
         final IGroupMember gm = GroupService.getGroupMember(def.getPortletDefinitionId().getStringId(), IPortletDefinition.class);
         @SuppressWarnings("unchecked")
