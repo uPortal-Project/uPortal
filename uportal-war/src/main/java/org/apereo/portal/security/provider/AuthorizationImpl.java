@@ -1,20 +1,16 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.security.provider;
 
@@ -26,12 +22,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.Vector;
-
 import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.Element;
 import net.sf.ehcache.constructs.blocking.CacheEntryFactory;
 import net.sf.ehcache.constructs.blocking.SelfPopulatingCache;
-
 import org.apereo.portal.AuthorizationException;
 import org.apereo.portal.concurrency.CachingException;
 import org.apereo.portal.concurrency.caching.RequestCache;
@@ -83,183 +77,193 @@ import org.springframework.stereotype.Service;
 @Service("authorizationService")
 public class AuthorizationImpl implements IAuthorizationService {
 
-    /** Instance of log in order to log events. */
-    protected final Logger log = LoggerFactory.getLogger(getClass());
+  /** Instance of log in order to log events. */
+  protected final Logger log = LoggerFactory.getLogger(getClass());
 
-    /** Constant representing the separator used in the principal key. */
-    private static final String PRINCIPAL_SEPARATOR = ".";
+  /** Constant representing the separator used in the principal key. */
+  private static final String PRINCIPAL_SEPARATOR = ".";
 
-    /** Instance of the Permission Store for storing permission information. */
-    private IPermissionStore permissionStore;
+  /** Instance of the Permission Store for storing permission information. */
+  private IPermissionStore permissionStore;
 
-    /** The default Permission Policy this Authorization implementation will use. */
-    private IPermissionPolicy defaultPermissionPolicy;
+  /** The default Permission Policy this Authorization implementation will use. */
+  private IPermissionPolicy defaultPermissionPolicy;
 
-    /** Spring-configured portlet definition registry instance */
-    private IPortletDefinitionRegistry portletDefinitionRegistry;
+  /** Spring-configured portlet definition registry instance */
+  private IPortletDefinitionRegistry portletDefinitionRegistry;
 
-    /** Indicates permission activity to permissionTargetProvider. */
-    private IPermissionOwnerDao permissionOwner;
+  /** Indicates permission activity to permissionTargetProvider. */
+  private IPermissionOwnerDao permissionOwner;
 
-    /** The cache to hold the list of principals. */
-    private Ehcache principalCache;
+  /** The cache to hold the list of principals. */
+  private Ehcache principalCache;
 
-    /** The cache to hold the list of principals. */
-    private Ehcache entityParentsCache;
+  /** The cache to hold the list of principals. */
+  private Ehcache entityParentsCache;
 
-    /** The cache to hold permission resolution. */
-    private Ehcache doesPrincipalHavePermissionCache;
+  /** The cache to hold permission resolution. */
+  private Ehcache doesPrincipalHavePermissionCache;
 
-    /** The class representing the permission set type. */
-    private static final Class<IPermissionSet> PERMISSION_SET_TYPE = IPermissionSet.class;
+  /** The class representing the permission set type. */
+  private static final Class<IPermissionSet> PERMISSION_SET_TYPE = IPermissionSet.class;
 
-    /** variable to determine if we should cache permissions or not. */
-    private boolean cachePermissions = true;
+  /** variable to determine if we should cache permissions or not. */
+  private boolean cachePermissions = true;
 
-    private Set<String> nonEntityPermissionTargetProviders = new HashSet<>();
+  private Set<String> nonEntityPermissionTargetProviders = new HashSet<>();
 
-    @Autowired
-    private IPermissionOwnerDao permissionOwnerDao;
+  @Autowired private IPermissionOwnerDao permissionOwnerDao;
 
-    @Autowired
-    private IPermissionTargetProviderRegistry targetProviderRegistry;
+  @Autowired private IPermissionTargetProviderRegistry targetProviderRegistry;
 
-    @Autowired
-    public void setDefaultPermissionPolicy(IPermissionPolicy newDefaultPermissionPolicy) {
-        this.defaultPermissionPolicy = newDefaultPermissionPolicy;
-    }
-    @Autowired
-    public void setPermissionStore(IPermissionStore permissionStore) {
-        this.permissionStore = permissionStore;
-    }
-    @Value("${org.apereo.portal.security.IAuthorizationService.cachePermissions}")
-    public void setCachePermissions(boolean cachePermissions) {
-        this.cachePermissions = cachePermissions;
-    }
-    @Autowired
-    public void setPrincipalCache(@Qualifier(CacheFactory.PRINCIPAL_CACHE)  Ehcache principalCache) {
-        this.principalCache = new SelfPopulatingCache(principalCache, new CacheEntryFactory() {
-            @Override
-            public Object createEntry(Object key) throws Exception {
-                final Tuple<String, Class> principalKey = (Tuple<String, Class>)key;
+  @Autowired
+  public void setDefaultPermissionPolicy(IPermissionPolicy newDefaultPermissionPolicy) {
+    this.defaultPermissionPolicy = newDefaultPermissionPolicy;
+  }
+
+  @Autowired
+  public void setPermissionStore(IPermissionStore permissionStore) {
+    this.permissionStore = permissionStore;
+  }
+
+  @Value("${org.apereo.portal.security.IAuthorizationService.cachePermissions}")
+  public void setCachePermissions(boolean cachePermissions) {
+    this.cachePermissions = cachePermissions;
+  }
+
+  @Autowired
+  public void setPrincipalCache(@Qualifier(CacheFactory.PRINCIPAL_CACHE) Ehcache principalCache) {
+    this.principalCache =
+        new SelfPopulatingCache(
+            principalCache,
+            new CacheEntryFactory() {
+              @Override
+              public Object createEntry(Object key) throws Exception {
+                final Tuple<String, Class> principalKey = (Tuple<String, Class>) key;
                 return primNewPrincipal(principalKey.first, principalKey.second);
-            }
-        });
-    }
-    @Autowired
-    public void setEntityParentsCache(@Qualifier(CacheFactory.ENTITY_PARENTS_CACHE)  Ehcache entityParentsCache) {
-        this.entityParentsCache = entityParentsCache;
-    }
-    @Autowired
-    public void setDoesPrincipalHavePermissionCache(@Qualifier("org.apereo.portal.security.provider.AuthorizationImpl.PRINCIPAL_HAS_PERMISSION") Ehcache doesPrincipalHavePermissionCache) {
-        this.doesPrincipalHavePermissionCache = doesPrincipalHavePermissionCache;
-    }
-    @Autowired
-    public void setPortletDefinitionRegistry(IPortletDefinitionRegistry portletDefinitionRegistry) {
-        this.portletDefinitionRegistry = portletDefinitionRegistry;
-    }
+              }
+            });
+  }
 
-    @Autowired
-    public void setPermissionOwner(IPermissionOwnerDao permissionOwner) {
-        this.permissionOwner = permissionOwner;
+  @Autowired
+  public void setEntityParentsCache(
+      @Qualifier(CacheFactory.ENTITY_PARENTS_CACHE) Ehcache entityParentsCache) {
+    this.entityParentsCache = entityParentsCache;
+  }
+
+  @Autowired
+  public void setDoesPrincipalHavePermissionCache(
+      @Qualifier("org.apereo.portal.security.provider.AuthorizationImpl.PRINCIPAL_HAS_PERMISSION")
+          Ehcache doesPrincipalHavePermissionCache) {
+    this.doesPrincipalHavePermissionCache = doesPrincipalHavePermissionCache;
+  }
+
+  @Autowired
+  public void setPortletDefinitionRegistry(IPortletDefinitionRegistry portletDefinitionRegistry) {
+    this.portletDefinitionRegistry = portletDefinitionRegistry;
+  }
+
+  @Autowired
+  public void setPermissionOwner(IPermissionOwnerDao permissionOwner) {
+    this.permissionOwner = permissionOwner;
+  }
+
+  public void setNonEntityPermissionTargetProviders(
+      Set<String> nonEntityPermissionTargetProviders) {
+    this.nonEntityPermissionTargetProviders = nonEntityPermissionTargetProviders;
+  }
+
+  /**
+   * Adds <code>IPermissions</code> to the back end store.
+   *
+   * @param permissions IPermission[]
+   * @exception AuthorizationException
+   */
+  public void addPermissions(IPermission[] permissions) throws AuthorizationException {
+    if (permissions.length > 0) {
+      getPermissionStore().add(permissions);
+      if (this.cachePermissions) {
+        removeFromPermissionsCache(permissions);
+      }
     }
+  }
 
-    public void setNonEntityPermissionTargetProviders(Set<String> nonEntityPermissionTargetProviders) {
-        this.nonEntityPermissionTargetProviders = nonEntityPermissionTargetProviders;
+  /** Adds the <code>IPermissionSet</code> to the entity cache. */
+  protected void cacheAdd(IPermissionSet ps) throws AuthorizationException {
+    try {
+      EntityCachingService.getEntityCachingService().add(ps);
+    } catch (CachingException ce) {
+      throw new AuthorizationException("Problem adding permissions for " + ps + " to cache", ce);
     }
+  }
 
-    /**
- * Adds <code>IPermissions</code> to the back end store.
- * @param permissions IPermission[]
- * @exception AuthorizationException
- */
-public void addPermissions(IPermission[] permissions)
-throws AuthorizationException
-{
-    if (permissions.length > 0)
-    {
-        getPermissionStore().add(permissions);
-        if ( this.cachePermissions )
-            { removeFromPermissionsCache(permissions); }
+  /**
+   * Retrieves the <code>IPermissionSet</code> for the <code>IPermissionSet</code> from the entity
+   * cache.
+   */
+  protected IPermissionSet cacheGet(IAuthorizationPrincipal principal)
+      throws AuthorizationException {
+    try {
+      return (IPermissionSet)
+          EntityCachingService.getEntityCachingService()
+              .get(this.PERMISSION_SET_TYPE, principal.getPrincipalString());
+    } catch (CachingException ce) {
+      throw new AuthorizationException(
+          "Problem getting permissions for " + principal + " from cache", ce);
     }
-}
+  }
 
-/**
-* Adds the <code>IPermissionSet</code> to the entity cache.
-*/
-protected void cacheAdd(IPermissionSet ps) throws AuthorizationException
-{
-    try
-        { EntityCachingService.getEntityCachingService().add(ps); }
-    catch (CachingException ce)
-        { throw new AuthorizationException("Problem adding permissions for " + ps + " to cache", ce); }
-}
-
-/**
-* Retrieves the <code>IPermissionSet</code> for the <code>IPermissionSet</code>
-* from the entity cache.
-*/
-protected IPermissionSet cacheGet(IAuthorizationPrincipal principal)
-throws AuthorizationException
-{
-    try
-    {
-        return (IPermissionSet)
-          EntityCachingService.getEntityCachingService().get(this.PERMISSION_SET_TYPE, principal.getPrincipalString());
+  /** Removes the <code>IPermissionSet</code> for this principal from the entity cache. */
+  protected void cacheRemove(IAuthorizationPrincipal ap) throws AuthorizationException {
+    try {
+      EntityCachingService.getEntityCachingService()
+          .remove(this.PERMISSION_SET_TYPE, ap.getPrincipalString());
+    } catch (CachingException ce) {
+      throw new AuthorizationException(
+          "Problem removing permissions for " + ap + " from cache", ce);
     }
-    catch (CachingException ce)
-        { throw new AuthorizationException("Problem getting permissions for " + principal + " from cache", ce); }
-}
+  }
 
-/**
-* Removes the <code>IPermissionSet</code> for this principal from the
-* entity cache.
-*/
-protected void cacheRemove(IAuthorizationPrincipal ap) throws AuthorizationException
-{
-    try
-        { EntityCachingService.getEntityCachingService().remove(this.PERMISSION_SET_TYPE, ap.getPrincipalString()); }
-    catch (CachingException ce)
-        { throw new AuthorizationException("Problem removing permissions for " + ap + " from cache", ce); }
-}
-
-@Override
-@RequestCache
-public boolean canPrincipalConfigure(IAuthorizationPrincipal principal, String portletDefinitionId) throws AuthorizationException {
+  @Override
+  @RequestCache
+  public boolean canPrincipalConfigure(
+      IAuthorizationPrincipal principal, String portletDefinitionId) throws AuthorizationException {
     String owner = IPermission.PORTAL_PUBLISH;
     String target = IPermission.PORTLET_PREFIX + portletDefinitionId;
 
     // retrieve the indicated channel from the channel registry store and
     // determine its current lifecycle state
-    IPortletDefinition portlet = this.portletDefinitionRegistry.getPortletDefinition(portletDefinitionId);
-    if (portlet == null){
-        throw new AuthorizationException("Unable to locate portlet " + portletDefinitionId);
+    IPortletDefinition portlet =
+        this.portletDefinitionRegistry.getPortletDefinition(portletDefinitionId);
+    if (portlet == null) {
+      throw new AuthorizationException("Unable to locate portlet " + portletDefinitionId);
     }
 
     final String activity = IPermission.PORTLET_MODE_CONFIG;
     return doesPrincipalHavePermission(principal, owner, activity, target);
-}
-/**
- * Answers if the principal has permission to MANAGE this Channel.
- * @return boolean
- * @param principal IAuthorizationPrincipal
- * @param portletDefinitionId
- * @exception AuthorizationException indicates authorization information could not be retrieved.
- */
-@RequestCache
-public boolean canPrincipalManage(IAuthorizationPrincipal principal, String portletDefinitionId)
-throws AuthorizationException
-{
+  }
+  /**
+   * Answers if the principal has permission to MANAGE this Channel.
+   *
+   * @return boolean
+   * @param principal IAuthorizationPrincipal
+   * @param portletDefinitionId
+   * @exception AuthorizationException indicates authorization information could not be retrieved.
+   */
+  @RequestCache
+  public boolean canPrincipalManage(IAuthorizationPrincipal principal, String portletDefinitionId)
+      throws AuthorizationException {
     String owner = IPermission.PORTAL_PUBLISH;
     String target = IPermission.PORTLET_PREFIX + portletDefinitionId;
 
     // retrieve the indicated channel from the channel registry store and
     // determine its current lifecycle state
-    IPortletDefinition portlet = this.portletDefinitionRegistry.getPortletDefinition(portletDefinitionId);
-    if (portlet == null){
-    	return doesPrincipalHavePermission(principal, owner,
-				IPermission.PORTLET_MANAGER_APPROVED_ACTIVITY, target);
-//    	throw new AuthorizationException("Unable to locate channel " + channelPublishId);
+    IPortletDefinition portlet =
+        this.portletDefinitionRegistry.getPortletDefinition(portletDefinitionId);
+    if (portlet == null) {
+      return doesPrincipalHavePermission(
+          principal, owner, IPermission.PORTLET_MANAGER_APPROVED_ACTIVITY, target);
+      //    	throw new AuthorizationException("Unable to locate channel " + channelPublishId);
     }
     PortletLifecycleState state = portlet.getLifecycleState();
     int order = state.getOrder();
@@ -276,155 +280,156 @@ throws AuthorizationException
 
     String activity = IPermission.PORTLET_MANAGER_MAINTENANCE_ACTIVITY;
     if (order <= PortletLifecycleState.MAINTENANCE.getOrder()
-            && doesPrincipalHavePermission(principal, owner, activity, target)) {
-        return true;
+        && doesPrincipalHavePermission(principal, owner, activity, target)) {
+      return true;
     }
 
     activity = IPermission.PORTLET_MANAGER_EXPIRED_ACTIVITY;
-	if ((order <= PortletLifecycleState.EXPIRED.getOrder()
-			|| portlet.getExpirationDate() != null)
-			&& doesPrincipalHavePermission(principal, owner, activity, target)) {
-		return true;
+    if ((order <= PortletLifecycleState.EXPIRED.getOrder() || portlet.getExpirationDate() != null)
+        && doesPrincipalHavePermission(principal, owner, activity, target)) {
+      return true;
     }
 
-	activity = IPermission.PORTLET_MANAGER_ACTIVITY;
-	if ((order <= PortletLifecycleState.PUBLISHED.getOrder()
-    		|| portlet.getPublishDate() != null)
-			&& doesPrincipalHavePermission(principal, owner, activity, target)) {
-    	return true;
+    activity = IPermission.PORTLET_MANAGER_ACTIVITY;
+    if ((order <= PortletLifecycleState.PUBLISHED.getOrder() || portlet.getPublishDate() != null)
+        && doesPrincipalHavePermission(principal, owner, activity, target)) {
+      return true;
     }
 
-	activity = IPermission.PORTLET_MANAGER_APPROVED_ACTIVITY;
-	log.debug("order: " + order + ", approved order: " + PortletLifecycleState.APPROVED.getOrder());
-	if (order <= PortletLifecycleState.APPROVED.getOrder()
-			&& doesPrincipalHavePermission(principal, owner, activity, target)) {
-    	return true;
+    activity = IPermission.PORTLET_MANAGER_APPROVED_ACTIVITY;
+    log.debug("order: " + order + ", approved order: " + PortletLifecycleState.APPROVED.getOrder());
+    if (order <= PortletLifecycleState.APPROVED.getOrder()
+        && doesPrincipalHavePermission(principal, owner, activity, target)) {
+      return true;
     }
 
-	activity = IPermission.PORTLET_MANAGER_CREATED_ACTIVITY;
-	if (order <= PortletLifecycleState.CREATED.getOrder()
-			&& doesPrincipalHavePermission(principal, owner, activity, target)) {
-    	return true;
+    activity = IPermission.PORTLET_MANAGER_CREATED_ACTIVITY;
+    if (order <= PortletLifecycleState.CREATED.getOrder()
+        && doesPrincipalHavePermission(principal, owner, activity, target)) {
+      return true;
     }
 
-	// if no permissions were found, return false
-	return false;
-}
+    // if no permissions were found, return false
+    return false;
+  }
 
-/**
- * This checks if the framework has granted principal a right to publish.  DO WE WANT SOMETHING THIS COARSE (de)?
- * @param principal IAuthorizationPrincipal
- * @return boolean
- */
-@RequestCache
-public boolean canPrincipalManage(IAuthorizationPrincipal principal, PortletLifecycleState state, String categoryId) throws AuthorizationException
-{
-//    return doesPrincipalHavePermission
-//      (principal, IPermission.PORTAL_FRAMEWORK, IPermission.CHANNEL_PUBLISHER_ACTIVITY, null);
+  /**
+   * This checks if the framework has granted principal a right to publish. DO WE WANT SOMETHING
+   * THIS COARSE (de)?
+   *
+   * @param principal IAuthorizationPrincipal
+   * @return boolean
+   */
+  @RequestCache
+  public boolean canPrincipalManage(
+      IAuthorizationPrincipal principal, PortletLifecycleState state, String categoryId)
+      throws AuthorizationException {
+    //    return doesPrincipalHavePermission
+    //      (principal, IPermission.PORTAL_FRAMEWORK, IPermission.CHANNEL_PUBLISHER_ACTIVITY, null);
     String owner = IPermission.PORTAL_PUBLISH;
 
     // retrieve the indicated channel from the channel registry store and
     // determine its current lifecycle state
-    PortletCategory category = PortletCategoryRegistryLocator.getPortletCategoryRegistry().getPortletCategory(categoryId);
-    if (category == null){
-//    	return doesPrincipalHavePermission(principal, owner,
-//				IPermission.CHANNEL_MANAGER_APPROVED_ACTIVITY, target);
-    	throw new AuthorizationException("Unable to locate category " + categoryId);
+    PortletCategory category =
+        PortletCategoryRegistryLocator.getPortletCategoryRegistry().getPortletCategory(categoryId);
+    if (category == null) {
+      //    	return doesPrincipalHavePermission(principal, owner,
+      //				IPermission.CHANNEL_MANAGER_APPROVED_ACTIVITY, target);
+      throw new AuthorizationException("Unable to locate category " + categoryId);
     }
     int order = state.getOrder();
 
     String activity = IPermission.PORTLET_MANAGER_MAINTENANCE_ACTIVITY;
     if (order <= PortletLifecycleState.MAINTENANCE.getOrder()
-            && doesPrincipalHavePermission(principal, owner, activity, categoryId)) {
-        return true;
+        && doesPrincipalHavePermission(principal, owner, activity, categoryId)) {
+      return true;
     }
 
     activity = IPermission.PORTLET_MANAGER_EXPIRED_ACTIVITY;
     if (order <= PortletLifecycleState.EXPIRED.getOrder()
-			&& doesPrincipalHavePermission(principal, owner, activity, categoryId)) {
-		return true;
+        && doesPrincipalHavePermission(principal, owner, activity, categoryId)) {
+      return true;
     }
 
     activity = IPermission.PORTLET_MANAGER_ACTIVITY;
-	if (order <= PortletLifecycleState.PUBLISHED.getOrder()
-			&& doesPrincipalHavePermission(principal, owner, activity, categoryId)) {
-    	return true;
+    if (order <= PortletLifecycleState.PUBLISHED.getOrder()
+        && doesPrincipalHavePermission(principal, owner, activity, categoryId)) {
+      return true;
     }
 
     activity = IPermission.PORTLET_MANAGER_APPROVED_ACTIVITY;
-	if (order <= PortletLifecycleState.APPROVED.getOrder()
-			&& doesPrincipalHavePermission(principal, owner, activity, categoryId)) {
-    	return true;
+    if (order <= PortletLifecycleState.APPROVED.getOrder()
+        && doesPrincipalHavePermission(principal, owner, activity, categoryId)) {
+      return true;
     }
 
     activity = IPermission.PORTLET_MANAGER_CREATED_ACTIVITY;
-	if (order <= PortletLifecycleState.CREATED.getOrder()
-			&& doesPrincipalHavePermission(principal, owner, activity, categoryId)) {
-    	return true;
+    if (order <= PortletLifecycleState.CREATED.getOrder()
+        && doesPrincipalHavePermission(principal, owner, activity, categoryId)) {
+      return true;
     }
 
-	return false;
+    return false;
+  }
 
-}
-
-/**
- * Answers if the principal has permission to RENDER this Channel.  This
- * implementation currently delegates to the SUBSCRIBE permission.
- *
- * @return boolean
- * @param principal IAuthorizationPrincipal
- * @param portletDefinitionId
- * @exception AuthorizationException indicates authorization information could not be retrieved.
- */
-@RequestCache
-public boolean canPrincipalRender(IAuthorizationPrincipal principal, String portletDefinitionId)
-throws AuthorizationException
-{
-	// This code simply assumes that anyone who can subscribe to a channel
-	// should be able to render it.  In the future, we'd like to update this
-	// implementation to use a separate permission for rendering.
+  /**
+   * Answers if the principal has permission to RENDER this Channel. This implementation currently
+   * delegates to the SUBSCRIBE permission.
+   *
+   * @return boolean
+   * @param principal IAuthorizationPrincipal
+   * @param portletDefinitionId
+   * @exception AuthorizationException indicates authorization information could not be retrieved.
+   */
+  @RequestCache
+  public boolean canPrincipalRender(IAuthorizationPrincipal principal, String portletDefinitionId)
+      throws AuthorizationException {
+    // This code simply assumes that anyone who can subscribe to a channel
+    // should be able to render it.  In the future, we'd like to update this
+    // implementation to use a separate permission for rendering.
     return canPrincipalSubscribe(principal, portletDefinitionId);
-}
+  }
 
-
-@Override
-@RequestCache
-public boolean canPrincipalBrowse(IAuthorizationPrincipal principal, String portletDefinitionId) {
+  @Override
+  @RequestCache
+  public boolean canPrincipalBrowse(IAuthorizationPrincipal principal, String portletDefinitionId) {
 
     // Retrieve the indicated portlet from the channel registry store.
-    IPortletDefinition portlet = this.portletDefinitionRegistry.getPortletDefinition(portletDefinitionId);
-    if (portlet == null){
-        return false;
+    IPortletDefinition portlet =
+        this.portletDefinitionRegistry.getPortletDefinition(portletDefinitionId);
+    if (portlet == null) {
+      return false;
     }
     return canPrincipalBrowse(principal, portlet);
-}
+  }
 
-@Override
-@RequestCache
-public boolean canPrincipalBrowse(IAuthorizationPrincipal principal, IPortletDefinition portlet) {
+  @Override
+  @RequestCache
+  public boolean canPrincipalBrowse(IAuthorizationPrincipal principal, IPortletDefinition portlet) {
     String target = PermissionHelper.permissionTargetIdForPortletDefinition(portlet);
-    return doesPrincipalHavePermission(principal, IPermission.PORTAL_SUBSCRIBE, IPermission.PORTLET_BROWSE_ACTIVITY,
-            target);
-}
+    return doesPrincipalHavePermission(
+        principal, IPermission.PORTAL_SUBSCRIBE, IPermission.PORTLET_BROWSE_ACTIVITY, target);
+  }
 
-/**
- * Answers if the principal has permission to SUBSCRIBE to this Channel.
- * @return boolean
- * @param principal IAuthorizationPrincipal
- * @param portletDefinitionId
- * @exception AuthorizationException indicates authorization information could not be retrieved.
- */
-@RequestCache
-public boolean canPrincipalSubscribe(IAuthorizationPrincipal principal, String portletDefinitionId)
-{
+  /**
+   * Answers if the principal has permission to SUBSCRIBE to this Channel.
+   *
+   * @return boolean
+   * @param principal IAuthorizationPrincipal
+   * @param portletDefinitionId
+   * @exception AuthorizationException indicates authorization information could not be retrieved.
+   */
+  @RequestCache
+  public boolean canPrincipalSubscribe(
+      IAuthorizationPrincipal principal, String portletDefinitionId) {
     String owner = IPermission.PORTAL_SUBSCRIBE;
-
 
     // retrieve the indicated channel from the channel registry store and
     // determine its current lifecycle state
-    IPortletDefinition portlet = this.portletDefinitionRegistry.getPortletDefinition(portletDefinitionId);
-    if (portlet == null){
-    	return false;
+    IPortletDefinition portlet =
+        this.portletDefinitionRegistry.getPortletDefinition(portletDefinitionId);
+    if (portlet == null) {
+      return false;
     }
 
     String target = PermissionHelper.permissionTargetIdForPortletDefinition(portlet);
@@ -437,522 +442,494 @@ public boolean canPrincipalSubscribe(IAuthorizationPrincipal principal, String p
      */
     String permission;
     if (state.equals(PortletLifecycleState.PUBLISHED)
-            || state.equals(PortletLifecycleState.MAINTENANCE)) {
-        // NB:  There is no separate SUBSCRIBE permission for MAINTENANCE
-        // mode;  everyone simply sees the 'out of service' message
-        permission = IPermission.PORTLET_SUBSCRIBER_ACTIVITY;
+        || state.equals(PortletLifecycleState.MAINTENANCE)) {
+      // NB:  There is no separate SUBSCRIBE permission for MAINTENANCE
+      // mode;  everyone simply sees the 'out of service' message
+      permission = IPermission.PORTLET_SUBSCRIBER_ACTIVITY;
     } else if (state.equals(PortletLifecycleState.APPROVED)) {
-    	permission = IPermission.PORTLET_SUBSCRIBER_APPROVED_ACTIVITY;
+      permission = IPermission.PORTLET_SUBSCRIBER_APPROVED_ACTIVITY;
     } else if (state.equals(PortletLifecycleState.CREATED)) {
-    	permission = IPermission.PORTLET_SUBSCRIBER_CREATED_ACTIVITY;
+      permission = IPermission.PORTLET_SUBSCRIBER_CREATED_ACTIVITY;
     } else if (state.equals(PortletLifecycleState.EXPIRED)) {
-    	permission = IPermission.PORTLET_SUBSCRIBER_EXPIRED_ACTIVITY;
+      permission = IPermission.PORTLET_SUBSCRIBER_EXPIRED_ACTIVITY;
     } else {
-			throw new AuthorizationException(
-					"Unrecognized lifecycle state for channel "
-							+ portletDefinitionId);
+      throw new AuthorizationException(
+          "Unrecognized lifecycle state for channel " + portletDefinitionId);
     }
 
     // Test the appropriate permission.
     return doesPrincipalHavePermission(principal, owner, permission, target);
-}
+  }
 
-/**
- * Answers if the owner has given the principal (or any of its parents) permission
- * to perform the activity on the target.  Params <code>owner</code> and
- * <code>activity</code> must be non-null.  If <code>target</code> is null, then
- * target is not checked.
- *
- * @return boolean
- * @param principal IAuthorizationPrincipal
- * @param owner java.lang.String
- * @param activity java.lang.String
- * @param target java.lang.String
- * @exception AuthorizationException indicates authorization information could not
- * be retrieved.
- */
-@RequestCache
-public boolean doesPrincipalHavePermission(
-    IAuthorizationPrincipal principal,
-    String owner,
-    String activity,
-    String target)
-throws AuthorizationException
-{
-     return doesPrincipalHavePermission(principal, owner, activity, target, getDefaultPermissionPolicy());
-}
+  /**
+   * Answers if the owner has given the principal (or any of its parents) permission to perform the
+   * activity on the target. Params <code>owner</code> and <code>activity</code> must be non-null.
+   * If <code>target</code> is null, then target is not checked.
+   *
+   * @return boolean
+   * @param principal IAuthorizationPrincipal
+   * @param owner java.lang.String
+   * @param activity java.lang.String
+   * @param target java.lang.String
+   * @exception AuthorizationException indicates authorization information could not be retrieved.
+   */
+  @RequestCache
+  public boolean doesPrincipalHavePermission(
+      IAuthorizationPrincipal principal, String owner, String activity, String target)
+      throws AuthorizationException {
+    return doesPrincipalHavePermission(
+        principal, owner, activity, target, getDefaultPermissionPolicy());
+  }
 
-/**
- * Answers if the owner has given the principal permission to perform the activity on
- * the target, as evaluated by the policy.  Params <code>policy</code>, <code>owner</code>
- * and <code>activity</code> must be non-null.
- *
- * @return boolean
- * @param principal IAuthorizationPrincipal
- * @param owner java.lang.String
- * @param activity java.lang.String
- * @param target java.lang.String
- * @exception AuthorizationException indicates authorization information could not
- * be retrieved.
- */
-    @Override
-    @RequestCache
-    public boolean doesPrincipalHavePermission(IAuthorizationPrincipal principal, String owner, String activity,
-            String target, IPermissionPolicy policy) throws AuthorizationException {
+  /**
+   * Answers if the owner has given the principal permission to perform the activity on the target,
+   * as evaluated by the policy. Params <code>policy</code>, <code>owner</code> and <code>activity
+   * </code> must be non-null.
+   *
+   * @return boolean
+   * @param principal IAuthorizationPrincipal
+   * @param owner java.lang.String
+   * @param activity java.lang.String
+   * @param target java.lang.String
+   * @exception AuthorizationException indicates authorization information could not be retrieved.
+   */
+  @Override
+  @RequestCache
+  public boolean doesPrincipalHavePermission(
+      IAuthorizationPrincipal principal,
+      String owner,
+      String activity,
+      String target,
+      IPermissionPolicy policy)
+      throws AuthorizationException {
 
-        final CacheKeyBuilder<Serializable, Serializable> cacheKeyBuilder = CacheKey.builder(AuthorizationImpl.class.getName());
-        final String username = principal.getKey();
-        if (IPerson.class.equals(principal.getType())) {
-            cacheKeyBuilder.addTag(UsernameTaggedCacheEntryPurger.createCacheEntryTag(username));
-        }
-        cacheKeyBuilder.addAll(policy.getClass(), username,
-                principal.getType(), owner, activity, target);
+    final CacheKeyBuilder<Serializable, Serializable> cacheKeyBuilder =
+        CacheKey.builder(AuthorizationImpl.class.getName());
+    final String username = principal.getKey();
+    if (IPerson.class.equals(principal.getType())) {
+      cacheKeyBuilder.addTag(UsernameTaggedCacheEntryPurger.createCacheEntryTag(username));
+    }
+    cacheKeyBuilder.addAll(
+        policy.getClass(), username, principal.getType(), owner, activity, target);
 
-        final CacheKey key = cacheKeyBuilder.build();
+    final CacheKey key = cacheKeyBuilder.build();
 
-        final Element element = this.doesPrincipalHavePermissionCache.get(key);
-        if (element != null) {
-            return (Boolean) element.getValue();
-        }
-
-        /*
-         * Convert to (strongly-typed) Java objects based on interfaces in
-         * o.j.p.permission before we make the actual check with IPermissionPolicy;
-         * parameters that communicate something of the nature of the things they
-         * represent helps us make the check(s) more intelligently.  This objects
-         * were retro-fitted to IPermissionPolicy in uP 4.3;  perhaps we should do
-         * the same to IAuthorizationService itself?
-         */
-        final IPermissionOwner ipOwner = permissionOwnerDao.getPermissionOwner(owner);
-        final IPermissionActivity ipActivity = permissionOwnerDao.getPermissionActivity(owner, activity);
-        if (ipActivity == null) {
-            // Means needed data is missing;  much clearer than NPE
-            String msg = "The following activity is not defined for owner '" + owner + "':  " + activity;
-            throw new RuntimeException(msg);
-        }
-        final IPermissionTargetProvider targetProvider = targetProviderRegistry.getTargetProvider(ipActivity.getTargetProviderKey());
-        final IPermissionTarget ipTarget = targetProvider.getTarget(target);
-
-        final boolean doesPrincipalHavePermission = policy.doesPrincipalHavePermission(this,
-                principal,
-                ipOwner,
-                ipActivity,
-                ipTarget);
-
-        this.doesPrincipalHavePermissionCache.put(new Element(key, doesPrincipalHavePermission));
-
-        return doesPrincipalHavePermission;
+    final Element element = this.doesPrincipalHavePermissionCache.get(key);
+    if (element != null) {
+      return (Boolean) element.getValue();
     }
 
-/**
- * Returns the <code>IPermissions</code> owner has granted this <code>Principal</code> for
- * the specified activity and target.  Null parameters will be ignored, that is, all
- * <code>IPermissions</code> matching the non-null parameters are retrieved.  So,
- * <code>getPermissions(principal,null, null, null)</code> should retrieve all <code>IPermissions</code>
- * for a <code>Principal</code>.  Note that this includes <code>IPermissions</code> inherited
- * from groups the <code>Principal</code> belongs to.
- *
- * @return org.apereo.portal.security.IPermission[]
- * @param principal IAuthorizationPrincipal
- * @param owner java.lang.String
- * @param activity java.lang.String
- * @param target java.lang.String
- * @exception AuthorizationException indicates authorization information could not
- * be retrieved.
- */
-public IPermission[] getAllPermissionsForPrincipal
-    (IAuthorizationPrincipal principal,
-    String owner,
-    String activity,
-    String target)
-throws AuthorizationException
-{
+    /*
+     * Convert to (strongly-typed) Java objects based on interfaces in
+     * o.j.p.permission before we make the actual check with IPermissionPolicy;
+     * parameters that communicate something of the nature of the things they
+     * represent helps us make the check(s) more intelligently.  This objects
+     * were retro-fitted to IPermissionPolicy in uP 4.3;  perhaps we should do
+     * the same to IAuthorizationService itself?
+     */
+    final IPermissionOwner ipOwner = permissionOwnerDao.getPermissionOwner(owner);
+    final IPermissionActivity ipActivity =
+        permissionOwnerDao.getPermissionActivity(owner, activity);
+    if (ipActivity == null) {
+      // Means needed data is missing;  much clearer than NPE
+      String msg = "The following activity is not defined for owner '" + owner + "':  " + activity;
+      throw new RuntimeException(msg);
+    }
+    final IPermissionTargetProvider targetProvider =
+        targetProviderRegistry.getTargetProvider(ipActivity.getTargetProviderKey());
+    final IPermissionTarget ipTarget = targetProvider.getTarget(target);
+
+    final boolean doesPrincipalHavePermission =
+        policy.doesPrincipalHavePermission(this, principal, ipOwner, ipActivity, ipTarget);
+
+    this.doesPrincipalHavePermissionCache.put(new Element(key, doesPrincipalHavePermission));
+
+    return doesPrincipalHavePermission;
+  }
+
+  /**
+   * Returns the <code>IPermissions</code> owner has granted this <code>Principal</code> for the
+   * specified activity and target. Null parameters will be ignored, that is, all <code>IPermissions
+   * </code> matching the non-null parameters are retrieved. So, <code>
+   * getPermissions(principal,null, null, null)</code> should retrieve all <code>IPermissions</code>
+   * for a <code>Principal</code>. Note that this includes <code>IPermissions</code> inherited from
+   * groups the <code>Principal</code> belongs to.
+   *
+   * @return org.apereo.portal.security.IPermission[]
+   * @param principal IAuthorizationPrincipal
+   * @param owner java.lang.String
+   * @param activity java.lang.String
+   * @param target java.lang.String
+   * @exception AuthorizationException indicates authorization information could not be retrieved.
+   */
+  public IPermission[] getAllPermissionsForPrincipal(
+      IAuthorizationPrincipal principal, String owner, String activity, String target)
+      throws AuthorizationException {
     IPermission[] perms = getPermissionsForPrincipal(principal, owner, activity, target);
     ArrayList<IPermission> al = new ArrayList<IPermission>(Arrays.asList(perms));
     Iterator i = getInheritedPrincipals(principal);
-    while ( i.hasNext() )
-    {
-        IAuthorizationPrincipal p = (IAuthorizationPrincipal) i.next();
-        perms = getPermissionsForPrincipal(p, owner, activity, target);
-        al.addAll(Arrays.asList(perms));
+    while (i.hasNext()) {
+      IAuthorizationPrincipal p = (IAuthorizationPrincipal) i.next();
+      perms = getPermissionsForPrincipal(p, owner, activity, target);
+      al.addAll(Arrays.asList(perms));
     }
 
     if (log.isTraceEnabled()) {
-    	log.trace("query for all permissions for principal=[" + principal + "], owner=[" + owner +
-    			"], activity=[" + activity + "], target=[" + target + "] returned permissions [" + al + "]");
+      log.trace(
+          "query for all permissions for principal=["
+              + principal
+              + "], owner=["
+              + owner
+              + "], activity=["
+              + activity
+              + "], target=["
+              + target
+              + "] returned permissions ["
+              + al
+              + "]");
     }
 
-    return ((IPermission[])al.toArray(new IPermission[al.size()]));
-}
+    return ((IPermission[]) al.toArray(new IPermission[al.size()]));
+  }
 
-/**
- * Does this mean all channels the principal could conceivably subscribe
- * to or all channels principal is specifically authorized to subscribe to,
- * or what?
- *
- * @param principal IAuthorizationPrincipal
- * @return Vector (of channels?)
- * @exception AuthorizationException indicates authorization information could not
- */
-public Vector getAuthorizedChannels(IAuthorizationPrincipal principal)
-throws AuthorizationException
-{
+  /**
+   * Does this mean all channels the principal could conceivably subscribe to or all channels
+   * principal is specifically authorized to subscribe to, or what?
+   *
+   * @param principal IAuthorizationPrincipal
+   * @return Vector (of channels?)
+   * @exception AuthorizationException indicates authorization information could not
+   */
+  public Vector getAuthorizedChannels(IAuthorizationPrincipal principal)
+      throws AuthorizationException {
     return new Vector();
-}
+  }
 
-/**
- * Returns <code>IAuthorizationPrincipals</code> that have <code>IPermissions</code> for
- * the given owner, activity and target.
- *
- * @return IAuthorizationPrincipal[]
- * @param owner
- * @param activity
- * @param target
- */
-public IAuthorizationPrincipal[] getAuthorizedPrincipals(String owner, String activity, String target)
-throws AuthorizationException
-{
+  /**
+   * Returns <code>IAuthorizationPrincipals</code> that have <code>IPermissions</code> for the given
+   * owner, activity and target.
+   *
+   * @return IAuthorizationPrincipal[]
+   * @param owner
+   * @param activity
+   * @param target
+   */
+  public IAuthorizationPrincipal[] getAuthorizedPrincipals(
+      String owner, String activity, String target) throws AuthorizationException {
     IPermission[] permissions = getPermissionsForOwner(owner, activity, target);
     return getPrincipalsFromPermissions(permissions);
-}
+  }
 
-/**
- * @return org.apereo.portal.security.IPermissionPolicy
- */
-protected IPermissionPolicy getDefaultPermissionPolicy() {
+  /** @return org.apereo.portal.security.IPermissionPolicy */
+  protected IPermissionPolicy getDefaultPermissionPolicy() {
     return this.defaultPermissionPolicy;
-}
+  }
 
-/**
- * @return org.apereo.portal.groups.IGroupMember
- * @param principal org.apereo.portal.security.IAuthorizationPrincipal
- */
-public IGroupMember getGroupMember(IAuthorizationPrincipal principal)
-throws GroupsException
-{
+  /**
+   * @return org.apereo.portal.groups.IGroupMember
+   * @param principal org.apereo.portal.security.IAuthorizationPrincipal
+   */
+  public IGroupMember getGroupMember(IAuthorizationPrincipal principal) throws GroupsException {
     return getGroupMemberForPrincipal(principal);
-}
+  }
 
-/**
- * @return org.apereo.portal.groups.IGroupMember
- * @param principal org.apereo.portal.security.IAuthorizationPrincipal
- */
-private IGroupMember getGroupMemberForPrincipal(IAuthorizationPrincipal principal)
-throws GroupsException
-{
+  /**
+   * @return org.apereo.portal.groups.IGroupMember
+   * @param principal org.apereo.portal.security.IAuthorizationPrincipal
+   */
+  private IGroupMember getGroupMemberForPrincipal(IAuthorizationPrincipal principal)
+      throws GroupsException {
 
     IGroupMember gm = GroupService.getGroupMember(principal.getKey(), principal.getType());
 
     if (log.isDebugEnabled()) {
-        log.debug("AuthorizationImpl.getGroupMemberForPrincipal(): principal [" + principal + "] " +
-                "got group member [" + gm + "]");
+      log.debug(
+          "AuthorizationImpl.getGroupMemberForPrincipal(): principal ["
+              + principal
+              + "] "
+              + "got group member ["
+              + gm
+              + "]");
     }
 
     return gm;
-}
+  }
 
-/**
- * Hook into the Groups system by converting the <code>IAuthorizationPrincipal</code> to
- * an <code>IGroupMember</code>.  Returns ALL the groups the <code>IGroupMember</code>
- * (recursively) belongs to.
- * @param principal - org.apereo.portal.security.IAuthorizationPrincipal
- * @return java.util.Iterator over Collection of IEntityGroups
- */
-private Iterator getGroupsForPrincipal(IAuthorizationPrincipal principal)
-throws GroupsException
-{
+  /**
+   * Hook into the Groups system by converting the <code>IAuthorizationPrincipal</code> to an <code>
+   * IGroupMember</code>. Returns ALL the groups the <code>IGroupMember</code> (recursively) belongs
+   * to.
+   *
+   * @param principal - org.apereo.portal.security.IAuthorizationPrincipal
+   * @return java.util.Iterator over Collection of IEntityGroups
+   */
+  private Iterator getGroupsForPrincipal(IAuthorizationPrincipal principal) throws GroupsException {
     IGroupMember gm = getGroupMemberForPrincipal(principal);
     return gm.getAncestorGroups().iterator();
-}
+  }
 
-/**
- * Hook into the Groups system, find all containing groups, and convert the
- * them to <code>IAuthorizationPrincipals</code>.
- * @param principal - org.apereo.portal.security.IAuthorizationPrincipal
- * @return java.util.Iterator over Collection of IEntityGroups
- */
-private Iterator getInheritedPrincipals(IAuthorizationPrincipal principal)
-throws AuthorizationException
-{
+  /**
+   * Hook into the Groups system, find all containing groups, and convert the them to <code>
+   * IAuthorizationPrincipals</code>.
+   *
+   * @param principal - org.apereo.portal.security.IAuthorizationPrincipal
+   * @return java.util.Iterator over Collection of IEntityGroups
+   */
+  private Iterator getInheritedPrincipals(IAuthorizationPrincipal principal)
+      throws AuthorizationException {
     Iterator i = null;
     ArrayList<IAuthorizationPrincipal> al = new ArrayList<IAuthorizationPrincipal>(5);
 
-    try
-        { i = getGroupsForPrincipal(principal); }
-    catch ( GroupsException ge )
-        { throw new AuthorizationException("Could not retrieve Groups for " + principal,ge) ; }
+    try {
+      i = getGroupsForPrincipal(principal);
+    } catch (GroupsException ge) {
+      throw new AuthorizationException("Could not retrieve Groups for " + principal, ge);
+    }
 
-    while ( i.hasNext() )
-    {
-        IEntityGroup group = (IEntityGroup) i.next();
-        IAuthorizationPrincipal p = getPrincipalForGroup(group);
-        al.add(p);
+    while (i.hasNext()) {
+      IEntityGroup group = (IEntityGroup) i.next();
+      IAuthorizationPrincipal p = getPrincipalForGroup(group);
+      al.add(p);
     }
     return al.iterator();
-}
+  }
 
-/**
- * Returns the <code>IPermissions</code> owner has granted for the specified activity
- * and target.  Null parameters will be ignored, that is, all <code>IPermissions</code>
- * matching the non-null parameters are retrieved.
- *
- * @return org.apereo.portal.security.IPermission[]
- * @param owner java.lang.String
- * @param activity java.lang.String
- * @param target java.lang.String
- * @exception AuthorizationException indicates authorization information could not
- * be retrieved.
- */
-public IPermission[] getPermissionsForOwner(String owner, String activity, String target)
-throws AuthorizationException
-{
+  /**
+   * Returns the <code>IPermissions</code> owner has granted for the specified activity and target.
+   * Null parameters will be ignored, that is, all <code>IPermissions</code> matching the non-null
+   * parameters are retrieved.
+   *
+   * @return org.apereo.portal.security.IPermission[]
+   * @param owner java.lang.String
+   * @param activity java.lang.String
+   * @param target java.lang.String
+   * @exception AuthorizationException indicates authorization information could not be retrieved.
+   */
+  public IPermission[] getPermissionsForOwner(String owner, String activity, String target)
+      throws AuthorizationException {
     return primRetrievePermissions(owner, null, activity, target);
-}
+  }
 
-/**
- * Returns the <code>IPermissions</code> owner has granted this <code>Principal</code> for
- * the specified activity and target.  Null parameters will be ignored, that is, all
- * <code>IPermissions</code> matching the non-null parameters are retrieved.  So,
- * <code>getPermissions(principal,null, null, null)</code> should retrieve all <code>IPermissions</code>
- * for a <code>Principal</code>.
- *
- * @return org.apereo.portal.security.IPermission[]
- * @param principal IAuthorizationPrincipal
- * @param owner java.lang.String
- * @param activity java.lang.String
- * @param target java.lang.String
- * @exception AuthorizationException indicates authorization information could not
- * be retrieved.
- */
-@RequestCache
-public IPermission[] getPermissionsForPrincipal
-    (IAuthorizationPrincipal principal,
-    String owner,
-    String activity,
-    String target)
-throws AuthorizationException
-{
+  /**
+   * Returns the <code>IPermissions</code> owner has granted this <code>Principal</code> for the
+   * specified activity and target. Null parameters will be ignored, that is, all <code>IPermissions
+   * </code> matching the non-null parameters are retrieved. So, <code>
+   * getPermissions(principal,null, null, null)</code> should retrieve all <code>IPermissions</code>
+   * for a <code>Principal</code>.
+   *
+   * @return org.apereo.portal.security.IPermission[]
+   * @param principal IAuthorizationPrincipal
+   * @param owner java.lang.String
+   * @param activity java.lang.String
+   * @param target java.lang.String
+   * @exception AuthorizationException indicates authorization information could not be retrieved.
+   */
+  @RequestCache
+  public IPermission[] getPermissionsForPrincipal(
+      IAuthorizationPrincipal principal, String owner, String activity, String target)
+      throws AuthorizationException {
     return primGetPermissionsForPrincipal(principal, owner, activity, target);
-}
+  }
 
-    public IPermission[] getPermissionsForTarget(final String owner, final String target) {
-        return getPermissionStore().select(owner, null, null, target, null);
-    }
+  public IPermission[] getPermissionsForTarget(final String owner, final String target) {
+    return getPermissionStore().select(owner, null, null, target, null);
+  }
 
-/**
- * @return org.apereo.portal.security.IPermissionStore
- */
-private IPermissionStore getPermissionStore()
-{
+  /** @return org.apereo.portal.security.IPermissionStore */
+  private IPermissionStore getPermissionStore() {
     return this.permissionStore;
-}
+  }
 
-/**
- * Returns <code>IAuthorizationPrincipal</code> associated with the <code>IPermission</code>.
- *
- * @return IAuthorizationPrincipal
- * @param permission IPermission
- */
-public IAuthorizationPrincipal getPrincipal(IPermission permission)
-throws AuthorizationException
-{
+  /**
+   * Returns <code>IAuthorizationPrincipal</code> associated with the <code>IPermission</code>.
+   *
+   * @return IAuthorizationPrincipal
+   * @param permission IPermission
+   */
+  public IAuthorizationPrincipal getPrincipal(IPermission permission)
+      throws AuthorizationException {
     String principalString = permission.getPrincipal();
     int idx = principalString.indexOf(PRINCIPAL_SEPARATOR);
     Integer typeId = new Integer(principalString.substring(0, idx));
     Class type = EntityTypesLocator.getEntityTypes().getEntityTypeFromID(typeId);
     String key = principalString.substring(idx + 1);
     return newPrincipal(key, type);
-}
+  }
 
-/**
- * @param group
- * @return user org.apereo.portal.security.IAuthorizationPrincipal
- */
-private IAuthorizationPrincipal getPrincipalForGroup(IEntityGroup group)
-{
+  /**
+   * @param group
+   * @return user org.apereo.portal.security.IAuthorizationPrincipal
+   */
+  private IAuthorizationPrincipal getPrincipalForGroup(IEntityGroup group) {
     String key = group.getKey();
     Class type = ICompositeGroupService.GROUP_ENTITY_TYPE;
     return newPrincipal(key, type);
-}
+  }
 
-/**
- * Returns <code>IAuthorizationPrincipals</code> associated with the <code>IPermission[]</code>.
- *
- * @return IAuthorizationPrincipal[]
- * @param permissions IPermission[]
- */
-private IAuthorizationPrincipal[] getPrincipalsFromPermissions(IPermission[] permissions)
-throws AuthorizationException
-{
+  /**
+   * Returns <code>IAuthorizationPrincipals</code> associated with the <code>IPermission[]</code>.
+   *
+   * @return IAuthorizationPrincipal[]
+   * @param permissions IPermission[]
+   */
+  private IAuthorizationPrincipal[] getPrincipalsFromPermissions(IPermission[] permissions)
+      throws AuthorizationException {
     Set principals = new HashSet();
-    for ( int i=0; i<permissions.length; i++ )
-    {
-        IAuthorizationPrincipal principal = getPrincipal(permissions[i]);
-        principals.add(principal);
+    for (int i = 0; i < permissions.length; i++) {
+      IAuthorizationPrincipal principal = getPrincipal(permissions[i]);
+      principals.add(principal);
     }
-    return ((IAuthorizationPrincipal[])principals.toArray(new IAuthorizationPrincipal[principals.size()]));
-}
+    return ((IAuthorizationPrincipal[])
+        principals.toArray(new IAuthorizationPrincipal[principals.size()]));
+  }
 
-/**
- * Returns the String used by an <code>IPermission</code> to represent an
- * <code>IAuthorizationPrincipal</code>.
- * @param principal org.apereo.portal.security.IAuthorizationPrincipal
- */
-public String getPrincipalString(IAuthorizationPrincipal principal)
-{
+  /**
+   * Returns the String used by an <code>IPermission</code> to represent an <code>
+   * IAuthorizationPrincipal</code>.
+   *
+   * @param principal org.apereo.portal.security.IAuthorizationPrincipal
+   */
+  public String getPrincipalString(IAuthorizationPrincipal principal) {
     return getPrincipalString(principal.getType(), principal.getKey());
-}
-private String getPrincipalString(Class pType, String pKey) {
+  }
+
+  private String getPrincipalString(Class pType, String pKey) {
     Integer type = EntityTypesLocator.getEntityTypes().getEntityIDFromType(pType);
     return type + PRINCIPAL_SEPARATOR + pKey;
-}
+  }
 
-/**
- * Returns the <code>IPermissions</code> owner has granted this <code>Principal</code> for
- * the specified activity and target.  Null parameters will be ignored, that is, all
- * <code>IPermissions</code> matching the non-null parameters are retrieved.  So,
- * <code>getPermissions(principal,null, null, null)</code> should retrieve all <code>IPermissions</code>
- * for a <code>Principal</code>.  Ignore any cached <code>IPermissions</code>.
- *
- * @return org.apereo.portal.security.IPermission[]
- * @param principal IAuthorizationPrincipal
- * @param owner java.lang.String
- * @param activity java.lang.String
- * @param target java.lang.String
- * @exception AuthorizationException indicates authorization information could not
- * be retrieved.
- */
-public IPermission[] getUncachedPermissionsForPrincipal
-        (IAuthorizationPrincipal principal,
-        String owner,
-        String activity,
-        String target)
-throws AuthorizationException
-{
+  /**
+   * Returns the <code>IPermissions</code> owner has granted this <code>Principal</code> for the
+   * specified activity and target. Null parameters will be ignored, that is, all <code>IPermissions
+   * </code> matching the non-null parameters are retrieved. So, <code>
+   * getPermissions(principal,null, null, null)</code> should retrieve all <code>IPermissions</code>
+   * for a <code>Principal</code>. Ignore any cached <code>IPermissions</code>.
+   *
+   * @return org.apereo.portal.security.IPermission[]
+   * @param principal IAuthorizationPrincipal
+   * @param owner java.lang.String
+   * @param activity java.lang.String
+   * @param target java.lang.String
+   * @exception AuthorizationException indicates authorization information could not be retrieved.
+   */
+  public IPermission[] getUncachedPermissionsForPrincipal(
+      IAuthorizationPrincipal principal, String owner, String activity, String target)
+      throws AuthorizationException {
     String pString = getPrincipalString(principal);
     return primRetrievePermissions(owner, pString, activity, target);
-}
+  }
 
-/**
- * Factory method for an <code>IPermission</code>.
- * @param owner String
- * @param principal IAuthorizationPrincipal
- * @return org.apereo.portal.security.IPermission
- */
-public IPermission newPermission(String owner, IAuthorizationPrincipal principal)
-{
+  /**
+   * Factory method for an <code>IPermission</code>.
+   *
+   * @param owner String
+   * @param principal IAuthorizationPrincipal
+   * @return org.apereo.portal.security.IPermission
+   */
+  public IPermission newPermission(String owner, IAuthorizationPrincipal principal) {
     IPermission p = getPermissionStore().newInstance(owner);
-    if ( principal != null )
-    {
-        String pString = getPrincipalString(principal);
-        p.setPrincipal(pString);
+    if (principal != null) {
+      String pString = getPrincipalString(principal);
+      p.setPrincipal(pString);
     }
     return p;
-}
+  }
 
-/**
- * Factory method for IPermissionManager.
- * @return org.apereo.portal.security.IPermissionManager
- * @param owner java.lang.String
- */
-public IPermissionManager newPermissionManager(String owner)
-{
+  /**
+   * Factory method for IPermissionManager.
+   *
+   * @return org.apereo.portal.security.IPermissionManager
+   * @param owner java.lang.String
+   */
+  public IPermissionManager newPermissionManager(String owner) {
     return new PermissionManagerImpl(owner, this);
-}
+  }
 
-
-/**
- * Factory method for IAuthorizationPrincipal. First check the principal
- * cache, and if not present, create the principal and cache it.
- *
- * @return org.apereo.portal.security.IAuthorizationPrincipal
- * @param key java.lang.String
- * @param type java.lang.Class
- */
-public IAuthorizationPrincipal newPrincipal(String key, Class type) {
+  /**
+   * Factory method for IAuthorizationPrincipal. First check the principal cache, and if not
+   * present, create the principal and cache it.
+   *
+   * @return org.apereo.portal.security.IAuthorizationPrincipal
+   * @param key java.lang.String
+   * @param type java.lang.Class
+   */
+  public IAuthorizationPrincipal newPrincipal(String key, Class type) {
     final Tuple<String, Class> principalKey = new Tuple<String, Class>(key, type);
     final Element element = this.principalCache.get(principalKey);
     //principalCache is self populating, it can never return a null entry
-    return (IAuthorizationPrincipal)element.getObjectValue();
-}
+    return (IAuthorizationPrincipal) element.getObjectValue();
+  }
 
-/**
- * Converts an <code>IGroupMember</code> into an <code>IAuthorizationPrincipal</code>.
- * @return org.apereo.portal.security.IAuthorizationPrincipal
- * @param groupMember org.apereo.portal.groups.IGroupMember
- */
-public IAuthorizationPrincipal newPrincipal(IGroupMember groupMember)
-throws GroupsException
-{
+  /**
+   * Converts an <code>IGroupMember</code> into an <code>IAuthorizationPrincipal</code>.
+   *
+   * @return org.apereo.portal.security.IAuthorizationPrincipal
+   * @param groupMember org.apereo.portal.groups.IGroupMember
+   */
+  public IAuthorizationPrincipal newPrincipal(IGroupMember groupMember) throws GroupsException {
     String key = groupMember.getKey();
     Class type = groupMember.getType();
 
     if (log.isDebugEnabled())
-        log.debug("AuthorizationImpl.newPrincipal(): for " + type + "(" + key + ")");
+      log.debug("AuthorizationImpl.newPrincipal(): for " + type + "(" + key + ")");
 
     return newPrincipal(key, type);
-}
+  }
 
-private IAuthorizationPrincipal primNewPrincipal(String key, Class type) {
+  private IAuthorizationPrincipal primNewPrincipal(String key, Class type) {
     return new AuthorizationPrincipalImpl(key, type, this);
-}
+  }
 
-/**
- * Factory method for IUpdatingPermissionManager.
- * @return org.apereo.portal.security.IUpdatingPermissionManager
- * @param owner java.lang.String
- */
-public IUpdatingPermissionManager newUpdatingPermissionManager(String owner)
-{
+  /**
+   * Factory method for IUpdatingPermissionManager.
+   *
+   * @return org.apereo.portal.security.IUpdatingPermissionManager
+   * @param owner java.lang.String
+   */
+  public IUpdatingPermissionManager newUpdatingPermissionManager(String owner) {
     return new UpdatingPermissionManagerImpl(owner, this);
-}
+  }
 
-/**
- * Returns permissions for a principal.  First check the entity caching
- * service, and if the permissions have not been cached, retrieve and
- * cache them.
- * @return IPermission[]
- * @param principal org.apereo.portal.security.IAuthorizationPrincipal
- */
-private IPermission[] primGetPermissionsForPrincipal(IAuthorizationPrincipal principal)
-throws AuthorizationException
-{
-    if ( ! this.cachePermissions )
-        { return getUncachedPermissionsForPrincipal(principal, null, null, null);}
+  /**
+   * Returns permissions for a principal. First check the entity caching service, and if the
+   * permissions have not been cached, retrieve and cache them.
+   *
+   * @return IPermission[]
+   * @param principal org.apereo.portal.security.IAuthorizationPrincipal
+   */
+  private IPermission[] primGetPermissionsForPrincipal(IAuthorizationPrincipal principal)
+      throws AuthorizationException {
+    if (!this.cachePermissions) {
+      return getUncachedPermissionsForPrincipal(principal, null, null, null);
+    }
 
     IPermissionSet ps = null;
     // Check the caching service for the Permissions first.
     ps = cacheGet(principal);
 
-    if ( ps == null )
-    synchronized ( principal )
-    {
+    if (ps == null)
+      synchronized (principal) {
         ps = cacheGet(principal);
-        if ( ps == null )
-        {
-            IPermission[] permissions =
+        if (ps == null) {
+          IPermission[] permissions =
               getUncachedPermissionsForPrincipal(principal, null, null, null);
-            ps = new PermissionSetImpl(permissions, principal);
-            cacheAdd(ps);
+          ps = new PermissionSetImpl(permissions, principal);
+          cacheAdd(ps);
         }
-    }      // end synchronized
+      } // end synchronized
     return ps.getPermissions();
-}
+  }
 
-/**
- * @return IPermission[]
- * @param principal org.apereo.portal.security.IAuthorizationPrincipal
- * @param owner String
- * @param activity String
- * @param target String
- */
-private IPermission[] primGetPermissionsForPrincipal
-    (IAuthorizationPrincipal principal,
-    String owner,
-    String activity,
-    String target)
-throws AuthorizationException
-{
+  /**
+   * @return IPermission[]
+   * @param principal org.apereo.portal.security.IAuthorizationPrincipal
+   * @param owner String
+   * @param activity String
+   * @param target String
+   */
+  private IPermission[] primGetPermissionsForPrincipal(
+      IAuthorizationPrincipal principal, String owner, String activity, String target)
+      throws AuthorizationException {
 
     /*
      * Get a list of all permissions for the specified principal, then iterate
@@ -960,178 +937,190 @@ throws AuthorizationException
      */
 
     IPermission[] perms = primGetPermissionsForPrincipal(principal);
-    if ( owner == null && activity == null && target == null )
-        { return perms; }
+    if (owner == null && activity == null && target == null) {
+      return perms;
+    }
 
     // If there are no permissions left, no need to look through group mappings.
     if (perms.length == 0) {
-        return perms;
+      return perms;
     }
 
-	Set<String> containingGroups;
+    Set<String> containingGroups;
 
-	if (target != null) {
+    if (target != null) {
 
-        final Element element = this.entityParentsCache.get(target);
-        if (element != null) {
-            containingGroups = (Set<String>) element.getObjectValue();
-        }
-        else {
-        	containingGroups = new HashSet<String>();
+      final Element element = this.entityParentsCache.get(target);
+      if (element != null) {
+        containingGroups = (Set<String>) element.getObjectValue();
+      } else {
+        containingGroups = new HashSet<String>();
 
-        	//Ignore target entity lookups for the various synthetic ALL targets
-        	if (!IPermission.ALL_CATEGORIES_TARGET.equals(target) &&
-                    !IPermission.ALL_GROUPS_TARGET.equals(target) &&
-                    !IPermission.ALL_PORTLETS_TARGET.equals(target) &&
-                    !IPermission.ALL_TARGET.equals(target)) {
+        //Ignore target entity lookups for the various synthetic ALL targets
+        if (!IPermission.ALL_CATEGORIES_TARGET.equals(target)
+            && !IPermission.ALL_GROUPS_TARGET.equals(target)
+            && !IPermission.ALL_PORTLETS_TARGET.equals(target)
+            && !IPermission.ALL_TARGET.equals(target)) {
 
-                // UP-4410; It would be ideal if the target string indicated it was a group or entity that might be
-                // a member of a group so we could determine whether to check what groups the target entity might be
-                // contained within to see if the principal has permission to the containing group, but it does not
-                // (too significant to refactor database values at this point).  If the owner and activity strings map to
-                // a type of target that might be a group name or entity name, create a set of the groups the target
-                // entity is contained in.
-                boolean checkTargetForContainingGroups = true;
-                if (owner != null && activity != null) {
-                    IPermissionActivity permissionActivity = permissionOwner.getPermissionActivity(
-                            owner, activity);
-                    if (nonEntityPermissionTargetProviders.contains(permissionActivity.getTargetProviderKey())) {
-                        checkTargetForContainingGroups = false;
-                    }
-                }
-                if (checkTargetForContainingGroups) {
-                    log.debug("Target '{}' is an entity. Checking for group or groups containing entity", target);
+          // UP-4410; It would be ideal if the target string indicated it was a group or entity that might be
+          // a member of a group so we could determine whether to check what groups the target entity might be
+          // contained within to see if the principal has permission to the containing group, but it does not
+          // (too significant to refactor database values at this point).  If the owner and activity strings map to
+          // a type of target that might be a group name or entity name, create a set of the groups the target
+          // entity is contained in.
+          boolean checkTargetForContainingGroups = true;
+          if (owner != null && activity != null) {
+            IPermissionActivity permissionActivity =
+                permissionOwner.getPermissionActivity(owner, activity);
+            if (nonEntityPermissionTargetProviders.contains(
+                permissionActivity.getTargetProviderKey())) {
+              checkTargetForContainingGroups = false;
+            }
+          }
+          if (checkTargetForContainingGroups) {
+            log.debug(
+                "Target '{}' is an entity. Checking for group or groups containing entity", target);
 
-                    IGroupMember targetEntity = GroupService.findGroup(target);
-                    if (targetEntity == null) {
-                        if (target.startsWith(IPermission.PORTLET_PREFIX)) {
-                            targetEntity = GroupService.getGroupMember(target.replace(IPermission.PORTLET_PREFIX, ""), IPortletDefinition.class);
-                        } else {
-                            targetEntity = GroupService.getGroupMember(target, IPerson.class);
-                        }
-                    }
-
-                    if (targetEntity != null) {
-                        for (IEntityGroup ancestor : targetEntity.getAncestorGroups()) {
-                            containingGroups.add(ancestor.getKey());
-                        }
-                    }
-                }
+            IGroupMember targetEntity = GroupService.findGroup(target);
+            if (targetEntity == null) {
+              if (target.startsWith(IPermission.PORTLET_PREFIX)) {
+                targetEntity =
+                    GroupService.getGroupMember(
+                        target.replace(IPermission.PORTLET_PREFIX, ""), IPortletDefinition.class);
+              } else {
+                targetEntity = GroupService.getGroupMember(target, IPerson.class);
+              }
             }
 
-            this.entityParentsCache.put(new Element(target, containingGroups));
-
+            if (targetEntity != null) {
+              for (IEntityGroup ancestor : targetEntity.getAncestorGroups()) {
+                containingGroups.add(ancestor.getKey());
+              }
+            }
+          }
         }
 
+        this.entityParentsCache.put(new Element(target, containingGroups));
+      }
 
-	} else {
-		containingGroups = new HashSet<String>();
-	}
+    } else {
+      containingGroups = new HashSet<String>();
+    }
 
     List<IPermission> al = new ArrayList<IPermission>(perms.length);
 
-    for ( int i=0; i<perms.length; i++ ) {
-        String permissionTarget = perms[i].getTarget();
+    for (int i = 0; i < perms.length; i++) {
+      String permissionTarget = perms[i].getTarget();
 
-        if (
-        		// owner matches
-        		(owner == null || owner.equals(perms[i].getOwner())) &&
-        		// activity matches
-                (activity == null || activity.equals(perms[i].getActivity())) &&
-                // target matches or is a member of the current permission target
-                (target == null || target.equals(permissionTarget)
-                		|| containingGroups.contains(permissionTarget))
-            ) {
+      if (
+      // owner matches
+      (owner == null || owner.equals(perms[i].getOwner()))
+          &&
+          // activity matches
+          (activity == null || activity.equals(perms[i].getActivity()))
+          &&
+          // target matches or is a member of the current permission target
+          (target == null
+              || target.equals(permissionTarget)
+              || containingGroups.contains(permissionTarget))) {
 
-                al.add(perms[i]);
-        }
-
+        al.add(perms[i]);
+      }
     }
-
-
 
     if (log.isTraceEnabled()) {
-        log.trace(
-                "AuthorizationImpl.primGetPermissionsForPrincipal(): " +
-                "Principal: " + principal + " owner: " + owner +
-                " activity: " + activity + " target: " + target + " : permissions retrieved: " + al);
+      log.trace(
+          "AuthorizationImpl.primGetPermissionsForPrincipal(): "
+              + "Principal: "
+              + principal
+              + " owner: "
+              + owner
+              + " activity: "
+              + activity
+              + " target: "
+              + target
+              + " : permissions retrieved: "
+              + al);
     } else if (log.isDebugEnabled()) {
-        log.debug(
-                "AuthorizationImpl.primGetPermissionsForPrincipal(): " +
-                "Principal: " + principal + " owner: " + owner +
-                " activity: " + activity + " target: " + target + " : number of permissions retrieved: " + al.size());
+      log.debug(
+          "AuthorizationImpl.primGetPermissionsForPrincipal(): "
+              + "Principal: "
+              + principal
+              + " owner: "
+              + owner
+              + " activity: "
+              + activity
+              + " target: "
+              + target
+              + " : number of permissions retrieved: "
+              + al.size());
     }
 
+    return ((IPermission[]) al.toArray(new IPermission[al.size()]));
+  }
 
-    return ((IPermission[])al.toArray(new IPermission[al.size()]));
-
-}
-
-/**
- * @return IPermission[]
- * @param owner String
- * @param principal String
- * @param activity String
- * @param target String
- */
-private IPermission[] primRetrievePermissions(String owner, String principal, String activity, String target)
-throws AuthorizationException
-{
+  /**
+   * @return IPermission[]
+   * @param owner String
+   * @param principal String
+   * @param activity String
+   * @param target String
+   */
+  private IPermission[] primRetrievePermissions(
+      String owner, String principal, String activity, String target)
+      throws AuthorizationException {
     return getPermissionStore().select(owner, principal, activity, target, null);
-}
+  }
 
-/**
- * Removes <code>IPermissions</code> for the <code>IAuthorizationPrincipals</code> from
- * the cache.
- * @param principals IAuthorizationPrincipal[]
- */
-private void removeFromPermissionsCache(IAuthorizationPrincipal[] principals)
-throws AuthorizationException
-{
-    for ( int i=0; i<principals.length; i++ )
-        { cacheRemove(principals[i]); }
-}
+  /**
+   * Removes <code>IPermissions</code> for the <code>IAuthorizationPrincipals</code> from the cache.
+   *
+   * @param principals IAuthorizationPrincipal[]
+   */
+  private void removeFromPermissionsCache(IAuthorizationPrincipal[] principals)
+      throws AuthorizationException {
+    for (int i = 0; i < principals.length; i++) {
+      cacheRemove(principals[i]);
+    }
+  }
 
-/**
- * Removes <code>IPermissions</code> from the cache.
- * @param permissions IPermission[]
- */
-private void removeFromPermissionsCache(IPermission[] permissions)
-throws AuthorizationException
-{
+  /**
+   * Removes <code>IPermissions</code> from the cache.
+   *
+   * @param permissions IPermission[]
+   */
+  private void removeFromPermissionsCache(IPermission[] permissions) throws AuthorizationException {
     IAuthorizationPrincipal[] principals = getPrincipalsFromPermissions(permissions);
     removeFromPermissionsCache(principals);
-}
+  }
 
-/**
- * Removes <code>IPermissions</code> from the back end store.
- * @param permissions IPermission[]
- * @exception AuthorizationException
- */
-public void removePermissions(IPermission[] permissions)
-throws AuthorizationException
-{
-    if (permissions.length > 0)
-    {
-        getPermissionStore().delete(permissions);
-        if ( this.cachePermissions )
-            { removeFromPermissionsCache(permissions); }
+  /**
+   * Removes <code>IPermissions</code> from the back end store.
+   *
+   * @param permissions IPermission[]
+   * @exception AuthorizationException
+   */
+  public void removePermissions(IPermission[] permissions) throws AuthorizationException {
+    if (permissions.length > 0) {
+      getPermissionStore().delete(permissions);
+      if (this.cachePermissions) {
+        removeFromPermissionsCache(permissions);
+      }
     }
-}
+  }
 
-/**
- * Updates <code>IPermissions</code> in the back end store.
- * @param permissions IPermission[]
- * @exception AuthorizationException
- */
-public void updatePermissions(IPermission[] permissions)
-throws AuthorizationException
-{
-    if (permissions.length > 0)
-    {
-        getPermissionStore().update(permissions);
-        if ( this.cachePermissions )
-            { removeFromPermissionsCache(permissions); }
+  /**
+   * Updates <code>IPermissions</code> in the back end store.
+   *
+   * @param permissions IPermission[]
+   * @exception AuthorizationException
+   */
+  public void updatePermissions(IPermission[] permissions) throws AuthorizationException {
+    if (permissions.length > 0) {
+      getPermissionStore().update(permissions);
+      if (this.cachePermissions) {
+        removeFromPermissionsCache(permissions);
+      }
     }
-}
+  }
 }

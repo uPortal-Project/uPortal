@@ -1,20 +1,16 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.io;
 
@@ -29,48 +25,51 @@ import org.danann.cernunnos.TaskRequest;
 import org.danann.cernunnos.TaskResponse;
 
 /**
- * Used by Import/Export to provide a default <code>FILE_PATTERN</code> that
- * works on all operating systems.
+ * Used by Import/Export to provide a default <code>FILE_PATTERN</code> that works on all operating
+ * systems.
  */
 public class FilePatternPhrase implements Phrase {
 
-    // Static Members.
-    public static final String DEFAULT_VALUE = ".*";
-    public static final String USE_DEFAULT_VALUE = "org.apereo.portal.FilePatternPhrase.USE_DEFAULT_VALUE";
+  // Static Members.
+  public static final String DEFAULT_VALUE = ".*";
+  public static final String USE_DEFAULT_VALUE =
+      "org.apereo.portal.FilePatternPhrase.USE_DEFAULT_VALUE";
+
+  // Instance Members.
+  private Phrase pattern;
+
+  /*
+   * Public API.
+   */
+
+  public static final Reagent PATTERN =
+      new SimpleReagent(
+          "PATTERN",
+          "descendant-or-self::text()",
+          ReagentType.PHRASE,
+          String.class,
+          "File pattern to use in an Import operation.");
+
+  public Formula getFormula() {
+    Reagent[] reagents = new Reagent[] {PATTERN};
+    return new SimpleFormula(FilePatternPhrase.class, reagents);
+  }
+
+  public void init(EntityConfig config) {
 
     // Instance Members.
-    private Phrase pattern;
+    this.pattern = (Phrase) config.getValue(PATTERN);
+  }
 
-    /*
-     * Public API.
-     */
+  public Object evaluate(TaskRequest req, TaskResponse res) {
 
-    public static final Reagent PATTERN = new SimpleReagent("PATTERN", "descendant-or-self::text()",
-                ReagentType.PHRASE, String.class, "File pattern to use in an Import operation.");
+    String rslt = DEFAULT_VALUE;
 
-    public Formula getFormula() {
-        Reagent[] reagents = new Reagent[] {PATTERN};
-        return new SimpleFormula(FilePatternPhrase.class, reagents);
+    String p = ((String) pattern.evaluate(req, res)).trim();
+    if (p != null && p.length() != 0 && !p.equals(USE_DEFAULT_VALUE)) {
+      rslt = p;
     }
 
-    public void init(EntityConfig config) {
-
-        // Instance Members.
-        this.pattern = (Phrase) config.getValue(PATTERN);
-
-    }
-
-    public Object evaluate(TaskRequest req, TaskResponse res) {
-
-        String rslt = DEFAULT_VALUE;
-
-        String p = ((String) pattern.evaluate(req, res)).trim();
-        if (p != null && p.length() !=0 && !p.equals(USE_DEFAULT_VALUE)) {
-            rslt = p;
-        }
-
-        return rslt;
-
-    }
-
+    return rslt;
+  }
 }

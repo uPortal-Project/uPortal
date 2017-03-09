@@ -1,20 +1,16 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.security;
 
@@ -32,24 +28,23 @@ public interface IPermission {
    */
 
   /**
-   * Allows the user to view or add to his or her layout a portlet that is in
-   * the <code>CREATED</code> lifecycle state.
+   * Allows the user to view or add to his or her layout a portlet that is in the <code>CREATED
+   * </code> lifecycle state.
    */
   public static final String PORTLET_SUBSCRIBER_CREATED_ACTIVITY = "SUBSCRIBE_CREATED";
   /**
-   * Allows the user to view or add to his or her layout a portlet that is in
-   * the <code>APPROVED</code> lifecycle state.
+   * Allows the user to view or add to his or her layout a portlet that is in the <code>APPROVED
+   * </code> lifecycle state.
    */
   public static final String PORTLET_SUBSCRIBER_APPROVED_ACTIVITY = "SUBSCRIBE_APPROVED";
   /**
-   * The standard <code>SUBSCRIBE</code> activity.  Allows the user to view or
-   * add to his or her layout a portlet that is in the <code>PUBLISHED</code>
-   * lifecycle state.
+   * The standard <code>SUBSCRIBE</code> activity. Allows the user to view or add to his or her
+   * layout a portlet that is in the <code>PUBLISHED</code> lifecycle state.
    */
   public static final String PORTLET_SUBSCRIBER_ACTIVITY = "SUBSCRIBE";
   /**
-   * Allows the user to view or add to his or her layout a portlet that is in
-   * the <code>EXPIRED</code> lifecycle state.
+   * Allows the user to view or add to his or her layout a portlet that is in the <code>EXPIRED
+   * </code> lifecycle state.
    */
   public static final String PORTLET_SUBSCRIBER_EXPIRED_ACTIVITY = "SUBSCRIBE_EXPIRED";
 
@@ -78,43 +73,41 @@ public interface IPermission {
    */
 
   /**
-   * Allows the user to edit the publication metadata of a portlet that is in
-   * the <code>CREATED</code> lifecycle state.
+   * Allows the user to edit the publication metadata of a portlet that is in the <code>CREATED
+   * </code> lifecycle state.
    */
   public static final String PORTLET_MANAGER_CREATED_ACTIVITY = "MANAGE_CREATED";
   /**
-   * Allows the user to edit the publication metadata of a portlet that is in
-   * the <code>APPROVED</code> lifecycle state.
+   * Allows the user to edit the publication metadata of a portlet that is in the <code>APPROVED
+   * </code> lifecycle state.
    */
   public static final String PORTLET_MANAGER_APPROVED_ACTIVITY = "MANAGE_APPROVED";
   /**
-   * The standard <code>MANAGE</code> activity.  Allows the user to edit the
-   * publication metadata of a portlet that is in the <code>PUBLISHED</code>
-   * lifecycle state.
+   * The standard <code>MANAGE</code> activity. Allows the user to edit the publication metadata of
+   * a portlet that is in the <code>PUBLISHED</code> lifecycle state.
    */
   public static final String PORTLET_MANAGER_ACTIVITY = "MANAGE";
   /**
-   * Allows the user to edit the publication metadata of a portlet that is in
-   * the <code>EXPIRED</code> lifecycle state.
+   * Allows the user to edit the publication metadata of a portlet that is in the <code>EXPIRED
+   * </code> lifecycle state.
    */
   public static final String PORTLET_MANAGER_EXPIRED_ACTIVITY = "MANAGE_EXPIRED";
   /**
-   * Allows the user to edit the publication metadata of a portlet that is in
-   * the <code>MAINTENANCE</code> lifecycle state.
+   * Allows the user to edit the publication metadata of a portlet that is in the <code>MAINTENANCE
+   * </code> lifecycle state.
    *
    * @since 4.2
    */
   public static final String PORTLET_MANAGER_MAINTENANCE_ACTIVITY = "MANAGE_MAINTENANCE";
 
-  /**
-   * All management permissions in one handy array.  Used within the edit-portlet flow.
-   */
+  /** All management permissions in one handy array. Used within the edit-portlet flow. */
   @SuppressWarnings("ucd")
-  public static final String[] PORTLET_MANAGER_MANAGE_ACTIVITIES = new String[] {
-      PORTLET_MANAGER_CREATED_ACTIVITY, PORTLET_MANAGER_APPROVED_ACTIVITY,
-      PORTLET_MANAGER_ACTIVITY, PORTLET_MANAGER_EXPIRED_ACTIVITY,
-      PORTLET_MANAGER_MAINTENANCE_ACTIVITY
-  };
+  public static final String[] PORTLET_MANAGER_MANAGE_ACTIVITIES =
+      new String[] {
+        PORTLET_MANAGER_CREATED_ACTIVITY, PORTLET_MANAGER_APPROVED_ACTIVITY,
+        PORTLET_MANAGER_ACTIVITY, PORTLET_MANAGER_EXPIRED_ACTIVITY,
+        PORTLET_MANAGER_MAINTENANCE_ACTIVITY
+      };
 
   /*
    * PortletMode permissions
@@ -130,14 +123,10 @@ public interface IPermission {
   public static final String DELETE_GROUP_ACTIVITY = "DELETE_GROUP";
   public static final String EDIT_GROUP_ACTIVITY = "EDIT_GROUP";
 
-  /**
-   * Activity string for adding a tab to your personal layout
-   */
+  /** Activity string for adding a tab to your personal layout */
   public static final String ADD_TAB_ACTIVITY = "ADD_TAB";
 
-  /**
-   * Non-owner-specific view activity (used by ERROR_PORTLET)
-   */
+  /** Non-owner-specific view activity (used by ERROR_PORTLET) */
   public static final String VIEW_ACTIVITY = "VIEW";
 
   public static final String VIEW_USER_ACTIVITY = "VIEW_USER";
@@ -165,14 +154,12 @@ public interface IPermission {
    */
 
   /**
-   * A String representing the uPortal framework, used, for example, for
-   * Permission.owner when the framework grants a Permission.
+   * A String representing the uPortal framework, used, for example, for Permission.owner when the
+   * framework grants a Permission.
    */
   public static final String PORTAL_SYSTEM = "UP_SYSTEM";
 
-  /**
-   * Represents the GaP subsystem as a permissions owner
-   */
+  /** Represents the GaP subsystem as a permissions owner */
   public static final String PORTAL_GROUPS = "UP_GROUPS";
 
   public static final String PORTAL_PUBLISH = "UP_PORTLET_PUBLISH";
@@ -205,88 +192,95 @@ public interface IPermission {
 
   public static final String ALL_TARGET = "ALL";
 
-  /**
-   * Non-owner-specific details target string (used by ERROR_PORTLET)
-   */
+  /** Non-owner-specific details target string (used by ERROR_PORTLET) */
   public static final String DETAILS_TARGET = "DETAILS";
 
   /**
    * Gets the activity associated with this <code>IPermission</code>.
+   *
    * @return String
    */
-
-  public String getActivity ();
+  public String getActivity();
 
   /**
    * Gets that date that this <code>IPermission</code> should become effective on.
+   *
    * @return date that this <code>IPermission</code> should become effective on
    */
-  public Date getEffective ();
+  public Date getEffective();
 
   /**
    * Gets the date that this <code>IPermission</code> should expire on.
+   *
    * @return date that this <code>IPermission</code> should expire on
    */
-  public Date getExpires ();
+  public Date getExpires();
 
   /**
    * Returns the owner of this <code>IPermission</code>.
+   *
    * @return owner of this <code>IPermission</code>
    */
-  public String getOwner ();
+  public String getOwner();
 
   /**
    * Gets the target associated with this <code>IPermission</code>.
+   *
    * @return target associated with this <code>IPermission</code>
    */
-  public String getTarget ();
+  public String getTarget();
 
-  /**
-   * Returns the <code>Permission</code> type.
-   */
-  public String getType ();
+  /** Returns the <code>Permission</code> type. */
+  public String getType();
 
   /**
    * Sets the activity associated with this <code>IPermission</code>.
+   *
    * @param activity String
    */
-  public void setActivity (String activity);
+  public void setActivity(String activity);
 
   /**
    * Sets the date that this <code>IPermission</code> should become effective on.
+   *
    * @param effective java.util.Date
    */
-  public void setEffective (Date effective);
+  public void setEffective(Date effective);
 
   /**
    * Sets the date that this <code>IPermission</code> should expire on.
+   *
    * @param expires java.util.Date
    */
-  public void setExpires (Date expires);
+  public void setExpires(Date expires);
 
   /**
    * Sets the target associated with this <code>IPermission</code>.
+   *
    * @param target
    */
-  public void setTarget (String target);
+  public void setTarget(String target);
 
   /**
    * Sets the <code>IPermission</code> type.
+   *
    * @param type String
    */
-  public abstract void setType (String type);
+  public abstract void setType(String type);
 
   /**
-   * Returns a String representing the <code>IAuthorizationPrincipal</code> associated
-   * with this <code>IPermission</code>.
+   * Returns a String representing the <code>IAuthorizationPrincipal</code> associated with this
+   * <code>IPermission</code>.
+   *
    * @return IAuthorizationPrincipal associated with this IPermission
    */
   public String getPrincipal();
 
   /**
-   * Sets the principal String representing the <code>IAuthorizationPrincipal</code>
-   * associated with this <code>IPermission</code>.
+   * Sets the principal String representing the <code>IAuthorizationPrincipal</code> associated with
+   * this <code>IPermission</code>.
+   *
    * @param newPrincipal String
    */
-  public void setPrincipal (String newPrincipal);
+  public void setPrincipal(String newPrincipal);
 }

@@ -1,29 +1,23 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-
 package org.apereo.portal.rest;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.stream.XMLEventReader;
@@ -32,7 +26,6 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 import javax.xml.transform.stax.StAXSource;
 import javax.xml.transform.stream.StreamResult;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apereo.portal.EntityIdentifier;
@@ -59,141 +52,160 @@ import org.springframework.web.multipart.MultipartFile;
 
 /**
  * ImportExportController provides AJAX/REST targets for import/export operations.
- * 
+ *
  * @author Jen Bourey, jennifer.bourey@gmail.com
  */
 @Controller
 public class ImportExportController {
 
-    final Log log = LogFactory.getLog(getClass());
+  final Log log = LogFactory.getLog(getClass());
 
-    private IPersonManager personManager;
-    private IPortalDataHandlerService portalDataHandlerService;
-    private XmlUtilities xmlUtilities;
+  private IPersonManager personManager;
+  private IPortalDataHandlerService portalDataHandlerService;
+  private XmlUtilities xmlUtilities;
 
-    @Autowired
-    public void setXmlUtilities(XmlUtilities xmlUtilities) {
-        this.xmlUtilities = xmlUtilities;
+  @Autowired
+  public void setXmlUtilities(XmlUtilities xmlUtilities) {
+    this.xmlUtilities = xmlUtilities;
+  }
+
+  @Autowired
+  public void setPersonManager(IPersonManager personManager) {
+    this.personManager = personManager;
+  }
+
+  @Autowired
+  public void setPortalDataHandlerService(IPortalDataHandlerService portalDataHandlerService) {
+    this.portalDataHandlerService = portalDataHandlerService;
+  }
+
+  @RequestMapping(value = "/import", method = RequestMethod.POST)
+  public void importEntity(
+      @RequestParam("file") MultipartFile entityFile,
+      HttpServletRequest request,
+      HttpServletResponse response)
+      throws IOException, XMLStreamException {
+
+    //Get a StAX reader for the source to determine info about the data to import
+    final BufferedXMLEventReader bufferedXmlEventReader = createSourceXmlEventReader(entityFile);
+    final PortalDataKey portalDataKey = getPortalDataKey(bufferedXmlEventReader);
+
+    final IPerson person = personManager.getPerson(request);
+    final EntityIdentifier ei = person.getEntityIdentifier();
+    final IAuthorizationPrincipal ap =
+        AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
+    if (!ap.hasPermission("UP_SYSTEM", "IMPORT_ENTITY", portalDataKey.getName().getLocalPart())) {
+      response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+      return;
     }
 
-    @Autowired
-    public void setPersonManager(IPersonManager personManager) {
-    	this.personManager = personManager;
+    portalDataHandlerService.importData(new StAXSource(bufferedXmlEventReader));
+
+    response.setStatus(HttpServletResponse.SC_OK);
+  }
+
+  protected BufferedXMLEventReader createSourceXmlEventReader(MultipartFile multipartFile)
+      throws IOException {
+    final InputStream inputStream = multipartFile.getInputStream();
+    final String name = multipartFile.getOriginalFilename();
+
+    final XMLInputFactory xmlInputFactory = this.xmlUtilities.getXmlInputFactory();
+    final XMLEventReader xmlEventReader;
+    try {
+      xmlEventReader = xmlInputFactory.createXMLEventReader(name, inputStream);
+    } catch (XMLStreamException e) {
+      throw new RuntimeException("Failed to create XML Event Reader for data Source", e);
     }
-    
-    @Autowired
-	public void setPortalDataHandlerService(IPortalDataHandlerService portalDataHandlerService) {
-        this.portalDataHandlerService = portalDataHandlerService;
-    }
+    return new BufferedXMLEventReader(xmlEventReader, -1);
+  }
 
-    @RequestMapping(value="/import", method = RequestMethod.POST)
-    public void importEntity(@RequestParam("file") MultipartFile entityFile, 
-    		HttpServletRequest request, HttpServletResponse response) throws IOException, XMLStreamException {
-        
-        //Get a StAX reader for the source to determine info about the data to import
-        final BufferedXMLEventReader bufferedXmlEventReader = createSourceXmlEventReader(entityFile);
-        final PortalDataKey portalDataKey = getPortalDataKey(bufferedXmlEventReader);
+  protected PortalDataKey getPortalDataKey(final BufferedXMLEventReader bufferedXmlEventReader) {
+    final StartElement rootElement = StaxUtils.getRootElement(bufferedXmlEventReader);
+    final PortalDataKey portalDataKey = new PortalDataKey(rootElement);
+    bufferedXmlEventReader.reset();
+    return portalDataKey;
+  }
 
-        final IPerson person = personManager.getPerson(request);
-		final EntityIdentifier ei = person.getEntityIdentifier();
-	    final IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
-	    if (!ap.hasPermission("UP_SYSTEM", "IMPORT_ENTITY", portalDataKey.getName().getLocalPart())) {
-	    	response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-	    	return;
-	    }
+  /**
+   * Delete an uPortal database object. This method provides a REST interface for uPortal database
+   * object deletion.
+   *
+   * <p>The path for this method is /entity/type/identifier. The identifier generally a string that
+   * may be used as a unique identifier, but is dependent on the entity type. For example, to delete
+   * the "demo" user one might use the path /entity/user/demo.
+   */
+  @RequestMapping(value = "/entity/{entityType}/{entityId}", method = RequestMethod.DELETE)
+  public void deleteEntity(
+      @PathVariable("entityType") String entityType,
+      @PathVariable("entityId") String entityId,
+      HttpServletRequest request,
+      HttpServletResponse response)
+      throws IOException {
 
-	    portalDataHandlerService.importData(new StAXSource(bufferedXmlEventReader));
+    final IPerson person = personManager.getPerson(request);
+    final EntityIdentifier ei = person.getEntityIdentifier();
+    final IAuthorizationPrincipal ap =
+        AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
 
-        response.setStatus(HttpServletResponse.SC_OK);
-    }
-    
-    protected BufferedXMLEventReader createSourceXmlEventReader(MultipartFile multipartFile) throws IOException {
-        final InputStream inputStream = multipartFile.getInputStream();
-        final String name = multipartFile.getOriginalFilename();
-        
-        final XMLInputFactory xmlInputFactory = this.xmlUtilities.getXmlInputFactory();
-        final XMLEventReader xmlEventReader;
-        try {
-            xmlEventReader = xmlInputFactory.createXMLEventReader(name, inputStream);
-        }
-        catch (XMLStreamException e) {
-            throw new RuntimeException("Failed to create XML Event Reader for data Source", e);
-        }
-        return new BufferedXMLEventReader(xmlEventReader, -1);
-    }
-
-    protected PortalDataKey getPortalDataKey(final BufferedXMLEventReader bufferedXmlEventReader) {
-        final StartElement rootElement = StaxUtils.getRootElement(bufferedXmlEventReader);
-        final PortalDataKey portalDataKey = new PortalDataKey(rootElement);
-        bufferedXmlEventReader.reset();
-        return portalDataKey;
-    }
-    
-    /**
-     * Delete an uPortal database object.  This method provides a REST interface
-     * for uPortal database object deletion.
-     * 
-     * The path for this method is /entity/type/identifier.  The identifier generally
-     * a string that may be used as a unique identifier, but is dependent on the 
-     * entity type.  For example, to delete the "demo" user one might use the 
-     * path /entity/user/demo.
-     */
-    @RequestMapping(value="/entity/{entityType}/{entityId}", method = RequestMethod.DELETE)
-	public void deleteEntity(@PathVariable("entityType") String entityType,
-			@PathVariable("entityId") String entityId, HttpServletRequest request,
-			HttpServletResponse response) throws IOException {
-    	
-		final IPerson person = personManager.getPerson(request);
-		final EntityIdentifier ei = person.getEntityIdentifier();
-	    final IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
-
-	    if (!ap.hasPermission(IPermission.PORTAL_SYSTEM, IPermission.DELETE_ACTIVITY, entityType)) {
-	    	response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-	    	return;
-	    }
-               
-	    // get the task associated with exporting this entity type 
-	    portalDataHandlerService.deleteData(entityType, entityId);
-    	    	
-    	response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+    if (!ap.hasPermission(IPermission.PORTAL_SYSTEM, IPermission.DELETE_ACTIVITY, entityType)) {
+      response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+      return;
     }
 
-    @RequestMapping(value="/entity/{entityType}/{entityId}", method = RequestMethod.GET)
-    public void exportEntity(@PathVariable("entityId") String entityId,
-    		@PathVariable("entityType") String entityType,
-    		@RequestParam(value="download", required=false) boolean download,
-    		@RequestParam(value="format", defaultValue="XML", required=false) String formatType,
-            HttpServletRequest request, HttpServletResponse response)
-            throws IOException, JSONException {
-    	
-		final IPerson person = personManager.getPerson(request);
-		final EntityIdentifier ei = person.getEntityIdentifier();
-	    final IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
+    // get the task associated with exporting this entity type
+    portalDataHandlerService.deleteData(entityType, entityId);
 
-	    // if the current user does not have permission to delete this database
-	    // object type, return a 401 error code
-	    if (!ap.hasPermission(IPermission.PORTAL_SYSTEM, IPermission.EXPORT_ACTIVITY, entityType)) {
-	    	response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-	    	return;
-	    }
-	    
-	    //Export the data into a string buffer
-	    final StringWriter exportBuffer = new StringWriter();
-	    final String fileName = portalDataHandlerService.exportData(entityType, entityId, new StreamResult(exportBuffer));
-	    final PrintWriter responseWriter = response.getWriter();
-	    
-	    if (download) {
-          response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "." + entityType + "."+formatType.toLowerCase()+"\"");
-        }
-	    
-	    if("XML".equalsIgnoreCase(formatType)) {
-          responseWriter.print(exportBuffer.getBuffer());
-	    } else if("JSON".equalsIgnoreCase(formatType)) {
-          JSONObject json = XML.toJSONObject(exportBuffer.getBuffer().toString());
-          responseWriter.print(json);
-	    } else {
-	      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-	      return;
-	    }
+    response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+  }
+
+  @RequestMapping(value = "/entity/{entityType}/{entityId}", method = RequestMethod.GET)
+  public void exportEntity(
+      @PathVariable("entityId") String entityId,
+      @PathVariable("entityType") String entityType,
+      @RequestParam(value = "download", required = false) boolean download,
+      @RequestParam(value = "format", defaultValue = "XML", required = false) String formatType,
+      HttpServletRequest request,
+      HttpServletResponse response)
+      throws IOException, JSONException {
+
+    final IPerson person = personManager.getPerson(request);
+    final EntityIdentifier ei = person.getEntityIdentifier();
+    final IAuthorizationPrincipal ap =
+        AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
+
+    // if the current user does not have permission to delete this database
+    // object type, return a 401 error code
+    if (!ap.hasPermission(IPermission.PORTAL_SYSTEM, IPermission.EXPORT_ACTIVITY, entityType)) {
+      response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+      return;
     }
+
+    //Export the data into a string buffer
+    final StringWriter exportBuffer = new StringWriter();
+    final String fileName =
+        portalDataHandlerService.exportData(entityType, entityId, new StreamResult(exportBuffer));
+    final PrintWriter responseWriter = response.getWriter();
+
+    if (download) {
+      response.setHeader(
+          "Content-Disposition",
+          "attachment; filename=\""
+              + fileName
+              + "."
+              + entityType
+              + "."
+              + formatType.toLowerCase()
+              + "\"");
+    }
+
+    if ("XML".equalsIgnoreCase(formatType)) {
+      responseWriter.print(exportBuffer.getBuffer());
+    } else if ("JSON".equalsIgnoreCase(formatType)) {
+      JSONObject json = XML.toJSONObject(exportBuffer.getBuffer().toString());
+      responseWriter.print(json);
+    } else {
+      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+      return;
+    }
+  }
 }

@@ -1,20 +1,16 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.utils;
 
@@ -22,22 +18,20 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 /**
- * The SmartCache class is used to store objects in memory for
- * a specified amount of time.  The time should be specified in seconds.
- * If the time is specified as a negative value, it will be cahced indefinitely.
+ * The SmartCache class is used to store objects in memory for a specified amount of time. The time
+ * should be specified in seconds. If the time is specified as a negative value, it will be cahced
+ * indefinitely.
+ *
  * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
  */
 public class SmartCache extends HashMap {
-  protected int iExpirationTimeout = 3600000;                   // default to 1 hour
+  protected int iExpirationTimeout = 3600000; // default to 1 hour
 
   /**
-   * Instantiate a new SmartCache.  Usually instances of SmartCache are
-   * declared as static. When retrieving a value from SmartCache, it will
-   * be null if the value has expired.  It is up to the client to then
-   * retrieve the value and put it in the cache again.
-   * Example:
-   * <code>
+   * Instantiate a new SmartCache. Usually instances of SmartCache are declared as static. When
+   * retrieving a value from SmartCache, it will be null if the value has expired. It is up to the
+   * client to then retrieve the value and put it in the cache again. Example: <code>
    * import org.apereo.portal.utils.SmartCache;
    *
    * public class CacheClient {
@@ -64,26 +58,27 @@ public class SmartCache extends HashMap {
    *   }
    * }
    * </code>
+   *
    * @param iExpirationTimeout specified in seconds
    */
   public SmartCache(int iExpirationTimeout) {
     super();
-    this.iExpirationTimeout = iExpirationTimeout*1000;
+    this.iExpirationTimeout = iExpirationTimeout * 1000;
   }
 
-  /**
-   * Instantiate SmartCache with a default expiration timeout of one hour.
-   */
+  /** Instantiate SmartCache with a default expiration timeout of one hour. */
   public SmartCache() {
     super();
   }
 
   /**
-   * Add a new value to the cache.  The value will expire in accordance with the
-   * cache's expiration timeout value which was set when the cache was created.
+   * Add a new value to the cache. The value will expire in accordance with the cache's expiration
+   * timeout value which was set when the cache was created.
+   *
    * @param key the key, typically a String
    * @param value the value
-   * @return the previous value of the specified key in this hashtable, or null if it did not have one.
+   * @return the previous value of the specified key in this hashtable, or null if it did not have
+   *     one.
    */
   public synchronized Object put(Object key, Object value) {
     ValueWrapper valueWrapper = new ValueWrapper(value);
@@ -92,11 +87,12 @@ public class SmartCache extends HashMap {
 
   /**
    * Add a new value to the cache
+   *
    * @param key the key, typically a String
    * @param value the value
-   * @param lCacheInterval an expiration timeout value, in seconds, which will  
-   * override the default cache value just for this item. If a negative timeout
-   * value is specified, the value will be cached indefinitely.                     
+   * @param lCacheInterval an expiration timeout value, in seconds, which will override the default
+   *     cache value just for this item. If a negative timeout value is specified, the value will be
+   *     cached indefinitely.
    * @return the cached object
    */
   public synchronized Object put(Object key, Object value, long lCacheInterval) {
@@ -106,11 +102,13 @@ public class SmartCache extends HashMap {
 
   /**
    * Get an object from the cache.
+   *
    * @param key the key, typically a String
-   * @return the value to which the key is mapped in this cache; null if the key is not mapped to any value in this cache.
+   * @return the value to which the key is mapped in this cache; null if the key is not mapped to
+   *     any value in this cache.
    */
   public synchronized Object get(Object key) {
-    ValueWrapper valueWrapper = (ValueWrapper)super.get(key);
+    ValueWrapper valueWrapper = (ValueWrapper) super.get(key);
     if (valueWrapper != null) {
       // Check if value has expired
       long creationTime = valueWrapper.getCreationTime();
@@ -121,18 +119,14 @@ public class SmartCache extends HashMap {
         return null;
       }
       return valueWrapper.getValue();
-    }
-    else
-      return null;
+    } else return null;
   }
 
-  /**
-   * Removes from the cache values which have expired.
-   */
+  /** Removes from the cache values which have expired. */
   protected void sweepCache() {
-    for (Iterator keyIterator = keySet().iterator(); keyIterator.hasNext();) {
+    for (Iterator keyIterator = keySet().iterator(); keyIterator.hasNext(); ) {
       Object key = keyIterator.next();
-      ValueWrapper valueWrapper = (ValueWrapper)super.get(key);
+      ValueWrapper valueWrapper = (ValueWrapper) super.get(key);
       long creationTime = valueWrapper.getCreationTime();
       long cacheInterval = valueWrapper.getCacheInterval();
       long currentTime = System.currentTimeMillis();
@@ -153,11 +147,11 @@ public class SmartCache extends HashMap {
 
     protected ValueWrapper(Object oValue, long lCacheInterval) {
       this.oValue = oValue;
-      this.lCacheInterval = lCacheInterval*1000;
+      this.lCacheInterval = lCacheInterval * 1000;
     }
 
     protected Object getValue() {
-      return  oValue;
+      return oValue;
     }
 
     protected void setValue(Object oValue) {
@@ -165,7 +159,7 @@ public class SmartCache extends HashMap {
     }
 
     protected long getCreationTime() {
-      return  lCreationTime;
+      return lCreationTime;
     }
 
     protected void setCreationTime(long lCreationTime) {
@@ -173,7 +167,7 @@ public class SmartCache extends HashMap {
     }
 
     protected long getCacheInterval() {
-      return  lCacheInterval;
+      return lCacheInterval;
     }
 
     protected void setCacheInterval(long lCacheInterval) {
@@ -181,6 +175,3 @@ public class SmartCache extends HashMap {
     }
   }
 }
-
-
-

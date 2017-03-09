@@ -1,20 +1,16 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.spring.locator;
 
@@ -25,46 +21,54 @@ import org.apereo.portal.utils.AbstractBeanLocator;
 import org.apereo.portal.utils.PortalApplicationContextLocator;
 import org.springframework.context.ApplicationContext;
 
-public class PasswordEncryptionServiceLocator extends AbstractBeanLocator<IStringEncryptionService> {
-    public static final String BEAN_NAME = "passwordEncryptionService";
-    
-    private static final Log LOG = LogFactory.getLog(PasswordEncryptionServiceLocator.class);
-    private static AbstractBeanLocator<IStringEncryptionService> locatorInstance;
+public class PasswordEncryptionServiceLocator
+    extends AbstractBeanLocator<IStringEncryptionService> {
+  public static final String BEAN_NAME = "passwordEncryptionService";
 
-    public static IStringEncryptionService getPasswordEncryptionService() {
-        AbstractBeanLocator<IStringEncryptionService> locator = locatorInstance;
-        if (locator == null) {
-            LOG.info("Looking up bean '" + BEAN_NAME + "' in ApplicationContext due to context not yet being initialized");
-            final ApplicationContext applicationContext = PortalApplicationContextLocator.getApplicationContext();
-            applicationContext.getBean(PasswordEncryptionServiceLocator.class.getName());
-            
-            locator = locatorInstance;
-            if (locator == null) {
-                LOG.warn("Instance of '" + BEAN_NAME + "' still null after portal application context has been initialized");
-                return applicationContext.getBean(BEAN_NAME, IStringEncryptionService.class);
-            }
-        }
-        
-        return locator.getInstance();
+  private static final Log LOG = LogFactory.getLog(PasswordEncryptionServiceLocator.class);
+  private static AbstractBeanLocator<IStringEncryptionService> locatorInstance;
+
+  public static IStringEncryptionService getPasswordEncryptionService() {
+    AbstractBeanLocator<IStringEncryptionService> locator = locatorInstance;
+    if (locator == null) {
+      LOG.info(
+          "Looking up bean '"
+              + BEAN_NAME
+              + "' in ApplicationContext due to context not yet being initialized");
+      final ApplicationContext applicationContext =
+          PortalApplicationContextLocator.getApplicationContext();
+      applicationContext.getBean(PasswordEncryptionServiceLocator.class.getName());
+
+      locator = locatorInstance;
+      if (locator == null) {
+        LOG.warn(
+            "Instance of '"
+                + BEAN_NAME
+                + "' still null after portal application context has been initialized");
+        return applicationContext.getBean(BEAN_NAME, IStringEncryptionService.class);
+      }
     }
 
-    public PasswordEncryptionServiceLocator(IStringEncryptionService instance) {
-        super(instance, IStringEncryptionService.class);
-    }
+    return locator.getInstance();
+  }
 
-    /* (non-Javadoc)
-     * @see org.apereo.portal.utils.AbstractBeanLocator#getLocator()
-     */
-    @Override
-    protected AbstractBeanLocator<IStringEncryptionService> getLocator() {
-        return locatorInstance;
-    }
+  public PasswordEncryptionServiceLocator(IStringEncryptionService instance) {
+    super(instance, IStringEncryptionService.class);
+  }
 
-    /* (non-Javadoc)
-     * @see org.apereo.portal.utils.AbstractBeanLocator#setLocator(org.apereo.portal.utils.AbstractBeanLocator)
-     */
-    @Override
-    protected void setLocator(AbstractBeanLocator<IStringEncryptionService> locator) {
-        locatorInstance = locator;
-    }
+  /* (non-Javadoc)
+   * @see org.apereo.portal.utils.AbstractBeanLocator#getLocator()
+   */
+  @Override
+  protected AbstractBeanLocator<IStringEncryptionService> getLocator() {
+    return locatorInstance;
+  }
+
+  /* (non-Javadoc)
+   * @see org.apereo.portal.utils.AbstractBeanLocator#setLocator(org.apereo.portal.utils.AbstractBeanLocator)
+   */
+  @Override
+  protected void setLocator(AbstractBeanLocator<IStringEncryptionService> locator) {
+    locatorInstance = locator;
+  }
 }
