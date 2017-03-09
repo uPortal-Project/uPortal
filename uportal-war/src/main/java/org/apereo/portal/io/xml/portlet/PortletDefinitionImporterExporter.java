@@ -588,7 +588,11 @@ public class PortletDefinitionImporterExporter
                 published.setValue(getCalendar(def.getPublishDate()));
                 lifecycle.setPublished(published);
             }
-            if (def.getLifecycleState().isEqualToOrAfter(PortletLifecycleState.EXPIRED)) {
+            /* An EXPIRED record in the lifecycle history requires two things:
+             *   - Current lifecycle state >= EXPIRED
+             *   - An expiration date
+             */
+            if (def.getLifecycleState().isEqualToOrAfter(PortletLifecycleState.EXPIRED) && def.getExpirationDate() != null) {
                 LifecycleEntry expired = new LifecycleEntry();
                 expired.setUser(getUsernameForUserId(def.getExpirerId()));
                 expired.setValue(getCalendar(def.getExpirationDate()));
