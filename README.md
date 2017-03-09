@@ -1,15 +1,45 @@
 # uPortal
 
-For more detailed help please refer to the [uPortal Manual](https://wiki.jasig.org/display/UPM42/Home)
-
-Additional information about uPortal is available on the [uPortal Home Page](http://www.apereo.org/uportal)
-or in the [uPortal Wiki](https://wiki.jasig.org/display/UPC/Home)
-
-## Travis-CI Continuous Integration
-
-uPortal uses Travis-CI for lightweight continuous integration.  You can see build statuses at <https://travis-ci.org/Jasig/uPortal>.  This handy image summarizes build status for the master branch:
-
 [![Master Branch Build Status](https://travis-ci.org/Jasig/uPortal.svg?branch=master)](https://travis-ci.org/Jasig/uPortal)
+[![Build status](https://ci.appveyor.com/api/projects/status/8t95sjt090mf62dh/branch/master?svg=true)](https://ci.appveyor.com/project/drewwills/uportal/branch/master)
+
+## About
+
+uPortal is the leading open source enterprise portal framework built by and for
+the higher education community. uPortal continues to evolve through contributions
+from its global community and is supported by resources, grants, donations, and
+memberships fees from academic institutions, commercial affiliates, and non-profit
+foundations. uPortal is built on open standards-based technologies such as Java
+and XML, and enables easy, standards-based integration with authentication and
+security infrastructures, single sign-on secure access, campus applications,
+web-based content, and end user customization. uPortal can easily integrate with
+other enterprise systems and can be customized for specific local needs.
+
+### Forever Free!
+
+You may [download uPortal](https://github.com/Jasig/uPortal/releases) and use it
+on your site at no cost. Unlike our competitors, uPortal is 100% free open source
+software managed by [Apereo](https://www.apereo.org/content/about). Our community
+has access to all releases of the uPortal software with absolutely no costs. We
+welcome [contributions from our community](https://github.com/Jasig/uPortal/graphs/contributors)
+of all types and sizes.
+
+## Manual
+
+Additional information about uPortal is available in the Manual.
+
+*   [uPortal 5.0 Manual](https://jasig.github.io/uPortal)
+*   [uPortal 4.3 Manual](https://wiki.jasig.org/display/UPM43/Home)
+*   [uPortal 4.2 Manual](https://wiki.jasig.org/display/UPM42/Home)
+*   [uPortal 4.1 Manual](https://wiki.jasig.org/display/UPM41/Home)
+*   [uPortal 4.0 Manual](https://wiki.jasig.org/display/UPM40/Home)
+*   [uPortal 3.2 Manual](https://wiki.jasig.org/display/UPM32/Home)
+*   [uPortal 3.1 Manual](https://wiki.jasig.org/display/UPM31/Home)
+*   [uPortal 3.0 Manual](https://wiki.jasig.org/display/UPM30/Home)
+
+## Continuous Integration
+
+uPortal uses Travis CI and AppVeyor for lightweight continuous integration.  You can see build statuses at <https://travis-ci.org/Jasig/uPortal> and <https://ci.appveyor.com/project/drewwills/uportal>.
 
 ## Accessibility
 
@@ -31,7 +61,9 @@ uPortal uses Maven for its project configuration and build system. An Ant
 related tasks. As a uPortal deployer you will likely only ever need to use the
 Ant tasks. Ant 1.8.2 or 1.9.3 or later is required
 
-### Ant tasks (run "ant -p" for a full list) :
+### Ant tasks
+
+For a full list of ant tasks run `ant -p`
 
 *   **hsql** - Starts a HSQL database instance. The default uPortal configuration points
 to this database and it can be used for portal development.
