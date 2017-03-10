@@ -4,7 +4,7 @@ Starting in CAS 4, the former ClearPass feature has been depreciated in lieu of 
 
 ## Configuring CAS for passing encrypted passwords
 
-See: https://apereo.github.io/cas/5.0.x/integration/ClearPass.html for CAS configuration.
+See: <https://apereo.github.io/cas/5.0.x/integration/ClearPass.html> for CAS configuration.
 
 ## Create Keys (from the above page)
 
@@ -36,6 +36,6 @@ org.apereo.portal.security.cas.assertion.decryptCredentialToPassword=true
 org.apereo.portal.security.cas.assertion.decryptCredentialToPasswordPrivateKey=/etc/cas/private.p8
 ```
 
-<div class="alert alert-warning"><strong>Warning: Cannot use localhost nor HTTP!</strong>
-<p>CAS requires that the traffic pass over an encryped <strong>HTTPS</strong> connection. Also, a hostname other than <i>localhost</i> is required.</p></div>
+:warning: **Warning: Cannot use localhost nor HTTP!** :warning:
+CAS requires that the traffic pass over an encryped **HTTPS** connection. Also, a hostname other than *localhost* is required.
 
