@@ -201,7 +201,7 @@ public class CasAssertionSecurityContext extends ChainingSecurityContext impleme
                     attrEntry.getKey(), attrEntry.getValue(), attrEntry.getValue().getClass().getName());
 
             // Check for credential
-            if (decryptCredentialToPassword && cipher != null && attrEntry.getKey().equals(CREDENTIAL_KEY)) {
+            if (decryptCredentialToPassword && key != null && cipher != null && attrEntry.getKey().equals(CREDENTIAL_KEY)) {
                 try {
                     final String encPwd = (String) (attrEntry.getValue() instanceof List
                             ? ((List) attrEntry.getValue()).get(0) : attrEntry.getValue());
@@ -209,7 +209,6 @@ public class CasAssertionSecurityContext extends ChainingSecurityContext impleme
                     cipher.init(Cipher.DECRYPT_MODE, key);
                     final byte[] cipherData = cipher.doFinal(cred64);
                     final String pwd = new String(cipherData);
-                    // log.debug("credential is decrypted to {}", pwd);
                     attributes.put(PASSWORD_KEY, Arrays.asList((Object) pwd));
                 } catch (Exception e) {
                     log.warn("Cannot decipher credential", e);
