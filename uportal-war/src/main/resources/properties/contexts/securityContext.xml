@@ -90,6 +90,9 @@
     <bean id="decryptCredentialToPasswordPrivateKey" class="java.lang.String">
         <constructor-arg index="0" value="${org.apereo.portal.security.cas.assertion.decryptCredentialToPasswordPrivateKey:''}"/>
     </bean>
+    <bean id="decryptCredentialToPasswordAlgorithm" class="java.lang.String">
+        <constructor-arg index="0" value="${org.apereo.portal.security.cas.assertion.decryptCredentialToPasswordAlgorithm:'RSA'}"/>
+    </bean>
 
     <!-- 
      | Some operations in the portal rely on evaluating whether a permission is

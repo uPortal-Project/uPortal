@@ -49,6 +49,7 @@ public class CasAssertionSecurityContext extends ChainingSecurityContext impleme
     private static final String CAS_COPY_ASSERT_ATTR_TO_USER_ATTR_BEAN = "casCopyAssertionAttributesToUserAttributes";
     private static final String DECRYPT_CRED_TO_PWD = "decryptCredentialToPassword";
     private static final String DECRYPT_CRED_TO_PWD_KEY = "decryptCredentialToPasswordPrivateKey";
+    private static final String DECRYPT_CRED_TO_PWD_ALG = "decryptCredentialToPasswordAlgorithm";
     private static final String CREDENTIAL_KEY = "credential";  // encrypted password attribute from CAS
     private static final String PASSWORD_KEY = "password";  // user attribute expected by portlets
 
@@ -57,9 +58,10 @@ public class CasAssertionSecurityContext extends ChainingSecurityContext impleme
     private Assertion assertion;
     private boolean copyAssertionAttributesToUserAttributes = false;
     private boolean decryptCredentialToPassword = false;
-    private String decryptCredentialToPasswordPrivateKey="/etc/cas/private.p8";
+    private String decryptCredentialToPasswordPrivateKey;
     private static PrivateKey key = null;
     private static Cipher cipher = null;
+    private static String algorithm;
 
     public CasAssertionSecurityContext() {
         applicationContext = ApplicationContextLocator.getApplicationContext();
@@ -86,6 +88,7 @@ public class CasAssertionSecurityContext extends ChainingSecurityContext impleme
                     e.printStackTrace();
                 }
             }
+            algorithm = applicationContext.getBean(DECRYPT_CRED_TO_PWD_ALG, String.class);
         }
     }
 
@@ -241,7 +244,7 @@ public class CasAssertionSecurityContext extends ChainingSecurityContext impleme
 
         PKCS8EncodedKeySpec spec =
                 new PKCS8EncodedKeySpec(keyBytes);
-        KeyFactory kf = KeyFactory.getInstance("RSA");
+        KeyFactory kf = KeyFactory.getInstance(algorithm);
         return kf.generatePrivate(spec);
     }
 }
