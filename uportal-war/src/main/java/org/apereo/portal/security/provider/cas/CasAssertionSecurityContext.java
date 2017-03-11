@@ -72,9 +72,9 @@ public class CasAssertionSecurityContext extends ChainingSecurityContext impleme
     public CasAssertionSecurityContext() {
         applicationContext = ApplicationContextLocator.getApplicationContext();
         String propertyVal = applicationContext.getBean(CAS_COPY_ASSERT_ATTR_TO_USER_ATTR_BEAN, String.class);
-        copyAssertionAttributesToUserAttributes = "true".equalsIgnoreCase(propertyVal);
+        copyAssertionAttributesToUserAttributes = Boolean.valueOf(propertyVal);
         propertyVal = applicationContext.getBean(DECRYPT_CRED_TO_PWD, String.class);
-        decryptCredentialToPassword = "true".equalsIgnoreCase(propertyVal);
+        decryptCredentialToPassword = Boolean.valueOf(propertyVal);
 
         if (decryptCredentialToPassword) {
             String decryptCredentialToPasswordPrivateKey = applicationContext.getBean(DECRYPT_CRED_TO_PWD_KEY, String.class);
@@ -82,16 +82,14 @@ public class CasAssertionSecurityContext extends ChainingSecurityContext impleme
                 try {
                     key = getPrivateKeyFromFile(decryptCredentialToPasswordPrivateKey);
                 } catch (Exception e) {
-                    log.error("Cannot load key from file: {}", decryptCredentialToPasswordPrivateKey);
-                    e.printStackTrace();
+                    log.error("Cannot load key from file: {}", decryptCredentialToPasswordPrivateKey, e);
                 }
             }
             if (cipher == null) {
                 try {
                     cipher = Cipher.getInstance(key.getAlgorithm());
                 } catch (Exception e) {
-                    log.error("Cannot create cipher for key from file: {}", decryptCredentialToPasswordPrivateKey);
-                    e.printStackTrace();
+                    log.error("Cannot create cipher for key from file: {}", decryptCredentialToPasswordPrivateKey, e);
                 }
             }
             algorithm = applicationContext.getBean(DECRYPT_CRED_TO_PWD_ALG, String.class);
@@ -217,7 +215,6 @@ public class CasAssertionSecurityContext extends ChainingSecurityContext impleme
                     attributes.put(PASSWORD_KEY, Collections.singletonList(pwd));
                 } catch (Exception e) {
                     log.warn("Cannot decipher credential", e);
-                    e.printStackTrace();
                 }
             }
 
@@ -241,11 +238,8 @@ public class CasAssertionSecurityContext extends ChainingSecurityContext impleme
     }
 
     private static PrivateKey getPrivateKeyFromFile(String filename) throws Exception {
-
         byte[] keyBytes = Files.readAllBytes(new File(filename).toPath());
-
-        PKCS8EncodedKeySpec spec =
-                new PKCS8EncodedKeySpec(keyBytes);
+        PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(keyBytes);
         KeyFactory kf = KeyFactory.getInstance(algorithm);
         return kf.generatePrivate(spec);
     }
