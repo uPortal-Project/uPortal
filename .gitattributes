@@ -1,0 +1,14 @@
+# Checkout as OS specific line endings, check in as LF
+* text=auto
+
+# Lock shell and batch files ending
+*.bat text eol=crlf
+*.sh text eol=lf
+
+# Unset formating for binary files
+*.jar binary
+*.jpg binary
+*.png binary
+*.tar.gz binary
+*.tgz binary
+*.zip binary
