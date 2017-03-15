@@ -1,6 +1,0 @@
-Local {
-    server = 'localhost'
-    port = 8080
-    username = 'tomcat'
-    password = 'tomcat'
-  }
