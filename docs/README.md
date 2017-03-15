@@ -2,7 +2,7 @@
 
 **NOTE:**  This area is a work-in-progress.  It is intended to serve as primary
 documentation for uPortal version 5.0 (expected mid-2017) and above.
-Documentation for earlier versions of uPortal is availabe in
+Documentation for earlier versions of uPortal is available in
 [Confluence](https://wiki.jasig.org).  See *Documentation for Previous Releases*
 below.
 
