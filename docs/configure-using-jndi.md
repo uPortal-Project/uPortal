@@ -1,4 +1,5 @@
 # JNDI Usage in uPortal
+
 JNDI can be used to populate values in various areas of uPortal configuration.
 
 - Override properties values in Spring
@@ -85,7 +86,8 @@ a helper factory bean can be configured to use the first working bean.
  a fallback bean that is defined with filter file values for testing.
  
 Example from datasourceContext.xml:
-```aidl
+
+```xml
 
     <!--
     <bean id="PortalDb" parent="basePooledDataSource">
