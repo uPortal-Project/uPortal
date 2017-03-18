@@ -146,7 +146,7 @@
         <ant.version>1.8.4</ant.version>
         <aspectjrt.version>1.7.4</aspectjrt.version>
         <aspectjweaver.version>1.7.4</aspectjweaver.version>
-        <casclient.version>3.2.2</casclient.version>
+        <casclient.version>3.4.1</casclient.version>
         <ccpp.version>1.0</ccpp.version>
         <cernunnos.version>1.2.2</cernunnos.version>
         <cobertura-maven-plugin.version>2.6</cobertura-maven-plugin.version>
