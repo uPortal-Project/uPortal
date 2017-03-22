@@ -2,7 +2,7 @@
 
 **NOTE:**  This area is a work-in-progress.  It is intended to serve as primary
 documentation for uPortal version 5.0 (expected mid-2017) and above.
-Documentation for earlier versions of uPortal is availabe in
+Documentation for earlier versions of uPortal is available in
 [Confluence](https://wiki.jasig.org).  See *Documentation for Previous Releases*
 below.
 
@@ -14,6 +14,7 @@ below.
 * [Using Angular](USING_ANGULAR.md)
 * [Supported web browsers](SUPPORTED_BROWSERS.md)
 * [Configuring using JNDI](configure-using-jndi.md)
+* [CAS 5 ClearPass: Credential Caching and Replay](Cas5ClearPass.md)
 * [Developer's Guide](developer/README.md)
 
 ## External Links

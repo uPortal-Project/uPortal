@@ -134,48 +134,42 @@
     </div>
 </div>
 
-<script type="text/javascript" src="<rs:resourceURL value="/rs/jquery/1.10.2/jquery-1.10.2.min.js"/>"></script>
-<script type="text/javascript" src="<rs:resourceURL value="/rs/jqueryui/1.10.3/jquery-ui-1.10.3.min.js"/>"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/search/autosuggestHandler.js"></script>
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/search/autosuggest.css">
-
-<script language="javascript" type="text/javascript"><rs:compressJs>
-/*
-* Switch jQuery to extreme noConflict mode, keeping a reference to it in the searchjQ["${n}"] namespace
-*/
-var searchjQ = searchjQ || {};
-searchjQ["${n}"] = searchjQ["${n}"] || {};
-searchjQ["${n}"].jQuery = jQuery.noConflict(true);
 
 <%-- Only set prepopulateAutoSuggestUrl if the portlet preference is not empty. --%>
 <c:if test="${not empty portletPreferencesValues['prepopulateAutoSuggestUrl'][0]}">
     <c:set var="prepopulateAutoSuggestUrl" value="${pageContext.request.contextPath}${portletPreferencesValues['prepopulateAutoSuggestUrl'][0]}"/>
 </c:if>
 
-searchjQ["${n}"].jQuery(document).ready(function() {
-    initSearchAuto(searchjQ["${n}"].jQuery, {
-        searchFieldSelector: "#${n}searchInput",
-        prepopulateAutoSuggestUrl: "${prepopulateAutoSuggestUrl}",
-        prepopulateUrlPattern: "${pageContext.request.contextPath}${portletPreferencesValues['prepopulateUrlPattern'][0]}",
-        autoSuggestResultsProcessor: "${portletPreferencesValues['autoSuggestResultsProcessor'][0]}",
-        autoSuggestSearchUrl: "${autocompleteUrl}"
+<script language="javascript" type="text/javascript"><rs:compressJs>
+(function($) {
+
+    $(function() {
+        up.initSearchAuto($, {
+            searchFieldSelector: '#${n}searchInput',
+            prepopulateAutoSuggestUrl: '${prepopulateAutoSuggestUrl}',
+            prepopulateUrlPattern: "${pageContext.request.contextPath}${portletPreferencesValues['prepopulateUrlPattern'][0]}",
+            autoSuggestResultsProcessor: "${portletPreferencesValues['autoSuggestResultsProcessor'][0]}",
+            autoSuggestSearchUrl: '${autocompleteUrl}'
+        });
+        $('#${n}searchResults').tabs();
+        <c:if test="${empty tabKeys}">
+            // Do not display the tabs header when tabKeys is empty
+            $('#${n}searchResults .searchTabsContainer').addClass('hidden');
+        </c:if>
+        $('#${n}searchResults').removeClass('hidden'); // Un-hide the search results now that the tabs are rendered
     });
-    searchjQ["${n}"].jQuery("#${n}searchResults").tabs();
-    <%-- If not configured for multiple tabs, don't display the tabs header --%>
-    <c:if test="${empty tabKeys}">
-        searchjQ["${n}"].jQuery("#${n}searchResults .searchTabsContainer").addClass("hidden");
-    </c:if>
-    searchjQ["${n}"].jQuery("#${n}searchResults").removeClass("hidden"); // Unhide the search results now that the tabs are rendered
-});
 
-// Only search if the user entered some text to search for
-searchjQ["${n}"].jQuery( "#${n}searchForm" ).submit(function( event ) {
-    if ( searchjQ["${n}"].jQuery( "#${n}searchInput" ).val().trim().length == 0 ) {
-        event.preventDefault();
-    } else {
-        document.getElementById('${n}searchButton').disabled = 1;
-    }
+    // Only search if the user entered some text to search for
+    $('#${n}searchForm').submit(function(event) {
+        if ($('#${n}searchInput').val().trim().length == 0) {
+            event.preventDefault();
+        } else {
+            document.getElementById('${n}searchButton').disabled = 1;
+        }
 
-});
+    });
 
+})(up.jQuery);
 </rs:compressJs></script>

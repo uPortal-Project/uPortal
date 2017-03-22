@@ -106,64 +106,62 @@
     </div>
 </div>
 
-<script type="text/javascript" src="<rs:resourceURL value="/rs/jquery/1.10.2/jquery-1.10.2.min.js"/>"></script>
-
 <script language="javascript" type="text/javascript">
 <rs:compressJs>
-/*
- * Switch jQuery to extreme noConflict mode, keeping a reference to it in the dynSkinConfig["${n}"] namespace
- */
-var dynSkinConfig = dynSkinConfig || {};
-dynSkinConfig["${n}"] = dynSkinConfig["${n}"] || {};
-dynSkinConfig["${n}"].jQuery = jQuery.noConflict(true);
+(function() {
 
-dynSkinConfig["${n}"].jQuery(document).ready(function() {
-    initDynSkin(dynSkinConfig["${n}"].jQuery, {
-        portletSelector: "#${n}skinManagerConfig",
-        formSelector: "#${n}dynSkinForm"
-    });
-});
+    // De-alias jQuery safely within this self-invoking function
+    var $ = up.jQuery;
 
-var initDynSkin = initDynSkin || function($, settings, portletSelector, formSelector) {
-    var formUrl = $(settings.formSelector).attr('action');
-    // The url contains &amp; which messes up spring webflow. Change them to & so parameters get passed through properly.
-    var cancelUrl = "${cancelUrl}".replace(/&amp;/g,"&");
+    var initDynSkin = function($, settings, portletSelector, formSelector) {
+        var formUrl = $(settings.formSelector).attr('action');
+        // The url contains &amp; which messes up spring webflow. Change them to & so parameters get passed through properly.
+        var cancelUrl = "${cancelUrl}".replace(/&amp;/g,"&");
 
-    var showLoading = function() {
-        $(settings.formSelector).find(".cancelButton").prop("disabled", true);
-        $(settings.formSelector).find(".saveButton").prop("disabled", true);
-        $(settings.portletSelector).find(".loadingMessage").removeClass("hidden");
+        var showLoading = function() {
+            $(settings.formSelector).find(".cancelButton").prop("disabled", true);
+            $(settings.formSelector).find(".saveButton").prop("disabled", true);
+            $(settings.portletSelector).find(".loadingMessage").removeClass("hidden");
+        };
+
+        $(settings.formSelector).submit(function (event) {
+            showLoading();
+            $.ajax({
+                url: formUrl,
+                type: "POST",
+                data: $(settings.formSelector).serialize()
+                })
+                // We don't capture error since there is no way the portal will return a different status code on an
+                // action url. If there is an error we'd get a web page with content that displayed an error message.
+                .success(function(data, textStatus, jqXHR) {
+                    // Since it saved successfully, invoke cancelUrl to gracefully exit config mode and return to
+                    // Portlet configuration without spring webflow errors. I'd have thought we could do a portletUrl
+                    // that sets portletMode=View but it does not seem to work.
+                    window.location.href=cancelUrl;
+                });
+            event.preventDefault();
+        });
+
+        // Enable or disable the dynamic skins based on whether dynamic is checked. Also setup change event to handle
+        // changes.
+        var enableOrDisableDynamicFields = function() {
+            if ($(settings.formSelector).find(".dynamicSelection").is(':checked')) {
+                $(settings.formSelector).find(".dynamicItems").removeClass("hidden");
+            } else {
+                $(settings.formSelector).find(".dynamicItems").addClass("hidden");
+            }
+        };
+        enableOrDisableDynamicFields();
+        $(settings.formSelector).find(".dynamicSelection").change(enableOrDisableDynamicFields);
     };
 
-    $(settings.formSelector).submit(function (event) {
-        showLoading();
-        $.ajax({
-            url: formUrl,
-            type: "POST",
-            data: $(settings.formSelector).serialize()
-            })
-            // We don't capture error since there is no way the portal will return a different status code on an
-            // action url. If there is an error we'd get a web page with content that displayed an error message.
-            .success(function(data, textStatus, jqXHR) {
-                // Since it saved successfully, invoke cancelUrl to gracefully exit config mode and return to
-                // Portlet configuration without spring webflow errors. I'd have thought we could do a portletUrl
-                // that sets portletMode=View but it does not seem to work.
-                window.location.href=cancelUrl;
-            });
-        event.preventDefault();
+    $(function() {
+        initDynSkin($, {
+            portletSelector: "#${n}skinManagerConfig",
+            formSelector: "#${n}dynSkinForm"
+        });
     });
 
-    // Enable or disable the dynamic skins based on whether dynamic is checked. Also setup change event to handle
-    // changes.
-    var enableOrDisableDynamicFields = function() {
-        if ($(settings.formSelector).find(".dynamicSelection").is(':checked')) {
-            $(settings.formSelector).find(".dynamicItems").removeClass("hidden");
-        } else {
-            $(settings.formSelector).find(".dynamicItems").addClass("hidden");
-        }
-    };
-    enableOrDisableDynamicFields();
-    $(settings.formSelector).find(".dynamicSelection").change(enableOrDisableDynamicFields);
-};
+})();
 </rs:compressJs>
 </script>

@@ -50,42 +50,36 @@
     </div>
 </div>
 
-<script type="text/javascript" src="<rs:resourceURL value="/rs/jquery/1.10.2/jquery-1.10.2.min.js"/>"></script>
-<script type="text/javascript" src="<rs:resourceURL value="/rs/jqueryui/1.10.3/jquery-ui-1.10.3.min.js"/>"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/search/autosuggestHandler.js"></script>
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/search/autosuggest.css">
-
-<script language="javascript" type="text/javascript"><rs:compressJs>
-/*
- * Switch jQuery to extreme noConflict mode, keeping a reference to it in the searchjQ["${n}"] namespace
- */
-var searchjQ = searchjQ || {};
-searchjQ["${n}"] = searchjQ["${n}"] || {};
-searchjQ["${n}"].jQuery = jQuery.noConflict(true);
 
 <%-- Only set prepopulateAutoSuggestUrl if the portlet preference is not empty. --%>
 <c:if test="${not empty portletPreferencesValues['prepopulateAutoSuggestUrl'][0]}">
     <c:set var="prepopulateAutoSuggestUrl" value="${pageContext.request.contextPath}${portletPreferencesValues['prepopulateAutoSuggestUrl'][0]}"/>
 </c:if>
 
-searchjQ["${n}"].jQuery(document).ready(function() {
-    initSearchAuto(searchjQ["${n}"].jQuery, {
-        searchFieldSelector: "#${n}webSearchInput",
-        prepopulateAutoSuggestUrl: "${prepopulateAutoSuggestUrl}",
-        prepopulateUrlPattern: "${pageContext.request.contextPath}${portletPreferencesValues['prepopulateUrlPattern'][0]}",
-        autoSuggestResultsProcessor: "${portletPreferencesValues['autoSuggestResultsProcessor'][0]}",
-        autoSuggestSearchUrl: "${autocompleteUrl}"
+<script language="javascript" type="text/javascript"><rs:compressJs>
+(function($) {
+
+    $(function() {
+        up.initSearchAuto($, {
+            searchFieldSelector: "#${n}webSearchInput",
+            prepopulateAutoSuggestUrl: "${prepopulateAutoSuggestUrl}",
+            prepopulateUrlPattern: "${pageContext.request.contextPath}${portletPreferencesValues['prepopulateUrlPattern'][0]}",
+            autoSuggestResultsProcessor: "${portletPreferencesValues['autoSuggestResultsProcessor'][0]}",
+            autoSuggestSearchUrl: "${autocompleteUrl}"
+        });
     });
-});
 
-// Only search if the user entered some text to search for
-searchjQ["${n}"].jQuery( "#${n}webSearchForm" ).submit(function( event ) {
-    if ( searchjQ["${n}"].jQuery( "#${n}webSearchInput" ).val().trim().length == 0 ) {
-        event.preventDefault();
-    } else {
-        document.getElementById('webSearchSubmit').disabled = 1;
-    }
+    // Only search if the user entered some text to search for
+    $("#${n}webSearchForm").submit(function(event) {
+        if ($( "#${n}webSearchInput").val().trim().length == 0) {
+            event.preventDefault();
+        } else {
+            document.getElementById('webSearchSubmit').disabled = 1;
+        }
 
-});
+    });
 
+})(up.jQuery);
 </rs:compressJs></script>
