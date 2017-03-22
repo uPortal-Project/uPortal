@@ -634,7 +634,6 @@ var up = up || {};
                 xmlhttp = new XMLHttpRequest();
                 xmlhttp.onreadystatechange = function() {
                     if (xmlhttp.readyState == 4) {
-                        //console.log(xmlhttp.responseText);
                         if (xmlhttp.status >= 200 && xmlhttp.status <= 202) {
                             that.registry.removeEntity(parentKey);
                             browseEntity(that, parentKey);
