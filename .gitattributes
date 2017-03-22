@@ -1,15 +1,22 @@
-# Lock batch file ending
-*.bat text eol=crlf
-
-# Checkout as OS specific line endings, check in as LF
-* text eol=lf
-
-# Unset formating for binary files
-*.gif binary
-*.jar binary
-*.jpg binary
-*.png binary
-*.tar.gz binary
-*.tgz binary
-*.ttf binary
-*.zip binary
+# Set line endings for known text files
+*.css        text eol=lf
+*.dtd        text eol=lf
+*.gradle     text eol=lf
+*.groovy     text eol=lf
+*.html       text eol=lf
+*.java       text eol=lf
+*.js         text eol=lf
+*.json       text eol=lf
+*.jsp        text eol=lf
+*.less       text eol=lf
+*.php        text eol=lf
+*.pl         text eol=lf
+*.properties text eol=lf
+*.sh         text eol=lf
+*.tld        text eol=lf
+*.txt        text eol=lf
+*.wsdl       text eol=lf
+*.xml        text eol=lf
+*.xsd        text eol=lf
+*.xsl        text eol=lf
+*.yml        text eol=lf
