@@ -9,6 +9,7 @@
 *.json       text eol=lf
 *.jsp        text eol=lf
 *.less       text eol=lf
+*.md         text eol=lf
 *.php        text eol=lf
 *.pl         text eol=lf
 *.properties text eol=lf
