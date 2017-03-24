@@ -26,7 +26,23 @@ has access to all releases of the uPortal software with absolutely no costs. We
 welcome [contributions from our community](https://github.com/Jasig/uPortal/graphs/contributors)
 of all types and sizes.
 
-## Manual
+### Accessibility
+
+uPortal strives to conform with Web Content Accessibility Guidelines Version 2.0 Level AA.
+The most recent accessibility audit results can be seen in [UP-4735](https://issues.jasig.org/browse/UP-4735).
+
+[![WCAG 2 AA Badge](https://www.w3.org/WAI/wcag2AA-blue-v.svg)](https://www.w3.org/TR/WCAG20/)
+
+## Help and Support
+
+The [uportal-user@apereo.org](https://wiki.jasig.org/display/JSG/uportal-user)
+email address is the best place to go with questions related to configuring or
+deploying uPortal.
+
+The [uPortal manual](#manual) is a collaborative resource which has more detailed documentation for
+each uPortal release.
+
+### Manual
 
 Additional information about uPortal is available in the Manual.
 
@@ -38,16 +54,6 @@ Additional information about uPortal is available in the Manual.
 *   [uPortal 3.2 Manual](https://wiki.jasig.org/display/UPM32/Home)
 *   [uPortal 3.1 Manual](https://wiki.jasig.org/display/UPM31/Home)
 *   [uPortal 3.0 Manual](https://wiki.jasig.org/display/UPM30/Home)
-
-## Continuous Integration
-
-uPortal uses Travis CI and AppVeyor for lightweight continuous integration.  You can see build statuses at <https://travis-ci.org/Jasig/uPortal> and <https://ci.appveyor.com/project/drewwills/uportal>.
-
-## Accessibility
-
-uPortal strives to conform with Web Content Accessibility Guidelines Version 2.0 Level AA. The most recent accessility audit results can be seen in [UP-4735](https://issues.jasig.org/browse/UP-4735).
-
-[![WCAG 2 AA Badge](https://www.w3.org/WAI/wcag2AA-blue-v.svg)](https://www.w3.org/TR/WCAG20/)
 
 ## Requirements
 
@@ -85,15 +91,6 @@ This is the required process to deploy any portlet to a uPortal instance.
 ``` shell
 ant deployPortletApp -DportletApp=/path/to/portlet.war
 ```
-
-## Help and Support
-
-The [uportal-user@apereo.org](https://wiki.jasig.org/display/JSG/uportal-user)
-email address is the best place to go with questions related to configuring or
-deploying uPortal.
-
-The uPortal manual is a collaborative document on the wiki which has more
-detailed documentation: <https://wiki.jasig.org/display/UPM42>
 
 ## Other Notes
 
