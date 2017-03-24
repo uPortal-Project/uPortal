@@ -28,7 +28,6 @@
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
-        
 
     <aop:aspectj-autoproxy/>
     
@@ -47,10 +46,7 @@
         <context:exclude-filter type="regex" expression="org\.apereo\.portal\.security\.mvc\..+"/>
         <context:exclude-filter type="regex" expression="org\.apereo\.portal\.security\.remoting\..+"/>
     </context:component-scan>
-    <!-- TODO:  Remove! -->
-    <context:component-scan base-package="org.jasig.portal">
-    </context:component-scan>
-    
+
     <bean id="primaryPropertyPlaceholderConfigurer" class="org.springframework.context.support.PortalPropertySourcesPlaceholderConfigurer">
         <property name="locations">
             <list>

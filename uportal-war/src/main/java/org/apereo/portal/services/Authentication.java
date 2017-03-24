@@ -21,6 +21,7 @@ package org.apereo.portal.services;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -74,6 +75,9 @@ public class Authentication {
     private IPortalAuthEventFactory portalEventFactory;
     private IPersonAttributeDao personAttributeDao;
     private UsernameTaggedCacheEntryPurger usernameTaggedCacheEntryPurger;
+
+    @Autowired
+    private Set<IAuthenticationListener> authenticationListeners;
 
     @Autowired
     public void setUsernameTaggedCacheEntryPurger(UsernameTaggedCacheEntryPurger usernameTaggedCacheEntryPurger) {
@@ -139,8 +143,19 @@ public class Authentication {
 
             threadNamingRequestFilter.updateCurrentUsername(userName);
 
-            //Clear all existing group data about the person
-            GroupService.finishedSession(person);
+            /*
+             * Clear cached group info for this user.
+             *
+             * There seem to be 2 systems in place for this information:
+             *   - The old system based on EntityCachingService
+             *   - The new system based on ehcache
+             *
+             * For uPortal 5, we should work to remove the old system.
+             */
+            GroupService.finishedSession(person);  // Old system
+            for (IAuthenticationListener authListener : authenticationListeners) {  // New system
+                authListener.userAuthenticated(person);
+            }
 
             //Clear all existing cached data about the person
             this.usernameTaggedCacheEntryPurger.purgeTaggedCacheEntries(userName);

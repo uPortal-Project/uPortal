@@ -18,7 +18,6 @@
  */
 package org.apereo.portal.groups.pags.dao;
 
-import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -118,7 +117,7 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
             }
         }
 
-        final MembershipCacheKey cacheKey = new MembershipCacheKey(group.getEntityIdentifier(), member.getEntityIdentifier());
+        final MembershipCacheKey cacheKey = new MembershipCacheKey(group.getEntityIdentifier(), member.getUnderlyingEntityIdentifier());
         Element element = membershipCache.get(cacheKey);
         if (element == null) {
 
@@ -446,60 +445,6 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
         }
         final IPersonAttributesGroupDefinition rslt = pagsGroups.isEmpty() ? null : pagsGroups.iterator().next();
         return rslt;
-    }
-
-    /*
-     * Nested Types
-     */
-
-    private static final class MembershipCacheKey implements Serializable {
-
-        private static final long serialVersionUID = 1L;
-
-        private final EntityIdentifier groupId;
-        private final EntityIdentifier memberId;
-
-        public MembershipCacheKey(final EntityIdentifier groupId, final EntityIdentifier memberId) {
-            this.groupId = groupId;
-            this.memberId = memberId;
-        }
-
-        @Override
-        public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + ((groupId == null) ? 0 : groupId.hashCode());
-            result = prime * result + ((memberId == null) ? 0 : memberId.hashCode());
-            return result;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj)
-                return true;
-            if (obj == null)
-                return false;
-            if (getClass() != obj.getClass())
-                return false;
-            MembershipCacheKey other = (MembershipCacheKey) obj;
-            if (groupId == null) {
-                if (other.groupId != null)
-                    return false;
-            } else if (!groupId.equals(other.groupId))
-                return false;
-            if (memberId == null) {
-                if (other.memberId != null)
-                    return false;
-            } else if (!memberId.equals(other.memberId))
-                return false;
-            return true;
-        }
-
-        @Override
-        public String toString() {
-            return "MembershipCacheKey [groupId=" + groupId + ", memberId=" + memberId + "]";
-        }
-
     }
 
 }
