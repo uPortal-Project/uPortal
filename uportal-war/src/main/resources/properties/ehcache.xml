@@ -1942,7 +1942,11 @@
      +-->
     <cache name="org.jasig.portal.groups.pags.dao.EntityPersonAttributesGroupStore.membership"
            eternal="false" overflowToDisk="false" diskPersistent="false"
-           maxElementsInMemory="50000" timeToIdleSeconds="0" timeToLiveSeconds="180" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+           maxElementsInMemory="50000" timeToIdleSeconds="0" timeToLiveSeconds="180" memoryStoreEvictionPolicy="LRU" statistics="true">
+        <searchable>
+            <searchAttribute name="memberId" class="org.jasig.portal.groups.pags.dao.EhcacheMemberIdAttributeExtractor"/>
+        </searchable>
+    </cache>
 
     <!-- PAGS Store Cache, not replicated -->
     <cache name="org.jasig.portal.groups.pags.dao.jpa.PersonAttributesGroupDefinitionImpl"
