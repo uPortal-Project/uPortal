@@ -41,7 +41,7 @@ import org.springframework.stereotype.Component;
  * attributes -- and therefore different PAGS affiliations -- based on
  * information passed to the authentication process.
  *
- * @author drewwills
+ * @since 5.0
  */
 @Component
 public class PagsMembershipCacheAuthenticationListener implements IAuthenticationListener {

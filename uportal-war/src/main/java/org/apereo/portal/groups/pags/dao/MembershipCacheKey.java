@@ -24,7 +24,7 @@ import java.io.Serializable;
 import org.apereo.portal.EntityIdentifier;
 
 /**
- * @author drewwills
+ * @since 5.0
  */
 /* package-private */ final class MembershipCacheKey implements Serializable {
 

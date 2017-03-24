@@ -33,13 +33,16 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 /**
- * Responsible for removing some membership-related cache entries when a user
- * authenticates so they can be evaluated afresh.
+ * Responsible for removing membership-related cache entries within the 'local'
+ * (database) groups strategy when a user authenticates.  (Other
+ * {@link IAuthenticationListener} beans may perform a similar function for
+ * other strategies).  This purge is necessary so they can be evaluated afresh;
+ * depending on authentication parameters, there could be a different result.
  *
- * @author drewwills
+ * @since 5.0
  */
 @Component
-public class GroupsCacheAuthenticationListener implements IAuthenticationListener {
+public class LocalGroupsCacheAuthenticationListener implements IAuthenticationListener {
 
     private Cache parentGroupsCache;
 
@@ -77,17 +80,14 @@ public class GroupsCacheAuthenticationListener implements IAuthenticationListene
         final Element parentGroupsElement = parentGroupsCache.get(ei);
         if (parentGroupsElement != null) {
             // We have some flushing work to do...
-            int numPurged = 1;
             final Set<IEntityGroup> parentGroups = (Set<IEntityGroup>) parentGroupsElement.getObjectValue();
             for (IEntityGroup group : parentGroups) {
                 final EntityIdentifier uei = group.getUnderlyingEntityIdentifier();
-                if (childrenCache.remove(uei)) {
-                    ++numPurged;
-                }
+                childrenCache.remove(uei);
             }
             parentGroupsCache.remove(ei);
-            logger.debug("Purged {} local group cache entries for authenticated user '{}' in {}ms",
-                    numPurged, user.getUserName(), Long.toBinaryString(System.currentTimeMillis() - timestamp));
+            logger.debug("Purged the following local group cache entries for authenticated user '{}' in {}ms:  {}",
+                    user.getUserName(), Long.toBinaryString(System.currentTimeMillis() - timestamp), parentGroups);
         }
 
     }

@@ -67,7 +67,7 @@ public class GroupsCacheAuthenticationListenerTest {
         Assert.assertEquals(parentGroupsCache.getSize(), 1);
         Assert.assertEquals(childrenCache.getSize(), 1);
 
-        final GroupsCacheAuthenticationListener listener = new GroupsCacheAuthenticationListener();
+        final LocalGroupsCacheAuthenticationListener listener = new LocalGroupsCacheAuthenticationListener();
         listener.setParentGroupsCache(parentGroupsCache);
         listener.setChildrenCache(childrenCache);
         listener.userAuthenticated(person);

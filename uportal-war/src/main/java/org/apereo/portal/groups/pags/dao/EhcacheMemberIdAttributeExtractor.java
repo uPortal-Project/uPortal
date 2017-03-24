@@ -27,7 +27,7 @@ import org.apereo.portal.EntityIdentifier;
 /**
  * Used within Ehcache to find keys that reference the specified username.
  *
- * @author drewwills
+ * @since 5.0
  */
 public class EhcacheMemberIdAttributeExtractor implements AttributeExtractor {
 

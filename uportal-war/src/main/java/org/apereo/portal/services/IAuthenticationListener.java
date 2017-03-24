@@ -24,7 +24,7 @@ import org.apereo.portal.security.IPerson;
 /**
  * Beans that implement this interface will be notified whenever a user authenticates.
  *
- * @author drewwills
+ * @since 5.0
  */
 public interface IAuthenticationListener {
 
