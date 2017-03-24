@@ -52,7 +52,7 @@ public class GroupsCacheAuthenticationListener implements IAuthenticationListene
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Override
-    public void userAuthenticateed(IPerson user) {
+    public void userAuthenticated(IPerson user) {
 
         final long timestamp = System.currentTimeMillis();
 

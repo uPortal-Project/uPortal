@@ -62,7 +62,7 @@ public class PagsMembershipCacheAuthenticationListener implements IAuthenticatio
     }
 
     @Override
-    public void userAuthenticateed(IPerson user) {
+    public void userAuthenticated(IPerson user) {
 
         final long timestamp = System.currentTimeMillis();
 
