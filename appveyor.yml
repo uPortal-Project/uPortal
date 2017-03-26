@@ -14,4 +14,4 @@ test_script:
 cache:
   - .gradle
   - C:\Users\appveyor\.gradle
-  - - C:\Users\appveyor\.m2\ -> pom.xml
+  - C:\Users\appveyor\.m2\ -> pom.xml
