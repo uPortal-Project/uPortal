@@ -1,20 +1,16 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.jdbc;
 
@@ -22,24 +18,20 @@ import java.util.Date;
 
 /**
  * @author susan.bramhall@yale.edu
- * @version $Revision$
- * Apr 8, 2005
- *
+ * @version $Revision$ Apr 8, 2005
  */
 public interface IDatabaseMetadata {
     /**
-     * Gets the appropriate {@link IJoinQueryString} implemenation for
-     * the database. If {@link #supportsOuterJoins()} returns <code>false</code>
-     * this will return <code>null</code>.
+     * Gets the appropriate {@link IJoinQueryString} implemenation for the database. If {@link
+     * #supportsOuterJoins()} returns <code>false</code> this will return <code>null</code>.
      *
      * @return The appropriate {@link IJoinQueryString} implemenation.
      */
     public IJoinQueryString getJoinQuery();
 
     /**
-     * Returns <code>true</code> if the database server supports outer
-     * joins. The query to use if this returns <code>true</code> can
-     * be retrieved from the {@link #getJoinQuery()} method.
+     * Returns <code>true</code> if the database server supports outer joins. The query to use if
+     * this returns <code>true</code> can be retrieved from the {@link #getJoinQuery()} method.
      *
      * @return <code>true</code> if the server supports outer joins.
      */
@@ -82,33 +74,21 @@ public interface IDatabaseMetadata {
      */
     public String sqlTimeStamp(Date date);
 
-    /**
-     * @return Database Name
-     */
+    /** @return Database Name */
     public String getDatabaseProductName();
 
-    /**
-     * @return Database Version
-     */
+    /** @return Database Version */
     public String getDatabaseProductVersion();
-    
-    /**
-     * @return The JDBC Driver being used
-     */
+
+    /** @return The JDBC Driver being used */
     public String getJdbcDriver();
 
-    /**
-     * @return The JDBC Driver version
-     */
+    /** @return The JDBC Driver version */
     public String getJdbcDriverVersion();
-    
-    /**
-     * @return The JDBC URL being used
-     */
+
+    /** @return The JDBC URL being used */
     public String getJdbcUrl();
-    
-    /**
-     * @return The JDBC user name
-     */
+
+    /** @return The JDBC user name */
     public String getJdbcUser();
 }

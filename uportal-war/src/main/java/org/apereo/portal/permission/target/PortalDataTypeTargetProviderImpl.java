@@ -1,31 +1,23 @@
 /**
- * Licensed to Jasig under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a
- * copy of the License at:
+ * Licensed to Jasig under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Jasig
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at:
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-
 package org.apereo.portal.permission.target;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.annotation.PostConstruct;
-
 import org.apereo.portal.io.xml.IPortalDataHandlerService;
 import org.apereo.portal.io.xml.IPortalDataType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,16 +26,17 @@ public class PortalDataTypeTargetProviderImpl implements IPermissionTargetProvid
 
     private Map<String, IPermissionTarget> targetMap = new HashMap<String, IPermissionTarget>();
 
-    @Autowired
-    private IPortalDataHandlerService portalDataHandlerService;
+    @Autowired private IPortalDataHandlerService portalDataHandlerService;
 
     @PostConstruct
     public void init() {
         Iterable<IPortalDataType> dataTypes = portalDataHandlerService.getExportPortalDataTypes();
         for (IPortalDataType type : dataTypes) {
             final String typeId = type.getTypeId();
-            targetMap.put(typeId, new PermissionTargetImpl(typeId, typeId,
-                                IPermissionTarget.TargetType.DATA_TYPE));
+            targetMap.put(
+                    typeId,
+                    new PermissionTargetImpl(
+                            typeId, typeId, IPermissionTarget.TargetType.DATA_TYPE));
         }
     }
 
@@ -74,5 +67,4 @@ public class PortalDataTypeTargetProviderImpl implements IPermissionTargetProvid
         // return the list of matching targets
         return matching;
     }
-
 }

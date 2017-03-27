@@ -1,20 +1,16 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.portlets.tenantmanager;
 
@@ -26,14 +22,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import javax.annotation.Resource;
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletSession;
 import javax.portlet.RenderRequest;
-
 import org.apache.commons.lang.StringUtils;
 import org.apereo.portal.tenants.ITenant;
 import org.apereo.portal.tenants.ITenantManagementAction;
@@ -64,25 +58,31 @@ public class TenantManagerController {
     private static final String OPTIONAL_LISTENER_PARAMETER = "optionalListener";
     private static final String OPERATION_NAME_CODE = "operationNameCode";
     private static final String OPERATIONS_LISTENER_RESPONSES = "operationsListenerResponses";
-    private static final String OPERATIONS_LINTENER_AVAILABLE_ACTIONS = "operationsListenerAvailableActions";
+    private static final String OPERATIONS_LINTENER_AVAILABLE_ACTIONS =
+            "operationsListenerAvailableActions";
     private static final String INVALID_FIELDS = "invalidFields";
     private static final String PREVIOUS_RESPONSES = "previousResponses";
 
-    private static final String CURRENT_TENANT_SESSION_ATTRIBUTE = TenantManagerController.class.getName() + ".currentTenant";
+    private static final String CURRENT_TENANT_SESSION_ATTRIBUTE =
+            TenantManagerController.class.getName() + ".currentTenant";
 
     /**
-     * Handy collection of things that might be stored in the {@link PortletSession} for easy cleanup.
+     * Handy collection of things that might be stored in the {@link PortletSession} for easy
+     * cleanup.
      */
-    private static final String[] SESSION_KEYS = new String[] {
-            CURRENT_TENANT_SESSION_ATTRIBUTE, INVALID_FIELDS, PREVIOUS_RESPONSES,
-            OPERATION_NAME_CODE, OPERATIONS_LISTENER_RESPONSES
-    };
+    private static final String[] SESSION_KEYS =
+            new String[] {
+                CURRENT_TENANT_SESSION_ATTRIBUTE,
+                INVALID_FIELDS,
+                PREVIOUS_RESPONSES,
+                OPERATION_NAME_CODE,
+                OPERATIONS_LISTENER_RESPONSES
+            };
 
-    @Autowired
-    private TenantService tenantService;
+    @Autowired private TenantService tenantService;
 
-    @Resource(name="tenantManagerAttributes")
-    private Map<String,String> tenantManagerAttributes;
+    @Resource(name = "tenantManagerAttributes")
+    private Map<String, String> tenantManagerAttributes;
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
@@ -92,17 +92,16 @@ public class TenantManagerController {
         // First reset any workflows the user may have undertaken
         clearState(req);
 
-        final Map<String,Object> model = new HashMap<String,Object>();
+        final Map<String, Object> model = new HashMap<String, Object>();
         final List<ITenant> tenantsList = tenantService.getTenantsList();
         model.put("tenantsList", tenantsList);
         return new ModelAndView(DEFAULT_VIEW_NAME, model);
-
     }
 
-    @RenderMapping(params="action=showAddTenant")
+    @RenderMapping(params = "action=showAddTenant")
     public ModelAndView showAddTenant(final PortletSession session) {
 
-        Map<String,Object> model = new HashMap<String,Object>();
+        Map<String, Object> model = new HashMap<String, Object>();
         model.put(TENANT_MANAGER_ATTRIBUTES, Collections.unmodifiableMap(tenantManagerAttributes));
         model.put(OPTIONAL_OPERATIONS_LISTENERS, tenantService.getOptionalOperationsListeners());
 
@@ -111,25 +110,22 @@ public class TenantManagerController {
          * but may contain data if you attempted to create a tenant but your
          * inputs failed validation.
          */
-        Map<String,String> previousResponses = Collections.emptyMap();  // default
+        Map<String, String> previousResponses = Collections.emptyMap(); // default
         if (session.getAttributeMap().containsKey(PREVIOUS_RESPONSES)) {
-            previousResponses = (Map<String,String>) session.getAttribute(PREVIOUS_RESPONSES);
+            previousResponses = (Map<String, String>) session.getAttribute(PREVIOUS_RESPONSES);
         }
         model.put(PREVIOUS_RESPONSES, previousResponses);
-        Map<String,Object> invalidFields = Collections.emptyMap();  // default
+        Map<String, Object> invalidFields = Collections.emptyMap(); // default
         if (session.getAttributeMap().containsKey(INVALID_FIELDS)) {
-            invalidFields = (Map<String,Object>) session.getAttribute(INVALID_FIELDS);
+            invalidFields = (Map<String, Object>) session.getAttribute(INVALID_FIELDS);
         }
         model.put(INVALID_FIELDS, invalidFields);
 
         return new ModelAndView(ADD_TENANT_VIEW_NAME, model);
-
     }
 
-    /**
-     * @since uPortal 4.3
-     */
-    @RenderMapping(params="action=showTenantDetails")
+    /** @since uPortal 4.3 */
+    @RenderMapping(params = "action=showTenantDetails")
     public ModelAndView showTenantDetails(final RenderRequest req, final PortletSession session) {
 
         // Should the user chose to perform an action on the details screen, we
@@ -152,7 +148,7 @@ public class TenantManagerController {
             tenant = (ITenant) session.getAttribute(CURRENT_TENANT_SESSION_ATTRIBUTE);
         }
 
-        Map<String,Object> model = new HashMap<String,Object>();
+        Map<String, Object> model = new HashMap<String, Object>();
         model.put("tenant", tenant);
         model.put("tenantManagerAttributes", Collections.unmodifiableMap(tenantManagerAttributes));
         model.put(OPERATIONS_LINTENER_AVAILABLE_ACTIONS, tenantService.getAllAvaialableActions());
@@ -162,37 +158,39 @@ public class TenantManagerController {
          * but may contain data if you attempted to create a tenant but your
          * inputs failed validation.
          */
-        Map<String,String> previousResponses = Collections.emptyMap();  // default
+        Map<String, String> previousResponses = Collections.emptyMap(); // default
         if (session.getAttributeMap().containsKey(PREVIOUS_RESPONSES)) {
-            previousResponses = (Map<String,String>) session.getAttribute(PREVIOUS_RESPONSES);
+            previousResponses = (Map<String, String>) session.getAttribute(PREVIOUS_RESPONSES);
         }
         model.put(PREVIOUS_RESPONSES, previousResponses);
-        Map<String,Object> invalidFields = Collections.emptyMap();  // default
+        Map<String, Object> invalidFields = Collections.emptyMap(); // default
         if (session.getAttributeMap().containsKey(INVALID_FIELDS)) {
-            invalidFields = (Map<String,Object>) session.getAttribute(INVALID_FIELDS);
+            invalidFields = (Map<String, Object>) session.getAttribute(INVALID_FIELDS);
         }
         model.put(INVALID_FIELDS, invalidFields);
 
         return new ModelAndView(TENANT_DETAILS_VIEW_NAME, model);
     }
 
-    /**
-     * @since uPortal 4.3
-     */
-    @RenderMapping(params="action=showReport")
+    /** @since uPortal 4.3 */
+    @RenderMapping(params = "action=showReport")
     public ModelAndView showReport(final RenderRequest req) {
-        Map<String,Object> model = new HashMap<String,Object>();
+        Map<String, Object> model = new HashMap<String, Object>();
         PortletSession session = req.getPortletSession();
         model.put(OPERATION_NAME_CODE, session.getAttribute(OPERATION_NAME_CODE));
-        model.put(OPERATIONS_LISTENER_RESPONSES, session.getAttribute(OPERATIONS_LISTENER_RESPONSES));
+        model.put(
+                OPERATIONS_LISTENER_RESPONSES, session.getAttribute(OPERATIONS_LISTENER_RESPONSES));
         return new ModelAndView(REPORT_VIEW_NAME, model);
     }
 
-    @ActionMapping(params="action=doAddTenant")
-    public void doAddTenant(ActionRequest req, ActionResponse res,
-            final PortletSession session, @RequestParam("name") String name) {
+    @ActionMapping(params = "action=doAddTenant")
+    public void doAddTenant(
+            ActionRequest req,
+            ActionResponse res,
+            final PortletSession session,
+            @RequestParam("name") String name) {
 
-        final Map<String,String> attributes = gatherAttributesFromPortletRequest(req);
+        final Map<String, String> attributes = gatherAttributesFromPortletRequest(req);
 
         final String fname = calculateFnameFromName(name);
         // Validation
@@ -206,9 +204,10 @@ public class TenantManagerController {
         }
 
         // Honor the user's choices as far as optional listeners
-        final List<String> selectedListenerFnames = (req.getParameterValues(OPTIONAL_LISTENER_PARAMETER) != null)
-                ? Arrays.asList(req.getParameterValues(OPTIONAL_LISTENER_PARAMETER))
-                : new ArrayList<String>(0);  // None were selected
+        final List<String> selectedListenerFnames =
+                (req.getParameterValues(OPTIONAL_LISTENER_PARAMETER) != null)
+                        ? Arrays.asList(req.getParameterValues(OPTIONAL_LISTENER_PARAMETER))
+                        : new ArrayList<String>(0); // None were selected
         final Set<String> skipListenerFnames = new HashSet<>();
         for (ITenantOperationsListener listener : tenantService.getOptionalOperationsListeners()) {
             if (!selectedListenerFnames.contains(listener.getFname())) {
@@ -220,27 +219,28 @@ public class TenantManagerController {
         tenantService.createTenant(name, fname, attributes, skipListenerFnames, responses);
 
         forwardToReportScreen(req, res, "tenant.manager.add", responses);
-
     }
 
-    @ActionMapping(params="action=doUpdateTenant")
-    public void doUpdateTenant(final ActionRequest req, final ActionResponse res,
-            final PortletSession session) {
+    @ActionMapping(params = "action=doUpdateTenant")
+    public void doUpdateTenant(
+            final ActionRequest req, final ActionResponse res, final PortletSession session) {
 
         final ITenant tenant = (ITenant) session.getAttribute(CURRENT_TENANT_SESSION_ATTRIBUTE);
         if (tenant == null) {
             throw new IllegalStateException("No current tenant");
         }
 
-        final Map<String,String> attributes = gatherAttributesFromPortletRequest(req);
+        final Map<String, String> attributes = gatherAttributesFromPortletRequest(req);
 
         // Validation
-        final Set<String> invalidFields = detectInvalidFields(tenant.getName(), tenant.getFname(), attributes);
+        final Set<String> invalidFields =
+                detectInvalidFields(tenant.getName(), tenant.getFname(), attributes);
         if (!invalidFields.isEmpty()) {
             /*
              * Something wasn't valid;  return the user to the addTenant screen.
              */
-            this.returnToInvalidForm(req, res, tenant.getName(), attributes, invalidFields, "showTenantDetails");
+            this.returnToInvalidForm(
+                    req, res, tenant.getName(), attributes, invalidFields, "showTenantDetails");
             return;
         }
 
@@ -248,26 +248,28 @@ public class TenantManagerController {
         tenantService.updateTenant(tenant, attributes, responses);
 
         forwardToReportScreen(req, res, "tenant.manager.update.attributes", responses);
-
     }
 
-    @ActionMapping(params="action=doRemoveTenant")
-    public void doRemoveTenant(ActionRequest req, ActionResponse res,
-            final PortletSession session, @RequestParam("fname") String fname) {
+    @ActionMapping(params = "action=doRemoveTenant")
+    public void doRemoveTenant(
+            ActionRequest req,
+            ActionResponse res,
+            final PortletSession session,
+            @RequestParam("fname") String fname) {
 
         List<TenantOperationResponse> responses = new ArrayList<>();
         tenantService.deleteTenantByFName(fname, responses);
 
         forwardToReportScreen(req, res, "tenant.manager.remove.tenant", responses);
-
     }
 
-    /**
-     * @since uPortal 4.3
-     */
-    @ActionMapping(params="action=doListenerAction")
-    public void doListenerAction(ActionRequest req, ActionResponse res,
-            @RequestParam("fname") String fname, final PortletSession session) {
+    /** @since uPortal 4.3 */
+    @ActionMapping(params = "action=doListenerAction")
+    public void doListenerAction(
+            ActionRequest req,
+            ActionResponse res,
+            @RequestParam("fname") String fname,
+            final PortletSession session) {
 
         final ITenantManagementAction action = tenantService.getAction(fname);
         final ITenant tenant = (ITenant) session.getAttribute(CURRENT_TENANT_SESSION_ATTRIBUTE);
@@ -276,23 +278,27 @@ public class TenantManagerController {
         }
         TenantOperationResponse response = action.invoke(tenant);
 
-        forwardToReportScreen(req, res, action.getMessageCode(), Collections.singletonList(response));
-
+        forwardToReportScreen(
+                req, res, action.getMessageCode(), Collections.singletonList(response));
     }
 
     /*
      * Implementation
      */
 
-    private void returnToInvalidForm(final ActionRequest req, final ActionResponse res,
-            final String name, final Map<String,String> attributes, final Set<String> invalidFields,
+    private void returnToInvalidForm(
+            final ActionRequest req,
+            final ActionResponse res,
+            final String name,
+            final Map<String, String> attributes,
+            final Set<String> invalidFields,
             final String actionParameter) {
 
         /*
          * JSP/JSTL/EL is not good at collection.contains();  Convert the
          * invalidFields to a format that's easy to read in the JSP.
          */
-        final Map<String,Object> invalidFieldsMap = new HashMap<>();
+        final Map<String, Object> invalidFieldsMap = new HashMap<>();
         for (String fieldName : invalidFields) {
             invalidFieldsMap.put(fieldName, Boolean.TRUE);
         }
@@ -301,7 +307,7 @@ public class TenantManagerController {
         // handy to have support for javax.portlet.actionScopedRequestAttributes
         final PortletSession session = req.getPortletSession();
         session.setAttribute(INVALID_FIELDS, invalidFieldsMap);
-        final Map<String,String> previousResponses = new HashMap<>();
+        final Map<String, String> previousResponses = new HashMap<>();
         previousResponses.put("name", name);
         previousResponses.putAll(attributes);
         session.setAttribute(PREVIOUS_RESPONSES, previousResponses);
@@ -310,8 +316,11 @@ public class TenantManagerController {
         res.setRenderParameter("action", actionParameter);
     }
 
-    private void forwardToReportScreen(final ActionRequest req, final ActionResponse res,
-            final String operationNameCode, final List<TenantOperationResponse> responses) {
+    private void forwardToReportScreen(
+            final ActionRequest req,
+            final ActionResponse res,
+            final String operationNameCode,
+            final List<TenantOperationResponse> responses) {
         final PortletSession session = req.getPortletSession();
         // Need to store some items to share with user in the report;  would be
         // handy to have support for javax.portlet.actionScopedRequestAttributes
@@ -322,10 +331,9 @@ public class TenantManagerController {
         res.setRenderParameter("action", "showReport");
     }
 
-    /**
-     * Returns a collection of invalid fields, if any.
-     */
-    private Set<String> detectInvalidFields(final String name, final String fname, final Map<String,String> attributes) {
+    /** Returns a collection of invalid fields, if any. */
+    private Set<String> detectInvalidFields(
+            final String name, final String fname, final Map<String, String> attributes) {
         final Set<String> rslt = new HashSet<>();
 
         // Name & Fname
@@ -351,16 +359,15 @@ public class TenantManagerController {
         }
 
         return rslt;
-
     }
 
     private String calculateFnameFromName(final String name) {
         return name.replaceAll("[\\s']", "_").toLowerCase();
     }
 
-    private Map<String,String> gatherAttributesFromPortletRequest(ActionRequest req) {
-        Map<String,String> rslt = new HashMap<String,String>();
-        for (Map.Entry<String,String> y : tenantManagerAttributes.entrySet()) {
+    private Map<String, String> gatherAttributesFromPortletRequest(ActionRequest req) {
+        Map<String, String> rslt = new HashMap<String, String>();
+        for (Map.Entry<String, String> y : tenantManagerAttributes.entrySet()) {
             final String key = y.getKey();
             final String value = req.getParameter(key);
             if (StringUtils.isNotBlank(value)) {
@@ -376,5 +383,4 @@ public class TenantManagerController {
             session.removeAttribute(key);
         }
     }
-
 }

@@ -1,23 +1,22 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.io.xml;
 
+import com.google.common.collect.ImmutableSet;
+import com.google.common.io.Files;
+import com.google.common.io.InputSupplier;
 import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -48,7 +47,6 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicLong;
-
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -60,7 +58,6 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stax.StAXSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
-
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveInputStream;
 import org.apache.commons.compress.archivers.ar.ArArchiveInputStream;
@@ -105,10 +102,6 @@ import org.springframework.oxm.XmlMappingException;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Node;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.common.io.Files;
-import com.google.common.io.InputSupplier;
-
 /**
  * Pulls together {@link IPortalDataType}, {@link IDataUpgrader}, and {@link IDataImporter}
  * implementations to handle data upgrade, import, export and removal operations.
@@ -118,9 +111,7 @@ import com.google.common.io.InputSupplier;
 @Service("portalDataHandlerService")
 public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
 
-    /**
-     * Tracks the base import directory to allow for easier to read logging when importing
-     */
+    /** Tracks the base import directory to allow for easier to read logging when importing */
     private static final ThreadLocal<String> IMPORT_BASE_DIR = new ThreadLocal<String>();
 
     private static final String REPORT_FORMAT = "%s,%s,%.2fms\n";
@@ -143,7 +134,8 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
 
     // Ant path matcher patterns that a file must match when scanning directories (unless a pattern is explicitly specified)
     private Set<String> dataFileIncludes = Collections.emptySet();
-    private Set<String> dataFileExcludes = ImmutableSet.copyOf(DirectoryScanner.getDefaultExcludes());
+    private Set<String> dataFileExcludes =
+            ImmutableSet.copyOf(DirectoryScanner.getDefaultExcludes());
 
     // Data upgraders mapped by PortalDataKey
     private Map<PortalDataKey, IDataUpgrader> portalDataUpgraders = Collections.emptyMap();
@@ -162,7 +154,6 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
     // Data deleters mapped by IPortalDateType#getTypeId()
     private Map<String, IDataDeleter<Object>> portalDataDeleters = Collections.emptyMap();
 
-
     private org.apereo.portal.utils.DirectoryScanner directoryScanner;
     private ExecutorService importExportThreadPool;
     private XmlUtilities xmlUtilities;
@@ -176,32 +167,29 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
     }
 
     @Autowired
-    public void setImportExportThreadPool(@Qualifier("importExportThreadPool") ExecutorService importExportThreadPool) {
+    public void setImportExportThreadPool(
+            @Qualifier("importExportThreadPool") ExecutorService importExportThreadPool) {
         this.importExportThreadPool = importExportThreadPool;
         this.directoryScanner = new ConcurrentDirectoryScanner(this.importExportThreadPool);
     }
 
-    /**
-     * Maximum time to wait for an import, export, or delete to execute.
-     */
+    /** Maximum time to wait for an import, export, or delete to execute. */
     public void setMaxWait(long maxWait) {
         this.maxWait = maxWait;
     }
 
-    /**
-     * {@link TimeUnit} for {@link #setMaxWait(long)} value.
-     */
+    /** {@link TimeUnit} for {@link #setMaxWait(long)} value. */
     public void setMaxWaitTimeUnit(TimeUnit maxWaitTimeUnit) {
         this.maxWaitTimeUnit = maxWaitTimeUnit;
     }
 
-    /**
-     * Order in which data types should be imported.
-     */
-    @javax.annotation.Resource(name="dataTypeImportOrder")
+    /** Order in which data types should be imported. */
+    @javax.annotation.Resource(name = "dataTypeImportOrder")
     public void setDataTypeImportOrder(List<IPortalDataType> dataTypeImportOrder) {
-        final ArrayList<PortalDataKey> dataKeyImportOrder = new ArrayList<PortalDataKey>(dataTypeImportOrder.size() * 2);
-        final Map<PortalDataKey, IPortalDataType> dataKeyTypes = new LinkedHashMap<PortalDataKey, IPortalDataType>(dataTypeImportOrder.size() * 2);
+        final ArrayList<PortalDataKey> dataKeyImportOrder =
+                new ArrayList<PortalDataKey>(dataTypeImportOrder.size() * 2);
+        final Map<PortalDataKey, IPortalDataType> dataKeyTypes =
+                new LinkedHashMap<PortalDataKey, IPortalDataType>(dataTypeImportOrder.size() * 2);
 
         for (final IPortalDataType portalDataType : dataTypeImportOrder) {
             final List<PortalDataKey> supportedDataKeys = portalDataType.getDataKeyImportOrder();
@@ -216,28 +204,26 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
         this.dataKeyTypes = Collections.unmodifiableMap(dataKeyTypes);
     }
 
-    /**
-     * Ant path matching patterns that files must match to be included
-     */
-    @javax.annotation.Resource(name="dataFileIncludes")
+    /** Ant path matching patterns that files must match to be included */
+    @javax.annotation.Resource(name = "dataFileIncludes")
     public void setDataFileIncludes(Set<String> dataFileIncludes) {
         this.dataFileIncludes = dataFileIncludes;
     }
 
     /**
-     * Ant path matching patterns that exclude matched files. Defaults to {@link DirectoryScanner#addDefaultExcludes()}
+     * Ant path matching patterns that exclude matched files. Defaults to {@link
+     * DirectoryScanner#addDefaultExcludes()}
      */
     public void setDataFileExcludes(Set<String> dataFileExcludes) {
         this.dataFileExcludes = dataFileExcludes;
     }
 
-    /**
-     * {@link IDataImporter} implementations to delegate import operations to.
-     */
+    /** {@link IDataImporter} implementations to delegate import operations to. */
     @SuppressWarnings("unchecked")
-    @Autowired(required=false)
+    @Autowired(required = false)
     public void setDataImporters(Collection<IDataImporter<? extends Object>> dataImporters) {
-        final Map<PortalDataKey, IDataImporter<Object>> dataImportersMap = new LinkedHashMap<PortalDataKey, IDataImporter<Object>>();
+        final Map<PortalDataKey, IDataImporter<Object>> dataImportersMap =
+                new LinkedHashMap<PortalDataKey, IDataImporter<Object>>();
 
         for (final IDataImporter<?> dataImporter : dataImporters) {
 
@@ -246,13 +232,16 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
                 final Set<PortalDataKey> importDataKeys = dataImporter.getImportDataKeys();
 
                 for (final PortalDataKey importDataKey : importDataKeys) {
-                    this.logger.debug("Registering IDataImporter for '{}' - {}",
-                            new Object[]{importDataKey, dataImporter});
+                    this.logger.debug(
+                            "Registering IDataImporter for '{}' - {}",
+                            new Object[] {importDataKey, dataImporter});
                     final IDataImporter<Object> existing =
-                            dataImportersMap.put(importDataKey, (IDataImporter<Object>) dataImporter);
+                            dataImportersMap.put(
+                                    importDataKey, (IDataImporter<Object>) dataImporter);
                     if (existing != null) {
-                        this.logger.warn("Duplicate IDataImporter PortalDataKey for {} Replacing {} with {}",
-                                new Object[]{importDataKey, existing, dataImporter});
+                        this.logger.warn(
+                                "Duplicate IDataImporter PortalDataKey for {} Replacing {} with {}",
+                                new Object[] {importDataKey, existing, dataImporter});
                     }
                 }
 
@@ -264,13 +253,12 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
         this.portalDataImporters = Collections.unmodifiableMap(dataImportersMap);
     }
 
-    /**
-     * {@link IDataExporter} implementations to delegate export operations to.
-     */
+    /** {@link IDataExporter} implementations to delegate export operations to. */
     @SuppressWarnings("unchecked")
-    @Autowired(required=false)
+    @Autowired(required = false)
     public void setDataExporters(Collection<IDataExporter<? extends Object>> dataExporters) {
-        final Map<String, IDataExporter<Object>> dataExportersMap = new LinkedHashMap<String, IDataExporter<Object>>();
+        final Map<String, IDataExporter<Object>> dataExportersMap =
+                new LinkedHashMap<String, IDataExporter<Object>>();
 
         final Set<IPortalDataType> portalDataTypes = new LinkedHashSet<IPortalDataType>();
 
@@ -281,13 +269,15 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
                 final IPortalDataType portalDataType = dataExporter.getPortalDataType();
                 final String typeId = portalDataType.getTypeId();
 
-                this.logger.debug("Registering IDataExporter for '{}' - {}",
-                        new Object[]{typeId, dataExporter});
+                this.logger.debug(
+                        "Registering IDataExporter for '{}' - {}",
+                        new Object[] {typeId, dataExporter});
                 final IDataExporter<Object> existing =
                         dataExportersMap.put(typeId, (IDataExporter<Object>) dataExporter);
                 if (existing != null) {
-                    this.logger.warn("Duplicate IDataExporter typeId for {} Replacing {} with {}",
-                            new Object[]{typeId, existing, dataExporter});
+                    this.logger.warn(
+                            "Duplicate IDataExporter typeId for {} Replacing {} with {}",
+                            new Object[] {typeId, existing, dataExporter});
                 }
 
                 portalDataTypes.add(portalDataType);
@@ -295,7 +285,6 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
             } catch (Exception exception) {
                 logger.error("Failed to register data exporter {}.", dataExporter, exception);
             }
-
         }
 
         this.portalDataExporters = Collections.unmodifiableMap(dataExportersMap);
@@ -303,21 +292,20 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
     }
 
     /**
-     * Optional set of all portal data types to export. If not specified all available portal data types
-     * will be listed.
+     * Optional set of all portal data types to export. If not specified all available portal data
+     * types will be listed.
      */
-    @javax.annotation.Resource(name="exportAllPortalDataTypes")
+    @javax.annotation.Resource(name = "exportAllPortalDataTypes")
     public void setExportAllPortalDataTypes(Set<IPortalDataType> exportAllPortalDataTypes) {
         this.exportAllPortalDataTypes = ImmutableSet.copyOf(exportAllPortalDataTypes);
     }
 
-    /**
-     * {@link IDataDeleter} implementations to delegate delete operations to.
-     */
+    /** {@link IDataDeleter} implementations to delegate delete operations to. */
     @SuppressWarnings("unchecked")
-    @Autowired(required=false)
+    @Autowired(required = false)
     public void setDataDeleters(Collection<IDataDeleter<? extends Object>> dataDeleters) {
-        final Map<String, IDataDeleter<Object>> dataDeletersMap = new LinkedHashMap<String, IDataDeleter<Object>>();
+        final Map<String, IDataDeleter<Object>> dataDeletersMap =
+                new LinkedHashMap<String, IDataDeleter<Object>>();
 
         final Set<IPortalDataType> portalDataTypes = new LinkedHashSet<IPortalDataType>();
 
@@ -328,13 +316,15 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
                 final IPortalDataType portalDataType = dataDeleter.getPortalDataType();
                 final String typeId = portalDataType.getTypeId();
 
-                this.logger.debug("Registering IDataDeleter for '{}' - {}",
-                        new Object[]{typeId, dataDeleter});
+                this.logger.debug(
+                        "Registering IDataDeleter for '{}' - {}",
+                        new Object[] {typeId, dataDeleter});
                 final IDataDeleter<Object> existing =
                         dataDeletersMap.put(typeId, (IDataDeleter<Object>) dataDeleter);
                 if (existing != null) {
-                    this.logger.warn("Duplicate IDataDeleter typeId for {} Replacing {} with {}",
-                            new Object[]{typeId, existing, dataDeleter});
+                    this.logger.warn(
+                            "Duplicate IDataDeleter typeId for {} Replacing {} with {}",
+                            new Object[] {typeId, existing, dataDeleter});
                 }
 
                 portalDataTypes.add(portalDataType);
@@ -348,12 +338,11 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
         this.deletePortalDataTypes = Collections.unmodifiableSet(portalDataTypes);
     }
 
-    /**
-     * {@link IDataUpgrader} implementations to delegate upgrade operations to.
-     */
-    @Autowired(required=false)
+    /** {@link IDataUpgrader} implementations to delegate upgrade operations to. */
+    @Autowired(required = false)
     public void setDataUpgraders(Collection<IDataUpgrader> dataUpgraders) {
-        final Map<PortalDataKey, IDataUpgrader> dataUpgraderMap = new LinkedHashMap<PortalDataKey, IDataUpgrader>();
+        final Map<PortalDataKey, IDataUpgrader> dataUpgraderMap =
+                new LinkedHashMap<PortalDataKey, IDataUpgrader>();
 
         for (final IDataUpgrader dataUpgrader : dataUpgraders) {
 
@@ -361,11 +350,16 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
 
                 final Set<PortalDataKey> upgradeDataKeys = dataUpgrader.getSourceDataTypes();
                 for (final PortalDataKey upgradeDataKey : upgradeDataKeys) {
-                    this.logger.debug("Registering IDataUpgrader for '{}' - {}", upgradeDataKey, dataUpgrader);
-                    final IDataUpgrader existing = dataUpgraderMap.put(upgradeDataKey, dataUpgrader);
+                    this.logger.debug(
+                            "Registering IDataUpgrader for '{}' - {}",
+                            upgradeDataKey,
+                            dataUpgrader);
+                    final IDataUpgrader existing =
+                            dataUpgraderMap.put(upgradeDataKey, dataUpgrader);
                     if (existing != null) {
-                        this.logger.warn("Duplicate IDataUpgrader PortalDataKey for {} Replacing {} with {}",
-                                new Object[]{upgradeDataKey, existing, dataUpgrader});
+                        this.logger.warn(
+                                "Duplicate IDataUpgrader PortalDataKey for {} Replacing {} with {}",
+                                new Object[] {upgradeDataKey, existing, dataUpgrader});
                     }
                 }
 
@@ -381,80 +375,78 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
     public void importDataArchive(Resource archive, BatchImportOptions options) {
         try {
             importDataArchive(archive, archive.getInputStream(), options);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new RuntimeException("Could not load InputStream for resource: " + archive, e);
         }
     }
 
-    protected void importDataArchive(Resource archive, InputStream resourceStream, BatchImportOptions options) {
+    protected void importDataArchive(
+            Resource archive, InputStream resourceStream, BatchImportOptions options) {
         BufferedInputStream bufferedResourceStream = null;
         try {
             //Make sure the stream is buffered
             if (resourceStream instanceof BufferedInputStream) {
-                bufferedResourceStream = (BufferedInputStream)resourceStream;
-            }
-            else {
+                bufferedResourceStream = (BufferedInputStream) resourceStream;
+            } else {
                 bufferedResourceStream = new BufferedInputStream(resourceStream);
             }
 
             //Buffer up to 100MB, bad things will happen if we bust this buffer.
             //TODO see if there is a buffered stream that will write to a file once the buffer fills up
-            bufferedResourceStream.mark(100*1024*1024);
+            bufferedResourceStream.mark(100 * 1024 * 1024);
             final MediaType type = getMediaType(bufferedResourceStream, archive.getFilename());
 
             if (MT_JAVA_ARCHIVE.equals(type)) {
-                final ArchiveInputStream archiveStream = new JarArchiveInputStream(bufferedResourceStream);
+                final ArchiveInputStream archiveStream =
+                        new JarArchiveInputStream(bufferedResourceStream);
                 importDataArchive(archive, archiveStream, options);
-            }
-            else if (MediaType.APPLICATION_ZIP.equals(type)) {
-                final ArchiveInputStream archiveStream = new ZipArchiveInputStream(bufferedResourceStream);
+            } else if (MediaType.APPLICATION_ZIP.equals(type)) {
+                final ArchiveInputStream archiveStream =
+                        new ZipArchiveInputStream(bufferedResourceStream);
                 importDataArchive(archive, archiveStream, options);
-            }
-            else if (MT_CPIO.equals(type)) {
-                final ArchiveInputStream archiveStream = new CpioArchiveInputStream(bufferedResourceStream);
+            } else if (MT_CPIO.equals(type)) {
+                final ArchiveInputStream archiveStream =
+                        new CpioArchiveInputStream(bufferedResourceStream);
                 importDataArchive(archive, archiveStream, options);
-            }
-            else if (MT_AR.equals(type)) {
-                final ArchiveInputStream archiveStream = new ArArchiveInputStream(bufferedResourceStream);
+            } else if (MT_AR.equals(type)) {
+                final ArchiveInputStream archiveStream =
+                        new ArArchiveInputStream(bufferedResourceStream);
                 importDataArchive(archive, archiveStream, options);
-            }
-            else if (MT_TAR.equals(type)) {
-                final ArchiveInputStream archiveStream = new TarArchiveInputStream(bufferedResourceStream);
+            } else if (MT_TAR.equals(type)) {
+                final ArchiveInputStream archiveStream =
+                        new TarArchiveInputStream(bufferedResourceStream);
                 importDataArchive(archive, archiveStream, options);
-            }
-            else if (MT_BZIP2.equals(type)) {
-                final CompressorInputStream compressedStream = new BZip2CompressorInputStream(bufferedResourceStream);
+            } else if (MT_BZIP2.equals(type)) {
+                final CompressorInputStream compressedStream =
+                        new BZip2CompressorInputStream(bufferedResourceStream);
                 importDataArchive(archive, compressedStream, options);
-            }
-            else if (MT_GZIP.equals(type)) {
-                final CompressorInputStream compressedStream = new GzipCompressorInputStream(bufferedResourceStream);
+            } else if (MT_GZIP.equals(type)) {
+                final CompressorInputStream compressedStream =
+                        new GzipCompressorInputStream(bufferedResourceStream);
                 importDataArchive(archive, compressedStream, options);
-            }
-            else if (MT_PACK200.equals(type)) {
-                final CompressorInputStream compressedStream = new Pack200CompressorInputStream(bufferedResourceStream);
+            } else if (MT_PACK200.equals(type)) {
+                final CompressorInputStream compressedStream =
+                        new Pack200CompressorInputStream(bufferedResourceStream);
                 importDataArchive(archive, compressedStream, options);
-            }
-            else if (MT_XZ.equals(type)) {
-                final CompressorInputStream compressedStream = new XZCompressorInputStream(bufferedResourceStream);
+            } else if (MT_XZ.equals(type)) {
+                final CompressorInputStream compressedStream =
+                        new XZCompressorInputStream(bufferedResourceStream);
                 importDataArchive(archive, compressedStream, options);
-            }
-            else {
+            } else {
                 throw new RuntimeException("Unrecognized archive media type: " + type);
             }
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new RuntimeException("Could not load InputStream for resource: " + archive, e);
-        }
-        finally {
+        } finally {
             IOUtils.closeQuietly(bufferedResourceStream);
         }
     }
 
-    /**
-     * Extracts the archive resource and then runs the batch-import process on it.
-     */
-    protected void importDataArchive(final Resource resource, final ArchiveInputStream resourceStream, BatchImportOptions options) {
+    /** Extracts the archive resource and then runs the batch-import process on it. */
+    protected void importDataArchive(
+            final Resource resource,
+            final ArchiveInputStream resourceStream,
+            BatchImportOptions options) {
 
         final File tempDir = Files.createTempDir();
         try {
@@ -463,31 +455,38 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
                 final File entryFile = new File(tempDir, archiveEntry.getName());
                 if (archiveEntry.isDirectory()) {
                     entryFile.mkdirs();
-                }
-                else {
+                } else {
                     entryFile.getParentFile().mkdirs();
 
-                    Files.copy(new InputSupplier<InputStream>() {
-                        @Override
-                        public InputStream getInput() throws IOException {
-                            return new CloseShieldInputStream(resourceStream);
-                        }
-                    }, entryFile);
+                    Files.copy(
+                            new InputSupplier<InputStream>() {
+                                @Override
+                                public InputStream getInput() throws IOException {
+                                    return new CloseShieldInputStream(resourceStream);
+                                }
+                            },
+                            entryFile);
                 }
             }
 
             importDataDirectory(tempDir, null, options);
-        }
-        catch (IOException e) {
-            throw new RuntimeException("Failed to extract data from '" +resource + "' to '" + tempDir + "' for batch import.", e);
-        }
-        finally {
+        } catch (IOException e) {
+            throw new RuntimeException(
+                    "Failed to extract data from '"
+                            + resource
+                            + "' to '"
+                            + tempDir
+                            + "' for batch import.",
+                    e);
+        } finally {
             FileUtils.deleteQuietly(tempDir);
         }
     }
 
-    protected MediaType getMediaType(BufferedInputStream inputStream, String fileName) throws IOException {
-        final TikaInputStream tikaInputStreamStream = TikaInputStream.get(new CloseShieldInputStream(inputStream));
+    protected MediaType getMediaType(BufferedInputStream inputStream, String fileName)
+            throws IOException {
+        final TikaInputStream tikaInputStreamStream =
+                TikaInputStream.get(new CloseShieldInputStream(inputStream));
         try {
             final Detector detector = new DefaultDetector();
             final Metadata metadata = new Metadata();
@@ -496,12 +495,10 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
             final MediaType type = detector.detect(tikaInputStreamStream, metadata);
             logger.debug("Determined '{}' for '{}'", type, fileName);
             return type;
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             logger.warn("Failed to determine media type for '" + fileName + "' assuming XML", e);
             return null;
-        }
-        finally {
+        } finally {
             IOUtils.closeQuietly(tikaInputStreamStream);
 
             //Reset the buffered stream to make up for anything read by the detector
@@ -510,20 +507,22 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
     }
 
     @Override
-    public void importDataDirectory(File directory, String pattern, final BatchImportOptions options) {
+    public void importDataDirectory(
+            File directory, String pattern, final BatchImportOptions options) {
         if (!directory.exists()) {
-            throw new IllegalArgumentException("The specified directory '" + directory + "' does not exist");
+            throw new IllegalArgumentException(
+                    "The specified directory '" + directory + "' does not exist");
         }
 
         //Create the file filter to use when searching for files to import
         final FileFilter fileFilter;
         if (pattern != null) {
             fileFilter = new AntPatternFileFilter(true, false, pattern, this.dataFileExcludes);
+        } else {
+            fileFilter =
+                    new AntPatternFileFilter(
+                            true, false, this.dataFileIncludes, this.dataFileExcludes);
         }
-        else {
-            fileFilter = new AntPatternFileFilter(true, false, this.dataFileIncludes, this.dataFileExcludes);
-        }
-
 
         //Determine the parent directory to log to
         final File logDirectory = determineLogDirectory(options, "import");
@@ -532,12 +531,12 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
         final File importReport = new File(logDirectory, "data-import.txt");
         final PrintWriter reportWriter;
         try {
-            reportWriter = new PrintWriter(new PeriodicFlushingBufferedWriter(500, new FileWriter(importReport)));
-        }
-        catch (IOException e) {
+            reportWriter =
+                    new PrintWriter(
+                            new PeriodicFlushingBufferedWriter(500, new FileWriter(importReport)));
+        } catch (IOException e) {
             throw new RuntimeException("Failed to create FileWriter for: " + importReport, e);
         }
-
 
         //Convert directory to URI String to provide better logging output
         final URI directoryUri = directory.toURI();
@@ -546,7 +545,8 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
         try {
             //Scan the specified directory for files to import
             logger.info("Scanning for files to Import from: {}", directory);
-            final PortalDataKeyFileProcessor fileProcessor = new PortalDataKeyFileProcessor(this.dataKeyTypes, options);
+            final PortalDataKeyFileProcessor fileProcessor =
+                    new PortalDataKeyFileProcessor(this.dataKeyTypes, options);
             this.directoryScanner.scanDirectoryNoResults(directory, fileFilter, fileProcessor);
             final long resourceCount = fileProcessor.getResourceCount();
             logger.info("Found {} files to Import from: {}", resourceCount, directory);
@@ -555,7 +555,8 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
             final boolean failOnError = options != null ? options.isFailOnError() : true;
 
             //Map of files to import, grouped by type
-            final ConcurrentMap<PortalDataKey, Queue<Resource>> dataToImport = fileProcessor.getDataToImport();
+            final ConcurrentMap<PortalDataKey, Queue<Resource>> dataToImport =
+                    fileProcessor.getDataToImport();
 
             //Import the data files
             for (final PortalDataKey portalDataKey : this.dataKeyImportOrder) {
@@ -575,64 +576,71 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
                     final Resource file = files.poll();
 
                     //Check for completed futures on every iteration, needed to fail as fast as possible on an import exception
-                    final List<FutureHolder<?>> newFailed = waitForFutures(importFutures, reportWriter, logDirectory, false);
+                    final List<FutureHolder<?>> newFailed =
+                            waitForFutures(importFutures, reportWriter, logDirectory, false);
                     failedFutures.addAll(newFailed);
 
                     final AtomicLong importTime = new AtomicLong(-1);
 
                     //Create import task
-                    final Callable<Object> task = new CallableWithoutResult() {
-                        @Override
-                        protected void callWithoutResult() {
-                            IMPORT_BASE_DIR.set(directoryUriStr);
-                            importTime.set(System.nanoTime());
-                            try {
-                                importData(file, portalDataKey);
-                            }
-                            finally {
-                                importTime.set(System.nanoTime() - importTime.get());
-                                IMPORT_BASE_DIR.remove();
-                            }
-                        }
-                    };
+                    final Callable<Object> task =
+                            new CallableWithoutResult() {
+                                @Override
+                                protected void callWithoutResult() {
+                                    IMPORT_BASE_DIR.set(directoryUriStr);
+                                    importTime.set(System.nanoTime());
+                                    try {
+                                        importData(file, portalDataKey);
+                                    } finally {
+                                        importTime.set(System.nanoTime() - importTime.get());
+                                        IMPORT_BASE_DIR.remove();
+                                    }
+                                }
+                            };
 
                     //Submit the import task
                     final Future<?> importFuture = this.importExportThreadPool.submit(task);
 
                     //Add the future for tracking
-                    importFutures.offer(new ImportFuture(importFuture, file, portalDataKey, importTime));
+                    importFutures.offer(
+                            new ImportFuture(importFuture, file, portalDataKey, importTime));
                 }
 
                 //Wait for all of the imports on of this type to complete
-                final List<FutureHolder<?>> newFailed = waitForFutures(importFutures, reportWriter, logDirectory, true);
+                final List<FutureHolder<?>> newFailed =
+                        waitForFutures(importFutures, reportWriter, logDirectory, true);
                 failedFutures.addAll(newFailed);
 
                 if (failOnError && !failedFutures.isEmpty()) {
-                    throw new RuntimeException(failedFutures.size() + " " + portalDataKey + " entities failed to import.\n\n" +
-                            "\tPer entity exception logs and a full report can be found in " + logDirectory + "\n");
+                    throw new RuntimeException(
+                            failedFutures.size()
+                                    + " "
+                                    + portalDataKey
+                                    + " entities failed to import.\n\n"
+                                    + "\tPer entity exception logs and a full report can be found in "
+                                    + logDirectory
+                                    + "\n");
                 }
 
                 reportWriter.flush();
             }
 
             if (!dataToImport.isEmpty()) {
-                throw new IllegalStateException("The following PortalDataKeys are not listed in the dataTypeImportOrder List: " + dataToImport.keySet());
+                throw new IllegalStateException(
+                        "The following PortalDataKeys are not listed in the dataTypeImportOrder List: "
+                                + dataToImport.keySet());
             }
 
             logger.info("For a detailed report on the data import see " + importReport);
-        }
-        catch (InterruptedException e) {
+        } catch (InterruptedException e) {
             throw new RuntimeException("Interrupted while waiting for entities to import", e);
-        }
-        finally {
+        } finally {
             IOUtils.closeQuietly(reportWriter);
             IMPORT_BASE_DIR.remove();
         }
     }
 
-    /**
-     * Determine directory to log import/export reports to
-     */
+    /** Determine directory to log import/export reports to */
     private File determineLogDirectory(final BatchOptions options, String operation) {
         File logDirectoryParent = options != null ? options.getLogDirectoryParent() : null;
         if (logDirectoryParent == null) {
@@ -642,9 +650,9 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
         try {
             logDirectory = logDirectory.getCanonicalFile();
             FileUtils.deleteDirectory(logDirectory);
-        }
-        catch (IOException e) {
-            throw new RuntimeException("Failed to clean data-" + operation + " log directory: " + logDirectory, e);
+        } catch (IOException e) {
+            throw new RuntimeException(
+                    "Failed to clean data-" + operation + " log directory: " + logDirectory, e);
         }
         logDirectory.mkdirs();
         return logDirectory;
@@ -677,14 +685,23 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
         //Post Process the PortalDataKey to see if more complex import operations are needed
         final IPortalDataType portalDataType = this.dataKeyTypes.get(portalDataKey);
         if (portalDataType == null) {
-            throw new RuntimeException("No IPortalDataType configured for " + portalDataKey + ", the resource will be ignored: " + getPartialSystemId(systemId));
+            throw new RuntimeException(
+                    "No IPortalDataType configured for "
+                            + portalDataKey
+                            + ", the resource will be ignored: "
+                            + getPartialSystemId(systemId));
         }
-        final Set<PortalDataKey> postProcessedPortalDataKeys = portalDataType.postProcessPortalDataKey(systemId, portalDataKey, bufferedXmlEventReader);
+        final Set<PortalDataKey> postProcessedPortalDataKeys =
+                portalDataType.postProcessPortalDataKey(
+                        systemId, portalDataKey, bufferedXmlEventReader);
         bufferedXmlEventReader.reset();
 
         //If only a single result from post processing import
         if (postProcessedPortalDataKeys.size() == 1) {
-            this.importOrUpgradeData(systemId, DataAccessUtils.singleResult(postProcessedPortalDataKeys), bufferedXmlEventReader);
+            this.importOrUpgradeData(
+                    systemId,
+                    DataAccessUtils.singleResult(postProcessedPortalDataKeys),
+                    bufferedXmlEventReader);
         }
         //If multiple results from post processing ordering is needed
         else {
@@ -693,33 +710,32 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
                 if (postProcessedPortalDataKeys.contains(orderedPortalDataKey)) {
                     //Reset the to start of the XML document for each import/upgrade call
                     bufferedXmlEventReader.reset();
-                    this.importOrUpgradeData(systemId, orderedPortalDataKey, bufferedXmlEventReader);
+                    this.importOrUpgradeData(
+                            systemId, orderedPortalDataKey, bufferedXmlEventReader);
                 }
             }
         }
     }
 
     /**
-     * @param portalDataKey Optional PortalDataKey to use, useful for batch imports where post-processing of keys has already take place
+     * @param portalDataKey Optional PortalDataKey to use, useful for batch imports where
+     *     post-processing of keys has already take place
      */
     protected final void importData(final Resource resource, final PortalDataKey portalDataKey) {
         final InputStream resourceStream;
         try {
             resourceStream = resource.getInputStream();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new RuntimeException("Could not load InputStream for resource: " + resource, e);
         }
 
         try {
             final String resourceUri = ResourceUtils.getResourceUri(resource);
             this.importData(new StreamSource(resourceStream, resourceUri), portalDataKey);
-        }
-        finally {
+        } finally {
             IOUtils.closeQuietly(resourceStream);
         }
     }
-
 
     protected String getPartialSystemId(String systemId) {
         final String directoryUriStr = IMPORT_BASE_DIR.get();
@@ -734,12 +750,12 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
         return systemId;
     }
 
-    /**
-     * Run the import/update process on the data
-     */
-    protected final void importOrUpgradeData(String systemId, PortalDataKey portalDataKey, XMLEventReader xmlEventReader) {
+    /** Run the import/update process on the data */
+    protected final void importOrUpgradeData(
+            String systemId, PortalDataKey portalDataKey, XMLEventReader xmlEventReader) {
         //See if there is a registered importer for the data, if so import
-        final IDataImporter<Object> dataImporterExporter = this.portalDataImporters.get(portalDataKey);
+        final IDataImporter<Object> dataImporterExporter =
+                this.portalDataImporters.get(portalDataKey);
         if (dataImporterExporter != null) {
             this.logger.debug("Importing: {}", getPartialSystemId(systemId));
             final Object data = unmarshallData(xmlEventReader, dataImporterExporter);
@@ -757,9 +773,9 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
             final Node sourceNode;
             try {
                 sourceNode = xmlUtilities.convertToDom(xmlEventReader);
-            }
-            catch (XMLStreamException e) {
-                throw new RuntimeException("Failed to create StAXSource from original XML reader", e);
+            } catch (XMLStreamException e) {
+                throw new RuntimeException(
+                        "Failed to create StAXSource from original XML reader", e);
             }
             final DOMSource source = new DOMSource(sourceNode);
 
@@ -770,40 +786,50 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
                 final org.w3c.dom.Node node = result.getNode();
                 final PortalDataKey upgradedPortalDataKey = new PortalDataKey(node);
                 if (this.logger.isTraceEnabled()) {
-                    this.logger.trace("Upgraded: " + getPartialSystemId(systemId) + " to " + upgradedPortalDataKey +
-                            "\n\nSource XML: \n" + XmlUtilitiesImpl.toString(source.getNode()) +
-                            "\n\nResult XML: \n" + XmlUtilitiesImpl.toString(node));
-                }
-                else {
-                    this.logger.info("Upgraded: {} to {}", getPartialSystemId(systemId), upgradedPortalDataKey);
+                    this.logger.trace(
+                            "Upgraded: "
+                                    + getPartialSystemId(systemId)
+                                    + " to "
+                                    + upgradedPortalDataKey
+                                    + "\n\nSource XML: \n"
+                                    + XmlUtilitiesImpl.toString(source.getNode())
+                                    + "\n\nResult XML: \n"
+                                    + XmlUtilitiesImpl.toString(node));
+                } else {
+                    this.logger.info(
+                            "Upgraded: {} to {}",
+                            getPartialSystemId(systemId),
+                            upgradedPortalDataKey);
                 }
                 final DOMSource upgradedSource = new DOMSource(node, systemId);
                 this.importData(upgradedSource, upgradedPortalDataKey);
-            }
-            else {
+            } else {
                 this.logger.info("Upgraded and Imported: {}", getPartialSystemId(systemId));
             }
             return;
         }
 
         //No importer or upgrader found, fail
-        throw new IllegalArgumentException("Provided data " + portalDataKey + " has no registered importer or upgrader support: " + systemId);
+        throw new IllegalArgumentException(
+                "Provided data "
+                        + portalDataKey
+                        + " has no registered importer or upgrader support: "
+                        + systemId);
     }
 
-    protected Object unmarshallData(final XMLEventReader bufferedXmlEventReader, final IDataImporter<Object> dataImporterExporter) {
+    protected Object unmarshallData(
+            final XMLEventReader bufferedXmlEventReader,
+            final IDataImporter<Object> dataImporterExporter) {
         final Unmarshaller unmarshaller = dataImporterExporter.getUnmarshaller();
 
         try {
             final StAXSource source = new StAXSource(bufferedXmlEventReader);
             return unmarshaller.unmarshal(source);
-        }
-        catch (XmlMappingException e) {
+        } catch (XmlMappingException e) {
             throw new RuntimeException("Failed to map provided XML to portal data", e);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new RuntimeException("Failed to read the provided XML data", e);
-        }
-        catch (XMLStreamException e) {
+        } catch (XMLStreamException e) {
             throw new RuntimeException("Failed to create StAX Source to read XML data", e);
         }
     }
@@ -811,11 +837,12 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
     protected BufferedXMLEventReader createSourceXmlEventReader(final Source source) {
         //If it is a StAXSource see if we can do better handling of it
         if (source instanceof StAXSource) {
-            final StAXSource staxSource = (StAXSource)source;
+            final StAXSource staxSource = (StAXSource) source;
             XMLEventReader xmlEventReader = staxSource.getXMLEventReader();
             if (xmlEventReader != null) {
                 if (xmlEventReader instanceof BufferedXMLEventReader) {
-                    final BufferedXMLEventReader bufferedXMLEventReader = (BufferedXMLEventReader)xmlEventReader;
+                    final BufferedXMLEventReader bufferedXMLEventReader =
+                            (BufferedXMLEventReader) xmlEventReader;
                     bufferedXMLEventReader.reset();
                     bufferedXMLEventReader.mark(-1);
                     return bufferedXMLEventReader;
@@ -829,8 +856,7 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
         final XMLEventReader xmlEventReader;
         try {
             xmlEventReader = xmlInputFactory.createXMLEventReader(source);
-        }
-        catch (XMLStreamException e) {
+        } catch (XMLStreamException e) {
             throw new RuntimeException("Failed to create XML Event Reader for data Source", e);
         }
         return new BufferedXMLEventReader(xmlEventReader, -1);
@@ -864,11 +890,9 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
         try {
             marshaller.marshal(data, result);
             return portalDataExporter.getFileName(data);
-        }
-        catch (XmlMappingException e) {
+        } catch (XmlMappingException e) {
             throw new RuntimeException("Failed to map provided portal data to XML", e);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new RuntimeException("Failed to write the provided XML data", e);
         }
     }
@@ -879,17 +903,20 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
 
         final File exportTempFile;
         try {
-            exportTempFile = File.createTempFile(
-                    SafeFilenameUtils.makeSafeFilename(StringUtils.rightPad(dataId, 2, '-') + "-"),
-                    SafeFilenameUtils.makeSafeFilename("." + typeId),
-                    directory);
-        }
-        catch (IOException e) {
-            throw new RuntimeException("Could not create temp file to export " + typeId + " " + dataId, e);
+            exportTempFile =
+                    File.createTempFile(
+                            SafeFilenameUtils.makeSafeFilename(
+                                    StringUtils.rightPad(dataId, 2, '-') + "-"),
+                            SafeFilenameUtils.makeSafeFilename("." + typeId),
+                            directory);
+        } catch (IOException e) {
+            throw new RuntimeException(
+                    "Could not create temp file to export " + typeId + " " + dataId, e);
         }
 
         try {
-            final String fileName = this.exportData(typeId, dataId, new StreamResult(exportTempFile));
+            final String fileName =
+                    this.exportData(typeId, dataId, new StreamResult(exportTempFile));
             if (fileName == null) {
                 logger.info("Skipped: type={} id={}", typeId, dataId);
                 return false;
@@ -897,28 +924,33 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
 
             final File destFile = new File(directory, fileName + "." + typeId + ".xml");
             if (destFile.exists()) {
-                logger.warn("Exporting " + typeId + " " + dataId + " but destination file already exists, it will be overwritten: " + destFile);
+                logger.warn(
+                        "Exporting "
+                                + typeId
+                                + " "
+                                + dataId
+                                + " but destination file already exists, it will be overwritten: "
+                                + destFile);
                 destFile.delete();
             }
             FileUtils.moveFile(exportTempFile, destFile);
             logger.info("Exported: {}", destFile);
 
             return true;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             if (e instanceof RuntimeException) {
-                throw (RuntimeException)e;
+                throw (RuntimeException) e;
             }
 
             throw new RuntimeException("Failed to export " + typeId + " " + dataId, e);
-        }
-        finally {
+        } finally {
             FileUtils.deleteQuietly(exportTempFile);
         }
     }
 
     @Override
-    public void exportAllDataOfType(Set<String> typeIds, File directory, BatchExportOptions options) {
+    public void exportAllDataOfType(
+            Set<String> typeIds, File directory, BatchExportOptions options) {
         final Queue<ExportFuture<?>> exportFutures = new ConcurrentLinkedQueue<ExportFuture<?>>();
         final boolean failOnError = options != null ? options.isFailOnError() : true;
 
@@ -930,8 +962,7 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
         final PrintWriter reportWriter;
         try {
             reportWriter = new PrintWriter(new BufferedWriter(new FileWriter(exportReport)));
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new RuntimeException("Failed to create FileWriter for: " + exportReport, e);
         }
 
@@ -949,48 +980,54 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
                     final String dataId = data.getDataId();
 
                     //Check for completed futures on every iteration, needed to fail as fast as possible on an import exception
-                    final List<FutureHolder<?>> newFailed = waitForFutures(exportFutures, reportWriter, logDirectory, false);
+                    final List<FutureHolder<?>> newFailed =
+                            waitForFutures(exportFutures, reportWriter, logDirectory, false);
                     failedFutures.addAll(newFailed);
 
                     final AtomicLong exportTime = new AtomicLong(-1);
 
                     //Create export task
-                    Callable<Object> task = new CallableWithoutResult() {
-                        @Override
-                        protected void callWithoutResult() {
-                            exportTime.set(System.nanoTime());
-                            try {
-                                exportData(typeId, dataId, typeDir);
-                            }
-                            finally {
-                                exportTime.set(System.nanoTime() - exportTime.get());
-                            }
-                        }
-                    };
+                    Callable<Object> task =
+                            new CallableWithoutResult() {
+                                @Override
+                                protected void callWithoutResult() {
+                                    exportTime.set(System.nanoTime());
+                                    try {
+                                        exportData(typeId, dataId, typeDir);
+                                    } finally {
+                                        exportTime.set(System.nanoTime() - exportTime.get());
+                                    }
+                                }
+                            };
 
                     //Submit the export task
                     final Future<?> exportFuture = this.importExportThreadPool.submit(task);
 
                     //Add the future for tracking
-                    final ExportFuture futureHolder = new ExportFuture(exportFuture, typeId, dataId, exportTime);
+                    final ExportFuture futureHolder =
+                            new ExportFuture(exportFuture, typeId, dataId, exportTime);
                     exportFutures.offer(futureHolder);
                 }
 
-                final List<FutureHolder<?>> newFailed = waitForFutures(exportFutures, reportWriter, logDirectory, true);
+                final List<FutureHolder<?>> newFailed =
+                        waitForFutures(exportFutures, reportWriter, logDirectory, true);
                 failedFutures.addAll(newFailed);
 
                 reportWriter.flush();
 
                 if (failOnError && !failedFutures.isEmpty()) {
-                    throw new RuntimeException(failedFutures.size() + " " + typeId + " entities failed to export.\n" +
-                            "\tPer entity exception logs and a full report can be found in " + logDirectory);
+                    throw new RuntimeException(
+                            failedFutures.size()
+                                    + " "
+                                    + typeId
+                                    + " entities failed to export.\n"
+                                    + "\tPer entity exception logs and a full report can be found in "
+                                    + logDirectory);
                 }
             }
-        }
-        catch (InterruptedException e) {
+        } catch (InterruptedException e) {
             throw new RuntimeException("Interrupted while waiting for entities to export", e);
-        }
-        finally {
+        } finally {
             IOUtils.closeQuietly(reportWriter);
         }
     }
@@ -1000,8 +1037,7 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
         final Set<IPortalDataType> portalDataTypes;
         if (this.exportAllPortalDataTypes != null) {
             portalDataTypes = this.exportAllPortalDataTypes;
-        }
-        else {
+        } else {
             portalDataTypes = this.exportPortalDataTypes;
         }
 
@@ -1030,29 +1066,33 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
         final Object data = dataDeleter.deleteData(dataId);
         if (data != null) {
             logger.info("Deleted data " + dataId + " of type " + typeId);
-        }
-        else {
+        } else {
             logger.info("No data " + dataId + " of type " + typeId + " exists to delete");
         }
     }
 
     /**
-     * Used by batch import and export to wait for queued tasks to complete. Handles fail-fast behavior
-     * if any of the tasks threw and exception by canceling all queued futures and logging a summary of
-     * the failures. All completed futures are removed from the queue.
+     * Used by batch import and export to wait for queued tasks to complete. Handles fail-fast
+     * behavior if any of the tasks threw and exception by canceling all queued futures and logging
+     * a summary of the failures. All completed futures are removed from the queue.
      *
      * @param futures Queued futures to check for completeness
-     * @param wait If true it will wait for all futures to complete, if false only check for completed futures
+     * @param wait If true it will wait for all futures to complete, if false only check for
+     *     completed futures
      * @return a list of futures that either threw exceptions or timed out
      */
     protected List<FutureHolder<?>> waitForFutures(
             final Queue<? extends FutureHolder<?>> futures,
-            final PrintWriter reportWriter, final File reportDirectory,
-            final boolean wait) throws InterruptedException {
+            final PrintWriter reportWriter,
+            final File reportDirectory,
+            final boolean wait)
+            throws InterruptedException {
 
         final List<FutureHolder<?>> failedFutures = new LinkedList<FutureHolder<?>>();
 
-        for (Iterator<? extends FutureHolder<?>> futuresItr = futures.iterator(); futuresItr.hasNext();) {
+        for (Iterator<? extends FutureHolder<?>> futuresItr = futures.iterator();
+                futuresItr.hasNext();
+                ) {
             final FutureHolder<?> futureHolder = futuresItr.next();
 
             //If waiting, or if not waiting but the future is already done do the get
@@ -1065,48 +1105,69 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
                     if (!future.isCancelled()) {
                         if (this.maxWait > 0) {
                             future.get(this.maxWait, this.maxWaitTimeUnit);
-                        }
-                        else {
+                        } else {
                             future.get();
                         }
 
-                        reportWriter.printf(REPORT_FORMAT, "SUCCESS", futureHolder.getDescription(), futureHolder.getExecutionTimeMillis());
+                        reportWriter.printf(
+                                REPORT_FORMAT,
+                                "SUCCESS",
+                                futureHolder.getDescription(),
+                                futureHolder.getExecutionTimeMillis());
                     }
-                }
-                catch (CancellationException e) {
+                } catch (CancellationException e) {
                     //Ignore cancellation exceptions
-                }
-                catch (ExecutionException e) {
+                } catch (ExecutionException e) {
                     logger.error("Failed: " + futureHolder);
 
                     futureHolder.setError(e);
                     failedFutures.add(futureHolder);
-                    reportWriter.printf(REPORT_FORMAT, "FAIL", futureHolder.getDescription(), futureHolder.getExecutionTimeMillis());
+                    reportWriter.printf(
+                            REPORT_FORMAT,
+                            "FAIL",
+                            futureHolder.getDescription(),
+                            futureHolder.getExecutionTimeMillis());
 
                     try {
-                        final String dataReportName = SafeFilenameUtils.makeSafeFilename(futureHolder.getDataType() + "_" + futureHolder.getDataName() + ".txt");
+                        final String dataReportName =
+                                SafeFilenameUtils.makeSafeFilename(
+                                        futureHolder.getDataType()
+                                                + "_"
+                                                + futureHolder.getDataName()
+                                                + ".txt");
                         final File dataReportFile = new File(reportDirectory, dataReportName);
-                        final PrintWriter dataReportWriter = new PrintWriter(new BufferedWriter(new FileWriter(dataReportFile)));
+                        final PrintWriter dataReportWriter =
+                                new PrintWriter(new BufferedWriter(new FileWriter(dataReportFile)));
                         try {
-                            dataReportWriter.println("FAIL: " + futureHolder.getDataType() + " - " + futureHolder.getDataName());
-                            dataReportWriter.println("--------------------------------------------------------------------------------");
+                            dataReportWriter.println(
+                                    "FAIL: "
+                                            + futureHolder.getDataType()
+                                            + " - "
+                                            + futureHolder.getDataName());
+                            dataReportWriter.println(
+                                    "--------------------------------------------------------------------------------");
                             e.getCause().printStackTrace(dataReportWriter);
-                        }
-                        finally {
+                        } finally {
                             IOUtils.closeQuietly(dataReportWriter);
                         }
+                    } catch (Exception re) {
+                        logger.warn(
+                                "Failed to write error report for failed "
+                                        + futureHolder
+                                        + ", logging root failure here",
+                                e.getCause());
                     }
-                    catch (Exception re) {
-                        logger.warn("Failed to write error report for failed " + futureHolder + ", logging root failure here", e.getCause());
-                    }
-                }
-                catch (TimeoutException e) {
+                } catch (TimeoutException e) {
                     logger.warn("Failed: " + futureHolder);
 
                     futureHolder.setError(e);
                     failedFutures.add(futureHolder);
                     future.cancel(true);
-                    reportWriter.printf(REPORT_FORMAT, "TIMEOUT", futureHolder.getDescription(), futureHolder.getExecutionTimeMillis());
+                    reportWriter.printf(
+                            REPORT_FORMAT,
+                            "TIMEOUT",
+                            futureHolder.getDescription(),
+                            futureHolder.getExecutionTimeMillis());
                 }
             }
         }
@@ -1114,7 +1175,7 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
         return failedFutures;
     }
 
-    private static abstract class FutureHolder<T> {
+    private abstract static class FutureHolder<T> {
         private final Future<T> future;
         private final AtomicLong time;
         private Exception error;
@@ -1155,7 +1216,8 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
         private final Resource resource;
         private final PortalDataKey dataKey;
 
-        public ImportFuture(Future<T> future, Resource resource, PortalDataKey dataKey, AtomicLong importTime) {
+        public ImportFuture(
+                Future<T> future, Resource resource, PortalDataKey dataKey, AtomicLong importTime) {
             super(future, importTime);
             this.resource = resource;
             this.dataKey = dataKey;

@@ -1,20 +1,16 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.portlets.account.selfedit;
 
@@ -28,8 +24,8 @@ import org.springframework.binding.message.MessageContext;
 import org.springframework.stereotype.Component;
 
 /**
- * This class validates {@link AccountPasswordForm} objects through the magic of
- * Webflow:  http://docs.spring.io/spring-webflow/docs/current/reference/html/views.html#view-validation-programmatic-validator
+ * This class validates {@link AccountPasswordForm} objects through the magic of Webflow:
+ * http://docs.spring.io/spring-webflow/docs/current/reference/html/views.html#view-validation-programmatic-validator
  *
  * @author Jen Bourey, jbourey@unicon.net
  * @version $Revision$
@@ -60,9 +56,13 @@ public class AccountPasswordFormValidator {
 
         // ensure that a current account password was entered
         if (StringUtils.isBlank(form.getCurrentPassword())) {
-            context.addMessage(new MessageBuilder().error().source("currentPassword")
-                    .code("please.enter.current.password")
-                    .defaultText("Please enter your current password").build());
+            context.addMessage(
+                    new MessageBuilder()
+                            .error()
+                            .source("currentPassword")
+                            .code("please.enter.current.password")
+                            .defaultText("Please enter your current password")
+                            .build());
         }
 
         // check to see if the provided password matches the current account
@@ -70,26 +70,39 @@ public class AccountPasswordFormValidator {
         else {
 
             ILocalAccountPerson account = accountDao.getPerson(form.getUserId());
-            if (!passwordService.validatePassword(form.getCurrentPassword(), account.getPassword())) {
-                context.addMessage(new MessageBuilder().error().source("currentPassword")
-                        .code("current.password.doesnt.match")
-                        .defaultText("Provided password does not match the current account password").build());
+            if (!passwordService.validatePassword(
+                    form.getCurrentPassword(), account.getPassword())) {
+                context.addMessage(
+                        new MessageBuilder()
+                                .error()
+                                .source("currentPassword")
+                                .code("current.password.doesnt.match")
+                                .defaultText(
+                                        "Provided password does not match the current account password")
+                                .build());
             }
-
         }
 
         // ensure a new account password was entered
         if (StringUtils.isBlank(form.getNewPassword())) {
-            context.addMessage(new MessageBuilder().error().source("newPassword")
-                    .code("please.enter.new.password")
-                    .defaultText("Please enter a new password").build());
+            context.addMessage(
+                    new MessageBuilder()
+                            .error()
+                            .source("newPassword")
+                            .code("please.enter.new.password")
+                            .defaultText("Please enter a new password")
+                            .build());
         }
 
         // ensure a new account password confirmation was entered
         if (StringUtils.isBlank(form.getConfirmNewPassword())) {
-            context.addMessage(new MessageBuilder().error().source("confirmNewPassword")
-                    .code("please.enter.confirm.password")
-                    .defaultText("Please confirm your new password").build());
+            context.addMessage(
+                    new MessageBuilder()
+                            .error()
+                            .source("confirmNewPassword")
+                            .code("please.enter.confirm.password")
+                            .defaultText("Please confirm your new password")
+                            .build());
         }
 
         // ensure the new password and new password confirmation match
@@ -97,11 +110,13 @@ public class AccountPasswordFormValidator {
                 && StringUtils.isNotBlank(form.getConfirmNewPassword())
                 && !form.getNewPassword().equals(form.getConfirmNewPassword())) {
 
-            context.addMessage(new MessageBuilder().error().source("confirmPassword")
-                    .code("passwords.must.match")
-                    .defaultText("Passwords must match").build());
+            context.addMessage(
+                    new MessageBuilder()
+                            .error()
+                            .source("confirmPassword")
+                            .code("passwords.must.match")
+                            .defaultText("Passwords must match")
+                            .build());
         }
-
     }
-
 }

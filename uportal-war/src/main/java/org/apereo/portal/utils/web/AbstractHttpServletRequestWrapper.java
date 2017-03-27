@@ -1,20 +1,16 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.utils.web;
 
@@ -26,7 +22,6 @@ import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Locale;
 import java.util.Map;
-
 import javax.servlet.AsyncContext;
 import javax.servlet.DispatcherType;
 import javax.servlet.RequestDispatcher;
@@ -41,13 +36,12 @@ import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.Part;
-
 import org.apache.commons.lang.Validate;
 
 /**
- * A custom HttpServletRequest wrapper that does NOT extend {@link HttpServletRequestWrapper}
- * to ensure the container can not unwrap too far.
- * 
+ * A custom HttpServletRequest wrapper that does NOT extend {@link HttpServletRequestWrapper} to
+ * ensure the container can not unwrap too far.
+ *
  * @author Eric Dalquist
  */
 public abstract class AbstractHttpServletRequestWrapper implements HttpServletRequest {
@@ -215,7 +209,7 @@ public abstract class AbstractHttpServletRequestWrapper implements HttpServletRe
      */
     @Override
     public String getRealPath(String path) {
-      return this.getServletContext().getRealPath(path);
+        return this.getServletContext().getRealPath(path);
     }
 
     @Override
@@ -298,9 +292,7 @@ public abstract class AbstractHttpServletRequestWrapper implements HttpServletRe
         return this.httpServletRequest.isRequestedSessionIdFromCookie();
     }
 
-    /**
-     * @see HttpServletRequest#isRequestedSessionIdFromUrl()
-     */
+    /** @see HttpServletRequest#isRequestedSessionIdFromUrl() */
     @Override
     public boolean isRequestedSessionIdFromUrl() {
         return this.isRequestedSessionIdFromURL();
@@ -343,61 +335,62 @@ public abstract class AbstractHttpServletRequestWrapper implements HttpServletRe
 
     @Override
     public AsyncContext getAsyncContext() {
-      return this.httpServletRequest.getAsyncContext();
+        return this.httpServletRequest.getAsyncContext();
     }
 
     @Override
     public DispatcherType getDispatcherType() {
-      return this.httpServletRequest.getDispatcherType();
+        return this.httpServletRequest.getDispatcherType();
     }
 
     @Override
     public ServletContext getServletContext() {
-      return this.httpServletRequest.getServletContext();
+        return this.httpServletRequest.getServletContext();
     }
 
     @Override
     public boolean isAsyncStarted() {
-      return this.httpServletRequest.isAsyncStarted();
+        return this.httpServletRequest.isAsyncStarted();
     }
 
     @Override
     public boolean isAsyncSupported() {
-      return this.httpServletRequest.isAsyncSupported();
+        return this.httpServletRequest.isAsyncSupported();
     }
 
     @Override
     public AsyncContext startAsync() throws IllegalStateException {
-      return this.httpServletRequest.startAsync();
+        return this.httpServletRequest.startAsync();
     }
 
     @Override
-    public AsyncContext startAsync(ServletRequest request, ServletResponse response) throws IllegalStateException {
-      return this.httpServletRequest.startAsync(request, response);
+    public AsyncContext startAsync(ServletRequest request, ServletResponse response)
+            throws IllegalStateException {
+        return this.httpServletRequest.startAsync(request, response);
     }
 
     @Override
     public boolean authenticate(HttpServletResponse response) throws IOException, ServletException {
-      return this.httpServletRequest.authenticate(response);
+        return this.httpServletRequest.authenticate(response);
     }
 
     @Override
     public Part getPart(String name) throws IOException, ServletException {
-      return this.httpServletRequest.getPart(name);
+        return this.httpServletRequest.getPart(name);
     }
 
     @Override
     public Collection<Part> getParts() throws IOException, ServletException {
-      return this.httpServletRequest.getParts();
+        return this.httpServletRequest.getParts();
     }
 
     @Override
     public void login(String uid, String password) throws ServletException {
-      this.httpServletRequest.login(uid, password);
+        this.httpServletRequest.login(uid, password);
     }
 
     @Override
     public void logout() throws ServletException {
-      this.httpServletRequest.logout();
+        this.httpServletRequest.logout();
     }
 }

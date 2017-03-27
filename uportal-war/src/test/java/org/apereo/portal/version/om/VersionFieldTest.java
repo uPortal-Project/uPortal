@@ -1,20 +1,16 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.version.om;
 
@@ -30,11 +26,10 @@ public class VersionFieldTest {
     public void testIsLessImportantThanLocal() {
         try {
             Version.Field.LOCAL.isLessImportantThan(null);
-        }
-        catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             //expected
         }
-        
+
         assertFalse(Version.Field.LOCAL.isLessImportantThan(Version.Field.LOCAL));
         assertTrue(Version.Field.LOCAL.isLessImportantThan(Version.Field.PATCH));
         assertTrue(Version.Field.LOCAL.isLessImportantThan(Version.Field.MINOR));
@@ -45,11 +40,10 @@ public class VersionFieldTest {
     public void testIsLessImportantThanPatch() {
         try {
             Version.Field.PATCH.isLessImportantThan(null);
-        }
-        catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             //expected
         }
-        
+
         assertFalse(Version.Field.PATCH.isLessImportantThan(Version.Field.LOCAL));
         assertFalse(Version.Field.PATCH.isLessImportantThan(Version.Field.PATCH));
         assertTrue(Version.Field.PATCH.isLessImportantThan(Version.Field.MINOR));
@@ -60,11 +54,10 @@ public class VersionFieldTest {
     public void testIsLessImportantThanMinor() {
         try {
             Version.Field.MINOR.isLessImportantThan(null);
-        }
-        catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             //expected
         }
-        
+
         assertFalse(Version.Field.MINOR.isLessImportantThan(Version.Field.LOCAL));
         assertFalse(Version.Field.MINOR.isLessImportantThan(Version.Field.PATCH));
         assertFalse(Version.Field.MINOR.isLessImportantThan(Version.Field.MINOR));
@@ -75,11 +68,10 @@ public class VersionFieldTest {
     public void testIsLessImportantThanMajor() {
         try {
             Version.Field.MAJOR.isLessImportantThan(null);
-        }
-        catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             //expected
         }
-        
+
         assertFalse(Version.Field.MAJOR.isLessImportantThan(Version.Field.LOCAL));
         assertFalse(Version.Field.MAJOR.isLessImportantThan(Version.Field.PATCH));
         assertFalse(Version.Field.MAJOR.isLessImportantThan(Version.Field.MINOR));
@@ -92,7 +84,6 @@ public class VersionFieldTest {
         assertEquals(Version.Field.PATCH, Version.Field.MINOR.getLessImportant());
         assertEquals(Version.Field.LOCAL, Version.Field.PATCH.getLessImportant());
         assertNull(Version.Field.LOCAL.getLessImportant());
-        
     }
 
     @Test
@@ -101,6 +92,5 @@ public class VersionFieldTest {
         assertEquals(Version.Field.MAJOR, Version.Field.MINOR.getMoreImportant());
         assertEquals(Version.Field.MINOR, Version.Field.PATCH.getMoreImportant());
         assertEquals(Version.Field.PATCH, Version.Field.LOCAL.getMoreImportant());
-        
     }
 }

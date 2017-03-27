@@ -1,23 +1,24 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.io;
 
+import org.apereo.portal.EntityIdentifier;
+import org.apereo.portal.groups.IGroupConstants;
+import org.apereo.portal.portlet.om.IPortletDefinition;
+import org.apereo.portal.security.IPerson;
+import org.apereo.portal.services.GroupService;
 import org.danann.cernunnos.EntityConfig;
 import org.danann.cernunnos.Formula;
 import org.danann.cernunnos.Phrase;
@@ -28,11 +29,6 @@ import org.danann.cernunnos.SimpleReagent;
 import org.danann.cernunnos.TaskRequest;
 import org.danann.cernunnos.TaskResponse;
 import org.dom4j.Element;
-import org.apereo.portal.EntityIdentifier;
-import org.apereo.portal.groups.IGroupConstants;
-import org.apereo.portal.portlet.om.IPortletDefinition;
-import org.apereo.portal.security.IPerson;
-import org.apereo.portal.services.GroupService;
 
 public class GroupKeyOrLiteralPhrase implements Phrase {
 
@@ -43,8 +39,13 @@ public class GroupKeyOrLiteralPhrase implements Phrase {
      * Public API.
      */
 
-    public static final Reagent ELEMENT = new SimpleReagent("ELEMENT", "descendant-or-self::text()", ReagentType.PHRASE,
-                                            Element.class, "Element representing either a principal or a target.");
+    public static final Reagent ELEMENT =
+            new SimpleReagent(
+                    "ELEMENT",
+                    "descendant-or-self::text()",
+                    ReagentType.PHRASE,
+                    Element.class,
+                    "Element representing either a principal or a target.");
 
     public Formula getFormula() {
         Reagent[] reagents = new Reagent[] {ELEMENT};
@@ -55,7 +56,6 @@ public class GroupKeyOrLiteralPhrase implements Phrase {
 
         // Instance Members.
         this.element = (Phrase) config.getValue(ELEMENT);
-
     }
 
     public Object evaluate(TaskRequest req, TaskResponse res) {
@@ -70,7 +70,8 @@ public class GroupKeyOrLiteralPhrase implements Phrase {
                 Class[] types = new Class[] {IPerson.class, IPortletDefinition.class};
 
                 for (Class c : types) {
-                    EntityIdentifier[] eis = GroupService.searchForGroups(e.getText(), IGroupConstants.IS, c);
+                    EntityIdentifier[] eis =
+                            GroupService.searchForGroups(e.getText(), IGroupConstants.IS, c);
                     switch (eis.length) {
                         case 1:
                             // This is good -- what we hope for...
@@ -81,7 +82,7 @@ public class GroupKeyOrLiteralPhrase implements Phrase {
                             continue;
                         default:
                             String msg2 = "Ambiguous group name:  " + e.getText();
-                        throw new RuntimeException(msg2);
+                            throw new RuntimeException(msg2);
                     }
                 }
 
@@ -103,7 +104,5 @@ public class GroupKeyOrLiteralPhrase implements Phrase {
         }
 
         return rslt;
-
     }
-
 }

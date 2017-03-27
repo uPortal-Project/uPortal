@@ -1,20 +1,16 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.io;
 
@@ -24,19 +20,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
+import org.apereo.portal.layout.IUserLayoutStore;
 import org.dom4j.DocumentFactory;
 import org.dom4j.Element;
 import org.dom4j.Node;
 import org.dom4j.XPath;
-import org.apereo.portal.layout.IUserLayoutStore;
 
 public enum SupportedFileTypes {
-
     LAYOUT("layout", "@username") {
         @Override
         protected boolean appliesTo(Element e, IUserLayoutStore rdbmdls) {
-            boolean rslt = false;  // default
+            boolean rslt = false; // default
             boolean isLayout = e.getName().equals(rootElementNodeName);
             if (isLayout) {
                 String username = ((Node) documentNameXPath.evaluate(e)).getText();
@@ -48,7 +42,7 @@ public enum SupportedFileTypes {
     FRAGMENT_LAYOUT("layout", "@username", "fragment-layout") {
         @Override
         protected boolean appliesTo(Element e, IUserLayoutStore rdbmdls) {
-            boolean rslt = false;  // default
+            boolean rslt = false; // default
             boolean isLayout = e.getName().equals(rootElementNodeName);
             if (isLayout) {
                 String username = ((Node) documentNameXPath.evaluate(e)).getText();
@@ -60,24 +54,34 @@ public enum SupportedFileTypes {
     PROFILE("profile", "@username") {
         // Instance Members
         private final XPath profileFNameXPath = fac.createXPath("fname");
+
         @Override
         public String getSafeFileNameWithExtension(Element e) {
             String namePart = ((Node) documentNameXPath.evaluate(e)).getText();
             if (namePart == null) {
-                String msg = "The XPath expression '" + documentNameXPath.getText() 
-                        + "' didn't match any text in the specified element:  " + e.getName();
+                String msg =
+                        "The XPath expression '"
+                                + documentNameXPath.getText()
+                                + "' didn't match any text in the specified element:  "
+                                + e.getName();
                 throw new RuntimeException(msg);
             }
             String fNamePart = ((Node) profileFNameXPath.evaluate(e)).getText();
             if (fNamePart == null) {
-                String msg = "The XPath expression '" + profileFNameXPath.getText() 
-                        + "' didn't match any text in the specified element:  " + e.getName();
+                String msg =
+                        "The XPath expression '"
+                                + profileFNameXPath.getText()
+                                + "' didn't match any text in the specified element:  "
+                                + e.getName();
                 throw new RuntimeException(msg);
             }
             StringBuilder rslt = new StringBuilder();
-            rslt.append(makeSafe(namePart)).append("-").append(makeSafe(fNamePart))
-                                        .append(".").append(fileExtension);
-            return  rslt.toString();
+            rslt.append(makeSafe(namePart))
+                    .append("-")
+                    .append(makeSafe(fNamePart))
+                    .append(".")
+                    .append(fileExtension);
+            return rslt.toString();
         }
     },
     PERMISSION("permission", null) {
@@ -85,6 +89,7 @@ public enum SupportedFileTypes {
         protected boolean appliesTo(Element e, IUserLayoutStore rdbmdls) {
             return false;
         }
+
         @Override
         public String getSafeFileNameWithExtension(Element e) {
             throw new UnsupportedOperationException("Not yet supported.");
@@ -95,30 +100,45 @@ public enum SupportedFileTypes {
         private final XPath principalXPath = fac.createXPath("principal/*");
         private final XPath activityXPath = fac.createXPath("activity");
         private final XPath ownerXPath = fac.createXPath("owner");
+
         @Override
         public String getSafeFileNameWithExtension(Element e) {
             String principalPart = ((Node) principalXPath.evaluate(e)).getText();
             if (principalPart == null) {
-                String msg = "The XPath expression '" + principalXPath.getText() 
-                        + "' didn't match any text in the specified element:  " + e.getName();
+                String msg =
+                        "The XPath expression '"
+                                + principalXPath.getText()
+                                + "' didn't match any text in the specified element:  "
+                                + e.getName();
                 throw new RuntimeException(msg);
             }
             String activityPart = ((Node) activityXPath.evaluate(e)).getText();
             if (activityPart == null) {
-                String msg = "The XPath expression '" + activityXPath.getText() 
-                        + "' didn't match any text in the specified element:  " + e.getName();
+                String msg =
+                        "The XPath expression '"
+                                + activityXPath.getText()
+                                + "' didn't match any text in the specified element:  "
+                                + e.getName();
                 throw new RuntimeException(msg);
             }
             String ownerPart = ((Node) ownerXPath.evaluate(e)).getText();
             if (ownerPart == null) {
-                String msg = "The XPath expression '" + ownerXPath.getText() 
-                        + "' didn't match any text in the specified element:  " + e.getName();
+                String msg =
+                        "The XPath expression '"
+                                + ownerXPath.getText()
+                                + "' didn't match any text in the specified element:  "
+                                + e.getName();
                 throw new RuntimeException(msg);
             }
             StringBuilder rslt = new StringBuilder();
-            rslt.append(makeSafe(principalPart)).append("__").append(makeSafe(activityPart)).append("__")
-                        .append(makeSafe(ownerPart)).append(".").append(fileExtension);
-            return  rslt.toString();
+            rslt.append(makeSafe(principalPart))
+                    .append("__")
+                    .append(makeSafe(activityPart))
+                    .append("__")
+                    .append(makeSafe(ownerPart))
+                    .append(".")
+                    .append(fileExtension);
+            return rslt.toString();
         }
     },
     MEMBERSHIP("membership", null) {
@@ -126,6 +146,7 @@ public enum SupportedFileTypes {
         protected boolean appliesTo(Element e, IUserLayoutStore rdbmdls) {
             return false;
         }
+
         @Override
         public String getSafeFileNameWithExtension(Element e) {
             throw new UnsupportedOperationException("Not yet supported.");
@@ -135,9 +156,10 @@ public enum SupportedFileTypes {
     CHANNEL_TYPE("channel-type", "name"),
     GROUP("group", "name") {
         private final XPath childrenXPath = fac.createXPath("children");
+
         @Override
         protected boolean appliesTo(Element e, IUserLayoutStore rdbmdls) {
-            boolean rslt = false;  // default
+            boolean rslt = false; // default
             boolean isGroup = e.getName().equals(rootElementNodeName);
             if (isGroup) {
                 Object childrenElement = childrenXPath.evaluate(e);
@@ -152,9 +174,10 @@ public enum SupportedFileTypes {
     },
     GROUP_MEMBERSHIP("group", "name", "group_membership") {
         private final XPath childrenXPath = fac.createXPath("children");
+
         @Override
         protected boolean appliesTo(Element e, IUserLayoutStore rdbmdls) {
-            boolean rslt = false;  // default
+            boolean rslt = false; // default
             boolean isGroup = e.getName().equals(rootElementNodeName);
             if (isGroup) {
                 Object childrenElement = childrenXPath.evaluate(e);
@@ -167,9 +190,10 @@ public enum SupportedFileTypes {
     },
     USER("user", "@username") {
         private final XPath templateUserXPath = fac.createXPath("default-user");
+
         @Override
         protected boolean appliesTo(Element e, IUserLayoutStore rdbmdls) {
-            boolean rslt = false;  // default
+            boolean rslt = false; // default
             boolean isUser = e.getName().equals(rootElementNodeName);
             if (isUser) {
                 Object defaultUserElement = templateUserXPath.evaluate(e);
@@ -182,9 +206,10 @@ public enum SupportedFileTypes {
     },
     TEMPLATE_USER("user", "@username", "template-user") {
         private final XPath templateUserXPath = fac.createXPath("default-user");
+
         @Override
         protected boolean appliesTo(Element e, IUserLayoutStore rdbmdls) {
-            boolean rslt = false;  // default
+            boolean rslt = false; // default
             boolean isUser = e.getName().equals(rootElementNodeName);
             if (isUser) {
                 Object defaultUserElement = templateUserXPath.evaluate(e);
@@ -203,17 +228,19 @@ public enum SupportedFileTypes {
     FRAGMENT_DEFINITION("fragment-definition", "*/@name");
 
     // Reserved names on Windows (see http://en.wikipedia.org/wiki/Filename)
-    private static final Pattern[] WINDOWS_INVALID_PATTERNS = new Pattern[] {
-                            Pattern.compile("AUX"),
-                            Pattern.compile("CLOCK\\$"),
-                            Pattern.compile("COM\\d*"),
-                            Pattern.compile("CON"),
-                            Pattern.compile("LPT\\d*"),
-                            Pattern.compile("NUL"),
-                            Pattern.compile("PRN")
-                        };
-    
+    private static final Pattern[] WINDOWS_INVALID_PATTERNS =
+            new Pattern[] {
+                Pattern.compile("AUX"),
+                Pattern.compile("CLOCK\\$"),
+                Pattern.compile("COM\\d*"),
+                Pattern.compile("CON"),
+                Pattern.compile("LPT\\d*"),
+                Pattern.compile("NUL"),
+                Pattern.compile("PRN")
+            };
+
     private static Map<Pattern, String> REPLACEMENT_PAIRS;
+
     static {
         final Map<Pattern, String> pairs = new LinkedHashMap<Pattern, String>();
         pairs.put(Pattern.compile("/|\\\\"), ".");
@@ -226,13 +253,13 @@ public enum SupportedFileTypes {
     protected final XPath documentNameXPath;
     protected final String fileExtension;
     protected final DocumentFactory fac = new DocumentFactory();
-    
+
     /*
      * Public API.
      */
-    
+
     public static SupportedFileTypes getApplicableFileType(Element e, IUserLayoutStore rdbmdls) {
-        
+
         // Assertions.
         if (e == null) {
             String msg = "Argument 'e' [Element] cannot be null";
@@ -242,7 +269,7 @@ public enum SupportedFileTypes {
             String msg = "Argument 'rdbmdls' [IUserLayoutStore] cannot be null";
             throw new IllegalArgumentException(msg);
         }
-        
+
         SupportedFileTypes rslt = null;
         for (SupportedFileTypes y : SupportedFileTypes.values()) {
             if (y.appliesTo(e, rdbmdls)) {
@@ -251,17 +278,22 @@ public enum SupportedFileTypes {
             }
         }
         if (rslt == null) {
-            String msg = "SupportedFileTypes instance not found for the specified element:  " + e.getName();
+            String msg =
+                    "SupportedFileTypes instance not found for the specified element:  "
+                            + e.getName();
             throw new RuntimeException(msg);
         }
         return rslt;
     }
-    
+
     public String getSafeFileNameWithExtension(Element e) {
         String namePart = ((Node) documentNameXPath.evaluate(e)).getText();
         if (namePart == null) {
-            String msg = "The XPath expression '" + documentNameXPath.getText() 
-                    + "' didn't match any text in the specified element:  " + e.getName();
+            String msg =
+                    "The XPath expression '"
+                            + documentNameXPath.getText()
+                            + "' didn't match any text in the specified element:  "
+                            + e.getName();
             throw new RuntimeException(msg);
         }
         return makeSafe(namePart) + "." + fileExtension;
@@ -275,11 +307,11 @@ public enum SupportedFileTypes {
         this(rootElementNodeName, documentNameExpression, rootElementNodeName);
     }
 
-    SupportedFileTypes(String rootElementNodeName, String documentNameExpression, String fileExtension) {
+    SupportedFileTypes(
+            String rootElementNodeName, String documentNameExpression, String fileExtension) {
         this.rootElementNodeName = rootElementNodeName;
-        this.documentNameXPath = documentNameExpression != null
-                            ? fac.createXPath(documentNameExpression)
-                            : null;
+        this.documentNameXPath =
+                documentNameExpression != null ? fac.createXPath(documentNameExpression) : null;
         this.fileExtension = fileExtension;
     }
 
@@ -304,5 +336,4 @@ public enum SupportedFileTypes {
         }
         return name;
     }
-
 }

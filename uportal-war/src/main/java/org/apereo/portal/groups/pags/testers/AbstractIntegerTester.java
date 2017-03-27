@@ -1,20 +1,16 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.groups.pags.testers;
 
@@ -22,8 +18,8 @@ import org.apereo.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
 import org.apereo.portal.security.IPerson;
 
 /**
- * Abstract base class for testers that test the value(s) of an
- * <code>IPerson</code> integer attribute.
+ * Abstract base class for testers that test the value(s) of an <code>IPerson</code> integer
+ * attribute.
  *
  * @author Dan Ellentuck
  */
@@ -31,17 +27,15 @@ public abstract class AbstractIntegerTester extends BaseAttributeTester {
 
     private final int testInteger;
 
-    /**
-     * @since 4.3
-     */
+    /** @since 4.3 */
     public AbstractIntegerTester(IPersonAttributesGroupTestDefinition definition) {
         super(definition);
         this.testInteger = Integer.parseInt(definition.getTestValue());
     }
 
     /**
-     * @deprecated use {@link EntityPersonAttributesGroupStore}, which leverages
-     * the single-argument constructor.
+     * @deprecated use {@link EntityPersonAttributesGroupStore}, which leverages the single-argument
+     *     constructor.
      */
     @Deprecated
     public AbstractIntegerTester(String attribute, String test) {
@@ -55,11 +49,11 @@ public abstract class AbstractIntegerTester extends BaseAttributeTester {
 
     public final boolean test(IPerson person) {
 
-        boolean result = false;  // default
+        boolean result = false; // default
         final Object[] atts = person.getAttributeValues(getAttributeName());
 
         if (atts != null) {
-            for (int i=0; i<atts.length && result == false; i++) {
+            for (int i = 0; i < atts.length && result == false; i++) {
 
                 final Object objValue = atts[i];
                 if (objValue == null) {
@@ -96,14 +90,11 @@ public abstract class AbstractIntegerTester extends BaseAttributeTester {
                     // result stays false
                     logger.debug("Value not parsable to an int:  {}", objValue, nfe);
                 }
-
             }
         }
 
         return result;
-
     }
 
     public abstract boolean test(int attributeValue);
-
 }

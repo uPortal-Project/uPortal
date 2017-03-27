@@ -1,33 +1,28 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.utils.cache;
 
+import com.google.common.collect.ImmutableMap;
 import java.util.Map;
 import java.util.Properties;
-
 import net.sf.ehcache.CacheException;
 import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.Element;
 import net.sf.ehcache.event.CacheEventListener;
 import net.sf.ehcache.event.CacheEventListenerAdapter;
 import net.sf.ehcache.event.CacheEventListenerFactory;
-
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,24 +30,24 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.google.common.collect.ImmutableMap;
-
-/**
- * Returns references to Spring configured {@link CacheEventListener}s 
- */
+/** Returns references to Spring configured {@link CacheEventListener}s */
 @Service
-public class SpringCacheEventListenerFactory extends CacheEventListenerFactory implements DisposableBean {
+public class SpringCacheEventListenerFactory extends CacheEventListenerFactory
+        implements DisposableBean {
     public static final String BEAN_NAME = "beanName";
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SpringCacheEventListenerFactory.class);
-    private static final CacheEventListener NOOP_CACHE_EVENT_LISTENER = new CacheEventListenerAdapter();
+    private static final Logger LOGGER =
+            LoggerFactory.getLogger(SpringCacheEventListenerFactory.class);
+    private static final CacheEventListener NOOP_CACHE_EVENT_LISTENER =
+            new CacheEventListenerAdapter();
     private static volatile Map<String, CacheEventListener> cacheEventListeners;
-    
+
     @Autowired
     public void setCacheEventListeners(Map<String, CacheEventListener> cacheEventListeners) {
-        SpringCacheEventListenerFactory.cacheEventListeners = ImmutableMap.copyOf(cacheEventListeners);
+        SpringCacheEventListenerFactory.cacheEventListeners =
+                ImmutableMap.copyOf(cacheEventListeners);
     }
-    
+
     @Override
     public void destroy() throws Exception {
         cacheEventListeners = null;
@@ -66,18 +61,16 @@ public class SpringCacheEventListenerFactory extends CacheEventListenerFactory i
         }
         return new LazyCacheEventListener(beanName);
     }
-    
+
     private static class LazyCacheEventListener implements CacheEventListener {
         private final String beanName;
         private CacheEventListener delegate;
-        
+
         public LazyCacheEventListener(String beanName) {
             this.beanName = beanName;
         }
-        
-        /**
-         * Always resolves to the same delegate object, no need for thread-sync checks
-         */
+
+        /** Always resolves to the same delegate object, no need for thread-sync checks */
         private CacheEventListener getDelegate() {
             CacheEventListener d = this.delegate;
             if (d == null) {
@@ -87,17 +80,19 @@ public class SpringCacheEventListenerFactory extends CacheEventListenerFactory i
                     //either pre-init or post-destroy, return noop logger
                     return NOOP_CACHE_EVENT_LISTENER;
                 }
-                
+
                 final CacheEventListener cacheEventListener = cel.get(beanName);
                 if (cacheEventListener == null) {
                     //If no listener is found just use the noop listener
-                    LOGGER.warn("No CacheEventListener bean found for name '" + beanName + "', using NOOP CacheEventListener instead.");
+                    LOGGER.warn(
+                            "No CacheEventListener bean found for name '"
+                                    + beanName
+                                    + "', using NOOP CacheEventListener instead.");
                     d = NOOP_CACHE_EVENT_LISTENER;
-                }
-                else {
+                } else {
                     d = cacheEventListener;
                 }
-                
+
                 this.delegate = d;
             }
             return d;

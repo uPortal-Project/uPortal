@@ -1,20 +1,16 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.portlets.dynamicskin;
 
@@ -30,14 +26,12 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.concurrent.CopyOnWriteArraySet;
-
 import javax.portlet.PortletContext;
 import javax.portlet.PortletPreferences;
 import javax.portlet.PortletRequest;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
 import org.apache.commons.io.IOUtils;
@@ -65,17 +59,19 @@ public class FileSystemDynamicSkinService implements DynamicSkinService {
     private static final String DYNASKIN_DEFAULT_ROOT_FOLDER = "/media/skins/respondr";
     private static final String DYNASKIN_TEMPLATE_INCLUDE_FILE = "{0}/{1}.less";
     private static final String DYNASKIN_INCLUDE_FILE = "{0}/configuredSkin-{1}.less";
-    private static final String LESS_CSS_JAVASCRIPT_URL = "/media/skins/common/javascript/less/less-1.6.2.js";
+    private static final String LESS_CSS_JAVASCRIPT_URL =
+            "/media/skins/common/javascript/less/less-1.6.2.js";
 
     private final Logger log = LoggerFactory.getLogger(getClass());
     private String rootFolder = DYNASKIN_DEFAULT_ROOT_FOLDER;
-    private MessageFormat skinTemplateIncludeFile = new MessageFormat(DYNASKIN_TEMPLATE_INCLUDE_FILE);
+    private MessageFormat skinTemplateIncludeFile =
+            new MessageFormat(DYNASKIN_TEMPLATE_INCLUDE_FILE);
     private MessageFormat skinIncludeFile = new MessageFormat(DYNASKIN_INCLUDE_FILE);
     private String lessCssJavascriptUrlPath = LESS_CSS_JAVASCRIPT_URL;
 
     /**
-     *  Set of skinFilePath values for skin files that currently exists on file
-     *  system.  Thread-safe for concurrent reads and inserts.
+     * Set of skinFilePath values for skin files that currently exists on file system. Thread-safe
+     * for concurrent reads and inserts.
      */
     private Set<String> compiledCssFilepaths = new CopyOnWriteArraySet<String>();
 
@@ -100,8 +96,8 @@ public class FileSystemDynamicSkinService implements DynamicSkinService {
     }
 
     /**
-     * Return true if the filePathname already exists on the file system.  Check memory first in a concurrent manner
-     * to allow multiple threads to check simultaneously.
+     * Return true if the filePathname already exists on the file system. Check memory first in a
+     * concurrent manner to allow multiple threads to check simultaneously.
      *
      * @param filePathname Fully-qualified file path name of the .css file
      * @return True if file exists on the file system.
@@ -122,10 +118,13 @@ public class FileSystemDynamicSkinService implements DynamicSkinService {
     }
 
     @Override
-    public void generateSkinCssFile(PortletRequest request, String filePathname, String skinToken,
-                                    String lessfileBaseName) {
+    public void generateSkinCssFile(
+            PortletRequest request,
+            String filePathname,
+            String skinToken,
+            String lessfileBaseName) {
 
-        synchronized(filePathname) {
+        synchronized (filePathname) {
             if (compiledCssFilepaths.contains(filePathname)) {
                 /*
                  * Two or more threads needing the same CSS file managed to invoke
@@ -142,13 +141,16 @@ public class FileSystemDynamicSkinService implements DynamicSkinService {
                     PortletContext ctx = request.getPortletSession().getPortletContext();
 
                     String templateRelativePath =
-                            skinTemplateIncludeFile.format(new Object[] {rootFolder, lessfileBaseName});
+                            skinTemplateIncludeFile.format(
+                                    new Object[] {rootFolder, lessfileBaseName});
                     String templateFilepath = ctx.getRealPath(templateRelativePath);
 
-                    String includeRelativePath = skinIncludeFile.format(new Object[] {rootFolder, skinToken});
+                    String includeRelativePath =
+                            skinIncludeFile.format(new Object[] {rootFolder, skinToken});
                     String includeFilepath = ctx.getRealPath(includeRelativePath);
 
-                    createLessIncludeFile(request.getPreferences(), includeFilepath, templateFilepath);
+                    createLessIncludeFile(
+                            request.getPreferences(), includeFilepath, templateFilepath);
 
                     URL lessCssJavascriptUrl = ctx.getResource(lessCssJavascriptUrlPath);
                     processLessFile(includeFilepath, filePathname, lessCssJavascriptUrl);
@@ -158,19 +160,21 @@ public class FileSystemDynamicSkinService implements DynamicSkinService {
                     // if we previously tried to create the CSS file and failed for some reason, don't try to compile it
                     // again for a bit since the process is so processor intensive. It would virtually hang the uPortal
                     // service trying to compile a bad LESS file repeatedly on different threads.
-                    log.warn("Skipping generation of CSS file {} due to previous LESS compilation failures", filePathname);
+                    log.warn(
+                            "Skipping generation of CSS file {} due to previous LESS compilation failures",
+                            filePathname);
                 }
             } catch (Exception e) {
                 cssSkinFailureCache.put(new Element(filePathname, filePathname));
-                throw new RuntimeException("Error compiling the following LESS file:  " + filePathname, e);
+                throw new RuntimeException(
+                        "Error compiling the following LESS file:  " + filePathname, e);
             }
         }
-
     }
 
     /**
-     * Create the less include file by appending the configurable preference definitions (minus the configuration
-     * prefix string) to the end of the template file; e.g. portlet preference name
+     * Create the less include file by appending the configurable preference definitions (minus the
+     * configuration prefix string) to the end of the template file; e.g. portlet preference name
      * PREFcolor1 is written to the less file as @color1:prefValue
      *
      * @param prefs Portlet preferences
@@ -178,20 +182,26 @@ public class FileSystemDynamicSkinService implements DynamicSkinService {
      * @param templateFile template less include file
      * @throws IOException
      */
-    private void createLessIncludeFile(PortletPreferences prefs, String filename, String templateFile) throws IOException {
+    private void createLessIncludeFile(
+            PortletPreferences prefs, String filename, String templateFile) throws IOException {
         // Create a set of less variable assignments.
         StringBuilder str = new StringBuilder();
-        Enumeration<String> prefNames =  prefs.getNames();
+        Enumeration<String> prefNames = prefs.getNames();
         while (prefNames.hasMoreElements()) {
             String prefName = prefNames.nextElement();
             if (prefName.startsWith(DynamicSkinService.CONFIGURABLE_PREFIX)) {
-                String nameWithoutPrefix = prefName.substring(DynamicSkinService.CONFIGURABLE_PREFIX.length());
+                String nameWithoutPrefix =
+                        prefName.substring(DynamicSkinService.CONFIGURABLE_PREFIX.length());
                 String value = prefs.getValue(prefName, "");
 
                 if (value.trim().equals("")) {
                     log.warn("Dynamic Skin Variable \"{}\" is not set", nameWithoutPrefix);
                 } else {
-                    str.append("@").append(nameWithoutPrefix).append(": ").append(value).append(";\n");
+                    str.append("@")
+                            .append(nameWithoutPrefix)
+                            .append(": ")
+                            .append(value)
+                            .append(";\n");
                 }
             }
         }
@@ -205,18 +215,24 @@ public class FileSystemDynamicSkinService implements DynamicSkinService {
         // include file.  Insure there is a newline at the end of the template content or the first preference
         // value will be lost.
         byte[] newline = "\n".getBytes();
-        byte[] fileContent = new byte[templateContent.length + newline.length + prefsContent.length];
+        byte[] fileContent =
+                new byte[templateContent.length + newline.length + prefsContent.length];
         System.arraycopy(templateContent, 0, fileContent, 0, templateContent.length);
         System.arraycopy(newline, 0, fileContent, templateContent.length, newline.length);
-        System.arraycopy(prefsContent, 0, fileContent, templateContent.length + newline.length, prefsContent.length);
+        System.arraycopy(
+                prefsContent,
+                0,
+                fileContent,
+                templateContent.length + newline.length,
+                prefsContent.length);
         File lessInclude = new File(filename);
         IOUtils.write(fileContent, new FileOutputStream(lessInclude));
     }
 
     /**
-     * Less compile the include file into a temporary css file.  When done rename the temporary css file to the
-     * correct output filename.  Since the less compilation phase takes several seconds, this insures the
-     * output css file is does not exist on the filesystem until it is complete.
+     * Less compile the include file into a temporary css file. When done rename the temporary css
+     * file to the correct output filename. Since the less compilation phase takes several seconds,
+     * this insures the output css file is does not exist on the filesystem until it is complete.
      *
      * @param lessIncludeFilepath less include file that includes all dependencies
      * @param outputFilepath name of the output css file
@@ -224,21 +240,26 @@ public class FileSystemDynamicSkinService implements DynamicSkinService {
      * @throws IOException
      * @throws LessException
      */
-    private void processLessFile(String lessIncludeFilepath, String outputFilepath, URL lessCssJavascriptUrl)
+    private void processLessFile(
+            String lessIncludeFilepath, String outputFilepath, URL lessCssJavascriptUrl)
             throws IOException, LessException {
         LessSource lessSource = new LessSource(new File(lessIncludeFilepath));
         if (log.isDebugEnabled()) {
             String result = lessSource.getNormalizedContent();
             File lessSourceOutput = new File(outputFilepath + ".lesssource");
             IOUtils.write(result, new FileOutputStream(lessSourceOutput));
-            log.debug("Full Less source from include file {}, using lessCssJavascript at {}"
-                    + ", is at {}, output css will be written to {}",
-                    lessIncludeFilepath, lessCssJavascriptUrl.toString(), lessSourceOutput, outputFilepath);
+            log.debug(
+                    "Full Less source from include file {}, using lessCssJavascript at {}"
+                            + ", is at {}, output css will be written to {}",
+                    lessIncludeFilepath,
+                    lessCssJavascriptUrl.toString(),
+                    lessSourceOutput,
+                    outputFilepath);
         }
         LessCompiler compiler = new LessCompiler();
         compiler.setLessJs(lessCssJavascriptUrl);
         compiler.setCompress(true);
-        File tempOutputFile = new File(outputFilepath+"tmp");
+        File tempOutputFile = new File(outputFilepath + "tmp");
         compiler.compile(lessSource, tempOutputFile);
         tempOutputFile.renameTo(new File(outputFilepath));
     }
@@ -263,8 +284,9 @@ public class FileSystemDynamicSkinService implements DynamicSkinService {
 
     @Override
     /**
-     * Returns the set of skins to use.  This implementation parses the skinList.xml file and returns the set of
-     * skin-key element values.  If there is an error parsing the XML file, return an empty set.
+     * Returns the set of skins to use. This implementation parses the skinList.xml file and returns
+     * the set of skin-key element values. If there is an error parsing the XML file, return an
+     * empty set.
      */
     public SortedSet<String> getSkinNames(PortletRequest request) {
         // Context to access the filesystem
@@ -278,8 +300,7 @@ public class FileSystemDynamicSkinService implements DynamicSkinService {
 
         TreeSet<String> skins = new TreeSet<>();
         try {
-            DocumentBuilderFactory dbFactory
-                    = DocumentBuilderFactory.newInstance();
+            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
             Document doc = dBuilder.parse(skinList);
             doc.getDocumentElement().normalize();
@@ -297,5 +318,4 @@ public class FileSystemDynamicSkinService implements DynamicSkinService {
 
         return skins;
     }
-
 }

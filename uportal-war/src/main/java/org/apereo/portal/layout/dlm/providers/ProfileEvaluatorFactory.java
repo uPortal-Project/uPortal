@@ -1,20 +1,16 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.layout.dlm.providers;
 
@@ -33,18 +29,21 @@ public class ProfileEvaluatorFactory implements EvaluatorFactory {
 
     @Override
     public Evaluator getEvaluator(Node audience) {
-        return getGroupEvaluator( OR, audience );
+        return getGroupEvaluator(OR, audience);
     }
 
     private Evaluator getGroupEvaluator(int type, Node node) {
         NodeList nodes = node.getChildNodes();
         Evaluator container = null;
 
-        if (nodes == null || nodes.getLength() == 0
+        if (nodes == null
+                || nodes.getLength() == 0
                 || (container = createGroupEvaluator(type, nodes)) == null) {
-            throw new RuntimeException("Invalid content. Expected one to many "
-                    + "<paren>, <NOT>, or <attribute> in '"
-                    + XmlUtilitiesImpl.toString(node) + "'");
+            throw new RuntimeException(
+                    "Invalid content. Expected one to many "
+                            + "<paren>, <NOT>, or <attribute> in '"
+                            + XmlUtilitiesImpl.toString(node)
+                            + "'");
         }
         return container;
     }
@@ -56,12 +55,9 @@ public class ProfileEvaluatorFactory implements EvaluatorFactory {
 
         Paren container = null;
 
-        if (type == NOT)
-            container = new Paren(Paren.Type.NOT);
-        else if (type == OR)
-            container = new Paren(Paren.Type.OR);
-        else if (type == AND)
-            container = new Paren(Paren.Type.AND);
+        if (type == NOT) container = new Paren(Paren.Type.NOT);
+        else if (type == OR) container = new Paren(Paren.Type.OR);
+        else if (type == AND) container = new Paren(Paren.Type.AND);
 
         boolean validContentAdded = false;
 
@@ -75,20 +71,21 @@ public class ProfileEvaluatorFactory implements EvaluatorFactory {
                 }
             }
         }
-        if (validContentAdded)
-            return container;
+        if (validContentAdded) return container;
         return null;
     }
 
     private Evaluator createEvaluator(Node node) {
         String nodeName = node.getNodeName();
 
-        if (nodeName.equals("paren"))
-            return createParen(node);
-        else if (nodeName.equals("profile"))
-            return createProfileEvaluator(node);
-        throw new RuntimeException("Unrecognized element '" + nodeName
-                + "' in '" + XmlUtilitiesImpl.toString(node) + "'");
+        if (nodeName.equals("paren")) return createParen(node);
+        else if (nodeName.equals("profile")) return createProfileEvaluator(node);
+        throw new RuntimeException(
+                "Unrecognized element '"
+                        + nodeName
+                        + "' in '"
+                        + XmlUtilitiesImpl.toString(node)
+                        + "'");
     }
 
     private Evaluator createParen(Node n) {
@@ -97,18 +94,19 @@ public class ProfileEvaluatorFactory implements EvaluatorFactory {
 
         if (opNode == null)
             throw new RuntimeException(
-                    "Invalid mode. Expected 'AND','OR', or 'NOT'" + " in '"
-                            + XmlUtilitiesImpl.toString(n) + "'");
-        else if (opNode.getNodeValue().equals("OR"))
-            return getGroupEvaluator(OR, n);
-        else if (opNode.getNodeValue().equals("NOT"))
-            return getGroupEvaluator(NOT, n);
-        else if (opNode.getNodeValue().equals("AND"))
-            return getGroupEvaluator(AND, n);
+                    "Invalid mode. Expected 'AND','OR', or 'NOT'"
+                            + " in '"
+                            + XmlUtilitiesImpl.toString(n)
+                            + "'");
+        else if (opNode.getNodeValue().equals("OR")) return getGroupEvaluator(OR, n);
+        else if (opNode.getNodeValue().equals("NOT")) return getGroupEvaluator(NOT, n);
+        else if (opNode.getNodeValue().equals("AND")) return getGroupEvaluator(AND, n);
         else
             throw new RuntimeException(
-                    "Invalid mode. Expected 'AND','OR', or 'NOT'" + " in '"
-                            + XmlUtilitiesImpl.toString(n) + "'");
+                    "Invalid mode. Expected 'AND','OR', or 'NOT'"
+                            + " in '"
+                            + XmlUtilitiesImpl.toString(n)
+                            + "'");
     }
 
     private Evaluator createProfileEvaluator(Node n) {
@@ -116,16 +114,15 @@ public class ProfileEvaluatorFactory implements EvaluatorFactory {
         Node attribNode = attribs.getNamedItem("fname");
 
         if (attribNode == null || attribNode.getNodeValue().equals(""))
-            throw new RuntimeException("Missing or empty value attribute in '"
-                    + XmlUtilitiesImpl.toString(n) + "'");
+            throw new RuntimeException(
+                    "Missing or empty value attribute in '" + XmlUtilitiesImpl.toString(n) + "'");
         String value = attribNode.getNodeValue();
         Evaluator eval = null;
 
         try {
             eval = getProfileEvaluator(value);
         } catch (Exception e) {
-            throw new RuntimeException(e.getMessage() + " in '"
-                    + XmlUtilitiesImpl.toString(n), e);
+            throw new RuntimeException(e.getMessage() + " in '" + XmlUtilitiesImpl.toString(n), e);
         }
         return eval;
     }
@@ -133,5 +130,4 @@ public class ProfileEvaluatorFactory implements EvaluatorFactory {
     public Evaluator getProfileEvaluator(String value) throws Exception {
         return new ProfileEvaluator(value);
     }
-
 }

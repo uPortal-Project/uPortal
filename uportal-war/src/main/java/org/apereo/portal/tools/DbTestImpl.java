@@ -1,20 +1,16 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.tools;
 
@@ -25,15 +21,14 @@ import java.sql.SQLException;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
-
-import org.hibernate.dialect.Dialect;
-import org.hibernate.engine.spi.SessionFactoryImplementor;
-import org.apereo.portal.jdbc.RDBMServices;
 import org.apereo.portal.hibernate.DelegatingHibernateIntegrator.HibernateConfiguration;
 import org.apereo.portal.hibernate.HibernateConfigurationAware;
+import org.apereo.portal.jdbc.RDBMServices;
 import org.apereo.portal.jpa.BaseAggrEventsJpaDao;
 import org.apereo.portal.jpa.BasePortalJpaDao;
 import org.apereo.portal.jpa.BaseRawEventsJpaDao;
+import org.hibernate.dialect.Dialect;
+import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,24 +42,25 @@ import org.springframework.stereotype.Component;
 
 /**
  * Title: DbTest Description: Displays database metadata information Company:
- * 
+ *
  * @author John Fereira
  */
 @Component("dbTest")
 @Lazy
-@DependsOn( { 
+@DependsOn({
     BasePortalJpaDao.PERSISTENCE_UNIT_NAME + "EntityManagerFactory",
     BaseAggrEventsJpaDao.PERSISTENCE_UNIT_NAME + "EntityManagerFactory",
     BaseRawEventsJpaDao.PERSISTENCE_UNIT_NAME + "EntityManagerFactory",
     "jdbcOperations",
     "rawEventsJdbcOperations",
     "aggrEventsJdbcOperations",
-    "hibernateConfigurationAwareInjector" 
-} )
+    "hibernateConfigurationAwareInjector"
+})
 public class DbTestImpl implements HibernateConfigurationAware, DbTest {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
-    
-    private final Map<String, HibernateConfiguration> hibernateConfigurations = new ConcurrentHashMap<String, HibernateConfiguration>();
+
+    private final Map<String, HibernateConfiguration> hibernateConfigurations =
+            new ConcurrentHashMap<String, HibernateConfiguration>();
     private Map<String, JdbcOperations> jdbcOperations;
 
     @Override
@@ -73,7 +69,8 @@ public class DbTestImpl implements HibernateConfigurationAware, DbTest {
     }
 
     @Override
-    public void setConfiguration(String persistenceUnit, HibernateConfiguration hibernateConfiguration) {
+    public void setConfiguration(
+            String persistenceUnit, HibernateConfiguration hibernateConfiguration) {
         this.hibernateConfigurations.put(persistenceUnit, hibernateConfiguration);
     }
 
@@ -81,52 +78,55 @@ public class DbTestImpl implements HibernateConfigurationAware, DbTest {
     public void setJdbcOperations(Map<String, JdbcOperations> jdbcOperations) {
         this.jdbcOperations = jdbcOperations;
     }
-    
+
     @Override
     public void printDbInfo() {
         boolean fail = false;
-        
+
         logger.info("JDBC DataSources");
         for (final Entry<String, JdbcOperations> jdbcEntry : this.jdbcOperations.entrySet()) {
             final String jdbcName = jdbcEntry.getKey();
             try {
                 logger.info("\t" + jdbcName);
                 final JdbcOperations jdbcOps = jdbcEntry.getValue();
-                jdbcOps.execute(new ConnectionCallback<Object>() {
-                    @Override
-                    public Object doInConnection(Connection con) throws SQLException, DataAccessException {
-                        printInfo(con);
-                        return null;
-                    }
-                });
-            }
-            catch (Exception e) {
+                jdbcOps.execute(
+                        new ConnectionCallback<Object>() {
+                            @Override
+                            public Object doInConnection(Connection con)
+                                    throws SQLException, DataAccessException {
+                                printInfo(con);
+                                return null;
+                            }
+                        });
+            } catch (Exception e) {
                 logger.error("\t" + jdbcName + ": parse info", e);
                 fail = true;
             }
             logger.info("");
         }
-        
+
         logger.info("Hibernate Dialects");
-        for (final Entry<String, HibernateConfiguration> configEntry : this.hibernateConfigurations.entrySet()) {
+        for (final Entry<String, HibernateConfiguration> configEntry :
+                this.hibernateConfigurations.entrySet()) {
             final String persistenceUnit = configEntry.getKey();
-            
+
             try {
                 final HibernateConfiguration hibernateConfiguration = configEntry.getValue();
-                final SessionFactoryImplementor sessionFactory = hibernateConfiguration.getSessionFactory();
+                final SessionFactoryImplementor sessionFactory =
+                        hibernateConfiguration.getSessionFactory();
                 final Dialect dialect = sessionFactory.getDialect();
-                
+
                 logger.info("\t" + persistenceUnit + ": " + dialect);
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 logger.error("\t" + persistenceUnit + ": Failed to resolve Dialect", e);
                 fail = true;
             }
             logger.info("");
         }
-        
+
         if (fail) {
-            throw new RuntimeException("One or more of the portal data sources is not configured correctly or the target database is not available.");
+            throw new RuntimeException(
+                    "One or more of the portal data sources is not configured correctly or the target database is not available.");
         }
     }
 
@@ -160,8 +160,10 @@ public class DbTestImpl implements HibernateConfigurationAware, DbTest {
         boolean supportsMultipleTransactions = dbMetaData.supportsMultipleTransactions();
         boolean supportsOpenCursorsAcrossCommit = dbMetaData.supportsOpenCursorsAcrossCommit();
         boolean supportsOpenCursorsAcrossRollback = dbMetaData.supportsOpenCursorsAcrossRollback();
-        boolean supportsOpenStatementsAcrossCommit = dbMetaData.supportsOpenStatementsAcrossCommit();
-        boolean supportsOpenStatementsAcrossRollback = dbMetaData.supportsOpenStatementsAcrossRollback();
+        boolean supportsOpenStatementsAcrossCommit =
+                dbMetaData.supportsOpenStatementsAcrossCommit();
+        boolean supportsOpenStatementsAcrossRollback =
+                dbMetaData.supportsOpenStatementsAcrossRollback();
 
         boolean supportsOrderByUnrelated = dbMetaData.supportsOrderByUnrelated();
         boolean supportsPositionedDelete = dbMetaData.supportsPositionedDelete();
@@ -192,9 +194,23 @@ public class DbTestImpl implements HibernateConfigurationAware, DbTest {
         String getTimeDateFunctions = dbMetaData.getTimeDateFunctions();
 
         logger.info("\t\tDatabase name:    '" + dbName + "'");
-        logger.info("\t\tDatabase version: '" + dbVersion + "' (" + databaseMajorVersion + "." + databaseMinorVersion + ")");
+        logger.info(
+                "\t\tDatabase version: '"
+                        + dbVersion
+                        + "' ("
+                        + databaseMajorVersion
+                        + "."
+                        + databaseMinorVersion
+                        + ")");
         logger.info("\t\tDriver name:      '" + driverName + "'");
-        logger.info("\t\tDriver version:   '" + driverVersion + "' (" + driverMajorVersion + "." + driverMinorVersion + ")");
+        logger.info(
+                "\t\tDriver version:   '"
+                        + driverVersion
+                        + "' ("
+                        + driverMajorVersion
+                        + "."
+                        + driverMinorVersion
+                        + ")");
         logger.info("\t\tDriver class:     '" + driverClass + "'");
         logger.info("\t\tConnection URL:   '" + url + "'");
         logger.info("\t\tUser:             '" + user + "'");
@@ -210,9 +226,13 @@ public class DbTestImpl implements HibernateConfigurationAware, DbTest {
         logger.info("\t\tsupportsMultipleTransactions: " + supportsMultipleTransactions);
 
         logger.info("\t\tsupportsOpenCursorsAcrossCommit:      " + supportsOpenCursorsAcrossCommit);
-        logger.info("\t\tsupportsOpenCursorsAcrossRollback:    " + supportsOpenCursorsAcrossRollback);
-        logger.info("\t\tsupportsOpenStatementsAcrossCommit:   " + supportsOpenStatementsAcrossCommit);
-        logger.info("\t\tsupportsOpenStatementsAcrossRollback: " + supportsOpenStatementsAcrossRollback);
+        logger.info(
+                "\t\tsupportsOpenCursorsAcrossRollback:    " + supportsOpenCursorsAcrossRollback);
+        logger.info(
+                "\t\tsupportsOpenStatementsAcrossCommit:   " + supportsOpenStatementsAcrossCommit);
+        logger.info(
+                "\t\tsupportsOpenStatementsAcrossRollback: "
+                        + supportsOpenStatementsAcrossRollback);
         logger.info("");
 
         logger.info("\t\tsupportsStoredProcedures:     " + supportsStoredProcedures);
@@ -248,7 +268,6 @@ public class DbTestImpl implements HibernateConfigurationAware, DbTest {
         logger.info("\t\ttimeDateFunctions:   " + getTimeDateFunctions);
         logger.info("");
 
-        
         ResultSet getTableTypes = null;
         ResultSet getTypeInfo = null;
         try {

@@ -1,32 +1,26 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.groups.pags.testers;
 
 import org.apereo.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
 
 /**
- * A tester for matching multiple values of an attribute 
- * against a regular expression.  The match function attempts to find the 
- * next subsequence of the attribute that matches the pattern. 
- * <p>
- * For example, if the pattern is specified as "<strong><code>^02([A-D])*</code></strong>":
- * 
+ * A tester for matching multiple values of an attribute against a regular expression. The match
+ * function attempts to find the next subsequence of the attribute that matches the pattern.
+ *
+ * <p>For example, if the pattern is specified as "<strong><code>^02([A-D])*</code></strong>":
  * <code>
  * <table border='2' width='100%'>
  *  <tr>
@@ -52,22 +46,20 @@ import org.apereo.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
  *  </tr>
  * </table>
  * </code>
- * 
+ *
  * @author Misagh Moayyed
  * @see RegexTester
  */
 public class EagerRegexTester extends RegexTester {
 
-    /**
-     * @since 4.3
-     */
+    /** @since 4.3 */
     public EagerRegexTester(IPersonAttributesGroupTestDefinition definition) {
         super(definition);
     }
 
     /**
-     * @deprecated use {@link EntityPersonAttributesGroupStore}, which leverages
-     * the single-argument constructor.
+     * @deprecated use {@link EntityPersonAttributesGroupStore}, which leverages the single-argument
+     *     constructor.
      */
     @Deprecated
     public EagerRegexTester(String attribute, String test) {
@@ -78,5 +70,4 @@ public class EagerRegexTester extends RegexTester {
     public boolean test(String att) {
         return pattern.matcher(att).find();
     }
-
 }

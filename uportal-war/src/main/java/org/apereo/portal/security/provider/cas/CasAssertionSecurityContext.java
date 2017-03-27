@@ -1,20 +1,16 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.security.provider.cas;
 
@@ -27,10 +23,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.crypto.Cipher;
 import javax.xml.bind.DatatypeConverter;
-
 import org.apereo.portal.security.PortalSecurityException;
 import org.apereo.portal.security.provider.ChainingSecurityContext;
 import org.apereo.portal.spring.locator.ApplicationContextLocator;
@@ -42,22 +36,26 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 
 /**
- * Implementation of the {@link org.apereo.portal.security.provider.cas.ICasSecurityContext} that reads the Assertion
- * from the ThreadLocal. The Assertion stored in a ThreadLocal is an artifact of the Jasig CAS Client for Java 3.x
- * library.
+ * Implementation of the {@link org.apereo.portal.security.provider.cas.ICasSecurityContext} that
+ * reads the Assertion from the ThreadLocal. The Assertion stored in a ThreadLocal is an artifact of
+ * the Jasig CAS Client for Java 3.x library.
  *
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.2
  */
-public class CasAssertionSecurityContext extends ChainingSecurityContext implements ICasSecurityContext {
-    private static final String SESSION_ADDITIONAL_DESCRIPTORS_BEAN = "sessionScopeAdditionalDescriptors";
-    private static final String CAS_COPY_ASSERT_ATTR_TO_USER_ATTR_BEAN = "casCopyAssertionAttributesToUserAttributes";
+public class CasAssertionSecurityContext extends ChainingSecurityContext
+        implements ICasSecurityContext {
+    private static final String SESSION_ADDITIONAL_DESCRIPTORS_BEAN =
+            "sessionScopeAdditionalDescriptors";
+    private static final String CAS_COPY_ASSERT_ATTR_TO_USER_ATTR_BEAN =
+            "casCopyAssertionAttributesToUserAttributes";
     private static final String DECRYPT_CRED_TO_PWD = "decryptCredentialToPassword";
     private static final String DECRYPT_CRED_TO_PWD_KEY = "decryptCredentialToPasswordPrivateKey";
     private static final String DECRYPT_CRED_TO_PWD_ALG = "decryptCredentialToPasswordAlgorithm";
-    private static final String CREDENTIAL_KEY = "credential";  // encrypted password attribute from CAS
-    private static final String PASSWORD_KEY = "password";  // user attribute expected by portlets
+    private static final String CREDENTIAL_KEY =
+            "credential"; // encrypted password attribute from CAS
+    private static final String PASSWORD_KEY = "password"; // user attribute expected by portlets
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
     // UP-4212 Transient because security contexts are serialized into HTTP Session (and webflow).
@@ -71,25 +69,33 @@ public class CasAssertionSecurityContext extends ChainingSecurityContext impleme
 
     public CasAssertionSecurityContext() {
         applicationContext = ApplicationContextLocator.getApplicationContext();
-        String propertyVal = applicationContext.getBean(CAS_COPY_ASSERT_ATTR_TO_USER_ATTR_BEAN, String.class);
+        String propertyVal =
+                applicationContext.getBean(CAS_COPY_ASSERT_ATTR_TO_USER_ATTR_BEAN, String.class);
         copyAssertionAttributesToUserAttributes = Boolean.valueOf(propertyVal);
         propertyVal = applicationContext.getBean(DECRYPT_CRED_TO_PWD, String.class);
         decryptCredentialToPassword = Boolean.valueOf(propertyVal);
 
         if (decryptCredentialToPassword) {
-            String decryptCredentialToPasswordPrivateKey = applicationContext.getBean(DECRYPT_CRED_TO_PWD_KEY, String.class);
+            String decryptCredentialToPasswordPrivateKey =
+                    applicationContext.getBean(DECRYPT_CRED_TO_PWD_KEY, String.class);
             if (key == null) {
                 try {
                     key = getPrivateKeyFromFile(decryptCredentialToPasswordPrivateKey);
                 } catch (Exception e) {
-                    log.error("Cannot load key from file: {}", decryptCredentialToPasswordPrivateKey, e);
+                    log.error(
+                            "Cannot load key from file: {}",
+                            decryptCredentialToPasswordPrivateKey,
+                            e);
                 }
             }
             if (cipher == null) {
                 try {
                     cipher = Cipher.getInstance(key.getAlgorithm());
                 } catch (Exception e) {
-                    log.error("Cannot create cipher for key from file: {}", decryptCredentialToPasswordPrivateKey, e);
+                    log.error(
+                            "Cannot create cipher for key from file: {}",
+                            decryptCredentialToPasswordPrivateKey,
+                            e);
                 }
             }
             algorithm = applicationContext.getBean(DECRYPT_CRED_TO_PWD_ALG, String.class);
@@ -101,11 +107,12 @@ public class CasAssertionSecurityContext extends ChainingSecurityContext impleme
     }
 
     /**
-     * Exposes a template post-authentication method for subclasses to implement their custom logic in.
-     * <p>
-     * NOTE: This is called BEFORE super.authenticate();
+     * Exposes a template post-authentication method for subclasses to implement their custom logic
+     * in.
      *
-     * @param assertion the Assertion that was retrieved from the ThreadLocal.  CANNOT be NULL.
+     * <p>NOTE: This is called BEFORE super.authenticate();
+     *
+     * @param assertion the Assertion that was retrieved from the ThreadLocal. CANNOT be NULL.
      */
     protected void postAuthenticate(final Assertion assertion) {
         copyAssertionAttributesToUserAttributes(assertion);
@@ -125,7 +132,8 @@ public class CasAssertionSecurityContext extends ChainingSecurityContext impleme
             final String usernameFromCas = assertion.getPrincipal().getName();
 
             if (null == usernameFromCas) {
-                throw new IllegalStateException("Non-null CAS assertion unexpectedly had null principal name.");
+                throw new IllegalStateException(
+                        "Non-null CAS assertion unexpectedly had null principal name.");
             }
 
             this.myPrincipal.setUID(usernameFromCas);
@@ -133,15 +141,24 @@ public class CasAssertionSecurityContext extends ChainingSecurityContext impleme
             // verify that the principal UID was successfully set
             final String uidAsSetInThePrincipal = this.myPrincipal.getUID();
 
-            if (! usernameFromCas.equals(uidAsSetInThePrincipal) ) {
-                final String logMessage = "Attempted to set portal principal username to [" + usernameFromCas +
-                        "] as read from the CAS assertion, but uid as set in the principal is instead [" + uidAsSetInThePrincipal + "].  This may be an attempt to exploit CVE-2014-5059 / UP-4192 .";
+            if (!usernameFromCas.equals(uidAsSetInThePrincipal)) {
+                final String logMessage =
+                        "Attempted to set portal principal username to ["
+                                + usernameFromCas
+                                + "] as read from the CAS assertion, but uid as set in the principal is instead ["
+                                + uidAsSetInThePrincipal
+                                + "].  This may be an attempt to exploit CVE-2014-5059 / UP-4192 .";
                 log.error(logMessage);
                 throw new IllegalStateException(logMessage);
             }
 
             this.isauth = true;
-            log.debug("CASContext authenticated [" + this.myPrincipal.getUID() + "] using assertion [" + this.assertion + "]");
+            log.debug(
+                    "CASContext authenticated ["
+                            + this.myPrincipal.getUID()
+                            + "] using assertion ["
+                            + this.assertion
+                            + "]");
             postAuthenticate(assertion);
         }
 
@@ -152,9 +169,15 @@ public class CasAssertionSecurityContext extends ChainingSecurityContext impleme
         }
     }
 
-    public final String getCasServiceToken(final String target) throws CasProxyTicketAcquisitionException {
+    public final String getCasServiceToken(final String target)
+            throws CasProxyTicketAcquisitionException {
         if (log.isTraceEnabled()) {
-            log.trace("Attempting to retrieve proxy ticket for target [" + target + "] by using CAS Assertion [" + assertion + "]");
+            log.trace(
+                    "Attempting to retrieve proxy ticket for target ["
+                            + target
+                            + "] by using CAS Assertion ["
+                            + assertion
+                            + "]");
         }
 
         if (this.assertion == null) {
@@ -167,7 +190,10 @@ public class CasAssertionSecurityContext extends ChainingSecurityContext impleme
         final String proxyTicket = this.assertion.getPrincipal().getProxyTicketFor(target);
 
         if (proxyTicket == null) {
-            log.error("Failed to retrieve proxy ticket for assertion [" + assertion + "].  Is the PGT still valid?");
+            log.error(
+                    "Failed to retrieve proxy ticket for assertion ["
+                            + assertion
+                            + "].  Is the PGT still valid?");
             throw new CasProxyTicketAcquisitionException(target, assertion.getPrincipal());
         }
 
@@ -185,7 +211,7 @@ public class CasAssertionSecurityContext extends ChainingSecurityContext impleme
     /**
      * If enabled, convert CAS assertion person attributes into uPortal user attributes.
      *
-     * @param assertion the Assertion that was retrieved from the ThreadLocal.  CANNOT be NULL.
+     * @param assertion the Assertion that was retrieved from the ThreadLocal. CANNOT be NULL.
      */
     private void copyAssertionAttributesToUserAttributes(Assertion assertion) {
         if (!copyAssertionAttributesToUserAttributes) {
@@ -193,21 +219,32 @@ public class CasAssertionSecurityContext extends ChainingSecurityContext impleme
         }
 
         // skip this if there are no attributes or if the attribute set is empty.
-        if (assertion.getPrincipal().getAttributes() == null || assertion.getPrincipal().getAttributes().isEmpty()) {
+        if (assertion.getPrincipal().getAttributes() == null
+                || assertion.getPrincipal().getAttributes().isEmpty()) {
             return;
         }
 
         Map<String, List<Object>> attributes = new HashMap<>();
         // loop over the set of person attributes from CAS...
-        for (Map.Entry<String, Object> attrEntry : assertion.getPrincipal().getAttributes().entrySet()) {
-            log.debug("Adding attribute '{}' from Assertion with value '{}'; runtime type of value is {}",
-                    attrEntry.getKey(), attrEntry.getValue(), attrEntry.getValue().getClass().getName());
+        for (Map.Entry<String, Object> attrEntry :
+                assertion.getPrincipal().getAttributes().entrySet()) {
+            log.debug(
+                    "Adding attribute '{}' from Assertion with value '{}'; runtime type of value is {}",
+                    attrEntry.getKey(),
+                    attrEntry.getValue(),
+                    attrEntry.getValue().getClass().getName());
 
             // Check for credential
-            if (decryptCredentialToPassword && key != null && cipher != null && attrEntry.getKey().equals(CREDENTIAL_KEY)) {
+            if (decryptCredentialToPassword
+                    && key != null
+                    && cipher != null
+                    && attrEntry.getKey().equals(CREDENTIAL_KEY)) {
                 try {
-                    final String encPwd = (String) (attrEntry.getValue() instanceof List
-                            ? ((List) attrEntry.getValue()).get(0) : attrEntry.getValue());
+                    final String encPwd =
+                            (String)
+                                    (attrEntry.getValue() instanceof List
+                                            ? ((List) attrEntry.getValue()).get(0)
+                                            : attrEntry.getValue());
                     byte[] cred64 = DatatypeConverter.parseBase64Binary(encPwd);
                     cipher.init(Cipher.DECRYPT_MODE, key);
                     final byte[] cipherData = cipher.doFinal(cred64);
@@ -231,7 +268,9 @@ public class CasAssertionSecurityContext extends ChainingSecurityContext impleme
         }
 
         // get the attribute descriptor from Spring...
-        IAdditionalDescriptors additionalDescriptors = (IAdditionalDescriptors) applicationContext.getBean(SESSION_ADDITIONAL_DESCRIPTORS_BEAN);
+        IAdditionalDescriptors additionalDescriptors =
+                (IAdditionalDescriptors)
+                        applicationContext.getBean(SESSION_ADDITIONAL_DESCRIPTORS_BEAN);
 
         // add the new properties...
         additionalDescriptors.addAttributes(attributes);

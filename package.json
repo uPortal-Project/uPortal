@@ -15,7 +15,10 @@
     "test": "eslint . --ignore-path .gitignore && stylelint --syntax less **/*.less !**/bootstrap/**/*.less && remark *.md docs/**/*.md"
   },
   "eslintConfig": {
-    "extends": "google"
+    "extends": "google",
+    "rules": {
+      "indent": ["warn", 4]
+    }
   },
   "remarkConfig": {
     "presets": [

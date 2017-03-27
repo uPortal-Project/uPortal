@@ -1,28 +1,22 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-
 package org.apereo.portal.groups.pags.testers;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-
 import org.apereo.portal.groups.pags.IPersonTester;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.provider.PersonImpl;
@@ -38,7 +32,9 @@ import org.junit.Test;
 public class InjectAttributeRegexTesterTest {
     private static Class IPERSON_CLASS;
     private Random random = new Random();
-    private String[] attributeNames = {"one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"};
+    private String[] attributeNames = {
+        "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"
+    };
     private String[] randomStrings;
     private String[] randomIntStrings;
     private String key1 = null;
@@ -49,58 +45,56 @@ public class InjectAttributeRegexTesterTest {
     private List stringList = null;
     private int testListSize = 10;
 
-
-    /**
-     * @return org.apereo.portal.groups.IEntity
-     */
+    /** @return org.apereo.portal.groups.IEntity */
     private IPerson getIPerson(String key) {
         IPerson ip = new PersonImpl();
         ip.setAttribute(IPerson.USERNAME, key);
-        return  ip;
+        return ip;
     }
     /**
-     *  @return java.lang.String
+     * @return java.lang.String
      * @param length int
      */
     private String getRandomString(java.util.Random r, int length) {
 
         char[] chars = new char[length];
 
-        for(int i=0; i<length; i++)
-        {
-            int diff = ( r.nextInt(25) );
-            int charValue =  (int)'A' + diff;
+        for (int i = 0; i < length; i++) {
+            int diff = (r.nextInt(25));
+            int charValue = (int) 'A' + diff;
             chars[i] = (char) charValue;
         }
         return new String(chars);
     }
 
-    /**
-     */
+    /** */
     @Before
     public void setUp() throws ClassNotFoundException {
-        if ( IPERSON_CLASS == null )
-        { IPERSON_CLASS = Class.forName("org.apereo.portal.security.IPerson"); }
+        if (IPERSON_CLASS == null) {
+            IPERSON_CLASS = Class.forName("org.apereo.portal.security.IPerson");
+        }
 
         randomStrings = new String[100];
-        for (int idx=0; idx<100; idx++) {
-            int length = random.nextInt(10) + 1;  // between 1 and 11.
+        for (int idx = 0; idx < 100; idx++) {
+            int length = random.nextInt(10) + 1; // between 1 and 11.
             randomStrings[idx] = getRandomString(random, length);
         }
 
         randomIntStrings = new String[100];
-        for (int idx=0; idx<100; idx++)  {
-            int randomInt = random.nextInt(99999) + 1;  // between 1 and 100000.
+        for (int idx = 0; idx < 100; idx++) {
+            int randomInt = random.nextInt(99999) + 1; // between 1 and 100000.
             randomIntStrings[idx] = randomInt + "";
         }
 
         intStringList = new ArrayList();
-        for (int idx=2; idx<testListSize; idx++)
-        { intStringList.add(randomIntStrings[idx]); }
+        for (int idx = 2; idx < testListSize; idx++) {
+            intStringList.add(randomIntStrings[idx]);
+        }
 
         stringList = new ArrayList();
-        for (int idx=2; idx<testListSize; idx++)
-        { stringList.add(randomStrings[idx]); }
+        for (int idx = 2; idx < testListSize; idx++) {
+            stringList.add(randomStrings[idx]);
+        }
 
         key1 = attributeNames[0];
         key2 = attributeNames[1];
@@ -154,7 +148,5 @@ public class InjectAttributeRegexTesterTest {
         Assert.assertTrue(tester4.test(newPerson));
         Assert.assertFalse(tester5.test(newPerson));
         Assert.assertFalse(tester6.test(newPerson));
-
     }
-
 }

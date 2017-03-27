@@ -1,20 +1,16 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.layout;
 
@@ -26,11 +22,12 @@ import org.w3c.dom.Node;
 
 /**
  * This class mimics the behaviour of XPath expression '/layout/folder/folder[@ID=$nodeId or
- * descendant::node()[@ID=$nodeId]]/@ID' - it searches for identifier of tab that contains a node with given identifier.
- * The rationale behind this method is because it is much faster using DOM introspection (~0.1ms), than XPath queries
- * (0-60ms <a href="http://stackoverflow.com/questions/6340802/java-xpath-apache-jaxp-implementation-performance">
+ * descendant::node()[@ID=$nodeId]]/@ID' - it searches for identifier of tab that contains a node
+ * with given identifier. The rationale behind this method is because it is much faster using DOM
+ * introspection (~0.1ms), than XPath queries (0-60ms <a
+ * href="http://stackoverflow.com/questions/6340802/java-xpath-apache-jaxp-implementation-performance">
  * without optimization</a>).
- * 
+ *
  * @author Arvīds Grabovskis
  */
 public class PortletTabIdResolver implements INodeIdResolver {
@@ -48,14 +45,21 @@ public class PortletTabIdResolver implements INodeIdResolver {
         // '/layout' - layouts
         for (Node root = document.getFirstChild(); root != null; root = root.getNextSibling()) {
             // '/layout/folder' - root/header/footer folders
-            for (Node rootFolder = root.getFirstChild(); rootFolder != null; rootFolder = rootFolder.getNextSibling()) {
+            for (Node rootFolder = root.getFirstChild();
+                    rootFolder != null;
+                    rootFolder = rootFolder.getNextSibling()) {
                 // '/layout/folder/folder' - tabs
-                for (Node tab = rootFolder.getFirstChild(); tab != null; tab = tab.getNextSibling()) {
+                for (Node tab = rootFolder.getFirstChild();
+                        tab != null;
+                        tab = tab.getNextSibling()) {
                     if (containsElmentWithId(tab, layoutNodeId)) {
                         String foundId = ((Element) tab).getAttribute("ID");
 
-                        logger.trace("Found id {} after traversing document {} looking for layoutNodeId {}",
-                                foundId, document, layoutNodeId);
+                        logger.trace(
+                                "Found id {} after traversing document {} looking for layoutNodeId {}",
+                                foundId,
+                                document,
+                                layoutNodeId);
                         return foundId;
                     }
                 }
@@ -68,10 +72,11 @@ public class PortletTabIdResolver implements INodeIdResolver {
 
     /**
      * Recursevly find out whether node contains a folder or channel with given identifier.
-     * 
+     *
      * @param node Where to search.
      * @param id Identifier to search for.
-     * @return true if node or any of its descendats contain an element with given identifier, false otherwise.
+     * @return true if node or any of its descendats contain an element with given identifier, false
+     *     otherwise.
      */
     private boolean containsElmentWithId(Node node, String id) {
         String nodeName = node.getNodeName();
@@ -81,7 +86,9 @@ public class PortletTabIdResolver implements INodeIdResolver {
                 return true;
             }
             if ("folder".equals(nodeName)) {
-                for (Node child = e.getFirstChild(); child != null; child = child.getNextSibling()) {
+                for (Node child = e.getFirstChild();
+                        child != null;
+                        child = child.getNextSibling()) {
                     if (containsElmentWithId(child, id)) {
                         return true;
                     }

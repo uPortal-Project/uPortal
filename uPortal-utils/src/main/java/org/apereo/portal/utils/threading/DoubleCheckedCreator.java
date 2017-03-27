@@ -1,34 +1,29 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.utils.threading;
 
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
  * Implementation of double-checked locking for object creation using a {@link ReadWriteLock}
- * 
+ *
  * @author Eric Dalquist
  */
 public abstract class DoubleCheckedCreator<T> {
@@ -37,23 +32,26 @@ public abstract class DoubleCheckedCreator<T> {
     private Log logger;
 
     /**
-     * Inits and/or returns already initialized logger.  <br>
-     * You have to use this method in order to use the logger,<br> 
+     * Inits and/or returns already initialized logger. <br>
+     * You have to use this method in order to use the logger,<br>
      * you should not call the private variable directly.<br>
-     * This was done because Tomcat may instantiate all listeners before calling contextInitialized on any listener.<br>
-     * Note that there is no synchronization here on purpose. The object returned by getLog for a logger name is<br>
+     * This was done because Tomcat may instantiate all listeners before calling contextInitialized
+     * on any listener.<br>
+     * Note that there is no synchronization here on purpose. The object returned by getLog for a
+     * logger name is<br>
      * idempotent and getLog itself is thread safe. Eventually all <br>
      * threads will see an instance level logger variable and calls to getLog will stop.
+     *
      * @return the log for this class
      */
     protected Log getLogger() {
-    	Log l = this.logger;
-	  if (l == null) {
-	    l = LogFactory.getLog(LOGGER_NAME);
-	    this.logger = l;
-	  }
-	  return l;
-	}
+        Log l = this.logger;
+        if (l == null) {
+            l = LogFactory.getLog(LOGGER_NAME);
+            this.logger = l;
+        }
+        return l;
+    }
 
     private final ReadWriteLock readWriteLock;
     protected final Lock readLock;
@@ -84,7 +82,7 @@ public abstract class DoubleCheckedCreator<T> {
 
     /**
      * The default impl returns true if value is null.
-     * 
+     *
      * @param value The object to validate
      * @param args Arguments to use when validating the object
      * @return true if the object is invalid and should be created, false if not.
@@ -95,8 +93,9 @@ public abstract class DoubleCheckedCreator<T> {
 
     /**
      * Double checking retrieval/creation of an object
-     * 
-     * @param args Optional arguments to pass to {@link #retrieve(Object...)}, {@link #create(Object...)}, and {@link #invalid(Object, Object...)}.
+     *
+     * @param args Optional arguments to pass to {@link #retrieve(Object...)}, {@link
+     *     #create(Object...)}, and {@link #invalid(Object, Object...)}.
      * @return A retrieved or created object.
      */
     public final T get(Object... args) {
@@ -113,8 +112,7 @@ public abstract class DoubleCheckedCreator<T> {
 
                 return value;
             }
-        }
-        finally {
+        } finally {
             //Release the read lock
             this.readLock.unlock();
         }
@@ -132,14 +130,12 @@ public abstract class DoubleCheckedCreator<T> {
                 if (getLogger().isDebugEnabled()) {
                     getLogger().debug("Created new Object='" + value + "'");
                 }
-            }
-            else if (getLogger().isDebugEnabled()) {
+            } else if (getLogger().isDebugEnabled()) {
                 getLogger().debug("Using retrieved (second attempt) Object='" + value + "'");
             }
 
             return value;
-        }
-        finally {
+        } finally {
             //switch back to the read lock
             this.writeLock.unlock();
         }

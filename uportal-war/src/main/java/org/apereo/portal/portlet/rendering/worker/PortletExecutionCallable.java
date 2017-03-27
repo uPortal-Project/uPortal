@@ -1,40 +1,37 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.portlet.rendering.worker;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
-
 import org.apereo.portal.portlet.om.IPortletWindowId;
 
 /**
  * Used by {@link PortletExecutionWorker} to submit to the thread pool
- * 
+ *
  * @author Eric Dalquist
  * @version $Revision$
  * @param <V>
  */
-final class PortletExecutionCallable<V> extends FutureTask<V> implements Callable<V>, IPortletExecutionContext {
+final class PortletExecutionCallable<V> extends FutureTask<V>
+        implements Callable<V>, IPortletExecutionContext {
     private final Callable<V> callable;
     private final IPortletExecutionContext portletExecutionContext;
 
-    public PortletExecutionCallable(IPortletExecutionContext portletExecutionContext, Callable<V> callable) {
+    public PortletExecutionCallable(
+            IPortletExecutionContext portletExecutionContext, Callable<V> callable) {
         super(callable);
         this.callable = callable;
         this.portletExecutionContext = portletExecutionContext;
@@ -117,5 +114,4 @@ final class PortletExecutionCallable<V> extends FutureTask<V> implements Callabl
     public V call() throws Exception {
         return this.callable.call();
     }
-
 }

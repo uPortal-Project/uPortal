@@ -1,20 +1,16 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.layout.profile.dao.jpa;
 
@@ -31,17 +27,17 @@ import org.apereo.portal.layout.profile.dao.IProfileSelectionDao;
  */
 // deliberately not annotated as Repository to avoid annotation-driven instantiation,
 // instead adopters wishing to store profile selections via JPA can explicitly configure.
-public class ProfileSelectionDaoImpl
-    extends BasePortalJpaDao
-    implements IProfileSelectionDao {
+public class ProfileSelectionDaoImpl extends BasePortalJpaDao implements IProfileSelectionDao {
 
     @Override
     @PortalTransactional
-    public IProfileSelection createOrUpdateProfileSelection(final String userName, final String profileFName){
+    public IProfileSelection createOrUpdateProfileSelection(
+            final String userName, final String profileFName) {
         Validate.notEmpty(userName, "Cannot create a profile selection for an empty userName");
-        Validate.notEmpty(profileFName,
-                "Cannot create profile selection with empty profile fname " +
-                        "(instead delete any selection for this user.)");
+        Validate.notEmpty(
+                profileFName,
+                "Cannot create profile selection with empty profile fname "
+                        + "(instead delete any selection for this user.)");
 
         final ProfileSelection jpaProfileSelection = new ProfileSelection(userName, profileFName);
         return this.createOrUpdateProfileSelection(jpaProfileSelection);
@@ -49,14 +45,15 @@ public class ProfileSelectionDaoImpl
 
     @Override
     @PortalTransactional
-    public IProfileSelection createOrUpdateProfileSelection(final IProfileSelection profileSelection){
+    public IProfileSelection createOrUpdateProfileSelection(
+            final IProfileSelection profileSelection) {
 
         Validate.notNull(profileSelection);
-        
-        if(!getEntityManager().contains(profileSelection)){
+
+        if (!getEntityManager().contains(profileSelection)) {
             //Entity is not managed
             return getEntityManager().merge(profileSelection);
-        }else{
+        } else {
             getEntityManager().persist(profileSelection);
             return profileSelection;
         }
@@ -77,7 +74,6 @@ public class ProfileSelectionDaoImpl
         }
 
         getEntityManager().remove(persistentProfileSelection);
-
     }
 
     @Override

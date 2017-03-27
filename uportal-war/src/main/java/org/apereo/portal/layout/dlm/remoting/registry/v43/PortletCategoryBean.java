@@ -1,22 +1,17 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-
 package org.apereo.portal.layout.dlm.remoting.registry.v43;
 
 import java.io.Serializable;
@@ -24,15 +19,14 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
-
 import org.apache.commons.lang.builder.CompareToBuilder;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apereo.portal.portlet.om.PortletCategory;
 
 /**
- * Gets serialized into JSON representing a category for the 4.3 version of the
- * portletRegistry.json API.
+ * Gets serialized into JSON representing a category for the 4.3 version of the portletRegistry.json
+ * API.
  *
  * @since 4.3
  * @author drewwills
@@ -45,14 +39,17 @@ public final class PortletCategoryBean implements Comparable<PortletCategoryBean
     private static final Set<PortletDefinitionBean> EMPTY_PORTLETS = Collections.emptySet();
 
     private final String id;
-    private String name;  // Setter provided so it can be localized after initialization
+    private String name; // Setter provided so it can be localized after initialization
     private final String description;
     private final SortedSet<PortletCategoryBean> subcategories;
     private final SortedSet<PortletDefinitionBean> portlets;
 
-    public static PortletCategoryBean fromPortletCategory(PortletCategory pc, 
-            Set<PortletCategoryBean> subcategories, Set<PortletDefinitionBean> portlets) {
-        return new PortletCategoryBean(pc,
+    public static PortletCategoryBean fromPortletCategory(
+            PortletCategory pc,
+            Set<PortletCategoryBean> subcategories,
+            Set<PortletDefinitionBean> portlets) {
+        return new PortletCategoryBean(
+                pc,
                 subcategories != null ? subcategories : EMPTY_CATEGORIES,
                 portlets != null ? portlets : EMPTY_PORTLETS);
     }
@@ -82,9 +79,7 @@ public final class PortletCategoryBean implements Comparable<PortletCategoryBean
     }
 
     public int compareTo(PortletCategoryBean category) {
-        return new CompareToBuilder()
-            .append(this.name, category.getName())
-            .toComparison();
+        return new CompareToBuilder().append(this.name, category.getName()).toComparison();
     }
 
     @Override
@@ -96,29 +91,26 @@ public final class PortletCategoryBean implements Comparable<PortletCategoryBean
             return false;
         }
         PortletCategoryBean rhs = (PortletCategoryBean) object;
-        return new EqualsBuilder()
-            .append(this.id, rhs.getId())
-            .isEquals();
+        return new EqualsBuilder().append(this.id, rhs.getId()).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(464270933, -1074792143)
-            .append(this.id)
-            .toHashCode();
+        return new HashCodeBuilder(464270933, -1074792143).append(this.id).toHashCode();
     }
 
     /*
      * Implementation
      */
 
-    private PortletCategoryBean(final PortletCategory category, 
-            Set<PortletCategoryBean> subcategories, Set<PortletDefinitionBean> portlets) {
+    private PortletCategoryBean(
+            final PortletCategory category,
+            Set<PortletCategoryBean> subcategories,
+            Set<PortletDefinitionBean> portlets) {
         this.id = category.getId();
         this.name = category.getName();
         this.description = category.getDescription();
         this.subcategories = new TreeSet<PortletCategoryBean>(subcategories);
         this.portlets = new TreeSet<PortletDefinitionBean>(portlets);
     }
-
 }

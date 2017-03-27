@@ -1,63 +1,50 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.spring.beans.factory;
 
 import java.util.List;
-
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
 import org.springframework.util.Assert;
 
 /**
- * Takes a list of bean names and attempts to load each in order. If the loading of a bean
- * throws an Exception it is logged and the next bean name in the list is tried. If no beans
- * can be loaded a {@link BeanCreationException} is thrown.
+ * Takes a list of bean names and attempts to load each in order. If the loading of a bean throws an
+ * Exception it is logged and the next bean name in the list is tried. If no beans can be loaded a
+ * {@link BeanCreationException} is thrown.
  */
 public class MediatingFactoryBean<T> extends AbstractFactoryBean<T> implements BeanFactoryAware {
     private List<String> delegateBeanNames;
     private Class<T> type = null;
 
-    /**
-     * @return the delegateBeanNames
-     */
+    /** @return the delegateBeanNames */
     public List<String> getDelegateBeanNames() {
         return this.delegateBeanNames;
     }
 
-    /**
-     * @param delegateBeanNames the delegateBeanNames to set
-     */
+    /** @param delegateBeanNames the delegateBeanNames to set */
     public void setDelegateBeanNames(List<String> delegateBeanNames) {
         this.delegateBeanNames = delegateBeanNames;
     }
 
-    /**
-     * @return the type
-     */
+    /** @return the type */
     public Class<T> getType() {
         return this.type;
     }
 
-    /**
-     * @param type the type to set
-     */
+    /** @param type the type to set */
     public void setType(Class<T> type) {
         this.type = type;
     }
@@ -92,23 +79,27 @@ public class MediatingFactoryBean<T> extends AbstractFactoryBean<T> implements B
 
                 return bean;
             } catch (final Exception e) {
-                final String msg = "Failed to load bean '"
-                        + beanName
-                        + "' from ApplicationContext"
-                        + (this.type != null ? " expecting type: " + this.type : "")
-                        + ". Will try to load the next bean in the list instead. Error message from the attempt to load this bean ('"
-                        + beanName + "'): ";
+                final String msg =
+                        "Failed to load bean '"
+                                + beanName
+                                + "' from ApplicationContext"
+                                + (this.type != null ? " expecting type: " + this.type : "")
+                                + ". Will try to load the next bean in the list instead. Error message from the attempt to load this bean ('"
+                                + beanName
+                                + "'): ";
 
                 if (this.logger.isDebugEnabled()) {
                     this.logger.debug(msg, e);
                 } else if (this.logger.isInfoEnabled()) {
-                    this.logger.info(msg + " " + e.getMessage() + " (enable debug for stack trace)");
+                    this.logger.info(
+                            msg + " " + e.getMessage() + " (enable debug for stack trace)");
                 }
             }
         }
 
-        throw new BeanCreationException("None of the configured bean names could be loaded. BeanNames: "
-                + this.delegateBeanNames);
+        throw new BeanCreationException(
+                "None of the configured bean names could be loaded. BeanNames: "
+                        + this.delegateBeanNames);
     }
 
     /* (non-Javadoc)

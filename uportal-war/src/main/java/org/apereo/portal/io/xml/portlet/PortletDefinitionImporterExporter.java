@@ -1,22 +1,17 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-
 package org.apereo.portal.io.xml.portlet;
 
 import java.math.BigInteger;
@@ -33,7 +28,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.apereo.portal.EntityIdentifier;
 import org.apereo.portal.IUserIdentityStore;
 import org.apereo.portal.channel.IPortletPublishingService;
@@ -53,7 +47,6 @@ import org.apereo.portal.portlet.dao.jpa.PortletDefinitionImpl;
 import org.apereo.portal.portlet.dao.jpa.PortletDefinitionParameterImpl;
 import org.apereo.portal.portlet.dao.jpa.PortletPreferenceImpl;
 import org.apereo.portal.portlet.om.IPortletDefinition;
-import org.apereo.portal.portlet.om.IPortletDefinitionId;
 import org.apereo.portal.portlet.om.IPortletDefinitionParameter;
 import org.apereo.portal.portlet.om.IPortletDescriptorKey;
 import org.apereo.portal.portlet.om.IPortletPreference;
@@ -79,13 +72,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- * @author Eric Dalquist
- */
-public class PortletDefinitionImporterExporter 
-        extends AbstractJaxbDataHandler<ExternalPortletDefinition> 
+/** @author Eric Dalquist */
+public class PortletDefinitionImporterExporter
+        extends AbstractJaxbDataHandler<ExternalPortletDefinition>
         implements IPortletPublishingService {
-
 
     private PortletPortalDataType portletPortalDataType;
     private IPortletTypeRegistry portletTypeRegistry;
@@ -94,18 +84,17 @@ public class PortletDefinitionImporterExporter
     private IUserIdentityStore userIdentityStore;
     private boolean errorOnChannel = true;
 
-    @Autowired
-    private IMarketplaceRatingDao marketplaceRatingDao;
+    @Autowired private IMarketplaceRatingDao marketplaceRatingDao;
 
     private IPerson systemUser = PersonFactory.createSystemPerson();
     private String systemUsername = SystemPerson.INSTANCE.getUserName();
 
     @Value("${org.apereo.portal.io.errorOnChannel}")
-	public void setErrorOnChannel(boolean errorOnChannel) {
-		this.errorOnChannel = errorOnChannel;
-	}
+    public void setErrorOnChannel(boolean errorOnChannel) {
+        this.errorOnChannel = errorOnChannel;
+    }
 
-	@Autowired
+    @Autowired
     public void setPortletPortalDataType(PortletPortalDataType portletPortalDataType) {
         this.portletPortalDataType = portletPortalDataType;
     }
@@ -148,37 +137,49 @@ public class PortletDefinitionImporterExporter
     @Transactional
     @Override
     public void importData(ExternalPortletDefinition portletRep) {
-    	final PortletDescriptor portletDescriptor = portletRep.getPortletDescriptor();
-    	final Boolean isFramework = portletDescriptor.isIsFramework();
+        final PortletDescriptor portletDescriptor = portletRep.getPortletDescriptor();
+        final Boolean isFramework = portletDescriptor.isIsFramework();
 
-    	if (isFramework != null && isFramework && "UPGRADED_CHANNEL_IS_NOT_A_PORTLET".equals(portletDescriptor.getPortletName())) {
-    		if (errorOnChannel) {
-    			throw new IllegalArgumentException(portletRep.getFname() + " is not a portlet. It was likely an IChannel from a previous version of uPortal and cannot be imported.");
-    		}
+        if (isFramework != null
+                && isFramework
+                && "UPGRADED_CHANNEL_IS_NOT_A_PORTLET".equals(portletDescriptor.getPortletName())) {
+            if (errorOnChannel) {
+                throw new IllegalArgumentException(
+                        portletRep.getFname()
+                                + " is not a portlet. It was likely an IChannel from a previous version of uPortal and cannot be imported.");
+            }
 
-    		logger.warn(portletRep.getFname() + " is not a portlet. It was likely an IChannel from a previous version of uPortal and will not be imported.");
-    		return;
-    	}
-    		
+            logger.warn(
+                    portletRep.getFname()
+                            + " is not a portlet. It was likely an IChannel from a previous version of uPortal and will not be imported.");
+            return;
+        }
+
         // get the portlet type
         final IPortletType portletType = portletTypeRegistry.getPortletType(portletRep.getType());
         if (portletType == null) {
-        	throw new IllegalArgumentException("No portlet type registered for: " + portletRep.getType());
+            throw new IllegalArgumentException(
+                    "No portlet type registered for: " + portletRep.getType());
         }
 
         final List<PortletCategory> categories = new ArrayList<PortletCategory>();
         for (String categoryName : portletRep.getCategories()) {
-            EntityIdentifier[] cats = GroupService.searchForGroups(categoryName, IGroupConstants.IS, IPortletDefinition.class);
+            EntityIdentifier[] cats =
+                    GroupService.searchForGroups(
+                            categoryName, IGroupConstants.IS, IPortletDefinition.class);
 
             PortletCategory category = null;
             if (cats != null && cats.length > 0) {
                 category = portletCategoryRegistry.getPortletCategory(cats[0].getKey());
-            }
-            else {
+            } else {
                 category = portletCategoryRegistry.getPortletCategory(categoryName);
             }
             if (category == null) {
-                throw new IllegalArgumentException("No category '" + categoryName + "' found when importing portlet: " + portletRep.getFname());
+                throw new IllegalArgumentException(
+                        "No category '"
+                                + categoryName
+                                + "' found when importing portlet: "
+                                + portletRep.getFname());
             }
             categories.add(category);
         }
@@ -188,10 +189,12 @@ public class PortletDefinitionImporterExporter
         final Set<IGroupMember> subscribeMembers = toGroupMembers(portletRep.getGroups(), fname);
         permissions.put(ExternalPermissionDefinition.SUBSCRIBE, subscribeMembers);
 
-        if (portletRep.getPermissions() != null && portletRep.getPermissions().getPermissions() != null) {
+        if (portletRep.getPermissions() != null
+                && portletRep.getPermissions().getPermissions() != null) {
             for (ExternalPermissionMemberList perm : portletRep.getPermissions().getPermissions()) {
                 Set<IGroupMember> members = toGroupMembers(perm.getGroups(), fname);
-                ExternalPermissionDefinition permDef = toExternalPermissionDefinition(perm.getSystem(), perm.getActivity());
+                ExternalPermissionDefinition permDef =
+                        toExternalPermissionDefinition(perm.getSystem(), perm.getActivity());
 
                 if (permissions.containsKey(permDef)) {
                     permissions.get(permDef).addAll(members);
@@ -203,23 +206,22 @@ public class PortletDefinitionImporterExporter
 
         IPortletDefinition def = portletDefinitionDao.getPortletDefinitionByFname(fname);
         if (def == null) {
-            def = new PortletDefinitionImpl(
-                    portletType, 
-                    fname, 
-                    portletRep.getName(),
-                    portletRep.getTitle(), 
-                    portletDescriptor.getWebAppName(), 
-                    portletDescriptor.getPortletName(), 
-                    isFramework != null ? isFramework : false);
-        }
-        else {
+            def =
+                    new PortletDefinitionImpl(
+                            portletType,
+                            fname,
+                            portletRep.getName(),
+                            portletRep.getTitle(),
+                            portletDescriptor.getWebAppName(),
+                            portletDescriptor.getPortletName(),
+                            isFramework != null ? isFramework : false);
+        } else {
             final IPortletDescriptorKey portletDescriptorKey = def.getPortletDescriptorKey();
             portletDescriptorKey.setPortletName(portletDescriptor.getPortletName());
             if (isFramework != null && isFramework) {
                 portletDescriptorKey.setFrameworkPortlet(true);
                 portletDescriptorKey.setWebAppName(null);
-            }
-            else {
+            } else {
                 portletDescriptorKey.setFrameworkPortlet(false);
                 portletDescriptorKey.setWebAppName(portletDescriptor.getWebAppName());
             }
@@ -254,7 +256,8 @@ public class PortletDefinitionImporterExporter
         handleLifecyclePublished(def, portletRep.getLifecycle());
         handleLifecycleExpired(def, portletRep.getLifecycle());
 
-        final Set<IPortletDefinitionParameter> parameters = new LinkedHashSet<IPortletDefinitionParameter>();
+        final Set<IPortletDefinitionParameter> parameters =
+                new LinkedHashSet<IPortletDefinitionParameter>();
         for (ExternalPortletParameter param : portletRep.getParameters()) {
             parameters.add(new PortletDefinitionParameterImpl(param.getName(), param.getValue()));
         }
@@ -264,16 +267,14 @@ public class PortletDefinitionImporterExporter
         for (ExternalPortletPreference pref : portletRep.getPortletPreferences()) {
             final List<String> valueList = pref.getValues();
             final String[] values = valueList.toArray(new String[valueList.size()]);
-            
+
             final Boolean readOnly = pref.isReadOnly();
             preferenceList.add(
                     new PortletPreferenceImpl(
-                            pref.getName(), 
-                            readOnly != null ? readOnly : false, 
-                            values));
+                            pref.getName(), readOnly != null ? readOnly : false, values));
         }
         def.setPortletPreferences(preferenceList);
-        
+
         savePortletDefinition(def, systemUser, categories, permissions);
     }
 
@@ -292,7 +293,7 @@ public class PortletDefinitionImporterExporter
                 def.setApproverId(systemUser.getID());
             } else {
                 def.setApprovalDate(null);
-                def.setApproverId(-1);  // Using -1 to be consistent with PortletAdministrationHelper
+                def.setApproverId(-1); // Using -1 to be consistent with PortletAdministrationHelper
             }
         } else {
             def.setApprovalDate(new Date());
@@ -305,17 +306,23 @@ public class PortletDefinitionImporterExporter
     private Date calculateEarliestApprovalDate(Lifecycle lifecycle) {
         Date publishOrExpireDate = calculateEarliestPubExpireDate(lifecycle);
         return lifecycle.getApproved() != null
-                && publishOrExpireDate.after(lifecycle.getApproved().getValue().getTime()) ?
-                    lifecycle.getApproved().getValue().getTime() : publishOrExpireDate;
+                        && publishOrExpireDate.after(lifecycle.getApproved().getValue().getTime())
+                ? lifecycle.getApproved().getValue().getTime()
+                : publishOrExpireDate;
     }
 
     // Calculates the earliest of either the published Date or Expiration date, whichever is specified.
     // If neither specified, returns current time.
     private Date calculateEarliestPubExpireDate(Lifecycle lifecycle) {
         Date now = new Date();
-        Date publishedDate = lifecycle.getPublished() != null && lifecycle.getPublished().getValue().before(now)?
-                lifecycle.getPublished().getValue().getTime() : now;
-        Date expiredDate = lifecycle.getExpiration() != null ? lifecycle.getExpiration().getValue().getTime() : now;
+        Date publishedDate =
+                lifecycle.getPublished() != null && lifecycle.getPublished().getValue().before(now)
+                        ? lifecycle.getPublished().getValue().getTime()
+                        : now;
+        Date expiredDate =
+                lifecycle.getExpiration() != null
+                        ? lifecycle.getExpiration().getValue().getTime()
+                        : now;
         return publishedDate.after(expiredDate) ? expiredDate : publishedDate;
     }
 
@@ -334,7 +341,8 @@ public class PortletDefinitionImporterExporter
                 def.setPublisherId(systemUser.getID());
             } else {
                 def.setPublishDate(null);
-                def.setPublisherId(-1);  // Using -1 to be consistent with PortletAdministrationHelper
+                def.setPublisherId(
+                        -1); // Using -1 to be consistent with PortletAdministrationHelper
             }
         } else {
             def.setPublishDate(new Date());
@@ -356,14 +364,16 @@ public class PortletDefinitionImporterExporter
     }
 
     // Returns the ID for the specified username or if not found the ID of the system user.
-    private int getUserIdForUsername (String username, IPortletDefinition def) {
+    private int getUserIdForUsername(String username, IPortletDefinition def) {
         if (username != null && !username.equals(systemUsername)) {
             Integer id = userIdentityStore.getPortalUserId(username);
             if (id != null) {
                 return id;
             }
-            logger.warn("Invalid username {} in portlet lifecycle for fname={}, defaulting to system user",
-                    username, def.getFName());
+            logger.warn(
+                    "Invalid username {} in portlet lifecycle for fname={}, defaulting to system user",
+                    username,
+                    def.getFName());
         }
         // Note this returns 0 consistent with prior import behavior, not the id in the database.
         // todo: Figure out if we should instead return the id of the system user in the DB
@@ -377,42 +387,45 @@ public class PortletDefinitionImporterExporter
             if (username != null) {
                 return username;
             }
-            logger.warn("Invalid userID {} found when exporting a portlet; return system username instead", id);
+            logger.warn(
+                    "Invalid userID {} found when exporting a portlet; return system username instead",
+                    id);
         }
         return systemUsername;
     }
 
-    /**
-     * {@link String} id argument is treated as the portlet fname.
-     */
+    /** {@link String} id argument is treated as the portlet fname. */
     @Transactional
     @Override
-	public ExternalPortletDefinition deleteData(String fname) {
-    	final IPortletDefinition def = this.portletDefinitionDao.getPortletDefinitionByFname(fname);
-    	if(null == def) {
-    		return null;
-    	}
-    	
-		ExternalPortletDefinition result = convert(def);
-		this.portletDefinitionDao.deletePortletDefinition(def);
-		return result;
-	}
+    public ExternalPortletDefinition deleteData(String fname) {
+        final IPortletDefinition def = this.portletDefinitionDao.getPortletDefinitionByFname(fname);
+        if (null == def) {
+            return null;
+        }
+
+        ExternalPortletDefinition result = convert(def);
+        this.portletDefinitionDao.deletePortletDefinition(def);
+        return result;
+    }
 
     private final Object groupUpdateLock = new Object();
-
 
     /*
      * (non-Javadoc)
      * @see org.apereo.portal.channel.IChannelPublishingService#saveChannelDefinition(org.apereo.portal.portlet.om.IPortletDefinition, org.apereo.portal.security.IPerson, org.apereo.portal.channel.ChannelLifecycleState, java.util.Date, java.util.Date, org.apereo.portal.ChannelCategory[], org.apereo.portal.groups.IGroupMember[])
      */
     @Override
-    public IPortletDefinition savePortletDefinition(IPortletDefinition definition, IPerson publisher, List<PortletCategory> categories, List<IGroupMember> groupMembers) {
+    public IPortletDefinition savePortletDefinition(
+            IPortletDefinition definition,
+            IPerson publisher,
+            List<PortletCategory> categories,
+            List<IGroupMember> groupMembers) {
         Map<ExternalPermissionDefinition, Set<IGroupMember>> permissions = new HashMap<>();
         permissions.put(ExternalPermissionDefinition.SUBSCRIBE, new HashSet<>(groupMembers));
-        IPortletDefinition def = savePortletDefinition(definition, publisher, categories, permissions);
+        IPortletDefinition def =
+                savePortletDefinition(definition, publisher, categories, permissions);
         return def;
     }
-
 
     /**
      * Save a portlet definition.
@@ -420,15 +433,15 @@ public class PortletDefinitionImporterExporter
      * @param definition the portlet definition
      * @param publisher the person publishing the portlet
      * @param categories the list of categories for the portlet
-     * @param permissionMap a map of permission name -> list of groups who are granted that permission
-     *                      (Note: for now, only grant is supported and only for the FRAMEWORK_OWNER perm manager)
+     * @param permissionMap a map of permission name -> list of groups who are granted that
+     *     permission (Note: for now, only grant is supported and only for the FRAMEWORK_OWNER perm
+     *     manager)
      */
     private IPortletDefinition savePortletDefinition(
             IPortletDefinition definition,
             IPerson publisher,
             List<PortletCategory> categories,
-            Map<ExternalPermissionDefinition,
-            Set<IGroupMember>> permissionMap) {
+            Map<ExternalPermissionDefinition, Set<IGroupMember>> permissionMap) {
         boolean newChannel = (definition.getPortletDefinitionId() == null);
 
         // save the channel
@@ -440,7 +453,7 @@ public class PortletDefinitionImporterExporter
 
         //Sync on groups during update. This really should be a portal wide thread-safety check or
         //The groups service needs to deal with concurrent modification better.
-        synchronized(this.groupUpdateLock) {
+        synchronized (this.groupUpdateLock) {
             // Delete existing category memberships for this channel
             if (!newChannel) {
                 for (IEntityGroup group : portletDefEntity.getAncestorGroups()) {
@@ -458,15 +471,19 @@ public class PortletDefinitionImporterExporter
 
             // Set groups
             final AuthorizationService authService = AuthorizationService.instance();
-            final String target = PermissionHelper.permissionTargetIdForPortletDefinition(definition);
+            final String target =
+                    PermissionHelper.permissionTargetIdForPortletDefinition(definition);
 
             // Loop over the affected permission managers...
-            Map<String, Collection<ExternalPermissionDefinition>> permissionsBySystem = getPermissionsBySystem(permissionMap.keySet());
+            Map<String, Collection<ExternalPermissionDefinition>> permissionsBySystem =
+                    getPermissionsBySystem(permissionMap.keySet());
             for (String system : permissionsBySystem.keySet()) {
-                Collection<ExternalPermissionDefinition> systemPerms = permissionsBySystem.get(system);
+                Collection<ExternalPermissionDefinition> systemPerms =
+                        permissionsBySystem.get(system);
 
                 // get the permission manager for this system...
-                final IUpdatingPermissionManager upm = authService.newUpdatingPermissionManager(system);
+                final IUpdatingPermissionManager upm =
+                        authService.newUpdatingPermissionManager(system);
                 final List<IPermission> permissions = new ArrayList<>();
 
                 // add activity grants for each permission..
@@ -475,7 +492,8 @@ public class PortletDefinitionImporterExporter
                     Set<IGroupMember> members = permissionMap.get(permissionDef);
                     for (final IGroupMember member : members) {
 
-                        final IAuthorizationPrincipal authPrincipal = authService.newPrincipal(member);
+                        final IAuthorizationPrincipal authPrincipal =
+                                authService.newPrincipal(member);
                         final IPermission permEntity = upm.newPermission(authPrincipal);
                         permEntity.setType(IPermission.PERMISSION_TYPE_GRANT);
                         permEntity.setActivity(permissionDef.getActivity());
@@ -487,7 +505,8 @@ public class PortletDefinitionImporterExporter
                 // If modifying the channel, remove the existing permissions before adding the new ones
                 if (!newChannel) {
                     for (ExternalPermissionDefinition permissionName : permissionMap.keySet()) {
-                        IPermission[] oldPermissions = upm.getPermissions(permissionName.getActivity(), target);
+                        IPermission[] oldPermissions =
+                                upm.getPermissions(permissionName.getActivity(), target);
                         upm.removePermissions(oldPermissions);
                     }
                 }
@@ -496,8 +515,12 @@ public class PortletDefinitionImporterExporter
         }
 
         if (logger.isDebugEnabled()) {
-            logger.debug( "Portlet " + defId + " has been " + 
-                    (newChannel ? "published" : "modified") + ".");
+            logger.debug(
+                    "Portlet "
+                            + defId
+                            + " has been "
+                            + (newChannel ? "published" : "modified")
+                            + ".");
         }
 
         return definition;
@@ -506,11 +529,14 @@ public class PortletDefinitionImporterExporter
     @Transactional
     @Override
     public void removePortletDefinition(IPortletDefinition portletDefinition, IPerson person) {
-        IPortletDefinition portletDef = portletDefinitionDao.getPortletDefinition(portletDefinition.getPortletDefinitionId());
+        IPortletDefinition portletDef =
+                portletDefinitionDao.getPortletDefinition(
+                        portletDefinition.getPortletDefinitionId());
 
         // Delete existing category memberships for this portlet
         String portletDefinitionId = portletDefinition.getPortletDefinitionId().getStringId();
-        IEntity channelDefEntity = GroupService.getEntity(portletDefinitionId, IPortletDefinition.class);
+        IEntity channelDefEntity =
+                GroupService.getEntity(portletDefinitionId, IPortletDefinition.class);
         for (IEntityGroup group : channelDefEntity.getAncestorGroups()) {
             group.removeChild(channelDefEntity);
             group.update();
@@ -519,7 +545,8 @@ public class PortletDefinitionImporterExporter
         // Delete permissions records that refer to this portlet
         AuthorizationService authService = AuthorizationService.instance();
         String target = PermissionHelper.permissionTargetIdForPortletDefinition(portletDefinition);
-        IUpdatingPermissionManager upm = authService.newUpdatingPermissionManager(IPermission.PORTAL_SUBSCRIBE);
+        IUpdatingPermissionManager upm =
+                authService.newUpdatingPermissionManager(IPermission.PORTAL_SUBSCRIBE);
         IPermission[] oldPermissions = upm.getPermissionsForTarget(target);
         upm.removePermissions(oldPermissions);
 
@@ -536,22 +563,20 @@ public class PortletDefinitionImporterExporter
         if (def == null) {
             return null;
         }
-        
+
         return convert(def);
     }
-    
-    
-    
+
     @Override
     public String getFileName(ExternalPortletDefinition data) {
         return SafeFilenameUtils.makeSafeFilename(data.getFname());
     }
-    
+
     protected BigInteger convertToBigInteger(Integer i) {
         if (i == null) {
             return null;
         }
-        
+
         return BigInteger.valueOf(i);
     }
 
@@ -564,7 +589,7 @@ public class PortletDefinitionImporterExporter
 
     protected ExternalPortletDefinition convert(IPortletDefinition def) {
         ExternalPortletDefinition rep = new ExternalPortletDefinition();
-         
+
         rep.setFname(def.getFName());
         rep.setDesc(def.getDescription());
         rep.setName(def.getName());
@@ -592,7 +617,8 @@ public class PortletDefinitionImporterExporter
              *   - Current lifecycle state >= EXPIRED
              *   - An expiration date
              */
-            if (def.getLifecycleState().isEqualToOrAfter(PortletLifecycleState.EXPIRED) && def.getExpirationDate() != null) {
+            if (def.getLifecycleState().isEqualToOrAfter(PortletLifecycleState.EXPIRED)
+                    && def.getExpirationDate() != null) {
                 LifecycleEntry expired = new LifecycleEntry();
                 expired.setUser(getUsernameForUserId(def.getExpirerId()));
                 expired.setValue(getCalendar(def.getExpirationDate()));
@@ -601,23 +627,22 @@ public class PortletDefinitionImporterExporter
             // Maintenance mode is handled via a portlet publishing parameter and not a lifecycle
             rep.setLifecycle(lifecycle);
         }
-         
-         
-        final org.apereo.portal.xml.PortletDescriptor portletDescriptor = new org.apereo.portal.xml.PortletDescriptor();
+
+        final org.apereo.portal.xml.PortletDescriptor portletDescriptor =
+                new org.apereo.portal.xml.PortletDescriptor();
         final IPortletDescriptorKey portletDescriptorKey = def.getPortletDescriptorKey();
         if (portletDescriptorKey.isFrameworkPortlet()) {
             portletDescriptor.setIsFramework(true);
-        }
-        else {
+        } else {
             portletDescriptor.setWebAppName(portletDescriptorKey.getWebAppName());
         }
         portletDescriptor.setPortletName(portletDescriptorKey.getPortletName());
         rep.setPortletDescriptor(portletDescriptor);
-         
-         
+
         final List<ExternalPortletParameter> parameterList = rep.getParameters();
         for (IPortletDefinitionParameter param : def.getParameters()) {
-            final ExternalPortletParameter externalPortletParameter = new ExternalPortletParameter();
+            final ExternalPortletParameter externalPortletParameter =
+                    new ExternalPortletParameter();
             externalPortletParameter.setName(param.getName());
             externalPortletParameter.setDescription(param.getDescription());
             externalPortletParameter.setValue(param.getValue());
@@ -625,25 +650,28 @@ public class PortletDefinitionImporterExporter
         }
         Collections.sort(parameterList, ExternalPortletParameterNameComparator.INSTANCE);
 
-         
         final List<ExternalPortletPreference> portletPreferenceList = rep.getPortletPreferences();
         for (IPortletPreference pref : def.getPortletPreferences()) {
-            final ExternalPortletPreference externalPortletPreference = new ExternalPortletPreference();
+            final ExternalPortletPreference externalPortletPreference =
+                    new ExternalPortletPreference();
             externalPortletPreference.setName(pref.getName());
             externalPortletPreference.setReadOnly(pref.isReadOnly());
-             
+
             final List<String> value = externalPortletPreference.getValues();
             value.addAll(Arrays.asList(pref.getValues()));
             //no sorting of preference values, order is specified by the portlet
-             
+
             portletPreferenceList.add(externalPortletPreference);
         }
         Collections.sort(portletPreferenceList, ExternalPortletPreferenceNameComparator.INSTANCE);
-         
+
         final List<String> categoryList = rep.getCategories();
-        final IGroupMember gm = GroupService.getGroupMember(def.getPortletDefinitionId().getStringId(), IPortletDefinition.class);
+        final IGroupMember gm =
+                GroupService.getGroupMember(
+                        def.getPortletDefinitionId().getStringId(), IPortletDefinition.class);
         @SuppressWarnings("unchecked")
-        final Iterator<IEntityGroup> categories = GroupService.getCompositeGroupService().findParentGroups(gm);
+        final Iterator<IEntityGroup> categories =
+                GroupService.getCompositeGroupService().findParentGroups(gm);
         while (categories.hasNext()) {
             IEntityGroup category = categories.next();
             categoryList.add(category.getName());
@@ -680,24 +708,32 @@ public class PortletDefinitionImporterExporter
         return rep;
     }
 
-    private boolean exportPermission(IPortletDefinition def, ExternalPermissionDefinition permDef, List<String> groupList, List<String> userList) {
-        final AuthorizationService authService = org.apereo.portal.services.AuthorizationService.instance();
+    private boolean exportPermission(
+            IPortletDefinition def,
+            ExternalPermissionDefinition permDef,
+            List<String> groupList,
+            List<String> userList) {
+        final AuthorizationService authService =
+                org.apereo.portal.services.AuthorizationService.instance();
         final IPermissionManager pm = authService.newPermissionManager(permDef.getSystem());
         final String portletTargetId = PermissionHelper.permissionTargetIdForPortletDefinition(def);
-        final IAuthorizationPrincipal[] principals = pm.getAuthorizedPrincipals(permDef.getActivity(), portletTargetId);
+        final IAuthorizationPrincipal[] principals =
+                pm.getAuthorizedPrincipals(permDef.getActivity(), portletTargetId);
         boolean permAdded = false;
 
         for (IAuthorizationPrincipal principal : principals) {
             IGroupMember member = authService.getGroupMember(principal);
             if (member.isGroup()) {
-                final EntityNameFinderService entityNameFinderService = EntityNameFinderService.instance();
-                final IEntityNameFinder nameFinder = entityNameFinderService.getNameFinder(member.getType());
+                final EntityNameFinderService entityNameFinderService =
+                        EntityNameFinderService.instance();
+                final IEntityNameFinder nameFinder =
+                        entityNameFinderService.getNameFinder(member.getType());
                 try {
                     groupList.add(nameFinder.getName(member.getKey()));
                     permAdded = true;
-                }
-                catch (Exception e) {
-                    throw new RuntimeException("Could not find group name for entity: " + member.getKey(), e);
+                } catch (Exception e) {
+                    throw new RuntimeException(
+                            "Could not find group name for entity: " + member.getKey(), e);
                 }
             } else {
                 if (userList != null) {
@@ -715,16 +751,17 @@ public class PortletDefinitionImporterExporter
         return permAdded;
     }
 
-
     /**
      * Convert a list of group names to a list of groups.
+     *
      * @param groupNames the list of group names
      * @return the list of groups.
      */
     private Set<IGroupMember> toGroupMembers(List<String> groupNames, String fname) {
         final Set<IGroupMember> groups = new HashSet<>();
         for (String groupName : groupNames) {
-            EntityIdentifier[] gs = GroupService.searchForGroups(groupName, IGroupConstants.IS, IPerson.class);
+            EntityIdentifier[] gs =
+                    GroupService.searchForGroups(groupName, IGroupConstants.IS, IPerson.class);
             IGroupMember group;
             if (gs != null && gs.length > 0) {
                 group = GroupService.findGroup(gs[0].getKey());
@@ -734,7 +771,8 @@ public class PortletDefinitionImporterExporter
             }
 
             if (group == null) {
-                throw new IllegalArgumentException("No group '" + groupName + "' found when importing portlet: " + fname);
+                throw new IllegalArgumentException(
+                        "No group '" + groupName + "' found when importing portlet: " + fname);
             }
 
             groups.add(group);
@@ -743,15 +781,16 @@ public class PortletDefinitionImporterExporter
         return groups;
     }
 
-
     /**
      * Check that a permission type from the XML file matches with a real permission.
+     *
      * @param system The name of the permission manager
      * @param activity The name of the permission to search for.
      * @return the permission type string to use
      * @throws IllegalArgumentException if an unsupported permission type is specified
      */
-    private ExternalPermissionDefinition toExternalPermissionDefinition(String system, String activity) {
+    private ExternalPermissionDefinition toExternalPermissionDefinition(
+            String system, String activity) {
         ExternalPermissionDefinition def = ExternalPermissionDefinition.find(system, activity);
         if (def != null) {
             return def;
@@ -765,12 +804,18 @@ public class PortletDefinitionImporterExporter
             delim = ", ";
         }
 
-        throw new IllegalArgumentException("Permission type " + system + "." + activity + " is not supported.  " +
-                "The only supported permissions at this time are: " + buffer.toString());
+        throw new IllegalArgumentException(
+                "Permission type "
+                        + system
+                        + "."
+                        + activity
+                        + " is not supported.  "
+                        + "The only supported permissions at this time are: "
+                        + buffer.toString());
     }
 
-
-    private Map<String, Collection<ExternalPermissionDefinition>> getPermissionsBySystem(Set<ExternalPermissionDefinition> perms) {
+    private Map<String, Collection<ExternalPermissionDefinition>> getPermissionsBySystem(
+            Set<ExternalPermissionDefinition> perms) {
         Map<String, Collection<ExternalPermissionDefinition>> mappedPerms = new HashMap<>();
         for (ExternalPermissionDefinition perm : perms) {
             if (!mappedPerms.containsKey(perm.getSystem())) {

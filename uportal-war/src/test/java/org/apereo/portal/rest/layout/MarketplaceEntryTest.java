@@ -1,31 +1,27 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.rest.layout;
+
+import static org.junit.Assert.*;
+import static org.mockito.MockitoAnnotations.initMocks;
 
 import org.apereo.portal.portlet.marketplace.MarketplacePortletDefinition;
 import org.apereo.portal.security.IPerson;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
-
-import static org.junit.Assert.*;
-import static org.mockito.MockitoAnnotations.initMocks;
 
 /**
  * Unit tests for MarketplaceEntry.
@@ -40,18 +36,13 @@ public class MarketplaceEntryTest {
     @Mock IPerson user;
     @Mock IPerson anotherUser;
 
-
-    /**
-     * Set up the test case.
-     */
+    /** Set up the test case. */
     @Before
     public void setUp() {
         initMocks(this);
     }
 
-    /**
-     * A MarketplaceEntry does not equals(null), of course.
-     */
+    /** A MarketplaceEntry does not equals(null), of course. */
     @Test
     public void testDoesNotEqualNull() {
 
@@ -60,17 +51,14 @@ public class MarketplaceEntryTest {
         assertFalse(anEntry.equals(null));
     }
 
-
-    /**
-     * MarketplaceEntries do not equal one another when their users differ.
-     */
+    /** MarketplaceEntries do not equal one another when their users differ. */
     @Test
     public void testDoesNotEqualWhenUsersDiffer() {
 
         final MarketplaceEntry anEntry = new MarketplaceEntry(marketplacePortletDefinition, user);
 
         final MarketplaceEntry sameDefinitionDifferentUser =
-            new MarketplaceEntry(marketplacePortletDefinition, anotherUser);
+                new MarketplaceEntry(marketplacePortletDefinition, anotherUser);
 
         assertFalse(anEntry.equals(sameDefinitionDifferentUser));
     }
@@ -84,22 +72,19 @@ public class MarketplaceEntryTest {
         final MarketplaceEntry anEntry = new MarketplaceEntry(marketplacePortletDefinition, user);
 
         final MarketplaceEntry differentDefinitionSameUser =
-            new MarketplaceEntry(anotherMarketplacePortletDefinition, user);
+                new MarketplaceEntry(anotherMarketplacePortletDefinition, user);
 
         assertFalse(anEntry.equals(differentDefinitionSameUser));
-
     }
 
-    /**
-     * Marketplace entries do not equal one another when their canAdd differs.
-     */
+    /** Marketplace entries do not equal one another when their canAdd differs. */
     @Test
     public void testDoesNotEqualWhenCanAddDiffers() {
 
         final MarketplaceEntry anEntry = new MarketplaceEntry(marketplacePortletDefinition, user);
 
         final MarketplaceEntry sameDefinitionSameUser =
-            new MarketplaceEntry(marketplacePortletDefinition, user);
+                new MarketplaceEntry(marketplacePortletDefinition, user);
 
         anEntry.setCanAdd(false);
         sameDefinitionSameUser.setCanAdd(true);
@@ -122,11 +107,11 @@ public class MarketplaceEntryTest {
     public void testDoesNotEqualWhenHavingnessOfRelatedPortletsDiffers() {
 
         final MarketplaceEntry noRelatedPortlets =
-            new MarketplaceEntry(marketplacePortletDefinition, false, user);
+                new MarketplaceEntry(marketplacePortletDefinition, false, user);
         noRelatedPortlets.setCanAdd(false);
 
         final MarketplaceEntry yesRelatedPortlets =
-            new MarketplaceEntry(marketplacePortletDefinition, true, user);
+                new MarketplaceEntry(marketplacePortletDefinition, true, user);
         yesRelatedPortlets.setCanAdd(false);
 
         assertFalse(noRelatedPortlets.equals(yesRelatedPortlets));
@@ -141,10 +126,10 @@ public class MarketplaceEntryTest {
     public void testEquals() {
 
         final MarketplaceEntry anEntry =
-            new MarketplaceEntry(marketplacePortletDefinition, true, user);
+                new MarketplaceEntry(marketplacePortletDefinition, true, user);
 
         final MarketplaceEntry equalEntry =
-            new MarketplaceEntry(marketplacePortletDefinition, true, user);
+                new MarketplaceEntry(marketplacePortletDefinition, true, user);
 
         anEntry.setCanAdd(true);
         equalEntry.setCanAdd(true);
@@ -158,5 +143,4 @@ public class MarketplaceEntryTest {
         assertEquals(anEntry, equalEntry);
         assertEquals(anEntry.hashCode(), equalEntry.hashCode());
     }
-
 }

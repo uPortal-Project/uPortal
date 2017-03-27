@@ -1,20 +1,16 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.xml.stream;
 
@@ -22,14 +18,13 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
-
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.XMLEvent;
 
 /**
  * Buffers XML events for later re-reading
- * 
+ *
  * @author Eric Dalquist
  * @version $Revision$
  */
@@ -37,26 +32,23 @@ public class BufferedXMLEventReader extends BaseXMLEventReader {
     private final LinkedList<XMLEvent> eventBuffer = new LinkedList<XMLEvent>();
     private int eventLimit = 0;
     private ListIterator<XMLEvent> bufferReader = null;
-    
-    /**
-     * Create new buffering reader, no buffering is done until {@link #mark(int)} is called.
-     */
+
+    /** Create new buffering reader, no buffering is done until {@link #mark(int)} is called. */
     public BufferedXMLEventReader(XMLEventReader reader) {
         super(reader);
     }
-    
+
     /**
      * Create new buffering reader. Calls {@link #mark(int)} with the specified event limit
+     *
      * @see #mark(int)
      */
     public BufferedXMLEventReader(XMLEventReader reader, int eventLimit) {
         super(reader);
         this.eventLimit = eventLimit;
     }
-    
-    /**
-     * @return A copy of the current buffer
-     */
+
+    /** @return A copy of the current buffer */
     public List<XMLEvent> getBuffer() {
         return new ArrayList<XMLEvent>(this.eventBuffer);
     }
@@ -75,31 +67,31 @@ public class BufferedXMLEventReader extends BaseXMLEventReader {
             if (!this.bufferReader.hasNext()) {
                 this.bufferReader = null;
             }
-            
+
             return event;
         }
 
         //Get the next event from the underlying reader
         final XMLEvent event = this.getParent().nextEvent();
-        
+
         //if buffering add the event
         if (this.eventLimit != 0) {
             this.eventBuffer.offer(event);
-            
+
             //If limited buffer size and buffer is too big trim the buffer.
             if (this.eventLimit > 0 && this.eventBuffer.size() > this.eventLimit) {
                 this.eventBuffer.poll();
             }
         }
-        
+
         return event;
     }
-    
+
     @Override
     public boolean hasNext() {
         return this.bufferReader != null || super.hasNext();
     }
-    
+
     @Override
     public XMLEvent peek() throws XMLStreamException {
         if (this.bufferReader != null) {
@@ -110,20 +102,20 @@ public class BufferedXMLEventReader extends BaseXMLEventReader {
         return super.peek();
     }
 
-    /**
-     * Same as calling {@link #mark(int)} with -1.
-     */
+    /** Same as calling {@link #mark(int)} with -1. */
     public void mark() {
         this.mark(-1);
     }
-    
+
     /**
      * Start buffering events
-     * @param eventLimit the maximum number of events to buffer. -1 will buffer all events, 0 will buffer no events.
+     *
+     * @param eventLimit the maximum number of events to buffer. -1 will buffer all events, 0 will
+     *     buffer no events.
      */
     public void mark(int eventLimit) {
         this.eventLimit = eventLimit;
-        
+
         //Buffering no events now, clear the buffer and buffered reader
         if (this.eventLimit == 0) {
             this.eventBuffer.clear();
@@ -135,14 +127,15 @@ public class BufferedXMLEventReader extends BaseXMLEventReader {
             int iteratorIndex = 0;
             if (this.bufferReader != null) {
                 final int nextIndex = this.bufferReader.nextIndex();
-                iteratorIndex = Math.max(0, nextIndex - (this.eventBuffer.size() - this.eventLimit));
+                iteratorIndex =
+                        Math.max(0, nextIndex - (this.eventBuffer.size() - this.eventLimit));
             }
-            
+
             //Trim the buffer until it is not larger than the limit
             while (this.eventBuffer.size() > this.eventLimit) {
                 this.eventBuffer.poll();
             }
-            
+
             //If there is an iterator re-create it using the newly calculated index
             if (this.bufferReader != null) {
                 this.bufferReader = this.eventBuffer.listIterator(iteratorIndex);
@@ -150,40 +143,36 @@ public class BufferedXMLEventReader extends BaseXMLEventReader {
         }
     }
 
-    /**
-     * Reset the reader to these start of the buffered events.
-     */
+    /** Reset the reader to these start of the buffered events. */
     public void reset() {
         if (this.eventBuffer.isEmpty()) {
             this.bufferReader = null;
-        }
-        else {
+        } else {
             this.bufferReader = this.eventBuffer.listIterator();
         }
     }
-    
+
     @Override
     public void close() throws XMLStreamException {
         this.mark(0);
         super.close();
     }
 
-    /**
-     * @return The number of events in the buffer.
-     */
+    /** @return The number of events in the buffer. */
     public int bufferSize() {
         return this.eventBuffer.size();
     }
 
     /**
-     * If reading from the buffer after a {@link #reset()} call an {@link IllegalStateException} will be thrown.
+     * If reading from the buffer after a {@link #reset()} call an {@link IllegalStateException}
+     * will be thrown.
      */
     @Override
     public void remove() {
         if (this.bufferReader != null && this.bufferReader.hasNext()) {
             throw new IllegalStateException("Cannot remove a buffered element");
         }
-        
+
         super.remove();
     }
 }
