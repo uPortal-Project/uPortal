@@ -47,8 +47,6 @@ public final class ChainingProfileMapperImpl implements IProfileMapper {
 
     private List<IProfileMapper> subMappers = Collections.<IProfileMapper>emptyList();
 
-    @Autowired private IUserLayoutStore layoutStore;
-
     public void setDefaultProfileName(String defaultProfileName) {
         this.defaultProfileName = defaultProfileName;
     }

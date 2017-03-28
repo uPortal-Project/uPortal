@@ -19,10 +19,7 @@ import java.util.List;
 
 /**
  * Implementation of {@link ConfigurationLoader} that loads {@link FragmentDefinition} objects from
- * the database using JPA/Hibernate. You can enable this feature by setting the <code>
- * ConfigurationLoader.impl</code> property in dlm.xml.
- *
- * @author awills
+ * the database using JPA/Hibernate.
  */
 public class RDBMConfigurationLoader implements ConfigurationLoader {
     // Instance Members.
@@ -33,9 +30,6 @@ public class RDBMConfigurationLoader implements ConfigurationLoader {
         this.fragmentDao = fragmentDao;
     }
 
-    /* (non-Javadoc)
-     * @see org.apereo.portal.layout.dlm.LegacyConfigurationLoader#getFragments()
-     */
     @Override
     public List<FragmentDefinition> getFragments() {
         final List<FragmentDefinition> allFragments = this.fragmentDao.getAllFragments();
@@ -53,4 +47,5 @@ public class RDBMConfigurationLoader implements ConfigurationLoader {
     public FragmentDefinition getFragmentByOwnerId(String ownerId) {
         return this.fragmentDao.getFragmentDefinitionByOwner(ownerId);
     }
+
 }

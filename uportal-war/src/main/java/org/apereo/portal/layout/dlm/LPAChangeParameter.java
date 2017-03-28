@@ -49,7 +49,7 @@ public class LPAChangeParameter implements ILayoutProcessingAction {
         if (nodeId.startsWith(Constants.FRAGMENT_ID_USER_PREFIX)) {
             // we are dealing with an incorporated node, adding will replace
             // an existing one for the same target node id and name
-            ParameterEditManager.addParmEditDirective(ilfNode, nodeId, name, value, person);
+            ParameterEditManager.addParmEditDirective(nodeId, name, value, person);
         } else {
             // node owned by user so change existing parameter child directly
             Document plf = RDBMDistributedLayoutStore.getPLF(person);

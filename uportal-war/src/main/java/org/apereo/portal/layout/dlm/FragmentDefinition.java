@@ -87,7 +87,7 @@ public class FragmentDefinition extends EvaluatorGroup {
      * This constructor is passed a dlm:fragment element from which this FragmentDefinition instance
      * gathers its configuration information.
      *
-     * @param e An Element representing a single <dlm:fragment> in dlm.xml.
+     * @param e An Element representing a single <dlm:fragment>
      * @throws Exception
      */
     public FragmentDefinition(Element e) {
@@ -145,10 +145,6 @@ public class FragmentDefinition extends EvaluatorGroup {
 
     public static String getDefaultLayoutOwnerId() {
         return cDefaultLayoutOwnerId;
-    }
-
-    public int getEvaluatorCount() {
-        return this.evaluators == null ? 0 : this.evaluators.size();
     }
 
     public List<Evaluator> getEvaluators() {

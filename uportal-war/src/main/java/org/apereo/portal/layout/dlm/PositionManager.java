@@ -122,8 +122,8 @@ public class PositionManager {
 
         applyOrdering(order, compViewParent, positionSet, tracker);
         applyNoReparenting(order, compViewParent, positionSet);
-        applyNoHopping(order, compViewParent, positionSet);
-        applyLowerPrecedence(order, compViewParent, positionSet);
+        applyNoHopping(order);
+        applyLowerPrecedence(order);
         evaluateAndApply(order, compViewParent, positionSet, result);
     }
 
@@ -244,8 +244,7 @@ public class PositionManager {
      * This method is responsible for preventing nodes with lower precedence from being located to
      * the left (lower sibling order) of nodes having a higher precedence and moveAllowed="false".
      */
-    static void applyLowerPrecedence(
-            List<NodeInfo> order, Element compViewParent, Element positionSet) {
+    static void applyLowerPrecedence(List<NodeInfo> order) {
         for (int i = 0; i < order.size(); i++) {
             NodeInfo ni = order.get(i);
             if (ni.getNode().getAttribute(Constants.ATT_MOVE_ALLOWED).equals("false")) {
@@ -270,7 +269,7 @@ public class PositionManager {
      * compViewParent is left as they are found in the CVP with any nodes brought in from other
      * parents appended at the end with their relative order preserved.
      */
-    static void applyNoHopping(List<NodeInfo> order, Element compViewParent, Element positionSet) {
+    static void applyNoHopping(List<NodeInfo> order) {
         if (isIllegalHoppingSpecified(order) == true) {
             ArrayList<NodeInfo> cvpNodeInfos = new ArrayList<>();
 
@@ -351,7 +350,6 @@ public class PositionManager {
         while (i < order.size()) {
             NodeInfo ni = order.get(i);
             if (!ni.getNode().getParentNode().equals(compViewParent)) {
-                ni.setDifferentParent(true);
                 if (isNotReparentable(ni, compViewParent, positionSet)) {
                     LOG.info(
                             "Resetting the following NodeInfo because it is not reparentable:  "
@@ -526,7 +524,7 @@ public class PositionManager {
                             || child.getAttribute("type").equals("regular"))) {
                 final NodeInfo nodeInfo = new NodeInfo(child, indexInCVP++);
 
-                tracker.track(nodeInfo, order, compViewParent, positionSet);
+                tracker.track(order, compViewParent, positionSet);
 
                 final NodeInfo prevNode = available.put(nodeInfo.getId(), nodeInfo);
                 if (prevNode != null) {
@@ -566,7 +564,7 @@ public class PositionManager {
                 NodeInfo ni = available.remove(childId);
                 if (ni == null) {
                     ni = new NodeInfo(child);
-                    tracker.track(ni, order, compViewParent, positionSet);
+                    tracker.track(order, compViewParent, positionSet);
                 }
 
                 ni.setPositionDirective(directive);

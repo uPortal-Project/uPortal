@@ -84,10 +84,10 @@ import org.w3c.dom.NodeList;
 
 /**
  * This class extends RDBMUserLayoutStore and implements instantiating and storing layouts that
- * conform to the design of the distribute layout management system. These layouts consist of two
- * types: layout fragments that are the layouts owned by a user specified in dlm.xml, and composite
- * view layouts which represent regular users with zero or more UI elements incorporated from layout
- * fragments. Only a user's personal layout fragment is
+ * conform to the design of the Distributed Layout Management system. These layouts consist of two
+ * types: layout fragments that are the layouts owned by a user specified in in a
+ * fragment-definition.xml file, and composite view layouts which represent regular users with zero
+ * or more UI elements incorporated from layout fragments.
  *
  * @since uPortal 2.5
  */
@@ -95,6 +95,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
 
     private static final Pattern VALID_PATHREF_PATTERN = Pattern.compile(".+\\:/.+");
     private static final String BAD_PATHREF_MESSAGE = "## DLM: ORPHANED DATA ##";
+    public static final String DEFAULT_LAYOUT_OWNER_PROPERTY = "org.apereo.portal.layout.dlm.defaultLayoutOwner";
 
     private String systemDefaultUser = null;
     private boolean systemDefaultUserLoaded = false;
@@ -1442,7 +1443,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
             }
         }
         final String globalDefault =
-                PropertiesManager.getProperty("org.apereo.portal.layout.dlm.defaultLayoutOwner");
+                PropertiesManager.getProperty(DEFAULT_LAYOUT_OWNER_PROPERTY);
         if (globalDefault != null && globalDefault.equals(userName)) {
             return true;
         }

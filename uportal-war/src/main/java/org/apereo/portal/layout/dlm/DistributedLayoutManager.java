@@ -413,12 +413,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
                             + ".");
         }
         // instantiate the node description
-        IUserLayoutNodeDescription desc = createNodeDescription(element);
-        if (nodeId.startsWith(Constants.FRAGMENT_ID_USER_PREFIX)
-                && desc instanceof ChannelDescription) {
-            FragmentChannelInfo info = this.distributedLayoutStore.getFragmentChannelInfo(nodeId);
-            ((ChannelDescription) desc).setFragmentChannelInfo(info);
-        }
+        final IUserLayoutNodeDescription desc = createNodeDescription(element);
         return desc;
     }
 
@@ -536,7 +531,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
             this.updateCacheKey();
 
             // now push into the PLF
-            TabColumnPrefsHandler.deleteNode(ilfNode, (Element) parent, owner);
+            TabColumnPrefsHandler.deleteNode(ilfNode, owner);
             // inform the listeners
             final int layoutId = this.getLayoutId();
             if (nodeDescription instanceof IUserLayoutChannelDescription) {
@@ -707,7 +702,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
                      */
                     pendingActions.add(
                             new LPAChangeAttribute(
-                                    nodeId, attName, newVal, owner, ilfNode, isFragmentOwner));
+                                    nodeId, attName, newVal, owner, ilfNode));
                 } else if (!fragNodeInf.canOverrideAttributes()) {
                     /*
                      * It isn't overrideable.
@@ -725,7 +720,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
                      */
                     pendingActions.add(
                             new LPAChangeAttribute(
-                                    nodeId, attName, newVal, owner, ilfNode, isFragmentOwner));
+                                    nodeId, attName, newVal, owner, ilfNode));
                 } else {
                     /*
                      * The new value matches that in the fragment.
@@ -744,7 +739,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
                  */
                 pendingActions.add(
                         new LPAChangeAttribute(
-                                nodeId, attName, newVal, owner, ilfNode, isFragmentOwner));
+                                nodeId, attName, newVal, owner, ilfNode));
             }
         }
     }
