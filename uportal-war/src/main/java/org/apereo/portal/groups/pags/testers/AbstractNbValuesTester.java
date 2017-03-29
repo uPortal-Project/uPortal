@@ -34,16 +34,6 @@ public abstract class AbstractNbValuesTester extends BaseAttributeTester {
         this.testInteger = Integer.parseInt(definition.getTestValue());
     }
 
-    /**
-     * @deprecated use {@link EntityPersonAttributesGroupStore}, which leverages the single-argument
-     *     constructor.
-     */
-    @Deprecated
-    public AbstractNbValuesTester(String attribute, String test) {
-        super(attribute, test);
-        testInteger = Integer.parseInt(test);
-    }
-
     public int getTestInteger() {
         return testInteger;
     }
@@ -60,4 +50,5 @@ public abstract class AbstractNbValuesTester extends BaseAttributeTester {
 
     /** Subclasses provide a concrete implementation of this method to perform their testing. */
     protected abstract boolean test(int numValues);
+
 }

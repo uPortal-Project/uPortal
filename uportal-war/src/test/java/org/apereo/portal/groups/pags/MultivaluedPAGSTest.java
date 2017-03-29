@@ -57,84 +57,103 @@ public class MultivaluedPAGSTest {
 
     @Test
     public void testMultivaluedRegex() {
-        IPersonTester tester = new RegexTester(strAttributeName, ".*somewhere.*");
+        IPersonTester tester = new RegexTester(
+                new TestPersonAttributesGroupTestDefinition(strAttributeName, ".*somewhere.*"));
         assertTrue(tester.test(person));
 
-        tester = new RegexTester(strAttributeName, ".*nowhere.*");
+        tester = new RegexTester(
+                new TestPersonAttributesGroupTestDefinition(strAttributeName, ".*nowhere.*"));
         assertFalse(tester.test(person));
     }
 
     @Test
     public void testIntegerLT() {
-        IPersonTester tester = new IntegerLTTester(intAttributeName, "124");
+        IPersonTester tester = new IntegerLTTester(
+                new TestPersonAttributesGroupTestDefinition(intAttributeName, "124"));
         assertTrue(tester.test(person));
 
-        tester = new IntegerLTTester(intAttributeName, "122");
+        tester = new IntegerLTTester(
+                new TestPersonAttributesGroupTestDefinition(intAttributeName, "122"));
         assertFalse(tester.test(person));
     }
 
     @Test
     public void testNbValuesGT() {
         IPersonTester tester =
-                new NbValuesGTTester(strAttributeName, Integer.toString(strNbValues - 1));
+                new NbValuesGTTester(
+                        new TestPersonAttributesGroupTestDefinition(strAttributeName, Integer.toString(strNbValues - 1)));
         assertTrue(tester.test(person));
 
-        tester = new NbValuesGTTester(strAttributeName, Integer.toString(strNbValues));
+        tester = new NbValuesGTTester(
+                new TestPersonAttributesGroupTestDefinition(strAttributeName, Integer.toString(strNbValues)));
         assertFalse(tester.test(person));
 
-        tester = new NbValuesGTTester(strAttributeName, Integer.toString(strNbValues + 1));
+        tester = new NbValuesGTTester(
+                new TestPersonAttributesGroupTestDefinition(strAttributeName, Integer.toString(strNbValues + 1)));
         assertFalse(tester.test(person));
     }
 
     @Test
     public void testNbValuesGE() {
         IPersonTester tester =
-                new NbValuesGETester(strAttributeName, Integer.toString(strNbValues));
+                new NbValuesGETester(
+                        new TestPersonAttributesGroupTestDefinition(strAttributeName, Integer.toString(strNbValues)));
         assertTrue(tester.test(person));
 
-        tester = new NbValuesGETester(strAttributeName, Integer.toString(strNbValues - 1));
+        tester = new NbValuesGETester(
+                new TestPersonAttributesGroupTestDefinition(strAttributeName, Integer.toString(strNbValues - 1)));
         assertTrue(tester.test(person));
 
-        tester = new NbValuesGETester(strAttributeName, Integer.toString(strNbValues + 1));
+        tester = new NbValuesGETester(
+                new TestPersonAttributesGroupTestDefinition(strAttributeName, Integer.toString(strNbValues + 1)));
         assertFalse(tester.test(person));
     }
 
     @Test
     public void testNbValuesLT() {
         IPersonTester tester =
-                new NbValuesLTTester(strAttributeName, Integer.toString(strNbValues + 1));
+                new NbValuesLTTester(
+                        new TestPersonAttributesGroupTestDefinition(strAttributeName, Integer.toString(strNbValues + 1)));
         assertTrue(tester.test(person));
 
-        tester = new NbValuesLTTester(strAttributeName, Integer.toString(strNbValues));
+        tester = new NbValuesLTTester(
+                new TestPersonAttributesGroupTestDefinition(strAttributeName, Integer.toString(strNbValues)));
         assertFalse(tester.test(person));
 
-        tester = new NbValuesLTTester(strAttributeName, Integer.toString(strNbValues - 1));
+        tester = new NbValuesLTTester(
+                new TestPersonAttributesGroupTestDefinition(strAttributeName, Integer.toString(strNbValues - 1)));
         assertFalse(tester.test(person));
     }
 
     @Test
     public void testNbValuesLE() {
         IPersonTester tester =
-                new NbValuesLETester(strAttributeName, Integer.toString(strNbValues));
+                new NbValuesLETester(
+                        new TestPersonAttributesGroupTestDefinition(strAttributeName, Integer.toString(strNbValues)));
         assertTrue(tester.test(person));
 
-        tester = new NbValuesLETester(strAttributeName, Integer.toString(strNbValues + 1));
+        tester = new NbValuesLETester(
+                new TestPersonAttributesGroupTestDefinition(strAttributeName, Integer.toString(strNbValues + 1)));
         assertTrue(tester.test(person));
 
-        tester = new NbValuesLETester(strAttributeName, Integer.toString(strNbValues - 1));
+        tester = new NbValuesLETester(
+                new TestPersonAttributesGroupTestDefinition(strAttributeName, Integer.toString(strNbValues - 1)));
         assertFalse(tester.test(person));
     }
 
     @Test
     public void testNbValuesEQ() {
         IPersonTester tester =
-                new NbValuesEQTester(strAttributeName, Integer.toString(strNbValues));
+                new NbValuesEQTester(
+                        new TestPersonAttributesGroupTestDefinition(strAttributeName, Integer.toString(strNbValues)));
         assertTrue(tester.test(person));
 
-        tester = new NbValuesEQTester(strAttributeName, Integer.toString(strNbValues + 1));
+        tester = new NbValuesEQTester(
+                new TestPersonAttributesGroupTestDefinition(strAttributeName, Integer.toString(strNbValues + 1)));
         assertFalse(tester.test(person));
 
-        tester = new NbValuesEQTester(strAttributeName, Integer.toString(strNbValues - 1));
+        tester = new NbValuesEQTester(
+                new TestPersonAttributesGroupTestDefinition(strAttributeName, Integer.toString(strNbValues - 1)));
         assertFalse(tester.test(person));
     }
 }

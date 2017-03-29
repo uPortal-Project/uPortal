@@ -63,27 +63,9 @@ public class LowercasedRegexTester extends AbstractStringTester {
         this.pattern = Pattern.compile(definition.getTestValue());
     }
 
-    /**
-     * @deprecated use {@link EntityPersonAttributesGroupStore}, which leverages the single-argument
-     *     constructor.
-     */
-    @Deprecated
-    public LowercasedRegexTester(String attribute, String test) {
-        super(attribute, test);
-        this.pattern = Pattern.compile(test);
-    }
-
-    /**
-     * Sets the pattern string to use for the regex test.
-     *
-     * @param patternString regex pattern string
-     */
-    protected void setPattern(String patternString) {
-        pattern = Pattern.compile(patternString);
-    }
-
     @Override
     public boolean test(String att) {
         return pattern.matcher(att.toLowerCase()).matches();
     }
+
 }

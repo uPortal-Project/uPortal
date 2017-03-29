@@ -31,15 +31,6 @@ public class GuestUserTester implements IPersonTester {
         this.guestValue = Boolean.parseBoolean(definition.getTestValue());
     }
 
-    /**
-     * @deprecated use {@link EntityPersonAttributesGroupStore}, which leverages the single-argument
-     *     constructor.
-     */
-    @Deprecated
-    public GuestUserTester(String attribute, String guestValue) {
-        this.guestValue = Boolean.parseBoolean(guestValue);
-    }
-
     public boolean test(IPerson person) {
         if (guestValue) {
             return person.isGuest();
@@ -47,4 +38,5 @@ public class GuestUserTester implements IPersonTester {
             return !person.isGuest();
         }
     }
+
 }

@@ -30,10 +30,6 @@ import org.apereo.portal.EntityIdentifier;
         this.memberId = memberId;
     }
 
-    public EntityIdentifier getGroupId() {
-        return groupId;
-    }
-
     public EntityIdentifier getMemberId() {
         return memberId;
     }

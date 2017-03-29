@@ -14,6 +14,7 @@
  */
 package org.apereo.portal.groups.pags.testers;
 
+import org.apereo.portal.groups.pags.TestPersonAttributesGroupTestDefinition;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -21,7 +22,8 @@ public class InvertedRegexTesterTest {
 
     @Test
     public void testRegexPatterns() {
-        InvertedRegexTester tester = new InvertedRegexTester("fakeAttribute", "^02([A-D])*");
+        InvertedRegexTester tester = new InvertedRegexTester(
+                new TestPersonAttributesGroupTestDefinition("fakeAttribute", "^02([A-D])*"));
         Assert.assertFalse(tester.test("02A"));
         Assert.assertFalse(tester.test("02ABCD"));
         Assert.assertTrue(tester.test("A02D"));

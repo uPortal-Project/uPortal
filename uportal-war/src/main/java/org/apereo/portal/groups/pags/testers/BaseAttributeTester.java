@@ -22,8 +22,6 @@ import org.slf4j.LoggerFactory;
 /**
  * A tester for examining <code>IPerson</code> attributes.
  *
- * <p>
- *
  * @author Dan Ellentuck
  */
 public abstract class BaseAttributeTester implements IPersonTester {
@@ -40,17 +38,6 @@ public abstract class BaseAttributeTester implements IPersonTester {
         testValue = definition.getTestValue();
     }
 
-    /**
-     * @deprecated use {@link EntityPersonAttributesGroupStore}, which leverages the single-argument
-     *     constructor.
-     */
-    @Deprecated
-    public BaseAttributeTester(String attribute, String test) {
-        super();
-        attributeName = attribute;
-        testValue = test;
-    }
-
     /** @return String */
     public String getAttributeName() {
         return attributeName;
@@ -61,23 +48,8 @@ public abstract class BaseAttributeTester implements IPersonTester {
         return testValue;
     }
 
-    /** return String */
-    public String asString(Object o) {
-        String result = null;
-        if (o instanceof String) {
-            result = (String) o;
-        } else {
-            if (o instanceof String[]) {
-                String[] sa = (String[]) o;
-                if (sa.length > 0) {
-                    result = sa[0];
-                }
-            }
-        }
-        return result;
-    }
-
     public String toString() {
         return "Tester for " + getAttributeName() + " : " + getTestValue();
     }
+
 }

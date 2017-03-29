@@ -31,16 +31,8 @@ public class StringEqualsTester extends AbstractStringTester {
         super(definition);
     }
 
-    /**
-     * @deprecated use {@link EntityPersonAttributesGroupStore}, which leverages the single-argument
-     *     constructor.
-     */
-    @Deprecated
-    public StringEqualsTester(String attribute, String test) {
-        super(attribute, test);
-    }
-
     public boolean test(String att) {
         return att.equals(testValue);
     }
+
 }
