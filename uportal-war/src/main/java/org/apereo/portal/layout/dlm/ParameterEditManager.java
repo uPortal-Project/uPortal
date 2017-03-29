@@ -210,7 +210,7 @@ public class ParameterEditManager {
      * edit is changed to the passed-in value.
      */
     public static synchronized void addParmEditDirective(
-            Element compViewChannelNode, String targetId, String name, String value, IPerson person)
+            String targetId, String name, String value, IPerson person)
             throws PortalException {
         Document plf = (Document) person.getAttribute(Constants.PLF);
         Element parmSet = getParmEditSet(plf, person, true);
@@ -232,6 +232,7 @@ public class ParameterEditManager {
         }
         existingEdit.setAttribute(Constants.ATT_USER_VALUE, value);
     }
+
     /**
      * This method does the actual work of adding a newly created parameter edit and adding it to
      * the parameter edits set.

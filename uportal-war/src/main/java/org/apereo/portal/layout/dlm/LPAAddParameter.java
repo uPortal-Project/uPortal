@@ -47,7 +47,7 @@ public class LPAAddParameter implements ILayoutProcessingAction {
         // push the change into the PLF
         if (nodeId.startsWith(Constants.FRAGMENT_ID_USER_PREFIX)) {
             // we are dealing with an incorporated node
-            ParameterEditManager.addParmEditDirective(ilfNode, nodeId, name, value, person);
+            ParameterEditManager.addParmEditDirective(nodeId, name, value, person);
         } else {
             // node owned by user so add parameter child directly
             Document plf = RDBMDistributedLayoutStore.getPLF(person);

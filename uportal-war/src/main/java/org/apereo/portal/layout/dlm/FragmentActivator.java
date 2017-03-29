@@ -283,7 +283,7 @@ public class FragmentActivator {
         } else {
             final String defaultLayoutOwner =
                     PropertiesManager.getProperty(
-                            "org.apereo.portal.layout.dlm.defaultLayoutOwner");
+                            RDBMDistributedLayoutStore.DEFAULT_LAYOUT_OWNER_PROPERTY);
             if (defaultLayoutOwner != null) {
                 defaultUser = defaultLayoutOwner;
             } else {
@@ -294,11 +294,10 @@ public class FragmentActivator {
                 } catch (RuntimeException re) {
                     throw new RuntimeException(
                             "\n\n WARNING: defaultLayoutOwner is not specified"
-                                    + " in dlm.xml and no default user is configured for "
-                                    + "the system. Owner '"
+                                    + " in portal.properties and no default user is "
+                                    + "configured for the system. Owner '"
                                     + fragment.getOwnerId()
-                                    + "' for "
-                                    + "fragment '"
+                                    + "' for fragment '"
                                     + fragment.getName()
                                     + "' can not be "
                                     + "created. The fragment will not be available for "

@@ -40,8 +40,7 @@ import org.w3c.dom.Element;
 
     private int count;
 
-    public void track(
-            NodeInfo ni, List<NodeInfo> order, Element compViewParent, Element positionSet) {
+    public void track(List<NodeInfo> order, Element compViewParent, Element positionSet) {
         ++count;
         if (count > MAX_NUMBER) {
             final String msg = "Maximum number of NodeInfo objects for this layout exceeded";

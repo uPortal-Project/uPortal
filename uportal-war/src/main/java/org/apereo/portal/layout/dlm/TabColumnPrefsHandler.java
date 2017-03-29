@@ -98,7 +98,7 @@ public class TabColumnPrefsHandler {
      * Handles user requests to delete UI elements. For ILF owned nodes it delegates to the
      * DeleteManager to add a delete directive. For PLF owned nodes it deletes the node outright.
      */
-    public static void deleteNode(Element compViewNode, Element compViewParent, IPerson person)
+    public static void deleteNode(Element compViewNode, IPerson person)
             throws PortalException {
         String ID = compViewNode.getAttribute(Constants.ATT_ID);
 

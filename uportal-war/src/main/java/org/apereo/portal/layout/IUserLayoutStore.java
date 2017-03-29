@@ -18,7 +18,6 @@ package org.apereo.portal.layout;
  * Interface by which portal talks to the database
  *
  * @author George Lindholm
- * @version $Revision$
  */
 import com.google.common.cache.Cache;
 import java.util.Hashtable;
@@ -34,7 +33,7 @@ import org.w3c.dom.Document;
 
 public interface IUserLayoutStore {
 
-    public void setLayoutImportExportCache(Cache<Tuple<String, String>, Document> layoutCache);
+    void setLayoutImportExportCache(Cache<Tuple<String, String>, Document> layoutCache);
 
     /**
      * Retrieve a user layout document.
@@ -44,7 +43,7 @@ public interface IUserLayoutStore {
      * @return a <code>Document</code> containing user layout (conforms to userLayout.dtd)
      * @exception Exception if an error occurs
      */
-    public DistributedUserLayout getUserLayout(IPerson Person, IUserProfile profile);
+    DistributedUserLayout getUserLayout(IPerson Person, IUserProfile profile);
 
     /**
      * Returns an <code>Element</code> representing the user's layout and <code>UserPreferences
@@ -60,7 +59,7 @@ public interface IUserLayoutStore {
      *     </code> data
      * @exception Exception if an error occurs
      */
-    public org.dom4j.Element exportLayout(IPerson person, IUserProfile profile);
+    org.dom4j.Element exportLayout(IPerson person, IUserProfile profile);
 
     /**
      * Performs the reverse of <code>exportLayout</code>. The specified element <em>must</em> have
@@ -69,7 +68,7 @@ public interface IUserLayoutStore {
      *
      * @param layout XML representing a user's layout and <code>UserPreferences</code>
      */
-    public void importLayout(org.dom4j.Element layout);
+    void importLayout(org.dom4j.Element layout);
 
     /**
      * Persist user layout document.
@@ -82,7 +81,7 @@ public interface IUserLayoutStore {
      *     user layout (for performance optimization purposes)
      * @exception Exception if an error occurs
      */
-    public void setUserLayout(
+    void setUserLayout(
             IPerson Person, IUserProfile profile, Document layoutXML, boolean channelsAdded);
 
     // user profiles
@@ -92,7 +91,7 @@ public interface IUserLayoutStore {
      * @param person User
      * @param profile profile update
      */
-    public void updateUserProfile(IPerson person, IUserProfile profile);
+    void updateUserProfile(IPerson person, IUserProfile profile);
 
     /**
      * remove user profile from the database
@@ -100,7 +99,7 @@ public interface IUserLayoutStore {
      * @param person User
      * @param profileId profile id
      */
-    public void deleteUserProfile(IPerson person, int profileId);
+    void deleteUserProfile(IPerson person, int profileId);
 
     /**
      * Creates a new user profile in the database. In the process, new profileId is assigned to the
@@ -110,7 +109,7 @@ public interface IUserLayoutStore {
      * @param profile profile object (profile id in this object will be overwritten)
      * @return profile object with the profile id set to the newly generated id
      */
-    public IUserProfile addUserProfile(IPerson person, IUserProfile profile);
+    IUserProfile addUserProfile(IPerson person, IUserProfile profile);
 
     /**
      * Obtains a user profile by profile functional name.
@@ -118,10 +117,10 @@ public interface IUserLayoutStore {
      * @param person an <code>IPerson</code> object representing the user
      * @param profileFname profile functional name
      */
-    public IUserProfile getUserProfileByFname(IPerson person, String profileFname);
+    IUserProfile getUserProfileByFname(IPerson person, String profileFname);
 
     /** Cache used during import/export operations */
-    public void setProfileImportExportCache(Cache<Tuple<String, String>, UserProfile> profileCache);
+    void setProfileImportExportCache(Cache<Tuple<String, String>, UserProfile> profileCache);
 
     /**
      * retreive a list of profiles associated with a user
@@ -130,9 +129,9 @@ public interface IUserLayoutStore {
      * @return a <code>Hashtable</code> mapping user profile ids (<code>Integer</code> objects) to
      *     the {@link UserProfile} objects
      */
-    public Hashtable<Integer, UserProfile> getUserProfileList(IPerson person);
+    Hashtable<Integer, UserProfile> getUserProfileList(IPerson person);
 
-    public IUserProfile getSystemProfileByFname(String profileFname);
+    IUserProfile getSystemProfileByFname(String profileFname);
 
     /**
      * Obtain a list of system profiles. Used in the User Manager.
@@ -140,7 +139,7 @@ public interface IUserLayoutStore {
      * @return a <code>Hashtable</code> mapping system profile ids (<code>Integer</code> objects) to
      *     the {@link UserProfile} objects
      */
-    public Hashtable getSystemProfileList();
+    Hashtable getSystemProfileList();
 
     /* ChannelRegistry */
     /**
@@ -150,7 +149,7 @@ public interface IUserLayoutStore {
      * @return a <code>String</code> value
      * @exception Exception if an error occurs
      */
-    public String generateNewChannelSubscribeId(IPerson person);
+    String generateNewChannelSubscribeId(IPerson person);
 
     /**
      * Generate a folder id for a folder being added to the user layout
@@ -159,7 +158,7 @@ public interface IUserLayoutStore {
      * @return a <code>String</code> value
      * @exception Exception if an error occurs
      */
-    public String generateNewFolderId(IPerson person);
+    String generateNewFolderId(IPerson person);
 
     /**
      * Method for acquiring copies of fragment layouts to assist in debugging. No infrastructure
@@ -168,7 +167,7 @@ public interface IUserLayoutStore {
      *
      * @return Map
      */
-    public Map<String, Document> getFragmentLayoutCopies();
+    Map<String, Document> getFragmentLayoutCopies();
 
     /**
      * Returns an object suitable for identifying channel attribute and parameter values in a user's
@@ -178,7 +177,7 @@ public interface IUserLayoutStore {
      * @param sId
      * @return FragmentChannelInfo if available or null if not found.
      */
-    public FragmentChannelInfo getFragmentChannelInfo(String sId);
+    FragmentChannelInfo getFragmentChannelInfo(String sId);
 
     /**
      * Returns an object suitable for identifying attribute values for folder nodes and attribute
@@ -189,7 +188,7 @@ public interface IUserLayoutStore {
      * @param sId
      * @return FragmentNodeInfo or null if folder not found.
      */
-    public FragmentNodeInfo getFragmentNodeInfo(String sId);
+    FragmentNodeInfo getFragmentNodeInfo(String sId);
 
     /**
      * Determines if a user is a fragment owner.
@@ -197,31 +196,30 @@ public interface IUserLayoutStore {
      * @param person
      * @return
      */
-    public boolean isFragmentOwner(IPerson person);
+    boolean isFragmentOwner(IPerson person);
 
-    public boolean isFragmentOwner(String username);
+    boolean isFragmentOwner(String username);
 
-    public void setUserLayout(
+    void setUserLayout(
             IPerson person,
             IUserProfile profile,
             Document layoutXML,
             boolean channelsAdded,
             boolean updateFragmentCache);
 
-    public Document getFragmentLayout(IPerson person, IUserProfile profile);
+    Document getFragmentLayout(IPerson person, IUserProfile profile);
 
     /**
      * Generates a new struct id for directive elements that dlm places in the PLF version of the
      * layout tree. These elements are atifacts of the dlm storage model and used during merge but
      * do not appear in the user's composite view.
      */
-    public String getNextStructDirectiveId(IPerson person);
+    String getNextStructDirectiveId(IPerson person);
 
     /**
-     * Returns a double value indicating the precedence value declared for a fragment in the
-     * dlm.xml. Precedence is actually based on two elements in a fragment definition: the
-     * precedence and the index of the fragment definition in the dlm.xml file. If two fragments are
-     * given equal precedence then the index if relied upon to resolve conflicts with UI elements.
+     * Returns a double value indicating the precedence value declared for a fragment.  Fragments
+     * with greater precedence come before those with lower precedence.
      */
-    public double getFragmentPrecedence(int index);
+    double getFragmentPrecedence(int index);
+
 }

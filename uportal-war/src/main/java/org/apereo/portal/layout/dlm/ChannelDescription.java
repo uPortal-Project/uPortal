@@ -27,15 +27,6 @@ import org.w3c.dom.Element;
 public class ChannelDescription extends UserLayoutChannelDescription {
     private String plfId = null;
     private String origin = null;
-    private FragmentChannelInfo fragmentChannelInfo = null;
-
-    public FragmentChannelInfo getFragmentChannelInfo() {
-        return fragmentChannelInfo;
-    }
-
-    public void setFragmentChannelInfo(FragmentChannelInfo fragmentChannelInfo) {
-        this.fragmentChannelInfo = fragmentChannelInfo;
-    }
 
     public String getOrigin() {
         return origin;

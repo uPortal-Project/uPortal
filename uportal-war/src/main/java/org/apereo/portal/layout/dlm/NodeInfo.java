@@ -27,7 +27,6 @@ public class NodeInfo {
     private final Element node;
     private final String id;
     private final Precedence precedence;
-    private boolean differentParent = false;
     private int indexInCVP = -1; // CVP = Composite View Parent
     private Element positionDirective = null;
 
@@ -42,20 +41,8 @@ public class NodeInfo {
         this.indexInCVP = indexInCVP;
     }
 
-    public boolean isDifferentParent() {
-        return differentParent;
-    }
-
-    public void setDifferentParent(boolean differentParent) {
-        this.differentParent = differentParent;
-    }
-
     public int getIndexInCVP() {
         return indexInCVP;
-    }
-
-    public void setIndexInCVP(int indexInCVP) {
-        this.indexInCVP = indexInCVP;
     }
 
     public Element getPositionDirective() {
@@ -106,8 +93,6 @@ public class NodeInfo {
                 + id
                 + ", precedence="
                 + precedence
-                + ", differentParent="
-                + differentParent
                 + ", indexInCVP="
                 + indexInCVP
                 + ", positionDirective="

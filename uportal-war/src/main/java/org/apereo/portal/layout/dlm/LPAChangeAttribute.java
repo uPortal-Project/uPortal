@@ -30,21 +30,18 @@ public class LPAChangeAttribute implements ILayoutProcessingAction {
     private IPerson person = null;
     private Element ilfNode = null;
     private String value = null;
-    private boolean isFragmentOwner = false;
 
     LPAChangeAttribute(
             String nodeId,
             String name,
             String value,
             IPerson p,
-            Element ilfNode,
-            boolean isFragmentOwner) {
+            Element ilfNode) {
         this.nodeId = nodeId;
         this.name = name;
         this.person = p;
         this.ilfNode = ilfNode;
         this.value = value;
-        this.isFragmentOwner = isFragmentOwner;
     }
 
     /** Apply the attribute change. */
