@@ -32,16 +32,8 @@ public class StringEqualsIgnoreCaseTester extends AbstractStringTester {
         super(definition);
     }
 
-    /**
-     * @deprecated use {@link EntityPersonAttributesGroupStore}, which leverages the single-argument
-     *     constructor.
-     */
-    @Deprecated
-    public StringEqualsIgnoreCaseTester(String attribute, String test) {
-        super(attribute, test);
-    }
-
     public boolean test(String att) {
         return att.equalsIgnoreCase(testValue);
     }
+
 }

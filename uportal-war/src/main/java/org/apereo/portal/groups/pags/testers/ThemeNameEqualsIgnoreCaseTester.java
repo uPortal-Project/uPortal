@@ -61,24 +61,6 @@ public class ThemeNameEqualsIgnoreCaseTester implements IPersonTester {
                         "stylesheetDescriptorDao", IStylesheetDescriptorDao.class);
     }
 
-    /**
-     * @deprecated use {@link EntityPersonAttributesGroupStore}, which leverages the single-argument
-     *     constructor.
-     */
-    @Deprecated
-    public ThemeNameEqualsIgnoreCaseTester(String attribute, String themeTestValue) {
-        assert StringUtils.isNotBlank(themeTestValue);
-        this.themeTestValue = themeTestValue;
-        this.applicationContext = ApplicationContextLocator.getApplicationContext();
-        this.portalRequestUtils = applicationContext.getBean(IPortalRequestUtils.class);
-        this.profileMapper = applicationContext.getBean("profileMapper", IProfileMapper.class);
-        this.userLayoutStore =
-                applicationContext.getBean("userLayoutStore", IUserLayoutStore.class);
-        this.stylesheetDescriptorDao =
-                applicationContext.getBean(
-                        "stylesheetDescriptorDao", IStylesheetDescriptorDao.class);
-    }
-
     public boolean test(IPerson person) {
         HttpServletRequest currentPortalRequest = getCurrentHttpServletRequest();
         if (currentPortalRequest == null) {
@@ -125,4 +107,5 @@ public class ThemeNameEqualsIgnoreCaseTester implements IPersonTester {
         }
         return testResult;
     }
+
 }

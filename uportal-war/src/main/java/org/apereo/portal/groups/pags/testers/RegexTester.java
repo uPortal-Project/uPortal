@@ -62,16 +62,6 @@ public class RegexTester extends AbstractStringTester {
     }
 
     /**
-     * @deprecated use {@link EntityPersonAttributesGroupStore}, which leverages the single-argument
-     *     constructor.
-     */
-    @Deprecated
-    public RegexTester(String attribute, String test) {
-        super(attribute, test);
-        this.pattern = Pattern.compile(test);
-    }
-
-    /**
      * Sets the pattern string to use for the regex test.
      *
      * @param patternString regex pattern string
@@ -84,4 +74,5 @@ public class RegexTester extends AbstractStringTester {
     public boolean test(String att) {
         return pattern.matcher(att).matches();
     }
+
 }

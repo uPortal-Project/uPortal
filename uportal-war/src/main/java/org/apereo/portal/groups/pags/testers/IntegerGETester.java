@@ -29,16 +29,8 @@ public class IntegerGETester extends AbstractIntegerTester {
         super(definition);
     }
 
-    /**
-     * @deprecated use {@link EntityPersonAttributesGroupStore}, which leverages the single-argument
-     *     constructor.
-     */
-    @Deprecated
-    public IntegerGETester(String attribute, String test) {
-        super(attribute, test);
-    }
-
     public boolean test(int attributeValue) {
         return !(attributeValue < getTestInteger());
     }
+
 }

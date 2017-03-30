@@ -38,18 +38,6 @@ public class PropertyRegexTester extends RegexTester {
         setPattern(definition.getAttributeName(), definition.getTestValue());
     }
 
-    /**
-     * @param attribute Person attribute to propertyName against
-     * @param propertyName name of a property defined in portal.properties
-     * @deprecated use {@link EntityPersonAttributesGroupStore}, which leverages the single-argument
-     *     constructor.
-     */
-    @Deprecated
-    public PropertyRegexTester(String attribute, String propertyName) {
-        super(attribute, propertyName);
-        setPattern(attribute, propertyName);
-    }
-
     @Override
     public boolean test(String att) {
         return pattern.matcher(att).matches();
@@ -66,4 +54,5 @@ public class PropertyRegexTester extends RegexTester {
         }
         setPattern(regexExpression);
     }
+
 }

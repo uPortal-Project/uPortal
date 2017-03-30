@@ -57,15 +57,6 @@ public class EagerRegexTester extends RegexTester {
         super(definition);
     }
 
-    /**
-     * @deprecated use {@link EntityPersonAttributesGroupStore}, which leverages the single-argument
-     *     constructor.
-     */
-    @Deprecated
-    public EagerRegexTester(String attribute, String test) {
-        super(attribute, test);
-    }
-
     @Override
     public boolean test(String att) {
         return pattern.matcher(att).find();

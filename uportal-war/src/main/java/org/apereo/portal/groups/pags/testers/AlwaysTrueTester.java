@@ -24,17 +24,8 @@ public class AlwaysTrueTester implements IPersonTester {
     /** @since 4.3 */
     public AlwaysTrueTester(IPersonAttributesGroupTestDefinition definition) {}
 
-    /**
-     * @deprecated use {@link EntityPersonAttributesGroupStore}, which leverages the single-argument
-     *     constructor.
-     */
-    @Deprecated
-    public AlwaysTrueTester(String attribute, String test) {}
-
-    /* (non-Javadoc)
-     * @see org.apereo.portal.groups.pags.IPersonTester#test(org.apereo.portal.security.IPerson)
-     */
     public boolean test(IPerson person) {
         return true;
     }
+
 }

@@ -20,24 +20,15 @@ import org.apereo.portal.security.IPerson;
 /**
  * Abstract class tests a possibly multi-valued attribute against a test value.
  *
- * <p>
- *
  * @author Dan Ellentuck
  */
 public abstract class AbstractStringTester extends BaseAttributeTester {
 
-    /** @since 4.3 */
+    /**
+     * @since 4.3
+     */
     public AbstractStringTester(IPersonAttributesGroupTestDefinition definition) {
         super(definition);
-    }
-
-    /**
-     * @deprecated use {@link EntityPersonAttributesGroupStore}, which leverages the single-argument
-     *     constructor.
-     */
-    @Deprecated
-    public AbstractStringTester(String attribute, String test) {
-        super(attribute, test);
     }
 
     public final boolean test(IPerson person) {
@@ -59,6 +50,9 @@ public abstract class AbstractStringTester extends BaseAttributeTester {
         return result;
     }
 
-    /** Subclasses provide a concrete implementation of this method to perform their testing. */
+    /**
+     * Subclasses provide a concrete implementation of this method to perform their testing.
+     */
     public abstract boolean test(String att);
+
 }

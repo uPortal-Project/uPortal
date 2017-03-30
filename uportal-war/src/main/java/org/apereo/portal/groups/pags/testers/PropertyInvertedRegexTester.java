@@ -39,18 +39,6 @@ public class PropertyInvertedRegexTester extends InvertedRegexTester {
         setPattern(definition.getAttributeName(), definition.getTestValue());
     }
 
-    /**
-     * @param attribute Person attribute to test against
-     * @param propertyName name of a property defined in portal.properties
-     * @deprecated use {@link EntityPersonAttributesGroupStore}, which leverages the single-argument
-     *     constructor.
-     */
-    @Deprecated
-    public PropertyInvertedRegexTester(String attribute, String propertyName) {
-        super(attribute, propertyName);
-        setPattern(attribute, propertyName);
-    }
-
     @Override
     public boolean test(String att) {
         return !pattern.matcher(att).matches();

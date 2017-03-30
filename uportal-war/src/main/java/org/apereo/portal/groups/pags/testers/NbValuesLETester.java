@@ -14,7 +14,6 @@
  */
 package org.apereo.portal.groups.pags.testers;
 
-import org.apereo.portal.groups.pags.dao.EntityPersonAttributesGroupStore;
 import org.apereo.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
 
 /**
@@ -29,17 +28,9 @@ public final class NbValuesLETester extends AbstractNbValuesTester {
         super(definition);
     }
 
-    /**
-     * @deprecated use {@link EntityPersonAttributesGroupStore}, which leverages the single-argument
-     *     constructor.
-     */
-    @Deprecated
-    public NbValuesLETester(String attribute, String test) {
-        super(attribute, test);
-    }
-
     @Override
     protected boolean test(int numValues) {
         return numValues <= getTestInteger();
     }
+
 }

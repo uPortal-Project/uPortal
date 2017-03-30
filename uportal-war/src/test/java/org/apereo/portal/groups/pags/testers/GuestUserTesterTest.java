@@ -14,6 +14,7 @@
  */
 package org.apereo.portal.groups.pags.testers;
 
+import org.apereo.portal.groups.pags.TestPersonAttributesGroupTestDefinition;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.provider.PersonImpl;
 import org.junit.Assert;
@@ -23,14 +24,16 @@ public class GuestUserTesterTest {
 
     @Test
     public void testGuestTrue() throws Exception {
-        GuestUserTester tester = new GuestUserTester("", "true");
+        GuestUserTester tester = new GuestUserTester(
+                new TestPersonAttributesGroupTestDefinition("", "true"));
         Assert.assertTrue(tester.test(createGuestPerson()));
         Assert.assertFalse(tester.test(createPerson()));
     }
 
     @Test
     public void testGuestFalse() throws Exception {
-        GuestUserTester tester = new GuestUserTester("", "false");
+        GuestUserTester tester = new GuestUserTester(
+                new TestPersonAttributesGroupTestDefinition("", "false"));
         Assert.assertTrue(tester.test(createPerson()));
         Assert.assertFalse(tester.test(createGuestPerson()));
     }

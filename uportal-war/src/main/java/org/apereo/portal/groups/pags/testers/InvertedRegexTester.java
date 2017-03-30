@@ -52,22 +52,13 @@ import org.apereo.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
  * @author James Wennmacher, jwennmacher@unicon.net
  */
 public class InvertedRegexTester extends AbstractStringTester {
+
     protected Pattern pattern;
 
     /** @since 4.3 */
     public InvertedRegexTester(IPersonAttributesGroupTestDefinition definition) {
         super(definition);
         this.pattern = Pattern.compile(definition.getTestValue());
-    }
-
-    /**
-     * @deprecated use {@link EntityPersonAttributesGroupStore}, which leverages the single-argument
-     *     constructor.
-     */
-    @Deprecated
-    public InvertedRegexTester(String attribute, String test) {
-        super(attribute, test);
-        this.pattern = Pattern.compile(test);
     }
 
     /**
@@ -83,4 +74,5 @@ public class InvertedRegexTester extends AbstractStringTester {
     public boolean test(String att) {
         return !pattern.matcher(att).matches();
     }
+
 }

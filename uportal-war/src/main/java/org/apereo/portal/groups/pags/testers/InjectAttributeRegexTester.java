@@ -56,15 +56,6 @@ public final class InjectAttributeRegexTester extends BaseAttributeTester {
         super(definition);
     }
 
-    /**
-     * @deprecated use {@link EntityPersonAttributesGroupStore}, which leverages the single-argument
-     *     constructor.
-     */
-    @Deprecated
-    public InjectAttributeRegexTester(String attribute, String test) {
-        super(attribute, test);
-    }
-
     @Override
     public boolean test(IPerson person) {
 
@@ -105,4 +96,5 @@ public final class InjectAttributeRegexTester extends BaseAttributeTester {
 
         return rslt;
     }
+
 }

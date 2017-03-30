@@ -29,15 +29,6 @@ public class ValueExistsTester extends AbstractStringTester {
         super(definition);
     }
 
-    /**
-     * @deprecated use {@link EntityPersonAttributesGroupStore}, which leverages the single-argument
-     *     constructor.
-     */
-    @Deprecated
-    public ValueExistsTester(String attribute, String test) {
-        super(attribute, test);
-    }
-
     public boolean test(String att) {
         boolean result = false;
         if (att != null && !att.equals("")) {
@@ -45,4 +36,5 @@ public class ValueExistsTester extends AbstractStringTester {
         }
         return result;
     }
+
 }

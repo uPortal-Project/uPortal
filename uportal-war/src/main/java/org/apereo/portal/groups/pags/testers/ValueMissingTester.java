@@ -30,15 +30,6 @@ public class ValueMissingTester extends BaseAttributeTester {
         super(definition);
     }
 
-    /**
-     * @deprecated use {@link EntityPersonAttributesGroupStore}, which leverages the single-argument
-     *     constructor.
-     */
-    @Deprecated
-    public ValueMissingTester(String attribute, String test) {
-        super(attribute, test);
-    }
-
     public boolean test(IPerson person) {
         // Get the list of values for the attribute
         Object[] vals = person.getAttributeValues(getAttributeName());

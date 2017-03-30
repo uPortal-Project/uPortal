@@ -28,15 +28,6 @@ public class IntegerLTTester extends AbstractIntegerTester {
         super(definition);
     }
 
-    /**
-     * @deprecated use {@link EntityPersonAttributesGroupStore}, which leverages the single-argument
-     *     constructor.
-     */
-    @Deprecated
-    public IntegerLTTester(String attribute, String test) {
-        super(attribute, test);
-    }
-
     public boolean test(int attributeValue) {
         return attributeValue < getTestInteger();
     }

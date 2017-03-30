@@ -22,15 +22,15 @@ package org.apereo.portal.groups.pags.dao;
  */
 public interface IPersonAttributesGroupTestDefinitionDao {
 
-    public IPersonAttributesGroupTestDefinition createPersonAttributesGroupTestDefinition(
+    IPersonAttributesGroupTestDefinition createPersonAttributesGroupTestDefinition(
             IPersonAttributesGroupTestGroupDefinition testGroup,
             String attributeName,
             String testerClass,
             String testValue);
 
-    public IPersonAttributesGroupTestDefinition updatePersonAttributesGroupTestDefinition(
+    IPersonAttributesGroupTestDefinition updatePersonAttributesGroupTestDefinition(
             IPersonAttributesGroupTestDefinition personAttributesGroupTestDefinition);
 
-    public void deletePersonAttributesGroupTestDefinition(
+    void deletePersonAttributesGroupTestDefinition(
             IPersonAttributesGroupTestDefinition definition);
 }
