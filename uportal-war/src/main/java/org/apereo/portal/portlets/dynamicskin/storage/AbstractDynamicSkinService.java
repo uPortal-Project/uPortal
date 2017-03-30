@@ -249,7 +249,11 @@ public abstract class AbstractDynamicSkinService implements DynamicSkinService {
     }
 
     private void appendPrefAsVariable(final StringBuilder str, final String name, final String value) {
-        str.append("@").append(name).append(": ").append(value).append(";\n");
+        if (StringUtils.isBlank(value)) {
+            log.warn("Dynamic Skin Variable \"{}\" is not set", name);
+        } else {
+            str.append("@").append(name).append(": ").append(value).append(";\n");
+        }
     }
 
     /**
