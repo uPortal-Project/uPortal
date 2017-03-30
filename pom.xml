@@ -1542,6 +1542,7 @@
                         <!-- aggregated reports for multi-module projects -->
                         <aggregate>true</aggregate>
                         <instrumentation>
+                            <ignoreTrivial>true</ignoreTrivial>
                             <excludes>
                                 <!-- Exclude generated classes -->
                                 <exclude>**/*_.class</exclude>
