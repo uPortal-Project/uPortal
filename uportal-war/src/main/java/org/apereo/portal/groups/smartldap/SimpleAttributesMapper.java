@@ -1,20 +1,16 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.groups.smartldap;
 
@@ -23,7 +19,6 @@ import java.util.LinkedList;
 import java.util.List;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apereo.portal.groups.EntityTestingGroupImpl;
@@ -33,32 +28,23 @@ import org.springframework.ldap.core.AttributesMapper;
 
 public final class SimpleAttributesMapper implements AttributesMapper {
 
-    private static final String GROUP_DESCRIPTION = 
-                    "This group was pulled from the directory server.";
+    private static final String GROUP_DESCRIPTION =
+            "This group was pulled from the directory server.";
 
-    /**
-     * Name of the LDAP attribute on a group that tells you 
-     * its key (normally 'dn').
-     */
-    private String keyAttributeName = null; 
+    /** Name of the LDAP attribute on a group that tells you its key (normally 'dn'). */
+    private String keyAttributeName = null;
 
-    /**
-     * Name of the LDAP attribute on a group that tells you 
-     * the name of the group.
-     */
-    private String groupNameAttributeName = null; 
+    /** Name of the LDAP attribute on a group that tells you the name of the group. */
+    private String groupNameAttributeName = null;
 
-    /**
-     * Name of the LDAP attribute on a group that tells you 
-     * who its children are.
-     */
-    private String membershipAttributeName = null; 
+    /** Name of the LDAP attribute on a group that tells you who its children are. */
+    private String membershipAttributeName = null;
 
     private final Log log = LogFactory.getLog(getClass());
 
     /*
      * Public API.
-     */ 
+     */
 
     public Object mapFromAttributes(Attributes attr) {
 
@@ -77,10 +63,14 @@ public final class SimpleAttributesMapper implements AttributesMapper {
         }
 
         if (log.isDebugEnabled()) {
-            String msg = "SimpleAttributesMapper.mapFromAttributes() :: settings:  keyAttributeName='" 
-                            + keyAttributeName + "', groupNameAttributeName='" 
-                            + groupNameAttributeName + "', groupNameAttributeName='" 
-                            + groupNameAttributeName + "'";
+            String msg =
+                    "SimpleAttributesMapper.mapFromAttributes() :: settings:  keyAttributeName='"
+                            + keyAttributeName
+                            + "', groupNameAttributeName='"
+                            + groupNameAttributeName
+                            + "', groupNameAttributeName='"
+                            + groupNameAttributeName
+                            + "'";
             log.debug(msg);
         }
 
@@ -98,7 +88,7 @@ public final class SimpleAttributesMapper implements AttributesMapper {
             List<String> membership = new LinkedList<String>();
             Attribute m = attr.get(membershipAttributeName);
             if (m != null) {
-                for (Enumeration<?> en=m.getAll(); en.hasMoreElements();) {
+                for (Enumeration<?> en = m.getAll(); en.hasMoreElements(); ) {
                     membership.add((String) en.nextElement());
                 }
             }
@@ -107,9 +97,11 @@ public final class SimpleAttributesMapper implements AttributesMapper {
             if (log.isDebugEnabled()) {
                 StringBuilder msg = new StringBuilder();
                 msg.append("Record Details:")
-                            .append("\n\tkey=").append(key)
-                            .append("\n\tgroupName=").append(groupName)
-                            .append("\n\tmembers:");
+                        .append("\n\tkey=")
+                        .append(key)
+                        .append("\n\tgroupName=")
+                        .append(groupName)
+                        .append("\n\tmembers:");
                 for (String s : membership) {
                     msg.append("\n\t\t").append(s);
                 }
@@ -118,13 +110,14 @@ public final class SimpleAttributesMapper implements AttributesMapper {
 
         } catch (Throwable t) {
             log.error("Error in SimpleAttributesMapper", t);
-            String msg = "SimpleAttributesMapper failed to create a LdapRecord "
-                                    + "from the specified Attributes:  " + attr;
+            String msg =
+                    "SimpleAttributesMapper failed to create a LdapRecord "
+                            + "from the specified Attributes:  "
+                            + attr;
             throw new RuntimeException(msg, t);
         }
 
         return rslt;
-
     }
 
     public void setKeyAttributeName(String keyAttributeName) {
@@ -138,5 +131,4 @@ public final class SimpleAttributesMapper implements AttributesMapper {
     public void setMembershipAttributeName(String membershipAttributeName) {
         this.membershipAttributeName = membershipAttributeName;
     }
-
 }

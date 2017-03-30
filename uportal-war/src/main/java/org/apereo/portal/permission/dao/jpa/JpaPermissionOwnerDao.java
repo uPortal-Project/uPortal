@@ -1,34 +1,29 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.permission.dao.jpa;
 
+import com.google.common.base.Function;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Root;
-
 import org.apereo.portal.jpa.BasePortalJpaDao;
 import org.apereo.portal.jpa.OpenEntityManager;
 import org.apereo.portal.permission.IPermissionActivity;
@@ -36,40 +31,43 @@ import org.apereo.portal.permission.IPermissionOwner;
 import org.apereo.portal.permission.dao.IPermissionOwnerDao;
 import org.springframework.stereotype.Repository;
 
-import com.google.common.base.Function;
-
 /**
- * JpaPermissionOwnerDao provides a default JPA/Hibernate implementation of
- * the IPermissionOwnerDao interface.
- * 
+ * JpaPermissionOwnerDao provides a default JPA/Hibernate implementation of the IPermissionOwnerDao
+ * interface.
+ *
  * @author Jen Bourey, jbourey@unicon.net
  * @version $Revision$
  * @since 3.3
  */
 @Repository("permissionOwnerDao")
 public class JpaPermissionOwnerDao extends BasePortalJpaDao implements IPermissionOwnerDao {
-    
+
     private CriteriaQuery<PermissionOwnerImpl> findAllPermissionOwners;
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        this.findAllPermissionOwners = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<PermissionOwnerImpl>>() {
-            @Override
-            public CriteriaQuery<PermissionOwnerImpl> apply(CriteriaBuilder cb) {
-                final CriteriaQuery<PermissionOwnerImpl> criteriaQuery = cb.createQuery(PermissionOwnerImpl.class);
-                final Root<PermissionOwnerImpl> ownerRoot = criteriaQuery.from(PermissionOwnerImpl.class);
-                criteriaQuery.select(ownerRoot);
-                ownerRoot.fetch(PermissionOwnerImpl_.activities, JoinType.LEFT);
-                
-                return criteriaQuery;
-            }
-        });
+        this.findAllPermissionOwners =
+                this.createCriteriaQuery(
+                        new Function<CriteriaBuilder, CriteriaQuery<PermissionOwnerImpl>>() {
+                            @Override
+                            public CriteriaQuery<PermissionOwnerImpl> apply(CriteriaBuilder cb) {
+                                final CriteriaQuery<PermissionOwnerImpl> criteriaQuery =
+                                        cb.createQuery(PermissionOwnerImpl.class);
+                                final Root<PermissionOwnerImpl> ownerRoot =
+                                        criteriaQuery.from(PermissionOwnerImpl.class);
+                                criteriaQuery.select(ownerRoot);
+                                ownerRoot.fetch(PermissionOwnerImpl_.activities, JoinType.LEFT);
+
+                                return criteriaQuery;
+                            }
+                        });
     }
 
     @Override
     public List<IPermissionOwner> getAllPermissionOwners() {
-        final TypedQuery<PermissionOwnerImpl> query = this.createCachedQuery(this.findAllPermissionOwners);
-        
+        final TypedQuery<PermissionOwnerImpl> query =
+                this.createCachedQuery(this.findAllPermissionOwners);
+
         final List<PermissionOwnerImpl> resultList = query.getResultList();
         return new ArrayList<IPermissionOwner>(new LinkedHashSet<IPermissionOwner>(resultList));
     }
@@ -84,20 +82,21 @@ public class JpaPermissionOwnerDao extends BasePortalJpaDao implements IPermissi
         }
         return owner;
     }
-    
+
     @Override
-    public IPermissionOwner getPermissionOwner(long id){
+    public IPermissionOwner getPermissionOwner(long id) {
         return getEntityManager().find(PermissionOwnerImpl.class, id);
     }
 
     @OpenEntityManager(unitName = PERSISTENCE_UNIT_NAME)
     @Override
-    public IPermissionOwner getPermissionOwner(String fname){
-        final NaturalIdQuery<PermissionOwnerImpl> query = this.createNaturalIdQuery(PermissionOwnerImpl.class);
+    public IPermissionOwner getPermissionOwner(String fname) {
+        final NaturalIdQuery<PermissionOwnerImpl> query =
+                this.createNaturalIdQuery(PermissionOwnerImpl.class);
         query.using(PermissionOwnerImpl_.fname, fname);
         return query.load();
     }
-    
+
     @Override
     @PortalTransactional
     public IPermissionOwner saveOwner(IPermissionOwner owner) {
@@ -142,19 +141,19 @@ public class JpaPermissionOwnerDao extends BasePortalJpaDao implements IPermissi
         return activity;
     }
 
-
-    protected IPermissionActivity findActivity(final IPermissionOwner permissionOwner, String activityFname) {
+    protected IPermissionActivity findActivity(
+            final IPermissionOwner permissionOwner, String activityFname) {
         if (permissionOwner == null) {
             return null;
         }
-        
+
         final Set<IPermissionActivity> activities = permissionOwner.getActivities();
         for (final IPermissionActivity permissionActivity : activities) {
             if (activityFname.equals(permissionActivity.getFname())) {
                 return permissionActivity;
             }
         }
-        
+
         return null;
     }
 }

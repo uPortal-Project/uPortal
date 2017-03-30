@@ -17,11 +17,12 @@
  * under the License.
  */
 @media screen {
-    /** 
-    * For the moment, please, do not remove max-with:769px media querie, the desktop css rules won t be ok : to much do/undo rules / difference hierarchy in code. will fix that later
+    /**
+    * For the moment, please, do not remove `max-with: @screen-xs-max` media query, the desktop css rules won't be ok:
+    * to much do/undo rules / difference hierarchy in code. will fix that later
     * This is a special case of mobile first and it can facilate customSkin, see comments in skin.less
     */
-    @media (max-width: 768px) {
+    @media (max-width: @screen-xs-max) {
 
         .row-offcanvas {
             position: relative;
@@ -38,7 +39,7 @@
             transition: all 350ms ease-out;
 
             /* When the sidebar is active */
-            /* TODO Put translate3d, scale3d, transition, transform-origin, backface-visibility, etc. in uPortal mixin.less */ 
+            /* TODO Put translate3d, scale3d, transition, transform-origin, backface-visibility, etc. in uPortal mixin.less */
             &.active {
                 -webkit-transform: translate3d(270px, 0, 0) scale3d(1, 1, 1);
                 -moz-transform: translate3d(270px, 0, 0) scale3d(1, 1, 1);
@@ -240,7 +241,7 @@
                                     &.dropdown-toggle.portal-navigation-dropdown {
                                         display: inline-block;
                                         position: relative;
-                                        width: 17px;
+                                        width: 26px;
                                         top: -5px;
 
                                         &:hover, &:focus, &:active {
@@ -318,7 +319,7 @@
                                                 color: @mobile-navbar-flyout-item-active-hover-text-color !important;
                                             }
                                         }
-                                    }               
+                                    }
                                 }
 
                             }
@@ -334,7 +335,7 @@
                                     }
                                 }
                             }
-                        }    
+                        }
                     }
                 }
             }
@@ -342,7 +343,7 @@
 
     }
 
-    @media (min-width: 769px) {
+    @media (min-width: @screen-sm-min) {
 
         .row-offcanvas {
             /* Intended to undo the rules for small displays above */
@@ -548,6 +549,10 @@
                                     left: 3px;
                                     position: relative;
                                     top: 0;
+                                    /* increase clickable size of dropdown toggle */
+                                    padding: 0 5px 5px;
+                                    margin: 0 -5px -5px;
+
                                     &:focus {
                                         outline: dotted 1px;
                                     }

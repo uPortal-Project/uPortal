@@ -1,28 +1,22 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.portlets.search.portletregistry;
 
 import java.util.List;
-
 import javax.portlet.PortletRequest;
 import javax.servlet.http.HttpServletRequest;
-
 import org.apereo.portal.portlet.PortletUtils;
 import org.apereo.portal.portlet.om.IPortletDefinition;
 import org.apereo.portal.portlet.om.IPortletWindow;
@@ -80,15 +74,16 @@ public class PortletRegistrySearchService implements IPortalSearchService {
     }
 
     @Override
-    public SearchResults getSearchResults(PortletRequest request,
-            SearchRequest query) {
-        
+    public SearchResults getSearchResults(PortletRequest request, SearchRequest query) {
+
         final String queryString = query.getSearchTerms().toLowerCase();
-        final List<IPortletDefinition> portlets = portletDefinitionRegistry.getAllPortletDefinitions();
-        
-        final HttpServletRequest httpServletRequest = this.portalRequestUtils.getPortletHttpRequest(request);
-        
-        final SearchResults results =  new SearchResults();
+        final List<IPortletDefinition> portlets =
+                portletDefinitionRegistry.getAllPortletDefinitions();
+
+        final HttpServletRequest httpServletRequest =
+                this.portalRequestUtils.getPortletHttpRequest(request);
+
+        final SearchResults results = new SearchResults();
         for (IPortletDefinition portlet : portlets) {
             if (matches(queryString, portlet)) {
                 final SearchResult result = new SearchResult();
@@ -96,20 +91,26 @@ public class PortletRegistrySearchService implements IPortalSearchService {
                 result.setSummary(portlet.getDescription());
                 result.getType().add(searchResultType);
 
-                final IPortletWindow portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindowByFname(httpServletRequest, portlet.getFName());
+                final IPortletWindow portletWindow =
+                        this.portletWindowRegistry.getOrCreateDefaultPortletWindowByFname(
+                                httpServletRequest, portlet.getFName());
                 // portletWindow is null if user does not have access to portlet.
                 // If user does not have browse permission, exclude the portlet.
-                if (portletWindow != null && authorizationService.canPrincipalBrowse(
-                        authorizationService.newPrincipal(request.getRemoteUser(), EntityEnum.PERSON.getClazz()),
-                        portlet)) {
+                if (portletWindow != null
+                        && authorizationService.canPrincipalBrowse(
+                                authorizationService.newPrincipal(
+                                        request.getRemoteUser(), EntityEnum.PERSON.getClazz()),
+                                portlet)) {
                     final IPortletWindowId portletWindowId = portletWindow.getPortletWindowId();
-                    final IPortalUrlBuilder portalUrlBuilder = this.portalUrlProvider.getPortalUrlBuilderByPortletFName(httpServletRequest, portlet.getFName(), UrlType.RENDER);
-                    final IPortletUrlBuilder portletUrlBuilder = portalUrlBuilder.getPortletUrlBuilder(portletWindowId);
+                    final IPortalUrlBuilder portalUrlBuilder =
+                            this.portalUrlProvider.getPortalUrlBuilderByPortletFName(
+                                    httpServletRequest, portlet.getFName(), UrlType.RENDER);
+                    final IPortletUrlBuilder portletUrlBuilder =
+                            portalUrlBuilder.getPortletUrlBuilder(portletWindowId);
                     portletUrlBuilder.setWindowState(PortletUtils.getWindowState("maximized"));
                     result.setExternalUrl(portalUrlBuilder.getUrlString());
                     results.getSearchResult().add(result);
                 }
-
             }
         }
 
@@ -117,9 +118,9 @@ public class PortletRegistrySearchService implements IPortalSearchService {
     }
 
     /**
-     * Performs a case-insensitive comparison of the user's query against 
-     * several important fields from the {@link IPortletDefinition}.
-     * 
+     * Performs a case-insensitive comparison of the user's query against several important fields
+     * from the {@link IPortletDefinition}.
+     *
      * @param query The user's search terms, which seem to be forced lower-case
      * @param portlet
      * @return
@@ -134,9 +135,10 @@ public class PortletRegistrySearchService implements IPortalSearchService {
         final String lcQuery = query.toLowerCase();
         final boolean titleMatch = portlet.getTitle().toLowerCase().contains(lcQuery);
         final boolean nameMatch = portlet.getName().toLowerCase().contains(lcQuery);
-        final boolean descMatch = portlet.getDescription() != null && portlet.getDescription().toLowerCase().contains(lcQuery);
+        final boolean descMatch =
+                portlet.getDescription() != null
+                        && portlet.getDescription().toLowerCase().contains(lcQuery);
         final boolean fnameMatch = portlet.getFName().toLowerCase().contains(lcQuery);
         return titleMatch || nameMatch || descMatch || fnameMatch;
     }
-
 }

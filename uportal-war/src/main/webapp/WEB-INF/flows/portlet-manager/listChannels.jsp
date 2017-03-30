@@ -51,7 +51,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 | naming conventions, 3rd Party libraries
 | (like jQuery and the Fluid Skinning System)
 | and more, refer to:
-| http://www.ja-sig.org/wiki/x/cQ
+| docs/SKINNING_UPORTAL.md
 -->
 
 <style>

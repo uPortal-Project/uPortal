@@ -1,24 +1,19 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.groups.pags.dao;
 
-import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,7 +21,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
@@ -41,8 +35,8 @@ import org.apereo.portal.groups.IEntitySearcher;
 import org.apereo.portal.groups.IEntityStore;
 import org.apereo.portal.groups.IGroupMember;
 import org.apereo.portal.groups.ILockableEntityGroup;
-import org.apereo.portal.groups.pags.PagsGroup;
 import org.apereo.portal.groups.pags.IPersonTester;
+import org.apereo.portal.groups.pags.PagsGroup;
 import org.apereo.portal.groups.pags.TestGroup;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.PersonFactory;
@@ -57,27 +51,23 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 
 /**
- * The Person Attributes Group Store uses attributes stored in the IPerson object to determine
- * group membership.  It can use attributes from any data source supported by the PersonDirectory
- * service.
+ * The Person Attributes Group Store uses attributes stored in the IPerson object to determine group
+ * membership. It can use attributes from any data source supported by the PersonDirectory service.
  *
  * @author Shawn Connolly, sconnolly@unicon.net
  * @since 4.1
  */
-public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEntityStore, IEntitySearcher {
+public class EntityPersonAttributesGroupStore
+        implements IEntityGroupStore, IEntityStore, IEntitySearcher {
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private static final Class<IPerson> IPERSON_CLASS = IPerson.class;
     private static final EntityIdentifier[] EMPTY_SEARCH_RESULTS = new EntityIdentifier[0];
     private IPersonAttributesGroupDefinitionDao personAttributesGroupDefinitionDao;
 
-    /**
-     * Caches IEntityGroup (EntityGroupImpl) instances
-     */
+    /** Caches IEntityGroup (EntityGroupImpl) instances */
     private final Cache entityGroupCache;
 
-    /**
-     * Caches PagsGroup instances
-     */
+    /** Caches PagsGroup instances */
     private final Cache pagsGroupCache;
 
     /**
@@ -88,11 +78,20 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
     public EntityPersonAttributesGroupStore() {
         super();
         ApplicationContext applicationContext = ApplicationContextLocator.getApplicationContext();
-        this.personAttributesGroupDefinitionDao = applicationContext.getBean("personAttributesGroupDefinitionDao", IPersonAttributesGroupDefinitionDao.class);
+        this.personAttributesGroupDefinitionDao =
+                applicationContext.getBean(
+                        "personAttributesGroupDefinitionDao",
+                        IPersonAttributesGroupDefinitionDao.class);
         CacheManager cacheManager = applicationContext.getBean("cacheManager", CacheManager.class);
-        this.entityGroupCache = cacheManager.getCache("org.apereo.portal.groups.pags.dao.EntityPersonAttributesGroupStore.entityGroup");
-        this.pagsGroupCache = cacheManager.getCache("org.apereo.portal.groups.pags.dao.EntityPersonAttributesGroupStore.pagsGroup");
-        this.membershipCache = cacheManager.getCache("org.apereo.portal.groups.pags.dao.EntityPersonAttributesGroupStore.membership");
+        this.entityGroupCache =
+                cacheManager.getCache(
+                        "org.apereo.portal.groups.pags.dao.EntityPersonAttributesGroupStore.entityGroup");
+        this.pagsGroupCache =
+                cacheManager.getCache(
+                        "org.apereo.portal.groups.pags.dao.EntityPersonAttributesGroupStore.pagsGroup");
+        this.membershipCache =
+                cacheManager.getCache(
+                        "org.apereo.portal.groups.pags.dao.EntityPersonAttributesGroupStore.membership");
     }
 
     @Override
@@ -118,20 +117,27 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
             }
         }
 
-        final MembershipCacheKey cacheKey = new MembershipCacheKey(group.getEntityIdentifier(), member.getEntityIdentifier());
+        final MembershipCacheKey cacheKey =
+                new MembershipCacheKey(
+                        group.getEntityIdentifier(), member.getUnderlyingEntityIdentifier());
         Element element = membershipCache.get(cacheKey);
         if (element == null) {
 
-            logger.debug("Checking if group {} contains member {}/{}", group.getName(), member.getKey(), member.getLeafType().getSimpleName());
+            logger.debug(
+                    "Checking if group {} contains member {}/{}",
+                    group.getName(),
+                    member.getKey(),
+                    member.getLeafType().getSimpleName());
 
-            boolean answer = false;  // default
+            boolean answer = false; // default
             final PagsGroup groupDef = convertEntityToGroupDef(group);
             if (member.isGroup()) {
-               final String key = ((IEntityGroup) member).getLocalKey();
-               answer = groupDef.hasMember(key);
+                final String key = ((IEntityGroup) member).getLocalKey();
+                answer = groupDef.hasMember(key);
             } else {
                 try {
-                    final IPersonAttributeDao pa = PersonAttributeDaoLocator.getPersonAttributeDao();
+                    final IPersonAttributeDao pa =
+                            PersonAttributeDaoLocator.getPersonAttributeDao();
                     final IPersonAttributes personAttributes = pa.getPerson(member.getKey());
 
                     if (personAttributes != null) {
@@ -140,18 +146,22 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
                         answer = groupDef.contains(rp);
                     }
                 } catch (Exception ex) {
-                    logger.error("Exception acquiring attributes for member " + member + " while checking if group " + group + " contains this member.", ex);
+                    logger.error(
+                            "Exception acquiring attributes for member "
+                                    + member
+                                    + " while checking if group "
+                                    + group
+                                    + " contains this member.",
+                            ex);
                     return false;
                 }
             }
 
             element = new Element(cacheKey, answer);
             membershipCache.put(element);
-
         }
 
         return (Boolean) element.getObjectValue();
-
     }
 
     private PagsGroup convertEntityToGroupDef(IEntityGroup group) {
@@ -165,7 +175,8 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
         Element element = entityGroupCache.get(cacheKey);
 
         if (element == null) {
-            final IEntityGroup entityGroup = new EntityTestingGroupImpl(group.getName(), IPERSON_CLASS);
+            final IEntityGroup entityGroup =
+                    new EntityTestingGroupImpl(group.getName(), IPERSON_CLASS);
             entityGroup.setName(group.getName());
             entityGroup.setDescription(group.getDescription());
             element = new Element(cacheKey, entityGroup);
@@ -173,20 +184,23 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
         }
 
         return (IEntityGroup) element.getObjectValue();
-
     }
 
     @Override
     public void delete(IEntityGroup group) throws GroupsException {
-        throw new UnsupportedOperationException("EntityPersonAttributesGroupStore: Method delete() not supported.");
+        throw new UnsupportedOperationException(
+                "EntityPersonAttributesGroupStore: Method delete() not supported.");
     }
 
     @Override
     public IEntityGroup find(String name) throws GroupsException {
-        Set<IPersonAttributesGroupDefinition> groups = personAttributesGroupDefinitionDao.getPersonAttributesGroupDefinitionByName(name);
+        Set<IPersonAttributesGroupDefinition> groups =
+                personAttributesGroupDefinitionDao.getPersonAttributesGroupDefinitionByName(name);
         if (groups.size() == 0) {
-            logger.error("No PAGS group with name {} found. Check your PAGS group definitions for possible error"
-                + " in member group name", name);
+            logger.error(
+                    "No PAGS group with name {} found. Check your PAGS group definitions for possible error"
+                            + " in member group name",
+                    name);
             return null;
         }
         IPersonAttributesGroupDefinition pagsGroup = groups.iterator().next();
@@ -211,7 +225,7 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
         logger.debug("finding containing groups for member key {}", member.getKey());
 
         final Set<IEntityGroup> set = Collections.emptySet();
-        Iterator<IEntityGroup> rslt = set.iterator();  // default
+        Iterator<IEntityGroup> rslt = set.iterator(); // default
 
         if (member.isGroup()) {
             // PAGS groups may only contain other PAGS groups (and people, of course)
@@ -224,26 +238,28 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
         }
 
         return rslt;
-
     }
 
     private Iterator<IEntityGroup> findParentGroupsForGroup(IEntityGroup group) {
-         logger.debug("Finding containing groups for group {} (key {})", group.getName(), group.getKey());
-         Set<IEntityGroup> parents = getParentGroups(group.getName(), new HashSet<IEntityGroup>());
-         return parents.iterator();
+        logger.debug(
+                "Finding containing groups for group {} (key {})", group.getName(), group.getKey());
+        Set<IEntityGroup> parents = getParentGroups(group.getName(), new HashSet<IEntityGroup>());
+        return parents.iterator();
     }
 
-    private Iterator<IEntityGroup> findParentGroupsForEntity(IEntity member) throws GroupsException {
+    private Iterator<IEntityGroup> findParentGroupsForEntity(IEntity member)
+            throws GroupsException {
 
-        Set<IPersonAttributesGroupDefinition> pagsGroups = personAttributesGroupDefinitionDao.getPersonAttributesGroupDefinitions();
+        Set<IPersonAttributesGroupDefinition> pagsGroups =
+                personAttributesGroupDefinitionDao.getPersonAttributesGroupDefinitions();
         List<IEntityGroup> results = new ArrayList<IEntityGroup>();
         for (IPersonAttributesGroupDefinition pagsGroup : pagsGroups) {
             IEntityGroup group = convertPagsGroupToEntity(pagsGroup);
-            if ( contains(group, member))
-                { results.add(group); }
+            if (contains(group, member)) {
+                results.add(group);
+            }
         }
         return results.iterator();
-
     }
 
     @Override
@@ -254,19 +270,23 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
 
     @Override
     public ILockableEntityGroup findLockable(String key) throws GroupsException {
-        throw new UnsupportedOperationException("EntityPersonAttributesGroupStore: Method findLockable() not supported");
+        throw new UnsupportedOperationException(
+                "EntityPersonAttributesGroupStore: Method findLockable() not supported");
     }
 
     @Override
     public String[] findMemberGroupKeys(IEntityGroup group) throws GroupsException {
 
         List<String> keys = new ArrayList<String>();
-        PagsGroup groupDef = convertEntityToGroupDef(group);  // Will prevent wasting time on non-PAGS groups, if those calls even happen
+        PagsGroup groupDef =
+                convertEntityToGroupDef(
+                        group); // Will prevent wasting time on non-PAGS groups, if those calls even happen
         if (groupDef != null) {
-             for (Iterator<String> i = groupDef.getMembers().iterator(); i.hasNext(); )
-                  { keys.add(i.next()); }
+            for (Iterator<String> i = groupDef.getMembers().iterator(); i.hasNext(); ) {
+                keys.add(i.next());
+            }
         }
-        return keys.toArray(new String[]{});
+        return keys.toArray(new String[] {});
     }
 
     @Override
@@ -286,14 +306,18 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
 
     @Override
     public IEntityGroup newInstance(Class entityType) throws GroupsException {
-        throw new UnsupportedOperationException("EntityPersonAttributesGroupStore: Method newInstance() not supported");
+        throw new UnsupportedOperationException(
+                "EntityPersonAttributesGroupStore: Method newInstance() not supported");
     }
 
     @Override
-    public EntityIdentifier[] searchForGroups(String query, int method, Class leaftype) throws GroupsException {
-        if ( leaftype != IPERSON_CLASS )
-             { return EMPTY_SEARCH_RESULTS; }
-        Set<IPersonAttributesGroupDefinition> pagsGroups = personAttributesGroupDefinitionDao.getPersonAttributesGroupDefinitions();
+    public EntityIdentifier[] searchForGroups(String query, int method, Class leaftype)
+            throws GroupsException {
+        if (leaftype != IPERSON_CLASS) {
+            return EMPTY_SEARCH_RESULTS;
+        }
+        Set<IPersonAttributesGroupDefinition> pagsGroups =
+                personAttributesGroupDefinitionDao.getPersonAttributesGroupDefinitions();
         List<EntityIdentifier> results = new ArrayList<EntityIdentifier>();
         switch (method) {
             case IS:
@@ -317,7 +341,7 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
                     IEntityGroup g = convertPagsGroupToEntity(pagsGroup);
                     if (g.getName().toUpperCase().endsWith(query.toUpperCase())) {
                         results.add(g.getEntityIdentifier());
-                  }
+                    }
                 }
                 break;
             case CONTAINS:
@@ -325,21 +349,23 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
                     IEntityGroup g = convertPagsGroupToEntity(pagsGroup);
                     if (g.getName().toUpperCase().indexOf(query.toUpperCase()) != -1) {
                         results.add(g.getEntityIdentifier());
-                  }
+                    }
                 }
                 break;
         }
-        return results.toArray(new EntityIdentifier[]{});
+        return results.toArray(new EntityIdentifier[] {});
     }
 
     @Override
     public void update(IEntityGroup group) throws GroupsException {
-        throw new UnsupportedOperationException("EntityPersonAttributesGroupStore: Method update() not supported.");
+        throw new UnsupportedOperationException(
+                "EntityPersonAttributesGroupStore: Method update() not supported.");
     }
 
     @Override
     public void updateMembers(IEntityGroup group) throws GroupsException {
-        throw new UnsupportedOperationException("EntityPersonAttributesGroupStore: Method updateMembers() not supported.");
+        throw new UnsupportedOperationException(
+                "EntityPersonAttributesGroupStore: Method updateMembers() not supported.");
     }
 
     @Override
@@ -349,13 +375,14 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
          * nonsense entities;  it's not clear what that would be.
          */
         if (EntityTypesLocator.getEntityTypes().getEntityIDFromType(type) == null) {
-            throw new GroupsException("Invalid entity type: "+type.getName());
+            throw new GroupsException("Invalid entity type: " + type.getName());
         }
         return new EntityImpl(key, type);
     }
 
     @Override
-    public EntityIdentifier[] searchForEntities(String query, int method, Class type) throws GroupsException {
+    public EntityIdentifier[] searchForEntities(String query, int method, Class type)
+            throws GroupsException {
         return EMPTY_SEARCH_RESULTS;
     }
 
@@ -370,10 +397,10 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
         groupDef.setDescription(group.getDescription());
         addMemberKeys(groupDef, group.getMembers());
         Set<IPersonAttributesGroupTestGroupDefinition> testGroups = group.getTestGroups();
-        for(IPersonAttributesGroupTestGroupDefinition testGroup : testGroups) {
+        for (IPersonAttributesGroupTestGroupDefinition testGroup : testGroups) {
             TestGroup tg = new TestGroup();
             Set<IPersonAttributesGroupTestDefinition> tests = testGroup.getTests();
-            for(IPersonAttributesGroupTestDefinition test : tests) {
+            for (IPersonAttributesGroupTestDefinition test : tests) {
                 IPersonTester testerInst = initializeTester(test);
                 if (testerInst == null) {
                     /*
@@ -396,7 +423,7 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
     }
 
     private void addMemberKeys(PagsGroup groupDef, Set<IPersonAttributesGroupDefinition> members) {
-        for(IPersonAttributesGroupDefinition member: members) {
+        for (IPersonAttributesGroupDefinition member : members) {
             groupDef.addMember(member.getName());
         }
     }
@@ -404,102 +431,58 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
     private IPersonTester initializeTester(IPersonAttributesGroupTestDefinition test) {
         try {
             Class<?> testerClass = Class.forName(test.getTesterClassName());
-            Constructor<?> c = testerClass.getConstructor(IPersonAttributesGroupTestDefinition.class);
+            Constructor<?> c =
+                    testerClass.getConstructor(IPersonAttributesGroupTestDefinition.class);
             Object o = c.newInstance(test);
             return (IPersonTester) o;
         } catch (Exception e) {
             logger.error("Error in initializing tester class: {}", test.getTesterClassName(), e);
             return null;
         }
-   }
+    }
 
-    private Set<IEntityGroup> getParentGroups(String name, Set<IEntityGroup> groups) throws GroupsException {
+    private Set<IEntityGroup> getParentGroups(String name, Set<IEntityGroup> groups)
+            throws GroupsException {
         logger.debug("Looking up containing groups for {}", name);
         IPersonAttributesGroupDefinition pagsGroup = getPagsGroupDefByName(name);
-        Set<IPersonAttributesGroupDefinition> pagsParentGroups = personAttributesGroupDefinitionDao.getParentPersonAttributesGroupDefinitions(pagsGroup);
+        Set<IPersonAttributesGroupDefinition> pagsParentGroups =
+                personAttributesGroupDefinitionDao.getParentPersonAttributesGroupDefinitions(
+                        pagsGroup);
         for (IPersonAttributesGroupDefinition pagsParent : pagsParentGroups) {
             IEntityGroup parent = convertPagsGroupToEntity(pagsParent);
             if (!groups.contains(parent)) {
                 groups.add(parent);
                 getParentGroups(pagsParent.getName(), groups);
             } else {
-                throw new RuntimeException("Recursive grouping detected! for " + name + " and parent " + pagsParent.getName());
+                throw new RuntimeException(
+                        "Recursive grouping detected! for "
+                                + name
+                                + " and parent "
+                                + pagsParent.getName());
             }
         }
         return groups;
     }
 
     /**
-     * Retrieve an implementation of {@code IPersonAttributesGroupDefinition} with the given {@code name} from
-     * the JPA DAO. There are two assumptions. First, that the DAO handles caching, so caching is not implemented here.
-     * Second, that group names are unique. A warning will be logged if more than one group is found with the same name.
+     * Retrieve an implementation of {@code IPersonAttributesGroupDefinition} with the given {@code
+     * name} from the JPA DAO. There are two assumptions. First, that the DAO handles caching, so
+     * caching is not implemented here. Second, that group names are unique. A warning will be
+     * logged if more than one group is found with the same name.
      *
-     * @param name      group name used to search for group definition
-     * @return          {@code IPersonAttributesGroupDefinition} of named group or null
-     * @see             IPersonAttributesGroupDefinitionDao#getPersonAttributesGroupDefinitionByName(String)
-     * @see             IPersonAttributesGroupDefinition
+     * @param name group name used to search for group definition
+     * @return {@code IPersonAttributesGroupDefinition} of named group or null
+     * @see IPersonAttributesGroupDefinitionDao#getPersonAttributesGroupDefinitionByName(String)
+     * @see IPersonAttributesGroupDefinition
      */
     private IPersonAttributesGroupDefinition getPagsGroupDefByName(String name) {
-        Set<IPersonAttributesGroupDefinition> pagsGroups = personAttributesGroupDefinitionDao.getPersonAttributesGroupDefinitionByName(name);
+        Set<IPersonAttributesGroupDefinition> pagsGroups =
+                personAttributesGroupDefinitionDao.getPersonAttributesGroupDefinitionByName(name);
         if (pagsGroups.size() > 1) {
             logger.error("More than one PAGS group with name {} found.", name);
         }
-        final IPersonAttributesGroupDefinition rslt = pagsGroups.isEmpty() ? null : pagsGroups.iterator().next();
+        final IPersonAttributesGroupDefinition rslt =
+                pagsGroups.isEmpty() ? null : pagsGroups.iterator().next();
         return rslt;
     }
-
-    /*
-     * Nested Types
-     */
-
-    private static final class MembershipCacheKey implements Serializable {
-
-        private static final long serialVersionUID = 1L;
-
-        private final EntityIdentifier groupId;
-        private final EntityIdentifier memberId;
-
-        public MembershipCacheKey(final EntityIdentifier groupId, final EntityIdentifier memberId) {
-            this.groupId = groupId;
-            this.memberId = memberId;
-        }
-
-        @Override
-        public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + ((groupId == null) ? 0 : groupId.hashCode());
-            result = prime * result + ((memberId == null) ? 0 : memberId.hashCode());
-            return result;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj)
-                return true;
-            if (obj == null)
-                return false;
-            if (getClass() != obj.getClass())
-                return false;
-            MembershipCacheKey other = (MembershipCacheKey) obj;
-            if (groupId == null) {
-                if (other.groupId != null)
-                    return false;
-            } else if (!groupId.equals(other.groupId))
-                return false;
-            if (memberId == null) {
-                if (other.memberId != null)
-                    return false;
-            } else if (!memberId.equals(other.memberId))
-                return false;
-            return true;
-        }
-
-        @Override
-        public String toString() {
-            return "MembershipCacheKey [groupId=" + groupId + ", memberId=" + memberId + "]";
-        }
-
-    }
-
 }

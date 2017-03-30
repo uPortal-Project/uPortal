@@ -52,8 +52,8 @@
         <div>
             <div id="${n}_chartLinkBar">
                 <a id="${n}_downloadCsv">CSV</a>
-                <a id="${n}_downloadHtml" target="_blank">HTML</a>
-                <a id="${n}_downloadPng" download="${reportName}.png" target="_blank">PNG</a>
+                <a id="${n}_downloadHtml" target="_blank" rel="noopener noreferrer">HTML</a>
+                <a id="${n}_downloadPng" download="${reportName}.png" target="_blank" rel="noopener noreferrer">PNG</a>
                 -
                 <a id="${n}_editChart" href="#"><spring:message code="edit.chart"/></a>
                 -

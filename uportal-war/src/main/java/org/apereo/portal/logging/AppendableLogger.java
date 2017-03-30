@@ -1,34 +1,29 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.logging;
 
 import java.io.IOException;
 import java.io.Writer;
-
 import org.apache.commons.lang.Validate;
 import org.slf4j.Logger;
 import org.slf4j.Marker;
 
 /**
- * Wraps an SLF4J Logger adding in the Appendable interface. Requires the log
- * level to use when appending to be specified in the constructor
- * 
+ * Wraps an SLF4J Logger adding in the Appendable interface. Requires the log level to use when
+ * appending to be specified in the constructor
+ *
  * @author Eric Dalquist
  */
 public class AppendableLogger implements Appendable, Logger {
@@ -174,7 +169,8 @@ public class AppendableLogger implements Appendable, Logger {
      * @param format
      * @param arg1
      * @param arg2
-     * @see org.slf4j.Logger#trace(org.slf4j.Marker, java.lang.String, java.lang.Object, java.lang.Object)
+     * @see org.slf4j.Logger#trace(org.slf4j.Marker, java.lang.String, java.lang.Object,
+     *     java.lang.Object)
      */
     @Override
     public void trace(Marker marker, String format, Object arg1, Object arg2) {
@@ -298,7 +294,8 @@ public class AppendableLogger implements Appendable, Logger {
      * @param format
      * @param arg1
      * @param arg2
-     * @see org.slf4j.Logger#debug(org.slf4j.Marker, java.lang.String, java.lang.Object, java.lang.Object)
+     * @see org.slf4j.Logger#debug(org.slf4j.Marker, java.lang.String, java.lang.Object,
+     *     java.lang.Object)
      */
     @Override
     public void debug(Marker marker, String format, Object arg1, Object arg2) {
@@ -422,7 +419,8 @@ public class AppendableLogger implements Appendable, Logger {
      * @param format
      * @param arg1
      * @param arg2
-     * @see org.slf4j.Logger#info(org.slf4j.Marker, java.lang.String, java.lang.Object, java.lang.Object)
+     * @see org.slf4j.Logger#info(org.slf4j.Marker, java.lang.String, java.lang.Object,
+     *     java.lang.Object)
      */
     @Override
     public void info(Marker marker, String format, Object arg1, Object arg2) {
@@ -546,7 +544,8 @@ public class AppendableLogger implements Appendable, Logger {
      * @param format
      * @param arg1
      * @param arg2
-     * @see org.slf4j.Logger#warn(org.slf4j.Marker, java.lang.String, java.lang.Object, java.lang.Object)
+     * @see org.slf4j.Logger#warn(org.slf4j.Marker, java.lang.String, java.lang.Object,
+     *     java.lang.Object)
      */
     @Override
     public void warn(Marker marker, String format, Object arg1, Object arg2) {
@@ -670,7 +669,8 @@ public class AppendableLogger implements Appendable, Logger {
      * @param format
      * @param arg1
      * @param arg2
-     * @see org.slf4j.Logger#error(org.slf4j.Marker, java.lang.String, java.lang.Object, java.lang.Object)
+     * @see org.slf4j.Logger#error(org.slf4j.Marker, java.lang.String, java.lang.Object,
+     *     java.lang.Object)
      */
     @Override
     public void error(Marker marker, String format, Object arg1, Object arg2) {
@@ -698,5 +698,4 @@ public class AppendableLogger implements Appendable, Logger {
     public void error(Marker marker, String msg, Throwable t) {
         this.logger.error(marker, msg, t);
     }
-
 }

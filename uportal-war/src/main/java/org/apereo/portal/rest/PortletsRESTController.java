@@ -1,22 +1,17 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-
 package org.apereo.portal.rest;
 
 import java.io.Serializable;
@@ -24,10 +19,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.lang.StringUtils;
 import org.apereo.portal.EntityIdentifier;
 import org.apereo.portal.portlet.om.IPortletDefinition;
@@ -53,39 +46,35 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
- * This controller logic is derived from {@link org.apereo.portal.layout.dlm.remoting.ChannelListController}
- * 
+ * This controller logic is derived from {@link
+ * org.apereo.portal.layout.dlm.remoting.ChannelListController}
+ *
  * @since 4.1
  * @author Shawn Connolly, sconnolly@unicon.net
  */
-
 @Controller
 public class PortletsRESTController {
 
-    @Autowired
-    private IPortletDefinitionRegistry portletDefinitionRegistry;
+    @Autowired private IPortletDefinitionRegistry portletDefinitionRegistry;
 
-    @Autowired
-    private IPortletCategoryRegistry portletCategoryRegistry;
+    @Autowired private IPortletCategoryRegistry portletCategoryRegistry;
 
-    @Autowired
-    private IPersonManager personManager;
+    @Autowired private IPersonManager personManager;
 
-    @Autowired
-    private IPortletWindowRegistry portletWindowRegistry;
+    @Autowired private IPortletWindowRegistry portletWindowRegistry;
 
-    @Autowired
-    private IPortletExecutionManager portletExecutionManager;
+    @Autowired private IPortletExecutionManager portletExecutionManager;
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     /**
-     * Provides information about all portlets in the portlet registry.  NOTE:  The response is
-     * governed by the <code>IPermission.PORTLET_MANAGER_xyz</code> series of permissions.  The
+     * Provides information about all portlets in the portlet registry. NOTE: The response is
+     * governed by the <code>IPermission.PORTLET_MANAGER_xyz</code> series of permissions. The
      * actual level of permission required is based on the current lifecycle state of the portlet.
      */
-    @RequestMapping(value="/portlets.json", method = RequestMethod.GET)
-    public ModelAndView getManageablePortlets(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    @RequestMapping(value = "/portlets.json", method = RequestMethod.GET)
+    public ModelAndView getManageablePortlets(
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
         // get a list of all channels
         List<IPortletDefinition> allPortlets = portletDefinitionRegistry.getAllPortletDefinitions();
         IAuthorizationPrincipal ap = getAuthorizationPrincipal(request);
@@ -98,18 +87,20 @@ public class PortletsRESTController {
         }
 
         return new ModelAndView("json", "portlets", rslt);
-
     }
 
     /**
-     * Provides information about a single portlet in the registry.  NOTE:  Access to this
-     * API enpoint requires only <code>IPermission.PORTAL_SUBSCRIBE</code> permission.
+     * Provides information about a single portlet in the registry. NOTE: Access to this API enpoint
+     * requires only <code>IPermission.PORTAL_SUBSCRIBE</code> permission.
      */
-    @RequestMapping(value="/portlet/{fname}.json", method = RequestMethod.GET)
-    public ModelAndView getPortlet(HttpServletRequest request, HttpServletResponse response, @PathVariable String fname) throws Exception {
+    @RequestMapping(value = "/portlet/{fname}.json", method = RequestMethod.GET)
+    public ModelAndView getPortlet(
+            HttpServletRequest request, HttpServletResponse response, @PathVariable String fname)
+            throws Exception {
         IAuthorizationPrincipal ap = getAuthorizationPrincipal(request);
-        IPortletDefinition portletDef = portletDefinitionRegistry.getPortletDefinitionByFname(fname);
-        if(portletDef != null && ap.canRender(portletDef.getPortletDefinitionId().getStringId())) {
+        IPortletDefinition portletDef =
+                portletDefinitionRegistry.getPortletDefinitionByFname(fname);
+        if (portletDef != null && ap.canRender(portletDef.getPortletDefinitionId().getStringId())) {
             LayoutPortlet portlet = new LayoutPortlet(portletDef);
             return new ModelAndView("json", "portlet", portlet);
         } else {
@@ -119,14 +110,17 @@ public class PortletsRESTController {
     }
 
     /**
-     * Provides a single, fully-rendered portlet.  NOTE:  Access to this API
-     * enpoint requires only <code>IPermission.PORTAL_SUBSCRIBE</code> permission.
+     * Provides a single, fully-rendered portlet. NOTE: Access to this API enpoint requires only
+     * <code>IPermission.PORTAL_SUBSCRIBE</code> permission.
      */
-    @RequestMapping(value="/v4-3/portlet/{fname}.html", method = RequestMethod.GET)
-    public @ResponseBody String getRenderedPortlet(HttpServletRequest req, HttpServletResponse res, @PathVariable String fname) throws Exception {
+    @RequestMapping(value = "/v4-3/portlet/{fname}.html", method = RequestMethod.GET)
+    public @ResponseBody String getRenderedPortlet(
+            HttpServletRequest req, HttpServletResponse res, @PathVariable String fname)
+            throws Exception {
 
         // Does the portlet exist in the registry?
-        final IPortletDefinition portletDef = portletDefinitionRegistry.getPortletDefinitionByFname(fname);
+        final IPortletDefinition portletDef =
+                portletDefinitionRegistry.getPortletDefinitionByFname(fname);
         if (portletDef == null) {
             res.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return "Portlet not found";
@@ -141,15 +135,18 @@ public class PortletsRESTController {
 
         // Proceed...
         try {
-            final IPortletWindow portletWindow = portletWindowRegistry.getOrCreateDefaultPortletWindow(req, portletDef.getPortletDefinitionId());
-            final String rslt = portletExecutionManager.getPortletOutput(portletWindow.getPortletWindowId(), req, res);
+            final IPortletWindow portletWindow =
+                    portletWindowRegistry.getOrCreateDefaultPortletWindow(
+                            req, portletDef.getPortletDefinitionId());
+            final String rslt =
+                    portletExecutionManager.getPortletOutput(
+                            portletWindow.getPortletWindowId(), req, res);
             return rslt;
         } catch (Exception e) {
             logger.error("Failed to render the requested portlet '{}'", fname, e);
             res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return "Internal error";
         }
-
     }
 
     /*
@@ -159,7 +156,8 @@ public class PortletsRESTController {
     private IAuthorizationPrincipal getAuthorizationPrincipal(HttpServletRequest req) {
         IPerson user = personManager.getPerson(req);
         EntityIdentifier ei = user.getEntityIdentifier();
-        IAuthorizationPrincipal rslt = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
+        IAuthorizationPrincipal rslt =
+                AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
         return rslt;
     }
 
@@ -226,7 +224,5 @@ public class PortletsRESTController {
         public Set<String> getCategories() {
             return categories;
         }
-
     }
-
 }

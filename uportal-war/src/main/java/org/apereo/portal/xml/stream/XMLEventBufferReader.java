@@ -1,25 +1,20 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.xml.stream;
 
 import java.util.ListIterator;
-
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
@@ -30,14 +25,14 @@ import javax.xml.stream.events.XMLEvent;
 
 /**
  * Wraps a {@link ListIterator} of {@link XMLEvent}s with an {@link XMLEventReader}
- * 
+ *
  * @author Eric Dalquist
  * @version $Revision$
  */
 public class XMLEventBufferReader implements XMLEventReader {
     private final ListIterator<XMLEvent> eventBuffer;
     private XMLEvent previousEvent;
-    
+
     public XMLEventBufferReader(ListIterator<XMLEvent> eventBuffer) {
         this.eventBuffer = eventBuffer;
     }
@@ -52,7 +47,7 @@ public class XMLEventBufferReader implements XMLEventReader {
         final XMLEvent event = this.eventBuffer.next();
         //Step back by one in the list
         this.eventBuffer.previous();
-        
+
         return event;
     }
 
@@ -66,7 +61,7 @@ public class XMLEventBufferReader implements XMLEventReader {
         this.previousEvent = this.eventBuffer.next();
         return this.previousEvent;
     }
-    
+
     @Override
     public void remove() {
         this.eventBuffer.remove();
@@ -76,41 +71,52 @@ public class XMLEventBufferReader implements XMLEventReader {
     public String getElementText() throws XMLStreamException {
         XMLEvent event = this.previousEvent;
         if (event == null) {
-            throw new XMLStreamException("Must be on START_ELEMENT to read next text, element was null");
+            throw new XMLStreamException(
+                    "Must be on START_ELEMENT to read next text, element was null");
         }
         if (!event.isStartElement()) {
-            throw new XMLStreamException("Must be on START_ELEMENT to read next text", event.getLocation());
+            throw new XMLStreamException(
+                    "Must be on START_ELEMENT to read next text", event.getLocation());
         }
-        
+
         final StringBuilder text = new StringBuilder();
         while (!event.isEndDocument()) {
             switch (event.getEventType()) {
                 case XMLStreamConstants.CHARACTERS:
                 case XMLStreamConstants.SPACE:
-                case XMLStreamConstants.CDATA: {
-                    final Characters characters = event.asCharacters();
-                    text.append(characters.getData());
-                    break;
-                }
-                case XMLStreamConstants.ENTITY_REFERENCE: {
-                    final EntityReference entityReference = (EntityReference)event;
-                    final EntityDeclaration declaration = entityReference.getDeclaration();
-                    text.append(declaration.getReplacementText());
-                    break;
-                }
+                case XMLStreamConstants.CDATA:
+                    {
+                        final Characters characters = event.asCharacters();
+                        text.append(characters.getData());
+                        break;
+                    }
+                case XMLStreamConstants.ENTITY_REFERENCE:
+                    {
+                        final EntityReference entityReference = (EntityReference) event;
+                        final EntityDeclaration declaration = entityReference.getDeclaration();
+                        text.append(declaration.getReplacementText());
+                        break;
+                    }
                 case XMLStreamConstants.COMMENT:
-                case XMLStreamConstants.PROCESSING_INSTRUCTION: {
-                    //Ignore
-                    break;
-                }
-                default: {
-                    throw new XMLStreamException("Unexpected event type '" + XMLStreamConstantsUtils.getEventName(event.getEventType()) + "' encountered. Found event: " + event, event.getLocation());
-                }
+                case XMLStreamConstants.PROCESSING_INSTRUCTION:
+                    {
+                        //Ignore
+                        break;
+                    }
+                default:
+                    {
+                        throw new XMLStreamException(
+                                "Unexpected event type '"
+                                        + XMLStreamConstantsUtils.getEventName(event.getEventType())
+                                        + "' encountered. Found event: "
+                                        + event,
+                                event.getLocation());
+                    }
             }
-            
+
             event = this.nextEvent();
         }
-        
+
         return text.toString();
     }
 
@@ -131,12 +137,17 @@ public class XMLEventBufferReader implements XMLEventReader {
         while ((event.isCharacters() && event.asCharacters().isWhiteSpace())
                 || event.isProcessingInstruction()
                 || event.getEventType() == XMLStreamConstants.COMMENT) {
-            
+
             event = this.nextEvent();
         }
 
-        if (!event.isStartElement()  && event.isEndElement()) {
-            throw new XMLStreamException("Unexpected event type '" + XMLStreamConstantsUtils.getEventName(event.getEventType()) + "' encountered. Found event: " + event, event.getLocation());
+        if (!event.isStartElement() && event.isEndElement()) {
+            throw new XMLStreamException(
+                    "Unexpected event type '"
+                            + XMLStreamConstantsUtils.getEventName(event.getEventType())
+                            + "' encountered. Found event: "
+                            + event,
+                    event.getLocation());
         }
 
         return event;

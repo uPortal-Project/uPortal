@@ -1,20 +1,16 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.io;
 
@@ -23,7 +19,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.danann.cernunnos.EntityConfig;
 import org.danann.cernunnos.Formula;
 import org.danann.cernunnos.Phrase;
@@ -43,18 +38,19 @@ import org.danann.cernunnos.TaskResponse;
 public class SafeFileNamePhrase implements Phrase {
 
     // Reserved names on Windows (see http://en.wikipedia.org/wiki/Filename)
-    private static final Pattern[] WINDOWS_INVALID_PATTERNS = new Pattern[] {
-                            Pattern.compile("AUX"),
-                            Pattern.compile("CLOCK\\$"),
-                            Pattern.compile("COM\\d*"),
-                            Pattern.compile("CON"),
-                            Pattern.compile("LPT\\d*"),
-                            Pattern.compile("NUL"),
-                            Pattern.compile("PRN")
-                        };
-    
+    private static final Pattern[] WINDOWS_INVALID_PATTERNS =
+            new Pattern[] {
+                Pattern.compile("AUX"),
+                Pattern.compile("CLOCK\\$"),
+                Pattern.compile("COM\\d*"),
+                Pattern.compile("CON"),
+                Pattern.compile("LPT\\d*"),
+                Pattern.compile("NUL"),
+                Pattern.compile("PRN")
+            };
+
     private static final Map<Pattern, String> REPLACEMENT_PAIRS;
-    
+
     static {
         final Map<Pattern, String> pairs = new LinkedHashMap<Pattern, String>();
         pairs.put(Pattern.compile("/|\\\\"), ".");
@@ -62,9 +58,14 @@ public class SafeFileNamePhrase implements Phrase {
         REPLACEMENT_PAIRS = Collections.unmodifiableMap(pairs);
     }
 
-    public static final Reagent HUMAN_FILE_NAME = new SimpleReagent("HUMAN_FILE_NAME", "descendant-or-self::text()", ReagentType.PHRASE,
-            String.class, "Human readable version of the file name to make safe");
-    
+    public static final Reagent HUMAN_FILE_NAME =
+            new SimpleReagent(
+                    "HUMAN_FILE_NAME",
+                    "descendant-or-self::text()",
+                    ReagentType.PHRASE,
+                    String.class,
+                    "Human readable version of the file name to make safe");
+
     // Instance Members.
     private Phrase humanFileNamePhrase;
 
@@ -79,15 +80,15 @@ public class SafeFileNamePhrase implements Phrase {
      * @see org.danann.cernunnos.Bootstrappable#getFormula()
      */
     public Formula getFormula() {
-        return new SimpleFormula(SafeFileNamePhrase.class, new Reagent[] { HUMAN_FILE_NAME });
+        return new SimpleFormula(SafeFileNamePhrase.class, new Reagent[] {HUMAN_FILE_NAME});
     }
-    
+
     /* (non-Javadoc)
      * @see org.danann.cernunnos.Phrase#evaluate(org.danann.cernunnos.TaskRequest, org.danann.cernunnos.TaskResponse)
      */
     public Object evaluate(TaskRequest req, TaskResponse res) {
-        final String humanFileName = (String)this.humanFileNamePhrase.evaluate(req, res);
-        
+        final String humanFileName = (String) this.humanFileNamePhrase.evaluate(req, res);
+
         return this.getSafeFileName(humanFileName);
     }
 
@@ -109,7 +110,5 @@ public class SafeFileNamePhrase implements Phrase {
         }
 
         return name;
-
     }
-
 }

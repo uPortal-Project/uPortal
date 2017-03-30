@@ -1,20 +1,16 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.persondir.dao.jpa;
 
@@ -28,7 +24,6 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -42,27 +37,22 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Version;
-
+import org.apereo.portal.persondir.ILocalAccountPerson;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.NaturalId;
-import org.apereo.portal.persondir.ILocalAccountPerson;
 import org.springframework.util.Assert;
 
 @Entity
 @Table(name = "UP_PERSON_DIR")
 @SequenceGenerator(
-        name="UP_PERSON_DIR_GEN",
-        sequenceName="UP_PERSON_DIR_SEQ",
-        allocationSize=5
-    )
-@TableGenerator(
-        name="UP_PERSON_DIR_GEN",
-        pkColumnValue="UP_PERSON_DIR",
-        allocationSize=5
-    )
+    name = "UP_PERSON_DIR_GEN",
+    sequenceName = "UP_PERSON_DIR_SEQ",
+    allocationSize = 5
+)
+@TableGenerator(name = "UP_PERSON_DIR_GEN", pkColumnValue = "UP_PERSON_DIR", allocationSize = 5)
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 class LocalAccountPersonImpl implements Serializable, ILocalAccountPerson {
@@ -87,11 +77,17 @@ class LocalAccountPersonImpl implements Serializable, ILocalAccountPerson {
     @Column(name = "LST_PSWD_CGH_DT")
     private Date lastPasswordChange;
 
-    @OneToMany(targetEntity = LocalAccountPersonAttributeImpl.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(
+        targetEntity = LocalAccountPersonAttributeImpl.class,
+        fetch = FetchType.EAGER,
+        cascade = CascadeType.ALL,
+        orphanRemoval = true
+    )
     @JoinColumn(name = "USER_DIR_ID", nullable = false)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @Fetch(FetchMode.JOIN)
-    private final Collection<LocalAccountPersonAttributeImpl> attributes = new ArrayList<LocalAccountPersonAttributeImpl>(0);
+    private final Collection<LocalAccountPersonAttributeImpl> attributes =
+            new ArrayList<LocalAccountPersonAttributeImpl>(0);
 
     @SuppressWarnings("unused")
     private LocalAccountPersonImpl() {
@@ -240,7 +236,9 @@ class LocalAccountPersonImpl implements Serializable, ILocalAccountPerson {
 
     @Override
     public boolean removeAttribute(String name) {
-        for (final Iterator<LocalAccountPersonAttributeImpl> itr = attributes.iterator(); itr.hasNext(); ) {
+        for (final Iterator<LocalAccountPersonAttributeImpl> itr = attributes.iterator();
+                itr.hasNext();
+                ) {
             if (itr.next().getName().equals(name)) {
                 itr.remove();
                 return true;
@@ -259,7 +257,10 @@ class LocalAccountPersonImpl implements Serializable, ILocalAccountPerson {
         //Make a local copy so we don't edit the original reference
         attributes = new LinkedHashMap<String, List<String>>(attributes);
 
-        for (final Iterator<LocalAccountPersonAttributeImpl> attributesItr = this.attributes.iterator(); attributesItr.hasNext(); ) {
+        for (final Iterator<LocalAccountPersonAttributeImpl> attributesItr =
+                        this.attributes.iterator();
+                attributesItr.hasNext();
+                ) {
             final LocalAccountPersonAttributeImpl attribute = attributesItr.next();
 
             //Remove the new values for the attribute from the input map
@@ -296,7 +297,8 @@ class LocalAccountPersonImpl implements Serializable, ILocalAccountPerson {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((attributes == null) ? 0 : attributes.hashCode());
-        result = prime * result + ((lastPasswordChange == null) ? 0 : lastPasswordChange.hashCode());
+        result =
+                prime * result + ((lastPasswordChange == null) ? 0 : lastPasswordChange.hashCode());
         result = prime * result + ((name == null) ? 0 : name.hashCode());
         result = prime * result + ((password == null) ? 0 : password.hashCode());
         return result;
@@ -318,32 +320,28 @@ class LocalAccountPersonImpl implements Serializable, ILocalAccountPerson {
             if (other.attributes != null) {
                 return false;
             }
-        }
-        else if (!attributes.equals(other.attributes)) {
+        } else if (!attributes.equals(other.attributes)) {
             return false;
         }
         if (lastPasswordChange == null) {
             if (other.lastPasswordChange != null) {
                 return false;
             }
-        }
-        else if (!lastPasswordChange.equals(other.lastPasswordChange)) {
+        } else if (!lastPasswordChange.equals(other.lastPasswordChange)) {
             return false;
         }
         if (name == null) {
             if (other.name != null) {
                 return false;
             }
-        }
-        else if (!name.equals(other.name)) {
+        } else if (!name.equals(other.name)) {
             return false;
         }
         if (password == null) {
             if (other.password != null) {
                 return false;
             }
-        }
-        else if (!password.equals(other.password)) {
+        } else if (!password.equals(other.password)) {
             return false;
         }
         return true;
@@ -351,7 +349,14 @@ class LocalAccountPersonImpl implements Serializable, ILocalAccountPerson {
 
     @Override
     public String toString() {
-        return "LocalAccountPersonImpl [id=" + this.id + ", entityVersion=" + this.entityVersion + ", name="
-                + this.name + ", lastPasswordChange=" + this.lastPasswordChange + "]";
+        return "LocalAccountPersonImpl [id="
+                + this.id
+                + ", entityVersion="
+                + this.entityVersion
+                + ", name="
+                + this.name
+                + ", lastPasswordChange="
+                + this.lastPasswordChange
+                + "]";
     }
 }

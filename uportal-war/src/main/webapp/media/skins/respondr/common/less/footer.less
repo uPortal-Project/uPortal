@@ -21,82 +21,85 @@
    Footer Nav
    ========================================================================== */
 
-    #region-footer-first {
-        background: @footer-background-color;
-        color: @footer-text-color;
-        font-size: 90%;
-        padding: 20px;
+#region-footer-first {
+  background: @footer-background-color;
+  color: @footer-text-color;
+  font-size: 90%;
+  padding: 20px;
 
-        a {
-            color: @footer-link-color;
+  a {
+    color: @footer-link-color;
 
-            &:hover, &:focus {
-                color: @footer-link-hover-color;
-            }
-        }
-
-        h4 {
-            a {
-                color: @footer-link-color;
-                margin: 0;
-
-                &:hover, &:focus {
-                    color: @footer-link-hover-color;
-                }
-            }
-            a.disabled {
-                pointer-events: none;
-                cursor: default;
-            }
-        }
-
-        ul {
-            list-style-type: none;
-            margin-left: 10px;
-            display: none;
-            padding: 0;
-        }
+    &:hover,
+    &:focus {
+      color: @footer-link-hover-color;
     }
+  }
+
+  h4 {
+    a {
+      color: @footer-link-color;
+      margin: 0;
+
+      &:hover,
+      &:focus {
+        color: @footer-link-hover-color;
+      }
+    }
+
+    a.disabled {
+      pointer-events: none;
+      cursor: default;
+    }
+  }
+
+  ul {
+    list-style-type: none;
+    margin-left: 10px;
+    display: none;
+    padding: 0;
+  }
+}
 
 /* ==========================================================================
    Footer Legal
    ========================================================================== */
 
-    #region-footer-second {
-        background: @footer-secondary-background-color;
-        color: @footer-text-color;
-        font-size: 80%;
-        padding: 5px 0;
+#region-footer-second {
+  background: @footer-secondary-background-color;
+  color: @footer-text-color;
+  font-size: 80%;
+  padding: 5px 0;
 
-        .hover-option {
-            font-size: 14px;
-        }
+  .hover-option {
+    font-size: 14px;
+  }
 
-        .legal-footer a {
-            color: @footer-link-color;
+  .legal-footer a {
+    color: @footer-link-color;
 
-            &:hover, &:focus {
-                color: @footer-link-hover-color;
-            }
-        }
+    &:hover,
+    &:focus {
+      color: @footer-link-hover-color;
     }
-
+  }
+}
 
 /* ==========================================================================
    Responsive Design
    ========================================================================== */
+
 /*
- * Breakpoints: 240px, 320px, 480px, 600px, 769px, and 992px.
+ * Breakpoints: are defined in bootstrap/variables.less
  */
 
-@media only screen and (min-width: 769px) {
-    #region-footer-first, #region-footer-second {
-        padding: 20px 0;
-    }
+@media only screen and (min-width: @screen-sm-min) {
+  #region-footer-first,
+  #region-footer-second {
+    padding: 20px 0;
+  }
 
-    #region-footer-first {
-        ul {
-            display: block;
-        }
-    }
+  #region-footer-first ul {
+    display: block;
+  }
 }

@@ -1,38 +1,31 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.tenants;
 
+import com.google.common.base.Function;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Root;
-
 import org.apereo.portal.jpa.BasePortalJpaDao;
 import org.springframework.stereotype.Repository;
-
-import com.google.common.base.Function;
 
 @Repository
 /* package-private */ class JpaTenantDao extends BasePortalJpaDao implements ITenantDao {
@@ -48,33 +41,42 @@ import com.google.common.base.Function;
         nameParameter = createParameterExpression(String.class, "name");
         fnameParameter = createParameterExpression(String.class, "fname");
 
-        allTenantsQuery = createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<JpaTenant>>() {
-            @Override
-            public CriteriaQuery<JpaTenant> apply(CriteriaBuilder cb) {
-                final CriteriaQuery<JpaTenant> rslt = cb.createQuery(JpaTenant.class);
-                Root<JpaTenant> root = rslt.from(JpaTenant.class);
-                rslt.orderBy(cb.asc(root.get(JpaTenant_.name)));
-                return rslt;
-            }
-        });
-        tenantByNameQuery = createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<JpaTenant>>() {
-            @Override
-            public CriteriaQuery<JpaTenant> apply(CriteriaBuilder cb) {
-                final CriteriaQuery<JpaTenant> rslt = cb.createQuery(JpaTenant.class);
-                Root<JpaTenant> root = rslt.from(JpaTenant.class);
-                rslt.where(cb.equal(root.get(JpaTenant_.name), nameParameter));
-                return rslt;
-            }
-        });
-        tenantByFNameQuery = createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<JpaTenant>>() {
-            @Override
-            public CriteriaQuery<JpaTenant> apply(CriteriaBuilder cb) {
-                final CriteriaQuery<JpaTenant> rslt = cb.createQuery(JpaTenant.class);
-                Root<JpaTenant> root = rslt.from(JpaTenant.class);
-                rslt.where(cb.equal(root.get(JpaTenant_.fname), fnameParameter));
-                return rslt;
-            }
-        });
+        allTenantsQuery =
+                createCriteriaQuery(
+                        new Function<CriteriaBuilder, CriteriaQuery<JpaTenant>>() {
+                            @Override
+                            public CriteriaQuery<JpaTenant> apply(CriteriaBuilder cb) {
+                                final CriteriaQuery<JpaTenant> rslt =
+                                        cb.createQuery(JpaTenant.class);
+                                Root<JpaTenant> root = rslt.from(JpaTenant.class);
+                                rslt.orderBy(cb.asc(root.get(JpaTenant_.name)));
+                                return rslt;
+                            }
+                        });
+        tenantByNameQuery =
+                createCriteriaQuery(
+                        new Function<CriteriaBuilder, CriteriaQuery<JpaTenant>>() {
+                            @Override
+                            public CriteriaQuery<JpaTenant> apply(CriteriaBuilder cb) {
+                                final CriteriaQuery<JpaTenant> rslt =
+                                        cb.createQuery(JpaTenant.class);
+                                Root<JpaTenant> root = rslt.from(JpaTenant.class);
+                                rslt.where(cb.equal(root.get(JpaTenant_.name), nameParameter));
+                                return rslt;
+                            }
+                        });
+        tenantByFNameQuery =
+                createCriteriaQuery(
+                        new Function<CriteriaBuilder, CriteriaQuery<JpaTenant>>() {
+                            @Override
+                            public CriteriaQuery<JpaTenant> apply(CriteriaBuilder cb) {
+                                final CriteriaQuery<JpaTenant> rslt =
+                                        cb.createQuery(JpaTenant.class);
+                                Root<JpaTenant> root = rslt.from(JpaTenant.class);
+                                rslt.where(cb.equal(root.get(JpaTenant_.fname), fnameParameter));
+                                return rslt;
+                            }
+                        });
     }
 
     @Override
@@ -130,10 +132,10 @@ import com.google.common.base.Function;
             entityManager.persist(persistantTenant);
         } else {
             // This object is not supported by this DAO
-            final String msg = "The specified tenant is not an instanceof JpaTenant:  " + tenant.getFname();
+            final String msg =
+                    "The specified tenant is not an instanceof JpaTenant:  " + tenant.getFname();
             throw new IllegalArgumentException(msg);
         }
-
     }
 
     @Override
@@ -147,7 +149,5 @@ import com.google.common.base.Function;
         }
 
         getEntityManager().remove(tenant);
-
     }
-
 }

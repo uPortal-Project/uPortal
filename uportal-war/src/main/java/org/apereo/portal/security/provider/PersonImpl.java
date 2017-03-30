@@ -1,20 +1,16 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.security.provider;
 
@@ -24,7 +20,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang3.StringUtils;
@@ -59,9 +54,9 @@ public class PersonImpl implements IPerson {
     }
 
     /**
-     * Returns an attribute for a key.  For objects represented as strings,
-     * a <code>java.lang.String</code> will be returned.  Binary values will
-     * be represented as byte arrays.
+     * Returns an attribute for a key. For objects represented as strings, a <code>java.lang.String
+     * </code> will be returned. Binary values will be represented as byte arrays.
+     *
      * @param key the attribute name.
      * @return value the attribute value identified by the key.
      */
@@ -80,8 +75,9 @@ public class PersonImpl implements IPerson {
     }
 
     /**
-     * Returns multiple attributes for a key.  If only one
-     * value exists, it will be returned in an array of size one.
+     * Returns multiple attributes for a key. If only one value exists, it will be returned in an
+     * array of size one.
+     *
      * @param key the attribute name
      * @return the array of attribute values identified by the key
      */
@@ -100,21 +96,21 @@ public class PersonImpl implements IPerson {
     }
 
     /**
-     * Provides access to this {@link org.apereo.portal.security.provider.PersonImpl}'s private copy of the attributes
-     * attached to this {@link IPerson}.  Changes to the map will affect the attributes directly.  (Perhaps we'd rather
-     * do a defensive copy?)
+     * Provides access to this {@link org.apereo.portal.security.provider.PersonImpl}'s private copy
+     * of the attributes attached to this {@link IPerson}. Changes to the map will affect the
+     * attributes directly. (Perhaps we'd rather do a defensive copy?)
      */
     @Override
-    public Map<String,List<Object>> getAttributeMap() {
-        final Map<String,List<Object>> attrMap = userAttributes;
+    public Map<String, List<Object>> getAttributeMap() {
+        final Map<String, List<Object>> attrMap = userAttributes;
         return attrMap;
     }
 
     /**
      * Sets the specified attribute to a value.
      *
-     * Reference implementation checks for the setting of the username attribute
-     * and updates the EntityIdentifier accordingly
+     * <p>Reference implementation checks for the setting of the username attribute and updates the
+     * EntityIdentifier accordingly
      *
      * @param key Attribute's name
      * @param value Attribute's value
@@ -123,8 +119,7 @@ public class PersonImpl implements IPerson {
     public void setAttribute(String key, Object value) {
         if (value == null) {
             setAttribute(key, null);
-        }
-        else {
+        } else {
             setAttribute(key, Collections.singletonList(value));
         }
     }
@@ -137,8 +132,7 @@ public class PersonImpl implements IPerson {
 
         if (value != null) {
             userAttributes.put(key, value);
-        }
-        else {
+        } else {
             userAttributes.remove(key);
         }
 
@@ -149,8 +143,7 @@ public class PersonImpl implements IPerson {
     }
 
     /**
-     * Sets the specified attributes. Uses {@link #setAttribute(String, Object)}
-     * to set each.
+     * Sets the specified attributes. Uses {@link #setAttribute(String, Object)} to set each.
      *
      * @see IPerson#setAttributes(java.util.Map)
      */
@@ -170,9 +163,9 @@ public class PersonImpl implements IPerson {
     }
 
     /**
-     * Returns the user's ID that was used for authentication.
-     * Does not correlate to any eduPerson attribute but is the key
-     * for user data in uPortal reference rdbms.
+     * Returns the user's ID that was used for authentication. Does not correlate to any eduPerson
+     * attribute but is the key for user data in uPortal reference rdbms.
+     *
      * @return User's ID.
      */
     @Override
@@ -182,9 +175,9 @@ public class PersonImpl implements IPerson {
 
     /**
      * Sets the user's ID.
-     * @param sID User's ID as supplied for authentication
-     * Does not correlate to any eduPerson attribute but is the key
-     * for user data in uPortal reference rdbms.
+     *
+     * @param sID User's ID as supplied for authentication Does not correlate to any eduPerson
+     *     attribute but is the key for user data in uPortal reference rdbms.
      */
     @Override
     public void setID(int sID) {
@@ -208,8 +201,9 @@ public class PersonImpl implements IPerson {
     }
 
     /**
-     * Returns the user's name that was established during authentication.
-     * Correlates to cn (common name) in the eduPerson 1.0 specification.
+     * Returns the user's name that was established during authentication. Correlates to cn (common
+     * name) in the eduPerson 1.0 specification.
+     *
      * @return User's name.
      */
     @Override
@@ -219,8 +213,9 @@ public class PersonImpl implements IPerson {
 
     /**
      * Sets the user's full name.
-     * @param sFullName User's name as established during authentication
-     * Correlates to cn (common name) in the eduPerson 1.0 specification.
+     *
+     * @param sFullName User's name as established during authentication Correlates to cn (common
+     *     name) in the eduPerson 1.0 specification.
      */
     @Override
     public void setFullName(String sFullName) {
@@ -229,13 +224,13 @@ public class PersonImpl implements IPerson {
 
     /**
      * Determines whether or not this person is a "guest" user.
-     * <p>
-     * This person is a "guest" if both of the following are true:
+     *
+     * <p>This person is a "guest" if both of the following are true:
+     *
      * <ol>
-     *   <li>This person's user name is listed as a guest user account.</li>
-     *   <li>This person does not have a live instance ISecurityContext that
-     *       states he/she has been successfully authenticated.  (It can be
-     *       either null or unauthenticated.)</li>
+     *   <li>This person's user name is listed as a guest user account.
+     *   <li>This person does not have a live instance ISecurityContext that states he/she has been
+     *       successfully authenticated. (It can be either null or unauthenticated.)
      * </ol>
      *
      * @return <code>true</code> If person is a guest, otherwise <code>false</code>
@@ -244,13 +239,13 @@ public class PersonImpl implements IPerson {
     public boolean isGuest() {
         String userName = (String) getAttribute(IPerson.USERNAME);
         boolean isGuestUsername = PersonFactory.GUEST_USERNAMES.contains(userName);
-        boolean isAuthenticated  = m_securityContext != null && m_securityContext.isAuthenticated();
+        boolean isAuthenticated = m_securityContext != null && m_securityContext.isAuthenticated();
         return isGuestUsername && !isAuthenticated;
     }
 
     /**
-     * Returns an EntityIdentifier for this person.  The key contains the value
-     * of the eudPerson username attribute, or null
+     * Returns an EntityIdentifier for this person. The key contains the value of the eudPerson
+     * username attribute, or null
      *
      * @return EntityIdentifier with attribute 'username' as key.
      */
@@ -260,8 +255,8 @@ public class PersonImpl implements IPerson {
     }
 
     /* (non-Javadoc)
-    * @see java.security.Principal#getName()
-    */
+     * @see java.security.Principal#getName()
+     */
     @Override
     public String getName() {
         return (String) getAttribute(IPerson.USERNAME);
@@ -280,23 +275,17 @@ public class PersonImpl implements IPerson {
 
     @Override
     public int hashCode() {
-        int result = new HashCodeBuilder(209348721,-93847839)
-            .append(m_ID)
-            .toHashCode();
+        int result = new HashCodeBuilder(209348721, -93847839).append(m_ID).toHashCode();
         return result;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if(obj == this)
-            return true;
-        if(!(obj instanceof IPerson))
-            return false;
+        if (obj == this) return true;
+        if (!(obj instanceof IPerson)) return false;
 
         IPerson other = (IPerson) obj;
-        return new EqualsBuilder()
-            .append(getID(), other.getID())
-            .isEquals();
+        return new EqualsBuilder().append(getID(), other.getID()).isEquals();
     }
 
     /*
@@ -304,21 +293,20 @@ public class PersonImpl implements IPerson {
      */
 
     /**
-     * This method helps the PersonImpl <i>fail fast</i> if it is initialized in
-     * an invalid state.  An instance of this class that does not have a value
-     * for <code>IPerson.USERNAME</code> cannot function properly.  It would be
-     * unusable for groups, permissions, layouts, authenticated status, and
-     * probably a whole host of other things.  It's best if we raise the alarm
-     * immediately, otherwise the issue may be much more time consuming to
-     * troubleshoot if it slips downstream.
+     * This method helps the PersonImpl <i>fail fast</i> if it is initialized in an invalid state.
+     * An instance of this class that does not have a value for <code>IPerson.USERNAME</code> cannot
+     * function properly. It would be unusable for groups, permissions, layouts, authenticated
+     * status, and probably a whole host of other things. It's best if we raise the alarm
+     * immediately, otherwise the issue may be much more time consuming to troubleshoot if it slips
+     * downstream.
      */
     private void validateUsername() {
         final String usernameValue = getUserName();
         if (StringUtils.isBlank(usernameValue)) {
-            final String msg = "Username cannot be blank;  check configuration "
-                    + "of user attributes and their data sources.";
+            final String msg =
+                    "Username cannot be blank;  check configuration "
+                            + "of user attributes and their data sources.";
             throw new IllegalStateException(msg);
         }
     }
-
 }

@@ -1,20 +1,16 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.portlet.container.services;
 
@@ -26,10 +22,8 @@ import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
-
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.pluto.container.PortletAppDescriptorService;
@@ -67,51 +61,51 @@ public class LocalPortletContextManager implements PortletRegistryService, Portl
     private static final String PORTLET_XML = "/WEB-INF/portlet.xml";
 
     protected final Log logger = LogFactory.getLog(this.getClass());
-    
-    /**
-     * The PortletContext cache map: key is servlet context, and value is the
-     * associated portlet context.
-     */
-    private Map<String, DriverPortletContext> portletContexts = new ConcurrentHashMap<String, DriverPortletContext>();
 
     /**
-     * The PortletContext cache map: key is servlet context, and value is the
-     * associated portlet context.
+     * The PortletContext cache map: key is servlet context, and value is the associated portlet
+     * context.
      */
-    private final Map<String, DriverPortletConfig> portletConfigs = new ConcurrentHashMap<String, DriverPortletConfig>();
+    private Map<String, DriverPortletContext> portletContexts =
+            new ConcurrentHashMap<String, DriverPortletContext>();
 
     /**
-     * The registered listeners that should be notified upon
-     * registry events.
+     * The PortletContext cache map: key is servlet context, and value is the associated portlet
+     * context.
      */
-    private final List<PortletRegistryListener> registryListeners = new CopyOnWriteArrayList<PortletRegistryListener>();
+    private final Map<String, DriverPortletConfig> portletConfigs =
+            new ConcurrentHashMap<String, DriverPortletConfig>();
+
+    /** The registered listeners that should be notified upon registry events. */
+    private final List<PortletRegistryListener> registryListeners =
+            new CopyOnWriteArrayList<PortletRegistryListener>();
 
     /**
-     * The classloader for the portal, key is portletWindow and value is the classloader.
-     * TODO this looks like a horrible memory leak
+     * The classloader for the portal, key is portletWindow and value is the classloader. TODO this
+     * looks like a horrible memory leak
      */
-    private final Map<String, ClassLoader> classLoaders = new ConcurrentHashMap<String, ClassLoader>();
+    private final Map<String, ClassLoader> classLoaders =
+            new ConcurrentHashMap<String, ClassLoader>();
 
     /**
-     * Cache of descriptors.  WeakHashMap is used so that
-     * once the context is destroyed (kinda), the cache is eliminated.
-     * Ideally we'd use a ServletContextListener, but at this
-     * point I'm wondering if we really want to add another
-     * config requirement in the servlet xml? Hmm. . .
+     * Cache of descriptors. WeakHashMap is used so that once the context is destroyed (kinda), the
+     * cache is eliminated. Ideally we'd use a ServletContextListener, but at this point I'm
+     * wondering if we really want to add another config requirement in the servlet xml? Hmm. . .
      */
-    private final Map<ServletContext, PortletApplicationDefinition> portletAppDefinitionCache = new WeakHashMap<ServletContext, PortletApplicationDefinition>();
+    private final Map<ServletContext, PortletApplicationDefinition> portletAppDefinitionCache =
+            new WeakHashMap<ServletContext, PortletApplicationDefinition>();
 
-    private PortletAppDescriptorService portletAppDescriptorService = new PortletAppDescriptorServiceImpl();
+    private PortletAppDescriptorService portletAppDescriptorService =
+            new PortletAppDescriptorServiceImpl();
     private RequestDispatcherService requestDispatcherService;
-
 
     @Autowired
     public void setRequestDispatcherService(RequestDispatcherService requestDispatcherService) {
         this.requestDispatcherService = requestDispatcherService;
     }
 
-
-    public void setPortletAppDescriptorService(PortletAppDescriptorService portletAppDescriptorService) {
+    public void setPortletAppDescriptorService(
+            PortletAppDescriptorService portletAppDescriptorService) {
         this.portletAppDescriptorService = portletAppDescriptorService;
     }
 
@@ -125,8 +119,8 @@ public class LocalPortletContextManager implements PortletRegistryService, Portl
     // Public Methods ----------------------------------------------------------
 
     /**
-     * Retrieves the PortletContext associated with the given ServletContext.
-     * If one does not exist, it is created.
+     * Retrieves the PortletContext associated with the given ServletContext. If one does not exist,
+     * it is created.
      *
      * @param config the servlet config.
      * @return the InternalPortletContext associated with the ServletContext.
@@ -138,13 +132,15 @@ public class LocalPortletContextManager implements PortletRegistryService, Portl
         String contextPath = servletContext.getContextPath();
         if (!portletContexts.containsKey(contextPath)) {
 
-            PortletApplicationDefinition portletApp = this
-                    .getPortletAppDD(servletContext, contextPath, contextPath);
+            PortletApplicationDefinition portletApp =
+                    this.getPortletAppDD(servletContext, contextPath, contextPath);
 
-            DriverPortletContext portletContext = new DriverPortletContextImpl(servletContext, portletApp,
-                    requestDispatcherService);
+            DriverPortletContext portletContext =
+                    new DriverPortletContextImpl(
+                            servletContext, portletApp, requestDispatcherService);
 
-            portletContext.setAttribute(PlatformApiBroker.PORTLET_CONTEXT_ATTRIBUTE_NAME,platformApiBroker);
+            portletContext.setAttribute(
+                    PlatformApiBroker.PORTLET_CONTEXT_ATTRIBUTE_NAME, platformApiBroker);
             portletContexts.put(contextPath, portletContext);
 
             fireRegistered(portletContext);
@@ -152,8 +148,11 @@ public class LocalPortletContextManager implements PortletRegistryService, Portl
             if (logger.isInfoEnabled()) {
                 logger.info("Registered portlet application for context '" + contextPath + "'");
 
-                logger.info("Registering " + portletApp.getPortlets().size() + " portlets for context "
-                        + portletContext.getApplicationName());
+                logger.info(
+                        "Registering "
+                                + portletApp.getPortlets().size()
+                                + " portlets for context "
+                                + portletContext.getApplicationName());
             }
 
             //TODO have the portlet servlet provide the portlet's classloader as parameter to this method
@@ -167,15 +166,19 @@ public class LocalPortletContextManager implements PortletRegistryService, Portl
             for (PortletDefinition portlet : portletApp.getPortlets()) {
                 String appName = portletContext.getApplicationName();
                 if (appName == null) {
-                    throw new PortletContainerException("Portlet application name should not be null.");
+                    throw new PortletContainerException(
+                            "Portlet application name should not be null.");
                 }
-                portletConfigs.put(portletContext.getApplicationName() + "/" + portlet.getPortletName(),
+                portletConfigs.put(
+                        portletContext.getApplicationName() + "/" + portlet.getPortletName(),
                         new DriverPortletConfigImpl(portletContext, portlet));
             }
-        }
-        else {
+        } else {
             if (logger.isInfoEnabled()) {
-                logger.info("Portlet application for context '" + contextPath + "' already registered.");
+                logger.info(
+                        "Portlet application for context '"
+                                + contextPath
+                                + "' already registered.");
             }
         }
         return contextPath;
@@ -211,7 +214,8 @@ public class LocalPortletContextManager implements PortletRegistryService, Portl
     }
 
     @Override
-    public DriverPortletContext getPortletContext(PortletWindow portletWindow) throws PortletContainerException {
+    public DriverPortletContext getPortletContext(PortletWindow portletWindow)
+            throws PortletContainerException {
         return portletContexts.get(portletWindow.getPortletDefinition().getApplication().getName());
     }
 
@@ -222,13 +226,19 @@ public class LocalPortletContextManager implements PortletRegistryService, Portl
         if (ipc != null) {
             return ipc;
         }
-        String msg = "Unable to locate portlet config [applicationName=" + applicationName + "]/[" + portletName + "].";
+        String msg =
+                "Unable to locate portlet config [applicationName="
+                        + applicationName
+                        + "]/["
+                        + portletName
+                        + "].";
         logger.warn(msg);
         throw new PortletContainerException(msg);
     }
 
     @Override
-    public PortletDefinition getPortlet(String applicationName, String portletName) throws PortletContainerException {
+    public PortletDefinition getPortlet(String applicationName, String portletName)
+            throws PortletContainerException {
         DriverPortletConfig ipc = portletConfigs.get(applicationName + "/" + portletName);
         if (ipc != null) {
             return ipc.getPortletDefinition();
@@ -239,7 +249,8 @@ public class LocalPortletContextManager implements PortletRegistryService, Portl
     }
 
     @Override
-    public PortletApplicationDefinition getPortletApplication(String applicationName) throws PortletContainerException {
+    public PortletApplicationDefinition getPortletApplication(String applicationName)
+            throws PortletContainerException {
         DriverPortletContext ipc = portletContexts.get(applicationName);
         if (ipc != null) {
             return ipc.getPortletApplicationDefinition();
@@ -263,7 +274,7 @@ public class LocalPortletContextManager implements PortletRegistryService, Portl
     public void removePortletRegistryListener(PortletRegistryListener listener) {
         registryListeners.remove(listener);
     }
-    
+
     private void fireRegistered(DriverPortletContext context) {
         PortletRegistryEvent event = new PortletRegistryEvent();
         event.setPortletApplication(context.getPortletApplicationDefinition());
@@ -286,16 +297,18 @@ public class LocalPortletContextManager implements PortletRegistryService, Portl
     }
 
     /**
-     * Retrieve the Portlet Application Deployment Descriptor for the given
-     * servlet context.  Create it if it does not allready exist.
+     * Retrieve the Portlet Application Deployment Descriptor for the given servlet context. Create
+     * it if it does not allready exist.
      *
-     * @param servletContext  the servlet context.
+     * @param servletContext the servlet context.
      * @return The portlet application deployment descriptor.
      * @throws PortletContainerException if the descriptor can not be found or parsed
      */
-    public synchronized PortletApplicationDefinition getPortletAppDD(ServletContext servletContext, String name, String contextPath)
+    public synchronized PortletApplicationDefinition getPortletAppDD(
+            ServletContext servletContext, String name, String contextPath)
             throws PortletContainerException {
-        PortletApplicationDefinition portletApp = this.portletAppDefinitionCache.get(servletContext);
+        PortletApplicationDefinition portletApp =
+                this.portletAppDefinitionCache.get(servletContext);
         if (portletApp == null) {
             portletApp = createDefinition(servletContext, name, contextPath);
             this.portletAppDefinitionCache.put(servletContext, portletApp);
@@ -308,29 +321,36 @@ public class LocalPortletContextManager implements PortletRegistryService, Portl
     /**
      * Creates the portlet.xml deployment descriptor representation.
      *
-     * @param servletContext  the servlet context for which the DD is requested.
+     * @param servletContext the servlet context for which the DD is requested.
      * @return the Portlet Application Deployment Descriptor.
      * @throws PortletContainerException
      */
-    private PortletApplicationDefinition createDefinition(ServletContext servletContext, String name, String contextPath)
+    private PortletApplicationDefinition createDefinition(
+            ServletContext servletContext, String name, String contextPath)
             throws PortletContainerException {
         PortletApplicationDefinition portletApp = null;
         try {
             InputStream paIn = servletContext.getResourceAsStream(PORTLET_XML);
             InputStream webIn = servletContext.getResourceAsStream(WEB_XML);
             if (paIn == null) {
-                throw new PortletContainerException("Cannot find '" + PORTLET_XML
-                        + "'. Are you sure it is in the deployed package?");
+                throw new PortletContainerException(
+                        "Cannot find '"
+                                + PORTLET_XML
+                                + "'. Are you sure it is in the deployed package?");
             }
             if (webIn == null) {
-                throw new PortletContainerException("Cannot find '" + WEB_XML
-                        + "'. Are you sure it is in the deployed package?");
+                throw new PortletContainerException(
+                        "Cannot find '"
+                                + WEB_XML
+                                + "'. Are you sure it is in the deployed package?");
             }
             portletApp = this.portletAppDescriptorService.read(name, contextPath, paIn);
             this.portletAppDescriptorService.mergeWebDescriptor(portletApp, webIn);
-        }
-        catch (Exception ex) {
-            throw new PortletContainerException("Exception loading portlet descriptor for: " + servletContext.getServletContextName(), ex);
+        } catch (Exception ex) {
+            throw new PortletContainerException(
+                    "Exception loading portlet descriptor for: "
+                            + servletContext.getServletContextName(),
+                    ex);
         }
         return portletApp;
     }

@@ -1,20 +1,16 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.layout;
 
@@ -24,9 +20,7 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
-
 import javax.xml.stream.XMLEventReader;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apereo.portal.PortalException;
@@ -40,13 +34,11 @@ import org.apereo.portal.spring.locator.PortletDefinitionRegistryLocator;
 import org.w3c.dom.Document;
 
 /**
- * Wraps {@link IUserLayoutManager} interface to provide ability to
- * incorporate channels into a user layout that are not part of
- * their layout structure (persistent).
+ * Wraps {@link IUserLayoutManager} interface to provide ability to incorporate channels into a user
+ * layout that are not part of their layout structure (persistent).
  *
- * The channels are incorporated upon request (functional name)
- * and remain part of the layout structure only as long as they
- * are the target channel.
+ * <p>The channels are incorporated upon request (functional name) and remain part of the layout
+ * structure only as long as they are the target channel.
  *
  * @author <a href="mailto:kstacks@sct.com">Keith Stacks</a>
  * @version $Revision$
@@ -54,21 +46,24 @@ import org.w3c.dom.Document;
 public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
 
     private static final Log log = LogFactory.getLog(TransientUserLayoutManagerWrapper.class);
-    
+
     // transient folder's subscribe id <'f'older><'t'ransient><id>
-    public final static String TRANSIENT_FOLDER_ID="ft1";
+    public static final String TRANSIENT_FOLDER_ID = "ft1";
     // channel subscription prefix  <'c'hannel><'t'ransient><'f'older>
-    public final static String SUBSCRIBE_PREFIX = "ctf";
-    
+    public static final String SUBSCRIBE_PREFIX = "ctf";
+
     // The original user layout manager
-    private IUserLayoutManager man=null;
-    
+    private IUserLayoutManager man = null;
+
     // contains fname --> subscribe id mappings (for transient channels only)
-    private Map<String, String> mFnameMap = Collections.synchronizedMap(new HashMap<String, String>());
+    private Map<String, String> mFnameMap =
+            Collections.synchronizedMap(new HashMap<String, String>());
     // contains subscribe id --> fname mappings (for transient channels only)
-    private Map<String, String> mSubIdMap = Collections.synchronizedMap(new HashMap<String, String>());
+    private Map<String, String> mSubIdMap =
+            Collections.synchronizedMap(new HashMap<String, String>());
     // stores channel defs by subscribe id (transient channels only)
-    private Map<String, IPortletDefinition> mChanMap = Collections.synchronizedMap(new HashMap<String, IPortletDefinition>());
+    private Map<String, IPortletDefinition> mChanMap =
+            Collections.synchronizedMap(new HashMap<String, IPortletDefinition>());
 
     // current root/focused subscribe id
     private String mFocusedId = "";
@@ -76,18 +71,18 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
     private int mSubId = 0;
 
     public TransientUserLayoutManagerWrapper(IUserLayoutManager manager) throws PortalException {
-        this.man=manager;
-        if(man==null) {
+        this.man = manager;
+        if (man == null) {
             throw new PortalException("Cannot wrap a null IUserLayoutManager !");
         }
     }
 
     public IUserLayoutManager getOriginalLayoutManager() throws PortalException {
-           return man;
+        return man;
     }
 
-    public void setOriginalLayoutManager(IUserLayoutManager man ) throws PortalException {
-           this.man = man;
+    public void setOriginalLayoutManager(IUserLayoutManager man) throws PortalException {
+        this.man = man;
     }
 
     public IUserLayout getUserLayout() throws PortalException {
@@ -104,11 +99,10 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
         return man.getUserLayoutDOM();
     }
 
-
     public void loadUserLayout() throws PortalException {
         man.loadUserLayout();
     }
-    
+
     public void loadUserLayout(boolean reload) throws PortalException {
         man.loadUserLayout(reload);
     }
@@ -116,15 +110,16 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
     public void saveUserLayout() throws PortalException {
         man.saveUserLayout();
     }
-    
+
     @Override
     public Set<String> getAllSubscribedChannels() {
-        final Set<String> allSubscribedChannels = new LinkedHashSet<String>(man.getAllSubscribedChannels());
-        
+        final Set<String> allSubscribedChannels =
+                new LinkedHashSet<String>(man.getAllSubscribedChannels());
+
         for (final String subscribeId : mSubIdMap.keySet()) {
             allSubscribedChannels.add(subscribeId);
         }
-        
+
         return allSubscribedChannels;
     }
 
@@ -137,29 +132,37 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
         // means that it may be a requested (transient) node.
         try {
             ulnd = man.getNode(nodeId);
-        } catch( PortalException pe ) {
+        } catch (PortalException pe) {
             if (log.isDebugEnabled())
-                log.debug("Node '" + nodeId + "' is not in layout, " +
-                           "checking for a transient node...");
+                log.debug(
+                        "Node '"
+                                + nodeId
+                                + "' is not in layout, "
+                                + "checking for a transient node...");
         }
 
-        if ( null == ulnd ) {
+        if (null == ulnd) {
             // if the requested node hasn't been returned yet, it's
             // likely it's a transient node that isn't actually part of
             // the layout
-            ulnd = getTransientNode( nodeId );
+            ulnd = getTransientNode(nodeId);
         }
 
         return ulnd;
     }
 
-    public IUserLayoutNodeDescription addNode(IUserLayoutNodeDescription node,String parentId,String nextSiblingId) throws PortalException {
-        return man.addNode(node,parentId,nextSiblingId);
+    public IUserLayoutNodeDescription addNode(
+            IUserLayoutNodeDescription node, String parentId, String nextSiblingId)
+            throws PortalException {
+        return man.addNode(node, parentId, nextSiblingId);
     }
 
-    public boolean moveNode(String nodeId, String parentId, String nextSiblingId) throws PortalException {
+    public boolean moveNode(String nodeId, String parentId, String nextSiblingId)
+            throws PortalException {
         // allow all moves, except for those related to the transient channels and folders
-        if(nodeId!=null && (!mSubIdMap.containsKey(nodeId)) && (!nodeId.equals(TRANSIENT_FOLDER_ID))) {
+        if (nodeId != null
+                && (!mSubIdMap.containsKey(nodeId))
+                && (!nodeId.equals(TRANSIENT_FOLDER_ID))) {
             return man.moveNode(nodeId, parentId, nextSiblingId);
         } else {
             return false;
@@ -168,7 +171,9 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
 
     public boolean deleteNode(String nodeId) throws PortalException {
         // allow all deletions, except for those related to the transient channels and folders
-        if(nodeId!=null && (!mSubIdMap.containsKey(nodeId)) && (!nodeId.equals(TRANSIENT_FOLDER_ID))) {
+        if (nodeId != null
+                && (!mSubIdMap.containsKey(nodeId))
+                && (!nodeId.equals(TRANSIENT_FOLDER_ID))) {
             return man.deleteNode(nodeId);
         } else {
             return false;
@@ -177,22 +182,28 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
 
     public boolean updateNode(IUserLayoutNodeDescription node) throws PortalException {
         // allow all updates, except for those related to the transient channels and folders
-        String nodeId=node.getId();
-        if(nodeId!=null && (!mSubIdMap.containsKey(nodeId)) && (!nodeId.equals(TRANSIENT_FOLDER_ID))) {
+        String nodeId = node.getId();
+        if (nodeId != null
+                && (!mSubIdMap.containsKey(nodeId))
+                && (!nodeId.equals(TRANSIENT_FOLDER_ID))) {
             return man.updateNode(node);
         } else {
             return false;
         }
     }
 
-
-    public boolean canAddNode(IUserLayoutNodeDescription node, String parentId, String nextSiblingId) throws PortalException {
+    public boolean canAddNode(
+            IUserLayoutNodeDescription node, String parentId, String nextSiblingId)
+            throws PortalException {
         return man.canAddNode(node, parentId, nextSiblingId);
     }
 
-    public boolean canMoveNode(String nodeId, String parentId, String nextSiblingId) throws PortalException {
+    public boolean canMoveNode(String nodeId, String parentId, String nextSiblingId)
+            throws PortalException {
         // allow all moves, except for those related to the transient channels and folders
-        if(nodeId!=null && (!mSubIdMap.containsKey(nodeId)) && (!nodeId.equals(TRANSIENT_FOLDER_ID))) {
+        if (nodeId != null
+                && (!mSubIdMap.containsKey(nodeId))
+                && (!nodeId.equals(TRANSIENT_FOLDER_ID))) {
             return man.canMoveNode(nodeId, parentId, nextSiblingId);
         } else {
             return false;
@@ -201,7 +212,9 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
 
     public boolean canDeleteNode(String nodeId) throws PortalException {
         // allow all deletions, except for those related to the transient channels and folders
-        if(nodeId!=null && (!mSubIdMap.containsKey(nodeId)) && (!nodeId.equals(TRANSIENT_FOLDER_ID))) {
+        if (nodeId != null
+                && (!mSubIdMap.containsKey(nodeId))
+                && (!nodeId.equals(TRANSIENT_FOLDER_ID))) {
             return man.canDeleteNode(nodeId);
         } else {
             return false;
@@ -210,8 +223,10 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
 
     public boolean canUpdateNode(IUserLayoutNodeDescription node) throws PortalException {
         // allow all updates, except for those related to the transient channels and folders
-        String nodeId=node.getId();
-        if(nodeId!=null && (!mSubIdMap.containsKey(nodeId)) && (!nodeId.equals(TRANSIENT_FOLDER_ID))) {
+        String nodeId = node.getId();
+        if (nodeId != null
+                && (!mSubIdMap.containsKey(nodeId))
+                && (!nodeId.equals(TRANSIENT_FOLDER_ID))) {
             return man.canUpdateNode(node);
         } else {
             return false;
@@ -246,7 +261,6 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
         return man.getPreviousSiblingId(nodeId);
     }
 
-
     public String getCacheKey() throws PortalException {
         // we don't need to worry about extending the base cache key here,
         // because the transient channels are always rendered in a focused
@@ -261,146 +275,142 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
         return man.getLayoutId();
     }
 
-    public String getRootFolderId(){
+    public String getRootFolderId() {
         return man.getRootFolderId();
     }
-    
+
     /**
-                 * Returns the depth of a node in the layout tree.
-                 *
-                 * @param nodeId a <code>String</code> value
-                 * @return a depth value
-                 * @exception PortalException if an error occurs
-                 */
+     * Returns the depth of a node in the layout tree.
+     *
+     * @param nodeId a <code>String</code> value
+     * @return a depth value
+     * @exception PortalException if an error occurs
+     */
     public int getDepth(String nodeId) throws PortalException {
         return man.getDepth(nodeId);
     }
 
-
-    public IUserLayoutNodeDescription createNodeDescription( LayoutNodeType nodeType ) throws PortalException {
+    public IUserLayoutNodeDescription createNodeDescription(LayoutNodeType nodeType)
+            throws PortalException {
         return man.createNodeDescription(nodeType);
     }
-
 
     /**
      * Given a subscribe Id, return a ChannelDefinition.
      *
-     * @param subId  the subscribe id for the ChannelDefinition.
+     * @param subId the subscribe id for the ChannelDefinition.
      * @return a <code>ChannelDefinition</code>
-     **/
-    protected IPortletDefinition getChannelDefinition( String subId )
-        throws PortalException
-    {
+     */
+    protected IPortletDefinition getChannelDefinition(String subId) throws PortalException {
         IPortletDefinition chanDef = mChanMap.get(subId);
 
-        if ( null == chanDef ){
+        if (null == chanDef) {
             String fname = getFname(subId);
             if (log.isDebugEnabled())
-                log.debug("TransientUserLayoutManagerWrapper>>getChannelDefinition, " +
-                           "attempting to get a channel definition using functional name: " + fname );
-            try{
-            	chanDef = PortletDefinitionRegistryLocator.getPortletDefinitionRegistry().getPortletDefinitionByFname(fname);
+                log.debug(
+                        "TransientUserLayoutManagerWrapper>>getChannelDefinition, "
+                                + "attempting to get a channel definition using functional name: "
+                                + fname);
+            try {
+                chanDef =
+                        PortletDefinitionRegistryLocator.getPortletDefinitionRegistry()
+                                .getPortletDefinitionByFname(fname);
+            } catch (Exception e) {
+                throw new PortalException(
+                        "Failed to get channel information " + "for subscribeId: " + subId);
             }
-            catch( Exception e ){
-                throw new PortalException( "Failed to get channel information " +
-                                           "for subscribeId: " + subId );
-            }
-            mChanMap.put(subId,chanDef);
+            mChanMap.put(subId, chanDef);
         }
 
         return chanDef;
     }
 
-
     /**
      * Given a subscribe Id, return its functional name.
      *
-     * @param subId  the subscribe id to lookup
+     * @param subId the subscribe id to lookup
      * @return the subscribe id's functional name
-     **/
-    public String getFname( String subId )
-    {
+     */
+    public String getFname(String subId) {
         return mSubIdMap.get(subId);
     }
-    
+
     public boolean isTransientChannel(String subId) {
         return mSubIdMap.containsKey(subId);
     }
 
-
     /**
      * Given an functional name, return its subscribe id.
      *
-     * @param fname  the functional name to lookup
+     * @param fname the functional name to lookup
      * @return the fname's subscribe id.
-     **/
+     */
     public String getSubscribeId(String fname) throws PortalException {
 
         // see if a given subscribe id is already in the map
-        String subId=mFnameMap.get(fname);
-        if(subId==null) {
+        String subId = mFnameMap.get(fname);
+        if (subId == null) {
             // see if a given subscribe id is already in the layout
             subId = man.getSubscribeId(fname);
         }
 
         // obtain a description of the transient channel and
         // assign a new transient channel id
-        if ( subId == null ) {
+        if (subId == null) {
             try {
-            	IPortletDefinition chanDef = PortletDefinitionRegistryLocator.getPortletDefinitionRegistry().getPortletDefinitionByFname(fname);
-                if(chanDef!=null) {
+                IPortletDefinition chanDef =
+                        PortletDefinitionRegistryLocator.getPortletDefinitionRegistry()
+                                .getPortletDefinitionByFname(fname);
+                if (chanDef != null) {
                     // assign a new id
                     subId = getNextSubscribeId();
-                    mFnameMap.put(fname,subId);
-                    mSubIdMap.put(subId,fname);
-                    mChanMap.put(subId,chanDef);
+                    mFnameMap.put(fname, subId);
+                    mSubIdMap.put(subId, fname);
+                    mChanMap.put(subId, chanDef);
                 }
             } catch (Exception e) {
-                log.error("TransientUserLayoutManagerWrapper::getSubscribeId() : " +
-                        "an exception encountered while trying to obtain " +
-                        "ChannelDefinition for fname \""+fname+"\" : "+e);
-                subId=null;
+                log.error(
+                        "TransientUserLayoutManagerWrapper::getSubscribeId() : "
+                                + "an exception encountered while trying to obtain "
+                                + "ChannelDefinition for fname \""
+                                + fname
+                                + "\" : "
+                                + e);
+                subId = null;
             }
         }
         return subId;
     }
-    
-    /* (non-Javadoc)
-	 * @see org.apereo.portal.layout.IUserLayoutManager#getSubscribeId(java.lang.String, java.lang.String)
-	 */
-	@Override
-	public String getSubscribeId(String parentFolderId, String fname) {
-		return this.man.getSubscribeId(parentFolderId, fname);
-	}
 
-	/**
-     * Get the current focused layout subscribe id.
-     **/
-    public String getFocusedId()
-    {
+    /* (non-Javadoc)
+     * @see org.apereo.portal.layout.IUserLayoutManager#getSubscribeId(java.lang.String, java.lang.String)
+     */
+    @Override
+    public String getSubscribeId(String parentFolderId, String fname) {
+        return this.man.getSubscribeId(parentFolderId, fname);
+    }
+
+    /** Get the current focused layout subscribe id. */
+    public String getFocusedId() {
         return mFocusedId;
     }
 
     /**
      * Set the current focused layout subscribe id.
      *
-     * @param subscribeId  Id to be set as focused.
-     **/
-    public void setFocusedId(String subscribeId)
-    {
+     * @param subscribeId Id to be set as focused.
+     */
+    public void setFocusedId(String subscribeId) {
         mFocusedId = subscribeId;
     }
-
 
     /**
      * Return an IUserLayoutChannelDescription by way of nodeId
      *
-     * @param nodeId  the node (subscribe) id to get the channel for.
+     * @param nodeId the node (subscribe) id to get the channel for.
      * @return a <code>IUserLayoutNodeDescription</code>
-     **/
-    private IUserLayoutChannelDescription getTransientNode(String nodeId)
-        throws PortalException
-    {
+     */
+    private IUserLayoutChannelDescription getTransientNode(String nodeId) throws PortalException {
         // get fname from subscribe id
         final String fname = getFname(nodeId);
         if (null == fname || fname.equals("")) {
@@ -412,19 +422,21 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
             IPortletDefinition chanDef = mChanMap.get(nodeId);
 
             if (null == chanDef) {
-            	chanDef = PortletDefinitionRegistryLocator.getPortletDefinitionRegistry().getPortletDefinitionByFname(fname);
+                chanDef =
+                        PortletDefinitionRegistryLocator.getPortletDefinitionRegistry()
+                                .getPortletDefinitionByFname(fname);
                 mChanMap.put(nodeId, chanDef);
             }
 
             return createUserLayoutChannelDescription(nodeId, chanDef);
 
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new PortalException("Failed to obtain channel definition using fname: " + fname);
         }
     }
-    
-    protected IUserLayoutChannelDescription createUserLayoutChannelDescription(String nodeId, IPortletDefinition chanDef) {
+
+    protected IUserLayoutChannelDescription createUserLayoutChannelDescription(
+            String nodeId, IPortletDefinition chanDef) {
         IUserLayoutChannelDescription ulnd = new UserLayoutChannelDescription();
 
         ulnd.setId(nodeId);
@@ -438,26 +450,22 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
         ulnd.setChannelTypeId("" + chanDef.getType().getId());
         ulnd.setFunctionalName(chanDef.getFName());
         ulnd.setTimeout(chanDef.getTimeout());
-        
+
         Set<IPortletDefinitionParameter> parms = chanDef.getParameters();
-        for ( IPortletDefinitionParameter parm : parms )
-        {
-            ulnd.setParameterValue(parm.getName(),parm.getValue());
+        for (IPortletDefinitionParameter parm : parms) {
+            ulnd.setParameterValue(parm.getName(), parm.getValue());
         }
-        
+
         return ulnd;
     }
-
 
     /**
      * Return the next sequential subscription id.
      *
      * @return a subscribe id
-     **/
-    private synchronized String getNextSubscribeId()
-    {
-        mSubId ++;
+     */
+    private synchronized String getNextSubscribeId() {
+        mSubId++;
         return SUBSCRIBE_PREFIX + mSubId;
     }
 }
-

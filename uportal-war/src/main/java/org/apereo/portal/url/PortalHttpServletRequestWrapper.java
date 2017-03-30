@@ -1,20 +1,16 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.url;
 
@@ -26,10 +22,8 @@ import java.util.LinkedHashSet;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -52,27 +46,33 @@ import org.apereo.portal.utils.web.AbstractHttpServletRequestWrapper;
  */
 public class PortalHttpServletRequestWrapper extends AbstractHttpServletRequestWrapper {
     /**
-     * {@link javax.servlet.http.HttpServletRequest} attribute that this {@link HttpServletRequest} object
-     * will be available.
+     * {@link javax.servlet.http.HttpServletRequest} attribute that this {@link HttpServletRequest}
+     * object will be available.
      */
-    public static final String ATTRIBUTE__HTTP_SERVLET_REQUEST = PortalHttpServletRequestWrapper.class.getName() + ".PORTAL_HTTP_SERVLET_REQUEST";
+    public static final String ATTRIBUTE__HTTP_SERVLET_REQUEST =
+            PortalHttpServletRequestWrapper.class.getName() + ".PORTAL_HTTP_SERVLET_REQUEST";
     /**
-     * {@link javax.servlet.http.HttpServletRequest} attribute that the {@link HttpServletResponse} object
-     * will be available.
+     * {@link javax.servlet.http.HttpServletRequest} attribute that the {@link HttpServletResponse}
+     * object will be available.
      */
-    public static final String ATTRIBUTE__HTTP_SERVLET_RESPONSE = PortalHttpServletRequestWrapper.class.getName() + ".PORTAL_HTTP_SERVLET_RESPONSE";
-    
+    public static final String ATTRIBUTE__HTTP_SERVLET_RESPONSE =
+            PortalHttpServletRequestWrapper.class.getName() + ".PORTAL_HTTP_SERVLET_RESPONSE";
+
     protected final Log logger = LogFactory.getLog(this.getClass());
-    
+
     private final Map<String, String> additionalHeaders = new LinkedHashMap<String, String>();
     private final HttpServletResponse httpServletResponse;
     private final IUserInstanceManager userInstanceManager;
 
     /**
      * Construct a writable this.request wrapping a real this.request
+     *
      * @param request Request to wrap, can not be null.
      */
-    public PortalHttpServletRequestWrapper(HttpServletRequest request, HttpServletResponse response, IUserInstanceManager userInstanceManager) {
+    public PortalHttpServletRequestWrapper(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            IUserInstanceManager userInstanceManager) {
         super(request);
         Validate.notNull(response);
         Validate.notNull(userInstanceManager);
@@ -84,9 +84,11 @@ public class PortalHttpServletRequestWrapper extends AbstractHttpServletRequestW
     public void setHeader(String name, String value) {
         this.additionalHeaders.put(name, value);
     }
+
     public void setDateHeader(String name, String value) {
         this.additionalHeaders.put(name, value);
     }
+
     public void setIntHeader(String name, String value) {
         this.additionalHeaders.put(name, value);
     }
@@ -101,7 +103,8 @@ public class PortalHttpServletRequestWrapper extends AbstractHttpServletRequestW
             final long longValue = Long.parseLong(value);
             return longValue;
         } catch (NumberFormatException nfe) {
-            throw new IllegalArgumentException("Header '" + name + "' cannot be converted to long: '" + value + "'", nfe);
+            throw new IllegalArgumentException(
+                    "Header '" + name + "' cannot be converted to long: '" + value + "'", nfe);
         }
     }
 
@@ -111,7 +114,7 @@ public class PortalHttpServletRequestWrapper extends AbstractHttpServletRequestW
         if (value == null) {
             return super.getHeader(name);
         }
-        
+
         return String.valueOf(value);
     }
 
@@ -121,21 +124,23 @@ public class PortalHttpServletRequestWrapper extends AbstractHttpServletRequestW
         if (value == null) {
             return super.getHeaders(name);
         }
-        
+
         return Collections.enumeration(Collections.singleton(value));
     }
 
     @Override
     public Enumeration<String> getHeaderNames() {
         final Set<String> headerNames = new LinkedHashSet<String>();
-        
-        for (final Enumeration<String> headerNamesEnum = super.getHeaderNames(); headerNamesEnum.hasMoreElements();) {
+
+        for (final Enumeration<String> headerNamesEnum = super.getHeaderNames();
+                headerNamesEnum.hasMoreElements();
+                ) {
             final String name = headerNamesEnum.nextElement();
             headerNames.add(name);
         }
-        
+
         headerNames.addAll(this.additionalHeaders.keySet());
-        
+
         return Collections.enumeration(headerNames);
     }
 
@@ -149,10 +154,11 @@ public class PortalHttpServletRequestWrapper extends AbstractHttpServletRequestW
             final int intValue = Integer.parseInt(value);
             return intValue;
         } catch (NumberFormatException nfe) {
-            throw new IllegalArgumentException("Header '" + name + "' cannot be converted to int: '" + value + "'", nfe);
+            throw new IllegalArgumentException(
+                    "Header '" + name + "' cannot be converted to int: '" + value + "'", nfe);
         }
     }
-    
+
     @Override
     public Object getAttribute(String name) {
         if (ATTRIBUTE__HTTP_SERVLET_REQUEST.equals(name)) {
@@ -161,7 +167,7 @@ public class PortalHttpServletRequestWrapper extends AbstractHttpServletRequestW
         if (ATTRIBUTE__HTTP_SERVLET_RESPONSE.equals(name)) {
             return this.httpServletResponse;
         }
-        
+
         return super.getAttribute(name);
     }
 
@@ -180,22 +186,24 @@ public class PortalHttpServletRequestWrapper extends AbstractHttpServletRequestW
         if (super.getSession(false) == null) {
             return super.getUserPrincipal();
         }
-        
-        final IUserInstance userInstance = this.userInstanceManager.getUserInstance(this.getWrappedRequest());
+
+        final IUserInstance userInstance =
+                this.userInstanceManager.getUserInstance(this.getWrappedRequest());
         final IPerson person = userInstance.getPerson();
         if (person == null || person.isGuest()) {
             return null;
         }
-        
+
         return person;
     }
 
     /**
-     * Determines whether or not the user is in the given role. The wrapped request
-     * is consulted first then the {@link GroupService} is used to determine if a
-     * group exists for the specified role and if the user is a member of it.
+     * Determines whether or not the user is in the given role. The wrapped request is consulted
+     * first then the {@link GroupService} is used to determine if a group exists for the specified
+     * role and if the user is a member of it.
      *
-     * @see org.apereo.portal.utils.web.AbstractHttpServletRequestWrapper#isUserInRole(java.lang.String)
+     * @see
+     *     org.apereo.portal.utils.web.AbstractHttpServletRequestWrapper#isUserInRole(java.lang.String)
      */
     @Override
     public boolean isUserInRole(String role) {
@@ -212,13 +220,18 @@ public class PortalHttpServletRequestWrapper extends AbstractHttpServletRequestW
         //Find the group for the role, if not found return false
         IEntityGroup groupForRole = GroupService.findGroup(role);
         if (groupForRole == null) {
-            final EntityIdentifier[] results = GroupService.searchForGroups(role, GroupService.IS, IPerson.class);
+            final EntityIdentifier[] results =
+                    GroupService.searchForGroups(role, GroupService.IS, IPerson.class);
             if (results == null || results.length == 0) {
                 return false;
             }
 
             if (results.length > 1) {
-                this.logger.warn(results.length + " groups were found for role '" + role + "'. The first result will be used.");
+                this.logger.warn(
+                        results.length
+                                + " groups were found for role '"
+                                + role
+                                + "'. The first result will be used.");
             }
 
             IGroupMember member = GroupService.getGroupMember(results[0]);
@@ -229,11 +242,12 @@ public class PortalHttpServletRequestWrapper extends AbstractHttpServletRequestW
         }
 
         //Load the group information about the current user
-        final IUserInstance userInstance = this.userInstanceManager.getUserInstance(this.getWrappedRequest());
+        final IUserInstance userInstance =
+                this.userInstanceManager.getUserInstance(this.getWrappedRequest());
         final IPerson person = userInstance.getPerson();
         final EntityIdentifier personEntityId = person.getEntityIdentifier();
         final IGroupMember personGroupMember = GroupService.getGroupMember(personEntityId);
-        
+
         return personGroupMember.isDeepMemberOf(groupForRole);
     }
 
@@ -245,8 +259,9 @@ public class PortalHttpServletRequestWrapper extends AbstractHttpServletRequestW
         if (super.getSession(false) == null) {
             return super.getLocale();
         }
-        
-        final IUserInstance userInstance = this.userInstanceManager.getUserInstance(this.getWrappedRequest());
+
+        final IUserInstance userInstance =
+                this.userInstanceManager.getUserInstance(this.getWrappedRequest());
         final LocaleManager localeManager = userInstance.getLocaleManager();
         final Locale[] locales = localeManager.getLocales();
         return locales[0];
@@ -260,11 +275,11 @@ public class PortalHttpServletRequestWrapper extends AbstractHttpServletRequestW
         if (super.getSession(false) == null) {
             return super.getLocales();
         }
-        
-        final IUserInstance userInstance = this.userInstanceManager.getUserInstance(this.getWrappedRequest());
+
+        final IUserInstance userInstance =
+                this.userInstanceManager.getUserInstance(this.getWrappedRequest());
         final LocaleManager localeManager = userInstance.getLocaleManager();
         final Locale[] locales = localeManager.getLocales();
         return new ArrayEnumerator<Locale>(locales);
     }
-
 }

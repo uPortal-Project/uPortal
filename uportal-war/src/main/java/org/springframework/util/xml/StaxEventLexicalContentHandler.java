@@ -1,20 +1,16 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.springframework.util.xml;
 
@@ -27,7 +23,6 @@ import javax.xml.stream.events.DTD;
 import javax.xml.stream.events.EntityReference;
 import javax.xml.stream.events.XMLEvent;
 import javax.xml.stream.util.XMLEventConsumer;
-
 import org.springframework.util.Assert;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
@@ -37,19 +32,20 @@ import org.xml.sax.ext.LexicalHandler;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class StaxEventLexicalContentHandler extends StaxEventContentHandler implements LexicalHandler {
+public class StaxEventLexicalContentHandler extends StaxEventContentHandler
+        implements LexicalHandler {
     public static final String EMPTY_SYSTEM_IDENTIFIER = "EMPTY";
-    
+
     private final XMLEventFactory eventFactory;
     private final XMLEventConsumer eventConsumer;
-    
+
     private StringBuilder cdata = null;
 
     public StaxEventLexicalContentHandler(XMLEventConsumer consumer, XMLEventFactory factory) {
         super(consumer, factory);
-        
+
         Assert.notNull(consumer, "'consumer' must not be null");
-        
+
         this.eventFactory = factory;
         this.eventConsumer = consumer;
     }
@@ -57,10 +53,10 @@ public class StaxEventLexicalContentHandler extends StaxEventContentHandler impl
     public StaxEventLexicalContentHandler(XMLEventConsumer consumer) {
         this(consumer, XMLEventFactory.newInstance());
     }
-    
+
     /**
-     * Essentially the same logic as the parent but uses a static Location impl to avoid
-     * this$0 reference holding on to StaxEventLexicalContentHandler instances 
+     * Essentially the same logic as the parent but uses a static Location impl to avoid this$0
+     * reference holding on to StaxEventLexicalContentHandler instances
      */
     public void setDocumentLocator(final Locator locator) {
         if (locator != null) {
@@ -76,12 +72,12 @@ public class StaxEventLexicalContentHandler extends StaxEventContentHandler impl
         // System identifier must be specified to print DOCTYPE.
 
         // This method is only called if the system identifier is specified.
-        // Since the HTML5 DOCTYPE declaration does not include a system 
+        // Since the HTML5 DOCTYPE declaration does not include a system
         // identifier, this code allows the static string EMPTY to serve as
         // a temporary system id for doctypes which should not have one set.
 
         // If public identifier is specified print 'PUBLIC
-        // <public> <system>', or if a non-'EMPTY' system identifier is 
+        // <public> <system>', or if a non-'EMPTY' system identifier is
         // specified, print 'SYSTEM <system>'.
 
         final StringBuilder dtdBuilder = new StringBuilder("<!DOCTYPE ");
@@ -89,8 +85,7 @@ public class StaxEventLexicalContentHandler extends StaxEventContentHandler impl
         if (publicId != null) {
             dtdBuilder.append(" PUBLIC \"").append(publicId).append("\" \"");
             dtdBuilder.append(systemId).append("\"");
-        }
-        else if (!EMPTY_SYSTEM_IDENTIFIER.equals(systemId)) {
+        } else if (!EMPTY_SYSTEM_IDENTIFIER.equals(systemId)) {
             dtdBuilder.append(" SYSTEM \"");
             dtdBuilder.append(systemId).append("\"");
         }
@@ -99,8 +94,7 @@ public class StaxEventLexicalContentHandler extends StaxEventContentHandler impl
         final DTD event = eventFactory.createDTD(dtdBuilder.toString());
         try {
             this.consumeEvent(event);
-        }
-        catch (XMLStreamException ex) {
+        } catch (XMLStreamException ex) {
             throw new SAXException("Could not create DTD: " + ex.getMessage(), ex);
         }
     }
@@ -122,8 +116,7 @@ public class StaxEventLexicalContentHandler extends StaxEventContentHandler impl
         final EntityReference event = eventFactory.createEntityReference(name, null);
         try {
             this.consumeEvent(event);
-        }
-        catch (XMLStreamException ex) {
+        } catch (XMLStreamException ex) {
             throw new SAXException("Could not create Entity: " + ex.getMessage(), ex);
         }
     }
@@ -154,12 +147,11 @@ public class StaxEventLexicalContentHandler extends StaxEventContentHandler impl
         cdata = null;
         try {
             this.consumeEvent(event);
-        }
-        catch (XMLStreamException ex) {
+        } catch (XMLStreamException ex) {
             throw new SAXException("Could not create CDATA: " + ex.getMessage(), ex);
         }
     }
-    
+
     /* (non-Javadoc)
      * @see org.springframework.util.xml.StaxEventContentHandler#charactersInternal(char[], int, int)
      */
@@ -167,8 +159,7 @@ public class StaxEventLexicalContentHandler extends StaxEventContentHandler impl
     protected void charactersInternal(char[] ch, int start, int length) throws XMLStreamException {
         if (this.cdata != null) {
             cdata.append(ch, start, length);
-        }
-        else {
+        } else {
             super.charactersInternal(ch, start, length);
         }
     }
@@ -181,17 +172,15 @@ public class StaxEventLexicalContentHandler extends StaxEventContentHandler impl
         final Comment event = eventFactory.createComment(new String(ch, start, length));
         try {
             this.consumeEvent(event);
-        }
-        catch (XMLStreamException ex) {
+        } catch (XMLStreamException ex) {
             throw new SAXException("Could not create Comment: " + ex.getMessage(), ex);
         }
     }
 
-
     private void consumeEvent(XMLEvent event) throws XMLStreamException {
         eventConsumer.add(event);
     }
-    
+
     private static final class LocatorLocation implements Location {
         private final Locator locator;
 

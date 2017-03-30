@@ -1,25 +1,20 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.events.aggr.action;
 
 import java.io.Serializable;
-
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -31,55 +26,67 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
-
 import org.apache.commons.lang.Validate;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Index;
-import org.hibernate.annotations.NaturalId;
-import org.hibernate.annotations.NaturalIdCache;
 import org.apereo.portal.events.aggr.AggregationInterval;
 import org.apereo.portal.events.aggr.BaseAggregationImpl;
 import org.apereo.portal.events.aggr.DateDimension;
 import org.apereo.portal.events.aggr.TimeDimension;
 import org.apereo.portal.events.aggr.groups.AggregatedGroupMapping;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Index;
+import org.hibernate.annotations.NaturalId;
+import org.hibernate.annotations.NaturalIdCache;
 
-/**
- * @author Chris Waymire (chris@waymire.net)
- */
+/** @author Chris Waymire (chris@waymire.net) */
 @Entity
 @Table(name = "UP_SEARCH_REQ_AGGR")
-@Inheritance(strategy= InheritanceType.JOINED)
+@Inheritance(strategy = InheritanceType.JOINED)
 @SequenceGenerator(
-        name="UP_SEARCH_REQ_AGGR_GEN",
-        sequenceName="UP_SEARCH_REQ_AGGR_SEQ",
-        allocationSize=1000
+    name = "UP_SEARCH_REQ_AGGR_GEN",
+    sequenceName = "UP_SEARCH_REQ_AGGR_SEQ",
+    allocationSize = 1000
 )
 @TableGenerator(
-        name="UP_SEARCH_REQ_AGGR_GEN",
-        pkColumnValue="UP_SEARCH_REQ_AGGR_PROP",
-        allocationSize=1000
+    name = "UP_SEARCH_REQ_AGGR_GEN",
+    pkColumnValue = "UP_SEARCH_REQ_AGGR_PROP",
+    allocationSize = 1000
 )
 @org.hibernate.annotations.Table(
-        appliesTo = "UP_SEARCH_REQ_AGGR",
-        indexes = {
-                @Index(name = "IDX_UP_SEARCH_REQ_AGGR_DTI", columnNames = { "DATE_DIMENSION_ID", "TIME_DIMENSION_ID", "AGGR_INTERVAL" }),
-                @Index(name = "IDX_UP_SEARCH_REQ_INTRVL", columnNames = { "AGGR_INTERVAL" }),
-                @Index(name = "IDX_UP_SEARCH_REQ_GRP", columnNames = { "AGGR_GROUP_ID" }),
-                @Index(name = "IDX_UP_SEARCH_REQ_TRM", columnNames = { "SEARCH_TERM" })
-        })
-@NaturalIdCache(region = "org.apereo.portal.events.aggr.action.SearchRequestAggregationImpl-NaturalId")
+    appliesTo = "UP_SEARCH_REQ_AGGR",
+    indexes = {
+        @Index(
+            name = "IDX_UP_SEARCH_REQ_AGGR_DTI",
+            columnNames = {"DATE_DIMENSION_ID", "TIME_DIMENSION_ID", "AGGR_INTERVAL"}
+        ),
+        @Index(
+            name = "IDX_UP_SEARCH_REQ_INTRVL",
+            columnNames = {"AGGR_INTERVAL"}
+        ),
+        @Index(
+            name = "IDX_UP_SEARCH_REQ_GRP",
+            columnNames = {"AGGR_GROUP_ID"}
+        ),
+        @Index(
+            name = "IDX_UP_SEARCH_REQ_TRM",
+            columnNames = {"SEARCH_TERM"}
+        )
+    }
+)
+@NaturalIdCache(
+    region = "org.apereo.portal.events.aggr.action.SearchRequestAggregationImpl-NaturalId"
+)
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class SearchRequestAggregationImpl
-        extends BaseAggregationImpl<SearchRequestAggregationKey, SearchRequestAggregationDiscriminator>
+        extends BaseAggregationImpl<
+                SearchRequestAggregationKey, SearchRequestAggregationDiscriminator>
         implements SearchRequestAggregation, Serializable {
     private static final long serialVersionUID = 1L;
 
-
     @Id
     @GeneratedValue(generator = "UP_SEARCH_REQ_AGGR_GEN")
-    @Column(name="ID")
+    @Column(name = "ID")
     private final long id;
 
     @NaturalId
@@ -92,10 +99,8 @@ public class SearchRequestAggregationImpl
     @Column(name = "STATS_COMPLETE", nullable = false)
     private boolean complete = false;
 
-    @Transient
-    private SearchRequestAggregationKey aggregationKey;
-    @Transient
-    private SearchRequestAggregationDiscriminator aggregationDiscriminator;
+    @Transient private SearchRequestAggregationKey aggregationKey;
+    @Transient private SearchRequestAggregationDiscriminator aggregationDiscriminator;
 
     @SuppressWarnings("unused")
     private SearchRequestAggregationImpl() {
@@ -104,8 +109,12 @@ public class SearchRequestAggregationImpl
         this.searchTerm = null;
     }
 
-    SearchRequestAggregationImpl(TimeDimension timeDimension, DateDimension dateDimension,
-                                 AggregationInterval interval, AggregatedGroupMapping aggregatedGroup, String searchTerm) {
+    SearchRequestAggregationImpl(
+            TimeDimension timeDimension,
+            DateDimension dateDimension,
+            AggregationInterval interval,
+            AggregatedGroupMapping aggregatedGroup,
+            String searchTerm) {
         super(timeDimension, dateDimension, interval, aggregatedGroup);
 
         Validate.notNull(searchTerm);
@@ -173,28 +182,29 @@ public class SearchRequestAggregationImpl
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (!super.equals(obj))
-            return false;
-        if (!(obj instanceof SearchRequestAggregation))
-            return false;
+        if (this == obj) return true;
+        if (!super.equals(obj)) return false;
+        if (!(obj instanceof SearchRequestAggregation)) return false;
         SearchRequestAggregation other = (SearchRequestAggregation) obj;
         if (searchTerm == null) {
-            if (other.getSearchTerm() != null)
-                return false;
-        }
-        else if (!searchTerm.equals(other.getSearchTerm()))
-            return false;
+            if (other.getSearchTerm() != null) return false;
+        } else if (!searchTerm.equals(other.getSearchTerm())) return false;
         return true;
     }
 
     @Override
     public String toString() {
         return this.getClass().getSimpleName()
-                + "[searchTerm=" + searchTerm
-                + ", timeDimension=" + getTimeDimension()
-                + ", dateDimension=" + getDateDimension() + ", interval=" + getInterval()
-                + ", aggregatedGroup=" + getAggregatedGroup() + "]";
+                + "[searchTerm="
+                + searchTerm
+                + ", timeDimension="
+                + getTimeDimension()
+                + ", dateDimension="
+                + getDateDimension()
+                + ", interval="
+                + getInterval()
+                + ", aggregatedGroup="
+                + getAggregatedGroup()
+                + "]";
     }
 }

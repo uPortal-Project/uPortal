@@ -71,6 +71,12 @@
         <name>showChrome</name>
         <value>false</value>
     </parameter>
+    <portlet-preference>
+        <name>backgroundImageCaptions</name>
+        <value>Galaxy</value>
+        <value>Mountain</value>
+        <value>Nebula</value>
+    </portlet-preference>
     <!--
      | Beginning with uPortal 5.0, image paths in this portlet-definition
      | support ${portalContext} as a replacement token for the context path of

@@ -1,27 +1,22 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.layout.dlm.remoting;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.apache.commons.lang.builder.CompareToBuilder;
 import org.apereo.portal.groups.IEntityGroup;
 import org.apereo.portal.groups.IGroupMember;
@@ -30,7 +25,7 @@ import org.apereo.portal.portlets.groupselector.EntityEnum;
 import org.apereo.portal.security.IPermission;
 
 /**
- * <p>Entity bean for JSON output.  Used for categories, groups, and people.</p>
+ * Entity bean for JSON output. Used for categories, groups, and people.
  *
  * @author Drew Mazurek
  */
@@ -48,8 +43,7 @@ public class JsonEntityBean implements Serializable, Comparable<JsonEntityBean> 
     private List<JsonEntityBean> children = new ArrayList<JsonEntityBean>();
     private boolean childrenInitialized = false;
 
-    public JsonEntityBean() {
-    }
+    public JsonEntityBean() {}
 
     public JsonEntityBean(PortletCategory category) {
         this.entityType = EntityEnum.CATEGORY;
@@ -57,16 +51,16 @@ public class JsonEntityBean implements Serializable, Comparable<JsonEntityBean> 
         this.name = category.getName();
         this.creatorId = category.getCreatorId();
         this.description = category.getDescription();
-        this.targetString = category.getId();  // e.g. 'local.25'
+        this.targetString = category.getId(); // e.g. 'local.25'
     }
 
     public JsonEntityBean(IGroupMember groupMember, EntityEnum entityType) {
         this.entityType = entityType;
         this.id = groupMember.getKey();
-        String prefix = "";  // default
+        String prefix = ""; // default
         switch (entityType) {
             case PORTLET:
-                prefix = IPermission.PORTLET_PREFIX;  // E.g. groupMember.getKey()=56
+                prefix = IPermission.PORTLET_PREFIX; // E.g. groupMember.getKey()=56
                 break;
             case PERSON:
                 // No prefix -- e.g. groupMember.getKey()=admin
@@ -83,7 +77,7 @@ public class JsonEntityBean implements Serializable, Comparable<JsonEntityBean> 
         this.name = entityGroup.getName();
         this.creatorId = entityGroup.getCreatorID();
         this.description = entityGroup.getDescription();
-        this.targetString = entityGroup.getKey();  // e.g. 'local.19' and 'pags.Authenticated Users'
+        this.targetString = entityGroup.getKey(); // e.g. 'local.19' and 'pags.Authenticated Users'
     }
 
     public EntityEnum getEntityType() {
@@ -143,9 +137,9 @@ public class JsonEntityBean implements Serializable, Comparable<JsonEntityBean> 
     }
 
     /**
-     * Identifies this bean uniquely as a permissions target.  NOTE:  This id is
-     * not the fname (for portlets) or name field (for groups), but rater a
-     * unique String like 'PORTLET_ID.19' or 'local.36' or 'pags.Authenticated Users'
+     * Identifies this bean uniquely as a permissions target. NOTE: This id is not the fname (for
+     * portlets) or name field (for groups), but rater a unique String like 'PORTLET_ID.19' or
+     * 'local.36' or 'pags.Authenticated Users'
      *
      * @since uPortal 4.0.14
      */
@@ -153,29 +147,24 @@ public class JsonEntityBean implements Serializable, Comparable<JsonEntityBean> 
         return targetString;
     }
 
-    /**
-     *
-     * @since uPortal 4.0.14
-     */
+    /** @since uPortal 4.0.14 */
     public void setTargetString(String targetString) {
         this.targetString = targetString;
     }
 
     /**
-     * Compute a hash based on type and ID to uniquely identify
-     * this bean. This method helps avoid the unlikely case where a
-     * group and person in the same principal list have the
-     * same ID.
+     * Compute a hash based on type and ID to uniquely identify this bean. This method helps avoid
+     * the unlikely case where a group and person in the same principal list have the same ID.
      *
-     * Periods are replaced to avoid issues in JSP EL and form names can't contain spaces.  Also SpEL parsing
-     * of form field names fails with characters such as dash or parenthesis (which PAGS groups can have) and
-     * likely other characters so they are also replaced with underscores.
+     * <p>Periods are replaced to avoid issues in JSP EL and form names can't contain spaces. Also
+     * SpEL parsing of form field names fails with characters such as dash or parenthesis (which
+     * PAGS groups can have) and likely other characters so they are also replaced with underscores.
      *
-     * @return  EntityType + "_" + ID
+     * @return EntityType + "_" + ID
      */
     public String getTypeAndIdHash() {
-        assert(entityType != null);
-        assert(id != null);
+        assert (entityType != null);
+        assert (id != null);
         String idStr = id.replaceAll("\\W", "__");
         return entityType.toString().toLowerCase() + "_" + idStr;
     }
@@ -189,8 +178,8 @@ public class JsonEntityBean implements Serializable, Comparable<JsonEntityBean> 
     }
 
     /**
-     * <p>Convenience method to add a child to this object's list of
-     * children.</p>
+     * Convenience method to add a child to this object's list of children.
+     *
      * @param child Object to add
      */
     public void addChild(JsonEntityBean child) {
@@ -210,12 +199,9 @@ public class JsonEntityBean implements Serializable, Comparable<JsonEntityBean> 
         final int prime = 31;
         int result = 1;
         result = prime * result + (childrenInitialized ? 1231 : 1237);
-        result = prime * result
-                + ((creatorId == null) ? 0 : creatorId.hashCode());
-        result = prime * result
-                + ((description == null) ? 0 : description.hashCode());
-        result = prime * result
-                + ((entityType == null) ? 0 : entityType.hashCode());
+        result = prime * result + ((creatorId == null) ? 0 : creatorId.hashCode());
+        result = prime * result + ((description == null) ? 0 : description.hashCode());
+        result = prime * result + ((entityType == null) ? 0 : entityType.hashCode());
         result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + ((name == null) ? 0 : name.hashCode());
         return result;
@@ -223,40 +209,26 @@ public class JsonEntityBean implements Serializable, Comparable<JsonEntityBean> 
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
+        if (this == obj) return true;
+        if (obj == null) return false;
+        if (getClass() != obj.getClass()) return false;
         JsonEntityBean other = (JsonEntityBean) obj;
-        if (childrenInitialized != other.childrenInitialized)
-            return false;
+        if (childrenInitialized != other.childrenInitialized) return false;
         if (creatorId == null) {
-            if (other.creatorId != null)
-                return false;
-        } else if (!creatorId.equals(other.creatorId))
-            return false;
+            if (other.creatorId != null) return false;
+        } else if (!creatorId.equals(other.creatorId)) return false;
         if (description == null) {
-            if (other.description != null)
-                return false;
-        } else if (!description.equals(other.description))
-            return false;
+            if (other.description != null) return false;
+        } else if (!description.equals(other.description)) return false;
         if (entityType == null) {
-            if (other.entityType != null)
-                return false;
-        } else if (!entityType.equals(other.entityType))
-            return false;
+            if (other.entityType != null) return false;
+        } else if (!entityType.equals(other.entityType)) return false;
         if (id == null) {
-            if (other.id != null)
-                return false;
-        } else if (!id.equals(other.id))
-            return false;
+            if (other.id != null) return false;
+        } else if (!id.equals(other.id)) return false;
         if (name == null) {
-            if (other.name != null)
-                return false;
-        } else if (!name.equals(other.name))
-            return false;
+            if (other.name != null) return false;
+        } else if (!name.equals(other.name)) return false;
         return true;
     }
 
@@ -275,10 +247,18 @@ public class JsonEntityBean implements Serializable, Comparable<JsonEntityBean> 
 
     @Override
     public String toString() {
-        return "JsonEntityBean [entityType=" + entityType + ", id=" + id
-                + ", name=" + name + ", creatorId=" + creatorId
-                + ", description=" + description + ", principalString="
-                + principalString + "]";
+        return "JsonEntityBean [entityType="
+                + entityType
+                + ", id="
+                + id
+                + ", name="
+                + name
+                + ", creatorId="
+                + creatorId
+                + ", description="
+                + description
+                + ", principalString="
+                + principalString
+                + "]";
     }
-
 }

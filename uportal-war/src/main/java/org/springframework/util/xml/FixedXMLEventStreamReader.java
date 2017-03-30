@@ -1,25 +1,20 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.springframework.util.xml;
 
 import java.util.Iterator;
-
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.namespace.QName;
 import javax.xml.stream.Location;
@@ -34,7 +29,7 @@ import javax.xml.stream.events.XMLEvent;
 
 /**
  * Fixed version of Springs's XMLEventStreamReader
- * 
+ *
  * @author Eric Dalquist
  * @version $Revision$
  */
@@ -49,29 +44,21 @@ public class FixedXMLEventStreamReader extends AbstractXMLStreamReader {
         event = eventReader.nextEvent();
     }
 
-    
-    /**
-     * See https://jira.springsource.org/browse/SPR-8457
-     */
+    /** See https://jira.springsource.org/browse/SPR-8457 */
     public String getText() {
         if (event.isCharacters()) { //Handles CHARACTERS, CDATA, & SPACE
             return event.asCharacters().getData();
-        }
-        else if (event.getEventType() == XMLEvent.COMMENT) {
+        } else if (event.getEventType() == XMLEvent.COMMENT) {
             return ((Comment) event).getText();
-        }
-        else {
+        } else {
             throw new IllegalStateException();
         }
     }
-    
-    
 
     public boolean isStandalone() {
         if (event.isStartDocument()) {
             return ((StartDocument) event).isStandalone();
-        }
-        else {
+        } else {
             throw new IllegalStateException();
         }
     }
@@ -79,8 +66,7 @@ public class FixedXMLEventStreamReader extends AbstractXMLStreamReader {
     public String getVersion() {
         if (event.isStartDocument()) {
             return ((StartDocument) event).getVersion();
-        }
-        else {
+        } else {
             return null;
         }
     }
@@ -92,8 +78,7 @@ public class FixedXMLEventStreamReader extends AbstractXMLStreamReader {
     public String getPITarget() {
         if (event.isProcessingInstruction()) {
             return ((ProcessingInstruction) event).getTarget();
-        }
-        else {
+        } else {
             throw new IllegalStateException();
         }
     }
@@ -101,8 +86,7 @@ public class FixedXMLEventStreamReader extends AbstractXMLStreamReader {
     public String getPIData() {
         if (event.isProcessingInstruction()) {
             return ((ProcessingInstruction) event).getData();
-        }
-        else {
+        } else {
             throw new IllegalStateException();
         }
     }
@@ -111,11 +95,9 @@ public class FixedXMLEventStreamReader extends AbstractXMLStreamReader {
         Iterator namespaces;
         if (event.isStartElement()) {
             namespaces = event.asStartElement().getNamespaces();
-        }
-        else if (event.isEndElement()) {
+        } else if (event.isEndElement()) {
             namespaces = event.asEndElement().getNamespaces();
-        }
-        else {
+        } else {
             throw new IllegalStateException();
         }
         return countIterator(namespaces);
@@ -124,8 +106,7 @@ public class FixedXMLEventStreamReader extends AbstractXMLStreamReader {
     public NamespaceContext getNamespaceContext() {
         if (event.isStartElement()) {
             return event.asStartElement().getNamespaceContext();
-        }
-        else {
+        } else {
             throw new IllegalStateException();
         }
     }
@@ -133,11 +114,9 @@ public class FixedXMLEventStreamReader extends AbstractXMLStreamReader {
     public QName getName() {
         if (event.isStartElement()) {
             return event.asStartElement().getName();
-        }
-        else if (event.isEndElement()) {
+        } else if (event.isEndElement()) {
             return event.asEndElement().getName();
-        }
-        else {
+        } else {
             throw new IllegalStateException();
         }
     }
@@ -206,8 +185,7 @@ public class FixedXMLEventStreamReader extends AbstractXMLStreamReader {
     public boolean standaloneSet() {
         if (event.isStartDocument()) {
             return ((StartDocument) event).standaloneSet();
-        }
-        else {
+        } else {
             throw new IllegalStateException();
         }
     }
@@ -231,8 +209,7 @@ public class FixedXMLEventStreamReader extends AbstractXMLStreamReader {
             Attribute attribute = (Attribute) attributes.next();
             if (count == index) {
                 return attribute;
-            }
-            else {
+            } else {
                 count++;
             }
         }
@@ -243,11 +220,9 @@ public class FixedXMLEventStreamReader extends AbstractXMLStreamReader {
         Iterator namespaces;
         if (event.isStartElement()) {
             namespaces = event.asStartElement().getNamespaces();
-        }
-        else if (event.isEndElement()) {
+        } else if (event.isEndElement()) {
             namespaces = event.asEndElement().getNamespaces();
-        }
-        else {
+        } else {
             throw new IllegalStateException();
         }
         int count = 0;
@@ -255,8 +230,7 @@ public class FixedXMLEventStreamReader extends AbstractXMLStreamReader {
             Namespace namespace = (Namespace) namespaces.next();
             if (count == index) {
                 return namespace;
-            }
-            else {
+            } else {
                 count++;
             }
         }

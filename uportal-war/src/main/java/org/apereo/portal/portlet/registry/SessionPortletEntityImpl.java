@@ -1,20 +1,16 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.portlet.registry;
 
@@ -23,9 +19,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
 import javax.portlet.WindowState;
-
 import org.apache.commons.lang.Validate;
 import org.apereo.portal.layout.om.IStylesheetDescriptor;
 import org.apereo.portal.portlet.om.IPortletDefinition;
@@ -37,7 +31,7 @@ import org.apereo.portal.portlet.om.IPortletPreference;
 
 /**
  * Portlet entity data that is not persisted. Used when the entity doesn't have any customizations.
- * 
+ *
  * @author Lennard Fuller
  */
 class SessionPortletEntityImpl implements IPortletEntity, IPortletEntityDescriptor {
@@ -46,14 +40,15 @@ class SessionPortletEntityImpl implements IPortletEntity, IPortletEntityDescript
     private final Map<Long, WindowState> windowStates = new ConcurrentHashMap<Long, WindowState>();
     private List<IPortletPreference> portletPreferences = new ArrayList<IPortletPreference>(0);
 
-    public SessionPortletEntityImpl(IPortletDefinition portletDefinition, PortletEntityData portletEntityData) {
+    public SessionPortletEntityImpl(
+            IPortletDefinition portletDefinition, PortletEntityData portletEntityData) {
         Validate.notNull(portletDefinition, "portletDefinition cannot be null");
         Validate.notNull(portletEntityData, "portletEntityData cannot be null");
-        
+
         this.portletDefinition = portletDefinition;
         this.portletEntityData = portletEntityData;
     }
-    
+
     public PortletEntityData getPortletEntityData() {
         return this.portletEntityData;
     }
@@ -97,78 +92,84 @@ class SessionPortletEntityImpl implements IPortletEntity, IPortletEntityDescript
     public void setWindowState(IStylesheetDescriptor stylesheetDescriptor, WindowState state) {
         if (state == null) {
             windowStates.remove(stylesheetDescriptor.getId());
-        }
-        else {
+        } else {
             windowStates.put(stylesheetDescriptor.getId(), state);
         }
     }
 
     /* (non-Javadoc)
-	 * @see org.apereo.portal.portlet.om.IPortletEntity#getPortletPreferences()
-	 */
-	@Override
-	public List<IPortletPreference> getPortletPreferences() {
-		return portletPreferences;
-	}
+     * @see org.apereo.portal.portlet.om.IPortletEntity#getPortletPreferences()
+     */
+    @Override
+    public List<IPortletPreference> getPortletPreferences() {
+        return portletPreferences;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.apereo.portal.portlet.om.IPortletEntity#setPortletPreferences(java.util.List)
-	 */
-	@Override
-	public boolean setPortletPreferences(List<IPortletPreference> portletPreferences) {
-		if (portletPreferences == null) {
-		    final boolean modified = !this.portletPreferences.isEmpty();
-			this.portletPreferences.clear();
-			return modified;
-		}
-		
-		final boolean modified = !this.portletPreferences.equals(portletPreferences);
-		this.portletPreferences = portletPreferences;
-		return modified;
-	}
+    /* (non-Javadoc)
+     * @see org.apereo.portal.portlet.om.IPortletEntity#setPortletPreferences(java.util.List)
+     */
+    @Override
+    public boolean setPortletPreferences(List<IPortletPreference> portletPreferences) {
+        if (portletPreferences == null) {
+            final boolean modified = !this.portletPreferences.isEmpty();
+            this.portletPreferences.clear();
+            return modified;
+        }
 
-	@Override
+        final boolean modified = !this.portletPreferences.equals(portletPreferences);
+        this.portletPreferences = portletPreferences;
+        return modified;
+    }
+
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((this.portletEntityData.getLayoutNodeId() == null) ? 0 : this.portletEntityData.getLayoutNodeId().hashCode());
-        result = prime * result + ((this.portletDefinition == null) ? 0 : this.portletDefinition.hashCode());
+        result =
+                prime * result
+                        + ((this.portletEntityData.getLayoutNodeId() == null)
+                                ? 0
+                                : this.portletEntityData.getLayoutNodeId().hashCode());
+        result =
+                prime * result
+                        + ((this.portletDefinition == null)
+                                ? 0
+                                : this.portletDefinition.hashCode());
         result = prime * result + this.portletEntityData.getUserId();
         return result;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (!IPortletEntity.class.isAssignableFrom(obj.getClass()))
-            return false;
+        if (this == obj) return true;
+        if (obj == null) return false;
+        if (!IPortletEntity.class.isAssignableFrom(obj.getClass())) return false;
         IPortletEntity other = (IPortletEntity) obj;
         if (this.portletEntityData.getLayoutNodeId() == null) {
-            if (other.getLayoutNodeId() != null)
-                return false;
-        }
-        else if (!this.portletEntityData.getLayoutNodeId().equals(other.getLayoutNodeId()))
+            if (other.getLayoutNodeId() != null) return false;
+        } else if (!this.portletEntityData.getLayoutNodeId().equals(other.getLayoutNodeId()))
             return false;
         if (this.portletDefinition == null) {
-            if (other.getPortletDefinition() != null)
-                return false;
-        }
-        else if (!this.portletDefinition.equals(other.getPortletDefinition()))
-            return false;
-        if (this.portletEntityData.getUserId() != other.getUserId())
-            return false;
+            if (other.getPortletDefinition() != null) return false;
+        } else if (!this.portletDefinition.equals(other.getPortletDefinition())) return false;
+        if (this.portletEntityData.getUserId() != other.getUserId()) return false;
         return true;
     }
 
     @Override
     public String toString() {
-        return "PortletEntity [" +
-                "portletEntityId=" + this.portletEntityData.getPortletEntityId() + ", " +
-                "layoutNodeId=" + this.portletEntityData.getLayoutNodeId() + ", " +
-                "userId=" + this.portletEntityData.getUserId() + ", " +
-                "portletDefinition=" + this.portletDefinition + "]";
+        return "PortletEntity ["
+                + "portletEntityId="
+                + this.portletEntityData.getPortletEntityId()
+                + ", "
+                + "layoutNodeId="
+                + this.portletEntityData.getLayoutNodeId()
+                + ", "
+                + "userId="
+                + this.portletEntityData.getUserId()
+                + ", "
+                + "portletDefinition="
+                + this.portletDefinition
+                + "]";
     }
 }

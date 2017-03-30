@@ -1,20 +1,16 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.portlet.container;
 
@@ -22,11 +18,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.Locale;
-
 import javax.portlet.CacheControl;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.lang.Validate;
 import org.apache.pluto.container.PortletContainer;
 import org.apache.pluto.container.PortletMimeResponseContext;
@@ -48,28 +42,52 @@ import org.apereo.portal.url.UrlType;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public abstract class PortletMimeResponseContextImpl extends PortletResponseContextImpl implements PortletMimeResponseContext {
-    
+public abstract class PortletMimeResponseContextImpl extends PortletResponseContextImpl
+        implements PortletMimeResponseContext {
+
     private final IPortalUrlProvider portalUrlProvider;
     private final PortletOutputHandler portletOutputHandler;
     private final CacheControl cacheControl;
-    
-    public PortletMimeResponseContextImpl(PortletContainer portletContainer, IPortletWindow portletWindow,
-            HttpServletRequest containerRequest, HttpServletResponse containerResponse,
-            IRequestPropertiesManager requestPropertiesManager, IPortalUrlProvider portalUrlProvider,
+
+    public PortletMimeResponseContextImpl(
+            PortletContainer portletContainer,
+            IPortletWindow portletWindow,
+            HttpServletRequest containerRequest,
+            HttpServletResponse containerResponse,
+            IRequestPropertiesManager requestPropertiesManager,
+            IPortalUrlProvider portalUrlProvider,
             IPortletCookieService portletCookieService) {
 
-        super(portletContainer, portletWindow, containerRequest, containerResponse, 
-                requestPropertiesManager, portletCookieService);
-        
+        super(
+                portletContainer,
+                portletWindow,
+                containerRequest,
+                containerResponse,
+                requestPropertiesManager,
+                portletCookieService);
+
         Validate.notNull(portalUrlProvider, "portalUrlProvider can not be null");
         this.portalUrlProvider = portalUrlProvider;
-        
-        this.portletOutputHandler = (PortletOutputHandler)containerRequest.getAttribute(IPortletRenderer.ATTRIBUTE__PORTLET_OUTPUT_HANDLER);
-        Validate.notNull(portletOutputHandler, "No " + IPortletRenderer.ATTRIBUTE__PORTLET_OUTPUT_HANDLER + " attribute found in request");
-        
-        this.cacheControl = (CacheControl)containerRequest.getAttribute(IPortletRenderer.ATTRIBUTE__PORTLET_CACHE_CONTROL);
-        Validate.notNull(cacheControl, "No " + IPortletRenderer.ATTRIBUTE__PORTLET_OUTPUT_HANDLER + " attribute found in request");
+
+        this.portletOutputHandler =
+                (PortletOutputHandler)
+                        containerRequest.getAttribute(
+                                IPortletRenderer.ATTRIBUTE__PORTLET_OUTPUT_HANDLER);
+        Validate.notNull(
+                portletOutputHandler,
+                "No "
+                        + IPortletRenderer.ATTRIBUTE__PORTLET_OUTPUT_HANDLER
+                        + " attribute found in request");
+
+        this.cacheControl =
+                (CacheControl)
+                        containerRequest.getAttribute(
+                                IPortletRenderer.ATTRIBUTE__PORTLET_CACHE_CONTROL);
+        Validate.notNull(
+                cacheControl,
+                "No "
+                        + IPortletRenderer.ATTRIBUTE__PORTLET_OUTPUT_HANDLER
+                        + " attribute found in request");
     }
 
     protected final PortletOutputHandler getPortletOutputHandler() {
@@ -85,7 +103,7 @@ public abstract class PortletMimeResponseContextImpl extends PortletResponseCont
         return this.cacheControl;
     }
 
-	/* (non-Javadoc)
+    /* (non-Javadoc)
      * @see org.apache.pluto.container.PortletMimeResponseContext#flushBuffer()
      */
     @Override
@@ -108,7 +126,7 @@ public abstract class PortletMimeResponseContextImpl extends PortletResponseCont
     @Override
     public String getCharacterEncoding() {
         this.checkContextStatus();
-        
+
         return this.servletResponse.getCharacterEncoding();
     }
 
@@ -146,8 +164,11 @@ public abstract class PortletMimeResponseContextImpl extends PortletResponseCont
     public PortletURLProvider getPortletURLProvider(TYPE type) {
         final IPortletWindowId portletWindowId = this.portletWindow.getPortletWindowId();
         final UrlType urlType = UrlType.fromPortletUrlType(type);
-        final IPortalUrlBuilder portalUrlBuilder = this.portalUrlProvider.getPortalUrlBuilderByPortletWindow(containerRequest, portletWindowId, urlType);
-        final IPortletUrlBuilder portletUrlBuilder = portalUrlBuilder.getPortletUrlBuilder(portletWindowId);
+        final IPortalUrlBuilder portalUrlBuilder =
+                this.portalUrlProvider.getPortalUrlBuilderByPortletWindow(
+                        containerRequest, portletWindowId, urlType);
+        final IPortletUrlBuilder portletUrlBuilder =
+                portalUrlBuilder.getPortletUrlBuilder(portletWindowId);
         return new PortletURLProviderImpl(portletUrlBuilder);
     }
 
@@ -203,5 +224,4 @@ public abstract class PortletMimeResponseContextImpl extends PortletResponseCont
         this.checkContextStatus();
         this.portletOutputHandler.setContentType(contentType);
     }
-
 }

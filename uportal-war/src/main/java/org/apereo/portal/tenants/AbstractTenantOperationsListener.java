@@ -1,29 +1,23 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.tenants;
 
 import java.util.Collections;
 import java.util.Locale;
 import java.util.Set;
-
 import javax.servlet.http.HttpServletRequest;
-
 import org.apereo.portal.i18n.ILocaleStore;
 import org.apereo.portal.i18n.LocaleManager;
 import org.apereo.portal.security.IPerson;
@@ -33,10 +27,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 
 /**
- * Implements all methods of {@link ITenantOperationsListener} as no-ops and can
- * therefore serve as a base class for concrete listeners that need to override
- * some but not all of the methods.
- * 
+ * Implements all methods of {@link ITenantOperationsListener} as no-ops and can therefore serve as
+ * a base class for concrete listeners that need to override some but not all of the methods.
+ *
  * @since 4.1
  * @author awills
  */
@@ -46,17 +39,13 @@ public abstract class AbstractTenantOperationsListener implements ITenantOperati
 
     private final String fname;
 
-    @Autowired
-    private IPortalRequestUtils portalRequestUtils;
+    @Autowired private IPortalRequestUtils portalRequestUtils;
 
-    @Autowired
-    private IPersonManager personManager;
+    @Autowired private IPersonManager personManager;
 
-    @Autowired
-    private ILocaleStore localeStore;
+    @Autowired private ILocaleStore localeStore;
 
-    @Autowired
-    private MessageSource messageSource;
+    @Autowired private MessageSource messageSource;
 
     protected AbstractTenantOperationsListener(final String fname) {
         this.fname = fname;
@@ -64,20 +53,17 @@ public abstract class AbstractTenantOperationsListener implements ITenantOperati
 
     @Override
     public final String getName() {
-        return messageSource.getMessage(getClass().getName() + ".name", null, getCurrentUserLocale());
+        return messageSource.getMessage(
+                getClass().getName() + ".name", null, getCurrentUserLocale());
     }
 
-    /**
-     * @since uPortal 4.3
-     */
+    /** @since uPortal 4.3 */
     @Override
     public final String getFname() {
         return fname;
     }
 
-    /**
-     * @since uPortal 4.3
-     */
+    /** @since uPortal 4.3 */
     @Override
     public boolean isOptional() {
         return false;
@@ -98,23 +84,17 @@ public abstract class AbstractTenantOperationsListener implements ITenantOperati
         return getDefaultResponse();
     }
 
-    /**
-     * @since uPortal 4.3
-     */
+    /** @since uPortal 4.3 */
     @Override
     public Set<ITenantManagementAction> getAvaialableActions() {
         return Collections.emptySet();
     }
 
-    /**
-     * Default implementation is a no-op.
-     */
+    /** Default implementation is a no-op. */
     @Override
     public void validateAttribute(final String key, final String value) throws Exception {}
 
-    /**
-     * @since uPortal 4.3
-     */
+    /** @since uPortal 4.3 */
     protected String createLocalizedMessage(final String messageCode, final Object[] args) {
         final Locale locale = getCurrentUserLocale();
         return messageSource.getMessage(messageCode, args, locale);
@@ -134,8 +114,8 @@ public abstract class AbstractTenantOperationsListener implements ITenantOperati
     }
 
     private TenantOperationResponse getDefaultResponse() {
-        TenantOperationResponse rslt = new TenantOperationResponse(this, TenantOperationResponse.Result.IGNORE);
+        TenantOperationResponse rslt =
+                new TenantOperationResponse(this, TenantOperationResponse.Result.IGNORE);
         return rslt;
     }
-
 }

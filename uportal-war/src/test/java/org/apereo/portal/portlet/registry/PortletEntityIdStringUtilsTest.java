@@ -1,20 +1,16 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.portlet.registry;
 
@@ -28,26 +24,25 @@ import org.junit.Test;
 
 /**
  * JUnit test class for {@link PortletEntityIdStringUtilsTest}
- * 
+ *
  * @author Gary Roybal
  * @version $Revision$
  */
 public class PortletEntityIdStringUtilsTest {
 
     @Before
-    public void setUp() throws Exception {
-    }
+    public void setUp() throws Exception {}
 
     @After
-    public void tearDown() throws Exception {
-    }
+    public void tearDown() throws Exception {}
 
     @Test
     public void convertToDelegateLayoutNodeIdMethodShouldReturnCorrectResult() {
         // given
         final String portletEntityIdString = "88_n149_52";
         // when
-        final String result = PortletEntityIdStringUtils.convertToDelegateLayoutNodeId(portletEntityIdString);
+        final String result =
+                PortletEntityIdStringUtils.convertToDelegateLayoutNodeId(portletEntityIdString);
         // then
         assertEquals("dlg-88-n149-52", result);
     }
@@ -65,7 +60,8 @@ public class PortletEntityIdStringUtilsTest {
         // given
         final String portletEntityIdString = "90_u110_18";
         // when
-        final boolean result = PortletEntityIdStringUtils.hasCorrectNumberOfParts(portletEntityIdString);
+        final boolean result =
+                PortletEntityIdStringUtils.hasCorrectNumberOfParts(portletEntityIdString);
         // then
         assertTrue(result);
     }
@@ -75,7 +71,8 @@ public class PortletEntityIdStringUtilsTest {
         // given
         final String portletEntityIdString = "90_u110";
         // when
-        final boolean result = PortletEntityIdStringUtils.hasCorrectNumberOfParts(portletEntityIdString);
+        final boolean result =
+                PortletEntityIdStringUtils.hasCorrectNumberOfParts(portletEntityIdString);
         // then
         assertFalse(result);
     }
@@ -85,7 +82,8 @@ public class PortletEntityIdStringUtilsTest {
         // given
         final String portletEntityIdString = "90_u110_18_blah";
         // when
-        final boolean result = PortletEntityIdStringUtils.hasCorrectNumberOfParts(portletEntityIdString);
+        final boolean result =
+                PortletEntityIdStringUtils.hasCorrectNumberOfParts(portletEntityIdString);
         // then
         assertFalse(result);
     }
@@ -115,7 +113,8 @@ public class PortletEntityIdStringUtilsTest {
         // given
         final String portletEntityIdString = "90_n155_18";
         // when
-        final String result = PortletEntityIdStringUtils.parsePortletDefinitionId(portletEntityIdString);
+        final String result =
+                PortletEntityIdStringUtils.parsePortletDefinitionId(portletEntityIdString);
         // then
         assertEquals("90", result);
     }
@@ -131,7 +130,8 @@ public class PortletEntityIdStringUtilsTest {
     }
 
     @Test
-    public void parseLayoutNodeIdMethodShouldReturnSecondPartWhenPortletEntityIdHasDelegateLayoutNode() {
+    public void
+            parseLayoutNodeIdMethodShouldReturnSecondPartWhenPortletEntityIdHasDelegateLayoutNode() {
         // given
         final String portletEntityIdString = "90_dlg-5-ctf1-18_18";
         // when
@@ -141,7 +141,8 @@ public class PortletEntityIdStringUtilsTest {
     }
 
     @Test
-    public void parseLayoutNodeIdMethodShouldReturnSecondPartWhenPortletEntityIdHasDelegateLayoutNodeWithWindowInstanceId() {
+    public void
+            parseLayoutNodeIdMethodShouldReturnSecondPartWhenPortletEntityIdHasDelegateLayoutNodeWithWindowInstanceId() {
         // given
         final String portletEntityIdString = "90_dlg-5-ctf1-18.tw_18";
         // when
@@ -159,5 +160,4 @@ public class PortletEntityIdStringUtilsTest {
         // then
         assertEquals("18", result);
     }
-
 }

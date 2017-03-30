@@ -21,7 +21,7 @@
  * portlets implemented in the uPortal webapp itself.  (Styles that apply
  * specifically to non-framework portlets should ideally be managed in their
  * respective projects.)  At a certain critical mass, these rules should
- * probably be broken into separate files. 
+ * probably be broken into separate files.
  */
 
 /* fragment-admin-exit */
@@ -158,7 +158,7 @@
 }
 
 /* Display only for desktop */
-@media only screen and (min-width: 769px) {
+@media only screen and (min-width: @screen-sm-min) {
     .favorites {
 
         /* Hide the navbar-brand text */
@@ -169,7 +169,7 @@
 }
 
 /* Display only for mobile */
-@media only screen and (max-width: 769px) {
+@media only screen and (max-width: @screen-sm-max) {
     .favorites {
 
         /* Show a border around the navbar */

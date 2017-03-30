@@ -1,22 +1,17 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-
 package org.apereo.portal.soffit.connector;
 
 import java.io.IOException;
@@ -24,12 +19,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-
 import javax.annotation.PostConstruct;
 import javax.portlet.PortletPreferences;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
-
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
 import org.apache.commons.io.IOUtils;
@@ -57,40 +50,47 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.portlet.bind.annotation.RenderMapping;
 
+/** @since 5.0 */
 @Controller
-@RequestMapping(value={"VIEW","EDIT","HELP"})
+@RequestMapping(value = {"VIEW", "EDIT", "HELP"})
 public class SoffitConnectorController implements ApplicationContextAware {
 
-    /**
-     * Preferences that begin with this String will not be shared with the remote soffit.
-     */
-    public static final String CONNECTOR_PREFERENCE_PREFIX = SoffitConnectorController.class.getName();
+    /** Preferences that begin with this String will not be shared with the remote soffit. */
+    public static final String CONNECTOR_PREFERENCE_PREFIX =
+            SoffitConnectorController.class.getName();
 
-    private static final String SERVICE_URL_PREFERENCE = CONNECTOR_PREFERENCE_PREFIX + ".serviceUrl";
+    private static final String SERVICE_URL_PREFERENCE =
+            CONNECTOR_PREFERENCE_PREFIX + ".serviceUrl";
 
     private static final int TIMEOUT_SECONDS = 10;
 
-    @Value("${org.apereo.portlet.soffit.connector.SoffitConnectorController.maxConnectionsPerRoute:20}")
+    @Value(
+            "${org.apereo.portlet.soffit.connector.SoffitConnectorController.maxConnectionsPerRoute:20}")
     private Integer maxConnectionsPerRoute;
 
-    @Value("${org.apereo.portlet.soffit.connector.SoffitConnectorController.maxConnectionsTotal:50}")
+    @Value(
+            "${org.apereo.portlet.soffit.connector.SoffitConnectorController.maxConnectionsTotal:50}")
     private Integer maxConnectionsTotal;
 
-    private final RequestConfig requestConfig = RequestConfig.custom()
-            .setSocketTimeout(TIMEOUT_SECONDS * 1000)
-            .setConnectTimeout(TIMEOUT_SECONDS * 1000)
-            .build();
+    private final RequestConfig requestConfig =
+            RequestConfig.custom()
+                    .setSocketTimeout(TIMEOUT_SECONDS * 1000)
+                    .setConnectTimeout(TIMEOUT_SECONDS * 1000)
+                    .build();
 
-    private final HttpClientBuilder httpClientBuilder = HttpClientBuilder
-            .create()
-            .setDefaultRequestConfig(requestConfig)
-            .setConnectionManagerShared(true);  // Prevents the client from shutting down the pool
+    private final HttpClientBuilder httpClientBuilder =
+            HttpClientBuilder.create()
+                    .setDefaultRequestConfig(requestConfig)
+                    .setConnectionManagerShared(
+                            true); // Prevents the client from shutting down the pool
 
     private ApplicationContext applicationContext;
     private List<IHeaderProvider> headerProviders;
 
     @Autowired
-    @Qualifier(value="org.apereo.portlet.soffit.connector.SoffitConnectorController.RESPONSE_CACHE")
+    @Qualifier(
+        value = "org.apereo.portlet.soffit.connector.SoffitConnectorController.RESPONSE_CACHE"
+    )
     private Cache responseCache;
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
@@ -102,12 +102,15 @@ public class SoffitConnectorController implements ApplicationContextAware {
 
     @PostConstruct
     public void init() {
-        PoolingHttpClientConnectionManager poolingHttpClientConnectionManager = new PoolingHttpClientConnectionManager();
+        PoolingHttpClientConnectionManager poolingHttpClientConnectionManager =
+                new PoolingHttpClientConnectionManager();
         poolingHttpClientConnectionManager.setDefaultMaxPerRoute(maxConnectionsPerRoute);
         poolingHttpClientConnectionManager.setMaxTotal(maxConnectionsTotal);
         httpClientBuilder.setConnectionManager(poolingHttpClientConnectionManager);
 
-        final Map<String, IHeaderProvider> beans = BeanFactoryUtils.beansOfTypeIncludingAncestors(applicationContext, IHeaderProvider.class);
+        final Map<String, IHeaderProvider> beans =
+                BeanFactoryUtils.beansOfTypeIncludingAncestors(
+                        applicationContext, IHeaderProvider.class);
         final List<IHeaderProvider> values = new ArrayList<>(beans.values());
         headerProviders = Collections.unmodifiableList(values);
     }
@@ -118,7 +121,8 @@ public class SoffitConnectorController implements ApplicationContextAware {
         final PortletPreferences prefs = req.getPreferences();
         final String serviceUrl = prefs.getValue(SERVICE_URL_PREFERENCE, null);
         if (serviceUrl == null) {
-            throw new IllegalStateException("Missing portlet prefernce value for " + SERVICE_URL_PREFERENCE);
+            throw new IllegalStateException(
+                    "Missing portlet prefernce value for " + SERVICE_URL_PREFERENCE);
         }
 
         // First look in cache for an existing response that applies to this request
@@ -144,10 +148,15 @@ public class SoffitConnectorController implements ApplicationContextAware {
                 logger.debug("HTTP response code for url '{}' was '{}'", serviceUrl, statusCode);
 
                 if (statusCode == HttpStatus.SC_OK) {
-                    responseValue = extractResponseAndCacheIfAppropriate(httpResponse, req, serviceUrl);
+                    responseValue =
+                            extractResponseAndCacheIfAppropriate(httpResponse, req, serviceUrl);
                 } else {
-                    logger.error("Failed to get content from remote service '{}';  HttpStatus={}", serviceUrl, statusCode);
-                    res.getWriter().write("FAILED!  statusCode="+statusCode);  // TODO:  Better message
+                    logger.error(
+                            "Failed to get content from remote service '{}';  HttpStatus={}",
+                            serviceUrl,
+                            statusCode);
+                    res.getWriter()
+                            .write("FAILED!  statusCode=" + statusCode); // TODO:  Better message
                 }
 
                 // Ensures that the entity content is fully consumed and the content stream, if exists, is closed.
@@ -156,7 +165,6 @@ public class SoffitConnectorController implements ApplicationContextAware {
             } catch (IOException e) {
                 logger.error("Failed to invoke serviceUrl '{}'", serviceUrl, e);
             }
-
         }
 
         if (responseValue != null) {
@@ -167,32 +175,34 @@ public class SoffitConnectorController implements ApplicationContextAware {
                 logger.error("Failed to write the response for serviceUrl '{}'", serviceUrl, e);
             }
         }
-
-
     }
 
     /*
      * Implementation
      */
 
-    private ResponseWrapper fetchContentFromCacheIfAvailable(final RenderRequest req, final String serviceUrl) {
+    private ResponseWrapper fetchContentFromCacheIfAvailable(
+            final RenderRequest req, final String serviceUrl) {
 
-        ResponseWrapper rslt = null;  // default
+        ResponseWrapper rslt = null; // default
 
         final List<CacheTuple> cacheKeysToTry = new ArrayList<>();
         // Don't use private-scope caching for anonymous users
         if (req.getRemoteUser() != null) {
             cacheKeysToTry.add(
                     // Private-scope cache key
-                    new CacheTuple(serviceUrl, req.getPortletMode().toString(),
-                            req.getWindowState().toString(), req.getRemoteUser())
-            );
+                    new CacheTuple(
+                            serviceUrl,
+                            req.getPortletMode().toString(),
+                            req.getWindowState().toString(),
+                            req.getRemoteUser()));
         }
         cacheKeysToTry.add(
                 // Public-scope cache key
-                new CacheTuple(serviceUrl, req.getPortletMode().toString(),
-                        req.getWindowState().toString())
-        );
+                new CacheTuple(
+                        serviceUrl,
+                        req.getPortletMode().toString(),
+                        req.getWindowState().toString()));
 
         for (CacheTuple key : cacheKeysToTry) {
             final Element cacheElement = this.responseCache.get(key);
@@ -203,11 +213,10 @@ public class SoffitConnectorController implements ApplicationContextAware {
         }
 
         return rslt;
-
     }
 
-    private ResponseWrapper extractResponseAndCacheIfAppropriate(final HttpResponse httpResponse,
-            final RenderRequest req, final String serviceUrl) {
+    private ResponseWrapper extractResponseAndCacheIfAppropriate(
+            final HttpResponse httpResponse, final RenderRequest req, final String serviceUrl) {
 
         // Extract
         final HttpEntity entity = httpResponse.getEntity();
@@ -219,11 +228,14 @@ public class SoffitConnectorController implements ApplicationContextAware {
         }
 
         // Cache the response if indicated by the remote service
-        final Header cacheControlHeader = httpResponse.getFirstHeader(Headers.CACHE_CONTROL.getName());
+        final Header cacheControlHeader =
+                httpResponse.getFirstHeader(Headers.CACHE_CONTROL.getName());
         if (cacheControlHeader != null) {
             final String cacheControlValue = cacheControlHeader.getValue();
-            logger.debug("Soffit with serviceUrl='{}' specified cache-control header value='{}'",
-                                                                serviceUrl, cacheControlValue);
+            logger.debug(
+                    "Soffit with serviceUrl='{}' specified cache-control header value='{}'",
+                    serviceUrl,
+                    cacheControlValue);
             if (cacheControlHeader != null) {
                 switch (cacheControlValue) {
                     case Headers.CACHE_CONTROL_NOCACHE:
@@ -236,7 +248,9 @@ public class SoffitConnectorController implements ApplicationContextAware {
                         /*
                          * The value 'no-store' is the default.
                          */
-                        logger.debug("Not caching response due to CacheControl directive of '{}'", cacheControlValue);
+                        logger.debug(
+                                "Not caching response due to CacheControl directive of '{}'",
+                                cacheControlValue);
                         break;
                     default:
                         /*
@@ -250,30 +264,39 @@ public class SoffitConnectorController implements ApplicationContextAware {
                             final String maxAge = tokens[1].trim().substring("max-age=".length());
                             int timeToLive = Integer.parseInt(maxAge);
                             if ("private".equals(tokens[0].trim())) {
-                                cacheTuple = new CacheTuple(serviceUrl, req.getPortletMode().toString(),
-                                        req.getWindowState().toString(), req.getRemoteUser());
+                                cacheTuple =
+                                        new CacheTuple(
+                                                serviceUrl,
+                                                req.getPortletMode().toString(),
+                                                req.getWindowState().toString(),
+                                                req.getRemoteUser());
                             } else if ("public".equals(tokens[0].trim())) {
-                                cacheTuple = new CacheTuple(serviceUrl, req.getPortletMode().toString(),
-                                        req.getWindowState().toString());
+                                cacheTuple =
+                                        new CacheTuple(
+                                                serviceUrl,
+                                                req.getPortletMode().toString(),
+                                                req.getWindowState().toString());
                             }
-                            logger.debug("Produced cacheTuple='{}' for cacheControlValue='{}'", cacheTuple, cacheControlValue);
+                            logger.debug(
+                                    "Produced cacheTuple='{}' for cacheControlValue='{}'",
+                                    cacheTuple,
+                                    cacheControlValue);
                             if (cacheTuple != null) {
                                 final Element element = new Element(cacheTuple, rslt);
                                 element.setTimeToLive(timeToLive);
                                 responseCache.put(element);
                             } else {
-                                logger.warn("The remote soffit specified cacheControlValue='{}', "
-                                        + "but SoffitConnectorController failed to generate a cacheTuple");
+                                logger.warn(
+                                        "The remote soffit specified cacheControlValue='{}', "
+                                                + "but SoffitConnectorController failed to generate a cacheTuple");
                             }
                         }
                         break;
                 }
             }
-
         }
 
         return rslt;
-
     }
 
     /*
@@ -287,9 +310,7 @@ public class SoffitConnectorController implements ApplicationContextAware {
         private final String username;
         private final boolean publicScope;
 
-        /**
-         * Creates a CacheTuple for a public-scope soffit response.
-         */
+        /** Creates a CacheTuple for a public-scope soffit response. */
         public CacheTuple(String serviceUrl, String mode, String windowState) {
             this.serviceUrl = serviceUrl;
             this.mode = mode;
@@ -298,9 +319,7 @@ public class SoffitConnectorController implements ApplicationContextAware {
             this.publicScope = true;
         }
 
-        /**
-         * Creates a CacheTuple for a private-scope soffit response.
-         */
+        /** Creates a CacheTuple for a private-scope soffit response. */
         public CacheTuple(String serviceUrl, String mode, String windowState, String username) {
             this.serviceUrl = serviceUrl;
             this.mode = mode;
@@ -323,44 +342,40 @@ public class SoffitConnectorController implements ApplicationContextAware {
 
         @Override
         public boolean equals(Object obj) {
-            if (this == obj)
-                return true;
-            if (obj == null)
-                return false;
-            if (getClass() != obj.getClass())
-                return false;
+            if (this == obj) return true;
+            if (obj == null) return false;
+            if (getClass() != obj.getClass()) return false;
             CacheTuple other = (CacheTuple) obj;
             if (mode == null) {
-                if (other.mode != null)
-                    return false;
-            } else if (!mode.equals(other.mode))
-                return false;
-            if (publicScope != other.publicScope)
-                return false;
+                if (other.mode != null) return false;
+            } else if (!mode.equals(other.mode)) return false;
+            if (publicScope != other.publicScope) return false;
             if (serviceUrl == null) {
-                if (other.serviceUrl != null)
-                    return false;
-            } else if (!serviceUrl.equals(other.serviceUrl))
-                return false;
+                if (other.serviceUrl != null) return false;
+            } else if (!serviceUrl.equals(other.serviceUrl)) return false;
             if (username == null) {
-                if (other.username != null)
-                    return false;
-            } else if (!username.equals(other.username))
-                return false;
+                if (other.username != null) return false;
+            } else if (!username.equals(other.username)) return false;
             if (windowState == null) {
-                if (other.windowState != null)
-                    return false;
-            } else if (!windowState.equals(other.windowState))
-                return false;
+                if (other.windowState != null) return false;
+            } else if (!windowState.equals(other.windowState)) return false;
             return true;
         }
 
         @Override
         public String toString() {
-            return "CacheTuple [serviceUrl=" + serviceUrl + ", mode=" + mode + ", windowState=" + windowState
-                    + ", username=" + username + ", publicScope=" + publicScope + "]";
+            return "CacheTuple [serviceUrl="
+                    + serviceUrl
+                    + ", mode="
+                    + mode
+                    + ", windowState="
+                    + windowState
+                    + ", username="
+                    + username
+                    + ", publicScope="
+                    + publicScope
+                    + "]";
         }
-
     }
 
     public static final class ResponseWrapper {
@@ -374,5 +389,4 @@ public class SoffitConnectorController implements ApplicationContextAware {
             return bytes;
         }
     }
-
 }

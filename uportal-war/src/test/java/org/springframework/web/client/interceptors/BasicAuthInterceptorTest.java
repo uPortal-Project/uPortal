@@ -1,29 +1,32 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.springframework.web.client.interceptors;
+
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.hasKey;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayOutputStream;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import org.junit.Test;
 import org.springframework.core.env.PropertyResolver;
 import org.springframework.http.HttpHeaders;
@@ -35,18 +38,7 @@ import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.web.client.RestTemplate;
 
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.hasKey;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-
-/**
- * @author Josh Helmer, jhelmer@unicon.net
- */
+/** @author Josh Helmer, jhelmer@unicon.net */
 public class BasicAuthInterceptorTest {
     @Test
     public void testInterceptorWithUsernamePassword() throws Exception {
@@ -55,12 +47,13 @@ public class BasicAuthInterceptorTest {
         final String password = "test";
 
         PropertyResolver resolver = mock(PropertyResolver.class);
-        when(resolver.getProperty(eq("org.jasig.rest.interceptor.basic-auth." + id + ".username"))).thenReturn(username);
-        when(resolver.getProperty(eq("org.jasig.rest.interceptor.basic-auth." + id + ".password"))).thenReturn(password);
+        when(resolver.getProperty(eq("org.jasig.rest.interceptor.basic-auth." + id + ".username")))
+                .thenReturn(username);
+        when(resolver.getProperty(eq("org.jasig.rest.interceptor.basic-auth." + id + ".password")))
+                .thenReturn(password);
 
         doInterceptorTest(resolver, id, "dGVzdDp0ZXN0");
     }
-
 
     @Test
     public void testInterceptorWithAuthCode() throws Exception {
@@ -68,13 +61,14 @@ public class BasicAuthInterceptorTest {
         final String authCode = "c29tZUxvbmdVc2VybmFtZTpzb21lTG9uZ1Bhc3N3b3Jk";
 
         PropertyResolver resolver = mock(PropertyResolver.class);
-        when(resolver.getProperty(eq("org.jasig.rest.interceptor.basic-auth." + id + ".authCode"))).thenReturn(authCode);
+        when(resolver.getProperty(eq("org.jasig.rest.interceptor.basic-auth." + id + ".authCode")))
+                .thenReturn(authCode);
 
         doInterceptorTest(resolver, id, authCode);
     }
 
-
-    private void doInterceptorTest(PropertyResolver resolver, String id, String expectedAuthCode) throws Exception {
+    private void doInterceptorTest(PropertyResolver resolver, String id, String expectedAuthCode)
+            throws Exception {
         final String url = "http://www.test.com/lrs";
         final String data = "test";
         final String expectedHeader = "Basic " + expectedAuthCode;
@@ -100,7 +94,8 @@ public class BasicAuthInterceptorTest {
         BasicAuthInterceptor interceptor = new BasicAuthInterceptor();
         interceptor.setPropertyResolver(resolver);
         interceptor.setId(id);
-        List<ClientHttpRequestInterceptor> interceptors = new ArrayList<ClientHttpRequestInterceptor>();
+        List<ClientHttpRequestInterceptor> interceptors =
+                new ArrayList<ClientHttpRequestInterceptor>();
         interceptors.add(interceptor);
 
         RestTemplate rest = new RestTemplate(factory);

@@ -1,49 +1,48 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.portlet.registry;
 
 import java.io.Serializable;
-
 import org.apereo.portal.portlet.om.IPortletDefinitionId;
 import org.apereo.portal.portlet.om.IPortletEntityDescriptor;
 import org.apereo.portal.portlet.om.IPortletEntityId;
 
 /**
  * Session persistent data stored for portlet entities
- * 
+ *
  * @author Eric Dalquist
  */
 class PortletEntityData implements Serializable, IPortletEntityDescriptor {
     private static final long serialVersionUID = 1L;
-    
+
     private final IPortletEntityId portletEntityId;
     private final IPortletDefinitionId portletDefinitionId;
     private final String layoutNodeId;
     private final int userId;
-    
-    public PortletEntityData(IPortletEntityId portletEntityId, IPortletDefinitionId portletDefinitionId, String layoutNodeId, int userId) {
+
+    public PortletEntityData(
+            IPortletEntityId portletEntityId,
+            IPortletDefinitionId portletDefinitionId,
+            String layoutNodeId,
+            int userId) {
         this.portletEntityId = portletEntityId;
         this.portletDefinitionId = portletDefinitionId;
         this.layoutNodeId = layoutNodeId;
         this.userId = userId;
     }
-    
+
     /* (non-Javadoc)
      * @see org.apereo.portal.portlet.registry.IPortletEntityDescriptor#getPortletEntityId()
      */
@@ -78,47 +77,47 @@ class PortletEntityData implements Serializable, IPortletEntityDescriptor {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((this.layoutNodeId == null) ? 0 : this.layoutNodeId.hashCode());
-        result = prime * result + ((this.portletDefinitionId == null) ? 0 : this.portletDefinitionId.hashCode());
-        result = prime * result + ((this.portletEntityId == null) ? 0 : this.portletEntityId.hashCode());
+        result =
+                prime * result
+                        + ((this.portletDefinitionId == null)
+                                ? 0
+                                : this.portletDefinitionId.hashCode());
+        result =
+                prime * result
+                        + ((this.portletEntityId == null) ? 0 : this.portletEntityId.hashCode());
         result = prime * result + this.userId;
         return result;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
+        if (this == obj) return true;
+        if (obj == null) return false;
+        if (getClass() != obj.getClass()) return false;
         PortletEntityData other = (PortletEntityData) obj;
         if (this.layoutNodeId == null) {
-            if (other.layoutNodeId != null)
-                return false;
-        }
-        else if (!this.layoutNodeId.equals(other.layoutNodeId))
-            return false;
+            if (other.layoutNodeId != null) return false;
+        } else if (!this.layoutNodeId.equals(other.layoutNodeId)) return false;
         if (this.portletDefinitionId == null) {
-            if (other.portletDefinitionId != null)
-                return false;
-        }
-        else if (!this.portletDefinitionId.equals(other.portletDefinitionId))
-            return false;
+            if (other.portletDefinitionId != null) return false;
+        } else if (!this.portletDefinitionId.equals(other.portletDefinitionId)) return false;
         if (this.portletEntityId == null) {
-            if (other.portletEntityId != null)
-                return false;
-        }
-        else if (!this.portletEntityId.equals(other.portletEntityId))
-            return false;
-        if (this.userId != other.userId)
-            return false;
+            if (other.portletEntityId != null) return false;
+        } else if (!this.portletEntityId.equals(other.portletEntityId)) return false;
+        if (this.userId != other.userId) return false;
         return true;
     }
 
     @Override
     public String toString() {
-        return "PortletEntityData [portletEntityId=" + this.portletEntityId + ", portletDefinitionId="
-                + this.portletDefinitionId + ", layoutNodeId=" + this.layoutNodeId + ", userId=" + this.userId + "]";
+        return "PortletEntityData [portletEntityId="
+                + this.portletEntityId
+                + ", portletDefinitionId="
+                + this.portletDefinitionId
+                + ", layoutNodeId="
+                + this.layoutNodeId
+                + ", userId="
+                + this.userId
+                + "]";
     }
 }

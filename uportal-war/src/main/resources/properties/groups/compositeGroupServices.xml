@@ -57,25 +57,7 @@ This list of component group services is processed by the composite, or "root" s
     <internally_managed>false</internally_managed>
     <caching_enabled>false</caching_enabled>
   </service>
-<!--
- | Used for XML PAGS implementation. PAGS data is defined in PAGSGroupStoreConfig.xml.
- |
- | DEPRICATED:  Some newer features (uPortal 4.1 and later) require 'entity' (JPA) PAGS (above).
- |
- | IMPORTANT: The pags service is REQUIRED for uPortal to correctly function.  Do not comment out this
- | service unless you uncomment the entity PAGS implementation above.
- +-->
-<!--
-  <service>
-    <name>pags</name>
-    <service_factory>org.apereo.portal.groups.ReferenceIndividualGroupServiceFactory</service_factory>
-    <entity_store_factory>org.apereo.portal.groups.pags.PersonAttributesEntityStoreFactory</entity_store_factory>
-    <group_store_factory>org.apereo.portal.groups.pags.PersonAttributesGroupStoreFactory</group_store_factory>
-    <entity_searcher_factory>org.apereo.portal.groups.pags.PersonAttributesEntitySearcherFactory</entity_searcher_factory>
-    <internally_managed>false</internally_managed>
-    <caching_enabled>true</caching_enabled>
-  </service>
--->
+
 <!--  Uncomment to configure an LDAP group service component.  Be sure to edit LDAPGroupStoreConfig.xml with your values. -->
 <!--
   <service>
@@ -102,13 +84,13 @@ This list of component group services is processed by the composite, or "root" s
   </service>
 -->
 
-<!--  
- | Uncomment to configure a SmartLdap group service component.  Be sure to edit 
+<!--
+ | Uncomment to configure a SmartLdap group service component.  Be sure to edit
  | SmartLdapGroupStoreConfig.xml to apply your settings.
  |
- | SmartLdapGroupStore is a GaP implementation that recognizes groups defined in 
- | an LDAP directory and makes them available in the portal.  You can read about 
- | this technology here:  http://www.ja-sig.org/wiki/x/3QPI   
+ | SmartLdapGroupStore is a GaP implementation that recognizes groups defined in
+ | an LDAP directory and makes them available in the portal.  You can read about
+ | this technology here:  https://wiki.jasig.org/display/UPM43/LDAP+User+Attribute+Sources
  +-->
 <!--
   <service>
@@ -122,15 +104,15 @@ This list of component group services is processed by the composite, or "root" s
   </service>
 -->
 
-<!--  
- | Uncomment to configure a Grouper group service component.  Be sure to edit 
+<!--
+ | Uncomment to configure a Grouper group service component.  Be sure to edit
  | grouper.client.properties and grouper.lib.properties to apply your settings.
  |
- | GrouperEntityGroupStore is a GaP implementation that recognizes groups defined 
- | on a Grouper server and makes them available in the portal.  You can read about 
- | this technology here:  http://www.ja-sig.org/wiki/x/3QPI   
+ | GrouperEntityGroupStore is a GaP implementation that recognizes groups defined
+ | on a Grouper server and makes them available in the portal.  You can read about
+ | this technology here:  https://wiki.jasig.org/display/UPM43/Grouper
  +-->
-<!-- 
+<!--
   <service>
     <name>grouper</name>
     <service_factory>org.apereo.portal.groups.ReferenceIndividualGroupServiceFactory</service_factory>

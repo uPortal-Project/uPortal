@@ -1,29 +1,23 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.shell;
 
 import groovy.lang.Binding;
-
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
-
 import org.springframework.context.ApplicationContext;
 
 /**
@@ -32,7 +26,7 @@ import org.springframework.context.ApplicationContext;
  */
 public class SpringBinding extends Binding implements Map<String, Object> {
     private final ApplicationContext context;
-    
+
     public SpringBinding(ApplicationContext context) {
         this.context = context;
     }
@@ -45,13 +39,13 @@ public class SpringBinding extends Binding implements Map<String, Object> {
 
         super.setVariable(name, value);
     }
-    
+
     @Override
     public Object getVariable(String name) {
         if (this.context.containsBean(name)) {
             return this.context.getBean(name);
         }
-        
+
         return super.getVariable(name);
     }
 
@@ -60,9 +54,9 @@ public class SpringBinding extends Binding implements Map<String, Object> {
     public Map getVariables() {
         return this;
     }
-    
+
     //******************** MAP INTERFACE IMPL ********************//
-    
+
     @Override
     public int size() {
         return super.getVariables().size() + context.getBeanDefinitionCount();
@@ -75,7 +69,7 @@ public class SpringBinding extends Binding implements Map<String, Object> {
 
     @Override
     public boolean containsKey(Object key) {
-        return context.containsBean((String)key) || super.getVariables().containsKey(key);
+        return context.containsBean((String) key) || super.getVariables().containsKey(key);
     }
 
     @Override
@@ -85,11 +79,11 @@ public class SpringBinding extends Binding implements Map<String, Object> {
 
     @Override
     public Object get(Object key) {
-        final String name = (String)key;
+        final String name = (String) key;
         if (context.containsBean(name)) {
             return context.getBean(name);
         }
-        
+
         return super.getVariables().get(key);
     }
 
@@ -99,17 +93,17 @@ public class SpringBinding extends Binding implements Map<String, Object> {
         if (context.containsBean(key)) {
             throw new IllegalArgumentException("Can't bind variable to key named '" + key + "'.");
         }
-        
+
         return super.getVariables().put(key, value);
     }
 
     @Override
     public Object remove(Object key) {
-        final String name = (String)key;
+        final String name = (String) key;
         if (context.containsBean(name)) {
             throw new IllegalArgumentException("Can't remove variable to named '" + name + "'.");
         }
-        
+
         return super.getVariables().remove(key);
     }
 

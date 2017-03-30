@@ -1,20 +1,16 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.layout.dlm;
 
@@ -24,46 +20,41 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
- * Layout processing action for changing a node's attribute in the user's
- * layout.
- * 
+ * Layout processing action for changing a node's attribute in the user's layout.
+ *
  * @author Mark Boyd
  */
-public class LPAChangeAttribute implements ILayoutProcessingAction
-{
+public class LPAChangeAttribute implements ILayoutProcessingAction {
     private String nodeId = null;
     private String name = null;
     private IPerson person = null;
     private Element ilfNode = null;
     private String value = null;
-    private boolean isFragmentOwner = false;
-    
-    LPAChangeAttribute(String nodeId, String name, String value, IPerson p, 
-            Element ilfNode, boolean isFragmentOwner)
-    {
+
+    LPAChangeAttribute(
+            String nodeId,
+            String name,
+            String value,
+            IPerson p,
+            Element ilfNode) {
         this.nodeId = nodeId;
         this.name = name;
         this.person = p;
         this.ilfNode = ilfNode;
         this.value = value;
-        this.isFragmentOwner = isFragmentOwner;
     }
-    
-    /**
-     * Apply the attribute change.
-     */
-    public void perform() throws PortalException
-    {
+
+    /** Apply the attribute change. */
+    public void perform() throws PortalException {
         // push the change into the PLF
-        if (nodeId.startsWith(Constants.FRAGMENT_ID_USER_PREFIX))
-        {
+        if (nodeId.startsWith(Constants.FRAGMENT_ID_USER_PREFIX)) {
             // we are dealing with an incorporated node, so get a plf ghost
             // node, set its attribute, then add a directive indicating the
             // attribute that should be pushed into the ilf during merge
-            Element plfNode = HandlerUtils
-            .getPLFNode( ilfNode, person,
-                         true, // create node if not found
-                         false ); // don't create children
+            Element plfNode =
+                    HandlerUtils.getPLFNode(
+                            ilfNode, person, true, // create node if not found
+                            false); // don't create children
             plfNode.setAttribute(name, value);
             /*
              * add directive to hold override value. This is not necessary for
@@ -71,9 +62,7 @@ public class LPAChangeAttribute implements ILayoutProcessingAction
              * locale specific version and persisted via a different mechanism.
              */
             EditManager.addEditDirective(plfNode, name, person);
-        }
-        else
-        {
+        } else {
             // node owned by user so change attribute in child directly
             Document plf = RDBMDistributedLayoutStore.getPLF(person);
             Element plfNode = plf.getElementById(nodeId);
@@ -88,7 +77,7 @@ public class LPAChangeAttribute implements ILayoutProcessingAction
          * So it doesn't matter what is in the ILF's folder name attribute.
          */
         if (!name.equals(Constants.ATT_NAME))
-        		// should always be non-null
+        // should always be non-null
         {
             ilfNode.setAttribute(name, value);
         }

@@ -1,32 +1,26 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.rest.layout;
-
-import org.apache.commons.lang.StringUtils;
-import org.apereo.portal.portlet.om.IPortletDefinition;
-import org.apereo.portal.portlet.om.IPortletDefinitionParameter;
-import org.apereo.portal.portlet.om.IPortletPreference;
 
 import com.fasterxml.jackson.annotation.JsonRawValue;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
+import org.apache.commons.lang.StringUtils;
+import org.apereo.portal.portlet.om.IPortletDefinition;
+import org.apereo.portal.portlet.om.IPortletDefinitionParameter;
+import org.apereo.portal.portlet.om.IPortletPreference;
 
 public class LayoutPortlet {
     private static final String CONTENT_PORTLET_PREFERENCE = "content";
@@ -49,106 +43,111 @@ public class LayoutPortlet {
     private String widgetURL;
     private String widgetType;
     private String widgetTemplate;
-    @JsonRawValue
-    private Object widgetConfig;
+    @JsonRawValue private Object widgetConfig;
 
     private boolean isAltMaxUrl = false;
     private boolean isRenderOnWeb;
 
-    /**
-     * Fuller static content that you might display in a lightbox or so.
-     */
+    /** Fuller static content that you might display in a lightbox or so. */
     private String staticContent;
 
-    /**
-     * Pithy static content that you might display on a dashboard mosaic view or so.
-     */
+    /** Pithy static content that you might display on a dashboard mosaic view or so. */
     private String pithyStaticContent;
 
-    public LayoutPortlet() {
-
-    }
+    public LayoutPortlet() {}
 
     public LayoutPortlet(IPortletDefinition portletDef) {
-      if(portletDef != null) {
+        if (portletDef != null) {
 
-        nodeId = "-1";
-        title = portletDef.getTitle();
-        description = portletDef.getDescription();
-        fname = portletDef.getFName();
-        url = portletDef.getAlternativeMaximizedLink(); //todo get normal URL if alt is missing
-        target = portletDef.getTarget();
-        isAltMaxUrl = StringUtils.isNotBlank(url);
-        IPortletDefinitionParameter iconParam = portletDef.getParameter("iconUrl");
-        if (iconParam != null) {
-            this.setIconUrl(iconParam.getValue());
+            nodeId = "-1";
+            title = portletDef.getTitle();
+            description = portletDef.getDescription();
+            fname = portletDef.getFName();
+            url = portletDef.getAlternativeMaximizedLink(); //todo get normal URL if alt is missing
+            target = portletDef.getTarget();
+            isAltMaxUrl = StringUtils.isNotBlank(url);
+            IPortletDefinitionParameter iconParam = portletDef.getParameter("iconUrl");
+            if (iconParam != null) {
+                this.setIconUrl(iconParam.getValue());
+            }
+
+            IPortletDefinitionParameter faIconParam = portletDef.getParameter("faIcon");
+            if (faIconParam != null) {
+                this.setFaIcon(faIconParam.getValue());
+            }
+
+            boolean[] efficencyFlag = {false, false, false, false, false, false, false};
+            efficencyFlag[0] =
+                    !(portletDef.getPortletDescriptorKey() != null
+                            && STATIC_CONTENT_PORTLET_WEBAPP_NAME.equals(
+                                    portletDef.getPortletDescriptorKey().getWebAppName()));
+            for (IPortletPreference pref : portletDef.getPortletPreferences()) {
+                if (!efficencyFlag[0]
+                        && CONTENT_PORTLET_PREFERENCE.equals(pref.getName())
+                        && pref.getValues().length == 1) {
+                    this.setStaticContent(pref.getValues()[0]);
+                    efficencyFlag[0] = true;
+                } else if (!efficencyFlag[1]
+                        && PITHY_CONTENT_PORTLET_PREFERENCE.equals(pref.getName())
+                        && 1 == pref.getValues().length) {
+                    this.setPithyStaticContent(pref.getValues()[0]);
+                    efficencyFlag[1] = true;
+                } else if (!efficencyFlag[2]
+                        && WIDGET_URL_PORLTET_PREFERENCE.equals(pref.getName())) {
+                    this.setWidgetURL(pref.getValues()[0]);
+                    efficencyFlag[2] = true;
+                } else if (!efficencyFlag[3]
+                        && WIDGET_TYPE_PORTLET_PREFERENCE.equals(pref.getName())) {
+                    this.setWidgetType(pref.getValues()[0]);
+                    efficencyFlag[3] = true;
+                } else if (!efficencyFlag[4]
+                        && WIDGET_CONFIG_PORTLET_PREFERENCE.equals(pref.getName())) {
+                    if (isValidJSON(pref.getValues()[0])) {
+                        this.setWidgetConfig(pref.getValues()[0]);
+                    } else {
+                        this.setWidgetConfig(
+                                "{\"error\" : \"config JSON not valid, syntax error? Double quotes not escaped?\"}");
+                    }
+                    efficencyFlag[4] = true;
+                } else if (!efficencyFlag[5]
+                        && WIDGET_TEMPLATE_PORTLET_PREFERENCE.equals(pref.getName())) {
+                    this.setWidgetTemplate(pref.getValues()[0]);
+                    efficencyFlag[5] = true;
+                } else if (!efficencyFlag[6]
+                        && RENDER_ON_WEB_PORTLET_PREFERENCE.equals(pref.getName())) {
+                    efficencyFlag[6] = true;
+                    this.setRenderOnWeb(Boolean.valueOf(pref.getValues()[0]));
+                }
+
+                if (allTrue(efficencyFlag)) {
+                    break;
+                }
+            }
         }
-
-        IPortletDefinitionParameter faIconParam = portletDef.getParameter("faIcon");
-        if(faIconParam != null) {
-            this.setFaIcon(faIconParam.getValue());
-        }
-
-        boolean[] efficencyFlag = {false, false, false, false, false, false, false};
-        efficencyFlag[0] = !(portletDef.getPortletDescriptorKey() != null && STATIC_CONTENT_PORTLET_WEBAPP_NAME.equals(portletDef.getPortletDescriptorKey().getWebAppName()));
-        for(IPortletPreference pref : portletDef.getPortletPreferences()) {
-          if(!efficencyFlag[0] && CONTENT_PORTLET_PREFERENCE.equals(pref.getName()) && pref.getValues().length == 1) {
-              this.setStaticContent(pref.getValues()[0]);
-              efficencyFlag[0] = true;
-          } else if (!efficencyFlag[1] && PITHY_CONTENT_PORTLET_PREFERENCE.equals(pref.getName()) && 1 == pref.getValues().length) {
-              this.setPithyStaticContent(pref.getValues()[0]);
-              efficencyFlag[1] = true;
-          } else if (!efficencyFlag[2] && WIDGET_URL_PORLTET_PREFERENCE.equals(pref.getName())) {
-              this.setWidgetURL(pref.getValues()[0]);
-              efficencyFlag[2] = true;
-          } else if(!efficencyFlag[3] && WIDGET_TYPE_PORTLET_PREFERENCE.equals(pref.getName())) {
-              this.setWidgetType(pref.getValues()[0]);
-              efficencyFlag[3] = true;
-          } else if(!efficencyFlag[4] && WIDGET_CONFIG_PORTLET_PREFERENCE.equals(pref.getName())) {
-              if(isValidJSON(pref.getValues()[0])) {
-                this.setWidgetConfig(pref.getValues()[0]);
-              } else {
-                this.setWidgetConfig("{\"error\" : \"config JSON not valid, syntax error? Double quotes not escaped?\"}");
-              }
-              efficencyFlag[4] = true;
-          } else if (!efficencyFlag[5] && WIDGET_TEMPLATE_PORTLET_PREFERENCE.equals(pref.getName())) {
-              this.setWidgetTemplate(pref.getValues()[0]);
-              efficencyFlag[5] = true;
-          } else if (!efficencyFlag[6] && RENDER_ON_WEB_PORTLET_PREFERENCE.equals(pref.getName())) {
-              efficencyFlag[6] = true;
-              this.setRenderOnWeb(Boolean.valueOf(pref.getValues()[0]));
-          }
-
-          if(allTrue(efficencyFlag)) {
-            break;
-          }
-        }
-      }
     }
 
     private boolean allTrue(boolean[] arr) {
-      for(int i = 0 ; i < arr.length; i++) {
-        if(arr[i] == false) {
-          return false;
+        for (int i = 0; i < arr.length; i++) {
+            if (arr[i] == false) {
+                return false;
+            }
         }
-      }
-      return true;
+        return true;
     }
 
     private boolean isValidJSON(final String json) {
-      boolean valid = false;
-      try {
-         final JsonParser parser = new ObjectMapper().getFactory().createParser(json);
-         while (parser.nextToken() != null) {
-         }
-         valid = true;
-      } catch (Exception jpe) {
-         //eat error
-         valid = false;
-      }
+        boolean valid = false;
+        try {
+            final JsonParser parser = new ObjectMapper().getFactory().createParser(json);
+            while (parser.nextToken() != null) {}
+            valid = true;
+        } catch (Exception jpe) {
+            //eat error
+            valid = false;
+        }
 
-      return valid;
-   }
+        return valid;
+    }
 
     public String getNodeId() {
         return nodeId;
@@ -199,27 +198,27 @@ public class LayoutPortlet {
     }
 
     public String getFname() {
-      return fname;
+        return fname;
     }
 
     public void setFname(String fname) {
-      this.fname = fname;
+        this.fname = fname;
     }
 
     public String getTarget() {
-      return target;
+        return target;
     }
 
     public void setTarget(String target) {
-      this.target = target;
+        this.target = target;
     }
 
     public String getStaticContent() {
-      return staticContent;
+        return staticContent;
     }
 
     public void setStaticContent(String staticContent) {
-      this.staticContent = staticContent;
+        this.staticContent = staticContent;
     }
 
     public String getPithyStaticContent() {
@@ -227,15 +226,15 @@ public class LayoutPortlet {
     }
 
     public void setPithyStaticContent(final String pithyStaticContent) {
-      this.pithyStaticContent = pithyStaticContent;
+        this.pithyStaticContent = pithyStaticContent;
     }
 
     public boolean isAltMaxUrl() {
-      return isAltMaxUrl;
+        return isAltMaxUrl;
     }
 
     public void setAltMaxUrl(boolean isAltMaxUrl) {
-      this.isAltMaxUrl = isAltMaxUrl;
+        this.isAltMaxUrl = isAltMaxUrl;
     }
 
     public String getWidgetURL() {
@@ -255,27 +254,26 @@ public class LayoutPortlet {
     }
 
     public String getWidgetConfig() {
-      return (String)widgetConfig;
+        return (String) widgetConfig;
     }
 
     public void setWidgetConfig(String widgetConfig) {
-      this.widgetConfig = widgetConfig;
+        this.widgetConfig = widgetConfig;
     }
 
     public String getWidgetTemplate() {
-      return widgetTemplate;
+        return widgetTemplate;
     }
 
     public void setWidgetTemplate(String widgetTemplate) {
-      this.widgetTemplate = widgetTemplate;
+        this.widgetTemplate = widgetTemplate;
     }
 
     public boolean isRenderOnWeb() {
-      return isRenderOnWeb;
+        return isRenderOnWeb;
     }
 
     public void setRenderOnWeb(boolean setter) {
-      this.isRenderOnWeb = setter;
+        this.isRenderOnWeb = setter;
     }
-
 }
