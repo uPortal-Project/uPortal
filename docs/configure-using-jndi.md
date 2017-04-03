@@ -4,6 +4,7 @@ JNDI can be used to populate values in various areas of uPortal configuration.
 
 - Override properties values in Spring
 - Define uPortal DataSources
+- Configure CAS Filters
 
 ## Use JNDI to override values for some properties in Spring
 
@@ -132,5 +133,24 @@ Example from datasourceContext.xml:
     </bean>
 
 ```
+
+## Configure CAS Filters
+
+The CAS Client is JNDI-aware. JNDI values supersede those defined in `web.xml`.
+Again, the JNDI names are mapped to global names in `uportal-war/src/main/webapp/META-INF/context.xml`.
+The global names (and actual values) are defined in Tomcat.
+
+```xml
+    <!-- required names for CAS client -->
+    <ResourceLink name="cas/casServerUrlPrefix" global="cas/casServerUrlPrefix" type="java.lang.String" />
+    <ResourceLink name="cas/service" global="uportal/service" type="java.lang.String" />
+    <!-- Conflicts with cas/service, which is needed for Authentication Filter
+    <ResourceLink name="cas/serverName" global="uportal/casServerName" type="java.lang.String" />
+    -->
+    <ResourceLink name="cas/proxyCallbackUrl" global="shared/url/my" type="java.lang.String" />
+    <ResourceLink name="cas/casServerLoginUrl" global="cas/casServerLoginUrl" type="java.lang.String" />
+```
+
+As noted in the example above, take care with conflicting configuration. Each CAS filter will read all the CAS values defined.
 
 Source: [uportal-user@ thread](https://groups.google.com/a/apereo.org/d/topic/uportal-user/IM0SnpIlJC0/discussion).
