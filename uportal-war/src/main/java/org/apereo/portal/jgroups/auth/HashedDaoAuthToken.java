@@ -100,4 +100,8 @@ public class HashedDaoAuthToken extends AuthToken {
         }
         this.authValue = Util.readString(in);
     }
+
+    public int size() {
+        return authValue.length();
+    }
 }
