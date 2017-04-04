@@ -32,9 +32,14 @@
     <aop:aspectj-autoproxy/>
     
     <context:annotation-config/>
-    <context:component-scan base-package="org.apereo.portal.portlets">
-        <context:include-filter type="regex" expression=".*\.PortletPreferencesJsonDao" />
-        <context:include-filter type="regex" expression=".*\.account\.UserAccountHelper" />
+    <context:component-scan base-package="org.apereo.portal.portlets" use-default-filters="false">
+        <context:include-filter type="assignable" expression="org.apereo.portal.portlets.PortletPreferencesJsonDao" />
+        <context:include-filter type="assignable" expression="org.apereo.portal.portlets.account.UserAccountHelper" />
+        <context:include-filter type="assignable" expression="org.apereo.portal.portlets.account.IPasswordResetNotification"/>
+        <context:include-filter type="assignable" expression="org.apereo.portal.portlets.portletadmin.xmlsupport.IChannelPublishingDefinitionDao"/>
+    </context:component-scan>
+    <context:component-scan base-package="org.apereo.portal" use-default-filters="false">
+        <context:include-filter type="regex" expression=".*\.rendering\.PortletEventCoordinatationService"/>
     </context:component-scan>
     <context:component-scan base-package="org.apereo.portal">
         <context:exclude-filter type="regex" expression="org\.apereo\.portal\.json\.rendering\..+"/>

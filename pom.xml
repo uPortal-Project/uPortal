@@ -146,6 +146,7 @@
         <ant.version>1.8.4</ant.version>
         <aspectjrt.version>1.7.4</aspectjrt.version>
         <aspectjweaver.version>1.7.4</aspectjweaver.version>
+        <aws.version>1.10.65</aws.version>
         <casclient.version>3.4.1</casclient.version>
         <ccpp.version>1.0</ccpp.version>
         <cernunnos.version>1.2.2</cernunnos.version>
@@ -179,6 +180,7 @@
         <hibernate-jpamodelgen.version>1.2.0.Final</hibernate-jpamodelgen.version>
         <hibernate-jpa-api.version>1.0.1.Final</hibernate-jpa-api.version>
         <hsqldb.version>2.3.2</hsqldb.version>
+        <httpclient.version>4.5.2</httpclient.version> <!-- aws skd does not like 4.2.3 -->
         <icu4j.version>53.1</icu4j.version>
         <jackson2.version>2.3.3</jackson2.version>
         <jansi.version>1.11</jansi.version>
@@ -263,6 +265,28 @@
                 <groupId>aopalliance</groupId>
                 <artifactId>aopalliance</artifactId>
                 <version>${aopalliance.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.amazonaws</groupId>
+                <artifactId>aws-java-sdk-s3</artifactId>
+                <version>${aws.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpclient</artifactId>
+                <version>${httpclient.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>ch.qos.logback</groupId>
