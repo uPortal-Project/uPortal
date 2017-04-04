@@ -76,9 +76,6 @@ public class PortalShell {
                         new CompilerConfiguration(System.getProperties());
                 final GroovyShell shell = new GroovyShell(binding, conf);
                 shell.run(scriptFile, args);
-            } else {
-                final Groovysh shell = new Groovysh(binding, new IO());
-                shell.run();
             }
         } finally {
             if (applicationContext instanceof DisposableBean) {
