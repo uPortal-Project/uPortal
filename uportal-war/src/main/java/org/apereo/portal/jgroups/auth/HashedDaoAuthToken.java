@@ -101,6 +101,7 @@ public class HashedDaoAuthToken extends AuthToken {
         this.authValue = Util.readString(in);
     }
 
+    @Override
     public int size() {
         return authValue.length();
     }
