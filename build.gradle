@@ -47,7 +47,7 @@ subprojects {
 
     checkstyle {
         // Stay on checkstyle version 6 until Java version 7 support can be dropped
-        toolVersion = '6.19'
+        toolVersion = '7.6'
         showViolations = true
         configFile = file("${project.rootDir}/checkstyle.xml")
     }
