@@ -19,6 +19,7 @@ import groovy.lang.GroovyShell;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.HelpFormatter;
@@ -29,8 +30,6 @@ import org.apache.commons.cli.PosixParser;
 import org.apache.tools.ant.util.FileUtils;
 import org.apereo.portal.utils.PortalApplicationContextLocator;
 import org.codehaus.groovy.control.CompilerConfiguration;
-import org.codehaus.groovy.tools.shell.Groovysh;
-import org.codehaus.groovy.tools.shell.IO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
@@ -67,15 +66,19 @@ public class PortalShell {
         try {
             final Binding binding = new SpringBinding(applicationContext);
             binding.setVariable("logger", LOGGER);
+            final CompilerConfiguration conf =
+                    new CompilerConfiguration(System.getProperties());
+            final GroovyShell shell = new GroovyShell(binding, conf);
 
             if (commandLine.hasOption("script")) {
                 final String scriptName = commandLine.getOptionValue("script");
                 final File scriptFile = getAbsoluteFile(scriptName);
 
-                final CompilerConfiguration conf =
-                        new CompilerConfiguration(System.getProperties());
-                final GroovyShell shell = new GroovyShell(binding, conf);
                 shell.run(scriptFile, args);
+
+            } else {
+                String[] noArgs = {};
+                shell.run("", "", noArgs);
             }
         } finally {
             if (applicationContext instanceof DisposableBean) {
