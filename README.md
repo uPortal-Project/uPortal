@@ -1,9 +1,9 @@
 # uPortal
 
-| Version | Linux | Windows | Coverage | Dependencies |
-| - | - | - | - | - |
-| [uPortal 5](https://github.com/Jasig/uPortal/tree/master) | [![Linux Build Status](https://travis-ci.org/Jasig/uPortal.svg?branch=master)](https://travis-ci.org/Jasig/uPortal) | [![Windows Build Status](https://ci.appveyor.com/api/projects/status/8t95sjt090mf62dh/branch/master?svg=true)](https://ci.appveyor.com/project/drewwills/uportal/branch/master) | [![Coverage Status](https://coveralls.io/repos/github/Jasig/uPortal/badge.svg?branch=master)](https://coveralls.io/github/Jasig/uPortal?branch=master) | [![Dependency Status](https://www.versioneye.com/user/projects/58d7e6a7cef500003d13666a/badge.svg?style=flat-square)](https://www.versioneye.com/user/projects/58d7e6a7cef500003d13666a) |
-| [uPortal 4](https://github.com/Jasig/uPortal/tree/rel-4-3-patches) | [![Linux Build Status](https://travis-ci.org/Jasig/uPortal.svg?branch=rel-4-3-patches)](https://travis-ci.org/Jasig/uPortal) | [![Windows Build Status](https://ci.appveyor.com/api/projects/status/8t95sjt090mf62dh/branch/rel-4-3-patches?svg=true)](https://ci.appveyor.com/project/drewwills/uportal/branch/rel-4-3-patches) | [![Coverage Status](https://coveralls.io/repos/github/Jasig/uPortal/badge.svg?branch=rel-4-3-patches)](https://coveralls.io/github/Jasig/uPortal?branch=rel-4-3-patches) | [![Dependency Status](https://www.versioneye.com/user/projects/58d7e6e86893fd003facc225/badge.svg?style=flat-square)](https://www.versioneye.com/user/projects/58d7e6e86893fd003facc225) |
+| Version | Linux | Windows | Coverage |
+| - | - | - | - |
+| [uPortal 5](https://github.com/Jasig/uPortal/tree/master) | [![Linux Build Status](https://travis-ci.org/Jasig/uPortal.svg?branch=master)](https://travis-ci.org/Jasig/uPortal) | [![Windows Build Status](https://ci.appveyor.com/api/projects/status/8t95sjt090mf62dh/branch/master?svg=true)](https://ci.appveyor.com/project/drewwills/uportal/branch/master) | [![Coverage Status](https://coveralls.io/repos/github/Jasig/uPortal/badge.svg?branch=master)](https://coveralls.io/github/Jasig/uPortal?branch=master) |
+| [uPortal 4](https://github.com/Jasig/uPortal/tree/rel-4-3-patches) | [![Linux Build Status](https://travis-ci.org/Jasig/uPortal.svg?branch=rel-4-3-patches)](https://travis-ci.org/Jasig/uPortal) | [![Windows Build Status](https://ci.appveyor.com/api/projects/status/8t95sjt090mf62dh/branch/rel-4-3-patches?svg=true)](https://ci.appveyor.com/project/drewwills/uportal/branch/rel-4-3-patches) | [![Coverage Status](https://coveralls.io/repos/github/Jasig/uPortal/badge.svg?branch=rel-4-3-patches)](https://coveralls.io/github/Jasig/uPortal?branch=rel-4-3-patches) |
 
 ## About
 
