@@ -5,7 +5,8 @@ replicas: 1
 image:
   registry: andrewstuart
   name: uportal
+  dbName: updb
   tag: "5"
 
 global:
-  dnsSuffix: astuart.co
+  dnsSuffix: apereo.org

@@ -21,11 +21,11 @@ data:
     hibernate.connection.driver_class=org.postgresql.Driver
     hibernate.connection.url=jdbc:postgresql://updb/uportal
     hibernate.connection.username=uportal
-    hibernate.connection.password=un1c0n
+    hibernate.connection.password=ap3r30
     hibernate.connection.validationQuery=select 1
     RawEventsJdbcUrl=jdbc:postgresql://updb/uportal
     AggrEventsJdbcUrl=jdbc:postgresql://updb/uportal
     RawEventsJdbcUser=uportal
-    RawEventsJdbcPassword=un1c0n
+    RawEventsJdbcPassword=ap3r30
     AggrEventsJdbcUser=uportal
-    AggrEventsJdbcPassword=un1c0n
+    AggrEventsJdbcPassword=ap3r30

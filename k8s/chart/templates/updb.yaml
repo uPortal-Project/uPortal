@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
       - name: updb
-        image: andrewstuart/updb:5
+        image: {{ .Values.image.registry }}/{{ .Values.image.dbName }}:{{ .Values.image.version }}
         imagePullPolicy: Always
         resources:
           requests:
@@ -30,7 +30,6 @@ metadata:
 spec:
   ports:
   - port: 5432
-    targetPort: 5432
   selector:
     app: updb
     tier: database
