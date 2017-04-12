@@ -32,7 +32,7 @@ clean:
 # DB_IP before the container has been started.
 start-ctr:
 	docker build -t $(DB_TEMP_NAME) uportal-db
-	docker run --name $(DB_CTR_NAME) -d $(DB_TEMP_NAME)
+	docker run -e POSTGRES_USER=uportal -e POSTGRES_PASSWORD=password --name $(DB_CTR_NAME) -d $(DB_TEMP_NAME)
 
 db: clean start-ctr
 	sed s/updb/$(CTR_IP)/g < filters/docker.properties > filters/$(BUILD_ENV).properties
@@ -44,7 +44,7 @@ db: clean start-ctr
 ear: clean build.properties
 	ant -Dserver.base=$(BUILD_DIR) -Denv=docker deploy-ear
 
-image:
+image: ear
 	docker build . -t $(FQTN)
 	docker push $(FQTN)
 

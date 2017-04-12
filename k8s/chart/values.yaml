@@ -8,5 +8,8 @@ image:
   dbName: updb
   tag: "5"
 
+updb:
+  password: ap3r30
+
 global:
   dnsSuffix: apereo.org

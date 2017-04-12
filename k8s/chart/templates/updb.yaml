@@ -13,8 +13,16 @@ spec:
     spec:
       containers:
       - name: updb
-        image: {{ .Values.image.registry }}/{{ .Values.image.dbName }}:{{ .Values.image.version }}
+        image: {{ .Values.image.registry }}/{{ .Values.image.dbName }}:{{ .Values.image.tag }}
         imagePullPolicy: Always
+        env:
+        - name: POSTGRES_USER
+          value: uportal
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: updb-creds
+              key: password
         resources:
           requests:
             cpu: 100m
@@ -33,3 +41,11 @@ spec:
   selector:
     app: updb
     tier: database
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: updb-creds
+type: Opaque
+data:
+  password: {{ .Values.updb.password | b64enc }}
