@@ -51,15 +51,13 @@ public class SimpleLayout implements IUserLayout {
     private final DistributedUserLayout userLayout;
     private final Document layout;
     private final String layoutId;
-    private final String cacheKey;
 
     private final Log log = LogFactory.getLog(getClass());
 
-    public SimpleLayout(DistributedUserLayout userLayout, String layoutId, String cacheKey) {
+    public SimpleLayout(DistributedUserLayout userLayout, String layoutId) {
         this.userLayout = userLayout;
         this.layout = this.userLayout.getLayout();
         this.layoutId = layoutId;
-        this.cacheKey = cacheKey;
     }
 
     @Override
@@ -101,11 +99,6 @@ public class SimpleLayout implements IUserLayout {
     }
 
     @Override
-    public String getCacheKey() throws PortalException {
-        return cacheKey;
-    }
-
-    @Override
     public String getId() {
         return layoutId;
     }
@@ -129,27 +122,6 @@ public class SimpleLayout implements IUserLayout {
     }
 
     @Override
-    public Enumeration getNodeIds() throws PortalException {
-        Vector v = new Vector();
-        try {
-            String expression = "*";
-            XPathFactory fac = XPathFactory.newInstance();
-            XPath xpath = fac.newXPath();
-            NodeList nl = (NodeList) xpath.evaluate(expression, layout, XPathConstants.NODESET);
-            for (int i = 0; i < nl.getLength(); i++) {
-                Node node = nl.item(i);
-                if (node.getNodeType() == Node.ELEMENT_NODE) {
-                    Element e = (Element) node;
-                    v.add(e.getAttribute("ID"));
-                }
-            }
-        } catch (Exception e) {
-            log.error("Exception getting node ids.", e);
-        }
-        return v.elements();
-    }
-
-    @Override
     public String getRootId() {
         String rootNode = null;
         try {
@@ -164,11 +136,6 @@ public class SimpleLayout implements IUserLayout {
             log.error("Error getting root id.", e);
         }
         return rootNode;
-    }
-
-    @Override
-    public Set<String> getFragmentNames() {
-        return this.userLayout.getFragmentNames();
     }
 
     @Override

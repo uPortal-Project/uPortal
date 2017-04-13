@@ -94,14 +94,6 @@ public interface IUserLayoutStore {
     void updateUserProfile(IPerson person, IUserProfile profile);
 
     /**
-     * remove user profile from the database
-     *
-     * @param person User
-     * @param profileId profile id
-     */
-    void deleteUserProfile(IPerson person, int profileId);
-
-    /**
      * Creates a new user profile in the database. In the process, new profileId is assigned to the
      * profile
      *

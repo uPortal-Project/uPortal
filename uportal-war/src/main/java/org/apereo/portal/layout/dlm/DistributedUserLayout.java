@@ -66,11 +66,6 @@ public class DistributedUserLayout {
         return this.layout;
     }
 
-    /** @return The names of all of the fragments incorporated into the layout */
-    public Set<String> getFragmentNames() {
-        return this.fragmentNames;
-    }
-
     public IStylesheetUserPreferences getDistributedStructureStylesheetUserPreferences() {
         return this.distributedStructureStylesheetUserPreferences;
     }
