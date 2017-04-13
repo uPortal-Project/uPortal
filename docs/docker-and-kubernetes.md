@@ -14,18 +14,18 @@ The docker build process, parameterized and managed primarily via Makefile, is
 as follows:
 
 1. Build the uPortal codebase, specifying a local directory as the build target.
-1. Build an empty database docker image with a few needs for initializing an
+2. Build an empty database docker image with a few needs for initializing an
    empty uPortal Postgres database.
-1. Start the previously mentioned database in docker locally to be used for
+3. Start the previously mentioned database in docker locally to be used for
    the uPortal init process
-1. Query the docker daemon for the IP address of the locally-running database,
+4. Query the docker daemon for the IP address of the locally-running database,
    and use this information to create a temporary
    filters/docker-build.properties file, inserting the IP address.
-1. Use ant to initialize the database into the running docker postgres
+5. Use ant to initialize the database into the running docker postgres
    container.
-1. Commit the database container, and run the Docker build for the uPortal
+6. Commit the database container, and run the Docker build for the uPortal
    container.
-1. Push both containers to the named REGISTRY
+7. Push both containers to the named REGISTRY
 
 ## Kubernetes objects (in progress)
 
