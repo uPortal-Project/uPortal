@@ -75,10 +75,7 @@ public interface IGroupMember extends IBasicEntity {
     /**
      * Returns the type of the underlying entity. For a group this will be <code>IEntityGroup</code>
      * . For an entity, it will be the type of the underlying <code>EntityIdentifier</code>.
-     *
-     * @deprecated Too confusing side-by-side with getLeafType
      */
-    @Deprecated
     Class getType();
     /**
      * Returns <code>EntityIdentifier</code> for this <code>IGroupMember's</code> underlying entity.

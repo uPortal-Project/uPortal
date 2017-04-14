@@ -28,7 +28,6 @@ import org.apereo.portal.groups.IEntityStoreFactory;
  * system group service.
  *
  * @author Dan Ellentuck
- * @version $Revision$
  */
 public class FileSystemGroupStoreFactory implements IEntityGroupStoreFactory, IEntityStoreFactory {
     private static final Log log = LogFactory.getLog(FileSystemGroupStoreFactory.class);
@@ -49,17 +48,17 @@ public class FileSystemGroupStoreFactory implements IEntityGroupStoreFactory, IE
     public IEntityStore newEntityStore() throws GroupsException {
         return getGroupStore();
     }
+
     /**
-     * Return an instance of the entity group store implementation.
+     * Needs to be fixed, don't call!
      *
      * @return IEntityGroupStore
      * @exception GroupsException
-     * @deprecated needs to be fixed, don't call
      */
-    @Deprecated()
     public IEntityGroupStore newGroupStore() throws GroupsException {
-        throw new UnsupportedOperationException("unimplemented method called");
+        throw new UnsupportedOperationException();
     }
+
     /**
      * Return an instance of the entity group store implementation.
      *

@@ -203,10 +203,6 @@ public abstract class AbstractHttpServletRequestWrapper implements HttpServletRe
         return this.httpServletRequest.getReader();
     }
 
-    /**
-     * @deprecated
-     * @see javax.servlet.ServletRequest#getRealPath(java.lang.String)
-     */
     @Override
     public String getRealPath(String path) {
         return this.getServletContext().getRealPath(path);

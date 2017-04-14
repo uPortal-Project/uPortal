@@ -21,10 +21,7 @@ import org.apereo.portal.url.IPortalRequestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * Return {@link IUserPreferencesManager#getStructureStylesheetDescriptorId()}
- *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class StructureTransformerSource extends BaseTransformerSource {
     @Autowired private IStylesheetUserPreferencesService stylesheetUserPrefService;
