@@ -77,7 +77,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
             </div>
             <!-- Application Dropdown -->
             <div class="form-group">
-                <div class=" col-md-3">
+                <div class=" col-md-3"> <spring:message code="application.information"/>
                     <select name="application" class="form-control">
                         <c:forEach items="${contexts}" var="context">
                             <option value="${fn:escapeXml(context.name)}">${fn:escapeXml(context.name)}</option>
@@ -87,7 +87,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
             </div>
             <!-- Portlet Dropdown -->
             <div class="form-group">
-                <div class="col-md-3">
+                <div class="col-md-3"><spring:message code="portlet.information"/>
                     <select name="portlet" class="form-control col-md-4">
                         <c:forEach items="${contexts[0].portlets}" var="portlet">
                             <option value="${fn:escapeXml(portlet.portletName)}
