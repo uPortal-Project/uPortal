@@ -165,8 +165,6 @@ public final class TemplateDataTenantOperationsListener extends AbstractTenantOp
                 throw new RuntimeException("Unable to construct a URI by resolving '"
                         + resourcePath + "'from '" + templateLocPath + "'");
             }
-//                            (new File(templateLocPath, resourcePath))
-//                                    .toString(); // let File class handle path separator
             log.debug("Calculated full path: {} -> {}", resourcePath, fullPath);
             fullResourcePathSet.add(fullPath);
         }
