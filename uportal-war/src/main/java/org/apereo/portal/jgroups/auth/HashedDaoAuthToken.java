@@ -91,13 +91,13 @@ public class HashedDaoAuthToken extends AuthToken {
         if (log.isDebugEnabled()) {
             log.debug("HashedDaoAuthToken writeTo()");
         }
-        Util.writeString(this.getAuthValue(), out);
+        Util.writeObject(this.getAuthValue(), out);
     }
 
     public void readFrom(DataInput in) throws Exception {
         if (log.isDebugEnabled()) {
             log.debug("HashedDaoAuthToken readFrom()");
         }
-        this.authValue = Util.readString(in);
+        this.authValue = (String) Util.readObject(in);
     }
 }

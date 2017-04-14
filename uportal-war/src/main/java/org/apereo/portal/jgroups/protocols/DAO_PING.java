@@ -16,6 +16,7 @@ package org.apereo.portal.jgroups.protocols;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -27,6 +28,8 @@ import org.jgroups.annotations.Property;
 import org.jgroups.conf.ClassConfigurator;
 import org.jgroups.logging.LogFactory;
 import org.jgroups.protocols.Discovery;
+import org.jgroups.protocols.PingData;
+import org.jgroups.util.Responses;
 
 /**
  * Discovery protocol that delegates to a {@link PingDao} implementation. The {@link PingDao} impl
@@ -63,11 +66,6 @@ public class DAO_PING extends Discovery {
     private Future<?> writer_future;
 
     @Override
-    public boolean sendDiscoveryRequestsInParallel() {
-        return true;
-    }
-
-    @Override
     public boolean isDynamic() {
         return true;
     }
@@ -92,13 +90,24 @@ public class DAO_PING extends Discovery {
     }
 
     @Override
+    protected void findMembers(List<Address> members, boolean initial_discovery, Responses responses) {
+        final Map<Address, PhysicalAddress> existing_mbrs = pingDao.getAddresses(cluster_name);
+        for (Address member : members) {
+            PhysicalAddress physicalAddress = existing_mbrs.get(member);
+            if (physicalAddress != null) {
+                PingData pingData = new PingData(member, true);
+                responses.addResponse(pingData, true);
+            }
+        }
+    }
+
+    @Override
     public void destroy() {
         super.destroy();
 
         pingDao = null;
     }
 
-    @Override
     public Collection<PhysicalAddress> fetchClusterMembers(String clusterName) {
         //If no DAO has been set just return an empty list
         if (pingDao == null) {
@@ -149,13 +158,13 @@ public class DAO_PING extends Discovery {
         final boolean is_coordinator = !mbrs.isEmpty() && mbrs.iterator().next().equals(local_addr);
         if (is_coordinator) {
             //Delete all member addresses other than those in the current view
-            pingDao.purgeOtherAddresses(group_addr, mbrs);
+            pingDao.purgeOtherAddresses(cluster_name, mbrs);
         }
     }
 
     protected final class WriterTask implements Runnable {
         public void run() {
-            getAndSavePhysicalAddress(group_addr);
+            getAndSavePhysicalAddress(cluster_name);
         }
     }
 }

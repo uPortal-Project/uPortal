@@ -169,7 +169,7 @@
         <easymock.version>3.2</easymock.version>
         <ejb3-persistence.version>1.0.1.GA</ejb3-persistence.version>
         <ehcache.version>2.6.8</ehcache.version>
-        <ehcache-jgroups3replication.version>1.7.4</ehcache-jgroups3replication.version>
+        <ehcache-jgroups3replication.version>1.7-SNAPSHOT</ehcache-jgroups3replication.version>
         <ehcache-spring-annotations.version>1.2.0</ehcache-spring-annotations.version>
         <ehcache-web.version>2.0.4</ehcache-web.version>
         <google-visualization.version>1.1.1</google-visualization.version>
@@ -190,7 +190,7 @@
         <jaxb2basics.version>0.6.5.1</jaxb2basics.version>
         <jaxb2basics.plugin.version>0.6.4</jaxb2basics.plugin.version>
         <jdom.version>1.0</jdom.version>
-        <jgroups.version>3.2.13.Final</jgroups.version>
+        <jgroups.version>3.6.13.Final</jgroups.version>
         <jline.version>2.11</jline.version>
         <joda-time.version>2.3</joda-time.version>
         <joda-time-jsptags.version>1.1.1</joda-time-jsptags.version>
