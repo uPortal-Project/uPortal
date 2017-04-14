@@ -492,38 +492,6 @@ public class GrouperEntityGroupStore implements IEntityGroupStore, IEntityStore,
     }
 
     /**
-     * Test a Grouper {WsGroup} against a query string according to the specified method and
-     * determine if it matches the query.
-     *
-     * @param group WsGroup to be tested
-     * @param query Query string
-     * @param method int-based method matching one of the standard search methods defined in
-     *     {IGroupConstants}
-     * @return <code>true</code> if the group matches, <code>false</code> otherwise
-     */
-    protected boolean groupMatches(WsGroup group, String query, int method) {
-
-        // Ensure that this group has a name defined before performing
-        // comparisons.
-        if (group == null || group.getName() == null) {
-            return false;
-        }
-
-        switch (method) {
-            case IGroupConstants.IS:
-                return group.getName().equals(query);
-            case IGroupConstants.STARTS_WITH:
-                return group.getName().startsWith(query);
-            case IGroupConstants.ENDS_WITH:
-                return group.getName().endsWith(query);
-            case IGroupConstants.CONTAINS:
-                return group.getName().contains(query);
-            default:
-                return false;
-        }
-    }
-
-    /**
      * Construct an IEntityGroup from a Grouper WsGroup.
      *
      * @param wsGroup
