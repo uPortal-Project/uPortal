@@ -15,6 +15,8 @@
 package org.apereo.portal.tenants;
 
 import java.io.File;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -148,14 +150,23 @@ public final class TemplateDataTenantOperationsListener extends AbstractTenantOp
      */
     /*package*/ static Set<String> determineImportOnUpdatePaths(
             String templateLoc, Set<String> relResourcePathSet) {
-        final String templateLocPath = templateLoc.split("\\*")[0]; // up to wildcard pattern
+        String templateLocPath = templateLoc.split("\\*")[0]; // up to wildcard pattern
+        if (!templateLocPath.endsWith("/")) {
+            templateLocPath = templateLocPath + "/";
+        }
         final Set<String> fullResourcePathSet = new HashSet<>();
         for (String resourcePath : relResourcePathSet) {
-            final String fullPath =
-                    resourcePath.matches("^[a-zA-Z]+:.*")
-                            ? resourcePath
-                            : (new File(templateLocPath, resourcePath))
-                                    .toString(); // let File class handle path separator
+            final String fullPath;
+            try {
+                fullPath = resourcePath.matches("^[a-zA-Z]+:.*")
+                        ? resourcePath
+                        : (new URI(templateLocPath).resolve(resourcePath)).toString();
+            } catch (URISyntaxException e) {
+                throw new RuntimeException("Unable to construct a URI by resolving '"
+                        + resourcePath + "'from '" + templateLocPath + "'");
+            }
+//                            (new File(templateLocPath, resourcePath))
+//                                    .toString(); // let File class handle path separator
             log.debug("Calculated full path: {} -> {}", resourcePath, fullPath);
             fullResourcePathSet.add(fullPath);
         }

@@ -19,21 +19,17 @@
 
 package org.apereo.portal.tenants
 
-import org.apereo.portal.tenants.TemplateDataTenantOperationsListener
-
 import static org.junit.Assert.*
 
 import org.junit.Test
-import org.springframework.core.io.ClassPathResource
-import org.springframework.core.io.Resource
 
 class TemplateDataTenantOperationsListenerTest {
-    static final String simplePath="classpath:/org/apereo/portal/tenants/sampledata";
-    static final String simplePath2="classpath:/org/apereo/portal/tenants/sampledata/";
-    static final String wildcardPath="classpath:/org/apereo/portal/tenants/sampledata/**/*.xml";
-    static final String adminFullPath="classpath:/org/apereo/portal/tenants/data/group_membership/Administrators.group-membership.xml";
-    static final String membersRelPath="pags-group/Members.pags-group.xml";
-    static final String membersFullPath="classpath:/org/apereo/portal/tenants/sampledata/pags-group/Members.pags-group.xml";
+    static final String simplePath = "classpath:/org/apereo/portal/tenants/sampledata";
+    static final String simplePath2 = "classpath:/org/apereo/portal/tenants/sampledata/";
+    static final String wildcardPath = "classpath:/org/apereo/portal/tenants/sampledata/**/*.xml";
+    static final String adminFullPath = "classpath:/org/apereo/portal/tenants/data/group_membership/Administrators.group-membership.xml";
+    static final String membersRelPath = "pags-group/Members.pags-group.xml";
+    static final String membersFullPath = "classpath:/org/apereo/portal/tenants/sampledata/pags-group/Members.pags-group.xml";
 
     @Test
     void testDetermineImportOnUpdatePaths() {
@@ -53,4 +49,5 @@ class TemplateDataTenantOperationsListenerTest {
         resources = TemplateDataTenantOperationsListener.determineImportOnUpdatePaths(wildcardPath, configResources);
         assertEquals("Wildcard path replacement incorrect", fullpathResources, resources);
     }
+
 }
