@@ -366,62 +366,6 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
         return (value != null && value.equals("true") ? true : false);
     }
 
-    public void deleteUserProfile(IPerson person, int profileId) {
-        int userId = person.getID();
-        deleteUserProfile(userId, profileId);
-    }
-
-    private void deleteUserProfile(final int userId, final int profileId) {
-        this.jdbcOperations.execute(
-                new ConnectionCallback<Object>() {
-                    @Override
-                    public Object doInConnection(Connection con)
-                            throws SQLException, DataAccessException {
-                        Statement stmt = con.createStatement();
-                        try {
-                            String sQuery =
-                                    "DELETE FROM UP_USER_PROFILE WHERE USER_ID="
-                                            + userId
-                                            + " AND PROFILE_ID="
-                                            + Integer.toString(profileId);
-                            logger.debug("deleteUserProfile() : {}", sQuery);
-                            stmt.executeUpdate(sQuery);
-
-                            // remove profile mappings
-                            sQuery =
-                                    "DELETE FROM UP_USER_UA_MAP WHERE USER_ID="
-                                            + userId
-                                            + " AND PROFILE_ID="
-                                            + Integer.toString(profileId);
-                            logger.debug("deleteUserProfile() : {}", sQuery);
-                            stmt.executeUpdate(sQuery);
-
-                            // remove parameter information
-                            sQuery =
-                                    "DELETE FROM UP_SS_USER_PARM WHERE USER_ID="
-                                            + userId
-                                            + " AND PROFILE_ID="
-                                            + Integer.toString(profileId);
-                            logger.debug("deleteUserProfile() : {}", sQuery);
-                            stmt.executeUpdate(sQuery);
-
-                            sQuery =
-                                    "DELETE FROM UP_SS_USER_ATTS WHERE USER_ID="
-                                            + userId
-                                            + " AND PROFILE_ID="
-                                            + Integer.toString(profileId);
-                            logger.debug("deleteUserProfile() : {}", sQuery);
-                            stmt.executeUpdate(sQuery);
-
-                        } finally {
-                            stmt.close();
-                        }
-
-                        return null;
-                    }
-                });
-    }
-
     /**
      * Return the next available channel structure id for a user
      *
@@ -503,56 +447,6 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                 });
     }
 
-    /** UserPreferences */
-    private String getUserBrowserMapping(final IPerson person, final String userAgentArg) {
-        final int userId = person.getID();
-        return jdbcOperations.execute(
-                new ConnectionCallback<String>() {
-                    @Override
-                    public String doInConnection(Connection con)
-                            throws SQLException, DataAccessException {
-                        final String userAgent;
-                        if (userAgentArg.length() > 255) {
-                            userAgent = userAgentArg.substring(0, 254);
-                            logger.debug(
-                                    "userAgent trimmed to 255 characters. userAgent: {}",
-                                    userAgentArg);
-                        } else {
-                            userAgent = userAgentArg;
-                        }
-
-                        String sQuery =
-                                "SELECT PROFILE_FNAME "
-                                        + "FROM UP_USER_UA_MAP LEFT JOIN UP_USER_PROFILE ON "
-                                        + "UP_USER_UA_MAP.PROFILE_ID=UP_USER_PROFILE.PROFILE_ID WHERE UP_USER_UA_MAP.USER_ID=? AND USER_AGENT=?";
-                        PreparedStatement pstmt = con.prepareStatement(sQuery);
-
-                        try {
-                            pstmt.setInt(1, userId);
-                            pstmt.setString(2, userAgent);
-
-                            logger.debug(
-                                    "getUserBrowserMapping(): '{}' userId: {} userAgent: {}",
-                                    sQuery,
-                                    userId,
-                                    userAgent);
-                            ResultSet rs = pstmt.executeQuery();
-                            try {
-                                if (rs.next()) {
-                                    return rs.getString("PROFILE_FNAME");
-                                }
-                            } finally {
-                                rs.close();
-                            }
-                        } finally {
-                            pstmt.close();
-                        }
-
-                        return null;
-                    }
-                });
-    }
-
     protected Document getPersonalUserLayout(final IPerson person, final IUserProfile profile) {
         final LocaleManager localeManager = profile.getLocaleManager();
 
@@ -610,12 +504,15 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                                                                                 stmt.executeQuery(
                                                                                         sQuery);
                                                                         try {
-                                                                            boolean hasRow =
-                                                                                    rs.next();
-                                                                            newUserId =
-                                                                                    rs.getInt(1);
-                                                                            newLayoutId =
-                                                                                    rs.getInt(2);
+                                                                            if (rs.next()) {
+                                                                                newUserId =
+                                                                                        rs.getInt(1);
+                                                                                newLayoutId =
+                                                                                        rs.getInt(2);
+                                                                            } else {
+                                                                                final String msg = "Unable to find default user for USER_ID=" + realUserId;
+                                                                                throw new SQLException(msg);
+                                                                            }
                                                                         } finally {
                                                                             rs.close();
                                                                         }
@@ -632,10 +529,13 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                                                                                 stmt.executeQuery(
                                                                                         sQuery);
                                                                         try {
-                                                                            boolean hasRow =
-                                                                                    rs.next();
-                                                                            nextStructId =
-                                                                                    rs.getInt(1);
+                                                                            if (rs.next()) {
+                                                                                nextStructId =
+                                                                                        rs.getInt(1);
+                                                                            } else {
+                                                                                final String msg = "Unable to find NEXT_STRUCT_ID for USER_ID=" + realUserId;
+                                                                                throw new SQLException(msg);
+                                                                            }
                                                                         } finally {
                                                                             rs.close();
                                                                         }
@@ -657,11 +557,13 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                                                                                             .executeQuery(
                                                                                                     sQuery);
                                                                             try {
-                                                                                boolean hasRow =
-                                                                                        rs.next();
-                                                                                realNextStructId =
-                                                                                        rs.getInt(
-                                                                                                1);
+                                                                                if (rs.next()) {
+                                                                                    realNextStructId =
+                                                                                            rs.getInt(1);
+                                                                                } else {
+                                                                                    final String msg = "Unable to find NEXT_STRUCT_ID for USER_ID=" + realUserId;
+                                                                                    throw new SQLException(msg);
+                                                                                }
                                                                             } finally {
                                                                                 rs.close();
                                                                             }

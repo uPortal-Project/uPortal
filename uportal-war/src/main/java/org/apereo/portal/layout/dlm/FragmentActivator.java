@@ -480,10 +480,6 @@ public class FragmentActivator {
         }
     }
 
-    private net.sf.ehcache.Element getUserView(String ownerId, Locale locale) {
-        return userViews.get(new Tuple<String, String>(ownerId, locale.toString()));
-    }
-
     public void clearChacheForOwner(final String ownerId) {
         final List<Locale> locales = fragmentOwnerLocales.getIfPresent(ownerId);
         if (locales == null) {

@@ -77,14 +77,6 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
         }
     }
 
-    public IUserLayoutManager getOriginalLayoutManager() throws PortalException {
-        return man;
-    }
-
-    public void setOriginalLayoutManager(IUserLayoutManager man) throws PortalException {
-        this.man = man;
-    }
-
     public IUserLayout getUserLayout() throws PortalException {
         return man.getUserLayout();
     }

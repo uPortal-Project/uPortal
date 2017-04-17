@@ -934,7 +934,7 @@ public class UpdatePreferencesServlet {
      */
     @RequestMapping(method = RequestMethod.POST, params = "action=chooseSkin")
     public ModelAndView chooseSkin(
-            HttpServletRequest request, HttpServletResponse response, @RequestParam String skinName)
+            HttpServletRequest request, @RequestParam String skinName)
             throws IOException {
 
         this.stylesheetUserPreferencesService.setStylesheetParameter(
@@ -1072,7 +1072,6 @@ public class UpdatePreferencesServlet {
             HttpServletResponse response,
             @RequestParam("targetId") String targetId,
             @RequestParam(value = "siblingId", required = false) String siblingId,
-            @RequestParam(value = "display", required = false) String display,
             @RequestBody(required = false) Map<String, Map<String, String>> attributes) {
         IUserLayoutManager ulm =
                 userInstanceManager
@@ -1438,17 +1437,6 @@ public class UpdatePreferencesServlet {
 
         final AuthorizationService authService = AuthorizationService.instance();
         return authService.newPrincipal(user);
-    }
-
-    /**
-     * A folder is a column if its parent is a tab element
-     *
-     * @param ulm User Layout Manager
-     * @param folderId the folder in question
-     * @return <code>true</code> if the folder is a column, otherwise <code>false</code>
-     */
-    protected boolean isColumn(IUserLayoutManager ulm, String folderId) throws PortalException {
-        return isTab(ulm, ulm.getParentId(folderId));
     }
 
     protected String getTabIdFromName(IUserLayout userLayout, String tabName) {
