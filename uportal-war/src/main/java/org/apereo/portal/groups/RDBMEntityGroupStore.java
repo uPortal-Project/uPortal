@@ -656,21 +656,7 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
         }
         return countAMemberGroupSql;
     }
-    /** @return java.lang.String */
-    private static java.lang.String getCountMemberGroupsNamedSql() {
-        if (countMemberGroupsNamedSql == null) {
-            StringBuffer buff = new StringBuffer(100);
-            buff.append("SELECT COUNT (*) FROM ");
-            buff.append(GROUP_TABLE_WITH_ALIAS + ", " + MEMBER_TABLE_WITH_ALIAS);
-            buff.append(" WHERE " + groupAlias(GROUP_ID_COLUMN) + EQ);
-            buff.append(memberAlias(MEMBER_MEMBER_KEY_COLUMN));
-            buff.append(" AND " + memberAlias(MEMBER_GROUP_ID_COLUMN) + EQUALS_PARAM);
-            buff.append(" AND " + groupAlias(GROUP_NAME_COLUMN) + EQUALS_PARAM);
-            buff.append(" AND " + memberAlias(MEMBER_MEMBER_SERVICE_COLUMN) + EQUALS_PARAM);
-            countMemberGroupsNamedSql = buff.toString();
-        }
-        return countMemberGroupsNamedSql;
-    }
+
     /** @return java.lang.String */
     private static java.lang.String getDeleteGroupSql(IEntityGroup group) {
         StringBuffer buff = new StringBuffer(100);

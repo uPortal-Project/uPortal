@@ -55,29 +55,11 @@ public interface IGroupService {
     IGroupMember getGroupMember(EntityIdentifier underlyingEntityIdentifier)
             throws GroupsException;
 
-    /** Returns a new <code>IEntityGroup</code> for the given Class with an unused key. */
-    IEntityGroup newGroup(Class type) throws GroupsException;
-
     /** Returns an <code>IEntityGroupStore</code>. */
     IEntityGroupStore getGroupStore() throws GroupsException;
 
     /** Removes the <code>IEntityGroup</code> from the store. */
     void deleteGroup(IEntityGroup group) throws GroupsException;
-
-    /** Commits the updated <code>IEntityGroup</code> to the store. */
-    void updateGroup(IEntityGroup group) throws GroupsException;
-
-    /** Commits the updated <code>IEntityGroup</code> to the store. */
-    void updateGroupMembers(IEntityGroup group) throws GroupsException;
-
-    /**
-     * Returns the containing groups for the <code>IGroupMember</code>. IMPORTANT! This method does
-     * not appear to be in use, but it's critical to something. The portal breaks badly if it is
-     * removed.
-     *
-     * @param gm IGroupMember
-     */
-    Iterator findParentGroups(IGroupMember gm) throws GroupsException;
 
     /**
      * Returns the member groups for the <code>IEntityGroup</code>
@@ -94,23 +76,10 @@ public interface IGroupService {
             throws GroupsException;
 
     /**
-     * Find EntityIdentifiers for groups whose name matches the query string according to the
-     * specified method, has the provided leaf type and descends from the specified group
-     */
-    EntityIdentifier[] searchForGroups(
-            String query, int method, Class leaftype, IEntityGroup ancestor) throws GroupsException;
-
-    /**
      * Find EntityIdentifiers for entities whose name matches the query string according to the
      * specified method and is of the specified type
      */
     EntityIdentifier[] searchForEntities(String query, int method, Class type)
             throws GroupsException;
 
-    /**
-     * Find EntityIdentifiers for entities whose name matches the query string according to the
-     * specified method, is of the specified type and descends from the specified group
-     */
-    EntityIdentifier[] searchForEntities(
-            String query, int method, Class type, IEntityGroup ancestor) throws GroupsException;
 }

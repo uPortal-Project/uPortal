@@ -244,19 +244,7 @@ public class EntityGroupImpl extends GroupMemberImpl implements IEntityGroup {
     public EntityIdentifier getEntityIdentifier() {
         return getUnderlyingEntityIdentifier();
     }
-    /**
-     * Returns the key of the underyling entity.
-     *
-     * @return String
-     */
-    public String getEntityKey() {
-        return getKey();
-    }
 
-    /** @return String */
-    public String getGroupID() {
-        return getKey();
-    }
     /**
      * Returns the entity type of this groups's members.
      *

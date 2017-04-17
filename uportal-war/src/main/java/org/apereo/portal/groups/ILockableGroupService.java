@@ -16,14 +16,13 @@ package org.apereo.portal.groups;
 
 /**
  * Extends IGroupService with methods for finding and maintaining <code>ILockableEntityGroups</code>
- * .
  *
  * @author Dan Ellentuck
  */
 public interface ILockableGroupService extends IGroupService {
 
     /** Removes the <code>ILockableEntityGroup</code> from the store. */
-    public void deleteGroup(ILockableEntityGroup group) throws GroupsException;
+    void deleteGroup(ILockableEntityGroup group) throws GroupsException;
 
     /**
      * Returns a pre-existing <code>ILockableEntityGroup</code> or null if the group is not found.
@@ -33,13 +32,13 @@ public interface ILockableGroupService extends IGroupService {
      * @param owner String - the lock owner.
      * @param durationSecs int - the duration of the lock in seconds.
      */
-    public ILockableEntityGroup findGroupWithLock(String key, String owner, int durationSecs)
+    ILockableEntityGroup findGroupWithLock(String key, String owner, int durationSecs)
             throws GroupsException;
 
     /** Commits the updated <code>ILockableEntityGroup</code> to the store and renews the lock. */
-    public void updateGroup(ILockableEntityGroup group, boolean renewLock) throws GroupsException;
+    void updateGroup(ILockableEntityGroup group, boolean renewLock) throws GroupsException;
 
     /** Commits the updated <code>ILockableEntityGroup</code> to the store and renews the lock. */
-    public void updateGroupMembers(ILockableEntityGroup group, boolean renewLock)
+    void updateGroupMembers(ILockableEntityGroup group, boolean renewLock)
             throws GroupsException;
 }
