@@ -24,9 +24,9 @@ clean:
 	-docker stop $(DB_CTR_NAME)
 	-docker rm -v $(DB_CTR_NAME)
 	-rm filters/$(BUILD_ENV).properties
-	mvn clean
-	./gradlew clean
-	mkdir -p $(BUILD_DIR)
+	-mvn clean
+	-./gradlew clean
+	-mkdir -p $(BUILD_DIR)
 
 # These must be run in a separate target, otherwise it seems `make` evaluates
 # DB_IP before the container has been started.
