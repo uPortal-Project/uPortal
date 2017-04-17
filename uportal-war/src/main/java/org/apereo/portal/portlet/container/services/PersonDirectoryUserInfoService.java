@@ -175,29 +175,6 @@ public class PersonDirectoryUserInfoService implements UserInfoService {
     }
 
     /**
-     * Converts the full portal user attribute Map to a USER_INFO map for the portlet
-     *
-     * @param portalUserAttributes All the attributes the portal knows about the user
-     * @return The Map to use for the USER_INFO attribute
-     */
-    protected Map<String, String> generateUserInfo(final Map<String, Object> portalUserAttributes) {
-        final Map<String, String> portletUserAttributes =
-                new HashMap<String, String>(portalUserAttributes.size());
-
-        //Copy expected attributes to the USER_INFO Map
-        for (final Map.Entry<String, Object> portalUserAttributeEntry :
-                portalUserAttributes.entrySet()) {
-            final String attributeName = portalUserAttributeEntry.getKey();
-            final Object valueObj = portalUserAttributeEntry.getValue();
-
-            final String value = String.valueOf(valueObj);
-            portletUserAttributes.put(attributeName, value);
-        }
-
-        return portletUserAttributes;
-    }
-
-    /**
      * Get the list of user attributes the portlet expects
      *
      * @param request The current request.

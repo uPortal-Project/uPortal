@@ -42,23 +42,6 @@ public class UpdatingPermissionManagerImpl extends PermissionManagerImpl
     }
 
     /**
-     * Retrieve an array of IPermission objects based on the given parameters. Any null parameters
-     * will be ignored.
-     *
-     * @param principal IAuthorizationPrincipal
-     * @param activity String
-     * @param target String
-     * @return IPermission[]
-     * @exception AuthorizationException
-     */
-    public IPermission[] getPermissions(
-            IAuthorizationPrincipal principal, String activity, String target)
-            throws AuthorizationException {
-        return getAuthorizationService()
-                .getUncachedPermissionsForPrincipal(principal, getOwner(), activity, target);
-    }
-
-    /**
      * Creates a new <code>IPermission</code> for the <code>principal</code> on behalf of the owner
      * of this <code>IPermissionManager</code>.
      *
