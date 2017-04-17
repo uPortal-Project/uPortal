@@ -37,8 +37,6 @@ public class SimpleSecurityContext extends ChainingSecurityContext implements IS
 
     private final int SIMPLESECURITYAUTHTYPE = 0xFF02;
 
-    private IPortalPasswordService passwordService;
-
     SimpleSecurityContext() {
         super();
     }
