@@ -61,15 +61,4 @@ public class UserPreferencesManager implements IUserPreferencesManager {
         return this.userProfile;
     }
 
-    @Override
-    @Deprecated
-    public long getThemeStylesheetDescriptorId() {
-        return this.userProfile.getThemeStylesheetId();
-    }
-
-    @Override
-    @Deprecated
-    public long getStructureStylesheetDescriptorId() {
-        return this.userProfile.getStructureStylesheetId();
-    }
 }

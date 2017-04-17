@@ -121,6 +121,7 @@ public abstract class GroupMemberImpl implements IGroupMember {
     public Class getType() {
         return getUnderlyingEntityIdentifier().getType();
     }
+
     /** @return EntityIdentifier */
     @Override
     public EntityIdentifier getUnderlyingEntityIdentifier() {

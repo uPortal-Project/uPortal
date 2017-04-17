@@ -22,7 +22,6 @@ import org.apereo.portal.security.IPerson;
  *
  * @author Peter Kharchenko {@link <a
  *     href="mailto:pkharchenko@interactivebusiness.com">pkharchenko@interactivebusiness.com</a>}
- * @version $Revision$
  */
 public interface IUserPreferencesManager {
 
@@ -31,35 +30,20 @@ public interface IUserPreferencesManager {
      *
      * @return current <code>IPerson</code>
      */
-    public IPerson getPerson();
+    IPerson getPerson();
 
     /**
      * Returns {@link IUserLayoutManager} object for performing layout-related operations.
      *
      * @return an <code>IUserLayoutManager</code> value
      */
-    public IUserLayoutManager getUserLayoutManager();
+    IUserLayoutManager getUserLayoutManager();
 
     /**
      * Returns current profile.
      *
      * @return current <code>UserProfile</code>
      */
-    public IUserProfile getUserProfile();
+    IUserProfile getUserProfile();
 
-    /**
-     * Returns current theme stylesheet description
-     *
-     * @deprecated use {@link #getUserProfile()} and {@link UserProfile#getThemeStylesheetId()}
-     */
-    @Deprecated
-    public long getThemeStylesheetDescriptorId();
-
-    /**
-     * Returns current structure stylesheet description
-     *
-     * @deprecated use {@link #getUserProfile()} and {@link UserProfile#getStructureStylesheetId()}
-     */
-    @Deprecated
-    public long getStructureStylesheetDescriptorId();
 }

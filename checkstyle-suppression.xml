@@ -415,7 +415,6 @@
     <suppress files="GenerateEntityFileNameTask\.java" checks="[a-zA-Z0-9]*"/>
     <suppress files="DefaultUsernamePhrase\.java" checks="[a-zA-Z0-9]*"/>
     <suppress files="FolderTypePhrase\.java" checks="[a-zA-Z0-9]*"/>
-    <suppress files="SafeFileNamePhrase\.java" checks="[a-zA-Z0-9]*"/>
     <suppress files="GetMemberServicePhrase\.java" checks="[a-zA-Z0-9]*"/>
     <suppress files="PropertiesFilesIsIncludedUser\.java" checks="[a-zA-Z0-9]*"/>
     <suppress files="FilePatternPhrase\.java" checks="[a-zA-Z0-9]*"/>
@@ -1178,13 +1177,11 @@
     <suppress files="EntityTypesLocator\.java" checks="[a-zA-Z0-9]*"/>
     <suppress files="UserLayoutStoreLocator\.java" checks="[a-zA-Z0-9]*"/>
     <suppress files="ReferenceEntitySearcherLocator\.java" checks="[a-zA-Z0-9]*"/>
-    <suppress files="UserIdentityStoreLocator\.java" checks="[a-zA-Z0-9]*"/>
     <suppress files="AuthorizationServiceLocator\.java" checks="[a-zA-Z0-9]*"/>
     <suppress files="PersonAttributeDaoLocator\.java" checks="[a-zA-Z0-9]*"/>
     <suppress files="PortalPasswordServiceLocator\.java" checks="[a-zA-Z0-9]*"/>
     <suppress files="PortletDefinitionRegistryLocator\.java" checks="[a-zA-Z0-9]*"/>
     <suppress files="PasswordEncryptionServiceLocator\.java" checks="[a-zA-Z0-9]*"/>
-    <suppress files="CacheFactoryLocator\.java" checks="[a-zA-Z0-9]*"/>
     <suppress files="ApplicationContextLocator\.java" checks="[a-zA-Z0-9]*"/>
     <suppress files="ILdapServer\.java" checks="[a-zA-Z0-9]*"/>
     <suppress files="ContextSourceLdapServerImpl\.java" checks="[a-zA-Z0-9]*"/>
@@ -1788,7 +1785,6 @@
     <suppress files="LayoutDataUpgradeTest\.java" checks="[a-zA-Z0-9]*"/>
     <suppress files="JaxbPortalDataHandlerServiceTest\.java" checks="[a-zA-Z0-9]*"/>
     <suppress files="PortletDataUpgradeTest\.java" checks="[a-zA-Z0-9]*"/>
-    <suppress files="SafeFileNamePhraseTest\.java" checks="[a-zA-Z0-9]*"/>
     <suppress files="JpaMultilingualMessageDaoTest\.java" checks="[a-zA-Z0-9]*"/>
     <suppress files="JpaClusterLockDaoTest\.java" checks="[a-zA-Z0-9]*"/>
     <suppress files="ClusterLockServiceImplDbBackedTest\.java" checks="[a-zA-Z0-9]*"/>

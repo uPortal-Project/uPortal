@@ -58,7 +58,6 @@ import org.apereo.portal.security.IAuthorizationService;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.PersonFactory;
 import org.apereo.portal.spring.locator.PortletDefinitionRegistryLocator;
-import org.apereo.portal.spring.locator.UserIdentityStoreLocator;
 import org.apereo.portal.xml.XmlUtilities;
 import org.apereo.portal.xml.xpath.XPathOperations;
 import org.springframework.beans.factory.InitializingBean;
@@ -85,6 +84,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
     private XPathOperations xpathOperations;
     private IPortalLayoutEventFactory portalEventFactory;
     private IAuthorizationService authorizationService;
+    private IUserIdentityStore userIdentityStore;
 
     protected final IPerson owner;
     protected final IUserProfile profile;
@@ -130,6 +130,11 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
     @Autowired
     public void setAuthorizationService(IAuthorizationService authorizationService) {
         this.authorizationService = authorizationService;
+    }
+
+    @Autowired
+    public void setUserIdentityStore(IUserIdentityStore userIdentityStore) {
+        this.userIdentityStore = userIdentityStore;
     }
 
     @Autowired
@@ -1384,8 +1389,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
                 person.setAttribute(IPerson.USERNAME, loginId);
 
                 try {
-                    IUserIdentityStore userStore = UserIdentityStoreLocator.getUserIdentityStore();
-                    portalID = userStore.getPortalUID(person);
+                    portalID = userIdentityStore.getPortalUID(person);
                     person.setID(portalID);
                 } catch (Exception e) {
                     // ignore since the store will log the problem
@@ -1427,11 +1431,10 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
                     org.apereo.portal.Constants.TEMPLATE_USER_NAME_ATT,
                     FragmentDefinition.getDefaultLayoutOwnerId());
         }
-        IUserIdentityStore userStore = UserIdentityStoreLocator.getUserIdentityStore();
 
         try {
-            userStore.removePortalUID(person.getID());
-            userStore.getPortalUID(person, true);
+            userIdentityStore.removePortalUID(person.getID());
+            userIdentityStore.getPortalUID(person, true);
 
             // see if the current user was the one to reset their layout and if
             // so we need to refresh our local copy of their layout
