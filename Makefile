@@ -46,6 +46,8 @@ ear: clean build.properties
 
 image: ear
 	docker build . -t $(FQTN)
+
+push: image
 	docker push $(FQTN)
 
 deploy-db: db
