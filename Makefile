@@ -53,5 +53,5 @@ push: image
 deploy-db: db
 	kubectl set image deployment/updb updb=$(call SHA,$(DB_FQTN))
 
-deploy: image
+deploy: push
 	kubectl set image deployment/uportal uportal=$(call SHA,$(FQTN))
