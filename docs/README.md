@@ -17,6 +17,7 @@ below.
 * [Redirect Guest to CAS Sign-In](redirect-guest-to-cas.md)
 * [CAS 5 ClearPass: Credential Caching and Replay](Cas5ClearPass.md)
 * [Developer's Guide](developer/README.md)
+* [Docker and Kubernetes](docker-and-kubernetes.md)
 
 ## External Links
 
