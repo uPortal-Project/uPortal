@@ -1,7 +1,7 @@
 description = "Apereo uPortal Soffit Connector"
 
 dependencies {
-    compile project(':uPortal-soffit')
+    compile project(':uPortal-soffit:uPortal-soffit-core')
 
     compile "commons-io:commons-io:${commonsIoVersion}"
     compile "net.sf.ehcache:ehcache-core:${ehcacheVersion}"
