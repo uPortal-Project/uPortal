@@ -22,7 +22,6 @@ import org.jasig.services.persondir.IPersonAttributeDao;
  * </code>.
  *
  * @author Alex Vigdor
- * @version $Revision$
  */
 public class PersonDirNameFinderFactory implements IEntityNameFinderFactory {
 

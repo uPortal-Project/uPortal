@@ -20,7 +20,6 @@ import org.jadira.usertype.spi.shared.AbstractSingleColumnUserType;
  * UserType for mapping strings that can be both null or empty
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class NullSafeStringType
         extends AbstractSingleColumnUserType<String, String, NullSafeStringColumnMapper> {

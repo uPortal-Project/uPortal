@@ -21,7 +21,6 @@ import org.apereo.portal.security.IPerson;
  * Defines constants for Groups related classes
  *
  * @author Alex Vigdor
- * @version $Revision$
  */
 public interface IGroupConstants {
     public final String EVERYONE = IPerson.class.getName();

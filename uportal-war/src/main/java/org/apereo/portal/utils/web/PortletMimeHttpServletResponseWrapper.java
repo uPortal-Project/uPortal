@@ -44,7 +44,6 @@ import org.apereo.portal.portlet.rendering.PortletOutputHandler;
  * replay the cached content.
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class PortletMimeHttpServletResponseWrapper extends PortletHttpServletResponseWrapper {
     private final PortletOutputHandler portletOutputHandler;

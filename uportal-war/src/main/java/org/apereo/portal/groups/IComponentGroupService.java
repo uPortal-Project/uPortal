@@ -25,7 +25,6 @@ import javax.naming.Name;
  * define any operations on groups, only on other components.
  *
  * @author Dan Ellentuck
- * @version $Revision$
  */
 public interface IComponentGroupService {
 

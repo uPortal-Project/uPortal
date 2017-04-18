@@ -19,7 +19,6 @@ import org.joda.time.Period;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class ReadablePeriodEditor extends PropertyEditorSupport {
     /* (non-Javadoc)

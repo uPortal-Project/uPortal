@@ -21,7 +21,6 @@ import org.apache.commons.logging.LogFactory;
  * Creates an instance of the reference <code>IEntityStore</code>.
  *
  * @author Dan Ellentuck
- * @version $Revision$
  */
 public class ReferenceEntityStoreFactory implements IEntityStoreFactory {
 

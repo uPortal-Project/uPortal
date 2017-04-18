@@ -24,7 +24,6 @@ import org.apereo.portal.security.PortalSecurityException;
  *
  * @author Russell Tokuyama (University of Hawaii)
  * @author Ken Weiner, kweiner@unicon.net
- * @version $Revision$
  * @deprecated As of uPortal 2.1.3, use {@link
  *     org.apereo.portal.security.provider.SimpleLdapSecurityContext} chained with {@link
  *     org.apereo.portal.security.provider.CacheSecurityContext} instead

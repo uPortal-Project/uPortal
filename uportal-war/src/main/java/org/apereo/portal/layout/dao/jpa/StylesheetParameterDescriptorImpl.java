@@ -29,7 +29,6 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  */
 @Entity
 @Table(name = "UP_SS_DESC_PARAM")

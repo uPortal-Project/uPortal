@@ -17,7 +17,6 @@ package org.apereo.portal.layout.dlm;
 import java.util.List;
 
 /**
- * @version $Revision$ $Date$
  * @since uPortal 2.5
  */
 public interface ConfigurationLoader {

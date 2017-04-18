@@ -25,7 +25,6 @@ import org.apereo.portal.url.ParameterMap;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  */
 class FailSafePortletUrlBuilder implements IPortletUrlBuilder {
     private final Map<String, String[]> parameters = new ParameterMap();

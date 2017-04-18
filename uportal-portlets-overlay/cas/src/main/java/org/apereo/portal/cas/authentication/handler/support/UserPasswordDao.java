@@ -16,7 +16,6 @@ package org.apereo.portal.cas.authentication.handler.support;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  */
 public interface UserPasswordDao {
     /**

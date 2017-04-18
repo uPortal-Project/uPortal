@@ -27,7 +27,6 @@ import org.apereo.portal.events.aggr.QuarterDetail;
  * Operations central to the management of portal event aggregation
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public interface IEventAggregationManagementDao {
     /** Get the aggregation status for the specified processing type */

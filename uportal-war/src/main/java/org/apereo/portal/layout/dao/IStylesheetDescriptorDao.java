@@ -21,7 +21,6 @@ import org.apereo.portal.layout.om.IStylesheetDescriptor;
  * Defines CRUD operations on {@link IStylesheetDescriptor} objects
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public interface IStylesheetDescriptorDao {
     /** Create and persist a new stylesheet descriptor, name and resource are required */

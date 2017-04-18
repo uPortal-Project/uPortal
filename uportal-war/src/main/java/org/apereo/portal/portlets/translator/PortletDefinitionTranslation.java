@@ -20,7 +20,6 @@ import java.io.Serializable;
  * This domain class represents the original and localized translation of portlet definiton.
  *
  * @author Arvids Grabovskis
- * @version $Revision$
  */
 class PortletDefinitionTranslation implements Serializable {
 

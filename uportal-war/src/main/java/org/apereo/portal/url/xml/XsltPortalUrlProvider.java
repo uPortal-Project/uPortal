@@ -35,7 +35,6 @@ import org.springframework.stereotype.Service;
  *
  * @author Eric Dalquist
  * @author vertein
- * @version $Revision$
  */
 @Service("xslPortalUrlProvider")
 public class XsltPortalUrlProvider {

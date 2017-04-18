@@ -42,7 +42,6 @@ import org.apereo.portal.portlet.om.IPortletWindowId;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class RenderPortletTag extends TagSupport {
     private static final long serialVersionUID = 1L;

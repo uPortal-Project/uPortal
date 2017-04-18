@@ -36,7 +36,6 @@ import org.hibernate.annotations.FetchMode;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  */
 @Entity
 @Table(name = "UP_SS_DESC_LAY_ATTR")

@@ -35,7 +35,6 @@ import org.apache.commons.logging.LogFactory;
  *
  * @author Eric Dalquist <a
  *     href="mailto:eric.dalquist@doit.wisc.edu">eric.dalquist@doit.wisc.edu</a>
- * @version $Revision$
  */
 public class JavaManagementServerListener implements ServletContextListener {
     //Init-parameters

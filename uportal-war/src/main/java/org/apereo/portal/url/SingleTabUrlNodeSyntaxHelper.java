@@ -55,7 +55,6 @@ import org.springframework.stereotype.Service;
  * for folder names.
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 @Service
 public class SingleTabUrlNodeSyntaxHelper implements IUrlNodeSyntaxHelper {

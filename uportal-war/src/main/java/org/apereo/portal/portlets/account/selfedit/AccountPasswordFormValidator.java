@@ -28,7 +28,6 @@ import org.springframework.stereotype.Component;
  * http://docs.spring.io/spring-webflow/docs/current/reference/html/views.html#view-validation-programmatic-validator
  *
  * @author Jen Bourey, jbourey@unicon.net
- * @version $Revision$
  */
 @Component("accountPasswordFormValidator")
 public class AccountPasswordFormValidator {

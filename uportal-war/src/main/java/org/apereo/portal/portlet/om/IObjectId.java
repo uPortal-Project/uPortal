@@ -18,7 +18,6 @@ import java.io.Serializable;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  */
 public interface IObjectId extends Serializable {
     /**

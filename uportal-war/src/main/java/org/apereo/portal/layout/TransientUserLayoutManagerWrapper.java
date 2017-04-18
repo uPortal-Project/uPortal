@@ -41,7 +41,6 @@ import org.w3c.dom.Document;
  * structure only as long as they are the target channel.
  *
  * @author <a href="mailto:kstacks@sct.com">Keith Stacks</a>
- * @version $Revision$
  */
 public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
 

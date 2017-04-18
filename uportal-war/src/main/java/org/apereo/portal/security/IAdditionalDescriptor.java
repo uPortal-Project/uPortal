@@ -21,6 +21,5 @@ import java.io.Serializable;
  * additional information that should be associated with a security context.
  *
  * @author Andrew Newman, newman@yale.edu
- * @version $Revision$
  */
 public interface IAdditionalDescriptor extends Serializable {}

@@ -27,7 +27,6 @@ import org.slf4j.Logger;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  */
 public final class PortalDataHandlerServiceUtils {
     private PortalDataHandlerServiceUtils() {}

@@ -29,7 +29,6 @@ import org.springframework.web.util.WebUtils;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  */
 public final class PortalWebUtils {
     private PortalWebUtils() {}

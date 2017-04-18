@@ -38,7 +38,6 @@ import org.springframework.web.servlet.View;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class PortletDelegationView implements View {
     /**

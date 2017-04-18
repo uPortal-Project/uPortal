@@ -40,7 +40,6 @@ import org.joda.time.LocalTime;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  */
 @Entity
 @Table(name = "UP_TIME_DIMENSION")

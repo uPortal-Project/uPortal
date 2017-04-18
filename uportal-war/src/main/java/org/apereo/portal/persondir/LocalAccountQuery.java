@@ -22,7 +22,6 @@ import java.util.Map;
  * LocalAccountQuery provides the persondirectory query object for local accounts.
  *
  * @author Jen Bourey, jbourey@unicon.net
- * @version $Revision$
  */
 public class LocalAccountQuery {
 

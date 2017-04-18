@@ -29,7 +29,6 @@ import org.apereo.portal.xml.stream.events.StartElementWrapper;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class ImmutableUserLayoutXMLEventReader extends FilteringXMLEventReader {
     private static final XMLEventFactory EVENT_FACTORY = XMLEventFactory.newFactory();

@@ -24,7 +24,6 @@ import org.apereo.portal.security.IPerson;
  * Describes CRUD operations on {@link IStylesheetUserPreferences}
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public interface IStylesheetUserPreferencesDao {
     public IStylesheetUserPreferences createStylesheetUserPreferences(

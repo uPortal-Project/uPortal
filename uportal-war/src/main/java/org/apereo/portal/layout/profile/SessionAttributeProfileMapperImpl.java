@@ -28,7 +28,6 @@ import org.springframework.util.Assert;
 
 /**
  * @author Jen Bourey, jennifer.bourey@gmail.com
- * @version $Revision$
  */
 public class SessionAttributeProfileMapperImpl
         implements IProfileMapper, ApplicationListener<ProfileSelectionEvent> {

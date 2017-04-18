@@ -37,7 +37,6 @@ import org.xml.sax.SAXException;
  * Once parsing is complete the generated objects are availabe via {@link #getTables()}
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class TableXmlHandler extends BaseDbXmlHandler implements ITableDataProvider {
     private final Mappings mappings = new Configuration().createMappings();

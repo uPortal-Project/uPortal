@@ -27,7 +27,6 @@ import org.apereo.portal.portlets.AttributeFactory;
  * Represents a query for a person using attributes submitted by the user.
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class PersonQuery implements Serializable {
     private static final long serialVersionUID = 1L;

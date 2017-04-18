@@ -31,7 +31,6 @@ import org.slf4j.LoggerFactory;
  * one of the patterns
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class AntPatternFileFilter implements FileFilter {
     protected final Logger logger = LoggerFactory.getLogger(getClass());

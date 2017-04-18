@@ -19,7 +19,6 @@ package org.apereo.portal;
  * This exception informs uPortal that an authorization violation has occured within a channel.
  *
  * @author Peter Kharchenko
- * @version $Revision$ $Date$
  */
 public class AuthorizationException extends PortalException {
     private static final long serialVersionUID = 1L;

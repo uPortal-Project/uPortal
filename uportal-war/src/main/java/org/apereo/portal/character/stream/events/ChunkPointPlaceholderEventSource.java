@@ -30,7 +30,6 @@ import org.apereo.portal.xml.stream.ChunkingEventReader;
  * will have common character event strings in their rendering pipeline.
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class ChunkPointPlaceholderEventSource extends BasePlaceholderEventSource {
     /** Represents <chunk-point> layout element */

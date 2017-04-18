@@ -19,7 +19,6 @@ import org.jadira.usertype.spi.shared.AbstractSingleColumnUserType;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class QNameType extends AbstractSingleColumnUserType<QName, String, QNameColumnMapper> {
     private static final long serialVersionUID = 1L;

@@ -29,7 +29,6 @@ import org.apereo.portal.security.PortalSecurityException;
  * username may be used for login.
  *
  * @author Pete Boysen (pboysen@iastate.edu)
- * @version $Revision$
  */
 public class RemoteUserPersonManager extends AbstractPersonManager {
 

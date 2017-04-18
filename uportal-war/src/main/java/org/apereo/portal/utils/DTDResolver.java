@@ -24,7 +24,6 @@ import org.xml.sax.InputSource;
  * @author Peter Kharchenko, pkharchenko@unicon.net
  * @author Ken Weiner, kweiner@unicon.net
  * @author Dave Wallace, dwallace@udel.edu modifications
- * @version $Revision$
  */
 public class DTDResolver implements EntityResolver {
     private static final String dtdPath = "/dtd";

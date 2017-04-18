@@ -42,7 +42,6 @@ import org.springframework.web.servlet.theme.AbstractThemeResolver;
  * designed to allow us to define alternate themes for mobile devices on a per-service basis.
  *
  * @author Jen Bourey, jbourey@unicon.net
- * @version $Revision$
  */
 public class ConfigurableUserAgentOverrideThemeResolver extends AbstractThemeResolver {
 

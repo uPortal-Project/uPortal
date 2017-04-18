@@ -23,7 +23,6 @@ import net.sf.ehcache.constructs.blocking.CacheEntryFactory;
  * {@link #createEntry(Object, Object)} method.
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public abstract class ThreadLocalCacheEntryFactory<A> implements CacheEntryFactory {
     public final ThreadLocal<A> threadData = new ThreadLocal<A>();

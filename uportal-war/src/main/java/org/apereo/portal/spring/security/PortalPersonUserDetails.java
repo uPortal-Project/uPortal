@@ -29,7 +29,6 @@ import org.springframework.security.core.userdetails.UserDetails;
  * implementation.
  *
  * @author Jen Bourey, jennifer.bourey@gmail.com
- * @version $Revision$
  */
 public class PortalPersonUserDetails implements UserDetails {
 

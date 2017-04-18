@@ -24,7 +24,6 @@ import javax.portlet.filter.ResourceFilter;
 
 /**
  * @author Nicholas Blair, npblair@wisc.edu
- * @version $Revision$
  */
 public class MockResourceFilter implements ResourceFilter {
 

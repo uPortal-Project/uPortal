@@ -18,7 +18,6 @@ package org.apereo.portal.portlet.om;
  * Identifier type for portlet definitions.
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public interface IPortletDefinitionId extends IObjectId {
     /** @return the numeric version of the id */

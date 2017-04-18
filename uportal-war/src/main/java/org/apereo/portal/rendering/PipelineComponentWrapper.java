@@ -21,7 +21,6 @@ import org.slf4j.LoggerFactory;
  * Wraps another {@link PipelineComponent}
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public abstract class PipelineComponentWrapper<R, E> implements PipelineComponent<R, E> {
     protected final Logger logger = LoggerFactory.getLogger(getClass());

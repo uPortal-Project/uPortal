@@ -48,7 +48,6 @@ import org.springframework.web.servlet.support.RequestContextUtils;
  *
  * @author Mary Hunt
  * @author Jen Bourey
- * @version $Revision$ $Date$
  */
 @Controller
 public class SubscribableTabsRESTController {

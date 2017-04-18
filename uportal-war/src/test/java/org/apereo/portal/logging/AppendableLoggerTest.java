@@ -24,7 +24,6 @@ import org.slf4j.Logger;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class AppendableLoggerTest {
     @Test

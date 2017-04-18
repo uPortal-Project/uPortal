@@ -24,7 +24,6 @@ import org.apache.commons.lang.Validate;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  */
 public abstract class AbstractUrlBuilder implements IUrlBuilder {
     private final Map<String, String[]> parameters;

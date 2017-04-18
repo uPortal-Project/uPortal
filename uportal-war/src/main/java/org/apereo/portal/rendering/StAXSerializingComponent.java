@@ -42,7 +42,6 @@ import org.springframework.beans.factory.annotation.Autowired;
  * chunks based on specific elements
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class StAXSerializingComponent implements CharacterPipelineComponent {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());

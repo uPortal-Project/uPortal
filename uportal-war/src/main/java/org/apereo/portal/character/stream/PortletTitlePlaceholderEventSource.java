@@ -25,7 +25,6 @@ import org.apereo.portal.portlet.om.IPortletWindowId;
  * Generates a {@link PortletTitlePlaceholderEvent} for a regular expression match
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class PortletTitlePlaceholderEventSource extends PortletPlaceholderEventSource {
 

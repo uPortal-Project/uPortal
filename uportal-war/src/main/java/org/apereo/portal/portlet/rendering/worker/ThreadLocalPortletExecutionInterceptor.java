@@ -23,7 +23,6 @@ import org.springframework.beans.factory.BeanNameAware;
  * thread.
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public abstract class ThreadLocalPortletExecutionInterceptor<T>
         extends PortletExecutionInterceptorAdaptor implements BeanNameAware {

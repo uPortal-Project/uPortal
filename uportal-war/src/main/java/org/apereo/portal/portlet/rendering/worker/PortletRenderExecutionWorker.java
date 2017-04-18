@@ -30,7 +30,6 @@ import org.apereo.portal.portlet.rendering.RenderPortletOutputHandler;
  * @see IPortletRenderer#doRenderMarkup(IPortletWindowId, HttpServletRequest, HttpServletResponse,
  *     java.io.Writer)
  * @author Eric Dalquist
- * @version $Revision$
  */
 class PortletRenderExecutionWorker extends PortletExecutionWorker<PortletRenderResult>
         implements IPortletRenderExecutionWorker {

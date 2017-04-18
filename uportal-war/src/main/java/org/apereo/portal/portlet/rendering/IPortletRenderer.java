@@ -30,7 +30,6 @@ import org.apereo.portal.portlet.om.IPortletWindowId;
  * setup and tear down around portlet calls.
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public interface IPortletRenderer {
     public static final WindowState EXCLUSIVE = new WindowState("EXCLUSIVE");

@@ -32,7 +32,6 @@ import org.joda.time.DateTime;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  */
 @Entity
 @Table(name = "UP_EVENT_AGGR_STATUS")

@@ -19,7 +19,6 @@ import org.hibernate.mapping.Table;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  */
 public interface ITableDataProvider {
 

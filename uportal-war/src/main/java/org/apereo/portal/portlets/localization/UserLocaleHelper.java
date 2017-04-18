@@ -36,7 +36,6 @@ import org.springframework.stereotype.Service;
  * UserLocaleHelper contains helper methods for the user locales webflow.
  *
  * @author Jen Bourey
- * @version $Revision$
  */
 @Service
 public class UserLocaleHelper {

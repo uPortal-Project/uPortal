@@ -26,7 +26,6 @@ import org.w3c.dom.Node;
  * parent element fragmentDefinition element.
  *
  * @author Jen Bourey, jbourey@unicon.net
- * @version $Revision$
  */
 public class SubscribedTabEvaluatorFactory implements EvaluatorFactory {
 

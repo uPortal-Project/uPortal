@@ -38,7 +38,6 @@ import org.springframework.beans.factory.annotation.Autowired;
  * {@link IUserLayoutManager#CHANNEL} element in the event stream
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class PortletRenderingInitiationStAXComponent extends StAXPipelineComponentWrapper {
     protected final Logger logger = LoggerFactory.getLogger(getClass());

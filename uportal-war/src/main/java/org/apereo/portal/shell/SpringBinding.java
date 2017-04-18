@@ -22,7 +22,6 @@ import org.springframework.context.ApplicationContext;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class SpringBinding extends Binding implements Map<String, Object> {
     private final ApplicationContext context;

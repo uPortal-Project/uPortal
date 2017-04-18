@@ -31,7 +31,6 @@ import org.springframework.beans.factory.annotation.Autowired;
  * Present's the user's preferred locale as a transformer parameter
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class LocaleTransformerConfigurationSource extends TransformerConfigurationSourceAdapter {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());

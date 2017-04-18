@@ -29,7 +29,6 @@ import javax.servlet.http.HttpServletResponseWrapper;
  * has been canceled.
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class GuardingHttpServletResponse extends HttpServletResponseWrapper {
     private final AtomicBoolean canceled;

@@ -40,7 +40,6 @@ import org.apache.commons.lang.Validate;
  * #get(Object)} before performing the requested operation to be able to return the 'old' value.
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class MapCacheProvider<K extends Serializable, V> implements Map<K, V> {
     private final Ehcache cache;

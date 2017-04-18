@@ -41,7 +41,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class StylesheetDescriptorImporterExporter
         extends AbstractJaxbDataHandler<ExternalStylesheetDescriptor> {

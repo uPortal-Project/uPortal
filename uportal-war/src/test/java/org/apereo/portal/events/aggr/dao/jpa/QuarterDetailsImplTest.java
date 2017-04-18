@@ -27,7 +27,6 @@ import org.junit.Test;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class QuarterDetailsImplTest {
 

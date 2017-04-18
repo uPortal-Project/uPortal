@@ -30,7 +30,6 @@ import org.springframework.util.Assert;
  * implementations
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public abstract class AbstractPortletContextImpl {
     protected final PortletContainer portletContainer;

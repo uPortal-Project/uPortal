@@ -39,7 +39,6 @@ import org.jasig.services.persondir.support.NamedPersonImpl;
  * requiring an administrator to add new entries to the result or query attribute mappings.
  *
  * @author Jen Bourey, jbourey@unicon.net
- * @version $Revision$
  */
 public class LocalAccountPersonAttributeDao extends AbstractDefaultAttributePersonAttributeDao {
 

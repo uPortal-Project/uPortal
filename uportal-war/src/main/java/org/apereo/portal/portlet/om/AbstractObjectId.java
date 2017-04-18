@@ -20,7 +20,6 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  */
 public abstract class AbstractObjectId implements IObjectId {
     private static final long serialVersionUID = 1L;

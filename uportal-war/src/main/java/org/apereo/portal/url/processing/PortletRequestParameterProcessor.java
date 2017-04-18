@@ -42,7 +42,6 @@ import org.springframework.stereotype.Service;
  * IPortletRequestParameterManager}.
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 @Service("portletRequestParameterProcessor")
 public class PortletRequestParameterProcessor implements IRequestParameterProcessor {

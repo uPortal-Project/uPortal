@@ -23,7 +23,6 @@ import javax.xml.stream.XMLEventReader;
  * IPortalDataHandlerService}
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public interface IPortalDataType {
     /** @return The unique name of this portal data type, must be a valid XML element name. */

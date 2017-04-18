@@ -39,7 +39,6 @@ import org.apereo.portal.character.stream.events.CharacterEvent;
  * stream and chunks the string data at each XML tag occurrence.
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class ChunkingEventReader extends BaseXMLEventReader {
     private static final XMLEventFactory EVENT_FACTORY = XMLEventFactory.newFactory();

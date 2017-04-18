@@ -19,7 +19,6 @@ import org.apereo.portal.events.aggr.session.EventSession;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class LoggingPortalEventAggregator extends BasePortalEventAggregator<PortalEvent>
         implements SimplePortalEventAggregator<PortalEvent> {

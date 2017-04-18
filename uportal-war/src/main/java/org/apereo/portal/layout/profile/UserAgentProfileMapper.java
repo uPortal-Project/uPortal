@@ -30,7 +30,6 @@ import org.slf4j.LoggerFactory;
  * is found the {@link #setDefaultProfileName(String)} value is used.
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class UserAgentProfileMapper implements IProfileMapper {
     protected Logger logger = LoggerFactory.getLogger(getClass());

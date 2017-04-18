@@ -19,7 +19,6 @@ package org.apereo.portal.security.provider;
  * JAASSecurityContext.
  *
  * @author Nathan Jacobs
- * @version $Revision$ $Date$
  */
 import org.apereo.portal.security.ISecurityContext;
 import org.apereo.portal.security.ISecurityContextFactory;

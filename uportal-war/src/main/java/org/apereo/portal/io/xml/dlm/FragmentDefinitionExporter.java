@@ -25,7 +25,6 @@ import org.springframework.beans.factory.annotation.Autowired;
  * Exports a uPortal 3.1 style fragment definition data file
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class FragmentDefinitionExporter extends AbstractDom4jExporter {
     private IFragmentDefinitionDao fragmentDefinitionDao;

@@ -56,7 +56,6 @@ import org.springframework.web.portlet.mvc.AbstractController;
  *
  * @author Andrew Petro
  * @author Jen Bourey, jbourey@unicon.net
- * @revision $Revision$
  */
 public class SqlQueryPortletController extends AbstractController {
     /**

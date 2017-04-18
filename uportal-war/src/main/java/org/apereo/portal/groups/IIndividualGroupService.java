@@ -20,7 +20,6 @@ import java.util.Iterator;
  * composite group service.
  *
  * @author Dan Ellentuck
- * @version $Revision$
  */
 public interface IIndividualGroupService extends ICompositeGroupService {
 

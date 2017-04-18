@@ -23,7 +23,6 @@ import org.apereo.portal.security.IPerson;
  * browsing.
  *
  * @author Jen Bourey, jbourey@unicon.net
- * @version $Revision$
  */
 public enum EntityEnum {
     PORTLET(IPortletDefinition.class, "portlet", false), // uPortal portlet

@@ -35,7 +35,6 @@ import org.springframework.beans.factory.annotation.Autowired;
  * XMLEvent} or {@link MatchResult}. Takes care of parsing out the {@link IPortletWindowId}
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public abstract class PortletPlaceholderEventSource extends BasePlaceholderEventSource {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());

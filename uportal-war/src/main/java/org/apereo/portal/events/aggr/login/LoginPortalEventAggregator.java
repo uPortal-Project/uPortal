@@ -30,7 +30,6 @@ import org.springframework.beans.factory.annotation.Autowired;
  * Event aggregator that uses {@link LoginAggregationPrivateDao} to aggregate login events
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class LoginPortalEventAggregator
         extends BaseIntervalAwarePortalEventAggregator<

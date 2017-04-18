@@ -27,7 +27,6 @@ import org.springframework.security.core.GrantedAuthority;
  * The user's current SecurityContext is used as the credentials object.
  *
  * @author Jen Bourey, jennifer.bourey@gmail.com
- * @version $Revision$
  */
 public class PortalAuthentication implements Authentication {
 

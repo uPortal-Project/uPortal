@@ -37,7 +37,6 @@ import org.springframework.stereotype.Service;
  * portlet requests
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 @Service
 public class PortletWorkerFactoryImpl implements IPortletWorkerFactory {

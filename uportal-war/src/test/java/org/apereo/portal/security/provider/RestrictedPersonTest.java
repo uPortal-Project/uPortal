@@ -27,7 +27,6 @@ import org.apereo.portal.security.PortalSecurityException;
  * Testcase for RestrictedPerson.
  *
  * @author andrew.petro@yale.edu
- * @version $Revision$ $Date$
  */
 public class RestrictedPersonTest extends TestCase {
 

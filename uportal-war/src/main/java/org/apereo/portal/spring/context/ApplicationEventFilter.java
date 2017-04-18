@@ -20,7 +20,6 @@ import org.springframework.context.ApplicationEvent;
  * Filter for determining if an {@link ApplicationEvent} is supported
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public interface ApplicationEventFilter<E extends ApplicationEvent> {
     /** @return true if the event is supported, false if not */

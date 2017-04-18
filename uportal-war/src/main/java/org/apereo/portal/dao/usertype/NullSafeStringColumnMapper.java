@@ -19,7 +19,6 @@ import org.jadira.usertype.spi.shared.AbstractStringColumnMapper;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class NullSafeStringColumnMapper extends AbstractStringColumnMapper<String> {
     private static final long serialVersionUID = 1L;

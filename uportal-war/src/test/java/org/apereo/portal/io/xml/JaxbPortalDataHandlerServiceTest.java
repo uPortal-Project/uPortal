@@ -63,7 +63,6 @@ import org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  */
 @RunWith(MockitoJUnitRunner.class)
 public class JaxbPortalDataHandlerServiceTest {

@@ -32,7 +32,6 @@ import java.util.Set;
  * release.
  *
  * @author Jen Bourey, jbourey@unicon.net
- * @revision $Revision$
  * @since 3.3
  */
 public interface IPermissionOwner {

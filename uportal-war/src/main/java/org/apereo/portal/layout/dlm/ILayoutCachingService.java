@@ -22,7 +22,6 @@ import org.apereo.portal.security.IPerson;
  * layouts when the user logs out
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public interface ILayoutCachingService {
 

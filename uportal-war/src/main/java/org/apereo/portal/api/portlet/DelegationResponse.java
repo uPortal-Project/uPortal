@@ -18,7 +18,6 @@ package org.apereo.portal.api.portlet;
  * The resulting state of the delegation request
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class DelegationResponse {
     private final DelegateState delegateState;

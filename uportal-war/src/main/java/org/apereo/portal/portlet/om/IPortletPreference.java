@@ -18,7 +18,6 @@ import org.apache.pluto.container.PortletPreference;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  */
 public interface IPortletPreference extends PortletPreference {
     /** Sets the read only state of the preference */

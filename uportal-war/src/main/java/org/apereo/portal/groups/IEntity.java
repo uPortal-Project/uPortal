@@ -20,6 +20,5 @@ package org.apereo.portal.groups;
  * <p>
  *
  * @author Dan Ellentuck
- * @version $Revision$
  */
 public interface IEntity extends IGroupMember {}

@@ -24,7 +24,6 @@ import org.springframework.util.Assert;
  * level.
  *
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 2.6
  */
 public final class LoggingEventHandler extends FilteringApplicationListener<ApplicationEvent> {

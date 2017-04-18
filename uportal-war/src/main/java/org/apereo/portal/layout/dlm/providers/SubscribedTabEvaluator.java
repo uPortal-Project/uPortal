@@ -37,7 +37,6 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
  * to ensure that the user is still permissioned to be include the fragment.
  *
  * @author Jen Bourey, jbourey@unicon.net
- * @version $Revision$
  */
 @Entity
 @Cacheable

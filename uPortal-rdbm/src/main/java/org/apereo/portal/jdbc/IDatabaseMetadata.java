@@ -18,7 +18,6 @@ import java.util.Date;
 
 /**
  * @author susan.bramhall@yale.edu
- * @version $Revision$ Apr 8, 2005
  */
 public interface IDatabaseMetadata {
     /**

@@ -62,7 +62,6 @@ import org.springframework.mock.web.MockHttpServletResponse;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  */
 @RunWith(MockitoJUnitRunner.class)
 public class StAXSerializingComponentTest {
