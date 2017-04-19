@@ -2,6 +2,7 @@ rootProject.name = 'uPortal'
 
 include 'uPortal-core'
 include 'uPortal-concurrency'
+include 'uPortal-io'
 include 'uPortal-rdbm'
 include 'uPortal-utils'
 
