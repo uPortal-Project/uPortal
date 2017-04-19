@@ -28,6 +28,7 @@ import org.apereo.portal.groups.IEntityGroup;
 import org.apereo.portal.groups.IEntityNameFinder;
 import org.apereo.portal.groups.IGroupConstants;
 import org.apereo.portal.groups.IGroupMember;
+import org.apereo.portal.portlet.om.IPortletDefinition;
 import org.apereo.portal.portlets.groupselector.EntityEnum;
 import org.apereo.portal.security.AuthorizationPrincipalHelper;
 import org.apereo.portal.security.IAuthorizationPrincipal;
@@ -104,7 +105,7 @@ public class GroupListHelperImpl implements IGroupListHelper {
             rootKey = "local.0";
         } else if (EntityEnum.CATEGORY.equals(type)) {
             IEntityGroup categoryGroup =
-                    GroupService.getDistinguishedGroup(IGroupConstants.PORTLET_CATEGORIES);
+                    GroupService.getDistinguishedGroup(IPortletDefinition.DISTINGUISHED_GROUP);
             return new JsonEntityBean(categoryGroup, EntityEnum.CATEGORY);
         } else {
             throw new IllegalArgumentException(

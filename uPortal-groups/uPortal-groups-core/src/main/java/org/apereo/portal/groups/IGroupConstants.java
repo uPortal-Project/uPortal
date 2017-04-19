@@ -14,25 +14,19 @@
  */
 package org.apereo.portal.groups;
 
-import org.apereo.portal.portlet.om.IPortletDefinition;
-import org.apereo.portal.security.IPerson;
-
 /**
  * Defines constants for Groups related classes
  *
  * @author Alex Vigdor
  */
 public interface IGroupConstants {
-    public final String EVERYONE = IPerson.class.getName();
-    public final String PORTLET_CATEGORIES = IPortletDefinition.class.getName();
-    public final String PORTAL_ADMINISTRATORS = EVERYONE + ".PortalAdministrators";
 
     //Search method constants
-    public final int IS = 1;
-    public final int STARTS_WITH = 2;
-    public final int ENDS_WITH = 3;
-    public final int CONTAINS = 4;
+    int IS = 1;
+    int STARTS_WITH = 2;
+    int ENDS_WITH = 3;
+    int CONTAINS = 4;
 
     // Composite group service:
-    public final String NODE_SEPARATOR = ".";
+    String NODE_SEPARATOR = ".";
 }

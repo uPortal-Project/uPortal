@@ -1,8 +1,17 @@
 rootProject.name = 'uPortal'
 
 include 'uPortal-core'
+include 'uPortal-concurrency'
 include 'uPortal-rdbm'
 include 'uPortal-utils'
+
+include 'uPortal-groups:uPortal-groups-core'
+include 'uPortal-groups:uPortal-groups-filesystem'
+include 'uPortal-groups:uPortal-groups-ldap'
+include 'uPortal-groups:uPortal-groups-local'
+include 'uPortal-groups:uPortal-groups-grouper'
+include 'uPortal-groups:uPortal-groups-pags'
+include 'uPortal-groups:uPortal-groups-smartldap'
 
 include 'uPortal-soffit:uPortal-soffit-core'
 include 'uPortal-soffit:uPortal-soffit-connector'
