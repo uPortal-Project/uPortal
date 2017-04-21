@@ -5,6 +5,11 @@
 | [uPortal 5](https://github.com/Jasig/uPortal/tree/master) | [![Linux Build Status](https://travis-ci.org/Jasig/uPortal.svg?branch=master)](https://travis-ci.org/Jasig/uPortal) | [![Windows Build Status](https://ci.appveyor.com/api/projects/status/8t95sjt090mf62dh/branch/master?svg=true)](https://ci.appveyor.com/project/drewwills/uportal/branch/master) | [![Coverage Status](https://coveralls.io/repos/github/Jasig/uPortal/badge.svg?branch=master)](https://coveralls.io/github/Jasig/uPortal?branch=master) |
 | [uPortal 4](https://github.com/Jasig/uPortal/tree/rel-4-3-patches) | [![Linux Build Status](https://travis-ci.org/Jasig/uPortal.svg?branch=rel-4-3-patches)](https://travis-ci.org/Jasig/uPortal) | [![Windows Build Status](https://ci.appveyor.com/api/projects/status/8t95sjt090mf62dh/branch/rel-4-3-patches?svg=true)](https://ci.appveyor.com/project/drewwills/uportal/branch/rel-4-3-patches) | [![Coverage Status](https://coveralls.io/repos/github/Jasig/uPortal/badge.svg?branch=rel-4-3-patches)](https://coveralls.io/github/Jasig/uPortal?branch=rel-4-3-patches) |
 
+[![WCAG 2 AA Badge](https://www.w3.org/WAI/wcag2AA-blue-v.svg)](#accessible)
+[![uPortal on IRC](https://img.shields.io/badge/IRC-%23jasig--uportal-1e72ff.svg?style=flat)](https://www.irccloud.com/invite?channel=%23jasig-uportal&amp;hostname=irc.freenode.net&amp;port=6697&amp;ssl=1)
+[![Issue Stats](http://issuestats.com/github/Jasig/uPortal/badge/pr)](http://issuestats.com/github/Jasig/uPortal)
+[![Twitter Follow](https://img.shields.io/twitter/follow/uPortal.svg?style=social&label=Follow)](https://twitter.com/uPortal)
+
 ## About
 
 uPortal is the leading open source enterprise portal framework built by and for
@@ -26,12 +31,10 @@ has access to all releases of the uPortal software with absolutely no costs. We
 welcome [contributions from our community](https://github.com/Jasig/uPortal/graphs/contributors)
 of all types and sizes.
 
-### Accessibility
+### Accessible
 
-uPortal strives to conform with Web Content Accessibility Guidelines Version 2.0 Level AA.
+uPortal strives to conform with [Web Content Accessibility Guidelines Version 2.0](https://www.w3.org/TR/WCAG20/) Level AA.
 The most recent accessibility audit results can be seen in [UP-4735](https://issues.jasig.org/browse/UP-4735).
-
-[![WCAG 2 AA Badge](https://www.w3.org/WAI/wcag2AA-blue-v.svg)](https://www.w3.org/TR/WCAG20/)
 
 ## Help and Support
 
