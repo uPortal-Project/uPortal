@@ -24,7 +24,6 @@ import org.slf4j.LoggerFactory;
  * attributes
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class ThemeAttributeSource extends StylesheetAttributeSource {
     private static final Logger LOGGER = LoggerFactory.getLogger(ThemeAttributeSource.class);

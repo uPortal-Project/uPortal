@@ -21,7 +21,6 @@ import java.util.Locale;
  * internationalization of dynamic messages like group names, tab titles, etc.
  *
  * @author Arvids Grabovskis
- * @version $Revision$
  */
 public interface Message {
 

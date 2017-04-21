@@ -28,7 +28,6 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
  * existing {@link EntityManager} if one already exists.
  *
  * @author Eric Dalquist
- * @version $Revision$
  * @see JpaInterceptor
  */
 public class JpaPortletExecutionInterceptor extends JpaAccessor

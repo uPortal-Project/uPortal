@@ -46,7 +46,6 @@ import org.apereo.portal.layout.dlm.Evaluator;
  *     org.apereo.portal.layout.dlm.providers.PersonEvaluatorFactory#getAttributeEvaluator(java.lang.String,
  *     java.lang.String, java.lang.String)
  * @author mboyd@sungardsct.com
- * @version $Revision$ $Date$
  * @since uPortal 2.5
  */
 public class GroupMembershipEvaluatorFactory extends PersonEvaluatorFactory {

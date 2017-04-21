@@ -23,7 +23,6 @@ import org.apereo.portal.PortalException;
  * <code>java.sql.SQLException</code>.
  *
  * @author Dan Ellentuck
- * @version $Revision$ $Date$
  */
 public class CachingException extends PortalException {
 

@@ -36,7 +36,6 @@ import org.springframework.stereotype.Service;
  * Uses an {@link Ehcache} to handle caching of the resources.
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 @Service
 public class CachingResourceLoaderImpl implements CachingResourceLoader {

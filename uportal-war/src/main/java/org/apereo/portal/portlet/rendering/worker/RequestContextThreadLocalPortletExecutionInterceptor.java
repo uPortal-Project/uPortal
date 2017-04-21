@@ -26,7 +26,6 @@ import org.springframework.web.context.request.RequestContextHolder;
  * thread and cleans up afterwards.
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 @Service("RequestContextThreadLocalPortletExecutionInterceptor")
 public class RequestContextThreadLocalPortletExecutionInterceptor

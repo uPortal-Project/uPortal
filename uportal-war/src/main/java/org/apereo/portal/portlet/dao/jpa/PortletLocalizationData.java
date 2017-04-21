@@ -28,7 +28,6 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
  * of its data model.
  *
  * @author Jen Bourey, jbourey@unicon.net
- * @revision $Revision$
  */
 @Embeddable
 @Table(name = "UP_PORTLET_MDATA")

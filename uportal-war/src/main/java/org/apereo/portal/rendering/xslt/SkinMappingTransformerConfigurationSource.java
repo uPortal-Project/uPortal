@@ -39,7 +39,6 @@ import org.springframework.beans.factory.annotation.Autowired;
  * #setSkinParameterName(String)} parameter.
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public abstract class SkinMappingTransformerConfigurationSource
         extends TransformerConfigurationSourceAdapter implements BeanNameAware {

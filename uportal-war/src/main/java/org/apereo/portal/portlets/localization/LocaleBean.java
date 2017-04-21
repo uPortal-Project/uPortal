@@ -22,7 +22,6 @@ import java.util.Locale;
  * properties.
  *
  * @author Jen Bourey, jbourey@unicon.net
- * @version $Revision$
  */
 public class LocaleBean implements Serializable {
 

@@ -40,7 +40,6 @@ import org.hibernate.annotations.NaturalIdCache;
  *
  * @author Ken Weiner, kweiner@unicon.net
  * @author Jen Bourey, jennifer.bourey@gmail.com
- * @version $Revision$
  */
 @Entity
 @Table(name = "UP_PORTLET_TYPE")

@@ -26,7 +26,6 @@ import org.apereo.portal.portlet.om.IPortletWindowId;
  * Generates a {@link PortletContentPlaceholderEvent} for a {@link StartElement} event.
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class PortletContentPlaceholderEventSource extends PortletPlaceholderEventSource {
 

@@ -28,7 +28,6 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
  * context.
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class EhcacheManagerBeanConfigurer implements BeanFactoryPostProcessor {
     protected final Log logger = LogFactory.getLog(this.getClass());

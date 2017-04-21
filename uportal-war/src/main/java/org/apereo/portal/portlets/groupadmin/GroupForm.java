@@ -23,7 +23,6 @@ import org.apereo.portal.layout.dlm.remoting.JsonEntityBean;
  * GroupForm represents a uPortal group instance during group editing.
  *
  * @author Jen Bourey, jbourey@unicon.net
- * @version $Revision$
  */
 public class GroupForm implements Serializable {
 

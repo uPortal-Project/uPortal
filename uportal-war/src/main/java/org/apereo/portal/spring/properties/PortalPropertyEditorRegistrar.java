@@ -25,7 +25,6 @@ import org.springframework.beans.PropertyEditorRegistry;
  * Registers a Map of PropertyEditors with the specified registry.
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class PortalPropertyEditorRegistrar implements PropertyEditorRegistrar {
     protected final Log logger = LogFactory.getLog(this.getClass());

@@ -31,7 +31,6 @@ import org.springframework.web.context.request.ServletWebRequest;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class StaticTransformerConfigurationSource implements TransformerConfigurationSource {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());

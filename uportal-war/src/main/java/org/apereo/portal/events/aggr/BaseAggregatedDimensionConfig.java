@@ -22,7 +22,6 @@ import org.apereo.portal.utils.IncludeExcludeUtils;
  * Describes common Include/Exclude configuration of aggregation dimensions
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public interface BaseAggregatedDimensionConfig<D> extends Serializable {
 

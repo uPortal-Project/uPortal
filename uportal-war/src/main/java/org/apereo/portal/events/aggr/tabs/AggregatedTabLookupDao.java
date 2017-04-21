@@ -20,7 +20,6 @@ import java.util.Set;
  * Used to map portal group keys to a more static group mapping object
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public interface AggregatedTabLookupDao {
 

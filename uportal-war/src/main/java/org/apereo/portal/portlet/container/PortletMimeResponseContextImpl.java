@@ -40,7 +40,6 @@ import org.apereo.portal.url.UrlType;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  */
 public abstract class PortletMimeResponseContextImpl extends PortletResponseContextImpl
         implements PortletMimeResponseContext {

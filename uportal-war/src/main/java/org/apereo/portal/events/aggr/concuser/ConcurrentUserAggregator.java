@@ -30,7 +30,6 @@ import org.springframework.beans.factory.annotation.Autowired;
  * user data
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class ConcurrentUserAggregator
         extends BaseIntervalAwarePortalEventAggregator<

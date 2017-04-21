@@ -19,7 +19,6 @@ package org.apereo.portal;
  * operation is missing.
  *
  * @author Peter Kharchenko
- * @version $Revision$ $Date$
  */
 public class ResourceMissingException extends PortalException {
     private static final long serialVersionUID = 1L;

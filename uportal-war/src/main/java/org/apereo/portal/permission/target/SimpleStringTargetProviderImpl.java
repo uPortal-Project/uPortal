@@ -25,7 +25,6 @@ import java.util.Map;
  * for which targets are simple static strings that are well-defined and known in advance.
  *
  * @author Jen Bourey, jbourey@unicon.net
- * @version $Revision$
  * @since 3.3
  */
 public class SimpleStringTargetProviderImpl implements IPermissionTargetProvider, Serializable {

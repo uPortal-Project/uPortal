@@ -24,7 +24,6 @@ import java.util.Map;
  * #putAll(Map)} adds values to the list
  *
  * @author Eric Dalquist
- * @version $Revision$
  * @param <K>
  * @param <V>
  */

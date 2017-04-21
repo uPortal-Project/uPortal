@@ -23,7 +23,6 @@ package org.apereo.portal.security.xslt;
  *
  * @author Eric Dalquist
  * @author Arvids Grabovskis
- * @version $Revision$
  */
 public interface IXalanMessageHelper {
 

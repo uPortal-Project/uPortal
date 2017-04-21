@@ -21,7 +21,6 @@ import org.apereo.portal.utils.cache.CacheKey;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  */
 public interface TransformerSource {
     /** Gets a XSLT Transformer */

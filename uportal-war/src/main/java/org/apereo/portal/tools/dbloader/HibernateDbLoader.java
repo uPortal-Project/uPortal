@@ -63,7 +63,6 @@ import org.xml.sax.SAXException;
  * a full range of database support.
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 @Component("dbLoader")
 @Lazy

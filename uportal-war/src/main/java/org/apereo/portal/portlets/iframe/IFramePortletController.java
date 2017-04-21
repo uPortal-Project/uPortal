@@ -36,7 +36,6 @@ import org.springframework.web.portlet.bind.annotation.RenderMapping;
  * @author Susan Bramhall
  * @author Jen Bourey, jbourey@unicon.net
  * @author Drew Wills, awills@unicon.net
- * @version $Revision$
  */
 @Controller
 @RequestMapping("VIEW")

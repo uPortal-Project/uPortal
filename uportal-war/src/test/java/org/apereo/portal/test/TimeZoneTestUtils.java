@@ -24,7 +24,6 @@ import org.junit.BeforeClass;
  * BeforeClass} method and {@link #afterTest()} should be called in a {@link AfterClass} block
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public final class TimeZoneTestUtils {
     private final DateTimeZone testTimeZone;

@@ -21,7 +21,6 @@ import org.apereo.portal.events.aggr.groups.AggregatedGroupMapping;
  * columns
  *
  * @author James Wennmacher
- * @version $Revision$
  */
 public interface BaseGroupedAggregationDiscriminator {
 

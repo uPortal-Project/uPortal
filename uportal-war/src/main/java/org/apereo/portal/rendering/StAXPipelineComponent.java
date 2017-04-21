@@ -21,6 +21,5 @@ import javax.xml.stream.events.XMLEvent;
  * {@link PipelineComponent} for a {@link XMLEventReader}
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public interface StAXPipelineComponent extends PipelineComponent<XMLEventReader, XMLEvent> {}

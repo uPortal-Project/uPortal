@@ -19,7 +19,6 @@ package org.apereo.portal.security.provider;
  * TruestSecurityContext.
  *
  * @author susan Bramhall susan.bramhall@yale.edu
- * @version $Revision$ $Date$
  */
 import org.apereo.portal.security.ISecurityContext;
 import org.apereo.portal.security.ISecurityContextFactory;

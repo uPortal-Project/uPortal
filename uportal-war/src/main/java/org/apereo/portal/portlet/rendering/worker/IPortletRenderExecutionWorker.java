@@ -20,7 +20,6 @@ import org.apereo.portal.portlet.rendering.PortletRenderResult;
  * Worker that executes a portlet render request
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public interface IPortletRenderExecutionWorker
         extends IPortletExecutionWorker<PortletRenderResult> {

@@ -26,7 +26,6 @@ import org.springframework.web.servlet.support.RequestContextUtils;
  * object is available.
  *
  * @author Arvids Grabovskis
- * @version $Revision$
  */
 public class LocaleManagementInterceptor extends HandlerInterceptorAdapter {
 

@@ -25,7 +25,6 @@ import org.springframework.stereotype.Service;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  */
 @Service
 public class PortletDelegationManagerImpl implements IPortletDelegationManager {

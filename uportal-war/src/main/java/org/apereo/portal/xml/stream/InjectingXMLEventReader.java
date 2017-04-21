@@ -25,7 +25,6 @@ import javax.xml.stream.events.XMLEvent;
  * stream.
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public abstract class InjectingXMLEventReader extends BaseXMLEventReader {
     private Deque<XMLEvent> additionalEvents;

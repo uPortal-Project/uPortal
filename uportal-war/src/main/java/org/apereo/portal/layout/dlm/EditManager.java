@@ -28,7 +28,6 @@ import org.w3c.dom.Node;
 /**
  * Handles ILF node edit directives recorded in the PLF.
  *
- * @version $Revision$ $Date$
  * @since uPortal 2.5
  */
 public class EditManager {

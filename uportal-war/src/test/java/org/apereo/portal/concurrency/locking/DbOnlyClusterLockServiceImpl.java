@@ -20,7 +20,6 @@ import java.util.concurrent.locks.ReentrantLock;
  * Used for testing the DB side of the locking logic
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class DbOnlyClusterLockServiceImpl extends ClusterLockServiceImpl {
     @Override

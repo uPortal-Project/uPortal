@@ -34,7 +34,6 @@ import org.slf4j.LoggerFactory;
  * <p>Code based on: http://piotrga.wordpress.com/2008/05/07/how-to-unzip-archive-in-java/
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public final class ZipUtils {
     protected static final Logger log = LoggerFactory.getLogger(ZipUtils.class);

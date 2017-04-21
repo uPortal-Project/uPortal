@@ -24,7 +24,6 @@ import org.apereo.portal.character.stream.events.CharacterEvent;
  * the parent interface.
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class CharacterEventReaderDelegate implements CharacterEventReader {
     private final CharacterEventReader delegate;

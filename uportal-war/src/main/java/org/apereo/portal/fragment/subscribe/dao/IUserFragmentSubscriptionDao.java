@@ -24,7 +24,6 @@ import org.apereo.portal.security.IPerson;
  * subscribed.
  *
  * @author Mary Hunt
- * @version $Revision$ $Date$
  */
 public interface IUserFragmentSubscriptionDao {
 

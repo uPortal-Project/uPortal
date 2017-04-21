@@ -18,7 +18,6 @@ import com.google.common.base.Function;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  * @see Function
  */
 public abstract class FunctionWithoutResult<F> implements Function<F, Object> {

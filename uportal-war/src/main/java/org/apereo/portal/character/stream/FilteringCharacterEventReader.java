@@ -22,7 +22,6 @@ import org.apereo.portal.character.stream.events.CharacterEvent;
  * through the reader.
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public abstract class FilteringCharacterEventReader extends CharacterEventReaderDelegate {
     private CharacterEvent peekedEvent = null;

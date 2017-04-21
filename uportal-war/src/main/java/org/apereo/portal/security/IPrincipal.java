@@ -22,7 +22,6 @@ import java.io.Serializable;
  * extend this interface rather than replacing it.
  *
  * @author Andrew Newman, newman@yale.edu
- * @version $Revision$
  */
 public interface IPrincipal extends Serializable {
 

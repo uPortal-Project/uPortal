@@ -19,7 +19,6 @@ package org.apereo.portal.properties;
  * requested but cannot be found.
  *
  * @author andrew.petro@yale.edu
- * @version $Revision$ $Date$
  * @since uPortal 2.4
  */
 public class MissingPropertyException extends RuntimeException {

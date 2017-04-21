@@ -32,7 +32,6 @@
     To control the attributes that are available, see ../personDirectory.xml.
 
     Author: Dan Ellentuck, de3@columbia.edu
-    Version $Revision$
 
     This sample configuration sets up 4 groups in the following relationship:
 

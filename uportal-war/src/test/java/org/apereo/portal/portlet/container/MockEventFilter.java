@@ -24,7 +24,6 @@ import javax.portlet.filter.FilterConfig;
 
 /**
  * @author Nicholas Blair, npblair@wisc.edu
- * @version $Revision$
  */
 public class MockEventFilter implements EventFilter {
 

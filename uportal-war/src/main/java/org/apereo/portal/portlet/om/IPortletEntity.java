@@ -24,7 +24,6 @@ import org.apereo.portal.layout.om.IStylesheetDescriptor;
  * model.
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public interface IPortletEntity extends IPortletEntityDescriptor {
     /** @return The unique identifier for this portlet entity. */

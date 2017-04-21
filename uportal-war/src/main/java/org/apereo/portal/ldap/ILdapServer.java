@@ -23,7 +23,6 @@ import org.springframework.ldap.core.support.LdapContextSource;
  * to an LDAP server, release the connection and get information about the connection.
  *
  * @author Eric Dalquist <a href="mailto:edalquist@unicon.net">edalquist@unicon.net</a>
- * @version $Revision$
  * @deprecated Framework code should access {@link LdapContextSource} objects in the spring context
  *     via injection instead of using these APIs.
  */

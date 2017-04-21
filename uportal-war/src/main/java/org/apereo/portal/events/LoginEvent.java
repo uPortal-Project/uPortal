@@ -26,7 +26,6 @@ import org.apache.commons.lang.Validate;
 
 /**
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 2.6
  */
 public final class LoginEvent extends PortalEvent {

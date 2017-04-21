@@ -37,7 +37,6 @@ import org.springframework.context.support.AbstractMessageSource;
  * the primary one.
  *
  * @author Arvids Grabovskis
- * @version $Revision$
  */
 public class DatabaseMessageSource extends AbstractMessageSource implements MessageSource {
 

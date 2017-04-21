@@ -28,7 +28,6 @@ import org.apache.commons.lang.Validate;
  * no configuration but no properties, states or modes are set by default.
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class PortalContextImpl implements PortalContext {
     private Properties portalProperties = new Properties();

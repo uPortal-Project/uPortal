@@ -23,7 +23,6 @@ import org.apereo.portal.portlet.om.IPortletWindowId;
  * Provides information to the URL generation code about layout nodes for navigation.
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public interface IUrlNodeSyntaxHelper {
     /**

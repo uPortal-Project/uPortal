@@ -23,7 +23,6 @@ import org.apereo.portal.portlet.om.IPortletDefinition;
  * package private, another implementation is used.
  *
  * @author Arvids Grabovskis
- * @version $Revision$
  */
 class LocalizedPortletDefinition implements Serializable {
 

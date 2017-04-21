@@ -28,7 +28,6 @@ import org.w3c.dom.NodeList;
 /**
  * Looks for, applies against the ilf, and updates accordingly the delete set within a plf.
  *
- * @version $Revision$ $Date$
  * @since uPortal 2.5
  */
 public class DeleteManager {

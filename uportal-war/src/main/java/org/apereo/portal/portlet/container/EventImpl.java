@@ -20,7 +20,6 @@ import javax.xml.namespace.QName;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class EventImpl implements Event {
 

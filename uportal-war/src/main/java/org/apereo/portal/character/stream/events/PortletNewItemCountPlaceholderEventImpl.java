@@ -18,7 +18,6 @@ import org.apereo.portal.portlet.om.IPortletWindowId;
 
 /**
  * @author Jen Bourey
- * @version $Revision$
  */
 public final class PortletNewItemCountPlaceholderEventImpl extends PortletPlaceholderEventImpl
         implements PortletNewItemCountPlaceholderEvent {

@@ -22,7 +22,6 @@ import org.apereo.portal.security.ISecurityContextFactory;
  * org.apereo.portal.security.provider.cas.CasAssertionSecurityContext}.
  *
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 3.2
  */
 public class CasAssertionSecurityContextFactory implements ISecurityContextFactory {

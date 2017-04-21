@@ -26,7 +26,6 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
  * Sets a custom session timeout for unauthenticated users.
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class GuestSessionExpirationInterceptor extends HandlerInterceptorAdapter {
     private IPersonManager personManager;

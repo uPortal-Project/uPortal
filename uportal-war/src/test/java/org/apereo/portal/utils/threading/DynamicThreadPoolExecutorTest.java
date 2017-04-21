@@ -32,7 +32,6 @@ import org.junit.Test;
  * Test for {@link ThreadPoolExecutor} that verifies threads are only created on demand
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 @Ignore
 public class DynamicThreadPoolExecutorTest {

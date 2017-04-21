@@ -46,7 +46,6 @@ import org.apereo.portal.spring.locator.PasswordEncryptionServiceLocator;
  * false (by default it is set to true).
  *
  * @author Andrew Newman, newman@yale.edu
- * @version $Revision$
  */
 class CacheSecurityContext extends ChainingSecurityContext
         implements ISecurityContext, IParentAwareSecurityContext {

@@ -19,7 +19,6 @@ import javax.xml.stream.events.Attribute;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class AttributeWrapper extends XMLEventWrapper implements Attribute {
     private final Attribute attribute;

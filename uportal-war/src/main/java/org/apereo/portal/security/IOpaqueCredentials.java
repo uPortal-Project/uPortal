@@ -22,7 +22,6 @@ import java.io.Serializable;
  * Kerberos TGT's or other useful security context authenticators.
  *
  * @author Andrew Newman, newman@yale.edu
- * @version $Revision$
  */
 public interface IOpaqueCredentials extends Serializable {
 

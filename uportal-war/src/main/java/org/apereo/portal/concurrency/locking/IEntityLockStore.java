@@ -22,7 +22,6 @@ import org.apereo.portal.concurrency.LockingException;
  * Interface for finding and maintaining <code>IEntityLocks</code>.
  *
  * @author Dan Ellentuck
- * @version $Revision$
  */
 public interface IEntityLockStore {
     /**

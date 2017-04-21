@@ -24,7 +24,6 @@ import org.springframework.core.io.Resource;
  * Service that can import, export, and delete portal data.
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public interface IPortalDataHandlerService {
 

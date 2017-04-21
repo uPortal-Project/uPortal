@@ -35,7 +35,6 @@ import org.springframework.stereotype.Repository;
  * subscribed.
  *
  * @author Mary Hunt
- * @version $Revision$ $Date$
  */
 @Repository
 public class JpaUserFragmentSubscriptionDaoImpl extends BasePortalJpaDao

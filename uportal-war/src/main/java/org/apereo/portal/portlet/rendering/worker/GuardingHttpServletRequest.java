@@ -35,7 +35,6 @@ import javax.servlet.http.HttpSession;
  * been canceled.
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class GuardingHttpServletRequest extends HttpServletRequestWrapper {
     private final AtomicBoolean canceled;

@@ -45,7 +45,6 @@ import org.springframework.stereotype.Repository;
  * is logged at the WARN level and the event is ignored.
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 @Repository
 public class JpaPortalEventStore extends BaseRawEventsJpaDao implements IPortalEventDao {

@@ -34,7 +34,6 @@ import org.springframework.webflow.mvc.view.FlowViewResolver;
  * PortletMvcView} or a {@link ServletMvcView} should be used.
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class RuntimeMvcViewFactory extends AbstractMvcViewFactory {
 

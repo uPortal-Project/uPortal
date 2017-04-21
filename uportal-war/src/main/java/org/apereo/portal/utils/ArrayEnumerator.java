@@ -21,7 +21,6 @@ import java.util.NoSuchElementException;
  * Implements the Enumeration interface over an Array
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class ArrayEnumerator<T> implements Enumeration<T> {
     private final T[] array;

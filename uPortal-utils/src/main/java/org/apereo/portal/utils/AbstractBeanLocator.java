@@ -26,7 +26,6 @@ import org.springframework.util.Assert;
  * the case of an already created ApplicationConext uses the bean refernce injected by the context.
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public abstract class AbstractBeanLocator<T> implements DisposableBean, InitializingBean {
     protected final Log logger = LogFactory.getLog(AbstractBeanLocator.class);

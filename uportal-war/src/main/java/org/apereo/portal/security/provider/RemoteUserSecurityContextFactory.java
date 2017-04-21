@@ -19,7 +19,6 @@ package org.apereo.portal.security.provider;
  * RemoteUserSecurityContext.
  *
  * @author Pete Boysen, pboysen@iastate.edu
- * @version $Revision$
  */
 import org.apereo.portal.security.ISecurityContext;
 import org.apereo.portal.security.ISecurityContextFactory;

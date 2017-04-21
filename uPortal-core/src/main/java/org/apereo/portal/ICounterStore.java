@@ -19,7 +19,6 @@ package org.apereo.portal;
  *
  * @author Peter Kharchenko {@link <a
  *     href="mailto:pkharchenko@interactivebusiness.com"">pkharchenko@interactivebusiness.com"</a>}
- * @version $Revision$
  */
 public interface ICounterStore {
 

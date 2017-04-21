@@ -23,7 +23,6 @@ import java.util.regex.Pattern;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  */
 public final class SafeFilenameUtils {
     // Reserved names on Windows (see http://en.wikipedia.org/wiki/Filename)

@@ -30,7 +30,6 @@ import org.w3c.dom.Document;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class LayoutExporter extends AbstractDom4jExporter {
     private final Cache<Tuple<String, String>, UserProfile> layoutCache =

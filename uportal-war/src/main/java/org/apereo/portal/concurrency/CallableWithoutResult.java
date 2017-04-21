@@ -18,7 +18,6 @@ import java.util.concurrent.Callable;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  */
 public abstract class CallableWithoutResult implements Callable<Object> {
 

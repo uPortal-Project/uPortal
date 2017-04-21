@@ -26,7 +26,6 @@ import org.w3c.dom.Document;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class XPathPoolImplTest {
     private Document document;

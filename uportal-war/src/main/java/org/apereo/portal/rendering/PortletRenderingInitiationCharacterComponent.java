@@ -37,7 +37,6 @@ import org.springframework.beans.factory.annotation.Autowired;
  * {@link CharacterEventTypes#PORTLET_CONTENT} element in the event stream
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class PortletRenderingInitiationCharacterComponent
         extends CharacterPipelineComponentWrapper {

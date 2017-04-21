@@ -88,7 +88,6 @@ import org.springframework.web.portlet.bind.annotation.ResourceMapping;
  * SearchPortletController produces both a search form and results for configured search services.
  *
  * @author Jen Bourey, jbourey@unicon.net
- * @version $Revision$
  */
 @Controller
 @RequestMapping("VIEW")

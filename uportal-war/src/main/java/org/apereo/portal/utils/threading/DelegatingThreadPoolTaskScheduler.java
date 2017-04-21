@@ -38,7 +38,6 @@ import org.springframework.scheduling.support.ScheduledMethodRunnable;
  * to another {@link ExecutorService}. Also adds a configurable start delay to scheduled tasks
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class DelegatingThreadPoolTaskScheduler extends ThreadPoolTaskScheduler
         implements TaskScheduler, SchedulingTaskExecutor {

@@ -31,7 +31,6 @@ import org.slf4j.LoggerFactory;
  * subclasses {@link #internalNextEvent()} as the exclusive way to read events.
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public abstract class BaseXMLEventReader extends EventReaderDelegate {
 

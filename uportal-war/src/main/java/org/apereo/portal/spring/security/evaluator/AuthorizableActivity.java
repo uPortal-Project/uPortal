@@ -19,7 +19,6 @@ package org.apereo.portal.spring.security.evaluator;
  * PortalPermissionEvaluator.
  *
  * @author Jen Bourey, jennifer.bourey@gmail.com
- * @version $Revision$
  */
 public class AuthorizableActivity {
 

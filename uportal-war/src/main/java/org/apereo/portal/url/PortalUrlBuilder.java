@@ -27,7 +27,6 @@ import org.apereo.portal.utils.ConcurrentMapUtils;
  * Builds a portal URL
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 class PortalUrlBuilder extends AbstractUrlBuilder implements IPortalActionUrlBuilder {
     final IUrlSyntaxProvider urlGenerator;

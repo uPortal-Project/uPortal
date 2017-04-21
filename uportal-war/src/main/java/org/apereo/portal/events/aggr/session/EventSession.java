@@ -25,7 +25,6 @@ import org.joda.time.DateTime;
  * PortalEvent#getEventSessionId()}
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public interface EventSession extends Serializable {
 

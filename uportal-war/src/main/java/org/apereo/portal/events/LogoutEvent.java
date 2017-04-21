@@ -16,7 +16,6 @@ package org.apereo.portal.events;
 
 /**
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 2.6
  */
 public final class LogoutEvent extends PortalEvent {

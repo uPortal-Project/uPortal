@@ -43,7 +43,6 @@ import org.hibernate.annotations.NaturalId;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  */
 @Entity
 @Table(name = "UP_EVENT_AGGR_CONF_INTRVL")

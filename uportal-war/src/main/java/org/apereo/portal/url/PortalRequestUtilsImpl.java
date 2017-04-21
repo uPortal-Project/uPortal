@@ -32,7 +32,6 @@ import org.springframework.web.portlet.context.PortletRequestAttributes;
  * PortletHttpServletRequestWrapper#ATTRIBUTE__HTTP_SERVLET_REQUEST}
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 @Service("portalRequestUtils")
 public class PortalRequestUtilsImpl implements IPortalRequestUtils {

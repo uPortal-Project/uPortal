@@ -22,7 +22,6 @@ import org.springframework.webflow.context.ExternalContext;
  * Useful general utilities for uPortal's webflows.
  *
  * @author Jen Bourey, jbourey@unicon.net
- * @version $Revision$
  */
 public interface IPortalWebFlowUtils {
 

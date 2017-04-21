@@ -22,7 +22,6 @@ import org.springframework.util.Assert;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  */
 public final class CharacterDataEventImpl implements CharacterDataEvent {
     private static final long serialVersionUID = 1L;

@@ -29,7 +29,6 @@ import org.springframework.core.OrderComparator;
  * subclass.
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public abstract class FilteringApplicationListener<E extends ApplicationEvent>
         implements ApplicationListener<E> {

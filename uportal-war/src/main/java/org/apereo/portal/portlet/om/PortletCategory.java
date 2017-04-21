@@ -23,7 +23,6 @@ import org.apache.commons.lang.builder.ToStringStyle;
  * A portlet category.
  *
  * @author Ken Weiner, kweiner@unicon.net
- * @version $Revision$
  */
 public class PortletCategory {
 

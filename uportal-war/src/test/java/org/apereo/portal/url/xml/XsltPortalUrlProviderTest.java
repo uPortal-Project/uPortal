@@ -60,7 +60,6 @@ import org.springframework.util.xml.SimpleTransformErrorListener;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  */
 @RunWith(MockitoJUnitRunner.class)
 public class XsltPortalUrlProviderTest {

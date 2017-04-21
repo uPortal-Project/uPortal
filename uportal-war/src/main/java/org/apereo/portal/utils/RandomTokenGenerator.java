@@ -23,7 +23,6 @@ import java.util.Random;
  * easily be confused with others depending on the font in use.
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public final class RandomTokenGenerator {
     private static final char[] DEFAULT_TOKEN_CHARS =

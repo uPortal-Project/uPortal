@@ -29,7 +29,6 @@ import org.springframework.web.context.request.WebRequest;
 
 /**
  * @author Jen Bourey, jbourey@unicon.net
- * @version $Revision$
  */
 public class PortalSpELServiceImplTest {
 

@@ -45,7 +45,6 @@ import org.hibernate.annotations.NaturalIdCache;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  */
 @Entity
 @Table(name = "UP_AGGR_GROUP_MAPPING")

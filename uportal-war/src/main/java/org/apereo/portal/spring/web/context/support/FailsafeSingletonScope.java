@@ -31,7 +31,6 @@ import org.springframework.beans.factory.config.Scope;
  * illegal state (no current session, request, ...)
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class FailsafeSingletonScope implements Scope, DisposableBean {
     protected final Log logger = LogFactory.getLog(this.getClass());
