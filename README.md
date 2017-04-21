@@ -5,6 +5,7 @@
 
 [![WCAG 2 AA Badge](https://www.w3.org/WAI/wcag2AA-blue-v.svg)](#accessible)
 [![Issue Stats](http://issuestats.com/github/Jasig/uPortal/badge/pr)](http://issuestats.com/github/Jasig/uPortal)
+[![Google Code Style](https://img.shields.io/badge/code_style-Google-green.svg?style=flat)](https://google.github.io/styleguide/javaguide.html)
 
 | Version | Linux | Windows | Coverage |
 | - | - | - | - |
