@@ -10,7 +10,10 @@ install:
   - ./gradlew install
   - mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
 
-script: mvn clean test cobertura:cobertura coveralls:report -B -V
+script:
+  - mvn findbugs:check -B -V
+  - ./gradlew -u -i -S check
+  - mvn clean test cobertura:cobertura coveralls:report -B -V
 
 cache:
   directories:
