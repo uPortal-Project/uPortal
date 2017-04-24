@@ -71,4 +71,11 @@ subprojects {
         compile.extendsFrom provided
     }
 
+    task cleanShared() {
+		group 'Configuration'
+		description 'Removes ALL shared libraries from the servlet container.'
+		def libs = serverbase+"/shared/lib"
+		FileTree tree = fileTree(dir: libs)
+		delete fileTree(dir:libs , include: '*')
+	}
 }
