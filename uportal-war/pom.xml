@@ -644,12 +644,6 @@
         <!-- ===== Runtime Dependencies ======================================= -->
 
         <dependency>
-            <groupId>org.jasig.ehcache</groupId>
-            <artifactId>ehcache-jgroups3replication</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-
-        <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-jsr223</artifactId>
             <scope>runtime</scope>
