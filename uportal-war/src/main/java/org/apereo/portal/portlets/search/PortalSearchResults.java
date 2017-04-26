@@ -50,7 +50,7 @@ public class PortalSearchResults implements Serializable {
 
         this.results =
                 CacheBuilder.newBuilder()
-                        .<String, List<Tuple<SearchResult, String>>>build(
+                        .build(
                                 new CacheLoader<String, List<Tuple<SearchResult, String>>>() {
                                     @Override
                                     public List<Tuple<SearchResult, String>> load(String key)
@@ -70,7 +70,7 @@ public class PortalSearchResults implements Serializable {
         final Set<String> tabs = this.getTabs(result);
         for (final String tab : tabs) {
             final List<Tuple<SearchResult, String>> typeResults = this.results.getUnchecked(tab);
-            typeResults.add(new Tuple<SearchResult, String>(result, url));
+            typeResults.add(new Tuple<>(result, url));
         }
     }
 
@@ -82,7 +82,7 @@ public class PortalSearchResults implements Serializable {
             return this.defaultTab;
         }
 
-        final Set<String> tabs = new HashSet<String>();
+        final Set<String> tabs = new HashSet<>();
 
         //For each type the search result declares lookup the tab(s) mapped to that type
         for (final String type : types) {

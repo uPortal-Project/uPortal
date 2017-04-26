@@ -124,8 +124,7 @@ public class SearchPortletController {
     private int maxAutocompleteSearchResults = 10;
     // Map of (search result type, priority) to prioritize search autocomplete results.  0 is default priority.
     // > 0 is higher priority, < 0 is lower priority.
-    private Map<String, Integer> autocompleteResultTypeToPriorityMap =
-            new HashMap<String, Integer>();
+    private Map<String, Integer> autocompleteResultTypeToPriorityMap = new HashMap<>();
 
     private IPortalSpELService spELService;
 
@@ -133,7 +132,7 @@ public class SearchPortletController {
     // search event listeners to voluntarily ignore the search event if they are one of the ignored types (and
     // again filtering here in case the search event listener doesn't respect the ignore set).
     // This requires changing the SearchEvent and unfortunately there is not time for that now.
-    private Set<String> autocompleteIgnoreResultTypes = new HashSet<String>();
+    private Set<String> autocompleteIgnoreResultTypes = new HashSet<>();
 
     @Resource(name = "searchServices")
     public void setPortalSearchServices(List<IPortalSearchService> searchServices) {
@@ -195,8 +194,8 @@ public class SearchPortletController {
     //Map of tab-key to string or collection<string> of search result types
     public void setSearchTabs(Map<String, Object> searchTabMappings) {
         final Map<String, Set<String>> resultTypeMappingsBuilder =
-                new LinkedHashMap<String, Set<String>>();
-        final List<String> tabKeysBuilder = new ArrayList<String>(searchTabMappings.size());
+                new LinkedHashMap<>();
+        final List<String> tabKeysBuilder = new ArrayList<>(searchTabMappings.size());
 
         for (final Map.Entry<String, Object> tabMapping : searchTabMappings.entrySet()) {
             final String tabKey = tabMapping.getKey();
@@ -223,7 +222,7 @@ public class SearchPortletController {
             final String resultType) {
         Set<String> tabKeys = resultTypeMappingsBuilder.get(resultType);
         if (tabKeys == null) {
-            tabKeys = new LinkedHashSet<String>();
+            tabKeys = new LinkedHashSet<>();
             resultTypeMappingsBuilder.put(resultType, tabKeys);
         }
         tabKeys.add(tabKey);
@@ -264,7 +263,7 @@ public class SearchPortletController {
                 searchCounterCache =
                         CacheBuilder.newBuilder()
                                 .expireAfterAccess(1, TimeUnit.MINUTES)
-                                .<String, Boolean>build();
+                                .build();
                 session.setAttribute(SEARCH_COUNTER_NAME, searchCounterCache);
             }
         }
@@ -314,7 +313,7 @@ public class SearchPortletController {
                         CacheBuilder.newBuilder()
                                 .maximumSize(20)
                                 .expireAfterAccess(5, TimeUnit.MINUTES)
-                                .<String, PortalSearchResults>build();
+                                .build();
                 session.setAttribute(SEARCH_RESULTS_CACHE_NAME, searchResultsCache);
             }
             // Save the last queryId for an ajax autocomplete search response.
@@ -509,7 +508,7 @@ public class SearchPortletController {
     /** Display a search form */
     @RequestMapping
     public ModelAndView showSearchForm(RenderRequest request, RenderResponse response) {
-        final Map<String, Object> model = new HashMap<String, Object>();
+        final Map<String, Object> model = new HashMap<>();
 
         // Determine if this portlet displays the search launch view or regular search view.
         PortletPreferences prefs = request.getPreferences();
@@ -570,7 +569,7 @@ public class SearchPortletController {
             @RequestParam(value = "query") String query,
             @RequestParam(value = "queryId") String queryId) {
 
-        final Map<String, Object> model = new HashMap<String, Object>();
+        final Map<String, Object> model = new HashMap<>();
         model.put("query", query);
 
         ConcurrentMap<String, List<Tuple<SearchResult, String>>> results =
@@ -597,7 +596,7 @@ public class SearchPortletController {
             @RequestParam(value = "query") String query,
             @RequestParam(value = "hitMaxQueries") boolean hitMaxQueries) {
 
-        final Map<String, Object> model = new HashMap<String, Object>();
+        final Map<String, Object> model = new HashMap<>();
         model.put("query", query);
         model.put("hitMaxQueries", hitMaxQueries);
 
@@ -615,8 +614,8 @@ public class SearchPortletController {
         int maxTextLength =
                 Integer.parseInt(prefs.getValue(AUTOCOMPLETE_MAX_TEXT_LENGTH_PREF_NAME, "180"));
 
-        final Map<String, Object> model = new HashMap<String, Object>();
-        List<AutocompleteResultsModel> results = new ArrayList<AutocompleteResultsModel>();
+        final Map<String, Object> model = new HashMap<>();
+        List<AutocompleteResultsModel> results = new ArrayList<>();
 
         final PortletSession session = request.getPortletSession();
         String queryId = (String) session.getAttribute(SEARCH_LAST_QUERY_ID);
@@ -662,7 +661,7 @@ public class SearchPortletController {
                 getCleanedAndSortedMapResults(resultsMap, maxTextLength);
 
         // Consolidate the results into a single, ordered list of max entries.
-        List<AutocompleteResultsModel> results = new ArrayList<AutocompleteResultsModel>();
+        List<AutocompleteResultsModel> results = new ArrayList<>();
         for (List<AutocompleteResultsModel> items : prioritizedResultsMap.values()) {
             results.addAll(items);
             if (results.size() >= maxAutocompleteSearchResults) {
@@ -729,8 +728,7 @@ public class SearchPortletController {
     }
 
     private SortedMap<Integer, List<AutocompleteResultsModel>> createAutocompletePriorityMap() {
-        SortedMap<Integer, List<AutocompleteResultsModel>> resultsMap =
-                new TreeMap<Integer, List<AutocompleteResultsModel>>();
+        SortedMap<Integer, List<AutocompleteResultsModel>> resultsMap = new TreeMap<>();
         for (Map.Entry<String, Integer> entry : autocompleteResultTypeToPriorityMap.entrySet()) {
             if (!resultsMap.containsKey(entry.getValue())) {
                 resultsMap.put(entry.getValue(), new ArrayList<AutocompleteResultsModel>());
