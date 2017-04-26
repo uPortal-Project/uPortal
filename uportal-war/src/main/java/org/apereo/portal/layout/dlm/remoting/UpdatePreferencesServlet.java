@@ -234,17 +234,18 @@ public class UpdatePreferencesServlet {
     /**
      * Remove the first element with the provided fname from the layout.
      *
-     * @param request
-     * @param response
-     * @param fname
-     * @return
-     * @throws IOException
+     * @param request HttpServletRequest
+     * @param response HttpServletResponse
+     * @param fname fname of the portlet to remove from the layout
+     * @return json response
+     * @throws IOException if the person cannot be retrieved
      */
     @RequestMapping(method = RequestMethod.POST, params = "action=removeByFName")
-    public ModelAndView removeByFName(HttpServletRequest request, 
+    public ModelAndView removeByFName(
+            HttpServletRequest request, 
             HttpServletResponse response,
-            @RequestParam(value = "fname", required = true) String fname)
-            throws IOException {
+            @RequestParam(value = "fname", required = true) String fname
+    ) throws IOException {
 
         IUserInstance ui = userInstanceManager.getUserInstance(request);
         IPerson per = getPerson(ui, response);
