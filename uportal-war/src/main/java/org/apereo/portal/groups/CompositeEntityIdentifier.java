@@ -89,7 +89,7 @@ public class CompositeEntityIdentifier extends EntityIdentifier implements IGrou
         }
     }
     /** @return javax.naming.Name */
-    protected Name getCompositeKey() {
+    protected synchronized Name getCompositeKey() {
         return compositeKey;
     }
     /** @return java.lang.String */
