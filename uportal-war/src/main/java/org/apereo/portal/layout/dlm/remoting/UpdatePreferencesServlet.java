@@ -262,7 +262,7 @@ public class UpdatePreferencesServlet {
 
                 removeSubscription(per, elementId, ulm);
 
-            } else {
+            } else if (elementId != null) {
                 // Delete the requested element node.  This code is the same for
                 // all node types, so we can just have a generic action.
                 if (!ulm.deleteNode(elementId)) {
@@ -270,7 +270,7 @@ public class UpdatePreferencesServlet {
                             "Failed to remove element ID {} from layout root folder ID {}, delete node returned false",
                             elementId,
                             ulm.getRootFolderId());
-                    response.sendError(HttpServletResponse.SC_FORBIDDEN);
+                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                     return new ModelAndView(
                             "jsonView",
                             Collections.singletonMap(
@@ -280,6 +280,9 @@ public class UpdatePreferencesServlet {
                                             "Unable to update element",
                                             RequestContextUtils.getLocale(request))));
                 }
+            } else {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+                return null;
             }
 
             ulm.saveUserLayout();
