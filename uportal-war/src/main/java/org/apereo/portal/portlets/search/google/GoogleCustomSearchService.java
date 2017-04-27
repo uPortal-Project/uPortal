@@ -94,7 +94,7 @@ public class GoogleCustomSearchService implements IPortalSearchService {
 
     @Override
     public SearchResults getSearchResults(PortletRequest request, SearchRequest query) {
-        final Map<String, Object> parameters = new LinkedHashMap<String, Object>();
+        final Map<String, Object> parameters = new LinkedHashMap<>();
 
         parameters.put(VERSION_PARAM, VERSION);
         parameters.put(RESULT_SIZE_PARAM, resultSize);
