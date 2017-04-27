@@ -171,7 +171,7 @@ public class UpdatePreferencesServlet {
 
     // default tab name
     protected static final String DEFAULT_TAB_NAME = "New Tab";
-    
+
     /**
      * Remove an element from the layout.
      *
@@ -242,53 +242,53 @@ public class UpdatePreferencesServlet {
      */
     @RequestMapping(method = RequestMethod.POST, params = "action=removeByFName")
     public ModelAndView removeByFName(
-            HttpServletRequest request,
+            HttpServletRequest request, 
             HttpServletResponse response,
             @RequestParam(value = "fname", required = true) String fname
     ) throws IOException {
-        ModelAndView result = new ModelAndView("jsonView", Collections.EMPTY_MAP);
+
+        IUserInstance ui = userInstanceManager.getUserInstance(request);
+        IPerson per = getPerson(ui, response);
+
+        UserPreferencesManager upm = (UserPreferencesManager) ui.getPreferencesManager();
+        IUserLayoutManager ulm = upm.getUserLayoutManager();
+
         try {
-            IUserInstance ui = userInstanceManager.getUserInstance(request);
-            IPerson per = getPerson(ui, response);
-
-            UserPreferencesManager upm = (UserPreferencesManager) ui.getPreferencesManager();
-            IUserLayoutManager ulm = upm.getUserLayoutManager();
-
             String elementId = ulm.getUserLayout().findNodeId(new PortletSubscribeIdResolver(fname));
-            if (elementId != null) {
-                boolean succeeded = true;
-                if (elementId.startsWith(Constants.FRAGMENT_ID_USER_PREFIX)
-                        && ulm.getNode(elementId) instanceof org.apereo.portal.layout.node.UserLayoutFolderDescription) {
-                    removeSubscription(per, elementId, ulm);
-                } else {
-                    // Delete the requested element node.  This code is the same for
-                    // all node types, so we can just have a generic action.
-                    succeeded = ulm.deleteNode(elementId);
-                }
-                if (succeeded) {
-                    ulm.saveUserLayout();
-                } else {
+            if (elementId != null
+                    && elementId.startsWith(Constants.FRAGMENT_ID_USER_PREFIX)
+                    && ulm.getNode(elementId)
+                            instanceof org.apereo.portal.layout.node.UserLayoutFolderDescription) {
+
+                removeSubscription(per, elementId, ulm);
+
+            } else {
+                // Delete the requested element node.  This code is the same for
+                // all node types, so we can just have a generic action.
+                if (!ulm.deleteNode(elementId)) {
                     logger.info(
                             "Failed to remove element ID {} from layout root folder ID {}, delete node returned false",
                             elementId,
-                            ulm.getRootFolderId()
-                    );
-                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                    String msg = getMessage(
-                            "error.element.update",
-                            "Unable to update element",
-                            RequestContextUtils.getLocale(request));
-                    result = new ModelAndView(
+                            ulm.getRootFolderId());
+                    response.sendError(HttpServletResponse.SC_FORBIDDEN);
+                    return new ModelAndView(
                             "jsonView",
-                            Collections.singletonMap("error", msg));
+                            Collections.singletonMap(
+                                    "error",
+                                    getMessage(
+                                            "error.element.update",
+                                            "Unable to update element",
+                                            RequestContextUtils.getLocale(request))));
                 }
-            } else {
-                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             }
+
+            ulm.saveUserLayout();
+
+            return new ModelAndView("jsonView", Collections.EMPTY_MAP);
+
         } catch (PortalException e) {
-            result = handlePersistError(request, response, e);
+            return handlePersistError(request, response, e);
         }
-        return result;
     }
     
     /**
