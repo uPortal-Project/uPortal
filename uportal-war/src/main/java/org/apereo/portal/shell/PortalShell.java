@@ -29,8 +29,6 @@ import org.apache.commons.cli.PosixParser;
 import org.apache.tools.ant.util.FileUtils;
 import org.apereo.portal.utils.PortalApplicationContextLocator;
 import org.codehaus.groovy.control.CompilerConfiguration;
-import org.codehaus.groovy.tools.shell.Groovysh;
-import org.codehaus.groovy.tools.shell.IO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
@@ -76,9 +74,6 @@ public class PortalShell {
                         new CompilerConfiguration(System.getProperties());
                 final GroovyShell shell = new GroovyShell(binding, conf);
                 shell.run(scriptFile, args);
-            } else {
-                final Groovysh shell = new Groovysh(binding, new IO());
-                shell.run();
             }
         } finally {
             if (applicationContext instanceof DisposableBean) {
