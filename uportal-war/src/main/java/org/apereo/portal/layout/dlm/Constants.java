@@ -17,7 +17,7 @@ package org.apereo.portal.layout.dlm;
 /**
  * Constants used in DLM.
  *
- * @since uPortal 2.5
+ * @since 2.5
  */
 public class Constants {
 

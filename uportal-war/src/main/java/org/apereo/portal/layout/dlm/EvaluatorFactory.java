@@ -16,7 +16,7 @@ package org.apereo.portal.layout.dlm;
 
 import org.w3c.dom.Node;
 
-/** @since uPortal 2.5 */
+/** @since 2.5 */
 public interface EvaluatorFactory {
     public Evaluator getEvaluator(Node audience);
 }

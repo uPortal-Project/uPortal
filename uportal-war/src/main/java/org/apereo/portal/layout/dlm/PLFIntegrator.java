@@ -24,7 +24,7 @@ import org.w3c.dom.NodeList;
 /**
  * Performs merging of PLF into ILF for DLM.
  *
- * @since uPortal 2.5
+ * @since 2.5
  */
 public class PLFIntegrator {
 

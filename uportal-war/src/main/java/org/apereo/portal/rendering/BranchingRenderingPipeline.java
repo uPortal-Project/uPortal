@@ -29,7 +29,7 @@ import org.springframework.beans.factory.annotation.Required;
  * <p>If the Predicate returns true, proceed down the true branch. If the Predicate returns false,
  * proceed down the false branch.
  *
- * @since uPortal 4.2
+ * @since 4.2
  */
 public class BranchingRenderingPipeline implements IPortalRenderingPipeline {
 

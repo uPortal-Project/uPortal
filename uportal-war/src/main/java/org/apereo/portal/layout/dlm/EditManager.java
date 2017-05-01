@@ -28,7 +28,7 @@ import org.w3c.dom.Node;
 /**
  * Handles ILF node edit directives recorded in the PLF.
  *
- * @since uPortal 2.5
+ * @since 2.5
  */
 public class EditManager {
     private static IUserLayoutStore dls = null;

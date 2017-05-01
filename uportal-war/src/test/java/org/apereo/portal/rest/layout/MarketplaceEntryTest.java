@@ -26,7 +26,7 @@ import org.mockito.Mock;
 /**
  * Unit tests for MarketplaceEntry.
  *
- * @since uPortal 4.2
+ * @since 4.2
  */
 public class MarketplaceEntryTest {
 

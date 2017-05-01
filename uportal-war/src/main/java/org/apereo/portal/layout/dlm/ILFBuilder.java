@@ -43,7 +43,7 @@ import org.w3c.dom.Node;
  * children of each fragment into the composite document and recording their identifiers in the
  * document identifier cache. No changes are made to the source fragments passed in.
  *
- * @since uPortal 2.5
+ * @since 2.5
  */
 public class ILFBuilder {
     private static final Log LOG = LogFactory.getLog(ILFBuilder.class);

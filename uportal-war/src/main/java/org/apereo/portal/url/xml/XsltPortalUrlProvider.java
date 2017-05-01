@@ -152,7 +152,7 @@ public class XsltPortalUrlProvider {
      * @param copyCurrentRenderParameters
      * @param resourceId - can be empty string
      * @return IPortletUrlBuilder
-     * @since uPortal 4.1
+     * @since 4.1
      */
     public IPortletUrlBuilder getPortletUrlBuilder(
             HttpServletRequest request,

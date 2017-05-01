@@ -23,7 +23,7 @@
 
 <!--=====START: DOCUMENT DESCRIPTION=====-->
 <!--
-    @since uPortal 4.3
+    @since 4.3
 
     General Description:  This file was developed to support Javascript-driven rendering of the
     uPortal UI.  This file collects the necessary user layout data and exports xml that is then

@@ -27,7 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * Answers whether a given HttpServletRequest represents one that the rendering pipeline will focus
  * on rendering just one portlet (e.g., maximized, or exclusive).
  *
- * @since uPortal 4.2
+ * @since 4.2
  */
 public class URLInSpecificState implements Predicate<HttpServletRequest> {
 

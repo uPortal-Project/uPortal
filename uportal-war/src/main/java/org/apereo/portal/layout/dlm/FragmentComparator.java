@@ -22,7 +22,7 @@ import java.util.Comparator;
  * precedence since it is an indication of the fragments location within the config file. For those
  * with equal precedence the one defined first when loading the file should take precedence.
  *
- * @since uPortal 2.5
+ * @since 2.5
  */
 public class FragmentComparator implements Comparator<FragmentDefinition> {
 

@@ -18,7 +18,7 @@ package org.apereo.portal.tenants;
  * Represents a behavior of an {@link ITenantOperationsListener} that may be invoked independent of
  * a Create, Update, or Delete operation. Actions are available from the Tenant Details screen.
  *
- * @since uPortal 4.3
+ * @since 4.3
  */
 public interface ITenantManagementAction {
 

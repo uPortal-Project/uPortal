@@ -124,7 +124,7 @@ public class TenantManagerController {
         return new ModelAndView(ADD_TENANT_VIEW_NAME, model);
     }
 
-    /** @since uPortal 4.3 */
+    /** @since 4.3 */
     @RenderMapping(params = "action=showTenantDetails")
     public ModelAndView showTenantDetails(final RenderRequest req, final PortletSession session) {
 
@@ -172,7 +172,7 @@ public class TenantManagerController {
         return new ModelAndView(TENANT_DETAILS_VIEW_NAME, model);
     }
 
-    /** @since uPortal 4.3 */
+    /** @since 4.3 */
     @RenderMapping(params = "action=showReport")
     public ModelAndView showReport(final RenderRequest req) {
         Map<String, Object> model = new HashMap<String, Object>();
@@ -263,7 +263,7 @@ public class TenantManagerController {
         forwardToReportScreen(req, res, "tenant.manager.remove.tenant", responses);
     }
 
-    /** @since uPortal 4.3 */
+    /** @since 4.3 */
     @ActionMapping(params = "action=doListenerAction")
     public void doListenerAction(
             ActionRequest req,

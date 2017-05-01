@@ -31,7 +31,7 @@ public interface ILocalAccountPerson {
     /**
      * Attribute name commonly used to retrieve users email address. This attribute may not exist
      * for all users, and may be named differently for some implementations, but this is
-     * common. @Since uPortal 4.1
+     * common. @since 4.1
      */
     public static final String ATTR_MAIL = "mail";
 

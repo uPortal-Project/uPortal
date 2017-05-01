@@ -35,7 +35,7 @@ import org.springframework.web.portlet.bind.annotation.RenderMapping;
 /**
  * Spring PortletMVC Controller for Favorites Portlet implementing EDIT mode.
  *
- * @since uPortal 4.1
+ * @since 4.1
  */
 @Controller
 @RequestMapping("EDIT")

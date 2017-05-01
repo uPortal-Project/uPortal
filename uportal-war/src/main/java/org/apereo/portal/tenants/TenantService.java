@@ -37,7 +37,7 @@ import org.springframework.stereotype.Service;
 /**
  * Defines the contract for Tenant operations vis-a-vis other subsystems.
  *
- * @since uPortal 4.1
+ * @since 4.1
  */
 @Service
 public class TenantService {
@@ -64,7 +64,7 @@ public class TenantService {
 
     @Autowired private IPortalTenantEventFactory tenantEventFactory;
 
-    /** @since uPortal 4.3 */
+    /** @since 4.3 */
     @PostConstruct
     public void init() {
         Map<String, ITenantManagementAction> map = new HashMap<>();
@@ -81,7 +81,7 @@ public class TenantService {
         operationsListenerAvailableActions = Collections.unmodifiableMap(map);
     }
 
-    /** @since uPortal 4.3 */
+    /** @since 4.3 */
     public ITenant getTenantByFName(final String fname) {
         // Assertions
         if (StringUtils.isBlank(fname)) {
@@ -272,7 +272,7 @@ public class TenantService {
      * List of the fnames of currently configured {@link ITenantOperationsListener} objects that may
      * be omitted, presented in their natural (sequential) order.
      *
-     * @since uPortal 4.3
+     * @since 4.3
      */
     public List<ITenantOperationsListener> getOptionalOperationsListeners() {
         return optionalOperationsListeners;
@@ -281,13 +281,13 @@ public class TenantService {
     /**
      * Complete set of actions from all listeners
      *
-     * @since uPortal 4.3
+     * @since 4.3
      */
     public Set<ITenantManagementAction> getAllAvaialableActions() {
         return new HashSet<ITenantManagementAction>(operationsListenerAvailableActions.values());
     }
 
-    /** @since uPortal 4.3 */
+    /** @since 4.3 */
     public ITenantManagementAction getAction(final String fname) {
         // Assertions
         if (StringUtils.isBlank(fname)) {
@@ -305,7 +305,7 @@ public class TenantService {
     /**
      * Returns true if a tenant with the specified name exists, otherwise false.
      *
-     * @since uPortal 4.3
+     * @since 4.3
      */
     public boolean nameExists(final String name) {
         boolean rslt = false; // default
@@ -323,7 +323,7 @@ public class TenantService {
     /**
      * Returns true if a tenant with the specified fname exists, otherwise false.
      *
-     * @since uPortal 4.3
+     * @since 4.3
      */
     public boolean fnameExists(final String fname) {
         boolean rslt = false; // default
@@ -341,7 +341,7 @@ public class TenantService {
     /**
      * Throws an exception if the specified String isn't a valid tenant name.
      *
-     * @since uPortal 4.3
+     * @since 4.3
      */
     public void validateName(final String name) {
         Validate.validState(
@@ -354,7 +354,7 @@ public class TenantService {
     /**
      * Throws an exception if the specified String isn't a valid tenant fname.
      *
-     * @since uPortal 4.3
+     * @since 4.3
      */
     public void validateFname(final String fname) {
         Validate.validState(
@@ -369,7 +369,7 @@ public class TenantService {
      * value isn't allowable for the specified attribute.
      *
      * @throws Exception
-     * @since uPortal 4.3
+     * @since 4.3
      */
     public void validateAttribute(final String key, final String value) throws Exception {
         for (ITenantOperationsListener listener : tenantOperationsListeners) {

@@ -33,7 +33,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
  * Provides endpoint that returns a JSON representation of the user's layout. The purpose of this
  * data is to support the Javascript-driven rendering of the uPortal UI.
  *
- * @since uPortal 4.3
+ * @since 4.3
  */
 @Controller
 public class LayoutJsonV43RenderingController {

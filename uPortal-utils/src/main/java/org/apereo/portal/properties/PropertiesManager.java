@@ -45,7 +45,7 @@ import org.apache.commons.logging.LogFactory;
  * <p>This class has a comprehensive JUnit testcase. Please keep the testcase up to date with any
  * changes you make to this class.
  *
- * @since uPortal 2.4, this class existed in the main package since uPortal 2.0
+ * @since 2.4, this class existed in the main package since uPortal 2.0
  */
 public class PropertiesManager {
 
@@ -324,7 +324,7 @@ public class PropertiesManager {
      *     be found.
      * @return the value of the requested property, or the supplied default value if the named
      *     property cannot be found.
-     * @since uPortal 2.4
+     * @since 2.4
      */
     public static String getProperty(String name, String defaultValue) {
         if (PropertiesManager.props == null) loadProps();
@@ -345,7 +345,7 @@ public class PropertiesManager {
      * @param name - the name of the property to be accessed
      * @param defaultValue - default value that will be returned in the event of any error
      * @return the looked up property value, or the defaultValue if any problem.
-     * @since uPortal 2.4
+     * @since 2.4
      */
     public static boolean getPropertyAsBoolean(final String name, final boolean defaultValue) {
         if (PropertiesManager.props == null) loadProps();
@@ -367,7 +367,7 @@ public class PropertiesManager {
      * @param name - the name of the property to be accessed
      * @param defaultValue - the default value that will be returned in the event of any error
      * @return the looked up property value, or the defaultValue if any problem.
-     * @since uPortal 2.4
+     * @since 2.4
      */
     public static byte getPropertyAsByte(final String name, final byte defaultValue) {
         if (PropertiesManager.props == null) loadProps();
@@ -394,7 +394,7 @@ public class PropertiesManager {
      * @param name - the name of the requested property
      * @param defaultValue - a default value that will be returned in the event of any error
      * @return the property value as a short or the default value in the event of any error
-     * @since uPortal 2.4
+     * @since 2.4
      */
     public static short getPropertyAsShort(String name, short defaultValue) {
         if (PropertiesManager.props == null) loadProps();
@@ -422,7 +422,7 @@ public class PropertiesManager {
      * @param defaultValue - a fallback default value for the property
      * @return the value of the property as an int, or the supplied default value in the event of
      *     any problem.
-     * @since uPortal 2.4
+     * @since 2.4
      */
     public static int getPropertyAsInt(String name, int defaultValue) {
         if (PropertiesManager.props == null) loadProps();
@@ -449,7 +449,7 @@ public class PropertiesManager {
      * @param defaultValue - a fallback default value that will be returned if there is any problem
      * @return the value of the property as a long, or the supplied default value if there is any
      *     problem.
-     * @since uPortal 2.4
+     * @since 2.4
      */
     public static long getPropertyAsLong(String name, long defaultValue) {
         if (PropertiesManager.props == null) loadProps();
@@ -476,7 +476,7 @@ public class PropertiesManager {
      * @param defaultValue - a fallback default value that will be returned if there is any problem
      * @return the value of the property as a float, or the supplied default value if there is any
      *     problem.
-     * @since uPortal 2.4
+     * @since 2.4
      */
     public static float getPropertyAsFloat(String name, float defaultValue) {
         if (PropertiesManager.props == null) loadProps();
@@ -503,7 +503,7 @@ public class PropertiesManager {
      * @param defaultValue - a fallback default value that will be returned if there is any problem
      * @return the value of the property as a double, or the supplied default value if there is any
      *     problem.
-     * @since uPortal 2.4
+     * @since 2.4
      */
     public static double getPropertyAsDouble(String name, double defaultValue) {
         if (PropertiesManager.props == null) loadProps();
@@ -525,7 +525,7 @@ public class PropertiesManager {
      * Get a Set of the names of properties that have been requested but were not set.
      *
      * @return a Set of the String names of missing properties.
-     * @since uPortal 2.4
+     * @since 2.4
      */
     public static Set getMissingProperties() {
         return PropertiesManager.missingProperties;

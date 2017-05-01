@@ -17,7 +17,7 @@ package org.apereo.portal.utils;
 import java.io.Serializable;
 
 /**
- * @since uPortal 2.5
+ * @since 2.5
  */
 public final class MovingAverageSample implements IMovingAverageSample, Serializable {
     //public static long SerialVersionUID = 2006l;

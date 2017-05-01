@@ -84,7 +84,7 @@ public final class ResetPasswordTenantOperationsListener extends AbstractTenantO
         return prepareResponse(tenant);
     }
 
-    /** @since uPortal 4.3 */
+    /** @since 4.3 */
     @Override
     public Set<ITenantManagementAction> getAvaialableActions() {
         ITenantManagementAction rslt =

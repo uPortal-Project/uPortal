@@ -19,7 +19,7 @@ import java.util.Set;
 /**
  * Defines the (subsystem-private) contract for Tenant persistence.
  *
- * @since uPortal 4.1
+ * @since 4.1
  */
 /* package-private */ interface ITenantDao {
 

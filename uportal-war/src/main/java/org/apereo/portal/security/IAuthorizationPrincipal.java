@@ -142,7 +142,7 @@ public interface IAuthorizationPrincipal {
      * Indicates whether the entity represented by this principal is a group (branch node) or user
      * (leaf node).
      *
-     * @since uPortal 4.3
+     * @since 4.3
      */
     boolean isGroup();
 

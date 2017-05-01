@@ -22,7 +22,7 @@ import org.apereo.portal.layout.profile.IProfileSelection;
  * <p>Note that this is *not* an API about storing actual Profiles in all their complexity. Rather,
  * this is an API about storing the user preference for a profile referenced by its fname.
  *
- * @since uPortal 4.2
+ * @since 4.2
  */
 public interface IProfileSelectionDao {
 

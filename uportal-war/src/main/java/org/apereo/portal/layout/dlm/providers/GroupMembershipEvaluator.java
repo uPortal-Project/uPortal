@@ -38,7 +38,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
  * <p>Added support for a 'deepMemberOf' mode, from 2.5 patches (UP-1284) and cache group key rather
  * than the group itself (UP-1532). d.e 2006/12/19.
  *
- * @since uPortal 2.5
+ * @since 2.5
  */
 @Entity
 @Cacheable

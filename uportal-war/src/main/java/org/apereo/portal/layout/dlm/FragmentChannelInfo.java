@@ -23,7 +23,7 @@ import org.w3c.dom.NodeList;
  * elements residing in the user's layout do not indicate if they came from a user change or from a
  * fragment's defined value. This class enables the layout manager to such determinations.
  *
- * @since uPortal 2.5
+ * @since 2.5
  */
 public class FragmentChannelInfo extends FragmentNodeInfo {
     FragmentChannelInfo(Element channel) {

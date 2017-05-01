@@ -28,7 +28,7 @@ import org.springframework.util.Assert;
  * implementation that might be plugged into a branch in the overall rendering pipeline and
  * conditionally actuated.
  *
- * @since uPortal 4.2
+ * @since 4.2
  */
 public class RedirectRenderingPipelineTerminator implements IPortalRenderingPipeline {
 

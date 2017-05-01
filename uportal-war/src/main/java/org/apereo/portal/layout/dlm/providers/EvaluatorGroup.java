@@ -31,7 +31,7 @@ import org.hibernate.annotations.IndexColumn;
 /**
  * An {@link Evaluator} that contains a group of other evaluators
  *
- * @since uPortal 2.5
+ * @since 2.5
  */
 @Entity
 @Cacheable

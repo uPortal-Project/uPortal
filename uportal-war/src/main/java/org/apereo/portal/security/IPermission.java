@@ -49,14 +49,14 @@ public interface IPermission {
     /**
      * Portlet subscribe permission to view ("browse") marketplace entry.
      *
-     * @since uPortal 4.1
+     * @since 4.1
      */
     public static final String PORTLET_BROWSE_ACTIVITY = "BROWSE";
 
     /**
      * Permission to favorite/star a portlet.
      *
-     * @since uPortal 5.0
+     * @since 5.0
      */
     public static final String PORTLET_FAVORITE_ACTIVITY = "FAVORITE";
 

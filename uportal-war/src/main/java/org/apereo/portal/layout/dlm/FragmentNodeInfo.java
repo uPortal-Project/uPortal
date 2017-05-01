@@ -23,7 +23,7 @@ import org.w3c.dom.Element;
  * the user's layout do not indicate if they came from a user change or from a fragment's defined
  * value. This class enables the layout manager to make such determinations.
  *
- * @since uPortal 2.6
+ * @since 2.6
  */
 public class FragmentNodeInfo {
     protected Element node = null;

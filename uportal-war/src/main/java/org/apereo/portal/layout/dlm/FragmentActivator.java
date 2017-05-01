@@ -44,7 +44,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-/** @since uPortal 2.5 */
+/** @since 2.5 */
 @Service
 public class FragmentActivator {
     private static final String NEWLY_CREATED_ATTR = "newlyCreated";

@@ -28,7 +28,7 @@ import org.springframework.util.Assert;
  * Predicate determining whether the given request represents a request in the context of a profile
  * matching the configured profile fname.
  *
- * @since uPortal 4.2
+ * @since 4.2
  */
 public class ProfileFNamePredicate implements Predicate<HttpServletRequest> {
 

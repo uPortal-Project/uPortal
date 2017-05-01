@@ -29,7 +29,7 @@ import org.springframework.context.ApplicationEvent;
  * <p>Equals: two ProfileSelectionEvents are equal if they represent the same user requesting the
  * same profile key, regardless of what HttpServletRequest they are associated with.
  *
- * @since uPortal 4.2
+ * @since 4.2
  */
 public class ProfileSelectionEvent extends ApplicationEvent {
 

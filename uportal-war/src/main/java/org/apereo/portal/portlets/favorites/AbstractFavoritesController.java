@@ -27,7 +27,7 @@ import org.springframework.util.StringUtils;
  * This abstract class implements those dependencies and auto-wiring once so that the concrete
  * controller implementations can inherit that functionality.
  *
- * @since uPortal 4.1
+ * @since 4.1
  */
 public abstract class AbstractFavoritesController {
 

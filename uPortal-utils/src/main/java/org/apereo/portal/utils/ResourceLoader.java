@@ -40,7 +40,7 @@ import org.xml.sax.SAXException;
  *
  * <p>The methods of this class sort of replace the old UtiltiesBean.fixURI() method.
  *
- * @since uPortal 2.0
+ * @since 2.0
  * @deprecated use CachingResourceLoader
  */
 @Deprecated

@@ -22,7 +22,7 @@ import org.apereo.portal.utils.MovingAverageSample;
 /**
  * uPortal metrics to make available via JMX.
  *
- * @since uPortal 2.5
+ * @since 2.5
  */
 public class FrameworkMBeanImpl implements FrameworkMBean {
     public FrameworkMBeanImpl() {}

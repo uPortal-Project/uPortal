@@ -27,7 +27,7 @@ public interface IUserLayoutFolderDescription extends IUserLayoutNodeDescription
      * Type attribute value of regular layout folders (i.e., tabs displayed normally, not headers,
      * footers, emergency fragments, tip fragments, favorites-containing meta-fragments, etc.
      *
-     * @since uPortal 4.1
+     * @since 4.1
      */
     public static final String REGULAR_TYPE = "regular";
 
@@ -35,7 +35,7 @@ public interface IUserLayoutFolderDescription extends IUserLayoutNodeDescription
      * Type attribute value of folders containing user favorites (used by the optional Favorites
      * portlet).
      *
-     * @since uPortal 4.1
+     * @since 4.1
      */
     public static final String FAVORITES_TYPE = "favorites";
 
@@ -43,7 +43,7 @@ public interface IUserLayoutFolderDescription extends IUserLayoutNodeDescription
      * Type attribute value of folders representing a named collection of user favorites (used by
      * the optional Favorites portlet).
      *
-     * @since uPortal 4.1
+     * @since 4.1
      */
     public static final String FAVORITE_COLLECTION_TYPE = "favorite_collection";
 
@@ -51,7 +51,7 @@ public interface IUserLayoutFolderDescription extends IUserLayoutNodeDescription
      * Returns folder type. Type might be one of the values documented in this interface. Then
      * again, it might be any other String.
      *
-     * @since uPortal 4.1
+     * @since 4.1
      * @return a non-null String representing folder type.
      */
     public String getFolderType();
@@ -59,7 +59,7 @@ public interface IUserLayoutFolderDescription extends IUserLayoutNodeDescription
     /**
      * Assign a type to a folder. Some useful types are documented in this interface.
      *
-     * @since uPortal 4.1
+     * @since 4.1
      * @param folderType String corresponding to underlying 'type' attribute
      */
     public void setFolderType(String folderType);

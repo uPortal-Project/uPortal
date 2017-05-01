@@ -41,7 +41,7 @@ import org.w3c.dom.NodeList;
 /**
  * Applies and updates position specifiers for child nodes in the composite layout.
  *
- * @since uPortal 2.5
+ * @since 2.5
  */
 public class PositionManager {
 

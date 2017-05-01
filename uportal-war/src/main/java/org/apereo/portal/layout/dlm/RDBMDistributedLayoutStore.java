@@ -89,7 +89,7 @@ import org.w3c.dom.NodeList;
  * fragment-definition.xml file, and composite view layouts which represent regular users with zero
  * or more UI elements incorporated from layout fragments.
  *
- * @since uPortal 2.5
+ * @since 2.5
  */
 public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
 

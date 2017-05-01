@@ -38,7 +38,7 @@ import org.junit.Test;
  * <p>Then there are testcases for bits of the implementation of the filter (namely, configuration
  * parsing and policy enforcement).
  *
- * @since uPortal 4.0.15
+ * @since 4.0.15
  */
 public final class RequestParameterPolicyEnforcementFilterTests {
 

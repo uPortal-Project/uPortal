@@ -23,7 +23,7 @@ import org.apereo.portal.layout.profile.dao.IProfileSelectionDao;
 /**
  * JPA implementation of IProfilePreferenceDao.
  *
- * @since uPortal 4.2
+ * @since 4.2
  */
 // deliberately not annotated as Repository to avoid annotation-driven instantiation,
 // instead adopters wishing to store profile selections via JPA can explicitly configure.

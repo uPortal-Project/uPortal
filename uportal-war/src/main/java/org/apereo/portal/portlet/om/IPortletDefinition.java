@@ -130,7 +130,7 @@ public interface IPortletDefinition extends IBasicEntity, IPortalData {
      * alternative to directly parsing the portlet parameters elsewhere.
      *
      * @return String representing alternative max URL, or null if none.
-     * @since uPortal 4.2
+     * @since 4.2
      */
     String getAlternativeMaximizedLink();
 

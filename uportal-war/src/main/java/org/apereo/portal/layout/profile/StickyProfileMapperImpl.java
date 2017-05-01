@@ -55,7 +55,7 @@ import org.springframework.context.ApplicationListener;
  *
  * <p>Typically this mapper will be in the profile mapping chain within a ChainingProfileMapperImpl.
  *
- * @since uPortal 4.2
+ * @since 4.2
  */
 public class StickyProfileMapperImpl
         implements IProfileMapper, ApplicationListener<ProfileSelectionEvent> {

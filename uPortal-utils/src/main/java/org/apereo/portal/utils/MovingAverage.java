@@ -15,7 +15,7 @@
 package org.apereo.portal.utils;
 
 /**
- * @since uPortal 2.5
+ * @since 2.5
  */
 public class MovingAverage {
 

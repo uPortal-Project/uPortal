@@ -24,7 +24,7 @@ import java.util.List;
  * include whether the operation succeeded, whether to abort the operation (if not), a handler for
  * callbacks for commit/rollback support, and information to display in the summary report.
  *
- * @since uPortal 4.3
+ * @since 4.3
  */
 public class TenantOperationResponse {
 
