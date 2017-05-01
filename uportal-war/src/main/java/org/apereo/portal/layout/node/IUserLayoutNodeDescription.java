@@ -21,7 +21,6 @@ import org.w3c.dom.Element;
  * An interface describing common features of user layout nodes, that is channels and folders
  *
  *     href="mailto:pkharchenko@interactivebusiness.com"">pkharchenko@interactivebusiness.com"</a>}
- * @version 1.0
  */
 public interface IUserLayoutNodeDescription {
     public enum LayoutNodeType {

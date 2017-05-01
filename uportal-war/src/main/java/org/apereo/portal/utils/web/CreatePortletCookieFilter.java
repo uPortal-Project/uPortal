@@ -27,7 +27,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 /**
  * Servlet filter to trigger {@link IPortalCookie} creation.
  *
- * @version $Id$
  */
 public class CreatePortletCookieFilter extends OncePerRequestFilter {
 

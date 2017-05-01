@@ -28,7 +28,6 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 /**
  * Manages execution of {@link IRequestParameterProcessor}s.
  *
- * @version $Revision: 11918 $
  */
 public class RequestParameterProcessorInterceptor extends HandlerInterceptorAdapter {
     protected final Log logger = LogFactory.getLog(this.getClass());

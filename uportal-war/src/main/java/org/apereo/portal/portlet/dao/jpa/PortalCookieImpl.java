@@ -44,7 +44,6 @@ import org.joda.time.DateTime;
 /**
  * JPA annotated {@link IPortalCookie} annotation.
  *
- * @version $Id$
  */
 @Entity
 @Table(name = "UP_PORTAL_COOKIES")

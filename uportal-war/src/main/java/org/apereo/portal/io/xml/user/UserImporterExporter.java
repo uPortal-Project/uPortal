@@ -48,7 +48,6 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * @version $Id$
  */
 public class UserImporterExporter extends AbstractJaxbDataHandler<UserType> {
 

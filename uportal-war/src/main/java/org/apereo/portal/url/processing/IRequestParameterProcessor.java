@@ -22,7 +22,6 @@ import javax.servlet.http.HttpServletResponse;
  * chain. Implementations can read and write request parameters before any other part of the
  * framework deals with the request.
  *
- * @version $Revision: 11911 $
  */
 public interface IRequestParameterProcessor {
 

@@ -22,7 +22,6 @@ import org.apache.pluto.container.PortletWindow;
  * This interface hooks into the {@link PortletRequestContext} implementation for uPortal and
  * provides a mechanism for finding additional attributes.
  *
- * @version $Id$
  */
 public interface RequestAttributeService {
 

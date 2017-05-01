@@ -48,7 +48,6 @@ import org.springframework.web.servlet.support.RequestContextUtils;
  * Default implementation of {@link IPortletCacheControlService}. {@link CacheControl}s are stored
  * in a {@link Map} stored as a {@link HttpServletRequest} attribute.
  *
- * @version $Id$
  */
 @Service
 public class PortletCacheControlServiceImpl implements IPortletCacheControlService {

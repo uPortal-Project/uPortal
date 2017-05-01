@@ -32,7 +32,6 @@ import org.springframework.web.client.RestOperations;
  * Service for searching using the Google Custom-Search API:
  * https://developers.google.com/custom-search/v1/overview
  *
- * @version $Revision: 1.1 $
  */
 public class GoogleCustomSearchService implements IPortalSearchService {
     public static final String QUERY_PARAM = "q";

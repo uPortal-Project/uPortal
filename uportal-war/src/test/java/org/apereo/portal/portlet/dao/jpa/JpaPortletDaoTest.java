@@ -45,7 +45,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
  *     href="mailto:eric.dalquist@doit.wisc.edu">eric.dalquist@doit.wisc.edu</a>
- * @version $Revision: 337 $
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:jpaPortalTestApplicationContext.xml")

@@ -22,7 +22,6 @@ import org.apereo.portal.io.xml.AbstractPortalDataType;
 import org.apereo.portal.io.xml.PortalDataKey;
 
 /**
- * @version $Id$
  */
 public class EventAggregationConfigurationPortalDataType extends AbstractPortalDataType {
     public static final QName EVENT_AGGREGATION_QNAME =

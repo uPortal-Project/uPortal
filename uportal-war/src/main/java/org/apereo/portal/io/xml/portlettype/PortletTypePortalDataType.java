@@ -22,7 +22,6 @@ import org.apereo.portal.io.xml.AbstractPortalDataType;
 import org.apereo.portal.io.xml.PortalDataKey;
 
 /**
- * @version $Id$
  */
 public class PortletTypePortalDataType extends AbstractPortalDataType {
     public static final QName PORTLET_TYPE_QNAME =

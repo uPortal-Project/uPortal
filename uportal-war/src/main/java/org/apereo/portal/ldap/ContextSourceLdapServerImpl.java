@@ -25,7 +25,6 @@ import org.springframework.ldap.core.ContextSource;
  * legacy ILdapServer support.
  *
  *     href="mailto:eric.dalquist@doit.wisc.edu">eric.dalquist@doit.wisc.edu</a>
- * @version $Revision: 1.1 $
  * @deprecated see {@link ILdapServer} deprecation comment
  */
 public class ContextSourceLdapServerImpl implements ILdapServer {

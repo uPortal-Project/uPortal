@@ -47,7 +47,6 @@ import org.springframework.stereotype.Service;
 /**
  * uPortal implementation of {@link PortletRequestContextService}.
  *
- * @version $Id$
  */
 @Service("portletRequestContextService")
 public class LocalPortletRequestContextServiceImpl implements PortletRequestContextService {

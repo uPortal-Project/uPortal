@@ -62,7 +62,6 @@ import org.springframework.mock.web.MockHttpServletResponse;
 /**
  * Tests for {@link PortletRendererImpl}.
  *
- * @version $Id$
  */
 @RunWith(MockitoJUnitRunner.class)
 public class PortletRendererImplTest {

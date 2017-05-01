@@ -39,7 +39,6 @@ import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 /**
- * @version $Id$
  */
 public class RequestAttributeServiceImplTest {
 

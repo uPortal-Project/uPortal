@@ -27,7 +27,6 @@ import org.springframework.stereotype.Component;
  * A factory class for obtaining {@link IUserLayoutManager} implementations.
  *
  *     href="mailto:pkharchenko@interactivebusiness.com"">pkharchenko@interactivebusiness.com"</a>}
- * @version 1.0
  */
 @Component
 public class UserLayoutManagerFactory implements BeanFactoryAware {

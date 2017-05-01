@@ -29,7 +29,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 /**
- * @version $RevisionR
  */
 public class ChainingProfileMapperImplTest {
 

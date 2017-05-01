@@ -29,7 +29,6 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 /**
- * @version $Id$
  */
 @RunWith(MockitoJUnitRunner.class)
 public class HeaderSettingCacheControlTest {
