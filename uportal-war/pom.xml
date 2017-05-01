@@ -138,7 +138,7 @@
             <groupId>aopalliance</groupId>
             <artifactId>aopalliance</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk-s3</artifactId>
@@ -152,22 +152,22 @@
             <groupId>org.jasig.cas.client</groupId>
             <artifactId>cas-client-core</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>com.fasterxml.jackson.module</groupId>
             <artifactId>jackson-module-jaxb-annotations</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
@@ -177,12 +177,12 @@
             <groupId>com.googlecode.cernunnos</groupId>
             <artifactId>cernunnos</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>com.googlecode.ehcache-spring-annotations</groupId>
             <artifactId>ehcache-spring-annotations</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>commons-cli</groupId>
             <artifactId>commons-cli</artifactId>
@@ -202,7 +202,7 @@
             <groupId>commons-dbcp</groupId>
             <artifactId>commons-dbcp</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>commons-fileupload</groupId>
             <artifactId>commons-fileupload</artifactId>
@@ -212,7 +212,7 @@
             <groupId>commons-httpclient</groupId>
             <artifactId>commons-httpclient</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpcore</artifactId>
@@ -237,12 +237,12 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-math3</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-compress</artifactId>
@@ -252,12 +252,12 @@
             <groupId>org.apache.tomcat</groupId>
             <artifactId>tomcat-jdbc</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>org.apache.tika</groupId>
             <artifactId>tika-core</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>dom4j</groupId>
             <artifactId>dom4j</artifactId>
@@ -267,7 +267,7 @@
             <groupId>edu.internet2.middleware.grouper</groupId>
             <artifactId>grouperClient</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>com.google.visualization</groupId>
             <artifactId>visualization-datasource</artifactId>
@@ -292,7 +292,7 @@
             <groupId>javax.servlet</groupId>
             <artifactId>jstl</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
@@ -301,7 +301,7 @@
           <groupId>joda-time</groupId>
           <artifactId>joda-time-jsptags</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>net.sf.ehcache</groupId>
             <artifactId>ehcache-core</artifactId>
@@ -327,7 +327,7 @@
             <groupId>org.jvnet.jaxb2_commons</groupId>
             <artifactId>jaxb2-basics-runtime</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>com.fasterxml.staxmate</groupId>
             <artifactId>staxmate</artifactId>
@@ -342,12 +342,12 @@
             <groupId>org.codehaus.woodstox</groupId>
             <artifactId>woodstox-core-asl</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>org.quartz-scheduler</groupId>
             <artifactId>quartz</artifactId>
-        </dependency> 
-        
+        </dependency>
+
         <dependency>
             <groupId>org.apache.ant</groupId>
             <artifactId>ant</artifactId>
@@ -357,22 +357,22 @@
             <groupId>org.apache.portals.pluto</groupId>
             <artifactId>pluto-container</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>org.apache.portals.pluto</groupId>
             <artifactId>pluto-portal-driver</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>org.aspectj</groupId>
             <artifactId>aspectjrt</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>org.aspectj</groupId>
             <artifactId>aspectjweaver</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy</artifactId>
@@ -398,7 +398,7 @@
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-ehcache</artifactId>
@@ -408,22 +408,22 @@
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-entitymanager</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>org.hibernate.javax.persistence</groupId>
             <artifactId>hibernate-jpa-2.0-api</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>org.jasig.portlet.utils</groupId>
             <artifactId>portlet-jdbc-util</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>org.jasig.resourceserver</groupId>
             <artifactId>resource-server-api</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>org.jasig.resourceserver</groupId>
             <artifactId>resource-server-utils</artifactId>
@@ -433,42 +433,42 @@
             <groupId>org.jasig.service.persondir</groupId>
             <artifactId>person-directory-impl</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>org.jasig.portlet.utils</groupId>
             <artifactId>portlet-ws-util</artifactId>
         </dependency>
 
-        <dependency> 
-            <groupId>org.jasypt</groupId> 
-            <artifactId>jasypt</artifactId>  
-        </dependency> 
-        
+        <dependency>
+            <groupId>org.jasypt</groupId>
+            <artifactId>jasypt</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>org.jadira.usertype</groupId>
             <artifactId>usertype.core</artifactId>
-        </dependency> 
-        
+        </dependency>
+
         <dependency>
             <groupId>org.jadira.usertype</groupId>
             <artifactId>usertype.spi</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>org.jgroups</groupId>
             <artifactId>jgroups</artifactId>
         </dependency>
-    
+
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>jcl-over-slf4j</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-aop</artifactId>
@@ -488,7 +488,7 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context-support</artifactId>
@@ -513,7 +513,7 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-orm</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-oxm</artifactId>
@@ -528,7 +528,7 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc-portlet</artifactId>
@@ -538,76 +538,76 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-tx</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>org.springframework.ldap</groupId>
             <artifactId>spring-ldap-core</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>org.springframework.ldap</groupId>
             <artifactId>spring-ldap-core-tiger</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-config</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-core</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-web</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>org.springframework.webflow</groupId>
             <artifactId>spring-binding</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>org.springframework.webflow</groupId>
             <artifactId>spring-webflow</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>org.springmodules</groupId>
             <artifactId>spring-modules-cache</artifactId>
-        </dependency>    
+        </dependency>
 
         <dependency>
             <groupId>taglibs</groupId>
             <artifactId>standard</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>com.thoughtworks.xstream</groupId>
             <artifactId>xstream</artifactId>
         </dependency>
 
-        
+
         <!-- ===== Provided Dependencies ====================================== -->
         <dependency>
             <groupId>javax.ccpp</groupId>
             <artifactId>ccpp</artifactId>
             <scope>provided</scope>
         </dependency>
-        
+
         <dependency>
             <groupId>org.apache.portals</groupId>
             <artifactId>portlet-api_2.1.0_spec</artifactId>
             <scope>provided</scope>
         </dependency>
-        
+
         <dependency>
             <groupId>javax.servlet.jsp</groupId>
             <artifactId>jsp-api</artifactId>
             <scope>provided</scope>
-        </dependency> 
+        </dependency>
 
         <dependency>
             <groupId>javax.servlet</groupId>
@@ -634,7 +634,7 @@
             <artifactId>pluto-util</artifactId>
             <scope>provided</scope>
         </dependency>
-        
+
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-jpamodelgen</artifactId>
@@ -642,19 +642,19 @@
         </dependency>
 
         <!-- ===== Runtime Dependencies ======================================= -->
-        
+
         <dependency>
             <groupId>org.jasig.ehcache</groupId>
             <artifactId>ehcache-jgroups3replication</artifactId>
             <scope>runtime</scope>
         </dependency>
-        
+
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-jsr223</artifactId>
             <scope>runtime</scope>
         </dependency>
-        
+
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-xml</artifactId>
@@ -676,11 +676,11 @@
                <artifactId>cas-server-core</artifactId>
              </exclusion>
              <exclusion>
-             	<groupId>javax.validation</groupId>	
+             	<groupId>javax.validation</groupId>
                	<artifactId>validation-api</artifactId>
              </exclusion>
              <exclusion>
-             	<groupId>org.slf4j</groupId>	
+             	<groupId>org.slf4j</groupId>
                	<artifactId>slf4j-log4j12</artifactId>
              </exclusion>
             </exclusions>
@@ -736,7 +736,7 @@
             <artifactId>jline</artifactId>
             <scope>runtime</scope>
         </dependency>
-        
+
         <!-- ===== Test Dependencies ========================================== -->
         <dependency>
             <groupId>org.hsqldb</groupId>
@@ -774,7 +774,7 @@
             <artifactId>easymock</artifactId>
             <scope>test</scope>
         </dependency>
-        
+
         <dependency>
             <groupId>org.skyscreamer</groupId>
             <artifactId>jsonassert</artifactId>
@@ -786,7 +786,7 @@
             <artifactId>spring-test</artifactId>
             <scope>test</scope>
         </dependency>
-        
+
         <dependency>
             <groupId>xmlunit</groupId>
             <artifactId>xmlunit</artifactId>
@@ -800,7 +800,7 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-    
+
     <build>
         <finalName>${uportal.docbase}</finalName>
         <filters>
@@ -810,9 +810,9 @@
             <resource>
                 <directory>src/main/resources</directory>
                 <filtering>true</filtering>
-                <!-- 
-                 | Enumerate filtered files explicitly to avoid issues with other 
-                 | config tech, e.g. Spring property placeholder 
+                <!--
+                 | Enumerate filtered files explicitly to avoid issues with other
+                 | config tech, e.g. Spring property placeholder
                  +-->
                 <includes>
                     <include>org/apache/pluto/driver/container/pluto-configuration.properties</include>
@@ -826,7 +826,7 @@
                     <include>logback.xml</include>
                 </includes>
             </resource>
-            <!-- 
+            <!--
              | Declare a mutually exclusive resource set for non-filtered files.
              +-->
             <resource>
@@ -888,7 +888,7 @@
                     </execution>
                 </executions>
             </plugin>
-            <!-- Generates JAXB binding classes -->            
+            <!-- Generates JAXB binding classes -->
             <plugin>
                 <groupId>org.jvnet.jaxb2.maven2</groupId>
                 <artifactId>maven-jaxb2-plugin</artifactId>
@@ -975,7 +975,7 @@
                         <exclude>**/Abstract*Test.java</exclude>
                         <exclude>**/Abstract*TestCase.java</exclude>
                         <exclude>**/*$*</exclude>
-                        
+
                         <!-- These tests do not function unless run against a fully initialized uPortal database -->
                         <exclude>**/EntityCacheTester.java</exclude>
                         <exclude>**/AuthorizationTester.java</exclude>
@@ -1041,21 +1041,6 @@
                             <lessJs>${project.basedir}/src/main/webapp/media/skins/common/javascript/less/less-1.6.2.js</lessJs>
                         </configuration>
                     </execution>
-                    <execution>
-                        <id>mobile-less</id>
-                        <goals>
-                            <goal>compile</goal>
-                        </goals>
-                        <configuration>
-                            <sourceDirectory>${project.basedir}/src/main/webapp/media/skins/muniversality/mobileSkin</sourceDirectory>
-                            <outputDirectory>${project.build.directory}/${project.build.finalName}/media/skins/muniversality/mobileSkin</outputDirectory>
-                            <compress>true</compress>
-                            <includes>
-                                <include>*.less</include>
-                            </includes>
-                            <lessJs>${project.basedir}/src/main/webapp/media/skins/common/javascript/less/less-1.6.2.js</lessJs>
-                        </configuration>
-                    </execution>
                 </executions>
             </plugin>
             <plugin>
@@ -1081,22 +1066,6 @@
                             <sharedJavaScriptDirectory>media/skins/respondr</sharedJavaScriptDirectory>
                         </configuration>
                     </execution>
-                    <execution>
-                        <id>aggregate-muniversality-skins</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>batch-aggregate</goal>
-                        </goals>
-                        <inherited>false</inherited>
-                        <configuration>
-                            <displayJsWarnings>false</displayJsWarnings>
-                            <useGeneratedSources>true</useGeneratedSources>
-                            <includes>
-                                <include>media/skins/muniversality/**/skin.xml</include>
-                            </includes>
-                            <sharedJavaScriptDirectory>media/skins/muniversality/common/javascript</sharedJavaScriptDirectory>
-                        </configuration>
-                    </execution>
                 </executions>
             </plugin>
             <plugin>
@@ -1118,14 +1087,14 @@
             </plugin>
         </plugins>
     </build>
-    
+
     <profiles>
         <profile>
             <id>jspc-tomcat6</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
             </activation>
-            
+
             <build>
                 <plugins>
                     <plugin>
@@ -1154,7 +1123,7 @@
                                 </goals>
                             </execution>
                         </executions>
-        
+
                         <!-- Use the Tomcat 6 JSP compiler -->
                         <dependencies>
                             <dependency>

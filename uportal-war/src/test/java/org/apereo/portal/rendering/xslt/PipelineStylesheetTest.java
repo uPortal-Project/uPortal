@@ -47,16 +47,6 @@ public class PipelineStylesheetTest {
     }
 
     @Test
-    public void testStructureMobileColumnCompile() throws Exception {
-        this.testXslCompile("/layout/structure/mobile-column/mobile-column.xsl");
-    }
-
-    @Test
-    public void testThemeMuniversalityCompile() throws Exception {
-        this.testXslCompile("/layout/theme/muniversality/muniversality.xsl");
-    }
-
-    @Test
     public void testThemeRespondrCompile() throws Exception {
         this.testXslCompile("/layout/theme/respondr/respondr.xsl");
     }
