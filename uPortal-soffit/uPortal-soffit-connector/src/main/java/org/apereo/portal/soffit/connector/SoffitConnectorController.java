@@ -144,24 +144,27 @@ public class SoffitConnectorController implements ApplicationContextAware {
 
                 // Send the request
                 final HttpResponse httpResponse = httpClient.execute(getMethod);
-                final int statusCode = httpResponse.getStatusLine().getStatusCode();
-                logger.debug("HTTP response code for url '{}' was '{}'", serviceUrl, statusCode);
+                try {
+                    final int statusCode = httpResponse.getStatusLine().getStatusCode();
+                    logger.debug("HTTP response code for url '{}' was '{}'", serviceUrl, statusCode);
 
-                if (statusCode == HttpStatus.SC_OK) {
-                    responseValue =
-                            extractResponseAndCacheIfAppropriate(httpResponse, req, serviceUrl);
-                } else {
-                    logger.error(
-                            "Failed to get content from remote service '{}';  HttpStatus={}",
-                            serviceUrl,
-                            statusCode);
-                    res.getWriter()
-                            .write("FAILED!  statusCode=" + statusCode); // TODO:  Better message
+                    if (statusCode == HttpStatus.SC_OK) {
+                        responseValue =
+                                extractResponseAndCacheIfAppropriate(httpResponse, req, serviceUrl);
+                    } else {
+                        logger.error(
+                                "Failed to get content from remote service '{}';  HttpStatus={}",
+                                serviceUrl,
+                                statusCode);
+                        res.getWriter()
+                                .write("FAILED!  statusCode=" + statusCode); // TODO:  Better message
+                    }
+                } finally {
+                    if (null != httpResponse) {
+                        // Ensures that the entity content is fully consumed and the content stream, if exists, is closed.
+                        EntityUtils.consumeQuietly(httpResponse.getEntity());
+                    }
                 }
-
-                // Ensures that the entity content is fully consumed and the content stream, if exists, is closed.
-                EntityUtils.consume(httpResponse.getEntity());
-
             } catch (IOException e) {
                 logger.error("Failed to invoke serviceUrl '{}'", serviceUrl, e);
             }
