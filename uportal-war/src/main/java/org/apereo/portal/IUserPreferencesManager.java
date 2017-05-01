@@ -19,8 +19,6 @@ import org.apereo.portal.security.IPerson;
 
 /**
  * Interface to user preferences management class.
- *
- *     href="mailto:pkharchenko@interactivebusiness.com">pkharchenko@interactivebusiness.com</a>}
  */
 public interface IUserPreferencesManager {
 

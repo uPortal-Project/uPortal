@@ -22,8 +22,6 @@ import org.w3c.dom.Element;
 
 /**
  * A class describing common features of user layout nodes that is channels and folders
- *
- *     href="mailto:pkharchenko@interactivebusiness.com"">pkharchenko@interactivebusiness.com"</a>}
  */
 public abstract class UserLayoutNodeDescription implements IUserLayoutNodeDescription {
     protected String id = null;

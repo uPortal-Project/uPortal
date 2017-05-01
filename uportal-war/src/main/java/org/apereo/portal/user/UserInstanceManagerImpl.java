@@ -40,8 +40,6 @@ import org.springframework.stereotype.Service;
 
 /**
  * Determines which user instance object to use for a given user.
- *
- *     href="mailto:pkharchenko@interactivebusiness.com"">pkharchenko@interactivebusiness.com"</a>}
  */
 @Service("userInstanceManager")
 public class UserInstanceManagerImpl implements IUserInstanceManager {

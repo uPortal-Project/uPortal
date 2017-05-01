@@ -22,8 +22,6 @@ import org.w3c.dom.Element;
 
 /**
  * An interface managing information contained in a user layout channel node.
- *
- *     href="mailto:pkharchenko@interactivebusiness.com"">pkharchenko@interactivebusiness.com"</a>}
  */
 public interface IUserLayoutChannelDescription extends IUserLayoutNodeDescription {
 

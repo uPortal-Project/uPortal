@@ -24,8 +24,6 @@ import org.apereo.portal.user.IUserInstance;
  * A class handling holding all user state information. The class is also responsible for request
  * processing and orchestrating the entire rendering procedure. (this is a replacement for the good
  * old LayoutBean class)
- *
- *     href="mailto:pkharchenko@interactivebusiness.com"">pkharchenko@interactivebusiness.com"</a>}
  */
 public class UserInstance implements IUserInstance {
     protected final Log log = LogFactory.getLog(this.getClass());
