@@ -31,7 +31,6 @@ import org.springframework.core.io.ResourceLoader;
  * be correctly resolved by the {@link ResourceLoader}
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class ResourceLoaderURIResolver implements URIResolver {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());

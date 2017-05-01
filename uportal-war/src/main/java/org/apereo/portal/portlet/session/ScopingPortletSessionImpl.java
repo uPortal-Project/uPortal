@@ -26,7 +26,6 @@ import org.apereo.portal.portlet.om.IPortletEntityId;
  * Custom portlet session impl, uses the entityId instead of the windowId for the session namespace
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class ScopingPortletSessionImpl extends PortletSessionImpl {
     protected final Log logger = LogFactory.getLog(this.getClass());

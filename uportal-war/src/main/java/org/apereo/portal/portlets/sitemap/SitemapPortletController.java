@@ -44,7 +44,6 @@ import org.springframework.web.portlet.ModelAndView;
  * exceptions out at render time.
  *
  * @author Jen Bourey, jbourey@unicon.net
- * @version $Revision$
  */
 @Controller
 @RequestMapping("VIEW")

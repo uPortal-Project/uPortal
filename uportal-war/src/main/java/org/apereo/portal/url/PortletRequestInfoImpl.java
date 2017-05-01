@@ -25,7 +25,6 @@ import org.apereo.portal.portlet.om.IPortletWindowId;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  */
 class PortletRequestInfoImpl implements IPortletRequestInfo {
     private final Object readOnlySync = new Object();

@@ -34,7 +34,6 @@ import org.springframework.beans.factory.BeanNameAware;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class StAXAttributeIncorporationComponent extends StAXPipelineComponentWrapper
         implements BeanNameAware {

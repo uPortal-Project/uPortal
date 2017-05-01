@@ -21,7 +21,6 @@ import java.util.Properties;
  * method.
  *
  * @author Eric Dalquist <a href="mailto:edalquist@unicon.net">edalquist@unicon.net</a>
- * @version $Revision$ $Date$
  */
 public interface IConfigurableSecurityContext extends ISecurityContext {
 

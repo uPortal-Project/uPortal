@@ -36,7 +36,6 @@ import org.springframework.stereotype.Repository;
  * interface.
  *
  * @author Jen Bourey, jbourey@unicon.net
- * @version $Revision$
  * @since 3.3
  */
 @Repository("permissionOwnerDao")

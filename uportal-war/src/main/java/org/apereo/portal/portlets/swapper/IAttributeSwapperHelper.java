@@ -22,7 +22,6 @@ import org.springframework.webflow.context.ExternalContext;
  * Defines helper methods for the attribute-swapper flow.
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public interface IAttributeSwapperHelper {
     /**

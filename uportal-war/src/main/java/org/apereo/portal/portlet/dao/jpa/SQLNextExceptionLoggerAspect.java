@@ -24,7 +24,6 @@ import org.springframework.core.Ordered;
  * SQLException#getNextException()}
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class SQLNextExceptionLoggerAspect implements Ordered {
     protected final Log logger = LogFactory.getLog(this.getClass());

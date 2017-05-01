@@ -21,7 +21,6 @@ import org.apereo.portal.portlet.om.IPortletWindow;
  * Simple handling for resource URL generation
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class ResourceUrlProviderImpl implements IPortletResourcePortalUrl {
     private final IPortletWindow portletWindow;

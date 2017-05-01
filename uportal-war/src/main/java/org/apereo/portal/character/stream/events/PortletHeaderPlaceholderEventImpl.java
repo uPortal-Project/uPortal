@@ -18,7 +18,6 @@ import org.apereo.portal.portlet.om.IPortletWindowId;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  */
 public final class PortletHeaderPlaceholderEventImpl extends PortletPlaceholderEventImpl
         implements PortletHeaderPlaceholderEvent {

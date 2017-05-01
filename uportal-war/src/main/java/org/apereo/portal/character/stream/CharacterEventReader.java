@@ -19,7 +19,6 @@ import org.apereo.portal.character.stream.events.CharacterEvent;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  */
 public interface CharacterEventReader extends Iterator<CharacterEvent> {
     /**

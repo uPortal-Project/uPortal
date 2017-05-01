@@ -34,7 +34,6 @@ import org.springframework.web.bind.annotation.RequestParam;
  * EntitiesRESTController
  *
  * @author Jen Bourey, jbourey@unicon.net
- * @version $Revision$
  */
 @Controller
 public class EntitiesRESTController {

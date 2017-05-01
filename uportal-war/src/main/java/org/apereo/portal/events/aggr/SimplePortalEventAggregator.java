@@ -25,7 +25,6 @@ import org.apereo.portal.jpa.BaseAggrEventsJpaDao;
  * execution is running in {@link FlushModeType#COMMIT}.
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public interface SimplePortalEventAggregator<E extends PortalEvent>
         extends IPortalEventAggregator<E> {

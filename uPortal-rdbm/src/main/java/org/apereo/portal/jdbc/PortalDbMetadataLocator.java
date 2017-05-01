@@ -22,7 +22,6 @@ import org.springframework.context.ApplicationContext;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  * @deprecated code that needs an IDatabaseMetadata should use direct dependency injection where
  *     possible
  */

@@ -37,7 +37,6 @@ import org.springframework.beans.factory.annotation.Autowired;
  * portal installations for searches that return many results.
  *
  * @author Jen Bourey, jbourey@unicon.net
- * @version $Revision$
  * @since 3.3
  */
 public class EntityTargetProviderImpl implements IPermissionTargetProvider, Serializable {

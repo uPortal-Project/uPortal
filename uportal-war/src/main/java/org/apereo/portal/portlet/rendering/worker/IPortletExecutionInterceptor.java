@@ -24,7 +24,6 @@ import org.apereo.portal.portlet.om.IPortletWindowId;
  * be called within a finally block.
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public interface IPortletExecutionInterceptor {
     /**

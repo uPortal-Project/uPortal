@@ -43,7 +43,6 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
  * either be refactored as a Spring managed bean or have access to the {@link ServletContext}
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class PortalApplicationContextLocator implements ServletContextListener {
     private static String LOGGER_NAME = PortalApplicationContextLocator.class.getName();

@@ -27,7 +27,6 @@ import org.springframework.web.context.request.WebRequest;
  * ${request.contextPath}/my/path.
  *
  * @author Jen Bourey, jbourey@unicon.net
- * @version $Revision$
  */
 public interface IPortalSpELService {
 

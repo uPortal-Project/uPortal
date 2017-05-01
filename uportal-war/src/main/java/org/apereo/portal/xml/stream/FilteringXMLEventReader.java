@@ -30,7 +30,6 @@ import javax.xml.stream.events.XMLEvent;
  * boolean)} will not see any events until after the matching {@link EndElement} event.
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public abstract class FilteringXMLEventReader extends BaseXMLEventReader {
     private final Deque<QName> prunedElements = new LinkedList<QName>();

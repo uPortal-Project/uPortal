@@ -23,7 +23,6 @@ import org.springframework.core.io.Resource;
  * Basic implementation of {@link LoadedResource}
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class LoadedResourceImpl<T> implements LoadedResource<T> {
     private final T resource;

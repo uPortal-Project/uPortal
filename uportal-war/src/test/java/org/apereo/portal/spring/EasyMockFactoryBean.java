@@ -23,7 +23,6 @@ import org.springframework.beans.factory.config.AbstractFactoryBean;
  * Factory for creating EasyMock objects as beans.
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class EasyMockFactoryBean<T> extends AbstractFactoryBean<T> {
     private final Class<? extends T> type;

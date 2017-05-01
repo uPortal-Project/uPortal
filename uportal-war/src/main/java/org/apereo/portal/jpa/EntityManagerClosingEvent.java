@@ -20,7 +20,6 @@ import javax.persistence.EntityManager;
  * Event fired immediately before the {@link EntityManager} is closed
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class EntityManagerClosingEvent extends AbstractEntityManagerEvent {
     private static final long serialVersionUID = 1L;

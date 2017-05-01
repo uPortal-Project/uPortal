@@ -20,7 +20,6 @@ import org.springframework.stereotype.Component;
 
 /**
  * @author Jen Bourey, jbourey@unicon.net
- * @version $Revision$
  */
 @Component("portalPasswordService")
 public class PortalPasswordServiceImpl implements IPortalPasswordService {

@@ -21,7 +21,6 @@ import javax.servlet.http.HttpServletRequest;
  * IPortalRequestInfo}
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public interface IUrlSyntaxProvider {
     /**

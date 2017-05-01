@@ -21,7 +21,6 @@ import javax.xml.xpath.XPathExpression;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  */
 public interface XPathOperations {
     /**

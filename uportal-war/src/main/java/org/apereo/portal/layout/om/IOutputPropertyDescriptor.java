@@ -20,6 +20,5 @@ import javax.xml.transform.Transformer;
  * Descriptor for {@link Transformer#setOutputProperty(String, String)}
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public interface IOutputPropertyDescriptor extends IStylesheetData {}

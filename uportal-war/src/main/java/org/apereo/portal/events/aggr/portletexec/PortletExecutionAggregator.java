@@ -36,7 +36,6 @@ import org.springframework.beans.factory.annotation.Autowired;
  * executions
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class PortletExecutionAggregator
         extends BaseIntervalAwarePortalEventAggregator<

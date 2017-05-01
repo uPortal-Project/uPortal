@@ -24,7 +24,6 @@ import org.apache.pluto.container.PortletWindow;
  * actual rendering/interaction layer of the portlet object model.
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public interface IPortletWindow extends IPortletWindowDescriptor {
     /**

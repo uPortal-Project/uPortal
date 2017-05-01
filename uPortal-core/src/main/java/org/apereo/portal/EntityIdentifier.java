@@ -24,7 +24,6 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  * A key and type that uniquely identify a portal entity.
  *
  * @author Dan Ellentuck
- * @version $Revision$
  * @see IBasicEntity
  */
 public class EntityIdentifier implements Serializable {

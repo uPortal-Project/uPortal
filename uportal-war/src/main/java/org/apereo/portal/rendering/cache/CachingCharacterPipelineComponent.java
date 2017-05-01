@@ -24,7 +24,6 @@ import org.apereo.portal.rendering.CharacterPipelineComponent;
  * component that can cache character pipeline events
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class CachingCharacterPipelineComponent
         extends CachingPipelineComponent<CharacterEventReader, CharacterEvent>

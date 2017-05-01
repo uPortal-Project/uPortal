@@ -28,7 +28,6 @@ import org.apereo.portal.utils.SerializableObject;
  * attributes.
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class RequestAttributeMutexListener implements ServletRequestListener {
 

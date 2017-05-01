@@ -24,7 +24,6 @@ import org.hibernate.annotations.Type;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  */
 @MappedSuperclass
 abstract class AbstractStylesheetDataImpl implements IStylesheetData {

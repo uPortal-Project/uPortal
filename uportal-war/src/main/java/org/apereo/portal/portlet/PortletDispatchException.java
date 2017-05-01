@@ -21,7 +21,6 @@ import org.apereo.portal.portlet.om.IPortletWindow;
  * Indicates that there was an exception while dispatching to a portlet.
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class PortletDispatchException extends PortalException {
     private static final long serialVersionUID = 1L;

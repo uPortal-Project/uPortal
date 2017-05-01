@@ -35,7 +35,6 @@ import org.springframework.beans.factory.annotation.Required;
  * map to store the attributes
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class OverwritingPersonAttributeDao extends AbstractFlatteningPersonAttributeDao {
     private final IAttributeMerger attributeMerger = new ReplacingAttributeAdder();

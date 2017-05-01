@@ -18,7 +18,6 @@ import java.util.Collection;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  */
 public final class IncludeExcludeUtils {
     private IncludeExcludeUtils() {}

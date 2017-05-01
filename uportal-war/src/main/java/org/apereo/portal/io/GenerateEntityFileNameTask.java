@@ -37,7 +37,6 @@ import org.dom4j.Element;
  * generated file names will be legal on all supported operating systems.
  *
  * @author Drew Wills
- * @version $Revision$
  */
 public class GenerateEntityFileNameTask implements Task {
 

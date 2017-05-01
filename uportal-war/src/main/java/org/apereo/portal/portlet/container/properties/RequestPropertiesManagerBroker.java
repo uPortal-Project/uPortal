@@ -39,7 +39,6 @@ import org.springframework.stereotype.Service;
  * IRequestPropertiesManagers higher in the list.
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 @Service("requestPropertiesManager")
 @Qualifier("main")

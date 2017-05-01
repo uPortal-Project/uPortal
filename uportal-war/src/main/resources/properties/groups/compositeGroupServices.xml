@@ -19,7 +19,6 @@
     under the License.
 
 -->
-<!-- $Revision$ -->
 <!--
 This list of component group services is processed by the composite, or "root" service as it assembles itself.  Each service element has 2 required elements: name and service_factory.  The values of all service elements are delivered to the service_factory.
 -->

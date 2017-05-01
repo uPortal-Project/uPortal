@@ -20,7 +20,6 @@ import javax.xml.xpath.XPathVariableResolver;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  */
 class ThreadLocalXPathVariableResolver implements XPathVariableResolver {
     private final ThreadLocal<Map<String, ?>> localVariables = new ThreadLocal<Map<String, ?>>();

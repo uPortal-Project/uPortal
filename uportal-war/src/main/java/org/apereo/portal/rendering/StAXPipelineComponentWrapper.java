@@ -21,7 +21,6 @@ import javax.xml.stream.events.XMLEvent;
  * Wraps another {@link StAXPipelineComponent}
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public abstract class StAXPipelineComponentWrapper
         extends PipelineComponentWrapper<XMLEventReader, XMLEvent>

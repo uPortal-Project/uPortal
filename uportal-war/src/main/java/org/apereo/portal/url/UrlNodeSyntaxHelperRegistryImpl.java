@@ -32,7 +32,6 @@ import org.springframework.stereotype.Service;
  * Simple autowired registry of {@link IUrlNodeSyntaxHelper} beans.
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 @Service
 public class UrlNodeSyntaxHelperRegistryImpl implements IUrlNodeSyntaxHelperRegistry {

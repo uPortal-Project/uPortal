@@ -132,11 +132,7 @@ public class SubscribedFragmentImporterExporter
                         t);
             }
 
-            if (create) {
-                userId = this.userIdentityStore.getPortalUID(person, true);
-            } else {
-                return null;
-            }
+            userId = this.userIdentityStore.getPortalUID(person, true);
         }
 
         person.setID(userId);

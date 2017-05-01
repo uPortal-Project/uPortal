@@ -22,7 +22,6 @@ import org.apereo.portal.IBasicEntity;
  * Subscriptions are used to track preferences for pulled DLM fragments.
  *
  * @author Mary Hunt
- * @version $Revision$ $Date$
  */
 public interface IUserFragmentSubscription extends IBasicEntity {
 

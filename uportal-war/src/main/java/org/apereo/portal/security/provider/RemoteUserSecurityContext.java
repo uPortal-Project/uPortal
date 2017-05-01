@@ -25,7 +25,6 @@ import org.apereo.portal.security.PortalSecurityException;
  *
  * @author Pete Boysen, pboysen@iastate.edu
  * @created November 17, 2002
- * @version $Revision$
  */
 class RemoteUserSecurityContext extends ChainingSecurityContext implements ISecurityContext {
 

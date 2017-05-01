@@ -23,7 +23,6 @@ import org.apereo.portal.security.ISecurityContextFactory;
  *
  * @author Russell Tokuyama (University of Hawaii)
  * @author Ken Weiner, kweiner@unicon.net
- * @version $Revision$
  * @deprecated As of uPortal 2.1.3, use {@link SimpleLdapSecurityContextFactory} chained with {@link
  *     CacheSecurityContextFactory} instead
  */

@@ -22,7 +22,6 @@ import java.util.Enumeration;
  * provide considerable encapsulation of the data we are trying to present.
  *
  * @author Andrew Newman, newman@yale.edu
- * @version $Revision$
  * @author Don Fracapane (df7@columbia.edu) Added getSubContextNames() to support principal and
  *     credential tokens
  */

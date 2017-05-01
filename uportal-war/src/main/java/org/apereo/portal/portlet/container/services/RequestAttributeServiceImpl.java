@@ -39,7 +39,6 @@ import org.springframework.stereotype.Service;
  * IPortletRenderer#MULTIVALUED_USERINFO_MAP_ATTRIBUTE}.
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 @Service
 public class RequestAttributeServiceImpl implements RequestAttributeService {

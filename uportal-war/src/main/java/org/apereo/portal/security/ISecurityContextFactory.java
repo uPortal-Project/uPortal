@@ -22,7 +22,6 @@ package org.apereo.portal.security;
  * instantiating the appropriate context class.
  *
  * @author Andrew Newman, newman@yale.edu
- * @version $Revision$
  */
 public interface ISecurityContextFactory {
 

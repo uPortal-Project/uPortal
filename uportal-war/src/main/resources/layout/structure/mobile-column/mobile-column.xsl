@@ -25,7 +25,6 @@
 <!--=====START: DOCUMENT DESCRIPTION=====-->
 <!--    
     Author: Matt Polizzotti, Jennifer Bourey
-    Version: $Revision$
     
     General Description: This file, mobile-tab-column.xsl, was developed in order to 
     enable uPortal 3.0.0 to be viewable by mobile devices. This file exports xml, which 

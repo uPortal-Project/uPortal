@@ -27,7 +27,6 @@ import org.xml.sax.SAXException;
 
 /**
  * @author Jen Bourey, jennifer.bourey@gmail.com
- * @version $Revision$
  */
 public class StaxEventLexicalContentHandlerTest {
 

@@ -33,7 +33,6 @@ import org.apereo.portal.url.IPortalUrlProvider;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class PortletResourceResponseContextImpl extends PortletMimeResponseContextImpl
         implements PortletResourceResponseContext {

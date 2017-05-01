@@ -29,7 +29,6 @@ import org.apereo.portal.security.PortalSecurityException;
  * <p>This class is a descendent of edu.yale.its.tp.portal.security.BrokenSecurityContext, which was
  * distributed in the Yale CAS uPortal security provider module version 3.0.0.
  *
- * @version $Revision$ $Date$
  */
 public class BrokenSecurityContext extends ChainingSecurityContext {
 

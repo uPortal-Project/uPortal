@@ -43,7 +43,6 @@ import org.springframework.core.io.Resource;
  * ExecutorService#execute(Runnable)}
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public final class ConcurrentDirectoryScanner implements DirectoryScanner {
     protected final Logger logger = LoggerFactory.getLogger(getClass());

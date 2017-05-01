@@ -21,7 +21,6 @@ import java.sql.SQLException;
  * be used for performing joins in SQL.
  *
  * @author Eric Dalquist <a href="mailto:edalquist@unicon.net">edalquist@unicon.net</a>
- * @version $Revision$ $Date$
  */
 public interface IJoinQueryString {
     /**

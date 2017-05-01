@@ -77,7 +77,6 @@ import org.springframework.beans.factory.annotation.Required;
  *
  * @author Eric Dalquist <a
  *     href="mailto:eric.dalquist@doit.wisc.edu">eric.dalquist@doit.wisc.edu</a>
- * @version $Revision$
  */
 public class JavaManagementServerBean {
     //System properties

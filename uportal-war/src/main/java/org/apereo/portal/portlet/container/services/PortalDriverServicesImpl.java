@@ -40,7 +40,6 @@ import org.springframework.stereotype.Service;
  * configured as spring beans.
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 @Service("portalDriverServices")
 public class PortalDriverServicesImpl implements PortalDriverServices {

@@ -28,7 +28,6 @@ import org.springframework.webflow.execution.RequestContextHolder;
  * Validator for {@link PersonQuery}
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class AttributeSwapRequestValidator {
     private IAttributeSwapperHelper attributeSwapperHelper;

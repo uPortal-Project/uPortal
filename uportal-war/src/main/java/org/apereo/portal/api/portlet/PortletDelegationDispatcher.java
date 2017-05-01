@@ -31,7 +31,6 @@ import org.apereo.portal.portlet.rendering.PortletResourceOutputHandler;
  * of the delegate portlet window.
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public interface PortletDelegationDispatcher {
     /**

@@ -31,7 +31,6 @@ import org.apereo.portal.character.stream.events.CharacterEvent;
  * Pattern}s
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public interface CharacterEventSource {
     /**

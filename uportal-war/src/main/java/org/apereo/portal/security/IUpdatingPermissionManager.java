@@ -20,7 +20,6 @@ import org.apereo.portal.AuthorizationException;
  * An interface for updating <code>Permissions</code> on behalf of a <code>Permission</code> owner.
  *
  * @author Dan Ellentuck
- * @version $Revision$
  */
 public interface IUpdatingPermissionManager extends IPermissionManager {
     /**

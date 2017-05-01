@@ -22,7 +22,6 @@ import org.apereo.portal.character.stream.events.CharacterDataEventImpl;
  * Base bean to expose a {@link CacheStats} object
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public abstract class GuavaCacheStatsBean {
     private volatile Cache<?, ?> cache = null;

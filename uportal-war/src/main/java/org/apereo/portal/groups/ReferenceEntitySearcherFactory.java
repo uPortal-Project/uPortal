@@ -20,7 +20,6 @@ import org.apereo.portal.spring.locator.ReferenceEntitySearcherLocator;
  * Creates an instance of the reference <code>IEntitySearcher</code>.
  *
  * @author Dan Ellentuck
- * @version $Revision$
  */
 public class ReferenceEntitySearcherFactory implements IEntitySearcherFactory {
     /**

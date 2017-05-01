@@ -20,7 +20,6 @@ import org.apache.commons.lang.Validate;
  * Simple {@link IPortalData} impl that just uses string fields
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class SimpleStringPortalData implements IPortalData {
     private final String dataId;

@@ -25,7 +25,6 @@ import org.springframework.stereotype.Service;
  * thread and cleans up afterwards.
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 @Service("LocaleThreadLocalPortletExecutionInterceptor")
 public class LocaleThreadLocalPortletExecutionInterceptor

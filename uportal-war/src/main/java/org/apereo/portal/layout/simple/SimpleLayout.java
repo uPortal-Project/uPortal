@@ -44,7 +44,6 @@ import org.w3c.dom.NodeList;
  * to its present package to reflect that it is part of the Simple Layout Management implementation.
  *
  * @author Ken Weiner, kweiner@unicon.net
- * @version $Revision$
  */
 public class SimpleLayout implements IUserLayout {
 

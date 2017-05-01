@@ -1048,7 +1048,8 @@
     </target>
 
     <!-- Internal use -->
-    <target name="up-shell" description="Run a uPortal Groovy Shell. Interactive or scripted using -Dscript=">
+	<!-- Following target run a uPortal Groovy Shell. Scripted using -Dscript=" -->
+    <target name="up-shell">
         <if>
             <not>
                 <istrue value="${skip-up-shell-execution}" />
@@ -1074,17 +1075,7 @@
                                 <arg value="${arg2}"/>
                             </java>
                         </then>
-                        <else>
-                            <echo>Interactive Mode</echo>
-
-                            <java fork="true" failonerror="true" dir="${basedir}" classname="org.apereo.portal.shell.PortalShell">
-                                <sysproperty key="logback.configurationFile" value="command-line.logback.xml" />
-                                <sysproperty key="java.awt.headless" value="true"/>
-                                <classpath refid="uportal-war-full.classpath" />
-                            </java>
-                        </else>
                     </if>
-
                 </uportal-war-macro>
             </then>
         </if>

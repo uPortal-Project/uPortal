@@ -22,7 +22,6 @@ import org.apereo.portal.portlet.om.IPortletWindowId;
  * Provides some utility methods for dealing with delegate rendering of portlets
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public interface IPortletDelegationManager {
     /**

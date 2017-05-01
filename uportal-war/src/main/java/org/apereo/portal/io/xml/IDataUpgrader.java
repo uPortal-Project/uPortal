@@ -23,7 +23,6 @@ import javax.xml.transform.Source;
  * upgraders may be run in succession to translate very old data into the most recent format.
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public interface IDataUpgrader {
     /** @return The {@link PortalDataKey}s this upgrader can operate on */

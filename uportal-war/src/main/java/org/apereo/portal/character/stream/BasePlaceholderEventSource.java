@@ -32,7 +32,6 @@ import org.apereo.portal.character.stream.events.CharacterEvent;
  * stream.
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public abstract class BasePlaceholderEventSource implements CharacterEventSource {
 

@@ -19,7 +19,6 @@ package org.apereo.portal;
  * clearly documented.
  *
  * @author Mark Boyd {@link <a href="mailto:mark.boyd@engineer.com">mark.boyd@engineer.com</a>}
- * @version $Revision$
  */
 public class Constants {
 

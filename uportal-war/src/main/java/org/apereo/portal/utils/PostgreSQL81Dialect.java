@@ -18,7 +18,6 @@ import org.hibernate.dialect.PostgreSQLDialect;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class PostgreSQL81Dialect extends PostgreSQLDialect {
     @Override

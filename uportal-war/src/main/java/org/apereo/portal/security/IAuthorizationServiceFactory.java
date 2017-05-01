@@ -24,7 +24,6 @@ import org.apereo.portal.AuthorizationException;
  * instantiating the appropriate context class.
  *
  * @author Andrew Newman, newman@yale.edu
- * @version $Revision$
  */
 public interface IAuthorizationServiceFactory {
     public IAuthorizationService getAuthorization() throws AuthorizationException;

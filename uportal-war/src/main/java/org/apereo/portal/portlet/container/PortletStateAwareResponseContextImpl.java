@@ -33,7 +33,6 @@ import org.apereo.portal.url.IPortletUrlBuilder;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class PortletStateAwareResponseContextImpl extends PortletResponseContextImpl
         implements PortletStateAwareResponseContext {

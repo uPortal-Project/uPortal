@@ -33,7 +33,6 @@ import org.joda.time.DateTime;
  * #handleIntervalBoundary(AggregationInterval, EventAggregationContext, Map)} called.
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public interface IntervalAwarePortalEventAggregator<E extends PortalEvent>
         extends IPortalEventAggregator<E> {

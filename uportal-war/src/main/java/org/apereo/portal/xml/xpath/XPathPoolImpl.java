@@ -32,7 +32,6 @@ import org.springframework.stereotype.Service;
  * compiled {@link XPathExpression} instances.
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 @Service
 public class XPathPoolImpl implements XPathOperations, DisposableBean {

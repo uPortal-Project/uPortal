@@ -29,7 +29,6 @@ import org.springframework.beans.factory.annotation.Required;
  * Generic export impl that support Cernunnous Tasks.
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class CernunnosDataExporter extends AbstractDom4jExporter {
     private Task task;
