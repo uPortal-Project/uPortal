@@ -34,8 +34,6 @@ import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
 import org.apache.tools.ant.util.FileUtils;
 import org.codehaus.groovy.control.CompilerConfiguration;
-import org.codehaus.groovy.tools.shell.Groovysh;
-import org.codehaus.groovy.tools.shell.IO;
 import org.jasig.portal.spring.PortalApplicationContextLocator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,7 +46,7 @@ import org.springframework.context.ApplicationContext;
  */
 public class PortalShell {
     static final Logger LOGGER = LoggerFactory.getLogger(PortalShell.class);
-    
+
     protected static Options getOptions() {
         final Options options = new Options();
 
@@ -56,10 +54,10 @@ public class PortalShell {
 
         return options;
     }
-    
+
     public static void main(String[] args) throws Exception {
         final Options options = getOptions();
-        
+
         final CommandLineParser parser = new PosixParser();
         final CommandLine commandLine;
         try {
@@ -70,23 +68,19 @@ public class PortalShell {
             printHelp(options);
             return;
         }
-        
+
         final ApplicationContext applicationContext = PortalApplicationContextLocator.getApplicationContext();
         try {
 	        final Binding binding = new SpringBinding(applicationContext);
 	        binding.setVariable("logger", LOGGER);
-	        
+
 	        if (commandLine.hasOption("script")) {
 	            final String scriptName = commandLine.getOptionValue("script");
 	            final File scriptFile = getAbsoluteFile(scriptName);
-	            
+
 	            final CompilerConfiguration conf = new CompilerConfiguration(System.getProperties());
 	            final GroovyShell shell = new GroovyShell(binding, conf);
 	            shell.run(scriptFile, args);
-	        }
-	        else {
-	            final Groovysh shell = new Groovysh(binding, new IO());
-	            shell.run();
 	        }
         }
         finally {
@@ -95,7 +89,7 @@ public class PortalShell {
         	}
         }
     }
-    
+
     protected static void printHelp(final Options options) {
         final HelpFormatter formatter = new HelpFormatter();
         final PrintWriter pw = new PrintWriter(System.err);
@@ -113,7 +107,7 @@ public class PortalShell {
         else {
             file = new File(new File(System.getProperty("user.dir")), filePath);
         }
-        
+
         try {
             return file.getCanonicalFile();
         }
