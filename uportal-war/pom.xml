@@ -51,12 +51,52 @@
         </dependency>
         <dependency>
             <groupId>org.jasig.portal</groupId>
-            <artifactId>uPortal-rdbm</artifactId>
+            <artifactId>uPortal-concurrency</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.jasig.portal</groupId>
-            <artifactId>uPortal-utils</artifactId>
+            <artifactId>uPortal-groups-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jasig.portal</groupId>
+            <artifactId>uPortal-groups-filesystem</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jasig.portal</groupId>
+            <artifactId>uPortal-groups-grouper</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jasig.portal</groupId>
+            <artifactId>uPortal-groups-ldap</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jasig.portal</groupId>
+            <artifactId>uPortal-groups-local</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jasig.portal</groupId>
+            <artifactId>uPortal-groups-pags</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jasig.portal</groupId>
+            <artifactId>uPortal-groups-smartldap</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jasig.portal</groupId>
+            <artifactId>uPortal-io</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jasig.portal</groupId>
+            <artifactId>uPortal-rdbm</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -69,6 +109,11 @@
                     <artifactId>commons-logging</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.jasig.portal</groupId>
+            <artifactId>uPortal-utils</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
         <!-- Pre-Gradle -->

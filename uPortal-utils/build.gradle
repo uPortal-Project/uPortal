@@ -1,11 +1,44 @@
 description = "Apereo uPortal Utilities"
 
 dependencies {
+    compile project(':uPortal-core')
+
+    compile "com.google.guava:guava:${guavaVersion}"
+    compile "commons-lang:commons-lang:${commonsLangVersion}"
     compile "org.apache.commons:commons-lang3:${commonsLang3Version}"
     compile "org.slf4j:jcl-over-slf4j:${slf4jVersion}"
     compile "org.springframework:spring-beans:${springVersion}"
     compile "org.springframework:spring-context:${springVersion}"
     compile "org.springframework:spring-web:${springVersion}"
+    compile("org.springmodules:spring-modules-cache:${apringModulesCacheVersion}") {
+        exclude group: 'log4j', module: 'log4j'
+        exclude group: 'commons-logging', module: 'commons-logging'
+        exclude group: 'org.springframework', module: 'spring'
+        exclude group: 'gigaspaces', module: 'gigaspaces-ce'
+        exclude group: 'jini', module: 'jsk-lib'
+        exclude group: 'jini', module: 'jsk-platform'
+        exclude group: 'jini', module: 'mahalo'
+        exclude group: 'jini', module: 'reggie'
+        exclude group: 'jini', module: 'start'
+        exclude group: 'jini', module: 'boot'
+        exclude group: 'jini', module: 'webster'
+        exclude group: 'commons-attributes', module: 'commons-attributes-api'
+        exclude group: 'commons-attributes', module: 'commons-attributes-compiler'
+        exclude group: 'jboss', module: 'javassist'
+        exclude group: 'jboss', module: 'jboss-cache'
+        exclude group: 'jboss', module: 'jboss-common'
+        exclude group: 'jboss', module: 'jboss-jmx'
+        exclude group: 'jboss', module: 'jboss-minimal'
+        exclude group: 'jboss', module: 'jboss-system'
+        exclude group: 'jcs', module: 'jcs'
+        exclude group: 'jgroups', module: 'jgroups-all'
+        exclude group: 'geronimo-spec', module: 'geronimo-spec-jta'
+        exclude group: 'xpp3', module: 'xpp3_min'
+        exclude group: 'xjavadoc', module: 'xjavadoc'
+        exclude group: 'xstream', module: 'xstream'
+        exclude group: 'opensymphony', module: 'oscache'
+        exclude group: 'ehcache', module: 'ehcache'
+    }
 
     provided "${servletApiDependency}"
 }
