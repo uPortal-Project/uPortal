@@ -116,10 +116,18 @@ public final class PeopleRESTControllerV50 {
 
         if (me == null) {
             //If null, this person is not logged in.
-            response.setStatus(401);
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return null;
         }
 
-        return new ModelAndView("json", me.getAttributeMap());
+        final IPersonAttributes person = lookupHelper.findPerson(me, me.getUserName());
+        if (person == null) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return null;
+        }
+
+        return new ModelAndView("json", person.getAttributes());
+
     }
+
 }

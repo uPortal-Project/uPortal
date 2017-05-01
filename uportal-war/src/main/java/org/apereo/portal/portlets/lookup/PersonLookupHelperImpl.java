@@ -202,11 +202,11 @@ public class PersonLookupHelperImpl implements IPersonLookupHelper {
 
         // build a set of all possible user attributes the current user has
         // permission to view
-        final Set<String> permittedAttributes = getAvailableAttributes(principal);
+        final Set<String> permittedAttributes = getPermittedAttributes(principal);
 
         // remove any query attributes that the user does not have permission
         // to view
-        final Map<String, Object> inUseQuery = new HashMap<String, Object>();
+        final Map<String, Object> inUseQuery = new HashMap<>();
         for (Map.Entry<String, Object> queryEntry : query.entrySet()) {
             final String attr = queryEntry.getKey();
             if (permittedAttributes.contains(attr)) {
@@ -293,7 +293,7 @@ public class PersonLookupHelperImpl implements IPersonLookupHelper {
         // For each person in the list, check to see if the current user has permission to view this user
         for (IPersonAttributes person : peopleList) {
             Callable<IPersonAttributes> worker =
-                    new GetVisiblePerson(principal, person, permittedAttributes, requestAttributes);
+                    new FetchVisiblePersonCallable(principal, person, permittedAttributes, requestAttributes);
             Future<IPersonAttributes> task = executor.submit(worker);
             futures.add(task);
         }
@@ -323,13 +323,13 @@ public class PersonLookupHelperImpl implements IPersonLookupHelper {
      * Utility class for executor framework for search persons processing. Ugly - person directory
      * needs the requestAttributes in the RequestContextHolder set for each thread from the caller.
      */
-    private class GetVisiblePerson implements Callable<IPersonAttributes> {
+    private class FetchVisiblePersonCallable implements Callable<IPersonAttributes> {
         private IAuthorizationPrincipal principal;
         private IPersonAttributes person;
         private Set<String> permittedAttributes;
         private RequestAttributes requestAttributes;
 
-        public GetVisiblePerson(
+        public FetchVisiblePersonCallable(
                 IAuthorizationPrincipal principal,
                 IPersonAttributes person,
                 Set<String> permittedAttributes,
@@ -380,7 +380,7 @@ public class PersonLookupHelperImpl implements IPersonLookupHelper {
 
         // build a set of all possible user attributes the current user has
         // permission to view
-        final Set<String> permittedAttributes = getAvailableAttributes(principal);
+        final Set<String> permittedAttributes = getPermittedAttributes(principal);
 
         // get the set of people matching the search query
         final IPersonAttributes person = this.personAttributeDao.getPerson(username);
@@ -414,9 +414,9 @@ public class PersonLookupHelperImpl implements IPersonLookupHelper {
      * @param principal
      * @return
      */
-    protected Set<String> getAvailableAttributes(final IAuthorizationPrincipal principal) {
-        final Set<String> attributeNames = this.personAttributeDao.getPossibleUserAttributeNames();
-        return getAvailableAttributes(principal, attributeNames);
+    protected Set<String> getPermittedAttributes(final IAuthorizationPrincipal principal) {
+        final Set<String> attributeNames = personAttributeDao.getPossibleUserAttributeNames();
+        return getPermittedAttributes(principal, attributeNames);
     }
 
     /**
@@ -427,9 +427,9 @@ public class PersonLookupHelperImpl implements IPersonLookupHelper {
      * @param attributeNames
      * @return
      */
-    protected Set<String> getAvailableAttributes(
+    protected Set<String> getPermittedAttributes(
             final IAuthorizationPrincipal principal, final Set<String> attributeNames) {
-        final Set<String> permittedAttributes = new HashSet<String>();
+        final Set<String> permittedAttributes = new HashSet<>();
         for (String attr : attributeNames) {
             if (principal.hasPermission(
                     IPermission.PORTAL_USERS, IPermission.VIEW_USER_ATTRIBUTE_ACTIVITY, attr)) {
@@ -440,19 +440,44 @@ public class PersonLookupHelperImpl implements IPersonLookupHelper {
     }
 
     /**
+     * Filter the provided set of user attribute names to contain only those the specified principal
+     * has permissions to view.
+     *
+     * @param principal
+     * @param generallyPermittedAttributes
+     * @return
+     */
+    protected Set<String> getPermittedOwnAttributes(
+            final IAuthorizationPrincipal principal, final Set<String> generallyPermittedAttributes) {
+
+        // The permttedOwnAttributes collection includes all the generallyPermittedAttributes
+        final Set<String> rslt = new HashSet<>(generallyPermittedAttributes);
+
+        for (String attr : personAttributeDao.getPossibleUserAttributeNames()) {
+            if (principal.hasPermission(
+                    IPermission.PORTAL_USERS, IPermission.VIEW_OWN_USER_ATTRIBUTE_ACTIVITY, attr)) {
+                rslt.add(attr);
+            }
+        }
+
+        return rslt;
+
+    }
+
+    /**
      * Filter an IPersonAttributes for a specified viewing principal. The returned person will
      * contain only the attributes provided in the permitted attributes list. <code>null</code> if
      * the principal does not have permission to view the user.
      *
      * @param principal
      * @param person
-     * @param permittedAttributes
+     * @param generallyPermittedAttributes
      * @return
      */
     protected IPersonAttributes getVisiblePerson(
             final IAuthorizationPrincipal principal,
             final IPersonAttributes person,
-            final Set<String> permittedAttributes) {
+            final Set<String> generallyPermittedAttributes) {
 
         // first check to see if the principal has permission to view this person.  Unfortunately for
         // non-admin users, this will result in a call to PersonDirectory (which may go out to LDAP or
@@ -464,9 +489,14 @@ public class PersonLookupHelperImpl implements IPersonLookupHelper {
                         IPermission.VIEW_USER_ACTIVITY,
                         person.getName())) {
 
-            // if the user has permission, filter the person attributes according
-            // to the specified permitted attributes
-            final Map<String, List<Object>> visibleAttributes = new HashMap<String, List<Object>>();
+            // If the user has permission, filter the person attributes according
+            // to the specified permitted attributes;  the collection of permitted
+            // attributes can be different based on whether the user is trying to
+            // access information about him/herself.
+            final Set<String> permittedAttributes = person.getName().equals(principal.getKey())
+                    ? getPermittedOwnAttributes(principal, generallyPermittedAttributes)
+                    : generallyPermittedAttributes;
+            final Map<String, List<Object>> visibleAttributes = new HashMap<>();
             for (String attr : person.getAttributes().keySet()) {
                 if (permittedAttributes.contains(attr)) {
                     visibleAttributes.put(attr, person.getAttributeValues(attr));

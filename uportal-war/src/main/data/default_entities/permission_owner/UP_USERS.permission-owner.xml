@@ -30,6 +30,12 @@
         <targetProvider>userAttributesTargetProvider</targetProvider>
     </activity>
     <activity>
+        <name>View own attribute</name>
+        <fname>VIEW_OWN_USER_ATTRIBUTE</fname>
+        <desc>View the value(s) of one's own user attribute</desc>
+        <targetProvider>userAttributesTargetProvider</targetProvider>
+    </activity>
+    <activity>
         <name>View user</name>
         <fname>VIEW_USER</fname>
         <desc>View a user.</desc>
