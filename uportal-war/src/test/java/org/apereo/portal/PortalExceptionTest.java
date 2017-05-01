@@ -23,7 +23,6 @@ import junit.framework.TestCase;
  * anything and should always return a reference to the PortalException.
  *
  * @author andrew.petro@yale.edu
- * @version $Revision$ $Date$
  */
 public class PortalExceptionTest extends TestCase {
 

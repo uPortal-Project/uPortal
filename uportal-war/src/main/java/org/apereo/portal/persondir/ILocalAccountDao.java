@@ -22,7 +22,6 @@ import java.util.Set;
  * This interface works with accounts in a local format rather than using the person directory API.
  *
  * @author Jen Bourey, jbourey@unicon.net
- * @version $Revision$
  */
 public interface ILocalAccountDao {
 

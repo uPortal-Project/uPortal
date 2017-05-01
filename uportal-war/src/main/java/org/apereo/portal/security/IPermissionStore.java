@@ -20,7 +20,6 @@ import org.apereo.portal.AuthorizationException;
  * Interface for creating, finding and maintaining <code>IPermissions</code>.
  *
  * @author Dan Ellentuck
- * @version $Revision$
  */
 public interface IPermissionStore {
 

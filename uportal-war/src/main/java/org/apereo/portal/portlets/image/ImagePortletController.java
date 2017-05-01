@@ -45,7 +45,6 @@ import org.springframework.web.portlet.mvc.AbstractController;
  *
  * @author Ken Weiner, kweiner@unicon.net
  * @author Jen Bourey, jbourey@unicon.net
- * @version $Revision$
  */
 public class ImagePortletController extends AbstractController {
     private IPortalSpELService portalSpELService;

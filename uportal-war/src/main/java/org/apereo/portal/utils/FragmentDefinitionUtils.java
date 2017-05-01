@@ -36,7 +36,6 @@ import org.w3c.dom.Document;
  * Default {@link IFragmentDefinitionUtils} implementation, backed by {@link ConfigurationLoader}
  * and {@link FragmentActivator} objects.
  *
- * @version $Revision$
  */
 @Service
 public class FragmentDefinitionUtils implements IFragmentDefinitionUtils {

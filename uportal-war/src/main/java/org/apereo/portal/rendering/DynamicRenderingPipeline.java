@@ -35,7 +35,6 @@ import org.springframework.beans.factory.annotation.Autowired;
  * Top level class that initiates rendering via a {@link CharacterPipelineComponent}
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class DynamicRenderingPipeline implements IPortalRenderingPipeline {
     public static final String CHARACTER_SET = "UTF-8";

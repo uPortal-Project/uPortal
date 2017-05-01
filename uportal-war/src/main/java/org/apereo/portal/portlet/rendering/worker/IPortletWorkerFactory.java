@@ -24,7 +24,6 @@ import org.apereo.portal.portlet.om.IPortletWindowId;
  * pool for execution and tracking the execution and result.
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public interface IPortletWorkerFactory {
     /** Create a worker that will execute an action request on the specified portlet window. */

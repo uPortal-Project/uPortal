@@ -20,7 +20,6 @@ import org.apereo.portal.security.IPerson;
 
 /**
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 2.6
  */
 public abstract class LayoutPortalEvent extends PortalEvent {

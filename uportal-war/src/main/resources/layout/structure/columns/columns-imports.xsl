@@ -23,7 +23,6 @@
 
 <!--=====START: DOCUMENT DESCRIPTION=====-->
 <!--
-    Version: $Revision$
     @since uPortal 4.2
 
     General Description:  This file was created in order to help minize duplication of code 

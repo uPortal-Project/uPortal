@@ -18,7 +18,6 @@ import org.apereo.portal.IBasicEntity;
 
 /**
  * @author Dan Ellentuck, de3@columbia.edu
- * @version $Revision$
  *     <p>A type that aggregates the <code>IPermissions</code> for an <code>IAuthorizationPrincipal
  *     </code> so that permissions can be cached by the <code>EntityCachingService</code>.
  */

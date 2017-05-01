@@ -30,7 +30,6 @@ import org.springframework.context.ApplicationEvent;
  * with some external timer that will call {@link #flush()} at regular intervals
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public abstract class QueueingEventHandler<E extends ApplicationEvent>
         extends FilteringApplicationListener<E> implements DisposableBean {

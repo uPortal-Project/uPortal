@@ -41,7 +41,6 @@ import org.springframework.context.ApplicationContext;
  * the Jasig CAS Client for Java 3.x library.
  *
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 3.2
  */
 public class CasAssertionSecurityContext extends ChainingSecurityContext

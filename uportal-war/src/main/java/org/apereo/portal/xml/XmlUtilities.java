@@ -32,7 +32,6 @@ import org.w3c.dom.Node;
  * Defines commonly used XML and XSLT utilities
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public interface XmlUtilities {
     /** Get {@link Templates} for the specified stylesheet resource */

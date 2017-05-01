@@ -23,7 +23,6 @@ import java.util.Comparator;
  * appropriate {@link Comparable} for the object.
  *
  * @author Eric Dalquist
- * @version $Revision$
  * @param <T> The root type being compared
  * @param <C> The type that extracted for comparison
  */

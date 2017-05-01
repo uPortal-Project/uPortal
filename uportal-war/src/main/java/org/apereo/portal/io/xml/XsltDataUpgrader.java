@@ -30,7 +30,6 @@ import org.springframework.core.io.Resource;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class XsltDataUpgrader implements IDataUpgrader, InitializingBean {
     private Set<PortalDataKey> portalDataKeys;

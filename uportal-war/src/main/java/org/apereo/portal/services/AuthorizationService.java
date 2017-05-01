@@ -32,7 +32,6 @@ import org.apereo.portal.utils.threading.SingletonDoubleCheckedCreator;
 /**
  * @author Bernie Durfee, bdurfee@interactivebusiness.com
  * @author Dan Ellentuck
- * @version $Revision$
  */
 public class AuthorizationService {
 

@@ -25,7 +25,6 @@ import org.apereo.portal.groups.IEntityGroupStoreFactory;
  * Returns an instance of the Grouper entity group store.
  *
  * @author Bill Brown
- * @version $Revision$
  */
 public class GrouperEntityGroupStoreFactory implements IEntityGroupStoreFactory {
 

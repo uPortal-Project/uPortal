@@ -27,7 +27,6 @@ import org.springframework.core.Ordered;
  * Manager that has a single backing Map of properties.
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class MockRequestPropertiesManager implements IRequestPropertiesManager, Ordered {
     private Map<String, String[]> properties = new ParameterMap();

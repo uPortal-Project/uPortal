@@ -21,7 +21,6 @@ package org.apereo.portal.concurrency.locking;
  * false.
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 interface IClusterLockDao {
 

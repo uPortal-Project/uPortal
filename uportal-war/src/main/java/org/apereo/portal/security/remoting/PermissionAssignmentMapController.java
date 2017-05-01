@@ -49,7 +49,6 @@ import org.springframework.web.servlet.ModelAndView;
 /**
  * @author Drew Wills
  * @author Jen Bourey, jbourey@unicon.net
- * @version $Revision$
  */
 @Controller
 public class PermissionAssignmentMapController extends AbstractPermissionsController {

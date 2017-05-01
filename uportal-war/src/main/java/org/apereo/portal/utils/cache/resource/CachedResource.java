@@ -23,7 +23,6 @@ import org.springframework.core.io.Resource;
  * information about when it was last loaded.
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public interface CachedResource<T> {
 

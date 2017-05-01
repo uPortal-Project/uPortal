@@ -26,7 +26,6 @@ import org.apereo.portal.security.IPerson;
  *
  * @author Drew Mazurek
  * @author Jen Bourey
- * @revision $Revision$
  */
 public interface IGroupListHelper {
 

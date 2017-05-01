@@ -88,7 +88,6 @@ import org.springframework.stereotype.Service;
  * which is used to determine which events to send to which portlet windows.
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 @Service("eventCoordinationService")
 public class PortletEventCoordinatationService implements IPortletEventCoordinationService {

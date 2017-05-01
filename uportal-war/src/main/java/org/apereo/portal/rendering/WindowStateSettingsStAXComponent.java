@@ -47,7 +47,6 @@ import org.springframework.beans.factory.annotation.Autowired;
  * {@link IPortletRenderer#DETACHED}, or {@link IPortletRenderer#EXCLUSIVE}
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class WindowStateSettingsStAXComponent extends StAXPipelineComponentWrapper {
     protected final Logger logger = LoggerFactory.getLogger(getClass());

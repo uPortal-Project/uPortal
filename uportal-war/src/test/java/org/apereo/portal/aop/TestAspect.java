@@ -18,7 +18,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class TestAspect {
     private final AtomicInteger callCount = new AtomicInteger();

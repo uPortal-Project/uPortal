@@ -45,7 +45,6 @@ import org.springframework.web.util.WebUtils;
  * <p>TODO this may not play well with distributed sessions
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 @Service("portletSessionExpirationManager")
 public class PortletSessionExpirationManager

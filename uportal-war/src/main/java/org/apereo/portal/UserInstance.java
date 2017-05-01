@@ -27,7 +27,6 @@ import org.apereo.portal.user.IUserInstance;
  *
  * @author Peter Kharchenko {@link <a
  *     href="mailto:pkharchenko@interactivebusiness.com"">pkharchenko@interactivebusiness.com"</a>}
- * @version $Revision$
  */
 public class UserInstance implements IUserInstance {
     protected final Log log = LogFactory.getLog(this.getClass());

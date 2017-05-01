@@ -41,7 +41,6 @@ import org.joda.time.ReadableInstant;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  */
 @Entity
 @Table(name = "UP_ACADEMIC_TERM_DETAIL")

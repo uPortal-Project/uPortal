@@ -31,7 +31,6 @@ import org.xml.sax.SAXException;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class XmlUtilitiesImplTest {
     @Test

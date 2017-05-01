@@ -34,7 +34,6 @@ import org.apereo.portal.utils.web.PortletHttpServletRequestWrapper;
  * make sure the error portlet still renders in the event of the thread pool being broken.
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 final class PortletFailureExecutionWorker implements IPortletFailureExecutionWorker {
 

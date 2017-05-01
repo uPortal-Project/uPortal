@@ -30,7 +30,6 @@ import org.apereo.portal.utils.IncludeExcludeUtils;
  * are modified.
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 @MappedSuperclass
 public abstract class BaseAggregatedDimensionConfigImpl<D>

@@ -29,7 +29,6 @@ import org.apereo.portal.url.IPortalRequestInfo;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class PortletResourceRequestContextImpl extends PortletRequestContextImpl
         implements PortletResourceRequestContext {

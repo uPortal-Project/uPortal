@@ -23,7 +23,6 @@ import org.slf4j.LoggerFactory;
  * Default implementation of {@link IPortletExecutionInterceptor} which does nothing.
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class PortletExecutionInterceptorAdaptor implements IPortletExecutionInterceptor {
     protected final Logger logger = LoggerFactory.getLogger(getClass());

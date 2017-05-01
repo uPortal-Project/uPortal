@@ -32,7 +32,6 @@ import java.util.Map.Entry;
  * with having values that are String[] correctly.
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class ParameterMap extends LinkedHashMap<String, String[]> {
     private static final long serialVersionUID = 1L;

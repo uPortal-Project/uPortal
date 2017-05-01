@@ -27,7 +27,6 @@ import org.springframework.beans.factory.annotation.Autowired;
  * Provides the username of the current portal user
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class PersonManagerCurrentUserProvider implements ICurrentUserProvider {
     protected final Log logger = LogFactory.getLog(this.getClass());

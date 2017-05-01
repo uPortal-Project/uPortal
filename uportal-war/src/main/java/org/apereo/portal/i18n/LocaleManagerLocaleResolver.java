@@ -32,7 +32,6 @@ import org.springframework.web.servlet.LocaleResolver;
  *
  * @see LocaleManagementInterceptor
  * @author Arvids Grabovskis
- * @version $Revision$
  */
 public class LocaleManagerLocaleResolver implements LocaleResolver {
 

@@ -23,7 +23,6 @@ import java.util.Iterator;
  * indefinitely.
  *
  * @author Ken Weiner, kweiner@unicon.net
- * @version $Revision$
  */
 public class SmartCache extends HashMap {
     protected int iExpirationTimeout = 3600000; // default to 1 hour

@@ -23,7 +23,6 @@ import org.apereo.portal.jdbc.RDBMServices;
 /**
  * LayoutStructure represents a channel or folder in a layout.
  *
- * @version $Revision$ $Date$
  * @since uPortal 2.5 - before 2.5 this class existed as a public inner class of
  *     RDBMUserLayoutStore.
  */

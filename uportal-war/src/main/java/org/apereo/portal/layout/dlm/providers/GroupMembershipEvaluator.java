@@ -39,7 +39,6 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
  * than the group itself (UP-1532). d.e 2006/12/19.
  *
  * @author mboyd@sungardsct.com
- * @version $Revision$ $Date$
  * @since uPortal 2.5
  */
 @Entity

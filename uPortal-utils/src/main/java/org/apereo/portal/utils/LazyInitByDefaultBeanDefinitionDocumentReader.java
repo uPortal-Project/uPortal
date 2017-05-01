@@ -25,7 +25,6 @@ import org.w3c.dom.Element;
  * during testing or with command line tools.
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class LazyInitByDefaultBeanDefinitionDocumentReader
         extends DefaultBeanDefinitionDocumentReader {

@@ -57,7 +57,6 @@ import org.w3c.dom.DocumentFragment;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "renderingPipelineTestContext.xml")

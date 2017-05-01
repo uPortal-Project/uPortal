@@ -213,7 +213,7 @@ public class PortletCategoryRegistryImpl implements IPortletCategoryRegistry {
     @Override
     public PortletCategory getTopLevelPortletCategory() {
         IEntityGroup categoryGroup =
-                GroupService.getDistinguishedGroup(IGroupConstants.PORTLET_CATEGORIES);
+                GroupService.getDistinguishedGroup(IPortletDefinition.DISTINGUISHED_GROUP);
         return getPortletCategory(categoryGroup.getKey());
     }
 }

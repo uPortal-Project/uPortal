@@ -23,7 +23,6 @@ import org.apereo.portal.portlet.om.IPortletWindowId;
  * as a child.
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public interface PortletDelegationLocator {
     /** The PortletDelegationLocator instance will be available in the request under this key */

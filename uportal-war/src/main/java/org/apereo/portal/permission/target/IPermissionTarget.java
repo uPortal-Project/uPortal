@@ -18,7 +18,6 @@ package org.apereo.portal.permission.target;
  * might include a uPortal group or a static string.
  *
  * @author Jen Bourey, jbourey@unicon.net
- * @version $Revision$
  * @since 3.3
  */
 public interface IPermissionTarget {

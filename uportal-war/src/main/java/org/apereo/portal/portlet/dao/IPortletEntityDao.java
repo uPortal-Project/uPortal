@@ -24,7 +24,6 @@ import org.apereo.portal.security.IPerson;
  * Provides APIs for creating, storing and retrieving {@link IPortletEntity} objects.
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public interface IPortletEntityDao {
     /**

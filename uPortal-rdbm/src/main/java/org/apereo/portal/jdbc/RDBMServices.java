@@ -50,7 +50,6 @@ import org.springframework.dao.DataAccessResourceFailureException;
  * @author George Lindholm, george.lindholm@ubc.ca
  * @author Eric Dalquist <a href="mailto:edalquist@unicon.net">edalquist@unicon.net</a>
  * @author Susan Bramhall <a href="mailto:susan.bramhall@yale.edu">susan.bramhall@yale.edu</a>
- * @version $Revision$ $Date$
  */
 public class RDBMServices {
     /** Name of the default portal database expected in the Spring application context */

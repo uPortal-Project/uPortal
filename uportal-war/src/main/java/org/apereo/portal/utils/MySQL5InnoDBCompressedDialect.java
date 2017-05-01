@@ -76,7 +76,7 @@ public class MySQL5InnoDBCompressedDialect extends MySQL5InnoDBDialect {
                     } else if (unwrappedValue == Double.POSITIVE_INFINITY) {
                         LOGGER.debug("Converting double from POSITIVE_INFINITY to MAX_VALUE");
                         unwrappedValue = Double.MAX_VALUE;
-                    } else if (unwrappedValue == Double.NaN) {
+                    } else if (unwrappedValue.isNaN()) {
                         LOGGER.debug("Converting double from NaN to 0");
                         unwrappedValue = 0d;
                     }

@@ -21,7 +21,6 @@ import org.apereo.portal.security.IPerson;
  * Interface defining how the portal reads and writes locale preferences.
  *
  * @author Ken Weiner, kweiner@unicon.net
- * @version $Revision$
  */
 public interface ILocaleStore {
 

@@ -35,7 +35,6 @@ import org.springframework.web.portlet.bind.annotation.ResourceMapping;
  * #postTranslation(String, String, String)} updates the message.
  *
  * @author Arvids Grabovskis
- * @version $Revision$
  */
 @Controller
 @RequestMapping(value = "VIEW", params = "entity=portlet")

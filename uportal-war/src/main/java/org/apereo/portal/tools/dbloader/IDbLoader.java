@@ -23,7 +23,6 @@ import org.xml.sax.SAXException;
  * definition files.
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public interface IDbLoader {
 

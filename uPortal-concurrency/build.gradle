@@ -1,0 +1,7 @@
+description = "Apereo uPortal Concurrency"
+
+dependencies {
+    compile project(':uPortal-utils')
+
+    // compile "com.google.guava:guava:${guavaVersion}"
+}

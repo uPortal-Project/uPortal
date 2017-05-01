@@ -23,7 +23,6 @@ import java.util.Map;
  * retrieving join queries. It also requires a test query be specified.
  *
  * @author Eric Dalquist <a href="mailto:edalquist@unicon.net">edalquist@unicon.net</a>
- * @version $Revision$ $Date$
  */
 public abstract class JoinQueryString implements IJoinQueryString {
 

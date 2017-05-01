@@ -70,7 +70,7 @@ public class GsaSearchService implements IPortalSearchService {
 
     protected SearchResults search(String query) {
 
-        Map<String, String> vars = new HashMap<String, String>();
+        Map<String, String> vars = new HashMap<>();
         vars.put("query", query);
         vars.put("baseUrl", gsaBaseUrl);
         vars.put("site", gsaSite);

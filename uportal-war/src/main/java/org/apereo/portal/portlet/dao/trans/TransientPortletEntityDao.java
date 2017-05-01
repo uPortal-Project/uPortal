@@ -43,7 +43,6 @@ import org.springframework.stereotype.Repository;
  * against the {@link TransientUserLayoutManagerWrapper#SUBSCRIBE_PREFIX} prefix.
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 @Repository
 @Qualifier("transient")

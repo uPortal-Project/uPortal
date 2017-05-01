@@ -18,7 +18,6 @@ package org.apereo.portal;
  * Provides information about the portal
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public interface IPortalInfoProvider {
     /**

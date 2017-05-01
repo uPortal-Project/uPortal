@@ -22,7 +22,6 @@ import org.springframework.stereotype.Service;
  * the Xalan elements can only instantiate classes directly.
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 @Service
 public class XalanGroupMembershipHelper {

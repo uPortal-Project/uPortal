@@ -21,6 +21,5 @@ import org.apache.pluto.container.ResourceURLProvider;
  * portlet parameters, support for setting the next WindowState and PortletMode for the portlet.
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public interface IPortletResourcePortalUrl extends ResourceURLProvider {}

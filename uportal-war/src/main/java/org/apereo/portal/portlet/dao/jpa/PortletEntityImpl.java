@@ -60,7 +60,6 @@ import org.hibernate.annotations.Type;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  */
 @Entity
 @Table(name = "UP_PORTLET_ENT")

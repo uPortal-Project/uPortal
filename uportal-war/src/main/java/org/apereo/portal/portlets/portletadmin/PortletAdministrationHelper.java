@@ -247,7 +247,7 @@ public final class PortletAdministrationHelper implements ServletContextAware {
 
         // pre-populate with top-level category
         final IEntityGroup portletCategoriesGroup =
-                GroupService.getDistinguishedGroup(GroupService.PORTLET_CATEGORIES);
+                GroupService.getDistinguishedGroup(IPortletDefinition.DISTINGUISHED_GROUP);
         form.addCategory(
                 new JsonEntityBean(
                         portletCategoriesGroup,
@@ -255,7 +255,7 @@ public final class PortletAdministrationHelper implements ServletContextAware {
 
         // pre-populate with top-level group
         final IEntityGroup everyoneGroup =
-                GroupService.getDistinguishedGroup(GroupService.EVERYONE);
+                GroupService.getDistinguishedGroup(IPerson.DISTINGUISHED_GROUP);
         JsonEntityBean everyoneBean =
                 new JsonEntityBean(everyoneGroup, groupListHelper.getEntityType(everyoneGroup));
         form.addPrincipal(everyoneBean);

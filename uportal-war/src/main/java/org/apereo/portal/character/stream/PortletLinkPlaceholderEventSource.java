@@ -22,7 +22,6 @@ import org.apereo.portal.portlet.om.IPortletWindowId;
 
 /**
  * @author Jen Bourey, jennifer.bourey@gmail.com
- * @version $Revision$
  */
 public class PortletLinkPlaceholderEventSource extends PortletPlaceholderEventSource {
 

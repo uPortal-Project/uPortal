@@ -20,7 +20,6 @@ import org.apereo.portal.portlet.om.IPortletDefinitionId;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class MockPortletDefinitionId implements IPortletDefinitionId {
     private static final long serialVersionUID = 1L;

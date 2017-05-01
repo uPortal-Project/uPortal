@@ -43,7 +43,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
  *
  * @author Ken Weiner, kweiner@unicon.net
  * @author Don Fracapane, df7@columbia.edu
- * @version $Revision$
  */
 @Controller
 @RequestMapping("/Logout")

@@ -26,7 +26,6 @@ import org.springframework.webflow.mvc.portlet.AbstractFlowHandler;
  * Simple Flow handler just returns a specified flowId, defaults to 'view'.
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class ParamaterizableFlowHandler extends AbstractFlowHandler {
     protected final Log logger = LogFactory.getLog(this.getClass());

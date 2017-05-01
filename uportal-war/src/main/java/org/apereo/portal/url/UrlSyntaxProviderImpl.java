@@ -64,7 +64,6 @@ import org.springframework.web.util.UrlPathHelper;
  * human readable URL format.
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 @Component("portalUrlProvider")
 public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {

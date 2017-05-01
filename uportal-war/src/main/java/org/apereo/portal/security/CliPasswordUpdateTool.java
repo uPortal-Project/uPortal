@@ -32,7 +32,6 @@ import org.springframework.transaction.annotation.Transactional;
  * doesn't exist. The <code>-l</code> flag causes the specified user's account to be locked.
  *
  * @author Andrew Newman, newman@yale.edu
- * @version $Revision$
  */
 @Service("passwordUpdateTool")
 public class CliPasswordUpdateTool implements IPasswordUpdateTool {

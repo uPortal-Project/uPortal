@@ -23,7 +23,6 @@ import org.apereo.portal.character.stream.events.CharacterEventTypes;
  * Removes content not wrapped by {@link CharacterEventTypes#JSON_LAYOUT} marker events
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class JsonWrapperFilteringCharacterEventReader extends FilteringCharacterEventReader {
     private boolean inLayout = false;

@@ -29,7 +29,6 @@ import org.apereo.portal.spring.locator.LocalAccountDaoLocator;
  * protected by HTTP authentication (BASIC or otherwise).
  *
  * @author Andrew Newman, newman@yale.edu
- * @version $Revision$
  */
 class TrustSecurityContext extends ChainingSecurityContext implements ISecurityContext {
 

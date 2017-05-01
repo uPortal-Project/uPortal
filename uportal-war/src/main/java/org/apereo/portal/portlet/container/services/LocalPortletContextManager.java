@@ -49,7 +49,6 @@ import org.springframework.stereotype.Service;
 
 /**
  * @author Nicholas Blair, npblair@wisc.edu
- * @version $Revision$
  */
 @Service
 public class LocalPortletContextManager implements PortletRegistryService, PortletContextService {

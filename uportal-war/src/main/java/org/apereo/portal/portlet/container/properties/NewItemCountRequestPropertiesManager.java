@@ -21,7 +21,6 @@ import org.springframework.stereotype.Service;
 
 /**
  * @author Jen Bourey
- * @version $Revision$
  */
 @Service
 public class NewItemCountRequestPropertiesManager extends BaseRequestPropertiesManager {

@@ -50,7 +50,6 @@ import org.springframework.core.io.Resource;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class CachingResourceLoaderImplTest {
     private static File doc1;

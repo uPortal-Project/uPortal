@@ -23,7 +23,6 @@ import org.apache.commons.lang.Validate;
  * Base class to handle encoding strings
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public abstract class BaseEncodedStringBuilder implements Serializable, Cloneable {
     private static final long serialVersionUID = 1L;

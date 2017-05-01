@@ -71,7 +71,6 @@ import org.apache.pluto.container.driver.AdministrativeRequestListener;
  * </table>
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class AdministrativeRequestListenerController
         implements org.apache.pluto.container.driver.AdministrativeRequestListener {

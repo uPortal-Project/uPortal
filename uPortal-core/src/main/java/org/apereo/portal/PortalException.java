@@ -22,7 +22,6 @@ import java.util.Date;
  * instantiated. The Problems servlet displays recently reported PortalExceptions.
  *
  * @author Peter Kharchenko
- * @version $Revision$
  */
 public class PortalException extends RuntimeException {
     private static final long serialVersionUID = 1L;

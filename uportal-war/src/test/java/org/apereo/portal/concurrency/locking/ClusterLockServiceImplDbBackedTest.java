@@ -39,7 +39,6 @@ import org.springframework.test.context.ContextConfiguration;
  * and is found to (one hopes, falsely) fail intermittently.
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 //@RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:jpaClusterLockDaoTestContext.xml")

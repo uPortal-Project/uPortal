@@ -31,7 +31,6 @@ import org.hibernate.annotations.IndexColumn;
 /**
  * An {@link Evaluator} that contains a group of other evaluators
  *
- * @version $Revision$ $Date$
  * @since uPortal 2.5
  */
 @Entity

@@ -32,7 +32,6 @@ import org.springframework.stereotype.Service;
  * operations on the {@link Map} interface are supported.
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 @Service("cacheFactory")
 public class CacheProviderFactory implements CacheFactory {

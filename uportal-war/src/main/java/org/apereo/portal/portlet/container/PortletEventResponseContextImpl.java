@@ -26,7 +26,6 @@ import org.apereo.portal.url.IPortletUrlBuilder;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class PortletEventResponseContextImpl extends PortletStateAwareResponseContextImpl
         implements PortletEventResponseContext {

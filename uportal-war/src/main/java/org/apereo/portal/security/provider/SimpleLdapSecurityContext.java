@@ -43,7 +43,6 @@ import org.slf4j.LoggerFactory;
  * used.
  *
  * @author Russell Tokuyama (University of Hawaii)
- * @version $Revision$
  */
 public class SimpleLdapSecurityContext extends ChainingSecurityContext
         implements IConfigurableSecurityContext {

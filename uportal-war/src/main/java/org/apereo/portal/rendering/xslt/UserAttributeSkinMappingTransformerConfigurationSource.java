@@ -33,7 +33,6 @@ import org.springframework.beans.factory.annotation.Autowired;
  * #setSkinParameterName(String)} parameter.
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class UserAttributeSkinMappingTransformerConfigurationSource
         extends SkinMappingTransformerConfigurationSource {

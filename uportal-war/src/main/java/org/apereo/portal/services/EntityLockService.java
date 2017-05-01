@@ -64,7 +64,6 @@ import org.apereo.portal.properties.PropertiesManager;
  * the entity.
  *
  * @author Dan Ellentuck
- * @version $Revision$
  */
 public class EntityLockService {
 

@@ -29,7 +29,6 @@ import org.springframework.core.annotation.Order;
  * Ordered} or be annotated with {@link Order}
  *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public interface IRequestPropertiesManager {
 

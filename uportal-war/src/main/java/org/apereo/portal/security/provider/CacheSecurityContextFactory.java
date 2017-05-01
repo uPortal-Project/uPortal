@@ -22,7 +22,6 @@ import org.apereo.portal.security.ISecurityContextFactory;
  * CacheSecurityContext. See the notes and warnings associated with the CacheSecurityContext class.
  *
  * @author Andrew Newman, newman@yale.edu
- * @version $Revision$
  */
 public class CacheSecurityContextFactory implements ISecurityContextFactory {
 

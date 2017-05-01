@@ -29,7 +29,6 @@ import org.apereo.portal.spring.locator.PortalPasswordServiceLocator;
  * hashed password entry.
  *
  * @author Andrew Newman, newman@yale.edu
- * @version $Revision$
  */
 public class SimpleSecurityContext extends ChainingSecurityContext implements ISecurityContext {
 
