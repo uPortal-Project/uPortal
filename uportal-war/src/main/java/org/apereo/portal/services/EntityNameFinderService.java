@@ -32,7 +32,7 @@ public class EntityNameFinderService {
     private static EntityNameFinderService m_instance;
     private Map nameFinders = null;
     private static boolean initialized = false;
-    /** */
+
     private EntityNameFinderService() {
         super();
         initialize();
@@ -111,7 +111,7 @@ public class EntityNameFinderService {
     static void setInitialized(boolean newInitialized) {
         initialized = newInitialized;
     }
-    /** */
+
     public static void start() {
         if (!isInitialized()) {
             instance();

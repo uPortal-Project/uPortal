@@ -116,9 +116,6 @@ import org.apereo.portal.spring.locator.EntityTypesLocator;
  *
  * <p>The store is not implemented as a singleton, so you can have multiple concurrent instances
  * pointing to different groups root directories.
- *
- * <p>
- *
  */
 public class FileSystemGroupStore implements IEntityGroupStore, IEntityStore, IEntitySearcher {
     private static final Log log = LogFactory.getLog(FileSystemGroupStore.class);
@@ -204,11 +201,11 @@ public class FileSystemGroupStore implements IEntityGroupStore, IEntityStore, IE
     protected GroupHolder cacheGet(String key) {
         return (GroupHolder) getCache().get(key);
     }
-    /** */
+
     protected void cachePut(String key, Object val) {
         getCache().put(key, val);
     }
-    /** */
+
     protected String conformSeparatorChars(String s) {
         return s.replace(getBadSeparator(), getGoodSeparator());
     }
@@ -547,7 +544,7 @@ public class FileSystemGroupStore implements IEntityGroupStore, IEntityStore, IE
         String key = getFilePathFromKey(group.getLocalKey());
         return new File(key);
     }
-    /** */
+
     protected String getFilePathFromKey(String key) {
         if (log.isDebugEnabled())
             log.debug(DEBUG_CLASS_NAME + ".getFilePathFromKey(): for key: " + key);
@@ -629,7 +626,7 @@ public class FileSystemGroupStore implements IEntityGroupStore, IEntityStore, IE
 
         return ids;
     }
-    /** */
+
     protected String getKeyFromFile(File f) {
         String key = null;
         if (f.getPath().startsWith(getGroupsRootPath())) {
@@ -641,7 +638,7 @@ public class FileSystemGroupStore implements IEntityGroupStore, IEntityStore, IE
         }
         return key;
     }
-    /** */
+
     protected void initialize(GroupServiceConfiguration cfg) {
         cache = Collections.synchronizedMap(new HashMap());
 

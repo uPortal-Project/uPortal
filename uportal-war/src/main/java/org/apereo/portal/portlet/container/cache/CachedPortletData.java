@@ -12,7 +12,6 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/** */
 package org.apereo.portal.portlet.container.cache;
 
 import java.io.IOException;
@@ -25,7 +24,6 @@ import org.apereo.portal.portlet.rendering.PortletOutputHandler;
 
 /**
  * Java bean to represent the data cached for a portlet request via {@link CacheControl}s.
- *
  */
 public class CachedPortletData<T extends Serializable>
         implements CachedPortletResultHolder<T>, Serializable {

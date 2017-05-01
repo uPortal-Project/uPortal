@@ -22,11 +22,8 @@ import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Test;
 
-/**
- */
 public class FilterConfigImplTest {
 
-    /** */
     @Test
     public void testControl() {
         final List<InitParamType> initParams = new ArrayList<InitParamType>();
@@ -41,7 +38,6 @@ public class FilterConfigImplTest {
         Assert.assertNotNull(impl.getPortletContext());
     }
 
-    /** */
     @Test
     public void testParams() {
         final List<InitParamType> initParams = new ArrayList<InitParamType>();

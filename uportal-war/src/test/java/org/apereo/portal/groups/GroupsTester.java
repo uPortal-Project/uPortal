@@ -32,7 +32,6 @@ import org.apereo.portal.spring.locator.EntityTypesLocator;
 
 /**
  * Tests the groups framework (a start).
- *
  */
 public class GroupsTester extends TestCase {
     private static Class GROUP_CLASS;
@@ -112,7 +111,7 @@ public class GroupsTester extends TestCase {
     public GroupsTester(String name) {
         super(name);
     }
-    /** */
+
     protected void addTestEntityType() {
         try {
             EntityTypesLocator.getEntityTypes()
@@ -121,7 +120,7 @@ public class GroupsTester extends TestCase {
             print("GroupsTester.addTestEntityType(): " + ex.getMessage());
         }
     }
-    /** */
+
     protected void deleteTestEntityType() {
         try {
             EntityTypesLocator.getEntityTypes().deleteEntityType(TEST_ENTITY_CLASS);
@@ -129,7 +128,7 @@ public class GroupsTester extends TestCase {
             print("EntityCacheTester.deleteTestEntityType(): " + ex.getMessage());
         }
     }
-    /** */
+
     protected void deleteTestGroups() {
         String sql =
                 " FROM UP_GROUP WHERE ENTITY_TYPE_ID = "
@@ -238,7 +237,7 @@ public class GroupsTester extends TestCase {
         printBlankLine();
         print("END TESTING CACHE");
     }
-    /** */
+
     private static void print(IEntity[] entities) {
         for (int i = 0; i < entities.length; i++) {
             print("(" + (i + 1) + ") " + entities[i]);
@@ -254,7 +253,7 @@ public class GroupsTester extends TestCase {
     private static void printBlankLine() {
         System.out.println("");
     }
-    /** */
+
     protected void setUp() {
         try {
             if (GROUP_CLASS == null) {
@@ -282,7 +281,7 @@ public class GroupsTester extends TestCase {
             print("GroupsTester.setUp(): " + ex.getMessage());
         }
     }
-    /** */
+
     protected void tearDown() {
         try {
             testEntityKeys = null;
@@ -293,7 +292,7 @@ public class GroupsTester extends TestCase {
             print("GroupTester.tearDown(): " + ex.getMessage());
         }
     }
-    /** */
+
     public void testAddAndDeleteGroups() throws Exception {
         print(CR + "***** ENTERING GroupsTester.testAddAndDeleteGroups() *****" + CR);
         String msg = null;
@@ -325,7 +324,7 @@ public class GroupsTester extends TestCase {
 
         print(CR + "***** LEAVING GroupsTester.testAddAndDeleteGroups() *****" + CR);
     }
-    /** */
+
     public void testAddToALargeGroup() throws Exception {
         print(CR + "***** ENTERING GroupsTester.testAddToALargeGroup() *****" + CR);
 
@@ -451,7 +450,6 @@ public class GroupsTester extends TestCase {
         print(CR + "***** LEAVING GroupsTester.testPagsContains() *****" + CR);
     }
 
-    /** */
     public void testAddAndDeleteMembers() throws Exception {
         print(CR + "***** ENTERING GroupsTester.testAddAndDeleteMembers() *****" + CR);
         String msg = null;
@@ -528,7 +526,7 @@ public class GroupsTester extends TestCase {
 
         print(CR + "***** LEAVING GroupsTester.testAddAndDeleteMembers() *****" + CR);
     }
-    /** */
+
     public void testContains() throws Exception {
         print(CR + "***** ENTERING GroupsTester.testContains() *****" + CR);
         String msg = null;
@@ -609,7 +607,7 @@ public class GroupsTester extends TestCase {
 
         print(CR + "***** LEAVING GroupsTester.testContains() *****" + CR);
     }
-    /** */
+
     public void testDeleteChildGroup() throws Exception {
         print(CR + "***** ENTERING GroupsTester.testDeleteChildGroup() *****" + CR);
         String msg = null;
@@ -698,7 +696,7 @@ public class GroupsTester extends TestCase {
 
         print(CR + "***** LEAVING GroupsTester.testDeleteChildGroup() *****" + CR);
     }
-    /** */
+
     public void testGroupMemberUpdate() throws Exception {
         print(CR + "***** ENTERING GroupsTester.testGroupMemberUpdate() *****" + CR);
         String msg = null;
@@ -816,7 +814,7 @@ public class GroupsTester extends TestCase {
 
         print(CR + "***** LEAVING GroupsTester.testGroupMemberUpdate() *****" + CR);
     }
-    /** */
+
     public void testGroupMemberValidation() throws Exception {
         print(CR + "***** ENTERING GroupsTester.testGroupMemberValidation() *****" + CR);
         String msg = null;
@@ -928,7 +926,7 @@ public class GroupsTester extends TestCase {
 
         print(CR + "***** LEAVING GroupsTester.testGroupMemberValidation() *****" + CR);
     }
-    /** */
+
     public void testRetrieveParentGroups() throws Exception {
         print(CR + "***** ENTERING GroupsTester.testRetrieveParentGroups() *****" + CR);
         String msg = null;
@@ -994,7 +992,7 @@ public class GroupsTester extends TestCase {
 
         print(CR + "***** LEAVING GroupsTester.testRetrieveParentGroups() *****" + CR);
     }
-    /** */
+
     public void testUpdateLockableGroups() throws Exception {
         print(CR + "***** ENTERING GroupsTester.testUpdateLockableGroups() *****" + CR);
         String msg = null;
@@ -1099,7 +1097,7 @@ public class GroupsTester extends TestCase {
 
         print(CR + "***** LEAVING GroupsTester.testUpdateLockableGroups() *****" + CR);
     }
-    /** */
+
     public void testUpdateLockableGroupsWithRenewableLock() throws Exception {
         print(
                 CR
@@ -1177,7 +1175,7 @@ public class GroupsTester extends TestCase {
                         + "***** LEAVING GroupsTester.testUpdateLockableGroupsWithRenewableLock() *****"
                         + CR);
     }
-    /** */
+
     public void testUpdateMembersVisibility() throws Exception {
         print(CR + "***** ENTERING GroupsTester.testUpdateMembersVisibility() *****" + CR);
         String msg = null;
@@ -1290,7 +1288,6 @@ public class GroupsTester extends TestCase {
         print(CR + "***** LEAVING GroupsTester.testUpdateMembersVisibility() *****" + CR);
     }
 
-    /** */
     public void testMixLockableAndNonLockableGroups() throws Exception {
         print(CR + "***** ENTERING GroupsTester.testMixLockableAndNonLockableGroups() *****" + CR);
         String msg = null;
@@ -1360,7 +1357,7 @@ public class GroupsTester extends TestCase {
 
         print(CR + "***** LEAVING GroupsTester.testMixLockableAndNonLockableGroups() *****" + CR);
     }
-    /** */
+
     public void testConcurrentAccess() throws Exception {
         print(CR + "***** ENTERING GroupsTester.testConcurrentAccess() *****" + CR);
 
@@ -1434,7 +1431,6 @@ public class GroupsTester extends TestCase {
         print(CR + "***** LEAVING GroupsTester.testConcurrentAccess() *****" + CR);
     }
 
-    /** */
     public void testParseCompoundKeys() throws Exception {
         print(CR + "***** ENTERING GroupsTester.testParseCompoundKeys() *****" + CR);
 

@@ -30,7 +30,6 @@ public class PLFIntegrator {
 
     private static Log LOG = LogFactory.getLog(PLFIntegrator.class);
 
-    /** */
     public static void mergePLFintoILF(Document plf, Document ilf, IntegrationResult result)
             throws PortalException {
         // we want to use the root folders located as the single child of

@@ -12,7 +12,6 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/** */
 package org.apereo.portal.utils.cache;
 
 import java.util.Comparator;
@@ -31,7 +30,6 @@ import org.springframework.stereotype.Service;
 /**
  * This class exposes some limited functions around the provided {@link CacheManager}. It is used
  * within SpEL expressions by the Cache Manager portlet.
- *
  */
 @Service
 public class CacheManagementHelper {

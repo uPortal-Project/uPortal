@@ -27,7 +27,6 @@ import org.junit.Test;
 
 /**
  * Tests the PAGS testers.
- *
  */
 public class InjectAttributeRegexTesterTest {
     private static Class IPERSON_CLASS;
@@ -67,7 +66,6 @@ public class InjectAttributeRegexTesterTest {
         return new String(chars);
     }
 
-    /** */
     @Before
     public void setUp() throws ClassNotFoundException {
         if (IPERSON_CLASS == null) {

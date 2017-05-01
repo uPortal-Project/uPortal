@@ -33,7 +33,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Reference individual, or leaf, group service.
- *
  */
 public class ReferenceIndividualGroupService extends ReferenceCompositeGroupService
         implements IIndividualGroupService, ILockableGroupService {
@@ -398,7 +397,6 @@ public class ReferenceIndividualGroupService extends ReferenceCompositeGroupServ
         return groupFactory;
     }
 
-    /** */
     protected ComponentGroupServiceDescriptor getServiceDescriptor() {
         return serviceDescriptor;
     }
@@ -562,7 +560,6 @@ public class ReferenceIndividualGroupService extends ReferenceCompositeGroupServ
         return filterEntities(searchForGroups(query, method, leaftype), ancestor);
     }
 
-    /** */
     protected void throwExceptionIfNotInternallyManaged() throws GroupsException {
         if (!isInternallyManaged()) {
             throw new GroupsException("Group Service " + getServiceName() + " is not updatable.");

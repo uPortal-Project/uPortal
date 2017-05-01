@@ -289,7 +289,6 @@ public class ReferenceCompositeGroupService extends ReferenceComponentGroupServi
         return (EntityIdentifier[]) allIds.toArray(new EntityIdentifier[allIds.size()]);
     }
 
-    /** */
     protected void cacheAdd(IGroupMember gm) throws GroupsException {
         try {
             EntityCachingService.instance().add(gm);
@@ -299,7 +298,6 @@ public class ReferenceCompositeGroupService extends ReferenceComponentGroupServi
         }
     }
 
-    /** */
     protected void cacheRemove(IGroupMember gm) throws GroupsException {
         try {
             EntityCachingService.instance().remove(gm.getEntityIdentifier());
@@ -309,7 +307,6 @@ public class ReferenceCompositeGroupService extends ReferenceComponentGroupServi
         }
     }
 
-    /** */
     protected void cacheUpdate(IGroupMember gm) throws GroupsException {
         try {
             EntityCachingService.instance().update(gm);

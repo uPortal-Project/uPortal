@@ -12,7 +12,6 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/** */
 package org.apereo.portal.portlet.container.cache;
 
 import static junit.framework.Assert.assertFalse;
@@ -27,7 +26,6 @@ import org.apache.commons.io.output.NullOutputStream;
 import org.junit.Test;
 /**
  * Tests for {@link LimitingTeeOutputStream}.
- *
  */
 public class LimitingTeeOutputStreamTest {
 

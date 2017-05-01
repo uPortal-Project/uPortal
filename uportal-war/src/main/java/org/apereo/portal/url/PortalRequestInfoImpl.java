@@ -12,7 +12,6 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/** */
 package org.apereo.portal.url;
 
 import com.google.common.base.Preconditions;
@@ -31,7 +30,6 @@ import org.slf4j.LoggerFactory;
  *
  * <p>Default value for "action" is <strong>false</strong>. Default urlState is {@link
  * UrlState#NORMAL}.
- *
  */
 class PortalRequestInfoImpl implements IPortalRequestInfo {
 

@@ -40,7 +40,6 @@ import org.apereo.portal.services.GroupService;
 
 /**
  * Tests the authorization framework.
- *
  */
 public class AuthorizationTester extends TestCase {
     private String OWNER = "UP_FRAMEWORK";
@@ -296,7 +295,7 @@ public class AuthorizationTester extends TestCase {
     private static void printBlankLine() {
         System.out.println("");
     }
-    /** */
+
     protected void setUp() {
         String msg = null;
         IPermission[] retrievedPermissions = null;
@@ -422,7 +421,7 @@ public class AuthorizationTester extends TestCase {
             print("AuthorizationTester.setUp(): " + ex.getMessage());
         }
     }
-    /** */
+
     protected void tearDown() {
         try {
             IPermission[] permissions =
@@ -435,7 +434,7 @@ public class AuthorizationTester extends TestCase {
             print("AuthorizationTester.tearDown(): " + ex.getMessage());
         }
     }
-    /** */
+
     public void testAlternativePermissionPolicies() throws Exception {
         print("***** ENTERING AuthorizationTester.testAlternativePermissionPolicies() *****");
         String msg = null;
@@ -492,7 +491,7 @@ public class AuthorizationTester extends TestCase {
 
         print("***** LEAVING AuthorizationTester.testAlternativePermissionPolicies() *****" + CR);
     }
-    /** */
+
     public void testDoesPrincipalHavePermission() throws Exception {
         print("***** ENTERING AuthorizationTester.testDoesPrincipalHavePermission() *****");
         String msg = null;
@@ -527,7 +526,7 @@ public class AuthorizationTester extends TestCase {
 
         print("***** LEAVING AuthorizationTester.testDoesPrincipalHavePermission() *****" + CR);
     }
-    /** */
+
     public void testPermissionStore() throws Exception {
         print("***** ENTERING AuthorizationTester.testPermissionStore() *****");
         String msg = null;

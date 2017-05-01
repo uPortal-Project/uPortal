@@ -12,7 +12,6 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/** */
 package org.apereo.portal.portlet.container.cache;
 
 import javax.portlet.CacheControl;
@@ -22,7 +21,6 @@ import org.apereo.portal.portlet.rendering.PortletRenderResult;
 
 /**
  * Interface defining mechanism for retrieving {@link CacheControl}s.
- *
  */
 public interface IPortletCacheControlService {
 

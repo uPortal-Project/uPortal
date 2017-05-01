@@ -222,7 +222,7 @@ public class ReferenceEntityLockService implements IEntityLockService {
     public boolean isValid(IEntityLock lock) throws LockingException {
         return isUnexpired(lock) && existsInStore(lock);
     }
-    /** */
+
     private boolean isValidLockType(int lockType) {
         return ((lockType == READ_LOCK) || (lockType == WRITE_LOCK));
     }

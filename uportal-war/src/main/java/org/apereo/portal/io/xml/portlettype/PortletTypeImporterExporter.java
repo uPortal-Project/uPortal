@@ -12,7 +12,6 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/** */
 package org.apereo.portal.io.xml.portlettype;
 
 import java.util.Collections;
@@ -27,8 +26,6 @@ import org.apereo.portal.utils.SafeFilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- */
 public class PortletTypeImporterExporter extends AbstractJaxbDataHandler<ExternalPortletType> {
 
     private PortletTypePortalDataType typePortalDataType;

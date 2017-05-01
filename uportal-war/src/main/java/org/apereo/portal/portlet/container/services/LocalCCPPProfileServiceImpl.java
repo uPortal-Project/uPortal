@@ -12,7 +12,6 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/** */
 package org.apereo.portal.portlet.container.services;
 
 import javax.ccpp.Profile;
@@ -24,7 +23,6 @@ import org.springframework.stereotype.Service;
 /**
  * Simple {@link CCPPProfileService}. Calls out to {@link ProfileFactory#getInstance()}, which
  * returns null if no implementation is available.
- *
  */
 @Service("cCPPProfileService")
 public class LocalCCPPProfileServiceImpl implements CCPPProfileService {

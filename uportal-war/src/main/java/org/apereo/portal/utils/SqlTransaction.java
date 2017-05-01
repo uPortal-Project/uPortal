@@ -21,7 +21,6 @@ import org.apereo.portal.jdbc.RDBMServices;
 
 /**
  * This type is a place to centralize the portal's sql transaction code.
- *
  */
 public class SqlTransaction {
     private static final Log log = LogFactory.getLog(SqlTransaction.class);
@@ -55,7 +54,7 @@ public class SqlTransaction {
         RDBMServices.commit(conn);
         RDBMServices.setAutoCommit(conn, true);
     }
-    /** */
+
     protected static void logNoTransactionWarning() {
         String msg =
                 "You are running the portal on a database that does not support transactions.  "

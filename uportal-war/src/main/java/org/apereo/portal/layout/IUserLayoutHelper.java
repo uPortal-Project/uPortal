@@ -12,7 +12,6 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/** */
 package org.apereo.portal.layout;
 
 import org.jasig.services.persondir.IPersonAttributes;
@@ -20,7 +19,6 @@ import org.jasig.services.persondir.IPersonAttributes;
 /**
  * Defines operations to assist in administering user layouts.  This bean is used in the
  * 'reset-user-layout' webflow.
- *
  */
 public interface IUserLayoutHelper {
 

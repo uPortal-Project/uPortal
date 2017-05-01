@@ -12,7 +12,6 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/** */
 package org.apereo.portal.web.skin;
 
 import org.apache.commons.logging.Log;
@@ -24,7 +23,6 @@ import org.springframework.stereotype.Service;
 
 /**
  * Class to facilitate enabling/disabling Resources aggregation.
- *
  */
 @Service
 public class ResourcesAggregationHelper {

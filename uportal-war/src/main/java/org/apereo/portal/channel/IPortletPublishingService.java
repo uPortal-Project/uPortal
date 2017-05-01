@@ -20,7 +20,6 @@ import org.apereo.portal.portlet.om.IPortletDefinition;
 import org.apereo.portal.portlet.om.PortletCategory;
 import org.apereo.portal.security.IPerson;
 
-/** */
 public interface IPortletPublishingService {
 
     public IPortletDefinition savePortletDefinition(

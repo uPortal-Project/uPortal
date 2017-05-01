@@ -12,7 +12,6 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/** */
 package org.apereo.portal.web.skin;
 
 import java.util.Collections;
@@ -31,7 +30,6 @@ import org.w3c.dom.NodeList;
 /**
  * Used by Xalan to transform a {@link Resources} to the correct HTML head elements (script tags for
  * javascript and link tags for css).
- *
  */
 public class ResourcesElementsXsltcHelper extends TransformerConfigurationSourceAdapter {
     protected final Log logger = LogFactory.getLog(this.getClass());

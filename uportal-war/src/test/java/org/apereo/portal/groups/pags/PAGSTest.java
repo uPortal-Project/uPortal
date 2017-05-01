@@ -34,7 +34,6 @@ import org.apereo.portal.security.provider.PersonImpl;
 
 /**
  * Tests the PAGS testers.
- *
  */
 public class PAGSTest extends TestCase {
     private static final Log LOG = LogFactory.getLog(PAGSTest.class);
@@ -87,7 +86,7 @@ public class PAGSTest extends TestCase {
     private static void print(String msg) {
         LOG.debug(msg);
     }
-    /** */
+
     protected void setUp() {
         try {
             if (IPERSON_CLASS == null) {
@@ -125,9 +124,9 @@ public class PAGSTest extends TestCase {
             print("GroupsTester.setUp(): " + ex.getMessage());
         }
     }
-    /** */
+
     protected void tearDown() {}
-    /** */
+
     public void testStringEqualsTester() throws Exception {
         print(CR + "***** ENTERING PAGSTester.testStringEqualsTester() *****" + CR);
         String msg = null;
@@ -194,7 +193,7 @@ public class PAGSTest extends TestCase {
         print("Success!");
         print(CR + "***** LEAVING PAGSTester.testStringEqualsIgnoreCaseTester() *****" + CR);
     }
-    /** */
+
     public void testIntegerEQTester() throws Exception {
         print(CR + "***** ENTERING PAGSTester.testIntegerEQTester() *****" + CR);
         String msg = null;
@@ -228,7 +227,7 @@ public class PAGSTest extends TestCase {
         print("Success!");
         print(CR + "***** LEAVING PAGSTester.testIntegerEQTester() *****" + CR);
     }
-    /** */
+
     public void testIntegerGTTester() throws Exception {
         print(CR + "***** ENTERING PAGSTester.testIntegerGTTester() *****" + CR);
         String msg = null;

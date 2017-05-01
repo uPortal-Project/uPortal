@@ -26,7 +26,6 @@ import org.apereo.portal.concurrency.LockingException;
 import org.apereo.portal.utils.SmartCache;
 /**
  * In-memory store for <code>IEntityLocks</code>.
- *
  */
 public class MemoryEntityLockStore implements IEntityLockStore {
     private static IEntityLockStore singleton;
@@ -216,7 +215,6 @@ public class MemoryEntityLockStore implements IEntityLockStore {
         }
     }
 
-    /** */
     private void initializeCache() {
         lockCache = new HashMap(10);
     }

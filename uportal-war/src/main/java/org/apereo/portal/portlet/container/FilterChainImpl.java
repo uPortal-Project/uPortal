@@ -12,7 +12,6 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/** */
 package org.apereo.portal.portlet.container;
 
 import java.io.IOException;
@@ -40,7 +39,6 @@ import org.apache.pluto.container.om.portlet.Filter;
 
 /**
  * Implementation of {@link FilterChain}.
- *
  */
 public class FilterChainImpl implements FilterChain {
 
