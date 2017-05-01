@@ -22,7 +22,6 @@ import org.dom4j.Document;
  * that are replaced with real values at runtime before importing.
  *
  * @since 4.2
- * @author drewwills
  */
 public interface IDataTemplatingStrategy {
 

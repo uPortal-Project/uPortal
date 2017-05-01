@@ -34,7 +34,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
- * @author Eric Dalquist
  */
 public class PortletResponseContextImpl extends AbstractPortletContextImpl
         implements PortletResponseContext {

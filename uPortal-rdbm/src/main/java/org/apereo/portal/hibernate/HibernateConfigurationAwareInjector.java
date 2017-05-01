@@ -25,7 +25,6 @@ import org.springframework.stereotype.Service;
 /**
  * Injects the {@link HibernateConfiguration} into beans that want to know about it
  *
- * @author Eric Dalquist
  */
 @Service("hibernateConfigurationAwareInjector")
 public final class HibernateConfigurationAwareInjector {

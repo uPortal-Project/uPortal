@@ -19,7 +19,6 @@ import org.apereo.portal.EntityIdentifier;
 /**
  * Defines an api for searching for entities
  *
- * @author Alex Vigdor
  */
 public interface IEntitySearcher {
     /**

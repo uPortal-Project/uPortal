@@ -18,7 +18,6 @@ import java.util.Iterator;
 import org.apereo.portal.character.stream.events.CharacterEvent;
 
 /**
- * @author Eric Dalquist
  */
 public interface CharacterEventReader extends Iterator<CharacterEvent> {
     /**

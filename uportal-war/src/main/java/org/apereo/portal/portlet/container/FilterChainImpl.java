@@ -41,7 +41,6 @@ import org.apache.pluto.container.om.portlet.Filter;
 /**
  * Implementation of {@link FilterChain}.
  *
- * @author Nicholas Blair, npblair@wisc.edu
  */
 public class FilterChainImpl implements FilterChain {
 

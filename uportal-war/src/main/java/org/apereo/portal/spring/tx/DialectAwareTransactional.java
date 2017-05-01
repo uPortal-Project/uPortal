@@ -26,7 +26,6 @@ import org.springframework.transaction.annotation.Transactional;
  * Added to methods annotated with {@link Transactional} to determine if a transaction is actually
  * needed based on the dialect
  *
- * @author Eric Dalquist
  */
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)

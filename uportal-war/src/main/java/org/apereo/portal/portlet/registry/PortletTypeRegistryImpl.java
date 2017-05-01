@@ -20,7 +20,6 @@ import org.apereo.portal.portlet.om.IPortletType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-/** @author Jen Bourey, jbourey@unicon.net */
 @Service("portletTypeRegistry")
 public class PortletTypeRegistryImpl implements IPortletTypeRegistry {
 

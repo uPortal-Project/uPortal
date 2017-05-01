@@ -15,7 +15,6 @@
 package org.apereo.portal.events.aggr.groups;
 
 /**
- * @author Eric Dalquist
  */
 public interface AggregatedGroupMapping {
     long getId();

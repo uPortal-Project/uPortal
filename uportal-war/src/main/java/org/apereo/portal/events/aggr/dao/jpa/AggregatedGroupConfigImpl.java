@@ -41,7 +41,6 @@ import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.NaturalId;
 
 /**
- * @author Eric Dalquist
  */
 @Entity
 @Table(name = "UP_EVENT_AGGR_CONF_GROUPS")

@@ -23,7 +23,6 @@ import org.apereo.portal.url.IPortalRequestInfo;
 /**
  * Publishes events related to portlet execution
  *
- * @author Eric Dalquist
  */
 public interface IPortletExecutionEventFactory {
 

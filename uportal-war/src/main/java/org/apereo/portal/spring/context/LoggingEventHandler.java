@@ -23,7 +23,6 @@ import org.springframework.util.Assert;
  * Instance of Event Handler that delegates to Commons Logging and writes out events at the INFO
  * level.
  *
- * @author Scott Battaglia
  * @since 2.6
  */
 public final class LoggingEventHandler extends FilteringApplicationListener<ApplicationEvent> {

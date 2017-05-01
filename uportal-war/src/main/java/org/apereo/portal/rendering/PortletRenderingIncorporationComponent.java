@@ -34,7 +34,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 /**
  * Inserts the results of portlet's rendering into the character stream
  *
- * @author Eric Dalquist
  */
 public class PortletRenderingIncorporationComponent extends CharacterPipelineComponentWrapper {
     private IPortletExecutionManager portletExecutionManager;

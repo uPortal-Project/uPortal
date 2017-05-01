@@ -45,8 +45,6 @@ import org.springframework.stereotype.Service;
 /**
  * Attempts to authenticate a user and retrieve attributes associated with the user.
  *
- * @author Ken Weiner, kweiner@unicon.net
- * @author Don Fracapane (df7@columbia.edu) Added properties in the security properties file that
  *     hold the tokens used to represent the principal and credential for each security context.
  *     This version differs in the way the principal and credentials are set (all contexts are set
  *     up front after evaluating the tokens). See setContextParameters() also. Changes put in to

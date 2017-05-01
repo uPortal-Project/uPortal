@@ -24,7 +24,6 @@ import org.slf4j.Logger;
 /**
  * Description
  *
- * @author James Wennmacher, jwennmacher@unicon.net
  */
 public class ImmutableTransientUserLayoutManagerWrapper extends TransientUserLayoutManagerWrapper {
     private final Logger logger = org.slf4j.LoggerFactory.getLogger(this.getClass());

@@ -17,7 +17,6 @@ package org.apereo.portal.layout.om;
 /**
  * Commons properties for all stylesheet properties/attributes/parameters
  *
- * @author Eric Dalquist
  */
 public interface IStylesheetData {
     public enum Scope {

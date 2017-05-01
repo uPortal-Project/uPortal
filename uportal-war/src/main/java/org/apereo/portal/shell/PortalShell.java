@@ -34,7 +34,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.context.ApplicationContext;
 
-/** @author Eric Dalquist */
 public class PortalShell {
     static final Logger LOGGER = LoggerFactory.getLogger(PortalShell.class);
 

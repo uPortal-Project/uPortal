@@ -21,7 +21,6 @@ import org.apereo.portal.security.IPerson;
 /**
  * Provides access to the layout and rendering related services for a portal user.
  *
- * @author Eric Dalquist
  */
 public interface IUserInstance {
     /** @return The Person this UserInstance is for */

@@ -36,7 +36,6 @@ import org.springframework.stereotype.Service;
  * methods include convenience methods for populating and editing form objects, as well as saving
  * information supplied to a group form.
  *
- * @author Jen Bourey, jbourey@unicon.net
  */
 @Service
 public class GroupAdministrationHelper {

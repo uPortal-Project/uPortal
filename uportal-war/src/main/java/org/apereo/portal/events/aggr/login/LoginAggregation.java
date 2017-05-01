@@ -18,7 +18,6 @@ import org.apereo.portal.events.LoginEvent;
 import org.apereo.portal.events.aggr.BaseAggregation;
 
 /**
- * @author Eric Dalquist
  */
 public interface LoginAggregation
         extends BaseAggregation<LoginAggregationKey, LoginAggregationDiscriminator> {

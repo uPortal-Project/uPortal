@@ -17,7 +17,6 @@ package org.apereo.portal.layout;
 /**
  * Interface by which portal talks to the database
  *
- * @author George Lindholm
  */
 import com.google.common.cache.Cache;
 import java.util.Hashtable;

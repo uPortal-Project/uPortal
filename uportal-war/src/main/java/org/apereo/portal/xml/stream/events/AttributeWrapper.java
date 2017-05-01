@@ -18,7 +18,6 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.events.Attribute;
 
 /**
- * @author Eric Dalquist
  */
 public class AttributeWrapper extends XMLEventWrapper implements Attribute {
     private final Attribute attribute;

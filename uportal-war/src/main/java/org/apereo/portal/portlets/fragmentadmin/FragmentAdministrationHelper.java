@@ -29,7 +29,6 @@ import org.springframework.webflow.execution.RequestContext;
 /**
  * Helper class for the FragmentAdministration web flow.
  *
- * @author Nicholas Blair, npblair@wisc.edu
  */
 @Service("fragmentAdministrationHelper")
 public class FragmentAdministrationHelper {

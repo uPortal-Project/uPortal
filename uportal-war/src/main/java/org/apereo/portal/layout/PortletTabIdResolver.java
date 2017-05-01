@@ -28,7 +28,6 @@ import org.w3c.dom.Node;
  * href="http://stackoverflow.com/questions/6340802/java-xpath-apache-jaxp-implementation-performance">
  * without optimization</a>).
  *
- * @author Arvīds Grabovskis
  */
 public class PortletTabIdResolver implements INodeIdResolver {
 

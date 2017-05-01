@@ -22,7 +22,6 @@ import org.apereo.portal.utils.MovingAverageSample;
 /**
  * uPortal metrics to make available via JMX.
  *
- * @author George Lindholm <a href="mailto:George.Lindholm@ubc.ca">George.Lindholm@ubc.ca</a>
  * @since uPortal 2.5
  */
 public class FrameworkMBeanImpl implements FrameworkMBean {

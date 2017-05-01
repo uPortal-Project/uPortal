@@ -42,7 +42,6 @@ import org.springframework.beans.factory.annotation.Autowired;
  * Base implementation of portlet definition source that adds the portlet webapp, name, and
  * framework portlet info
  *
- * @author James Wennmacher jwennmacher@unicon.net
  */
 public class PortletDefinitionAttributeSource implements AttributeSource, BeanNameAware {
     protected final Logger logger = LoggerFactory.getLogger(getClass());

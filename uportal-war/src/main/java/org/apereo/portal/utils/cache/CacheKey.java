@@ -40,7 +40,6 @@ import org.apereo.portal.utils.Populator;
  * Tags can be added to a key which are used with the {@link TaggedCacheEntry} facilities. These
  * tags ARE NOT included in CacheKey comparison.
  *
- * @author Eric Dalquist
  */
 public final class CacheKey implements Serializable, TaggedCacheEntry {
     private static final long serialVersionUID = 1L;

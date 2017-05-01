@@ -32,7 +32,6 @@ import org.springframework.stereotype.Repository;
  * JPA/Hibernate implementation of IChannelTypeDao. This DAO handles channel types and is not yet
  * integrated with the channel definition persistence code.
  *
- * @author Jen Bourey, jbourey@unicon.net
  */
 @Repository
 public class JpaPortletTypeDao extends BasePortalJpaDao implements IPortletTypeDao {

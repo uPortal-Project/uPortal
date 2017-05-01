@@ -35,7 +35,6 @@ import org.apereo.portal.security.provider.PersonImpl;
 /**
  * Tests the PAGS testers.
  *
- * @author: Dan Ellentuck
  */
 public class PAGSTest extends TestCase {
     private static final Log LOG = LogFactory.getLog(PAGSTest.class);

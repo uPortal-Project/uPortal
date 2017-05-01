@@ -45,7 +45,6 @@ import org.springframework.web.context.request.RequestAttributes;
 /**
  * Aspect that caches the results of a method invocation in the current {@link RequestAttributes}
  *
- * @author Eric Dalquist
  */
 @Aspect
 @Component("requestCacheAspect")

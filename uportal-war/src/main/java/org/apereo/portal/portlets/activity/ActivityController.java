@@ -48,7 +48,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.portlet.bind.annotation.RenderMapping;
 import org.springframework.web.servlet.ModelAndView;
 
-/** @author Chris Waymire (chris@waymire.net) */
 @Controller
 @RequestMapping("VIEW")
 public class ActivityController {

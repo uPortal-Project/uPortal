@@ -23,7 +23,6 @@ import javax.portlet.filter.FilterChain;
 import javax.portlet.filter.FilterConfig;
 import javax.portlet.filter.RenderFilter;
 
-/** @author Nicholas Blair, npblair@wisc.edu */
 public class MockRenderFilter implements RenderFilter {
 
     /* (non-Javadoc)

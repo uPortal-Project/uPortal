@@ -20,7 +20,6 @@ import org.apereo.portal.character.stream.events.CharacterEvent;
 /**
  * {@link PipelineComponent} for a {@link CharacterEventReader}
  *
- * @author Eric Dalquist
  */
 public interface CharacterPipelineComponent
         extends PipelineComponent<CharacterEventReader, CharacterEvent> {}

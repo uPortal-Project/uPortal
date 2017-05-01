@@ -18,7 +18,6 @@ import org.apache.commons.lang.Validate;
 import org.apereo.portal.portlet.om.IPortletEntityId;
 import org.apereo.portal.portlet.om.IPortletWindowId;
 
-/** @author Eric Dalquist */
 class PortletWindowIdImpl implements IPortletWindowId {
     private static final long serialVersionUID = 2L;
 

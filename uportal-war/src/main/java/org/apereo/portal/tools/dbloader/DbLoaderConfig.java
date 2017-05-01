@@ -15,7 +15,6 @@
 package org.apereo.portal.tools.dbloader;
 
 /**
- * @author Eric Dalquist
  */
 public interface DbLoaderConfig {
 

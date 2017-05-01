@@ -21,7 +21,6 @@ import java.util.concurrent.ConcurrentMap;
 /**
  * Utilities for working with concurrent maps
  *
- * @author Eric Dalquist
  */
 public final class ConcurrentMapUtils {
     private ConcurrentMapUtils() {}

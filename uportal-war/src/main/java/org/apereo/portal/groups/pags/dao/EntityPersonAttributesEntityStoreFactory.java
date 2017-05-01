@@ -19,7 +19,6 @@ import org.apereo.portal.groups.IEntityStore;
 import org.apereo.portal.groups.IEntityStoreFactory;
 
 /**
- * @author Shawn Connolly, sconnolly@unicon.net
  * @since 4.1
  */
 public class EntityPersonAttributesEntityStoreFactory implements IEntityStoreFactory {

@@ -27,7 +27,6 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
  * intended to be used in a JPA/Hibernate-managed map and does not include the locale itself as part
  * of its data model.
  *
- * @author Jen Bourey, jbourey@unicon.net
  */
 @Embeddable
 @Table(name = "UP_PORTLET_MDATA")

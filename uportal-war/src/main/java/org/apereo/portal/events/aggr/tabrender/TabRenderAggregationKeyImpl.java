@@ -24,7 +24,6 @@ import org.apereo.portal.events.aggr.tabs.AggregatedTabMapping;
 /**
  * Basic impl of {@link TabRenderAggregationKey}
  *
- * @author Eric Dalquist
  */
 public final class TabRenderAggregationKeyImpl extends BaseAggregationKeyImpl
         implements TabRenderAggregationKey {

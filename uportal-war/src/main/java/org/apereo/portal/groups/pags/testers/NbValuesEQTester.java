@@ -19,7 +19,6 @@ import org.apereo.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
 /**
  * A tester for examining if an <code>IPerson</code> attribute has exactly nth values.
  *
- * @author GIP RECIA - Julien Gribonvald
  * @since 5.0
  */
 public final class NbValuesEQTester extends AbstractNbValuesTester {

@@ -31,7 +31,6 @@ import org.springframework.beans.factory.annotation.Autowired;
  * Base {@link PortalEvent} aggregator, useful for aggregations that extend from {@link
  * BaseAggregationImpl}
  *
- * @author Eric Dalquist
  * @param <E> The {@link PortalEvent} type handled by this aggregator
  * @param <T> The {@link BaseAggregationImpl} subclass operated on by this aggregator
  * @param <K> The {@link BaseAggregationKey} type used by this aggregator

@@ -42,7 +42,6 @@ import org.springframework.stereotype.Repository;
  * rendering of the portlet. Transient portlets are detected by checking the channel subscribe ID
  * against the {@link TransientUserLayoutManagerWrapper#SUBSCRIBE_PREFIX} prefix.
  *
- * @author Eric Dalquist
  */
 @Repository
 @Qualifier("transient")

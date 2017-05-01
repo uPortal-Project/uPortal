@@ -21,7 +21,6 @@ import org.apereo.portal.events.tincan.json.LocalizedStringSerializer;
 /**
  * A String with an associated Locale
  *
- * @author Eric Dalquist
  */
 @JsonSerialize(using = LocalizedStringSerializer.class)
 public class LocalizedString {

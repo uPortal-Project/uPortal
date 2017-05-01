@@ -25,7 +25,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 
 /**
- * @author Eric Dalquist
  */
 public class PipelineStylesheetTest {
     protected final Logger logger = LoggerFactory.getLogger(getClass());

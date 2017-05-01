@@ -31,7 +31,6 @@ import org.springframework.stereotype.Service;
  * This uses the {@link MapCacheProvider} to perform the wrapping. Refer to that class for which
  * operations on the {@link Map} interface are supported.
  *
- * @author Eric Dalquist
  */
 @Service("cacheFactory")
 public class CacheProviderFactory implements CacheFactory {

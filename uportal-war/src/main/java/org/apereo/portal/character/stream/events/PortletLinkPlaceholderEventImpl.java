@@ -17,7 +17,6 @@ package org.apereo.portal.character.stream.events;
 import org.apereo.portal.portlet.om.IPortletWindowId;
 
 /**
- * @author Jen Bourey, jennifer.bourey@gmail.com
  */
 public final class PortletLinkPlaceholderEventImpl extends PortletPlaceholderEventImpl
         implements PortletLinkPlaceholderEvent {

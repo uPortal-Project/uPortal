@@ -21,7 +21,6 @@ import org.apereo.portal.security.IPerson;
  * Base API for layout caching service. The implementation should handle appropriately expiring
  * layouts when the user logs out
  *
- * @author Eric Dalquist
  */
 public interface ILayoutCachingService {
 

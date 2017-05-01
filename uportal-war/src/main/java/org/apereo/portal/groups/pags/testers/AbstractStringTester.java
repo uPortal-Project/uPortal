@@ -20,7 +20,6 @@ import org.apereo.portal.security.IPerson;
 /**
  * Abstract class tests a possibly multi-valued attribute against a test value.
  *
- * @author Dan Ellentuck
  */
 public abstract class AbstractStringTester extends BaseAttributeTester {
 

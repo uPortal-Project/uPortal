@@ -19,7 +19,6 @@ import org.joda.time.DateMidnight;
 /**
  * Details about a term of the year
  *
- * @author Eric Dalquist
  */
 public interface AcademicTermDetail
         extends DateRange<DateMidnight>, Comparable<AcademicTermDetail> {

@@ -21,7 +21,6 @@ import org.w3c.dom.Element;
 /**
  * Layout processing action for changnig the set of restrictions for a fragment node.
  *
- * @author Mark Boyd
  */
 public class LPAEditRestriction implements ILayoutProcessingAction {
     private IPerson person = null;

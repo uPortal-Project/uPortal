@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServletRequest;
  * account). Instances are sorted in natural order.
  *
  * @since 5.0
- * @author drewwills
  */
 public interface IGuestUsernameSelector extends Comparable<IGuestUsernameSelector> {
 

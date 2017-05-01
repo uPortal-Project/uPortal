@@ -22,7 +22,6 @@ import java.util.List;
  * column headings. Various implementations will generate the text as they see fit based upon
  * available data.
  *
- * @author James Wennmacher, jameswennmacher@gmail.com
  */
 public interface ReportTitleAndColumnDescriptionStrategy {
 

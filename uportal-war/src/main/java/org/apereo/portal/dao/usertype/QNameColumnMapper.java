@@ -18,7 +18,6 @@ import javax.xml.namespace.QName;
 import org.jadira.usertype.spi.shared.AbstractStringColumnMapper;
 
 /**
- * @author Eric Dalquist
  */
 public class QNameColumnMapper extends AbstractStringColumnMapper<QName> {
     private static final long serialVersionUID = 1L;

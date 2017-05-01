@@ -41,7 +41,6 @@ import org.springframework.stereotype.Service;
  * IPortletWindow}. The {@link org.apereo.portal.portlet.url.RequestType} is tracked in the {@link
  * IPortletRequestParameterManager}.
  *
- * @author Eric Dalquist
  */
 @Service("portletRequestParameterProcessor")
 public class PortletRequestParameterProcessor implements IRequestParameterProcessor {

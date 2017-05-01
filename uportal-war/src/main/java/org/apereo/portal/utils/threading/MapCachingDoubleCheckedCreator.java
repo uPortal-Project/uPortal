@@ -28,7 +28,6 @@ import org.apache.commons.lang.builder.ToStringStyle;
  * {@link #create(Object...)} to create new instances of the objects. <br>
  * The default constructor uses a {@link ReferenceMap} with hard references to the keys
  *
- * @author Eric Dalquist
  */
 public abstract class MapCachingDoubleCheckedCreator<K, T> extends DoubleCheckedCreator<T> {
     private final Map<K, T> objectCache;

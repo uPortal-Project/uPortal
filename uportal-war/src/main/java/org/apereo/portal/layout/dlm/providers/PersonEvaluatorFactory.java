@@ -25,7 +25,6 @@ import org.w3c.dom.NodeList;
  * Implementation of the Evaluator Factory interface that creates evaluators of string attributes in
  * implementations of IPerson to determine if a user gets a layout fragment.
  *
- * @author mboyd@sungardsct.com
  * @since uPortal 2.5
  */
 public class PersonEvaluatorFactory implements EvaluatorFactory {

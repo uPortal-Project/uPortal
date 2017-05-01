@@ -24,7 +24,6 @@ import org.springframework.stereotype.Service;
  * Copies {@link TrackingThreadLocal} data from the portal request thread into the portlet execution
  * thread and cleans up afterwards.
  *
- * @author Eric Dalquist
  */
 @Service("TrackingThreadLocalPortletExecutionInterceptor")
 public class TrackingThreadLocalPortletExecutionInterceptor

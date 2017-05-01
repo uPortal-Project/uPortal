@@ -20,7 +20,6 @@ import org.apereo.portal.portlet.om.IPortletEntityId;
 /**
  * Identifies a portlet entity
  *
- * @author Eric Dalquist
  */
 class PortletEntityIdImpl extends AbstractObjectId implements IPortletEntityId {
     private static final long serialVersionUID = 1L;

@@ -38,7 +38,6 @@ import org.springframework.transaction.support.TransactionCallback;
 /**
  * JPA dao to manage aggregated group mappings
  *
- * @author Eric Dalquist
  */
 @Repository
 public class JpaAggregatedGroupLookupDao extends BaseAggrEventsJpaDao

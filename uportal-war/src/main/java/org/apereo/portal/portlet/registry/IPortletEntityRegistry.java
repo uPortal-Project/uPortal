@@ -25,7 +25,6 @@ import org.apereo.portal.user.IUserInstance;
 /**
  * Provides methods for creating and accessing {@link IPortletEntity} and related objects.
  *
- * @author Eric Dalquist
  */
 public interface IPortletEntityRegistry {
     /**

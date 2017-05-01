@@ -20,7 +20,6 @@ import org.apereo.portal.EntityIdentifier;
 /**
  * Interface for finding and maintaining <code>IEntityGroups</code>.
  *
- * @author Dan Ellentuck
  * @version 1.0, 11/29/01
  */
 public interface IEntityGroupStore extends IGroupConstants {

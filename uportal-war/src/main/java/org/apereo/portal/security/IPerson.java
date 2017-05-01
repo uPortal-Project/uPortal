@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Map;
 import org.apereo.portal.IBasicEntity;
 
-/** @author Bernie Durfee, bdurfee@interactivebusiness.com */
 public interface IPerson extends Principal, IAdditionalDescriptor, IBasicEntity, Serializable {
 
     /** String used as a key for the eduPerson username attribute. */

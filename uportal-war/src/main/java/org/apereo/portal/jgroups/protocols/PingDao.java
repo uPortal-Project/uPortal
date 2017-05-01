@@ -22,7 +22,6 @@ import org.jgroups.PhysicalAddress;
 /**
  * Shared persistent store used by {@link DAO_PING} to discover other cluster members.
  *
- * @author Eric Dalquist
  */
 public interface PingDao {
     /**

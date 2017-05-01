@@ -119,7 +119,6 @@ import org.apereo.portal.spring.locator.EntityTypesLocator;
  *
  * <p>
  *
- * @author Dan Ellentuck
  */
 public class FileSystemGroupStore implements IEntityGroupStore, IEntityStore, IEntitySearcher {
     private static final Log log = LogFactory.getLog(FileSystemGroupStore.class);

@@ -17,7 +17,6 @@ package org.apereo.portal.groups;
 /**
  * Defines constants for Groups related classes
  *
- * @author Alex Vigdor
  */
 public interface IGroupConstants {
 

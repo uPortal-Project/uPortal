@@ -24,7 +24,6 @@ import org.apache.commons.io.output.WriterOutputStream;
  * PortletOutputHandler that stores all content written to a string. Requires that an encoding be
  * specified in case the portlet writes to the output stream.
  *
- * @author Eric Dalquist
  */
 public class RenderPortletOutputHandler implements PortletOutputHandler {
     private final StringBuilderWriter writer = new StringBuilderWriter();

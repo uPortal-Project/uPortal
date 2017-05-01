@@ -37,7 +37,6 @@ import org.springframework.stereotype.Service;
 /**
  * Portlet property manager that just translates properties to/from the portal request attributes
  *
- * @author Eric Dalquist
  */
 @Service
 public class PropertyToAttributePropertiesManager extends BaseRequestPropertiesManager {

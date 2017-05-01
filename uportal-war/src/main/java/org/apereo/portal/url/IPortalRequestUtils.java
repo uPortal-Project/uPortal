@@ -20,7 +20,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.web.context.request.WebRequest;
 
 /**
- * @author Eric Dalquist
  */
 public interface IPortalRequestUtils {
 

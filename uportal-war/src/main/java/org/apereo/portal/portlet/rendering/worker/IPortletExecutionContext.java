@@ -21,7 +21,6 @@ import org.apereo.portal.portlet.om.IPortletWindowId;
 /**
  * Data about a portlet execution.
  *
- * @author Eric Dalquist
  */
 public interface IPortletExecutionContext {
     public enum ExecutionType {

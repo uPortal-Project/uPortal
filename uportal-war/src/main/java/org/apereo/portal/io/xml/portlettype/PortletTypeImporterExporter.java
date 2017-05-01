@@ -28,7 +28,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * @author Nicholas Blair
  * @version $Id$
  */
 public class PortletTypeImporterExporter extends AbstractJaxbDataHandler<ExternalPortletType> {

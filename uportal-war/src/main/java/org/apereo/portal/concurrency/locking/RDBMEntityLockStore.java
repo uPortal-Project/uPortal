@@ -33,7 +33,6 @@ import org.apereo.portal.spring.locator.EntityTypesLocator;
 /**
  * RDBMS-based store for <code>IEntityLocks</code>.
  *
- * @author Dan Ellentuck
  */
 public class RDBMEntityLockStore implements IEntityLockStore {
     private static final Log log = LogFactory.getLog(RDBMEntityLockStore.class);

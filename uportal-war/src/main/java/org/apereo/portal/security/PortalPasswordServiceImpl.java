@@ -19,7 +19,6 @@ import org.jasypt.util.password.ConfigurablePasswordEncryptor;
 import org.springframework.stereotype.Component;
 
 /**
- * @author Jen Bourey, jbourey@unicon.net
  */
 @Component("portalPasswordService")
 public class PortalPasswordServiceImpl implements IPortalPasswordService {

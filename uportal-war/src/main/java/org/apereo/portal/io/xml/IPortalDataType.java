@@ -22,7 +22,6 @@ import javax.xml.stream.XMLEventReader;
  * Describes a type of portal data that can be imported, exported, or deleted via the {@link
  * IPortalDataHandlerService}
  *
- * @author Eric Dalquist
  */
 public interface IPortalDataType {
     /** @return The unique name of this portal data type, must be a valid XML element name. */

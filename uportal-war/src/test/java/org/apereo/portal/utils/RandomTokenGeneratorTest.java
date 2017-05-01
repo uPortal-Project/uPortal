@@ -22,7 +22,6 @@ import org.junit.Test;
 /**
  * Test generation of random tokens
  *
- * @author Eric Dalquist
  */
 public class RandomTokenGeneratorTest {
     @Test

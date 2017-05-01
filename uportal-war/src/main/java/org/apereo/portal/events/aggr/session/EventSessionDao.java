@@ -20,7 +20,6 @@ import org.joda.time.DateTime;
 /**
  * Tracks event session data during aggregation.
  *
- * @author Eric Dalquist
  */
 public interface EventSessionDao {
 

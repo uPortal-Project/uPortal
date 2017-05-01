@@ -33,7 +33,6 @@ import org.apache.commons.logging.LogFactory;
  * the context-param <code>org.apereo.portal.servlet.JavaManagementServerListener.failOnException
  * </code> to true.
  *
- * @author Eric Dalquist <a
  *     href="mailto:eric.dalquist@doit.wisc.edu">eric.dalquist@doit.wisc.edu</a>
  */
 public class JavaManagementServerListener implements ServletContextListener {

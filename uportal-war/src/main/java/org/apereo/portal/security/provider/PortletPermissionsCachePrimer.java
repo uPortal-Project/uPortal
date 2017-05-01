@@ -51,7 +51,6 @@ import org.springframework.beans.factory.annotation.Required;
  * computationally expensive work, especially for operations that need a decision for every portlet
  * in the registry; it's better to do it outside of a request thread.
  *
- * @author drewwills
  * @since uPortal 4.3
  */
 public class PortletPermissionsCachePrimer {

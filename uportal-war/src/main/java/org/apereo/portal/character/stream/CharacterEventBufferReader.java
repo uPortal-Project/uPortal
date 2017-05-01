@@ -21,7 +21,6 @@ import org.apereo.portal.character.stream.events.CharacterEvent;
 /**
  * Creates a {@link CharacterEventReader} that wraps a {@link List} of {@link CharacterEvent}s
  *
- * @author Eric Dalquist
  */
 public class CharacterEventBufferReader implements CharacterEventReader {
     private final ListIterator<CharacterEvent> eventBuffer;

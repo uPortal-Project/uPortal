@@ -27,7 +27,6 @@ import org.slf4j.LoggerFactory;
 /**
  * Logs the Character events
  *
- * @author Eric Dalquist
  */
 public class LoggingCharacterComponent extends CharacterPipelineComponentWrapper {
     private Logger logger = LoggerFactory.getLogger(getClass());

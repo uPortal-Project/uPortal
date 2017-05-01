@@ -26,7 +26,6 @@ import java.util.Map;
  * <p>Tenancy is an optional concept in uPortal.
  *
  * @since uPortal 4.1
- * @author awills
  */
 public interface ITenant extends Comparable<ITenant>, Serializable {
 

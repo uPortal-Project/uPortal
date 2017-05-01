@@ -32,7 +32,6 @@ import org.springframework.mock.web.MockHttpServletResponse;
 /**
  * Tests for {@link PortletCookieServiceImpl}.
  *
- * @author Nicholas Blair
  * @version $Id$
  */
 public class PortletCookieServiceImplTest {
@@ -264,7 +263,6 @@ public class PortletCookieServiceImplTest {
     /**
      * Mock {@link IPortalCookie} used in these tests.
      *
-     * @author Nicholas Blair
      * @version $Id$
      */
     class MockPortalCookie implements IPortalCookie {

@@ -20,7 +20,6 @@ package org.apereo.portal.permission;
  * the ability to manage a group's members. IPermissionActivity represents the abstract permission
  * itself and does not contain any permission assignment information.
  *
- * @author Jen Bourey, jbourey@unicon.net
  * @since 3.3
  */
 public interface IPermissionActivity extends Comparable<IPermissionActivity> {

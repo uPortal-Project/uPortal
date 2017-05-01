@@ -19,8 +19,6 @@ import java.io.Serializable;
 /**
  * Form object (DTO) representing a password change request.
  *
- * @author apetro
- * @author jbourey
  */
 public class AccountPasswordForm implements Serializable {
 

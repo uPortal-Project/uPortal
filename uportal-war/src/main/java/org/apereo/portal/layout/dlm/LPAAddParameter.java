@@ -22,7 +22,6 @@ import org.w3c.dom.Element;
 /**
  * Layout processing action for adding a channel parameter to the user's layout.
  *
- * @author Mark Boyd
  */
 public class LPAAddParameter implements ILayoutProcessingAction {
     private String nodeId = null;

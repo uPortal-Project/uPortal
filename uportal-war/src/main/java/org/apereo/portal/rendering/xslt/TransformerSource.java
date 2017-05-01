@@ -20,7 +20,6 @@ import javax.xml.transform.Transformer;
 import org.apereo.portal.utils.cache.CacheKey;
 
 /**
- * @author Eric Dalquist
  */
 public interface TransformerSource {
     /** Gets a XSLT Transformer */

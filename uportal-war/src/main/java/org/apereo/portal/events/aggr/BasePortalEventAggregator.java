@@ -22,7 +22,6 @@ import org.slf4j.LoggerFactory;
  * Base {@link PortalEvent} aggregator, useful for aggregations that extend from {@link
  * BaseAggregationImpl}
  *
- * @author Eric Dalquist
  * @param <E> The {@link PortalEvent} type handled by this aggregator
  */
 public abstract class BasePortalEventAggregator<E extends PortalEvent>

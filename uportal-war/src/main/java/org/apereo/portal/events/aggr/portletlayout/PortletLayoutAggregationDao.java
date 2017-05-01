@@ -23,7 +23,6 @@ import org.joda.time.DateTime;
 /**
  * DAO used to query information about portlet layout aggregates
  *
- * @author Chris Waymire <cwaymire@unicon.net>
  */
 public interface PortletLayoutAggregationDao<T extends PortletLayoutAggregation>
         extends BaseAggregationDao<T, PortletLayoutAggregationKey> {

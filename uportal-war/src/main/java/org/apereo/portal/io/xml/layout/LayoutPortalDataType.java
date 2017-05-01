@@ -29,7 +29,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 /**
  * Describes a user's layout
  *
- * @author Eric Dalquist
  */
 public class LayoutPortalDataType extends AbstractPortalDataType {
     public static final QName LEGACY_LAYOUT_QNAME = new QName("layout");

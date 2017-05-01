@@ -85,7 +85,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-/** @author vertein A controller with a public method to return a list of portlets */
 @Controller
 @RequestMapping("VIEW")
 public class PortletMarketplaceController {

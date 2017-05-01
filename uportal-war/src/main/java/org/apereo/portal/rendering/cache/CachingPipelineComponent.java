@@ -37,7 +37,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 /**
  * Component that caches events from a wrapped component
  *
- * @author Eric Dalquist
  */
 public abstract class CachingPipelineComponent<R, E> extends PipelineComponentWrapper<R, E>
         implements BeanNameAware {

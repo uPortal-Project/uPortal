@@ -23,7 +23,6 @@ import javax.xml.stream.XMLInputFactory;
 import org.apereo.portal.io.xml.PortalDataKey;
 import org.junit.Test;
 
-/** @author Drew Wills */
 public class LayoutPortalDataTypeTest {
 
     private static final XMLInputFactory FAC = XMLInputFactory.newFactory();

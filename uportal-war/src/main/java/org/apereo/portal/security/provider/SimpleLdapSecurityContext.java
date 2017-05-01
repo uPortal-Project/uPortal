@@ -42,7 +42,6 @@ import org.slf4j.LoggerFactory;
  * specified the default LDAP connection returned by {@link org.apereo.portal.ldap.LdapServices} is
  * used.
  *
- * @author Russell Tokuyama (University of Hawaii)
  */
 public class SimpleLdapSecurityContext extends ChainingSecurityContext
         implements IConfigurableSecurityContext {

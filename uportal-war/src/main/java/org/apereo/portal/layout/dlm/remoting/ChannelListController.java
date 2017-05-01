@@ -61,8 +61,6 @@ import org.springframework.web.servlet.ModelAndView;
  * the marketplace and uses the BROWSE permission properly without overloading the meaning of
  * categories).
  *
- * @author Drew Mazurek
- * @author Jen Bourey, jbourey@unicon.net
  */
 @Controller
 public class ChannelListController {

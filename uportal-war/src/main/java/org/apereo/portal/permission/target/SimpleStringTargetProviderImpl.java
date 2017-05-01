@@ -24,7 +24,6 @@ import java.util.Map;
  * registering static strings as targets. This implementation is appropriate for permission owners
  * for which targets are simple static strings that are well-defined and known in advance.
  *
- * @author Jen Bourey, jbourey@unicon.net
  * @since 3.3
  */
 public class SimpleStringTargetProviderImpl implements IPermissionTargetProvider, Serializable {

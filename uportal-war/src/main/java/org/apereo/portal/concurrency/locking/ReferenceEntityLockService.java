@@ -23,7 +23,6 @@ import org.apereo.portal.concurrency.IEntityLockService;
 import org.apereo.portal.concurrency.LockingException;
 import org.apereo.portal.properties.PropertiesManager;
 
-/** @author Dan Ellentuck */
 public class ReferenceEntityLockService implements IEntityLockService {
     private static final Log log = LogFactory.getLog(ReferenceEntityLockService.class);
 

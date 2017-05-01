@@ -31,7 +31,6 @@ import org.apereo.portal.utils.Populator;
  * Stylesheet user preferences setup for memory or serialized storage. All APIs and returned objects
  * are thread safe.
  *
- * @author Eric Dalquist
  */
 public class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences, Serializable {
     private static final long serialVersionUID = 1L;

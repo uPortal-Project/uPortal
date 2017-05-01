@@ -25,7 +25,6 @@ import org.joda.time.DateMidnight;
 import org.junit.Test;
 
 /**
- * @author Eric Dalquist
  */
 public class EventDateTimeUtilsTest {
     @Test

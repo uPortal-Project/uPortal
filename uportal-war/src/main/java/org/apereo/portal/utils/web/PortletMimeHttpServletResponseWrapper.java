@@ -43,7 +43,6 @@ import org.apereo.portal.portlet.rendering.PortletOutputHandler;
  * responses that want to use cached content as after the forward is complete the portal needs to
  * replay the cached content.
  *
- * @author Eric Dalquist
  */
 public class PortletMimeHttpServletResponseWrapper extends PortletHttpServletResponseWrapper {
     private final PortletOutputHandler portletOutputHandler;

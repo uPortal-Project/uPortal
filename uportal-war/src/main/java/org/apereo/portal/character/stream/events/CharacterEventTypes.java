@@ -15,7 +15,6 @@
 package org.apereo.portal.character.stream.events;
 
 /**
- * @author Eric Dalquist
  */
 public enum CharacterEventTypes {
     /** @see CharacterDataEvent */

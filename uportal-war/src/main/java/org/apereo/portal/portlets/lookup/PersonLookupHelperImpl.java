@@ -52,7 +52,6 @@ import org.springframework.webflow.context.ExternalContext;
 /**
  * Implements logic and helper methods for the person-lookup web flow.
  *
- * @author Eric Dalquist
  */
 public class PersonLookupHelperImpl implements IPersonLookupHelper {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());

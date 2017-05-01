@@ -22,7 +22,6 @@ import org.springframework.ldap.core.support.LdapContextSource;
  * The <code>ILdapServer</code> interface defines a set of methods to be used to create a connection
  * to an LDAP server, release the connection and get information about the connection.
  *
- * @author Eric Dalquist <a href="mailto:edalquist@unicon.net">edalquist@unicon.net</a>
  * @deprecated Framework code should access {@link LdapContextSource} objects in the spring context
  *     via injection instead of using these APIs.
  */

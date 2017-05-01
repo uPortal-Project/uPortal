@@ -17,7 +17,6 @@ package org.apereo.portal.groups;
 /**
  * An interface for retrieving <code>IEntities</code>.
  *
- * @author Dan Ellentuck
  * @version 1.0, 11/29/01
  */
 public interface IEntityStore {

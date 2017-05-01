@@ -27,7 +27,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 /**
  * Lists each fragment definition in the database
  *
- * @author Eric Dalquist
  */
 public class FragmentDefinitionDataFunction
         implements Function<IPortalDataType, Iterable<? extends IPortalData>> {

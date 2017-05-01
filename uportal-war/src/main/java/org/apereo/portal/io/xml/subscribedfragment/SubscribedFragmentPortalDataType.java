@@ -21,7 +21,6 @@ import javax.xml.namespace.QName;
 import org.apereo.portal.io.xml.AbstractPortalDataType;
 import org.apereo.portal.io.xml.PortalDataKey;
 
-/** @author Eric Dalquist */
 public class SubscribedFragmentPortalDataType extends AbstractPortalDataType {
     public static final QName PORTLET_TYPE_QNAME =
             new QName(

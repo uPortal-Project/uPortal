@@ -19,7 +19,6 @@ import org.springframework.oxm.Marshaller;
 /**
  * Defines a class that can export a specific type of portal data
  *
- * @author Eric Dalquist
  */
 public interface IDataExporter<T> {
     /** @return The type descriptor for the */

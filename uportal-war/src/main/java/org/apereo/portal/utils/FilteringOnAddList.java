@@ -21,7 +21,6 @@ import java.util.Collection;
 /**
  * List that runs each element being added through a fitler before adding it
  *
- * @author Eric Dalquist
  * @param <E>
  */
 public abstract class FilteringOnAddList<E> extends ForwardingList<E> {

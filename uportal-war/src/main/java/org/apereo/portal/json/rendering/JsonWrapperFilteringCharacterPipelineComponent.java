@@ -27,7 +27,6 @@ import org.apereo.portal.utils.cache.CacheKey;
 /**
  * Adds JsonWrapperFilteringCharacterEventReader into the character event reader stream
  *
- * @author Eric Dalquist
  */
 public class JsonWrapperFilteringCharacterPipelineComponent
         extends CharacterPipelineComponentWrapper {

@@ -23,7 +23,6 @@ import org.apache.commons.lang.builder.ToStringStyle;
 /**
  * PermissionTargetImpl represents a simple default implementation of IPermissionTarget.
  *
- * @author Jen Bourey, jbourey@unicon.net
  * @since 3.3
  */
 public class PermissionTargetImpl

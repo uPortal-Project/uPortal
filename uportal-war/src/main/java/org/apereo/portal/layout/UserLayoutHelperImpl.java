@@ -34,8 +34,6 @@ import org.springframework.jdbc.core.support.JdbcDaoSupport;
  *
  * <p>Depends on uPortal's {@link DataSource}.
  *
- * @author Nicholas Blair, npblair@wisc.edu
- * @author Susan Bramhall, susan.bramhall@yale.edu
  */
 public class UserLayoutHelperImpl extends JdbcDaoSupport implements IUserLayoutHelper {
 

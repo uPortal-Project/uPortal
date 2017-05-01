@@ -15,7 +15,6 @@
 package org.apereo.portal.portlet.rendering.worker;
 
 /**
- * @author Eric Dalquist
  * @param <V>
  */
 public interface IPortletExecutionWorker<V> extends IPortletExecutionContext {

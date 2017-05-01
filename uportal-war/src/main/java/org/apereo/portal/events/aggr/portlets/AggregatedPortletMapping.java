@@ -19,7 +19,6 @@ import org.apereo.portal.portlet.om.IPortletDefinition;
 /**
  * A mapped portlet name
  *
- * @author Eric Dalquist
  */
 public interface AggregatedPortletMapping {
 

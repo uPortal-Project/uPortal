@@ -47,7 +47,6 @@ import org.hibernate.annotations.IndexColumn;
  * Internal class to the portlet entity/definition needed to have a sane DB schema and still share
  * tables
  *
- * @author Eric Dalquist
  */
 @Entity
 @Table(name = "UP_PORTLET_PREFS")

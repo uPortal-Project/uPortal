@@ -25,7 +25,6 @@ import org.springframework.web.context.request.RequestContextHolder;
  * Copies {@link LocaleContextHolder} data from the portal request thread into the portlet execution
  * thread and cleans up afterwards.
  *
- * @author Eric Dalquist
  */
 @Service("RequestContextThreadLocalPortletExecutionInterceptor")
 public class RequestContextThreadLocalPortletExecutionInterceptor

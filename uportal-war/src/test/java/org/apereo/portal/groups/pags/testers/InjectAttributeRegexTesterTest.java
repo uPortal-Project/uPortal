@@ -28,7 +28,6 @@ import org.junit.Test;
 /**
  * Tests the PAGS testers.
  *
- * @author: Julien Gribonvald
  */
 public class InjectAttributeRegexTesterTest {
     private static Class IPERSON_CLASS;

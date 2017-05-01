@@ -34,7 +34,6 @@ import org.slf4j.LoggerFactory;
 /**
  * Reference individual, or leaf, group service.
  *
- * @author Dan Ellentuck
  */
 public class ReferenceIndividualGroupService extends ReferenceCompositeGroupService
         implements IIndividualGroupService, ILockableGroupService {

@@ -33,7 +33,6 @@ import org.apereo.portal.spring.locator.EntityTypesLocator;
 /**
  * Tests the groups framework (a start).
  *
- * @author: Dan Ellentuck
  */
 public class GroupsTester extends TestCase {
     private static Class GROUP_CLASS;

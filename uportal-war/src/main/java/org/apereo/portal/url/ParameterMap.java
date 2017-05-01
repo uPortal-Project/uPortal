@@ -31,7 +31,6 @@ import java.util.Map.Entry;
  * custom {@link #toString()}, {@link #hashCode()}, and {@link #equals(Object)} methods that deal
  * with having values that are String[] correctly.
  *
- * @author Eric Dalquist
  */
 public class ParameterMap extends LinkedHashMap<String, String[]> {
     private static final long serialVersionUID = 1L;

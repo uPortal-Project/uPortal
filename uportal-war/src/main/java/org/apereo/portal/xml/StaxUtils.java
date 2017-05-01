@@ -25,7 +25,6 @@ import org.xml.sax.ContentHandler;
 /**
  * Stax utility methods
  *
- * @author Eric Dalquist
  */
 public final class StaxUtils {
     private StaxUtils() {}

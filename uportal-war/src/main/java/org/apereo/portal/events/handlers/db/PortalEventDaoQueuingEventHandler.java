@@ -21,7 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 /**
  * Hands off queued portal events for storage by the IPortalEventDao
  *
- * @author Eric Dalquist
  */
 public class PortalEventDaoQueuingEventHandler extends QueueingEventHandler<PortalEvent> {
     private IPortalEventDao portalEventDao;

@@ -21,7 +21,6 @@ import org.apereo.portal.utils.PortalApplicationContextLocator;
 import org.springframework.context.ApplicationContext;
 
 /**
- * @author Eric Dalquist
  * @deprecated code that needs an IDatabaseMetadata should use direct dependency injection where
  *     possible
  */

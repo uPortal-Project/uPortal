@@ -19,7 +19,6 @@ import java.util.Set;
 /**
  * Used to map portal group keys to a more static group mapping object
  *
- * @author Eric Dalquist
  */
 public interface AggregatedGroupLookupDao {
     /** Get the group mapping object for the specified group mapping id */

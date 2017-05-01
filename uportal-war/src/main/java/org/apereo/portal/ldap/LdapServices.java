@@ -31,7 +31,6 @@ import org.springframework.context.ApplicationContext;
  * Post 3.0 this class looks for an ILdapServer in the portal spring context named
  * 'defaultLdapServer' to use as the default LDAP server.
  *
- * @author Eric Dalquist
  * @deprecated The prefered way to access configured ldap servers is using dependency injection and
  *     accessing the LdapContext instances in the spring context.
  */

@@ -19,7 +19,6 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * Manages the storage of an IPerson object in a user's session.
  *
- * @author Bernie Durfee, bdurfee@interactivebusiness.com
  */
 public interface IPersonManager {
 

@@ -35,7 +35,6 @@ import org.slf4j.LoggerFactory;
  * falling back on the default if there are no answering mappers, just as if the failing mapper had
  * returned null indicating no opinion rather than throwing.
  *
- * @author Jen Bourey, jennifer.bourey@gmail.com
  */
 public final class ChainingProfileMapperImpl implements IProfileMapper {
 

@@ -47,7 +47,6 @@ import org.springframework.stereotype.Repository;
 /**
  * DAO for Portlet Layout Aggregations
  *
- * @author Chris Waymire <cwaymire@unicon.net>
  */
 @Repository
 public class JpaPortletLayoutAggregationDao

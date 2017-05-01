@@ -19,7 +19,6 @@ import org.apereo.portal.events.aggr.BaseAggregationPrivateDao;
 /**
  * Concurrent User Aggregation DAO used internally to create and update concurrent user aggregations
  *
- * @author Eric Dalquist
  */
 interface ConcurrentUserAggregationPrivateDao
         extends ConcurrentUserAggregationDao<ConcurrentUserAggregationImpl>,

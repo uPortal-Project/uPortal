@@ -17,7 +17,6 @@ package org.apereo.portal.groups;
 /**
  * Factory interface for creating an <code>IEntityStore</code>.
  *
- * @author Dan Ellentuck
  */
 public interface IEntityStoreFactory {
     /** */

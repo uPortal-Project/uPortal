@@ -33,7 +33,6 @@ import org.springframework.expression.Expression;
  * Implements a SpEL-based templating strategy.
  *
  * @since 4.2
- * @author drewwills
  */
 public class SpELDataTemplatingStrategy implements IDataTemplatingStrategy {
 

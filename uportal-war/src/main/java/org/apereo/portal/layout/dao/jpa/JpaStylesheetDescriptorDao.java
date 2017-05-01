@@ -32,7 +32,6 @@ import org.springframework.stereotype.Repository;
 /**
  * JPA DAO for stylesheet descriptor
  *
- * @author Eric Dalquist
  */
 @Repository("stylesheetDescriptorDao")
 public class JpaStylesheetDescriptorDao extends BasePortalJpaDao

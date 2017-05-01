@@ -21,7 +21,6 @@ import org.apache.pluto.container.PortletWindow;
 import org.apereo.portal.portlet.container.FilterManagerImpl;
 import org.springframework.stereotype.Service;
 
-/** @author Nicholas Blair, npblair@wisc.edu */
 @Service("filterManagerService")
 public class LocalFilterManagerServiceImpl implements FilterManagerService {
 

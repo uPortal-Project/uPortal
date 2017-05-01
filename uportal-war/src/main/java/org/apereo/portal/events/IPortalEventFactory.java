@@ -20,7 +20,6 @@ import org.apereo.portal.security.IPerson;
 /**
  * Used to create and publish portal events
  *
- * @author Eric Dalquist
  */
 public interface IPortalEventFactory
         extends IPortalAuthEventFactory,

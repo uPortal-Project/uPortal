@@ -39,7 +39,6 @@ import org.joda.time.DateMidnight;
 import org.joda.time.LocalDate;
 
 /**
- * @author Eric Dalquist
  */
 @Entity
 @Table(name = "UP_DATE_DIMENSION")

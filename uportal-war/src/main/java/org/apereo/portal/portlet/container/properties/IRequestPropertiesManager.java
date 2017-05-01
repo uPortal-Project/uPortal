@@ -28,7 +28,6 @@ import org.springframework.core.annotation.Order;
  * true. If ordering in property handling is important the manager should either implement {@link
  * Ordered} or be annotated with {@link Order}
  *
- * @author Eric Dalquist
  */
 public interface IRequestPropertiesManager {
 

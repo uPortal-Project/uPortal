@@ -20,7 +20,6 @@ import org.w3c.dom.Element;
 /**
  * An interface describing a folder user layout node.
  *
- * @author Peter Kharchenko
  */
 public interface IUserLayoutFolderDescription extends IUserLayoutNodeDescription {
 

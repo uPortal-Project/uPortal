@@ -24,7 +24,6 @@ import org.apereo.portal.io.xml.PortalDataKey;
 /**
  * Describes a User data type in the portal
  *
- * @author Eric Dalquist
  */
 public class UserPortalDataType extends AbstractPortalDataType {
     public static final QName USER_QNAME =

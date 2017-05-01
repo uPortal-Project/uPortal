@@ -19,7 +19,6 @@ import java.util.Iterator;
  * Defines a component group service that finds and maintains <code>IGroupMembers</code> within a
  * composite group service.
  *
- * @author Dan Ellentuck
  */
 public interface IIndividualGroupService extends ICompositeGroupService {
 

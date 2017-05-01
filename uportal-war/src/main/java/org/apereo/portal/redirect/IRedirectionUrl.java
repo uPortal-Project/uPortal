@@ -17,6 +17,5 @@ package org.apereo.portal.redirect;
 /**
  * IRedirectionUrl represents a target URL in the redirection service.
  *
- * @author Jen Bourey, jennifer.bourey@gmail.com
  */
 public interface IRedirectionUrl {}

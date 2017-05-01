@@ -19,7 +19,6 @@ import org.apereo.portal.security.IPerson;
 /**
  * Interface for managing creation and removal of User Portal Data
  *
- * @author Susan Bramhall
  */
 public interface IUserIdentityStore {
 

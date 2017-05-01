@@ -29,7 +29,6 @@ import org.apereo.portal.utils.threading.NoopLock;
  * Utility for caching portlet entities and entity data in memory. Ensures a consistent view for
  * accessing the data by different sets of keys
  *
- * @author Eric Dalquist
  * @param <T>
  */
 class PortletEntityCache<T extends IPortletEntityDescriptor> implements Serializable {

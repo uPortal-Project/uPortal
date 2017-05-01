@@ -16,7 +16,6 @@ package org.apereo.portal.events.aggr.action;
 
 import org.apereo.portal.events.aggr.BaseAggregation;
 
-/** @author Chris Waymire (chris@waymire.net) */
 public interface SearchRequestAggregation
         extends BaseAggregation<
                 SearchRequestAggregationKey, SearchRequestAggregationDiscriminator> {

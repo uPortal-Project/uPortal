@@ -22,7 +22,6 @@ import java.util.Map;
 /**
  * Generic {@link PipelineEventReader} implementation
  *
- * @author Eric Dalquist
  */
 public class PipelineEventReaderImpl<R, E> implements PipelineEventReader<R, E> {
     private final R eventReader;

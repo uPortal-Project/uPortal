@@ -24,7 +24,6 @@ import org.apereo.portal.utils.cache.CacheKey;
  *
  * <p>Implementations must be thread safe.
  *
- * @author Eric Dalquist
  * @param <R> The event reader implementation
  */
 public interface PipelineComponent<R, E> {

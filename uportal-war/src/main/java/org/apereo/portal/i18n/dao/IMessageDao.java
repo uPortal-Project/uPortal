@@ -21,7 +21,6 @@ import org.apereo.portal.i18n.Message;
 /**
  * Interface for creating/retrieving/updating/deleting {@link Message}s.
  *
- * @author Arvids Grabovskis
  */
 public interface IMessageDao {
 

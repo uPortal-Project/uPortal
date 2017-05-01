@@ -29,7 +29,6 @@ import org.apereo.portal.xml.stream.ChunkingEventReader;
  * de-duplication logic of the {@link CharacterDataEventImpl} to be more effective as more users
  * will have common character event strings in their rendering pipeline.
  *
- * @author Eric Dalquist
  */
 public class ChunkPointPlaceholderEventSource extends BasePlaceholderEventSource {
     /** Represents <chunk-point> layout element */

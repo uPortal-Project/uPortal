@@ -45,7 +45,6 @@ import org.springframework.web.client.RestTemplate;
 /**
  * Tests a GoogleAjaxSearchService
  *
- * @author Eric Dalquist
  */
 @RunWith(MockitoJUnitRunner.class)
 public class GoogleCustomSearchServiceTest {

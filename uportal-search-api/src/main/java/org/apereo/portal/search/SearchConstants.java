@@ -19,7 +19,6 @@ import javax.xml.namespace.QName;
 /**
  * Constants related to the portal search API
  *
- * @author Eric Dalquist
  */
 public final class SearchConstants {
     /** Namespace used by uPortal search events */

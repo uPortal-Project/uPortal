@@ -22,7 +22,6 @@ import junit.framework.TestCase;
  * illegal state (cause already init'ed). Therefore PortalException.initCause() should never throw
  * anything and should always return a reference to the PortalException.
  *
- * @author andrew.petro@yale.edu
  */
 public class PortalExceptionTest extends TestCase {
 

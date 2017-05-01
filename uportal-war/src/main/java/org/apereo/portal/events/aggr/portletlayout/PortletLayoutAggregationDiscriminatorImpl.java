@@ -22,7 +22,6 @@ import org.apereo.portal.utils.ComparableExtractingComparator;
 /**
  * Basic impl of {@link PortletLayoutAggregationDiscriminator}
  *
- * @author Chris Waymire <cwaymire@unicon.net>
  */
 public class PortletLayoutAggregationDiscriminatorImpl
         extends BaseGroupedAggregationDiscriminatorImpl

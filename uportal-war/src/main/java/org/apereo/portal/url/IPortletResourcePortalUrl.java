@@ -20,6 +20,5 @@ import org.apache.pluto.container.ResourceURLProvider;
  * Specific type of portal URL that targets a portlet. The URL can have portal parameters and
  * portlet parameters, support for setting the next WindowState and PortletMode for the portlet.
  *
- * @author Eric Dalquist
  */
 public interface IPortletResourcePortalUrl extends ResourceURLProvider {}

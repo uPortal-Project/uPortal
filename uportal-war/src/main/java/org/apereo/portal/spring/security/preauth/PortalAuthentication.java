@@ -26,7 +26,6 @@ import org.springframework.security.core.GrantedAuthority;
  * wraps the IPerson object, delegating to it for determining authentication state and user details.
  * The user's current SecurityContext is used as the credentials object.
  *
- * @author Jen Bourey, jennifer.bourey@gmail.com
  */
 public class PortalAuthentication implements Authentication {
 

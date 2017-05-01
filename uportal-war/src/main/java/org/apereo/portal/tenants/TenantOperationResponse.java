@@ -25,7 +25,6 @@ import java.util.List;
  * callbacks for commit/rollback support, and information to display in the summary report.
  *
  * @since uPortal 4.3
- * @author drewwills
  */
 public class TenantOperationResponse {
 

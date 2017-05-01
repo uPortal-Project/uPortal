@@ -27,7 +27,6 @@ import org.apereo.portal.security.IPermission;
 /**
  * Entity bean for JSON output. Used for categories, groups, and people.
  *
- * @author Drew Mazurek
  */
 public class JsonEntityBean implements Serializable, Comparable<JsonEntityBean> {
 

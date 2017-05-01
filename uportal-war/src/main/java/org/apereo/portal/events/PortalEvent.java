@@ -31,7 +31,6 @@ import org.springframework.context.ApplicationEvent;
 /**
  * ApplicationEvent specific to the Portal.
  *
- * @author Scott Battaglia
  * @since 2.6
  */
 @JsonAutoDetect(

@@ -93,7 +93,6 @@ import org.w3c.dom.NodeList;
 /**
  * Provides targets for AJAX preference setting calls.
  *
- * @author jennifer.bourey@yale.edu
  */
 @Controller
 @RequestMapping("/layout")

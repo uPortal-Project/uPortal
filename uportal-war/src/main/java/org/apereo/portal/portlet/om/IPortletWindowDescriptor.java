@@ -17,7 +17,6 @@ package org.apereo.portal.portlet.om;
 /**
  * Describes the IDs at the core of a portlet window
  *
- * @author Eric Dalquist
  */
 public interface IPortletWindowDescriptor {
 

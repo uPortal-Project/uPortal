@@ -21,7 +21,6 @@ import org.apereo.portal.groups.IEntityStoreFactory;
 /**
  * Returns an instance of the ldap <code>IEntityStore</code>.
  *
- * @author Dan Ellentuck
  */
 public class LDAPEntityStoreFactory implements IEntityStoreFactory {
     /** ReferenceGroupServiceFactory constructor. */

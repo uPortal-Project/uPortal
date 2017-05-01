@@ -23,7 +23,6 @@ import org.joda.time.DateTime;
  * <p>Mimics the Java EE {@link Cookie} class, with the addition of a few methods to help with
  * integration.
  *
- * @author Nicholas Blair
  * @version $Id$
  */
 public interface IPortletCookie {

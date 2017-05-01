@@ -25,7 +25,6 @@ import org.apereo.portal.groups.IEntityNameFinderFactory;
 import org.apereo.portal.properties.PropertiesManager;
 import org.apereo.portal.spring.locator.EntityTypesLocator;
 
-/** @author Dan Ellentuck */
 public class EntityNameFinderService {
 
     private static final Log log = LogFactory.getLog(EntityNameFinderService.class);

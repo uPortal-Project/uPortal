@@ -14,5 +14,4 @@
  */
 package org.apereo.portal.events;
 
-/** @author Josh Helmer, jhelmer@unicon.net */
 public class MockPortletExecutionEvent extends PortletExecutionEvent {}

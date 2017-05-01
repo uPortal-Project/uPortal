@@ -19,7 +19,6 @@ import javax.persistence.EntityManager;
 /**
  * Event fired immediately after the {@link EntityManager} is created
  *
- * @author Eric Dalquist
  */
 public class EntityManagerCreatedEvent extends AbstractEntityManagerEvent {
     private static final long serialVersionUID = 1L;

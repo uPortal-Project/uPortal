@@ -21,8 +21,6 @@ package org.apereo.portal.security.xslt;
  * therefore we're using separate methods for functions with different quantities of placeholders.
  * Currently up to 3 parameters are supported.
  *
- * @author Eric Dalquist
- * @author Arvids Grabovskis
  */
 public interface IXalanMessageHelper {
 

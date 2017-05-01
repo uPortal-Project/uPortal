@@ -63,7 +63,6 @@ import org.apereo.portal.properties.PropertiesManager;
  * WRITE lock guarantees exclusive access; no other clients can get either READ or WRITE locks on
  * the entity.
  *
- * @author Dan Ellentuck
  */
 public class EntityLockService {
 

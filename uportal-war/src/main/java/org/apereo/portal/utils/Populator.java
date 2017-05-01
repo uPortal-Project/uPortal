@@ -19,7 +19,6 @@ import java.util.Map;
 /**
  * Basic interface used for populating a Map-like data structure
  *
- * @author Eric Dalquist
  * @param <K>
  * @param <V>
  */

@@ -24,7 +24,6 @@ import org.apache.commons.logging.LogFactory;
 /**
  * Implementation of double-checked locking for object creation using a {@link ReadWriteLock}
  *
- * @author Eric Dalquist
  */
 public abstract class DoubleCheckedCreator<T> {
     private static String LOGGER_NAME = DoubleCheckedCreator.class.getName();

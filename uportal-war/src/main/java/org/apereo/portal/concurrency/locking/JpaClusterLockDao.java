@@ -43,7 +43,6 @@ import org.springframework.transaction.support.TransactionTemplate;
 /**
  * DB based locking DAO using JPA2 locking APIs
  *
- * @author Eric Dalquist
  */
 @Repository
 public class JpaClusterLockDao extends BasePortalJpaDao implements IClusterLockDao {

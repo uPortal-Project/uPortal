@@ -54,7 +54,6 @@ import org.springframework.context.ApplicationContext;
  * The Person Attributes Group Store uses attributes stored in the IPerson object to determine group
  * membership. It can use attributes from any data source supported by the PersonDirectory service.
  *
- * @author Shawn Connolly, sconnolly@unicon.net
  * @since 4.1
  */
 public class EntityPersonAttributesGroupStore

@@ -18,7 +18,6 @@ import org.apereo.portal.events.aggr.BaseGroupedAggregationDiscriminatorImpl;
 import org.apereo.portal.events.aggr.groups.AggregatedGroupMapping;
 import org.apereo.portal.utils.ComparableExtractingComparator;
 
-/** @author Chris Waymire (chris@waymire.net) */
 public class SearchRequestAggregationDiscriminatorImpl
         extends BaseGroupedAggregationDiscriminatorImpl
         implements SearchRequestAggregationDiscriminator {

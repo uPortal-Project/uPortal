@@ -28,7 +28,6 @@ import org.slf4j.LoggerFactory;
 /**
  * Utility for running several threads in a test
  *
- * @author Eric Dalquist
  */
 public final class ThreadGroupRunner {
     private enum State {

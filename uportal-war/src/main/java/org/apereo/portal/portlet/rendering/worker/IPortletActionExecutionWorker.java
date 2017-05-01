@@ -17,6 +17,5 @@ package org.apereo.portal.portlet.rendering.worker;
 /**
  * Worker that executes a portlet action request
  *
- * @author Eric Dalquist
  */
 public interface IPortletActionExecutionWorker extends IPortletExecutionWorker<Long> {}

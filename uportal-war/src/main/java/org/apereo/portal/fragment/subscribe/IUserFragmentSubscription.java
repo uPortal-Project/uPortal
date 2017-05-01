@@ -21,7 +21,6 @@ import org.apereo.portal.IBasicEntity;
  * IUserFragmentSubscription represents a fragment subscription for an individual user.
  * Subscriptions are used to track preferences for pulled DLM fragments.
  *
- * @author Mary Hunt
  */
 public interface IUserFragmentSubscription extends IBasicEntity {
 

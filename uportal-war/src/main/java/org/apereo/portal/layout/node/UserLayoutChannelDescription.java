@@ -32,7 +32,6 @@ import org.w3c.dom.Node;
 /**
  * A class managing information contained in a user layout channel node.
  *
- * @author Peter Kharchenko {@link <a
  *     href="mailto:pkharchenko@interactivebusiness.com"">pkharchenko@interactivebusiness.com"</a>}
  */
 public class UserLayoutChannelDescription extends UserLayoutNodeDescription

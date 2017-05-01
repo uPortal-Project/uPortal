@@ -34,7 +34,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 /**
  * Test CachingPortletOutputHandler
  *
- * @author Eric Dalquist
  */
 @RunWith(MockitoJUnitRunner.class)
 public class CachingPortletOutputHandlerTest {

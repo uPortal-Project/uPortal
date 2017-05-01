@@ -28,7 +28,6 @@ import org.apereo.portal.spring.locator.PortalPasswordServiceLocator;
  * This is an implementation of a SecurityContext that checks a user's credentials against an MD5
  * hashed password entry.
  *
- * @author Andrew Newman, newman@yale.edu
  */
 public class SimpleSecurityContext extends ChainingSecurityContext implements ISecurityContext {
 

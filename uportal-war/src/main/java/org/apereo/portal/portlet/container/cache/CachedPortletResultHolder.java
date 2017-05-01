@@ -19,7 +19,6 @@ import java.io.Serializable;
 /**
  * Defines a cached portlet results
  *
- * @author Eric Dalquist
  * @param <T>
  */
 public interface CachedPortletResultHolder<T extends Serializable> {

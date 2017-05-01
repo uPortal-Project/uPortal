@@ -30,7 +30,6 @@ import org.springframework.expression.Expression;
 import org.springframework.web.context.request.ServletWebRequest;
 
 /**
- * @author Eric Dalquist
  */
 public class StaticTransformerConfigurationSource implements TransformerConfigurationSource {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());

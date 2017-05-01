@@ -24,7 +24,6 @@ import org.joda.time.DateTime;
  * Defines data that is tracked across all events associated with the same {@link
  * PortalEvent#getEventSessionId()}
  *
- * @author Eric Dalquist
  */
 public interface EventSession extends Serializable {
 

@@ -19,7 +19,6 @@ package org.apereo.portal.tenants;
  * a Create, Update, or Delete operation. Actions are available from the Tenant Details screen.
  *
  * @since uPortal 4.3
- * @author drewwills
  */
 public interface ITenantManagementAction {
 

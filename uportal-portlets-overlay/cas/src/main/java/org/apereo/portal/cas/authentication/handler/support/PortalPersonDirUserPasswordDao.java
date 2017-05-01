@@ -22,7 +22,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 /**
  * Retrieves password hashes from the uPortal UP_PERSON_DIR table
  *
- * @author Eric Dalquist
  */
 public class PortalPersonDirUserPasswordDao implements UserPasswordDao {
     private static final String PERSON_DIR_QUERY =

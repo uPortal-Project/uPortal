@@ -21,7 +21,6 @@ import java.io.Serializable;
  * authenticated principal (user). Providers requiring additional principal information should
  * extend this interface rather than replacing it.
  *
- * @author Andrew Newman, newman@yale.edu
  */
 public interface IPrincipal extends Serializable {
 

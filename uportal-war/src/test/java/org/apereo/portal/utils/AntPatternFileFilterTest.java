@@ -23,7 +23,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 /**
- * @author Eric Dalquist
  */
 public class AntPatternFileFilterTest {
     @Test

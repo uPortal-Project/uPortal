@@ -69,7 +69,6 @@ import org.hibernate.annotations.Type;
 import org.springframework.util.StringUtils;
 
 /**
- * @author Eric Dalquist
  */
 @Entity
 @Table(name = "UP_PORTLET_DEF")

@@ -48,7 +48,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
- * @author Nicholas Blair, npblair@wisc.edu
  */
 @Service
 public class LocalPortletContextManager implements PortletRegistryService, PortletContextService {

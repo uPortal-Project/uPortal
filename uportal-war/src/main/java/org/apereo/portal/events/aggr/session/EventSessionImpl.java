@@ -46,7 +46,6 @@ import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
 /**
- * @author Eric Dalquist
  */
 @Entity
 @Table(name = "UP_EVENT_SESSION")

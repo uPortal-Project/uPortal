@@ -30,7 +30,6 @@ import org.apereo.portal.groups.pags.dao.IPersonAttributesGroupDefinitionDao;
 import org.apereo.portal.jpa.BasePortalJpaDao;
 import org.springframework.stereotype.Repository;
 
-/** @author Shawn Connolly, sconnolly@unicon.net */
 @Repository("personAttributesGroupDefinitionDao")
 public class JpaPersonAttributesGroupDefinitionDao extends BasePortalJpaDao
         implements IPersonAttributesGroupDefinitionDao {

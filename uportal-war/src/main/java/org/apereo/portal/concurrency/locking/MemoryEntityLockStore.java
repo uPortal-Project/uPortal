@@ -27,7 +27,6 @@ import org.apereo.portal.utils.SmartCache;
 /**
  * In-memory store for <code>IEntityLocks</code>.
  *
- * @author Dan Ellentuck
  */
 public class MemoryEntityLockStore implements IEntityLockStore {
     private static IEntityLockStore singleton;

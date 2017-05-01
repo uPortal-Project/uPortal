@@ -21,7 +21,6 @@ import org.apache.commons.lang3.StringUtils;
  * Useful for extra user input validation in Create and Update tenant operations.
  *
  * @since 4.3
- * @author awills
  */
 public class AttributeValidatingOperationsListener extends AbstractTenantOperationsListener {
 

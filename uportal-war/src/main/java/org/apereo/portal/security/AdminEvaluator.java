@@ -27,7 +27,6 @@ import org.apereo.portal.services.GroupService;
  * administrator or is in any administrative sub-group.
  *
  * @deprecated The few things this class controls should be converted to proper permissions.
- * @author Mark Boyd
  */
 @Deprecated
 public class AdminEvaluator {

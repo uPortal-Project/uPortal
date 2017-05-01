@@ -18,7 +18,6 @@ import java.beans.PropertyEditorSupport;
 import org.apereo.portal.portlet.PortletUtils;
 
 /**
- * @author Eric Dalquist
  */
 public class PortletModeEditor extends PropertyEditorSupport {
     /* (non-Javadoc)

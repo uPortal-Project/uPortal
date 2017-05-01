@@ -75,7 +75,6 @@ import org.springframework.beans.factory.annotation.Required;
  * induced GCs set the properties to '0x7ffffffffffffffe' Only do this if you can rely on the
  * generational GC to reguarly clean up RMI objects.
  *
- * @author Eric Dalquist <a
  *     href="mailto:eric.dalquist@doit.wisc.edu">eric.dalquist@doit.wisc.edu</a>
  */
 public class JavaManagementServerBean {

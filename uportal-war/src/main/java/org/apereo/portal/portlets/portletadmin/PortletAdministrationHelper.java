@@ -112,7 +112,6 @@ import org.springframework.webflow.context.ExternalContext;
 /**
  * Helper methods for the portlet administration workflow.
  *
- * @author Jen Bourey, jbourey@unicon.net
  */
 @Service
 public final class PortletAdministrationHelper implements ServletContextAware {

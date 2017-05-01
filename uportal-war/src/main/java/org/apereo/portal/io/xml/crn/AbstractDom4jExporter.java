@@ -39,7 +39,6 @@ import org.springframework.oxm.XmlMappingException;
 /**
  * Base class used for exporting DOM4j data
  *
- * @author Eric Dalquist
  */
 public abstract class AbstractDom4jExporter
         implements IDataExporter<Tuple<String, Element>>, Marshaller {

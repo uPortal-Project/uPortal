@@ -22,7 +22,6 @@ import org.slf4j.Logger;
 /**
  * Writer that writes to a {@link Logger}
  *
- * @author Eric Dalquist
  */
 public class LoggingWriter extends Writer {
     private static final String NEWLINE = System.getProperty("line.separator");

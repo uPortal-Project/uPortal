@@ -47,7 +47,6 @@ import org.springframework.stereotype.Service;
 /**
  * uPortal implementation of {@link PortletRequestContextService}.
  *
- * @author Nicholas Blair
  * @version $Id$
  */
 @Service("portletRequestContextService")

@@ -29,7 +29,6 @@ import org.springframework.stereotype.Service;
 /**
  * Merges together the results of multiple instances of UserInfoService.
  *
- * @author Jen Bourey
  */
 @Service
 @Qualifier("main")

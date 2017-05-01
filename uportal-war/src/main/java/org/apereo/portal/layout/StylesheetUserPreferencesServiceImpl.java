@@ -50,7 +50,6 @@ import org.springframework.web.util.WebUtils;
 /**
  * Handles retrieving and storing the various scopes of stylesheet user preference data.
  *
- * @author Eric Dalquist
  */
 @Service
 public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPreferencesService {

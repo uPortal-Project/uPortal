@@ -27,7 +27,6 @@ import org.apereo.portal.services.EntityLockService;
 /**
  * Tests the entity lock framework.
  *
- * @author: Dan Ellentuck
  */
 public class EntityLockTest extends TestCase {
     private static final Log LOG = LogFactory.getLog(EntityLockTest.class);

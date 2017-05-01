@@ -32,7 +32,6 @@ import org.slf4j.LoggerFactory;
  * <p>Default value for "action" is <strong>false</strong>. Default urlState is {@link
  * UrlState#NORMAL}.
  *
- * @author Nicholas Blair, nblair@doit.wisc.edu
  */
 class PortalRequestInfoImpl implements IPortalRequestInfo {
 

@@ -24,7 +24,6 @@ import org.springframework.web.servlet.view.AbstractView;
 /**
  * Base class for views that serialize {@link DataTable} objects
  *
- * @author Eric Dalquist
  */
 public abstract class AbstractGoogleDataTableView extends AbstractView {
     public static final String DATA_TABLE_MODEL_ATTRIBUTE = "dataTable";

@@ -21,7 +21,6 @@ import org.apereo.portal.concurrency.IEntityLock;
  *
  * <p>
  *
- * @author Dan Ellentuck
  */
 public interface ILockableEntityGroup extends IEntityGroup {
     /** @return org.apereo.portal.concurrency.IEntityLock */

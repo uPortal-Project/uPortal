@@ -66,7 +66,6 @@ import org.springframework.stereotype.Service;
 /**
  * Executes methods on portlets using Pluto
  *
- * @author Eric Dalquist
  */
 @Service
 public class PortletRendererImpl implements IPortletRenderer {

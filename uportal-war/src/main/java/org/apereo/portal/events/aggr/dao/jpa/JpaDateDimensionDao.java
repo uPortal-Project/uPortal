@@ -35,7 +35,6 @@ import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 
 /**
- * @author Eric Dalquist
  */
 @Repository
 public class JpaDateDimensionDao extends BaseAggrEventsJpaDao implements DateDimensionDao {

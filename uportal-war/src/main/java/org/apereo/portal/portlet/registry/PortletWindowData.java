@@ -32,7 +32,6 @@ import org.apereo.portal.portlet.om.IPortletWindowId;
 /**
  * Serializable persistent portlet window data. This class MUST be thread safe.
  *
- * @author Eric Dalquist
  */
 class PortletWindowData implements IPortletWindowDescriptor, Serializable {
     private static final long serialVersionUID = 1L;

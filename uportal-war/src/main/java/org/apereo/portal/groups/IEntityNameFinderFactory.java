@@ -17,7 +17,6 @@ package org.apereo.portal.groups;
 /**
  * Factory interface for creating <code>IEntityNameFinders</code>.
  *
- * @author Dan Ellentuck
  */
 public interface IEntityNameFinderFactory {
     /**

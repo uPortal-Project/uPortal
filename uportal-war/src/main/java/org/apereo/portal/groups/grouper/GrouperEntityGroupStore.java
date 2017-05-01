@@ -68,8 +68,6 @@ import org.apereo.portal.spring.locator.EntityTypesLocator;
  * Grouper client jar to search for group information. It does not currently support write access or
  * group locking.
  *
- * @author Bill Brown
- * @author Jen Bourey, jbourey@unicon.net
  */
 public class GrouperEntityGroupStore implements IEntityGroupStore, IEntityStore, IEntitySearcher {
 

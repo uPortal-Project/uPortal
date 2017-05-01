@@ -23,7 +23,6 @@ import org.joda.time.DateTime;
 /**
  * Base DAO APIs shared between all {@link BaseAggregation} implementation DAOs
  *
- * @author Eric Dalquist
  * @param <T> Aggregation type
  */
 public interface BaseAggregationDao<T extends BaseAggregation<K, ?>, K extends BaseAggregationKey> {

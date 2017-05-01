@@ -36,7 +36,6 @@ import org.springframework.stereotype.Service;
 /**
  * Parses the provided input stream into a {@link Templates} object.
  *
- * @author Eric Dalquist
  */
 @Service
 public class TemplatesBuilder implements Loader<Templates>, ResourceLoaderAware {

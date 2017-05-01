@@ -34,7 +34,6 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * Handles import and export of Permission Owner data
  *
- * @author Eric Dalquist
  */
 public class PermissionOwnerImporterExporter
         extends AbstractJaxbDataHandler<ExternalPermissionOwner> {

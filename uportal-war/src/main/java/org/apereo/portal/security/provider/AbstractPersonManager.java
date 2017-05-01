@@ -27,7 +27,6 @@ import org.apereo.portal.security.InitialSecurityContextFactory;
 import org.apereo.portal.security.PersonFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-/** @author Eric Dalquist */
 public abstract class AbstractPersonManager implements IPersonManager {
 
     private final Map<String, Integer> guestUserIds = new HashMap<>();

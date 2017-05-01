@@ -21,7 +21,6 @@ import java.util.concurrent.ThreadPoolExecutor;
 /**
  * Logs a more useful error message when rejecting a runnable
  *
- * @author Eric Dalquist
  */
 public class LoggingAbortHandler implements RejectedExecutionHandler {
     @Override

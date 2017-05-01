@@ -62,7 +62,6 @@ import org.xml.sax.SAXException;
  * a XML data definition file. Table creation is done using the Hibernate mapping APIs to allow for
  * a full range of database support.
  *
- * @author Eric Dalquist
  */
 @Component("dbLoader")
 @Lazy

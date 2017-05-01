@@ -28,7 +28,6 @@ import org.junit.Test;
 /**
  * Tests for {@link LimitingTeeOutputStream}.
  *
- * @author Nicholas Blair
  */
 public class LimitingTeeOutputStreamTest {
 

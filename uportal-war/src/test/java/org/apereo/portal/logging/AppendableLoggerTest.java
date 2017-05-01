@@ -23,7 +23,6 @@ import org.mockito.Mockito;
 import org.slf4j.Logger;
 
 /**
- * @author Eric Dalquist
  */
 public class AppendableLoggerTest {
     @Test

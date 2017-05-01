@@ -37,7 +37,6 @@ import org.apache.pluto.container.om.portlet.FilterMapping;
 import org.apache.pluto.container.om.portlet.PortletApplicationDefinition;
 import org.apache.pluto.container.om.portlet.PortletDefinition;
 
-/** @author Nicholas Blair, npblair@wisc.edu */
 public class FilterManagerImpl implements FilterManager {
     private FilterChainImpl filterchain;
     private PortletApplicationDefinition portletApp;

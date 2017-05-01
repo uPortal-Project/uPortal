@@ -28,7 +28,6 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.web.context.request.WebRequest;
 
 /**
- * @author Jen Bourey, jbourey@unicon.net
  */
 public class PortalSpELServiceImplTest {
 

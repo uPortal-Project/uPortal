@@ -17,7 +17,6 @@ package org.apereo.portal.utils;
 import java.io.Serializable;
 
 /**
- * @author George Lindholm <a href="mailto:George.Lindholm@ubc.ca">George.Lindholm@ubc.ca</a>
  * @since uPortal 2.5
  */
 public final class MovingAverageSample implements IMovingAverageSample, Serializable {

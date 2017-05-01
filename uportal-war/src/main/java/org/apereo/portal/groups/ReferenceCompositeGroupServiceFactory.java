@@ -20,7 +20,6 @@ import org.apache.commons.logging.LogFactory;
 /**
  * Creates an instance of the reference <code>ICompositeGroupService</code>.
  *
- * @author Dan Ellentuck
  */
 public class ReferenceCompositeGroupServiceFactory implements ICompositeGroupServiceFactory {
     private static final Log log = LogFactory.getLog(ReferenceCompositeGroupServiceFactory.class);

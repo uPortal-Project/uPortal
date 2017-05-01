@@ -21,7 +21,6 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 /**
  * Provides a DoubleCheckedCreator impl that tracks the singleton instance internally
  *
- * @author Eric Dalquist
  */
 public abstract class SingletonDoubleCheckedCreator<T> extends DoubleCheckedCreator<T> {
     private final AtomicBoolean creating = new AtomicBoolean(false);

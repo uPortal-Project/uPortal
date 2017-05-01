@@ -22,7 +22,6 @@ import org.slf4j.LoggerFactory;
 /**
  * Returns structure stylesheet descriptor and preferences data
  *
- * @author Eric Dalquist
  */
 public class StructureAttributeSource extends StylesheetAttributeSource {
     private static final Logger LOGGER = LoggerFactory.getLogger(StructureAttributeSource.class);

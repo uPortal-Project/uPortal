@@ -25,7 +25,6 @@ import org.springframework.core.io.Resource;
  * <p>Clients should call {@link #getResource(Resource, Loader)} every time they need the object and
  * rely on the {@link CachingResourceLoader} implementation to manage caching and reloading.
  *
- * @author Eric Dalquist
  */
 public interface CachingResourceLoader {
     /** Same as {@link #getResource(Resource, Loader, long)} with a 60 second check interval */

@@ -25,7 +25,6 @@ import org.springframework.stereotype.Service;
  * Simple {@link CCPPProfileService}. Calls out to {@link ProfileFactory#getInstance()}, which
  * returns null if no implementation is available.
  *
- * @author Nicholas Blair, npblair@wisc.edu
  */
 @Service("cCPPProfileService")
 public class LocalCCPPProfileServiceImpl implements CCPPProfileService {

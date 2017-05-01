@@ -20,7 +20,6 @@ import java.util.Map;
 /**
  * Populator that targets a Map
  *
- * @author Eric Dalquist
  * @param <K>
  * @param <V>
  */

@@ -23,7 +23,6 @@ import org.jasypt.util.password.ConfigurablePasswordEncryptor;
 /**
  * Impl of the uPortal MD5 password checking algorithm
  *
- * @author Eric Dalquist
  */
 public class PersonDirAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
     private static final String MD5_PREFIX = "(MD5)";

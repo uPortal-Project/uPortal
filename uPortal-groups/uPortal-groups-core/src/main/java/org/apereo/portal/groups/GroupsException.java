@@ -22,7 +22,6 @@ import org.apereo.portal.PortalException;
  * retrieving or updating the groups store, the GroupsException should wrap an Exception specific to
  * the store, probably a java.sql.SQLException or a javax.naming.NamingException.
  *
- * @author Dan Ellentuck
  */
 public class GroupsException extends PortalException {
 

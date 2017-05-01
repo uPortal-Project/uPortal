@@ -32,7 +32,6 @@ import org.springframework.context.ApplicationContext;
 /**
  * This is the base class for every node in the graph.
  *
- * @author Dan Ellentuck
  * @see IGroupMember
  */
 public abstract class GroupMemberImpl implements IGroupMember {

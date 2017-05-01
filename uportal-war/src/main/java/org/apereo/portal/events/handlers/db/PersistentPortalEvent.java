@@ -33,7 +33,6 @@ import org.joda.time.DateTime;
 /**
  * Persistent wrapper for storing portal events
  *
- * @author Eric Dalquist
  */
 @Entity
 @Table(name = "UP_RAW_EVENTS")

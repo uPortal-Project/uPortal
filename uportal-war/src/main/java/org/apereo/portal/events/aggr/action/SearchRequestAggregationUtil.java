@@ -14,7 +14,6 @@
  */
 package org.apereo.portal.events.aggr.action;
 
-/** @author Chris Waymire (chris@waymire.net) */
 public class SearchRequestAggregationUtil {
 
     public static String normalizeSearchTerm(String searchTerm) {

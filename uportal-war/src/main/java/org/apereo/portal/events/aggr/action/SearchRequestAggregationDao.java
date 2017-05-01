@@ -20,7 +20,6 @@ import org.apereo.portal.events.aggr.BaseAggregationDao;
 import org.apereo.portal.events.aggr.groups.AggregatedGroupMapping;
 import org.joda.time.DateTime;
 
-/** @author Chris Waymire (chris@waymire.net) */
 public interface SearchRequestAggregationDao<T extends SearchRequestAggregation>
         extends BaseAggregationDao<T, SearchRequestAggregationKey> {
 

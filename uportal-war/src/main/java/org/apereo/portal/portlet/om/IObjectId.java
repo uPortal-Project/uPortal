@@ -17,7 +17,6 @@ package org.apereo.portal.portlet.om;
 import java.io.Serializable;
 
 /**
- * @author Eric Dalquist
  */
 public interface IObjectId extends Serializable {
     /**

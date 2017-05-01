@@ -24,7 +24,6 @@ import org.apereo.portal.portlet.om.IPortletDefinition;
 /**
  * Describes the {@link IPortletDefinition} for import and export.
  *
- * @author Eric Dalquist
  */
 public class PortletPortalDataType extends AbstractPortalDataType {
     public static final QName PORTLET_DEFINITION_QNAME =

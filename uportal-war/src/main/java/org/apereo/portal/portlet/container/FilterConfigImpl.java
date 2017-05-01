@@ -24,7 +24,6 @@ import javax.portlet.PortletContext;
 import javax.portlet.filter.FilterConfig;
 import org.apache.pluto.container.om.portlet.InitParam;
 
-/** @author Nicholas Blair, npblair@wisc.edu */
 public class FilterConfigImpl implements FilterConfig {
 
     private final String filterName;

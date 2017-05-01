@@ -38,8 +38,6 @@ import org.hibernate.annotations.NaturalIdCache;
 /**
  * JPA implementation of the IPortletType interface.
  *
- * @author Ken Weiner, kweiner@unicon.net
- * @author Jen Bourey, jennifer.bourey@gmail.com
  */
 @Entity
 @Table(name = "UP_PORTLET_TYPE")

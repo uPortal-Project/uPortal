@@ -22,7 +22,6 @@ import org.xml.sax.SAXException;
  * Describes a class that is able to drop, create and populate database tables based on XML
  * definition files.
  *
- * @author Eric Dalquist
  */
 public interface IDbLoader {
 

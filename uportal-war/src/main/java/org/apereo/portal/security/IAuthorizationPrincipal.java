@@ -23,7 +23,6 @@ import org.apereo.portal.portlet.om.PortletLifecycleState;
  * </code> have been granted. Such an entity could be an <code>IGroupMember</code>, an <code>
  * IChannel</code> or an <code>IPerson</code>.
  *
- * @author Dan Ellentuck
  */
 public interface IAuthorizationPrincipal {
     /**

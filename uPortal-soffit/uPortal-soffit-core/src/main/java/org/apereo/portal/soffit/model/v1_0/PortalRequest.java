@@ -32,7 +32,6 @@ public class PortalRequest extends AbstractTokenizable {
      * Additional information that the portal (via the Soffit Connector) shares with the remote
      * Soffit will be set as attributes on the {@link PortalRequest}.
      *
-     * @author drewwills
      */
     public enum Attributes {
 

@@ -20,7 +20,6 @@ import java.util.Set;
  * Interface that supports pluggable behavior when tenants are created, updated, or removed.
  *
  * @since uPortal 4.1
- * @author awills
  */
 public interface ITenantOperationsListener {
 

@@ -22,7 +22,6 @@ import org.apache.commons.lang.builder.ToStringStyle;
 /**
  * Configuration for the DbLoader, includes commons-cli Options set for command line use.
  *
- * @author Eric Dalquist
  */
 public class DbLoaderConfigBuilder implements DbLoaderConfig {
     private String tablesFile;

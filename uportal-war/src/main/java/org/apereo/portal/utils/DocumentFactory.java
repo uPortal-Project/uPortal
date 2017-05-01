@@ -30,7 +30,6 @@ import org.xml.sax.SAXException;
 /**
  * Produces an empty Document implementation
  *
- * @author Bernie Durfee, bdurfee@interactivebusiness.com
  */
 public final class DocumentFactory {
 

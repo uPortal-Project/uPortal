@@ -33,7 +33,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 /**
  * Event aggregator that uses {@link TabRenderAggregationPrivateDao} to aggregate tab renders
  *
- * @author Eric Dalquist
  */
 public class TabRenderAggregator
         extends BaseIntervalAwarePortalEventAggregator<

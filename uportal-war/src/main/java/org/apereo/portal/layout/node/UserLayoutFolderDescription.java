@@ -22,7 +22,6 @@ import org.w3c.dom.Element;
 /**
  * A class describing a folder node fo the user layout structure.
  *
- * @author Peter Kharchenko {@link <a
  *     href="mailto:pkharchenko@interactivebusiness.com"">pkharchenko@interactivebusiness.com"</a>}
  */
 public class UserLayoutFolderDescription extends UserLayoutNodeDescription

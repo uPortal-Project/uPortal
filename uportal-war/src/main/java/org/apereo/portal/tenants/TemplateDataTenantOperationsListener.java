@@ -56,7 +56,6 @@ import org.springframework.expression.spel.support.StandardEvaluationContext;
  * pare-down tenant template data in src/main/resources/org/apereo/portal/tenants/data.
  *
  * @since 4.1
- * @author awills
  */
 public final class TemplateDataTenantOperationsListener extends AbstractTenantOperationsListener
         implements ApplicationContextAware {

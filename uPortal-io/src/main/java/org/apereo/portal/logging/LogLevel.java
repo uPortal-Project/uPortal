@@ -19,7 +19,6 @@ import org.slf4j.Logger;
 /**
  * LogLevel
  *
- * @author Eric Dalquist
  */
 public enum LogLevel {
     TRACE {

@@ -23,7 +23,6 @@ import org.apereo.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
  *
  * <p>
  *
- * @author Dan Ellentuck
  */
 public class StringEqualsIgnoreCaseTester extends AbstractStringTester {
 

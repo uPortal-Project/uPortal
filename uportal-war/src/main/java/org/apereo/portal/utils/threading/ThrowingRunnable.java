@@ -17,7 +17,6 @@ package org.apereo.portal.utils.threading;
 /**
  * Base Runnable that allows sub-classes to throw any exception
  *
- * @author Eric Dalquist
  */
 public abstract class ThrowingRunnable implements Runnable {
 

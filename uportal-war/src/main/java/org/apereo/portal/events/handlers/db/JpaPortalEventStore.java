@@ -44,7 +44,6 @@ import org.springframework.stereotype.Repository;
  * of {@link PortalEvent}s. If a {@link PortalEvent} is not mapped as a persistent entity a message
  * is logged at the WARN level and the event is ignored.
  *
- * @author Eric Dalquist
  */
 @Repository
 public class JpaPortalEventStore extends BaseRawEventsJpaDao implements IPortalEventDao {

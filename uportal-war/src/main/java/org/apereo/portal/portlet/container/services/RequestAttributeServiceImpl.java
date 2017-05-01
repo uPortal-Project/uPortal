@@ -38,7 +38,6 @@ import org.springframework.stereotype.Service;
  * user attribute map that corresponds to the attribute with the name {@link
  * IPortletRenderer#MULTIVALUED_USERINFO_MAP_ATTRIBUTE}.
  *
- * @author Eric Dalquist
  */
 @Service
 public class RequestAttributeServiceImpl implements RequestAttributeService {

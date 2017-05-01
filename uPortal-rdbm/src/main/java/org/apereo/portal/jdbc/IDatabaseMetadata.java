@@ -17,7 +17,6 @@ package org.apereo.portal.jdbc;
 import java.util.Date;
 
 /**
- * @author susan.bramhall@yale.edu
  */
 public interface IDatabaseMetadata {
     /**

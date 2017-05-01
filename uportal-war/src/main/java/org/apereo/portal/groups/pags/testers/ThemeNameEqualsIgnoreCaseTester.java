@@ -34,7 +34,6 @@ import org.springframework.context.ApplicationContext;
  * This Group tester checks the current session's user profile theme against the test value ignoring
  * case.
  *
- * @author Shawn Connolly, sconnolly@unicon.net
  */
 public class ThemeNameEqualsIgnoreCaseTester implements IPersonTester {
 

@@ -31,7 +31,6 @@ import org.springframework.context.MessageSource;
  * a base class for concrete listeners that need to override some but not all of the methods.
  *
  * @since 4.1
- * @author awills
  */
 public abstract class AbstractTenantOperationsListener implements ITenantOperationsListener {
 

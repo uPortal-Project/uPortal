@@ -37,7 +37,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.View;
 
 /**
- * @author Eric Dalquist
  */
 public class PortletDelegationView implements View {
     /**

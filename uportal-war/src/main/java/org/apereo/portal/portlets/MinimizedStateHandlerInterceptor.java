@@ -23,7 +23,6 @@ import org.springframework.web.portlet.handler.HandlerInterceptorAdapter;
 /**
  * Portlet {@link HandlerInterceptor}
  *
- * @author Eric Dalquist
  */
 public class MinimizedStateHandlerInterceptor extends HandlerInterceptorAdapter {
 

@@ -21,7 +21,6 @@ import org.apereo.portal.services.GroupService;
 /**
  * Reference implementation of <code>IEntityNameFinder</code> for <code>IEntityGroup</code>.
  *
- * @author Alex Vigdor
  */
 public class EntityGroupNameFinder implements IEntityNameFinder {
     private static final Log log = LogFactory.getLog(EntityGroupNameFinder.class);

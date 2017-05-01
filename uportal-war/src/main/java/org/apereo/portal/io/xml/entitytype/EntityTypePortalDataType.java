@@ -23,7 +23,6 @@ import org.apereo.portal.io.xml.PortalDataKey;
 /**
  * Describes an entity-type data type in the portal
  *
- * @author Eric Dalquist
  */
 public class EntityTypePortalDataType extends AbstractPortalDataType {
     public static final QName LEGACY_ENTITY_TYPE_QNAME = new QName("entity-type");

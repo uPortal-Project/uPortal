@@ -31,7 +31,6 @@ import org.apereo.portal.portlet.om.IPortletWindow;
  * <p>See UP-4364
  *
  * @since 4.2
- * @author Josh Helmer, jhelmer.unicon.net
  */
 public class WindowStateAttributeSource extends PortletWindowAttributeSource {
     private WindowState windowState;

@@ -65,7 +65,6 @@ import org.springframework.web.util.WebUtils;
  * Provides the default implementation of the window registry, the backing for the storage of
  * IPortletWindow objects is a Map stored in the HttpSession for the user.
  *
- * @author Eric Dalquist
  */
 @Service
 public class PortletWindowRegistryImpl implements IPortletWindowRegistry {

@@ -28,7 +28,6 @@ import org.joda.time.ReadableInstant;
 /**
  * Utilities for working with the various date/time data types involved in event aggregation
  *
- * @author Eric Dalquist
  */
 public final class EventDateTimeUtils {
     private EventDateTimeUtils() {}

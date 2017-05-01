@@ -28,7 +28,6 @@ import org.apereo.portal.portlets.dynamicskin.DynamicSkinInstanceData;
  * Services for the DynamicRespondrSkin portlet.
  *
  * @since 4.1.0
- * @author James Wennmacher, jwennmacher@unicon.net
  */
 public interface DynamicSkinService {
 

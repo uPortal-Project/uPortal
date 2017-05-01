@@ -41,7 +41,6 @@ import org.apereo.portal.services.GroupService;
 /**
  * Tests the authorization framework.
  *
- * @author: Dan Ellentuck
  */
 public class AuthorizationTester extends TestCase {
     private String OWNER = "UP_FRAMEWORK";

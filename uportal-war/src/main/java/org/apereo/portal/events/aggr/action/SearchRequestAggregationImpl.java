@@ -38,7 +38,6 @@ import org.hibernate.annotations.Index;
 import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.NaturalIdCache;
 
-/** @author Chris Waymire (chris@waymire.net) */
 @Entity
 @Table(name = "UP_SEARCH_REQ_AGGR")
 @Inheritance(strategy = InheritanceType.JOINED)

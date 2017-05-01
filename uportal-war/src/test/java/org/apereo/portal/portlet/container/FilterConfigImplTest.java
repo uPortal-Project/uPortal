@@ -23,7 +23,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * @author Nicholas Blair, npblair@wisc.edu
  */
 public class FilterConfigImplTest {
 

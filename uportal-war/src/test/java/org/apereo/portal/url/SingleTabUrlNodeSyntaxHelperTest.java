@@ -36,7 +36,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 /**
- * @author Eric Dalquist
  */
 @RunWith(MockitoJUnitRunner.class)
 public class SingleTabUrlNodeSyntaxHelperTest {

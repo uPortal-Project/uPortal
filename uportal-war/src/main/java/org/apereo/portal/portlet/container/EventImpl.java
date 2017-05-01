@@ -19,7 +19,6 @@ import javax.portlet.Event;
 import javax.xml.namespace.QName;
 
 /**
- * @author Eric Dalquist
  */
 public class EventImpl implements Event {
 

@@ -19,7 +19,6 @@ import org.apereo.portal.portlet.om.IPortletWindowId;
 /**
  * A generic base event type for any event that targets a portlet window.
  *
- * @author Eric Dalquist
  */
 public interface PortletPlaceholderEvent extends CharacterEvent {
     /** @return The portlet window id of the targeted portlet */

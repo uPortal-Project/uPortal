@@ -22,7 +22,6 @@ import java.util.Iterator;
  * should be specified in seconds. If the time is specified as a negative value, it will be cahced
  * indefinitely.
  *
- * @author Ken Weiner, kweiner@unicon.net
  */
 public class SmartCache extends HashMap {
     protected int iExpirationTimeout = 3600000; // default to 1 hour

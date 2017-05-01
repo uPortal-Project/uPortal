@@ -26,7 +26,6 @@ import org.springframework.util.StringUtils;
 /**
  * Caches lookups for TX managers specified by qualifier in a local map
  *
- * @author Eric Dalquist
  */
 public class TransactionManagerCachingTransactionInterceptor extends TransactionInterceptor {
     private static final long serialVersionUID = 1L;

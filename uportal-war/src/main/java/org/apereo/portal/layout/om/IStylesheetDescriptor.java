@@ -24,7 +24,6 @@ import org.apereo.portal.url.IUrlNodeSyntaxHelperRegistry;
 /**
  * Describes a XSL Stylesheet used in the rendering pipeline
  *
- * @author Eric Dalquist
  */
 public interface IStylesheetDescriptor extends IPortalData {
 

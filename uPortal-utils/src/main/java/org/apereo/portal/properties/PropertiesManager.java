@@ -45,9 +45,6 @@ import org.apache.commons.logging.LogFactory;
  * <p>This class has a comprehensive JUnit testcase. Please keep the testcase up to date with any
  * changes you make to this class.
  *
- * @author Ken Weiner, kweiner@unicon.net
- * @author howard.gilbert@yale.edu
- * @author andrew.petro@yale.edu
  * @since uPortal 2.4, this class existed in the main package since uPortal 2.0
  */
 public class PropertiesManager {

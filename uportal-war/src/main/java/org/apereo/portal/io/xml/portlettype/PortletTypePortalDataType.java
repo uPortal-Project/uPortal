@@ -22,7 +22,6 @@ import org.apereo.portal.io.xml.AbstractPortalDataType;
 import org.apereo.portal.io.xml.PortalDataKey;
 
 /**
- * @author Nicholas Blair
  * @version $Id$
  */
 public class PortletTypePortalDataType extends AbstractPortalDataType {

@@ -39,7 +39,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 /**
  * Ties the IPersonAttributeDao to the Pluto UserInfoService
  *
- * @author Eric Dalquist
  */
 public class PersonDirectoryUserInfoService implements UserInfoService {
     private IPersonAttributeDao personAttributeDao;

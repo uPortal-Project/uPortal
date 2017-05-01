@@ -32,7 +32,6 @@ import org.springframework.stereotype.Service;
  * This class exposes some limited functions around the provided {@link CacheManager}. It is used
  * within SpEL expressions by the Cache Manager portlet.
  *
- * @author Nicholas Blair, npblair@wisc.edu
  */
 @Service
 public class CacheManagementHelper {

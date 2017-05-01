@@ -26,7 +26,6 @@ import org.apereo.portal.portlets.AttributeFactory;
 /**
  * Request to change the specified attributes
  *
- * @author Eric Dalquist
  */
 public class AttributeSwapRequest implements Serializable {
     private static final long serialVersionUID = 1L;

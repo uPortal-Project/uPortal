@@ -38,7 +38,6 @@ import org.apereo.portal.character.stream.events.CharacterEvent;
  * Used with code that serializes StAX events into a string. Watches for specific XML tags in a StAX
  * stream and chunks the string data at each XML tag occurrence.
  *
- * @author Eric Dalquist
  */
 public class ChunkingEventReader extends BaseXMLEventReader {
     private static final XMLEventFactory EVENT_FACTORY = XMLEventFactory.newFactory();

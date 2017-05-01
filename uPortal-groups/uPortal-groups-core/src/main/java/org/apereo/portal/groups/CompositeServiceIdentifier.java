@@ -19,7 +19,6 @@ import javax.naming.Name;
 /**
  * A composite key that identifies a component group service.
  *
- * @author Dan Ellentuck
  */
 public class CompositeServiceIdentifier extends CompositeEntityIdentifier {
 

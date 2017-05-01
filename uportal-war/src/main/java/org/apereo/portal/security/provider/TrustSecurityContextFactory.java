@@ -18,7 +18,6 @@ package org.apereo.portal.security.provider;
  * The factory class for the trust security context. Just returns a new instance of the
  * TruestSecurityContext.
  *
- * @author Andrew Newman, newman@yale.edu
  */
 import org.apereo.portal.security.ISecurityContext;
 import org.apereo.portal.security.ISecurityContextFactory;

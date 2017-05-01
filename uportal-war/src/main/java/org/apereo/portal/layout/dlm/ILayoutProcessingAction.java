@@ -25,7 +25,6 @@ import org.apereo.portal.PortalException;
  * interface applies its changes in an appropriate manner based on whether the node is incorporated
  * from a fragment or owned by the user.
  *
- * @author mboyd@sungardsct.com
  */
 public interface ILayoutProcessingAction {
     public void perform() throws PortalException;

@@ -34,7 +34,6 @@ import org.springframework.stereotype.Repository;
 /**
  * JPA implementation of {@link IStylesheetUserPreferencesDao}
  *
- * @author Eric Dalquist
  */
 @Repository("stylesheetUserPreferencesDao")
 public class JpaStylesheetUserPreferencesDao extends BasePortalJpaDao

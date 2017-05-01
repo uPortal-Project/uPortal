@@ -33,7 +33,6 @@ import org.slf4j.LoggerFactory;
  *
  * <p>Configured via the {@link ServiceLoader} mechanism.
  *
- * @author Eric Dalquist
  */
 public class DelegatingHibernateIntegrator implements Integrator {
     private static final Set<HibernateConfigurationAwareInjector> configurationAwareBeans =

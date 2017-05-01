@@ -27,7 +27,6 @@ import org.apereo.portal.portlet.rendering.IPortletRenderer;
 import org.apereo.portal.url.IPortalUrlProvider;
 
 /**
- * @author Eric Dalquist
  */
 public class PortletRenderResponseContextImpl extends PortletMimeResponseContextImpl
         implements PortletRenderResponseContext {

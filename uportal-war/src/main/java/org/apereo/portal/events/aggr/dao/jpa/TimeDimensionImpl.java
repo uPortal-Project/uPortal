@@ -39,7 +39,6 @@ import org.hibernate.annotations.Type;
 import org.joda.time.LocalTime;
 
 /**
- * @author Eric Dalquist
  */
 @Entity
 @Table(name = "UP_TIME_DIMENSION")

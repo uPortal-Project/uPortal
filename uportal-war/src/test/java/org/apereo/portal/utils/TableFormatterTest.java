@@ -21,7 +21,6 @@ import org.apereo.portal.utils.TableFormatter.TableEntry;
 import org.junit.Test;
 
 /**
- * @author Eric Dalquist
  */
 public class TableFormatterTest {
 

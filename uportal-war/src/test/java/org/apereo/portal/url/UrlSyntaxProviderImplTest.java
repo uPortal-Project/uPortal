@@ -57,7 +57,6 @@ import org.springframework.mock.web.MockHttpServletRequest;
 /**
  * Test harness for {@link UrlSyntaxProviderImpl}.
  *
- * @author Nicholas Blair, nblair@doit.wisc.edu
  */
 @RunWith(MockitoJUnitRunner.class)
 public class UrlSyntaxProviderImplTest {

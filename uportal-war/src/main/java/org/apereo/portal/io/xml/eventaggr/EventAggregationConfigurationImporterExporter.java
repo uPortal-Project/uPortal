@@ -46,7 +46,6 @@ import org.joda.time.MonthDay;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-/** @author Eric Dalquist */
 public class EventAggregationConfigurationImporterExporter
         extends AbstractJaxbDataHandler<ExternalEventAggregationConfiguration> {
 

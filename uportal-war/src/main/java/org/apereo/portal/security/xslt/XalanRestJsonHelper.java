@@ -20,7 +20,6 @@ import org.springframework.stereotype.Service;
 /**
  * This class contains convenience methods to produce Json stream from xsl templates.
  *
- * @author Julien Gribonvald
  */
 @Service
 public class XalanRestJsonHelper {

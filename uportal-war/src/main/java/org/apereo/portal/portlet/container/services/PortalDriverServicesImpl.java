@@ -39,7 +39,6 @@ import org.springframework.stereotype.Service;
  * dispatching to portlets. uPortal provides implementations of most of them and all impls are
  * configured as spring beans.
  *
- * @author Eric Dalquist
  */
 @Service("portalDriverServices")
 public class PortalDriverServicesImpl implements PortalDriverServices {

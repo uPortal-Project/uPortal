@@ -32,7 +32,6 @@ import org.w3c.dom.NodeList;
  * Used by Xalan to transform a {@link Resources} to the correct HTML head elements (script tags for
  * javascript and link tags for css).
  *
- * @author Nicholas Blair, npblair@wisc.edu TransformerConfigurationSource
  */
 public class ResourcesElementsXsltcHelper extends TransformerConfigurationSourceAdapter {
     protected final Log logger = LogFactory.getLog(this.getClass());

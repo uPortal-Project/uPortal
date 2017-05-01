@@ -49,7 +49,6 @@ import org.w3c.dom.Node;
 /**
  * Implementation of core XML related utilities
  *
- * @author Eric Dalquist
  */
 @Service
 public class XmlUtilitiesImpl implements XmlUtilities {

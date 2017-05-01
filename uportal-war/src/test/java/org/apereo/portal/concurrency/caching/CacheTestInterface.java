@@ -14,7 +14,6 @@
  */
 package org.apereo.portal.concurrency.caching;
 
-/** @author Eric Dalquist */
 public interface CacheTestInterface {
 
     String testMethodNoCache(String arg, boolean returnNull, boolean throwEx);

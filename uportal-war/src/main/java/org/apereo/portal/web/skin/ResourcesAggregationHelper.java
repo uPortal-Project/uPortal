@@ -25,7 +25,6 @@ import org.springframework.stereotype.Service;
 /**
  * Class to facilitate enabling/disabling Resources aggregation.
  *
- * @author Nicholas Blair, npblair@wisc.edu
  */
 @Service
 public class ResourcesAggregationHelper {

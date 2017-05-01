@@ -18,7 +18,6 @@ package org.apereo.portal.properties;
  * An undeclared (Runtime) exception to be thrown by the PropertiesManager when a property is
  * requested but cannot be found.
  *
- * @author andrew.petro@yale.edu
  * @since uPortal 2.4
  */
 public class MissingPropertyException extends RuntimeException {

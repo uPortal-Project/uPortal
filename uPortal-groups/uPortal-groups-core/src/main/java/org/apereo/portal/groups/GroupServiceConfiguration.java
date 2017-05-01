@@ -30,7 +30,6 @@ import org.xml.sax.XMLReader;
  * Parses service descriptions found in the file found at SERVICES_XML. The elements of each service
  * are stored in a ComponentGroupServiceDescriptor.
  *
- * @author Dan Ellentuck
  */
 public class GroupServiceConfiguration {
     private static final Log log = LogFactory.getLog(GroupServiceConfiguration.class);

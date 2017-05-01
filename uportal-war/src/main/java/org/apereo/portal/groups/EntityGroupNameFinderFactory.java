@@ -20,7 +20,6 @@ import org.apache.commons.logging.LogFactory;
 /**
  * Factory for creating <code>EntityGroupNameFinder</code>.
  *
- * @author Alex Vigdor
  */
 public class EntityGroupNameFinderFactory implements IEntityNameFinderFactory {
     private static final Log log = LogFactory.getLog(EntityGroupNameFinderFactory.class);

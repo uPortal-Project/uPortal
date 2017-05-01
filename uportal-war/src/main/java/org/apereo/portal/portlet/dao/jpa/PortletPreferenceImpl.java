@@ -46,7 +46,6 @@ import org.hibernate.annotations.Index;
 import org.hibernate.annotations.IndexColumn;
 
 /**
- * @author Eric Dalquist
  */
 @Entity
 @Table(name = "UP_PORTLET_PREF")

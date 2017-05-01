@@ -19,7 +19,6 @@ import org.apereo.portal.spring.locator.EntityTypesLocator;
 /**
  * Reference implementation for IEntityStore.
  *
- * @author Dan Ellentuck
  */
 public class RDBMEntityStore implements IEntityStore {
     private static IEntityStore singleton;

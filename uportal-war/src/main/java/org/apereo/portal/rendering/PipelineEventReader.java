@@ -19,7 +19,6 @@ import java.util.Map;
 /**
  * Event reader for the rendering pipeline.
  *
- * @author Eric Dalquist
  * @param <R> The type of the native event reader
  * @param <E> The type of event the reader exposes
  */

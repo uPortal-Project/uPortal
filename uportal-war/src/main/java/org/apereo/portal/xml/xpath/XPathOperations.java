@@ -20,7 +20,6 @@ import javax.xml.namespace.QName;
 import javax.xml.xpath.XPathExpression;
 
 /**
- * @author Eric Dalquist
  */
 public interface XPathOperations {
     /**

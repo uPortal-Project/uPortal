@@ -30,7 +30,6 @@ import org.apereo.portal.portlet.om.IPortletWindowId;
 /**
  * Constructor assumes that Map passed in is completely immutable
  *
- * @author Eric Dalquist
  */
 public abstract class PortletExecutionEvent extends PortalEvent {
     private static final long serialVersionUID = 1L;

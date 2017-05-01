@@ -20,7 +20,6 @@ import org.springframework.oxm.Unmarshaller;
 /**
  * Defines a class that can import a specific type of portal data
  *
- * @author Eric Dalquist
  */
 public interface IDataImporter<T> {
     /** @return The {@link PortalDataKey}s that this importer can import */

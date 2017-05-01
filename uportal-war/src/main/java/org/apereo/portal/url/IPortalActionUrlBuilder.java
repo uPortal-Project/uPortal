@@ -17,7 +17,6 @@ package org.apereo.portal.url;
 /**
  * Builds a portal action URL that can deal with redirects
  *
- * @author Eric Dalquist
  */
 public interface IPortalActionUrlBuilder extends IPortalUrlBuilder {
     /** @param location The redirect location to generate a URL for. */

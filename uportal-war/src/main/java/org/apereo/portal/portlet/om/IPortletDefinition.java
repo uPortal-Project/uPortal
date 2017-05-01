@@ -24,7 +24,6 @@ import org.apereo.portal.io.xml.IPortalData;
 /**
  * A portlet definition is equivalent to a published ChannelDefinition.
  *
- * @author Eric Dalquist
  */
 public interface IPortletDefinition extends IBasicEntity, IPortalData {
 

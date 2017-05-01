@@ -19,7 +19,6 @@ import java.util.Collection;
  * IPermissionTargetProviderRegistry provides a registry of target provider instances. This registry
  * can be used to retrieve provider instances associated with specified provider keys.
  *
- * @author Jen Bourey, jbourey@unicon.net
  * @since 3.3
  */
 public interface IPermissionTargetProviderRegistry {

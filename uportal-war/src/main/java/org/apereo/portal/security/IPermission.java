@@ -17,8 +17,6 @@ package org.apereo.portal.security;
 import java.util.Date;
 
 /**
- * @author Bernie Durfee (bdurfee@interactivebusiness.com)
- * @author Dan Ellentuck
  */
 public interface IPermission {
 

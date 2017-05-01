@@ -20,7 +20,6 @@ import org.apache.commons.logging.LogFactory;
 /**
  * Creates an instance of the reference <code>IIndividualGroupService</code>.
  *
- * @author Dan Ellentuck
  */
 public class ReferenceIndividualGroupServiceFactory implements IComponentGroupServiceFactory {
 

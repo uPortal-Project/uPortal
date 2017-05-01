@@ -18,7 +18,6 @@ import java.beans.PropertyEditorSupport;
 import org.apereo.portal.portlet.PortletUtils;
 
 /**
- * @author Eric Dalquist
  */
 public class WindowStateEditor extends PropertyEditorSupport {
     /* (non-Javadoc)

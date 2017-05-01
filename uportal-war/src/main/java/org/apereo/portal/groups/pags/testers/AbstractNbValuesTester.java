@@ -21,7 +21,6 @@ import org.apereo.portal.security.IPerson;
  * Base class for testers that determine membership based on the number of values a user has for an
  * attribute.
  *
- * @author drewwills
  * @since 5.0
  */
 public abstract class AbstractNbValuesTester extends BaseAttributeTester {

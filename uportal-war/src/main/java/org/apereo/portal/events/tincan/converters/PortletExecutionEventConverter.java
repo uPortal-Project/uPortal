@@ -30,7 +30,6 @@ import org.springframework.beans.factory.annotation.Required;
 /**
  * Generic xApi converter for PortletExecutionEvents.
  *
- * @author Josh Helmer, jhelmer@unicon.net
  */
 public class PortletExecutionEventConverter extends AbstractPortalEventToLrsStatementConverter {
     private AggregatedPortletLookupDao aggregatedPortletLookupDao;

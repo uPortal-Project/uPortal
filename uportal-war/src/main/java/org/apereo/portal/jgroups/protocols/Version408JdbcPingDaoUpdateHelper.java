@@ -30,7 +30,6 @@ import org.springframework.stereotype.Component;
 /**
  * Handle changing column types in the JDBC_PING table when upgrading from 4.0.8
  *
- * @author Eric Dalquist
  */
 @Component
 public class Version408JdbcPingDaoUpdateHelper implements IVersionedDatabaseUpdateHelper {

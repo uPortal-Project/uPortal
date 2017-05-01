@@ -36,7 +36,6 @@ import org.springframework.security.core.userdetails.UserDetails;
  * security annotations. This current implementation is an early attempt at connecting the uPortal
  * permissions framework to Spring Security and will need future adjustment and expansion.
  *
- * @author Jen Bourey, jennifer.bourey@gmail.com
  */
 public class PortalPermissionEvaluator implements PermissionEvaluator {
 

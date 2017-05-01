@@ -23,7 +23,6 @@ import org.apereo.portal.portlet.rendering.PortletRenderResult;
 /**
  * Interface defining mechanism for retrieving {@link CacheControl}s.
  *
- * @author Nicholas Blair
  */
 public interface IPortletCacheControlService {
 

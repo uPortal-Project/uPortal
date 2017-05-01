@@ -27,7 +27,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.springframework.mock.web.MockHttpServletRequest;
 
-/** @author GIP RECIA 2013 - Maxime BOSSARD. */
 @RunWith(BlockJUnit4ClassRunner.class)
 public class ServerNameGuestChainingProfileMapperTest {
 

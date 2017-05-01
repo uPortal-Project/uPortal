@@ -28,7 +28,6 @@ import org.apereo.portal.concurrency.CachingException;
 import org.apereo.portal.services.EntityCachingService;
 import org.apereo.portal.services.GroupService;
 
-/** @author Dan Ellentuck */
 public class ReferenceCompositeGroupService extends ReferenceComponentGroupService
         implements ICompositeGroupService {
     // Factory for IEntities:

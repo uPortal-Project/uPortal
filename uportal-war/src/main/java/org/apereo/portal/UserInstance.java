@@ -25,7 +25,6 @@ import org.apereo.portal.user.IUserInstance;
  * processing and orchestrating the entire rendering procedure. (this is a replacement for the good
  * old LayoutBean class)
  *
- * @author Peter Kharchenko {@link <a
  *     href="mailto:pkharchenko@interactivebusiness.com"">pkharchenko@interactivebusiness.com"</a>}
  */
 public class UserInstance implements IUserInstance {

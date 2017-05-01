@@ -24,7 +24,6 @@ import org.junit.Test;
 /**
  * Tests for {@link LimitingTeeWriter}.
  *
- * @author Nicholas Blair
  */
 public class LimitingTeeWriterTest {
 

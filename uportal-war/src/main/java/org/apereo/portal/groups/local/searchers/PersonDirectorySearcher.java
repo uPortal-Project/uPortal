@@ -35,7 +35,6 @@ import org.springframework.stereotype.Service;
 /**
  * Searches the portal DB for people. Used by EntitySearcherImpl
  *
- * @author Alex Vigdor
  */
 @Service
 public class PersonDirectorySearcher implements ITypedEntitySearcher {

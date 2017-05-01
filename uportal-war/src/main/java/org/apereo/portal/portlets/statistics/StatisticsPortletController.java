@@ -40,7 +40,6 @@ import org.springframework.web.portlet.bind.annotation.ResourceMapping;
 /**
  * StatisticsPortletController drives stats reporting
  *
- * @author Jen Bourey, jennifer.bourey@gmail.com
  */
 @Controller
 @RequestMapping("VIEW")

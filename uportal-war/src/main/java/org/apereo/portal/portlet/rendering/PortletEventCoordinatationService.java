@@ -87,7 +87,6 @@ import org.springframework.stereotype.Service;
  * <p>It also provides {@link #getPortletEventQueue(PortletEventQueue, List, HttpServletRequest)}
  * which is used to determine which events to send to which portlet windows.
  *
- * @author Eric Dalquist
  */
 @Service("eventCoordinationService")
 public class PortletEventCoordinatationService implements IPortletEventCoordinationService {

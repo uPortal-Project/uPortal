@@ -35,7 +35,6 @@ import org.apereo.portal.utils.SqlTransaction;
 /**
  * Store for <code>EntityGroupImpl</code>.
  *
- * @author Dan Ellentuck
  */
 public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants {
     private static final Log log = LogFactory.getLog(RDBMEntityGroupStore.class);

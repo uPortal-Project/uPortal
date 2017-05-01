@@ -30,8 +30,6 @@ import org.apereo.portal.security.PortalSecurityException;
 import org.apereo.portal.utils.threading.SingletonDoubleCheckedCreator;
 
 /**
- * @author Bernie Durfee, bdurfee@interactivebusiness.com
- * @author Dan Ellentuck
  */
 public class AuthorizationService {
 

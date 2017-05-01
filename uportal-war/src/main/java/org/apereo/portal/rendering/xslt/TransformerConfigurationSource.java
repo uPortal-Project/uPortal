@@ -24,7 +24,6 @@ import org.apereo.portal.utils.cache.CacheKey;
 /**
  * Used by a {@link XSLTComponent} to configure the {@link Transformer}
  *
- * @author Eric Dalquist
  */
 public interface TransformerConfigurationSource {
     /**

@@ -25,7 +25,6 @@ import org.joda.time.DateTime;
  * {@link IPortletCookie} implementation for {@link IPortletCookie}s that are only stored in the
  * {@link HttpSession} (e.g. those with maxAge = -1).
  *
- * @author Nicholas Blair
  */
 class SessionOnlyPortletCookieImpl implements IPortletCookie, Serializable {
 

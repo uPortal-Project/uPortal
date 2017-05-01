@@ -30,7 +30,6 @@ import org.springframework.jdbc.core.RowMapper;
  * Simple Function for use in {@link CernunnosDataExporter#setPortalDataRetriever(Function)} that
  * uses a parameter-less sql query to build a list of IPortalData objects
  *
- * @author Eric Dalquist
  */
 public class SqlPortalDataFunction
         implements Function<IPortalDataType, Iterable<? extends IPortalData>> {

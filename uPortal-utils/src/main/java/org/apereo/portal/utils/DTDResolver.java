@@ -21,9 +21,6 @@ import org.xml.sax.InputSource;
 /**
  * Provides a means to resolve uPortal DTDs
  *
- * @author Peter Kharchenko, pkharchenko@unicon.net
- * @author Ken Weiner, kweiner@unicon.net
- * @author Dave Wallace, dwallace@udel.edu modifications
  */
 public class DTDResolver implements EntityResolver {
     private static final String dtdPath = "/dtd";

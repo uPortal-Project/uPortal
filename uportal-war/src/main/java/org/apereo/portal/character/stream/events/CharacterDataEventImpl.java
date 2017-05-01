@@ -21,7 +21,6 @@ import com.google.common.cache.LoadingCache;
 import org.springframework.util.Assert;
 
 /**
- * @author Eric Dalquist
  */
 public final class CharacterDataEventImpl implements CharacterDataEvent {
     private static final long serialVersionUID = 1L;

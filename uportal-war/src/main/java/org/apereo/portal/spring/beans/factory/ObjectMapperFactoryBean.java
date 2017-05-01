@@ -20,7 +20,6 @@ import org.springframework.beans.factory.config.AbstractFactoryBean;
 /**
  * Builds an ObjectMapper configured with annotation support
  *
- * @author Eric Dalquist
  */
 public class ObjectMapperFactoryBean extends AbstractFactoryBean<ObjectMapper> {
 

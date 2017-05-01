@@ -19,7 +19,6 @@ import java.util.Set;
 /**
  * Descriptor for attributes added to layout elements
  *
- * @author Eric Dalquist
  */
 public interface ILayoutAttributeDescriptor extends IStylesheetData {
     /** Set of layout element names this attribute should be applied to. */

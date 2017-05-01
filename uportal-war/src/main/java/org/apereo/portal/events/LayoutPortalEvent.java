@@ -19,7 +19,6 @@ import org.apache.commons.lang.Validate;
 import org.apereo.portal.security.IPerson;
 
 /**
- * @author Scott Battaglia
  * @since 2.6
  */
 public abstract class LayoutPortalEvent extends PortalEvent {

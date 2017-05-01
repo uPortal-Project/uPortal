@@ -50,7 +50,6 @@ import org.springframework.util.Assert;
 /**
  * Backs the {@link PortletRequest} impl provided by Pluto
  *
- * @author Eric Dalquist
  */
 public class PortletRequestContextImpl extends AbstractPortletContextImpl
         implements PortletRequestContext {

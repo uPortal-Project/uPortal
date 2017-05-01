@@ -20,7 +20,6 @@ import org.joda.time.DateTime;
 /**
  * Extension of the {@link BaseAggregationDao} that provides create/update operations
  *
- * @author Eric Dalquist
  * @param <T> Aggregation type
  * @param <K> The key type for the aggregation
  */

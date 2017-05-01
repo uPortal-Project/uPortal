@@ -29,7 +29,6 @@ import org.springframework.stereotype.Repository;
 /**
  * DAO For Login Aggregations
  *
- * @author Eric Dalquist
  */
 @Repository
 public class JpaLoginAggregationDao

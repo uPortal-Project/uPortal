@@ -22,7 +22,6 @@ import org.joda.time.DateTime;
 /**
  * Persists, retrieves and deletes portal events from a persistent store
  *
- * @author Eric Dalquist
  */
 public interface IPortalEventDao {
     void storePortalEvent(PortalEvent portalEvent);

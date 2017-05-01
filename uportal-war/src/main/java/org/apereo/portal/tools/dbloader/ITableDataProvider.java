@@ -18,7 +18,6 @@ import java.util.Map;
 import org.hibernate.mapping.Table;
 
 /**
- * @author Eric Dalquist
  */
 public interface ITableDataProvider {
 

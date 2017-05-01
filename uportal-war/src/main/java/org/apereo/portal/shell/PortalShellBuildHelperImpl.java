@@ -40,7 +40,6 @@ import org.springframework.stereotype.Service;
 /**
  * Utility used by the groovy scripts generated in build.xml and passed into PortalShell
  *
- * @author Eric Dalquist
  */
 @Service("portalShellBuildHelper")
 public class PortalShellBuildHelperImpl implements PortalShellBuildHelper {

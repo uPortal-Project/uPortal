@@ -23,7 +23,6 @@ import org.apereo.portal.spring.locator.PortletDefinitionRegistryLocator;
 /**
  * Reference implementation of <code>IEntityNameFinder</code> for <code>Channels</code>.
  *
- * @author Alex Vigdor
  */
 public class ReferenceChannelNameFinder implements IEntityNameFinder {
 
