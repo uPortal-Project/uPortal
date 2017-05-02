@@ -7,6 +7,8 @@ apply plugin: 'com.gradle.build-scan'
 // Adds support for Node.js scripts
 apply plugin: 'com.moowork.node'
 
+def skipUpShellExecution = true
+
 buildscript {
     repositories {
         maven {
@@ -78,4 +80,14 @@ subprojects {
 		FileTree tree = fileTree(dir: libs)
 		delete fileTree(dir:libs , include: '*')
 	}
+
+	 task cleanTomcat() {
+		group 'Configuration'
+		description 'Removes the deployed uPortal from the servlet container.'
+		def uPortal = serverbase+"/webapps/uPortal"
+		printf uPortal
+		FileTree tree = fileTree(dir: uPortal)
+		delete uPortal
+	}
+
 }
