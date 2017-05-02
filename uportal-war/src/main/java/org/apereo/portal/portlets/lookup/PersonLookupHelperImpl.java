@@ -420,8 +420,9 @@ public class PersonLookupHelperImpl implements IPersonLookupHelper {
     }
 
     /**
-     * Filter the provided set of user attribute names to contain only those the specified principal
-     * has permissions to view.
+     * Filter the specified set of user attribute names to contain only those that the specified
+     * principal may perform <code>IPermission.VIEW_USER_ATTRIBUTE_ACTIVITY</code>.  These are
+     * user attributes the user has general permission to view, for all visible users.
      *
      * @param principal
      * @param attributeNames
@@ -440,12 +441,15 @@ public class PersonLookupHelperImpl implements IPersonLookupHelper {
     }
 
     /**
-     * Filter the provided set of user attribute names to contain only those the specified principal
-     * has permissions to view.
+     * Provide a complete set of user attribute names that the specified principal may view within
+     * his or her own collection.  These will be attributes for which the user has <em>either</em>
+     * <code>IPermission.VIEW_USER_ATTRIBUTE_ACTIVITY</code> or
+     * <code>IPermission.VIEW_OWN_USER_ATTRIBUTE_ACTIVITY</code>.
      *
-     * @param principal
-     * @param generallyPermittedAttributes
-     * @return
+     * @param principal Represents a portal user who wishes to view user attributes
+     * @param generallyPermittedAttributes The collection of user attribute name this user may view
+     *                                     for any visible user
+     * @since 5.0
      */
     protected Set<String> getPermittedOwnAttributes(
             final IAuthorizationPrincipal principal, final Set<String> generallyPermittedAttributes) {

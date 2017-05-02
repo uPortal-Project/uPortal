@@ -32,7 +32,7 @@
     <activity>
         <name>View own attribute</name>
         <fname>VIEW_OWN_USER_ATTRIBUTE</fname>
-        <desc>View the value(s) of one's own user attribute</desc>
+        <desc>View one's own value(s) for the specified user attribute.  This permission is cumulative with VIEW_USER_ATTRIBUTE</desc>
         <targetProvider>userAttributesTargetProvider</targetProvider>
     </activity>
     <activity>

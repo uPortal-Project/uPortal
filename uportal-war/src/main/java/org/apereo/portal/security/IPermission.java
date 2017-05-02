@@ -141,7 +141,12 @@ public interface IPermission {
     String VIEW_USER_ATTRIBUTE_ACTIVITY = "VIEW_USER_ATTRIBUTE";
 
     /**
-     * Governs the visibility of one's own user attributes.
+     * Governs additional visibility of one's own user attributes.  When it comes to their own
+     * attributes, users may view those for which they have either
+     * <code>VIEW_USER_ATTRIBUTE_ACTIVITY</code> or <code>VIEW_OWN_USER_ATTRIBUTE_ACTIVITY</code>
+     * permission.
+     *
+     * @since 5.0
      */
     String VIEW_OWN_USER_ATTRIBUTE_ACTIVITY = "VIEW_OWN_USER_ATTRIBUTE";
 

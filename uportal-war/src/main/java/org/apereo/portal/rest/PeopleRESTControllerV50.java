@@ -115,14 +115,14 @@ public final class PeopleRESTControllerV50 {
         final IPerson me = personManager.getPerson(request);
 
         if (me == null) {
-            //If null, this person is not logged in.
+            //If null, this person does not have a proper portal session.
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return null;
         }
 
         final IPersonAttributes person = lookupHelper.findPerson(me, me.getUserName());
         if (person == null) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return null;
         }
 
