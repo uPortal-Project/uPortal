@@ -214,7 +214,7 @@
         <person-directory.version>1.7.1</person-directory.version>
         <pluto.version>2.1.0-M3</pluto.version>
         <quartz.version>2.2.1</quartz.version>
-        <resource-server.version>1.0.45</resource-server.version>
+        <resource-server.version>1.0.46</resource-server.version>
         <servlet-api.version>3.0.1</servlet-api.version>
         <slf4j.version>1.7.7</slf4j.version>
         <spring-framework.version>3.2.18.RELEASE</spring-framework.version>
