@@ -6,6 +6,31 @@ Documentation for earlier versions of uPortal is available in
 [Confluence](https://wiki.jasig.org).  See *Documentation for Previous Releases*
 below.
 
+<table><tr>
+<td>
+
+[![WCAG 2 AA Badge](https://www.w3.org/WAI/wcag2AA-blue-v.svg)](#accessible)
+[![Issue Stats](http://issuestats.com/github/Jasig/uPortal/badge/pr)](http://issuestats.com/github/Jasig/uPortal)
+[![Google Code Style](https://img.shields.io/badge/code_style-Google-green.svg?style=flat)](https://google.github.io/styleguide/javaguide.html)
+
+| Version | Linux | Windows | Coverage |
+| - | - | - | - |
+| [uPortal 5](https://github.com/Jasig/uPortal/tree/master) | [![Linux Build Status](https://travis-ci.org/Jasig/uPortal.svg?branch=master)](https://travis-ci.org/Jasig/uPortal) | [![Windows Build Status](https://ci.appveyor.com/api/projects/status/8t95sjt090mf62dh/branch/master?svg=true)](https://ci.appveyor.com/project/drewwills/uportal/branch/master) | [![Coverage Status](https://coveralls.io/repos/github/Jasig/uPortal/badge.svg?branch=master)](https://coveralls.io/github/Jasig/uPortal?branch=master) |
+| [uPortal 4](https://github.com/Jasig/uPortal/tree/rel-4-3-patches) | [![Linux Build Status](https://travis-ci.org/Jasig/uPortal.svg?branch=rel-4-3-patches)](https://travis-ci.org/Jasig/uPortal) | [![Windows Build Status](https://ci.appveyor.com/api/projects/status/8t95sjt090mf62dh/branch/rel-4-3-patches?svg=true)](https://ci.appveyor.com/project/drewwills/uportal/branch/rel-4-3-patches) | [![Coverage Status](https://coveralls.io/repos/github/Jasig/uPortal/badge.svg?branch=rel-4-3-patches)](https://coveralls.io/github/Jasig/uPortal?branch=rel-4-3-patches) |
+
+</td>
+<td>
+
+| Get Involved | Outlet |
+| - | - |
+| Report an Issue | [![Issue Tracker](https://img.shields.io/badge/issue_tacker-Jira-green.svg?style=flat)](https://issues.jasig.org/browse/UP) |
+| Request a feature | [![Issue Tracker](https://img.shields.io/badge/issue_tacker-Jira-green.svg?style=flat)](https://issues.jasig.org/browse/UP) |
+| Contibute Code | [![Contributing Guide](https://img.shields.io/badge/contributing-guide-green.svg?style=flat)](CONTRIBUTING.md)
+| Join the Conversation | [![Gitter](https://badges.gitter.im/Jasig/uPortal.svg)](https://gitter.im/Jasig/uPortal?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge) <br> [![uPortal on IRC](https://img.shields.io/badge/IRC-%23jasig--uportal-1e72ff.svg?style=flat)](https://www.irccloud.com/invite?channel=%23jasig-uportal&amp;hostname=irc.freenode.net&amp;port=6697&amp;ssl=1) <br> [![Twitter Follow](https://img.shields.io/twitter/follow/uPortal.svg?style=social&label=Follow)](https://twitter.com/uPortal) |
+
+</td>
+</tr></table>
+
 ## Sections
 
 * [Ant Help](antHelp.txt)
