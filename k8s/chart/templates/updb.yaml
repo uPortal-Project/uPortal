@@ -1,0 +1,51 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: updb
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: updb
+        tier: database
+    spec:
+      containers:
+      - name: updb
+        image: {{ .Values.image.registry }}/{{ .Values.image.dbName }}:{{ .Values.image.tag }}
+        imagePullPolicy: Always
+        env:
+        - name: POSTGRES_USER
+          value: uportal
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: updb-creds
+              key: password
+        resources:
+          requests:
+            cpu: 100m
+            memory: 200Mi
+        ports:
+        - containerPort: 5432
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: updb
+  namespace: {{ .Release.Namespace }}
+spec:
+  ports:
+  - port: 5432
+  selector:
+    app: updb
+    tier: database
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: updb-creds
+type: Opaque
+data:
+  password: {{ .Values.updb.password | b64enc }}

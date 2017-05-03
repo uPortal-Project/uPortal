@@ -100,23 +100,35 @@
     </rollingPolicy>
   </appender>
   
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <!-- encoders are assigned the type
+         ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
+    <encoder>
+      <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+    </encoder>
+  </appender>
+
   <root level="${environment.build.log.rootLevel}">
     <appender-ref ref="PORTAL"/>
+    <appender-ref ref="STDOUT" />
   </root>
   
   <!-- Log use of the identity and attribute swapper -->
   <logger name="org.apereo.portal.portlets.swapper" additivity="false" level="${environment.build.log.rootLevel}">
     <appender-ref ref="SWAPPER"/>
+    <appender-ref ref="STDOUT" />
   </logger>
 
   <!--  Portal Event aggregation -->
   <logger name="org.apereo.portal.events" additivity="false" level="${environment.build.log.rootLevel}">
     <appender-ref ref="EVENT"/>
+    <appender-ref ref="STDOUT" />
   </logger>
   
   <!--  Portal Tin Can Events -->
   <logger name="org.apereo.portal.events.tincan.providers.LogEventTinCanAPIProvider" additivity="false" level="DEBUG">
     <appender-ref ref="TINCAN"/>
+    <appender-ref ref="STDOUT" />
   </logger>
  
   <!-- Debug CAS Clearpass

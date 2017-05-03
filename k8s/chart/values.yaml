@@ -1,0 +1,15 @@
+# Default values for chart.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+replicas: 1
+image:
+  registry: andrewstuart
+  name: uportal
+  dbName: updb
+  tag: "5"
+
+updb:
+  password: ap3r30
+
+global:
+  dnsSuffix: apereo.org
