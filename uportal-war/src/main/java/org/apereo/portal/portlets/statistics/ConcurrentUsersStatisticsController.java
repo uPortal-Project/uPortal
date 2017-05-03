@@ -46,7 +46,6 @@ import org.springframework.web.portlet.bind.annotation.ResourceMapping;
 /**
  * Concurrent User Reports
  *
- * @author edalquist
  */
 @Controller
 @RequestMapping("VIEW")

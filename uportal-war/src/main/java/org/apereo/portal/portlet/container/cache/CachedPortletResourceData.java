@@ -29,7 +29,6 @@ import org.apereo.portal.portlet.rendering.PortletResourceOutputHandler;
 /**
  * Java bean to represent the data cached for a portlet resource request via {@link CacheControl}s.
  *
- * @author Eric Dalquist
  */
 public class CachedPortletResourceData<T extends Serializable>
         implements CachedPortletResultHolder<T>, Serializable {

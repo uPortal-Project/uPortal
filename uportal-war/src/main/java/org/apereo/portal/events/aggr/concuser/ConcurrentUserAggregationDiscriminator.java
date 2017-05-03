@@ -20,7 +20,6 @@ import org.apereo.portal.events.aggr.BaseGroupedAggregationDiscriminator;
  * Interface to separate Concurrent User aggregation events into separate columns for reporting
  * purposes.
  *
- * @author James Wennmacher, jameswennmacher@gmail.com
  */
 public interface ConcurrentUserAggregationDiscriminator
         extends BaseGroupedAggregationDiscriminator {}

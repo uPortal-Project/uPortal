@@ -23,7 +23,6 @@ import org.apereo.portal.xml.stream.XMLEventBufferReader;
 /**
  * component that can cache StAX pipeline events
  *
- * @author Eric Dalquist
  */
 public class CachingStAXPipelineComponent extends CachingPipelineComponent<XMLEventReader, XMLEvent>
         implements StAXPipelineComponent {

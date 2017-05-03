@@ -22,7 +22,6 @@ import org.apereo.portal.layout.om.IStylesheetUserPreferences;
 /**
  * Utility class to simplify logic needed in CRN script when importing user profile data
  *
- * @author Eric Dalquist
  */
 public class ProfileImportHelper {
     private final IStylesheetUserPreferencesDao stylesheetUserPreferencesDao;

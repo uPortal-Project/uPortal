@@ -26,7 +26,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 
 /**
- * @author Eric Dalquist
  */
 public class StaticTransformerSource implements TransformerSource {
     private Resource stylesheet;

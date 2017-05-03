@@ -12,7 +12,6 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/** */
 package org.apereo.portal.portlet.container;
 
 import java.io.IOException;
@@ -37,7 +36,6 @@ import org.apache.pluto.container.om.portlet.FilterMapping;
 import org.apache.pluto.container.om.portlet.PortletApplicationDefinition;
 import org.apache.pluto.container.om.portlet.PortletDefinition;
 
-/** @author Nicholas Blair, npblair@wisc.edu */
 public class FilterManagerImpl implements FilterManager {
     private FilterChainImpl filterchain;
     private PortletApplicationDefinition portletApp;

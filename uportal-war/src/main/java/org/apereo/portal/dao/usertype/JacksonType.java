@@ -19,7 +19,6 @@ import org.jadira.usertype.spi.shared.AbstractSingleColumnUserType;
 /**
  * Uses Jackson to convert objects to/from JSON
  *
- * @author Eric Dalquist
  */
 public class JacksonType extends AbstractSingleColumnUserType<Object, String, JacksonColumnMapper> {
     private static final long serialVersionUID = 1L;

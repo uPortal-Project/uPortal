@@ -21,7 +21,6 @@ import java.util.Set;
  * ILocalAccountDao provides an interface for interacting with the uPortal internal account store.
  * This interface works with accounts in a local format rather than using the person directory API.
  *
- * @author Jen Bourey, jbourey@unicon.net
  */
 public interface ILocalAccountDao {
 

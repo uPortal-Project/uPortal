@@ -21,7 +21,6 @@ import javax.naming.Name;
 /**
  * Reference implementation of IComponentGroupService.
  *
- * @author Dan Ellentuck
  */
 public class ReferenceComponentGroupService implements IComponentGroupService {
     /**

@@ -38,7 +38,7 @@ import org.mockito.Mock;
  * would be better to use more real objects and less mock objects by mocking up only the bits
  * necessary to make real objects interpret the mocks as meaning the indicated active profile fname.
  *
- * @since uPortal 4.2
+ * @since 4.2
  */
 public class ProfileFNamePredicateTest {
 

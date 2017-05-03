@@ -48,7 +48,6 @@ import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 import org.hibernate.annotations.NaturalIdCache;
 
-/** @author Shawn Connolly, sconnolly@unicon.net */
 @Entity
 @Table(name = "UP_PAGS_GROUP")
 @SequenceGenerator(

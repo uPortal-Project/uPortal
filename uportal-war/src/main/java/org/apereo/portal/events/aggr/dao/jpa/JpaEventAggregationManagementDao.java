@@ -44,7 +44,6 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 
-/** @author Eric Dalquist */
 @Repository
 public class JpaEventAggregationManagementDao extends BaseAggrEventsJpaDao
         implements IEventAggregationManagementDao {

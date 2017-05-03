@@ -24,7 +24,6 @@ import javax.portlet.RenderResponse;
  * </code> to add ability to process the <code>RENDER_HEADERS</code> portion of the two-phase render
  * process.
  *
- * @author James Wennmacher, jwennmacher@unicon.net
  */
 public class HeaderHandlingDispatcherPortlet extends DispatcherPortlet {
 

@@ -20,7 +20,6 @@ import org.apereo.portal.portlet.om.IPortletWindowId;
 /**
  * Provides portal URL builders
  *
- * @author Eric Dalquist
  */
 public interface IPortalUrlProvider {
     /**

@@ -17,7 +17,6 @@ package org.apereo.portal.tools.dbloader;
 /**
  * Handles portal schema drop/create/update
  *
- * @author Eric Dalquist
  */
 public interface ISchemaExport {
 

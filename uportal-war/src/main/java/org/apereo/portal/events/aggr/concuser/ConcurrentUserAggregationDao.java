@@ -20,7 +20,6 @@ import org.apereo.portal.events.aggr.BaseAggregationDao;
  * DAO used to query information about login aggregates: Total Logins and Unique Logins per
  * date,time,interval,group
  *
- * @author Eric Dalquist
  */
 public interface ConcurrentUserAggregationDao<T extends ConcurrentUserAggregation>
         extends BaseAggregationDao<T, ConcurrentUserAggregationKey> {}

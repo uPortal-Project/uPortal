@@ -35,7 +35,6 @@ import org.springframework.stereotype.Repository;
 /**
  * DAO for Tab Render Aggregations
  *
- * @author Eric Dalquist
  */
 @Repository
 public class JpaTabRenderAggregationDao

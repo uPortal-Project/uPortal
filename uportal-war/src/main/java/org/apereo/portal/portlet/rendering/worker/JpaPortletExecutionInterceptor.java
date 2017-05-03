@@ -27,7 +27,6 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
  * Opens and closes an {@link EntityManager} around the execution of a portlet, participates in an
  * existing {@link EntityManager} if one already exists.
  *
- * @author Eric Dalquist
  * @see JpaInterceptor
  */
 public class JpaPortletExecutionInterceptor extends JpaAccessor

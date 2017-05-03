@@ -40,7 +40,6 @@ import org.springframework.context.ApplicationContext;
  * reads the Assertion from the ThreadLocal. The Assertion stored in a ThreadLocal is an artifact of
  * the Jasig CAS Client for Java 3.x library.
  *
- * @author Scott Battaglia
  * @since 3.2
  */
 public class CasAssertionSecurityContext extends ChainingSecurityContext

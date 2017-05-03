@@ -24,7 +24,6 @@ import org.springframework.stereotype.Service;
  * Responsible for issuing and parsing Bearer tokens.
  *
  * @since 5.0
- * @author drewwills
  */
 @Service
 public class BearerService extends AbstractJwtService {

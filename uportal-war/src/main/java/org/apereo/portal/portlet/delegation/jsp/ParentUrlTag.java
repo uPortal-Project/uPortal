@@ -27,7 +27,6 @@ import org.apereo.portal.portlet.PortletUtils;
 /**
  * Simple wrapper tag for setting up the basis of URLs for portlet delegation
  *
- * @author Eric Dalquist
  */
 public class ParentUrlTag extends TagSupport implements ParameterizableTag {
     private static final long serialVersionUID = 1L;

@@ -23,7 +23,6 @@ import org.apereo.portal.character.stream.events.CharacterEvent;
  * CharacterEventReader. By default each method does nothing but call the corresponding method on
  * the parent interface.
  *
- * @author Eric Dalquist
  */
 public class CharacterEventReaderDelegate implements CharacterEventReader {
     private final CharacterEventReader delegate;

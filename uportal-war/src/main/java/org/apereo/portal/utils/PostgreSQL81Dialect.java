@@ -17,7 +17,6 @@ package org.apereo.portal.utils;
 import org.hibernate.dialect.PostgreSQLDialect;
 
 /**
- * @author Eric Dalquist
  */
 public class PostgreSQL81Dialect extends PostgreSQLDialect {
     @Override

@@ -23,7 +23,6 @@ import java.util.Map;
  *
  * <p>TODO: We still need to add Spring auto-wiring friendliness.
  *
- * @author Jen Bourey, jbourey@unicon.net
  * @since 3.3
  */
 public class PermissionTargetProviderRegistryImpl implements IPermissionTargetProviderRegistry {

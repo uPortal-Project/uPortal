@@ -21,7 +21,6 @@ import org.apereo.portal.character.stream.events.CharacterEvent;
  * Base class for application event readers that simply want to filter or monitor events passing
  * through the reader.
  *
- * @author Eric Dalquist
  */
 public abstract class FilteringCharacterEventReader extends CharacterEventReaderDelegate {
     private CharacterEvent peekedEvent = null;

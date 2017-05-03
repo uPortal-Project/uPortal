@@ -29,8 +29,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 /**
- * @author Jen Bourey, jennifer.bourey@gmail.com
- * @version $RevisionR
  */
 public class ChainingProfileMapperImplTest {
 

@@ -76,7 +76,6 @@ import org.w3c.dom.Node;
  * <p>Prior to uPortal 2.5, this class existed in the org.jasig.portal package. It was moved to its
  * present package to express that it is part of the Simple Layout Manager implementation.
  *
- * @author George Lindholm
  */
 public abstract class RDBMUserLayoutStore implements IUserLayoutStore, InitializingBean {
 

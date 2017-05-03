@@ -14,7 +14,6 @@
  */
 package org.apereo.portal.utils.web;
 
-/** @author Chris Waymire <cwaymire@unicon.net> */
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;

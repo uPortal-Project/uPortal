@@ -16,9 +16,6 @@ package org.apereo.portal;
 
 /**
  * A store interface that keeps track of multiple unique ID counters.
- *
- * @author Peter Kharchenko {@link <a
- *     href="mailto:pkharchenko@interactivebusiness.com"">pkharchenko@interactivebusiness.com"</a>}
  */
 public interface ICounterStore {
 

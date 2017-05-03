@@ -43,7 +43,6 @@ import org.hibernate.annotations.Index;
 import org.hibernate.annotations.NaturalIdCache;
 
 /**
- * @author Eric Dalquist
  */
 @Entity
 @Table(name = "UP_LOGIN_EVENT_AGGR")

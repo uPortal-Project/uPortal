@@ -19,7 +19,6 @@ import org.apereo.portal.groups.IEntitySearcher;
 import org.apereo.portal.groups.IEntitySearcherFactory;
 
 /**
- * @author Shawn Connolly, sconnolly@unicon.net
  * @since 4.1
  */
 public class EntityPersonAttributesEntitySearcherFactory implements IEntitySearcherFactory {

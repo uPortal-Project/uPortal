@@ -43,7 +43,6 @@ import org.springframework.stereotype.Component;
 /**
  * Title: DbTest Description: Displays database metadata information Company:
  *
- * @author John Fereira
  */
 @Component("dbTest")
 @Lazy

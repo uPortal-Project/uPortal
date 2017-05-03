@@ -24,7 +24,6 @@ import org.apereo.portal.EntityTypes;
  *
  * <p>See IEntityLockService for the rules governing lock assignment and a code example.
  *
- * @author Dan Ellentuck
  * @see org.apereo.portal.concurrency.IEntityLockService
  */
 public interface IEntityLock {

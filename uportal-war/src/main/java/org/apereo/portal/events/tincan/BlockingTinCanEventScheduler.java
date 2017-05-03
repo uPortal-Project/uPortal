@@ -21,7 +21,6 @@ import org.apereo.portal.events.tincan.providers.ITinCanAPIProvider;
  * Event scheduler that blocks while sending events to all providers. Since this is called from
  * event aggregation which is itself async in the portal, keeping this as the default for now.
  *
- * @author Josh Helmer, jhelmer@unicon.net
  */
 public class BlockingTinCanEventScheduler extends AbstractTinCanEventScheduler
         implements ITinCanEventScheduler {

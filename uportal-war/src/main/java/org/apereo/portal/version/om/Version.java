@@ -19,7 +19,6 @@ package org.apereo.portal.version.om;
  * Versions MUST implement equality as checking if the Major, Minor, Patch, and Local values ALL
  * match
  *
- * @author Eric Dalquist
  */
 public interface Version extends Comparable<Version> {
     /** Describes the fields of the version number */

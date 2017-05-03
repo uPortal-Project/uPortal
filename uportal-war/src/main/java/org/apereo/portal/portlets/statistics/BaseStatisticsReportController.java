@@ -66,7 +66,6 @@ import org.springframework.web.portlet.ModelAndView;
  * #renderAggregationReport(BaseReportForm)} from their resource request handling method. This will
  * generate the {@link DataTable} of the results and render the correct view.
  *
- * @author Eric Dalquist
  * @param <T> The type of aggregation being reported on
  * @param <K> The aggregation query key
  * @param <F> The form used to query for data

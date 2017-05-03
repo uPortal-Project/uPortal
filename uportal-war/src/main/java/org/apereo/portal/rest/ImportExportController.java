@@ -53,7 +53,6 @@ import org.springframework.web.multipart.MultipartFile;
 /**
  * ImportExportController provides AJAX/REST targets for import/export operations.
  *
- * @author Jen Bourey, jennifer.bourey@gmail.com
  */
 @Controller
 public class ImportExportController {

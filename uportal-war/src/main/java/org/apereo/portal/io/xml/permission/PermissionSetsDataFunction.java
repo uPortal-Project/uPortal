@@ -30,7 +30,6 @@ import org.springframework.jdbc.core.RowMapper;
 /**
  * Lists each Permission Set in the portal during the export process.
  *
- * @author Eric Dalquist
  */
 public class PermissionSetsDataFunction
         implements Function<IPortalDataType, Iterable<? extends IPortalData>> {

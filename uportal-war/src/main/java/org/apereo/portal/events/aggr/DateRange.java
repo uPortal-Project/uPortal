@@ -19,7 +19,6 @@ import org.joda.time.ReadableInstant;
 /**
  * Describes a basic date range with an inclusive start and and exclusive end
  *
- * @author Eric Dalquist
  */
 public interface DateRange<DT> {
 

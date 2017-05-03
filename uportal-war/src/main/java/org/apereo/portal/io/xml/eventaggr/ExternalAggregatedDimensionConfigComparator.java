@@ -19,7 +19,6 @@ import org.apereo.portal.utils.ComparableExtractingComparator;
 /**
  * Compare dimension configs by type
  *
- * @author Eric Dalquist
  */
 public class ExternalAggregatedDimensionConfigComparator
         extends ComparableExtractingComparator<ExternalAggregatedDimensionConfig, String> {

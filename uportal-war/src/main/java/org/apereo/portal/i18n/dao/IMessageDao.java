@@ -21,7 +21,6 @@ import org.apereo.portal.i18n.Message;
 /**
  * Interface for creating/retrieving/updating/deleting {@link Message}s.
  *
- * @author Arvids Grabovskis
  */
 public interface IMessageDao {
 
@@ -80,7 +79,7 @@ public interface IMessageDao {
      * missing translations for specific locales.
      *
      * @return A set of all message codes.
-     * @since uPortal 4.0.2
+     * @since 4.0.2
      */
     Set<String> getCodes();
 }

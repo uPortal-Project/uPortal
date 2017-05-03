@@ -26,7 +26,6 @@ import org.apereo.portal.utils.Populator;
  * access to theme or structure stylesheet user preferences. All of the details around default
  * values, scoping and persistence are taken care of here.
  *
- * @author Eric Dalquist
  */
 public interface IStylesheetUserPreferencesService {
     public enum PreferencesScope {

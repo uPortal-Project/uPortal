@@ -21,7 +21,6 @@ import junit.framework.TestCase;
  * Test case for PropertiesManager. Exercises property accessor methods against a test properties
  * file.
  *
- * @author andrew.petro@yale.edu
  */
 public class PropertiesManagerTest extends TestCase {
 

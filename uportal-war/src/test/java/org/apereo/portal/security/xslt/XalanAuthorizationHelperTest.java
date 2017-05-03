@@ -39,7 +39,6 @@ import org.springframework.core.io.ClassRelativeResourceLoader;
 import org.springframework.util.xml.SimpleTransformErrorListener;
 
 /**
- * @author Eric Dalquist
  */
 public class XalanAuthorizationHelperTest {
     protected final Logger logger = LoggerFactory.getLogger(getClass());

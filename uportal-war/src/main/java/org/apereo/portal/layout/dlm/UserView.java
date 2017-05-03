@@ -16,7 +16,7 @@ package org.apereo.portal.layout.dlm;
 
 import org.w3c.dom.Document;
 
-/** @since uPortal 2.5 */
+/** @since 2.5 */
 public class UserView {
 
     private final int userId;

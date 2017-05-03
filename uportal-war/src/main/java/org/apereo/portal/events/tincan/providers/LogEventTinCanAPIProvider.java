@@ -24,7 +24,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 /**
  * TinCan API provider that just logs LRS statements.
  *
- * @author Josh Helmer, jhelmer@unicon.net
  */
 public class LogEventTinCanAPIProvider implements ITinCanAPIProvider {
     private static Logger log = LoggerFactory.getLogger(LogEventTinCanAPIProvider.class);

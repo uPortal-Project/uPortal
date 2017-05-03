@@ -25,7 +25,6 @@ import org.springframework.web.servlet.support.RequestContextUtils;
  * use <code>response.getLocale()</code> in order to determine the portal locale whenever request
  * object is available.
  *
- * @author Arvids Grabovskis
  */
 public class LocaleManagementInterceptor extends HandlerInterceptorAdapter {
 

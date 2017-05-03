@@ -36,7 +36,6 @@ import org.springframework.stereotype.Service;
  * PermissionAdministrationHelper contains convenience methods for the permission editing Spring
  * Webflows.
  *
- * @author Jen Bourey, jbourey@unicon.net
  * @since 3.3
  */
 @Service

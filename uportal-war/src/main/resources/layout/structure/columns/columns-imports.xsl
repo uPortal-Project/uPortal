@@ -23,7 +23,7 @@
 
 <!--=====START: DOCUMENT DESCRIPTION=====-->
 <!--
-    @since uPortal 4.2
+    @since 4.2
 
     General Description:  This file was created in order to help minize duplication of code 
     between columns.xsl and columns-js.xsl (which was derived from columns.xsl).  It contains 

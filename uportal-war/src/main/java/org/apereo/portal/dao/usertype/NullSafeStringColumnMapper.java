@@ -18,7 +18,6 @@ import org.hibernate.HibernateException;
 import org.jadira.usertype.spi.shared.AbstractStringColumnMapper;
 
 /**
- * @author Eric Dalquist
  */
 public class NullSafeStringColumnMapper extends AbstractStringColumnMapper<String> {
     private static final long serialVersionUID = 1L;

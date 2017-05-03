@@ -19,9 +19,6 @@ import org.apereo.portal.security.IPerson;
 
 /**
  * Interface to user preferences management class.
- *
- * @author Peter Kharchenko {@link <a
- *     href="mailto:pkharchenko@interactivebusiness.com">pkharchenko@interactivebusiness.com</a>}
  */
 public interface IUserPreferencesManager {
 

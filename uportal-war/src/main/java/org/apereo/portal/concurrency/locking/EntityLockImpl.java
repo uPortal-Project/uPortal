@@ -24,7 +24,6 @@ import org.apereo.portal.concurrency.LockingException;
  * entityType</code> and <code>entityKey</code>. It guarantees some degree of exclusive access to
  * the entity, depending on <code>lockType</code> and <code>expirationTime</code>.
  *
- * @author Dan Ellentuck
  * @see org.apereo.portal.concurrency.IEntityLock
  */
 public class EntityLockImpl implements IEntityLock {
@@ -34,7 +33,7 @@ public class EntityLockImpl implements IEntityLock {
     private Date expirationTime;
     private int lockType;
     private IEntityLockService service;
-    /** */
+
     protected EntityLockImpl(
             Class newEntityType,
             String newEntityKey,
@@ -48,7 +47,7 @@ public class EntityLockImpl implements IEntityLock {
         setExpirationTime(newExpirationTime);
         setLockOwner(newLockOwner);
     }
-    /** */
+
     protected EntityLockImpl(
             Class newEntityType,
             String newEntityKey,
@@ -100,7 +99,7 @@ public class EntityLockImpl implements IEntityLock {
                 && this.getLockType() == candidate.getLockType()
                 && this.getExpirationTime().equals(candidate.getExpirationTime());
     }
-    /** */
+
     protected void expire() {
         setExpirationTime(new Date(0));
     }

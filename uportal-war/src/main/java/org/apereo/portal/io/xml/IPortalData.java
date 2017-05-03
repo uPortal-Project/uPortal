@@ -17,7 +17,6 @@ package org.apereo.portal.io.xml;
 /**
  * Represents a piece of data in the portal that can be exported.
  *
- * @author Eric Dalquist
  */
 public interface IPortalData {
     /** @return The unique id of the data object this represents */

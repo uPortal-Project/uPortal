@@ -26,7 +26,6 @@ import org.springframework.stereotype.Service;
  * Responsible for issuing and parsing Definition tokens.
  *
  * @since 5.0
- * @author drewwills
  */
 @Service
 public class DefinitionService extends AbstractJwtService {

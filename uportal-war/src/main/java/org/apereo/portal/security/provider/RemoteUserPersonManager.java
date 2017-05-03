@@ -28,7 +28,6 @@ import org.apereo.portal.security.PortalSecurityException;
  * passed to the security context. If it is set then the server has authenticated the user and the
  * username may be used for login.
  *
- * @author Pete Boysen (pboysen@iastate.edu)
  */
 public class RemoteUserPersonManager extends AbstractPersonManager {
 

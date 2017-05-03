@@ -59,7 +59,6 @@ import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.Type;
 
 /**
- * @author Eric Dalquist
  */
 @Entity
 @Table(name = "UP_PORTLET_ENT")

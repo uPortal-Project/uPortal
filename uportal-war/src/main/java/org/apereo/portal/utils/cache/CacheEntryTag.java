@@ -19,7 +19,6 @@ import java.io.Serializable;
 /**
  * Tag for a cache entry
  *
- * @author Eric Dalquist
  */
 public interface CacheEntryTag extends Serializable {
     /**

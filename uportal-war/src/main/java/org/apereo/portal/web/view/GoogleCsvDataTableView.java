@@ -26,7 +26,6 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Renders a google {@link DataTable} to a CSV
  *
- * @author Eric Dalquist
  */
 public class GoogleCsvDataTableView extends AbstractGoogleDataTableView {
     public static final String OUT_FILE_NAME_ATTRIBUTE = "outFileName";

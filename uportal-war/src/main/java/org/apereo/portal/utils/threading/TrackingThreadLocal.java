@@ -32,8 +32,6 @@ import org.apereo.portal.portlet.rendering.worker.TrackingThreadLocalPortletExec
  * subclass will not cause leaks by holding on to thread local instances that are no longer
  * referenced.
  *
- * @author Eric Dalquist
- * @version $Revision: 1.4 $
  */
 public class TrackingThreadLocal<T> extends ThreadLocal<T> {
     @SuppressWarnings("unchecked")

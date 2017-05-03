@@ -43,7 +43,6 @@ import org.w3c.dom.NodeList;
  * <p>Prior to uPortal 2.5, this class existed in the org.apereo.portal.layout package. It was moved
  * to its present package to reflect that it is part of the Simple Layout Management implementation.
  *
- * @author Ken Weiner, kweiner@unicon.net
  */
 public class SimpleLayout implements IUserLayout {
 

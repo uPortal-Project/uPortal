@@ -27,7 +27,6 @@ import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 /**
  * Wraps common logic for configuring a {@link Jaxb2Marshaller}
  *
- * @author Eric Dalquist
  */
 public abstract class AbstractJaxbDataHandler<T>
         implements IDataImporter<T>, IDataExporter<T>, IDataDeleter<T>, InitializingBean {

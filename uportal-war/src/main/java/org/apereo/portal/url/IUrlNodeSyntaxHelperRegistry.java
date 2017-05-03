@@ -20,7 +20,6 @@ import org.apereo.portal.layout.om.IStylesheetDescriptor;
 /**
  * A registry of all available {@link IUrlNodeSyntaxHelper} impls
  *
- * @author Eric Dalquist
  */
 public interface IUrlNodeSyntaxHelperRegistry {
     /** Get the registered {@link IUrlNodeSyntaxHelper} */

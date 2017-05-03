@@ -39,7 +39,6 @@ import org.springframework.stereotype.Service;
  * -- instead of the DAOs directly -- whenever the actions are undertaken on behalf of a specific
  * user.
  *
- * @author drewwills
  */
 @Service
 public final class PagsService {

@@ -21,7 +21,6 @@ import org.apereo.portal.groups.IEntitySearcherFactory;
 /**
  * Returns an instance of the ldap <code>IEntitySearcher</code>.
  *
- * @author Dan Ellentuck
  */
 public class LDAPEntitySearcherFactory implements IEntitySearcherFactory {
     /** LdapEntitySearcherFactory constructor. */

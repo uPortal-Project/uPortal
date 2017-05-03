@@ -29,7 +29,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
- * @since uPortal 2.5
+ * @since 2.5
  */
 @Entity
 @Cacheable

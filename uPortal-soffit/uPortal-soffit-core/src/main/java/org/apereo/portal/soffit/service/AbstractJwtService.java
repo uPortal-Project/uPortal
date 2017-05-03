@@ -32,7 +32,6 @@ import org.springframework.beans.factory.annotation.Value;
  * Base class for services that produce JASON Web Tokens.
  *
  * @since 5.0
- * @author drewwills
  */
 public class AbstractJwtService {
 

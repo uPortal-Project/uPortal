@@ -33,7 +33,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 /**
  * Exposes the transformer parameter from {@link StylesheetUserPreferences#getParameterValues()}
  *
- * @author Eric Dalquist
  */
 public abstract class StylesheetUserPreferencesTransformerConfigurationSource
         extends TransformerConfigurationSourceAdapter implements BeanNameAware {

@@ -28,7 +28,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 /**
  * Injects a parameter marking if the current user is impersonating another using the ID Swapper
  *
- * @author Eric Dalquist
  */
 public class UserImpersonationTransformerConfigurationSource
         implements TransformerConfigurationSource {

@@ -44,7 +44,6 @@ import org.springframework.web.context.request.WebRequest;
 /**
  * PortalSpELServiceImpl provides the default implementation of IPortalSpELService.
  *
- * @author Jen Bourey, jbourey@unicon.net
  */
 @Service
 public class PortalSpELServiceImpl implements IPortalSpELService, BeanFactoryAware {

@@ -21,7 +21,6 @@ import java.util.Map;
 /**
  * Target of an {@link LrsVerb}
  *
- * @author Eric Dalquist
  */
 public class LrsObject {
     private final URI id;

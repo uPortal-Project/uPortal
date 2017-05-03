@@ -24,7 +24,6 @@ import org.apereo.portal.events.tincan.om.LrsObject;
 /**
  * Converter for Login events.
  *
- * @author Josh Helmer, jhelmer@unicon.net
  */
 public class LoginEventConverter extends AbstractPortalEventToLrsStatementConverter {
     @Override

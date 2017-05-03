@@ -21,7 +21,6 @@ import org.joda.time.LocalTime;
 /**
  * Describes a dimension in time (hours). Each object represents one minute in a 24 period
  *
- * @author Eric Dalquist
  */
 public interface TimeDimension extends Serializable {
     /** @return The ID of the dimension */

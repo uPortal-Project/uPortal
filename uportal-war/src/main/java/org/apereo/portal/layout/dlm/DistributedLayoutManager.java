@@ -71,8 +71,7 @@ import org.w3c.dom.NodeList;
  * A layout manager that provides layout control through layout fragments that are derived from
  * regular portal user accounts.
  *
- * @author Mark Boyd
- * @since uPortal 2.5
+ * @since 2.5
  */
 public class DistributedLayoutManager implements IUserLayoutManager, InitializingBean {
 

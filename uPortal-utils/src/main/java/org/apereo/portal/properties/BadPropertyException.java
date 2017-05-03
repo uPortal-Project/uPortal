@@ -18,8 +18,7 @@ package org.apereo.portal.properties;
  * This is an undeclared (Runtime) exception to be thrown by the PropertiesManager when a property
  * is requested but cannot be parsed and returned as the desired type.
  *
- * @author andrew.petro@yale.edu
- * @since uPortal 2.4
+ * @since 2.4
  */
 public class BadPropertyException extends RuntimeException {
 

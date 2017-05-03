@@ -17,7 +17,7 @@ package org.apereo.portal.layout.dlm;
 /**
  * This class is used to keep track of changes when integrating PLF and ILF components.
  *
- * @since uPortal 2.5
+ * @since 2.5
  */
 public class IntegrationResult {
 

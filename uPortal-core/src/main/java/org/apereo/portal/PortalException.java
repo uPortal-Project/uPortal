@@ -21,7 +21,6 @@ import java.util.Date;
  * errors gracefully. This class also reports itself to the ProblemsTable whenever it is
  * instantiated. The Problems servlet displays recently reported PortalExceptions.
  *
- * @author Peter Kharchenko
  */
 public class PortalException extends RuntimeException {
     private static final long serialVersionUID = 1L;

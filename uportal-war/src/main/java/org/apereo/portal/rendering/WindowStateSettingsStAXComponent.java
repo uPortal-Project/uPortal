@@ -46,7 +46,6 @@ import org.springframework.beans.factory.annotation.Autowired;
  * not specified a check is made to ensure the window states are not {@link WindowState#MAXIMIZED},
  * {@link IPortletRenderer#DETACHED}, or {@link IPortletRenderer#EXCLUSIVE}
  *
- * @author Eric Dalquist
  */
 public class WindowStateSettingsStAXComponent extends StAXPipelineComponentWrapper {
     protected final Logger logger = LoggerFactory.getLogger(getClass());

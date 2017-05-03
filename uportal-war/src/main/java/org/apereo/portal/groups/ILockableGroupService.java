@@ -17,7 +17,6 @@ package org.apereo.portal.groups;
 /**
  * Extends IGroupService with methods for finding and maintaining <code>ILockableEntityGroups</code>
  *
- * @author Dan Ellentuck
  */
 public interface ILockableGroupService extends IGroupService {
 

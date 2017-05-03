@@ -20,7 +20,6 @@ import org.apache.commons.collections.Factory;
 /**
  * commons-collections Factory that creates new {@link Attribute}s
  *
- * @author Eric Dalquist
  */
 public class AttributeFactory implements Factory, Serializable {
     private static final long serialVersionUID = 1L;

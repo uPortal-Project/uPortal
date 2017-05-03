@@ -26,7 +26,6 @@ import org.slf4j.LoggerFactory;
  * match the entire region against the pattern specified. <br>
  * See {@link org.apereo.portal.groups.pags.testers.RegexTester} for regex examples.
  *
- * @author James Wennmacher jwennmacher@unicon.net
  * @see org.apereo.portal.groups.pags.testers.RegexTester for expression examples
  */
 public class PropertyRegexTester extends RegexTester {

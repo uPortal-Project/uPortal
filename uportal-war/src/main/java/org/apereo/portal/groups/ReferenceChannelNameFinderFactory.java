@@ -17,7 +17,6 @@ package org.apereo.portal.groups;
 /**
  * Factory for creating <code>ReferencePersonNameFinders</code>.
  *
- * @author Alex Vigdor
  */
 public class ReferenceChannelNameFinderFactory implements IEntityNameFinderFactory {
     /** ReferenceChannelNameFinderFactory constructor comment. */

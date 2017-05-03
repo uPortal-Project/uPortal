@@ -20,7 +20,6 @@ import org.apereo.portal.version.dao.VersionDao;
  * Runs steps needed to init/upgrade/update the database based on the version information retrieved
  * from {@link VersionDao}
  *
- * @author Eric Dalquist
  */
 public interface VersionedDataUpdater {
 

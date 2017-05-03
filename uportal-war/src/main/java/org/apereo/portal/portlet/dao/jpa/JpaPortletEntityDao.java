@@ -42,7 +42,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.stereotype.Repository;
 
-/** @author Eric Dalquist */
 @Repository
 @Qualifier("persistence")
 public class JpaPortletEntityDao extends BasePortalJpaDao implements IPortletEntityDao {

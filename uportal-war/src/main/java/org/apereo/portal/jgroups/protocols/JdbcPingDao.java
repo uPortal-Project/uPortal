@@ -45,7 +45,6 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 /**
  * {@link PingDao} that uses the Spring JDBC APIs to do its work.
  *
- * @author Eric Dalquist
  */
 public class JdbcPingDao implements PingDao, InitializingBean {
     /**

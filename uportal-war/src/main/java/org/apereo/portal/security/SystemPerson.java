@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Map;
 import org.apereo.portal.EntityIdentifier;
 
-/** @author Eric Dalquist */
 public final class SystemPerson implements IPerson {
     private static final long serialVersionUID = 1L;
 

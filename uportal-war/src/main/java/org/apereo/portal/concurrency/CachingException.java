@@ -22,7 +22,6 @@ import org.apereo.portal.PortalException;
  * CachingException</code> should wrap an <code>Exception</code> specific to the store, like a
  * <code>java.sql.SQLException</code>.
  *
- * @author Dan Ellentuck
  */
 public class CachingException extends PortalException {
 

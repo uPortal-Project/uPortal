@@ -19,7 +19,6 @@ import org.apereo.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
 /**
  * Tests if any of the possibly multiple values of the attribute are LT (less than) the test value.
  *
- * @author Dan Ellentuck
  */
 public class IntegerLTTester extends AbstractIntegerTester {
 

@@ -37,7 +37,6 @@ import org.apereo.portal.security.provider.RestrictedPerson;
  *       </code>.
  * </ol>
  *
- * @author Ken Weiner, kweiner@unicon.net
  */
 public class PersonFactory {
 

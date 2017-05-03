@@ -12,7 +12,6 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/** */
 package org.apereo.portal.url;
 
 import static org.junit.Assert.assertEquals;
@@ -56,8 +55,6 @@ import org.springframework.mock.web.MockHttpServletRequest;
 
 /**
  * Test harness for {@link UrlSyntaxProviderImpl}.
- *
- * @author Nicholas Blair, nblair@doit.wisc.edu
  */
 @RunWith(MockitoJUnitRunner.class)
 public class UrlSyntaxProviderImplTest {

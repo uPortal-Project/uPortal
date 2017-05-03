@@ -19,7 +19,6 @@ import org.apereo.portal.security.IPerson;
 /**
  * Authorization helper APIs.
  *
- * @author Eric Dalquist
  */
 public interface IXalanAuthorizationHelper {
 

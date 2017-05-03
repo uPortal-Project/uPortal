@@ -37,8 +37,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * typically used to generate the post to this servlet. Actual login processing occurs in
  * PortalPreAuthenticatedProcessingFilter.
  *
- * @author Bernie Durfee (bdurfee@interactivebusiness.com)
- * @author Don Fracapane (df7@columbia.edu)
  */
 @Controller
 @RequestMapping("/Login")

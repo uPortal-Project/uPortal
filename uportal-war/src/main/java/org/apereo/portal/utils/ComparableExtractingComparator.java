@@ -22,7 +22,6 @@ import java.util.Comparator;
  * <p>Implementations have a custom {@link #getComparable(Object)} method that returns an
  * appropriate {@link Comparable} for the object.
  *
- * @author Eric Dalquist
  * @param <T> The root type being compared
  * @param <C> The type that extracted for comparison
  */

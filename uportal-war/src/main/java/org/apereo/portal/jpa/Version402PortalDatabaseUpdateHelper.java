@@ -26,7 +26,6 @@ import org.springframework.stereotype.Component;
 /**
  * Update the portal db from 4.0.2
  *
- * @author Eric Dalquist
  */
 @Component
 public class Version402PortalDatabaseUpdateHelper implements IVersionedDatabaseUpdateHelper {

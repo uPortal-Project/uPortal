@@ -21,7 +21,6 @@ import org.joda.time.DateTime;
 /**
  * Base of all aggregations which includes time, date, interval, group, and duration
  *
- * @author Eric Dalquist
  */
 public interface BaseAggregation<
                 K extends BaseAggregationKey, D extends BaseGroupedAggregationDiscriminator>

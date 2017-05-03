@@ -59,7 +59,6 @@ import org.springframework.util.xml.FixedXMLEventStreamReader;
 import org.springframework.util.xml.SimpleTransformErrorListener;
 
 /**
- * @author Eric Dalquist
  */
 @RunWith(MockitoJUnitRunner.class)
 public class XsltPortalUrlProviderTest {

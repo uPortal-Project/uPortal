@@ -25,7 +25,6 @@ import org.w3c.dom.Node;
 /**
  * Describes the type and version of a portal data XML file.
  *
- * @author Eric Dalquist
  */
 public class PortalDataKey {
     /**

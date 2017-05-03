@@ -39,7 +39,6 @@ import org.springframework.stereotype.Component;
 /**
  * Utilities for portlets
  *
- * @author Eric Dalquist
  */
 @Component
 public final class PortletUtils {

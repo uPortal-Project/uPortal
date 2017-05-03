@@ -21,7 +21,6 @@ import java.io.Serializable;
  * same structure stores information that can potentially be used post-authentication to keep
  * Kerberos TGT's or other useful security context authenticators.
  *
- * @author Andrew Newman, newman@yale.edu
  */
 public interface IOpaqueCredentials extends Serializable {
 

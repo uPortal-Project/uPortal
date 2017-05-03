@@ -19,7 +19,6 @@ import org.apereo.portal.portlet.om.IPortletWindowId;
 /**
  * Base portlet placeholder event
  *
- * @author Eric Dalquist
  */
 public abstract class PortletPlaceholderEventImpl implements PortletPlaceholderEvent {
     private static final long serialVersionUID = 1L;

@@ -33,7 +33,6 @@ import org.springframework.expression.ParseException;
  *   <li>@beanName - bean in spring context
  * </ul>
  *
- * @author James Wennmacher, jwennmacher@unicon.net
  * @since 4.2
  */
 public interface IPortletSpELService {

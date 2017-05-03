@@ -17,8 +17,6 @@ package org.apereo.portal.security;
 import java.util.Date;
 
 /**
- * @author Bernie Durfee (bdurfee@interactivebusiness.com)
- * @author Dan Ellentuck
  */
 public interface IPermission {
 
@@ -51,14 +49,14 @@ public interface IPermission {
     /**
      * Portlet subscribe permission to view ("browse") marketplace entry.
      *
-     * @since uPortal 4.1
+     * @since 4.1
      */
     String PORTLET_BROWSE_ACTIVITY = "BROWSE";
 
     /**
      * Permission to favorite/star a portlet.
      *
-     * @since uPortal 5.0
+     * @since 5.0
      */
     String PORTLET_FAVORITE_ACTIVITY = "FAVORITE";
 

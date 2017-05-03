@@ -37,7 +37,6 @@ import org.springframework.scheduling.support.ScheduledMethodRunnable;
  * Scheduling thread pool that upon invocation of the scheduled task immediately delegates execution
  * to another {@link ExecutorService}. Also adds a configurable start delay to scheduled tasks
  *
- * @author Eric Dalquist
  */
 public class DelegatingThreadPoolTaskScheduler extends ThreadPoolTaskScheduler
         implements TaskScheduler, SchedulingTaskExecutor {

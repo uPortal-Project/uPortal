@@ -28,7 +28,7 @@ import org.w3c.dom.NodeList;
 /**
  * Looks for, applies against the ilf, and updates accordingly the delete set within a plf.
  *
- * @since uPortal 2.5
+ * @since 2.5
  */
 public class DeleteManager {
     private static final Log LOG = LogFactory.getLog(DeleteManager.class);

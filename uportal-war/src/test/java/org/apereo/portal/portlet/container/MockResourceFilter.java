@@ -23,7 +23,6 @@ import javax.portlet.filter.FilterConfig;
 import javax.portlet.filter.ResourceFilter;
 
 /**
- * @author Nicholas Blair, npblair@wisc.edu
  */
 public class MockResourceFilter implements ResourceFilter {
 

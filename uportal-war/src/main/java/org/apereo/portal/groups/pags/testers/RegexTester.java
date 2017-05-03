@@ -48,8 +48,6 @@ import org.apereo.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
  * </table>
  * </code>
  *
- * @author Dan Ellentucke
- * @author Misagh Moayyed
  * @see EagerRegexTester
  */
 public class RegexTester extends AbstractStringTester {

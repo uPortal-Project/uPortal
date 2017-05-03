@@ -22,7 +22,6 @@ import org.apereo.portal.portlet.om.IPortletDefinition;
  * class is the same as o.j.p.portlet.dao.jpa.PortletLocalizationData but since JPA class should be
  * package private, another implementation is used.
  *
- * @author Arvids Grabovskis
  */
 class LocalizedPortletDefinition implements Serializable {
 

@@ -31,7 +31,6 @@ import org.apereo.portal.character.stream.events.CharacterEvent;
  * Base implementation of CharacterEventSource that deals with reading the element data off the
  * stream.
  *
- * @author Eric Dalquist
  */
 public abstract class BasePlaceholderEventSource implements CharacterEventSource {
 

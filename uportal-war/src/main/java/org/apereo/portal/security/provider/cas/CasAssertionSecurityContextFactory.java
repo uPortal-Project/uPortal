@@ -21,7 +21,6 @@ import org.apereo.portal.security.ISecurityContextFactory;
  * Factory to construct new instances of {@link
  * org.apereo.portal.security.provider.cas.CasAssertionSecurityContext}.
  *
- * @author Scott Battaglia
  * @since 3.2
  */
 public class CasAssertionSecurityContextFactory implements ISecurityContextFactory {

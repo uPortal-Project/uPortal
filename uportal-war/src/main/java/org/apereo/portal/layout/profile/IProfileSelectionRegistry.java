@@ -19,7 +19,7 @@ package org.apereo.portal.layout.profile;
  *
  * <p>Because the domain model here is so very simple, represented as plain old Strings.
  *
- * @since uPortal 4.2
+ * @since 4.2
  */
 public interface IProfileSelectionRegistry {
 

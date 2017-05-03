@@ -34,7 +34,6 @@ import org.springframework.beans.factory.annotation.Autowired;
  * Base class for create {@link CharacterEvent}s that target a portlet based on either an {@link
  * XMLEvent} or {@link MatchResult}. Takes care of parsing out the {@link IPortletWindowId}
  *
- * @author Eric Dalquist
  */
 public abstract class PortletPlaceholderEventSource extends BasePlaceholderEventSource {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());

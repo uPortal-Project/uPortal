@@ -25,7 +25,6 @@ import java.util.Set;
 import org.apache.commons.lang.Validate;
 
 /**
- * @author Scott Battaglia
  * @since 2.6
  */
 public final class LoginEvent extends PortalEvent {

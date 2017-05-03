@@ -33,7 +33,7 @@ import org.hibernate.annotations.NaturalIdCache;
 /**
  * JPA implementation of IProfileSelection domain object.
  *
- * @since uPortal 4.2
+ * @since 4.2
  */
 @Entity
 @Table(name = "UP_PROFILE_SELECTION")

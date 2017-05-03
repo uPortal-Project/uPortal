@@ -32,7 +32,6 @@ import org.apereo.portal.utils.Tuple;
 /**
  * Used to collate search results for the SearchPortletController.
  *
- * @author Eric Dalquist
  */
 public class PortalSearchResults implements Serializable {
     private static final long serialVersionUID = 1L;

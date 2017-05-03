@@ -46,7 +46,6 @@ import org.springframework.web.context.request.WebRequest;
  * Base implementation of layout attribute source that feeds off of {@link IStylesheetDescriptor}
  * and {@link IStylesheetUserPreferences} data
  *
- * @author Eric Dalquist
  */
 public abstract class StylesheetAttributeSource implements AttributeSource, BeanNameAware {
     private final XMLEventFactory xmlEventFactory = XMLEventFactory.newFactory();

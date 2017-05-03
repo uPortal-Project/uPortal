@@ -28,7 +28,6 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
- * @author Eric Dalquist
  */
 @Entity
 @Table(name = "UP_SS_DESC_OUTPUT_PROP")

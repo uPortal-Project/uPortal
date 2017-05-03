@@ -17,7 +17,6 @@ package org.apereo.portal.io.xml;
 /**
  * Defines a class that can export a specific type of portal data
  *
- * @author Eric Dalquist
  */
 public interface IDataDeleter<T> {
     /** @return The type descriptor for the */

@@ -32,9 +32,6 @@ import org.apache.commons.logging.LogFactory;
  * If a failure to start or stop the JMX server should cause the listener to throw an exception set
  * the context-param <code>org.apereo.portal.servlet.JavaManagementServerListener.failOnException
  * </code> to true.
- *
- * @author Eric Dalquist <a
- *     href="mailto:eric.dalquist@doit.wisc.edu">eric.dalquist@doit.wisc.edu</a>
  */
 public class JavaManagementServerListener implements ServletContextListener {
     //Init-parameters

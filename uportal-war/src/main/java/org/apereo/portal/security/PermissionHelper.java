@@ -20,7 +20,7 @@ import org.apereo.portal.portlet.om.IPortletDefinition;
 /**
  * Stateless static utility convenience methods for working with uPortal permissions.
  *
- * @since uPortal 4.1
+ * @since 4.1
  */
 public class PermissionHelper {
 
@@ -30,7 +30,7 @@ public class PermissionHelper {
      * @param portletDefinition a portlet definition
      * @return String permission target ID for the portlet definition.
      * @throws IllegalArgumentException if portletDefinition is null
-     * @since uPortal 4.1
+     * @since 4.1
      */
     public static String permissionTargetIdForPortletDefinition(
             final IPortletDefinition portletDefinition) {

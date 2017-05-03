@@ -23,7 +23,6 @@ import org.apereo.portal.groups.IEntitySearcherFactory;
 /**
  * Returns an instance of the Grouper entity searcher.
  *
- * @author Bill Brown
  */
 public class GrouperEntitySearcherFactory implements IEntitySearcherFactory {
 

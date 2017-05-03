@@ -29,7 +29,6 @@ import org.xml.sax.SAXException;
 import org.xml.sax.ext.LexicalHandler;
 
 /**
- * @author Eric Dalquist
  */
 public class StaxEventLexicalContentHandler extends StaxEventContentHandler
         implements LexicalHandler {

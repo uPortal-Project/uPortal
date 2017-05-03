@@ -22,7 +22,6 @@ import org.jasig.services.persondir.IPersonAttributeDao;
 import org.springframework.context.ApplicationContext;
 
 /**
- * @author Eric Dalquist
  * @deprecated code that needs an IPersonAttributeDao should use direct dependency injection where
  *     possible
  */

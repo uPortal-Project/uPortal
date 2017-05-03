@@ -19,7 +19,6 @@ import org.apereo.portal.utils.ComparableExtractingComparator;
 /**
  * Compare ExternalActivity based on fname
  *
- * @author Eric Dalquist
  */
 public class ExternalActivityFnameComparator
         extends ComparableExtractingComparator<ExternalActivity, String> {

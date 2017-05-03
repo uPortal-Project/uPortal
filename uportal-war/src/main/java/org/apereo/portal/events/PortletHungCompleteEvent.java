@@ -20,7 +20,6 @@ import org.apereo.portal.portlet.rendering.worker.IPortletExecutionWorker;
 /**
  * Used to signal that a portlet hung execution has completed
  *
- * @author Eric Dalquist
  */
 public class PortletHungCompleteEvent extends PortalEvent {
     private static final long serialVersionUID = 1L;

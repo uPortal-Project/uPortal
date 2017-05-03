@@ -21,7 +21,6 @@ import org.jadira.usertype.spi.shared.AbstractSingleColumnUserType;
 /**
  * Uses a regular expression to validate strings coming to/from the database.
  *
- * @author Eric Dalquist
  */
 public class FunctionalNameType
         extends AbstractSingleColumnUserType<String, String, FunctionalNameColumnMapper> {

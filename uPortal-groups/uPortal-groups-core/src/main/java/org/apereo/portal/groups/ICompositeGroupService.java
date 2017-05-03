@@ -26,7 +26,6 @@ import org.apereo.portal.EntityIdentifier;
  * navigating the system or maintaining groups go thru the <code>IGroupMember</code> api and are
  * serviced by the individual component services.
  *
- * @author Dan Ellentuck
  */
 public interface ICompositeGroupService extends IComponentGroupService {
 

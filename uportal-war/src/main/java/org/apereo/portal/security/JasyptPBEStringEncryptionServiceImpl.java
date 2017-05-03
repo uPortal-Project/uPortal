@@ -20,7 +20,6 @@ import org.jasypt.encryption.pbe.PBEStringEncryptor;
  * JasyptPBEStringEncryptionServiceImpl is an implementation of IStringEncryptionService that uses a
  * configurable Jasypt PBEStringEncryptor to perform string encryption and decryption.
  *
- * @author Jen Bourey
  */
 public class JasyptPBEStringEncryptionServiceImpl implements IStringEncryptionService {
 

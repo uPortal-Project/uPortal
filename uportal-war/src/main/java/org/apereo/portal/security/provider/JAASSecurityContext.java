@@ -26,7 +26,6 @@ import org.apereo.portal.security.PortalSecurityException;
 /**
  * This is an implementation of a SecurityContext that checks a user's credentials using JAAS.
  *
- * @author Nathan Jacobs
  */
 class JAASSecurityContext extends ChainingSecurityContext
         implements ISecurityContext, Serializable {

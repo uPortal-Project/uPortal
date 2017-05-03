@@ -25,7 +25,6 @@ import org.junit.Test;
 /**
  * JUnit test class for {@link PortletEntityIdStringUtilsTest}
  *
- * @author Gary Roybal
  */
 public class PortletEntityIdStringUtilsTest {
 

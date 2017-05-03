@@ -16,7 +16,6 @@ package org.apereo.portal.events.aggr.action;
 
 import org.apereo.portal.events.aggr.BaseAggregationKey;
 
-/** @author Chris Waymire (chris@waymire.net) */
 public interface SearchRequestAggregationKey extends BaseAggregationKey {
     /** @return The search term used */
     String getSearchTerm();

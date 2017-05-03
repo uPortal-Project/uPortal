@@ -43,7 +43,6 @@ import org.springframework.transaction.support.TransactionTemplate;
 /**
  * Database implementation of locale storage interface.
  *
- * @author Ken Weiner, kweiner@unicon.net
  */
 @Repository("localeStore")
 public class RDBMLocaleStore implements ILocaleStore {

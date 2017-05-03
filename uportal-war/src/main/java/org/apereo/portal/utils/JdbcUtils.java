@@ -29,7 +29,6 @@ import org.springframework.jdbc.core.JdbcOperations;
 /**
  * Utilities for JDBC operations
  *
- * @author Eric Dalquist
  */
 public final class JdbcUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(JdbcUtils.class);

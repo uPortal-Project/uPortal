@@ -17,7 +17,6 @@ package org.apereo.portal.spring.properties;
 import java.beans.PropertyEditorSupport;
 import org.apereo.portal.version.VersionUtils;
 
-/** @author Eric Dalquist */
 public class VersionEditor extends PropertyEditorSupport {
     @Override
     public void setAsText(String text) throws IllegalArgumentException {

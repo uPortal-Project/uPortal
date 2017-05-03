@@ -36,7 +36,6 @@ import org.springframework.beans.factory.annotation.Autowired;
  * 'tenantOperationsListeners' bean in servicesContext.xml.
  *
  * @since 4.1
- * @author awills
  */
 public final class ResetPasswordTenantOperationsListener extends AbstractTenantOperationsListener {
 
@@ -85,7 +84,7 @@ public final class ResetPasswordTenantOperationsListener extends AbstractTenantO
         return prepareResponse(tenant);
     }
 
-    /** @since uPortal 4.3 */
+    /** @since 4.3 */
     @Override
     public Set<ITenantManagementAction> getAvaialableActions() {
         ITenantManagementAction rslt =

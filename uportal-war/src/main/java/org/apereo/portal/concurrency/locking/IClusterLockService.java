@@ -19,7 +19,6 @@ import com.google.common.base.Function;
 /**
  * Service which allows actions to be executed within a cluster wide lock, locks are reentrant.
  *
- * @author Eric Dalquist
  */
 public interface IClusterLockService {
     /** Result of a lock execution */

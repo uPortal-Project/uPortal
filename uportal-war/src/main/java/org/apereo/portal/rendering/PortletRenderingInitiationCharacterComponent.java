@@ -36,7 +36,6 @@ import org.springframework.beans.factory.annotation.Autowired;
  * Initiates portlet rendering based each encountered {@link CharacterEventTypes#PORTLET_HEADER} and
  * {@link CharacterEventTypes#PORTLET_CONTENT} element in the event stream
  *
- * @author Eric Dalquist
  */
 public class PortletRenderingInitiationCharacterComponent
         extends CharacterPipelineComponentWrapper {

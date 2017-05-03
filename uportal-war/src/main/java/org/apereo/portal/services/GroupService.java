@@ -38,8 +38,6 @@ import org.slf4j.LoggerFactory;
 /**
  * Bootstrap class for the IGroupService implementation.
  *
- * @author Alex Vigdor
- * @author Dan Ellentuck
  */
 public final class GroupService implements IGroupConstants {
 

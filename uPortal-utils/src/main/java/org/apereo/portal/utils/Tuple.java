@@ -19,7 +19,6 @@ import java.io.Serializable;
 /**
  * Simple object that contains two values who's references are immutable once initialized.
  *
- * @author Eric Dalquist
  */
 public class Tuple<A, B> implements Serializable {
     private static final long serialVersionUID = 1L;

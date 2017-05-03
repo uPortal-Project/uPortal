@@ -52,7 +52,6 @@ import org.springframework.security.web.authentication.preauth.AbstractPreAuthen
  * <p>At login, fires ProfileSelectionEvent representing any runtime request for a profile selection
  * (as in, profile request parameter or target profile indicated by the swapper manager).
  *
- * @author Jen Bourey, jennifer.bourey@gmail.com
  */
 public class PortalPreAuthenticatedProcessingFilter
         extends AbstractPreAuthenticatedProcessingFilter {

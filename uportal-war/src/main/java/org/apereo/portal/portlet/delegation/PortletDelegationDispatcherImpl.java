@@ -49,7 +49,6 @@ import org.apereo.portal.url.IPortletUrlBuilder;
 /**
  * Implementation of delegation dispatcher
  *
- * @author Eric Dalquist
  */
 public class PortletDelegationDispatcherImpl implements PortletDelegationDispatcher {
     protected final Log logger = LogFactory.getLog(this.getClass());

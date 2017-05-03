@@ -18,7 +18,6 @@ import org.apereo.portal.io.xml.BaseXsltDataUpgraderTest;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 
-/** @author Eric Dalquist */
 public class PortletDataUpgradeTest extends BaseXsltDataUpgraderTest {
     @Test
     public void testUpgradeFacultyFeature31to32() throws Exception {

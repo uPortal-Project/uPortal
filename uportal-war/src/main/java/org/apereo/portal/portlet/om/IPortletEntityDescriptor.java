@@ -17,7 +17,6 @@ package org.apereo.portal.portlet.om;
 /**
  * Describes the IDs at the core of a portlet entity
  *
- * @author Eric Dalquist
  */
 public interface IPortletEntityDescriptor {
     /** @return ID of the entity */

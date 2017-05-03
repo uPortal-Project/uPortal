@@ -29,10 +29,6 @@ import org.apereo.portal.security.IUpdatingPermissionManager;
 import org.apereo.portal.security.PortalSecurityException;
 import org.apereo.portal.utils.threading.SingletonDoubleCheckedCreator;
 
-/**
- * @author Bernie Durfee, bdurfee@interactivebusiness.com
- * @author Dan Ellentuck
- */
 public class AuthorizationService {
 
     private static final Log log = LogFactory.getLog(AuthorizationService.class);
@@ -96,7 +92,6 @@ public class AuthorizationService {
         }
     }
 
-    /** */
     private AuthorizationService() throws AuthorizationException {
         // From our factory get an actual authorization instance
         m_authorization = m_Factory.getAuthorization();

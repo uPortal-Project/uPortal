@@ -32,7 +32,6 @@ import org.apereo.portal.portlet.om.IPortletWindow;
 import org.apereo.portal.url.IPortletUrlBuilder;
 
 /**
- * @author Eric Dalquist
  */
 public class PortletStateAwareResponseContextImpl extends PortletResponseContextImpl
         implements PortletStateAwareResponseContext {

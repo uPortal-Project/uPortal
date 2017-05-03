@@ -53,7 +53,6 @@ import org.hibernate.annotations.Type;
 /**
  * JPA implementation of stylesheet descriptor data
  *
- * @author Eric Dalquist
  */
 @Entity
 @Table(name = "UP_SS_DESC")

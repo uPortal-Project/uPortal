@@ -23,7 +23,6 @@ import org.apereo.portal.io.xml.PortalDataKey;
 /**
  * Describes a permission in the portal
  *
- * @author Eric Dalquist
  */
 public class PermissionSetPortalDataType extends AbstractPortalDataType {
 

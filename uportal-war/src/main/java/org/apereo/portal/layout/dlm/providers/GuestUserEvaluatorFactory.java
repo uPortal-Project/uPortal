@@ -33,8 +33,7 @@ import org.w3c.dom.Node;
 /**
  * Used to target a fragment only to guest users.
  *
- * @author mboyd@sungardsct.com
- * @since uPortal 2.5
+ * @since 2.5
  */
 @Entity
 @Cacheable

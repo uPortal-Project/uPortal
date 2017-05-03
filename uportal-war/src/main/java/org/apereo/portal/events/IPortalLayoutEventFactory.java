@@ -20,7 +20,6 @@ import org.apereo.portal.security.IPerson;
 /**
  * Publishes events related to layouts
  *
- * @author Eric Dalquist
  */
 public interface IPortalLayoutEventFactory {
 

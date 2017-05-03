@@ -24,7 +24,6 @@ import org.apereo.portal.PortalException;
 /**
  * Determines which {@link IUserInstance} object to use for a given request.
  *
- * @author Eric Dalquist
  */
 public interface IUserInstanceManager {
     /**

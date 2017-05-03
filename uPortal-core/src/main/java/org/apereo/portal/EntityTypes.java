@@ -40,7 +40,6 @@ import org.springframework.transaction.annotation.Transactional;
  * <p>Each type is associated with an <code>Integer</code> used to represent the type in the portal
  * data store. This class translates between the <code>Integer</code> and <code>Class</code> values.
  *
- * @author Dan Ellentuck
  * @see org.apereo.portal.IBasicEntity
  */
 @Repository("entityTypes")

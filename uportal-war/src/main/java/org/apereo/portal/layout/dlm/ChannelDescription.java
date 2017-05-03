@@ -22,7 +22,6 @@ import org.w3c.dom.Element;
 /**
  * DLM specific Channel description to protect DLM artifacts of channels.
  *
- * @author mboyd@sungardct.com
  */
 public class ChannelDescription extends UserLayoutChannelDescription {
     private String plfId = null;

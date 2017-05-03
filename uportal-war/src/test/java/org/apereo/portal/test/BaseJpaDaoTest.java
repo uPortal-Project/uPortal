@@ -44,7 +44,6 @@ import org.springframework.transaction.support.TransactionOperations;
  * Base class for JPA based unit tests that want TX and entity manager support. Also deletes all
  * hibernate managed data from the database after each test execution
  *
- * @author Eric Dalquist
  */
 public abstract class BaseJpaDaoTest {
     protected final Logger logger = LoggerFactory.getLogger(getClass());

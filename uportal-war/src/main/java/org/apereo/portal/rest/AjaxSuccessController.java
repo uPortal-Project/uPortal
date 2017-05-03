@@ -29,7 +29,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * assembling a complete page. These tasks are wasteful for an ajax-based request, so action handler
  * that wish to avoid that waste may redirect to this endpoint.
  *
- * @author awills
  */
 @Controller
 public class AjaxSuccessController {

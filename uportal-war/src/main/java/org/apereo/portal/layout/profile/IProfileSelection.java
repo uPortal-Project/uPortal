@@ -17,7 +17,7 @@ package org.apereo.portal.layout.profile;
 /**
  * Represents a profile selection, which is a username and profile fname pair.
  *
- * @since uPortal 4.2
+ * @since 4.2
  */
 public interface IProfileSelection {
 

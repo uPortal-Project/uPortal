@@ -22,7 +22,6 @@ import org.slf4j.LoggerFactory;
 /**
  * A tester for examining <code>IPerson</code> attributes.
  *
- * @author Dan Ellentuck
  */
 public abstract class BaseAttributeTester implements IPersonTester {
 

@@ -36,7 +36,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-/** @author Eric Dalquist */
 @Service
 public class ClusterLockServiceImpl implements IClusterLockService {
     private static final LockOptions DEFAULT_LOCK_OPTIONS = new LockOptions();

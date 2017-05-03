@@ -30,7 +30,6 @@ import org.slf4j.LoggerFactory;
  * FilenameFilter that uses a Set of regular expressions for testing. The file name must match any
  * one of the patterns
  *
- * @author Eric Dalquist
  */
 public class AntPatternFileFilter implements FileFilter {
     protected final Logger logger = LoggerFactory.getLogger(getClass());

@@ -48,8 +48,6 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * @author Nicholas Blair
- * @version $Id$
  */
 public class UserImporterExporter extends AbstractJaxbDataHandler<UserType> {
 

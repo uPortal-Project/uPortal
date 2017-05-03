@@ -19,7 +19,6 @@ import java.util.List;
 /**
  * Defines the service calls for DLM fragment definition DAO implementations.
  *
- * @author awills
  */
 public interface IFragmentDefinitionDao {
 

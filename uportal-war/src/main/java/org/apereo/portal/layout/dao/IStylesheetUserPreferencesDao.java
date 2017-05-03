@@ -23,7 +23,6 @@ import org.apereo.portal.security.IPerson;
 /**
  * Describes CRUD operations on {@link IStylesheetUserPreferences}
  *
- * @author Eric Dalquist
  */
 public interface IStylesheetUserPreferencesDao {
     public IStylesheetUserPreferences createStylesheetUserPreferences(

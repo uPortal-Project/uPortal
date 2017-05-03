@@ -21,7 +21,6 @@ import org.apereo.portal.portlet.om.IPortletWindowId;
 /**
  * Used by {@link PortletExecutionWorker} to submit to the thread pool
  *
- * @author Eric Dalquist
  * @param <V>
  */
 final class PortletExecutionCallable<V> extends FutureTask<V>

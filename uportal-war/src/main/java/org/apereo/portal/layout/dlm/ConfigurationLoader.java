@@ -17,7 +17,7 @@ package org.apereo.portal.layout.dlm;
 import java.util.List;
 
 /**
- * @since uPortal 2.5
+ * @since 2.5
  */
 public interface ConfigurationLoader {
 

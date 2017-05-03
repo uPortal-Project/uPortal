@@ -23,7 +23,6 @@ import org.jasig.cas.client.util.CommonUtils;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
-/** @author Scott Battaglia */
 public final class PasswordCachingCasAssertionSecurityContextFactory
         implements ISecurityContextFactory {
 

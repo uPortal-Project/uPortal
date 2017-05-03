@@ -26,7 +26,6 @@ import org.apereo.portal.utils.TeeOutputStream;
  *
  * <p>A callback {@link Function} to be executed when the limit is hit can be provided as well.
  *
- * @author Nicholas Blair
  */
 public class LimitingTeeOutputStream extends TeeOutputStream {
     private final long maximumBytes;

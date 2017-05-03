@@ -24,7 +24,6 @@ import org.apereo.portal.layout.om.IStylesheetUserPreferences;
 /**
  * An interface representing the user layout.
  *
- * @author <a href="mailto:mvi@immagic.com">Michael Ivanov</a>
  */
 public interface IUserLayout {
     /**

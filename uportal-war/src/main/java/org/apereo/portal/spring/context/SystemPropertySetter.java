@@ -20,7 +20,6 @@ import java.util.Properties;
 /**
  * Sets system properties, ignores any properties with zero length values
  *
- * @author Eric Dalquist
  */
 public final class SystemPropertySetter {
     public void setSystemProperties(Properties props) {

@@ -44,7 +44,6 @@ import org.springframework.util.CollectionUtils;
  *   <li>Provide support for encrypted property values based on Jasypt
  * </ul>
  *
- * @author Josh Helmer, jhelmer@unicon.net
  */
 public class PortalPropertySourcesPlaceholderConfigurer
         extends PropertySourcesPlaceholderConfigurer {

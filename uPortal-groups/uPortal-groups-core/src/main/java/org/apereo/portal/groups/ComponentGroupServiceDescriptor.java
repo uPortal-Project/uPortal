@@ -19,7 +19,6 @@ import java.util.HashMap;
 /**
  * A data holder for configuration information about a specific component group service.
  *
- * @author Dan Ellentuck
  * @see ICompositeGroupService
  */
 public class ComponentGroupServiceDescriptor extends HashMap<String, Object> {

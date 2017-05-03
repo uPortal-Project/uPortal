@@ -45,7 +45,6 @@ import org.apereo.portal.spring.locator.PasswordEncryptionServiceLocator;
  * org.apereo.portal.security.provider.ChainingSecurityContext.stopWhenAuthenticated must be set to
  * false (by default it is set to true).
  *
- * @author Andrew Newman, newman@yale.edu
  */
 class CacheSecurityContext extends ChainingSecurityContext
         implements ISecurityContext, IParentAwareSecurityContext {

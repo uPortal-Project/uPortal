@@ -21,7 +21,6 @@ import org.joda.time.ReadableInstant;
 /**
  * Details about a quarter of the year. The first quarter will have ID 0, the second ID 1, etc...
  *
- * @author Eric Dalquist
  */
 public interface QuarterDetail extends DateRange<MonthDay>, Comparable<QuarterDetail> {
 

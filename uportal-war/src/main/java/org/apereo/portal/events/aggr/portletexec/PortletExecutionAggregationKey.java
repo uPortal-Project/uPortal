@@ -26,7 +26,6 @@ import org.apereo.portal.events.aggr.portlets.AggregatedPortletMapping;
 /**
  * Primary Key for a {@link PortletExecutionAggregation}
  *
- * @author Eric Dalquist
  */
 public interface PortletExecutionAggregationKey extends BaseAggregationKey {
     /** @return The name of the tab */

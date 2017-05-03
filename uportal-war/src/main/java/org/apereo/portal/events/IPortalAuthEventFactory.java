@@ -20,7 +20,6 @@ import org.apereo.portal.security.IPerson;
 /**
  * Publishing authentication related events
  *
- * @author Eric Dalquist
  */
 public interface IPortalAuthEventFactory {
 

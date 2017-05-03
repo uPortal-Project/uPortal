@@ -32,7 +32,6 @@ import org.apereo.portal.portlet.om.IPortletPreference;
 /**
  * Portlet entity data that is not persisted. Used when the entity doesn't have any customizations.
  *
- * @author Lennard Fuller
  */
 class SessionPortletEntityImpl implements IPortletEntity, IPortletEntityDescriptor {
     private final IPortletDefinition portletDefinition;

@@ -20,7 +20,6 @@ import org.jadira.usertype.spi.shared.AbstractSingleColumnUserType;
 /**
  * Converts portlet WindowState objects to/from strings.
  *
- * @author Eric Dalquist
  */
 public class WindowStateType
         extends AbstractSingleColumnUserType<WindowState, String, WindowStateColumnMapper> {

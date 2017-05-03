@@ -22,8 +22,6 @@ import org.apereo.portal.portlet.om.IPortletDefinition;
 import org.apereo.portal.portlet.om.PortletLifecycleState;
 
 /**
- * @author Bernie Durfee, bdurfee@interactivebusiness.com
- * @author Dan Ellentuck, de3@columbia.edu
  *     <p>An <code>IAuthorizationService</code> represents the portal's authorization service. All
  *     requests for authorization activities ultimately come here.
  */

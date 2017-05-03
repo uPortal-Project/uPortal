@@ -21,7 +21,6 @@ import org.apereo.portal.security.IPerson;
  * Tests whether the attribute is null or none of the values of the attribute equal the specified
  * attribute value.
  *
- * @author Eric Dalquist, edalquist@unicon.net
  */
 public class ValueMissingTester extends BaseAttributeTester {
 

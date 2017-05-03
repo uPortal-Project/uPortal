@@ -23,7 +23,6 @@ import org.springframework.webflow.context.ExternalContext;
 /**
  * Helper methods to allow setting window states and portlet modes during flow exections
  *
- * @author Eric Dalquist
  */
 public class PortletUrlFlowHelper {
     public void setWindowState(ExternalContext externalContext, String windowState) {

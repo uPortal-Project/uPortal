@@ -41,7 +41,6 @@ import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 /**
- * @author Eric Dalquist
  */
 public class StylesheetUserPreferencesServiceImplTest {
 

@@ -38,7 +38,6 @@ import org.springframework.context.ApplicationContext;
  * <p>{@code Value} should be the group name as expected by {@code GroupService.searchForGroups}.
  * {@code GroupService} is searched every test since groups can be added without restarting uPortal.
  *
- * @author Benito J. Gonzalez <bgonzalez@unicon.net>
  * @see org.apereo.portal.groups.pags.IPersonTester
  * @see org.apereo.portal.groups.pags.dao.EntityPersonAttributesGroupStore
  * @see org.apereo.portal.groups.pags.dao.IPersonAttributesGroupTestGroupDefinition

@@ -23,7 +23,6 @@ import org.apereo.portal.groups.IEntityStoreFactory;
 /**
  * Returns an instance of the Grouper entity store.
  *
- * @author Bill Brown
  */
 public class GrouperEntityStoreFactory implements IEntityStoreFactory {
 

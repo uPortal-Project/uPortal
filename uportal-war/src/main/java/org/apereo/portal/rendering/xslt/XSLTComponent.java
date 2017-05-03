@@ -50,7 +50,6 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.helpers.LocatorImpl;
 
 /**
- * @author Eric Dalquist
  */
 public class XSLTComponent extends StAXPipelineComponentWrapper
         implements BeanNameAware, ResourceLoaderAware {

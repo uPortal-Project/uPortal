@@ -25,11 +25,6 @@ import org.w3c.dom.Document;
 
 /**
  * An interface for abstracting operations performed on the user layout.
- *
- * @author Peter Kharchenko {@link <a
- *     href="mailto:pkharchenko@interactivebusiness.com"">pkharchenko@interactivebusiness.com"</a>}
- * @author <a href="mailto:mvi@immagic.com">Michael Ivanov</a>
- * @version 1.1
  */
 public interface IUserLayoutManager {
     /** Represents a <folder> layout element */

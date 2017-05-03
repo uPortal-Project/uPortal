@@ -24,7 +24,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 /**
  * Exports a PAGS Group definition data file
  *
- * @author Shawn Connolly, sconnolly@unicon.net
  */
 public class PersonAttributesGroupStoreExporter extends AbstractDom4jExporter {
     private IPersonAttributesGroupDefinitionDao personAttributesGroupDefinitionDao;

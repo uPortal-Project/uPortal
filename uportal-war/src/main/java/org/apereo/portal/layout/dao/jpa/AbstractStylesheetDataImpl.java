@@ -23,7 +23,6 @@ import org.apereo.portal.layout.om.IStylesheetData;
 import org.hibernate.annotations.Type;
 
 /**
- * @author Eric Dalquist
  */
 @MappedSuperclass
 abstract class AbstractStylesheetDataImpl implements IStylesheetData {

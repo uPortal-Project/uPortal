@@ -40,7 +40,6 @@ import org.w3c.dom.Document;
 /**
  * Generic dom4j import impl
  *
- * @author Eric Dalquist
  */
 public abstract class AbstractDom4jImporter
         implements IDataImporter<Tuple<String, Element>>, Unmarshaller {

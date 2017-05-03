@@ -22,7 +22,6 @@ import org.apereo.portal.events.aggr.portlets.AggregatedPortletMapping;
 /**
  * Tracks portlet execution stats
  *
- * @author Eric Dalquist
  */
 public interface PortletExecutionAggregation
         extends BaseAggregation<

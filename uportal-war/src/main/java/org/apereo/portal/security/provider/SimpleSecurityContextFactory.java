@@ -18,7 +18,6 @@ package org.apereo.portal.security.provider;
  * The factory class for the simple security context. Just returns a new instance of the
  * SimpleSecurityContext.
  *
- * @author Andrew Newman, newman@yale.edu
  */
 import org.apereo.portal.security.ISecurityContext;
 import org.apereo.portal.security.ISecurityContextFactory;

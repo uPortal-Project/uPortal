@@ -19,7 +19,6 @@ import org.apereo.portal.security.IAuthorizationPrincipal;
 import org.apereo.portal.security.IPermission;
 import org.apereo.portal.security.IUpdatingPermissionManager;
 
-/** @author Dan Ellentuck (de3@columbia.edu) */
 public class UpdatingPermissionManagerImpl extends PermissionManagerImpl
         implements IUpdatingPermissionManager {
     /**

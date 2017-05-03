@@ -27,7 +27,6 @@ import org.apereo.portal.utils.SerializableObject;
  * constant. It serves as a safe reference to synchronize on for locking on the current request
  * attributes.
  *
- * @author Eric Dalquist
  */
 public class RequestAttributeMutexListener implements ServletRequestListener {
 

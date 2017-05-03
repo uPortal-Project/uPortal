@@ -23,7 +23,6 @@ import org.dom4j.Element;
  * groups in the GaP (Groups & Permissions) subsystem. An object of this type, therefore, is not
  * itself a group; it's a blueprint for an {@link IEntityGroup}.
  *
- * @author Shawn Connolly, sconnolly@unicon.net
  */
 public interface IPersonAttributesGroupDefinition {
 

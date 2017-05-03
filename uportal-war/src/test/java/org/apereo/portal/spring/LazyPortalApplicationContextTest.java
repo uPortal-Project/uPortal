@@ -17,7 +17,6 @@ package org.apereo.portal.spring;
 import org.apereo.portal.utils.PortalApplicationContextLocator;
 import org.junit.Test;
 
-/** @author Eric Dalquist */
 public class LazyPortalApplicationContextTest {
 
     @Test(expected = IllegalStateException.class)

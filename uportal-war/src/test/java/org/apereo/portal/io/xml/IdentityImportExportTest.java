@@ -44,7 +44,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.jdbc.JdbcTestUtils;
 import org.w3c.dom.Element;
 
-/** @author Eric Dalquist */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:/org/apereo/portal/io/xml/importExportTestContext.xml")
 public class IdentityImportExportTest extends BasePortalJpaDaoTest {

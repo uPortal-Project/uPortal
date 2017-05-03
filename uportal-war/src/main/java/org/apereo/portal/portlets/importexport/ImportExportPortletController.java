@@ -39,7 +39,6 @@ import org.springframework.web.portlet.ModelAndView;
 /**
  * ImportExportPortletController controls the display of the import/export portlet interface views.
  *
- * @author Jen Bourey, jennifer.bourey@gmail.com
  */
 @Controller
 @RequestMapping("VIEW")

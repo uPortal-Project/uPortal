@@ -21,7 +21,6 @@ import org.apereo.portal.url.IPortalRequestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * @author Eric Dalquist
  */
 public class ThemeTransformerSource extends BaseTransformerSource {
     @Autowired private IStylesheetUserPreferencesService stylesheetUserPrefService;

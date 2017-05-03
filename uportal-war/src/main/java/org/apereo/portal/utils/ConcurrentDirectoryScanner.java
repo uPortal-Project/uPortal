@@ -42,7 +42,6 @@ import org.springframework.core.io.Resource;
  * <p>Note that the provided ExecutorService can never block on {@link
  * ExecutorService#execute(Runnable)}
  *
- * @author Eric Dalquist
  */
 public final class ConcurrentDirectoryScanner implements DirectoryScanner {
     protected final Logger logger = LoggerFactory.getLogger(getClass());

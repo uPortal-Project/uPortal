@@ -20,7 +20,6 @@ import java.util.concurrent.locks.ReadWriteLock;
 /**
  * Utility class for safely interacting with a read-write lock
  *
- * @author Eric Dalquist
  */
 public class ReadWriteLockTemplate {
     public static <T> T doWithLock(ReadWriteLock readWriteLock, ReadWriteCallback<T> c) {

@@ -29,7 +29,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.w3c.dom.Document;
 
 /**
- * @author Eric Dalquist
  */
 public class LayoutExporter extends AbstractDom4jExporter {
     private final Cache<Tuple<String, String>, UserProfile> layoutCache =

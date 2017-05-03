@@ -21,7 +21,6 @@ import org.apereo.portal.portlet.om.IPortletDefinitionId;
 /**
  * Provides APIs for creating, storing and retrieving {@link IPortletDefinition} objects.
  *
- * @author Eric Dalquist
  */
 public interface IPortletDefinitionDao {
     /**

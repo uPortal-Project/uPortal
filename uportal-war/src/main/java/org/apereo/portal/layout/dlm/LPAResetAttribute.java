@@ -21,7 +21,6 @@ import org.w3c.dom.Element;
 /**
  * Layout processing action to reset an attribute to the value specified by the owning fragment.
  *
- * @author Mark Boyd
  */
 public class LPAResetAttribute implements ILayoutProcessingAction {
     private String nodeId = null;

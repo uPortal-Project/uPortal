@@ -20,7 +20,6 @@ import org.apereo.portal.utils.ComparableExtractingComparator;
 /**
  * Basic impl of {@link BaseGroupedAggregationDiscriminator}
  *
- * @author James Wennmacher, jameswennmacher@gmail.com
  */
 public class BaseGroupedAggregationDiscriminatorImpl
         implements BaseGroupedAggregationDiscriminator {

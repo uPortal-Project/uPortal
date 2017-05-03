@@ -23,7 +23,6 @@ import org.w3c.dom.Document;
 /**
  * A user's layout and meta-data about that layout
  *
- * @author Eric Dalquist
  */
 public class DistributedUserLayout {
     private final Document layout;

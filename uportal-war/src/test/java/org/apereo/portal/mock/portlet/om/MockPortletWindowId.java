@@ -20,7 +20,6 @@ import org.apache.pluto.container.PortletWindowID;
 import org.apereo.portal.portlet.om.IPortletWindowId;
 
 /**
- * @author Eric Dalquist
  */
 public class MockPortletWindowId implements IPortletWindowId {
     private static final long serialVersionUID = 1L;

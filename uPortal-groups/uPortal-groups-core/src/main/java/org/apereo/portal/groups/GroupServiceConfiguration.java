@@ -29,8 +29,6 @@ import org.xml.sax.XMLReader;
 /**
  * Parses service descriptions found in the file found at SERVICES_XML. The elements of each service
  * are stored in a ComponentGroupServiceDescriptor.
- *
- * @author Dan Ellentuck
  */
 public class GroupServiceConfiguration {
     private static final Log log = LogFactory.getLog(GroupServiceConfiguration.class);
@@ -99,7 +97,7 @@ public class GroupServiceConfiguration {
         super();
         serviceHandler = new GroupConfigurationHandler();
     }
-    /** */
+
     public Map getAttributes() {
         return attributes;
     }
@@ -111,11 +109,11 @@ public class GroupServiceConfiguration {
         }
         return configuration;
     }
-    /** */
+
     public String getDefaultService() {
         return (String) getAttributes().get("defaultService");
     }
-    /** */
+
     public String getNodeSeparator() {
         Object nodeSeparator = getAttributes().get("nodeSeparator");
         return (nodeSeparator == null) ? IGroupConstants.NODE_SEPARATOR : (String) nodeSeparator;
@@ -125,7 +123,6 @@ public class GroupServiceConfiguration {
         return serviceDescriptors;
     }
 
-    /** */
     protected void parseAttributes(Attributes atts) {
         String name, value;
         for (int i = 0; i < atts.getLength(); i++) {

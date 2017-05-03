@@ -51,7 +51,7 @@ import org.springframework.stereotype.Service;
 /**
  * Service layer implementation for Marketplace.
  *
- * @since uPortal 4.1
+ * @since 4.1
  */
 @Service
 public class MarketplaceService implements IMarketplaceService, ApplicationListener<LoginEvent> {
@@ -384,7 +384,7 @@ public class MarketplaceService implements IMarketplaceService, ApplicationListe
      * @return true if permitted, false otherwise
      * @throws IllegalArgumentException if user is null
      * @throws IllegalArgumentException if portletDefinition is null
-     * @since uPortal 4.2
+     * @since 4.2
      */
     @RequestCache
     public boolean mayAddPortlet(final IPerson user, final IPortletDefinition portletDefinition) {

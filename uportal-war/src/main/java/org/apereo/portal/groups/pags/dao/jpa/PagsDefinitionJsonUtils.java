@@ -48,7 +48,6 @@ import org.springframework.stereotype.Component;
  * which is stereotyped as a Spring Component. This approach allows the outer type to access
  * Spring-managed dependencies and make them (privately, statically) available to the nested types.
  *
- * @author drewwills
  */
 @Component
 public final class PagsDefinitionJsonUtils {

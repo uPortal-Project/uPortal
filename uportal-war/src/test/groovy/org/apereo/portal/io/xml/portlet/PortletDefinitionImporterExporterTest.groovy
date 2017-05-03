@@ -47,7 +47,6 @@ import java.lang.reflect.Method
 import java.lang.reflect.Proxy
 
 /**
- * @author Josh Helmer, jhelmer.unicon.net
  */
 public class PortletDefinitionImporterExporterTest extends Specification {
     private static ICompositeGroupService staticGroupService;

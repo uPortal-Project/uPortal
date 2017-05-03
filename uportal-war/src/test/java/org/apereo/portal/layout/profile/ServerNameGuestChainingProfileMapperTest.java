@@ -12,7 +12,6 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/** */
 package org.apereo.portal.layout.profile;
 
 import java.util.ArrayList;
@@ -27,7 +26,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.springframework.mock.web.MockHttpServletRequest;
 
-/** @author GIP RECIA 2013 - Maxime BOSSARD. */
 @RunWith(BlockJUnit4ClassRunner.class)
 public class ServerNameGuestChainingProfileMapperTest {
 

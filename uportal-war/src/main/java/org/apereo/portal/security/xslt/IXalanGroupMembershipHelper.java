@@ -17,7 +17,6 @@ package org.apereo.portal.security.xslt;
 /**
  * Group Membership Helper APIs
  *
- * @author Eric Dalquist
  */
 public interface IXalanGroupMembershipHelper {
     /**

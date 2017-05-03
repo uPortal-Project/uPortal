@@ -37,7 +37,6 @@ import org.springframework.stereotype.Repository;
 /**
  * DAO for Portlet Execution Aggregations
  *
- * @author Eric Dalquist
  */
 @Repository
 public class JpaPortletExecutionAggregationDao

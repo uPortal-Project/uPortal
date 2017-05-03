@@ -35,7 +35,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 /**
  * Handles CONFIG mode for the SQL query portlet.
  *
- * @author Jen Bourey, jbourey@unicon.net
  */
 @Controller
 @RequestMapping("CONFIG")

@@ -39,7 +39,6 @@ import org.springframework.stereotype.Repository;
 /**
  * JPA implementation of the portlet definition DAO
  *
- * @author Eric Dalquist
  */
 @Repository
 public class JpaPortletDefinitionDao extends BasePortalJpaDao implements IPortletDefinitionDao {

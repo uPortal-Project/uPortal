@@ -31,7 +31,6 @@ import org.springframework.transaction.annotation.Transactional;
  * The program accepts two optional flags <code>-c</code> causes the user to be created if he/she
  * doesn't exist. The <code>-l</code> flag causes the specified user's account to be locked.
  *
- * @author Andrew Newman, newman@yale.edu
  */
 @Service("passwordUpdateTool")
 public class CliPasswordUpdateTool implements IPasswordUpdateTool {

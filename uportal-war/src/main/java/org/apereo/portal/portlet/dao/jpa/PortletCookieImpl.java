@@ -40,8 +40,6 @@ import org.joda.time.DateTime;
 /**
  * JPA annotated {@link IPortletCookie} implementation.
  *
- * @author Nicholas Blair
- * @version $Id$
  */
 @Entity
 @Table(

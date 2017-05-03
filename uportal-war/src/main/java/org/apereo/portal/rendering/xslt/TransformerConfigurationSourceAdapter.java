@@ -25,7 +25,6 @@ import org.slf4j.LoggerFactory;
 /**
  * Base TransformerConfigurationSource that returns nothing for all methods
  *
- * @author Eric Dalquist
  */
 public class TransformerConfigurationSourceAdapter implements TransformerConfigurationSource {
     protected final Logger logger = LoggerFactory.getLogger(getClass());

@@ -27,7 +27,6 @@ import org.danann.cernunnos.TaskRequest;
 import org.danann.cernunnos.TaskResponse;
 
 /**
- * @author Eric Dalquist
  */
 public class SequenceGeneratorPhrase implements Phrase {
 

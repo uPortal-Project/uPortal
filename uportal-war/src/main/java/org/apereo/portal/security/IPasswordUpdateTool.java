@@ -19,7 +19,6 @@ import java.io.IOException;
 /**
  * Used by the md5passwd task to update a user's password.
  *
- * @author Eric Dalquist
  */
 public interface IPasswordUpdateTool {
 

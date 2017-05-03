@@ -57,7 +57,6 @@ import org.springframework.stereotype.Service;
 /**
  * Provides custom portlet session instance to use a different scoping attribute value
  *
- * @author Eric Dalquist
  */
 @Service("portletEnvironmentService")
 public class PortletEnvironmentServiceImpl implements PortletEnvironmentService {

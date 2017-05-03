@@ -24,7 +24,6 @@ import org.apereo.portal.concurrency.IEntityCache;
 /**
  * Implements the uPortal caching API to wrap a Map based cache
  *
- * @author Eric Dalquist
  */
 public class MapBackedEntityCache implements IEntityCache {
     private final Map<Serializable, IBasicEntity> cache;

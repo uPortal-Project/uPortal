@@ -55,7 +55,6 @@ import org.springframework.web.servlet.ModelAndView;
 /**
  * PermissionsRESTController provides a REST endpoing for permission owners and activities.
  *
- * @author Jen Bourey, jbourey@unicon.net
  */
 @Controller
 public class PermissionsRESTController {

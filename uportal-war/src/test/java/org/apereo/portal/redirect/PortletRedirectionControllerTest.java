@@ -26,7 +26,6 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-/** @author Jen Bourey, jennifer.bourey@gmail.com */
 public class PortletRedirectionControllerTest {
 
     PortletRedirectionController controller = new PortletRedirectionController();

@@ -33,7 +33,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 /**
  * EntitiesRESTController
  *
- * @author Jen Bourey, jbourey@unicon.net
  */
 @Controller
 public class EntitiesRESTController {

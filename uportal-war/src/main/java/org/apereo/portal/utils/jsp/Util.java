@@ -31,7 +31,6 @@ import org.springframework.web.util.UriUtils;
 /**
  * JSP Static utility functions
  *
- * @author Eric Dalquist
  */
 public class Util {
 

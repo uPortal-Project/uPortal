@@ -48,7 +48,6 @@ import org.springframework.beans.factory.annotation.Autowired;
  * portlet context (not by annotation).
  *
  * @since 5.0
- * @author drewwills
  */
 public class DefinitionHeaderProvider extends AbstractHeaderProvider {
 

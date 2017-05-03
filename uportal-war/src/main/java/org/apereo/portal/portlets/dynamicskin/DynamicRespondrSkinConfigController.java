@@ -44,7 +44,6 @@ import org.springframework.web.portlet.bind.annotation.RenderMapping;
  * skin properties. Supports the optional 'dynamic' strategy for skinning Respondr.
  *
  * @since 4.1.0
- * @author James Wennmacher, jwennmacher@unicon.net
  */
 @Controller
 @RequestMapping("CONFIG")

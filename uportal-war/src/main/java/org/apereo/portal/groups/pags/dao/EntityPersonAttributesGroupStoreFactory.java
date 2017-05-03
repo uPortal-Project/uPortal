@@ -22,7 +22,6 @@ import org.apereo.portal.groups.IEntityGroupStoreFactory;
 /**
  * Factory class for Person Attributes Group Store
  *
- * @author Shawn Connolly, sconnolly@unicon.net
  * @since 4.1
  */
 public class EntityPersonAttributesGroupStoreFactory implements IEntityGroupStoreFactory {

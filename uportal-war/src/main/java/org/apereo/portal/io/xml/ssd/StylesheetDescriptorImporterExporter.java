@@ -40,7 +40,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * @author Eric Dalquist
  */
 public class StylesheetDescriptorImporterExporter
         extends AbstractJaxbDataHandler<ExternalStylesheetDescriptor> {

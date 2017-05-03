@@ -24,9 +24,6 @@ import org.springframework.ldap.core.ContextSource;
  * An ILdapServer impl that wraps a Spring-LDAP ContextSource for getting contections to provide
  * legacy ILdapServer support.
  *
- * @author Eric Dalquist <a
- *     href="mailto:eric.dalquist@doit.wisc.edu">eric.dalquist@doit.wisc.edu</a>
- * @version $Revision: 1.1 $
  * @deprecated see {@link ILdapServer} deprecation comment
  */
 public class ContextSourceLdapServerImpl implements ILdapServer {

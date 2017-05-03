@@ -19,7 +19,6 @@ import javax.portlet.RenderResponse;
 /**
  * Delegates to a {@link RenderResponse}
  *
- * @author Eric Dalquist
  */
 public class RenderResponsePortletOutputHandler extends MimeResponsePortletOutputHandler {
 

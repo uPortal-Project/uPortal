@@ -22,7 +22,6 @@ import org.apereo.portal.concurrency.IEntityLock;
  *
  * <p>
  *
- * @author Dan Ellentuck
  */
 public class LockableEntityGroupImpl extends EntityGroupImpl implements ILockableEntityGroup {
     protected IEntityLock lock;

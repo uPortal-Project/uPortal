@@ -27,7 +27,6 @@ import org.slf4j.LoggerFactory;
  * See {@link org.apereo.portal.groups.pags.testers.InvertedRegexTester} for regex examples.
  *
  * @see org.apereo.portal.groups.pags.testers.InvertedRegexTester for regex evaluation examples
- * @author James Wennmacher, jwennmacher@unicon.net
  */
 public class PropertyInvertedRegexTester extends InvertedRegexTester {
 

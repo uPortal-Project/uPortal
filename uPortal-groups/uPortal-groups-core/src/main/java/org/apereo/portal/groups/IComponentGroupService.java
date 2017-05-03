@@ -24,7 +24,6 @@ import javax.naming.Name;
  * <p>The component is only used in the process of composing the composite service, so it does not
  * define any operations on groups, only on other components.
  *
- * @author Dan Ellentuck
  */
 public interface IComponentGroupService {
 

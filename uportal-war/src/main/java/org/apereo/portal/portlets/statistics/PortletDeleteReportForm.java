@@ -14,5 +14,4 @@
  */
 package org.apereo.portal.portlets.statistics;
 
-/** @author Chris Waymire <cwaymire@unicon.net> */
 public class PortletDeleteReportForm extends BasePortletLayoutReportForm {}

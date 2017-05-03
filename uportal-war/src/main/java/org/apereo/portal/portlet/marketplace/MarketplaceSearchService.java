@@ -43,7 +43,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 /**
  * The search service that captures marketplace entries.
  *
- * @author vertein
  */
 public class MarketplaceSearchService implements IPortalSearchService {
 

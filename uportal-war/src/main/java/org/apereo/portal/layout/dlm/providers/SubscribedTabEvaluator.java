@@ -36,7 +36,6 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
  * IPerson's fragment subscription list. This evaluator also performs a real-time permissions lookup
  * to ensure that the user is still permissioned to be include the fragment.
  *
- * @author Jen Bourey, jbourey@unicon.net
  */
 @Entity
 @Cacheable

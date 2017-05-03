@@ -60,7 +60,6 @@ import org.springframework.web.servlet.ModelAndView;
  *   <li>fromDate: Date (inclusive) from which to count backwards; default is today
  * </ul>
  *
- * @author Drew Wills, drew@unicon.net
  */
 @Controller
 @RequestMapping("VIEW")

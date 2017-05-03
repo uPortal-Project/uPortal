@@ -49,7 +49,6 @@ import org.springframework.transaction.support.TransactionTemplate;
 /**
  * {@link PingDao} that uses the Spring JDBC APIs to do its work.
  *
- * @author Eric Dalquist
  */
 public class JdbcAuthDao implements AuthDao, InitializingBean {
     /**

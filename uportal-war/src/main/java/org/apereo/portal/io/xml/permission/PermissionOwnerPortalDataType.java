@@ -23,7 +23,6 @@ import org.apereo.portal.io.xml.PortalDataKey;
 /**
  * Describes a set of permissions in the portal
  *
- * @author Eric Dalquist
  */
 public class PermissionOwnerPortalDataType extends AbstractPortalDataType {
     public static final QName PERMISSION_OWNER_QNAME =

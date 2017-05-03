@@ -47,7 +47,6 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
 /**
- * @author Eric Dalquist
  */
 public abstract class BaseXsltDataUpgraderTest {
 

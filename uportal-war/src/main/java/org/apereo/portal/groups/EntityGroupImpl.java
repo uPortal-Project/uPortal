@@ -46,7 +46,6 @@ import org.springframework.context.ApplicationContext;
  * without, either via explicit locking (<code>GroupService.getLockableGroup()</code>) or by
  * synchronizing access from the caller.
  *
- * @author Dan Ellentuck
  * @see IEntityGroup
  */
 public class EntityGroupImpl extends GroupMemberImpl implements IEntityGroup {

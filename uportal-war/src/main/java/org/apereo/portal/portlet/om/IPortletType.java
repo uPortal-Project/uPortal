@@ -21,8 +21,6 @@ import org.apereo.portal.io.xml.IPortalData;
  * references a channel publishing document that describes the parameters that must be fed to the
  * channel.
  *
- * @author Ken Weiner, kweiner@unicon.net
- * @author Jen Bourey, jbourey@unicon.net
  */
 public interface IPortletType extends IPortalData {
 

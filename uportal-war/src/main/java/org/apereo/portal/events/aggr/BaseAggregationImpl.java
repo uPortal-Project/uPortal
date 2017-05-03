@@ -36,7 +36,6 @@ import org.slf4j.LoggerFactory;
 /**
  * Base implementations for aggregations that are grouped by date, time, interval and group
  *
- * @author Eric Dalquist
  */
 @Access(AccessType.FIELD)
 @MappedSuperclass

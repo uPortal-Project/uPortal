@@ -24,7 +24,6 @@ import javax.portlet.WindowState;
 import org.apereo.portal.portlet.om.IPortletWindowId;
 
 /**
- * @author Eric Dalquist
  */
 class PortletRequestInfoImpl implements IPortletRequestInfo {
     private final Object readOnlySync = new Object();

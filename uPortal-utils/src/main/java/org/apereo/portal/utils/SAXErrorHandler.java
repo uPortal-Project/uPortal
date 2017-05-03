@@ -21,8 +21,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
 /**
- * @author George Lindholm
- * @since uPortal 2.5.3
+ * @since 2.5.3
  */
 public class SAXErrorHandler implements ErrorHandler {
 

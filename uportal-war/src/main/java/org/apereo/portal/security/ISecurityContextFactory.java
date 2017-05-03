@@ -21,7 +21,6 @@ package org.apereo.portal.security;
  * followed for consistency even when the factory performs no additional value-add than
  * instantiating the appropriate context class.
  *
- * @author Andrew Newman, newman@yale.edu
  */
 public interface ISecurityContextFactory {
 

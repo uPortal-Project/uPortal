@@ -24,7 +24,6 @@ import org.apache.pluto.container.driver.AdministrativeRequestListener;
  * Provides access to actions involving the PortletSession. Refer to {@link SessionAction} for
  * supported actions.
  *
- * @author Eric Dalquist
  */
 public class PortletSessionAdministrativeRequestListener implements AdministrativeRequestListener {
     public static final String ACTION = "org.apereo.portal.portlet.session.ACTION";

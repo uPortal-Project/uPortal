@@ -45,7 +45,6 @@ import org.springframework.jdbc.core.JdbcOperations;
 /**
  * Runs the Hibernate Schema Export tool using the specified DataSource for the target DB.
  *
- * @author Eric Dalquist
  */
 public class DataSourceSchemaExport implements ISchemaExport, HibernateConfigurationAware {
     protected final Logger logger = LoggerFactory.getLogger(getClass());

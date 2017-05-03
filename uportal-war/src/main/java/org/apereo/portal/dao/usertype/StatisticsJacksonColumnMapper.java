@@ -27,7 +27,6 @@ import org.apache.commons.math3.stat.descriptive.UnivariateStatistic;
 /**
  * Used for mapping instances of {@link UnivariateStatistic} to/from JSON
  *
- * @author Eric Dalquist
  */
 public class StatisticsJacksonColumnMapper extends JacksonColumnMapper {
     private static final long serialVersionUID = 1L;

@@ -20,7 +20,6 @@ import org.apereo.portal.security.IPerson;
 /**
  * Maps a layout profile name for a specific user and request.
  *
- * @author Eric Dalquist
  */
 public interface IProfileMapper {
 

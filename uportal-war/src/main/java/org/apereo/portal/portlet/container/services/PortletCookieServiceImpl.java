@@ -49,7 +49,6 @@ import org.springframework.web.util.WebUtils;
 /**
  * {@link Service} bean to encapsulate business logic regarding portlet cookie persistence.
  *
- * @author Eric Dalquist
  */
 @Service("portletCookieService")
 public class PortletCookieServiceImpl implements IPortletCookieService, ServletContextAware {

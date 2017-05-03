@@ -25,7 +25,6 @@ import org.apereo.portal.security.IPerson;
  * IPermissionAdministrationHelper is designed to offer access to common permissions administration
  * operations.
  *
- * @author Jen Bourey, jennifer.bourey@gmail.com
  */
 public interface IPermissionAdministrationHelper {
 

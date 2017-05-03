@@ -33,7 +33,6 @@ import org.jgroups.protocols.Discovery;
  * MUST call the static {@link #setPingDao(PingDao)} method when it is ready to handle calls. Until
  * that time the DAO_PING protocol will behave as if there are no other visible members.
  *
- * @author Eric Dalquist
  */
 public class DAO_PING extends Discovery {
     static {

@@ -30,7 +30,6 @@ import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 /**
- * @author Eric Dalquist
  */
 public class XmlUtilitiesImplTest {
     @Test

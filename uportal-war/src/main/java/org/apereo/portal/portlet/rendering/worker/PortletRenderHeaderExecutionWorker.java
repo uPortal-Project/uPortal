@@ -26,8 +26,6 @@ import org.apereo.portal.portlet.rendering.RenderPortletOutputHandler;
 /**
  * {@link PortletExecutionWorker} capable of rendering the head content for a portlet.
  *
- * @author Nicholas Blair
- * @version $Id$
  */
 class PortletRenderHeaderExecutionWorker extends PortletExecutionWorker<PortletRenderResult>
         implements IPortletRenderExecutionWorker {

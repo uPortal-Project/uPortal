@@ -20,7 +20,6 @@ import org.apereo.portal.portlets.statistics.ReportTitleAndColumnDescriptionStra
 import org.junit.Before;
 import org.junit.Test;
 
-/** @author James Wennmacher (jameswennmacher@gmail.com) */
 public class DefaultStatisticsReportLabellingStrategyTest {
 
     DefaultStatisticsReportLabellingStrategy object;

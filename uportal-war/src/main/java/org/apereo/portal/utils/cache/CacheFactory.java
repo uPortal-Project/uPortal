@@ -22,7 +22,6 @@ import net.sf.ehcache.Ehcache;
  * Interface for a cache factory that returns a cache that externally acts like a map. Underlying
  * caches don't have to be a map, but they must be wrapped in the map interface if they do not.
  *
- * @author Scott Battaglia
  * @deprecated Inject the {@link Ehcache} instances directly into spring managed beans
  *     using @Qualifier to specify the cache name
  */

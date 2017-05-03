@@ -32,7 +32,6 @@ import org.springframework.stereotype.Component;
  * Determines set of images to display by checking to see if user is in a mobile user group as
  * determined by the portal's security roles.
  *
- * @author James Wennmacher, jwennmacher@unicon.net
  */
 @Component
 public class RoleBasedBackgroundSetSelectionStrategy implements BackgroundSetSelectionStrategy {

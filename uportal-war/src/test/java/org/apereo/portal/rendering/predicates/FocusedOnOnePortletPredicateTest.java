@@ -31,7 +31,7 @@ import org.mockito.Mock;
 /**
  * Unit tests for FocusedOnOnePortletPredicate.
  *
- * @since uPortal 4.2
+ * @since 4.2
  */
 public class FocusedOnOnePortletPredicateTest {
 

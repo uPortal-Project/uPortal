@@ -18,7 +18,6 @@ package org.apereo.portal;
  * This exception would inform uPortal that a particular resource required to complete channel
  * operation is missing.
  *
- * @author Peter Kharchenko
  */
 public class ResourceMissingException extends PortalException {
     private static final long serialVersionUID = 1L;

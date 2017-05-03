@@ -18,7 +18,6 @@ import org.apereo.portal.groups.pags.IPersonTester;
 import org.apereo.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
 import org.apereo.portal.security.IPerson;
 
-/** @author Eric Dalquist */
 public class AlwaysTrueTester implements IPersonTester {
 
     /** @since 4.3 */

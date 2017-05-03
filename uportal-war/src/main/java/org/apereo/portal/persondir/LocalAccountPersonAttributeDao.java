@@ -38,7 +38,6 @@ import org.jasig.services.persondir.support.NamedPersonImpl;
  * AbstractQueryPersonAttributeDao to allow for the use of arbitrary user attributes without
  * requiring an administrator to add new entries to the result or query attribute mappings.
  *
- * @author Jen Bourey, jbourey@unicon.net
  */
 public class LocalAccountPersonAttributeDao extends AbstractDefaultAttributePersonAttributeDao {
 

@@ -17,7 +17,6 @@ package org.apereo.portal.portlet.delegation.jsp;
 /**
  * Used by {@link ParamTag} to add parameters to another tag
  *
- * @author Eric Dalquist
  */
 public interface ParameterizableTag {
     /**

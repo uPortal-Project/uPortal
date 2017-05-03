@@ -20,7 +20,6 @@ import javax.servlet.jsp.tagext.TagSupport;
 /**
  * Parameter tag, uses the {@link ParameterizableTag} as a parent to add parameters
  *
- * @author Eric Dalquist
  */
 public class ParamTag extends TagSupport {
     private static final long serialVersionUID = 1L;

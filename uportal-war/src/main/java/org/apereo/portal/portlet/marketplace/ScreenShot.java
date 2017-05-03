@@ -39,7 +39,6 @@ public class ScreenShot {
         this.url = url;
     }
     /**
-     * @author vertein
      * @return the captions for a screen shot. Will not return null, might return empty list.
      */
     public List<String> getCaptions() {

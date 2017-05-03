@@ -44,7 +44,6 @@ import javax.naming.Name;
  *
  * <p>
  *
- * @author Dan Ellentuck
  */
 public interface IEntityGroup extends IGroupMember {
 

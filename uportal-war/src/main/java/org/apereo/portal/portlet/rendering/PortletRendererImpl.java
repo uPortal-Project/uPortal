@@ -66,7 +66,6 @@ import org.springframework.stereotype.Service;
 /**
  * Executes methods on portlets using Pluto
  *
- * @author Eric Dalquist
  */
 @Service
 public class PortletRendererImpl implements IPortletRenderer {
@@ -954,7 +953,7 @@ public class PortletRendererImpl implements IPortletRenderer {
      * @throws AuthorizationException if the user is not permitted to access config mode yet portlet
      *     window specifies config mode
      * @throws java.lang.IllegalArgumentException if the request or window are null
-     * @since uPortal 4.0.13.1, 4.0.14, 4.1.
+     * @since 4.0.13.1, 4.0.14, 4.1.
      */
     protected void enforceConfigPermission(
             final HttpServletRequest httpServletRequest, final IPortletWindow portletWindow) {

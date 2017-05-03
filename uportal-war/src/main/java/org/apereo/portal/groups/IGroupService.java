@@ -22,7 +22,6 @@ import org.apereo.portal.EntityIdentifier;
  * IGroupMember</code>. This is analogous to getting an <code>InitialContext</code> in JNDI.
  * Subsequent requests for navigating or maintaining groups go thru the <code>IGroupMember</code>.
  *
- * @author Dan Ellentuck
  * @deprecated Use instead {@link ICompositeGroupService} or {@link IIndividualGroupService}
  */
 @Deprecated

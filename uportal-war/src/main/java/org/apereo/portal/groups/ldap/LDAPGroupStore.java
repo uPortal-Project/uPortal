@@ -60,7 +60,6 @@ import org.xml.sax.SAXException;
 /**
  * LDAPGroupStore.
  *
- * @author Alex Vidgor
  */
 public class LDAPGroupStore implements IEntityGroupStore, IEntityStore, IEntitySearcher {
     private static final Log log = LogFactory.getLog(LDAPGroupStore.class);

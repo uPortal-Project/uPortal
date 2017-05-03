@@ -26,7 +26,6 @@ import org.mockito.MockitoAnnotations;
 import org.xml.sax.SAXException;
 
 /**
- * @author Jen Bourey, jennifer.bourey@gmail.com
  */
 public class StaxEventLexicalContentHandlerTest {
 

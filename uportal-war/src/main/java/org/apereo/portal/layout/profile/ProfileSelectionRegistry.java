@@ -26,7 +26,7 @@ import org.springframework.util.Assert;
  * <p>Translates between the very simple selections-are-just-plain-old-Strings Registry API and the
  * selections-are-objects DAO API.
  *
- * @since uPortal 4.2
+ * @since 4.2
  */
 public class ProfileSelectionRegistry implements IProfileSelectionRegistry {
 

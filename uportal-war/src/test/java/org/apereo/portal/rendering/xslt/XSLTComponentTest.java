@@ -54,7 +54,6 @@ import org.xml.sax.SAXException;
 /**
  * Test XSLT when going from DOM -> StAX -> XSLT -> StAX
  *
- * @author Eric Dalquist
  */
 public class XSLTComponentTest {
     protected final Logger logger = LoggerFactory.getLogger(getClass());

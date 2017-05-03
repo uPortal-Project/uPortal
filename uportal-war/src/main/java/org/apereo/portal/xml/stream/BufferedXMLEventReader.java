@@ -25,7 +25,6 @@ import javax.xml.stream.events.XMLEvent;
 /**
  * Buffers XML events for later re-reading
  *
- * @author Eric Dalquist
  */
 public class BufferedXMLEventReader extends BaseXMLEventReader {
     private final LinkedList<XMLEvent> eventBuffer = new LinkedList<XMLEvent>();

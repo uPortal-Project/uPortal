@@ -37,7 +37,6 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 /**
- * @author Eric Dalquist
  */
 public class PortalUrlProviderImplTest {
     private MockHttpServletRequest request;

@@ -35,7 +35,6 @@ import org.apereo.portal.events.aggr.TimedAggregationStatistics;
 /**
  * Semi-Clone of {@link SummaryStatistics} that can be persisted in a database
  *
- * @author Eric Dalquist
  */
 @Embeddable
 public class JpaStatisticalSummary implements TimedAggregationStatistics {

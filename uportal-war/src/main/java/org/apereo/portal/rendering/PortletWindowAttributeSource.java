@@ -41,7 +41,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 /**
  * Adds information about the portlet window to the layout xml data
  *
- * @author Eric Dalquist
  */
 public class PortletWindowAttributeSource implements AttributeSource, BeanNameAware {
     protected final Logger logger = LoggerFactory.getLogger(getClass());

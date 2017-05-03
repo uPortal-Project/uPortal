@@ -24,8 +24,6 @@ import org.apereo.portal.security.IPerson;
 /**
  * Helper methods for retrieving portal entities.
  *
- * @author Drew Mazurek
- * @author Jen Bourey
  */
 public interface IGroupListHelper {
 

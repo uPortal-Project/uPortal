@@ -20,7 +20,6 @@ import java.util.Properties;
 /**
  * Populator that targets a Properties object
  *
- * @author Eric Dalquist
  */
 public class PropertiesPopulator implements Populator<String, String> {
     private final Properties properties;

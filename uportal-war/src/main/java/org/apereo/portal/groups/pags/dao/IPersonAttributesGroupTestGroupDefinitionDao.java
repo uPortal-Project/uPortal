@@ -18,7 +18,6 @@ package org.apereo.portal.groups.pags.dao;
  * Provides APIs for creating, updating, and deleting {@link
  * IPersonAttributesGroupTestGroupDefinition} objects.
  *
- * @author Shawn Connolly, sconnolly@unicon.net
  */
 public interface IPersonAttributesGroupTestGroupDefinitionDao {
 

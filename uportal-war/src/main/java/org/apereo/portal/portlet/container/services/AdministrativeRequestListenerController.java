@@ -70,7 +70,6 @@ import org.apache.pluto.container.driver.AdministrativeRequestListener;
  *     </tr>
  * </table>
  *
- * @author Eric Dalquist
  */
 public class AdministrativeRequestListenerController
         implements org.apache.pluto.container.driver.AdministrativeRequestListener {
