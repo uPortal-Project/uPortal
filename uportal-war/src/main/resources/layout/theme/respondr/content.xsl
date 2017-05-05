@@ -395,7 +395,7 @@
         <!-- Locked indicator for portlets that are not movable -->
         <xsl:if test="$PORTLET_LOCKED='locked'">
           <div class="locked-icon">
-              <i class="fa fa-lock"></i>
+              <i class="fa fa-lock" aria-hidden="true"></i>
               <span class="sr-only">
                   <xsl:value-of select="upMsg:getMessage('this.portlet.locked', $USER_LANG)"/>
               </span>
