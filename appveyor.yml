@@ -9,6 +9,7 @@ build_script:
   - gradlew.bat -u -i install
   - mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
 test_script:
+  - mvn findbugs:check -B -V
   - mvn clean test
   - gradlew.bat -u -i -S check
 cache:
