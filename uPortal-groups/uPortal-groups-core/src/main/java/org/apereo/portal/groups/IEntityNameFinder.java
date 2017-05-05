@@ -25,12 +25,12 @@ public interface IEntityNameFinder {
      *
      * @param key java.lang.String
      */
-    public String getName(String key) throws Exception;
+    String getName(String key) throws Exception;
 
     /**
      * Returns the entity type for this <code>IEntityFinder</code>.
      *
      * @return java.lang.Class
      */
-    public Class getType();
+    Class getType();
 }
