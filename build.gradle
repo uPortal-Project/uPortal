@@ -3,6 +3,7 @@ description = "Apereo uPortal $version"
 // Build Scans provide detailed information about many aspects of your
 // build right in your browser.  (https://scans.gradle.com/plugin)
 apply plugin: 'com.gradle.build-scan'
+apply plugin: 'java'
 
 // Adds support for Node.js scripts
 apply plugin: 'com.moowork.node'
@@ -14,6 +15,7 @@ buildscript {
         maven {
             url 'https://plugins.gradle.org/m2/'
         }
+        
     }
     dependencies {
         classpath 'com.gradle:build-scan-plugin:1.0'
@@ -45,8 +47,196 @@ subprojects {
     repositories {
         mavenLocal()
         mavenCentral()
+      //  flatDir {
+   //    dirs '/home/stalele/uportal/uPortal/uportal-war/target/'
+  // }
+    }
+    
+    ext {
+    basedir = "."
+    targetdir = basedir + "/target"
+    jasigTmpdir = targetdir + "/tmp"
+    jarfile = "/home/stalele/uportal/uPortal/uportal-war/target/uPortal-classes.jar"
+}
+
+dependencies {
+    compile group: 'commons-cli', name: 'commons-cli', version: '1.2'
+    compile group: 'org.codehaus.groovy', name: 'groovy-groovysh', version: '2.2.0'
+	compile group: 'org.springframework', name: 'spring-context', version: '3.2.18.RELEASE'
+	compile group: 'org.slf4j', name: 'log4j-over-slf4j', version: '1.7.7'
+	compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.7'
+	compile group: 'org.slf4j', name: 'jcl-over-slf4j', version: '1.7.7'
+	compile group: 'org.slf4j', name: 'jul-to-slf4j', version: '1.7.7'
+	compile group: 'org.jasig.portal', name: 'uPortal-utils', version:'5.0.0-SNAPSHOT'
+	compile group: 'javax.servlet', name: 'javax.servlet-api', version: '3.0.1'
+	compile "org.springframework.security:spring-security-config:3.2.10.RELEASE"
+	compile "org.springframework.security:spring-security-core:3.2.10.RELEASE"
+	compile "org.springframework.security:spring-security-web:3.2.10.RELEASE"
+	compile "org.springframework:spring-aop:3.2.18.RELEASE"
+	compile "org.springframework:spring-aspects:3.2.18.RELEASE"
+	compile "org.springframework:spring-beans:3.2.18.RELEASE"
+	compile "org.springframework:spring-context:3.2.18.RELEASE"
+	compile "org.springframework:spring-context-support:3.2.18.RELEASE"
+	compile "org.springframework:spring-core:3.2.18.RELEASE"
+	compile "org.springframework:spring-expression:3.2.18.RELEASE"
+	compile "org.springframework:spring-jdbc:3.2.18.RELEASE"
+	compile "org.springframework:spring-orm:3.2.18.RELEASE"
+	compile "org.springframework:spring-oxm:3.2.18.RELEASE"
+	compile "org.springframework:spring-test:3.2.18.RELEASE"
+	compile "org.springframework:spring-tx:3.2.18.RELEASE"
+	compile "org.springframework:spring-web:3.2.18.RELEASE"
+	compile "org.springframework:spring-webmvc:3.2.18.RELEASE"
+	compile "org.springframework:spring-webmvc-portlet:3.2.18.RELEASE"
+	compile "org.springframework.ldap:spring-ldap-core:1.3.1.RELEASE"
+	compile "org.springframework.ldap:spring-ldap-core-tiger:1.3.1.RELEASE"
+	
+	compile "org.springframework.webflow:spring-binding:2.3.2.RELEASE"
+	compile "org.springframework.webflow:spring-webflow:2.3.2.RELEASE"
+	compile "com.amazonaws:aws-java-sdk-s3:1.10.65"
+	
+	compile "commons-collections:commons-collections:3.2.2"
+}
+
+
+/*dependencies {
+	compile "org.antlr:stringtemplate:4.0.2"
+	compile "aopalliance:aopalliance:1.0"
+	
+	compile "org.apache.httpcomponents:httpclient:4.5.2"
+	compile "ch.qos.logback:logback-classic:1.1.2"
+	compile "com.fasterxml.jackson.core:jackson-databind:2.3.3"
+	compile "com.fasterxml.jackson.module:jackson-module-jaxb-annotations:2.3.3"
+	compile "com.google.guava:guava:16.0.1"
+	compile "com.googlecode.cernunnos:cernunnos:1.2.2"
+	compile "com.googlecode.ehcache-spring-annotations:ehcache-spring-annotations:1.2.0"
+	compile "com.thoughtworks.xstream:xstream:1.4.7"
+	compile "commons-cli:commons-cli:1.2"
+	compile "commons-codec:commons-codec:1.9"
+	
+	compile "commons-dbcp:commons-dbcp:1.4"
+	compile "commons-fileupload:commons-fileupload:1.3.2"
+	compile "commons-httpclient:commons-httpclient:3.1"
+	compile "org.apache.httpcomponents:httpcore:4.4.4"
+	compile "commons-io:commons-io:2.4"
+	compile "commons-lang:commons-lang:2.6"
+	compile "commons-pool:commons-pool:1.6"
+	compile "org.apache.commons:commons-lang3:3.3.2"
+	compile "org.apache.commons:commons-math3:3.2"
+	compile "org.apache.commons:commons-compress:1.8"
+	compile "org.apache.tika:tika-core:1.5"
+	compile "org.apache.tomcat:tomcat-jdbc:7.0.37"
+	compile "org.json:json:20090211"
+	compile "dom4j:dom4j:1.6.1"
+	compile "edu.internet2.middleware.grouper:grouperClient:1.6.3"
+	compile "com.google.visualization:visualization-datasource:1.1.1"
+	compile "org.hsqldb:hsqldb:2.3.2"
+	compile "org.hsqldb:sqltool:2.3.2"
+	compile "org.javassist:javassist:3.18.1-GA"
+	compile "org.jgroups:jgroups:3.2.13.Final"
+	compile "com.ibm.icu:icu4j:53.1"
+	compile "javax.activation:activation:1.1.1"
+	compile "javax.ccpp:ccpp:1.0"
+	compile "javax.mail:mail:1.4.5"
+	compile "org.apache.portals:portlet-api_2.1.0_spec:1.0"
+	compile "javax.servlet.jsp:jsp-api:2.2"
+	compile "javax.servlet:jstl:1.2"
+	compile "javax.servlet:javax.servlet-api:3.0.1"
+	compile "jline:jline:2.11"
+	compile "joda-time:joda-time:2.3"
+	compile "joda-time:joda-time-jsptags:1.1.1"
+	compile "junit:junit:4.11"
+	testCompile "org.hamcrest:hamcrest-all:1.3"
+	compile "jtidy:jtidy:4aug2000r7-dev"
+	compile "net.oauth.core:oauth:20100527"
+	compile "net.sf.ehcache:ehcache-core:2.6.8"
+	compile "net.sf.ehcache:ehcache-web:2.0.4"
+	compile "net.sf.json-lib:json-lib-ext-spring:1.0.2"
+	compile "org.jvnet.jaxb2_commons:jaxb2-basics-runtime:0.6.5.1"
+	compile "org.mockito:mockito-core:1.9.5"
+	compile "org.objenesis:objenesis:2.1"
+	compile "org.quartz-scheduler:quartz:2.2.1"
+	compile "org.apache.ant:ant:1.8.4"
+	compile "org.apache.ant:ant-launcher:1.8.4"
+	compile "org.apache.portals.pluto:pluto-ant-tasks:2.1.0-M3"
+	compile "org.apache.portals.pluto:pluto-container:2.1.0-M3"
+	compile "org.apache.portals.pluto:pluto-container-api:2.1.0-M3"
+	compile "org.apache.portals.pluto:pluto-portal-driver:2.1.0-M3"
+	compile "org.apache.portals.pluto:pluto-container-driver-api:2.1.0-M3"
+	compile "org.jasig.ehcache:ehcache-jgroups3replication:1.7.4"
+	compile "org.apache.portals.pluto:pluto-taglib:2.1.0-M3"
+	compile "org.apache.portals.pluto:pluto-util:2.1.0-M3"
+	compile "org.aspectj:aspectjrt:1.7.4"
+	compile "org.aspectj:aspectjweaver:1.7.4"
+	compile "org.codehaus.groovy:groovy:2.2.2"
+	compile "org.codehaus.groovy:groovy-ant:2.2.2"
+	compile "org.codehaus.groovy:groovy-groovysh:2.2.2"
+	compile "org.codehaus.groovy:groovy-jsr223:2.2.2"
+	compile "org.codehaus.groovy:groovy-sql:2.2.2"
+	compile "org.codehaus.groovy:groovy-test:2.2.2"
+	compile "org.codehaus.groovy:groovy-xml:2.2.2"
+	compile "org.codehaus.groovy:groovy-all:2.2.2"
+	compile "com.fasterxml.staxmate:staxmate:2.2.1"
+	compile "org.codehaus.woodstox:stax2-api:3.1.4"
+	compile "org.codehaus.woodstox:woodstox-core-asl:4.3.0"
+	compile "org.easymock:easymock:3.2"
+	compile "org.fusesource.jansi:jansi:1.11"
+	compile "org.hibernate:hibernate-core:4.2.19.Final"
+	compile "org.hibernate:hibernate-ehcache:4.2.19.Final"
+	compile "org.hibernate:hibernate-entitymanager:4.2.19.Final"
+	compile "org.hibernate:hibernate-jpamodelgen:1.2.0.Final"
+	compile "org.hibernate.javax.persistence:hibernate-jpa-2.0-api:1.0.1.Final"
+	compile "org.jasig.cas.client:cas-client-core:3.4.1"
+	compile "org.jasig.cas:cas-server-extension-clearpass:3.5.2.1"
+	compile "org.jasig.portal:uportal-ear-deployer:3.1.5"
+	compile "org.jasig.portlet.utils:portlet-ws-util:1.1.0"
+	compile "org.jasig.portlet.utils:portlet-jdbc-util:1.1.0"
+	compile "org.jasig.resourceserver:resource-server-api:1.0.45"
+	compile "org.jasig.resourceserver:resource-server-utils:1.0.45"
+	compile "org.jasig.service.persondir:person-directory-api:1.7.1"
+	compile "org.jasig.service.persondir:person-directory-impl:1.7.1"
+	compile "org.jasypt:jasypt:1.9.2"
+	compile "org.jadira.usertype:usertype.core:3.1.0.GA"
+	compile "org.jadira.usertype:usertype.spi:3.1.0.GA"
+	compile "org.lesscss:lesscss:1.3.3"
+	compile "org.skyscreamer:jsonassert:1.2.3"
+	compile "org.slf4j:slf4j-api:1.7.7"
+	compile "org.slf4j:jcl-over-slf4j:1.7.7"
+	compile "org.slf4j:jul-to-slf4j:1.7.7"
+	compile "org.slf4j:log4j-over-slf4j:1.7.7"
+	compile "org.springframework:spring-aop:3.2.18.RELEASE"
+	compile "org.springframework:spring-aspects:3.2.18.RELEASE"
+	compile "org.springframework:spring-beans:3.2.18.RELEASE"
+	compile "org.springframework:spring-context:3.2.18.RELEASE"
+	compile "org.springframework:spring-context-support:3.2.18.RELEASE"
+	compile "org.springframework:spring-core:3.2.18.RELEASE"
+	compile "org.springframework:spring-expression:3.2.18.RELEASE"
+	compile "org.springframework:spring-jdbc:3.2.18.RELEASE"
+	compile "org.springframework:spring-orm:3.2.18.RELEASE"
+	compile "org.springframework:spring-oxm:3.2.18.RELEASE"
+	compile "org.springframework:spring-test:3.2.18.RELEASE"
+	compile "org.springframework:spring-tx:3.2.18.RELEASE"
+	compile "org.springframework:spring-web:3.2.18.RELEASE"
+	compile "org.springframework:spring-webmvc:3.2.18.RELEASE"
+	compile "org.springframework:spring-webmvc-portlet:3.2.18.RELEASE"
+	compile "org.springframework.ldap:spring-ldap-core:1.3.1.RELEASE"
+	compile "org.springframework.ldap:spring-ldap-core-tiger:1.3.1.RELEASE"
+	
+	compile "org.springframework.webflow:spring-binding:2.3.2.RELEASE"
+	compile "org.springframework.webflow:spring-webflow:2.3.2.RELEASE"
+	compile "org.springmodules:spring-modules-cache:0.8a"
+	compile "oro:oro:2.0.8"
+	compile "taglibs:standard:1.1.2"
+	compile "xmlunit:xmlunit:1.5"
+}*/
+    
+   sourceSets {
+    main {
+   // println "jar file set is " +jarfile
+        runtimeClasspath += files(jarfile)
     }
 
+
+}
     checkstyle {
         // Stay on checkstyle version 6 until Java version 7 support can be dropped
         toolVersion = '6.19'
@@ -72,6 +262,8 @@ subprojects {
          */
         compile.extendsFrom provided
     }
+    
+  //  compile name: 'uPortal-classes'
 
     task cleanShared() {
 		group 'Configuration'
@@ -89,5 +281,36 @@ subprojects {
 		FileTree tree = fileTree(dir: uPortal)
 		delete uPortal
 	}
+	
+	task dbtest() {
+ description "Displays information about the database defined in rdbm.properties"
+ println 'Creating DBTest Script'
+//println basedir
+//println targetdir
+//println jasigTmpdir
+def shellscript = jasigTmpdir + "/upshell_"
+println shellscript
+ def temp = File.createTempFile(shellscript, ".groovy")  
+temp.write('portalShellBuildHelper.dbTest();')
+println temp.getAbsolutePath()    
+//temp.deleteOnExit()  
+}
+
+apply plugin: 'application'
+task upShell(type:JavaExec) {
+    def uportalWar = "/home/stalele/uportal/uPortal/uportal-war/target/uPortal-classes.jar"
+	//if(skipUpShellExecution) {
+	
+	description='Run a uPortal Groovy Shell. scripted using -Dscript='
+    main = 'org.apereo.portal.shell.PortalShell'
+     classpath = sourceSets.main.runtimeClasspath
+    // jvmArgs '-XX:MaxPermSize=256m'
+     systemProperty 'java.awt.headless', 'true'
+     systemProperty 'logback.configurationFile','command-line.logback.xml'
+    args 'script'
+   // }
+}
+
+
 
 }
