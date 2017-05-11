@@ -33,6 +33,7 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.xpath.XPathConstants;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apereo.portal.IUserIdentityStore;
@@ -933,7 +934,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
         }
 
         // make sure sibling exists and is a child of nodeId
-        if (nextSiblingId != null && !nextSiblingId.equals("")) {
+        if ( StringUtils.isNotBlank(nextSiblingId) ) {
             IUserLayoutNodeDescription sibling = getNode(nextSiblingId);
             if (sibling == null) {
                 throw new PortalException(
