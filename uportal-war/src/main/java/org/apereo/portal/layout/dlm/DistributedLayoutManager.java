@@ -937,6 +937,10 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
             return false;
         }
 
+        if ( !(node.isMoveAllowed()) ) { // cannot add a node one cannot move
+            return false;
+        }
+
         // make sure sibling exists and is a child of nodeId
         if ( StringUtils.isNotBlank(nextSiblingId) ) {
             IUserLayoutNodeDescription sibling = getNode(nextSiblingId);
@@ -967,7 +971,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
         // same layout fragment as the fragment owner to insure a misbehaving front-end doesn't
         // do an improper operation.
 
-        if ( !(node.isMoveAllowed() || isFragmentOwner)) return false;
+        if ( isFragmentOwner ) return false;
 
         if (parent instanceof IUserLayoutFolderDescription
                 && !(((IUserLayoutFolderDescription) parent).isAddChildAllowed())
