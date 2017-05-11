@@ -908,6 +908,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
         }
     }
 
+    @Override
     public boolean canAddNode(
             IUserLayoutNodeDescription node, String parentId, String nextSiblingId)
             throws PortalException {
