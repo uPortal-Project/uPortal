@@ -34,17 +34,13 @@ import static org.mockito.Mockito.*;
  */
 public class DistributedLayoutManagerTest {
 
-
     /**
      * One cannot add a null node to a layout.
      */
     @Test
     public void cannotAddNullNode() {
 
-        final IPerson person = new PersonImpl();
-        final IUserProfile profile = new UserProfile();
-
-        final DistributedLayoutManager dlm = new DistributedLayoutManager(person, profile);
+        final DistributedLayoutManager dlm = newBasicDlm();
 
         final IUserLayoutNodeDescription nullNode = null;
         final IUserLayoutNodeDescription parent =  mock(IUserLayoutNodeDescription.class);
@@ -59,10 +55,7 @@ public class DistributedLayoutManagerTest {
     @Test
     public void cannotAddNodeToNullParent() {
 
-        final IPerson person = new PersonImpl();
-        final IUserProfile profile = new UserProfile();
-
-        final DistributedLayoutManager dlm = new DistributedLayoutManager(person, profile);
+        final DistributedLayoutManager dlm = newBasicDlm();
 
         final IUserLayoutNodeDescription nodeToAdd = mock(IUserLayoutNodeDescription.class);
         final IUserLayoutNodeDescription nullParent = null;
@@ -77,10 +70,7 @@ public class DistributedLayoutManagerTest {
     @Test
     public void cannotAddAnImmovableNode() {
 
-        final IPerson person = new PersonImpl();
-        final IUserProfile profile = new UserProfile();
-
-        final DistributedLayoutManager dlm = new DistributedLayoutManager(person, profile);
+        final DistributedLayoutManager dlm = newBasicDlm();
 
         final IUserLayoutNodeDescription nodeToAdd = mock(IUserLayoutNodeDescription.class);
 
@@ -91,6 +81,19 @@ public class DistributedLayoutManagerTest {
 
         assertFalse(dlm.canAddNode(nodeToAdd, parent, noNextSiblingId));
 
+    }
+
+    /**
+     * Utility method for instantiating a DLM to test.
+     * @return a simple DLM instance.
+     */
+    public static DistributedLayoutManager newBasicDlm() {
+        final IPerson person = new PersonImpl();
+        final IUserProfile profile = new UserProfile();
+
+        final DistributedLayoutManager dlm = new DistributedLayoutManager(person, profile);
+
+        return dlm;
     }
 
 }
