@@ -927,6 +927,11 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
             final IUserLayoutNodeDescription parent,
             final String nextSiblingId)
             throws PortalException {
+
+        if (parent == null) { // cannot add a node without a parent to add it under
+            return false;
+        }
+
         // make sure sibling exists and is a child of nodeId
         if (nextSiblingId != null && !nextSiblingId.equals("")) {
             IUserLayoutNodeDescription sibling = getNode(nextSiblingId);
@@ -957,7 +962,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
         // same layout fragment as the fragment owner to insure a misbehaving front-end doesn't
         // do an improper operation.
 
-        if (parent == null || !(node.isMoveAllowed() || isFragmentOwner)) return false;
+        if ( !(node.isMoveAllowed() || isFragmentOwner)) return false;
 
         if (parent instanceof IUserLayoutFolderDescription
                 && !(((IUserLayoutFolderDescription) parent).isAddChildAllowed())
