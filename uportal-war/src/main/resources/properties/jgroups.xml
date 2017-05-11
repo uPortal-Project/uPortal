@@ -59,7 +59,12 @@
          oob_thread_pool.queue_max_size="100"
          oob_thread_pool.rejection_policy="discard"/>
 
-    <org.apereo.portal.jgroups.protocols.DAO_PING timeout="3000" />
+    <JDBC_PING
+            connection_url="${hibernate.connection.url}"
+            connection_username="${hibernate.connection.username}"
+            connection_password="${hibernate.connection.password}"
+            connection_driver="${hibernate.connection.driver_class}"
+    />
     <MERGE2  min_interval="10000"
              max_interval="30000"/>
     <FD_SOCK start_port="${uPortal.cacheManager.jgroups.fd_sock.start_port}"/>
