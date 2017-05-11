@@ -107,6 +107,7 @@
     -->
     <xsl:template name="region.pre-header">
         <xsl:if test="//region[@name='pre-header']/channel">
+            <a role="button" class="portal-header-skip-nav btn" href="#portalPageBody"><xsl:value-of select="upMsg:getMessage('skip.to.page.content', $USER_LANG)"/></a>
             <div id="region-pre-header" class="portal-user">
                 <xsl:for-each select="//region[@name='pre-header']/channel">
                     <xsl:call-template name="regions.portlet.decorator" />
