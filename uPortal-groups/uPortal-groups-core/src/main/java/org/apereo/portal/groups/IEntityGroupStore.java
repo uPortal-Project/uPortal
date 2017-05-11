@@ -29,20 +29,20 @@ public interface IEntityGroupStore extends IGroupConstants {
      * @param group org.apereo.portal.groups.IEntityGroup
      * @param member org.apereo.portal.groups.IGroupMember
      */
-    public boolean contains(IEntityGroup group, IGroupMember member) throws GroupsException;
+    boolean contains(IEntityGroup group, IGroupMember member) throws GroupsException;
     /**
      * Delete this <code>IEntityGroup</code> from the data store.
      *
      * @param group org.apereo.portal.groups.IEntityGroup
      */
-    public void delete(IEntityGroup group) throws GroupsException;
+    void delete(IEntityGroup group) throws GroupsException;
     /**
      * Returns an instance of the <code>IEntityGroup</code> from the data store.
      *
      * @return org.apereo.portal.groups.IEntityGroup
      * @param key java.lang.String
      */
-    public IEntityGroup find(String key) throws GroupsException;
+    IEntityGroup find(String key) throws GroupsException;
     /**
      * Returns an <code>Iterator</code> over the <code>Collection</code> of <code>IEntityGroups
      * </code> that the <code>IGroupMember</code> belongs to.
@@ -50,7 +50,7 @@ public interface IEntityGroupStore extends IGroupConstants {
      * @return java.util.Iterator
      * @param gm org.apereo.portal.groups.IEntityGroup
      */
-    public Iterator findParentGroups(IGroupMember gm) throws GroupsException;
+    Iterator findParentGroups(IGroupMember gm) throws GroupsException;
     /**
      * Returns an <code>Iterator</code> over the <code>Collection</code> of <code>IEntities</code>
      * that are members of this <code>IEntityGroup</code>.
@@ -58,14 +58,14 @@ public interface IEntityGroupStore extends IGroupConstants {
      * @return java.util.Iterator
      * @param group org.apereo.portal.groups.IEntityGroup
      */
-    public Iterator findEntitiesForGroup(IEntityGroup group) throws GroupsException;
+    Iterator findEntitiesForGroup(IEntityGroup group) throws GroupsException;
     /**
      * Returns an instance of the <code>ILockableEntityGroup</code> from the data store.
      *
      * @return org.apereo.portal.groups.IEntityGroup
      * @param key java.lang.String
      */
-    public ILockableEntityGroup findLockable(String key) throws GroupsException;
+    ILockableEntityGroup findLockable(String key) throws GroupsException;
     /**
      * Returns a <code>String[]</code> containing the keys of <code>IEntityGroups</code> that are
      * members of this <code>IEntityGroup</code>. In a composite group system, a group may contain a
@@ -77,7 +77,7 @@ public interface IEntityGroupStore extends IGroupConstants {
      * @return String[]
      * @param group org.apereo.portal.groups.IEntityGroup
      */
-    public String[] findMemberGroupKeys(IEntityGroup group) throws GroupsException;
+    String[] findMemberGroupKeys(IEntityGroup group) throws GroupsException;
     /**
      * Returns an <code>Iterator</code> over the <code>Collection</code> of <code>IEntityGroups
      * </code> that are members of this <code>IEntityGroup</code>.
@@ -85,14 +85,14 @@ public interface IEntityGroupStore extends IGroupConstants {
      * @return java.util.Iterator
      * @param group org.apereo.portal.groups.IEntityGroup
      */
-    public Iterator findMemberGroups(IEntityGroup group) throws GroupsException;
+    Iterator findMemberGroups(IEntityGroup group) throws GroupsException;
     /** @return org.apereo.portal.groups.IEntityGroup */
-    public IEntityGroup newInstance(Class entityType) throws GroupsException;
+    IEntityGroup newInstance(Class entityType) throws GroupsException;
     /**
      * Find EntityIdentifiers for groups whose name matches the query string according to the
      * specified method and matches the provided leaf type
      */
-    public EntityIdentifier[] searchForGroups(String query, int method, Class leaftype)
+    EntityIdentifier[] searchForGroups(String query, int method, Class leaftype)
             throws GroupsException;
     /**
      * Adds or updates the <code>IEntityGroup</code> AND ITS MEMBERSHIPS to the data store, as
@@ -100,11 +100,11 @@ public interface IEntityGroupStore extends IGroupConstants {
      *
      * @param group org.apereo.portal.groups.IEntityGroup
      */
-    public void update(IEntityGroup group) throws GroupsException;
+    void update(IEntityGroup group) throws GroupsException;
     /**
      * Commits the group memberships of the <code>IEntityGroup</code> to the data store.
      *
      * @param group org.apereo.portal.groups.IEntityGroup
      */
-    public void updateMembers(IEntityGroup group) throws GroupsException;
+    void updateMembers(IEntityGroup group) throws GroupsException;
 }
