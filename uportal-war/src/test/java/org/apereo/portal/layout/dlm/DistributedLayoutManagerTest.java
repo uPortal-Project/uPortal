@@ -52,4 +52,26 @@ public class DistributedLayoutManagerTest {
         assertFalse(dlm.canAddNode(nodeToAdd, nullParent, noNextSiblingId));
     }
 
+    /**
+     * If you can't move a node, you can't add that node.
+     */
+    @Test
+    public void cannotAddAnImmovableNode() {
+
+        final IPerson person = new PersonImpl();
+        final IUserProfile profile = new UserProfile();
+
+        final DistributedLayoutManager dlm = new DistributedLayoutManager(person, profile);
+
+        final IUserLayoutNodeDescription nodeToAdd = mock(IUserLayoutNodeDescription.class);
+
+        final IUserLayoutNodeDescription parent = mock(IUserLayoutNodeDescription.class);
+        when(parent.isMoveAllowed()).thenReturn(Boolean.FALSE);
+
+        final String noNextSiblingId = "";
+
+        assertFalse(dlm.canAddNode(nodeToAdd, parent, noNextSiblingId));
+
+    }
+
 }
