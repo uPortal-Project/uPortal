@@ -452,6 +452,13 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
 
             return node;
         }
+
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Attempted to add node in impermissible location "
+                    + "with parent " + parentId + " and next sibling " + nextSiblingId
+                    + ". Made no layout change.");
+        }
+
         return null;
     }
 
