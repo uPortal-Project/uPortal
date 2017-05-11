@@ -21,6 +21,7 @@ package org.apereo.portal.layout.dlm;
 
 import org.apereo.portal.IUserProfile;
 import org.apereo.portal.UserProfile;
+import org.apereo.portal.layout.node.IUserLayoutFolderDescription;
 import org.apereo.portal.layout.node.IUserLayoutNodeDescription;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.provider.PersonImpl;
@@ -81,6 +82,28 @@ public class DistributedLayoutManagerTest {
 
         assertFalse(dlm.canAddNode(nodeToAdd, parent, noNextSiblingId));
 
+    }
+
+    /**
+     * You cannot add a node to a parent that disallows adding children,
+     * when you are not a fragment owner.
+     */
+    @Test
+    public void nonFragmentOwnersCannotAddToParentThatDisallowsChildren() {
+
+        final DistributedLayoutManager dlm = newBasicDlm();
+
+        // bad news: hard to unit test DLM under fragment owner case
+        // good news: default is the not-fragment-owner case, and that is this case.
+
+        final IUserLayoutNodeDescription nodeToAdd = mock(IUserLayoutNodeDescription.class);
+
+        final IUserLayoutFolderDescription parent = mock(IUserLayoutFolderDescription.class);
+        when (parent.isAddChildAllowed()).thenReturn(Boolean.FALSE);
+
+        final String noNextSiblingId = "";
+
+        assertFalse(dlm.canAddNode(nodeToAdd, parent, noNextSiblingId));
     }
 
     /**
