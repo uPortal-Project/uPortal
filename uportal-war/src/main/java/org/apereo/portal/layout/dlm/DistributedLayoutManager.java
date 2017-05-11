@@ -977,7 +977,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
                 && !(((IUserLayoutFolderDescription) parent).isAddChildAllowed())
                 && !isFragmentOwner) return false;
 
-        if (nextSiblingId == null || nextSiblingId.equals("")) // end of list targeted
+        if ( StringUtils.isBlank(nextSiblingId) ) // end of list targeted
         return true;
 
         // so lets see if we can place it at the end of the sibling list and
