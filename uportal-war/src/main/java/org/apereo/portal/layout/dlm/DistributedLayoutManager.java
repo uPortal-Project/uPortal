@@ -923,9 +923,9 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
     }
 
     protected boolean canAddNode(
-            IUserLayoutNodeDescription node,
-            IUserLayoutNodeDescription parent,
-            String nextSiblingId)
+            final IUserLayoutNodeDescription node,
+            final IUserLayoutNodeDescription parent,
+            final String nextSiblingId)
             throws PortalException {
         // make sure sibling exists and is a child of nodeId
         if (nextSiblingId != null && !nextSiblingId.equals("")) {
