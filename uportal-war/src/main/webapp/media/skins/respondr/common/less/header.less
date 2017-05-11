@@ -52,6 +52,25 @@
         z-index: 10;
     }
 
+    /* Hide the "Skip to page content" button offscreen until it's brought into focus */
+    .portal-header-skip-nav {
+        position: absolute;
+        top: -1000px;
+        left: -1000px;
+        height: 1px;
+        width: 1px;
+        text-align: left;
+        overflow: hidden;
+
+        &:active, &:focus, &:hover {
+            left: 0;
+            top: 0;
+            width: auto;
+            height: auto;
+            overflow: visible;
+       }
+    }
+
     .portal-nav {
         .container {
             padding: 0;
