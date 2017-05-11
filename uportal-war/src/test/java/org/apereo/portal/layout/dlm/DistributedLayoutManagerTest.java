@@ -34,6 +34,25 @@ import static org.mockito.Mockito.*;
  */
 public class DistributedLayoutManagerTest {
 
+
+    /**
+     * One cannot add a null node to a layout.
+     */
+    @Test
+    public void cannotAddNullNode() {
+
+        final IPerson person = new PersonImpl();
+        final IUserProfile profile = new UserProfile();
+
+        final DistributedLayoutManager dlm = new DistributedLayoutManager(person, profile);
+
+        final IUserLayoutNodeDescription nullNode = null;
+        final IUserLayoutNodeDescription parent =  mock(IUserLayoutNodeDescription.class);
+        final String noNextSiblingId = "";
+
+        assertFalse(dlm.canAddNode(nullNode, parent, noNextSiblingId));
+    }
+
     /**
      * Adding a node to a null parent makes no sense and is disallowed.
      */

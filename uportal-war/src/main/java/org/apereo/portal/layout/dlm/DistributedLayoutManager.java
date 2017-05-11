@@ -929,6 +929,10 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
             final String nextSiblingId)
             throws PortalException {
 
+        if (node == null) { // cannot add a null node
+            return false;
+        }
+
         if (parent == null) { // cannot add a node without a parent to add it under
             return false;
         }
