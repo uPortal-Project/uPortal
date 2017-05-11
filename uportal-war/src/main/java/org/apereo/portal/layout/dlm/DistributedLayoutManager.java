@@ -929,6 +929,8 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
             final String nextSiblingId)
             throws PortalException {
 
+        if ( isFragmentOwner ) return false;
+
         if (node == null) { // cannot add a null node
             return false;
         }
@@ -970,8 +972,6 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
         // todo if isFragmentOwner should probably verify both node and parent are part of the
         // same layout fragment as the fragment owner to insure a misbehaving front-end doesn't
         // do an improper operation.
-
-        if ( isFragmentOwner ) return false;
 
         if (parent instanceof IUserLayoutFolderDescription
                 && !(((IUserLayoutFolderDescription) parent).isAddChildAllowed())
