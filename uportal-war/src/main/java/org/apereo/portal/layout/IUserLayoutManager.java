@@ -98,6 +98,21 @@ public interface IUserLayoutManager {
             throws PortalException;
 
     /**
+     * Add a node under a parent without specifying in what order it ought to be placed among
+     * siblings. Use addNode(node, parentId, nextSiblingId) to express exactly where among
+     * current children of the parent node the new node ought to be placed. Use this method to
+     * leave sibling order to the discretion of the underlying layout manager.
+     *
+     * @param nodeToAdd non-null node to add to the layout
+     * @param parentId non-null ID of parent under which to add the node
+     * @return new description of the added node, now with a new or updated ID,
+     * or null if not added.
+     * @since 5.0.0
+     */
+    IUserLayoutNodeDescription addNodeInAnyOrder(
+        IUserLayoutNodeDescription nodeToAdd, String parentId);
+
+    /**
      * Move a node (channel or folder) from one location to another.
      *
      * @param nodeId a <code>String</code> value of a node Id.
