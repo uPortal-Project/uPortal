@@ -1,7 +1,7 @@
 description = "Apereo uPortal Utilities"
 
 dependencies {
-    compile project(':uPortal-core')
+    compile project(':uPortal-concurrency')
 
     compile "com.google.guava:guava:${guavaVersion}"
     compile "commons-lang:commons-lang:${commonsLangVersion}"

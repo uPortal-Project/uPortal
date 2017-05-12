@@ -34,7 +34,7 @@ public interface ISecurityContext extends Serializable {
      *     are foundation types distributed by JASIG. All other should be registered and globally
      *     unique.
      */
-    public int getAuthType();
+    int getAuthType();
 
     /**
      * Returns an empty object reference to an object implementing the Principal interface. By
@@ -45,7 +45,7 @@ public interface ISecurityContext extends Serializable {
      * @return An empty principal container.
      * @see IPrincipal
      */
-    public IPrincipal getPrincipalInstance();
+    IPrincipal getPrincipalInstance();
 
     /**
      * Returns an empty object reference to an object implementing the IOpaqueCredentials interface.
@@ -56,7 +56,7 @@ public interface ISecurityContext extends Serializable {
      * @return An empty credentials container.
      * @see IOpaqueCredentials
      */
-    public IOpaqueCredentials getOpaqueCredentialsInstance();
+    IOpaqueCredentials getOpaqueCredentialsInstance();
 
     /**
      * Performs the operation of authentication. To perform this operation, the values set in the
@@ -67,7 +67,7 @@ public interface ISecurityContext extends Serializable {
      * @see #getPrincipalInstance
      * @see #getOpaqueCredentialsInstance
      */
-    public void authenticate() throws PortalSecurityException;
+    void authenticate() throws PortalSecurityException;
 
     /**
      * Returns the currently authenticated principal if we are currently authenticated. Note that
@@ -77,7 +77,7 @@ public interface ISecurityContext extends Serializable {
      *
      * @return The currently authenticated principal.
      */
-    public IPrincipal getPrincipal();
+    IPrincipal getPrincipal();
 
     /**
      * Returns any credentials that an authenticated principal currently has. Note that opaque
@@ -88,7 +88,7 @@ public interface ISecurityContext extends Serializable {
      * @return The currently authenticated credentials object.
      * @see IOpaqueCredentials
      */
-    public IOpaqueCredentials getOpaqueCredentials();
+    IOpaqueCredentials getOpaqueCredentials();
 
     /**
      * Returns any additional descriptor information that might have been acquired during the
@@ -98,14 +98,14 @@ public interface ISecurityContext extends Serializable {
      * @return An object containing any additional descriptor information.
      * @see IAdditionalDescriptor
      */
-    public IAdditionalDescriptor getAdditionalDescriptor();
+    IAdditionalDescriptor getAdditionalDescriptor();
 
     /**
      * Returns a boolean status as to whether the descriptor corresponds to an authenticated
      * principal. Note that the get(Principal|OpaqueCredentials) calls return null until
      * isAuthenticated first returns <code>true</code>.
      */
-    public boolean isAuthenticated();
+    boolean isAuthenticated();
 
     /**
      * Returns an <code>ISecurityContext</code> for the named subservient security context.
@@ -114,7 +114,7 @@ public interface ISecurityContext extends Serializable {
      *     parameter.
      * @param ctx The non-compound name of the subservient security context.
      */
-    public ISecurityContext getSubContext(String ctx) throws PortalSecurityException;
+    ISecurityContext getSubContext(String ctx) throws PortalSecurityException;
 
     /**
      * Returns an enumeration of the security contexts currently registered as being subservient to
@@ -122,7 +122,7 @@ public interface ISecurityContext extends Serializable {
      *
      * @return The enumeration object containing all of the contexts.
      */
-    public Enumeration getSubContexts();
+    Enumeration getSubContexts();
 
     /**
      * Returns an enumeration of the names of the security contexts currently registered as being
@@ -130,7 +130,7 @@ public interface ISecurityContext extends Serializable {
      *
      * @return The enumeration object containing all of the subcontext names.
      */
-    public Enumeration getSubContextNames();
+    Enumeration getSubContextNames();
 
     /**
      * Adds a named sub context to the list of subservient subcontexts.
@@ -140,5 +140,5 @@ public interface ISecurityContext extends Serializable {
      *     all subcontext.
      * @param ctx The security context object to register.
      */
-    public void addSubContext(String name, ISecurityContext ctx) throws PortalSecurityException;
+    void addSubContext(String name, ISecurityContext ctx) throws PortalSecurityException;
 }
