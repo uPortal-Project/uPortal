@@ -1266,7 +1266,7 @@
                                 <version>2.2</version>
                               </requireMavenVersion>
                               <requireJavaVersion>
-                                <version>1.8</version>
+                                <version>${project.build.targetVersion}</version>
                               </requireJavaVersion>
                             </rules>
                         </configuration>
