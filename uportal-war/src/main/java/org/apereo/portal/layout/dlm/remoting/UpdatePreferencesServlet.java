@@ -915,11 +915,20 @@ public class UpdatePreferencesServlet {
                         Collections.singletonMap("error", "Cannot insert into portlet element"));
             }
 
-            String siblingId = isInsert ? destinationId : null;
-            String target = isInsert ? ulm.getParentId(destinationId) : destinationId;
+            if (isInsert) {
+                final String siblingId = isInsert ? destinationId : null;
+                final String target = isInsert ? ulm.getParentId(destinationId) : destinationId;
 
-            // move the channel into the column
-            node = ulm.addNode(channel, target, siblingId);
+                // move the channel into the column
+                node = ulm.addNode(channel, target, siblingId);
+            } else {
+                // request did not specify in what order to insert,
+                // so add anywhere in target folder.
+
+                node = ulm.addNodeInAnyOrder(channel, destinationId);
+            }
+
+
         }
 
         if (node == null) {
