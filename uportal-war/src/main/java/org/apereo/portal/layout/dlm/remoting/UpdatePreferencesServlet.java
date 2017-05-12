@@ -1000,7 +1000,6 @@ public class UpdatePreferencesServlet {
      * Update the user's preferred skin.
      *
      * @param request HTTP Request
-     * @param response HTTP Response
      * @param skinName name of the Skin
      * @throws IOException
      * @throws PortalException
