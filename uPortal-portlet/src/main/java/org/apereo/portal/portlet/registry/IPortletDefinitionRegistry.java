@@ -35,19 +35,19 @@ public interface IPortletDefinitionRegistry {
      * @return The portlet definition for the id, null if no definition exists for the id.
      * @throws IllegalArgumentException If portletDefinitionId is null.
      */
-    public IPortletDefinition getPortletDefinition(IPortletDefinitionId portletDefinitionId);
+    IPortletDefinition getPortletDefinition(IPortletDefinitionId portletDefinitionId);
 
-    public IPortletDefinition getPortletDefinition(String portletDefinitionIdString);
+    IPortletDefinition getPortletDefinition(String portletDefinitionIdString);
 
     /**
      * @param fname The functional name of the portlet definition
      * @return The definition or null of none exists for the specified fname
      */
-    public IPortletDefinition getPortletDefinitionByFname(String fname);
+    IPortletDefinition getPortletDefinitionByFname(String fname);
 
-    public IPortletDefinition getPortletDefinitionByName(String name);
+    IPortletDefinition getPortletDefinitionByName(String name);
 
-    public List<IPortletDefinition> getAllPortletDefinitions();
+    List<IPortletDefinition> getAllPortletDefinitions();
 
     /**
      * Persists changes to a IPortletDefinition.
@@ -55,9 +55,9 @@ public interface IPortletDefinitionRegistry {
      * @param portletDefinition The IPortletDefinition to store changes to.
      * @throws IllegalArgumentException If portletDefinition is null
      */
-    public IPortletDefinition savePortletDefinition(IPortletDefinition portletDefinition);
+    IPortletDefinition savePortletDefinition(IPortletDefinition portletDefinition);
 
-    public List<IPortletDefinition> searchForPortlets(String term, boolean allowPartial);
+    List<IPortletDefinition> searchForPortlets(String term, boolean allowPartial);
 
     /**
      * Gets the parent portlet descriptor for the entity specified by the definition id.
@@ -69,7 +69,7 @@ public interface IPortletDefinitionRegistry {
      * @throws DataRetrievalFailureException if the {@link PortletDefinition} cannot be found for
      *     the {@link IPortletDefinition}
      */
-    public PortletDefinition getParentPortletDescriptor(IPortletDefinitionId portletDefinitionId);
+    PortletDefinition getParentPortletDescriptor(IPortletDefinitionId portletDefinitionId);
 
     /**
      * Gets the parent portlet application descriptor for the entity specified by the definition id.
@@ -81,7 +81,7 @@ public interface IPortletDefinitionRegistry {
      * @throws DataRetrievalFailureException if the {@link PortletApplicationDefinition} cannot be
      *     found for the {@link IPortletDefinition}
      */
-    public PortletApplicationDefinition getParentPortletApplicationDescriptor(
+    PortletApplicationDefinition getParentPortletApplicationDescriptor(
             IPortletDefinitionId portletDefinitionId);
 
     /**
@@ -89,5 +89,5 @@ public interface IPortletDefinitionRegistry {
      * portletApplicationId will be {@link Tuple#first} and the portletName will be {@link
      * Tuple#second}
      */
-    public Tuple<String, String> getPortletDescriptorKeys(IPortletDefinition portletDefinition);
+    Tuple<String, String> getPortletDescriptorKeys(IPortletDefinition portletDefinition);
 }

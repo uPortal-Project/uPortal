@@ -6,6 +6,12 @@ dependencies {
     compile "com.google.guava:guava:${guavaVersion}"
     compile "commons-lang:commons-lang:${commonsLangVersion}"
     compile "org.apache.commons:commons-lang3:${commonsLang3Version}"
+    compile("org.jasig.service.persondir:person-directory-impl:${personDirectoryVersion}") {
+        exclude group: 'org.springframework', module: 'spring-beans'
+        exclude group: 'org.springframework', module: 'spring-context'
+        exclude group: 'org.springframework', module: 'spring-core'
+        exclude group: 'org.springframework', module: 'spring-tx'
+    }
     compile "org.slf4j:jcl-over-slf4j:${slf4jVersion}"
     compile "org.springframework:spring-beans:${springVersion}"
     compile "org.springframework:spring-context:${springVersion}"
