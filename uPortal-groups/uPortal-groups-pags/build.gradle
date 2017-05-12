@@ -2,6 +2,10 @@ plugins {
     id "at.comm_unity.gradle.plugins.jpamodelgen" version "1.1.3"
 }
 
+jpaModelgen {
+    // library = "org.hibernate:hibernate-jpamodelgen:4.3.8.Final"
+    jpaModelgenSourcesDir = "build/jpaModelgen/java"
+}
 description = "Apereo uPortal Groups PAGS"
 
 apply plugin: 'at.comm_unity.gradle.plugins.jpamodelgen'
