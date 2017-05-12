@@ -961,7 +961,8 @@ public class UpdatePreferencesServlet {
         if (columns.hasMoreElements()) {
             while (columns.hasMoreElements()) {
                 // attempt to add this channel to the column
-                node = ulm.addNode(channel, columns.nextElement(), null);
+                node = ulm.addNodeInAnyOrder(channel, columns.nextElement());
+
                 // if it couldn't be added to this column, go on and try the next
                 // one.  otherwise, we're set.
                 if (node != null) break;
