@@ -32,7 +32,7 @@ public interface IAuthorizationService {
      * @param permissions IPermission[]
      * @exception AuthorizationException
      */
-    public void addPermissions(IPermission[] permissions) throws AuthorizationException;
+    void addPermissions(IPermission[] permissions) throws AuthorizationException;
     /**
      * Answers if the principal has permission to use the CONFIG PortletMode on this Channel.
      *
@@ -41,7 +41,7 @@ public interface IAuthorizationService {
      * @param channelPublishId int
      * @exception AuthorizationException indicates authorization information could not be retrieved.
      */
-    public boolean canPrincipalConfigure(IAuthorizationPrincipal principal, String channelPublishId)
+    boolean canPrincipalConfigure(IAuthorizationPrincipal principal, String channelPublishId)
             throws AuthorizationException;
     /**
      * Answers if the principal has permission to manage this Channel.
@@ -51,7 +51,7 @@ public interface IAuthorizationService {
      * @param channelPublishId int
      * @exception AuthorizationException indicates authorization information could not be retrieved.
      */
-    public boolean canPrincipalManage(IAuthorizationPrincipal principal, String channelPublishId)
+    boolean canPrincipalManage(IAuthorizationPrincipal principal, String channelPublishId)
             throws AuthorizationException;
     /**
      * I'm not sure what this means (Dan). Publish what?
@@ -60,7 +60,7 @@ public interface IAuthorizationService {
      * @return boolean
      * @exception AuthorizationException
      */
-    public boolean canPrincipalManage(
+    boolean canPrincipalManage(
             IAuthorizationPrincipal principal, PortletLifecycleState state, String categoryId)
             throws AuthorizationException;
     /**
@@ -71,7 +71,7 @@ public interface IAuthorizationService {
      * @param channelPublishId int
      * @exception AuthorizationException indicates authorization information could not be retrieved.
      */
-    public boolean canPrincipalRender(IAuthorizationPrincipal principal, String channelPublishId)
+    boolean canPrincipalRender(IAuthorizationPrincipal principal, String channelPublishId)
             throws AuthorizationException;
 
     /**
@@ -81,7 +81,7 @@ public interface IAuthorizationService {
      * @param portletDefinitionId Portlet definition string ID of the portlet to check
      * @return True if the principal has permission to browse this portlet.
      */
-    public boolean canPrincipalBrowse(
+    boolean canPrincipalBrowse(
             IAuthorizationPrincipal principal, String portletDefinitionId);
 
     /**
@@ -91,7 +91,7 @@ public interface IAuthorizationService {
      * @param portlet Portlet to check
      * @return True if the principal has permission to browse this portlet.
      */
-    public boolean canPrincipalBrowse(
+    boolean canPrincipalBrowse(
             IAuthorizationPrincipal principal, IPortletDefinition portlet);
 
     /**
@@ -102,7 +102,7 @@ public interface IAuthorizationService {
      * @param channelPublishId int
      * @exception AuthorizationException indicates authorization information could not be retrieved.
      */
-    public boolean canPrincipalSubscribe(IAuthorizationPrincipal principal, String channelPublishId)
+    boolean canPrincipalSubscribe(IAuthorizationPrincipal principal, String channelPublishId)
             throws AuthorizationException;
     /**
      * Answers if the owner has given the principal permission to perform the activity on the
@@ -118,7 +118,7 @@ public interface IAuthorizationService {
      * @param target java.lang.String
      * @exception AuthorizationException indicates authorization information could not be retrieved.
      */
-    public boolean doesPrincipalHavePermission(
+    boolean doesPrincipalHavePermission(
             IAuthorizationPrincipal principal, String owner, String activity, String target)
             throws AuthorizationException;
     /**
@@ -135,7 +135,7 @@ public interface IAuthorizationService {
      * @param target java.lang.String
      * @exception AuthorizationException indicates authorization information could not be retrieved.
      */
-    public IPermission[] getAllPermissionsForPrincipal(
+    IPermission[] getAllPermissionsForPrincipal(
             IAuthorizationPrincipal principal, String owner, String activity, String target)
             throws AuthorizationException;
     /**
@@ -146,14 +146,14 @@ public interface IAuthorizationService {
      * @return Vector (of channels?)
      * @exception AuthorizationException indicates authorization information could not
      */
-    public Vector getAuthorizedChannels(IAuthorizationPrincipal principal)
+    Vector getAuthorizedChannels(IAuthorizationPrincipal principal)
             throws AuthorizationException;
 
     /**
      * @return org.apereo.portal.groups.IGroupMember
      * @param principal org.apereo.portal.security.IAuthorizationPrincipal
      */
-    public IGroupMember getGroupMember(IAuthorizationPrincipal principal) throws GroupsException;
+    IGroupMember getGroupMember(IAuthorizationPrincipal principal) throws GroupsException;
 
     /**
      * Returns the <code>IPermissions</code> owner has granted for the specified activity and
@@ -166,7 +166,7 @@ public interface IAuthorizationService {
      * @param target java.lang.String
      * @exception AuthorizationException indicates authorization information could not be retrieved.
      */
-    public IPermission[] getPermissionsForOwner(String owner, String activity, String target)
+    IPermission[] getPermissionsForOwner(String owner, String activity, String target)
             throws AuthorizationException;
     /**
      * Returns the <code>IPermissions</code> owner has granted this <code>Principal</code> for the
@@ -182,7 +182,7 @@ public interface IAuthorizationService {
      * @param target java.lang.String
      * @exception AuthorizationException indicates authorization information could not be retrieved.
      */
-    public IPermission[] getPermissionsForPrincipal(
+    IPermission[] getPermissionsForPrincipal(
             IAuthorizationPrincipal principal, String owner, String activity, String target)
             throws AuthorizationException;
     /**
@@ -192,14 +192,14 @@ public interface IAuthorizationService {
      * @param owner String
      * @param principal IAuthorizationPrincipal
      */
-    public IPermission newPermission(String owner, IAuthorizationPrincipal principal)
+    IPermission newPermission(String owner, IAuthorizationPrincipal principal)
             throws AuthorizationException;
     /**
      * @param key java.lang.String
      * @return org.apereo.portal.security.IPermissionManager
      * @exception AuthorizationException
      */
-    public IPermissionManager newPermissionManager(String key) throws AuthorizationException;
+    IPermissionManager newPermissionManager(String key) throws AuthorizationException;
     /**
      * Factory method for an <code>IAuthorizationPrincipal</code>. This type wraps an underlying
      * entity so that the authorization system can treat all principals alike.
@@ -208,7 +208,7 @@ public interface IAuthorizationService {
      * @param type Class
      * @return IAuthorizationPrincipal
      */
-    public IAuthorizationPrincipal newPrincipal(String key, Class type);
+    IAuthorizationPrincipal newPrincipal(String key, Class type);
 
     /**
      * Converts an <code>IGroupMember</code> into an <code>IAuthorizationPrincipal</code>.
@@ -216,13 +216,13 @@ public interface IAuthorizationService {
      * @return org.apereo.portal.security.IAuthorizationPrincipal
      * @param groupMember org.apereo.portal.groups.IGroupMember
      */
-    public IAuthorizationPrincipal newPrincipal(IGroupMember groupMember) throws GroupsException;
+    IAuthorizationPrincipal newPrincipal(IGroupMember groupMember) throws GroupsException;
     /**
      * @return org.apereo.portal.security.IUpdatingPermissionManager
      * @param key java.lang.String
      * @exception AuthorizationException
      */
-    public IUpdatingPermissionManager newUpdatingPermissionManager(String key)
+    IUpdatingPermissionManager newUpdatingPermissionManager(String key)
             throws AuthorizationException;
     /**
      * Removes <code>IPermissions</code> from the service.
@@ -230,7 +230,7 @@ public interface IAuthorizationService {
      * @param permissions IPermission[]
      * @exception AuthorizationException
      */
-    public void removePermissions(IPermission[] permissions) throws AuthorizationException;
+    void removePermissions(IPermission[] permissions) throws AuthorizationException;
 
     /**
      * Updates <code>IPermissions</code> in the service.
@@ -238,7 +238,7 @@ public interface IAuthorizationService {
      * @param permissions IPermission[]
      * @exception AuthorizationException
      */
-    public void updatePermissions(IPermission[] permissions) throws AuthorizationException;
+    void updatePermissions(IPermission[] permissions) throws AuthorizationException;
 
     /**
      * Returns the <code>IAuthorizationPrincipal</code> associated with the <code>IPermission</code>
@@ -246,7 +246,7 @@ public interface IAuthorizationService {
      *
      * @param permission IPermission
      */
-    public IAuthorizationPrincipal getPrincipal(IPermission permission)
+    IAuthorizationPrincipal getPrincipal(IPermission permission)
             throws AuthorizationException;
 
     /**
@@ -254,7 +254,7 @@ public interface IAuthorizationService {
      *
      * @param principal IAuthorizationPrincipal
      */
-    public String getPrincipalString(IAuthorizationPrincipal principal);
+    String getPrincipalString(IAuthorizationPrincipal principal);
 
     /**
      * Answers if the owner has given the principal permission to perform the activity on the
@@ -271,7 +271,7 @@ public interface IAuthorizationService {
      * @param target java.lang.String
      * @exception AuthorizationException indicates authorization information could not be retrieved.
      */
-    public boolean doesPrincipalHavePermission(
+    boolean doesPrincipalHavePermission(
             IAuthorizationPrincipal principal,
             String owner,
             String activity,

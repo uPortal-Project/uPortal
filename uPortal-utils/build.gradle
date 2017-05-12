@@ -4,7 +4,6 @@ dependencies {
     compile project(':uPortal-concurrency')
 
     compile "com.google.guava:guava:${guavaVersion}"
-    compile "commons-lang:commons-lang:${commonsLangVersion}"
     compile "org.apache.commons:commons-lang3:${commonsLang3Version}"
     compile("org.jasig.service.persondir:person-directory-impl:${personDirectoryVersion}") {
         exclude group: 'org.springframework', module: 'spring-beans'
@@ -16,7 +15,7 @@ dependencies {
     compile "org.springframework:spring-beans:${springVersion}"
     compile "org.springframework:spring-context:${springVersion}"
     compile "org.springframework:spring-web:${springVersion}"
-    compile("org.springmodules:spring-modules-cache:${apringModulesCacheVersion}") {
+    compile("org.springmodules:spring-modules-cache:${springModulesCacheVersion}") {
         exclude group: 'log4j', module: 'log4j'
         exclude group: 'commons-logging', module: 'commons-logging'
         exclude group: 'org.springframework', module: 'spring'

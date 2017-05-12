@@ -18,8 +18,6 @@ import java.util.Collection;
 import java.util.Map;
 import javax.xml.transform.Transformer;
 import org.apereo.portal.io.xml.IPortalData;
-import org.apereo.portal.url.IUrlNodeSyntaxHelper;
-import org.apereo.portal.url.IUrlNodeSyntaxHelperRegistry;
 
 /**
  * Describes a XSL Stylesheet used in the rendering pipeline
@@ -47,14 +45,14 @@ public interface IStylesheetDescriptor extends IPortalData {
     public String getStylesheetResource();
 
     /**
-     * The name of the {@link IUrlNodeSyntaxHelper} as it is registered in the {@link
-     * IUrlNodeSyntaxHelperRegistry}, can be null if no {@link IUrlNodeSyntaxHelper} is associated
+     * The name of the <code>IUrlNodeSyntaxHelper</code> as it is registered in the {@link
+     * <code>IUrlNodeSyntaxHelperRegistry</code>, can be null if no <code>IUrlNodeSyntaxHelper</code> is associated
      * with this stylesheet.
      */
     public void setUrlNodeSyntaxHelperName(String urlNodeSyntaxHelperName);
     /**
-     * @return The name of the {@link IUrlNodeSyntaxHelper} as it is registered in the {@link
-     *     IUrlNodeSyntaxHelperRegistry}, can be null if no {@link IUrlNodeSyntaxHelper} is
+     * @return The name of the <code>IUrlNodeSyntaxHelper</code> as it is registered in the {@link
+     *     <code>IUrlNodeSyntaxHelperRegistry</code>, can be null if no <code>IUrlNodeSyntaxHelper</code> is
      *     associated with this stylesheet.
      */
     public String getUrlNodeSyntaxHelperName();

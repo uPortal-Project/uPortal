@@ -37,7 +37,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.apereo.portal.groups.pags.dao.IPersonAttributesGroupDefinition;
 import org.apereo.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
 import org.apereo.portal.groups.pags.dao.IPersonAttributesGroupTestGroupDefinition;
-import org.apereo.portal.rest.PagsRESTController;
 import org.apereo.portal.url.IPortalRequestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -51,6 +50,9 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public final class PagsDefinitionJsonUtils {
+
+    /** Help other Java classes use this API well. */
+    public static final String URL_FORMAT_STRING = "/api/v4-3/pags/%s.json";
 
     private static final Map<Class<?>, Object> beans = new HashMap<>();
 
@@ -93,7 +95,7 @@ public final class PagsDefinitionJsonUtils {
                 url.append(req.getContextPath())
                         .append(
                                 String.format(
-                                        PagsRESTController.URL_FORMAT_STRING,
+                                        URL_FORMAT_STRING,
                                         URLEncoder.encode(groupDef.getName(), "UTF-8")));
                 jsonGenerator.writeStringField("url", url.toString());
                 jsonGenerator.writeEndObject();
