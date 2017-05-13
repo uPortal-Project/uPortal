@@ -245,6 +245,7 @@
     </properties>
 
     <modules>
+        <module>cas-filter-webapp</module>
         <module>uportal-db</module>
         <module>uportal-war</module>
         <module>uportal-ear</module>
