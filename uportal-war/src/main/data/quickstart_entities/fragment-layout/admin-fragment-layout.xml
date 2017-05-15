@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?><layout xmlns:dlm="http://www.uportal.org/layout/dlm" script="classpath://org/jasig/portal/io/import-layout_v3-2.crn" username="admin">
+  <folder hidden="false" immutable="false" name="Root folder" type="root" unremovable="true">
+    <folder dlm:origin="admin-lo:/layout/folder/folder[3]" hidden="false" immutable="false" name="Admin Tools" type="regular" unremovable="false">
+      <folder dlm:origin="admin-lo:/layout/folder/folder[3]/folder" hidden="false" immutable="false" name="Column" type="regular" unremovable="false">
+        <structure-attribute>
+          <name>width</name>
+          <value>17%</value>
+        </structure-attribute>
+        <dlm:editSet hidden="false" immutable="false" name="" type="dlm:editSet" unremovable="false">
+          <dlm:pref hidden="false" immutable="false" name="width" type="dlm:pref" unremovable="false"/>
+        </dlm:editSet>
+        <channel fname="group-administration-launcher" unremovable="false" hidden="false" immutable="false"/>
+        <channel fname="cache-administration-launcher" unremovable="false" hidden="false" immutable="false"/>
+      </folder>
+      <folder hidden="false" immutable="false" name="Column" type="regular" unremovable="false">
+        <structure-attribute>
+          <name>width</name>
+          <value>16%</value>
+        </structure-attribute>
+        <channel fname="portlet-administration-launcher" unremovable="false" hidden="false" immutable="false"/>
+        <channel fname="audit-dlm-fragments-launcher" unremovable="false" hidden="false" immutable="false"/>
+      </folder>
+      <folder hidden="false" immutable="false" name="Column" type="regular" unremovable="false">
+        <structure-attribute>
+          <name>width</name>
+          <value>16%</value>
+        </structure-attribute>
+        <channel fname="permission-administration-launcher" unremovable="false" hidden="false" immutable="false"/>
+        <channel fname="resource-aggregation-administration-launcher" unremovable="false" hidden="false" immutable="false"/>
+      </folder>
+      <folder hidden="false" immutable="false" name="Column" type="regular" unremovable="false">
+        <structure-attribute>
+          <name>width</name>
+          <value>17%</value>
+        </structure-attribute>
+        <channel fname="dlm-fragment-administration-launcher" unremovable="false" hidden="false" immutable="false"/>
+        <dlm:positionSet hidden="false" immutable="false" name="" type="dlm:positionSet" unremovable="false">
+          <dlm:position hidden="false" immutable="false" name="admin:/layout/folder/folder/folder[4]/channel" type="dlm:position" unremovable="false" fname="dlm-fragment-administration-launcher"/>
+          <dlm:position hidden="false" immutable="false" name="admin-lo:/layout/folder/folder[3]/folder[2]/channel" type="dlm:position" unremovable="false" fname="announcementsAdmin"/>
+        </dlm:positionSet>
+      </folder>
+      <folder hidden="false" immutable="false" name="Column" type="regular" unremovable="false">
+        <structure-attribute>
+          <name>width</name>
+          <value>17%</value>
+        </structure-attribute>
+        <channel fname="tenant-administration-launcher" unremovable="false" hidden="false" immutable="false"/>
+        <dlm:positionSet hidden="false" immutable="false" name="" type="dlm:positionSet" unremovable="false">
+          <dlm:position hidden="false" immutable="false" name="admin:/layout/folder/folder/folder[5]/channel" type="dlm:position" unremovable="false" fname="tenant-administration-launcher"/>
+          <dlm:position hidden="false" immutable="false" name="admin-lo:/layout/folder/folder[3]/folder[2]/channel[2]" type="dlm:position" unremovable="false" fname="emergency-alert-admin"/>
+          <dlm:position hidden="false" immutable="false" name="admin-lo:/layout/folder/folder[3]/folder[2]/channel[3]" type="dlm:position" unremovable="false" fname="please-register"/>
+        </dlm:positionSet>
+      </folder>
+      <folder dlm:origin="admin-lo:/layout/folder/folder[3]/folder[2]" hidden="false" immutable="false" name="Column" type="regular" unremovable="false">
+        <structure-attribute>
+          <name>width</name>
+          <value>17%</value>
+        </structure-attribute>
+        <dlm:editSet hidden="false" immutable="false" name="" type="dlm:editSet" unremovable="false">
+          <dlm:pref hidden="false" immutable="false" name="width" type="dlm:pref" unremovable="false"/>
+        </dlm:editSet>
+        <channel fname="user-administration-launcher" unremovable="false" hidden="false" immutable="false"/>
+        <channel fname="import-export-launcher" unremovable="false" hidden="false" immutable="false"/>
+      </folder>
+    </folder>
+  </folder>
+  <dlm:deleteSet hidden="false" immutable="false" name="" type="dlm:deleteSet" unremovable="false">
+    <dlm:delete hidden="false" immutable="false" name="admin-lo:/layout/folder/folder[3]/folder/channel" type="dlm:delete" unremovable="false" fname="portal-administration"/>
+  </dlm:deleteSet>
+</layout>
