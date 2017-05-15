@@ -24,7 +24,7 @@
     </parameter>
     <parameter>
         <name>chromeStyle</name>
-        <value>default</value>
+        <value>no-chrome</value>
     </parameter>
     <parameter>
         <name>configurable</name>
