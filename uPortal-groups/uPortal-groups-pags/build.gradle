@@ -35,7 +35,8 @@ sourceSets {
 // These are the only modifications to build process that are required.
 compileJava {
     doFirst {
-        // Directory should exists before compilation started.
+        // Generated sources directory should be present & empty before compilation
+        generatedSourcesDir.deleteDir()
         generatedSourcesDir.mkdirs()
     }
     options.compilerArgs += ['-s', generatedSourcesDir]
