@@ -25,7 +25,6 @@ import org.springframework.util.ReflectionUtils;
 /**
  * Creates AspectJAroundAdvice while hiding a bit of the boilerplate
  *
- * @author Eric Dalquist
  */
 public class AspectJAroundAdviceFactory extends AbstractFactoryBean<AspectJAroundAdvice> {
     private Object aspect;

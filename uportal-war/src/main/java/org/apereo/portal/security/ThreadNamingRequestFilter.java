@@ -26,7 +26,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 /**
  * Appends the username of the current user to the name of the current thread
  *
- * @author Eric Dalquist
  */
 @Service("threadNamingRequestFilter")
 public class ThreadNamingRequestFilter extends OncePerRequestFilter {

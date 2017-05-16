@@ -16,7 +16,7 @@ package org.apereo.portal.groups.pags.testers;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
+import java.util.UUID;
 import org.apereo.portal.groups.pags.IPersonTester;
 import org.apereo.portal.groups.pags.TestPersonAttributesGroupTestDefinition;
 import org.apereo.portal.security.IPerson;
@@ -27,22 +27,17 @@ import org.junit.Test;
 
 /**
  * Tests the PAGS testers.
- *
- * @author: Julien Gribonvald
  */
 public class InjectAttributeRegexTesterTest {
     private static Class IPERSON_CLASS;
-    private Random random = new Random();
     private String[] attributeNames = {
-        "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"
+        "one", "two", "three", "four", "five"
     };
     private String[] randomStrings;
-    private String[] randomIntStrings;
     private String key1 = null;
     private String key2 = null;
     private String key3 = null;
     private String missingKey = null;
-    private List intStringList = null;
     private List stringList = null;
     private int testListSize = 10;
 
@@ -52,23 +47,7 @@ public class InjectAttributeRegexTesterTest {
         ip.setAttribute(IPerson.USERNAME, key);
         return ip;
     }
-    /**
-     * @return java.lang.String
-     * @param length int
-     */
-    private String getRandomString(java.util.Random r, int length) {
 
-        char[] chars = new char[length];
-
-        for (int i = 0; i < length; i++) {
-            int diff = (r.nextInt(25));
-            int charValue = (int) 'A' + diff;
-            chars[i] = (char) charValue;
-        }
-        return new String(chars);
-    }
-
-    /** */
     @Before
     public void setUp() throws ClassNotFoundException {
         if (IPERSON_CLASS == null) {
@@ -77,19 +56,7 @@ public class InjectAttributeRegexTesterTest {
 
         randomStrings = new String[100];
         for (int idx = 0; idx < 100; idx++) {
-            int length = random.nextInt(10) + 1; // between 1 and 11.
-            randomStrings[idx] = getRandomString(random, length);
-        }
-
-        randomIntStrings = new String[100];
-        for (int idx = 0; idx < 100; idx++) {
-            int randomInt = random.nextInt(99999) + 1; // between 1 and 100000.
-            randomIntStrings[idx] = randomInt + "";
-        }
-
-        intStringList = new ArrayList();
-        for (int idx = 2; idx < testListSize; idx++) {
-            intStringList.add(randomIntStrings[idx]);
+            randomStrings[idx] = UUID.randomUUID().toString();
         }
 
         stringList = new ArrayList();

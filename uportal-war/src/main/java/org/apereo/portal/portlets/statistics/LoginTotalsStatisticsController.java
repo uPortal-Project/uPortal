@@ -47,7 +47,6 @@ import org.springframework.web.portlet.bind.annotation.ResourceMapping;
 /**
  * Login reports
  *
- * @author Jen Bourey, jennifer.bourey@gmail.com
  */
 @Controller
 @RequestMapping(value = "VIEW")

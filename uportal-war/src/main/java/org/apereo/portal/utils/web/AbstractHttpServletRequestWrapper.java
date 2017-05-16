@@ -42,7 +42,6 @@ import org.apache.commons.lang.Validate;
  * A custom HttpServletRequest wrapper that does NOT extend {@link HttpServletRequestWrapper} to
  * ensure the container can not unwrap too far.
  *
- * @author Eric Dalquist
  */
 public abstract class AbstractHttpServletRequestWrapper implements HttpServletRequest {
     public static final String PORTAL_ATTRIBUTE_PREFIX = "org.apereo.portal.";
@@ -203,10 +202,6 @@ public abstract class AbstractHttpServletRequestWrapper implements HttpServletRe
         return this.httpServletRequest.getReader();
     }
 
-    /**
-     * @deprecated
-     * @see javax.servlet.ServletRequest#getRealPath(java.lang.String)
-     */
     @Override
     public String getRealPath(String path) {
         return this.getServletContext().getRealPath(path);

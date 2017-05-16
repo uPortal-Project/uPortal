@@ -23,8 +23,6 @@ import org.apache.pluto.container.PortletWindow;
  * uPortal extensions to the Pluto {@link PortletWindow} interface. A portlet window represents the
  * actual rendering/interaction layer of the portlet object model.
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 public interface IPortletWindow extends IPortletWindowDescriptor {
     /**

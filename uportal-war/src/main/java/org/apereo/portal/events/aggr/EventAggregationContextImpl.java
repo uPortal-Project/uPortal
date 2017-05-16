@@ -22,7 +22,6 @@ import org.slf4j.LoggerFactory;
 /**
  * Basic context impl
  *
- * @author Eric Dalquist
  */
 class EventAggregationContextImpl implements EventAggregationContext {
     protected final Logger logger = LoggerFactory.getLogger(getClass());

@@ -18,7 +18,6 @@ import org.apereo.portal.io.xml.BaseXsltDataUpgraderTest;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 
-/** @author Eric Dalquist */
 public class UserDataUpgradeTest extends BaseXsltDataUpgraderTest {
     @Test
     public void testUpgradeUser26to40() throws Exception {

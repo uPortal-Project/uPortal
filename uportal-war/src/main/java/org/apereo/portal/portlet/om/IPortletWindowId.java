@@ -20,7 +20,5 @@ import org.apache.pluto.container.PortletWindowID;
 /**
  * uPortal extensions to the Pluto {@link PortletWindowID} interface.
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 public interface IPortletWindowId extends PortletWindowID, Serializable {}

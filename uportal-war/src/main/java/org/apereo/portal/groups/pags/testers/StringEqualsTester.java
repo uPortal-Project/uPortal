@@ -22,7 +22,6 @@ import org.apereo.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
  *
  * <p>
  *
- * @author Dan Ellentuck
  */
 public class StringEqualsTester extends AbstractStringTester {
 

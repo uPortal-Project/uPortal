@@ -27,7 +27,6 @@ import org.springframework.stereotype.Component;
 /**
  * Update the aggregate stats db from 4.0.4
  *
- * @author Eric Dalquist
  */
 @Component
 public class Version404AggrEventsDatabaseUpdateHelper implements IVersionedDatabaseUpdateHelper {

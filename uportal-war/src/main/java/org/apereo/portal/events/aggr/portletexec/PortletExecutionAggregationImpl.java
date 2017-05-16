@@ -45,7 +45,6 @@ import org.hibernate.annotations.Index;
 import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.NaturalIdCache;
 
-/** @author Eric Dalquist */
 @Entity
 @Table(name = "UP_PORTLET_EXEC_AGGR")
 @Inheritance(strategy = InheritanceType.JOINED)

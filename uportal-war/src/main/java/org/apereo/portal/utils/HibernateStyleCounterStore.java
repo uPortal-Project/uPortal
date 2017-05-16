@@ -70,7 +70,6 @@ import org.springframework.transaction.support.TransactionOperations;
 /**
  * Mostly cloned from {@link TableGenerator}
  *
- * @author Eric Dalquist
  */
 @Repository("counterStore")
 public class HibernateStyleCounterStore implements ICounterStore {

@@ -20,8 +20,6 @@ import org.apereo.portal.security.IPrincipal;
 /**
  * Implements an immutable IPrincipal for use with the identity swapper
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 public class IdentitySwapperPrincipal implements IPrincipal {
     private static final long serialVersionUID = 1L;

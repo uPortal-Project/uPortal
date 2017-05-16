@@ -39,7 +39,6 @@ import org.springframework.transaction.support.TransactionOperations;
 /**
  * Utility for doing import/export round trip testing
  *
- * @author Eric Dalquist
  */
 public final class IdentityImportExportTestUtilities {
 

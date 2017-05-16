@@ -24,8 +24,6 @@ import org.w3c.dom.Element;
  * BeanDefinitionParserDelegate#DEFAULT_LAZY_INIT_ATTRIBUTE} to true, usefull when loading a context
  * during testing or with command line tools.
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 public class LazyInitByDefaultBeanDefinitionDocumentReader
         extends DefaultBeanDefinitionDocumentReader {

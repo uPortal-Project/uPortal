@@ -42,8 +42,6 @@ import org.springframework.transaction.support.TransactionCallback;
 /**
  * JPA dao to manage aggregated tab mappings
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 @Repository
 public class JpaAggregatedTabLookupDao extends BaseAggrEventsJpaDao

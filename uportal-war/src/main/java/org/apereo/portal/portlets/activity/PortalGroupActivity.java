@@ -14,7 +14,6 @@
  */
 package org.apereo.portal.portlets.activity;
 
-/** @author Chris Waymire (chris@waymire.net) */
 public class PortalGroupActivity implements Comparable<PortalGroupActivity> {
     private final String groupName;
     private int total;

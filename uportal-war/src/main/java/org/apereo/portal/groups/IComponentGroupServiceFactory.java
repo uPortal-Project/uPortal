@@ -17,7 +17,6 @@ package org.apereo.portal.groups;
 /**
  * Factory interface for creating an <code>IComponentGroupService</code>.
  *
- * @author Dan Ellentuck
  */
 public interface IComponentGroupServiceFactory {
 

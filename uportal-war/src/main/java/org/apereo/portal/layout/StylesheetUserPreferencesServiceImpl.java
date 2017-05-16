@@ -50,8 +50,6 @@ import org.springframework.web.util.WebUtils;
 /**
  * Handles retrieving and storing the various scopes of stylesheet user preference data.
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 @Service
 public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPreferencesService {
@@ -157,19 +155,11 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
             StylesheetPreferencesKey stylesheetPreferencesKey,
             IStylesheetData descriptor) {
         final Scope scope = descriptor.getScope();
-        final boolean persistentScopeReadOnly =
-                this.isPersistentScopeReadOnly(request, prefScope, stylesheetPreferencesKey);
+        final boolean persistentScopeReadOnly = stylesheetPreferencesKey.person.isGuest();
         if (persistentScopeReadOnly && Scope.PERSISTENT == scope) {
             return Scope.SESSION;
         }
         return scope;
-    }
-
-    protected boolean isPersistentScopeReadOnly(
-            HttpServletRequest request,
-            PreferencesScope prefScope,
-            StylesheetPreferencesKey stylesheetPreferencesKey) {
-        return stylesheetPreferencesKey.person.isGuest();
     }
 
     protected final boolean compareValues(String value, String defaultValue) {

@@ -27,7 +27,6 @@ import org.springframework.stereotype.Service;
 /**
  * Create a LrsActor object based on the username.
  *
- * @author Josh Helmer, jhelmer@unicon.net
  */
 @Service("lrsActorService")
 public class LrsActorService implements ILrsActorService {

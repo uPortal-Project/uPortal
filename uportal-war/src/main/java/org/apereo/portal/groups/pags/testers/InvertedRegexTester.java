@@ -49,7 +49,6 @@ import org.apereo.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
  * </table>
  * </code>
  *
- * @author James Wennmacher, jwennmacher@unicon.net
  */
 public class InvertedRegexTester extends AbstractStringTester {
 

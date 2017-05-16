@@ -24,8 +24,6 @@ import org.apache.pluto.container.impl.PortletContainerImpl;
 /**
  * uPortal specific extension to the Pluto {@link PortletContainer}
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 public class UportalPortletContainerImpl extends PortletContainerImpl {
 

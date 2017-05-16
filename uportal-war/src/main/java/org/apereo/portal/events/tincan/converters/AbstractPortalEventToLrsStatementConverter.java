@@ -28,7 +28,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 /**
  * Base class for PortalEvent to LrsStatement converters.
  *
- * @author Josh Helmer, jhelmer@unicon.net
  */
 public abstract class AbstractPortalEventToLrsStatementConverter
         implements IPortalEventToLrsStatementConverter {

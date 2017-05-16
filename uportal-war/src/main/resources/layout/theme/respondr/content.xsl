@@ -392,6 +392,16 @@
       </xsl:variable>
 
       <div class="portlet-controls">
+        <!-- Locked indicator for portlets that are not movable -->
+        <xsl:if test="$PORTLET_LOCKED='locked'">
+          <div class="locked-icon">
+              <i class="fa fa-lock" aria-hidden="true"></i>
+              <span class="sr-only">
+                  <xsl:value-of select="upMsg:getMessage('this.portlet.locked', $USER_LANG)"/>
+              </span>
+          </div>
+        </xsl:if>
+
         <!-- The 'grab-handle' class must be present on every portlet else fluid
              will error when it encounters a portlet without the class.  Grab
              handles for locked portlets will remain hidden. -->

@@ -20,7 +20,6 @@ import org.apereo.portal.security.IPermission;
  * Set of supported permissions that can be used in the <permissions></permissions> element of a
  * portlet definition.
  *
- * @author Josh Helmer, jhelmer.unicon.net
  * @since 4.2
  */
 public enum ExternalPermissionDefinition {

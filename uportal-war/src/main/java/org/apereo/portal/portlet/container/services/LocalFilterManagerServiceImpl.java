@@ -12,7 +12,6 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/** */
 package org.apereo.portal.portlet.container.services;
 
 import org.apache.pluto.container.FilterManager;
@@ -21,7 +20,6 @@ import org.apache.pluto.container.PortletWindow;
 import org.apereo.portal.portlet.container.FilterManagerImpl;
 import org.springframework.stereotype.Service;
 
-/** @author Nicholas Blair, npblair@wisc.edu */
 @Service("filterManagerService")
 public class LocalFilterManagerServiceImpl implements FilterManagerService {
 

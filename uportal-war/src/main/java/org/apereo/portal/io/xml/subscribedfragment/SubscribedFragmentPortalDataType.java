@@ -12,7 +12,6 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/** */
 package org.apereo.portal.io.xml.subscribedfragment;
 
 import java.util.Arrays;
@@ -21,7 +20,6 @@ import javax.xml.namespace.QName;
 import org.apereo.portal.io.xml.AbstractPortalDataType;
 import org.apereo.portal.io.xml.PortalDataKey;
 
-/** @author Eric Dalquist */
 public class SubscribedFragmentPortalDataType extends AbstractPortalDataType {
     public static final QName PORTLET_TYPE_QNAME =
             new QName(

@@ -38,8 +38,6 @@ import org.springframework.beans.factory.annotation.Autowired;
  * #setAttributeToSkinMap(Map)} map and the skin name is set to in the transformer using the {@link
  * #setSkinParameterName(String)} parameter.
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 public abstract class SkinMappingTransformerConfigurationSource
         extends TransformerConfigurationSourceAdapter implements BeanNameAware {

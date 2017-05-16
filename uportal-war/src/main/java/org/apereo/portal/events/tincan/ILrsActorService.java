@@ -16,7 +16,6 @@ package org.apereo.portal.events.tincan;
 
 import org.apereo.portal.events.tincan.om.LrsActor;
 
-/** @author Josh Helmer, jhelmer@unicon.net */
 public interface ILrsActorService {
     /**
      * Given a username, get an LrsActor object.

@@ -24,8 +24,6 @@ import org.junit.Test;
 import org.w3c.dom.Document;
 
 /**
- * @author Eric Dalquist
- * @version $Revision$
  */
 public class Dom2StAXTest {
     private Document document;

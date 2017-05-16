@@ -21,8 +21,6 @@ import org.joda.time.DateTime;
  * Calculates the correct {@link AggregationIntervalInfo} that contains the spcified {@link
  * DateTime} for the specified {@link AggregationInterval}.
  *
- * @author Eric Dalquist
- * @version $Revision: 18025 $
  */
 public interface AggregationIntervalHelper {
     /**

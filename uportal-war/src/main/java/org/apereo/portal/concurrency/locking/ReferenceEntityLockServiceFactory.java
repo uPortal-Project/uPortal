@@ -23,7 +23,6 @@ import org.apereo.portal.concurrency.LockingException;
 /**
  * Creates the reference implemetation of <code>IEntityLockService</code>.
  *
- * @author Dan Ellentuck
  */
 public class ReferenceEntityLockServiceFactory implements IEntityLockServiceFactory {
     private static final Log log = LogFactory.getLog(ReferenceEntityLockServiceFactory.class);

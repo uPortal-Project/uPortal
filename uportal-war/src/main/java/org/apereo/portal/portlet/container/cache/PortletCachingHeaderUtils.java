@@ -20,8 +20,6 @@ import org.apereo.portal.portlet.rendering.PortletResourceOutputHandler;
 /**
  * Utility for writing out portlet response caching related headers
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 public final class PortletCachingHeaderUtils {
     private static final int YEAR_OF_SECONDS = (int) TimeUnit.DAYS.toSeconds(365);

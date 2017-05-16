@@ -70,9 +70,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 /**
- * @author Bernie Durfee, bdurfee@interactivebusiness.com
- * @author Dan Ellentuck
- * @author Scott Battaglia
  */
 @Service("authorizationService")
 public class AuthorizationImpl implements IAuthorizationService {

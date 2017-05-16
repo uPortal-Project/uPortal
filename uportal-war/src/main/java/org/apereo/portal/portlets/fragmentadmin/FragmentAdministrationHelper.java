@@ -12,7 +12,6 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/** */
 package org.apereo.portal.portlets.fragmentadmin;
 
 import java.util.List;
@@ -28,8 +27,6 @@ import org.springframework.webflow.execution.RequestContext;
 
 /**
  * Helper class for the FragmentAdministration web flow.
- *
- * @author Nicholas Blair, npblair@wisc.edu
  */
 @Service("fragmentAdministrationHelper")
 public class FragmentAdministrationHelper {

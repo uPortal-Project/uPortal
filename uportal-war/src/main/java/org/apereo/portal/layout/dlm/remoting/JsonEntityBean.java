@@ -27,7 +27,6 @@ import org.apereo.portal.security.IPermission;
 /**
  * Entity bean for JSON output. Used for categories, groups, and people.
  *
- * @author Drew Mazurek
  */
 public class JsonEntityBean implements Serializable, Comparable<JsonEntityBean> {
 
@@ -141,13 +140,13 @@ public class JsonEntityBean implements Serializable, Comparable<JsonEntityBean> 
      * portlets) or name field (for groups), but rater a unique String like 'PORTLET_ID.19' or
      * 'local.36' or 'pags.Authenticated Users'
      *
-     * @since uPortal 4.0.14
+     * @since 4.0.14
      */
     public String getTargetString() {
         return targetString;
     }
 
-    /** @since uPortal 4.0.14 */
+    /** @since 4.0.14 */
     public void setTargetString(String targetString) {
         this.targetString = targetString;
     }

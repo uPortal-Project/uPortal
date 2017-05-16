@@ -30,7 +30,6 @@ import org.apache.commons.lang.Validate;
  *   <li><strong>SOMETIMES</strong> a portlet fname (layout nodes referring to portlets only)
  * </ul>
  *
- * @author awills
  */
 public final class Pathref {
 

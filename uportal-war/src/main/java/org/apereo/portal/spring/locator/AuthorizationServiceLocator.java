@@ -24,8 +24,6 @@ import org.springframework.context.ApplicationContext;
 /**
  * The factory class for the uPortal reference IAuthorizationService implementation.
  *
- * @author Dan Ellentuck
- * @version $Revision$
  * @deprecated
  */
 @Deprecated

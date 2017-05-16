@@ -44,7 +44,6 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.NaturalIdCache;
 
-/** @author Shawn Connolly, sconnolly@unicon.net */
 @Entity
 @Table(name = "UP_PAGS_TEST_GROUP")
 @SequenceGenerator(

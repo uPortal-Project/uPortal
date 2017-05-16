@@ -15,8 +15,6 @@
 package org.apereo.portal.io.xml;
 
 /**
- * @author Eric Dalquist
- * @version $Revision$
  */
 public class XmlTestException extends Exception {
     private final String result;

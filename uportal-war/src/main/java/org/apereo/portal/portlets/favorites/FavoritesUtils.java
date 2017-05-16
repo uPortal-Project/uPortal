@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Utility class supporting Favorites portlet.
  *
- * @since uPortal 4.1
+ * @since 4.1
  */
 public final class FavoritesUtils {
 

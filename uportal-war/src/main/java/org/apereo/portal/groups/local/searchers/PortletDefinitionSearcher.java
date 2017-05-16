@@ -30,7 +30,6 @@ import org.springframework.stereotype.Service;
 /**
  * Searches the portal DB for channels. Used by EntitySearcherImpl
  *
- * @author Alex Vigdor
  */
 @Service
 public class PortletDefinitionSearcher implements ITypedEntitySearcher {

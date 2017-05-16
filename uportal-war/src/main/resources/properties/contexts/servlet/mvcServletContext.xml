@@ -46,7 +46,42 @@
   		<property name="useDefaultSuffixPattern" value="false"/>
 	</bean>
     <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter"/>
-    
+
+    <!--
+     | This bean is needed for the EntitiesRESTController to convert JsonEntityBean objects into
+     | JSON.  It is not compatible with Portlet MVC types in recent versions of the Spring
+     | Framework, so it needs to be defined here (rather than the main application context).  There
+     | seem to be, moreover, multiple ways in uPortal to convert Java objects to JSON.  We should
+     | probably identify the best/most contemporary and consolidate on that approach.
+     +-->
+    <bean class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
+        <property name="order" value="0"/>
+        <property name="defaultViews">
+            <list>
+                <bean
+                        class="org.springframework.web.servlet.view.json.MappingJackson2JsonView" />
+                <bean class="org.springframework.web.servlet.view.xml.MarshallingView">
+                    <constructor-arg>
+                        <bean class="org.springframework.oxm.xstream.XStreamMarshaller" />
+                    </constructor-arg>
+                </bean>
+            </list>
+        </property>
+        <property name="contentNegotiationManager">
+            <bean class="org.springframework.web.accept.ContentNegotiationManager">
+                <constructor-arg>
+                    <bean class="org.springframework.web.accept.PathExtensionContentNegotiationStrategy">
+                        <constructor-arg>
+                            <map>
+                                <entry key="json" value="application/json"/>
+                            </map>
+                        </constructor-arg>
+                    </bean>
+                </constructor-arg>
+            </bean>
+        </property>
+    </bean>
+
     <!-- even though context:component-scan is defined in applicationContext, we need an additional reference
     for this context as it's unique to the DispatcherServlet -->
     <context:component-scan base-package="org.apereo.portal.layout.dlm.remoting"/>

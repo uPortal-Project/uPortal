@@ -22,7 +22,6 @@ import org.w3c.dom.Element;
 /**
  * Layout processing action for changing a node's attribute in the user's layout.
  *
- * @author Mark Boyd
  */
 public class LPAChangeAttribute implements ILayoutProcessingAction {
     private String nodeId = null;

@@ -20,7 +20,6 @@ import org.apereo.portal.events.aggr.tabs.AggregatedTabMapping;
 /**
  * Primary Key for a {@link TabRenderAggregation}
  *
- * @author Eric Dalquist
  */
 public interface TabRenderAggregationKey extends BaseAggregationKey {
 

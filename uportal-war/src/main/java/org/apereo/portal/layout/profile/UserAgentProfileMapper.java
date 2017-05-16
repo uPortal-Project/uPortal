@@ -29,8 +29,6 @@ import org.slf4j.LoggerFactory;
  * evaluated in order and the first match is returned. If the user agent header is null or no match
  * is found the {@link #setDefaultProfileName(String)} value is used.
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 public class UserAgentProfileMapper implements IProfileMapper {
     protected Logger logger = LoggerFactory.getLogger(getClass());

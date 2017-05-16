@@ -19,11 +19,9 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.apereo.portal.layout.IUserLayoutStore;
 import org.apereo.portal.security.IPerson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * This concrete implementation of {@link IProfileMapper} decorates one or more enclosed profile
@@ -37,7 +35,6 @@ import org.springframework.beans.factory.annotation.Autowired;
  * falling back on the default if there are no answering mappers, just as if the failing mapper had
  * returned null indicating no opinion rather than throwing.
  *
- * @author Jen Bourey, jennifer.bourey@gmail.com
  */
 public final class ChainingProfileMapperImpl implements IProfileMapper {
 

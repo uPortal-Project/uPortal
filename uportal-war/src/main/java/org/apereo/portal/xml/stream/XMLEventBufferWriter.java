@@ -27,8 +27,6 @@ import javax.xml.stream.events.XMLEvent;
 /**
  * Caches events written to a List
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 public class XMLEventBufferWriter implements XMLEventWriter {
     private final Map<String, String> prefixes = new LinkedHashMap<String, String>();

@@ -24,7 +24,6 @@ import org.slf4j.LoggerFactory;
 /**
  * Evicts expired elements from a {@link CacheManager}
  *
- * @author Eric Dalquist
  */
 public class ExpiredElementEvictor {
     private final ReentrantLock evictLock = new ReentrantLock();

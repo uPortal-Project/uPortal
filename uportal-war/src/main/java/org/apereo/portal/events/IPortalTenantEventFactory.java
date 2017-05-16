@@ -20,7 +20,6 @@ import org.apereo.portal.tenants.ITenant;
 /**
  * Publishes events related to tenants in the portal.
  *
- * @author awills
  */
 public interface IPortalTenantEventFactory {
 

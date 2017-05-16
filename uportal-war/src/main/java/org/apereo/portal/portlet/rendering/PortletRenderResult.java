@@ -19,8 +19,6 @@ import java.io.Serializable;
 /**
  * The result of rendering a portlet
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 public class PortletRenderResult implements Serializable {
     private static final long serialVersionUID = 1L;

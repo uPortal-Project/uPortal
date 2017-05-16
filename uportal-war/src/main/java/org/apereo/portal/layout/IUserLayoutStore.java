@@ -17,7 +17,6 @@ package org.apereo.portal.layout;
 /**
  * Interface by which portal talks to the database
  *
- * @author George Lindholm
  */
 import com.google.common.cache.Cache;
 import java.util.Hashtable;
@@ -92,14 +91,6 @@ public interface IUserLayoutStore {
      * @param profile profile update
      */
     void updateUserProfile(IPerson person, IUserProfile profile);
-
-    /**
-     * remove user profile from the database
-     *
-     * @param person User
-     * @param profileId profile id
-     */
-    void deleteUserProfile(IPerson person, int profileId);
 
     /**
      * Creates a new user profile in the database. In the process, new profileId is assigned to the

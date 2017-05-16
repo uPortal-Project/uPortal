@@ -21,8 +21,6 @@ import org.springframework.core.io.Resource;
 /**
  * Utilities for working with Spring {@link Resource} objects
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 public final class ResourceUtils {
     private ResourceUtils() {}

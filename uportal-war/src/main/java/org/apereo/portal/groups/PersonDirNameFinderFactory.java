@@ -21,8 +21,6 @@ import org.jasig.services.persondir.IPersonAttributeDao;
  * Factory for creating and obtaining reference to a static singleton <code>PersonDirNameFinder
  * </code>.
  *
- * @author Alex Vigdor
- * @version $Revision$
  */
 public class PersonDirNameFinderFactory implements IEntityNameFinderFactory {
 

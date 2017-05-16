@@ -20,48 +20,49 @@ import java.util.List;
 import java.util.Map;
 import org.apereo.portal.IBasicEntity;
 
-/** @author Bernie Durfee, bdurfee@interactivebusiness.com */
 public interface IPerson extends Principal, IAdditionalDescriptor, IBasicEntity, Serializable {
 
     /** String used as a key for the eduPerson username attribute. */
-    public static final String USERNAME = "username";
+    String USERNAME = "username";
 
     /** The default ID for person objects. */
-    public static final int UNDEFINED_ID = -1;
+    int UNDEFINED_ID = -1;
+
+    String DISTINGUISHED_GROUP = IPerson.class.getName();
 
     /**
      * Sets the ID of the user
      *
      * @param sID
      */
-    public void setID(int sID);
+    void setID(int sID);
 
     /**
      * Gets the ID of the user
      *
      * @return ID of the user
      */
-    public int getID();
+    int getID();
 
     /** @return The userName for the user. */
-    public String getUserName();
+    String getUserName();
 
     /** @param userName The userName to set for the user. */
-    public void setUserName(String userName);
+    void setUserName(String userName);
 
     /**
      * Sets the full name of the user
      *
      * @param sFullName
      */
-    public void setFullName(String sFullName);
+    void setFullName(String sFullName);
 
     /**
      * Gets the full name of the user
      *
      * @return full name of the user
      */
-    public String getFullName();
+    String getFullName();
 
     /**
      * Gets an attribute associated with the user
@@ -69,7 +70,7 @@ public interface IPerson extends Principal, IAdditionalDescriptor, IBasicEntity,
      * @param key
      * @return attribute associated with the user
      */
-    public Object getAttribute(String key);
+    Object getAttribute(String key);
 
     /**
      * Gets multiple values of an attribute associated with the user
@@ -77,7 +78,7 @@ public interface IPerson extends Principal, IAdditionalDescriptor, IBasicEntity,
      * @param key
      * @return attributes associated with the user
      */
-    public Object[] getAttributeValues(String key);
+    Object[] getAttributeValues(String key);
 
     /**
      * Associates an attribute with the user
@@ -85,41 +86,41 @@ public interface IPerson extends Principal, IAdditionalDescriptor, IBasicEntity,
      * @param key
      * @param value
      */
-    public void setAttribute(String key, Object value);
+    void setAttribute(String key, Object value);
 
     /**
      * @param key
      * @param values
      */
-    public void setAttribute(String key, List<Object> values);
+    void setAttribute(String key, List<Object> values);
 
     /**
      * Associates attributes with the user
      *
      * @param attrs
      */
-    public void setAttributes(Map<String, List<Object>> attrs);
+    void setAttributes(Map<String, List<Object>> attrs);
 
-    public Map<String, List<Object>> getAttributeMap();
+    Map<String, List<Object>> getAttributeMap();
 
     /**
      * Associates a security context object with the user
      *
      * @param securityContext
      */
-    public void setSecurityContext(ISecurityContext securityContext);
+    void setSecurityContext(ISecurityContext securityContext);
 
     /**
      * Gets the security context object associated with the user
      *
      * @return security context object associated with the user
      */
-    public ISecurityContext getSecurityContext();
+    ISecurityContext getSecurityContext();
 
     /**
      * Checks to see if this user is considered a guest
      *
      * @return true if user is considered a guest
      */
-    public boolean isGuest();
+    boolean isGuest();
 }

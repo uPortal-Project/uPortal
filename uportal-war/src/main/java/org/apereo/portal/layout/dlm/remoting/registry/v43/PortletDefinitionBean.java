@@ -31,7 +31,6 @@ import org.apereo.portal.portlet.om.IPortletDefinitionParameter;
  * API.
  *
  * @since 4.3
- * @author drewwills
  */
 public final class PortletDefinitionBean
         implements Comparable<PortletDefinitionBean>, Serializable {

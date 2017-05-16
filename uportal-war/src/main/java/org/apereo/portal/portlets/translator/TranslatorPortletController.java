@@ -30,8 +30,6 @@ import org.springframework.web.portlet.bind.annotation.RenderMapping;
  * are handled by a controllers depending on selected entity type. For example, by selecting
  * "portlet" entity type to translate, {@link PortletEntityTranslationController} will be used.
  *
- * @author Arvids Grabovskis
- * @version $Revision$
  */
 @Controller
 @RequestMapping("VIEW")

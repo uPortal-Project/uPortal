@@ -12,7 +12,6 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/** */
 package org.apereo.portal.portlet.container.cache;
 
 import com.google.common.base.Function;
@@ -23,8 +22,6 @@ import org.junit.Assert;
 import org.junit.Test;
 /**
  * Tests for {@link LimitingTeeWriter}.
- *
- * @author Nicholas Blair
  */
 public class LimitingTeeWriterTest {
 

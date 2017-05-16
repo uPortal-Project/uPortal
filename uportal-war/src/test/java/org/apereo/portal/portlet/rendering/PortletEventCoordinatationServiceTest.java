@@ -38,8 +38,6 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 /**
- * @author Eric Dalquist
- * @version $Revision$
  */
 @RunWith(MockitoJUnitRunner.class)
 public class PortletEventCoordinatationServiceTest {

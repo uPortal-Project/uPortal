@@ -19,7 +19,6 @@ import org.apereo.portal.events.aggr.BaseAggregationPrivateDao;
 /**
  * Portlet Layout Aggregation DAO used internally to create and update portlet layout aggregations
  *
- * @author Chris Waymire <cwaymire@unicon.net>
  */
 interface PortletLayoutAggregationPrivateDao
         extends PortletLayoutAggregationDao<PortletLayoutAggregationImpl>,

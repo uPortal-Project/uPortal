@@ -22,7 +22,6 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Used to handle output from portlet resource requests.
  *
- * @author Eric Dalquist
  */
 public interface PortletResourceOutputHandler extends PortletOutputHandler {
 

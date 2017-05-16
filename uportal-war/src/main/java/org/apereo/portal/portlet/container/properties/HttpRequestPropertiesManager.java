@@ -25,8 +25,6 @@ import org.springframework.stereotype.Service;
 /**
  * Provides some extra information from the {@link HttpServletRequest} to the portlet as properties.
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 @Service("httpRequestPropertiesManager")
 public class HttpRequestPropertiesManager extends BaseRequestPropertiesManager {

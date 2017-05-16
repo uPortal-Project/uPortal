@@ -19,8 +19,6 @@ import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 
 /**
- * @author Eric Dalquist
- * @version $Revision$
  */
 public class LayoutDataUpgradeTest extends BaseXsltDataUpgraderTest {
     @Test

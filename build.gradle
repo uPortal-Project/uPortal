@@ -22,12 +22,12 @@ buildscript {
 }
 
 node {
-  // Version of node to use.
-  version = '6.9.1'
+    // Version of node to use.
+    version = '6.9.1'
 
-  // If true, it will download node using above parameters.
-  // If false, it will try to use globally installed node.
-  download = true
+    // If true, it will download node using above parameters.
+    // If false, it will try to use globally installed node.
+    download = true
 }
 
 buildScan {
@@ -66,8 +66,7 @@ subprojects {
     
 //}
     checkstyle {
-        // Stay on checkstyle version 6 until Java version 7 support can be dropped
-        toolVersion = '6.19'
+        toolVersion = '7.7'
         showViolations = true
         configFile = file("${project.rootDir}/checkstyle.xml")
     }

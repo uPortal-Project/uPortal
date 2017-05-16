@@ -23,8 +23,6 @@ import org.junit.Test;
 /**
  * JUnit test class for {@link PortletWindowIdStringUtilsTest}
  *
- * @author Gary Roybal
- * @version $Revision$
  */
 public class PortletWindowIdStringUtilsTest {
 

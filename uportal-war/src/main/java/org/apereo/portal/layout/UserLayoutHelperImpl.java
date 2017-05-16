@@ -12,7 +12,6 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/** */
 package org.apereo.portal.layout;
 
 import java.util.Hashtable;
@@ -33,9 +32,6 @@ import org.springframework.jdbc.core.support.JdbcDaoSupport;
  * Helper class for reset-layout based web flows.
  *
  * <p>Depends on uPortal's {@link DataSource}.
- *
- * @author Nicholas Blair, npblair@wisc.edu
- * @author Susan Bramhall, susan.bramhall@yale.edu
  */
 public class UserLayoutHelperImpl extends JdbcDaoSupport implements IUserLayoutHelper {
 

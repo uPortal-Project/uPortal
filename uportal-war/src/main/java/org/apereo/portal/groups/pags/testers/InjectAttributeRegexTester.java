@@ -45,7 +45,6 @@ import org.apereo.portal.security.IPerson;
  * Organization context app, and when you have one portlet app per context.<br>
  * It's used to have one access rule on an app at once in a same layout.
  *
- * @author Julien Gribonvald
  * @since 5.0
  */
 public final class InjectAttributeRegexTester extends BaseAttributeTester {

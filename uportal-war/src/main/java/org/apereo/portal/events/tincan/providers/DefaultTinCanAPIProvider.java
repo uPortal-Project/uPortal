@@ -134,7 +134,6 @@ import org.springframework.web.client.RestTemplate;
  *     </tr>
  * </table>
  *
- * @author Josh Helmer, jhelmer@unicon.net
  */
 public class DefaultTinCanAPIProvider implements ITinCanAPIProvider {
     protected static final String STATEMENTS_REST_ENDPOINT = "/statements";

@@ -17,7 +17,6 @@ package org.apereo.portal.events.aggr.tabs;
 /**
  * A mapped tab name
  *
- * @author Eric Dalquist
  */
 public interface AggregatedTabMapping {
     /** Returned by {@link #getFragmentName()} for personal tabs */

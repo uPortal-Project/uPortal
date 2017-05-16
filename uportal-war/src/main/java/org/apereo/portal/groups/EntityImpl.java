@@ -21,7 +21,6 @@ import org.apereo.portal.spring.locator.EntityTypesLocator;
 /**
  * Reference implementation for <code>IEntity</code>.
  *
- * @author Dan Ellentuck
  */
 public class EntityImpl extends GroupMemberImpl implements IEntity {
     protected EntityIdentifier entityIdentifier;

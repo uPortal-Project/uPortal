@@ -31,8 +31,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 /**
  * Pays attention to the state of skin aggregation and only applies the filter if it is disabled
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 public class AggregationAwareFilterBean implements Filter {
     protected final Log logger = LogFactory.getLog(this.getClass());

@@ -16,11 +16,7 @@ package org.apereo.portal.groups;
 
 /**
  * Factory interface for creating an <code>IEntitySearcher</code>.
- *
- * @author Dan Ellentuck
- * @version $Revision$
  */
 public interface IEntitySearcherFactory {
-    /** */
     public IEntitySearcher newEntitySearcher() throws GroupsException;
 }

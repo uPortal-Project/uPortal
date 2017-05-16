@@ -53,7 +53,6 @@ import org.springframework.beans.factory.annotation.Autowired;
  * standard methods defined by {@link BaseAggregationPrivateDao}. Note that subclasses MUST call
  * {@link #afterPropertiesSet()} if they override it or this class WILL NOT WORK
  *
- * @author Eric Dalquist
  * @param <T> The entity type being aggregated
  * @param <K> The entity primary key
  */

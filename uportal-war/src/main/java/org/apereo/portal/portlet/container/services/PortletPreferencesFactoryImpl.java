@@ -39,7 +39,6 @@ import org.springframework.transaction.support.TransactionOperations;
 /**
  * Creates {@link PortletPreferences} objects
  *
- * @author Eric Dalquist
  */
 @Service
 public class PortletPreferencesFactoryImpl implements PortletPreferencesFactory {

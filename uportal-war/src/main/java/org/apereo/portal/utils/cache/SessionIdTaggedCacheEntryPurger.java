@@ -23,7 +23,6 @@ import org.springframework.stereotype.Component;
 /**
  * Purges cache entries tagged for a specific session when the session is destroyed
  *
- * @author Eric Dalquist
  */
 @Component
 public class SessionIdTaggedCacheEntryPurger

@@ -28,7 +28,6 @@ import org.apereo.portal.concurrency.CachingException;
 import org.apereo.portal.services.EntityCachingService;
 import org.apereo.portal.services.GroupService;
 
-/** @author Dan Ellentuck */
 public class ReferenceCompositeGroupService extends ReferenceComponentGroupService
         implements ICompositeGroupService {
     // Factory for IEntities:
@@ -290,7 +289,6 @@ public class ReferenceCompositeGroupService extends ReferenceComponentGroupServi
         return (EntityIdentifier[]) allIds.toArray(new EntityIdentifier[allIds.size()]);
     }
 
-    /** */
     protected void cacheAdd(IGroupMember gm) throws GroupsException {
         try {
             EntityCachingService.instance().add(gm);
@@ -300,7 +298,6 @@ public class ReferenceCompositeGroupService extends ReferenceComponentGroupServi
         }
     }
 
-    /** */
     protected void cacheRemove(IGroupMember gm) throws GroupsException {
         try {
             EntityCachingService.instance().remove(gm.getEntityIdentifier());
@@ -310,7 +307,6 @@ public class ReferenceCompositeGroupService extends ReferenceComponentGroupServi
         }
     }
 
-    /** */
     protected void cacheUpdate(IGroupMember gm) throws GroupsException {
         try {
             EntityCachingService.instance().update(gm);

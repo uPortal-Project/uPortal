@@ -53,7 +53,6 @@ import org.springframework.web.portlet.bind.annotation.ResourceMapping;
 /**
  * Tab render reports
  *
- * @author James Wennmacher, jameswennmacher@gmail.com
  */
 @Controller
 @RequestMapping(value = "VIEW")

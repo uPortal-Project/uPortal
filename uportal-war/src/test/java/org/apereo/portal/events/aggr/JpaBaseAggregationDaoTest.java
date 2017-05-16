@@ -51,8 +51,6 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * @author Eric Dalquist
- * @version $Revision$
  */
 public abstract class JpaBaseAggregationDaoTest<
                 T extends BaseAggregationImpl<K, D>,

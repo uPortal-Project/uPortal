@@ -21,8 +21,6 @@ import org.apereo.portal.i18n.LocaleManager;
 /**
  * A user profile associates a user layout with a structure and theme stylesheet.
  *
- * @author Peter Kharchenko
- * @version $Revision$
  */
 public class UserProfile implements Serializable, IUserProfile {
     private static final long serialVersionUID = 1L;

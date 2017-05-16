@@ -22,8 +22,6 @@ import org.apereo.portal.security.IPerson;
  * specifically for use with the JsonEntityBean entity wrapper and for simplified channel and group
  * browsing.
  *
- * @author Jen Bourey, jbourey@unicon.net
- * @version $Revision$
  */
 public enum EntityEnum {
     PORTLET(IPortletDefinition.class, "portlet", false), // uPortal portlet

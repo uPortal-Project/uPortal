@@ -24,7 +24,6 @@ import org.springframework.stereotype.Component;
  * Create statistics report title and column headers using a dashed separator with of items in title
  * and column header being the order passed in.
  *
- * @author James Wennmacher, jameswennmacher@gmail.com
  */
 @Component
 public class DefaultStatisticsReportLabellingStrategy

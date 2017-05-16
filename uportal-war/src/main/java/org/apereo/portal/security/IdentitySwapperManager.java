@@ -22,7 +22,6 @@ import org.springframework.security.core.Authentication;
 /**
  * Manages workflow around use of the identity swapper features.
  *
- * @author Eric Dalquist
  */
 public interface IdentitySwapperManager {
     /**

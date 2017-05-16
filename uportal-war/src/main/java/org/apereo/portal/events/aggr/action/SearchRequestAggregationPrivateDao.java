@@ -16,7 +16,6 @@ package org.apereo.portal.events.aggr.action;
 
 import org.apereo.portal.events.aggr.BaseAggregationPrivateDao;
 
-/** @author Chris Waymire (chris@waymire.net) */
 interface SearchRequestAggregationPrivateDao
         extends SearchRequestAggregationDao<SearchRequestAggregationImpl>,
                 BaseAggregationPrivateDao<

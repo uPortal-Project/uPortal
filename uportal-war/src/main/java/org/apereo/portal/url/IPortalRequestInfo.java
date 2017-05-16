@@ -21,8 +21,6 @@ import org.apereo.portal.portlet.om.IPortletWindowId;
 /**
  * Provides information about the portal request.
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 public interface IPortalRequestInfo {
     public static final String URL_TYPE_HEADER = UrlType.class.getName();

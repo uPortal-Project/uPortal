@@ -14,7 +14,6 @@
  */
 package org.apereo.portal.portlet.om;
 
-/** @author Jen Bourey, jbourey@unicon.net */
 public enum PortletLifecycleState {
     CREATED(0),
     APPROVED(1),

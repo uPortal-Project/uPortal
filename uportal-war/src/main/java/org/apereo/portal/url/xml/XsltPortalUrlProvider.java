@@ -33,9 +33,6 @@ import org.springframework.stereotype.Service;
 /**
  * Wrapper class for {@link IPortalUrlProvider} that makes use easier in XSL
  *
- * @author Eric Dalquist
- * @author vertein
- * @version $Revision$
  */
 @Service("xslPortalUrlProvider")
 public class XsltPortalUrlProvider {
@@ -155,7 +152,7 @@ public class XsltPortalUrlProvider {
      * @param copyCurrentRenderParameters
      * @param resourceId - can be empty string
      * @return IPortletUrlBuilder
-     * @since uPortal 4.1
+     * @since 4.1
      */
     public IPortletUrlBuilder getPortletUrlBuilder(
             HttpServletRequest request,

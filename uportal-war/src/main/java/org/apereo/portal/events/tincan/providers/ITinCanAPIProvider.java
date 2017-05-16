@@ -16,7 +16,6 @@ package org.apereo.portal.events.tincan.providers;
 
 import org.apereo.portal.events.tincan.om.LrsStatement;
 
-/** @author Josh Helmer, jhelmer@unicon.net */
 public interface ITinCanAPIProvider {
     /** Do any initialization required for this provider. */
     void init();

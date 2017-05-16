@@ -23,8 +23,6 @@ import org.apereo.portal.portlet.om.IPortletDefinitionId;
 /**
  * Identifies a portlet definition
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 class PortletDefinitionIdImpl extends AbstractObjectId implements IPortletDefinitionId {
     private static final long serialVersionUID = 1L;

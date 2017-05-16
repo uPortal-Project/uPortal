@@ -46,7 +46,6 @@ import org.apereo.portal.EntityIdentifier;
  * <p>NB: since the locking service is not part of a transactional or object persistence framework,
  * it has no way to enforce its own use.
  *
- * @author Dan Ellentuck
  */
 public interface IEntityLockService {
 

@@ -33,8 +33,6 @@ import org.springframework.webflow.mvc.view.FlowViewResolver;
  * Implementation that does reflection on the native request to determine if a {@link
  * PortletMvcView} or a {@link ServletMvcView} should be used.
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 public class RuntimeMvcViewFactory extends AbstractMvcViewFactory {
 

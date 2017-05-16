@@ -40,7 +40,6 @@ import org.springframework.transaction.support.TransactionOperations;
 /**
  * Base class for JPA DAOs in the portal that contains common functions.
  *
- * @author Eric Dalquist
  */
 public abstract class BaseJpaDao implements InitializingBean, ApplicationContextAware {
     private static final String QUERY_SUFFIX = ".Query";

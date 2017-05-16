@@ -31,8 +31,6 @@ import org.springframework.web.servlet.LocaleResolver;
  * context attribute is instance of this class.
  *
  * @see LocaleManagementInterceptor
- * @author Arvids Grabovskis
- * @version $Revision$
  */
 public class LocaleManagerLocaleResolver implements LocaleResolver {
 

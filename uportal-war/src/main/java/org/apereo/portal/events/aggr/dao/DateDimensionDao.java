@@ -21,8 +21,6 @@ import org.joda.time.DateMidnight;
 /**
  * DAO for creation/lookup of date dimensions
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 public interface DateDimensionDao {
 

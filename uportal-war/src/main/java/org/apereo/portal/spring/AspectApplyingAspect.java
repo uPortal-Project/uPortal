@@ -25,7 +25,6 @@ import org.springframework.core.OrderComparator;
 /**
  * Apply AOP Aspect(s) to the object returned by the invoked method.
  *
- * @author Eric Dalquist
  */
 public class AspectApplyingAspect {
     private List<Advice> advices;

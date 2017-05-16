@@ -225,7 +225,7 @@ public class AnyUnblockedGrantPermissionPolicy implements IPermissionPolicy {
      * This method will create the cache entry whether it exists already or not, forcibly resetting
      * the TTL.
      *
-     * @since uPortal 4.3
+     * @since 4.3
      */
     public void loadInCache(
             IAuthorizationService service,

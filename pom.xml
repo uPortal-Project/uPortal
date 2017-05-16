@@ -214,7 +214,7 @@
         <person-directory.version>1.7.1</person-directory.version>
         <pluto.version>2.1.0-M3</pluto.version>
         <quartz.version>2.2.1</quartz.version>
-        <resource-server.version>1.0.45</resource-server.version>
+        <resource-server.version>1.0.46</resource-server.version>
         <servlet-api.version>3.0.1</servlet-api.version>
         <slf4j.version>1.7.7</slf4j.version>
         <spring-framework.version>3.2.18.RELEASE</spring-framework.version>
@@ -239,8 +239,8 @@
          +-->
         <mobile.user.agent.regex>(.*iPhone.*)|(.*Android.*)|(.*IEMobile.*)|(.*Safari.*Pre.*)|(.*Nokia.*AppleWebKit.*)|(.*Black[Bb]erry.*)|(.*Opera Mobile.*)|(.*Windows Phone.*)|(.*Fennec.*)|(.*Minimo.*)</mobile.user.agent.regex>
 
-        <project.build.sourceVersion>1.7</project.build.sourceVersion>
-        <project.build.targetVersion>1.7</project.build.targetVersion>
+        <project.build.sourceVersion>1.8</project.build.sourceVersion>
+        <project.build.targetVersion>1.8</project.build.targetVersion>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -1266,7 +1266,7 @@
                                 <version>2.2</version>
                               </requireMavenVersion>
                               <requireJavaVersion>
-                                <version>1.6</version>
+                                <version>${project.build.targetVersion}</version>
                               </requireJavaVersion>
                             </rules>
                         </configuration>
@@ -1342,6 +1342,21 @@
                         <excludedModule>uportal-ear</excludedModule>
                     </excludedModules>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>2.17</version>
+                <configuration>
+                    <configLocation>./checkstyle.xml</configLocation>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.puppycrawl.tools</groupId>
+                        <artifactId>checkstyle</artifactId>
+                        <version>7.6</version>
+                    </dependency>
+                </dependencies>
             </plugin>
         </plugins>
         <pluginManagement>
@@ -1446,7 +1461,7 @@
                             <plugin>
                                 <groupId>org.codehaus.mojo</groupId>
                                 <artifactId>findbugs-maven-plugin</artifactId>
-                                <version>2.4.0</version>
+                                <version>3.0.4</version>
                             </plugin>
                         </reportPlugins>
                     </configuration>

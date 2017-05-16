@@ -27,8 +27,6 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.util.ObjectUtils;
 
 /**
- * @author Eric Dalquist
- * @version $Revision$
  */
 @Ignore
 public class ServletAnnotationMappingUtilsTest {

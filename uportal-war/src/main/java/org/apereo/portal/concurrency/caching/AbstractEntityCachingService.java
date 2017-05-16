@@ -23,7 +23,6 @@ import org.apereo.portal.concurrency.IEntityCachingService;
 /**
  * Provides common {@link IEntityCachingService} logic
  *
- * @author Eric Dalquist
  */
 public abstract class AbstractEntityCachingService implements IEntityCachingService {
 

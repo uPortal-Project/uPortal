@@ -29,8 +29,6 @@ import org.springframework.context.ApplicationEvent;
  * configured {@link BatchingEventHandler} when {@link #flush()} is called. This class must be used
  * with some external timer that will call {@link #flush()} at regular intervals
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 public abstract class QueueingEventHandler<E extends ApplicationEvent>
         extends FilteringApplicationListener<E> implements DisposableBean {

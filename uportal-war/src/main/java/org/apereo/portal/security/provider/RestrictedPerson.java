@@ -24,7 +24,6 @@ import org.apereo.portal.security.ISecurityContext;
  * An IPerson object that wraps another IPerson object and prevents access to the underlying
  * security context.
  *
- * @author Ken Weiner, kweiner@unicon.net
  */
 public class RestrictedPerson implements IPerson {
     private static final long serialVersionUID = 1L;

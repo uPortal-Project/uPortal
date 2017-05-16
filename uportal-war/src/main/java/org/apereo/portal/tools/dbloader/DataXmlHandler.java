@@ -32,8 +32,6 @@ import org.xml.sax.SAXException;
 /**
  * Generates and executes SQL INSERT statements as the data XML document is parsed.
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 public class DataXmlHandler extends BaseDbXmlHandler {
     private final JdbcOperations jdbcOperations;

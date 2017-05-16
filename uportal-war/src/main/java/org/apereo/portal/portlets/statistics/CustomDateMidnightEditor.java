@@ -31,7 +31,6 @@ import org.springframework.util.StringUtils;
  * <p>In web MVC code, this editor will typically be registered with <code>
  * binder.registerCustomEditor</code> calls in a custom <code>initBinder</code> method.
  *
- * @author Juergen Hoeller @Author Jen Bourey
  * @see org.springframework.validation.DataBinder#registerCustomEditor
  * @see org.springframework.web.servlet.mvc.BaseCommandController#initBinder
  */

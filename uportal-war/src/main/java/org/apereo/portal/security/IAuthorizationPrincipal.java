@@ -23,7 +23,6 @@ import org.apereo.portal.portlet.om.PortletLifecycleState;
  * </code> have been granted. Such an entity could be an <code>IGroupMember</code>, an <code>
  * IChannel</code> or an <code>IPerson</code>.
  *
- * @author Dan Ellentuck
  */
 public interface IAuthorizationPrincipal {
     /**
@@ -43,7 +42,7 @@ public interface IAuthorizationPrincipal {
      * @exception AuthorizationException thrown when authorization information could not be
      *     retrieved.
      */
-    public boolean canManage(PortletLifecycleState state, String categoryId)
+    boolean canManage(PortletLifecycleState state, String categoryId)
             throws AuthorizationException;
     /**
      * Answers if this <code>IAuthorizationPrincipal</code> has permission to use the CONFIG
@@ -53,7 +52,7 @@ public interface IAuthorizationPrincipal {
      * @return
      * @throws AuthorizationException
      */
-    public boolean canConfigure(String channelPublishId) throws AuthorizationException;
+    boolean canConfigure(String channelPublishId) throws AuthorizationException;
     /**
      * Answers if this <code>IAuthoriztionPrincipal</code> has permission to render this channel.
      *
@@ -80,7 +79,7 @@ public interface IAuthorizationPrincipal {
      * @return org.apereo.portal.security.IPermission[]
      * @exception AuthorizationException indicates authorization information could not be retrieved.
      */
-    public IPermission[] getAllPermissions() throws AuthorizationException;
+    IPermission[] getAllPermissions() throws AuthorizationException;
     /**
      * Returns the <code>IPermissions</code> for this <code>IAuthorizationPrincipal</code> for the
      * specified <code>owner</code>, <code>activity</code> and <code>target</code>. This includes
@@ -94,7 +93,7 @@ public interface IAuthorizationPrincipal {
      * @param target java.lang.String
      * @exception AuthorizationException indicates authorization information could not be retrieved.
      */
-    public IPermission[] getAllPermissions(String owner, String activity, String target)
+    IPermission[] getAllPermissions(String owner, String activity, String target)
             throws AuthorizationException;
     /**
      * Return a Vector of IChannels.
@@ -102,20 +101,20 @@ public interface IAuthorizationPrincipal {
      * @return a <code>java.util.Vector</code> of IChannels
      * @exception AuthorizationException indicates authorization information could not be retrieved.
      */
-    public Vector getAuthorizedChannels() throws AuthorizationException;
+    Vector getAuthorizedChannels() throws AuthorizationException;
     /**
-     * Returns the key of the underlying entity.
+     * Returns the key of the underlying entity.  For users, the key will be the username.
      *
      * @return java.lang.String
      */
-    public String getKey();
+    String getKey();
     /**
      * Returns the <code>IPermissions</code> for this <code>IAuthorizationPrincipal</code>.
      *
      * @return org.apereo.portal.security.IPermission[]
      * @exception AuthorizationException indicates authorization information could not be retrieved.
      */
-    public IPermission[] getPermissions() throws AuthorizationException;
+    IPermission[] getPermissions() throws AuthorizationException;
     /**
      * Returns the <code>IPermissions</code> for this <code>IAuthorizationPrincipal</code> for the
      * specified <code>owner</code>, <code>activity</code> and <code>target</code>. Null parameters
@@ -128,22 +127,22 @@ public interface IAuthorizationPrincipal {
      * @param target java.lang.String
      * @exception AuthorizationException indicates authorization information could not be retrieved.
      */
-    public IPermission[] getPermissions(String owner, String activity, String target)
+    IPermission[] getPermissions(String owner, String activity, String target)
             throws AuthorizationException;
     /** @return java.lang.String */
-    public String getPrincipalString();
+    String getPrincipalString();
     /**
      * Return the Type of the underlying entity.
      *
      * @return java.lang.Class
      */
-    public Class getType();
+    Class getType();
 
     /**
      * Indicates whether the entity represented by this principal is a group (branch node) or user
      * (leaf node).
      *
-     * @since uPortal 4.3
+     * @since 4.3
      */
     boolean isGroup();
 
@@ -158,7 +157,7 @@ public interface IAuthorizationPrincipal {
      * @param target java.lang.String
      * @exception AuthorizationException indicates authorization information could not be retrieved.
      */
-    public boolean hasPermission(String owner, String activity, String target)
+    boolean hasPermission(String owner, String activity, String target)
             throws AuthorizationException;
 
     /**
@@ -173,7 +172,7 @@ public interface IAuthorizationPrincipal {
      * @param policy org.apereo.portal.security.IPermissionPolicy
      * @exception AuthorizationException indicates authorization information could not be retrieved.
      */
-    public boolean hasPermission(
+    boolean hasPermission(
             String owner, String activity, String target, IPermissionPolicy policy)
             throws AuthorizationException;
 }

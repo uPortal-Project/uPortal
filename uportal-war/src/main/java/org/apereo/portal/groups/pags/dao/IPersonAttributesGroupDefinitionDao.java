@@ -20,7 +20,6 @@ import java.util.Set;
  * Provides APIs for creating, storing and retrieving {@link IPersonAttributesGroupDefinition}
  * objects.
  *
- * @author Shawn Connolly, sconnolly@unicon.net
  */
 public interface IPersonAttributesGroupDefinitionDao {
 

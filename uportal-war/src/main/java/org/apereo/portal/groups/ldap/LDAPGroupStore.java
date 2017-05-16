@@ -35,11 +35,16 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apereo.portal.EntityIdentifier;
 import org.apereo.portal.ResourceMissingException;
-import org.apereo.portal.groups.*;
 import org.apereo.portal.groups.EntityGroupImpl;
+import org.apereo.portal.groups.EntityImpl;
 import org.apereo.portal.groups.GroupsException;
+import org.apereo.portal.groups.IEntity;
 import org.apereo.portal.groups.IEntityGroup;
+import org.apereo.portal.groups.IEntityGroupStore;
+import org.apereo.portal.groups.IEntitySearcher;
+import org.apereo.portal.groups.IEntityStore;
 import org.apereo.portal.groups.IGroupMember;
+import org.apereo.portal.groups.ILockableEntityGroup;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.spring.locator.EntityTypesLocator;
 import org.apereo.portal.utils.ResourceLoader;
@@ -55,7 +60,6 @@ import org.xml.sax.SAXException;
 /**
  * LDAPGroupStore.
  *
- * @author Alex Vidgor
  */
 public class LDAPGroupStore implements IEntityGroupStore, IEntityStore, IEntitySearcher {
     private static final Log log = LogFactory.getLog(LDAPGroupStore.class);

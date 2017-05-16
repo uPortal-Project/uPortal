@@ -38,7 +38,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 
-/** @author Eric Dalquist */
 @Service("channelPublishingDefinitionDao")
 public class XmlChannelPublishingDefinitionDao
         implements IChannelPublishingDefinitionDao, ResourceLoaderAware, InitializingBean {

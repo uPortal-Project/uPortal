@@ -22,7 +22,6 @@ import org.apereo.portal.portlet.om.IPortletWindowId;
 /**
  * Service interface for implementing Cookie support for Portlets.
  *
- * @author Eric Dalquist
  */
 public interface IPortletCookieService {
     public static final String DEFAULT_PORTAL_COOKIE_NAME = "org.apereo.portal.PORTLET_COOKIE";

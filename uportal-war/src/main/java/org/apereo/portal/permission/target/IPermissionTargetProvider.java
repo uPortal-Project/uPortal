@@ -19,8 +19,6 @@ import java.util.Collection;
  * IPermissionTargetProvider provides an interface for retrieving and validating potential targets
  * for a permission activity.
  *
- * @author Jen Bourey, jbourey@unicon.net
- * @version $Revision$
  * @since 3.3
  */
 public interface IPermissionTargetProvider {

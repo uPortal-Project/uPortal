@@ -43,11 +43,6 @@ import org.apache.commons.logging.LogFactory;
  *  System.out.println("Nope");
  * </pre>
  *
- * @author Andrew Newman, newman@yale.edu
- * @author Susan Bramhall (susan.bramhall@yale.edu)
- * @author Shawn Bayern (shawn.bayern@yale.edu)
- * @author Eric Dalquist <a href="mailto:edalquist@unicon.net">edalquist@unicon.net</a>
- * @version $Revision$
  */
 public class InitialSecurityContextFactory {
 

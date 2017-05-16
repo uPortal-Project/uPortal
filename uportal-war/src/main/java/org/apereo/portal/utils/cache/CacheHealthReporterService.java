@@ -32,7 +32,6 @@ import org.springframework.stereotype.Service;
  * this service with the details. Periodically this service produces a report on bad things that are
  * occurring, if any, and writes it to the log.
  *
- * @author drewwills
  */
 @Service("cacheHealthReporterService")
 public class CacheHealthReporterService {

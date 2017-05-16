@@ -21,7 +21,6 @@ import org.apereo.portal.security.IPerson;
  * Abstract base class for testers that test the value(s) of an <code>IPerson</code> integer
  * attribute.
  *
- * @author Dan Ellentuck
  */
 public abstract class AbstractIntegerTester extends BaseAttributeTester {
 

@@ -29,7 +29,6 @@ import org.apereo.portal.events.aggr.TimeDimension;
 import org.apereo.portal.events.aggr.groups.AggregatedGroupMapping;
 import org.springframework.beans.factory.annotation.Autowired;
 
-/** @author Chris Waymire (chris@waymire.net) */
 public class SearchRequestAggregator
         extends BaseIntervalAwarePortalEventAggregator<
                 PortletActionExecutionEvent, SearchRequestAggregationImpl,

@@ -32,7 +32,6 @@ import org.springframework.util.StringUtils;
  * is "guest-[server name]-[sub fname]". If the server name used is not authorized use "guest-[sub
  * fname]" instead.
  *
- * @author Maxime Bossard - GIP RECIA 2013
  */
 public class ServerNameGuestChainingProfileMapper implements IProfileMapper, InitializingBean {
 

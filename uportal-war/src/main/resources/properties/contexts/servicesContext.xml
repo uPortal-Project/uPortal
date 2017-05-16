@@ -352,12 +352,12 @@
             <property name="entityResourcesToImportOnUpdate">
                 <set value-type="java.lang.String">
                     <!-- Updates the user in the tenant administrators group -->
-                    <value>classpath:/org/apereo/portal/tenants/data/group_membership/Administrators.group-membership.xml</value>
+                    <value>classpath:/org/apereo/portal/tenants/sampledata/group_membership/Administrators.group-membership.xml</value>
                     <!-- Updates the org attribute value that links users with the tenancy -->
-                    <value>classpath:/org/apereo/portal/tenants/data/pags-group/Members.pags-group.xml</value>
+                    <value>classpath:/org/apereo/portal/tenants/sampledata/pags-group/Members.pags-group.xml</value>
                     <!-- Updates the email address of or, if necessary, creates
                          a new portal account for the admin contact user -->
-                    <value>classpath:/org/apereo/portal/tenants/data/user/contact.user.xml</value>
+                    <value>classpath:/org/apereo/portal/tenants/sampledata/user/tenant-admin.user.xml</value>
                 </set>
             </property>
             <!--

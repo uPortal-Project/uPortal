@@ -23,8 +23,6 @@ import org.apereo.portal.PortalException;
 /**
  * Describes the entry point into the uPortal rendering pipeline.
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 public interface IPortalRenderingPipeline {
     /**

@@ -17,7 +17,6 @@ package org.apereo.portal.groups.pags.dao;
 import java.util.Set;
 import org.dom4j.Element;
 
-/** @author Shawn Connolly, sconnolly@unicon.net */
 public interface IPersonAttributesGroupTestGroupDefinition {
 
     long getId();

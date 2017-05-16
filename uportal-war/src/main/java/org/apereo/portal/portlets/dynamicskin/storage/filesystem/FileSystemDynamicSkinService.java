@@ -34,7 +34,6 @@ import org.springframework.stereotype.Service;
  * File system based implementation of services for the Skin Manager.
  *
  * @since 4.1.0
- * @author James Wennmacher, jwennmacher@unicon.net
  */
 @Service("fileSystemDynamicSkinService")
 public class FileSystemDynamicSkinService extends AbstractDynamicSkinService {

@@ -47,7 +47,6 @@ import org.apereo.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
  * </table>
  * </code>
  *
- * @author Misagh Moayyed
  * @see RegexTester
  */
 public class EagerRegexTester extends RegexTester {

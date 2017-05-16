@@ -48,7 +48,7 @@ import org.slf4j.LoggerFactory;
  * Marketplace portlet definitions add Marketplace-specific features upon an underlying
  * IPortletDefinition.
  *
- * @since uPortal 4.1
+ * @since 4.1
  */
 public class MarketplacePortletDefinition implements IPortletDefinition {
 
@@ -717,7 +717,7 @@ public class MarketplacePortletDefinition implements IPortletDefinition {
     /*
      * Marketplace portlet definitions are definitively identified by the fname of their underlying
      * portlet publication, so only the fname contributes to the hashcode.
-     * @since uPortal 4.2
+     * @since 4.2
      */
     @Override
     public int hashCode() {
@@ -727,7 +727,7 @@ public class MarketplacePortletDefinition implements IPortletDefinition {
     /*
      * Equal where the other object is a MarketplacePortletDefinition with the same fname.
      * This is important so that Set operations work properly.
-     * @since uPortal 4.2
+     * @since 4.2
      */
     @Override
     public boolean equals(Object other) {

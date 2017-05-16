@@ -25,7 +25,6 @@ import org.springframework.web.context.request.async.WebAsyncUtils;
 /**
  * Scopes set request attributes to just this request.
  *
- * @author Eric Dalquist
  */
 public class PortletHttpServletRequestWrapper extends AbstractHttpServletRequestWrapper {
     /**

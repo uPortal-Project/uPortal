@@ -29,7 +29,6 @@ import org.apereo.portal.events.aggr.stat.JpaStatisticalSummary;
 /**
  * Base for aggregate entities that track timed statistics
  *
- * @author Eric Dalquist
  */
 @Access(AccessType.FIELD)
 @MappedSuperclass

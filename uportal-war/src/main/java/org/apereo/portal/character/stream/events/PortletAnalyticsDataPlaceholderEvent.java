@@ -17,7 +17,6 @@ package org.apereo.portal.character.stream.events;
 /**
  * Placeholder in the character event string for analytics data
  *
- * @author Eric Dalquist
  */
 public final class PortletAnalyticsDataPlaceholderEvent implements CharacterEvent {
     public static PortletAnalyticsDataPlaceholderEvent INSTANCE =

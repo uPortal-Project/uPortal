@@ -24,7 +24,6 @@ import org.springframework.util.Assert;
 /**
  * Converts to/from the generic {@link JsonNode} API
  *
- * @author Eric Dalquist
  */
 public class MappingJackson2JsonTreeEditor extends PropertyEditorSupport {
     private ObjectMapper objectMapper = new ObjectMapper();

@@ -28,8 +28,6 @@ import org.springframework.web.portlet.context.PortletRequestAttributes;
 import org.springframework.web.util.WebUtils;
 
 /**
- * @author Eric Dalquist
- * @version $Revision$
  */
 public final class PortalWebUtils {
     private PortalWebUtils() {}

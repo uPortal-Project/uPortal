@@ -23,8 +23,6 @@ import org.apereo.portal.io.xml.PortalDataKey;
 /**
  * Describes a portal group
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 public class GroupPortalDataType extends AbstractPortalDataType {
     public static final QName LEGACY_GROUP_QNAME = new QName("group");

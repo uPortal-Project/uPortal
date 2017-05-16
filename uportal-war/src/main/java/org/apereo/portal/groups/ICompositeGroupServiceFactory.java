@@ -16,11 +16,7 @@ package org.apereo.portal.groups;
 
 /**
  * Factory interface for creating an <code>ICompositeGroupService</code>.
- *
- * @author Dan Ellentuck
- * @version $Revision$
  */
 public interface ICompositeGroupServiceFactory {
-    /** */
     public ICompositeGroupService newGroupService() throws GroupsException;
 }

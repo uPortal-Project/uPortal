@@ -45,9 +45,6 @@ import org.w3c.dom.Element;
  *   <li>User profile's locale preferences
  * </ol>
  *
- * @author Shoji Kajita <a href="mailto:">kajita@itc.nagoya-u.ac.jp</a>
- * @author Ken Weiner, kweiner@unicon.net
- * @version $Revision$
  */
 public class LocaleManager implements Serializable {
 

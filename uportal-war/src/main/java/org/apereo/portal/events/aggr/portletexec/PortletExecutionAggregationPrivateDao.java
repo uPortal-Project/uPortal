@@ -19,7 +19,6 @@ import org.apereo.portal.events.aggr.BaseAggregationPrivateDao;
 /**
  * Tab Aggregation DAO used internally to create and update tab aggregations
  *
- * @author Eric Dalquist
  */
 interface PortletExecutionAggregationPrivateDao
         extends PortletExecutionAggregationDao<PortletExecutionAggregationImpl>,

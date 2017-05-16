@@ -20,7 +20,7 @@ import org.apereo.portal.layout.node.IUserLayoutNodeDescription;
  * A class that embodies the logic for determining if a node can be moved to the left or right of
  * another node based on getMovedAllowed() and getPrecedence().
  *
- * @since uPortal 2.5
+ * @since 2.5
  */
 public class MovementRules {
     /**

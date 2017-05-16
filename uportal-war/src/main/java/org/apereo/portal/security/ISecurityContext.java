@@ -21,9 +21,6 @@ import java.util.Enumeration;
  * This is the main interface for the JASIG portal effort's security mechanism. We endeavor here to
  * provide considerable encapsulation of the data we are trying to present.
  *
- * @author Andrew Newman, newman@yale.edu
- * @version $Revision$
- * @author Don Fracapane (df7@columbia.edu) Added getSubContextNames() to support principal and
  *     credential tokens
  */
 public interface ISecurityContext extends Serializable {

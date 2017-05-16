@@ -23,8 +23,6 @@ import org.w3c.dom.Document;
 /**
  * A user's layout and meta-data about that layout
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 public class DistributedUserLayout {
     private final Document layout;
@@ -64,11 +62,6 @@ public class DistributedUserLayout {
     /** @return The layout document */
     public Document getLayout() {
         return this.layout;
-    }
-
-    /** @return The names of all of the fragments incorporated into the layout */
-    public Set<String> getFragmentNames() {
-        return this.fragmentNames;
     }
 
     public IStylesheetUserPreferences getDistributedStructureStylesheetUserPreferences() {

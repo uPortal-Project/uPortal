@@ -41,7 +41,6 @@ import org.w3c.dom.Node;
  * Noderef}s. One instance of NodeReferenceFactory should be present in the Spring context, whence
  * it also derives its dependencies.
  *
- * @author awills
  */
 @Component
 public final class NodeReferenceFactory {

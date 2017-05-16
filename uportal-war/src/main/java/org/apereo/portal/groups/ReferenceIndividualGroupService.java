@@ -33,8 +33,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Reference individual, or leaf, group service.
- *
- * @author Dan Ellentuck
  */
 public class ReferenceIndividualGroupService extends ReferenceCompositeGroupService
         implements IIndividualGroupService, ILockableGroupService {
@@ -362,14 +360,6 @@ public class ReferenceIndividualGroupService extends ReferenceCompositeGroupServ
         return ent;
     }
 
-    /**
-     * Returns an <code>IEntity</code> representing a portal entity. This does not guarantee that
-     * the entity actually exists.
-     */
-    public IEntityStore getEntityFactory() {
-        return entityFactory;
-    }
-
     /** Returns a cached <code>IEntityGroup</code> or null if it has not been cached. */
     protected IEntityGroup getGroupFromCache(String key) throws CachingException {
         return (IEntityGroup)
@@ -407,7 +397,6 @@ public class ReferenceIndividualGroupService extends ReferenceCompositeGroupServ
         return groupFactory;
     }
 
-    /** */
     protected ComponentGroupServiceDescriptor getServiceDescriptor() {
         return serviceDescriptor;
     }
@@ -571,7 +560,6 @@ public class ReferenceIndividualGroupService extends ReferenceCompositeGroupServ
         return filterEntities(searchForGroups(query, method, leaftype), ancestor);
     }
 
-    /** */
     protected void throwExceptionIfNotInternallyManaged() throws GroupsException {
         if (!isInternallyManaged()) {
             throw new GroupsException("Group Service " + getServiceName() + " is not updatable.");
@@ -590,15 +578,6 @@ public class ReferenceIndividualGroupService extends ReferenceCompositeGroupServ
             cacheUpdate(group);
         }
         synchronizeGroupMembersOnUpdate(group);
-    }
-
-    /**
-     * Updates the <code>ILockableEntityGroup</code> in the cache and the store.
-     *
-     * @param group ILockableEntityGroup
-     */
-    public void updateGroup(ILockableEntityGroup group) throws GroupsException {
-        updateGroup(group, false);
     }
 
     /**
@@ -645,15 +624,6 @@ public class ReferenceIndividualGroupService extends ReferenceCompositeGroupServ
             cacheUpdate(group);
         }
         synchronizeGroupMembersOnUpdate(group);
-    }
-
-    /**
-     * Updates the <code>ILockableEntityGroup</code> in the cache and the store.
-     *
-     * @param group ILockableEntityGroup
-     */
-    public void updateGroupMembers(ILockableEntityGroup group) throws GroupsException {
-        updateGroupMembers(group, false);
     }
 
     /**

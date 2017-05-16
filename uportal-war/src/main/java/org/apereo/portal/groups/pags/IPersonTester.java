@@ -23,7 +23,6 @@ import org.apereo.portal.security.IPerson;
  * PersonAttributesGroupTestDefinitionImpl} so that they can be properly instantiated and configured
  * by the group store..
  *
- * @author Dan Ellentuck
  */
 public interface IPersonTester {
     boolean test(IPerson person);

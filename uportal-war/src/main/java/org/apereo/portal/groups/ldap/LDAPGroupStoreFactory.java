@@ -24,8 +24,6 @@ import org.apereo.portal.groups.IEntityGroupStoreFactory;
 /**
  * Returns an instance of the ldap <code>IEntityGroupStore</code>.
  *
- * @author Dan Ellentuck
- * @version $Revision$
  */
 public class LDAPGroupStoreFactory implements IEntityGroupStoreFactory {
     private static final Log log = LogFactory.getLog(LDAPGroupStoreFactory.class);

@@ -25,7 +25,6 @@ import org.springframework.dao.DataRetrievalFailureException;
 /**
  * Provides methods for creating and accessing {@link IPortletDefinition} and related objects.
  *
- * @author Eric Dalquist
  */
 public interface IPortletDefinitionRegistry {
     /**

@@ -86,13 +86,10 @@ import org.springframework.stereotype.Service;
  *
  * <p>It also provides {@link #getPortletEventQueue(PortletEventQueue, List, HttpServletRequest)}
  * which is used to determine which events to send to which portlet windows.
- *
- * @author Eric Dalquist
- * @version $Revision$
  */
 @Service("eventCoordinationService")
 public class PortletEventCoordinatationService implements IPortletEventCoordinationService {
-    /** */
+
     public static final String GLOBAL_EVENT__CONTAINER_OPTION = "org.apereo.portal.globalEvent";
 
     private static final String PORTLET_EVENT_QUEUE =

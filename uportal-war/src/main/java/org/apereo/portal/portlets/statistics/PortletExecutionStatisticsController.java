@@ -55,7 +55,6 @@ import org.springframework.web.portlet.bind.annotation.ResourceMapping;
 /**
  * Portlet Execution reports
  *
- * @author James Wennmacher, jameswennmacher@gmail.com
  */
 @Controller
 @RequestMapping(value = "VIEW")

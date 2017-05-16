@@ -26,8 +26,6 @@ import javax.xml.stream.events.XMLEvent;
 /**
  * Wraps a {@link ListIterator} of {@link XMLEvent}s with an {@link XMLEventReader}
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 public class XMLEventBufferReader implements XMLEventReader {
     private final ListIterator<XMLEvent> eventBuffer;

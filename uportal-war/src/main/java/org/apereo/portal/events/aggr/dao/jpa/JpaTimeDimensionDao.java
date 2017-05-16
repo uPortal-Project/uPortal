@@ -28,7 +28,6 @@ import org.apereo.portal.jpa.OpenEntityManager;
 import org.joda.time.LocalTime;
 import org.springframework.stereotype.Repository;
 
-/** @author Eric Dalquist */
 @Repository
 public class JpaTimeDimensionDao extends BaseAggrEventsJpaDao implements TimeDimensionDao {
 

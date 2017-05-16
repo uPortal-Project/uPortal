@@ -24,7 +24,6 @@ import org.apereo.portal.utils.web.PortletMimeHttpServletResponseWrapper;
  * Wrapper for the portal response when a portlet is handling a resource request. As much is
  * delegated to the {@link PortletResourceOutputHandler} as possible
  *
- * @author Eric Dalquist
  */
 public class PortletResourceHttpServletResponseWrapper
         extends PortletMimeHttpServletResponseWrapper {

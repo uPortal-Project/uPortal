@@ -22,8 +22,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * @author Eric Dalquist
- * @version $Revision$
  */
 public class UrlStringBuilderTest {
 

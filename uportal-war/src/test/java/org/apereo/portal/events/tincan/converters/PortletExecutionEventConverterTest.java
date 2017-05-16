@@ -27,7 +27,6 @@ import org.apereo.portal.events.PortletExecutionEvent;
 import org.apereo.portal.events.tincan.converters.PortletExecutionEventConverter.FNameFilterType;
 import org.junit.Test;
 
-/** @author Josh Helmer, jhelmer@unicon.net */
 public class PortletExecutionEventConverterTest {
     @Test
     public void testSupportsClassFilter() throws Exception {

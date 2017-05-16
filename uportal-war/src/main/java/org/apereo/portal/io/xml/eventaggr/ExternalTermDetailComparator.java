@@ -20,7 +20,6 @@ import org.apereo.portal.utils.ComparableExtractingComparator;
 /**
  * Compare ExternalTermDetail based on start date
  *
- * @author Eric Dalquist
  */
 public class ExternalTermDetailComparator
         extends ComparableExtractingComparator<ExternalTermDetail, Calendar> {

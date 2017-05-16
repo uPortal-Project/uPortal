@@ -22,7 +22,6 @@ import org.apereo.portal.groups.pags.dao.IPersonAttributesGroupTestGroupDefiniti
 import org.apereo.portal.jpa.BasePortalJpaDao;
 import org.springframework.stereotype.Repository;
 
-/** @author Shawn Connolly, sconnolly@unicon.net */
 @Repository("personAttributesGroupTestDefinitionDao")
 public class JpaPersonAttributesGroupTestDefinitionDao extends BasePortalJpaDao
         implements IPersonAttributesGroupTestDefinitionDao {

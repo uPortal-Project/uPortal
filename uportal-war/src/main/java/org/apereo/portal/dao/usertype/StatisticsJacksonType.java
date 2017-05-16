@@ -19,8 +19,6 @@ import org.jadira.usertype.spi.shared.AbstractSingleColumnUserType;
 /**
  * Uses Jackson to convert objects to/from JSON
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 public class StatisticsJacksonType
         extends AbstractSingleColumnUserType<Object, String, StatisticsJacksonColumnMapper> {

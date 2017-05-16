@@ -20,8 +20,6 @@ import java.sql.SQLException;
  * The join query interface defines methods for storing and retrieving queries fragments that will
  * be used for performing joins in SQL.
  *
- * @author Eric Dalquist <a href="mailto:edalquist@unicon.net">edalquist@unicon.net</a>
- * @version $Revision$ $Date$
  */
 public interface IJoinQueryString {
     /**

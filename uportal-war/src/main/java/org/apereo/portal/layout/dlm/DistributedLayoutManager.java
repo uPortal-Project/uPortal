@@ -58,7 +58,6 @@ import org.apereo.portal.security.IAuthorizationService;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.PersonFactory;
 import org.apereo.portal.spring.locator.PortletDefinitionRegistryLocator;
-import org.apereo.portal.spring.locator.UserIdentityStoreLocator;
 import org.apereo.portal.xml.XmlUtilities;
 import org.apereo.portal.xml.xpath.XPathOperations;
 import org.springframework.beans.factory.InitializingBean;
@@ -72,8 +71,7 @@ import org.w3c.dom.NodeList;
  * A layout manager that provides layout control through layout fragments that are derived from
  * regular portal user accounts.
  *
- * @author Mark Boyd
- * @since uPortal 2.5
+ * @since 2.5
  */
 public class DistributedLayoutManager implements IUserLayoutManager, InitializingBean {
 
@@ -85,15 +83,10 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
     private XPathOperations xpathOperations;
     private IPortalLayoutEventFactory portalEventFactory;
     private IAuthorizationService authorizationService;
+    private IUserIdentityStore userIdentityStore;
 
     protected final IPerson owner;
     protected final IUserProfile profile;
-
-    /**
-     * Holds the bean name of the configured folder label policy if any that is defined in the dlm
-     * context configuration.
-     */
-    static final String FOLDER_LABEL_POLICY = "FolderLabelPolicy";
 
     protected static final Random rnd = new Random();
     protected String cacheKey = null; // Must be "updated" prior to use
@@ -130,6 +123,11 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
     @Autowired
     public void setAuthorizationService(IAuthorizationService authorizationService) {
         this.authorizationService = authorizationService;
+    }
+
+    @Autowired
+    public void setUserIdentityStore(IUserIdentityStore userIdentityStore) {
+        this.userIdentityStore = userIdentityStore;
     }
 
     @Autowired
@@ -291,22 +289,6 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
                             + owner.getAttribute(IPerson.USERNAME),
                     e);
         }
-    }
-
-    /**
-     * Instantiates an empty transformer to generate SAX events for the layout.
-     *
-     * @return Transformer
-     * @throws PortalException
-     */
-    private Transformer getEmptyTransformer() throws PortalException {
-        Transformer xfrmr = null;
-        try {
-            xfrmr = TransformerFactory.newInstance().newTransformer();
-        } catch (Exception e) {
-            throw new PortalException("Unable to instantiate transformer.", e);
-        }
-        return xfrmr;
     }
 
     public synchronized void loadUserLayout() throws PortalException {
@@ -1093,10 +1075,6 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
         return isFragmentOwner || node.isDeleteAllowed();
     }
 
-    public boolean canUpdateNode(String nodeId) throws PortalException {
-        return canUpdateNode(this.getNode(nodeId));
-    }
-
     /**
      * Returns true if we are dealing with a fragment layout or if editing of attributes is allowed,
      * or the node is a channel since ad-hoc parameters can always be added.
@@ -1288,8 +1266,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
         // simple layouts, ie Documents.
         return new SimpleLayout(
                 this.getDistributedUserLayout(),
-                String.valueOf(profile.getLayoutId()),
-                this.cacheKey);
+                String.valueOf(profile.getLayoutId()));
     }
 
     /* Returns the ID attribute of the root folder of the layout. This folder
@@ -1384,8 +1361,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
                 person.setAttribute(IPerson.USERNAME, loginId);
 
                 try {
-                    IUserIdentityStore userStore = UserIdentityStoreLocator.getUserIdentityStore();
-                    portalID = userStore.getPortalUID(person);
+                    portalID = userIdentityStore.getPortalUID(person);
                     person.setID(portalID);
                 } catch (Exception e) {
                     // ignore since the store will log the problem
@@ -1427,11 +1403,10 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
                     org.apereo.portal.Constants.TEMPLATE_USER_NAME_ATT,
                     FragmentDefinition.getDefaultLayoutOwnerId());
         }
-        IUserIdentityStore userStore = UserIdentityStoreLocator.getUserIdentityStore();
 
         try {
-            userStore.removePortalUID(person.getID());
-            userStore.getPortalUID(person, true);
+            userIdentityStore.removePortalUID(person.getID());
+            userIdentityStore.getPortalUID(person, true);
 
             // see if the current user was the one to reset their layout and if
             // so we need to refresh our local copy of their layout
@@ -1464,43 +1439,4 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
         }
     }
 
-    /**
-     * Return a map of channel identifiers to functional names, for those channels that have
-     * functional names.
-     */
-    public Map getChannelFunctionalNameMap() throws PortalException {
-        Document layout = getUserLayoutDOM();
-
-        /*
-         * NodeLists are known not to be thread safe but the layout is
-         * hierarchical and this is the simples way to obtain all of the nested
-         * channels. Furthermore, since this method is only called by jndi
-         * initialization once in a user's session and hence should be just
-         * fine. Furthermore, this NodeList is not that of the children of
-         * a node in the layout so it is unlikely that it will change.
-         */
-        NodeList channelNodes = layout.getElementsByTagName("channel");
-        Map<String, String> map = new HashMap<String, String>();
-
-        // Parse through the channels and populate the set
-        for (int i = 0; i < channelNodes.getLength(); i++) {
-            // Attempt to get the fname and instance ID from the channel
-            Element chan = (Element) channelNodes.item(i);
-            String id = chan.getAttribute("ID");
-            String fname = chan.getAttribute("fname");
-            if (!id.equals("") && !fname.equals("")) {
-                map.put(id, fname);
-            }
-        }
-        return map;
-    }
-
-    /**
-     * Returns the IPerson that is the owner of this layout manager instance.
-     *
-     * @return IPerson object
-     */
-    IPerson getOwner() {
-        return owner;
-    }
 }

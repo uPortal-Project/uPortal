@@ -25,7 +25,6 @@ import org.slf4j.LoggerFactory;
 /**
  * Region factory that loads the {@link CacheManager} by name
  *
- * @author Eric Dalquist
  */
 public class SpringBeanEhCacheRegionFactory extends AbstractEhcacheRegionFactory {
     private static final long serialVersionUID = 1L;

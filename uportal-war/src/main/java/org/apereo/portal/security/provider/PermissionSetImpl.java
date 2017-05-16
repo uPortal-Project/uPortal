@@ -21,8 +21,6 @@ import org.apereo.portal.security.IPermission;
 import org.apereo.portal.security.IPermissionSet;
 
 /**
- * @author Dan Ellentuck, de3@columbia.edu
- * @version $Revision$
  *     <p>Aggregates <code>IPermissions</code> for a single <code>IAuthorizationPrincipal</code> so
  *     that the permissions can be cached as a unit by the <code>EntityCachingService</code>.
  *     <p>Separating caching of principals and permissions lets a client keep a reference to a

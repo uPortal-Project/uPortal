@@ -20,8 +20,6 @@ package org.apereo.portal.concurrency.locking;
  * <p>Locks are NOT reentrant. If ServerA tries to call getLock twice the 2nd call will return
  * false.
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 interface IClusterLockDao {
 

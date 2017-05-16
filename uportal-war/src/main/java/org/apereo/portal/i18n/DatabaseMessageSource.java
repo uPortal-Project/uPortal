@@ -36,8 +36,6 @@ import org.springframework.context.support.AbstractMessageSource;
  * message source will be set as parent to this message source, then this message source will become
  * the primary one.
  *
- * @author Arvids Grabovskis
- * @version $Revision$
  */
 public class DatabaseMessageSource extends AbstractMessageSource implements MessageSource {
 

@@ -27,8 +27,6 @@ import org.dom4j.Element;
 /**
  * Generic import impl that support Cernunnous Tasks.
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 public class CernunnosDataImporter extends AbstractDom4jImporter {
     private Task task;

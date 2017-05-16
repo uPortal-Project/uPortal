@@ -47,10 +47,10 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apereo.portal.EntityIdentifier;
-import org.apereo.portal.groups.*;
 import org.apereo.portal.groups.EntityGroupImpl;
 import org.apereo.portal.groups.EntityImpl;
 import org.apereo.portal.groups.GroupsException;
+import org.apereo.portal.groups.ICompositeGroupService;
 import org.apereo.portal.groups.IEntity;
 import org.apereo.portal.groups.IEntityGroup;
 import org.apereo.portal.groups.IEntityGroupStore;
@@ -58,6 +58,7 @@ import org.apereo.portal.groups.IEntitySearcher;
 import org.apereo.portal.groups.IEntityStore;
 import org.apereo.portal.groups.IGroupConstants;
 import org.apereo.portal.groups.IGroupMember;
+import org.apereo.portal.groups.ILockableEntityGroup;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.spring.locator.EntityTypesLocator;
 
@@ -67,8 +68,6 @@ import org.apereo.portal.spring.locator.EntityTypesLocator;
  * Grouper client jar to search for group information. It does not currently support write access or
  * group locking.
  *
- * @author Bill Brown
- * @author Jen Bourey, jbourey@unicon.net
  */
 public class GrouperEntityGroupStore implements IEntityGroupStore, IEntityStore, IEntitySearcher {
 
@@ -488,38 +487,6 @@ public class GrouperEntityGroupStore implements IEntityGroupStore, IEntityStore,
             throw new GroupsException("Invalid group type: " + type);
         }
         return new EntityImpl(key, type);
-    }
-
-    /**
-     * Test a Grouper {WsGroup} against a query string according to the specified method and
-     * determine if it matches the query.
-     *
-     * @param group WsGroup to be tested
-     * @param query Query string
-     * @param method int-based method matching one of the standard search methods defined in
-     *     {IGroupConstants}
-     * @return <code>true</code> if the group matches, <code>false</code> otherwise
-     */
-    protected boolean groupMatches(WsGroup group, String query, int method) {
-
-        // Ensure that this group has a name defined before performing
-        // comparisons.
-        if (group == null || group.getName() == null) {
-            return false;
-        }
-
-        switch (method) {
-            case IGroupConstants.IS:
-                return group.getName().equals(query);
-            case IGroupConstants.STARTS_WITH:
-                return group.getName().startsWith(query);
-            case IGroupConstants.ENDS_WITH:
-                return group.getName().endsWith(query);
-            case IGroupConstants.CONTAINS:
-                return group.getName().contains(query);
-            default:
-                return false;
-        }
     }
 
     /**

@@ -17,8 +17,6 @@ package org.apereo.portal.events.aggr;
 /**
  * Configuration of interval includes/excludes
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 public interface AggregatedIntervalConfig
         extends BaseAggregatedDimensionConfig<AggregationInterval> {}

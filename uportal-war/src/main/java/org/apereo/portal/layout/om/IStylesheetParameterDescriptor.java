@@ -15,7 +15,5 @@
 package org.apereo.portal.layout.om;
 
 /**
- * @author Eric Dalquist
- * @version $Revision$
  */
 public interface IStylesheetParameterDescriptor extends IStylesheetData {}

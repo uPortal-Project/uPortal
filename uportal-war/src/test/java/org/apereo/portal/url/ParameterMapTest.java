@@ -19,8 +19,6 @@ import static junit.framework.Assert.assertTrue;
 import org.junit.Test;
 
 /**
- * @author Eric Dalquist
- * @version $Revision$
  */
 public class ParameterMapTest {
     @Test

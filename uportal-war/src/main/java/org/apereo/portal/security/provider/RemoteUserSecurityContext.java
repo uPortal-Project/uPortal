@@ -23,9 +23,7 @@ import org.apereo.portal.security.PortalSecurityException;
  * Create a security context and store the value of remote user. If not null, the user has
  * authenticated.
  *
- * @author Pete Boysen, pboysen@iastate.edu
  * @created November 17, 2002
- * @version $Revision$
  */
 class RemoteUserSecurityContext extends ChainingSecurityContext implements ISecurityContext {
 

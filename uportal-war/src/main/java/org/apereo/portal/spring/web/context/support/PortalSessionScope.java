@@ -32,8 +32,6 @@ import org.springframework.web.util.WebUtils;
  * Wraps {@link SessionScope} to provide functionality when no session is available by using a
  * singleton instance.
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 public class PortalSessionScope implements Scope {
     public static final String DESTRUCTION_CALLBACK_NAME_PREFIX =

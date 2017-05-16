@@ -23,8 +23,6 @@ import org.springframework.core.io.Resource;
 /**
  * Scans a directory structure for files.
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 public interface DirectoryScanner {
 

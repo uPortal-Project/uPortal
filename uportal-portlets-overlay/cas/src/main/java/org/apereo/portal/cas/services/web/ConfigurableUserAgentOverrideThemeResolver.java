@@ -41,8 +41,6 @@ import org.springframework.web.servlet.theme.AbstractThemeResolver;
  * to determine if an alternate theme name is configured for the current user agent. This class is
  * designed to allow us to define alternate themes for mobile devices on a per-service basis.
  *
- * @author Jen Bourey, jbourey@unicon.net
- * @version $Revision$
  */
 public class ConfigurableUserAgentOverrideThemeResolver extends AbstractThemeResolver {
 

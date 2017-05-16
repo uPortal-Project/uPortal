@@ -23,8 +23,6 @@ import javax.xml.stream.events.XMLEvent;
 import org.junit.Test;
 
 /**
- * @author Eric Dalquist
- * @version $Revision$
  */
 public class BufferedXMLEventReaderTest {
 

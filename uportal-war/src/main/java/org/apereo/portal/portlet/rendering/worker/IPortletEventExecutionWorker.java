@@ -19,8 +19,6 @@ import javax.portlet.Event;
 /**
  * Worker that executes a portlet event request
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 public interface IPortletEventExecutionWorker extends IPortletExecutionWorker<Long> {
     /** @return The event that will be executed */

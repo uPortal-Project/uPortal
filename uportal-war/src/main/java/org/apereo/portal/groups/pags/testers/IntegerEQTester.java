@@ -19,7 +19,6 @@ import org.apereo.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
 /**
  * Tests if any of the possibly multiple values of the attribute are EQ (equal to) the test value.
  *
- * @author Dan Ellentuck
  */
 public class IntegerEQTester extends AbstractIntegerTester {
 

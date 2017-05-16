@@ -28,8 +28,6 @@ import org.junit.Test;
 /**
  * Test PAGS IPersonTester implementations against multi-valued attributes.
  *
- * @author Jen Bourey, jbourey@unicon.net
- * @version $Revision$
  */
 public class MultivaluedPAGSTest {
 

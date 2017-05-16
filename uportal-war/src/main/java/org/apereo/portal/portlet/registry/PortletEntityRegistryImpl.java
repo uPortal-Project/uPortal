@@ -73,7 +73,6 @@ import org.springframework.web.util.WebUtils;
  * <p>The portlet adaptor channel will be responsible for listenting to unsubscribe events and
  * cleaning up entity objects
  *
- * @author Eric Dalquist
  */
 @Service
 public class PortletEntityRegistryImpl implements IPortletEntityRegistry {

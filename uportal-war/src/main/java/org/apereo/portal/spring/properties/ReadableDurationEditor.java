@@ -18,8 +18,6 @@ import java.beans.PropertyEditorSupport;
 import org.joda.time.Duration;
 
 /**
- * @author Eric Dalquist
- * @version $Revision$
  */
 public class ReadableDurationEditor extends PropertyEditorSupport {
     /* (non-Javadoc)

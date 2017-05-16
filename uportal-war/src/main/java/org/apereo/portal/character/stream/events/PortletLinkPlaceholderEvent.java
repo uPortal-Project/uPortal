@@ -15,8 +15,6 @@
 package org.apereo.portal.character.stream.events;
 
 /**
- * @author Jen Bourey, jennifer.bourey@gmail.com
- * @version $Revision$
  */
 public interface PortletLinkPlaceholderEvent extends PortletPlaceholderEvent {
 

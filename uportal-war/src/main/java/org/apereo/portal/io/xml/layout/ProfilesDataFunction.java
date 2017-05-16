@@ -29,8 +29,6 @@ import org.springframework.jdbc.core.RowMapper;
 /**
  * Lists each Permission Set in the portal
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 public class ProfilesDataFunction
         implements Function<IPortalDataType, Iterable<? extends IPortalData>> {

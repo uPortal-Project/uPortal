@@ -12,7 +12,6 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/** */
 package org.apereo.portal.fragment.subscribe;
 
 import org.apereo.portal.IBasicEntity;
@@ -20,9 +19,6 @@ import org.apereo.portal.IBasicEntity;
 /**
  * IUserFragmentSubscription represents a fragment subscription for an individual user.
  * Subscriptions are used to track preferences for pulled DLM fragments.
- *
- * @author Mary Hunt
- * @version $Revision$ $Date$
  */
 public interface IUserFragmentSubscription extends IBasicEntity {
 

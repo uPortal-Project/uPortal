@@ -52,8 +52,6 @@ import org.apereo.portal.utils.threading.SingletonDoubleCheckedCreator;
  *
  * <p>
  *
- * @author Dan Ellentuck
- * @version $Revision$
  * @deprecated Where possible the Spring managed {@link IEntityCachingService} bean should be
  *     injected instead of using this lookup class.
  */

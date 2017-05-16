@@ -16,7 +16,6 @@ package org.apereo.portal.dao.usertype;
 
 import org.jadira.usertype.spi.shared.AbstractStringColumnMapper;
 
-/** @author Eric Dalquist */
 public class FunctionalNameColumnMapper extends AbstractStringColumnMapper<String> {
     private static final long serialVersionUID = 1L;
 

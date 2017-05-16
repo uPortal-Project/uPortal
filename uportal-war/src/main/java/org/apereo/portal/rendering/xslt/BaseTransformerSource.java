@@ -37,8 +37,6 @@ import org.springframework.core.io.ResourceLoader;
  * CoreStylesheetDescription} Implementations have to provide the appropriate {@link
  * CoreStylesheetDescription} from the {@link IUserPreferencesManager}
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 public abstract class BaseTransformerSource implements TransformerSource, ResourceLoaderAware {
     private IUserInstanceManager userInstanceManager;

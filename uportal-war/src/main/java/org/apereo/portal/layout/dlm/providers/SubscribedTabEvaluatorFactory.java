@@ -25,8 +25,6 @@ import org.w3c.dom.Node;
  * factory will automatically configure evaluators using the ownerID attribute associated with the
  * parent element fragmentDefinition element.
  *
- * @author Jen Bourey, jbourey@unicon.net
- * @version $Revision$
  */
 public class SubscribedTabEvaluatorFactory implements EvaluatorFactory {
 

@@ -21,7 +21,6 @@ import org.apereo.portal.security.IPerson;
 import org.jasig.services.persondir.IPersonAttributes;
 import org.springframework.webflow.context.ExternalContext;
 
-/** @author Eric Dalquist */
 public interface IPersonLookupHelper {
     /** Portlet preference name to use to specify a List of attributes displayed in query UI */
     public static final String PERSON_LOOKUP_PERSON_LOOKUP_QUERY_ATTRIBUTES =

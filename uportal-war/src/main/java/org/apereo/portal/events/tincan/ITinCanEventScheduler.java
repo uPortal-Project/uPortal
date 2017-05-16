@@ -21,7 +21,6 @@ import org.apereo.portal.events.tincan.providers.ITinCanAPIProvider;
 /**
  * API that controls when API events are sent off to a provider.
  *
- * @author Josh Helmer, jhelmer@unicon.net
  */
 public interface ITinCanEventScheduler {
     /**

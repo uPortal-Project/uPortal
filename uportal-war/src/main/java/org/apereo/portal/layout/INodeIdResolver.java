@@ -24,7 +24,6 @@ import org.w3c.dom.Document;
  * "manually" is much faster in some situations. Note that with simple XPath expressions it might
  * not
  *
- * @author Arvīds Grabovskis
  */
 public interface INodeIdResolver {
 

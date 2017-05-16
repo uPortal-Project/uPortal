@@ -20,7 +20,6 @@ import org.springframework.context.ApplicationEvent;
 /**
  * Base {@link EntityManager} related event.
  *
- * @author Eric Dalquist
  */
 public abstract class AbstractEntityManagerEvent extends ApplicationEvent {
     private static final long serialVersionUID = 1L;

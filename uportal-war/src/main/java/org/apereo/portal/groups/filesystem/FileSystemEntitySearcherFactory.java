@@ -24,8 +24,6 @@ import org.apereo.portal.groups.IEntitySearcherFactory;
  * Returns <code>IEntityGroupStore</code> and <code>IEntityStore</code> implementations for the file
  * system group service.
  *
- * @author Dan Ellentuck
- * @version $Revision$
  */
 public class FileSystemEntitySearcherFactory implements IEntitySearcherFactory {
     private static final Log log = LogFactory.getLog(FileSystemEntitySearcherFactory.class);

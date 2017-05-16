@@ -26,7 +26,6 @@ import org.springframework.stereotype.Component;
 /**
  * Purges cache entries tagged for a specific user when they login or logout
  *
- * @author Eric Dalquist
  */
 @Component
 public class UsernameTaggedCacheEntryPurger implements ApplicationListener<LogoutEvent> {

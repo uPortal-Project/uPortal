@@ -28,8 +28,6 @@ import org.apereo.portal.spring.locator.LocalAccountDaoLocator;
  * which it is called. The typical system where this might be used is a portal whose main page is
  * protected by HTTP authentication (BASIC or otherwise).
  *
- * @author Andrew Newman, newman@yale.edu
- * @version $Revision$
  */
 class TrustSecurityContext extends ChainingSecurityContext implements ISecurityContext {
 

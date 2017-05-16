@@ -33,8 +33,6 @@ import org.springframework.stereotype.Service;
 /**
  * Helper methods for the login portlet webflow.
  *
- * @author Jen Bourey, jennifer.bourey@gmail.com
- * @version $Revision$
  */
 @Service
 public class LoginPortletHelper {

@@ -19,8 +19,6 @@ import org.apereo.portal.PortalException;
 /**
  * An exception representing a Portal security problem.
  *
- * @author Andrew Newman, newman-andy@yale.edu
- * @version $Revision$ $Date$
  */
 public class PortalSecurityException extends PortalException {
 

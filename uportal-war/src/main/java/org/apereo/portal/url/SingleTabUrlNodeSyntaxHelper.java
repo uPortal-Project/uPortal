@@ -54,8 +54,6 @@ import org.springframework.stereotype.Service;
  * Maps tabs and portlets to folder names and back. Handles a single set of tabs and uses tab IDs
  * for folder names.
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 @Service
 public class SingleTabUrlNodeSyntaxHelper implements IUrlNodeSyntaxHelper {

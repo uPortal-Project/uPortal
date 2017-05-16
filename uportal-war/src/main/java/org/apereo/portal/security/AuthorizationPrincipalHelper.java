@@ -24,7 +24,7 @@ import org.apereo.portal.services.AuthorizationService;
  * <p>Currently offers one method which encapsulates the magic for converting a uPortal IPerson to
  * an IAuthorizationPrincipal.
  *
- * @since uPortal 4.1
+ * @since 4.1
  */
 public final class AuthorizationPrincipalHelper {
 
@@ -34,7 +34,7 @@ public final class AuthorizationPrincipalHelper {
      * @param user a non-null valid IPerson
      * @return an IAuthorizationPrincipal representing that user
      * @throws IllegalArgumentException if the user object is null or defective.
-     * @since uPortal 4.1
+     * @since 4.1
      */
     public static IAuthorizationPrincipal principalFromUser(final IPerson user) {
 

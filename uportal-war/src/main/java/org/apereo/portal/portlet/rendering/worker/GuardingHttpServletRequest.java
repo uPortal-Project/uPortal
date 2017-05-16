@@ -34,8 +34,6 @@ import javax.servlet.http.HttpSession;
  * Wrapper for a {@link HttpServletRequest} that makes the request inaccessible once the worker has
  * been canceled.
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 public class GuardingHttpServletRequest extends HttpServletRequestWrapper {
     private final AtomicBoolean canceled;

@@ -26,7 +26,6 @@ import org.springframework.beans.factory.annotation.Autowired;
  * Abstract base class for tinCanSchedulers. This class just has the basics for managing a set of
  * tin can providers.
  *
- * @author Josh Helmer, jhelmer@unicon.net
  */
 public abstract class AbstractTinCanEventScheduler implements ITinCanEventScheduler {
     private static final Logger log = LoggerFactory.getLogger(AbstractTinCanEventScheduler.class);

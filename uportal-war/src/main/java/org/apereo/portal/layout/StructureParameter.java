@@ -17,8 +17,7 @@ package org.apereo.portal.layout;
 /**
  * This class began its life as a public inner class of RDBMUserLayoutStore.
  *
- * @version $Revision$ $Date$
- * @since uPortal 2.5 before 2.5 this was an inner class of org.apereo.portal.RDBMUserLayoutStore.
+ * @since 2.5 before 2.5 this was an inner class of org.apereo.portal.RDBMUserLayoutStore.
  */
 public class StructureParameter {
     // TODO: provide an intelligent Type comment for this object.

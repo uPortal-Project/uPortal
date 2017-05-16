@@ -26,7 +26,6 @@ import org.springframework.beans.factory.annotation.Required;
  * originally requested URL will be decoded twice (decoded once when the browser sends it to CAS,
  * then again when the browser sends it back to uPortal after coming from CAS).
  *
- * @author James Wennmacher, jwennmacher@unicon.net
  */
 public class CasLoginRefUrlEncoder implements LoginRefUrlEncoder {
 

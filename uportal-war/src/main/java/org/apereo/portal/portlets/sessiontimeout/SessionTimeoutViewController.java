@@ -30,7 +30,6 @@ import org.springframework.web.portlet.bind.annotation.RenderMapping;
  * Controller for the session timeout portlet. This controller mostly just reads the configs and
  * then renders the JSP.
  *
- * @author Josh Helmer, jhelmer@unicon.net
  * @since 4.1.1
  */
 @Controller

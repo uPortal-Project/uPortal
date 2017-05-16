@@ -36,8 +36,6 @@ import org.springframework.stereotype.Repository;
  * Reference implementation of IPermissionStore. Performs CRUD operations on the UP_Permission
  * table.
  *
- * @author Dan Ellentuck (de3@columbia.edu)
- * @version $Revision$
  */
 @Repository
 public class RDBMPermissionImpl implements IPermissionStore {
@@ -80,36 +78,6 @@ public class RDBMPermissionImpl implements IPermissionStore {
      * {@see IPermission.setPrincipal} for use with {@see RDBMPermissionImpl}.
      */
     public static int PRINCIPAL_TYPE_PERSON = 2;
-
-    public enum PrincipalType {
-        GROUP(PRINCIPAL_TYPE_GROUP),
-
-        PERSON(PRINCIPAL_TYPE_PERSON);
-
-        // Instance Members.
-        private final int intValue;
-
-        public static PrincipalType byEntityTypeName(String name) {
-            PrincipalType rslt = null;
-            for (PrincipalType y : values()) {
-                if (y.name().toLowerCase().equals(name)) {
-                    rslt = y;
-                }
-            }
-            if (rslt == null && log.isWarnEnabled()) {
-                log.warn("Unrecognized PrincipalType:  " + name);
-            }
-            return rslt;
-        }
-
-        public int toInt() {
-            return intValue;
-        }
-
-        PrincipalType(int intValue) {
-            this.intValue = intValue;
-        }
-    }
 
     /**
      * Add the IPermissions to the store.
@@ -201,47 +169,7 @@ public class RDBMPermissionImpl implements IPermissionStore {
             RDBMServices.releaseConnection(conn);
         }
     }
-    /**
-     * Answer if this entity exists in the database.
-     *
-     * @return boolean
-     * @param perm org.apereo.portal.security.IPermission
-     * @exception java.sql.SQLException
-     */
-    public boolean existsInDatabase(IPermission perm) throws AuthorizationException, SQLException {
-        Connection conn = null;
-        try {
-            conn = RDBMServices.getConnection();
-            String sQuery = getFindPermissionSql();
-            PreparedStatement ps = conn.prepareStatement(sQuery);
-            try {
-                ps.setString(1, perm.getOwner());
-                ps.setInt(2, getPrincipalType(perm));
-                ps.setString(3, getPrincipalKey(perm));
-                ps.setString(4, perm.getActivity());
-                ps.setString(5, perm.getTarget());
-                if (log.isDebugEnabled()) log.debug("RDBMPermissionImpl.existsInDatabase(): " + ps);
-                ResultSet rs = ps.executeQuery();
-                try {
-                    return (rs.next());
-                } finally {
-                    rs.close();
-                }
-            } finally {
-                ps.close();
-            }
-        } catch (Exception ex) {
-            log.error(
-                    "Exception determining whether "
-                            + "permission ["
-                            + perm
-                            + "] exists in database.",
-                    ex);
-            throw new AuthorizationException("RDBMPermissionImpl.existsInDatabase(): " + ex);
-        } finally {
-            RDBMServices.releaseConnection(conn);
-        }
-    }
+
     /** @return java.lang.String */
     private static String getAllPermissionColumnsSql() {
         if (allPermissionColumnsSql == null) {

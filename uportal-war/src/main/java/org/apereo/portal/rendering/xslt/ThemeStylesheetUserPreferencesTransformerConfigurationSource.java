@@ -22,8 +22,6 @@ import org.apereo.portal.layout.om.IStylesheetUserPreferences;
 /**
  * Returns theme {@link IStylesheetUserPreferences}
  *
- * @author Eric Dalquist
- * @version $Revision$
  * @see IStylesheetUserPreferencesService#getThemeStylesheetUserPreferences(HttpServletRequest)
  */
 public class ThemeStylesheetUserPreferencesTransformerConfigurationSource

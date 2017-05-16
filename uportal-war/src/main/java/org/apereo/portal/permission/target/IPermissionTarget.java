@@ -17,8 +17,6 @@ package org.apereo.portal.permission.target;
  * IPermissionTarget represents a valid target for a permission. Examples of permission targets
  * might include a uPortal group or a static string.
  *
- * @author Jen Bourey, jbourey@unicon.net
- * @version $Revision$
  * @since 3.3
  */
 public interface IPermissionTarget {
@@ -27,7 +25,6 @@ public interface IPermissionTarget {
      * Indicates the nature of the target you're dealing with. Allows code that does things with
      * permissions (esp. checking) to approach its work intelligently.
      *
-     * @author drewwills
      * @since 4.3
      */
     public enum TargetType {

@@ -46,8 +46,6 @@ import org.w3c.dom.Element;
 /**
  * Imports a uPortal 3.1 style fragment definition data file
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 public class FragmentDefinitionImporter
         implements IDataImporter<Tuple<String, Document>>, Unmarshaller {

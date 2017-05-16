@@ -24,8 +24,6 @@ import org.apache.commons.lang.builder.ToStringStyle;
 /**
  * Set state and mode for the delegate portlet
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 public class DelegateState {
     private final PortletMode portletMode;

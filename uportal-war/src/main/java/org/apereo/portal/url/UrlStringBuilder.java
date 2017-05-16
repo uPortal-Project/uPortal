@@ -29,8 +29,6 @@ import org.apache.commons.lang.Validate;
  *
  * <p>This class is not thread safe.
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 public final class UrlStringBuilder extends BaseEncodedStringBuilder {
     private static final long serialVersionUID = 1L;

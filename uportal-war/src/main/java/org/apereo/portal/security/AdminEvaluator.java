@@ -26,9 +26,14 @@ import org.apereo.portal.services.GroupService;
  * Provides single location for housing knowledge of the various ways to determine if a user is an
  * administrator or is in any administrative sub-group.
  *
- * @author Mark Boyd
+ * @deprecated The few things this class controls should be converted to proper permissions.
  */
+@Deprecated
 public class AdminEvaluator {
+
+    public static final String PORTAL_ADMINISTRATORS_DISTINGUISHED_GROUP = IPerson.DISTINGUISHED_GROUP + ".PortalAdministrators";
+
+
     private static final Log cLog = LogFactory.getLog(AdminEvaluator.class);
 
     /**
@@ -51,9 +56,6 @@ public class AdminEvaluator {
     /**
      * Determines if the passed-in authorization principal represents a user that is a member of the
      * administrator group or any of its sub groups.
-     *
-     * @param p
-     * @return
      */
     public static boolean isAdmin(IAuthorizationPrincipal ap) {
         IGroupMember member = AuthorizationService.instance().getGroupMember(ap);
@@ -63,15 +65,12 @@ public class AdminEvaluator {
     /**
      * Determines if the passed-in group member represents a user that is a member of the
      * administrator group or any of its sub groups.
-     *
-     * @param p
-     * @return
      */
     public static boolean isAdmin(IGroupMember member) {
         IEntityGroup adminGroup = null;
 
         try {
-            adminGroup = GroupService.getDistinguishedGroup(GroupService.PORTAL_ADMINISTRATORS);
+            adminGroup = GroupService.getDistinguishedGroup(PORTAL_ADMINISTRATORS_DISTINGUISHED_GROUP);
         } catch (GroupsException ge) {
             // cannot determine whether or not the user is an admin.
             cLog.error(

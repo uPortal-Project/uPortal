@@ -20,7 +20,6 @@ import org.apereo.portal.security.IPerson;
 import org.junit.Assert;
 import org.junit.Test;
 
-/** @author drewwills */
 public class EhcacheMemberIdAttributeExtractorTest {
 
     @Test

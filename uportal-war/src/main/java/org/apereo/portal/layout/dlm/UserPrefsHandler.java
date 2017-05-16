@@ -24,7 +24,7 @@ import org.w3c.dom.NodeList;
  * Applies user changes that are part of the uPortal User Preferences storage (not part of the
  * layout structure) to the user's plf prior to persisting.
  *
- * @since uPortal 2.5
+ * @since 2.5
  */
 public class UserPrefsHandler {
     /**

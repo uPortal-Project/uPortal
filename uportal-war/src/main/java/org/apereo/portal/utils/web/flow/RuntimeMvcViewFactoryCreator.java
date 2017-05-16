@@ -33,8 +33,6 @@ import org.springframework.webflow.validation.WebFlowMessageCodesResolver;
 /**
  * Clone of {@link MvcViewFactoryCreator} that returns our {@link RuntimeMvcViewFactory}.
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 public class RuntimeMvcViewFactoryCreator extends MvcViewFactoryCreator {
     private final FlowResourceFlowViewResolver flowResourceFlowViewResolver =

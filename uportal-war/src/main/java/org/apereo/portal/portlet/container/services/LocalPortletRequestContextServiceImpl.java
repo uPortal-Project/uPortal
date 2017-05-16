@@ -12,7 +12,6 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/** */
 package org.apereo.portal.portlet.container.services;
 
 import javax.servlet.http.HttpServletRequest;
@@ -46,9 +45,6 @@ import org.springframework.stereotype.Service;
 
 /**
  * uPortal implementation of {@link PortletRequestContextService}.
- *
- * @author Nicholas Blair
- * @version $Id$
  */
 @Service("portletRequestContextService")
 public class LocalPortletRequestContextServiceImpl implements PortletRequestContextService {

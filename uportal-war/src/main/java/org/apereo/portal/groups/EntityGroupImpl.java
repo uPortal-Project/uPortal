@@ -46,7 +46,6 @@ import org.springframework.context.ApplicationContext;
  * without, either via explicit locking (<code>GroupService.getLockableGroup()</code>) or by
  * synchronizing access from the caller.
  *
- * @author Dan Ellentuck
  * @see IEntityGroup
  */
 public class EntityGroupImpl extends GroupMemberImpl implements IEntityGroup {
@@ -244,19 +243,7 @@ public class EntityGroupImpl extends GroupMemberImpl implements IEntityGroup {
     public EntityIdentifier getEntityIdentifier() {
         return getUnderlyingEntityIdentifier();
     }
-    /**
-     * Returns the key of the underyling entity.
-     *
-     * @return String
-     */
-    public String getEntityKey() {
-        return getKey();
-    }
 
-    /** @return String */
-    public String getGroupID() {
-        return getKey();
-    }
     /**
      * Returns the entity type of this groups's members.
      *

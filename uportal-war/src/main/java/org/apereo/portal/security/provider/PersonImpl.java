@@ -32,7 +32,6 @@ import org.apereo.portal.security.PersonFactory;
 /**
  * This is a reference IPerson implementation.
  *
- * @author Adam Rybicki, arybicki@unicon.net
  */
 public class PersonImpl implements IPerson {
     private static final long serialVersionUID = 1L;

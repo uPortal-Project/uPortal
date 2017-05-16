@@ -28,7 +28,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 /**
  * Generic class to convert from PortletRenderEvent to LrsStatement.
  *
- * @author Josh Helmer, jhelmer@unicon.net
  */
 public class PortletRenderEventConverter extends AbstractPortalEventToLrsStatementConverter {
     private AggregatedTabLookupDao aggregatedTabLookupDao;

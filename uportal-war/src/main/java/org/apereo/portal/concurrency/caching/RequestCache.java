@@ -25,8 +25,6 @@ import org.springframework.web.context.request.RequestAttributes;
  * Marks a method whose result should be cached in the current {@link RequestAttributes}. If there
  * is no current request no caching is done.
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)

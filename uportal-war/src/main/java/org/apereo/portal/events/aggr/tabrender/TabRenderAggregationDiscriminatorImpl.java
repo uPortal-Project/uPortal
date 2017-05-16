@@ -22,7 +22,6 @@ import org.apereo.portal.utils.ComparableExtractingComparator;
 /**
  * Basic impl of {@link org.apereo.portal.events.aggr.tabrender.TabRenderAggregationKey}
  *
- * @author James Wennmacher, jameswennmacher@gmail.com
  */
 public final class TabRenderAggregationDiscriminatorImpl
         extends BaseGroupedAggregationDiscriminatorImpl

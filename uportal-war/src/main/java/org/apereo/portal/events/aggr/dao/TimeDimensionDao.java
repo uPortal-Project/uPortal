@@ -21,8 +21,6 @@ import org.joda.time.LocalTime;
 /**
  * DAO for creation/lookup of time dimensions
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 public interface TimeDimensionDao {
 

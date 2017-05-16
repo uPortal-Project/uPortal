@@ -23,7 +23,6 @@ import org.w3c.dom.Element;
 /**
  * Layout processing action for changing a channel parameter in a user's layout.
  *
- * @author Mark Boyd
  */
 public class LPAChangeParameter implements ILayoutProcessingAction {
     private String nodeId = null;

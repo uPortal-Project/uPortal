@@ -17,8 +17,6 @@ package org.apereo.portal;
 import org.apereo.portal.i18n.LocaleManager;
 
 /**
- * @author Eric Dalquist
- * @version $Revision$
  */
 public interface IUserProfile {
 

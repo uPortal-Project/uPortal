@@ -24,8 +24,6 @@ import org.apereo.portal.url.ParameterMap;
 /**
  * The resulting state of the delegated action request
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 public class DelegationActionResponse extends DelegationResponse {
     private final String redirectLocation;

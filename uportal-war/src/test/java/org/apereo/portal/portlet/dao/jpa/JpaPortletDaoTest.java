@@ -43,11 +43,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-/**
- * @author Eric Dalquist <a
- *     href="mailto:eric.dalquist@doit.wisc.edu">eric.dalquist@doit.wisc.edu</a>
- * @version $Revision: 337 $
- */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:jpaPortalTestApplicationContext.xml")
 public class JpaPortletDaoTest extends BasePortalJpaDaoTest {

@@ -27,8 +27,6 @@ import org.w3c.dom.Document;
 /**
  * Imports a layout
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 public class LayoutImporter extends AbstractDom4jImporter {
     private final Cache<Tuple<String, String>, UserProfile> layoutCache =

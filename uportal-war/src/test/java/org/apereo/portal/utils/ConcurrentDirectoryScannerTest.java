@@ -30,8 +30,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean;
 
 /**
- * @author Eric Dalquist
- * @version $Revision$
  */
 public class ConcurrentDirectoryScannerTest {
     private ThreadPoolExecutorFactoryBean executorServiceFactory;

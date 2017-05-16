@@ -49,9 +49,6 @@ import org.apereo.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
  * </table>
  * </code>
  *
- * @author James Wennmacher (jwennmacher@unicon.net)
- * @author Dan Ellentucke
- * @author Misagh Moayyed
  * @see org.apereo.portal.groups.pags.testers.EagerRegexTester
  */
 public class LowercasedRegexTester extends AbstractStringTester {

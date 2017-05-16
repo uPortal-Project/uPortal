@@ -23,8 +23,6 @@ import org.apereo.portal.portlet.om.IPortletWindowId;
 /**
  * Information from the request that targets a particular portlet
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 public interface IPortletRequestInfo {
     /** @return The {@link IPortletWindowId} this request info is for, will never return null */

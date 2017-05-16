@@ -30,8 +30,6 @@ import org.apereo.portal.character.stream.events.CharacterEventTypes;
 import org.junit.Test;
 
 /**
- * @author Eric Dalquist
- * @version $Revision$
  */
 public class JsonWrapperFilteringCharacterEventReaderTest {
     @Test

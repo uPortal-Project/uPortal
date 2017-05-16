@@ -21,7 +21,6 @@ import org.apereo.portal.jpa.BaseAggrEventsJpaDao;
 /**
  * Base class for AggrEventsDb unit tests that want TX and entity manager support.
  *
- * @author Eric Dalquist
  */
 public abstract class BaseAggrEventsJpaDaoTest extends BaseJpaDaoTest {
 

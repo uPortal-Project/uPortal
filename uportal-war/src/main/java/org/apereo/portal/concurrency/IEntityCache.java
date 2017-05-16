@@ -20,7 +20,6 @@ import org.apereo.portal.IBasicEntity;
 /**
  * Defines the api for a cache that caches <code>IBasicEntities</code> of a single type.
  *
- * @author Dan Ellentuck
  */
 public interface IEntityCache {
 

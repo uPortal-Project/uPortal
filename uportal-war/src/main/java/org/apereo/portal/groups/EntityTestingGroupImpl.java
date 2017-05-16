@@ -23,7 +23,6 @@ package org.apereo.portal.groups;
  * PAGS and JitLDAP. Groups in these services do not keep references to their members but only
  * define the logic for computing if a candidate entity is a member.
  *
- * @author Dan Ellentuck
  * @see IEntityGroup
  */
 public class EntityTestingGroupImpl extends EntityGroupImpl {

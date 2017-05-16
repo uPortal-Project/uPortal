@@ -20,7 +20,6 @@ import org.apereo.portal.events.aggr.portlets.AggregatedPortletMapping;
 /**
  * Primary Key for a {@link PortletLayoutAggregation}
  *
- * @author Chris Waymire <cwaymire@unicon.net>
  */
 public interface PortletLayoutAggregationKey extends BaseAggregationKey {
     /** @return The name of the portlet */

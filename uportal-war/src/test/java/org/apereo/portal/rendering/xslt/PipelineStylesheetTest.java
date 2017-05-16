@@ -25,8 +25,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 
 /**
- * @author Eric Dalquist
- * @version $Revision$
  */
 public class PipelineStylesheetTest {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
@@ -45,16 +43,6 @@ public class PipelineStylesheetTest {
     @Test
     public void testStructureColumnsCompile() throws Exception {
         this.testXslCompile("/layout/structure/columns/columns.xsl");
-    }
-
-    @Test
-    public void testStructureMobileColumnCompile() throws Exception {
-        this.testXslCompile("/layout/structure/mobile-column/mobile-column.xsl");
-    }
-
-    @Test
-    public void testThemeMuniversalityCompile() throws Exception {
-        this.testXslCompile("/layout/theme/muniversality/muniversality.xsl");
     }
 
     @Test

@@ -20,8 +20,6 @@ import org.apereo.portal.security.IPermission;
 import org.apereo.portal.security.IPermissionManager;
 
 /**
- * @author Bernie Durfee (bdurfee@interactivebusiness.com)
- * @author Dan Ellentuck (de3@columbia.edu)
  */
 public class PermissionManagerImpl implements IPermissionManager {
     private AuthorizationImpl authorizationService;

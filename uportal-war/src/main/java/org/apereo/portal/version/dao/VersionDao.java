@@ -19,7 +19,6 @@ import org.apereo.portal.version.om.Version;
 /**
  * Access information about version numbers for various parts of uPortal
  *
- * @author Eric Dalquist
  */
 public interface VersionDao {
     /** Get the version information for the specified product, returns null if no version is set. */
