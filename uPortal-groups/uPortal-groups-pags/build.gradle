@@ -1,14 +1,9 @@
-plugins {
-    id "at.comm_unity.gradle.plugins.jpamodelgen" version "1.1.3"
-}
-
-jpaModelgen {
-    // library = "org.hibernate:hibernate-jpamodelgen:4.3.8.Final"
-    jpaModelgenSourcesDir = "build/jpaModelgen/java"
-}
 description = "Apereo uPortal Groups PAGS"
 
-apply plugin: 'at.comm_unity.gradle.plugins.jpamodelgen'
+ext {
+    // Solution for JPA Modelgen based on http://stackoverflow.com/a/23218255/1651116
+    generatedSourcesDir = file("${buildDir}/generated-sources/javac/main/java")
+}
 
 dependencies {
     compile project(':uPortal-groups:uPortal-groups-core')
@@ -19,4 +14,29 @@ dependencies {
     compile "com.fasterxml.jackson.core:jackson-annotations:${jacksonVersion}"
     compile "com.fasterxml.jackson.core:jackson-core:${jacksonVersion}"
     compile "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
+    compile "org.hibernate:hibernate-jpamodelgen:${hibernateJpamodelgenVersion}" // Required for javac -s
+}
+
+/*
+ * This section is the key to IDE integration.  IDE will look for source files in both...
+ *
+ *   - src/main/java
+ *   - build/generated-sources/javac/main/java
+ */
+sourceSets {
+    main {
+        java {
+            srcDir 'src/main/java'
+            srcDir generatedSourcesDir
+        }
+    }
+}
+
+// These are the only modifications to build process that are required.
+compileJava {
+    doFirst {
+        // Directory should exists before compilation started.
+        generatedSourcesDir.mkdirs()
+    }
+    options.compilerArgs += ['-s', generatedSourcesDir]
 }
