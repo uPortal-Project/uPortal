@@ -11,15 +11,11 @@ apply plugin: 'com.moowork.node'
 def props = new Properties()
 file("build.properties").withInputStream { props.load(it) }
 
-task printProps() {
-    println props.getProperty("server.home")
-}
 buildscript {
     repositories {
         maven {
             url 'https://plugins.gradle.org/m2/'
         }
-        
     }
     dependencies {
         classpath 'com.gradle:build-scan-plugin:1.0'
@@ -41,20 +37,22 @@ buildScan {
     licenseAgree = 'yes'
 }
 
-	task cleanShared() {
+	 task cleanShared(type:Delete) {
 		description 'Removes ALL shared libraries from the servlet container.'
 		def serverbase = props.getProperty("server.home")
 		def libs =  "${serverbase}/shared/lib"
+		printf "Configured shared libraries from servlet container at location:  ${libs}"
 		FileTree tree = fileTree(dir: libs)
 		delete fileTree(dir:libs , include: '*')
 	}
 
-	 task cleanTomcat() {
+	 task cleanTomcat(type:Delete) {
 		description 'Removes the deployed uPortal from the servlet container.'
 		def serverbase = props.getProperty("server.home")
-		def uPortal = "${serverbase}/webapps/uPortal"
-		FileTree tree = fileTree(dir: uPortal)
-		delete uPortal
+		def uPortalDeployDir = "${serverbase}/webapps/uPortal"
+		printf "Configured deployed uPortal from servlet container at location:  ${uPortalDeployDir}"
+		FileTree tree = fileTree(dir: uPortalDeployDir)
+		delete uPortalDeployDir
 	}
 
 subprojects {
