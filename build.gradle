@@ -9,7 +9,6 @@ apply plugin: 'java'
 apply plugin: 'com.moowork.node'
 
 def props = new Properties()
-file("build.properties").withInputStream { props.load(it) }
 
 task copySampleProperties(type: Copy) {
  printf "Configuring copying the build.properties.sample into build.properties"
@@ -18,6 +17,9 @@ task copySampleProperties(type: Copy) {
     include 'build.properties.sample'
     rename { String fileName ->
     fileName.replace("build.properties.sample", "build.properties")
+  }
+  doLast {
+	  file("build.properties").withInputStream { props.load(it) }
   }
 }
 
