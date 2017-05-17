@@ -8,6 +8,12 @@ apply plugin: 'java'
 // Adds support for Node.js scripts
 apply plugin: 'com.moowork.node'
 
+def props = new Properties()
+file("build.properties").withInputStream { props.load(it) }
+
+task printProps() {
+    println props.getProperty("server.home")
+}
 buildscript {
     repositories {
         maven {
@@ -36,18 +42,17 @@ buildScan {
 }
 
 	task cleanShared() {
-		group 'Configuration'
 		description 'Removes ALL shared libraries from the servlet container.'
-		def libs = serverbase+"/shared/lib"
+		def serverbase = props.getProperty("server.home")
+		def libs =  "${serverbase}/shared/lib"
 		FileTree tree = fileTree(dir: libs)
 		delete fileTree(dir:libs , include: '*')
 	}
 
 	 task cleanTomcat() {
-		group 'Configuration'
 		description 'Removes the deployed uPortal from the servlet container.'
-		def uPortal = serverbase+"/webapps/uPortal"
-		printf uPortal
+		def serverbase = props.getProperty("server.home")
+		def uPortal = "${serverbase}/webapps/uPortal"
 		FileTree tree = fileTree(dir: uPortal)
 		delete uPortal
 	}
@@ -64,7 +69,6 @@ subprojects {
         mavenCentral()
     }
     
-//}
     checkstyle {
         toolVersion = '7.7'
         showViolations = true
@@ -90,8 +94,4 @@ subprojects {
         compile.extendsFrom provided
     }
     
-  //  compile name: 'uPortal-classes'
-
-   
-	
 }
