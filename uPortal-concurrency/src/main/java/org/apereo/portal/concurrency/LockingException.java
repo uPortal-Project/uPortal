@@ -21,7 +21,6 @@ import org.apereo.portal.PortalException;
  * or alter an <code>IEntityLock</code>. If the problem occurs in the lock store, the <code>
  * LockingException</code> should wrap an <code>Exception</code> specific to the store, like a
  * <code>java.sql.SQLException</code>.
- *
  */
 public class LockingException extends PortalException {
 
