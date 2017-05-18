@@ -24,7 +24,7 @@ public interface IPortalInfoProvider {
      *
      * @return The name of the server
      */
-    public String getServerName();
+    String getServerName();
 
     /**
      * The name of the server, clients can assume that this name will be unique across all instances
@@ -32,5 +32,5 @@ public interface IPortalInfoProvider {
      *
      * @return The name of the server
      */
-    public String getUniqueServerName();
+    String getUniqueServerName();
 }

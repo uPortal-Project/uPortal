@@ -51,7 +51,6 @@ public final class PortalWebUtils {
      * @param servletRequest the ServletRequest to find a mutex for
      * @return the mutex object (never <code>null</code>)
      * @see #REQUEST_MUTEX_ATTRIBUTE
-     * @see RequestAttributeMutexListener
      */
     public static Object getRequestAttributeMutex(ServletRequest servletRequest) {
         Assert.notNull(servletRequest, "ServletRequest must not be null");

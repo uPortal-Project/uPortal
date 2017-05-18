@@ -29,7 +29,7 @@ public interface IPortalRequestUtils {
      * @param portletRequest The request targeted to the portlet
      * @return The portlet's request, scoped to the portlet.
      */
-    public HttpServletRequest getPortletHttpRequest(PortletRequest portletRequest);
+    HttpServletRequest getPortletHttpRequest(PortletRequest portletRequest);
 
     /**
      * Useful for container service callbacks and service portlets that are provided with the
@@ -38,10 +38,10 @@ public interface IPortalRequestUtils {
      * @param request The request targeted to the portlet
      * @return The portal's request, not scoped to a particular portlet
      */
-    public HttpServletRequest getOriginalPortalRequest(HttpServletRequest request);
+    HttpServletRequest getOriginalPortalRequest(HttpServletRequest request);
 
     /** @see #getPortletHttpRequest(PortletRequest) */
-    public HttpServletRequest getOriginalPortalRequest(WebRequest request);
+    HttpServletRequest getOriginalPortalRequest(WebRequest request);
 
     /**
      * Useful for container service callbacks and service portlets that are provided with the
@@ -50,21 +50,21 @@ public interface IPortalRequestUtils {
      * @param portletRequest The request targeted to the portlet
      * @return The portal's response, not scoped to a particular portlet
      */
-    public HttpServletResponse getOriginalPortalResponse(PortletRequest portletRequest);
+    HttpServletResponse getOriginalPortalResponse(PortletRequest portletRequest);
 
     /** @see #getOriginalPortalResponse(PortletRequest) */
-    public HttpServletResponse getOriginalPortalResponse(HttpServletRequest portletRequest);
+    HttpServletResponse getOriginalPortalResponse(HttpServletRequest portletRequest);
 
     /**
      * Uses {@link org.springframework.web.context.request.RequestContextHolder} to retrieve the
      * current portal HttpServletRequest
      */
-    public HttpServletRequest getCurrentPortalRequest();
+    HttpServletRequest getCurrentPortalRequest();
 
     /**
      * Useful for container service callbacks and service portlets that are provided with a {@link
      * HttpServletRequest} but need either the root portlet request or the root portal request
      * (depending on where processing is happening at that point)
      */
-    public HttpServletRequest getOriginalPortletOrPortalRequest(HttpServletRequest portletRequest);
+    HttpServletRequest getOriginalPortletOrPortalRequest(HttpServletRequest portletRequest);
 }

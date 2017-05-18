@@ -26,7 +26,7 @@ import org.apache.commons.lang.builder.ToStringStyle;
  * Implementation of DoubleCheckedCreator that stores what it creates in a backing Map. Subclasses
  * need to implement {@link #getKey(Object...)} to provide a Map key to use for the arguments and
  * {@link #create(Object...)} to create new instances of the objects. <br>
- * The default constructor uses a {@link ReferenceMap} with hard references to the keys
+ * The default constructor uses a ReferenceMap with hard references to the keys
  *
  */
 public abstract class MapCachingDoubleCheckedCreator<K, T> extends DoubleCheckedCreator<T> {

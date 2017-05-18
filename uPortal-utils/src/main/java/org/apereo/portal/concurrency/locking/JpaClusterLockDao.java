@@ -225,7 +225,7 @@ public class JpaClusterLockDao extends BasePortalJpaDao implements IClusterLockD
                     public ClusterMutex doInTransaction(TransactionStatus status) {
                         final CacheKey key = CacheKey.build(CLUSTER_MUTEX_SOURCE, mutexName);
                         ClusterMutex clusterMutex =
-                                entityManagerCache.get(PERSISTENCE_UNIT_NAME, key);
+                                entityManagerCache.get(BasePortalJpaDao.PERSISTENCE_UNIT_NAME, key);
                         if (clusterMutex != null) {
                             return clusterMutex;
                         }
@@ -235,7 +235,7 @@ public class JpaClusterLockDao extends BasePortalJpaDao implements IClusterLockD
                         query.using(ClusterMutex_.name, mutexName);
                         clusterMutex = query.load();
 
-                        entityManagerCache.put(PERSISTENCE_UNIT_NAME, key, clusterMutex);
+                        entityManagerCache.put(BasePortalJpaDao.PERSISTENCE_UNIT_NAME, key, clusterMutex);
 
                         return clusterMutex;
                     }

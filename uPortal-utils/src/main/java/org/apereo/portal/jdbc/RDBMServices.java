@@ -22,7 +22,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import javax.sql.DataSource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apereo.portal.jpa.BasePortalJpaDao;
 import org.apereo.portal.utils.MovingAverage;
 import org.apereo.portal.utils.MovingAverageSample;
 import org.apereo.portal.utils.PortalApplicationContextLocator;
@@ -48,11 +47,15 @@ import org.springframework.dao.DataAccessResourceFailureException;
  *
  */
 public class RDBMServices {
-    /** Name of the default portal database expected in the Spring application context */
-    public static final String PORTAL_DB = BasePortalJpaDao.PERSISTENCE_UNIT_NAME;
+    /**
+     * Name of the default portal database expected in the Spring application context.  Duplicates
+     * (unfortunately) a constant in BasePortalJpaDao.
+     */
+    public static final String PORTAL_DB = "PortalDb";
+
 
   /**
-   * Name of the {@link org.apereo.portal.jdbc.IDatabaseMetadata} expected in the Spring application
+   * Name of the IDatabaseMetadata expected in the Spring application
    * context
    */
   public static final String PORTAL_DB_METADATA = "PortalDB.metadata";
@@ -87,7 +90,7 @@ public class RDBMServices {
     /**
      * Gets a named DataSource from JNDI, with special handling for the PORTAL_DB datasource.
      * Successful lookups are cached and not done again. Lookup failure is remembered and blocks
-     * retry for a number of milliseconds specified by {@link #JNDI_RETRY_TIME} to reduce JNDI
+     * retry for a number of milliseconds specified by JNDI_RETRY_TIME to reduce JNDI
      * overhead and log spam.
      *
      * <p>There are two ways in which we handle the core uPortal DataSource specially.
