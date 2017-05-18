@@ -23,7 +23,6 @@ version = '5.0.0-SNAPSHOT'
 // File: build.gradle
 apply plugin: 'java'
 apply plugin: 'maven'
-apply plugin: 'groovy'
 
  
 dependencies {
