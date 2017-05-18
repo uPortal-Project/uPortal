@@ -37,7 +37,7 @@ Contents
 
 System requirements
 --------------------------------------------------------------------------------
-- JDK 1.7 or later
+- JDK 1.8 or later
 - JDK must include tools.jar.
 - JAVA_HOME environment variable must be set to a path that does not contain
   spaces.
@@ -57,7 +57,7 @@ UNIX:    ant.sh
   (That is, under a UNIX-style operating system this is `ant.sh start` ,
    and under a Windows operating system this is `ant.bat` ).
 
-'ant stop' - Stops Tomcat then stops HSQL. 
+'ant stop' - Stops Tomcat then stops HSQL.
   (That is, under a UNIX-style operating system this is `ant.sh stop` ,
    and under a Windows operating system this is `ant.bat stop` ).
 
@@ -115,5 +115,3 @@ Please report bugs and suggestions:
 uPortal website:
 
  http://www.apereo.org/uportal
-
-
