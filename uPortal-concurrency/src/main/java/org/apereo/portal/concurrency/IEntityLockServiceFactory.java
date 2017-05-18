@@ -14,10 +14,7 @@
  */
 package org.apereo.portal.concurrency;
 
-/**
- * Factory interface for creating an <code>IEntityLockService</code>.
- *
- */
+/** Factory interface for creating an <code>IEntityLockService</code>. */
 public interface IEntityLockServiceFactory {
     /**
      * Return an IEntityLockService instance.

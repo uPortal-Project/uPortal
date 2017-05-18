@@ -16,9 +16,7 @@ package org.apereo.portal.concurrency;
 
 import com.google.common.base.Function;
 
-/**
- * @see Function
- */
+/** @see Function */
 public abstract class FunctionWithoutResult<F> implements Function<F, Object> {
 
     @Override

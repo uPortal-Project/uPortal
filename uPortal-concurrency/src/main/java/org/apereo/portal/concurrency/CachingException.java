@@ -21,7 +21,6 @@ import org.apereo.portal.PortalException;
  * update, remove or reference a cache entry. If the problem arises in the store, the <code>
  * CachingException</code> should wrap an <code>Exception</code> specific to the store, like a
  * <code>java.sql.SQLException</code>.
- *
  */
 public class CachingException extends PortalException {
 

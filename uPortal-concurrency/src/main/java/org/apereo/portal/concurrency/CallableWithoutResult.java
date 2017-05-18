@@ -16,8 +16,7 @@ package org.apereo.portal.concurrency;
 
 import java.util.concurrent.Callable;
 
-/**
- */
+/** */
 public abstract class CallableWithoutResult implements Callable<Object> {
 
     @Override

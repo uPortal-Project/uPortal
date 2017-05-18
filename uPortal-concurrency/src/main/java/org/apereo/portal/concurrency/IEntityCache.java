@@ -17,10 +17,7 @@ package org.apereo.portal.concurrency;
 import org.apereo.portal.EntityTypes;
 import org.apereo.portal.IBasicEntity;
 
-/**
- * Defines the api for a cache that caches <code>IBasicEntities</code> of a single type.
- *
- */
+/** Defines the api for a cache that caches <code>IBasicEntities</code> of a single type. */
 public interface IEntityCache {
 
     /** @param entity - the entity to be cached. */
