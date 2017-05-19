@@ -1,16 +1,34 @@
 description = "Apereo uPortal Utilities"
 
-dependencies {
-    compile project(':uPortal-core')
+ext {
+    // Solution for JPA Modelgen based on http://stackoverflow.com/a/23218255/1651116
+    generatedSourcesDir = file("${buildDir}/generated-sources/javac/main/java")
+}
 
+dependencies {
+    compile project(':uPortal-concurrency')
+
+    compile "com.fasterxml.jackson.core:jackson-annotations:${jacksonVersion}"
+    compile "com.fasterxml.jackson.core:jackson-core:${jacksonVersion}"
+    compile "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
     compile "com.google.guava:guava:${guavaVersion}"
-    compile "commons-lang:commons-lang:${commonsLangVersion}"
+    compile "joda-time:joda-time:${jodaTimeVersion}"
     compile "org.apache.commons:commons-lang3:${commonsLang3Version}"
+    compile "org.aspectj:aspectjrt:${aspectjrtVersion}"
+    compile "org.hibernate:hibernate-jpamodelgen:${hibernateJpamodelgenVersion}" // Required for javac -s
+    compile("org.jasig.service.persondir:person-directory-impl:${personDirectoryVersion}") {
+        exclude group: 'org.springframework', module: 'spring-beans'
+        exclude group: 'org.springframework', module: 'spring-context'
+        exclude group: 'org.springframework', module: 'spring-core'
+        exclude group: 'org.springframework', module: 'spring-tx'
+    }
     compile "org.slf4j:jcl-over-slf4j:${slf4jVersion}"
     compile "org.springframework:spring-beans:${springVersion}"
     compile "org.springframework:spring-context:${springVersion}"
+    compile "org.springframework:spring-orm:${springVersion}"
     compile "org.springframework:spring-web:${springVersion}"
-    compile("org.springmodules:spring-modules-cache:${apringModulesCacheVersion}") {
+    compile "org.springframework:spring-webmvc-portlet:${springVersion}"
+    compile("org.springmodules:spring-modules-cache:${springModulesCacheVersion}") {
         exclude group: 'log4j', module: 'log4j'
         exclude group: 'commons-logging', module: 'commons-logging'
         exclude group: 'org.springframework', module: 'spring'
@@ -40,5 +58,32 @@ dependencies {
         exclude group: 'ehcache', module: 'ehcache'
     }
 
+    provided "${portletApiDependency}"
     provided "${servletApiDependency}"
 }
+
+/*
+ * This section is the key to IDE integration.  IDE will look for source files in both...
+ *
+ *   - src/main/java
+ *   - build/generated-sources/javac/main/java
+ */
+sourceSets {
+    main {
+        java {
+            srcDir 'src/main/java'
+            srcDir generatedSourcesDir
+        }
+    }
+}
+
+// These are the only modifications to build process that are required.
+compileJava {
+    doFirst {
+        // Generated sources directory should be present & empty before compilation
+        generatedSourcesDir.deleteDir()
+        generatedSourcesDir.mkdirs()
+    }
+    options.compilerArgs += ['-s', generatedSourcesDir]
+}
+
