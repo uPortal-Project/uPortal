@@ -29,7 +29,6 @@ import javax.persistence.Id;
 import javax.sql.DataSource;
 
 import org.hibernate.exception.ConstraintViolationException;
-import org.jasig.portal.jgroups.protocols.PingDao;
 import org.jasig.portal.utils.JdbcUtils;
 import org.jasig.portal.utils.RandomTokenGenerator;
 import org.slf4j.Logger;
@@ -54,7 +53,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import com.google.common.collect.ImmutableMap;
 
 /**
- * {@link PingDao} that uses the Spring JDBC APIs to do its work.
+ * {@link AuthDao} that uses the Spring JDBC APIs to do its work.
  * 
  * @author Eric Dalquist
  */
