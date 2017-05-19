@@ -718,6 +718,7 @@
             <script src="/uPortal/scripts/respond-1.4.2.min.js" type="text/javascript"></script>
         </head>
         <body class="up dashboard portal fl-theme-mist">
+          <xsl:call-template name="skipnav" />
           <div class="row-offcanvas">
             <div id="up-notification"></div>
             <div id="wrapper">
@@ -862,6 +863,7 @@
         <script src="/uPortal/scripts/respond-1.4.2.min.js" type="text/javascript"></script>
     </head>
     <body class="up dashboard portal fl-theme-mist detachedHeader">
+        <xsl:call-template name="skipnav" />
         <div id="wrapper">
             <xsl:call-template name="region.hidden-top" />
             <xsl:call-template name="region.page-top" />

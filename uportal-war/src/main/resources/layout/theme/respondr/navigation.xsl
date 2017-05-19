@@ -384,4 +384,14 @@
   <!-- =================================================== -->
 
 
+  <!-- ========== TEMPLATE: SKIPNAV ========== -->
+  <!-- =================================================== -->
+  <!--
+   | This template renders the "Skip to page content" button at th top of the page.
+  -->
+  <xsl:template name="skipnav">
+    <a role="button" class="portal-header-skip-nav btn" href="#portalPageBody"><xsl:value-of select="upMsg:getMessage('skip.to.page.content', $USER_LANG)"/></a>
+  </xsl:template>
+  <!-- =================================================== -->
+
 </xsl:stylesheet>
