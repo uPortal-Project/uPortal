@@ -44,6 +44,7 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.IndexColumn;
+import org.hibernate.annotations.Type;
 
 /**
  */
@@ -78,6 +79,7 @@ public class PortletPreferenceImpl implements IPortletPreference, Cloneable {
     private final long entityVersion;
 
     @Column(name = "PREF_NAME", length = 100000)
+    @Type(type = "org.hibernate.type.TextType")
     @Lob
     private String name = null;
 
@@ -89,6 +91,7 @@ public class PortletPreferenceImpl implements IPortletPreference, Cloneable {
     @IndexColumn(name = "VALUE_ORDER")
     @Lob
     @Column(name = "PREF_VALUE", length = 100000)
+    @Type(type = "org.hibernate.type.TextType")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @Fetch(FetchMode.JOIN)
     private List<String> values = new ArrayList<String>(0);
