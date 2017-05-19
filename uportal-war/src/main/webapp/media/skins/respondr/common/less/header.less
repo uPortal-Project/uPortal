@@ -16,6 +16,28 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
+/* Hide the "Skip to page content" button offscreen until it's brought into focus */
+.portal-header-skip-nav {
+    position: absolute;
+    top: -1000px;
+    left: -1000px;
+    height: 1px;
+    width: 1px;
+    text-align: left;
+    color: @header-link-color;
+    overflow: hidden;
+
+    &:active, &:focus, &:hover {
+        left: 0;
+        top: .5rem;
+        z-index: 1;
+        width: auto;
+        height: auto;
+        overflow: visible;
+   }
+}
+
 .portal-header {
     background: @header-background-color;
     color: @header-text-color;
@@ -50,25 +72,6 @@
         /* Need for the offcanvas open effect */
         position: relative;
         z-index: 10;
-    }
-
-    /* Hide the "Skip to page content" button offscreen until it's brought into focus */
-    .portal-header-skip-nav {
-        position: absolute;
-        top: -1000px;
-        left: -1000px;
-        height: 1px;
-        width: 1px;
-        text-align: left;
-        overflow: hidden;
-
-        &:active, &:focus, &:hover {
-            left: 0;
-            top: 0;
-            width: auto;
-            height: auto;
-            overflow: visible;
-       }
     }
 
     .portal-nav {
