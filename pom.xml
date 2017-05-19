@@ -169,6 +169,7 @@
         <easymock.version>3.2</easymock.version>
         <ejb3-persistence.version>1.0.1.GA</ejb3-persistence.version>
         <ehcache.version>2.6.8</ehcache.version>
+        <ehcache-jgroups3replication.version>1.7.4</ehcache-jgroups3replication.version>
         <ehcache-spring-annotations.version>1.2.0</ehcache-spring-annotations.version>
         <ehcache-web.version>2.0.4</ehcache-web.version>
         <google-visualization.version>1.1.1</google-visualization.version>
@@ -702,6 +703,11 @@
                         <artifactId>slf4j-jdk14</artifactId>
                     </exclusion>
                 </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.jasig.ehcache</groupId>
+                <artifactId>ehcache-jgroups3replication</artifactId>
+                <version>${ehcache-jgroups3replication.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.aspectj</groupId>
