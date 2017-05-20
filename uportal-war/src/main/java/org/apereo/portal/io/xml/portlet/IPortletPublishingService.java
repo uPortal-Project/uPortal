@@ -12,7 +12,7 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apereo.portal.channel;
+package org.apereo.portal.io.xml.portlet;
 
 import java.util.List;
 import org.apereo.portal.groups.IGroupMember;
@@ -22,11 +22,11 @@ import org.apereo.portal.security.IPerson;
 
 public interface IPortletPublishingService {
 
-    public IPortletDefinition savePortletDefinition(
+    IPortletDefinition savePortletDefinition(
             IPortletDefinition definition,
             IPerson publisher,
             List<PortletCategory> categories,
             List<IGroupMember> groupMembers);
 
-    public void removePortletDefinition(IPortletDefinition definition, IPerson person);
+    void removePortletDefinition(IPortletDefinition definition, IPerson person);
 }
