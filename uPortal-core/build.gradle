@@ -12,4 +12,5 @@ dependencies {
 
     provided "org.apache.portals.pluto:pluto-container-api:${plutoVersion}"
     provided "${portletApiDependency}"
+    provided "${servletApiDependency}"
 }

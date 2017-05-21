@@ -5,5 +5,4 @@ dependencies {
 
     // compile "com.google.guava:guava:${guavaVersion}"
     provided "${portletApiDependency}"
-    provided "${servletApiDependency}"
 }

@@ -59,7 +59,6 @@ dependencies {
     }
 
     provided "${portletApiDependency}"
-    provided "${servletApiDependency}"
 }
 
 /*

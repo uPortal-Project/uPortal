@@ -6,11 +6,4 @@ dependencies {
     compile("com.google.visualization:visualization-datasource:${googleVisualizationVersion}") {
         exclude group: 'commons-logging', module: 'commons-logging'
     }
-    compile("org.jasig.resourceserver:resource-server-api:${resourceServerVersion}") {
-        exclude group: 'commons-logging', module: 'commons-logging'
-    }
-    compile("org.jasig.resourceserver:resource-server-utils:${resourceServerVersion}") {
-        exclude group: 'commons-logging', module: 'commons-logging'
-    }
-    provided "${servletApiDependency}"
 }
