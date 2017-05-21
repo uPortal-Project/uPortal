@@ -140,6 +140,11 @@
             <artifactId>uPortal-utils</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.jasig.portal</groupId>
+            <artifactId>uPortal-web</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
         <!-- Pre-Gradle -->
         <dependency>
