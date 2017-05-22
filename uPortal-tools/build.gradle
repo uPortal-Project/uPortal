@@ -1,0 +1,8 @@
+description = "Apereo uPortal Tools"
+
+dependencies {
+    compile project(':uPortal-hibernate')
+    compile project(':uPortal-rdbm')
+
+    // compile "com.google.guava:guava:${guavaVersion}"
+}

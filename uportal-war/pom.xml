@@ -91,6 +91,11 @@
         </dependency>
         <dependency>
             <groupId>org.jasig.portal</groupId>
+            <artifactId>uPortal-hibernate</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jasig.portal</groupId>
             <artifactId>uPortal-io</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -129,6 +134,11 @@
                     <artifactId>commons-logging</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.jasig.portal</groupId>
+            <artifactId>uPortal-tools</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.jasig.portal</groupId>
