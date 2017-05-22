@@ -147,6 +147,12 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
         return man.addNode(node, parentId, nextSiblingId);
     }
 
+    @Override
+    public IUserLayoutNodeDescription addNodeInAnyOrder(
+        final IUserLayoutNodeDescription nodeToAdd, final String parentId) {
+        return man.addNodeInAnyOrder(nodeToAdd, parentId);
+    }
+
     public boolean moveNode(String nodeId, String parentId, String nextSiblingId)
             throws PortalException {
         // allow all moves, except for those related to the transient channels and folders

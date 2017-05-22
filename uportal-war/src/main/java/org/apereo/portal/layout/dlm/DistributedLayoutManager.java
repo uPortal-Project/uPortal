@@ -33,6 +33,7 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.xpath.XPathConstants;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apereo.portal.IUserIdentityStore;
@@ -452,8 +453,79 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
 
             return node;
         }
+
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Attempted to add node in impermissible location "
+                    + "with parent " + parentId + " and next sibling " + nextSiblingId
+                    + ". Made no layout change.");
+        }
+
         return null;
     }
+
+    /*
+     * DLM implementation adds to first allowable position among existing children of the parent
+     * node, if any.
+     */
+    public IUserLayoutNodeDescription addNodeInAnyOrder(
+        final IUserLayoutNodeDescription nodeToInsert, final String parentId) {
+
+        final IUserLayoutNodeDescription parentNode = getNode(parentId);
+
+        final String firstAllowableNextSiblingId =
+            firstAllowableNextSiblingId(parentNode, nodeToInsert);
+
+        return addNode(nodeToInsert, parentId, firstAllowableNextSiblingId);
+    }
+
+    /**
+     * Compute the siblingId representing the earliest allowable placement for adding a child node.
+     * @param parent potential parent of the node to be added
+     * @return siblingId representing earliest allowable nextSiblingId for adding a node,
+     * or blank if no such nextSiblingId
+     * @since 5.0.0
+     */
+    private String firstAllowableNextSiblingId(
+        final IUserLayoutNodeDescription parent,
+        final IUserLayoutNodeDescription nodeToInsert) {
+
+        final Enumeration sibIds = getVisibleChildIds(parent.getId());
+        final List sibs = Collections.list(sibIds);
+
+        if (sibs.size() == 0) { // no existing children, so no first allowable next sibling ID
+            return "";
+        }
+
+        // Algorithm:
+        // Starting at the last sibling position.
+        // Try to promote to the next earlier position. Repeat zero to N times,
+        // until failure to promote or until reaching first position.
+        // Return the best allowable nextSiblingId,
+        // which might be none if successfully promoted zero times.
+
+        String firstAllowableNextSiblingId = "";
+
+        // reverse scan so that as changes are made the order of the, as yet,
+        // unprocessed nodes is not altered.
+        for (int idx = sibs.size() - 1; idx >= 0; idx--) {
+            final IUserLayoutNodeDescription prev = getNode((String) sibs.get(idx));
+
+            final boolean canPromoteFurther =
+                ( isFragmentOwner || MovementRules.canHopLeft(nodeToInsert, prev));
+
+            if (! canPromoteFurther) {
+                return firstAllowableNextSiblingId;
+            }
+
+            firstAllowableNextSiblingId = prev.getId();
+
+        }
+
+        return firstAllowableNextSiblingId;
+
+    }
+
+
 
     public boolean moveNode(String nodeId, String parentId, String nextSiblingId)
             throws PortalException {
@@ -908,6 +980,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
         }
     }
 
+    @Override
     public boolean canAddNode(
             IUserLayoutNodeDescription node, String parentId, String nextSiblingId)
             throws PortalException {
@@ -915,12 +988,27 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
     }
 
     protected boolean canAddNode(
-            IUserLayoutNodeDescription node,
-            IUserLayoutNodeDescription parent,
-            String nextSiblingId)
+            final IUserLayoutNodeDescription node,
+            final IUserLayoutNodeDescription parent,
+            final String nextSiblingId)
             throws PortalException {
+
+        if ( isFragmentOwner ) return false;
+
+        if (node == null) { // cannot add a null node
+            return false;
+        }
+
+        if (parent == null) { // cannot add a node without a parent to add it under
+            return false;
+        }
+
+        if ( !(node.isMoveAllowed()) ) { // cannot add a node one cannot move
+            return false;
+        }
+
         // make sure sibling exists and is a child of nodeId
-        if (nextSiblingId != null && !nextSiblingId.equals("")) {
+        if ( StringUtils.isNotBlank(nextSiblingId) ) {
             IUserLayoutNodeDescription sibling = getNode(nextSiblingId);
             if (sibling == null) {
                 throw new PortalException(
@@ -949,13 +1037,11 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
         // same layout fragment as the fragment owner to insure a misbehaving front-end doesn't
         // do an improper operation.
 
-        if (parent == null || !(node.isMoveAllowed() || isFragmentOwner)) return false;
-
         if (parent instanceof IUserLayoutFolderDescription
                 && !(((IUserLayoutFolderDescription) parent).isAddChildAllowed())
                 && !isFragmentOwner) return false;
 
-        if (nextSiblingId == null || nextSiblingId.equals("")) // end of list targeted
+        if ( StringUtils.isBlank(nextSiblingId) ) // end of list targeted
         return true;
 
         // so lets see if we can place it at the end of the sibling list and
