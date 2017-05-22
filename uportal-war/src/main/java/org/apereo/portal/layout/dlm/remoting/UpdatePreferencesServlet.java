@@ -50,6 +50,7 @@ import org.apereo.portal.layout.IStylesheetUserPreferencesService.PreferencesSco
 import org.apereo.portal.layout.IUserLayout;
 import org.apereo.portal.layout.IUserLayoutManager;
 import org.apereo.portal.layout.IUserLayoutStore;
+import org.apereo.portal.layout.PortletSubscribeIdResolver;
 import org.apereo.portal.layout.dlm.Constants;
 import org.apereo.portal.layout.dlm.DistributedUserLayout;
 import org.apereo.portal.layout.dlm.UserPrefsHandler;
@@ -92,7 +93,6 @@ import org.w3c.dom.NodeList;
 /**
  * Provides targets for AJAX preference setting calls.
  *
- * @author jennifer.bourey@yale.edu
  */
 @Controller
 @RequestMapping("/layout")
@@ -230,6 +230,69 @@ public class UpdatePreferencesServlet {
         }
     }
 
+    /**
+     * Remove the first element with the provided fname from the layout.
+     *
+     * @param request HttpServletRequest
+     * @param response HttpServletResponse
+     * @param fname fname of the portlet to remove from the layout
+     * @return json response
+     * @throws IOException if the person cannot be retrieved
+     */
+    @RequestMapping(method = RequestMethod.POST, params = "action=removeByFName")
+    public ModelAndView removeByFName(
+            HttpServletRequest request, 
+            HttpServletResponse response,
+            @RequestParam(value = "fname", required = true) String fname
+    ) throws IOException {
+
+        IUserInstance ui = userInstanceManager.getUserInstance(request);
+        IPerson per = getPerson(ui, response);
+
+        UserPreferencesManager upm = (UserPreferencesManager) ui.getPreferencesManager();
+        IUserLayoutManager ulm = upm.getUserLayoutManager();
+
+        try {
+            String elementId = ulm.getUserLayout().findNodeId(new PortletSubscribeIdResolver(fname));
+            if (elementId != null
+                    && elementId.startsWith(Constants.FRAGMENT_ID_USER_PREFIX)
+                    && ulm.getNode(elementId)
+                            instanceof org.apereo.portal.layout.node.UserLayoutFolderDescription) {
+
+                removeSubscription(per, elementId, ulm);
+
+            } else if (elementId != null) {
+                // Delete the requested element node.  This code is the same for
+                // all node types, so we can just have a generic action.
+                if (!ulm.deleteNode(elementId)) {
+                    logger.info(
+                            "Failed to remove element ID {} from layout root folder ID {}, delete node returned false",
+                            elementId,
+                            ulm.getRootFolderId());
+                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                    return new ModelAndView(
+                            "jsonView",
+                            Collections.singletonMap(
+                                    "error",
+                                    getMessage(
+                                            "error.element.update",
+                                            "Unable to update element",
+                                            RequestContextUtils.getLocale(request))));
+                }
+            } else {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+                return null;
+            }
+
+            ulm.saveUserLayout();
+
+            return new ModelAndView("jsonView", Collections.EMPTY_MAP);
+
+        } catch (PortalException e) {
+            return handlePersistError(request, response, e);
+        }
+    }
+    
     /**
      * Subscribe a user to a pre-formatted tab (pulled DLM fragment).
      *
@@ -934,7 +997,7 @@ public class UpdatePreferencesServlet {
      */
     @RequestMapping(method = RequestMethod.POST, params = "action=chooseSkin")
     public ModelAndView chooseSkin(
-            HttpServletRequest request, HttpServletResponse response, @RequestParam String skinName)
+            HttpServletRequest request, @RequestParam String skinName)
             throws IOException {
 
         this.stylesheetUserPreferencesService.setStylesheetParameter(
@@ -1072,7 +1135,6 @@ public class UpdatePreferencesServlet {
             HttpServletResponse response,
             @RequestParam("targetId") String targetId,
             @RequestParam(value = "siblingId", required = false) String siblingId,
-            @RequestParam(value = "display", required = false) String display,
             @RequestBody(required = false) Map<String, Map<String, String>> attributes) {
         IUserLayoutManager ulm =
                 userInstanceManager
@@ -1438,17 +1500,6 @@ public class UpdatePreferencesServlet {
 
         final AuthorizationService authService = AuthorizationService.instance();
         return authService.newPrincipal(user);
-    }
-
-    /**
-     * A folder is a column if its parent is a tab element
-     *
-     * @param ulm User Layout Manager
-     * @param folderId the folder in question
-     * @return <code>true</code> if the folder is a column, otherwise <code>false</code>
-     */
-    protected boolean isColumn(IUserLayoutManager ulm, String folderId) throws PortalException {
-        return isTab(ulm, ulm.getParentId(folderId));
     }
 
     protected String getTabIdFromName(IUserLayout userLayout, String tabName) {

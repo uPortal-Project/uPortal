@@ -65,7 +65,6 @@ import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.WebUtils;
 
-/** @author Eric Dalquist */
 @Service("portalEventFactory")
 public class PortalEventFactoryImpl implements IPortalEventFactory, ApplicationEventPublisherAware {
     private static final String EVENT_SESSION_MUTEX =

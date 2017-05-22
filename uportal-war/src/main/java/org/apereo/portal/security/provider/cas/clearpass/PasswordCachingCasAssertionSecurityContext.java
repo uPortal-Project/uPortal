@@ -22,7 +22,6 @@ import org.jasig.cas.client.util.XmlUtils;
 import org.jasig.cas.client.validation.Assertion;
 import org.springframework.util.Assert;
 
-/** @author Scott Battaglia */
 public class PasswordCachingCasAssertionSecurityContext extends CasAssertionSecurityContext {
 
     private static final long serialVersionUID = -3816036745827152340L;

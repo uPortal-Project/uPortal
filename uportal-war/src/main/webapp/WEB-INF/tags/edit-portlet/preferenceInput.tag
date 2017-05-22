@@ -33,13 +33,13 @@
     <c:forEach items="${ values }" var="val">
       <div>
          <input name="${ fn:escapeXml(path )}" value="${ fn:escapeXml(val )}" class="form-control" />
-         <a class="delete-parameter-value-link btn btn-xs btn-info" href="#">
+         <a class="delete-parameter-value-link btn btn-xs btn-info" href="javascript:void(0)">
              <spring:message code="remove" text="Remove"/>&nbsp;&nbsp;
              <i class="fa fa-minus-circle"></i>
          </a>
       </div>
     </c:forEach>
-    <a class="add-parameter-value-link" href="#" paramName="${fn:escapeXml(name)}">
+    <a class="add-parameter-value-link" href="javascript:void(0)" paramName="${fn:escapeXml(name)}">
         <spring:message code="add.value" text="Add Value"/>&nbsp;&nbsp;
         <i class="fa fa-plus-circle"></i>
     </a>

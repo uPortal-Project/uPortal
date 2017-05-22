@@ -19,7 +19,6 @@ import java.util.Map;
 /**
  * JMX stats for HungWorkerAnalyzer
  *
- * @author Eric Dalquist
  */
 public interface HungWorkerAnalyzerMXBean {
 

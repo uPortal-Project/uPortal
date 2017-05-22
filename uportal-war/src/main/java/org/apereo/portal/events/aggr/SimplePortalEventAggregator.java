@@ -24,8 +24,6 @@ import org.apereo.portal.jpa.BaseAggrEventsJpaDao;
  * IMPORTANT: The AggrEventsDb EntityManager {@link BaseAggrEventsJpaDao} that is open during
  * execution is running in {@link FlushModeType#COMMIT}.
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 public interface SimplePortalEventAggregator<E extends PortalEvent>
         extends IPortalEventAggregator<E> {

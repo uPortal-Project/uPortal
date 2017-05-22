@@ -19,7 +19,6 @@ import javax.naming.Name;
 import org.apereo.portal.EntityIdentifier;
 import org.apereo.portal.IBasicEntity;
 
-/** @author drewwills */
 public class MockEntityGroup implements IEntityGroup {
 
     private final EntityIdentifier underlyingEntityIdentifier;

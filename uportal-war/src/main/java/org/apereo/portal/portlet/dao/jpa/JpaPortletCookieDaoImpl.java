@@ -41,7 +41,6 @@ import org.springframework.stereotype.Repository;
 /**
  * JPA implementation of {@link IPortletCookieDao}.
  *
- * @author Nicholas Blair
  */
 @Repository("portletCookieDao")
 @Qualifier("persistence")

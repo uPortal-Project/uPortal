@@ -22,10 +22,6 @@ import org.apereo.portal.security.IPerson;
 /**
  * UserPreferencesManager is responsible for keeping: user id, user layout, user preferences and
  * stylesheet descriptions. For method descriptions please see {@link IUserPreferencesManager}.
- *
- * @author Peter Kharchenko {@link <a
- *     href="mailto:pkharchenko@interactivebusiness.com">pkharchenko@interactivebusiness.com</a>}
- * @version $Revision$
  */
 public class UserPreferencesManager implements IUserPreferencesManager {
     protected final Log logger = LogFactory.getLog(this.getClass());
@@ -61,15 +57,4 @@ public class UserPreferencesManager implements IUserPreferencesManager {
         return this.userProfile;
     }
 
-    @Override
-    @Deprecated
-    public long getThemeStylesheetDescriptorId() {
-        return this.userProfile.getThemeStylesheetId();
-    }
-
-    @Override
-    @Deprecated
-    public long getStructureStylesheetDescriptorId() {
-        return this.userProfile.getStructureStylesheetId();
-    }
 }

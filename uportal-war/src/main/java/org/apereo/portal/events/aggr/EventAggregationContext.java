@@ -20,7 +20,6 @@ package org.apereo.portal.events.aggr;
  * NOTE: Attributes are globally scoped, aggregates must make sure the key is appropriate to prevent
  * stepping on toes.
  *
- * @author Eric Dalquist
  */
 public interface EventAggregationContext {
     /** Store an attribute in the current aggregation context */

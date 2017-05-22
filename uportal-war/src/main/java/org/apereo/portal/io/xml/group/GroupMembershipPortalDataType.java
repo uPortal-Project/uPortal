@@ -27,7 +27,6 @@ import org.apereo.portal.io.xml.PortalDataKey;
 /**
  * Describes a group with members in the portal
  *
- * @author Eric Dalquist
  */
 public class GroupMembershipPortalDataType extends AbstractPortalDataType {
     public static final QName LEGACY_GROUP_QNAME = new QName("group");

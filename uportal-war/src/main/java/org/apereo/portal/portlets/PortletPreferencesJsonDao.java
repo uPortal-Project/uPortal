@@ -24,7 +24,6 @@ import net.sf.json.JSONObject;
 /**
  * DAO That stores/retrieves objects as JSON in portlet preferences
  *
- * @author Eric Dalquist
  */
 public interface PortletPreferencesJsonDao {
 

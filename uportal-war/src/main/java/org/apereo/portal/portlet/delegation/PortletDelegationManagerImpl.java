@@ -24,8 +24,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
- * @author Eric Dalquist
- * @version $Revision$
  */
 @Service
 public class PortletDelegationManagerImpl implements IPortletDelegationManager {

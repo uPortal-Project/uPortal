@@ -23,8 +23,6 @@ import org.apereo.portal.portlet.om.IPortletWindowId;
  * Create workers used to execute portlet actions. The workers take care of submitting to a thread
  * pool for execution and tracking the execution and result.
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 public interface IPortletWorkerFactory {
     /** Create a worker that will execute an action request on the specified portlet window. */

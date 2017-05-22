@@ -21,8 +21,6 @@ import org.apereo.portal.permission.IPermissionOwner;
 /**
  * IPermissionOwnerDao represents an interface for retrieving and persisting permission owners.
  *
- * @author Jen Bourey, jbourey@unicon.net
- * @version $Revision$
  * @since 3.3
  */
 public interface IPermissionOwnerDao {

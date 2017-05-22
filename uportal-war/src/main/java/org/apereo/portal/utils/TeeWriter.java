@@ -22,8 +22,6 @@ import org.apache.commons.io.output.ProxyWriter;
  * {@link Writer} that mimics the UNIX 'tee' command on a pair of {@link Writer}s. Note the {@link
  * #write(char[], int, int)} implementation is synchronized.
  *
- * @author Nicholas Blair
- * @version $Id$
  */
 public class TeeWriter extends ProxyWriter {
     private Writer branch;

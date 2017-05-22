@@ -20,7 +20,6 @@ import org.apereo.portal.events.aggr.tabs.AggregatedTabMapping;
 /**
  * Interface to separate Tab Render Aggregation events into separate columns for reporting purposes.
  *
- * @author James Wennmacher, jameswennmacher@gmail.com
  */
 public interface TabRenderAggregationDiscriminator extends BaseGroupedAggregationDiscriminator {
 

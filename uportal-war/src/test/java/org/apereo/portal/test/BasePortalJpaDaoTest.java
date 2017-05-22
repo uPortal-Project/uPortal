@@ -21,7 +21,6 @@ import org.apereo.portal.jpa.BasePortalJpaDao;
 /**
  * Base class for PortalDb unit tests that want TX and entity manager support.
  *
- * @author Eric Dalquist
  */
 public abstract class BasePortalJpaDaoTest extends BaseJpaDaoTest {
     private EntityManager entityManager;

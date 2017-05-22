@@ -24,7 +24,6 @@ import org.springframework.stereotype.Service;
  * Used with caches that will degrade performance when the maxElementsInMemory is smaller than the
  * number of objects of that type in the portal.
  *
- * @author drewwills
  */
 @Service("insufficientSizeCacheEventListener")
 public class InsufficientSizeCacheEventListener extends CacheEventListenerAdapter {

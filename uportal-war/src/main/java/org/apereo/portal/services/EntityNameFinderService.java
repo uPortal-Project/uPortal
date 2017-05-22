@@ -25,7 +25,6 @@ import org.apereo.portal.groups.IEntityNameFinderFactory;
 import org.apereo.portal.properties.PropertiesManager;
 import org.apereo.portal.spring.locator.EntityTypesLocator;
 
-/** @author Dan Ellentuck */
 public class EntityNameFinderService {
 
     private static final Log log = LogFactory.getLog(EntityNameFinderService.class);
@@ -33,7 +32,7 @@ public class EntityNameFinderService {
     private static EntityNameFinderService m_instance;
     private Map nameFinders = null;
     private static boolean initialized = false;
-    /** */
+
     private EntityNameFinderService() {
         super();
         initialize();
@@ -112,7 +111,7 @@ public class EntityNameFinderService {
     static void setInitialized(boolean newInitialized) {
         initialized = newInitialized;
     }
-    /** */
+
     public static void start() {
         if (!isInitialized()) {
             instance();

@@ -26,7 +26,6 @@ import org.jasig.services.persondir.support.ComplexStubPersonAttributeDao;
 /**
  * Testcase for PersonDirNameFinder
  *
- * @version $Revision$ $Date$
  */
 public class PersonDirNameFinderTest extends TestCase {
 

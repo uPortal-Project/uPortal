@@ -17,7 +17,6 @@ package org.apereo.portal.events.tincan;
 import org.apereo.portal.events.PortalEvent;
 import org.apereo.portal.events.tincan.om.LrsStatement;
 
-/** @author Josh Helmer, jhelmer@unicon.net */
 public interface IPortalEventToLrsStatementConverter {
     /**
      * Check if this converter supports the PortalEvent.

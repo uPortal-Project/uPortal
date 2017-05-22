@@ -46,7 +46,6 @@ import org.springframework.web.portlet.bind.annotation.RenderMapping;
  * skin (CSS file) and generates that file if necessary.
  *
  * @since 4.1.0
- * @author James Wennmacher, jwennmacher@unicon.net
  */
 @Controller
 @RequestMapping("VIEW")

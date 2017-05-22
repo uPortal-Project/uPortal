@@ -33,8 +33,6 @@ import org.springframework.web.servlet.ModelAndView;
 /**
  * PrincipalsRESTController provides a REST endpoint for searching uPortal principals.
  *
- * @author Jen Bourey, jbourey@unicon.net
- * @version $Revision$
  */
 @Controller
 public class PrincipalsRESTController {

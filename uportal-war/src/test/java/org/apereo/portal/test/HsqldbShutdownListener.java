@@ -23,8 +23,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
- * @author Eric Dalquist
- * @version $Revision$
  */
 public class HsqldbShutdownListener implements DisposableBean {
     protected final Logger logger = LoggerFactory.getLogger(getClass());

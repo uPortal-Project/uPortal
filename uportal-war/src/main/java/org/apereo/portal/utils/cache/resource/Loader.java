@@ -20,8 +20,6 @@ import org.springframework.core.io.Resource;
 /**
  * Responsible for parsing the {@link Resource} into the specified object type.
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 public interface Loader<T> {
     /** Parse the given {@link Resource} into the appropriate object. */

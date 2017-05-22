@@ -19,7 +19,6 @@ import org.apereo.portal.events.aggr.BaseAggregationDao;
 /**
  * DAO used to query information about tab aggregates
  *
- * @author Eric Dalquist
  */
 public interface TabRenderAggregationDao<T extends TabRenderAggregation>
         extends BaseAggregationDao<T, TabRenderAggregationKey> {}

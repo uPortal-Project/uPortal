@@ -20,8 +20,6 @@ import org.apereo.portal.portlet.om.IPortletWindowId;
 /**
  * Tracks an event and the window id that generated it
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 public class QueuedEvent {
     private final IPortletWindowId portletWindowId;

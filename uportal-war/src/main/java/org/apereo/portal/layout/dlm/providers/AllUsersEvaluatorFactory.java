@@ -30,8 +30,7 @@ import org.w3c.dom.Node;
 /**
  * Used to target a fragment to all users of the system including guest users.
  *
- * @version $Revision$ $Date$
- * @since uPortal 2.5
+ * @since 2.5
  */
 @Entity
 @Cacheable

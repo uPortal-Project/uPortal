@@ -24,13 +24,12 @@ import org.w3c.dom.NodeList;
 /**
  * Performs merging of PLF into ILF for DLM.
  *
- * @since uPortal 2.5
+ * @since 2.5
  */
 public class PLFIntegrator {
 
     private static Log LOG = LogFactory.getLog(PLFIntegrator.class);
 
-    /** */
     public static void mergePLFintoILF(Document plf, Document ilf, IntegrationResult result)
             throws PortalException {
         // we want to use the root folders located as the single child of

@@ -126,7 +126,7 @@ public class MarketplaceEntry implements Serializable {
     /**
      * @param parameterName
      * @return
-     * @since uPortal 4.2
+     * @since 4.2
      */
     public IPortletDefinitionParameter getParameter(final String parameterName) {
         return this.pdef.getParameter(parameterName);

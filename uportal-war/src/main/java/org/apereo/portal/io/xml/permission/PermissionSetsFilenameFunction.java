@@ -22,8 +22,6 @@ import org.dom4j.Node;
 /**
  * Generates the correct file name for a Permission Set
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 public class PermissionSetsFilenameFunction implements Function<Tuple<String, Node>, String> {
     public static final Pattern SPLIT = Pattern.compile("\\|");

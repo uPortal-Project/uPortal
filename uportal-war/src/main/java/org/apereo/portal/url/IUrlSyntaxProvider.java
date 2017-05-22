@@ -20,8 +20,6 @@ import javax.servlet.http.HttpServletRequest;
  * Generates a URL string from a {@link IPortalUrlBuilder} or parses a request URL into {@link
  * IPortalRequestInfo}
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 public interface IUrlSyntaxProvider {
     /**

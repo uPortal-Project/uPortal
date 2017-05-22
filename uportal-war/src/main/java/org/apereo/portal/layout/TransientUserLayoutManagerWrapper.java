@@ -40,8 +40,6 @@ import org.w3c.dom.Document;
  * <p>The channels are incorporated upon request (functional name) and remain part of the layout
  * structure only as long as they are the target channel.
  *
- * @author <a href="mailto:kstacks@sct.com">Keith Stacks</a>
- * @version $Revision$
  */
 public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
 
@@ -75,14 +73,6 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
         if (man == null) {
             throw new PortalException("Cannot wrap a null IUserLayoutManager !");
         }
-    }
-
-    public IUserLayoutManager getOriginalLayoutManager() throws PortalException {
-        return man;
-    }
-
-    public void setOriginalLayoutManager(IUserLayoutManager man) throws PortalException {
-        this.man = man;
     }
 
     public IUserLayout getUserLayout() throws PortalException {

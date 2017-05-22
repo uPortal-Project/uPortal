@@ -18,8 +18,6 @@ import javax.portlet.CacheControl;
 import org.apache.commons.lang.StringUtils;
 
 /**
- * @author Eric Dalquist
- * @version $Revision$
  */
 public class CacheControlImpl implements CacheControl {
     private String eTag;

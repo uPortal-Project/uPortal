@@ -20,7 +20,6 @@ import org.apereo.portal.events.aggr.portlets.AggregatedPortletMapping;
 /**
  * Tracks portlet layout change events
  *
- * @author Chris Waymire <cwaymire@unicon.net>
  */
 public interface PortletLayoutAggregation
         extends BaseAggregation<

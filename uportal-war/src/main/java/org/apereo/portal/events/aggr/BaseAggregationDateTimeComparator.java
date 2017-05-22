@@ -19,7 +19,6 @@ import java.util.Comparator;
 /**
  * Sorts {@link BaseAggregation} instaces by Date and Time
  *
- * @author Eric Dalquist
  */
 public class BaseAggregationDateTimeComparator implements Comparator<BaseAggregation<?, ?>> {
     public static final Comparator<BaseAggregation<?, ?>> INSTANCE =

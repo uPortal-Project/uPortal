@@ -55,7 +55,6 @@ import org.hibernate.annotations.Type;
 /**
  * JPA implementation of stylesheet user preferences data
  *
- * @author Eric Dalquist
  */
 @Entity
 @Table(name = "UP_SS_USER_PREF")

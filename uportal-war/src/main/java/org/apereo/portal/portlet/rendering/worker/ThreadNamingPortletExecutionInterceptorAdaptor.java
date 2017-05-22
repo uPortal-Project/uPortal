@@ -29,8 +29,6 @@ import org.springframework.stereotype.Service;
 /**
  * Adds the targeted portlet's fname to the current thread name.
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 @Service("ThreadNamingPortletExecutionInterceptorAdaptor")
 public class ThreadNamingPortletExecutionInterceptorAdaptor

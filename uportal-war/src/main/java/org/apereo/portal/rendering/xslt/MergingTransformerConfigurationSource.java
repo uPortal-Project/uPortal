@@ -26,8 +26,6 @@ import org.apereo.portal.utils.cache.CacheKey.CacheKeyBuilder;
 /**
  * Merges the results of multiple {@link TransformerConfigurationSource}s
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 public class MergingTransformerConfigurationSource implements TransformerConfigurationSource {
     private List<TransformerConfigurationSource> sources;

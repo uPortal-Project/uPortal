@@ -23,7 +23,6 @@ import java.util.Map;
  * AbstractRedirectionUrl provides a base for IRedirectUrls. This class adds support for additional
  * static URL parameters, as well as for dynamic parameters.
  *
- * @author Jen Bourey, jennifer.bourey@gmail.com
  */
 public abstract class AbstractRedirectionUrl implements IRedirectionUrl {
 

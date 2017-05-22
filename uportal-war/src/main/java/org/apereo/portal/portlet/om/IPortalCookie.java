@@ -20,7 +20,6 @@ import org.joda.time.DateTime;
 /**
  * Interface describing the parent cookie used to relate all Portlet Cookies to one HTTP Cookie.
  *
- * @author Nicholas Blair
  */
 public interface IPortalCookie {
 

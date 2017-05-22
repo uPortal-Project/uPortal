@@ -21,8 +21,6 @@ import org.apereo.portal.security.IAdditionalDescriptor;
 /**
  * Simple container object for a JAAS Subject for the logged in user.
  *
- * @author Al Wold
- * @version $Revision$
  */
 public class JAASSubject implements IAdditionalDescriptor, Serializable {
     private Subject subject;

@@ -19,7 +19,6 @@ import org.apereo.portal.security.IAuthorizationPrincipal;
 import org.apereo.portal.security.IPermission;
 import org.apereo.portal.security.IUpdatingPermissionManager;
 
-/** @author Dan Ellentuck (de3@columbia.edu) */
 public class UpdatingPermissionManagerImpl extends PermissionManagerImpl
         implements IUpdatingPermissionManager {
     /**
@@ -39,23 +38,6 @@ public class UpdatingPermissionManagerImpl extends PermissionManagerImpl
      */
     public void addPermissions(IPermission[] newPermissions) throws AuthorizationException {
         getAuthorizationService().addPermissions(newPermissions);
-    }
-
-    /**
-     * Retrieve an array of IPermission objects based on the given parameters. Any null parameters
-     * will be ignored.
-     *
-     * @param principal IAuthorizationPrincipal
-     * @param activity String
-     * @param target String
-     * @return IPermission[]
-     * @exception AuthorizationException
-     */
-    public IPermission[] getPermissions(
-            IAuthorizationPrincipal principal, String activity, String target)
-            throws AuthorizationException {
-        return getAuthorizationService()
-                .getUncachedPermissionsForPrincipal(principal, getOwner(), activity, target);
     }
 
     /**

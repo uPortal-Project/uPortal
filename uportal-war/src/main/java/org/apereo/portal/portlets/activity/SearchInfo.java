@@ -16,7 +16,6 @@ package org.apereo.portal.portlets.activity;
 
 import org.apache.commons.lang.StringUtils;
 
-/** @author Chris Waymire (chris@waymire.net) */
 public class SearchInfo implements Comparable<SearchInfo> {
     private final String searchTerm;
     private int count;

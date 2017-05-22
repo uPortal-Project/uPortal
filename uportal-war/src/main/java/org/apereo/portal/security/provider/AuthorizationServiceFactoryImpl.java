@@ -22,8 +22,6 @@ import org.apereo.portal.spring.locator.AuthorizationServiceLocator;
 /**
  * The factory class for the uPortal reference IAuthorizationService implementation.
  *
- * @author Dan Ellentuck
- * @version $Revision$
  * @deprecated
  */
 @Deprecated

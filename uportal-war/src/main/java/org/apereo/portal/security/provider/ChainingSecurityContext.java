@@ -31,8 +31,6 @@ import org.slf4j.LoggerFactory;
  * This is the basic abstract class for all security contexts that should chain to children security
  * contexts.
  *
- * @author Andrew Newman, newman@yale.edu
- * @author Don Fracapane (df7@columbia.edu) Added a new method named getSubContextNames() that
  *     returns an Enumeration of names for the subcontexts.
  */
 public abstract class ChainingSecurityContext implements ISecurityContext {

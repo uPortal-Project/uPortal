@@ -23,7 +23,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.sql.DataSource;
-import org.apereo.portal.jgroups.protocols.PingDao;
 import org.apereo.portal.utils.JdbcUtils;
 import org.apereo.portal.utils.RandomTokenGenerator;
 import org.hibernate.exception.ConstraintViolationException;
@@ -47,9 +46,8 @@ import org.springframework.transaction.support.TransactionOperations;
 import org.springframework.transaction.support.TransactionTemplate;
 
 /**
- * {@link PingDao} that uses the Spring JDBC APIs to do its work.
+ * {@link AuthDao} that uses the Spring JDBC APIs to do its work.
  *
- * @author Eric Dalquist
  */
 public class JdbcAuthDao implements AuthDao, InitializingBean {
     /**

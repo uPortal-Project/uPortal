@@ -27,7 +27,6 @@ import org.apereo.portal.portlet.rendering.PortletResourceOutputHandler;
 /**
  * Extention of {@link CachingPortletOutputHandler} that adds support for resource requests
  *
- * @author Eric Dalquist
  */
 public class CachingPortletResourceOutputHandler extends CachingPortletOutputHandler
         implements PortletResourceOutputHandler {

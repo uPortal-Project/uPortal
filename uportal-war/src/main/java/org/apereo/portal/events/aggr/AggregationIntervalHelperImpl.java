@@ -30,8 +30,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
- * @author Eric Dalquist
- * @version $Revision: 18025 $
  */
 @Service
 public class AggregationIntervalHelperImpl implements AggregationIntervalHelper {

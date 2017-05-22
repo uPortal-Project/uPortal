@@ -22,8 +22,6 @@ import org.apereo.portal.security.IOpaqueCredentials;
  * of the original by providing means of retreiving a stored credential. See the warnings and
  * caveats associated with the CacheSecurityContext provider.
  *
- * @author Andrew Newman, newman@yale.edu
- * @version $Revision$
  */
 public interface NotSoOpaqueCredentials extends IOpaqueCredentials {
 

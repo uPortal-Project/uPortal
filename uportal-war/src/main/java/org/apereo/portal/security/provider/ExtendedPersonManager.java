@@ -28,7 +28,6 @@ import org.jasig.services.persondir.support.merger.MultivaluedAttributeMerger;
  * Manages the storage of an IPerson object in a user's session, and add request attributes to the
  * user guest.
  *
- * @author GIP RECIA - Julien Gribonvald 23 avr. 2013
  */
 public class ExtendedPersonManager extends AbstractPersonManager {
 

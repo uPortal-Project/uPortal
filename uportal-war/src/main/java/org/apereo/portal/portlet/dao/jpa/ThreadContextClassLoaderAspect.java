@@ -23,7 +23,6 @@ import org.springframework.core.Ordered;
  * Switches context class loader for {@link Thread#currentThread()} to the class loader of this
  * class and switches it back after the method completes
  *
- * @author Eric Dalquist
  */
 public class ThreadContextClassLoaderAspect implements Ordered {
     private static final ClassLoader PORTAL_CLASS_LOADER =

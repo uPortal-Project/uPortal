@@ -24,8 +24,6 @@ import org.springframework.webflow.mvc.view.FlowViewResolver;
 /**
  * FlowViewResolver that can use a list of both ViewResolver and FlowViewResolvers
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 public class FallbackDelegatingFlowViewResolver extends DelegatingFlowViewResolver {
     private final List<FlowViewResolver> flowViewResolvers;

@@ -36,7 +36,6 @@ import org.apereo.portal.layout.IUserLayoutStore;
 import org.apereo.portal.properties.PropertiesManager;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.provider.PersonImpl;
-import org.apereo.portal.utils.Tuple;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -45,7 +44,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-/** @since uPortal 2.5 */
+/** @since 2.5 */
 @Service
 public class FragmentActivator {
     private static final String NEWLY_CREATED_ATTR = "newlyCreated";
@@ -478,10 +477,6 @@ public class FragmentActivator {
                 }
             }
         }
-    }
-
-    private net.sf.ehcache.Element getUserView(String ownerId, Locale locale) {
-        return userViews.get(new Tuple<String, String>(ownerId, locale.toString()));
     }
 
     public void clearChacheForOwner(final String ownerId) {

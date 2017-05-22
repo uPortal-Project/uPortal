@@ -20,7 +20,6 @@ import org.joda.time.MonthDay;
 /**
  * Compare ExternalQuarterDetail based on start MonthDay
  *
- * @author Eric Dalquist
  */
 public class ExternalQuarterDetailComparator
         extends ComparableExtractingComparator<ExternalQuarterDetail, MonthDay> {

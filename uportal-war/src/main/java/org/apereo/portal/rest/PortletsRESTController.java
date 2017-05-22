@@ -50,7 +50,6 @@ import org.springframework.web.servlet.ModelAndView;
  * org.apereo.portal.layout.dlm.remoting.ChannelListController}
  *
  * @since 4.1
- * @author Shawn Connolly, sconnolly@unicon.net
  */
 @Controller
 public class PortletsRESTController {

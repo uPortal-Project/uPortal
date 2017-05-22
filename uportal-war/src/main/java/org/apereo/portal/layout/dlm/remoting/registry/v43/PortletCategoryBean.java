@@ -29,7 +29,6 @@ import org.apereo.portal.portlet.om.PortletCategory;
  * API.
  *
  * @since 4.3
- * @author drewwills
  */
 public final class PortletCategoryBean implements Comparable<PortletCategoryBean>, Serializable {
 

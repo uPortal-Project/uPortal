@@ -22,8 +22,6 @@ import net.sf.ehcache.constructs.blocking.CacheEntryFactory;
  * Base CacheEntryFactory that uses a {@link ThreadLocal} to pass along additional data to the
  * {@link #createEntry(Object, Object)} method.
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 public abstract class ThreadLocalCacheEntryFactory<A> implements CacheEntryFactory {
     public final ThreadLocal<A> threadData = new ThreadLocal<A>();

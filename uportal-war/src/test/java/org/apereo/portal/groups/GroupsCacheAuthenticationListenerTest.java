@@ -23,7 +23,6 @@ import org.apereo.portal.security.PersonFactory;
 import org.junit.Assert;
 import org.junit.Test;
 
-/** @author drewwills */
 public class GroupsCacheAuthenticationListenerTest {
 
     @Test

@@ -20,8 +20,6 @@ import org.springframework.core.io.Resource;
 /**
  * Represents a resources loaded by a {@link Loader}.
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 public interface LoadedResource<T> {
     /** @return The built resource object */

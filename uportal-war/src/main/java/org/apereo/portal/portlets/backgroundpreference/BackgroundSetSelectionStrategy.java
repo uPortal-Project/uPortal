@@ -21,7 +21,6 @@ import javax.portlet.PortletRequest;
  * Strategy for selecting different background image sets based on some criteria such as theme, user
  * agent, etc.
  *
- * @author James Wennmacher, jwennmacher@unicon.net
  */
 public interface BackgroundSetSelectionStrategy {
 

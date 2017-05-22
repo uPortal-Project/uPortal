@@ -18,7 +18,6 @@ import org.apereo.portal.io.xml.BaseXsltDataUpgraderTest;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 
-/** @author Eric Dalquist */
 public class SubscribedFragmentDataUpgradeTest extends BaseXsltDataUpgraderTest {
     @Test
     public void testUpgradeUser32to40() throws Exception {

@@ -17,7 +17,6 @@ package org.apereo.portal.character.stream.events;
 /**
  * Placeholder in the character event string for page analytics data
  *
- * @author Eric Dalquist
  */
 public final class PageAnalyticsDataPlaceholderEvent implements CharacterEvent {
     public static PageAnalyticsDataPlaceholderEvent INSTANCE =

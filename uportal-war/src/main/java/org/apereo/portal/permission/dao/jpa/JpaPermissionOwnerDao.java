@@ -35,8 +35,6 @@ import org.springframework.stereotype.Repository;
  * JpaPermissionOwnerDao provides a default JPA/Hibernate implementation of the IPermissionOwnerDao
  * interface.
  *
- * @author Jen Bourey, jbourey@unicon.net
- * @version $Revision$
  * @since 3.3
  */
 @Repository("permissionOwnerDao")

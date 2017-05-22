@@ -14,7 +14,6 @@
  */
 package org.apereo.portal.concurrency.caching;
 
-/** @author Eric Dalquist */
 public class CacheTestImpl implements CacheTestInterface {
     private int testMethodNoCache = 0;
     private int testMethodCacheDefault = 0;

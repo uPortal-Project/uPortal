@@ -34,8 +34,6 @@ import org.hibernate.annotations.Type;
 /**
  * PermissionActivityImpl represents the default JPA implementation of IPermissionActivity.
  *
- * @author Jen Bourey, jbourey@unicon.net
- * @version $Revision$
  * @since 3.3
  */
 @Entity

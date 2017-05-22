@@ -20,7 +20,6 @@ import javax.servlet.http.HttpServletResponseWrapper;
 /**
  * Wrapper for all portal responses
  *
- * @author Eric Dalquist
  */
 public class PortalHttpServletResponseWrapper extends HttpServletResponseWrapper {
     private final Object urlEncodingMutex = new Object();

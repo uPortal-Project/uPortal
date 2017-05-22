@@ -21,7 +21,6 @@ import javax.servlet.ServletOutputStream;
 /**
  * {@link ServletOutputStream} impl that delegates to an {@link OutputStream}
  *
- * @author Eric Dalquist
  */
 public class DelegatingServletOutputStream extends ServletOutputStream {
     private final OutputStream outputStream;

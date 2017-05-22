@@ -19,8 +19,6 @@ import org.apereo.portal.portlet.PortletUtils;
 import org.jadira.usertype.spi.shared.AbstractStringColumnMapper;
 
 /**
- * @author Eric Dalquist
- * @version $Revision$
  */
 public class WindowStateColumnMapper extends AbstractStringColumnMapper<WindowState> {
     private static final long serialVersionUID = 1L;

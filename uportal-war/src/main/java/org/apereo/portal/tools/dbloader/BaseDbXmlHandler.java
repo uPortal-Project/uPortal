@@ -25,8 +25,6 @@ import org.xml.sax.ext.DefaultHandler2;
 /**
  * Base SAX handler for providing an entity resolver and capturing character data
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 public class BaseDbXmlHandler extends DefaultHandler2 {
     protected final Log logger = LogFactory.getLog(this.getClass());

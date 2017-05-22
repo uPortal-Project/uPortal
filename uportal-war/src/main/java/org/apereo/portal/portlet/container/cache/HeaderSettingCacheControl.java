@@ -22,7 +22,6 @@ import org.apereo.portal.portlet.rendering.PortletResourceOutputHandler;
  * CacheControl where calls to {@link #setExpirationTime(int)}, {@link #setPublicScope(boolean)},
  * and {@link #setETag(String)} result setting headers Last-Modified, CacheControl and ETag
  *
- * @author Eric Dalquist
  */
 public class HeaderSettingCacheControl implements CacheControl {
     private final CacheControl cacheControl;

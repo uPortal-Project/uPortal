@@ -26,7 +26,6 @@ import org.w3c.dom.Document;
 /**
  * Interface for classes providing utility methods for dealing with {@link FragmentDefinition}s.
  *
- * @version $Revision$
  */
 public interface IFragmentDefinitionUtils {
 

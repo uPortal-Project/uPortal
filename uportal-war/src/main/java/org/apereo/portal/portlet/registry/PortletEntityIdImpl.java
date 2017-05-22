@@ -20,7 +20,6 @@ import org.apereo.portal.portlet.om.IPortletEntityId;
 /**
  * Standard IPortletEntityId
  *
- * @author Eric Dalquist
  */
 class PortletEntityIdImpl implements IPortletEntityId {
     private static final long serialVersionUID = 2L;

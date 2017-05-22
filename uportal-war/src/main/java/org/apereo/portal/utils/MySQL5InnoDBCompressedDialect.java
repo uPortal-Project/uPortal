@@ -30,7 +30,6 @@ import org.slf4j.LoggerFactory;
 /**
  * Uses the COMPRESSED row format in an InnoDB engine, needed for long index support with UTF-8
  *
- * @author Raymond Bourges
  */
 public class MySQL5InnoDBCompressedDialect extends MySQL5InnoDBDialect {
 
@@ -76,7 +75,7 @@ public class MySQL5InnoDBCompressedDialect extends MySQL5InnoDBDialect {
                     } else if (unwrappedValue == Double.POSITIVE_INFINITY) {
                         LOGGER.debug("Converting double from POSITIVE_INFINITY to MAX_VALUE");
                         unwrappedValue = Double.MAX_VALUE;
-                    } else if (unwrappedValue == Double.NaN) {
+                    } else if (unwrappedValue.isNaN()) {
                         LOGGER.debug("Converting double from NaN to 0");
                         unwrappedValue = 0d;
                     }

@@ -74,7 +74,7 @@ If your change is to a user-facing experience, it should not regress support for
 [Apereo licensing generally]: http://www.apereo.org/licensing
 [contributor licensing agreements specifically]: http://www.apereo.org/licensing/agreements
 [Contributor License Agreement]: http://www.apereo.org/licensing/agreements
-[Individual Contributor License Agreement form]: http://www.apereo.org/sites/default/files/licensing/apereo-icla.pdf
+[Individual Contributor License Agreement form]: https://www.apereo.org/licensing/agreements/icla
 
 [uportal-dev@]: https://wiki.jasig.org/display/JSG/uportal-dev
 [uportal-user@]: https://wiki.jasig.org/display/JSG/uportal-user

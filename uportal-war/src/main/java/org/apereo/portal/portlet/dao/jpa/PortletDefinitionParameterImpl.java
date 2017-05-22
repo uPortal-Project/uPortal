@@ -30,7 +30,6 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 /**
  * JPA implementation of the IPortletParameter interface.
  *
- * @author Jen Bourey, jennifer.bourey@gmail.com
  */
 @Entity
 @Table(name = "UP_PORTLET_DEF_PARAM")

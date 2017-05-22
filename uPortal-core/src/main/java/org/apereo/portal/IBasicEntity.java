@@ -18,7 +18,6 @@ package org.apereo.portal;
  * Minimal interface describes an entity that has only a key and a type. It can be cached, locked
  * and grouped.
  *
- * @author Dan Ellentuck
  */
 public interface IBasicEntity {
 

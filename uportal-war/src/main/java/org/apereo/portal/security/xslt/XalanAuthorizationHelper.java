@@ -20,8 +20,6 @@ import org.springframework.stereotype.Service;
 /**
  * Provides a static wrapper around an actual {@link IXalanAuthorizationHelper}
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 @Service
 public class XalanAuthorizationHelper {

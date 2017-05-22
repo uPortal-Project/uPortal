@@ -43,9 +43,6 @@ import org.springframework.web.portlet.mvc.AbstractController;
  *     <tr><td>alt-text</td><td>Text to include as the 'alt' attribute of the img tag</td><td>Almost live shot of Hamilton library front enterance</td><td>no, but highly recommended in support of non-visual browsers</td></tr>
  *   </table>
  *
- * @author Ken Weiner, kweiner@unicon.net
- * @author Jen Bourey, jbourey@unicon.net
- * @version $Revision$
  */
 public class ImagePortletController extends AbstractController {
     private IPortalSpELService portalSpELService;

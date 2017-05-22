@@ -30,7 +30,6 @@ import org.springframework.beans.factory.annotation.Value;
 /**
  * Event aggregator that processes events and converts them to xAPI events.
  *
- * @author Josh Helmer, jhelmer@unicon.net
  */
 public class TinCanPortalEventAggregator extends BasePortalEventAggregator<PortalEvent>
         implements SimplePortalEventAggregator<PortalEvent> {

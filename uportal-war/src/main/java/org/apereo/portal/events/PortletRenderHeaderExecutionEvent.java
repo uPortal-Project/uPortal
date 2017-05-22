@@ -15,8 +15,6 @@
 package org.apereo.portal.events;
 
 /**
- * @author Eric Dalquist
- * @version $Revision$
  */
 public final class PortletRenderHeaderExecutionEvent extends PortletExecutionEvent {
     private static final long serialVersionUID = 1L;

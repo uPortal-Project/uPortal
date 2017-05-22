@@ -25,8 +25,6 @@ import org.springframework.beans.factory.config.AbstractFactoryBean;
 /**
  * Factory for creating Mockito objects as beans.
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 public class MockitoFactoryBean<T> extends AbstractFactoryBean<T> {
     private static final Set<Object> MOCK_CACHE =

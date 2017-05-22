@@ -16,7 +16,6 @@ package org.apereo.portal.portlets.activity;
 
 import java.util.List;
 
-/** @author Chris Waymire (chris@waymire.net) */
 public class PortalActivity {
     private final int total;
     private final List<PortalGroupActivity> groupActivity;

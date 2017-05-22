@@ -43,8 +43,6 @@ import org.springframework.web.portlet.ModelAndView;
  * which auto-wire in. In the case where necessary components fail to auto-wire in, portlet
  * exceptions out at render time.
  *
- * @author Jen Bourey, jbourey@unicon.net
- * @version $Revision$
  */
 @Controller
 @RequestMapping("VIEW")

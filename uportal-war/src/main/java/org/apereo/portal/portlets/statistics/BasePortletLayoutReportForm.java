@@ -17,7 +17,6 @@ package org.apereo.portal.portlets.statistics;
 import java.util.HashSet;
 import java.util.Set;
 
-/** @author Chris Waymire <cwaymire@unicon.net> */
 public class BasePortletLayoutReportForm extends BaseReportForm {
     private Set<String> portlets = new HashSet<String>();
 

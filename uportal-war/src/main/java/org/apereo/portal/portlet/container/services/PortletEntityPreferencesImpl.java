@@ -41,7 +41,6 @@ import org.springframework.transaction.support.TransactionOperations;
 /**
  * Preferences impl that manipulates the portlet entity level preference data
  *
- * @author Eric Dalquist
  */
 public class PortletEntityPreferencesImpl extends AbstractPortletPreferencesImpl<IPortletEntity> {
     private final PortletRequestContext portletRequestContext;

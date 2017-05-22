@@ -37,7 +37,6 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Type;
 
-/** @author Eric Dalquist */
 @Entity
 @Table(name = "UP_SS_USER_PREF_LAY_ATTR")
 @SequenceGenerator(

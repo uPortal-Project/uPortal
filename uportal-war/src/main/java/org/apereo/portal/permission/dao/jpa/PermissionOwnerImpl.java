@@ -43,8 +43,6 @@ import org.hibernate.annotations.Type;
 /**
  * PermissionOwnerImpl represents the default JPA implementation of IPermissionOwner.
  *
- * @author Jen Bourey, jbourey@unicon.net
- * @version $Revision$
  * @since 3.3
  */
 @Entity

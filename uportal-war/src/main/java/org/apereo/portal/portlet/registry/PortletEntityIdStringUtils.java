@@ -41,7 +41,6 @@ import java.util.regex.Pattern;
  * @see https://issues.jasig.org/browse/UP-2563
  * @see PortletWindowIdStringUtils
  * @see PortletWindowRegistryImpl#STATELESS_PORTLET_WINDOW_ID
- * @author Gary Roybal
  */
 public class PortletEntityIdStringUtils {
 

@@ -18,8 +18,6 @@ import javax.xml.transform.ErrorListener;
 import javax.xml.transform.TransformerException;
 
 /**
- * @author Eric Dalquist
- * @version $Revision$
  */
 public class SystemErrorListener implements ErrorListener {
 

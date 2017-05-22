@@ -19,8 +19,6 @@ import java.util.Map;
 import org.springframework.core.io.Resource;
 
 /**
- * @author Eric Dalquist
- * @version $Revision$
  */
 class CachedResourceImpl<T> implements CachedResource<T> {
     private final Resource resource;

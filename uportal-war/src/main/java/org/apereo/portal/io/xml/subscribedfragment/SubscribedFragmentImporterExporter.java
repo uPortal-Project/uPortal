@@ -12,7 +12,6 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/** */
 package org.apereo.portal.io.xml.subscribedfragment;
 
 import com.google.common.base.Function;
@@ -36,7 +35,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Transactional;
 
-/** @author Eric Dalquist */
 public class SubscribedFragmentImporterExporter
         extends AbstractJaxbDataHandler<ExternalSubscribedFragments> {
 
@@ -132,11 +130,7 @@ public class SubscribedFragmentImporterExporter
                         t);
             }
 
-            if (create) {
-                userId = this.userIdentityStore.getPortalUID(person, true);
-            } else {
-                return null;
-            }
+            userId = this.userIdentityStore.getPortalUID(person, true);
         }
 
         person.setID(userId);

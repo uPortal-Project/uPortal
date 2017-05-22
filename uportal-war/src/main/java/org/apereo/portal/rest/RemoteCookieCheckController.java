@@ -25,7 +25,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-/** @author Chris Waymire <cwaymire@unicon.net> */
 @Controller
 public class RemoteCookieCheckController {
     public static final String COOKIE_CHECK_REQUEST_MAPPING = "/cookiecheck";

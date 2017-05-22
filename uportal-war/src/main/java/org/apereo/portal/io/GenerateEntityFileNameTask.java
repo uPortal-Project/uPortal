@@ -36,8 +36,6 @@ import org.dom4j.Element;
  * case, that 2 logically separate entities will never produce the same file name, and that
  * generated file names will be legal on all supported operating systems.
  *
- * @author Drew Wills
- * @version $Revision$
  */
 public class GenerateEntityFileNameTask implements Task {
 

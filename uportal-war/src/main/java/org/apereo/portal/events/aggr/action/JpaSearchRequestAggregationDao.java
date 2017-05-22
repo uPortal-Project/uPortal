@@ -42,7 +42,6 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.stereotype.Repository;
 
-/** @author Chris Waymire (chris@waymire.net) */
 @Repository
 public class JpaSearchRequestAggregationDao
         extends JpaBaseAggregationDao<SearchRequestAggregationImpl, SearchRequestAggregationKey>

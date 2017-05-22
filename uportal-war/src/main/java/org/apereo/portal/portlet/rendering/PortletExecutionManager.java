@@ -67,7 +67,6 @@ import org.springframework.web.util.WebUtils;
  * Handles the asynchronous execution of portlets, handling execution errors and publishing events
  * about the execution.
  *
- * @author Eric Dalquist
  */
 @ManagedResource("uPortal:section=Framework,name=PortletExecutionManager")
 @Service("portletExecutionManager")

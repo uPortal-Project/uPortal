@@ -37,7 +37,6 @@ import org.apereo.portal.portlet.registry.IPortletEntityRegistry;
 /**
  * Preferences impl that manipulates the portlet entity level preference data
  *
- * @author Eric Dalquist
  */
 public class GuestPortletEntityPreferencesImpl
         extends AbstractPortletPreferencesImpl<IPortletEntity> {

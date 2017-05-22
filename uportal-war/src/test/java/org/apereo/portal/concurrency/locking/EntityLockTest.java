@@ -26,8 +26,6 @@ import org.apereo.portal.services.EntityLockService;
 
 /**
  * Tests the entity lock framework.
- *
- * @author: Dan Ellentuck
  */
 public class EntityLockTest extends TestCase {
     private static final Log LOG = LogFactory.getLog(EntityLockTest.class);
@@ -67,7 +65,7 @@ public class EntityLockTest extends TestCase {
         printBlankLine();
         print("END TESTING LOCK STORE");
     }
-    /** */
+
     private static void print(IEntityLock[] locks) {
         for (int i = 0; i < locks.length; i++) {
             print("(" + (i + 1) + ") " + locks[i]);
@@ -78,11 +76,11 @@ public class EntityLockTest extends TestCase {
     private static void print(String msg) {
         LOG.debug(msg);
     }
-    /** */
+
     private static void printBlankLine() {
         System.out.println("");
     }
-    /** */
+
     protected void setUp() {
         try {
             if (GROUP_CLASS == null) {
@@ -133,7 +131,7 @@ public class EntityLockTest extends TestCase {
             print("EntityLockTester.setUp(): " + ex.getMessage());
         }
     }
-    /** */
+
     protected void tearDown() {
         try {
             // delete any remaining test locks.
@@ -145,7 +143,7 @@ public class EntityLockTest extends TestCase {
             print("EntityLockTester.tearDown(): " + ex.getMessage());
         }
     }
-    /** */
+
     public void testExistsInStore() throws Exception {
         String msg = null;
         IEntityLock lock = testLocks[4];
@@ -168,7 +166,7 @@ public class EntityLockTest extends TestCase {
         print("Adding back the lock just deleted from database.");
         getLockStore().add(lock);
     }
-    /** */
+
     public void testExpirationInStore() throws Exception {
         int numLocks = 0;
         int ctr = 0;
@@ -203,7 +201,7 @@ public class EntityLockTest extends TestCase {
             assertTrue(msg, selectedLocks[ctr].getExpirationTime().after(now));
         }
     }
-    /** */
+
     public void testSelectFromStore() throws Exception {
         int numLocks = 0;
         int ctr = 0;
@@ -256,7 +254,7 @@ public class EntityLockTest extends TestCase {
             assertEquals(msg, selectedLocks[ctr].getLockOwner(), id);
         }
     }
-    /** */
+
     public void testService() throws Exception {
 
         String msg = null;
@@ -301,7 +299,7 @@ public class EntityLockTest extends TestCase {
         writeLock.release();
         assertTrue(msg, !writeLock.isValid());
     }
-    /** */
+
     public void testServiceConvert() throws Exception {
 
         String msg = null;
@@ -355,7 +353,7 @@ public class EntityLockTest extends TestCase {
 
         assertNull(msg, duplicateLock);
     }
-    /** */
+
     public void testServiceLockRenewal() throws Exception {
         String msg = null;
         boolean valid = false;
@@ -385,7 +383,7 @@ public class EntityLockTest extends TestCase {
         }
         assertTrue(msg, service.isValid(goodLock));
     }
-    /** */
+
     public void testServiceNewLock() throws Exception {
 
         String msg = null;
@@ -408,7 +406,7 @@ public class EntityLockTest extends TestCase {
         print(msg);
         assertTrue(msg, !valid);
     }
-    /** */
+
     public void testStoreUpdate() throws Exception {
         long fiveMinutes = 1000 * 60 * 5;
         long tenMinutes = 1000 * 60 * 10;

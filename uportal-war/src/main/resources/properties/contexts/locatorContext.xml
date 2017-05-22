@@ -38,11 +38,7 @@
             class="org.apereo.portal.spring.locator.UserLayoutStoreLocator">
         <constructor-arg index="0" ref="userLayoutStore" />
     </bean>
-    
-    <bean id="org.apereo.portal.spring.locator.PersonManagerLocator"
-            class="org.apereo.portal.spring.locator.PersonManagerLocator">
-    </bean>
-    
+
     <bean id="org.apereo.portal.jdbc.PortalDbLocator"
             class="org.apereo.portal.jdbc.PortalDbLocator" lazy-init="false">
         <constructor-arg index="0" ref="PortalDb" />
@@ -72,21 +68,12 @@
             class="org.apereo.portal.spring.locator.CounterStoreLocator">
         <constructor-arg index="0" ref="counterStore" />
     </bean>
-    
-    <bean id="org.apereo.portal.spring.locator.CacheFactoryLocator"
-            class="org.apereo.portal.spring.locator.CacheFactoryLocator">
-        <constructor-arg index="0" ref="cacheFactory" />
-    </bean>
-    
+
     <bean id="org.apereo.portal.spring.locator.PasswordEncryptionServiceLocator"
         class="org.apereo.portal.spring.locator.PasswordEncryptionServiceLocator">
         <constructor-arg index="0" ref="stringEncryptionService" />
     </bean>
-    
-    <bean id="org.apereo.portal.spring.locator.UserIdentityStoreLocator"
-        class="org.apereo.portal.spring.locator.UserIdentityStoreLocator">
-    </bean>
-    
+
     <bean id="org.apereo.portal.spring.locator.UserFragmentSubscriptionDaoLocator"
         class="org.apereo.portal.spring.locator.UserFragmentSubscriptionDaoLocator">
     </bean>

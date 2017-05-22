@@ -30,7 +30,6 @@ import org.apache.commons.lang3.ArrayUtils;
  * @see PortletEntityIdStringUtils
  * @see TransientUserLayoutManagerWrapper#SUBSCRIBE_PREFIX
  * @see PortletWindowRegistryImpl#STATELESS_PORTLET_WINDOW_ID
- * @author Gary Roybal
  */
 public class PortletWindowIdStringUtils {
 

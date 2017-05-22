@@ -21,8 +21,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
 /**
- * @author Eric Dalquist
- * @version $Revision$
  */
 public class PortalPersonDirUserPasswordDaoTest extends TestCase {
     private JdbcTemplate jdbcTemplate;

@@ -27,8 +27,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 /**
  * Redirects the user to the Login servlet if they don't already have a session.
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 public class RequireValidSessionFilter extends OncePerRequestFilter {
 

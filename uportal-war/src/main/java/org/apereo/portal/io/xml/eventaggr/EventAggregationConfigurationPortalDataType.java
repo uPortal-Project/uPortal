@@ -12,7 +12,6 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/** */
 package org.apereo.portal.io.xml.eventaggr;
 
 import java.util.Arrays;
@@ -21,10 +20,6 @@ import javax.xml.namespace.QName;
 import org.apereo.portal.io.xml.AbstractPortalDataType;
 import org.apereo.portal.io.xml.PortalDataKey;
 
-/**
- * @author Nicholas Blair
- * @version $Id$
- */
 public class EventAggregationConfigurationPortalDataType extends AbstractPortalDataType {
     public static final QName EVENT_AGGREGATION_QNAME =
             new QName(

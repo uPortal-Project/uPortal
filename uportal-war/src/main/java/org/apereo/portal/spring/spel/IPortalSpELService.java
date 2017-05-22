@@ -26,8 +26,6 @@ import org.springframework.web.context.request.WebRequest;
  * } and text string content. For example, a portal-relative URL path might be formatted as
  * ${request.contextPath}/my/path.
  *
- * @author Jen Bourey, jbourey@unicon.net
- * @version $Revision$
  */
 public interface IPortalSpELService {
 

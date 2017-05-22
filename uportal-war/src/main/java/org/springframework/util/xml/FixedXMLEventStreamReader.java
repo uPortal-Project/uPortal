@@ -30,8 +30,6 @@ import javax.xml.stream.events.XMLEvent;
 /**
  * Fixed version of Springs's XMLEventStreamReader
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 public class FixedXMLEventStreamReader extends AbstractXMLStreamReader {
 

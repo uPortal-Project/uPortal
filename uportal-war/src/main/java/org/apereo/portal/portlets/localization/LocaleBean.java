@@ -21,8 +21,6 @@ import java.util.Locale;
  * LocaleBean wraps a java.util.Locale instance and provides simple getters for the display
  * properties.
  *
- * @author Jen Bourey, jbourey@unicon.net
- * @version $Revision$
  */
 public class LocaleBean implements Serializable {
 

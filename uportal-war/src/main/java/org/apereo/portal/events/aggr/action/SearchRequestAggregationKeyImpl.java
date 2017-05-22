@@ -20,7 +20,6 @@ import org.apereo.portal.events.aggr.DateDimension;
 import org.apereo.portal.events.aggr.TimeDimension;
 import org.apereo.portal.events.aggr.groups.AggregatedGroupMapping;
 
-/** @author Chris Waymire (chris@waymire.net) */
 public class SearchRequestAggregationKeyImpl extends BaseAggregationKeyImpl
         implements SearchRequestAggregationKey {
     private static final long serialVersionUID = 1L;

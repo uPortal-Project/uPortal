@@ -24,7 +24,7 @@ import org.w3c.dom.Element;
 /**
  * Applies user prefs changes to the user's plf prior to persisting.
  *
- * @since uPortal 2.5
+ * @since 2.5
  */
 public class TabColumnPrefsHandler {
     private static Log LOG = LogFactory.getLog(TabColumnPrefsHandler.class);

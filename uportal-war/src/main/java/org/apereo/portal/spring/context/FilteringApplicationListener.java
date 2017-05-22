@@ -28,8 +28,6 @@ import org.springframework.core.OrderComparator;
  * Uses list of {@link ApplicationEventFilter} to decide if an event should be passed to the
  * subclass.
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 public abstract class FilteringApplicationListener<E extends ApplicationEvent>
         implements ApplicationListener<E> {

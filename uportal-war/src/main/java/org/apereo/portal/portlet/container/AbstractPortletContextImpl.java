@@ -29,8 +29,6 @@ import org.springframework.util.Assert;
  * Base class for both {@link PortletRequestContext} and {@link PortletResponseContext}
  * implementations
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 public abstract class AbstractPortletContextImpl {
     protected final PortletContainer portletContainer;

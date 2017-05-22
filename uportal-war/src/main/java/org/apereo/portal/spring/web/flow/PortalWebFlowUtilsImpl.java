@@ -27,8 +27,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.webflow.context.ExternalContext;
 
 /**
- * @author Jen Bourey, jbourey@unicon.net
- * @version $Revision$
  */
 @Component("portalWebFlowUtils")
 public class PortalWebFlowUtilsImpl implements IPortalWebFlowUtils {

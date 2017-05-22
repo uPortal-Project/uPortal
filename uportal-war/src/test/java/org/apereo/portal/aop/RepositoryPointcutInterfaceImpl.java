@@ -17,8 +17,6 @@ package org.apereo.portal.aop;
 import org.springframework.stereotype.Repository;
 
 /**
- * @author Eric Dalquist
- * @version $Revision$
  */
 @Repository
 public class RepositoryPointcutInterfaceImpl implements RepositoryPointcutInterface {

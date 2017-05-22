@@ -45,7 +45,6 @@ import org.apereo.portal.utils.ConcurrentMapUtils;
  * #remove()}, {@link #element()}, {@link #drainTo(Collection)}, and {@link #drainTo(Collection,
  * int)} no matter how much time has elapsed
  *
- * @author Eric Dalquist
  * @param <K> The type of key used for grouping elements in the queue
  * @param <T> The type of elements in the queue
  */

@@ -41,16 +41,12 @@ import org.springframework.web.bind.annotation.*;
  * REST Controller that leverages PagsAdministrationHelper and related form classes to provide a
  * RESTful API for AJAX management of PAGS.
  *
- * @author Benito Gonzalez, bgonzalez@unicon.net
  */
 @Controller
 public class PagsRESTController {
     /*
      Tried to use ResponseEntities but the ran into conflicts when using <mvc:annotation-driven/>
     */
-
-    /** Help other Java classes use this API well. */
-    public static final String URL_FORMAT_STRING = "/api/v4-3/pags/%s.json";
 
     @Autowired private PagsService pagsService;
 

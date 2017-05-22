@@ -21,7 +21,6 @@ import org.apereo.portal.jpa.BaseRawEventsJpaDao;
 /**
  * Base class for RawEventsDb unit tests that want TX and entity manager support.
  *
- * @author Eric Dalquist
  */
 public abstract class BaseRawEventsJpaDaoTest extends BaseJpaDaoTest {
     private EntityManager entityManager;

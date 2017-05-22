@@ -32,8 +32,6 @@ import org.springframework.web.client.RestOperations;
  * Service for searching using the Google Custom-Search API:
  * https://developers.google.com/custom-search/v1/overview
  *
- * @author Eric Dalquist
- * @version $Revision: 1.1 $
  */
 public class GoogleCustomSearchService implements IPortalSearchService {
     public static final String QUERY_PARAM = "q";
@@ -94,7 +92,7 @@ public class GoogleCustomSearchService implements IPortalSearchService {
 
     @Override
     public SearchResults getSearchResults(PortletRequest request, SearchRequest query) {
-        final Map<String, Object> parameters = new LinkedHashMap<String, Object>();
+        final Map<String, Object> parameters = new LinkedHashMap<>();
 
         parameters.put(VERSION_PARAM, VERSION);
         parameters.put(RESULT_SIZE_PARAM, resultSize);

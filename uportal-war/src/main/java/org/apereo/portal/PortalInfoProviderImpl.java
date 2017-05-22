@@ -36,8 +36,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 /**
- * @author Eric Dalquist
- * @version $Revision$
  */
 @Service("portalInfoProvider")
 public class PortalInfoProviderImpl implements IPortalInfoProvider, ReadWriteCallback<String> {

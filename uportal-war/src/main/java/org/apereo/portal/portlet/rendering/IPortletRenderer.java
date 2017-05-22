@@ -29,8 +29,6 @@ import org.apereo.portal.portlet.om.IPortletWindowId;
  * Provides easy API for executing methods on portlets. Takes care of all of the uPortal specific
  * setup and tear down around portlet calls.
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 public interface IPortletRenderer {
     public static final WindowState EXCLUSIVE = new WindowState("EXCLUSIVE");

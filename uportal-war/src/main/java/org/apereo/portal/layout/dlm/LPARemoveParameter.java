@@ -22,7 +22,6 @@ import org.w3c.dom.Element;
 /**
  * Layout processing action for removing a channel parameter from the user's layout.
  *
- * @author Mark Boyd
  */
 public class LPARemoveParameter implements ILayoutProcessingAction {
     private String nodeId = null;

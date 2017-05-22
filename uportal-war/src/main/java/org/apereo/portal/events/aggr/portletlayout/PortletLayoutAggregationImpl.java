@@ -41,7 +41,6 @@ import org.hibernate.annotations.Index;
 import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.NaturalIdCache;
 
-/** @author Chris Waymire <cwaymire@unicon.net> */
 @Entity
 @Table(name = "UP_PORTLET_LAYOUT_AGGR")
 @Inheritance(strategy = InheritanceType.JOINED)

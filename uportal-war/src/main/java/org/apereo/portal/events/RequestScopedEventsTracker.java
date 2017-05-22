@@ -22,7 +22,6 @@ import javax.servlet.http.HttpServletRequest;
  * Tracks events that have been fired during this request and provides a thread-safe read-only set
  * of those events.
  *
- * @author Eric Dalquist
  */
 public interface RequestScopedEventsTracker {
 

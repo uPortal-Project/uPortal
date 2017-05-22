@@ -29,7 +29,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 /**
  * Lists each PAGS Group definition in the database
  *
- * @author Shawn Connolly, sconnolly@unicon.net
  */
 public class PersonAttributesGroupStoreDataFunction
         implements Function<IPortalDataType, Iterable<? extends IPortalData>> {

@@ -20,8 +20,6 @@ import java.io.Serializable;
  * Simple class that wraps a string and provides a getter/setter. Nessescary for binding into the
  * value of a Map in WebFlow
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 public class Attribute implements Serializable {
     private static final long serialVersionUID = 1L;

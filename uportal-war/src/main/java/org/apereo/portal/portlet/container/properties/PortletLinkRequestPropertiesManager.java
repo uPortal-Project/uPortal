@@ -21,8 +21,6 @@ import org.apereo.portal.portlet.rendering.IPortletRenderer;
 import org.springframework.stereotype.Service;
 
 /**
- * @author Jen Bourey, jennifer.bourey@gmail.com
- * @version $Revision$
  */
 @Service
 public class PortletLinkRequestPropertiesManager extends BaseRequestPropertiesManager {

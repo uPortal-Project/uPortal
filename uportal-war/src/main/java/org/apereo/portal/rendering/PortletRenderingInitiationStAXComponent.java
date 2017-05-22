@@ -37,8 +37,6 @@ import org.springframework.beans.factory.annotation.Autowired;
  * Initiates portlet rendering based each encountered {@link IUserLayoutManager#CHANNEL_HEADER} and
  * {@link IUserLayoutManager#CHANNEL} element in the event stream
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 public class PortletRenderingInitiationStAXComponent extends StAXPipelineComponentWrapper {
     protected final Logger logger = LoggerFactory.getLogger(getClass());

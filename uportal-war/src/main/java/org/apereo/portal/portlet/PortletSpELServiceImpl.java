@@ -42,7 +42,6 @@ import org.springframework.web.portlet.context.PortletWebRequest;
 /**
  * PortletSpELServiceImpl provides the default implementation of IPortletSpELService.
  *
- * @author James Wennmacher, jwennmacher@unicon.net (code based on PortalSpELServiceImpl by Jen
  *     Bourey)
  */
 @Service

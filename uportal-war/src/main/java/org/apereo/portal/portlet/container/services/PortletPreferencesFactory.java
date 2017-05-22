@@ -20,7 +20,6 @@ import org.apache.pluto.container.PortletRequestContext;
 /**
  * Creates {@link PortletPreferences} objects
  *
- * @author Eric Dalquist
  */
 public interface PortletPreferencesFactory {
 

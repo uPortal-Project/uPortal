@@ -19,7 +19,6 @@ import org.apereo.portal.utils.ComparableExtractingComparator;
 /**
  * Compare ExternalStylesheetData by name
  *
- * @author Eric Dalquist
  */
 public class ExternalStylesheetDataNameComparator
         extends ComparableExtractingComparator<ExternalStylesheetData, String> {

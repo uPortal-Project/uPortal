@@ -20,8 +20,6 @@ import org.apereo.portal.events.aggr.groups.AggregatedGroupMapping;
  * Base of all aggregation discriminators used to organize aggregation results into different report
  * columns
  *
- * @author James Wennmacher
- * @version $Revision$
  */
 public interface BaseGroupedAggregationDiscriminator {
 

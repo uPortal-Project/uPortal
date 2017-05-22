@@ -24,7 +24,6 @@ import javax.xml.stream.XMLEventReader;
 import org.apereo.portal.io.xml.AbstractPortalDataType;
 import org.apereo.portal.io.xml.PortalDataKey;
 
-/** @author Shawn Connolly, sconnolly@unicon.net */
 public class PersonAttributesGroupStorePortalDataType extends AbstractPortalDataType {
     public static final QName PERSON_ATTRIBUTE_GROUP_STORE_TYPE_QNAME = new QName("pags-group");
 

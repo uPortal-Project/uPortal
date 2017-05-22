@@ -25,8 +25,6 @@ import org.apereo.portal.portlet.om.IPortletEntityId;
 import org.apereo.portal.portlet.om.IPortletPreference;
 
 /**
- * @author Eric Dalquist
- * @version $Revision$
  */
 class TransientPortletEntity implements IPortletEntity {
     private final IPortletEntity delegatePortletEntity;

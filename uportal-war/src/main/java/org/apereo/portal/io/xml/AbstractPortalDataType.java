@@ -25,8 +25,6 @@ import org.slf4j.LoggerFactory;
 /**
  * Base IPortalDataType implementation that should simplify most implementations
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 public abstract class AbstractPortalDataType implements IPortalDataType {
     protected final Logger logger = LoggerFactory.getLogger(getClass());

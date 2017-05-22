@@ -30,8 +30,6 @@ import org.springframework.core.io.ResourceLoader;
  * document. Assumes that the provided 'base + href' argument or if base is null 'href' argument can
  * be correctly resolved by the {@link ResourceLoader}
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 public class ResourceLoaderURIResolver implements URIResolver {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());

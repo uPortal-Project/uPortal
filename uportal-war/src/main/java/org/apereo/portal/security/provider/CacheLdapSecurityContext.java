@@ -22,9 +22,6 @@ import org.apereo.portal.security.PortalSecurityException;
  * directory. It expects to be able to bind to the LDAP directory as the user so that it can
  * authenticate the user. The user's credentials are cached.
  *
- * @author Russell Tokuyama (University of Hawaii)
- * @author Ken Weiner, kweiner@unicon.net
- * @version $Revision$
  * @deprecated As of uPortal 2.1.3, use {@link
  *     org.apereo.portal.security.provider.SimpleLdapSecurityContext} chained with {@link
  *     org.apereo.portal.security.provider.CacheSecurityContext} instead

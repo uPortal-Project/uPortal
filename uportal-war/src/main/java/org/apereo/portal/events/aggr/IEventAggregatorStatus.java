@@ -19,8 +19,6 @@ import org.joda.time.DateTime;
 /**
  * Bean that tracks the status of portal event aggregator work.
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 public interface IEventAggregatorStatus {
     /** Types of aggregator processing */

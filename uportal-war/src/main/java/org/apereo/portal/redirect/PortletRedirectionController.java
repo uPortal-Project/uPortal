@@ -45,7 +45,6 @@ import org.springframework.web.servlet.HandlerMapping;
  * target URL. This controller can be used to map links from one portlet to another without
  * requiring the linking portlet know the entire URL structure of the target.
  *
- * @author Jen Bourey, jennifer.bourey@gmail.com
  */
 @Controller
 public class PortletRedirectionController {

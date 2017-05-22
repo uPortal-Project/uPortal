@@ -30,8 +30,6 @@ import org.apereo.portal.character.stream.events.CharacterEvent;
  * Generates {@link CharacterEvent} instances from matched {@link StartElement} events of {@link
  * Pattern}s
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 public interface CharacterEventSource {
     /**

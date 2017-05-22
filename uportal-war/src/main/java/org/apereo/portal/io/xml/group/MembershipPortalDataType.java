@@ -23,8 +23,6 @@ import org.apereo.portal.io.xml.PortalDataKey;
 /**
  * Describes a member of a group
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 public class MembershipPortalDataType extends AbstractPortalDataType {
     public static final QName LEGACY_MEMBERSHIP_QNAME = new QName("membership");

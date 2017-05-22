@@ -29,7 +29,6 @@ import org.springframework.stereotype.Repository;
 /**
  * DAO for Concurrent User Aggregations
  *
- * @author Eric Dalquist
  */
 @Repository
 public class JpaConcurrentUserAggregationDao

@@ -1,0 +1,8 @@
+description = "Apereo uPortal Security"
+
+dependencies {
+    compile project(':uPortal-groups:uPortal-groups-core')
+    compile project(':uPortal-portlet')
+
+    // compile "com.google.guava:guava:${guavaVersion}"
+}

@@ -21,8 +21,6 @@ import java.util.List;
 import org.jvnet.jaxb2_commons.lang.Validate;
 
 /**
- * @author Eric Dalquist
- * @version $Revision$
  */
 public class TableFormatter {
     public static final class TableEntry<T> {

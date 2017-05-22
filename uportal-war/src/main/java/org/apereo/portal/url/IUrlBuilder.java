@@ -20,8 +20,6 @@ import java.util.Map;
 /**
  * Base class to define common methods for URL builders
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 public interface IUrlBuilder {
     /**

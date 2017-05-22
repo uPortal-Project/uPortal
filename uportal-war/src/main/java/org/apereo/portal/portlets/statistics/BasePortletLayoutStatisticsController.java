@@ -45,7 +45,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.portlet.ModelAndView;
 
-/** @author Chris Waymire <cwaymire@unicon.net> */
 public abstract class BasePortletLayoutStatisticsController<F extends BasePortletLayoutReportForm>
         extends BaseStatisticsReportController<
                 PortletLayoutAggregation, PortletLayoutAggregationKey,

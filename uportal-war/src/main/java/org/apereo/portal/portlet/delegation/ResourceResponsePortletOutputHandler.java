@@ -23,7 +23,6 @@ import org.apereo.portal.portlet.rendering.PortletResourceOutputHandler;
 /**
  * Delegates to a {@link ResourceResponse}
  *
- * @author Eric Dalquist
  */
 public class ResourceResponsePortletOutputHandler extends MimeResponsePortletOutputHandler
         implements PortletResourceOutputHandler {

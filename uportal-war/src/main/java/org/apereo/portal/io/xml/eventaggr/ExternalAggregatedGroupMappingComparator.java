@@ -22,7 +22,6 @@ import org.apereo.portal.utils.ComparableExtractingComparator;
 /**
  * Sort group mappings
  *
- * @author Eric Dalquist
  */
 public class ExternalAggregatedGroupMappingComparator
         implements Comparator<ExternalAggregatedGroupMapping> {

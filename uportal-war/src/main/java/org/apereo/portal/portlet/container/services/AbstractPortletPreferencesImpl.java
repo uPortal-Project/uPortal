@@ -34,7 +34,6 @@ import org.springframework.util.Assert;
 /**
  * Base class for portlet preferences
  *
- * @author Eric Dalquist
  */
 public abstract class AbstractPortletPreferencesImpl<C> implements PortletPreferences {
     protected final Logger logger = LoggerFactory.getLogger(getClass());

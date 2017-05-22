@@ -19,8 +19,6 @@ import javax.xml.namespace.QName;
 import org.apache.commons.lang.Validate;
 
 /**
- * @author Eric Dalquist
- * @version $Revision$
  */
 public final class PortletEventExecutionEvent extends PortletExecutionEvent {
     private static final long serialVersionUID = 1L;

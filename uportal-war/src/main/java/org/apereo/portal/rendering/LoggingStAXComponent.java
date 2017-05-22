@@ -33,7 +33,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 /**
  * Logs the StAX events
  *
- * @author Eric Dalquist
  */
 public class LoggingStAXComponent extends StAXPipelineComponentWrapper {
     private Logger logger = LoggerFactory.getLogger(getClass());

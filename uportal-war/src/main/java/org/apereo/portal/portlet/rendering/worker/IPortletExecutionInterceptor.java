@@ -23,8 +23,6 @@ import org.apereo.portal.portlet.om.IPortletWindowId;
  * #postExecution(HttpServletRequest, HttpServletResponse, IPortletWindowId, Exception)} will always
  * be called within a finally block.
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 public interface IPortletExecutionInterceptor {
     /**

@@ -15,8 +15,6 @@
 package org.apereo.portal.aop;
 
 /**
- * @author Eric Dalquist
- * @version $Revision$
  */
 public interface RepositoryPointcutInterface {
     String methodOne(String arg);

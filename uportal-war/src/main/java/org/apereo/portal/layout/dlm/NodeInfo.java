@@ -20,7 +20,7 @@ import org.w3c.dom.Element;
  * Simple tuple that holds onto metadata about a layout node while the Composite Layout is being
  * calculated.
  *
- * @since uPortal 2.5
+ * @since 2.5
  */
 public class NodeInfo {
 

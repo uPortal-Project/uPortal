@@ -54,9 +54,6 @@ import org.springframework.web.portlet.mvc.AbstractController;
  *
  * This portlet is useful for exposing results of a simple DB query as a single page for users.
  *
- * @author Andrew Petro
- * @author Jen Bourey, jbourey@unicon.net
- * @revision $Revision$
  */
 public class SqlQueryPortletController extends AbstractController {
     /**

@@ -27,8 +27,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 /**
  * Lists each fragment owner in the portal
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 public class FragmentLayoutsDataFunction
         implements Function<IPortalDataType, Iterable<? extends IPortalData>> {

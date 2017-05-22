@@ -47,8 +47,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 /**
  * Requests a CAS Proxy ticket for the current portlet and adds it to the Pluto UserInfoService.
  *
- * @author Jen Bourey
- * @version $Revision$
  */
 public class CasTicketUserInfoService implements UserInfoService {
 

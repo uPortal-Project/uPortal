@@ -38,8 +38,6 @@ import org.xml.sax.SAXException;
  * that. This is meant to simulate what currently happens in {@link
  * DistributedLayoutManager#getUserLayoutReader()}
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 public class StaticDocumentComponent implements StAXPipelineComponent {
     private Resource document;

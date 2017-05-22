@@ -37,8 +37,6 @@ import org.apache.pluto.container.om.portlet.PortletDefinition;
 import org.apereo.portal.portlet.om.IPortletWindow;
 
 /**
- * @author Eric Dalquist
- * @version $Revision$
  */
 public class EventProviderImpl implements EventProvider {
     protected final Log logger = LogFactory.getLog(this.getClass());

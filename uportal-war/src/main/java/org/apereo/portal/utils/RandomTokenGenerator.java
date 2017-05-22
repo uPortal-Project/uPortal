@@ -22,8 +22,6 @@ import java.util.Random;
  * except i, l and o. This is intended to create a set that avoids numbers and letters which can
  * easily be confused with others depending on the font in use.
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 public final class RandomTokenGenerator {
     private static final char[] DEFAULT_TOKEN_CHARS =

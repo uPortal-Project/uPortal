@@ -21,8 +21,6 @@ import org.apereo.portal.portlet.om.IPortletWindowId;
 /**
  * Service that manages handling and queueing portlet events
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 public interface IPortletEventCoordinationService extends EventCoordinationService {
     /**

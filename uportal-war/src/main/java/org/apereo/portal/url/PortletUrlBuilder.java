@@ -26,8 +26,6 @@ import org.apereo.portal.portlet.om.IPortletWindowId;
 /**
  * Builds a portlet URL
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 class PortletUrlBuilder extends AbstractUrlBuilder implements IPortletUrlBuilder {
     private final IPortletWindowId portletWindowId;

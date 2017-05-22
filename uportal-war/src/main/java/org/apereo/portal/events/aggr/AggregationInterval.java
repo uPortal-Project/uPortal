@@ -25,7 +25,6 @@ import org.joda.time.ReadableInstant;
  * Enumeration of all time intervals the event aggregation can handle. All of the example ranges are
  * inclusive on both ends
  *
- * @author Eric Dalquist
  */
 public enum AggregationInterval {
     /**

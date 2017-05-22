@@ -29,7 +29,6 @@ import org.springframework.util.Assert;
 /**
  * Interceptor for RestTemplate that add the headers required for Basic authentication.
  *
- * @author Josh Helmer, jhelmer@unicon.net
  */
 public class BasicAuthInterceptor implements ClientHttpRequestInterceptor {
     private String id;

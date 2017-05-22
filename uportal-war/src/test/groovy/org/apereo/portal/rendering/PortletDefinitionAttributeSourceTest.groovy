@@ -29,7 +29,6 @@ import javax.xml.stream.XMLEventFactory
 /**
  * Tests PortletDefinitionAttributeSource.
  *
- * @author James Wennmacher, jwennmacher@unicon.net
  */
 
 class PortletDefinitionAttributeSourceTest extends GroovyTestCase {

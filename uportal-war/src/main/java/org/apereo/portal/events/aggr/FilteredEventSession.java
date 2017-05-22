@@ -25,7 +25,6 @@ import org.joda.time.DateTime;
  * {@link EventSession} that provides a filtered view of another {@link EventSession} based on an
  * {@link AggregatedGroupConfig}
  *
- * @author Eric Dalquist
  */
 class FilteredEventSession implements EventSession {
     private static final long serialVersionUID = 1L;

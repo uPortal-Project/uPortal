@@ -39,8 +39,6 @@ import org.springframework.stereotype.Service;
 /**
  * Generates {@link IPortalUrlBuilder} objects based on various layout and portlet targets.
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 @Service
 public class PortalUrlProviderImpl implements IPortalUrlProvider {

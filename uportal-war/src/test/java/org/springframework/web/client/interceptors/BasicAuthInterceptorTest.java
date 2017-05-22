@@ -38,7 +38,6 @@ import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.web.client.RestTemplate;
 
-/** @author Josh Helmer, jhelmer@unicon.net */
 public class BasicAuthInterceptorTest {
     @Test
     public void testInterceptorWithUsernamePassword() throws Exception {

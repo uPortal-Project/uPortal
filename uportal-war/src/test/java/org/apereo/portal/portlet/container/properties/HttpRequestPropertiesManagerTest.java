@@ -26,8 +26,6 @@ import org.easymock.EasyMock;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 /**
- * @author Eric Dalquist
- * @version $Revision$
  */
 public class HttpRequestPropertiesManagerTest extends TestCase {
     private HttpRequestPropertiesManager httpRequestPropertiesManager;

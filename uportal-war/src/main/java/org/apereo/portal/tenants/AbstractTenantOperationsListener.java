@@ -31,7 +31,6 @@ import org.springframework.context.MessageSource;
  * a base class for concrete listeners that need to override some but not all of the methods.
  *
  * @since 4.1
- * @author awills
  */
 public abstract class AbstractTenantOperationsListener implements ITenantOperationsListener {
 
@@ -57,13 +56,13 @@ public abstract class AbstractTenantOperationsListener implements ITenantOperati
                 getClass().getName() + ".name", null, getCurrentUserLocale());
     }
 
-    /** @since uPortal 4.3 */
+    /** @since 4.3 */
     @Override
     public final String getFname() {
         return fname;
     }
 
-    /** @since uPortal 4.3 */
+    /** @since 4.3 */
     @Override
     public boolean isOptional() {
         return false;
@@ -84,7 +83,7 @@ public abstract class AbstractTenantOperationsListener implements ITenantOperati
         return getDefaultResponse();
     }
 
-    /** @since uPortal 4.3 */
+    /** @since 4.3 */
     @Override
     public Set<ITenantManagementAction> getAvaialableActions() {
         return Collections.emptySet();
@@ -94,7 +93,7 @@ public abstract class AbstractTenantOperationsListener implements ITenantOperati
     @Override
     public void validateAttribute(final String key, final String value) throws Exception {}
 
-    /** @since uPortal 4.3 */
+    /** @since 4.3 */
     protected String createLocalizedMessage(final String messageCode, final Object[] args) {
         final Locale locale = getCurrentUserLocale();
         return messageSource.getMessage(messageCode, args, locale);

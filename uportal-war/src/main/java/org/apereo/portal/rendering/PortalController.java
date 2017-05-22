@@ -33,7 +33,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-/** @author Eric Dalquist */
 @Controller
 @RequestMapping(value = "/**")
 public class PortalController {

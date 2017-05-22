@@ -23,7 +23,6 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * PortletOutputHandler that delegates all methods directly to a {@link HttpServletResponse}
  *
- * @author Eric Dalquist
  */
 public class ResourcePortletOutputHandler implements PortletResourceOutputHandler {
     private final HttpServletResponse response;

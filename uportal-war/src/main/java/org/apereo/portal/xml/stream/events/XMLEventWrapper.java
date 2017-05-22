@@ -26,8 +26,6 @@ import javax.xml.stream.events.XMLEvent;
 /**
  * Wraps an {@link XMLEvent} delegating all method calls to it
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 public class XMLEventWrapper implements XMLEvent {
     private final XMLEvent event;

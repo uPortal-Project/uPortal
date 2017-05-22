@@ -25,7 +25,6 @@ import org.apereo.portal.groups.pags.dao.IPersonAttributesGroupTestGroupDefiniti
 /**
  * Helper class called from crn to handle the object creation and updates during PAGS import
  *
- * @author Shawn Connolly, sconnolly@unicon.net
  */
 public class PersonAttributesGroupImportHelper {
     private IPersonAttributesGroupDefinitionDao personAttributesGroupDefinitionDao;

@@ -22,8 +22,6 @@ import org.springframework.beans.factory.BeanNameAware;
  * Base class for copying data from a {@link ThreadLocal} in the calling thread into the worker
  * thread.
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 public abstract class ThreadLocalPortletExecutionInterceptor<T>
         extends PortletExecutionInterceptorAdaptor implements BeanNameAware {

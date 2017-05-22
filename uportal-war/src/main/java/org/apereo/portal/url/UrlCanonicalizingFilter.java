@@ -32,8 +32,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 /**
  * Sets request info headers and forces canonical portal URLs
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 public class UrlCanonicalizingFilter extends OncePerRequestFilter {
     private static final String COOKIE_NAME = "UrlCanonicalizingFilter.REDIRECT_COUNT";

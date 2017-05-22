@@ -34,7 +34,6 @@ import org.apache.commons.lang.Validate;
  *
  * Example Noderef: u13l1s2
  *
- * @author awills
  */
 public final class Noderef {
 

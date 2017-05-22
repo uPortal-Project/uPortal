@@ -1,9 +1,141 @@
 # uPortal
 
-| Version | Linux | Windows | Coverage |
-| - | - | - | - |
-| [uPortal 5](https://github.com/Jasig/uPortal/tree/master) | [![Linux Build Status](https://travis-ci.org/Jasig/uPortal.svg?branch=master)](https://travis-ci.org/Jasig/uPortal) | [![Windows Build Status](https://ci.appveyor.com/api/projects/status/8t95sjt090mf62dh/branch/master?svg=true)](https://ci.appveyor.com/project/drewwills/uportal/branch/master) | [![Coverage Status](https://coveralls.io/repos/github/Jasig/uPortal/badge.svg?branch=master)](https://coveralls.io/github/Jasig/uPortal?branch=master) |
-| [uPortal 4](https://github.com/Jasig/uPortal/tree/rel-4-3-patches) | [![Linux Build Status](https://travis-ci.org/Jasig/uPortal.svg?branch=rel-4-3-patches)](https://travis-ci.org/Jasig/uPortal) | [![Windows Build Status](https://ci.appveyor.com/api/projects/status/8t95sjt090mf62dh/branch/rel-4-3-patches?svg=true)](https://ci.appveyor.com/project/drewwills/uportal/branch/rel-4-3-patches) | [![Coverage Status](https://coveralls.io/repos/github/Jasig/uPortal/badge.svg?branch=rel-4-3-patches)](https://coveralls.io/github/Jasig/uPortal?branch=rel-4-3-patches) |
+<table border="0">
+  <tr>
+    <td>
+      <a href="https://www.w3.org/TR/WCAG20/">
+        <img src="https://www.w3.org/WAI/wcag2AA-blue-v.svg" alt="WCAG 2 AA Badge">
+      </a>
+      <a href="http://issuestats.com/github/Jasig/uPortal">
+        <img src="http://issuestats.com/github/Jasig/uPortal/badge/pr" alt="Issue Stats">
+      </a>
+      <a href="https://google.github.io/styleguide/javaguide.html">
+        <img src="https://img.shields.io/badge/code_style-Google-green.svg?style=flat" alt="Google Code Style">
+      </a>
+      <br>
+      <table>
+        <tr>
+          <th>
+            Version
+          </th>
+          <th>
+            Linux
+          </th>
+          <th>
+            Windows
+          </th>
+          <th>
+            Coverage
+          </th>
+        </tr>
+        <tr>
+          <td>
+            <a href="https://github.com/Jasig/uPortal/tree/master">
+              uPortal 5
+            </a>
+          </td>
+          <td>
+            <a href="https://travis-ci.org/Jasig/uPortal">
+              <img src="https://travis-ci.org/Jasig/uPortal.svg?branch=master" alt="Linux Build Status">
+            </a>
+          </td>
+          <td>
+            <a href="https://ci.appveyor.com/project/drewwills/uportal/branch/master">
+              <img src="https://ci.appveyor.com/api/projects/status/8t95sjt090mf62dh/branch/master?svg=true" alt="Windows Build Status">
+            </a>
+          </td>
+          <td>
+            <a href="https://coveralls.io/github/Jasig/uPortal?branch=master">
+              <img src="https://coveralls.io/repos/github/Jasig/uPortal/badge.svg?branch=master" alt="Coverage Status">
+            </a>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <a href="https://github.com/Jasig/uPortal/tree/rel-4-3-patches">
+              uPortal 4
+            </a>
+          </td>
+          <td>
+            <a href="https://travis-ci.org/Jasig/uPortal">
+              <img src="https://travis-ci.org/Jasig/uPortal.svg?branch=rel-4-3-patches" alt="Linux Build Status">
+            </a>
+          </td>
+          <td>
+            <a href="https://ci.appveyor.com/project/drewwills/uportal/branch/rel-4-3-patches">
+              <img src="https://ci.appveyor.com/api/projects/status/8t95sjt090mf62dh/branch/rel-4-3-patches?svg=true" alt="Windows Build Status">
+            </a>
+          </td>
+          <td>
+            <a href="https://coveralls.io/github/Jasig/uPortal?branch=rel-4-3-patches">
+              <img src="https://coveralls.io/repos/github/Jasig/uPortal/badge.svg?branch=rel-4-3-patches" alt="Coverage Status">
+            </a>
+          </td>
+        </tr>
+      </table>
+    </td>
+    <td>
+      <table>
+        <tr>
+          <th>
+            Get Involved
+          </th>
+          <th>
+            Outlet
+          </th>
+        </tr>
+        <tr>
+          <td>
+            Report an Issue
+          </td>
+          <td>
+            <a href="https://issues.jasig.org/browse/UP">
+              <img src="https://img.shields.io/badge/issue_tacker-Jira-green.svg?style=flat" alt="Issue Tracker">
+            </a>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            Request a feature
+          </td>
+          <td>
+            <a href="https://issues.jasig.org/browse/UP">
+              <img src="https://img.shields.io/badge/issue_tacker-Jira-green.svg?style=flat" alt="Issue Tracker">
+            </a>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            Contribute Code
+          </td>
+          <td>
+            <a href="CONTRIBUTING.md">
+              <img src="https://img.shields.io/badge/contributing-guide-green.svg?style=flat" alt="Contributing Guide">
+            </a>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            Join the Conversation
+          </td>
+          <td>
+            <a href="https://gitter.im/Jasig/uPortal?utm_source=badge&amp;utm_medium=badge&amp;utm_campaign=pr-badge">
+              <img src="https://badges.gitter.im/Jasig/uPortal.svg" alt="Gitter">
+            </a>
+            <br>
+            <a href="https://www.irccloud.com/invite?channel=%23jasig-uportal&amp;hostname=irc.freenode.net&amp;port=6697&amp;ssl=1">
+              <img src="https://img.shields.io/badge/IRC-%23jasig--uportal-1e72ff.svg?style=flat" alt="uPortal on IRC">
+            </a>
+            <br>
+            <a href="https://twitter.com/uPortal">
+              <img src="https://img.shields.io/twitter/follow/uPortal.svg?style=social&amp;label=Follow" alt="Twitter Follow">
+            </a>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
 
 ## About
 
@@ -26,12 +158,10 @@ has access to all releases of the uPortal software with absolutely no costs. We
 welcome [contributions from our community](https://github.com/Jasig/uPortal/graphs/contributors)
 of all types and sizes.
 
-### Accessibility
+### Accessible
 
-uPortal strives to conform with Web Content Accessibility Guidelines Version 2.0 Level AA.
+uPortal strives to conform with [Web Content Accessibility Guidelines Version 2.0](https://www.w3.org/TR/WCAG20/) Level AA.
 The most recent accessibility audit results can be seen in [UP-4735](https://issues.jasig.org/browse/UP-4735).
-
-[![WCAG 2 AA Badge](https://www.w3.org/WAI/wcag2AA-blue-v.svg)](https://www.w3.org/TR/WCAG20/)
 
 ## Help and Support
 

@@ -24,7 +24,6 @@ import org.apereo.portal.url.BaseEncodedStringBuilder;
 /**
  * Builds a valid URN
  *
- * @author Eric Dalquist
  */
 public final class UrnBuilder extends BaseEncodedStringBuilder {
     private static final long serialVersionUID = 1L;

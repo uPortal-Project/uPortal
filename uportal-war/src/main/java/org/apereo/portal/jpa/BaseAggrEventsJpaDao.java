@@ -30,7 +30,6 @@ import org.springframework.transaction.support.TransactionOperations;
 /**
  * Base for DAOs that interact with the "AggrEventsDb" JPA Persistent Unit
  *
- * @author Eric Dalquist
  */
 public class BaseAggrEventsJpaDao extends BaseJpaDao {
     public static final String PERSISTENCE_UNIT_NAME = "AggrEventsDb";

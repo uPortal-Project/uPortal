@@ -28,7 +28,6 @@ import org.apereo.portal.portlet.rendering.PortletOutputHandler;
  * Captures the output of a portlet for later re-use. The maximumSize field allows for setting a max
  * number of bytes/chars to cache before giving up on the caching.
  *
- * @author Eric Dalquist
  */
 public class CachingPortletOutputHandler implements PortletOutputHandler {
     private final PortletOutputHandler portletOutputHandler;

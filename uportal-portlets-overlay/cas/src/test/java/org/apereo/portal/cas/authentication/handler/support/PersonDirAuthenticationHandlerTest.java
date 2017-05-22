@@ -22,8 +22,6 @@ import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.junit.Test;
 
 /**
- * @author Eric Dalquist
- * @version $Revision$
  */
 public class PersonDirAuthenticationHandlerTest {
 

@@ -19,9 +19,6 @@ import java.util.Date;
 import org.apereo.portal.security.IPermission;
 
 /**
- * @author Bernie Durfee (bdurfee@interactivebusiness.com)
- * @author Dan Ellentuck
- * @version $Revision$
  */
 public class PermissionImpl implements IPermission, Serializable {
     private String m_owner = null;

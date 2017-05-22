@@ -36,8 +36,6 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 /**
  * Lists each fragment owner in the portal
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 public class LayoutsDataFunction
         implements Function<IPortalDataType, Iterable<? extends IPortalData>>, InitializingBean {

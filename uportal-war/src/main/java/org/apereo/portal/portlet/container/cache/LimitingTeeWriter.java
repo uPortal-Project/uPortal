@@ -26,7 +26,6 @@ import org.apereo.portal.utils.TeeWriter;
  *
  * <p>A callback {@link Function} to be executed when the limit is hit can be provided as well.
  *
- * @author Nicholas Blair
  */
 public class LimitingTeeWriter extends TeeWriter {
     private final long maximumCharacters;

@@ -26,7 +26,7 @@ import org.apereo.portal.security.IPerson;
  * Marketplace service layer responsible for gathering and applying policy about what Marketplace
  * entries and categories ought to be available to a given user.
  *
- * @since uPortal 4.1
+ * @since 4.1
  */
 public interface IMarketplaceService {
 
@@ -39,7 +39,7 @@ public interface IMarketplaceService {
      * @param categories Restricts the output to entries within the specified categories if
      *     non-empty
      * @throws IllegalArgumentException when passed in user is null
-     * @since uPortal 4.2
+     * @since 4.2
      */
     ImmutableSet<MarketplaceEntry> browseableMarketplaceEntriesFor(
             IPerson user, final Set<PortletCategory> categories);
@@ -54,7 +54,7 @@ public interface IMarketplaceService {
      * @param categories Restricts the output to entries within the specified categories if
      *     non-empty
      * @return potentially empty non-null Set of browseable categories
-     * @since uPortal 4.1
+     * @since 4.1
      */
     Set<PortletCategory> browseableNonEmptyPortletCategoriesFor(
             IPerson user, final Set<PortletCategory> categories);
@@ -69,7 +69,7 @@ public interface IMarketplaceService {
      * @return true if permitted, false otherwise
      * @throws IllegalArgumentException If user is null
      * @throws IllegalArgumentException If portletDefinition is null
-     * @since uPortal 4.1
+     * @since 4.1
      */
     boolean mayBrowsePortlet(
             IAuthorizationPrincipal principal, IPortletDefinition portletDefinition);
@@ -83,7 +83,7 @@ public interface IMarketplaceService {
      * @param categories Restricts the output to entries within the specified categories if
      *     non-empty
      * @return non-null potentially empty Set of featured portlet MarketplaceEntries.
-     * @since uPortal 4.2
+     * @since 4.2
      */
     Set<MarketplaceEntry> featuredEntriesForUser(
             IPerson user, final Set<PortletCategory> categories);
@@ -116,7 +116,7 @@ public interface IMarketplaceService {
      * @return true if permitted, false otherwise
      * @throws IllegalArgumentException if user is null
      * @throws IllegalArgumentException if portletDefinition is null
-     * @since uPortal 4.2
+     * @since 4.2
      */
     boolean mayAddPortlet(final IPerson user, final IPortletDefinition portletDefinition);
 }

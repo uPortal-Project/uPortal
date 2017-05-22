@@ -18,8 +18,6 @@ package org.apereo.portal;
  * Houses constants used in the portal code base. Developers, any constants added here should be
  * clearly documented.
  *
- * @author Mark Boyd {@link <a href="mailto:mark.boyd@engineer.com">mark.boyd@engineer.com</a>}
- * @version $Revision$
  */
 public class Constants {
 

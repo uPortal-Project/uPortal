@@ -29,8 +29,6 @@ import org.apereo.portal.utils.IncludeExcludeUtils;
  * #isIncluded(Object)} it should call {@link #clearIncludedCache()} after the includes or excludes
  * are modified.
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 @MappedSuperclass
 public abstract class BaseAggregatedDimensionConfigImpl<D>

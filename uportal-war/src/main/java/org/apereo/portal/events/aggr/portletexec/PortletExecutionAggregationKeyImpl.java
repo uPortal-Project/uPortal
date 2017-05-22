@@ -24,7 +24,6 @@ import org.apereo.portal.events.aggr.portlets.AggregatedPortletMapping;
 /**
  * Basic impl of {@link PortletExecutionAggregationKey}
  *
- * @author Eric Dalquist
  */
 public final class PortletExecutionAggregationKeyImpl extends BaseAggregationKeyImpl
         implements PortletExecutionAggregationKey {

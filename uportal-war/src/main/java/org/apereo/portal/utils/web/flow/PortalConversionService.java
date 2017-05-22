@@ -20,7 +20,6 @@ import org.springframework.binding.convert.service.DefaultConversionService;
 /**
  * This class contains the custom converters for Spring Web Flow type conversions.
  *
- * @author Drew Mazurek
  */
 public class PortalConversionService extends DefaultConversionService {
 

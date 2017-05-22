@@ -23,8 +23,6 @@ import java.util.Map;
  * Populates a Map with a List for the value. Each call to {@link #put(Object, Object)} or {@link
  * #putAll(Map)} adds values to the list
  *
- * @author Eric Dalquist
- * @version $Revision$
  * @param <K>
  * @param <V>
  */

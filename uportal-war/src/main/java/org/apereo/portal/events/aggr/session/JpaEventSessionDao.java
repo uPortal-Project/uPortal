@@ -42,8 +42,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 /**
- * @author Eric Dalquist
- * @version $Revision$
  */
 @Repository("eventSessionDao")
 public class JpaEventSessionDao extends BaseAggrEventsJpaDao implements EventSessionDao {

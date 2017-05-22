@@ -50,8 +50,6 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpSession;
 
 /**
- * @author Nicholas Blair
- * @version $Id$
  */
 @RunWith(MockitoJUnitRunner.class)
 public class PortletCacheControlServiceImplTest {

@@ -24,7 +24,6 @@ import org.apereo.portal.utils.ComparableExtractingComparator;
  * Basic impl of {@link
  * org.apereo.portal.events.aggr.portletexec.PortletExecutionAggregationDiscriminator}
  *
- * @author James Wennmacher, jameswennmacher@gmail.com
  */
 public final class PortletExecutionAggregationDiscriminatorImpl
         extends BaseGroupedAggregationDiscriminatorImpl

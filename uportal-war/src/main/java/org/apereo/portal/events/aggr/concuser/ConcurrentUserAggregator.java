@@ -29,8 +29,6 @@ import org.springframework.beans.factory.annotation.Autowired;
  * Event aggregator that uses {@link ConcurrentUserAggregationPrivateDao} to aggregate concurrent
  * user data
  *
- * @author Eric Dalquist
- * @version $Revision$
  */
 public class ConcurrentUserAggregator
         extends BaseIntervalAwarePortalEventAggregator<

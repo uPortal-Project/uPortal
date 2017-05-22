@@ -19,8 +19,6 @@ import java.io.Serializable;
 /**
  * This class is for response on AJAX requests in order to populate list of translateable entities.
  *
- * @author Arvids Grabovskis
- * @version $Revision$
  */
 class TranslatableEntity implements Serializable {
 

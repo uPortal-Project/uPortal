@@ -17,7 +17,6 @@ package org.apereo.portal.events;
 import org.apereo.portal.dao.usertype.FunctionalNameType;
 import org.apereo.portal.security.IPerson;
 
-/** @author Chris Waymire <cwaymire@unicon.net> */
 public abstract class PortletLayoutPortalEvent extends LayoutPortalEvent {
     private static final long serialVersionUID = 1L;
 

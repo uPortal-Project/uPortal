@@ -19,8 +19,7 @@ import java.util.Set;
 /**
  * Interface that supports pluggable behavior when tenants are created, updated, or removed.
  *
- * @since uPortal 4.1
- * @author awills
+ * @since 4.1
  */
 public interface ITenantOperationsListener {
 
@@ -33,14 +32,14 @@ public interface ITenantOperationsListener {
     /**
      * The (short) string that identifies this listener uniquely.
      *
-     * @since uPortal 4.3
+     * @since 4.3
      */
     String getFname();
 
     /**
      * Is skipping this listener permissable?
      *
-     * @since uPortal 4.3
+     * @since 4.3
      */
     boolean isOptional();
 
@@ -61,14 +60,14 @@ public interface ITenantOperationsListener {
      * tenant. Normally these actions might be the same as, or similar too, the behavior they
      * implement for tenant CrUD operations. Example: 'Re-send Tenant Admin Email'
      *
-     * @since uPortal 4.3
+     * @since 4.3
      */
     Set<ITenantManagementAction> getAvaialableActions();
 
     /**
      * Throws an exception if the specified value isn't allowable for the specified attribute.
      *
-     * @since uPortal 4.3
+     * @since 4.3
      */
     void validateAttribute(String key, String value) throws Exception;
 }

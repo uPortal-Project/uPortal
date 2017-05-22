@@ -15,9 +15,7 @@
 package org.apereo.portal.utils;
 
 /**
- * @author George Lindholm <a href="mailto:George.Lindholm@ubc.ca">George.Lindholm@ubc.ca</a>
- * @version $Revision$ $Date$
- * @since uPortal 2.5
+ * @since 2.5
  */
 public class MovingAverage {
 

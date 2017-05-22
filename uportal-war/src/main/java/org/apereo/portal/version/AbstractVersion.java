@@ -20,7 +20,6 @@ import org.apereo.portal.version.om.Version;
 /**
  * Base class for versions that implements a "correct" equals hashCode, equals and toString
  *
- * @author Eric Dalquist
  */
 public abstract class AbstractVersion implements Version, Serializable {
     private static final long serialVersionUID = 1L;

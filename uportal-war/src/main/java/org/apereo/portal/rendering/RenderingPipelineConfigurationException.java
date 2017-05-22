@@ -16,7 +16,6 @@ package org.apereo.portal.rendering;
 
 import org.apereo.portal.PortalException;
 
-/** @author Eric Dalquist */
 public class RenderingPipelineConfigurationException extends PortalException {
     private static final long serialVersionUID = 1L;
 

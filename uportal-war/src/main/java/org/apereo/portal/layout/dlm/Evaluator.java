@@ -32,8 +32,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
- * @version $Revision$ $Date$
- * @since uPortal 2.5
+ * @since 2.5
  */
 @Entity
 @Table(name = "UP_DLM_EVALUATOR")

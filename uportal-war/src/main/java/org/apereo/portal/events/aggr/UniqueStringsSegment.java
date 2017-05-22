@@ -44,7 +44,6 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
  * being reloaded for the parent entity but the contents of each UniqueStringsSegment will not need
  * to be modified.
  *
- * @author Eric Dalquist
  */
 @Entity
 @Table(name = "UP_UNIQUE_STR_SEGMENT")
