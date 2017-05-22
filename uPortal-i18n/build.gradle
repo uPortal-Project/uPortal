@@ -1,0 +1,7 @@
+description = "Apereo uPortal i18n"
+
+dependencies {
+    compile project(':uPortal-rdbm')
+
+    // compile "commons-lang:commons-lang:${commonsLangVersion}"
+}
