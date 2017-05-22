@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<portlet-definition version="4.3" xsi:schemaLocation="https://source.jasig.org/schemas/uportal/io/portlet-definition https://source.jasig.org/schemas/uportal/io/portlet-definition/portlet-definition-4.3.xsd" xmlns="https://source.jasig.org/schemas/uportal/io/portlet-definition" xmlns:ns6="https://source.jasig.org/schemas/uportal/io/portlet-type" xmlns:ns5="https://source.jasig.org/schemas/uportal/io/stylesheet-descriptor" xmlns:ns8="https://source.jasig.org/schemas/uportal/io/event-aggregation" xmlns:ns7="https://source.jasig.org/schemas/uportal/io/subscribed-fragment" xmlns:ns2="https://source.jasig.org/schemas/uportal" xmlns:ns4="https://source.jasig.org/schemas/uportal/io/user" xmlns:ns3="https://source.jasig.org/schemas/uportal/io/permission-owner" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <title>Permission Administration Launcher</title>
+    <name>Permission Administration Launcher</name>
+    <fname>permission-administration-launcher</fname>
+    <desc>Manage Permissions</desc>
+    <type>App Launcher</type>
+    <timeout>5000</timeout>
+    <portlet-descriptor>
+        <ns2:webAppName>/jasig-widget-portlets</ns2:webAppName>
+        <ns2:portletName>app-launcher</ns2:portletName>
+    </portlet-descriptor>
+    <category>Administration</category>
+    <category>uPortal</category>
+    <group>Portal System</group>
+    <permissions>
+        <permission system="UP_PORTLET_SUBSCRIBE" activity="BROWSE">
+            <group>Portal System</group>
+        </permission>
+    </permissions>
+    <parameter>
+        <name>blockImpersonation</name>
+        <value>false</value>
+    </parameter>
+    <parameter>
+        <name>chromeStyle</name>
+        <value>no-chrome</value>
+    </parameter>
+    <parameter>
+        <name>configurable</name>
+        <value>true</value>
+    </parameter>
+    <parameter>
+        <name>disableDynamicTitle</name>
+        <value>true</value>
+    </parameter>
+    <parameter>
+        <name>disablePortletEvents</name>
+        <value>false</value>
+    </parameter>
+    <parameter>
+        <name>editable</name>
+        <value>false</value>
+    </parameter>
+    <parameter>
+        <name>hasAbout</name>
+        <value>false</value>
+    </parameter>
+    <parameter>
+        <name>hasHelp</name>
+        <value>false</value>
+    </parameter>
+    <parameter>
+        <name>hideFromMobile</name>
+        <value>false</value>
+    </parameter>
+    <parameter>
+        <name>printable</name>
+        <value>false</value>
+    </parameter>
+    <portlet-preference>
+        <name>AppDefinition.appUrl</name>
+        <readOnly>false</readOnly>
+        <value>/uPortal/p/permissionsmanager</value>
+    </portlet-preference>
+    <portlet-preference>
+        <name>AppDefinition.displayStrategy</name>
+        <readOnly>false</readOnly>
+        <value>sameWindow</value>
+    </portlet-preference>
+    <portlet-preference>
+        <name>AppDefinition.iconUrl</name>
+        <readOnly>false</readOnly>
+        <value>/uPortal/media/font-awesome/shield.png</value>
+    </portlet-preference>
+    <portlet-preference>
+        <name>AppDefinition.linkTitle</name>
+        <readOnly>false</readOnly>
+        <value>Permission Administration</value>
+    </portlet-preference>
+    <portlet-preference>
+        <name>AppDefinition.subtitle</name>
+        <readOnly>false</readOnly>
+    </portlet-preference>
+    <portlet-preference>
+        <name>AppDefinition.title</name>
+        <readOnly>false</readOnly>
+        <value>Permission Administration</value>
+    </portlet-preference>
+</portlet-definition>

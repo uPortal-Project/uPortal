@@ -62,6 +62,14 @@ public class HashedDaoAuthToken extends AuthToken {
         return HashedDaoAuthToken.class.getName();
     }
 
+    @Override
+    public int size() {
+        if (authValue == null) {
+            getAuthValue();     // load value if not set
+        }
+        return  authValue == null ? 0 : authValue.length();     // might still be null
+    }
+
     public boolean authenticate(AuthToken token, Message msg) {
 
         if ((token != null) && (token instanceof HashedDaoAuthToken)) {
@@ -91,13 +99,13 @@ public class HashedDaoAuthToken extends AuthToken {
         if (log.isDebugEnabled()) {
             log.debug("HashedDaoAuthToken writeTo()");
         }
-        Util.writeString(this.getAuthValue(), out);
+        Util.writeObject(this.getAuthValue(), out);
     }
 
     public void readFrom(DataInput in) throws Exception {
         if (log.isDebugEnabled()) {
             log.debug("HashedDaoAuthToken readFrom()");
         }
-        this.authValue = Util.readString(in);
+        this.authValue = (String) Util.readObject(in);
     }
 }

@@ -155,6 +155,7 @@ below.
 * [CAS 5 ClearPass: Credential Caching and Replay](Cas5ClearPass.md)
 * [Developer's Guide](developer/README.md)
 * [Accessibility](ACCESSIBILITY.md)
+* [Project Committers](COMMITTERS.md)
 
 ## External Links
 
