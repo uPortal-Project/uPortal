@@ -146,16 +146,17 @@
         <ant.version>1.8.4</ant.version>
         <aspectjrt.version>1.7.4</aspectjrt.version>
         <aspectjweaver.version>1.7.4</aspectjweaver.version>
+        <aws.version>1.10.65</aws.version>
         <casclient.version>3.4.1</casclient.version>
         <ccpp.version>1.0</ccpp.version>
         <cernunnos.version>1.2.2</cernunnos.version>
-        <cobertura-maven-plugin.version>2.6</cobertura-maven-plugin.version>
+        <cobertura-maven-plugin.version>2.7</cobertura-maven-plugin.version>
         <commons-cli.version>1.2</commons-cli.version>
         <commons-codec.version>1.9</commons-codec.version>
         <commons-collections.version>3.2.2</commons-collections.version>
         <commons-compress.version>1.8</commons-compress.version>
         <commons-dbcp.version>1.4</commons-dbcp.version>
-        <commons-fileupload.version>1.3.1</commons-fileupload.version>
+        <commons-fileupload.version>1.3.2</commons-fileupload.version>
         <commons-httpclient.version>3.1</commons-httpclient.version>
         <commons-httpcomponents.version>4.4.4</commons-httpcomponents.version>
         <commons-io.version>2.4</commons-io.version>
@@ -163,7 +164,7 @@
         <commons-lang3.version>3.3.2</commons-lang3.version>
         <commons-pool.version>1.6</commons-pool.version>
         <commons-math3.version>3.2</commons-math3.version>
-        <coveralls-maven-plugin.version>2.2.0</coveralls-maven-plugin.version>
+        <coveralls-maven-plugin.version>4.2.0</coveralls-maven-plugin.version>
         <dom4j.version>1.6.1</dom4j.version>
         <easymock.version>3.2</easymock.version>
         <ejb3-persistence.version>1.0.1.GA</ejb3-persistence.version>
@@ -179,6 +180,7 @@
         <hibernate-jpamodelgen.version>1.2.0.Final</hibernate-jpamodelgen.version>
         <hibernate-jpa-api.version>1.0.1.Final</hibernate-jpa-api.version>
         <hsqldb.version>2.3.2</hsqldb.version>
+        <httpclient.version>4.5.2</httpclient.version> <!-- aws skd does not like 4.2.3 -->
         <icu4j.version>53.1</icu4j.version>
         <jackson2.version>2.3.3</jackson2.version>
         <jansi.version>1.11</jansi.version>
@@ -188,7 +190,7 @@
         <jaxb2basics.version>0.6.5.1</jaxb2basics.version>
         <jaxb2basics.plugin.version>0.6.4</jaxb2basics.plugin.version>
         <jdom.version>1.0</jdom.version>
-        <jgroups.version>3.2.7.Final</jgroups.version>
+        <jgroups.version>3.6.13.Final</jgroups.version>
         <jline.version>2.11</jline.version>
         <joda-time.version>2.3</joda-time.version>
         <joda-time-jsptags.version>1.1.1</joda-time-jsptags.version>
@@ -212,12 +214,12 @@
         <person-directory.version>1.7.1</person-directory.version>
         <pluto.version>2.1.0-M3</pluto.version>
         <quartz.version>2.2.1</quartz.version>
-        <resource-server.version>1.0.45</resource-server.version>
+        <resource-server.version>1.0.46</resource-server.version>
         <servlet-api.version>3.0.1</servlet-api.version>
         <slf4j.version>1.7.7</slf4j.version>
-        <spring-framework.version>3.2.9.RELEASE</spring-framework.version>
+        <spring-framework.version>3.2.18.RELEASE</spring-framework.version>
         <spring-ldap.version>1.3.1.RELEASE</spring-ldap.version>
-        <spring-security.version>3.1.3.RELEASE</spring-security.version>
+        <spring-security.version>3.2.10.RELEASE</spring-security.version>
         <standard.version>1.1.2</standard.version>
         <staxmate.version>2.2.1</staxmate.version>
         <stringtemplate.version>4.0.2</stringtemplate.version>
@@ -237,8 +239,8 @@
          +-->
         <mobile.user.agent.regex>(.*iPhone.*)|(.*Android.*)|(.*IEMobile.*)|(.*Safari.*Pre.*)|(.*Nokia.*AppleWebKit.*)|(.*Black[Bb]erry.*)|(.*Opera Mobile.*)|(.*Windows Phone.*)|(.*Fennec.*)|(.*Minimo.*)</mobile.user.agent.regex>
 
-        <project.build.sourceVersion>1.7</project.build.sourceVersion>
-        <project.build.targetVersion>1.7</project.build.targetVersion>
+        <project.build.sourceVersion>1.8</project.build.sourceVersion>
+        <project.build.targetVersion>1.8</project.build.targetVersion>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -263,6 +265,28 @@
                 <groupId>aopalliance</groupId>
                 <artifactId>aopalliance</artifactId>
                 <version>${aopalliance.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.amazonaws</groupId>
+                <artifactId>aws-java-sdk-s3</artifactId>
+                <version>${aws.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpclient</artifactId>
+                <version>${httpclient.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>ch.qos.logback</groupId>
@@ -665,11 +689,6 @@
                 <version>${pluto.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.jasig.ehcache</groupId>
-                <artifactId>ehcache-jgroups3replication</artifactId>
-                <version>${ehcache-jgroups3replication.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>org.apache.portals.pluto</groupId>
                 <artifactId>pluto-taglib</artifactId>
                 <version>${pluto.version}</version>
@@ -684,6 +703,11 @@
                         <artifactId>slf4j-jdk14</artifactId>
                     </exclusion>
                 </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.jasig.ehcache</groupId>
+                <artifactId>ehcache-jgroups3replication</artifactId>
+                <version>${ehcache-jgroups3replication.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.aspectj</groupId>
@@ -1242,7 +1266,7 @@
                                 <version>2.2</version>
                               </requireMavenVersion>
                               <requireJavaVersion>
-                                <version>1.6</version>
+                                <version>${project.build.targetVersion}</version>
                               </requireJavaVersion>
                             </rules>
                         </configuration>
@@ -1422,7 +1446,7 @@
                             <plugin>
                                 <groupId>org.codehaus.mojo</groupId>
                                 <artifactId>findbugs-maven-plugin</artifactId>
-                                <version>2.4.0</version>
+                                <version>3.0.4</version>
                             </plugin>
                         </reportPlugins>
                     </configuration>
@@ -1542,6 +1566,7 @@
                         <!-- aggregated reports for multi-module projects -->
                         <aggregate>true</aggregate>
                         <instrumentation>
+                            <ignoreTrivial>true</ignoreTrivial>
                             <excludes>
                                 <!-- Exclude generated classes -->
                                 <exclude>**/*_.class</exclude>

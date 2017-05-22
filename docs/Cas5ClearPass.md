@@ -19,6 +19,16 @@ openssl pkcs8 -topk8 -inform PER -outform DER -nocrypt -in private.key -out priv
 
 Save `private.p8` in a well-known location.
 
+## Change CAS Validate Filter to use CAS Protocol 3
+
+uPortal uses an older version for it's CAS embedded service. To use this ClearPass feature,
+the validation filter needs to be switched from CAS Protocol 2 to 3. This is simply done
+by editing the classname of the filter in web.xml:
+
+```xml
+        <filter-class>org.jasig.cas.client.validation.Cas30ProxyReceivingTicketValidationFilter</filter-class>
+```
+
 ## Configuring uPortal for accepting encrypted passwords
 
 uPortal setup for this feature is straight-forward. The hardest part is configuring the location of the private key.

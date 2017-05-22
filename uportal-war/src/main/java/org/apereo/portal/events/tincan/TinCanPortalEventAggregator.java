@@ -1,27 +1,21 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.events.tincan;
 
 import java.util.List;
-
 import javax.annotation.Resource;
-
 import org.apereo.portal.events.PortalEvent;
 import org.apereo.portal.events.aggr.BasePortalEventAggregator;
 import org.apereo.portal.events.aggr.SimplePortalEventAggregator;
@@ -33,27 +27,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 
-
 /**
- * Event aggregator that processes events and converts them to
- * xAPI events.
+ * Event aggregator that processes events and converts them to xAPI events.
  *
- * @author Josh Helmer, jhelmer@unicon.net
  */
-public class TinCanPortalEventAggregator extends
-        BasePortalEventAggregator<PortalEvent> implements
-        SimplePortalEventAggregator<PortalEvent> {
+public class TinCanPortalEventAggregator extends BasePortalEventAggregator<PortalEvent>
+        implements SimplePortalEventAggregator<PortalEvent> {
     private static final Logger log = LoggerFactory.getLogger(TinCanPortalEventAggregator.class);
     private ITinCanEventScheduler tinCanEventScheduler;
     private List<IPortalEventToLrsStatementConverter> statementFactories;
     private boolean tinCanAPIEnabled = false;
 
-
     @Resource(name = "tinCanEventConverters")
-    public void setStatementFactories(final List<IPortalEventToLrsStatementConverter> statementFactories) {
+    public void setStatementFactories(
+            final List<IPortalEventToLrsStatementConverter> statementFactories) {
         this.statementFactories = statementFactories;
     }
-
 
     @Autowired
     @Qualifier("tinCanEventScheduler")
@@ -66,12 +55,10 @@ public class TinCanPortalEventAggregator extends
         this.tinCanAPIEnabled = enabled;
     }
 
-
     @Override
     public boolean supports(Class<? extends PortalEvent> type) {
         return true;
     }
-
 
     @Override
     public void aggregateEvent(PortalEvent e, EventSession eventSession) {

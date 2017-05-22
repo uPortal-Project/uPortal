@@ -1,20 +1,16 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.portlets.search.gsa;
 
@@ -32,7 +28,7 @@ public class GsaSearchResult {
 
     private String shortVisibleUrl;
 
-    @XmlElement(name="T")
+    @XmlElement(name = "T")
     public String getTitle() {
         return title;
     }
@@ -41,7 +37,7 @@ public class GsaSearchResult {
         this.title = title;
     }
 
-    @XmlElement(name="U")
+    @XmlElement(name = "U")
     public String getLink() {
         return link;
     }
@@ -50,7 +46,7 @@ public class GsaSearchResult {
         this.link = link;
     }
 
-    @XmlElement(name="S")
+    @XmlElement(name = "S")
     public String getSnippet() {
         return snippet;
     }
@@ -59,7 +55,7 @@ public class GsaSearchResult {
         this.snippet = snippet;
     }
 
-    @XmlElement(name="UD")
+    @XmlElement(name = "UD")
     public String getVisibleUrl() {
         return visibleUrl;
     }
@@ -68,7 +64,7 @@ public class GsaSearchResult {
         this.visibleUrl = visibleUrl;
     }
 
-    @XmlElement(name="UE")
+    @XmlElement(name = "UE")
     public String getShortVisibleUrl() {
         return shortVisibleUrl;
     }
@@ -76,5 +72,4 @@ public class GsaSearchResult {
     public void setShortVisibleUrl(String shortVisibleUrl) {
         this.shortVisibleUrl = shortVisibleUrl;
     }
-
 }

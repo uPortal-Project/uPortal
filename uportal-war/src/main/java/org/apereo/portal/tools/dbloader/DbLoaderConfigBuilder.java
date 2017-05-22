@@ -1,20 +1,16 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.tools.dbloader;
 
@@ -25,9 +21,7 @@ import org.apache.commons.lang.builder.ToStringStyle;
 
 /**
  * Configuration for the DbLoader, includes commons-cli Options set for command line use.
- * 
- * @author Eric Dalquist
- * @version $Revision$
+ *
  */
 public class DbLoaderConfigBuilder implements DbLoaderConfig {
     private String tablesFile;
@@ -36,7 +30,6 @@ public class DbLoaderConfigBuilder implements DbLoaderConfig {
     private boolean dropTables;
     private boolean createTables;
     private boolean populateTables;
-    
 
     public DbLoaderConfigBuilder setTablesFile(String tablesFile) {
         this.tablesFile = tablesFile;
@@ -116,9 +109,7 @@ public class DbLoaderConfigBuilder implements DbLoaderConfig {
         return populateTables;
     }
 
-    /**
-     * @see java.lang.Object#equals(Object)
-     */
+    /** @see java.lang.Object#equals(Object) */
     @Override
     public boolean equals(Object object) {
         if (object == this) {
@@ -129,42 +120,38 @@ public class DbLoaderConfigBuilder implements DbLoaderConfig {
         }
         DbLoaderConfigBuilder rhs = (DbLoaderConfigBuilder) object;
         return new EqualsBuilder()
-            .append(this.scriptFile, rhs.scriptFile)
-            .append(this.dropTables, rhs.dropTables)
-            .append(this.createTables, rhs.createTables)
-            .append(this.tablesFile, rhs.tablesFile)
-            .append(this.dataFile, rhs.dataFile)
-            .append(this.populateTables, rhs.populateTables)
-            .isEquals();
+                .append(this.scriptFile, rhs.scriptFile)
+                .append(this.dropTables, rhs.dropTables)
+                .append(this.createTables, rhs.createTables)
+                .append(this.tablesFile, rhs.tablesFile)
+                .append(this.dataFile, rhs.dataFile)
+                .append(this.populateTables, rhs.populateTables)
+                .isEquals();
     }
 
-    /**
-     * @see java.lang.Object#hashCode()
-     */
+    /** @see java.lang.Object#hashCode() */
     @Override
     public int hashCode() {
         return new HashCodeBuilder(-1864980211, 1008139621)
-            .append(this.scriptFile)
-            .append(this.dropTables)
-            .append(this.createTables)
-            .append(this.tablesFile)
-            .append(this.dataFile)
-            .append(this.populateTables)
-            .toHashCode();
+                .append(this.scriptFile)
+                .append(this.dropTables)
+                .append(this.createTables)
+                .append(this.tablesFile)
+                .append(this.dataFile)
+                .append(this.populateTables)
+                .toHashCode();
     }
 
-    /**
-     * @see java.lang.Object#toString()
-     */
+    /** @see java.lang.Object#toString() */
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
-            .append("tablesFile", this.tablesFile)
-            .append("dataFile", this.dataFile)
-            .append("scriptFile", this.scriptFile)
-            .append("dropTables", this.dropTables)
-            .append("createTables", this.createTables)
-            .append("populateTables", this.populateTables)
-            .toString();
+                .append("tablesFile", this.tablesFile)
+                .append("dataFile", this.dataFile)
+                .append("scriptFile", this.scriptFile)
+                .append("dropTables", this.dropTables)
+                .append("createTables", this.createTables)
+                .append("populateTables", this.populateTables)
+                .toString();
     }
 }

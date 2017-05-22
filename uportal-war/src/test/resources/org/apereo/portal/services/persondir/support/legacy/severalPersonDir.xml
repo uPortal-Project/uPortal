@@ -19,7 +19,6 @@
 
 -->
 <PersonDirs>
-	<!-- CVS metadata: $Revision$ $Date$ -->
 	<!-- An example PersonDirs.xml file which configures a single
 		attribute source using directly configured JDBC. 
 		This file is used for the PersonDirXmlParserTester testcase - this file should

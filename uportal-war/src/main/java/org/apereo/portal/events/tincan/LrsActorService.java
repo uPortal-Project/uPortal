@@ -1,20 +1,16 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.events.tincan;
 
@@ -28,11 +24,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-
 /**
  * Create a LrsActor object based on the username.
  *
- * @author Josh Helmer, jhelmer@unicon.net
  */
 @Service("lrsActorService")
 public class LrsActorService implements ILrsActorService {
@@ -42,12 +36,10 @@ public class LrsActorService implements ILrsActorService {
     private String emailAttributeName = "mail";
     private String displayNameAttributeName = "displayName";
 
-
     @Autowired
     public void setPersonAttributeDao(IPersonAttributeDao personAttributeDao) {
         this.personAttributeDao = personAttributeDao;
     }
-
 
     @Autowired
     @Qualifier("org.apereo.portal.events.tincan.LrsActorCache")
@@ -55,24 +47,22 @@ public class LrsActorService implements ILrsActorService {
         this.lrsActorCache = lrsActorCache;
     }
 
-
     @Value("${org.apereo.portal.events.tincan.TinCanPortalEventAggregator.emailAttributeName:mail}")
     public void setEmailAttributeName(String emailAttributeName) {
         this.emailAttributeName = emailAttributeName;
     }
 
-
-    @Value("${org.apereo.portal.events.tincan.TinCanPortalEventAggregator.displayNameAttributeName:displayName}")
+    @Value(
+            "${org.apereo.portal.events.tincan.TinCanPortalEventAggregator.displayNameAttributeName:displayName}")
     public void setDisplayNameAttributeName(String displayNameAttributeName) {
         this.displayNameAttributeName = displayNameAttributeName;
     }
-
 
     @Override
     public LrsActor getLrsActor(String userName) {
         Element element = this.lrsActorCache.get(userName);
         if (element != null) {
-            return (LrsActor)element.getObjectValue();
+            return (LrsActor) element.getObjectValue();
         }
 
         final String email;
@@ -81,8 +71,7 @@ public class LrsActorService implements ILrsActorService {
         if (person == null) {
             email = userName;
             name = userName + "@example.com";
-        }
-        else {
+        } else {
             email = getEmail(person);
             name = getName(person);
         }
@@ -92,7 +81,6 @@ public class LrsActorService implements ILrsActorService {
         return lrsActor;
     }
 
-
     protected String getEmail(IPersonAttributes person) {
         final Object email = person.getAttributeValue(emailAttributeName);
         if (email != null) {
@@ -101,7 +89,6 @@ public class LrsActorService implements ILrsActorService {
 
         return person.getName() + "@example.com";
     }
-
 
     protected String getName(IPersonAttributes person) {
         final Object displayName = person.getAttributeValue(displayNameAttributeName);

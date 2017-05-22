@@ -1,0 +1,11 @@
+description = "Apereo uPortal Layout"
+
+dependencies {
+    compile project(':uPortal-io')
+    compile project(':uPortal-utils')
+
+    compile "com.google.guava:guava:${guavaVersion}"
+    compile("dom4j:dom4j:${dom4jVersion}"){
+        exclude group: 'xml-apis', module: 'xml-apis'
+    }
+}

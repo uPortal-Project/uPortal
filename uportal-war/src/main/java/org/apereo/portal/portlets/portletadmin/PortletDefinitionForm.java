@@ -1,20 +1,16 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.portlets.portletadmin;
 
@@ -29,7 +25,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
-
 import org.apache.commons.collections.map.LazyMap;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.time.FastDateFormat;
@@ -62,13 +57,11 @@ public class PortletDefinitionForm implements Serializable {
     private static final FastDateFormat dateFormat = FastDateFormat.getInstance("M/d/yyyy");
 
     private static final long serialVersionUID = 892741367149099649L;
-    protected transient final Log log = LogFactory.getLog(getClass());
+    protected final transient Log log = LogFactory.getLog(getClass());
 
-    /**
-     * Main portlet fields
-     */
-
+    /** Main portlet fields */
     private String id = null;
+
     private String fname = "";
     private String name = "";
     private String description = "";
@@ -79,11 +72,9 @@ public class PortletDefinitionForm implements Serializable {
     private int timeout = 5000;
     private int typeId;
 
-    /**
-     * Lifecycle information
-     */
-
+    /** Lifecycle information */
     private PortletLifecycleState lifecycleState = PortletLifecycleState.CREATED;
+
     private Date publishDate;
     private int publishHour = 12;
     private int publishMinute = 0;
@@ -93,45 +84,36 @@ public class PortletDefinitionForm implements Serializable {
     private int expirationMinute = 0;
     private int expirationAmPm = 0;
 
-    /**
-     * Portlet controls
-     */
-
+    /** Portlet controls */
     private boolean editable;
+
     private boolean hasHelp;
     private boolean hasAbout;
     private boolean configurable;
 
-    /**
-     * Principals and categories
-     */
-
+    /** Principals and categories */
     private SortedSet<JsonEntityBean> principals = new TreeSet<>();
+
     private SortedSet<JsonEntityBean> categories = new TreeSet<>();
     private Set<String> permissions = new HashSet<>();
 
-
-    /**
-     * Parameters and preferences
-     */
+    /** Parameters and preferences */
+    @SuppressWarnings("unchecked")
+    private Map<String, Attribute> parameters =
+            LazyMap.decorate(new HashMap<String, Attribute>(), new AttributeFactory());
 
     @SuppressWarnings("unchecked")
-    private Map<String, Attribute> parameters = LazyMap.decorate(
-            new HashMap<String, Attribute>(), new AttributeFactory());
+    private Map<String, StringListAttribute> portletPreferences =
+            LazyMap.decorate(
+                    new HashMap<String, StringListAttribute>(), new StringListAttributeFactory());
 
     @SuppressWarnings("unchecked")
-    private Map<String, StringListAttribute> portletPreferences = LazyMap.decorate(
-            new HashMap<String, StringListAttribute>(), new StringListAttributeFactory());
+    private Map<String, BooleanAttribute> portletPreferenceReadOnly =
+            LazyMap.decorate(
+                    new HashMap<String, BooleanAttribute>(), new BooleanAttributeFactory());
 
-    @SuppressWarnings("unchecked")
-    private Map<String, BooleanAttribute> portletPreferenceReadOnly = LazyMap
-            .decorate(new HashMap<String, BooleanAttribute>(), new BooleanAttributeFactory());
-
-    /**
-     * Default constructor
-     */
-    public PortletDefinitionForm() {
-    }
+    /** Default constructor */
+    public PortletDefinitionForm() {}
 
     /**
      * Construct a new PortletDefinitionForm from a PortletDefinition
@@ -150,16 +132,24 @@ public class PortletDefinitionForm implements Serializable {
         this.setPortletName(def.getPortletDescriptorKey().getPortletName());
         this.setFramework(def.getPortletDescriptorKey().isFrameworkPortlet());
         if (def.getParameter(IPortletDefinition.EDITABLE_PARAM) != null) {
-            this.setEditable(Boolean.parseBoolean(def.getParameter(IPortletDefinition.EDITABLE_PARAM).getValue()));
+            this.setEditable(
+                    Boolean.parseBoolean(
+                            def.getParameter(IPortletDefinition.EDITABLE_PARAM).getValue()));
         }
         if (def.getParameter(IPortletDefinition.CONFIGURABLE_PARAM) != null) {
-            this.setConfigurable(Boolean.parseBoolean(def.getParameter(IPortletDefinition.CONFIGURABLE_PARAM).getValue()));
+            this.setConfigurable(
+                    Boolean.parseBoolean(
+                            def.getParameter(IPortletDefinition.CONFIGURABLE_PARAM).getValue()));
         }
         if (def.getParameter(IPortletDefinition.HAS_HELP_PARAM) != null) {
-            this.setHasHelp(Boolean.parseBoolean(def.getParameter(IPortletDefinition.HAS_HELP_PARAM).getValue()));
+            this.setHasHelp(
+                    Boolean.parseBoolean(
+                            def.getParameter(IPortletDefinition.HAS_HELP_PARAM).getValue()));
         }
         if (def.getParameter(IPortletDefinition.HAS_ABOUT_PARAM) != null) {
-            this.setHasAbout(Boolean.parseBoolean(def.getParameter(IPortletDefinition.HAS_ABOUT_PARAM).getValue()));
+            this.setHasAbout(
+                    Boolean.parseBoolean(
+                            def.getParameter(IPortletDefinition.HAS_ABOUT_PARAM).getValue()));
         }
         this.setLifecycleState(def.getLifecycleState());
 
@@ -173,23 +163,23 @@ public class PortletDefinitionForm implements Serializable {
 
         for (IPortletDefinitionParameter param : def.getParameters()) {
             if (param.getName().startsWith("PORTLET.")) {
-                this.portletPreferences.put(param.getName(),
-                        new StringListAttribute(new String[]{param.getValue()}));
+                this.portletPreferences.put(
+                        param.getName(), new StringListAttribute(new String[] {param.getValue()}));
             } else {
-                this.parameters.put(param.getName(),
-                        new Attribute(param.getValue()));
+                this.parameters.put(param.getName(), new Attribute(param.getValue()));
             }
         }
 
         for (IPortletPreference pref : def.getPortletPreferences()) {
             this.portletPreferences.put(pref.getName(), new StringListAttribute(pref.getValues()));
-            this.portletPreferenceReadOnly.put(pref.getName(), new BooleanAttribute(pref.isReadOnly()));
+            this.portletPreferenceReadOnly.put(
+                    pref.getName(), new BooleanAttribute(pref.isReadOnly()));
         }
-
     }
 
     /**
      * Indicates whether this portlet has been previously published.
+     *
      * @return
      */
     public boolean isNew() {
@@ -197,8 +187,7 @@ public class PortletDefinitionForm implements Serializable {
     }
 
     /**
-     * Sets the Java class name and parameter defaults based on the
-     * PortletPublishingDefinition.
+     * Sets the Java class name and parameter defaults based on the PortletPublishingDefinition.
      *
      * @param cpd
      */
@@ -210,12 +199,9 @@ public class PortletDefinitionForm implements Serializable {
             final PortletDescriptor pDesc = cpd.getPortletDescriptor();
             // PortletDescriptor is a class generated from XSD.  The value of
             // isIsFramework() will commonly be null.
-            final boolean isFramework = pDesc.isIsFramework() != null
-                    ? pDesc.isIsFramework()
-                    : false;
-            applicationId = isFramework
-                    ? FRAMEWORK_PORTLET_URL
-                    : pDesc.getWebAppName();
+            final boolean isFramework =
+                    pDesc.isIsFramework() != null ? pDesc.isIsFramework() : false;
+            applicationId = isFramework ? FRAMEWORK_PORTLET_URL : pDesc.getWebAppName();
             portletName = pDesc.getPortletName();
         }
 
@@ -244,7 +230,13 @@ public class PortletDefinitionForm implements Serializable {
                     // for a default in the CPD
                     if (!this.portletPreferences.containsKey(pref.getName())
                             || this.portletPreferences.get(pref.getName()).getValue().size() == 0
-                            || (this.portletPreferences.get(pref.getName()).getValue().size() == 1 && this.portletPreferences.get(pref.getName()).getValue().get(0).trim().equals(""))) {
+                            || (this.portletPreferences.get(pref.getName()).getValue().size() == 1
+                                    && this.portletPreferences
+                                            .get(pref.getName())
+                                            .getValue()
+                                            .get(0)
+                                            .trim()
+                                            .equals(""))) {
 
                         if (!this.portletPreferences.containsKey(pref.getName())) {
                             this.portletPreferences.put(pref.getName(), new StringListAttribute());
@@ -253,22 +245,28 @@ public class PortletDefinitionForm implements Serializable {
                         // use the default value if one exists
                         PreferenceInputType input = pref.getPreferenceInput().getValue();
                         if (input instanceof SingleValuedPreferenceInputType) {
-                            SingleValuedPreferenceInputType singleValued = (SingleValuedPreferenceInputType) input;
+                            SingleValuedPreferenceInputType singleValued =
+                                    (SingleValuedPreferenceInputType) input;
                             if (singleValued.getDefault() != null) {
-                                this.portletPreferences.get(pref.getName()).getValue().add(singleValued.getDefault());
+                                this.portletPreferences
+                                        .get(pref.getName())
+                                        .getValue()
+                                        .add(singleValued.getDefault());
                             }
                         } else if (input instanceof MultiValuedPreferenceInputType) {
-                            MultiValuedPreferenceInputType multiValued = (MultiValuedPreferenceInputType) input;
+                            MultiValuedPreferenceInputType multiValued =
+                                    (MultiValuedPreferenceInputType) input;
                             if (multiValued.getDefaults() != null) {
-                                this.portletPreferences.get(pref.getName()).getValue().addAll(multiValued.getDefaults());
+                                this.portletPreferences
+                                        .get(pref.getName())
+                                        .getValue()
+                                        .addAll(multiValued.getDefaults());
                             }
                         }
-
                     }
                 }
             }
         }
-
     }
 
     public String getId() {
@@ -337,7 +335,8 @@ public class PortletDefinitionForm implements Serializable {
 
     public void setApplicationId(String applicationId) {
         // Be careful not to pass on extra whitespace
-        this.applicationId = StringUtils.isNotBlank(applicationId) ? applicationId.trim() : applicationId;
+        this.applicationId =
+                StringUtils.isNotBlank(applicationId) ? applicationId.trim() : applicationId;
     }
 
     public String getPortletName() {
@@ -539,8 +538,8 @@ public class PortletDefinitionForm implements Serializable {
     }
 
     /**
-     * Return the full date and time at which this portlet shoudl be automatically
-     * published.  This value is built from the individual date/time fields.
+     * Return the full date and time at which this portlet shoudl be automatically published. This
+     * value is built from the individual date/time fields.
      *
      * @return
      */
@@ -560,8 +559,8 @@ public class PortletDefinitionForm implements Serializable {
     }
 
     /**
-     * Return the full date and time at which this portlet shoudl be automatically
-     * expired.  This value is built from the individual date/time fields.
+     * Return the full date and time at which this portlet shoudl be automatically expired. This
+     * value is built from the individual date/time fields.
      *
      * @return
      */
@@ -580,9 +579,9 @@ public class PortletDefinitionForm implements Serializable {
         return cal.getTime();
     }
 
-
     /**
-     * Get the expiration date as a string.  This is just  webflow workaround.
+     * Get the expiration date as a string. This is just webflow workaround.
+     *
      * @return the expiration date as a string
      */
     public String getExpirationDateString() {
@@ -593,9 +592,9 @@ public class PortletDefinitionForm implements Serializable {
         return dateFormat.format(expirationDate);
     }
 
-
     /**
      * Set the expiration date as a string.
+     *
      * @param date the date string
      * @throws ParseException if the string cannot be parsed
      */
@@ -623,9 +622,9 @@ public class PortletDefinitionForm implements Serializable {
         }
     }
 
-
     /**
      * Get the publish date as a string.
+     *
      * @return the publish date as a string
      */
     public String getPublishDateString() {
@@ -636,10 +635,8 @@ public class PortletDefinitionForm implements Serializable {
         return dateFormat.format(publishDate);
     }
 
-
     /**
-     * Set the publish date as a string.   This is just a webflow
-     * workaround.
+     * Set the publish date as a string. This is just a webflow workaround.
      *
      * @param date the date string
      * @throws ParseException if the date cannot be parsed
@@ -667,5 +664,4 @@ public class PortletDefinitionForm implements Serializable {
             this.setExpirationAmPm(cal.get(Calendar.AM_PM));
         }
     }
-
 }

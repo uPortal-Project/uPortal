@@ -1,20 +1,16 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.security.provider;
 
@@ -28,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apereo.portal.AuthorizationException;
@@ -38,10 +33,9 @@ import org.apereo.portal.security.IPermissionStore;
 import org.springframework.stereotype.Repository;
 
 /**
- * Reference implementation of IPermissionStore.  Performs CRUD operations
- * on the UP_Permission table.
- * @author Dan Ellentuck (de3@columbia.edu)
- * @version $Revision$
+ * Reference implementation of IPermissionStore. Performs CRUD operations on the UP_Permission
+ * table.
+ *
  */
 @Repository
 public class RDBMPermissionImpl implements IPermissionStore {
@@ -50,14 +44,14 @@ public class RDBMPermissionImpl implements IPermissionStore {
 
     // sql Strings:
     private static String PERMISSION_TABLE = "UP_PERMISSION";
-    private static String OWNER_COLUMN =     "OWNER";
+    private static String OWNER_COLUMN = "OWNER";
     private static String PRINCIPAL_TYPE_COLUMN = "PRINCIPAL_TYPE";
     private static String PRINCIPAL_KEY_COLUMN = "PRINCIPAL_KEY";
-    private static String ACTIVITY_COLUMN =  "ACTIVITY";
-    private static String TARGET_COLUMN =    "TARGET";
-    private static String TYPE_COLUMN =      "PERMISSION_TYPE";
+    private static String ACTIVITY_COLUMN = "ACTIVITY";
+    private static String TARGET_COLUMN = "TARGET";
+    private static String TYPE_COLUMN = "PERMISSION_TYPE";
     private static String EFFECTIVE_COLUMN = "EFFECTIVE";
-    private static String EXPIRES_COLUMN =   "EXPIRES";
+    private static String EXPIRES_COLUMN = "EXPIRES";
     private static String allPermissionColumnsSql;
     private static String deletePermissionSql;
     private static String findPermissionSql;
@@ -68,72 +62,34 @@ public class RDBMPermissionImpl implements IPermissionStore {
     public static String PRINCIPAL_SEPARATOR = ".";
 
     /**
-     * Signifies that the principal is an {@see IEntityGroup}.  The 
-     * {@see IPermission} contract does not define a method like 
-     * <code>setPrincipalType()</code>, but {@see RDBMPermissionImpl} (this 
-     * class) <i>does</i> have a notion of principal type.  Specify 
-     * <code>(PRINCIPAL_TYPE_GROUP|PRINCIPAL_TYPE_USER)PRINCIPAL_SEPARATOR&lt;principal.key&gt;</code> 
-     * to {@see IPermission.setPrincipal} for use with {@see RDBMPermissionImpl}.
+     * Signifies that the principal is an {@see IEntityGroup}. The {@see IPermission} contract does
+     * not define a method like <code>setPrincipalType()</code>, but {@see RDBMPermissionImpl} (this
+     * class) <i>does</i> have a notion of principal type. Specify <code>
+     * (PRINCIPAL_TYPE_GROUP|PRINCIPAL_TYPE_USER)PRINCIPAL_SEPARATOR&lt;principal.key&gt;</code> to
+     * {@see IPermission.setPrincipal} for use with {@see RDBMPermissionImpl}.
      */
     public static int PRINCIPAL_TYPE_GROUP = 1;
 
     /**
-     * Signifies that the principal is an {@see IPerson}.  The 
-     * {@see IPermission} contract does not define a method like 
-     * <code>setPrincipalType()</code>, but {@see RDBMPermissionImpl} (this 
-     * class) <i>does</i> have a notion of principal type.  Specify 
-     * <code>(PRINCIPAL_TYPE_GROUP|PRINCIPAL_TYPE_USER)PRINCIPAL_SEPARATOR&lt;principal.key&gt;</code> 
-     * to {@see IPermission.setPrincipal} for use with {@see RDBMPermissionImpl}.
+     * Signifies that the principal is an {@see IPerson}. The {@see IPermission} contract does not
+     * define a method like <code>setPrincipalType()</code>, but {@see RDBMPermissionImpl} (this
+     * class) <i>does</i> have a notion of principal type. Specify <code>
+     * (PRINCIPAL_TYPE_GROUP|PRINCIPAL_TYPE_USER)PRINCIPAL_SEPARATOR&lt;principal.key&gt;</code> to
+     * {@see IPermission.setPrincipal} for use with {@see RDBMPermissionImpl}.
      */
     public static int PRINCIPAL_TYPE_PERSON = 2;
 
-    public enum PrincipalType {
-
-        GROUP(PRINCIPAL_TYPE_GROUP),
-
-        PERSON(PRINCIPAL_TYPE_PERSON);
-
-        // Instance Members.
-        private final int intValue;
-
-        public static PrincipalType byEntityTypeName(String name) {
-            PrincipalType rslt = null;
-            for (PrincipalType y : values()) {
-                if (y.name().toLowerCase().equals(name)) {
-                    rslt = y;
-                }
-            }
-            if (rslt == null && log.isWarnEnabled()) {
-                log.warn("Unrecognized PrincipalType:  " + name);
-            }
-            return rslt;
-        }
-
-        public int toInt() {
-            return intValue;
-        }
-
-        PrincipalType(int intValue) {
-            this.intValue = intValue;
-        }
-
-    }
-
     /**
      * Add the IPermissions to the store.
+     *
      * @param perms org.apereo.portal.security.IPermission[]
      * @exception AuthorizationException - wraps an Exception specific to the store.
      */
-    public void add(IPermission[] perms) throws AuthorizationException
-    {
-        if ( perms.length > 0 )
-        {
-            try
-            {
+    public void add(IPermission[] perms) throws AuthorizationException {
+        if (perms.length > 0) {
+            try {
                 primAdd(perms);
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 log.error("Exception adding permissions " + perms, ex);
                 throw new AuthorizationException(ex);
             }
@@ -141,138 +97,82 @@ public class RDBMPermissionImpl implements IPermissionStore {
     }
     /**
      * Add the IPermission to the store.
+     *
      * @param perm org.apereo.portal.security.IPermission
      * @exception AuthorizationException - wraps an Exception specific to the store.
      */
-    public void add(IPermission perm) throws AuthorizationException
+    public void add(IPermission perm) throws AuthorizationException {
 
-    {
         Connection conn = null;
         int rc = 0;
 
-        try
-        {
+        try {
             conn = RDBMServices.getConnection();
             String sQuery = getInsertPermissionSql();
             PreparedStatement ps = conn.prepareStatement(sQuery);
-            try
-            {
+            try {
                 primAdd(perm, ps);
-                if (log.isDebugEnabled())
-                    log.debug("RDBMPermissionImpl.add(): " + ps);
+                if (log.isDebugEnabled()) log.debug("RDBMPermissionImpl.add(): " + ps);
                 rc = ps.executeUpdate();
-                if ( rc != 1 )
-                { throw new AuthorizationException("Problem adding Permission " + perm); }
+                if (rc != 1) {
+                    throw new AuthorizationException("Problem adding Permission " + perm);
+                }
+            } finally {
+                ps.close();
             }
-            finally
-            { ps.close(); }
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             log.error("Exception adding permission [" + perm + "]", ex);
             throw new AuthorizationException("Problem adding Permission " + perm);
+        } finally {
+            RDBMServices.releaseConnection(conn);
         }
-        finally
-        { RDBMServices.releaseConnection(conn); }
     }
     /**
      * Delete the IPermissions from the store.
+     *
      * @param perms org.apereo.portal.security.IPermission[]
      * @exception AuthorizationException - wraps an Exception specific to the store.
      */
-    public void delete(IPermission[] perms) throws AuthorizationException
-    {
-        if ( perms.length > 0 )
-        {
-            try
-            {
+    public void delete(IPermission[] perms) throws AuthorizationException {
+        if (perms.length > 0) {
+            try {
                 primDelete(perms);
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 log.error("Exception deleting permissions " + Arrays.toString(perms), ex);
-                throw new AuthorizationException("Exception deleting permissions " + Arrays.toString(perms), ex);
+                throw new AuthorizationException(
+                        "Exception deleting permissions " + Arrays.toString(perms), ex);
             }
         }
     }
     /**
      * Delete a single IPermission from the store.
+     *
      * @param perm org.apereo.portal.security.IPermission
      * @exception AuthorizationException - wraps an Exception specific to the store.
      */
-    public void delete(IPermission perm) throws AuthorizationException
+    public void delete(IPermission perm) throws AuthorizationException {
 
-    {
         Connection conn = null;
-        try
-        {
+        try {
             conn = RDBMServices.getConnection();
             String sQuery = getDeletePermissionSql();
             PreparedStatement ps = conn.prepareStatement(sQuery);
-            try
-            { primDelete(perm, ps); }
-            finally
-            { ps.close(); }
-        }
-        catch (Exception ex)
-        {
+            try {
+                primDelete(perm, ps);
+            } finally {
+                ps.close();
+            }
+        } catch (Exception ex) {
             log.error("Exception deleting permission [" + perm + "]", ex);
             throw new AuthorizationException("Problem deleting Permission " + perm, ex);
-        }
-        finally
-        { RDBMServices.releaseConnection(conn); }
-    }
-    /**
-     * Answer if this entity exists in the database.
-     * @return boolean
-     * @param perm org.apereo.portal.security.IPermission
-     * @exception java.sql.SQLException
-     */
-    public boolean existsInDatabase(IPermission perm) throws AuthorizationException, SQLException
-    {
-        Connection conn = null;
-        try
-        {
-            conn = RDBMServices.getConnection();
-            String sQuery = getFindPermissionSql();
-            PreparedStatement ps = conn.prepareStatement(sQuery);
-            try
-            {
-                ps.setString(1, perm.getOwner());
-                ps.setInt   (2, getPrincipalType(perm));
-                ps.setString(3, getPrincipalKey(perm));
-                ps.setString(4, perm.getActivity());
-                ps.setString(5, perm.getTarget());
-                if (log.isDebugEnabled())
-                    log.debug("RDBMPermissionImpl.existsInDatabase(): " + ps);
-                ResultSet rs = ps.executeQuery();
-                try {
-                    return ( rs.next() );
-                } finally {
-                    rs.close();
-                }
-            }
-            finally
-            { ps.close(); }
-        }
-        catch (Exception ex)
-        {
-            log.error("Exception determining whether " +
-                    "permission [" + perm + "] exists in database.", ex);
-            throw new AuthorizationException("RDBMPermissionImpl.existsInDatabase(): " + ex);
-        }
-        finally
-        {
+        } finally {
             RDBMServices.releaseConnection(conn);
         }
     }
-    /**
-     * @return java.lang.String
-     */
-    private static String getAllPermissionColumnsSql()
-    {
-        if ( allPermissionColumnsSql == null )
-        {
+
+    /** @return java.lang.String */
+    private static String getAllPermissionColumnsSql() {
+        if (allPermissionColumnsSql == null) {
             StringBuffer sqlBuff = new StringBuffer(200);
             sqlBuff.append(OWNER_COLUMN);
             sqlBuff.append(", ");
@@ -293,13 +193,9 @@ public class RDBMPermissionImpl implements IPermissionStore {
         }
         return allPermissionColumnsSql;
     }
-    /**
-     * @return java.lang.String
-     */
-    private static String getDeletePermissionSql()
-    {
-        if ( deletePermissionSql == null )
-        {
+    /** @return java.lang.String */
+    private static String getDeletePermissionSql() {
+        if (deletePermissionSql == null) {
             StringBuffer sqlBuff = new StringBuffer(200);
             sqlBuff.append("DELETE FROM ");
             sqlBuff.append(PERMISSION_TABLE);
@@ -319,14 +215,12 @@ public class RDBMPermissionImpl implements IPermissionStore {
         return deletePermissionSql;
     }
     /**
-     * Insert the method's description here.
-     * Creation date: (11/6/01 5:19:57 PM)
+     * Insert the method's description here. Creation date: (11/6/01 5:19:57 PM)
+     *
      * @return java.lang.String
      */
-    private static java.lang.String getFindPermissionSql()
-    {
-        if ( findPermissionSql == null )
-        {
+    private static java.lang.String getFindPermissionSql() {
+        if (findPermissionSql == null) {
             StringBuffer sqlBuff = new StringBuffer(getSelectPermissionSql());
             sqlBuff.append("WHERE ");
             sqlBuff.append(OWNER_COLUMN);
@@ -345,13 +239,9 @@ public class RDBMPermissionImpl implements IPermissionStore {
         }
         return findPermissionSql;
     }
-    /**
-     * @return java.lang.String
-     */
-    private static String getInsertPermissionSql()
-    {
-        if ( insertPermissionSql == null )
-        {
+    /** @return java.lang.String */
+    private static String getInsertPermissionSql() {
+        if (insertPermissionSql == null) {
             StringBuffer sqlBuff = new StringBuffer(200);
             sqlBuff.append("INSERT INTO ");
             sqlBuff.append(PERMISSION_TABLE);
@@ -364,49 +254,46 @@ public class RDBMPermissionImpl implements IPermissionStore {
     }
     /**
      * Returns the principal key portion of the IPermission principal.
+     *
      * @return String
      * @param principalString
      */
-    private String getPrincipalKey(String principalString)
-    {
-        return principalString.substring(principalString.indexOf(PRINCIPAL_SEPARATOR)+1);
+    private String getPrincipalKey(String principalString) {
+        return principalString.substring(principalString.indexOf(PRINCIPAL_SEPARATOR) + 1);
     }
     /**
      * Returns the principal key portion of the IPermission principal.
+     *
      * @return String
      * @param perm org.apereo.portal.security.IPermission
      * @exception AuthorizationException
      */
-    private String getPrincipalKey(IPermission perm) throws AuthorizationException
-    {
+    private String getPrincipalKey(IPermission perm) throws AuthorizationException {
         return getPrincipalKey(perm.getPrincipal());
     }
     /**
      * Returns the principal type portion of the principal.
+     *
      * @return int
      * @param principalString
      */
-    private int getPrincipalType(String principalString)
-    {
-        return Integer.parseInt(principalString.substring(0,principalString.indexOf(PRINCIPAL_SEPARATOR)));
+    private int getPrincipalType(String principalString) {
+        return Integer.parseInt(
+                principalString.substring(0, principalString.indexOf(PRINCIPAL_SEPARATOR)));
     }
     /**
      * Returns the principal type portion of the IPermission principal.
+     *
      * @return int
      * @param perm org.apereo.portal.security.IPermission
      * @exception AuthorizationException
      */
-    private int getPrincipalType(IPermission perm) throws AuthorizationException
-    {
+    private int getPrincipalType(IPermission perm) throws AuthorizationException {
         return getPrincipalType(perm.getPrincipal());
     }
-    /**
-     * @return java.lang.String
-     */
-    private static String getSelectPermissionSql()
-    {
-        if ( selectPermissionSql == null )
-        {
+    /** @return java.lang.String */
+    private static String getSelectPermissionSql() {
+        if (selectPermissionSql == null) {
             StringBuffer sqlBuff = new StringBuffer(200);
             sqlBuff.append("SELECT ");
             sqlBuff.append(getAllPermissionColumnsSql());
@@ -417,13 +304,9 @@ public class RDBMPermissionImpl implements IPermissionStore {
         }
         return selectPermissionSql;
     }
-    /**
-     * @return java.lang.String
-     */
-    private static String getUpdatePermissionSql()
-    {
-        if ( updatePermissionSql == null )
-        {
+    /** @return java.lang.String */
+    private static String getUpdatePermissionSql() {
+        if (updatePermissionSql == null) {
             StringBuffer sqlBuff = new StringBuffer(300);
             sqlBuff.append("UPDATE ");
             sqlBuff.append(PERMISSION_TABLE);
@@ -452,319 +335,300 @@ public class RDBMPermissionImpl implements IPermissionStore {
      * @return org.apereo.portal.security.IPermission
      * @param rs java.sql.ResultSet
      */
-    private IPermission instanceFromResultSet(ResultSet rs) throws  SQLException
-    {
+    private IPermission instanceFromResultSet(ResultSet rs) throws SQLException {
         Timestamp ts = null;
 
         IPermission perm = newInstance(rs.getString(OWNER_COLUMN));
-        perm.setPrincipal(rs.getString(PRINCIPAL_TYPE_COLUMN) + "." + rs.getString(PRINCIPAL_KEY_COLUMN) );
+        perm.setPrincipal(
+                rs.getString(PRINCIPAL_TYPE_COLUMN) + "." + rs.getString(PRINCIPAL_KEY_COLUMN));
         perm.setActivity(rs.getString(ACTIVITY_COLUMN));
         perm.setTarget(rs.getString(TARGET_COLUMN));
         perm.setType(rs.getString(TYPE_COLUMN));
 
         ts = rs.getTimestamp(EFFECTIVE_COLUMN);
-        if ( ts != null )
-        { perm.setEffective(new Date(getTimestampMillis(ts))); }
+        if (ts != null) {
+            perm.setEffective(new Date(getTimestampMillis(ts)));
+        }
 
         ts = rs.getTimestamp(EXPIRES_COLUMN);
-        if ( ts != null )
-        { perm.setExpires(new Date(getTimestampMillis(ts))); }
+        if (ts != null) {
+            perm.setExpires(new Date(getTimestampMillis(ts)));
+        }
 
         return perm;
     }
-    /**
-     * Factory method for IPermissions
-     */
-    public IPermission newInstance(String owner)
-    {
+    /** Factory method for IPermissions */
+    public IPermission newInstance(String owner) {
         return new PermissionImpl(owner);
     }
     /**
      * Add the IPermissions to the store.
+     *
      * @param perms org.apereo.portal.security.IPermission[]
      * @exception Exception
      */
-    private void primAdd(IPermission[] perms) throws Exception
-    {
+    private void primAdd(IPermission[] perms) throws Exception {
         Connection conn = null;
         int rc = 0;
 
-        try
-        {
+        try {
             conn = RDBMServices.getConnection();
             String sQuery = getInsertPermissionSql();
             PreparedStatement ps = conn.prepareStatement(sQuery);
-            try
-            {
+            try {
                 RDBMServices.setAutoCommit(conn, false);
 
-                for ( int i=0; i<perms.length; i++ )
-                {
+                for (int i = 0; i < perms.length; i++) {
                     primAdd(perms[i], ps);
-                    if (log.isDebugEnabled())
-                        log.debug("RDBMPermissionImpl.primAdd(): " + ps);
+                    if (log.isDebugEnabled()) log.debug("RDBMPermissionImpl.primAdd(): " + ps);
                     rc = ps.executeUpdate();
 
-                    if ( rc != 1 )
-                    {
+                    if (rc != 1) {
                         String errMsg = "Problem adding " + perms[i] + " RC: " + rc;
-                        log.error( errMsg);
+                        log.error(errMsg);
                         RDBMServices.rollback(conn);
                         throw new AuthorizationException(errMsg);
                     }
                 }
+            } finally {
+                ps.close();
             }
-            finally
-            { ps.close(); }
 
             RDBMServices.commit(conn);
 
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             log.error("Exception adding permissions " + perms, ex);
             RDBMServices.rollback(conn);
             throw ex;
-        }
-        finally
-        {
-            try
-            { RDBMServices.setAutoCommit(conn, true); }
-            finally
-            { RDBMServices.releaseConnection(conn); }
+        } finally {
+            try {
+                RDBMServices.setAutoCommit(conn, true);
+            } finally {
+                RDBMServices.releaseConnection(conn);
+            }
         }
     }
     /**
      * Set the params on the PreparedStatement and execute the insert.
+     *
      * @param perm org.apereo.portal.security.IPermission
      * @param ps java.sql.PreparedStatement - the PreparedStatement for inserting a Permission row.
      * @exception Exception
      */
-    private void primAdd(IPermission perm, PreparedStatement ps) throws Exception
-    {
+    private void primAdd(IPermission perm, PreparedStatement ps) throws Exception {
         java.sql.Timestamp ts = null;
 
         // NON-NULL COLUMNS:
         ps.clearParameters();
         ps.setString(1, perm.getOwner());
-        ps.setInt(   2, getPrincipalType(perm));
+        ps.setInt(2, getPrincipalType(perm));
         ps.setString(3, getPrincipalKey(perm));
         ps.setString(4, perm.getActivity());
         ps.setString(5, perm.getTarget());
         // TYPE:
-        if ( perm.getType() == null )
-        { ps.setNull(6, Types.VARCHAR); }
-        else
-        { ps.setString(6, perm.getType()); }
+        if (perm.getType() == null) {
+            ps.setNull(6, Types.VARCHAR);
+        } else {
+            ps.setString(6, perm.getType());
+        }
         // EFFECTIVE:
-        if ( perm.getEffective() == null )
-        { ps.setNull(7, Types.TIMESTAMP); }
-        else
-        {
+        if (perm.getEffective() == null) {
+            ps.setNull(7, Types.TIMESTAMP);
+        } else {
             ts = new java.sql.Timestamp(perm.getEffective().getTime());
             ps.setTimestamp(7, ts);
         }
         // EXPIRES:
-        if ( perm.getExpires() == null )
-        { ps.setNull(8, Types.TIMESTAMP); }
-        else
-        {
+        if (perm.getExpires() == null) {
+            ps.setNull(8, Types.TIMESTAMP);
+        } else {
             ts = new java.sql.Timestamp(perm.getExpires().getTime());
             ps.setTimestamp(8, ts);
         }
     }
     /**
      * Delete the IPermissions from the store.
+     *
      * @param perms org.apereo.portal.security.IPermission[]
      * @exception Exception
      */
-    private void primDelete(IPermission[] perms) throws Exception
-    {
+    private void primDelete(IPermission[] perms) throws Exception {
         Connection conn = null;
 
-        try
-        {
+        try {
             conn = RDBMServices.getConnection();
             String sQuery = getDeletePermissionSql();
             PreparedStatement ps = conn.prepareStatement(sQuery);
-            try
-            {
+            try {
                 RDBMServices.setAutoCommit(conn, false);
 
-                for ( int i=0; i<perms.length; i++ )
-                { primDelete(perms[i], ps); }
+                for (int i = 0; i < perms.length; i++) {
+                    primDelete(perms[i], ps);
+                }
+            } finally {
+                ps.close();
             }
-            finally
-            { ps.close(); }
 
             RDBMServices.commit(conn);
 
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             log.error("Exception deleting permissions [" + perms + "]", ex);
             RDBMServices.rollback(conn);
             throw ex;
-        }
-        finally
-        {
-            try
-            { RDBMServices.setAutoCommit(conn, true); }
-            finally
-            { RDBMServices.releaseConnection(conn); }
+        } finally {
+            try {
+                RDBMServices.setAutoCommit(conn, true);
+            } finally {
+                RDBMServices.releaseConnection(conn);
+            }
         }
     }
     /**
      * Set the params on the PreparedStatement and execute the delete.
+     *
      * @param perm org.apereo.portal.security.IPermission
      * @param ps java.sql.PreparedStatement - the PreparedStatement for deleting a Permission row.
      * @return int - the return code from the PreparedStatement
      * @exception Exception
      */
-    private int primDelete(IPermission perm, PreparedStatement ps) throws Exception
-    {
+    private int primDelete(IPermission perm, PreparedStatement ps) throws Exception {
         ps.clearParameters();
         ps.setString(1, perm.getOwner());
-        ps.setInt(   2, getPrincipalType(perm));
+        ps.setInt(2, getPrincipalType(perm));
         ps.setString(3, getPrincipalKey(perm));
         ps.setString(4, perm.getActivity());
         ps.setString(5, perm.getTarget());
-        if (log.isDebugEnabled())
-            log.debug("RDBMPermissionImpl.primDelete(): " + ps);
+        if (log.isDebugEnabled()) log.debug("RDBMPermissionImpl.primDelete(): " + ps);
 
         return ps.executeUpdate();
     }
     /**
      * Update the IPermissions in the store.
+     *
      * @param perms org.apereo.portal.security.IPermission[]
      * @exception Exception
      */
-    private void primUpdate(IPermission[] perms) throws Exception
-    {
+    private void primUpdate(IPermission[] perms) throws Exception {
         Connection conn = null;
 
-        try
-        {
+        try {
             conn = RDBMServices.getConnection();
             String sQuery = getUpdatePermissionSql();
             PreparedStatement ps = conn.prepareStatement(sQuery);
-            try
-            {
+            try {
                 RDBMServices.setAutoCommit(conn, false);
 
-                for ( int i=0; i<perms.length; i++ )
-                { primUpdate(perms[i], ps); }
+                for (int i = 0; i < perms.length; i++) {
+                    primUpdate(perms[i], ps);
+                }
+            } finally {
+                ps.close();
             }
-            finally
-            { ps.close(); }
 
             RDBMServices.commit(conn);
 
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             log.error("Exception updating permissions " + perms, ex);
             RDBMServices.rollback(conn);
             throw ex;
-        }
-        finally
-        {
-            try
-            { RDBMServices.setAutoCommit(conn, true); }
-            finally
-            { RDBMServices.releaseConnection(conn); }
+        } finally {
+            try {
+                RDBMServices.setAutoCommit(conn, true);
+            } finally {
+                RDBMServices.releaseConnection(conn);
+            }
         }
     }
     /**
      * Set the params on the PreparedStatement and execute the update.
+     *
      * @param perm org.apereo.portal.security.IPermission
      * @param ps java.sql.PreparedStatement - the PreparedStatement for updating a Permission row.
      * @return int - the return code from the PreparedStatement
      * @exception Exception
      */
-    private int primUpdate(IPermission perm, PreparedStatement ps) throws Exception
-    {
+    private int primUpdate(IPermission perm, PreparedStatement ps) throws Exception {
         java.sql.Timestamp ts = null;
 
         // UPDATE COLUMNS:
 
         ps.clearParameters();
         // TYPE:
-        if ( perm.getType() == null )
-        { ps.setNull(1, Types.VARCHAR); }
-        else
-        { ps.setString(1, perm.getType()); }
+        if (perm.getType() == null) {
+            ps.setNull(1, Types.VARCHAR);
+        } else {
+            ps.setString(1, perm.getType());
+        }
         // EFFECTIVE:
-        if ( perm.getEffective() == null )
-        { ps.setNull(2, Types.TIMESTAMP); }
-        else
-        {
+        if (perm.getEffective() == null) {
+            ps.setNull(2, Types.TIMESTAMP);
+        } else {
             ts = new java.sql.Timestamp(perm.getEffective().getTime());
             ps.setTimestamp(2, ts);
         }
         // EXPIRES:
-        if ( perm.getExpires() == null )
-        { ps.setNull(3, Types.TIMESTAMP); }
-        else
-        {
+        if (perm.getExpires() == null) {
+            ps.setNull(3, Types.TIMESTAMP);
+        } else {
             ts = new java.sql.Timestamp(perm.getExpires().getTime());
             ps.setTimestamp(3, ts);
         }
         // WHERE COLUMNS:
         ps.setString(4, perm.getOwner());
-        ps.setInt(   5, getPrincipalType(perm));
+        ps.setInt(5, getPrincipalType(perm));
         ps.setString(6, getPrincipalKey(perm));
         ps.setString(7, perm.getActivity());
         ps.setString(8, perm.getTarget());
-        if (log.isDebugEnabled())
-            log.debug("RDBMPermissionImpl.primUpdate(): " + ps);
-
+        if (log.isDebugEnabled()) log.debug("RDBMPermissionImpl.primUpdate(): " + ps);
 
         return ps.executeUpdate();
     }
 
-    private void prepareSelectQuery(PreparedStatement stmt, String owner,
-                                    String principal, String activity,
-                                    String target, String type)
+    private void prepareSelectQuery(
+            PreparedStatement stmt,
+            String owner,
+            String principal,
+            String activity,
+            String target,
+            String type)
             throws SQLException {
         int i = 1;
 
-        if ( owner != null ) {
+        if (owner != null) {
             stmt.setString(i++, owner);
         }
 
-        if ( principal != null ) {
+        if (principal != null) {
             stmt.setInt(i++, getPrincipalType(principal));
             stmt.setString(i++, getPrincipalKey(principal));
         }
 
-        if ( activity != null ) {
+        if (activity != null) {
             stmt.setString(i++, activity);
         }
 
-        if ( target != null ) {
+        if (target != null) {
             stmt.setString(i++, target);
         }
 
-        if ( type != null ) {
+        if (type != null) {
             stmt.setString(i++, type);
         }
     }
 
-
-    private String getSelectQuery(String owner, String principal, String activity,
-                                  String target, String type) {
+    private String getSelectQuery(
+            String owner, String principal, String activity, String target, String type) {
         StringBuffer sqlQuery = new StringBuffer(getSelectPermissionSql());
         sqlQuery.append(" WHERE ");
 
-        if ( owner != null ) {
+        if (owner != null) {
             sqlQuery.append(OWNER_COLUMN);
             sqlQuery.append(" = ? ");
         } else {
             sqlQuery.append("1 = 1 ");
         }
 
-        if ( principal != null ) {
+        if (principal != null) {
             sqlQuery.append("AND ");
             sqlQuery.append(PRINCIPAL_TYPE_COLUMN);
             sqlQuery.append(" = ? AND ");
@@ -772,27 +636,39 @@ public class RDBMPermissionImpl implements IPermissionStore {
             sqlQuery.append(" = ? ");
         }
 
-        if ( activity != null ) {
+        if (activity != null) {
             sqlQuery.append("AND ");
             sqlQuery.append(ACTIVITY_COLUMN);
             sqlQuery.append(" = ? ");
         }
 
-        if ( target != null ) {
+        if (target != null) {
             sqlQuery.append("AND ");
             sqlQuery.append(TARGET_COLUMN);
             sqlQuery.append(" = ? ");
         }
 
-        if ( type != null ) {
+        if (type != null) {
             sqlQuery.append("AND ");
             sqlQuery.append(TYPE_COLUMN);
             sqlQuery.append(" = ? ");
         }
 
         if (log.isTraceEnabled()) {
-            log.trace("Computed SQL query [" + sqlQuery + "] for owner=[" + owner + "] and principal=[" + principal +
-                    "] and activity=[" + activity + "] and target=[" + target + "] and type=[" + type + "]");
+            log.trace(
+                    "Computed SQL query ["
+                            + sqlQuery
+                            + "] for owner=["
+                            + owner
+                            + "] and principal=["
+                            + principal
+                            + "] and activity=["
+                            + activity
+                            + "] and target=["
+                            + target
+                            + "] and type=["
+                            + type
+                            + "]");
         }
 
         return sqlQuery.toString();
@@ -800,26 +676,21 @@ public class RDBMPermissionImpl implements IPermissionStore {
 
     /**
      * Select the Permissions from the store.
+     *
      * @param owner String - the Permission owner
      * @param principal String - the Permission principal
      * @param activity String - the Permission activity
      * @exception AuthorizationException - wraps an Exception specific to the store.
      */
-    public IPermission[] select
-    (String owner,
-     String principal,
-     String activity,
-     String target,
-     String type)
-            throws AuthorizationException
-    {
+    public IPermission[] select(
+            String owner, String principal, String activity, String target, String type)
+            throws AuthorizationException {
         Connection conn = null;
         PreparedStatement stmt = null;
         ResultSet rs = null;
         List<IPermission> perms = new ArrayList<IPermission>();
 
         String query = getSelectQuery(owner, principal, activity, target, type);
-
 
         try {
             conn = RDBMServices.getConnection();
@@ -828,40 +699,70 @@ public class RDBMPermissionImpl implements IPermissionStore {
             try {
                 rs = stmt.executeQuery();
                 try {
-                    while ( rs.next() )
-                    { perms.add(instanceFromResultSet(rs)); }
-                } finally { rs.close(); }
-            } finally { stmt.close(); }
+                    while (rs.next()) {
+                        perms.add(instanceFromResultSet(rs));
+                    }
+                } finally {
+                    rs.close();
+                }
+            } finally {
+                stmt.close();
+            }
         } catch (SQLException sqle) {
             log.error("Problem retrieving permissions", sqle);
-            throw new AuthorizationException("Problem retrieving Permissions [" + sqle.getMessage() + "] for query=[" + query +
-                    "] for owner=[" + owner + "] and principal=[" + principal + "] and activity=[" + activity +
-                    "] and target=[" + target + "] and type=[" + type + "]", sqle);
-        } finally { RDBMServices.releaseConnection(conn); }
-
-        if (log.isTraceEnabled()) {
-            log.trace("RDBMPermissionImpl.select(): [" + query + "] for owner=[" + owner + "] and principal=["
-                    + principal + "] and activity=[" + activity + "] and target=[" + target + "] and type=[" + type + "] returned permissions [" + perms + "]");
+            throw new AuthorizationException(
+                    "Problem retrieving Permissions ["
+                            + sqle.getMessage()
+                            + "] for query=["
+                            + query
+                            + "] for owner=["
+                            + owner
+                            + "] and principal=["
+                            + principal
+                            + "] and activity=["
+                            + activity
+                            + "] and target=["
+                            + target
+                            + "] and type=["
+                            + type
+                            + "]",
+                    sqle);
+        } finally {
+            RDBMServices.releaseConnection(conn);
         }
 
-        return ((IPermission[])perms.toArray(new IPermission[perms.size()]));
+        if (log.isTraceEnabled()) {
+            log.trace(
+                    "RDBMPermissionImpl.select(): ["
+                            + query
+                            + "] for owner=["
+                            + owner
+                            + "] and principal=["
+                            + principal
+                            + "] and activity=["
+                            + activity
+                            + "] and target=["
+                            + target
+                            + "] and type=["
+                            + type
+                            + "] returned permissions ["
+                            + perms
+                            + "]");
+        }
 
+        return ((IPermission[]) perms.toArray(new IPermission[perms.size()]));
     }
     /**
      * Update the IPermissions in the store.
+     *
      * @param perms org.apereo.portal.security.IPermission[]
      * @exception AuthorizationException - wraps an Exception specific to the store.
      */
-    public void update(IPermission[] perms) throws AuthorizationException
-    {
-        if ( perms.length > 0 )
-        {
-            try
-            {
+    public void update(IPermission[] perms) throws AuthorizationException {
+        if (perms.length > 0) {
+            try {
                 primUpdate(perms);
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 log.error("Exception updating permissions " + perms, ex);
                 throw new AuthorizationException(ex);
             }
@@ -869,38 +770,32 @@ public class RDBMPermissionImpl implements IPermissionStore {
     }
     /**
      * Update a single IPermission in the store.
+     *
      * @param perm org.apereo.portal.security.IPermission
      * @exception AuthorizationException - wraps an Exception specific to the store.
      */
-    public void update(IPermission perm) throws AuthorizationException
+    public void update(IPermission perm) throws AuthorizationException {
 
-    {
         Connection conn = null;
-        try
-        {
+        try {
             conn = RDBMServices.getConnection();
             String sQuery = getUpdatePermissionSql();
-            if (log.isDebugEnabled())
-                log.debug("RDBMPermissionImpl.update(): " + sQuery);
+            if (log.isDebugEnabled()) log.debug("RDBMPermissionImpl.update(): " + sQuery);
             PreparedStatement ps = conn.prepareStatement(sQuery);
-            try
-            { primUpdate(perm, ps); }
-            finally
-            { ps.close(); }
-        }
-        catch (Exception ex)
-        {
+            try {
+                primUpdate(perm, ps);
+            } finally {
+                ps.close();
+            }
+        } catch (Exception ex) {
             log.error("Exception updating permission [" + perm + "]", ex);
             throw new AuthorizationException("Problem updating Permission " + perm);
+        } finally {
+            RDBMServices.releaseConnection(conn);
         }
-        finally
-        { RDBMServices.releaseConnection(conn); }
     }
-    /**
-     * @return long
-     */
-    private static long getTimestampMillis(Timestamp ts)
-    {
+    /** @return long */
+    private static long getTimestampMillis(Timestamp ts) {
         return ts.getTime();
     }
 }

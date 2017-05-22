@@ -1,20 +1,16 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.portlet.url;
 
@@ -23,11 +19,9 @@ import java.io.Writer;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-
 import javax.portlet.PortletMode;
 import javax.portlet.PortletSecurityException;
 import javax.portlet.WindowState;
-
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.pluto.container.PortletURLProvider;
 import org.apereo.portal.url.IPortalUrlBuilder;
@@ -36,13 +30,11 @@ import org.apereo.portal.url.UrlType;
 
 /**
  * Wraps the portal {@link IPortletUrlBuilder} API to work with Pluto's API
- * 
- * @author Eric Dalquist
- * @version $Revision$
+ *
  */
 public class PortletURLProviderImpl implements PortletURLProvider {
     private final IPortletUrlBuilder portletUrlBuilder;
-    
+
     public PortletURLProviderImpl(IPortletUrlBuilder portletUrlBuilder) {
         this.portletUrlBuilder = portletUrlBuilder;
     }
@@ -181,8 +173,7 @@ public class PortletURLProviderImpl implements PortletURLProvider {
         final String url = this.toURL();
         if (escapeXML) {
             StringEscapeUtils.escapeXml(out, url);
-        }
-        else {
+        } else {
             out.write(url);
         }
     }

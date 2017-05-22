@@ -1,20 +1,16 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.layout.node;
 
@@ -25,10 +21,9 @@ import org.w3c.dom.Element;
 
 /**
  * A class describing a folder node fo the user layout structure.
- *
- * @author Peter Kharchenko  {@link <a href="mailto:pkharchenko@interactivebusiness.com"">pkharchenko@interactivebusiness.com"</a>}
  */
-public class UserLayoutFolderDescription extends UserLayoutNodeDescription implements IUserLayoutFolderDescription {
+public class UserLayoutFolderDescription extends UserLayoutNodeDescription
+        implements IUserLayoutFolderDescription {
 
     private String folderType = "regular";
 
@@ -39,17 +34,16 @@ public class UserLayoutFolderDescription extends UserLayoutNodeDescription imple
      * @exception PortalException if xml is malformed
      */
     public UserLayoutFolderDescription(Element xmlNode) throws PortalException {
-        super( xmlNode );
-        
-        if(!xmlNode.getNodeName().equals("folder")) {
+        super(xmlNode);
+
+        if (!xmlNode.getNodeName().equals("folder")) {
             throw new PortalException("Given XML Element is not a folder!");
         }
 
         this.folderType = xmlNode.getAttribute("type");
     }
 
-    public UserLayoutFolderDescription() {
-    }
+    public UserLayoutFolderDescription() {}
 
     /**
      * Returns a type of the node, could be FOLDER or CHANNEL integer constant.
@@ -57,7 +51,7 @@ public class UserLayoutFolderDescription extends UserLayoutNodeDescription imple
      * @return a type
      */
     public LayoutNodeType getType() {
-      return LayoutNodeType.FOLDER;
+        return LayoutNodeType.FOLDER;
     }
 
     @Override
@@ -72,7 +66,7 @@ public class UserLayoutFolderDescription extends UserLayoutNodeDescription imple
             throw new IllegalArgumentException("Folder type cannot be set to null.");
         }
 
-        this.folderType=folderTypeArg;
+        this.folderType = folderTypeArg;
     }
 
     /**
@@ -82,7 +76,7 @@ public class UserLayoutFolderDescription extends UserLayoutNodeDescription imple
      * @return a <code>Node</code> value
      */
     public Element getXML(Document root) {
-        Element node=root.createElement("folder");
+        Element node = root.createElement("folder");
         this.addNodeAttributes(node);
         return node;
     }
@@ -93,18 +87,18 @@ public class UserLayoutFolderDescription extends UserLayoutNodeDescription imple
     }
 
     public String toString() {
-        return new ToStringBuilder(this).
-                append("ID", this.id).
-                append("name", this.name).
-                append("channel_or_folder?", this.getType()).
-                append("type", this.folderType).
-                append("precedence", this.precedence).
-                append("moveAllowed", this.moveAllowed).
-                append("removable", !this.unremovable).
-                append("deleteAllowed", this.deleteAllowed).
-                append("immutable", this.immutable).
-                append("editAllowed", this.editAllowed).
-                append("precedence", this.precedence).
-                toString();
+        return new ToStringBuilder(this)
+                .append("ID", this.id)
+                .append("name", this.name)
+                .append("channel_or_folder?", this.getType())
+                .append("type", this.folderType)
+                .append("precedence", this.precedence)
+                .append("moveAllowed", this.moveAllowed)
+                .append("removable", !this.unremovable)
+                .append("deleteAllowed", this.deleteAllowed)
+                .append("immutable", this.immutable)
+                .append("editAllowed", this.editAllowed)
+                .append("precedence", this.precedence)
+                .toString();
     }
 }

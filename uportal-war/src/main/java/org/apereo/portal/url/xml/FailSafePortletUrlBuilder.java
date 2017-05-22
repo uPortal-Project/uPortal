@@ -1,45 +1,38 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.url.xml;
 
 import java.util.List;
 import java.util.Map;
-
 import javax.portlet.PortletMode;
 import javax.portlet.WindowState;
-
 import org.apereo.portal.portlet.om.IPortletWindowId;
 import org.apereo.portal.url.IPortalUrlBuilder;
 import org.apereo.portal.url.IPortletUrlBuilder;
 import org.apereo.portal.url.ParameterMap;
 
 /**
- * @author Eric Dalquist
- * @version $Revision$
  */
 class FailSafePortletUrlBuilder implements IPortletUrlBuilder {
     private final Map<String, String[]> parameters = new ParameterMap();
     private final Map<String, String[]> publicParameters = new ParameterMap();
     private final IPortletWindowId portletWindowId;
     private final IPortalUrlBuilder portalUrlBuilder;
-    
-    public FailSafePortletUrlBuilder(IPortletWindowId portletWindowId, IPortalUrlBuilder portalUrlBuilder) {
+
+    public FailSafePortletUrlBuilder(
+            IPortletWindowId portletWindowId, IPortalUrlBuilder portalUrlBuilder) {
         this.portletWindowId = portletWindowId;
         this.portalUrlBuilder = portalUrlBuilder;
     }
@@ -75,7 +68,7 @@ class FailSafePortletUrlBuilder implements IPortletUrlBuilder {
     public void setParameters(Map<String, List<String>> parameters) {
         //NOOP
     }
-    
+
     /* (non-Javadoc)
      * @see org.apereo.portal.url.IPortletUrlBuilder#setCopyCurrentRenderParameters(boolean)
      */
@@ -83,7 +76,7 @@ class FailSafePortletUrlBuilder implements IPortletUrlBuilder {
     public void setCopyCurrentRenderParameters(boolean copyCurrentRenderParameters) {
         //NOOP
     }
-    
+
     /* (non-Javadoc)
      * @see org.apereo.portal.url.IPortletUrlBuilder#getCopyCurrentRenderParameters()
      */

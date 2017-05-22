@@ -1,26 +1,21 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.portlet.dao.jpa;
 
 import java.util.HashSet;
 import java.util.Set;
-
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -34,7 +29,8 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Version;
-
+import org.apereo.portal.portlet.om.IPortalCookie;
+import org.apereo.portal.portlet.om.IPortletCookie;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
@@ -43,145 +39,139 @@ import org.hibernate.annotations.Index;
 import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.NaturalIdCache;
 import org.hibernate.annotations.Type;
-import org.apereo.portal.portlet.om.IPortalCookie;
-import org.apereo.portal.portlet.om.IPortletCookie;
 import org.joda.time.DateTime;
 
 /**
  * JPA annotated {@link IPortalCookie} annotation.
- * 
- * @author Nicholas Blair
- * @version $Id$
+ *
  */
 @Entity
-@Table(
-		name = "UP_PORTAL_COOKIES"
-	)
+@Table(name = "UP_PORTAL_COOKIES")
 @SequenceGenerator(
-        name="UP_PORTAL_COOKIES_GEN",
-        sequenceName="UP_PORTAL_COOKIES_SEQ",
-        allocationSize=100
-    )
+    name = "UP_PORTAL_COOKIES_GEN",
+    sequenceName = "UP_PORTAL_COOKIES_SEQ",
+    allocationSize = 100
+)
 @TableGenerator(
-        name="UP_PORTAL_COOKIES_GEN",
-        pkColumnValue="UP_PORTAL_COOKIES",
-        allocationSize=100
-    )
+    name = "UP_PORTAL_COOKIES_GEN",
+    pkColumnValue = "UP_PORTAL_COOKIES",
+    allocationSize = 100
+)
 @org.hibernate.annotations.Table(
-        appliesTo = "UP_PORTAL_COOKIES",
-        indexes = @Index(name = "IDX_UP_PRTL_CK_EXP", columnNames = { "EXPIRES" })
-    )
+    appliesTo = "UP_PORTAL_COOKIES",
+    indexes =
+            @Index(
+                name = "IDX_UP_PRTL_CK_EXP",
+                columnNames = {"EXPIRES"}
+            )
+)
 @NaturalIdCache(region = "org.apereo.portal.portlet.dao.jpa.PortalCookieImpl-NaturalId")
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 class PortalCookieImpl implements IPortalCookie {
-	@Id
+    @Id
     @GeneratedValue(generator = "UP_PORTAL_COOKIES_GEN")
     @Column(name = "PORTAL_COOKIE_ID")
     private final long internalPortalCookieId;
-	
-	@Version
+
+    @Version
     @Column(name = "ENTITY_VERSION")
     private final long entityVersion;
-    
+
     @Column(name = "CREATED", nullable = false, updatable = false)
     @Type(type = "dateTime")
     private DateTime created;
-    
-	@Column(name = "EXPIRES", nullable = false, updatable = true)
-	@Type(type = "dateTime")
-	private DateTime expires;
-	
-	@NaturalId
-	@Column(name = "COOKIE_VALUE", length=100, nullable = false)
-	private final String value;
-	
-	@OneToMany(targetEntity = PortletCookieImpl.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+
+    @Column(name = "EXPIRES", nullable = false, updatable = true)
+    @Type(type = "dateTime")
+    private DateTime expires;
+
+    @NaturalId
+    @Column(name = "COOKIE_VALUE", length = 100, nullable = false)
+    private final String value;
+
+    @OneToMany(
+        targetEntity = PortletCookieImpl.class,
+        cascade = CascadeType.ALL,
+        fetch = FetchType.EAGER,
+        orphanRemoval = true
+    )
     @JoinColumn(name = "PORTAL_COOKIE_ID")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @Fetch(FetchMode.JOIN)
     private Set<IPortletCookie> portletCookies;
-	
-	/**
-	 * For ORM internal use only
-	 */
-	@SuppressWarnings("unused")
-	private PortalCookieImpl() {
-		this.internalPortalCookieId = -1;
-		this.entityVersion = -1;
-		this.created = DateTime.now();
-		this.expires = null;
-		this.value = null;
-		this.portletCookies = new HashSet<IPortletCookie>();
-	}
-	
-	/**
-	 * 
-	 * @param value
-	 */
-	PortalCookieImpl(String value, DateTime expiration) {
-		this.internalPortalCookieId = -1;
-		this.entityVersion = -1;
-		
-		this.value = value;
-		
-		this.created = DateTime.now();
-		this.expires = expiration;
-		this.portletCookies = new HashSet<IPortletCookie>();
-	}
 
-	/**
-	 * @return the internalPortalCookieId
-	 */
-	public long getInternalPortalCookieId() {
-		return internalPortalCookieId;
-	}
+    /** For ORM internal use only */
+    @SuppressWarnings("unused")
+    private PortalCookieImpl() {
+        this.internalPortalCookieId = -1;
+        this.entityVersion = -1;
+        this.created = DateTime.now();
+        this.expires = null;
+        this.value = null;
+        this.portletCookies = new HashSet<IPortletCookie>();
+    }
 
-	/**
-	 * @return the created
-	 */
-	@Override
+    /** @param value */
+    PortalCookieImpl(String value, DateTime expiration) {
+        this.internalPortalCookieId = -1;
+        this.entityVersion = -1;
+
+        this.value = value;
+
+        this.created = DateTime.now();
+        this.expires = expiration;
+        this.portletCookies = new HashSet<IPortletCookie>();
+    }
+
+    /** @return the internalPortalCookieId */
+    public long getInternalPortalCookieId() {
+        return internalPortalCookieId;
+    }
+
+    /** @return the created */
+    @Override
     public DateTime getCreated() {
-		return created;
-	}
+        return created;
+    }
 
-	/**
-	 * @return the expires
-	 */
-	@Override
+    /** @return the expires */
+    @Override
     public DateTime getExpires() {
-		return expires;
-	}
+        return expires;
+    }
 
-	/**
-	 * @return the value
-	 */
-	@Override
+    /** @return the value */
+    @Override
     public String getValue() {
-		return value;
-	}
+        return value;
+    }
 
-	/**
-	 * @return the portletCookies
-	 */
-	@Override
+    /** @return the portletCookies */
+    @Override
     public Set<IPortletCookie> getPortletCookies() {
-		return portletCookies;
-	}
+        return portletCookies;
+    }
 
-	/**
-	 * @param expires the expires to set
-	 */
-	@Override
+    /** @param expires the expires to set */
+    @Override
     public void setExpires(DateTime expires) {
-		this.expires = expires;
-	}
+        this.expires = expires;
+    }
 
     @Override
     public String toString() {
-        return "PortalCookieImpl [internalPortalCookieId=" + this.internalPortalCookieId + ", entityVersion="
-                + this.entityVersion + ", created=" + this.created + ", expires=" + this.expires + ", value="
-                + this.value + "]";
+        return "PortalCookieImpl [internalPortalCookieId="
+                + this.internalPortalCookieId
+                + ", entityVersion="
+                + this.entityVersion
+                + ", created="
+                + this.created
+                + ", expires="
+                + this.expires
+                + ", value="
+                + this.value
+                + "]";
     }
 
     @Override
@@ -194,19 +184,13 @@ class PortalCookieImpl implements IPortalCookie {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
+        if (this == obj) return true;
+        if (obj == null) return false;
+        if (getClass() != obj.getClass()) return false;
         PortalCookieImpl other = (PortalCookieImpl) obj;
         if (this.value == null) {
-            if (other.value != null)
-                return false;
-        }
-        else if (!this.value.equals(other.value))
-            return false;
+            if (other.value != null) return false;
+        } else if (!this.value.equals(other.value)) return false;
         return true;
     }
 }

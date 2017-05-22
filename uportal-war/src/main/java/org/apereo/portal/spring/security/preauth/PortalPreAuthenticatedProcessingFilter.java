@@ -1,20 +1,16 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.spring.security.preauth;
 
@@ -24,14 +20,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
-
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apereo.portal.PortalException;
@@ -52,16 +46,15 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.preauth.AbstractPreAuthenticatedProcessingFilter;
 
 /**
- * PortalPreAuthenticatedProcessingFilter enables Spring Security 
- * pre-authentication in uPortal by returning the current IPerson object as
- * the user details.
+ * PortalPreAuthenticatedProcessingFilter enables Spring Security pre-authentication in uPortal by
+ * returning the current IPerson object as the user details.
  *
- * At login, fires ProfileSelectionEvent representing any runtime request for a profile selection
+ * <p>At login, fires ProfileSelectionEvent representing any runtime request for a profile selection
  * (as in, profile request parameter or target profile indicated by the swapper manager).
- * 
- * @author Jen Bourey, jennifer.bourey@gmail.com
+ *
  */
-public class PortalPreAuthenticatedProcessingFilter extends AbstractPreAuthenticatedProcessingFilter {
+public class PortalPreAuthenticatedProcessingFilter
+        extends AbstractPreAuthenticatedProcessingFilter {
 
     protected final Log swapperLog = LogFactory.getLog("org.jasig.portal.portlets.swapper");
 
@@ -100,14 +93,14 @@ public class PortalPreAuthenticatedProcessingFilter extends AbstractPreAuthentic
     @Override
     public void afterPropertiesSet() {
         super.afterPropertiesSet();
-        this.credentialTokens = new HashMap<String,String>(1);
-        this.principalTokens = new HashMap<String,String>(1);
+        this.credentialTokens = new HashMap<String, String>(1);
+        this.principalTokens = new HashMap<String, String>(1);
         this.retrieveCredentialAndPrincipalTokensFromPropertiesFile();
     }
 
     /**
      * Set the path to the portal's local login servlet.
-     * 
+     *
      * @param loginPath
      */
     public void setLoginPath(String loginPath) {
@@ -116,7 +109,7 @@ public class PortalPreAuthenticatedProcessingFilter extends AbstractPreAuthentic
 
     /**
      * Set the path to the portal's local logout servlet.
-     * 
+     *
      * @param logoutPath
      */
     public void setLogoutPath(String logoutPath) {
@@ -124,26 +117,31 @@ public class PortalPreAuthenticatedProcessingFilter extends AbstractPreAuthentic
     }
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response,
-            FilterChain chain) throws IOException, ServletException {
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+            throws IOException, ServletException {
 
         // Set up some DEBUG logging for performance troubleshooting
         final long timestamp = System.currentTimeMillis();
-        UUID uuid = null;  // Tagging with a UUID (instead of username) because username changes in the /Login process
+        UUID uuid =
+                null; // Tagging with a UUID (instead of username) because username changes in the /Login process
         if (logger.isDebugEnabled()) {
             uuid = UUID.randomUUID();
             final HttpServletRequest httpr = (HttpServletRequest) request;
-            logger.debug("STARTING [" + uuid.toString() + "] for URI=" + httpr.getRequestURI() + " #milestone");
+            logger.debug(
+                    "STARTING ["
+                            + uuid.toString()
+                            + "] for URI="
+                            + httpr.getRequestURI()
+                            + " #milestone");
         }
 
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
         String currentPath = httpServletRequest.getServletPath();
 
         /**
-         * Override the base class's main filter method to bypass this filter if
-         * we're currently at the login servlet.  Since that servlet sets up the 
-         * user session and authentication, we need it to run before this filter
-         * is useful.
+         * Override the base class's main filter method to bypass this filter if we're currently at
+         * the login servlet. Since that servlet sets up the user session and authentication, we
+         * need it to run before this filter is useful.
          */
         if (loginPath.equals(currentPath)) {
             final org.springframework.security.core.Authentication originalAuthentication =
@@ -152,10 +150,9 @@ public class PortalPreAuthenticatedProcessingFilter extends AbstractPreAuthentic
                 SecurityContextHolder.clearContext();
             }
             this.logForLoginPath(currentPath);
-            this.doPortalAuthentication((HttpServletRequest)request, originalAuthentication);
+            this.doPortalAuthentication((HttpServletRequest) request, originalAuthentication);
             chain.doFilter(request, response);
-        }
-        else if (logoutPath.equals(currentPath)) {
+        } else if (logoutPath.equals(currentPath)) {
             SecurityContextHolder.clearContext();
             this.logForLogoutPath(currentPath);
             chain.doFilter(request, response);
@@ -168,7 +165,14 @@ public class PortalPreAuthenticatedProcessingFilter extends AbstractPreAuthentic
 
         if (logger.isDebugEnabled()) {
             final HttpServletRequest httpr = (HttpServletRequest) request;
-            logger.debug("FINISHED [" + uuid.toString() + "] for URI=" + httpr.getRequestURI() + " in " + Long.toString(System.currentTimeMillis() - timestamp) + "ms #milestone");
+            logger.debug(
+                    "FINISHED ["
+                            + uuid.toString()
+                            + "] for URI="
+                            + httpr.getRequestURI()
+                            + " in "
+                            + Long.toString(System.currentTimeMillis() - timestamp)
+                            + "ms #milestone");
         }
     }
 
@@ -205,13 +209,19 @@ public class PortalPreAuthenticatedProcessingFilter extends AbstractPreAuthentic
         final String requestedSessionId = request.getRequestedSessionId();
         if (request.isRequestedSessionIdValid()) {
             if (logger.isDebugEnabled()) {
-                logger.debug("doPortalAuthentication for valid requested session id " + requestedSessionId);
+                logger.debug(
+                        "doPortalAuthentication for valid requested session id "
+                                + requestedSessionId);
             }
-            identitySwapHelper = getIdentitySwapDataAndInvalidateSession(request, originalAuthentication);
+            identitySwapHelper =
+                    getIdentitySwapDataAndInvalidateSession(request, originalAuthentication);
         } else {
             if (logger.isTraceEnabled()) {
-                logger.trace("Requested session id " + requestedSessionId + " was not valid " +
-                        "so no attempt to apply swapping rules.");
+                logger.trace(
+                        "Requested session id "
+                                + requestedSessionId
+                                + " was not valid "
+                                + "so no attempt to apply swapping rules.");
             }
         }
 
@@ -237,8 +247,7 @@ public class PortalPreAuthenticatedProcessingFilter extends AbstractPreAuthentic
 
             // Attempt to authenticate using the incoming request
             authenticationService.authenticate(request, principals, credentials, person);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             // Log the exception
             logger.error("Exception authenticating the request", e);
             // Reset everything
@@ -251,8 +260,8 @@ public class PortalPreAuthenticatedProcessingFilter extends AbstractPreAuthentic
     }
 
     /**
-     * Helper inner class for encapsulating logic for determining whether or not the request is for an identity "swap" 
-     * or "unswap", and determining the "swap from" and "swap to" values.
+     * Helper inner class for encapsulating logic for determining whether or not the request is for
+     * an identity "swap" or "unswap", and determining the "swap from" and "swap to" values.
      */
     class IdentitySwapHelper {
         private String originalUsername;
@@ -262,31 +271,37 @@ public class PortalPreAuthenticatedProcessingFilter extends AbstractPreAuthentic
         private org.springframework.security.core.Authentication originalAuthenticationForSwap;
         private org.springframework.security.core.Authentication originalAuthenticationForUnswap;
 
-        IdentitySwapHelper(
-                final HttpSession s,
-                final String personName) {
+        IdentitySwapHelper(final HttpSession s, final String personName) {
             // must pull out session data during creation because session may later be invalidated
-            this.originalAuthenticationForUnswap = identitySwapperManager.getOriginalAuthentication(s);
+            this.originalAuthenticationForUnswap =
+                    identitySwapperManager.getOriginalAuthentication(s);
             this.originalUsername = identitySwapperManager.getOriginalUsername(s);
             this.personName = personName;
             this.targetUsername = identitySwapperManager.getTargetUsername(s);
             this.targetProfile = identitySwapperManager.getTargetProfile(s);
         }
+
         public boolean isSwapRequest() {
             return this.originalUsername == null && this.targetUsername != null;
         }
+
         public boolean isUnswapRequest() {
             return this.originalUsername != null;
         }
+
         public boolean isSwapOrUnswapRequest() {
             return this.isSwapRequest() || this.isUnswapRequest();
         }
+
         public org.springframework.security.core.Authentication getOriginalAuthenticationForSwap() {
             return this.originalAuthenticationForSwap;
         }
-        public org.springframework.security.core.Authentication getOriginalAuthenticationForUnswap() {
+
+        public org.springframework.security.core.Authentication
+                getOriginalAuthenticationForUnswap() {
             return this.originalAuthenticationForUnswap;
         }
+
         public String getSwapFromUid() {
             if (this.isSwapRequest()) {
                 return this.personName;
@@ -296,6 +311,7 @@ public class PortalPreAuthenticatedProcessingFilter extends AbstractPreAuthentic
             }
             return null;
         }
+
         public String getSwapToUid() {
             if (this.isSwapRequest()) {
                 return this.targetUsername;
@@ -305,16 +321,20 @@ public class PortalPreAuthenticatedProcessingFilter extends AbstractPreAuthentic
             }
             return null;
         }
+
         public String getTargetProfile() {
             return this.targetProfile;
         }
-        public void setOriginalAuthenticationForSwap(final org.springframework.security.core.Authentication auth) {
+
+        public void setOriginalAuthenticationForSwap(
+                final org.springframework.security.core.Authentication auth) {
             this.originalAuthenticationForSwap = auth;
         }
     }
 
     private IdentitySwapHelper getIdentitySwapDataAndInvalidateSession(
-            final HttpServletRequest request, final org.springframework.security.core.Authentication originalAuth) {
+            final HttpServletRequest request,
+            final org.springframework.security.core.Authentication originalAuth) {
         IdentitySwapHelper identitySwapHelper = null;
         try {
             HttpSession s = request.getSession(false);
@@ -329,91 +349,114 @@ public class PortalPreAuthenticatedProcessingFilter extends AbstractPreAuthentic
                 }
                 s.invalidate();
             }
-        }
-        catch (IllegalStateException ise) {
+        } catch (IllegalStateException ise) {
             // ISE indicates session was already invalidated.
             // This is fine.  This servlet trying to guarantee that the session has been invalidated;
             // it doesn't have to insist that it is the one that invalidated it.
             if (logger.isTraceEnabled()) {
-                logger.trace("LoginServlet attempted to invalidate an already invalid session.", ise);
+                logger.trace(
+                        "LoginServlet attempted to invalidate an already invalid session.", ise);
             }
         }
         return identitySwapHelper;
     }
 
     private void handleIdentitySwap(
-            final IPerson person, final HttpSession session , final IdentitySwapHelper identitySwapHelper) {
+            final IPerson person,
+            final HttpSession session,
+            final IdentitySwapHelper identitySwapHelper) {
         String msgFormat;
         if (identitySwapHelper.isSwapRequest()) {
             msgFormat = "Swapping identity for '%s' to '%s'";
             this.identitySwapperManager.setOriginalUser(
-                session,
-                identitySwapHelper.getSwapFromUid(),
-                identitySwapHelper.getSwapToUid(),
-                identitySwapHelper.getOriginalAuthenticationForSwap());
-        }
-        else {
+                    session,
+                    identitySwapHelper.getSwapFromUid(),
+                    identitySwapHelper.getSwapToUid(),
+                    identitySwapHelper.getOriginalAuthenticationForSwap());
+        } else {
             msgFormat = "Reverting swapped identity from '%s' to '%s'";
             if (identitySwapHelper.getOriginalAuthenticationForUnswap() != null) {
-                SecurityContextHolder.getContext().setAuthentication(
-                        identitySwapHelper.getOriginalAuthenticationForUnswap());
+                SecurityContextHolder.getContext()
+                        .setAuthentication(identitySwapHelper.getOriginalAuthenticationForUnswap());
             }
         }
         person.setUserName(identitySwapHelper.getSwapToUid());
-        final String msg = String.format(
-                msgFormat, identitySwapHelper.getSwapFromUid(), identitySwapHelper.getSwapToUid());
+        final String msg =
+                String.format(
+                        msgFormat,
+                        identitySwapHelper.getSwapFromUid(),
+                        identitySwapHelper.getSwapToUid());
         swapperLog.warn(msg);
 
         //Setup the custom security context
-        final IdentitySwapperPrincipal identitySwapperPrincipal = new IdentitySwapperPrincipal(person);
+        final IdentitySwapperPrincipal identitySwapperPrincipal =
+                new IdentitySwapperPrincipal(person);
         final IdentitySwapperSecurityContext identitySwapperSecurityContext =
                 new IdentitySwapperSecurityContext(identitySwapperPrincipal);
         person.setSecurityContext(identitySwapperSecurityContext);
     }
 
     private void publishProfileSelectionEvent(
-            final IPerson person, final HttpServletRequest request, final IdentitySwapHelper identitySwapHelper) {
+            final IPerson person,
+            final HttpServletRequest request,
+            final IdentitySwapHelper identitySwapHelper) {
         final String requestedProfile = request.getParameter(LoginController.REQUESTED_PROFILE_KEY);
         if (requestedProfile != null) {
-            final ProfileSelectionEvent event = new ProfileSelectionEvent(this, requestedProfile, person, request);
-            this.publishProfileSelectionEvent(event);
-        } else if(identitySwapHelper != null && identitySwapHelper.isSwapRequest()) {
             final ProfileSelectionEvent event =
-                    new ProfileSelectionEvent(this, identitySwapHelper.getTargetProfile(), person, request);
+                    new ProfileSelectionEvent(this, requestedProfile, person, request);
+            this.publishProfileSelectionEvent(event);
+        } else if (identitySwapHelper != null && identitySwapHelper.isSwapRequest()) {
+            final ProfileSelectionEvent event =
+                    new ProfileSelectionEvent(
+                            this, identitySwapHelper.getTargetProfile(), person, request);
             this.publishProfileSelectionEvent(event);
         } else {
             if (logger.isTraceEnabled()) {
-                logger.trace("No requested or swapper profile requested so no profile selection event.");
+                logger.trace(
+                        "No requested or swapper profile requested so no profile selection event.");
             }
         }
     }
+
     private void publishProfileSelectionEvent(final ProfileSelectionEvent event) {
         try {
             this.eventPublisher.publishEvent(event);
         } catch (final Exception exceptionFiringProfileSelection) {
             // failing to swap as the desired profile selection is bad,
             // but preventing login entirely is worse.  Log the exception and continue.
-            logger.error("Exception on firing profile selection event " + event,
-                exceptionFiringProfileSelection);
+            logger.error(
+                    "Exception on firing profile selection event " + event,
+                    exceptionFiringProfileSelection);
         }
     }
 
     private void logForLoginPath(final String currentPath) {
         if (logger.isDebugEnabled()) {
-            logger.debug("Path [" + currentPath + "] is loginPath, so cleared security context" +
-                    " so we can re-establish it once the new session is established.");
+            logger.debug(
+                    "Path ["
+                            + currentPath
+                            + "] is loginPath, so cleared security context"
+                            + " so we can re-establish it once the new session is established.");
         }
     }
+
     private void logForLogoutPath(final String currentPath) {
         if (logger.isDebugEnabled()) {
-            logger.debug("Path [" + currentPath + "] is logoutPath, so cleared security context" +
-                    " so can re-establish it once the new session is established.");
+            logger.debug(
+                    "Path ["
+                            + currentPath
+                            + "] is logoutPath, so cleared security context"
+                            + " so can re-establish it once the new session is established.");
         }
     }
+
     private void logForNonLoginOrLogoutPath(final String currentPath) {
         if (logger.isTraceEnabled()) {
-            logger.trace("Path [" + currentPath  + "] is neither a login nor a logout path," +
-                    " so no uPortal-custom filtering.");
+            logger.trace(
+                    "Path ["
+                            + currentPath
+                            + "] is neither a login nor a logout path,"
+                            + " so no uPortal-custom filtering.");
         }
     }
 
@@ -422,7 +465,9 @@ public class PortalPreAuthenticatedProcessingFilter extends AbstractPreAuthentic
             String key;
             // We retrieve the tokens representing the credential and principal
             // parameters from the security properties file.
-            Properties props = ResourceLoader.getResourceAsProperties(getClass(), "/properties/security.properties");
+            Properties props =
+                    ResourceLoader.getResourceAsProperties(
+                            getClass(), "/properties/security.properties");
             Enumeration<?> propNames = props.propertyNames();
             while (propNames.hasMoreElements()) {
                 String propName = (String) propNames.nextElement();
@@ -436,23 +481,23 @@ public class PortalPreAuthenticatedProcessingFilter extends AbstractPreAuthentic
                     this.principalTokens.put(key, propValue);
                 }
             }
-        }
-        catch (PortalException pe) {
+        } catch (PortalException pe) {
             logger.error("LoginServlet::static ", pe);
-        }
-        catch (IOException ioe) {
+        } catch (IOException ioe) {
             logger.error("LoginServlet::static ", ioe);
         }
     }
 
     /**
-     * Get the values represented by each token from the request and load them into a
-     * HashMap that is returned.
+     * Get the values represented by each token from the request and load them into a HashMap that
+     * is returned.
+     *
      * @param tokens
      * @param request
      * @return HashMap of properties
      */
-    private HashMap<String, String> getPropertyFromRequest(HashMap<String, String> tokens, HttpServletRequest request) {
+    private HashMap<String, String> getPropertyFromRequest(
+            HashMap<String, String> tokens, HttpServletRequest request) {
         // Iterate through all of the other property keys looking for the first property
         // named like propname that has a value in the request
         HashMap<String, String> retHash = new HashMap<String, String>(1);
@@ -462,18 +507,16 @@ public class PortalPreAuthenticatedProcessingFilter extends AbstractPreAuthentic
             String parmName = entry.getValue();
             String parmValue = null;
             if (request.getAttribute(parmName) != null) {
-                // Upstream components (like servlet filters) may supply information 
+                // Upstream components (like servlet filters) may supply information
                 // for the authentication process using request attributes.
                 try {
                     parmValue = (String) request.getAttribute(parmName);
-                }
-                catch (ClassCastException cce) {
+                } catch (ClassCastException cce) {
                     String msg = "The request attribute '" + parmName + "' must be a String.";
                     throw new RuntimeException(msg, cce);
                 }
-            }
-            else {
-                // If a configured parameter isn't provided by a request attribute, 
+            } else {
+                // If a configured parameter isn't provided by a request attribute,
                 // check request parameters (i.e. querystring, form fields).
                 parmValue = request.getParameter(parmName);
             }
@@ -483,8 +526,7 @@ public class PortalPreAuthenticatedProcessingFilter extends AbstractPreAuthentic
                 // make sure we don't trim passwords, since they might have
                 // leading or trailing spaces
                 parmValue = (parmValue == null ? "" : parmValue);
-            }
-            else {
+            } else {
                 parmValue = (parmValue == null ? "" : parmValue).trim();
             }
 
@@ -500,19 +542,20 @@ public class PortalPreAuthenticatedProcessingFilter extends AbstractPreAuthentic
     }
 
     @Override
-    public void setApplicationEventPublisher(ApplicationEventPublisher anApplicationEventPublisher) {
+    public void setApplicationEventPublisher(
+            ApplicationEventPublisher anApplicationEventPublisher) {
         super.setApplicationEventPublisher(anApplicationEventPublisher);
         this.eventPublisher = anApplicationEventPublisher;
     }
 
     /**
-     * Convenience method for sub-classes to access the event publisher without having to override this class
-     * implementation of setApplicationEventPublisher (which this class had to override in its parent class because
-     * that parent class failed to expose a getter method like this!)
+     * Convenience method for sub-classes to access the event publisher without having to override
+     * this class implementation of setApplicationEventPublisher (which this class had to override
+     * in its parent class because that parent class failed to expose a getter method like this!)
+     *
      * @return the Spring application event publisher.
      */
     protected final ApplicationEventPublisher getApplicationEventPublisher() {
         return this.eventPublisher;
     }
 }
-

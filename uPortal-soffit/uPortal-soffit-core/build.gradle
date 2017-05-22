@@ -1,0 +1,9 @@
+description = "Apereo uPortal Soffit Core"
+
+dependencies {
+    compile "io.jsonwebtoken:jjwt:${jjwtVersion}"
+    compile "org.apache.commons:commons-lang3:${commonsLang3Version}"
+    compile "org.jasypt:jasypt:${jasyptVersion}"
+    compile "org.slf4j:slf4j-api:${slf4jVersion}"
+    compile "org.springframework:spring-web:${springVersion}"
+}

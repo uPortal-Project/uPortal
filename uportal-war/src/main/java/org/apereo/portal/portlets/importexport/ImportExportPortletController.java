@@ -1,32 +1,25 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-
 package org.apereo.portal.portlets.importexport;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.portlet.PortletRequest;
 import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apereo.portal.EntityIdentifier;
@@ -44,10 +37,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.portlet.ModelAndView;
 
 /**
- * ImportExportPortletController controls the display of the import/export
- * portlet interface views.
- * 
- * @author Jen Bourey, jennifer.bourey@gmail.com
+ * ImportExportPortletController controls the display of the import/export portlet interface views.
+ *
  */
 @Controller
 @RequestMapping("VIEW")
@@ -76,7 +67,7 @@ public class ImportExportPortletController {
 
     /**
      * Display the entity import form view.
-     * 
+     *
      * @param request
      * @return
      */
@@ -87,66 +78,72 @@ public class ImportExportPortletController {
 
     /**
      * Display the entity export form view.
-     * 
+     *
      * @param request
      * @return
      */
-    @RequestMapping(params="action=export")
+    @RequestMapping(params = "action=export")
     public ModelAndView getExportView(PortletRequest request) {
-    	Map<String,Object> model = new HashMap<String,Object>();
+        Map<String, Object> model = new HashMap<String, Object>();
 
         // add a list of all permitted export types
-    	final Iterable<IPortalDataType> exportPortalDataTypes = this.portalDataHandlerService.getExportPortalDataTypes();
-    	final List<IPortalDataType> types = getAllowedTypes(request, IPermission.EXPORT_ACTIVITY, exportPortalDataTypes);
-    	model.put("supportedTypes", types);
+        final Iterable<IPortalDataType> exportPortalDataTypes =
+                this.portalDataHandlerService.getExportPortalDataTypes();
+        final List<IPortalDataType> types =
+                getAllowedTypes(request, IPermission.EXPORT_ACTIVITY, exportPortalDataTypes);
+        model.put("supportedTypes", types);
 
         return new ModelAndView("/jsp/ImportExportPortlet/export", model);
     }
 
     /**
      * Display the entity deletion form view.
-     * 
+     *
      * @param request
      * @return
      */
-    @RequestMapping(params="action=delete")
+    @RequestMapping(params = "action=delete")
     public ModelAndView getDeleteView(PortletRequest request) {
-    	Map<String,Object> model = new HashMap<String,Object>();
+        Map<String, Object> model = new HashMap<String, Object>();
 
-    	// add a list of all permitted deletion types
-    	final Iterable<IPortalDataType> deletePortalDataTypes = this.portalDataHandlerService.getDeletePortalDataTypes();
-    	final List<IPortalDataType> types = getAllowedTypes(request, IPermission.DELETE_ACTIVITY, deletePortalDataTypes);
-    	model.put("supportedTypes", types);
+        // add a list of all permitted deletion types
+        final Iterable<IPortalDataType> deletePortalDataTypes =
+                this.portalDataHandlerService.getDeletePortalDataTypes();
+        final List<IPortalDataType> types =
+                getAllowedTypes(request, IPermission.DELETE_ACTIVITY, deletePortalDataTypes);
+        model.put("supportedTypes", types);
 
         return new ModelAndView("/jsp/ImportExportPortlet/delete", model);
     }
 
     /**
-     * Return a list of all permitted import/export types for the given permission
-     * and the current user.
-     * 
+     * Return a list of all permitted import/export types for the given permission and the current
+     * user.
+     *
      * @param request
      * @param activityName
      * @return
      */
-    protected List<IPortalDataType> getAllowedTypes(PortletRequest request, String activityName, Iterable<IPortalDataType> dataTypes) {
+    protected List<IPortalDataType> getAllowedTypes(
+            PortletRequest request, String activityName, Iterable<IPortalDataType> dataTypes) {
 
-    	// get the authorization principal representing the current user
-        final HttpServletRequest httpServletRequest = this.portalRequestUtils.getPortletHttpRequest(request);
-		final IPerson person = personManager.getPerson(httpServletRequest);
-		final EntityIdentifier ei = person.getEntityIdentifier();
-	    final IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
+        // get the authorization principal representing the current user
+        final HttpServletRequest httpServletRequest =
+                this.portalRequestUtils.getPortletHttpRequest(request);
+        final IPerson person = personManager.getPerson(httpServletRequest);
+        final EntityIdentifier ei = person.getEntityIdentifier();
+        final IAuthorizationPrincipal ap =
+                AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
 
-	    // filter the list of configured import/export types by user permission
-    	final List<IPortalDataType> results = new ArrayList<IPortalDataType>();
-    	for (IPortalDataType type : dataTypes) {
-    		final String typeId = type.getTypeId();
-    	    if (ap.hasPermission(IPermission.PORTAL_SYSTEM, activityName, typeId)) {
-    	    	results.add(type);
-    	    }
-    	}
+        // filter the list of configured import/export types by user permission
+        final List<IPortalDataType> results = new ArrayList<IPortalDataType>();
+        for (IPortalDataType type : dataTypes) {
+            final String typeId = type.getTypeId();
+            if (ap.hasPermission(IPermission.PORTAL_SYSTEM, activityName, typeId)) {
+                results.add(type);
+            }
+        }
 
-    	return results;
+        return results;
     }
-
 }

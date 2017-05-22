@@ -16,4 +16,11 @@ script:
   - ./gradlew npm_test
 
 after_success:
-  - mvn clean test cobertura:cobertura coveralls:cobertura
+  - mvn clean test cobertura:cobertura coveralls:report -B -V
+  - ./gradlew -u -i -S check
+
+cache:
+  directories:
+    - $HOME/.m2
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/

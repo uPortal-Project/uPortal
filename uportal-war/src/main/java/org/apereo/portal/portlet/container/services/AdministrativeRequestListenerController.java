@@ -1,39 +1,32 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.portlet.container.services;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletResponse;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.pluto.container.driver.AdministrativeRequestListener;
 
 /**
- * AdministrativeRequestListener that delegates to another AdministrativeRequestListener based on
- * a request attribute.
- * 
- * <br>
+ * AdministrativeRequestListener that delegates to another AdministrativeRequestListener based on a
+ * request attribute. <br>
  * Configuration:
+ *
  * <table border="1">
  *     <tr>
  *         <th align="left">Property</th>
@@ -76,106 +69,115 @@ import org.apache.pluto.container.driver.AdministrativeRequestListener;
  *         <td valign="top">false</td>
  *     </tr>
  * </table>
- * 
- * @author Eric Dalquist
- * @version $Revision$
+ *
  */
-public class AdministrativeRequestListenerController implements org.apache.pluto.container.driver.AdministrativeRequestListener {
-    public static final String DEFAULT_LISTENER_KEY_ATTRIBUTE = AdministrativeRequestListenerController.class.getName() + ".LISTENER_KEY";
-    
+public class AdministrativeRequestListenerController
+        implements org.apache.pluto.container.driver.AdministrativeRequestListener {
+    public static final String DEFAULT_LISTENER_KEY_ATTRIBUTE =
+            AdministrativeRequestListenerController.class.getName() + ".LISTENER_KEY";
+
     protected final Log logger = LogFactory.getLog(this.getClass());
-    
+
     private String listenerKeyAttribute = DEFAULT_LISTENER_KEY_ATTRIBUTE;
-    private Map<String, AdministrativeRequestListener> listeners = new HashMap<String, AdministrativeRequestListener>();
+    private Map<String, AdministrativeRequestListener> listeners =
+            new HashMap<String, AdministrativeRequestListener>();
     private boolean failOnKeyNotFound = false;
     private boolean failOnListenerNotFound = false;
 
-    
-    /**
-     * @return the failOnKeyNotFound
-     */
+    /** @return the failOnKeyNotFound */
     public boolean isFailOnKeyNotFound() {
         return this.failOnKeyNotFound;
     }
-    /**
-     * @param failOnKeyNotFound the failOnKeyNotFound to set
-     */
+    /** @param failOnKeyNotFound the failOnKeyNotFound to set */
     public void setFailOnKeyNotFound(boolean failOnKeyNotFound) {
         this.failOnKeyNotFound = failOnKeyNotFound;
     }
-    /**
-     * @return the failOnListenerNotFound
-     */
+    /** @return the failOnListenerNotFound */
     public boolean isFailOnListenerNotFound() {
         return this.failOnListenerNotFound;
     }
-    /**
-     * @param failOnListenerNotFound the failOnListenerNotFound to set
-     */
+    /** @param failOnListenerNotFound the failOnListenerNotFound to set */
     public void setFailOnListenerNotFound(boolean failOnListenerNotFound) {
         this.failOnListenerNotFound = failOnListenerNotFound;
     }
-    /**
-     * @return the listenerKeyAttribute
-     */
+    /** @return the listenerKeyAttribute */
     public String getListenerKeyAttribute() {
         return this.listenerKeyAttribute;
     }
-    /**
-     * @param listenerKeyAttribute the listenerKeyAttribute to set
-     */
+    /** @param listenerKeyAttribute the listenerKeyAttribute to set */
     public void setListenerKeyAttribute(String listenerKeyAttribute) {
         this.listenerKeyAttribute = listenerKeyAttribute;
     }
-    /**
-     * @return the listeners
-     */
+    /** @return the listeners */
     public Map<String, AdministrativeRequestListener> getListeners() {
         return this.listeners;
     }
-    /**
-     * @param listeners the listeners to set
-     */
+    /** @param listeners the listeners to set */
     public void setListeners(Map<String, AdministrativeRequestListener> listeners) {
         this.listeners = listeners;
     }
 
-
     /**
-     * @see org.apache.pluto.spi.optional.AdministrativeRequestListener#administer(javax.portlet.PortletRequest, javax.portlet.PortletResponse)
+     * @see
+     *     org.apache.pluto.spi.optional.AdministrativeRequestListener#administer(javax.portlet.PortletRequest,
+     *     javax.portlet.PortletResponse)
      */
     public void administer(PortletRequest request, PortletResponse response) {
-        final String listenerKey = (String)request.getAttribute(this.listenerKeyAttribute);
+        final String listenerKey = (String) request.getAttribute(this.listenerKeyAttribute);
         if (this.logger.isDebugEnabled()) {
-            this.logger.debug("Found key '" + listenerKey + "' from PortletRequest attribute '" + this.listenerKeyAttribute + "'");
+            this.logger.debug(
+                    "Found key '"
+                            + listenerKey
+                            + "' from PortletRequest attribute '"
+                            + this.listenerKeyAttribute
+                            + "'");
         }
-        
+
         if (listenerKey == null) {
             if (this.failOnKeyNotFound) {
-                this.logger.error("Failed to find PortletRequest attribute '" + this.listenerKeyAttribute + "'");
-                throw new IllegalArgumentException("Failed to find PortletRequest attribute '" + this.listenerKeyAttribute + "'");
+                this.logger.error(
+                        "Failed to find PortletRequest attribute '"
+                                + this.listenerKeyAttribute
+                                + "'");
+                throw new IllegalArgumentException(
+                        "Failed to find PortletRequest attribute '"
+                                + this.listenerKeyAttribute
+                                + "'");
             }
 
-            this.logger.warn("Failed to find PortletRequest attribute '" + this.listenerKeyAttribute + "'");
+            this.logger.warn(
+                    "Failed to find PortletRequest attribute '" + this.listenerKeyAttribute + "'");
             return;
         }
-        
-        
-        final AdministrativeRequestListener administrativeRequestListener = this.listeners.get(listenerKey);
+
+        final AdministrativeRequestListener administrativeRequestListener =
+                this.listeners.get(listenerKey);
         if (this.logger.isDebugEnabled()) {
-            this.logger.debug("Found AdministrativeRequestListener '" + administrativeRequestListener + "' for key '" + listenerKey + "'");
+            this.logger.debug(
+                    "Found AdministrativeRequestListener '"
+                            + administrativeRequestListener
+                            + "' for key '"
+                            + listenerKey
+                            + "'");
         }
-        
+
         if (administrativeRequestListener == null) {
             if (this.failOnListenerNotFound) {
-                this.logger.error("Failed to find AdministrativeRequestListener for key '" + listenerKey + "'");
-                throw new IllegalArgumentException("Failed to find AdministrativeRequestListener for key '" + listenerKey + "'");
+                this.logger.error(
+                        "Failed to find AdministrativeRequestListener for key '"
+                                + listenerKey
+                                + "'");
+                throw new IllegalArgumentException(
+                        "Failed to find AdministrativeRequestListener for key '"
+                                + listenerKey
+                                + "'");
             }
 
-            this.logger.warn("Failed to find AdministrativeRequestListener for key '" + listenerKey + "'");
+            this.logger.warn(
+                    "Failed to find AdministrativeRequestListener for key '" + listenerKey + "'");
             return;
         }
-        
+
         administrativeRequestListener.administer(request, response);
     }
 }

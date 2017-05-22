@@ -1,20 +1,16 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.portlet.rendering.worker;
 
@@ -22,10 +18,8 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apereo.portal.portlet.om.IPortletWindowId;
@@ -36,21 +30,18 @@ import org.apereo.portal.portlets.error.PortletErrorController;
 import org.apereo.portal.utils.web.PortletHttpServletRequestWrapper;
 
 /**
- * Worker used to execute render requests on the error portlet. Does not use
- * any thread-pool code to make sure the error portlet still renders in the event
- * of the thread pool being broken.
- * 
- * @author Eric Dalquist
- * @version $Revision$
+ * Worker used to execute render requests on the error portlet. Does not use any thread-pool code to
+ * make sure the error portlet still renders in the event of the thread pool being broken.
+ *
  */
 final class PortletFailureExecutionWorker implements IPortletFailureExecutionWorker {
-    
+
     private static final int SIGNAL_THE_OPERATION_DOES_NOT_TIMEOUT = -1;
-    
+
     protected final Log logger = LogFactory.getLog(this.getClass());
-    
+
     private final Map<String, Object> executionAttributes = new ConcurrentHashMap<String, Object>();
-    
+
     private final IPortletRenderer portletRenderer;
     private final List<IPortletExecutionInterceptor> interceptors;
     private final HttpServletRequest request;
@@ -62,16 +53,21 @@ final class PortletFailureExecutionWorker implements IPortletFailureExecutionWor
 
     private PortletRenderResult portletRenderResult;
     private String output;
-    
+
     private boolean retrieved = false;
     private long submitted = 0;
     private long completed = 0;
-    
+
     public PortletFailureExecutionWorker(
-            IPortletRenderer portletRenderer, List<IPortletExecutionInterceptor> interceptors,
-            HttpServletRequest request, HttpServletResponse response, IPortletWindowId errorPortletWindowId,
-            IPortletWindowId failedPortletWindowId, String failedPortletFname, Exception cause) {
-        
+            IPortletRenderer portletRenderer,
+            List<IPortletExecutionInterceptor> interceptors,
+            HttpServletRequest request,
+            HttpServletResponse response,
+            IPortletWindowId errorPortletWindowId,
+            IPortletWindowId failedPortletWindowId,
+            String failedPortletFname,
+            Exception cause) {
+
         this.portletRenderer = portletRenderer;
         this.interceptors = interceptors;
         this.request = request;
@@ -90,31 +86,35 @@ final class PortletFailureExecutionWorker implements IPortletFailureExecutionWor
     @Override
     public void submit() {
         if (this.submitted > 0) {
-            throw new IllegalStateException(this.getClass().getSimpleName() + " for " + this.getPortletWindowId() + " has already been submitted.");
+            throw new IllegalStateException(
+                    this.getClass().getSimpleName()
+                            + " for "
+                            + this.getPortletWindowId()
+                            + " has already been submitted.");
         }
-        
+
         this.submitted = System.currentTimeMillis();
-        
+
         //Run pre-submit interceptors
         for (final IPortletExecutionInterceptor interceptor : this.interceptors) {
             interceptor.preSubmit(request, response, this);
         }
     }
-    
+
     private void doPostExecution(Exception e) {
         //Iterate over handlers in reverse for post execution
-        final ListIterator<IPortletExecutionInterceptor> listIterator = this.interceptors.listIterator(this.interceptors.size());
+        final ListIterator<IPortletExecutionInterceptor> listIterator =
+                this.interceptors.listIterator(this.interceptors.size());
         while (listIterator.hasPrevious()) {
             final IPortletExecutionInterceptor interceptor = listIterator.previous();
             try {
                 interceptor.postExecution(request, response, this, e);
-            }
-            catch (Throwable ex2) {
+            } catch (Throwable ex2) {
                 logger.error("HandlerInterceptor.postExecution threw exception", ex2);
             }
         }
     }
-    
+
     @Override
     public String getOutput(long timeout) throws Exception {
         this.get(timeout);
@@ -133,7 +133,7 @@ final class PortletFailureExecutionWorker implements IPortletFailureExecutionWor
         this.renderError(timeout);
         return this.portletRenderResult;
     }
-    
+
     /* (non-Javadoc)
      * @see org.apereo.portal.portlet.rendering.worker.IPortletExecutionWorker#cancel()
      */
@@ -141,7 +141,7 @@ final class PortletFailureExecutionWorker implements IPortletFailureExecutionWor
     public void cancel() {
         //NOOP
     }
-    
+
     /* (non-Javadoc)
      * @see org.apereo.portal.portlet.rendering.worker.IPortletExecutionWorker#getCancelCount()
      */
@@ -155,12 +155,16 @@ final class PortletFailureExecutionWorker implements IPortletFailureExecutionWor
         if (this.completed > 0) {
             return;
         }
-        
+
         //Wrap the request to scope the attributes to just this execution
-        final PortletHttpServletRequestWrapper wrappedRequest = new PortletHttpServletRequestWrapper(request);
-        wrappedRequest.setAttribute(PortletErrorController.REQUEST_ATTRIBUTE__CURRENT_FAILED_PORTLET_WINDOW_ID, failedPortletWindowId);
-        wrappedRequest.setAttribute(PortletErrorController.REQUEST_ATTRIBUTE__CURRENT_EXCEPTION_CAUSE, cause);
-        
+        final PortletHttpServletRequestWrapper wrappedRequest =
+                new PortletHttpServletRequestWrapper(request);
+        wrappedRequest.setAttribute(
+                PortletErrorController.REQUEST_ATTRIBUTE__CURRENT_FAILED_PORTLET_WINDOW_ID,
+                failedPortletWindowId);
+        wrappedRequest.setAttribute(
+                PortletErrorController.REQUEST_ATTRIBUTE__CURRENT_EXCEPTION_CAUSE, cause);
+
         //Run pre-execution interceptors
         for (final IPortletExecutionInterceptor interceptor : this.interceptors) {
             interceptor.preExecution(request, response, this);
@@ -169,18 +173,23 @@ final class PortletFailureExecutionWorker implements IPortletFailureExecutionWor
         //Aggressive exception handling to make sure at least something is written out when an error happens.
         try {
             final String characterEncoding = response.getCharacterEncoding();
-            final RenderPortletOutputHandler renderPortletOutputHandler = new RenderPortletOutputHandler(characterEncoding);
-            
-            this.portletRenderResult = this.portletRenderer.doRenderMarkup(errorPortletWindowId, wrappedRequest, response, renderPortletOutputHandler);
+            final RenderPortletOutputHandler renderPortletOutputHandler =
+                    new RenderPortletOutputHandler(characterEncoding);
+
+            this.portletRenderResult =
+                    this.portletRenderer.doRenderMarkup(
+                            errorPortletWindowId,
+                            wrappedRequest,
+                            response,
+                            renderPortletOutputHandler);
             doPostExecution(null);
             this.output = renderPortletOutputHandler.getOutput();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             doPostExecution(e);
             this.logger.error("Exception while dispatching to error handling portlet", e);
             this.output = "Error Portlet Unavailable. Please contact your portal adminstrators.";
         }
-        
+
         this.completed = System.currentTimeMillis();
     }
 
@@ -201,7 +210,7 @@ final class PortletFailureExecutionWorker implements IPortletFailureExecutionWor
     public IPortletWindowId getPortletWindowId() {
         return this.failedPortletWindowId;
     }
-    
+
     /* (non-Javadoc)
      * @see org.apereo.portal.portlet.rendering.worker.IPortletExecutionContext#getPortletFname()
      */
@@ -224,7 +233,7 @@ final class PortletFailureExecutionWorker implements IPortletFailureExecutionWor
     public boolean isComplete() {
         return this.completed > 0;
     }
-    
+
     @Override
     public boolean isRetrieved() {
         return this.retrieved;

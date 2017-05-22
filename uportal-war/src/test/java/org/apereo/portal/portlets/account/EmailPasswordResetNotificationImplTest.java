@@ -1,33 +1,37 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.portlets.account;
 
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import java.net.URL;
 import java.util.Locale;
-
 import javax.activation.DataHandler;
 import javax.mail.BodyPart;
 import javax.mail.Message.RecipientType;
 import javax.mail.Multipart;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-
 import org.apache.commons.io.IOUtils;
 import org.apereo.portal.persondir.ILocalAccountPerson;
 import org.junit.Before;
@@ -43,37 +47,28 @@ import org.mockito.stubbing.Answer;
 import org.springframework.context.MessageSource;
 import org.springframework.mail.javamail.JavaMailSender;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-
 @RunWith(MockitoJUnitRunner.class)
 public class EmailPasswordResetNotificationImplTest {
     @Mock MessageSource messageSource;
     @Mock JavaMailSender mailSender;
     @Captor ArgumentCaptor<MimeMessage> mimeMessageCaptor;
-    @InjectMocks EmailPasswordResetNotificationImpl service = new EmailPasswordResetNotificationImpl();
 
+    @InjectMocks
+    EmailPasswordResetNotificationImpl service = new EmailPasswordResetNotificationImpl();
 
     @Before
     public void setUp() {
         // dummy up message source to just return the key value...
         when(messageSource.getMessage(anyString(), any(Object[].class), any(Locale.class)))
-                .thenAnswer(new Answer<String>() {
-                    @Override
-                    public String answer(InvocationOnMock invocationOnMock) throws Throwable {
-                        return (String)invocationOnMock.getArguments()[0];
-                    }
-                });
+                .thenAnswer(
+                        new Answer<String>() {
+                            @Override
+                            public String answer(InvocationOnMock invocationOnMock)
+                                    throws Throwable {
+                                return (String) invocationOnMock.getArguments()[0];
+                            }
+                        });
     }
-
 
     @Test
     public void testNotification() throws Exception {
@@ -84,7 +79,8 @@ public class EmailPasswordResetNotificationImplTest {
         final String displayName = "displayName";
 
         ILocalAccountPerson person = mock(ILocalAccountPerson.class);
-        when(person.getAttributeValue(eq(ILocalAccountPerson.ATTR_DISPLAY_NAME))).thenReturn(displayName);
+        when(person.getAttributeValue(eq(ILocalAccountPerson.ATTR_DISPLAY_NAME)))
+                .thenReturn(displayName);
         when(person.getAttributeValue(eq(ILocalAccountPerson.ATTR_MAIL))).thenReturn(toAddress);
 
         MimeMessage mockedMimeMessage = mock(MimeMessage.class);
@@ -113,7 +109,6 @@ public class EmailPasswordResetNotificationImplTest {
         assertThat(toCaptor.getValue().getAddress(), equalTo(toAddress));
         assertThat(getBodyHtml(bodyCaptor.getValue()), containsString(resetUrl));
     }
-
 
     private String getBodyHtml(Multipart msg) throws Exception {
         for (int i = 0; i < msg.getCount(); i++) {

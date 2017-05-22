@@ -1,29 +1,23 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.portlet.registry;
 
 import java.util.Collections;
 import java.util.Map;
-
 import javax.portlet.PortletMode;
 import javax.portlet.WindowState;
-
 import org.apache.commons.lang.Validate;
 import org.apache.pluto.container.PortletWindow;
 import org.apache.pluto.container.PortletWindowID;
@@ -34,11 +28,9 @@ import org.apereo.portal.portlet.om.IPortletWindow;
 import org.apereo.portal.portlet.om.IPortletWindowId;
 
 /**
- * Implementation of the {@link IPortletWindow} that is backed by a
- * {@link PortletWindowData} object. Tracks changes both locally and
- * in the backing object.
- * 
- * @author Eric Dalquist
+ * Implementation of the {@link IPortletWindow} that is backed by a {@link PortletWindowData}
+ * object. Tracks changes both locally and in the backing object.
+ *
  */
 class PortletWindowImpl implements IPortletWindow, PortletWindow {
 
@@ -53,14 +45,14 @@ class PortletWindowImpl implements IPortletWindow, PortletWindow {
     private Integer expirationCache = null;
 
     public PortletWindowImpl(
-            PortletDefinition portletDefinition, 
-            IPortletEntity portletEntity, 
+            PortletDefinition portletDefinition,
+            IPortletEntity portletEntity,
             PortletWindowData portletWindowData) {
-        
+
         Validate.notNull(portletDefinition);
         Validate.notNull(portletEntity);
         Validate.notNull(portletWindowData);
-        
+
         this.portletDefinition = portletDefinition;
         this.portletEntity = portletEntity;
         this.portletWindowData = portletWindowData;
@@ -70,7 +62,6 @@ class PortletWindowImpl implements IPortletWindow, PortletWindow {
     public PortletWindowID getId() {
         return this.portletWindowData.getPortletWindowId();
     }
-    
 
     @Override
     public IPortletEntityId getPortletEntityId() {
@@ -150,7 +141,6 @@ class PortletWindowImpl implements IPortletWindow, PortletWindow {
         requestParameters = Collections.unmodifiableMap(requestParameters);
         this.publicRenderParameters = requestParameters;
         this.portletWindowData.setPublicRenderParameters(requestParameters);
-        
     }
 
     @Override
@@ -181,52 +171,68 @@ class PortletWindowImpl implements IPortletWindow, PortletWindow {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((this.portletEntity == null) ? 0 : this.portletEntity.hashCode());
-        result = prime * result + ((this.portletWindowData.getPortletWindowId() == null) ? 0 : this.portletWindowData.getPortletWindowId().hashCode());
-        result = prime * result + ((this.portletWindowData.getDelegationParentId() == null) ? 0 : this.portletWindowData.getDelegationParentId().hashCode());
+        result =
+                prime * result + ((this.portletEntity == null) ? 0 : this.portletEntity.hashCode());
+        result =
+                prime * result
+                        + ((this.portletWindowData.getPortletWindowId() == null)
+                                ? 0
+                                : this.portletWindowData.getPortletWindowId().hashCode());
+        result =
+                prime * result
+                        + ((this.portletWindowData.getDelegationParentId() == null)
+                                ? 0
+                                : this.portletWindowData.getDelegationParentId().hashCode());
         return result;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (!IPortletWindow.class.isAssignableFrom(obj.getClass()))
-            return false;
+        if (this == obj) return true;
+        if (obj == null) return false;
+        if (!IPortletWindow.class.isAssignableFrom(obj.getClass())) return false;
         final IPortletWindow other = (IPortletWindow) obj;
         if (this.portletEntity == null) {
-            if (other.getPortletEntity() != null)
-                return false;
-        }
-        else if (!this.portletEntity.equals(other.getPortletEntity()))
-            return false;
+            if (other.getPortletEntity() != null) return false;
+        } else if (!this.portletEntity.equals(other.getPortletEntity())) return false;
         if (this.portletWindowData.getDelegationParentId() == null) {
-            if (other.getDelegationParentId() != null)
-                return false;
-        }
-        else if (!this.portletWindowData.getDelegationParentId().equals(other.getDelegationParentId()))
-            return false;
+            if (other.getDelegationParentId() != null) return false;
+        } else if (!this.portletWindowData
+                .getDelegationParentId()
+                .equals(other.getDelegationParentId())) return false;
         if (this.portletWindowData.getPortletWindowId() == null) {
-            if (other.getPortletWindowId() != null)
-                return false;
-        }
-        else if (!this.portletWindowData.getPortletWindowId().equals(other.getPortletWindowId()))
+            if (other.getPortletWindowId() != null) return false;
+        } else if (!this.portletWindowData.getPortletWindowId().equals(other.getPortletWindowId()))
             return false;
         return true;
     }
 
     @Override
     public String toString() {
-        return "PortletWindow [" +
-                "portletWindowId=" + this.portletWindowData.getPortletWindowId() + ", " +
-                "delegationParentId=" + this.portletWindowData.getDelegationParentId() + ", " +
-                "portletMode=" + this.portletWindowData.getPortletMode() + ", " +
-                "windowState=" + this.portletWindowData.getWindowState() + ", " +
-                "expirationCache=" + this.portletWindowData.getExpirationCache() + ", " +
-                "renderParameters=" + this.portletWindowData.getRenderParameters() + ", " +
-                "publicRenderParameters=" + this.portletWindowData.getPublicRenderParameters() + ", " +
-                "portletEntity=" + this.portletEntity + "]";
+        return "PortletWindow ["
+                + "portletWindowId="
+                + this.portletWindowData.getPortletWindowId()
+                + ", "
+                + "delegationParentId="
+                + this.portletWindowData.getDelegationParentId()
+                + ", "
+                + "portletMode="
+                + this.portletWindowData.getPortletMode()
+                + ", "
+                + "windowState="
+                + this.portletWindowData.getWindowState()
+                + ", "
+                + "expirationCache="
+                + this.portletWindowData.getExpirationCache()
+                + ", "
+                + "renderParameters="
+                + this.portletWindowData.getRenderParameters()
+                + ", "
+                + "publicRenderParameters="
+                + this.portletWindowData.getPublicRenderParameters()
+                + ", "
+                + "portletEntity="
+                + this.portletEntity
+                + "]";
     }
 }

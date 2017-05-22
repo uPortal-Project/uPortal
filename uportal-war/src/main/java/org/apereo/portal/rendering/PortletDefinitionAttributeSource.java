@@ -1,20 +1,16 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.rendering;
 
@@ -22,14 +18,12 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Set;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.StartElement;
-
 import org.apereo.portal.layout.IUserLayoutManager;
 import org.apereo.portal.portlet.dao.IPortletDefinitionDao;
 import org.apereo.portal.portlet.om.IPortletDefinition;
@@ -45,10 +39,9 @@ import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * Base implementation of portlet definition source that adds the
- * portlet webapp, name, and framework portlet info
- * 
- * @author James Wennmacher jwennmacher@unicon.net
+ * Base implementation of portlet definition source that adds the portlet webapp, name, and
+ * framework portlet info
+ *
  */
 public class PortletDefinitionAttributeSource implements AttributeSource, BeanNameAware {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
@@ -80,7 +73,8 @@ public class PortletDefinitionAttributeSource implements AttributeSource, BeanNa
     }
 
     @Override
-    public final Iterator<Attribute> getAdditionalAttributes(HttpServletRequest request, HttpServletResponse response, StartElement event) {
+    public final Iterator<Attribute> getAdditionalAttributes(
+            HttpServletRequest request, HttpServletResponse response, StartElement event) {
 
         final QName eventName = event.getName();
         final String localEventName = eventName.getLocalPart();
@@ -98,15 +92,25 @@ public class PortletDefinitionAttributeSource implements AttributeSource, BeanNa
             final String fname = fnameAttribute.getValue();
             IPortletDefinition def = portletDefinitionDao.getPortletDefinitionByFname(fname);
             if (def == null) {
-                this.logger.warn("Cannot get portlet definition attributes.  No portlet definition found for fname: '" + fname + "'.");
+                this.logger.warn(
+                        "Cannot get portlet definition attributes.  No portlet definition found for fname: '"
+                                + fname
+                                + "'.");
             } else {
                 IPortletDescriptorKey descriptorKey = def.getPortletDescriptorKey();
-                attributes.add(xmlEventFactory.createAttribute(PORTLET_NAME_ATTRIBUTE, descriptorKey.getPortletName()));
-                attributes.add(xmlEventFactory.createAttribute(PORTLET_LIFECYCLE_ATTRIBUTE, def.getLifecycleState().toString()));
+                attributes.add(
+                        xmlEventFactory.createAttribute(
+                                PORTLET_NAME_ATTRIBUTE, descriptorKey.getPortletName()));
+                attributes.add(
+                        xmlEventFactory.createAttribute(
+                                PORTLET_LIFECYCLE_ATTRIBUTE, def.getLifecycleState().toString()));
                 if (descriptorKey.isFrameworkPortlet()) {
-                    attributes.add(xmlEventFactory.createAttribute(FRAMEWORK_PORTLET_ATTRIBUTE, "true"));
+                    attributes.add(
+                            xmlEventFactory.createAttribute(FRAMEWORK_PORTLET_ATTRIBUTE, "true"));
                 } else {
-                    attributes.add(xmlEventFactory.createAttribute(WEBAPP_NAME_ATTRIBUTE, descriptorKey.getWebAppName()));
+                    attributes.add(
+                            xmlEventFactory.createAttribute(
+                                    WEBAPP_NAME_ATTRIBUTE, descriptorKey.getWebAppName()));
                 }
             }
         }
@@ -120,18 +124,19 @@ public class PortletDefinitionAttributeSource implements AttributeSource, BeanNa
 
         // We need something that makes for a unique cache key.  For lack of anything else useful,
         // use the set of all layout portlet window ids in the user's layout.
-        final Set<IPortletWindow> portletWindows = this.portletWindowRegistry.getAllLayoutPortletWindows(request);
+        final Set<IPortletWindow> portletWindows =
+                this.portletWindowRegistry.getAllLayoutPortletWindows(request);
 
         for (final IPortletWindow portletWindow : portletWindows) {
-            if(portletWindow != null) {
+            if (portletWindow != null) {
                 final IPortletWindowId portletWindowId = portletWindow.getPortletWindowId();
                 cacheKeyBuilder.add(portletWindowId);
             } else {
-                this.logger.warn("portletWindowRegistry#getAllLayoutPortletWindows() returned a null portletWindow");
+                this.logger.warn(
+                        "portletWindowRegistry#getAllLayoutPortletWindows() returned a null portletWindow");
             }
         }
 
         return cacheKeyBuilder.build();
     }
-
 }

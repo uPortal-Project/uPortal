@@ -1,26 +1,21 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.portlet.container;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.apache.pluto.container.PortletActionResponseContext;
 import org.apache.pluto.container.PortletContainer;
 import org.apache.pluto.container.driver.PortletContextService;
@@ -31,21 +26,32 @@ import org.apereo.portal.url.IPortalActionUrlBuilder;
 import org.apereo.portal.url.IPortletUrlBuilder;
 
 /**
- * @author Eric Dalquist
- * @version $Revision$
  */
-public class PortletActionResponseContextImpl extends PortletStateAwareResponseContextImpl implements PortletActionResponseContext {
+public class PortletActionResponseContextImpl extends PortletStateAwareResponseContextImpl
+        implements PortletActionResponseContext {
     private final IPortalActionUrlBuilder portalActionUrlBuilder;
-    
-    public PortletActionResponseContextImpl(PortletContainer portletContainer, IPortletWindow portletWindow,
-            HttpServletRequest containerRequest, HttpServletResponse containerResponse,
-            IRequestPropertiesManager requestPropertiesManager, IPortalActionUrlBuilder portalActionUrlBuilder,
-            IPortletUrlBuilder portletUrlBuider, PortletContextService portletContextService,
+
+    public PortletActionResponseContextImpl(
+            PortletContainer portletContainer,
+            IPortletWindow portletWindow,
+            HttpServletRequest containerRequest,
+            HttpServletResponse containerResponse,
+            IRequestPropertiesManager requestPropertiesManager,
+            IPortalActionUrlBuilder portalActionUrlBuilder,
+            IPortletUrlBuilder portletUrlBuider,
+            PortletContextService portletContextService,
             IPortletCookieService portletCookieService) {
-        
-        super(portletContainer, portletWindow, containerRequest, containerResponse, 
-                requestPropertiesManager, portletUrlBuider, portletContextService, portletCookieService);
-        
+
+        super(
+                portletContainer,
+                portletWindow,
+                containerRequest,
+                containerResponse,
+                requestPropertiesManager,
+                portletUrlBuider,
+                portletContextService,
+                portletCookieService);
+
         this.portalActionUrlBuilder = portalActionUrlBuilder;
     }
 
@@ -67,7 +73,7 @@ public class PortletActionResponseContextImpl extends PortletStateAwareResponseC
     @Override
     public void setRedirect(String location, String renderUrlParamName) {
         this.checkContextStatus();
-        
+
         this.portalActionUrlBuilder.setRedirectLocation(location, renderUrlParamName);
     }
 }

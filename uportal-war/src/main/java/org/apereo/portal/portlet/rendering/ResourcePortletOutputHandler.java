@@ -1,20 +1,16 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.portlet.rendering;
 
@@ -22,17 +18,15 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.Locale;
-
 import javax.servlet.http.HttpServletResponse;
 
 /**
  * PortletOutputHandler that delegates all methods directly to a {@link HttpServletResponse}
- * 
- * @author Eric Dalquist
+ *
  */
 public class ResourcePortletOutputHandler implements PortletResourceOutputHandler {
     private final HttpServletResponse response;
-    
+
     public ResourcePortletOutputHandler(HttpServletResponse response) {
         this.response = response;
     }
@@ -77,7 +71,6 @@ public class ResourcePortletOutputHandler implements PortletResourceOutputHandle
         this.response.setBufferSize(size);
     }
 
-    
     @Override
     public void setContentType(String contentType) {
         this.response.setContentType(contentType);
@@ -115,17 +108,17 @@ public class ResourcePortletOutputHandler implements PortletResourceOutputHandle
 
     @Override
     public void setHeader(String name, String value) {
-        this.response.setHeader(name, value);        
+        this.response.setHeader(name, value);
     }
 
     @Override
     public void addHeader(String name, String value) {
-        this.response.addHeader(name, value);        
+        this.response.addHeader(name, value);
     }
 
     @Override
     public void setIntHeader(String name, int value) {
-        this.response.setIntHeader(name, value);        
+        this.response.setIntHeader(name, value);
     }
 
     @Override

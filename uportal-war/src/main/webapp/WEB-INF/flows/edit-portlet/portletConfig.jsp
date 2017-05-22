@@ -399,26 +399,26 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                                                                         <c:forEach items="${ portlet.portletPreferences[name].value }" var="val">
                                                                             <div>
                                                                                 <input class="form-control parameter-editor-value" name="portletPreferences['${fn:escapeXml(name)}'].value" value="${ fn:escapeXml(val) }"/>
-                                                                                <a class="delete-parameter-value-link btn btn-xs btn-default" href="#">
+                                                                                <a class="delete-parameter-value-link btn btn-xs btn-default" href="javascript:void(0)">
                                                                                     <spring:message code="remove" text="Remove"/>
                                                                                     <i class="fa fa-minus-circle"></i>
                                                                                 </a>
                                                                             </div>
                                                                         </c:forEach>
                                                                         <input type="hidden" class="form-control" name="portletPreferences['${fn:escapeXml(name)}'].value" value=""/>
-                                                                        <a class="add-parameter-value-link btn btn-xs btn-info" href="#" paramName="${fn:escapeXml(name)}">
+                                                                        <a class="add-parameter-value-link btn btn-xs btn-info" href="javascript:void(0)" paramName="${fn:escapeXml(name)}">
                                                                             <spring:message code="add.value" text="Add value"/>
                                                                             <i class="fa fa-plus-circle"></i>
                                                                         </a>
                                                                     </td>
                                                                     <td><form:checkbox path="${overrideParamPath}" value="true"/></td>
-                                                                    <td><a class="delete-parameter-link btn btn-warning" href="#"><spring:message code="setParameters.deleteButton"/> <i class="fa fa-trash"></i></a></td>
+                                                                    <td><a class="delete-parameter-link btn btn-warning" href="javascript:void(0)"><spring:message code="setParameters.deleteButton"/> <i class="fa fa-trash"></i></a></td>
                                                                 </tr>
                                                             </c:forEach>
                                                         </tbody>
                                                     </table>
                                                     <p>
-                                                        <a class="add-parameter-link btn btn-primary" href="#">
+                                                        <a class="add-parameter-link btn btn-primary" href="javascript:void(0)">
                                                             <spring:message code="add.preference"/>&nbsp;&nbsp;<i class="fa fa-plus-circle"></i>
                                                         </a>
                                                     </p>
@@ -463,13 +463,13 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                                                 <td class="col-sm-6"></td>
                                                 <td class="col-sm-3 text-nowrap">
                                                     <spring:message code="edit.browse"/>
-                                                    <a href="#" data-toggle="tooltip" data-placement="top" title="<spring:message code='edit.browse.tooltip'/>">
+                                                    <a href="javascript:void(0)" data-toggle="tooltip" data-placement="top" title="<spring:message code='edit.browse.tooltip'/>">
                                                         <i class="fa fa-info-circle"></i>
                                                     </a>
                                                 </td>
                                                 <td class="col-sm-3 text-nowrap">
                                                     <spring:message code="edit.subscribe"/>
-                                                    <a href="#" data-toggle="tooltip" data-placement="top" title="<spring:message code='edit.subscribe.tooltip'/>">
+                                                    <a href="javascript:void(0)" data-toggle="tooltip" data-placement="top" title="<spring:message code='edit.subscribe.tooltip'/>">
                                                         <i class="fa fa-info-circle"></i>
                                                     </a>
                                                 </td>
@@ -632,7 +632,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                                         <form:option value="0" label="${ amLabel }"/>
                                         <form:option value="1" label="${ pmLabel }"/>
                                     </form:select>
-                                    (<a class="clear-date" href="#"><spring:message code="reset"/></a>)
+                                    (<a class="clear-date" href="javascript:void(0)"><spring:message code="reset"/></a>)
                                 </span>
                             </td>
                         </tr>
@@ -679,7 +679,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                                             <form:option value="0" label="${ amLabel }"/>
                                             <form:option value="1" label="${ pmLabel }"/>
                                         </form:select>
-                                        (<a class="clear-date" href="#"><spring:message code="reset"/></a>)
+                                        (<a class="clear-date" href="javascript:void(0)"><spring:message code="reset"/></a>)
                                     </span>
                                 </td>
                             </tr>

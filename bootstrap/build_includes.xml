@@ -20,7 +20,7 @@
 -->
 <project name="uPortal_Includes" basedir="." xmlns:artifact="urn:maven-artifact-ant">
     <dirname property="imported.basedir" file="${ant.file.uPortal_Includes}"/>
-    
+
     <fail message="Ant 1.8.2 or 1.9.3+ is required, version ${ant.version} is not supported">
         <condition>
             <not>
@@ -31,13 +31,10 @@
             </not>
         </condition>
     </fail>
-    <fail message="Unsupported Java version: ${java.version}. Make sure that the version of the Java compiler is 1.7 (7.0) or greater.">
+    <fail message="Unsupported Java version: ${java.version}. Make sure that the version of the Java compiler is 1.8 (8.0) or greater.">
         <condition>
             <not>
-                <or>
-                    <contains string="${java.version}" substring="1.7" casesensitive="false" />
-                    <contains string="${java.version}" substring="1.8" casesensitive="false" />
-                </or>
+                <contains string="${java.version}" substring="1.8" casesensitive="false" />
             </not>
         </condition>
     </fail>
@@ -79,7 +76,7 @@
             <echo>${@{filesetref}.echopath}</echo>
         </sequential>
     </macrodef>
-	
+
 	<target name="test-macros" description="Test macrodefs defined in this file">
 		<path id="testpath">
 			<pathelement location="hsqldb"/>

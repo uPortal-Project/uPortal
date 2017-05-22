@@ -1,20 +1,16 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.xml.stream;
 
@@ -24,22 +20,19 @@ import java.util.LinkedList;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-
 import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.Characters;
 import javax.xml.stream.events.XMLEvent;
-
 import org.apache.commons.lang.StringUtils;
 
-/**
- * Adds indentation to an {@link XMLEventWriter}
- */
+/** Adds indentation to an {@link XMLEventWriter} */
 public class IndentingXMLEventWriter extends EventWriterDelegate {
     public static final String NEW_LINE = "\n";
-    private static final ConcurrentMap<Integer, String> indentCache = new ConcurrentHashMap<Integer, String>();
+    private static final ConcurrentMap<Integer, String> indentCache =
+            new ConcurrentHashMap<Integer, String>();
 
     private enum StackState {
         WROTE_MARKUP,
@@ -62,14 +55,11 @@ public class IndentingXMLEventWriter extends EventWriterDelegate {
         this.indentSize = indentSize;
     }
 
-    /**
-     * @return System.getProperty("line.separator") or {@link #NEW_LINE} if that fails.
-     */
+    /** @return System.getProperty("line.separator") or {@link #NEW_LINE} if that fails. */
     public static String getLineSeparator() {
         try {
             return System.getProperty("line.separator");
-        }
-        catch (SecurityException ignored) {
+        } catch (SecurityException ignored) {
         }
         return NEW_LINE;
     }
@@ -79,42 +69,48 @@ public class IndentingXMLEventWriter extends EventWriterDelegate {
         switch (event.getEventType()) {
             case XMLStreamConstants.CHARACTERS:
             case XMLStreamConstants.CDATA:
-            case XMLStreamConstants.SPACE: {
-                wrappedWriter.add(event);
-                afterData();
-                return;
-            }
-            case XMLStreamConstants.START_ELEMENT: {
-                beforeStartElement();
-                wrappedWriter.add(event);
-                afterStartElement();
-                return;
-            }
+            case XMLStreamConstants.SPACE:
+                {
+                    wrappedWriter.add(event);
+                    afterData();
+                    return;
+                }
+            case XMLStreamConstants.START_ELEMENT:
+                {
+                    beforeStartElement();
+                    wrappedWriter.add(event);
+                    afterStartElement();
+                    return;
+                }
 
-            case XMLStreamConstants.END_ELEMENT: {
-                beforeEndElement();
-                wrappedWriter.add(event);
-                afterEndElement();
-                return;
-            }
+            case XMLStreamConstants.END_ELEMENT:
+                {
+                    beforeEndElement();
+                    wrappedWriter.add(event);
+                    afterEndElement();
+                    return;
+                }
             case XMLStreamConstants.START_DOCUMENT:
             case XMLStreamConstants.PROCESSING_INSTRUCTION:
             case XMLStreamConstants.COMMENT:
-            case XMLStreamConstants.DTD: {
-                beforeMarkup();
-                wrappedWriter.add(event);
-                afterMarkup();
-                return;
-            }
-            case XMLStreamConstants.END_DOCUMENT: {
-                wrappedWriter.add(event);
-                afterEndDocument();
-                break;
-            }
-            default: {
-                wrappedWriter.add(event);
-                return;
-            }
+            case XMLStreamConstants.DTD:
+                {
+                    beforeMarkup();
+                    wrappedWriter.add(event);
+                    afterMarkup();
+                    return;
+                }
+            case XMLStreamConstants.END_DOCUMENT:
+                {
+                    wrappedWriter.add(event);
+                    afterEndDocument();
+                    break;
+                }
+            default:
+                {
+                    wrappedWriter.add(event);
+                    return;
+                }
         }
     }
 
@@ -126,8 +122,7 @@ public class IndentingXMLEventWriter extends EventWriterDelegate {
             final Characters indentEvent = xmlEventFactory.createCharacters(indent);
             try {
                 wrappedWriter.add(indentEvent);
-            }
-            catch (XMLStreamException e) {
+            } catch (XMLStreamException e) {
                 //Ignore exceptions caused by indentation
             }
             afterMarkup(); // indentation was written
@@ -162,13 +157,14 @@ public class IndentingXMLEventWriter extends EventWriterDelegate {
     protected void beforeEndElement() {
         final Set<StackState> state = scopeState.getFirst();
         // but not data
-        if (depth > 0 && state.contains(StackState.WROTE_MARKUP) && !state.contains(StackState.WROTE_DATA)) {
+        if (depth > 0
+                && state.contains(StackState.WROTE_MARKUP)
+                && !state.contains(StackState.WROTE_DATA)) {
             final String indent = this.getIndent(depth - 1, indentSize);
             final Characters indentEvent = xmlEventFactory.createCharacters(indent);
             try {
                 wrappedWriter.add(indentEvent);
-            }
-            catch (XMLStreamException e) {
+            } catch (XMLStreamException e) {
                 //Ignore exceptions caused by indentation
             }
         }
@@ -186,23 +182,20 @@ public class IndentingXMLEventWriter extends EventWriterDelegate {
     protected void afterEndDocument() {
         depth = 0;
         final Set<StackState> state = scopeState.getFirst();
-        if (state.contains(StackState.WROTE_MARKUP) && !state.contains(StackState.WROTE_DATA)) { // but not data
+        if (state.contains(StackState.WROTE_MARKUP)
+                && !state.contains(StackState.WROTE_DATA)) { // but not data
             try {
                 final String indent = getLineSeparator() + StringUtils.repeat("  ", 0);
                 final Characters indentEvent = xmlEventFactory.createCharacters(indent);
                 wrappedWriter.add(indentEvent);
-            }
-            catch (Exception ignored) {
+            } catch (Exception ignored) {
             }
         }
         scopeState.clear();
         scopeState.push(EnumSet.noneOf(StackState.class)); // start fresh
     }
 
-
-    /**
-     * Generate an indentation string for the specified depth and indent size
-     */
+    /** Generate an indentation string for the specified depth and indent size */
     protected String getIndent(int depth, int size) {
         final int length = depth * size;
         String indent = indentCache.get(length);

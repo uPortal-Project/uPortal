@@ -1,23 +1,24 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.portlets.favorites;
 
+import java.util.List;
+import javax.portlet.ActionResponse;
+import javax.portlet.PortletMode;
+import javax.portlet.RenderRequest;
+import javax.servlet.http.HttpServletRequest;
 import org.apereo.portal.IUserPreferencesManager;
 import org.apereo.portal.UserPreferencesManager;
 import org.apereo.portal.layout.IUserLayout;
@@ -31,48 +32,42 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.portlet.bind.annotation.ActionMapping;
 import org.springframework.web.portlet.bind.annotation.RenderMapping;
 
-import javax.portlet.ActionResponse;
-import javax.portlet.PortletMode;
-import javax.portlet.RenderRequest;
-import javax.servlet.http.HttpServletRequest;
-import java.util.List;
-
 /**
  * Spring PortletMVC Controller for Favorites Portlet implementing EDIT mode.
- * @since uPortal 4.1
+ *
+ * @since 4.1
  */
 @Controller
 @RequestMapping("EDIT")
-public class FavoritesEditController
-    extends AbstractFavoritesController {
+public class FavoritesEditController extends AbstractFavoritesController {
 
     /**
-     * Handles all Favorites portlet EDIT mode renders.
-     * Populates model with user's favorites and selects a view to display those favorites.
+     * Handles all Favorites portlet EDIT mode renders. Populates model with user's favorites and
+     * selects a view to display those favorites.
      *
-     * View selection:
+     * <p>View selection:
      *
-     * Returns "jsp/Favorites/edit" in the normal case where the user has
-     * at least one favorited portlet or favorited collection.
+     * <p>Returns "jsp/Favorites/edit" in the normal case where the user has at least one favorited
+     * portlet or favorited collection.
      *
-     * Returns "jsp/Favorites/edit_zero" in the edge case where the user has
-     * zero favorited portlets AND zero favorited collections.
+     * <p>Returns "jsp/Favorites/edit_zero" in the edge case where the user has zero favorited
+     * portlets AND zero favorited collections.
      *
-     * Model:
-     * marketPlaceFname --> String functional name of Marketplace portlet, or null if not available.
-     * collections      --> List of favorited collections (IUserLayoutNodeDescription s)
-     * favorites        --> List of favorited individual portlets (IUserLayoutNodeDescription s)
-     * successMessageCode   --> String success message bundle key, or null if none
-     * errorMessageCode     --> String error message bundle key, or null if none
-     * nameOfFavoriteActedUpon --> Name of favorite acted upon, intended as parameter to success or error message
+     * <p>Model: marketPlaceFname --> String functional name of Marketplace portlet, or null if not
+     * available. collections --> List of favorited collections (IUserLayoutNodeDescription s)
+     * favorites --> List of favorited individual portlets (IUserLayoutNodeDescription s)
+     * successMessageCode --> String success message bundle key, or null if none errorMessageCode
+     * --> String error message bundle key, or null if none nameOfFavoriteActedUpon --> Name of
+     * favorite acted upon, intended as parameter to success or error message
      *
-     * @param model . Spring model.  This method adds five model attributes.
+     * @param model . Spring model. This method adds five model attributes.
      * @return jsp/Favorites/edit[_zero]
      */
     @RenderMapping
     public String initializeView(Model model, RenderRequest renderRequest) {
 
-        IUserInstance ui = userInstanceManager.getUserInstance(portalRequestUtils.getCurrentPortalRequest());
+        IUserInstance ui =
+                userInstanceManager.getUserInstance(portalRequestUtils.getCurrentPortalRequest());
         UserPreferencesManager upm = (UserPreferencesManager) ui.getPreferencesManager();
         IUserLayoutManager ulm = upm.getUserLayoutManager();
 
@@ -86,7 +81,8 @@ public class FavoritesEditController
 
         model.addAttribute("marketplaceFname", this.marketplaceFName);
 
-        List<IUserLayoutNodeDescription> collections = FavoritesUtils.getFavoriteCollections(userLayout);
+        List<IUserLayoutNodeDescription> collections =
+                FavoritesUtils.getFavoriteCollections(userLayout);
         model.addAttribute("collections", collections);
 
         List<IUserLayoutNodeDescription> favorites = FavoritesUtils.getFavoritePortlets(userLayout);
@@ -95,7 +91,8 @@ public class FavoritesEditController
         model.addAttribute("successMessageCode", renderRequest.getParameter("successMessageCode"));
         model.addAttribute("errorMessageCode", renderRequest.getParameter("errorMessageCode"));
 
-        model.addAttribute("nameOfFavoriteActedUpon", renderRequest.getParameter("nameOfFavoriteActedUpon"));
+        model.addAttribute(
+                "nameOfFavoriteActedUpon", renderRequest.getParameter("nameOfFavoriteActedUpon"));
 
         // default to the regular old edit view
         String viewName = "jsp/Favorites/edit";
@@ -105,25 +102,25 @@ public class FavoritesEditController
             viewName = "jsp/Favorites/edit_zero";
         }
 
-        logger.trace("Favorites Portlet EDIT mode built model [{}] and selected view {}.",
-                model, viewName);
+        logger.trace(
+                "Favorites Portlet EDIT mode built model [{}] and selected view {}.",
+                model,
+                viewName);
 
         return viewName;
     }
 
-
     /**
-     * Un-favorite a favorite node (portlet or collection) identified by node ID.
-     * Routed by the action=delete parameter.
-     * If no favorites remain after un-favoriting, switches portlet mode to VIEW.
+     * Un-favorite a favorite node (portlet or collection) identified by node ID. Routed by the
+     * action=delete parameter. If no favorites remain after un-favoriting, switches portlet mode to
+     * VIEW.
      *
-     * Sets render parameters:
-     * successMessageCode: message code of success message if applicable
-     * errorMessageCode: message code of error message if applicable
-     * nameOfFavoriteActedUpon: user-facing name of favorite acted upon.
-     * action: will be set to "list" to facilitate not repeatedly attempting delete.
+     * <p>Sets render parameters: successMessageCode: message code of success message if applicable
+     * errorMessageCode: message code of error message if applicable nameOfFavoriteActedUpon:
+     * user-facing name of favorite acted upon. action: will be set to "list" to facilitate not
+     * repeatedly attempting delete.
      *
-     * Exactly one of [successMessageCode|errorMessageCode] render parameters will be set.
+     * <p>Exactly one of [successMessageCode|errorMessageCode] render parameters will be set.
      * nameOfFavoriteActedUpon and action will always be set.
      *
      * @param nodeId identifier of target node
@@ -152,23 +149,25 @@ public class FavoritesEditController
                 if (nodeSuccessfullyDeleted) {
                     layoutManager.saveUserLayout();
 
-                    response.setRenderParameter("successMessageCode", "favorites.unfavorite.success.parameterized");
+                    response.setRenderParameter(
+                            "successMessageCode", "favorites.unfavorite.success.parameterized");
 
                     IUserLayout updatedLayout = layoutManager.getUserLayout();
 
                     // if removed last favorite, return to VIEW mode
-                    if (! FavoritesUtils.hasAnyFavorites(updatedLayout)) {
+                    if (!FavoritesUtils.hasAnyFavorites(updatedLayout)) {
                         response.setPortletMode(PortletMode.VIEW);
                     }
 
                     logger.debug("Successfully unfavorited [{}]", nodeDescription);
 
                 } else {
-                    logger.error("Failed to delete node [{}] on unfavorite request, but this should have succeeded?",
+                    logger.error(
+                            "Failed to delete node [{}] on unfavorite request, but this should have succeeded?",
                             nodeDescription);
 
-                    response.setRenderParameter("errorMessageCode", "favorites.unfavorite.fail.parameterized");
-
+                    response.setRenderParameter(
+                            "errorMessageCode", "favorites.unfavorite.fail.parameterized");
                 }
 
             } else {
@@ -176,9 +175,9 @@ public class FavoritesEditController
                         "Attempt to unfavorite [{}] failed because user lacks permission to delete that layout node.",
                         nodeDescription);
 
-                response.setRenderParameter("errorMessageCode",
+                response.setRenderParameter(
+                        "errorMessageCode",
                         "favorites.unfavorite.fail.lack.permission.parameterized");
-
             }
 
         } catch (Exception e) {
@@ -189,13 +188,11 @@ public class FavoritesEditController
             // may have failed to load node description, so fall back on describing by id
             final String fallbackUserFacingNodeName = "node with id " + nodeId;
 
-            response.setRenderParameter("errorMessageCode", "favorites.unfavorite.fail.parameterized");
+            response.setRenderParameter(
+                    "errorMessageCode", "favorites.unfavorite.fail.parameterized");
             response.setRenderParameter("nameOfFavoriteActedUpon", fallbackUserFacingNodeName);
-
         }
 
         response.setRenderParameter("action", "list");
-        
     }
-
 }

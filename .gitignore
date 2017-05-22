@@ -417,7 +417,7 @@ modules.xml
 !bootstrap/lib/*.jar
 !uportal-portlets-overlay/CalendarPortlet/3rd-party/repository/org/osaf/caldav4j/0.7/*.jar
 !uportal-portlets-overlay/CalendarPortlet/3rd-party/repository/slide/jakarta-slide-webdavlib/2.2pre1-httpclient-3.0/*.jar
-!uportal-war/src/main/java/org/apereo/portal/permission/target/
-!uportal-war/src/main/webapp/WEB-INF/tags/
+!**/src/**/target/
+!**/src/**/tags/
 !uportal-war/src/test/resources/org/apereo/portal/io/xml/import_archive.*
 !uportal-war/src/test/resources/org/apereo/portal/utils/DirScannerData.zip

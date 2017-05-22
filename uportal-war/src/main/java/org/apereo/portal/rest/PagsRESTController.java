@@ -1,29 +1,24 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-
 package org.apereo.portal.rest;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.apereo.portal.EntityIdentifier;
 import org.apereo.portal.groups.IEntityGroup;
 import org.apereo.portal.groups.IGroupConstants;
@@ -42,41 +37,35 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 /**
- * REST Controller that leverages PagsAdministrationHelper and related form classes
- * to provide a RESTful API for AJAX management of PAGS.
- * 
- * @author Benito Gonzalez, bgonzalez@unicon.net
+ * REST Controller that leverages PagsAdministrationHelper and related form classes to provide a
+ * RESTful API for AJAX management of PAGS.
+ *
  */
 @Controller
 public class PagsRESTController {
     /*
-      Tried to use ResponseEntities but the ran into conflicts when using <mvc:annotation-driven/>
-     */
+     Tried to use ResponseEntities but the ran into conflicts when using <mvc:annotation-driven/>
+    */
 
-    /**
-     * Help other Java classes use this API well.
-     */
-    public static final String URL_FORMAT_STRING = "/api/v4-3/pags/%s.json";
+    @Autowired private PagsService pagsService;
 
-    @Autowired
-    private PagsService pagsService;
+    @Autowired private IPersonManager personManager;
 
-    @Autowired
-    private IPersonManager personManager;
-
-    @Autowired
-    private ObjectMapper objectMapper;
+    @Autowired private ObjectMapper objectMapper;
 
     @SuppressWarnings("unused")
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    @RequestMapping(value="/v4-3/pags/{pagsGroupName}.json", produces = {MediaType.APPLICATION_JSON_VALUE}, method = RequestMethod.GET)
-    public @ResponseBody String findPagsGroup(HttpServletRequest request, HttpServletResponse res,
-                                              @PathVariable("pagsGroupName") String pagsGroupName) {
+    @RequestMapping(
+        value = "/v4-3/pags/{pagsGroupName}.json",
+        produces = {MediaType.APPLICATION_JSON_VALUE},
+        method = RequestMethod.GET
+    )
+    public @ResponseBody String findPagsGroup(
+            HttpServletRequest request,
+            HttpServletResponse res,
+            @PathVariable("pagsGroupName") String pagsGroupName) {
 
         res.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
@@ -93,16 +82,21 @@ public class PagsRESTController {
         }
 
         IPerson person = personManager.getPerson(request);
-        IPersonAttributesGroupDefinition pagsGroup = this.pagsService.getPagsDefinitionByName(person, name);
+        IPersonAttributesGroupDefinition pagsGroup =
+                this.pagsService.getPagsDefinitionByName(person, name);
         return respondPagsGroupJson(res, pagsGroup, person, HttpServletResponse.SC_FOUND);
-
     }
 
-    @RequestMapping(value="/v4-3/pags/{parentGroupName}.json", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
-    public @ResponseBody String createPagsGroup(HttpServletRequest request,
-                                                HttpServletResponse res,
-                                                @PathVariable("parentGroupName") String parentGroupName,
-                                                @RequestBody String json) {
+    @RequestMapping(
+        value = "/v4-3/pags/{parentGroupName}.json",
+        produces = MediaType.APPLICATION_JSON_VALUE,
+        method = RequestMethod.POST
+    )
+    public @ResponseBody String createPagsGroup(
+            HttpServletRequest request,
+            HttpServletResponse res,
+            @PathVariable("parentGroupName") String parentGroupName,
+            @RequestBody String json) {
 
         res.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
@@ -127,19 +121,23 @@ public class PagsRESTController {
         }
 
         // Obtain a real reference to the parent group
-        EntityIdentifier[] eids = GroupService.searchForGroups(name, IGroupConstants.IS, IPerson.class);
+        EntityIdentifier[] eids =
+                GroupService.searchForGroups(name, IGroupConstants.IS, IPerson.class);
         if (eids.length == 0) {
             res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return "{ 'error': 'Parent group does not exist: " + name + "' }";
         }
-        IEntityGroup parentGroup = (IEntityGroup) GroupService.getGroupMember(eids[0]);  // Names must be unique
+        IEntityGroup parentGroup =
+                (IEntityGroup) GroupService.getGroupMember(eids[0]); // Names must be unique
 
         IPerson person = personManager.getPerson(request);
         IPersonAttributesGroupDefinition rslt;
         try {
             // A little weird that we need to do both;
             // need some PAGS DAO/Service refactoring
-            rslt = pagsService.createPagsDefinition(person, parentGroup, inpt.getName(), inpt.getDescription());
+            rslt =
+                    pagsService.createPagsDefinition(
+                            person, parentGroup, inpt.getName(), inpt.getDescription());
             // NOTE:  We are also obligated to establish the backlink
             // testGroupDef --> groupDef;  arguably this backlink serves
             // little purpose and could be removed.
@@ -162,14 +160,18 @@ public class PagsRESTController {
             return "{ 'error': '" + e.getMessage() + "' }";
         }
         return respondPagsGroupJson(res, rslt, person, HttpServletResponse.SC_CREATED);
-
     }
 
-    @RequestMapping(value="/v4-3/pags/{pagsGroupName}.json", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.PUT)
-    public @ResponseBody String updatePagsGroup(HttpServletRequest req,
-                                                HttpServletResponse res,
-                                                @PathVariable("pagsGroupName") String pagsGroupName,
-                                                @RequestBody String json) {
+    @RequestMapping(
+        value = "/v4-3/pags/{pagsGroupName}.json",
+        produces = MediaType.APPLICATION_JSON_VALUE,
+        method = RequestMethod.PUT
+    )
+    public @ResponseBody String updatePagsGroup(
+            HttpServletRequest req,
+            HttpServletResponse res,
+            @PathVariable("pagsGroupName") String pagsGroupName,
+            @RequestBody String json) {
 
         res.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
@@ -204,7 +206,8 @@ public class PagsRESTController {
         IPerson person = personManager.getPerson(req);
         IPersonAttributesGroupDefinition rslt;
         try {
-            IPersonAttributesGroupDefinition currentDef = pagsService.getPagsDefinitionByName(person, name);
+            IPersonAttributesGroupDefinition currentDef =
+                    pagsService.getPagsDefinitionByName(person, name);
             if (currentDef == null) {
                 res.setStatus(HttpServletResponse.SC_NOT_FOUND);
                 return "{ 'error': 'Not found' }";
@@ -242,7 +245,11 @@ public class PagsRESTController {
      * Implementation
      */
 
-    private String respondPagsGroupJson(HttpServletResponse response, IPersonAttributesGroupDefinition pagsGroup, IPerson person, int status) {
+    private String respondPagsGroupJson(
+            HttpServletResponse response,
+            IPersonAttributesGroupDefinition pagsGroup,
+            IPerson person,
+            int status) {
         if (pagsGroup == null) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return "{ 'error': 'Not Found' }";
@@ -255,5 +262,4 @@ public class PagsRESTController {
             return "{ 'error': '" + e.toString() + "' }";
         }
     }
-
 }

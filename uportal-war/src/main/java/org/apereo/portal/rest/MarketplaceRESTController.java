@@ -1,22 +1,17 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-
 package org.apereo.portal.rest;
 
 import java.util.ArrayList;
@@ -25,14 +20,13 @@ import java.util.List;
 import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.lang.Validate;
 import org.apereo.portal.portlet.dao.IMarketplaceRatingDao;
 import org.apereo.portal.portlet.marketplace.IMarketplaceRating;
 import org.apereo.portal.portlet.marketplace.IMarketplaceService;
 import org.apereo.portal.portlet.marketplace.MarketplacePortletDefinition;
-import org.apereo.portal.portlet.om.PortletCategory;
 import org.apereo.portal.portlet.om.IPortletDefinition;
+import org.apereo.portal.portlet.om.PortletCategory;
 import org.apereo.portal.rest.layout.MarketplaceEntry;
 import org.apereo.portal.rest.layout.MarketplaceEntryRating;
 import org.apereo.portal.security.AuthorizationPrincipalHelper;
@@ -77,19 +71,25 @@ public class MarketplaceRESTController {
     public ModelAndView marketplaceEntriesFeed(HttpServletRequest request) {
         final IPerson user = personManager.getPerson(request);
 
-        final Set<PortletCategory> empty = Collections.emptySet();  // Produces an complete/unfiltered collection
-        final Set<MarketplaceEntry> marketplaceEntries = marketplaceService.browseableMarketplaceEntriesFor(user, empty);
+        final Set<PortletCategory> empty =
+                Collections.emptySet(); // Produces an complete/unfiltered collection
+        final Set<MarketplaceEntry> marketplaceEntries =
+                marketplaceService.browseableMarketplaceEntriesFor(user, empty);
 
         return new ModelAndView("json", "portlets", marketplaceEntries);
     }
 
-    @RequestMapping(value="/marketplace/entry/{fname}.json")
-    public ModelAndView marketplaceEntryFeed(HttpServletRequest request, HttpServletResponse response, @PathVariable String fname) {
+    @RequestMapping(value = "/marketplace/entry/{fname}.json")
+    public ModelAndView marketplaceEntryFeed(
+            HttpServletRequest request, HttpServletResponse response, @PathVariable String fname) {
         final IPerson user = personManager.getPerson(request);
-        final IAuthorizationPrincipal principal = AuthorizationPrincipalHelper.principalFromUser(user);
+        final IAuthorizationPrincipal principal =
+                AuthorizationPrincipalHelper.principalFromUser(user);
 
-        final MarketplacePortletDefinition marketplacePortletDefinition = marketplaceService.getOrCreateMarketplacePortletDefinitionIfTheFnameExists(fname);
-        if(marketplacePortletDefinition != null && marketplaceService.mayBrowsePortlet(principal, marketplacePortletDefinition)) {
+        final MarketplacePortletDefinition marketplacePortletDefinition =
+                marketplaceService.getOrCreateMarketplacePortletDefinitionIfTheFnameExists(fname);
+        if (marketplacePortletDefinition != null
+                && marketplaceService.mayBrowsePortlet(principal, marketplacePortletDefinition)) {
             MarketplaceEntry entry = new MarketplaceEntry(marketplacePortletDefinition, true, user);
             entry.setCanAdd(marketplaceService.mayAddPortlet(user, marketplacePortletDefinition));
 
@@ -100,58 +100,69 @@ public class MarketplaceRESTController {
         return null;
     }
 
-    /**
-     * @since 5.0
-     */
-    @RequestMapping(value="/v5-0/marketplace/{fname}/ratings", method = RequestMethod.GET)
+    /** @since 5.0 */
+    @RequestMapping(value = "/v5-0/marketplace/{fname}/ratings", method = RequestMethod.GET)
     public ModelAndView getPortletRatings(HttpServletRequest request, @PathVariable String fname) {
 
         // TODO:  This method should send 404 or 403 in appropriate circumstances
 
         Validate.notNull(fname, "Please supply a portlet to get rating for - should not be null");
-        IPortletDefinition marketplacePortletDefinition = (IPortletDefinition) marketplaceService.getOrCreateMarketplacePortletDefinitionIfTheFnameExists(fname);
+        IPortletDefinition marketplacePortletDefinition =
+                (IPortletDefinition)
+                        marketplaceService.getOrCreateMarketplacePortletDefinitionIfTheFnameExists(
+                                fname);
 
         final IPerson user = personManager.getPerson(request);
-        final IAuthorizationPrincipal principal = AuthorizationPrincipalHelper.principalFromUser(user);
-        if(principal.canManage(marketplacePortletDefinition.getPortletDefinitionId().getStringId())){
+        final IAuthorizationPrincipal principal =
+                AuthorizationPrincipalHelper.principalFromUser(user);
+        if (principal.canManage(
+                marketplacePortletDefinition.getPortletDefinitionId().getStringId())) {
             Set<IMarketplaceRating> portletRatings = marketplaceRatingDAO.getRatingsByFname(fname);
 
-            if(portletRatings != null ) {
-            List<MarketplaceEntryRating> ratingResults = new ArrayList<>();
-                for(IMarketplaceRating imr:portletRatings) {
+            if (portletRatings != null) {
+                List<MarketplaceEntryRating> ratingResults = new ArrayList<>();
+                for (IMarketplaceRating imr : portletRatings) {
                     ratingResults.add(new MarketplaceEntryRating(imr.getRating(), imr.getReview()));
                 }
 
                 return new ModelAndView("json", "ratings", ratingResults);
-
             }
         }
 
         return new ModelAndView("json", "ratings", null);
     }
 
-    @RequestMapping(value="/marketplace/{fname}/getRating", method = RequestMethod.GET)
+    @RequestMapping(value = "/marketplace/{fname}/getRating", method = RequestMethod.GET)
     public ModelAndView getUserRating(HttpServletRequest request, @PathVariable String fname) {
         Validate.notNull(fname, "Please supply a portlet to get rating for - should not be null");
-        IMarketplaceRating tempRating = marketplaceRatingDAO.getRating(request.getRemoteUser(), marketplaceService.getOrCreateMarketplacePortletDefinitionIfTheFnameExists(fname));
-        if(tempRating != null) {
-            return new ModelAndView("json", "rating", new MarketplaceEntryRating(tempRating.getRating(), tempRating.getReview()));
+        IMarketplaceRating tempRating =
+                marketplaceRatingDAO.getRating(
+                        request.getRemoteUser(),
+                        marketplaceService.getOrCreateMarketplacePortletDefinitionIfTheFnameExists(
+                                fname));
+        if (tempRating != null) {
+            return new ModelAndView(
+                    "json",
+                    "rating",
+                    new MarketplaceEntryRating(tempRating.getRating(), tempRating.getReview()));
         }
         return new ModelAndView("json", "rating", null);
     }
 
-    @RequestMapping(value="/marketplace/{fname}/rating/{rating}", method = RequestMethod.POST)
-    public ModelAndView saveUserRating(HttpServletRequest request,
+    @RequestMapping(value = "/marketplace/{fname}/rating/{rating}", method = RequestMethod.POST)
+    public ModelAndView saveUserRating(
+            HttpServletRequest request,
             @PathVariable String fname,
             @PathVariable String rating,
             @RequestParam(required = false) String review) {
         Validate.notNull(rating, "Please supply a rating - should not be null");
         Validate.notNull(fname, "Please supply a portlet to rate - should not be null");
-        marketplaceRatingDAO.createOrUpdateRating(Integer.parseInt(rating),
-            request.getRemoteUser(),
-            review,
-            marketplaceService.getOrCreateMarketplacePortletDefinitionIfTheFnameExists(fname));
-        return new ModelAndView("json", "rating", new MarketplaceEntryRating(Integer.parseInt(rating), review));
+        marketplaceRatingDAO.createOrUpdateRating(
+                Integer.parseInt(rating),
+                request.getRemoteUser(),
+                review,
+                marketplaceService.getOrCreateMarketplacePortletDefinitionIfTheFnameExists(fname));
+        return new ModelAndView(
+                "json", "rating", new MarketplaceEntryRating(Integer.parseInt(rating), review));
     }
-
 }

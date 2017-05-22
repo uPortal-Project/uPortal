@@ -1,31 +1,26 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.portlets.permissionsadmin;
 
 import java.io.Serializable;
 import java.util.Set;
 import java.util.TreeSet;
-
 import org.apereo.portal.layout.dlm.remoting.JsonEntityBean;
 
 public class Assignment implements Comparable<Assignment>, Serializable {
-    
+
     private static final long serialVersionUID = 1L;
 
     // Instance Members.
@@ -37,22 +32,20 @@ public class Assignment implements Comparable<Assignment>, Serializable {
     /*
      * Public API.
      */
-    
+
     public enum Type {
-        
         INHERIT_GRANT,
-        
+
         INHERIT_DENY,
-        
+
         GRANT,
-        
+
         DENY
-        
     }
 
     /**
      * Creates a new {@see Assignment} of type {@see Type.INHERIT}.
-     * 
+     *
      * @param principal User or group to which this permissions record applies
      */
     public Assignment(String principalId, JsonEntityBean principal) {
@@ -61,7 +54,7 @@ public class Assignment implements Comparable<Assignment>, Serializable {
 
     /**
      * Creates a new {@see Assignment} of the specified {@see Type}.
-     * 
+     *
      * @param principal User or group to which this permissions record applies
      * @param type Either {@see Type.INHERIT}, {@see Type.GRANT}, or {@see Type.DENY}
      */
@@ -76,13 +69,12 @@ public class Assignment implements Comparable<Assignment>, Serializable {
             String msg = "Argument 'type' cannot be null";
             throw new IllegalArgumentException(msg);
         }
-        
+
         this.principalId = principalId;
         this.principal = principal;
         this.type = type;
-
     }
-    
+
     public Assignment addChild(Assignment a) {
 
         // Assertions.
@@ -93,9 +85,8 @@ public class Assignment implements Comparable<Assignment>, Serializable {
 
         children.add(a);
         return this;
-
     }
-    
+
     @Override
     public int compareTo(Assignment a) {
         return this.principal.getName().compareTo(a.principal.getName());
@@ -104,31 +95,33 @@ public class Assignment implements Comparable<Assignment>, Serializable {
     public Set<Assignment> getChildren() {
         return new TreeSet<Assignment>(children);
     }
-    
+
     public JsonEntityBean getPrincipal() {
         return principal;
     }
-    
+
     public Type getType() {
         return type;
     }
-    
+
     public void setType(Type type) {
         this.type = type;
     }
-    
+
     public Assignment findDecendentOrSelfIfExists(JsonEntityBean principal) {
-        
+
         // Assertions.
         if (principal == null) {
             String msg = "Argument 'principal' cannot be null";
             throw new IllegalArgumentException(msg);
         }
 
-        Assignment rslt = null;  // default...
-        
-        if (principal.getId().equals(this.principal.getId()) 
-                && principal.getEntityTypeAsString().equals(this.principal.getEntityTypeAsString())) {
+        Assignment rslt = null; // default...
+
+        if (principal.getId().equals(this.principal.getId())
+                && principal
+                        .getEntityTypeAsString()
+                        .equals(this.principal.getEntityTypeAsString())) {
             rslt = this;
         } else {
             for (Assignment a : children) {
@@ -138,13 +131,11 @@ public class Assignment implements Comparable<Assignment>, Serializable {
                 }
             }
         }
-        
+
         return rslt;
-        
     }
 
     public String getPrincipalId() {
         return principalId;
     }
-
 }

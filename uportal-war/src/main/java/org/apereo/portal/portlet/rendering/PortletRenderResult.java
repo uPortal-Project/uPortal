@@ -1,47 +1,41 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.portlet.rendering;
 
 import java.io.Serializable;
 
-
 /**
  * The result of rendering a portlet
- * 
- * @author Eric Dalquist
- * @version $Revision$
+ *
  */
 public class PortletRenderResult implements Serializable {
     private static final long serialVersionUID = 1L;
-    
+
     private final String title;
     private final long renderTime;
     private final int newItemCount;
     private final String externalLink;
 
-    public PortletRenderResult(String title, String externalLink, int newItemCount, long renderTime) {
+    public PortletRenderResult(
+            String title, String externalLink, int newItemCount, long renderTime) {
         this.title = title;
         this.renderTime = renderTime;
         this.newItemCount = newItemCount;
         this.externalLink = externalLink;
     }
-    
+
     public PortletRenderResult(PortletRenderResult portletRenderResult, long renderTime) {
         this.title = portletRenderResult.getTitle();
         this.newItemCount = portletRenderResult.getNewItemCount();
@@ -49,27 +43,21 @@ public class PortletRenderResult implements Serializable {
         this.renderTime = renderTime;
     }
 
-    /**
-     * @return The title set by the portlet, null if none was set
-     */
+    /** @return The title set by the portlet, null if none was set */
     public String getTitle() {
         return title;
     }
 
-    /**
-     * @return The time it took the portlet to render.
-     */
+    /** @return The time it took the portlet to render. */
     public long getRenderTime() {
         return this.renderTime;
     }
-    
-    /**
-     * @return The number of new items reported by the portlet for the current user
-     */
+
+    /** @return The number of new items reported by the portlet for the current user */
     public int getNewItemCount() {
         return this.newItemCount;
     }
-    
+
     public String getExternalLink() {
         return this.externalLink;
     }
@@ -102,8 +90,7 @@ public class PortletRenderResult implements Serializable {
             if (other.title != null) {
                 return false;
             }
-        }
-        else if (!this.title.equals(other.title)) {
+        } else if (!this.title.equals(other.title)) {
             return false;
         }
         return true;

@@ -1,26 +1,21 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.spring.web.context.support;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -32,18 +27,16 @@ import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.config.Scope;
 
 /**
- * Wraps a {@link Scope} to provide functionality when the wrapped scope can't function
- * due to an illegal state (no current session, request, ...)
- * 
- * @author Eric Dalquist
- * @version $Revision$
+ * Wraps a {@link Scope} to provide functionality when the wrapped scope can't function due to an
+ * illegal state (no current session, request, ...)
+ *
  */
 public class FailsafeSingletonScope implements Scope, DisposableBean {
     protected final Log logger = LogFactory.getLog(this.getClass());
 
     private final Map<String, InstanceHolder> instances = new HashMap<String, InstanceHolder>();
     private final Scope delegateScope;
-    
+
     public FailsafeSingletonScope(Scope delegateScope) {
         this.delegateScope = delegateScope;
     }
@@ -56,24 +49,27 @@ public class FailsafeSingletonScope implements Scope, DisposableBean {
             if (instanceHolder.destructionCallback != null) {
                 try {
                     instanceHolder.destructionCallback.run();
-                }
-                catch (Exception e) {
-                    this.logger.warn("Destruction callback for bean named '" + instanceHolder.name + "' failed.", e);
+                } catch (Exception e) {
+                    this.logger.warn(
+                            "Destruction callback for bean named '"
+                                    + instanceHolder.name
+                                    + "' failed.",
+                            e);
                 }
             }
         }
-        
+
         this.instances.clear();
     }
 
     /**
-     * @see org.springframework.web.context.request.SessionScope#get(java.lang.String, org.springframework.beans.factory.ObjectFactory)
+     * @see org.springframework.web.context.request.SessionScope#get(java.lang.String,
+     *     org.springframework.beans.factory.ObjectFactory)
      */
     public Object get(String name, ObjectFactory<?> objectFactory) {
         try {
             return this.delegateScope.get(name, objectFactory);
-        }
-        catch (IllegalStateException ise) {
+        } catch (IllegalStateException ise) {
             synchronized (this.instances) {
                 InstanceHolder instanceHolder = this.instances.get(name);
                 if (instanceHolder == null) {
@@ -86,8 +82,7 @@ public class FailsafeSingletonScope implements Scope, DisposableBean {
                     this.instances.put(name, instanceHolder);
 
                     instanceHolder.instance = objectFactory.getObject();
-                }
-                else if (this.logger.isDebugEnabled()) {
+                } else if (this.logger.isDebugEnabled()) {
                     this.logger.debug("Using existing singleton instance for bean '" + name + "'");
                 }
 
@@ -96,26 +91,24 @@ public class FailsafeSingletonScope implements Scope, DisposableBean {
         }
     }
 
-    /**
-     * @see org.springframework.web.context.request.SessionScope#getConversationId()
-     */
+    /** @see org.springframework.web.context.request.SessionScope#getConversationId() */
     public String getConversationId() {
         try {
             return this.delegateScope.getConversationId();
-        }
-        catch (IllegalStateException ise) {
+        } catch (IllegalStateException ise) {
             return "NO_SESSION_SINGLETON";
         }
     }
 
     /**
-     * @see org.springframework.web.context.request.AbstractRequestAttributesScope#registerDestructionCallback(java.lang.String, java.lang.Runnable)
+     * @see
+     *     org.springframework.web.context.request.AbstractRequestAttributesScope#registerDestructionCallback(java.lang.String,
+     *     java.lang.Runnable)
      */
     public void registerDestructionCallback(String name, Runnable callback) {
         try {
             this.delegateScope.registerDestructionCallback(name, callback);
-        }
-        catch (IllegalStateException ise) {
+        } catch (IllegalStateException ise) {
             final InstanceHolder instanceHolder;
             synchronized (this.instances) {
                 instanceHolder = this.instances.get(name);
@@ -123,46 +116,43 @@ public class FailsafeSingletonScope implements Scope, DisposableBean {
 
             if (instanceHolder != null) {
                 if (this.logger.isInfoEnabled()) {
-                    this.logger.info("Adding destruction callback singleton for bean '" + name + "'");
+                    this.logger.info(
+                            "Adding destruction callback singleton for bean '" + name + "'");
                 }
-                
-                instanceHolder.destructionCallback = callback;
-            }
-            else if (this.logger.isInfoEnabled()) {
-                this.logger.info("Ignoring destruction callback for singleton bean '" + name + "' because there currently is no instance");
-            }
 
+                instanceHolder.destructionCallback = callback;
+            } else if (this.logger.isInfoEnabled()) {
+                this.logger.info(
+                        "Ignoring destruction callback for singleton bean '"
+                                + name
+                                + "' because there currently is no instance");
+            }
         }
     }
 
-    /**
-     * @see org.springframework.web.context.request.SessionScope#remove(java.lang.String)
-     */
+    /** @see org.springframework.web.context.request.SessionScope#remove(java.lang.String) */
     public Object remove(String name) {
         try {
             return this.delegateScope.remove(name);
-        }
-        catch (IllegalStateException ise) {
+        } catch (IllegalStateException ise) {
             final InstanceHolder instanceHolder;
             synchronized (this.instances) {
                 instanceHolder = this.instances.remove(name);
             }
-            
+
             if (instanceHolder != null) {
                 if (this.logger.isInfoEnabled()) {
                     this.logger.info("Removing singleton bean '" + name + "'");
                 }
-                
+
                 return instanceHolder.instance;
             }
-            
+
             return null;
         }
     }
-    
-    /**
-     * Holder class for singleton instances
-     */
+
+    /** Holder class for singleton instances */
     private static class InstanceHolder {
         public final String name;
         public Object instance;
@@ -172,9 +162,7 @@ public class FailsafeSingletonScope implements Scope, DisposableBean {
             this.name = name;
         }
 
-        /**
-         * @see java.lang.Object#equals(Object)
-         */
+        /** @see java.lang.Object#equals(Object) */
         @Override
         public boolean equals(Object object) {
             if (object == this) {
@@ -184,37 +172,29 @@ public class FailsafeSingletonScope implements Scope, DisposableBean {
                 return false;
             }
             InstanceHolder rhs = (InstanceHolder) object;
-            return new EqualsBuilder()
-                .append(this.name, rhs.name)
-                .isEquals();
+            return new EqualsBuilder().append(this.name, rhs.name).isEquals();
         }
 
-        /**
-         * @see java.lang.Object#hashCode()
-         */
+        /** @see java.lang.Object#hashCode() */
         @Override
         public int hashCode() {
-            return new HashCodeBuilder(217891979, 1307635269)
-                .append(this.name)
-                .toHashCode();
+            return new HashCodeBuilder(217891979, 1307635269).append(this.name).toHashCode();
         }
 
-        /**
-         * @see java.lang.Object#toString()
-         */
+        /** @see java.lang.Object#toString() */
         @Override
         public String toString() {
             return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
-                .append("name", this.name)
-                .append("instance", this.instance)
-                .append("destructionCallback", this.destructionCallback)
-                .toString();
+                    .append("name", this.name)
+                    .append("instance", this.instance)
+                    .append("destructionCallback", this.destructionCallback)
+                    .toString();
         }
     }
 
-	@Override
-	public Object resolveContextualObject(String arg0) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public Object resolveContextualObject(String arg0) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

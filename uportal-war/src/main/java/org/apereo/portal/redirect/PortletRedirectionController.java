@@ -1,20 +1,16 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.redirect;
 
@@ -25,13 +21,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
-
 import javax.annotation.Resource;
 import javax.portlet.WindowState;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apereo.portal.portlet.om.IPortletWindow;
@@ -47,12 +41,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.HandlerMapping;
 
 /**
- * PortletRedirectionController issues a 302 redirect from an abstract service
- * URL to the configured target URL.  This controller can be used to map
- * links from one portlet to another without requiring the linking portlet know
- * the entire URL structure of the target. 
- * 
- * @author Jen Bourey, jennifer.bourey@gmail.com
+ * PortletRedirectionController issues a 302 redirect from an abstract service URL to the configured
+ * target URL. This controller can be used to map links from one portlet to another without
+ * requiring the linking portlet know the entire URL structure of the target.
+ *
  */
 @Controller
 public class PortletRedirectionController {
@@ -76,15 +68,20 @@ public class PortletRedirectionController {
     private Map<String, IRedirectionUrl> services;
 
     @Required
-    @Resource(name="redirectionServices")
+    @Resource(name = "redirectionServices")
     public void setServices(Map<String, IRedirectionUrl> services) {
         this.services = services;
     }
 
-    @RequestMapping(value={"{serviceKey}/*/**","{serviceKey}"})
-    public void redirectExtra(HttpServletRequest request, HttpServletResponse response, @PathVariable String serviceKey) throws IOException {
+    @RequestMapping(value = {"{serviceKey}/*/**", "{serviceKey}"})
+    public void redirectExtra(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            @PathVariable String serviceKey)
+            throws IOException {
 
-        String path = (String) request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
+        String path =
+                (String) request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
 
         List<String> pathElements = Arrays.asList(path.split("/"));
 
@@ -98,10 +95,10 @@ public class PortletRedirectionController {
 
         // send a redirect
         response.sendRedirect(redirectUrl);
-
     }
 
-    protected String getUrlString(IRedirectionUrl url, HttpServletRequest request, List<String> extraPath) {
+    protected String getUrlString(
+            IRedirectionUrl url, HttpServletRequest request, List<String> extraPath) {
 
         if (url instanceof ExternalRedirectionUrl) {
             ExternalRedirectionUrl externalUrl = (ExternalRedirectionUrl) url;
@@ -112,7 +109,8 @@ public class PortletRedirectionController {
 
                 // add any additional parameters
                 String separator = "?";
-                for (Map.Entry<String, String[]> param : externalUrl.getAdditionalParameters().entrySet()) {
+                for (Map.Entry<String, String[]> param :
+                        externalUrl.getAdditionalParameters().entrySet()) {
                     for (String value : param.getValue()) {
                         urlStr.append(separator);
                         urlStr.append(param.getKey());
@@ -123,7 +121,8 @@ public class PortletRedirectionController {
                 }
 
                 // add any dynamic parameters
-                for (Map.Entry<String, String> param : externalUrl.getDynamicParameters().entrySet()) {
+                for (Map.Entry<String, String> param :
+                        externalUrl.getDynamicParameters().entrySet()) {
                     String[] values = request.getParameterValues(param.getKey());
                     if (values != null) {
                         for (String value : values) {
@@ -141,10 +140,10 @@ public class PortletRedirectionController {
                     List<String> paramNames = externalUrl.getPathParameters();
 
                     ListIterator<String> itt = paramNames.listIterator();
-                    while(itt.hasNext() && !extraPath.isEmpty()) {
+                    while (itt.hasNext() && !extraPath.isEmpty()) {
                         String param = itt.next();
                         String value;
-                        if (itt.hasNext()){
+                        if (itt.hasNext()) {
                             value = extraPath.remove(0);
                         } else {
                             value = StringUtils.join(extraPath, "/");
@@ -159,27 +158,31 @@ public class PortletRedirectionController {
 
                 return urlStr.toString();
 
-            } catch (UnsupportedEncodingException ex){
+            } catch (UnsupportedEncodingException ex) {
                 log.error("Unable to encode URL parameter for external service redirect", ex);
                 return null;
             }
 
-        }
-
-        else {
+        } else {
 
             PortletRedirectionUrl portletUrl = (PortletRedirectionUrl) url;
 
             // create the base URL for the portlet
-            final IPortletWindow portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindowByFname(request, portletUrl.getFname());
-            final IPortalUrlBuilder portalUrlBuilder = this.portalUrlProvider.getPortalUrlBuilderByPortletWindow(request, portletWindow.getPortletWindowId(), portletUrl.getType());
-            final IPortletUrlBuilder portletUrlBuilder = portalUrlBuilder.getTargetedPortletUrlBuilder();
+            final IPortletWindow portletWindow =
+                    this.portletWindowRegistry.getOrCreateDefaultPortletWindowByFname(
+                            request, portletUrl.getFname());
+            final IPortalUrlBuilder portalUrlBuilder =
+                    this.portalUrlProvider.getPortalUrlBuilderByPortletWindow(
+                            request, portletWindow.getPortletWindowId(), portletUrl.getType());
+            final IPortletUrlBuilder portletUrlBuilder =
+                    portalUrlBuilder.getTargetedPortletUrlBuilder();
             portletUrlBuilder.setPortletMode(portletUrl.getMode());
             portletUrlBuilder.setWindowState(WindowState.MAXIMIZED);
 
             // for each of the defined additional parameters, add a matching
             // parameter to the portlet URL
-            for (Map.Entry<String, String[]> param : portletUrl.getAdditionalParameters().entrySet()) {
+            for (Map.Entry<String, String[]> param :
+                    portletUrl.getAdditionalParameters().entrySet()) {
                 portletUrlBuilder.addParameter(param.getKey(), param.getValue());
             }
 
@@ -193,28 +196,26 @@ public class PortletRedirectionController {
             }
 
             if (!extraPath.isEmpty()) {
-                    List<String> paramNames = portletUrl.getPathParameters();
+                List<String> paramNames = portletUrl.getPathParameters();
 
-                    ListIterator<String> itt = paramNames.listIterator();
-                    while(itt.hasNext() && !extraPath.isEmpty()) {
+                ListIterator<String> itt = paramNames.listIterator();
+                while (itt.hasNext() && !extraPath.isEmpty()) {
 
-                        String param = itt.next();
-                        String value;
-                        if (itt.hasNext()){
-                            value = extraPath.remove(0);
-                        } else {
-                            value = StringUtils.join(extraPath, "/");
-                        }
-
-                        if (StringUtils.isEmpty(value)) {
-                            break;
-                        } else
-                            portletUrlBuilder.addParameter(param, value);
+                    String param = itt.next();
+                    String value;
+                    if (itt.hasNext()) {
+                        value = extraPath.remove(0);
+                    } else {
+                        value = StringUtils.join(extraPath, "/");
                     }
+
+                    if (StringUtils.isEmpty(value)) {
+                        break;
+                    } else portletUrlBuilder.addParameter(param, value);
                 }
+            }
 
             return portalUrlBuilder.getUrlString();
         }
     }
-
 }

@@ -1,39 +1,34 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.io.xml.crn;
 
+import com.google.common.base.Function;
 import java.io.IOException;
-
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Result;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
-
-import org.dom4j.Element;
-import org.dom4j.io.DocumentSource;
 import org.apereo.portal.io.xml.IDataExporter;
 import org.apereo.portal.io.xml.IPortalData;
 import org.apereo.portal.io.xml.IPortalDataType;
 import org.apereo.portal.utils.SafeFilenameUtils;
 import org.apereo.portal.utils.Tuple;
 import org.apereo.portal.xml.XmlUtilities;
+import org.dom4j.Element;
+import org.dom4j.io.DocumentSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,17 +36,14 @@ import org.springframework.beans.factory.annotation.Required;
 import org.springframework.oxm.Marshaller;
 import org.springframework.oxm.XmlMappingException;
 
-import com.google.common.base.Function;
-
 /**
  * Base class used for exporting DOM4j data
- * 
- * @author Eric Dalquist
- * @version $Revision$
+ *
  */
-public abstract class AbstractDom4jExporter implements IDataExporter<Tuple<String, Element>>, Marshaller  {
+public abstract class AbstractDom4jExporter
+        implements IDataExporter<Tuple<String, Element>>, Marshaller {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
-    
+
     private XmlUtilities xmlUtilities;
     private IPortalDataType portalDataType;
     private Function<IPortalDataType, Iterable<? extends IPortalData>> portalDataRetriever;
@@ -67,7 +59,8 @@ public abstract class AbstractDom4jExporter implements IDataExporter<Tuple<Strin
     }
 
     @Required
-    public void setPortalDataRetriever(Function<IPortalDataType, Iterable<? extends IPortalData>> portalDataRetriever) {
+    public void setPortalDataRetriever(
+            Function<IPortalDataType, Iterable<? extends IPortalData>> portalDataRetriever) {
         this.portalDataRetriever = portalDataRetriever;
     }
 
@@ -96,10 +89,10 @@ public abstract class AbstractDom4jExporter implements IDataExporter<Tuple<Strin
         if (node == null) {
             return null;
         }
-        
+
         return new Tuple<String, Element>(id, node);
     }
-    
+
     protected abstract Element exportDataElement(String id);
 
     /* (non-Javadoc)
@@ -132,24 +125,22 @@ public abstract class AbstractDom4jExporter implements IDataExporter<Tuple<Strin
     @Override
     public void marshal(Object graph, Result result) throws IOException, XmlMappingException {
         @SuppressWarnings("unchecked")
-        final Tuple<String, Element> data = (Tuple<String, Element>)graph;
-        
+        final Tuple<String, Element> data = (Tuple<String, Element>) graph;
+
         final Transformer transformer;
         try {
             transformer = this.xmlUtilities.getIdentityTransformer();
-        }
-        catch (TransformerConfigurationException e) {
+        } catch (TransformerConfigurationException e) {
             throw new RuntimeException("Failed to load identity Transformer", e);
         }
 
         //Setup the transformer to pretty-print the output
         transformer.setOutputProperty(OutputKeys.INDENT, "yes");
         transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
-        
+
         try {
             transformer.transform(new DocumentSource(data.second), result);
-        }
-        catch (TransformerException e) {
+        } catch (TransformerException e) {
             throw new RuntimeException("Failed to write Element to Result for: " + data.first, e);
         }
     }

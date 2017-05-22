@@ -1,20 +1,16 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.utils;
 
@@ -25,13 +21,10 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 
 /**
- * Provides base functionality for a static reference bean locator. Used by legacy code that
- * is not managed within spring, avoids direct use of PortalApplicationContextLocator by
- * client code and in the case of an already created ApplicationConext uses the bean refernce
- * injected by the context.
- * 
- * @author Eric Dalquist
- * @version $Revision$
+ * Provides base functionality for a static reference bean locator. Used by legacy code that is not
+ * managed within spring, avoids direct use of PortalApplicationContextLocator by client code and in
+ * the case of an already created ApplicationConext uses the bean refernce injected by the context.
+ *
  */
 public abstract class AbstractBeanLocator<T> implements DisposableBean, InitializingBean {
     protected final Log logger = LogFactory.getLog(AbstractBeanLocator.class);
@@ -60,8 +53,10 @@ public abstract class AbstractBeanLocator<T> implements DisposableBean, Initiali
     @Override
     public final void afterPropertiesSet() throws Exception {
         if (this.getLocator() != null) {
-            this.logger.warn("Static " + this.getClass().getName()
-                    + " reference has already been set and setInstance is being called");
+            this.logger.warn(
+                    "Static "
+                            + this.getClass().getName()
+                            + " reference has already been set and setInstance is being called");
         }
         this.setLocator(this);
     }
@@ -72,8 +67,10 @@ public abstract class AbstractBeanLocator<T> implements DisposableBean, Initiali
     @Override
     public final void destroy() throws Exception {
         if (this.getLocator() == null) {
-            this.logger.warn("Static " + this.getClass().getName()
-                    + " reference is already null and destroy is being called");
+            this.logger.warn(
+                    "Static "
+                            + this.getClass().getName()
+                            + " reference is already null and destroy is being called");
         }
         this.setLocator(null);
     }

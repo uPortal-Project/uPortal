@@ -1,20 +1,16 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.security.provider;
 
@@ -29,22 +25,15 @@ import org.apereo.portal.spring.locator.LocalAccountDaoLocator;
 import org.apereo.portal.spring.locator.PortalPasswordServiceLocator;
 
 /**
- * <p>
- * This is an implementation of a SecurityContext that checks a user's
- * credentials against an MD5 hashed password entry.
- * 
- * @author Andrew Newman, newman@yale.edu
- * @version $Revision$
+ * This is an implementation of a SecurityContext that checks a user's credentials against an MD5
+ * hashed password entry.
+ *
  */
-public class SimpleSecurityContext extends ChainingSecurityContext implements
-        ISecurityContext {
+public class SimpleSecurityContext extends ChainingSecurityContext implements ISecurityContext {
 
-    private static final Log log = LogFactory
-            .getLog(SimpleSecurityContext.class);
+    private static final Log log = LogFactory.getLog(SimpleSecurityContext.class);
 
     private final int SIMPLESECURITYAUTHTYPE = 0xFF02;
-
-    private IPortalPasswordService passwordService;
 
     SimpleSecurityContext() {
         super();
@@ -56,49 +45,43 @@ public class SimpleSecurityContext extends ChainingSecurityContext implements
 
     /**
      * Authenticate user.
-     * 
+     *
      * @exception PortalSecurityException
      */
     public synchronized void authenticate() throws PortalSecurityException {
         this.isauth = false;
-        if (this.myPrincipal.UID != null
-                && this.myOpaqueCredentials.credentialstring != null) {
+        if (this.myPrincipal.UID != null && this.myOpaqueCredentials.credentialstring != null) {
 
             try {
-                
-                ILocalAccountDao accountStore = LocalAccountDaoLocator
-                        .getLocalAccountDao();
-                IPortalPasswordService passwordService = PortalPasswordServiceLocator
-                        .getPortalPasswordService();
+
+                ILocalAccountDao accountStore = LocalAccountDaoLocator.getLocalAccountDao();
+                IPortalPasswordService passwordService =
+                        PortalPasswordServiceLocator.getPortalPasswordService();
 
                 // retrieve the account from the local user store
                 ILocalAccountPerson account = accountStore.getPerson(this.myPrincipal.UID);
-                
+
                 if (account != null) {
 
                     // get the account password as an ASCII string
                     String loginPassword = new String(this.myOpaqueCredentials.credentialstring);
-                    
+
                     // if the password provided at login matches the hashed
                     // account password, authenticate the user
                     if (passwordService.validatePassword(loginPassword, account.getPassword())) {
-                        
+
                         // set the full name for this user
                         String fullName = (String) account.getAttributeValue("displayName");
                         this.myPrincipal.FullName = fullName;
                         if (log.isInfoEnabled())
-                            log.info("User " + this.myPrincipal.UID
-                                    + " is authenticated");
+                            log.info("User " + this.myPrincipal.UID + " is authenticated");
                         this.isauth = true;
-                    } 
-                    
-                    else {
+                    } else {
                         log.info("Password Invalid");
                     }
-                    
+
                 } else {
-                    if (log.isInfoEnabled())
-                        log.info("No such user: " + this.myPrincipal.UID);
+                    if (log.isInfoEnabled()) log.info("No such user: " + this.myPrincipal.UID);
                 }
             } catch (Exception e) {
                 log.error("Error authenticating user", e);
@@ -114,5 +97,4 @@ public class SimpleSecurityContext extends ChainingSecurityContext implements
         super.authenticate();
         return;
     }
-
 }

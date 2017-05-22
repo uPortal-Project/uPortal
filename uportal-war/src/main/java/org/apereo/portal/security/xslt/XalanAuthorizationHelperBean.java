@@ -1,25 +1,20 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.security.xslt;
 
 import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apereo.portal.groups.IEntity;
@@ -35,11 +30,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
- * Spring managed version of the Xalan Elements helper class used during portal XSL
- * transformations.
- * 
- * @author Eric Dalquist
- * @version $Revision$
+ * Spring managed version of the Xalan Elements helper class used during portal XSL transformations.
+ *
  */
 @Service
 public class XalanAuthorizationHelperBean implements IXalanAuthorizationHelper {
@@ -48,10 +40,8 @@ public class XalanAuthorizationHelperBean implements IXalanAuthorizationHelper {
     private IPortletDefinitionRegistry portletDefinitionRegistry;
     private IPortalRequestUtils portalRequestUtils;
     private IPersonManager personManager;
-        
-    /**
-     * @param portletDefinitionRegistry the portletDefinitionRegistry to set
-     */
+
+    /** @param portletDefinitionRegistry the portletDefinitionRegistry to set */
     @Autowired
     public void setPortletDefinitionRegistry(IPortletDefinitionRegistry portletDefinitionRegistry) {
         this.portletDefinitionRegistry = portletDefinitionRegistry;
@@ -75,36 +65,43 @@ public class XalanAuthorizationHelperBean implements IXalanAuthorizationHelper {
         if (userName == null || fname == null) {
             return false;
         }
-        
+
         final IAuthorizationPrincipal userPrincipal = this.getUserPrincipal(userName);
         if (userPrincipal == null) {
             return false;
         }
-        
+
         final String portletId;
         try {
-            final IPortletDefinition portletDefinition = this.portletDefinitionRegistry.getPortletDefinitionByFname(fname);
+            final IPortletDefinition portletDefinition =
+                    this.portletDefinitionRegistry.getPortletDefinitionByFname(fname);
             if (portletDefinition == null) {
                 if (this.logger.isInfoEnabled()) {
-                    this.logger.info("No PortletDefinition for fname='" + fname + "', returning false.");
+                    this.logger.info(
+                            "No PortletDefinition for fname='" + fname + "', returning false.");
                 }
 
                 return false;
             }
-            
+
             portletId = portletDefinition.getPortletDefinitionId().getStringId();
-        }
-        catch (Exception e) {
-            this.logger.warn("Could not find PortletDefinition for fname='" + fname + "' while checking if user '" + userName + "' can render it. Returning FALSE.", e);
+        } catch (Exception e) {
+            this.logger.warn(
+                    "Could not find PortletDefinition for fname='"
+                            + fname
+                            + "' while checking if user '"
+                            + userName
+                            + "' can render it. Returning FALSE.",
+                    e);
             return false;
         }
-        
+
         return userPrincipal.canRender(portletId);
     }
 
     @Override
     public boolean hasPermission(final String owner, final String activity, final String target) {
-        
+
         // owner & activity are required (but not target)
         if (owner == null || activity == null) {
             return false;
@@ -112,13 +109,14 @@ public class XalanAuthorizationHelperBean implements IXalanAuthorizationHelper {
 
         final HttpServletRequest currentRequest = portalRequestUtils.getCurrentPortalRequest();
         final IPerson currentUser = personManager.getPerson((HttpServletRequest) currentRequest);
-        final IAuthorizationPrincipal authPrincipal = this.getUserPrincipal(currentUser.getUserName());
-        
-        final boolean rslt = authPrincipal != null
-                ? authPrincipal.hasPermission(owner, activity, target)
-                : false;
-        return rslt;
+        final IAuthorizationPrincipal authPrincipal =
+                this.getUserPrincipal(currentUser.getUserName());
 
+        final boolean rslt =
+                authPrincipal != null
+                        ? authPrincipal.hasPermission(owner, activity, target)
+                        : false;
+        return rslt;
     }
 
     protected IAuthorizationPrincipal getUserPrincipal(final String userName) {
@@ -126,9 +124,8 @@ public class XalanAuthorizationHelperBean implements IXalanAuthorizationHelper {
         if (user == null) {
             return null;
         }
-        
+
         final AuthorizationService authService = AuthorizationService.instance();
         return authService.newPrincipal(user);
     }
-
 }

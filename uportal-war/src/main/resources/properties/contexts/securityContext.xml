@@ -20,12 +20,12 @@
 
 -->
 <beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns="http://www.springframework.org/schema/beans" 
+       xmlns="http://www.springframework.org/schema/beans"
        xmlns:security="http://www.springframework.org/schema/security"
        xsi:schemaLocation="
-           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
-           http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.1.xsd">
-           
+           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+           http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.2.xsd">
+
    <security:global-method-security />
 
     <!-- Spring Security pre-authentication -->
@@ -34,7 +34,7 @@
         <security:intercept-url pattern="**" />
         <security:session-management session-authentication-strategy-ref="sessionAuthenticationStrategy" />
     </security:http>
-    
+
     <bean id="sessionAuthenticationStrategy" class="org.springframework.security.web.authentication.session.NullAuthenticatedSessionStrategy" />
 
     <bean id="portalPreAuthenticationFilter"
@@ -42,12 +42,12 @@
         <property name="authenticationManager" ref="authenticationManager" />
         <property name="clearSecurityContextPriorToPortalAuthentication" value="false" />
     </bean>
-  
+
     <bean id="preAuthProvider"
         class="org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationProvider">
         <property name="preAuthenticatedUserDetailsService" ref="portalPreAuthenticatedUserDetailsService"/>
     </bean>
-    
+
     <security:authentication-manager alias="authenticationManager">
         <security:authentication-provider ref="preAuthProvider"/>
     </security:authentication-manager>
@@ -61,12 +61,12 @@
                      password works but is not secure.
                 -->
                 <property name="password" value="${org.apereo.portal.portlets.passwordEncryptionKey}"/>
-                
-                <!-- 
+
+                <!--
                     Example BouncyCastle-powered AES encryption
-                    
+
                     To use AES encryption, uncomment the following section, add
-                    the unrestricted JCE provider files to your JVM, and add 
+                    the unrestricted JCE provider files to your JVM, and add
                     the JVM-version-appropriate BouncyCastle dependency to uPortal
                 -->
                 <!--
@@ -94,7 +94,7 @@
         <constructor-arg index="0" value="${org.apereo.portal.security.cas.assertion.decryptCredentialToPasswordAlgorithm:'RSA'}"/>
     </bean>
 
-    <!-- 
+    <!--
      | Some operations in the portal rely on evaluating whether a permission is
      | granted over every portlet in the registry.  As the number of portlets
      | (or user groups) gets large, these operations can exhibit poor performance.

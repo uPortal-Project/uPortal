@@ -1,22 +1,17 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-
 package org.apereo.portal.layout.dlm.remoting.registry.v43;
 
 import java.io.Serializable;
@@ -25,7 +20,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-
 import org.apache.commons.lang.builder.CompareToBuilder;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
@@ -33,13 +27,13 @@ import org.apereo.portal.portlet.marketplace.MarketplacePortletDefinition;
 import org.apereo.portal.portlet.om.IPortletDefinitionParameter;
 
 /**
- * Gets serialized into JSON representing a portlet for the 4.3 version of the
- * portletRegistry.json API.
+ * Gets serialized into JSON representing a portlet for the 4.3 version of the portletRegistry.json
+ * API.
  *
  * @since 4.3
- * @author drewwills
  */
-public final class PortletDefinitionBean implements Comparable<PortletDefinitionBean>, Serializable {
+public final class PortletDefinitionBean
+        implements Comparable<PortletDefinitionBean>, Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -54,10 +48,11 @@ public final class PortletDefinitionBean implements Comparable<PortletDefinition
     private final int typeId;
     private final Double averageRating;
     private final long ratingsCount;
-    private final Map<String,IPortletDefinitionParameter> parameters;
+    private final Map<String, IPortletDefinitionParameter> parameters;
     private final List<String> keywords;
 
-    public static PortletDefinitionBean fromMarketplacePortletDefinition(final MarketplacePortletDefinition mpd, final Locale locale) {
+    public static PortletDefinitionBean fromMarketplacePortletDefinition(
+            final MarketplacePortletDefinition mpd, final Locale locale) {
         return new PortletDefinitionBean(mpd, locale);
     }
 
@@ -85,7 +80,6 @@ public final class PortletDefinitionBean implements Comparable<PortletDefinition
         return state;
     }
 
-
     public int getTypeId() {
         return typeId;
     }
@@ -98,7 +92,7 @@ public final class PortletDefinitionBean implements Comparable<PortletDefinition
         return ratingsCount;
     }
 
-    public Map<String,IPortletDefinitionParameter> getParameters() {
+    public Map<String, IPortletDefinitionParameter> getParameters() {
         return parameters;
     }
 
@@ -111,8 +105,7 @@ public final class PortletDefinitionBean implements Comparable<PortletDefinition
     }
 
     public int compareTo(PortletDefinitionBean pdb) {
-        return new CompareToBuilder().append(this.name, pdb.getName())
-                .toComparison();
+        return new CompareToBuilder().append(this.name, pdb.getName()).toComparison();
     }
 
     @Override
@@ -129,8 +122,7 @@ public final class PortletDefinitionBean implements Comparable<PortletDefinition
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(464270933, -1074792143).append(this.id)
-                .toHashCode();
+        return new HashCodeBuilder(464270933, -1074792143).append(this.id).toHashCode();
     }
 
     /*
@@ -148,9 +140,9 @@ public final class PortletDefinitionBean implements Comparable<PortletDefinition
         this.averageRating = mpd.getRating();
         this.ratingsCount = mpd.getUsersRated();
         this.parameters = new HashMap<>(mpd.getParametersAsUnmodifiableMap());
-        this.keywords = mpd.getKeywords() != null
-                ? Collections.unmodifiableList(mpd.getKeywords())
-                : EMPTY_KEYWORDS;
+        this.keywords =
+                mpd.getKeywords() != null
+                        ? Collections.unmodifiableList(mpd.getKeywords())
+                        : EMPTY_KEYWORDS;
     }
-
 }

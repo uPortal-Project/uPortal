@@ -1,22 +1,16 @@
 /**
- * Licensed to Jasig under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a
- * copy of the License at:
+ * Licensed to Jasig under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Jasig
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at:
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-
 package org.apereo.portal.permission.target;
 
 import java.io.Serializable;
@@ -25,15 +19,11 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-
 /**
- * SimpleStringTargetProviderImpl provides a basic target provider implementation
- * capable of registering static strings as targets.  This implementation is
- * appropriate for permission owners for which targets are simple static 
- * strings that are well-defined and known in advance.
- * 
- * @author Jen Bourey, jbourey@unicon.net
- * @version $Revision$
+ * SimpleStringTargetProviderImpl provides a basic target provider implementation capable of
+ * registering static strings as targets. This implementation is appropriate for permission owners
+ * for which targets are simple static strings that are well-defined and known in advance.
+ *
  * @since 3.3
  */
 public class SimpleStringTargetProviderImpl implements IPermissionTargetProvider, Serializable {
@@ -43,7 +33,7 @@ public class SimpleStringTargetProviderImpl implements IPermissionTargetProvider
 
     /**
      * Add a permission target to this target provider.
-     * 
+     *
      * @param target
      */
     public void addTarget(IPermissionTarget target) {
@@ -52,19 +42,18 @@ public class SimpleStringTargetProviderImpl implements IPermissionTargetProvider
 
     /**
      * Set the permission targets for this provider.
-     * 
-     * @param targets  collection of targets
+     *
+     * @param targets collection of targets
      */
     public void setTargets(Collection<IPermissionTarget> targets) {
 
         // clear out any existing targets
         targetMap.clear();
 
-        // add each target to the internal map and index it by the target key 
+        // add each target to the internal map and index it by the target key
         for (IPermissionTarget target : targets) {
             targetMap.put(target.getKey(), target);
         }
-
     }
 
     /*
@@ -100,5 +89,4 @@ public class SimpleStringTargetProviderImpl implements IPermissionTargetProvider
         // return the list of matching targets
         return matching;
     }
-
 }

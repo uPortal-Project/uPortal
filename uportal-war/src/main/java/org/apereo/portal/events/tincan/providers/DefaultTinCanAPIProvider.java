@@ -1,22 +1,20 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.events.tincan.providers;
+
+import static java.lang.String.format;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -24,7 +22,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
@@ -47,19 +44,14 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
-import static java.lang.String.format;
-
-
 /**
  * HTTP provider that connects to a TinCan LRS service.
  *
- * Each provider is must be configured with an id.  The id will
- * be used to load the configuration for the provider.  The id
- * must be injected as a spring property.*
+ * <p>Each provider is must be configured with an id. The id will be used to load the configuration
+ * for the provider. The id must be injected as a spring property.*
  *
- * Additional configuration is available by setting properties
- * in the portal.properties or your local overrides.properties
- * file.  The additional properties that may be configured are:
+ * <p>Additional configuration is available by setting properties in the portal.properties or your
+ * local overrides.properties file. The additional properties that may be configured are:
  *
  * <table>
  *     <tr>
@@ -142,12 +134,12 @@ import static java.lang.String.format;
  *     </tr>
  * </table>
  *
- * @author Josh Helmer, jhelmer@unicon.net
  */
 public class DefaultTinCanAPIProvider implements ITinCanAPIProvider {
     protected static final String STATEMENTS_REST_ENDPOINT = "/statements";
     protected static final String STATES_REST_ENDPOINT = "/activities/state";
-    private static final String ACTOR_FORMAT = "{\"name\":\"%s\",\"mbox\":\"mailto:%s\",\"objectType\":\"Agent\"}";
+    private static final String ACTOR_FORMAT =
+            "{\"name\":\"%s\",\"mbox\":\"mailto:%s\",\"objectType\":\"Agent\"}";
     private static final String STATE_FORMAT = "{\"%s\":\"%s\"}";
     private static final String STATE_KEY_STATUS = "status";
     private static final String STATE_VALUE_STARTED = "started";
@@ -172,7 +164,6 @@ public class DefaultTinCanAPIProvider implements ITinCanAPIProvider {
     private boolean formEncodeActivityData = false;
     private String activitiesFormParamName = "content";
 
-
     /**
      * Set the rest template object.
      *
@@ -182,7 +173,6 @@ public class DefaultTinCanAPIProvider implements ITinCanAPIProvider {
     public void setRestTemplate(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
-
 
     /**
      * Property resolver used to read property values based on the provider id.
@@ -194,10 +184,9 @@ public class DefaultTinCanAPIProvider implements ITinCanAPIProvider {
         this.propertyResolver = propertyResolver;
     }
 
-
     /**
-     * Set the id of the provider to use.  The ID will be used to read the
-     * configuration for this provider.
+     * Set the id of the provider to use. The ID will be used to read the configuration for this
+     * provider.
      *
      * @param id the provider id.
      */
@@ -206,9 +195,8 @@ public class DefaultTinCanAPIProvider implements ITinCanAPIProvider {
         this.id = id;
     }
 
-
     /**
-     * If the xAPI interface is enabled or disabled.  Defaults to "false"
+     * If the xAPI interface is enabled or disabled. Defaults to "false"
      *
      * @param enabled the xAPI status
      */
@@ -216,7 +204,6 @@ public class DefaultTinCanAPIProvider implements ITinCanAPIProvider {
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
-
 
     /**
      * Check if the LRS provider is enabled.
@@ -227,7 +214,6 @@ public class DefaultTinCanAPIProvider implements ITinCanAPIProvider {
         return enabled;
     }
 
-
     /**
      * Get the base LRS URL.
      *
@@ -237,10 +223,9 @@ public class DefaultTinCanAPIProvider implements ITinCanAPIProvider {
         return LRSUrl;
     }
 
-
     /**
-     * Initialize the API.  Just sends an initialization event to the LRS provider.
-     * This uses the activities/state API to do the initial test.
+     * Initialize the API. Just sends an initialization event to the LRS provider. This uses the
+     * activities/state API to do the initial test.
      */
     @Override
     public void init() {
@@ -274,25 +259,38 @@ public class DefaultTinCanAPIProvider implements ITinCanAPIProvider {
                 body = data;
             }
 
-            ResponseEntity<Object> response = sendRequest(STATES_REST_ENDPOINT, HttpMethod.POST, getParams, body, Object.class);
+            ResponseEntity<Object> response =
+                    sendRequest(
+                            STATES_REST_ENDPOINT, HttpMethod.POST, getParams, body, Object.class);
             if (response.getStatusCode().series() != Series.SUCCESSFUL) {
-                logger.error("LRS provider for URL " + LRSUrl + " it not configured properly, or is offline.  Disabling provider.");
+                logger.error(
+                        "LRS provider for URL "
+                                + LRSUrl
+                                + " it not configured properly, or is offline.  Disabling provider.");
             }
 
-        // todo: Need to think through a strategy for handling errors submitting
-        // to the LRS.
+            // todo: Need to think through a strategy for handling errors submitting
+            // to the LRS.
         } catch (HttpClientErrorException e) {
             // log some additional info in this case...
-            logger.error("LRS provider for URL " + LRSUrl + " failed to contact LRS for initialization.  Disabling provider." , e);
-            logger.error("  Status: {}, Response: {}", e.getStatusCode(), e.getResponseBodyAsString());
+            logger.error(
+                    "LRS provider for URL "
+                            + LRSUrl
+                            + " failed to contact LRS for initialization.  Disabling provider.",
+                    e);
+            logger.error(
+                    "  Status: {}, Response: {}", e.getStatusCode(), e.getResponseBodyAsString());
             enabled = false;
 
         } catch (Exception e) {
-            logger.error("LRS provider for URL " + LRSUrl + " failed to contact LRS for initialization.  Disabling provider" , e);
+            logger.error(
+                    "LRS provider for URL "
+                            + LRSUrl
+                            + " failed to contact LRS for initialization.  Disabling provider",
+                    e);
             enabled = false;
         }
     }
-
 
     /**
      * Actually send an event to the provider.
@@ -305,7 +303,9 @@ public class DefaultTinCanAPIProvider implements ITinCanAPIProvider {
             return false;
         }
 
-        ResponseEntity<Object> response = sendRequest(STATEMENTS_REST_ENDPOINT, HttpMethod.POST, null, statement, Object.class);
+        ResponseEntity<Object> response =
+                sendRequest(
+                        STATEMENTS_REST_ENDPOINT, HttpMethod.POST, null, statement, Object.class);
         if (response.getStatusCode().series() == Series.SUCCESSFUL) {
             logger.trace("LRS provider successfully sent to {}, statement: {}", LRSUrl, statement);
         } else {
@@ -317,22 +317,18 @@ public class DefaultTinCanAPIProvider implements ITinCanAPIProvider {
         return true;
     }
 
-
     @Override
-    public void destroy() {
-    }
-
+    public void destroy() {}
 
     /**
      * Read the LRS config.
      *
-     * "url" is the only required property.  If not set, will disable this LRS
-     * provider.
+     * <p>"url" is the only required property. If not set, will disable this LRS provider.
      *
-     * Rather than asking installations to write a lot of XML, this pushes most
-     * of the configuration out to portal.properties.  It reads dynamically named
-     * properties based on the "id" of this LRS provider.  This is similar to the
-     * way that the TinCan configuration is handled for Sakai.
+     * <p>Rather than asking installations to write a lot of XML, this pushes most of the
+     * configuration out to portal.properties. It reads dynamically named properties based on the
+     * "id" of this LRS provider. This is similar to the way that the TinCan configuration is
+     * handled for Sakai.
      */
     protected void loadConfig() {
         if (!isEnabled()) {
@@ -341,12 +337,24 @@ public class DefaultTinCanAPIProvider implements ITinCanAPIProvider {
 
         final String urlProp = format(PROPERTY_FORMAT, id, "url");
         LRSUrl = propertyResolver.getProperty(urlProp);
-        actorName = propertyResolver.getProperty(format(PROPERTY_FORMAT, id, "actor-name"), actorName);
-        actorEmail = propertyResolver.getProperty(format(PROPERTY_FORMAT, id, "actor-email"), actorEmail);
-        activityId = propertyResolver.getProperty(format(PROPERTY_FORMAT, id, "activity-id"), activityId);
+        actorName =
+                propertyResolver.getProperty(format(PROPERTY_FORMAT, id, "actor-name"), actorName);
+        actorEmail =
+                propertyResolver.getProperty(
+                        format(PROPERTY_FORMAT, id, "actor-email"), actorEmail);
+        activityId =
+                propertyResolver.getProperty(
+                        format(PROPERTY_FORMAT, id, "activity-id"), activityId);
         stateId = propertyResolver.getProperty(format(PROPERTY_FORMAT, id, "state-id"), stateId);
-        formEncodeActivityData = propertyResolver.getProperty(format(PROPERTY_FORMAT, id, "form-encode-activity-data"), Boolean.class, formEncodeActivityData);
-        activitiesFormParamName = propertyResolver.getProperty(format(PROPERTY_FORMAT, id, "activity-form-param-name"), activitiesFormParamName);
+        formEncodeActivityData =
+                propertyResolver.getProperty(
+                        format(PROPERTY_FORMAT, id, "form-encode-activity-data"),
+                        Boolean.class,
+                        formEncodeActivityData);
+        activitiesFormParamName =
+                propertyResolver.getProperty(
+                        format(PROPERTY_FORMAT, id, "activity-form-param-name"),
+                        activitiesFormParamName);
 
         if (StringUtils.isEmpty(LRSUrl)) {
             logger.error("Disabling TinCan API interface.  Property {} not set!", urlProp);
@@ -358,11 +366,10 @@ public class DefaultTinCanAPIProvider implements ITinCanAPIProvider {
         LRSUrl = LRSUrl.replaceAll("/*$", "");
     }
 
-
     /**
      * Send a request to the LRS.
      *
-     * @param pathFragment the URL.  Should be relative to the xAPI API root
+     * @param pathFragment the URL. Should be relative to the xAPI API root
      * @param method the HTTP method
      * @param getParams the set of GET params
      * @param postData the post data.
@@ -370,8 +377,12 @@ public class DefaultTinCanAPIProvider implements ITinCanAPIProvider {
      * @param <T> The type of object to expect in the response
      * @return The response object.
      */
-    protected <T> ResponseEntity<T> sendRequest(String pathFragment, HttpMethod method,
-            List<? extends NameValuePair> getParams, Object postData, Class<T> returnType) {
+    protected <T> ResponseEntity<T> sendRequest(
+            String pathFragment,
+            HttpMethod method,
+            List<? extends NameValuePair> getParams,
+            Object postData,
+            Class<T> returnType) {
         HttpHeaders headers = new HttpHeaders();
         headers.add(XAPI_VERSION_HEADER, XAPI_VERSION_VALUE);
 
@@ -388,16 +399,15 @@ public class DefaultTinCanAPIProvider implements ITinCanAPIProvider {
         return response;
     }
 
-
     /**
      * Build a URI for the REST request.
      *
-     * Note: this converts to URI instead of using a string because the activities/state
-     * API requires you to pass JSON as a GET parameter.  The {...} confuses the RestTemplate
-     * path parameter handling.  By converting to URI, I skip that.
+     * <p>Note: this converts to URI instead of using a string because the activities/state API
+     * requires you to pass JSON as a GET parameter. The {...} confuses the RestTemplate path
+     * parameter handling. By converting to URI, I skip that.
      *
      * @param pathFragment The path fragment relative to the LRS REST base URL
-     * @param params The list of GET parameters to encode.  May be null.
+     * @param params The list of GET parameters to encode. May be null.
      * @return The full URI to the LMS REST endpoint
      */
     private URI buildRequestURI(String pathFragment, List<? extends NameValuePair> params) {

@@ -1,29 +1,23 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.user;
 
 import java.io.Serializable;
 import java.util.Locale;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -46,16 +40,13 @@ import org.springframework.stereotype.Service;
 
 /**
  * Determines which user instance object to use for a given user.
- *
- * @author Peter Kharchenko  {@link <a href="mailto:pkharchenko@interactivebusiness.com"">pkharchenko@interactivebusiness.com"</a>}
- * @version $Revision 1.1$
  */
 @Service("userInstanceManager")
 public class UserInstanceManagerImpl implements IUserInstanceManager {
     private static final String KEY = UserInstanceManagerImpl.class.getName() + ".USER_INSTANCE";
-    
+
     protected final Log logger = LogFactory.getLog(UserInstanceManagerImpl.class);
-    
+
     private ILocaleStore localeStore;
     private IUserLayoutStore userLayoutStore;
     private IPersonManager personManager;
@@ -82,12 +73,12 @@ public class UserInstanceManagerImpl implements IUserInstanceManager {
     public void setPersonManager(IPersonManager personManager) {
         this.personManager = personManager;
     }
-    
+
     @Autowired
     public void setPortalRequestUtils(IPortalRequestUtils portalRequestUtils) {
         this.portalRequestUtils = portalRequestUtils;
     }
-    
+
     @Autowired
     public void setProfileMapper(IProfileMapper profileMapper) {
         this.profileMapper = profileMapper;
@@ -95,6 +86,7 @@ public class UserInstanceManagerImpl implements IUserInstanceManager {
 
     /**
      * Returns the UserInstance object that is associated with the given request.
+     *
      * @param request Incoming HttpServletRequest
      * @return UserInstance object associated with the given request
      */
@@ -105,13 +97,13 @@ public class UserInstanceManagerImpl implements IUserInstanceManager {
         } catch (IllegalArgumentException iae) {
             //ignore, just means that this isn't a wrapped request
         }
-        
+
         // Use request attributes first for the fastest possible retrieval
-        IUserInstance userInstance = (IUserInstance)request.getAttribute(KEY);
+        IUserInstance userInstance = (IUserInstance) request.getAttribute(KEY);
         if (userInstance != null) {
             return userInstance;
         }
-        
+
         final IPerson person;
         try {
             // Retrieve the person object that is associated with the request
@@ -120,21 +112,24 @@ public class UserInstanceManagerImpl implements IUserInstanceManager {
             logger.error("Exception while retrieving IPerson!", e);
             throw new PortalSecurityException("Could not retrieve IPerson", e);
         }
-        
+
         if (person == null) {
-            throw new PortalSecurityException("PersonManager returned null person for this request.  With no user, there's no UserInstance.  Is PersonManager misconfigured?  RDBMS access misconfigured?");
+            throw new PortalSecurityException(
+                    "PersonManager returned null person for this request.  With no user, there's no UserInstance.  Is PersonManager misconfigured?  RDBMS access misconfigured?");
         }
 
         final HttpSession session = request.getSession();
         if (session == null) {
-            throw new IllegalStateException("HttpServletRequest.getSession() returned a null session for request: " + request);
+            throw new IllegalStateException(
+                    "HttpServletRequest.getSession() returned a null session for request: "
+                            + request);
         }
 
         // Return the UserInstance object if it's in the session
         UserInstanceHolder userInstanceHolder = getUserInstanceHolder(session);
         if (userInstanceHolder != null) {
             userInstance = userInstanceHolder.getUserInstance();
-            
+
             if (userInstance != null) {
                 return userInstance;
             }
@@ -143,14 +138,16 @@ public class UserInstanceManagerImpl implements IUserInstanceManager {
         // Create either a UserInstance or a GuestUserInstance
         final LocaleManager localeManager = this.getLocaleManager(request, person);
         final String userAgent = this.getUserAgent(request);
-        final IUserProfile userProfile = this.getUserProfile(request, person, localeManager, userAgent);
+        final IUserProfile userProfile =
+                this.getUserProfile(request, person, localeManager, userAgent);
 
         //Create the user layout manager and user instance object
-        IUserLayoutManager userLayoutManager = userLayoutManagerFactory.getUserLayoutManager(person, userProfile);
+        IUserLayoutManager userLayoutManager =
+                userLayoutManagerFactory.getUserLayoutManager(person, userProfile);
 
-        final UserPreferencesManager userPreferencesManager = new UserPreferencesManager(person, userProfile, userLayoutManager);
+        final UserPreferencesManager userPreferencesManager =
+                new UserPreferencesManager(person, userProfile, userLayoutManager);
         userInstance = new UserInstance(person, userPreferencesManager, localeManager);
-        
 
         //Ensure the newly created UserInstance is cached in the session
         if (userInstanceHolder == null) {
@@ -164,21 +161,25 @@ public class UserInstanceManagerImpl implements IUserInstanceManager {
         return userInstance;
     }
 
-    protected IUserProfile getUserProfile(HttpServletRequest request, IPerson person, LocaleManager localeManager, String userAgent) {
+    protected IUserProfile getUserProfile(
+            HttpServletRequest request,
+            IPerson person,
+            LocaleManager localeManager,
+            String userAgent) {
         final String profileFname = profileMapper.getProfileFname(person, request);
         IUserProfile userProfile = userLayoutStore.getUserProfileByFname(person, profileFname);
 
         if (userProfile == null) {
             userProfile = userLayoutStore.getSystemProfileByFname(profileFname);
         }
-        
+
         if (localeManager != null && LocaleManager.isLocaleAware()) {
             userProfile.setLocaleManager(localeManager);
         }
-        
+
         return userProfile;
     }
-    
+
     protected LocaleManager getLocaleManager(HttpServletRequest request, IPerson person) {
         final String acceptLanguage = request.getHeader("Accept-Language");
         final Locale[] userLocales = localeStore.getUserLocales(person);
@@ -187,8 +188,8 @@ public class UserInstanceManagerImpl implements IUserInstanceManager {
 
     protected String getUserAgent(HttpServletRequest request) {
         String userAgent = request.getHeader("User-Agent");
-        if(StringUtils.isEmpty(userAgent)) {
-            userAgent="null";
+        if (StringUtils.isEmpty(userAgent)) {
+            userAgent = "null";
         }
         return userAgent;
     }
@@ -198,29 +199,24 @@ public class UserInstanceManagerImpl implements IUserInstanceManager {
     }
 
     /**
-     * <p>Serializable wrapper class so the UserInstance object can
-     * be indirectly stored in the session. The manager can deal with
-     * this class returning a null value and its field is transient
-     * so the session can be serialized successfully with the
-     * UserInstance object in it.</p>
-     * <p>Implements HttpSessionBindingListener and delegates those methods to
-     * the wrapped UserInstance, if present.</p>
+     * Serializable wrapper class so the UserInstance object can be indirectly stored in the
+     * session. The manager can deal with this class returning a null value and its field is
+     * transient so the session can be serialized successfully with the UserInstance object in it.
+     *
+     * <p>Implements HttpSessionBindingListener and delegates those methods to the wrapped
+     * UserInstance, if present.
      */
     private static class UserInstanceHolder implements Serializable {
         private static final long serialVersionUID = 1L;
 
         private transient IUserInstance ui = null;
 
-        /**
-         * @return Returns the userInstance.
-         */
+        /** @return Returns the userInstance. */
         protected IUserInstance getUserInstance() {
             return this.ui;
         }
 
-        /**
-         * @param userInstance The userInstance to set.
-         */
+        /** @param userInstance The userInstance to set. */
         protected void setUserInstance(IUserInstance userInstance) {
             this.ui = userInstance;
         }

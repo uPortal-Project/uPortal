@@ -1,20 +1,16 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.layout.dlm.remoting;
 
@@ -23,11 +19,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.xpath.XPathConstants;
-
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -52,32 +46,33 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
 /**
- * Spring controller that returns a JSON representation of DLM fragments
- * in response to requests by portal administrators.</p>
- * <p>Optional Request parameter:</p>
+ * Spring controller that returns a JSON representation of DLM fragments in response to requests by
+ * portal administrators.
+ *
+ * <p>Optional Request parameter:
+ *
  * <ul>
- *   <li>sort : PRECEDENCE or NAME.  Defaults to PRECEDENCE. Sort by precedence or name of fragment.</li>
+ *   <li>sort : PRECEDENCE or NAME. Defaults to PRECEDENCE. Sort by precedence or name of fragment.
  * </ul>
  *
- * Implementation note: currently the UI client for this JSON service,
- * in fragment-audit.jsp, does not implement support for user selection of sort order.
+ * Implementation note: currently the UI client for this JSON service, in fragment-audit.jsp, does
+ * not implement support for user selection of sort order.
  *
- * @author Drew Wills, drew@unicon.net
  */
 @Controller
 @RequestMapping("/fragmentList")
 public class FragmentListController {
-    
+
     private static final Sort DEFAULT_SORT = Sort.PRECEDENCE;
     private static final String CHANNEL_FNAME_XPATH = "//channel/@fname";
-    
+
     private ConfigurationLoader dlmConfig;
-    private IPersonManager personManager;    
+    private IPersonManager personManager;
     private IUserLayoutStore userLayoutStore;
     private IPortletDefinitionRegistry portletRegistry;
     private XPathOperations xpathOperations;
     private final Log log = LogFactory.getLog(getClass());
-    
+
     @Autowired
     public void setXpathOperations(XPathOperations xpathOperations) {
         this.xpathOperations = xpathOperations;
@@ -104,12 +99,11 @@ public class FragmentListController {
     }
 
     /**
-     * Returns a model of
-     * fragments --> List<FragmentBean> ,
-     * sorted by precedence (default) or by fragment name depending on sort parameter,
-     * to be rendered by the jsonView.
+     * Returns a model of fragments --> List<FragmentBean> , sorted by precedence (default) or by
+     * fragment name depending on sort parameter, to be rendered by the jsonView.
      *
-     * @param req the servlet request, bound via SpringWebMVC to GET method invocations of this controller.
+     * @param req the servlet request, bound via SpringWebMVC to GET method invocations of this
+     *     controller.
      * @param sortParam PRECEDENCE, NAME, or null.
      * @return ModelAndView with a List of FragmentBeans to be rendered by the jsonView.
      * @throws ServletException on Exception in underlying attempt to get at the fragments
@@ -117,17 +111,19 @@ public class FragmentListController {
      * @throws IllegalArgumentException if sort parameter has an unrecognized value
      */
     @RequestMapping(method = RequestMethod.GET)
-    public ModelAndView listFragments(HttpServletRequest req,
-                                      @RequestParam(value="sort",required=false) String sortParam)
+    public ModelAndView listFragments(
+            HttpServletRequest req,
+            @RequestParam(value = "sort", required = false) String sortParam)
             throws ServletException {
 
         // Verify that the user is allowed to use this service
         IPerson user = personManager.getPerson(req);
-        if(!AdminEvaluator.isAdmin(user)) {
-            throw new AuthorizationException("User " + user.getUserName() + " not an administrator.");
+        if (!AdminEvaluator.isAdmin(user)) {
+            throw new AuthorizationException(
+                    "User " + user.getUserName() + " not an administrator.");
         }
 
-        Map<String,Document> fragmentLayoutMap = null;
+        Map<String, Document> fragmentLayoutMap = null;
         if (userLayoutStore != null) {
             try {
                 fragmentLayoutMap = userLayoutStore.getFragmentLayoutCopies();
@@ -137,19 +133,20 @@ public class FragmentListController {
                 throw new ServletException(msg, e);
             }
         }
-        
-        List<FragmentBean> fragments = new ArrayList<FragmentBean>(); 
+
+        List<FragmentBean> fragments = new ArrayList<FragmentBean>();
         for (FragmentDefinition frag : dlmConfig.getFragments()) {
-            
-            Document layout = fragmentLayoutMap != null 
-                                ? fragmentLayoutMap.get(frag.getOwnerId())
-                                : null;
+
+            Document layout =
+                    fragmentLayoutMap != null ? fragmentLayoutMap.get(frag.getOwnerId()) : null;
 
             List<String> portlets = null;
             if (layout != null) {
                 portlets = new ArrayList<String>();
-                NodeList channelFNames = this.xpathOperations.evaluate(CHANNEL_FNAME_XPATH, layout, XPathConstants.NODESET);
-                for (int i=0; i < channelFNames.getLength(); i++) {
+                NodeList channelFNames =
+                        this.xpathOperations.evaluate(
+                                CHANNEL_FNAME_XPATH, layout, XPathConstants.NODESET);
+                for (int i = 0; i < channelFNames.getLength(); i++) {
                     String fname = channelFNames.item(i).getTextContent();
                     IPortletDefinition pDef = portletRegistry.getPortletDefinitionByFname(fname);
 
@@ -158,11 +155,10 @@ public class FragmentListController {
                     }
                 }
             }
-            
-            fragments.add(FragmentBean.create(frag, portlets));
 
+            fragments.add(FragmentBean.create(frag, portlets));
         }
-        
+
         // Determine & follow sorting preference...
         Sort sort = DEFAULT_SORT;
         if (sortParam != null) {
@@ -171,29 +167,27 @@ public class FragmentListController {
         Collections.sort(fragments, sort.getComparator());
 
         return new ModelAndView("jsonView", "fragments", fragments);
-
     }
-    
+
     /*
      * Nested Types
      */
-    
+
     private enum Sort {
-        
         PRECEDENCE {
             public Comparator<FragmentBean> getComparator() {
                 return new Comparator<FragmentBean>() {
                     @Override
                     public int compare(FragmentBean frag1, FragmentBean frag2) {
-                        // When sorting by precedence, use reverse order to 
-                        // match the order in which the portal will sort them 
+                        // When sorting by precedence, use reverse order to
+                        // match the order in which the portal will sort them
                         // as tabs.
                         return frag2.getPrecedence().compareTo(frag1.getPrecedence());
                     }
                 };
             }
         },
-        
+
         NAME {
             public Comparator<FragmentBean> getComparator() {
                 return new Comparator<FragmentBean>() {
@@ -204,61 +198,65 @@ public class FragmentListController {
                 };
             }
         };
-        
+
         public abstract Comparator<FragmentBean> getComparator();
-        
     }
-    
-    /**
-     * Very simple class representing a DLM fragment.
-     */
+
+    /** Very simple class representing a DLM fragment. */
     public static final class FragmentBean {
-        
+
         // Instance Members.
         private final String name;
         private final String ownerId;
         private final Double precedence;
         private final List<String> audience;
         private final List<String> portlets;
-        
+
         public static FragmentBean create(FragmentDefinition frag, List<String> portlets) {
 
             Validate.notNull(frag, "Cannot create a FragmentBean for a null fragment.");
-            
+
             // NB:  'portlets' may be null
-            
-            return new FragmentBean(frag.getName(), frag.getOwnerId(), 
-                            frag.getPrecedence(), frag.getEvaluators(),
-                            portlets);
-            
+
+            return new FragmentBean(
+                    frag.getName(),
+                    frag.getOwnerId(),
+                    frag.getPrecedence(),
+                    frag.getEvaluators(),
+                    portlets);
         }
-        
+
         public String getName() {
             return name;
         }
-        
+
         public String getOwnerId() {
             return ownerId;
         }
-        
+
         public Double getPrecedence() {
             return precedence;
         }
-        
+
         public List<String> getAudience() {
             return audience;
         }
-        
+
         public List<String> getPortlets() {
             return portlets;
         }
- 
-        private FragmentBean(String name, String ownerId, Double precedence, List<Evaluator> audience, List<String> portlets) {            
+
+        private FragmentBean(
+                String name,
+                String ownerId,
+                Double precedence,
+                List<Evaluator> audience,
+                List<String> portlets) {
 
             this.name = name;
             this.ownerId = ownerId;
             this.precedence = precedence;
-            
+
             List<String> list = new ArrayList<String>();
             for (Evaluator ev : audience) {
                 list.add(ev.getSummary());
@@ -269,9 +267,6 @@ public class FragmentListController {
             } else {
                 this.portlets = Collections.emptyList();
             }
-
         }
-        
     }
-
 }

@@ -1,33 +1,26 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.concurrency.caching;
 
-/**
- * @author Eric Dalquist
- */
 public class CacheTestImpl implements CacheTestInterface {
     private int testMethodNoCache = 0;
     private int testMethodCacheDefault = 0;
     private int testMethodCacheDefaultNoArgs = 0;
     private int testMethodCacheNull = 0;
     private int testMethodCacheThrows = 0;
-    
+
     @Override
     public void reset() {
         this.testMethodNoCache = 0;
@@ -53,7 +46,7 @@ public class CacheTestImpl implements CacheTestInterface {
     public int testMethodNoCacheCount() {
         return testMethodNoCache;
     }
-    
+
     @RequestCache
     @Override
     public String testMethodCacheDefaultNoArgs() {
@@ -84,7 +77,7 @@ public class CacheTestImpl implements CacheTestInterface {
         return testMethodCacheDefault;
     }
 
-    @RequestCache(cacheNull=true)
+    @RequestCache(cacheNull = true)
     @Override
     public String testMethodCacheNull(String arg, boolean returnNull, boolean throwEx) {
         this.testMethodCacheNull++;
@@ -102,7 +95,7 @@ public class CacheTestImpl implements CacheTestInterface {
         return testMethodCacheNull;
     }
 
-    @RequestCache(cacheException=true)
+    @RequestCache(cacheException = true)
     @Override
     public String testMethodCacheThrows(String arg, boolean returnNull, boolean throwEx) {
         this.testMethodCacheThrows++;
@@ -119,5 +112,4 @@ public class CacheTestImpl implements CacheTestInterface {
     public int testMethodCacheThrowsCount() {
         return testMethodCacheThrows;
     }
-
 }

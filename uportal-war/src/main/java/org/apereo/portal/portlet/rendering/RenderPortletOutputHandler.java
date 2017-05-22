@@ -1,35 +1,29 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.portlet.rendering;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-
 import org.apache.commons.io.output.StringBuilderWriter;
 import org.apache.commons.io.output.WriterOutputStream;
 
 /**
- * PortletOutputHandler that stores all content written to a string. Requires that
- * an encoding be specified in case the portlet writes to the output stream.
- * 
- * @author Eric Dalquist
+ * PortletOutputHandler that stores all content written to a string. Requires that an encoding be
+ * specified in case the portlet writes to the output stream.
+ *
  */
 public class RenderPortletOutputHandler implements PortletOutputHandler {
     private final StringBuilderWriter writer = new StringBuilderWriter();
@@ -39,22 +33,18 @@ public class RenderPortletOutputHandler implements PortletOutputHandler {
 
     private int bufferSize = Integer.MAX_VALUE;
     private String contentType;
-    
+
     public RenderPortletOutputHandler(String characterEncoding) {
         this.characterEncoding = characterEncoding;
     }
-    
-    /**
-     * @return The output the portlet has written, calls {@link #flushBuffer()} first
-     */
+
+    /** @return The output the portlet has written, calls {@link #flushBuffer()} first */
     public String getOutput() {
         this.flushBuffer();
         return writer.getBuilder().toString();
     }
 
-    /**
-     * @return The content-type the portlet set
-     */
+    /** @return The content-type the portlet set */
     public String getContentType() {
         return contentType;
     }
@@ -67,9 +57,10 @@ public class RenderPortletOutputHandler implements PortletOutputHandler {
     @Override
     public OutputStream getOutputStream() {
         if (this.writerOutputStream == null) {
-            this.writerOutputStream = new WriterOutputStream(this.printWriter, this.characterEncoding);
+            this.writerOutputStream =
+                    new WriterOutputStream(this.printWriter, this.characterEncoding);
         }
-        
+
         return writerOutputStream;
     }
 
@@ -78,8 +69,7 @@ public class RenderPortletOutputHandler implements PortletOutputHandler {
         if (this.writerOutputStream != null) {
             try {
                 this.writerOutputStream.flush();
-            }
-            catch (IOException e) {
+            } catch (IOException e) {
                 //No way the output stream can throw an IOE here
             }
         }
@@ -99,7 +89,7 @@ public class RenderPortletOutputHandler implements PortletOutputHandler {
     @Override
     public void reset() {
         this.contentType = null;
-        
+
         this.resetBuffer();
     }
 
@@ -117,7 +107,6 @@ public class RenderPortletOutputHandler implements PortletOutputHandler {
         //Ignore, we can always buffer the max string length
     }
 
-    
     @Override
     public void setContentType(String contentType) {
         this.contentType = contentType;

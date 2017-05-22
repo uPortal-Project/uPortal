@@ -1,20 +1,16 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.redirect;
 
@@ -24,10 +20,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * AbstractRedirectionUrl provides a base for IRedirectUrls.  This class adds
- * support for additional static URL parameters, as well as for dynamic parameters.
- * 
- * @author Jen Bourey, jennifer.bourey@gmail.com
+ * AbstractRedirectionUrl provides a base for IRedirectUrls. This class adds support for additional
+ * static URL parameters, as well as for dynamic parameters.
+ *
  */
 public abstract class AbstractRedirectionUrl implements IRedirectionUrl {
 
@@ -36,12 +31,12 @@ public abstract class AbstractRedirectionUrl implements IRedirectionUrl {
     private List<String> pathParameters = new ArrayList<String>();
 
     /**
-     * Get a map of additional parameters to be added to the url.  This
-     * map specifies hard-coded parameters that will be used in every url.
-     * 
-     * The map keys represent the parameter name, while the entry values should
-     * be an array of values for the associated parameter name.
-     * 
+     * Get a map of additional parameters to be added to the url. This map specifies hard-coded
+     * parameters that will be used in every url.
+     *
+     * <p>The map keys represent the parameter name, while the entry values should be an array of
+     * values for the associated parameter name.
+     *
      * @return
      */
     public Map<String, String[]> getAdditionalParameters() {
@@ -49,24 +44,22 @@ public abstract class AbstractRedirectionUrl implements IRedirectionUrl {
     }
 
     /**
-     * Set a map of additional parameters to be added to the url.  This
-     * map specifies hard-coded parameters that will be used in every url.
-     * 
-     * The map keys represent the parameter name, while the entry values should
-     * be an array of values for the associated parameter name.
-     * 
+     * Set a map of additional parameters to be added to the url. This map specifies hard-coded
+     * parameters that will be used in every url.
+     *
+     * <p>The map keys represent the parameter name, while the entry values should be an array of
+     * values for the associated parameter name.
+     *
      * @param
      */
-    public void setAdditionalParameters(
-            Map<String, String[]> additionalParameters) {
+    public void setAdditionalParameters(Map<String, String[]> additionalParameters) {
         this.additionalParameters = additionalParameters;
     }
 
     /**
-     * Get a map of dynamic parameters to be copied from the incoming URL
-     * to the target url, mapping the parameter name in the 
-     * incoming URL to the parameter name in the target URL.
-     * 
+     * Get a map of dynamic parameters to be copied from the incoming URL to the target url, mapping
+     * the parameter name in the incoming URL to the parameter name in the target URL.
+     *
      * @return
      */
     public Map<String, String> getDynamicParameters() {
@@ -74,22 +67,19 @@ public abstract class AbstractRedirectionUrl implements IRedirectionUrl {
     }
 
     /**
-     * Set a map of dynamic parameters to be copied from the incoming URL
-     * to the target url, mapping the parameter name in the 
-     * incoming URL to the parameter name in the target URL.
-     * 
+     * Set a map of dynamic parameters to be copied from the incoming URL to the target url, mapping
+     * the parameter name in the incoming URL to the parameter name in the target URL.
+     *
      * @param
      */
     public void setDynamicParameters(Map<String, String> dynamicParameters) {
         this.dynamicParameters = dynamicParameters;
     }
 
-
     /**
-     * Get a map of dynamic parameters to be copied from the incoming URL
-     * to the target url, mapping the parameter name in the 
-     * incoming URL to the parameter name in the target URL.
-     * 
+     * Get a map of dynamic parameters to be copied from the incoming URL to the target url, mapping
+     * the parameter name in the incoming URL to the parameter name in the target URL.
+     *
      * @return
      */
     public List<String> getPathParameters() {
@@ -97,14 +87,12 @@ public abstract class AbstractRedirectionUrl implements IRedirectionUrl {
     }
 
     /**
-     * Set a map of dynamic parameters to be copied from the incoming URL
-     * to the target url, mapping the parameter name in the 
-     * incoming URL to the parameter name in the target URL.
-     * 
+     * Set a map of dynamic parameters to be copied from the incoming URL to the target url, mapping
+     * the parameter name in the incoming URL to the parameter name in the target URL.
+     *
      * @param
      */
     public void setPathParameters(List<String> pathParameters) {
         this.pathParameters = pathParameters;
     }
-    
 }

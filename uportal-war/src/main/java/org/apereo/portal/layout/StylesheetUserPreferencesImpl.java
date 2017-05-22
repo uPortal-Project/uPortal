@@ -1,23 +1,21 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.layout;
 
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMap.Builder;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
@@ -25,26 +23,25 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-
 import org.apache.commons.lang.Validate;
 import org.apereo.portal.layout.om.IStylesheetUserPreferences;
 import org.apereo.portal.utils.Populator;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMap.Builder;
-
 /**
- * Stylesheet user preferences setup for memory or serialized storage. All APIs and returned objects are thread safe.
- * 
- * @author Eric Dalquist
+ * Stylesheet user preferences setup for memory or serialized storage. All APIs and returned objects
+ * are thread safe.
+ *
  */
 public class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences, Serializable {
     private static final long serialVersionUID = 1L;
 
-    private final ConcurrentMap<String, String> outputProperties = new ConcurrentHashMap<String, String>();
-    private final ConcurrentMap<String, String> parameters = new ConcurrentHashMap<String, String>();
+    private final ConcurrentMap<String, String> outputProperties =
+            new ConcurrentHashMap<String, String>();
+    private final ConcurrentMap<String, String> parameters =
+            new ConcurrentHashMap<String, String>();
     //NodeId -> Name -> Value
-    private final ConcurrentMap<String, ConcurrentMap<String, String>> layoutAttributes = new ConcurrentHashMap<String, ConcurrentMap<String,String>>();
+    private final ConcurrentMap<String, ConcurrentMap<String, String>> layoutAttributes =
+            new ConcurrentHashMap<String, ConcurrentMap<String, String>>();
 
     @Override
     public long getId() {
@@ -83,7 +80,8 @@ public class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences
     }
 
     @Override
-    public <P extends Populator<String, String>> P populateStylesheetParameters(P stylesheetParameters) {
+    public <P extends Populator<String, String>> P populateStylesheetParameters(
+            P stylesheetParameters) {
         stylesheetParameters.putAll(this.parameters);
         return stylesheetParameters;
     }
@@ -92,12 +90,12 @@ public class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences
     public String getLayoutAttribute(String nodeId, String name) {
         Validate.notEmpty(nodeId, "nodeId cannot be null");
         Validate.notEmpty(name, "name cannot be null");
-        
+
         final Map<String, String> nodeAttributes = this.layoutAttributes.get(nodeId);
         if (nodeAttributes == null) {
             return null;
         }
-        
+
         return nodeAttributes.get(name);
     }
 
@@ -106,7 +104,7 @@ public class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences
         Validate.notEmpty(nodeId, "nodeId cannot be null");
         Validate.notEmpty(name, "name cannot be null");
         Validate.notEmpty(value, "value cannot be null");
-        
+
         ConcurrentMap<String, String> nodeAttributes;
         synchronized (this.layoutAttributes) {
             nodeAttributes = this.layoutAttributes.get(nodeId);
@@ -115,7 +113,7 @@ public class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences
                 this.layoutAttributes.put(nodeId, nodeAttributes);
             }
         }
-        
+
         return nodeAttributes.put(name, value);
     }
 
@@ -126,41 +124,44 @@ public class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences
     public String removeLayoutAttribute(String nodeId, String name) {
         Validate.notEmpty(nodeId, "nodeId cannot be null");
         Validate.notEmpty(name, "name cannot be null");
-        
+
         final Map<String, String> nodeAttributes = this.layoutAttributes.get(nodeId);
         if (nodeAttributes == null) {
             return null;
         }
-        
+
         return nodeAttributes.remove(name);
     }
 
     @Override
-    public <P extends Populator<String, String>> P populateLayoutAttributes(String nodeId, P layoutAttributes) {
+    public <P extends Populator<String, String>> P populateLayoutAttributes(
+            String nodeId, P layoutAttributes) {
         Validate.notEmpty(nodeId, "nodeId cannot be null");
-        
+
         final Map<String, String> nodeAttributes = this.layoutAttributes.get(nodeId);
         if (nodeAttributes != null) {
             layoutAttributes.putAll(nodeAttributes);
         }
-        
+
         return layoutAttributes;
     }
-    
+
     @Override
     public Map<String, String> getAllNodesAndValuesForAttribute(String name) {
         Validate.notEmpty(name, "name cannot be null");
-        
+
         final Builder<String, String> result = ImmutableMap.builder();
-        for (final Entry<String, ConcurrentMap<String, String>> layoutNodeAttributesEntry : this.layoutAttributes.entrySet()) {
-            final ConcurrentMap<String, String> layoutNodeAttributes = layoutNodeAttributesEntry.getValue();
+        for (final Entry<String, ConcurrentMap<String, String>> layoutNodeAttributesEntry :
+                this.layoutAttributes.entrySet()) {
+            final ConcurrentMap<String, String> layoutNodeAttributes =
+                    layoutNodeAttributesEntry.getValue();
             final String value = layoutNodeAttributes.get(name);
             if (value != null) {
                 final String nodeId = layoutNodeAttributesEntry.getKey();
                 result.put(nodeId, value);
             }
         }
-        
+
         return result.build();
     }
 
@@ -173,45 +174,42 @@ public class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((this.layoutAttributes == null) ? 0 : this.layoutAttributes.hashCode());
-        result = prime * result + ((this.outputProperties == null) ? 0 : this.outputProperties.hashCode());
+        result =
+                prime * result
+                        + ((this.layoutAttributes == null) ? 0 : this.layoutAttributes.hashCode());
+        result =
+                prime * result
+                        + ((this.outputProperties == null) ? 0 : this.outputProperties.hashCode());
         result = prime * result + ((this.parameters == null) ? 0 : this.parameters.hashCode());
         return result;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
+        if (this == obj) return true;
+        if (obj == null) return false;
+        if (getClass() != obj.getClass()) return false;
         StylesheetUserPreferencesImpl other = (StylesheetUserPreferencesImpl) obj;
         if (this.layoutAttributes == null) {
-            if (other.layoutAttributes != null)
-                return false;
-        }
-        else if (!this.layoutAttributes.equals(other.layoutAttributes))
-            return false;
+            if (other.layoutAttributes != null) return false;
+        } else if (!this.layoutAttributes.equals(other.layoutAttributes)) return false;
         if (this.outputProperties == null) {
-            if (other.outputProperties != null)
-                return false;
-        }
-        else if (!this.outputProperties.equals(other.outputProperties))
-            return false;
+            if (other.outputProperties != null) return false;
+        } else if (!this.outputProperties.equals(other.outputProperties)) return false;
         if (this.parameters == null) {
-            if (other.parameters != null)
-                return false;
-        }
-        else if (!this.parameters.equals(other.parameters))
-            return false;
+            if (other.parameters != null) return false;
+        } else if (!this.parameters.equals(other.parameters)) return false;
         return true;
     }
 
     @Override
     public String toString() {
-        return "StylesheetUserPreferencesImpl [outputProperties=" + this.outputProperties
-                + ", parameters=" + this.parameters + ", layoutAttributes=" + this.layoutAttributes + "]";
+        return "StylesheetUserPreferencesImpl [outputProperties="
+                + this.outputProperties
+                + ", parameters="
+                + this.parameters
+                + ", layoutAttributes="
+                + this.layoutAttributes
+                + "]";
     }
 }

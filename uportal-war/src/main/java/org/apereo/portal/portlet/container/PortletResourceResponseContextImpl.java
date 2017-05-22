@@ -1,30 +1,24 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.portlet.container;
 
 import java.nio.charset.Charset;
 import java.util.Locale;
-
 import javax.portlet.ResourceResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.lang.LocaleUtils;
 import org.apache.http.HeaderElement;
 import org.apache.http.entity.ContentType;
@@ -38,23 +32,32 @@ import org.apereo.portal.portlet.rendering.PortletResourceOutputHandler;
 import org.apereo.portal.url.IPortalUrlProvider;
 
 /**
- * @author Eric Dalquist
- * @version $Revision$
  */
-public class PortletResourceResponseContextImpl extends PortletMimeResponseContextImpl implements
-        PortletResourceResponseContext {
+public class PortletResourceResponseContextImpl extends PortletMimeResponseContextImpl
+        implements PortletResourceResponseContext {
 
     private final PortletResourceOutputHandler portletResourceOutputHandler;
 
-    public PortletResourceResponseContextImpl(PortletContainer portletContainer, IPortletWindow portletWindow,
-            HttpServletRequest containerRequest, HttpServletResponse containerResponse,
-            IRequestPropertiesManager requestPropertiesManager, IPortalUrlProvider portalUrlProvider,
+    public PortletResourceResponseContextImpl(
+            PortletContainer portletContainer,
+            IPortletWindow portletWindow,
+            HttpServletRequest containerRequest,
+            HttpServletResponse containerResponse,
+            IRequestPropertiesManager requestPropertiesManager,
+            IPortalUrlProvider portalUrlProvider,
             IPortletCookieService portletCookieService) {
 
-        super(portletContainer, portletWindow, containerRequest, containerResponse, requestPropertiesManager,
-                portalUrlProvider, portletCookieService);
+        super(
+                portletContainer,
+                portletWindow,
+                containerRequest,
+                containerResponse,
+                requestPropertiesManager,
+                portalUrlProvider,
+                portletCookieService);
 
-        this.portletResourceOutputHandler = (PortletResourceOutputHandler) this.getPortletOutputHandler();
+        this.portletResourceOutputHandler =
+                (PortletResourceOutputHandler) this.getPortletOutputHandler();
     }
 
     @Override
@@ -82,7 +85,7 @@ public class PortletResourceResponseContextImpl extends PortletMimeResponseConte
             if (handleResourceHeader(key, value)) {
                 return true;
             }
-            
+
             this.portletResourceOutputHandler.setHeader(key, value);
         }
         return true;
@@ -95,15 +98,16 @@ public class PortletResourceResponseContextImpl extends PortletMimeResponseConte
             if (handleResourceHeader(key, value)) {
                 return true;
             }
-            
+
             this.portletResourceOutputHandler.addHeader(key, value);
         }
         return true;
     }
-    
+
     /**
-     * Handles resource response specific headers. Returns true if the header was consumed by this method and requires no further processing
-     * 
+     * Handles resource response specific headers. Returns true if the header was consumed by this
+     * method and requires no further processing
+     *
      * @return
      */
     protected boolean handleResourceHeader(String key, String value) {
@@ -114,7 +118,7 @@ public class PortletResourceResponseContextImpl extends PortletMimeResponseConte
         if ("Content-Type".equals(key)) {
             final ContentType contentType = ContentType.parse(value);
             final Charset charset = contentType.getCharset();
-            if (charset != null) { 
+            if (charset != null) {
                 this.portletResourceOutputHandler.setCharacterEncoding(charset.name());
             }
             this.portletResourceOutputHandler.setContentType(contentType.getMimeType());
@@ -133,7 +137,7 @@ public class PortletResourceResponseContextImpl extends PortletMimeResponseConte
                 return true;
             }
         }
-        
+
         return false;
     }
 }

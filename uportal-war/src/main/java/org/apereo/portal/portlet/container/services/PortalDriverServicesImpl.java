@@ -1,25 +1,20 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.portlet.container.services;
 
 import javax.portlet.PortalContext;
-
 import org.apache.pluto.container.CCPPProfileService;
 import org.apache.pluto.container.EventCoordinationService;
 import org.apache.pluto.container.FilterManagerService;
@@ -43,9 +38,7 @@ import org.springframework.stereotype.Service;
  * Service API for working with Pluto. Pluto uses all of these interfaces for various tasks when
  * dispatching to portlets. uPortal provides implementations of most of them and all impls are
  * configured as spring beans.
- * 
- * @author Eric Dalquist
- * @version $Revision$
+ *
  */
 @Service("portalDriverServices")
 public class PortalDriverServicesImpl implements PortalDriverServices {
@@ -55,7 +48,7 @@ public class PortalDriverServicesImpl implements PortalDriverServices {
     private FilterManagerService filterManagerService;
     private PortletRequestContextService portletRequestContextService;
     private PortletURLListenerService portletURLListenerService;
-    
+
     //OptionalContainerServices
     private UserInfoService userInfoService;
     private PortalAdministrationService portalAdministrationService;
@@ -66,7 +59,7 @@ public class PortalDriverServicesImpl implements PortalDriverServices {
     private NamespaceMapper namespaceMapper;
     private CCPPProfileService ccppProfileService;
     private RequestDispatcherService requestDispatcherService;
-    
+
     @Autowired
     public void setPortalContext(PortalContext portalContext) {
         this.portalContext = portalContext;
@@ -83,7 +76,8 @@ public class PortalDriverServicesImpl implements PortalDriverServices {
     }
 
     @Autowired
-    public void setPortletRequestContextService(PortletRequestContextService portletRequestContextService) {
+    public void setPortletRequestContextService(
+            PortletRequestContextService portletRequestContextService) {
         this.portletRequestContextService = portletRequestContextService;
     }
 
@@ -98,7 +92,8 @@ public class PortalDriverServicesImpl implements PortalDriverServices {
     }
 
     @Autowired
-    public void setPortalAdministrationService(PortalAdministrationService portalAdministrationService) {
+    public void setPortalAdministrationService(
+            PortalAdministrationService portalAdministrationService) {
         this.portalAdministrationService = portalAdministrationService;
     }
 
@@ -164,7 +159,8 @@ public class PortalDriverServicesImpl implements PortalDriverServices {
 
     @Override
     public PortletPreferencesService getPortletPreferencesService() {
-        throw new UnsupportedOperationException("uPortal provides custom PortletPreferences implementations which do not use the PortletPreferencesService");
+        throw new UnsupportedOperationException(
+                "uPortal provides custom PortletPreferences implementations which do not use the PortletPreferencesService");
     }
 
     @Override

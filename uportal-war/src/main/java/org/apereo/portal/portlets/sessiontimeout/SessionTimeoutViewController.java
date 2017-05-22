@@ -1,30 +1,24 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.portlets.sessiontimeout;
 
 import java.io.IOException;
-
 import javax.portlet.PortletPreferences;
 import javax.portlet.PortletRequest;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -32,12 +26,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.portlet.bind.annotation.RenderMapping;
 
-
 /**
- * Controller for the session timeout portlet.  This controller mostly just
- * reads the configs and then renders the JSP.
+ * Controller for the session timeout portlet. This controller mostly just reads the configs and
+ * then renders the JSP.
  *
- * @author Josh Helmer, jhelmer@unicon.net
  * @since 4.1.1
  */
 @Controller
@@ -64,16 +56,18 @@ public class SessionTimeoutViewController {
     private static final String PREF_LOGOUT_URL_FRAGMENT = "logoutURLFragment";
     private static final String PREF_RESET_SESSION_URL_FRAGMENT = "resetSessionURLFragment";
 
-
     @RenderMapping
-    public String writeJsContent(RenderRequest req, RenderResponse resp, Model model) throws IOException {
+    public String writeJsContent(RenderRequest req, RenderResponse resp, Model model)
+            throws IOException {
         if (PortletRequest.RENDER_HEADERS.equals(req.getAttribute(PortletRequest.RENDER_PART))) {
             PortletPreferences prefs = req.getPreferences();
 
             boolean enabled = getEnabled(prefs);
             int timeout = req.getPortletSession().getMaxInactiveInterval();
-            String logoutURL = prefs.getValue(PREF_LOGOUT_URL_FRAGMENT, DEFAULT_LOGOUT_URL_FRAGMENT);
-            String resetURL = prefs.getValue(PREF_RESET_SESSION_URL_FRAGMENT, DEFAULT_RESET_SESSION_FRAGMENT);
+            String logoutURL =
+                    prefs.getValue(PREF_LOGOUT_URL_FRAGMENT, DEFAULT_LOGOUT_URL_FRAGMENT);
+            String resetURL =
+                    prefs.getValue(PREF_RESET_SESSION_URL_FRAGMENT, DEFAULT_RESET_SESSION_FRAGMENT);
             int dialogDisplayTime = getDialogDisplayTime(prefs, timeout);
 
             model.addAttribute(ATTR_ENABLED, enabled);
@@ -88,27 +82,31 @@ public class SessionTimeoutViewController {
         }
     }
 
-
     private int getDialogDisplayTime(PortletPreferences prefs, int timeout) {
-        String dialogTimeStr = prefs.getValue(PREF_DIALOG_DISPLAY_SECONDS, Integer.toString(DEFAULT_DIALOG_DISPLAY_SECONDS));
+        String dialogTimeStr =
+                prefs.getValue(
+                        PREF_DIALOG_DISPLAY_SECONDS,
+                        Integer.toString(DEFAULT_DIALOG_DISPLAY_SECONDS));
 
         int time = DEFAULT_DIALOG_DISPLAY_SECONDS;
         try {
             time = Integer.parseInt(dialogTimeStr);
         } catch (NumberFormatException e) {
-            logger.warn("Invalid dialogDisplayTime preference: {0}, using default of {1}s",
+            logger.warn(
+                    "Invalid dialogDisplayTime preference: {0}, using default of {1}s",
                     dialogTimeStr, DEFAULT_DIALOG_DISPLAY_SECONDS);
             return DEFAULT_DIALOG_DISPLAY_SECONDS;
         }
 
         if (time >= timeout) {
-            logger.warn("Invalid dialogDisplayTime preference: {0}.  Time can not exceed session timeout.  Using session timeout value", dialogTimeStr);
+            logger.warn(
+                    "Invalid dialogDisplayTime preference: {0}.  Time can not exceed session timeout.  Using session timeout value",
+                    dialogTimeStr);
             return timeout;
         }
 
         return time;
     }
-
 
     private boolean getEnabled(PortletPreferences prefs) {
         String val = prefs.getValue(PREF_ENABLED, "true");

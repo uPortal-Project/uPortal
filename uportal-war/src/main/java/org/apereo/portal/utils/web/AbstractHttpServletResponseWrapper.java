@@ -1,20 +1,16 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.utils.web;
 
@@ -22,26 +18,23 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.Locale;
-
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
-
 import org.apache.commons.lang.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A custom HttpServletResponse wrapper that does NOT extend {@link HttpServletResponseWrapper}
- * to ensure the container can not unwrap too far.
- * 
- * @author Eric Dalquist
+ * A custom HttpServletResponse wrapper that does NOT extend {@link HttpServletResponseWrapper} to
+ * ensure the container can not unwrap too far.
+ *
  */
 public abstract class AbstractHttpServletResponseWrapper implements HttpServletResponse {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
-    
+
     private final HttpServletResponse httpServletResponse;
 
     public AbstractHttpServletResponseWrapper(HttpServletResponse httpServletResponse) {
@@ -55,24 +48,24 @@ public abstract class AbstractHttpServletResponseWrapper implements HttpServletR
 
     @Override
     public String getHeader(String name) {
-      return this.httpServletResponse.getHeader(name);
+        return this.httpServletResponse.getHeader(name);
     }
 
     @Override
     public Collection<String> getHeaderNames() {
-      return this.httpServletResponse.getHeaderNames();
+        return this.httpServletResponse.getHeaderNames();
     }
 
     @Override
     public Collection<String> getHeaders(String name) {
-      return this.httpServletResponse.getHeaders(name);
+        return this.httpServletResponse.getHeaders(name);
     }
 
     @Override
     public int getStatus() {
-      return this.httpServletResponse.getStatus();
+        return this.httpServletResponse.getStatus();
     }
-    
+
     @Override
     public void addCookie(Cookie cookie) {
         this.httpServletResponse.addCookie(cookie);

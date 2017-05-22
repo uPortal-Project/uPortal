@@ -1,20 +1,16 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.security.mvc;
 
@@ -23,12 +19,10 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apereo.portal.PortalException;
@@ -44,12 +38,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
- * Simple servlet to handle user logout. When a user
- * logs out, their session gets invalidated and they
- * are returned to the guest page.
- * @author Ken Weiner, kweiner@unicon.net
- * @author Don Fracapane, df7@columbia.edu
- * @version $Revision$
+ * Simple servlet to handle user logout. When a user logs out, their session gets invalidated and
+ * they are returned to the guest page.
+ *
  */
 @Controller
 @RequestMapping("/Logout")
@@ -61,7 +52,7 @@ public class LogoutController implements InitializingBean {
     private IPortalAuthEventFactory portalEventFactory;
     private IPersonManager personManager;
     private IdentitySwapperManager identitySwapperManager;
-    
+
     @Autowired
     public void setIdentitySwapperManager(IdentitySwapperManager identitySwapperManager) {
         this.identitySwapperManager = identitySwapperManager;
@@ -85,8 +76,9 @@ public class LogoutController implements InitializingBean {
             // We retrieve the redirect strings for each context
             // from the security properties file.
             String key;
-            final Properties props = ResourceLoader.getResourceAsProperties(LogoutController.class,
-                    "/properties/security.properties");
+            final Properties props =
+                    ResourceLoader.getResourceAsProperties(
+                            LogoutController.class, "/properties/security.properties");
             final Enumeration propNames = props.propertyNames();
             while (propNames.hasMoreElements()) {
                 final String propName = (String) propNames.nextElement();
@@ -101,11 +93,9 @@ public class LogoutController implements InitializingBean {
                     rdHash.put(key, propValue);
                 }
             }
-        }
-        catch (final PortalException pe) {
+        } catch (final PortalException pe) {
             log.error("Failed to load logout redirect URLs", pe);
-        }
-        catch (final IOException ioe) {
+        } catch (final IOException ioe) {
             log.error("Failed to load logout redirect URLs", ioe);
         }
 
@@ -114,13 +104,15 @@ public class LogoutController implements InitializingBean {
 
     /**
      * Process the incoming request and response.
+     *
      * @param request HttpServletRequest object
      * @param response HttpServletResponse object
      * @throws ServletException
      * @throws IOException
      */
     @RequestMapping
-    public void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void service(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         String redirect = this.getRedirectionUrl(request);
         final HttpSession session = request.getSession(false);
 
@@ -131,8 +123,7 @@ public class LogoutController implements InitializingBean {
                 if (person != null && person.getSecurityContext().isAuthenticated()) {
                     this.portalEventFactory.publishLogoutEvent(request, this, person);
                 }
-            }
-            catch (final Exception e) {
+            } catch (final Exception e) {
                 log.error("Exception recording logout " + "associated with request " + request, e);
             }
 
@@ -140,18 +131,17 @@ public class LogoutController implements InitializingBean {
             //Logging out from a swapped user, just redirect to the Login servlet
             if (originalUid != null) {
                 redirect = request.getContextPath() + "/Login";
-            }
-            else {
+            } else {
                 // Clear out the existing session for the user
                 try {
                     session.invalidate();
-                }
-                catch (final IllegalStateException ise) {
+                } catch (final IllegalStateException ise) {
                     // IllegalStateException indicates session was already invalidated.
                     // This is fine.  LogoutController is looking to guarantee the logged out session is invalid;
                     // it need not insist that it be the one to perform the invalidating.
                     if (log.isTraceEnabled()) {
-                        log.trace("LogoutController encountered IllegalStateException invalidating a presumably already-invalidated session.",
+                        log.trace(
+                                "LogoutController encountered IllegalStateException invalidating a presumably already-invalidated session.",
                                 ise);
                     }
                 }
@@ -167,23 +157,20 @@ public class LogoutController implements InitializingBean {
     }
 
     /**
-     * The redirect is determined based upon the context that passed authentication
-     * The LogoutController looks at each authenticated context and determines if a
-     * redirect exists for that context in the redirectMap variable (loaded from
-     * security.properties file). The redirect is returned for the first authenticated
-     * context that has an associated redirect string. If such a context is not found,
-     * we use the default DEFAULT_REDIRECT that was originally setup.
+     * The redirect is determined based upon the context that passed authentication The
+     * LogoutController looks at each authenticated context and determines if a redirect exists for
+     * that context in the redirectMap variable (loaded from security.properties file). The redirect
+     * is returned for the first authenticated context that has an associated redirect string. If
+     * such a context is not found, we use the default DEFAULT_REDIRECT that was originally setup.
      *
-     * NOTE:
-     * This will work or not work based upon the logic in the root context. At this time,
-     * all known security contexts extend the ChainingSecurityContext class. If a context
-     * has the variable stopWhenAuthenticated set to false, the user may be logged into
-     * multiple security contexts. If this is the case, the logout process currently
-     * implemented does not accommodate multiple logouts. As a reference implemention,
-     * the current implementation assumes only one security context has been authenticated.
-     * Modifications to perform multiple logouts should be considered when a concrete
-     * need arises and can be handled by this class or through a change in the
-     * ISecurityConext API where a context knows how to perform it's own logout.
+     * <p>NOTE: This will work or not work based upon the logic in the root context. At this time,
+     * all known security contexts extend the ChainingSecurityContext class. If a context has the
+     * variable stopWhenAuthenticated set to false, the user may be logged into multiple security
+     * contexts. If this is the case, the logout process currently implemented does not accommodate
+     * multiple logouts. As a reference implemention, the current implementation assumes only one
+     * security context has been authenticated. Modifications to perform multiple logouts should be
+     * considered when a concrete need arises and can be handled by this class or through a change
+     * in the ISecurityConext API where a context knows how to perform it's own logout.
      *
      * @param request
      * @return String representing the redirection URL
@@ -203,8 +190,9 @@ public class LogoutController implements InitializingBean {
                 final ISecurityContext securityContext = person.getSecurityContext();
                 if (securityContext.isAuthenticated()) {
                     if (log.isDebugEnabled()) {
-                        log.debug("LogoutController::getRedirectionUrl()"
-                                + " Looking for redirect string for the root context");
+                        log.debug(
+                                "LogoutController::getRedirectionUrl()"
+                                        + " Looking for redirect string for the root context");
                     }
                     redirect = this.redirectMap.get("root");
                     if (redirect != null && !redirect.equals("")) {
@@ -215,30 +203,40 @@ public class LogoutController implements InitializingBean {
                 while (subCtxNames.hasMoreElements()) {
                     final String subCtxName = (String) subCtxNames.nextElement();
                     if (log.isDebugEnabled()) {
-                        log.debug("LogoutController::getRedirectionUrl() " + " subCtxName = " + subCtxName);
+                        log.debug(
+                                "LogoutController::getRedirectionUrl() "
+                                        + " subCtxName = "
+                                        + subCtxName);
                     }
                     // strip off "root." part of name
                     final ISecurityContext sc = securityContext.getSubContext(subCtxName);
                     if (log.isDebugEnabled()) {
-                        log.debug("LogoutController::getRedirectionUrl()" + " subCtxName isAuth = " + sc.isAuthenticated());
+                        log.debug(
+                                "LogoutController::getRedirectionUrl()"
+                                        + " subCtxName isAuth = "
+                                        + sc.isAuthenticated());
                     }
                     if (sc.isAuthenticated()) {
                         if (log.isDebugEnabled()) {
-                            log.debug("LogoutController::getRedirectionUrl()"
-                                    + " Looking for redirect string for subCtxName = " + subCtxName);
+                            log.debug(
+                                    "LogoutController::getRedirectionUrl()"
+                                            + " Looking for redirect string for subCtxName = "
+                                            + subCtxName);
                         }
                         redirect = this.redirectMap.get(subCtxName);
                         if (redirect != null && !redirect.equals("")) {
                             if (log.isDebugEnabled()) {
-                                log.debug("LogoutController::getRedirectionUrl()" + " subCtxName redirect = " + redirect);
+                                log.debug(
+                                        "LogoutController::getRedirectionUrl()"
+                                                + " subCtxName redirect = "
+                                                + redirect);
                             }
                             break;
                         }
                     }
                 }
             }
-        }
-        catch (final Exception e) {
+        } catch (final Exception e) {
             // Log the exception
             log.error("LogoutController::getRedirectionUrl() Error:", e);
         }
