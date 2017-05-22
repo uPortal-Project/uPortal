@@ -174,10 +174,10 @@ Misc Targets:
     Used in a local development environment.
 	
 	GRADLE VERSION IS AVAILABLE
-	to start the hsql server use 
+	To start the hsql server use:
 	gradle startHsql
 	
-	to stop the hsql 
+	To stop the hsql:
 	gradle stopHsql
 
 Maven Build Options:
