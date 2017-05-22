@@ -2,7 +2,10 @@ description = "Apereo uPortal Tools"
 
 dependencies {
     compile project(':uPortal-hibernate')
+    compile project(':uPortal-io')
     compile project(':uPortal-rdbm')
 
-    // compile "com.google.guava:guava:${guavaVersion}"
+    compile "commons-cli:commons-cli:${commonsCliVersion}"
+    compile "org.apache.ant:ant:${antVersion}"
+    compile "org.codehaus.groovy:groovy:${groovyVersion}"
 }

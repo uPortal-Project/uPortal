@@ -29,7 +29,7 @@ public interface IUserIdentityStore {
      * @return uPortalUID number
      * @throws Exception exception if an error occurs.
      */
-    public int getPortalUID(IPerson person) throws AuthorizationException;
+    int getPortalUID(IPerson person) throws AuthorizationException;
 
     /**
      * Returns a unique uPortal key for a user. A boolean flag determines whether or not to
@@ -41,11 +41,11 @@ public interface IUserIdentityStore {
      * @throws AuthorizationException if createPortalData is false and no user is found or if a sql
      *     error is encountered
      */
-    public int getPortalUID(IPerson person, boolean createPortalData) throws AuthorizationException;
+    int getPortalUID(IPerson person, boolean createPortalData) throws AuthorizationException;
 
-    public void removePortalUID(String userName) throws Exception;
+    void removePortalUID(String userName) throws Exception;
 
-    public void removePortalUID(int uPortalUID) throws Exception;
+    void removePortalUID(int uPortalUID) throws Exception;
 
     /**
      * Gets a portal user name that is associated with the specified portal ID.
@@ -54,16 +54,16 @@ public interface IUserIdentityStore {
      * @return The user name associated with the specified portal id, null if one isn't found.
      * @throws Exception If there are any problems retrieving the user name.
      */
-    public String getPortalUserName(int uPortalUID);
+    String getPortalUserName(int uPortalUID);
 
     /** Gets a portal user id that is associated with the specified portal user name */
-    public Integer getPortalUserId(String userName);
+    Integer getPortalUserId(String userName);
 
     /**
      * @return true if the specified username is used as a default user for any other user in the
      *     portal
      */
-    public boolean isDefaultUser(String username);
+    boolean isDefaultUser(String username);
 
     /** Returns true if the specified String satisfies all criteria for a valid username. */
     boolean validateUsername(String username);
