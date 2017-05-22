@@ -5,6 +5,7 @@
  - Anthony Colebourne (acolebourne)
  - Andrew Petro (apetro)
  - Benito Gonzalez (bjagg)
+ - [Christian Cousquer][] (cousquer)
  - Christian Murphy (ChristianMurphy)
  - Daniel McCallum (dmccallum)
  - Drew Wills (drewwills)
@@ -76,3 +77,6 @@ Apache Software Foundation on
 + [Decision making](https://community.apache.org/committers/decisionMaking.html)
 + [Adding new Committers](https://community.apache.org/newcommitter.html)
 + [Voting](https://community.apache.org/committers/voting.html)
+
+
+[Christian Cousquer]: https://groups.google.com/a/apereo.org/d/topic/uportal-dev/oMLYtLAo3zo/discussion
