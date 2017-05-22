@@ -11,13 +11,9 @@ install:
   - mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
 
 script:
-  - mvn test -B
-  - ./gradlew check
-  - ./gradlew npm_test
-
-after_success:
   - mvn clean test cobertura:cobertura coveralls:report -B -V
   - ./gradlew -u -i -S check
+  - ./gradlew -u -i -S npm_test
 
 cache:
   directories:
