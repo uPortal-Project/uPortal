@@ -189,7 +189,7 @@
         <jaxb2basics.version>0.6.5.1</jaxb2basics.version>
         <jaxb2basics.plugin.version>0.6.4</jaxb2basics.plugin.version>
         <jdom.version>1.0</jdom.version>
-        <jgroups.version>3.2.16.Final</jgroups.version>
+        <jgroups.version>3.6.13.Final</jgroups.version>
         <jline.version>2.11</jline.version>
         <joda-time.version>2.3</joda-time.version>
         <joda-time-jsptags.version>1.1.1</joda-time-jsptags.version>
