@@ -26,6 +26,6 @@
 4. Open eclipse
 6. Select file > import
 7. Search for "Existing Projects into Workspace"
-![open in intellij](../../images/eclipse_import.png)
+![open in eclipse](../../images/eclipse_import.png)
 7. Navigate to the uPortal folder
 8. Open it
