@@ -1,6 +1,9 @@
 description = "Apereo uPortal Soffit Connector"
 
 dependencies {
+    compile project(':uPortal-groups:uPortal-groups-core')
+    compile project(':uPortal-i18n')
+    compile project(':uPortal-marketplace')
     compile project(':uPortal-soffit:uPortal-soffit-core')
 
     compile "commons-io:commons-io:${commonsIoVersion}"
