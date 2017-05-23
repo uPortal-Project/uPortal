@@ -289,7 +289,7 @@ public class JpaPortalEventStore extends BaseRawEventsJpaDao implements IPortalE
                     this.logger.debug(
                             "Aggregated {} events, flush and clear {} EntityManager.",
                             resultCount,
-                            PERSISTENCE_UNIT_NAME);
+                            BaseRawEventsJpaDao.PERSISTENCE_UNIT_NAME);
                     session.flush();
                     session.clear();
                 }

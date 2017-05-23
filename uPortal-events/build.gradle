@@ -1,0 +1,13 @@
+description = "Apereo uPortal Events"
+
+dependencies {
+    compile project(':uPortal-rendering')
+    compile project(':uPortal-security')
+
+    compile "org.apache.commons:commons-math3:${commonsMath3Version}"
+    // NOTE:  String that the group and version don't seem to
+    // match, but apparently this version is correct.
+    compile("org.apache.httpcomponents:httpclient:${httpclientVersion}") {
+        exclude group: 'commons-logging', module: 'commons-logging'
+    }
+}

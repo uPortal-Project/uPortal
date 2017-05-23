@@ -71,13 +71,13 @@ public class JpaAggregatedPortletLookupDao extends BaseAggrEventsJpaDao
                         });
     }
 
-    @OpenEntityManager(unitName = PERSISTENCE_UNIT_NAME)
+    @OpenEntityManager(unitName = BaseAggrEventsJpaDao.PERSISTENCE_UNIT_NAME)
     @Override
     public AggregatedPortletMapping getMappedPortletForFname(final String fname) {
         final CacheKey key = CacheKey.build(this.getClass().getName(), fname);
 
         AggregatedPortletMapping portletMapping =
-                this.entityManagerCache.get(PERSISTENCE_UNIT_NAME, key);
+                this.entityManagerCache.get(BaseAggrEventsJpaDao.PERSISTENCE_UNIT_NAME, key);
         if (portletMapping != null) {
             return portletMapping;
         }
@@ -87,7 +87,7 @@ public class JpaAggregatedPortletLookupDao extends BaseAggrEventsJpaDao
         query.using(AggregatedPortletMappingImpl_.fname, fname);
         portletMapping = query.load();
         if (portletMapping != null) {
-            this.entityManagerCache.put(PERSISTENCE_UNIT_NAME, key, portletMapping);
+            this.entityManagerCache.put(BaseAggrEventsJpaDao.PERSISTENCE_UNIT_NAME, key, portletMapping);
             return portletMapping;
         }
 
@@ -112,7 +112,7 @@ public class JpaAggregatedPortletLookupDao extends BaseAggrEventsJpaDao
 
                                 logger.debug("Created {}", aggregatedGroupMapping);
                                 entityManagerCache.put(
-                                        PERSISTENCE_UNIT_NAME, key, aggregatedGroupMapping);
+                                        BaseAggrEventsJpaDao.PERSISTENCE_UNIT_NAME, key, aggregatedGroupMapping);
 
                                 return aggregatedGroupMapping;
                             }

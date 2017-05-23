@@ -73,7 +73,7 @@ public class JpaAggregatedGroupLookupDao extends BaseAggrEventsJpaDao
                         });
     }
 
-    @OpenEntityManager(unitName = PERSISTENCE_UNIT_NAME)
+    @OpenEntityManager(unitName = BaseAggrEventsJpaDao.PERSISTENCE_UNIT_NAME)
     @Override
     public AggregatedGroupMapping getGroupMapping(
             final String groupService, final String groupName) {
@@ -121,7 +121,7 @@ public class JpaAggregatedGroupLookupDao extends BaseAggrEventsJpaDao
     private final Set<String> warnedGroupKeys =
             Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
 
-    @OpenEntityManager(unitName = PERSISTENCE_UNIT_NAME)
+    @OpenEntityManager(unitName = BaseAggrEventsJpaDao.PERSISTENCE_UNIT_NAME)
     @Override
     public AggregatedGroupMapping getGroupMapping(final String portalGroupKey) {
         final IEntityGroup group = compositeGroupService.findGroup(portalGroupKey);

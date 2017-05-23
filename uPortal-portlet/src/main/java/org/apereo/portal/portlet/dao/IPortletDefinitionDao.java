@@ -29,9 +29,9 @@ public interface IPortletDefinitionDao {
      * @param portletDefinition The portlet definition to store the changes for
      * @throws IllegalArgumentException if portletDefinition is null.
      */
-    public IPortletDefinition savePortletDefinition(IPortletDefinition portletDefinition);
+    IPortletDefinition savePortletDefinition(IPortletDefinition portletDefinition);
 
-    public void deletePortletDefinition(IPortletDefinition definition);
+    void deletePortletDefinition(IPortletDefinition definition);
 
     /**
      * Get a {@link IPortletDefinition} for the specified {@link IPortletDefinitionId}.
@@ -40,15 +40,15 @@ public interface IPortletDefinitionDao {
      * @return The portlet definition for the id, null if no definition exists for the id.
      * @throws IllegalArgumentException if portletDefinitionId is null.
      */
-    public IPortletDefinition getPortletDefinition(IPortletDefinitionId portletDefinitionId);
+    IPortletDefinition getPortletDefinition(IPortletDefinitionId portletDefinitionId);
 
-    public IPortletDefinition getPortletDefinition(String portletDefinitionIdString);
+    IPortletDefinition getPortletDefinition(String portletDefinitionIdString);
 
-    public IPortletDefinition getPortletDefinitionByFname(String fname);
+    IPortletDefinition getPortletDefinitionByFname(String fname);
 
-    public IPortletDefinition getPortletDefinitionByName(String name);
+    IPortletDefinition getPortletDefinitionByName(String name);
 
-    public List<IPortletDefinition> getPortletDefinitions();
+    List<IPortletDefinition> getPortletDefinitions();
 
-    public List<IPortletDefinition> searchForPortlets(String term, boolean allowPartial);
+    List<IPortletDefinition> searchForPortlets(String term, boolean allowPartial);
 }

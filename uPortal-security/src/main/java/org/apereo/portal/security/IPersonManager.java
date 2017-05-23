@@ -23,7 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 public interface IPersonManager {
 
     // Can be used to store an instance of IPerson in the user's session
-    public static final String PERSON_SESSION_KEY = "org.apereo.portal.security.IPerson";
+    String PERSON_SESSION_KEY = "org.apereo.portal.security.IPerson";
 
     /**
      * Returns an IPerson associated with the incoming request
@@ -31,5 +31,5 @@ public interface IPersonManager {
      * @param request
      * @return IPerson associated with the incoming request
      */
-    public IPerson getPerson(HttpServletRequest request) throws PortalSecurityException;
+    IPerson getPerson(HttpServletRequest request) throws PortalSecurityException;
 }

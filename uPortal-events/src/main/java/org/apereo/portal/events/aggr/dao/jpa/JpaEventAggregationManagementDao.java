@@ -195,7 +195,7 @@ public class JpaEventAggregationManagementDao extends BaseAggrEventsJpaDao
                         });
     }
 
-    @OpenEntityManager(unitName = PERSISTENCE_UNIT_NAME)
+    @OpenEntityManager(unitName = BaseAggrEventsJpaDao.PERSISTENCE_UNIT_NAME)
     @Override
     public IEventAggregatorStatus getEventAggregatorStatus(
             final ProcessingType processingType, boolean create) {

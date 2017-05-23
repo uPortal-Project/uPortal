@@ -88,19 +88,19 @@ public class JpaAggregatedTabLookupDao extends BaseAggrEventsJpaDao
                         });
     }
 
-    @OpenEntityManager(unitName = PERSISTENCE_UNIT_NAME)
+    @OpenEntityManager(unitName = BaseAggrEventsJpaDao.PERSISTENCE_UNIT_NAME)
     @Override
     public AggregatedTabMapping getMappedTabForLayoutId(String layoutNodeId) {
         final Tuple<String, String> resolveTabName = this.resolveTabName(layoutNodeId);
         return getTabMapping(resolveTabName.first, resolveTabName.second);
     }
 
-    @OpenEntityManager(unitName = PERSISTENCE_UNIT_NAME)
+    @OpenEntityManager(unitName = BaseAggrEventsJpaDao.PERSISTENCE_UNIT_NAME)
     @Override
     public AggregatedTabMapping getTabMapping(final String fragmentName, final String tabName) {
         final CacheKey key = CacheKey.build(this.getClass().getName(), tabName);
 
-        AggregatedTabMapping tabMapping = this.entityManagerCache.get(PERSISTENCE_UNIT_NAME, key);
+        AggregatedTabMapping tabMapping = this.entityManagerCache.get(BaseAggrEventsJpaDao.PERSISTENCE_UNIT_NAME, key);
         if (tabMapping != null) {
             return tabMapping;
         }
@@ -111,7 +111,7 @@ public class JpaAggregatedTabLookupDao extends BaseAggrEventsJpaDao
         query.using(AggregatedTabMappingImpl_.tabName, tabName);
         tabMapping = query.load();
         if (tabMapping != null) {
-            this.entityManagerCache.put(PERSISTENCE_UNIT_NAME, key, tabMapping);
+            this.entityManagerCache.put(BaseAggrEventsJpaDao.PERSISTENCE_UNIT_NAME, key, tabMapping);
             return tabMapping;
         }
 
@@ -126,7 +126,7 @@ public class JpaAggregatedTabLookupDao extends BaseAggrEventsJpaDao
 
                                 logger.debug("Created {}", aggregatedGroupMapping);
                                 entityManagerCache.put(
-                                        PERSISTENCE_UNIT_NAME, key, aggregatedGroupMapping);
+                                        BaseAggrEventsJpaDao.PERSISTENCE_UNIT_NAME, key, aggregatedGroupMapping);
 
                                 return aggregatedGroupMapping;
                             }

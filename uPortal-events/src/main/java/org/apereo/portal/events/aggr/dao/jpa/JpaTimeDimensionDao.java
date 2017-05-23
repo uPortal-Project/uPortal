@@ -80,7 +80,7 @@ public class JpaTimeDimensionDao extends BaseAggrEventsJpaDao implements TimeDim
         return timeDimension;
     }
 
-    @OpenEntityManager(unitName = PERSISTENCE_UNIT_NAME)
+    @OpenEntityManager(unitName = BaseAggrEventsJpaDao.PERSISTENCE_UNIT_NAME)
     @Override
     public TimeDimension getTimeDimensionByTime(LocalTime localTime) {
         final NaturalIdQuery<TimeDimensionImpl> query =

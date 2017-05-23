@@ -246,7 +246,7 @@ public class JpaDateDimensionDao extends BaseAggrEventsJpaDao implements DateDim
         }
     }
 
-    @OpenEntityManager(unitName = PERSISTENCE_UNIT_NAME)
+    @OpenEntityManager(unitName = BaseAggrEventsJpaDao.PERSISTENCE_UNIT_NAME)
     @Override
     public DateDimension getDateDimensionByDate(DateMidnight date) {
         final NaturalIdQuery<DateDimensionImpl> query =

@@ -22,5 +22,5 @@ import org.springframework.context.ApplicationEvent;
  */
 public interface ApplicationEventFilter<E extends ApplicationEvent> {
     /** @return true if the event is supported, false if not */
-    public boolean supports(E event);
+    boolean supports(E event);
 }

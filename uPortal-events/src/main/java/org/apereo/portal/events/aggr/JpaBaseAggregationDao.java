@@ -455,7 +455,7 @@ public abstract class JpaBaseAggregationDao<
     }
 
     @Override
-    @OpenEntityManager(unitName = PERSISTENCE_UNIT_NAME)
+    @OpenEntityManager(unitName = BaseAggrEventsJpaDao.PERSISTENCE_UNIT_NAME)
     public final T getAggregation(K key) {
         final NaturalIdQuery<T> query = this.createNaturalIdQuery(this.aggregationEntityType);
         query.using(BaseAggregationImpl_.dateDimension, (DateDimensionImpl) key.getDateDimension());
