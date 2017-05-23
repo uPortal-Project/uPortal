@@ -8,11 +8,11 @@ apply plugin: 'com.gradle.build-scan'
 apply plugin: 'com.moowork.node'
 apply plugin: 'com.wiredforcode.spawn'
 
-//NOTE: The startHsql task can be executed after ant initportal because it uses hsqldb-2.3.2.jar in classpath, otherwise it will fail 
+// NOTE: The startHsql task can be executed after ant initportal because it uses hsqldb-2.3.2.jar in classpath, otherwise it will fail
 task startHsql(type: SpawnProcessTask) {
-	def cmd = "java -cp ./uportal-war/target/uPortal/WEB-INF/lib/hsqldb-2.3.2.jar org.hsqldb.server.Server --database.0 file:./data/uPortal;hsqldb.tx=mvcc --dbname.0 uPortal --address localhost --port 8887"
-	command cmd
-	ready 'Started Application'
+  def cmd = "java -cp ./uportal-war/target/uPortal/WEB-INF/lib/hsqldb-2.3.2.jar org.hsqldb.server.Server --database.0 file:./data/uPortal;hsqldb.tx=mvcc --dbname.0 uPortal --address localhost --port 8887"
+  command cmd
+  ready 'Started Application'
 }
 task stopHsql(type: KillProcessTask)
 
@@ -59,6 +59,7 @@ buildScan {
 subprojects {
     apply plugin: 'findbugs'
     apply plugin: 'idea'
+    apply plugin: 'eclipse'
     apply plugin: 'java'
     apply plugin: 'maven'
     apply plugin: 'com.github.sherter.google-java-format'
