@@ -9,4 +9,9 @@ dependencies {
     compile "org.slf4j:slf4j-api:${slf4jVersion}"
     compile "org.springframework:spring-context:${springVersion}"
     compile "org.springframework:spring-jdbc:${springVersion}"
+    compile "org.springframework.security:spring-security-core:${springSecurityVersion}"
+
+    provided "org.apache.portals.pluto:pluto-container-api:${plutoVersion}"
+    provided "${portletApiDependency}"
+    provided "${servletApiDependency}"
 }
