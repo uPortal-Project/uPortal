@@ -4,6 +4,7 @@ dependencies {
     compile project(':uPortal-utils')
 
     compile "com.google.guava:guava:${guavaVersion}"
+    compile "org.apache.commons:commons-math3:${commonsMath3Version}"
     compile "org.hibernate:hibernate-core:${hibernateVersion}"
     compile "org.hibernate.javax.persistence:hibernate-jpa-2.0-api:1.0.1.Final"
     compile("org.jasig.portlet.utils:portlet-jdbc-util:${apereoPortletUtilsVersion}") {
