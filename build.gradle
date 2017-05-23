@@ -10,13 +10,13 @@ apply plugin: 'com.wiredforcode.spawn'
 
 //NOTE: The startHsql task can be executed after uportal-war is built because it uses hsqldb-2.3.2.jar in classpath, otherwise it will fail
 task startHsql(type: SpawnProcessTask) {
-	description "Start hsql server"
-	def cmd = "java -cp ./uportal-war/target/uPortal/WEB-INF/lib/hsqldb-2.3.2.jar org.hsqldb.server.Server --database.0 file:./data/uPortal;hsqldb.tx=mvcc --dbname.0 uPortal --address localhost --port 8887"
-	command cmd
-	ready 'Started Application'
+    description "Start hsql server"
+    def cmd = "java -cp ./uportal-war/target/uPortal/WEB-INF/lib/hsqldb-2.3.2.jar org.hsqldb.server.Server --database.0 file:./data/uPortal;hsqldb.tx=mvcc --dbname.0 uPortal --address localhost --port 8887"
+    command cmd
+    ready 'Startup sequence completed'
 }
 task stopHsql(type: KillProcessTask){
-description "Stop hsql server" 
+    description "Stop hsql server"
 }
 
 import com.wiredforcode.gradle.spawn.*
