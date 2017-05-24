@@ -8,6 +8,7 @@ ext {
 dependencies {
     compile project(':uPortal-hibernate')
     compile project(':uPortal-io')
+    compile project(':uPortal-persondir')
     compile project(':uPortal-rdbm')
 
     compile "commons-cli:commons-cli:${commonsCliVersion}"
