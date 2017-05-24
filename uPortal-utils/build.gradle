@@ -12,10 +12,17 @@ dependencies {
     compile "com.fasterxml.jackson.core:jackson-core:${jacksonVersion}"
     compile "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
     compile "com.google.guava:guava:${guavaVersion}"
-    compile "joda-time:joda-time:${jodaTimeVersion}"
+    compile "net.sf.ehcache:ehcache-core:${ehcacheVersion}"
+    compile "org.apache.ant:ant:${antVersion}"
     compile "org.apache.commons:commons-lang3:${commonsLang3Version}"
     compile "org.aspectj:aspectjrt:${aspectjrtVersion}"
     compile "org.hibernate:hibernate-jpamodelgen:${hibernateJpamodelgenVersion}" // Required for javac -s
+    compile("org.jasig.resourceserver:resource-server-api:${resourceServerVersion}") {
+        exclude group: 'commons-logging', module: 'commons-logging'
+    }
+    compile("org.jasig.resourceserver:resource-server-utils:${resourceServerVersion}") {
+        exclude group: 'commons-logging', module: 'commons-logging'
+    }
     compile("org.jasig.service.persondir:person-directory-impl:${personDirectoryVersion}") {
         exclude group: 'org.springframework', module: 'spring-beans'
         exclude group: 'org.springframework', module: 'spring-context'
@@ -31,6 +38,13 @@ dependencies {
     compile "org.springframework:spring-web:${springVersion}"
     compile "org.springframework:spring-webmvc-portlet:${springVersion}"
     compile("org.springframework.ldap:spring-ldap-core:${springLdapVersion}") {
+        exclude group: 'commons-logging', module: 'commons-logging'
+    }
+    compile "org.springframework.security:spring-security-web:${springSecurityVersion}"
+    compile("org.springframework.webflow:spring-binding:${springWebflowVersion}") {
+        exclude group: 'commons-logging', module: 'commons-logging'
+    }
+    compile("org.springframework.webflow:spring-webflow:${springWebflowVersion}") {
         exclude group: 'commons-logging', module: 'commons-logging'
     }
     compile("org.springmodules:spring-modules-cache:${springModulesCacheVersion}") {
@@ -64,6 +78,7 @@ dependencies {
     }
 
     provided "${portletApiDependency}"
+    provided "${servletApiDependency}"
 }
 
 /*

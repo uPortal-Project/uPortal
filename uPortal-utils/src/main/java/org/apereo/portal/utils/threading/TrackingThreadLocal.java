@@ -19,12 +19,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
-import org.apereo.portal.portlet.rendering.worker.TrackingThreadLocalPortletExecutionInterceptor;
 
 /**
  * A ThreadLocal subclass that keeps track of all created instances. Using this ThreadLocal subclass
- * in uPortal allows any portlet execution thread wrapped by {@link
- * TrackingThreadLocalPortletExecutionInterceptor} to have the values copied into the appropriate
+ * in uPortal allows any portlet execution thread wrapped by
+ * TrackingThreadLocalPortletExecutionInterceptor to have the values copied into the appropriate
  * ThreadLocals in the child thread when the thread is run. This avoids having to write explicit
  * code for each ThreadLocal that needs to be copied.<br>
  * <br>
