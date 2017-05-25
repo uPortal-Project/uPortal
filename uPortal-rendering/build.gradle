@@ -7,10 +7,4 @@ dependencies {
     compile("org.codehaus.woodstox:woodstox-core-asl:${woodstoxVersion}") {
         exclude group: 'javax.xml.stream', module: 'stax-api'
     }
-    compile("org.jasig.resourceserver:resource-server-api:${resourceServerVersion}") {
-        exclude group: 'commons-logging', module: 'commons-logging'
-    }
-    compile("org.jasig.resourceserver:resource-server-utils:${resourceServerVersion}") {
-        exclude group: 'commons-logging', module: 'commons-logging'
-    }
 }

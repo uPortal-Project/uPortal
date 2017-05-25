@@ -16,7 +16,7 @@ package org.apereo.portal.security;
 
 public interface IPortalPasswordService {
 
-    public String encryptPassword(String cleartext);
+    String encryptPassword(String cleartext);
 
-    public boolean validatePassword(String cleartext, String encrypted);
+    boolean validatePassword(String cleartext, String encrypted);
 }

@@ -28,7 +28,7 @@ import org.apereo.portal.utils.Populator;
  *
  */
 public interface IStylesheetUserPreferencesService {
-    public enum PreferencesScope {
+    enum PreferencesScope {
         THEME {
             @Override
             public int getStylesheetId(IUserProfile userProfile) {
@@ -65,7 +65,7 @@ public interface IStylesheetUserPreferencesService {
      * @param prefScope The stylesheet preferences scope
      * @return The stylesheet descriptor for the current request and scope
      */
-    public IStylesheetDescriptor getStylesheetDescriptor(
+    IStylesheetDescriptor getStylesheetDescriptor(
             HttpServletRequest request, PreferencesScope prefScope);
 
     /**
@@ -75,7 +75,7 @@ public interface IStylesheetUserPreferencesService {
      * @param prefScope The stylesheet preferences scope
      * @see IStylesheetUserPreferences#removeOutputProperty(String)
      */
-    public String removeOutputProperty(
+    String removeOutputProperty(
             HttpServletRequest request, PreferencesScope prefScope, String name);
 
     /**
@@ -85,7 +85,7 @@ public interface IStylesheetUserPreferencesService {
      * @param prefScope The stylesheet preferences scope
      * @see IStylesheetUserPreferences#populateOutputProperties(Populator)
      */
-    public <P extends Populator<String, String>> P populateOutputProperties(
+    <P extends Populator<String, String>> P populateOutputProperties(
             HttpServletRequest request, PreferencesScope prefScope, P properties);
 
     /**
@@ -95,7 +95,7 @@ public interface IStylesheetUserPreferencesService {
      * @param prefScope The stylesheet preferences scope
      * @see IStylesheetUserPreferences#getStylesheetParameter(String)
      */
-    public String getStylesheetParameter(
+    String getStylesheetParameter(
             HttpServletRequest request, PreferencesScope prefScope, String name);
 
     /**
@@ -105,7 +105,7 @@ public interface IStylesheetUserPreferencesService {
      * @param prefScope The stylesheet preferences scope
      * @see IStylesheetUserPreferences#setStylesheetParameter(String, String)
      */
-    public String setStylesheetParameter(
+    String setStylesheetParameter(
             HttpServletRequest request, PreferencesScope prefScope, String name, String value);
 
     /**
@@ -115,7 +115,7 @@ public interface IStylesheetUserPreferencesService {
      * @param prefScope The stylesheet preferences scope
      * @see IStylesheetUserPreferences#removeStylesheetParameter(String)
      */
-    public String removeStylesheetParameter(
+    String removeStylesheetParameter(
             HttpServletRequest request, PreferencesScope prefScope, String name);
 
     /**
@@ -125,7 +125,7 @@ public interface IStylesheetUserPreferencesService {
      * @param prefScope The stylesheet preferences scope
      * @see IStylesheetUserPreferences#populateStylesheetParameters(Populator)
      */
-    public <P extends Populator<String, String>> P populateStylesheetParameters(
+    <P extends Populator<String, String>> P populateStylesheetParameters(
             HttpServletRequest request, PreferencesScope prefScope, P stylesheetParameters);
 
     /**
@@ -135,7 +135,7 @@ public interface IStylesheetUserPreferencesService {
      * @param prefScope The stylesheet preferences scope
      * @see IStylesheetUserPreferences#getLayoutAttribute(String, String)
      */
-    public String getLayoutAttribute(
+    String getLayoutAttribute(
             HttpServletRequest request, PreferencesScope prefScope, String nodeId, String name);
 
     /**
@@ -145,7 +145,7 @@ public interface IStylesheetUserPreferencesService {
      * @param prefScope The stylesheet preferences scope
      * @see IStylesheetUserPreferences#setLayoutAttribute(String, String, String)
      */
-    public String setLayoutAttribute(
+    String setLayoutAttribute(
             HttpServletRequest request,
             PreferencesScope prefScope,
             String nodeId,
@@ -157,7 +157,7 @@ public interface IStylesheetUserPreferencesService {
      * @param prefScope The stylesheet preferences scope
      * @see IStylesheetUserPreferences#removeLayoutAttribute(String, String)
      */
-    public String removeLayoutAttribute(
+    String removeLayoutAttribute(
             HttpServletRequest request, PreferencesScope prefScope, String nodeId, String name);
 
     /**
@@ -166,7 +166,7 @@ public interface IStylesheetUserPreferencesService {
      * @param prefScope The stylesheet preferences scope
      * @see IStylesheetUserPreferences#getAllLayoutAttributeNodeIds()
      */
-    public Iterable<String> getAllLayoutAttributeNodeIds(
+    Iterable<String> getAllLayoutAttributeNodeIds(
             HttpServletRequest request, PreferencesScope prefScope);
 
     /**
@@ -178,7 +178,7 @@ public interface IStylesheetUserPreferencesService {
      * @return Map of layoutNodeId to attribute value for all nodes that have an attribute with the
      *     specified name.
      */
-    public Map<String, String> getAllNodesAndValuesForAttribute(
+    Map<String, String> getAllNodesAndValuesForAttribute(
             HttpServletRequest request, PreferencesScope prefScope, String name);
 
     /**
@@ -188,13 +188,13 @@ public interface IStylesheetUserPreferencesService {
      * @param prefScope The stylesheet preferences scope
      * @see IStylesheetUserPreferences#populateLayoutAttributes(String, Populator)
      */
-    public <P extends Populator<String, String>> P populateLayoutAttributes(
+    <P extends Populator<String, String>> P populateLayoutAttributes(
             HttpServletRequest request,
             PreferencesScope prefScope,
             String nodeId,
             P layoutAttributes);
 
-    public void setStructureStylesheetOverride(HttpServletRequest request, String override);
+    void setStructureStylesheetOverride(HttpServletRequest request, String override);
 
-    public void setThemeStyleSheetOverride(HttpServletRequest request, String override);
+    void setThemeStyleSheetOverride(HttpServletRequest request, String override);
 }

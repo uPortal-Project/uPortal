@@ -41,7 +41,7 @@ public interface IPortletEntityDao {
      *     org.apereo.portal.portlet.om.IPortletDefinition} exists for the specified {@link
      *     IPortletDefinitionId}
      */
-    public IPortletEntity createPortletEntity(
+    IPortletEntity createPortletEntity(
             IPortletDefinitionId portletDefinitionId, String layoutNodeId, int userId);
 
     /**
@@ -50,7 +50,7 @@ public interface IPortletEntityDao {
      * @param portletEntity The portlet entity to store the changes for
      * @throws IllegalArgumentException if portletEntity is null.
      */
-    public void updatePortletEntity(IPortletEntity portletEntity);
+    void updatePortletEntity(IPortletEntity portletEntity);
 
     /**
      * Get a {@link IPortletEntity} for the specified {@link IPortletEntityId}.
@@ -59,14 +59,14 @@ public interface IPortletEntityDao {
      * @return The portlet entity for the id, null if no entity exists for the id.
      * @throws IllegalArgumentException if portletEntityId is null.
      */
-    public IPortletEntity getPortletEntity(IPortletEntityId portletEntityId);
+    IPortletEntity getPortletEntity(IPortletEntityId portletEntityId);
 
     /**
      * Check if a {@link IPortletEntity} actually exists in the database.
      *
      * @param portletEntityId The id of the entity to check for.
      */
-    public boolean portletEntityExists(IPortletEntityId portletEntityId);
+    boolean portletEntityExists(IPortletEntityId portletEntityId);
 
     /**
      * Get a {@link IPortletEntity} for the specified layout node id and user id.
@@ -76,7 +76,7 @@ public interface IPortletEntityDao {
      * @return The portlet entity for the id, null if no entity exists for the ids.
      * @throws IllegalArgumentException if layoutNodeId is null.
      */
-    public IPortletEntity getPortletEntity(String layoutNodeId, int userId);
+    IPortletEntity getPortletEntity(String layoutNodeId, int userId);
 
     /**
      * Get all {@link IPortletEntity}s based on the specified {@link IPortletDefinitionId}.
@@ -86,7 +86,7 @@ public interface IPortletEntityDao {
      *     no entities exist for the id, will never be null.
      * @throws IllegalArgumentException if portletDefinitionId is null.
      */
-    public Set<IPortletEntity> getPortletEntities(IPortletDefinitionId portletDefinitionId);
+    Set<IPortletEntity> getPortletEntities(IPortletDefinitionId portletDefinitionId);
 
     /**
      * Get all {@link IPortletEntity}s that exist for the specified user id. (From {@link
@@ -96,7 +96,7 @@ public interface IPortletEntityDao {
      * @return A set of all entities base on the specified user id, will be empty if no entities
      *     exist for the id, will never be null.
      */
-    public Set<IPortletEntity> getPortletEntitiesForUser(int userId);
+    Set<IPortletEntity> getPortletEntitiesForUser(int userId);
 
     /**
      * Removes the specified {@link IPortletEntity} from the persistent store.
@@ -104,5 +104,5 @@ public interface IPortletEntityDao {
      * @param portletEntity The entity to remove.
      * @throws IllegalArgumentException if portletEntity is null.
      */
-    public void deletePortletEntity(IPortletEntity portletEntity);
+    void deletePortletEntity(IPortletEntity portletEntity);
 }

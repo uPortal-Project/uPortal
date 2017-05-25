@@ -116,6 +116,16 @@
         </dependency>
         <dependency>
             <groupId>org.jasig.portal</groupId>
+            <artifactId>uPortal-marketplace</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jasig.portal</groupId>
+            <artifactId>uPortal-persondir</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jasig.portal</groupId>
             <artifactId>uPortal-portlet</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -144,6 +154,11 @@
                     <artifactId>commons-logging</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.jasig.portal</groupId>
+            <artifactId>uPortal-spring</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.jasig.portal</groupId>

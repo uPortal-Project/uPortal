@@ -33,12 +33,12 @@ public interface IRequestParameterProcessor {
      * have been allowed to execute. Even if <code>false</code> is returned as much processing as
      * possible should happen for each pass.
      *
-     * @param req - incoming request
-     * @param res - outgoing response
+     * @param request - incoming request
+     * @param response - outgoing response
      * @returns <code>true</code> if processing is complete, <code>false</code> if processing is not
      *     complete and this processor should be called again after all other processors have been
      *     executed.
      * @throws IllegalArgumentException If req or res are null.
      */
-    public boolean processParameters(HttpServletRequest request, HttpServletResponse response);
+    boolean processParameters(HttpServletRequest request, HttpServletResponse response);
 }
