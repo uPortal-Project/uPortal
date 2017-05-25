@@ -20,6 +20,8 @@ include 'uPortal-url'
 include 'uPortal-utils'
 include 'uPortal-web'
 
+include 'uPortal-api:uPortal-api-search'
+
 include 'uPortal-groups:uPortal-groups-core'
 include 'uPortal-groups:uPortal-groups-filesystem'
 include 'uPortal-groups:uPortal-groups-ldap'
