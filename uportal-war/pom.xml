@@ -157,6 +157,11 @@
         </dependency>
         <dependency>
             <groupId>org.jasig.portal</groupId>
+            <artifactId>uPortal-spring</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jasig.portal</groupId>
             <artifactId>uPortal-tenants</artifactId>
             <version>${project.version}</version>
         </dependency>

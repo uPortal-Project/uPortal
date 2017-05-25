@@ -22,7 +22,7 @@ import org.springframework.web.servlet.ViewRendererServlet;
 
 public class ForwardingDispatcherPortlet extends DispatcherPortlet {
     /** URL that points to the ViewRendererServlet */
-    private String viewRendererUrl = DEFAULT_VIEW_RENDERER_URL;
+    private String viewRendererUrl = DispatcherPortlet.DEFAULT_VIEW_RENDERER_URL;
 
     public void setViewRendererUrl(String viewRendererUrl) {
         this.viewRendererUrl = viewRendererUrl;
