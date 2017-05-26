@@ -2,6 +2,6 @@ description = "Apereo uPortal Marketplace"
 
 dependencies {
     compile project(':uPortal-security')
-
+    compile project(':uPortal-layout')
     // compile "org.hibernate:hibernate-jpamodelgen:${hibernateJpamodelgenVersion}" // Required for javac -s
 }
