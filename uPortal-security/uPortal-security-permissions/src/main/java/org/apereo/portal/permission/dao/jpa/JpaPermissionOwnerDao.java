@@ -86,7 +86,7 @@ public class JpaPermissionOwnerDao extends BasePortalJpaDao implements IPermissi
         return getEntityManager().find(PermissionOwnerImpl.class, id);
     }
 
-    @OpenEntityManager(unitName = PERSISTENCE_UNIT_NAME)
+    @OpenEntityManager(unitName = BasePortalJpaDao.PERSISTENCE_UNIT_NAME)
     @Override
     public IPermissionOwner getPermissionOwner(String fname) {
         final NaturalIdQuery<PermissionOwnerImpl> query =

@@ -16,10 +16,12 @@ include 'uPortal-tools'
 include 'uPortal-url'
 include 'uPortal-web'
 
+include 'uPortal-api:uPortal-api-internal'
 include 'uPortal-api:uPortal-api-platform'
 include 'uPortal-api:uPortal-api-search'
 
 include 'uPortal-content:uPortal-content-portlet'
+include 'uPortal-content:uPortal-content-publishing'
 
 include 'uPortal-groups:uPortal-groups-core'
 include 'uPortal-groups:uPortal-groups-filesystem'
@@ -34,6 +36,7 @@ include 'uPortal-io:uPortal-io-jaxb'
 
 include 'uPortal-security:uPortal-security-core'
 include 'uPortal-security:uPortal-security-mvc'
+include 'uPortal-security:uPortal-security-permissions'
 include 'uPortal-security:uPortal-security-services'
 include 'uPortal-security:uPortal-security-xslt'
 

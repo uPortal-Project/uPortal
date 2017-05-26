@@ -21,7 +21,7 @@ import org.apereo.portal.portletpublishing.xml.PortletPublishingDefinition;
 /**
  */
 public interface IChannelPublishingDefinitionDao {
-    public PortletPublishingDefinition getChannelPublishingDefinition(int channelTypeId);
+    PortletPublishingDefinition getChannelPublishingDefinition(int channelTypeId);
 
-    public Map<IPortletType, PortletPublishingDefinition> getChannelPublishingDefinitions();
+    Map<IPortletType, PortletPublishingDefinition> getChannelPublishingDefinitions();
 }

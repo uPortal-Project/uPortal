@@ -46,6 +46,11 @@
         <!-- ===== uPortal Dependencies ======================================= -->
         <dependency>
             <groupId>org.jasig.portal</groupId>
+            <artifactId>uPortal-api-internal</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jasig.portal</groupId>
             <artifactId>uPortal-api-platform</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -67,6 +72,11 @@
         <dependency>
             <groupId>org.jasig.portal</groupId>
             <artifactId>uPortal-content-portlet</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jasig.portal</groupId>
+            <artifactId>uPortal-content-publishing</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -162,6 +172,11 @@
         <dependency>
             <groupId>org.jasig.portal</groupId>
             <artifactId>uPortal-security-mvc</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jasig.portal</groupId>
+            <artifactId>uPortal-security-permissions</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
