@@ -33,6 +33,7 @@ include 'uPortal-groups:uPortal-groups-smartldap'
 include 'uPortal-security:uPortal-security-core'
 include 'uPortal-security:uPortal-security-mvc'
 include 'uPortal-security:uPortal-security-services'
+include 'uPortal-security:uPortal-security-xslt'
 
 include 'uPortal-soffit:uPortal-soffit-core'
 include 'uPortal-soffit:uPortal-soffit-connector'
