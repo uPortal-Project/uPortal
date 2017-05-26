@@ -420,7 +420,7 @@ public class PortletRendererImpl implements IPortletRenderer {
          *
          * THIS IS VERY BAD AND SHOULD BE DEPRECATED ALONG WITH EXCLUSIVE WINDOW STATE
          */
-        if (EXCLUSIVE.equals(portletWindow.getWindowState())) {
+        if (IPortletRenderer.EXCLUSIVE.equals(portletWindow.getWindowState())) {
             portletOutputHandler = new ResourcePortletOutputHandler(httpServletResponse);
         }
 
@@ -446,9 +446,9 @@ public class PortletRendererImpl implements IPortletRenderer {
                 new PortletMimeHttpServletResponseWrapper(
                         httpServletResponse, portletWindow, portletOutputHandler, cacheControl);
 
-        httpServletRequest.setAttribute(ATTRIBUTE__PORTLET_CACHE_CONTROL, cacheControl);
+        httpServletRequest.setAttribute(IPortletRenderer.ATTRIBUTE__PORTLET_CACHE_CONTROL, cacheControl);
         httpServletRequest.setAttribute(
-                ATTRIBUTE__PORTLET_OUTPUT_HANDLER, cachingPortletOutputHandler);
+                IPortletRenderer.ATTRIBUTE__PORTLET_OUTPUT_HANDLER, cachingPortletOutputHandler);
 
         logger.debug("Rendering portlet {} for window {}", renderPart.name(), portletWindow);
 
@@ -674,9 +674,9 @@ public class PortletRendererImpl implements IPortletRenderer {
                 new PortletResourceHttpServletResponseWrapper(
                         httpServletResponse, portletWindow, portletOutputHandler, cacheControl);
 
-        httpServletRequest.setAttribute(ATTRIBUTE__PORTLET_CACHE_CONTROL, cacheControl);
+        httpServletRequest.setAttribute(IPortletRenderer.ATTRIBUTE__PORTLET_CACHE_CONTROL, cacheControl);
         httpServletRequest.setAttribute(
-                ATTRIBUTE__PORTLET_OUTPUT_HANDLER, cachingPortletOutputHandler);
+                IPortletRenderer.ATTRIBUTE__PORTLET_OUTPUT_HANDLER, cachingPortletOutputHandler);
 
         this.logger.debug("Executing resource request for window {}", portletWindow);
 
@@ -893,10 +893,10 @@ public class PortletRendererImpl implements IPortletRenderer {
             //These are required for a render request to be created and admin requests use a render request under the hood
             final String characterEncoding = httpServletResponse.getCharacterEncoding();
             httpServletRequest.setAttribute(
-                    ATTRIBUTE__PORTLET_OUTPUT_HANDLER,
+                    IPortletRenderer.ATTRIBUTE__PORTLET_OUTPUT_HANDLER,
                     new RenderPortletOutputHandler(characterEncoding));
             httpServletRequest.setAttribute(
-                    ATTRIBUTE__PORTLET_CACHE_CONTROL, new CacheControlImpl());
+                    IPortletRenderer.ATTRIBUTE__PORTLET_CACHE_CONTROL, new CacheControlImpl());
 
             try {
                 this.portletContainer.doAdmin(
