@@ -202,7 +202,12 @@
         </dependency>
         <dependency>
             <groupId>org.jasig.portal</groupId>
-            <artifactId>uPortal-utils</artifactId>
+            <artifactId>uPortal-utils-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jasig.portal</groupId>
+            <artifactId>uPortal-utils-jmx</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
