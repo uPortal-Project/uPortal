@@ -23,6 +23,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apereo.portal.layout.LayoutPortlet;
 import org.apereo.portal.portlet.marketplace.MarketplacePortletDefinition;
 import org.apereo.portal.portlet.marketplace.PortletReleaseNotes;
 import org.apereo.portal.portlet.marketplace.ScreenShot;
@@ -51,6 +52,7 @@ public class MarketplaceEntry implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private final MarketplacePortletDefinition pdef;
+    private final LayoutPortlet layoutObject;
     private String maxURL;
     private Set<MarketplaceEntry> relatedEntries;
     private boolean generateRelatedPortlets = true;
@@ -63,12 +65,14 @@ public class MarketplaceEntry implements Serializable {
         this.pdef = pdef;
         this.maxURL = pdef.getRenderUrl();
         this.user = user;
+        this.layoutObject = new LayoutPortlet(pdef);
     }
 
     public MarketplaceEntry(MarketplacePortletDefinition pdef, String maxURL, final IPerson user) {
         this.pdef = pdef;
         this.maxURL = maxURL;
         this.user = user;
+        this.layoutObject = new LayoutPortlet(pdef);
     }
 
     public MarketplaceEntry(
@@ -79,6 +83,11 @@ public class MarketplaceEntry implements Serializable {
         this.maxURL = pdef.getRenderUrl();
         this.generateRelatedPortlets = generateRelatedPortlets;
         this.user = user;
+        this.layoutObject = new LayoutPortlet(pdef);
+    }
+
+    public LayoutPortlet getLayoutObject() {
+        return layoutObject;
     }
 
     public String getId() {
