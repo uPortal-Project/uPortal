@@ -46,6 +46,11 @@
         <!-- ===== uPortal Dependencies ======================================= -->
         <dependency>
             <groupId>org.jasig.portal</groupId>
+            <artifactId>uPortal-api-platform</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jasig.portal</groupId>
             <artifactId>uPortal-api-search</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -189,14 +194,6 @@
             <groupId>org.jasig.portal</groupId>
             <artifactId>uPortal-web</artifactId>
             <version>${project.version}</version>
-        </dependency>
-
-        <!-- Pre-Gradle -->
-        <dependency>
-            <groupId>org.jasig.portal</groupId>
-            <artifactId>uportal-platform-api</artifactId>
-            <version>${project.version}</version>
-            <scope>provided</scope>
         </dependency>
 
         <!-- ===== Compile Dependencies ======================================= -->

@@ -249,7 +249,6 @@
         <module>uportal-ear</module>
         <module>uportal-portlets-overlay</module>
         <module>bootstrap</module>
-        <module>uportal-platform-api</module>
     </modules>
 
     <dependencyManagement>
