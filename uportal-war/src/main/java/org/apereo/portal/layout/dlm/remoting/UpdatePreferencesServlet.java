@@ -33,6 +33,8 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
+
+import com.google.common.collect.Lists;
 import org.apache.commons.beanutils.BeanPredicate;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections.CollectionUtils;
@@ -517,7 +519,8 @@ public class UpdatePreferencesServlet {
     /**
      * Change the number of columns on a specified tab. In the event that the user is decreasing the
      * number of columns, extra columns will be stripped from the right-hand side. Any channels in
-     * these columns will be moved to the bottom of the last preserved column.
+     * these columns will be moved to last remaining column, added to the first permissible
+     * positions in that column.
      *
      * @param widths array of column widths
      * @param deleted array of deleted column IDs
@@ -589,9 +592,16 @@ public class UpdatePreferencesServlet {
             for (String columnId : deleted) {
 
                 // move all channels in the current column to the last valid column
-                Enumeration channels = ulm.getChildIds(columnId);
-                while (channels.hasMoreElements()) {
-                    ulm.addNode(ulm.getNode((String) channels.nextElement()), acceptor, null);
+
+                final List<String> orphanedChannels = Collections.list(ulm.getChildIds(columnId));
+
+                // reverse order so that we add the last first so as each adds to first permitted
+                // position user-facing portlet order is retained.
+
+                Lists.reverse(orphanedChannels);
+
+                for (final String channelId : orphanedChannels) {
+                    ulm.addNode(ulm.getNode( channelId ), acceptor, null);
                 }
 
                 // delete the column from the user's layout
@@ -1007,7 +1017,7 @@ public class UpdatePreferencesServlet {
     }
 
     /**
-     * Add a new tab to the layout. The new tab will be appended to the end of the list and named
+     * Add a new tab to the layout. The new tab will be first permissible tab position and named
      * with the BLANK_TAB_NAME variable.
      *
      * @param request
@@ -1122,8 +1132,8 @@ public class UpdatePreferencesServlet {
      * @param response
      * @param targetId - id of the folder node to add the new folder to. By default, the folder will
      *     be inserted after other existing items in the node unless a siblingId is provided.
-     * @param siblingId - if set, insert new folder prior to the node with this id, otherwise simple
-     *     insert at the end of the list.
+     * @param siblingId - if set, insert new folder prior to the node with this id,
+     *                  if blank inserts at first position consistent with DLM restrictions
      * @param attributes - if included, parse the JSON name-value pairs in the body as the
      *     attributes of the folder. These will override the defaults. e.g. : {
      *     "structureAttributes" : {"display" : "row", "other" : "another" }, "attributes" :
@@ -1536,9 +1546,11 @@ public class UpdatePreferencesServlet {
     /**
      * Moves the source element.
      *
-     * <p>- If the destination is a tab, the new element automatically goes to the end of the first
-     * column or in a new column. - If the destination is a folder, the element is added to the end
-     * of the folder. - Otherwise, the element is inserted before the destination (the destination
+     * <p>- If the destination is a tab, the new element automatically goes to the first
+     * permissible position in the first
+     * column or in a new column. - If the destination is a folder, the element is added to the
+     * first permissible position in that folder.
+     * . - Otherwise, the element is inserted before the destination (the destination
      * can't be a tab or folder so it must be a portlet).
      *
      * @return true if the element was moved and saved.
@@ -1595,7 +1607,7 @@ public class UpdatePreferencesServlet {
             if (isFolder(ulm, destinationId)) {
                 success = attemptNodeMove(ulm, sourceId, destinationId, null);
             } else {
-                // If insertBefore move to prior to node else to end of folder containing node
+                // If insertBefore move to prior to node else default to first permissible position
                 success =
                         attemptNodeMove(
                                 ulm,
