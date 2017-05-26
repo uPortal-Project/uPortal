@@ -7,7 +7,7 @@ ext {
 
 dependencies {
     compile project(':uPortal-rendering')
-    compile project(':uPortal-security')
+    compile project(':uPortal-security:uPortal-security-core')
 
     compile "org.apache.commons:commons-math3:${commonsMath3Version}"
     // NOTE:  String that the group and version don't seem to

@@ -6,7 +6,7 @@ ext {
 }
 
 dependencies {
-    compile project(':uPortal-security')
+    compile project(':uPortal-security:uPortal-security-core')
 
     compile "org.hibernate:hibernate-jpamodelgen:${hibernateJpamodelgenVersion}" // Required for javac -s
 }
