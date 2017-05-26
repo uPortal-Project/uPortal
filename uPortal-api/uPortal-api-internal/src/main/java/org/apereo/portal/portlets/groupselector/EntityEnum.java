@@ -21,7 +21,6 @@ import org.apereo.portal.security.IPerson;
  * EntityEnum represents an enumeration of known uPortal entity types. This class was designed
  * specifically for use with the JsonEntityBean entity wrapper and for simplified channel and group
  * browsing.
- *
  */
 public enum EntityEnum {
     PORTLET(IPortletDefinition.class, "portlet", false), // uPortal portlet

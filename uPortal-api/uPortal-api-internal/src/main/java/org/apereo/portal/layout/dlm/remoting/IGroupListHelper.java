@@ -21,10 +21,7 @@ import org.apereo.portal.portlets.groupselector.EntityEnum;
 import org.apereo.portal.security.IAuthorizationPrincipal;
 import org.apereo.portal.security.IPerson;
 
-/**
- * Helper methods for retrieving portal entities.
- *
- */
+/** Helper methods for retrieving portal entities. */
 public interface IGroupListHelper {
 
     /**

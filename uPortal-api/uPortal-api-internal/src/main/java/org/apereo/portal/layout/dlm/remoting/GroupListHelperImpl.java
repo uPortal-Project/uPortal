@@ -26,7 +26,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apereo.portal.EntityIdentifier;
 import org.apereo.portal.groups.IEntityGroup;
 import org.apereo.portal.groups.IEntityNameFinder;
-import org.apereo.portal.groups.IGroupConstants;
 import org.apereo.portal.groups.IGroupMember;
 import org.apereo.portal.portlet.om.IPortletDefinition;
 import org.apereo.portal.portlets.groupselector.EntityEnum;

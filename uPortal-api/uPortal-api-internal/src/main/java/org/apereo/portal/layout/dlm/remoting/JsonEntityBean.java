@@ -24,10 +24,7 @@ import org.apereo.portal.portlet.om.PortletCategory;
 import org.apereo.portal.portlets.groupselector.EntityEnum;
 import org.apereo.portal.security.IPermission;
 
-/**
- * Entity bean for JSON output. Used for categories, groups, and people.
- *
- */
+/** Entity bean for JSON output. Used for categories, groups, and people. */
 public class JsonEntityBean implements Serializable, Comparable<JsonEntityBean> {
 
     private static final long serialVersionUID = 1L;
