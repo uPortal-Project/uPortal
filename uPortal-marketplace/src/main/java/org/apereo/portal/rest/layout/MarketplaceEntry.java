@@ -23,6 +23,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apereo.portal.layout.LayoutPortlet;
 import org.apereo.portal.portlet.marketplace.MarketplacePortletDefinition;
 import org.apereo.portal.portlet.marketplace.PortletReleaseNotes;
 import org.apereo.portal.portlet.marketplace.ScreenShot;
