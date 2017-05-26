@@ -16,10 +16,7 @@ package org.apereo.portal.search;
 
 import javax.xml.namespace.QName;
 
-/**
- * Constants related to the portal search API
- *
- */
+/** Constants related to the portal search API */
 public final class SearchConstants {
     /** Namespace used by uPortal search events */
     public static final String NAMESPACE = "https://source.jasig.org/schemas/uportal/search";
