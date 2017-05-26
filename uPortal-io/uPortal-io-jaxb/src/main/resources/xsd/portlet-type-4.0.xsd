@@ -19,32 +19,28 @@
 
 -->
 <xs:schema
-    xmlns="https://source.jasig.org/schemas/uportal/io/subscribed-fragment"
-    targetNamespace="https://source.jasig.org/schemas/uportal/io/subscribed-fragment"
+    xmlns="https://source.jasig.org/schemas/uportal/io/portlet-type"
+    targetNamespace="https://source.jasig.org/schemas/uportal/io/portlet-type"
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:up="https://source.jasig.org/schemas/uportal"
     xmlns:io="https://source.jasig.org/schemas/uportal/io"
     elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0">
 
-    <xs:import namespace="https://source.jasig.org/schemas/uportal" schemaLocation="../../common-types-4.0.xsd"/>
-    <xs:import namespace="https://source.jasig.org/schemas/uportal/io" schemaLocation="../common-io-types-4.0.xsd"/>
+    <xs:import namespace="https://source.jasig.org/schemas/uportal" schemaLocation="common-types-4.0.xsd"/>
+    <xs:import namespace="https://source.jasig.org/schemas/uportal/io" schemaLocation="common-io-types-4.0.xsd"/>
     
-    <xs:element name="subscribed-fragments">
+    <xs:element name="portlet-type">
         <xs:complexType>
-            <xs:complexContent>
+        	<xs:complexContent>
                 <xs:extension base="io:basePortalDataType40">
                     <xs:sequence>
-                        <xs:element name="subscribed-fragment" type="subscribedFragmentType" minOccurs="1" maxOccurs="unbounded"/>
-                    </xs:sequence>
-                    
-                    <xs:attribute name="username" type="xs:string" use="required"/>
-                </xs:extension>
-            </xs:complexContent>
+        				<xs:element name="name" type="xs:string"/>
+        				<xs:element name="description" type="xs:string" minOccurs="0"/>
+        				<xs:element name="uri" type="xs:string"/>
+        			</xs:sequence>
+        		</xs:extension>
+        	</xs:complexContent>
         </xs:complexType>
-    </xs:element>   
-    
-    <xs:complexType name="subscribedFragmentType">
-        <xs:attribute name="fragment-owner" type="xs:string" use="required" />
-    </xs:complexType>
+    </xs:element>
 </xs:schema>

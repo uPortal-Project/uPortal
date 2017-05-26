@@ -1,8 +1,6 @@
 description = "Apereo uPortal Spring Components"
 
 dependencies {
-    // compile project(':uPortal-io')
-
     compile "commons-codec:commons-codec:${commonsCodecVersion}"
     compile "commons-lang:commons-lang:${commonsLangVersion}"
     compile "net.oauth.core:oauth:${oauthVersion}"

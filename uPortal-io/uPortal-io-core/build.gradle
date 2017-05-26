@@ -1,0 +1,8 @@
+description = "Apereo uPortal Import/Export Core"
+
+dependencies {
+    compile project(':uPortal-utils:uPortal-utils-core')
+
+    compile "commons-lang:commons-lang:${commonsLangVersion}"
+    compile "org.slf4j:slf4j-api:${slf4jVersion}"
+}

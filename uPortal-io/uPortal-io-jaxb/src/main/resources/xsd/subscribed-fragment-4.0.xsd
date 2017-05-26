@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <!--
 
     Licensed to Apereo under one or more contributor license
@@ -20,43 +19,32 @@
 
 -->
 <xs:schema
-    xmlns="https://source.jasig.org/schemas/uportal/io/permission-owner"
-    targetNamespace="https://source.jasig.org/schemas/uportal/io/permission-owner"
+    xmlns="https://source.jasig.org/schemas/uportal/io/subscribed-fragment"
+    targetNamespace="https://source.jasig.org/schemas/uportal/io/subscribed-fragment"
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:up="https://source.jasig.org/schemas/uportal"
     xmlns:io="https://source.jasig.org/schemas/uportal/io"
     elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0">
 
-    <xs:import namespace="https://source.jasig.org/schemas/uportal" schemaLocation="../../common-types-4.0.xsd"/>
-    <xs:import namespace="https://source.jasig.org/schemas/uportal/io" schemaLocation="../common-io-types-4.0.xsd"/>
-
-    <xs:element name="permission-owner">
+    <xs:import namespace="https://source.jasig.org/schemas/uportal" schemaLocation="common-types-4.0.xsd"/>
+    <xs:import namespace="https://source.jasig.org/schemas/uportal/io" schemaLocation="common-io-types-4.0.xsd"/>
+    
+    <xs:element name="subscribed-fragments">
         <xs:complexType>
             <xs:complexContent>
                 <xs:extension base="io:basePortalDataType40">
                     <xs:sequence>
-                        <xs:element name="name" type="xs:string"/>
-                        <xs:element name="fname" type="up:fname-type"/>
-                        <xs:element name="desc" type="xs:string" minOccurs="0"/>
-                        
-                        <xs:element name="activity" type="externalActivity" minOccurs="0" maxOccurs="unbounded"/>
+                        <xs:element name="subscribed-fragment" type="subscribedFragmentType" minOccurs="1" maxOccurs="unbounded"/>
                     </xs:sequence>
+                    
+                    <xs:attribute name="username" type="xs:string" use="required"/>
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>
-        <xs:unique name="unique-activity">
-            <xs:selector xpath="activity"/>
-            <xs:field xpath="fname"/>
-        </xs:unique>
-    </xs:element>
-
-    <xs:complexType name="externalActivity">
-        <xs:sequence>
-            <xs:element name="name" type="xs:string"/>
-            <xs:element name="fname" type="up:fname-type"/>
-            <xs:element name="desc" type="xs:string" minOccurs="0"/>
-            <xs:element name="targetProvider" type="xs:string"/>
-        </xs:sequence>
+    </xs:element>   
+    
+    <xs:complexType name="subscribedFragmentType">
+        <xs:attribute name="fragment-owner" type="xs:string" use="required" />
     </xs:complexType>
 </xs:schema>

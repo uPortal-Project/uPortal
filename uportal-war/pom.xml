@@ -66,6 +66,11 @@
         </dependency>
         <dependency>
             <groupId>org.jasig.portal</groupId>
+            <artifactId>uPortal-content-portlet</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jasig.portal</groupId>
             <artifactId>uPortal-events</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -116,7 +121,12 @@
         </dependency>
         <dependency>
             <groupId>org.jasig.portal</groupId>
-            <artifactId>uPortal-io</artifactId>
+            <artifactId>uPortal-io-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jasig.portal</groupId>
+            <artifactId>uPortal-io-jaxb</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -132,11 +142,6 @@
         <dependency>
             <groupId>org.jasig.portal</groupId>
             <artifactId>uPortal-persondir</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jasig.portal</groupId>
-            <artifactId>uPortal-portlet</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -969,26 +974,6 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
-            <!-- Generates JAXB binding classes -->
-            <plugin>
-                <groupId>org.jvnet.jaxb2.maven2</groupId>
-                <artifactId>maven-jaxb2-plugin</artifactId>
-                <configuration>
-                    <schemaIncludes>
-                        <include>io/event-aggregation/*.xsd</include>
-                        <include>io/portlet-definition/*.xsd</include>
-                        <include>io/portlet-type/*.xsd</include>
-                        <include>io/stylesheet-descriptor/*.xsd</include>
-                        <include>io/user/*.xsd</include>
-                        <include>io/permission-owner/*.xsd</include>
-                        <include>io/subscribed-fragment/*.xsd</include>
-                        <include>portlet-publishing/*.xsd</include>
-                    </schemaIncludes>
-                    <schemaExcludes>
-                        <exclude>io/portlet-definition/portlet-definition-4.1.xsd</exclude>
-                    </schemaExcludes>
-                </configuration>
             </plugin>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>

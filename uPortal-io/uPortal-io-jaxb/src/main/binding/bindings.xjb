@@ -24,12 +24,12 @@
     </jaxb:bindings>
       
     <!-- Import/Export Schemas  -->
-    <jaxb:bindings schemaLocation="../resources/xsd/io/common-io-types-4.0.xsd">
+    <jaxb:bindings schemaLocation="../resources/xsd/common-io-types-4.0.xsd">
         <jaxb:schemaBindings>
             <jaxb:package name="org.apereo.portal.io.xml" />
         </jaxb:schemaBindings>
     </jaxb:bindings>
-    <jaxb:bindings schemaLocation="../resources/xsd/io/portlet-definition/portlet-definition-4.3.xsd">
+    <jaxb:bindings schemaLocation="../resources/xsd/portlet-definition-4.3.xsd">
         <jaxb:bindings node="//xs:element[@name='portlet-definition']">
             <jaxb:class name="ExternalPortletDefinition"/>
         </jaxb:bindings>
@@ -37,7 +37,7 @@
             <jaxb:package name="org.apereo.portal.io.xml.portlet" />
         </jaxb:schemaBindings>
     </jaxb:bindings>
-    <jaxb:bindings schemaLocation="../resources/xsd/io/portlet-type/portlet-type-4.0.xsd">
+    <jaxb:bindings schemaLocation="../resources/xsd/portlet-type-4.0.xsd">
         <jaxb:bindings node="//xs:element[@name='portlet-type']">
             <jaxb:class name="ExternalPortletType"/>
         </jaxb:bindings>
@@ -45,7 +45,7 @@
             <jaxb:package name="org.apereo.portal.io.xml.portlettype" />
         </jaxb:schemaBindings>
     </jaxb:bindings>
-    <jaxb:bindings schemaLocation="../resources/xsd/io/stylesheet-descriptor/stylesheet-descriptor-4.0.xsd">
+    <jaxb:bindings schemaLocation="../resources/xsd/stylesheet-descriptor-4.0.xsd">
         <jaxb:bindings node="//xs:element[@name='stylesheet-descriptor']">
             <jaxb:class name="ExternalStylesheetDescriptor"/>
         </jaxb:bindings>
@@ -53,7 +53,7 @@
             <jaxb:package name="org.apereo.portal.io.xml.ssd" />
         </jaxb:schemaBindings>
     </jaxb:bindings>
-    <jaxb:bindings schemaLocation="../resources/xsd/io/user/user-4.0.xsd">
+    <jaxb:bindings schemaLocation="../resources/xsd/user-4.0.xsd">
         <jaxb:bindings node="//xs:element[@name='user']">
             <jaxb:class name="ExternalUser"/>
         </jaxb:bindings>
@@ -64,7 +64,7 @@
             <jaxb:package name="org.apereo.portal.io.xml.user" />
         </jaxb:schemaBindings>
     </jaxb:bindings>
-    <jaxb:bindings schemaLocation="../resources/xsd/io/permission-owner/permission-owner-4.0.xsd">
+    <jaxb:bindings schemaLocation="../resources/xsd/permission-owner-4.0.xsd">
         <jaxb:bindings node="//xs:element[@name='permission-owner']">
             <jaxb:class name="ExternalPermissionOwner"/>
         </jaxb:bindings>
@@ -72,7 +72,7 @@
             <jaxb:package name="org.apereo.portal.io.xml.permission" />
         </jaxb:schemaBindings>
     </jaxb:bindings>
-    <jaxb:bindings schemaLocation="../resources/xsd/io/event-aggregation/event-aggregation-4.0.xsd">
+    <jaxb:bindings schemaLocation="../resources/xsd/event-aggregation-4.0.xsd">
         <jaxb:bindings node="//xs:element[@name='event-aggregation']">
             <jaxb:class name="ExternalEventAggregationConfiguration"/>
         </jaxb:bindings>
@@ -80,7 +80,7 @@
             <jaxb:package name="org.apereo.portal.io.xml.eventaggr" />
         </jaxb:schemaBindings>
     </jaxb:bindings>
-    <jaxb:bindings schemaLocation="../resources/xsd/io/subscribed-fragment/subscribed-fragment-4.0.xsd">
+    <jaxb:bindings schemaLocation="../resources/xsd/subscribed-fragment-4.0.xsd">
         <jaxb:bindings node="//xs:element[@name='subscribed-fragments']">
             <jaxb:class name="ExternalSubscribedFragments"/>
         </jaxb:bindings>
@@ -88,8 +88,8 @@
             <jaxb:package name="org.apereo.portal.io.xml.subscribedfragment" />
         </jaxb:schemaBindings>
     </jaxb:bindings>
-    
-    <jaxb:bindings schemaLocation="../resources/xsd/portlet-publishing/portlet-publishing-definition-4.0.xsd">
+
+    <jaxb:bindings schemaLocation="../resources/xsd/portlet-publishing-definition-4.0.xsd">
         <jaxb:bindings node="//xs:element[@name='step']">
             <jaxb:property name="steps"/>
         </jaxb:bindings>

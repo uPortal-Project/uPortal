@@ -27,20 +27,20 @@
                         http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
                         http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
                         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
-    <!-- 
+    <!--
      | Event Aggregation Config Beans
      +-->
     <bean id="eventAggregationConfigurationPortalDataType" class="org.apereo.portal.io.xml.eventaggr.EventAggregationConfigurationPortalDataType" />
     <bean id="eventAggregationConfigurationImporterExporter" class="org.apereo.portal.io.xml.eventaggr.EventAggregationConfigurationImporterExporter">
         <property name="contextPath" value="org.apereo.portal.io.xml.eventaggr" />
-        <property name="schema" value="classpath:/xsd/io/event-aggregation/event-aggregation-4.0.xsd" />
+        <property name="schema" value="classpath:/xsd/event-aggregation-4.0.xsd" />
         <property name="schemaLocation" value="https://source.jasig.org/schemas/uportal/io/event-aggregation https://source.jasig.org/schemas/uportal/io/event-aggregation/event-aggregation-4.0.xsd" />
     </bean>
 
 
-    
-    
-    <!-- 
+
+
+    <!--
      |  Support Beans
      +-->
     <bean id="cachingResourceLoader" class="org.apereo.portal.spring.MockitoFactoryBean">
@@ -55,8 +55,6 @@
 
     <bean id="xmlUtilities" class="org.apereo.portal.xml.XmlUtilitiesImpl" />
     <bean id="xpathOperations" class="org.apereo.portal.xml.xpath.XPathPoolImpl" />
-    
+
     <import resource="classpath:/jpaAggrEventsTestContext.xml"/>
 </beans>
-
-
