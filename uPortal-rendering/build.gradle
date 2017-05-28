@@ -1,6 +1,8 @@
 description = "Apereo uPortal Rendering"
 
 dependencies {
+    compile project(':uPortal-api:uPortal-api-search')
+    compile project(':uPortal-marketplace')
     compile project(':uPortal-security:uPortal-security-core')
     compile project(':uPortal-url')
 
