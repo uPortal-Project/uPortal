@@ -14,10 +14,7 @@
  */
 package org.apereo.portal.api.portlet;
 
-/**
- * The resulting state of the delegation request
- *
- */
+/** The resulting state of the delegation request */
 public class DelegationResponse {
     private final DelegateState delegateState;
 

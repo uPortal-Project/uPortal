@@ -29,7 +29,6 @@ import org.apereo.portal.portlet.rendering.PortletResourceOutputHandler;
 /**
  * Used to dispatch requests to a delegate portlet window. Also provides information about the state
  * of the delegate portlet window.
- *
  */
 public interface PortletDelegationDispatcher {
     /**

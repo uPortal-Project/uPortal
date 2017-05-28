@@ -21,10 +21,7 @@ import javax.portlet.PortletMode;
 import javax.portlet.WindowState;
 import org.apereo.portal.url.ParameterMap;
 
-/**
- * The resulting state of the delegated action request
- *
- */
+/** The resulting state of the delegated action request */
 public class DelegationActionResponse extends DelegationResponse {
     private final String redirectLocation;
     private final String renderUrlParamName;

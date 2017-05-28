@@ -21,7 +21,6 @@ import org.apereo.portal.portlet.om.IPortletWindowId;
 /**
  * Creates {@link PortletDelegationDispatcher} instances that can be used to execute another portlet
  * as a child.
- *
  */
 public interface PortletDelegationLocator {
     /** The PortletDelegationLocator instance will be available in the request under this key */

@@ -21,10 +21,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
-/**
- * Set state and mode for the delegate portlet
- *
- */
+/** Set state and mode for the delegate portlet */
 public class DelegateState {
     private final PortletMode portletMode;
     private final WindowState windowState;
