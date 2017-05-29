@@ -16,6 +16,9 @@ dependencies {
     compile "org.apache.ant:ant:${antVersion}"
     compile "org.apache.commons:commons-lang3:${commonsLang3Version}"
     compile "org.aspectj:aspectjrt:${aspectjrtVersion}"
+    compile("org.codehaus.woodstox:woodstox-core-asl:${woodstoxVersion}") {
+        exclude group: 'javax.xml.stream', module: 'stax-api'
+    }
     compile "org.hibernate:hibernate-jpamodelgen:${hibernateJpamodelgenVersion}" // Required for javac -s
     compile("org.jasig.resourceserver:resource-server-api:${resourceServerVersion}") {
         exclude group: 'commons-logging', module: 'commons-logging'
@@ -24,6 +27,7 @@ dependencies {
         exclude group: 'commons-logging', module: 'commons-logging'
     }
     compile("org.jasig.service.persondir:person-directory-impl:${personDirectoryVersion}") {
+        exclude group: 'com.google.guava', module: 'guava'
         exclude group: 'org.springframework', module: 'spring-beans'
         exclude group: 'org.springframework', module: 'spring-context'
         exclude group: 'org.springframework', module: 'spring-core'

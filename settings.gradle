@@ -34,6 +34,7 @@ include 'uPortal-groups:uPortal-groups-smartldap'
 
 include 'uPortal-io:uPortal-io-core'
 include 'uPortal-io:uPortal-io-jaxb'
+include 'uPortal-io:uPortal-io-types'
 
 include 'uPortal-security:uPortal-security-core'
 include 'uPortal-security:uPortal-security-mvc'
