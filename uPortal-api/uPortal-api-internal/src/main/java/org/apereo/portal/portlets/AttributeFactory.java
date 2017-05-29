@@ -17,10 +17,7 @@ package org.apereo.portal.portlets;
 import java.io.Serializable;
 import org.apache.commons.collections.Factory;
 
-/**
- * commons-collections Factory that creates new {@link Attribute}s
- *
- */
+/** commons-collections Factory that creates new {@link Attribute}s */
 public class AttributeFactory implements Factory, Serializable {
     private static final long serialVersionUID = 1L;
 
