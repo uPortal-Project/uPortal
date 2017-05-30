@@ -1,0 +1,19 @@
+description = "Apereo uPortal Framework Portlets"
+
+dependencies {
+    compile project(':uPortal-io:uPortal-io-types')
+    compile project(':uPortal-tenants')
+    compile project(':uPortal-web')
+
+    compile("com.amazonaws:aws-java-sdk-s3:${awsVersion}") {
+        exclude group: 'commons-logging', module: 'commons-logging'
+    }
+    compile "javax.mail:mail:${javaxMailVersion}"
+    compile("net.sf.json-lib:json-lib-ext-spring:${jsonLibExtSpringVersion}") {
+        exclude group: 'javax.servlet', module: 'servlet-api'
+        exclude group: 'log4j', module: 'log4j'
+    }
+    compile "org.antlr:stringtemplate:${stringtemplateVersion}"
+    compile "org.lesscss:lesscss:${lesscssVersion}"
+    compile "org.springframework:spring-context-support:${springVersion}"
+}
