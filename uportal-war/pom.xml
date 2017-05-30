@@ -151,7 +151,12 @@
         </dependency>
         <dependency>
             <groupId>org.jasig.portal</groupId>
-            <artifactId>uPortal-layout</artifactId>
+            <artifactId>uPortal-layout-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jasig.portal</groupId>
+            <artifactId>uPortal-layout-impl</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

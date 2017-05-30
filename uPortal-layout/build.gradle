@@ -1,11 +1,10 @@
-description = "Apereo uPortal Layout"
-
-dependencies {
-    compile project(':uPortal-io:uPortal-io-core')
-    compile project(':uPortal-utils:uPortal-utils-core')
-
-    compile "com.google.guava:guava:${guavaVersion}"
-    compile("dom4j:dom4j:${dom4jVersion}"){
-        exclude group: 'xml-apis', module: 'xml-apis'
-    }
+/*
+ * Skip installing and uploading this level of the hierarchy;  it's merely a convenient grouping
+ * for submodules.
+ */
+install {
+    enabled = false
+}
+uploadArchives {
+    enabled = false
 }
