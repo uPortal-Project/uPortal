@@ -18,10 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apereo.portal.api.portlet.DelegationRequest;
 import org.apereo.portal.portlet.om.IPortletWindowId;
 
-/**
- * Provides some utility methods for dealing with delegate rendering of portlets
- *
- */
+/** Provides some utility methods for dealing with delegate rendering of portlets */
 public interface IPortletDelegationManager {
     /**
      * Set the {@link DelegationRequest} for the specified delegate portlet window.

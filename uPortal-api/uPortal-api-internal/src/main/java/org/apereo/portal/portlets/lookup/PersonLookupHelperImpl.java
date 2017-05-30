@@ -49,10 +49,7 @@ import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.webflow.context.ExternalContext;
 
-/**
- * Implements logic and helper methods for the person-lookup web flow.
- *
- */
+/** Implements logic and helper methods for the person-lookup web flow. */
 public class PersonLookupHelperImpl implements IPersonLookupHelper {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -292,7 +289,8 @@ public class PersonLookupHelperImpl implements IPersonLookupHelper {
         // For each person in the list, check to see if the current user has permission to view this user
         for (IPersonAttributes person : peopleList) {
             Callable<IPersonAttributes> worker =
-                    new FetchVisiblePersonCallable(principal, person, permittedAttributes, requestAttributes);
+                    new FetchVisiblePersonCallable(
+                            principal, person, permittedAttributes, requestAttributes);
             Future<IPersonAttributes> task = executor.submit(worker);
             futures.add(task);
         }
@@ -420,8 +418,8 @@ public class PersonLookupHelperImpl implements IPersonLookupHelper {
 
     /**
      * Filter the specified set of user attribute names to contain only those that the specified
-     * principal may perform <code>IPermission.VIEW_USER_ATTRIBUTE_ACTIVITY</code>.  These are
-     * user attributes the user has general permission to view, for all visible users.
+     * principal may perform <code>IPermission.VIEW_USER_ATTRIBUTE_ACTIVITY</code>. These are user
+     * attributes the user has general permission to view, for all visible users.
      *
      * @param principal
      * @param attributeNames
@@ -441,17 +439,18 @@ public class PersonLookupHelperImpl implements IPersonLookupHelper {
 
     /**
      * Provide a complete set of user attribute names that the specified principal may view within
-     * his or her own collection.  These will be attributes for which the user has <em>either</em>
-     * <code>IPermission.VIEW_USER_ATTRIBUTE_ACTIVITY</code> or
-     * <code>IPermission.VIEW_OWN_USER_ATTRIBUTE_ACTIVITY</code>.
+     * his or her own collection. These will be attributes for which the user has <em>either</em>
+     * <code>IPermission.VIEW_USER_ATTRIBUTE_ACTIVITY</code> or <code>
+     * IPermission.VIEW_OWN_USER_ATTRIBUTE_ACTIVITY</code>.
      *
      * @param principal Represents a portal user who wishes to view user attributes
      * @param generallyPermittedAttributes The collection of user attribute name this user may view
-     *                                     for any visible user
+     *     for any visible user
      * @since 5.0
      */
     protected Set<String> getPermittedOwnAttributes(
-            final IAuthorizationPrincipal principal, final Set<String> generallyPermittedAttributes) {
+            final IAuthorizationPrincipal principal,
+            final Set<String> generallyPermittedAttributes) {
 
         // The permttedOwnAttributes collection includes all the generallyPermittedAttributes
         final Set<String> rslt = new HashSet<>(generallyPermittedAttributes);
@@ -464,7 +463,6 @@ public class PersonLookupHelperImpl implements IPersonLookupHelper {
         }
 
         return rslt;
-
     }
 
     /**
@@ -496,9 +494,10 @@ public class PersonLookupHelperImpl implements IPersonLookupHelper {
             // to the specified permitted attributes;  the collection of permitted
             // attributes can be different based on whether the user is trying to
             // access information about him/herself.
-            final Set<String> permittedAttributes = person.getName().equals(principal.getKey())
-                    ? getPermittedOwnAttributes(principal, generallyPermittedAttributes)
-                    : generallyPermittedAttributes;
+            final Set<String> permittedAttributes =
+                    person.getName().equals(principal.getKey())
+                            ? getPermittedOwnAttributes(principal, generallyPermittedAttributes)
+                            : generallyPermittedAttributes;
             final Map<String, List<Object>> visibleAttributes = new HashMap<>();
             for (String attr : person.getAttributes().keySet()) {
                 if (permittedAttributes.contains(attr)) {

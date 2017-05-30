@@ -30,10 +30,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-/**
- * PrincipalsRESTController provides a REST endpoint for searching uPortal principals.
- *
- */
+/** PrincipalsRESTController provides a REST endpoint for searching uPortal principals. */
 @Controller
 public class PrincipalsRESTController {
 

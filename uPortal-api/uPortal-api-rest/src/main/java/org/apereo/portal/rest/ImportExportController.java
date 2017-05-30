@@ -50,10 +50,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-/**
- * ImportExportController provides AJAX/REST targets for import/export operations.
- *
- */
+/** ImportExportController provides AJAX/REST targets for import/export operations. */
 @Controller
 public class ImportExportController {
 

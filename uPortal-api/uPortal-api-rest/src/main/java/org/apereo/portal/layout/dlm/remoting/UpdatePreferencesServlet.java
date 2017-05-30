@@ -14,8 +14,6 @@
  */
 package org.apereo.portal.layout.dlm.remoting;
 
-import static org.apereo.portal.layout.node.IUserLayoutNodeDescription.LayoutNodeType.FOLDER;
-
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -90,10 +88,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-/**
- * Provides targets for AJAX preference setting calls.
- *
- */
+/** Provides targets for AJAX preference setting calls. */
 @Controller
 @RequestMapping("/layout")
 public class UpdatePreferencesServlet {
@@ -241,10 +236,10 @@ public class UpdatePreferencesServlet {
      */
     @RequestMapping(method = RequestMethod.POST, params = "action=removeByFName")
     public ModelAndView removeByFName(
-            HttpServletRequest request, 
+            HttpServletRequest request,
             HttpServletResponse response,
-            @RequestParam(value = "fname", required = true) String fname
-    ) throws IOException {
+            @RequestParam(value = "fname", required = true) String fname)
+            throws IOException {
 
         IUserInstance ui = userInstanceManager.getUserInstance(request);
         IPerson per = getPerson(ui, response);
@@ -253,7 +248,8 @@ public class UpdatePreferencesServlet {
         IUserLayoutManager ulm = upm.getUserLayoutManager();
 
         try {
-            String elementId = ulm.getUserLayout().findNodeId(new PortletSubscribeIdResolver(fname));
+            String elementId =
+                    ulm.getUserLayout().findNodeId(new PortletSubscribeIdResolver(fname));
             if (elementId != null
                     && elementId.startsWith(Constants.FRAGMENT_ID_USER_PREFIX)
                     && ulm.getNode(elementId)
@@ -292,7 +288,7 @@ public class UpdatePreferencesServlet {
             return handlePersistError(request, response, e);
         }
     }
-    
+
     /**
      * Subscribe a user to a pre-formatted tab (pulled DLM fragment).
      *
@@ -996,8 +992,7 @@ public class UpdatePreferencesServlet {
      * @throws PortalException
      */
     @RequestMapping(method = RequestMethod.POST, params = "action=chooseSkin")
-    public ModelAndView chooseSkin(
-            HttpServletRequest request, @RequestParam String skinName)
+    public ModelAndView chooseSkin(HttpServletRequest request, @RequestParam String skinName)
             throws IOException {
 
         this.stylesheetUserPreferencesService.setStylesheetParameter(

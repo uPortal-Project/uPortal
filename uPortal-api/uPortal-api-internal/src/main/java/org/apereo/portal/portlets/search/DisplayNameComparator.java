@@ -18,10 +18,7 @@ import java.io.Serializable;
 import java.util.Comparator;
 import org.jasig.services.persondir.IPersonAttributes;
 
-/**
- * DisplayNameComparator allows the sorting of people by display name.
- *
- */
+/** DisplayNameComparator allows the sorting of people by display name. */
 public class DisplayNameComparator implements Comparator<IPersonAttributes>, Serializable {
     private static final long serialVersionUID = 1L;
 

@@ -28,7 +28,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * complete page lifecycle -- event/resource/render phases plus rendering other portlets and
  * assembling a complete page. These tasks are wasteful for an ajax-based request, so action handler
  * that wish to avoid that waste may redirect to this endpoint.
- *
  */
 @Controller
 public class AjaxSuccessController {

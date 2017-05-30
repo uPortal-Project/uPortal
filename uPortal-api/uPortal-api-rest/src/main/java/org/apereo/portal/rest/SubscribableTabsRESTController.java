@@ -45,7 +45,6 @@ import org.springframework.web.servlet.support.RequestContextUtils;
 /**
  * Returns JSON representing the list of subscribable fragments for the currently-authenticated
  * user.
- *
  */
 @Controller
 public class SubscribableTabsRESTController {

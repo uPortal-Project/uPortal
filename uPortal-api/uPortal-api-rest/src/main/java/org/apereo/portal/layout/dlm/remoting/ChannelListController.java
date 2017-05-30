@@ -60,7 +60,6 @@ import org.springframework.web.servlet.ModelAndView;
  * and left out portlets with no categories but this change makes this API in sync with search and
  * the marketplace and uses the BROWSE permission properly without overloading the meaning of
  * categories).
- *
  */
 @Controller
 public class ChannelListController {

@@ -57,7 +57,6 @@ import org.w3c.dom.NodeList;
  *
  * Implementation note: currently the UI client for this JSON service, in fragment-audit.jsp, does
  * not implement support for user selection of sort order.
- *
  */
 @Controller
 @RequestMapping("/fragmentList")

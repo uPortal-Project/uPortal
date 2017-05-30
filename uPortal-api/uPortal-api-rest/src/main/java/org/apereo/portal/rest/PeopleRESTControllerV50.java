@@ -127,7 +127,5 @@ public final class PeopleRESTControllerV50 {
         }
 
         return new ModelAndView("json", person.getAttributes());
-
     }
-
 }

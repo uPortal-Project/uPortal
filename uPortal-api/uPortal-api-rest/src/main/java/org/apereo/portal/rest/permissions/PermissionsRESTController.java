@@ -52,10 +52,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-/**
- * PermissionsRESTController provides a REST endpoing for permission owners and activities.
- *
- */
+/** PermissionsRESTController provides a REST endpoing for permission owners and activities. */
 @Controller
 public class PermissionsRESTController {
 
