@@ -11,9 +11,9 @@ apply plugin: 'com.wiredforcode.spawn'
 
 //NOTE: The startHsql task can be executed after ant initportal because it uses hsqldb-2.3.2.jar in classpath, otherwise it will fail 
 task startHsql(type: SpawnProcessTask) {
-	def cmd = "java -cp ./uportal-war/target/uPortal/WEB-INF/lib/hsqldb-2.3.2.jar org.hsqldb.server.Server --database.0 file:./data/uPortal;hsqldb.tx=mvcc --dbname.0 uPortal --address localhost --port 8887"
-	command cmd
-	ready 'Started Application'
+    def cmd = "java -cp ./uportal-war/target/uPortal/WEB-INF/lib/hsqldb-2.3.2.jar org.hsqldb.server.Server --database.0 file:./data/uPortal;hsqldb.tx=mvcc --dbname.0 uPortal --address localhost --port 8887"
+    command cmd
+    ready 'Started Application'
 }
 task stopHsql(type: KillProcessTask)
 
@@ -30,16 +30,16 @@ repositories {
 def props = new Properties()
 
 task copySampleProperties(type: Copy) {
- printf "Configuring copying the build.properties.sample into build.properties"
- from '.'
+    printf "Configuring copying the build.properties.sample into build.properties"
+    from '.'
     into '.'
     include 'build.properties.sample'
     rename { String fileName ->
-    fileName.replace("build.properties.sample", "build.properties")
-  }
-  doLast {
-	  file("build.properties").withInputStream { props.load(it) }
-  }
+        fileName.replace("build.properties.sample", "build.properties")
+    }
+    doLast {
+        file("build.properties").withInputStream { props.load(it) }
+    }
 }
 
 buildscript {
