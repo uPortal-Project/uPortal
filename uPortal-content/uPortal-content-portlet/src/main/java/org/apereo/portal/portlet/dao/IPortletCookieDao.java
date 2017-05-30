@@ -29,20 +29,20 @@ public interface IPortletCookieDao {
      * @param maxAge The cookies maximum age in seconds
      * @return a brand new {@link IPortalCookie}
      */
-    public IPortalCookie createPortalCookie(int maxAge);
+    IPortalCookie createPortalCookie(int maxAge);
 
     /**
      * @param maxAge The cookies maximum age in seconds
      * @param portalCookie
      * @return
      */
-    public IPortalCookie updatePortalCookieExpiration(IPortalCookie portalCookie, int maxAge);
+    IPortalCookie updatePortalCookieExpiration(IPortalCookie portalCookie, int maxAge);
 
     /**
      * @param value
      * @return the matching {@link IPortalCookie} with the same value, or null if doesn't exist
      */
-    public IPortalCookie getPortalCookie(String value);
+    IPortalCookie getPortalCookie(String value);
 
     /**
      * Update the {@link IPortletCookie} in the specified {@link IPortalCookie}.
@@ -51,7 +51,7 @@ public interface IPortletCookieDao {
      * @param cookie
      * @return the updated {@link IPortalCookie}
      */
-    public IPortalCookie addOrUpdatePortletCookie(IPortalCookie portalCookie, Cookie cookie);
+    IPortalCookie addOrUpdatePortletCookie(IPortalCookie portalCookie, Cookie cookie);
 
     /**
      * Intended for periodic execution, this method will delete all {@link IPortalCookie}s and
@@ -59,5 +59,5 @@ public interface IPortletCookieDao {
      *
      * @param maxAge The max number of seconds the portal cookie should live for.
      */
-    public void purgeExpiredCookies(int maxAge);
+    void purgeExpiredCookies(int maxAge);
 }

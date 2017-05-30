@@ -3,5 +3,4 @@ description = "Apereo uPortal Portlet Support"
 dependencies {
     compile project(':uPortal-layout:uPortal-layout-core')
     compile project(':uPortal-rdbm')
-
 }

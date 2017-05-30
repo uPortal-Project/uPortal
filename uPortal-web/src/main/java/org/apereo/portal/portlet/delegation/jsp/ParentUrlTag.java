@@ -61,7 +61,7 @@ public class ParentUrlTag extends TagSupport implements ParameterizableTag {
     @Override
     public int doEndTag() throws JspException {
         final RenderPortletTag renderPortletTag =
-                (RenderPortletTag) findAncestorWithClass(this, RenderPortletTag.class);
+                (RenderPortletTag) TagSupport.findAncestorWithClass(this, RenderPortletTag.class);
 
         if (this.windowState != null) {
             final WindowState state = PortletUtils.getWindowState(this.windowState);

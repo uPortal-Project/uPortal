@@ -35,7 +35,7 @@ public class ParamTag extends TagSupport {
     @Override
     public int doStartTag() throws JspException {
         final ParameterizableTag parameterizableTag =
-                (ParameterizableTag) findAncestorWithClass(this, ParameterizableTag.class);
+                (ParameterizableTag) TagSupport.findAncestorWithClass(this, ParameterizableTag.class);
 
         if (parameterizableTag == null) {
             throw new JspException(

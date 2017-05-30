@@ -108,7 +108,7 @@ public class RenderPortletTag extends TagSupport {
 
     @Override
     public int doStartTag() throws JspException {
-        return EVAL_BODY_INCLUDE;
+        return Tag.EVAL_BODY_INCLUDE;
     }
 
     @Override

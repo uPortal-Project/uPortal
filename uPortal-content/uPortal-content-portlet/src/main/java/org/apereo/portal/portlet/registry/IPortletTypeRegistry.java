@@ -19,15 +19,15 @@ import org.apereo.portal.portlet.om.IPortletType;
 
 public interface IPortletTypeRegistry {
 
-    public IPortletType createPortletType(String name, String cpdUri);
+    IPortletType createPortletType(String name, String cpdUri);
 
-    public IPortletType getPortletType(int channelTypeId);
+    IPortletType getPortletType(int channelTypeId);
 
-    public IPortletType getPortletType(String name);
+    IPortletType getPortletType(String name);
 
-    public List<IPortletType> getPortletTypes();
+    List<IPortletType> getPortletTypes();
 
-    public IPortletType savePortletType(IPortletType chanType);
+    IPortletType savePortletType(IPortletType chanType);
 
-    public void deleteChannelType(IPortletType chanType);
+    void deleteChannelType(IPortletType chanType);
 }
