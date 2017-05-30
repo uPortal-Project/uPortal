@@ -19,7 +19,6 @@ dependencies {
     compile("org.codehaus.woodstox:woodstox-core-asl:${woodstoxVersion}") {
         exclude group: 'javax.xml.stream', module: 'stax-api'
     }
-    compile "org.hibernate:hibernate-jpamodelgen:${hibernateJpamodelgenVersion}" // Required for javac -s
     compile("org.jasig.resourceserver:resource-server-api:${resourceServerVersion}") {
         exclude group: 'commons-logging', module: 'commons-logging'
     }
@@ -82,7 +81,7 @@ dependencies {
     }
 
     provided "${portletApiDependency}"
-    provided "${servletApiDependency}"
+    provided "org.hibernate:hibernate-jpamodelgen:${hibernateJpamodelgenVersion}" // Required for javac -s
 }
 
 /*

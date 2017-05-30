@@ -15,7 +15,8 @@ dependencies {
     compile("org.apache.httpcomponents:httpclient:${httpclientVersion}") {
         exclude group: 'commons-logging', module: 'commons-logging'
     }
-    compile "org.hibernate:hibernate-jpamodelgen:${hibernateJpamodelgenVersion}" // Required for javac -s
+
+    provided "org.hibernate:hibernate-jpamodelgen:${hibernateJpamodelgenVersion}" // Required for javac -s
 }
 
 /*

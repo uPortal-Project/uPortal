@@ -10,12 +10,13 @@ dependencies {
         exclude group: 'commons-logging', module: 'commons-logging'
     }
     compile "commons-pool:commons-pool:${commonsPoolVersion}"
-    compile "javax.ccpp:ccpp:${ccppVersion}"
     compile("org.apache.portals.pluto:pluto-container:${plutoVersion}") {
         exclude group: 'javax.xml.bind', module: 'jaxb-api'
         exclude group: 'com.sun.xml.bind', module: 'jaxb-impl'
         exclude group: 'stax', module: 'stax'
     }
-    compile "org.apache.portals.pluto:pluto-container-driver-api:${plutoVersion}"
     compile "org.apache.portals.pluto:pluto-portal-driver:${plutoVersion}"
+
+    provided "javax.ccpp:ccpp:${ccppVersion}"
+    provided "org.apache.portals.pluto:pluto-container-driver-api:${plutoVersion}"
 }

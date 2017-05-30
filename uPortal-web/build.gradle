@@ -10,7 +10,7 @@ dependencies {
     compile("com.google.visualization:visualization-datasource:${googleVisualizationVersion}") {
         exclude group: 'commons-logging', module: 'commons-logging'
     }
-    compile "javax.servlet.jsp:jsp-api:${jspApiVersion}"
 
+    provided "javax.servlet.jsp:jsp-api:${jspApiVersion}"
     provided "org.apache.portals.pluto:pluto-taglib:${plutoVersion}"
 }
