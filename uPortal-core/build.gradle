@@ -3,10 +3,16 @@ description = "Apereo uPortal Core"
 dependencies {
     compile "com.googlecode.ehcache-spring-annotations:ehcache-spring-annotations:${ehcacheSpringAnnotationsVersion}"
     compile "commons-lang:commons-lang:${commonsLangVersion}"
+    compile "joda-time:joda-time:${jodaTimeVersion}"
     compile "org.apache.commons:commons-lang3:${commonsLang3Version}"
     compile "org.hibernate:hibernate-core:${hibernateVersion}"
     compile "org.jadira.usertype:usertype.spi:${usertypeVersion}"
     compile "org.slf4j:slf4j-api:${slf4jVersion}"
     compile "org.springframework:spring-context:${springVersion}"
     compile "org.springframework:spring-jdbc:${springVersion}"
+    compile "org.springframework.security:spring-security-core:${springSecurityVersion}"
+
+    provided "org.apache.portals.pluto:pluto-container-api:${plutoVersion}"
+    provided "${portletApiDependency}"
+    provided "${servletApiDependency}"
 }

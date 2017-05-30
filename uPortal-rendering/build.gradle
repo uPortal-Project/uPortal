@@ -1,0 +1,10 @@
+description = "Apereo uPortal Rendering"
+
+dependencies {
+    compile project(':uPortal-url')
+
+    compile "commons-pool:commons-pool:${commonsPoolVersion}"
+    compile("org.codehaus.woodstox:woodstox-core-asl:${woodstoxVersion}") {
+        exclude group: 'javax.xml.stream', module: 'stax-api'
+    }
+}

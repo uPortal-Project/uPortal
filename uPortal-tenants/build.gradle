@@ -1,0 +1,7 @@
+description = "Apereo uPortal Tenants"
+
+dependencies {
+    compile project(':uPortal-io')
+
+    // compile "org.hibernate:hibernate-jpamodelgen:${hibernateJpamodelgenVersion}" // Required for javac -s
+}
