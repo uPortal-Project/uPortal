@@ -1,8 +1,0 @@
-description = "Apereo uPortal Portlet Support"
-
-dependencies {
-    compile project(':uPortal-io')
-    compile project(':uPortal-utils')
-
-    provided "org.apache.portals.pluto:pluto-container-api:${plutoVersion}"
-}

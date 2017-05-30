@@ -1,0 +1,8 @@
+description = "Apereo uPortal Tenants"
+
+dependencies {
+    compile project(':uPortal-api:uPortal-api-internal')
+    compile project(':uPortal-io:uPortal-io-types')
+
+    compile "javax.mail:mail:${javaxMailVersion}"
+}

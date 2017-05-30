@@ -172,6 +172,13 @@ Misc Targets:
     via a stop build control in your IDE.
 
     Used in a local development environment.
+	
+	GRADLE VERSION IS AVAILABLE
+	To start the hsql server use:
+	gradle startHsql
+	
+	To stop the hsql:
+	gradle stopHsql
 
 Maven Build Options:
 -------------------

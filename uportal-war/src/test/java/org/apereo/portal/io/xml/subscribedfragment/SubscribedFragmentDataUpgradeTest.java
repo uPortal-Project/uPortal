@@ -29,6 +29,6 @@ public class SubscribedFragmentDataUpgradeTest extends BaseXsltDataUpgraderTest 
                         "/org/apereo/portal/io/xml/subscribed-fragment/test_3-2.subscribed-fragment.xml"),
                 new ClassPathResource(
                         "/org/apereo/portal/io/xml/subscribed-fragment/test_4-0.subscribed-fragment.xml"),
-                new ClassPathResource("/xsd/io/subscribed-fragment/subscribed-fragment-4.0.xsd"));
+                new ClassPathResource("/xsd/subscribed-fragment-4.0.xsd"));
     }
 }

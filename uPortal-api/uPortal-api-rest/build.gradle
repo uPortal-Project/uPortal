@@ -1,0 +1,13 @@
+description = "Apereo uPortal REST APIs"
+
+dependencies {
+    compile project(':uPortal-api:uPortal-api-platform-impl')
+    compile project(':uPortal-groups:uPortal-groups-pags')
+    compile project(':uPortal-layout:uPortal-layout-impl')
+    compile project(':uPortal-security:uPortal-security-permissions')
+
+    compile("commons-beanutils:commons-beanutils:${commonsBeanutilsVersion}") {
+        exclude group: 'commons-logging', module: 'commons-logging'
+    }
+    compile "org.json:json:${orgJsonVersion}"
+}
