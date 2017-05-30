@@ -30,7 +30,6 @@ import java.util.Map;
 import java.util.Set;
 import org.apereo.portal.EntityIdentifier;
 import org.apereo.portal.IUserIdentityStore;
-import org.apereo.portal.channel.IPortletPublishingService;
 import org.apereo.portal.groups.IEntity;
 import org.apereo.portal.groups.IEntityGroup;
 import org.apereo.portal.groups.IEntityNameFinder;

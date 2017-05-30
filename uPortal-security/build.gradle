@@ -2,7 +2,8 @@ description = "Apereo uPortal Security"
 
 dependencies {
     compile project(':uPortal-groups:uPortal-groups-core')
+    compile project(':uPortal-i18n')
     compile project(':uPortal-portlet')
 
-    // compile "com.google.guava:guava:${guavaVersion}"
+    compile "org.jasypt:jasypt:${jasyptVersion}"
 }

@@ -1,9 +1,20 @@
 description = "Apereo uPortal Soffit Renderer"
 
 dependencies {
-    compile project(':uPortal-soffit:uPortal-soffit-core')
+    compile(project(':uPortal-soffit:uPortal-soffit-core')) {
+        exclude group: 'org.springframework', module: 'spring-web'
+    }
 
-    compile "org.springframework:spring-webmvc:${springVersion}"
+    /*
+     * NOTE:  For the present, the Soffit Renderer module specifies it's own, different version of
+     * the Spring framework dependencies.  This arrangement is desirable because the version
+     * specified here is more recent.  This arrangement is possible because the Soffit Renderer
+     * code runs inside soffits, not inside uPortal itself.
+     *
+     * We are working to upgrade the rest of uPortal to Spring 4.  When that happens, this
+     * difference can & should be removed.
+     */
+    compile "org.springframework:spring-webmvc:4.3.1.RELEASE"
 
     testCompile "junit:junit:${junitVersion}"
     testCompile "org.mockito:mockito-core:${mockitoVersion}"

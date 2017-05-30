@@ -1,0 +1,16 @@
+description = "Apereo uPortal Spring Components"
+
+dependencies {
+    // compile project(':uPortal-io')
+
+    compile "commons-codec:commons-codec:${commonsCodecVersion}"
+    compile "commons-lang:commons-lang:${commonsLangVersion}"
+    compile "net.oauth.core:oauth:${oauthVersion}"
+    compile "org.jasypt:jasypt:${jasyptVersion}"
+    compile "org.slf4j:slf4j-api:${slf4jVersion}"
+    compile "org.springframework:spring-web:${springVersion}"
+    compile "org.springframework:spring-webmvc:${springVersion}"
+    compile "org.springframework:spring-webmvc-portlet:${springVersion}"
+
+    compile "${portletApiDependency}"
+}

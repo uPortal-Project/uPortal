@@ -56,6 +56,11 @@
         </dependency>
         <dependency>
             <groupId>org.jasig.portal</groupId>
+            <artifactId>uPortal-events</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jasig.portal</groupId>
             <artifactId>uPortal-groups-core</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -91,6 +96,16 @@
         </dependency>
         <dependency>
             <groupId>org.jasig.portal</groupId>
+            <artifactId>uPortal-hibernate</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jasig.portal</groupId>
+            <artifactId>uPortal-i18n</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jasig.portal</groupId>
             <artifactId>uPortal-io</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -101,7 +116,22 @@
         </dependency>
         <dependency>
             <groupId>org.jasig.portal</groupId>
+            <artifactId>uPortal-marketplace</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jasig.portal</groupId>
+            <artifactId>uPortal-persondir</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jasig.portal</groupId>
             <artifactId>uPortal-portlet</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jasig.portal</groupId>
+            <artifactId>uPortal-rendering</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -127,12 +157,32 @@
         </dependency>
         <dependency>
             <groupId>org.jasig.portal</groupId>
+            <artifactId>uPortal-spring</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jasig.portal</groupId>
+            <artifactId>uPortal-tenants</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jasig.portal</groupId>
+            <artifactId>uPortal-tools</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jasig.portal</groupId>
             <artifactId>uPortal-url</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.jasig.portal</groupId>
             <artifactId>uPortal-utils</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jasig.portal</groupId>
+            <artifactId>uPortal-web</artifactId>
             <version>${project.version}</version>
         </dependency>
 
@@ -226,11 +276,6 @@
         <dependency>
             <groupId>commons-fileupload</groupId>
             <artifactId>commons-fileupload</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>commons-httpclient</groupId>
-            <artifactId>commons-httpclient</artifactId>
         </dependency>
 
         <dependency>

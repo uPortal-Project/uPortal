@@ -1,0 +1,37 @@
+description = "Apereo uPortal Person Directory"
+
+ext {
+    // Solution for JPA Modelgen based on http://stackoverflow.com/a/23218255/1651116
+    generatedSourcesDir = file("${buildDir}/generated-sources/javac/main/java")
+}
+
+dependencies {
+    compile project(':uPortal-security')
+
+    compile "org.hibernate:hibernate-jpamodelgen:${hibernateJpamodelgenVersion}" // Required for javac -s
+}
+
+/*
+ * This section is the key to IDE integration.  IDE will look for source files in both...
+ *
+ *   - src/main/java
+ *   - build/generated-sources/javac/main/java
+ */
+sourceSets {
+    main {
+        java {
+            srcDir 'src/main/java'
+            srcDir generatedSourcesDir
+        }
+    }
+}
+
+// These are the only modifications to build process that are required.
+compileJava {
+    doFirst {
+        // Generated sources directory should be present & empty before compilation
+        generatedSourcesDir.deleteDir()
+        generatedSourcesDir.mkdirs()
+    }
+    options.compilerArgs += ['-s', generatedSourcesDir]
+}
