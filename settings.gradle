@@ -18,6 +18,7 @@ include 'uPortal-web'
 include 'uPortal-api:uPortal-api-internal'
 include 'uPortal-api:uPortal-api-platform'
 include 'uPortal-api:uPortal-api-platform-impl'
+include 'uPortal-api:uPortal-api-rest'
 include 'uPortal-api:uPortal-api-search'
 
 include 'uPortal-content:uPortal-content-portlet'

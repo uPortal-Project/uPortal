@@ -1515,7 +1515,7 @@ public class UpdatePreferencesServlet {
                 IUserLayoutNodeDescription nodeDescription = userLayout.getNodeDescription(nodeId);
                 IUserLayoutNodeDescription.LayoutNodeType nodeType = nodeDescription.getType();
 
-                if (FOLDER.equals(nodeType)
+                if (IUserLayoutNodeDescription.LayoutNodeType.FOLDER.equals(nodeType)
                         && nodeDescription instanceof IUserLayoutFolderDescription) {
                     IUserLayoutFolderDescription folderDescription =
                             (IUserLayoutFolderDescription) nodeDescription;

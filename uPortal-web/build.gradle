@@ -1,6 +1,8 @@
 description = "Apereo uPortal Web"
 
 dependencies {
+    compile project(':uPortal-api:uPortal-api-platform-impl')
+    compile project(':uPortal-events')
     compile project(':uPortal-rendering')
 
     compile("com.google.visualization:visualization-datasource:${googleVisualizationVersion}") {
