@@ -79,8 +79,8 @@ final class PortletFailureExecutionWorker implements IPortletFailureExecutionWor
     }
 
     @Override
-    public ExecutionType getExecutionType() {
-        return ExecutionType.FAILURE;
+    public IPortletExecutionContext.ExecutionType getExecutionType() {
+        return IPortletExecutionContext.ExecutionType.FAILURE;
     }
 
     @Override
