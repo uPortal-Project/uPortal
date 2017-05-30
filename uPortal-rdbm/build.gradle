@@ -1,7 +1,7 @@
 description = "Apereo uPortal RDBM"
 
 dependencies {
-    compile project(':uPortal-utils')
+    compile project(':uPortal-utils:uPortal-utils-core')
 
     compile "com.google.guava:guava:${guavaVersion}"
     compile "org.apache.commons:commons-math3:${commonsMath3Version}"

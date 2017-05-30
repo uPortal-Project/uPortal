@@ -27,7 +27,7 @@ public class UserDataUpgradeTest extends BaseXsltDataUpgraderTest {
                 new ClassPathResource("/org/apereo/portal/io/xml/user/test_2-6.user.xml"),
                 new ClassPathResource(
                         "/org/apereo/portal/io/xml/user/test_2-6_to_4-0_expected.user.xml"),
-                new ClassPathResource("/xsd/io/user/user-4.0.xsd"));
+                new ClassPathResource("/xsd/user-4.0.xsd"));
     }
 
     @Test
@@ -38,7 +38,7 @@ public class UserDataUpgradeTest extends BaseXsltDataUpgraderTest {
                 new ClassPathResource("/org/apereo/portal/io/xml/user/test_3-0.user.xml"),
                 new ClassPathResource(
                         "/org/apereo/portal/io/xml/user/test_3-0_to_4-0_expected.user.xml"),
-                new ClassPathResource("/xsd/io/user/user-4.0.xsd"));
+                new ClassPathResource("/xsd/user-4.0.xsd"));
     }
 
     @Test
@@ -49,6 +49,6 @@ public class UserDataUpgradeTest extends BaseXsltDataUpgraderTest {
                 new ClassPathResource("/org/apereo/portal/io/xml/user/test_3-2.user.xml"),
                 new ClassPathResource(
                         "/org/apereo/portal/io/xml/user/test_3-2_to_4-0_expected.user.xml"),
-                new ClassPathResource("/xsd/io/user/user-4.0.xsd"));
+                new ClassPathResource("/xsd/user-4.0.xsd"));
     }
 }

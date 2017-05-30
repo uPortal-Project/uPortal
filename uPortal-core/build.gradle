@@ -1,7 +1,9 @@
 description = "Apereo uPortal Core"
 
 dependencies {
-    compile "com.googlecode.ehcache-spring-annotations:ehcache-spring-annotations:${ehcacheSpringAnnotationsVersion}"
+    compile("com.googlecode.ehcache-spring-annotations:ehcache-spring-annotations:${ehcacheSpringAnnotationsVersion}") {
+        exclude group: 'com.google.guava', module: 'guava'
+    }
     compile "commons-lang:commons-lang:${commonsLangVersion}"
     compile "joda-time:joda-time:${jodaTimeVersion}"
     compile "org.apache.commons:commons-lang3:${commonsLang3Version}"

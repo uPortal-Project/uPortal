@@ -122,8 +122,6 @@
      +-->
     <property name="bootstrap.dir" value="${basedir}/bootstrap" />
 	<property name="uportal-db.dir" value="${basedir}/uportal-db" />
-    <property name="uportal-platform-api.dir" value="${basedir}/uportal-platform-api" />
-    <property name="uportal-search-api.dir" value="${basedir}/uportal-search-api" />
     <property name="uportal-war.dir" value="${basedir}/uportal-war" />
     <property name="uportal-portlets-overlay.dir" value="${basedir}/uportal-portlets-overlay" />
     <property name="uportal-ear.dir" value="${basedir}/uportal-ear" />
@@ -1470,58 +1468,6 @@ IMPORTANT: The '-Dpattern=' property is no longer a regular expression and is a 
     </macrodef>
 
     <!--
-     | The task ensures the uportal-search-api JAR exists and is up to date.
-     |
-     | The following are available in the search-api-sub-tasks element:
-     | properties from the uportal-parent-macro macrodef
-     | pom object   - uportal-search-api.pom                       - The Maven POM object for the uportal-search-api pom
-     | property     - uportal-search-api.artifact                  - The full path to the uportal-search-api WAR
-     | path         - uportal-search-api.classpath                 - The uportal-search-api classpath not including the uportal-search-api WAR
-     +-->
-    <macrodef name="uportal-search-api-macro">
-        <element name="search-api-sub-tasks" optional="false" implicit="true" />
-
-        <sequential>
-            <uportal-parent-macro>
-                <fileset id="uportal-parent.pom.fsid" file="${basedir}/pom.xml" />
-
-                <maven-artifact-macro project-name="uportal-search-api" project-path="${uportal-search-api.dir}" checkfilesid="uportal-parent.pom.fsid">
-                    <!--
-                     | Execute the search-api-sub-tasks
-                     +-->
-                    <search-api-sub-tasks />
-                </maven-artifact-macro>
-            </uportal-parent-macro>
-        </sequential>
-    </macrodef>
-
-    <!--
-     | The task ensures the uportal-platform-api JAR exists and is up to date.
-     |
-     | The following are available in the platform-api-sub-tasks element:
-     | properties from the uportal-parent-macro macrodef
-     | pom object   - uportal-platform-api.pom                       - The Maven POM object for the uportal-platform-api pom
-     | property     - uportal-platform-api.artifact                  - The full path to the uportal-platform-api WAR
-     | path         - uportal-platform-api.classpath                 - The uportal-platform-api classpath not including the uportal-platform-api WAR
-     +-->
-    <macrodef name="uportal-platform-api-macro">
-        <element name="platform-api-sub-tasks" optional="false" implicit="true" />
-
-        <sequential>
-            <uportal-parent-macro>
-                <fileset id="uportal-parent.pom.fsid" file="${basedir}/pom.xml" />
-
-                <maven-artifact-macro project-name="uportal-platform-api" project-path="${uportal-platform-api.dir}" checkfilesid="uportal-parent.pom.fsid">
-                    <!--
-                     | Execute the platform-api-sub-tasks
-                     +-->
-                    <platform-api-sub-tasks />
-                </maven-artifact-macro>
-            </uportal-parent-macro>
-        </sequential>
-    </macrodef>
-
-    <!--
      | The task ensures the uportal-db pom is installed into the local repository for dependency resolution.
      |
      | The following are available in the uportal-db-sub-tasks element:
@@ -1565,12 +1511,6 @@ IMPORTANT: The '-Dpattern=' property is no longer a regular expression and is a 
             <uportal-db-macro>
                 <fileset id="uportal-parent.pom.fsid" file="${basedir}/pom.xml" />
             </uportal-db-macro>
-            <uportal-platform-api-macro>
-                <fileset id="uportal-parent.pom.fsid" file="${basedir}/pom.xml" />
-            </uportal-platform-api-macro>
-            <uportal-search-api-macro>
-                <fileset id="uportal-parent.pom.fsid" file="${basedir}/pom.xml" />
-            </uportal-search-api-macro>
 
             <maven-artifact-macro project-name="uportal-war" project-path="${uportal-war.dir}" checkfilesid="uportal-parent.pom.fsid">
 

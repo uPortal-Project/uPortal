@@ -7,8 +7,8 @@ ext {
 
 dependencies {
     compile project(':uPortal-groups:uPortal-groups-core')
-    compile project(':uPortal-layout')
-    compile project(':uPortal-security')
+    compile project(':uPortal-layout:uPortal-layout-core')
+    compile project(':uPortal-security:uPortal-security-core')
     compile project(':uPortal-url')
 
     compile "com.fasterxml.jackson.core:jackson-annotations:${jacksonVersion}"

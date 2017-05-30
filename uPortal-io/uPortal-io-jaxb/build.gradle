@@ -1,0 +1,60 @@
+description = 'Apereo uPortal Import/Export JAXB Data Model'
+
+ext {
+    generatedSourcesDir = 'build/generated-sources/xjc'
+}
+
+buildscript {
+    repositories {
+        jcenter()
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'com.github.jacobono:gradle-jaxb-plugin:1.3.6'
+    }
+}
+
+// Solution for JAXB2 using https://github.com/jacobono/gradle-jaxb-plugin
+apply plugin: 'com.github.jacobono.jaxb'
+
+dependencies {
+    // All 6 of the following are for the 'com.github.jacobono.jaxb' plugin
+    jaxb 'com.sun.xml.bind:jaxb-xjc:2.2.7-b41'
+    jaxb 'com.sun.xml.bind:jaxb-impl:2.2.7-b41'
+    jaxb 'javax.xml.bind:jaxb-api:2.2.7'
+    jaxb 'org.jvnet.jaxb2_commons:jaxb2-basics-ant:0.6.5'
+    jaxb 'org.jvnet.jaxb2_commons:jaxb2-basics:0.6.4'
+    jaxb 'org.jvnet.jaxb2_commons:jaxb2-basics-annotate:0.6.4'
+}
+
+/*
+ * This section is the key to IDE integration.  IDE will look for source files in both...
+ *
+ *   - src/main/java
+ *   - build/generated-sources/xjc
+ */
+sourceSets {
+    main {
+        java {
+            // srcDir 'src/main/java'
+            srcDir generatedSourcesDir
+        }
+    }
+}
+
+jaxb {
+    // Without the 'accessExternalSchema' setting, this module will not build on Java 8
+    System.setProperty('javax.xml.accessExternalSchema', 'all')
+    xsdDir = "${project.parent.name}/${project.name}/src/main/resources/xsd"
+    bindingsDir = "${project.parent.name}/${project.name}/src/main/binding"
+    bindings = ['bindings.xjb']
+    // Not sure of the role of episodes, but it's better to specify a location within build/
+    episodesDir = "${project.parent.name}/${project.name}/build/schema/episodes"
+    xjc {
+        taskClassname = 'org.jvnet.jaxb2_commons.xjc.XJC2Task'
+        destinationDir = "${generatedSourcesDir}"
+    }
+}
+
+compileJava.dependsOn(xjc)

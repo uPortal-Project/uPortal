@@ -1,0 +1,107 @@
+<jaxb:bindings
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+    xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/jaxb http://java.sun.com/xml/ns/jaxb/bindingschema_2_0.xsd"
+    jaxb:version="2.1"
+>
+
+    <jaxb:bindings>
+        <jaxb:globalBindings fixedAttributeAsConstantProperty="true" enableFailFastCheck="true"  >
+            <xjc:simple />
+            <jaxb:serializable/>
+            <jaxb:javaType name="java.util.Calendar" xmlType="xs:dateTime" parseMethod="javax.xml.bind.DatatypeConverter.parseDateTime" printMethod="javax.xml.bind.DatatypeConverter.printDateTime" />
+            <jaxb:javaType name="java.util.Calendar" xmlType="xs:date" parseMethod="javax.xml.bind.DatatypeConverter.parseDate" printMethod="javax.xml.bind.DatatypeConverter.printDate" />
+        </jaxb:globalBindings>
+    </jaxb:bindings>
+    
+    <!-- Generic uPortal Schemas -->
+    <jaxb:bindings schemaLocation="../resources/xsd/common-types-4.0.xsd">
+        <jaxb:schemaBindings>
+            <jaxb:package name="org.apereo.portal.xml" />
+        </jaxb:schemaBindings>
+    </jaxb:bindings>
+      
+    <!-- Import/Export Schemas  -->
+    <jaxb:bindings schemaLocation="../resources/xsd/common-io-types-4.0.xsd">
+        <jaxb:schemaBindings>
+            <jaxb:package name="org.apereo.portal.io.xml" />
+        </jaxb:schemaBindings>
+    </jaxb:bindings>
+    <jaxb:bindings schemaLocation="../resources/xsd/portlet-definition-4.3.xsd">
+        <jaxb:bindings node="//xs:element[@name='portlet-definition']">
+            <jaxb:class name="ExternalPortletDefinition"/>
+        </jaxb:bindings>
+        <jaxb:schemaBindings>
+            <jaxb:package name="org.apereo.portal.io.xml.portlet" />
+        </jaxb:schemaBindings>
+    </jaxb:bindings>
+    <jaxb:bindings schemaLocation="../resources/xsd/portlet-type-4.0.xsd">
+        <jaxb:bindings node="//xs:element[@name='portlet-type']">
+            <jaxb:class name="ExternalPortletType"/>
+        </jaxb:bindings>
+        <jaxb:schemaBindings>
+            <jaxb:package name="org.apereo.portal.io.xml.portlettype" />
+        </jaxb:schemaBindings>
+    </jaxb:bindings>
+    <jaxb:bindings schemaLocation="../resources/xsd/stylesheet-descriptor-4.0.xsd">
+        <jaxb:bindings node="//xs:element[@name='stylesheet-descriptor']">
+            <jaxb:class name="ExternalStylesheetDescriptor"/>
+        </jaxb:bindings>
+        <jaxb:schemaBindings>
+            <jaxb:package name="org.apereo.portal.io.xml.ssd" />
+        </jaxb:schemaBindings>
+    </jaxb:bindings>
+    <jaxb:bindings schemaLocation="../resources/xsd/user-4.0.xsd">
+        <jaxb:bindings node="//xs:element[@name='user']">
+            <jaxb:class name="ExternalUser"/>
+        </jaxb:bindings>
+        <jaxb:bindings node="//xs:element[@name='template-user']">
+            <jaxb:class name="ExternalTemplateUser"/>
+        </jaxb:bindings>
+        <jaxb:schemaBindings>
+            <jaxb:package name="org.apereo.portal.io.xml.user" />
+        </jaxb:schemaBindings>
+    </jaxb:bindings>
+    <jaxb:bindings schemaLocation="../resources/xsd/permission-owner-4.0.xsd">
+        <jaxb:bindings node="//xs:element[@name='permission-owner']">
+            <jaxb:class name="ExternalPermissionOwner"/>
+        </jaxb:bindings>
+        <jaxb:schemaBindings>
+            <jaxb:package name="org.apereo.portal.io.xml.permission" />
+        </jaxb:schemaBindings>
+    </jaxb:bindings>
+    <jaxb:bindings schemaLocation="../resources/xsd/event-aggregation-4.0.xsd">
+        <jaxb:bindings node="//xs:element[@name='event-aggregation']">
+            <jaxb:class name="ExternalEventAggregationConfiguration"/>
+        </jaxb:bindings>
+        <jaxb:schemaBindings>
+            <jaxb:package name="org.apereo.portal.io.xml.eventaggr" />
+        </jaxb:schemaBindings>
+    </jaxb:bindings>
+    <jaxb:bindings schemaLocation="../resources/xsd/subscribed-fragment-4.0.xsd">
+        <jaxb:bindings node="//xs:element[@name='subscribed-fragments']">
+            <jaxb:class name="ExternalSubscribedFragments"/>
+        </jaxb:bindings>
+        <jaxb:schemaBindings>
+            <jaxb:package name="org.apereo.portal.io.xml.subscribedfragment" />
+        </jaxb:schemaBindings>
+    </jaxb:bindings>
+
+    <jaxb:bindings schemaLocation="../resources/xsd/portlet-publishing-definition-4.0.xsd">
+        <jaxb:bindings node="//xs:element[@name='step']">
+            <jaxb:property name="steps"/>
+        </jaxb:bindings>
+        <jaxb:bindings node="//xs:element[@name='parameter']">
+            <jaxb:property name="parameters"/>
+        </jaxb:bindings>
+        <jaxb:bindings node="//xs:element[@name='preference']">
+            <jaxb:property name="preferences"/>
+        </jaxb:bindings>
+        <jaxb:schemaBindings>
+            <jaxb:package name="org.apereo.portal.portletpublishing.xml" />
+        </jaxb:schemaBindings>
+    </jaxb:bindings>
+
+</jaxb:bindings>

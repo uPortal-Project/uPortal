@@ -1,11 +1,15 @@
 description = "Apereo uPortal Spring Components"
 
 dependencies {
-    // compile project(':uPortal-io')
+    compile project(':uPortal-api:uPortal-api-internal')
+    compile project(':uPortal-security:uPortal-security-core')
+    compile project(':uPortal-security:uPortal-security-mvc')
+    compile project(':uPortal-tools')
 
     compile "commons-codec:commons-codec:${commonsCodecVersion}"
     compile "commons-lang:commons-lang:${commonsLangVersion}"
     compile "net.oauth.core:oauth:${oauthVersion}"
+    compile "org.aspectj:aspectjrt:${aspectjrtVersion}"
     compile "org.jasypt:jasypt:${jasyptVersion}"
     compile "org.slf4j:slf4j-api:${slf4jVersion}"
     compile "org.springframework:spring-web:${springVersion}"
