@@ -38,6 +38,7 @@ include 'uPortal-io:uPortal-io-types'
 include 'uPortal-layout:uPortal-layout-core'
 include 'uPortal-layout:uPortal-layout-impl'
 
+include 'uPortal-security:uPortal-security-authn'
 include 'uPortal-security:uPortal-security-core'
 include 'uPortal-security:uPortal-security-mvc'
 include 'uPortal-security:uPortal-security-permissions'

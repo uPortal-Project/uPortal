@@ -5,4 +5,5 @@ dependencies {
     compile project(':uPortal-content:uPortal-content-publishing')
     compile project(':uPortal-io:uPortal-io-jaxb')
     compile project(':uPortal-security:uPortal-security-core')
+    compile project(':uPortal-spring')
 }

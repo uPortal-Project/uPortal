@@ -181,6 +181,11 @@
         </dependency>
         <dependency>
             <groupId>org.jasig.portal</groupId>
+            <artifactId>uPortal-security-authn</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jasig.portal</groupId>
             <artifactId>uPortal-security-core</artifactId>
             <version>${project.version}</version>
         </dependency>
