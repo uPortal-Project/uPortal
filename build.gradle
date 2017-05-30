@@ -8,7 +8,7 @@ apply plugin: 'com.gradle.build-scan'
 apply plugin: 'com.moowork.node'
 apply plugin: 'com.wiredforcode.spawn'
 
-//NOTE: The startHsql task can be executed after ant initportal because it uses hsqldb-2.3.2.jar in classpath, otherwise it will fail 
+//NOTE: The startHsql task can be executed after ant initportal because it uses hsqldb-2.3.2.jar in classpath, otherwise it will fail
 task startHsql(type: SpawnProcessTask) {
 	def cmd = "java -cp ./uportal-war/target/uPortal/WEB-INF/lib/hsqldb-2.3.2.jar org.hsqldb.server.Server --database.0 file:./data/uPortal;hsqldb.tx=mvcc --dbname.0 uPortal --address localhost --port 8887"
 	command cmd
@@ -44,7 +44,7 @@ buildscript {
 
 node {
     // Version of node to use.
-    version = '6.9.1'
+    version = '8.0.0'
 
     // If true, it will download node using above parameters.
     // If false, it will try to use globally installed node.

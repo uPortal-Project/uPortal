@@ -12,7 +12,9 @@ build_script:
 test_script:
   - mvn clean test
   - gradlew.bat -u -i -S check
-  - gradlew.bat -u -i -S npm_test
+  - gradlew.bat -u -i -S npm_run_lint-js
+  - gradlew.bat -u -i -S npm_run_lint-less
+  - gradlew.bat -u -i -S npm_run_lint-md
 cache:
   - .gradle
   - C:\Users\appveyor\.gradle
