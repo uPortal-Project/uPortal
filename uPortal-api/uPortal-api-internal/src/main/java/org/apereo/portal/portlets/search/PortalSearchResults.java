@@ -29,10 +29,7 @@ import java.util.concurrent.ConcurrentMap;
 import org.apereo.portal.search.SearchResult;
 import org.apereo.portal.utils.Tuple;
 
-/**
- * Used to collate search results for the SearchPortletController.
- *
- */
+/** Used to collate search results for the SearchPortletController. */
 public class PortalSearchResults implements Serializable {
     private static final long serialVersionUID = 1L;
 
