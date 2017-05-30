@@ -33,15 +33,21 @@ repositories {
 def props = new Properties()
 
 task copySampleProperties(type: Copy) {
-    printf "Configuring copying the build.properties.sample into build.properties"
-    from '.'
-    into '.'
-    include 'build.properties.sample'
-    rename { String fileName ->
-        fileName.replace("build.properties.sample", "build.properties")
+    println "Configuring copying the build.properties.sample into build.properties"
+    def sampleBuildFile = 'build.properties.sample'
+    if(new File(sampleBuildFile).exists()) { 
+        from '.'
+        into '.'
+        include sampleBuildFile
+        rename { String fileName ->
+            fileName.replace(sampleBuildFile, "build.properties")
+        }
+        doLast {
+            file("build.properties").withInputStream { props.load(it) }
+        }
     }
-    doLast {
-        file("build.properties").withInputStream { props.load(it) }
+    else {
+    println("ERROR:${sampleBuildFile} does not exist") 
     }
 }
 
