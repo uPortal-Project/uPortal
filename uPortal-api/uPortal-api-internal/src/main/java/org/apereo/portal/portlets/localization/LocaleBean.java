@@ -20,7 +20,6 @@ import java.util.Locale;
 /**
  * LocaleBean wraps a java.util.Locale instance and provides simple getters for the display
  * properties.
- *
  */
 public class LocaleBean implements Serializable {
 

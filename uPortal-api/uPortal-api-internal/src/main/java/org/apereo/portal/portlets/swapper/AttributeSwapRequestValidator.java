@@ -24,10 +24,7 @@ import org.springframework.webflow.context.ExternalContext;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.RequestContextHolder;
 
-/**
- * Validator for {@link PersonQuery}
- *
- */
+/** Validator for {@link PersonQuery} */
 public class AttributeSwapRequestValidator {
     private IAttributeSwapperHelper attributeSwapperHelper;
 

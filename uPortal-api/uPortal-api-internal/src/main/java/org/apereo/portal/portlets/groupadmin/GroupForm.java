@@ -19,10 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.apereo.portal.layout.dlm.remoting.JsonEntityBean;
 
-/**
- * GroupForm represents a uPortal group instance during group editing.
- *
- */
+/** GroupForm represents a uPortal group instance during group editing. */
 public class GroupForm implements Serializable {
 
     private static final long serialVersionUID = 1L;

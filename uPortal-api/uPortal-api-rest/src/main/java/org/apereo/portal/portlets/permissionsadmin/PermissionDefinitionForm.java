@@ -24,7 +24,6 @@ import org.apereo.portal.permission.target.IPermissionTarget;
 /**
  * PermissionDefinitionForm represents important editing information for editing a set of permission
  * activities on a specific target.
- *
  */
 public class PermissionDefinitionForm implements Serializable {
 

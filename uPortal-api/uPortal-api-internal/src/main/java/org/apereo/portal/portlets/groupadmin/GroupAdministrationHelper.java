@@ -35,7 +35,6 @@ import org.springframework.stereotype.Service;
  * GroupAdministrationHelper provides helper groups for the groups administration webflows. These
  * methods include convenience methods for populating and editing form objects, as well as saving
  * information supplied to a group form.
- *
  */
 @Service
 public class GroupAdministrationHelper {

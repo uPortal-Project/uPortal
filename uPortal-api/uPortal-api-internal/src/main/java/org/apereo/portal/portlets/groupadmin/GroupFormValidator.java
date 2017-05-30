@@ -18,10 +18,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
 
-/**
- * GroupFormValidator validates GroupForm objects in the group editing Spring Web Flow.
- *
- */
+/** GroupFormValidator validates GroupForm objects in the group editing Spring Web Flow. */
 public class GroupFormValidator {
 
     /**

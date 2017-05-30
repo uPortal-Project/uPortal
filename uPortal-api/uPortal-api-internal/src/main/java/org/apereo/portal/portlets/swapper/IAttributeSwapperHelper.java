@@ -18,10 +18,7 @@ import java.util.Set;
 import org.jasig.services.persondir.IPersonAttributes;
 import org.springframework.webflow.context.ExternalContext;
 
-/**
- * Defines helper methods for the attribute-swapper flow.
- *
- */
+/** Defines helper methods for the attribute-swapper flow. */
 public interface IAttributeSwapperHelper {
     /**
      * Portlet preference name to use to specify a List of attributes that will be displayed for the

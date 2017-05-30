@@ -21,7 +21,6 @@ import org.springframework.stereotype.Component;
 /**
  * This class validates {@link PermissionDefinitionForm} objects through the magic of Webflow:
  * http://docs.spring.io/spring-webflow/docs/current/reference/html/views.html#view-validation-programmatic-validator
- *
  */
 @Component
 public class PermissionDefinitionFormValidator {

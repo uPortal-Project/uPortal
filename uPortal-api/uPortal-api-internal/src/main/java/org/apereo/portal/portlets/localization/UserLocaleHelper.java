@@ -32,10 +32,7 @@ import org.apereo.portal.user.IUserInstanceManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-/**
- * UserLocaleHelper contains helper methods for the user locales webflow.
- *
- */
+/** UserLocaleHelper contains helper methods for the user locales webflow. */
 @Service
 public class UserLocaleHelper {
 

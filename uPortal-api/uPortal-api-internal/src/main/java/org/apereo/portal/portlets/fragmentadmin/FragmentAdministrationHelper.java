@@ -25,9 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.webflow.execution.RequestContext;
 
-/**
- * Helper class for the FragmentAdministration web flow.
- */
+/** Helper class for the FragmentAdministration web flow. */
 @Service("fragmentAdministrationHelper")
 public class FragmentAdministrationHelper {
 

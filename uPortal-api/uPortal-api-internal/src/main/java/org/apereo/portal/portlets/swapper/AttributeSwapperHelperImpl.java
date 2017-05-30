@@ -42,8 +42,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.webflow.context.ExternalContext;
 
-/**
- */
+/** */
 public class AttributeSwapperHelperImpl implements IAttributeSwapperHelper {
     private static final String OVERRIDDEN_ATTRIBUTES =
             AttributeSwapperHelperImpl.class.getName() + ".OVERRIDDEN_ATTRIBUTES";

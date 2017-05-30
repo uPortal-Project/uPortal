@@ -33,7 +33,6 @@ import org.springframework.beans.factory.annotation.Required;
 /**
  * Provides for overriding certain attributes for certain users. By default uses a concurrent hash
  * map to store the attributes
- *
  */
 public class OverwritingPersonAttributeDao extends AbstractFlatteningPersonAttributeDao {
     private final IAttributeMerger attributeMerger = new ReplacingAttributeAdder();
