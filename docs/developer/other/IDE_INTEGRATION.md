@@ -1,5 +1,8 @@
 # IDE Integration
 
+These scripts automatically generate project configuration for the Intellij and Eclipse editors.
+Using these scripts removes the need to run custom import and configuration to integrate uPortal with the Integrated Development Environment (IDE).
+
 ## Intellij
 
 1. Open a terminal
