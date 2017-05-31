@@ -7,4 +7,7 @@ dependencies {
     compile project(':uPortal-persondir')
     compile project(':uPortal-rendering')
     compile project(':uPortal-security:uPortal-security-services')
+
+    compileOnly "${portletApiDependency}"
+    compileOnly "${servletApiDependency}"
 }

@@ -16,4 +16,9 @@ dependencies {
     compile "org.antlr:stringtemplate:${stringtemplateVersion}"
     compile "org.lesscss:lesscss:${lesscssVersion}"
     compile "org.springframework:spring-context-support:${springVersion}"
+
+    compileOnly "org.apache.portals.pluto:pluto-container-api:${plutoVersion}"
+    compileOnly "org.apache.portals.pluto:pluto-container-driver-api:${plutoVersion}"
+    compileOnly "${portletApiDependency}"
+    compileOnly "${servletApiDependency}"
 }

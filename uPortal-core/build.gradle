@@ -18,7 +18,7 @@ dependencies {
     compile "org.springframework:spring-jdbc:${springVersion}"
     compile "org.springframework.security:spring-security-core:${springSecurityVersion}"
 
-    provided "org.apache.portals.pluto:pluto-container-api:${plutoVersion}"
-    provided "${portletApiDependency}"
-    provided "${servletApiDependency}"
+    compileOnly "org.apache.portals.pluto:pluto-container-api:${plutoVersion}"
+    compileOnly "${portletApiDependency}"
+    compileOnly "${servletApiDependency}"
 }

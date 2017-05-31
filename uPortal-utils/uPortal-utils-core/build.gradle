@@ -82,8 +82,10 @@ dependencies {
 
     testCompile project(':uPortal-events')
 
-    provided "${portletApiDependency}"
-    provided "org.hibernate:hibernate-jpamodelgen:${hibernateJpamodelgenVersion}" // Required for javac -s
+    compileOnly "org.apache.portals.pluto:pluto-container-api:${plutoVersion}"
+    compileOnly "org.hibernate:hibernate-jpamodelgen:${hibernateJpamodelgenVersion}" // Required for javac -s
+    compileOnly "${portletApiDependency}"
+    compileOnly "${servletApiDependency}"
 }
 
 /*
@@ -110,6 +112,3 @@ compileJava {
     }
     options.compilerArgs += ['-s', generatedSourcesDir]
 }
-
-// Run unit tests whenever we call assemble
-build.dependsOn test

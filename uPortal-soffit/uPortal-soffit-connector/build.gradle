@@ -11,5 +11,7 @@ dependencies {
     compile "org.apache.httpcomponents:httpclient:${httpclientVersion}"
     compile "org.springframework:spring-webmvc-portlet:${springVersion}"
 
-    provided "${portletApiDependency}"
+    compileOnly "org.apache.portals.pluto:pluto-container-api:${plutoVersion}"
+    compileOnly "${portletApiDependency}"
+    compileOnly "${servletApiDependency}"
 }

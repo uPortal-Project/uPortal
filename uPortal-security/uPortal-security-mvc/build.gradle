@@ -3,4 +3,6 @@ description = "Apereo uPortal Security MVC"
 dependencies {
     compile project(':uPortal-core')
     compile project(':uPortal-events')
+
+    compileOnly "${servletApiDependency}"
 }

@@ -18,6 +18,7 @@ dependencies {
     compile project(':uPortal-utils:uPortal-utils-jmx')
 
     runtime "ch.qos.logback:logback-classic:${logbackVersion}"
+    runtime "joda-time:joda-time-jsptags:${jodaTimeJsptagsVersion}"
     runtime "org.aspectj:aspectjweaver:${aspectjVersion}"
     runtime "org.hibernate:hibernate-entitymanager:${hibernateVersion}"
     runtime("org.jasig.cas.client:cas-client-support-distributed-ehcache:${casClientVersion}") {

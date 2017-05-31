@@ -6,4 +6,7 @@ dependencies {
     compile project(':uPortal-i18n')
 
     compile "org.jasypt:jasypt:${jasyptVersion}"
+
+    compileOnly "${portletApiDependency}"
+    compileOnly "${servletApiDependency}"
 }

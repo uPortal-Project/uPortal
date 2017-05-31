@@ -15,5 +15,6 @@ dependencies {
     compile "org.springframework:spring-webmvc:${springVersion}"
     compile "org.springframework:spring-webmvc-portlet:${springVersion}"
 
-    provided "${portletApiDependency}"
+    compileOnly "${portletApiDependency}"
+    compileOnly "${servletApiDependency}"
 }
