@@ -80,6 +80,8 @@ dependencies {
         exclude group: 'ehcache', module: 'ehcache'
     }
 
+    testCompile project(':uPortal-events')
+
     provided "${portletApiDependency}"
     provided "org.hibernate:hibernate-jpamodelgen:${hibernateJpamodelgenVersion}" // Required for javac -s
 }
@@ -109,3 +111,5 @@ compileJava {
     options.compilerArgs += ['-s', generatedSourcesDir]
 }
 
+// Run unit tests whenever we call assemble
+build.dependsOn test

@@ -71,6 +71,15 @@ subprojects {
         mavenCentral()
     }
 
+    dependencies {
+        testCompile "junit:junit:${junitVersion}"
+        testCompile "org.easymock:easymock:${easymockVersion}"
+        testCompile "org.hamcrest:hamcrest-all:${hamcrestVersion}"
+        testCompile "org.mockito:mockito-core:${mockitoVersion}"
+        testCompile "org.springframework:spring-test:${springVersion}"
+        testCompile "xmlunit:xmlunit:${xmlunitVersion}"
+    }
+
     findbugs {
         toolVersion = '3.0.1'
         ignoreFailures = true
