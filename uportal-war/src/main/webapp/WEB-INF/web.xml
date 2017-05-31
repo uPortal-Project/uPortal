@@ -98,7 +98,7 @@
         </init-param>
         <init-param>
             <param-name>proxyCallbackUrl</param-name>
-            <param-value>${environment.build.uportal.protocol}://${environment.build.uportal.server}${environment.build.uportal.context}/CasProxyServlet</param-value>
+            <param-value>${environment.build.uportal.protocol}://${environment.build.real.uportal.server}${environment.build.real.uportal.context}/CasProxyServlet</param-value>
         </init-param>
         <init-param>
             <param-name>proxyReceptorUrl</param-name>
