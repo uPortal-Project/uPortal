@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to Apereo under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Apereo licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow
+    http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+    <!--
+     | Portlet input
+     |
+     | The portlet object should be an instance of PortletDefinitionForm that
+     | represents either a new or existing portlet definition.  This object
+     | may not be null.
+     +-->
+    <input name="portlet"/>
+
+    <!-- Initialize a list of available portlet types -->
+    <on-start>
+        <set name="flashScope.servletRequest"
+                value="portalRequestUtils.getPortletHttpRequest(externalContext.getNativeRequest())"/>
+        <set name="flowScope.person"
+                value="personManager.getPerson(servletRequest)"/>
+        <set name="flowScope.portletTypes"
+                value="portletAdministrationHelper.getAllowableChannelPublishingDefinitions(person)"/>
+        <!-- track if in the new portlet workflow.  Note: flowScope.completed changes state after save.  This doesn't -->
+        <set name="flowScope.isNew" value="portlet.isNew()"/>
+        <set name="flowScope.completed" value="!portlet.isNew()"/>
+    </on-start>
+
+    <!-- If we're creating a new portlet, display the first step in the workflow.
+        Otherwise, display the portlet summary view. -->
+    <decision-state id="isPortletNew">
+        <if test="completed" then="portletConfig" else="isOnlyOnePortletTypeAvailable"/>
+    </decision-state>
+
+    <decision-state id="isOnlyOnePortletTypeAvailable">
+        <if test="portletTypes.size() == 1" then="chooseDefaultPortlet" else="chooseType" />
+    </decision-state>
+
+    <!-- if there is only one available portlet type, select it, then move to the next step automatically -->
+    <action-state id="chooseDefaultPortlet">
+        <evaluate expression="portletAdministrationHelper.updateFormForSinglePortletType(portletTypes, portlet)"
+        	result="flowScope.cpd" />
+        <transition to="afterChooseType"/>
+    </action-state>
+
+    <!-- PORTLET TYPE view -->
+    <view-state id="chooseType" model="portlet">
+        <transition on="next" to="afterChooseType">
+            <!-- Set default parameters based on portlet type -->
+            <set name="flowScope.cpd"
+                value="channelPublishingDefinitionDao.getChannelPublishingDefinition(portlet.typeId)"/>
+            <evaluate expression="portlet.setChannelPublishingDefinition(cpd)"/>
+        </transition>
+    </view-state>
+
+    <decision-state id="afterChooseType">
+        <if test="portletAdministrationHelper.offerPortletSelection(portlet)"
+            then="choosePortlet" else="prepNewModel"/>
+    </decision-state>
+
+    <view-state id="choosePortlet">
+        <on-render>
+            <set name="flashScope.contexts" value="portletAdministrationHelper.getPortletApplications()"/>
+        </on-render>
+        <transition on="next" to="prepNewModel" validate="false" bind="false">
+            <evaluate expression="portlet.setApplicationId(requestParameters.application)"/>
+            <evaluate expression="portlet.setPortletName(requestParameters.portlet)"/>
+        </transition>
+        <transition on="back" to="chooseType" validate="false"/>
+    </view-state>
+
+    <action-state id="prepNewModel">
+        <evaluate expression="portletAdministrationHelper.loadDefaultsFromPortletDefinitionIfNew(portlet)"/>
+        <transition to="portletConfig"/>
+    </action-state>
+
+    <view-state id="portletConfig" model="portlet">
+        <on-entry>
+            <set name="flowScope.cpd" value="channelPublishingDefinitionDao.getChannelPublishingDefinition(portlet.typeId)"/>
+            <set name="flowScope.showParameters" value="cpd.getSteps().isEmpty()"/>
+            <set name="flowScope.supportsConfig" value="portletAdministrationHelper.supportsConfigMode(portlet)"/>
+            <set name="viewScope.lifecycleStates" value="portletAdministrationHelper.getAllowedLifecycleStates(person, portlet.categories)"/>
+            <set name="flashScope.portletDescriptor" value="portletAdministrationHelper.getPortletDescriptor(portlet)"/>
+            <set name="flashScope.arbitraryPreferenceNames" value="portletAdministrationHelper.getArbitraryPortletPreferenceNames(portlet)"/>
+        </on-entry>
+        <transition on="back" to="chooseType" validate="false"/>
+        <transition on="cancel" to="cancelPortletEdit" validate="false"/>
+        <transition on="save" to="finishPortletEdit">
+            <evaluate expression="portletAdministrationHelper.cleanOptions(portlet, externalContext.getNativeRequest())"/>
+            <set name="flowScope.portlet" value="portletAdministrationHelper.savePortletRegistration(person, portlet)"/>
+        </transition>
+        <transition on="saveAndConfig" to="configMode">
+            <evaluate expression="portletAdministrationHelper.cleanOptions(portlet, externalContext.getNativeRequest())"/>
+            <set name="flowScope.portlet" value="portletAdministrationHelper.savePortletRegistration(person, portlet)"/>
+        </transition>
+        <transition on="choosePrincipal" to="choosePrincipal">
+            <evaluate expression="portletAdministrationHelper.cleanOptions(portlet, externalContext.getNativeRequest())"/>
+        </transition>
+        <transition on="chooseCategory" to="chooseCategory">
+            <evaluate expression="portletAdministrationHelper.cleanOptions(portlet, externalContext.getNativeRequest())"/>
+        </transition>
+    </view-state>
+
+    <!-- CATEGORIES view -->
+    <subflow-state id="chooseCategory" subflow="entity-selector">
+        <on-entry>
+            <set name="flashScope.entityTypes" value="new java.util.HashSet()"/>
+            <evaluate expression="entityTypes.add('category')"/>
+            <set name="flashScope.rootEntity" value="groupListHelper.getIndividualBestRootEntity(person, 'category', T(org.apereo.portal.security.IPermission).PORTAL_PUBLISH, T(org.apereo.portal.security.IPermission).PORTLET_MANAGER_MANAGE_ACTIVITIES)"/>
+        </on-entry>
+        <!-- View Parameters -->
+        <input name="selectTypes" value="entityTypes"/>
+        <input name="selectMultiple" value="true"/>
+        <input name="requireSelection" value="false"/>
+        <input name="rootEntity" value="rootEntity"/>
+        <input name="enableAdHocGroups" value="false"/>
+
+        <input name="showCancelButton" value="true"/>
+        <input name="showBackButton" value="false"/>
+        <input name="saveButtonCode" value="'save'" />
+        <input name="backButtonCode" value="'back'" />
+        <input name="cancelButtonCode" value="'cancel'" />
+        <input name="pageTitleCode" value="'select.categories'"/>
+        <input name="pageSubtitleCode" value="'categories.membership.which'" />
+        <input name="pageSubtitleArgument" value="portlet.name != '' ? portlet.name : 'this portlet'" />
+
+        <!-- Group input/output mapping -->
+        <input name="selectedGroups" value="portlet.categories"/>
+        <output name="selectedGroups" value="portlet.categories"/>
+
+        <transition on="finish" to="portletConfig"/>
+        <transition on="cancel" to="portletConfig"/>
+    </subflow-state>
+
+
+    <!-- GROUPS view -->
+    <subflow-state id="choosePrincipal" subflow="entity-selector">
+        <on-entry>
+            <set name="flashScope.entityTypes" value="new java.util.HashSet()"/>
+            <evaluate expression="entityTypes.add('person')"/>
+            <evaluate expression="entityTypes.add('group')"/>
+            <set name="flashScope.rootEntity" value="groupListHelper.getIndividualBestRootEntity(person, 'group', T(org.apereo.portal.security.IPermission).PORTAL_GROUPS, T(org.apereo.portal.security.IPermission).VIEW_GROUP_ACTIVITY)"/>
+        </on-entry>
+        <!-- View Parameters -->
+        <input name="selectTypes" value="entityTypes"/>
+        <input name="selectMultiple" value="true"/>
+        <input name="requireSelection" value="false"/>
+        <input name="rootEntity" value="rootEntity"/>
+        <input name="enableAdHocGroups" value="true"/>
+        <input name="adHocEntity" value="rootEntity"/>
+
+        <input name="showCancelButton" value="true"/>
+        <input name="showBackButton" value="false"/>
+        <input name="saveButtonCode" value="'save'"/>
+        <input name="cancelButtonCode" value="'cancel'" />
+        <input name="pageTitleCode" value="'select.people.and.groups'"/>
+        <input name="pageSubtitleCode" value="'people.membership.which'" />
+        <input name="pageSubtitleArgument" value="portlet.name != '' ? portlet.name : 'this portlet'" />
+
+        <!-- Group input/output mapping -->
+        <input name="selectedGroups" value="portlet.principals"/>
+        <output name="selectedGroups" value="portlet.principals"/>
+
+        <transition on="finish" to="portletConfig"/>
+        <transition on="cancel" to="portletConfig"/>
+    </subflow-state>
+
+
+    <decision-state id="configModeAction">
+        <if test="externalContext.requestMap[T(javax.portlet.PortletRequest).LIFECYCLE_PHASE] == T(javax.portlet.PortletRequest).RESOURCE_PHASE"
+            then="configModeResourceRequest"/>
+
+        <if test="externalContext.requestMap[T(javax.portlet.PortletRequest).LIFECYCLE_PHASE] == T(javax.portlet.PortletRequest).ACTION_PHASE"
+            then="configModeActionRequest"
+            else="configMode"/>
+    </decision-state>
+
+    <action-state id="configModeActionRequest">
+        <set name="flashScope.configComplete" value="portletAdministrationHelper.configModeAction(externalContext, portlet.getFname())" />
+        <transition to="configMode" on="#{!flashScope.configComplete}" />
+        <transition to="configModeSaved" on="#{flashScope.configComplete}">
+            <set name="flowScope.portlet" value="portletAdministrationHelper.createPortletDefinitionForm(person, portlet.id)"/>
+        </transition>
+    </action-state>
+
+    <decision-state id="configModeSaved">
+        <if test="isNew" then="finishPortletEdit" else="finishPortletEdit"/>
+    </decision-state>
+
+    <view-state id="configModeResourceRequest" view="portletDelegationView">
+        <on-entry>
+            <set name="viewScope[T(org.apereo.portal.portlet.delegation.PortletDelegationView).DELEGATE_PORTLET_WINDOW_ID]"
+                value="portletAdministrationHelper.getDelegateWindowId(externalContext, portlet.getFname())"/>
+        </on-entry>
+    </view-state>
+
+    <view-state id="configMode">
+        <on-render>
+            <set name="flashScope.PORTLET_FNAME" value="portlet.getFname()"/>
+        </on-render>
+        <transition on="configModeAction" to="configModeAction" />
+    </view-state>
+
+    <decision-state id="cancelEditScreen">
+        <if test="completed" then="portletConfig" else="cancelPortletEdit"/>
+    </decision-state>
+
+    <end-state id="cancelPortletEdit" />
+    <end-state id="finishPortletEdit">
+        <output name="portletId" value="flowScope.portlet.id"/>
+    </end-state>
+
+    <global-transitions>
+        <transition on="update" to="portletConfig"/>
+        <transition on="review" to="portletConfig"/>
+        <transition on="cancel" to="cancelEditScreen" bind="false"/>
+        <transition on="cancelPortletEdit" to="cancelPortletEdit"/>
+    </global-transitions>
+
+</flow>

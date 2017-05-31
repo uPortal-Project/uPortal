@@ -1,0 +1,60 @@
+apply plugin: 'war'
+
+description = "Apereo uPortal Webapp (WAR)"
+
+// Support for filtering properties files
+import org.apache.tools.ant.filters.ReplaceTokens
+
+dependencies {
+    compile project(':uPortal-groups:uPortal-groups-filesystem')
+    compile project(':uPortal-groups:uPortal-groups-grouper')
+    compile project(':uPortal-groups:uPortal-groups-ldap')
+    compile project(':uPortal-groups:uPortal-groups-local')
+    compile project(':uPortal-groups:uPortal-groups-smartldap')
+    compile project(':uPortal-portlets')
+    compile project(':uPortal-security:uPortal-security-authn')
+    compile project(':uPortal-security:uPortal-security-xslt')
+    compile project(':uPortal-soffit:uPortal-soffit-connector')
+    compile project(':uPortal-utils:uPortal-utils-jmx')
+
+    runtime "ch.qos.logback:logback-classic:${logbackVersion}"
+    runtime "org.aspectj:aspectjweaver:${aspectjVersion}"
+    runtime "org.hibernate:hibernate-entitymanager:${hibernateVersion}"
+    runtime("org.jasig.cas.client:cas-client-support-distributed-ehcache:${casClientVersion}") {
+        exclude group: 'commons-logging', module: 'commons-logging'
+    }
+    runtime "org.jasig.ehcache:ehcache-jgroups3replication:${ehcacheJgroups3ReplicationVersion}"
+    runtime("org.jasig.portlet.utils:portlet-ws-util:${apereoPortletUtilsVersion}") {
+        exclude group: 'commons-logging', module: 'commons-logging'
+    }
+    runtime "org.slf4j:jul-to-slf4j:${slf4jVersion}"
+    runtime "org.slf4j:log4j-over-slf4j:${slf4jVersion}"
+    runtime "org.springframework.security:spring-security-config:${springSecurityVersion}"
+    runtime "com.thoughtworks.xstream:xstream:${xstreamVersion}"
+
+    /*
+     * The HSQL driver jar should always be included with 'vanilla' uPortal
+     * from Apereo;  aditional JDBC drivers may be added in the overlay process
+     */
+    runtime "org.hsqldb:hsqldb:${hsqldbVersion}"
+
+    /*
+     * Additional runtime dependencies that were present in uP 4.3.x and may
+     * (or may not) be needed at this point.
+     */
+    // runtime "jline:jline:${jlineVersion}"
+    // runtime "org.codehaus.groovy:groovy-jsr223:${groovyVersion}"
+    // runtime "org.codehaus.groovy:groovy-xml:${groovyVersion}"
+    // runtime "org.fusesource.jansi:jansi:${jansiVersion}"
+    // runtime("org.jasig.cas:cas-server-extension-clearpass:${casServerVersion}") {
+    //     // NOTE:  ClearPass is no longer a feature of CAS,
+    //     // and uPortal already supports the new mechanism
+    //     exclude group: 'org.jasig.cas', module: 'cas-server-core'
+    //     exclude group: 'javax.validation', module: 'validation-api'
+    //     exclude group: 'org.slf4j', module: 'slf4j-log4j12'
+    // }
+}
+
+processResources {
+    filter(ReplaceTokens, tokens:['projectVersion': project.version])
+}

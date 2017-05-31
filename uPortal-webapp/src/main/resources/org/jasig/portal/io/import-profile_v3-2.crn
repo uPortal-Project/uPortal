@@ -1,0 +1,125 @@
+<!--
+
+    Licensed to Apereo under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Apereo licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<!--
+ | NOTICE:  This file represents a contractual API that is leveraged by more 
+ | than one caller.  Please do not refactor this file in a way that changes 
+ | the number or nature of arguments expected.
+ |
+ | These are:
+ |   - ${Attributes.NODE}=XML Element that defines the entity to import
+ |
+ +-->
+<sql-transaction>
+<with>
+    <attribute key="USER_NAME">${valueOf(@username)}</attribute>
+    <attribute key="USER_ID">${sql(SELECT user_id FROM up_user WHERE user_name = '${valueOf(@username)}')}</attribute>
+    <attribute key="STRUCTURE_STYLESHEET_NAME">${valueOf(structure/@name)}</attribute>
+    <attribute key="THEME_STYLESHEET_NAME">${valueOf(theme/@name)}</attribute>
+    <subtasks>
+        <with>
+            <attribute key="STRUCTURE_STYLESHEET_ID">${crn(classpath:/org/apereo/portal/io/lookup-ss_struct_id.crn)}</attribute>
+            <attribute key="THEME_STYLESHEET_ID">${crn(classpath:/org/apereo/portal/io/lookup-ss_theme_id.crn)}</attribute>
+            <subtasks>
+                <sql-transaction>
+                    <!-- 
+                     | Perform an 'upsert' operation on the PROFILE_NAME column
+                     +-->
+                    <sql-upsert>
+                        <update-statement>
+                            UPDATE up_user_profile 
+                            SET description = ?, structure_ss_id = ?, theme_ss_id = ?
+                            WHERE user_id = ? AND profile_fname = ?
+                        </update-statement>
+                        <insert-statement>
+                            INSERT INTO up_user_profile(user_id, profile_id, profile_fname, profile_name, description, layout_id, structure_ss_id, theme_ss_id) 
+                            VALUES(?, ?, ?, ?, ?, ?, ?, ?)
+                        </insert-statement>
+                        <update-parameter value="${valueOf(description)}"/>
+                        <update-parameter value="${groovy(STRUCTURE_STYLESHEET_ID.intValue())}"/>
+                        <update-parameter value="${groovy(THEME_STYLESHEET_ID.intValue())}"/>
+                        <update-parameter value="${USER_ID}"/>
+                        <update-parameter value="${valueOf(fname)}"/>
+                        <insert-parameter value="${USER_ID}"/>
+                        <insert-parameter value="${org.apereo.portal.io.SequenceGeneratorPhrase(UP_SS_THEME)}"/>
+                        <insert-parameter value="${valueOf(fname)}"/>
+                        <insert-parameter value="${valueOf(name)}"/>
+                        <insert-parameter value="${valueOf(description)}"/>
+                        <insert-parameter value="${groovy(1.intValue())}"/>
+                        <insert-parameter value="${groovy(STRUCTURE_STYLESHEET_ID.intValue())}"/>
+                        <insert-parameter value="${groovy(THEME_STYLESHEET_ID.intValue())}"/>
+                    </sql-upsert>
+        
+                    <sql-query>
+                        <sql>
+                            SELECT profile_id 
+                            FROM up_user_profile 
+                            WHERE user_id = ? AND profile_fname = ?
+                        </sql>
+                        <parameter value="${USER_ID}"/>
+                        <parameter value="${valueOf(fname)}" />
+                        <subtasks>
+                            <with-attribute key="profileImportHelper" value="${groovy(new org.apereo.portal.io.xml.profile.ProfileImportHelper(stylesheetDescriptorDao, stylesheetUserPreferencesDao, STRUCTURE_STYLESHEET_ID, THEME_STYLESHEET_ID, USER_ID.intValue(), PROFILE_ID.intValue()))}">
+                                
+                                <!-- User (Profile) Parameters:  structure... -->
+                                <node-iterator xpath="structure/parameter">
+                                    <with>
+                                        <attribute key="name">${valueOf(name)}</attribute>
+                                        <attribute key="value">${valueOf(value)}</attribute>
+                                        <subtasks>
+                                            <groovy>
+                                                <script>
+                                                    profileImportHelper.addStructureParameter(name, value);
+                                                </script>
+                                            </groovy>
+                                        </subtasks>
+                                    </with>
+                                </node-iterator>
+            
+                                <!-- User (Profile) Parameters:  theme... -->
+                                <node-iterator xpath="theme/parameter">
+                                    <with>
+                                        <attribute key="name">${valueOf(name)}</attribute>
+                                        <attribute key="value">${valueOf(value)}</attribute>
+                                        <subtasks>
+                                            <groovy>
+                                                <script>
+                                                    profileImportHelper.addThemeParameter(name, value);
+                                                </script>
+                                            </groovy>
+                                        </subtasks>
+                                    </with>
+                                </node-iterator>
+                                
+                                <!-- persist the changes -->
+                                <groovy>
+                                    <script>
+                                        profileImportHelper.save();
+                                    </script>
+                                </groovy>
+                            </with-attribute>
+                        </subtasks>
+                    </sql-query>
+                </sql-transaction>
+            </subtasks>
+        </with>
+    </subtasks>
+</with>
+</sql-transaction>

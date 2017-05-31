@@ -1,0 +1,463 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to Apereo under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Apereo licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<web-app 
+    xmlns="http://java.sun.com/xml/ns/javaee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+    metadata-complete="true"
+    version="3.0">
+
+    <display-name>uPortal</display-name>
+
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>classpath:/properties/contexts/*.xml,classpath:/properties/contextOverrides/*.xml</param-value>
+    </context-param>
+
+    <!-- Needed to remove JMX registration and allow for classloader GC. Should be first listener per http://logback.qos.ch/manual/loggingSeparation.html#hotDeploy -->
+    <listener>
+        <listener-class>ch.qos.logback.classic.selector.servlet.ContextDetachingSCL</listener-class>
+    </listener>
+
+  <!--
+     | uPortal utility for accessing the WebApplicationContext from code that doesn't have a reference to the ServletContext
+     +-->
+    <listener>
+        <listener-class>org.apereo.portal.utils.PortalApplicationContextLocator</listener-class>
+    </listener>
+
+    <!-- 
+     | Loads/Unloads the Spring WebApplicationContext
+     +-->
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+    
+    <!-- 
+     | Passes Session init/destroy events to the WebApplicationContext
+     +-->
+    <listener>
+        <listener-class>org.springframework.security.web.session.HttpSessionEventPublisher</listener-class>
+    </listener>
+    
+    <!-- 
+     | Exposes the current RequestAttributes object
+     +-->
+    <listener>
+        <listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
+    </listener>
+    
+    <!-- 
+     | Add Session and Request MUTEX objects
+     +-->
+    <listener>
+        <listener-class>org.springframework.web.util.HttpSessionMutexListener</listener-class>
+    </listener>
+    <listener>
+        <listener-class>org.apereo.portal.utils.web.RequestAttributeMutexListener</listener-class>
+    </listener>
+
+    <filter>
+        <filter-name>requestParameterFilter</filter-name>
+        <filter-class>org.apereo.portal.security.firewall.RequestParameterPolicyEnforcementFilter</filter-class>
+        <init-param>
+            <param-name>parametersToCheck</param-name>
+            <param-value>ticket SAMLArt pgtIou pgtId</param-value>
+        </init-param>
+    </filter>
+    
+    <filter>
+        <filter-name>CAS Validate Filter</filter-name>
+        <filter-class>org.jasig.cas.client.validation.Cas20ProxyReceivingTicketValidationFilter</filter-class>
+        <init-param>
+          <param-name>casServerUrlPrefix</param-name>
+          <param-value>${environment.build.cas.protocol}://${environment.build.cas.server}${environment.build.cas.context}</param-value>
+        </init-param>
+        <init-param>
+          <param-name>serverName</param-name>
+          <param-value>${environment.build.uportal.protocol}://${environment.build.uportal.server}</param-value>
+        </init-param>
+        <init-param>
+            <param-name>proxyCallbackUrl</param-name>
+            <param-value>${environment.build.uportal.protocol}://${environment.build.uportal.server}${environment.build.uportal.context}/CasProxyServlet</param-value>
+        </init-param>
+        <init-param>
+            <param-name>proxyReceptorUrl</param-name>
+            <param-value>/CasProxyServlet</param-value>
+        </init-param>
+        <!--
+         | For CAS PGT replication for CAS ClearPass in a clustered uPortal environment.
+         | See "Replicating PGT using "proxyGrantingTicketStorageClass" and Distributed Caching" in
+         | https://wiki.jasig.org/display/CASC/Configuring+the+Jasig+CAS+Client+for+Java+in+the+web.xml.
+         | If CAS ClearPass is not enabled in security.properties, this parameter has no effect.
+         +-->
+        <init-param>
+            <param-name>proxyGrantingTicketStorageClass</param-name>
+            <param-value>org.jasig.cas.client.proxy.EhcacheBackedProxyGrantingTicketStorageImpl</param-value>
+        </init-param>
+    </filter>
+    
+    <filter>
+        <filter-name>CAS Assertion ThreadLocal Filter</filter-name>
+        <filter-class>org.jasig.cas.client.util.AssertionThreadLocalFilter</filter-class>
+    </filter>
+
+    <filter>
+      <filter-name>springSecurityFilterChain</filter-name>
+      <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    </filter>
+    
+    <filter>
+        <filter-name>requestAttributeSourceFilter</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    </filter>
+
+    <filter>
+        <filter-name>OpenEntityManagerInViewFilter</filter-name>
+        <filter-class>org.springframework.orm.jpa.support.OpenEntityManagerInViewFilter</filter-class>
+        <init-param>
+            <param-name>persistenceUnitName</param-name>
+            <param-value>PortalDb</param-value>
+        </init-param>
+    </filter>
+
+    <filter>
+        <filter-name>pageCachingFilter</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+        <init-param>
+            <param-name>targetFilterLifecycle</param-name>
+            <param-value>true</param-value>
+        </init-param>
+    </filter>
+    
+    <filter>
+        <filter-name>CacheExpiresFilter</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    </filter>
+    
+    <filter>
+        <filter-name>CharacterEncodingFilter</filter-name>
+        <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+        <init-param>
+            <param-name>encoding</param-name>
+            <param-value>UTF-8</param-value>
+        </init-param>
+        <init-param>
+            <param-name>forceEncoding</param-name>
+            <param-value>true</param-value>
+        </init-param>
+    </filter>
+    
+    
+    <filter>
+        <filter-name>requireValidSessionFilter</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+        <init-param>
+            <param-name>targetFilterLifecycle</param-name>
+            <param-value>true</param-value>
+        </init-param>
+    </filter>
+    
+    <filter>
+        <filter-name>urlCanonicalizingFilter</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+        <init-param>
+            <param-name>targetFilterLifecycle</param-name>
+            <param-value>true</param-value>
+        </init-param>
+    </filter>
+    
+    <filter>
+        <filter-name>etagFilter</filter-name>
+        <filter-class>org.springframework.web.filter.ShallowEtagHeaderFilter</filter-class>
+    </filter>
+    
+    <filter>
+        <filter-name>createPortletCookieFilter</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    </filter>
+    
+    <filter>
+        <filter-name>ExceptionLoggingFilter</filter-name>
+        <filter-class>org.apereo.portal.web.ExceptionLoggingFilter</filter-class>
+    </filter>
+    
+    <filter>
+        <filter-name>threadNamingRequestFilter</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    </filter>
+
+    <filter>
+        <filter-name>remoteCookieCheckFilter</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    </filter>
+    
+    <!-- Useful for testing/debugging remote_user based authn 
+    <filter>
+        <filter-name>RemoteUserSettingFilter</filter-name>
+        <filter-class>org.apereo.portal.spring.security.RemoteUserSettingFilter</filter-class>
+        <init-param>
+            <param-name>remoteUserFile</param-name>
+            <param-value>/home/edalquist/tmp/remoteUser</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>RemoteUserSettingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+     -->
+    
+    <!-- FILTER ORDER IS VERY IMPORTANT. DO NOT CHANGE ORDER WITHOUT VERY GOOD REASON -->
+    
+    <filter-mapping>
+        <filter-name>ExceptionLoggingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    
+    <filter-mapping>
+        <filter-name>CharacterEncodingFilter</filter-name>
+        <servlet-name>AuthenticationDispatcherServlet</servlet-name>
+        <servlet-name>RenderingDispatcherServlet</servlet-name>
+        <servlet-name>JsonRenderingDispatcherServlet</servlet-name>
+        <servlet-name>MVCDispatcherServlet</servlet-name>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>OpenEntityManagerInViewFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    
+    <filter-mapping>
+        <filter-name>threadNamingRequestFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    
+    <filter-mapping>
+        <filter-name>requestAttributeSourceFilter</filter-name>
+        <url-pattern>/Login</url-pattern>
+    </filter-mapping>
+    
+    <filter-mapping>
+        <filter-name>requireValidSessionFilter</filter-name>
+        <servlet-name>RenderingDispatcherServlet</servlet-name>
+        <servlet-name>MVCDispatcherServlet</servlet-name>
+        <servlet-name>JsonRenderingDispatcherServlet</servlet-name>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>requestParameterFilter</filter-name>
+        <url-pattern>/Login</url-pattern>
+        <url-pattern>/CasProxyServlet</url-pattern>
+    </filter-mapping>
+
+    <!-- the requestParameterFilter **must** be mapped before the CAS Validate Filter -->
+    <filter-mapping>
+        <filter-name>CAS Validate Filter</filter-name>
+        <url-pattern>/Login</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>CAS Validate Filter</filter-name>
+        <url-pattern>/CasProxyServlet</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>CAS Assertion ThreadLocal Filter</filter-name>
+        <url-pattern>/Login</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+      <filter-name>springSecurityFilterChain</filter-name>
+      <url-pattern>*</url-pattern>
+    </filter-mapping>
+     
+    <filter-mapping>
+        <filter-name>urlCanonicalizingFilter</filter-name>
+        <servlet-name>RenderingDispatcherServlet</servlet-name>
+    </filter-mapping>
+    
+    <!-- Temporarily commenting out this filter for development purposes -->
+    <filter-mapping>
+        <filter-name>pageCachingFilter</filter-name>
+        <url-pattern>*.js</url-pattern>
+        <url-pattern>*.css</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>CacheExpiresFilter</filter-name>
+        <url-pattern>/media/*</url-pattern>
+        <url-pattern>*.js</url-pattern>
+        <url-pattern>*.css</url-pattern>
+        <url-pattern>*.png</url-pattern>
+        <url-pattern>*.gif</url-pattern>
+        <url-pattern>*.jpg</url-pattern>
+        <url-pattern>*.ico</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>etagFilter</filter-name>
+        <url-pattern>/api/*</url-pattern>
+    </filter-mapping>
+
+	 <filter-mapping>
+        <filter-name>createPortletCookieFilter</filter-name>
+        <servlet-name>RenderingDispatcherServlet</servlet-name>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>remoteCookieCheckFilter</filter-name>
+        <url-pattern>/Login</url-pattern>
+    </filter-mapping>
+
+    <!-- Supports view rendering -->
+    <servlet>
+        <servlet-name>ViewRendererServlet</servlet-name>
+        <servlet-class>org.springframework.web.servlet.ViewRendererServlet</servlet-class>
+    </servlet>
+    
+    <!-- Supports Spring controllers -->
+    <servlet>
+        <servlet-name>MVCDispatcherServlet</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>classpath:properties/contexts/servlet/mvcServletContext.xml,
+                classpath:properties/contexts/servlet/renderingServletContext.xml</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    
+    <servlet>
+        <servlet-name>AuthenticationDispatcherServlet</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>classpath:properties/contexts/servlet/authenticationServletContext.xml</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    
+    <servlet>
+        <servlet-name>RenderingDispatcherServlet</servlet-name>
+        <servlet-class>org.apereo.portal.spring.web.servlet.NoMultipartDispatcherServlet</servlet-class>
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>classpath:properties/contexts/servlet/renderingServletContext.xml</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet>
+        <servlet-name>JsonRenderingDispatcherServlet</servlet-name>
+        <servlet-class>org.apereo.portal.spring.web.servlet.NoMultipartDispatcherServlet</servlet-class>
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>classpath:properties/contexts/servlet/jsonRenderingServletContext.xml</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet>
+        <servlet-name>RedirectionDispatcherServlet</servlet-name>
+        <servlet-class>org.apereo.portal.spring.web.servlet.NoMultipartDispatcherServlet</servlet-class>
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>classpath:properties/contexts/servlet/redirectionServletContext.xml</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <!-- Serves static resource content from .jar files such as spring-js.jar -->
+    <servlet>
+        <servlet-name>Resources Servlet</servlet-name>
+        <servlet-class>org.springframework.js.resource.ResourceServlet</servlet-class>
+        <load-on-startup>0</load-on-startup>
+    </servlet>
+
+    <!-- [INSERT JSPC FRAGMENT HERE] -->
+
+    <servlet-mapping>
+        <servlet-name>ViewRendererServlet</servlet-name>
+        <url-pattern>/WEB-INF/servlet/view</url-pattern>
+    </servlet-mapping>
+
+    <!-- Map all /resources requests to the Resource Servlet for handling -->
+    <servlet-mapping>
+        <servlet-name>Resources Servlet</servlet-name>
+        <url-pattern>/resources/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>RenderingDispatcherServlet</servlet-name>
+        <url-pattern>/index.jsp</url-pattern>
+        <url-pattern>*.uP</url-pattern>
+        <url-pattern>/f/*</url-pattern>
+        <url-pattern>/p/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>JsonRenderingDispatcherServlet</servlet-name>
+        <url-pattern>/layout.json</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>RedirectionDispatcherServlet</servlet-name>
+        <url-pattern>/s/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>MVCDispatcherServlet</servlet-name>
+        <url-pattern>/api/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>AuthenticationDispatcherServlet</servlet-name>
+        <url-pattern>/Login</url-pattern>
+        <url-pattern>/Logout</url-pattern>
+    </servlet-mapping>
+
+    <mime-mapping>
+        <extension>wbmp</extension>
+        <mime-type>image/vnd.wap.wbmp</mime-type>
+    </mime-mapping>
+
+    <error-page>
+        <error-code>500</error-code>
+        <location>/500.html</location>
+    </error-page>
+
+    <session-config>
+      <cookie-config>
+        <http-only>true</http-only>
+        <!-- Should match the value of org.apereo.portal.portlet.container.services.PortletCookieServiceImpl.portalCookieAlwaysSecure in portal.properties. -->
+        <secure>${environment.build.uportal.secureSessionCookie}</secure>
+      </cookie-config>
+      <tracking-mode>COOKIE</tracking-mode>
+      <!-- NOTE:  Specify the HTTP session duration in <tomcatHome>/conf/web.xml so it is the same for all webapps. -->
+    </session-config>
+
+    <welcome-file-list>
+        <welcome-file>index.html</welcome-file>
+        <welcome-file>index.htm</welcome-file>
+        <welcome-file>index.jsp</welcome-file>
+    </welcome-file-list>
+</web-app>

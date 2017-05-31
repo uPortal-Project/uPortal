@@ -1,0 +1,404 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to Apereo under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Apereo licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:p="http://www.springframework.org/schema/p" xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:component-scan base-package="org.apereo.portal.portlets" use-default-filters="false">
+        <context:include-filter type="assignable" expression="org.apereo.portal.portlets.portletadmin.xmlsupport.IChannelPublishingDefinitionDao"/>
+    </context:component-scan>
+
+    <bean id="webServiceMessageSender" class="org.springframework.ws.transport.http.HttpComponentsMessageSender">
+        <property name="httpClient" ref="httpClient"/>
+    </bean>
+    <bean id="clientHttpRequestFactory" class="org.springframework.http.client.HttpComponentsClientHttpRequestFactory">
+        <property name="httpClient" ref="httpClient" />
+    </bean>
+    
+    <bean id="httpClient" class="org.jasig.apache.http.impl.client.ResponseHeaderHandlingHttpClient" depends-on="httpConnectionParamBean, clientParamBean">
+        <constructor-arg ref="httpConnectionManager" />
+        <constructor-arg ref="httpParams"/>
+    </bean>
+    <bean id="httpConnectionManager" class="org.jasig.apache.http.impl.conn.CleanShutdownPoolingClientConnectionManager" destroy-method="shutdown">
+        <property name="defaultMaxPerRoute" value="1000" />
+        <property name="maxTotal" value="1000" />
+    </bean>
+    <bean id="httpParams" class="org.apache.http.params.BasicHttpParams"/>
+    <bean id="httpConnectionParamBean" class="org.apache.http.params.HttpConnectionParamBean">
+        <constructor-arg index="0">
+            <ref bean="httpParams"/>
+        </constructor-arg>
+        <property name="connectionTimeout" value="5000"/>
+        <property name="soTimeout" value="30000"/>
+        <property name="staleCheckingEnabled" value="true"/>
+    </bean>
+    <bean id="clientParamBean" class="org.apache.http.client.params.ClientParamBean">
+        <constructor-arg index="0">
+            <ref bean="httpParams"/>
+        </constructor-arg>
+        <property name="cookiePolicy" value="ignoreCookies"/>
+    </bean>
+    
+    <bean id="restTemplate" class="org.springframework.web.client.RestTemplate">
+        <property name="messageConverters">
+            <util:list>
+                <bean class="org.springframework.http.converter.xml.Jaxb2RootElementHttpMessageConverter"/>
+                <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+                    <property name="supportedMediaTypes">
+                        <list>
+                            <bean class="org.springframework.http.MediaType">
+                                <constructor-arg value="text" />
+                                <constructor-arg value="javascript" />
+                            </bean>
+                            <bean class="org.springframework.http.MediaType">
+                                <constructor-arg value="application" />
+                                <constructor-arg value="javascript" />
+                            </bean>
+                            <util:constant static-field="org.springframework.http.MediaType.APPLICATION_JSON"/>
+                        </list>
+                    </property>
+                </bean>
+            </util:list>
+        </property>
+        <property name="requestFactory" ref="clientHttpRequestFactory" />
+    </bean>
+    
+    <util:set id="UsernameCacheTagPurger_IgnoredUsernames">
+        <value>guest</value>
+    </util:set>
+    
+    
+    <util:list id="searchServices">
+        
+        <!-- Uncomment and fill in your Google Custom Search ID to use
+        <bean class="org.apereo.portal.portlets.search.google.GoogleCustomSearchService">
+            <property name="customSearchId" value="" />
+        </bean>
+         -->
+         
+        <!-- Uncomment and fill in your Google Search Appliance URL and Site to use
+        <bean class="org.apereo.portal.portlets.search.gsa.GsaSearchService">
+            <property name="baseUrl" value="http://search.example.com"/>
+            <property name="site" value="Site"/>
+        </bean>
+        -->
+        
+        <!--Toggle one of the next two via comment
+        	Marketplace and PortletRegistry search are very similar.  Marketplace provides searching of
+        	portlet preferences marked as screen_capture_x and will include a link to the marketplace
+        	entry and possibly more to come
+         -->
+        
+        <!--
+        <bean class="org.apereo.portal.portlets.search.portletregistry.PortletRegistrySearchService"/>
+        --> 
+         
+        <bean class="org.apereo.portal.portlet.marketplace.MarketplaceSearchService" />
+		
+        
+    </util:list>
+    
+    <!-- 
+     | Maps search resultType strings to tabs that are displayed in the results. If a resultType is not
+     | mapped below its results go in the default tab.
+     |
+     | The key is the Messages.properties key to use for the result tab name 
+     +-->
+    <util:map id="searchTabs">
+        <entry key="googleInstitution.results">
+            <list>
+                <value>${org.apereo.portal.portlets.googleWebSearch.search.result.type}</value>
+                <value>${org.apereo.portal.portlets.googleSearchAppliance.search.result.type}</value>
+            </list>
+        </entry>
+    </util:map>
+
+    <!--
+     | For search autocomplete, indicate a set of priorities for each type of search result type.  Lower values
+     | result in the search result appearing higher in the list (e.g. greater emphasis).
+     |
+     | Key: value set by the various Search services in the SearchResult.type field.
+     |
+     | Value: The value is the general priority for results of that type.  The default priority if not specified
+     | is priority 0.  A positive value is lower than the default priority (i.e. de-emphasizes result),
+     | and a negative value is higher than the default priority (e.g. emphasizes result).
+     +-->
+    <util:map id="searchAutocompletePriorityMap" value-type="java.lang.Integer">
+        <entry key="${org.apereo.portal.portlets.portletRegistry.search.result.type}" value="-5"/>
+        <entry key="${org.apereo.portal.portlets.directory.search.result.type}" value="5"/>
+        <!--<entry key="${org.apereo.portal.portlets.googleSearchAppliance.search.result.type}" value="0"/>-->
+        <!--<entry key="${org.apereo.portal.portlets.googleWebSearch.search.result.type}" value="0"/>-->
+    </util:map>
+
+    <!--
+     | Set of the search result types to exclude from search autocompletion.  The value is the set by the
+     | various Search services in the SearchResult.type field.
+     +-->
+    <util:set id="searchAutocompleteIgnoreResultTypes">
+        <!--<value>${org.apereo.portal.portlets.directory.search.result.type}</value>-->
+    </util:set>
+
+
+    <bean id="authorizationService" class="org.apereo.portal.security.provider.AuthorizationImpl">
+        <!-- Set of permissionTargetProviders that are not entities and permission checks on a target
+             string value do not need to search through groups or group member target names for a match.
+             See bean permissionTargetProviderRegistry. -->
+        <property name="nonEntityPermissionTargetProviders">
+            <set>
+                <value>portletTypeTargetProvider</value>
+                <value>errorChannelTargetProvider</value>
+                <value>portalSystemTargetProvider</value>
+                <value>userAttributesTargetProvider</value>
+                <value>portalDataTypeTargetProvider</value>
+            </set>
+        </property>
+    </bean>
+    <!--
+    | The permissionTargetProvider key names must be synchronized between src/main/data/default_entities/permission_owner/*.xml
+    | files, here, and authorizationService.
+    +-->
+    <bean id="permissionTargetProviderRegistry" class="org.apereo.portal.permission.target.PermissionTargetProviderRegistryImpl">
+        <property name="providers">
+            <map>
+                <entry key="allEntitiesTargetProvider">
+                    <bean class="org.apereo.portal.permission.target.EntityTargetProviderImpl">
+                        <constructor-arg>
+                            <util:set>
+                                <value>group</value>
+                                <value>person</value>
+                                <value>category</value>
+                                <value>portlet</value>
+                            </util:set>
+                        </constructor-arg>
+                    </bean>
+                </entry>
+                <entry key="allGroupsTargetProvider">
+                    <bean class="org.apereo.portal.permission.target.EntityTargetProviderImpl">
+                        <constructor-arg>
+                            <util:set>
+                                <value>group</value>
+                                <value>category</value>
+                            </util:set>
+                        </constructor-arg>
+                    </bean>
+                </entry>
+                <entry key="peopleAndGroupsTargetProvider">
+                    <bean class="org.apereo.portal.permission.target.EntityTargetProviderImpl">
+                        <constructor-arg>
+                            <util:set>
+                                <value>group</value>
+                                <value>person</value>
+                            </util:set>
+                        </constructor-arg>
+                    </bean>
+                </entry>
+                <entry key="channelsAndCategoriesTargetProvider">
+                    <bean class="org.apereo.portal.permission.target.EntityTargetProviderImpl">
+                        <constructor-arg>
+                            <util:set>
+                                <value>category</value>
+                                <value>portlet</value>
+                            </util:set>
+                        </constructor-arg>
+                    </bean>
+                </entry>
+                <entry key="portletTypeTargetProvider">
+                    <bean class="org.apereo.portal.permission.target.PortletTypeTargetProviderImpl"/>
+                </entry>
+                <entry key="errorChannelTargetProvider">
+                    <bean class="org.apereo.portal.permission.target.SimpleStringTargetProviderImpl">
+                        <property name="targets">
+                            <util:list>
+                                <bean class="org.apereo.portal.permission.target.PermissionTargetImpl">
+                                    <constructor-arg value="DETAILS"/>
+                                    <constructor-arg value="Stack Trace"/>
+                                    <constructor-arg>
+                                        <value type="org.apereo.portal.permission.target.IPermissionTarget.TargetType">OTHER</value>
+                                    </constructor-arg>
+                                </bean>
+                            </util:list>
+                        </property>
+                    </bean>
+                </entry>
+                <entry key="portalSystemTargetProvider">
+                    <bean class="org.apereo.portal.permission.target.SimpleStringTargetProviderImpl">
+                        <property name="targets">
+                            <util:list>
+                                <bean class="org.apereo.portal.permission.target.PermissionTargetImpl">
+                                    <constructor-arg value="ALL"/>
+                                    <constructor-arg value="All permissions"/>
+                                    <constructor-arg>
+                                        <value type="org.apereo.portal.permission.target.IPermissionTarget.TargetType">OTHER</value>
+                                    </constructor-arg>
+                                </bean>
+                            </util:list>
+                        </property>
+                    </bean>
+                </entry>
+                <entry key="userAttributesTargetProvider">
+                    <bean class="org.apereo.portal.permission.target.UserAttributesTargetProviderImpl">
+                        <property name="personAttributeDao" ref="personAttributeDao" />
+                    </bean>
+                </entry>
+                <entry key="portalDataTypeTargetProvider">
+                    <bean class="org.apereo.portal.permission.target.PortalDataTypeTargetProviderImpl" />
+                </entry>
+            </map>
+        </property>
+    </bean>
+
+    <util:map id="redirectionServices">
+        <entry key="person">
+            <bean class="org.apereo.portal.redirect.PortletRedirectionUrl"
+                p:fname="directory" p:mode="VIEW" p:type="RENDER">
+                <property name="dynamicParameters">
+                    <map>
+                        <entry key="id" value="username"/>
+                    </map>
+                </property>
+                <property name="additionalParameters">
+                    <map>
+                        <entry key="action" value="findByUsername"/>
+                    </map>
+                </property>
+                <property name="pathParameters">
+                    <list>
+                        <value>username</value>
+                    </list>
+                </property>
+            </bean>
+        </entry>
+        <!-- For the Map portlet, which is not included in the quickstart data set -->
+        <!-- entry key="location">
+            <bean class="org.apereo.portal.redirect.PortletRedirectionUrl"
+                    p:fname="map" p:mode="VIEW" p:type="RENDER">
+                <property name="dynamicParameters">
+                    <map>
+                        <entry key="id" value="location"/>
+                    </map>
+                </property>
+            </bean>
+        </entry -->
+    </util:map>
+
+    <!--
+     | Map of custom attributes for tenants that may be managed in the Tenant
+     | Manager.  (Any attribute may be created programmatically.)  Runtime type
+     | for attributes is Map<String,String>.  In this Map, the keys are attribute
+     | names and the values are themselves keys into the messageBundle for human-
+     | readable form labels.  The order specified is the order they will appear
+     | on the screen.
+     +-->
+    <util:map id="tenantManagerAttributes" map-class="java.util.LinkedHashMap">
+        <entry key="#{T(org.apereo.portal.tenants.ResetPasswordTenantOperationsListener).ADMIN_CONTACT_USERNAME}" value="tenant.manager.adminContactUsername" />
+        <entry key="#{T(org.apereo.portal.tenants.ResetPasswordTenantOperationsListener).ADMIN_CONTACT_EMAIL}" value="tenant.manager.adminContactEmail" />
+        <entry key="tenantOrg" value="tenant.manager.tenantOrgValue" />
+    </util:map>
+
+    <!--
+     | Defines what happens when a Tenant is created/updated/deleted.
+     +-->
+    <util:list id="tenantOperationsListeners">
+        <!-- Enforce a required attribute that isn't hard-wired into the function of another listener -->
+        <bean class="org.apereo.portal.tenants.AttributeValidatingOperationsListener">
+            <property name="requiredAttributes">
+                <set>
+                    <!-- Matches entry in tenantManagerAttributes above -->
+                    <value>tenantOrg</value>
+                </set>
+            </property>
+        </bean>
+        <!-- Processes templated entities -->
+        <bean class="org.apereo.portal.tenants.TemplateDataTenantOperationsListener">
+            <!--
+             | A collection of Resource objects upon which to run an Import when onUpate()
+             | is invoked;  presumably these are a subset of the entities inside
+             | org.apereo.portal.tenants.TemplateDataTenantOperationsListener.templateLocation,
+             | but they don't have to be.
+             |
+             | Example of value relative to templateLocation:
+             |    templateLocation = classpath://org/apereo/portal/tenants/sampledata/**/*.xml
+             |    value = user/contact.user.xml
+             |    effective path = classpath://org.jasig/portal/tenants/sampledata/user/contact.user.xml
+             |
+             | You wouldn't want _all_ the entities in there re-imported because that
+             | approach would reset (undo) many changes made by the tenant admin since
+             | creation.  Typically you want to update the files that contain EL expressions
+             | that reference 'tenant.attributesMap' like the following:
+             |   - ${tenant.attributesMap['adminContactUsername']}
+             +-->
+            <property name="entityResourcesToImportOnUpdate">
+                <set value-type="java.lang.String">
+                    <!-- Updates the user in the tenant administrators group -->
+                    <value>classpath:/org/apereo/portal/tenants/sampledata/group_membership/Administrators.group-membership.xml</value>
+                    <!-- Updates the org attribute value that links users with the tenancy -->
+                    <value>classpath:/org/apereo/portal/tenants/sampledata/pags-group/Members.pags-group.xml</value>
+                    <!-- Updates the email address of or, if necessary, creates
+                         a new portal account for the admin contact user -->
+                    <value>classpath:/org/apereo/portal/tenants/sampledata/user/tenant-admin.user.xml</value>
+                </set>
+            </property>
+            <!--
+             | Instructs the TemplateDataTenantOperationsListener how to clean
+             | up the portal database when a tenant is deleted.  The sysid field
+             | may contain SpEL expressions.  Works just like $ant data-delete
+             | from the command line.
+             +-->
+            <property name="entitiesToRemoveOnDelete">
+                <list>
+                    <!-- TODO:  DELETE -->
+                    <bean p:type="fragment-definition" p:sysid="#{'$'}{tenant.fname}" class="org.apereo.portal.tenants.TemplateDataTenantOperationsListener$DeleteTuple" />
+                    <!-- TODO:  DELETE -->
+                    <bean p:type="fragment-layout" p:sysid="#{'$'}{tenant.fname}-lo" class="org.apereo.portal.tenants.TemplateDataTenantOperationsListener$DeleteTuple" />
+                    <!-- TODO:  DELETE -->
+                    <bean p:type="group-membership" p:sysid="#{'$'}{tenant.name}" class="org.apereo.portal.tenants.TemplateDataTenantOperationsListener$DeleteTuple" />
+                    <bean p:type="group-membership" p:sysid="#{'$'}{tenant.name} Portlets" class="org.apereo.portal.tenants.TemplateDataTenantOperationsListener$DeleteTuple" />
+                    <!-- TODO:  DELETE -->
+                    <bean p:type="pags-group" p:sysid="#{'$'}{tenant.name} Members" class="org.apereo.portal.tenants.TemplateDataTenantOperationsListener$DeleteTuple" />
+                    <bean p:type="portlet-definition" p:sysid="#{'$'}{tenant.fname}-logo" class="org.apereo.portal.tenants.TemplateDataTenantOperationsListener$DeleteTuple" />
+                    <bean p:type="portlet-definition" p:sysid="#{'$'}{tenant.fname}-skin" class="org.apereo.portal.tenants.TemplateDataTenantOperationsListener$DeleteTuple" />
+                    <bean p:type="user" p:sysid="#{'$'}{tenant.fname}-lo" class="org.apereo.portal.tenants.TemplateDataTenantOperationsListener$DeleteTuple" />
+                    <bean p:type="user" p:sysid="#{'$'}{tenant.attributesMap['adminContactUsername']}" class="org.apereo.portal.tenants.TemplateDataTenantOperationsListener$DeleteTuple" />
+                    <!-- TODO:  Find a way to identify and delete 'orphaned' portlets -->
+                </list>
+            </property>
+        </bean>
+        <!-- Persists the tenant object locally;  implemented as a listener so this behavior can occupy any position in the chain. -->
+        <bean class="org.apereo.portal.tenants.JpaPersistenceTenantOperationsListener" />
+        <!-- Listener that sends a "reset password" email to the named admin contact so they can
+             login using the local login form. Useful if you aren't using LDAP or other criteria for
+             authenticating tenant admins.  MUST BE LAST! -->
+        <bean class="org.apereo.portal.tenants.ResetPasswordTenantOperationsListener">
+            <property name="passwordResetNotification">
+                <bean class="org.apereo.portal.portlets.account.EmailPasswordResetNotificationImpl">
+                    <property name="subjectMessageKey" value="tenant.new.account"/>
+                    <property name="templateDir" value="${org.apereo.portal.tenant.template-dir}"/>
+                    <property name="templateName" value="${org.apereo.portal.tenant.template-name}"/>
+                </bean>
+            </property>
+        </bean>
+    </util:list>
+
+</beans>

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to Apereo under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Apereo licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow
+                          http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+    <!--  View Parameters -->
+    <input name="selectTypes" type="java.util.Set" required="true"/> <!-- Set<JsonEntityBean> of desired entity types -->
+    <input name="selectMultiple" type="boolean" required="false"/> <!-- Can multiple entries be selected? -->
+    <input name="rootEntity" type="org.apereo.portal.layout.dlm.remoting.JsonEntityBean" required="false"/> <!-- Search base -->
+    <input name="requireSelection" type="boolean" required="false"/>
+    <input name="enableAdHocGroups" type="boolean" required="false"/>
+    <input name="adHocEntity" type="org.apereo.portal.layout.dlm.remoting.JsonEntityBean" required="false"/> <!-- Search base -->
+
+    <input name="showCancelButton" type="boolean" required="false" />
+    <input name="showBackButton" type="boolean" required="false"/>
+    <input name="saveButtonCode" type="string" required="false" />
+    <input name="saveButtonText" type="string" required="false" />
+    
+    <!-- The below inputs are for customized text strings.  For example,
+         "pageTitleText" could be "Category Selection" if you're selecting
+         categories and "Groups Selection" if you're selecting groups.
+         Use the "Code" value if you're supplying a Spring message bundle,
+         otherwise use the "Text" value if you're specifying the actual
+         string. -->
+    <input name="backButtonCode" type="string" required="false" />
+    <input name="backButtonText" type="string" required="false" />
+    <input name="cancelButtonCode" type="string" required="false" />
+    <input name="cancelButtonText" type="string" required="false" />
+    <input name="pageTitleCode" type="string" required="false" />
+    <input name="pageTitleText" type="string" required="false" />
+    <input name="pageSubtitleCode" type="string" required="false" />
+    <input name="pageSubtitleText" type="string" required="false" />
+    <input name="pageSubtitleArgument" type="string" required="false" />
+
+    <!-- 
+        | Selected groups input
+        |
+        | The selected groups object should be a list of entity IDs representing
+        | the existing or default list of group and group member selections.
+        +-->
+    <input name="selectedGroups" type="java.util.List" required="true"/>
+    
+    <!-- Initialize a simple hashmap to use as a model for forms and add
+        the input selected groups to the model -->
+    <on-start>
+        <set name="flowScope.groups" value="selectedGroups"/>
+        <set name="flowScope.entityTypes" value="new java.util.ArrayList()"/>       
+    </on-start>
+    
+    <!-- Main user form for entity selection -->
+    <view-state id="selectEntities">
+        <transition on="back" to="back"/>
+        <transition on="save" to="finish">
+            <set name="flashScope.groupArray" value="externalContext.getNativeRequest().getParameterValues('groups')"/>
+            <set name="flowScope.groups" value="groupListHelper.getEntityBeans(groupArray)"/>
+        </transition>
+        <transition on="cancel" to="cancel" bind="false"/>
+    </view-state>
+
+	<end-state id="finish">
+	    <output name="selectedGroups" value="flowScope.groups"/>
+    </end-state>
+
+    <end-state id="back">
+        <output name="selectedGroups" value="flowScope.groups"/>
+    </end-state>
+    
+    <end-state id="cancel">
+        <output name="selectedGroups" value="flowScope.groups"/>
+    </end-state>
+</flow>

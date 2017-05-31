@@ -9,7 +9,6 @@ dependencies {
     compile "commons-codec:commons-codec:${commonsCodecVersion}"
     compile "commons-lang:commons-lang:${commonsLangVersion}"
     compile "net.oauth.core:oauth:${oauthVersion}"
-    compile "org.aspectj:aspectjrt:${aspectjrtVersion}"
     compile "org.jasypt:jasypt:${jasyptVersion}"
     compile "org.slf4j:slf4j-api:${slf4jVersion}"
     compile "org.springframework:spring-web:${springVersion}"

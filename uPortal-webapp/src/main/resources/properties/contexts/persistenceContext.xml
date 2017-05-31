@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to Apereo under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Apereo licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns="http://www.springframework.org/schema/beans"
+  xmlns:aop="http://www.springframework.org/schema/aop"
+  xmlns:util="http://www.springframework.org/schema/util"
+  xsi:schemaLocation="http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
+        
+    <bean id="permissionStore" class="org.apereo.portal.security.provider.RDBMPermissionImpl"/>
+
+    <!-- ********** JPA Beans ********** -->
+    
+    <aop:config>
+        <aop:pointcut id="daoExecution" 
+            expression="within(@org.springframework.stereotype.Repository *) &amp;&amp; execution(* org.apereo.portal..*.*(..))"/>
+
+        <aop:pointcut id="allExecutions" expression="execution(* *.*(..))"/>
+        
+        <aop:pointcut id="portletPreferenceExecution" expression="execution(* javax.portlet.PortletPreferences.*(..))"/>
+            
+        <aop:aspect ref="threadContextClassLoaderAspect">
+            <!-- 
+             | ALL potential callbacks from a portlet through pluto and back into uPortal MUST be covered here. Tomcat switches the
+             | thread context classloader from uPortal's to the portlet's during the cross-context dispatch. On a call back into uPortal 
+             | from a portlet (generally via a Pluto SPI) the thread contxt classloader MUST be switched back to the uPortal classloader
+             | to avoid classloading issues during uPortal code execution.
+             +-->
+            <aop:around method="doThreadContextClassLoaderUpdate" pointcut="execution(* javax.portlet.PortalContext.*(..))"/>
+            <aop:around method="doThreadContextClassLoaderUpdate" pointcut="execution(* org.apache.pluto.container.EventCoordinationService.*(..))"/>
+            <aop:around method="doThreadContextClassLoaderUpdate" pointcut="execution(* org.apache.pluto.container.FilterManagerService.*(..))"/>
+            <aop:around method="doThreadContextClassLoaderUpdate" pointcut="execution(* org.apache.pluto.container.PortletRequestContextService.*(..))"/>
+            <aop:around method="doThreadContextClassLoaderUpdate" pointcut="execution(* org.apache.pluto.container.PortletURLListenerService.*(..))"/>
+            <aop:around method="doThreadContextClassLoaderUpdate" pointcut="execution(* org.apache.pluto.container.UserInfoService.*(..))"/>
+            <aop:around method="doThreadContextClassLoaderUpdate" pointcut="execution(* org.apache.pluto.container.driver.PortalAdministrationService.*(..))"/>
+            <aop:around method="doThreadContextClassLoaderUpdate" pointcut="execution(* org.apache.pluto.container.PortletPreferencesService.*(..))"/>
+            <aop:around method="doThreadContextClassLoaderUpdate" pointcut="execution(* org.apereo.portal.portlet.container.services.PortletPreferencesFactory.*(..))"/>
+            <aop:around method="doThreadContextClassLoaderUpdate" pointcut="execution(* org.apache.pluto.container.PortletEnvironmentService.*(..))"/>
+            <aop:around method="doThreadContextClassLoaderUpdate" pointcut="execution(* org.apache.pluto.container.driver.PortletRegistryService.*(..))"/>
+            <aop:around method="doThreadContextClassLoaderUpdate" pointcut="execution(* org.apache.pluto.container.driver.PortletContextService.*(..))"/>
+            <aop:around method="doThreadContextClassLoaderUpdate" pointcut="execution(* org.apache.pluto.container.PortletInvokerService.*(..))"/>
+            <aop:around method="doThreadContextClassLoaderUpdate" pointcut="execution(* org.apache.pluto.container.NamespaceMapper.*(..))"/>
+            <aop:around method="doThreadContextClassLoaderUpdate" pointcut="execution(* org.apache.pluto.container.CCPPProfileService.*(..))"/>
+            <aop:around method="doThreadContextClassLoaderUpdate" pointcut="execution(* org.apache.pluto.container.RequestDispatcherService.*(..))"/>
+        </aop:aspect>
+        
+        <aop:aspect ref="threadContextClassLoaderApplyingAspect">
+            <aop:around method="applyAspect" pointcut="execution(* org.apereo.portal.portlet.container.services.PortletPreferencesFactory.*(..))"/>
+        </aop:aspect>
+        
+        <aop:aspect ref="sqlNextExceptionLoggerAspect">
+            <aop:after-throwing pointcut-ref="daoExecution" method="logBatchUpdateExceptions" throwing="t"/>
+        </aop:aspect>
+    </aop:config>
+    
+    <!-- 
+     | Aspect used to apply the threadContextClassLoaderAspect every PortletPreference impl returned by the
+     | targeted object 
+     +-->
+    <bean id="threadContextClassLoaderApplyingAspect" class="org.apereo.portal.spring.AspectApplyingAspect">
+        <property name="advices" ref="threadContextClassLoaderPortetPreferencesAdvice" />
+    </bean>
+    
+    <!-- 
+     | Advice object used to apply the threadContextClassLoaderAspect every method on a PortletPreference impl
+     +-->
+    <bean id="threadContextClassLoaderPortetPreferencesAdvice" class="org.apereo.portal.spring.AspectJAroundAdviceFactory">
+        <property name="aspect" ref="threadContextClassLoaderAspect" />
+        <property name="method" value="doThreadContextClassLoaderUpdate" />
+        <property name="args" value="org.aspectj.lang.ProceedingJoinPoint" />
+        <property name="pointcut" ref="portletPreferenceExecution" />
+    </bean>
+    
+    <!-- Aspect to force the Thread.getContextClassLoader() to the correct loader on cross-context calls form portlets -->
+    <bean id="threadContextClassLoaderAspect" class="org.apereo.portal.portlet.dao.jpa.ThreadContextClassLoaderAspect" />
+    
+    <bean id="sqlNextExceptionLoggerAspect" class="org.apereo.portal.portlet.dao.jpa.SQLNextExceptionLoggerAspect" />
+    
+    <bean id="PortalDbEntityManagerFactory" class="org.apereo.portal.jpa.EventingLocalContainerEntityManagerFactoryBean" depends-on="cacheManager">
+        <property name="dataSource" ref="PortalDb" />
+        <property name="jpaVendorAdapter" ref="jpaVendorAdapter" />
+        <property name="persistenceUnitName">
+            <util:constant static-field="org.apereo.portal.jpa.BasePortalJpaDao.PERSISTENCE_UNIT_NAME"/>
+        </property>
+        <property name="jpaProperties">
+            <props>
+                <prop key="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.SpringBeanEhCacheRegionFactory</prop>
+                <prop key="org.apereo.portal.cache.CacheManagerName">uPortal.cacheManager</prop>
+                <prop key="persistenceUnitName">#{T(org.apereo.portal.jpa.BasePortalJpaDao).PERSISTENCE_UNIT_NAME}</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="jpaVendorAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter" >
+        <property name="generateDdl" value="false" />
+    </bean> 
+    
+    <bean id="jpaInterceptor" class="org.springframework.orm.jpa.JpaInterceptor">
+        <property name="entityManagerFactory" ref="PortalDbEntityManagerFactory" />
+    </bean>
+
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <qualifier value="PortalDb"/>
+        <property name="entityManagerFactory" ref="PortalDbEntityManagerFactory" />
+    </bean>
+    <bean id="transactionOperations" class="org.springframework.transaction.support.TransactionTemplate">
+        <qualifier value="PortalDb"/>
+        <property name="transactionManager" ref="transactionManager" />
+    </bean>
+    <bean id="jdbcOperations" class="org.springframework.jdbc.core.JdbcTemplate">
+        <qualifier value="PortalDb"/>
+        <property name="dataSource" ref="PortalDb" />
+    </bean>
+
+    <!-- This mimics what <tx:annotation-driven/> does but uses our custom TransactionManagerCachingTransactionInterceptor -->    
+    <bean id="org.springframework.transaction.annotation.AnnotationTransactionAttributeSource#0" 
+            class="org.springframework.transaction.annotation.AnnotationTransactionAttributeSource"/>
+    <bean id="org.springframework.transaction.interceptor.TransactionInterceptor#0"
+            class="org.apereo.portal.spring.tx.DialectAwareTransactionInterceptor">
+        <property name="transactionAttributeSource" ref="org.springframework.transaction.annotation.AnnotationTransactionAttributeSource#0" />
+        <property name="transactionManagerBeanName" value="transactionManager" />
+    </bean>
+    <bean id="org.springframework.transaction.config.internalTransactionAdvisor" 
+            class="org.springframework.transaction.interceptor.BeanFactoryTransactionAttributeSourceAdvisor">
+        <property name="transactionAttributeSource" ref="org.springframework.transaction.annotation.AnnotationTransactionAttributeSource#0" />
+        <property name="adviceBeanName" value="org.springframework.transaction.interceptor.TransactionInterceptor#0" />
+    </bean>
+
+    <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
+
+    <!-- ********** Database Utilities ********** -->
+    <bean name="portalDbHibernateExport" class="org.apereo.portal.tools.dbloader.DataSourceSchemaExport" lazy-init="true" depends-on="PortalDbEntityManagerFactory,hibernateConfigurationAwareInjector">
+        <qualifier value="PortalDb"/>
+        <property name="jdbcOperations" ref="jdbcOperations" />
+        <property name="persistenceUnit">
+            <util:constant static-field="org.apereo.portal.jpa.BasePortalJpaDao.PERSISTENCE_UNIT_NAME"/>
+        </property>
+    </bean>
+
+    <!--
+     | Providing HibernateStyleCounterStore.java with its own TransactionTemplate
+     | where propagationBehavior=Propagation.REQUIRES_NEW because it's the only
+     | class that touches this table, and because failure elsewhere in a shared
+     | transaction is orthogonal to fetching a new batch of sequence numbers.
+     +-->
+    <bean id="counterStoreTransactionOperations" class="org.springframework.transaction.support.TransactionTemplate">
+        <property name="transactionManager" ref="transactionManager" />
+        <property name="propagationBehavior" value="#{T(org.springframework.transaction.TransactionDefinition).PROPAGATION_REQUIRES_NEW}" />
+    </bean>
+
+</beans>

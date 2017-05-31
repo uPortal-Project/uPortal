@@ -1,0 +1,82 @@
+<!--
+
+    Licensed to Apereo under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Apereo licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<!--
+ | NOTICE:  This file represents a contractual API that is leveraged by more 
+ | than one caller.  Please do not refactor this file in a way that changes 
+ | the number or nature of arguments expected.
+ |
+ | These are:
+ |   - ${Attributes.NODE}=XML Element that defines the entity to import
+ |   - ${PORTAL_CONTEXT}=uPortal's Spring ApplicationContext
+ |   - ${SqlAttributes.DATA_SOURCE}=the DataSource for the PortalDb
+ |   - ${SqlAttributes.TRANSACTION_MANAGER}=PlatformTransactionManager in use
+ |
+ | To debug, it is probably easier to change log.debug to log.error within this script because the script
+ | classname is dynamic; e.g. Script1, Script 13, etc., so it is a pain to have the right value in logback.xml.
+ +-->
+<with-attribute key="PARENT_GROUP_NAME" value="${valueOf(parent)}">
+    <groovy>
+        <script>
+            import org.apereo.portal.groups.IEntityGroup
+            import org.apereo.portal.groups.IGroupConstants
+            import org.apereo.portal.groups.IGroupMember
+            import org.apereo.portal.io.GetMemberIsGroupPhrase
+            import org.apereo.portal.io.GetMemberKeyPhrase
+            import org.apereo.portal.io.GetMemberServicePhrase
+            import org.apereo.portal.services.GroupService
+            import org.slf4j.LoggerFactory
+
+            def log = LoggerFactory.getLogger(this.getClass());
+
+            def entityIdArr = GroupService.searchForGroups(PARENT_GROUP_NAME, IGroupConstants.IS, org.apereo.portal.security.IPerson.class);
+            entityIdArr = entityIdArr.size() > 0 ? entityIdArr : GroupService.searchForGroups(PARENT_GROUP_NAME, IGroupConstants.IS, org.apereo.portal.portlet.om.IPortletDefinition.class);
+            switch (entityIdArr.size()) {
+                case 0:
+                    throw new RuntimeException("Unable to find group with name $PARENT_GROUP_NAME");
+                case 1:
+                    break;
+                default:
+                    throw new RuntimeException("Found $entityIdArr.size groups with name $PARENT_GROUP_NAME -- should only be 1");
+            }
+            def group = GroupService.findGroup(entityIdArr[0].getKey());
+
+            Attributes.NODE.selectNodes('child/*').each {
+                String groupService = GetMemberServicePhrase.getPhrase(it.getName(), it.getText());
+                String memberId = GetMemberKeyPhrase.getPhrase(it.getName(), it.getText());
+                log.debug("Found service=$groupService, memberId=$memberId");
+
+                if (GetMemberIsGroupPhrase.phraseIsGroup(it.getName())) {
+                    String key = groupService + '.' + memberId;
+                    log.debug("Created key $key");
+                    IEntityGroup member = GroupService.findGroup(key);
+                    log.debug("Adding group $member");
+                    group.addChild(member);
+                } else {
+                    IGroupMember member = GroupService.getGroupMember(memberId, group.getLeafType());
+                    log.debug("Adding entity $member");
+                    group.addChild(member);
+                }
+            }
+
+            group.updateMembers();
+        </script>
+    </groovy>
+</with-attribute>

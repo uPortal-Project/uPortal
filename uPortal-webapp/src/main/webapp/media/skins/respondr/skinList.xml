@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+<!--
+
+    Licensed to Apereo under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Apereo licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<skins>
+
+    <!-- 
+        NOTE:  The default skin for Respondr is available in three variations:
+
+          1. static (enabled by default)
+                Links compiled LESS (i.e. CSS) into the page using the Dynamic Skin Portlet when using the
+                following configuration specified by portlet preferences in portlet.xml
+
+                dynamic: false
+                skinName: defaultSkin (may be changed to the institutional skin's name file by changing the
+                          preference in the portlet definition file dynamic-respondr-skin.portlet-definition.xml
+                          or changing the preference value using the Manage Portlets UI). Will embed
+                          defaultSkin.css (name derived by adding ".css" to skinName).
+          2. static using skin.xml
+                Does not use the Dynamic Skin Portlet at all.  Typically used at a non-tenant institution that
+                customized their theme or skin.  You must change skin.xml to include your
+                institution CSS skin file, remove Dynamic Skin Manager from respondr-lo.fragment-layout.xml and
+                re-import the fragment layout, and change the skin name set in
+                src/main/data/required_entities/stylesheet-descriptor/Respondr.stylesheet-descriptor.xml
+          3. dynamic
+                Generates a customized CSS file from the defaultSkin LESS file, incorporating user-configured
+                portlet preference values for configurable elements (mostly colors). Dynamic Skin Portlet links
+                customized CSS file into the page.  To use, set the following preference values in the
+                portlet definition file dynamic-respondr-skin.portlet-definition.xml:
+
+                dynamic: true
+                skinName: Optional (defaults to defaultSkin).  Base name of the LESS file to look for in
+                          media/skins/respondr to process (.less added to the base name).  For example, value
+                          of defaultSkin will process defaultSkin.less to create the dynamic skin css file.
+
+        All flavors use exactly the same LESS files.  The dynamic strategy supports changing a few settings
+        (i.e. color choices) using an admin UI.  You can switch from one strategy to the other by adjusting
+        configuration as indicated above.
+
+        Creating institution-specific theme/skin.
+        1. Copy defaultSkin folder to a name of your choice (e.g. byuSkin)
+        2. Copy defaultSkin.less to a similar name; e.g. byuSkin.less
+        3. Customize skin files accordingly.
+        4. Modify this file to your institution skin name (e.g. change defaultSkin to byuSkin)
+        5. Enable dynamic skin portlet and set skinName to your institution name (see above).
+    -->
+
+  <skin>
+    <skin-key>defaultSkin</skin-key>
+    <skin-name>defaultSkin</skin-name>
+    <skin-description>
+      Basic skin for the Respondr theme based on Twitter Bootstrap and Responsive Design
+    </skin-description>
+  </skin>
+  
+</skins>
+

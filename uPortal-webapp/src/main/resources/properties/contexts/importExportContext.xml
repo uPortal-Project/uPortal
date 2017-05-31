@@ -1,0 +1,654 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to Apereo under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Apereo licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="
+           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
+
+
+
+    <!--
+     | The various portal data type descriptors
+     +-->
+    <bean id="entityTypePortalDataType" class="org.apereo.portal.io.xml.entitytype.EntityTypePortalDataType"/>
+    <bean id="stylesheetDescriptorPortalDataType" class="org.apereo.portal.io.xml.ssd.StylesheetDescriptorPortalDataType"/>
+    <bean id="templateUserPortalDataType" class="org.apereo.portal.io.xml.user.TemplateUserPortalDataType"/>
+    <bean id="userPortalDataType" class="org.apereo.portal.io.xml.user.UserPortalDataType"/>
+    <bean id="groupPortalDataType" class="org.apereo.portal.io.xml.group.GroupPortalDataType"/>
+    <bean id="groupMembershipPortalDataType" class="org.apereo.portal.io.xml.group.GroupMembershipPortalDataType"/>
+    <bean id="membershipPortalDataType" class="org.apereo.portal.io.xml.group.MembershipPortalDataType"/>
+    <bean id="portletTypePortalDataType" class="org.apereo.portal.io.xml.portlettype.PortletTypePortalDataType"/>
+    <bean id="portletPortalDataType" class="org.apereo.portal.io.xml.portlet.PortletPortalDataType"/>
+    <bean id="permissionPortalDataType" class="org.apereo.portal.io.xml.permission.PermissionPortalDataType"/>
+    <bean id="permissionSetPortalDataType" class="org.apereo.portal.io.xml.permission.PermissionSetPortalDataType"/>
+    <bean id="permissionOwnerPortalDataType" class="org.apereo.portal.io.xml.permission.PermissionOwnerPortalDataType"/>
+    <bean id="profilePortalDataType" class="org.apereo.portal.io.xml.layout.ProfilePortalDataType"/>
+    <bean id="fragmentLayoutPortalDataType" class="org.apereo.portal.io.xml.layout.FragmentLayoutPortalDataType"/>
+    <bean id="layoutPortalDataType" class="org.apereo.portal.io.xml.layout.LayoutPortalDataType"/>
+    <bean id="fragmentDefinitionPortalDataType" class="org.apereo.portal.io.xml.dlm.FragmentDefinitionPortalDataType"/>
+    <bean id="eventAggregationConfigurationPortalDataType" class="org.apereo.portal.io.xml.eventaggr.EventAggregationConfigurationPortalDataType" />
+    <bean id="subscribedFragmentPortalDataType" class="org.apereo.portal.io.xml.subscribedfragment.SubscribedFragmentPortalDataType" />
+    <bean id="personAttributesGroupStorePortalDataType" class="org.apereo.portal.io.xml.pags.PersonAttributesGroupStorePortalDataType" />
+
+    <!--
+     | Import order for portal data types
+     +-->
+    <util:list id="dataTypeImportOrder">
+        <ref bean="personAttributesGroupStorePortalDataType" />
+        <ref bean="entityTypePortalDataType" />
+        <ref bean="stylesheetDescriptorPortalDataType" />
+        <ref bean="templateUserPortalDataType" />
+        <ref bean="userPortalDataType" />
+        <ref bean="groupPortalDataType" />
+        <ref bean="groupMembershipPortalDataType" />
+        <ref bean="membershipPortalDataType" />
+        <ref bean="portletTypePortalDataType" />
+        <ref bean="portletPortalDataType" />
+        <ref bean="permissionPortalDataType" />
+        <ref bean="permissionSetPortalDataType" />
+        <ref bean="permissionOwnerPortalDataType" />
+        <ref bean="profilePortalDataType" />
+        <ref bean="fragmentDefinitionPortalDataType" />
+        <ref bean="fragmentLayoutPortalDataType" />
+        <ref bean="layoutPortalDataType" />
+        <ref bean="subscribedFragmentPortalDataType" />
+        <ref bean="eventAggregationConfigurationPortalDataType" />
+    </util:list>
+
+    <util:set id="exportAllPortalDataTypes">
+        <ref bean="personAttributesGroupStorePortalDataType" />
+        <ref bean="entityTypePortalDataType" />
+        <ref bean="fragmentDefinitionPortalDataType" />
+        <ref bean="fragmentLayoutPortalDataType" />
+        <ref bean="groupMembershipPortalDataType" />
+        <ref bean="layoutPortalDataType" />
+        <ref bean="subscribedFragmentPortalDataType" />
+        <ref bean="permissionOwnerPortalDataType" />
+        <ref bean="permissionSetPortalDataType" />
+        <ref bean="portletTypePortalDataType" />
+        <ref bean="portletPortalDataType" />
+        <ref bean="profilePortalDataType" />
+        <ref bean="stylesheetDescriptorPortalDataType" />
+        <ref bean="userPortalDataType" />
+        <ref bean="eventAggregationConfigurationPortalDataType" />
+    </util:set>
+
+    <!--
+     | File-name patterns that a candidate file must match one of when doing a bulk import
+     +-->
+    <util:set id="dataFileIncludes">
+        <value>**/*.pags-group</value>
+        <value>**/*.xml</value>
+        <value>**/*.entity-type</value>
+        <value>**/*.template-user</value>
+        <value>**/*.user</value>
+        <value>**/*.group</value>
+        <value>**/*.group_membership</value>
+        <value>**/*.membership</value>
+        <value>**/*.portlet-type</value>
+        <value>**/*.portlet</value>
+        <value>**/*.channel</value>
+        <value>**/*.permission</value>
+        <value>**/*.permission_set</value>
+        <value>**/*.permission_owner</value>
+        <value>**/*.profile</value>
+        <value>**/*.fragment-layout</value>
+        <value>**/*.layout</value>
+        <value>**/*.fragment-definition</value>
+        <value>**/*.subscribed-fragment</value>
+    </util:set>
+
+    <!--
+     | Thread pool used for bulk import/export operations
+     +-->
+    <bean id="importExportThreadPool" class="org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean">
+        <property name="corePoolSize" value="${org.apereo.portal.io.threadPool.initialThreads}" />
+        <property name="maxPoolSize" value="${org.apereo.portal.io.threadPool.maxThreads}" />
+        <property name="queueCapacity" value="${org.apereo.portal.io.threadPool.queueSize}" />
+        <property name="threadGroupName" value="uP-ImportExportTG" />
+        <property name="threadNamePrefix" value="uP-ImportExport-" />
+        <property name="threadPriority" value="${org.apereo.portal.io.threadPool.threadPriority}" />
+        <property name="keepAliveSeconds" value="${org.apereo.portal.io.threadPool.keepAliveSeconds}" />
+        <property name="rejectedExecutionHandler">
+            <bean class="java.util.concurrent.ThreadPoolExecutor.CallerRunsPolicy"/>
+        </property>
+        <property name="daemon" value="true" />
+        <property name="allowCoreThreadTimeOut" value="true" />
+    </bean>
+
+    <!--
+     | Import/Export classes for portal entities
+     +-->
+    <bean id="portletDefinitionImporterExporter" class="org.apereo.portal.io.xml.portlet.PortletDefinitionImporterExporter">
+        <property name="contextPath" value="org.apereo.portal.io.xml.portlet" />
+        <property name="schema" value="classpath:/xsd/portlet-definition-4.3.xsd" />
+        <property name="schemaLocation" value="https://source.jasig.org/schemas/uportal/io/portlet-definition https://source.jasig.org/schemas/uportal/io/portlet-definition/portlet-definition-4.3.xsd" />
+    </bean>
+    <bean id="portletTypeImporterExporter" class="org.apereo.portal.io.xml.portlettype.PortletTypeImporterExporter">
+        <property name="contextPath" value="org.apereo.portal.io.xml.portlettype" />
+        <property name="schema" value="classpath:/xsd/portlet-type-4.0.xsd" />
+        <property name="schemaLocation" value="https://source.jasig.org/schemas/uportal/io/portlet-type https://source.jasig.org/schemas/uportal/io/portlet-type/portlet-type-4.0.xsd" />
+    </bean>
+    <bean id="stylesheetDescriptorImporterExporter" class="org.apereo.portal.io.xml.ssd.StylesheetDescriptorImporterExporter">
+        <property name="contextPath" value="org.apereo.portal.io.xml.ssd" />
+        <property name="schema" value="classpath:/xsd/stylesheet-descriptor-4.0.xsd" />
+        <property name="schemaLocation" value="https://source.jasig.org/schemas/uportal/io/stylesheet-descriptor https://source.jasig.org/schemas/uportal/io/stylesheet-descriptor/stylesheet-descriptor-4.0.xsd" />
+    </bean>
+    <bean id="userImporterExporter" class="org.apereo.portal.io.xml.user.UserImporterExporter">
+        <property name="contextPath" value="org.apereo.portal.io.xml.user" />
+        <property name="schema" value="classpath:/xsd/user-4.0.xsd" />
+        <property name="schemaLocation" value="https://source.jasig.org/schemas/uportal/io/user https://source.jasig.org/schemas/uportal/io/user/user-4.0.xsd" />
+    </bean>
+    <bean id="permissionOwnerImporterExporter" class="org.apereo.portal.io.xml.permission.PermissionOwnerImporterExporter">
+        <property name="contextPath" value="org.apereo.portal.io.xml.permission" />
+        <property name="schema" value="classpath:/xsd/permission-owner-4.0.xsd" />
+        <property name="schemaLocation" value="https://source.jasig.org/schemas/uportal/io/permission-owner https://source.jasig.org/schemas/uportal/io/permission-owner/permission-owner-4.0.xsd" />
+    </bean>
+    <bean id="eventAggregationConfigurationImporterExporter" class="org.apereo.portal.io.xml.eventaggr.EventAggregationConfigurationImporterExporter">
+        <property name="contextPath" value="org.apereo.portal.io.xml.eventaggr" />
+        <property name="schema" value="classpath:/xsd/event-aggregation-4.0.xsd" />
+        <property name="schemaLocation" value="https://source.jasig.org/schemas/uportal/io/event-aggregation https://source.jasig.org/schemas/uportal/io/event-aggregation/event-aggregation-4.0.xsd" />
+    </bean>
+    <bean id="subscribedFragmentImporterExporter" class="org.apereo.portal.io.xml.subscribedfragment.SubscribedFragmentImporterExporter">
+        <property name="contextPath" value="org.apereo.portal.io.xml.subscribedfragment" />
+        <property name="schema" value="classpath:/xsd/subscribed-fragment-4.0.xsd" />
+        <property name="schemaLocation" value="https://source.jasig.org/schemas/uportal/io/subscribed-fragment https://source.jasig.org/schemas/uportal/io/subscribed-fragment/subscribed-fragment-4.0.xsd" />
+    </bean>
+
+    <!--
+     | Legacy Import classes for portal entities
+     +-->
+    <bean id="layout32Importer" class="org.apereo.portal.io.xml.layout.LayoutImporter">
+        <property name="threadSafe" value="true"/>
+        <property name="dataKeys">
+            <set>
+                <util:constant static-field="org.apereo.portal.io.xml.layout.LayoutPortalDataType.IMPORT_32_DATA_KEY"/>
+                <util:constant static-field="org.apereo.portal.io.xml.layout.LayoutPortalDataType.IMPORT_32_DEFAULT_USER_DATA_KEY"/>
+                <util:constant static-field="org.apereo.portal.io.xml.layout.FragmentLayoutPortalDataType.IMPORT_32_DATA_KEY"/>
+            </set>
+        </property>
+    </bean>
+    <bean id="entity26Importer" class="org.apereo.portal.io.xml.crn.CernunnosDataImporter">
+        <property name="dataKeys">
+            <util:constant static-field="org.apereo.portal.io.xml.entitytype.EntityTypePortalDataType.IMPORT_26_DATA_KEY"/>
+        </property>
+        <property name="task" ref="import-entity-type_v2-6" />
+    </bean>
+    <bean id="entity32Importer" class="org.apereo.portal.io.xml.crn.CernunnosDataImporter">
+        <property name="dataKeys">
+            <util:constant static-field="org.apereo.portal.io.xml.entitytype.EntityTypePortalDataType.IMPORT_32_DATA_KEY"/>
+        </property>
+        <property name="task" ref="import-entity-type_v3-2" />
+    </bean>
+    <bean id="profile32Importer" class="org.apereo.portal.io.xml.crn.CernunnosDataImporter">
+        <property name="dataKeys">
+            <util:constant static-field="org.apereo.portal.io.xml.layout.ProfilePortalDataType.IMPORT_32_DATA_KEY"/>
+        </property>
+        <property name="task" ref="import-profile_v3-2" />
+    </bean>
+    <bean id="group26Importer" class="org.apereo.portal.io.xml.crn.CernunnosDataImporter">
+        <property name="dataKeys">
+            <util:constant static-field="org.apereo.portal.io.xml.group.GroupPortalDataType.IMPORT_26_DATA_KEY"/>
+        </property>
+        <property name="task" ref="import-group_v2-6" />
+    </bean>
+    <bean id="groupMembershipGroup30Importer" class="org.apereo.portal.io.xml.crn.CernunnosDataImporter">
+        <property name="threadSafe" value="false" />
+        <property name="dataKeys">
+            <util:constant static-field="org.apereo.portal.io.xml.group.GroupMembershipPortalDataType.IMPORT_GROUP_30_DATA_KEY"/>
+        </property>
+        <property name="task" ref="import-group_membership_v3-0-GROUP" />
+    </bean>
+    <bean id="groupMembershipMembers30Importer" class="org.apereo.portal.io.xml.crn.CernunnosDataImporter">
+        <property name="threadSafe" value="false" />
+        <property name="dataKeys">
+            <util:constant static-field="org.apereo.portal.io.xml.group.GroupMembershipPortalDataType.IMPORT_MEMBERS_30_DATA_KEY"/>
+        </property>
+        <property name="task" ref="import-group_membership_v3-0-MEMBERS" />
+    </bean>
+    <bean id="groupMembershipGroup32Importer" class="org.apereo.portal.io.xml.crn.CernunnosDataImporter">
+        <property name="threadSafe" value="false" />
+        <property name="dataKeys">
+            <util:constant static-field="org.apereo.portal.io.xml.group.GroupMembershipPortalDataType.IMPORT_GROUP_32_DATA_KEY"/>
+        </property>
+        <property name="task" ref="import-group_membership_v3-2-GROUP" />
+    </bean>
+    <bean id="groupMembershipMembers32Importer" class="org.apereo.portal.io.xml.crn.CernunnosDataImporter">
+        <property name="threadSafe" value="false" />
+        <property name="dataKeys">
+            <util:constant static-field="org.apereo.portal.io.xml.group.GroupMembershipPortalDataType.IMPORT_MEMBERS_32_DATA_KEY"/>
+        </property>
+        <property name="task" ref="import-group_membership_v3-2-MEMBERS" />
+    </bean>
+    <bean id="pagsGroupMembershipGroup41Importer" class="org.apereo.portal.io.xml.crn.CernunnosDataImporter">
+        <property name="threadSafe" value="false" />
+        <property name="dataKeys">
+            <util:constant static-field="org.apereo.portal.io.xml.pags.PersonAttributesGroupStorePortalDataType.IMPORT_PAGS_GROUP_41_DATA_KEY"/>
+        </property>
+        <property name="task" ref="import-pags-group_v4-1-GROUP" />
+    </bean>
+    <bean id="pagsGroupMembershipMembers41Importer" class="org.apereo.portal.io.xml.crn.CernunnosDataImporter">
+        <property name="threadSafe" value="false" />
+        <property name="dataKeys">
+            <util:constant static-field="org.apereo.portal.io.xml.pags.PersonAttributesGroupStorePortalDataType.IMPORT_PAGS_MEMBERS_41_DATA_KEY"/>
+        </property>
+        <property name="task" ref="import-pags-group_v4-1-MEMBERS" />
+    </bean>
+
+    <bean id="membership26Importer" class="org.apereo.portal.io.xml.crn.CernunnosDataImporter">
+        <property name="dataKeys">
+            <util:constant static-field="org.apereo.portal.io.xml.group.MembershipPortalDataType.IMPORT_26_DATA_KEY"/>
+        </property>
+        <property name="task" ref="import-membership_v2-6" />
+    </bean>
+    <bean id="permissionSet31Importer" class="org.apereo.portal.io.xml.crn.CernunnosDataImporter">
+        <property name="threadSafe" value="false" />
+        <property name="dataKeys">
+            <util:constant static-field="org.apereo.portal.io.xml.permission.PermissionSetPortalDataType.IMPORT_31_DATA_KEY"/>
+        </property>
+        <property name="task" ref="import-permission_set_v3-1" />
+    </bean>
+    <bean id="permission26Importer" class="org.apereo.portal.io.xml.crn.CernunnosDataImporter">
+        <property name="dataKeys">
+            <util:constant static-field="org.apereo.portal.io.xml.permission.PermissionPortalDataType.IMPORT_26_DATA_KEY"/>
+        </property>
+        <property name="task" ref="import-permission_v2-6" />
+    </bean>
+    <bean id="fragmentDefinition31Importer" class="org.apereo.portal.io.xml.dlm.FragmentDefinitionImporter" />
+
+
+    <!--
+     | Data Upgrader classes for portal entities
+     +-->
+    <bean id="user26_32DataUpgrader" class="org.apereo.portal.io.xml.XsltDataUpgrader">
+        <property name="portalDataKeys">
+            <set>
+                <util:constant static-field="org.apereo.portal.io.xml.user.UserPortalDataType.IMPORT_26_DATA_KEY"/>
+                <util:constant static-field="org.apereo.portal.io.xml.user.UserPortalDataType.IMPORT_30_DATA_KEY"/>
+                <util:constant static-field="org.apereo.portal.io.xml.user.UserPortalDataType.IMPORT_32_DATA_KEY"/>
+            </set>
+        </property>
+        <property name="xslResource" value="classpath:/org/apereo/portal/io/xml/user/upgrade-user_3-2.xsl" />
+    </bean>
+    <bean id="templateUser26_32DataUpgrader" class="org.apereo.portal.io.xml.XsltDataUpgrader">
+        <property name="portalDataKeys">
+            <set>
+                <util:constant static-field="org.apereo.portal.io.xml.user.TemplateUserPortalDataType.IMPORT_26_DATA_KEY"/>
+                <util:constant static-field="org.apereo.portal.io.xml.user.TemplateUserPortalDataType.IMPORT_30_DATA_KEY"/>
+                <util:constant static-field="org.apereo.portal.io.xml.user.TemplateUserPortalDataType.IMPORT_32_DATA_KEY"/>
+            </set>
+        </property>
+        <property name="xslResource" value="classpath:/org/apereo/portal/io/xml/user/upgrade-template-user_3-2.xsl" />
+    </bean>
+    <bean id="layoutDataUpgrader" class="org.apereo.portal.io.xml.XsltDataUpgrader">
+        <property name="portalDataKeys">
+            <set>
+                <util:constant static-field="org.apereo.portal.io.xml.layout.FragmentLayoutPortalDataType.IMPORT_26_DATA_KEY"/>
+                <util:constant static-field="org.apereo.portal.io.xml.layout.FragmentLayoutPortalDataType.IMPORT_30_DATA_KEY"/>
+                <util:constant static-field="org.apereo.portal.io.xml.layout.LayoutPortalDataType.IMPORT_26_DATA_KEY"/>
+                <util:constant static-field="org.apereo.portal.io.xml.layout.LayoutPortalDataType.IMPORT_30_DATA_KEY"/>
+                <util:constant static-field="org.apereo.portal.io.xml.layout.LayoutPortalDataType.IMPORT_26_DEFAULT_USER_DATA_KEY"/>
+                <util:constant static-field="org.apereo.portal.io.xml.layout.LayoutPortalDataType.IMPORT_30_DEFAULT_USER_DATA_KEY"/>
+            </set>
+        </property>
+        <property name="xslResource" value="classpath:/org/apereo/portal/io/xml/layout/upgradeLayout_v3-2.xsl" />
+    </bean>
+    <bean id="channel26DataUpgrader" class="org.apereo.portal.io.xml.XsltDataUpgrader">
+        <property name="portalDataKeys">
+            <set>
+                <util:constant static-field="org.apereo.portal.io.xml.portlet.PortletPortalDataType.IMPORT_26_DATA_KEY"/>
+            </set>
+        </property>
+        <property name="xslResource" value="classpath:/org/apereo/portal/io/xml/portlet/upgradeChannel_26.xsl" />
+    </bean>
+    <bean id="channel30DataUpgrader" class="org.apereo.portal.io.xml.XsltDataUpgrader">
+        <property name="portalDataKeys">
+            <set>
+                <util:constant static-field="org.apereo.portal.io.xml.portlet.PortletPortalDataType.IMPORT_30_DATA_KEY"/>
+            </set>
+        </property>
+        <property name="xslResource" value="classpath:/org/apereo/portal/io/xml/portlet/upgradeChannel_30.xsl" />
+    </bean>
+    <bean id="channel31DataUpgrader" class="org.apereo.portal.io.xml.XsltDataUpgrader">
+        <property name="portalDataKeys">
+            <set>
+                <util:constant static-field="org.apereo.portal.io.xml.portlet.PortletPortalDataType.IMPORT_31_DATA_KEY"/>
+            </set>
+        </property>
+        <property name="xslResource" value="classpath:/org/apereo/portal/io/xml/portlet/upgradeChannel_31.xsl" />
+    </bean>
+    <bean id="channel32DataUpgrader" class="org.apereo.portal.io.xml.XsltDataUpgrader">
+        <property name="portalDataKeys">
+            <set>
+                <util:constant static-field="org.apereo.portal.io.xml.portlet.PortletPortalDataType.IMPORT_32_DATA_KEY"/>
+            </set>
+        </property>
+        <property name="xslResource" value="classpath:/org/apereo/portal/io/xml/portlet/upgradeChannel_32.xsl" />
+    </bean>
+    <bean id="portlet40DataUpgrader" class="org.apereo.portal.io.xml.XsltDataUpgrader">
+        <property name="portalDataKeys">
+            <set>
+                <util:constant static-field="org.apereo.portal.io.xml.portlet.PortletPortalDataType.IMPORT_40_DATA_KEY"/>
+            </set>
+        </property>
+        <property name="xslResource" value="classpath:/org/apereo/portal/io/xml/portlet/upgradePortlet_40.xsl" />
+    </bean>
+    <bean id="subscribedFragment32DataUpgrader" class="org.apereo.portal.io.xml.XsltDataUpgrader">
+        <property name="portalDataKeys">
+            <util:constant static-field="org.apereo.portal.io.xml.subscribedfragment.SubscribedFragmentPortalDataType.IMPORT_32_DATA_KEY"/>
+        </property>
+        <property name="xslResource" value="classpath:/org/apereo/portal/io/xml/subscribed-fragment/upgrade-subscribed-fragment_3-2.xsl" />
+    </bean>
+
+    <!--
+     | Legacy Export classes for portal entities
+     +-->
+    <bean id="entityTypeExporter" class="org.apereo.portal.io.xml.crn.CernunnosDataExporter">
+        <property name="idAttributeName" value="NAME"/>
+        <property name="portalDataType" ref="entityTypePortalDataType"/>
+        <property name="task" ref="export-entity-type" />
+        <property name="portalDataRetriever">
+            <bean class="org.apereo.portal.io.xml.crn.SqlPortalDataFunction">
+                <property name="dataSource" ref="PortalDb" />
+                <property name="query" value="SELECT entity_type_name, DESCRIPTIVE_NAME FROM up_entity_type" />
+                <property name="idColumn" value="entity_type_name" />
+                <property name="nameColumn" value="entity_type_name" />
+                <property name="descColumn" value="DESCRIPTIVE_NAME" />
+            </bean>
+        </property>
+    </bean>
+    <bean id="groupMembershipExporter" class="org.apereo.portal.io.xml.crn.CernunnosDataExporter">
+        <property name="idAttributeName" value="GROUP_NAME"/>
+        <property name="portalDataType" ref="groupMembershipPortalDataType"/>
+        <property name="task" ref="export-group_membership" />
+        <property name="portalDataRetriever">
+            <bean class="org.apereo.portal.io.xml.crn.SqlPortalDataFunction">
+                <property name="dataSource" ref="PortalDb" />
+                <property name="query" value="select group_name, DESCRIPTION from UP_GROUP" />
+                <property name="idColumn" value="group_name" />
+                <property name="nameColumn" value="group_name" />
+                <property name="descColumn" value="description" />
+            </bean>
+        </property>
+    </bean>
+    <bean id="personAttributesGroupStoreDataFunction" class="org.apereo.portal.io.xml.pags.PersonAttributesGroupStoreDataFunction"/>
+    <bean id="personAttributesGroupStoreExporter" class="org.apereo.portal.io.xml.pags.PersonAttributesGroupStoreExporter">
+        <property name="portalDataType" ref="personAttributesGroupStorePortalDataType"/>
+        <property name="portalDataRetriever" ref="personAttributesGroupStoreDataFunction" />
+    </bean>
+    <bean id="permissionSetExporter" class="org.apereo.portal.io.xml.crn.CernunnosDataExporter">
+        <property name="idAttributeName" value="SET_KEY"/>
+        <property name="portalDataType" ref="permissionSetPortalDataType"/>
+        <property name="task" ref="export-permission_sets" />
+        <property name="portalDataRetriever">
+            <bean class="org.apereo.portal.io.xml.permission.PermissionSetsDataFunction">
+                <property name="dataSource" ref="PortalDb" />
+            </bean>
+        </property>
+        <property name="fileNameFunction">
+            <bean class="org.apereo.portal.io.xml.permission.PermissionSetsFilenameFunction" />
+        </property>
+    </bean>
+    <bean id="profileExporter" class="org.apereo.portal.io.xml.crn.CernunnosDataExporter">
+        <property name="idAttributeName" value="PROFILE_KEY"/>
+        <property name="portalDataType" ref="profilePortalDataType"/>
+        <property name="task" ref="export-profile" />
+        <property name="portalDataRetriever">
+            <bean class="org.apereo.portal.io.xml.layout.ProfilesDataFunction">
+                <property name="dataSource" ref="PortalDb" />
+            </bean>
+        </property>
+    </bean>
+    <bean id="fragmentLayoutsDataFunction" class="org.apereo.portal.io.xml.layout.FragmentLayoutsDataFunction" />
+    <bean id="fragmentLayoutExporter" class="org.apereo.portal.io.xml.layout.LayoutExporter">
+        <property name="portalDataType" ref="fragmentLayoutPortalDataType"/>
+        <property name="portalDataRetriever" ref="fragmentLayoutsDataFunction" />
+    </bean>
+    <bean id="layoutsDataFunction" class="org.apereo.portal.io.xml.layout.LayoutsDataFunction" />
+    <bean id="layoutExporter" class="org.apereo.portal.io.xml.layout.LayoutExporter">
+        <property name="portalDataType" ref="layoutPortalDataType"/>
+        <property name="portalDataRetriever" ref="layoutsDataFunction" />
+    </bean>
+    <bean id="fragmentDefinitionDataFunction" class="org.apereo.portal.io.xml.dlm.FragmentDefinitionDataFunction"/>
+    <bean id="fragmentDefinitionExporter" class="org.apereo.portal.io.xml.dlm.FragmentDefinitionExporter">
+        <property name="portalDataType" ref="fragmentDefinitionPortalDataType"/>
+        <property name="portalDataRetriever" ref="fragmentDefinitionDataFunction" />
+    </bean>
+
+    <!--
+     | Cernunnos Import Tasks
+     +-->
+    <bean id="import-membership_v2-6" class="org.danann.cernunnos.runtime.PojoTask">
+        <property name="location" value="classpath://org/jasig/portal/io/import-membership_v2-6.crn" />
+        <property name="requestAttributes">
+            <util:map>
+                <entry key="SqlAttributes.DATA_SOURCE" value-ref="PortalDb" />
+                <entry key="SqlAttributes.TRANSACTION_MANAGER" value-ref="transactionManager" />
+            </util:map>
+        </property>
+    </bean>
+
+    <bean id="import-group_membership_v3-2-GROUP" class="org.danann.cernunnos.runtime.PojoTask">
+        <property name="location" value="classpath://org/jasig/portal/io/import-group_membership_v3-2.crn" />
+        <property name="requestAttributes">
+            <util:map>
+                <entry key="SqlAttributes.DATA_SOURCE" value-ref="PortalDb" />
+                <entry key="SqlAttributes.TRANSACTION_MANAGER" value-ref="transactionManager" />
+                <entry key="IMPORT_ACTION" value="GROUP" />
+            </util:map>
+        </property>
+    </bean>
+    <bean id="import-group_membership_v3-2-MEMBERS" class="org.danann.cernunnos.runtime.PojoTask">
+        <property name="location" value="classpath://org/jasig/portal/io/import-group_membership_v3-2.crn" />
+        <property name="requestAttributes">
+            <util:map>
+                <entry key="SqlAttributes.DATA_SOURCE" value-ref="PortalDb" />
+                <entry key="SqlAttributes.TRANSACTION_MANAGER" value-ref="transactionManager" />
+                <entry key="IMPORT_ACTION" value="MEMBERS" />
+            </util:map>
+        </property>
+    </bean>
+
+    <bean id="import-group_membership_v3-0-GROUP" class="org.danann.cernunnos.runtime.PojoTask">
+        <property name="location" value="classpath://org/jasig/portal/io/import-group_membership_v3-0.crn" />
+        <property name="requestAttributes">
+            <util:map>
+                <entry key="SqlAttributes.DATA_SOURCE" value-ref="PortalDb" />
+                <entry key="SqlAttributes.TRANSACTION_MANAGER" value-ref="transactionManager" />
+                <entry key="IMPORT_ACTION" value="GROUP" />
+            </util:map>
+        </property>
+    </bean>
+    <bean id="import-group_membership_v3-0-MEMBERS" class="org.danann.cernunnos.runtime.PojoTask">
+        <property name="location" value="classpath://org/jasig/portal/io/import-group_membership_v3-0.crn" />
+        <property name="requestAttributes">
+            <util:map>
+                <entry key="SqlAttributes.DATA_SOURCE" value-ref="PortalDb" />
+                <entry key="SqlAttributes.TRANSACTION_MANAGER" value-ref="transactionManager" />
+                <entry key="IMPORT_ACTION" value="MEMBERS" />
+            </util:map>
+        </property>
+    </bean>
+    <bean id="import-pags-group_v4-1-GROUP" class="org.danann.cernunnos.runtime.PojoTask">
+        <property name="location" value="classpath://org/jasig/portal/io/import-pags-group_v4-1.crn" />
+        <property name="requestAttributes">
+            <util:map>
+                <entry key="SqlAttributes.DATA_SOURCE" value-ref="PortalDb" />
+                <entry key="SqlAttributes.TRANSACTION_MANAGER" value-ref="transactionManager" />
+                <entry key="IMPORT_ACTION" value="GROUP" />
+                <entry key="jpaPersonAttributesGroupDefinitionDao" value-ref="personAttributesGroupDefinitionDao" />
+                <entry key="jpaPersonAttributesGroupTestDefinitionDao" value-ref="personAttributesGroupTestDefinitionDao" />
+                <entry key="jpaPersonAttributesGroupTestGroupDefinitionDao" value-ref="personAttributesGroupTestGroupDefinitionDao" />
+            </util:map>
+        </property>
+    </bean>
+    <bean id="import-pags-group_v4-1-MEMBERS" class="org.danann.cernunnos.runtime.PojoTask">
+        <property name="location" value="classpath://org/jasig/portal/io/import-pags-group_v4-1.crn" />
+        <property name="requestAttributes">
+            <util:map>
+                <entry key="SqlAttributes.DATA_SOURCE" value-ref="PortalDb" />
+                <entry key="SqlAttributes.TRANSACTION_MANAGER" value-ref="transactionManager" />
+                <entry key="IMPORT_ACTION" value="MEMBERS" />
+                <entry key="jpaPersonAttributesGroupDefinitionDao" value-ref="personAttributesGroupDefinitionDao" />
+                <entry key="jpaPersonAttributesGroupTestDefinitionDao" value-ref="personAttributesGroupTestDefinitionDao" />
+                <entry key="jpaPersonAttributesGroupTestGroupDefinitionDao" value-ref="personAttributesGroupTestGroupDefinitionDao" />
+            </util:map>
+        </property>
+    </bean>
+    <bean id="import-group_v2-6" class="org.danann.cernunnos.runtime.PojoTask">
+        <property name="location" value="classpath://org/jasig/portal/io/import-group_v2-6.crn" />
+        <property name="requestAttributes">
+            <util:map>
+                <entry key="SqlAttributes.DATA_SOURCE" value-ref="PortalDb" />
+                <entry key="SqlAttributes.TRANSACTION_MANAGER" value-ref="transactionManager" />
+            </util:map>
+        </property>
+    </bean>
+
+    <bean id="import-permission_set_v3-1" class="org.danann.cernunnos.runtime.PojoTask">
+        <property name="location" value="classpath://org/jasig/portal/io/import-permission_set_v3-1.crn" />
+        <property name="requestAttributes">
+            <util:map>
+                <entry key="SqlAttributes.DATA_SOURCE" value-ref="PortalDb" />
+                <entry key="SqlAttributes.TRANSACTION_MANAGER" value-ref="transactionManager" />
+            </util:map>
+        </property>
+    </bean>
+
+    <bean id="import-permission_v2-6" class="org.danann.cernunnos.runtime.PojoTask">
+        <property name="location" value="classpath://org/jasig/portal/io/import-permission_v2-6.crn" />
+        <property name="requestAttributes">
+            <util:map>
+                <entry key="SqlAttributes.DATA_SOURCE" value-ref="PortalDb" />
+                <entry key="SqlAttributes.TRANSACTION_MANAGER" value-ref="transactionManager" />
+            </util:map>
+        </property>
+    </bean>
+
+    <bean id="import-entity-type_v2-6" class="org.danann.cernunnos.runtime.PojoTask">
+        <property name="location" value="classpath://org/jasig/portal/io/import-entity-type_v2-6.crn" />
+        <property name="requestAttributes">
+            <util:map>
+                <entry key="entityTypesSingleton" value-ref="entityTypes" />
+            </util:map>
+        </property>
+    </bean>
+
+    <bean id="import-entity-type_v3-2" class="org.danann.cernunnos.runtime.PojoTask">
+        <property name="location" value="classpath://org/jasig/portal/io/import-entity-type_v3-2.crn"/>
+        <property name="requestAttributes">
+            <util:map>
+                <entry key="entityTypesSingleton" value-ref="entityTypes" />
+            </util:map>
+        </property>
+    </bean>
+
+    <bean id="import-profile_v3-2" class="org.danann.cernunnos.runtime.PojoTask">
+        <property name="location" value="classpath://org/jasig/portal/io/import-profile_v3-2.crn" />
+        <property name="requestAttributes">
+            <util:map>
+                <entry key="SqlAttributes.DATA_SOURCE" value-ref="PortalDb" />
+                <entry key="SqlAttributes.TRANSACTION_MANAGER" value-ref="transactionManager" />
+                <entry key="stylesheetDescriptorDao" value-ref="stylesheetDescriptorDao" />
+                <entry key="stylesheetUserPreferencesDao" value-ref="stylesheetUserPreferencesDao" />
+                <entry key="user_profile_structure_force"           value="${org.apereo.portal.io.forceDefaultStructure}" />
+                <entry key="user_profile_structure_name_default"    value="${org.apereo.portal.io.defaultStructureName}" />
+                <entry key="user_profile_theme_force"               value="${org.apereo.portal.io.forceDefaultTheme}" />
+                <entry key="user_profile_theme_name_default"        value="${org.apereo.portal.io.defaultThemeName}" />
+            </util:map>
+        </property>
+    </bean>
+
+    <!--
+     | Cernunnos Export Tasks
+     +-->
+    <bean id="export-permission_sets" class="org.danann.cernunnos.runtime.PojoTask">
+        <property name="location" value="classpath:/org/apereo/portal/io/export-permission_sets.crn" />
+        <property name="requestAttributes">
+            <util:map>
+                <entry key="SqlAttributes.DATA_SOURCE" value-ref="PortalDb" />
+                <entry key="SqlAttributes.TRANSACTION_MANAGER" value-ref="transactionManager" />
+                <entry key="isUserIncluded" value-ref="isUserIncluded" />
+            </util:map>
+        </property>
+    </bean>
+
+    <bean id="export-group_membership" class="org.danann.cernunnos.runtime.PojoTask">
+        <property name="location" value="classpath:/org/apereo/portal/io/export-group_membership.crn" />
+        <property name="requestAttributes">
+            <util:map>
+                <entry key="SqlAttributes.DATA_SOURCE" value-ref="PortalDb" />
+                <entry key="SqlAttributes.TRANSACTION_MANAGER" value-ref="transactionManager" />
+                <entry key="isUserIncluded" value-ref="isUserIncluded" />
+            </util:map>
+        </property>
+    </bean>
+
+    <bean id="export-entity-type" class="org.danann.cernunnos.runtime.PojoTask">
+        <property name="location" value="classpath:/org/apereo/portal/io/export-entity-type.crn" />
+        <property name="requestAttributes">
+            <util:map>
+                <entry key="SqlAttributes.DATA_SOURCE" value-ref="PortalDb" />
+                <entry key="SqlAttributes.TRANSACTION_MANAGER" value-ref="transactionManager" />
+            </util:map>
+        </property>
+    </bean>
+
+    <bean id="export-profile" class="org.danann.cernunnos.runtime.PojoTask">
+        <property name="location" value="classpath:/org/apereo/portal/io/export-profile.crn" />
+        <property name="requestAttributes">
+            <util:map>
+                <entry key="SqlAttributes.DATA_SOURCE" value-ref="PortalDb" />
+                <entry key="SqlAttributes.TRANSACTION_MANAGER" value-ref="transactionManager" />
+                <entry key="stylesheetDescriptorDao" value-ref="stylesheetDescriptorDao" />
+                <entry key="stylesheetUserPreferencesDao" value-ref="stylesheetUserPreferencesDao" />
+            </util:map>
+        </property>
+    </bean>
+
+    <bean id="export-fragment-definition" class="org.danann.cernunnos.runtime.PojoTask">
+        <property name="location" value="classpath:/org/apereo/portal/io/export-fragment-definition.crn" />
+        <property name="requestAttributes">
+            <util:map>
+                <entry key="SqlAttributes.DATA_SOURCE" value-ref="PortalDb" />
+                <entry key="SqlAttributes.TRANSACTION_MANAGER" value-ref="transactionManager" />
+                <entry key="fragmentDefinitionDao">
+                    <ref bean="fragmentDefinitionDao"/>
+                </entry>
+            </util:map>
+        </property>
+    </bean>
+
+    <!--
+     | Nested Tasks
+     +-->
+    <bean id="isUserIncluded" class="org.apereo.portal.io.PropertiesFilesIsIncludedUser">
+        <property name="userNamesMap">
+            <util:properties local-override="true" location="classpath:/properties/export_included_users.properties">
+                <!-- Properties listed here are in addition to the properties in the flat file -->
+                <prop key="system"/>
+            </util:properties>
+        </property>
+    </bean>
+</beans>

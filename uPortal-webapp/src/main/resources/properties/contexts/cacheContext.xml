@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to Apereo under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Apereo licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="http://www.springframework.org/schema/beans"
+    xmlns:ehcache="http://ehcache-spring-annotations.googlecode.com/svn/schema/ehcache-spring"
+    xmlns:p="http://www.springframework.org/schema/p"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+		http://ehcache-spring-annotations.googlecode.com/svn/schema/ehcache-spring http://ehcache-spring-annotations.googlecode.com/svn/schema/ehcache-spring/ehcache-spring-1.2.xsd">
+
+    <!-- This bean CANNOT be autowired or it will not function correctly -->
+    <bean class="org.apereo.portal.utils.cache.EhcacheManagerBeanConfigurer">
+        <property name="cacheManager" ref="cacheManager" />
+    </bean>
+
+    <!--
+     | The per-cache settings are configured in /uportal-war/src/main/resources/properties/ehcache.xml.
+     | Note: In a Tomcat webapp environment, setting shared=true makes the CacheManager application-wide, not JVM-wide
+     | as Spring documentation suggests.  This allows all uPortal classes to look up the caches configured for uPortal.
+     +-->
+    <bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean"
+          depends-on="systemPropertySetter, authDao"
+          p:shared="true"
+          p:configLocation="classpath:/properties/ehcache.xml" />
+    <bean id="cacheManagerExpiredElementEvictor" class="org.apereo.portal.utils.cache.ExpiredElementEvictor">
+        <property name="cacheManager" ref="cacheManager"></property>
+    </bean>
+
+    <bean id="authDao" class="org.apereo.portal.jgroups.auth.JdbcAuthDao">
+        <property name="jdbcOperations" ref="jdbcOperations" />
+    </bean>
+
+    <!-- 
+     | Annotation based caching support
+     +-->
+    <ehcache:annotation-driven default-cache-key-generator="portalCacheKeyGenerator" cache-manager="cacheManager" />
+
+    <bean id="portalCacheKeyGenerator" class="org.apereo.portal.utils.cache.PortalCacheKeyGenerator"/>
+
+    <bean class="org.apereo.portal.utils.ResourceLoader">
+        <property name="resourceUrlCache">
+            <bean class="org.apereo.portal.utils.cache.MapCacheFactoryBean">
+                <property name="cacheFactory" ref="cacheFactory" />
+                <property name="cacheName" value="org.apereo.portal.utils.ResourceLoader.RESOURCE_URL_CACHE" />
+            </bean>
+        </property>
+        <property name="resourceUrlNotFoundCache">
+            <bean class="org.apereo.portal.utils.cache.MapCacheFactoryBean">
+                <property name="cacheFactory" ref="cacheFactory" />
+                <property name="cacheName" value="org.apereo.portal.utils.ResourceLoader.RESOURCE_URL_NOT_FOUND_CACHE" />
+            </bean>
+        </property>
+    </bean>
+
+    <bean id="pageCachingFilter" class="org.apereo.portal.web.skin.AggregationAwareFilterBean">
+        <property name="filter">
+            <bean class="org.jasig.resourceserver.utils.cache.ConfigurablePageCachingFilter">
+                <constructor-arg ref="cacheManager"/>
+                <constructor-arg value="org.apereo.portal.utils.cache.ConfigurablePageCachingFilter.PAGE_CACHE"/>
+            </bean>
+        </property>
+    </bean>
+
+    <bean id="CacheExpiresFilter" class="org.apereo.portal.web.skin.AggregationAwareFilterBean">
+        <property name="filter">
+            <bean class="org.jasig.resourceserver.utils.filter.PathBasedCacheExpirationFilter">
+                <property name="cacheMaxAges">
+                    <map value-type="java.lang.Long">
+                        <entry key="/**/*.aggr.min.js" value="31536000"/>
+                        <entry key="/**/*.aggr.min.css" value="31536000"/>
+                        <entry key="/**/*.min.js" value="31536000"/>
+                        <entry key="/**/*.min.css" value="31536000"/>
+                        <entry key="/rs/**/*" value="31536000"/>
+                        <entry key="/**/*.jpg" value="1800"/>
+                        <entry key="/**/*.gif" value="1800"/>
+                        <entry key="/**/*.png" value="1800"/>
+                        <entry key="/**/*.ico" value="1800"/>
+                    </map>
+                </property>
+            </bean>
+        </property>
+    </bean>
+
+</beans>

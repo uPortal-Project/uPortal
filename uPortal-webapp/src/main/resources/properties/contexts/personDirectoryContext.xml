@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to Apereo under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Apereo licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="
+           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
+    
+    <!-- ********** User Information Support Beans ********** -->
+    <!--
+     | Provides user name for the current portal user if the thread is handling a request
+     +-->
+    <bean id="currentUserProvider" class="org.apereo.portal.persondir.support.PersonManagerCurrentUserProvider" />
+    
+    <!--
+     | Provides the default username attribute to use to the rest of the DAOs
+     +-->
+    <bean id="usernameAttributeProvider" class="org.jasig.services.persondir.support.SimpleUsernameAttributeProvider">
+        <property name="usernameAttribute" value="username" />
+    </bean>
+    
+    
+    
+    <!-- ********** Overwriting attribute beans for Attribute Swapper ********** -->
+    <!-- 
+     | Overrides DAO acts as the root, it handles incorporating attributes from the attribute swapper utility, wraps
+     | the caching DAO
+     +-->
+    <bean id="personAttributeDao" class="org.apereo.portal.portlets.swapper.OverwritingPersonAttributeDao">
+        <qualifier value="personAttributeDao"/>
+        <property name="delegatePersonAttributeDao" ref="requestAttributeMergingDao" />
+        <property name="attributeOverridesMap" ref="sessionAttributesOverridesMap" />
+    </bean>
+    
+    <!--
+     | Store attribute overrides in a session scoped map to ensure overrides don't show up for
+     | other users and swapped attributes will be cleaned up on user logout.
+     +-->
+    <bean id="sessionAttributesOverridesMap" class="java.util.concurrent.ConcurrentHashMap" scope="globalSession">
+        <aop:scoped-proxy />
+    </bean>
+
+
+
+    <!-- ********** Beans for Attributes from the HttpServletRequest **********-->
+    <!--
+     | Merges attributes from the request with those from other DAOs
+     +-->
+    <bean id="requestAttributeMergingDao"
+        class="org.jasig.services.persondir.support.MergingPersonAttributeDaoImpl">
+        <property name="usernameAttributeProvider" ref="usernameAttributeProvider" />
+        <property name="merger">
+            <bean
+                class="org.jasig.services.persondir.support.merger.ReplacingAttributeAdder" />
+        </property>
+        <property name="personAttributeDaos">
+            <list>
+                <ref bean="requestAttributesDao" />
+                <ref bean="mergedPersonAttributeDao" />
+            </list>
+        </property>
+    </bean>
+
+    <!--
+     | Servlet filter that creates an attribute for the serverName
+     +-->
+    <bean id="requestAttributeSourceFilter"
+        class="org.jasig.services.persondir.support.web.RequestAttributeSourceFilter">
+        <property name="additionalDescriptors" ref="requestAdditionalDescriptors" />
+        <property name="usernameAttribute" value="remoteUser" />
+        <property name="remoteUserAttribute" value="remoteUser" />
+        <property name="serverNameAttribute" value="serverName" />
+        <!-- The processing position should be set to BOTH for uPortal because the session-scoped bean
+             sessionScopeAdditionalDescriptors gets cleared during /Login processing and request attributes
+             (particularly from HTTP Headers populated by Shibboleth) would be lost.  By executing the filter both
+             before and after, the latter execution will re-add the request attributes to the session-scoped bean.
+             See http://permalink.gmane.org/gmane.comp.java.jasig.uportal/10771 for more information. -->
+        <property name="processingPosition" value="BOTH" />
+        <property name="headerAttributeMapping">
+            <util:map>
+                <entry key="User-Agent">
+                    <util:set>
+                        <value>agentDevice</value>
+                    </util:set>
+                </entry>
+            </util:map>
+        </property>
+    </bean>
+
+    <!--
+     | Session-scoped descriptors object. One of these will exist for each user in their session. It will store the
+     | attributes from the request set by the requestAttributeSourceFilter.  This must hold both a session-scoped
+     | bean and request-scoped bean.  See http://permalink.gmane.org/gmane.comp.java.jasig.uportal/10771
+     | for more information.
+     +-->
+    <bean id="requestAdditionalDescriptors" class="org.jasig.services.persondir.support.MediatingAdditionalDescriptors">
+        <property name="delegateDescriptors">
+            <list>
+                <ref bean="sessionScopeAdditionalDescriptors"/>
+                <ref bean="requestScopeAdditionalDescriptors"/>
+            </list>
+        </property>
+    </bean>
+    <!-- Do not change this bean id without altering CasAssertionSecurityContext to refer to the new id. -->
+    <bean id="sessionScopeAdditionalDescriptors" class="org.jasig.services.persondir.support.AdditionalDescriptors" scope="globalSession">
+        <aop:scoped-proxy />
+    </bean>
+    <bean id="requestScopeAdditionalDescriptors" class="org.jasig.services.persondir.support.AdditionalDescriptors" scope="request">
+        <aop:scoped-proxy />
+    </bean>
+
+    <!--
+     | The person attributes DAO that returns the attributes from the request. Uses a currentUserProvider since the
+     | username may not always be provided by the request object.
+     +-->
+    <bean id="requestAttributesDao"
+        class="org.jasig.services.persondir.support.AdditionalDescriptorsPersonAttributeDao">
+        <property name="descriptors" ref="requestAdditionalDescriptors" />
+        <property name="usernameAttributeProvider" ref="usernameAttributeProvider" />
+        <property name="currentUserProvider" ref="currentUserProvider" />
+    </bean>
+
+
+
+    <!-- ********** Data source attribute DAOs **********-->
+    <!--
+     | Merging DAOs that define the order that the data providing DAOs are called, results are cached by the outer
+     | caching DAO 
+     +-->
+    <bean id="mergedPersonAttributeDao"
+		class="org.jasig.services.persondir.support.CachingPersonAttributeDaoImpl">
+        <property name="usernameAttributeProvider" ref="usernameAttributeProvider" />
+        <property name="cacheNullResults" value="true" />
+        <property name="userInfoCache">
+            <bean class="org.apereo.portal.utils.cache.MapCacheFactoryBean">
+                <property name="cacheFactory" ref="cacheFactory" />
+                <property name="cacheName" value="org.jasig.services.persondir.USER_INFO.merged" />
+            </bean>
+        </property>
+        <property name="cacheKeyGenerator" ref="userAttributeCacheKeyGenerator" />
+        <property name="cachedPersonAttributesDao" >
+            <bean class="org.jasig.services.persondir.support.MergingPersonAttributeDaoImpl">
+                <property name="merger">
+                    <!-- This is a "first one wins" strategy. I.e. the first value found for
+                    any given result attribute will be assigned to the user. Different values
+                    found in subsequently queried attribute sources will be ignored. Suitable
+                    if uP-local attributes should always take precedence. Other
+                    options (all in the same package):
+
+                        MultivaluedAttributeMerger - Collects values from all DAOs into lists (does not
+                          filter out duplicate values, though)
+                        ReplacingAttributeAdder - "Last one wins" strategy. I.e. the opposite of
+                          NoncollidingAttributeAdder.
+                    -->
+                    <bean class="org.jasig.services.persondir.support.merger.NoncollidingAttributeAdder" />
+                </property>
+                <property name="usernameAttributeProvider" ref="usernameAttributeProvider" />
+                <property name="personAttributeDaos">
+                    <list>
+                        <!-- Provides a single attribute (but only for the current logged in user):  impersonating='true'|'false' -->
+                        <bean class="org.apereo.portal.persondir.ImpersonationStatusPersonAttributeDao" />
+                        <bean class="org.jasig.services.persondir.support.CascadingPersonAttributeDao">
+                            <property name="usernameAttributeProvider" ref="usernameAttributeProvider" />
+                            <property name="personAttributeDaos">
+                                <list>
+                                    <ref bean="uPortalAccountUserSource" />
+                                    <ref bean="uPortalJdbcUserSource" />
+                                </list>
+                            </property>
+                        </bean>
+                        <!-- ADDITIONAL ATTRIBUTE SOURCES GET ADDED HERE
+
+                        Don't add more sources to the CascadingPersonAttributeDao.personAttributeDaos
+                        list above unless you're adding "special" DAOs tasked with augmenting/transforming
+                        the attributes generated by uP-local DAOs. (CascadingPersonAttributeDao takes
+                        the results from the first-DAO, transforms them into a query, and passes that
+                        query to each subsequent DAO. I.e. subsequent DAOs in the cascade list will
+                        *not* be given a chance to process the original query. But they will if you add
+                        them directly to the MergingPersonAttributeDaoImpl.personAttributeDaos list here.)
+                        -->
+                    </list>
+                </property>
+            </bean>
+        </property>
+    </bean>
+
+    <!--
+     | Looks in the local person-directory data. This is only used for portal-local users such as fragment owners
+     | All attributes are searchable via this configuration, results are cached by the underlying DAO
+     +-->
+    <bean id="uPortalAccountUserSource" class="org.apereo.portal.persondir.LocalAccountPersonAttributeDao">
+        <property name="localAccountDao" ref="localAccountDao"/>
+        <property name="usernameAttributeProvider" ref="usernameAttributeProvider" />
+        <property name="queryAttributeMapping">
+            <map>
+                <entry key="username" value="username" />
+                <entry key="givenName" value="givenName" />
+                <entry key="sn" value="sn"/>
+            </map>
+        </property>
+        <property name="resultAttributeMapping">
+            <map>
+                <entry key="username">
+                    <set>
+                        <value>uid</value>
+                        <value>user.login.id</value>
+                    </set>
+                </entry>
+            </map>
+        </property>
+    </bean>
+
+    <!--
+     | Looks in the base UP_USER table, doesn't find attributes but will ensure a result if it the user exists in the
+     | portal database and is searched for by username, results are cached by the outer caching DAO
+     +-->
+    <bean id="uPortalJdbcUserSource"
+          class="org.jasig.services.persondir.support.CachingPersonAttributeDaoImpl">
+        <property name="usernameAttributeProvider" ref="usernameAttributeProvider" />
+        <property name="cacheNullResults" value="true" />
+        <property name="userInfoCache">
+            <bean class="org.apereo.portal.utils.cache.MapCacheFactoryBean">
+                <property name="cacheFactory" ref="cacheFactory" />
+                <property name="cacheName" value="org.jasig.services.persondir.USER_INFO.up_user" />
+            </bean>
+        </property>
+        <property name="cacheKeyGenerator" ref="userAttributeCacheKeyGenerator" />
+        <property name="cachedPersonAttributesDao" >
+            <bean class="org.jasig.services.persondir.support.jdbc.SingleRowJdbcPersonAttributeDao">
+                <constructor-arg index="0" ref="PersonDB" />
+                <constructor-arg>
+                    <value>
+                        SELECT USER_NAME
+                        FROM UP_USER
+                        WHERE {0}
+                    </value>
+                </constructor-arg>
+                <property name="usernameAttributeProvider" ref="usernameAttributeProvider" />
+                <property name="queryAttributeMapping">
+                    <map>
+                        <entry key="username" value="USER_NAME" />
+                    </map>
+                </property>
+                <property name="resultAttributeMapping">
+                    <map>
+                        <entry key="USER_NAME">
+                            <set>
+                                <value>uid</value>
+                                <value>username</value>
+                                <value>user.login.id</value>
+                            </set>
+                        </entry>
+                    </map>
+                </property>
+            </bean>
+        </property>
+    </bean>
+
+    <!-- Where non-local attribute DAOs go -->
+    
+    <bean id="userAttributeCacheKeyGenerator" class="org.apereo.portal.utils.cache.PersonDirectoryCacheKeyGenerator">
+        <property name="ignoreEmptyAttributes" value="true" />
+    </bean>
+</beans>

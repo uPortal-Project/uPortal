@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to Apereo under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Apereo licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow
+    http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+    
+    <!-- 
+     | Group input 
+     |
+     | The group object should be an instance of GroupForm that
+     | represents either a new or existing group.  This object
+     | may not be null.
+     +-->
+    <input name="group" required="true" type="org.apereo.portal.portlets.groupadmin.GroupForm"/>
+    
+    <!-- 
+     | Parent input input 
+     |
+     | The parent object should be an instance of JsonEntityBean that represents
+     | the parent object to be used for a new group.  This object is only 
+     | required when creating new groups.
+     +-->
+    <input name="parent" required="false" type="org.apereo.portal.layout.dlm.remoting.JsonEntityBean"/>
+    
+    <on-start>
+        <set name="flowScope.completed" value="group.key != null"/>
+        <set name="flashScope.servletRequest" 
+            value="portalRequestUtils.getPortletHttpRequest(externalContext.getNativeRequest())"/>
+        <set name="flowScope.person" 
+            value="personManager.getPerson(servletRequest)"/>
+    </on-start>
+    
+    <!-- If we're creating a new portlet, display the first step in the workflow.
+        Otherwise, display the portlet summary view. --> 
+    <decision-state id="isGroupNew">
+        <if test="completed" then="reviewGroup" else="editDetails"/>
+    </decision-state>
+
+    <!-- EDIT GROUP DETAILS view -->
+    <view-state id="editDetails" model="group">
+        <transition on="next" to="editMembers"/>
+        <transition on="save" to="reviewGroup">
+            <evaluate expression="groupAdministrationHelper.updateGroupDetails(group, person)"/>
+        </transition>
+        <transition on="cancel" to="cancelEditScreen" bind="false"/>
+    </view-state>
+    
+    <!-- CHOOSE MEMBER GROUPS view -->
+    <subflow-state id="editMembers" subflow="entity-selector">
+        <on-entry>
+            <set name="flashScope.entityTypes" value="groupListHelper.getEntityTypesForGroupType(group.type)"/>
+            <set name="flashScope.rootEntity" value="groupListHelper.getRootEntity(group.type)"/>
+        </on-entry>
+        <!-- View Parameters -->
+        <input name="selectTypes" value="entityTypes"/>
+        <input name="selectMultiple" value="true"/>
+        <input name="requireSelection" value="false"/>
+        <input name="rootEntity" value="rootEntity"/>
+        <input name="enableAdHocGroups" value="group.type == 'group'"/>
+        <input name="adHocEntity" value="rootEntity"/>
+
+        <input name="showCancelButton" value="true"/>
+        <input name="showBackButton" value="!completed"/>
+        <input name="saveButtonCode" value="completed ? 'save' : 'next'" />
+        <input name="backButtonCode" value="'back'" />
+        <input name="cancelButtonCode" value="'cancel'" />
+        <input name="pageTitleCode" value="'select.people.and.groups'"/>
+        <input name="pageSubtitleCode" value="'select.members.of.group'" />
+        <input name="pageSubtitleArgument" value="group.name" />
+        
+        <!-- Group input/output mapping -->
+        <input name="selectedGroups" value="group.members"/>
+        <output name="selectedGroups" value="flashScope.selectedGroups"/>
+        
+        <transition on="back" to="editDetails"/>
+        <transition on="#{currentEvent.id == 'finish' and !completed}" to="reviewGroup">
+            <evaluate expression="group.setMembers(selectedGroups)"/>
+        </transition>
+        
+        <transition on="#{currentEvent.id == 'finish' and completed}" to="reviewGroup">
+            <evaluate expression="group.setMembers(selectedGroups)"/>
+            <evaluate expression="groupAdministrationHelper.updateGroupMembers(group, person)"/>
+        </transition>
+        
+        <transition on="cancel" to="cancelEditScreen"/>
+        
+    </subflow-state>
+
+    <!-- CREATE CHILD GROUP subflow -->
+    <subflow-state id="createChildGroup" subflow="edit-group">
+        
+        <on-entry>
+            <set name="flashScope.child" value="new org.apereo.portal.portlets.groupadmin.GroupForm()"/>
+            <set name="child.type" value="group.type"/>
+            <set name="child.creatorId" value="person.userName"/>
+        </on-entry>
+        
+        <input name="parent" value="groupListHelper.getEntity(group.type, group.key, false)"/>
+        <input name="group" value="child"/>
+        
+        <transition on="finishGroupEdit" to="reviewGroup">
+            <set name="flowScope.group"
+                value="groupAdministrationHelper.getGroupForm(group.key)"/>
+        </transition>
+        
+        <transition on="cancelGroupEdit" to="reviewGroup"/>
+        
+    </subflow-state>
+    
+    <!-- REVIEW GROUP view -->
+    <view-state id="reviewGroup">
+        <on-entry>
+            <set name="flowScope.canEdit" value="!completed or groupAdministrationHelper.canEditGroup(person, group.key)"/>
+            <set name="flowScope.canDelete" value="completed and groupAdministrationHelper.canDeleteGroup(person, group.key)"/>
+            <set name="flowScope.canCreateMember" value="completed and groupAdministrationHelper.canCreateMemberGroup(person, group.key)"/>
+        </on-entry>
+        
+        <!-- edit transitions -->
+        <transition on="editDetails" to="editDetails"/>
+        <transition on="editMembers" to="editMembers"/>
+        <transition on="createChildGroup" to="createChildGroup"/>
+        <transition on="viewGroupPermissions" to="viewGroupPermissions"/>
+        <transition on="confirmRemove" to="confirmRemove"/>
+
+        <transition on="back" to="editMembers"/>        
+        <!-- save the portlet -->
+        <transition on="save" to="createGroup"/>
+        
+        <!-- cancel our portlet edit and exit the sub-flow -->
+        <transition on="cancel" to="cancelGroupEdit" bind="false"/>
+    </view-state>
+
+    <!-- VIEW PERMISSIONS view state -->    
+    <view-state id="viewGroupPermissions">
+        <on-entry>
+            <set name="viewScope.principalString" value="groupListHelper.getEntity(group.type, group.key, false).getPrincipalString()"/>
+        </on-entry>
+        <transition on="group" to="reviewGroup"/>
+        <transition on="editPermission" to="edit-permission"/>
+    </view-state>
+
+    <!-- EDIT PERMISSION subflow -->
+    <subflow-state id="edit-permission" subflow="edit-permission">
+        <on-entry>
+            <set name="flashScope.breadcrumbs" value="new java.util.LinkedHashMap()"/>
+            <evaluate expression="breadcrumbs.put('reviewGroup', group.name)"/>
+            <evaluate expression="breadcrumbs.put('viewGroupPermissions', 'Permissions')"/>
+            <set name="flashScope.owner" value="permissionOwnerDao.getPermissionOwner(requestParameters.owner)"/>
+            <set name="flashScope.activity" value="permissionOwnerDao.getPermissionActivity(requestParameters.owner, requestParameters.activity)"/>
+            <set name="flashScope.targetProvider" value="permissionTargetProviderRegistry.getTargetProvider(activity.targetProviderKey)"/>
+            <set name="flashScope.target" value="targetProvider.getTarget(requestParameters.target)"/>
+            <set name="flashScope.principals" value="permissionAdministrationHelper.getCurrentPrincipals(owner, activity, requestParameters.target)"/>
+        </on-entry>
+        
+        <input name="owner" value="owner"/>
+        <input name="activity" value="activity"/>
+        <input name="target" value="flashScope.target"/>
+        <input name="principals" value="principals"/>
+        <input name="breadcrumbs" value="breadcrumbs"/>
+        <output name="breadcrumb" value="flowScope.breadcrumb"/>
+
+        <transition on="#{breadcrumb == 'reviewGroup'}" to="reviewGroup"/>
+        <transition on="#{breadcrumb == 'viewGroupPermissions'}" to="viewGroupPermissions"/>
+    </subflow-state>
+
+    <!-- CONFIRM REMOVAL view -->    
+    <view-state id="confirmRemove">
+        <transition on="cancel" to="reviewGroup"/>
+        <transition on="removeGroup" to="finishGroupEdit">
+            <evaluate expression="groupAdministrationHelper.deleteGroup(group.key, person)"/>
+        </transition>
+    </view-state>
+
+    <!-- CREATE GROUP action state -->
+    <action-state id="createGroup">
+        <evaluate expression="groupAdministrationHelper.createGroup(group, parent, person)"/>
+        <transition to="finishGroupEdit"/>
+    </action-state>
+    
+    <decision-state id="cancelEditScreen">
+        <if test="completed" then="reviewGroup" else="cancelGroupEdit"/>
+    </decision-state>
+    
+    <end-state id="cancelGroupEdit" />
+    <end-state id="finishGroupEdit" />
+    
+    <global-transitions>
+        <transition on="update" to="reviewGroup"/>
+        <transition on="review" to="reviewGroup"/>
+        <transition on="cancel" to="cancelEditScreen" bind="false"/>
+        <transition on="cancelGroupEdit" to="cancelGroupEdit"/>
+    </global-transitions>
+    
+</flow>

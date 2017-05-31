@@ -1,0 +1,266 @@
+/**
+ * Licensed to Apereo under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work
+ * for additional information regarding copyright ownership.
+ * Apereo licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+/* ==========================================================================
+   Variables
+   ========================================================================== */
+@white: #FFFFFF;
+@black: #000000;
+
+/*
+ * Grayscale colors. 1 is lightest, 10 is darkest.
+ */
+
+@grayscale1:  #F5F5F5;
+@grayscale2:  #E5E5E5;
+@grayscale3:  #D8D8D8;
+@grayscale4:  #CCCCCC;
+@grayscale5:  #ADADAD;
+@grayscale6:  #999999;
+@grayscale7:  #8C8C8C;
+@grayscale8:  #696969;
+@grayscale9:  #404040;
+@grayscale10: #333333;
+
+/*
+ * Primary color with 3 lightened shades and 3 darkened shades.
+ *
+ * The variable color1 is used by the DynamicRespondrSkin portlet.
+ * 1) Do not change the variable name. It is used as a portlet preference variable name that users can override
+ *    the value of.
+ * 2) The value must be on the same line as the variable name and be terminated with a semicolon due to
+ *    regex searches by skin manager.
+ */
+@color1: #4065B0; // medium blue
+@color1-light: lighten(@color1, 10%);
+@color1-lighter: lighten(@color1, 25%);
+@color1-lightest: lighten(@color1, 50%);
+@color1-dark: darken(@color1, 10%);
+@color1-darker: darken(@color1, 25%);
+@color1-darkest: darken(@color1, 50%);
+
+/*
+ * Secondary color with 3 lightened shades and 3 darkened shades.
+ *
+ * The variable color2 is used by the DynamicRespondrSkin portlet.
+ * 1) Do not change the variable name. It is used as a portlet preference variable name that users can override
+ *    the value of.
+ * 2) The value must be on the same line as the variable name and be terminated with a semicolon due to
+ *    regex searches by skin manager.
+ */
+@color2: #F68923;  // muted orange
+@color2-light: lighten(@color2, 10%);
+@color2-lighter: lighten(@color2, 25%);
+@color2-lightest: lighten(@color2, 50%);
+@color2-dark: darken(@color2, 10%);
+@color2-darker: darken(@color2, 25%);
+@color2-darkest: darken(@color2, 50%);
+
+/*
+ * Link color with 1 lighter shade.
+ *
+ * The variable color3 is used by the DynamicRespondrSkin portlet.
+ * 1) Do not change the variable name. It is used as a portlet preference variable name that users can override
+ *    the value of.
+ * 2) The value must be on the same line as the variable name and be terminated with a semicolon due to
+ *    regex searches by skin manager.
+ */
+@color3: #317ab9;  // light muted blue
+@color3-light: lighten(@color3, 15%);
+
+/*
+ * Footer text color with 1 lighter shade.
+ *
+ * The variable color3 is used by the DynamicRespondrSkin portlet.
+ * 1) Do not change the variable name. It is used as a portlet preference variable name that users can override
+ *    the value of.
+ * 2) The value must be on the same line as the variable name and be terminated with a semicolon due to
+ *    regex searches by skin manager.
+ */
+@color4: #ADADAD;  // light gray
+@color4-light: lighten(@color4, 15%);
+@color4-lighter: lighten(@color4, 30%);
+
+/*
+ * Footer background color.
+ *
+ * The variable color3 is used by the DynamicRespondrSkin portlet.
+ * 1) Do not change the variable name. It is used as a portlet preference variable name that users can override
+ *    the value of.
+ * 2) The value must be on the same line as the variable name and be terminated with a semicolon due to
+ *    regex searches by skin manager.
+ */
+@color5: #333333;  // dark gray
+
+/*
+ * Portlet border color.
+ *
+ * The variable color3 is used by the DynamicRespondrSkin portlet.
+ * 1) Do not change the variable name. It is used as a portlet preference variable name that users can override
+ *    the value of.
+ * 2) The value must be on the same line as the variable name and be terminated with a semicolon due to
+ *    regex searches by skin manager.
+ */
+@color6: #E5E5E5;  // lighter gray
+
+@border: 1px solid @grayscale2;
+
+/**
+ * Link colors
+ */
+@portal-link-color: @color3;
+@portal-link-hover-color: @color3-light;
+
+/**
+ * Off-canvas content Styles
+ */
+@offcanvas-background-color: @grayscale10;
+
+/**
+ * Main content Styles
+ */
+@content-background-color: @white;
+
+/**
+ * Region styles
+ */
+@header-background-color: @color1;
+@header-text-color: @white;
+@header-link-color: @white;
+
+@footer-background-color: @color5;
+@footer-secondary-background-color: lighten(@color5, 10%);
+@footer-text-color: @color4-light;
+@footer-link-color: @color4-lighter;
+@footer-link-hover-color: @white;
+
+/**
+ * Page-level styles
+ */
+@body-background-color: @footer-secondary-background-color;  // default to match footer-second;  prevents 'gaps' at the bottom of short pages
+@body-background-image: none;
+@portal-page-body-background-image: url(./common/images/furley_bg.png); // Using the furley pattern from http://subtlepatterns.com
+@portal-page-body-background-image-filter: none; // for full list of filter effects see: https://developer.mozilla.org/en-US/docs/Web/CSS/filter
+
+/**
+ * User bar styles
+ */
+@portal-global-background-color: @color1;
+@portal-global-background-gradient: false;
+@portal-global-border-color: @color1-light;
+
+/**
+ * Theme based button styles
+ */
+@btn-skin-text-color:             @white;
+@btn-skin-background-color:       @color2;
+
+@btn-skin-alt-text-color:         @grayscale10;
+@btn-skin-alt-background-color:   @color3;
+
+
+/**
+ * Nav
+ */
+@mobile-navbar-top-position: -148px; /* Active only on mobile : if you need to custumize region header height (big banner, small logo etc.), you need to modify this value. default is -148px. */
+
+@mobile-navbar-item-active-background-color: @color1;
+@mobile-navbar-item-active-text-color: @white;
+@mobile-navbar-item-background-color: @offcanvas-background-color;
+@mobile-navbar-flyout-item-active-hover-text-color: @white;
+
+@navbar-background-color: @color1-dark;
+@navbar-border-color: transparent;
+@navbar-border-size: 0;
+
+@navbar-item-background-color: transparent;
+@navbar-item-text-color: @grayscale3;
+
+@navbar-item-font-weight: bold;
+
+@navbar-item-hover-text-color: lighten(@navbar-item-text-color, 50%);
+@navbar-item-hover-background-color: @color1-light;
+
+@navbar-item-active-background-color: @color1-darker;
+@navbar-item-active-hover-background-color: lighten(@navbar-item-active-background-color, 50%);
+
+@navbar-item-active-text-color: @white;
+@navbar-item-active-hover-text-color: inherit;
+
+@navbar-controls-color: @white;
+@navbar-controls-hover-color: @white;
+
+@menu-toggle-background-color: @color1-dark;
+@menu-toggle-border-color: @color1-darker;
+@menu-toggle-text-color: @white;
+
+@menu-toggle-hover-background-color: @color1-light;
+@menu-toggle-hover-border-color: @color1-lighter;
+@menu-toggle-hover-text-color: @white;
+
+/**
+ * Search field
+ */
+@search-button-text-color: @white;
+@search-button-background-color: @color2;
+/**
+ * Portlet Chrome Settings
+ */
+@portlet-border-color: @color6;
+@portlet-border-radius: 5px;
+@portlet-header-border-color: @color6;
+
+@portlet-titlebar-link-color: @grayscale10;
+@portlet-titlebar-background-color: @grayscale2;
+
+@portlet-options-link-color: @grayscale10;
+@portlet-options-link-hover-color: darken(@portlet-options-link-color, 20%);
+
+/**
+ * Detached Header (aka sticky header) styles
+ */
+@detached-header-link-color: @grayscale4;
+@detached-header-backbround-color: @color1;
+@detached-header-height: 30px;
+
+/*
+ * Custom Mixins Settings
+ */
+@contrasted-dark-default: @grayscale10;
+@contrasted-light-default: @grayscale2;
+@contrasted-lightness-threshold: 43%;
+
+
+
+/*
+ * Simple float. Pass in the direction; default is left.
+ */
+
+.float (@direction: left) {
+    float: @direction;
+}
+
+/*
+ * Base formatting for converting a block-list to an inline-list.
+ */
+
+.inline-block-list {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}

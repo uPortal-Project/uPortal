@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to Apereo under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Apereo licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow
+    http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+    
+    <view-state id="cache-list">
+        <on-render>
+            <set name="requestScope.statisticsMap" value="cacheManagementHelper.getAllCacheStatistics()"/>
+        </on-render>
+        <transition on="view-statistics" to="cache-statistics">
+            <set name="flowScope.cacheName" value="requestParameters.cacheName"/>
+        </transition>
+        <transition to="confirm-flush" on="flush">
+        	 <set name="flowScope.cacheName" value="requestParameters.cacheName"/>
+        </transition>
+        <transition on="flush-all" to="confirm-flush-all"/>
+    </view-state>
+    
+    <view-state id="cache-statistics">
+        <on-render>
+            <set name="requestScope.statistics" value="cacheManagementHelper.getCacheStatistics(flowScope.cacheName)"/>
+        </on-render>
+        <transition to="confirm-flush" on="flush"/>
+        <transition to="cache-list" on="cache-list"/>
+    </view-state>
+    
+    <view-state id="confirm-flush">
+        <transition to="cache-list" on="confirm">
+            <evaluate expression="cacheManagementHelper.clearCache(flowScope.cacheName)"/>
+        </transition>
+        <transition to="cache-statistics" on="cancel"/>
+    </view-state>
+    
+    <view-state id="confirm-flush-all">
+        <transition to="cache-list" on="confirm">
+            <evaluate expression="cacheManagementHelper.clearAllCaches()"/>
+        </transition>
+        <transition to="cache-list" on="cancel"/>
+    </view-state>
+    
+</flow>

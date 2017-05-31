@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+
+    Licensed to Apereo under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Apereo licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<resources xmlns="http://www.jasig.org/uportal/web/skin"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://www.jasig.org/uportal/web/skin https://source.jasig.org/schemas/resource-server/skin-configuration/skin-configuration-v1.2.xsd">
+
+  <js>javascript/uportal/up-util.js</js>
+  <js>javascript/uportal/up-portlet-registry.js</js>
+  <js>javascript/uportal/up-entity-registry.js</js>
+  <js>javascript/uportal/up-portlet-browser.js</js>
+  <js>javascript/uportal/up-layout-draggable-manager.js</js>
+  <js>javascript/uportal/up-layout-gallery.js</js>
+  <js>javascript/uportal/up-fragment-permissions-manager.js</js>
+  <js>javascript/uportal/up-subscription-browser.js</js>
+  <js>javascript/uportal/up-layout-selector.js</js>
+  <js>javascript/uportal/up-skin-selector.js</js>
+  <js>javascript/uportal/up-tab-manager.js</js>
+  <js>javascript/uportal/up-layout-persistence.js</js>
+  <js>javascript/uportal/up-url-provider.js</js>
+  <js>javascript/uportal/up-layout-preferences.js</js>
+  <js>javascript/uportal/up-autocomplete.js</js>
+  <js>javascript/uportal/up-showHideToggle.js</js>
+  <js>javascript/uportal/entity-selector.js</js>
+  <js>javascript/uportal/up-parameter-editor.js</js>
+  <js>javascript/uportal/flyout-nav.js</js>
+  <js>javascript/uportal/up-translator.js</js>
+  <js>javascript/uportal/up-print-plugin.js</js>
+  <js>javascript/uportal/up-ga.js</js>
+  <js>javascript/uportal/up-rating-option.js</js>
+  <js>javascript/uportal/up-favorite.js</js>
+  <js>javascript/uportal/up-config-lightbox.js</js>
+
+</resources>

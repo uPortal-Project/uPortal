@@ -1,0 +1,39 @@
+<!--
+
+    Licensed to Apereo under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Apereo licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<with-attribute key="ENTITY_TYPE_NAME" value="${valueOf(principal-type)}">
+    <!--
+     | For uPortal 5, 'org.jasig.portal...' changed to 'org.apereo.portal...'
+     +-->
+    <if test="${groovy(ENTITY_TYPE_NAME.equals('org.jasig.portal.groups.IEntityGroup'))}">
+        <delete-node node="${singleNode(principal-type)}"/>
+        <append-node sibling="${singleNode(owner)}">
+            <principal-type>org.apereo.portal.groups.IEntityGroup</principal-type>
+        </append-node>
+    </if>
+    <if test="${groovy(ENTITY_TYPE_NAME.equals('org.jasig.portal.security.IPerson'))}">
+        <delete-node node="${singleNode(principal-type)}"/>
+        <append-node sibling="${singleNode(owner)}">
+            <principal-type>org.apereo.portal.security.IPerson</principal-type>
+        </append-node>
+    </if>
+    <crn location="classpath:/org/apereo/portal/io/import-permission_set_v5-0.crn"/>
+</with-attribute>
+

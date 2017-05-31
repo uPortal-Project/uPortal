@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to Apereo under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Apereo licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
+
+    <!--
+     | DataSource objects used by the portal should be configured here
+     +-->
+     
+    <!--  base pooled datasource with common configuration -->
+    <bean id="basePooledDataSource" class="org.jasig.portlet.utils.jdbc.TomcatDataSourceFactory" abstract="true">
+    	<property name="baseObjectName" value="uPortal:section=DataSource,name=" />
+        <property name="mBeanServer" ref="mbeanServer" />
+      
+        <property name="initialSize" value="1" />
+        <property name="minIdle" value="1" />
+        <property name="maxActive" value="100" />
+        <property name="maxIdle" value="50" />
+        <property name="maxWait" value="5000" /> <!-- 5 seconds -->
+        <property name="maxAge" value="3600000" /> <!-- 1 hour -->
+        <property name="minEvictableIdleTimeMillis" value="300000" /> <!-- 5 minutes -->
+        
+        <property name="abandonWhenPercentageFull" value="70" />
+        <property name="removeAbandoned" value="true" />
+        <property name="removeAbandonedTimeout" value="300" />
+        <property name="logAbandoned" value="${tomcat.jdbc.pool.logAbandoned:false}"/>
+        
+        <property name="jdbcInterceptors" value="ConnectionState(useEquals=true);ResetAbandonedTimer"/>
+        
+        <property name="testWhileIdle" value="true" />
+        <property name="testOnBorrow" value="true" />
+        <property name="delayedValidationQueryResolver" ref="delayedValidationQueryResolver" />
+    </bean>
+
+    <bean id="PortalDb" parent="basePooledDataSource">
+        <qualifier value="PortalDb"/>
+        <property name="driverClassName" value="${hibernate.connection.driver_class}" />
+        <property name="url" value="${hibernate.connection.url}" />
+        <property name="username" value="${hibernate.connection.username}" />
+        <property name="password" value="${hibernate.connection.password}" />
+    </bean>
+    <bean id="PortalDB.metadata" class="org.apereo.portal.jdbc.DatabaseMetaDataImpl">
+        <constructor-arg index="0" ref="PortalDb" />
+        <constructor-arg index="1" ref="transactionManager"/>
+    </bean>
+    
+    <alias alias="PersonDB" name="PortalDb"/>
+    
+    <!-- 
+     | DataSource used to store raw portal event data, wrapper is used instead of alias so that Spring treats each
+     | DataSource as unique.
+     +-->
+    <bean id="RawEventsDb" parent="basePooledDataSource">
+        <qualifier value="RawEventsDb" />
+        <property name="driverClassName" value="${RawEventsJdbcDriver}" />
+        <property name="url" value="${RawEventsJdbcUrl}" />
+        <property name="username" value="${RawEventsJdbcUser}" />
+        <property name="password" value="${RawEventsJdbcPassword}" />
+    </bean>    
+    <!-- 
+     | DataSource used to store aggregated portal event data, wrapper is used instead of alias so that Spring treats each
+     | DataSource as unique.
+     +-->
+    <bean id="AggrEventsDb" parent="basePooledDataSource">
+        <qualifier value="AggrEventsDb" />
+        <property name="driverClassName" value="${AggrEventsJdbcDriver}" />
+        <property name="url" value="${AggrEventsJdbcUrl}" />
+        <property name="username" value="${AggrEventsJdbcUser}" />
+        <property name="password" value="${AggrEventsJdbcPassword}" />
+    </bean>    
+    
+    <bean id="delayedValidationQueryResolver" class="org.apereo.portal.utils.jdbc.DelayedValidationQueryResolverImpl">
+    	<property name="persistenceUnit">
+    		<util:constant static-field="org.apereo.portal.jpa.BasePortalJpaDao.PERSISTENCE_UNIT_NAME"/>
+    	</property>
+    	<property name="validationQueryMap">
+            <!-- todo: Change to simply use ${hibernate.connection.validationQuery} instead of a map -->
+    		<map>
+                <entry key="org.hibernate.dialect.OracleDialect" value="SELECT 1 FROM DUAL" />
+                <entry key="org.hibernate.dialect.Oracle8iDialect" value="SELECT 1 FROM DUAL" />
+                <entry key="org.hibernate.dialect.Oracle9iDialect" value="SELECT 1 FROM DUAL" />
+                <entry key="org.hibernate.dialect.Oracle10gDialect" value="SELECT 1 FROM DUAL" />
+    			<entry key="org.hibernate.dialect.MySQLDialect" value="SELECT 1" />
+    			<entry key="org.hibernate.dialect.PostgreSQL81Dialect" value="SELECT 1" />
+    			<entry key="org.hibernate.dialect.SQLServerDialect" value="SELECT 1" />
+    			<entry key="org.hibernate.dialect.HSQLDialect" value="select 1 from INFORMATION_SCHEMA.SYSTEM_USERS" />
+    		</map>
+    	</property>
+    </bean>
+</beans>

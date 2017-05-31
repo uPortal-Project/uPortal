@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to Apereo under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Apereo licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
+       xmlns:security="http://www.springframework.org/schema/security"
+       xsi:schemaLocation="
+           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+           http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.2.xsd">
+
+   <security:global-method-security />
+
+    <!-- Spring Security pre-authentication -->
+    <security:http auto-config='true'>
+        <security:custom-filter position="PRE_AUTH_FILTER" ref="portalPreAuthenticationFilter" />
+        <security:intercept-url pattern="**" />
+        <security:session-management session-authentication-strategy-ref="sessionAuthenticationStrategy" />
+    </security:http>
+
+    <bean id="sessionAuthenticationStrategy" class="org.springframework.security.web.authentication.session.NullAuthenticatedSessionStrategy" />
+
+    <bean id="portalPreAuthenticationFilter"
+        class="org.apereo.portal.spring.security.preauth.PortalPreAuthenticatedProcessingFilter">
+        <property name="authenticationManager" ref="authenticationManager" />
+        <property name="clearSecurityContextPriorToPortalAuthentication" value="false" />
+    </bean>
+
+    <bean id="preAuthProvider"
+        class="org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationProvider">
+        <property name="preAuthenticatedUserDetailsService" ref="portalPreAuthenticatedUserDetailsService"/>
+    </bean>
+
+    <security:authentication-manager alias="authenticationManager">
+        <security:authentication-provider ref="preAuthProvider"/>
+    </security:authentication-manager>
+
+    <!--  String encryption service -->
+    <bean id="stringEncryptionService" class="org.apereo.portal.security.JasyptPBEStringEncryptionServiceImpl">
+        <property name="stringEncryptor">
+            <bean class="org.jasypt.encryption.pbe.StandardPBEStringEncryptor">
+
+                <!-- Before using the string encryption service you should first set a password.  The default
+                     password works but is not secure.
+                -->
+                <property name="password" value="${org.apereo.portal.portlets.passwordEncryptionKey}"/>
+
+                <!--
+                    Example BouncyCastle-powered AES encryption
+
+                    To use AES encryption, uncomment the following section, add
+                    the unrestricted JCE provider files to your JVM, and add
+                    the JVM-version-appropriate BouncyCastle dependency to uPortal
+                -->
+                <!--
+                <property name="algorithm" value="PBEWITHSHA256AND128BITAES-CBC-BC"/>
+                <property name="provider">
+                    <bean class="org.bouncycastle.jce.provider.BouncyCastleProvider"/>
+                </property>
+                -->
+            </bean>
+        </property>
+    </bean>
+
+    <!-- These are used in CasAssertionSecurityContext.  Putting them here just to avoid
+         introducing static variables, or re-reading security.properties repeatedly. -->
+    <bean id="casCopyAssertionAttributesToUserAttributes" class="java.lang.String">
+        <constructor-arg index="0" value="${org.apereo.portal.security.cas.assertion.copyAttributesToUserAttributes:false}"/>
+    </bean>
+    <bean id="decryptCredentialToPassword" class="java.lang.String">
+        <constructor-arg index="0" value="${org.apereo.portal.security.cas.assertion.decryptCredentialToPassword:false}"/>
+    </bean>
+    <bean id="decryptCredentialToPasswordPrivateKey" class="java.lang.String">
+        <constructor-arg index="0" value="${org.apereo.portal.security.cas.assertion.decryptCredentialToPasswordPrivateKey:''}"/>
+    </bean>
+    <bean id="decryptCredentialToPasswordAlgorithm" class="java.lang.String">
+        <constructor-arg index="0" value="${org.apereo.portal.security.cas.assertion.decryptCredentialToPasswordAlgorithm:'RSA'}"/>
+    </bean>
+
+    <!--
+     | Some operations in the portal rely on evaluating whether a permission is
+     | granted over every portlet in the registry.  As the number of portlets
+     | (or user groups) gets large, these operations can exhibit poor performance.
+     | This bean is designed to pre-load the AuthZ evaluation cache so that the
+     | answers are already known when needed.
+     +-->
+    <bean id="portletPermissionsCachePrimer" class="org.apereo.portal.security.provider.PortletPermissionsCachePrimer">
+        <property name="executor">
+            <bean class="org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean">
+                <property name="corePoolSize" value="2" />
+                <property name="maxPoolSize" value="7" />
+                <property name="queueCapacity" value="0" />
+                <property name="threadGroupName" value="uP-PermCachePrime" />
+                <property name="threadNamePrefix" value="uP-PermCachePrime-" />
+                <property name="threadPriority" value="${org.apereo.portal.task.exec.threadPool.threadPriority}" />
+                <property name="keepAliveSeconds" value="${org.apereo.portal.task.exec.threadPool.keepAliveSeconds}" />
+                <property name="daemon" value="true" />
+                <property name="allowCoreThreadTimeOut" value="true" />
+                <property name="rejectedExecutionHandler" ref="loggingAbortHandler" />
+            </bean>
+        </property>
+        <property name="permissionsMap">
+            <!-- Use this property to tell the bean what to pre-load.  Keys are
+                 permissions owners;  value(s) are activities -->
+            <map>
+                <entry key="UP_PORTLET_SUBSCRIBE">
+                    <set>
+                        <value>BROWSE</value>
+                        <value>SUBSCRIBE</value>
+                    </set>
+                </entry>
+                <!-- Useful in delegated administration scenarios involving portlets.
+                     Typically delegated authority is granted to MANAGE_EXPIRED, but
+                     since MANAGE_* permissions are hierarchical we need all of them. -->
+                <!-- entry key="UP_PORTLET_PUBLISH">
+                    <set>
+                        <value>MANAGE_CREATED</value>
+                        <value>MANAGE_APPROVED</value>
+                        <value>MANAGE</value>
+                        <value>MANAGE_EXPIRED</value>
+                        <value>MANAGE_MAINTENANCE</value>
+                    </set>
+                </entry -->
+            </map>
+        </property>
+    </bean>
+</beans>

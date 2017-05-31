@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to Apereo under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Apereo licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns="http://www.springframework.org/schema/beans"
+  xmlns:context="http://www.springframework.org/schema/context"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
+    
+    <!-- Ref to the mbean server -->
+    <bean id="mbeanServer" class="org.springframework.jmx.support.MBeanServerFactoryBean">
+        <property name="locateExistingServerIfPossible" value="true" />
+    </bean>
+    
+    <!-- Exporter used to register beans with the mbean server -->
+    <bean id="jmxAdapter" class="org.springframework.jmx.export.annotation.AnnotationMBeanExporter">
+        <property name="server" ref="mbeanServer" />
+        <property name="ensureUniqueRuntimeObjectNames" value="true" />
+        <property name="assembler" ref="mbeanInfoAssembler" />
+        <property name="registrationBehaviorName" value="REGISTRATION_REPLACE_EXISTING" />
+        <property name="beans">
+            <map>
+                <entry key="uPortal:section=Framework,name=Statistics" value-ref="portalFrameworkMBean" />
+                <entry key="uPortal:section=Framework,name=uPortalTaskExecutor" value-ref="uPortalTaskExecutor" />
+                <entry key="uPortal:section=Framework,name=uPortalTaskScheduler" value-ref="uPortalTaskScheduler" />
+                <entry key="uPortal:section=Framework,name=uPortalLockExecutor" value-ref="uPortalLockExecutor" />
+                <entry key="uPortal:section=Framework,name=PortletThreadPool" value-ref="portletThreadPool" />
+                
+                <entry key="uPortal:section=Cache,name=CharacterDataEventCacheStats" value-ref="characterDataEventCacheStatsBean" />
+                
+                <entry key="uPortal:section=Hibernate,name=HibernateStatistics" value-ref="hibernateStatisticsMBean"/>
+                <entry key="uPortal:section=Hibernate,name=RawEventsHibernateStatistics" value-ref="rawEventsHibernateStatisticsMBean"/>
+                <entry key="uPortal:section=Hibernate,name=AggrEventsHibernateStatistics" value-ref="aggrEventsHibernateStatisticsMBean"/>
+            </map>
+        </property>
+    </bean>
+    
+    <bean id="mbeanInfoAssembler" class="org.springframework.jmx.export.assembler.MethodExclusionMBeanInfoAssembler">
+        <property name="ignoredMethodMappings">
+            <props>
+            </props>
+        </property>
+    </bean>
+
+    <!-- Hibernate persistence statistics -->
+    <bean id="hibernateStatisticsMBean" class="org.hibernate.jmx.StatisticsService">
+        <property name="statisticsEnabled" value="true"/>
+        <property name="sessionFactory">
+            <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+                <property name="targetObject" ref="PortalDbEntityManagerFactory" />
+                <property name="targetMethod" value="getSessionFactory" />
+            </bean>
+        </property>
+    </bean>
+
+    <!-- Hibernate Raw Events persistence statistics -->
+    <bean id="rawEventsHibernateStatisticsMBean" class="org.hibernate.jmx.StatisticsService">
+        <property name="statisticsEnabled" value="true"/>
+        <property name="sessionFactory">
+            <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+                <property name="targetObject" ref="RawEventsDbEntityManagerFactory" />
+                <property name="targetMethod" value="getSessionFactory" />
+            </bean>
+        </property>
+    </bean>
+    
+    <!-- Hibernate Aggr Events persistence statistics -->
+    <bean id="aggrEventsHibernateStatisticsMBean" class="org.hibernate.jmx.StatisticsService">
+        <property name="statisticsEnabled" value="true"/>
+        <property name="sessionFactory">
+            <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+                <property name="targetObject" ref="AggrEventsDbEntityManagerFactory" />
+                <property name="targetMethod" value="getSessionFactory" />
+            </bean>
+        </property>
+    </bean>
+
+    <!-- uPortal framework statistics -->
+    <bean id="portalFrameworkMBean" class="org.apereo.portal.jmx.FrameworkMBeanImpl" />
+    
+    <bean id="characterDataEventCacheStatsBean" class="org.apereo.portal.character.stream.events.CharacterDataEventCacheStatsBean" />
+
+    <!-- EhCache management and statistics -->
+    <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="targetClass" value="net.sf.ehcache.management.ManagementService" />
+        <property name="targetMethod" value="registerMBeans" />
+        <property name="arguments">
+            <list>
+                <ref bean="cacheManager" />
+                <ref bean="mbeanServer" />
+                <value>true</value>
+                <value>true</value>
+                <value>true</value>
+                <value>true</value>
+                <value>true</value>
+            </list>
+        </property>
+    </bean>
+</beans>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to Apereo under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Apereo licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans" 
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd">
+
+    <context:component-scan base-package="org.apereo.portal.portlets.dynamicskin">
+        <!--<context:exclude-filter type="regex" expression="org\.apereo\.portal\.portlets\.dynamicskin\.storage\.filesystem\..*"/>-->
+        <context:exclude-filter type="regex" expression="org\.apereo\.portal\.portlets\.dynamicskin\.storage\.s3\..*"/>
+    </context:component-scan>
+
+    <bean class="org.springframework.web.portlet.mvc.annotation.DefaultAnnotationHandlerMapping">
+        <property name="interceptors"><bean class="org.apereo.portal.portlets.MinimizedStateHandlerInterceptor"/></property>
+    </bean>
+
+    <bean id="dynamicSkinUniqueTokenGenerator" class="org.apereo.portal.portlets.dynamicskin.ConfigurablePreferencesBasedTokenGenerator" />
+
+    <!--
+     | To read/write Dynamic Skin CSS from/to an AWS S3 bucket, follow these step:
+     |
+     | 1. Set up the AWS S3 bucket properties by doing a.) or b.) below:
+     |    a.) update the dynamic-skin* properties in portal.properties
+     |    b.) copy dynamic-skin* properties from portal.properties to your property overrides
+     |        file, update the values, and set up property overrides
+     |        see:  https://wiki.jasig.org/display/UPM43/Properties+Files+and+Properties+Overrides
+     | 2. Replace the "org\.apereo\.portal\.portlets\.dynamicskin\.storage\.filesystem\..*"" component scan exclude filter regex expression with:
+     |    "org\.apereo\.portal\.portlets\.dynamicskin\.storage\.s3\..*""
+     | 3. Add the following portlet preference to your dynamic-respondr-skin.portlet-definition.xml
+     |    file, change the value to the desired file name, and import the portlet definition to
+     |    apply the preference:
+     |        <portlet-preference>
+     |            <name>dynamicSkinCssFileName</name>
+     |            <readOnly>true</readOnly>
+     |            <value>myskin.css</value>
+     |        </portlet-preference>
+     +-->
+    <!--
+    <bean id="amazonS3Client" class="com.amazonaws.services.s3.AmazonS3Client">
+    -->
+        <!--
+         | Uncomment this only if the aws-credentials.properties file (or an overrides.properties file) will be used to retrieve the
+         | credentials. Otherwise, the default behavior (which searches a number of sources) will be used.
+         | See: http://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/services/s3/AmazonS3Client.html#AmazonS3Client()
+         +-->
+         <!--<constructor-arg ref="awsCredentialsConfig" />-->
+    <!--
+    </bean>
+    -->
+
+    <bean parent="primaryPropertyPlaceholderConfigurer" />
+
+</beans>

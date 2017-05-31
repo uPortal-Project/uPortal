@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to Apereo under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Apereo licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="
+           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
+   
+    <bean id="portletThreadPool" class="org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean">
+        <property name="corePoolSize" value="${org.apereo.portal.portlet.worker.threadPool.initialThreads}" />
+        <property name="maxPoolSize" value="${org.apereo.portal.portlet.worker.threadPool.maxThreads}" />
+        <property name="queueCapacity" value="0" />
+        <property name="threadGroupName" value="uP-PortletExecTG" />
+        <property name="threadNamePrefix" value="uP-PortletExec-" />
+        <property name="threadPriority" value="${org.apereo.portal.portlet.worker.threadPool.threadPriority}" />
+        <property name="keepAliveSeconds" value="${org.apereo.portal.portlet.worker.threadPool.keepAliveSeconds}" />
+        <property name="daemon" value="true" />
+        <property name="allowCoreThreadTimeOut" value="true" />
+        <property name="rejectedExecutionHandler" ref="loggingAbortHandler" />
+    </bean>
+    
+    <util:list id="portletExecutionInterceptors" value-type="org.apereo.portal.portlet.rendering.worker.IPortletExecutionInterceptor">
+        <ref bean="hungWorkerAnalyzer"/>
+        <ref bean="JpaPortletExecutionInterceptor"/>
+        <ref bean="LocaleThreadLocalPortletExecutionInterceptor"/>
+        <ref bean="RequestContextThreadLocalPortletExecutionInterceptor"/>
+        <ref bean="TrackingThreadLocalPortletExecutionInterceptor"/>
+        <ref bean="ThreadNamingPortletExecutionInterceptorAdaptor"/>
+        <ref bean="portletExecutionManager"/>
+    </util:list>
+    
+    <bean id="JpaPortletExecutionInterceptor" class="org.apereo.portal.portlet.rendering.worker.JpaPortletExecutionInterceptor">
+        <property name="entityManagerFactory" ref="PortalDbEntityManagerFactory" />
+    </bean>
+    
+    <!-- 
+     | See PropertyToAttributePropertiesManager.setPropertyMappings
+     +-->
+    <util:map id="portletPropertyToAttributeMappings">
+    </util:map>
+    <!-- 
+     | See PropertyToAttributePropertiesManager.setNonNamespacedProperties
+     +-->
+    <util:set id="nonNamespacedPortletProperties">
+    </util:set>
+    
+    <bean id="portletContainer" class="org.apereo.portal.portlet.container.UportalPortletContainerImpl" destroy-method="destroy" init-method="init">
+        <constructor-arg value="#{servletContext.contextPath + '-PlutoPortletContainer'}" />
+        <constructor-arg>
+            <!-- TODO this setup will never let the portal webapp restart without leaking memory -->
+            <bean class="org.apache.pluto.container.driver.PlutoServices">
+                <constructor-arg ref="portalDriverServices" />
+            </bean>
+        </constructor-arg>
+    </bean>
+    
+    <bean id="portalContext" class="org.apereo.portal.portlet.container.PortalContextImpl">
+        <property name="windowStates">
+            <set value-type="javax.portlet.WindowState">
+                <value>MINIMIZED</value>
+                <value>NORMAL</value>
+                <value>MAXIMIZED</value>
+                <value>EXCLUSIVE</value>
+                <value>DETACHED</value>
+            </set>
+        </property>
+        <property name="portletModes">
+            <set value-type="javax.portlet.PortletMode">
+                <value>VIEW</value>
+                <value>EDIT</value>
+                <value>HELP</value>
+                <value>ABOUT</value>
+                <value>CONFIG</value>
+            </set>
+        </property>
+        <property name="portalProperties">
+        	<props>
+        		<prop key="javax.portlet.markup.head.element.support">true</prop>
+        	</props>
+        </property>
+        <property name="portalVersion" value="${org.apereo.portal.version}" />
+    </bean>
+    
+    <bean id="personDirectoryUserInfoService" class="org.apereo.portal.portlet.container.services.PersonDirectoryUserInfoService">
+        <property name="personAttributeDao" ref="personAttributeDao" />
+    </bean>
+
+    <!--
+     | Uncomment the 'casTicketUserInfoService' bean to support Proxy CAS authentication in portlets.
+     |
+     | Be aware, however, that this feature may cause large amounts of traffic
+     | between your CAS serever and portal server(s), especially if you have a
+     | lot of portlets with support for Proxy CAS.  This phenomenon occurs
+     | because CAS proxy tickets are short-lived;  the portal must request a new
+     | one for every render of a portlet that asks for one.
+     +-->
+    <!--
+    <bean id="casTicketUserInfoService" class="org.apereo.portal.portlet.container.services.CasTicketUserInfoService" />
+    -->
+
+    <!--
+     | To enable providing the user's password to portlets that need it, uncomment this bean.
+     | By default it is commented out as a security precaution to prevent portlets from having access
+     | to the password information unless an institution determines they want to enable that capability.
+     | NOTE:  Other configuration is also needed to obtain and cache the user's password so this bean can provide it.
+     | See the uPortal manual https://wiki.jasig.org/display/UPM41/Caching+and+Re-playing+Credentials.
+     |
+     | IMPORTANT:  If using CAS Clearpass, set decryptPassword=false.  Otherwise set it to true.
+     -->
+    <!--bean id="cachedPasswordUserInfoService"
+        class="org.apereo.portal.portlet.container.services.CachedPasswordUserInfoService">
+        <property name="decryptPassword" value="false"/>
+    </bean-->
+    
+    <bean id="portalAdministrationService" class="org.apache.pluto.driver.container.DefaultPortalAdministrationService">
+    	<property name="administrativeRequestListeners">
+    		<list>
+    			<bean class="org.apereo.portal.portlet.container.services.AdministrativeRequestListenerController">
+                    <property name="listeners">
+                        <map>
+                            <entry key="sessionActionListener">
+                            	<bean class="org.apereo.portal.portlet.session.PortletSessionAdministrativeRequestListener" />
+                            </entry>
+                        </map>
+                    </property>
+                </bean>
+    		</list>
+    	</property>
+    	<property name="portletInvocationListeners">
+    		 <list>
+                <ref bean="portletSessionExpirationManager" />
+            </list>
+    	</property>
+    </bean>
+    
+    <!-- Portlet Container Services from Pluto -->
+    <bean id="portletInvokerService" class="org.apache.pluto.driver.container.DefaultPortletInvokerService" autowire="constructor" />
+    <bean id="namespaceMapper" class="org.apache.pluto.driver.container.DefaultNamespaceMapper"/>
+    <bean id="requestDispatcherService" class="org.apache.pluto.container.impl.RequestDispatcherServiceImpl" />
+    
+    <!--  <bean id="portletSessionExpirationManager" class="org.apereo.portal.portlet.session.PortletSessionExpirationManager" /> -->
+    <!--  
+    <bean id="requestAttributeService" class="org.apereo.portal.portlet.container.services.RequestAttributeServiceImpl">
+    	<property name="personAttributeDao" ref="personAttributeDao" />
+    </bean>
+    -->
+    
+</beans>

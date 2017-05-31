@@ -1,0 +1,92 @@
+<!--
+
+    Licensed to Apereo under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Apereo licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<xs:schema
+    xmlns="https://source.jasig.org/schemas/uportal/layout/portal-url"
+    targetNamespace="https://source.jasig.org/schemas/uportal/layout/portal-url"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:up="https://source.jasig.org/schemas/uportal"
+    elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0">
+    
+    <xs:import namespace="https://source.jasig.org/schemas/uportal" schemaLocation="../common-types-4.0.xsd"/>
+    
+    <xs:element name="portal-url">
+        <xs:annotation>
+            <xs:documentation>
+                Describes the data used to generate a portal url
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="baseUrlType">
+                    <xs:sequence>
+                        <xs:element name="portlet-url" type="portletUrlType" minOccurs="0" maxOccurs="unbounded"/>
+                    </xs:sequence>
+                    
+                    <xs:attribute name="type" type="urlType" default="RENDER"/>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    
+    <xs:complexType name="baseUrlType" abstract="true">
+        <xs:annotation>
+            <xs:documentation>
+                Common structure between portal and portlet urls.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:choice>
+                <xs:element name="fname" type="up:fname-type" />
+                <xs:element name="layoutId" type="xs:string" />
+            </xs:choice>
+            <xs:element name="param" type="paramType" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="portletUrlType" abstract="true">
+        <xs:complexContent>
+            <xs:extension base="baseUrlType">
+                <xs:attribute name="state" type="xs:string" />
+                <xs:attribute name="mode" type="xs:string" />
+                <xs:attribute name="copyCurrentRenderParameters" type="xs:boolean" default="false"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    
+    <xs:complexType name="paramType">
+        <xs:attribute name="name" type="xs:string"/>
+        <xs:attribute name="value" type="xs:string"/>
+    </xs:complexType>
+    
+    <xs:simpleType name="urlType">
+        <xs:annotation>
+            <xs:documentation>
+                Corresponds to org.apereo.portal.url.UrlType
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:token">
+            <xs:enumeration value="RENDER"/>
+            <xs:enumeration value="ACTION"/>
+            <xs:enumeration value="RESOURCE"/>
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>

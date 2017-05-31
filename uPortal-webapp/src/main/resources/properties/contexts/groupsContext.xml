@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to Apereo under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Apereo licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.springframework.org/schema/beans"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xsi:schemaLocation="http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+
+    <bean id="compositeGroupService" class="org.apereo.portal.services.GroupService" factory-method="getCompositeGroupService" lazy-init="true">
+        <aop:scoped-proxy/>
+    </bean>
+
+    <!--
+     | NOTE:  The smartLdapGroupStore bean MUST specify lazy-init="false" (even though it's normally
+     | the default), because the LazyInitByDefaultBeanDefinitionDocumentReader will re-set the default
+     | to 'true' in the context of command line tools.  If SmartLDAP is in use (i.e. configured in
+     | compositeGroupServices.xml), the bean MUST be initialized before GroupService attempts to use it.
+     +-->
+    <bean id="smartLdapGroupStore" class="org.apereo.portal.groups.smartldap.SmartLdapGroupStore" lazy-init="false">
+
+        <!--
+         | This property is the ContextSource instance that will be used to connect to LDAP.  Uncomment the
+         | following to use the LDAP settings in ldapContext.xml for user attributes, or supply your own.
+         +-->
+        <!--
+        <property name="ldapContext" ref="defaultLdapContext"/>
+        -->
+
+        <!--
+         | This property identifies the name of the Person Attribute that
+         | lists the SmartLdap groups each person is a member of.
+         +-->
+        <property name="memberOfAttributeName" value="memberOf"/>
+
+        <!--
+         | BaseDn that will be passed to the search (not to the context).
+         |
+         | WARNING:  If you get an error like this...
+         |   ...PartialResultException: [LDAP: error code 10...
+         | it probably means your baseGroupDn isn't correct!
+         +-->
+        <property name="baseGroupDn" value="OU=Membership,DC=unicon,DC=net"/>
+
+        <!--
+         | LDAP query string that will be passed to the search.
+         +-->
+        <property name="filter" value="(objectCategory=group)"/>
+
+        <!--
+         | Period, in seconds, after which SmartLdap will drop and re-init the groups
+         | tree.  A value of zero or less (negative) disables this feature.
+         +-->
+        <property name="groupsTreeRefreshIntervalSeconds" value="900"/>
+
+        <!--
+         | These next 2 properties tell smartLdap whether to gather additional groups that
+         | are members of groups returned by the first baseGroupDn and filter, and where to
+         | look if so.
+         |
+         |   - resolveMemberGroups=[true|false]
+         |   - resolveDn={a different, broader baseGroupDn than the one above}
+         |
+         | Here's how it works:  smartLdap will first collect all groups under the
+         | baseGroupDn specified above.  If 'resolveMemberGroups' is enabled, it will
+         | also search for additional groups (found within the 'resolveDn' specified
+         | here) that are members of groups in the first collection.
+         +-->
+        <property name="resolveMemberGroups" value="false"/>
+        <property name="resolveDn" value=""/><!--Used with resolveMemberGroups -->
+
+        <!--
+         | This property identifies the org.springframework.ldap.core.AttributesMapper
+         | implementation used in reading the groups records from LDAP.
+         +-->
+        <property name="attributesMapper">
+            <bean id="attributesMapper" class="org.apereo.portal.groups.smartldap.SimpleAttributesMapper">
+                <!--
+                 | Name of the group attribute that tells you its key.
+                 +-->
+                <property name="keyAttributeName">
+                    <value>distinguishedName</value>
+                </property>
+                <!--
+                 | Name of the group attribute that tells you its name.
+                 +-->
+                <property name="groupNameAttributeName">
+                    <value>cn</value>
+                </property>
+                <!--
+                 | Name of the group attribute that lists its members.
+                 +-->
+                <property name="membershipAttributeName">
+                    <value>member</value>
+                </property>
+            </bean>
+        </property>
+    </bean>
+</beans>

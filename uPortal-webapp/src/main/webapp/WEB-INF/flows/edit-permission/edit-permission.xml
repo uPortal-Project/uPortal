@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to Apereo under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Apereo licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow
+    http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+    
+    <!-- 
+     | permissionForm input 
+     |
+     | This object encapsulates stateful information about this subflow;  must be an 
+     | instance of org.apereo.portal.portlets.permissionsadmin.PermissionDefinitionForm.
+     +-->
+    <input name="owner" required="true"/>
+    <input name="activity" required="true"/>
+    <input name="target" required="true"/>
+    <input name="principals" required="true"/>
+    <input name="breadcrumbs" required="false"/>
+    
+    <view-state id="editPermission" model="permissionDefinition">
+        <transition on="choosePrinicipals" to="choosePrinicipals"/>
+        <transition on="groupTarget" to="groupTarget"/>
+        <transition on="portletTarget" to="portletTarget"/>
+        <transition on="breadcrumb" to="followBreadcrumb" bind="false" validate="false">
+            <set name="flowScope.selectedBreadcrumb" value="requestParameters.breadcrumb"/>
+        </transition>
+    </view-state>
+
+    <!-- Sub-flow to choose principals (groups and users) -->
+    <subflow-state id="choosePrinicipals" subflow="entity-selector">
+        <on-entry>
+            <set name="flashScope.entityTypes" value="new java.util.HashSet()"/>
+            <evaluate expression="entityTypes.add('person')"/>
+            <evaluate expression="entityTypes.add('group')"/>
+            <set name="flashScope.rootEntity" value="groupListHelper.getEntity('group', 'local.0', false)"/>
+        </on-entry>
+        <!-- View Parameters -->
+        <input name="selectTypes" value="entityTypes"/>
+        <input name="selectMultiple" value="true"/>
+        <input name="requireSelection" value="true"/>
+        <input name="rootEntity" value="rootEntity"/>
+        <input name="enableAdHocGroups" value="true"/>
+        <input name="adHocEntity" value="rootEntity"/>
+
+        <input name="showCancelButton" value="false"/>
+        <input name="showBackButton" value="true"/>
+        <input name="saveButtonCode" value="'submit'" />
+        <input name="backButtonCode" value="'back'" />
+        <input name="pageTitleCode" value="'select.principals'"/>
+        <input name="pageSubtitleCode" value="'select.principals.for.permission'" />
+        <input name="pageSubtitleArgument" value="''" />
+
+        <!-- Group input/output mapping -->
+        <input name="selectedGroups" value="permissionAdministrationHelper.getEntitiesForPrincipals(principals)"/>
+        <output name="selectedGroups" value="flashScope.entities"/>
+        
+        <transition on="back" to="editPermission"/>
+        <transition on="finish" to="editPermission">
+            <set name="principals" value="permissionAdministrationHelper.getPrincipalsForEntities(entities)"/>
+        </transition>
+    </subflow-state>
+
+    <end-state id="cancel">
+        <output name="breadcrumb" value="''"/>
+    </end-state>
+    <end-state id="followBreadcrumb">
+        <output name="breadcrumb" value="flowScope.selectedBreadcrumb"/>
+    </end-state>
+    <end-state id="done">
+        <output name="breadcrumb" value="''"/>
+    </end-state>
+    
+</flow>

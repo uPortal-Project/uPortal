@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to Apereo under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Apereo licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow
+                          http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+    <view-state id="selectUserAction">
+        <transition to="personLookup" on="findUser"/>
+        <transition to="createLocalAccount" on="createUser"/>
+    </view-state>
+
+    <!--
+     | Selection of existing person
+     +-->
+    <subflow-state id="personLookup" subflow="person-lookup">
+        <input name="showCancelButton" value="'false'" />
+        
+        <output name="person" />
+
+        <transition to="selectUserAction" on="cancelPersonLookup" />
+        <transition to="viewUserDetails" on="returnSelectedPerson" />
+    </subflow-state>
+
+    <!--
+     | User summary and links
+     +-->
+  <view-state id="viewUserDetails">
+        <on-entry>
+            <set name="flashScope.servletRequest"
+                value="portalRequestUtils.getPortletHttpRequest(externalContext.getNativeRequest())"/>
+            <set name="flashScope.user" 
+                value="personManager.getPerson(servletRequest)"/>
+            <set name="flashScope.groupedAttributes" 
+                value="userAccountHelper.groupPersonAttributes(person, servletRequest)"/>
+            <set name="viewScope.canEdit" value="userAccountHelper.canEditUser(user, person.name)"/>
+            <set name="viewScope.canDelete" value="userAccountHelper.canDeleteUser(user, person.name)"/>
+            <set name="viewScope.canImpersonate" value="identitySwapperManager.canImpersonateUser(user, person.name)"/>
+            <set name="viewScope.parents" value="userAccountHelper.getParentGroups(person.name)"/>
+            <set name="viewScope.profiles" value="userLayoutStore.getSystemProfileList()" />
+        </on-entry>
+        <transition on="editUser" to="editLocalAccount"/>
+        <transition on="swap" to="swapIdentity"/>
+        <transition on="swapDynamic" to="swapDynamic"/>
+        <transition on="viewPermissions" to="viewPermissions"/>
+        <transition on="resetLayout" to="resetLayout"/>
+        <transition on="confirmRemove" to="confirmRemove"/>
+        <transition on="cancel" to="personLookup"/>
+    </view-state>
+
+    <view-state id="viewPermissions">
+        <on-entry>
+            <set name="flashScope.personEntity" 
+                value="groupListHelper.getEntity('person', person.name, false)"/>
+        </on-entry>
+        <transition on="viewUserDetails" to="viewUserDetails"/>
+        <transition on="editPermission" to="edit-permission"/>
+    </view-state>
+
+    <!-- EDIT PERMISSION subflow -->
+    <subflow-state id="edit-permission" subflow="edit-permission">
+        <on-entry>
+            <set name="flashScope.breadcrumbs" value="new java.util.LinkedHashMap()"/>
+            <evaluate expression="breadcrumbs.put('viewUserDetails', person.name)"/>
+            <evaluate expression="breadcrumbs.put('viewPermissions', 'Permissions')"/>
+            <set name="flashScope.owner" value="permissionOwnerDao.getPermissionOwner(requestParameters.owner)"/>
+            <set name="flashScope.activity" value="permissionOwnerDao.getPermissionActivity(requestParameters.owner, requestParameters.activity)"/>
+            <set name="flashScope.targetProvider" value="permissionTargetProviderRegistry.getTargetProvider(activity.targetProviderKey)"/>
+            <set name="flashScope.target" value="targetProvider.getTarget(requestParameters.target)"/>
+            <set name="flashScope.principals" value="permissionAdministrationHelper.getCurrentPrincipals(owner, activity, requestParameters.target)"/>
+        </on-entry>
+        
+        <input name="owner" value="owner"/>
+        <input name="activity" value="activity"/>
+        <input name="target" value="flashScope.target"/>
+        <input name="principals" value="principals"/>
+        <input name="breadcrumbs" value="breadcrumbs"/>
+        <output name="breadcrumb" value="flowScope.breadcrumb"/>
+
+        <transition on="#{breadcrumb == 'viewUserDetails'}" to="viewUserDetails"/>
+        <transition on="#{breadcrumb == 'viewPermissions'}" to="viewPermissions"/>
+    </subflow-state>
+
+    <!--
+     | Layout reseting
+     +-->
+    <subflow-state id="resetLayout" subflow="reset-user-layout">
+        <input name="person" value="person" />
+
+        <transition to="viewUserDetails" on="reset-complete" />
+    </subflow-state>
+    
+    <!--
+     | Local account editing
+     +-->
+    <subflow-state id="editLocalAccount" subflow="edit-account">
+        <input name="accountForm" value="userAccountHelper.getForm(person.name)"/>
+        <output name="person" value="flowScope.person"/>
+        
+        <transition on="finish" to="viewUserDetails"/>
+        <transition on="cancel" to="viewUserDetails"/>
+    </subflow-state>
+
+    <!--
+     | Local account creation
+     +-->
+    <subflow-state id="createLocalAccount" subflow="edit-account">
+        
+        <input name="accountForm" value="userAccountHelper.getNewAccountForm()"/>
+        <output name="person" value="flowScope.person"/>
+        
+        <transition on="finish" to="viewUserDetails"/>
+        <transition on="cancel" to="selectUserAction"/>
+    </subflow-state>
+
+    <!-- 
+     | Account deletion
+     +-->
+    <view-state id="confirmRemove">
+        <transition on="remove" to="finish">
+            <!-- Remove the portlet -->
+            <set name="flashScope.servletRequest" 
+                value="portalRequestUtils.getPortletHttpRequest(externalContext.getNativeRequest())"/>
+            <set name="flashScope.user"
+                value="personManager.getPerson(servletRequest)"/>
+            <evaluate expression="userAccountHelper.deleteAccount(flashScope.user, person.name)"/>
+        </transition>
+        <transition on="cancel" to="viewUserDetails"/>
+    </view-state>
+
+    <end-state id="swapIdentity">
+        <on-entry>
+            <set name="flashScope.servletRequest" 
+                value="portalRequestUtils.getPortletHttpRequest(externalContext.getNativeRequest())"/>
+            <set name="flashScope.user"
+                value="personManager.getPerson(servletRequest)"/>
+            <evaluate expression="identitySwapperManager.impersonateUser(externalContext.nativeRequest, user.name, person.name)" />
+        </on-entry>
+    </end-state>
+    
+    <end-state id="swapDynamic">
+        <on-entry>
+            <set name="flashScope.servletRequest" 
+                value="portalRequestUtils.getPortletHttpRequest(externalContext.getNativeRequest())"/>
+            <set name="flashScope.user"
+                value="personManager.getPerson(servletRequest)"/>
+            <set name="flashScope.profile"
+                value="requestParameters.profile" />
+            <evaluate expression="identitySwapperManager.impersonateUser(externalContext.nativeRequest, user.name, person.name, profile)" />
+        </on-entry>    
+    </end-state>
+    
+    <end-state id="finish"/>
+
+</flow>

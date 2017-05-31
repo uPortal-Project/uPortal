@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to Apereo under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Apereo licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow
+    http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+    <on-start>
+        <set name="flashScope.servletRequest"
+            value="portalRequestUtils.getPortletHttpRequest(externalContext.getNativeRequest())"/>
+        <set name="flowScope.person"
+            value="personManager.getPerson(servletRequest)"/>
+        <set name="flowScope.portletTypes"
+            value="portletTypeRegistry.getPortletTypes()"/>
+    </on-start>
+
+    <!--
+     | Portlet selection view
+     |
+     | Present a list of currently configured portlets and allow the
+     | administrative user to either select a portlet to edit or to elect to
+     | create a new portlet
+     +-->
+    <view-state id="listChannels">
+        <on-entry>
+            <set name="viewScope.lifecycleStates" value="portletAdministrationHelper.getLifecycleStates()"/>
+        </on-entry>
+
+        <!-- If we're editing an already-existing portlet, create a form and
+            populate it with the selected portlet's data -->
+        <transition on="editPortlet" to="edit-portlet">
+            <set name="flowScope.portlet"
+                value="portletAdministrationHelper.createPortletDefinitionForm(person, requestParameters.portletId)"/>
+        </transition>
+        <!-- If we're creating a new portlet, create a new form -->
+        <transition on="createPortlet" to="edit-portlet">
+            <set name="flowScope.portlet"
+                value="new org.apereo.portal.portlets.portletadmin.PortletDefinitionForm()"/>
+        </transition>
+        <!-- If we're deleting a portlet, confirm the user wants to delete it -->
+        <transition on="removePortlet" to="confirmRemove">
+            <set name="flowScope.portlet"
+                value="portletAdministrationHelper.createPortletDefinitionForm(person, requestParameters.portletId)"/>
+        </transition>
+    </view-state>
+
+    <!--
+     | Portlet editing subflow
+     |
+     | Edit or create the selected portlet
+     +-->
+    <subflow-state id="edit-portlet" subflow="edit-portlet">
+        <input name="portlet" value="portlet"/>
+        <output name="portletId" value="requestScope.portletId"/>
+
+        <transition on="finishPortletEdit" to="listChannels">
+            <set name="flashScope.statusMsgCode" value="portlet.isNew() ? 'portlet.manager.registered' : 'portlet.manager.edited'"/>
+            <set name="flashScope.layoutURL" value="portletAdministrationHelper.shouldDisplayLayoutLink(person, portlet, portletId) ? portletAdministrationHelper.getFragmentAdminURL(portalRequestUtils.getPortletHttpRequest(externalContext.getNativeRequest())) : null" />
+        </transition>
+        <transition on="cancelPortletEdit" to="finishPortletEdit"/>
+    </subflow-state>
+
+    <!--
+     | Portlet deletion
+     +-->
+    <view-state id="confirmRemove">
+        <transition on="remove" to="listChannels">
+            <!-- Remove the portlet -->
+            <evaluate expression="portletAdministrationHelper.removePortletRegistration(person, portlet)"/>
+            <set name="flashScope.statusMsgCode" value="'portlet.manager.removed'"/>
+        </transition>
+        <transition on="cancel" to="listChannels"/>
+    </view-state>
+
+    <!-- End state -->
+    <end-state id="finishPortletEdit" />
+
+</flow>

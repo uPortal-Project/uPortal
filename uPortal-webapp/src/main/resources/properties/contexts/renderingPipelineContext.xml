@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to Apereo under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Apereo licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans" 
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="
+           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
+
+    <!-- 
+     | Due to the fairly generic nature of each component in the rendering 
+     | pipeline it cannot be autowired. However the dependencies of each
+     | component often can.
+     +-->
+
+    <!-- Start of the rendering pipeline, provides the user's layout -->
+    <bean id="userLayoutStoreComponent" class="org.apereo.portal.rendering.UserLayoutStoreComponent" />
+    
+    <bean id="postUserLayoutStoreLogger" class="org.apereo.portal.rendering.LoggingStAXComponent">
+        <property name="wrappedComponent" ref="userLayoutStoreComponent" />
+        <property name="loggerName" value="org.apereo.portal.rendering.LoggingStAXComponent.POST_LAYOUT" />
+        <property name="logEvents" value="false" /> 
+        <property name="logFullDocument" value="true" />
+        <property name="stepIdentifier" value="postUserLayoutStoreLogger"/>
+    </bean>
+    
+    <bean id="dashboardWindowStateSettingsStAXComponent" class="org.apereo.portal.rendering.WindowStateSettingsStAXComponent">
+        <property name="wrappedComponent" ref="postUserLayoutStoreLogger" />
+        <property name="stylesheetAttributeSource" ref="themeAttributeSource" />
+    </bean>
+    
+    <!-- portlet window attribute incorporation -->
+    <bean id="portletWindowAttributeIncorporationComponent" class="org.apereo.portal.rendering.StAXAttributeIncorporationComponent">
+        <property name="wrappedComponent" ref="dashboardWindowStateSettingsStAXComponent" />
+        <property name="attributeSource" ref="attributeSource"/>
+    </bean>
+    <bean name="attributeSource" class="org.apereo.portal.rendering.PortletWindowAttributeSource" />
+
+    <!-- structure attribute incorporation -->
+    <bean id="structureAttributeIncorporationComponent" class="org.apereo.portal.rendering.StAXAttributeIncorporationComponent">
+        <property name="wrappedComponent" ref="portletWindowAttributeIncorporationComponent" />
+        <property name="attributeSource" ref="structureAttributeSource" />
+    </bean>
+    <bean id="structureAttributeSource" class="org.apereo.portal.rendering.StructureAttributeSource" />
+    
+    <bean id="preStructureTransformLogger" class="org.apereo.portal.rendering.LoggingStAXComponent">
+        <property name="wrappedComponent" ref="structureAttributeIncorporationComponent" />
+        <property name="loggerName" value="org.apereo.portal.rendering.LoggingStAXComponent.PRE_STRUCTURE" />
+        <property name="logEvents" value="false" />
+        <property name="logFullDocument" value="true" />
+        <property name="stepIdentifier" value="preStructureTransformLogger"/>
+    </bean>
+    
+    <!-- structure transformation -->
+    <bean id="structureTransformSource" class="org.apereo.portal.rendering.xslt.StructureTransformerSource"/>
+    
+    <bean id="structureTransformComponent" class="org.apereo.portal.rendering.xslt.XSLTComponent">
+        <property name="wrappedComponent" ref="preStructureTransformLogger" />
+        <property name="transformerSource" ref="structureTransformSource"/>
+        <property name="xsltParameterSource">
+            <bean class="org.apereo.portal.rendering.xslt.MergingTransformerConfigurationSource">
+                <property name="sources">
+                    <list>
+                        <bean class="org.apereo.portal.rendering.xslt.StructureStylesheetDescriptorTransformerConfigurationSource"/>
+                        <bean class="org.apereo.portal.rendering.xslt.StructureStylesheetUserPreferencesTransformerConfigurationSource"/>
+                        <bean class="org.apereo.portal.rendering.xslt.StaticTransformerConfigurationSource">
+                            <property name="parameters">
+                                <map>
+                                    <entry key="version-UP_FRAMEWORK" value="${org.apereo.portal.version}"/>
+                                </map>
+                            </property>
+                        </bean>
+                        <bean class="org.apereo.portal.rendering.xslt.UserImpersonationTransformerConfigurationSource" />
+                    </list>
+                </property>
+            </bean>
+        </property>
+    </bean>
+    
+    <bean id="postStructureTransformLogger" class="org.apereo.portal.rendering.LoggingStAXComponent">
+        <property name="wrappedComponent" ref="structureTransformComponent" />
+        <property name="loggerName" value="org.apereo.portal.rendering.LoggingStAXComponent.POST_STRUCTURE" />
+        <property name="logEvents" value="false" />
+        <property name="logFullDocument" value="true" />
+        <property name="stepIdentifier" value="postStructureTransformLogger"/>
+    </bean>
+    
+    <bean id="structureCachingComponent" class="org.apereo.portal.rendering.cache.CachingStAXPipelineComponent">
+        <property name="wrappedComponent" ref="postStructureTransformLogger" />
+        <property name="cache" ref="org.apereo.portal.rendering.STRUCTURE_TRANSFORM" />
+    </bean>
+    
+    <!-- portlet rendering initiation -->
+    <bean id="portletRenderingInitiationComponent" class="org.apereo.portal.rendering.PortletRenderingInitiationStAXComponent">
+        <property name="wrappedComponent" ref="structureCachingComponent" />
+    </bean>
+    
+    <!-- theme attribute incorporation -->
+    <bean id="themeAttributeIncorporationComponent" class="org.apereo.portal.rendering.StAXAttributeIncorporationComponent">
+        <property name="wrappedComponent" ref="portletRenderingInitiationComponent" />
+        <property name="attributeSource" ref="themeAttributeSource" />
+    </bean>
+    <bean id="themeAttributeSource" class="org.apereo.portal.rendering.ThemeAttributeSource" />
+
+    <bean id="preThemeTransformLogger" class="org.apereo.portal.rendering.LoggingStAXComponent">
+        <property name="wrappedComponent" ref="themeAttributeIncorporationComponent" />
+        <property name="loggerName" value="org.apereo.portal.rendering.LoggingStAXComponent.PRE_THEME" />
+        <property name="logEvents" value="false" />
+        <property name="logFullDocument" value="true" />
+        <property name="stepIdentifier" value="preThemeTransformLogger"/>
+    </bean>
+     
+    <!-- theme transformation -->
+    <bean id="themeTransformSource" class="org.apereo.portal.rendering.xslt.ThemeTransformerSource"/>
+    <bean id="themeTransformComponent" class="org.apereo.portal.rendering.xslt.XSLTComponent">
+        <property name="wrappedComponent" ref="preThemeTransformLogger" />
+        <property name="transformerSource" ref="themeTransformSource"/>
+        <property name="xsltParameterSource">
+            <bean class="org.apereo.portal.rendering.xslt.MergingTransformerConfigurationSource">
+                <property name="sources">
+                    <list>
+                        <bean class="org.apereo.portal.rendering.xslt.ThemeStylesheetDescriptorTransformerConfigurationSource" />
+                        <!-- Uncomment and configure to map a user attribute value to various skin names
+                        <bean class="org.apereo.portal.rendering.xslt.UserAttributeSkinMappingTransformerConfigurationSource">
+                            <property name="stylesheetDescriptorNames">
+                                <set>
+                                    <value>DLMXHTML</value>
+                                </set>
+                            </property>
+                            <property name="skinAttributeName" value="serverName" />
+                            <property name="attributeToSkinMap">
+                                <map>
+                                    <entry key=".*\.example\.com" value="example.com" />
+                                </map>
+                            </property>
+                        </bean>
+                        -->
+                        <!-- Uncomment and configure to map user group membership to various skin names
+                        <bean class="org.apereo.portal.rendering.xslt.UserGroupSkinMappingTransformerConfigurationSource">
+                            <property name="stylesheetDescriptorNames">
+                                <set>
+                                    <value>DLMXHTML</value>
+                                </set>
+                            </property>
+                            <property name="groupToSkinMap">
+                                <map>
+                                    <entry key="pags.students" value="students" />
+                                    <entry key="pags.staff" value="staff" />
+                                    <entry key="pags.faculty" value="staff" />
+                                </map>
+                            </property>
+                        </bean>
+                        -->
+                        <bean class="org.apereo.portal.rendering.xslt.ThemeStylesheetUserPreferencesTransformerConfigurationSource" />
+                        <bean class="org.apereo.portal.rendering.xslt.StaticTransformerConfigurationSource">
+                            <property name="parameters">
+                                <map>
+                                    <entry>
+                                        <key><util:constant static-field="org.apereo.portal.url.xml.XsltPortalUrlProvider.XSLT_PORTAL_URL_PROVIDER" /></key>
+                                        <ref bean="xslPortalUrlProvider"/>
+                                    </entry>
+                                    <entry key="EXTERNAL_LOGIN_URL" value="${org.apereo.portal.channels.CLogin.CasLoginUrl}" />
+                                    <entry key="useTabGroups" value="${org.apereo.portal.layout.useTabGroups}"/>
+                                    <entry key="UP_VERSION" value="${org.apereo.portal.version}"/>
+                                    <entry key="USE_FLYOUT_MENUS" value="${org.apereo.portal.layout.useFlyoutMenus:false}" />
+                                </map>
+                            </property>
+                            <property name="parameterExpressions">
+                                <map>
+                                    <entry key="CURRENT_REQUEST" value="request.nativeRequest" />
+                                    <entry key="CONTEXT_PATH" value="request.contextPath" />
+                                    <entry key="HOST_NAME" value="request.nativeRequest.serverName" />
+                                    <entry key="AUTHENTICATED" value="!person.guest" />
+                                    <entry key="userName" value="person.fullName" />
+                                    <entry key="USER_ID" value="person.userName" />
+                                    <entry key="SERVER_NAME" value="@portalInfoProvider.serverName" />
+                                    <entry key="STATS_SESSION_ID" value="@portalEventFactory.getPortalEventSessionId(request.nativeRequest, person)" />
+                                </map>
+                            </property>
+                            <property name="cacheKeyExcludedParameters">
+                                <set>
+                                    <value>CURRENT_REQUEST</value>
+                                    <util:constant static-field="org.apereo.portal.web.skin.ResourcesElementsXsltcHelper.RESOURCES_ELEMENTS_HELPER" />
+                                    <util:constant static-field="org.apereo.portal.url.xml.XsltPortalUrlProvider.XSLT_PORTAL_URL_PROVIDER" />
+                                </set>
+                            </property>
+                        </bean>
+                        <bean class="org.apereo.portal.rendering.xslt.LocaleTransformerConfigurationSource" />
+                        <bean class="org.apereo.portal.web.skin.ResourcesElementsXsltcHelper" />
+                    </list>
+                </property>
+            </bean>
+        </property>
+    </bean>
+
+    <bean id="postThemeTransformLogger" class="org.apereo.portal.rendering.LoggingStAXComponent">
+        <property name="wrappedComponent" ref="themeTransformComponent" />
+        <property name="loggerName" value="org.apereo.portal.rendering.LoggingStAXComponent.POST_THEME" />
+        <property name="logEvents" value="false" />
+        <property name="logFullDocument" value="true" />
+        <property name="logFullDocumentAsHtml" value="true" />
+        <property name="stepIdentifier" value="postThemeTransformLogger"/>
+    </bean>
+    
+    <!-- StAX to String serialization -->
+    <bean id="staxSerializingComponent" class="org.apereo.portal.rendering.StAXSerializingComponent">
+        <property name="wrappedComponent" ref="postThemeTransformLogger" />
+        <property name="chunkingElements">
+            <map>
+                <entry>
+                    <key><util:constant static-field="org.apereo.portal.layout.IUserLayoutManager.CHANNEL" /></key>
+                    <bean class="org.apereo.portal.character.stream.PortletContentPlaceholderEventSource" />
+                </entry>
+                <entry>
+                    <key><util:constant static-field="org.apereo.portal.layout.IUserLayoutManager.CHANNEL_HEADER" /></key>
+                    <bean class="org.apereo.portal.character.stream.PortletHeaderPlaceholderEventSource" />
+                </entry>
+                <entry>
+                    <key><util:constant static-field="org.apereo.portal.character.stream.events.ChunkPointPlaceholderEventSource.CHUNK_POINT" /></key>
+                    <bean class="org.apereo.portal.character.stream.events.ChunkPointPlaceholderEventSource" />
+                </entry>
+                <entry>
+                    <key><util:constant static-field="org.apereo.portal.rendering.PortletAnalyticsDataPlaceholderEventSource.PORTLET_ANALYTICS_SCRIPT" /></key>
+                    <bean class="org.apereo.portal.rendering.PortletAnalyticsDataPlaceholderEventSource" />
+                </entry>
+                <entry>
+                    <key><util:constant static-field="org.apereo.portal.rendering.PageAnalyticsDataPlaceholderEventSource.PAGE_ANALYTICS_SCRIPT" /></key>
+                    <bean class="org.apereo.portal.rendering.PageAnalyticsDataPlaceholderEventSource" />
+                </entry>
+            </map>
+        </property>
+        <property name="chunkingPatterns">
+            <map>
+                <entry key="\{up-portlet-title\(([^\)]+)\)\}">
+                    <bean class="org.apereo.portal.character.stream.PortletTitlePlaceholderEventSource" />
+                </entry>
+                <entry key="\{up-portlet-help\(([^\)]+)\)\}">
+                    <bean class="org.apereo.portal.character.stream.PortletHelpPlaceholderEventSource" />
+                </entry>
+                <entry key="\{up-portlet-new-item-count\(([^\)]+)\)\}">
+                    <bean class="org.apereo.portal.character.stream.PortletNewItemCountPlaceholderEventSource" />
+                </entry>
+                <entry key="\{up-portlet-link\(([^,]+),([^\)]+)\)\}">
+                    <bean class="org.apereo.portal.character.stream.PortletLinkPlaceholderEventSource" />
+                </entry>
+            </map>
+        </property>
+    </bean>
+    
+    <bean id="postSerializerLogger" class="org.apereo.portal.rendering.LoggingCharacterComponent">
+        <property name="wrappedComponent" ref="staxSerializingComponent" />
+        <property name="loggerName" value="org.apereo.portal.rendering.LoggingCharacterComponent.POST_SERIALIZER" />
+    </bean>
+    
+    <bean id="themeCachingComponent" class="org.apereo.portal.rendering.cache.CachingCharacterPipelineComponent">
+        <property name="wrappedComponent" ref="staxSerializingComponent" />
+        <property name="cache" ref="org.apereo.portal.rendering.THEME_TRANSFORM" />
+    </bean>
+    
+    <bean id="portletRenderingInitiationCharacterComponent" class="org.apereo.portal.rendering.PortletRenderingInitiationCharacterComponent">
+        <property name="wrappedComponent" ref="themeCachingComponent" />
+    </bean>
+    
+    <!-- portlet content incorporation -->
+    <bean id="portletRenderingIncorporationComponent" class="org.apereo.portal.rendering.PortletRenderingIncorporationComponent">
+        <property name="wrappedComponent" ref="portletRenderingInitiationCharacterComponent" />
+    </bean>
+    
+    <bean id="analyticsIncorporationComponent" class="org.apereo.portal.rendering.AnalyticsIncorporationComponent">
+        <property name="wrappedComponent" ref="portletRenderingIncorporationComponent" />
+    </bean>
+    
+    <bean id="portalRenderingPipeline" class="org.apereo.portal.rendering.DynamicRenderingPipeline">
+        <qualifier value="main" />
+        <property name="pipeline" ref="analyticsIncorporationComponent" />
+    </bean>
+    
+    <bean id="resourcesElementsProvider" class="org.jasig.resourceserver.utils.aggr.ResourcesElementsProviderImpl">
+        <property name="resourcesDao" ref="resourcesDao" />
+    </bean>
+    <bean id="resourcesDao" class="org.jasig.resourceserver.aggr.ResourcesDaoImpl" />
+    
+</beans>

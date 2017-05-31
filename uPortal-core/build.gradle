@@ -8,6 +8,10 @@ dependencies {
     compile "joda-time:joda-time:${jodaTimeVersion}"
     compile "org.apache.commons:commons-lang3:${commonsLang3Version}"
     compile "org.hibernate:hibernate-core:${hibernateVersion}"
+    compile("org.jadira.usertype:usertype.core:${usertypeVersion}") {
+        exclude group: 'org.hibernate', module: 'hibernate-core'
+        exclude group: 'org.hibernate', module: 'hibernate-entitymanager'
+    }
     compile "org.jadira.usertype:usertype.spi:${usertypeVersion}"
     compile "org.slf4j:slf4j-api:${slf4jVersion}"
     compile "org.springframework:spring-context:${springVersion}"
