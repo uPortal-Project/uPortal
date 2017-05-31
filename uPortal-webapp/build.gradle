@@ -61,4 +61,14 @@ processResources {
     filter(ReplaceTokens, tokens:['projectVersion': project.version])
 }
 
+war {
+    from 'build/webapp'
+}
+
+task copyWebapp(type: Copy) {
+    from 'src/main/webapp'
+    into 'build/webapp'
+}
+
+processResources.dependsOn('copyWebapp')
 processResources.dependsOn('npm_run_compile-less')
