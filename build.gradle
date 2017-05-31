@@ -34,20 +34,11 @@ def props = new Properties()
 
 task copySampleProperties(type: Copy) {
     println "Configuring copying the build.properties.sample into build.properties"
-    def sampleBuildFile = 'build.properties.sample'
-    if(new File(sampleBuildFile).exists()) { 
-        from '.'
-        into '.'
-        include sampleBuildFile
-        rename { String fileName ->
-            fileName.replace(sampleBuildFile, "build.properties")
-        }
-        doLast {
-            file("build.properties").withInputStream { props.load(it) }
-        }
-    }
-    else {
-    println("ERROR:${sampleBuildFile} does not exist") 
+    def buildPropsFile = new File('build.properties')
+    if (buildPropsFile.exists()) {
+        buildPropsFile.withInputStream { props.load(it) }
+    } else {
+        println("WARNING: build.properties not found")
     }
 }
 
