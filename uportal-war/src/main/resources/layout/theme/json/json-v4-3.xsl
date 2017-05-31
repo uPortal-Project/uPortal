@@ -49,10 +49,7 @@
  | Since : uPortal Version 4.3.0
  |
  | General Description: This file, json-v4-3.xsl, was developed for sending layout data to the UI
- | for use in rendering the uPortal UI using Javascript.  The original json.xsl file is now
- | considered 'version 1' and this new file is 'version 4.3'. The original endpoint,
- | "/uPortal/layout.json", has been preserved for backwards compatibility.  However, the same
- | content is now also available at: "/uPortal/api/v41/dlm/layout.json".  A new endpoint,
+ | for use in rendering the uPortal UI using Javascript. A new endpoint,
  | "/uPortal/api/v4-3/dlm/layout.json" to match the uPortal release (new naming convention)
  | , which utilizes this file, has been added.
 -->

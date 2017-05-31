@@ -1,0 +1,1312 @@
+{
+    "user": "student",
+    "authenticated": "true",
+    "hostname": "localhost",
+    "fragmentAdmin" : "false",
+    "locale": "en-US",
+    "layout": {
+        "globals": {
+            
+         "userLayoutRoot": "root",
+         "hasFavorites": "true",
+         "activeTabGroup": "DEFAULT_TABGROUP",
+         "tabsInTabGroup": "4",
+         "userImpersonation": "false"
+        },
+        "regions": [
+            
+        {
+            "name": "header-right",
+            
+            "content": [
+            
+                                        {
+                                            "_objectType": "portlet",
+                                            "url": "/uPortal/api/v4-3/portlet/search-launcher.html",
+                                            "iconUrl": "/uPortal/media/skins/icons/mobile/search.png",
+                                            "ID": "u17l1n110",
+                                            "chanID": "32",
+                                            "description": "Search Launcher to launch the search portlet that searches the portal, directory, and campus web.",
+                                            "fragment": "0",
+                                            "precedence": "80.0",
+                                            "fname": "search-launcher",
+                                            "locale": "en_US",
+                                            "name": "SearchLauncher",
+                                            "timeout": "30000",
+                                            "title": "Search Launcher",
+                                            "typeID": "1",
+                                            "windowState": "normal",
+                                            "portletMode": "view",
+                                            "portletName": "Search",
+                                            "lifecycleState": "PUBLISHED",
+                                            "frameworkPortlet": "true",
+                                            
+                                            "parameters": {
+                                                
+                                                    "mobileIconUrl": "\/uPortal\/media\/skins\/icons\/mobile\/search.png",
+                                                    "role": "searchLauncher",
+                                                    "iconUrl": "\/ResourceServingWebapp\/rs\/tango\/0.8.90\/32x32\/actions\/system-search.png",
+                                                    "disableDynamicTitle": "true"
+                                            }
+                                        }
+            ]
+        },
+        {
+            "name": "header-bottom",
+            
+            "content": [
+            
+                                        {
+                                            "_objectType": "portlet",
+                                            "url": "/uPortal/api/v4-3/portlet/emergency-alert.html",
+                                            "iconUrl": "/uPortal/media/skins/icons/mobile/emergency.png",
+                                            "ID": "u17l1n210",
+                                            "chanID": "57",
+                                            "description": "Apereo Emergency Alert portlet",
+                                            "fragment": "0",
+                                            "precedence": "80.0",
+                                            "fname": "emergency-alert",
+                                            "locale": "en_US",
+                                            "name": "Emergency Alert",
+                                            "timeout": "20000",
+                                            "title": "Emergency Alert",
+                                            "typeID": "1",
+                                            "windowState": "normal",
+                                            "portletMode": "view",
+                                            "portletName": "EmergencyAlert",
+                                            "lifecycleState": "PUBLISHED",
+                                            "webAppName": "\/NotificationPortlet",
+                                            
+                                            "parameters": {
+                                                
+                                                    "hideFromMobile": "true",
+                                                    "highlight": "false",
+                                                    "showChrome": "true",
+                                                    "blockImpersonation": "false",
+                                                    "role": "alert",
+                                                    "mobileIconUrl": "\/uPortal\/media\/skins\/icons\/mobile\/emergency.png",
+                                                    "hasAbout": "false",
+                                                    "editable": "false",
+                                                    "alternate": "false",
+                                                    "disableDynamicTitle": "true",
+                                                    "hasHelp": "false"
+                                            }
+                                        }
+            ]
+        },
+        {
+            "name": "pre-content",
+            
+            "content": [
+            
+                                        {
+                                            "_objectType": "portlet",
+                                            "url": "/uPortal/api/v4-3/portlet/tips.html",
+                                            "iconUrl": "/uPortal/media/skins/icons/mobile/check.png",
+                                            "ID": "u17l1n410",
+                                            "chanID": "85",
+                                            "description": "Tips on using the portal",
+                                            "fragment": "0",
+                                            "precedence": "80.0",
+                                            "fname": "tips",
+                                            "locale": "en_US",
+                                            "name": "Tips",
+                                            "timeout": "20000",
+                                            "title": "Tips",
+                                            "typeID": "1",
+                                            "windowState": "normal",
+                                            "portletMode": "view",
+                                            "portletName": "tips",
+                                            "lifecycleState": "PUBLISHED",
+                                            "webAppName": "\/jasig-widget-portlets",
+                                            
+                                            "parameters": {
+                                                
+                                                    "hideFromMobile": "true",
+                                                    "highlight": "false",
+                                                    "showChrome": "true",
+                                                    "blockImpersonation": "false",
+                                                    "role": "tips",
+                                                    "mobileIconUrl": "\/uPortal\/media\/skins\/icons\/mobile\/check.png",
+                                                    "hasAbout": "false",
+                                                    "editable": "false",
+                                                    "alternate": "false",
+                                                    "disableDynamicTitle": "true",
+                                                    "hasHelp": "false"
+                                            }
+                                        }
+            ]
+        },
+        {
+            "name": "footer-second",
+            
+            "content": [
+            
+                                        {
+                                            "_objectType": "portlet",
+                                            "url": "/uPortal/api/v4-3/portlet/legal-footer.html",
+                                            "iconUrl": "/uPortal/media/skins/icons/mobile/default.png",
+                                            "ID": "u17l1n510",
+                                            "chanID": "16",
+                                            "description": "Legal links for uPortal",
+                                            "fragment": "0",
+                                            "precedence": "80.0",
+                                            "fname": "legal-footer",
+                                            "locale": "en_US",
+                                            "name": "Legal Footer",
+                                            "timeout": "5000",
+                                            "title": "Legal Footer",
+                                            "typeID": "1",
+                                            "windowState": "normal",
+                                            "portletMode": "view",
+                                            "portletName": "cms",
+                                            "lifecycleState": "PUBLISHED",
+                                            "webAppName": "\/SimpleContentPortlet",
+                                            
+                                            "parameters": {
+                                                
+                                                    "disableDynamicTitle": "true",
+                                                    "configurable": "true"
+                                            }
+                                        }
+            ]
+        },
+        {
+            "name": "page-bottom",
+            
+            "content": [
+            
+                                        {
+                                            "_objectType": "portlet",
+                                            "url": "/uPortal/api/v4-3/portlet/attachments.html",
+                                            "iconUrl": "/uPortal/media/skins/icons/mobile/default.png",
+                                            "ID": "u17l1n610",
+                                            "chanID": "1",
+                                            "description": "Manage portal attachments",
+                                            "fragment": "0",
+                                            "precedence": "80.0",
+                                            "fname": "attachments",
+                                            "locale": "en_US",
+                                            "name": "Attachments",
+                                            "timeout": "50000",
+                                            "title": "Attachments",
+                                            "typeID": "1",
+                                            "windowState": "normal",
+                                            "portletMode": "view",
+                                            "portletName": "attachments",
+                                            "lifecycleState": "PUBLISHED",
+                                            "webAppName": "\/SimpleContentPortlet",
+                                            
+                                            "parameters": {
+                                                
+                                                    "hideFromMobile": "true",
+                                                    "highlight": "false",
+                                                    "showChrome": "false",
+                                                    "blockImpersonation": "false",
+                                                    "role": "tips",
+                                                    "hasAbout": "false",
+                                                    "editable": "false",
+                                                    "alternate": "false",
+                                                    "disableDynamicTitle": "true",
+                                                    "hasHelp": "false"
+                                            }
+                                        },
+                                        {
+                                            "_objectType": "portlet",
+                                            "url": "/uPortal/api/v4-3/portlet/google-analytics-config.html",
+                                            "iconUrl": "/uPortal/media/skins/icons/mobile/default.png",
+                                            "ID": "u17l1n620",
+                                            "chanID": "59",
+                                            "description": "Configuration and Script Rendering for Google Analytics",
+                                            "fragment": "0",
+                                            "precedence": "80.0",
+                                            "fname": "google-analytics-config",
+                                            "locale": "en_US",
+                                            "name": "Google Analytics Configuration",
+                                            "timeout": "20000",
+                                            "title": "Google Analytics Configuration",
+                                            "typeID": "1",
+                                            "windowState": "normal",
+                                            "portletMode": "view",
+                                            "portletName": "GoogleAnalytics",
+                                            "lifecycleState": "PUBLISHED",
+                                            "frameworkPortlet": "true",
+                                            
+                                            "parameters": {
+                                                
+                                                    "hideFromMobile": "true",
+                                                    "highlight": "false",
+                                                    "showChrome": "false",
+                                                    "blockImpersonation": "false",
+                                                    "hasAbout": "false",
+                                                    "editable": "false",
+                                                    "alternate": "false",
+                                                    "disableDynamicTitle": "true",
+                                                    "hasHelp": "false"
+                                            }
+                                        }
+            ]
+        },
+        {
+            "name": "pre-header",
+            
+            "content": [
+            
+                                        {
+                                            "_objectType": "portlet",
+                                            "url": "/uPortal/api/v4-3/portlet/notification-icon.html",
+                                            "iconUrl": "/uPortal/media/skins/icons/mobile/bullhorn.png",
+                                            "ID": "u18l1n110",
+                                            "chanID": "69",
+                                            "description": "Icon-based launcher for the Apereo Notification portlet designed for the pre-header region of the page",
+                                            "fragment": "0",
+                                            "precedence": "80.0",
+                                            "fname": "notification-icon",
+                                            "locale": "en_US",
+                                            "name": "Notification Icon",
+                                            "timeout": "5000",
+                                            "title": "Notification Icon",
+                                            "typeID": "1",
+                                            "windowState": "normal",
+                                            "portletMode": "view",
+                                            "portletName": "NotificationIcon",
+                                            "lifecycleState": "PUBLISHED",
+                                            "webAppName": "\/NotificationPortlet",
+                                            
+                                            "parameters": {
+                                                
+                                                    "blockImpersonation": "false",
+                                                    "hideFromMobile": "false",
+                                                    "highlight": "false",
+                                                    "iconUrl": "\/ResourceServingWebapp\/rs\/tango\/0.8.90\/32x32\/status\/dialog-warning.png",
+                                                    "showChrome": "true",
+                                                    "mobileIconUrl": "\/uPortal\/media\/skins\/icons\/mobile\/bullhorn.png",
+                                                    "hasAbout": "false",
+                                                    "editable": "false",
+                                                    "alternate": "false",
+                                                    "disableDynamicTitle": "true",
+                                                    "hasHelp": "false"
+                                            }
+                                        },
+                                        {
+                                            "_objectType": "portlet",
+                                            "url": "/uPortal/api/v4-3/portlet/portal-greeting.html",
+                                            "iconUrl": "/uPortal/media/skins/icons/mobile/default.png",
+                                            "ID": "u18l1n120",
+                                            "chanID": "26",
+                                            "description": "Greeting that appears at the top of the page for authenticated users",
+                                            "fragment": "0",
+                                            "precedence": "80.0",
+                                            "fname": "portal-greeting",
+                                            "locale": "en_US",
+                                            "name": "Portal Greeting",
+                                            "timeout": "30000",
+                                            "title": "Portal Greeting",
+                                            "typeID": "1",
+                                            "windowState": "normal",
+                                            "portletMode": "view",
+                                            "portletName": "JspInvoker",
+                                            "lifecycleState": "PUBLISHED",
+                                            "frameworkPortlet": "true",
+                                            
+                                            "parameters": {
+                                                
+                                                    "disableDynamicTitle": "true"
+                                            }
+                                        },
+                                        {
+                                            "_objectType": "portlet",
+                                            "url": "/uPortal/api/v4-3/portlet/logout-launcher.html",
+                                            "iconUrl": "/uPortal/media/skins/icons/mobile/default.png",
+                                            "ID": "u18l1n130",
+                                            "chanID": "19",
+                                            "description": "Provides a link to log out of the portal for authenticated users",
+                                            "fragment": "0",
+                                            "precedence": "80.0",
+                                            "fname": "logout-launcher",
+                                            "locale": "en_US",
+                                            "name": "Logout Launcher",
+                                            "timeout": "5000",
+                                            "title": "Logout Launcher",
+                                            "typeID": "1",
+                                            "windowState": "normal",
+                                            "portletMode": "view",
+                                            "portletName": "JspInvoker",
+                                            "lifecycleState": "PUBLISHED",
+                                            "frameworkPortlet": "true",
+                                            
+                                            "parameters": {
+                                                
+                                                    "disableDynamicTitle": "true"
+                                            }
+                                        },
+                                        {
+                                            "_objectType": "portlet",
+                                            "url": "/uPortal/api/v4-3/portlet/session-timeout.html",
+                                            "iconUrl": "/uPortal/media/skins/icons/mobile/default.png",
+                                            "ID": "u18l1n140",
+                                            "chanID": "33",
+                                            "description": "Provides an alert that will appear before a session timeout, giving the user the opportunity to refresh their session.",
+                                            "fragment": "0",
+                                            "precedence": "80.0",
+                                            "fname": "session-timeout",
+                                            "locale": "en_US",
+                                            "name": "Session Timeout",
+                                            "timeout": "30000",
+                                            "title": "Session Timeout",
+                                            "typeID": "1",
+                                            "windowState": "normal",
+                                            "portletMode": "view",
+                                            "portletName": "SessionTimeout",
+                                            "lifecycleState": "PUBLISHED",
+                                            "frameworkPortlet": "true",
+                                            
+                                            "parameters": {
+                                                
+                                            }
+                                        }
+            ]
+        },
+        {
+            "name": "customize",
+            
+            "content": [
+            
+                                        {
+                                            "_objectType": "portlet",
+                                            "url": "/uPortal/api/v4-3/portlet/personalization-gallery.html",
+                                            "iconUrl": "/uPortal/media/skins/icons/mobile/default.png",
+                                            "ID": "u18l1n310",
+                                            "chanID": "22",
+                                            "description": "Gallery approach to personalization, as seen in uPortal 3.x and 4.0",
+                                            "fragment": "0",
+                                            "precedence": "80.0",
+                                            "fname": "personalization-gallery",
+                                            "locale": "en_US",
+                                            "name": "Personalization Gallery",
+                                            "timeout": "30000",
+                                            "title": "Personalization Gallery",
+                                            "typeID": "1",
+                                            "windowState": "normal",
+                                            "portletMode": "view",
+                                            "portletName": "JspInvoker",
+                                            "lifecycleState": "PUBLISHED",
+                                            "frameworkPortlet": "true",
+                                            
+                                            "parameters": {
+                                                
+                                                    "disableDynamicTitle": "true"
+                                            }
+                                        },
+                                        {
+                                            "_objectType": "portlet",
+                                            "url": "/uPortal/api/v4-3/portlet/background-preference.html",
+                                            "iconUrl": "/uPortal/media/skins/icons/mobile/default.png",
+                                            "ID": "u18l1n320",
+                                            "chanID": "45",
+                                            "description": "Display user selected background images on main page.",
+                                            "fragment": "0",
+                                            "precedence": "80.0",
+                                            "fname": "background-preference",
+                                            "locale": "en_US",
+                                            "name": "background-preference",
+                                            "timeout": "30000",
+                                            "title": "Background Preference",
+                                            "typeID": "1",
+                                            "windowState": "normal",
+                                            "portletMode": "view",
+                                            "portletName": "backgroundPreference",
+                                            "lifecycleState": "PUBLISHED",
+                                            "frameworkPortlet": "true",
+                                            
+                                            "parameters": {
+                                                
+                                                    "blockImpersonation": "false",
+                                                    "role": "tips",
+                                                    "hideFromMobile": "true",
+                                                    "highlight": "false",
+                                                    "showChrome": "false",
+                                                    "hasAbout": "false",
+                                                    "editable": "false",
+                                                    "alternate": "false",
+                                                    "disableDynamicTitle": "true",
+                                                    "hasHelp": "false"
+                                            }
+                                        }
+            ]
+        },
+        {
+            "name": "page-top",
+            
+            "content": [
+            
+                                        {
+                                            "_objectType": "portlet",
+                                            "url": "/uPortal/api/v4-3/portlet/dynamic-respondr-skin.html",
+                                            "iconUrl": "/ResourceServingWebapp/rs/tango/0.8.90/32x32/actions/preferences-desktop-theme.png",
+                                            "ID": "u28l1n110",
+                                            "chanID": "5",
+                                            "description": "Compiles Bootstrap LESS dynamically, allowing administrators to make some skin configuration choices in a UI.  Supports the optional 'dynamic' strategy for Respondr.",
+                                            "fragment": "0",
+                                            "precedence": "80.0",
+                                            "fname": "dynamic-respondr-skin",
+                                            "locale": "en_US",
+                                            "name": "Dynamic Respondr Skin",
+                                            "timeout": "30000",
+                                            "title": "Dynamic Respondr Skin",
+                                            "typeID": "1",
+                                            "windowState": "normal",
+                                            "portletMode": "view",
+                                            "portletName": "DynamicRespondrSkin",
+                                            "lifecycleState": "PUBLISHED",
+                                            "frameworkPortlet": "true",
+                                            
+                                            "parameters": {
+                                                
+                                                    "mobileIconUrl": "\/ResourceServingWebapp\/rs\/tango\/0.8.90\/32x32\/actions\/preferences-desktop-theme.png",
+                                                    "iconUrl": "\/ResourceServingWebapp\/rs\/tango\/0.8.90\/32x32\/actions\/preferences-desktop-theme.png",
+                                                    "disableDynamicTitle": "true",
+                                                    "configurable": "true"
+                                            }
+                                        }
+            ]
+        },
+        {
+            "name": "header-left",
+            
+            "content": [
+            
+                                        {
+                                            "_objectType": "portlet",
+                                            "url": "/uPortal/api/v4-3/portlet/portal-logo.html",
+                                            "iconUrl": "/uPortal/media/skins/icons/mobile/default.png",
+                                            "ID": "u28l1n210",
+                                            "chanID": "27",
+                                            "description": "Renders the portal logo at the top of the page",
+                                            "fragment": "0",
+                                            "precedence": "80.0",
+                                            "fname": "portal-logo",
+                                            "locale": "en_US",
+                                            "name": "Portal Logo",
+                                            "timeout": "5000",
+                                            "title": "Portal Logo",
+                                            "typeID": "1",
+                                            "windowState": "normal",
+                                            "portletMode": "view",
+                                            "portletName": "cms",
+                                            "lifecycleState": "PUBLISHED",
+                                            "webAppName": "\/SimpleContentPortlet",
+                                            
+                                            "parameters": {
+                                                
+                                                    "disableDynamicTitle": "true",
+                                                    "configurable": "true"
+                                            }
+                                        }
+            ]
+        }
+        ],
+        "navigation": {
+            
+                "allowAddTab": "true",
+            
+            "tabGroupsList": {
+                "activeTabGroup": "DEFAULT_TABGROUP",
+                
+                "tabGroups": [
+                    
+                    {
+                        
+                            "name": "DEFAULT_TABGROUP",
+                            "firstTabId": "u33l1s7"
+                    }
+                ]
+            },
+            "tabs": [
+                
+                {
+                    "ID": "u33l1s7",
+                    "deleteAllowed": "false",
+                    "editAllowed": "false",
+                    "fragment": "0",
+                    "moveAllowed": "false",
+                    "precedence": "80.0",
+                    "hidden": "false",
+                    "immutable": "false",
+                    "locale": "en_US",
+                    "name": "Welcome",
+                    "type": "regular",
+                    "unremovable": "false",
+                    "externalId": "welcome",
+                    "tabGroup": "DEFAULT_TABGROUP",
+                    "width": "100%",
+                    "addChildAllowed": "true",
+                    
+                    "content": [
+                    
+                            {
+                                 "_objectType": "folder",
+                                "ID": "u33l1s8",
+                                "fragment": "0",
+                                "precedence": "80.0",
+                                "hidden": "false",
+                                "immutable": "false",
+                                "locale": "en_US",
+                                "name": "Column",
+                                "type": "regular",
+                                "unremovable": "false",
+                                "tabGroup": "DEFAULT_TABGROUP",
+                                "width": "60%",
+                                
+                                "content": [
+                                    
+                                        {
+                                            "_objectType": "portlet",
+                                            "url": "/uPortal/api/v4-3/portlet/email-preview-demo.html",
+                                            "iconUrl": "/uPortal/media/skins/icons/mobile/email.png",
+                                            "ID": "u33l1n9",
+                                            "chanID": "55",
+                                            "description": "Demo version of the Jasig Email Preview portlet",
+                                            "deleteAllowed": "false",
+                                            "fragment": "0",
+                                            "moveAllowed": "false",
+                                            "precedence": "80.0",
+                                            "fname": "email-preview-demo",
+                                            "locale": "en_US",
+                                            "name": "Email Preview Demo",
+                                            "timeout": "20000",
+                                            "title": "Email Preview Demo",
+                                            "typeID": "1",
+                                            "windowState": "normal",
+                                            "portletMode": "view",
+                                            "portletName": "demo-email-preview",
+                                            "lifecycleState": "PUBLISHED",
+                                            "webAppName": "\/email-preview",
+                                            
+                                            "parameters": {
+                                                
+                                                    "blockImpersonation": "false",
+                                                    "hideFromMobile": "false",
+                                                    "highlight": "false",
+                                                    "iconUrl": "\/ResourceServingWebapp\/rs\/tango\/0.8.90\/32x32\/apps\/internet-mail.png",
+                                                    "showChrome": "true",
+                                                    "mobileIconUrl": "\/uPortal\/media\/skins\/icons\/mobile\/email.png",
+                                                    "hasAbout": "false",
+                                                    "editable": "true",
+                                                    "alternate": "false",
+                                                    "disableDynamicTitle": "true",
+                                                    "configurable": "true",
+                                                    "hasHelp": "true"
+                                            }
+                                        },
+                                        {
+                                            "_objectType": "portlet",
+                                            "url": "/uPortal/api/v4-3/portlet/weather.html",
+                                            "iconUrl": "/uPortal/media/skins/icons/mobile/weather.png",
+                                            "ID": "u33l1n10",
+                                            "chanID": "89",
+                                            "description": "Current weather conditions and forecast.",
+                                            "fragment": "0",
+                                            "precedence": "80.0",
+                                            "fname": "weather",
+                                            "locale": "en_US",
+                                            "name": "Weather",
+                                            "timeout": "15000",
+                                            "title": "Weather",
+                                            "typeID": "1",
+                                            "windowState": "normal",
+                                            "portletMode": "view",
+                                            "portletName": "Weather",
+                                            "lifecycleState": "PUBLISHED",
+                                            "webAppName": "\/WeatherPortlet",
+                                            
+                                            "parameters": {
+                                                
+                                                    "mobileIconUrl": "\/uPortal\/media\/skins\/icons\/mobile\/weather.png",
+                                                    "editable": "true",
+                                                    "iconUrl": "\/ResourceServingWebapp\/rs\/tango\/0.8.90\/32x32\/status\/weather-few-clouds.png",
+                                                    "portletName": "Weather"
+                                            }
+                                        },
+                                        {
+                                            "_objectType": "portlet",
+                                            "url": "/uPortal/api/v4-3/portlet/pbookmarks.html",
+                                            "iconUrl": "/uPortal/media/skins/icons/mobile/bookmarks.png",
+                                            "ID": "u33l1n11",
+                                            "chanID": "73",
+                                            "description": "Bookmarks portlet",
+                                            "deleteAllowed": "false",
+                                            "fragment": "0",
+                                            "moveAllowed": "false",
+                                            "precedence": "80.0",
+                                            "fname": "pbookmarks",
+                                            "locale": "en_US",
+                                            "name": "Bookmarks",
+                                            "timeout": "60000",
+                                            "title": "Bookmarks",
+                                            "typeID": "4",
+                                            "windowState": "normal",
+                                            "portletMode": "view",
+                                            "portletName": "BookmarksPortlet",
+                                            "lifecycleState": "PUBLISHED",
+                                            "webAppName": "\/BookmarksPortlet",
+                                            
+                                            "parameters": {
+                                                
+                                                    "mobileIconUrl": "\/uPortal\/media\/skins\/icons\/mobile\/bookmarks.png",
+                                                    "quicklink": "1",
+                                                    "editable": "true",
+                                                    "iconUrl": "\/ResourceServingWebapp\/rs\/tango\/0.8.90\/32x32\/mimetypes\/x-office-address-book.png"
+                                            }
+                                        }
+                                ]
+                            },
+                            {
+                                 "_objectType": "folder",
+                                "ID": "u33l1s12",
+                                "fragment": "0",
+                                "precedence": "80.0",
+                                "hidden": "false",
+                                "immutable": "false",
+                                "locale": "en_US",
+                                "name": "Column",
+                                "type": "regular",
+                                "unremovable": "false",
+                                "tabGroup": "DEFAULT_TABGROUP",
+                                "width": "40%",
+                                
+                                "content": [
+                                    
+                                        {
+                                            "_objectType": "portlet",
+                                            "url": "/uPortal/api/v4-3/portlet/calendar.html",
+                                            "iconUrl": "/uPortal/media/skins/icons/mobile/calendar_alt.png",
+                                            "ID": "u33l1n13",
+                                            "chanID": "47",
+                                            "description": "Calendar of campus, academic, and personal events.",
+                                            "fragment": "0",
+                                            "precedence": "80.0",
+                                            "fname": "calendar",
+                                            "locale": "en_US",
+                                            "name": "Calendar",
+                                            "timeout": "30000",
+                                            "title": "Calendar",
+                                            "typeID": "1",
+                                            "windowState": "normal",
+                                            "portletMode": "view",
+                                            "portletName": "calendar",
+                                            "lifecycleState": "PUBLISHED",
+                                            "webAppName": "\/CalendarPortlet",
+                                            
+                                            "parameters": {
+                                                
+                                                    "blockImpersonation": "false",
+                                                    "hideFromMobile": "false",
+                                                    "highlight": "false",
+                                                    "iconUrl": "\/ResourceServingWebapp\/rs\/tango\/0.8.90\/32x32\/mimetypes\/x-office-calendar.png",
+                                                    "showChrome": "true",
+                                                    "mobileIconUrl": "\/uPortal\/media\/skins\/icons\/mobile\/calendar_alt.png",
+                                                    "hasAbout": "false",
+                                                    "editable": "true",
+                                                    "alternate": "false",
+                                                    "disableDynamicTitle": "true",
+                                                    "hasHelp": "false"
+                                            }
+                                        }
+                                ]
+                            }
+                    ]
+                },
+                {
+                    "ID": "u16l1s7",
+                    "fragment": "0",
+                    "precedence": "50.0",
+                    "hidden": "false",
+                    "immutable": "false",
+                    "locale": "en_US",
+                    "name": "Academics",
+                    "type": "regular",
+                    "unremovable": "false",
+                    "tabGroup": "DEFAULT_TABGROUP",
+                    "width": "100%",
+                    "addChildAllowed": "true",
+                    
+                    "content": [
+                    
+                            {
+                                 "_objectType": "folder",
+                                "ID": "u16l1s8",
+                                "fragment": "0",
+                                "precedence": "50.0",
+                                "hidden": "false",
+                                "immutable": "false",
+                                "locale": "en_US",
+                                "name": "Column 1",
+                                "type": "regular",
+                                "unremovable": "false",
+                                "tabGroup": "DEFAULT_TABGROUP",
+                                "width": "50%",
+                                
+                                "content": [
+                                    
+                                        {
+                                            "_objectType": "portlet",
+                                            "url": "/uPortal/api/v4-3/portlet/announcements.html",
+                                            "iconUrl": "/uPortal/media/skins/icons/mobile/announcements.png",
+                                            "ID": "u16l1n9",
+                                            "chanID": "43",
+                                            "description": "Announcements for students, staff, and faculty",
+                                            "fragment": "0",
+                                            "precedence": "50.0",
+                                            "fname": "announcements",
+                                            "locale": "en_US",
+                                            "name": "Announcements",
+                                            "timeout": "5000",
+                                            "title": "Announcements",
+                                            "typeID": "1",
+                                            "windowState": "normal",
+                                            "portletMode": "view",
+                                            "portletName": "AnnouncementsDisplay",
+                                            "lifecycleState": "PUBLISHED",
+                                            "webAppName": "\/Announcements",
+                                            
+                                            "parameters": {
+                                                
+                                                    "blockImpersonation": "false",
+                                                    "hideFromMobile": "false",
+                                                    "highlight": "false",
+                                                    "showChrome": "true",
+                                                    "mobileIconUrl": "\/uPortal\/media\/skins\/icons\/mobile\/announcements.png",
+                                                    "hasAbout": "false",
+                                                    "editable": "true",
+                                                    "alternate": "false",
+                                                    "disableDynamicTitle": "true",
+                                                    "printable": "false",
+                                                    "hasHelp": "false"
+                                            }
+                                        },
+                                        {
+                                            "_objectType": "portlet",
+                                            "url": "/uPortal/api/v4-3/portlet/courses.html",
+                                            "iconUrl": "/uPortal/media/skins/icons/mobile/courses_alt.png",
+                                            "ID": "u16l1n10",
+                                            "chanID": "50",
+                                            "description": "Course links and announcements.",
+                                            "fragment": "0",
+                                            "precedence": "50.0",
+                                            "fname": "courses",
+                                            "locale": "en_US",
+                                            "name": "Courses",
+                                            "timeout": "60000",
+                                            "title": "Courses",
+                                            "typeID": "5",
+                                            "windowState": "normal",
+                                            "portletMode": "view",
+                                            "portletName": "cms",
+                                            "lifecycleState": "PUBLISHED",
+                                            "webAppName": "\/SimpleContentPortlet",
+                                            
+                                            "parameters": {
+                                                
+                                                    "mobileIconUrl": "\/uPortal\/media\/skins\/icons\/mobile\/courses_alt.png",
+                                                    "iconUrl": "\/ResourceServingWebapp\/rs\/tango\/0.8.90\/32x32\/apps\/accessories-text-editor.png",
+                                                    "configurable": "true"
+                                            }
+                                        }
+                                ]
+                            },
+                            {
+                                 "_objectType": "folder",
+                                "ID": "u16l1s11",
+                                "fragment": "0",
+                                "precedence": "50.0",
+                                "hidden": "false",
+                                "immutable": "false",
+                                "locale": "en_US",
+                                "name": "Column 2",
+                                "type": "regular",
+                                "unremovable": "false",
+                                "tabGroup": "DEFAULT_TABGROUP",
+                                "width": "50%",
+                                
+                                "content": [
+                                    
+                                        {
+                                            "_objectType": "portlet",
+                                            "url": "/uPortal/api/v4-3/portlet/notification.html",
+                                            "iconUrl": "/uPortal/media/skins/icons/mobile/bullhorn.png",
+                                            "ID": "u16l1n12",
+                                            "chanID": "70",
+                                            "description": "Apereo Notification Portlet",
+                                            "fragment": "0",
+                                            "precedence": "50.0",
+                                            "fname": "notification",
+                                            "locale": "en_US",
+                                            "name": "Notification Portlet",
+                                            "timeout": "20000",
+                                            "title": "Notification Portlet",
+                                            "typeID": "1",
+                                            "windowState": "normal",
+                                            "portletMode": "view",
+                                            "portletName": "Notifications",
+                                            "lifecycleState": "PUBLISHED",
+                                            "webAppName": "\/NotificationPortlet",
+                                            
+                                            "parameters": {
+                                                
+                                                    "blockImpersonation": "false",
+                                                    "hideFromMobile": "false",
+                                                    "highlight": "false",
+                                                    "iconUrl": "\/ResourceServingWebapp\/rs\/tango\/0.8.90\/32x32\/status\/dialog-warning.png",
+                                                    "showChrome": "true",
+                                                    "mobileIconUrl": "\/uPortal\/media\/skins\/icons\/mobile\/bullhorn.png",
+                                                    "hasAbout": "false",
+                                                    "editable": "false",
+                                                    "alternate": "false",
+                                                    "disableDynamicTitle": "true",
+                                                    "hasHelp": "false"
+                                            }
+                                        },
+                                        {
+                                            "_objectType": "portlet",
+                                            "url": "/uPortal/api/v4-3/portlet/google-docs.html",
+                                            "iconUrl": "/uPortal/media/skins/icons/mobile/default.png",
+                                            "ID": "u16l1n13",
+                                            "chanID": "60",
+                                            "description": "View your active Google documents",
+                                            "fragment": "0",
+                                            "precedence": "50.0",
+                                            "fname": "google-docs",
+                                            "locale": "en_US",
+                                            "name": "Google Docs",
+                                            "timeout": "60000",
+                                            "title": "Google Docs",
+                                            "typeID": "1",
+                                            "windowState": "normal",
+                                            "portletMode": "view",
+                                            "portletName": "gadget",
+                                            "lifecycleState": "PUBLISHED",
+                                            "webAppName": "\/jasig-widget-portlets",
+                                            
+                                            "parameters": {
+                                                
+                                                    "editable": "false"
+                                            }
+                                        }
+                                ]
+                            }
+                    ]
+                },
+                {
+                    "ID": "u16l1s14",
+                    "fragment": "0",
+                    "precedence": "50.0",
+                    "hidden": "false",
+                    "immutable": "false",
+                    "locale": "en_US",
+                    "name": "LMS",
+                    "type": "regular",
+                    "unremovable": "false",
+                    "tabGroup": "DEFAULT_TABGROUP",
+                    "width": "100%",
+                    "addChildAllowed": "true",
+                    
+                    "content": [
+                    
+                            {
+                                 "_objectType": "folder",
+                                "ID": "u16l1s15",
+                                "fragment": "0",
+                                "precedence": "50.0",
+                                "hidden": "false",
+                                "immutable": "false",
+                                "locale": "en_US",
+                                "name": "Column 1",
+                                "type": "regular",
+                                "unremovable": "false",
+                                "tabGroup": "DEFAULT_TABGROUP",
+                                "width": "50%",
+                                
+                                "content": [
+                                    
+                                        {
+                                            "_objectType": "portlet",
+                                            "url": "/uPortal/api/v4-3/portlet/sakai-connector.html",
+                                            "iconUrl": "/uPortal/media/skins/icons/mobile/default.png",
+                                            "ID": "u16l1n16",
+                                            "chanID": "77",
+                                            "description": "Embed tools from any of your Sakai sites directly into the portal. Demo connection to Sakai Nightly demo site.",
+                                            "fragment": "0",
+                                            "precedence": "50.0",
+                                            "fname": "sakai-connector",
+                                            "locale": "en_US",
+                                            "name": "Sakai Connector (demo)",
+                                            "timeout": "5000",
+                                            "title": "Sakai Connector (demo)",
+                                            "typeID": "1",
+                                            "windowState": "normal",
+                                            "portletMode": "view",
+                                            "portletName": "sakai-connector",
+                                            "lifecycleState": "PUBLISHED",
+                                            "webAppName": "\/sakai-connector",
+                                            
+                                            "parameters": {
+                                                
+                                                    "blockImpersonation": "false",
+                                                    "hideFromMobile": "false",
+                                                    "highlight": "false",
+                                                    "showChrome": "true",
+                                                    "hasAbout": "false",
+                                                    "editable": "true",
+                                                    "alternate": "false",
+                                                    "disableDynamicTitle": "false",
+                                                    "printable": "false",
+                                                    "configurable": "true",
+                                                    "hasHelp": "false"
+                                            }
+                                        }
+                                ]
+                            },
+                            {
+                                 "_objectType": "folder",
+                                "ID": "u16l1s17",
+                                "fragment": "0",
+                                "precedence": "50.0",
+                                "hidden": "false",
+                                "immutable": "false",
+                                "locale": "en_US",
+                                "name": "Column 2",
+                                "type": "regular",
+                                "unremovable": "false",
+                                "tabGroup": "DEFAULT_TABGROUP",
+                                "width": "50%",
+                                
+                                "content": [
+                                    
+                                        {
+                                            "_objectType": "portlet",
+                                            "url": "/uPortal/api/v4-3/portlet/basiclti-portlet.html",
+                                            "iconUrl": "/uPortal/media/skins/icons/mobile/default.png",
+                                            "ID": "u16l1n18",
+                                            "chanID": "46",
+                                            "description": "Implements the IMS Basic Learning Tools Interoperability spec and allows you to render any Basic LTI enabled app inside uPortal",
+                                            "fragment": "0",
+                                            "precedence": "50.0",
+                                            "fname": "basiclti-portlet",
+                                            "locale": "en_US",
+                                            "name": "Basic LTI Portlet (demo)",
+                                            "timeout": "5000",
+                                            "title": "Basic LTI Portlet (demo)",
+                                            "typeID": "1",
+                                            "windowState": "normal",
+                                            "portletMode": "view",
+                                            "portletName": "basiclti-portlet",
+                                            "lifecycleState": "PUBLISHED",
+                                            "webAppName": "\/basiclti-portlet",
+                                            
+                                            "parameters": {
+                                                
+                                                    "blockImpersonation": "false",
+                                                    "hideFromMobile": "false",
+                                                    "highlight": "false",
+                                                    "showChrome": "true",
+                                                    "hasAbout": "false",
+                                                    "editable": "true",
+                                                    "alternate": "false",
+                                                    "disableDynamicTitle": "false",
+                                                    "printable": "false",
+                                                    "configurable": "true",
+                                                    "hasHelp": "false"
+                                            }
+                                        }
+                                ]
+                            }
+                    ]
+                },
+                {
+                    "ID": "u19l1s7",
+                    "fragment": "0",
+                    "precedence": "40.0",
+                    "hidden": "false",
+                    "immutable": "false",
+                    "locale": "en_US",
+                    "name": "Campus",
+                    "type": "regular",
+                    "unremovable": "false",
+                    "externalId": "campus",
+                    "tabGroup": "DEFAULT_TABGROUP",
+                    "width": "100%",
+                    "addChildAllowed": "true",
+                    
+                    "content": [
+                    
+                            {
+                                 "_objectType": "folder",
+                                "ID": "u19l1s8",
+                                "fragment": "0",
+                                "precedence": "40.0",
+                                "hidden": "false",
+                                "immutable": "false",
+                                "locale": "en_US",
+                                "name": "Column 1",
+                                "type": "regular",
+                                "unremovable": "false",
+                                "tabGroup": "DEFAULT_TABGROUP",
+                                "width": "40%",
+                                
+                                "content": [
+                                    
+                                ]
+                            },
+                            {
+                                 "_objectType": "folder",
+                                "ID": "u19l1s9",
+                                "fragment": "0",
+                                "precedence": "40.0",
+                                "hidden": "false",
+                                "immutable": "false",
+                                "locale": "en_US",
+                                "name": "Column 2",
+                                "type": "regular",
+                                "unremovable": "false",
+                                "tabGroup": "DEFAULT_TABGROUP",
+                                "width": "60%",
+                                
+                                "content": [
+                                    
+                                        {
+                                            "_objectType": "portlet",
+                                            "url": "/uPortal/api/v4-3/portlet/google-maps-portlet.html",
+                                            "iconUrl": "/uPortal/media/skins/icons/mobile/map_alt.png",
+                                            "ID": "u19l1n10",
+                                            "chanID": "61",
+                                            "description": "Jasig Google Maps Portlet",
+                                            "fragment": "0",
+                                            "precedence": "40.0",
+                                            "fname": "google-maps-portlet",
+                                            "locale": "en_US",
+                                            "name": "Google Maps",
+                                            "timeout": "60000",
+                                            "title": "Map",
+                                            "typeID": "1",
+                                            "windowState": "normal",
+                                            "portletMode": "view",
+                                            "portletName": "google-maps",
+                                            "lifecycleState": "PUBLISHED",
+                                            "webAppName": "\/jasig-widget-portlets",
+                                            
+                                            "parameters": {
+                                                
+                                                    "mobileIconUrl": "\/uPortal\/media\/skins\/icons\/mobile\/map_alt.png",
+                                                    "iconUrl": "${request.contextPath}\/media\/skins\/icons\/google.png"
+                                            }
+                                        }
+                                ]
+                            }
+                    ]
+                }
+            ]
+
+        },
+        "favorites": [
+            
+                            {
+                                 "_objectType": "folder",
+                                "ID": "u24l1s5",
+                                "deleteAllowed": "false",
+                                "fragment": "0",
+                                "precedence": "80.0",
+                                "hidden": "false",
+                                "immutable": "false",
+                                "locale": "en_US",
+                                "name": "Column",
+                                "type": "favorite_column",
+                                "unremovable": "false",
+                                "tabGroup": "DEFAULT_TABGROUP",
+                                "width": "60%",
+                                
+                                "content": [
+                                    
+                                ]
+                            },
+                            {
+                                 "_objectType": "folder",
+                                "ID": "u24l1s6",
+                                "fragment": "0",
+                                "precedence": "80.0",
+                                "hidden": "false",
+                                "immutable": "false",
+                                "locale": "en_US",
+                                "name": "Column",
+                                "type": "regular",
+                                "unremovable": "false",
+                                "tabGroup": "DEFAULT_TABGROUP",
+                                "width": "40%",
+                                
+                                "content": [
+                                    
+                                ]
+                            }
+        ],
+        "favoriteGroups": [
+            
+    {
+        "ID": "u27l1s4",
+        "deleteAllowed": "true",
+        "editAllowed": "true",
+        "fragment": "0",
+        "precedence": "80.0",
+        "hidden": "false",
+        "immutable": "false",
+        "locale": "en_US",
+        "name": "News",
+        "type": "favorite_collection",
+        "unremovable": "false",
+        "externalId": "news-fav-collection",
+        "tabGroup": "DEFAULT_TABGROUP",
+        "width": "100%",
+        
+        "content": [
+        
+                            {
+                                 "_objectType": "folder",
+                                "ID": "u27l1s5",
+                                "deleteAllowed": "false",
+                                "fragment": "0",
+                                "precedence": "80.0",
+                                "hidden": "false",
+                                "immutable": "false",
+                                "locale": "en_US",
+                                "name": "Column",
+                                "type": "regular",
+                                "unremovable": "false",
+                                "tabGroup": "DEFAULT_TABGROUP",
+                                "width": "60%",
+                                
+                                "content": [
+                                    
+                                        {
+                                            "_objectType": "portlet",
+                                            "url": "/uPortal/api/v4-3/portlet/announcements.html",
+                                            "iconUrl": "/uPortal/media/skins/icons/mobile/announcements.png",
+                                            "ID": "u27l1n7",
+                                            "chanID": "43",
+                                            "description": "Announcements for students, staff, and faculty",
+                                            "fragment": "0",
+                                            "precedence": "80.0",
+                                            "fname": "announcements",
+                                            "locale": "en_US",
+                                            "name": "Announcements",
+                                            "timeout": "5000",
+                                            "title": "Announcements",
+                                            "typeID": "1",
+                                            "windowState": "normal",
+                                            "portletMode": "view",
+                                            "portletName": "AnnouncementsDisplay",
+                                            "lifecycleState": "PUBLISHED",
+                                            "webAppName": "\/Announcements",
+                                            
+                                            "parameters": {
+                                                
+                                                    "hideFromMobile": "false",
+                                                    "highlight": "false",
+                                                    "showChrome": "true",
+                                                    "blockImpersonation": "false",
+                                                    "mobileIconUrl": "\/uPortal\/media\/skins\/icons\/mobile\/announcements.png",
+                                                    "hasAbout": "false",
+                                                    "editable": "true",
+                                                    "alternate": "false",
+                                                    "disableDynamicTitle": "true",
+                                                    "printable": "false",
+                                                    "hasHelp": "false"
+                                            }
+                                        },
+                                        {
+                                            "_objectType": "portlet",
+                                            "url": "/uPortal/api/v4-3/portlet/campus-news.html",
+                                            "iconUrl": "/uPortal/media/skins/icons/mobile/campus_life.png",
+                                            "ID": "u27l1n8",
+                                            "chanID": "48",
+                                            "description": "Campus News",
+                                            "fragment": "0",
+                                            "precedence": "80.0",
+                                            "fname": "campus-news",
+                                            "locale": "en_US",
+                                            "name": "Campus News",
+                                            "timeout": "20000",
+                                            "title": "Campus News",
+                                            "typeID": "1",
+                                            "windowState": "normal",
+                                            "portletMode": "view",
+                                            "portletName": "news",
+                                            "lifecycleState": "PUBLISHED",
+                                            "webAppName": "\/NewsReaderPortlet",
+                                            
+                                            "parameters": {
+                                                
+                                                    "hideFromMobile": "false",
+                                                    "highlight": "false",
+                                                    "showChrome": "true",
+                                                    "blockImpersonation": "false",
+                                                    "mobileIconUrl": "\/uPortal\/media\/skins\/icons\/mobile\/campus_life.png",
+                                                    "hasAbout": "false",
+                                                    "editable": "true",
+                                                    "alternate": "false",
+                                                    "disableDynamicTitle": "true",
+                                                    "hasHelp": "true"
+                                            }
+                                        }
+                                ]
+                            },
+                            {
+                                 "_objectType": "folder",
+                                "ID": "u27l1s6",
+                                "fragment": "0",
+                                "precedence": "80.0",
+                                "hidden": "false",
+                                "immutable": "false",
+                                "locale": "en_US",
+                                "name": "Column",
+                                "type": "regular",
+                                "unremovable": "false",
+                                "tabGroup": "DEFAULT_TABGROUP",
+                                "width": "40%",
+                                
+                                "content": [
+                                    
+                                        {
+                                            "_objectType": "portlet",
+                                            "url": "/uPortal/api/v4-3/portlet/chronicle-wired.html",
+                                            "iconUrl": "/uPortal/media/skins/icons/mobile/feed.png",
+                                            "ID": "u27l1n9",
+                                            "chanID": "49",
+                                            "description": "Top stories from The Chronicle of Higher Education: Wired Campus Edition",
+                                            "fragment": "0",
+                                            "precedence": "80.0",
+                                            "fname": "chronicle-wired",
+                                            "locale": "en_US",
+                                            "name": "The Chronicle: Wired Campus",
+                                            "timeout": "5000",
+                                            "title": "The Chronicle: Wired Campus",
+                                            "typeID": "8",
+                                            "windowState": "normal",
+                                            "portletMode": "view",
+                                            "portletName": "news",
+                                            "lifecycleState": "PUBLISHED",
+                                            "webAppName": "\/NewsReaderPortlet",
+                                            
+                                            "parameters": {
+                                                
+                                                    "mobileIconUrl": "\/uPortal\/media\/skins\/icons\/mobile\/feed.png",
+                                                    "editable": "true",
+                                                    "iconUrl": "\/ResourceServingWebapp\/rs\/tango\/0.8.90\/32x32\/apps\/internet-news-reader.png",
+                                                    "hasHelp": "true"
+                                            }
+                                        }
+                                ]
+                            }
+        ]
+    }
+        ]
+    }
+}
