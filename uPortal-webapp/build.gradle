@@ -57,6 +57,11 @@ dependencies {
     // }
 }
 
+node {
+    version = '8.0.0'
+    download = true
+}
+
 processResources {
     filter(ReplaceTokens, tokens:['projectVersion': project.version])
 }

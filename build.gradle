@@ -46,11 +46,7 @@ buildscript {
 }
 
 node {
-    // Version of node to use.
-    version = '6.9.1'
-
-    // If true, it will download node using above parameters.
-    // If false, it will try to use globally installed node.
+    version = '8.0.0'
     download = true
 }
 
