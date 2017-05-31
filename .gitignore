@@ -411,6 +411,7 @@ modules.xml
 # Project specific ignores
 /build.properties
 /data/
+**/respondr/defaultSkin.css
 
 # Project specific includes
 !**/filters/local.properties

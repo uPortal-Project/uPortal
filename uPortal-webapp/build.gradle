@@ -1,4 +1,5 @@
 apply plugin: 'war'
+apply plugin: 'com.moowork.node'
 
 description = "Apereo uPortal Webapp (WAR)"
 
@@ -59,3 +60,5 @@ dependencies {
 processResources {
     filter(ReplaceTokens, tokens:['projectVersion': project.version])
 }
+
+processResources.dependsOn('npm_run_compile-less')
