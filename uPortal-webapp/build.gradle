@@ -3,6 +3,10 @@ apply plugin: 'com.moowork.node'
 
 description = "Apereo uPortal Webapp (WAR)"
 
+/*
+ * TODO:  Groovy-based tests (in src/test/groovy) are not currently run by the Gradle build.
+ */
+
 // Support for filtering properties files
 import org.apache.tools.ant.filters.ReplaceTokens
 

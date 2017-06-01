@@ -67,6 +67,13 @@ subprojects {
         mavenCentral()
     }
 
+    configurations {
+        // Banned dependencies
+        all*.exclude group: 'commons-logging', module: 'commons-logging'
+        all*.exclude group: 'commons-logging', module: 'commons-logging-api'
+        all*.exclude group: 'log4j', module: 'log4j'
+    }
+
     dependencies {
         testCompile "junit:junit:${junitVersion}"
         testCompile "org.easymock:easymock:${easymockVersion}"

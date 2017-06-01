@@ -8,6 +8,8 @@ ext {
 dependencies {
     compile project(':uPortal-rdbm')
 
+    compile "org.slf4j:log4j-over-slf4j:${slf4jVersion}"
+
     compileOnly "org.hibernate:hibernate-jpamodelgen:${hibernateJpamodelgenVersion}" // Required for javac -s
     compileOnly "${servletApiDependency}"
 }
