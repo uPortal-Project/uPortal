@@ -1,7 +1,9 @@
 description = "Apereo uPortal URL"
 
 dependencies {
-    compile project(':uPortal-portlet')
+    compile project(':uPortal-content:uPortal-content-portlet')
+    compile project(':uPortal-groups:uPortal-groups-core')
+    compile project(':uPortal-security:uPortal-security-core')
 
     // compile "com.google.guava:guava:${guavaVersion}"
     provided "${portletApiDependency}"

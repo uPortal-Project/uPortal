@@ -96,7 +96,7 @@ public class PortletDataUpgradeTest extends BaseXsltDataUpgraderTest {
                         "/org/apereo/portal/io/xml/portlet/test-portlet-1_40.portlet-definitionl.xml"),
                 new ClassPathResource(
                         "/org/apereo/portal/io/xml/portlet/test-portlet-1_40-43_expected.portlet-definition.xml"),
-                new ClassPathResource("/xsd/io/portlet-definition/portlet-definition-4.3.xsd"));
+                new ClassPathResource("/xsd/portlet-definition-4.3.xsd"));
     }
 
     @Test

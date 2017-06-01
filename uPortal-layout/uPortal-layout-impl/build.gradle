@@ -1,0 +1,11 @@
+description = "Apereo uPortal Layout Manager Implementations"
+
+dependencies {
+    compile project(':uPortal-content:uPortal-content-portlet')
+    compile project(':uPortal-layout:uPortal-layout-core')
+    compile project(':uPortal-rendering')
+    compile project(':uPortal-security:uPortal-security-core')
+    compile project(':uPortal-spring')
+
+    // compile "com.google.guava:guava:${guavaVersion}"
+}

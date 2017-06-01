@@ -46,12 +46,47 @@
         <!-- ===== uPortal Dependencies ======================================= -->
         <dependency>
             <groupId>org.jasig.portal</groupId>
+            <artifactId>uPortal-api-internal</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jasig.portal</groupId>
+            <artifactId>uPortal-api-platform</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jasig.portal</groupId>
+            <artifactId>uPortal-api-platform-impl</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jasig.portal</groupId>
+            <artifactId>uPortal-api-rest</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jasig.portal</groupId>
+            <artifactId>uPortal-api-search</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jasig.portal</groupId>
             <artifactId>uPortal-core</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.jasig.portal</groupId>
             <artifactId>uPortal-concurrency</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jasig.portal</groupId>
+            <artifactId>uPortal-content-portlet</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jasig.portal</groupId>
+            <artifactId>uPortal-content-publishing</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -106,12 +141,27 @@
         </dependency>
         <dependency>
             <groupId>org.jasig.portal</groupId>
-            <artifactId>uPortal-io</artifactId>
+            <artifactId>uPortal-io-core</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.jasig.portal</groupId>
-            <artifactId>uPortal-layout</artifactId>
+            <artifactId>uPortal-io-jaxb</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jasig.portal</groupId>
+            <artifactId>uPortal-io-types</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jasig.portal</groupId>
+            <artifactId>uPortal-layout-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jasig.portal</groupId>
+            <artifactId>uPortal-layout-impl</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -126,7 +176,7 @@
         </dependency>
         <dependency>
             <groupId>org.jasig.portal</groupId>
-            <artifactId>uPortal-portlet</artifactId>
+            <artifactId>uPortal-portlets</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -141,7 +191,32 @@
         </dependency>
         <dependency>
             <groupId>org.jasig.portal</groupId>
-            <artifactId>uPortal-security</artifactId>
+            <artifactId>uPortal-security-authn</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jasig.portal</groupId>
+            <artifactId>uPortal-security-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jasig.portal</groupId>
+            <artifactId>uPortal-security-mvc</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jasig.portal</groupId>
+            <artifactId>uPortal-security-permissions</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jasig.portal</groupId>
+            <artifactId>uPortal-security-services</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jasig.portal</groupId>
+            <artifactId>uPortal-security-xslt</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -177,25 +252,17 @@
         </dependency>
         <dependency>
             <groupId>org.jasig.portal</groupId>
-            <artifactId>uPortal-utils</artifactId>
+            <artifactId>uPortal-utils-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jasig.portal</groupId>
+            <artifactId>uPortal-utils-jmx</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.jasig.portal</groupId>
             <artifactId>uPortal-web</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <!-- Pre-Gradle -->
-        <dependency>
-            <groupId>org.jasig.portal</groupId>
-            <artifactId>uportal-platform-api</artifactId>
-            <version>${project.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jasig.portal</groupId>
-            <artifactId>uportal-search-api</artifactId>
             <version>${project.version}</version>
         </dependency>
 
@@ -952,26 +1019,6 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
-            <!-- Generates JAXB binding classes -->
-            <plugin>
-                <groupId>org.jvnet.jaxb2.maven2</groupId>
-                <artifactId>maven-jaxb2-plugin</artifactId>
-                <configuration>
-                    <schemaIncludes>
-                        <include>io/event-aggregation/*.xsd</include>
-                        <include>io/portlet-definition/*.xsd</include>
-                        <include>io/portlet-type/*.xsd</include>
-                        <include>io/stylesheet-descriptor/*.xsd</include>
-                        <include>io/user/*.xsd</include>
-                        <include>io/permission-owner/*.xsd</include>
-                        <include>io/subscribed-fragment/*.xsd</include>
-                        <include>portlet-publishing/*.xsd</include>
-                    </schemaIncludes>
-                    <schemaExcludes>
-                        <exclude>io/portlet-definition/portlet-definition-4.1.xsd</exclude>
-                    </schemaExcludes>
-                </configuration>
             </plugin>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>

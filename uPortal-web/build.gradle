@@ -1,9 +1,16 @@
 description = "Apereo uPortal Web"
 
 dependencies {
+    compile project(':uPortal-api:uPortal-api-platform-impl')
+    compile project(':uPortal-api:uPortal-api-rest')
+    compile project(':uPortal-events')
+    compile project(':uPortal-layout:uPortal-layout-impl')
     compile project(':uPortal-rendering')
 
     compile("com.google.visualization:visualization-datasource:${googleVisualizationVersion}") {
         exclude group: 'commons-logging', module: 'commons-logging'
     }
+    compile "javax.servlet.jsp:jsp-api:${jspApiVersion}"
+
+    provided "org.apache.portals.pluto:pluto-taglib:${plutoVersion}"
 }

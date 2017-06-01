@@ -1,0 +1,10 @@
+description = "Apereo uPortal Internal API"
+
+dependencies {
+    compile project(':uPortal-io:uPortal-io-jaxb')
+    compile project(':uPortal-layout:uPortal-layout-core')
+    compile project(':uPortal-marketplace')
+    compile project(':uPortal-persondir')
+    compile project(':uPortal-rendering')
+    compile project(':uPortal-security:uPortal-security-services')
+}
