@@ -69,10 +69,57 @@ processResources {
 war {
     // Add generated CSS for Respondr skins to the war file
     with {
-        from 'build/generated-sources/lessc/main/webapp'
+        from 'build/generated-sources/skin/main/webapp'
         into '/'
     }
 }
 
+/*
+ * Aggregate Respondr Skins
+ *
+ * The following sections are a gradle-based replacement for the
+ * 'resource-server-plugin' (Maven) used by uportal-war to aggregate
+ * and minify JS
+ */
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.jasig.resourceserver:resource-server-core:${resourceServerVersion}") {
+            exclude group: 'commons-logging', module: 'commons-logging'
+        }
+    }
+}
+import org.jasig.resource.aggr.AggregationRequest;
+import org.jasig.resource.aggr.ResourcesAggregator;
+import org.jasig.resource.aggr.ResourcesAggregatorImpl;
+task aggregateRespondrSkins {
+    doLast {
+        final ResourcesAggregator aggr = new ResourcesAggregatorImpl();
+        aggr.setDisplayJsWarnings(false);
+
+        final File resourcesXmlFile = new File(projectDir, 'src/main/webapp/media/skins/respondr/defaultSkin/skin.xml');
+        final File fullOutputDirectory = new File(buildDir, 'generated-sources/skin/main/webapp/media/skins/respondr/defaultSkin');
+        final File sharedJavaScriptDirectory = new File(buildDir, 'generated-sources/skin/main/webapp/media/skins/respondr');
+
+        // Provide the paths we evaluated in DEBUG logging
+        logger.debug("resourcesXmlFile=${resourcesXmlFile}");
+        logger.debug("fullOutputDirectory=${fullOutputDirectory}");
+        logger.debug("sharedJavaScriptDirectory=${sharedJavaScriptDirectory}");
+
+        final AggregationRequest aggregationRequest = new AggregationRequest();
+        aggregationRequest
+                .setResourcesXml(resourcesXmlFile)
+                .setOutputBaseDirectory(fullOutputDirectory)
+                .addAdditionalSourceDirectory(fullOutputDirectory)
+                .setSharedJavaScriptDirectory(sharedJavaScriptDirectory);
+        aggr.aggregate(aggregationRequest);
+
+    }
+}
+
 // Generate CSS for Respondr skins
-processResources.dependsOn('npm_run_compile-less')
+aggregateRespondrSkins.dependsOn('npm_run_compile-less')
+processResources.dependsOn(aggregateRespondrSkins)
