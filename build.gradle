@@ -3,6 +3,7 @@ description = "Apereo uPortal $version"
 // Build Scans provide detailed information about many aspects of your
 // build right in your browser.  (https://scans.gradle.com/plugin)
 apply plugin: 'com.gradle.build-scan'
+apply plugin: 'java'
 
 // Adds support for Node.js scripts
 apply plugin: 'com.moowork.node'
@@ -27,6 +28,18 @@ repositories {
     jcenter()
     mavenCentral()
     mavenLocal()
+}
+
+def props = new Properties()
+
+task loadBuildFile() {
+    println "Load the build.properties file"
+    def buildPropsFile = new File('build.properties')
+    if (buildPropsFile.exists()) {
+        buildPropsFile.withInputStream { props.load(it) }
+    } else {
+        println("WARNING: build.properties not found")
+    }
 }
 
 buildscript {
@@ -54,6 +67,24 @@ buildScan {
     licenseAgreementUrl = 'https://gradle.com/terms-of-service'
     licenseAgree = 'yes'
 }
+
+	 task cleanShared(type:Delete) {
+		description 'Removes ALL shared libraries from the servlet container.'
+		def serverbase = props.getProperty("server.home")
+		def libs =  "${serverbase}/shared/lib"
+		printf "Configured shared libraries from servlet container at location:  ${libs}"
+		FileTree tree = fileTree(dir: libs)
+		delete fileTree(dir:libs , include: '*')
+	}
+
+	 task cleanTomcat(type:Delete) {
+		description 'Removes the deployed uPortal from the servlet container.'
+		def serverbase = props.getProperty("server.home")
+		def uPortalDeployDir = "${serverbase}/webapps/uPortal"
+		printf "Configured deployed uPortal from servlet container at location:  ${uPortalDeployDir}"
+		FileTree tree = fileTree(dir: uPortalDeployDir)
+		delete uPortalDeployDir
+	}
 
 subprojects {
     apply plugin: 'findbugs'
