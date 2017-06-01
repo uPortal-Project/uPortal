@@ -67,13 +67,12 @@ processResources {
 }
 
 war {
-    from 'build/webapp'
+    // Add generated CSS for Respondr skins to the war file
+    with {
+        from 'build/generated-sources/lessc/main/webapp'
+        into '/'
+    }
 }
 
-task copyWebapp(type: Copy) {
-    from 'src/main/webapp'
-    into 'build/webapp'
-}
-
-processResources.dependsOn('copyWebapp')
+// Generate CSS for Respondr skins
 processResources.dependsOn('npm_run_compile-less')

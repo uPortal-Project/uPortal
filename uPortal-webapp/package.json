@@ -5,6 +5,6 @@
     "less": "^2.7.2"
   },
   "scripts": {
-    "compile-less": "lessc src/main/webapp/media/skins/respondr/defaultSkin.less build/webapp/media/skins/respondr/defaultSkin.css"
+    "compile-less": "lessc src/main/webapp/media/skins/respondr/defaultSkin.less build/generated-sources/lessc/main/webapp/media/skins/respondr/defaultSkin.css"
   }
 }

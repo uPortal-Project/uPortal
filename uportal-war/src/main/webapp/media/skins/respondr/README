@@ -1,5 +1,0 @@
-NOTE: the defaultSkin.less and common/common.less files are outside the less/ directory due to a limitation 
-in the LESS CSS Maven Plugin's inability to traverse relative paths.
-
-Also, due to a limitation in the LESS CSS Maven Plugin, whitespace before an
-@import will cause a compile error.
