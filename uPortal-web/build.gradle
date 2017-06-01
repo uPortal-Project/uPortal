@@ -17,6 +17,9 @@ dependencies {
         exclude group: 'commons-logging', module: 'commons-logging'
     }
 
+    testCompile "org.apache.portals.pluto:pluto-container-api:${plutoVersion}"
+    testCompile "${servletApiDependency}"
+
     compileOnly "org.apache.portals.pluto:pluto-container-api:${plutoVersion}"
     compileOnly "org.apache.portals.pluto:pluto-container-driver-api:${plutoVersion}"
     compileOnly "org.apache.portals.pluto:pluto-taglib:${plutoVersion}"

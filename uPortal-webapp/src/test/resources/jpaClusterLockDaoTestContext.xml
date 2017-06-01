@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to Apereo under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Apereo licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:util="http://www.springframework.org/schema/util"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+                        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
+                        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+                        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
+                        
+    <bean id="uPortalLockExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean">
+        <qualifier value="uPortalLockExecutor" />
+        <property name="corePoolSize" value="2" />
+        <property name="maxPoolSize" value="50" />
+        <property name="queueCapacity" value="0" />
+        <property name="threadGroupName" value="uPortal-LockExecutorThreadGroup" />
+        <property name="threadNamePrefix" value="uPortal-LockExecutor-" />
+        <property name="keepAliveSeconds" value="300" />
+        <property name="daemon" value="true" />
+        <property name="allowCoreThreadTimeOut" value="true" />
+    </bean>
+    
+    <bean id="clusterLockService" class="org.apereo.portal.concurrency.locking.ClusterLockServiceImpl">
+        <qualifier value="normal" />
+    </bean>
+    
+    <bean id="dbOnlyClusterLockService" class="org.apereo.portal.concurrency.locking.DbOnlyClusterLockServiceImpl">
+        <qualifier value="dbOnly" />
+    </bean>
+
+    <bean id="clusterLockDao" class="org.apereo.portal.concurrency.locking.JpaClusterLockDao">
+        <property name="abandonedLockAge" value="PT0.100S" />
+    </bean>
+    
+    <bean id="portalInfoProvider" class="org.apereo.portal.spring.MockitoFactoryBean">
+        <constructor-arg value="org.apereo.portal.IPortalInfoProvider" />
+    </bean>
+    
+    
+    <bean id="localPropertyPlaceholderConfigurer" parent="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="properties">
+            <props>
+                <prop key="persistenceUnitName">PortalDb</prop>
+            </props>
+        </property>
+    </bean>
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <qualifier value="PortalDb" />
+        <property name="entityManagerFactory" ref="factoryBean" />
+    </bean>
+    <bean id="transactionOperations" class="org.springframework.transaction.support.TransactionTemplate">
+        <qualifier value="PortalDb"/>
+        <property name="transactionManager" ref="transactionManager" />
+    </bean>
+    <bean id="PortalDb" parent="TestDb">
+        <qualifier value="PortalDb" />
+    </bean>
+    <import resource="classpath:sharedJpaTestContext.xml"/>
+</beans>
+
+

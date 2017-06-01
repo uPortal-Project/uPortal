@@ -17,6 +17,10 @@ dependencies {
     }
     compile "org.apache.portals.pluto:pluto-portal-driver:${plutoVersion}"
 
+    testCompile "org.apache.portals.pluto:pluto-container-api:${plutoVersion}"
+    testCompile "${portletApiDependency}"
+    testCompile "${servletApiDependency}"
+
     compileOnly "javax.ccpp:ccpp:${ccppVersion}"
     compileOnly "org.apache.portals.pluto:pluto-container-driver-api:${plutoVersion}"
     compileOnly "${portletApiDependency}"

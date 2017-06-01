@@ -15,6 +15,9 @@ dependencies {
         exclude group: 'xml-apis', module: 'xml-apis'
     }
 
+    testCompile "${portletApiDependency}"
+    testCompile "${servletApiDependency}"
+
     compileOnly "org.apache.portals.pluto:pluto-container-api:${plutoVersion}"
     compileOnly "org.hibernate:hibernate-jpamodelgen:${hibernateJpamodelgenVersion}" // Required for javac -s
     compileOnly "${servletApiDependency}"

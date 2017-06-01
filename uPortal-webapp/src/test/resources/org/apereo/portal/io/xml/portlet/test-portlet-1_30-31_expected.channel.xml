@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?><!--
+
+    Licensed to Jasig under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Jasig licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License. You may obtain a
+    copy of the License at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on
+    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied. See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+--><channel-definition script="classpath://org/jasig/portal/io/import-channel_v3-1.crn">
+  <title>Test Portlet 1</title>
+  <name>Test Portlet 1</name>
+  <fname>test-portlet-1</fname>
+  <desc>Test portlet 1 from Apache Pluto</desc>
+  <type>Portlet</type>
+  <class>org.jasig.portal.channels.portlet.CSpringPortletAdaptor</class>
+  <timeout>600000</timeout>
+  <hasedit>N</hasedit>
+  <hashelp>N</hashelp>
+  <hasabout>N</hasabout>
+  <secure>N</secure>
+  <locale>en_US</locale>
+  <categories>
+    <category>Development</category>
+  </categories>
+  <groups>
+    <group>Everyone</group>
+  </groups>
+  <parameters><parameter> 
+      <name>portletApplicationId</name>  
+      <value>/pluto-testsuite</value>  
+      <description/>  
+      <ovrd>N</ovrd> 
+    </parameter><parameter> 
+      <name>portletName</name>  
+      <value>TestPortlet1</value>  
+      <description/>  
+      <ovrd>N</ovrd> 
+    </parameter></parameters><portletPreferences><portletPreference><name>cdata</name><read-only>true</read-only><values><value>
+
+  &lt;div&gt;To preview My UW-Madison, use one of these example accounts:&lt;/div&gt;
+  &lt;table&gt;
+    &lt;tbody&gt;
+      &lt;tr&gt;
+        &lt;td&gt;
+          &lt;form action="/portal/Login" method="post"&gt;
+            &lt;input value="admin" name="userName" type="hidden"/&gt;
+            &lt;input value="admin" name="password" type="hidden"/&gt;
+            &lt;input value="Login as a 'admin'" name="Login" class="uportal-button" type="submit"/&gt;
+          &lt;/form&gt;
+        &lt;/td&gt;
+       &lt;/tr&gt;
+       &lt;tr&gt;
+        &lt;td&gt;
+          &lt;form action="/portal/Login" method="post"&gt;
+            &lt;input value="staff" name="userName" type="hidden"/&gt;
+            &lt;input value="staff" name="password" type="hidden"/&gt;
+            &lt;input value="Login as an 'staff'" name="Login" class="uportal-button" type="submit"/&gt;
+          &lt;/form&gt;
+        &lt;/td&gt;
+      &lt;/tr&gt;
+       &lt;tr&gt;
+        &lt;td&gt;
+          &lt;form action="/portal/Login" method="post"&gt;
+            &lt;input value="student" name="userName" type="hidden"/&gt;
+            &lt;input value="student" name="password" type="hidden"/&gt;
+            &lt;input value="Login as an 'student'" name="Login" class="uportal-button" type="submit"/&gt;
+          &lt;/form&gt;
+        &lt;/td&gt;
+      &lt;/tr&gt;
+       &lt;tr&gt;
+        &lt;td&gt;
+          &lt;form action="/portal/Login" method="post"&gt;
+            &lt;input value="faculty" name="userName" type="hidden"/&gt;
+            &lt;input value="faculty" name="password" type="hidden"/&gt;
+            &lt;input value="Login as an 'faculty'" name="Login" class="uportal-button" type="submit"/&gt;
+          &lt;/form&gt;
+        &lt;/td&gt;
+      &lt;/tr&gt;
+    &lt;/tbody&gt;
+  &lt;/table&gt;
+
+      </value></values></portletPreference><portletPreference><name>TestName4</name><read-only>true</read-only><values><value>TestValue4</value></values></portletPreference></portletPreferences>
+</channel-definition>
