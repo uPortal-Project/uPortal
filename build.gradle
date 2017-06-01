@@ -32,8 +32,8 @@ repositories {
 
 def props = new Properties()
 
-task copySampleProperties(type: Copy) {
-    println "Configuring copying the build.properties.sample into build.properties"
+task loadBuildFile() {
+    println "Load the build.properties file"
     def buildPropsFile = new File('build.properties')
     if (buildPropsFile.exists()) {
         buildPropsFile.withInputStream { props.load(it) }
