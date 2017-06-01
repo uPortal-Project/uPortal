@@ -31,6 +31,7 @@ dependencies {
     runtime "ch.qos.logback:logback-classic:${logbackVersion}"
     runtime "joda-time:joda-time-jsptags:${jodaTimeJsptagsVersion}"
     runtime "org.aspectj:aspectjweaver:${aspectjVersion}"
+    runtime "org.codehaus.groovy:groovy-jsr223:${groovyVersion}"
     runtime "org.hibernate:hibernate-entitymanager:${hibernateVersion}"
     runtime("org.jasig.cas.client:cas-client-support-distributed-ehcache:${casClientVersion}") {
         exclude group: 'commons-logging', module: 'commons-logging'
@@ -55,7 +56,6 @@ dependencies {
      * (or may not) be needed at this point.
      */
     // runtime "jline:jline:${jlineVersion}"
-    // runtime "org.codehaus.groovy:groovy-jsr223:${groovyVersion}"
     // runtime "org.codehaus.groovy:groovy-xml:${groovyVersion}"
     // runtime "org.fusesource.jansi:jansi:${jansiVersion}"
     // runtime("org.jasig.cas:cas-server-extension-clearpass:${casServerVersion}") {

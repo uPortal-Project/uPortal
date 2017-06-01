@@ -30,8 +30,6 @@
 <c:set var="n"><portlet:namespace/></c:set>
 <c:set var="selectionMode">${selectMultiple}</c:set>
 
-<link href="<c:url value="/media/skins/common/css/entity-selector.css"/>" rel="stylesheet" type="text/css" />
-
 <!--
 | PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 | For the standards and guidelines that govern the user interface of this portlet

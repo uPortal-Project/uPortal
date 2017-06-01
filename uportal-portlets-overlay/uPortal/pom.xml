@@ -35,16 +35,56 @@
     <description>Overlay on the uPortal-webapp Gradle module</description>
 
     <dependencies>
-        <!-- ===== Compile Time Dependencies ============================== -->
+
+        <!-- WAR dependency for overlay -->
         <dependency>
             <groupId>org.jasig.portal</groupId>
             <artifactId>uPortal-webapp</artifactId>
             <version>${uPortal.version}</version>
             <type>war</type>
         </dependency>
-        
+
+        <!-- Dependencies for tools -->
+        <dependency>
+            <groupId>org.jasig.portal</groupId>
+            <artifactId>uPortal-webapp</artifactId>
+            <version>${uPortal.version}</version>
+            <type>pom</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jasig.portal</groupId>
+            <artifactId>uPortal-api-platform</artifactId>
+            <version>${uPortal.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.ccpp</groupId>
+            <artifactId>ccpp</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.portals</groupId>
+            <artifactId>portlet-api_2.1.0_spec</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.portals.pluto</groupId>
+            <artifactId>pluto-container-driver-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-jsr223</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
     </dependencies>
-    
 
     <build>
         <plugins>
@@ -52,6 +92,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
                 <configuration>
+                    <attachClasses>true</attachClasses>
                     <!-- By specifying an exclude we'll retain META-INF/context.xml (META-INF is excluded by default).
                          Context.xml is important because it allows the ResourceUrl to 'see' the ResourceServingWebapp
                          to determine if a resource is available there, which allows for browser caching of common
