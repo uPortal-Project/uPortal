@@ -4,5 +4,5 @@ dependencies {
     compile project(':uPortal-events')
     compile project(':uPortal-security:uPortal-security-core')
 
-    // compile "org.jasypt:jasypt:${jasyptVersion}"
+    compileOnly "${servletApiDependency}"
 }

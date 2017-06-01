@@ -224,6 +224,7 @@
         <stringtemplate.version>4.0.2</stringtemplate.version>
         <tika.version>1.5</tika.version>
         <tomcat-jdbc.version>7.0.37</tomcat-jdbc.version>
+        <uPortal.version>5.0.0-SNAPSHOT</uPortal.version>
         <uportal-ear-deployer.version>3.1.5</uportal-ear-deployer.version>
         <uportal-maven-plugin.version>1.0.1</uportal-maven-plugin.version>
         <usertype.version>3.1.0.GA</usertype.version>
@@ -245,7 +246,7 @@
 
     <modules>
         <module>uportal-db</module>
-        <module>uportal-war</module>
+        <!-- module>uportal-war</module -->
         <module>uportal-ear</module>
         <module>uportal-portlets-overlay</module>
         <module>bootstrap</module>

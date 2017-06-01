@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to Apereo under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Apereo licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="
+           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
+
+    <!--
+     | The concrete IPersonManager implementation to be used
+     +-->
+   	<bean id="personManager" class="org.apereo.portal.security.provider.SimplePersonManager" />
+    <!--
+     | Use this bean for Shibboleth authentication
+     +-->
+    <!--
+    <bean id="personManager" class="org.apereo.portal.security.provider.RemoteUserPersonManager" />
+    -->
+   	<!--
+   	 | Use this bean to extend guest user properties with attributes from the request set by the requestAttributeSourceFilter
+   	 +-->
+   	<!--
+   	<bean id="personManager" class="org.apereo.portal.security.provider.ExtendedPersonManager" >
+   		<property name="merger">
+            <bean class="org.jasig.services.persondir.support.merger.ReplacingAttributeAdder" />
+        </property>
+   		<property name="descriptors" ref="requestAdditionalDescriptors" />
+   	</bean> -->
+
+    <util:map id="profileKeyMappings">
+        <entry key="desktop" value="default"/>
+        <entry key="mobile" value="mobileDefault"/>
+        <entry key="respondr" value="respondr" />
+    </util:map>
+
+    <bean id="profileMapper" class="org.apereo.portal.layout.profile.ChainingProfileMapperImpl">
+        <property name="defaultProfileName" value="default" />
+        <property name="subMappers">
+            <util:list>
+                <ref bean="sessionAttributeProfileMapper" />
+                
+                <!-- If the user's server dictates to use a profile, apply it -->
+                <!-- <ref bean="serverProfileMapper" />  -->
+
+                <!--
+                 | uPortal 4.1 promotes a responsive design theme Respondr.  The older uPortal 3.x, 4.0x
+                 | mUniversality view is by default disabled.  To re-enable it so those user agent strings that
+                 | match the regex instruction get the mUniversality view, uncomment the following bean.
+                 +-->
+                <!--<ref bean="userAgentProfileMapper" />-->
+
+                <!--
+                | Define a profilMapper for user guest associated to the serverName attribute,
+                | This example configuration is applyed only if user-agent isn't a mobile.
+                | You need to define and import a new profil for each entries on default users
+                | Add "guest-[server name]-" prefix to the subfname found
+                +-->
+                <!--
+                <bean class="org.apereo.portal.layout.profile.ServerNameGuestChainingProfileMapper">
+                	<property name="authorizedServerNames">
+                		<util:map>
+                			< Only server names listed here are authorized ! (the value replace the server name) />
+                			<entry key="www.univ1.fr" value="univ1" />
+                			<entry key="www.univ2.fr" value="univ2" />
+                		</util:map>
+                	</property>
+                	<property name="subMappers">
+                		<util:list>
+                			< Move here the mappers you want to customize for each server name guest. />
+                		</util:list>
+                	</property>
+                </bean>
+                -->
+            </util:list>
+        </property>
+    </bean>
+    
+    <!-- Example of how to use serverProfileMapper.  This puts users on profile=default
+    for any server that matches the regex (everything not *.wisconsin.edu* for example -->
+    <!-- 
+    <bean id="serverProfileMapper" class="org.apereo.portal.layout.profile.ServerProfileMapperImpl"
+        p:serverRegex="^((?!.\\.wisconsin\\.edu).)*$"
+        p:profile="default" />
+    -->
+
+    <bean id="sessionAttributeProfileMapper" class="org.apereo.portal.layout.profile.SessionAttributeProfileMapperImpl"
+        p:mappings-ref="profileKeyMappings"/>
+
+    <bean id="userAgentProfileMapper" class="org.apereo.portal.layout.profile.UserAgentProfileMapper">
+        <property name="mappings">
+            <list>
+                <!-- mobile device -->
+                <bean class="org.apereo.portal.layout.profile.UserAgentProfileMapper.Mapping">
+                    <property name="pattern" value="${org.apereo.portal.http.header.userAgent.mobile.regex.pattern}"/>
+                    <property name="profileName" value="mobileDefault" />
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <!-- The following attribute names are used in searching for users through
+       person-directory, such as from within the Directory framework portlet. If using LDAP User Attribute sources,
+       these should correspond to the internal names (keys, not the ldap attribute names) of the
+       queryAttributeMapping property of bean uPortalLdapAttributeSource in personDirectoryContext.xml (see
+       https://wiki.jasig.org/display/UPM40/LDAP+User+Attribute+Sources).
+
+       For the search to work, users must also have permission to view the attributes (see
+       src/main/data/default/Everyone__VIEW_USER_ATTRIBUTE__UP_USERS.permission-set.xml -->
+    <util:list id="directoryQueryAttributes">
+        <value>givenName</value>
+        <value>sn</value>
+    </util:list>
+
+    <util:map id="directoryDisplayAttributes">
+        <entry key="title" value="GENERIC"/>
+        <entry key="department" value="GENERIC"/>
+        <entry key="organization" value="GENERIC"/>
+        <entry key="mail" value="EMAIL"/>
+        <entry key="telephoneNumber" value="PHONE"/>
+        <entry key="postalAddress" value="MAP"/>
+    </util:map>
+
+    <!-- Form inputs for local account editing.  These fields will be filtered
+        according to user permissions. -->
+    <util:list id="accountEditAttributes">
+        <bean class="org.apereo.portal.portlets.account.PreferenceInputFactory"
+            factory-method="createSingleTextPreference">
+            <constructor-arg value="title"/>
+            <constructor-arg value="attribute.displayName.title"/>
+        </bean>
+        <bean class="org.apereo.portal.portlets.account.PreferenceInputFactory"
+            factory-method="createSingleTextPreference">
+            <constructor-arg value="department"/>
+            <constructor-arg value="attribute.displayName.department"/>
+        </bean>
+        <bean class="org.apereo.portal.portlets.account.PreferenceInputFactory"
+            factory-method="createSingleTextPreference">
+            <constructor-arg value="organization"/>
+            <constructor-arg value="attribute.displayName.organization"/>
+        </bean>
+        <bean class="org.apereo.portal.portlets.account.PreferenceInputFactory"
+            factory-method="createSingleTextPreference">
+            <constructor-arg value="mail"/>
+            <constructor-arg value="attribute.displayName.mail"/>
+        </bean>
+        <bean class="org.apereo.portal.portlets.account.PreferenceInputFactory"
+            factory-method="createSingleTextPreference">
+            <constructor-arg value="telephoneNumber"/>
+            <constructor-arg value="attribute.displayName.telephoneNumber"/>
+        </bean>
+    </util:list>
+
+    <!-- Spring mail-sending service -->
+    <bean id="passwordResetMailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+        <property name="host" value="${org.apereo.portal.email.host:localhost}" />
+        <property name="port" value="${org.apereo.portal.email.port:25}" />
+        <property name="protocol" value="${org.apereo.portal.email.protocol:smtp}" />
+    </bean>
+
+    <bean id="portalEmailAddress" class="java.lang.String">
+        <constructor-arg value="${org.apereo.portal.email.fromAddress}"/>
+    </bean>
+
+</beans>

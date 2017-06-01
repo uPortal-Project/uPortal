@@ -1,7 +1,10 @@
 description = "Apereo uPortal Platform API Implementation"
 
 dependencies {
-    compile project(':uPortal-api:uPortal-api-platform')
     compile project(':uPortal-rendering')
     compile project(':uPortal-security:uPortal-security-permissions')
+    compileOnly project(':uPortal-api:uPortal-api-platform')
+
+    compileOnly "${portletApiDependency}"
+    compileOnly "${servletApiDependency}"
 }

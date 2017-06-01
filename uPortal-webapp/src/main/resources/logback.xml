@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to Apereo under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Apereo licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<!-- For assistance related to logback-translator or configuration  -->
+<!-- files in general, please contact the logback user mailing list -->
+<!-- at http://www.qos.ch/mailman/listinfo/logback-user             -->
+<!--                                                                -->
+<!-- For professional support please see                            -->
+<!--    http://www.qos.ch/shop/products/professionalSupport         -->
+<!--                                                                -->
+<configuration scan="true" scanPeriod="30 seconds">
+  <contextName>uPortal</contextName>
+ 
+  <contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
+    <resetJUL>true</resetJUL>
+  </contextListener>
+  
+  <jmxConfigurator />
+  
+  <appender name="PORTAL" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <!--See http://logback.qos.ch/manual/appenders.html#RollingFileAppender-->
+    <!--and http://logback.qos.ch/manual/appenders.html#TimeBasedRollingPolicy-->
+    <!--for further documentation-->
+    <File>${catalina.base}/logs/portal/portal.log</File>
+    <encoder>
+      <pattern>%-5level [%thread] %logger{36} %d{ISO8601} - %msg%n</pattern>
+    </encoder>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>${catalina.base}/logs/portal/portal.log.%d{yyyy-MM-dd}</fileNamePattern>
+    </rollingPolicy>
+  </appender>
+
+  <appender name="EVENT" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <!--See http://logback.qos.ch/manual/appenders.html#RollingFileAppender-->
+    <!--and http://logback.qos.ch/manual/appenders.html#TimeBasedRollingPolicy-->
+    <!--for further documentation-->
+    <File>${catalina.base}/logs/portal/portal-events.log</File>
+    <encoder>
+      <pattern>%-5level [%thread] %logger{36} %d{ISO8601} - %msg%n</pattern>
+    </encoder>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>${catalina.base}/logs/portal/portal-events.log.%d{yyyy-MM-dd}</fileNamePattern>
+    </rollingPolicy>
+  </appender>
+  
+  <appender name="TINCAN" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <!--See http://logback.qos.ch/manual/appenders.html#RollingFileAppender-->
+    <!--and http://logback.qos.ch/manual/appenders.html#TimeBasedRollingPolicy-->
+    <!--for further documentation-->
+    <File>${catalina.base}/logs/portal/portal-tincan-events.log</File>
+    <encoder>
+      <pattern>%-5level [%thread] %logger{36} %d{ISO8601} - %msg%n</pattern>
+    </encoder>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>${catalina.base}/logs/portal/portal-events.log.%d{yyyy-MM-dd}</fileNamePattern>
+    </rollingPolicy>
+  </appender>
+  
+  <appender name="SWAPPER" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <!--See http://logback.qos.ch/manual/appenders.html#RollingFileAppender-->
+    <!--and http://logback.qos.ch/manual/appenders.html#TimeBasedRollingPolicy-->
+    <!--for further documentation-->
+    <File>${catalina.base}/logs/audit/portal.audit.log</File>
+    <encoder>
+      <pattern>%-5level [%thread] %logger{36} %d{ISO8601} - %msg%n</pattern>
+    </encoder>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>${catalina.base}/logs/audit/portal.audit.log.%d{yyyy-MM-dd}</fileNamePattern>
+    </rollingPolicy>
+  </appender>
+  
+  <appender name="JG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <!--See http://logback.qos.ch/manual/appenders.html#RollingFileAppender-->
+    <!--and http://logback.qos.ch/manual/appenders.html#TimeBasedRollingPolicy-->
+    <!--for further documentation-->
+    <File>${catalina.base}/logs/jgroups/portal.jgroups.log</File>
+    <encoder>
+      <pattern>%-5level [%thread] %logger{36} %d{ISO8601} - %msg%n</pattern>
+    </encoder>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>${catalina.base}/logs/jgroups/portal.jgroups.log.%d{yyyy-MM-dd}</fileNamePattern>
+    </rollingPolicy>
+  </appender>
+  
+  <root level="INFO">
+    <appender-ref ref="PORTAL"/>
+  </root>
+  
+  <!-- Log use of the identity and attribute swapper -->
+  <logger name="org.apereo.portal.portlets.swapper" additivity="false" level="INFO">
+    <appender-ref ref="SWAPPER"/>
+  </logger>
+
+  <!--  Portal Event aggregation -->
+  <logger name="org.apereo.portal.events" additivity="false" level="INFO">
+    <appender-ref ref="EVENT"/>
+  </logger>
+  
+  <!--  Portal Tin Can Events -->
+  <logger name="org.apereo.portal.events.tincan.providers.LogEventTinCanAPIProvider" additivity="false" level="DEBUG">
+    <appender-ref ref="TINCAN"/>
+  </logger>
+ 
+  <!-- Debug CAS Clearpass
+  <logger name="org.apereo.portal.security.provider.cas" additivity="false" level="TRACE">
+    <appender-ref ref="PORTAL"/>
+  </logger>
+  <logger name="org.jasig.cas.client" additivity="false" level="TRACE">
+    <appender-ref ref="PORTAL"/>
+  </logger>
+  <logger name="org.apereo.portal.portlet.container.services" additivity="false" level="DEBUG">
+    <appender-ref ref="PORTAL"/>
+  </logger>
+  -->
+
+  <!-- Uncomment to monitor jGroups clustering
+  <logger name="net.sf.ehcache.distribution" additivity="false" level="TRACE">
+    <appender-ref ref="JG"/>
+  </logger>
+  <logger name="org.jgroups" additivity="false" level="DEBUG">
+    <appender-ref ref="JG"/>
+  </logger>
+  -->
+
+  <!--  Log all TX, SQL and SQL Parameters
+  <logger name="org.springframework.orm.jpa.JpaTransactionManager" additivity="false" level="DEBUG">
+    <appender-ref ref="PORTAL"/>
+  </logger>
+  <logger name="org.hibernate.SQL" additivity="false" level="DEBUG">
+    <appender-ref ref="PORTAL"/>
+  </logger>
+  <logger name="org.hibernate.type" additivity="false" level="TRACE">
+    <appender-ref ref="PORTAL"/>
+  </logger>
+   -->
+   
+  <!-- Portlet Event handling logging
+  <logger name="org.apereo.portal.portlet.rendering.PortletEventCoordinatationService" additivity="false" level="DEBUG">
+    <appender-ref ref="PORTAL"/>
+  </logger>
+  -->
+  
+  <!-- Uncomment to see the XML at various stages in the rendering pipeline
+  <logger name="org.apereo.portal.rendering.LoggingStAXComponent" additivity="false" level="DEBUG">
+    <appender-ref ref="PORTAL"/>
+  </logger>
+  -->
+
+  <!-- Uncomment to see fragment activation errors
+  <logger name="org.apereo.portal.layout.dlm.FragmentActivator" additivity="false" level="DEBUG">
+    <appender-ref ref="PORTAL"/>
+  </logger>
+  -->
+  
+  <!-- Uncomment to monitor portlet-spec caching behavior
+  <logger name="org.apereo.portal.portlet.rendering.PortletRendererImpl" additivity="false" level="DEBUG">
+    <appender-ref ref="PORTAL"/>
+  </logger>
+  <logger name="org.apereo.portal.portlet.container.cache" additivity="false" level="DEBUG">
+    <appender-ref ref="PORTAL"/>
+  </logger>
+  -->
+
+  <!-- Hide some useful Hibernate performance statistics that clutter the logs in dev.  Enable this to review
+       DB connection, flush, and cache times, # of objects flushed, etc. -->
+  <logger name="org.hibernate.engine.internal.StatisticalLoggingSessionEventListener" additivity="false" level="WARN"/>
+
+  <!-- Hide some bad Hibernate log messages -->
+  <logger name="org.hibernate.cfg.annotations.reflection.JPAOverriddenAnnotationReader" additivity="false" level="ERROR"/>
+  <logger name="org.hibernate.ejb.metamodel.MetadataContext" additivity="false" level="FATAL"/>
+  <logger name="org.hibernate.engine.jdbc.spi.SqlExceptionHelper" additivity="false" level="FATAL"/>
+  
+</configuration>
