@@ -419,5 +419,8 @@ modules.xml
 !uportal-portlets-overlay/CalendarPortlet/3rd-party/repository/slide/jakarta-slide-webdavlib/2.2pre1-httpclient-3.0/*.jar
 !**/src/**/target/
 !**/src/**/tags/
-!uportal-war/src/test/resources/org/apereo/portal/io/xml/import_archive.*
-!uportal-war/src/test/resources/org/apereo/portal/utils/DirScannerData.zip
+!**/src/test/**/*.jar
+!**/src/test/**/*.tar
+!**/src/test/**/*.tar.gz
+!**/src/test/**/*.tgz
+!**/src/test/**/*.zip
