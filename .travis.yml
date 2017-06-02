@@ -2,9 +2,6 @@ language: java
 jdk: oraclejdk8
 sudo: false
 
-before_install:
-  - unset GEM_PATH
-
 # ./gradlew assemble (default install command) won't cut it
 install:
   - ./gradlew install
