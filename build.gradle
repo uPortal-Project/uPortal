@@ -116,6 +116,7 @@ subprojects {
 
                 pom.withXml {
                     asNode().with {
+                        appendNode('name', 'uPortal')
                         appendNode('description', 'Enterprise open source portal built by and for the higher education community.')
                         appendNode('url', 'https://www.apereo.org/projects/uportal')
                         appendNode('scm').with {
