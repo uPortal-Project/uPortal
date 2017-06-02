@@ -36,9 +36,15 @@
     <description>The complete uPortal package including dependent portlets.</description>
 
     <dependencies>
-        <dependency>
+        <!-- dependency>
             <groupId>org.jasig.portal</groupId>
             <artifactId>uportal-war</artifactId>
+            <version>${project.version}</version>
+            <type>war</type>
+        </dependency -->
+        <dependency>
+            <groupId>org.jasig.portal.portlets-overlay</groupId>
+            <artifactId>uPortal</artifactId>
             <version>${project.version}</version>
             <type>war</type>
         </dependency>
@@ -219,12 +225,12 @@
                 <configuration>
                     <fileNameMapping>no-version</fileNameMapping>
                     <modules>
-                        <webModule>
+                        <!-- webModule>
                             <groupId>org.jasig.portal</groupId>
                             <artifactId>uportal-war</artifactId>
                             <bundleFileName>${uportal.docbase}.war</bundleFileName>
                             <contextRoot>/${uportal.docbase}</contextRoot>
-                        </webModule>
+                        </webModule -->
                         <webModule>
                             <groupId>org.jasig.resourceserver</groupId>
                             <artifactId>resource-server-webapp</artifactId>

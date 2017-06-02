@@ -45,13 +45,13 @@ server.webapps=${server.base}/webapps
 
 ######## uPortal Data ######## 
 
-# Use default_entities.location to override the location of data imported by the initdb 
+# Use default_entities.location to override the location of data imported by the initdb
 # and/or db-import targets;  required data is imported before entities specified here
-#default_entities.location=uportal-war/src/main/data/default_entities
+#default_entities.location=uportal-data/default
 
-# Use quickstart_entities.location to override the location of data imported by the initdb 
+# Use quickstart_entities.location to override the location of data imported by the initdb
 # and/or db-import targets;  required and default data is imported before entities specified here
-#quickstart_entities.location=uportal-war/src/main/data/quickstart_entities
+#quickstart_entities.location=uportal-data/quickstart
 
 
 ######## Deployment Configuration ##########

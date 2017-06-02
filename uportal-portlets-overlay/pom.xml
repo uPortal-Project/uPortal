@@ -50,6 +50,7 @@
         <module>NotificationPortlet</module>
 		<module>sakai-connector-portlet</module>
         <module>SimpleContentPortlet</module>
+        <module>uPortal</module>
         <module>WeatherPortlet</module>
         <module>WebProxyPortlet</module>
     </modules>

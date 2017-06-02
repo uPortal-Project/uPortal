@@ -7,5 +7,9 @@ dependencies {
     compile project(':uPortal-security:uPortal-security-core')
     compile project(':uPortal-spring')
 
-    // compile "com.google.guava:guava:${guavaVersion}"
+    testCompile "${servletApiDependency}"
+
+    compileOnly "org.apache.portals.pluto:pluto-container-api:${plutoVersion}"
+    compileOnly "${portletApiDependency}"
+    compileOnly "${servletApiDependency}"
 }

@@ -3,6 +3,7 @@ description = "Apereo uPortal $version"
 // Build Scans provide detailed information about many aspects of your
 // build right in your browser.  (https://scans.gradle.com/plugin)
 apply plugin: 'com.gradle.build-scan'
+apply plugin: 'java'
 
 // Adds support for Node.js scripts
 apply plugin: 'com.moowork.node'
@@ -30,6 +31,18 @@ repositories {
     mavenLocal()
 }
 
+def props = new Properties()
+
+task loadBuildFile() {
+    println "Load the build.properties file"
+    def buildPropsFile = new File('build.properties')
+    if (buildPropsFile.exists()) {
+        buildPropsFile.withInputStream { props.load(it) }
+    } else {
+        println("WARNING: build.properties not found")
+    }
+}
+
 buildscript {
     repositories {
         maven {
@@ -48,11 +61,7 @@ buildscript {
 }
 
 node {
-    // Version of node to use.
-    version = '6.9.1'
-
-    // If true, it will download node using above parameters.
-    // If false, it will try to use globally installed node.
+    version = '8.0.0'
     download = true
 }
 
@@ -69,18 +78,53 @@ gradleLint.criticalRules = [
   'duplicate-dependency-class'
 ]
 
+	 task cleanShared(type:Delete) {
+		description 'Removes ALL shared libraries from the servlet container.'
+		def serverbase = props.getProperty("server.home")
+		def libs =  "${serverbase}/shared/lib"
+		printf "Configured shared libraries from servlet container at location:  ${libs}"
+		FileTree tree = fileTree(dir: libs)
+		delete fileTree(dir:libs , include: '*')
+	}
+
+	 task cleanTomcat(type:Delete) {
+		description 'Removes the deployed uPortal from the servlet container.'
+		def serverbase = props.getProperty("server.home")
+		def uPortalDeployDir = "${serverbase}/webapps/uPortal"
+		printf "Configured deployed uPortal from servlet container at location:  ${uPortalDeployDir}"
+		FileTree tree = fileTree(dir: uPortalDeployDir)
+		delete uPortalDeployDir
+	}
+
 subprojects {
     apply plugin: 'findbugs'
     apply plugin: 'idea'
     apply plugin: 'eclipse'
     apply plugin: 'java'
     apply plugin: 'maven'
+    apply plugin: 'maven-publish'
     apply plugin: 'com.github.sherter.google-java-format'
     apply plugin: 'nebula.lint'
 
     repositories {
         mavenLocal()
         mavenCentral()
+    }
+
+    configurations {
+        // Banned dependencies
+        all*.exclude group: 'commons-logging', module: 'commons-logging'
+        all*.exclude group: 'commons-logging', module: 'commons-logging-api'
+        all*.exclude group: 'log4j', module: 'log4j'
+    }
+
+    dependencies {
+        testCompile "junit:junit:${junitVersion}"
+        testCompile "org.easymock:easymock:${easymockVersion}"
+        testCompile "org.hamcrest:hamcrest-all:${hamcrestVersion}"
+        testCompile "org.mockito:mockito-core:${mockitoVersion}"
+        testCompile "org.springframework:spring-test:${springVersion}"
+        testCompile "xmlunit:xmlunit:${xmlunitVersion}"
     }
 
     findbugs {
@@ -101,17 +145,31 @@ subprojects {
       'duplicate-dependency-class'
     ]
 
-    configurations {
-        /*
-         * Defines a 'provided' scope similar to the one in Maven.  Dependencies
-         * defined using provided will not become transitive dependencies.
-         */
-        provided
-
-        /*
-         * Makes provided dependencies available on the compile classpath in a way
-         * that works both from the command line and in Buildship.
-         */
-        compile.extendsFrom provided
+    /*
+     * The following 2 sections are for publishing releases to the sonatype staging repo.
+     *
+     * Use the '$ ./gradlew publish' command, and you MUST pass
+     * '-P sonatypeUser=[user] -P sonatypePassword={pass}'
+     */
+    ext {
+        sonatypeUser = project.hasProperty('sonatypeUser') ? project.getProperty('sonatypeUser') : ''
+        sonatypePassword = project.hasProperty('sonatypePassword') ? project.getProperty('sonatypePassword') : ''
+    }
+    publishing {
+        publications {
+            maven(MavenPublication) {
+                from components.java
+            }
+        }
+        repositories {
+            maven {
+                // Sonatype staging repo for releases
+                url 'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
+                credentials {
+                    username sonatypeUser
+                    password sonatypePassword
+                }
+            }
+        }
     }
 }

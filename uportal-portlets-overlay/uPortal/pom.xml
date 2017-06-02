@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to Apereo under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Apereo licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <parent>
+        <groupId>org.jasig.portal.portlets-overlay</groupId>
+        <artifactId>uportal-portlets-overlay</artifactId>
+        <version>5.0.0-SNAPSHOT</version>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>uPortal</artifactId>
+    <packaging>war</packaging>
+
+    <name>uPortal</name>
+    <description>Overlay on the uPortal-webapp Gradle module</description>
+
+    <dependencies>
+
+        <!-- WAR dependency for overlay -->
+        <dependency>
+            <groupId>org.jasig.portal</groupId>
+            <artifactId>uPortal-webapp</artifactId>
+            <version>${uPortal.version}</version>
+            <type>war</type>
+        </dependency>
+
+        <!-- Dependencies for tools -->
+        <dependency>
+            <groupId>org.jasig.portal</groupId>
+            <artifactId>uPortal-webapp</artifactId>
+            <version>${uPortal.version}</version>
+            <type>pom</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jasig.portal</groupId>
+            <artifactId>uPortal-api-platform</artifactId>
+            <version>${uPortal.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.ccpp</groupId>
+            <artifactId>ccpp</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.portals</groupId>
+            <artifactId>portlet-api_2.1.0_spec</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.portals.pluto</groupId>
+            <artifactId>pluto-container-driver-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-jsr223</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <configuration>
+                    <attachClasses>true</attachClasses>
+                    <!-- By specifying an exclude we'll retain META-INF/context.xml (META-INF is excluded by default).
+                         Context.xml is important because it allows the ResourceUrl to 'see' the ResourceServingWebapp
+                         to determine if a resource is available there, which allows for browser caching of common
+                         libraries -->
+                    <dependentWarExcludes>junkname.jar</dependentWarExcludes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.portals.pluto</groupId>
+                <artifactId>maven-pluto-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

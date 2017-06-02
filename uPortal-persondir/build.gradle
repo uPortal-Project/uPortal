@@ -8,7 +8,8 @@ ext {
 dependencies {
     compile project(':uPortal-security:uPortal-security-core')
 
-    compile "org.hibernate:hibernate-jpamodelgen:${hibernateJpamodelgenVersion}" // Required for javac -s
+    compileOnly "org.hibernate:hibernate-jpamodelgen:${hibernateJpamodelgenVersion}" // Required for javac -s
+    compileOnly "${servletApiDependency}"
 }
 
 /*

@@ -18,6 +18,7 @@ dependencies {
 
     testCompile "junit:junit:${junitVersion}"
     testCompile "org.mockito:mockito-core:${mockitoVersion}"
+    testCompile "${servletApiDependency}"
 
-    provided "${servletApiDependency}"
+    compileOnly "${servletApiDependency}"
 }
