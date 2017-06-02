@@ -2,7 +2,7 @@ def props = new Properties()
 
 task loadBuildFile() {
     println "Load the build.properties file"
-    def buildPropsFile = new File('build.properties')
+    def buildPropsFile = file('build.properties')
     if (buildPropsFile.exists()) {
         buildPropsFile.withInputStream { props.load(it) }
     } else {
