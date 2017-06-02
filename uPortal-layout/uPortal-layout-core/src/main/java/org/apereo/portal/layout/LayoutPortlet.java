@@ -63,7 +63,7 @@ public class LayoutPortlet {
             title = portletDef.getTitle();
             description = portletDef.getDescription();
             fname = portletDef.getFName();
-            url = portletDef.getAlternativeMaximizedLink(); //todo get normal URL if alt is missing
+            url = portletDef.getAlternativeMaximizedLink();
             target = portletDef.getTarget();
             isAltMaxUrl = StringUtils.isNotBlank(url);
             IPortletDefinitionParameter iconParam = portletDef.getParameter("iconUrl");
