@@ -11,10 +11,31 @@ ext {
     sonatypePassword = project.hasProperty('sonatypePassword') ? project.getProperty('sonatypePassword') : ''
 }
 
+tasks.withType(Jar) {
+    from(project.projectDir) {
+        include 'LICENSE'
+        into 'META-INF'
+    }
+}
+
+task sourceJar(type: Jar, dependsOn: classes) {
+    classifier 'sources'
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
 publishing {
     publications {
         maven(MavenPublication) {
             from components.java
+
+            artifact sourceJar
+            artifact javadocJar
+
             pom.withXml {
                 asNode().with {
                     appendNode('description', 'Enterprise open source portal built by and for the higher education community.')
