@@ -128,19 +128,15 @@ subprojects {
     }
 
     signing {
+        required { gradle.taskGraph.hasTask('publish') }
         sign configurations.archives
     }
 
-    /*
-     * The following 2 sections are for publishing releases to the sonatype staging repo.
-     *
-     * Use the '$ ./gradlew publish' command, and you MUST pass
-     * '-P sonatypeUser=[user] -P sonatypePassword={pass}'
-     */
     ext {
         sonatypeUser = project.hasProperty('sonatypeUser') ? project.getProperty('sonatypeUser') : ''
         sonatypePassword = project.hasProperty('sonatypePassword') ? project.getProperty('sonatypePassword') : ''
     }
+
     publishing {
         publications {
             maven(MavenPublication) {
