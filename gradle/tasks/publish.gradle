@@ -1,0 +1,30 @@
+apply plugin: 'signing'
+apply plugin: 'maven-publish'
+
+signing {
+    required { gradle.taskGraph.hasTask('publish') }
+    sign configurations.archives
+}
+
+ext {
+    sonatypeUser = project.hasProperty('sonatypeUser') ? project.getProperty('sonatypeUser') : ''
+    sonatypePassword = project.hasProperty('sonatypePassword') ? project.getProperty('sonatypePassword') : ''
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+        }
+    }
+    repositories {
+        maven {
+            // Sonatype staging repo for releases
+            url 'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
+            credentials {
+                username sonatypeUser
+                password sonatypePassword
+            }
+        }
+    }
+}
