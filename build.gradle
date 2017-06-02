@@ -7,20 +7,10 @@ apply plugin: 'java'
 
 // Adds support for Node.js scripts
 apply plugin: 'com.moowork.node'
-apply plugin: 'com.wiredforcode.spawn'
 
-// NOTE: The startHsql task can be executed after uportal-war is built because it uses hsqldb-2.3.2.jar in classpath, otherwise it will fail
-task startHsql(type: SpawnProcessTask) {
-    description "Start hsql server"
-    def cmd = "java -cp ./uportal-war/target/uPortal/WEB-INF/lib/hsqldb-2.3.2.jar org.hsqldb.server.Server --database.0 file:./data/uPortal;hsqldb.tx=mvcc --dbname.0 uPortal --address localhost --port 8887"
-    command cmd
-    ready 'Startup sequence completed'
-}
-task stopHsql(type: KillProcessTask){
-    description "Stop hsql server"
-}
-
-import com.wiredforcode.gradle.spawn.*
+// Load custom tasks for uPortal
+apply from: rootProject.file('gradle/tasks/clean.gradle')
+apply from: rootProject.file('gradle/tasks/hsql.gradle')
 
 repositories {
     // Use jcenter for resolving your dependencies.
@@ -30,31 +20,17 @@ repositories {
     mavenLocal()
 }
 
-def props = new Properties()
-
-task loadBuildFile() {
-    println "Load the build.properties file"
-    def buildPropsFile = new File('build.properties')
-    if (buildPropsFile.exists()) {
-        buildPropsFile.withInputStream { props.load(it) }
-    } else {
-        println("WARNING: build.properties not found")
-    }
-}
-
 buildscript {
     repositories {
         maven {
             url 'https://plugins.gradle.org/m2/'
         }
-        maven { url 'http://dl.bintray.com/vermeulen-mp/gradle-plugins' }
         mavenLocal()
     }
     dependencies {
         classpath 'com.gradle:build-scan-plugin:1.0'
         classpath 'com.moowork.gradle:gradle-node-plugin:0.13'
         classpath 'gradle.plugin.com.github.sherter.google-java-format:google-java-format-gradle-plugin:0.6'
-        classpath 'com.wiredforcode:gradle-spawn-plugin:0.6.0'
     }
 }
 
@@ -67,24 +43,6 @@ buildScan {
     licenseAgreementUrl = 'https://gradle.com/terms-of-service'
     licenseAgree = 'yes'
 }
-
-	 task cleanShared(type:Delete) {
-		description 'Removes ALL shared libraries from the servlet container.'
-		def serverbase = props.getProperty("server.home")
-		def libs =  "${serverbase}/shared/lib"
-		printf "Configured shared libraries from servlet container at location:  ${libs}"
-		FileTree tree = fileTree(dir: libs)
-		delete fileTree(dir:libs , include: '*')
-	}
-
-	 task cleanTomcat(type:Delete) {
-		description 'Removes the deployed uPortal from the servlet container.'
-		def serverbase = props.getProperty("server.home")
-		def uPortalDeployDir = "${serverbase}/webapps/uPortal"
-		printf "Configured deployed uPortal from servlet container at location:  ${uPortalDeployDir}"
-		FileTree tree = fileTree(dir: uPortalDeployDir)
-		delete uPortalDeployDir
-	}
 
 subprojects {
     apply plugin: 'findbugs'
