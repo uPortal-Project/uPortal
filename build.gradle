@@ -1,20 +1,14 @@
 description = "Apereo uPortal $version"
 
-// Build Scans provide detailed information about many aspects of your
-// build right in your browser.  (https://scans.gradle.com/plugin)
-apply plugin: 'com.gradle.build-scan'
+/*======== Plugins ========*/
 apply plugin: 'java'
-
-// Adds support for Node.js scripts
+apply plugin: 'com.gradle.build-scan'
 apply plugin: 'com.moowork.node'
-
-// Load custom tasks for uPortal
 apply from: rootProject.file('gradle/tasks/clean.gradle')
 apply from: rootProject.file('gradle/tasks/hsql.gradle')
 
+/*======== Dependency Management ========**/
 repositories {
-    // Use jcenter for resolving your dependencies.
-    // You can declare any Maven/Ivy/file repository here.
     jcenter()
     mavenCentral()
     mavenLocal()
@@ -39,20 +33,25 @@ node {
     download = true
 }
 
+/*======== Static Analysis ========*/
 buildScan {
     licenseAgreementUrl = 'https://gradle.com/terms-of-service'
     licenseAgree = 'yes'
 }
 
+/*======== Child Projects ========*/
 subprojects {
+    /*======== Plugins ========*/
+    apply plugin: 'com.github.sherter.google-java-format'
+    apply plugin: 'eclipse'
     apply plugin: 'findbugs'
     apply plugin: 'idea'
-    apply plugin: 'eclipse'
     apply plugin: 'java'
-    apply plugin: 'maven'
     apply plugin: 'maven-publish'
-    apply plugin: 'com.github.sherter.google-java-format'
+    apply plugin: 'maven'
+    apply plugin: 'signing'
 
+    /*======== Dependency Management ========**/
     repositories {
         mavenLocal()
         mavenCentral()
@@ -74,30 +73,77 @@ subprojects {
         testCompile "xmlunit:xmlunit:${xmlunitVersion}"
     }
 
-    findbugs {
-        toolVersion = '3.0.1'
-        ignoreFailures = true
+    /*======== Release Management ========*/
+    signing {
+        required { gradle.taskGraph.hasTask('publish') }
+        sign configurations.archives
     }
 
-    googleJavaFormat {
-        toolVersion '1.3'
-        options style: 'AOSP'
-    }
-
-    /*
-     * The following 2 sections are for publishing releases to the sonatype staging repo.
-     *
-     * Use the '$ ./gradlew publish' command, and you MUST pass
-     * '-P sonatypeUser=[user] -P sonatypePassword={pass}'
-     */
     ext {
         sonatypeUser = project.hasProperty('sonatypeUser') ? project.getProperty('sonatypeUser') : ''
         sonatypePassword = project.hasProperty('sonatypePassword') ? project.getProperty('sonatypePassword') : ''
     }
+
+    tasks.withType(Javadoc) {
+        // FIXME: Fix errors rather than supressing them
+        failOnError = false
+    }
+
+    tasks.withType(Jar) {
+        from(project.projectDir) {
+            include "${rootDir}/LICENSE"
+            into 'META-INF'
+        }
+    }
+
+    task sourceJar(type: Jar, dependsOn: classes) {
+        classifier 'sources'
+        from sourceSets.main.allSource
+    }
+
+    task javadocJar(type: Jar, dependsOn: javadoc) {
+        classifier = 'javadoc'
+        from javadoc.destinationDir
+    }
+
     publishing {
         publications {
             maven(MavenPublication) {
                 from components.java
+
+                artifact sourceJar
+                artifact javadocJar
+
+                pom.withXml {
+                    asNode().with {
+                        appendNode('description', 'Enterprise open source portal built by and for the higher education community.')
+                        appendNode('url', 'https://www.apereo.org/projects/uportal')
+                        appendNode('scm').with {
+                            appendNode('url', 'https://github.com/Jasig/uPortal')
+                            appendNode('connection', 'scm:git@github.com:Jasig/uPortal.git')
+                        }
+                        appendNode('issueManagement').with {
+                            appendNode('url', 'https://issues.jasig.org/browse/UP/')
+                            appendNode('system', 'JIRA')
+                        }
+                        appendNode('licenses').with {
+                            appendNode('license').with {
+                                appendNode('name', 'The Apache Software License, Version 2.0')
+                                appendNode('url', 'http://www.apache.org/licenses/LICENSE-2.0.txt')
+                            }
+                        }
+                        appendNode('organization').with {
+                            appendNode('name', 'Apereo')
+                            appendNode('url', 'https://www.apereo.org/')
+                        }
+                        appendNode('developers').with {
+                            appendNode('developer').with {
+                                appendNode('organization', 'uPortal Developers')
+                                appendNode('organizationUrl', 'https://github.com/Jasig/uPortal/graphs/contributors')
+                            }
+                        }
+                    }
+                }
             }
         }
         repositories {
@@ -110,5 +156,16 @@ subprojects {
                 }
             }
         }
+    }
+
+    /*======== Static Analysis ========*/
+    findbugs {
+        toolVersion = '3.0.1'
+        ignoreFailures = true
+    }
+
+    googleJavaFormat {
+        toolVersion '1.3'
+        options style: 'AOSP'
     }
 }
