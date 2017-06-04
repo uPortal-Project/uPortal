@@ -150,7 +150,7 @@
         <casclient.version>3.4.1</casclient.version>
         <ccpp.version>1.0</ccpp.version>
         <cernunnos.version>1.2.2</cernunnos.version>
-        <cobertura-maven-plugin.version>2.7</cobertura-maven-plugin.version>
+        <clover.version>4.2.0</clover.version>
         <commons-cli.version>1.2</commons-cli.version>
         <commons-codec.version>1.9</commons-codec.version>
         <commons-collections.version>3.2.2</commons-collections.version>
@@ -1541,26 +1541,18 @@
                     <version>${coveralls-maven-plugin.version}</version>
                 </plugin>
                 <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>cobertura-maven-plugin</artifactId>
-                    <version>${cobertura-maven-plugin.version}</version>
+                    <groupId>org.openclover</groupId>
+                    <artifactId>clover-maven-plugin</artifactId>
+                    <version>${clover.version}</version>
                     <configuration>
-                        <formats>
-                            <format>html</format>
-                            <format>xml</format>
-                        </formats>
-                        <maxmem>256m</maxmem>
-                        <!-- aggregated reports for multi-module projects -->
-                        <aggregate>true</aggregate>
-                        <instrumentation>
-                            <ignoreTrivial>true</ignoreTrivial>
-                            <excludes>
-                                <!-- Exclude generated classes -->
-                                <exclude>**/*_.class</exclude>
-                                <exclude>**/*_.java</exclude>
-                            </excludes>
-                        </instrumentation>
-                    </configuration>
+                        <generatePdf>true</generatePdf>
+                        <generateHtml>true</generateHtml>
+                        <excludes>
+                            <!-- Exclude generated classes -->
+                            <exclude>**/*_.class</exclude>
+                            <exclude>**/*_.java</exclude>
+                        </excludes>
+                   </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
