@@ -3,6 +3,7 @@ description = "Apereo uPortal $version"
 // Build Scans provide detailed information about many aspects of your
 // build right in your browser.  (https://scans.gradle.com/plugin)
 apply plugin: 'com.gradle.build-scan'
+apply plugin: 'com.github.kt3k.coveralls'
 apply plugin: 'java'
 
 // Adds support for Node.js scripts
@@ -31,6 +32,7 @@ buildscript {
         classpath 'com.gradle:build-scan-plugin:1.0'
         classpath 'com.moowork.gradle:gradle-node-plugin:0.13'
         classpath 'gradle.plugin.com.github.sherter.google-java-format:google-java-format-gradle-plugin:0.6'
+        classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.1'
     }
 }
 
@@ -42,6 +44,10 @@ node {
 buildScan {
     licenseAgreementUrl = 'https://gradle.com/terms-of-service'
     licenseAgree = 'yes'
+}
+
+allprojects {
+    apply plugin: 'jacoco'
 }
 
 subprojects {
@@ -110,5 +116,25 @@ subprojects {
                 }
             }
         }
+    }
+}
+
+task jacocoRootReport(type: org.gradle.testing.jacoco.tasks.JacocoReport) {
+    dependsOn = subprojects.test
+    additionalSourceDirs = files(subprojects.sourceSets.main.allSource.srcDirs)
+    sourceDirectories = files(subprojects.sourceSets.main.allSource.srcDirs)
+    classDirectories = files(subprojects.sourceSets.main.output)
+    executionData = files(subprojects.jacocoTestReport.executionData)
+    reports {
+        xml.enabled = true
+        html.enabled = true
+    }
+    onlyIf = {
+        true
+    }
+    doFirst {
+        executionData = files(executionData.findAll {
+            it.exists()
+        })
     }
 }
