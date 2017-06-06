@@ -12,7 +12,7 @@ install:
 
 script:
   - mvn clean test -B -V
-  - ./gradlew -u -i -S check jacocoRootReport coveralls
+  - ./gradlew -u -i -S check jacocoAggregateReport coveralls
 
 cache:
   directories:
