@@ -2,20 +2,10 @@ language: java
 jdk: oraclejdk8
 sudo: false
 
-before_install:
-  - unset GEM_PATH
+install: ./gradlew install
 
-# ./gradlew assemble (default install command) won't cut it
-install:
-  - ./gradlew install
-  - mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
-
-script:
-  - mvn clean test -B -V
-  - ./gradlew -u -i -w -S check jacocoAggregateReport coveralls
+script: ./gradlew -u -i -q -S check jacocoAggregateReport coveralls
 
 cache:
   directories:
-    - $HOME/.m2
-    - $HOME/.gradle/caches/
-    - $HOME/.gradle/wrapper/
+    - $HOME/.gradle/
