@@ -4,6 +4,7 @@ description = "Apereo uPortal $version"
 // build right in your browser.  (https://scans.gradle.com/plugin)
 apply plugin: 'com.gradle.build-scan'
 apply plugin: 'java'
+apply plugin: 'build-announcements'
 
 // Adds support for Node.js scripts
 apply plugin: 'com.moowork.node'
