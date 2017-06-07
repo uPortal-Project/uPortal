@@ -19,7 +19,7 @@ The `groupId`, `artifactId` and `version` specified in this command are up to yo
 
 In the filters folder, locate the default `local.properties` file under `uPortal-4.1.x/filters/local.properties` and configure the Database Connection Settings
 
-```
+```shell
 # HSQL Configuration
 environment.build.hsql.port=8887
 
@@ -96,7 +96,7 @@ Add the appropriate version properties to the root `pom.xml` file or enter the a
 
 Running the `dbtest` ant target will tell you if you have configured the database connection properly.
 
-```
+```shell
 ant dbtest
 ```
 
@@ -106,7 +106,7 @@ Following a successful test, you can execute the command below to build the data
 
 Executing the command `ant clean initportal` **will drop and recreate the database tables and all existing data will be lost**. This will result in a clean uPortal database structure. If you want to keep the contents of your existing database, use `ant clean deploy-war` .
 
-```
+```shell
 ant clean initportal
 ```
 

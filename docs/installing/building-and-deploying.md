@@ -18,7 +18,7 @@ The uPortal build requires a `build.properties` file describing the deployment e
 
 Go to your uPortal source directory and create the `build.properties` file by copying the `build.properties.sample` file to `build.properties`.
 
-```
+```shell
 cp build.properties.sample build.properties
 ```
 
@@ -36,7 +36,7 @@ In the `filters` folder, locate the default `local.properties` file and configur
 
 uPortal provides an optional mechanism to override these settings with a file that is completely *outside* uPortal source. This approach allows systems administrators to change these settings without rebuilding.  It also provides an easy way for adopters to keep sensitive information outside of their Source Code Management system.
 
-```
+```properties
 ## HSQL Configuration
 environment.build.hsql.port=8887
 
@@ -96,11 +96,11 @@ For example, I can create a new filter file named `test.properties` and set all 
 
 Make sure you use the `clean` command when making a switch between filters.
 
-```
+```shell
 ant clean deploy-ear -Denv=test
 ```
 
-```
+```shell
 mvn clean install -Denv=test
 ```
 
@@ -131,14 +131,14 @@ Just in case you missed it, don't forget to [configure Tomcat](./tomcat/), espec
 
 Run the following command to deploy uPortal and load your database
 
-```
+```shell
 ant initportal
 ```
 
 
 ### Step 6: Restart Tomcat
 
-```
+```shell
 $TOMCAT_HOME/bin/shutdown.sh
 $TOMCAT_HOME/bin/startup.sh
 ```
@@ -168,7 +168,7 @@ tar -xvf uPortal-4.2-quick-start.tar.gz
 
 Make sure the `JAVA_HOME` environment variable is set
 
-```
+```shell
 export JAVA_HOME=/path/to/java
 ```
 
@@ -176,7 +176,7 @@ export JAVA_HOME=/path/to/java
 
 Start uPortal by running the ant command from inside the `uPortal-4.2-quick-start` directory
 
-```
+```shell
 # Linux
 # Temporary due to https://issues.jasig.org/browse/UP-4454:
 export M2_HOME=<pathToYourQuickstartLocation>/apache-maven-3.0.5
@@ -200,7 +200,7 @@ If everything has been installed correctly you should see out-of-the-box uPortal
 
 ### Step 5: Stop uPortal
 
-```
+```shell
 ant stop
 ```
 

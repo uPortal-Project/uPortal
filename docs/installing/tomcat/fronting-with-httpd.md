@@ -77,7 +77,7 @@ LoadModule jk_module "/usr/lib/httpd/modules/mod_jk.so"
 
 Define the `IfModule` directive
 
-```
+```apache
 <IfModule mod_jk.c>
   JkWorkersFile "/path/to/apache/config/workers.properties"
   JkLogFile "/path/to/apache/logs/mod_jk.log"
@@ -119,17 +119,17 @@ worker.list=worker1
 ```
 
 
-### Option #2 mod_proxy/mod_proxy_ajp
+### Option \#2 mod_proxy/mod_proxy_ajp
 
 After you have configured Tomcat in Step 1 you will now need to go to your Apache config directory to setup mod_proxy.
 
-```
+```shell
 cd /path/to/apache/config
 ```
 
 Open httpd.conf for editing and uncomment the following modules.
 
-```
+```shell
 LoadModule proxy_module       /usr/lib/apache2-prefork/mod_proxy.so
 LoadModule proxy_ajp_module   /usr/lib/apache2-prefork/mod_proxy_ajp.so
 ```
@@ -138,13 +138,13 @@ LoadModule proxy_ajp_module   /usr/lib/apache2-prefork/mod_proxy_ajp.so
 
 You may chose to keep `mod_proxy_ajp` configurations separate by creating a new file (i.e., `mod_proxy_ajp.conf`), but you will need to map this path in your `httpd.conf` file.
 
-```
+```apache
 Include /path/to/apache/stuff/mod_proxy_ajp.conf
 ```
 
 Whether you place your `mod_proxy_ajp` configurations in a separate file or in the `httpd.conf` is entirely up to you, but you will need to include the following information.
 
-```
+```shell
 ProxyRequests Off
 <Proxy *>
         Order deny,allow

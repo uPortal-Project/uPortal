@@ -10,7 +10,7 @@ uPortal does support a number of popular production-class databases and you can 
 
 In the `filters` folder, locate the default `local.properties` file under `uPortal-4.1/filters/local.properties` and configure the Database Connection Settings
 
-```
+```shell
 # HSQL Configuration
 environment.build.hsql.port=8887
 

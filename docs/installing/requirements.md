@@ -103,7 +103,7 @@ unzip apache-maven-3.2.x.bin.zip
 
 #### 4. Set JAVA_HOME
 
-Same as above (*-nix instructions), make sure that `JAVA_HOME` exists in your user variables or in the system variables and set the location of your JDK (`C:\Program Files\Java\jdk1.x`)
+Same as above (\*-nix instructions), make sure that `JAVA_HOME` exists in your user variables or in the system variables and set the location of your JDK (`C:\Program Files\Java\jdk1.x`)
 
 #### 5. Update the Path environment variable
 

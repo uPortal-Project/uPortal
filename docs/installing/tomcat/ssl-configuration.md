@@ -11,7 +11,7 @@ The commands regarding creating the certificate keystore reference the `keytool`
 
 A certificate keystore is a single file that contains SSL private keys and certificates. Before you can configure Apache Tomcat to listen on https, you must create a certificate keystore that contains a private key and public certificate. Execute the following command:
 
-```
+```shell
 $JAVA_HOME/bin/keytool -genkey -alias tomcat -keyalg RSA
 ```
 
@@ -49,13 +49,13 @@ You are now ready to submit your CSR to your preferred Certificate Authority (CA
 
 Go to your `server.xml` file and open the `server.xml` file for editing. The file should be located at `/path/to/tomcat/conf/server.xml`.
 
-```
+```shell
 cd /path/to/tomcat/conf
 ```
 
 Comment out the following code block for port `8080` to disable plain text HTTP:
 
-```
+```xml
 <!-- Define a non-SSL HTTP/1.1 Connector on port 8080
 <Connector port="8080" maxHttpHeaderSize="8192"
   maxThreads="150" minSpareThreads="25" maxSpareThreads="75"
@@ -65,7 +65,7 @@ Comment out the following code block for port `8080` to disable plain text HTTP:
 
 Uncomment the following code block to enable the HTTPS connector on port `8443`:
 
-```
+```xml
 <!-- Define a SSL HTTP/1.1 Connector on port 8443 -->
 <Connector port="8443" maxHttpHeaderSize="8192"
   maxThreads="150" minSpareThreads="25" maxSpareThreads="75"
@@ -76,7 +76,7 @@ Uncomment the following code block to enable the HTTPS connector on port `8443`:
 
 Add the `address` attribute to the HTTPS connector:
 
-```
+```xml
 <Connector port="8443" maxHttpHeaderSize="8192" address="192.168.1.1"
            maxThreads="150" minSpareThreads="25" maxSpareThreads="75"
            enableLookups="false" disableUploadTimeout="true"
@@ -88,7 +88,7 @@ It is important to consider a proper value for the `address` attribute in the HT
 
 Once you have saved your changes to `server.xml`, simply restart Tomcat:
 
-```
+```shell
 $TOMCAT_HOME/bin/shutdown.sh
 $TOMCAT_HOME/bin/startup.sh
 ```
@@ -97,7 +97,7 @@ $TOMCAT_HOME/bin/startup.sh
 
 Your CA has finally signed your certificate; store the certificate file somewhere on the file system and execute the following command:
 
-```
+```shell
 $JAVA_HOME/bin/keytool -import -alias tomcat -keyalg RSA -file /path/to/your/certificate_reply.crt
 ```
 
