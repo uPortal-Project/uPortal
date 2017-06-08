@@ -92,6 +92,7 @@ public class CompositeEntityIdentifier extends EntityIdentifier implements IGrou
         return compositeKey;
     }
     /** @return java.lang.String */
+    @Override
     public synchronized String getKey() {
         if (cachedCompositeKey == null) {
             cachedCompositeKey = getCompositeKey().toString();
@@ -146,6 +147,7 @@ public class CompositeEntityIdentifier extends EntityIdentifier implements IGrou
      *
      * @return java.lang.String
      */
+    @Override
     public String toString() {
         return "CompositeEntityIdentifier (" + type + "(" + getKey() + "))";
     }
@@ -166,16 +168,19 @@ public class CompositeEntityIdentifier extends EntityIdentifier implements IGrou
             components = comps;
         }
 
+        @Override
         public Name add(String comp) {
             components.add(comp);
             return this;
         }
 
+        @Override
         public Name add(int posn, String comp) {
             components.add(posn, comp);
             return this;
         }
 
+        @Override
         public Name addAll(int posn, Name n) {
             int i = posn;
             for (Enumeration e = n.getAll(); e.hasMoreElements(); i++) {
@@ -184,6 +189,7 @@ public class CompositeEntityIdentifier extends EntityIdentifier implements IGrou
             return this;
         }
 
+        @Override
         public Name addAll(Name n) {
             for (Enumeration e = n.getAll(); e.hasMoreElements(); ) {
                 add((String) e.nextElement());
@@ -191,11 +197,13 @@ public class CompositeEntityIdentifier extends EntityIdentifier implements IGrou
             return this;
         }
 
+        @Override
         public Object clone() {
             List<String> comps = (List<String>) ((ArrayList<String>) components).clone();
             return new NameImpl(comps);
         }
 
+        @Override
         public int compareTo(Object obj) {
             if (this == obj) {
                 return 0;
@@ -226,6 +234,7 @@ public class CompositeEntityIdentifier extends EntityIdentifier implements IGrou
             return len1 - len2;
         }
 
+        @Override
         public boolean endsWith(Name n) {
             int startIndex = size() - n.size();
             if (startIndex < 0 || startIndex > size()) {
@@ -249,14 +258,17 @@ public class CompositeEntityIdentifier extends EntityIdentifier implements IGrou
             return true;
         }
 
+        @Override
         public String get(int posn) {
             return components.get(posn);
         }
 
+        @Override
         public Enumeration getAll() {
             return new NameImplEnumerator(components, 0, components.size());
         }
 
+        @Override
         public Name getPrefix(int posn) {
             if (posn < 0 || posn >= size()) {
                 throw new ArrayIndexOutOfBoundsException(posn);
@@ -264,6 +276,7 @@ public class CompositeEntityIdentifier extends EntityIdentifier implements IGrou
             return getNameComponents(0, posn);
         }
 
+        @Override
         public Name getSuffix(int posn) {
             if (posn < 0 || posn > size()) {
                 throw new ArrayIndexOutOfBoundsException(posn);
@@ -271,10 +284,12 @@ public class CompositeEntityIdentifier extends EntityIdentifier implements IGrou
             return getNameComponents(posn, size());
         }
 
+        @Override
         public boolean isEmpty() {
             return (components.isEmpty());
         }
 
+        @Override
         public Object remove(int posn) throws InvalidNameException {
             if (posn < 0 || posn >= size()) {
                 throw new InvalidNameException("Invalid position.");
@@ -282,15 +297,18 @@ public class CompositeEntityIdentifier extends EntityIdentifier implements IGrou
             return components.remove(posn);
         }
 
+        @Override
         public int size() {
             return (components.size());
         }
 
+        @Override
         public boolean startsWith(Name n) {
             Name myPrefix = getPrefix(n.size());
             return (myPrefix.compareTo(n) == 0);
         }
 
+        @Override
         public String toString() {
             if (size() == 0) {
                 return "";
@@ -311,6 +329,7 @@ public class CompositeEntityIdentifier extends EntityIdentifier implements IGrou
             return (sb.toString());
         }
 
+        @Override
         public boolean equals(Object obj) {
             if (obj == null) {
                 return false;
@@ -330,6 +349,7 @@ public class CompositeEntityIdentifier extends EntityIdentifier implements IGrou
             return target.toString().equals(this.toString());
         }
 
+        @Override
         public int hashCode() {
             int hash = 0;
             for (Enumeration e = getAll(); e.hasMoreElements(); ) {
@@ -363,10 +383,12 @@ public class CompositeEntityIdentifier extends EntityIdentifier implements IGrou
             limit = lim;
         }
 
+        @Override
         public boolean hasMoreElements() {
             return count < limit;
         }
 
+        @Override
         public String nextElement() {
             if (count < limit) {
                 return list.get(count++);

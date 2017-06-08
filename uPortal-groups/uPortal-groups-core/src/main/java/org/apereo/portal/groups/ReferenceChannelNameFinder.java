@@ -43,6 +43,7 @@ public class ReferenceChannelNameFinder implements IEntityNameFinder {
      *
      * @param key java.lang.String
      */
+    @Override
     public String getName(String key) throws Exception {
         IPortletDefinitionRegistry registry =
                 PortletDefinitionRegistryLocator.getPortletDefinitionRegistry();
@@ -61,6 +62,7 @@ public class ReferenceChannelNameFinder implements IEntityNameFinder {
      *
      * @return java.lang.Class
      */
+    @Override
     public Class getType() {
         return type;
     }

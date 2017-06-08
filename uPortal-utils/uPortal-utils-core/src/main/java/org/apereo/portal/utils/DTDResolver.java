@@ -73,6 +73,7 @@ public class DTDResolver implements EntityResolver {
      * @return an input source based on the dtd specified in the xml document or null if we don't
      *     have a dtd that matches systemId or publicId
      */
+    @Override
     public InputSource resolveEntity(String publicId, String systemId) {
         InputStream inStream = null;
 

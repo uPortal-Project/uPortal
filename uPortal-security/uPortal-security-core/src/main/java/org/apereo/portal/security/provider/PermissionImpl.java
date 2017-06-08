@@ -35,6 +35,7 @@ public class PermissionImpl implements IPermission, Serializable {
      *
      * @param owner
      */
+    @Override
     public PermissionImpl(String owner) {
         // Make sure to call the constructor that stores the owner
         super();
@@ -45,6 +46,7 @@ public class PermissionImpl implements IPermission, Serializable {
      *
      * @return String
      */
+    @Override
     public String getActivity() {
         return (m_activity);
     }
@@ -53,6 +55,7 @@ public class PermissionImpl implements IPermission, Serializable {
      *
      * @return the effective date that was set for this Permission
      */
+    @Override
     public Date getEffective() {
         return (m_effective);
     }
@@ -61,6 +64,7 @@ public class PermissionImpl implements IPermission, Serializable {
      *
      * @return the expires date that was set for this Permission
      */
+    @Override
     public Date getExpires() {
         return (m_expires);
     }
@@ -69,6 +73,7 @@ public class PermissionImpl implements IPermission, Serializable {
      *
      * @return the owner of this Permission
      */
+    @Override
     public String getOwner() {
         return (m_owner);
     }
@@ -78,12 +83,14 @@ public class PermissionImpl implements IPermission, Serializable {
      *
      * @return String
      */
+    @Override
     public String getPrincipal() {
         return (m_principal);
     }
     /**
      * Returns the token that represents the target associated with this <code>IPermission</code>.
      */
+    @Override
     public String getTarget() {
         return (m_target);
     }
@@ -92,6 +99,7 @@ public class PermissionImpl implements IPermission, Serializable {
      *
      * @return String
      */
+    @Override
     public String getType() {
         return (m_type);
     }
@@ -101,6 +109,7 @@ public class PermissionImpl implements IPermission, Serializable {
      *
      * @param activity String
      */
+    @Override
     public void setActivity(String activity) {
         m_activity = activity;
     }
@@ -109,6 +118,7 @@ public class PermissionImpl implements IPermission, Serializable {
      *
      * @param effective java.util.Date
      */
+    @Override
     public void setEffective(Date effective) {
         m_effective = effective;
     }
@@ -117,6 +127,7 @@ public class PermissionImpl implements IPermission, Serializable {
      *
      * @param expires java.util.Date
      */
+    @Override
     public void setExpires(Date expires) {
         m_expires = expires;
     }
@@ -126,6 +137,7 @@ public class PermissionImpl implements IPermission, Serializable {
      *
      * @param newPrincipal String
      */
+    @Override
     public void setPrincipal(String newPrincipal) {
         m_principal = newPrincipal;
     }
@@ -134,6 +146,7 @@ public class PermissionImpl implements IPermission, Serializable {
      *
      * @param target String
      */
+    @Override
     public void setTarget(String target) {
         m_target = target;
     }
@@ -142,10 +155,12 @@ public class PermissionImpl implements IPermission, Serializable {
      *
      * @param type String
      */
+    @Override
     public void setType(String type) {
         m_type = type;
     }
     /** @return java.lang.String */
+    @Override
     public String toString() {
         StringBuffer buff = new StringBuffer("Permission on ");
         buff.append(getTarget());

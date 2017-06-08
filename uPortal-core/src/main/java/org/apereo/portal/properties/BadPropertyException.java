@@ -44,6 +44,7 @@ public class BadPropertyException extends RuntimeException {
         this.desiredType = desiredType;
     }
 
+    @Override
     public String getMessage() {
         return "The property ["
                 + this.propertyName
@@ -54,6 +55,7 @@ public class BadPropertyException extends RuntimeException {
                 + "].";
     }
 
+    @Override
     public String getLocalizedMessage() {
         return getMessage();
     }

@@ -35,6 +35,7 @@ public class SimplePersonManager extends AbstractPersonManager {
      * @param request the servlet request object
      * @return the IPerson object for the incoming request
      */
+    @Override
     public IPerson getPerson(HttpServletRequest request) throws PortalSecurityException {
         HttpSession session = request.getSession(false);
         IPerson person = null;

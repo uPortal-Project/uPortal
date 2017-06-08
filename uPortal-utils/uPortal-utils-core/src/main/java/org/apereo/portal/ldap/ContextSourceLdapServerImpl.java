@@ -47,6 +47,7 @@ public class ContextSourceLdapServerImpl implements ILdapServer {
     }
 
     /** @see org.apereo.portal.ldap.ILdapServer#getBaseDN() */
+    @Override
     public String getBaseDN() {
         return this.baseDN;
     }
@@ -57,11 +58,13 @@ public class ContextSourceLdapServerImpl implements ILdapServer {
     }
 
     /** @see org.apereo.portal.ldap.ILdapServer#getConnection() */
+    @Override
     public DirContext getConnection() throws NamingException {
         return this.contextSource.getReadOnlyContext();
     }
 
     /** @see org.apereo.portal.ldap.ILdapServer#getUidAttribute() */
+    @Override
     public String getUidAttribute() {
         return this.uidAttribute;
     }
@@ -69,6 +72,7 @@ public class ContextSourceLdapServerImpl implements ILdapServer {
     /**
      * @see org.apereo.portal.ldap.ILdapServer#releaseConnection(javax.naming.directory.DirContext)
      */
+    @Override
     public void releaseConnection(DirContext conn) {
         try {
             conn.close();

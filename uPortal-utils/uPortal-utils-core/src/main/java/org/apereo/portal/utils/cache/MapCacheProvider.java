@@ -57,6 +57,7 @@ public class MapCacheProvider<K extends Serializable, V> implements Map<K, V> {
     /* (non-Javadoc)
      * @see java.util.Map#clear()
      */
+    @Override
     public void clear() {
         this.cache.removeAll();
     }
@@ -66,6 +67,7 @@ public class MapCacheProvider<K extends Serializable, V> implements Map<K, V> {
      *
      * @see java.util.Map#containsKey(java.lang.Object)
      */
+    @Override
     public boolean containsKey(Object key) {
         return this.cache.isKeyInCache(key);
     }
@@ -73,6 +75,7 @@ public class MapCacheProvider<K extends Serializable, V> implements Map<K, V> {
     /* (non-Javadoc)
      * @see java.util.Map#get(java.lang.Object)
      */
+    @Override
     @SuppressWarnings("unchecked")
     public V get(Object key) {
         final Element element = this.cache.get((Serializable) key);
@@ -86,6 +89,7 @@ public class MapCacheProvider<K extends Serializable, V> implements Map<K, V> {
     /* (non-Javadoc)
      * @see java.util.Map#put(java.lang.Object, java.lang.Object)
      */
+    @Override
     public V put(K key, V value) {
         final V old = this.get(key);
         this.cache.put(new Element(key, value));
@@ -95,6 +99,7 @@ public class MapCacheProvider<K extends Serializable, V> implements Map<K, V> {
     /* (non-Javadoc)
      * @see java.util.Map#putAll(java.util.Map)
      */
+    @Override
     public void putAll(Map<? extends K, ? extends V> t) {
         for (final Map.Entry<? extends K, ? extends V> e : t.entrySet()) {
             final K key = e.getKey();
@@ -107,6 +112,7 @@ public class MapCacheProvider<K extends Serializable, V> implements Map<K, V> {
     /* (non-Javadoc)
      * @see java.util.Map#remove(java.lang.Object)
      */
+    @Override
     public V remove(Object key) {
         final V old = this.get(key);
         this.cache.remove((Serializable) key);
@@ -151,6 +157,7 @@ public class MapCacheProvider<K extends Serializable, V> implements Map<K, V> {
     /* (non-Javadoc)
      * @see java.util.Map#containsValue(java.lang.Object)
      */
+    @Override
     public boolean containsValue(Object value) {
         return this.cache.isValueInCache(value);
     }
@@ -158,6 +165,7 @@ public class MapCacheProvider<K extends Serializable, V> implements Map<K, V> {
     /* (non-Javadoc)
      * @see java.util.Map#isEmpty()
      */
+    @Override
     public boolean isEmpty() {
         return this.cache.getSize() > 0;
     }
@@ -165,6 +173,7 @@ public class MapCacheProvider<K extends Serializable, V> implements Map<K, V> {
     /* (non-Javadoc)
      * @see java.util.Map#size()
      */
+    @Override
     public int size() {
         return this.cache.getSize();
     }
@@ -174,6 +183,7 @@ public class MapCacheProvider<K extends Serializable, V> implements Map<K, V> {
     /* (non-Javadoc)
      * @see java.util.Map#entrySet()
      */
+    @Override
     public Set<java.util.Map.Entry<K, V>> entrySet() {
         return Collections.emptySet();
     }
@@ -181,6 +191,7 @@ public class MapCacheProvider<K extends Serializable, V> implements Map<K, V> {
     /* (non-Javadoc)
      * @see java.util.Map#keySet()
      */
+    @Override
     public Set<K> keySet() {
         return Collections.emptySet();
     }
@@ -188,6 +199,7 @@ public class MapCacheProvider<K extends Serializable, V> implements Map<K, V> {
     /* (non-Javadoc)
      * @see java.util.Map#values()
      */
+    @Override
     public Collection<V> values() {
         return Collections.emptySet();
     }

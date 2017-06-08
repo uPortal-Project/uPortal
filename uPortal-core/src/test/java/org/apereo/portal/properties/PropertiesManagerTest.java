@@ -36,6 +36,7 @@ public class PropertiesManagerTest extends TestCase {
     /*
      * @see TestCase#setUp()
      */
+    @Override
     protected void setUp() throws Exception {
         super.setUp();
         Properties testProperties = new Properties();
@@ -43,6 +44,7 @@ public class PropertiesManagerTest extends TestCase {
         PropertiesManager.setProperties(testProperties);
     }
 
+    @Override
     protected void tearDown() throws Exception {
         super.tearDown();
         if (this.systemPropertyValue != null)

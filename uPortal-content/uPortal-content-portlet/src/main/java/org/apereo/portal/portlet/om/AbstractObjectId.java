@@ -34,6 +34,7 @@ public abstract class AbstractObjectId implements IObjectId {
     /* (non-Javadoc)
      * @see org.apache.pluto.PortletEntityID#getStringId()
      */
+    @Override
     public String getStringId() {
         return this.objectId;
     }

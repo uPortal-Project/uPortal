@@ -58,6 +58,7 @@ public class HashedDaoAuthToken extends AuthToken {
         return av;
     }
 
+    @Override
     public String getName() {
         return HashedDaoAuthToken.class.getName();
     }
@@ -70,6 +71,7 @@ public class HashedDaoAuthToken extends AuthToken {
         return  authValue == null ? 0 : authValue.length();     // might still be null
     }
 
+    @Override
     public boolean authenticate(AuthToken token, Message msg) {
 
         if ((token != null) && (token instanceof HashedDaoAuthToken)) {
@@ -95,6 +97,7 @@ public class HashedDaoAuthToken extends AuthToken {
         return false;
     }
 
+    @Override
     public void writeTo(DataOutput out) throws Exception {
         if (log.isDebugEnabled()) {
             log.debug("HashedDaoAuthToken writeTo()");
@@ -102,6 +105,7 @@ public class HashedDaoAuthToken extends AuthToken {
         Util.writeObject(this.getAuthValue(), out);
     }
 
+    @Override
     public void readFrom(DataInput in) throws Exception {
         if (log.isDebugEnabled()) {
             log.debug("HashedDaoAuthToken readFrom()");

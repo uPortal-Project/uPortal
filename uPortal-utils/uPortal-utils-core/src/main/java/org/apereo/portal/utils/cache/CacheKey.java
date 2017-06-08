@@ -106,6 +106,7 @@ public final class CacheKey implements Serializable, TaggedCacheEntry {
             return this;
         }
 
+        @Override
         public CacheKeyBuilder<K, V> put(K k, V v) {
             checkKeyMap();
 
@@ -122,6 +123,7 @@ public final class CacheKey implements Serializable, TaggedCacheEntry {
             return this;
         }
 
+        @Override
         public CacheKeyBuilder<K, V> putAll(Map<? extends K, ? extends V> vm) {
             checkKeyMap();
 

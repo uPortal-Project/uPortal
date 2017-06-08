@@ -87,6 +87,7 @@ public class EntityCachingService implements IEntityCachingService {
      * @param ent org.apereo.portal.IBasicEntity
      * @exception org.apereo.portal.concurrency.CachingException
      */
+    @Override
     public void add(IBasicEntity ent) throws CachingException {
         EntityCachingServiceLocator.getEntityCachingService().add(ent);
     }
@@ -99,6 +100,7 @@ public class EntityCachingService implements IEntityCachingService {
      * @return IBasicEntity entity
      * @exception org.apereo.portal.concurrency.CachingException
      */
+    @Override
     public IBasicEntity get(Class<? extends IBasicEntity> type, String key)
             throws CachingException {
         return EntityCachingServiceLocator.getEntityCachingService().get(type, key);
@@ -123,6 +125,7 @@ public class EntityCachingService implements IEntityCachingService {
      * @param key String
      * @exception org.apereo.portal.concurrency.CachingException
      */
+    @Override
     public void remove(Class<? extends IBasicEntity> type, String key) throws CachingException {
         EntityCachingServiceLocator.getEntityCachingService().remove(type, key);
     }
@@ -153,6 +156,7 @@ public class EntityCachingService implements IEntityCachingService {
      * @param ent org.apereo.portal.concurrency.IBasicEntity
      * @exception org.apereo.portal.concurrency.CachingException
      */
+    @Override
     public void update(IBasicEntity ent) throws CachingException {
         EntityCachingServiceLocator.getEntityCachingService().update(ent);
     }

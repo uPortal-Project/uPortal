@@ -37,6 +37,7 @@ public class MySQL5InnoDBCompressedDialect extends MySQL5InnoDBDialect {
         super();
     }
 
+    @Override
     public String getTableTypeString() {
         return " ENGINE=InnoDB ROW_FORMAT=COMPRESSED";
     }
@@ -62,6 +63,7 @@ public class MySQL5InnoDBCompressedDialect extends MySQL5InnoDBDialect {
 
         public static final MySqlDoubleTypeDescriptor INSTANCE = new MySqlDoubleTypeDescriptor();
 
+        @Override
         public <X> ValueBinder<X> getBinder(final JavaTypeDescriptor<X> javaTypeDescriptor) {
             return new BasicBinder<X>(javaTypeDescriptor, this) {
                 @Override

@@ -74,6 +74,7 @@ public class RDBMEntityLockStore implements IEntityLockStore {
      *
      * @param lock
      */
+    @Override
     public void add(IEntityLock lock) throws LockingException {
         Connection conn = null;
         try {
@@ -92,6 +93,7 @@ public class RDBMEntityLockStore implements IEntityLockStore {
      *
      * @param lock
      */
+    @Override
     public void delete(IEntityLock lock) throws LockingException {
         Connection conn = null;
         try {
@@ -105,6 +107,7 @@ public class RDBMEntityLockStore implements IEntityLockStore {
     }
 
     /** Delete all IEntityLocks from the underlying store. */
+    @Override
     public void deleteAll() throws LockingException {
         Connection conn = null;
         Statement stmnt = null;
@@ -135,6 +138,7 @@ public class RDBMEntityLockStore implements IEntityLockStore {
      *
      * @param expiration
      */
+    @Override
     public void deleteExpired(Date expiration) throws LockingException {
         deleteExpired(expiration, null, null);
     }
@@ -179,6 +183,7 @@ public class RDBMEntityLockStore implements IEntityLockStore {
      * @param lockOwner String
      * @exception LockingException - wraps an Exception specific to the store.
      */
+    @Override
     public IEntityLock[] find(
             Class entityType, String entityKey, Integer lockType, Date expiration, String lockOwner)
             throws LockingException {
@@ -195,6 +200,7 @@ public class RDBMEntityLockStore implements IEntityLockStore {
      * @param lockOwner String
      * @exception LockingException - wraps an Exception specific to the store.
      */
+    @Override
     public IEntityLock[] findUnexpired(
             Date expiration, Class entityType, String entityKey, Integer lockType, String lockOwner)
             throws LockingException {
@@ -320,7 +326,7 @@ public class RDBMEntityLockStore implements IEntityLockStore {
      */
     private IEntityLock instanceFromResultSet(java.sql.ResultSet rs)
             throws SQLException, LockingException {
-        Integer entityTypeID = new Integer(rs.getInt(1));
+        Integer entityTypeID = rs.getInt(1);
         Class entityType = EntityTypesLocator.getEntityTypes().getEntityTypeFromID(entityTypeID);
         String key = rs.getString(2);
         int lockType = rs.getInt(3);
@@ -634,6 +640,7 @@ public class RDBMEntityLockStore implements IEntityLockStore {
      * @param lock org.apereo.portal.groups.IEntityLock
      * @param newExpiration java.util.Date
      */
+    @Override
     public void update(IEntityLock lock, java.util.Date newExpiration) throws LockingException {
         update(lock, newExpiration, null);
     }
@@ -645,6 +652,7 @@ public class RDBMEntityLockStore implements IEntityLockStore {
      * @param newExpiration java.util.Date
      * @param newLockType Integer
      */
+    @Override
     public void update(IEntityLock lock, Date newExpiration, Integer newLockType)
             throws LockingException {
         Connection conn = null;

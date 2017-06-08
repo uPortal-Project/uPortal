@@ -35,6 +35,7 @@ public class ReferenceEntityGroupStoreFactory implements IEntityGroupStoreFactor
      * @return IEntityGroupStore
      * @exception GroupsException
      */
+    @Override
     public IEntityGroupStore newGroupStore() throws GroupsException {
         return newGroupStore(null);
     }
@@ -44,6 +45,7 @@ public class ReferenceEntityGroupStoreFactory implements IEntityGroupStoreFactor
      * @return IEntityGroupStore
      * @exception GroupsException
      */
+    @Override
     public IEntityGroupStore newGroupStore(ComponentGroupServiceDescriptor svcDescriptor)
             throws GroupsException {
         return newInstance();

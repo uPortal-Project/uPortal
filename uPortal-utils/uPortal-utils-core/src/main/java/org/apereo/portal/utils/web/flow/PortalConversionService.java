@@ -33,6 +33,7 @@ public class PortalConversionService extends DefaultConversionService {
     /* (non-Javadoc)
      * Modify this method to add more converters.
      */
+    @Override
     protected void addDefaultConverters() {
         super.addDefaultConverters();
 
