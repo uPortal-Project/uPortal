@@ -47,138 +47,172 @@ public class LazyPrintWriter extends PrintWriter {
         return this.printWriter;
     }
 
+    @Override
     public void flush() {
         getPrintWriter().flush();
     }
 
+    @Override
     public void close() {
         getPrintWriter().close();
     }
 
+    @Override
     public boolean checkError() {
         return getPrintWriter().checkError();
     }
 
+    @Override
     public void write(int c) {
         getPrintWriter().write(c);
     }
 
+    @Override
     public void write(char[] buf, int off, int len) {
         getPrintWriter().write(buf, off, len);
     }
 
+    @Override
     public void write(char[] buf) {
         getPrintWriter().write(buf);
     }
 
+    @Override
     public void write(String s, int off, int len) {
         getPrintWriter().write(s, off, len);
     }
 
+    @Override
     public void write(String s) {
         getPrintWriter().write(s);
     }
 
+    @Override
     public void print(boolean b) {
         getPrintWriter().print(b);
     }
 
+    @Override
     public void print(char c) {
         getPrintWriter().print(c);
     }
 
+    @Override
     public void print(int i) {
         getPrintWriter().print(i);
     }
 
+    @Override
     public void print(long l) {
         getPrintWriter().print(l);
     }
 
+    @Override
     public void print(float f) {
         getPrintWriter().print(f);
     }
 
+    @Override
     public void print(double d) {
         getPrintWriter().print(d);
     }
 
+    @Override
     public void print(char[] s) {
         getPrintWriter().print(s);
     }
 
+    @Override
     public void print(String s) {
         getPrintWriter().print(s);
     }
 
+    @Override
     public void print(Object obj) {
         getPrintWriter().print(obj);
     }
 
+    @Override
     public void println() {
         getPrintWriter().println();
     }
 
+    @Override
     public void println(boolean x) {
         getPrintWriter().println(x);
     }
 
+    @Override
     public void println(char x) {
         getPrintWriter().println(x);
     }
 
+    @Override
     public void println(int x) {
         getPrintWriter().println(x);
     }
 
+    @Override
     public void println(long x) {
         getPrintWriter().println(x);
     }
 
+    @Override
     public void println(float x) {
         getPrintWriter().println(x);
     }
 
+    @Override
     public void println(double x) {
         getPrintWriter().println(x);
     }
 
+    @Override
     public void println(char[] x) {
         getPrintWriter().println(x);
     }
 
+    @Override
     public void println(String x) {
         getPrintWriter().println(x);
     }
 
+    @Override
     public void println(Object x) {
         getPrintWriter().println(x);
     }
 
+    @Override
     public PrintWriter printf(String format, Object... args) {
         return getPrintWriter().printf(format, args);
     }
 
+    @Override
     public PrintWriter printf(Locale l, String format, Object... args) {
         return getPrintWriter().printf(l, format, args);
     }
 
+    @Override
     public PrintWriter format(String format, Object... args) {
         return getPrintWriter().format(format, args);
     }
 
+    @Override
     public PrintWriter format(Locale l, String format, Object... args) {
         return getPrintWriter().format(l, format, args);
     }
 
+    @Override
     public PrintWriter append(CharSequence csq) {
         return getPrintWriter().append(csq);
     }
 
+    @Override
     public PrintWriter append(CharSequence csq, int start, int end) {
         return getPrintWriter().append(csq, start, end);
     }
 
+    @Override
     public PrintWriter append(char c) {
         return getPrintWriter().append(c);
     }

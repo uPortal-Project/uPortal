@@ -83,6 +83,7 @@ public class UserGroupSkinMappingTransformerConfigurationSource
         this.groupToSkinMap = groupToSkinMap;
     }
 
+    @Override
     protected String getSkinName(HttpServletRequest request) {
 
         final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);

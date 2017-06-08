@@ -35,7 +35,6 @@ public class PermissionImpl implements IPermission, Serializable {
      *
      * @param owner
      */
-    @Override
     public PermissionImpl(String owner) {
         // Make sure to call the constructor that stores the owner
         super();

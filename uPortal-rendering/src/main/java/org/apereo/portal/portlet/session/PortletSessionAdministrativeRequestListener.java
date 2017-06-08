@@ -59,6 +59,7 @@ public class PortletSessionAdministrativeRequestListener implements Administrati
      *     org.apache.pluto.spi.optional.AdministrativeRequestListener#administer(javax.portlet.PortletRequest,
      *     javax.portlet.PortletResponse)
      */
+    @Override
     public void administer(PortletRequest request, PortletResponse response) {
         final SessionAction action = this.getAction(request);
         final Object[] arguments = this.getArguments(request);
