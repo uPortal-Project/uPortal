@@ -110,6 +110,7 @@ public class PersonLookupHelperImpl implements IPersonLookupHelper {
     /* (non-Javadoc)
      * @see org.apereo.portal.portlets.swapper.IPersonLookupHelper#getQueryAttributes(org.springframework.webflow.context.ExternalContext)
      */
+    @Override
     public Set<String> getQueryAttributes(ExternalContext externalContext) {
         final PortletRequest portletRequest = (PortletRequest) externalContext.getNativeRequest();
         final PortletPreferences preferences = portletRequest.getPreferences();
@@ -144,6 +145,7 @@ public class PersonLookupHelperImpl implements IPersonLookupHelper {
     /* (non-Javadoc)
      * @see org.apereo.portal.portlets.swapper.IPersonLookupHelper#getDisplayAttributes(org.springframework.webflow.context.ExternalContext)
      */
+    @Override
     public Set<String> getDisplayAttributes(ExternalContext externalContext) {
         final PortletRequest portletRequest = (PortletRequest) externalContext.getNativeRequest();
         final PortletPreferences preferences = portletRequest.getPreferences();
@@ -179,6 +181,7 @@ public class PersonLookupHelperImpl implements IPersonLookupHelper {
     /* (non-Javadoc)
      * @see org.apereo.portal.portlets.lookup.IPersonLookupHelper#getSelf(org.springframework.webflow.context.ExternalContext)
      */
+    @Override
     public IPersonAttributes getSelf(ExternalContext externalContext) {
 
         final PortletRequest portletRequest = (PortletRequest) externalContext.getNativeRequest();
@@ -190,6 +193,7 @@ public class PersonLookupHelperImpl implements IPersonLookupHelper {
     /* (non-Javadoc)
      * @see org.apereo.portal.portlets.lookup.IPersonLookupHelper#searchForPeople(org.apereo.portal.security.IPerson, java.util.Map)
      */
+    @Override
     public List<IPersonAttributes> searchForPeople(
             final IPerson searcher, final Map<String, Object> query) {
 
@@ -370,6 +374,7 @@ public class PersonLookupHelperImpl implements IPersonLookupHelper {
     /* (non-Javadoc)
      * @see org.apereo.portal.portlets.lookup.IPersonLookupHelper#findPerson(org.apereo.portal.security.IPerson, java.lang.String)
      */
+    @Override
     public IPersonAttributes findPerson(final IPerson searcher, final String username) {
 
         // get the IAuthorizationPrincipal for the searching user

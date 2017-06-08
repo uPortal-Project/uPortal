@@ -24,11 +24,13 @@ public class ForwardingDispatcherPortlet extends DispatcherPortlet {
     /** URL that points to the ViewRendererServlet */
     private String viewRendererUrl = DispatcherPortlet.DEFAULT_VIEW_RENDERER_URL;
 
+    @Override
     public void setViewRendererUrl(String viewRendererUrl) {
         this.viewRendererUrl = viewRendererUrl;
         super.setViewRendererUrl(viewRendererUrl);
     }
 
+    @Override
     protected void doRender(View view, Map model, PortletRequest request, MimeResponse response)
             throws Exception {
         // Expose Portlet ApplicationContext to view objects.
