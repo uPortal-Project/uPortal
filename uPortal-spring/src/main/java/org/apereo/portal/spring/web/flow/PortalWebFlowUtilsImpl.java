@@ -48,6 +48,7 @@ public class PortalWebFlowUtilsImpl implements IPortalWebFlowUtils {
     /* (non-Javadoc)
      * @see org.apereo.portal.spring.web.flow.IPortalWebFlowUtils#getCurrentPerson(org.springframework.webflow.context.ExternalContext)
      */
+    @Override
     public IPerson getCurrentPerson(final ExternalContext externalContext) {
         final HttpServletRequest servletRequest =
                 getServletRequestFromExternalContext(externalContext);
@@ -57,6 +58,7 @@ public class PortalWebFlowUtilsImpl implements IPortalWebFlowUtils {
     /* (non-Javadoc)
      * @see org.apereo.portal.spring.web.flow.IPortalWebFlowUtils#getCurrentPrincipal(org.springframework.webflow.context.ExternalContext)
      */
+    @Override
     public IAuthorizationPrincipal getCurrentPrincipal(final ExternalContext externalContext) {
         final IPerson person = getCurrentPerson(externalContext);
         final EntityIdentifier ei = person.getEntityIdentifier();

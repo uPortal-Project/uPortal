@@ -44,6 +44,7 @@ public class FailsafeSingletonScope implements Scope, DisposableBean {
     /* (non-Javadoc)
      * @see org.springframework.beans.factory.DisposableBean#destroy()
      */
+    @Override
     public void destroy() throws Exception {
         for (final InstanceHolder instanceHolder : this.instances.values()) {
             if (instanceHolder.destructionCallback != null) {
@@ -66,6 +67,7 @@ public class FailsafeSingletonScope implements Scope, DisposableBean {
      * @see org.springframework.web.context.request.SessionScope#get(java.lang.String,
      *     org.springframework.beans.factory.ObjectFactory)
      */
+    @Override
     public Object get(String name, ObjectFactory<?> objectFactory) {
         try {
             return this.delegateScope.get(name, objectFactory);
@@ -92,6 +94,7 @@ public class FailsafeSingletonScope implements Scope, DisposableBean {
     }
 
     /** @see org.springframework.web.context.request.SessionScope#getConversationId() */
+    @Override
     public String getConversationId() {
         try {
             return this.delegateScope.getConversationId();
@@ -105,6 +108,7 @@ public class FailsafeSingletonScope implements Scope, DisposableBean {
      *     org.springframework.web.context.request.AbstractRequestAttributesScope#registerDestructionCallback(java.lang.String,
      *     java.lang.Runnable)
      */
+    @Override
     public void registerDestructionCallback(String name, Runnable callback) {
         try {
             this.delegateScope.registerDestructionCallback(name, callback);
@@ -131,6 +135,7 @@ public class FailsafeSingletonScope implements Scope, DisposableBean {
     }
 
     /** @see org.springframework.web.context.request.SessionScope#remove(java.lang.String) */
+    @Override
     public Object remove(String name) {
         try {
             return this.delegateScope.remove(name);

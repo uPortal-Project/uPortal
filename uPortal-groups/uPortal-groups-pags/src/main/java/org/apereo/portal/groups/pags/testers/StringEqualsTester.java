@@ -30,6 +30,7 @@ public class StringEqualsTester extends AbstractStringTester {
         super(definition);
     }
 
+    @Override
     public boolean test(String att) {
         return att.equals(testValue);
     }

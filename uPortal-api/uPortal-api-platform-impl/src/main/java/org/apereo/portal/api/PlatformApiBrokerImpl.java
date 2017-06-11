@@ -28,6 +28,7 @@ public class PlatformApiBrokerImpl implements PlatformApiBroker {
         this.permissionsService = permissionsService;
     }
 
+    @Override
     public PermissionsService getPermissionsService() {
         return permissionsService;
     }
@@ -39,6 +40,7 @@ public class PlatformApiBrokerImpl implements PlatformApiBroker {
         this.groupsService = groupsService;
     }
 
+    @Override
     public GroupsService getGroupsService() {
         return groupsService;
     }

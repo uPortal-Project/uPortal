@@ -22,6 +22,7 @@ import org.apereo.portal.groups.IEntitySearcherFactory;
  * @since 4.1
  */
 public class EntityPersonAttributesEntitySearcherFactory implements IEntitySearcherFactory {
+    @Override
     public IEntitySearcher newEntitySearcher() throws GroupsException {
         return (IEntitySearcher) new EntityPersonAttributesGroupStoreFactory().newGroupStore();
     }

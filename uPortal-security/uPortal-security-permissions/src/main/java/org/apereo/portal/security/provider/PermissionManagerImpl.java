@@ -51,12 +51,14 @@ public class PermissionManagerImpl implements IPermissionManager {
      * @param activity String - the Permission activity
      * @param target String - the Permission target
      */
+    @Override
     public IAuthorizationPrincipal[] getAuthorizedPrincipals(String activity, String target)
             throws AuthorizationException {
         return getAuthorizationService().getAuthorizedPrincipals(getOwner(), activity, target);
     }
 
     /** @return java.lang.String */
+    @Override
     public java.lang.String getOwner() {
         return owner;
     }
@@ -75,6 +77,7 @@ public class PermissionManagerImpl implements IPermissionManager {
      * @return IPermission[]
      * @exception AuthorizationException
      */
+    @Override
     public IPermission[] getPermissions(String activity, String target)
             throws AuthorizationException {
         return getAuthorizationService().getPermissionsForOwner(getOwner(), activity, target);

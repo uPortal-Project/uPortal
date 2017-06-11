@@ -211,6 +211,7 @@ public class EventAggregationConfigurationImporterExporter
                 Lists.transform(
                         data.getTermDetails(),
                         new Function<ExternalTermDetail, AcademicTermDetail>() {
+                            @Override
                             public AcademicTermDetail apply(ExternalTermDetail externalTermDetail) {
                                 return new AcademicTermDetailImpl(
                                         new DateMidnight(externalTermDetail.getStart()),

@@ -31,10 +31,12 @@ public class EntityPersonAttributesGroupStoreFactory implements IEntityGroupStor
         return groupStore;
     }
 
+    @Override
     public IEntityGroupStore newGroupStore() throws GroupsException {
         return getGroupStore();
     }
 
+    @Override
     public IEntityGroupStore newGroupStore(ComponentGroupServiceDescriptor svcDescriptor)
             throws GroupsException {
         return getGroupStore();

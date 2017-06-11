@@ -48,6 +48,7 @@ public enum ExternalPermissionDefinition {
         return exportForPortletDef;
     }
 
+    @Override
     public String toString() {
         return system + "." + activity;
     }

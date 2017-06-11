@@ -36,6 +36,7 @@ public abstract class AbstractIntegerTester extends BaseAttributeTester {
         return testInteger;
     }
 
+    @Override
     public final boolean test(IPerson person) {
 
         boolean result = false; // default

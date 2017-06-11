@@ -83,6 +83,7 @@ public class PagsGroup {
         return false;
     }
 
+    @Override
     public String toString() {
         return "GroupDefinition " + key + " (" + name + ")";
     }

@@ -79,6 +79,7 @@ public class AnyUnblockedGrantPermissionPolicy implements IPermissionPolicy {
     )
     private Cache hasUnblockedGrantCache;
 
+    @Override
     public boolean doesPrincipalHavePermission(
             IAuthorizationService service,
             IAuthorizationPrincipal principal,
