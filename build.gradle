@@ -5,6 +5,7 @@ description = "Apereo uPortal $version"
 apply plugin: 'com.gradle.build-scan'
 apply plugin: me.champeau.gradle.buildscans.RecipesPlugin
 apply plugin: 'java'
+apply plugin: 'build-announcements'
 
 // Adds support for Node.js scripts
 apply plugin: 'com.moowork.node'
