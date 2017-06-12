@@ -4,7 +4,9 @@ description = "Apereo uPortal $version"
 // build right in your browser.  (https://scans.gradle.com/plugin)
 apply plugin: 'com.gradle.build-scan'
 apply plugin: 'com.github.kt3k.coveralls'
+apply plugin: me.champeau.gradle.buildscans.RecipesPlugin
 apply plugin: 'java'
+apply plugin: 'build-announcements'
 
 // Adds support for Node.js scripts
 apply plugin: 'com.moowork.node'
@@ -33,6 +35,7 @@ buildscript {
         classpath 'com.moowork.gradle:gradle-node-plugin:0.13'
         classpath 'gradle.plugin.com.github.sherter.google-java-format:google-java-format-gradle-plugin:0.6'
         classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.1'
+        classpath 'me.champeau.gradle:buildscan-recipes-plugin:0.2.0'
     }
 }
 
@@ -44,6 +47,9 @@ node {
 buildScan {
     licenseAgreementUrl = 'https://gradle.com/terms-of-service'
     licenseAgree = 'yes'
+}
+buildScanRecipes {
+    recipes 'travis-ci', 'git-commit'
 }
 
 allprojects {

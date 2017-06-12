@@ -4,7 +4,7 @@ sudo: false
 
 install: ./gradlew install
 
-script: ./gradlew -u -i -q -S check jacocoAggregateReport coveralls
+script: ./gradlew -u -i -q -S --scan check jacocoAggregateReport coveralls
 
 cache:
   directories:
