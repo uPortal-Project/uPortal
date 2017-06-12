@@ -9,7 +9,7 @@ install:
 
 script:
   - mvn clean test cobertura:cobertura coveralls:report -B -V
-  - ./gradlew -u -i -S check
+  - ./gradlew -u -i -S --scan check
 
 cache:
   directories:
