@@ -2,9 +2,8 @@ language: java
 jdk: oraclejdk8
 sudo: false
 
-install: ./gradlew install
-
-script: ./gradlew -u -i -q -S --scan check jacocoAggregateReport coveralls
+# The 'build' task runs everything, including test, check, & static analysis
+install: ./gradlew -u -i -S build
 
 cache:
   directories:

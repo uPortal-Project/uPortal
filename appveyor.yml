@@ -4,8 +4,7 @@ os: Visual Studio 2017 # Windows Server 2016
 install:
   - java -version
   - gradlew.bat --version
-build_script: gradlew.bat -u -i install
-test_script: gradlew.bat -u -i -S check
+build_script: gradlew.bat -u -i -S build # The 'build' task runs everything, including test, check, & static analysis
 cache:
   - .gradle
   - C:\Users\appveyor\.gradle
