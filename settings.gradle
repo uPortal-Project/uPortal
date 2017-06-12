@@ -15,6 +15,7 @@ include 'uPortal-tenants'
 include 'uPortal-tools'
 include 'uPortal-url'
 include 'uPortal-web'
+include 'uPortal-webapp'
 
 include 'uPortal-api:uPortal-api-internal'
 include 'uPortal-api:uPortal-api-platform'

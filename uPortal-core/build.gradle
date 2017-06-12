@@ -8,13 +8,19 @@ dependencies {
     compile "joda-time:joda-time:${jodaTimeVersion}"
     compile "org.apache.commons:commons-lang3:${commonsLang3Version}"
     compile "org.hibernate:hibernate-core:${hibernateVersion}"
+    compile("org.jadira.usertype:usertype.core:${usertypeVersion}") {
+        exclude group: 'org.hibernate', module: 'hibernate-core'
+        exclude group: 'org.hibernate', module: 'hibernate-entitymanager'
+    }
     compile "org.jadira.usertype:usertype.spi:${usertypeVersion}"
+    compile "org.slf4j:log4j-over-slf4j:${slf4jVersion}"
+    compile "org.slf4j:jcl-over-slf4j:${slf4jVersion}"
     compile "org.slf4j:slf4j-api:${slf4jVersion}"
     compile "org.springframework:spring-context:${springVersion}"
     compile "org.springframework:spring-jdbc:${springVersion}"
     compile "org.springframework.security:spring-security-core:${springSecurityVersion}"
 
-    provided "org.apache.portals.pluto:pluto-container-api:${plutoVersion}"
-    provided "${portletApiDependency}"
-    provided "${servletApiDependency}"
+    compileOnly "org.apache.portals.pluto:pluto-container-api:${plutoVersion}"
+    compileOnly "${portletApiDependency}"
+    compileOnly "${servletApiDependency}"
 }

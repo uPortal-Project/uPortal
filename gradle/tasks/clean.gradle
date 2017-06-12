@@ -1,0 +1,39 @@
+def props = new Properties()
+
+task loadBuildFile() {
+    doLast {
+        println 'Load the build.properties file'
+        def buildPropsFile = file('build.properties')
+        if (buildPropsFile.exists()) {
+            buildPropsFile.withInputStream {props.load(it)}
+        } else {
+            println('WARNING: build.properties not found')
+        }
+    }
+}
+
+task cleanShared(type: Delete, dependsOn: 'loadBuildFile') {
+    group 'Clean Tomcat'
+    description 'Removes ALL shared libraries from the servlet container.'
+    followSymlinks = true
+
+    doFirst {
+        def serverbase = props.getProperty('server.home')
+        def libs = "${serverbase}/shared/lib"
+        println "Configured shared libraries from servlet container at location:  ${libs}"
+        delete libs
+    }
+}
+
+task cleanPortal(type: Delete, dependsOn: 'loadBuildFile') {
+    group 'Clean Tomcat'
+    description 'Removes the deployed uPortal from the servlet container.'
+    followSymlinks = true
+
+    doFirst {
+        def serverbase = props.getProperty('server.home')
+        def uPortalDeployDir = "${serverbase}/webapps/uPortal"
+        println "Configured deployed uPortal from servlet container at location:  ${uPortalDeployDir}"
+        delete uPortalDeployDir
+    }
+}

@@ -23,4 +23,6 @@ dependencies {
         exclude group: 'javax.script', module: 'groovy-engine'
         exclude group: 'javax.script', module: 'script-api'
     }
+
+    compileOnly "org.apache.portals.pluto:pluto-container-api:${plutoVersion}"
 }

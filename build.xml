@@ -122,7 +122,7 @@
      +-->
     <property name="bootstrap.dir" value="${basedir}/bootstrap" />
 	<property name="uportal-db.dir" value="${basedir}/uportal-db" />
-    <property name="uportal-war.dir" value="${basedir}/uportal-war" />
+    <property name="uportal-war.dir" value="${basedir}/uportal-portlets-overlay/uPortal" />
     <property name="uportal-portlets-overlay.dir" value="${basedir}/uportal-portlets-overlay" />
     <property name="uportal-ear.dir" value="${basedir}/uportal-ear" />
     <property name="uportal.war.name" value="uPortal"/> <!-- Keep in sync with uportal.docbase in pom.xml and environment.build.uportal.context in filters/*.properties -->
@@ -990,7 +990,7 @@
     <target name="db-import-required" depends="prodPrompt" description="Imports the required data files to the database">
         <up-shell-batch>
             <antcall target="data-import">
-                <param name="dir" value="${basedir}/uportal-war/src/main/data/required_entities" />
+                <param name="dir" value="${basedir}/uportal-data/required" />
             </antcall>
         </up-shell-batch>
     </target>
@@ -998,7 +998,7 @@
     <!-- Internal use -->
     <target name="db-import-default" depends="prodPrompt" description="Imports the default data files to the database">
         <!-- Use build.properties to override the entities.location setting -->
-        <property name="default_entities.location" value="uportal-war/src/main/data/default_entities" />
+        <property name="default_entities.location" value="uportal-data/default" />
 
         <up-shell-batch>
             <antcall target="data-import">
@@ -1010,7 +1010,7 @@
     <!-- Internal use -->
     <target name="db-import-quickstart" depends="prodPrompt" description="Imports the quickstart data files to the database">
         <!-- Use build.properties to override the entities.location setting -->
-        <property name="quickstart_entities.location" value="uportal-war/src/main/data/quickstart_entities" />
+        <property name="quickstart_entities.location" value="uportal-data/quickstart" />
 
         <up-shell-batch>
             <antcall target="data-import">
@@ -1522,7 +1522,7 @@ IMPORTANT: The '-Dpattern=' property is no longer a regular expression and is a 
                  | target directory from the uPortal war build (or we could define a reference to the one in
                  | .m2/repository but the target dir is simpler and the file should be present).
                  +-->
-                <fail message="Unable to find ${uportal-war.dir}/target/uPortal-classes.jar. Run ant deploy-war to rebuild uportal-war">
+                <fail message="Unable to find ${uportal-war.dir}/target/${uportal.war.name}-classes.jar. Run ant deploy-war to rebuild uportal-war">
                     <condition>
                         <not>
                             <available file="${uportal-war.dir}/target/${uportal.war.name}-classes.jar"/>
