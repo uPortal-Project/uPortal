@@ -94,6 +94,10 @@ subprojects {
      *
      * Based on Sonatype's guide for publishing w/ Gradle:  http://central.sonatype.org/pages/gradle.html
      */
+    ext {
+        publishingUsername = project.hasProperty('ossrhUsername') ? project.getProperty('ossrhUsername') : ""
+        publishingPassword = project.hasProperty('ossrhPassword') ? project.getProperty('ossrhPassword') : ""
+    }
     signing {
         required { gradle.taskGraph.hasTask('uploadArchives') }
         sign configurations.archives
@@ -125,7 +129,7 @@ subprojects {
                 beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
 
                 repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-                    authentication(userName: ossrhUsername, password: ossrhPassword)
+                    authentication(userName: publishingUsername, password: publishingPassword)
                 }
 
                 pom.project {
