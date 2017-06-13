@@ -2,8 +2,9 @@ language: java
 jdk: oraclejdk8
 sudo: false
 
-# The 'build' task runs everything, including test, check, & static analysis
-install: ./gradlew -u -i -S build
+# The 'build' task runs most things, including test, check, & static analysis
+install: true
+script: ./gradlew -u -i -q -S build jacocoAggregateReport coveralls
 
 cache:
   directories:
