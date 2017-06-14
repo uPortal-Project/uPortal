@@ -3,19 +3,14 @@ environment:
 os: Visual Studio 2017 # Windows Server 2016
 install:
   - java -version
-  - mvn --version
   - gradlew.bat --version
-build_script:
-  - gradlew.bat -u -i install
-  - gradlew.bat -u -i npm_install
-  - mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
+# The 'build' task runs most things, including test, check, & static analysis
+build: off
 test_script:
-  - mvn clean test
-  - gradlew.bat -u -i -S check
+  - gradlew.bat -u -i -S build
   - gradlew.bat -u -i -S npm_run_lint-js
   - gradlew.bat -u -i -S npm_run_lint-less
   - gradlew.bat -u -i -S npm_run_lint-md
 cache:
   - .gradle
   - C:\Users\appveyor\.gradle
-  - C:\Users\appveyor\.m2\ -> pom.xml
