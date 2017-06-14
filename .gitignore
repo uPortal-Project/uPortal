@@ -412,6 +412,17 @@ modules.xml
 /build.properties
 /data/
 
+## Jekyll documentation
+
+### Local configuration for local Jekyll
+
+/docs/.ruby-version
+/docs/Gemfile.lock
+
+###  Generated files when Jekylling the docs locally
+
+/docs/_site
+
 # Project specific includes
 !**/filters/local.properties
 !bootstrap/lib/*.jar
