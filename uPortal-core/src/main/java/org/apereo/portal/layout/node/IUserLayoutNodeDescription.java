@@ -21,7 +21,7 @@ import org.w3c.dom.Element;
  * An interface describing common features of user layout nodes, that is channels and folders
  */
 public interface IUserLayoutNodeDescription {
-    public enum LayoutNodeType {
+    enum LayoutNodeType {
         PORTLET,
         FOLDER;
     }
@@ -31,38 +31,38 @@ public interface IUserLayoutNodeDescription {
      *
      * @return a <code>String</code> value
      */
-    public String getId();
+    String getId();
 
     /** Set a new node Id. The Id has to be unique in the entire user layout document. */
-    public void setId(String id);
+    void setId(String id);
 
     /**
      * Determine a name associated with this node.
      *
      * @return a folder/channel name.
      */
-    public String getName();
+    String getName();
 
     /**
      * Returns a type of the node, could be FOLDER or CHANNEL integer constant.
      *
      * @return a type
      */
-    public LayoutNodeType getType();
+    LayoutNodeType getType();
 
-    public void setName(String name);
+    void setName(String name);
 
-    public boolean isUnremovable();
+    boolean isUnremovable();
 
-    public void setUnremovable(boolean setting);
+    void setUnremovable(boolean setting);
 
-    public boolean isImmutable();
+    boolean isImmutable();
 
-    public void setImmutable(boolean setting);
+    void setImmutable(boolean setting);
 
-    public boolean isHidden();
+    boolean isHidden();
 
-    public void setHidden(boolean setting);
+    void setHidden(boolean setting);
 
     /**
      * Creates a <code>org.w3c.dom.Element</code> representation of the current node.
@@ -70,43 +70,43 @@ public interface IUserLayoutNodeDescription {
      * @param root a <code>Document</code> for which the <code>Element</code> should be created.
      * @return a <code>Element</code> value
      */
-    public Element getXML(Document root);
+    Element getXML(Document root);
 
-    public void addNodeAttributes(Element node);
+    void addNodeAttributes(Element node);
 
     /** Returns true if child nodes can be added to the node. Added by SCT for DLM. */
-    public boolean isAddChildAllowed();
+    boolean isAddChildAllowed();
 
     /** Set whether or not child nodes can be added to this node. Added by SCT for DLM. */
-    public void setAddChildAllowed(boolean setting);
+    void setAddChildAllowed(boolean setting);
 
     /** Returns true if the node's attributes can be edited. Added by SCT for DLM. */
-    public boolean isEditAllowed();
+    boolean isEditAllowed();
 
     /** Set whether a node's attributes can be edited or not. Added by SCT for DLM. */
-    public void setEditAllowed(boolean setting);
+    void setEditAllowed(boolean setting);
 
     /**
      * Returns the precedence value for this node. The precedence is 0.0 for a user owned node and
      * the value of the node's owning fragment's precedence for a node incorporated from another
      * fragment. Added by SCT for DLM.
      */
-    public double getPrecedence();
+    double getPrecedence();
 
     /**
      * Set the precedence of a node. See getPrecedence for more information. Added by SCT for DLM.
      */
-    public void setPrecedence(double setting);
+    void setPrecedence(double setting);
 
     /** Returns true if the node can be moved. Added by SCT for DLM. */
-    public boolean isMoveAllowed();
+    boolean isMoveAllowed();
 
     /** Set whether a node can be moved or not. Added by SCT for DLM. */
-    public void setMoveAllowed(boolean setting);
+    void setMoveAllowed(boolean setting);
 
     /** Returns true if the node can be deleted. Added by SCT for DLM. */
-    public boolean isDeleteAllowed();
+    boolean isDeleteAllowed();
 
     /** Set whether a node can be deleted or not. Added by SCT for DLM. */
-    public void setDeleteAllowed(boolean setting);
+    void setDeleteAllowed(boolean setting);
 }
