@@ -11,10 +11,6 @@ apply plugin: 'build-announcements'
 // Adds support for Node.js scripts
 apply plugin: 'com.moowork.node'
 
-// Load custom tasks for uPortal
-apply from: rootProject.file('gradle/tasks/clean.gradle')
-apply from: rootProject.file('gradle/tasks/hsql.gradle')
-
 /*======== Dependency Management ========**/
 repositories {
     jcenter()
