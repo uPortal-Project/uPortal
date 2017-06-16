@@ -7,6 +7,7 @@ apply plugin: 'com.github.kt3k.coveralls'
 apply plugin: me.champeau.gradle.buildscans.RecipesPlugin
 apply plugin: 'java'
 apply plugin: 'build-announcements'
+apply plugin: 'org.standardout.versioneye'
 
 // Adds support for Node.js scripts
 apply plugin: 'com.moowork.node'
@@ -27,6 +28,7 @@ buildscript {
         maven {
             url 'https://plugins.gradle.org/m2/'
         }
+        jcenter()
         mavenLocal()
     }
     dependencies {
@@ -35,6 +37,7 @@ buildscript {
         classpath 'gradle.plugin.com.github.sherter.google-java-format:google-java-format-gradle-plugin:0.6'
         classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.1'
         classpath 'me.champeau.gradle:buildscan-recipes-plugin:0.2.0'
+        classpath 'org.standardout:gradle-versioneye-plugin:1.4.0'
     }
 }
 
@@ -50,6 +53,11 @@ buildScan {
 }
 buildScanRecipes {
     recipes 'travis-ci', 'git-commit'
+}
+
+versioneye {
+  includeSubProjects = true
+  exclude project.configurations.findAll { !it.canBeResolved }*.name as String[]
 }
 
 allprojects {
