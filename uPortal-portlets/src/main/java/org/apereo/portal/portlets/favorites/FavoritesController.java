@@ -106,8 +106,11 @@ public class FavoritesController extends AbstractFavoritesController {
         final List<IUserLayoutNodeDescription> rawFavorites = FavoritesUtils.getFavoritePortlets(userLayout);
 
         /*
-         * Filter the collection by SUBSCRIBE permission.  (NOTE:  I wish this filtering were done
-         * by the Layout Manager, before now, but it isn't.)
+         * Filter the collection by SUBSCRIBE permission.
+         *
+         * NOTE:  In the "regular" (non-Favorites) layout, this permissions check is handled by
+         * the rendering engine.  It will refuse to spawn a worker for a portlet to which you
+         * cannot SUBSCRIBE.
          */
         final String username = req.getRemoteUser() != null ? req.getRemoteUser() : PersonFactory.GUEST_USERNAMES.get(0); // First item is the default
         final IAuthorizationPrincipal principal =
