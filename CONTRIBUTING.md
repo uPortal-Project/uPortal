@@ -8,6 +8,10 @@ uPortal is an Apereo project.  Apereo requires that contributions be through Ind
 
 You can learn more about [Apereo licensing generally][], the [contributor licensing agreements specifically][], and get the actual [Individual Contributor License Agreement form][], as linked.
 
+## Apereo Welcoming Policy
+
+As an Apereo project, participation in uPortal is within the scope of the Apereo Welcoming Policy. cf. `CODE_OF_CONDUCT.md` at the root of this repository.
+
 ## Getting Started
 
 If you are just getting started with Git, GitHub and/or contributing to uPortal via GitHub there are a few pre-requisite steps.
