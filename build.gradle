@@ -124,6 +124,13 @@ subprojects {
     artifacts {
         archives javadocJar, sourcesJar
     }
+    publishing {
+        publications {
+            maven(MavenPublication) {
+                from components.java
+            }
+        }
+    }
     uploadArchives {
         repositories {
             mavenDeployer {
