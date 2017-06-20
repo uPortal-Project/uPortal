@@ -10,7 +10,7 @@ You can learn more about [Apereo licensing generally][], the [contributor licens
 
 ## Apereo Welcoming Policy
 
-As an Apereo project, participation in uPortal is within the scope of the Apereo Welcoming Policy. cf. `CODE_OF_CONDUCT.md` at the root of this repository.
+As an Apereo project, participation in uPortal is within the scope of the Apereo Welcoming Policy. cf. [`CODE_OF_CONDUCT.md`][] at the root of this repository.
 
 ## Getting Started
 
@@ -79,6 +79,8 @@ If your change is to a user-facing experience, it should not regress support for
 [contributor licensing agreements specifically]: http://www.apereo.org/licensing/agreements
 [Contributor License Agreement]: http://www.apereo.org/licensing/agreements
 [Individual Contributor License Agreement form]: https://www.apereo.org/licensing/agreements/icla
+
+[`CODE_OF_CONDUCT.md`]: CODE_OF_CONDUCT.md
 
 [uportal-dev@]: https://wiki.jasig.org/display/JSG/uportal-dev
 [uportal-user@]: https://wiki.jasig.org/display/JSG/uportal-user
