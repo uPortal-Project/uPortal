@@ -71,6 +71,7 @@ subprojects {
     apply plugin: 'java'
     apply plugin: 'maven'
     apply plugin: 'signing'
+    apply plugin: 'maven-publish'
 
     /*======== Dependency Management ========**/
     repositories {
@@ -126,6 +127,13 @@ subprojects {
     }
     artifacts {
         archives javadocJar, sourcesJar
+    }
+    publishing {
+        publications {
+            maven(MavenPublication) {
+                from components.java
+            }
+        }
     }
     uploadArchives {
         repositories {
