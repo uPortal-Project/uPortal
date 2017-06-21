@@ -79,8 +79,8 @@
     <pbcast.STABLE stability_delay="1000" desired_avg_gossip="50000"
                    max_bytes="4M"/>
     <!-- <AUTH auth_class="org.apereo.portal.jgroups.auth.HashedDaoAuthToken"/> -->
-    <pbcast.GMS print_local_addr="true" join_timeout="3000"
-
+    <pbcast.GMS print_local_addr="true" join_timeout="2000"
+                max_join_attempts="3"
                 view_bundling="true"/>
     <UFC max_credits="2M"
          min_threshold="0.4"/>
