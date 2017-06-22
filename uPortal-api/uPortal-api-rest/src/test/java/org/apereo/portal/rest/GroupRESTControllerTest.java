@@ -54,7 +54,6 @@ public class GroupRESTControllerTest {
     @Test
     public void testGetUsersGroup() {
         IPerson person = null;
-        System.out.print("groupRESTController" + groupRESTController);
         Mockito.when(personManager.getPerson(req).getUserName()).thenReturn("john");
       //  Mockito.when(apiGroupsService.getGroupsForMember("john")).thenReturn(Collections.emptySet());
         ModelAndView modelAndView = groupRESTController.getUsersGroup(req,res);
