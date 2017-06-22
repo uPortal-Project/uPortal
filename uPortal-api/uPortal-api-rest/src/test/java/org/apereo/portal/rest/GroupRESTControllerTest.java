@@ -15,43 +15,30 @@
 
 package org.apereo.portal.rest;
 
-import org.apereo.portal.api.groups.ApiGroupsService;
-import org.apereo.portal.security.IPerson;
-import org.apereo.portal.security.IPersonManager;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-import org.springframework.web.servlet.ModelAndView;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import java.util.Collections;
+import org.apereo.portal.security.IPersonManager;
+import org.junit.Before;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 
-import static org.junit.Assert.assertEquals;
-
-/**
- * Created by stalele on 6/21/17.
- */
 public class GroupRESTControllerTest {
 
     @InjectMocks
-    GroupRESTController groupRESTController;
+    private GroupRESTController groupRESTController;
 
    // @Mock
    // ApiGroupsService apiGroupsService;
 
     @Mock
-    IPersonManager personManager;
+    private IPersonManager personManager;
 
     @Mock
-    HttpServletRequest req;
+    private HttpServletRequest req;
 
     @Mock
-    HttpServletResponse res;
+    private HttpServletResponse res;
 
     @Before
     public void setup() throws Exception {
@@ -61,7 +48,10 @@ public class GroupRESTControllerTest {
         //MockitoAnnotations.initMocks(this);
     }
 
-   // @Test
+   /***
+    * Need to figure out why it is not able to find GroupService class while executing the test.
+    * Confirm first if api is working or not by deploying it in tomcat, making API request from postman or from uPortal
+    @Test
     public void testGetUsersGroup() {
         IPerson person = null;
         System.out.print("groupRESTController" + groupRESTController);
@@ -71,5 +61,5 @@ public class GroupRESTControllerTest {
         assertEquals("json", modelAndView.getViewName());
         assertEquals("groups", modelAndView.getViewName());
         assertEquals(null,modelAndView.getModel());
-    }
+    }*/
 }

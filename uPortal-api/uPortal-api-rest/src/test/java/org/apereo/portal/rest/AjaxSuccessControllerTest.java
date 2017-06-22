@@ -15,24 +15,13 @@
 
 package org.apereo.portal.rest;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
-import org.mockito.Mockito;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-/**
- * Created by stalele on 6/21/17.
- */
 public class AjaxSuccessControllerTest {
-    //final HttpServletRequest req = Mockito.mock(HttpServletRequest.class);
-   // final HttpServletResponse res = Mockito.mock(HttpServletResponse.class);
 
     @InjectMocks
     private AjaxSuccessController ajaxSuccessController;

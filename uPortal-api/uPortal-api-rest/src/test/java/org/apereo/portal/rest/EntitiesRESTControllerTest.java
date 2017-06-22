@@ -4,9 +4,9 @@
  * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
  * this file except in compliance with the License. You may obtain a copy of the License at the
  * following location:
- *
+ * <p>
  * <p>http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  * <p>Unless required by applicable law or agreed to in writing, software distributed under the
  * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
  * express or implied. See the License for the specific language governing permissions and
@@ -15,34 +15,36 @@
 
 package org.apereo.portal.rest;
 
+import java.util.*;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apereo.portal.layout.dlm.remoting.IGroupListHelper;
 import org.apereo.portal.layout.dlm.remoting.JsonEntityBean;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.*;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.*;
-
-/**
- * Created by stalele on 6/22/17.
- */
 public class EntitiesRESTControllerTest {
     public static final String ENTITY_TYPE = "entityType";
     public static final String ENTITY_ID_101 = "entityId-101";
+
     @InjectMocks
-    EntitiesRESTController entitiesRESTController;
+    private EntitiesRESTController entitiesRESTController;
 
     @Mock
-    IGroupListHelper groupListHelper;
+    private IGroupListHelper groupListHelper;
 
     @Mock
-    HttpServletRequest req;
+    private HttpServletRequest req;
 
     @Mock
-    HttpServletResponse res;
+    private HttpServletResponse res;
 
     @Before
     public void setup() throws Exception {
@@ -62,42 +64,42 @@ public class EntitiesRESTControllerTest {
 
     @Test
     public void testFindEntity() {
-        Mockito.when(groupListHelper.getEntity(ENTITY_TYPE, ENTITY_ID_101,true)).thenReturn(new JsonEntityBean());
-        JsonEntityBean entityBean =  entitiesRESTController.findEntity(req,res,ENTITY_TYPE,ENTITY_ID_101);
+        Mockito.when(groupListHelper.getEntity(ENTITY_TYPE, ENTITY_ID_101, true)).thenReturn(new JsonEntityBean());
+        JsonEntityBean entityBean = entitiesRESTController.findEntity(req, res, ENTITY_TYPE, ENTITY_ID_101);
         Assert.assertNotNull(entityBean);
     }
 
     @Test
-    public void testNullFindEntity() {
-        Mockito.when(groupListHelper.getEntity(null, null,true)).thenReturn(null);
-        JsonEntityBean entityBean =  entitiesRESTController.findEntity(req,res,null,null);
+    public void testFindEntityNull() {
+        Mockito.when(groupListHelper.getEntity(null, null, true)).thenReturn(null);
+        JsonEntityBean entityBean = entitiesRESTController.findEntity(req, res, null, null);
         Assert.assertNull(entityBean);
     }
 
     @Test
-    public void testEmptyFindEntity() {
-        Mockito.when(groupListHelper.getEntity("", "",true)).thenReturn(null);
-        JsonEntityBean entityBean =  entitiesRESTController.findEntity(req,res,"","");
+    public void testFindEntityEmpty() {
+        Mockito.when(groupListHelper.getEntity("", "", true)).thenReturn(null);
+        JsonEntityBean entityBean = entitiesRESTController.findEntity(req, res, "", "");
         Assert.assertNull(entityBean);
     }
 
     @Test
-    public void testdoSearchNotFound() {
+    public void testDoSearchNotFound() {
         Mockito.when(groupListHelper.search(ENTITY_TYPE, "test")).thenReturn(Collections.emptySet());
         List<String> entitytypes = new ArrayList<String>();
         entitytypes.add(ENTITY_TYPE);
-        Set<JsonEntityBean> beans=  entitiesRESTController.doSearch(req,res,"test",entitytypes);
+        Set<JsonEntityBean> beans = entitiesRESTController.doSearch(req, res, "test", entitytypes);
         Assert.assertTrue(beans.isEmpty());
     }
 
     @Test
-    public void testdoSearchFound() {
+    public void testDoSearchFound() {
         Set<JsonEntityBean> returnBeans = new HashSet<JsonEntityBean>();
         returnBeans.add(buildJsonEntityBean());
         Mockito.when(groupListHelper.search(ENTITY_TYPE, "test")).thenReturn(returnBeans);
         List<String> entitytypes = new ArrayList<String>();
         entitytypes.add(ENTITY_TYPE);
-        Set<JsonEntityBean> beans=  entitiesRESTController.doSearch(req,res,"test",entitytypes);
-        Assert.assertEquals(1L,beans.size());
+        Set<JsonEntityBean> beans = entitiesRESTController.doSearch(req, res, "test", entitytypes);
+        Assert.assertEquals(1L, beans.size());
     }
 }
