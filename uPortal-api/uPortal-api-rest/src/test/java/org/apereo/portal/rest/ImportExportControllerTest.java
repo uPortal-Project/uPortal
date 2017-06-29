@@ -16,31 +16,25 @@
 package org.apereo.portal.rest;
 
 import java.io.IOException;
-import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.xml.stream.XMLStreamException;
 
 import org.apereo.portal.EntityIdentifier;
 import org.apereo.portal.groups.ICompositeGroupService;
 import org.apereo.portal.io.xml.IPortalDataHandlerService;
-import org.apereo.portal.security.IAuthorizationPrincipal;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.IPersonManager;
-import org.apereo.portal.security.provider.AuthorizationPrincipalImpl;
 import org.apereo.portal.security.provider.PersonImpl;
 import org.apereo.portal.services.AuthorizationService;
 import org.apereo.portal.xml.XmlUtilities;
-import org.json.JSONException;
 import org.junit.Before;
-import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockMultipartFile;
+
 
 public class ImportExportControllerTest {
 
@@ -73,19 +67,20 @@ public class ImportExportControllerTest {
         importExportController = new ImportExportController();
         MockitoAnnotations.initMocks(this);
         res = new MockHttpServletResponse();
-
+        AuthorizationService service = Mockito.mock(AuthorizationService.class);
     }
 
-    @Test//(expected = java.lang.ExceptionInInitializerError.class)
+    //@Test//(expected = java.lang.ExceptionInInitializerError.class)
     public void testDeleteEntityUnauthorized() throws IOException {
         EntityIdentifier id = new EntityIdentifier(ENTITY_ID, ICompositeGroupService.LEAF_ENTITY_TYPE);
         IPerson person = new PersonImpl();
         person.setUserName(USER_NAME);
         Mockito.when( personManager.getPerson(req)).thenReturn(person);
-        AuthorizationService service = Mockito.mock(AuthorizationService.class);
-        IAuthorizationPrincipal principal = Mockito.mock(AuthorizationPrincipalImpl.class);
+       // AuthorizationService service = Mockito.mock(AuthorizationService.class);
+
+       // IAuthorizationPrincipal principal = Mockito.mock(AuthorizationPrincipalImpl.class);
         //Mockito.when(AuthorizationService.class.getResourceAsStream("properties/security.properties")).thenReturn("properties/security.properties");
-         Mockito.when(AuthorizationService.instance().newPrincipal(USER_NAME,IPerson.class)).thenReturn(principal);
+        Mockito.when(AuthorizationService.instance().newPrincipal(USER_NAME,IPerson.class)).thenReturn(null);
         importExportController.deleteEntity(ENTITY_TYPE, ENTITY_ID, req, res);
     }
 
