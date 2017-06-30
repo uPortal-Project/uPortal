@@ -20,4 +20,8 @@ dependencies {
     testCompile "junit:junit:${junitVersion}"
     testCompile "org.mockito:mockito-core:${mockitoVersion}"
     testCompile "${servletApiDependency}"
+
+    //need to add for SessionRESTControllerTest.java
+    testCompile "org.apache.portals.pluto:pluto-container-api:${plutoVersion}"
+
 }

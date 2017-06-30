@@ -166,4 +166,19 @@ public class MarketplaceRESTControllerTest {
         Set<MarketplaceEntry> returnEntries = (Set<MarketplaceEntry>) modelAndView.getModel().get("portlets");
         Assert.assertEquals(1L,entries.size());
     }
+
+    @Test
+    public void testMarketplaceEntriesFeedNoContent() {
+        IPerson person = new PersonImpl();
+        person.setUserName(USER_NAME);
+        person.setFullName("john doe");
+        Mockito.when( personManager.getPerson(req)).thenReturn(person);
+
+        Mockito.when(marketplaceService.browseableMarketplaceEntriesFor(person, Collections.emptySet())).thenReturn(null);
+        ModelAndView modelAndView = marketplaceRESTController.marketplaceEntriesFeed(req);
+
+        Set<MarketplaceEntry> returnEntries = (Set<MarketplaceEntry>) modelAndView.getModel().get("portlets");
+        Assert.assertNull(returnEntries);
+    }
+
 }
