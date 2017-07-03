@@ -60,10 +60,16 @@
                 <c:forEach var="favorite" items="${favorites}">
                     <li class="list-group-item">
                         <span class="glyphicon glyphicon-star pull-right"></span>
-                        <a href="${renderRequest.contextPath}/p/${favorite.functionalName}/render.uP">
+                        <c:set var="favoriteAnchorContent">
+                            <c:choose>
+                                <c:when test="${not empty favorite.parameterMap['alternativeMaximizedLink']}">href="${favorite.parameterMap['alternativeMaximizedLink']}" target="_blank" rel="noopener noreferrer"</c:when>
+                                <c:otherwise>href="${renderRequest.contextPath}/p/${favorite.functionalName}/render.uP"</c:otherwise>
+                            </c:choose>
+                        </c:set>
+                        <a ${favoriteAnchorContent}>
                             <span class="favorites-icon">
                                 <c:choose>
-                                    <c:when test="${favorite.parameterMap['iconUrl'] ne null}">
+                                    <c:when test="${not empty favorite.parameterMap['iconUrl']}">
                                         <img src="${favorite.parameterMap['iconUrl']}" class="img-responsive" alt="Icon for ${favorite.name}" aria-hidden="true" />
                                     </c:when>
                                     <c:otherwise>

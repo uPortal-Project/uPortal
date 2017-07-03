@@ -30,7 +30,7 @@ public interface IPermissionTargetProvider {
      * @param key
      * @return
      */
-    public IPermissionTarget getTarget(String key);
+    IPermissionTarget getTarget(String key);
 
     /**
      * Search this provider for a particular target using a single string search term. Each target
@@ -39,5 +39,5 @@ public interface IPermissionTargetProvider {
      * @param term search term
      * @return collection of matching targets
      */
-    public Collection<IPermissionTarget> searchTargets(String term);
+    Collection<IPermissionTarget> searchTargets(String term);
 }

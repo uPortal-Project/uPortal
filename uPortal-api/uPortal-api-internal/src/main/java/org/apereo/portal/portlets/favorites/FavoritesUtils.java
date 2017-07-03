@@ -169,7 +169,7 @@ public final class FavoritesUtils {
 
         logger.trace("Extracting favorite portlets from layout [{}]", userLayout);
 
-        List<IUserLayoutNodeDescription> favorites = new LinkedList<IUserLayoutNodeDescription>();
+        List<IUserLayoutNodeDescription> favorites = new LinkedList<>();
 
         Enumeration<String> childrenOfRoot = userLayout.getChildIds(userLayout.getRootId());
 
@@ -180,10 +180,6 @@ public final class FavoritesUtils {
             try {
 
                 IUserLayoutNodeDescription nodeDescription = userLayout.getNodeDescription(nodeId);
-
-                String parentId = userLayout.getParentId(nodeId);
-                String nodeName = nodeDescription.getName();
-                IUserLayoutNodeDescription.LayoutNodeType nodeType = nodeDescription.getType();
 
                 if (FOLDER.equals(nodeDescription.getType())
                         && nodeDescription instanceof IUserLayoutFolderDescription) {
@@ -197,10 +193,10 @@ public final class FavoritesUtils {
 
                         //loop through columns to gather beloved portlets
                         while (columns.hasMoreElements()) {
-                            String column = (String) columns.nextElement();
+                            String column = columns.nextElement();
                             Enumeration<String> portlets = userLayout.getChildIds(column);
                             while (portlets.hasMoreElements()) {
-                                String portlet = (String) portlets.nextElement();
+                                String portlet = portlets.nextElement();
                                 IUserLayoutNodeDescription portletDescription =
                                         userLayout.getNodeDescription(portlet);
                                 favorites.add(portletDescription);

@@ -30,168 +30,168 @@ public interface IUserLayoutChannelDescription extends IUserLayoutNodeDescriptio
      *
      * @return value of hasAbout.
      */
-    public boolean hasAbout();
+    boolean hasAbout();
 
     /**
      * Specify whether the channel supports "about" action.
      *
      * @param v Value to assign to hasAbout.
      */
-    public void setHasAbout(boolean v);
+    void setHasAbout(boolean v);
 
     /**
      * Determine if the channel supports "help" action.
      *
      * @return value of hasHelp.
      */
-    public boolean hasHelp();
+    boolean hasHelp();
 
     /**
      * Specify whether the channel supports "help" action.
      *
      * @param v Value to assign to hasHelp.
      */
-    public void setHasHelp(boolean v);
+    void setHasHelp(boolean v);
 
     /**
      * Determine if the channel is editable.
      *
      * @return value of editable.
      */
-    public boolean isEditable();
+    boolean isEditable();
 
     /**
      * Specify whether the channel is editable.
      *
      * @param v Value to assign to editable.
      */
-    public void setEditable(boolean v);
+    void setEditable(boolean v);
 
     /**
      * Get the value of channel timeout in milliseconds.
      *
      * @return value of timeout.
      */
-    public long getTimeout();
+    long getTimeout();
 
     /**
      * Set the value of channel timeout in milliseconds.
      *
      * @param v Value to assign to timeout.
      */
-    public void setTimeout(long v);
+    void setTimeout(long v);
 
     /**
      * Get the value of functionalName.
      *
      * @return value of functionalName.
      */
-    public String getFunctionalName();
+    String getFunctionalName();
 
     /**
      * Set the value of functionalName.
      *
      * @param v Value to assign to functionalName.
      */
-    public void setFunctionalName(String v);
+    void setFunctionalName(String v);
 
     /**
      * Get the value of channelSubscribeId.
      *
      * @return value of channelSubscribeId.
      */
-    public String getChannelSubscribeId();
+    String getChannelSubscribeId();
 
     /**
      * Set the value of channelSubscribeId.
      *
      * @param v Value to assign to channelSubscribeId.
      */
-    public void setChannelSubscribeId(String v);
+    void setChannelSubscribeId(String v);
 
     /**
      * Get the value of channelTypeId.
      *
      * @return value of channelTypeId.
      */
-    public String getChannelTypeId();
+    String getChannelTypeId();
 
     /**
      * Set the value of channelTypeId.
      *
      * @param v Value to assign to channelTypeId.
      */
-    public void setChannelTypeId(String v);
+    void setChannelTypeId(String v);
 
     /**
      * Get the value of channelPublishId for this channel.
      *
      * @return value of channelPublishId.
      */
-    public String getChannelPublishId();
+    String getChannelPublishId();
 
     /**
      * Set the value of channelPublishId for this channel.
      *
      * @param v Value to assign to channelPublishId.
      */
-    public void setChannelPublishId(String v);
+    void setChannelPublishId(String v);
 
     /**
      * Get the value of className implementing this channel.
      *
      * @return value of className.
      */
-    public String getClassName();
+    String getClassName();
 
     /**
      * Set the value of className implementing this channel.
      *
      * @param v Value to assign to className.
      */
-    public void setClassName(String v);
+    void setClassName(String v);
 
     /**
      * Get the value of title.
      *
      * @return value of title.
      */
-    public String getTitle();
+    String getTitle();
 
     /**
      * Set the value of title.
      *
      * @param v Value to assign to title.
      */
-    public void setTitle(String v);
+    void setTitle(String v);
 
     /**
      * Get the value of description.
      *
      * @return value of description.
      */
-    public String getDescription();
+    String getDescription();
 
     /**
      * Set the value of description.
      *
      * @param v Value to assign to description.
      */
-    public void setDescription(String v);
+    void setDescription(String v);
 
     /**
      * Get the value of secure.
      *
      * @return value of secure.
      */
-    public boolean isSecure();
+    boolean isSecure();
 
     /**
      * Set the value of secure.
      *
      * @param v Value to assign to secure.
      */
-    public void setIsSecure(boolean v);
+    void setIsSecure(boolean v);
 
     /**
      * Return true if the described channel is a JSR-168 portlet, false otherwise.
@@ -200,7 +200,7 @@ public interface IUserLayoutChannelDescription extends IUserLayoutNodeDescriptio
      * @deprecated everything is a portlet now
      */
     @Deprecated
-    public boolean isPortlet();
+    boolean isPortlet();
 
     // channel parameter methods
 
@@ -211,7 +211,7 @@ public interface IUserLayoutChannelDescription extends IUserLayoutNodeDescriptio
      * @param parameterName a <code>String</code> value
      * @return a <code>String</code> value that was set.
      */
-    public String setParameterValue(String parameterName, String parameterValue);
+    String setParameterValue(String parameterName, String parameterValue);
 
     /**
      * Obtain a channel parameter value.
@@ -219,28 +219,28 @@ public interface IUserLayoutChannelDescription extends IUserLayoutNodeDescriptio
      * @param parameterName a <code>String</code> value
      * @return a <code>String</code> value
      */
-    public String getParameterValue(String parameterName);
+    String getParameterValue(String parameterName);
 
     /**
      * Obtain values of all existing channel parameters.
      *
      * @return a <code>Collection</code> of <code>String</code> parameter values.
      */
-    public Collection getParameterValues();
+    Collection getParameterValues();
 
     /**
      * Obtain a set of channel parameter names.
      *
      * @return a <code>Set</code> of <code>String</code> parameter names.
      */
-    public Enumeration getParameterNames();
+    Enumeration getParameterNames();
 
     /**
      * Returns an entire mapping of parameters.
      *
      * @return a <code>Map</code> of parameter names on parameter values.
      */
-    public Map getParameterMap();
+    Map getParameterMap();
 
     /**
      * Creates a <code>org.w3c.dom.Element</code> representation of the current channel.
@@ -249,5 +249,5 @@ public interface IUserLayoutChannelDescription extends IUserLayoutNodeDescriptio
      * @return a <code>Node</code> value
      */
     @Override
-    public Element getXML(Document root);
+    Element getXML(Document root);
 };

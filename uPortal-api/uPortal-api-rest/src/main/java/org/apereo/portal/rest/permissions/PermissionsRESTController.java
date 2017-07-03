@@ -102,7 +102,7 @@ public class PermissionsRESTController {
      * @throws Exception
      */
     @PreAuthorize(
-            "hasPermission('string', 'ALL', new org.apereo.portal.spring.security.evaluator.AuthorizableActivity('UP_PERMISSIONS', 'VIEW_PERMISSIONS'))")
+            "hasPermission('ALL', 'java.lang.String', new org.apereo.portal.spring.security.evaluator.AuthorizableActivity('UP_PERMISSIONS', 'VIEW_PERMISSIONS'))")
     @RequestMapping(value = "/permissions/owners.json", method = RequestMethod.GET)
     public ModelAndView getOwners(HttpServletRequest req, HttpServletResponse response)
             throws Exception {
@@ -128,7 +128,7 @@ public class PermissionsRESTController {
      * @throws Exception
      */
     @PreAuthorize(
-            "hasPermission('string', 'ALL', new org.apereo.portal.spring.security.evaluator.AuthorizableActivity('UP_PERMISSIONS', 'VIEW_PERMISSIONS'))")
+            "hasPermission('ALL', 'java.lang.String', new org.apereo.portal.spring.security.evaluator.AuthorizableActivity('UP_PERMISSIONS', 'VIEW_PERMISSIONS'))")
     @RequestMapping(value = "/permissions/owners/{owner}.json", method = RequestMethod.GET)
     public ModelAndView getOwners(
             @PathVariable("owner") String ownerParam,
@@ -171,7 +171,7 @@ public class PermissionsRESTController {
      * @throws Exception
      */
     @PreAuthorize(
-            "hasPermission('string', 'ALL', new org.apereo.portal.spring.security.evaluator.AuthorizableActivity('UP_PERMISSIONS', 'VIEW_PERMISSIONS'))")
+            "hasPermission('ALL', 'java.lang.String', new org.apereo.portal.spring.security.evaluator.AuthorizableActivity('UP_PERMISSIONS', 'VIEW_PERMISSIONS'))")
     @RequestMapping(value = "/permissions/activities.json", method = RequestMethod.GET)
     public ModelAndView getActivities(
             @RequestParam(value = "q", required = false) String query,
@@ -214,7 +214,7 @@ public class PermissionsRESTController {
      * @throws Exception
      */
     @PreAuthorize(
-            "hasPermission('string', 'ALL', new org.apereo.portal.spring.security.evaluator.AuthorizableActivity('UP_PERMISSIONS', 'VIEW_PERMISSIONS'))")
+            "hasPermission('ALL', 'java.lang.String', new org.apereo.portal.spring.security.evaluator.AuthorizableActivity('UP_PERMISSIONS', 'VIEW_PERMISSIONS'))")
     @RequestMapping(value = "/permissions/{activity}/targets.json", method = RequestMethod.GET)
     public ModelAndView getTargets(
             @PathVariable("activity") Long activityId,
@@ -246,7 +246,7 @@ public class PermissionsRESTController {
     }
 
     @PreAuthorize(
-            "hasPermission('string', 'ALL', new org.apereo.portal.spring.security.evaluator.AuthorizableActivity('UP_PERMISSIONS', 'VIEW_PERMISSIONS'))")
+            "hasPermission('ALL', 'java.lang.String', new org.apereo.portal.spring.security.evaluator.AuthorizableActivity('UP_PERMISSIONS', 'VIEW_PERMISSIONS'))")
     @RequestMapping("/assignments/principal/{principal}.json")
     public ModelAndView getAssignmentsForPrincipal(
             @PathVariable("principal") String principal,
@@ -265,7 +265,7 @@ public class PermissionsRESTController {
     }
 
     @PreAuthorize(
-            "(#entityType == 'person' and #id == authentication.name) or hasPermission('string', 'ALL', new org.apereo.portal.spring.security.evaluator.AuthorizableActivity('UP_PERMISSIONS', 'VIEW_PERMISSIONS'))")
+            "(#entityType == 'person' and #id == authentication.name) or hasPermission('ALL', 'java.lang.String', new org.apereo.portal.spring.security.evaluator.AuthorizableActivity('UP_PERMISSIONS', 'VIEW_PERMISSIONS'))")
     @RequestMapping("/assignments/{entityType}/{id}.json")
     public ModelAndView getAssignmentsForEntity(
             @PathVariable("entityType") String entityType,
@@ -285,7 +285,7 @@ public class PermissionsRESTController {
     }
 
     @PreAuthorize(
-            "hasPermission('string', 'ALL', new org.apereo.portal.spring.security.evaluator.AuthorizableActivity('UP_PERMISSIONS', 'VIEW_PERMISSIONS'))")
+            "hasPermission('ALL', 'java.lang.String', new org.apereo.portal.spring.security.evaluator.AuthorizableActivity('UP_PERMISSIONS', 'VIEW_PERMISSIONS'))")
     @RequestMapping("/assignments/target/{target}.json")
     public ModelAndView getAssignmentsOnTarget(
             @PathVariable("target") String target,
