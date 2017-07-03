@@ -12,7 +12,6 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apereo.portal.rest;
 
 import static org.junit.Assert.assertEquals;
@@ -23,8 +22,7 @@ import org.mockito.InjectMocks;
 
 public class AjaxSuccessControllerTest {
 
-    @InjectMocks
-    private AjaxSuccessController ajaxSuccessController;
+    @InjectMocks private AjaxSuccessController ajaxSuccessController;
 
     @Before
     public void setup() throws Exception {
@@ -34,8 +32,8 @@ public class AjaxSuccessControllerTest {
     @Test
     public void testSendJsonSuccess() {
 
-        String body = ajaxSuccessController.sendJsonSuccess(null,null);
+        String body = ajaxSuccessController.sendJsonSuccess(null, null);
         String expectedResponse = "{ 'success': 'true' }";
-        assertEquals(expectedResponse,body);
+        assertEquals(expectedResponse, body);
     }
 }

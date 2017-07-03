@@ -14,17 +14,14 @@
  */
 package org.apereo.portal.rest;
 
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.apereo.portal.portlets.lookup.PersonLookupHelperImpl;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.IPersonManager;
@@ -44,20 +41,15 @@ public class PeopleRESTControllerTest {
 
     public static final String USER_NAME = "jdoe";
 
-    @InjectMocks
-    private PeopleRESTController peopleRESTController;
+    @InjectMocks private PeopleRESTController peopleRESTController;
 
-    @Mock
-    private IPersonManager personManager;
+    @Mock private IPersonManager personManager;
 
-    @Mock
-    private PersonLookupHelperImpl lookupHelper;
+    @Mock private PersonLookupHelperImpl lookupHelper;
 
-    @Mock
-    private HttpServletRequest req;
+    @Mock private HttpServletRequest req;
 
-    @Mock
-    private HttpServletResponse res;
+    @Mock private HttpServletResponse res;
 
     @Before
     public void setup() throws Exception {
@@ -71,10 +63,10 @@ public class PeopleRESTControllerTest {
         searchTerms.add("john");
         searchTerms.add("doe");
 
-        Mockito.when( personManager.getPerson(req)).thenReturn(null);
-        ModelAndView modelAndView = peopleRESTController.getPeople(searchTerms,req,res);
+        Mockito.when(personManager.getPerson(req)).thenReturn(null);
+        ModelAndView modelAndView = peopleRESTController.getPeople(searchTerms, req, res);
 
-        Assert.assertEquals(null,modelAndView);
+        Assert.assertEquals(null, modelAndView);
     }
 
     @Test
@@ -85,12 +77,14 @@ public class PeopleRESTControllerTest {
         IPerson person = new PersonImpl();
         person.setUserName(USER_NAME);
 
-        Mockito.when( personManager.getPerson(req)).thenReturn(person);
-        Mockito.when(lookupHelper.searchForPeople(Mockito.any(), Mockito.anyMap())).thenReturn(Collections.emptyList());
-        ModelAndView modelAndView = peopleRESTController.getPeople(searchTerms,req,res);
+        Mockito.when(personManager.getPerson(req)).thenReturn(person);
+        Mockito.when(lookupHelper.searchForPeople(Mockito.any(), Mockito.anyMap()))
+                .thenReturn(Collections.emptyList());
+        ModelAndView modelAndView = peopleRESTController.getPeople(searchTerms, req, res);
 
-        Assert.assertEquals("json",modelAndView.getViewName());
-        List<IPersonAttributes> persons = (List<IPersonAttributes>) modelAndView.getModel().get("people");
+        Assert.assertEquals("json", modelAndView.getViewName());
+        List<IPersonAttributes> persons =
+                (List<IPersonAttributes>) modelAndView.getModel().get("people");
 
         Assert.assertTrue(persons.isEmpty());
     }
@@ -107,14 +101,16 @@ public class PeopleRESTControllerTest {
 
         List<IPersonAttributes> personAttributes = getIPersonAttributes();
 
-        Mockito.when( personManager.getPerson(req)).thenReturn(person);
-        Mockito.when(lookupHelper.searchForPeople(Mockito.any(), Mockito.anyMap())).thenReturn(personAttributes);
-        ModelAndView modelAndView = peopleRESTController.getPeople(searchTerms,req,res);
+        Mockito.when(personManager.getPerson(req)).thenReturn(person);
+        Mockito.when(lookupHelper.searchForPeople(Mockito.any(), Mockito.anyMap()))
+                .thenReturn(personAttributes);
+        ModelAndView modelAndView = peopleRESTController.getPeople(searchTerms, req, res);
 
-        Assert.assertEquals("json",modelAndView.getViewName());
-        List<IPersonAttributes> persons = (List<IPersonAttributes>) modelAndView.getModel().get("people");
+        Assert.assertEquals("json", modelAndView.getViewName());
+        List<IPersonAttributes> persons =
+                (List<IPersonAttributes>) modelAndView.getModel().get("people");
 
-        Assert.assertEquals(1L,persons.size());
+        Assert.assertEquals(1L, persons.size());
     }
 
     private List<IPersonAttributes> getIPersonAttributes() {
@@ -123,19 +119,19 @@ public class PeopleRESTControllerTest {
         return personAttributes;
     }
 
-    private NamedPersonImpl getNamedPerson(){
+    private NamedPersonImpl getNamedPerson() {
         final Map<String, List<Object>> mappedAttributes =
                 new LinkedHashMap<String, List<Object>>();
-        mappedAttributes.put("school", Arrays.asList("ASU","Standford"));
+        mappedAttributes.put("school", Arrays.asList("ASU", "Standford"));
         return new NamedPersonImpl(USER_NAME, mappedAttributes);
     }
 
     @Test
     public void testGetPersonNull() {
-        Mockito.when( personManager.getPerson(req)).thenReturn(null);
-        ModelAndView modelAndView = peopleRESTController.getPerson(USER_NAME,req,res);
+        Mockito.when(personManager.getPerson(req)).thenReturn(null);
+        ModelAndView modelAndView = peopleRESTController.getPerson(USER_NAME, req, res);
 
-        Assert.assertEquals(null,modelAndView);
+        Assert.assertEquals(null, modelAndView);
     }
 
     @Test
@@ -143,13 +139,13 @@ public class PeopleRESTControllerTest {
         IPerson person = new PersonImpl();
         person.setUserName(USER_NAME);
 
-        Mockito.when( personManager.getPerson(req)).thenReturn(person);
+        Mockito.when(personManager.getPerson(req)).thenReturn(person);
         Mockito.when(lookupHelper.findPerson(person, USER_NAME)).thenReturn(getNamedPerson());
-        ModelAndView modelAndView = peopleRESTController.getPerson(USER_NAME,req,res);
+        ModelAndView modelAndView = peopleRESTController.getPerson(USER_NAME, req, res);
         IPersonAttributes returnperson = (IPersonAttributes) modelAndView.getModel().get("person");
 
-        Assert.assertEquals("json",modelAndView.getViewName());
+        Assert.assertEquals("json", modelAndView.getViewName());
         Assert.assertNotNull(returnperson);
-        Assert.assertEquals(2L,returnperson.getAttributes().get("school").size());
+        Assert.assertEquals(2L, returnperson.getAttributes().get("school").size());
     }
 }

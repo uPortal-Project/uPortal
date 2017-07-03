@@ -4,26 +4,26 @@
  * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
  * this file except in compliance with the License. You may obtain a copy of the License at the
  * following location:
+ *
  * <p>
+ *
  * <p>http://www.apache.org/licenses/LICENSE-2.0
+ *
  * <p>
+ *
  * <p>Unless required by applicable law or agreed to in writing, software distributed under the
  * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apereo.portal.rest;
 
-
+import com.google.common.collect.ImmutableSet;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import com.google.common.collect.ImmutableSet;
 import org.apereo.portal.portlet.dao.IMarketplaceRatingDao;
 import org.apereo.portal.portlet.dao.jpa.PortletDefinitionImpl;
 import org.apereo.portal.portlet.dao.jpa.PortletTypeImpl;
@@ -45,27 +45,20 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.servlet.ModelAndView;
 
-
 public class MarketplaceRESTControllerTest {
     public static final String USER_NAME = "jdoe";
     public static final String F_NAME = "john";
-    @InjectMocks
-    private MarketplaceRESTController marketplaceRESTController;
+    @InjectMocks private MarketplaceRESTController marketplaceRESTController;
 
-    @Mock
-    private IPersonManager personManager;
+    @Mock private IPersonManager personManager;
 
-    @Mock
-    private HttpServletRequest req;
+    @Mock private HttpServletRequest req;
 
-    @Mock
-    private IMarketplaceService marketplaceService;
+    @Mock private IMarketplaceService marketplaceService;
 
-    @Mock
-    private IMarketplaceRatingDao marketplaceRatingDAO;
+    @Mock private IMarketplaceRatingDao marketplaceRatingDAO;
 
-    @Mock
-    private HttpServletResponse res;
+    @Mock private HttpServletResponse res;
 
     @Before
     public void setup() throws Exception {
@@ -80,14 +73,18 @@ public class MarketplaceRESTControllerTest {
 
         String remoteUser = "jdoe";
         Mockito.when(req.getRemoteUser()).thenReturn("jdoe");
-        IPortletType portletType = new PortletTypeImpl("John Doe", "http://localhost:8080/uportal/test");
+        IPortletType portletType =
+                new PortletTypeImpl("John Doe", "http://localhost:8080/uportal/test");
         portletType.setDescription("Portlet Type");
 
         PortletDefinitionImpl tempPortlet =
                 new PortletDefinitionImpl(
                         portletType, "John", "Doe", "Course", "app-id", "Courses", true);
 
-        Mockito.when(marketplaceService.getOrCreateMarketplacePortletDefinitionIfTheFnameExists(remoteUser)).thenReturn(null);
+        Mockito.when(
+                        marketplaceService.getOrCreateMarketplacePortletDefinitionIfTheFnameExists(
+                                remoteUser))
+                .thenReturn(null);
         Mockito.when(marketplaceRatingDAO.getRating(remoteUser, tempPortlet)).thenReturn(null);
         ModelAndView modelAndView = marketplaceRESTController.getUserRating(req, F_NAME);
         Assert.assertNull(modelAndView.getModel().get("rating"));
@@ -98,13 +95,17 @@ public class MarketplaceRESTControllerTest {
 
         String remoteUser = "jdoe";
         Mockito.when(req.getRemoteUser()).thenReturn("jdoe");
-        IPortletType portletType = new PortletTypeImpl("John Doe", "http://localhost:8080/uportal/test");
+        IPortletType portletType =
+                new PortletTypeImpl("John Doe", "http://localhost:8080/uportal/test");
         portletType.setDescription("Portlet Type");
 
         PortletDefinitionImpl tempPortlet =
                 new PortletDefinitionImpl(
                         portletType, "John", "Doe", "Course", "app-id", "Courses", true);
-        Mockito.when(marketplaceService.getOrCreateMarketplacePortletDefinitionIfTheFnameExists(remoteUser)).thenReturn(null);
+        Mockito.when(
+                        marketplaceService.getOrCreateMarketplacePortletDefinitionIfTheFnameExists(
+                                remoteUser))
+                .thenReturn(null);
 
         ModelAndView modelAndView = marketplaceRESTController.getUserRating(req, F_NAME);
         Assert.assertNull(modelAndView.getModel().get("rating"));
@@ -117,11 +118,15 @@ public class MarketplaceRESTControllerTest {
         Mockito.when(req.getRemoteUser()).thenReturn("jdoe");
 
         marketplaceRESTController.saveUserRating(req, F_NAME, rating, review);
-        Mockito.verify(marketplaceService).getOrCreateMarketplacePortletDefinitionIfTheFnameExists(F_NAME);
-        Mockito.verify(marketplaceRatingDAO).createOrUpdateRating(Integer.parseInt(rating),
-                req.getRemoteUser(),
-                review,
-                marketplaceService.getOrCreateMarketplacePortletDefinitionIfTheFnameExists(F_NAME));
+        Mockito.verify(marketplaceService)
+                .getOrCreateMarketplacePortletDefinitionIfTheFnameExists(F_NAME);
+        Mockito.verify(marketplaceRatingDAO)
+                .createOrUpdateRating(
+                        Integer.parseInt(rating),
+                        req.getRemoteUser(),
+                        review,
+                        marketplaceService.getOrCreateMarketplacePortletDefinitionIfTheFnameExists(
+                                F_NAME));
     }
 
     @Test
@@ -131,8 +136,10 @@ public class MarketplaceRESTControllerTest {
 
         Mockito.when(req.getRemoteUser()).thenReturn("jdoe");
 
-        ModelAndView modelAndView = marketplaceRESTController.saveUserRating(req, F_NAME, rating, review);
-        MarketplaceEntryRating entry = (MarketplaceEntryRating) modelAndView.getModel().get("rating");
+        ModelAndView modelAndView =
+                marketplaceRESTController.saveUserRating(req, F_NAME, rating, review);
+        MarketplaceEntryRating entry =
+                (MarketplaceEntryRating) modelAndView.getModel().get("rating");
         Assert.assertNotNull(entry);
     }
 
@@ -142,8 +149,11 @@ public class MarketplaceRESTControllerTest {
         person.setUserName(USER_NAME);
         person.setFullName("john doe");
 
-        Mockito.when( personManager.getPerson(req)).thenReturn(person);
-        Mockito.when(marketplaceService.browseableMarketplaceEntriesFor(person, Collections.emptySet())).thenReturn(null);
+        Mockito.when(personManager.getPerson(req)).thenReturn(person);
+        Mockito.when(
+                        marketplaceService.browseableMarketplaceEntriesFor(
+                                person, Collections.emptySet()))
+                .thenReturn(null);
 
         ModelAndView modelAndView = marketplaceRESTController.marketplaceEntriesFeed(req);
         Assert.assertNull(modelAndView.getModel().get("portlets"));
@@ -154,17 +164,21 @@ public class MarketplaceRESTControllerTest {
         IPerson person = new PersonImpl();
         person.setUserName(USER_NAME);
         person.setFullName("john doe");
-        Mockito.when( personManager.getPerson(req)).thenReturn(person);
-        MarketplaceEntry entry = new MarketplaceEntry(null,null,person);
+        Mockito.when(personManager.getPerson(req)).thenReturn(person);
+        MarketplaceEntry entry = new MarketplaceEntry(null, null, person);
 
         Set<MarketplaceEntry> marketplaceEntries = new HashSet<MarketplaceEntry>();
         marketplaceEntries.add(entry);
         ImmutableSet<MarketplaceEntry> entries = ImmutableSet.copyOf(marketplaceEntries);
-        Mockito.when(marketplaceService.browseableMarketplaceEntriesFor(person, Collections.emptySet())).thenReturn(entries);
+        Mockito.when(
+                        marketplaceService.browseableMarketplaceEntriesFor(
+                                person, Collections.emptySet()))
+                .thenReturn(entries);
         ModelAndView modelAndView = marketplaceRESTController.marketplaceEntriesFeed(req);
 
-        Set<MarketplaceEntry> returnEntries = (Set<MarketplaceEntry>) modelAndView.getModel().get("portlets");
-        Assert.assertEquals(1L,entries.size());
+        Set<MarketplaceEntry> returnEntries =
+                (Set<MarketplaceEntry>) modelAndView.getModel().get("portlets");
+        Assert.assertEquals(1L, entries.size());
     }
 
     @Test
@@ -172,13 +186,16 @@ public class MarketplaceRESTControllerTest {
         IPerson person = new PersonImpl();
         person.setUserName(USER_NAME);
         person.setFullName("john doe");
-        Mockito.when( personManager.getPerson(req)).thenReturn(person);
+        Mockito.when(personManager.getPerson(req)).thenReturn(person);
 
-        Mockito.when(marketplaceService.browseableMarketplaceEntriesFor(person, Collections.emptySet())).thenReturn(null);
+        Mockito.when(
+                        marketplaceService.browseableMarketplaceEntriesFor(
+                                person, Collections.emptySet()))
+                .thenReturn(null);
         ModelAndView modelAndView = marketplaceRESTController.marketplaceEntriesFeed(req);
 
-        Set<MarketplaceEntry> returnEntries = (Set<MarketplaceEntry>) modelAndView.getModel().get("portlets");
+        Set<MarketplaceEntry> returnEntries =
+                (Set<MarketplaceEntry>) modelAndView.getModel().get("portlets");
         Assert.assertNull(returnEntries);
     }
-
 }

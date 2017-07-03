@@ -12,12 +12,10 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apereo.portal.rest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.apereo.portal.security.IPersonManager;
 import org.junit.Before;
 import org.mockito.InjectMocks;
@@ -25,40 +23,33 @@ import org.mockito.Mock;
 
 public class GroupRESTControllerTest {
 
-    @InjectMocks
-    private GroupRESTController groupRESTController;
+    @InjectMocks private GroupRESTController groupRESTController;
 
-   // @Mock
-   // ApiGroupsService apiGroupsService;
+    // @Mock
+    // ApiGroupsService apiGroupsService;
 
-    @Mock
-    private IPersonManager personManager;
+    @Mock private IPersonManager personManager;
 
-    @Mock
-    private HttpServletRequest req;
+    @Mock private HttpServletRequest req;
 
-    @Mock
-    private HttpServletResponse res;
+    @Mock private HttpServletResponse res;
 
     @Before
     public void setup() throws Exception {
         groupRESTController = new GroupRESTController();
-      //  groupRESTController.setGroupService(apiGroupsService);
+        //  groupRESTController.setGroupService(apiGroupsService);
         groupRESTController.setPersonManager(personManager);
         //MockitoAnnotations.initMocks(this);
     }
 
-   /***
-    * Need to figure out why it is not able to find GroupService class while executing the test.
-    * Confirm first if api is working or not by deploying it in tomcat, making API request from postman or from uPortal
-    @Test
-    public void testGetUsersGroup() {
-        IPerson person = null;
-        Mockito.when(personManager.getPerson(req).getUserName()).thenReturn("john");
-      //  Mockito.when(apiGroupsService.getGroupsForMember("john")).thenReturn(Collections.emptySet());
-        ModelAndView modelAndView = groupRESTController.getUsersGroup(req,res);
-        assertEquals("json", modelAndView.getViewName());
-        assertEquals("groups", modelAndView.getViewName());
-        assertEquals(null,modelAndView.getModel());
-    }*/
+    /**
+     * * Need to figure out why it is not able to find GroupService class while executing the test.
+     * Confirm first if api is working or not by deploying it in tomcat, making API request from
+     * postman or from uPortal @Test public void testGetUsersGroup() { IPerson person = null;
+     * Mockito.when(personManager.getPerson(req).getUserName()).thenReturn("john"); //
+     * Mockito.when(apiGroupsService.getGroupsForMember("john")).thenReturn(Collections.emptySet());
+     * ModelAndView modelAndView = groupRESTController.getUsersGroup(req,res); assertEquals("json",
+     * modelAndView.getViewName()); assertEquals("groups", modelAndView.getViewName());
+     * assertEquals(null,modelAndView.getModel()); }
+     */
 }

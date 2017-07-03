@@ -14,15 +14,12 @@
  */
 package org.apereo.portal.rest;
 
-
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.apereo.portal.layout.dlm.remoting.IGroupListHelper;
 import org.apereo.portal.layout.dlm.remoting.JsonEntityBean;
 import org.apereo.portal.portlets.groupselector.EntityEnum;
@@ -37,17 +34,13 @@ import org.springframework.web.servlet.ModelAndView;
 
 public class PrincipalsRESTControllerTest {
 
-    @InjectMocks
-    private PrincipalsRESTController principalsRESTController;
+    @InjectMocks private PrincipalsRESTController principalsRESTController;
 
-    @Mock
-    private HttpServletRequest req;
+    @Mock private HttpServletRequest req;
 
-    @Mock
-    private HttpServletResponse res;
+    @Mock private HttpServletResponse res;
 
-    @Mock
-    private IGroupListHelper groupListHelper;
+    @Mock private IGroupListHelper groupListHelper;
 
     @Before
     public void setup() throws Exception {
@@ -78,12 +71,16 @@ public class PrincipalsRESTControllerTest {
     @Test
     public void testGetPrincipals() throws Exception {
         String query = "test";
-        Mockito.when(groupListHelper.search(EntityEnum.GROUP.toString(), "test")).thenReturn(Collections.emptySet());
-        Mockito.when(groupListHelper.search(EntityEnum.PERSON.toString(), "test")).thenReturn(Collections.emptySet());
+        Mockito.when(groupListHelper.search(EntityEnum.GROUP.toString(), "test"))
+                .thenReturn(Collections.emptySet());
+        Mockito.when(groupListHelper.search(EntityEnum.PERSON.toString(), "test"))
+                .thenReturn(Collections.emptySet());
 
-        ModelAndView modelAndView = principalsRESTController.getPrincipals(query,req,res);
-        List<JsonEntityBean> returnPersonEntities= (List<JsonEntityBean>) modelAndView.getModel().get("people");
-        List<JsonEntityBean> returnGroupEntities= (List<JsonEntityBean>) modelAndView.getModel().get("groups");
+        ModelAndView modelAndView = principalsRESTController.getPrincipals(query, req, res);
+        List<JsonEntityBean> returnPersonEntities =
+                (List<JsonEntityBean>) modelAndView.getModel().get("people");
+        List<JsonEntityBean> returnGroupEntities =
+                (List<JsonEntityBean>) modelAndView.getModel().get("groups");
 
         Assert.assertTrue(returnPersonEntities.isEmpty());
         Assert.assertTrue(returnGroupEntities.isEmpty());
@@ -95,12 +92,16 @@ public class PrincipalsRESTControllerTest {
         Set<JsonEntityBean> beans = new HashSet<JsonEntityBean>();
         beans.add(buildJsonPersonEntityBean());
 
-        Mockito.when(groupListHelper.search(EntityEnum.GROUP.toString(), "test")).thenReturn(Collections.emptySet());
-        Mockito.when(groupListHelper.search(EntityEnum.PERSON.toString(), "test")).thenReturn(beans);
+        Mockito.when(groupListHelper.search(EntityEnum.GROUP.toString(), "test"))
+                .thenReturn(Collections.emptySet());
+        Mockito.when(groupListHelper.search(EntityEnum.PERSON.toString(), "test"))
+                .thenReturn(beans);
 
-        ModelAndView modelAndView = principalsRESTController.getPrincipals(query,req,res);
-        List<JsonEntityBean> returnPersonEntities= (List<JsonEntityBean>) modelAndView.getModel().get("people");
-        List<JsonEntityBean> returnGroupEntities= (List<JsonEntityBean>) modelAndView.getModel().get("groups");
+        ModelAndView modelAndView = principalsRESTController.getPrincipals(query, req, res);
+        List<JsonEntityBean> returnPersonEntities =
+                (List<JsonEntityBean>) modelAndView.getModel().get("people");
+        List<JsonEntityBean> returnGroupEntities =
+                (List<JsonEntityBean>) modelAndView.getModel().get("groups");
 
         Assert.assertFalse(returnPersonEntities.isEmpty());
         Assert.assertTrue(returnGroupEntities.isEmpty());
@@ -113,14 +114,16 @@ public class PrincipalsRESTControllerTest {
         beans.add(buildJsonGroupEntityBean());
 
         Mockito.when(groupListHelper.search(EntityEnum.GROUP.toString(), "test")).thenReturn(beans);
-        Mockito.when(groupListHelper.search(EntityEnum.PERSON.toString(), "test")).thenReturn(Collections.emptySet());
+        Mockito.when(groupListHelper.search(EntityEnum.PERSON.toString(), "test"))
+                .thenReturn(Collections.emptySet());
 
-        ModelAndView modelAndView = principalsRESTController.getPrincipals(query,req,res);
-        List<JsonEntityBean> returnPersonEntities= (List<JsonEntityBean>) modelAndView.getModel().get("people");
-        List<JsonEntityBean> returnGroupEntities= (List<JsonEntityBean>) modelAndView.getModel().get("groups");
+        ModelAndView modelAndView = principalsRESTController.getPrincipals(query, req, res);
+        List<JsonEntityBean> returnPersonEntities =
+                (List<JsonEntityBean>) modelAndView.getModel().get("people");
+        List<JsonEntityBean> returnGroupEntities =
+                (List<JsonEntityBean>) modelAndView.getModel().get("groups");
 
         Assert.assertTrue(returnPersonEntities.isEmpty());
         Assert.assertFalse(returnGroupEntities.isEmpty());
     }
-
 }

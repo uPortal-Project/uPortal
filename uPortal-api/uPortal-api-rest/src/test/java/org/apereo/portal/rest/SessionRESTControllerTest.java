@@ -15,7 +15,6 @@
 package org.apereo.portal.rest;
 
 import java.util.Map;
-
 import org.apereo.portal.events.PortalEventFactoryImpl;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.IPersonManager;
@@ -36,14 +35,11 @@ public class SessionRESTControllerTest {
 
     public static final String USER_NAME = "jdoe";
 
-    @InjectMocks
-    private SessionRESTController sessionRESTController;
+    @InjectMocks private SessionRESTController sessionRESTController;
 
-    @Mock
-    private IPersonManager personManager;
+    @Mock private IPersonManager personManager;
 
-    @Mock
-    private PortalEventFactoryImpl portalEventFactory;
+    @Mock private PortalEventFactoryImpl portalEventFactory;
 
     private MockHttpServletRequest req;
 
@@ -63,14 +59,15 @@ public class SessionRESTControllerTest {
         person.setUserName(USER_NAME);
         person.setFullName("john doe");
 
-        Mockito.when( personManager.getPerson(req)).thenReturn(person);
-        Mockito.when(portalEventFactory.getPortalEventSessionId(req,person)).thenReturn("id");
+        Mockito.when(personManager.getPerson(req)).thenReturn(person);
+        Mockito.when(portalEventFactory.getPortalEventSessionId(req, person)).thenReturn("id");
         req.setSession(null);
 
-        ModelAndView modelAndView = sessionRESTController.isAuthenticated(req,res);
-        Map<String, Object>attributes = (Map<String, Object>) modelAndView.getModel().get("person");
+        ModelAndView modelAndView = sessionRESTController.isAuthenticated(req, res);
+        Map<String, Object> attributes =
+                (Map<String, Object>) modelAndView.getModel().get("person");
 
-        Assert.assertEquals(404,res.getStatus());
+        Assert.assertEquals(404, res.getStatus());
         Assert.assertNull(modelAndView.getModel().get("person"));
     }
 
@@ -80,16 +77,16 @@ public class SessionRESTControllerTest {
         person.setUserName(USER_NAME);
         person.setFullName("john doe");
 
-        Mockito.when( personManager.getPerson(req)).thenReturn(person);
-        Mockito.when(portalEventFactory.getPortalEventSessionId(req,person)).thenReturn("id");
+        Mockito.when(personManager.getPerson(req)).thenReturn(person);
+        Mockito.when(portalEventFactory.getPortalEventSessionId(req, person)).thenReturn("id");
 
         MockHttpSession session = new MockHttpSession();
-        session.setAttribute("session","true");
+        session.setAttribute("session", "true");
         req.setSession(session);
 
-        ModelAndView modelAndView = sessionRESTController.isAuthenticated(req,res);
-        Map<String, Object>attributes = (Map<String, Object>) modelAndView.getModel().get("person");
-        Assert.assertEquals(USER_NAME,attributes.get("userName"));
+        ModelAndView modelAndView = sessionRESTController.isAuthenticated(req, res);
+        Map<String, Object> attributes =
+                (Map<String, Object>) modelAndView.getModel().get("person");
+        Assert.assertEquals(USER_NAME, attributes.get("userName"));
     }
-
 }

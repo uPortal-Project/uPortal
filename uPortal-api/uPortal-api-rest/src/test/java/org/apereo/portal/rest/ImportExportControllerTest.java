@@ -12,13 +12,10 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apereo.portal.rest;
 
 import java.io.IOException;
-
 import javax.servlet.http.HttpServletRequest;
-
 import org.apereo.portal.EntityIdentifier;
 import org.apereo.portal.groups.ICompositeGroupService;
 import org.apereo.portal.io.xml.IPortalDataHandlerService;
@@ -35,35 +32,30 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockMultipartFile;
 
-
 public class ImportExportControllerTest {
 
     public static final String ENTITY_TYPE = "user";
     public static final String ENTITY_ID = "123";
     public static final String USER_NAME = "jdoe";
 
-    @InjectMocks
-    private ImportExportController importExportController;
+    @InjectMocks private ImportExportController importExportController;
 
-    @Mock
-    private IPersonManager personManager;
+    @Mock private IPersonManager personManager;
 
-    @Mock
-    private IPortalDataHandlerService portalDataHandlerService;
+    @Mock private IPortalDataHandlerService portalDataHandlerService;
 
-    @Mock
-    private XmlUtilities xmlUtilities;
+    @Mock private XmlUtilities xmlUtilities;
 
     MockHttpServletResponse res;
 
-    @Mock
-    private HttpServletRequest req;
+    @Mock private HttpServletRequest req;
 
     private MockMultipartFile firstFile;
 
     @Before
     public void setup() {
-        firstFile = new MockMultipartFile("data", "filename.txt", "text/plain", "some xml".getBytes());
+        firstFile =
+                new MockMultipartFile("data", "filename.txt", "text/plain", "some xml".getBytes());
         importExportController = new ImportExportController();
         MockitoAnnotations.initMocks(this);
         res = new MockHttpServletResponse();
@@ -72,15 +64,17 @@ public class ImportExportControllerTest {
 
     //@Test//(expected = java.lang.ExceptionInInitializerError.class)
     public void testDeleteEntityUnauthorized() throws IOException {
-        EntityIdentifier id = new EntityIdentifier(ENTITY_ID, ICompositeGroupService.LEAF_ENTITY_TYPE);
+        EntityIdentifier id =
+                new EntityIdentifier(ENTITY_ID, ICompositeGroupService.LEAF_ENTITY_TYPE);
         IPerson person = new PersonImpl();
         person.setUserName(USER_NAME);
-        Mockito.when( personManager.getPerson(req)).thenReturn(person);
-       // AuthorizationService service = Mockito.mock(AuthorizationService.class);
+        Mockito.when(personManager.getPerson(req)).thenReturn(person);
+        // AuthorizationService service = Mockito.mock(AuthorizationService.class);
 
-       // IAuthorizationPrincipal principal = Mockito.mock(AuthorizationPrincipalImpl.class);
+        // IAuthorizationPrincipal principal = Mockito.mock(AuthorizationPrincipalImpl.class);
         //Mockito.when(AuthorizationService.class.getResourceAsStream("properties/security.properties")).thenReturn("properties/security.properties");
-        Mockito.when(AuthorizationService.instance().newPrincipal(USER_NAME,IPerson.class)).thenReturn(null);
+        Mockito.when(AuthorizationService.instance().newPrincipal(USER_NAME, IPerson.class))
+                .thenReturn(null);
         importExportController.deleteEntity(ENTITY_TYPE, ENTITY_ID, req, res);
     }
 
