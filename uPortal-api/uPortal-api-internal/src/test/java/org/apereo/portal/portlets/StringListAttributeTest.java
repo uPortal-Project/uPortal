@@ -16,6 +16,7 @@ package org.apereo.portal.portlets;
 
 import static org.junit.Assert.*;
 
+import java.util.Arrays;
 import org.junit.Test;
 
 public class StringListAttributeTest {
@@ -40,7 +41,7 @@ public class StringListAttributeTest {
         for (String[] blank : blankScenarios) {
             StringListAttribute sla = new StringListAttribute(blank);
             assertTrue(
-                    "StringListAttribute should be blank for values:  " + blank.toString(),
+                    "StringListAttribute should be blank for values:  " + Arrays.toString(blank),
                     sla.isBlank());
         }
     }
@@ -59,7 +60,8 @@ public class StringListAttributeTest {
         for (String[] nonBlank : nonBlankScenarios) {
             StringListAttribute sla = new StringListAttribute(nonBlank);
             assertFalse(
-                    "StringListAttribute should NOT be blank for values:  " + nonBlank.toString(),
+                    "StringListAttribute should NOT be blank for values:  "
+                            + Arrays.toString(nonBlank),
                     sla.isBlank());
         }
     }

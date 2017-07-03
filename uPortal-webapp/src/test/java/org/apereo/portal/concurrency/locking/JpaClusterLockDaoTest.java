@@ -155,6 +155,7 @@ public class JpaClusterLockDaoTest extends BasePortalJpaDaoTest {
      *
      * @throws InterruptedException
      */
+    @Test
     @Ignore
     public void testConcurrentCreateLocking() throws InterruptedException {
         reset(portalInfoProvider);
@@ -213,6 +214,7 @@ public class JpaClusterLockDaoTest extends BasePortalJpaDaoTest {
      *
      * @throws Exception
      */
+    @Test
     @Ignore
     public void testNotAbandoned() throws Exception {
         //Used to make a 'mutable string'
@@ -293,6 +295,7 @@ public class JpaClusterLockDaoTest extends BasePortalJpaDaoTest {
      *
      * @throws Exception
      */
+    @Test
     @Ignore
     public void testAbandoned() throws Exception {
         //Used to make a 'mutable string'

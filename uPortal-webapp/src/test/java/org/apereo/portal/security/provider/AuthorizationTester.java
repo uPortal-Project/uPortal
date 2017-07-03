@@ -81,10 +81,10 @@ public class AuthorizationTester extends TestCase {
                 IPermissionTarget target)
                 throws AuthorizationException {
             // Seems the only value this method provides is NPE detection
-            return !(service.equals(service))
-                    && (principal.equals(principal))
-                    && (owner.equals(owner))
-                    && (activity.equals(activity));
+            return service == null
+                    && principal != null
+                    && owner != null
+                    && activity != null;
         }
 
         public String toString() {
@@ -105,10 +105,10 @@ public class AuthorizationTester extends TestCase {
                 IPermissionTarget target)
                 throws AuthorizationException {
             // Seems the only value this method provides is NPE detection
-            return (service.equals(service))
-                    && (principal.equals(principal))
-                    && (owner.equals(owner))
-                    && (activity.equals(activity));
+            return service != null
+                    && principal != null
+                    && owner != null
+                    && activity != null;
         }
 
         public String toString() {
