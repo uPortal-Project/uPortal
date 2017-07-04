@@ -14,13 +14,22 @@
  */
 package org.apereo.portal.portlets.favorites;
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.portlet.PortletPreferences;
+import javax.portlet.PortletRequest;
+
 import org.apereo.portal.UserPreferencesManager;
 import org.apereo.portal.layout.IUserLayout;
 import org.apereo.portal.layout.IUserLayoutManager;
+import org.apereo.portal.layout.node.IUserLayoutChannelDescription;
 import org.apereo.portal.layout.node.IUserLayoutNodeDescription;
+import org.apereo.portal.security.IAuthorizationPrincipal;
+import org.apereo.portal.security.IAuthorizationService;
+import org.apereo.portal.security.IPerson;
+import org.apereo.portal.security.PersonFactory;
 import org.apereo.portal.user.IUserInstance;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -52,6 +61,9 @@ public class FavoritesController extends AbstractFavoritesController {
      */
     public static final String MAX_HEIGHT_PIXELS_PREFERENCE = "FavoritesController.maxHeightPixels";
 
+    @Autowired
+    private IAuthorizationService authorizationService;
+
     /**
      * Handles all Favorites portlet VIEW mode renders. Populates model with user's favorites and
      * selects a view to display those favorites.
@@ -72,13 +84,13 @@ public class FavoritesController extends AbstractFavoritesController {
      * @return jsp/Favorites/view[_zero]
      */
     @RenderMapping
-    public String initializeView(Model model) {
-        IUserInstance ui =
+    public String initializeView(PortletRequest req, Model model) {
+        final IUserInstance ui =
                 userInstanceManager.getUserInstance(portalRequestUtils.getCurrentPortalRequest());
-        UserPreferencesManager upm = (UserPreferencesManager) ui.getPreferencesManager();
-        IUserLayoutManager ulm = upm.getUserLayoutManager();
+        final UserPreferencesManager upm = (UserPreferencesManager) ui.getPreferencesManager();
+        final IUserLayoutManager ulm = upm.getUserLayoutManager();
 
-        IUserLayout userLayout = ulm.getUserLayout();
+        final IUserLayout userLayout = ulm.getUserLayout();
 
         // TODO: the portlet could predicate including a non-null marketplace portlet fname
         // on the accessing user having permission to render the portlet referenced by that fname
@@ -87,11 +99,35 @@ public class FavoritesController extends AbstractFavoritesController {
         // viable configured marketplace.  This complexity may not be worth it.  Anyway it is not yet implemented.
         model.addAttribute("marketplaceFname", this.marketplaceFName);
 
-        List<IUserLayoutNodeDescription> collections =
+        final List<IUserLayoutNodeDescription> collections =
                 FavoritesUtils.getFavoriteCollections(userLayout);
         model.addAttribute("collections", collections);
 
-        List<IUserLayoutNodeDescription> favorites = FavoritesUtils.getFavoritePortlets(userLayout);
+        final List<IUserLayoutNodeDescription> rawFavorites = FavoritesUtils.getFavoritePortlets(userLayout);
+
+        /*
+         * Filter the collection by SUBSCRIBE permission.
+         *
+         * NOTE:  In the "regular" (non-Favorites) layout, this permissions check is handled by
+         * the rendering engine.  It will refuse to spawn a worker for a portlet to which you
+         * cannot SUBSCRIBE.
+         */
+        final String username = req.getRemoteUser() != null ? req.getRemoteUser() : PersonFactory.GUEST_USERNAMES.get(0); // First item is the default
+        final IAuthorizationPrincipal principal =
+                authorizationService.newPrincipal(username, IPerson.class);
+        final List<IUserLayoutNodeDescription> favorites = new ArrayList<>();
+        for (IUserLayoutNodeDescription nodeDescription : rawFavorites) {
+            if (nodeDescription instanceof IUserLayoutChannelDescription) {
+                final IUserLayoutChannelDescription channelDescription =
+                        (IUserLayoutChannelDescription) nodeDescription;
+                if (principal.canRender(channelDescription.getChannelPublishId())) {
+                    favorites.add(nodeDescription);
+                }
+
+            }
+
+        }
+
         model.addAttribute("favorites", favorites);
 
         // default to the regular old view
@@ -102,7 +138,7 @@ public class FavoritesController extends AbstractFavoritesController {
             viewName = "jsp/Favorites/view_zero";
         }
 
-        logger.trace(
+        logger.debug(
                 "Favorites Portlet VIEW mode render populated model [{}] for render by view {}.",
                 model,
                 viewName);
@@ -111,8 +147,9 @@ public class FavoritesController extends AbstractFavoritesController {
 
     @ModelAttribute("maxHeightPixels")
     public Integer getMaxHeightPixels(PortletPreferences prefs) {
-        String value = prefs.getValue(MAX_HEIGHT_PIXELS_PREFERENCE, null);
-        Integer rslt = value != null ? Integer.valueOf(value) : null;
+        final String value = prefs.getValue(MAX_HEIGHT_PIXELS_PREFERENCE, null);
+        final Integer rslt = value != null ? Integer.valueOf(value) : null;
         return rslt;
     }
+
 }
