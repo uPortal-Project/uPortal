@@ -98,7 +98,9 @@ subprojects {
     }
 
     dependencies {
-        testCompile "junit:junit:${junitVersion}"
+        testCompile("junit:junit:${junitVersion}") {
+            exclude group: 'org.hamcrest', module: 'hamcrest-core'
+        }
         testCompile "org.easymock:easymock:${easymockVersion}"
         testCompile "org.hamcrest:hamcrest-all:${hamcrestVersion}"
         testCompile "org.mockito:mockito-core:${mockitoVersion}"

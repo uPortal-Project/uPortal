@@ -22,6 +22,7 @@ dependencies {
         exclude group: 'org.springframework.ldap', module: 'spring-ldap'
         exclude group: 'javax.script', module: 'groovy-engine'
         exclude group: 'javax.script', module: 'script-api'
+        exclude group: 'org.hamcrest', module: 'hamcrest-core'
     }
 
     compileOnly "org.apache.portals.pluto:pluto-container-api:${plutoVersion}"
