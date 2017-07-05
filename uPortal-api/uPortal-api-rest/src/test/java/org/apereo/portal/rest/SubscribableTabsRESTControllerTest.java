@@ -59,6 +59,5 @@ public class SubscribableTabsRESTControllerTest {
 
         Mockito.when(userInstanceManager.getUserInstance(req)).thenReturn(user);
         ModelAndView modelAndView = subscribableTabsRESTController.getSubscriptionList(req);
-
     }
 }

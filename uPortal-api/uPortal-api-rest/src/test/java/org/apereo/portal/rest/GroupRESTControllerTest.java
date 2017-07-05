@@ -14,19 +14,33 @@
  */
 package org.apereo.portal.rest;
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apereo.portal.api.groups.ApiGroupsService;
+import org.apereo.portal.api.groups.Entity;
+import org.apereo.portal.api.groups.EntityFactory;
+import org.apereo.portal.portlets.groupselector.EntityEnum;
+import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.IPersonManager;
+import org.apereo.portal.security.provider.PersonImpl;
+import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.web.servlet.ModelAndView;
 
 public class GroupRESTControllerTest {
 
     @InjectMocks private GroupRESTController groupRESTController;
 
-    // @Mock
-    // ApiGroupsService apiGroupsService;
+    @Mock private ApiGroupsService apiGroupsService;
 
     @Mock private IPersonManager personManager;
 
@@ -37,19 +51,58 @@ public class GroupRESTControllerTest {
     @Before
     public void setup() throws Exception {
         groupRESTController = new GroupRESTController();
-        //  groupRESTController.setGroupService(apiGroupsService);
-        groupRESTController.setPersonManager(personManager);
-        //MockitoAnnotations.initMocks(this);
+        apiGroupsService = Mockito.mock(ApiGroupsService.class);
+        req = new MockHttpServletRequest();
+        MockitoAnnotations.initMocks(this);
     }
 
-    /**
-     * * Need to figure out why it is not able to find GroupService class while executing the test.
-     * Confirm first if api is working or not by deploying it in tomcat, making API request from
-     * postman or from uPortal @Test public void testGetUsersGroup() { IPerson person = null;
-     * Mockito.when(personManager.getPerson(req).getUserName()).thenReturn("john"); //
-     * Mockito.when(apiGroupsService.getGroupsForMember("john")).thenReturn(Collections.emptySet());
-     * ModelAndView modelAndView = groupRESTController.getUsersGroup(req,res); assertEquals("json",
-     * modelAndView.getViewName()); assertEquals("groups", modelAndView.getViewName());
-     * assertEquals(null,modelAndView.getModel()); }
-     */
+    @Test
+    public void testGetUsersGroupEmpty() {
+        IPerson person = new PersonImpl();
+        person.setUserName("jdoe");
+        person.setFullName("john doe");
+
+        Mockito.when(personManager.getPerson(req)).thenReturn(person);
+        Mockito.when(apiGroupsService.getGroupsForMember("john"))
+                .thenReturn(Collections.emptySet());
+        ModelAndView modelAndView = groupRESTController.getUsersGroup(req, res);
+        Set<Entity> groups = (Set<Entity>) modelAndView.getModel().get("groups");
+
+        Assert.assertEquals("json", modelAndView.getViewName());
+        Assert.assertTrue(groups.isEmpty());
+    }
+
+    @Test
+    public void testGetUsersGroupNULL() {
+        IPerson person = new PersonImpl();
+        person.setUserName("jdoe");
+        person.setFullName("john doe");
+
+        Entity e = EntityFactory.createEntity(null, EntityEnum.GROUP);
+        Set<Entity> groups = new HashSet<Entity>();
+        groups.add(e);
+        Mockito.when(personManager.getPerson(req)).thenReturn(person);
+        Mockito.when(apiGroupsService.getGroupsForMember("jdoe")).thenReturn(groups);
+
+        ModelAndView modelAndView = groupRESTController.getUsersGroup(req, res);
+        Set<Entity> returnGroups = (Set<Entity>) modelAndView.getModel().get("groups");
+
+        Assert.assertFalse(returnGroups.isEmpty());
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testGetUsersGroupPersonNULL() {
+        IPerson person = new PersonImpl();
+        person.setUserName("jdoe");
+        person.setFullName("john doe");
+
+        org.apereo.portal.api.groups.Entity e = EntityFactory.createEntity(null, EntityEnum.GROUP);
+        Set<Entity> groups = new HashSet<Entity>();
+        groups.add(e);
+        Mockito.when(personManager.getPerson(req)).thenReturn(null);
+        Mockito.when(apiGroupsService.getGroupsForMember("john")).thenReturn(groups);
+
+        ModelAndView modelAndView = groupRESTController.getUsersGroup(req, res);
+        Set<Entity> returnGroups = (Set<Entity>) modelAndView.getModel().get("groups");
+    }
 }
