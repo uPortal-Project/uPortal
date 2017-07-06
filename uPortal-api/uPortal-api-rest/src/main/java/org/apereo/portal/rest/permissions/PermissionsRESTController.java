@@ -185,6 +185,7 @@ public class PermissionsRESTController {
 
         List<IPermissionActivity> activities = new ArrayList<IPermissionActivity>();
         Collection<IPermissionOwner> owners = permissionOwnerDao.getAllPermissionOwners();
+
         for (IPermissionOwner owner : owners) {
             for (IPermissionActivity activity : owner.getActivities()) {
                 if (StringUtils.isBlank(query)

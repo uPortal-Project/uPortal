@@ -16,11 +16,7 @@ package org.apereo.portal.rest;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.IOException;
-import java.util.Collections;
 import junit.framework.Assert;
-import org.apereo.portal.EntityIdentifier;
-import org.apereo.portal.groups.IGroupConstants;
 import org.apereo.portal.groups.pags.dao.IPersonAttributesGroupDefinition;
 import org.apereo.portal.groups.pags.dao.PagsService;
 import org.apereo.portal.groups.pags.dao.jpa.PersonAttributesGroupDefinitionImpl;
@@ -31,7 +27,6 @@ import org.apereo.portal.services.GroupService;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -99,31 +94,6 @@ public class PagsRESTControllerTest {
         pagsRESTController.findPagsGroup(req, res, "groupname");
 
         Mockito.verify(mapper).writeValueAsString(pagsGroup);
-    }
-
-    // @Test
-    public void testCreatePagsGroup() throws IOException {
-        String groupName = "groupname";
-        IPerson person = new PersonImpl();
-        person.setUserName(USER_NAME);
-        person.setFullName("john doe");
-        String json = null;
-        PersonAttributesGroupDefinitionImpl personAttributesGroupDefinition =
-                new PersonAttributesGroupDefinitionImpl();
-        personAttributesGroupDefinition.setDescription("group description");
-        personAttributesGroupDefinition.setName("group101");
-        personAttributesGroupDefinition.setTestGroups(Collections.emptySet());
-        EntityIdentifier[] eids = new EntityIdentifier[2];
-        Mockito.when(personManager.getPerson(req)).thenReturn(person);
-        Mockito.when(mapper.readValue(json, PersonAttributesGroupDefinitionImpl.class))
-                .thenReturn(null);
-        Mockito.when(
-                        GroupService.searchForGroups(
-                                Matchers.anyString(), IGroupConstants.IS, IPerson.class))
-                .thenReturn(new EntityIdentifier[2]);
-
-        pagsRESTController.createPagsGroup(req, res, "groupname", json);
-        org.junit.Assert.assertEquals(404, res.getStatus());
     }
 
     @Test

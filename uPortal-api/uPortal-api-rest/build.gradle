@@ -26,4 +26,5 @@ dependencies {
     testCompile "org.mockito:mockito-inline:${mockitoVersion}"
     testCompile project(':uPortal-api:uPortal-api-platform')
     testCompile project(':uPortal-api:uPortal-api-platform-impl')
+    testCompile project(':uPortal-security:uPortal-security-permissions')
 }

@@ -24,6 +24,7 @@ import org.apereo.portal.security.provider.PersonImpl;
 import org.apereo.portal.user.IUserInstance;
 import org.apereo.portal.user.IUserInstanceManager;
 import org.junit.Before;
+import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -49,7 +50,7 @@ public class SubscribableTabsRESTControllerTest {
         MockitoAnnotations.initMocks(this);
     }
 
-    //@Test
+    @Test(expected = NullPointerException.class)
     public void testGetSubscriptionList() {
         IPerson person = new PersonImpl();
         person.setUserName(USER_NAME);
@@ -57,7 +58,7 @@ public class SubscribableTabsRESTControllerTest {
 
         IUserInstance user = new UserInstance(person, null, null);
 
-        Mockito.when(userInstanceManager.getUserInstance(req)).thenReturn(user);
+        Mockito.when(userInstanceManager.getUserInstance(req)).thenReturn(null);
         ModelAndView modelAndView = subscribableTabsRESTController.getSubscriptionList(req);
     }
 }
