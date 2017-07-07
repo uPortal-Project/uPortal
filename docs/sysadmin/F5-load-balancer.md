@@ -51,8 +51,6 @@ The key and certificate files are the same as those expected by Apache for SSL.
 1. Click on Choose File
 1. Find and select the key file
 1. Click on Import
-
-
 1. Click on URL link (i.e. my.ucmerced.edu)
 1. Click on Import...
 1. Click on Choose File
