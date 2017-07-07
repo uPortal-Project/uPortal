@@ -1,5 +1,7 @@
 description = "Apereo uPortal REST APIs"
 
+apply plugin: 'idea'
+
 dependencies {
     compile project(':uPortal-api:uPortal-api-platform-impl')
     compile project(':uPortal-groups:uPortal-groups-pags')
@@ -14,4 +16,15 @@ dependencies {
 
     compileOnly "${portletApiDependency}"
     compileOnly "${servletApiDependency}"
+
+    testCompile "junit:junit:${junitVersion}"
+    testCompile "org.mockito:mockito-core:${mockitoVersion}"
+    testCompile "${servletApiDependency}"
+
+    //need to add for SessionRESTControllerTest.java
+    testCompile "org.apache.portals.pluto:pluto-container-api:${plutoVersion}"
+    testCompile "org.mockito:mockito-inline:${mockitoVersion}"
+    testCompile project(':uPortal-api:uPortal-api-platform')
+    testCompile project(':uPortal-api:uPortal-api-platform-impl')
+    testCompile project(':uPortal-security:uPortal-security-permissions')
 }
