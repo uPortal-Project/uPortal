@@ -39,7 +39,7 @@ The first systems to configure are the LTMs.
 
 Log into each LTM web client (requires admin access).
 
-### Install SSL key and certificate
+### Install SSL Key and Certificate
 
 This step makes available the key and certificate for the uPortal web service.
 This is similar to configuring Apache to front uPortal and handle SSL traffic.
@@ -163,7 +163,7 @@ This step assumes that DNS is set up correctly both on the global DNS and the GT
     1. Name: CNAME of the F5 managed A record
     2. Pool: select pool created above
 
-## Configuring connectors in Tomcat server.xml
+## Configuring Connectors in Tomcat server.xml
 
 To support decryption at the F5, some additional attributes need to be set for the connectors
 in server.xml in your uPortal Tomcat installs. This change configures Tomcat to accept unencrypted
