@@ -3,10 +3,10 @@
 ## Sections
 
 1. [Introduction](#introduction)
-2. [Pre-requisites](#pre-requisites)
+2. [Pre-Requisites](#pre-requisites)
 3. [Configuring an LTM](#configuring-an-ltm)
-4. [Configuring the GTM](#confifguring-gtm)
-5. [Configuring connectors in Tomcat server.xml](#configuring-connectors-in-tomcat-server.xml)
+4. [Configuring the GTM](#configuring-the-gtm)
+5. [Configuring connectors in Tomcat](#configuring-connectors-in-tomcat)
 
 ## Introduction
 
@@ -20,7 +20,7 @@ network packets before passing them on to uPortal. In addition, F5 will handle S
 
 In this example, the main DNS service is configured to alias the uPortal service to the F5 GTM.
 
-## Pre-requisites
+## Pre-Requisites
 
 You will need to coordinate a few IP/DNS changes up front with your network team.
 
@@ -163,7 +163,7 @@ This step assumes that DNS is set up correctly both on the global DNS and the GT
     1. Name: CNAME of the F5 managed A record
     2. Pool: select pool created above
 
-## Configuring Connectors in Tomcat server.xml
+## Configuring Connectors in Tomcat
 
 To support decryption at the F5, some additional attributes need to be set for the connectors
 in server.xml in your uPortal Tomcat installs. This change configures Tomcat to accept unencrypted
