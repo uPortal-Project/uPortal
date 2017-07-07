@@ -2,15 +2,15 @@
 
 ## Sections
 
-1. Introduction
-2. Pre-requisites
-3. Configuring an LTM
-4. Configuring the GTM
-5. Configuring connectors in Tomcat server.xml
+1. [Introduction](#introduction)
+2. [Pre-requisites](#pre-requisites)
+3. [Configuring an LTM](#configuring-an-ltm)
+4. [Configuring the GTM](#confifguring-gtm)
+5. [Configuring connectors in Tomcat server.xml](#configuring-connectors-in-tomcat-server.xml)
 
 ## Introduction
 
-Big IP's F5 is a popular solution for a dedicated load balancer. It is feature-rich with many options. Here is one
+F5's BIG-IP Platform (commonly called F5) is a popular solution for a dedicated load balancer. It is feature-rich with many options. Here is one
 approach used at University of California, Merced.
 
 
@@ -169,7 +169,7 @@ To support decryption at the F5, some additional attributes need to be set for t
 in server.xml in your uPortal Tomcat installs. This change configures Tomcat to accept unencrypted
 packets but consider them secure.
 
-````
+```
 <Connector port="8080" protocol="HTTP/1.1"
     ...
     proxyPort="443"
@@ -178,3 +178,5 @@ packets but consider them secure.
     secure="true"
 />
 ```
+
+See [BIG-IP Platform](https://f5.com/products/big-ip)
