@@ -17,8 +17,6 @@ dependencies {
     compileOnly "${portletApiDependency}"
     compileOnly "${servletApiDependency}"
 
-    testCompile "junit:junit:${junitVersion}"
-    testCompile "org.mockito:mockito-core:${mockitoVersion}"
     testCompile "${servletApiDependency}"
 
     //need to add for SessionRESTControllerTest.java
