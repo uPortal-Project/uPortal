@@ -195,6 +195,9 @@ subprojects {
         toolVersion = '3.0.1'
         ignoreFailures = true
     }
+    tasks.withType(FindBugs) {
+        enabled = gradle.startParameter.taskNames.contains(it.name)
+    }
     googleJavaFormat {
         toolVersion '1.3'
         options style: 'AOSP'
