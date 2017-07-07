@@ -1,7 +1,5 @@
 description = "Apereo uPortal REST APIs"
 
-apply plugin: 'idea'
-
 dependencies {
     compile project(':uPortal-api:uPortal-api-platform-impl')
     compile project(':uPortal-groups:uPortal-groups-pags')
