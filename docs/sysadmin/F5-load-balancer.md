@@ -24,13 +24,13 @@ In this example, the main DNS service is configured to alias the uPortal service
 
 You will need to coordinate a few IP/DNS changes up front with your network team.
 
-| Item | Example value for this install |
-| ---- | ------------------------------ |
-| CNAME of uPortal URL to F5 managed A record | my.ucmerced.edu -> my.gl.ucmerced.edu |
-| CNAME of F5 managed A record in DNS as external | my.gl.ucmerced.edu -> F5 DNS services |
-| uPortal Virtual IPs (one per LTM) | 169.236.5.27, 169.236.79.27 |
-| SSL key and certificate | my.key, my.cert |
-| String to grep from the landing page of the tomcats | "portal" |
+| Item                                                | Example value for this install        |
+| --------------------------------------------------- | ------------------------------------- |
+| CNAME of uPortal URL to F5 managed A record         | my.ucmerced.edu -> my.gl.ucmerced.edu |
+| CNAME of F5 managed A record in DNS as external     | my.gl.ucmerced.edu -> F5 DNS services |
+| uPortal Virtual IPs (one per LTM)                   | 169.236.5.27, 169.236.79.27           |
+| SSL key and certificate                             | my.key, my.cert                       |
+| String to grep from the landing page of the tomcats | "portal"                              |
 
 Details for setting up F5 are beyond this document. These items are for setting up a new uPortal service.
 
@@ -46,16 +46,16 @@ This is similar to configuring Apache to front uPortal and handle SSL traffic.
 The key and certificate files are the same as those expected by Apache for SSL.
 
 1. Navigate to System > File Management > SSL Certificate List > Import...
-1. Import Type: Key
-1. Key Name: use URL (i.e. my.ucmerced.edu)
-1. Click on Choose File
-1. Find and select the key file
-1. Click on Import
-1. Click on URL link (i.e. my.ucmerced.edu)
-1. Click on Import...
-1. Click on Choose File
-1. Find and select the certificate file
-1. Click on Import
+2. Import Type: Key
+3. Key Name: use URL (i.e. my.ucmerced.edu)
+4. Click on Choose File
+5. Find and select the key file
+6. Click on Import
+7. Click on URL link (i.e. my.ucmerced.edu)
+8. Click on Import...
+9. Click on Choose File
+10. Find and select the certificate file
+11. Click on Import
 
 ### Create Monitor
 
@@ -68,7 +68,7 @@ response, to confirm it is operational.
     1. Name: something referencing service and "mon" (i.e. portal-http-mon)
     2. Description: some detail if you want
     3. Type: HTTP (opens up more fields)
-    4. Send String: GET / HTTP/1.1\r\nHost: \r\n\r\n
+    4. Send String: `GET / HTTP/1.1\r\nHost: \r\n\r\n`
     5. Receive String: some text you expect from the landing page (see step #1)
     
 ### Create Pools
@@ -96,11 +96,11 @@ The SSL Profile connects the SSL key and certificate with the uPortal pool(s).
 2. Click on Create ...
 3. Enter the following values:
     1. Name: an appropriate name (i.e. portal_clientssl)
-    1. Parent Profile: clientssl
-    1. Select 'Advanced' from the dropdown
-    1. Certificate: check and change to SSL Profile created above
-    1. Key: check and change to SSL Profile created above
-    1. Chain: check and change to an intermediate if required for your certificate
+    2. Parent Profile: clientssl
+    3. Select 'Advanced' from the dropdown
+    4. Certificate: check and change to SSL Profile created above
+    5. Key: check and change to SSL Profile created above
+    6. Chain: check and change to an intermediate if required for your certificate
 
 ### Create Port 80 Redirect Virtual Server
 
@@ -110,11 +110,11 @@ This step creates a redirect for traffic on the uPortal virtual IP, port 80, to 
 2. Click on Create ...
 3. Enter the following values:
     1. Name: Something tha combines "vs" plus service plus portl (i.e. vs_portal_80)
-    1. Destination: Virtual IP for this LTM (see pre-requisites)
-    1. Service Port: HTTP (80)
-    1. HTTP Profile: http
-    1. VLAN and Tunnels: external_vip_vlan
-    1. iRules: _sys_https_redirect
+    2. Destination: Virtual IP for this LTM (see pre-requisites)
+    3. Service Port: HTTP (80)
+    4. HTTP Profile: http
+    5. VLAN and Tunnels: external_vip_vlan
+    6. iRules: _sys_https_redirect
 
 ### Create Port 443 Virtual Server
 
@@ -124,14 +124,14 @@ This step routes incoming traffic on the virtual IP for uPortal to the uPortal s
 2. Click on Create ...
 1. Enter the following values:
     1. Name: Something tha combines "vs" plus service plus portl (i.e. vs_portal_443)
-    1. Destination: Virtual IP for this LTM (see pre-requisites)
-    1. Service Port: HTTPS (443)
-    1. HTTP Profile: http
-    1. SSL Profile (Client): select SSL Profile created above
-    1. VLAN and Tunnels: external_vip_vlan
-    1. SNAT Pool: Auto Map
-    1. Default Pool: select the pool created above
-    1. Default Persistence Profile: cookie
+    2. Destination: Virtual IP for this LTM (see pre-requisites)
+    3. Service Port: HTTPS (443)
+    4. HTTP Profile: http
+    5. SSL Profile (Client): select SSL Profile created above
+    6. VLAN and Tunnels: external_vip_vlan
+    7. SNAT Pool: Auto Map
+    8. Default Pool: select the pool created above
+    9. Default Persistence Profile: cookie
 
 ## Configuring the GTM
 
@@ -149,9 +149,9 @@ The pool is the definitive list of the uPortal virtual IPs pointing to all activ
 2. Click on Create ...
 3. Enter the following values:
     1. Name: Something with service name and "pool" (i.e. uportal_pool)
-    1. Load Balancing Method: Topology, Global Availability, Return to DNS
+    2. Load Balancing Method: Topology, Global Availability, Return to DNS
         - see help for addition options
-    1. Members: Virtual IPs + ports for all LTMs with uPortal pools
+    3. Members: Virtual IPs + ports for all LTMs with uPortal pools
 
 ### Create Wide IPs
 
@@ -169,7 +169,7 @@ To support decryption at the F5, some additional attributes need to be set for t
 in server.xml in your uPortal Tomcat installs. This change configures Tomcat to accept unencrypted
 packets but consider them secure.
 
-```
+``` xml
 <Connector port="8080" protocol="HTTP/1.1"
     ...
     proxyPort="443"
