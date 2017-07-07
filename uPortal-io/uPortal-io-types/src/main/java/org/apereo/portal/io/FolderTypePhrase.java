@@ -44,17 +44,20 @@ public class FolderTypePhrase implements Phrase {
                     String.class,
                     "Value of the TYPE field from the DB.");
 
+    @Override
     public Formula getFormula() {
         Reagent[] reagents = new Reagent[] {DB_VALUE};
         return new SimpleFormula(FolderTypePhrase.class, reagents);
     }
 
+    @Override
     public void init(EntityConfig config) {
 
         // Instance Members.
         this.dbvalue = (Phrase) config.getValue(DB_VALUE);
     }
 
+    @Override
     public Object evaluate(TaskRequest req, TaskResponse res) {
 
         String value = (String) dbvalue.evaluate(req, res);

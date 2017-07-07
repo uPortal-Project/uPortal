@@ -104,6 +104,7 @@ public final class PortletDefinitionBean
         return keywords;
     }
 
+    @Override
     public int compareTo(PortletDefinitionBean pdb) {
         return new CompareToBuilder().append(this.name, pdb.getName()).toComparison();
     }

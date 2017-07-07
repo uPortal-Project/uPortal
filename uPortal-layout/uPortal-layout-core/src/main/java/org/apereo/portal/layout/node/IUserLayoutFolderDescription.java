@@ -70,5 +70,6 @@ public interface IUserLayoutFolderDescription extends IUserLayoutNodeDescription
      * @param root a <code>Document</code> for which the <code>Element</code> should be created.
      * @return a <code>Node</code> value
      */
+    @Override
     public Element getXML(Document root);
 }

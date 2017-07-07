@@ -51,26 +51,32 @@ public final class MovingAverageSample implements IMovingAverageSample, Serializ
         this.totalSamples = totalSamples;
     }
 
+    @Override
     public long getAverage() {
         return average;
     }
 
+    @Override
     public long getHighMax() {
         return highMax;
     }
 
+    @Override
     public long getLastSample() {
         return lastSample;
     }
 
+    @Override
     public long getMax() {
         return max;
     }
 
+    @Override
     public long getMin() {
         return min;
     }
 
+    @Override
     public long getTotalSamples() {
         return totalSamples;
     }

@@ -24,7 +24,7 @@ public enum PortletLifecycleState {
     public static final String MAINTENANCE_MODE_PARAMETER_NAME =
             "PortletLifecycleState.inMaintenanceMode";
 
-    private int order;
+    private final int order;
 
     private PortletLifecycleState(int order) {
         this.order = order;

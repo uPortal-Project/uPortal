@@ -50,6 +50,7 @@ public class PermissionTargetImpl
      * (non-Javadoc)
      * @see org.apereo.portal.permission.target.IPermissionTarget#getKey()
      */
+    @Override
     public String getKey() {
         return key;
     }
@@ -58,10 +59,12 @@ public class PermissionTargetImpl
      * (non-Javadoc)
      * @see org.apereo.portal.permission.target.IPermissionTarget#getName()
      */
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public TargetType getTargetType() {
         return type;
     }
@@ -104,6 +107,7 @@ public class PermissionTargetImpl
     }
 
     /** @see java.lang.Comparable#compareTo(java.lang.Object) */
+    @Override
     public int compareTo(IPermissionTarget target) {
         return new CompareToBuilder()
                 .append(this.name, target.getName())

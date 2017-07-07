@@ -45,6 +45,7 @@ public class RenderPortletOutputHandler implements PortletOutputHandler {
     }
 
     /** @return The content-type the portlet set */
+    @Override
     public String getContentType() {
         return contentType;
     }

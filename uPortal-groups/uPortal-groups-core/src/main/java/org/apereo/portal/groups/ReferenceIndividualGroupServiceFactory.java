@@ -44,6 +44,7 @@ public class ReferenceIndividualGroupServiceFactory implements IComponentGroupSe
      * @return IIndividualGroupService
      * @exception GroupsException
      */
+    @Override
     public IComponentGroupService newGroupService(ComponentGroupServiceDescriptor svcDescriptor)
             throws GroupsException {
         try {

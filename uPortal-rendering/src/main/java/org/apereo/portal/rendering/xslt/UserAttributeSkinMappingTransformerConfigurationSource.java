@@ -63,6 +63,7 @@ public class UserAttributeSkinMappingTransformerConfigurationSource
         this.attributeToSkinMap = attributeToSkinMap;
     }
 
+    @Override
     protected String getSkinName(HttpServletRequest request) {
         final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
         final IPerson person = userInstance.getPerson();

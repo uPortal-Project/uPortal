@@ -304,7 +304,7 @@ public class StylesheetDescriptorImpl implements IStylesheetDescriptor {
         }
 
         //Remove all old data entries that were not updated
-        dataMap.keySet().remove(oldDataKeys);
+        dataMap.keySet().removeAll(oldDataKeys);
     }
 
     private interface Updater<V> {

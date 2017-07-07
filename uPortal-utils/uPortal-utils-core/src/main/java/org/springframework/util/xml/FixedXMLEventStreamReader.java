@@ -43,6 +43,7 @@ public class FixedXMLEventStreamReader extends AbstractXMLStreamReader {
     }
 
     /** See https://jira.springsource.org/browse/SPR-8457 */
+    @Override
     public String getText() {
         if (event.isCharacters()) { //Handles CHARACTERS, CDATA, & SPACE
             return event.asCharacters().getData();
@@ -53,6 +54,7 @@ public class FixedXMLEventStreamReader extends AbstractXMLStreamReader {
         }
     }
 
+    @Override
     public boolean isStandalone() {
         if (event.isStartDocument()) {
             return ((StartDocument) event).isStandalone();
@@ -61,6 +63,7 @@ public class FixedXMLEventStreamReader extends AbstractXMLStreamReader {
         }
     }
 
+    @Override
     public String getVersion() {
         if (event.isStartDocument()) {
             return ((StartDocument) event).getVersion();
@@ -69,10 +72,12 @@ public class FixedXMLEventStreamReader extends AbstractXMLStreamReader {
         }
     }
 
+    @Override
     public int getTextStart() {
         return 0;
     }
 
+    @Override
     public String getPITarget() {
         if (event.isProcessingInstruction()) {
             return ((ProcessingInstruction) event).getTarget();
@@ -81,6 +86,7 @@ public class FixedXMLEventStreamReader extends AbstractXMLStreamReader {
         }
     }
 
+    @Override
     public String getPIData() {
         if (event.isProcessingInstruction()) {
             return ((ProcessingInstruction) event).getData();
@@ -89,6 +95,7 @@ public class FixedXMLEventStreamReader extends AbstractXMLStreamReader {
         }
     }
 
+    @Override
     public int getNamespaceCount() {
         Iterator namespaces;
         if (event.isStartElement()) {
@@ -101,6 +108,7 @@ public class FixedXMLEventStreamReader extends AbstractXMLStreamReader {
         return countIterator(namespaces);
     }
 
+    @Override
     public NamespaceContext getNamespaceContext() {
         if (event.isStartElement()) {
             return event.asStartElement().getNamespaceContext();
@@ -109,6 +117,7 @@ public class FixedXMLEventStreamReader extends AbstractXMLStreamReader {
         }
     }
 
+    @Override
     public QName getName() {
         if (event.isStartElement()) {
             return event.asStartElement().getName();
@@ -119,22 +128,27 @@ public class FixedXMLEventStreamReader extends AbstractXMLStreamReader {
         }
     }
 
+    @Override
     public Location getLocation() {
         return event.getLocation();
     }
 
+    @Override
     public int getEventType() {
         return event.getEventType();
     }
 
+    @Override
     public String getEncoding() {
         return null;
     }
 
+    @Override
     public String getCharacterEncodingScheme() {
         return null;
     }
 
+    @Override
     public int getAttributeCount() {
         if (!event.isStartElement()) {
             throw new IllegalStateException();
@@ -143,43 +157,53 @@ public class FixedXMLEventStreamReader extends AbstractXMLStreamReader {
         return countIterator(attributes);
     }
 
+    @Override
     public void close() throws XMLStreamException {
         eventReader.close();
     }
 
+    @Override
     public QName getAttributeName(int index) {
         return getAttribute(index).getName();
     }
 
+    @Override
     public String getAttributeType(int index) {
         return getAttribute(index).getDTDType();
     }
 
+    @Override
     public String getAttributeValue(int index) {
         return getAttribute(index).getValue();
     }
 
+    @Override
     public String getNamespacePrefix(int index) {
         return getNamespace(index).getPrefix();
     }
 
+    @Override
     public String getNamespaceURI(int index) {
         return getNamespace(index).getNamespaceURI();
     }
 
+    @Override
     public Object getProperty(String name) throws IllegalArgumentException {
         return eventReader.getProperty(name);
     }
 
+    @Override
     public boolean isAttributeSpecified(int index) {
         return getAttribute(index).isSpecified();
     }
 
+    @Override
     public int next() throws XMLStreamException {
         event = eventReader.nextEvent();
         return event.getEventType();
     }
 
+    @Override
     public boolean standaloneSet() {
         if (event.isStartDocument()) {
             return ((StartDocument) event).standaloneSet();

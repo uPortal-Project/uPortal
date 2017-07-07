@@ -50,6 +50,7 @@ public class MergingUserInfoService implements UserInfoService {
     /* (non-Javadoc)
      * @see org.apache.pluto.spi.optional.UserInfoService#getUserInfo(javax.portlet.PortletRequest, org.apache.pluto.PortletWindow)
      */
+    @Override
     public Map<String, String> getUserInfo(PortletRequest request, PortletWindow portletWindow)
             throws PortletContainerException {
 

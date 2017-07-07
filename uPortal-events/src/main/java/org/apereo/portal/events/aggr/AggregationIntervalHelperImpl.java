@@ -61,6 +61,7 @@ public class AggregationIntervalHelperImpl implements AggregationIntervalHelper 
         return getIntervalStartDateTimesBetween(interval, start, end, -1);
     }
 
+    @Override
     public int intervalsBetween(AggregationInterval interval, DateTime start, DateTime end) {
         //For intervals that support native determination
         if (interval.isSupportsDetermination()) {

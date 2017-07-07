@@ -31,6 +31,7 @@ buildscript {
         classpath 'com.gradle:build-scan-plugin:1.7.4'
         classpath 'com.moowork.gradle:gradle-node-plugin:0.13'
         classpath 'gradle.plugin.com.github.sherter.google-java-format:google-java-format-gradle-plugin:0.6'
+        classpath 'net.ltgt.gradle:gradle-errorprone-plugin:0.0.10'
         classpath 'com.netflix.nebula:gradle-lint-plugin:latest.release'
         classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.1'
         classpath 'me.champeau.gradle:buildscan-recipes-plugin:0.2.0'
@@ -82,6 +83,9 @@ subprojects {
     apply plugin: 'maven'
     apply plugin: 'signing'
     apply plugin: 'maven-publish'
+    apply plugin: 'com.github.sherter.google-java-format'
+    apply plugin: 'net.ltgt.errorprone'
+
 
     /*======== Dependency Management ========**/
     repositories {
@@ -190,6 +194,9 @@ subprojects {
     findbugs {
         toolVersion = '3.0.1'
         ignoreFailures = true
+    }
+    tasks.withType(FindBugs) {
+        enabled = gradle.startParameter.taskNames.contains(it.name)
     }
     googleJavaFormat {
         toolVersion '1.3'

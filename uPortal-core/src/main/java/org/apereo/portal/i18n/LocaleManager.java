@@ -349,6 +349,7 @@ public class LocaleManager implements Serializable {
         return doc;
     }
 
+    @Override
     public String toString() {
         StringBuffer sb = new StringBuffer(1024);
         sb.append("LocaleManager's locales").append("\n");

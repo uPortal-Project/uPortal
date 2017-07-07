@@ -33,6 +33,7 @@ public class RestrictedPersonTest extends TestCase {
 
     private RestrictedPerson restrictedPerson;
 
+    @Override
     protected void setUp() {
         IPerson fullPerson = new PersonImpl();
         fullPerson.setAttribute("att1", "val1");
@@ -48,6 +49,7 @@ public class RestrictedPersonTest extends TestCase {
         this.restrictedPerson = new RestrictedPerson(fullPerson);
     }
 
+    @Override
     protected void tearDown() {
         this.person = null;
         this.restrictedPerson = null;
@@ -136,11 +138,12 @@ public class RestrictedPersonTest extends TestCase {
      * A dummy ISecurityContext implementation. Useful as a non-null ISecurityContext, but otherwise
      * no methods do anything.
      */
-    private class DummySecurityContext implements ISecurityContext {
+    private static class DummySecurityContext implements ISecurityContext {
 
         /* (non-Javadoc)
          * @see org.apereo.portal.security.ISecurityContext#getAuthType()
          */
+        @Override
         public int getAuthType() {
             return 0;
         }
@@ -148,6 +151,7 @@ public class RestrictedPersonTest extends TestCase {
         /* (non-Javadoc)
          * @see org.apereo.portal.security.ISecurityContext#getPrincipalInstance()
          */
+        @Override
         public IPrincipal getPrincipalInstance() {
             return null;
         }
@@ -155,6 +159,7 @@ public class RestrictedPersonTest extends TestCase {
         /* (non-Javadoc)
          * @see org.apereo.portal.security.ISecurityContext#getOpaqueCredentialsInstance()
          */
+        @Override
         public IOpaqueCredentials getOpaqueCredentialsInstance() {
             return null;
         }
@@ -162,6 +167,7 @@ public class RestrictedPersonTest extends TestCase {
         /* (non-Javadoc)
          * @see org.apereo.portal.security.ISecurityContext#authenticate()
          */
+        @Override
         public void authenticate() throws PortalSecurityException {
             // do nothing -- dummy implementation
         }
@@ -169,6 +175,7 @@ public class RestrictedPersonTest extends TestCase {
         /* (non-Javadoc)
          * @see org.apereo.portal.security.ISecurityContext#getPrincipal()
          */
+        @Override
         public IPrincipal getPrincipal() {
             return null;
         }
@@ -176,6 +183,7 @@ public class RestrictedPersonTest extends TestCase {
         /* (non-Javadoc)
          * @see org.apereo.portal.security.ISecurityContext#getOpaqueCredentials()
          */
+        @Override
         public IOpaqueCredentials getOpaqueCredentials() {
             return null;
         }
@@ -183,6 +191,7 @@ public class RestrictedPersonTest extends TestCase {
         /* (non-Javadoc)
          * @see org.apereo.portal.security.ISecurityContext#getAdditionalDescriptor()
          */
+        @Override
         public IAdditionalDescriptor getAdditionalDescriptor() {
             return null;
         }
@@ -190,6 +199,7 @@ public class RestrictedPersonTest extends TestCase {
         /* (non-Javadoc)
          * @see org.apereo.portal.security.ISecurityContext#isAuthenticated()
          */
+        @Override
         public boolean isAuthenticated() {
             return false;
         }
@@ -197,6 +207,7 @@ public class RestrictedPersonTest extends TestCase {
         /* (non-Javadoc)
          * @see org.apereo.portal.security.ISecurityContext#getSubContext(java.lang.String)
          */
+        @Override
         public ISecurityContext getSubContext(String ctx) throws PortalSecurityException {
             return null;
         }
@@ -204,6 +215,7 @@ public class RestrictedPersonTest extends TestCase {
         /* (non-Javadoc)
          * @see org.apereo.portal.security.ISecurityContext#getSubContexts()
          */
+        @Override
         public Enumeration getSubContexts() {
             return null;
         }
@@ -211,6 +223,7 @@ public class RestrictedPersonTest extends TestCase {
         /* (non-Javadoc)
          * @see org.apereo.portal.security.ISecurityContext#getSubContextNames()
          */
+        @Override
         public Enumeration getSubContextNames() {
             return null;
         }
@@ -218,6 +231,7 @@ public class RestrictedPersonTest extends TestCase {
         /* (non-Javadoc)
          * @see org.apereo.portal.security.ISecurityContext#addSubContext(java.lang.String, org.apereo.portal.security.ISecurityContext)
          */
+        @Override
         public void addSubContext(String name, ISecurityContext ctx)
                 throws PortalSecurityException {
             // do nothing -- dummy implementation

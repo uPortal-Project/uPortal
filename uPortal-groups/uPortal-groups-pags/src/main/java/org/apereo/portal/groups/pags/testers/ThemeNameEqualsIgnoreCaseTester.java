@@ -60,6 +60,7 @@ public class ThemeNameEqualsIgnoreCaseTester implements IPersonTester {
                         "stylesheetDescriptorDao", IStylesheetDescriptorDao.class);
     }
 
+    @Override
     public boolean test(IPerson person) {
         HttpServletRequest currentPortalRequest = getCurrentHttpServletRequest();
         if (currentPortalRequest == null) {

@@ -68,6 +68,7 @@ public class VersionVerifier implements InitializingBean {
         this.updatePolicy = updatePolicy;
     }
 
+    @SuppressWarnings("FallThrough")
     @Override
     public void afterPropertiesSet() throws Exception {
         for (final Map.Entry<String, Version> productVersionEntry :

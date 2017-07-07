@@ -98,56 +98,67 @@ public abstract class BaseTimedAggregationStatsImpl<
         return this.count;
     }
 
+    @Override
     public final double getSum() {
         updateStats();
         return this.sum;
     }
 
+    @Override
     public final double getSumsq() {
         updateStats();
         return this.sumsq;
     }
 
+    @Override
     public final double getMean() {
         updateStats();
         return this.mean;
     }
 
+    @Override
     public final double getStandardDeviation() {
         updateStats();
         return this.standardDeviation;
     }
 
+    @Override
     public final double getVariance() {
         updateStats();
         return this.variance;
     }
 
+    @Override
     public final double getPopulationVariance() {
         updateStats();
         return this.populationVariance;
     }
 
+    @Override
     public final double getMax() {
         updateStats();
         return this.max;
     }
 
+    @Override
     public final double getMin() {
         updateStats();
         return this.min;
     }
 
+    @Override
     public final double getGeometricMean() {
         updateStats();
         return this.geometricMean;
     }
 
+    @Override
     public final double getSumOfLogs() {
         updateStats();
         return this.sumOfLogs;
     }
 
+    @Override
     public final double getSecondMoment() {
         updateStats();
         return this.secondMoment;

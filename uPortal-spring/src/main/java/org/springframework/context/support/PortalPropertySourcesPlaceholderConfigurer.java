@@ -80,7 +80,7 @@ public class PortalPropertySourcesPlaceholderConfigurer
      * collection.
      */
     @Override
-    public void setLocations(Resource[] locations) {
+    public void setLocations(Resource... locations) {
         final List<Resource> list = new ArrayList<>();
         for (Resource r : locations) {
             if (r.exists()) {

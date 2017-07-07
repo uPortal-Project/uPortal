@@ -168,6 +168,7 @@ public class DialectAwareTransactionInterceptor
         return tas;
     }
 
+    @Override
     protected PlatformTransactionManager determineTransactionManager(TransactionAttribute txAttr) {
         if (txAttr instanceof SkipTransactionAttribute) {
             return NOOP_TRANSACTION_MANAGER;

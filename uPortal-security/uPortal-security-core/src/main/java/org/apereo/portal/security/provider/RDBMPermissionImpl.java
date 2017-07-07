@@ -85,12 +85,13 @@ public class RDBMPermissionImpl implements IPermissionStore {
      * @param perms org.apereo.portal.security.IPermission[]
      * @exception AuthorizationException - wraps an Exception specific to the store.
      */
+    @Override
     public void add(IPermission[] perms) throws AuthorizationException {
         if (perms.length > 0) {
             try {
                 primAdd(perms);
             } catch (Exception ex) {
-                log.error("Exception adding permissions " + perms, ex);
+                log.error("Exception adding permissions " + Arrays.toString(perms), ex);
                 throw new AuthorizationException(ex);
             }
         }
@@ -101,6 +102,7 @@ public class RDBMPermissionImpl implements IPermissionStore {
      * @param perm org.apereo.portal.security.IPermission
      * @exception AuthorizationException - wraps an Exception specific to the store.
      */
+    @Override
     public void add(IPermission perm) throws AuthorizationException {
 
         Connection conn = null;
@@ -133,6 +135,7 @@ public class RDBMPermissionImpl implements IPermissionStore {
      * @param perms org.apereo.portal.security.IPermission[]
      * @exception AuthorizationException - wraps an Exception specific to the store.
      */
+    @Override
     public void delete(IPermission[] perms) throws AuthorizationException {
         if (perms.length > 0) {
             try {
@@ -150,6 +153,7 @@ public class RDBMPermissionImpl implements IPermissionStore {
      * @param perm org.apereo.portal.security.IPermission
      * @exception AuthorizationException - wraps an Exception specific to the store.
      */
+    @Override
     public void delete(IPermission perm) throws AuthorizationException {
 
         Connection conn = null;
@@ -358,6 +362,7 @@ public class RDBMPermissionImpl implements IPermissionStore {
         return perm;
     }
     /** Factory method for IPermissions */
+    @Override
     public IPermission newInstance(String owner) {
         return new PermissionImpl(owner);
     }
@@ -397,7 +402,7 @@ public class RDBMPermissionImpl implements IPermissionStore {
             RDBMServices.commit(conn);
 
         } catch (Exception ex) {
-            log.error("Exception adding permissions " + perms, ex);
+            log.error("Exception adding permissions " + Arrays.toString(perms), ex);
             RDBMServices.rollback(conn);
             throw ex;
         } finally {
@@ -472,7 +477,7 @@ public class RDBMPermissionImpl implements IPermissionStore {
             RDBMServices.commit(conn);
 
         } catch (Exception ex) {
-            log.error("Exception deleting permissions [" + perms + "]", ex);
+            log.error("Exception deleting permissions [" + Arrays.toString(perms) + "]", ex);
             RDBMServices.rollback(conn);
             throw ex;
         } finally {
@@ -528,7 +533,7 @@ public class RDBMPermissionImpl implements IPermissionStore {
             RDBMServices.commit(conn);
 
         } catch (Exception ex) {
-            log.error("Exception updating permissions " + perms, ex);
+            log.error("Exception updating permissions " + Arrays.toString(perms), ex);
             RDBMServices.rollback(conn);
             throw ex;
         } finally {
@@ -682,6 +687,7 @@ public class RDBMPermissionImpl implements IPermissionStore {
      * @param activity String - the Permission activity
      * @exception AuthorizationException - wraps an Exception specific to the store.
      */
+    @Override
     public IPermission[] select(
             String owner, String principal, String activity, String target, String type)
             throws AuthorizationException {
@@ -758,12 +764,13 @@ public class RDBMPermissionImpl implements IPermissionStore {
      * @param perms org.apereo.portal.security.IPermission[]
      * @exception AuthorizationException - wraps an Exception specific to the store.
      */
+    @Override
     public void update(IPermission[] perms) throws AuthorizationException {
         if (perms.length > 0) {
             try {
                 primUpdate(perms);
             } catch (Exception ex) {
-                log.error("Exception updating permissions " + perms, ex);
+                log.error("Exception updating permissions " + Arrays.toString(perms), ex);
                 throw new AuthorizationException(ex);
             }
         }
@@ -774,6 +781,7 @@ public class RDBMPermissionImpl implements IPermissionStore {
      * @param perm org.apereo.portal.security.IPermission
      * @exception AuthorizationException - wraps an Exception specific to the store.
      */
+    @Override
     public void update(IPermission perm) throws AuthorizationException {
 
         Connection conn = null;

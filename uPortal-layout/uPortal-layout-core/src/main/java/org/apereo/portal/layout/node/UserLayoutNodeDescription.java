@@ -42,8 +42,8 @@ public abstract class UserLayoutNodeDescription implements IUserLayoutNodeDescri
         // standard Node attributes
         this.setId(xmlNode.getAttribute("ID"));
         this.setName(xmlNode.getAttribute("name"));
-        this.setUnremovable((new Boolean(xmlNode.getAttribute("unremovable"))).booleanValue());
-        this.setImmutable((new Boolean(xmlNode.getAttribute("immutable"))).booleanValue());
+        this.setUnremovable(Boolean.valueOf(xmlNode.getAttribute("unremovable")));
+        this.setImmutable(Boolean.valueOf(xmlNode.getAttribute("immutable")));
 
         if (xmlNode.getAttribute(Constants.ATT_DELETE_ALLOWED).equals("false"))
             this.setDeleteAllowed(false);
@@ -73,6 +73,7 @@ public abstract class UserLayoutNodeDescription implements IUserLayoutNodeDescri
      * the value of the node's owning fragment's precedence for a node incorporated from another
      * fragment. Added by SCT for DLM.
      */
+    @Override
     public double getPrecedence() {
         return this.precedence;
     }
@@ -80,46 +81,55 @@ public abstract class UserLayoutNodeDescription implements IUserLayoutNodeDescri
     /**
      * Set the precedence of a node. See getPrecedence for more information. Added by SCT for DLM.
      */
+    @Override
     public void setPrecedence(double setting) {
         this.precedence = setting;
     }
 
     /** Returns true if the node can be moved. Added by SCT for DLM. */
+    @Override
     public boolean isMoveAllowed() {
         return this.moveAllowed;
     }
 
     /** Set whether a node can be moved or not. Added by SCT for DLM. */
+    @Override
     public void setMoveAllowed(boolean setting) {
         this.moveAllowed = setting;
     }
 
     /** Returns true if the node can be deleted. Added by SCT for DLM. */
+    @Override
     public boolean isDeleteAllowed() {
         return this.deleteAllowed;
     }
 
     /** Set whether a node can be deleted or not. Added by SCT for DLM. */
+    @Override
     public void setDeleteAllowed(boolean setting) {
         this.deleteAllowed = setting;
     }
 
     /** Returns true if the node can be edited. Added by SCT for DLM. */
+    @Override
     public boolean isEditAllowed() {
         return this.editAllowed;
     }
 
     /** Set whether a node can be edited or not. Added by SCT for DLM. */
+    @Override
     public void setEditAllowed(boolean setting) {
         this.editAllowed = setting;
     }
 
     /** Returns true if a child node may be added to the node. Added by SCT for DLM. */
+    @Override
     public boolean isAddChildAllowed() {
         return this.addChildAllowed;
     }
 
     /** Set whether or not child nodes can be added to this node. Added by SCT for DLM. */
+    @Override
     public void setAddChildAllowed(boolean setting) {
         this.addChildAllowed = setting;
     }
@@ -129,11 +139,13 @@ public abstract class UserLayoutNodeDescription implements IUserLayoutNodeDescri
      *
      * @return a <code>String</code> value
      */
+    @Override
     public String getId() {
         return this.id;
     }
 
     /** Set a new node Id. The Id has to be unique in the entire user layout document. */
+    @Override
     public void setId(String id) {
         this.id = id;
     }
@@ -143,34 +155,42 @@ public abstract class UserLayoutNodeDescription implements IUserLayoutNodeDescri
      *
      * @return a folder/channel name.
      */
+    @Override
     public String getName() {
         return this.name;
     }
 
+    @Override
     public void setName(String name) {
         this.name = name;
     }
 
+    @Override
     public boolean isUnremovable() {
         return this.unremovable;
     }
 
+    @Override
     public void setUnremovable(boolean setting) {
         this.unremovable = setting;
     }
 
+    @Override
     public boolean isImmutable() {
         return this.immutable;
     }
 
+    @Override
     public void setImmutable(boolean setting) {
         this.immutable = setting;
     }
 
+    @Override
     public boolean isHidden() {
         return this.hidden;
     }
 
+    @Override
     public void setHidden(boolean setting) {
         this.hidden = setting;
     }
@@ -180,6 +200,7 @@ public abstract class UserLayoutNodeDescription implements IUserLayoutNodeDescri
      *
      * @return a type
      */
+    @Override
     public abstract LayoutNodeType getType();
 
     /**
@@ -188,6 +209,7 @@ public abstract class UserLayoutNodeDescription implements IUserLayoutNodeDescri
      * @param root a <code>Document</code> for which the <code>Element</code> should be created.
      * @return a <code>Element</code> value
      */
+    @Override
     public abstract Element getXML(Document root);
 
     /**
@@ -195,12 +217,13 @@ public abstract class UserLayoutNodeDescription implements IUserLayoutNodeDescri
      *
      * @param node an <code>Element</code> value
      */
+    @Override
     public void addNodeAttributes(Element node) {
         node.setAttribute("ID", this.getId());
         node.setAttribute("name", this.getName());
-        node.setAttribute("unremovable", (new Boolean(this.isUnremovable())).toString());
-        node.setAttribute("immutable", (new Boolean(this.isImmutable())).toString());
-        node.setAttribute("hidden", (new Boolean(this.isHidden())).toString());
+        node.setAttribute("unremovable", String.valueOf(this.isUnremovable()));
+        node.setAttribute("immutable", String.valueOf(this.isImmutable()));
+        node.setAttribute("hidden", String.valueOf(this.isHidden()));
 
         if (!this.isDeleteAllowed())
             node.setAttributeNS(Constants.NS_URI, Constants.ATT_DELETE_ALLOWED, "false");

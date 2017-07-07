@@ -71,6 +71,7 @@ public class FocusedOnOnePortletPredicate implements Predicate<HttpServletReques
         this.urlSyntaxProvider = urlSyntaxProvider;
     }
 
+    @Override
     public String toString() {
         return this.getClass().getSimpleName();
     }

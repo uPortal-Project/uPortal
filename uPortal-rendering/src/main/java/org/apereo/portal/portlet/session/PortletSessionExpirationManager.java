@@ -74,6 +74,7 @@ public class PortletSessionExpirationManager
      * @see org.apache.pluto.spi.optional.PortletInvocationListener#onEnd(org.apache.pluto.spi.optional.PortletInvocationEvent)
      */
     @SuppressWarnings("unchecked")
+    @Override
     public void onEnd(PortletInvocationEvent event) {
         final PortletRequest portletRequest = event.getPortletRequest();
         final PortletSession portletSession = portletRequest.getPortletSession(false);
@@ -107,6 +108,7 @@ public class PortletSessionExpirationManager
     /* (non-Javadoc)
      * @see org.springframework.context.ApplicationListener#onApplicationEvent(org.springframework.context.ApplicationEvent)
      */
+    @Override
     public void onApplicationEvent(HttpSessionDestroyedEvent event) {
         final HttpSession session = ((HttpSessionDestroyedEvent) event).getSession();
         @SuppressWarnings("unchecked")
@@ -162,6 +164,7 @@ public class PortletSessionExpirationManager
     /* (non-Javadoc)
      * @see org.apache.pluto.spi.optional.PortletInvocationListener#onBegin(org.apache.pluto.spi.optional.PortletInvocationEvent)
      */
+    @Override
     public void onBegin(PortletInvocationEvent event) {
         // Ignore
     }
@@ -169,6 +172,7 @@ public class PortletSessionExpirationManager
     /* (non-Javadoc)
      * @see org.apache.pluto.spi.optional.PortletInvocationListener#onError(org.apache.pluto.spi.optional.PortletInvocationEvent, java.lang.Throwable)
      */
+    @Override
     public void onError(PortletInvocationEvent event, Throwable t) {
         // Ignore
     }
@@ -191,18 +195,22 @@ public class PortletSessionExpirationManager
             return this.delegate != null;
         }
 
+        @Override
         public void clear() {
             delegate.clear();
         }
 
+        @Override
         public boolean containsKey(Object key) {
             return delegate.containsKey(key);
         }
 
+        @Override
         public boolean containsValue(Object value) {
             return delegate.containsValue(value);
         }
 
+        @Override
         public Set<java.util.Map.Entry<K, V>> entrySet() {
             return delegate.entrySet();
         }
@@ -212,6 +220,7 @@ public class PortletSessionExpirationManager
             return delegate.equals(o);
         }
 
+        @Override
         public V get(Object key) {
             return delegate.get(key);
         }
@@ -221,30 +230,37 @@ public class PortletSessionExpirationManager
             return delegate.hashCode();
         }
 
+        @Override
         public boolean isEmpty() {
             return delegate.isEmpty();
         }
 
+        @Override
         public Set<K> keySet() {
             return delegate.keySet();
         }
 
+        @Override
         public V put(K key, V value) {
             return delegate.put(key, value);
         }
 
+        @Override
         public void putAll(Map<? extends K, ? extends V> t) {
             delegate.putAll(t);
         }
 
+        @Override
         public V remove(Object key) {
             return delegate.remove(key);
         }
 
+        @Override
         public int size() {
             return delegate.size();
         }
 
+        @Override
         public Collection<V> values() {
             return delegate.values();
         }

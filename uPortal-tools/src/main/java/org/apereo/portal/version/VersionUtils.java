@@ -153,6 +153,7 @@ public class VersionUtils {
             return patch;
         }
 
+        @Override
         public Integer getLocal() {
             return local;
         }

@@ -36,6 +36,7 @@ public class ReferenceEntityLockServiceFactory implements IEntityLockServiceFact
      * @return org.apereo.portal.concurrency.locking.IEntityLockService
      * @exception LockingException
      */
+    @Override
     public IEntityLockService newLockService() throws LockingException {
         try {
             return ReferenceEntityLockService.singleton();

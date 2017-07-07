@@ -87,6 +87,7 @@ class PortletPreferencesImpl {
     @Transient
     private final List<IPortletPreference> filteringPortletPreferences =
             new FilteringOnAddList<IPortletPreference>(new NewPreferencesFilter(), true) {
+                @Override
                 protected List<IPortletPreference> delegate() {
                     return portletPreferences;
                 }

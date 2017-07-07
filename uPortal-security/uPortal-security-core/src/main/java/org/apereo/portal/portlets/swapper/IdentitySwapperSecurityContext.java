@@ -38,6 +38,7 @@ public class IdentitySwapperSecurityContext implements ISecurityContext {
     /* (non-Javadoc)
      * @see org.apereo.portal.security.ISecurityContext#addSubContext(java.lang.String, org.apereo.portal.security.ISecurityContext)
      */
+    @Override
     public void addSubContext(String name, ISecurityContext ctx) throws PortalSecurityException {
         throw new UnsupportedOperationException("This context does not support chaining.");
     }
@@ -45,6 +46,7 @@ public class IdentitySwapperSecurityContext implements ISecurityContext {
     /* (non-Javadoc)
      * @see org.apereo.portal.security.ISecurityContext#authenticate()
      */
+    @Override
     public void authenticate() throws PortalSecurityException {
         //Do Nothing
     }
@@ -52,6 +54,7 @@ public class IdentitySwapperSecurityContext implements ISecurityContext {
     /* (non-Javadoc)
      * @see org.apereo.portal.security.ISecurityContext#getAdditionalDescriptor()
      */
+    @Override
     public IAdditionalDescriptor getAdditionalDescriptor() {
         return null;
     }
@@ -59,6 +62,7 @@ public class IdentitySwapperSecurityContext implements ISecurityContext {
     /* (non-Javadoc)
      * @see org.apereo.portal.security.ISecurityContext#getAuthType()
      */
+    @Override
     public int getAuthType() {
         return 0;
     }
@@ -66,6 +70,7 @@ public class IdentitySwapperSecurityContext implements ISecurityContext {
     /* (non-Javadoc)
      * @see org.apereo.portal.security.ISecurityContext#getOpaqueCredentials()
      */
+    @Override
     public IOpaqueCredentials getOpaqueCredentials() {
         return null;
     }
@@ -73,6 +78,7 @@ public class IdentitySwapperSecurityContext implements ISecurityContext {
     /* (non-Javadoc)
      * @see org.apereo.portal.security.ISecurityContext#getOpaqueCredentialsInstance()
      */
+    @Override
     public IOpaqueCredentials getOpaqueCredentialsInstance() {
         return null;
     }
@@ -80,6 +86,7 @@ public class IdentitySwapperSecurityContext implements ISecurityContext {
     /* (non-Javadoc)
      * @see org.apereo.portal.security.ISecurityContext#getPrincipal()
      */
+    @Override
     public IPrincipal getPrincipal() {
         return this.principal;
     }
@@ -87,6 +94,7 @@ public class IdentitySwapperSecurityContext implements ISecurityContext {
     /* (non-Javadoc)
      * @see org.apereo.portal.security.ISecurityContext#getPrincipalInstance()
      */
+    @Override
     public IPrincipal getPrincipalInstance() {
         return this.principal;
     }
@@ -94,6 +102,7 @@ public class IdentitySwapperSecurityContext implements ISecurityContext {
     /* (non-Javadoc)
      * @see org.apereo.portal.security.ISecurityContext#getSubContext(java.lang.String)
      */
+    @Override
     public ISecurityContext getSubContext(String ctx) throws PortalSecurityException {
         return null;
     }
@@ -101,6 +110,7 @@ public class IdentitySwapperSecurityContext implements ISecurityContext {
     /* (non-Javadoc)
      * @see org.apereo.portal.security.ISecurityContext#getSubContextNames()
      */
+    @Override
     public Enumeration getSubContextNames() {
         return Collections.enumeration(Collections.emptySet());
     }
@@ -108,6 +118,7 @@ public class IdentitySwapperSecurityContext implements ISecurityContext {
     /* (non-Javadoc)
      * @see org.apereo.portal.security.ISecurityContext#getSubContexts()
      */
+    @Override
     public Enumeration getSubContexts() {
         return Collections.enumeration(Collections.emptySet());
     }
@@ -115,6 +126,7 @@ public class IdentitySwapperSecurityContext implements ISecurityContext {
     /* (non-Javadoc)
      * @see org.apereo.portal.security.ISecurityContext#isAuthenticated()
      */
+    @Override
     public boolean isAuthenticated() {
         //Always says the user is authenticated
         return true;

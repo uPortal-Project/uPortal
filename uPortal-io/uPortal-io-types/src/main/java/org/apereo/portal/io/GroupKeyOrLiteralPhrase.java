@@ -47,17 +47,20 @@ public class GroupKeyOrLiteralPhrase implements Phrase {
                     Element.class,
                     "Element representing either a principal or a target.");
 
+    @Override
     public Formula getFormula() {
         Reagent[] reagents = new Reagent[] {ELEMENT};
         return new SimpleFormula(GroupKeyOrLiteralPhrase.class, reagents);
     }
 
+    @Override
     public void init(EntityConfig config) {
 
         // Instance Members.
         this.element = (Phrase) config.getValue(ELEMENT);
     }
 
+    @Override
     public Object evaluate(TaskRequest req, TaskResponse res) {
 
         String rslt = null;
