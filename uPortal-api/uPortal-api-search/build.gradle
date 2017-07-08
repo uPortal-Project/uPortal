@@ -6,7 +6,7 @@ plugins {
 description = 'Apereo uPortal Search API'
 
 ext {
-    generatedSourcesDir = 'build/generated-sources/xjc'
+    generatedSourcesDir = "${buildDir}/generated-sources/xjc"
 }
 
 dependencies {
@@ -37,14 +37,15 @@ sourceSets {
 jaxb {
     // Without the 'accessExternalSchema' setting, this module will not build on Java 8
     System.setProperty('javax.xml.accessExternalSchema', 'all')
-    xsdDir = "${project.parent.name}/${project.name}/src/main/resources/xsd"
-    bindingsDir = "${project.parent.name}/${project.name}/src/main/binding"
+    xsdDir = "${projectDir}/src/main/resources/xsd"
+    bindingsDir = "${projectDir}/src/main/binding"
     bindings = ['bindings.xjb']
     // Not sure of the role of episodes, but it's better to specify a location within build/
-    episodesDir = "${project.parent.name}/${project.name}/build/schema/episodes"
+    episodesDir = "${buildDir}/schema/episodes"
     xjc {
         taskClassname = 'org.jvnet.jaxb2_commons.xjc.XJC2Task'
-        destinationDir = "${generatedSourcesDir}"
+        destinationDir = generatedSourcesDir
+        producesDir = generatedSourcesDir
     }
 }
 
