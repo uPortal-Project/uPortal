@@ -1,5 +1,5 @@
 plugins {
-    id 'com.github.jacobono.jaxb' version '1.3.5'
+    id 'org.openrepose.gradle.plugins.jaxb' version '2.2.3'
 }
 
 description = 'Apereo uPortal Import/Export JAXB Data Model'
