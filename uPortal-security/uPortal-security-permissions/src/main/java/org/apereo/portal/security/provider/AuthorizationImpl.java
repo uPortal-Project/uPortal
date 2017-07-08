@@ -69,8 +69,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-/**
- */
+/** */
 @Service("authorizationService")
 public class AuthorizationImpl implements IAuthorizationService {
 

@@ -41,7 +41,6 @@ import org.apache.commons.lang.Validate;
 /**
  * A custom HttpServletRequest wrapper that does NOT extend {@link HttpServletRequestWrapper} to
  * ensure the container can not unwrap too far.
- *
  */
 public abstract class AbstractHttpServletRequestWrapper implements HttpServletRequest {
     public static final String PORTAL_ATTRIBUTE_PREFIX = "org.apereo.portal.";

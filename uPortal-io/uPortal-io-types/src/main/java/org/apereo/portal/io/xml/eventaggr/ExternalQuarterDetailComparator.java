@@ -17,10 +17,7 @@ package org.apereo.portal.io.xml.eventaggr;
 import org.apereo.portal.utils.ComparableExtractingComparator;
 import org.joda.time.MonthDay;
 
-/**
- * Compare ExternalQuarterDetail based on start MonthDay
- *
- */
+/** Compare ExternalQuarterDetail based on start MonthDay */
 public class ExternalQuarterDetailComparator
         extends ComparableExtractingComparator<ExternalQuarterDetail, MonthDay> {
     public static final ExternalQuarterDetailComparator INSTANCE =

@@ -30,10 +30,7 @@ import org.springframework.webflow.mvc.view.AbstractMvcViewFactory;
 import org.springframework.webflow.mvc.view.FlowViewResolver;
 import org.springframework.webflow.validation.WebFlowMessageCodesResolver;
 
-/**
- * Clone of {@link MvcViewFactoryCreator} that returns our {@link RuntimeMvcViewFactory}.
- *
- */
+/** Clone of {@link MvcViewFactoryCreator} that returns our {@link RuntimeMvcViewFactory}. */
 public class RuntimeMvcViewFactoryCreator extends MvcViewFactoryCreator {
     private final FlowResourceFlowViewResolver flowResourceFlowViewResolver =
             new FlowResourceFlowViewResolver();

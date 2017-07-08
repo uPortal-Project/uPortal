@@ -27,10 +27,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionOperations;
 
-/**
- * Base for DAOs that interact with the "PortalDb" JPA Persistent Unit
- *
- */
+/** Base for DAOs that interact with the "PortalDb" JPA Persistent Unit */
 public class BasePortalJpaDao extends BaseJpaDao {
     public static final String PERSISTENCE_UNIT_NAME = "PortalDb";
 

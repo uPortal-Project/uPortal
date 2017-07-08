@@ -20,7 +20,6 @@ import org.apereo.portal.events.aggr.BaseAggregation;
 /**
  * Tracks the number of concurrent users. Measured by unique {@link PortalEvent#getEventSessionId()}
  * values seen during the aggregated interval
- *
  */
 public interface ConcurrentUserAggregation
         extends BaseAggregation<

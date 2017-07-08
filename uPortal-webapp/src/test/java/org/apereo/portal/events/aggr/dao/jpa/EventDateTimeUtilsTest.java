@@ -24,8 +24,7 @@ import org.apereo.portal.events.aggr.EventDateTimeUtils;
 import org.joda.time.DateMidnight;
 import org.junit.Test;
 
-/**
- */
+/** */
 public class EventDateTimeUtilsTest {
     @Test
     public void testFindAcademicTerms() {

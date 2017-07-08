@@ -17,10 +17,7 @@ package org.apereo.portal.events;
 import org.apache.commons.lang.Validate;
 import org.apereo.portal.portlet.rendering.worker.IPortletExecutionWorker;
 
-/**
- * Used to signal that a portlet execution has hung
- *
- */
+/** Used to signal that a portlet execution has hung */
 public class PortletHungEvent extends PortalEvent {
     private static final long serialVersionUID = 1L;
 

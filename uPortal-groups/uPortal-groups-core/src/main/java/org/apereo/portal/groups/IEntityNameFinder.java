@@ -14,11 +14,7 @@
  */
 package org.apereo.portal.groups;
 
-
-/**
- * Interface for finding the names of portal entities of a given type.
- *
- */
+/** Interface for finding the names of portal entities of a given type. */
 public interface IEntityNameFinder {
     /**
      * Given the key, returns the entity's name.

@@ -22,10 +22,7 @@ import org.apereo.portal.character.stream.events.PortletHeaderPlaceholderEvent;
 import org.apereo.portal.character.stream.events.PortletHeaderPlaceholderEventImpl;
 import org.apereo.portal.portlet.om.IPortletWindowId;
 
-/**
- * Generates a {@link PortletHeaderPlaceholderEvent} for a {@link StartElement} event
- *
- */
+/** Generates a {@link PortletHeaderPlaceholderEvent} for a {@link StartElement} event */
 public class PortletHeaderPlaceholderEventSource extends PortletPlaceholderEventSource {
 
     @Override

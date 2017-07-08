@@ -20,10 +20,7 @@ import javax.portlet.WindowStateException;
 import org.apereo.portal.portlet.PortletUtils;
 import org.springframework.webflow.context.ExternalContext;
 
-/**
- * Helper methods to allow setting window states and portlet modes during flow exections
- *
- */
+/** Helper methods to allow setting window states and portlet modes during flow exections */
 public class PortletUrlFlowHelper {
     public void setWindowState(ExternalContext externalContext, String windowState) {
         final ActionResponse actionResponse;

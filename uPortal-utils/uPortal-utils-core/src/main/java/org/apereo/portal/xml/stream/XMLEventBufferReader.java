@@ -23,10 +23,7 @@ import javax.xml.stream.events.EntityDeclaration;
 import javax.xml.stream.events.EntityReference;
 import javax.xml.stream.events.XMLEvent;
 
-/**
- * Wraps a {@link ListIterator} of {@link XMLEvent}s with an {@link XMLEventReader}
- *
- */
+/** Wraps a {@link ListIterator} of {@link XMLEvent}s with an {@link XMLEventReader} */
 public class XMLEventBufferReader implements XMLEventReader {
     private final ListIterator<XMLEvent> eventBuffer;
     private XMLEvent previousEvent;

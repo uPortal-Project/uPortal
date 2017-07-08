@@ -20,8 +20,7 @@ import org.apereo.portal.layout.om.IStylesheetDescriptor;
 import org.apereo.portal.url.IPortalRequestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-/**
- */
+/** */
 public class StructureTransformerSource extends BaseTransformerSource {
     @Autowired private IStylesheetUserPreferencesService stylesheetUserPrefService;
 

@@ -16,10 +16,7 @@ package org.apereo.portal.events.aggr.tabrender;
 
 import org.apereo.portal.events.aggr.BaseAggregationPrivateDao;
 
-/**
- * Tab Aggregation DAO used internally to create and update tab aggregations
- *
- */
+/** Tab Aggregation DAO used internally to create and update tab aggregations */
 interface TabRenderAggregationPrivateDao
         extends TabRenderAggregationDao<TabRenderAggregationImpl>,
                 BaseAggregationPrivateDao<TabRenderAggregationImpl, TabRenderAggregationKey> {}

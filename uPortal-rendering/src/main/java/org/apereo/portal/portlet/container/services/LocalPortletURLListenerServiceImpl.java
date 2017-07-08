@@ -24,8 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-/**
- */
+/** */
 @Service("portletURLListenerService")
 public class LocalPortletURLListenerServiceImpl implements PortletURLListenerService {
 

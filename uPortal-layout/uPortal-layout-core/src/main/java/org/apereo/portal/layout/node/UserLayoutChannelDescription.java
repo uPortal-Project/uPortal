@@ -29,9 +29,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-/**
- * A class managing information contained in a user layout channel node.
- */
+/** A class managing information contained in a user layout channel node. */
 public class UserLayoutChannelDescription extends UserLayoutNodeDescription
         implements IUserLayoutChannelDescription {
 

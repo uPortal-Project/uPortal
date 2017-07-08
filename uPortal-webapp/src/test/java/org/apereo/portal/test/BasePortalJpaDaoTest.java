@@ -18,10 +18,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import org.apereo.portal.jpa.BasePortalJpaDao;
 
-/**
- * Base class for PortalDb unit tests that want TX and entity manager support.
- *
- */
+/** Base class for PortalDb unit tests that want TX and entity manager support. */
 public abstract class BasePortalJpaDaoTest extends BaseJpaDaoTest {
     private EntityManager entityManager;
 

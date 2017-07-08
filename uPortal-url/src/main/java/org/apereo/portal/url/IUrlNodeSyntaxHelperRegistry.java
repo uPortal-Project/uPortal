@@ -17,10 +17,7 @@ package org.apereo.portal.url;
 import javax.servlet.http.HttpServletRequest;
 import org.apereo.portal.layout.om.IStylesheetDescriptor;
 
-/**
- * A registry of all available {@link IUrlNodeSyntaxHelper} impls
- *
- */
+/** A registry of all available {@link IUrlNodeSyntaxHelper} impls */
 public interface IUrlNodeSyntaxHelperRegistry {
     /** Get the registered {@link IUrlNodeSyntaxHelper} */
     public IUrlNodeSyntaxHelper getUrlNodeSyntaxHelper(String name);

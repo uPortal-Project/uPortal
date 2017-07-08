@@ -47,8 +47,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- */
+/** */
 public class UserImporterExporter extends AbstractJaxbDataHandler<UserType> {
 
     private static final ImmutableSet<PortalDataKey> IMPORT_DATA_KEYS =

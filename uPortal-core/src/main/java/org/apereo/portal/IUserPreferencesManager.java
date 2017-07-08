@@ -17,9 +17,7 @@ package org.apereo.portal;
 import org.apereo.portal.layout.IUserLayoutManager;
 import org.apereo.portal.security.IPerson;
 
-/**
- * Interface to user preferences management class.
- */
+/** Interface to user preferences management class. */
 public interface IUserPreferencesManager {
 
     /**
@@ -42,5 +40,4 @@ public interface IUserPreferencesManager {
      * @return current <code>UserProfile</code>
      */
     IUserProfile getUserProfile();
-
 }

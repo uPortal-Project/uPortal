@@ -23,10 +23,7 @@ import org.apereo.portal.url.ParameterMap;
 import org.apereo.portal.utils.Populator;
 import org.springframework.core.Ordered;
 
-/**
- * Manager that has a single backing Map of properties.
- *
- */
+/** Manager that has a single backing Map of properties. */
 public class MockRequestPropertiesManager implements IRequestPropertiesManager, Ordered {
     private Map<String, String[]> properties = new ParameterMap();
     private int order;

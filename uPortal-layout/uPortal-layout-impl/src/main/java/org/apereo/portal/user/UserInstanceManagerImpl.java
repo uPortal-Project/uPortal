@@ -38,9 +38,7 @@ import org.apereo.portal.url.IPortalRequestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-/**
- * Determines which user instance object to use for a given user.
- */
+/** Determines which user instance object to use for a given user. */
 @Service("userInstanceManager")
 public class UserInstanceManagerImpl implements IUserInstanceManager {
     private static final String KEY = UserInstanceManagerImpl.class.getName() + ".USER_INSTANCE";

@@ -4,9 +4,7 @@ import org.apereo.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
 import org.apereo.portal.groups.pags.dao.IPersonAttributesGroupTestGroupDefinition;
 import org.dom4j.Element;
 
-/**
- * Supports instantiating {@link IPersonTester} objects in unit tests.
- */
+/** Supports instantiating {@link IPersonTester} objects in unit tests. */
 public final class TestPersonAttributesGroupTestDefinition
         implements IPersonAttributesGroupTestDefinition {
 
@@ -67,5 +65,4 @@ public final class TestPersonAttributesGroupTestDefinition
     public void toElement(Element parent) {
         throw new UnsupportedOperationException();
     }
-
 }

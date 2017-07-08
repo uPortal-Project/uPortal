@@ -23,7 +23,6 @@ import org.slf4j.Marker;
 /**
  * Wraps an SLF4J Logger adding in the Appendable interface. Requires the log level to use when
  * appending to be specified in the constructor
- *
  */
 public class AppendableLogger implements Appendable, Logger {
 

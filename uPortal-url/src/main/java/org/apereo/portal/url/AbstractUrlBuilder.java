@@ -22,8 +22,7 @@ import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang.Validate;
 
-/**
- */
+/** */
 public abstract class AbstractUrlBuilder implements IUrlBuilder {
     private final Map<String, String[]> parameters;
 

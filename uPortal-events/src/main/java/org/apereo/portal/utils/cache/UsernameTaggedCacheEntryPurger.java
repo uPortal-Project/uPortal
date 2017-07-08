@@ -23,10 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
-/**
- * Purges cache entries tagged for a specific user when they login or logout
- *
- */
+/** Purges cache entries tagged for a specific user when they login or logout */
 @Component
 public class UsernameTaggedCacheEntryPurger implements ApplicationListener<LogoutEvent> {
     public static final String TAG_TYPE = "username";

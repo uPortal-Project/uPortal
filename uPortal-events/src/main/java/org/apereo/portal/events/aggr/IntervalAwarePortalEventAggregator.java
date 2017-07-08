@@ -31,7 +31,6 @@ import org.joda.time.DateTime;
  * EventAggregationContext, Map)} calls. <br>
  * An explicit {@link EntityManager#flush()} call is made after all aggregators have had {@link
  * #handleIntervalBoundary(AggregationInterval, EventAggregationContext, Map)} called.
- *
  */
 public interface IntervalAwarePortalEventAggregator<E extends PortalEvent>
         extends IPortalEventAggregator<E> {

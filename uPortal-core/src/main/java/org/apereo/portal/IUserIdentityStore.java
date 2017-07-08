@@ -16,10 +16,7 @@ package org.apereo.portal;
 
 import org.apereo.portal.security.IPerson;
 
-/**
- * Interface for managing creation and removal of User Portal Data
- *
- */
+/** Interface for managing creation and removal of User Portal Data */
 public interface IUserIdentityStore {
 
     /**

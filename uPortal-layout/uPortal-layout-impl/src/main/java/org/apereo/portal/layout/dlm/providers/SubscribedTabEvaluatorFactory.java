@@ -24,7 +24,6 @@ import org.w3c.dom.Node;
  * SubscribedTabEvaluators. This evalutator factory does not recognize any child elements. The
  * factory will automatically configure evaluators using the ownerID attribute associated with the
  * parent element fragmentDefinition element.
- *
  */
 public class SubscribedTabEvaluatorFactory implements EvaluatorFactory {
 

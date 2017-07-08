@@ -22,7 +22,6 @@ import org.junit.BeforeClass;
 /**
  * Utility for setting the TZ during a unit test. {@link #beforeTest()} should be called in a {@link
  * BeforeClass} method and {@link #afterTest()} should be called in a {@link AfterClass} block
- *
  */
 public final class TimeZoneTestUtils {
     private final DateTimeZone testTimeZone;

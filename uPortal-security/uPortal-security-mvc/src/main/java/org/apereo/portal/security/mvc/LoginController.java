@@ -36,7 +36,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * Controller to work with the local login form. The form presented by the login portlet is
  * typically used to generate the post to this servlet. Actual login processing occurs in
  * PortalPreAuthenticatedProcessingFilter.
- *
  */
 @Controller
 @RequestMapping("/Login")

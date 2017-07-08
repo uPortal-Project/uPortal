@@ -17,10 +17,7 @@ package org.apereo.portal.rendering;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.events.XMLEvent;
 
-/**
- * Wraps another {@link StAXPipelineComponent}
- *
- */
+/** Wraps another {@link StAXPipelineComponent} */
 public abstract class StAXPipelineComponentWrapper
         extends PipelineComponentWrapper<XMLEventReader, XMLEvent>
         implements StAXPipelineComponent {}

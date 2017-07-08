@@ -20,7 +20,6 @@ import org.apereo.portal.security.ISecurityContextFactory;
 /**
  * The factory class for the cache security context. Just returns a new instance of the
  * CacheSecurityContext. See the notes and warnings associated with the CacheSecurityContext class.
- *
  */
 public class CacheSecurityContextFactory implements ISecurityContextFactory {
 

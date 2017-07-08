@@ -43,7 +43,6 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
  * UniqueStringsSegment} in each jpa session. This will result in the set of UniqueStringsSegments
  * being reloaded for the parent entity but the contents of each UniqueStringsSegment will not need
  * to be modified.
- *
  */
 @Entity
 @Table(name = "UP_UNIQUE_STR_SEGMENT")

@@ -50,10 +50,7 @@ import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.NaturalIdCache;
 import org.hibernate.annotations.Type;
 
-/**
- * JPA implementation of stylesheet descriptor data
- *
- */
+/** JPA implementation of stylesheet descriptor data */
 @Entity
 @Table(name = "UP_SS_DESC")
 @SequenceGenerator(name = "UP_SS_DESC_GEN", sequenceName = "UP_SS_DESC_SEQ", allocationSize = 5)

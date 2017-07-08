@@ -18,10 +18,7 @@ import java.util.Map;
 import org.apereo.portal.portlet.om.IPortletDefinition;
 import org.apereo.portal.portlet.om.IPortletWindowId;
 
-/**
- * Data about a portlet execution.
- *
- */
+/** Data about a portlet execution. */
 public interface IPortletExecutionContext {
     public enum ExecutionType {
         ACTION,

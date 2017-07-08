@@ -18,10 +18,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import javax.servlet.ServletOutputStream;
 
-/**
- * {@link ServletOutputStream} impl that delegates to an {@link OutputStream}
- *
- */
+/** {@link ServletOutputStream} impl that delegates to an {@link OutputStream} */
 public class DelegatingServletOutputStream extends ServletOutputStream {
     private final OutputStream outputStream;
 

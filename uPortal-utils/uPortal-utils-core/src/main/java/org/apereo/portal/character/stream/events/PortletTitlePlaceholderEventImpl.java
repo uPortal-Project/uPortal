@@ -16,8 +16,7 @@ package org.apereo.portal.character.stream.events;
 
 import org.apereo.portal.portlet.om.IPortletWindowId;
 
-/**
- */
+/** */
 public final class PortletTitlePlaceholderEventImpl extends PortletPlaceholderEventImpl
         implements PortletTitlePlaceholderEvent {
     private static final long serialVersionUID = 1L;

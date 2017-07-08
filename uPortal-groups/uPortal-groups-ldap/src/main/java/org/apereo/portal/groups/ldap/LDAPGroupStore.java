@@ -57,10 +57,7 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 import org.xml.sax.SAXException;
 
-/**
- * LDAPGroupStore.
- *
- */
+/** LDAPGroupStore. */
 public class LDAPGroupStore implements IEntityGroupStore, IEntityStore, IEntitySearcher {
     private static final Log log = LogFactory.getLog(LDAPGroupStore.class);
     protected String url;

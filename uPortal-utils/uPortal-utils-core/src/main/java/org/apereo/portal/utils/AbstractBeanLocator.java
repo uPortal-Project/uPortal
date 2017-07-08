@@ -24,7 +24,6 @@ import org.springframework.util.Assert;
  * Provides base functionality for a static reference bean locator. Used by legacy code that is not
  * managed within spring, avoids direct use of PortalApplicationContextLocator by client code and in
  * the case of an already created ApplicationConext uses the bean refernce injected by the context.
- *
  */
 public abstract class AbstractBeanLocator<T> implements DisposableBean, InitializingBean {
     protected final Log logger = LogFactory.getLog(AbstractBeanLocator.class);

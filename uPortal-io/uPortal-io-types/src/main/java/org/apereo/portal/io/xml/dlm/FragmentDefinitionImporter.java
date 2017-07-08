@@ -43,10 +43,7 @@ import org.springframework.util.xml.FixedXMLEventStreamReader;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-/**
- * Imports a uPortal 3.1 style fragment definition data file
- *
- */
+/** Imports a uPortal 3.1 style fragment definition data file */
 public class FragmentDefinitionImporter
         implements IDataImporter<Tuple<String, Document>>, Unmarshaller {
 

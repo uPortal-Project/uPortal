@@ -14,10 +14,7 @@
  */
 package org.apereo.portal.groups;
 
-/**
- * Factory for creating <code>ReferencePersonNameFinders</code>.
- *
- */
+/** Factory for creating <code>ReferencePersonNameFinders</code>. */
 public class ReferenceChannelNameFinderFactory implements IEntityNameFinderFactory {
     /** ReferenceChannelNameFinderFactory constructor comment. */
     public ReferenceChannelNameFinderFactory() {

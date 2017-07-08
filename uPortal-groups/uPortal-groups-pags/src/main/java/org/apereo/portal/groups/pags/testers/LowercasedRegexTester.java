@@ -64,5 +64,4 @@ public class LowercasedRegexTester extends AbstractStringTester {
     public boolean test(String att) {
         return pattern.matcher(att.toLowerCase()).matches();
     }
-
 }

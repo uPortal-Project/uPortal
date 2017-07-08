@@ -32,10 +32,7 @@ import org.apereo.portal.spring.locator.CounterStoreLocator;
 import org.apereo.portal.spring.locator.EntityTypesLocator;
 import org.apereo.portal.utils.SqlTransaction;
 
-/**
- * Store for <code>EntityGroupImpl</code>.
- *
- */
+/** Store for <code>EntityGroupImpl</code>. */
 public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants {
     private static final Log log = LogFactory.getLog(RDBMEntityGroupStore.class);
     private static RDBMEntityGroupStore singleton;

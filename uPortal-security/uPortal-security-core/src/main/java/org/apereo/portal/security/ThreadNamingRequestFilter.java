@@ -23,10 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-/**
- * Appends the username of the current user to the name of the current thread
- *
- */
+/** Appends the username of the current user to the name of the current thread */
 @Service("threadNamingRequestFilter")
 public class ThreadNamingRequestFilter extends OncePerRequestFilter {
     private final ThreadLocal<String> originalThreadNameLocal = new ThreadLocal<String>();

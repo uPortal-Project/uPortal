@@ -27,10 +27,7 @@ import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-/**
- * Produces an empty Document implementation
- *
- */
+/** Produces an empty Document implementation */
 public final class DocumentFactory {
 
     private static final Log log = LogFactory.getLog(DocumentFactory.class);

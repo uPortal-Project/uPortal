@@ -26,10 +26,7 @@ import org.apereo.portal.events.aggr.TimeDimension;
 import org.apereo.portal.events.aggr.groups.AggregatedGroupMapping;
 import org.springframework.stereotype.Repository;
 
-/**
- * DAO For Login Aggregations
- *
- */
+/** DAO For Login Aggregations */
 @Repository
 public class JpaLoginAggregationDao
         extends JpaBaseAggregationDao<LoginAggregationImpl, LoginAggregationKey>

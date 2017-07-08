@@ -28,8 +28,7 @@ import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import org.xml.sax.ext.LexicalHandler;
 
-/**
- */
+/** */
 public class StaxEventLexicalContentHandler extends StaxEventContentHandler
         implements LexicalHandler {
     public static final String EMPTY_SYSTEM_IDENTIFIER = "EMPTY";

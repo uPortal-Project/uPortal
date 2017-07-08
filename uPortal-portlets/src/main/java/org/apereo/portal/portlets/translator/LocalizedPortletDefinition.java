@@ -21,7 +21,6 @@ import org.apereo.portal.portlet.om.IPortletDefinition;
  * This domain class is used in order to represent the localization of portlet definition. This
  * class is the same as o.j.p.portlet.dao.jpa.PortletLocalizationData but since JPA class should be
  * package private, another implementation is used.
- *
  */
 class LocalizedPortletDefinition implements Serializable {
 

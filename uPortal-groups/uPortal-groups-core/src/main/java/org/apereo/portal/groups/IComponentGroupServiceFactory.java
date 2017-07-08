@@ -14,10 +14,7 @@
  */
 package org.apereo.portal.groups;
 
-/**
- * Factory interface for creating an <code>IComponentGroupService</code>.
- *
- */
+/** Factory interface for creating an <code>IComponentGroupService</code>. */
 public interface IComponentGroupServiceFactory {
 
     /** @param descriptor org.apereo.portal.groups.ComponentGroupServiceDescriptor */

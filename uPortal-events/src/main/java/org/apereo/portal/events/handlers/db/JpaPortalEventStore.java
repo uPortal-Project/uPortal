@@ -43,7 +43,6 @@ import org.springframework.stereotype.Repository;
  * Stores portal events using JPA/Hibenate no internal batch segmentation is done to the passed list
  * of {@link PortalEvent}s. If a {@link PortalEvent} is not mapped as a persistent entity a message
  * is logged at the WARN level and the event is ignored.
- *
  */
 @Repository
 public class JpaPortalEventStore extends BaseRawEventsJpaDao implements IPortalEventDao {

@@ -48,8 +48,7 @@ import org.junit.Test;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 
-/**
- */
+/** */
 public class CachingResourceLoaderImplTest {
     private static File doc1;
 

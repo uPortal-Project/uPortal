@@ -95,7 +95,8 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
 
     private static final Pattern VALID_PATHREF_PATTERN = Pattern.compile(".+\\:/.+");
     private static final String BAD_PATHREF_MESSAGE = "## DLM: ORPHANED DATA ##";
-    public static final String DEFAULT_LAYOUT_OWNER_PROPERTY = "org.apereo.portal.layout.dlm.defaultLayoutOwner";
+    public static final String DEFAULT_LAYOUT_OWNER_PROPERTY =
+            "org.apereo.portal.layout.dlm.defaultLayoutOwner";
 
     private String systemDefaultUser = null;
     private boolean systemDefaultUserLoaded = false;
@@ -1442,8 +1443,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
                 }
             }
         }
-        final String globalDefault =
-                PropertiesManager.getProperty(DEFAULT_LAYOUT_OWNER_PROPERTY);
+        final String globalDefault = PropertiesManager.getProperty(DEFAULT_LAYOUT_OWNER_PROPERTY);
         if (globalDefault != null && globalDefault.equals(userName)) {
             return true;
         }

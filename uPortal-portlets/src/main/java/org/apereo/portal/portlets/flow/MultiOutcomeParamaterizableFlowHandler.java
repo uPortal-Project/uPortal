@@ -26,7 +26,6 @@ import org.springframework.webflow.mvc.portlet.AbstractFlowHandler;
 /**
  * MultiOutcomeParamaterizableFlowHandler provides an alternative to ParamaterizableFlowHandler for
  * flows that require different handling on different outcomes.
- *
  */
 public class MultiOutcomeParamaterizableFlowHandler extends AbstractFlowHandler {
     protected final Log logger = LogFactory.getLog(this.getClass());

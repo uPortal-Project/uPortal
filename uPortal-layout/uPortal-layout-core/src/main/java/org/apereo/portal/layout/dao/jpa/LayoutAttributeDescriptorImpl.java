@@ -34,8 +34,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
-/**
- */
+/** */
 @Entity
 @Table(name = "UP_SS_DESC_LAY_ATTR")
 @SequenceGenerator(

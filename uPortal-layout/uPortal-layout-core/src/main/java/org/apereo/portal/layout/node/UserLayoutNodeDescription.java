@@ -20,9 +20,7 @@ import org.apereo.portal.layout.dlm.Constants;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-/**
- * A class describing common features of user layout nodes that is channels and folders
- */
+/** A class describing common features of user layout nodes that is channels and folders */
 public abstract class UserLayoutNodeDescription implements IUserLayoutNodeDescription {
     protected String id = null;
     protected String name = null;

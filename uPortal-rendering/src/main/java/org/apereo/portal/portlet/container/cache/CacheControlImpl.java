@@ -17,8 +17,7 @@ package org.apereo.portal.portlet.container.cache;
 import javax.portlet.CacheControl;
 import org.apache.commons.lang.StringUtils;
 
-/**
- */
+/** */
 public class CacheControlImpl implements CacheControl {
     private String eTag;
     // PLT.22.1 default expiration time is 0 ("always expired")

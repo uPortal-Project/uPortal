@@ -16,10 +16,7 @@ package org.apereo.portal.character.stream.events;
 
 import org.apereo.portal.portlet.om.IPortletWindowId;
 
-/**
- * Base portlet placeholder event
- *
- */
+/** Base portlet placeholder event */
 public abstract class PortletPlaceholderEventImpl implements PortletPlaceholderEvent {
     private static final long serialVersionUID = 1L;
 

@@ -27,10 +27,7 @@ import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
-/**
- * Lists each Permission Set in the portal during the export process.
- *
- */
+/** Lists each Permission Set in the portal during the export process. */
 public class PermissionSetsDataFunction
         implements Function<IPortalDataType, Iterable<? extends IPortalData>> {
     private JdbcOperations jdbcOperations;

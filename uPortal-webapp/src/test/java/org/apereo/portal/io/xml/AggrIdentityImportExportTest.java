@@ -23,8 +23,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-/**
- */
+/** */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(
     locations = "classpath:/org/apereo/portal/io/xml/aggrImportExportTestContext.xml"

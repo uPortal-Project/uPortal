@@ -32,7 +32,6 @@ import org.springframework.util.Assert;
 /**
  * Used to coordinate cluster wide locking via the database. Tracks the server that currently owns
  * the lock, when the lock started, last updated and released.
- *
  */
 @Entity
 @Table(name = "UP_MUTEX")

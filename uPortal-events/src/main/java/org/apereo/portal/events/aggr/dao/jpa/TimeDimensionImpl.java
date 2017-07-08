@@ -38,8 +38,7 @@ import org.hibernate.annotations.NaturalIdCache;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalTime;
 
-/**
- */
+/** */
 @Entity
 @Table(name = "UP_TIME_DIMENSION")
 @SequenceGenerator(

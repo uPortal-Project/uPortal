@@ -19,10 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import org.springframework.security.core.Authentication;
 
-/**
- * Manages workflow around use of the identity swapper features.
- *
- */
+/** Manages workflow around use of the identity swapper features. */
 public interface IdentitySwapperManager {
     /**
      * Check if the currentUser can impersonate the targetUsername, returns true if they can, false

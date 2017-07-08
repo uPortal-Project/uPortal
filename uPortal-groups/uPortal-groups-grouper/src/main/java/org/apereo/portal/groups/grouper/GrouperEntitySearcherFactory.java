@@ -20,10 +20,7 @@ import org.apereo.portal.groups.GroupsException;
 import org.apereo.portal.groups.IEntitySearcher;
 import org.apereo.portal.groups.IEntitySearcherFactory;
 
-/**
- * Returns an instance of the Grouper entity searcher.
- *
- */
+/** Returns an instance of the Grouper entity searcher. */
 public class GrouperEntitySearcherFactory implements IEntitySearcherFactory {
 
     /** The logger to use. */

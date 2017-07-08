@@ -21,10 +21,7 @@ import net.sf.ehcache.Ehcache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Evicts expired elements from a {@link CacheManager}
- *
- */
+/** Evicts expired elements from a {@link CacheManager} */
 public class ExpiredElementEvictor {
     private final ReentrantLock evictLock = new ReentrantLock();
 

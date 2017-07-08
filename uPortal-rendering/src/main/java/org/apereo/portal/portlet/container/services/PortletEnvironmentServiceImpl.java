@@ -54,10 +54,7 @@ import org.apereo.portal.url.IPortalRequestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-/**
- * Provides custom portlet session instance to use a different scoping attribute value
- *
- */
+/** Provides custom portlet session instance to use a different scoping attribute value */
 @Service("portletEnvironmentService")
 public class PortletEnvironmentServiceImpl implements PortletEnvironmentService {
     private PortletPreferencesFactory portletPreferencesFactory;

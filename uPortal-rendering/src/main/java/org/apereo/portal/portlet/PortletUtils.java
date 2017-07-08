@@ -36,10 +36,7 @@ import org.apereo.portal.url.UrlType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-/**
- * Utilities for portlets
- *
- */
+/** Utilities for portlets */
 @Component
 public final class PortletUtils {
 

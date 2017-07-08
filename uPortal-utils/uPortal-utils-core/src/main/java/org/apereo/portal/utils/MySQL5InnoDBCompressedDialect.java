@@ -27,10 +27,7 @@ import org.hibernate.type.descriptor.sql.SqlTypeDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Uses the COMPRESSED row format in an InnoDB engine, needed for long index support with UTF-8
- *
- */
+/** Uses the COMPRESSED row format in an InnoDB engine, needed for long index support with UTF-8 */
 public class MySQL5InnoDBCompressedDialect extends MySQL5InnoDBDialect {
 
     public MySQL5InnoDBCompressedDialect() {

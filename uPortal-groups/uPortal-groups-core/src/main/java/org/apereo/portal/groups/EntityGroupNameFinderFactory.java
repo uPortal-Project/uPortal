@@ -17,10 +17,7 @@ package org.apereo.portal.groups;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-/**
- * Factory for creating <code>EntityGroupNameFinder</code>.
- *
- */
+/** Factory for creating <code>EntityGroupNameFinder</code>. */
 public class EntityGroupNameFinderFactory implements IEntityNameFinderFactory {
     private static final Log log = LogFactory.getLog(EntityGroupNameFinderFactory.class);
 

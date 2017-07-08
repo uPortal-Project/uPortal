@@ -21,10 +21,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.PropertyEditorRegistrar;
 import org.springframework.beans.PropertyEditorRegistry;
 
-/**
- * Registers a Map of PropertyEditors with the specified registry.
- *
- */
+/** Registers a Map of PropertyEditors with the specified registry. */
 public class PortalPropertyEditorRegistrar implements PropertyEditorRegistrar {
     protected final Log logger = LogFactory.getLog(this.getClass());
 

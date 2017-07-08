@@ -16,10 +16,7 @@ package org.apereo.portal.events.aggr;
 
 import java.util.Comparator;
 
-/**
- * Sorts {@link BaseAggregation} instaces by Date and Time
- *
- */
+/** Sorts {@link BaseAggregation} instaces by Date and Time */
 public class BaseAggregationDateTimeComparator implements Comparator<BaseAggregation<?, ?>> {
     public static final Comparator<BaseAggregation<?, ?>> INSTANCE =
             new BaseAggregationDateTimeComparator();

@@ -21,10 +21,7 @@ import javax.security.auth.callback.NameCallback;
 import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
 
-/**
- * Used by JAAS security provider checks userid and credentials using JAAS.
- *
- */
+/** Used by JAAS security provider checks userid and credentials using JAAS. */
 public class JAASInlineCallbackHandler implements CallbackHandler {
 
     private String username = null;

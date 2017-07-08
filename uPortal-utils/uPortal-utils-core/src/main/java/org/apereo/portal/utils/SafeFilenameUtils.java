@@ -21,8 +21,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- */
+/** */
 public final class SafeFilenameUtils {
     // Reserved names on Windows (see http://en.wikipedia.org/wiki/Filename)
     private static final List<Pattern> WINDOWS_INVALID_PATTERNS =

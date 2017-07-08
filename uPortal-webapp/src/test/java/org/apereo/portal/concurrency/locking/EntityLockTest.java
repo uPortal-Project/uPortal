@@ -24,9 +24,7 @@ import org.apereo.portal.concurrency.LockingException;
 import org.apereo.portal.properties.PropertiesManager;
 import org.apereo.portal.services.EntityLockService;
 
-/**
- * Tests the entity lock framework.
- */
+/** Tests the entity lock framework. */
 public class EntityLockTest extends TestCase {
     private static final Log LOG = LogFactory.getLog(EntityLockTest.class);
 

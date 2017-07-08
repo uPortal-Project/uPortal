@@ -59,7 +59,6 @@ import org.springframework.web.servlet.ModelAndView;
  *   <li>days: Number of calendar days to include in the report; default is 30
  *   <li>fromDate: Date (inclusive) from which to count backwards; default is today
  * </ul>
- *
  */
 @Controller
 @RequestMapping("VIEW")

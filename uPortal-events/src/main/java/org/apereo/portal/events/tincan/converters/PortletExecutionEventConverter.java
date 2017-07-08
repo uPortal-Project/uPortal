@@ -27,10 +27,7 @@ import org.apereo.portal.events.tincan.om.LrsObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
 
-/**
- * Generic xApi converter for PortletExecutionEvents.
- *
- */
+/** Generic xApi converter for PortletExecutionEvents. */
 public class PortletExecutionEventConverter extends AbstractPortalEventToLrsStatementConverter {
     private AggregatedPortletLookupDao aggregatedPortletLookupDao;
     private List<Class<? extends PortletExecutionEvent>> supportedEventTypes;

@@ -36,7 +36,6 @@ import org.apereo.portal.security.provider.RestrictedPerson;
  *       org.apereo.portal.security.PersonFactory.guest_user_name</code> in <code>portal.properties
  *       </code>.
  * </ol>
- *
  */
 public class PersonFactory {
 

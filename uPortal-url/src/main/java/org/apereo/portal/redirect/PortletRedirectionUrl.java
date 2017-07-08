@@ -20,7 +20,6 @@ import org.apereo.portal.url.UrlType;
 /**
  * PortletRedirectionUrl represents a redirection service target that is a portlet inside this
  * portal container.
- *
  */
 public class PortletRedirectionUrl extends AbstractRedirectionUrl {
 

@@ -28,7 +28,6 @@ import org.springframework.context.ApplicationEvent;
  * Queues PortalEvents in a local {@link ConcurrentLinkedQueue} and flushes the events to the
  * configured {@link BatchingEventHandler} when {@link #flush()} is called. This class must be used
  * with some external timer that will call {@link #flush()} at regular intervals
- *
  */
 public abstract class QueueingEventHandler<E extends ApplicationEvent>
         extends FilteringApplicationListener<E> implements DisposableBean {

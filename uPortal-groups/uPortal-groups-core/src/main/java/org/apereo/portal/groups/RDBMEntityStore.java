@@ -16,10 +16,7 @@ package org.apereo.portal.groups;
 
 import org.apereo.portal.spring.locator.EntityTypesLocator;
 
-/**
- * Reference implementation for IEntityStore.
- *
- */
+/** Reference implementation for IEntityStore. */
 public class RDBMEntityStore implements IEntityStore {
     private static IEntityStore singleton;
 

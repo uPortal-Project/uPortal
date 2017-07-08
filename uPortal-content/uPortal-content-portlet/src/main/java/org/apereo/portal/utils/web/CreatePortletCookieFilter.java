@@ -24,10 +24,7 @@ import org.apereo.portal.portlet.om.IPortalCookie;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-/**
- * Servlet filter to trigger {@link IPortalCookie} creation.
- *
- */
+/** Servlet filter to trigger {@link IPortalCookie} creation. */
 public class CreatePortletCookieFilter extends OncePerRequestFilter {
 
     private IPortletCookieService portletCookieService;

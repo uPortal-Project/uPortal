@@ -40,7 +40,6 @@ import org.springframework.stereotype.Service;
  * {@link PortletUrl}s. The WindowState, PortletMode and parameter Map is set directly on the {@link
  * IPortletWindow}. The {@link org.apereo.portal.portlet.url.RequestType} is tracked in the {@link
  * IPortletRequestParameterManager}.
- *
  */
 @Service("portletRequestParameterProcessor")
 public class PortletRequestParameterProcessor implements IRequestParameterProcessor {

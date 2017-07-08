@@ -17,8 +17,7 @@ package org.apereo.portal.dao.usertype;
 import org.hibernate.HibernateException;
 import org.jadira.usertype.spi.shared.AbstractStringColumnMapper;
 
-/**
- */
+/** */
 public class NullSafeStringColumnMapper extends AbstractStringColumnMapper<String> {
     private static final long serialVersionUID = 1L;
 

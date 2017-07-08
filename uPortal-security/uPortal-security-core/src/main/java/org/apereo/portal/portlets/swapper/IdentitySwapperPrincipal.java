@@ -17,10 +17,7 @@ package org.apereo.portal.portlets.swapper;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.IPrincipal;
 
-/**
- * Implements an immutable IPrincipal for use with the identity swapper
- *
- */
+/** Implements an immutable IPrincipal for use with the identity swapper */
 public class IdentitySwapperPrincipal implements IPrincipal {
     private static final long serialVersionUID = 1L;
 

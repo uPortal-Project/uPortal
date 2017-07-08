@@ -29,8 +29,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
-/**
- */
+/** */
 public class XmlUtilitiesImplTest {
     @Test
     public void testGetUniqueXPath() throws Exception {

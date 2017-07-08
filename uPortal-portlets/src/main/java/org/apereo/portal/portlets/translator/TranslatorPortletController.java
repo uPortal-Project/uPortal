@@ -29,7 +29,6 @@ import org.springframework.web.portlet.bind.annotation.RenderMapping;
  * setting it to locales supported by portal. All further interactions are using AJAX calls which
  * are handled by a controllers depending on selected entity type. For example, by selecting
  * "portlet" entity type to translate, {@link PortletEntityTranslationController} will be used.
- *
  */
 @Controller
 @RequestMapping("VIEW")

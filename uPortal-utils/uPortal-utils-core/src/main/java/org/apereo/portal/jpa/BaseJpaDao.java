@@ -37,10 +37,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionOperations;
 
-/**
- * Base class for JPA DAOs in the portal that contains common functions.
- *
- */
+/** Base class for JPA DAOs in the portal that contains common functions. */
 public abstract class BaseJpaDao implements InitializingBean, ApplicationContextAware {
     private static final String QUERY_SUFFIX = ".Query";
 
@@ -123,12 +120,12 @@ public abstract class BaseJpaDao implements InitializingBean, ApplicationContext
         return query;
     }
 
-  /**
-   * Utility for creating queries based on naturalId. The caller MUST be annotated with {@link
-   * org.apereo.portal.jpa.OpenEntityManager} or {@link Transactional} so that the Hibernate
-   * specific extensions are available.
-   */
-  protected final <T> NaturalIdQuery<T> createNaturalIdQuery(Class<T> entityType) {
+    /**
+     * Utility for creating queries based on naturalId. The caller MUST be annotated with {@link
+     * org.apereo.portal.jpa.OpenEntityManager} or {@link Transactional} so that the Hibernate
+     * specific extensions are available.
+     */
+    protected final <T> NaturalIdQuery<T> createNaturalIdQuery(Class<T> entityType) {
         final EntityManager entityManager = this.getEntityManager();
         final Session session;
         try {

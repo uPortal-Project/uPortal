@@ -21,10 +21,7 @@ import javax.portlet.ResourceURL;
 import javax.portlet.WindowState;
 import org.apereo.portal.portlet.om.IPortletWindowId;
 
-/**
- * Builds a URL for a specific portlet.
- *
- */
+/** Builds a URL for a specific portlet. */
 public interface IPortletUrlBuilder extends IUrlBuilder {
     /** @return The portlet window this url builder is for */
     public IPortletWindowId getPortletWindowId();

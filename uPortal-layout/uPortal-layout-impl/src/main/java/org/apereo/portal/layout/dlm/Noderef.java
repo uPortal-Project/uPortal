@@ -33,7 +33,6 @@ import org.apache.commons.lang.Validate;
  * </ul>
  *
  * Example Noderef: u13l1s2
- *
  */
 public final class Noderef {
 

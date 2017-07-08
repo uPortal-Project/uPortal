@@ -31,8 +31,7 @@ import org.apereo.portal.portlet.om.IPortletWindow;
 import org.apereo.portal.portlet.rendering.PortletResourceOutputHandler;
 import org.apereo.portal.url.IPortalUrlProvider;
 
-/**
- */
+/** */
 public class PortletResourceResponseContextImpl extends PortletMimeResponseContextImpl
         implements PortletResourceResponseContext {
 

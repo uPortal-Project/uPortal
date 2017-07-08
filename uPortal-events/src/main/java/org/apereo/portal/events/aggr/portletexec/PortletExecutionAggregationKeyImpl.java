@@ -21,10 +21,7 @@ import org.apereo.portal.events.aggr.TimeDimension;
 import org.apereo.portal.events.aggr.groups.AggregatedGroupMapping;
 import org.apereo.portal.events.aggr.portlets.AggregatedPortletMapping;
 
-/**
- * Basic impl of {@link PortletExecutionAggregationKey}
- *
- */
+/** Basic impl of {@link PortletExecutionAggregationKey} */
 public final class PortletExecutionAggregationKeyImpl extends BaseAggregationKeyImpl
         implements PortletExecutionAggregationKey {
     private static final long serialVersionUID = 1L;

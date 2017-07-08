@@ -43,7 +43,6 @@ import org.springframework.util.CollectionUtils;
  *       in the log concerning missing properties files that are optional
  *   <li>Provide support for encrypted property values based on Jasypt
  * </ul>
- *
  */
 public class PortalPropertySourcesPlaceholderConfigurer
         extends PropertySourcesPlaceholderConfigurer {

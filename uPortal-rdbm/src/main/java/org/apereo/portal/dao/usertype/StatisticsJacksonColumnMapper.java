@@ -24,10 +24,7 @@ import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import org.apache.commons.math3.stat.descriptive.UnivariateStatistic;
 
-/**
- * Used for mapping instances of {@link UnivariateStatistic} to/from JSON
- *
- */
+/** Used for mapping instances of {@link UnivariateStatistic} to/from JSON */
 public class StatisticsJacksonColumnMapper extends JacksonColumnMapper {
     private static final long serialVersionUID = 1L;
     private FilterProvider filters;

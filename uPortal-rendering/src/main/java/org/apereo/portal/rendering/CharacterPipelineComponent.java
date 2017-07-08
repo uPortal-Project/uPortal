@@ -17,9 +17,6 @@ package org.apereo.portal.rendering;
 import org.apereo.portal.character.stream.CharacterEventReader;
 import org.apereo.portal.character.stream.events.CharacterEvent;
 
-/**
- * {@link PipelineComponent} for a {@link CharacterEventReader}
- *
- */
+/** {@link PipelineComponent} for a {@link CharacterEventReader} */
 public interface CharacterPipelineComponent
         extends PipelineComponent<CharacterEventReader, CharacterEvent> {}

@@ -45,10 +45,10 @@ import org.springframework.stereotype.Service;
 /**
  * Attempts to authenticate a user and retrieve attributes associated with the user.
  *
- *     hold the tokens used to represent the principal and credential for each security context.
- *     This version differs in the way the principal and credentials are set (all contexts are set
- *     up front after evaluating the tokens). See setContextParameters() also. Changes put in to
- *     allow credentials and principals to be defined and held by each context.
+ * <p>hold the tokens used to represent the principal and credential for each security context. This
+ * version differs in the way the principal and credentials are set (all contexts are set up front
+ * after evaluating the tokens). See setContextParameters() also. Changes put in to allow
+ * credentials and principals to be defined and held by each context.
  */
 @Service
 public class Authentication {

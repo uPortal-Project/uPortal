@@ -21,7 +21,6 @@ import junit.framework.TestCase;
  * Throwable implementation's thrown exceptions in the case of illegal argument (null argument) or
  * illegal state (cause already init'ed). Therefore PortalException.initCause() should never throw
  * anything and should always return a reference to the PortalException.
- *
  */
 public class PortalExceptionTest extends TestCase {
 

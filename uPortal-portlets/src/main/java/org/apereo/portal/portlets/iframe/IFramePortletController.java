@@ -32,7 +32,6 @@ import org.springframework.web.portlet.bind.annotation.RenderMapping;
  * href="http://www.htmlhelp.com/reference/html40/special/iframe.html">
  * http://www.htmlhelp.com/reference/html40/special/iframe.html</a> for more information on inline
  * frames.
- *
  */
 @Controller
 @RequestMapping("VIEW")

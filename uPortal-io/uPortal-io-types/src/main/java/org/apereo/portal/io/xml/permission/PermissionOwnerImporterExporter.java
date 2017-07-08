@@ -31,10 +31,7 @@ import org.apereo.portal.utils.SafeFilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- * Handles import and export of Permission Owner data
- *
- */
+/** Handles import and export of Permission Owner data */
 public class PermissionOwnerImporterExporter
         extends AbstractJaxbDataHandler<ExternalPermissionOwner> {
 

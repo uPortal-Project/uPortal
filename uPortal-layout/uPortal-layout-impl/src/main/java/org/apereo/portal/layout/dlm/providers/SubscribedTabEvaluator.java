@@ -35,7 +35,6 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
  * SubscribedTabEvaluator is a DLM evaluator that determines if a given fragment is in the specified
  * IPerson's fragment subscription list. This evaluator also performs a real-time permissions lookup
  * to ensure that the user is still permissioned to be include the fragment.
- *
  */
 @Entity
 @Cacheable

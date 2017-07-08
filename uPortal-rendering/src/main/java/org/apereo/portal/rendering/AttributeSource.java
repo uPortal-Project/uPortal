@@ -23,7 +23,6 @@ import org.apereo.portal.utils.cache.CacheKey;
 
 /**
  * Source of additional {@link Attribute}s used by the {@link StAXAttributeIncorporationComponent}
- *
  */
 public interface AttributeSource {
     /**

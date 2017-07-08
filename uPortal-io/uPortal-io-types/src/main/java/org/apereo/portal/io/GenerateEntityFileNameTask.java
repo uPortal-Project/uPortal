@@ -35,7 +35,6 @@ import org.dom4j.Element;
  * appropriate file name, including the appropriate extension. <em>Appropriate</em> means, in this
  * case, that 2 logically separate entities will never produce the same file name, and that
  * generated file names will be legal on all supported operating systems.
- *
  */
 public class GenerateEntityFileNameTask implements Task {
 

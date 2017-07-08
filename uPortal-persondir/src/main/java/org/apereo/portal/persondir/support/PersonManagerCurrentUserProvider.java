@@ -23,10 +23,7 @@ import org.apereo.portal.url.IPortalRequestUtils;
 import org.jasig.services.persondir.support.ICurrentUserProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 
-/**
- * Provides the username of the current portal user
- *
- */
+/** Provides the username of the current portal user */
 public class PersonManagerCurrentUserProvider implements ICurrentUserProvider {
     protected final Log logger = LogFactory.getLog(this.getClass());
 

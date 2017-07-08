@@ -41,10 +41,7 @@ import org.hibernate.annotations.NaturalIdCache;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
-/**
- * JPA annotated {@link IPortalCookie} annotation.
- *
- */
+/** JPA annotated {@link IPortalCookie} annotation. */
 @Entity
 @Table(name = "UP_PORTAL_COOKIES")
 @SequenceGenerator(

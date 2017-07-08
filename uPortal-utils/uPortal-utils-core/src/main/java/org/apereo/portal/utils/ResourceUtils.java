@@ -18,10 +18,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import org.springframework.core.io.Resource;
 
-/**
- * Utilities for working with Spring {@link Resource} objects
- *
- */
+/** Utilities for working with Spring {@link Resource} objects */
 public final class ResourceUtils {
     private ResourceUtils() {}
 

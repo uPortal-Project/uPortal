@@ -44,7 +44,6 @@ import org.apereo.portal.spring.locator.PasswordEncryptionServiceLocator;
  * <p>To ensure that both contexts are exercised the portal property
  * org.apereo.portal.security.provider.ChainingSecurityContext.stopWhenAuthenticated must be set to
  * false (by default it is set to true).
- *
  */
 class CacheSecurityContext extends ChainingSecurityContext
         implements ISecurityContext, IParentAwareSecurityContext {

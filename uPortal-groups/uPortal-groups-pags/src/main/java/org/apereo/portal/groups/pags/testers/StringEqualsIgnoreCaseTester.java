@@ -22,7 +22,6 @@ import org.apereo.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
  * handle non-default locales?
  *
  * <p>
- *
  */
 public class StringEqualsIgnoreCaseTester extends AbstractStringTester {
 
@@ -34,5 +33,4 @@ public class StringEqualsIgnoreCaseTester extends AbstractStringTester {
     public boolean test(String att) {
         return att.equalsIgnoreCase(testValue);
     }
-
 }

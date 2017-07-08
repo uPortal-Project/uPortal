@@ -16,10 +16,7 @@ package org.apereo.portal.concurrency.locking;
 
 import com.google.common.base.Function;
 
-/**
- * Service which allows actions to be executed within a cluster wide lock, locks are reentrant.
- *
- */
+/** Service which allows actions to be executed within a cluster wide lock, locks are reentrant. */
 public interface IClusterLockService {
     /** Result of a lock execution */
     interface TryLockFunctionResult<T> {

@@ -21,10 +21,7 @@ import org.apereo.portal.io.xml.crn.AbstractDom4jExporter;
 import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 
-/**
- * Exports a PAGS Group definition data file
- *
- */
+/** Exports a PAGS Group definition data file */
 public class PersonAttributesGroupStoreExporter extends AbstractDom4jExporter {
     private IPersonAttributesGroupDefinitionDao personAttributesGroupDefinitionDao;
 

@@ -25,8 +25,7 @@ import org.joda.time.DateTime;
 import org.joda.time.MonthDay;
 import org.junit.Test;
 
-/**
- */
+/** */
 public class QuarterDetailsImplTest {
 
     @Test

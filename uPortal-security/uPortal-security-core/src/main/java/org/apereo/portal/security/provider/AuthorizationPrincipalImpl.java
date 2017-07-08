@@ -22,8 +22,7 @@ import org.apereo.portal.security.IAuthorizationService;
 import org.apereo.portal.security.IPermission;
 import org.apereo.portal.security.IPermissionPolicy;
 
-/**
- */
+/** */
 public class AuthorizationPrincipalImpl implements IAuthorizationPrincipal {
     private final String key;
     private final Class type;

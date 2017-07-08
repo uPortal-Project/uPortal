@@ -28,7 +28,6 @@ import org.apereo.portal.utils.IncludeExcludeUtils;
  * Base impl for aggregated dimension configs, if the subclass does not override {@link
  * #isIncluded(Object)} it should call {@link #clearIncludedCache()} after the includes or excludes
  * are modified.
- *
  */
 @MappedSuperclass
 public abstract class BaseAggregatedDimensionConfigImpl<D>

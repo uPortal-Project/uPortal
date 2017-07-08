@@ -37,7 +37,6 @@ import org.springframework.stereotype.Service;
  * Maps are overlayed in order to produce the final Map that is returned. This means
  * IRequestPropertiesManagers lower in the propertiesManagers List can over-write properties from
  * IRequestPropertiesManagers higher in the list.
- *
  */
 @Service("requestPropertiesManager")
 @Qualifier("main")

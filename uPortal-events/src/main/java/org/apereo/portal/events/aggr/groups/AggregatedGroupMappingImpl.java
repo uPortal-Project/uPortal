@@ -43,8 +43,7 @@ import org.hibernate.annotations.Immutable;
 import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.NaturalIdCache;
 
-/**
- */
+/** */
 @Entity
 @Table(name = "UP_AGGR_GROUP_MAPPING")
 @SequenceGenerator(

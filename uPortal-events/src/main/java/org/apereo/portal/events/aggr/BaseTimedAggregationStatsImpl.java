@@ -26,10 +26,7 @@ import javax.persistence.Transient;
 import org.apereo.portal.events.aggr.groups.AggregatedGroupMapping;
 import org.apereo.portal.events.aggr.stat.JpaStatisticalSummary;
 
-/**
- * Base for aggregate entities that track timed statistics
- *
- */
+/** Base for aggregate entities that track timed statistics */
 @Access(AccessType.FIELD)
 @MappedSuperclass
 public abstract class BaseTimedAggregationStatsImpl<

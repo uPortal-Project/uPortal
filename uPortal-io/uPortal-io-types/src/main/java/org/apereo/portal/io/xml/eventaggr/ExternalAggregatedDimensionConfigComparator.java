@@ -16,10 +16,7 @@ package org.apereo.portal.io.xml.eventaggr;
 
 import org.apereo.portal.utils.ComparableExtractingComparator;
 
-/**
- * Compare dimension configs by type
- *
- */
+/** Compare dimension configs by type */
 public class ExternalAggregatedDimensionConfigComparator
         extends ComparableExtractingComparator<ExternalAggregatedDimensionConfig, String> {
 

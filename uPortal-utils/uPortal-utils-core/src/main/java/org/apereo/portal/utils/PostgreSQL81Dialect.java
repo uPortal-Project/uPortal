@@ -16,8 +16,7 @@ package org.apereo.portal.utils;
 
 import org.hibernate.dialect.PostgreSQLDialect;
 
-/**
- */
+/** */
 public class PostgreSQL81Dialect extends PostgreSQLDialect {
     @Override
     public boolean supportsIfExistsBeforeTableName() {

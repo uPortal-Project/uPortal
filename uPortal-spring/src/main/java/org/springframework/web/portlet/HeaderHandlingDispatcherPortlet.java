@@ -23,7 +23,6 @@ import javax.portlet.RenderResponse;
  * This Dispatcher extends the capability of <code>org.springframework.web.portlet.DispatcherPortlet
  * </code> to add ability to process the <code>RENDER_HEADERS</code> portion of the two-phase render
  * process.
- *
  */
 public class HeaderHandlingDispatcherPortlet extends DispatcherPortlet {
 

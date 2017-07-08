@@ -14,13 +14,9 @@
  */
 package org.apereo.portal.character.stream.events;
 
-import org.apereo.portal.character.stream.events.CharacterEventTypes;
-import org.apereo.portal.character.stream.events.PortletContentPlaceholderEvent;
-import org.apereo.portal.character.stream.events.PortletPlaceholderEventImpl;
 import org.apereo.portal.portlet.om.IPortletWindowId;
 
-/**
- */
+/** */
 public final class PortletContentPlaceholderEventImpl extends PortletPlaceholderEventImpl
         implements PortletContentPlaceholderEvent {
     private static final long serialVersionUID = 1L;

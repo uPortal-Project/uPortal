@@ -21,7 +21,6 @@ import java.util.Random;
  * Generate random tokens. The default character set is the numbers 2-9 and lower case letters a-z
  * except i, l and o. This is intended to create a set that avoids numbers and letters which can
  * easily be confused with others depending on the font in use.
- *
  */
 public final class RandomTokenGenerator {
     private static final char[] DEFAULT_TOKEN_CHARS =

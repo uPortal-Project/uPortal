@@ -69,7 +69,6 @@ import org.apache.pluto.container.driver.AdministrativeRequestListener;
  *         <td valign="top">false</td>
  *     </tr>
  * </table>
- *
  */
 public class AdministrativeRequestListenerController
         implements org.apache.pluto.container.driver.AdministrativeRequestListener {

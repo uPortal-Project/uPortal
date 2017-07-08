@@ -22,7 +22,6 @@ import org.dom4j.Element;
  * Describes the definition of a group. PAGS group definitions are used (at runtime) to create
  * groups in the GaP (Groups & Permissions) subsystem. An object of this type, therefore, is not
  * itself a group; it's a blueprint for an {@link IEntityGroup}.
- *
  */
 public interface IPersonAttributesGroupDefinition {
 

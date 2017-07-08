@@ -31,5 +31,4 @@ public final class NbValuesEQTester extends AbstractNbValuesTester {
     protected boolean test(int numValues) {
         return numValues == getTestInteger();
     }
-
 }

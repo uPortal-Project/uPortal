@@ -32,7 +32,6 @@ import org.springframework.stereotype.Component;
 /**
  * Bean that verifies the product version numbers in the configuration versus the database on
  * startup
- *
  */
 @Component
 public class VersionVerifier implements InitializingBean {

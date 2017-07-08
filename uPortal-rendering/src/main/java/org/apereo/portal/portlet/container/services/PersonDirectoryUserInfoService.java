@@ -36,10 +36,7 @@ import org.jasig.services.persondir.IPersonAttributeDao;
 import org.jasig.services.persondir.IPersonAttributes;
 import org.springframework.beans.factory.annotation.Autowired;
 
-/**
- * Ties the IPersonAttributeDao to the Pluto UserInfoService
- *
- */
+/** Ties the IPersonAttributeDao to the Pluto UserInfoService */
 public class PersonDirectoryUserInfoService implements UserInfoService {
     private IPersonAttributeDao personAttributeDao;
     private IPortletWindowRegistry portletWindowRegistry;

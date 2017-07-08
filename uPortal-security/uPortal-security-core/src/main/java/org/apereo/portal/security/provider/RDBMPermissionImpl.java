@@ -35,7 +35,6 @@ import org.springframework.stereotype.Repository;
 /**
  * Reference implementation of IPermissionStore. Performs CRUD operations on the UP_Permission
  * table.
- *
  */
 @Repository
 public class RDBMPermissionImpl implements IPermissionStore {

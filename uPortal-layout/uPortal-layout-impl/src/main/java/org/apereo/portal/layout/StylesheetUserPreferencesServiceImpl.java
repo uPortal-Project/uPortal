@@ -47,10 +47,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.util.WebUtils;
 
-/**
- * Handles retrieving and storing the various scopes of stylesheet user preference data.
- *
- */
+/** Handles retrieving and storing the various scopes of stylesheet user preference data. */
 @Service
 public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPreferencesService {
     private static final String OUTPUT_PROPERTIES_KEY =

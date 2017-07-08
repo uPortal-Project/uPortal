@@ -17,10 +17,7 @@ package org.apereo.portal.url;
 import javax.servlet.http.HttpServletRequest;
 import org.apereo.portal.portlet.om.IPortletWindowId;
 
-/**
- * Provides portal URL builders
- *
- */
+/** Provides portal URL builders */
 public interface IPortalUrlProvider {
     /**
      * @param request the current request

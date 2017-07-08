@@ -18,10 +18,7 @@ import java.io.InputStream;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 
-/**
- * Provides a means to resolve uPortal DTDs
- *
- */
+/** Provides a means to resolve uPortal DTDs */
 public class DTDResolver implements EntityResolver {
     private static final String dtdPath = "/dtd";
 

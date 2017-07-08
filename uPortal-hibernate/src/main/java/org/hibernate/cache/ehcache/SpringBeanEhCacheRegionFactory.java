@@ -22,10 +22,7 @@ import org.hibernate.cfg.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Region factory that loads the {@link CacheManager} by name
- *
- */
+/** Region factory that loads the {@link CacheManager} by name */
 public class SpringBeanEhCacheRegionFactory extends AbstractEhcacheRegionFactory {
     private static final long serialVersionUID = 1L;
 

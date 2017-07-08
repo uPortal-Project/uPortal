@@ -16,10 +16,7 @@ package org.apereo.portal.portlets.account.selfedit;
 
 import java.io.Serializable;
 
-/**
- * Form object (DTO) representing a password change request.
- *
- */
+/** Form object (DTO) representing a password change request. */
 public class AccountPasswordForm implements Serializable {
 
     private long userId;

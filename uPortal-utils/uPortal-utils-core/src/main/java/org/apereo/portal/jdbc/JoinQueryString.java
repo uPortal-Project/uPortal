@@ -21,7 +21,6 @@ import java.util.Map;
 /**
  * Partial implemenation of {@link IJoinQueryString} which provides the implemention of storing and
  * retrieving join queries. It also requires a test query be specified.
- *
  */
 public abstract class JoinQueryString implements IJoinQueryString {
 

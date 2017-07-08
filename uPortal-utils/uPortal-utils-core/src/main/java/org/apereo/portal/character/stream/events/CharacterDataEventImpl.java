@@ -20,8 +20,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import org.springframework.util.Assert;
 
-/**
- */
+/** */
 public final class CharacterDataEventImpl implements CharacterDataEvent {
     private static final long serialVersionUID = 1L;
 

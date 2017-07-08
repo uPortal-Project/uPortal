@@ -47,10 +47,7 @@ import org.apereo.portal.utils.MultivaluedMapPopulator;
 import org.apereo.portal.utils.web.AbstractHttpServletRequestWrapper;
 import org.springframework.util.Assert;
 
-/**
- * Backs the {@link PortletRequest} impl provided by Pluto
- *
- */
+/** Backs the {@link PortletRequest} impl provided by Pluto */
 public class PortletRequestContextImpl extends AbstractPortletContextImpl
         implements PortletRequestContext {
     private final Map<String, Object> attributes = new LinkedHashMap<String, Object>();

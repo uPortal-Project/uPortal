@@ -26,7 +26,6 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
  * ChannelLocalizationData represents locale-specific ChannelDefinition metadata. This class is
  * intended to be used in a JPA/Hibernate-managed map and does not include the locale itself as part
  * of its data model.
- *
  */
 @Embeddable
 @Table(name = "UP_PORTLET_MDATA")

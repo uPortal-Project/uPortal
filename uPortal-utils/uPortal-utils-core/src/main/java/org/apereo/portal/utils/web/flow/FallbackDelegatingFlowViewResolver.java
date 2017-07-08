@@ -21,10 +21,7 @@ import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.mvc.builder.DelegatingFlowViewResolver;
 import org.springframework.webflow.mvc.view.FlowViewResolver;
 
-/**
- * FlowViewResolver that can use a list of both ViewResolver and FlowViewResolvers
- *
- */
+/** FlowViewResolver that can use a list of both ViewResolver and FlowViewResolvers */
 public class FallbackDelegatingFlowViewResolver extends DelegatingFlowViewResolver {
     private final List<FlowViewResolver> flowViewResolvers;
 

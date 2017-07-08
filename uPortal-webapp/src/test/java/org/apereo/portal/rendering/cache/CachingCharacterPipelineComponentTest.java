@@ -39,8 +39,7 @@ import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
-/**
- */
+/** */
 public class CachingCharacterPipelineComponentTest {
     @Test
     public void testCacheMiss() {

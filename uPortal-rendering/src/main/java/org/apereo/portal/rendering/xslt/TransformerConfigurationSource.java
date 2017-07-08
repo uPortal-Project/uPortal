@@ -21,10 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.xml.transform.Transformer;
 import org.apereo.portal.utils.cache.CacheKey;
 
-/**
- * Used by a {@link XSLTComponent} to configure the {@link Transformer}
- *
- */
+/** Used by a {@link XSLTComponent} to configure the {@link Transformer} */
 public interface TransformerConfigurationSource {
     /**
      * Passed on to {@link Transformer#setParameter(String, Object)}, ignored if null is returned

@@ -24,9 +24,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import org.apache.commons.io.output.NullOutputStream;
 import org.junit.Test;
-/**
- * Tests for {@link LimitingTeeOutputStream}.
- */
+/** Tests for {@link LimitingTeeOutputStream}. */
 public class LimitingTeeOutputStreamTest {
 
     @Test

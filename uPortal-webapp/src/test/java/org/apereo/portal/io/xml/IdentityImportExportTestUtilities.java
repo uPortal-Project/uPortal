@@ -36,10 +36,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionOperations;
 
-/**
- * Utility for doing import/export round trip testing
- *
- */
+/** Utility for doing import/export round trip testing */
 public final class IdentityImportExportTestUtilities {
 
     public static <T> void testIdentityImportExport(

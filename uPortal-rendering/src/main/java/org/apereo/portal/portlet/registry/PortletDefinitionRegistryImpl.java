@@ -36,7 +36,6 @@ import org.springframework.web.context.ServletContextAware;
 /**
  * Implementation of the definition registry, pulls together the related parts of the framework for
  * creation and access of {@link IPortletDefinition}s.
- *
  */
 @Service("portletDefinitionRegistry")
 public class PortletDefinitionRegistryImpl

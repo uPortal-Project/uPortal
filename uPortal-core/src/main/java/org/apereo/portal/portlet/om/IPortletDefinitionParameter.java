@@ -17,7 +17,6 @@ package org.apereo.portal.portlet.om;
 /**
  * IChannelParameter represents an interface for ChannelDefinition parameters. These parameters
  * function as defaults for the channel and may optionally be overridden by end users.
- *
  */
 public interface IPortletDefinitionParameter {
 

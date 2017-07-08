@@ -20,10 +20,7 @@ import java.io.PrintWriter;
 import javax.portlet.MimeResponse;
 import org.apereo.portal.portlet.rendering.PortletOutputHandler;
 
-/**
- * Delegates to a {@link MimeResponse}
- *
- */
+/** Delegates to a {@link MimeResponse} */
 public class MimeResponsePortletOutputHandler implements PortletOutputHandler {
     private final MimeResponse mimeResponse;
 

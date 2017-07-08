@@ -22,10 +22,7 @@ import org.apereo.portal.security.IPrincipal;
 import org.apereo.portal.security.ISecurityContext;
 import org.apereo.portal.security.PortalSecurityException;
 
-/**
- * Security context used exclusively for doing identity-swaps
- *
- */
+/** Security context used exclusively for doing identity-swaps */
 public class IdentitySwapperSecurityContext implements ISecurityContext {
     private static final long serialVersionUID = 1L;
 

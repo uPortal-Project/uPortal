@@ -16,7 +16,6 @@ package org.apereo.portal.groups;
 
 /**
  * Extends IGroupService with methods for finding and maintaining <code>ILockableEntityGroups</code>
- *
  */
 public interface ILockableGroupService extends IGroupService {
 
@@ -38,6 +37,5 @@ public interface ILockableGroupService extends IGroupService {
     void updateGroup(ILockableEntityGroup group, boolean renewLock) throws GroupsException;
 
     /** Commits the updated <code>ILockableEntityGroup</code> to the store and renews the lock. */
-    void updateGroupMembers(ILockableEntityGroup group, boolean renewLock)
-            throws GroupsException;
+    void updateGroupMembers(ILockableEntityGroup group, boolean renewLock) throws GroupsException;
 }

@@ -41,8 +41,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
-/**
- */
+/** */
 @Repository("eventSessionDao")
 public class JpaEventSessionDao extends BaseAggrEventsJpaDao implements EventSessionDao {
     private static final String EVENT_SESSION_CACHE_SOURCE =
@@ -146,7 +145,8 @@ public class JpaEventSessionDao extends BaseAggrEventsJpaDao implements EventSes
         final String eventSessionId = event.getEventSessionId();
 
         final CacheKey key = CacheKey.build(EVENT_SESSION_CACHE_SOURCE, eventSessionId);
-        EventSessionImpl eventSession = this.entityManagerCache.get(BaseAggrEventsJpaDao.PERSISTENCE_UNIT_NAME, key);
+        EventSessionImpl eventSession =
+                this.entityManagerCache.get(BaseAggrEventsJpaDao.PERSISTENCE_UNIT_NAME, key);
         if (eventSession != null) {
             return eventSession;
         }
@@ -164,7 +164,8 @@ public class JpaEventSessionDao extends BaseAggrEventsJpaDao implements EventSes
             eventSession = new EventSessionImpl(eventSessionId, eventDate, groupMappings);
 
             this.getEntityManager().persist(eventSession);
-            this.entityManagerCache.put(BaseAggrEventsJpaDao.PERSISTENCE_UNIT_NAME, key, eventSession);
+            this.entityManagerCache.put(
+                    BaseAggrEventsJpaDao.PERSISTENCE_UNIT_NAME, key, eventSession);
         }
 
         return eventSession;

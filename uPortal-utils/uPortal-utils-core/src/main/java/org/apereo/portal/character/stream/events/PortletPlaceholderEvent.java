@@ -16,10 +16,7 @@ package org.apereo.portal.character.stream.events;
 
 import org.apereo.portal.portlet.om.IPortletWindowId;
 
-/**
- * A generic base event type for any event that targets a portlet window.
- *
- */
+/** A generic base event type for any event that targets a portlet window. */
 public interface PortletPlaceholderEvent extends CharacterEvent {
     /** @return The portlet window id of the targeted portlet */
     public IPortletWindowId getPortletWindowId();

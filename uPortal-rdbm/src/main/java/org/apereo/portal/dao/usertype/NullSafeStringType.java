@@ -16,10 +16,7 @@ package org.apereo.portal.dao.usertype;
 
 import org.jadira.usertype.spi.shared.AbstractSingleColumnUserType;
 
-/**
- * UserType for mapping strings that can be both null or empty
- *
- */
+/** UserType for mapping strings that can be both null or empty */
 public class NullSafeStringType
         extends AbstractSingleColumnUserType<String, String, NullSafeStringColumnMapper> {
     private static final long serialVersionUID = 1L;

@@ -33,10 +33,7 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Base implementations for aggregations that are grouped by date, time, interval and group
- *
- */
+/** Base implementations for aggregations that are grouped by date, time, interval and group */
 @Access(AccessType.FIELD)
 @MappedSuperclass
 public abstract class BaseAggregationImpl<

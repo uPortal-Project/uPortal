@@ -16,10 +16,7 @@ package org.apereo.portal.security;
 
 import java.io.IOException;
 
-/**
- * Used by the md5passwd task to update a user's password.
- *
- */
+/** Used by the md5passwd task to update a user's password. */
 public interface IPasswordUpdateTool {
 
     boolean updatePassword(String user, boolean create) throws IOException;

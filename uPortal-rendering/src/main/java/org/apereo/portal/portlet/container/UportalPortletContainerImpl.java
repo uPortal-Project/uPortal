@@ -21,10 +21,7 @@ import org.apache.pluto.container.ContainerServices;
 import org.apache.pluto.container.PortletContainer;
 import org.apache.pluto.container.impl.PortletContainerImpl;
 
-/**
- * uPortal specific extension to the Pluto {@link PortletContainer}
- *
- */
+/** uPortal specific extension to the Pluto {@link PortletContainer} */
 public class UportalPortletContainerImpl extends PortletContainerImpl {
 
     /** @see PortletContainerImpl#PortletContainerImpl(String, ContainerServices) */

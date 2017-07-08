@@ -16,9 +16,7 @@ package org.apereo.portal.layout.dlm;
 
 import java.util.List;
 
-/**
- * @since 2.5
- */
+/** @since 2.5 */
 public interface ConfigurationLoader {
 
     /** @return The available fragment definitions */

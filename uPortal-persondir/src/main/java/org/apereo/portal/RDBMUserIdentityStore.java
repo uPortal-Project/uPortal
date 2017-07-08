@@ -64,7 +64,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 /**
  * SQL implementation for managing creation and removal of User Portal Data
  *
- *     Dalquist - edalquist@unicon.net)
+ * <p>Dalquist - edalquist@unicon.net)
  */
 @Service("userIdentityStore")
 public class RDBMUserIdentityStore implements IUserIdentityStore {

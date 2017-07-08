@@ -17,8 +17,7 @@ package org.apereo.portal.character.stream;
 import java.util.Iterator;
 import org.apereo.portal.character.stream.events.CharacterEvent;
 
-/**
- */
+/** */
 public interface CharacterEventReader extends Iterator<CharacterEvent> {
     /**
      * Check the next XMLEvent without reading it from the stream. Returns null if the stream is at

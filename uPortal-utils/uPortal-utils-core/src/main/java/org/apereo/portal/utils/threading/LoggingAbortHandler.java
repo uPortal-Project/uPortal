@@ -18,10 +18,7 @@ import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
 
-/**
- * Logs a more useful error message when rejecting a runnable
- *
- */
+/** Logs a more useful error message when rejecting a runnable */
 public class LoggingAbortHandler implements RejectedExecutionHandler {
     @Override
     public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {

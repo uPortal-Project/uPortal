@@ -18,10 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.naming.Name;
 
-/**
- * Reference implementation of IComponentGroupService.
- *
- */
+/** Reference implementation of IComponentGroupService. */
 public class ReferenceComponentGroupService implements IComponentGroupService {
     /**
      * The services contained by this component, keyed on the name of the service as it is known

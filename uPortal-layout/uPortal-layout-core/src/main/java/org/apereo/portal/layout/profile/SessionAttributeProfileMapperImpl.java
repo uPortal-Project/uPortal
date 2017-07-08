@@ -26,8 +26,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationListener;
 import org.springframework.util.Assert;
 
-/**
- */
+/** */
 public class SessionAttributeProfileMapperImpl
         implements IProfileMapper, ApplicationListener<ProfileSelectionEvent> {
 

@@ -31,8 +31,8 @@ import org.apereo.portal.services.GroupService;
 @Deprecated
 public class AdminEvaluator {
 
-    public static final String PORTAL_ADMINISTRATORS_DISTINGUISHED_GROUP = IPerson.DISTINGUISHED_GROUP + ".PortalAdministrators";
-
+    public static final String PORTAL_ADMINISTRATORS_DISTINGUISHED_GROUP =
+            IPerson.DISTINGUISHED_GROUP + ".PortalAdministrators";
 
     private static final Log cLog = LogFactory.getLog(AdminEvaluator.class);
 
@@ -70,7 +70,8 @@ public class AdminEvaluator {
         IEntityGroup adminGroup = null;
 
         try {
-            adminGroup = GroupService.getDistinguishedGroup(PORTAL_ADMINISTRATORS_DISTINGUISHED_GROUP);
+            adminGroup =
+                    GroupService.getDistinguishedGroup(PORTAL_ADMINISTRATORS_DISTINGUISHED_GROUP);
         } catch (GroupsException ge) {
             // cannot determine whether or not the user is an admin.
             cLog.error(

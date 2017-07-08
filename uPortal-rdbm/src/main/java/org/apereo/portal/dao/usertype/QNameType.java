@@ -17,8 +17,7 @@ package org.apereo.portal.dao.usertype;
 import javax.xml.namespace.QName;
 import org.jadira.usertype.spi.shared.AbstractSingleColumnUserType;
 
-/**
- */
+/** */
 public class QNameType extends AbstractSingleColumnUserType<QName, String, QNameColumnMapper> {
     private static final long serialVersionUID = 1L;
 }

@@ -65,9 +65,9 @@ public class HashedDaoAuthToken extends AuthToken {
     @Override
     public int size() {
         if (authValue == null) {
-            getAuthValue();     // load value if not set
+            getAuthValue(); // load value if not set
         }
-        return  authValue == null ? 0 : authValue.length();     // might still be null
+        return authValue == null ? 0 : authValue.length(); // might still be null
     }
 
     public boolean authenticate(AuthToken token, Message msg) {

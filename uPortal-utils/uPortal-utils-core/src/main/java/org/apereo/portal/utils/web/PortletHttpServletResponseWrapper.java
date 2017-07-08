@@ -35,7 +35,6 @@ import org.apereo.portal.utils.DelegatingServletOutputStream;
  *
  * <p>Any mutator method calls are not passed on and logged at warn level. The writer/stream objects
  * discard all data written and log byte/char counts at warn level on close.
- *
  */
 public class PortletHttpServletResponseWrapper extends AbstractHttpServletResponseWrapper {
     private final IPortletWindow portletWindow;

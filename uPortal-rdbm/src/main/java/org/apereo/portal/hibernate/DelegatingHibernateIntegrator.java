@@ -32,7 +32,6 @@ import org.slf4j.LoggerFactory;
  * hibernate to other beans.
  *
  * <p>Configured via the {@link ServiceLoader} mechanism.
- *
  */
 public class DelegatingHibernateIntegrator implements Integrator {
     private static final Set<HibernateConfigurationAwareInjector> configurationAwareBeans =

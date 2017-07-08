@@ -27,7 +27,6 @@ import org.springframework.core.annotation.Order;
  * <p>For the add/set methods configured property managers are called in turn until one returns
  * true. If ordering in property handling is important the manager should either implement {@link
  * Ordered} or be annotated with {@link Order}
- *
  */
 public interface IRequestPropertiesManager {
 

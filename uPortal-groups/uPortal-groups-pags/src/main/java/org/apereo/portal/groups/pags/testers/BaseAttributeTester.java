@@ -19,10 +19,7 @@ import org.apereo.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * A tester for examining <code>IPerson</code> attributes.
- *
- */
+/** A tester for examining <code>IPerson</code> attributes. */
 public abstract class BaseAttributeTester implements IPersonTester {
 
     protected final String attributeName;
@@ -50,5 +47,4 @@ public abstract class BaseAttributeTester implements IPersonTester {
     public String toString() {
         return "Tester for " + getAttributeName() + " : " + getTestValue();
     }
-
 }

@@ -17,10 +17,7 @@ package org.apereo.portal.utils.web.flow;
 import org.springframework.binding.convert.converters.StringToDate;
 import org.springframework.binding.convert.service.DefaultConversionService;
 
-/**
- * This class contains the custom converters for Spring Web Flow type conversions.
- *
- */
+/** This class contains the custom converters for Spring Web Flow type conversions. */
 public class PortalConversionService extends DefaultConversionService {
 
     // TODO: this should be externalized

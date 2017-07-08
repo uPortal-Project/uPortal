@@ -23,10 +23,7 @@ import org.apereo.portal.security.IPrincipal;
 import org.apereo.portal.security.ISecurityContext;
 import org.apereo.portal.security.PortalSecurityException;
 
-/**
- * Testcase for RestrictedPerson.
- *
- */
+/** Testcase for RestrictedPerson. */
 public class RestrictedPersonTest extends TestCase {
 
     private IPerson person;

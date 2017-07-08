@@ -20,10 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apereo.portal.PortalException;
 
-/**
- * Describes the entry point into the uPortal rendering pipeline.
- *
- */
+/** Describes the entry point into the uPortal rendering pipeline. */
 public interface IPortalRenderingPipeline {
     /**
      * <code>renderState</code> method orchestrates the rendering pipeline which includes worker

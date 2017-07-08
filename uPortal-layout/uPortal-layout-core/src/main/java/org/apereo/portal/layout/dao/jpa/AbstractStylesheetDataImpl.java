@@ -22,8 +22,7 @@ import org.apache.commons.lang.Validate;
 import org.apereo.portal.layout.om.IStylesheetData;
 import org.hibernate.annotations.Type;
 
-/**
- */
+/** */
 @MappedSuperclass
 abstract class AbstractStylesheetDataImpl implements IStylesheetData {
     @Column(name = "DATA_NAME", length = 100, nullable = false, updatable = false)

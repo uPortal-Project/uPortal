@@ -37,9 +37,7 @@ import javax.portlet.filter.RenderFilter;
 import javax.portlet.filter.ResourceFilter;
 import org.apache.pluto.container.om.portlet.Filter;
 
-/**
- * Implementation of {@link FilterChain}.
- */
+/** Implementation of {@link FilterChain}. */
 public class FilterChainImpl implements FilterChain {
 
     private List<Filter> filterList = new ArrayList<Filter>();

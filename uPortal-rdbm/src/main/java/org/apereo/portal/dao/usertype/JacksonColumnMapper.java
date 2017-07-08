@@ -30,7 +30,6 @@ import org.jadira.usertype.spi.shared.AbstractStringColumnMapper;
 /**
  * Mapper that read/writes objects to JSON. Uses a 2 step serialization/deserialization process so
  * the object's type can be recorded in the JSON data
- *
  */
 public class JacksonColumnMapper extends AbstractStringColumnMapper<Object> {
     private static final long serialVersionUID = 1L;

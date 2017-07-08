@@ -17,10 +17,7 @@ package org.apereo.portal.events.aggr;
 import org.apereo.portal.events.aggr.groups.AggregatedGroupMapping;
 import org.apereo.portal.utils.ComparableExtractingComparator;
 
-/**
- * Basic impl of {@link BaseGroupedAggregationDiscriminator}
- *
- */
+/** Basic impl of {@link BaseGroupedAggregationDiscriminator} */
 public class BaseGroupedAggregationDiscriminatorImpl
         implements BaseGroupedAggregationDiscriminator {
     private static final long serialVersionUID = 1L;

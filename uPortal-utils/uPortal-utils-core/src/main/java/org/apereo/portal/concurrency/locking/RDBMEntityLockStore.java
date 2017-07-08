@@ -30,10 +30,7 @@ import org.apereo.portal.concurrency.LockingException;
 import org.apereo.portal.jdbc.RDBMServices;
 import org.apereo.portal.spring.locator.EntityTypesLocator;
 
-/**
- * RDBMS-based store for <code>IEntityLocks</code>.
- *
- */
+/** RDBMS-based store for <code>IEntityLocks</code>. */
 public class RDBMEntityLockStore implements IEntityLockStore {
     private static final Log log = LogFactory.getLog(RDBMEntityLockStore.class);
     private static IEntityLockStore singleton;

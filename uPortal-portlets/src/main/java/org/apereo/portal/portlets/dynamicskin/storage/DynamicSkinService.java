@@ -1,27 +1,21 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.portlets.dynamicskin.storage;
 
 import java.util.SortedSet;
-
 import javax.portlet.PortletRequest;
-
 import org.apereo.portal.portlets.dynamicskin.DynamicSkinInstanceData;
 
 /**
@@ -32,8 +26,9 @@ import org.apereo.portal.portlets.dynamicskin.DynamicSkinInstanceData;
 public interface DynamicSkinService {
 
     /**
-     * Returns path to skin CSS file for the provided data.  Path returned may be relative or absolute depending on the
-     * implementation.
+     * Returns path to skin CSS file for the provided data. Path returned may be relative or
+     * absolute depending on the implementation.
+     *
      * @param data skin instance data
      * @return path to skin CSS file
      */
@@ -48,9 +43,10 @@ public interface DynamicSkinService {
     boolean skinCssFileExists(DynamicSkinInstanceData data);
 
     /**
-     * Generates the skin CSS file for the provided skin instance data.  Once the CSS file is created, the path to the 
-     * file can be accessed with the {@link #getSkinCssPath(DynamicSkinInstanceData)} method.
-     * 
+     * Generates the skin CSS file for the provided skin instance data. Once the CSS file is
+     * created, the path to the file can be accessed with the {@link
+     * #getSkinCssPath(DynamicSkinInstanceData)} method.
+     *
      * @param data skin instance data
      */
     void generateSkinCssFile(DynamicSkinInstanceData data);
@@ -63,5 +59,4 @@ public interface DynamicSkinService {
      * @since 4.3
      */
     SortedSet<String> getSkinNames(PortletRequest request);
-
 }

@@ -24,7 +24,6 @@ import org.jasig.services.persondir.IPersonAttributes;
 /**
  * Implementation of <code>IEntityNameFinder</code> for <code>IPersons</code> by looking up
  * displayName from an <code>IPersonAttributeDao</code>.
- *
  */
 public class PersonDirNameFinder implements IEntityNameFinder {
 

@@ -20,7 +20,6 @@ package org.apereo.portal.security.xslt;
  * extension functions, hence it's hard to create actual multi-argument extension functions,
  * therefore we're using separate methods for functions with different quantities of placeholders.
  * Currently up to 3 parameters are supported.
- *
  */
 public interface IXalanMessageHelper {
 

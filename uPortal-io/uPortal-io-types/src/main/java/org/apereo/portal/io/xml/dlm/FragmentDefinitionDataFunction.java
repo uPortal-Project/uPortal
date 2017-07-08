@@ -24,10 +24,7 @@ import org.apereo.portal.layout.dlm.FragmentDefinition;
 import org.apereo.portal.layout.dlm.IFragmentDefinitionDao;
 import org.springframework.beans.factory.annotation.Autowired;
 
-/**
- * Lists each fragment definition in the database
- *
- */
+/** Lists each fragment definition in the database */
 public class FragmentDefinitionDataFunction
         implements Function<IPortalDataType, Iterable<? extends IPortalData>> {
     private IFragmentDefinitionDao fragmentDefinitionDao;

@@ -18,9 +18,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang.Validate;
 import org.apereo.portal.security.IPerson;
 
-/**
- * @since 2.6
- */
+/** @since 2.6 */
 public abstract class LayoutPortalEvent extends PortalEvent {
     private static final long serialVersionUID = 1L;
 

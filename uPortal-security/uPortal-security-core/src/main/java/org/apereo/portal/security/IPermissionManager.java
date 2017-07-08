@@ -19,7 +19,6 @@ import org.apereo.portal.AuthorizationException;
 /**
  * An interface for retrieving <code>IAuthorizationPrincipals</code> and their <code>Permissions
  * </code> on behalf of a <code>Permission</code> owner.
- *
  */
 public interface IPermissionManager {
 

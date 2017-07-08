@@ -39,9 +39,7 @@ import org.apereo.portal.services.AuthorizationService;
 import org.apereo.portal.services.GroupService;
 import org.junit.Ignore;
 
-/**
- * Tests the authorization framework.
- */
+/** Tests the authorization framework. */
 @Ignore // Breaks on move to Gradlde
 public class AuthorizationTester extends TestCase {
     private String OWNER = "UP_FRAMEWORK";

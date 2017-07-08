@@ -18,10 +18,7 @@ import com.google.common.collect.ImmutableMap;
 import java.net.URI;
 import java.util.Map;
 
-/**
- * Target of an {@link LrsVerb}
- *
- */
+/** Target of an {@link LrsVerb} */
 public class LrsObject {
     private final URI id;
     private final String objectType;

@@ -20,10 +20,7 @@ import org.apereo.portal.concurrency.CachingException;
 import org.apereo.portal.concurrency.IEntityCache;
 import org.apereo.portal.concurrency.IEntityCachingService;
 
-/**
- * Provides common {@link IEntityCachingService} logic
- *
- */
+/** Provides common {@link IEntityCachingService} logic */
 public abstract class AbstractEntityCachingService implements IEntityCachingService {
 
     /**

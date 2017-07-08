@@ -18,10 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * LocalAccountQuery provides the persondirectory query object for local accounts.
- *
- */
+/** LocalAccountQuery provides the persondirectory query object for local accounts. */
 public class LocalAccountQuery {
 
     private String username;

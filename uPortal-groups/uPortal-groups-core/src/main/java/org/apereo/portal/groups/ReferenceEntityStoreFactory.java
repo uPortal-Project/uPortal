@@ -17,10 +17,7 @@ package org.apereo.portal.groups;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-/**
- * Creates an instance of the reference <code>IEntityStore</code>.
- *
- */
+/** Creates an instance of the reference <code>IEntityStore</code>. */
 public class ReferenceEntityStoreFactory implements IEntityStoreFactory {
 
     private static final Log log = LogFactory.getLog(ReferenceEntityStoreFactory.class);

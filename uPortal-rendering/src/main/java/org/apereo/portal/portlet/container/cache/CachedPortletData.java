@@ -22,9 +22,7 @@ import java.util.concurrent.TimeUnit;
 import javax.portlet.CacheControl;
 import org.apereo.portal.portlet.rendering.PortletOutputHandler;
 
-/**
- * Java bean to represent the data cached for a portlet request via {@link CacheControl}s.
- */
+/** Java bean to represent the data cached for a portlet request via {@link CacheControl}s. */
 public class CachedPortletData<T extends Serializable>
         implements CachedPortletResultHolder<T>, Serializable {
     private static final long serialVersionUID = 5509299103587289000L;

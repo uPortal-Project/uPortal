@@ -16,8 +16,5 @@ package org.apereo.portal.events.aggr.login;
 
 import org.apereo.portal.events.aggr.BaseGroupedAggregationDiscriminator;
 
-/**
- * Interface to separate Login aggregation events into separate columns for reporting purposes.
- *
- */
+/** Interface to separate Login aggregation events into separate columns for reporting purposes. */
 public interface LoginAggregationDiscriminator extends BaseGroupedAggregationDiscriminator {}

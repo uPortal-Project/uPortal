@@ -23,8 +23,7 @@ import org.apereo.portal.jdbc.RDBMServices;
 /**
  * LayoutStructure represents a channel or folder in a layout.
  *
- * @since 2.5 - before 2.5 this class existed as a public inner class of
- *     RDBMUserLayoutStore.
+ * @since 2.5 - before 2.5 this class existed as a public inner class of RDBMUserLayoutStore.
  */
 public final class LayoutStructure {
 

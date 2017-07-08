@@ -34,10 +34,7 @@ import org.apereo.portal.events.aggr.portlets.AggregatedPortletMapping;
 import org.apereo.portal.events.aggr.portlets.AggregatedPortletMappingImpl;
 import org.springframework.stereotype.Repository;
 
-/**
- * DAO for Portlet Execution Aggregations
- *
- */
+/** DAO for Portlet Execution Aggregations */
 @Repository
 public class JpaPortletExecutionAggregationDao
         extends JpaBaseAggregationDao<

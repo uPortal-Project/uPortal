@@ -18,10 +18,7 @@ import org.apereo.portal.PortalException;
 import org.apereo.portal.security.IPerson;
 import org.w3c.dom.Element;
 
-/**
- * Layout processing action for changnig the set of restrictions for a fragment node.
- *
- */
+/** Layout processing action for changnig the set of restrictions for a fragment node. */
 public class LPAEditRestriction implements ILayoutProcessingAction {
     private IPerson person = null;
     private Element ilfNode = null;

@@ -17,10 +17,7 @@ package org.apereo.portal.url;
 import java.util.Map;
 import org.apereo.portal.portlet.om.IPortletWindowId;
 
-/**
- * Builds a portal URL
- *
- */
+/** Builds a portal URL */
 public interface IPortalUrlBuilder extends IUrlBuilder {
     /**
      * @return The layout folder this URL targets, if null {@link #getTargetPortletWindowId()} will

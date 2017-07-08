@@ -42,7 +42,6 @@ import org.springframework.web.portlet.ModelAndView;
  * <p>Woefully, this implementation is dependent upon XSLT details of the portal rendering pipeline,
  * which auto-wire in. In the case where necessary components fail to auto-wire in, portlet
  * exceptions out at render time.
- *
  */
 @Controller
 @RequestMapping("VIEW")

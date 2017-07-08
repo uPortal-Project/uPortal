@@ -14,10 +14,7 @@
  */
 package org.apereo.portal.groups;
 
-/**
- * Factory interface for creating an <code>IEntityGroupStore</code>.
- *
- */
+/** Factory interface for creating an <code>IEntityGroupStore</code>. */
 public interface IEntityGroupStoreFactory {
     /**
      * @return IEntityGroupStore

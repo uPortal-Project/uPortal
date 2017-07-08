@@ -16,10 +16,7 @@ package org.apereo.portal.events.aggr.portlets;
 
 import org.apereo.portal.portlet.om.IPortletDefinition;
 
-/**
- * A mapped portlet name
- *
- */
+/** A mapped portlet name */
 public interface AggregatedPortletMapping {
 
     /**

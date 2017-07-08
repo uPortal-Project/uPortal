@@ -22,10 +22,7 @@ import java.util.Collections;
 import java.util.Set;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
 
-/**
- * Factory for creating Mockito objects as beans.
- *
- */
+/** Factory for creating Mockito objects as beans. */
 public class MockitoFactoryBean<T> extends AbstractFactoryBean<T> {
     private static final Set<Object> MOCK_CACHE =
             Collections.newSetFromMap(new MapMaker().weakKeys().<Object, Boolean>makeMap());

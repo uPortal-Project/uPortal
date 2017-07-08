@@ -46,7 +46,6 @@ import org.springframework.stereotype.Component;
  * JsonSerializer} and {@link JsonDeserializer} classes themselves are nested types on this class,
  * which is stereotyped as a Spring Component. This approach allows the outer type to access
  * Spring-managed dependencies and make them (privately, statically) available to the nested types.
- *
  */
 @Component
 public final class PagsDefinitionJsonUtils {

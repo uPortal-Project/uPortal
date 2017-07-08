@@ -18,8 +18,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.core.Is.is;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -54,9 +52,11 @@ public class ZeroLeggedOAuthInterceptorTest {
         PropertyResolver resolver = mock(PropertyResolver.class);
         when(resolver.getProperty(Matchers.eq("org.jasig.rest.interceptor.oauth." + id + ".realm")))
                 .thenReturn(realm);
-        when(resolver.getProperty(Matchers.eq("org.jasig.rest.interceptor.oauth." + id + ".consumerKey")))
+        when(resolver.getProperty(
+                        Matchers.eq("org.jasig.rest.interceptor.oauth." + id + ".consumerKey")))
                 .thenReturn(consumerKey);
-        when(resolver.getProperty(Matchers.eq("org.jasig.rest.interceptor.oauth." + id + ".secretKey")))
+        when(resolver.getProperty(
+                        Matchers.eq("org.jasig.rest.interceptor.oauth." + id + ".secretKey")))
                 .thenReturn(secretKey);
 
         // holder for the headers...
@@ -74,7 +74,8 @@ public class ZeroLeggedOAuthInterceptorTest {
         when(client.execute()).thenReturn(resp);
 
         ClientHttpRequestFactory factory = mock(ClientHttpRequestFactory.class);
-        when(factory.createRequest(Matchers.any(URI.class), Matchers.any(HttpMethod.class))).thenReturn(client);
+        when(factory.createRequest(Matchers.any(URI.class), Matchers.any(HttpMethod.class)))
+                .thenReturn(client);
 
         // add the new interceptor...
         ZeroLeggedOAuthInterceptor interceptor = new ZeroLeggedOAuthInterceptor();

@@ -19,10 +19,7 @@ import java.io.Writer;
 import org.apache.commons.lang.Validate;
 import org.slf4j.Logger;
 
-/**
- * Writer that writes to a {@link Logger}
- *
- */
+/** Writer that writes to a {@link Logger} */
 public class LoggingWriter extends Writer {
     private static final String NEWLINE = System.getProperty("line.separator");
     private final StringBuilder builder = new StringBuilder();

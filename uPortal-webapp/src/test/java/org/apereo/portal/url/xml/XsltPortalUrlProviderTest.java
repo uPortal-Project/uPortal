@@ -58,8 +58,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.util.xml.FixedXMLEventStreamReader;
 import org.springframework.util.xml.SimpleTransformErrorListener;
 
-/**
- */
+/** */
 @RunWith(MockitoJUnitRunner.class)
 public class XsltPortalUrlProviderTest {
     protected final Logger logger = LoggerFactory.getLogger(getClass());

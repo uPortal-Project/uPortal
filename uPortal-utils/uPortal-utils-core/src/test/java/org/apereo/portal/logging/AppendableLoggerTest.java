@@ -22,8 +22,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
 
-/**
- */
+/** */
 public class AppendableLoggerTest {
     @Test
     public void testAppendableLogger() {

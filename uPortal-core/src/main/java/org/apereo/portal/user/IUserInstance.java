@@ -18,10 +18,7 @@ import org.apereo.portal.IUserPreferencesManager;
 import org.apereo.portal.i18n.LocaleManager;
 import org.apereo.portal.security.IPerson;
 
-/**
- * Provides access to the layout and rendering related services for a portal user.
- *
- */
+/** Provides access to the layout and rendering related services for a portal user. */
 public interface IUserInstance {
     /** @return The Person this UserInstance is for */
     public IPerson getPerson();

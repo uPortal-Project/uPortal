@@ -17,10 +17,7 @@ package org.apereo.portal.layout.node;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-/**
- * An interface describing a folder user layout node.
- *
- */
+/** An interface describing a folder user layout node. */
 public interface IUserLayoutFolderDescription extends IUserLayoutNodeDescription {
 
     /**

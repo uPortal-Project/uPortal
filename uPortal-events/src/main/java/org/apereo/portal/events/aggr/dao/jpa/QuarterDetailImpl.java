@@ -36,8 +36,7 @@ import org.joda.time.DateTime;
 import org.joda.time.MonthDay;
 import org.joda.time.ReadableInstant;
 
-/**
- */
+/** */
 @Entity
 @Table(name = "UP_QUARTER_DETAIL")
 @SequenceGenerator(

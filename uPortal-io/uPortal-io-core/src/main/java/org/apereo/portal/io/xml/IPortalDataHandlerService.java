@@ -20,10 +20,7 @@ import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import org.springframework.core.io.Resource;
 
-/**
- * Service that can import, export, and delete portal data.
- *
- */
+/** Service that can import, export, and delete portal data. */
 public interface IPortalDataHandlerService {
 
     /** Options that control behavior of batch import operations */

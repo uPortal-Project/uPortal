@@ -32,7 +32,6 @@ import org.apereo.portal.utils.web.PortletHttpServletRequestWrapper;
 /**
  * Worker used to execute render requests on the error portlet. Does not use any thread-pool code to
  * make sure the error portlet still renders in the event of the thread pool being broken.
- *
  */
 final class PortletFailureExecutionWorker implements IPortletFailureExecutionWorker {
 

@@ -41,8 +41,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 
-/**
- */
+/** */
 public class JacksonPortalEventTest {
     private ObjectMapper mapper;
 

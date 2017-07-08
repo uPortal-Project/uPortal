@@ -17,10 +17,7 @@ package org.apereo.portal.events;
 import javax.servlet.http.HttpServletRequest;
 import org.apereo.portal.security.IPerson;
 
-/**
- * Publishing authentication related events
- *
- */
+/** Publishing authentication related events */
 public interface IPortalAuthEventFactory {
 
     void publishLoginEvent(HttpServletRequest request, Object source, IPerson person);

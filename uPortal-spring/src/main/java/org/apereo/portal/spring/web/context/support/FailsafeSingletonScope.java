@@ -29,7 +29,6 @@ import org.springframework.beans.factory.config.Scope;
 /**
  * Wraps a {@link Scope} to provide functionality when the wrapped scope can't function due to an
  * illegal state (no current session, request, ...)
- *
  */
 public class FailsafeSingletonScope implements Scope, DisposableBean {
     protected final Log logger = LogFactory.getLog(this.getClass());

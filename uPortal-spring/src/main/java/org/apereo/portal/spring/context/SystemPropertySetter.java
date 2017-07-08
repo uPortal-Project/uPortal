@@ -17,10 +17,7 @@ package org.apereo.portal.spring.context;
 import java.util.Map;
 import java.util.Properties;
 
-/**
- * Sets system properties, ignores any properties with zero length values
- *
- */
+/** Sets system properties, ignores any properties with zero length values */
 public final class SystemPropertySetter {
     public void setSystemProperties(Properties props) {
         for (final Map.Entry<Object, Object> propEntry : props.entrySet()) {

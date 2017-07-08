@@ -21,7 +21,6 @@ import org.apache.commons.io.output.ProxyOutputStream;
 /**
  * {@link OutputStream} that mimics the UNIX 'tee' command on a pair of {@link OutputStream}s. Note
  * the {@link #write(char[], int, int)} implementation is synchronized.
- *
  */
 public class TeeOutputStream extends ProxyOutputStream {
     private OutputStream branch;

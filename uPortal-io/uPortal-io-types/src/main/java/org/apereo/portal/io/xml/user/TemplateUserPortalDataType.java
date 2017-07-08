@@ -20,10 +20,7 @@ import javax.xml.namespace.QName;
 import org.apereo.portal.io.xml.AbstractPortalDataType;
 import org.apereo.portal.io.xml.PortalDataKey;
 
-/**
- * Describes a User data type in the portal
- *
- */
+/** Describes a User data type in the portal */
 public class TemplateUserPortalDataType extends AbstractPortalDataType {
     public static final QName TEMPLATE_USER_QNAME =
             new QName("https://source.jasig.org/schemas/uportal/io/user", "template-user");

@@ -17,10 +17,7 @@ package org.apereo.portal.dao.usertype;
 import javax.portlet.WindowState;
 import org.jadira.usertype.spi.shared.AbstractSingleColumnUserType;
 
-/**
- * Converts portlet WindowState objects to/from strings.
- *
- */
+/** Converts portlet WindowState objects to/from strings. */
 public class WindowStateType
         extends AbstractSingleColumnUserType<WindowState, String, WindowStateColumnMapper> {
     private static final long serialVersionUID = 1L;

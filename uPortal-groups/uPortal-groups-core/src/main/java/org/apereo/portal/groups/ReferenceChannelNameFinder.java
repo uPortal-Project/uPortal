@@ -20,10 +20,7 @@ import org.apereo.portal.portlet.om.IPortletDefinition;
 import org.apereo.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.apereo.portal.spring.locator.PortletDefinitionRegistryLocator;
 
-/**
- * Reference implementation of <code>IEntityNameFinder</code> for <code>Channels</code>.
- *
- */
+/** Reference implementation of <code>IEntityNameFinder</code> for <code>Channels</code>. */
 public class ReferenceChannelNameFinder implements IEntityNameFinder {
 
     private static IEntityNameFinder _instance = null;

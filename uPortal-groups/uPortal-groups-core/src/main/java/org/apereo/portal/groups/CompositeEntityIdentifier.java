@@ -30,7 +30,6 @@ import org.apereo.portal.EntityIdentifier;
  * A composite key and type that uniquely identify a portal entity. The composite key contains a
  * service name, which may be compound, and a native key, which is the key that identifies the
  * entity in the local service.
- *
  */
 public class CompositeEntityIdentifier extends EntityIdentifier implements IGroupConstants {
 

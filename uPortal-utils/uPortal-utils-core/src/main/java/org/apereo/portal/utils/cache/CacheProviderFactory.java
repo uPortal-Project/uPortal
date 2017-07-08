@@ -30,7 +30,6 @@ import org.springframework.stereotype.Service;
  * CacheFactory impl that provides Map instances that wrap a configured {@link CacheProviderFacade}.
  * This uses the {@link MapCacheProvider} to perform the wrapping. Refer to that class for which
  * operations on the {@link Map} interface are supported.
- *
  */
 @Service("cacheFactory")
 public class CacheProviderFactory implements CacheFactory {

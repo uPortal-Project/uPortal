@@ -27,8 +27,7 @@ import org.apereo.portal.layout.om.IOutputPropertyDescriptor;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-/**
- */
+/** */
 @Entity
 @Table(name = "UP_SS_DESC_OUTPUT_PROP")
 @SequenceGenerator(

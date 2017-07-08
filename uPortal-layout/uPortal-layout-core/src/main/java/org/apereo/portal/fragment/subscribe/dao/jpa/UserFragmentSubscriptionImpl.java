@@ -41,7 +41,6 @@ import org.hibernate.annotations.NaturalId;
 /**
  * UserFragmentSubscriptionImpl is the default JPA-based implementation of {@link
  * IUserFragmentSubscription}.
- *
  */
 @Entity
 @Table(name = "UP_USER_FRAGMENT_SUBSCRIPTION")

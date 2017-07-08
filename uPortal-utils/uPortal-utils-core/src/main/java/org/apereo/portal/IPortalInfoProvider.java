@@ -14,10 +14,7 @@
  */
 package org.apereo.portal;
 
-/**
- * Provides information about the portal
- *
- */
+/** Provides information about the portal */
 public interface IPortalInfoProvider {
     /**
      * The name of the server

@@ -44,10 +44,7 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.stereotype.Repository;
 
-/**
- * DAO for Portlet Layout Aggregations
- *
- */
+/** DAO for Portlet Layout Aggregations */
 @Repository
 public class JpaPortletLayoutAggregationDao
         extends JpaBaseAggregationDao<PortletLayoutAggregationImpl, PortletLayoutAggregationKey>

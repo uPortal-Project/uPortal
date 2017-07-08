@@ -20,9 +20,7 @@ import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
-/**
- * @since 2.5.3
- */
+/** @since 2.5.3 */
 public class SAXErrorHandler implements ErrorHandler {
 
     private static final Log log = LogFactory.getLog(SAXErrorHandler.class);

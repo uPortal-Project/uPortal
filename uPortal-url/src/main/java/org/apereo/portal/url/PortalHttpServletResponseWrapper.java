@@ -17,10 +17,7 @@ package org.apereo.portal.url;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
-/**
- * Wrapper for all portal responses
- *
- */
+/** Wrapper for all portal responses */
 public class PortalHttpServletResponseWrapper extends HttpServletResponseWrapper {
     private final Object urlEncodingMutex = new Object();
 

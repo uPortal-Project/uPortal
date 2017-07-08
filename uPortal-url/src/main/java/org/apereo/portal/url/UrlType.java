@@ -16,10 +16,7 @@ package org.apereo.portal.url;
 
 import org.apache.pluto.container.PortletURLProvider.TYPE;
 
-/**
- * Represents the request type of the url, all available request types should be enumerated here
- *
- */
+/** Represents the request type of the url, all available request types should be enumerated here */
 public enum UrlType {
     /* IMPORTANT, all enum keys must be completely upper case for the helper methods to not cause problems */
 

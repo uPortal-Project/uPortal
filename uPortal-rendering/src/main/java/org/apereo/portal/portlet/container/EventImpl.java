@@ -18,8 +18,7 @@ import java.io.Serializable;
 import javax.portlet.Event;
 import javax.xml.namespace.QName;
 
-/**
- */
+/** */
 public class EventImpl implements Event {
 
     private final QName qname;

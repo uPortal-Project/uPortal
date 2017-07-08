@@ -43,7 +43,6 @@ import org.springframework.web.util.WebUtils;
  * PortletSession#invalidate()} method is called on all portlet sessions in the Map.
  *
  * <p>TODO this may not play well with distributed sessions
- *
  */
 @Service("portletSessionExpirationManager")
 public class PortletSessionExpirationManager

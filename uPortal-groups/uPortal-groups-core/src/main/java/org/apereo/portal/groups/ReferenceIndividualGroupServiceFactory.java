@@ -17,10 +17,7 @@ package org.apereo.portal.groups;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-/**
- * Creates an instance of the reference <code>IIndividualGroupService</code>.
- *
- */
+/** Creates an instance of the reference <code>IIndividualGroupService</code>. */
 public class ReferenceIndividualGroupServiceFactory implements IComponentGroupServiceFactory {
 
     private static final Log log = LogFactory.getLog(ReferenceIndividualGroupServiceFactory.class);

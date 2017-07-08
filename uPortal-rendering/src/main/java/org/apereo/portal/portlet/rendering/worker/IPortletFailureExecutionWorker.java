@@ -14,6 +14,5 @@
  */
 package org.apereo.portal.portlet.rendering.worker;
 
-/**
- */
+/** */
 public interface IPortletFailureExecutionWorker extends IPortletRenderExecutionWorker {}

@@ -16,10 +16,7 @@ package org.apereo.portal.portlet.delegation;
 
 import javax.portlet.RenderResponse;
 
-/**
- * Delegates to a {@link RenderResponse}
- *
- */
+/** Delegates to a {@link RenderResponse} */
 public class RenderResponsePortletOutputHandler extends MimeResponsePortletOutputHandler {
 
     public RenderResponsePortletOutputHandler(RenderResponse renderResponse) {

@@ -25,8 +25,7 @@ import org.apereo.portal.utils.MultivaluedMapPopulator;
 import org.easymock.EasyMock;
 import org.springframework.mock.web.MockHttpServletRequest;
 
-/**
- */
+/** */
 public class HttpRequestPropertiesManagerTest extends TestCase {
     private HttpRequestPropertiesManager httpRequestPropertiesManager;
 

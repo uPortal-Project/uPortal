@@ -105,7 +105,6 @@ import org.w3c.dom.Node;
 /**
  * Pulls together {@link IPortalDataType}, {@link IDataUpgrader}, and {@link IDataImporter}
  * implementations to handle data upgrade, import, export and removal operations.
- *
  */
 @Service("portalDataHandlerService")
 public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {

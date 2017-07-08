@@ -15,16 +15,12 @@
 package org.apereo.portal.layout;
 
 import java.util.Enumeration;
-import java.util.Set;
 import javax.xml.xpath.XPathExpression;
 import org.apereo.portal.PortalException;
 import org.apereo.portal.layout.node.IUserLayoutNodeDescription;
 import org.apereo.portal.layout.om.IStylesheetUserPreferences;
 
-/**
- * An interface representing the user layout.
- *
- */
+/** An interface representing the user layout. */
 public interface IUserLayout {
     /**
      * The name to use for the root node of the layout. This should be used with regard to rendering
@@ -102,5 +98,4 @@ public interface IUserLayout {
      *     incorporated fragments
      */
     IStylesheetUserPreferences getDistributedThemeStylesheetUserPreferences();
-
 }

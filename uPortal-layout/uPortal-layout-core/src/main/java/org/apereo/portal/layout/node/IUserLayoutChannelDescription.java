@@ -20,9 +20,7 @@ import java.util.Map;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-/**
- * An interface managing information contained in a user layout channel node.
- */
+/** An interface managing information contained in a user layout channel node. */
 public interface IUserLayoutChannelDescription extends IUserLayoutNodeDescription {
 
     /**

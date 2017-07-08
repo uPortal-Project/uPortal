@@ -44,7 +44,6 @@ import org.w3c.dom.Element;
  *   <li>Layout node's locale preferences
  *   <li>User profile's locale preferences
  * </ol>
- *
  */
 public class LocaleManager implements Serializable {
 

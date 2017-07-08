@@ -27,10 +27,7 @@ import javax.xml.stream.events.ProcessingInstruction;
 import javax.xml.stream.events.StartDocument;
 import javax.xml.stream.events.XMLEvent;
 
-/**
- * Fixed version of Springs's XMLEventStreamReader
- *
- */
+/** Fixed version of Springs's XMLEventStreamReader */
 public class FixedXMLEventStreamReader extends AbstractXMLStreamReader {
 
     private XMLEvent event;

@@ -22,7 +22,6 @@ import org.apereo.portal.portlet.om.IPortletWindowId;
  * Interceptor used to add behavior before or after portlet execution. {@link
  * #postExecution(HttpServletRequest, HttpServletResponse, IPortletWindowId, Exception)} will always
  * be called within a finally block.
- *
  */
 public interface IPortletExecutionInterceptor {
     /**

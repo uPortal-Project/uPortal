@@ -45,7 +45,6 @@ import org.springframework.beans.factory.annotation.Autowired;
  * pipeline will have their window state set to the specified value. If the IStylesheetDescriptor is
  * not specified a check is made to ensure the window states are not {@link WindowState#MAXIMIZED},
  * {@link IPortletRenderer#DETACHED}, or {@link IPortletRenderer#EXCLUSIVE}
- *
  */
 public class WindowStateSettingsStAXComponent extends StAXPipelineComponentWrapper {
     protected final Logger logger = LoggerFactory.getLogger(getClass());

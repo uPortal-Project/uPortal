@@ -21,10 +21,7 @@ import org.apereo.portal.layout.TransientUserLayoutManagerWrapper;
 import org.apereo.portal.layout.node.IUserLayoutNodeDescription;
 import org.slf4j.Logger;
 
-/**
- * Description
- *
- */
+/** Description */
 public class ImmutableTransientUserLayoutManagerWrapper extends TransientUserLayoutManagerWrapper {
     private final Logger logger = org.slf4j.LoggerFactory.getLogger(this.getClass());
 

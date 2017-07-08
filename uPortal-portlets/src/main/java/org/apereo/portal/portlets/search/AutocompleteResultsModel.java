@@ -14,10 +14,7 @@
  */
 package org.apereo.portal.portlets.search;
 
-/**
- * Model object for the search-as-you-type ajax results
- *
- */
+/** Model object for the search-as-you-type ajax results */
 public class AutocompleteResultsModel {
     String title;
     String description;

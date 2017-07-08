@@ -31,10 +31,7 @@ import org.apereo.portal.portlet.rendering.IPortletExecutionManager;
 import org.apereo.portal.utils.cache.CacheKey;
 import org.springframework.beans.factory.annotation.Autowired;
 
-/**
- * Inserts the results of portlet's rendering into the character stream
- *
- */
+/** Inserts the results of portlet's rendering into the character stream */
 public class PortletRenderingIncorporationComponent extends CharacterPipelineComponentWrapper {
     private IPortletExecutionManager portletExecutionManager;
 

@@ -22,10 +22,7 @@ import org.apereo.portal.groups.pags.dao.IPersonAttributesGroupTestDefinitionDao
 import org.apereo.portal.groups.pags.dao.IPersonAttributesGroupTestGroupDefinition;
 import org.apereo.portal.groups.pags.dao.IPersonAttributesGroupTestGroupDefinitionDao;
 
-/**
- * Helper class called from crn to handle the object creation and updates during PAGS import
- *
- */
+/** Helper class called from crn to handle the object creation and updates during PAGS import */
 public class PersonAttributesGroupImportHelper {
     private IPersonAttributesGroupDefinitionDao personAttributesGroupDefinitionDao;
     private IPersonAttributesGroupTestDefinitionDao personAttributesGroupTestDefinitionDao;

@@ -36,10 +36,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-/**
- * Generates {@link IPortalUrlBuilder} objects based on various layout and portlet targets.
- *
- */
+/** Generates {@link IPortalUrlBuilder} objects based on various layout and portlet targets. */
 @Service
 public class PortalUrlProviderImpl implements IPortalUrlProvider {
     private static final String PORTAL_ACTION_URL_BUILDER =

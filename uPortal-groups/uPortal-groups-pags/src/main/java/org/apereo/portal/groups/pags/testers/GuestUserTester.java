@@ -38,5 +38,4 @@ public class GuestUserTester implements IPersonTester {
             return !person.isGuest();
         }
     }
-
 }

@@ -25,10 +25,7 @@ import org.danann.cernunnos.runtime.RuntimeRequestResponse;
 import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Required;
 
-/**
- * Generic export impl that support Cernunnous Tasks.
- *
- */
+/** Generic export impl that support Cernunnous Tasks. */
 public class CernunnosDataExporter extends AbstractDom4jExporter {
     private Task task;
     private String idAttributeName;

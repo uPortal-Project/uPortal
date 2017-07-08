@@ -31,7 +31,6 @@ import org.apereo.portal.utils.ConcurrentMapUtils;
  * un-processed events for each {@link IPortletWindowId}
  *
  * <p>This class and all data structures returned by it are thread safe
- *
  */
 public class PortletEventQueue implements Iterable<IPortletWindowId> {
     /** Queue of portlet events that have not been resolved to target specific portlet windows */

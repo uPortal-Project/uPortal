@@ -23,10 +23,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-/**
- * Renders a google {@link DataTable} to a CSV
- *
- */
+/** Renders a google {@link DataTable} to a CSV */
 public class GoogleCsvDataTableView extends AbstractGoogleDataTableView {
     public static final String OUT_FILE_NAME_ATTRIBUTE = "outFileName";
 

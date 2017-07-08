@@ -44,7 +44,6 @@ import org.springframework.web.servlet.HandlerMapping;
  * PortletRedirectionController issues a 302 redirect from an abstract service URL to the configured
  * target URL. This controller can be used to map links from one portlet to another without
  * requiring the linking portlet know the entire URL structure of the target.
- *
  */
 @Controller
 public class PortletRedirectionController {

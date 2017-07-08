@@ -50,8 +50,7 @@ import org.joda.time.LocalTime;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-/**
- */
+/** */
 public abstract class JpaBaseAggregationDaoTest<
                 T extends BaseAggregationImpl<K, D>,
                 K extends BaseAggregationKey,

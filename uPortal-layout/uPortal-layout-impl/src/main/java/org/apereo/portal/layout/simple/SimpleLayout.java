@@ -15,7 +15,6 @@
 package org.apereo.portal.layout.simple;
 
 import java.util.Enumeration;
-import java.util.Set;
 import java.util.Vector;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
@@ -35,14 +34,12 @@ import org.apereo.portal.layout.om.IStylesheetUserPreferences;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 /**
  * The simple user layout implementation. This layout is based on a Document.
  *
  * <p>Prior to uPortal 2.5, this class existed in the org.apereo.portal.layout package. It was moved
  * to its present package to reflect that it is part of the Simple Layout Management implementation.
- *
  */
 public class SimpleLayout implements IUserLayout {
 

@@ -19,8 +19,7 @@ import org.apereo.portal.security.IAuthorizationPrincipal;
 import org.apereo.portal.security.IPermission;
 import org.apereo.portal.security.IPermissionManager;
 
-/**
- */
+/** */
 public class PermissionManagerImpl implements IPermissionManager {
     private AuthorizationImpl authorizationService;
     private java.lang.String owner;

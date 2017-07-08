@@ -18,10 +18,7 @@ import java.util.List;
 import org.apereo.portal.portlet.om.IPortletDefinition;
 import org.apereo.portal.portlet.om.IPortletDefinitionId;
 
-/**
- * Provides APIs for creating, storing and retrieving {@link IPortletDefinition} objects.
- *
- */
+/** Provides APIs for creating, storing and retrieving {@link IPortletDefinition} objects. */
 public interface IPortletDefinitionDao {
     /**
      * Persists changes to a {@link IPortletDefinition}.

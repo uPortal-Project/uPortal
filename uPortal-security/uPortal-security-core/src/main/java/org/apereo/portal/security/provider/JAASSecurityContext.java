@@ -23,10 +23,7 @@ import org.apereo.portal.security.IAdditionalDescriptor;
 import org.apereo.portal.security.ISecurityContext;
 import org.apereo.portal.security.PortalSecurityException;
 
-/**
- * This is an implementation of a SecurityContext that checks a user's credentials using JAAS.
- *
- */
+/** This is an implementation of a SecurityContext that checks a user's credentials using JAAS. */
 class JAASSecurityContext extends ChainingSecurityContext
         implements ISecurityContext, Serializable {
 

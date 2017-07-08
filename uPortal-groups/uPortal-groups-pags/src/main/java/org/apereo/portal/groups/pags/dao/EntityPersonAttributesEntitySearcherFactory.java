@@ -18,9 +18,7 @@ import org.apereo.portal.groups.GroupsException;
 import org.apereo.portal.groups.IEntitySearcher;
 import org.apereo.portal.groups.IEntitySearcherFactory;
 
-/**
- * @since 4.1
- */
+/** @since 4.1 */
 public class EntityPersonAttributesEntitySearcherFactory implements IEntitySearcherFactory {
     public IEntitySearcher newEntitySearcher() throws GroupsException {
         return (IEntitySearcher) new EntityPersonAttributesGroupStoreFactory().newGroupStore();

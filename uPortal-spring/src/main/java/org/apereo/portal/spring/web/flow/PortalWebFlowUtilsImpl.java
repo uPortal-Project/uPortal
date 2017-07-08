@@ -26,8 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.webflow.context.ExternalContext;
 
-/**
- */
+/** */
 @Component("portalWebFlowUtils")
 public class PortalWebFlowUtilsImpl implements IPortalWebFlowUtils {
 

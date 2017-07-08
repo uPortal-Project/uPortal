@@ -21,7 +21,6 @@ import org.springframework.core.io.Resource;
 /**
  * Returned by the {@link CachingResourceLoader}. Represents a IO loaded resource including
  * information about when it was last loaded.
- *
  */
 public interface CachedResource<T> {
 

@@ -44,10 +44,7 @@ import org.apereo.portal.user.IUserInstance;
 import org.apereo.portal.user.IUserInstanceManager;
 import org.springframework.beans.factory.annotation.Autowired;
 
-/**
- * Requests a CAS Proxy ticket for the current portlet and adds it to the Pluto UserInfoService.
- *
- */
+/** Requests a CAS Proxy ticket for the current portlet and adds it to the Pluto UserInfoService. */
 public class CasTicketUserInfoService implements UserInfoService {
 
     private IUserInstanceManager userInstanceManager;

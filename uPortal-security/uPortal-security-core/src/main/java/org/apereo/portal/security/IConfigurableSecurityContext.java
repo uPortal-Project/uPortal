@@ -19,7 +19,6 @@ import java.util.Properties;
 /**
  * Allows an ISecurityContext to note that it can have a Properties passed to it via a setter
  * method.
- *
  */
 public interface IConfigurableSecurityContext extends ISecurityContext {
 

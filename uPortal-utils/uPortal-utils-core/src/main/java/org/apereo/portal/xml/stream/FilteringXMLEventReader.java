@@ -28,7 +28,6 @@ import javax.xml.stream.events.XMLEvent;
  * Base class for {@link XMLEventReader}s that want to modify or remove events from the reader
  * stream. If a {@link StartElement} event is removed the subclass's {@link #filterEvent(XMLEvent,
  * boolean)} will not see any events until after the matching {@link EndElement} event.
- *
  */
 public abstract class FilteringXMLEventReader extends BaseXMLEventReader {
     private final Deque<QName> prunedElements = new LinkedList<QName>();

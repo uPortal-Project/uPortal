@@ -39,8 +39,7 @@ import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import org.joda.time.ReadableInstant;
 
-/**
- */
+/** */
 @Entity
 @Table(name = "UP_ACADEMIC_TERM_DETAIL")
 @SequenceGenerator(

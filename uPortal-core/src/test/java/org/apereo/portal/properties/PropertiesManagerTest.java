@@ -20,7 +20,6 @@ import junit.framework.TestCase;
 /**
  * Test case for PropertiesManager. Exercises property accessor methods against a test properties
  * file.
- *
  */
 public class PropertiesManagerTest extends TestCase {
 

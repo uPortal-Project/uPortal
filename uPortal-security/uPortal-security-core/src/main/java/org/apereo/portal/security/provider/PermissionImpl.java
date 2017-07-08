@@ -18,8 +18,7 @@ import java.io.Serializable;
 import java.util.Date;
 import org.apereo.portal.security.IPermission;
 
-/**
- */
+/** */
 public class PermissionImpl implements IPermission, Serializable {
     private String m_owner = null;
     private String m_principal = null;

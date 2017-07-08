@@ -21,7 +21,6 @@ import org.apereo.portal.concurrency.IEntityLock;
  * Extends <code>EntityGroupImpl</code> to make it lockable for writing.
  *
  * <p>
- *
  */
 public class LockableEntityGroupImpl extends EntityGroupImpl implements ILockableEntityGroup {
     protected IEntityLock lock;

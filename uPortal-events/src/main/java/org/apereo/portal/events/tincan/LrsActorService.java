@@ -24,10 +24,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-/**
- * Create a LrsActor object based on the username.
- *
- */
+/** Create a LrsActor object based on the username. */
 @Service("lrsActorService")
 public class LrsActorService implements ILrsActorService {
     private IPersonAttributeDao personAttributeDao;

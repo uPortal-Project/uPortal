@@ -47,8 +47,7 @@ import org.apereo.portal.portlet.dao.jpa.ThreadContextClassLoaderAspect;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-/**
- */
+/** */
 @Service
 public class LocalPortletContextManager implements PortletRegistryService, PortletContextService {
 

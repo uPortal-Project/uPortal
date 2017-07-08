@@ -21,10 +21,7 @@ import org.apereo.portal.groups.GroupsException;
 import org.apereo.portal.groups.IEntityGroupStore;
 import org.apereo.portal.groups.IEntityGroupStoreFactory;
 
-/**
- * Returns an instance of the ldap <code>IEntityGroupStore</code>.
- *
- */
+/** Returns an instance of the ldap <code>IEntityGroupStore</code>. */
 public class LDAPGroupStoreFactory implements IEntityGroupStoreFactory {
     private static final Log log = LogFactory.getLog(LDAPGroupStoreFactory.class);
     protected static LDAPGroupStore groupStore;

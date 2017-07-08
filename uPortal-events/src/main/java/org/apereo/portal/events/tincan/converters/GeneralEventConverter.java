@@ -23,7 +23,6 @@ import org.apereo.portal.events.tincan.om.LrsObject;
 /**
  * General event converter. This is a super generic event handler. It's not intended for production
  * use. It's primarily intended to help with debugging.
- *
  */
 public class GeneralEventConverter extends AbstractPortalEventToLrsStatementConverter {
     @Override

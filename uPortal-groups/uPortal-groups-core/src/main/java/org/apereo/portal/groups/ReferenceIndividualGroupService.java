@@ -31,9 +31,7 @@ import org.apereo.portal.services.GroupService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Reference individual, or leaf, group service.
- */
+/** Reference individual, or leaf, group service. */
 public class ReferenceIndividualGroupService extends ReferenceCompositeGroupService
         implements IIndividualGroupService, ILockableGroupService {
 

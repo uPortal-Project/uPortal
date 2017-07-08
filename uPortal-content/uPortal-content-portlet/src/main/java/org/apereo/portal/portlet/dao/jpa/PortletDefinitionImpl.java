@@ -68,8 +68,7 @@ import org.hibernate.annotations.NaturalIdCache;
 import org.hibernate.annotations.Type;
 import org.springframework.util.StringUtils;
 
-/**
- */
+/** */
 @Entity
 @Table(name = "UP_PORTLET_DEF")
 @SequenceGenerator(

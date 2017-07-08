@@ -32,10 +32,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 
-/**
- * JPA dao to manage aggregated tab mappings
- *
- */
+/** JPA dao to manage aggregated tab mappings */
 @Repository
 public class JpaAggregatedPortletLookupDao extends BaseAggrEventsJpaDao
         implements AggregatedPortletLookupDao {
@@ -87,7 +84,8 @@ public class JpaAggregatedPortletLookupDao extends BaseAggrEventsJpaDao
         query.using(AggregatedPortletMappingImpl_.fname, fname);
         portletMapping = query.load();
         if (portletMapping != null) {
-            this.entityManagerCache.put(BaseAggrEventsJpaDao.PERSISTENCE_UNIT_NAME, key, portletMapping);
+            this.entityManagerCache.put(
+                    BaseAggrEventsJpaDao.PERSISTENCE_UNIT_NAME, key, portletMapping);
             return portletMapping;
         }
 
@@ -112,7 +110,9 @@ public class JpaAggregatedPortletLookupDao extends BaseAggrEventsJpaDao
 
                                 logger.debug("Created {}", aggregatedGroupMapping);
                                 entityManagerCache.put(
-                                        BaseAggrEventsJpaDao.PERSISTENCE_UNIT_NAME, key, aggregatedGroupMapping);
+                                        BaseAggrEventsJpaDao.PERSISTENCE_UNIT_NAME,
+                                        key,
+                                        aggregatedGroupMapping);
 
                                 return aggregatedGroupMapping;
                             }

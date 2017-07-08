@@ -16,8 +16,7 @@ package org.apereo.portal.events;
 
 import javax.portlet.ResourceRequest;
 
-/**
- */
+/** */
 public final class PortletResourceExecutionEvent extends PortletExecutionEvent {
     private static final long serialVersionUID = 1L;
 

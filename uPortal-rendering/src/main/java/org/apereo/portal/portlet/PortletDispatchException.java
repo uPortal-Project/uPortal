@@ -17,10 +17,7 @@ package org.apereo.portal.portlet;
 import org.apereo.portal.PortalException;
 import org.apereo.portal.portlet.om.IPortletWindow;
 
-/**
- * Indicates that there was an exception while dispatching to a portlet.
- *
- */
+/** Indicates that there was an exception while dispatching to a portlet. */
 public class PortletDispatchException extends PortalException {
     private static final long serialVersionUID = 1L;
 

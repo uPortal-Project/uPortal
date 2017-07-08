@@ -19,10 +19,7 @@ import java.util.Map;
 import javax.xml.transform.Transformer;
 import org.apereo.portal.io.xml.IPortalData;
 
-/**
- * Describes a XSL Stylesheet used in the rendering pipeline
- *
- */
+/** Describes a XSL Stylesheet used in the rendering pipeline */
 public interface IStylesheetDescriptor extends IPortalData {
 
     /** @return Unique ID of the descriptor */

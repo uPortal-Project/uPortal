@@ -38,9 +38,7 @@ public class ScreenShot {
     public void setUrl(String url) {
         this.url = url;
     }
-    /**
-     * @return the captions for a screen shot. Will not return null, might return empty list.
-     */
+    /** @return the captions for a screen shot. Will not return null, might return empty list. */
     public List<String> getCaptions() {
         if (captions == null) {
             this.captions = new ArrayList<String>();

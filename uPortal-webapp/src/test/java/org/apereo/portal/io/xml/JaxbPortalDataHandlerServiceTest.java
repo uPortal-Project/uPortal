@@ -61,8 +61,7 @@ import org.springframework.oxm.Unmarshaller;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean;
 
-/**
- */
+/** */
 @RunWith(MockitoJUnitRunner.class)
 public class JaxbPortalDataHandlerServiceTest {
     @InjectMocks

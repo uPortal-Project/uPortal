@@ -19,9 +19,7 @@ import org.apereo.portal.PortalException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-/**
- * A class describing a folder node fo the user layout structure.
- */
+/** A class describing a folder node fo the user layout structure. */
 public class UserLayoutFolderDescription extends UserLayoutNodeDescription
         implements IUserLayoutFolderDescription {
 

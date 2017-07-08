@@ -16,10 +16,7 @@ package org.apereo.portal.groups;
 
 import javax.naming.Name;
 
-/**
- * A composite key that identifies a component group service.
- *
- */
+/** A composite key that identifies a component group service. */
 public class CompositeServiceIdentifier extends CompositeEntityIdentifier {
 
     private static final long serialVersionUID = 1L;

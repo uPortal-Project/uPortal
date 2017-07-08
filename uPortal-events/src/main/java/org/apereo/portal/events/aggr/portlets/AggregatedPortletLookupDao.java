@@ -16,10 +16,7 @@ package org.apereo.portal.events.aggr.portlets;
 
 import java.util.Set;
 
-/**
- * Used to map portal group keys to a more static group mapping object
- *
- */
+/** Used to map portal group keys to a more static group mapping object */
 public interface AggregatedPortletLookupDao {
     /** Get the portlet mapping object for the specified fname */
     AggregatedPortletMapping getMappedPortletForFname(String fname);

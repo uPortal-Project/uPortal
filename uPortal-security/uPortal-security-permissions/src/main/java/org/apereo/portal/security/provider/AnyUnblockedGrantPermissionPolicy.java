@@ -102,7 +102,12 @@ public class AnyUnblockedGrantPermissionPolicy implements IPermissionPolicy {
                             + "should not be possible.  This is indicative of a potentially serious bug in the permissions "
                             + "and authorization infrastructure;  service='{}', principal='{}', owner='{}', activity='{}', "
                             + "target='{}'",
-                    service, principal, owner, activity, target, new AuthorizationException("Null argument"));
+                    service,
+                    principal,
+                    owner,
+                    activity,
+                    target,
+                    new AuthorizationException("Null argument"));
             // fail closed
             return false;
         }

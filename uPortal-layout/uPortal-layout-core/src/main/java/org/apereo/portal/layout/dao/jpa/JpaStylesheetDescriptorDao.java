@@ -29,10 +29,7 @@ import org.apereo.portal.layout.dao.IStylesheetDescriptorDao;
 import org.apereo.portal.layout.om.IStylesheetDescriptor;
 import org.springframework.stereotype.Repository;
 
-/**
- * JPA DAO for stylesheet descriptor
- *
- */
+/** JPA DAO for stylesheet descriptor */
 @Repository("stylesheetDescriptorDao")
 public class JpaStylesheetDescriptorDao extends BasePortalJpaDao
         implements IStylesheetDescriptorDao {

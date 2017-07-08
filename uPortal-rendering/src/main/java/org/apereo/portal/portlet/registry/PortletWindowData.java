@@ -29,10 +29,7 @@ import org.apereo.portal.portlet.om.IPortletEntityId;
 import org.apereo.portal.portlet.om.IPortletWindowDescriptor;
 import org.apereo.portal.portlet.om.IPortletWindowId;
 
-/**
- * Serializable persistent portlet window data. This class MUST be thread safe.
- *
- */
+/** Serializable persistent portlet window data. This class MUST be thread safe. */
 class PortletWindowData implements IPortletWindowDescriptor, Serializable {
     private static final long serialVersionUID = 1L;
 

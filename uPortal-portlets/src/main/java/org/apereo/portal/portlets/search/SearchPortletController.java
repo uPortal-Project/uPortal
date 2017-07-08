@@ -86,7 +86,6 @@ import org.springframework.web.portlet.bind.annotation.ResourceMapping;
 
 /**
  * SearchPortletController produces both a search form and results for configured search services.
- *
  */
 @Controller
 @RequestMapping("VIEW")
@@ -192,8 +191,7 @@ public class SearchPortletController {
     @Resource(name = "searchTabs")
     //Map of tab-key to string or collection<string> of search result types
     public void setSearchTabs(Map<String, Object> searchTabMappings) {
-        final Map<String, Set<String>> resultTypeMappingsBuilder =
-                new LinkedHashMap<>();
+        final Map<String, Set<String>> resultTypeMappingsBuilder = new LinkedHashMap<>();
         final List<String> tabKeysBuilder = new ArrayList<>(searchTabMappings.size());
 
         for (final Map.Entry<String, Object> tabMapping : searchTabMappings.entrySet()) {
@@ -260,9 +258,7 @@ public class SearchPortletController {
             searchCounterCache = (Cache<String, Boolean>) session.getAttribute(SEARCH_COUNTER_NAME);
             if (searchCounterCache == null) {
                 searchCounterCache =
-                        CacheBuilder.newBuilder()
-                                .expireAfterAccess(1, TimeUnit.MINUTES)
-                                .build();
+                        CacheBuilder.newBuilder().expireAfterAccess(1, TimeUnit.MINUTES).build();
                 session.setAttribute(SEARCH_COUNTER_NAME, searchCounterCache);
             }
         }

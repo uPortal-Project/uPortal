@@ -20,7 +20,6 @@ import org.apereo.portal.events.aggr.portlets.AggregatedPortletMapping;
 /**
  * Interface to separate Portlet Layout Aggregation events into separate columns for reporting
  * purposes.
- *
  */
 public interface PortletLayoutAggregationDiscriminator extends BaseGroupedAggregationDiscriminator {
     /** @return The name of the tab */

@@ -21,10 +21,7 @@ import org.apereo.portal.character.stream.events.PortletNewItemCountPlaceholderE
 import org.apereo.portal.character.stream.events.PortletNewItemCountPlaceholderEventImpl;
 import org.apereo.portal.portlet.om.IPortletWindowId;
 
-/**
- * Generates a {@link PortletNewItemCountPlaceholderEvent} for a regular expression match
- *
- */
+/** Generates a {@link PortletNewItemCountPlaceholderEvent} for a regular expression match */
 public class PortletNewItemCountPlaceholderEventSource extends PortletPlaceholderEventSource {
 
     @Override

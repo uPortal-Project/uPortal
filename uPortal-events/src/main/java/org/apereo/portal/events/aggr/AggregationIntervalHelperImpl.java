@@ -29,8 +29,7 @@ import org.joda.time.LocalTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-/**
- */
+/** */
 @Service
 public class AggregationIntervalHelperImpl implements AggregationIntervalHelper {
     protected final Log logger = LogFactory.getLog(this.getClass());

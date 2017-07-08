@@ -23,10 +23,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-/**
- * Renders a google {@link DataTable} to HTML
- *
- */
+/** Renders a google {@link DataTable} to HTML */
 public class GoogleHtmlDataTableView extends AbstractGoogleDataTableView {
     protected void renderDataTable(
             Map<String, Object> model,

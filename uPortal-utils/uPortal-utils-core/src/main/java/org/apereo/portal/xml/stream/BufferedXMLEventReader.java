@@ -22,10 +22,7 @@ import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.XMLEvent;
 
-/**
- * Buffers XML events for later re-reading
- *
- */
+/** Buffers XML events for later re-reading */
 public class BufferedXMLEventReader extends BaseXMLEventReader {
     private final LinkedList<XMLEvent> eventBuffer = new LinkedList<XMLEvent>();
     private int eventLimit = 0;

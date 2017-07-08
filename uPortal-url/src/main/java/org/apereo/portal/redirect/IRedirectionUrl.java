@@ -14,8 +14,5 @@
  */
 package org.apereo.portal.redirect;
 
-/**
- * IRedirectionUrl represents a target URL in the redirection service.
- *
- */
+/** IRedirectionUrl represents a target URL in the redirection service. */
 public interface IRedirectionUrl {}

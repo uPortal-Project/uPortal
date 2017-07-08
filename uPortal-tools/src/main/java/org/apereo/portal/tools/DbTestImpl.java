@@ -40,10 +40,7 @@ import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.support.JdbcUtils;
 import org.springframework.stereotype.Component;
 
-/**
- * Title: DbTest Description: Displays database metadata information Company:
- *
- */
+/** Title: DbTest Description: Displays database metadata information Company: */
 @Component("dbTest")
 @Lazy
 @DependsOn({

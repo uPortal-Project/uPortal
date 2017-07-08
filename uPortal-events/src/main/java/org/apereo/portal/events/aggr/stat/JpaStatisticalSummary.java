@@ -32,10 +32,7 @@ import org.apache.commons.math3.util.MathUtils;
 import org.apache.commons.math3.util.Precision;
 import org.apereo.portal.events.aggr.TimedAggregationStatistics;
 
-/**
- * Semi-Clone of {@link SummaryStatistics} that can be persisted in a database
- *
- */
+/** Semi-Clone of {@link SummaryStatistics} that can be persisted in a database */
 @Embeddable
 public class JpaStatisticalSummary implements TimedAggregationStatistics {
 

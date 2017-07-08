@@ -23,7 +23,6 @@ import org.springframework.stereotype.Service;
 
 /**
  * This class contains convenience methods for resolving localized layout structure element titles.
- *
  */
 @Service
 public class XalanLayoutElementTitleHelper {

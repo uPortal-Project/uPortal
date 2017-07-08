@@ -17,8 +17,7 @@ package org.apereo.portal.spring.properties;
 import java.beans.PropertyEditorSupport;
 import org.joda.time.Period;
 
-/**
- */
+/** */
 public class ReadablePeriodEditor extends PropertyEditorSupport {
     /* (non-Javadoc)
      * @see java.beans.PropertyEditorSupport#setAsText(java.lang.String)

@@ -17,10 +17,7 @@ package org.apereo.portal.portlet.rendering;
 import javax.portlet.Event;
 import org.apereo.portal.portlet.om.IPortletWindowId;
 
-/**
- * Tracks an event and the window id that generated it
- *
- */
+/** Tracks an event and the window id that generated it */
 public class QueuedEvent {
     private final IPortletWindowId portletWindowId;
     private final Event event;

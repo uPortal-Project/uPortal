@@ -21,10 +21,7 @@ import org.apereo.portal.IBasicEntity;
 import org.apereo.portal.concurrency.CachingException;
 import org.apereo.portal.concurrency.IEntityCache;
 
-/**
- * Implements the uPortal caching API to wrap a Map based cache
- *
- */
+/** Implements the uPortal caching API to wrap a Map based cache */
 public class MapBackedEntityCache implements IEntityCache {
     private final Map<Serializable, IBasicEntity> cache;
     private final Class<? extends IBasicEntity> entityType;

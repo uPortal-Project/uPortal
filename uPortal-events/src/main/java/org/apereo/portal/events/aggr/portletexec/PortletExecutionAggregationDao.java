@@ -16,9 +16,6 @@ package org.apereo.portal.events.aggr.portletexec;
 
 import org.apereo.portal.events.aggr.BaseAggregationDao;
 
-/**
- * DAO used to query information about portlet aggregates
- *
- */
+/** DAO used to query information about portlet aggregates */
 public interface PortletExecutionAggregationDao<T extends PortletExecutionAggregation>
         extends BaseAggregationDao<T, PortletExecutionAggregationKey> {}

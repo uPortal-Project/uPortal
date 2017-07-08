@@ -20,10 +20,7 @@ import org.apereo.portal.utils.Populator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Base implementation which provides default implementations
- *
- */
+/** Base implementation which provides default implementations */
 public abstract class BaseRequestPropertiesManager implements IRequestPropertiesManager {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 

@@ -20,7 +20,6 @@ import org.apereo.portal.security.IPerson;
 /**
  * Abstract base class for testers that test the value(s) of an <code>IPerson</code> integer
  * attribute.
- *
  */
 public abstract class AbstractIntegerTester extends BaseAttributeTester {
 
@@ -86,5 +85,4 @@ public abstract class AbstractIntegerTester extends BaseAttributeTester {
     }
 
     public abstract boolean test(int attributeValue);
-
 }

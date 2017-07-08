@@ -21,10 +21,7 @@ import javax.portlet.MimeResponse;
 import javax.servlet.jsp.JspWriter;
 import org.apereo.portal.portlet.rendering.PortletOutputHandler;
 
-/**
- * Output handler that delegates to a {@link JspWriter}
- *
- */
+/** Output handler that delegates to a {@link JspWriter} */
 public class JspWriterPortletOutputHandler implements PortletOutputHandler {
     private final JspWriter jspWriter;
     private final PrintWriter printWriter;

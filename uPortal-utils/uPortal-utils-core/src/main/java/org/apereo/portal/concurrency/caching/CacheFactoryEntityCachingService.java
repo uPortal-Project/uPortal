@@ -28,7 +28,6 @@ import org.springframework.stereotype.Service;
 /**
  * Creates {@link MapBackedEntityCache} instances that wrap {@link Map} caches retrieved from the
  * {@link CacheFactory} service.
- *
  */
 @Service("entityCachingService")
 public class CacheFactoryEntityCachingService extends AbstractEntityCachingService {

@@ -18,8 +18,7 @@ import org.jasypt.digest.config.SimpleDigesterConfig;
 import org.jasypt.util.password.ConfigurablePasswordEncryptor;
 import org.springframework.stereotype.Component;
 
-/**
- */
+/** */
 @Component("portalPasswordService")
 public class PortalPasswordServiceImpl implements IPortalPasswordService {
 

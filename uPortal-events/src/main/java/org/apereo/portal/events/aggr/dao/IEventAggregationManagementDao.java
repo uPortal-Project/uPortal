@@ -23,10 +23,7 @@ import org.apereo.portal.events.aggr.IEventAggregatorStatus;
 import org.apereo.portal.events.aggr.IPortalEventAggregator;
 import org.apereo.portal.events.aggr.QuarterDetail;
 
-/**
- * Operations central to the management of portal event aggregation
- *
- */
+/** Operations central to the management of portal event aggregation */
 public interface IEventAggregationManagementDao {
     /** Get the aggregation status for the specified processing type */
     IEventAggregatorStatus getEventAggregatorStatus(

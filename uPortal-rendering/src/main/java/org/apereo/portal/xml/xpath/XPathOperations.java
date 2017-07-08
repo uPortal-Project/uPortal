@@ -19,8 +19,7 @@ import java.util.Map;
 import javax.xml.namespace.QName;
 import javax.xml.xpath.XPathExpression;
 
-/**
- */
+/** */
 public interface XPathOperations {
     /**
      * Call the specified Function with the compiled {@link XPathExpression} version of the

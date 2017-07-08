@@ -26,8 +26,7 @@ import org.danann.cernunnos.SimpleReagent;
 import org.danann.cernunnos.TaskRequest;
 import org.danann.cernunnos.TaskResponse;
 
-/**
- */
+/** */
 public class SequenceGeneratorPhrase implements Phrase {
 
     public static final Reagent SEQ_NAME =

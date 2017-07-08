@@ -26,10 +26,7 @@ import org.apereo.portal.io.xml.PortalDataKey;
 import org.apereo.portal.xml.StaxUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-/**
- * Describes a user's layout
- *
- */
+/** Describes a user's layout */
 public class LayoutPortalDataType extends AbstractPortalDataType {
     public static final QName LEGACY_LAYOUT_QNAME = new QName("layout");
 

@@ -29,7 +29,6 @@ import org.slf4j.LoggerFactory;
 /**
  * A custom HttpServletResponse wrapper that does NOT extend {@link HttpServletResponseWrapper} to
  * ensure the container can not unwrap too far.
- *
  */
 public abstract class AbstractHttpServletResponseWrapper implements HttpServletResponse {
 

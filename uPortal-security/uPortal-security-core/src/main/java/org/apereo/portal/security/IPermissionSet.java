@@ -17,7 +17,7 @@ package org.apereo.portal.security;
 import org.apereo.portal.IBasicEntity;
 
 /**
- *     <p>A type that aggregates the <code>IPermissions</code> for an <code>IAuthorizationPrincipal
+ * A type that aggregates the <code>IPermissions</code> for an <code>IAuthorizationPrincipal
  *     </code> so that permissions can be cached by the <code>EntityCachingService</code>.
  */
 public interface IPermissionSet extends IBasicEntity {

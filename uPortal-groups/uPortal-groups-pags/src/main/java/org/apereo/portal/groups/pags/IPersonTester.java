@@ -22,7 +22,6 @@ import org.apereo.portal.security.IPerson;
  * <p>Concrete implementations should provide a constructor that takes a single {@link
  * PersonAttributesGroupTestDefinitionImpl} so that they can be properly instantiated and configured
  * by the group store..
- *
  */
 public interface IPersonTester {
     boolean test(IPerson person);

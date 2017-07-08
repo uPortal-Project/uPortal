@@ -22,7 +22,6 @@ import org.apereo.portal.utils.Populator;
 /**
  * Tracks customizations made by the users to the XSL transformer and layout attributes.
  * Implementations and returned data structures MUST be thread-safe
- *
  */
 public interface IStylesheetUserPreferences {
     /** Unique identifier of these preferences */

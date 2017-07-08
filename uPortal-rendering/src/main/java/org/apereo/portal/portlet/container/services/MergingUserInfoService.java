@@ -26,10 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-/**
- * Merges together the results of multiple instances of UserInfoService.
- *
- */
+/** Merges together the results of multiple instances of UserInfoService. */
 @Service
 @Qualifier("main")
 public class MergingUserInfoService implements UserInfoService {

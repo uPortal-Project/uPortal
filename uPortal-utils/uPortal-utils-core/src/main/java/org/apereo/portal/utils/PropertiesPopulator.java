@@ -17,10 +17,7 @@ package org.apereo.portal.utils;
 import java.util.Map;
 import java.util.Properties;
 
-/**
- * Populator that targets a Properties object
- *
- */
+/** Populator that targets a Properties object */
 public class PropertiesPopulator implements Populator<String, String> {
     private final Properties properties;
 

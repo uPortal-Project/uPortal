@@ -34,7 +34,6 @@ import org.slf4j.LoggerFactory;
  * ignored, with the chaining mapper continuing along the chain looking for a non-failing mapper or
  * falling back on the default if there are no answering mappers, just as if the failing mapper had
  * returned null indicating no opinion rather than throwing.
- *
  */
 public final class ChainingProfileMapperImpl implements IProfileMapper {
 

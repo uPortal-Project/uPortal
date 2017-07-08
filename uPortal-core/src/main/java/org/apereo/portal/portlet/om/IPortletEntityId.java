@@ -14,8 +14,5 @@
  */
 package org.apereo.portal.portlet.om;
 
-/**
- * Identifier type for portlet entities.
- *
- */
+/** Identifier type for portlet entities. */
 public interface IPortletEntityId extends IObjectId {}

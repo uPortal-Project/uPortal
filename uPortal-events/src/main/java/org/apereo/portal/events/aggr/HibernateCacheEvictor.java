@@ -17,10 +17,7 @@ package org.apereo.portal.events.aggr;
 import java.io.Serializable;
 import org.hibernate.Cache;
 
-/**
- * Utility to evict data from the underlying hibernate caches
- *
- */
+/** Utility to evict data from the underlying hibernate caches */
 public interface HibernateCacheEvictor {
     /** @see Cache#evictEntity(Class, Serializable) */
     void evictEntity(Class<?> entityClass, Serializable identifier);

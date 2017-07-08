@@ -17,10 +17,7 @@ package org.apereo.portal.portlet.om;
 import java.util.Set;
 import org.joda.time.DateTime;
 
-/**
- * Interface describing the parent cookie used to relate all Portlet Cookies to one HTTP Cookie.
- *
- */
+/** Interface describing the parent cookie used to relate all Portlet Cookies to one HTTP Cookie. */
 public interface IPortalCookie {
 
     /** @return the unique value for this cookie */

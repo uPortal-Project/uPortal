@@ -49,7 +49,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 /**
  * Portlet intended to replace the output for a portlet that failed to render due to an {@link
  * Exception}.
- *
  */
 @Controller
 public class PortletErrorController {

@@ -16,10 +16,7 @@ package org.apereo.portal.jpa;
 
 import javax.persistence.EntityManager;
 
-/**
- * Event fired immediately before the {@link EntityManager} is closed
- *
- */
+/** Event fired immediately before the {@link EntityManager} is closed */
 public class EntityManagerClosingEvent extends AbstractEntityManagerEvent {
     private static final long serialVersionUID = 1L;
 

@@ -26,5 +26,4 @@ public class AlwaysTrueTester implements IPersonTester {
     public boolean test(IPerson person) {
         return true;
     }
-
 }

@@ -25,7 +25,6 @@ import org.apereo.portal.EntityIdentifier;
  * </code> in JNDI. Once a client gets an <code>IGroupMember</code>, subsequent requests for
  * navigating the system or maintaining groups go thru the <code>IGroupMember</code> api and are
  * serviced by the individual component services.
- *
  */
 public interface ICompositeGroupService extends IComponentGroupService {
 

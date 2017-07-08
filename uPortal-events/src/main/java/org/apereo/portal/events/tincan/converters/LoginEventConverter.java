@@ -21,10 +21,7 @@ import org.apereo.portal.events.PortalEvent;
 import org.apereo.portal.events.tincan.om.LocalizedString;
 import org.apereo.portal.events.tincan.om.LrsObject;
 
-/**
- * Converter for Login events.
- *
- */
+/** Converter for Login events. */
 public class LoginEventConverter extends AbstractPortalEventToLrsStatementConverter {
     @Override
     public boolean supports(PortalEvent event) {

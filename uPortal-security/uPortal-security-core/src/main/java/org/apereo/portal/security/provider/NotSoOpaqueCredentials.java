@@ -21,7 +21,6 @@ import org.apereo.portal.security.IOpaqueCredentials;
  * with the caching security context. This interface adds a method that removes a bit of the opacity
  * of the original by providing means of retreiving a stored credential. See the warnings and
  * caveats associated with the CacheSecurityContext provider.
- *
  */
 public interface NotSoOpaqueCredentials extends IOpaqueCredentials {
 

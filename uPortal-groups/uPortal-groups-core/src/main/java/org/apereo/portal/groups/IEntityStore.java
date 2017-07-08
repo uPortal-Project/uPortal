@@ -14,10 +14,7 @@
  */
 package org.apereo.portal.groups;
 
-/**
- * An interface for retrieving <code>IEntities</code>.
- *
- */
+/** An interface for retrieving <code>IEntities</code>. */
 public interface IEntityStore {
 
     /**
