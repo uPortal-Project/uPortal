@@ -32,6 +32,7 @@ public class ReferenceEntityStoreFactory implements IEntityStoreFactory {
      * @return IEntityStore
      * @exception GroupsException
      */
+    @Override
     public IEntityStore newEntityStore() throws GroupsException {
         return newInstance();
     }

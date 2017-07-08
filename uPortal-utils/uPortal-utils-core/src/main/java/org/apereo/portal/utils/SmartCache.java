@@ -77,6 +77,7 @@ public class SmartCache extends HashMap {
      * @return the previous value of the specified key in this hashtable, or null if it did not have
      *     one.
      */
+    @Override
     public synchronized Object put(Object key, Object value) {
         ValueWrapper valueWrapper = new ValueWrapper(value);
         return super.put(key, valueWrapper);
@@ -104,6 +105,7 @@ public class SmartCache extends HashMap {
      * @return the value to which the key is mapped in this cache; null if the key is not mapped to
      *     any value in this cache.
      */
+    @Override
     public synchronized Object get(Object key) {
         ValueWrapper valueWrapper = (ValueWrapper) super.get(key);
         if (valueWrapper != null) {

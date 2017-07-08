@@ -30,6 +30,7 @@ public class LocalPortletURLListenerServiceImpl implements PortletURLListenerSer
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    @Override
     public List<PortletURLGenerationListener> getPortletURLGenerationListeners(
             PortletApplicationDefinition app) {
         List<PortletURLGenerationListener> listeners =

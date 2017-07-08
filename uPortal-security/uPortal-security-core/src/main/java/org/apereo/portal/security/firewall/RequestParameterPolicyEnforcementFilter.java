@@ -15,10 +15,7 @@
 package org.apereo.portal.security.firewall;
 
 import java.io.IOException;
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -443,7 +440,7 @@ public final class RequestParameterPolicyEnforcementFilter implements Filter {
                             "Parameter ["
                                     + parameterName
                                     + "] had multiple values ["
-                                    + values
+                                    + Arrays.toString(values)
                                     + "] but at most one value is allowable.");
                 }
             }

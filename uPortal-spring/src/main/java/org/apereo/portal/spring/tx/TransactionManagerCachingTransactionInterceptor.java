@@ -44,6 +44,7 @@ public class TransactionManagerCachingTransactionInterceptor extends Transaction
         super(ptm, tas);
     }
 
+    @Override
     protected PlatformTransactionManager determineTransactionManager(TransactionAttribute txAttr) {
         if (txAttr == null) {
             return super.determineTransactionManager(txAttr);

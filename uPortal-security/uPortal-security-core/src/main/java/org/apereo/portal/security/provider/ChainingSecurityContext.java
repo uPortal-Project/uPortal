@@ -60,11 +60,13 @@ public abstract class ChainingSecurityContext implements ISecurityContext {
         mySubContexts = new Vector();
     }
 
+    @Override
     public IPrincipal getPrincipalInstance() {
         if (this.isauth) return new ChainingPrincipal();
         else return this.myPrincipal;
     }
 
+    @Override
     public IOpaqueCredentials getOpaqueCredentialsInstance() {
         if (this.isauth) return new ChainingOpaqueCredentials();
         else return this.myOpaqueCredentials;
@@ -75,6 +77,7 @@ public abstract class ChainingSecurityContext implements ISecurityContext {
      * Note that the contexts themselves should resist actually performing the assignment if an
      * assignment has already been made to either the credentials or the UID.
      */
+    @Override
     public synchronized void authenticate() throws PortalSecurityException {
         int i;
         Enumeration e = mySubContexts.elements();
@@ -107,25 +110,30 @@ public abstract class ChainingSecurityContext implements ISecurityContext {
         return;
     }
 
+    @Override
     public IPrincipal getPrincipal() {
         if (this.isauth) return this.myPrincipal;
         else return null;
     }
 
+    @Override
     public IOpaqueCredentials getOpaqueCredentials() {
         if (this.isauth) return this.myOpaqueCredentials;
         else return null;
     }
 
+    @Override
     public IAdditionalDescriptor getAdditionalDescriptor() {
         if (this.isauth) return this.myAdditionalDescriptor;
         else return null;
     }
 
+    @Override
     public boolean isAuthenticated() {
         return this.isauth;
     }
 
+    @Override
     public synchronized ISecurityContext getSubContext(String name) {
         for (int i = 0; i < mySubContexts.size(); i++) {
             Entry entry = (Entry) mySubContexts.get(i);
@@ -151,6 +159,7 @@ public abstract class ChainingSecurityContext implements ISecurityContext {
     // Return an enumeration of subcontexts by running the vector and
     // creating the enumeration.  All this so the subcontexts will
     // be returned in the order they appeared in the properties file.
+    @Override
     public synchronized Enumeration getSubContexts() {
         Enumeration e = mySubContexts.elements();
         class Adapter implements Enumeration {
@@ -160,10 +169,12 @@ public abstract class ChainingSecurityContext implements ISecurityContext {
                 this.base = e;
             }
 
+            @Override
             public boolean hasMoreElements() {
                 return base.hasMoreElements();
             }
 
+            @Override
             public Object nextElement() {
                 return ((Entry) base.nextElement()).getCtx();
             }
@@ -171,6 +182,7 @@ public abstract class ChainingSecurityContext implements ISecurityContext {
         return new Adapter(e);
     }
 
+    @Override
     public synchronized void addSubContext(String name, ISecurityContext ctx)
             throws PortalSecurityException {
         // Make sure the subcontext does not already exist in the chain
@@ -187,7 +199,7 @@ public abstract class ChainingSecurityContext implements ISecurityContext {
     // I suppose the public class could just implement all of these interfaces
     // but I prefer member classes. -ADN
 
-    protected class ChainingPrincipal implements IPrincipal {
+    protected static class ChainingPrincipal implements IPrincipal {
         protected String globalUID;
         protected String UID;
         protected String FullName;
@@ -204,10 +216,12 @@ public abstract class ChainingSecurityContext implements ISecurityContext {
             this.FullName = p.getFullName();
         }
 
+        @Override
         public String getUID() {
             return this.UID;
         }
 
+        @Override
         public String getGlobalUID() {
             return this.globalUID;
         }
@@ -215,10 +229,12 @@ public abstract class ChainingSecurityContext implements ISecurityContext {
         // This is supposed to be the person's "human readable" name. We should
         // probably do an account lookup at the very least to return this.
 
+        @Override
         public String getFullName() {
             return this.FullName;
         }
 
+        @Override
         public void setUID(String UID) {
             if (this.UID == null) this.UID = UID;
         }
@@ -228,7 +244,7 @@ public abstract class ChainingSecurityContext implements ISecurityContext {
         }
     }
 
-    protected class ChainingOpaqueCredentials implements IOpaqueCredentials {
+    protected static class ChainingOpaqueCredentials implements IOpaqueCredentials {
 
         public byte[] credentialstring;
 
@@ -236,6 +252,7 @@ public abstract class ChainingSecurityContext implements ISecurityContext {
         // copy the credentials here in case a sub-authenticator doesn't want
         // to perform the operation immediately.
 
+        @Override
         public void setCredentials(byte[] credentials) {
             int i;
 
@@ -245,6 +262,7 @@ public abstract class ChainingSecurityContext implements ISecurityContext {
             }
         }
 
+        @Override
         public void setCredentials(String credentials) {
             if (this.credentialstring == null && credentials != null)
                 setCredentials(credentials.getBytes());
@@ -252,6 +270,7 @@ public abstract class ChainingSecurityContext implements ISecurityContext {
     }
 
     // Returns an Enumeration of the names of the subcontexts.
+    @Override
     public synchronized Enumeration getSubContextNames() {
         Vector scNames = new Vector();
         for (int i = 0; i < mySubContexts.size(); i++) {
@@ -267,7 +286,7 @@ public abstract class ChainingSecurityContext implements ISecurityContext {
      * A default, placeholder implementation of IAdditionalDescriptor an instance of which is the
      * default value for the instance variable "myAdditionalDescriptor" of instances of this class.
      */
-    public class ChainingAdditionalDescriptor implements IAdditionalDescriptor {
+    public static class ChainingAdditionalDescriptor implements IAdditionalDescriptor {
         // do nothing
     }
 

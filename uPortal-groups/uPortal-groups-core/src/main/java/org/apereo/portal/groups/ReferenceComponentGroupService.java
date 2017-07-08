@@ -39,6 +39,7 @@ public class ReferenceComponentGroupService implements IComponentGroupService {
      * Returns a <code>Map</code> of the services contained by this component, keyed on the name of
      * the service WITHIN THIS COMPONENT.
      */
+    @Override
     public Map getComponentServices() {
         return componentServices;
     }
@@ -46,6 +47,7 @@ public class ReferenceComponentGroupService implements IComponentGroupService {
      * Returns the FULLY-QUALIFIED <code>Name</code> of the service, which may not be known until
      * the composite service is assembled.
      */
+    @Override
     public javax.naming.Name getServiceName() {
         return serviceName;
     }
@@ -53,10 +55,12 @@ public class ReferenceComponentGroupService implements IComponentGroupService {
      * Answers if this service is a leaf in the composite; a service that actually operates on
      * groups.
      */
+    @Override
     public boolean isLeafService() {
         return false;
     }
     /** Sets the name of the service to the new value. */
+    @Override
     public void setServiceName(Name newServiceName) {
         serviceName = newServiceName;
     }

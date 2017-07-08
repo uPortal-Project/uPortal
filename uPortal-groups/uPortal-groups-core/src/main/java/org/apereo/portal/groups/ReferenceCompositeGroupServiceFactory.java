@@ -31,6 +31,7 @@ public class ReferenceCompositeGroupServiceFactory implements ICompositeGroupSer
      * @return ICompositeGroupService
      * @exception GroupsException
      */
+    @Override
     public ICompositeGroupService newGroupService() throws GroupsException {
         try {
             ReferenceCompositeGroupService service = new ReferenceCompositeGroupService();

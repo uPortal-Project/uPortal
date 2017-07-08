@@ -49,6 +49,7 @@ public class CacheProviderFactory implements CacheFactory {
     /* (non-Javadoc)
      * @see org.apereo.portal.utils.cache.CacheFactory#getCache()
      */
+    @Override
     public <K extends Serializable, V> Map<K, V> getCache() {
         return this.getCache(DEFAULT);
     }
@@ -56,6 +57,7 @@ public class CacheProviderFactory implements CacheFactory {
     /* (non-Javadoc)
      * @see org.apereo.portal.utils.cache.CacheFactory#getCache(java.lang.String)
      */
+    @Override
     @SuppressWarnings("unchecked")
     public <K extends Serializable, V> Map<K, V> getCache(String cacheName)
             throws IllegalArgumentException {

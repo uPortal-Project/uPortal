@@ -27,6 +27,7 @@ public class IntegerGTTester extends AbstractIntegerTester {
         super(definition);
     }
 
+    @Override
     public boolean test(int attributeValue) {
         return attributeValue > getTestInteger();
     }

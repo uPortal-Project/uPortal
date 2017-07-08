@@ -116,6 +116,7 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
                             + "]";
         }
 
+        @Override
         public String toString() {
             return this.str;
         }
@@ -953,6 +954,7 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
 
     @Transactional
     @Override
+    @SuppressWarnings("FallThrough")
     public String removeLayoutAttribute(
             HttpServletRequest request, PreferencesScope prefScope, String nodeId, String name) {
         final StylesheetPreferencesKey stylesheetPreferencesKey =

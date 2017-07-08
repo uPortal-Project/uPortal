@@ -100,6 +100,9 @@ public class PortletRequestParameterProcessor implements IRequestParameterProces
 
                         break;
                     }
+
+                default:
+                    // Do nothing
             }
 
             //Override the window state of the targeted portlet window based on the url state
@@ -121,6 +124,8 @@ public class PortletRequestParameterProcessor implements IRequestParameterProces
                             portletWindow.setWindowState(IPortletRenderer.EXCLUSIVE);
                             break;
                         }
+                    default:
+                        // Do nothing
                 }
             }
 

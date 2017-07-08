@@ -20,7 +20,7 @@ import org.apereo.portal.groups.IEntityStoreFactory;
 
 /** @since 4.1 */
 public class EntityPersonAttributesEntityStoreFactory implements IEntityStoreFactory {
-
+    @Override
     public IEntityStore newEntityStore() throws GroupsException {
         return (IEntityStore) new EntityPersonAttributesGroupStoreFactory().newGroupStore();
     }

@@ -49,6 +49,7 @@ public abstract class JoinQueryString implements IJoinQueryString {
     }
 
     /** @see IJoinQueryString#getQuery(java.lang.String) */
+    @Override
     public String getQuery(final String key) throws SQLException {
         final String query = (String) queryStrings.get(key);
 
@@ -60,6 +61,7 @@ public abstract class JoinQueryString implements IJoinQueryString {
     }
 
     /** @see IJoinQueryString#addQuery(java.lang.String, java.lang.String) */
+    @Override
     public void addQuery(final String key, final String value) {
         queryStrings.put(key, value);
     }

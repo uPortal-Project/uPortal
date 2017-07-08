@@ -36,14 +36,17 @@ class JAASSecurityContext extends ChainingSecurityContext
         super();
     }
 
+    @Override
     public int getAuthType() {
         return this.JAASSECURITYAUTHTYPE;
     }
 
+    @Override
     public IAdditionalDescriptor getAdditionalDescriptor() {
         return additionalDescriptor;
     }
 
+    @Override
     public synchronized void authenticate() throws PortalSecurityException {
         this.isauth = false;
 

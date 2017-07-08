@@ -42,6 +42,7 @@ public class MemoryEntityLockStore implements IEntityLockStore {
      *
      * @param lock
      */
+    @Override
     public void add(IEntityLock lock) throws LockingException {
         primAdd(lock, lock.getExpirationTime());
     }
@@ -51,6 +52,7 @@ public class MemoryEntityLockStore implements IEntityLockStore {
      *
      * @param lock
      */
+    @Override
     public void delete(IEntityLock lock) throws LockingException {
         Map m = getLockCache(lock.getEntityType());
         synchronized (m) {
@@ -58,6 +60,7 @@ public class MemoryEntityLockStore implements IEntityLockStore {
         }
     }
 
+    @Override
     public void deleteAll() {
         initializeCache();
     }
@@ -67,6 +70,7 @@ public class MemoryEntityLockStore implements IEntityLockStore {
      *
      * @param expiration java.util.Date
      */
+    @Override
     public void deleteExpired(java.util.Date expiration) throws LockingException {
         // let SmartCache handle it.
     }
@@ -84,6 +88,7 @@ public class MemoryEntityLockStore implements IEntityLockStore {
      * @param lockOwner String
      * @exception LockingException - wraps an Exception specific to the store.
      */
+    @Override
     public IEntityLock[] find(
             Class entityType,
             String entityKey,
@@ -170,6 +175,7 @@ public class MemoryEntityLockStore implements IEntityLockStore {
      * @param lockOwner String
      * @exception LockingException - wraps an Exception specific to the store.
      */
+    @Override
     public IEntityLock[] findUnexpired(
             java.util.Date expiration,
             Class entityType,
@@ -234,6 +240,7 @@ public class MemoryEntityLockStore implements IEntityLockStore {
      * @param lock
      * @param newExpiration
      */
+    @Override
     public void update(IEntityLock lock, java.util.Date newExpiration) throws LockingException {
         update(lock, newExpiration, null);
     }
@@ -246,6 +253,7 @@ public class MemoryEntityLockStore implements IEntityLockStore {
      * @param newExpiration java.util.Date
      * @param newLockType Integer
      */
+    @Override
     public void update(IEntityLock lock, java.util.Date newExpiration, Integer newLockType)
             throws LockingException {
         if (find(lock) == null) {

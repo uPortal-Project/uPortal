@@ -50,30 +50,37 @@ class SessionOnlyPortletCookieImpl implements IPortletCookie, Serializable {
         setMaxAge(cookie.getMaxAge());
     }
     /** @return the name */
+    @Override
     public String getName() {
         return name;
     }
     /** @return the value */
+    @Override
     public String getValue() {
         return value;
     }
     /** @param value the value to set */
+    @Override
     public void setValue(String value) {
         this.value = value;
     }
     /** @return the comment */
+    @Override
     public String getComment() {
         return comment;
     }
     /** @param comment the comment to set */
+    @Override
     public void setComment(String comment) {
         this.comment = comment;
     }
     /** @return the domain */
+    @Override
     public String getDomain() {
         return domain;
     }
     /** @param domain the domain to set */
+    @Override
     public void setDomain(String domain) {
         this.domain = domain;
     }
@@ -96,34 +103,42 @@ class SessionOnlyPortletCookieImpl implements IPortletCookie, Serializable {
         }
     }
     /** @return the path */
+    @Override
     public String getPath() {
         return path;
     }
     /** @param path the path to set */
+    @Override
     public void setPath(String path) {
         this.path = path;
     }
     /** @return the version */
+    @Override
     public int getVersion() {
         return version;
     }
     /** @param version the version to set */
+    @Override
     public void setVersion(int version) {
         this.version = version;
     }
     /** @return the secure */
+    @Override
     public boolean isSecure() {
         return secure;
     }
     /** @param secure the secure to set */
+    @Override
     public void setSecure(boolean secure) {
         this.secure = secure;
     }
     /** @return the expires */
+    @Override
     public DateTime getExpires() {
         return expires;
     }
     /** @param expires the expires to set */
+    @Override
     public void setExpires(DateTime expires) {
         this.expires = expires;
     }

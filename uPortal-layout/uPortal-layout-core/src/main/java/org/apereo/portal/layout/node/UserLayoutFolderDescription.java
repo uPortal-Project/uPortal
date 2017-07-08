@@ -48,6 +48,7 @@ public class UserLayoutFolderDescription extends UserLayoutNodeDescription
      *
      * @return a type
      */
+    @Override
     public LayoutNodeType getType() {
         return LayoutNodeType.FOLDER;
     }
@@ -73,17 +74,20 @@ public class UserLayoutFolderDescription extends UserLayoutNodeDescription
      * @param root a <code>Document</code> for which the <code>Element</code> should be created.
      * @return a <code>Node</code> value
      */
+    @Override
     public Element getXML(Document root) {
         Element node = root.createElement("folder");
         this.addNodeAttributes(node);
         return node;
     }
 
+    @Override
     public void addNodeAttributes(Element node) {
         super.addNodeAttributes(node);
         node.setAttribute("type", this.folderType);
     }
 
+    @Override
     public String toString() {
         return new ToStringBuilder(this)
                 .append("ID", this.id)

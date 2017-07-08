@@ -69,6 +69,7 @@ public class ReferenceIndividualGroupService extends ReferenceCompositeGroupServ
      *
      * @param group IEntityGroup
      */
+    @Override
     public void deleteGroup(IEntityGroup group) throws GroupsException {
         throwExceptionIfNotInternallyManaged();
         synchronizeGroupMembersOnDelete(group);
@@ -131,6 +132,7 @@ public class ReferenceIndividualGroupService extends ReferenceCompositeGroupServ
      *
      * @param group ILockableEntityGroup
      */
+    @Override
     public void deleteGroup(ILockableEntityGroup group) throws GroupsException {
         throwExceptionIfNotInternallyManaged();
         try {
@@ -191,11 +193,13 @@ public class ReferenceIndividualGroupService extends ReferenceCompositeGroupServ
     }
 
     /** Returns a pre-existing <code>IEntityGroup</code> or null if it does not exist. */
+    @Override
     public IEntityGroup findGroup(String key) throws GroupsException {
         return findGroup(newCompositeEntityIdentifier(key));
     }
 
     /** Returns a pre-existing <code>IEntityGroup</code> or null if it does not exist. */
+    @Override
     public IEntityGroup findGroup(CompositeEntityIdentifier ent) throws GroupsException {
         return (cacheInUse()) ? findGroupWithCache(ent) : primFindGroup(ent.getLocalKey());
     }
@@ -220,6 +224,7 @@ public class ReferenceIndividualGroupService extends ReferenceCompositeGroupServ
     /**
      * Returns a pre-existing <code>ILockableEntityGroup</code> or null if the group is not found.
      */
+    @Override
     public ILockableEntityGroup findGroupWithLock(String key, String owner) throws GroupsException {
         return findGroupWithLock(key, owner, 0);
     }
@@ -227,6 +232,7 @@ public class ReferenceIndividualGroupService extends ReferenceCompositeGroupServ
     /**
      * Returns a pre-existing <code>ILockableEntityGroup</code> or null if the group is not found.
      */
+    @Override
     public ILockableEntityGroup findGroupWithLock(String key, String owner, int secs)
             throws GroupsException {
 
@@ -296,6 +302,7 @@ public class ReferenceIndividualGroupService extends ReferenceCompositeGroupServ
      *
      * @param eg IEntityGroup
      */
+    @Override
     public Iterator findMemberGroups(IEntityGroup eg) throws GroupsException {
         Map groups = new HashMap();
         IEntityGroup group = null;
@@ -321,6 +328,7 @@ public class ReferenceIndividualGroupService extends ReferenceCompositeGroupServ
      *
      * @param eg IEntityGroup
      */
+    @Override
     public Iterator findMembers(IEntityGroup eg) throws GroupsException {
         Collection members = new ArrayList(10);
         Iterator it = null;
@@ -339,6 +347,7 @@ public class ReferenceIndividualGroupService extends ReferenceCompositeGroupServ
      * Returns an <code>IEntity</code> representing a portal entity. This does not guarantee that
      * the underlying entity actually exists.
      */
+    @Override
     public IEntity getEntity(String key, Class type) throws GroupsException {
         IEntity ent = primGetEntity(key, type);
 
@@ -369,6 +378,7 @@ public class ReferenceIndividualGroupService extends ReferenceCompositeGroupServ
      * parm <code>type</code> is the group type, the <code>IGroupMember</code> is an <code>
      * IEntityGroup</code> else it is an <code>IEntity</code>.
      */
+    @Override
     public IGroupMember getGroupMember(String key, Class type) throws GroupsException {
         IGroupMember gm = null;
         if (type == ICompositeGroupService.GROUP_ENTITY_TYPE) gm = findGroup(key);
@@ -381,6 +391,7 @@ public class ReferenceIndividualGroupService extends ReferenceCompositeGroupServ
      * the <code>EntityIdentifier</code>, which refers to the UNDERLYING entity for the <code>
      * IGroupMember</code>.
      */
+    @Override
     public IGroupMember getGroupMember(EntityIdentifier underlyingEntityIdentifier)
             throws GroupsException {
         return getGroupMember(
@@ -391,6 +402,7 @@ public class ReferenceIndividualGroupService extends ReferenceCompositeGroupServ
      * Returns the implementation of <code>IEntityGroupStore</code> whose class name was retrieved
      * by the PropertiesManager (see initialize()).
      */
+    @Override
     public IEntityGroupStore getGroupStore() throws GroupsException {
         return groupFactory;
     }
@@ -485,6 +497,7 @@ public class ReferenceIndividualGroupService extends ReferenceCompositeGroupServ
     }
 
     /** Answers if the group can be updated or deleted in the store. */
+    @Override
     public boolean isEditable(IEntityGroup group) throws GroupsException {
         return isInternallyManaged();
     }
@@ -498,16 +511,19 @@ public class ReferenceIndividualGroupService extends ReferenceCompositeGroupServ
      * Answers if this service is a leaf in the composite; a service that actually operates on
      * groups.
      */
+    @Override
     public boolean isLeafService() {
         return true;
     }
 
     /** Answers if this service is updateable by the portal. */
+    @Override
     public boolean isEditable() {
         return isInternallyManaged();
     }
 
     /** Returns a new <code>IEntityGroup</code> for the given Class with an unused key. */
+    @Override
     public IEntityGroup newGroup(Class type) throws GroupsException {
         throwExceptionIfNotInternallyManaged();
         IEntityGroup group = groupFactory.newInstance(type);
@@ -519,6 +535,7 @@ public class ReferenceIndividualGroupService extends ReferenceCompositeGroupServ
     }
 
     /** Returns a pre-existing <code>IEntityGroup</code> or null if it does not exist. */
+    @Override
     protected IEntityGroup primFindGroup(String localKey) throws GroupsException {
         IEntityGroup group = groupFactory.find(localKey);
         if (group != null) {
@@ -537,21 +554,25 @@ public class ReferenceIndividualGroupService extends ReferenceCompositeGroupServ
         return (EntityIdentifier[]) ar.toArray(new EntityIdentifier[0]);
     }
 
+    @Override
     public EntityIdentifier[] searchForEntities(String query, int method, Class type)
             throws GroupsException {
         return removeDuplicates(entitySearcher.searchForEntities(query, method, type));
     }
 
+    @Override
     public EntityIdentifier[] searchForEntities(
             String query, int method, Class type, IEntityGroup ancestor) throws GroupsException {
         return filterEntities(searchForEntities(query, method, type), ancestor);
     }
 
+    @Override
     public EntityIdentifier[] searchForGroups(String query, int method, Class leaftype)
             throws GroupsException {
         return removeDuplicates(groupFactory.searchForGroups(query, method, leaftype));
     }
 
+    @Override
     public EntityIdentifier[] searchForGroups(
             String query, int method, Class leaftype, IEntityGroup ancestor)
             throws GroupsException {
@@ -569,6 +590,7 @@ public class ReferenceIndividualGroupService extends ReferenceCompositeGroupServ
      *
      * @param group IEntityGroup
      */
+    @Override
     public void updateGroup(IEntityGroup group) throws GroupsException {
         throwExceptionIfNotInternallyManaged();
         getGroupStore().update(group);
@@ -583,6 +605,7 @@ public class ReferenceIndividualGroupService extends ReferenceCompositeGroupServ
      *
      * @param group ILockableEntityGroup
      */
+    @Override
     public void updateGroup(ILockableEntityGroup group, boolean renewLock) throws GroupsException {
         throwExceptionIfNotInternallyManaged();
 
@@ -615,6 +638,7 @@ public class ReferenceIndividualGroupService extends ReferenceCompositeGroupServ
      *
      * @param group IEntityGroup
      */
+    @Override
     public void updateGroupMembers(IEntityGroup group) throws GroupsException {
         throwExceptionIfNotInternallyManaged();
         getGroupStore().updateMembers(group);
@@ -629,6 +653,7 @@ public class ReferenceIndividualGroupService extends ReferenceCompositeGroupServ
      *
      * @param group ILockableEntityGroup
      */
+    @Override
     public void updateGroupMembers(ILockableEntityGroup group, boolean renewLock)
             throws GroupsException {
         throwExceptionIfNotInternallyManaged();

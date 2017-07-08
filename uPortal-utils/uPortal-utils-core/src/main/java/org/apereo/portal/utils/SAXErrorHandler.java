@@ -33,6 +33,7 @@ public class SAXErrorHandler implements ErrorHandler {
     /* (non-Javadoc)
      * @see org.xml.sax.ErrorHandler#warning(org.xml.sax.SAXParseException)
      */
+    @Override
     public void warning(SAXParseException exception) throws SAXException {
         log.warn(invoker, exception);
     }
@@ -40,6 +41,7 @@ public class SAXErrorHandler implements ErrorHandler {
     /* (non-Javadoc)
      * @see org.xml.sax.ErrorHandler#error(org.xml.sax.SAXParseException)
      */
+    @Override
     public void error(SAXParseException exception) throws SAXException {
         log.error(invoker, exception);
     }
@@ -47,6 +49,7 @@ public class SAXErrorHandler implements ErrorHandler {
     /* (non-Javadoc)
      * @see org.xml.sax.ErrorHandler#fatalError(org.xml.sax.SAXParseException)
      */
+    @Override
     public void fatalError(SAXParseException exception) throws SAXException {
         log.fatal(invoker, exception);
     }

@@ -34,11 +34,13 @@ public class JasyptPBEStringEncryptionServiceImpl implements IStringEncryptionSe
     }
 
     /** {@inheritDoc} */
+    @Override
     public String encrypt(String plaintext) {
         return this.encryptor.encrypt(plaintext);
     }
 
     /** {@inheritDoc} */
+    @Override
     public String decrypt(String cryptotet) {
         return this.encryptor.decrypt(cryptotet);
     }

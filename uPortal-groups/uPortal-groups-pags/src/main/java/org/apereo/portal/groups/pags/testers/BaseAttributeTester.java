@@ -44,6 +44,7 @@ public abstract class BaseAttributeTester implements IPersonTester {
         return testValue;
     }
 
+    @Override
     public String toString() {
         return "Tester for " + getAttributeName() + " : " + getTestValue();
     }

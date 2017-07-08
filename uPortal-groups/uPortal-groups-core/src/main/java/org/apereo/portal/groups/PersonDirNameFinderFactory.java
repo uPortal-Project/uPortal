@@ -39,6 +39,7 @@ public class PersonDirNameFinderFactory implements IEntityNameFinderFactory {
      *
      * @return the static singleton PersonDirNameFinder backed by PersonDirectory
      */
+    @Override
     public IEntityNameFinder newFinder() {
 
         if (PERSON_DIR_NAME_FINDER_INSTANCE == null) {

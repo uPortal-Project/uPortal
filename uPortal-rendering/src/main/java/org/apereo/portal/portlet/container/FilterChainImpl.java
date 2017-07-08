@@ -99,6 +99,7 @@ public class FilterChainImpl implements FilterChain {
         filterList.add(filter);
     }
 
+    @Override
     public void doFilter(ActionRequest request, ActionResponse response)
             throws IOException, PortletException {
         if (filterListIndex < filterList.size()) {
@@ -125,6 +126,7 @@ public class FilterChainImpl implements FilterChain {
         }
     }
 
+    @Override
     public void doFilter(EventRequest request, EventResponse response)
             throws IOException, PortletException {
         if (filterListIndex < filterList.size()) {
@@ -151,6 +153,7 @@ public class FilterChainImpl implements FilterChain {
         }
     }
 
+    @Override
     public void doFilter(RenderRequest request, RenderResponse response)
             throws IOException, PortletException {
         if (filterListIndex < filterList.size()) {
@@ -177,6 +180,7 @@ public class FilterChainImpl implements FilterChain {
         }
     }
 
+    @Override
     public void doFilter(ResourceRequest request, ResourceResponse response)
             throws IOException, PortletException {
         if (filterListIndex < filterList.size()) {

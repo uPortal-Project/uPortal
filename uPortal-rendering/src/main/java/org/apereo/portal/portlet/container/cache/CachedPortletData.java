@@ -83,6 +83,7 @@ public class CachedPortletData<T extends Serializable>
     /**
      * The time since the epoch in milliseconds that this content expires. -1 if it never expires
      */
+    @Override
     public long getExpirationTime() {
         return expirationTime;
     }
@@ -97,6 +98,7 @@ public class CachedPortletData<T extends Serializable>
         }
     }
 
+    @Override
     public T getPortletResult() {
         return portletResult;
     }
@@ -113,10 +115,12 @@ public class CachedPortletData<T extends Serializable>
         return contentType;
     }
 
+    @Override
     public String getEtag() {
         return etag;
     }
 
+    @Override
     public long getTimeStored() {
         return timeStored;
     }

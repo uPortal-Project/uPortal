@@ -30,6 +30,7 @@ public class SpringBeanEhCacheRegionFactory extends AbstractEhcacheRegionFactory
 
     public static final String CACHE_MANAGER_NAME = "org.apereo.portal.cache.CacheManagerName";
 
+    @Override
     public void start(Settings settings, Properties properties) throws CacheException {
         this.settings = settings;
         try {
@@ -53,6 +54,7 @@ public class SpringBeanEhCacheRegionFactory extends AbstractEhcacheRegionFactory
     }
 
     /** {@inheritDoc} */
+    @Override
     public void stop() {
         //Assume spring will stop the cache manager
         manager = null;

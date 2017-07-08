@@ -96,6 +96,7 @@ public class PersonDirectoryUserInfoService implements UserInfoService {
     /* (non-Javadoc)
      * @see org.apache.pluto.spi.optional.UserInfoService#getUserInfo(javax.portlet.PortletRequest, org.apache.pluto.PortletWindow)
      */
+    @Override
     public Map<String, String> getUserInfo(PortletRequest request, PortletWindow plutoPortletWindow)
             throws PortletContainerException {
         //Get the remote user

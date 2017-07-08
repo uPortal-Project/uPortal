@@ -246,5 +246,6 @@ public interface IUserLayoutChannelDescription extends IUserLayoutNodeDescriptio
      * @param root a <code>Document</code> for which the <code>Element</code> should be created.
      * @return a <code>Node</code> value
      */
+    @Override
     Element getXML(Document root);
 };

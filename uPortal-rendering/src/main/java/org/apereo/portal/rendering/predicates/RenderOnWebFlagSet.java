@@ -58,6 +58,7 @@ public class RenderOnWebFlagSet implements Predicate<HttpServletRequest> {
         return false;
     }
 
+    @Override
     public String toString() {
         return this.getClass().getSimpleName();
     }

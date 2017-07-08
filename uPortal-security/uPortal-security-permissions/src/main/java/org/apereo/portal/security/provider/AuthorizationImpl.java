@@ -177,6 +177,7 @@ public class AuthorizationImpl implements IAuthorizationService {
      * @param permissions IPermission[]
      * @exception AuthorizationException
      */
+    @Override
     public void addPermissions(IPermission[] permissions) throws AuthorizationException {
         if (permissions.length > 0) {
             getPermissionStore().add(permissions);
@@ -250,6 +251,7 @@ public class AuthorizationImpl implements IAuthorizationService {
      * @param portletDefinitionId
      * @exception AuthorizationException indicates authorization information could not be retrieved.
      */
+    @Override
     @RequestCache
     public boolean canPrincipalManage(IAuthorizationPrincipal principal, String portletDefinitionId)
             throws AuthorizationException {
@@ -326,6 +328,7 @@ public class AuthorizationImpl implements IAuthorizationService {
      * @param principal IAuthorizationPrincipal
      * @return boolean
      */
+    @Override
     @RequestCache
     public boolean canPrincipalManage(
             IAuthorizationPrincipal principal, PortletLifecycleState state, String categoryId)
@@ -388,6 +391,7 @@ public class AuthorizationImpl implements IAuthorizationService {
      * @param portletDefinitionId
      * @exception AuthorizationException indicates authorization information could not be retrieved.
      */
+    @Override
     @RequestCache
     public boolean canPrincipalRender(IAuthorizationPrincipal principal, String portletDefinitionId)
             throws AuthorizationException {
@@ -431,6 +435,7 @@ public class AuthorizationImpl implements IAuthorizationService {
      * @param portletDefinitionId
      * @exception AuthorizationException indicates authorization information could not be retrieved.
      */
+    @Override
     @RequestCache
     public boolean canPrincipalSubscribe(
             IAuthorizationPrincipal principal, String portletDefinitionId) {
@@ -485,6 +490,7 @@ public class AuthorizationImpl implements IAuthorizationService {
      * @param target java.lang.String
      * @exception AuthorizationException indicates authorization information could not be retrieved.
      */
+    @Override
     @RequestCache
     public boolean doesPrincipalHavePermission(
             IAuthorizationPrincipal principal, String owner, String activity, String target)
@@ -575,6 +581,7 @@ public class AuthorizationImpl implements IAuthorizationService {
      * @param target java.lang.String
      * @exception AuthorizationException indicates authorization information could not be retrieved.
      */
+    @Override
     public IPermission[] getAllPermissionsForPrincipal(
             IAuthorizationPrincipal principal, String owner, String activity, String target)
             throws AuthorizationException {
@@ -613,6 +620,7 @@ public class AuthorizationImpl implements IAuthorizationService {
      * @return Vector (of channels?)
      * @exception AuthorizationException indicates authorization information could not
      */
+    @Override
     public Vector getAuthorizedChannels(IAuthorizationPrincipal principal)
             throws AuthorizationException {
         return new Vector();
@@ -642,6 +650,7 @@ public class AuthorizationImpl implements IAuthorizationService {
      * @return org.apereo.portal.groups.IGroupMember
      * @param principal org.apereo.portal.security.IAuthorizationPrincipal
      */
+    @Override
     public IGroupMember getGroupMember(IAuthorizationPrincipal principal) throws GroupsException {
         return getGroupMemberForPrincipal(principal);
     }
@@ -719,6 +728,7 @@ public class AuthorizationImpl implements IAuthorizationService {
      * @param target java.lang.String
      * @exception AuthorizationException indicates authorization information could not be retrieved.
      */
+    @Override
     public IPermission[] getPermissionsForOwner(String owner, String activity, String target)
             throws AuthorizationException {
         return primRetrievePermissions(owner, null, activity, target);
@@ -738,6 +748,7 @@ public class AuthorizationImpl implements IAuthorizationService {
      * @param target java.lang.String
      * @exception AuthorizationException indicates authorization information could not be retrieved.
      */
+    @Override
     @RequestCache
     public IPermission[] getPermissionsForPrincipal(
             IAuthorizationPrincipal principal, String owner, String activity, String target)
@@ -760,11 +771,12 @@ public class AuthorizationImpl implements IAuthorizationService {
      * @return IAuthorizationPrincipal
      * @param permission IPermission
      */
+    @Override
     public IAuthorizationPrincipal getPrincipal(IPermission permission)
             throws AuthorizationException {
         String principalString = permission.getPrincipal();
         int idx = principalString.indexOf(PRINCIPAL_SEPARATOR);
-        Integer typeId = new Integer(principalString.substring(0, idx));
+        Integer typeId = Integer.valueOf(principalString.substring(0, idx));
         Class type = EntityTypesLocator.getEntityTypes().getEntityTypeFromID(typeId);
         String key = principalString.substring(idx + 1);
         return newPrincipal(key, type);
@@ -803,6 +815,7 @@ public class AuthorizationImpl implements IAuthorizationService {
      *
      * @param principal org.apereo.portal.security.IAuthorizationPrincipal
      */
+    @Override
     public String getPrincipalString(IAuthorizationPrincipal principal) {
         return getPrincipalString(principal.getType(), principal.getKey());
     }
@@ -840,6 +853,7 @@ public class AuthorizationImpl implements IAuthorizationService {
      * @param principal IAuthorizationPrincipal
      * @return org.apereo.portal.security.IPermission
      */
+    @Override
     public IPermission newPermission(String owner, IAuthorizationPrincipal principal) {
         IPermission p = getPermissionStore().newInstance(owner);
         if (principal != null) {
@@ -855,6 +869,7 @@ public class AuthorizationImpl implements IAuthorizationService {
      * @return org.apereo.portal.security.IPermissionManager
      * @param owner java.lang.String
      */
+    @Override
     public IPermissionManager newPermissionManager(String owner) {
         return new PermissionManagerImpl(owner, this);
     }
@@ -867,6 +882,7 @@ public class AuthorizationImpl implements IAuthorizationService {
      * @param key java.lang.String
      * @param type java.lang.Class
      */
+    @Override
     public IAuthorizationPrincipal newPrincipal(String key, Class type) {
         final Tuple<String, Class> principalKey = new Tuple<String, Class>(key, type);
         final Element element = this.principalCache.get(principalKey);
@@ -880,6 +896,7 @@ public class AuthorizationImpl implements IAuthorizationService {
      * @return org.apereo.portal.security.IAuthorizationPrincipal
      * @param groupMember org.apereo.portal.groups.IGroupMember
      */
+    @Override
     public IAuthorizationPrincipal newPrincipal(IGroupMember groupMember) throws GroupsException {
         String key = groupMember.getKey();
         Class type = groupMember.getType();
@@ -900,6 +917,7 @@ public class AuthorizationImpl implements IAuthorizationService {
      * @return org.apereo.portal.security.IUpdatingPermissionManager
      * @param owner java.lang.String
      */
+    @Override
     public IUpdatingPermissionManager newUpdatingPermissionManager(String owner) {
         return new UpdatingPermissionManagerImpl(owner, this);
     }
@@ -1118,6 +1136,7 @@ public class AuthorizationImpl implements IAuthorizationService {
      * @param permissions IPermission[]
      * @exception AuthorizationException
      */
+    @Override
     public void removePermissions(IPermission[] permissions) throws AuthorizationException {
         if (permissions.length > 0) {
             getPermissionStore().delete(permissions);
@@ -1133,6 +1152,7 @@ public class AuthorizationImpl implements IAuthorizationService {
      * @param permissions IPermission[]
      * @exception AuthorizationException
      */
+    @Override
     public void updatePermissions(IPermission[] permissions) throws AuthorizationException {
         if (permissions.length > 0) {
             getPermissionStore().update(permissions);

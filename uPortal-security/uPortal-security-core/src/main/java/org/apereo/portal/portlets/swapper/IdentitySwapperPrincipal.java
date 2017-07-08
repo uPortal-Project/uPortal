@@ -30,6 +30,7 @@ public class IdentitySwapperPrincipal implements IPrincipal {
     /* (non-Javadoc)
      * @see org.apereo.portal.security.IPrincipal#getFullName()
      */
+    @Override
     public String getFullName() {
         return this.person.getFullName();
     }
@@ -37,6 +38,7 @@ public class IdentitySwapperPrincipal implements IPrincipal {
     /* (non-Javadoc)
      * @see org.apereo.portal.security.IPrincipal#getGlobalUID()
      */
+    @Override
     public String getGlobalUID() {
         return this.person.getName();
     }
@@ -44,6 +46,7 @@ public class IdentitySwapperPrincipal implements IPrincipal {
     /* (non-Javadoc)
      * @see org.apereo.portal.security.IPrincipal#getUID()
      */
+    @Override
     public String getUID() {
         return this.person.getName();
     }
@@ -51,6 +54,7 @@ public class IdentitySwapperPrincipal implements IPrincipal {
     /* (non-Javadoc)
      * @see org.apereo.portal.security.IPrincipal#setUID(java.lang.String)
      */
+    @Override
     public void setUID(String UID) {
         throw new UnsupportedOperationException("UID is fixed for a swapped user.");
     }

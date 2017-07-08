@@ -45,7 +45,8 @@ public class CompositeServiceIdentifier extends CompositeEntityIdentifier {
      *
      * @return javax.naming.Name
      */
-    public Name getServiceName() {
+    @Override
+    public synchronized Name getServiceName() {
         return getCompositeKey();
     }
     /**
@@ -53,6 +54,7 @@ public class CompositeServiceIdentifier extends CompositeEntityIdentifier {
      *
      * @return java.lang.String
      */
+    @Override
     public String toString() {
         return "CompositeServiceIdentifier (" + getKey() + ")";
     }

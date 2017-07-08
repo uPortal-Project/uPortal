@@ -46,6 +46,7 @@ public class ReferenceCompositeGroupService extends ReferenceComponentGroupServi
      *
      * @param gm IGroupMember
      */
+    @Override
     public Iterator findParentGroups(IGroupMember gm) throws GroupsException {
         Collection allGroups = new ArrayList();
 
@@ -67,6 +68,7 @@ public class ReferenceCompositeGroupService extends ReferenceComponentGroupServi
      * Returns a pre-existing <code>IEntityGroup</code> or null if the <code>IGroupMember</code>
      * does not exist.
      */
+    @Override
     public IEntityGroup findGroup(String key) throws GroupsException {
         CompositeEntityIdentifier ent = newCompositeEntityIdentifier(key);
         IIndividualGroupService service = getComponentService(ent);
@@ -76,6 +78,7 @@ public class ReferenceCompositeGroupService extends ReferenceComponentGroupServi
      * Returns a pre-existing <code>IEntityGroup</code> or null if the <code>IGroupMember</code>
      * does not exist.
      */
+    @Override
     public ILockableEntityGroup findGroupWithLock(String key, String lockOwner)
             throws GroupsException {
         CompositeEntityIdentifier ent = newCompositeEntityIdentifier(key);
@@ -101,6 +104,7 @@ public class ReferenceCompositeGroupService extends ReferenceComponentGroupServi
      * Returns an <code>IEntity</code> representing a portal entity. This does not guarantee that
      * the entity actually exists.
      */
+    @Override
     public IEntity getEntity(String key, Class type) throws GroupsException {
         return getEntity(key, type, null);
     }
@@ -108,6 +112,7 @@ public class ReferenceCompositeGroupService extends ReferenceComponentGroupServi
      * Returns an <code>IEntity</code> representing a portal entity. This does not guarantee that
      * the entity actually exists.
      */
+    @Override
     public IEntity getEntity(String key, Class type, String svcName) throws GroupsException {
         IIndividualGroupService svc = null;
         if (svcName == null) {
@@ -127,6 +132,7 @@ public class ReferenceCompositeGroupService extends ReferenceComponentGroupServi
      * parm <code>type</code> is the group type, the <code>IGroupMember</code> is an <code>
      * IEntityGroup</code> else it is an <code>IEntity</code>.
      */
+    @Override
     public IGroupMember getGroupMember(String key, Class type) throws GroupsException {
         IGroupMember gm = null;
         if (type == ICompositeGroupService.GROUP_ENTITY_TYPE) gm = findGroup(key);
@@ -195,6 +201,7 @@ public class ReferenceCompositeGroupService extends ReferenceComponentGroupServi
         return new CompositeEntityIdentifier(key, ICompositeGroupService.GROUP_ENTITY_TYPE);
     }
     /** Returns a new <code>IEntityGroup</code> from the named service. */
+    @Override
     public IEntityGroup newGroup(Class type, Name serviceName) throws GroupsException {
         return getComponentService(serviceName).newGroup(type);
     }
@@ -211,6 +218,7 @@ public class ReferenceCompositeGroupService extends ReferenceComponentGroupServi
      * Find EntityIdentifiers for entities whose name matches the query string according to the
      * specified method and is of the specified type
      */
+    @Override
     public EntityIdentifier[] searchForEntities(String query, int method, Class type)
             throws GroupsException {
         Set allIds = new HashSet();
@@ -228,6 +236,7 @@ public class ReferenceCompositeGroupService extends ReferenceComponentGroupServi
      * Find EntityIdentifiers for entities whose name matches the query string according to the
      * specified method, is of the specified type and descends from the specified group
      */
+    @Override
     public EntityIdentifier[] searchForEntities(
             String query, int method, Class type, IEntityGroup ancestor) throws GroupsException {
         Set allIds = new HashSet();
@@ -245,6 +254,7 @@ public class ReferenceCompositeGroupService extends ReferenceComponentGroupServi
      * Find EntityIdentifiers for groups whose name matches the query string according to the
      * specified method and matches the provided leaf type
      */
+    @Override
     public EntityIdentifier[] searchForGroups(String query, int method, Class leaftype)
             throws GroupsException {
         Set allIds = new HashSet();
@@ -268,6 +278,7 @@ public class ReferenceCompositeGroupService extends ReferenceComponentGroupServi
      * Find EntityIdentifiers for groups whose name matches the query string according to the
      * specified method, has the provided leaf type and descends from the specified group
      */
+    @Override
     public EntityIdentifier[] searchForGroups(
             String query, int method, Class leaftype, IEntityGroup ancestor)
             throws GroupsException {

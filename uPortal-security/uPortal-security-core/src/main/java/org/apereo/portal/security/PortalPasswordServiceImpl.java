@@ -60,6 +60,7 @@ public class PortalPasswordServiceImpl implements IPortalPasswordService {
     /* (non-Javadoc)
      * @see org.apereo.portal.security.IPortalPasswordService#encryptPassword(java.lang.String)
      */
+    @Override
     public String encryptPassword(String cleartext) {
         String encrypted = sha256Encryptor.encryptPassword(cleartext);
         if (encrypted.endsWith("\n")) {
@@ -72,6 +73,7 @@ public class PortalPasswordServiceImpl implements IPortalPasswordService {
     /* (non-Javadoc)
      * @see org.apereo.portal.security.IPortalPasswordService#validatePassword(java.lang.String, java.lang.String)
      */
+    @Override
     public boolean validatePassword(String cleartext, String encrypted) {
         // If local account has no password, do not allow login.
         if (encrypted == null) {

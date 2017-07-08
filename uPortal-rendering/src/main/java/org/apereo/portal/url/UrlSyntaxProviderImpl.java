@@ -430,6 +430,7 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                                 break;
                             }
                         }
+                        break;
                     case PORTLET:
                         {
                             parseStep = ParseStep.STATE;
@@ -461,6 +462,7 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                                                 targetedPortletString);
                             }
                         }
+                        break;
                     case STATE:
                         {
                             parseStep = ParseStep.TYPE;
@@ -515,11 +517,14 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                                                     IPortletRenderer.EXCLUSIVE);
                                         }
                                         break;
+                                    default:
+                                        // Do thing
                                 }
 
                                 break;
                             }
                         }
+                        break;
                     case TYPE:
                         {
                             parseStep = ParseStep.COMPLETE;
@@ -555,6 +560,9 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                                 }
                             }
                         }
+                        break;
+                    default:
+                        // Do nothing
                 }
             }
 
@@ -970,6 +978,7 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
         return fullName.substring(prefix.length());
     }
 
+    @SuppressWarnings("FallThrough")
     @Override
     public String getCanonicalUrl(HttpServletRequest request) {
 
@@ -1048,6 +1057,8 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                         portletUrlBuilder.setPortletMode(portletRequestInfo.getPortletMode());
                         break;
                     }
+                default:
+                    // Do nothing
             }
         }
 

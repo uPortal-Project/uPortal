@@ -26,6 +26,7 @@ public class ReferenceChannelNameFinderFactory implements IEntityNameFinderFacto
      * @return org.apereo.portal.groups.IEntityNameFinder
      * @exception GroupsException
      */
+    @Override
     public IEntityNameFinder newFinder() throws GroupsException {
         return ReferenceChannelNameFinder.singleton();
     }

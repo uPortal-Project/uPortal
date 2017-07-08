@@ -89,6 +89,7 @@ public class UserLayoutHelperImpl extends JdbcDaoSupport implements IUserLayoutH
      * @see
      *     org.apereo.portal.layout.IUserLayoutHelper#resetUserLayout(org.jasig.services.persondir.IPersonAttributes)
      */
+    @Override
     public void resetUserLayout(final IPersonAttributes personAttributes) {
         // Create an empty RestrictedPerson object
         RestrictedPerson person = PersonFactory.createRestrictedPerson();

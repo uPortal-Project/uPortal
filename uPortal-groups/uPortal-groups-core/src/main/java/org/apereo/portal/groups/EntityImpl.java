@@ -34,6 +34,7 @@ public class EntityImpl extends GroupMemberImpl implements IEntity {
     }
 
     /** @return org.apereo.portal.EntityIdentifier */
+    @Override
     public EntityIdentifier getEntityIdentifier() {
         return entityIdentifier;
     }
@@ -43,6 +44,7 @@ public class EntityImpl extends GroupMemberImpl implements IEntity {
      *
      * @return java.lang.String
      */
+    @Override
     public java.lang.String getKey() {
         return getUnderlyingEntityIdentifier().getKey();
     }
@@ -51,10 +53,12 @@ public class EntityImpl extends GroupMemberImpl implements IEntity {
      *
      * @return java.lang.Class
      */
+    @Override
     public Class<? extends IBasicEntity> getLeafType() {
         return getUnderlyingEntityIdentifier().getType();
     }
     /** Returns this object's type, as opposed to the type of its underlying entity. */
+    @Override
     public Class getType() {
         return getLeafType();
     }
@@ -64,6 +68,7 @@ public class EntityImpl extends GroupMemberImpl implements IEntity {
      *
      * @return a string representation of the receiver
      */
+    @Override
     public String toString() {
         String clsName = getLeafType().getName();
         return "EntityImpl (" + clsName + ") " + getKey();

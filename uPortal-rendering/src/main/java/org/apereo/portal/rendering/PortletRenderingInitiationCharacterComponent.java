@@ -100,6 +100,8 @@ public class PortletRenderingInitiationCharacterComponent
 
                         break;
                     }
+                default:
+                    // Do nothing
             }
 
             eventBuffer.add(event);

@@ -55,6 +55,7 @@ public class StaxEventLexicalContentHandler extends StaxEventContentHandler
      * Essentially the same logic as the parent but uses a static Location impl to avoid this$0
      * reference holding on to StaxEventLexicalContentHandler instances
      */
+    @Override
     public void setDocumentLocator(final Locator locator) {
         if (locator != null) {
             eventFactory.setLocation(new LocatorLocation(locator));
@@ -185,22 +186,27 @@ public class StaxEventLexicalContentHandler extends StaxEventContentHandler
             this.locator = locator;
         }
 
+        @Override
         public int getLineNumber() {
             return locator.getLineNumber();
         }
 
+        @Override
         public int getColumnNumber() {
             return locator.getColumnNumber();
         }
 
+        @Override
         public int getCharacterOffset() {
             return -1;
         }
 
+        @Override
         public String getPublicId() {
             return locator.getPublicId();
         }
 
+        @Override
         public String getSystemId() {
             return locator.getSystemId();
         }

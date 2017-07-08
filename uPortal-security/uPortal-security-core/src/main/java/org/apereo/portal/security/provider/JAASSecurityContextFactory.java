@@ -22,6 +22,7 @@ import org.apereo.portal.security.ISecurityContext;
 import org.apereo.portal.security.ISecurityContextFactory;
 
 public class JAASSecurityContextFactory implements ISecurityContextFactory {
+    @Override
     public ISecurityContext getSecurityContext() {
         return new JAASSecurityContext();
     }

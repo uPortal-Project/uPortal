@@ -145,6 +145,7 @@ public class JpaPortletLayoutAggregationDao
                         .in(portletMappingParameter));
     }
 
+    @Override
     public final List<PortletLayoutAggregationImpl> getAggregationsForAllPortlets(
             DateTime start,
             DateTime end,

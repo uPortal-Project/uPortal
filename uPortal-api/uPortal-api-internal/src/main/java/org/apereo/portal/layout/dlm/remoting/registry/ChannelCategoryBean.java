@@ -93,6 +93,7 @@ public class ChannelCategoryBean implements Comparable<ChannelCategoryBean>, Ser
         this.channels = channels;
     }
 
+    @Override
     public int compareTo(ChannelCategoryBean category) {
         return new CompareToBuilder().append(this.id, category.getId()).toComparison();
     }

@@ -741,10 +741,9 @@ public class MarketplacePortletDefinition implements IPortletDefinition {
             return false;
         }
         final MarketplacePortletDefinition otherDefinition = (MarketplacePortletDefinition) other;
-        if (getFName() == otherDefinition.getFName()) {
+        if (getFName() == null && otherDefinition.getFName() == null) {
             return true;
         }
-        ; // both null fname case
 
         return getFName().equals(otherDefinition.getFName());
     }

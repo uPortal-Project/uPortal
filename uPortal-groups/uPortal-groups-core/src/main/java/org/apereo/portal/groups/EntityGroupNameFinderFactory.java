@@ -23,6 +23,7 @@ public class EntityGroupNameFinderFactory implements IEntityNameFinderFactory {
 
     public EntityGroupNameFinderFactory() {}
 
+    @Override
     public IEntityNameFinder newFinder() throws GroupsException {
         try {
             return EntityGroupNameFinder.singleton();

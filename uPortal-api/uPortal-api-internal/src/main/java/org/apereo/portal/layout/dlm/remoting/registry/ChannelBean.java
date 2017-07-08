@@ -98,6 +98,7 @@ public class ChannelBean implements Comparable<ChannelBean>, Serializable {
         this.iconUrl = iconUrl;
     }
 
+    @Override
     public int compareTo(ChannelBean channel) {
         return new CompareToBuilder().append(this.id, channel.getId()).toComparison();
     }
