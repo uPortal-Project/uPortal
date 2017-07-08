@@ -54,8 +54,8 @@ public class GetMemberIsGroupPhrase implements Phrase {
         // Instance Members.
         this.element = (Phrase) config.getValue(ELEMENT);
     }
-    @Override
 
+    @Override
     public Object evaluate(TaskRequest req, TaskResponse res) {
 
         Element e = (Element) element.evaluate(req, res);

@@ -15,8 +15,6 @@
 package org.apereo.portal.concurrency.locking;
 
 import java.util.Date;
-
-import jdk.nashorn.internal.ir.annotations.Ignore;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apereo.portal.EntityIdentifier;
