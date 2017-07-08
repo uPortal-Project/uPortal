@@ -1,4 +1,19 @@
-apply plugin: 'war'
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.jasig.resourceserver:resource-server-core:${resourceServerVersion}") {
+            exclude group: 'commons-logging', module: 'commons-logging'
+        }
+    }
+}
+
+plugins {
+    id 'war'
+}
+
 apply plugin: 'com.moowork.node'
 
 description = "Apereo uPortal Webapp (WAR)"
@@ -68,8 +83,7 @@ dependencies {
 }
 
 node {
-    version = '8.0.0'
-    download = true
+    workDir = file("${rootDir}/.gradle/nodejs")
 }
 
 processResources {
@@ -84,24 +98,6 @@ war {
     }
 }
 
-/*
- * Aggregate Respondr Skins
- *
- * The following sections are a gradle-based replacement for the
- * 'resource-server-plugin' (Maven) used by uportal-war to aggregate
- * and minify JS
- */
-buildscript {
-    repositories {
-        mavenLocal()
-        mavenCentral()
-    }
-    dependencies {
-        classpath("org.jasig.resourceserver:resource-server-core:${resourceServerVersion}") {
-            exclude group: 'commons-logging', module: 'commons-logging'
-        }
-    }
-}
 import org.jasig.resource.aggr.AggregationRequest;
 import org.jasig.resource.aggr.ResourcesAggregator;
 import org.jasig.resource.aggr.ResourcesAggregatorImpl;

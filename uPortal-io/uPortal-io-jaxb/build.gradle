@@ -1,22 +1,12 @@
+plugins {
+    id 'com.github.jacobono.jaxb' version '1.3.5'
+}
+
 description = 'Apereo uPortal Import/Export JAXB Data Model'
 
 ext {
     generatedSourcesDir = 'build/generated-sources/xjc'
 }
-
-buildscript {
-    repositories {
-        jcenter()
-        mavenCentral()
-    }
-
-    dependencies {
-        classpath 'com.github.jacobono:gradle-jaxb-plugin:1.3.6'
-    }
-}
-
-// Solution for JAXB2 using https://github.com/jacobono/gradle-jaxb-plugin
-apply plugin: 'com.github.jacobono.jaxb'
 
 dependencies {
     // All 6 of the following are for the 'com.github.jacobono.jaxb' plugin
