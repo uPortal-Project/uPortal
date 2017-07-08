@@ -9,7 +9,7 @@ plugins {
 
     // Sub project plugins
     id 'com.github.sherter.google-java-format' version '0.6' apply false
-    id 'nebula.lint' version '7.4.0' apply false
+    id 'nebula.lint' version '7.9.1' apply false
     id 'net.ltgt.errorprone' version '0.0.10' apply false
 }
 
@@ -67,6 +67,7 @@ allprojects {
     googleJavaFormat {
         toolVersion '1.3'
         options style: 'AOSP'
+        exclude '**/generated-sources'
     }
 }
 
@@ -184,11 +185,11 @@ subprojects {
 }
 
 task jacocoAggregateReport(type: org.gradle.testing.jacoco.tasks.JacocoReport) {
-    dependsOn = subprojects.test
-    additionalSourceDirs = files(subprojects.sourceSets.main.allSource.srcDirs)
-    sourceDirectories = files(subprojects.sourceSets.main.allSource.srcDirs)
-    classDirectories = files(subprojects.sourceSets.main.output)
-    executionData = files(subprojects.jacocoTestReport.executionData)
+    dependsOn = allprojects.test
+    additionalSourceDirs = files(allprojects.sourceSets.main.allSource.srcDirs)
+    sourceDirectories = files(allprojects.sourceSets.main.allSource.srcDirs)
+    classDirectories = files(allprojects.sourceSets.main.output)
+    executionData = files(allprojects.jacocoTestReport.executionData)
     reports {
         xml.enabled = true
         html.enabled = true
@@ -205,5 +206,5 @@ task jacocoAggregateReport(type: org.gradle.testing.jacoco.tasks.JacocoReport) {
 
 coveralls {
     jacocoReportPath = "${buildDir}/reports/jacoco/jacocoAggregateReport/jacocoAggregateReport.xml"
-    sourceDirs = files(subprojects.sourceSets.main.allSource.srcDirs).files.absolutePath
+    sourceDirs = files(allprojects.sourceSets.main.allSource.srcDirs).files.absolutePath
 }
