@@ -1133,7 +1133,7 @@
         <portlet-preferences>
             <preference>
                 <!-- This preference identifies the remote service -->
-                <name>org.apereo.portlet.soffit.connector.SoffitConnectorController.serviceUrl</name>
+                <name>org.apereo.portal.soffit.connector.SoffitConnectorController.serviceUrl</name>
             </preference>
         </portlet-preferences>
     </portlet>
