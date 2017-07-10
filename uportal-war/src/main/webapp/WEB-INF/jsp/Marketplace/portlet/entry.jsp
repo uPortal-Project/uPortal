@@ -512,7 +512,7 @@
                         <portlet:renderURL var="initialViewWithFilterURL" windowState="MAXIMIZED">
                             <portlet:param name="initialFilter" value="${portletCategory}"/>
                         </portlet:renderURL>
-                        <li>- <a href="${initialViewWithFilterURL}">${portletCategory}</a></li>
+                        <ul><li>- <a href="${initialViewWithFilterURL}">${portletCategory}</a></li></ul>
                     </c:forEach>
                 </div>
             </div>
