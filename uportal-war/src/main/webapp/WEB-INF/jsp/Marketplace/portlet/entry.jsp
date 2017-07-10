@@ -164,8 +164,8 @@
     }
 
     #${n} .marketplace_dropdown_menu li a[disabled] {
-        color: #666666;
-        background-color: #c0c0c0;
+        color: #DDDDDD;
+        background-color: #333333;
     }
 
     #${n} .marketplace_section.row {
