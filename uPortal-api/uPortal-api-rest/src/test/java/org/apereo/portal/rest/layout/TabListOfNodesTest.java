@@ -12,15 +12,11 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apereo.portal.rest.layout;
 
-
 import java.io.StringReader;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-
 import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,33 +34,34 @@ public class TabListOfNodesTest {
     }
 
     @Test(expected = NullPointerException.class)
-    public void testAddAllChannelsNull(){
+    public void testAddAllChannelsNull() {
         nodes.addAllChannels(null);
     }
 
     @Test
-    public void testAddAllChannels(){
+    public void testAddAllChannels() {
         Document document;
-        String xml = "<bookstore> <channel>  <title>Everyday Italian</title> " +
-                "<author>Giada De Laurentiis</author> " +
-                "<year>2005</year> " +
-                "<price>30.00</price> " +
-                "</channel> " +
-                "<channel>  <title>Harry Potter</title>  " +
-                "<author>J K. Rowling</author>" +
-                "  <year>2005</year> " +
-                "<price>29.99</price> </channel>" +
-                " <channel> <title>XQuery Kick Start</title>  " +
-                "<author>James McGovern</author> " +
-                " <author>Per Bothner</author> " +
-                "<author>Kurt Cagle</author> " +
-                "<author>James Linn</author> " +
-                "<author>Vaidyanathan Nagarajan</author> " +
-                "<year>2003</year> " +
-                "<price>49.99</price> </channel> " +
-                "<channel> <title>Learning XML</title> <author>Erik T. Ray</author> <year>2003</year>" +
-                "<price>39.95</price> </channel> " +
-                "</bookstore>";
+        String xml =
+                "<bookstore> <channel>  <title>Everyday Italian</title> "
+                        + "<author>Giada De Laurentiis</author> "
+                        + "<year>2005</year> "
+                        + "<price>30.00</price> "
+                        + "</channel> "
+                        + "<channel>  <title>Harry Potter</title>  "
+                        + "<author>J K. Rowling</author>"
+                        + "  <year>2005</year> "
+                        + "<price>29.99</price> </channel>"
+                        + " <channel> <title>XQuery Kick Start</title>  "
+                        + "<author>James McGovern</author> "
+                        + " <author>Per Bothner</author> "
+                        + "<author>Kurt Cagle</author> "
+                        + "<author>James Linn</author> "
+                        + "<author>Vaidyanathan Nagarajan</author> "
+                        + "<year>2003</year> "
+                        + "<price>49.99</price> </channel> "
+                        + "<channel> <title>Learning XML</title> <author>Erik T. Ray</author> <year>2003</year>"
+                        + "<price>39.95</price> </channel> "
+                        + "</bookstore>";
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder documentBuilder = factory.newDocumentBuilder();
@@ -72,12 +69,12 @@ public class TabListOfNodesTest {
             is.setCharacterStream(new StringReader(xml));
             document = documentBuilder.parse(is);
         } catch (Exception e) {
-            throw new RuntimeException("Unable to parse region metadata file: " + e.getMessage(), e);
+            throw new RuntimeException(
+                    "Unable to parse region metadata file: " + e.getMessage(), e);
         }
 
         NodeList bookstores = document.getElementsByTagName("bookstore");
         nodes.addAllChannels(bookstores);
         Assert.assertEquals(4, nodes.getLength());
     }
-
 }

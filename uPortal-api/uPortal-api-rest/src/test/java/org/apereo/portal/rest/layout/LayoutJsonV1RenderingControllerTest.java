@@ -12,16 +12,12 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apereo.portal.rest.layout;
 
-
 import java.io.IOException;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.apereo.portal.layout.IStylesheetUserPreferencesService;
 import org.apereo.portal.portlet.registry.IPortletWindowRegistry;
 import org.apereo.portal.rendering.IPortalRenderingPipeline;
@@ -33,17 +29,14 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 public class LayoutJsonV1RenderingControllerTest {
-    @InjectMocks
-    LayoutJsonV43RenderingController controller;
-    @Mock
-    private HttpServletRequest req;
+    @InjectMocks LayoutJsonV43RenderingController controller;
+    @Mock private HttpServletRequest req;
 
     @Mock private HttpServletResponse res;
 
     @Mock private IPortalRenderingPipeline portalRenderingPipeline;
     @Mock private IPortletWindowRegistry portletWindowRegistry;
     @Mock private IStylesheetUserPreferencesService stylesheetUserPrefService;
-
 
     @Before
     public void setup() {
@@ -53,9 +46,8 @@ public class LayoutJsonV1RenderingControllerTest {
 
     @Test
     public void testRenderRequest() throws IOException, ServletException {
-        controller.renderRequest(req,res);
+        controller.renderRequest(req, res);
         Mockito.verify(portletWindowRegistry).disablePersistentWindowStates(req);
         Mockito.verify(portalRenderingPipeline).renderState(req, res);
     }
-
 }
