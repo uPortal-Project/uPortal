@@ -168,6 +168,11 @@
         background-color: #333333;
     }
 
+    #${n} .btn .btn-default[disabled] {
+        color: #DDDDDD;
+        background-color: #333333;
+    }
+
     #${n} .marketplace_section.row {
         margin-right: 15px;
         padding: 20px 0;
@@ -421,7 +426,8 @@
                         </div>
                         <c:if test="${enableReviews}">
                         <div class="form-group">
-                            <textarea id="${n}marketplace_user_review_input" name="review" class="form-control col-xs-12 col-med-6" rows="3"></textarea>
+                            <label id="review-label"><spring:message code="rating.leave.review"/></label>
+                            <textarea id="${n}marketplace_user_review_input" aria-labelledby="review-label" name="review" class="form-control col-xs-12 col-med-6" rows="3"></textarea>
                             <div id="${n}input_chars_remaining"></div>
                         </div>
                         </c:if>
