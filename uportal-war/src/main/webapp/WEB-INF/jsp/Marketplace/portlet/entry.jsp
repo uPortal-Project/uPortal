@@ -383,10 +383,10 @@
                 <c:url value="/media/skins/icons/mobile/default.png" var="defaultIcon"/>
                     <c:choose>
                         <c:when test="${empty marketplaceEntry.getParameter('mobileIconUrl')}">
-                            <img src="${defaultIcon}">
+                            <img src="${defaultIcon}" alt="">
                         </c:when>
                         <c:otherwise>
-                            <img src="${marketplaceEntry.getParameter('mobileIconUrl').value}">
+                            <img src="${marketplaceEntry.getParameter('mobileIconUrl').value}" alt="">
                         </c:otherwise>
                 </c:choose>
             </div>
@@ -488,10 +488,10 @@
                                     <div class="portlet-icon">
                                         <c:choose>
                                             <c:when test="${empty relatedPortlet.getParameter('mobileIconUrl')}">
-                                                <img src="${defaultIcon}">
+                                                <img src="${defaultIcon}" alt="">
                                             </c:when>
                                             <c:otherwise>
-                                                <img src="${relatedPortlet.getParameter('mobileIconUrl').value}">
+                                                <img src="${relatedPortlet.getParameter('mobileIconUrl').value}" alt="">
                                             </c:otherwise>
                                         </c:choose>
                                     </div>
