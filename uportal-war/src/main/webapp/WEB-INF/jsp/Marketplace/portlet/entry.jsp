@@ -168,9 +168,9 @@
         background-color: #333333;
     }
 
-    #${n} .btn .btn-default[disabled] {
-        color: #DDDDDD;
-        background-color: #333333;
+    #${n} .btn.btn-default.disabled {
+        background-color: #E0E0E0;
+        opacity: 1;
     }
 
     #${n} .marketplace_section.row {
