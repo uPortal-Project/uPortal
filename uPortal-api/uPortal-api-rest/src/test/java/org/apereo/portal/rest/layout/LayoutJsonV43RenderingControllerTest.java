@@ -32,9 +32,7 @@ public class LayoutJsonV43RenderingControllerTest {
 
     @InjectMocks LayoutJsonV43RenderingController controller;
     @Mock private HttpServletRequest req;
-
     @Mock private HttpServletResponse res;
-
     @Mock private IPortalRenderingPipeline portalRenderingPipeline;
     @Mock private IPortletWindowRegistry portletWindowRegistry;
     @Mock private IStylesheetUserPreferencesService stylesheetUserPrefService;
