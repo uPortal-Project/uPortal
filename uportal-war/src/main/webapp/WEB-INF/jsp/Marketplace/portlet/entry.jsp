@@ -272,13 +272,13 @@
 </style>
 
 <script type="text/template" id="${n}options-menu">
-    <li>
+    <li role="menuitem">
         <a href="javascript:;" title='<spring:message code="link.to" text="Link to ..." />' data-toggle="modal" data-target="#${n}copy-modal" id="${n}linkto">
             <spring:message code="link.to" text="Link to ..."/>
         </a>
     </li>
-    <li class="divider"></li>
-    <li>
+    <li aria-hidden="true" class="divider"></li>
+    <li role="menuitem">
         <spring:message code="add.this.portlet.to.my.favorite" text="Add this Portlet to My Favorites" var="atptmfTitle"/>
         <a href="javascript:;" title="${atptmfTitle}"
                 class="{% if (isFavorite) { print('marketplace_remove_favorite'); } else { print('marketplace_add_favorite'); } %}"
@@ -293,7 +293,7 @@
             </span>
         </a>
     </li>
-    <li>
+    <li role="menuitem">
         <a href="javascript://" aria-disabled="true" disabled>
                 <span>
                     <spring:message code="marketplace.add.to.tab" text="Add portlet to tab:"/>
@@ -301,7 +301,7 @@
         </a>
     </li>
     {% _.each(tabs, function(tab) { %}
-        <li>
+        <li role="menuitem">
             <a href="javascript:;" class="marketplace_add_to_tab_link" data-tab-id="{%= tab.id %}">
                 <span>
                     {%- tab.name %}
