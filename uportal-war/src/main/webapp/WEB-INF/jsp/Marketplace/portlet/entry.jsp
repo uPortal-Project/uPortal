@@ -281,7 +281,8 @@
     <li>
         <spring:message code="add.this.portlet.to.my.favorite" text="Add this Portlet to My Favorites" var="atptmfTitle"/>
         <a href="javascript:;" title="${atptmfTitle}"
-                class="{% if (isFavorite) { print('marketplace_remove_favorite'); } else { print('marketplace_add_favorite'); } %}">
+                class="{% if (isFavorite) { print('marketplace_remove_favorite'); } else { print('marketplace_add_favorite'); } %}"
+                aria-selected="{% if (isFavorite) { print('true'); } else { print('false'); } %}">
             {% if (isFavorite) { %}
                 <i class="fa fa-star"></i>
             {% } else { %}
@@ -293,7 +294,7 @@
         </a>
     </li>
     <li>
-        <a href="javascript://" disabled>
+        <a href="javascript://" aria-disabled="true" disabled>
                 <span>
                     <spring:message code="marketplace.add.to.tab" text="Add portlet to tab:"/>
                 </span>
