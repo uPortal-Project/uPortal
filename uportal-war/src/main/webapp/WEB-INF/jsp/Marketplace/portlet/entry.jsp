@@ -536,10 +536,10 @@
         </div>
     </div>                      
 </div>
-<div class="modal fade" id="${n}copy-modal" tabindex="-1" role="dialog" aria-labelledby="LinkToModal" aria-hidden="true">
+<div class="modal fade" id="${n}copy-modal" tabindex="-1" role="dialog" aria-labelledby="LinkToModal" aria-modal="true">
     <div class="modal-dialog" style="text-align:center">
         <div class="modal-content" style="white-space: nowrap">
-            <h4 class="modal-title">
+            <h4 id="LinkToModal" class="modal-title">
                 <strong>
                     <spring:message code="link.to.this" text="Link to This"/>
                 </strong>
@@ -549,7 +549,7 @@
                 <div class="form-group">
                     <label for="inputDeep" class="col-sm-2 control-label"><spring:message code="link" text="Link"/></label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" id="inputDeep"
+                        <input tabindex="0" type="text" class="form-control" id="inputDeep"
                                value="${marketplaceEntry.renderUrl}"></input>
                     </div>
                 </div>
@@ -557,14 +557,14 @@
                     <div class="form-group">
                         <label for="smallLink" class="col-sm-2 control-label"><spring:message code="shortLink" text="Short Link"/></label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" id="smallLink" value="${shortURL}"></input>
+                            <input tabindex="0" type="text" class="form-control" id="smallLink" value="${shortURL}"></input>
                         </div>
                     </div>
                 </c:if>
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal"><spring:message code="close" text="Close"/></button>
+                <button tabindex="0" role="button" type="button" class="btn btn-default" data-dismiss="modal"><spring:message code="close" text="Close"/></button>
             </div>
         </div>
     </div>
