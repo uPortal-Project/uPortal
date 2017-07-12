@@ -5,7 +5,6 @@ description = "Apereo uPortal $version"
 apply plugin: 'com.gradle.build-scan'
 apply plugin: 'com.github.kt3k.coveralls'
 apply plugin: me.champeau.gradle.buildscans.RecipesPlugin
-apply plugin: 'java'
 apply plugin: 'build-announcements'
 apply plugin: 'org.standardout.versioneye'
 
@@ -58,8 +57,11 @@ versioneye {
 }
 
 allprojects {
+    apply plugin: 'java'
     apply plugin: 'jacoco'
     apply plugin: 'nebula.lint'
+
+    sourceCompatibility = 1.8
 
     gradleLint.criticalRules = [
       'overridden-dependency-version',
@@ -78,7 +80,6 @@ subprojects {
     apply plugin: 'eclipse'
     apply plugin: 'findbugs'
     apply plugin: 'idea'
-    apply plugin: 'java'
     apply plugin: 'maven'
     apply plugin: 'signing'
     apply plugin: 'maven-publish'
