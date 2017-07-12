@@ -15,10 +15,11 @@
 package org.apereo.portal.rest.layout;
 
 import java.io.IOException;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apereo.portal.layout.IStylesheetUserPreferencesService;
+
 import org.apereo.portal.portlet.registry.IPortletWindowRegistry;
 import org.apereo.portal.rendering.IPortalRenderingPipeline;
 import org.junit.Before;
@@ -29,14 +30,12 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 public class LayoutJsonV1RenderingControllerTest {
+
     @InjectMocks LayoutJsonV43RenderingController controller;
     @Mock private HttpServletRequest req;
-
     @Mock private HttpServletResponse res;
-
     @Mock private IPortalRenderingPipeline portalRenderingPipeline;
     @Mock private IPortletWindowRegistry portletWindowRegistry;
-    @Mock private IStylesheetUserPreferencesService stylesheetUserPrefService;
 
     @Before
     public void setup() {
