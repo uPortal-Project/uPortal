@@ -114,12 +114,18 @@ public class SubscribedFragmentImporterExporter
     }
 
     private IPerson getPerson(final String username, boolean create) {
+        IPerson rslt;
         try {
-            return userIdentityStore.getPerson(username, create);
+            // Try once w/ false, even if create=true...
+            rslt = userIdentityStore.getPerson(username, false);
         } catch (final Exception e) {
-            throw new RuntimeException("Unrecognized user '" + username +
-                    "'; you must import users before their layouts.", e);
+            if (!create || this.errorOnMissingUser) {
+                throw new RuntimeException("Unrecognized user '" + username +
+                        "'; you must import users before their layouts.", e);
+            }
+            rslt = userIdentityStore.getPerson(username, true);
         }
+        return rslt;
     }
 
     /*
