@@ -427,7 +427,7 @@
                         </div>
                         <c:if test="${enableReviews}">
                         <div class="form-group">
-                            <label id="review-label"><spring:message code="rating.leave.review"/></label>
+                            <label for="${n}marketplace_user_review_input" id="review-label"><spring:message code="rating.leave.review"/></label>
                             <textarea id="${n}marketplace_user_review_input" aria-labelledby="review-label" name="review" class="form-control col-xs-12 col-med-6" rows="3"></textarea>
                             <div id="${n}input_chars_remaining"></div>
                         </div>

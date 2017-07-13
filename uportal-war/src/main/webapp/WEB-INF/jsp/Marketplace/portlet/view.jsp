@@ -312,10 +312,10 @@
                                     <c:choose>
                                         <c:when test="${empty featuredPortlet.getParameter('mobileIconUrl')}">
 
-                                            <img src="${defaultIcon}">
+                                            <img src="${defaultIcon}" alt="">
                                         </c:when>
                                         <c:otherwise>
-                                            <img src="${featuredPortlet.getParameter('mobileIconUrl').value}">
+                                            <img src="${featuredPortlet.getParameter('mobileIconUrl').value}" alt="">
                                         </c:otherwise>
                                     </c:choose>
                                 </div>
