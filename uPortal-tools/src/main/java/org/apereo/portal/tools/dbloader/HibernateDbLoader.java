@@ -28,6 +28,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apereo.portal.hibernate.DelegatingHibernateIntegrator.HibernateConfiguration;
@@ -277,16 +278,11 @@ public class HibernateDbLoader
 
         for (final Table table : tables) {
             if (table.isPhysicalTable()) {
-                if (!dialect.supportsUniqueConstraintInCreateAlterTable()) {
-                    for (final Iterator<UniqueKey> subIter = table.getUniqueKeyIterator();
-                            subIter.hasNext();
-                            ) {
-                        final UniqueKey uk = subIter.next();
-                        final String constraintString =
-                                uk.sqlCreateString(dialect, mapping, defaultCatalog, defaultSchema);
-                        if (constraintString != null) {
-                            script.add(constraintString);
-                        }
+                for (final Iterator<UniqueKey> subIter = table.getUniqueKeyIterator(); subIter.hasNext();) {
+                    final UniqueKey uk = subIter.next();
+                    final String constraintString = uk.sqlCreateString(dialect, mapping, defaultCatalog, defaultSchema);
+                    if (StringUtils.isNotBlank(constraintString)) {
+                        script.add(constraintString);
                     }
                 }
 
@@ -299,9 +295,7 @@ public class HibernateDbLoader
                 }
 
                 if (dialect.hasAlterTable()) {
-                    for (final Iterator<ForeignKey> subIter = table.getForeignKeyIterator();
-                            subIter.hasNext();
-                            ) {
+                    for (final Iterator<ForeignKey> subIter = table.getForeignKeyIterator();subIter.hasNext();) {
                         final ForeignKey fk = subIter.next();
                         if (fk.isPhysicalConstraint()) {
                             script.add(
