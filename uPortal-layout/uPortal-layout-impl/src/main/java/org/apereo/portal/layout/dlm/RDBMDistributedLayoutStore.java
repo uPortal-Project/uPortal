@@ -54,6 +54,7 @@ import org.apereo.portal.portlet.om.IPortletDefinitionId;
 import org.apereo.portal.portlet.om.IPortletDefinitionParameter;
 import org.apereo.portal.portlet.om.IPortletEntity;
 import org.apereo.portal.portlet.om.IPortletPreference;
+import org.apereo.portal.portlet.om.PortletLifecycleState;
 import org.apereo.portal.portlet.registry.IPortletEntityRegistry;
 import org.apereo.portal.properties.PropertiesManager;
 import org.apereo.portal.security.IPerson;
@@ -1579,7 +1580,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
 
     @Override
     protected Element getStructure(Document doc, LayoutStructure ls) {
-        Element structure = null;
+        Element structure;
 
         String type = ls.getType();
 
@@ -1587,7 +1588,8 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
             final IPortletDefinition channelDef =
                     this.portletDefinitionRegistry.getPortletDefinition(
                             String.valueOf(ls.getChanId()));
-            if (channelDef != null && channelApproved(channelDef.getApprovalDate())) {
+            if (channelDef != null && channelDef.getLifecycleState()
+                    .isEqualToOrAfter(PortletLifecycleState.APPROVED)) {
                 structure =
                         this.getElementForChannel(
                                 doc, channelPrefix + ls.getStructId(), channelDef, ls.getLocale());

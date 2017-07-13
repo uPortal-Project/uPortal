@@ -29,6 +29,7 @@ import org.apereo.portal.portlet.om.IPortletDefinition;
 import org.apereo.portal.portlet.om.IPortletDefinitionId;
 import org.apereo.portal.portlet.om.IPortletDefinitionParameter;
 import org.apereo.portal.portlet.om.IPortletDescriptorKey;
+import org.apereo.portal.portlet.om.IPortletLifecycleEntry;
 import org.apereo.portal.portlet.om.IPortletPreference;
 import org.apereo.portal.portlet.om.IPortletType;
 import org.apereo.portal.portlet.om.PortletCategory;
@@ -432,6 +433,21 @@ public class MarketplacePortletDefinition implements IPortletDefinition {
     }
 
     @Override
+    public void setLifecycleState(PortletLifecycleState lifecycleState, IPerson user) {
+        portletDefinition.setLifecycleState(lifecycleState, user);
+    }
+
+    @Override
+    public void setLifecycleState(PortletLifecycleState lifecycleState, IPerson user, Date timestamp) {
+        portletDefinition.setLifecycleState(lifecycleState, user, timestamp);
+    }
+
+    @Override
+    public List<IPortletLifecycleEntry> getLifecycle() {
+        return portletDefinition.getLifecycle();
+    }
+
+    @Override
     public String getFName() {
         return this.portletDefinition.getFName();
     }
@@ -484,36 +500,6 @@ public class MarketplacePortletDefinition implements IPortletDefinition {
     @Override
     public IPortletType getType() {
         return this.portletDefinition.getType();
-    }
-
-    @Override
-    public int getPublisherId() {
-        return this.portletDefinition.getPublisherId();
-    }
-
-    @Override
-    public int getApproverId() {
-        return this.portletDefinition.getApproverId();
-    }
-
-    @Override
-    public Date getPublishDate() {
-        return this.portletDefinition.getPublishDate();
-    }
-
-    @Override
-    public Date getApprovalDate() {
-        return this.portletDefinition.getApprovalDate();
-    }
-
-    @Override
-    public int getExpirerId() {
-        return this.portletDefinition.getExpirerId();
-    }
-
-    @Override
-    public Date getExpirationDate() {
-        return this.portletDefinition.getExpirationDate();
     }
 
     @Override
@@ -599,36 +585,6 @@ public class MarketplacePortletDefinition implements IPortletDefinition {
     @Override
     public void setType(IPortletType channelType) {
         this.portletDefinition.setType(channelType);
-    }
-
-    @Override
-    public void setPublisherId(int publisherId) {
-        this.portletDefinition.setPublisherId(publisherId);
-    }
-
-    @Override
-    public void setApproverId(int approvalId) {
-        this.portletDefinition.setApproverId(approvalId);
-    }
-
-    @Override
-    public void setPublishDate(Date publishDate) {
-        this.portletDefinition.setPublishDate(publishDate);
-    }
-
-    @Override
-    public void setApprovalDate(Date approvalDate) {
-        this.portletDefinition.setApprovalDate(approvalDate);
-    }
-
-    @Override
-    public void setExpirerId(int expirerId) {
-        this.portletDefinition.setExpirerId(expirerId);
-    }
-
-    @Override
-    public void setExpirationDate(Date expirationDate) {
-        this.portletDefinition.setExpirationDate(expirationDate);
     }
 
     @Override

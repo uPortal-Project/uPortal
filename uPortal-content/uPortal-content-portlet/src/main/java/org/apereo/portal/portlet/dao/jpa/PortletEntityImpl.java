@@ -90,7 +90,7 @@ class PortletEntityImpl implements IPortletEntity {
     @Column(name = "USER_ID", nullable = false)
     private final int userId;
 
-    //Hidden reference to the parent portlet definition, used by hibernate for referential integrety
+    //Hidden reference to the parent portlet definition, used by hibernate for referential integrity
     @ManyToOne(
         targetEntity = PortletDefinitionImpl.class,
         cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}

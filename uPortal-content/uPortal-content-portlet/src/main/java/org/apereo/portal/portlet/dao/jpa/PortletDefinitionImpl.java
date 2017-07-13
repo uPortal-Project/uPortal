@@ -14,6 +14,7 @@
  */
 package org.apereo.portal.portlet.dao.jpa;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -55,9 +56,11 @@ import org.apereo.portal.portlet.om.IPortletDefinitionId;
 import org.apereo.portal.portlet.om.IPortletDefinitionParameter;
 import org.apereo.portal.portlet.om.IPortletDescriptorKey;
 import org.apereo.portal.portlet.om.IPortletEntity;
+import org.apereo.portal.portlet.om.IPortletLifecycleEntry;
 import org.apereo.portal.portlet.om.IPortletPreference;
 import org.apereo.portal.portlet.om.IPortletType;
 import org.apereo.portal.portlet.om.PortletLifecycleState;
+import org.apereo.portal.security.IPerson;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
@@ -68,7 +71,9 @@ import org.hibernate.annotations.NaturalIdCache;
 import org.hibernate.annotations.Type;
 import org.springframework.util.StringUtils;
 
-/** */
+/**
+ * Concrete implementation of {@link IPortletDefinition} that is JPA-managed.
+ */
 @Entity
 @Table(name = "UP_PORTLET_DEF")
 @SequenceGenerator(
@@ -81,7 +86,12 @@ import org.springframework.util.StringUtils;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class PortletDefinitionImpl implements IPortletDefinition {
-    //Properties are final to stop changes in code, hibernate overrides the final via reflection to set their values
+
+    /*
+     * Properties are final to stop changes in code; hibernate
+     * overrides the final via reflection to set their values.
+     */
+
     @Id
     @GeneratedValue(generator = "UP_PORTLET_DEF_GEN")
     @Column(name = "PORTLET_DEF_ID")
@@ -94,8 +104,11 @@ public class PortletDefinitionImpl implements IPortletDefinition {
     @Column(name = "ENTITY_VERSION")
     private final long entityVersion;
 
-    //Hidden reference to the child portlet entities, used to allow cascading deletes where when a portlet definition is deleted all associated entities are also deleted
-    //MUST BE LAZY FETCH, this set should never actually be populated at runtime or performance will be TERRIBLE
+    /*
+     * Hidden reference to the child portlet entities, used to allow cascading deletes where when a
+     * portlet definition is deleted all associated entities are also deleted.  MUST BE LAZY FETCH,
+     * this set should never actually be populated at runtime or performance will be TERRIBLE!
+     */
     @SuppressWarnings("unused")
     @OneToMany(
         mappedBy = "portletDefinition",
@@ -124,6 +137,9 @@ public class PortletDefinitionImpl implements IPortletDefinition {
     @Column(name = "PORTLET_NAME", length = 128, nullable = false, unique = true)
     private String name;
 
+    /**
+     * The "fName" of a portlet is its human-assigned, unique identifier.
+     */
     @NaturalId(mutable = true)
     @Column(name = "PORTLET_FNAME", length = 255, nullable = false)
     @Type(type = "fname")
@@ -161,27 +177,25 @@ public class PortletDefinitionImpl implements IPortletDefinition {
     @Column(name = "RESOURCE_TIMEOUT")
     private Integer resourceTimeout = null;
 
-    //TODO link to User object once it is JPA managed
-    @Column(name = "PORTLET_PUBL_ID")
-    private int publisherId = -1;
+    /**
+     * The lifecycle history of this portlet.  NOTE (JPA docs):  "If the ordering element is not
+     * specified, ordering by the primary key of the associated entity is assumed."
+     */
+    @OneToMany(
+            targetEntity = PortletLifecycleEntryImpl.class,
+            cascade = CascadeType.ALL,
+            fetch = FetchType.EAGER,
+            orphanRemoval = true
+    )
+    @JoinColumn(name = "PORLTET_DEF_ID", nullable = false)
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    @Fetch(FetchMode.JOIN)
+    private List<IPortletLifecycleEntry> lifecycleEntries = new ArrayList<>();
 
-    //TODO link to User object once it is JPA managed
-    @Column(name = "PORTLET_APVL_ID")
-    private int approverId = -1;
-
-    //TODO link to User object once it is JPA managed
-    @Column(name = "PORTLET_EXP_ID")
-    private int expirerId = -1;
-
-    @Column(name = "PORTLET_PUBL_DT")
-    private Date publishDate = null;
-
-    @Column(name = "PORTLET_APVL_DT")
-    private Date approvalDate = null;
-
-    @Column(name = "PORTLET_EXP_DT")
-    private Date expirationDate = null;
-
+    /**
+     * Portlet publishing parameters.  These are portlet-specific settings that are defined,
+     * managed, and (typically) consumed by uPortal itself.
+     */
     @OneToMany(
         targetEntity = PortletDefinitionParameterImpl.class,
         cascade = CascadeType.ALL,
@@ -193,7 +207,7 @@ public class PortletDefinitionImpl implements IPortletDefinition {
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @Fetch(FetchMode.JOIN)
     private Map<String, IPortletDefinitionParameter> parameters =
-            new LinkedHashMap<String, IPortletDefinitionParameter>();
+            new LinkedHashMap<>();
 
     @ElementCollection(fetch = FetchType.EAGER, targetClass = PortletLocalizationData.class)
     @JoinTable(name = "UP_PORTLET_DEF_MDATA", joinColumns = @JoinColumn(name = "PORTLET_ID"))
@@ -201,7 +215,7 @@ public class PortletDefinitionImpl implements IPortletDefinition {
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @Fetch(FetchMode.JOIN)
     private final Map<String, PortletLocalizationData> localizations =
-            new LinkedHashMap<String, PortletLocalizationData>();
+            new LinkedHashMap<>();
 
     @Embedded private PortletDescriptorKeyImpl portletDescriptorKey;
 
@@ -318,7 +332,7 @@ public class PortletDefinitionImpl implements IPortletDefinition {
     /**
      * @param rating the rating to set. Must be within marketplaceRating range (inclusive). Can not
      *     be null.
-     * @throws IllegalArgumentException
+     * @throws IllegalArgumentException If the specified rating is out of bounds
      */
     @Override
     public void setRating(Double rating) {
@@ -458,66 +472,6 @@ public class PortletDefinitionImpl implements IPortletDefinition {
     }
 
     @Override
-    public int getPublisherId() {
-        return publisherId;
-    }
-
-    @Override
-    public void setPublisherId(int publisherId) {
-        this.publisherId = publisherId;
-    }
-
-    @Override
-    public int getApproverId() {
-        return approverId;
-    }
-
-    @Override
-    public void setApproverId(int approverId) {
-        this.approverId = approverId;
-    }
-
-    @Override
-    public int getExpirerId() {
-        return expirerId;
-    }
-
-    @Override
-    public void setExpirerId(int expirerId) {
-        this.expirerId = expirerId;
-    }
-
-    @Override
-    public Date getPublishDate() {
-        return publishDate;
-    }
-
-    @Override
-    public void setPublishDate(Date publishDate) {
-        this.publishDate = publishDate;
-    }
-
-    @Override
-    public Date getApprovalDate() {
-        return approvalDate;
-    }
-
-    @Override
-    public void setApprovalDate(Date approvalDate) {
-        this.approvalDate = approvalDate;
-    }
-
-    @Override
-    public Date getExpirationDate() {
-        return expirationDate;
-    }
-
-    @Override
-    public void setExpirationDate(Date expirationDate) {
-        this.expirationDate = expirationDate;
-    }
-
-    @Override
     public IPortletType getType() {
         return this.portletType;
     }
@@ -624,23 +578,23 @@ public class PortletDefinitionImpl implements IPortletDefinition {
     @Override
     public Set<IPortletDefinitionParameter> getParameters() {
         return Collections.unmodifiableSet(
-                new LinkedHashSet<IPortletDefinitionParameter>(parameters.values()));
+                new LinkedHashSet<>(parameters.values()));
     }
 
     @Override
     public void setParameters(Set<IPortletDefinitionParameter> newParameters) {
 
         if (newParameters == null) {
-            this.parameters = new LinkedHashMap<String, IPortletDefinitionParameter>();
+            this.parameters = new LinkedHashMap<>();
         } else if (this.parameters == null) {
-            this.parameters = new LinkedHashMap<String, IPortletDefinitionParameter>();
+            this.parameters = new LinkedHashMap<>();
             for (final IPortletDefinitionParameter parameter : newParameters) {
                 this.parameters.put(parameter.getName(), parameter);
             }
         } else {
             //Build map of existing parameters for tracking which parameters have been removed
             final Map<String, IPortletDefinitionParameter> oldPreferences =
-                    new LinkedHashMap<String, IPortletDefinitionParameter>(this.parameters);
+                    new LinkedHashMap<>(this.parameters);
 
             for (final IPortletDefinitionParameter parameter : newParameters) {
                 final String name = parameter.getName();
@@ -713,18 +667,55 @@ public class PortletDefinitionImpl implements IPortletDefinition {
 
     @Override
     public PortletLifecycleState getLifecycleState() {
+
+        /*
+         * NB:  A portlet definition may have a current lifecycle
+         * state of null if it has not yet been completely created.
+         */
+        PortletLifecycleState rslt = null;
+
         final Date now = new Date();
-        if (parameters.containsKey(PortletLifecycleState.MAINTENANCE_MODE_PARAMETER_NAME)) {
-            return PortletLifecycleState.MAINTENANCE;
-        } else if (expirationDate != null && expirationDate.before(now)) {
-            return PortletLifecycleState.EXPIRED;
-        } else if (publishDate != null && publishDate.before(now)) {
-            return PortletLifecycleState.PUBLISHED;
-        } else if (approvalDate != null && approvalDate.before(now)) {
-            return PortletLifecycleState.APPROVED;
-        } else {
-            return PortletLifecycleState.CREATED;
+        for (IPortletLifecycleEntry entry : lifecycleEntries) {
+            /*
+             * A lifecycle change that is scheduled for the
+             * future is not a candidate for the current state.
+             */
+            if (entry.getDate().before(now)) {
+                rslt = entry.getLifecycleState();
+            } else {
+                /*
+                 * NOTE (per JPA docs):  "If the ordering element is not specified,
+                 * ordering by the primary key of the associated entity is assumed."
+                 */
+                break;
+            }
         }
+
+        return rslt;
+
+    }
+
+    @Override
+    public void setLifecycleState(PortletLifecycleState lifecycleState, IPerson user) {
+        setLifecycleState(lifecycleState, user, new Date());
+    }
+
+    @Override
+    public void setLifecycleState(PortletLifecycleState lifecycleState, IPerson user, Date timestamp) {
+        // Avoid a ConcurrentModificationException
+        final List<IPortletLifecycleEntry> list = new ArrayList<>(lifecycleEntries);
+        for (IPortletLifecycleEntry entry : list) {
+            if (entry.getLifecycleState().isEqualToOrAfter(lifecycleState)) {
+                lifecycleEntries.remove(entry);
+            }
+        }
+        IPortletLifecycleEntry newEntry = new PortletLifecycleEntryImpl(user.getID(), lifecycleState, timestamp);
+        lifecycleEntries.add(newEntry);
+    }
+
+    @Override
+    public List<IPortletLifecycleEntry> getLifecycle() {
+        return Collections.unmodifiableList(lifecycleEntries);
     }
 
     @Override

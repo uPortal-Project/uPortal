@@ -46,6 +46,7 @@ import org.apereo.portal.portlet.om.IPortletDefinitionParameter;
 import org.apereo.portal.portlet.om.IPortletDescriptorKey;
 import org.apereo.portal.portlet.om.IPortletEntity;
 import org.apereo.portal.portlet.om.IPortletEntityId;
+import org.apereo.portal.portlet.om.IPortletLifecycleEntry;
 import org.apereo.portal.portlet.om.IPortletPreference;
 import org.apereo.portal.portlet.om.IPortletType;
 import org.apereo.portal.portlet.om.IPortletWindowId;
@@ -913,12 +914,6 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
                 public void setRenderTimeout(Integer renderTimeout) {}
 
                 @Override
-                public void setPublisherId(int publisherId) {}
-
-                @Override
-                public void setPublishDate(Date publishDate) {}
-
-                @Override
                 public boolean setPortletPreferences(List<IPortletPreference> portletPreferences) {
                     return false;
                 }
@@ -933,22 +928,10 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
                 public void setFName(String fname) {}
 
                 @Override
-                public void setExpirerId(int expirerId) {}
-
-                @Override
-                public void setExpirationDate(Date expirationDate) {}
-
-                @Override
                 public void setEventTimeout(Integer eventTimeout) {}
 
                 @Override
                 public void setDescription(String descr) {}
-
-                @Override
-                public void setApproverId(int approvalId) {}
-
-                @Override
-                public void setApprovalDate(Date approvalDate) {}
 
                 @Override
                 public void setActionTimeout(Integer actionTimeout) {}
@@ -991,16 +974,6 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
 
                 @Override
                 public Integer getRenderTimeout() {
-                    return null;
-                }
-
-                @Override
-                public int getPublisherId() {
-                    return 0;
-                }
-
-                @Override
-                public Date getPublishDate() {
                     return null;
                 }
 
@@ -1050,17 +1023,16 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
                 }
 
                 @Override
+                public void setLifecycleState(PortletLifecycleState lifecycleState, IPerson user) {}
+
+                @Override
+                public void setLifecycleState(PortletLifecycleState lifecycleState, IPerson user, Date timestamp) {}
+
+                @Override
+                public List<IPortletLifecycleEntry> getLifecycle() { return null; }
+
+                @Override
                 public String getFName() {
-                    return null;
-                }
-
-                @Override
-                public int getExpirerId() {
-                    return 0;
-                }
-
-                @Override
-                public Date getExpirationDate() {
                     return null;
                 }
 
@@ -1081,16 +1053,6 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
 
                 @Override
                 public String getDescription() {
-                    return null;
-                }
-
-                @Override
-                public int getApproverId() {
-                    return 0;
-                }
-
-                @Override
-                public Date getApprovalDate() {
                     return null;
                 }
 

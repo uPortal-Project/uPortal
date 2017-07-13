@@ -24,9 +24,11 @@ import org.apereo.portal.portlet.om.IPortletDefinition;
 import org.apereo.portal.portlet.om.IPortletDefinitionId;
 import org.apereo.portal.portlet.om.IPortletDefinitionParameter;
 import org.apereo.portal.portlet.om.IPortletDescriptorKey;
+import org.apereo.portal.portlet.om.IPortletLifecycleEntry;
 import org.apereo.portal.portlet.om.IPortletPreference;
 import org.apereo.portal.portlet.om.IPortletType;
 import org.apereo.portal.portlet.om.PortletLifecycleState;
+import org.apereo.portal.security.IPerson;
 
 /**
  * {@link IPortletDefinition} implementation representing a missing portlet, meaning a portlet that
@@ -34,8 +36,8 @@ import org.apereo.portal.portlet.om.PortletLifecycleState;
  */
 public class MissingPortletDefinition implements IPortletDefinition {
 
-    public static final String FNAME = "DLMStaticMissingChannel";
-    public static final String CHANNEL_ID = "-1";
+    private static final String FNAME = "DLMStaticMissingChannel";
+    /* package-private */ static final String CHANNEL_ID = "-1";
 
     public static final IPortletDefinition INSTANCE = new MissingPortletDefinition();
 
@@ -159,16 +161,6 @@ public class MissingPortletDefinition implements IPortletDefinition {
     public void addParameter(IPortletDefinitionParameter parameter) {}
 
     @Override
-    public Date getApprovalDate() {
-        return null;
-    }
-
-    @Override
-    public int getApproverId() {
-        return 0;
-    }
-
-    @Override
     public String getDescription() {
         return null;
     }
@@ -181,16 +173,6 @@ public class MissingPortletDefinition implements IPortletDefinition {
     @Override
     public EntityIdentifier getEntityIdentifier() {
         return null;
-    }
-
-    @Override
-    public Date getExpirationDate() {
-        return null;
-    }
-
-    @Override
-    public int getExpirerId() {
-        return 0;
     }
 
     @Override
@@ -209,35 +191,13 @@ public class MissingPortletDefinition implements IPortletDefinition {
     }
 
     @Override
-    public Date getPublishDate() {
-        return null;
-    }
-
-    @Override
-    public int getPublisherId() {
-        return 0;
-    }
-
-    @Override
     public void removeParameter(IPortletDefinitionParameter parameter) {}
 
     @Override
     public void removeParameter(String name) {}
 
     @Override
-    public void setApprovalDate(Date approvalDate) {}
-
-    @Override
-    public void setApproverId(int approvalId) {}
-
-    @Override
     public void setDescription(String descr) {}
-
-    @Override
-    public void setExpirationDate(Date expirationDate) {}
-
-    @Override
-    public void setExpirerId(int expirerId) {}
 
     @Override
     public void setFName(String fname) {}
@@ -247,12 +207,6 @@ public class MissingPortletDefinition implements IPortletDefinition {
 
     @Override
     public void setParameters(Set<IPortletDefinitionParameter> parameters) {}
-
-    @Override
-    public void setPublishDate(Date publishDate) {}
-
-    @Override
-    public void setPublisherId(int publisherId) {}
 
     @Override
     public void setTimeout(int timeout) {}
@@ -271,6 +225,15 @@ public class MissingPortletDefinition implements IPortletDefinition {
     public PortletLifecycleState getLifecycleState() {
         return null;
     }
+
+    @Override
+    public void setLifecycleState(PortletLifecycleState lifecycleState, IPerson user) {}
+
+    @Override
+    public void setLifecycleState(PortletLifecycleState lifecycleState, IPerson user, Date timestamp) {}
+
+    @Override
+    public List<IPortletLifecycleEntry> getLifecycle() { return null; }
 
     @Override
     public IPortletDefinitionId getPortletDefinitionId() {
@@ -310,11 +273,8 @@ public class MissingPortletDefinition implements IPortletDefinition {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
-            return true; // there is only one instance, so this should suffice
-        } else {
-            return false;
-        }
+        // there is only one instance, so this should suffice
+        return this == obj;
     }
 
     private static final class MissingPortletDefinitionId implements IPortletDefinitionId {

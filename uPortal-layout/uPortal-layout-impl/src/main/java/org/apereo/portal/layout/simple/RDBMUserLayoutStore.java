@@ -314,17 +314,6 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
     }
 
     /**
-     * Checks if a channel has been approved
-     *
-     * @param approvedDate
-     * @return boolean Channel is approved
-     */
-    protected static boolean channelApproved(java.util.Date approvedDate) {
-        java.util.Date rightNow = new java.util.Date();
-        return (approvedDate != null && rightNow.after(approvedDate));
-    }
-
-    /**
      * Create a layout
      *
      * @param layoutStructure

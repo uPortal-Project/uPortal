@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Set;
 import org.apereo.portal.IBasicEntity;
 import org.apereo.portal.io.xml.IPortalData;
+import org.apereo.portal.security.IPerson;
 
 /** A portlet definition is equivalent to a published ChannelDefinition. */
 public interface IPortletDefinition extends IBasicEntity, IPortalData {
@@ -58,6 +59,12 @@ public interface IPortletDefinition extends IBasicEntity, IPortalData {
 
     PortletLifecycleState getLifecycleState();
 
+    void setLifecycleState(PortletLifecycleState lifecycleState, IPerson user);
+
+    void setLifecycleState(PortletLifecycleState lifecycleState, IPerson user, Date timestamp);
+
+    List<IPortletLifecycleEntry> getLifecycle();
+
     String getFName();
 
     String getName();
@@ -92,18 +99,6 @@ public interface IPortletDefinition extends IBasicEntity, IPortalData {
     Integer getResourceTimeout();
 
     IPortletType getType();
-
-    int getPublisherId();
-
-    int getApproverId();
-
-    Date getPublishDate();
-
-    Date getApprovalDate();
-
-    int getExpirerId();
-
-    Date getExpirationDate();
 
     /** @return a READ-ONLY copy of the parameters */
     Set<IPortletDefinitionParameter> getParameters();
@@ -172,18 +167,6 @@ public interface IPortletDefinition extends IBasicEntity, IPortalData {
     void setResourceTimeout(Integer resourceTimeout);
 
     void setType(IPortletType channelType);
-
-    void setPublisherId(int publisherId);
-
-    void setApproverId(int approvalId);
-
-    void setPublishDate(Date publishDate);
-
-    void setApprovalDate(Date approvalDate);
-
-    void setExpirerId(int expirerId);
-
-    void setExpirationDate(Date expirationDate);
 
     void setParameters(Set<IPortletDefinitionParameter> parameters);
 

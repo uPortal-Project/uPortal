@@ -142,8 +142,8 @@
      +-->
     <bean id="portletDefinitionImporterExporter" class="org.apereo.portal.io.xml.portlet.PortletDefinitionImporterExporter">
         <property name="contextPath" value="org.apereo.portal.io.xml.portlet" />
-        <property name="schema" value="classpath:/xsd/portlet-definition-4.3.xsd" />
-        <property name="schemaLocation" value="https://source.jasig.org/schemas/uportal/io/portlet-definition https://source.jasig.org/schemas/uportal/io/portlet-definition/portlet-definition-4.3.xsd" />
+        <property name="schema" value="classpath:/xsd/portlet-definition-5.0.xsd" />
+        <property name="schemaLocation" value="https://source.jasig.org/schemas/uportal/io/portlet-definition https://source.jasig.org/schemas/uportal/io/portlet-definition/portlet-definition-5.0.xsd" />
     </bean>
     <bean id="portletTypeImporterExporter" class="org.apereo.portal.io.xml.portlettype.PortletTypeImporterExporter">
         <property name="contextPath" value="org.apereo.portal.io.xml.portlettype" />
@@ -353,6 +353,14 @@
             </set>
         </property>
         <property name="xslResource" value="classpath:/org/apereo/portal/io/xml/portlet/upgradePortlet_40.xsl" />
+    </bean>
+    <bean id="portlet43DataUpgrader" class="org.apereo.portal.io.xml.XsltDataUpgrader">
+        <property name="portalDataKeys">
+            <set>
+                <util:constant static-field="org.apereo.portal.io.xml.portlet.PortletPortalDataType.IMPORT_43_DATA_KEY"/>
+            </set>
+        </property>
+        <property name="xslResource" value="classpath:/org/apereo/portal/io/xml/portlet/upgradePortlet_43.xsl" />
     </bean>
     <bean id="subscribedFragment32DataUpgrader" class="org.apereo.portal.io.xml.XsltDataUpgrader">
         <property name="portalDataKeys">

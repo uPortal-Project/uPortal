@@ -70,6 +70,7 @@
         <mapping class="org.apereo.portal.portlet.dao.jpa.PortalCookieImpl"/>
         <mapping class="org.apereo.portal.portlet.dao.jpa.PortletTypeImpl" />
         <mapping class="org.apereo.portal.portlet.dao.jpa.PortletEntityImpl" />
+        <mapping class="org.apereo.portal.portlet.dao.jpa.PortletLifecycleEntryImpl" />
         <mapping class="org.apereo.portal.portlet.dao.jpa.PortletPreferencesImpl" />
         <mapping class="org.apereo.portal.portlet.dao.jpa.PortletPreferenceImpl" />
         <mapping class="org.apereo.portal.tenants.JpaTenant"/>

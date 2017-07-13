@@ -527,11 +527,8 @@ public final class PortletAdministrationHelper implements ServletContextAware {
         IAuthorizationPrincipal authPrincipal =
                 authorizationService.newPrincipal(
                         person.getUserName(), EntityEnum.PERSON.getClazz());
-        if (!authPrincipal.canSubscribe(portletId)) {
-            return false;
-        }
 
-        return true;
+        return authPrincipal.canSubscribe(portletId);
     }
 
     /**
@@ -562,7 +559,7 @@ public final class PortletAdministrationHelper implements ServletContextAware {
         PortletPublishingDefinition cpd =
                 this.portletPublishingDefinitionDao.getChannelPublishingDefinition(
                         form.getTypeId());
-        Set<String> currentPrefs = new HashSet<String>();
+        Set<String> currentPrefs = new HashSet<>();
         currentPrefs.addAll(form.getPortletPreferences().keySet());
         for (Step step : cpd.getSteps()) {
             if (step.getPreferences() != null) {
@@ -631,8 +628,8 @@ public final class PortletAdministrationHelper implements ServletContextAware {
         }
 
         //Names of valid preferences and parameters
-        final Set<String> preferenceNames = new HashSet<String>();
-        final Set<String> parameterNames = new HashSet<String>();
+        final Set<String> preferenceNames = new HashSet<>();
+        final Set<String> parameterNames = new HashSet<>();
 
         //Read all of the submitted channel parameter and portlet preference names from the request
         for (final Enumeration<String> e = request.getParameterNames(); e.hasMoreElements(); ) {
@@ -766,8 +763,7 @@ public final class PortletAdministrationHelper implements ServletContextAware {
     public List<PortletApplicationDefinition> getPortletApplications() {
         final PortletRegistryService portletRegistryService =
                 portalDriverContainerServices.getPortletRegistryService();
-        final List<PortletApplicationDefinition> contexts =
-                new ArrayList<PortletApplicationDefinition>();
+        final List<PortletApplicationDefinition> contexts = new ArrayList<>();
 
         for (final Iterator<String> iter =
                         portletRegistryService.getRegisteredPortletApplicationNames();
@@ -786,47 +782,43 @@ public final class PortletAdministrationHelper implements ServletContextAware {
             }
 
             final List<? extends PortletDefinition> portlets = applicationDefninition.getPortlets();
-            Collections.sort(
-                    portlets,
-                    new ComparableExtractingComparator<PortletDefinition, String>(
-                            String.CASE_INSENSITIVE_ORDER) {
-                        @Override
-                        protected String getComparable(PortletDefinition o) {
-                            final List<? extends DisplayName> displayNames = o.getDisplayNames();
-                            if (displayNames != null && displayNames.size() > 0) {
-                                return displayNames.get(0).getDisplayName();
-                            }
+            portlets.sort(new ComparableExtractingComparator<PortletDefinition, String>(
+                    String.CASE_INSENSITIVE_ORDER) {
+                @Override
+                protected String getComparable(PortletDefinition o) {
+                    final List<? extends DisplayName> displayNames = o.getDisplayNames();
+                    if (displayNames != null && displayNames.size() > 0) {
+                        return displayNames.get(0).getDisplayName();
+                    }
 
-                            return o.getPortletName();
-                        }
-                    });
+                    return o.getPortletName();
+                }
+            });
 
             contexts.add(applicationDefninition);
         }
 
-        Collections.sort(
-                contexts,
-                new ComparableExtractingComparator<PortletApplicationDefinition, String>(
-                        String.CASE_INSENSITIVE_ORDER) {
-                    @Override
-                    protected String getComparable(PortletApplicationDefinition o) {
-                        final String portletContextName = o.getName();
-                        if (portletContextName != null) {
-                            return portletContextName;
-                        }
+        contexts.sort(new ComparableExtractingComparator<PortletApplicationDefinition, String>(
+                String.CASE_INSENSITIVE_ORDER) {
+            @Override
+            protected String getComparable(PortletApplicationDefinition o) {
+                final String portletContextName = o.getName();
+                if (portletContextName != null) {
+                    return portletContextName;
+                }
 
-                        final String applicationName = o.getContextPath();
-                        if ("/".equals(applicationName)) {
-                            return "ROOT";
-                        }
+                final String applicationName = o.getContextPath();
+                if ("/".equals(applicationName)) {
+                    return "ROOT";
+                }
 
-                        if (applicationName.startsWith("/")) {
-                            return applicationName.substring(1);
-                        }
+                if (applicationName.startsWith("/")) {
+                    return applicationName.substring(1);
+                }
 
-                        return applicationName;
-                    }
-                });
+                return applicationName;
+            }
+        });
         return contexts;
     }
 
@@ -849,9 +841,7 @@ public final class PortletAdministrationHelper implements ServletContextAware {
         final PortletRegistryService portletRegistryService =
                 portalDriverContainerServices.getPortletRegistryService();
         try {
-            PortletDefinition portletDD =
-                    portletRegistryService.getPortlet(portletAppId, portletName);
-            return portletDD;
+            return portletRegistryService.getPortlet(portletAppId, portletName);
         } catch (PortletContainerException e) {
             e.printStackTrace();
             return null;
@@ -1076,7 +1066,7 @@ public final class PortletAdministrationHelper implements ServletContextAware {
 
         final Boolean isFramework = portletDescriptor.isIsFramework();
         if (isFramework != null && isFramework) {
-            form.setFramework(isFramework);
+            form.setFramework(true);
         } else {
             final String webAppName = portletDescriptor.getWebAppName();
             form.setApplicationId(webAppName);
@@ -1105,7 +1095,7 @@ public final class PortletAdministrationHelper implements ServletContextAware {
             rslt = rawMap;
         } else {
             // Filter the collection by permissions...
-            rslt = new HashMap<IPortletType, PortletPublishingDefinition>();
+            rslt = new HashMap<>();
             for (Map.Entry<IPortletType, PortletPublishingDefinition> y : rawMap.entrySet()) {
                 if (principal.hasPermission(
                         IPermission.PORTAL_PUBLISH,
@@ -1134,93 +1124,52 @@ public final class PortletAdministrationHelper implements ServletContextAware {
 
         final String portletName = form.getPortletName();
 
-        return new Tuple<String, String>(portletAppId, portletName);
+        return new Tuple<>(portletAppId, portletName);
     }
 
     private void updateLifecycleState(
             PortletDefinitionForm form, IPortletDefinition portletDef, IPerson publisher) {
 
-        /*
-         * Manage the metadata for each possible lifecycle state in turn...
-         */
-
-        Date now = new Date(); // Will be entered as the timestamp for states that we trigger
-        PortletLifecycleState selectedLifecycleState = form.getLifecycleState();
+        final PortletLifecycleState selectedLifecycleState = form.getLifecycleState();
 
         /*
-         * APPROVED
+         * Step One:  update the current lifecycle state, even if it isn't changing.
+         *
+         * NOTE 1:  forcing an update (even to the same state) will have the effect of
+         * clearing the publish/expire date if set previously (but not set in this submit).
+         *
+         * NOTE 2:  permissions for this step have already been checked in savePortletRegistration.
          */
-        if (selectedLifecycleState.isEqualToOrAfter(PortletLifecycleState.APPROVED)) {
-            // We are the 'approver' if it isn't previously approved...
-            if (portletDef.getApprovalDate() == null) {
-                portletDef.setApproverId(publisher.getID());
-                portletDef.setApprovalDate(now);
-            }
-            if (selectedLifecycleState.equals(PortletLifecycleState.APPROVED)
-                    && form.getPublishDate() != null
-                    // Permissions check required (of course) to use the auto-publish feature
-                    && hasLifecyclePermission(
-                            publisher, PortletLifecycleState.PUBLISHED, form.getCategories())) {
-                // We are also the 'publisher' if we scheduled the portlet for (future) publication...
-                portletDef.setPublishDate(form.getPublishDateTime());
-                portletDef.setPublisherId(publisher.getID());
-            }
-        } else {
-            // Clear previous approval fields, if present...
-            portletDef.setApprovalDate(null);
-            portletDef.setApproverId(-1);
+        portletDef.setLifecycleState(selectedLifecycleState, publisher);
+
+        /*
+         * Step Two:  depending on which state was selected, we may have extra work to do.
+         */
+        switch (selectedLifecycleState) {
+            case APPROVED:
+                // Check for an auto-publish date...
+                if (form.getPublishDate() != null && hasLifecyclePermission(
+                        publisher, PortletLifecycleState.PUBLISHED, form.getCategories())) {
+                    // We are also the 'publisher' if we scheduled the portlet for (future) publication...
+                    portletDef.setLifecycleState(PortletLifecycleState.PUBLISHED, publisher,
+                            form.getPublishDateTime());
+                }
+                break;
+            case PUBLISHED:
+                // Check for an expiration date...
+                if (form.getExpirationDate() != null && hasLifecyclePermission(
+                        publisher, PortletLifecycleState.EXPIRED, form.getCategories())) {
+                    // We are also the 'expirer' if we scheduled the portlet for (future) expiration...
+                    portletDef.setLifecycleState(PortletLifecycleState.EXPIRED, publisher,
+                            form.getExpirationDateTime());
+
+                }
+                break;
+            default:
+                // No extra work
+                break;
         }
 
-        /*
-         * PUBLISHED
-         */
-        if (selectedLifecycleState.isEqualToOrAfter(PortletLifecycleState.PUBLISHED)) {
-            // We are the 'publisher' if it isn't previously published or the publish time hasn't hit yet...
-            if (portletDef.getPublishDate() == null || portletDef.getPublishDate().after(now)) {
-                portletDef.setPublisherId(publisher.getID());
-                portletDef.setPublishDate(now);
-            }
-            if (selectedLifecycleState.equals(PortletLifecycleState.PUBLISHED)
-                    && form.getExpirationDate() != null
-                    // Permissions check required (of course) to use the auto-expire feature
-                    && hasLifecyclePermission(
-                            publisher, PortletLifecycleState.EXPIRED, form.getCategories())) {
-                // We are also the 'expirer' if we scheduled the portlet for (future) expiration...
-                portletDef.setExpirationDate(form.getExpirationDateTime());
-                portletDef.setExpirerId(publisher.getID());
-            }
-        } else if (!selectedLifecycleState.equals(PortletLifecycleState.APPROVED)
-                || form.getPublishDate() == null) {
-            // Clear previous publishing fields, if present...
-            portletDef.setPublishDate(null);
-            portletDef.setPublisherId(-1);
-        }
-
-        /*
-         * EXPIRED
-         */
-        if (selectedLifecycleState.equals(PortletLifecycleState.EXPIRED)) {
-            // We are only the 'expirer' if we specifically choose EXPIRED
-            // (MAINTENANCE mode is not considered expired)
-            portletDef.setExpirerId(publisher.getID());
-            portletDef.setExpirationDate(now);
-        } else if (!selectedLifecycleState.equals(PortletLifecycleState.PUBLISHED)
-                || form.getExpirationDate() == null) {
-            // Clear previous expiration fields, if present...
-            portletDef.setExpirationDate(null);
-            portletDef.setExpirerId(-1);
-        }
-
-        /*
-         * MAINTENANCE
-         */
-        if (selectedLifecycleState.equals(PortletLifecycleState.MAINTENANCE)) {
-            // We are placing the portlet into MAINTENANCE mode;
-            // an admin will restore it (manually) when available
-            portletDef.addParameter(PortletLifecycleState.MAINTENANCE_MODE_PARAMETER_NAME, "true");
-        } else {
-            // Otherwise we must remove the MAINTENANCE flag, if present
-            portletDef.removeParameter(PortletLifecycleState.MAINTENANCE_MODE_PARAMETER_NAME);
-        }
     }
+
 }

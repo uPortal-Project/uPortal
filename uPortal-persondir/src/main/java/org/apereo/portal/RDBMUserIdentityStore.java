@@ -42,6 +42,8 @@ import org.apereo.portal.portlet.dao.IPortletEntityDao;
 import org.apereo.portal.portlet.om.IPortletEntity;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.PersonFactory;
+import org.apereo.portal.security.provider.BrokenSecurityContext;
+import org.apereo.portal.security.provider.PersonImpl;
 import org.apereo.portal.services.GroupService;
 import org.apereo.portal.spring.locator.CounterStoreLocator;
 import org.apereo.portal.utils.SerializableObject;
@@ -303,6 +305,18 @@ public class RDBMUserIdentityStore implements IUserIdentityStore {
         }
         return uid;
     }
+
+    public IPerson getPerson(String userName, boolean createPortalData)
+            throws AuthorizationException {
+
+        final IPerson rslt = new PersonImpl();
+        rslt.setUserName(userName);
+        rslt.setID(getPortalUID(rslt, createPortalData));
+        rslt.setSecurityContext(new BrokenSecurityContext());
+        return rslt;
+
+    }
+
 
     /* (non-javadoc)
      * @see org.apereo.portal.IUserIdentityStore#getPortalUserName(int)

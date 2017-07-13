@@ -61,4 +61,18 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
+
+    <xs:complexType name="basePortalDataType50" abstract="true">
+        <xs:annotation>
+            <xs:documentation>
+                Base type for all 5.0 version data descriptor files. A copy of this type should be
+                created for each minor release of uPortal with the version field appropriately incremented.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="basePortalDataType">
+                <xs:attribute name="version" type="xs:string" use="required" fixed="5.0" />
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
 </xs:schema>

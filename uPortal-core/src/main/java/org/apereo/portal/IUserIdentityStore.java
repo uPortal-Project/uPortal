@@ -24,7 +24,6 @@ public interface IUserIdentityStore {
      *
      * @param person the person object
      * @return uPortalUID number
-     * @throws Exception exception if an error occurs.
      */
     int getPortalUID(IPerson person) throws AuthorizationException;
 
@@ -32,13 +31,24 @@ public interface IUserIdentityStore {
      * Returns a unique uPortal key for a user. A boolean flag determines whether or not to
      * auto-create data for a new user.
      *
-     * @param person person whose portalUID will be returned
-     * @param createPortalData indicates whether to try to create all uPortal data for a new user.
-     * @return uPortalUID number or -1 if no user found and unable to create user.
-     * @throws AuthorizationException if createPortalData is false and no user is found or if a sql
+     * @param person Person whose portalUID will be returned
+     * @param createPortalData Indicates whether to try to create all uPortal data for a new user
+     * @return uPortalUID Number or -1 if no user found and unable to create user.
+     * @throws AuthorizationException If createPortalData is false and no user is found or if a sql
      *     error is encountered
      */
     int getPortalUID(IPerson person, boolean createPortalData) throws AuthorizationException;
+
+    /**
+     * Returns the portal {@link IPerson} corresponding with the specified userName.  The
+     * <code>createPortalData</code> flag indicates whether the user should be created in
+     * the case that s/he doesn't already exist.
+     *
+     * @param userName The identity of the requested user
+     * @param createPortalData Indicates whether to try to create all uPortal data for a new user
+     * @return The specified user, or null if the user is not found and createPortalData is false
+     */
+    IPerson getPerson(String userName, boolean createPortalData) throws AuthorizationException;
 
     void removePortalUID(String userName) throws Exception;
 
@@ -49,7 +59,6 @@ public interface IUserIdentityStore {
      *
      * @param uPortalUID The portal ID to find a user name for.
      * @return The user name associated with the specified portal id, null if one isn't found.
-     * @throws Exception If there are any problems retrieving the user name.
      */
     String getPortalUserName(int uPortalUID);
 
@@ -64,4 +73,5 @@ public interface IUserIdentityStore {
 
     /** Returns true if the specified String satisfies all criteria for a valid username. */
     boolean validateUsername(String username);
+
 }

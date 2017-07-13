@@ -19,6 +19,7 @@ import com.google.common.collect.Collections2;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+
 import org.apereo.portal.IUserIdentityStore;
 import org.apereo.portal.fragment.subscribe.IUserFragmentSubscription;
 import org.apereo.portal.fragment.subscribe.dao.IUserFragmentSubscriptionDao;
@@ -28,8 +29,6 @@ import org.apereo.portal.io.xml.IPortalDataType;
 import org.apereo.portal.io.xml.PortalDataKey;
 import org.apereo.portal.io.xml.SimpleStringPortalData;
 import org.apereo.portal.security.IPerson;
-import org.apereo.portal.security.provider.BrokenSecurityContext;
-import org.apereo.portal.security.provider.PersonImpl;
 import org.apereo.portal.utils.SafeFilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -115,27 +114,12 @@ public class SubscribedFragmentImporterExporter
     }
 
     private IPerson getPerson(final String username, boolean create) {
-        final IPerson person = new PersonImpl();
-        person.setUserName(username);
-
-        int userId;
         try {
-            userId = this.userIdentityStore.getPortalUID(person);
-        } catch (final Throwable t) {
-            if (!create || this.errorOnMissingUser) {
-                throw new RuntimeException(
-                        "Unrecognized user "
-                                + person.getUserName()
-                                + "; you must import users before their layouts.",
-                        t);
-            }
-
-            userId = this.userIdentityStore.getPortalUID(person, true);
+            return userIdentityStore.getPerson(username, create);
+        } catch (final Exception e) {
+            throw new RuntimeException("Unrecognized user '" + username +
+                    "'; you must import users before their layouts.", e);
         }
-
-        person.setID(userId);
-        person.setSecurityContext(new BrokenSecurityContext());
-        return person;
     }
 
     /*
