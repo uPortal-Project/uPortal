@@ -16,7 +16,6 @@ package org.apereo.portal.rest;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import junit.framework.Assert;
 import org.apereo.portal.groups.pags.dao.IPersonAttributesGroupDefinition;
 import org.apereo.portal.groups.pags.dao.PagsService;
 import org.apereo.portal.groups.pags.dao.jpa.PersonAttributesGroupDefinitionImpl;
@@ -24,6 +23,7 @@ import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.IPersonManager;
 import org.apereo.portal.security.provider.PersonImpl;
 import org.apereo.portal.services.GroupService;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
