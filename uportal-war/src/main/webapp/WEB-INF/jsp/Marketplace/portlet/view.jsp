@@ -397,24 +397,26 @@
 
 <div id="unseen">
     <table id="${n}portletTable" class="display table">
+        <caption class="sr-only"><spring:message code="favorites.invitation.to.marketplace.short" /></caption>
         <thead>
             <tr>
-                <th class="essential" style="border:none;">
+                <th class="essential" style="border:none;" scope="col">
                     <spring:message code="marketplace.title" />
                 </th>
-                <th class="optional" style="border:none;">
+                <th class="optional" style="border:none;" scope="col">
                     <spring:message code="marketplace.description" />
                 </th>
-                    <th class="essential" style="border:none;">
+                <th class="essential" style="border:none;" scope="col">
+                    <spring:message code="marketplace.details" />
                 </th>
             </tr>
         </thead>
         <tbody>
             <c:forEach var="portlet" items="${marketplaceEntries}">
                 <tr>
-                    <td class="essential" style="white-space: nowrap; border:none;">
+                    <th class="essential" style="white-space: nowrap; border:none;" scope="row">
                         <strong><a href="${portlet.renderUrl}">${portlet.title} <i class="fa fa-external-link"></i></a></strong>
-                    </td>
+                    </th>
                     <td class="optional" style="border:none;">
                         ${portlet.description}
                     </td>
@@ -479,7 +481,7 @@
             var myDataTable = $('#${n}portletTable').dataTable({
                 "aoColumnDefs": [{"bSortable": false, "aTargets": [ 2 ] }, { "bVisible": false, "aTargets": [ 3 ] }],
                 "fnRowCallback": function(nRow, aData, iDisplayIndex, iDisplayIndexFull){
-                       applyEllipsis(nRow,1,75);
+                       applyEllipsis(nRow,0,75);
                       },
                 "sDom": '<rt'+
                     '<"row ${n}bottom" <"col-xs-6 col-sm-8 col-md-3" i>'+
