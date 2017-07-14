@@ -57,12 +57,29 @@ public interface IPortletDefinition extends IBasicEntity, IPortalData {
      */
     boolean setPortletPreferences(List<IPortletPreference> portletPreferences);
 
+    /**
+     * The current lifecycle state is equal to the last entry in the lifecycle history that is not
+     * in the future.
+     */
     PortletLifecycleState getLifecycleState();
 
+    /**
+     * Adds the specified state to the lifecycle history at the present moment, removing any
+     * lifecycle changes scheduled for the future.
+     */
     void setLifecycleState(PortletLifecycleState lifecycleState, IPerson user);
 
+    /**
+     * Schedules the specified state change for the specified moment, removing any lifecycle
+     * changes scheduled beyond that.
+     */
     void setLifecycleState(PortletLifecycleState lifecycleState, IPerson user, Date timestamp);
 
+    /**
+     * Returns the entire lifecycle history of the portlet:  past, present, and future.  Entries in
+     * the lifecycle history will always be in chronological order.  A portlet may be placed in and
+     * out of the same state multiple times, and the lifecycle history will reflect those changes.
+     */
     List<IPortletLifecycleEntry> getLifecycle();
 
     String getFName();

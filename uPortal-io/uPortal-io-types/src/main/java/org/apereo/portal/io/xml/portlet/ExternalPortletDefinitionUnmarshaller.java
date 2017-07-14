@@ -1,3 +1,18 @@
+/**
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
+ *
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.apereo.portal.io.xml.portlet;
 
 import java.math.BigInteger;
@@ -84,6 +99,13 @@ import org.springframework.stereotype.Component;
         } catch (ParseException e) {
             throw new RuntimeException(e);
        }
+    }
+
+    /**
+     * For unit tests.
+     */
+    /* package-private */ void setUserIdentityStore(IUserIdentityStore userIdentityStore) {
+        this.userIdentityStore = userIdentityStore;
     }
 
     /* package-private */ IPortletDefinition unmarshall(ExternalPortletDefinition epd) {
@@ -203,24 +225,10 @@ import org.springframework.stereotype.Component;
             portletDefinition.setLifecycleState(PortletLifecycleState.CREATED, systemUser);
         } else {
             /*
-             * Ultimately, we need to be certain the the entries get
-             * applied to the new portlet definition in a sane order...
+             * Use a TreeMap because we need to be certain the the entries
+             * get applied to the new portlet definition in a sane order...
              */
-            Map<IPortletLifecycleEntry,IPerson> convertedEntries = new TreeMap<>(
-                    (o1, o2) -> {
-                        int rslt = 0; // default; entries are equal (but this outcome shouldn't happen)
-                        if(!o1.getDate().equals(o2.getDate())) {
-                            // Most important criterion is date
-                            rslt = o1.getDate().before(o2.getDate()) ? -1 : 1;
-                        } else {
-                            // The tie breaker is PortletLifecycleState
-                            if (!o1.getLifecycleState().equals(o2.getLifecycleState())) {
-                                rslt = o1.getLifecycleState().isBefore(o2.getLifecycleState()) ? -1 : 1;
-                            }
-                        }
-                        return rslt;
-                    }
-            );
+            Map<IPortletLifecycleEntry,IPerson> convertedEntries = new TreeMap<>();
             /*
              * Convert each LifecycleEntry (JAXB) to an IPortletLifecycleEntry (internal)
              */
@@ -239,15 +247,21 @@ import org.springframework.stereotype.Component;
                     public int getUserId() {
                         return user.getID();
                     }
-
                     @Override
                     public PortletLifecycleState getLifecycleState() {
                         return state;
                     }
-
                     @Override
                     public Date getDate() {
                         return date;
+                    }
+                    @Override
+                    public int compareTo(IPortletLifecycleEntry o) {
+                        int rslt = date.compareTo(o.getDate());
+                        if (rslt == 0) {
+                            rslt = state.getOrder() - o.getLifecycleState().getOrder();
+                        }
+                        return rslt;
                     }
                 }, user);
             }

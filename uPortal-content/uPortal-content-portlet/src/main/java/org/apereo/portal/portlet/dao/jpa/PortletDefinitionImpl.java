@@ -38,6 +38,7 @@ import javax.persistence.MapKey;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
 import javax.persistence.PostLoad;
 import javax.persistence.PostPersist;
 import javax.persistence.PostRemove;
@@ -177,10 +178,6 @@ public class PortletDefinitionImpl implements IPortletDefinition {
     @Column(name = "RESOURCE_TIMEOUT")
     private Integer resourceTimeout = null;
 
-    /**
-     * The lifecycle history of this portlet.  NOTE (JPA docs):  "If the ordering element is not
-     * specified, ordering by the primary key of the associated entity is assumed."
-     */
     @OneToMany(
             targetEntity = PortletLifecycleEntryImpl.class,
             cascade = CascadeType.ALL,
@@ -190,6 +187,7 @@ public class PortletDefinitionImpl implements IPortletDefinition {
     @JoinColumn(name = "PORLTET_DEF_ID", nullable = false)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @Fetch(FetchMode.JOIN)
+    @OrderBy("ENTRY_DATE ASC")
     private List<IPortletLifecycleEntry> lifecycleEntries = new ArrayList<>();
 
     /**
@@ -705,7 +703,11 @@ public class PortletDefinitionImpl implements IPortletDefinition {
         // Avoid a ConcurrentModificationException
         final List<IPortletLifecycleEntry> list = new ArrayList<>(lifecycleEntries);
         for (IPortletLifecycleEntry entry : list) {
-            if (entry.getLifecycleState().isEqualToOrAfter(lifecycleState)) {
+            /*
+             * Lifecycle entries that are scheduled for a
+             * date following the new entry must be cleared.
+             */
+            if (entry.getDate().after(timestamp)) {
                 lifecycleEntries.remove(entry);
             }
         }

@@ -241,6 +241,20 @@
         </property>
         <property name="task" ref="import-group_membership_v3-2-MEMBERS" />
     </bean>
+    <bean id="groupMembershipGroup50Importer" class="org.apereo.portal.io.xml.crn.CernunnosDataImporter">
+        <property name="threadSafe" value="false" />
+        <property name="dataKeys">
+            <util:constant static-field="org.apereo.portal.io.xml.group.GroupMembershipPortalDataType.IMPORT_GROUP_50_DATA_KEY"/>
+        </property>
+        <property name="task" ref="import-group_membership_v5-0-GROUP" />
+    </bean>
+    <bean id="groupMembershipMembers50Importer" class="org.apereo.portal.io.xml.crn.CernunnosDataImporter">
+        <property name="threadSafe" value="false" />
+        <property name="dataKeys">
+            <util:constant static-field="org.apereo.portal.io.xml.group.GroupMembershipPortalDataType.IMPORT_MEMBERS_50_DATA_KEY"/>
+        </property>
+        <property name="task" ref="import-group_membership_v5-0-MEMBERS" />
+    </bean>
     <bean id="pagsGroupMembershipGroup41Importer" class="org.apereo.portal.io.xml.crn.CernunnosDataImporter">
         <property name="threadSafe" value="false" />
         <property name="dataKeys">
@@ -453,6 +467,27 @@
             <util:map>
                 <entry key="SqlAttributes.DATA_SOURCE" value-ref="PortalDb" />
                 <entry key="SqlAttributes.TRANSACTION_MANAGER" value-ref="transactionManager" />
+            </util:map>
+        </property>
+    </bean>
+
+    <bean id="import-group_membership_v5-0-GROUP" class="org.danann.cernunnos.runtime.PojoTask">
+        <property name="location" value="classpath://org/apereo/portal/io/import-group_membership_v5-0.crn" />
+        <property name="requestAttributes">
+            <util:map>
+                <entry key="SqlAttributes.DATA_SOURCE" value-ref="PortalDb" />
+                <entry key="SqlAttributes.TRANSACTION_MANAGER" value-ref="transactionManager" />
+                <entry key="IMPORT_ACTION" value="GROUP" />
+            </util:map>
+        </property>
+    </bean>
+    <bean id="import-group_membership_v5-0-MEMBERS" class="org.danann.cernunnos.runtime.PojoTask">
+        <property name="location" value="classpath://org/apereo/portal/io/import-group_membership_v5-0.crn" />
+        <property name="requestAttributes">
+            <util:map>
+                <entry key="SqlAttributes.DATA_SOURCE" value-ref="PortalDb" />
+                <entry key="SqlAttributes.TRANSACTION_MANAGER" value-ref="transactionManager" />
+                <entry key="IMPORT_ACTION" value="MEMBERS" />
             </util:map>
         </property>
     </bean>

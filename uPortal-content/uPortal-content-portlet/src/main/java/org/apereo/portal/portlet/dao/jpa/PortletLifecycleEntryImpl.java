@@ -15,7 +15,6 @@
 
 package org.apereo.portal.portlet.dao.jpa;
 
-import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Cacheable;
@@ -27,6 +26,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.portal.portlet.om.IPortletLifecycleEntry;
 import org.apereo.portal.portlet.om.PortletLifecycleState;
 import org.hibernate.annotations.Cache;
@@ -50,7 +50,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 )
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)  // Should work, AFAIK, since these objects are immutable
-public class PortletLifecycleEntryImpl implements IPortletLifecycleEntry, Serializable {
+public class PortletLifecycleEntryImpl implements IPortletLifecycleEntry {
 
     private static final long serialVersionUID = 1L;
 
@@ -93,6 +93,44 @@ public class PortletLifecycleEntryImpl implements IPortletLifecycleEntry, Serial
     @Override
     public Date getDate() {
         return date;
+    }
+
+    @Override
+    public int compareTo(IPortletLifecycleEntry o) {
+        int rslt = date.compareTo(o.getDate());
+        if (rslt == 0) {
+            rslt = lifecycleStateId - o.getLifecycleState().getOrder();
+        }
+        return rslt;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        PortletLifecycleEntryImpl that = (PortletLifecycleEntryImpl) o;
+
+        if (userId != that.userId) return false;
+        if (lifecycleStateId != that.lifecycleStateId) return false;
+        return date != null ? date.equals(that.date) : that.date == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = userId;
+        result = 31 * result + lifecycleStateId;
+        result = 31 * result + (date != null ? date.hashCode() : 0);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("userId", userId)
+                .append("lifecycleStateId", lifecycleStateId)
+                .append("date", date)
+                .toString();
     }
 
 }

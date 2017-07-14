@@ -15,6 +15,7 @@
 
 package org.apereo.portal.portlet.om;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -24,7 +25,7 @@ import java.util.Date;
  * and creates a new entry -- with the current user's Id and the current data -- at the specified
  * state.
  */
-public interface IPortletLifecycleEntry {
+public interface IPortletLifecycleEntry extends Comparable<IPortletLifecycleEntry>, Serializable {
 
     int getUserId();
 
