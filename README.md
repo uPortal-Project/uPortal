@@ -1,4 +1,4 @@
-# uPortal
+![uPortal logo](docs/images/uPortal-logo.jpg)
 
 <table border="0">
   <tr>
