@@ -48,7 +48,7 @@
 /* Permissions by Category */
 .permission-lookup {
     background: #eee;
-    border: 1px solid #ccc;
+    border: 1px solid @grayscale4;
     padding: 15px;
     margin: 10px;
     border-radius: 5px;
@@ -59,11 +59,11 @@
     }
 
     .up-autocomplete-dropdown {
-        background: #fff;
-        border: 1px solid #ccc;
+        background: @white;
+        border: 1px solid @grayscale4;
         border-radius: 4px;
         width: 160px;
-        box-shadow: 0 0 5px 0 #999;
+        box-shadow: 0 0 5px 0 @grayscale6;
         position: absolute;
         z-index: 1000;
         display: none;
@@ -83,13 +83,13 @@
             margin-bottom: 0;
 
             .up-autocomplete-match {
-                border-bottom: 1px solid #eee;
+                border-bottom: 1px solid @gray-lighter;
                 padding: 5px;
 
                 &:hover {
                     cursor: pointer;
-                    background: #eee;
-                    color: #000;
+                    background: @gray-lighter;
+                    color: @black;
                 }
 
                 a {
@@ -107,12 +107,12 @@
             background: #ddd;
             &:hover {
                 cursor: pointer;
-                background: #eee;
-                color: #000;
+                background: @gray-lighter;
+                color: @black;
             }
 
             a {
-                color: #999;
+                color: @grayscale6;
                 font-size: 11px;
                 &:hover {
                     text-decoration: none;
@@ -174,7 +174,7 @@
 
         /* Show a border around the navbar */
         .navbar {
-            border: 1px solid #e7e7e7;
+            border: 1px solid @grayscale2;
         }
     }
 }
