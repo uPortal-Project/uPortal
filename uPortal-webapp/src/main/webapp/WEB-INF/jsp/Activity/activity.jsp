@@ -32,63 +32,6 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 | docs/SKINNING_UPORTAL.md
 -->
 
-<style type="text/css">
-    .portal-activity .box-outer {
-        height:auto;
-        background-color: #2E2E2E;
-    }
-
-    .portal-activity .box-header {
-        width:100%;
-        height:20px;
-        background-color:black;
-        text-align:center;
-        vertical-align: middle;
-        font-weight:bold;
-        color:white;
-    }
-
-    .portal-activity .box-total {
-        margin-top:5px;
-        color:white;
-        font-weight:bold;
-        font-size:xx-large;
-        text-align:center;
-        line-height:100%;
-    }
-
-    .portal-activity .box-data {
-        padding-top: 5px;
-        padding-bottom: 15px;
-        color:white;
-    }
-
-    .portal-activity .box-data table {
-        margin-left: auto;
-        margin-right:auto;
-        border-collapse: collapse;
-    }
-
-    .portal-activity .box-data table td {
-        line-height:100%;
-        padding: 2px;
-    }
-
-    .portal-activity .popular-search {
-        clear:both;
-        margin-top:15px;
-    }
-
-    .portal-activity .popular-search .title {
-        margin-top:15px;
-        font-weight:bold;
-    }
-
-    .portal-activity a:link, .portal-activity a:visited, .portal-activity a:hover, .portal-activity a:active {
-        text-decoration: none;
-    }
-</style>
-
 <!-- Portlet -->
 <div class="fl-widget portlet portal-activity" role="section">
     <form id="${n}form">
@@ -175,5 +118,3 @@ up.jQuery( "#portalSearchActivityToggle" ).click(function() {
     up.jQuery( "#portalSearchActivity" ).slideToggle( "slow" );
 });
 </script>
-
-
