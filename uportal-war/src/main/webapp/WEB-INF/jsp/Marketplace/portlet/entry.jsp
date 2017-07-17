@@ -280,9 +280,9 @@
     <li aria-hidden="true" class="divider"></li>
     <li role="menuitem">
         <spring:message code="add.this.portlet.to.my.favorite" text="Add this Portlet to My Favorites" var="atptmfTitle"/>
-        <a href="javascript:;" title="${atptmfTitle}"
+        <a role="button" href="javascript:;" title="${atptmfTitle}"
                 class="{% if (isFavorite) { print('marketplace_remove_favorite'); } else { print('marketplace_add_favorite'); } %}"
-                aria-selected="{% if (isFavorite) { print('true'); } else { print('false'); } %}">
+                aria-pressed="{% if (isFavorite) { print('true'); } else { print('false'); } %}">
             {% if (isFavorite) { %}
                 <i class="fa fa-star"></i>
             {% } else { %}
