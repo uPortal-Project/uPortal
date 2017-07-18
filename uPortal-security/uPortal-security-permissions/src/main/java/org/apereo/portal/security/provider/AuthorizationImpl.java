@@ -613,20 +613,6 @@ public class AuthorizationImpl implements IAuthorizationService {
     }
 
     /**
-     * Does this mean all channels the principal could conceivably subscribe to or all channels
-     * principal is specifically authorized to subscribe to, or what?
-     *
-     * @param principal IAuthorizationPrincipal
-     * @return Vector (of channels?)
-     * @exception AuthorizationException indicates authorization information could not
-     */
-    @Override
-    public Vector getAuthorizedChannels(IAuthorizationPrincipal principal)
-            throws AuthorizationException {
-        return new Vector();
-    }
-
-    /**
      * Returns <code>IAuthorizationPrincipals</code> that have <code>IPermissions</code> for the
      * given owner, activity and target.
      *

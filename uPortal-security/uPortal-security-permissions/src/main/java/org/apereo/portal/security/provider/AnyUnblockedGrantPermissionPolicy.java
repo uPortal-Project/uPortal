@@ -32,6 +32,8 @@ import org.apereo.portal.security.IAuthorizationPrincipal;
 import org.apereo.portal.security.IAuthorizationService;
 import org.apereo.portal.security.IPermission;
 import org.apereo.portal.security.IPermissionPolicy;
+import org.apereo.portal.utils.cache.CacheKey;
+import org.apereo.portal.utils.cache.UsernameTaggedCacheEntryPurger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -237,15 +239,10 @@ public class AnyUnblockedGrantPermissionPolicy implements IPermissionPolicy {
             IPermissionTarget target) {
 
         final Set<IGroupMember> seenGroups = new HashSet<>();
-        final CacheTuple cacheTuple =
-                new CacheTuple(
-                        principal.getPrincipalString(),
-                        owner.getFname(),
-                        activity.getFname(),
-                        target.getKey());
+        final CacheKey cacheKey = getCacheKey(principal, owner, activity, target);
         final boolean answer =
                 hasUnblockedPathToGrant(service, principal, owner, activity, target, seenGroups);
-        Element element = new Element(cacheTuple, answer);
+        final Element element = new Element(cacheKey, answer);
         hasUnblockedGrantCache.put(element);
     }
 
@@ -258,18 +255,13 @@ public class AnyUnblockedGrantPermissionPolicy implements IPermissionPolicy {
             Set<IGroupMember> seenGroups)
             throws GroupsException {
 
-        final CacheTuple cacheTuple =
-                new CacheTuple(
-                        principal.getPrincipalString(),
-                        owner.getFname(),
-                        activity.getFname(),
-                        target.getKey());
-        Element element = hasUnblockedGrantCache.get(cacheTuple);
+        final CacheKey cacheKey = getCacheKey(principal, owner, activity, target);
+        Element element = hasUnblockedGrantCache.get(cacheKey);
         if (element == null) {
             final boolean answer =
                     hasUnblockedPathToGrant(
                             service, principal, owner, activity, target, seenGroups);
-            element = new Element(cacheTuple, answer);
+            element = new Element(cacheKey, answer);
             hasUnblockedGrantCache.put(element);
         }
         return (Boolean) element.getObjectValue();
@@ -391,7 +383,7 @@ public class AnyUnblockedGrantPermissionPolicy implements IPermissionPolicy {
     private Set<IPermission> removeInactivePermissions(final IPermission[] perms) {
         Date now = new Date();
 
-        Set<IPermission> rslt = new HashSet<IPermission>(1);
+        Set<IPermission> rslt = new HashSet<>(1);
 
         for (int i = 0; i < perms.length; i++) {
             IPermission p = perms[i];
@@ -434,86 +426,36 @@ public class AnyUnblockedGrantPermissionPolicy implements IPermissionPolicy {
         return rslt;
     }
 
-    /*
-     * Nested Types
-     */
+    protected CacheKey getCacheKey(IAuthorizationPrincipal principal, IPermissionOwner owner,
+                                   IPermissionActivity activity, IPermissionTarget target) {
 
-    private static final class CacheTuple {
-        private final String principalName;
-        private final String owner;
-        private final String activity;
-        private final String target;
-
-        public CacheTuple(String principalName, String owner, String activity, String target) {
-            this.principalName = principalName;
-            this.owner = owner;
-            this.activity = activity;
-            this.target = target;
+        CacheKey rslt;
+        if (principal.isGroup()) {
+            /*
+             * Untagged keys for groups...
+             */
+            rslt = CacheKey.build(
+                    AnyUnblockedGrantPermissionPolicy.class.getName(),
+                    principal.getPrincipalString(),
+                    owner.getFname(),
+                    activity.getFname(),
+                    target.getKey());
+        } else {
+            /*
+             * Keys tagged with the username for users;  this practice
+             * will cause them to be purged if the user re-authenticates.
+             */
+            rslt = CacheKey.buildTagged(
+                    AnyUnblockedGrantPermissionPolicy.class.getName(),
+                    UsernameTaggedCacheEntryPurger.createCacheEntryTag(principal.getKey()),
+                    principal.getPrincipalString(),
+                    owner.getFname(),
+                    activity.getFname(),
+                    target.getKey());
         }
 
-        @SuppressWarnings("unused")
-        public String getPrincipalName() {
-            return principalName;
-        }
+        return rslt;
 
-        @SuppressWarnings("unused")
-        public String getOwner() {
-            return owner;
-        }
-
-        @SuppressWarnings("unused")
-        public String getActivity() {
-            return activity;
-        }
-
-        @SuppressWarnings("unused")
-        public String getTarget() {
-            return target;
-        }
-
-        @Override
-        public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + ((activity == null) ? 0 : activity.hashCode());
-            result = prime * result + ((owner == null) ? 0 : owner.hashCode());
-            result = prime * result + ((principalName == null) ? 0 : principalName.hashCode());
-            result = prime * result + ((target == null) ? 0 : target.hashCode());
-            return result;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) return true;
-            if (obj == null) return false;
-            if (getClass() != obj.getClass()) return false;
-            CacheTuple other = (CacheTuple) obj;
-            if (activity == null) {
-                if (other.activity != null) return false;
-            } else if (!activity.equals(other.activity)) return false;
-            if (owner == null) {
-                if (other.owner != null) return false;
-            } else if (!owner.equals(other.owner)) return false;
-            if (principalName == null) {
-                if (other.principalName != null) return false;
-            } else if (!principalName.equals(other.principalName)) return false;
-            if (target == null) {
-                if (other.target != null) return false;
-            } else if (!target.equals(other.target)) return false;
-            return true;
-        }
-
-        @Override
-        public String toString() {
-            return "CacheTuple [principalName="
-                    + principalName
-                    + ", owner="
-                    + owner
-                    + ", activity="
-                    + activity
-                    + ", target="
-                    + target
-                    + "]";
-        }
     }
+
 }

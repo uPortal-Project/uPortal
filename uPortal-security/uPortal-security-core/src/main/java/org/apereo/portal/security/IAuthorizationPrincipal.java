@@ -24,6 +24,7 @@ import org.apereo.portal.portlet.om.PortletLifecycleState;
  * IChannel</code> or an <code>IPerson</code>.
  */
 public interface IAuthorizationPrincipal {
+
     /**
      * Answers if this <code>IAuthorizationPrincipal</code> has permission to manage this channel.
      *
@@ -33,6 +34,7 @@ public interface IAuthorizationPrincipal {
      *     retrieved.
      */
     boolean canManage(String channelPublishId) throws AuthorizationException;
+
     /**
      * Answers if this <code>IAuthorizationPrincipal</code> has permission to publish (used only by
      * SLM).
@@ -42,6 +44,7 @@ public interface IAuthorizationPrincipal {
      *     retrieved.
      */
     boolean canManage(PortletLifecycleState state, String categoryId) throws AuthorizationException;
+
     /**
      * Answers if this <code>IAuthorizationPrincipal</code> has permission to use the CONFIG
      * PortletMode on the specified channel
@@ -51,6 +54,7 @@ public interface IAuthorizationPrincipal {
      * @throws AuthorizationException
      */
     boolean canConfigure(String channelPublishId) throws AuthorizationException;
+
     /**
      * Answers if this <code>IAuthoriztionPrincipal</code> has permission to render this channel.
      *
@@ -60,6 +64,7 @@ public interface IAuthorizationPrincipal {
      *     retrieved.
      */
     boolean canRender(String channelPublishId) throws AuthorizationException;
+
     /**
      * Answers if this <code>IAuthorizationPrincipal</code> has permission to subscribe to this
      * channel.
@@ -70,6 +75,7 @@ public interface IAuthorizationPrincipal {
      *     retrieved.
      */
     boolean canSubscribe(String channelPublishId) throws AuthorizationException;
+
     /**
      * Returns the <code>IPermissions</code> for this <code>IAuthorizationPrincipal</code>,
      * including inherited <code>Permissions</code>.
@@ -78,6 +84,7 @@ public interface IAuthorizationPrincipal {
      * @exception AuthorizationException indicates authorization information could not be retrieved.
      */
     IPermission[] getAllPermissions() throws AuthorizationException;
+
     /**
      * Returns the <code>IPermissions</code> for this <code>IAuthorizationPrincipal</code> for the
      * specified <code>owner</code>, <code>activity</code> and <code>target</code>. This includes
@@ -93,19 +100,12 @@ public interface IAuthorizationPrincipal {
      */
     IPermission[] getAllPermissions(String owner, String activity, String target)
             throws AuthorizationException;
+
     /**
-     * Return a Vector of IChannels.
-     *
-     * @return a <code>java.util.Vector</code> of IChannels
-     * @exception AuthorizationException indicates authorization information could not be retrieved.
-     */
-    Vector getAuthorizedChannels() throws AuthorizationException;
-    /**
-     * Returns the key of the underlying entity. For users, the key will be the username.
-     *
-     * @return java.lang.String
+     * Returns the key of the underlying entity.  For users, the key will be the username.
      */
     String getKey();
+
     /**
      * Returns the <code>IPermissions</code> for this <code>IAuthorizationPrincipal</code>.
      *
@@ -113,6 +113,7 @@ public interface IAuthorizationPrincipal {
      * @exception AuthorizationException indicates authorization information could not be retrieved.
      */
     IPermission[] getPermissions() throws AuthorizationException;
+
     /**
      * Returns the <code>IPermissions</code> for this <code>IAuthorizationPrincipal</code> for the
      * specified <code>owner</code>, <code>activity</code> and <code>target</code>. Null parameters
@@ -127,8 +128,10 @@ public interface IAuthorizationPrincipal {
      */
     IPermission[] getPermissions(String owner, String activity, String target)
             throws AuthorizationException;
+
     /** @return java.lang.String */
     String getPrincipalString();
+
     /**
      * Return the Type of the underlying entity.
      *
@@ -172,4 +175,5 @@ public interface IAuthorizationPrincipal {
      */
     boolean hasPermission(String owner, String activity, String target, IPermissionPolicy policy)
             throws AuthorizationException;
+
 }
