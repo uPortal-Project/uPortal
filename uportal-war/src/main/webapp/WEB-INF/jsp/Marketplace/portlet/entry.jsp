@@ -358,13 +358,13 @@
 </script>
 
 <div id="${n}">
-    <div>
+    <div class="col-xs-12">
         <div class="row">
-            <div class="col-xs-1">
+            <div class="col-xs-6">
                 <portlet:renderURL var="initialViewURL" windowState="MAXIMIZED"/>
                 <a class="btn btn-default" href="${initialViewURL}"><i class="fa fa-arrow-left"></i> <spring:message code="back.to.list" text="Back to List"/></a>
             </div>
-            <div class="col-md-offset-5 col-md-6 col-xs-6" class="${n}go_button">
+            <div class="col-xs-6" class="${n}go_button">
                 <div class="btn-group marketplace_button_group" style="float:right">
                     <a href="${marketplaceEntry.renderUrl}" id="marketplace_go_button"
                        class="btn btn-default marketplace_dropdown_button" role="button">
@@ -380,7 +380,7 @@
             </div>
         </div>
         <div class="row header-info-wrapper">
-            <div class="col-sm-1 header-img">
+            <div class="col-sm-1 col-xs-4 header-img">
                 <c:url value="/media/skins/icons/mobile/default.png" var="defaultIcon"/>
                     <c:choose>
                         <c:when test="${empty marketplaceEntry.getParameter('mobileIconUrl')}">
@@ -391,7 +391,7 @@
                         </c:otherwise>
                 </c:choose>
             </div>
-            <div class="col-sm-11">
+            <div class="col-sm-11 col-xs-8">
                 <div class="marketplace_description_title">
                     <h1>${marketplaceEntry.title}</h1>
                 </div>
