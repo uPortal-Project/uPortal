@@ -28,7 +28,6 @@ import org.jasig.portal.security.IPermissionPolicy;
 
 /**
  * @author Dan Ellentuck
- * @version $Revision$
  */
 public class AuthorizationPrincipalImpl implements IAuthorizationPrincipal {
     private final String key;
