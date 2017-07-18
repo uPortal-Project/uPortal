@@ -681,8 +681,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
                      * edited an attribute on that node.
                      */
                     pendingActions.add(
-                            new LPAChangeAttribute(
-                                    nodeId, attName, newVal, owner, ilfNode));
+                            new LPAChangeAttribute(nodeId, attName, newVal, owner, ilfNode));
                 } else if (!fragNodeInf.canOverrideAttributes()) {
                     /*
                      * It isn't overrideable.
@@ -699,8 +698,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
                      * different than that in the fragment so make the change.
                      */
                     pendingActions.add(
-                            new LPAChangeAttribute(
-                                    nodeId, attName, newVal, owner, ilfNode));
+                            new LPAChangeAttribute(nodeId, attName, newVal, owner, ilfNode));
                 } else {
                     /*
                      * The new value matches that in the fragment.
@@ -717,9 +715,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
                 /*
                  * Node owned by user so no checking needed. Just change it.
                  */
-                pendingActions.add(
-                        new LPAChangeAttribute(
-                                nodeId, attName, newVal, owner, ilfNode));
+                pendingActions.add(new LPAChangeAttribute(nodeId, attName, newVal, owner, ilfNode));
             }
         }
     }
@@ -1263,8 +1259,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
         // Copied from SimpleLayoutManager since our layouts are regular
         // simple layouts, ie Documents.
         return new SimpleLayout(
-                this.getDistributedUserLayout(),
-                String.valueOf(profile.getLayoutId()));
+                this.getDistributedUserLayout(), String.valueOf(profile.getLayoutId()));
     }
 
     /* Returns the ID attribute of the root folder of the layout. This folder
@@ -1436,5 +1431,4 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
             throw new PortalException("Given XML Element is not a channel!");
         }
     }
-
 }

@@ -16,10 +16,7 @@ package org.apereo.portal.security;
 
 import org.apereo.portal.PortalException;
 
-/**
- * An exception representing a Portal security problem.
- *
- */
+/** An exception representing a Portal security problem. */
 public class PortalSecurityException extends PortalException {
 
     /**

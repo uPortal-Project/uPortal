@@ -18,10 +18,7 @@ import java.io.Serializable;
 import org.apereo.portal.events.aggr.groups.AggregatedGroupMapping;
 import org.joda.time.DateTime;
 
-/**
- * Base of all aggregations which includes time, date, interval, group, and duration
- *
- */
+/** Base of all aggregations which includes time, date, interval, group, and duration */
 public interface BaseAggregation<
                 K extends BaseAggregationKey, D extends BaseGroupedAggregationDiscriminator>
         extends Serializable {

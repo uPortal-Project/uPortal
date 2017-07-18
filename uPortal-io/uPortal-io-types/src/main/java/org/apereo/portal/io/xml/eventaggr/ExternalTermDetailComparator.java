@@ -17,10 +17,7 @@ package org.apereo.portal.io.xml.eventaggr;
 import java.util.Calendar;
 import org.apereo.portal.utils.ComparableExtractingComparator;
 
-/**
- * Compare ExternalTermDetail based on start date
- *
- */
+/** Compare ExternalTermDetail based on start date */
 public class ExternalTermDetailComparator
         extends ComparableExtractingComparator<ExternalTermDetail, Calendar> {
     public static final ExternalTermDetailComparator INSTANCE = new ExternalTermDetailComparator();

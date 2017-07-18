@@ -45,10 +45,7 @@ import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionOperations;
 import org.springframework.transaction.support.TransactionTemplate;
 
-/**
- * {@link AuthDao} that uses the Spring JDBC APIs to do its work.
- *
- */
+/** {@link AuthDao} that uses the Spring JDBC APIs to do its work. */
 public class JdbcAuthDao implements AuthDao, InitializingBean {
     /**
      * This class is ONLY used to provide for creation of the table/index required by the {@link

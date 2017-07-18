@@ -30,7 +30,6 @@ import org.springframework.web.client.HttpClientErrorException;
  *
  * <p>IMPORTANT: If you configure a BatchTinCanAPIProvider you MUST also add a scheduler that calls
  * the sendBatch() method regularly. An example configuration is available in tincanAPIContext.xml.
- *
  */
 public class BatchTinCanAPIProvider extends DefaultTinCanAPIProvider {
     private final Queue<LrsStatement> statementQueue = new ConcurrentLinkedQueue<LrsStatement>();

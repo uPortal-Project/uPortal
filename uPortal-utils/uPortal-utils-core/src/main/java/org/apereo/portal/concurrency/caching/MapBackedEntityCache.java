@@ -21,10 +21,7 @@ import org.apereo.portal.IBasicEntity;
 import org.apereo.portal.concurrency.CachingException;
 import org.apereo.portal.concurrency.IEntityCache;
 
-/**
- * Implements the uPortal caching API to wrap a Map based cache
- *
- */
+/** Implements the uPortal caching API to wrap a Map based cache */
 public class MapBackedEntityCache implements IEntityCache {
     private final Map<Serializable, IBasicEntity> cache;
     private final Class<? extends IBasicEntity> entityType;
@@ -38,6 +35,7 @@ public class MapBackedEntityCache implements IEntityCache {
     /* (non-Javadoc)
      * @see org.apereo.portal.concurrency.IEntityCache#add(org.apereo.portal.IBasicEntity)
      */
+    @Override
     public void add(IBasicEntity entity) throws CachingException {
         final EntityIdentifier entityIdentifier = entity.getEntityIdentifier();
         final Class<? extends IBasicEntity> addType = entityIdentifier.getType();
@@ -59,6 +57,7 @@ public class MapBackedEntityCache implements IEntityCache {
     /* (non-Javadoc)
      * @see org.apereo.portal.concurrency.IEntityCache#clearCache()
      */
+    @Override
     public void clearCache() throws CachingException {
         this.cache.clear();
     }
@@ -66,6 +65,7 @@ public class MapBackedEntityCache implements IEntityCache {
     /* (non-Javadoc)
      * @see org.apereo.portal.concurrency.IEntityCache#get(java.lang.String)
      */
+    @Override
     public IBasicEntity get(String key) {
         return this.cache.get(key);
     }
@@ -73,6 +73,7 @@ public class MapBackedEntityCache implements IEntityCache {
     /* (non-Javadoc)
      * @see org.apereo.portal.concurrency.IEntityCache#getEntityType()
      */
+    @Override
     public Class<? extends IBasicEntity> getEntityType() {
         return this.entityType;
     }
@@ -80,6 +81,7 @@ public class MapBackedEntityCache implements IEntityCache {
     /* (non-Javadoc)
      * @see org.apereo.portal.concurrency.IEntityCache#remove(java.lang.String)
      */
+    @Override
     public void remove(String entityKey) throws CachingException {
         this.cache.remove(entityKey);
     }
@@ -87,6 +89,7 @@ public class MapBackedEntityCache implements IEntityCache {
     /* (non-Javadoc)
      * @see org.apereo.portal.concurrency.IEntityCache#update(org.apereo.portal.IBasicEntity)
      */
+    @Override
     public void update(IBasicEntity entity) throws CachingException {
         this.add(entity);
     }
@@ -94,6 +97,7 @@ public class MapBackedEntityCache implements IEntityCache {
     /* (non-Javadoc)
      * @see org.apereo.portal.concurrency.IEntityCache#size()
      */
+    @Override
     public int size() {
         return this.cache.size();
     }

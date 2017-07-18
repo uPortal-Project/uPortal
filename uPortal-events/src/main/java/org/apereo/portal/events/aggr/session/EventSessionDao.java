@@ -17,10 +17,7 @@ package org.apereo.portal.events.aggr.session;
 import org.apereo.portal.events.PortalEvent;
 import org.joda.time.DateTime;
 
-/**
- * Tracks event session data during aggregation.
- *
- */
+/** Tracks event session data during aggregation. */
 public interface EventSessionDao {
 
     /** Store a modified event session */

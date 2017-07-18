@@ -17,10 +17,7 @@ package org.apereo.portal.portlet.container.services;
 import javax.portlet.PortletPreferences;
 import org.apache.pluto.container.PortletRequestContext;
 
-/**
- * Creates {@link PortletPreferences} objects
- *
- */
+/** Creates {@link PortletPreferences} objects */
 public interface PortletPreferencesFactory {
 
     /** Create portlet preferences for the specified portlet request context */

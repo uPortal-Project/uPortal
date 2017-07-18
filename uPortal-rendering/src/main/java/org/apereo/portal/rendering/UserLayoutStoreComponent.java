@@ -30,7 +30,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 /**
  * Gets the {@link IUserLayoutManager} for the current request and exposes the layout XML via an
  * {@link XMLEventReader}
- *
  */
 public class UserLayoutStoreComponent implements StAXPipelineComponent {
     private IUserInstanceManager userInstanceManager;

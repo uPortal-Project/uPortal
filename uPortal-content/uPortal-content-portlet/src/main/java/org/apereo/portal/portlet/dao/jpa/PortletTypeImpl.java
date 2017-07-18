@@ -35,10 +35,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.NaturalIdCache;
 
-/**
- * JPA implementation of the IPortletType interface.
- *
- */
+/** JPA implementation of the IPortletType interface. */
 @Entity
 @Table(name = "UP_PORTLET_TYPE")
 @SequenceGenerator(

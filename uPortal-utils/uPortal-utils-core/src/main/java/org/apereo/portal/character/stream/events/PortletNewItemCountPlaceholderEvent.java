@@ -14,6 +14,5 @@
  */
 package org.apereo.portal.character.stream.events;
 
-/**
- */
+/** */
 public interface PortletNewItemCountPlaceholderEvent extends PortletPlaceholderEvent {}

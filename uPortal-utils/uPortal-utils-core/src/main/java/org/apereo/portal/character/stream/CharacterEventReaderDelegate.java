@@ -22,7 +22,6 @@ import org.apereo.portal.character.stream.events.CharacterEvent;
  * <p>This class is designed to sit between an CharacterEventReader and an application's
  * CharacterEventReader. By default each method does nothing but call the corresponding method on
  * the parent interface.
- *
  */
 public class CharacterEventReaderDelegate implements CharacterEventReader {
     private final CharacterEventReader delegate;

@@ -1,13 +1,12 @@
 language: java
 
-sudo: false
-
 matrix:
   fast_finish: true
   include:
     - os: linux
       dist: trusty
       jdk: oraclejdk8
+      sudo: required
     - os: osx
       osx_image: xcode8.3
 

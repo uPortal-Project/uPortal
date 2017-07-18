@@ -39,7 +39,6 @@ import org.w3c.dom.Document;
  *
  * <p>The channels are incorporated upon request (functional name) and remain part of the layout
  * structure only as long as they are the target channel.
- *
  */
 public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
 

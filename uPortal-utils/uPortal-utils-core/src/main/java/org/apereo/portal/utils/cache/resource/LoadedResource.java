@@ -17,10 +17,7 @@ package org.apereo.portal.utils.cache.resource;
 import java.util.Map;
 import org.springframework.core.io.Resource;
 
-/**
- * Represents a resources loaded by a {@link Loader}.
- *
- */
+/** Represents a resources loaded by a {@link Loader}. */
 public interface LoadedResource<T> {
     /** @return The built resource object */
     public T getLoadedResource();

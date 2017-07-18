@@ -17,10 +17,7 @@ package org.apereo.portal.layout.dao;
 import java.util.List;
 import org.apereo.portal.layout.om.IStylesheetDescriptor;
 
-/**
- * Defines CRUD operations on {@link IStylesheetDescriptor} objects
- *
- */
+/** Defines CRUD operations on {@link IStylesheetDescriptor} objects */
 public interface IStylesheetDescriptorDao {
     /** Create and persist a new stylesheet descriptor, name and resource are required */
     public IStylesheetDescriptor createStylesheetDescriptor(String name, String stylesheetResource);

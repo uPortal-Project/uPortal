@@ -26,10 +26,7 @@ import org.apereo.portal.events.aggr.TimeDimension;
 import org.apereo.portal.events.aggr.groups.AggregatedGroupMapping;
 import org.springframework.beans.factory.annotation.Autowired;
 
-/**
- * Event aggregator that uses {@link LoginAggregationPrivateDao} to aggregate login events
- *
- */
+/** Event aggregator that uses {@link LoginAggregationPrivateDao} to aggregate login events */
 public class LoginPortalEventAggregator
         extends BaseIntervalAwarePortalEventAggregator<
                 LoginEvent, LoginAggregationImpl, LoginAggregationKey> {

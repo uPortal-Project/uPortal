@@ -28,10 +28,7 @@ import java.util.concurrent.TimeUnit;
 import org.junit.Ignore;
 import org.junit.Test;
 
-/**
- * Test for {@link ThreadPoolExecutor} that verifies threads are only created on demand
- *
- */
+/** Test for {@link ThreadPoolExecutor} that verifies threads are only created on demand */
 @Ignore
 public class DynamicThreadPoolExecutorTest {
 

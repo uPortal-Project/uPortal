@@ -16,10 +16,7 @@ package org.apereo.portal.io.xml.ssd;
 
 import org.apereo.portal.utils.ComparableExtractingComparator;
 
-/**
- * Compare ExternalStylesheetData by name
- *
- */
+/** Compare ExternalStylesheetData by name */
 public class ExternalStylesheetDataNameComparator
         extends ComparableExtractingComparator<ExternalStylesheetData, String> {
     public static final ExternalStylesheetDataNameComparator INSTANCE =

@@ -16,10 +16,7 @@ package org.apereo.portal.security;
 
 import org.apereo.portal.AuthorizationException;
 
-/**
- * Interface for creating, finding and maintaining <code>IPermissions</code>.
- *
- */
+/** Interface for creating, finding and maintaining <code>IPermissions</code>. */
 public interface IPermissionStore {
 
     /**

@@ -16,10 +16,7 @@ package org.apereo.portal.events.aggr.login;
 
 import org.apereo.portal.events.aggr.BaseAggregationPrivateDao;
 
-/**
- * Login Aggregation DAO used internally to create and update login aggregations
- *
- */
+/** Login Aggregation DAO used internally to create and update login aggregations */
 interface LoginAggregationPrivateDao
         extends LoginAggregationDao<LoginAggregationImpl>,
                 BaseAggregationPrivateDao<LoginAggregationImpl, LoginAggregationKey> {}

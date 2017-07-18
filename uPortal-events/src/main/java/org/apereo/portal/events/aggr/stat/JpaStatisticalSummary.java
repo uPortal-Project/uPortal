@@ -32,10 +32,7 @@ import org.apache.commons.math3.util.MathUtils;
 import org.apache.commons.math3.util.Precision;
 import org.apereo.portal.events.aggr.TimedAggregationStatistics;
 
-/**
- * Semi-Clone of {@link SummaryStatistics} that can be persisted in a database
- *
- */
+/** Semi-Clone of {@link SummaryStatistics} that can be persisted in a database */
 @Embeddable
 public class JpaStatisticalSummary implements TimedAggregationStatistics {
 
@@ -145,6 +142,7 @@ public class JpaStatisticalSummary implements TimedAggregationStatistics {
      *
      * @return The number of available values
      */
+    @Override
     public long getN() {
         return _getSum().getN();
     }
@@ -154,6 +152,7 @@ public class JpaStatisticalSummary implements TimedAggregationStatistics {
      *
      * @return The sum or <code>Double.NaN</code> if no values have been added
      */
+    @Override
     public double getSum() {
         return _getSum().getResult();
     }
@@ -165,6 +164,7 @@ public class JpaStatisticalSummary implements TimedAggregationStatistics {
      *
      * @return The sum of squares
      */
+    @Override
     public double getSumsq() {
         return _getSumsq().getResult();
     }
@@ -176,6 +176,7 @@ public class JpaStatisticalSummary implements TimedAggregationStatistics {
      *
      * @return the mean
      */
+    @Override
     public double getMean() {
         return _getMean().getResult();
     }
@@ -187,6 +188,7 @@ public class JpaStatisticalSummary implements TimedAggregationStatistics {
      *
      * @return the standard deviation
      */
+    @Override
     public double getStandardDeviation() {
         double stdDev = Double.NaN;
         if (getN() > 0) {
@@ -210,6 +212,7 @@ public class JpaStatisticalSummary implements TimedAggregationStatistics {
      *
      * @return the variance
      */
+    @Override
     public double getVariance() {
         return _getVariance().getResult();
     }
@@ -222,6 +225,7 @@ public class JpaStatisticalSummary implements TimedAggregationStatistics {
      *
      * @return the population variance
      */
+    @Override
     public double getPopulationVariance() {
         Variance populationVariance = new Variance(_getSecondMoment());
         populationVariance.setBiasCorrected(false);
@@ -235,6 +239,7 @@ public class JpaStatisticalSummary implements TimedAggregationStatistics {
      *
      * @return the maximum
      */
+    @Override
     public double getMax() {
         return _getMax().getResult();
     }
@@ -246,6 +251,7 @@ public class JpaStatisticalSummary implements TimedAggregationStatistics {
      *
      * @return the minimum
      */
+    @Override
     public double getMin() {
         return _getMin().getResult();
     }
@@ -257,6 +263,7 @@ public class JpaStatisticalSummary implements TimedAggregationStatistics {
      *
      * @return the geometric mean
      */
+    @Override
     public double getGeometricMean() {
         return _getGeoMean().getResult();
     }
@@ -269,6 +276,7 @@ public class JpaStatisticalSummary implements TimedAggregationStatistics {
      * @return the sum of logs
      * @since 1.2
      */
+    @Override
     public double getSumOfLogs() {
         return _getSumLog().getResult();
     }
@@ -285,6 +293,7 @@ public class JpaStatisticalSummary implements TimedAggregationStatistics {
      * @return second central moment statistic
      * @since 2.0
      */
+    @Override
     public double getSecondMoment() {
         return _getSecondMoment().getResult();
     }

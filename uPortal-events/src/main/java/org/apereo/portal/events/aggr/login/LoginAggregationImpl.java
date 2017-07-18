@@ -42,8 +42,7 @@ import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.NaturalIdCache;
 
-/**
- */
+/** */
 @Entity
 @Table(name = "UP_LOGIN_EVENT_AGGR")
 @Inheritance(strategy = InheritanceType.JOINED)

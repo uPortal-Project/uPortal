@@ -18,10 +18,7 @@ import java.util.List;
 import java.util.Map;
 import org.apereo.portal.portlet.om.IPortletWindowId;
 
-/**
- * Provides information about the portal request.
- *
- */
+/** Provides information about the portal request. */
 public interface IPortalRequestInfo {
     public static final String URL_TYPE_HEADER = UrlType.class.getName();
     public static final String URL_STATE_HEADER = UrlState.class.getName();

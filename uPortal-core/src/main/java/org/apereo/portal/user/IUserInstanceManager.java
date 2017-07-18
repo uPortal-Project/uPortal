@@ -21,10 +21,7 @@ package org.apereo.portal.user;
 import javax.servlet.http.HttpServletRequest;
 import org.apereo.portal.PortalException;
 
-/**
- * Determines which {@link IUserInstance} object to use for a given request.
- *
- */
+/** Determines which {@link IUserInstance} object to use for a given request. */
 public interface IUserInstanceManager {
     /**
      * Returns the {@link IUserInstance} object that is associated with the given request.

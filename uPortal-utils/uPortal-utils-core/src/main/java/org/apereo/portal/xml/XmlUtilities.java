@@ -28,10 +28,7 @@ import javax.xml.transform.TransformerConfigurationException;
 import org.springframework.core.io.Resource;
 import org.w3c.dom.Node;
 
-/**
- * Defines commonly used XML and XSLT utilities
- *
- */
+/** Defines commonly used XML and XSLT utilities */
 public interface XmlUtilities {
     /** Get {@link Templates} for the specified stylesheet resource */
     public Templates getTemplates(Resource stylesheet)

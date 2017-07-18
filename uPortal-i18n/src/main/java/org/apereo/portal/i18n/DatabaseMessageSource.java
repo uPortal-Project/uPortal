@@ -35,7 +35,6 @@ import org.springframework.context.support.AbstractMessageSource;
  * look up for a message. Of course, it can be set up the other way round - if resource bundle
  * message source will be set as parent to this message source, then this message source will become
  * the primary one.
- *
  */
 public class DatabaseMessageSource extends AbstractMessageSource implements MessageSource {
 

@@ -32,10 +32,7 @@ import org.jasig.services.persondir.support.IUsernameAttributeProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-/**
- * Searches the portal DB for people. Used by EntitySearcherImpl
- *
- */
+/** Searches the portal DB for people. Used by EntitySearcherImpl */
 @Service
 public class PersonDirectorySearcher implements ITypedEntitySearcher {
     private static final Log log = LogFactory.getLog(PersonDirectorySearcher.class);

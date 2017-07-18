@@ -19,10 +19,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import org.apache.commons.lang.Validate;
 
-/**
- * Base class to handle encoding strings
- *
- */
+/** Base class to handle encoding strings */
 public abstract class BaseEncodedStringBuilder implements Serializable, Cloneable {
     private static final long serialVersionUID = 1L;
 

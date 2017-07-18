@@ -14,8 +14,7 @@
  */
 package org.apereo.portal.character.stream.events;
 
-/**
- */
+/** */
 public enum CharacterEventTypes {
     /** @see CharacterDataEvent */
     CHARACTER,

@@ -21,7 +21,6 @@ import org.apereo.portal.portlet.om.IPortletCookie;
 /**
  * Interface for creating/updating/deleting {@link IPortalCookie} and related {@link
  * IPortletCookie}s.
- *
  */
 public interface IPortletCookieDao {
 

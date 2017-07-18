@@ -31,7 +31,6 @@ import org.springframework.stereotype.Service;
 
 /**
  * Spring managed version of the Xalan Elements helper class used during portal XSL transformations.
- *
  */
 @Service
 public class XalanAuthorizationHelperBean implements IXalanAuthorizationHelper {

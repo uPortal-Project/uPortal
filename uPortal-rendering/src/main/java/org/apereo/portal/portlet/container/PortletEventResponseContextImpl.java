@@ -24,8 +24,7 @@ import org.apereo.portal.portlet.container.services.IPortletCookieService;
 import org.apereo.portal.portlet.om.IPortletWindow;
 import org.apereo.portal.url.IPortletUrlBuilder;
 
-/**
- */
+/** */
 public class PortletEventResponseContextImpl extends PortletStateAwareResponseContextImpl
         implements PortletEventResponseContext {
 

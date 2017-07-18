@@ -44,21 +44,16 @@ import org.springframework.dao.DataAccessResourceFailureException;
  * SQLExceptions that the underlying methods declare to be thrown (these helpers also catch and log
  * RuntimeExceptions encountered). They provide an alternative to trying and catching those methods
  * using the JDBC APIs directly.
- *
  */
 public class RDBMServices {
     /**
-     * Name of the default portal database expected in the Spring application context.  Duplicates
+     * Name of the default portal database expected in the Spring application context. Duplicates
      * (unfortunately) a constant in BasePortalJpaDao.
      */
     public static final String PORTAL_DB = "PortalDb";
 
-
-  /**
-   * Name of the IDatabaseMetadata expected in the Spring application
-   * context
-   */
-  public static final String PORTAL_DB_METADATA = "PortalDB.metadata";
+    /** Name of the IDatabaseMetadata expected in the Spring application context */
+    public static final String PORTAL_DB_METADATA = "PortalDB.metadata";
 
     private static final Log LOG = LogFactory.getLog(RDBMServices.class);
 
@@ -90,8 +85,8 @@ public class RDBMServices {
     /**
      * Gets a named DataSource from JNDI, with special handling for the PORTAL_DB datasource.
      * Successful lookups are cached and not done again. Lookup failure is remembered and blocks
-     * retry for a number of milliseconds specified by JNDI_RETRY_TIME to reduce JNDI
-     * overhead and log spam.
+     * retry for a number of milliseconds specified by JNDI_RETRY_TIME to reduce JNDI overhead and
+     * log spam.
      *
      * <p>There are two ways in which we handle the core uPortal DataSource specially.
      *

@@ -23,7 +23,6 @@ import org.w3c.dom.Document;
  * same behavior can be achieved using XPath expressions (and vice versa), but traversing DOM
  * "manually" is much faster in some situations. Note that with simple XPath expressions it might
  * not
- *
  */
 public interface INodeIdResolver {
 

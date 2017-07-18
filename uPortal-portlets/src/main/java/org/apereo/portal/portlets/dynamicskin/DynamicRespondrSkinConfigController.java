@@ -17,7 +17,6 @@ package org.apereo.portal.portlets.dynamicskin;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.SortedSet;
-
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 import javax.portlet.PortletMode;
@@ -28,7 +27,6 @@ import javax.portlet.RenderRequest;
 import javax.portlet.ValidatorException;
 import javax.portlet.WindowState;
 import javax.portlet.WindowStateException;
-
 import org.apereo.portal.portlets.dynamicskin.storage.DynamicSkinService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

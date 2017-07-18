@@ -14,10 +14,7 @@
  */
 package org.apereo.portal.url;
 
-/**
- * Represents the rendering state of the portal, all available states should be enumerated here
- *
- */
+/** Represents the rendering state of the portal, all available states should be enumerated here */
 public enum UrlState {
     /* IMPORTANT, all enum keys must be completely upper case for the helper methods to not cause problems */
 

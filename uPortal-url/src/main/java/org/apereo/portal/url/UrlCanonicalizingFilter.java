@@ -29,10 +29,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-/**
- * Sets request info headers and forces canonical portal URLs
- *
- */
+/** Sets request info headers and forces canonical portal URLs */
 public class UrlCanonicalizingFilter extends OncePerRequestFilter {
     private static final String COOKIE_NAME = "UrlCanonicalizingFilter.REDIRECT_COUNT";
 

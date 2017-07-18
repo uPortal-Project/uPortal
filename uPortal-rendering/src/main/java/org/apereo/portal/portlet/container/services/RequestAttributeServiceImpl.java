@@ -37,7 +37,6 @@ import org.springframework.stereotype.Service;
  * Default implementation of {@link RequestAttributeService} that can construct the multi-valued
  * user attribute map that corresponds to the attribute with the name {@link
  * IPortletRenderer#MULTIVALUED_USERINFO_MAP_ATTRIBUTE}.
- *
  */
 @Service
 public class RequestAttributeServiceImpl implements RequestAttributeService {

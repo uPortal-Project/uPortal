@@ -24,10 +24,7 @@ import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.w3c.dom.Document;
 
-/**
- * Imports a layout
- *
- */
+/** Imports a layout */
 public class LayoutImporter extends AbstractDom4jImporter {
     private final Cache<Tuple<String, String>, UserProfile> layoutCache =
             CacheBuilder.newBuilder().maximumSize(1000).<Tuple<String, String>, UserProfile>build();

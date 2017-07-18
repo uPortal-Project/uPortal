@@ -22,7 +22,6 @@ import org.apereo.portal.security.IPerson;
 /**
  * Interface for retrieving information about fragments (pre-formatted tabs) to which a user has
  * subscribed.
- *
  */
 public interface IUserFragmentSubscriptionDao {
 

@@ -32,7 +32,6 @@ import org.slf4j.LoggerFactory;
  * Extract a Zip File or Zip InputStream to a directory
  *
  * <p>Code based on: http://piotrga.wordpress.com/2008/05/07/how-to-unzip-archive-in-java/
- *
  */
 public final class ZipUtils {
     protected static final Logger log = LoggerFactory.getLogger(ZipUtils.class);

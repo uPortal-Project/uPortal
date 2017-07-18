@@ -21,10 +21,7 @@ import org.apereo.portal.groups.GroupsException;
 import org.apereo.portal.groups.IEntityGroupStore;
 import org.apereo.portal.groups.IEntityGroupStoreFactory;
 
-/**
- * Returns an instance of the Grouper entity group store.
- *
- */
+/** Returns an instance of the Grouper entity group store. */
 public class GrouperEntityGroupStoreFactory implements IEntityGroupStoreFactory {
 
     /** Logger. */

@@ -21,7 +21,6 @@ import org.apache.commons.io.output.ProxyOutputStream;
 /**
  * {@link OutputStream} that mimics the UNIX 'tee' command on a pair of {@link OutputStream}s. Note
  * the {@link #write(char[], int, int)} implementation is synchronized.
- *
  */
 public class TeeOutputStream extends ProxyOutputStream {
     private OutputStream branch;
@@ -36,26 +35,31 @@ public class TeeOutputStream extends ProxyOutputStream {
         this.branch = branch;
     }
 
+    @Override
     public void write(int c) throws IOException {
         super.write(c);
         branch.write(c);
     }
 
+    @Override
     public void write(byte[] b) throws IOException {
         super.write(b);
         branch.write(b);
     }
 
+    @Override
     public void write(byte[] b, int off, int len) throws IOException {
         super.write(b, off, len);
         branch.write(b, off, len);
     }
 
+    @Override
     public void flush() throws IOException {
         super.flush();
         branch.flush();
     }
 
+    @Override
     public void close() throws IOException {
         try {
             super.close();
@@ -64,6 +68,7 @@ public class TeeOutputStream extends ProxyOutputStream {
         }
     }
 
+    @Override
     public String toString() {
         return branch.toString();
     }

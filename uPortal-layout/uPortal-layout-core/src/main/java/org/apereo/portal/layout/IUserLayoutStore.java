@@ -14,10 +14,7 @@
  */
 package org.apereo.portal.layout;
 
-/**
- * Interface by which portal talks to the database
- *
- */
+/** Interface by which portal talks to the database */
 import com.google.common.cache.Cache;
 import java.util.Hashtable;
 import java.util.Map;
@@ -208,9 +205,8 @@ public interface IUserLayoutStore {
     String getNextStructDirectiveId(IPerson person);
 
     /**
-     * Returns a double value indicating the precedence value declared for a fragment.  Fragments
+     * Returns a double value indicating the precedence value declared for a fragment. Fragments
      * with greater precedence come before those with lower precedence.
      */
     double getFragmentPrecedence(int index);
-
 }

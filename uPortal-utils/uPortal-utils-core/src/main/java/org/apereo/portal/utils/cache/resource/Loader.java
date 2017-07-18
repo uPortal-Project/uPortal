@@ -17,10 +17,7 @@ package org.apereo.portal.utils.cache.resource;
 import java.io.IOException;
 import org.springframework.core.io.Resource;
 
-/**
- * Responsible for parsing the {@link Resource} into the specified object type.
- *
- */
+/** Responsible for parsing the {@link Resource} into the specified object type. */
 public interface Loader<T> {
     /** Parse the given {@link Resource} into the appropriate object. */
     public LoadedResource<T> loadResource(Resource resource) throws IOException;

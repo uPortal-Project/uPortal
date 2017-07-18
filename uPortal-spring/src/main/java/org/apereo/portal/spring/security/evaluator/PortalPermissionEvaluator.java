@@ -35,7 +35,6 @@ import org.springframework.security.core.userdetails.UserDetails;
  * PortalPermissionEvaluator provides support for Spring EL hasPermission expressions in method
  * security annotations. This current implementation is an early attempt at connecting the uPortal
  * permissions framework to Spring Security and will need future adjustment and expansion.
- *
  */
 public class PortalPermissionEvaluator implements PermissionEvaluator {
 

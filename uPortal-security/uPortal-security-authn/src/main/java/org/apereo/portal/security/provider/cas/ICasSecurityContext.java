@@ -21,7 +21,6 @@ package org.apereo.portal.security.provider.cas;
  *
  * <p>This interface evolved from edu.yale.its.tp.portal.security.IYaleCasContext as distributed in
  * the Yale uPortal CAS security provider distribution version 3.0.0.
- *
  */
 public interface ICasSecurityContext {
     /** Authentication type for CAS authentication */

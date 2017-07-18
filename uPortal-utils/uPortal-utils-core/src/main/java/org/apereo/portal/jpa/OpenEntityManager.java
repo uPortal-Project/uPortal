@@ -23,7 +23,6 @@ import org.springframework.orm.jpa.support.OpenEntityManagerInViewFilter;
 
 /**
  * Opens or uses existing {@link EntityManager}, similar to {@link OpenEntityManagerInViewFilter}
- *
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)

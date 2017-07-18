@@ -32,7 +32,6 @@ import org.springframework.stereotype.Component;
 /**
  * Bean that verifies the product version numbers in the configuration versus the database on
  * startup
- *
  */
 @Component
 public class VersionVerifier implements InitializingBean {
@@ -68,6 +67,7 @@ public class VersionVerifier implements InitializingBean {
         this.updatePolicy = updatePolicy;
     }
 
+    @SuppressWarnings("FallThrough")
     @Override
     public void afterPropertiesSet() throws Exception {
         for (final Map.Entry<String, Version> productVersionEntry :

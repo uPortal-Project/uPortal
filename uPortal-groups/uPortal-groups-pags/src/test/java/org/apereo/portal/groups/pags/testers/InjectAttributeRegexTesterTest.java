@@ -25,14 +25,10 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * Tests the PAGS testers.
- */
+/** Tests the PAGS testers. */
 public class InjectAttributeRegexTesterTest {
     private static Class IPERSON_CLASS;
-    private String[] attributeNames = {
-        "one", "two", "three", "four", "five"
-    };
+    private String[] attributeNames = {"one", "two", "three", "four", "five"};
     private String[] randomStrings;
     private String key1 = null;
     private String key2 = null;
@@ -88,33 +84,39 @@ public class InjectAttributeRegexTesterTest {
         newPerson.setAttribute(key5, "0450822X");
 
         //  test with an injected attribute not given, so like equals test.  Should return true.
-        IPersonTester tester1 = new InjectAttributeRegexTester(
-                new TestPersonAttributesGroupTestDefinition(key1, randomStrings[0]));
+        IPersonTester tester1 =
+                new InjectAttributeRegexTester(
+                        new TestPersonAttributesGroupTestDefinition(key1, randomStrings[0]));
 
         // test with an injected attributes.  Should return true.
         String testValue2 = randomStrings[0] + "@" + key2 + "@.*";
-        IPersonTester tester2 = new InjectAttributeRegexTester(
-                new TestPersonAttributesGroupTestDefinition(key3, testValue2));
+        IPersonTester tester2 =
+                new InjectAttributeRegexTester(
+                        new TestPersonAttributesGroupTestDefinition(key3, testValue2));
 
         // test an injected attributes that doesn't exist.  Should return false.
         String testValue3 = randomStrings[0] + "@" + missingKey + "@.*";
-        IPersonTester tester3 = new InjectAttributeRegexTester(
-                new TestPersonAttributesGroupTestDefinition(key3, testValue3));
+        IPersonTester tester3 =
+                new InjectAttributeRegexTester(
+                        new TestPersonAttributesGroupTestDefinition(key3, testValue3));
 
         //  test an injected attribute with same String.  Should return true.
         String testValue4 = ".*@" + key2 + "@.*";
-        IPersonTester tester4 = new InjectAttributeRegexTester(
-                new TestPersonAttributesGroupTestDefinition(key2, testValue4));
+        IPersonTester tester4 =
+                new InjectAttributeRegexTester(
+                        new TestPersonAttributesGroupTestDefinition(key2, testValue4));
 
         // test an injected attribute with different String.  Should return false.
         String testValue5 = ".*@" + key2 + "@.*";
-        IPersonTester tester5 = new InjectAttributeRegexTester(
-                new TestPersonAttributesGroupTestDefinition(key1, testValue5));
+        IPersonTester tester5 =
+                new InjectAttributeRegexTester(
+                        new TestPersonAttributesGroupTestDefinition(key1, testValue5));
 
         // test value on null user attribute value.  Should return false.
         String testValue6 = ".*@" + key2 + "@.*";
-        IPersonTester tester6 = new InjectAttributeRegexTester(
-                new TestPersonAttributesGroupTestDefinition(key4, testValue6));
+        IPersonTester tester6 =
+                new InjectAttributeRegexTester(
+                        new TestPersonAttributesGroupTestDefinition(key4, testValue6));
 
         Assert.assertTrue(tester1.test(newPerson));
         Assert.assertTrue(tester2.test(newPerson));

@@ -17,10 +17,7 @@ package org.apereo.portal.groups;
 import java.util.Iterator;
 import org.apereo.portal.EntityIdentifier;
 
-/**
- * Interface for finding and maintaining <code>IEntityGroups</code>.
- *
- */
+/** Interface for finding and maintaining <code>IEntityGroups</code>. */
 public interface IEntityGroupStore extends IGroupConstants {
     /**
      * Answers if <code>group</code> contains <code>member</code>.

@@ -17,10 +17,7 @@ package org.apereo.portal.events.aggr.portletlayout;
 import org.apereo.portal.events.aggr.BaseAggregationKey;
 import org.apereo.portal.events.aggr.portlets.AggregatedPortletMapping;
 
-/**
- * Primary Key for a {@link PortletLayoutAggregation}
- *
- */
+/** Primary Key for a {@link PortletLayoutAggregation} */
 public interface PortletLayoutAggregationKey extends BaseAggregationKey {
     /** @return The name of the portlet */
     AggregatedPortletMapping getPortletMapping();

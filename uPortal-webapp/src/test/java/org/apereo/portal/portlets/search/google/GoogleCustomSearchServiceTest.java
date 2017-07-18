@@ -42,10 +42,7 @@ import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
-/**
- * Tests a GoogleAjaxSearchService
- *
- */
+/** Tests a GoogleAjaxSearchService */
 @RunWith(MockitoJUnitRunner.class)
 public class GoogleCustomSearchServiceTest {
     @InjectMocks

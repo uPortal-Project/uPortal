@@ -21,10 +21,11 @@ import org.apereo.portal.security.IPermission;
 import org.apereo.portal.security.IPermissionSet;
 
 /**
- *     <p>Aggregates <code>IPermissions</code> for a single <code>IAuthorizationPrincipal</code> so
- *     that the permissions can be cached as a unit by the <code>EntityCachingService</code>.
- *     <p>Separating caching of principals and permissions lets a client keep a reference to a
- *     principal over time while being guaranteed the latest version of its permissions.
+ * Aggregates <code>IPermissions</code> for a single <code>IAuthorizationPrincipal</code> so that
+ * the permissions can be cached as a unit by the <code>EntityCachingService</code>.
+ *
+ * <p>Separating caching of principals and permissions lets a client keep a reference to a principal
+ * over time while being guaranteed the latest version of its permissions.
  */
 public class PermissionSetImpl implements IPermissionSet {
 
@@ -42,15 +43,18 @@ public class PermissionSetImpl implements IPermissionSet {
         entityIdentifier = new EntityIdentifier(key, type);
     }
     /** @return IPermission[] */
+    @Override
     public IPermission[] getPermissions() {
         return permissions;
     }
 
     /** @return EntityIdentifier IPermission[] */
+    @Override
     public EntityIdentifier getEntityIdentifier() {
         return entityIdentifier;
     }
 
+    @Override
     public String toString() {
         StringBuffer sb = new StringBuffer();
         sb.append("PermissionSetImpl: entitityIdentifier=[" + this.entityIdentifier + "]");

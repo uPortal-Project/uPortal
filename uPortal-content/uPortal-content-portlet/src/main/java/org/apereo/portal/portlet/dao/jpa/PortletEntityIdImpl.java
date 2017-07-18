@@ -17,10 +17,7 @@ package org.apereo.portal.portlet.dao.jpa;
 import org.apereo.portal.portlet.om.AbstractObjectId;
 import org.apereo.portal.portlet.om.IPortletEntityId;
 
-/**
- * Identifies a portlet entity
- *
- */
+/** Identifies a portlet entity */
 class PortletEntityIdImpl extends AbstractObjectId implements IPortletEntityId {
     private static final long serialVersionUID = 1L;
 

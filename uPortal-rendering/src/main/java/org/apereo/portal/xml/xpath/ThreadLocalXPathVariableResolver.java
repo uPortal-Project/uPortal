@@ -18,8 +18,7 @@ import java.util.Map;
 import javax.xml.namespace.QName;
 import javax.xml.xpath.XPathVariableResolver;
 
-/**
- */
+/** */
 class ThreadLocalXPathVariableResolver implements XPathVariableResolver {
     private final ThreadLocal<Map<String, ?>> localVariables = new ThreadLocal<Map<String, ?>>();
 

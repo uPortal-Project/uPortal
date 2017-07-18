@@ -60,10 +60,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
-/**
- * Tests for {@link PortletRendererImpl}.
- *
- */
+/** Tests for {@link PortletRendererImpl}. */
 @Ignore // Breaks on move to Gradlde
 @RunWith(MockitoJUnitRunner.class)
 public class PortletRendererImplTest {

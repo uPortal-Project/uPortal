@@ -17,10 +17,7 @@ package org.apereo.portal.events;
 import javax.servlet.http.HttpServletRequest;
 import org.apereo.portal.security.IPerson;
 
-/**
- * Used to create and publish portal events
- *
- */
+/** Used to create and publish portal events */
 public interface IPortalEventFactory
         extends IPortalAuthEventFactory,
                 IPortalLayoutEventFactory,

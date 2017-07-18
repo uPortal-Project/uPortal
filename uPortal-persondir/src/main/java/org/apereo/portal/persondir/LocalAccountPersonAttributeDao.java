@@ -37,7 +37,6 @@ import org.jasig.services.persondir.support.NamedPersonImpl;
  * internal account store. This implementation overrides several methods of
  * AbstractQueryPersonAttributeDao to allow for the use of arbitrary user attributes without
  * requiring an administrator to add new entries to the result or query attribute mappings.
- *
  */
 public class LocalAccountPersonAttributeDao extends AbstractDefaultAttributePersonAttributeDao {
 
@@ -128,6 +127,7 @@ public class LocalAccountPersonAttributeDao extends AbstractDefaultAttributePers
      *
      * @return Set
      */
+    @Override
     public Set<String> getPossibleUserAttributeNames() {
         final Set<String> names = new HashSet<String>();
         names.addAll(this.possibleUserAttributes);
@@ -143,6 +143,7 @@ public class LocalAccountPersonAttributeDao extends AbstractDefaultAttributePers
      *
      * @return Set
      */
+    @Override
     public Set<String> getAvailableQueryAttributes() {
         if (this.queryAttributeMapping == null) {
             return Collections.emptySet();
@@ -154,6 +155,7 @@ public class LocalAccountPersonAttributeDao extends AbstractDefaultAttributePers
     /* (non-Javadoc)
      * @see org.jasig.services.persondir.IPersonAttributeDao#getPeopleWithMultivaluedAttributes(java.util.Map)
      */
+    @Override
     public final Set<IPersonAttributes> getPeopleWithMultivaluedAttributes(
             Map<String, List<Object>> query) {
         Validate.notNull(query, "query may not be null.");

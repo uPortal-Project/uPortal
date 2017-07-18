@@ -21,7 +21,6 @@ import org.apereo.portal.events.aggr.portlets.AggregatedPortletMapping;
 /**
  * Interface to separate Portlet Execution aggregation events into separate columns for reporting
  * purposes.
- *
  */
 public interface PortletExecutionAggregationDiscriminator
         extends BaseGroupedAggregationDiscriminator {

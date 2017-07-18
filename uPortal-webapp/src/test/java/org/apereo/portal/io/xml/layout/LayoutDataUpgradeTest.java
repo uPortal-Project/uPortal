@@ -18,8 +18,7 @@ import org.apereo.portal.io.xml.BaseXsltDataUpgraderTest;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 
-/**
- */
+/** */
 public class LayoutDataUpgradeTest extends BaseXsltDataUpgraderTest {
     @Test
     public void testUpgrade30to32() throws Exception {

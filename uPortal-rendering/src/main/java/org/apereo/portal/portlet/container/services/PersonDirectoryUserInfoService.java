@@ -36,10 +36,7 @@ import org.jasig.services.persondir.IPersonAttributeDao;
 import org.jasig.services.persondir.IPersonAttributes;
 import org.springframework.beans.factory.annotation.Autowired;
 
-/**
- * Ties the IPersonAttributeDao to the Pluto UserInfoService
- *
- */
+/** Ties the IPersonAttributeDao to the Pluto UserInfoService */
 public class PersonDirectoryUserInfoService implements UserInfoService {
     private IPersonAttributeDao personAttributeDao;
     private IPortletWindowRegistry portletWindowRegistry;
@@ -99,6 +96,7 @@ public class PersonDirectoryUserInfoService implements UserInfoService {
     /* (non-Javadoc)
      * @see org.apache.pluto.spi.optional.UserInfoService#getUserInfo(javax.portlet.PortletRequest, org.apache.pluto.PortletWindow)
      */
+    @Override
     public Map<String, String> getUserInfo(PortletRequest request, PortletWindow plutoPortletWindow)
             throws PortletContainerException {
         //Get the remote user

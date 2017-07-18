@@ -28,7 +28,6 @@ import org.apache.commons.lang.Validate;
  * Builds a URL.
  *
  * <p>This class is not thread safe.
- *
  */
 public final class UrlStringBuilder extends BaseEncodedStringBuilder {
     private static final long serialVersionUID = 1L;

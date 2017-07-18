@@ -18,7 +18,6 @@ import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
 
 /**
  * Statistics about an aggregation that includes timing info. All values are returned in nanoseconds
- *
  */
 public interface TimedAggregationStatistics extends StatisticalSummary {
     /**

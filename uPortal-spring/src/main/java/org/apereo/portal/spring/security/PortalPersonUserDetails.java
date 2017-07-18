@@ -27,7 +27,6 @@ import org.springframework.security.core.userdetails.UserDetails;
  *
  * <p>Passwords, authorities, and account expiration/locking features are not supported by this
  * implementation.
- *
  */
 public class PortalPersonUserDetails implements UserDetails {
 

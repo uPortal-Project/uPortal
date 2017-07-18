@@ -17,10 +17,7 @@ package org.apereo.portal.spring.beans.factory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
 
-/**
- * Builds an ObjectMapper configured with annotation support
- *
- */
+/** Builds an ObjectMapper configured with annotation support */
 public class ObjectMapperFactoryBean extends AbstractFactoryBean<ObjectMapper> {
 
     @Override

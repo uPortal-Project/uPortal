@@ -21,7 +21,6 @@ import javax.xml.transform.Source;
 /**
  * Can upgrade an older portal data XML document to a newer format of the same data. Multiple data
  * upgraders may be run in succession to translate very old data into the most recent format.
- *
  */
 public interface IDataUpgrader {
     /** @return The {@link PortalDataKey}s this upgrader can operate on */

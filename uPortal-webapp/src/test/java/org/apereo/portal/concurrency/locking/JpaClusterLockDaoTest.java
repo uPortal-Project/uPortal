@@ -42,8 +42,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-/**
- */
+/** */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:jpaClusterLockDaoTestContext.xml")
 public class JpaClusterLockDaoTest extends BasePortalJpaDaoTest {
@@ -155,6 +154,7 @@ public class JpaClusterLockDaoTest extends BasePortalJpaDaoTest {
      *
      * @throws InterruptedException
      */
+    @Test
     @Ignore
     public void testConcurrentCreateLocking() throws InterruptedException {
         reset(portalInfoProvider);
@@ -213,6 +213,7 @@ public class JpaClusterLockDaoTest extends BasePortalJpaDaoTest {
      *
      * @throws Exception
      */
+    @Test
     @Ignore
     public void testNotAbandoned() throws Exception {
         //Used to make a 'mutable string'
@@ -293,6 +294,7 @@ public class JpaClusterLockDaoTest extends BasePortalJpaDaoTest {
      *
      * @throws Exception
      */
+    @Test
     @Ignore
     public void testAbandoned() throws Exception {
         //Used to make a 'mutable string'

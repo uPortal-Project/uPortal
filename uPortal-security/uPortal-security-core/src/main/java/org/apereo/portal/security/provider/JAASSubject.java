@@ -18,10 +18,7 @@ import java.io.Serializable;
 import javax.security.auth.*;
 import org.apereo.portal.security.IAdditionalDescriptor;
 
-/**
- * Simple container object for a JAAS Subject for the logged in user.
- *
- */
+/** Simple container object for a JAAS Subject for the logged in user. */
 public class JAASSubject implements IAdditionalDescriptor, Serializable {
     private Subject subject;
 

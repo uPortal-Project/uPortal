@@ -32,10 +32,7 @@ import org.apereo.portal.events.aggr.tabs.AggregatedTabMapping;
 import org.apereo.portal.events.aggr.tabs.AggregatedTabMappingImpl;
 import org.springframework.stereotype.Repository;
 
-/**
- * DAO for Tab Render Aggregations
- *
- */
+/** DAO for Tab Render Aggregations */
 @Repository
 public class JpaTabRenderAggregationDao
         extends JpaBaseAggregationDao<TabRenderAggregationImpl, TabRenderAggregationKey>

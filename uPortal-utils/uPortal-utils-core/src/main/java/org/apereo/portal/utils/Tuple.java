@@ -16,10 +16,7 @@ package org.apereo.portal.utils;
 
 import java.io.Serializable;
 
-/**
- * Simple object that contains two values who's references are immutable once initialized.
- *
- */
+/** Simple object that contains two values who's references are immutable once initialized. */
 public class Tuple<A, B> implements Serializable {
     private static final long serialVersionUID = 1L;
 

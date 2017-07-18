@@ -20,7 +20,6 @@ import junit.framework.TestCase;
 /**
  * Test case for PropertiesManager. Exercises property accessor methods against a test properties
  * file.
- *
  */
 public class PropertiesManagerTest extends TestCase {
 
@@ -36,6 +35,7 @@ public class PropertiesManagerTest extends TestCase {
     /*
      * @see TestCase#setUp()
      */
+    @Override
     protected void setUp() throws Exception {
         super.setUp();
         Properties testProperties = new Properties();
@@ -43,6 +43,7 @@ public class PropertiesManagerTest extends TestCase {
         PropertiesManager.setProperties(testProperties);
     }
 
+    @Override
     protected void tearDown() throws Exception {
         super.tearDown();
         if (this.systemPropertyValue != null)

@@ -56,5 +56,4 @@ public class UserPreferencesManager implements IUserPreferencesManager {
     public IUserProfile getUserProfile() {
         return this.userProfile;
     }
-
 }

@@ -20,8 +20,7 @@ import java.util.Formatter;
 import org.apereo.portal.utils.TableFormatter.TableEntry;
 import org.junit.Test;
 
-/**
- */
+/** */
 public class TableFormatterTest {
 
     private static String newline = System.getProperty("line.separator");

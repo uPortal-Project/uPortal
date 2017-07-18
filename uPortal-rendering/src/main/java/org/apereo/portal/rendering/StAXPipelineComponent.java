@@ -17,8 +17,5 @@ package org.apereo.portal.rendering;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.events.XMLEvent;
 
-/**
- * {@link PipelineComponent} for a {@link XMLEventReader}
- *
- */
+/** {@link PipelineComponent} for a {@link XMLEventReader} */
 public interface StAXPipelineComponent extends PipelineComponent<XMLEventReader, XMLEvent> {}

@@ -34,10 +34,7 @@ import org.apereo.portal.portlet.om.IPortletPreference;
 import org.apereo.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.apereo.portal.portlet.registry.IPortletEntityRegistry;
 
-/**
- * Preferences impl that manipulates the portlet entity level preference data
- *
- */
+/** Preferences impl that manipulates the portlet entity level preference data */
 public class GuestPortletEntityPreferencesImpl
         extends AbstractPortletPreferencesImpl<IPortletEntity> {
     protected static final String PORTLET_PREFERENCES_MAP_ATTRIBUTE =

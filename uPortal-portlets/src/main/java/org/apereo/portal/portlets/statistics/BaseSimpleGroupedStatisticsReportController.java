@@ -29,7 +29,6 @@ import org.apereo.portal.events.aggr.groups.AggregatedGroupMapping;
 /**
  * Extension of {@link BaseStatisticsReportController} for reports that only need to differentiate
  * columns by group
- *
  */
 public abstract class BaseSimpleGroupedStatisticsReportController<
                 T extends BaseAggregation<K, D>,

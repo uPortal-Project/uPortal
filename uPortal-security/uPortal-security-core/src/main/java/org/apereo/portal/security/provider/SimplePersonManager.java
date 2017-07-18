@@ -21,10 +21,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.PortalSecurityException;
 
-/**
- * Manages the storage of an IPerson object in a user's session.
- *
- */
+/** Manages the storage of an IPerson object in a user's session. */
 public class SimplePersonManager extends AbstractPersonManager {
 
     private static final Log log = LogFactory.getLog(SimplePersonManager.class);
@@ -35,6 +32,7 @@ public class SimplePersonManager extends AbstractPersonManager {
      * @param request the servlet request object
      * @return the IPerson object for the incoming request
      */
+    @Override
     public IPerson getPerson(HttpServletRequest request) throws PortalSecurityException {
         HttpSession session = request.getSession(false);
         IPerson person = null;

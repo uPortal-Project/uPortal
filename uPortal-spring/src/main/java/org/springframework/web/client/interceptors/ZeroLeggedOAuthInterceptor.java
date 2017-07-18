@@ -31,10 +31,7 @@ import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.util.Assert;
 
-/**
- * Interceptor to add the authorization headers required for 0-legged oauth signing of requests.
- *
- */
+/** Interceptor to add the authorization headers required for 0-legged oauth signing of requests. */
 public class ZeroLeggedOAuthInterceptor implements ClientHttpRequestInterceptor {
     private String id;
     private PropertyResolver propertyResolver;

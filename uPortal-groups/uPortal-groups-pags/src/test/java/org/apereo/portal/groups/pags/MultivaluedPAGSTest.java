@@ -25,10 +25,7 @@ import org.apereo.portal.security.provider.PersonImpl;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * Test PAGS IPersonTester implementations against multi-valued attributes.
- *
- */
+/** Test PAGS IPersonTester implementations against multi-valued attributes. */
 public class MultivaluedPAGSTest {
 
     IPerson person;
@@ -55,23 +52,29 @@ public class MultivaluedPAGSTest {
 
     @Test
     public void testMultivaluedRegex() {
-        IPersonTester tester = new RegexTester(
-                new TestPersonAttributesGroupTestDefinition(strAttributeName, ".*somewhere.*"));
+        IPersonTester tester =
+                new RegexTester(
+                        new TestPersonAttributesGroupTestDefinition(
+                                strAttributeName, ".*somewhere.*"));
         assertTrue(tester.test(person));
 
-        tester = new RegexTester(
-                new TestPersonAttributesGroupTestDefinition(strAttributeName, ".*nowhere.*"));
+        tester =
+                new RegexTester(
+                        new TestPersonAttributesGroupTestDefinition(
+                                strAttributeName, ".*nowhere.*"));
         assertFalse(tester.test(person));
     }
 
     @Test
     public void testIntegerLT() {
-        IPersonTester tester = new IntegerLTTester(
-                new TestPersonAttributesGroupTestDefinition(intAttributeName, "124"));
+        IPersonTester tester =
+                new IntegerLTTester(
+                        new TestPersonAttributesGroupTestDefinition(intAttributeName, "124"));
         assertTrue(tester.test(person));
 
-        tester = new IntegerLTTester(
-                new TestPersonAttributesGroupTestDefinition(intAttributeName, "122"));
+        tester =
+                new IntegerLTTester(
+                        new TestPersonAttributesGroupTestDefinition(intAttributeName, "122"));
         assertFalse(tester.test(person));
     }
 
@@ -79,15 +82,20 @@ public class MultivaluedPAGSTest {
     public void testNbValuesGT() {
         IPersonTester tester =
                 new NbValuesGTTester(
-                        new TestPersonAttributesGroupTestDefinition(strAttributeName, Integer.toString(strNbValues - 1)));
+                        new TestPersonAttributesGroupTestDefinition(
+                                strAttributeName, Integer.toString(strNbValues - 1)));
         assertTrue(tester.test(person));
 
-        tester = new NbValuesGTTester(
-                new TestPersonAttributesGroupTestDefinition(strAttributeName, Integer.toString(strNbValues)));
+        tester =
+                new NbValuesGTTester(
+                        new TestPersonAttributesGroupTestDefinition(
+                                strAttributeName, Integer.toString(strNbValues)));
         assertFalse(tester.test(person));
 
-        tester = new NbValuesGTTester(
-                new TestPersonAttributesGroupTestDefinition(strAttributeName, Integer.toString(strNbValues + 1)));
+        tester =
+                new NbValuesGTTester(
+                        new TestPersonAttributesGroupTestDefinition(
+                                strAttributeName, Integer.toString(strNbValues + 1)));
         assertFalse(tester.test(person));
     }
 
@@ -95,15 +103,20 @@ public class MultivaluedPAGSTest {
     public void testNbValuesGE() {
         IPersonTester tester =
                 new NbValuesGETester(
-                        new TestPersonAttributesGroupTestDefinition(strAttributeName, Integer.toString(strNbValues)));
+                        new TestPersonAttributesGroupTestDefinition(
+                                strAttributeName, Integer.toString(strNbValues)));
         assertTrue(tester.test(person));
 
-        tester = new NbValuesGETester(
-                new TestPersonAttributesGroupTestDefinition(strAttributeName, Integer.toString(strNbValues - 1)));
+        tester =
+                new NbValuesGETester(
+                        new TestPersonAttributesGroupTestDefinition(
+                                strAttributeName, Integer.toString(strNbValues - 1)));
         assertTrue(tester.test(person));
 
-        tester = new NbValuesGETester(
-                new TestPersonAttributesGroupTestDefinition(strAttributeName, Integer.toString(strNbValues + 1)));
+        tester =
+                new NbValuesGETester(
+                        new TestPersonAttributesGroupTestDefinition(
+                                strAttributeName, Integer.toString(strNbValues + 1)));
         assertFalse(tester.test(person));
     }
 
@@ -111,15 +124,20 @@ public class MultivaluedPAGSTest {
     public void testNbValuesLT() {
         IPersonTester tester =
                 new NbValuesLTTester(
-                        new TestPersonAttributesGroupTestDefinition(strAttributeName, Integer.toString(strNbValues + 1)));
+                        new TestPersonAttributesGroupTestDefinition(
+                                strAttributeName, Integer.toString(strNbValues + 1)));
         assertTrue(tester.test(person));
 
-        tester = new NbValuesLTTester(
-                new TestPersonAttributesGroupTestDefinition(strAttributeName, Integer.toString(strNbValues)));
+        tester =
+                new NbValuesLTTester(
+                        new TestPersonAttributesGroupTestDefinition(
+                                strAttributeName, Integer.toString(strNbValues)));
         assertFalse(tester.test(person));
 
-        tester = new NbValuesLTTester(
-                new TestPersonAttributesGroupTestDefinition(strAttributeName, Integer.toString(strNbValues - 1)));
+        tester =
+                new NbValuesLTTester(
+                        new TestPersonAttributesGroupTestDefinition(
+                                strAttributeName, Integer.toString(strNbValues - 1)));
         assertFalse(tester.test(person));
     }
 
@@ -127,15 +145,20 @@ public class MultivaluedPAGSTest {
     public void testNbValuesLE() {
         IPersonTester tester =
                 new NbValuesLETester(
-                        new TestPersonAttributesGroupTestDefinition(strAttributeName, Integer.toString(strNbValues)));
+                        new TestPersonAttributesGroupTestDefinition(
+                                strAttributeName, Integer.toString(strNbValues)));
         assertTrue(tester.test(person));
 
-        tester = new NbValuesLETester(
-                new TestPersonAttributesGroupTestDefinition(strAttributeName, Integer.toString(strNbValues + 1)));
+        tester =
+                new NbValuesLETester(
+                        new TestPersonAttributesGroupTestDefinition(
+                                strAttributeName, Integer.toString(strNbValues + 1)));
         assertTrue(tester.test(person));
 
-        tester = new NbValuesLETester(
-                new TestPersonAttributesGroupTestDefinition(strAttributeName, Integer.toString(strNbValues - 1)));
+        tester =
+                new NbValuesLETester(
+                        new TestPersonAttributesGroupTestDefinition(
+                                strAttributeName, Integer.toString(strNbValues - 1)));
         assertFalse(tester.test(person));
     }
 
@@ -143,15 +166,20 @@ public class MultivaluedPAGSTest {
     public void testNbValuesEQ() {
         IPersonTester tester =
                 new NbValuesEQTester(
-                        new TestPersonAttributesGroupTestDefinition(strAttributeName, Integer.toString(strNbValues)));
+                        new TestPersonAttributesGroupTestDefinition(
+                                strAttributeName, Integer.toString(strNbValues)));
         assertTrue(tester.test(person));
 
-        tester = new NbValuesEQTester(
-                new TestPersonAttributesGroupTestDefinition(strAttributeName, Integer.toString(strNbValues + 1)));
+        tester =
+                new NbValuesEQTester(
+                        new TestPersonAttributesGroupTestDefinition(
+                                strAttributeName, Integer.toString(strNbValues + 1)));
         assertFalse(tester.test(person));
 
-        tester = new NbValuesEQTester(
-                new TestPersonAttributesGroupTestDefinition(strAttributeName, Integer.toString(strNbValues - 1)));
+        tester =
+                new NbValuesEQTester(
+                        new TestPersonAttributesGroupTestDefinition(
+                                strAttributeName, Integer.toString(strNbValues - 1)));
         assertFalse(tester.test(person));
     }
 }

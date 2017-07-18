@@ -49,6 +49,7 @@ public class GroupListHelperImpl implements IGroupListHelper {
      * @see org.apereo.portal.layout.dlm.remoting.IGroupListHelper#search(java.lang.String, java.lang.String)
      */
     @SuppressWarnings("unchecked")
+    @Override
     public Set<JsonEntityBean> search(String entityType, String searchTerm) {
 
         Set<JsonEntityBean> results = new HashSet<JsonEntityBean>();
@@ -95,6 +96,7 @@ public class GroupListHelperImpl implements IGroupListHelper {
      * (non-Javadoc)
      * @see org.apereo.portal.layout.dlm.remoting.IGroupListHelper#getRootEntity(java.lang.String)
      */
+    @Override
     public JsonEntityBean getRootEntity(String groupType) {
 
         EntityEnum type = EntityEnum.getEntityEnum(groupType);
@@ -242,6 +244,7 @@ public class GroupListHelperImpl implements IGroupListHelper {
      * (non-Javadoc)
      * @see org.apereo.portal.layout.dlm.remoting.IGroupListHelper#getEntityTypesForGroupType(java.lang.String)
      */
+    @Override
     public Set<String> getEntityTypesForGroupType(String groupType) {
 
         // add the group type itself to the allowed list
@@ -274,6 +277,7 @@ public class GroupListHelperImpl implements IGroupListHelper {
      * (non-Javadoc)
      * @see org.apereo.portal.layout.dlm.remoting.IGroupListHelper#getEntity(java.lang.String, java.lang.String, boolean)
      */
+    @Override
     public JsonEntityBean getEntity(String entityType, String entityId, boolean populateChildren) {
 
         // get the EntityEnum for the specified entity type
@@ -325,6 +329,7 @@ public class GroupListHelperImpl implements IGroupListHelper {
      * (non-Javadoc)
      * @see org.apereo.portal.layout.dlm.remoting.IGroupListHelper#getEntity(org.apereo.portal.groups.IGroupMember)
      */
+    @Override
     public JsonEntityBean getEntity(IGroupMember member) {
 
         // get the type of this member entity
@@ -351,6 +356,7 @@ public class GroupListHelperImpl implements IGroupListHelper {
         return entity;
     }
 
+    @Override
     public JsonEntityBean getEntityForPrincipal(String principalString) {
 
         // split the principal string into its type and key components
@@ -371,6 +377,7 @@ public class GroupListHelperImpl implements IGroupListHelper {
         return bean;
     }
 
+    @Override
     public IAuthorizationPrincipal getPrincipalForEntity(JsonEntityBean entity) {
 
         // attempt to determine the entity type class for this principal
@@ -419,6 +426,7 @@ public class GroupListHelperImpl implements IGroupListHelper {
      * (non-Javadoc)
      * @see org.apereo.portal.layout.dlm.remoting.IGroupListHelper#getEntityType(org.apereo.portal.groups.IGroupMember)
      */
+    @Override
     public EntityEnum getEntityType(IGroupMember entity) {
 
         if (IEntityGroup.class.isAssignableFrom(entity.getClass())) {
@@ -432,6 +440,7 @@ public class GroupListHelperImpl implements IGroupListHelper {
      * (non-Javadoc)
      * @see org.apereo.portal.portlets.groupselector.GroupsSelectorHelper#getEntityBeans(java.util.List)
      */
+    @Override
     public List<JsonEntityBean> getEntityBeans(List<String> params) {
         // if no parameters have been supplied, just return an empty list
         if (params == null || params.isEmpty()) {
@@ -453,6 +462,7 @@ public class GroupListHelperImpl implements IGroupListHelper {
      * @param groupMember Entity to look up
      * @return groupMember's name or null if there's an error
      */
+    @Override
     public String lookupEntityName(JsonEntityBean entity) {
 
         EntityEnum entityEnum = entity.getEntityType();

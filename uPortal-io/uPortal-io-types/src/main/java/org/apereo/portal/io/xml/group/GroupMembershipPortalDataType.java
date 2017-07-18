@@ -24,10 +24,7 @@ import javax.xml.stream.XMLEventReader;
 import org.apereo.portal.io.xml.AbstractPortalDataType;
 import org.apereo.portal.io.xml.PortalDataKey;
 
-/**
- * Describes a group with members in the portal
- *
- */
+/** Describes a group with members in the portal */
 public class GroupMembershipPortalDataType extends AbstractPortalDataType {
     public static final QName LEGACY_GROUP_QNAME = new QName("group");
     public static final String TYPE_ID = "group-membership";

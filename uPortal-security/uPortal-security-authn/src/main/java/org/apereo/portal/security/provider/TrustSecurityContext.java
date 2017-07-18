@@ -27,7 +27,6 @@ import org.apereo.portal.spring.locator.LocalAccountDaoLocator;
  * the UP_USERS database table but otherwise presumes to be pre-authenticated by the context from
  * which it is called. The typical system where this might be used is a portal whose main page is
  * protected by HTTP authentication (BASIC or otherwise).
- *
  */
 class TrustSecurityContext extends ChainingSecurityContext implements ISecurityContext {
 

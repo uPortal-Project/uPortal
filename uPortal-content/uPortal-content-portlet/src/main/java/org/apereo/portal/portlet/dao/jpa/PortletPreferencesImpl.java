@@ -46,7 +46,6 @@ import org.hibernate.annotations.IndexColumn;
 /**
  * Internal class to the portlet entity/definition needed to have a sane DB schema and still share
  * tables
- *
  */
 @Entity
 @Table(name = "UP_PORTLET_PREFS")
@@ -87,6 +86,7 @@ class PortletPreferencesImpl {
     @Transient
     private final List<IPortletPreference> filteringPortletPreferences =
             new FilteringOnAddList<IPortletPreference>(new NewPreferencesFilter(), true) {
+                @Override
                 protected List<IPortletPreference> delegate() {
                     return portletPreferences;
                 }

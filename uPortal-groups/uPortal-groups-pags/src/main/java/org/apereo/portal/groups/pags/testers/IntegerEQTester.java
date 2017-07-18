@@ -18,7 +18,6 @@ import org.apereo.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
 
 /**
  * Tests if any of the possibly multiple values of the attribute are EQ (equal to) the test value.
- *
  */
 public class IntegerEQTester extends AbstractIntegerTester {
 
@@ -27,8 +26,8 @@ public class IntegerEQTester extends AbstractIntegerTester {
         super(definition);
     }
 
+    @Override
     public boolean test(int attributeValue) {
         return attributeValue == getTestInteger();
     }
-
 }

@@ -42,7 +42,7 @@ import org.springframework.web.portlet.context.PortletWebRequest;
 /**
  * PortletSpELServiceImpl provides the default implementation of IPortletSpELService.
  *
- *     Bourey)
+ * <p>Bourey)
  */
 @Service
 public class PortletSpELServiceImpl implements BeanFactoryAware, IPortletSpELService {

@@ -40,8 +40,7 @@ import org.apereo.portal.utils.IFragmentDefinitionUtils;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
-/**
- */
+/** */
 public class StylesheetUserPreferencesServiceImplTest {
 
     /** @throws Exception */

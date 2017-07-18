@@ -20,10 +20,7 @@ import javax.xml.namespace.QName;
 import org.apereo.portal.io.xml.AbstractPortalDataType;
 import org.apereo.portal.io.xml.PortalDataKey;
 
-/**
- * Describes a permission owner in the portal
- *
- */
+/** Describes a permission owner in the portal */
 public class PermissionPortalDataType extends AbstractPortalDataType {
     public static final QName LEGACY_PERMISSION_QNAME = new QName("permission");
 

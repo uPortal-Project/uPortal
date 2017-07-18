@@ -26,10 +26,7 @@ import org.apereo.portal.security.IPersonManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-/**
- * Adds the targeted portlet's fname to the current thread name.
- *
- */
+/** Adds the targeted portlet's fname to the current thread name. */
 @Service("ThreadNamingPortletExecutionInterceptorAdaptor")
 public class ThreadNamingPortletExecutionInterceptorAdaptor
         extends PortletExecutionInterceptorAdaptor {

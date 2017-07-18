@@ -40,8 +40,7 @@ import org.apereo.portal.api.portlet.PortletDelegationLocator;
 import org.apereo.portal.portlet.PortletUtils;
 import org.apereo.portal.portlet.om.IPortletWindowId;
 
-/**
- */
+/** */
 public class RenderPortletTag extends TagSupport {
     private static final long serialVersionUID = 1L;
 

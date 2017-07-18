@@ -19,10 +19,7 @@ import org.apereo.portal.security.IPerson;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-/**
- * Layout processing action for changing a node's attribute in the user's layout.
- *
- */
+/** Layout processing action for changing a node's attribute in the user's layout. */
 public class LPAChangeAttribute implements ILayoutProcessingAction {
     private String nodeId = null;
     private String name = null;
@@ -30,12 +27,7 @@ public class LPAChangeAttribute implements ILayoutProcessingAction {
     private Element ilfNode = null;
     private String value = null;
 
-    LPAChangeAttribute(
-            String nodeId,
-            String name,
-            String value,
-            IPerson p,
-            Element ilfNode) {
+    LPAChangeAttribute(String nodeId, String name, String value, IPerson p, Element ilfNode) {
         this.nodeId = nodeId;
         this.name = name;
         this.person = p;

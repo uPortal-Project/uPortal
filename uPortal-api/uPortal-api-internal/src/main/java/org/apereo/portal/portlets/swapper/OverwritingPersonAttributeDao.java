@@ -80,6 +80,7 @@ public class OverwritingPersonAttributeDao extends AbstractFlatteningPersonAttri
     /* (non-Javadoc)
      * @see org.jasig.services.persondir.IPersonAttributeDao#getPerson(java.lang.String)
      */
+    @Override
     public IPersonAttributes getPerson(String uid) {
         final IPersonAttributes person = this.delegatePersonAttributeDao.getPerson(uid);
         if (person == null) {
@@ -92,6 +93,7 @@ public class OverwritingPersonAttributeDao extends AbstractFlatteningPersonAttri
     /* (non-Javadoc)
      * @see org.jasig.services.persondir.IPersonAttributeDao#getPeopleWithMultivaluedAttributes(java.util.Map)
      */
+    @Override
     public Set<IPersonAttributes> getPeopleWithMultivaluedAttributes(
             Map<String, List<Object>> query) {
         final Set<IPersonAttributes> people =
@@ -113,6 +115,7 @@ public class OverwritingPersonAttributeDao extends AbstractFlatteningPersonAttri
     /* (non-Javadoc)
      * @see org.jasig.services.persondir.IPersonAttributeDao#getPossibleUserAttributeNames()
      */
+    @Override
     public Set<String> getPossibleUserAttributeNames() {
         return this.delegatePersonAttributeDao.getPossibleUserAttributeNames();
     }
@@ -120,6 +123,7 @@ public class OverwritingPersonAttributeDao extends AbstractFlatteningPersonAttri
     /* (non-Javadoc)
      * @see org.jasig.services.persondir.IPersonAttributeDao#getAvailableQueryAttributes()
      */
+    @Override
     public Set<String> getAvailableQueryAttributes() {
         return this.delegatePersonAttributeDao.getAvailableQueryAttributes();
     }

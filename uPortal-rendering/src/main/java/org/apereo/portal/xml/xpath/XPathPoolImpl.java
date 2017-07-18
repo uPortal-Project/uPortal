@@ -30,7 +30,6 @@ import org.springframework.stereotype.Service;
 /**
  * Implementation of {@link XPathOperations} that uses a {@link GenericKeyedObjectPool} to pool
  * compiled {@link XPathExpression} instances.
- *
  */
 @Service
 public class XPathPoolImpl implements XPathOperations, DisposableBean {

@@ -146,7 +146,8 @@ public class SoffitConnectorController implements ApplicationContextAware {
                 final HttpResponse httpResponse = httpClient.execute(getMethod);
                 try {
                     final int statusCode = httpResponse.getStatusLine().getStatusCode();
-                    logger.debug("HTTP response code for url '{}' was '{}'", serviceUrl, statusCode);
+                    logger.debug(
+                            "HTTP response code for url '{}' was '{}'", serviceUrl, statusCode);
 
                     if (statusCode == HttpStatus.SC_OK) {
                         responseValue =
@@ -157,7 +158,9 @@ public class SoffitConnectorController implements ApplicationContextAware {
                                 serviceUrl,
                                 statusCode);
                         res.getWriter()
-                                .write("FAILED!  statusCode=" + statusCode); // TODO:  Better message
+                                .write(
+                                        "FAILED!  statusCode="
+                                                + statusCode); // TODO:  Better message
                     }
                 } finally {
                     if (null != httpResponse) {

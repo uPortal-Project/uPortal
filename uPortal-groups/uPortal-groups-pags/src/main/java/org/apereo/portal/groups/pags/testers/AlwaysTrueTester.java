@@ -23,8 +23,8 @@ public class AlwaysTrueTester implements IPersonTester {
     /** @since 4.3 */
     public AlwaysTrueTester(IPersonAttributesGroupTestDefinition definition) {}
 
+    @Override
     public boolean test(IPerson person) {
         return true;
     }
-
 }

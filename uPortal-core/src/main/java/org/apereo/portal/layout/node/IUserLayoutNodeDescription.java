@@ -17,9 +17,7 @@ package org.apereo.portal.layout.node;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-/**
- * An interface describing common features of user layout nodes, that is channels and folders
- */
+/** An interface describing common features of user layout nodes, that is channels and folders */
 public interface IUserLayoutNodeDescription {
     enum LayoutNodeType {
         PORTLET,

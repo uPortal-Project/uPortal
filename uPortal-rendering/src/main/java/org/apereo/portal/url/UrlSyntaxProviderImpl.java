@@ -62,7 +62,6 @@ import org.springframework.web.util.UrlPathHelper;
 /**
  * {@link IPortalUrlProvider} and {@link IUrlSyntaxProvider} implementation that uses a consistent
  * human readable URL format.
- *
  */
 @Component("portalUrlProvider")
 public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
@@ -310,6 +309,7 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
      * @see org.apereo.portal.url.IPortalUrlProvider#getPortalRequestInfo(javax.servlet.http.HttpServletRequest)
      */
     @Override
+    @SuppressWarnings("FallThrough")
     public IPortalRequestInfo getPortalRequestInfo(HttpServletRequest request) {
         request = this.portalRequestUtils.getOriginalPortalRequest(request);
         final IPortalRequestInfo cachedPortalRequestInfo =
@@ -515,10 +515,9 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                                             targetedPortletRequestInfo.setWindowState(
                                                     IPortletRenderer.EXCLUSIVE);
                                         }
-                                        break;
+                                    default:
+                                        // Do thing
                                 }
-
-                                break;
                             }
                         }
                     case TYPE:
@@ -556,6 +555,8 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                                 }
                             }
                         }
+                    default:
+                        // Do nothing
                 }
             }
 
@@ -971,6 +972,7 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
         return fullName.substring(prefix.length());
     }
 
+    @SuppressWarnings("FallThrough")
     @Override
     public String getCanonicalUrl(HttpServletRequest request) {
 
@@ -1049,6 +1051,8 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                         portletUrlBuilder.setPortletMode(portletRequestInfo.getPortletMode());
                         break;
                     }
+                default:
+                    // Do nothing
             }
         }
 

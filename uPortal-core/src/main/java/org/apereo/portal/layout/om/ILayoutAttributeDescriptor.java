@@ -16,10 +16,7 @@ package org.apereo.portal.layout.om;
 
 import java.util.Set;
 
-/**
- * Descriptor for attributes added to layout elements
- *
- */
+/** Descriptor for attributes added to layout elements */
 public interface ILayoutAttributeDescriptor extends IStylesheetData {
     /** Set of layout element names this attribute should be applied to. */
     public Set<String> getTargetElementNames();

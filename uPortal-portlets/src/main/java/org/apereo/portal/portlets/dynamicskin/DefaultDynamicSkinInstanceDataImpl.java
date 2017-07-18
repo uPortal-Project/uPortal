@@ -1,31 +1,25 @@
 /**
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apereo.portal.portlets.dynamicskin;
 
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.portlet.PortletContext;
 import javax.portlet.PortletPreferences;
 import javax.portlet.PortletRequest;
-
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
@@ -46,17 +40,13 @@ public class DefaultDynamicSkinInstanceDataImpl implements DynamicSkinInstanceDa
         this.portletRequest = request;
     }
 
-    /**
-     * @see DynamicSkinInstanceData#getPortletAbsolutePathRoot()
-     */
+    /** @see DynamicSkinInstanceData#getPortletAbsolutePathRoot() */
     @Override
     public String getPortletAbsolutePathRoot() {
-       return this.portletAbsolutePathRoot;
+        return this.portletAbsolutePathRoot;
     }
 
-    /**
-     * @see DynamicSkinInstanceData#getSkinName()
-     */
+    /** @see DynamicSkinInstanceData#getSkinName() */
     @Override
     public String getSkinName() {
         return this.skinName;
@@ -67,9 +57,7 @@ public class DefaultDynamicSkinInstanceDataImpl implements DynamicSkinInstanceDa
         return this.portletRequest;
     }
 
-    /**
-     * @see DynamicSkinInstanceData#getVariablesValuesMap()
-     */
+    /** @see DynamicSkinInstanceData#getVariablesValuesMap() */
     @Override
     public Map<String, String> getVariableNameToValueMap() {
         return this.variableNameToValueMap;
@@ -86,15 +74,19 @@ public class DefaultDynamicSkinInstanceDataImpl implements DynamicSkinInstanceDa
     }
 
     private void pullDataFromPortletPreferences(final PortletPreferences prefs) {
-        this.skinName = prefs.getValue(
-                DynamicRespondrSkinConstants.PREF_SKIN_NAME, DynamicRespondrSkinConstants.DEFAULT_SKIN_NAME);
+        this.skinName =
+                prefs.getValue(
+                        DynamicRespondrSkinConstants.PREF_SKIN_NAME,
+                        DynamicRespondrSkinConstants.DEFAULT_SKIN_NAME);
 
         this.variableNameToValueMap = new HashMap<String, String>();
-        final Enumeration<String> prefNames =  prefs.getNames();
+        final Enumeration<String> prefNames = prefs.getNames();
         while (prefNames.hasMoreElements()) {
             final String prefName = prefNames.nextElement();
             if (prefName.startsWith(DynamicRespondrSkinConstants.CONFIGURABLE_PREFIX)) {
-                final String nameWithoutPrefix = prefName.substring(DynamicRespondrSkinConstants.CONFIGURABLE_PREFIX.length());
+                final String nameWithoutPrefix =
+                        prefName.substring(
+                                DynamicRespondrSkinConstants.CONFIGURABLE_PREFIX.length());
                 final String value = prefs.getValue(prefName, "");
                 this.variableNameToValueMap.put(nameWithoutPrefix, value);
             }
@@ -104,5 +96,4 @@ public class DefaultDynamicSkinInstanceDataImpl implements DynamicSkinInstanceDa
     private void pullDataFromPortletContext(final PortletContext ctx) {
         this.portletAbsolutePathRoot = ctx.getRealPath("/");
     }
-
 }

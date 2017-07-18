@@ -19,10 +19,7 @@ import java.util.regex.Pattern;
 import org.apereo.portal.utils.Tuple;
 import org.dom4j.Node;
 
-/**
- * Generates the correct file name for a Permission Set
- *
- */
+/** Generates the correct file name for a Permission Set */
 public class PermissionSetsFilenameFunction implements Function<Tuple<String, Node>, String> {
     public static final Pattern SPLIT = Pattern.compile("\\|");
 

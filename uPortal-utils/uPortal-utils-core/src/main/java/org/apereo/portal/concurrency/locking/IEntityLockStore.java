@@ -18,10 +18,7 @@ import java.util.Date;
 import org.apereo.portal.concurrency.IEntityLock;
 import org.apereo.portal.concurrency.LockingException;
 
-/**
- * Interface for finding and maintaining <code>IEntityLocks</code>.
- *
- */
+/** Interface for finding and maintaining <code>IEntityLocks</code>. */
 public interface IEntityLockStore {
     /**
      * Adds this IEntityLock to the store.

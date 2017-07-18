@@ -18,8 +18,7 @@ import org.apache.commons.lang.Validate;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
-/**
- */
+/** */
 public abstract class AbstractObjectId implements IObjectId {
     private static final long serialVersionUID = 1L;
 
@@ -34,6 +33,7 @@ public abstract class AbstractObjectId implements IObjectId {
     /* (non-Javadoc)
      * @see org.apache.pluto.PortletEntityID#getStringId()
      */
+    @Override
     public String getStringId() {
         return this.objectId;
     }

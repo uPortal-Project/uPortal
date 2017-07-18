@@ -19,10 +19,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
-/**
- * A portlet category.
- *
- */
+/** A portlet category. */
 public class PortletCategory {
 
     private String id;

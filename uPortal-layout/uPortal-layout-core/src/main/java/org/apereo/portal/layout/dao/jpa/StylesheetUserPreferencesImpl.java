@@ -52,10 +52,7 @@ import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.Type;
 
-/**
- * JPA implementation of stylesheet user preferences data
- *
- */
+/** JPA implementation of stylesheet user preferences data */
 @Entity
 @Table(name = "UP_SS_USER_PREF")
 @SequenceGenerator(

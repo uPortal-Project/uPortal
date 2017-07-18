@@ -34,7 +34,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 /**
  * Event aggregator that uses {@link PortletExecutionAggregationPrivateDao} to aggregate portlet
  * executions
- *
  */
 public class PortletExecutionAggregator
         extends BaseIntervalAwarePortalEventAggregator<

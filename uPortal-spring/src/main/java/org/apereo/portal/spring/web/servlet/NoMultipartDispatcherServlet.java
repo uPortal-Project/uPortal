@@ -21,7 +21,6 @@ import org.springframework.web.servlet.DispatcherServlet;
 /**
  * {@link DispatcherServlet} that will NEVER touch multipart request data. Needed in uPortal so that
  * the multipart request is passed on to the portlet correctly
- *
  */
 public class NoMultipartDispatcherServlet extends DispatcherServlet {
     private static final long serialVersionUID = 1L;

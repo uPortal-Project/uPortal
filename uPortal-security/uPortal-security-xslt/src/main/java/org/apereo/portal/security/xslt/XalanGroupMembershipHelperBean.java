@@ -27,8 +27,7 @@ import org.apereo.portal.services.GroupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-/**
- */
+/** */
 @Service
 public class XalanGroupMembershipHelperBean implements IXalanGroupMembershipHelper {
     protected final Log logger = LogFactory.getLog(this.getClass());

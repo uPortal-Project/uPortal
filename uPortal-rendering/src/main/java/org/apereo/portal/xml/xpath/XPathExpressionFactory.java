@@ -24,10 +24,7 @@ import org.apache.commons.pool.BaseKeyedPoolableObjectFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Creates new {@link XPathExpression} instances
- *
- */
+/** Creates new {@link XPathExpression} instances */
 class XPathExpressionFactory extends BaseKeyedPoolableObjectFactory {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 

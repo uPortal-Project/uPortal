@@ -83,6 +83,7 @@ public class AttributeSwapperHelperImpl implements IAttributeSwapperHelper {
     /* (non-Javadoc)
      * @see org.apereo.portal.portlets.swapper.IAttributeSwapperHelper#getSwappableAttributes(org.springframework.webflow.context.ExternalContext)
      */
+    @Override
     public Set<String> getSwappableAttributes(ExternalContext externalContext) {
         final PortletRequest portletRequest = (PortletRequest) externalContext.getNativeRequest();
         final PortletPreferences preferences = portletRequest.getPreferences();
@@ -132,6 +133,7 @@ public class AttributeSwapperHelperImpl implements IAttributeSwapperHelper {
     /* (non-Javadoc)
      * @see org.apereo.portal.portlets.swapper.IAttributeSwapperHelper#getOriginalUserAttributes(java.lang.String)
      */
+    @Override
     public IPersonAttributes getOriginalUserAttributes(String uid) {
         final IPersonAttributeDao delegatePersonAttributeDao =
                 this.overwritingPersonAttributeDao.getDelegatePersonAttributeDao();
@@ -141,6 +143,7 @@ public class AttributeSwapperHelperImpl implements IAttributeSwapperHelper {
     /* (non-Javadoc)
      * @see org.apereo.portal.portlets.swapper.IAttributeSwapperHelper#populateSwapRequest(org.springframework.webflow.context.ExternalContext, org.apereo.portal.portlets.swapper.AttributeSwapRequest)
      */
+    @Override
     public void populateSwapRequest(
             ExternalContext externalContext, AttributeSwapRequest attributeSwapRequest) {
         final Principal currentUser = externalContext.getCurrentUser();
@@ -163,6 +166,7 @@ public class AttributeSwapperHelperImpl implements IAttributeSwapperHelper {
     /* (non-Javadoc)
      * @see org.apereo.portal.portlets.swapper.IAttributeSwapperHelper#swapAttributes(org.springframework.webflow.context.ExternalContext, org.apereo.portal.portlets.swapper.AttributeSwapRequest)
      */
+    @Override
     public void swapAttributes(
             ExternalContext externalContext, AttributeSwapRequest attributeSwapRequest) {
         //Collate the swap request into a single overrides map
@@ -250,6 +254,7 @@ public class AttributeSwapperHelperImpl implements IAttributeSwapperHelper {
     /* (non-Javadoc)
      * @see org.apereo.portal.portlets.swapper.IAttributeSwapperHelper#resetAttributes(java.lang.String)
      */
+    @Override
     public void resetAttributes(ExternalContext externalContext) {
         final Principal currentUser = externalContext.getCurrentUser();
         final String uid = currentUser.getName();

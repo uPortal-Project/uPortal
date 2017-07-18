@@ -20,7 +20,6 @@ import org.apereo.portal.concurrency.IEntityLock;
  * Defines an <code>IEntityGroup</code> that can be locked for update.
  *
  * <p>
- *
  */
 public interface ILockableEntityGroup extends IEntityGroup {
     /** @return org.apereo.portal.concurrency.IEntityLock */

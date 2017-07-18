@@ -76,6 +76,7 @@ public class UserLayoutParameterProcessor implements IRequestParameterProcessor 
     }
 
     @Override
+    @SuppressWarnings("FallThrough")
     public boolean processParameters(HttpServletRequest request, HttpServletResponse response) {
         final IPortalRequestInfo portalRequestInfo =
                 this.urlSyntaxProvider.getPortalRequestInfo(request);

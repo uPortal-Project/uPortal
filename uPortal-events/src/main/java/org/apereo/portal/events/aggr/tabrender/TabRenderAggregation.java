@@ -18,10 +18,7 @@ import org.apereo.portal.events.aggr.BaseAggregation;
 import org.apereo.portal.events.aggr.TimedAggregationStatistics;
 import org.apereo.portal.events.aggr.tabs.AggregatedTabMapping;
 
-/**
- * Tracks tab render stats, all times are in nanoseconds.
- *
- */
+/** Tracks tab render stats, all times are in nanoseconds. */
 public interface TabRenderAggregation
         extends BaseAggregation<TabRenderAggregationKey, TabRenderAggregationDiscriminator>,
                 TimedAggregationStatistics {

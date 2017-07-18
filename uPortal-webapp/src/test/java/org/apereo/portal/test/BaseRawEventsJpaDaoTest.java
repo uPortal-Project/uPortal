@@ -18,10 +18,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import org.apereo.portal.jpa.BaseRawEventsJpaDao;
 
-/**
- * Base class for RawEventsDb unit tests that want TX and entity manager support.
- *
- */
+/** Base class for RawEventsDb unit tests that want TX and entity manager support. */
 public abstract class BaseRawEventsJpaDaoTest extends BaseJpaDaoTest {
     private EntityManager entityManager;
 

@@ -19,10 +19,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
-/**
- * Configuration for the DbLoader, includes commons-cli Options set for command line use.
- *
- */
+/** Configuration for the DbLoader, includes commons-cli Options set for command line use. */
 public class DbLoaderConfigBuilder implements DbLoaderConfig {
     private String tablesFile;
     private String dataFile;

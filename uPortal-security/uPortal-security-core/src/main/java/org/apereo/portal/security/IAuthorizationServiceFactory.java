@@ -22,7 +22,6 @@ import org.apereo.portal.AuthorizationException;
  * instantiation through means other than the corresponding factory. This formalism should be
  * followed for consistency even when the factory performs no additional value-add than
  * instantiating the appropriate context class.
- *
  */
 public interface IAuthorizationServiceFactory {
     public IAuthorizationService getAuthorization() throws AuthorizationException;

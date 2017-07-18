@@ -32,7 +32,6 @@ import org.springframework.stereotype.Service;
 /**
  * Tracks entries added to {@link Ehcache} instances that have keys or values which implement {@link
  * TaggedCacheEntry}. Allows for external removal of elements that match a specified tag
- *
  */
 @Service("tagTrackingCacheEventListener")
 public class TagTrackingCacheEventListener extends CacheEventListenerAdapter

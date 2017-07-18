@@ -36,10 +36,7 @@ import org.hibernate.dialect.PostgreSQL81Dialect;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 
-/**
- * JPA implementation of the portlet definition DAO
- *
- */
+/** JPA implementation of the portlet definition DAO */
 @Repository
 public class JpaPortletDefinitionDao extends BasePortalJpaDao implements IPortletDefinitionDao {
     private CriteriaQuery<PortletDefinitionImpl> findAllPortletDefinitions;

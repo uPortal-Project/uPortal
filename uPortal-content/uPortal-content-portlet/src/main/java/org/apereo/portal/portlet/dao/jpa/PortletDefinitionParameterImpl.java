@@ -27,10 +27,7 @@ import org.apereo.portal.portlet.om.IPortletDefinitionParameter;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-/**
- * JPA implementation of the IPortletParameter interface.
- *
- */
+/** JPA implementation of the IPortletParameter interface. */
 @Entity
 @Table(name = "UP_PORTLET_DEF_PARAM")
 @SequenceGenerator(

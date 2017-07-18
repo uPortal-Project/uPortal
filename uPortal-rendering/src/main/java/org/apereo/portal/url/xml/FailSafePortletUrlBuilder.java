@@ -23,8 +23,7 @@ import org.apereo.portal.url.IPortalUrlBuilder;
 import org.apereo.portal.url.IPortletUrlBuilder;
 import org.apereo.portal.url.ParameterMap;
 
-/**
- */
+/** */
 class FailSafePortletUrlBuilder implements IPortletUrlBuilder {
     private final Map<String, String[]> parameters = new ParameterMap();
     private final Map<String, String[]> publicParameters = new ParameterMap();

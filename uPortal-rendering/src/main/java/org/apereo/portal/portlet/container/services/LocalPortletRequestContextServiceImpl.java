@@ -43,9 +43,7 @@ import org.apereo.portal.url.IUrlSyntaxProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-/**
- * uPortal implementation of {@link PortletRequestContextService}.
- */
+/** uPortal implementation of {@link PortletRequestContextService}. */
 @Service("portletRequestContextService")
 public class LocalPortletRequestContextServiceImpl implements PortletRequestContextService {
     private IPortletWindowRegistry portletWindowRegistry;

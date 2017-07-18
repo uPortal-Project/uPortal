@@ -27,7 +27,6 @@ import org.jasig.services.persondir.support.merger.MultivaluedAttributeMerger;
 /**
  * Manages the storage of an IPerson object in a user's session, and add request attributes to the
  * user guest.
- *
  */
 public class ExtendedPersonManager extends AbstractPersonManager {
 
@@ -47,6 +46,7 @@ public class ExtendedPersonManager extends AbstractPersonManager {
      * @return the IPerson object for the incoming request
      * @throws PortalSecurityException
      */
+    @Override
     public IPerson getPerson(HttpServletRequest request) throws PortalSecurityException {
         HttpSession session = request.getSession(false);
         IPerson person = null;

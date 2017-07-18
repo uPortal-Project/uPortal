@@ -26,7 +26,6 @@ import org.apache.commons.lang.Validate;
 /**
  * Provides basic information about uPortal and features it supports. The class will function with
  * no configuration but no properties, states or modes are set by default.
- *
  */
 public class PortalContextImpl implements PortalContext {
     private Properties portalProperties = new Properties();

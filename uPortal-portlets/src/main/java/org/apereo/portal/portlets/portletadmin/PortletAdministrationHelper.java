@@ -55,9 +55,9 @@ import org.apereo.portal.api.portlet.DelegateState;
 import org.apereo.portal.api.portlet.DelegationActionResponse;
 import org.apereo.portal.api.portlet.PortletDelegationDispatcher;
 import org.apereo.portal.api.portlet.PortletDelegationLocator;
-import org.apereo.portal.io.xml.portlet.IPortletPublishingService;
 import org.apereo.portal.groups.IEntityGroup;
 import org.apereo.portal.groups.IGroupMember;
+import org.apereo.portal.io.xml.portlet.IPortletPublishingService;
 import org.apereo.portal.layout.dlm.remoting.IGroupListHelper;
 import org.apereo.portal.layout.dlm.remoting.JsonEntityBean;
 import org.apereo.portal.portlet.PortletUtils;
@@ -109,10 +109,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.context.ServletContextAware;
 import org.springframework.webflow.context.ExternalContext;
 
-/**
- * Helper methods for the portlet administration workflow.
- *
- */
+/** Helper methods for the portlet administration workflow. */
 @Service
 public final class PortletAdministrationHelper implements ServletContextAware {
 

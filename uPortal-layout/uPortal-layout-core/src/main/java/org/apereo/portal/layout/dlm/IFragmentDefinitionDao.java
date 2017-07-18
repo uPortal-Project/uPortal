@@ -16,10 +16,7 @@ package org.apereo.portal.layout.dlm;
 
 import java.util.List;
 
-/**
- * Defines the service calls for DLM fragment definition DAO implementations.
- *
- */
+/** Defines the service calls for DLM fragment definition DAO implementations. */
 public interface IFragmentDefinitionDao {
 
     /**

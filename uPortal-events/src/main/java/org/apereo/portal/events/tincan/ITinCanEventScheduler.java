@@ -18,10 +18,7 @@ import java.util.List;
 import org.apereo.portal.events.tincan.om.LrsStatement;
 import org.apereo.portal.events.tincan.providers.ITinCanAPIProvider;
 
-/**
- * API that controls when API events are sent off to a provider.
- *
- */
+/** API that controls when API events are sent off to a provider. */
 public interface ITinCanEventScheduler {
     /**
      * Set the list of xAPI providers to process each event.

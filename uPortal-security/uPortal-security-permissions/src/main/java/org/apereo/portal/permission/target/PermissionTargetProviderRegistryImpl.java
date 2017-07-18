@@ -50,6 +50,7 @@ public class PermissionTargetProviderRegistryImpl implements IPermissionTargetPr
      * (non-Javadoc)
      * @see org.apereo.portal.permission.target.IPermissionTargetProviderRegistry#getTargetProvider(java.lang.String)
      */
+    @Override
     public IPermissionTargetProvider getTargetProvider(String key) {
         return providers.get(key);
     }
@@ -58,6 +59,7 @@ public class PermissionTargetProviderRegistryImpl implements IPermissionTargetPr
      * (non-Javadoc)
      * @see org.apereo.portal.permission.target.IPermissionTargetProviderRegistry#getTargetProviders()
      */
+    @Override
     public Collection<IPermissionTargetProvider> getTargetProviders() {
         return this.providers.values();
     }

@@ -18,10 +18,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-/**
- * Provides a DoubleCheckedCreator impl that tracks the singleton instance internally
- *
- */
+/** Provides a DoubleCheckedCreator impl that tracks the singleton instance internally */
 public abstract class SingletonDoubleCheckedCreator<T> extends DoubleCheckedCreator<T> {
     private final AtomicBoolean creating = new AtomicBoolean(false);
     private final AtomicBoolean created = new AtomicBoolean(false);

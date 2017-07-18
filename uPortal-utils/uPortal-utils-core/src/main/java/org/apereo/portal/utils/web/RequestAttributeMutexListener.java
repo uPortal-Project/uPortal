@@ -26,7 +26,6 @@ import org.apereo.portal.utils.SerializableObject;
  * the request, available under the key defined by the <code>REQUEST_MUTEX_ATTRIBUTE</code>
  * constant. It serves as a safe reference to synchronize on for locking on the current request
  * attributes.
- *
  */
 public class RequestAttributeMutexListener implements ServletRequestListener {
 

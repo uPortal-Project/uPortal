@@ -17,7 +17,6 @@ package org.apereo.portal.groups.pags.dao;
 /**
  * Provides APIs for creating, editing, and deleting {@link IPersonAttributesGroupTestDefinition}
  * objects.
- *
  */
 public interface IPersonAttributesGroupTestDefinitionDao {
 
@@ -30,6 +29,5 @@ public interface IPersonAttributesGroupTestDefinitionDao {
     IPersonAttributesGroupTestDefinition updatePersonAttributesGroupTestDefinition(
             IPersonAttributesGroupTestDefinition personAttributesGroupTestDefinition);
 
-    void deletePersonAttributesGroupTestDefinition(
-            IPersonAttributesGroupTestDefinition definition);
+    void deletePersonAttributesGroupTestDefinition(IPersonAttributesGroupTestDefinition definition);
 }

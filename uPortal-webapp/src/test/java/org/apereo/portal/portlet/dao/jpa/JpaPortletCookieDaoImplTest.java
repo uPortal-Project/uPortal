@@ -29,10 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-/**
- * Tests for {@link JpaPortletCookieDaoImpl}.
- *
- */
+/** Tests for {@link JpaPortletCookieDaoImpl}. */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:jpaPortalTestApplicationContext.xml")
 public class JpaPortletCookieDaoImplTest extends BasePortalJpaDaoTest {

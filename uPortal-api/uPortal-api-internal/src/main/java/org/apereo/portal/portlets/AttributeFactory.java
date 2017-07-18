@@ -21,6 +21,7 @@ import org.apache.commons.collections.Factory;
 public class AttributeFactory implements Factory, Serializable {
     private static final long serialVersionUID = 1L;
 
+    @Override
     public Attribute create() {
         return new Attribute();
     }

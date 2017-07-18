@@ -18,10 +18,7 @@ import java.io.Serializable;
 import java.util.Set;
 import org.apereo.portal.utils.IncludeExcludeUtils;
 
-/**
- * Describes common Include/Exclude configuration of aggregation dimensions
- *
- */
+/** Describes common Include/Exclude configuration of aggregation dimensions */
 public interface BaseAggregatedDimensionConfig<D> extends Serializable {
 
     /** @return The aggregator the includes/excludes are for */

@@ -29,7 +29,6 @@ import org.apache.commons.lang.Validate;
  *   <li>XPath that uniquely identifies a layout node (e.g. '/layout/folder/folder[3]')
  *   <li><strong>SOMETIMES</strong> a portlet fname (layout nodes referring to portlets only)
  * </ul>
- *
  */
 public final class Pathref {
 

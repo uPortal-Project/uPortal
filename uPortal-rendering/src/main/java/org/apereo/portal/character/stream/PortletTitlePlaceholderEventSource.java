@@ -21,10 +21,7 @@ import org.apereo.portal.character.stream.events.PortletTitlePlaceholderEvent;
 import org.apereo.portal.character.stream.events.PortletTitlePlaceholderEventImpl;
 import org.apereo.portal.portlet.om.IPortletWindowId;
 
-/**
- * Generates a {@link PortletTitlePlaceholderEvent} for a regular expression match
- *
- */
+/** Generates a {@link PortletTitlePlaceholderEvent} for a regular expression match */
 public class PortletTitlePlaceholderEventSource extends PortletPlaceholderEventSource {
 
     @Override

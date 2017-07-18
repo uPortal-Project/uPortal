@@ -67,10 +67,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionOperations;
 
-/**
- * Mostly cloned from {@link TableGenerator}
- *
- */
+/** Mostly cloned from {@link TableGenerator} */
 @Repository("counterStore")
 public class HibernateStyleCounterStore implements ICounterStore {
 

@@ -22,10 +22,7 @@ import org.springframework.aop.aspectj.annotation.AspectJProxyFactory;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.core.OrderComparator;
 
-/**
- * Apply AOP Aspect(s) to the object returned by the invoked method.
- *
- */
+/** Apply AOP Aspect(s) to the object returned by the invoked method. */
 public class AspectApplyingAspect {
     private List<Advice> advices;
 

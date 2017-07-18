@@ -19,10 +19,7 @@ import org.apereo.portal.events.aggr.groups.AggregatedGroupMapping;
 import org.apereo.portal.events.aggr.portlets.AggregatedPortletMapping;
 import org.apereo.portal.utils.ComparableExtractingComparator;
 
-/**
- * Basic impl of {@link PortletLayoutAggregationDiscriminator}
- *
- */
+/** Basic impl of {@link PortletLayoutAggregationDiscriminator} */
 public class PortletLayoutAggregationDiscriminatorImpl
         extends BaseGroupedAggregationDiscriminatorImpl
         implements PortletLayoutAggregationDiscriminator {

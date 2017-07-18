@@ -30,10 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-/**
- * Logs the StAX events
- *
- */
+/** Logs the StAX events */
 public class LoggingStAXComponent extends StAXPipelineComponentWrapper {
     private Logger logger = LoggerFactory.getLogger(getClass());
 

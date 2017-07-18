@@ -22,10 +22,7 @@ import javax.xml.stream.events.XMLEvent;
 import org.springframework.util.xml.StaxEventLexicalContentHandler;
 import org.xml.sax.ContentHandler;
 
-/**
- * Stax utility methods
- *
- */
+/** Stax utility methods */
 public final class StaxUtils {
     private StaxUtils() {}
 

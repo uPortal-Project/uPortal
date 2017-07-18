@@ -20,10 +20,7 @@ import java.util.Set;
 import org.apereo.portal.layout.om.IStylesheetUserPreferences;
 import org.w3c.dom.Document;
 
-/**
- * A user's layout and meta-data about that layout
- *
- */
+/** A user's layout and meta-data about that layout */
 public class DistributedUserLayout {
     private final Document layout;
     private final Set<String> fragmentNames;

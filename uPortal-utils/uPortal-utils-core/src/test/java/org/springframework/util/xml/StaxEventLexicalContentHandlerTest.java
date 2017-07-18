@@ -23,8 +23,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.xml.sax.SAXException;
 
-/**
- */
+/** */
 public class StaxEventLexicalContentHandlerTest {
 
     @Mock XMLEventConsumer consumer;

@@ -31,7 +31,6 @@ import org.springframework.web.util.WebUtils;
 /**
  * Wraps {@link SessionScope} to provide functionality when no session is available by using a
  * singleton instance.
- *
  */
 public class PortalSessionScope implements Scope {
     public static final String DESTRUCTION_CALLBACK_NAME_PREFIX =
@@ -62,6 +61,7 @@ public class PortalSessionScope implements Scope {
     /* (non-Javadoc)
      * @see org.springframework.beans.factory.config.Scope#get(java.lang.String, org.springframework.beans.factory.ObjectFactory)
      */
+    @Override
     public Object get(String name, ObjectFactory<?> objectFactory) {
         final HttpSession session = this.getPortalSesion(true);
 
@@ -80,6 +80,7 @@ public class PortalSessionScope implements Scope {
     /* (non-Javadoc)
      * @see org.springframework.beans.factory.config.Scope#getConversationId()
      */
+    @Override
     public String getConversationId() {
         final HttpSession session = this.getPortalSesion(false);
 
@@ -93,6 +94,7 @@ public class PortalSessionScope implements Scope {
     /* (non-Javadoc)
      * @see org.springframework.beans.factory.config.Scope#registerDestructionCallback(java.lang.String, java.lang.Runnable)
      */
+    @Override
     public void registerDestructionCallback(String name, Runnable callback) {
         final HttpSession session = this.getPortalSesion(true);
         final DestructionCallbackBindingListener callbackListener =
@@ -103,6 +105,7 @@ public class PortalSessionScope implements Scope {
     /* (non-Javadoc)
      * @see org.springframework.beans.factory.config.Scope#remove(java.lang.String)
      */
+    @Override
     public Object remove(String name) {
         final HttpSession session = this.getPortalSesion(false);
         if (session == null) {
@@ -139,8 +142,10 @@ public class PortalSessionScope implements Scope {
             this.destructionCallback = destructionCallback;
         }
 
+        @Override
         public void valueBound(HttpSessionBindingEvent event) {}
 
+        @Override
         public void valueUnbound(HttpSessionBindingEvent event) {
             if (this.destructionCallback != null) {
                 this.destructionCallback.run();

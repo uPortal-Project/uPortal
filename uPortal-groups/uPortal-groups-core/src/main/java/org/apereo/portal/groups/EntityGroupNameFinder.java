@@ -18,10 +18,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apereo.portal.services.GroupService;
 
-/**
- * Reference implementation of <code>IEntityNameFinder</code> for <code>IEntityGroup</code>.
- *
- */
+/** Reference implementation of <code>IEntityNameFinder</code> for <code>IEntityGroup</code>. */
 public class EntityGroupNameFinder implements IEntityNameFinder {
     private static final Log log = LogFactory.getLog(EntityGroupNameFinder.class);
     private static IEntityNameFinder _instance = null;
@@ -47,6 +44,7 @@ public class EntityGroupNameFinder implements IEntityNameFinder {
      *
      * @param key java.lang.String
      */
+    @Override
     public String getName(String key) throws Exception {
         IEntityGroup g = GroupService.findGroup(key);
         return g.getName();
@@ -57,6 +55,7 @@ public class EntityGroupNameFinder implements IEntityNameFinder {
      *
      * @return java.lang.Class
      */
+    @Override
     public Class getType() {
         return type;
     }

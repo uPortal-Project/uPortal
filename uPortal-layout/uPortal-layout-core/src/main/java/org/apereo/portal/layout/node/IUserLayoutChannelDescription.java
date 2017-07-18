@@ -20,9 +20,7 @@ import java.util.Map;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-/**
- * An interface managing information contained in a user layout channel node.
- */
+/** An interface managing information contained in a user layout channel node. */
 public interface IUserLayoutChannelDescription extends IUserLayoutNodeDescription {
 
     /**
@@ -248,5 +246,6 @@ public interface IUserLayoutChannelDescription extends IUserLayoutNodeDescriptio
      * @param root a <code>Document</code> for which the <code>Element</code> should be created.
      * @return a <code>Node</code> value
      */
+    @Override
     Element getXML(Document root);
 };

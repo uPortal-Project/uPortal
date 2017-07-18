@@ -14,10 +14,7 @@
  */
 package org.apereo.portal.events.aggr.tabs;
 
-/**
- * A mapped tab name
- *
- */
+/** A mapped tab name */
 public interface AggregatedTabMapping {
     /** Returned by {@link #getFragmentName()} for personal tabs */
     static final String PERSONAL_TAB_FRAGMENT_NAME = "CATCH_ALL_PERSONAL_TAB_OWNER";

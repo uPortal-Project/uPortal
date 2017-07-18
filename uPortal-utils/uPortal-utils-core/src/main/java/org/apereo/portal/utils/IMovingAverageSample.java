@@ -14,9 +14,7 @@
  */
 package org.apereo.portal.utils;
 
-/**
- * @since 2.5
- */
+/** @since 2.5 */
 public interface IMovingAverageSample {
     public long getAverage();
 

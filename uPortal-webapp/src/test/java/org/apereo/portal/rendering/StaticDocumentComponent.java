@@ -37,7 +37,6 @@ import org.xml.sax.SAXException;
  * Pipeline component that reads in a XML file into a Document then creates a XMLEventReader from
  * that. This is meant to simulate what currently happens in {@link
  * DistributedLayoutManager#getUserLayoutReader()}
- *
  */
 public class StaticDocumentComponent implements StAXPipelineComponent {
     private Resource document;

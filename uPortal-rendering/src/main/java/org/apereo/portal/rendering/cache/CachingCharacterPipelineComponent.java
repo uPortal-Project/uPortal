@@ -20,10 +20,7 @@ import org.apereo.portal.character.stream.CharacterEventReader;
 import org.apereo.portal.character.stream.events.CharacterEvent;
 import org.apereo.portal.rendering.CharacterPipelineComponent;
 
-/**
- * component that can cache character pipeline events
- *
- */
+/** component that can cache character pipeline events */
 public class CachingCharacterPipelineComponent
         extends CachingPipelineComponent<CharacterEventReader, CharacterEvent>
         implements CharacterPipelineComponent {

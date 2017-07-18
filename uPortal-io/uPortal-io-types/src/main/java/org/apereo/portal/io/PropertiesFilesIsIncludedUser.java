@@ -25,7 +25,6 @@ import org.springframework.beans.factory.annotation.Autowired;
  *
  * <p>Users that are fragment owners as determined by {@link
  * IUserLayoutStore#isFragmentOwner(String)} are also included
- *
  */
 public class PropertiesFilesIsIncludedUser implements Function<String, Boolean> {
     //userLayoutStore.isFragmentOwner

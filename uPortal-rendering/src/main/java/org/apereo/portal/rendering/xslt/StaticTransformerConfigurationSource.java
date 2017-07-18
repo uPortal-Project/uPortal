@@ -29,8 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.expression.Expression;
 import org.springframework.web.context.request.ServletWebRequest;
 
-/**
- */
+/** */
 public class StaticTransformerConfigurationSource implements TransformerConfigurationSource {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 

@@ -25,10 +25,7 @@ import org.apereo.portal.events.aggr.dao.jpa.QuarterDetailImpl;
 import org.joda.time.MonthDay;
 import org.joda.time.ReadableInstant;
 
-/**
- * Utilities for working with the various date/time data types involved in event aggregation
- *
- */
+/** Utilities for working with the various date/time data types involved in event aggregation */
 public final class EventDateTimeUtils {
     private EventDateTimeUtils() {}
 

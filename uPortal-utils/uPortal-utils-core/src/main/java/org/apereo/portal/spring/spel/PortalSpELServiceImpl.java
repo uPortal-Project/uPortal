@@ -41,10 +41,7 @@ import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.WebRequest;
 
-/**
- * PortalSpELServiceImpl provides the default implementation of IPortalSpELService.
- *
- */
+/** PortalSpELServiceImpl provides the default implementation of IPortalSpELService. */
 @Service
 public class PortalSpELServiceImpl implements IPortalSpELService, BeanFactoryAware {
     protected final Log logger = LogFactory.getLog(this.getClass());

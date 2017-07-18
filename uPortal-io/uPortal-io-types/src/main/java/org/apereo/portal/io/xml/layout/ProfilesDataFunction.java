@@ -26,10 +26,7 @@ import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
-/**
- * Lists each Permission Set in the portal
- *
- */
+/** Lists each Permission Set in the portal */
 public class ProfilesDataFunction
         implements Function<IPortalDataType, Iterable<? extends IPortalData>> {
     private JdbcOperations jdbcOperations;

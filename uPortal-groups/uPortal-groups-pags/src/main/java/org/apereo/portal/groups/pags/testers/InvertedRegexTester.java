@@ -48,7 +48,6 @@ import org.apereo.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
  *  </tr>
  * </table>
  * </code>
- *
  */
 public class InvertedRegexTester extends AbstractStringTester {
 
@@ -73,5 +72,4 @@ public class InvertedRegexTester extends AbstractStringTester {
     public boolean test(String att) {
         return !pattern.matcher(att).matches();
     }
-
 }

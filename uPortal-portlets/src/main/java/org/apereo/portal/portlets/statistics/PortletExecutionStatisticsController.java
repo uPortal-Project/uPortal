@@ -52,10 +52,7 @@ import org.springframework.web.portlet.ModelAndView;
 import org.springframework.web.portlet.bind.annotation.RenderMapping;
 import org.springframework.web.portlet.bind.annotation.ResourceMapping;
 
-/**
- * Portlet Execution reports
- *
- */
+/** Portlet Execution reports */
 @Controller
 @RequestMapping(value = "VIEW")
 public class PortletExecutionStatisticsController

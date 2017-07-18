@@ -16,10 +16,7 @@ package org.apereo.portal.concurrency.locking;
 
 import java.util.concurrent.locks.ReentrantLock;
 
-/**
- * Used for testing the DB side of the locking logic
- *
- */
+/** Used for testing the DB side of the locking logic */
 public class DbOnlyClusterLockServiceImpl extends ClusterLockServiceImpl {
     @Override
     protected ReentrantLock getLocalLock(String mutexName) {

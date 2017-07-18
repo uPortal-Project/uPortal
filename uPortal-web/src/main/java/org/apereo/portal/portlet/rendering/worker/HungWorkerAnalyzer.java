@@ -41,7 +41,6 @@ import org.springframework.stereotype.Service;
 /**
  * Watches for {@link PortletHungEvent} and {@link PortletHungCompleteEvent} events and uses that
  * information to track the number of portlets for each fname that are hung.
- *
  */
 @ManagedResource("uPortal:section=Framework,name=HungWorkerAnalyzer")
 @Service("hungWorkerAnalyzer")

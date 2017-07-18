@@ -22,10 +22,7 @@ import org.hibernate.cfg.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Region factory that loads the {@link CacheManager} by name
- *
- */
+/** Region factory that loads the {@link CacheManager} by name */
 public class SpringBeanEhCacheRegionFactory extends AbstractEhcacheRegionFactory {
     private static final long serialVersionUID = 1L;
 
@@ -33,6 +30,7 @@ public class SpringBeanEhCacheRegionFactory extends AbstractEhcacheRegionFactory
 
     public static final String CACHE_MANAGER_NAME = "org.apereo.portal.cache.CacheManagerName";
 
+    @Override
     public void start(Settings settings, Properties properties) throws CacheException {
         this.settings = settings;
         try {
@@ -56,6 +54,7 @@ public class SpringBeanEhCacheRegionFactory extends AbstractEhcacheRegionFactory
     }
 
     /** {@inheritDoc} */
+    @Override
     public void stop() {
         //Assume spring will stop the cache manager
         manager = null;

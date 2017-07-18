@@ -34,7 +34,6 @@ import org.apereo.portal.IBasicEntity;
  *
  * <p>Take care to implement <code>equals()</code> and <code>hashCode()</code> so that duplicates
  * returned from "deep" methods can be recognized.
- *
  */
 public interface IGroupMember extends IBasicEntity {
 

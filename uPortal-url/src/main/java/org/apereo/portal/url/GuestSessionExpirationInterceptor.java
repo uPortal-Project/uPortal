@@ -22,10 +22,7 @@ import org.apereo.portal.security.IPersonManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
-/**
- * Sets a custom session timeout for unauthenticated users.
- *
- */
+/** Sets a custom session timeout for unauthenticated users. */
 public class GuestSessionExpirationInterceptor extends HandlerInterceptorAdapter {
     private IPersonManager personManager;
     private int unauthenticatedUserSessionTimeout = 0;

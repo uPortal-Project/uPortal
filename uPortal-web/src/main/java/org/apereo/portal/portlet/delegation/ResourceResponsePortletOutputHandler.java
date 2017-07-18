@@ -20,10 +20,7 @@ import javax.portlet.ResourceResponse;
 import org.apache.commons.lang.time.FastDateFormat;
 import org.apereo.portal.portlet.rendering.PortletResourceOutputHandler;
 
-/**
- * Delegates to a {@link ResourceResponse}
- *
- */
+/** Delegates to a {@link ResourceResponse} */
 public class ResourceResponsePortletOutputHandler extends MimeResponsePortletOutputHandler
         implements PortletResourceOutputHandler {
     private static final TimeZone GMT_ZONE = TimeZone.getTimeZone("GMT");

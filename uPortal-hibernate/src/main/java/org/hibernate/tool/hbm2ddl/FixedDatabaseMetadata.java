@@ -63,6 +63,7 @@ public class FixedDatabaseMetadata extends DatabaseMetadata {
 
     private static final String[] TYPES = {"TABLE", "VIEW"};
 
+    @Override
     public TableMetadata getTableMetadata(
             String name, String schema, String catalog, boolean isQuoted)
             throws HibernateException {
@@ -146,6 +147,7 @@ public class FixedDatabaseMetadata extends DatabaseMetadata {
         }
     }
 
+    @Override
     public boolean isSequence(Object key) {
         if (key instanceof String) {
             String[] strings = StringHelper.split(".", (String) key);
@@ -154,6 +156,7 @@ public class FixedDatabaseMetadata extends DatabaseMetadata {
         return false;
     }
 
+    @Override
     public boolean isTable(Object key) throws HibernateException {
         if (key instanceof String) {
             Table tbl = new Table((String) key);

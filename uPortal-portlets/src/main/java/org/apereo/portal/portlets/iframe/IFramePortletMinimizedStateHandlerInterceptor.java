@@ -19,8 +19,7 @@ import javax.portlet.RenderResponse;
 import javax.portlet.WindowState;
 import org.springframework.web.portlet.handler.HandlerInterceptorAdapter;
 
-/**
- */
+/** */
 public class IFramePortletMinimizedStateHandlerInterceptor extends HandlerInterceptorAdapter {
 
     @Override

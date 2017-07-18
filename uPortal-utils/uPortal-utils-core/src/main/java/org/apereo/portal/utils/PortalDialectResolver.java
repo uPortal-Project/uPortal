@@ -20,11 +20,11 @@ import org.hibernate.dialect.Dialect;
 import org.hibernate.dialect.SQLServer2005Dialect;
 import org.hibernate.service.jdbc.dialect.internal.AbstractDialectResolver;
 
-/**
- */
+/** */
 public class PortalDialectResolver extends AbstractDialectResolver {
     private static final long serialVersionUID = 1L;
 
+    @Override
     protected final Dialect resolveDialectInternal(DatabaseMetaData metaData) throws SQLException {
         final String databaseName = metaData.getDatabaseProductName();
         final int databaseMajorVersion = metaData.getDatabaseMajorVersion();

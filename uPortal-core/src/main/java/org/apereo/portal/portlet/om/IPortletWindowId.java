@@ -17,8 +17,5 @@ package org.apereo.portal.portlet.om;
 import java.io.Serializable;
 import org.apache.pluto.container.PortletWindowID;
 
-/**
- * uPortal extensions to the Pluto {@link PortletWindowID} interface.
- *
- */
+/** uPortal extensions to the Pluto {@link PortletWindowID} interface. */
 public interface IPortletWindowId extends PortletWindowID, Serializable {}

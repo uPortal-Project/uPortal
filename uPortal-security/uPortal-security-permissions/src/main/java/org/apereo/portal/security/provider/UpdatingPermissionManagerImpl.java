@@ -36,6 +36,7 @@ public class UpdatingPermissionManagerImpl extends PermissionManagerImpl
      *
      * @param newPermissions
      */
+    @Override
     public void addPermissions(IPermission[] newPermissions) throws AuthorizationException {
         getAuthorizationService().addPermissions(newPermissions);
     }
@@ -46,6 +47,7 @@ public class UpdatingPermissionManagerImpl extends PermissionManagerImpl
      *
      * @param principal IAuthorizationPrincipal
      */
+    @Override
     public IPermission newPermission(IAuthorizationPrincipal principal)
             throws AuthorizationException {
         return getAuthorizationService().newPermission(getOwner(), principal);
@@ -56,6 +58,7 @@ public class UpdatingPermissionManagerImpl extends PermissionManagerImpl
      *
      * @param oldPermissions
      */
+    @Override
     public void removePermissions(IPermission[] oldPermissions) throws AuthorizationException {
         getAuthorizationService().removePermissions(oldPermissions);
     }
@@ -65,6 +68,7 @@ public class UpdatingPermissionManagerImpl extends PermissionManagerImpl
      *
      * @param changedPermissions
      */
+    @Override
     public void updatePermissions(IPermission[] changedPermissions) throws AuthorizationException {
         getAuthorizationService().updatePermissions(changedPermissions);
     }

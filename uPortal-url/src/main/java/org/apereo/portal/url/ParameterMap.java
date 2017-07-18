@@ -30,7 +30,6 @@ import java.util.Map.Entry;
  * Special type of map for dealing with request parameters. Extends a {@link LinkedHashMap} and adds
  * custom {@link #toString()}, {@link #hashCode()}, and {@link #equals(Object)} methods that deal
  * with having values that are String[] correctly.
- *
  */
 public class ParameterMap extends LinkedHashMap<String, String[]> {
     private static final long serialVersionUID = 1L;

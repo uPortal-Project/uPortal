@@ -14,10 +14,7 @@
  */
 package org.apereo.portal.redirect;
 
-/**
- * ExternalRedirectionUrl represents a non-portlet URL target for the redirection service.
- *
- */
+/** ExternalRedirectionUrl represents a non-portlet URL target for the redirection service. */
 public class ExternalRedirectionUrl extends AbstractRedirectionUrl {
 
     private String url;

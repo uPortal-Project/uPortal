@@ -25,10 +25,7 @@ import org.apereo.portal.utils.ConcurrentMapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Utility for running several threads in a test
- *
- */
+/** Utility for running several threads in a test */
 public final class ThreadGroupRunner {
     private enum State {
         SETUP,

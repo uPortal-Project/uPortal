@@ -30,7 +30,6 @@ import org.apereo.portal.portletpublishing.xml.TextDisplay;
 /**
  * PreferenceInputFactory provides factory methods for creating Preference input objects. This class
  * may be used to ease XML configuration of forms.
- *
  */
 public class PreferenceInputFactory {
 

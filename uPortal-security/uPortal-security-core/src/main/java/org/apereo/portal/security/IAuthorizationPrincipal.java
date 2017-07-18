@@ -22,7 +22,6 @@ import org.apereo.portal.portlet.om.PortletLifecycleState;
  * An <code>IAuthorizationPrincipal</code> represents a portal entity to which <code>IPermissions
  * </code> have been granted. Such an entity could be an <code>IGroupMember</code>, an <code>
  * IChannel</code> or an <code>IPerson</code>.
- *
  */
 public interface IAuthorizationPrincipal {
     /**
@@ -42,8 +41,7 @@ public interface IAuthorizationPrincipal {
      * @exception AuthorizationException thrown when authorization information could not be
      *     retrieved.
      */
-    boolean canManage(PortletLifecycleState state, String categoryId)
-            throws AuthorizationException;
+    boolean canManage(PortletLifecycleState state, String categoryId) throws AuthorizationException;
     /**
      * Answers if this <code>IAuthorizationPrincipal</code> has permission to use the CONFIG
      * PortletMode on the specified channel
@@ -103,7 +101,7 @@ public interface IAuthorizationPrincipal {
      */
     Vector getAuthorizedChannels() throws AuthorizationException;
     /**
-     * Returns the key of the underlying entity.  For users, the key will be the username.
+     * Returns the key of the underlying entity. For users, the key will be the username.
      *
      * @return java.lang.String
      */
@@ -172,7 +170,6 @@ public interface IAuthorizationPrincipal {
      * @param policy org.apereo.portal.security.IPermissionPolicy
      * @exception AuthorizationException indicates authorization information could not be retrieved.
      */
-    boolean hasPermission(
-            String owner, String activity, String target, IPermissionPolicy policy)
+    boolean hasPermission(String owner, String activity, String target, IPermissionPolicy policy)
             throws AuthorizationException;
 }

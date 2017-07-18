@@ -26,10 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-/**
- * Merges together the results of multiple instances of UserInfoService.
- *
- */
+/** Merges together the results of multiple instances of UserInfoService. */
 @Service
 @Qualifier("main")
 public class MergingUserInfoService implements UserInfoService {
@@ -50,6 +47,7 @@ public class MergingUserInfoService implements UserInfoService {
     /* (non-Javadoc)
      * @see org.apache.pluto.spi.optional.UserInfoService#getUserInfo(javax.portlet.PortletRequest, org.apache.pluto.PortletWindow)
      */
+    @Override
     public Map<String, String> getUserInfo(PortletRequest request, PortletWindow portletWindow)
             throws PortletContainerException {
 

@@ -29,10 +29,7 @@ import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.ISecurityContext;
 import org.apereo.portal.security.PersonFactory;
 
-/**
- * This is a reference IPerson implementation.
- *
- */
+/** This is a reference IPerson implementation. */
 public class PersonImpl implements IPerson {
     private static final long serialVersionUID = 1L;
 

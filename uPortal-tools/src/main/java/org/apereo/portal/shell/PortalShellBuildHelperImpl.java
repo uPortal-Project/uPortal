@@ -37,10 +37,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Service;
 
-/**
- * Utility used by the groovy scripts generated in build.xml and passed into PortalShell
- *
- */
+/** Utility used by the groovy scripts generated in build.xml and passed into PortalShell */
 @Service("portalShellBuildHelper")
 public class PortalShellBuildHelperImpl implements PortalShellBuildHelper {
     private static final Pattern COMMA_DELIM = Pattern.compile(",");

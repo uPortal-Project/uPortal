@@ -16,8 +16,7 @@ package org.apereo.portal.character.stream.events;
 
 import java.io.Serializable;
 
-/**
- */
+/** */
 public interface CharacterEvent extends Serializable {
     public CharacterEventTypes getEventType();
 }

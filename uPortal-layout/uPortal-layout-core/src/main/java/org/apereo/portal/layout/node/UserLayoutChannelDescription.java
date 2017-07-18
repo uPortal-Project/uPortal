@@ -29,9 +29,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-/**
- * A class managing information contained in a user layout channel node.
- */
+/** A class managing information contained in a user layout channel node. */
 public class UserLayoutChannelDescription extends UserLayoutNodeDescription
         implements IUserLayoutChannelDescription {
 
@@ -123,6 +121,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription
      *
      * @return value of hasAbout.
      */
+    @Override
     public boolean hasAbout() {
         return hasAbout;
     }
@@ -132,6 +131,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription
      *
      * @param v Value to assign to hasAbout.
      */
+    @Override
     public void setHasAbout(boolean v) {
         this.hasAbout = v;
     }
@@ -141,6 +141,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription
      *
      * @return value of hasHelp.
      */
+    @Override
     public boolean hasHelp() {
         return hasHelp;
     }
@@ -150,6 +151,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription
      *
      * @param v Value to assign to hasHelp.
      */
+    @Override
     public void setHasHelp(boolean v) {
         this.hasHelp = v;
     }
@@ -159,6 +161,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription
      *
      * @return value of editable.
      */
+    @Override
     public boolean isEditable() {
         return editable;
     }
@@ -168,6 +171,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription
      *
      * @param v Value to assign to editable.
      */
+    @Override
     public void setEditable(boolean v) {
         this.editable = v;
     }
@@ -177,6 +181,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription
      *
      * @return value of timeout.
      */
+    @Override
     public long getTimeout() {
         return timeout;
     }
@@ -186,6 +191,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription
      *
      * @param v Value to assign to timeout.
      */
+    @Override
     public void setTimeout(long v) {
         this.timeout = v;
     }
@@ -195,6 +201,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription
      *
      * @return value of secure.
      */
+    @Override
     public boolean isSecure() {
         return isSecure;
     }
@@ -204,6 +211,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription
      *
      * @param secure Value to assign to secure
      */
+    @Override
     public void setIsSecure(boolean secure) {
         this.isSecure = secure;
     }
@@ -213,6 +221,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription
      *
      * @return the channel type for portlet / not portlet
      */
+    @Override
     public boolean isPortlet() {
         return true;
     }
@@ -222,6 +231,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription
      *
      * @return value of functionalName.
      */
+    @Override
     public String getFunctionalName() {
         return functionalName;
     }
@@ -231,6 +241,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription
      *
      * @param v Value to assign to functionalName.
      */
+    @Override
     public void setFunctionalName(String v) {
         this.functionalName = v;
     }
@@ -240,6 +251,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription
      *
      * @return value of channelSubscribeId.
      */
+    @Override
     public String getChannelSubscribeId() {
         return super.getId();
     }
@@ -249,6 +261,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription
      *
      * @param v Value to assign to channelSubscribeId.
      */
+    @Override
     public void setChannelSubscribeId(String v) {
         super.setId(v);
     }
@@ -258,6 +271,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription
      *
      * @return value of channelTypeId.
      */
+    @Override
     public String getChannelTypeId() {
         return channelTypeId;
     }
@@ -267,6 +281,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription
      *
      * @param v Value to assign to channelTypeId.
      */
+    @Override
     public void setChannelTypeId(String v) {
         this.channelTypeId = v;
     }
@@ -276,6 +291,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription
      *
      * @return value of channelPublishId.
      */
+    @Override
     public String getChannelPublishId() {
         return channelPublishId;
     }
@@ -285,6 +301,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription
      *
      * @param v Value to assign to channelPublishId.
      */
+    @Override
     public void setChannelPublishId(String v) {
         this.channelPublishId = v;
     }
@@ -294,6 +311,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription
      *
      * @return value of className.
      */
+    @Override
     public String getClassName() {
         return className;
     }
@@ -303,6 +321,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription
      *
      * @param v Value to assign to className.
      */
+    @Override
     public void setClassName(String v) {
         this.className = v;
     }
@@ -312,6 +331,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription
      *
      * @return value of title.
      */
+    @Override
     public String getTitle() {
         return title;
     }
@@ -321,6 +341,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription
      *
      * @param v Value to assign to title.
      */
+    @Override
     public void setTitle(String v) {
         this.title = v;
     }
@@ -330,6 +351,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription
      *
      * @return value of description.
      */
+    @Override
     public String getDescription() {
         return description;
     }
@@ -339,6 +361,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription
      *
      * @param v Value to assign to description.
      */
+    @Override
     public void setDescription(String v) {
         this.description = v;
     }
@@ -352,6 +375,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription
      * @param parameterName a <code>String</code> value
      * @return a <code>String</code> value that was set.
      */
+    @Override
     public String setParameterValue(String parameterName, String parameterValue) {
         // don't try to store a null value
         if (parameterValue == null) return null;
@@ -364,6 +388,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription
      * @param parameterName a <code>String</code> value
      * @return a <code>String</code> value
      */
+    @Override
     public String getParameterValue(String parameterName) {
         return (String) parameters.get(parameterName);
     }
@@ -373,6 +398,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription
      *
      * @return a <code>Collection</code> of <code>String</code> parameter values.
      */
+    @Override
     public Collection getParameterValues() {
         return parameters.values();
     }
@@ -382,6 +408,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription
      *
      * @return a <code>Set</code> of <code>String</code> parameter names.
      */
+    @Override
     public Enumeration getParameterNames() {
         return parameters.keys();
     }
@@ -391,6 +418,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription
      *
      * @return a <code>Map</code> of parameter names on parameter values.
      */
+    @Override
     public Map getParameterMap() {
         return Collections.unmodifiableMap(parameters);
     }
@@ -401,6 +429,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription
      * @param root a <code>Document</code> for which the <code>Element</code> should be created.
      * @return a <code>Node</code> value
      */
+    @Override
     public Element getXML(Document root) {
         Element node = root.createElement("channel");
         this.addNodeAttributes(node);
@@ -418,6 +447,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription
         }
     }
 
+    @Override
     public void addNodeAttributes(Element node) {
         super.addNodeAttributes(node);
         node.setAttribute("title", this.getTitle());
@@ -427,12 +457,12 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription
         node.setAttribute("chanID", this.getChannelPublishId());
         node.setAttribute("typeID", this.getChannelTypeId());
         node.setAttribute("fname", this.getFunctionalName());
-        node.setAttribute("timeout", Long.toString(this.getTimeout()));
-        node.setAttribute("editable", (new Boolean(this.isEditable())).toString());
-        node.setAttribute("hasHelp", (new Boolean(this.hasHelp())).toString());
-        node.setAttribute("hasAbout", (new Boolean(this.hasAbout())).toString());
-        node.setAttribute("secure", (new Boolean(this.isSecure())).toString());
-        node.setAttribute("isPortlet", Boolean.valueOf(this.isPortlet()).toString());
+        node.setAttribute("timeout", String.valueOf(this.getTimeout()));
+        node.setAttribute("editable", String.valueOf(this.isEditable()));
+        node.setAttribute("hasHelp", String.valueOf(this.hasHelp()));
+        node.setAttribute("hasAbout", String.valueOf(this.hasAbout()));
+        node.setAttribute("secure", String.valueOf(this.isSecure()));
+        node.setAttribute("isPortlet", String.valueOf(this.isPortlet()));
     }
 
     /**
@@ -440,6 +470,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription
      *
      * @return a type
      */
+    @Override
     public LayoutNodeType getType() {
         return LayoutNodeType.PORTLET;
     }

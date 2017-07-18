@@ -23,7 +23,6 @@ import org.apache.pluto.container.driver.AdministrativeRequestListener;
 /**
  * Provides access to actions involving the PortletSession. Refer to {@link SessionAction} for
  * supported actions.
- *
  */
 public class PortletSessionAdministrativeRequestListener implements AdministrativeRequestListener {
     public static final String ACTION = "org.apereo.portal.portlet.session.ACTION";
@@ -59,6 +58,7 @@ public class PortletSessionAdministrativeRequestListener implements Administrati
      *     org.apache.pluto.spi.optional.AdministrativeRequestListener#administer(javax.portlet.PortletRequest,
      *     javax.portlet.PortletResponse)
      */
+    @Override
     public void administer(PortletRequest request, PortletResponse response) {
         final SessionAction action = this.getAction(request);
         final Object[] arguments = this.getArguments(request);

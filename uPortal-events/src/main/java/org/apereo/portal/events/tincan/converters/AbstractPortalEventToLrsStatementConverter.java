@@ -25,10 +25,7 @@ import org.apereo.portal.events.tincan.om.LrsStatement;
 import org.apereo.portal.events.tincan.om.LrsVerb;
 import org.springframework.beans.factory.annotation.Autowired;
 
-/**
- * Base class for PortalEvent to LrsStatement converters.
- *
- */
+/** Base class for PortalEvent to LrsStatement converters. */
 public abstract class AbstractPortalEventToLrsStatementConverter
         implements IPortalEventToLrsStatementConverter {
     private ILrsActorService actorService;

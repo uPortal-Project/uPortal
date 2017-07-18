@@ -20,10 +20,7 @@ import java.io.PrintWriter;
 import javax.portlet.MimeResponse;
 import javax.servlet.ServletResponse;
 
-/**
- * Used to handle output from portlet render and resource requests.
- *
- */
+/** Used to handle output from portlet render and resource requests. */
 public interface PortletOutputHandler {
     /**
      * @see MimeResponse#getWriter()

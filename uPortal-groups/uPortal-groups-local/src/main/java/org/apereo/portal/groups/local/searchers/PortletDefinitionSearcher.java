@@ -27,10 +27,7 @@ import org.apereo.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-/**
- * Searches the portal DB for channels. Used by EntitySearcherImpl
- *
- */
+/** Searches the portal DB for channels. Used by EntitySearcherImpl */
 @Service
 public class PortletDefinitionSearcher implements ITypedEntitySearcher {
     private static final Log log = LogFactory.getLog(PortletDefinitionSearcher.class);

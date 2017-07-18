@@ -19,10 +19,7 @@ import org.apereo.portal.events.aggr.TimedAggregationStatistics;
 import org.apereo.portal.events.aggr.portletexec.PortletExecutionAggregationKey.ExecutionType;
 import org.apereo.portal.events.aggr.portlets.AggregatedPortletMapping;
 
-/**
- * Tracks portlet execution stats
- *
- */
+/** Tracks portlet execution stats */
 public interface PortletExecutionAggregation
         extends BaseAggregation<
                         PortletExecutionAggregationKey, PortletExecutionAggregationDiscriminator>,

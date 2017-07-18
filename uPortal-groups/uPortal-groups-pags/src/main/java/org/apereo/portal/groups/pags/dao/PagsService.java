@@ -38,7 +38,6 @@ import org.springframework.stereotype.Service;
  * apply to CRUD operations on PAGS definitions. External clients should interact with this service
  * -- instead of the DAOs directly -- whenever the actions are undertaken on behalf of a specific
  * user.
- *
  */
 @Service
 public final class PagsService {

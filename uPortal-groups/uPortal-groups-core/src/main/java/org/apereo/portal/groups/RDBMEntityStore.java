@@ -16,10 +16,7 @@ package org.apereo.portal.groups;
 
 import org.apereo.portal.spring.locator.EntityTypesLocator;
 
-/**
- * Reference implementation for IEntityStore.
- *
- */
+/** Reference implementation for IEntityStore. */
 public class RDBMEntityStore implements IEntityStore {
     private static IEntityStore singleton;
 
@@ -33,6 +30,7 @@ public class RDBMEntityStore implements IEntityStore {
      * @param key java.lang.String
      * @param type java.lang.Class
      */
+    @Override
     public IEntity newInstance(String key, Class type) throws GroupsException {
         if (EntityTypesLocator.getEntityTypes().getEntityIDFromType(type) == null) {
             throw new GroupsException("Invalid group type: " + type);

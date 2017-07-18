@@ -20,10 +20,7 @@ import javax.portlet.PortletMode;
 import javax.portlet.WindowState;
 import org.apereo.portal.portlet.om.IPortletWindowId;
 
-/**
- * Information from the request that targets a particular portlet
- *
- */
+/** Information from the request that targets a particular portlet */
 public interface IPortletRequestInfo {
     /** @return The {@link IPortletWindowId} this request info is for, will never return null */
     public IPortletWindowId getPortletWindowId();

@@ -18,10 +18,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.util.Locale;
 import org.apereo.portal.events.tincan.json.LocalizedStringSerializer;
 
-/**
- * A String with an associated Locale
- *
- */
+/** A String with an associated Locale */
 @JsonSerialize(using = LocalizedStringSerializer.class)
 public class LocalizedString {
     private final Locale locale;

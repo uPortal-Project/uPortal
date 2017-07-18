@@ -60,7 +60,7 @@ public class RequestCacheAspectTest {
         try {
             result = cacheTestInterface.testMethodNoCache("1", false, true);
             fail();
-        } catch (Throwable t) {
+        } catch (Exception t) {
             //expected
         }
         assertEquals(4, cacheTestInterface.testMethodNoCacheCount());
@@ -68,7 +68,7 @@ public class RequestCacheAspectTest {
         try {
             result = cacheTestInterface.testMethodNoCache("1", false, true);
             fail();
-        } catch (Throwable t) {
+        } catch (Exception t) {
             //expected
         }
         assertEquals(5, cacheTestInterface.testMethodNoCacheCount());
@@ -120,7 +120,7 @@ public class RequestCacheAspectTest {
         try {
             result = cacheTestInterface.testMethodCacheDefault("1", false, true);
             fail();
-        } catch (Throwable t) {
+        } catch (Exception t) {
             //expected
         }
         assertEquals(4, cacheTestInterface.testMethodCacheDefaultCount());
@@ -128,7 +128,7 @@ public class RequestCacheAspectTest {
         try {
             result = cacheTestInterface.testMethodCacheDefault("1", false, true);
             fail();
-        } catch (Throwable t) {
+        } catch (Exception t) {
             //expected
         }
         assertEquals(5, cacheTestInterface.testMethodCacheDefaultCount());
@@ -164,7 +164,7 @@ public class RequestCacheAspectTest {
         try {
             result = cacheTestInterface.testMethodCacheDefault("1", false, true);
             fail();
-        } catch (Throwable t) {
+        } catch (Exception t) {
             //expected
         }
         assertEquals(4, cacheTestInterface.testMethodCacheDefaultCount());
@@ -172,7 +172,7 @@ public class RequestCacheAspectTest {
         try {
             result = cacheTestInterface.testMethodCacheDefault("1", false, true);
             fail();
-        } catch (Throwable t) {
+        } catch (Exception t) {
             //expected
         }
         assertEquals(5, cacheTestInterface.testMethodCacheDefaultCount());
@@ -208,7 +208,7 @@ public class RequestCacheAspectTest {
         try {
             result = cacheTestInterface.testMethodCacheNull("1", false, true);
             fail();
-        } catch (Throwable t) {
+        } catch (Exception t) {
             //expected
         }
         assertEquals(3, cacheTestInterface.testMethodCacheNullCount());
@@ -216,7 +216,7 @@ public class RequestCacheAspectTest {
         try {
             result = cacheTestInterface.testMethodCacheNull("1", false, true);
             fail();
-        } catch (Throwable t) {
+        } catch (Exception t) {
             //expected
         }
         assertEquals(4, cacheTestInterface.testMethodCacheNullCount());
@@ -252,7 +252,7 @@ public class RequestCacheAspectTest {
         try {
             result = cacheTestInterface.testMethodCacheThrows("1", false, true);
             fail();
-        } catch (Throwable t) {
+        } catch (Exception t) {
             //expected
         }
         assertEquals(4, cacheTestInterface.testMethodCacheThrowsCount());
@@ -260,7 +260,7 @@ public class RequestCacheAspectTest {
         try {
             result = cacheTestInterface.testMethodCacheThrows("1", false, true);
             fail();
-        } catch (Throwable t) {
+        } catch (Exception t) {
             //expected
         }
         assertEquals(4, cacheTestInterface.testMethodCacheThrowsCount());

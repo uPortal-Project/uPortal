@@ -37,10 +37,7 @@ import org.springframework.oxm.XmlMappingException;
 import org.springframework.util.xml.FixedXMLEventStreamReader;
 import org.w3c.dom.Document;
 
-/**
- * Generic dom4j import impl
- *
- */
+/** Generic dom4j import impl */
 public abstract class AbstractDom4jImporter
         implements IDataImporter<Tuple<String, Element>>, Unmarshaller {
     protected final Logger logger = LoggerFactory.getLogger(getClass());

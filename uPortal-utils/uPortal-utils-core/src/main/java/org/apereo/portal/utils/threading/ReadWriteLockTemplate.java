@@ -17,10 +17,7 @@ package org.apereo.portal.utils.threading;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 
-/**
- * Utility class for safely interacting with a read-write lock
- *
- */
+/** Utility class for safely interacting with a read-write lock */
 public class ReadWriteLockTemplate {
     public static <T> T doWithLock(ReadWriteLock readWriteLock, ReadWriteCallback<T> c) {
         final ReadResult<T> readResult;

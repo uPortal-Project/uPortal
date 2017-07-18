@@ -16,10 +16,7 @@ package org.apereo.portal.events.aggr.portletexec;
 
 import org.apereo.portal.events.aggr.BaseAggregationPrivateDao;
 
-/**
- * Tab Aggregation DAO used internally to create and update tab aggregations
- *
- */
+/** Tab Aggregation DAO used internally to create and update tab aggregations */
 interface PortletExecutionAggregationPrivateDao
         extends PortletExecutionAggregationDao<PortletExecutionAggregationImpl>,
                 BaseAggregationPrivateDao<

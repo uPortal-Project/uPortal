@@ -26,10 +26,7 @@ import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.util.Assert;
 
-/**
- * Interceptor for RestTemplate that add the headers required for Basic authentication.
- *
- */
+/** Interceptor for RestTemplate that add the headers required for Basic authentication. */
 public class BasicAuthInterceptor implements ClientHttpRequestInterceptor {
     private String id;
     private PropertyResolver propertyResolver;

@@ -23,10 +23,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.stereotype.Component;
 
-/**
- * Update the aggregate stats db from 4.0.3
- *
- */
+/** Update the aggregate stats db from 4.0.3 */
 @Component
 public class Version403AggrEventsDatabaseUpdateHelper implements IVersionedDatabaseUpdateHelper {
     private final Version version = VersionUtils.parseVersion("4.0.3");

@@ -21,7 +21,6 @@ import org.apereo.portal.hibernate.DelegatingHibernateIntegrator.HibernateConfig
  * hibernate instance behind a specific persistence unit.
  *
  * <p>IMPORTANT: these objects are mutable but SHOULD NOT BE MODIFIED
- *
  */
 public interface HibernateConfigurationAware {
     /** @return true if the class cares about the specific persistence unit */

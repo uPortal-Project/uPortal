@@ -31,10 +31,7 @@ import org.apereo.portal.security.IPerson;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 
-/**
- * JPA implementation of {@link IStylesheetUserPreferencesDao}
- *
- */
+/** JPA implementation of {@link IStylesheetUserPreferencesDao} */
 @Repository("stylesheetUserPreferencesDao")
 public class JpaStylesheetUserPreferencesDao extends BasePortalJpaDao
         implements IStylesheetUserPreferencesDao {

@@ -22,8 +22,10 @@ public class EagerRegexTesterTest {
 
     @Test
     public void testEagerPatterns() {
-        EagerRegexTester tester = new EagerRegexTester(
-                new TestPersonAttributesGroupTestDefinition("fakeAttribute", "^02([A-D])*"));
+        EagerRegexTester tester =
+                new EagerRegexTester(
+                        new TestPersonAttributesGroupTestDefinition(
+                                "fakeAttribute", "^02([A-D])*"));
         Assert.assertTrue(tester.test("02A"));
         Assert.assertTrue(tester.test("02ABCD"));
         Assert.assertFalse(tester.test("A02D"));

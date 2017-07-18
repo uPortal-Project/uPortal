@@ -16,8 +16,5 @@ package org.apereo.portal.layout.om;
 
 import javax.xml.transform.Transformer;
 
-/**
- * Descriptor for {@link Transformer#setOutputProperty(String, String)}
- *
- */
+/** Descriptor for {@link Transformer#setOutputProperty(String, String)} */
 public interface IOutputPropertyDescriptor extends IStylesheetData {}

@@ -26,8 +26,7 @@ import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.StartElement;
 import org.apereo.portal.utils.cache.CacheKey;
 
-/**
- */
+/** */
 public class StaticAttributeSource implements AttributeSource {
     private final XMLEventFactory xmlEventFactory = XMLEventFactory.newFactory();
 

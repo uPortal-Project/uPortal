@@ -18,10 +18,7 @@ import org.apereo.portal.PortalException;
 import org.apereo.portal.security.IPerson;
 import org.w3c.dom.Element;
 
-/**
- * Layout processing action to reset an attribute to the value specified by the owning fragment.
- *
- */
+/** Layout processing action to reset an attribute to the value specified by the owning fragment. */
 public class LPAResetAttribute implements ILayoutProcessingAction {
     private String nodeId = null;
     private String name = null;

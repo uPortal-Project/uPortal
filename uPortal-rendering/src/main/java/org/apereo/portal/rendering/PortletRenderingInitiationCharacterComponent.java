@@ -35,7 +35,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 /**
  * Initiates portlet rendering based each encountered {@link CharacterEventTypes#PORTLET_HEADER} and
  * {@link CharacterEventTypes#PORTLET_CONTENT} element in the event stream
- *
  */
 public class PortletRenderingInitiationCharacterComponent
         extends CharacterPipelineComponentWrapper {
@@ -101,6 +100,8 @@ public class PortletRenderingInitiationCharacterComponent
 
                         break;
                     }
+                default:
+                    // Do nothing
             }
 
             eventBuffer.add(event);

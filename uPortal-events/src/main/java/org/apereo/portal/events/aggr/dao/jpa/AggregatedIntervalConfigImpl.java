@@ -41,8 +41,7 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.NaturalId;
 
-/**
- */
+/** */
 @Entity
 @Table(name = "UP_EVENT_AGGR_CONF_INTRVL")
 @SequenceGenerator(

@@ -18,10 +18,7 @@ import org.apereo.portal.events.PortalEvent;
 import org.apereo.portal.events.handlers.QueueingEventHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 
-/**
- * Hands off queued portal events for storage by the IPortalEventDao
- *
- */
+/** Hands off queued portal events for storage by the IPortalEventDao */
 public class PortalEventDaoQueuingEventHandler extends QueueingEventHandler<PortalEvent> {
     private IPortalEventDao portalEventDao;
 

@@ -37,10 +37,7 @@ import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
-/**
- * JPA annotated {@link IPortletCookie} implementation.
- *
- */
+/** JPA annotated {@link IPortletCookie} implementation. */
 @Entity
 @Table(
     name = "UP_PORTLET_COOKIES",

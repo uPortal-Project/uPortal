@@ -18,10 +18,7 @@ import java.io.InputStream;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 
-/**
- * Provides a means to resolve uPortal DTDs
- *
- */
+/** Provides a means to resolve uPortal DTDs */
 public class DTDResolver implements EntityResolver {
     private static final String dtdPath = "/dtd";
 
@@ -73,6 +70,7 @@ public class DTDResolver implements EntityResolver {
      * @return an input source based on the dtd specified in the xml document or null if we don't
      *     have a dtd that matches systemId or publicId
      */
+    @Override
     public InputSource resolveEntity(String publicId, String systemId) {
         InputStream inStream = null;
 

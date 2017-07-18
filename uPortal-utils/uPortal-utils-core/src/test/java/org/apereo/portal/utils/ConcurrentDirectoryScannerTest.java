@@ -29,8 +29,7 @@ import org.junit.Test;
 import org.springframework.core.io.Resource;
 import org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean;
 
-/**
- */
+/** */
 public class ConcurrentDirectoryScannerTest {
     private ThreadPoolExecutorFactoryBean executorServiceFactory;
     private ConcurrentDirectoryScanner directoryScanner;

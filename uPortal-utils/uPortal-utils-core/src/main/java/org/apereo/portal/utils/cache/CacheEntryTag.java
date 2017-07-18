@@ -16,10 +16,7 @@ package org.apereo.portal.utils.cache;
 
 import java.io.Serializable;
 
-/**
- * Tag for a cache entry
- *
- */
+/** Tag for a cache entry */
 public interface CacheEntryTag extends Serializable {
     /**
      * @return The type of tag, should be a generally consistent type across the application. ex:

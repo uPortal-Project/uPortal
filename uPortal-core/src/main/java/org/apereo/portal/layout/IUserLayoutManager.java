@@ -23,9 +23,7 @@ import org.apereo.portal.layout.node.IUserLayoutNodeDescription;
 import org.apereo.portal.layout.node.IUserLayoutNodeDescription.LayoutNodeType;
 import org.w3c.dom.Document;
 
-/**
- * An interface for abstracting operations performed on the user layout.
- */
+/** An interface for abstracting operations performed on the user layout. */
 public interface IUserLayoutManager {
     /** Represents a <folder> layout element */
     public static final String FOLDER = "folder";

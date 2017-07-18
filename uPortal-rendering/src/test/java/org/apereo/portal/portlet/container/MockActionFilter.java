@@ -22,8 +22,7 @@ import javax.portlet.filter.ActionFilter;
 import javax.portlet.filter.FilterChain;
 import javax.portlet.filter.FilterConfig;
 
-/**
- */
+/** */
 public class MockActionFilter implements ActionFilter {
 
     /* (non-Javadoc)

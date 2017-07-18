@@ -31,7 +31,6 @@ import org.springframework.beans.factory.annotation.Autowired;
  * #setSkinAttributeName(String)} is used to look up a skin name via the {@link
  * #setAttributeToSkinMap(Map)} map and the skin name is set to in the transformer using the {@link
  * #setSkinParameterName(String)} parameter.
- *
  */
 public class UserAttributeSkinMappingTransformerConfigurationSource
         extends SkinMappingTransformerConfigurationSource {
@@ -63,6 +62,7 @@ public class UserAttributeSkinMappingTransformerConfigurationSource
         this.attributeToSkinMap = attributeToSkinMap;
     }
 
+    @Override
     protected String getSkinName(HttpServletRequest request) {
         final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
         final IPerson person = userInstance.getPerson();

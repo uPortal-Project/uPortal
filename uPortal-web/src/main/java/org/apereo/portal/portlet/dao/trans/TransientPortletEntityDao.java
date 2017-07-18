@@ -41,7 +41,6 @@ import org.springframework.stereotype.Repository;
  * of the user's layout. Portlet preferences are still persisted but are associated with a transient
  * rendering of the portlet. Transient portlets are detected by checking the channel subscribe ID
  * against the {@link TransientUserLayoutManagerWrapper#SUBSCRIBE_PREFIX} prefix.
- *
  */
 @Repository
 @Qualifier("transient")

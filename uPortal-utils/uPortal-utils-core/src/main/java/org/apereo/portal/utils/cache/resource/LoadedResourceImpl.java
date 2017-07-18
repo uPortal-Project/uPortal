@@ -19,10 +19,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import org.springframework.core.io.Resource;
 
-/**
- * Basic implementation of {@link LoadedResource}
- *
- */
+/** Basic implementation of {@link LoadedResource} */
 public class LoadedResourceImpl<T> implements LoadedResource<T> {
     private final T resource;
     private final Map<Resource, Long> additionalSources;

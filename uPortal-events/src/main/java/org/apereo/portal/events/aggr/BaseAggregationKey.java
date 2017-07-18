@@ -20,7 +20,6 @@ import org.apereo.portal.events.aggr.groups.AggregatedGroupMapping;
 /**
  * Fields that make up the primary key for a {@link BaseAggregation}. {@link BaseAggregation}
  * subclasses may define their own extension of this interface if additional fields are needed
- *
  */
 public interface BaseAggregationKey extends Serializable {
     /** @return The day the aggregation is for */

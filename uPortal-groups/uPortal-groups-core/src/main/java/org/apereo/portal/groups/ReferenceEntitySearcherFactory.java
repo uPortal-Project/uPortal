@@ -16,10 +16,7 @@ package org.apereo.portal.groups;
 
 import org.apereo.portal.spring.locator.ReferenceEntitySearcherLocator;
 
-/**
- * Creates an instance of the reference <code>IEntitySearcher</code>.
- *
- */
+/** Creates an instance of the reference <code>IEntitySearcher</code>. */
 public class ReferenceEntitySearcherFactory implements IEntitySearcherFactory {
     /**
      * Return an instance of the entity searcher implementation.

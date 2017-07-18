@@ -19,8 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.xml.transform.Transformer;
 import org.apereo.portal.utils.cache.CacheKey;
 
-/**
- */
+/** */
 public interface TransformerSource {
     /** Gets a XSLT Transformer */
     public Transformer getTransformer(HttpServletRequest request, HttpServletResponse response);

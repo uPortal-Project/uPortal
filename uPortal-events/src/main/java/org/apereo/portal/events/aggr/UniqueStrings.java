@@ -44,7 +44,6 @@ import org.slf4j.LoggerFactory;
  * that needs to maintain a set of unique strings over time can add a new {@link UniqueStrings} in
  * each jpa session. This will result in the set of UniqueStringsSegments being reloaded for the
  * parent entity but the contents of each UniqueStringsSegment will not need to be modified.
- *
  */
 @Entity
 @Table(name = "UP_UNIQUE_STR")

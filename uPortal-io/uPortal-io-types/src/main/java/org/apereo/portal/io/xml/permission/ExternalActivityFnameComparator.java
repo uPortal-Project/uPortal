@@ -16,10 +16,7 @@ package org.apereo.portal.io.xml.permission;
 
 import org.apereo.portal.utils.ComparableExtractingComparator;
 
-/**
- * Compare ExternalActivity based on fname
- *
- */
+/** Compare ExternalActivity based on fname */
 public class ExternalActivityFnameComparator
         extends ComparableExtractingComparator<ExternalActivity, String> {
     public static final ExternalActivityFnameComparator INSTANCE =

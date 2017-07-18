@@ -21,9 +21,7 @@ import org.jasig.resourceserver.utils.aggr.ResourcesElementsProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-/**
- * Class to facilitate enabling/disabling Resources aggregation.
- */
+/** Class to facilitate enabling/disabling Resources aggregation. */
 @Service
 public class ResourcesAggregationHelper {
     /** Name of {@link System} property used to toggle default/aggregated skin output. */

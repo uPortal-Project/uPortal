@@ -62,7 +62,6 @@ import org.xml.sax.SAXException;
  * Can drop and/or create tables based on an XML table definition file and populate tables based on
  * a XML data definition file. Table creation is done using the Hibernate mapping APIs to allow for
  * a full range of database support.
- *
  */
 @Component("dbLoader")
 @Lazy

@@ -28,8 +28,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-/**
- */
+/** */
 public class ChainingProfileMapperImplTest {
 
     @InjectMocks ChainingProfileMapperImpl mapper = new ChainingProfileMapperImpl();

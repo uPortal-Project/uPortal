@@ -26,7 +26,6 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 /**
  * Registers all of the Ehcache's from the {@link CacheManager} as bean's in the application
  * context.
- *
  */
 public class EhcacheManagerBeanConfigurer implements BeanFactoryPostProcessor {
     protected final Log logger = LogFactory.getLog(this.getClass());

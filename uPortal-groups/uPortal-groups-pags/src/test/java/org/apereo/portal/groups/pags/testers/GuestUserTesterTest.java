@@ -24,16 +24,16 @@ public class GuestUserTesterTest {
 
     @Test
     public void testGuestTrue() throws Exception {
-        GuestUserTester tester = new GuestUserTester(
-                new TestPersonAttributesGroupTestDefinition("", "true"));
+        GuestUserTester tester =
+                new GuestUserTester(new TestPersonAttributesGroupTestDefinition("", "true"));
         Assert.assertTrue(tester.test(createGuestPerson()));
         Assert.assertFalse(tester.test(createPerson()));
     }
 
     @Test
     public void testGuestFalse() throws Exception {
-        GuestUserTester tester = new GuestUserTester(
-                new TestPersonAttributesGroupTestDefinition("", "false"));
+        GuestUserTester tester =
+                new GuestUserTester(new TestPersonAttributesGroupTestDefinition("", "false"));
         Assert.assertTrue(tester.test(createPerson()));
         Assert.assertFalse(tester.test(createGuestPerson()));
     }

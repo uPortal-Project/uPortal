@@ -17,10 +17,7 @@ package org.apereo.portal.portlet.container.cache;
 import java.util.concurrent.TimeUnit;
 import org.apereo.portal.portlet.rendering.PortletResourceOutputHandler;
 
-/**
- * Utility for writing out portlet response caching related headers
- *
- */
+/** Utility for writing out portlet response caching related headers */
 public final class PortletCachingHeaderUtils {
     private static final int YEAR_OF_SECONDS = (int) TimeUnit.DAYS.toSeconds(365);
 

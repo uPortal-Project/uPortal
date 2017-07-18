@@ -51,7 +51,8 @@ import org.springframework.web.portlet.bind.annotation.RenderMapping;
 @RequestMapping("VIEW")
 public class DynamicRespondrSkinViewController {
     private static final MessageFormat DEFAULT_SKIN_CSS_PATH_FORMAT =
-            new MessageFormat(DynamicRespondrSkinConstants.DEFAULT_RELATIVE_ROOT_FOLDER + "/{0}.css");
+            new MessageFormat(
+                    DynamicRespondrSkinConstants.DEFAULT_RELATIVE_ROOT_FOLDER + "/{0}.css");
 
     protected Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -84,11 +85,19 @@ public class DynamicRespondrSkinViewController {
                 request.getAttribute(PortletRequest.RENDER_PART))) {
 
             PortletPreferences prefs = request.getPreferences();
-            Boolean enabled = Boolean.valueOf(prefs.getValue(DynamicRespondrSkinConstants.PREF_DYNAMIC, "false"));
-            String skinName = prefs.getValue(DynamicRespondrSkinConstants.PREF_SKIN_NAME, DynamicRespondrSkinConstants.DEFAULT_SKIN_NAME);
-            String cssUrl = enabled ?
-                    calculateDynamicSkinUrlPathToUse(request, skinName) : calculateDefaultSkinCssLocationInWebapp(skinName);
-            model.addAttribute(DynamicRespondrSkinConstants.SKIN_CSS_URL_MODEL_ATTRIBUTE_NAME, cssUrl);
+            Boolean enabled =
+                    Boolean.valueOf(
+                            prefs.getValue(DynamicRespondrSkinConstants.PREF_DYNAMIC, "false"));
+            String skinName =
+                    prefs.getValue(
+                            DynamicRespondrSkinConstants.PREF_SKIN_NAME,
+                            DynamicRespondrSkinConstants.DEFAULT_SKIN_NAME);
+            String cssUrl =
+                    enabled
+                            ? calculateDynamicSkinUrlPathToUse(request, skinName)
+                            : calculateDefaultSkinCssLocationInWebapp(skinName);
+            model.addAttribute(
+                    DynamicRespondrSkinConstants.SKIN_CSS_URL_MODEL_ATTRIBUTE_NAME, cssUrl);
             return new ModelAndView("jsp/DynamicRespondrSkin/skinHeader");
         } else {
             // We need to know if this user can CONFIG this skin
@@ -114,14 +123,15 @@ public class DynamicRespondrSkinViewController {
     }
 
     /**
-     * Calculate the default skin URL path or the path to a skin CSS file that is specific to the set of
-     * portlet preference values currently defined.
+     * Calculate the default skin URL path or the path to a skin CSS file that is specific to the
+     * set of portlet preference values currently defined.
      *
      * @param request
      * @return
      * @throws IOException
      */
-    private String calculateDynamicSkinUrlPathToUse(PortletRequest request, String lessfileBaseName) throws IOException {
+    private String calculateDynamicSkinUrlPathToUse(PortletRequest request, String lessfileBaseName)
+            throws IOException {
         final DynamicSkinInstanceData data = new DefaultDynamicSkinInstanceDataImpl(request);
         if (!service.skinCssFileExists(data)) {
             // Trigger the LESS compilation
@@ -132,6 +142,7 @@ public class DynamicRespondrSkinViewController {
 
     /**
      * Calculates the relative URL of the default skin CSS file.
+     *
      * @param skinName skin filename
      * @return Relative URL of the default skin CSS file for the user.
      */

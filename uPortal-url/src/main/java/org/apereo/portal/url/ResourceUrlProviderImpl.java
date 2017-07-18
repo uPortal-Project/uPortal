@@ -17,10 +17,7 @@ package org.apereo.portal.url;
 import javax.servlet.http.HttpServletRequest;
 import org.apereo.portal.portlet.om.IPortletWindow;
 
-/**
- * Simple handling for resource URL generation
- *
- */
+/** Simple handling for resource URL generation */
 public class ResourceUrlProviderImpl implements IPortletResourcePortalUrl {
     private final IPortletWindow portletWindow;
     private final HttpServletRequest containerRequest;

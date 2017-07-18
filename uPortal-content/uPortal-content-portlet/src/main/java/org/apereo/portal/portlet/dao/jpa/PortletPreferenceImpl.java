@@ -46,8 +46,7 @@ import org.hibernate.annotations.Index;
 import org.hibernate.annotations.IndexColumn;
 import org.hibernate.annotations.Type;
 
-/**
- */
+/** */
 @Entity
 @Table(name = "UP_PORTLET_PREF")
 @org.hibernate.annotations.Table(

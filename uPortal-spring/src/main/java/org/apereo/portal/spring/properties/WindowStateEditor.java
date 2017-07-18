@@ -17,8 +17,7 @@ package org.apereo.portal.spring.properties;
 import java.beans.PropertyEditorSupport;
 import org.apereo.portal.portlet.PortletUtils;
 
-/**
- */
+/** */
 public class WindowStateEditor extends PropertyEditorSupport {
     /* (non-Javadoc)
      * @see java.beans.PropertyEditorSupport#setAsText(java.lang.String)

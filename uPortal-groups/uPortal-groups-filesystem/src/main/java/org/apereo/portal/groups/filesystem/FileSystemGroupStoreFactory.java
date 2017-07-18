@@ -26,7 +26,6 @@ import org.apereo.portal.groups.IEntityStoreFactory;
 /**
  * Returns <code>IEntityGroupStore</code> and <code>IEntityStore</code> implementations for the file
  * system group service.
- *
  */
 public class FileSystemGroupStoreFactory implements IEntityGroupStoreFactory, IEntityStoreFactory {
     private static final Log log = LogFactory.getLog(FileSystemGroupStoreFactory.class);

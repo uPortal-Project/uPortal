@@ -42,17 +42,20 @@ public class GetMemberIsGroupPhrase implements Phrase {
                     Element.class,
                     "Element whose text is a member name.");
 
+    @Override
     public Formula getFormula() {
         Reagent[] reagents = new Reagent[] {ELEMENT};
         return new SimpleFormula(GetMemberIsGroupPhrase.class, reagents);
     }
 
+    @Override
     public void init(EntityConfig config) {
 
         // Instance Members.
         this.element = (Phrase) config.getValue(ELEMENT);
     }
 
+    @Override
     public Object evaluate(TaskRequest req, TaskResponse res) {
 
         Element e = (Element) element.evaluate(req, res);

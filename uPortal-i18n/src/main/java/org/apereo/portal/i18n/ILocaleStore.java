@@ -17,10 +17,7 @@ package org.apereo.portal.i18n;
 import java.util.Locale;
 import org.apereo.portal.security.IPerson;
 
-/**
- * Interface defining how the portal reads and writes locale preferences.
- *
- */
+/** Interface defining how the portal reads and writes locale preferences. */
 public interface ILocaleStore {
 
     /**

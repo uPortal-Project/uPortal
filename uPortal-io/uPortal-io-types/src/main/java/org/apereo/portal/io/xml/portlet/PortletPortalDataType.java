@@ -21,10 +21,7 @@ import org.apereo.portal.io.xml.AbstractPortalDataType;
 import org.apereo.portal.io.xml.PortalDataKey;
 import org.apereo.portal.portlet.om.IPortletDefinition;
 
-/**
- * Describes the {@link IPortletDefinition} for import and export.
- *
- */
+/** Describes the {@link IPortletDefinition} for import and export. */
 public class PortletPortalDataType extends AbstractPortalDataType {
     public static final QName PORTLET_DEFINITION_QNAME =
             new QName(

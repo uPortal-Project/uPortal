@@ -49,8 +49,7 @@ import org.springframework.util.xml.SimpleTransformErrorListener;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.helpers.LocatorImpl;
 
-/**
- */
+/** */
 public class XSLTComponent extends StAXPipelineComponentWrapper
         implements BeanNameAware, ResourceLoaderAware {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());

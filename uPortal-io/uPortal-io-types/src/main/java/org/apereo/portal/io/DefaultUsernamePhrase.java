@@ -42,17 +42,20 @@ public class DefaultUsernamePhrase implements Phrase {
                     Element.class,
                     "Element representing a default user or null.");
 
+    @Override
     public Formula getFormula() {
         Reagent[] reagents = new Reagent[] {ELEMENT};
         return new SimpleFormula(DefaultUsernamePhrase.class, reagents);
     }
 
+    @Override
     public void init(EntityConfig config) {
 
         // Instance Members.
         this.element = (Phrase) config.getValue(ELEMENT);
     }
 
+    @Override
     public Object evaluate(TaskRequest req, TaskResponse res) {
 
         String rslt = null;

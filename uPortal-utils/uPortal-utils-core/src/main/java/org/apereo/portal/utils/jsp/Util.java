@@ -28,10 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.util.UriUtils;
 
-/**
- * JSP Static utility functions
- *
- */
+/** JSP Static utility functions */
 public class Util {
 
     static final Logger logger = LoggerFactory.getLogger(Util.class);

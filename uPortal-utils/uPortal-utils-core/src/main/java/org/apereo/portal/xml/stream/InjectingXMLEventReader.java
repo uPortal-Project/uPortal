@@ -23,7 +23,6 @@ import javax.xml.stream.events.XMLEvent;
 /**
  * Base class for {@link XMLEventReader}s for classes that want to inject additional events into the
  * stream.
- *
  */
 public abstract class InjectingXMLEventReader extends BaseXMLEventReader {
     private Deque<XMLEvent> additionalEvents;

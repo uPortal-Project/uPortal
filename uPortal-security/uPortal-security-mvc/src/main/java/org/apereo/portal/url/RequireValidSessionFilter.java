@@ -24,10 +24,7 @@ import javax.servlet.http.HttpSession;
 import org.apereo.portal.security.mvc.LoginController;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-/**
- * Redirects the user to the Login servlet if they don't already have a session.
- *
- */
+/** Redirects the user to the Login servlet if they don't already have a session. */
 public class RequireValidSessionFilter extends OncePerRequestFilter {
 
     @Override

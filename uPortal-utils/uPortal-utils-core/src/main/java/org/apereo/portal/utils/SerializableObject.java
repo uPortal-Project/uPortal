@@ -16,10 +16,7 @@ package org.apereo.portal.utils;
 
 import java.io.Serializable;
 
-/**
- * A serializable object, useful for mutex objects that need to live in serializable containers
- *
- */
+/** A serializable object, useful for mutex objects that need to live in serializable containers */
 public final class SerializableObject implements Serializable {
     private static final long serialVersionUID = 1L;
 }

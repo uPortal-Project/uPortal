@@ -26,10 +26,7 @@ import org.apereo.portal.io.xml.IPortalDataType;
 import org.apereo.portal.io.xml.SimpleStringPortalData;
 import org.springframework.beans.factory.annotation.Autowired;
 
-/**
- * Lists each PAGS Group definition in the database
- *
- */
+/** Lists each PAGS Group definition in the database */
 public class PersonAttributesGroupStoreDataFunction
         implements Function<IPortalDataType, Iterable<? extends IPortalData>> {
     private IPersonAttributesGroupDefinitionDao personAttributesGroupDefinitionDao;

@@ -18,10 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.pluto.container.EventCoordinationService;
 import org.apereo.portal.portlet.om.IPortletWindowId;
 
-/**
- * Service that manages handling and queueing portlet events
- *
- */
+/** Service that manages handling and queueing portlet events */
 public interface IPortletEventCoordinationService extends EventCoordinationService {
     /**
      * Remove events from the Queue determining which {@link IPortletWindowId}s it targets and then

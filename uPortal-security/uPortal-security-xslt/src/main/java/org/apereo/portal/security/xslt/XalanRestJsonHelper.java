@@ -17,10 +17,7 @@ package org.apereo.portal.security.xslt;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.springframework.stereotype.Service;
 
-/**
- * This class contains convenience methods to produce Json stream from xsl templates.
- *
- */
+/** This class contains convenience methods to produce Json stream from xsl templates. */
 @Service
 public class XalanRestJsonHelper {
 

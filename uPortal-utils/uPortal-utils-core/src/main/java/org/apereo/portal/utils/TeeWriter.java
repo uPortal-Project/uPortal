@@ -21,7 +21,6 @@ import org.apache.commons.io.output.ProxyWriter;
 /**
  * {@link Writer} that mimics the UNIX 'tee' command on a pair of {@link Writer}s. Note the {@link
  * #write(char[], int, int)} implementation is synchronized.
- *
  */
 public class TeeWriter extends ProxyWriter {
     private Writer branch;
@@ -36,54 +35,64 @@ public class TeeWriter extends ProxyWriter {
         this.branch = branch;
     }
 
+    @Override
     public void write(int c) throws IOException {
         super.write(c);
         branch.write(c);
     }
 
+    @Override
     public void write(char[] cbuf) throws IOException {
         super.write(cbuf);
         branch.write(cbuf);
     }
 
+    @Override
     public void write(char[] cbuf, int off, int len) throws IOException {
         super.write(cbuf, off, len);
         branch.write(cbuf, off, len);
     }
 
+    @Override
     public void write(String str) throws IOException {
         super.write(str);
         branch.write(str);
     }
 
+    @Override
     public void write(String str, int off, int len) throws IOException {
         super.write(str, off, len);
         branch.write(str, off, len);
     }
 
+    @Override
     public Writer append(CharSequence csq) throws IOException {
         super.append(csq);
         branch.append(csq);
         return this;
     }
 
+    @Override
     public Writer append(CharSequence csq, int start, int end) throws IOException {
         super.append(csq, start, end);
         branch.append(csq, start, end);
         return this;
     }
 
+    @Override
     public Writer append(char c) throws IOException {
         super.append(c);
         branch.append(c);
         return this;
     }
 
+    @Override
     public void flush() throws IOException {
         super.flush();
         branch.flush();
     }
 
+    @Override
     public void close() throws IOException {
         try {
             super.close();
@@ -92,6 +101,7 @@ public class TeeWriter extends ProxyWriter {
         }
     }
 
+    @Override
     public String toString() {
         return branch.toString();
     }

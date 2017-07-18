@@ -18,10 +18,7 @@ import org.apereo.portal.security.IAuthorizationPrincipal;
 import org.apereo.portal.security.IPerson;
 import org.springframework.webflow.context.ExternalContext;
 
-/**
- * Useful general utilities for uPortal's webflows.
- *
- */
+/** Useful general utilities for uPortal's webflows. */
 public interface IPortalWebFlowUtils {
 
     /**

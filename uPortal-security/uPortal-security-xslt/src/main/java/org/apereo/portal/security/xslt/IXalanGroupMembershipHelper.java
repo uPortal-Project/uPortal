@@ -14,10 +14,7 @@
  */
 package org.apereo.portal.security.xslt;
 
-/**
- * Group Membership Helper APIs
- *
- */
+/** Group Membership Helper APIs */
 public interface IXalanGroupMembershipHelper {
     /**
      * Checks if the user is a deep member of the specified group

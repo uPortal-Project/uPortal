@@ -31,6 +31,7 @@ public class GuestUserTester implements IPersonTester {
         this.guestValue = Boolean.parseBoolean(definition.getTestValue());
     }
 
+    @Override
     public boolean test(IPerson person) {
         if (guestValue) {
             return person.isGuest();
@@ -38,5 +39,4 @@ public class GuestUserTester implements IPersonTester {
             return !person.isGuest();
         }
     }
-
 }

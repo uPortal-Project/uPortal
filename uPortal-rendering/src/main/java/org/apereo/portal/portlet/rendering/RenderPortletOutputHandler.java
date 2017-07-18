@@ -23,7 +23,6 @@ import org.apache.commons.io.output.WriterOutputStream;
 /**
  * PortletOutputHandler that stores all content written to a string. Requires that an encoding be
  * specified in case the portlet writes to the output stream.
- *
  */
 public class RenderPortletOutputHandler implements PortletOutputHandler {
     private final StringBuilderWriter writer = new StringBuilderWriter();
@@ -45,6 +44,7 @@ public class RenderPortletOutputHandler implements PortletOutputHandler {
     }
 
     /** @return The content-type the portlet set */
+    @Override
     public String getContentType() {
         return contentType;
     }

@@ -21,10 +21,7 @@ import org.apereo.portal.events.aggr.TimeDimension;
 import org.apereo.portal.events.aggr.groups.AggregatedGroupMapping;
 import org.apereo.portal.events.aggr.tabs.AggregatedTabMapping;
 
-/**
- * Basic impl of {@link TabRenderAggregationKey}
- *
- */
+/** Basic impl of {@link TabRenderAggregationKey} */
 public final class TabRenderAggregationKeyImpl extends BaseAggregationKeyImpl
         implements TabRenderAggregationKey {
     private static final long serialVersionUID = 1L;

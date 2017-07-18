@@ -17,10 +17,7 @@ package org.apereo.portal.rendering;
 import org.apereo.portal.character.stream.CharacterEventReader;
 import org.apereo.portal.character.stream.events.CharacterEvent;
 
-/**
- * Wraps another {@link CharacterPipelineComponent}
- *
- */
+/** Wraps another {@link CharacterPipelineComponent} */
 public abstract class CharacterPipelineComponentWrapper
         extends PipelineComponentWrapper<CharacterEventReader, CharacterEvent>
         implements CharacterPipelineComponent {}

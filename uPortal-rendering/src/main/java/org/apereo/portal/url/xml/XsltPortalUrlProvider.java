@@ -30,10 +30,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-/**
- * Wrapper class for {@link IPortalUrlProvider} that makes use easier in XSL
- *
- */
+/** Wrapper class for {@link IPortalUrlProvider} that makes use easier in XSL */
 @Service("xslPortalUrlProvider")
 public class XsltPortalUrlProvider {
     public static final String XSLT_PORTAL_URL_PROVIDER = "XSLT_PORTAL_URL_PROVIDER";

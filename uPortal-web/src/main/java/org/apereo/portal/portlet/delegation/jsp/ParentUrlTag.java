@@ -24,10 +24,7 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 import org.apereo.portal.portlet.PortletUtils;
 
-/**
- * Simple wrapper tag for setting up the basis of URLs for portlet delegation
- *
- */
+/** Simple wrapper tag for setting up the basis of URLs for portlet delegation */
 public class ParentUrlTag extends TagSupport implements ParameterizableTag {
     private static final long serialVersionUID = 1L;
 

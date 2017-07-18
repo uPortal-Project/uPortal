@@ -25,10 +25,7 @@ import org.apereo.portal.events.tincan.om.LocalizedString;
 import org.apereo.portal.events.tincan.om.LrsObject;
 import org.springframework.beans.factory.annotation.Autowired;
 
-/**
- * Generic class to convert from PortletRenderEvent to LrsStatement.
- *
- */
+/** Generic class to convert from PortletRenderEvent to LrsStatement. */
 public class PortletRenderEventConverter extends AbstractPortalEventToLrsStatementConverter {
     private AggregatedTabLookupDao aggregatedTabLookupDao;
 

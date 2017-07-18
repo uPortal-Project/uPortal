@@ -18,10 +18,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import javax.servlet.ServletOutputStream;
 
-/**
- * {@link ServletOutputStream} impl that delegates to an {@link OutputStream}
- *
- */
+/** {@link ServletOutputStream} impl that delegates to an {@link OutputStream} */
 public class DelegatingServletOutputStream extends ServletOutputStream {
     private final OutputStream outputStream;
 
@@ -29,22 +26,27 @@ public class DelegatingServletOutputStream extends ServletOutputStream {
         this.outputStream = outputStream;
     }
 
+    @Override
     public void write(int b) throws IOException {
         outputStream.write(b);
     }
 
+    @Override
     public void write(byte[] b) throws IOException {
         outputStream.write(b);
     }
 
+    @Override
     public void write(byte[] b, int off, int len) throws IOException {
         outputStream.write(b, off, len);
     }
 
+    @Override
     public void flush() throws IOException {
         outputStream.flush();
     }
 
+    @Override
     public void close() throws IOException {
         outputStream.close();
     }

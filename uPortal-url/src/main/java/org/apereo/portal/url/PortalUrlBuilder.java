@@ -23,10 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apereo.portal.portlet.om.IPortletWindowId;
 import org.apereo.portal.utils.ConcurrentMapUtils;
 
-/**
- * Builds a portal URL
- *
- */
+/** Builds a portal URL */
 class PortalUrlBuilder extends AbstractUrlBuilder implements IPortalActionUrlBuilder {
     final IUrlSyntaxProvider urlGenerator;
     final HttpServletRequest httpServletRequest;

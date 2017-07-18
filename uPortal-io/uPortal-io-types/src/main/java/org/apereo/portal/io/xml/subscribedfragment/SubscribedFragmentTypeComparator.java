@@ -16,10 +16,7 @@ package org.apereo.portal.io.xml.subscribedfragment;
 
 import org.apereo.portal.utils.ComparableExtractingComparator;
 
-/**
- * Compares SubscribedFragmentType instances
- *
- */
+/** Compares SubscribedFragmentType instances */
 public class SubscribedFragmentTypeComparator
         extends ComparableExtractingComparator<SubscribedFragmentType, String> {
     public static final SubscribedFragmentTypeComparator INSTANCE =

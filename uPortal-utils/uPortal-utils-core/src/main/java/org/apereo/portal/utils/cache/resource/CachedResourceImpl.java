@@ -18,8 +18,7 @@ import java.io.Serializable;
 import java.util.Map;
 import org.springframework.core.io.Resource;
 
-/**
- */
+/** */
 class CachedResourceImpl<T> implements CachedResource<T> {
     private final Resource resource;
     private final Map<Resource, Long> additionalResources;

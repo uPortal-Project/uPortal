@@ -26,7 +26,6 @@ import org.springframework.stereotype.Service;
 /**
  * An IEntitySearcher implementation for the local portal group service. Uses implementations of
  * ITypedEntitySearcher to do the dirty work.
- *
  */
 @Service("referenceEntitySearcher")
 public class ReferenceEntitySearcherImpl implements IEntitySearcher {

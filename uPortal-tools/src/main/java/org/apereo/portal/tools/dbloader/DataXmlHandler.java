@@ -29,10 +29,7 @@ import org.springframework.transaction.support.TransactionOperations;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
-/**
- * Generates and executes SQL INSERT statements as the data XML document is parsed.
- *
- */
+/** Generates and executes SQL INSERT statements as the data XML document is parsed. */
 public class DataXmlHandler extends BaseDbXmlHandler {
     private final JdbcOperations jdbcOperations;
     private final TransactionOperations transactionOperations;

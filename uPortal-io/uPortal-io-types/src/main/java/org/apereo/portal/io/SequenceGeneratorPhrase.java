@@ -26,8 +26,7 @@ import org.danann.cernunnos.SimpleReagent;
 import org.danann.cernunnos.TaskRequest;
 import org.danann.cernunnos.TaskResponse;
 
-/**
- */
+/** */
 public class SequenceGeneratorPhrase implements Phrase {
 
     public static final Reagent SEQ_NAME =
@@ -44,6 +43,7 @@ public class SequenceGeneratorPhrase implements Phrase {
     /* (non-Javadoc)
      * @see org.danann.cernunnos.Bootstrappable#init(org.danann.cernunnos.EntityConfig)
      */
+    @Override
     public void init(EntityConfig config) {
         this.seqNamePhrase = (Phrase) config.getValue(SEQ_NAME);
     }
@@ -51,6 +51,7 @@ public class SequenceGeneratorPhrase implements Phrase {
     /* (non-Javadoc)
      * @see org.danann.cernunnos.Bootstrappable#getFormula()
      */
+    @Override
     public Formula getFormula() {
         return new SimpleFormula(SequenceGeneratorPhrase.class, new Reagent[] {SEQ_NAME});
     }
@@ -58,6 +59,7 @@ public class SequenceGeneratorPhrase implements Phrase {
     /* (non-Javadoc)
      * @see org.danann.cernunnos.Phrase#evaluate(org.danann.cernunnos.TaskRequest, org.danann.cernunnos.TaskResponse)
      */
+    @Override
     public Object evaluate(TaskRequest req, TaskResponse res) {
         final String seqName = (String) this.seqNamePhrase.evaluate(req, res);
 

@@ -31,7 +31,6 @@ import org.springframework.util.StringUtils;
  * ChainingProfileMapper which add a prefix on profil Fname if the user is a guest. The prefix added
  * is "guest-[server name]-[sub fname]". If the server name used is not authorized use "guest-[sub
  * fname]" instead.
- *
  */
 public class ServerNameGuestChainingProfileMapper implements IProfileMapper, InitializingBean {
 

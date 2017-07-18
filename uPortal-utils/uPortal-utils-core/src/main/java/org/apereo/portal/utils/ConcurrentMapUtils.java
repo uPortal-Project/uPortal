@@ -18,10 +18,7 @@ import com.google.common.base.Function;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-/**
- * Utilities for working with concurrent maps
- *
- */
+/** Utilities for working with concurrent maps */
 public final class ConcurrentMapUtils {
     private ConcurrentMapUtils() {}
 

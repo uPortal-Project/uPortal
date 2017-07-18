@@ -24,8 +24,7 @@ import org.apereo.portal.portlet.om.IPortletEntity;
 import org.apereo.portal.portlet.om.IPortletEntityId;
 import org.apereo.portal.portlet.om.IPortletPreference;
 
-/**
- */
+/** */
 class TransientPortletEntity implements IPortletEntity {
     private final IPortletEntity delegatePortletEntity;
     private final String transientLayoutNodeId;

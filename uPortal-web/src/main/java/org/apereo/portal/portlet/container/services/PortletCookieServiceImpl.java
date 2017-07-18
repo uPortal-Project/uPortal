@@ -46,10 +46,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.context.ServletContextAware;
 import org.springframework.web.util.WebUtils;
 
-/**
- * {@link Service} bean to encapsulate business logic regarding portlet cookie persistence.
- *
- */
+/** {@link Service} bean to encapsulate business logic regarding portlet cookie persistence. */
 @Service("portletCookieService")
 public class PortletCookieServiceImpl implements IPortletCookieService, ServletContextAware {
 

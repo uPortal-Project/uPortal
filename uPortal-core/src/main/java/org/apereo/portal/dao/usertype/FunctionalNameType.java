@@ -18,10 +18,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.jadira.usertype.spi.shared.AbstractSingleColumnUserType;
 
-/**
- * Uses a regular expression to validate strings coming to/from the database.
- *
- */
+/** Uses a regular expression to validate strings coming to/from the database. */
 public class FunctionalNameType
         extends AbstractSingleColumnUserType<String, String, FunctionalNameColumnMapper> {
     private static final long serialVersionUID = 1L;

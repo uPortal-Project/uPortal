@@ -21,10 +21,7 @@ import javax.xml.stream.XMLEventReader;
 import org.apereo.portal.io.xml.AbstractPortalDataType;
 import org.apereo.portal.io.xml.PortalDataKey;
 
-/**
- * Describes a User data type in the portal
- *
- */
+/** Describes a User data type in the portal */
 public class UserPortalDataType extends AbstractPortalDataType {
     public static final QName USER_QNAME =
             new QName("https://source.jasig.org/schemas/uportal/io/user", "user");

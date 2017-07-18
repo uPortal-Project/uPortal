@@ -14,10 +14,7 @@
  */
 package org.apereo.portal.portlet.delegation.jsp;
 
-/**
- * Used by {@link ParamTag} to add parameters to another tag
- *
- */
+/** Used by {@link ParamTag} to add parameters to another tag */
 public interface ParameterizableTag {
     /**
      * Adds the name and value parameter pair. If the parameter already exists the value is added to

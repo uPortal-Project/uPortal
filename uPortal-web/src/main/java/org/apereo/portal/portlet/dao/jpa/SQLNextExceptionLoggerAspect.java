@@ -22,7 +22,6 @@ import org.springframework.core.Ordered;
 /**
  * Provides additional logging for SQL based exceptions that provide chained exceptions via {@link
  * SQLException#getNextException()}
- *
  */
 public class SQLNextExceptionLoggerAspect implements Ordered {
     protected final Log logger = LogFactory.getLog(this.getClass());

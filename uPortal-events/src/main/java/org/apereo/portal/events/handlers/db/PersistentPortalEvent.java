@@ -30,10 +30,7 @@ import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
-/**
- * Persistent wrapper for storing portal events
- *
- */
+/** Persistent wrapper for storing portal events */
 @Entity
 @Table(name = "UP_RAW_EVENTS")
 @Inheritance(strategy = InheritanceType.JOINED)

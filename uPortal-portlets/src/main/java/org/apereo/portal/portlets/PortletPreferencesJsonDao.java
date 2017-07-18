@@ -21,10 +21,7 @@ import javax.portlet.ReadOnlyException;
 import javax.portlet.ValidatorException;
 import net.sf.json.JSONObject;
 
-/**
- * DAO That stores/retrieves objects as JSON in portlet preferences
- *
- */
+/** DAO That stores/retrieves objects as JSON in portlet preferences */
 public interface PortletPreferencesJsonDao {
 
     /**

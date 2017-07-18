@@ -113,6 +113,7 @@ public class EntityTargetProviderImpl implements IPermissionTargetProvider, Seri
      *   <li>local.1 (category)
      * </ul>
      */
+    @Override
     public IPermissionTarget getTarget(String key) {
 
         /*
@@ -152,6 +153,7 @@ public class EntityTargetProviderImpl implements IPermissionTargetProvider, Seri
      * (non-Javadoc)
      * @see org.apereo.portal.permission.target.IPermissionTargetProvider#searchTargets(java.lang.String)
      */
+    @Override
     public Collection<IPermissionTarget> searchTargets(String term) {
 
         // Initialize a new collection of matching targets.  We use a HashSet

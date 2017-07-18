@@ -43,7 +43,6 @@ import javax.naming.Name;
  * <code>setLocalGroupService()</code> - sets the group service of origin.<br>
  *
  * <p>
- *
  */
 public interface IEntityGroup extends IGroupMember {
 
