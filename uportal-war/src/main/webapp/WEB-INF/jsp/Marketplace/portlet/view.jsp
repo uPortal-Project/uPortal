@@ -166,9 +166,7 @@
 }
 
 @media only screen and (max-width: 768px) {
-    #${n}marketplace #unseen table th:nth-child(1),
-    #unseen table th:nth-child(3),
-    #unseen table td:nth-child(2),
+    #${n}marketplace #unseen table td:nth-child(2),
     #unseen table th:nth-child(2){display: none;}
     #${n}marketplace .dataTables_filter{
         text-align: left;
