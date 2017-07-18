@@ -14,7 +14,6 @@
  */
 package org.apereo.portal.security;
 
-import java.util.Vector;
 import org.apereo.portal.AuthorizationException;
 import org.apereo.portal.groups.GroupsException;
 import org.apereo.portal.groups.IGroupMember;

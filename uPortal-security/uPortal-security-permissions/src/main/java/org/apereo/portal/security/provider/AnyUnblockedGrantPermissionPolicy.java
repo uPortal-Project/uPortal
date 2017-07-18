@@ -426,36 +426,39 @@ public class AnyUnblockedGrantPermissionPolicy implements IPermissionPolicy {
         return rslt;
     }
 
-    protected CacheKey getCacheKey(IAuthorizationPrincipal principal, IPermissionOwner owner,
-                                   IPermissionActivity activity, IPermissionTarget target) {
+    protected CacheKey getCacheKey(
+            IAuthorizationPrincipal principal,
+            IPermissionOwner owner,
+            IPermissionActivity activity,
+            IPermissionTarget target) {
 
         CacheKey rslt;
         if (principal.isGroup()) {
             /*
              * Untagged keys for groups...
              */
-            rslt = CacheKey.build(
-                    AnyUnblockedGrantPermissionPolicy.class.getName(),
-                    principal.getPrincipalString(),
-                    owner.getFname(),
-                    activity.getFname(),
-                    target.getKey());
+            rslt =
+                    CacheKey.build(
+                            AnyUnblockedGrantPermissionPolicy.class.getName(),
+                            principal.getPrincipalString(),
+                            owner.getFname(),
+                            activity.getFname(),
+                            target.getKey());
         } else {
             /*
              * Keys tagged with the username for users;  this practice
              * will cause them to be purged if the user re-authenticates.
              */
-            rslt = CacheKey.buildTagged(
-                    AnyUnblockedGrantPermissionPolicy.class.getName(),
-                    UsernameTaggedCacheEntryPurger.createCacheEntryTag(principal.getKey()),
-                    principal.getPrincipalString(),
-                    owner.getFname(),
-                    activity.getFname(),
-                    target.getKey());
+            rslt =
+                    CacheKey.buildTagged(
+                            AnyUnblockedGrantPermissionPolicy.class.getName(),
+                            UsernameTaggedCacheEntryPurger.createCacheEntryTag(principal.getKey()),
+                            principal.getPrincipalString(),
+                            owner.getFname(),
+                            activity.getFname(),
+                            target.getKey());
         }
 
         return rslt;
-
     }
-
 }

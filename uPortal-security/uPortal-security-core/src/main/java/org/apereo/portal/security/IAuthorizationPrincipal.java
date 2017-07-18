@@ -14,7 +14,6 @@
  */
 package org.apereo.portal.security;
 
-import java.util.Vector;
 import org.apereo.portal.AuthorizationException;
 import org.apereo.portal.portlet.om.PortletLifecycleState;
 
@@ -101,9 +100,7 @@ public interface IAuthorizationPrincipal {
     IPermission[] getAllPermissions(String owner, String activity, String target)
             throws AuthorizationException;
 
-    /**
-     * Returns the key of the underlying entity.  For users, the key will be the username.
-     */
+    /** Returns the key of the underlying entity. For users, the key will be the username. */
     String getKey();
 
     /**
@@ -175,5 +172,4 @@ public interface IAuthorizationPrincipal {
      */
     boolean hasPermission(String owner, String activity, String target, IPermissionPolicy policy)
             throws AuthorizationException;
-
 }

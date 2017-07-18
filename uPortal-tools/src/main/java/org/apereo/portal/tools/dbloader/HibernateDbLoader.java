@@ -277,9 +277,12 @@ public class HibernateDbLoader
 
         for (final Table table : tables) {
             if (table.isPhysicalTable()) {
-                for (final Iterator<UniqueKey> subIter = table.getUniqueKeyIterator(); subIter.hasNext();) {
+                for (final Iterator<UniqueKey> subIter = table.getUniqueKeyIterator();
+                        subIter.hasNext();
+                        ) {
                     final UniqueKey uk = subIter.next();
-                    final String constraintString = uk.sqlCreateString(dialect, mapping, defaultCatalog, defaultSchema);
+                    final String constraintString =
+                            uk.sqlCreateString(dialect, mapping, defaultCatalog, defaultSchema);
                     if (StringUtils.isNotBlank(constraintString)) {
                         script.add(constraintString);
                     }
@@ -294,7 +297,9 @@ public class HibernateDbLoader
                 }
 
                 if (dialect.hasAlterTable()) {
-                    for (final Iterator<ForeignKey> subIter = table.getForeignKeyIterator();subIter.hasNext();) {
+                    for (final Iterator<ForeignKey> subIter = table.getForeignKeyIterator();
+                            subIter.hasNext();
+                            ) {
                         final ForeignKey fk = subIter.next();
                         if (fk.isPhysicalConstraint()) {
                             script.add(
