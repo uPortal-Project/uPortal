@@ -14,10 +14,18 @@
  */
 package org.apereo.portal.json.rendering;
 
+import junit.framework.Assert;
+import org.apereo.portal.character.stream.CharacterEventReader;
+import org.apereo.portal.character.stream.events.CharacterEvent;
+import org.apereo.portal.rendering.PipelineComponent;
+import org.apereo.portal.rendering.PipelineComponentWrapper;
+import org.apereo.portal.rendering.PipelineEventReader;
+import org.apereo.portal.rendering.PipelineEventReaderImpl;
 import org.apereo.portal.utils.cache.CacheKey;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -27,6 +35,7 @@ public class JsonWrapperFilteringCharacterPipelineComponentTest {
     JsonWrapperFilteringCharacterPipelineComponent jsonWrapperFilteringCharacterPipelineComponent;
     private MockHttpServletRequest req;
     private MockHttpServletResponse res;
+    @Mock private PipelineComponent wrappedComponent;
 
     @Before
     public void setup() {
@@ -35,18 +44,40 @@ public class JsonWrapperFilteringCharacterPipelineComponentTest {
 
         res = new MockHttpServletResponse();
         req = new MockHttpServletRequest();
+        wrappedComponent = Mockito.mock(PipelineComponentWrapper.class);
         MockitoAnnotations.initMocks(this);
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testGetEventReaderNull() {
         jsonWrapperFilteringCharacterPipelineComponent.setWrappedComponent(null);
-        jsonWrapperFilteringCharacterPipelineComponent.getEventReader(req, res);
+        Assert.assertNull(jsonWrapperFilteringCharacterPipelineComponent.getEventReader(req, res));
     }
 
-    @Test(expected = NullPointerException.class)
-    public void testGetCacheKey() {
+    @Test
+    public void testGetEventReader() {
+        PipelineEventReader<CharacterEventReader, CharacterEvent> pipelineEventReader =
+                Mockito.mock(PipelineEventReaderImpl.class);
+        CharacterEventReader eventReader = Mockito.mock(CharacterEventReader.class);
+        Mockito.when(pipelineEventReader.getEventReader()).thenReturn(eventReader);
+        Mockito.when(wrappedComponent.getEventReader(req, res)).thenReturn(pipelineEventReader);
+        jsonWrapperFilteringCharacterPipelineComponent.setWrappedComponent(wrappedComponent);
+        jsonWrapperFilteringCharacterPipelineComponent.getEventReader(req, res);
+        Mockito.verify(wrappedComponent).getEventReader(req, res);
+    }
+
+    @Test
+    public void testGetCacheKeyNull() {
         CacheKey cacheKey = jsonWrapperFilteringCharacterPipelineComponent.getCacheKey(req, res);
         Assert.assertNull(cacheKey);
+    }
+
+    @Test
+    public void testGetCacheKey() {
+        jsonWrapperFilteringCharacterPipelineComponent.setWrappedComponent(wrappedComponent);
+        Mockito.when(wrappedComponent.getCacheKey(req, res))
+                .thenReturn(Mockito.mock(CacheKey.class));
+        CacheKey cacheKey = jsonWrapperFilteringCharacterPipelineComponent.getCacheKey(req, res);
+        Assert.assertNotNull(cacheKey);
     }
 }
