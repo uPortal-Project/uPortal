@@ -2,28 +2,33 @@
   "name": "uportal",
   "private": true,
   "devDependencies": {
-    "eslint": "3.8.1",
-    "eslint-config-google": "0.7.0",
-    "remark-cli": "^2.1.0",
-    "remark-preset-lint-consistent": "^1.0.0",
-    "remark-preset-lint-recommended": "^1.0.0",
-    "remark-validate-links": "^5.0.0",
-    "stylelint": "7.7.1",
-    "stylelint-config-standard": "15.0.1"
+    "eslint": "4.0.0",
+    "eslint-config-google": "0.8.0",
+    "remark-cli": "^3.0.1",
+    "remark-preset-lint-consistent": "^2.0.0",
+    "remark-preset-lint-recommended": "^2.0.0",
+    "remark-validate-links": "^6.0.0",
+    "stylelint": "7.11.0",
+    "stylelint-config-standard": "16.0.0"
   },
   "scripts": {
-    "test": "eslint . --ignore-path .gitignore && stylelint --syntax less **/*.less !**/bootstrap/**/*.less && remark *.md docs/**/*.md"
+    "lint-js": "eslint . --ignore-path .gitignore --ignore-pattern *.min.js --ignore-pattern jstree.js --ignore-pattern less-1.6.2.js",
+    "lint-less": "stylelint --syntax less **/*.less !**/bootstrap/**/*.less",
+    "lint-md": "remark -f *.md docs/**"
   },
   "eslintConfig": {
     "extends": "google",
     "rules": {
-      "indent": ["warn", 4]
+      "indent": [
+        "warn",
+        4
+      ]
     }
   },
   "remarkConfig": {
-    "presets": [
-      "remark-preset-lint-recommended",
-      "remark-preset-lint-consistent"
+    "plugins": [
+      "preset-lint-recommended",
+      "preset-lint-consistent"
     ]
   },
   "stylelint": {

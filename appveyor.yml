@@ -6,7 +6,11 @@ install:
   - gradlew.bat --version
 # The 'build' task runs most things, including test, check, & static analysis
 build: off
-test_script: gradlew.bat -u -i -S build
+test_script:
+  - gradlew.bat -u -i -S build
+  - gradlew.bat -u -i -S npm_run_lint-js
+  - gradlew.bat -u -i -S npm_run_lint-less
+  - gradlew.bat -u -i -S npm_run_lint-md
 cache:
   - .gradle
   - C:\Users\appveyor\.gradle
