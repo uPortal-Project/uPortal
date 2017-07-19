@@ -17,6 +17,7 @@ dependencies {
     compileOnly "${servletApiDependency}"
 
     testCompile "${servletApiDependency}"
+    testCompile "${portletApiDependency}"
 
     //need to add for SessionRESTControllerTest.java
     testCompile "org.apache.portals.pluto:pluto-container-api:${plutoVersion}"
