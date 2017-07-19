@@ -33,7 +33,9 @@ public class JsonWrapperFilteringCharacterPipelineComponent
      */
     @Override
     public CacheKey getCacheKey(HttpServletRequest request, HttpServletResponse response) {
-        return this.wrappedComponent.getCacheKey(request, response);
+        if (this.wrappedComponent != null) {
+            return this.wrappedComponent.getCacheKey(request, response);
+        } else return null;
     }
 
     /* (non-Javadoc)
@@ -42,13 +44,16 @@ public class JsonWrapperFilteringCharacterPipelineComponent
     @Override
     public PipelineEventReader<CharacterEventReader, CharacterEvent> getEventReader(
             HttpServletRequest request, HttpServletResponse response) {
-        final PipelineEventReader<CharacterEventReader, CharacterEvent> pipelineEventReader =
-                this.wrappedComponent.getEventReader(request, response);
-        final CharacterEventReader eventReader = pipelineEventReader.getEventReader();
-        final JsonWrapperFilteringCharacterEventReader jsonWrapperFilteringCharacterEventReader =
-                new JsonWrapperFilteringCharacterEventReader(eventReader);
-        final Map<String, String> outputProperties = pipelineEventReader.getOutputProperties();
-        return new PipelineEventReaderImpl<CharacterEventReader, CharacterEvent>(
-                jsonWrapperFilteringCharacterEventReader, outputProperties);
+        if (this.wrappedComponent != null) {
+            final PipelineEventReader<CharacterEventReader, CharacterEvent> pipelineEventReader =
+                    this.wrappedComponent.getEventReader(request, response);
+            final CharacterEventReader eventReader = pipelineEventReader.getEventReader();
+            final JsonWrapperFilteringCharacterEventReader
+                    jsonWrapperFilteringCharacterEventReader =
+                            new JsonWrapperFilteringCharacterEventReader(eventReader);
+            final Map<String, String> outputProperties = pipelineEventReader.getOutputProperties();
+            return new PipelineEventReaderImpl<CharacterEventReader, CharacterEvent>(
+                    jsonWrapperFilteringCharacterEventReader, outputProperties);
+        } else return null;
     }
 }
