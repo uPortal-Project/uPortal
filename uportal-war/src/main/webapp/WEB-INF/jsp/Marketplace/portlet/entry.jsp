@@ -515,12 +515,14 @@
             <div class="row">
             <div class = "col-xs-12 col-md-4">
                 <span class="marketplace_section_header"><spring:message code="categories" text="CATEGORIES" /></span>
+                <ul>
                     <c:forEach var="portletCategory" items="${portletCategories}">
                         <portlet:renderURL var="initialViewWithFilterURL" windowState="MAXIMIZED">
                             <portlet:param name="initialFilter" value="${portletCategory}"/>
                         </portlet:renderURL>
-                        <ul><li>- <a href="${initialViewWithFilterURL}">${portletCategory}</a></li></ul>
+                        <li>- <a href="${initialViewWithFilterURL}">${portletCategory}</a></li>
                     </c:forEach>
+                </ul>   
                 </div>
             </div>
             <br>
