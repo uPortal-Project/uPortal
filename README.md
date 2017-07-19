@@ -13,10 +13,10 @@
         <img src="https://img.shields.io/badge/code_style-Google-green.svg?style=flat" alt="Google Code Style">
       </a>
       <a href="https://github.com/search?q=topic%3Auportal+topic%3Asoffit&type=Repositories">
-        <img src="https://img.shields.io/badge/discover-soffits-blue.svg?style=flat" alt="Google Code Style">
+        <img src="https://img.shields.io/badge/discover-soffits-blue.svg?style=flat" alt="Discover Soffits">
       </a>
       <a href="https://github.com/search?q=topic%3Auportal+topic%3Aportlet&type=Repositories">
-        <img src="https://img.shields.io/badge/discover-portlets-blue.svg?style=flat" alt="Google Code Style">
+        <img src="https://img.shields.io/badge/discover-portlets-blue.svg?style=flat" alt="Discover Portlets">
       </a>
       <br>
       <table>
