@@ -73,7 +73,7 @@ import org.hibernate.annotations.Type;
 import org.springframework.util.StringUtils;
 
 /**
- * Concrete implementation of {@link IPortletDefinition} that is JPA-managed.
+ * Concrete JPA-managed implementation of {@link IPortletDefinition} .
  */
 @Entity
 @Table(name = "UP_PORTLET_DEF")
@@ -131,15 +131,15 @@ public class PortletDefinitionImpl implements IPortletDefinition {
     private final PortletPreferencesImpl portletPreferences;
 
     /**
-     * Name is used for admin tools, but will typically not be presented to end users. It allows for
-     * situations where you need to define multiple similar portlets, all sharing a title. but still
-     * provides a way to distinguish between the portlets in admin tools.
+     * Name shows in admin tools, not typically to end users.
+     * Name is useful for administratively distinguishing multiple portlet
+     * publications that share a title.
      */
     @Column(name = "PORTLET_NAME", length = 128, nullable = false, unique = true)
     private String name;
 
     /**
-     * The "fName" of a portlet is its human-assigned, unique identifier.
+     * The "fName" of a portlet is its human-assigned unique identifier.
      */
     @NaturalId(mutable = true)
     @Column(name = "PORTLET_FNAME", length = 255, nullable = false)
@@ -191,7 +191,7 @@ public class PortletDefinitionImpl implements IPortletDefinition {
     private List<IPortletLifecycleEntry> lifecycleEntries = new ArrayList<>();
 
     /**
-     * Portlet publishing parameters.  These are portlet-specific settings that are defined,
+     * Portlet publishing parameters are portlet-specific settings defined,
      * managed, and (typically) consumed by uPortal itself.
      */
     @OneToMany(
