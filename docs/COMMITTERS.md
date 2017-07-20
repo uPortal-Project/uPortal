@@ -11,6 +11,7 @@
  - Drew Wills (drewwills)
  - James Wennmacher (jameswennmacher)
  - Jeff Cross (jeffbcross)
+ - [Jim Helwig] (jimhelwig)
  - Josh Helmer (jhelmer-unicon)
  - Misagh Moayyed (mmoayyed)
  - Nicholas Blair (nblair)
@@ -80,3 +81,4 @@ Apache Software Foundation on
 
 
 [Christian Cousquer]: https://groups.google.com/a/apereo.org/d/topic/uportal-dev/oMLYtLAo3zo/discussion
+[Jim Helwig]: https://groups.google.com/a/apereo.org/d/msg/uportal-dev/A5ok2Fiab_M/IQP5g9OvCgAJ
