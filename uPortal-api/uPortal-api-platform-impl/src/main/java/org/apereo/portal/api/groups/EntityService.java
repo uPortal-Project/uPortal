@@ -17,6 +17,7 @@ package org.apereo.portal.api.groups;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apereo.portal.EntityIdentifier;
@@ -48,76 +49,112 @@ public final class EntityService {
     }
 
     public Set<Entity> search(String entityType, String searchTerm) {
+        if (!StringUtils.isEmpty(entityType) && !StringUtils.isEmpty(searchTerm)) {
+            Set<Entity> results = new HashSet<Entity>();
+            EntityEnum entityEnum = EntityEnum.getEntityEnum(entityType);
+            EntityIdentifier[] identifiers;
+            Class<?> identifierType;
 
-        Set<Entity> results = new HashSet<Entity>();
-        EntityEnum entityEnum = EntityEnum.getEntityEnum(entityType);
-        EntityIdentifier[] identifiers;
-        Class<?> identifierType;
-
-        // if the entity type is a group, use the group service's findGroup method
-        // to locate it
-        if (entityEnum.isGroup()) {
-            identifiers =
-                    GroupService.searchForGroups(
-                            searchTerm, GroupService.CONTAINS, entityEnum.getClazz());
-            identifierType = IEntityGroup.class;
-        }
-        // otherwise use the getGroupMember method
-        else {
-            identifiers =
-                    GroupService.searchForEntities(
-                            searchTerm, GroupService.CONTAINS, entityEnum.getClazz());
-            identifierType = entityEnum.getClazz();
-        }
-
-        for (EntityIdentifier entityIdentifier : identifiers) {
-            if (entityIdentifier.getType().equals(identifierType)) {
-                IGroupMember groupMember = GroupService.getGroupMember(entityIdentifier);
-                Entity entity = getEntity(groupMember);
-                results.add(entity);
+            // if the entity type is a group, use the group service's findGroup method
+            // to locate it
+            if (entityEnum.isGroup()) {
+                identifiers =
+                        GroupService.searchForGroups(
+                                searchTerm, GroupService.CONTAINS, entityEnum.getClazz());
+                identifierType = IEntityGroup.class;
             }
-        }
+            // otherwise use the getGroupMember method
+            else {
+                identifiers =
+                        GroupService.searchForEntities(
+                                searchTerm, GroupService.CONTAINS, entityEnum.getClazz());
+                identifierType = entityEnum.getClazz();
+            }
 
-        return results;
+            for (EntityIdentifier entityIdentifier : identifiers) {
+                if (entityIdentifier.getType().equals(identifierType)) {
+                    IGroupMember groupMember = GroupService.getGroupMember(entityIdentifier);
+                    Entity entity = getEntity(groupMember);
+                    results.add(entity);
+                }
+            }
+
+            return results;
+        }
+        return null;
     }
 
     public Entity getEntity(String entityType, String entityId, boolean populateChildren) {
 
         // get the EntityEnum for the specified entity type
-        EntityEnum entityEnum = EntityEnum.getEntityEnum(entityType);
+        if (!StringUtils.isEmpty(entityType) && !StringUtils.isEmpty(entityId)) {
+            EntityEnum entityEnum = EntityEnum.getEntityEnum(entityType);
 
-        // if the entity type is a group, use the group service's findGroup method
-        // to locate it
-        if (entityEnum.isGroup()) {
-            // attempt to find the entity
-            IEntityGroup entityGroup = GroupService.findGroup(entityId);
-            if (entityGroup == null) {
-                return null;
-            } else {
-                Entity entity = EntityFactory.createEntity(entityGroup, entityEnum);
-                if (populateChildren) {
-                    Iterator<IGroupMember> members = entityGroup.getChildren().iterator();
-                    entity = populateChildren(entity, members);
+            // if the entity type is a group, use the group service's findGroup method
+            // to locate it
+            if (entityEnum.isGroup()) {
+                // attempt to find the entity
+                IEntityGroup entityGroup = GroupService.findGroup(entityId);
+                if (entityGroup == null) {
+                    return null;
+                } else {
+                    Entity entity = EntityFactory.createEntity(entityGroup, entityEnum);
+                    if (populateChildren) {
+                        Iterator<IGroupMember> members = entityGroup.getChildren().iterator();
+                        entity = populateChildren(entity, members);
+                    }
+                    IAuthorizationPrincipal authP = getPrincipalForEntity(entity);
+                    Principal principal =
+                            new PrincipalImpl(authP.getKey(), authP.getPrincipalString());
+
+                    entity.setPrincipal(principal);
+                    return entity;
                 }
-                IAuthorizationPrincipal authP = getPrincipalForEntity(entity);
-                Principal principal = new PrincipalImpl(authP.getKey(), authP.getPrincipalString());
+            }
 
-                entity.setPrincipal(principal);
+            // otherwise use the getGroupMember method
+            else {
+                IGroupMember groupMember =
+                        GroupService.getGroupMember(entityId, entityEnum.getClazz());
+                if (groupMember == null || groupMember instanceof IEntityGroup) {
+                    return null;
+                }
+                Entity entity = EntityFactory.createEntity(groupMember, entityEnum);
+
+                // the group member interface doesn't include the entity name, so
+                // we'll need to look that up manually
+                entity.setName(lookupEntityName(entity));
+                if (EntityEnum.GROUP.toString().equals(entity.getEntityType())
+                        || EntityEnum.PERSON.toString().equals(entity.getEntityType())) {
+                    IAuthorizationPrincipal authP = getPrincipalForEntity(entity);
+                    Principal principal =
+                            new PrincipalImpl(authP.getKey(), authP.getPrincipalString());
+                    entity.setPrincipal(principal);
+                }
                 return entity;
             }
         }
+        return null;
+    }
 
-        // otherwise use the getGroupMember method
-        else {
-            IGroupMember groupMember = GroupService.getGroupMember(entityId, entityEnum.getClazz());
-            if (groupMember == null || groupMember instanceof IEntityGroup) {
-                return null;
+    public Entity getEntity(IGroupMember member) {
+        if (member != null) {
+            // get the type of this member entity
+            EntityEnum entityEnum = getEntityType(member);
+
+            // construct a new entity bean for this entity
+            Entity entity;
+            if (entityEnum.isGroup()) {
+                entity = EntityFactory.createEntity((IEntityGroup) member, entityEnum);
+            } else {
+                entity = EntityFactory.createEntity(member, entityEnum);
             }
-            Entity entity = EntityFactory.createEntity(groupMember, entityEnum);
 
-            // the group member interface doesn't include the entity name, so
-            // we'll need to look that up manually
-            entity.setName(lookupEntityName(entity));
+            // if the name hasn't been set yet, look up the entity name
+            if (entity.getName() == null) {
+                entity.setName(lookupEntityName(entity));
+            }
+
             if (EntityEnum.GROUP.toString().equals(entity.getEntityType())
                     || EntityEnum.PERSON.toString().equals(entity.getEntityType())) {
                 IAuthorizationPrincipal authP = getPrincipalForEntity(entity);
@@ -126,33 +163,7 @@ public final class EntityService {
             }
             return entity;
         }
-    }
-
-    public Entity getEntity(IGroupMember member) {
-
-        // get the type of this member entity
-        EntityEnum entityEnum = getEntityType(member);
-
-        // construct a new entity bean for this entity
-        Entity entity;
-        if (entityEnum.isGroup()) {
-            entity = EntityFactory.createEntity((IEntityGroup) member, entityEnum);
-        } else {
-            entity = EntityFactory.createEntity(member, entityEnum);
-        }
-
-        // if the name hasn't been set yet, look up the entity name
-        if (entity.getName() == null) {
-            entity.setName(lookupEntityName(entity));
-        }
-
-        if (EntityEnum.GROUP.toString().equals(entity.getEntityType())
-                || EntityEnum.PERSON.toString().equals(entity.getEntityType())) {
-            IAuthorizationPrincipal authP = getPrincipalForEntity(entity);
-            Principal principal = new PrincipalImpl(authP.getKey(), authP.getPrincipalString());
-            entity.setPrincipal(principal);
-        }
-        return entity;
+        return null;
     }
 
     public EntityEnum getEntityType(IGroupMember entity) {
@@ -167,17 +178,20 @@ public final class EntityService {
     public IAuthorizationPrincipal getPrincipalForEntity(Entity entity) {
 
         // attempt to determine the entity type class for this principal
-        Class entityType;
-        if (entity.getEntityType().equals(EntityEnum.GROUP.toString())) {
-            entityType = IEntityGroup.class;
-        } else {
-            entityType = EntityEnum.getEntityEnum(entity.getEntityType()).getClazz();
-        }
+        if (entity != null) {
+            Class entityType;
+            if (entity.getEntityType().equals(EntityEnum.GROUP.toString())) {
+                entityType = IEntityGroup.class;
+            } else {
+                entityType = EntityEnum.getEntityEnum(entity.getEntityType()).getClazz();
+            }
 
-        // construct an authorization principal for this JsonEntityBean
-        AuthorizationService authService = AuthorizationService.instance();
-        IAuthorizationPrincipal p = authService.newPrincipal(entity.getId(), entityType);
-        return p;
+            // construct an authorization principal for this JsonEntityBean
+            AuthorizationService authService = AuthorizationService.instance();
+            IAuthorizationPrincipal p = authService.newPrincipal(entity.getId(), entityType);
+            return p;
+        }
+        return null;
     }
 
     /**
@@ -187,26 +201,32 @@ public final class EntityService {
      * @return groupMember's name or null if there's an error
      */
     public String lookupEntityName(Entity entity) {
-        EntityEnum entityEnum = EntityEnum.getEntityEnum(entity.getEntityType());
-        return lookupEntityName(entityEnum, entity.getId());
+        if (entity != null) {
+            EntityEnum entityEnum = EntityEnum.getEntityEnum(entity.getEntityType());
+            return lookupEntityName(entityEnum, entity.getId());
+        }
+        return null;
     }
 
     public String lookupEntityName(EntityEnum entityType, String entityId) {
-        IEntityNameFinder finder;
-        if (entityType.isGroup()) {
-            finder = EntityNameFinderService.instance().getNameFinder(IEntityGroup.class);
-        } else {
-            finder = EntityNameFinderService.instance().getNameFinder(entityType.getClazz());
-        }
+        if (entityType != null && (!StringUtils.isEmpty(entityId))) {
+            IEntityNameFinder finder;
+            if (entityType.isGroup()) {
+                finder = EntityNameFinderService.instance().getNameFinder(IEntityGroup.class);
+            } else {
+                finder = EntityNameFinderService.instance().getNameFinder(entityType.getClazz());
+            }
 
-        try {
-            return finder.getName(entityId);
-        } catch (Exception e) {
-            /* An exception here isn't the end of the world.  Just log it
-            and return null. */
-            log.warn("Couldn't find name for entity " + entityId, e);
-            return null;
+            try {
+                return finder.getName(entityId);
+            } catch (Exception e) {
+                /* An exception here isn't the end of the world.  Just log it
+                and return null. */
+                log.warn("Couldn't find name for entity " + entityId, e);
+                return null;
+            }
         }
+        return null;
     }
 
     private Entity populateChildren(Entity entity, Iterator<IGroupMember> children) {
