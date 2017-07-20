@@ -89,7 +89,7 @@ import org.springframework.util.StringUtils;
 public class PortletDefinitionImpl implements IPortletDefinition {
 
     /*
-     * Properties are final to stop changes in code; hibernate
+     * Properties are final to stop changes in code; Hibernate
      * overrides the final via reflection to set their values.
      */
 
