@@ -23,7 +23,7 @@ repositories {
 }
 
 node {
-    version = '8.1.4'
+    version = "${nodejsVersion}"
     download = true
 }
 
