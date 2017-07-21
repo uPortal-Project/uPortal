@@ -20,10 +20,7 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.security.web.session.HttpSessionDestroyedEvent;
 import org.springframework.stereotype.Component;
 
-/**
- * Purges cache entries tagged for a specific session when the session is destroyed
- *
- */
+/** Purges cache entries tagged for a specific session when the session is destroyed */
 @Component
 public class SessionIdTaggedCacheEntryPurger
         implements ApplicationListener<HttpSessionDestroyedEvent> {

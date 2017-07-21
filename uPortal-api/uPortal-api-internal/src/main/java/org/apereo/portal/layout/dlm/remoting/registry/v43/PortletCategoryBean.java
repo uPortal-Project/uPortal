@@ -77,6 +77,7 @@ public final class PortletCategoryBean implements Comparable<PortletCategoryBean
         return this.portlets;
     }
 
+    @Override
     public int compareTo(PortletCategoryBean category) {
         return new CompareToBuilder().append(this.name, category.getName()).toComparison();
     }

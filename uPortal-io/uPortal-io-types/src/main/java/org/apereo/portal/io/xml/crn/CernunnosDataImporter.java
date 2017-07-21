@@ -24,10 +24,7 @@ import org.danann.cernunnos.TaskResponse;
 import org.danann.cernunnos.runtime.RuntimeRequestResponse;
 import org.dom4j.Element;
 
-/**
- * Generic import impl that support Cernunnous Tasks.
- *
- */
+/** Generic import impl that support Cernunnous Tasks. */
 public class CernunnosDataImporter extends AbstractDom4jImporter {
     private Task task;
 

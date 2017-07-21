@@ -43,6 +43,7 @@ public class MissingPropertyException extends RuntimeException {
         this.alreadyReported = alreadyReported;
     }
 
+    @Override
     public String getMessage() {
         return "The property [" + this.propertyName + "] could not be found.";
     }

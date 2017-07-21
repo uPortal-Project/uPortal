@@ -17,10 +17,7 @@ package org.apereo.portal.events.aggr.portletlayout;
 import org.apereo.portal.events.aggr.BaseAggregation;
 import org.apereo.portal.events.aggr.portlets.AggregatedPortletMapping;
 
-/**
- * Tracks portlet layout change events
- *
- */
+/** Tracks portlet layout change events */
 public interface PortletLayoutAggregation
         extends BaseAggregation<
                 PortletLayoutAggregationKey, PortletLayoutAggregationDiscriminator> {

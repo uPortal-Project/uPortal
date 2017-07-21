@@ -19,10 +19,7 @@ import org.apereo.portal.layout.node.UserLayoutChannelDescription;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-/**
- * DLM specific Channel description to protect DLM artifacts of channels.
- *
- */
+/** DLM specific Channel description to protect DLM artifacts of channels. */
 public class ChannelDescription extends UserLayoutChannelDescription {
     private String plfId = null;
     private String origin = null;

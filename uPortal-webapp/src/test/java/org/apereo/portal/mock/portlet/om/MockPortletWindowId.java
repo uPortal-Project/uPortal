@@ -19,8 +19,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.pluto.container.PortletWindowID;
 import org.apereo.portal.portlet.om.IPortletWindowId;
 
-/**
- */
+/** */
 public class MockPortletWindowId implements IPortletWindowId {
     private static final long serialVersionUID = 1L;
 

@@ -19,10 +19,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 
-/**
- * A Lock that doesn't actually Lock, useful if a non-locking placeholder is needed,
- *
- */
+/** A Lock that doesn't actually Lock, useful if a non-locking placeholder is needed, */
 public class NoopLock implements Lock {
     public static final NoopLock INSTANCE = new NoopLock();
 

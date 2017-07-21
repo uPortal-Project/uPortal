@@ -19,7 +19,6 @@ import java.util.Locale;
 /**
  * This interface represents localized messages used in database message source in order to enable
  * internationalization of dynamic messages like group names, tab titles, etc.
- *
  */
 public interface Message {
 

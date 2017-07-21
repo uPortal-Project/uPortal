@@ -24,10 +24,7 @@ import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.XMLEvent;
 
-/**
- * Caches events written to a List
- *
- */
+/** Caches events written to a List */
 public class XMLEventBufferWriter implements XMLEventWriter {
     private final Map<String, String> prefixes = new LinkedHashMap<String, String>();
     private final List<XMLEvent> eventBuffer = new LinkedList<XMLEvent>();

@@ -35,7 +35,6 @@ import org.springframework.stereotype.Service;
 /**
  * Factory for creating {@link IPortletExecutionWorker}s that handle the asynchronous execution of
  * portlet requests
- *
  */
 @Service
 public class PortletWorkerFactoryImpl implements IPortletWorkerFactory {

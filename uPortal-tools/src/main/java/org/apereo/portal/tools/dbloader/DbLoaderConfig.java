@@ -14,8 +14,7 @@
  */
 package org.apereo.portal.tools.dbloader;
 
-/**
- */
+/** */
 public interface DbLoaderConfig {
 
     /** @return the tablesFile */

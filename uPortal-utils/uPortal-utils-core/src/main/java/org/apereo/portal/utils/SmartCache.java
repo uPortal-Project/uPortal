@@ -21,7 +21,6 @@ import java.util.Iterator;
  * The SmartCache class is used to store objects in memory for a specified amount of time. The time
  * should be specified in seconds. If the time is specified as a negative value, it will be cahced
  * indefinitely.
- *
  */
 public class SmartCache extends HashMap {
     protected int iExpirationTimeout = 3600000; // default to 1 hour
@@ -78,6 +77,7 @@ public class SmartCache extends HashMap {
      * @return the previous value of the specified key in this hashtable, or null if it did not have
      *     one.
      */
+    @Override
     public synchronized Object put(Object key, Object value) {
         ValueWrapper valueWrapper = new ValueWrapper(value);
         return super.put(key, valueWrapper);
@@ -105,6 +105,7 @@ public class SmartCache extends HashMap {
      * @return the value to which the key is mapped in this cache; null if the key is not mapped to
      *     any value in this cache.
      */
+    @Override
     public synchronized Object get(Object key) {
         ValueWrapper valueWrapper = (ValueWrapper) super.get(key);
         if (valueWrapper != null) {

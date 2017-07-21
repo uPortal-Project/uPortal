@@ -19,9 +19,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apereo.portal.jdbc.RDBMServices;
 
-/**
- * This type is a place to centralize the portal's sql transaction code.
- */
+/** This type is a place to centralize the portal's sql transaction code. */
 public class SqlTransaction {
     private static final Log log = LogFactory.getLog(SqlTransaction.class);
     /** SqlTransaction constructor comment. */

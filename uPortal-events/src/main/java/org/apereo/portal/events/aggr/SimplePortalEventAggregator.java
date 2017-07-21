@@ -23,7 +23,6 @@ import org.apereo.portal.jpa.BaseAggrEventsJpaDao;
  * Defines a class that aggregates events. <br>
  * IMPORTANT: The AggrEventsDb EntityManager {@link BaseAggrEventsJpaDao} that is open during
  * execution is running in {@link FlushModeType#COMMIT}.
- *
  */
 public interface SimplePortalEventAggregator<E extends PortalEvent>
         extends IPortalEventAggregator<E> {

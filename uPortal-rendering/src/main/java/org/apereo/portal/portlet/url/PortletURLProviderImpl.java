@@ -28,10 +28,7 @@ import org.apereo.portal.url.IPortalUrlBuilder;
 import org.apereo.portal.url.IPortletUrlBuilder;
 import org.apereo.portal.url.UrlType;
 
-/**
- * Wraps the portal {@link IPortletUrlBuilder} API to work with Pluto's API
- *
- */
+/** Wraps the portal {@link IPortletUrlBuilder} API to work with Pluto's API */
 public class PortletURLProviderImpl implements PortletURLProvider {
     private final IPortletUrlBuilder portletUrlBuilder;
 

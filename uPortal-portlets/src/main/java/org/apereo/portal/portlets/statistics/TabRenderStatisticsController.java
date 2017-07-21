@@ -50,10 +50,7 @@ import org.springframework.web.portlet.ModelAndView;
 import org.springframework.web.portlet.bind.annotation.RenderMapping;
 import org.springframework.web.portlet.bind.annotation.ResourceMapping;
 
-/**
- * Tab render reports
- *
- */
+/** Tab render reports */
 @Controller
 @RequestMapping(value = "VIEW")
 public class TabRenderStatisticsController

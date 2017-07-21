@@ -210,8 +210,7 @@ public class ParameterEditManager {
      * edit is changed to the passed-in value.
      */
     public static synchronized void addParmEditDirective(
-            String targetId, String name, String value, IPerson person)
-            throws PortalException {
+            String targetId, String name, String value, IPerson person) throws PortalException {
         Document plf = (Document) person.getAttribute(Constants.PLF);
         Element parmSet = getParmEditSet(plf, person, true);
         NodeList edits = parmSet.getChildNodes();

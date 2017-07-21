@@ -22,7 +22,6 @@ import org.apereo.portal.layout.om.IStylesheetDescriptor;
 /**
  * A portlet entity represents what a user subscribes to (adds to their layout) in the portal object
  * model.
- *
  */
 public interface IPortletEntity extends IPortletEntityDescriptor {
     /** @return The unique identifier for this portlet entity. */

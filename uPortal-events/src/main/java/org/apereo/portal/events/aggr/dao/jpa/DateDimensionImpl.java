@@ -38,8 +38,7 @@ import org.hibernate.annotations.Type;
 import org.joda.time.DateMidnight;
 import org.joda.time.LocalDate;
 
-/**
- */
+/** */
 @Entity
 @Table(name = "UP_DATE_DIMENSION")
 @SequenceGenerator(

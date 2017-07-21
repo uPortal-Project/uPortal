@@ -36,7 +36,6 @@ import org.springframework.core.io.ResourceLoader;
  * Common logic for getting a {@link Transformer} for a stylesheet specified by a {@link
  * CoreStylesheetDescription} Implementations have to provide the appropriate {@link
  * CoreStylesheetDescription} from the {@link IUserPreferencesManager}
- *
  */
 public abstract class BaseTransformerSource implements TransformerSource, ResourceLoaderAware {
     private IUserInstanceManager userInstanceManager;

@@ -34,8 +34,7 @@ import org.joda.time.LocalDate;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 
-/**
- */
+/** */
 @Repository
 public class JpaDateDimensionDao extends BaseAggrEventsJpaDao implements DateDimensionDao {
     private CriteriaQuery<DateDimensionImpl> findAllDateDimensionsQuery;

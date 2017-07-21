@@ -19,10 +19,7 @@ import java.util.Comparator;
 import org.apache.commons.collections.comparators.ComparatorChain;
 import org.apereo.portal.utils.ComparableExtractingComparator;
 
-/**
- * Sort group mappings
- *
- */
+/** Sort group mappings */
 public class ExternalAggregatedGroupMappingComparator
         implements Comparator<ExternalAggregatedGroupMapping> {
     private final ComparatorChain chain;

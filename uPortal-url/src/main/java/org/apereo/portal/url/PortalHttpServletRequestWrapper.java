@@ -41,7 +41,6 @@ import org.apereo.portal.utils.web.AbstractHttpServletRequestWrapper;
 /**
  * Portal wide request wrapper. Provides portal specific information for request parameters,
  * attributes, user and role.
- *
  */
 public class PortalHttpServletRequestWrapper extends AbstractHttpServletRequestWrapper {
     /**

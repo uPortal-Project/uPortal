@@ -17,10 +17,7 @@ package org.apereo.portal.portlet.delegation.jsp;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 
-/**
- * Parameter tag, uses the {@link ParameterizableTag} as a parent to add parameters
- *
- */
+/** Parameter tag, uses the {@link ParameterizableTag} as a parent to add parameters */
 public class ParamTag extends TagSupport {
     private static final long serialVersionUID = 1L;
 
@@ -35,7 +32,8 @@ public class ParamTag extends TagSupport {
     @Override
     public int doStartTag() throws JspException {
         final ParameterizableTag parameterizableTag =
-                (ParameterizableTag) TagSupport.findAncestorWithClass(this, ParameterizableTag.class);
+                (ParameterizableTag)
+                        TagSupport.findAncestorWithClass(this, ParameterizableTag.class);
 
         if (parameterizableTag == null) {
             throw new JspException(

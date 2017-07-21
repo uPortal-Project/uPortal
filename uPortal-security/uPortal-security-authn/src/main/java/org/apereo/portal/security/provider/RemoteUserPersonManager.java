@@ -27,7 +27,6 @@ import org.apereo.portal.security.PortalSecurityException;
  * When retrieving a new person, the value of the <code>REMOTEUSER</code> environment variable is
  * passed to the security context. If it is set then the server has authenticated the user and the
  * username may be used for login.
- *
  */
 public class RemoteUserPersonManager extends AbstractPersonManager {
 

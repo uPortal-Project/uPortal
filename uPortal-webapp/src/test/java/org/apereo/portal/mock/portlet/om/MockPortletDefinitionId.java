@@ -18,8 +18,7 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apereo.portal.portlet.om.IPortletDefinitionId;
 
-/**
- */
+/** */
 public class MockPortletDefinitionId implements IPortletDefinitionId {
     private static final long serialVersionUID = 1L;
 

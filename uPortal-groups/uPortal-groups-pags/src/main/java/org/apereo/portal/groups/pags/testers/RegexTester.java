@@ -72,5 +72,4 @@ public class RegexTester extends AbstractStringTester {
     public boolean test(String att) {
         return pattern.matcher(att).matches();
     }
-
 }

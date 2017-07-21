@@ -17,10 +17,7 @@ package org.apereo.portal.groups;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-/**
- * Creates an instance of the reference <code>IEntityGroupStore</code>.
- *
- */
+/** Creates an instance of the reference <code>IEntityGroupStore</code>. */
 public class ReferenceEntityGroupStoreFactory implements IEntityGroupStoreFactory {
 
     private static final Log log = LogFactory.getLog(ReferenceEntityGroupStoreFactory.class);
@@ -35,6 +32,7 @@ public class ReferenceEntityGroupStoreFactory implements IEntityGroupStoreFactor
      * @return IEntityGroupStore
      * @exception GroupsException
      */
+    @Override
     public IEntityGroupStore newGroupStore() throws GroupsException {
         return newGroupStore(null);
     }
@@ -44,6 +42,7 @@ public class ReferenceEntityGroupStoreFactory implements IEntityGroupStoreFactor
      * @return IEntityGroupStore
      * @exception GroupsException
      */
+    @Override
     public IEntityGroupStore newGroupStore(ComponentGroupServiceDescriptor svcDescriptor)
             throws GroupsException {
         return newInstance();

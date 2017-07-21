@@ -17,10 +17,7 @@ package org.apereo.portal.portlets.swapper;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.IPrincipal;
 
-/**
- * Implements an immutable IPrincipal for use with the identity swapper
- *
- */
+/** Implements an immutable IPrincipal for use with the identity swapper */
 public class IdentitySwapperPrincipal implements IPrincipal {
     private static final long serialVersionUID = 1L;
 
@@ -33,6 +30,7 @@ public class IdentitySwapperPrincipal implements IPrincipal {
     /* (non-Javadoc)
      * @see org.apereo.portal.security.IPrincipal#getFullName()
      */
+    @Override
     public String getFullName() {
         return this.person.getFullName();
     }
@@ -40,6 +38,7 @@ public class IdentitySwapperPrincipal implements IPrincipal {
     /* (non-Javadoc)
      * @see org.apereo.portal.security.IPrincipal#getGlobalUID()
      */
+    @Override
     public String getGlobalUID() {
         return this.person.getName();
     }
@@ -47,6 +46,7 @@ public class IdentitySwapperPrincipal implements IPrincipal {
     /* (non-Javadoc)
      * @see org.apereo.portal.security.IPrincipal#getUID()
      */
+    @Override
     public String getUID() {
         return this.person.getName();
     }
@@ -54,6 +54,7 @@ public class IdentitySwapperPrincipal implements IPrincipal {
     /* (non-Javadoc)
      * @see org.apereo.portal.security.IPrincipal#setUID(java.lang.String)
      */
+    @Override
     public void setUID(String UID) {
         throw new UnsupportedOperationException("UID is fixed for a swapped user.");
     }

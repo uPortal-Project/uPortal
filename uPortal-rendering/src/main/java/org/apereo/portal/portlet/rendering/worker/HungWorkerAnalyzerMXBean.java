@@ -16,10 +16,7 @@ package org.apereo.portal.portlet.rendering.worker;
 
 import java.util.Map;
 
-/**
- * JMX stats for HungWorkerAnalyzer
- *
- */
+/** JMX stats for HungWorkerAnalyzer */
 public interface HungWorkerAnalyzerMXBean {
 
     /** @return Total number of hung workers */

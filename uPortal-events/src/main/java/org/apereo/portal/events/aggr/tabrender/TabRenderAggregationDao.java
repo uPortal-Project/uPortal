@@ -16,9 +16,6 @@ package org.apereo.portal.events.aggr.tabrender;
 
 import org.apereo.portal.events.aggr.BaseAggregationDao;
 
-/**
- * DAO used to query information about tab aggregates
- *
- */
+/** DAO used to query information about tab aggregates */
 public interface TabRenderAggregationDao<T extends TabRenderAggregation>
         extends BaseAggregationDao<T, TabRenderAggregationKey> {}

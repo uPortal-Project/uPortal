@@ -27,8 +27,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.portlet.context.PortletRequestAttributes;
 import org.springframework.web.util.WebUtils;
 
-/**
- */
+/** */
 public final class PortalWebUtils {
     private PortalWebUtils() {}
 

@@ -21,7 +21,6 @@ import java.util.List;
  * Interface to define the strategies used to determine the text of the statistics report titles and
  * column headings. Various implementations will generate the text as they see fit based upon
  * available data.
- *
  */
 public interface ReportTitleAndColumnDescriptionStrategy {
 

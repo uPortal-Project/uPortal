@@ -30,7 +30,6 @@ import org.springframework.web.portlet.context.PortletRequestAttributes;
  * Provides access to the original portal and portlet requests using the {@link
  * PortalHttpServletRequestWrapper#ATTRIBUTE__HTTP_SERVLET_REQUEST} and {@link
  * PortletHttpServletRequestWrapper#ATTRIBUTE__HTTP_SERVLET_REQUEST}
- *
  */
 @Service("portalRequestUtils")
 public class PortalRequestUtilsImpl implements IPortalRequestUtils {

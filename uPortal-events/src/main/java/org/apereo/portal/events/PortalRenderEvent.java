@@ -24,10 +24,7 @@ import org.apache.commons.lang.Validate;
 import org.apereo.portal.url.UrlState;
 import org.apereo.portal.url.UrlType;
 
-/**
- * Constructor assumes that Map passed in is completely immutable
- *
- */
+/** Constructor assumes that Map passed in is completely immutable */
 public final class PortalRenderEvent extends PortalEvent {
     private static final long serialVersionUID = 1L;
 

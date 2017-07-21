@@ -60,6 +60,7 @@ public class ReferenceEntityLockService implements IEntityLockService {
      * @param newType int
      * @exception org.apereo.portal.concurrency.LockingException
      */
+    @Override
     public void convert(IEntityLock lock, int newType) throws LockingException {
         convert(lock, newType, defaultLockPeriod);
     }
@@ -71,6 +72,7 @@ public class ReferenceEntityLockService implements IEntityLockService {
      * @param newDuration int
      * @exception org.apereo.portal.concurrency.LockingException
      */
+    @Override
     public void convert(IEntityLock lock, int newType, int newDuration) throws LockingException {
         if (lock.getLockType() == newType) {
             throw new LockingException(
@@ -97,7 +99,7 @@ public class ReferenceEntityLockService implements IEntityLockService {
         }
 
         Date newExpiration = getNewExpiration(newDuration);
-        getLockStore().update(lock, newExpiration, new Integer(newType));
+        getLockStore().update(lock, newExpiration, newType);
         ((EntityLockImpl) lock).setLockType(newType);
         ((EntityLockImpl) lock).setExpirationTime(newExpiration);
     }
@@ -108,10 +110,11 @@ public class ReferenceEntityLockService implements IEntityLockService {
      * @param lock
      * @return boolean
      */
+    @Override
     public boolean existsInStore(IEntityLock lock) throws LockingException {
         Class entityType = lock.getEntityType();
         String key = lock.getEntityKey();
-        Integer lockType = new Integer(lock.getLockType());
+        Integer lockType = lock.getLockType();
         Date expiration = lock.getExpirationTime();
         String owner = lock.getLockOwner();
         IEntityLock[] lockArray = getLockStore().find(entityType, key, lockType, expiration, owner);
@@ -219,6 +222,7 @@ public class ReferenceEntityLockService implements IEntityLockService {
      * @param lock IEntityLock
      * @exception org.apereo.portal.concurrency.LockingException
      */
+    @Override
     public boolean isValid(IEntityLock lock) throws LockingException {
         return isUnexpired(lock) && existsInStore(lock);
     }
@@ -237,6 +241,7 @@ public class ReferenceEntityLockService implements IEntityLockService {
      * @return org.apereo.portal.groups.IEntityLock
      * @exception LockingException
      */
+    @Override
     public IEntityLock newLock(Class entityType, String entityKey, int lockType, String owner)
             throws LockingException {
         return newLock(entityType, entityKey, lockType, owner, defaultLockPeriod);
@@ -259,6 +264,7 @@ public class ReferenceEntityLockService implements IEntityLockService {
      *     think this is slightly safer than depending on the db isolation level for transactional
      *     integrity.
      */
+    @Override
     public IEntityLock newLock(
             Class entityType, String entityKey, int lockType, String owner, int durationSecs)
             throws LockingException {
@@ -313,6 +319,7 @@ public class ReferenceEntityLockService implements IEntityLockService {
      * @param owner String
      * @exception LockingException
      */
+    @Override
     public IEntityLock newLock(EntityIdentifier entityID, int lockType, String owner)
             throws LockingException {
         return newLock(entityID.getType(), entityID.getKey(), lockType, owner, defaultLockPeriod);
@@ -327,6 +334,7 @@ public class ReferenceEntityLockService implements IEntityLockService {
      * @param durationSecs int
      * @exception LockingException
      */
+    @Override
     public IEntityLock newLock(
             EntityIdentifier entityID, int lockType, String owner, int durationSecs)
             throws LockingException {
@@ -338,6 +346,7 @@ public class ReferenceEntityLockService implements IEntityLockService {
      * @param lock IEntityLock
      * @exception LockingException
      */
+    @Override
     public void release(IEntityLock lock) throws LockingException {
         getLockStore().delete(lock);
         ((EntityLockImpl) lock).setExpirationTime(new Date(0));
@@ -348,6 +357,7 @@ public class ReferenceEntityLockService implements IEntityLockService {
      * @param lock IEntityLock
      * @exception LockingException
      */
+    @Override
     public void renew(IEntityLock lock) throws LockingException {
         renew(lock, defaultLockPeriod);
     }
@@ -357,6 +367,7 @@ public class ReferenceEntityLockService implements IEntityLockService {
      * @param lock IEntityLock
      * @exception LockingException
      */
+    @Override
     public void renew(IEntityLock lock, int duration) throws LockingException {
         if (isValid(lock)) {
             Date newExpiration = getNewExpiration(duration);

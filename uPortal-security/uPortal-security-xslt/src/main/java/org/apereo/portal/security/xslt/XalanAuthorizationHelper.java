@@ -17,10 +17,7 @@ package org.apereo.portal.security.xslt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-/**
- * Provides a static wrapper around an actual {@link IXalanAuthorizationHelper}
- *
- */
+/** Provides a static wrapper around an actual {@link IXalanAuthorizationHelper} */
 @Service
 public class XalanAuthorizationHelper {
     private static IXalanAuthorizationHelper authorizationHelper;

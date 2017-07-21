@@ -29,7 +29,6 @@ import org.slf4j.LoggerFactory;
  * Base for XMLEventReader that implements the {@link #getElementText()} and {@link #nextTag()} APIs
  * in a way that is agnostic from the rest of the XMLEventReader implementation. Both will use the
  * subclasses {@link #internalNextEvent()} as the exclusive way to read events.
- *
  */
 public abstract class BaseXMLEventReader extends EventReaderDelegate {
 

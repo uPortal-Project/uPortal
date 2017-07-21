@@ -21,10 +21,7 @@ import java.util.LinkedList;
 import java.util.List;
 import org.apereo.portal.url.BaseEncodedStringBuilder;
 
-/**
- * Builds a valid URN
- *
- */
+/** Builds a valid URN */
 public final class UrnBuilder extends BaseEncodedStringBuilder {
     private static final long serialVersionUID = 1L;
 

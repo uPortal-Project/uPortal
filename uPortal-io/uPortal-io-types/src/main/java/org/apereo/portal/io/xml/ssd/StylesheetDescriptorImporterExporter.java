@@ -39,8 +39,7 @@ import org.apereo.portal.utils.SafeFilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- */
+/** */
 public class StylesheetDescriptorImporterExporter
         extends AbstractJaxbDataHandler<ExternalStylesheetDescriptor> {
     private StylesheetDescriptorPortalDataType stylesheetDescriptorPortalDataType;

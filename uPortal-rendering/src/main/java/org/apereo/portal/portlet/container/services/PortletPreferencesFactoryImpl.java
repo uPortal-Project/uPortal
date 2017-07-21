@@ -36,10 +36,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionOperations;
 
-/**
- * Creates {@link PortletPreferences} objects
- *
- */
+/** Creates {@link PortletPreferences} objects */
 @Service
 public class PortletPreferencesFactoryImpl implements PortletPreferencesFactory {
     private IPersonManager personManager;

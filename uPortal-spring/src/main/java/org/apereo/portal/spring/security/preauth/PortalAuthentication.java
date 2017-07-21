@@ -25,7 +25,6 @@ import org.springframework.security.core.GrantedAuthority;
  * Authentication interface, enabling pre-authentication scenarios in uPortal. This implementation
  * wraps the IPerson object, delegating to it for determining authentication state and user details.
  * The user's current SecurityContext is used as the credentials object.
- *
  */
 public class PortalAuthentication implements Authentication {
 

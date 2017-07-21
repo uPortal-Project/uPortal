@@ -20,7 +20,6 @@ import org.springframework.stereotype.Service;
 /**
  * Provides a Spring locating facade in front of an actual {@link IXalanGroupMembershipHelper} since
  * the Xalan elements can only instantiate classes directly.
- *
  */
 @Service
 public class XalanGroupMembershipHelper {

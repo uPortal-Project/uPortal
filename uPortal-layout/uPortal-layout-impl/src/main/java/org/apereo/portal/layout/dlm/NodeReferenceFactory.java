@@ -40,7 +40,6 @@ import org.w3c.dom.Node;
  * Factory object responsible for creating DLM reference objects like {@link Pathref}s and {@link
  * Noderef}s. One instance of NodeReferenceFactory should be present in the Spring context, whence
  * it also derives its dependencies.
- *
  */
 @Component
 public final class NodeReferenceFactory {

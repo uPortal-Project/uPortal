@@ -14,7 +14,6 @@
  */
 package org.apereo.portal.security;
 
-import java.util.Vector;
 import org.apereo.portal.AuthorizationException;
 import org.apereo.portal.groups.GroupsException;
 import org.apereo.portal.groups.IGroupMember;
@@ -22,8 +21,8 @@ import org.apereo.portal.portlet.om.IPortletDefinition;
 import org.apereo.portal.portlet.om.PortletLifecycleState;
 
 /**
- *     <p>An <code>IAuthorizationService</code> represents the portal's authorization service. All
- *     requests for authorization activities ultimately come here.
+ * An <code>IAuthorizationService</code> represents the portal's authorization service. All requests
+ * for authorization activities ultimately come here.
  */
 public interface IAuthorizationService {
     /**
@@ -81,8 +80,7 @@ public interface IAuthorizationService {
      * @param portletDefinitionId Portlet definition string ID of the portlet to check
      * @return True if the principal has permission to browse this portlet.
      */
-    boolean canPrincipalBrowse(
-            IAuthorizationPrincipal principal, String portletDefinitionId);
+    boolean canPrincipalBrowse(IAuthorizationPrincipal principal, String portletDefinitionId);
 
     /**
      * True if the principal has permission to browse this portlet.
@@ -91,8 +89,7 @@ public interface IAuthorizationService {
      * @param portlet Portlet to check
      * @return True if the principal has permission to browse this portlet.
      */
-    boolean canPrincipalBrowse(
-            IAuthorizationPrincipal principal, IPortletDefinition portlet);
+    boolean canPrincipalBrowse(IAuthorizationPrincipal principal, IPortletDefinition portlet);
 
     /**
      * Answers if the principal has permission to subscribe to this Channel.
@@ -137,16 +134,6 @@ public interface IAuthorizationService {
      */
     IPermission[] getAllPermissionsForPrincipal(
             IAuthorizationPrincipal principal, String owner, String activity, String target)
-            throws AuthorizationException;
-    /**
-     * Does this mean all channels the principal could conceivably subscribe to or all channels
-     * principal is specifically authorized to subscribe to, or what?
-     *
-     * @param principal IAuthorizationPrincipal
-     * @return Vector (of channels?)
-     * @exception AuthorizationException indicates authorization information could not
-     */
-    Vector getAuthorizedChannels(IAuthorizationPrincipal principal)
             throws AuthorizationException;
 
     /**
@@ -246,8 +233,7 @@ public interface IAuthorizationService {
      *
      * @param permission IPermission
      */
-    IAuthorizationPrincipal getPrincipal(IPermission permission)
-            throws AuthorizationException;
+    IAuthorizationPrincipal getPrincipal(IPermission permission) throws AuthorizationException;
 
     /**
      * Returns a <code>String</code> used to represent the <code>IAuthorizationPrincipal</code>.

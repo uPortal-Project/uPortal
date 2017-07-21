@@ -46,10 +46,7 @@ import org.springframework.stereotype.Service;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-/**
- * Implementation of core XML related utilities
- *
- */
+/** Implementation of core XML related utilities */
 @Service
 public class XmlUtilitiesImpl implements XmlUtilities {
     private static final TransformerFactory transformerFactory = TransformerFactory.newInstance();

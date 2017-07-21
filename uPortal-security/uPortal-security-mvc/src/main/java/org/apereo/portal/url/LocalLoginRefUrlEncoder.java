@@ -22,7 +22,6 @@ import org.apereo.portal.security.mvc.LoginController;
 /**
  * Encode the originally requested URL for use as a RefUrl parameter for the local (uPortal) login
  * use case.
- *
  */
 public class LocalLoginRefUrlEncoder implements LoginRefUrlEncoder {
 

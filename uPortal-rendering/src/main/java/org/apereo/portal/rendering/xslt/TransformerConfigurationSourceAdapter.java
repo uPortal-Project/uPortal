@@ -22,10 +22,7 @@ import org.apereo.portal.utils.cache.CacheKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Base TransformerConfigurationSource that returns nothing for all methods
- *
- */
+/** Base TransformerConfigurationSource that returns nothing for all methods */
 public class TransformerConfigurationSourceAdapter implements TransformerConfigurationSource {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 

@@ -20,7 +20,6 @@ import java.util.Date;
  * Base portal exception class. Information contained in this class allows ErrorChannel to handle
  * errors gracefully. This class also reports itself to the ProblemsTable whenever it is
  * instantiated. The Problems servlet displays recently reported PortalExceptions.
- *
  */
 public class PortalException extends RuntimeException {
     private static final long serialVersionUID = 1L;

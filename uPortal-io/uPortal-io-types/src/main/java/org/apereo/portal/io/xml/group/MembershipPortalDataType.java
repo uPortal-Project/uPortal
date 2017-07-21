@@ -20,10 +20,7 @@ import javax.xml.namespace.QName;
 import org.apereo.portal.io.xml.AbstractPortalDataType;
 import org.apereo.portal.io.xml.PortalDataKey;
 
-/**
- * Describes a member of a group
- *
- */
+/** Describes a member of a group */
 public class MembershipPortalDataType extends AbstractPortalDataType {
     public static final QName LEGACY_MEMBERSHIP_QNAME = new QName("membership");
 

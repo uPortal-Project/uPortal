@@ -20,7 +20,6 @@ import org.apereo.portal.security.IPerson;
 /**
  * Tests whether the attribute is null or none of the values of the attribute equal the specified
  * attribute value.
- *
  */
 public class ValueMissingTester extends BaseAttributeTester {
 
@@ -29,6 +28,7 @@ public class ValueMissingTester extends BaseAttributeTester {
         super(definition);
     }
 
+    @Override
     public boolean test(IPerson person) {
         // Get the list of values for the attribute
         Object[] vals = person.getAttributeValues(getAttributeName());

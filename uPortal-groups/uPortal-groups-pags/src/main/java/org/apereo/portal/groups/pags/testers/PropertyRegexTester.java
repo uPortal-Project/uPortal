@@ -53,5 +53,4 @@ public class PropertyRegexTester extends RegexTester {
         }
         setPattern(regexExpression);
     }
-
 }

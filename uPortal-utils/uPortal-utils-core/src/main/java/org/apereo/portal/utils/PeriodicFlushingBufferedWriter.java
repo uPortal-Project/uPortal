@@ -21,7 +21,6 @@ import java.io.Writer;
 /**
  * Buffered Writer that flushes its buffer when any write/append method is called after a certain
  * time has passed
- *
  */
 public class PeriodicFlushingBufferedWriter extends BufferedWriter {
     private final long period;

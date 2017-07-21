@@ -55,8 +55,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.w3c.dom.Document;
 import org.w3c.dom.DocumentFragment;
 
-/**
- */
+/** */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "renderingPipelineTestContext.xml")
 public class RenderingPipelineIntegrationTest {

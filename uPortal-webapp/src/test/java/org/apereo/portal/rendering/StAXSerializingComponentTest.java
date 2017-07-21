@@ -60,8 +60,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
-/**
- */
+/** */
 @RunWith(MockitoJUnitRunner.class)
 public class StAXSerializingComponentTest {
     @InjectMocks

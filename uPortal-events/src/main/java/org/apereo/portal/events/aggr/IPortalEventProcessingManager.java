@@ -14,10 +14,7 @@
  */
 package org.apereo.portal.events.aggr;
 
-/**
- * Manages processing of portal event data
- *
- */
+/** Manages processing of portal event data */
 public interface IPortalEventProcessingManager {
 
     /**

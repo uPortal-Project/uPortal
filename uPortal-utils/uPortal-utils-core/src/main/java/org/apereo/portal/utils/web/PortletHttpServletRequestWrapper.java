@@ -22,10 +22,7 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.web.context.request.async.WebAsyncUtils;
 
-/**
- * Scopes set request attributes to just this request.
- *
- */
+/** Scopes set request attributes to just this request. */
 public class PortletHttpServletRequestWrapper extends AbstractHttpServletRequestWrapper {
     /**
      * {@link javax.servlet.http.HttpServletRequest} attribute that this {@link HttpServletRequest}

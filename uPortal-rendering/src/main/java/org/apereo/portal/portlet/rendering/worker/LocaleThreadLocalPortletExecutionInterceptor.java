@@ -23,7 +23,6 @@ import org.springframework.stereotype.Service;
 /**
  * Copies {@link LocaleContextHolder} data from the portal request thread into the portlet execution
  * thread and cleans up afterwards.
- *
  */
 @Service("LocaleThreadLocalPortletExecutionInterceptor")
 public class LocaleThreadLocalPortletExecutionInterceptor

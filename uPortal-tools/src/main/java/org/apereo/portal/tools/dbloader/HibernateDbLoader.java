@@ -28,6 +28,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apereo.portal.hibernate.DelegatingHibernateIntegrator.HibernateConfiguration;
@@ -61,7 +62,6 @@ import org.xml.sax.SAXException;
  * Can drop and/or create tables based on an XML table definition file and populate tables based on
  * a XML data definition file. Table creation is done using the Hibernate mapping APIs to allow for
  * a full range of database support.
- *
  */
 @Component("dbLoader")
 @Lazy
@@ -277,16 +277,14 @@ public class HibernateDbLoader
 
         for (final Table table : tables) {
             if (table.isPhysicalTable()) {
-                if (!dialect.supportsUniqueConstraintInCreateAlterTable()) {
-                    for (final Iterator<UniqueKey> subIter = table.getUniqueKeyIterator();
-                            subIter.hasNext();
-                            ) {
-                        final UniqueKey uk = subIter.next();
-                        final String constraintString =
-                                uk.sqlCreateString(dialect, mapping, defaultCatalog, defaultSchema);
-                        if (constraintString != null) {
-                            script.add(constraintString);
-                        }
+                for (final Iterator<UniqueKey> subIter = table.getUniqueKeyIterator();
+                        subIter.hasNext();
+                        ) {
+                    final UniqueKey uk = subIter.next();
+                    final String constraintString =
+                            uk.sqlCreateString(dialect, mapping, defaultCatalog, defaultSchema);
+                    if (StringUtils.isNotBlank(constraintString)) {
+                        script.add(constraintString);
                     }
                 }
 

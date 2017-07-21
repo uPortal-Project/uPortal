@@ -26,8 +26,7 @@ import org.easymock.EasyMock;
 import org.springframework.core.Ordered;
 import org.springframework.mock.web.MockHttpServletRequest;
 
-/**
- */
+/** */
 public class RequestPropertiesManagerBrokerTest extends TestCase {
     private RequestPropertiesManagerBroker requestPropertiesManagerBroker;
 

@@ -24,13 +24,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-/**
- */
+/** */
 @Service("portletURLListenerService")
 public class LocalPortletURLListenerServiceImpl implements PortletURLListenerService {
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    @Override
     public List<PortletURLGenerationListener> getPortletURLGenerationListeners(
             PortletApplicationDefinition app) {
         List<PortletURLGenerationListener> listeners =

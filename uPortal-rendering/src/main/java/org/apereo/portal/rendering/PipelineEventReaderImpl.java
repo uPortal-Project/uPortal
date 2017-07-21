@@ -19,10 +19,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-/**
- * Generic {@link PipelineEventReader} implementation
- *
- */
+/** Generic {@link PipelineEventReader} implementation */
 public class PipelineEventReaderImpl<R, E> implements PipelineEventReader<R, E> {
     private final R eventReader;
     private final Map<String, String> outputProperties;

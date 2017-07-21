@@ -26,10 +26,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.jdbc.core.JdbcOperations;
 
-/**
- * Utilities for JDBC operations
- *
- */
+/** Utilities for JDBC operations */
 public final class JdbcUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(JdbcUtils.class);
 

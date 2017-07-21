@@ -32,10 +32,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionOperations;
 
-/**
- * Preferences impl that manipulates the portlet definition level preference data
- *
- */
+/** Preferences impl that manipulates the portlet definition level preference data */
 public class PortletDefinitionPreferencesImpl
         extends AbstractPortletPreferencesImpl<IPortletDefinition> {
     private final IPortletDefinitionId portletDefinitionId;

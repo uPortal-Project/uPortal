@@ -23,7 +23,6 @@ import org.slf4j.Marker;
 /**
  * Wraps an SLF4J Logger adding in the Appendable interface. Requires the log level to use when
  * appending to be specified in the constructor
- *
  */
 public class AppendableLogger implements Appendable, Logger {
 
@@ -115,10 +114,10 @@ public class AppendableLogger implements Appendable, Logger {
     /**
      * @param format
      * @param argArray
-     * @see org.slf4j.Logger#trace(java.lang.String, java.lang.Object[])
+     * @see org.slf4j.Logger#trace(java.lang.String, java.lang.Object...)
      */
     @Override
-    public void trace(String format, Object[] argArray) {
+    public void trace(String format, Object... argArray) {
         this.logger.trace(format, argArray);
     }
 
@@ -180,10 +179,10 @@ public class AppendableLogger implements Appendable, Logger {
      * @param marker
      * @param format
      * @param argArray
-     * @see org.slf4j.Logger#trace(org.slf4j.Marker, java.lang.String, java.lang.Object[])
+     * @see org.slf4j.Logger#trace(org.slf4j.Marker, java.lang.String, java.lang.Object...)
      */
     @Override
-    public void trace(Marker marker, String format, Object[] argArray) {
+    public void trace(Marker marker, String format, Object... argArray) {
         this.logger.trace(marker, format, argArray);
     }
 
@@ -240,10 +239,10 @@ public class AppendableLogger implements Appendable, Logger {
     /**
      * @param format
      * @param argArray
-     * @see org.slf4j.Logger#debug(java.lang.String, java.lang.Object[])
+     * @see org.slf4j.Logger#debug(java.lang.String, java.lang.Object...)
      */
     @Override
-    public void debug(String format, Object[] argArray) {
+    public void debug(String format, Object... argArray) {
         this.logger.debug(format, argArray);
     }
 
@@ -305,10 +304,10 @@ public class AppendableLogger implements Appendable, Logger {
      * @param marker
      * @param format
      * @param argArray
-     * @see org.slf4j.Logger#debug(org.slf4j.Marker, java.lang.String, java.lang.Object[])
+     * @see org.slf4j.Logger#debug(org.slf4j.Marker, java.lang.String, java.lang.Object...)
      */
     @Override
-    public void debug(Marker marker, String format, Object[] argArray) {
+    public void debug(Marker marker, String format, Object... argArray) {
         this.logger.debug(marker, format, argArray);
     }
 
@@ -365,10 +364,10 @@ public class AppendableLogger implements Appendable, Logger {
     /**
      * @param format
      * @param argArray
-     * @see org.slf4j.Logger#info(java.lang.String, java.lang.Object[])
+     * @see org.slf4j.Logger#info(java.lang.String, java.lang.Object...)
      */
     @Override
-    public void info(String format, Object[] argArray) {
+    public void info(String format, Object... argArray) {
         this.logger.info(format, argArray);
     }
 
@@ -430,10 +429,10 @@ public class AppendableLogger implements Appendable, Logger {
      * @param marker
      * @param format
      * @param argArray
-     * @see org.slf4j.Logger#info(org.slf4j.Marker, java.lang.String, java.lang.Object[])
+     * @see org.slf4j.Logger#info(org.slf4j.Marker, java.lang.String, java.lang.Object...)
      */
     @Override
-    public void info(Marker marker, String format, Object[] argArray) {
+    public void info(Marker marker, String format, Object... argArray) {
         this.logger.info(marker, format, argArray);
     }
 
@@ -479,10 +478,10 @@ public class AppendableLogger implements Appendable, Logger {
     /**
      * @param format
      * @param argArray
-     * @see org.slf4j.Logger#warn(java.lang.String, java.lang.Object[])
+     * @see org.slf4j.Logger#warn(java.lang.String, java.lang.Object...)
      */
     @Override
-    public void warn(String format, Object[] argArray) {
+    public void warn(String format, Object... argArray) {
         this.logger.warn(format, argArray);
     }
 
@@ -555,10 +554,10 @@ public class AppendableLogger implements Appendable, Logger {
      * @param marker
      * @param format
      * @param argArray
-     * @see org.slf4j.Logger#warn(org.slf4j.Marker, java.lang.String, java.lang.Object[])
+     * @see org.slf4j.Logger#warn(org.slf4j.Marker, java.lang.String, java.lang.Object...)
      */
     @Override
-    public void warn(Marker marker, String format, Object[] argArray) {
+    public void warn(Marker marker, String format, Object... argArray) {
         this.logger.warn(marker, format, argArray);
     }
 
@@ -615,10 +614,10 @@ public class AppendableLogger implements Appendable, Logger {
     /**
      * @param format
      * @param argArray
-     * @see org.slf4j.Logger#error(java.lang.String, java.lang.Object[])
+     * @see org.slf4j.Logger#error(java.lang.String, java.lang.Object...)
      */
     @Override
-    public void error(String format, Object[] argArray) {
+    public void error(String format, Object... argArray) {
         this.logger.error(format, argArray);
     }
 
@@ -680,10 +679,10 @@ public class AppendableLogger implements Appendable, Logger {
      * @param marker
      * @param format
      * @param argArray
-     * @see org.slf4j.Logger#error(org.slf4j.Marker, java.lang.String, java.lang.Object[])
+     * @see org.slf4j.Logger#error(org.slf4j.Marker, java.lang.String, java.lang.Object...)
      */
     @Override
-    public void error(Marker marker, String format, Object[] argArray) {
+    public void error(Marker marker, String format, Object... argArray) {
         this.logger.error(marker, format, argArray);
     }
 

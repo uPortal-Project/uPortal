@@ -17,7 +17,6 @@ package org.apereo.portal;
 /**
  * Houses constants used in the portal code base. Developers, any constants added here should be
  * clearly documented.
- *
  */
 public class Constants {
 

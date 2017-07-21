@@ -21,10 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-/**
- * TinCan API provider that just logs LRS statements.
- *
- */
+/** TinCan API provider that just logs LRS statements. */
 public class LogEventTinCanAPIProvider implements ITinCanAPIProvider {
     private static Logger log = LoggerFactory.getLogger(LogEventTinCanAPIProvider.class);
     private ObjectMapper objectMapper;

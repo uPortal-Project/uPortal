@@ -18,10 +18,7 @@ import org.apereo.portal.groups.GroupsException;
 import org.apereo.portal.groups.IEntityStore;
 import org.apereo.portal.groups.IEntityStoreFactory;
 
-/**
- * Returns an instance of the ldap <code>IEntityStore</code>.
- *
- */
+/** Returns an instance of the ldap <code>IEntityStore</code>. */
 public class LDAPEntityStoreFactory implements IEntityStoreFactory {
     /** ReferenceGroupServiceFactory constructor. */
     public LDAPEntityStoreFactory() {

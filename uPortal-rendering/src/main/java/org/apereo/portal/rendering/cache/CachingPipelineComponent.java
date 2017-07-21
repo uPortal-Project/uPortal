@@ -34,10 +34,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.annotation.Autowired;
 
-/**
- * Component that caches events from a wrapped component
- *
- */
+/** Component that caches events from a wrapped component */
 public abstract class CachingPipelineComponent<R, E> extends PipelineComponentWrapper<R, E>
         implements BeanNameAware {
     protected final Logger logger = LoggerFactory.getLogger(getClass());

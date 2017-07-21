@@ -22,10 +22,7 @@ import org.springframework.beans.factory.annotation.Required;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
 import org.springframework.util.ReflectionUtils;
 
-/**
- * Creates AspectJAroundAdvice while hiding a bit of the boilerplate
- *
- */
+/** Creates AspectJAroundAdvice while hiding a bit of the boilerplate */
 public class AspectJAroundAdviceFactory extends AbstractFactoryBean<AspectJAroundAdvice> {
     private Object aspect;
     private String method;

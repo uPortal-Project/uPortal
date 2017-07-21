@@ -18,10 +18,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import org.apereo.portal.jpa.BaseAggrEventsJpaDao;
 
-/**
- * Base class for AggrEventsDb unit tests that want TX and entity manager support.
- *
- */
+/** Base class for AggrEventsDb unit tests that want TX and entity manager support. */
 public abstract class BaseAggrEventsJpaDaoTest extends BaseJpaDaoTest {
 
     private EntityManager entityManager;

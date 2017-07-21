@@ -24,7 +24,6 @@ import java.io.IOException;
 /**
  * GoogleDataTableSerializer configures a Google DataTable to be serialized using Google's Json
  * serialization code.
- *
  */
 public class GoogleDataTableSerializer extends JsonSerializer<JsonDataTable> {
 

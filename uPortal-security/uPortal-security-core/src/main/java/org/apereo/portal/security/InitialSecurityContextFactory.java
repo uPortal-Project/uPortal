@@ -42,7 +42,6 @@ import org.apache.commons.logging.LogFactory;
  * else
  *  System.out.println("Nope");
  * </pre>
- *
  */
 public class InitialSecurityContextFactory {
 

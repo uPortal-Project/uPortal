@@ -24,10 +24,7 @@ import org.apereo.portal.utils.cache.CacheKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Logs the Character events
- *
- */
+/** Logs the Character events */
 public class LoggingCharacterComponent extends CharacterPipelineComponentWrapper {
     private Logger logger = LoggerFactory.getLogger(getClass());
 

@@ -133,7 +133,6 @@ import org.springframework.web.client.RestTemplate;
  *         </td>
  *     </tr>
  * </table>
- *
  */
 public class DefaultTinCanAPIProvider implements ITinCanAPIProvider {
     protected static final String STATEMENTS_REST_ENDPOINT = "/statements";

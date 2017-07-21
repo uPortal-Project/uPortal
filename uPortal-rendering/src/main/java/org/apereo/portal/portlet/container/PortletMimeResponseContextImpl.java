@@ -38,8 +38,7 @@ import org.apereo.portal.url.IPortalUrlProvider;
 import org.apereo.portal.url.IPortletUrlBuilder;
 import org.apereo.portal.url.UrlType;
 
-/**
- */
+/** */
 public abstract class PortletMimeResponseContextImpl extends PortletResponseContextImpl
         implements PortletMimeResponseContext {
 

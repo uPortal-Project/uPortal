@@ -49,5 +49,4 @@ public abstract class AbstractNbValuesTester extends BaseAttributeTester {
 
     /** Subclasses provide a concrete implementation of this method to perform their testing. */
     protected abstract boolean test(int numValues);
-
 }

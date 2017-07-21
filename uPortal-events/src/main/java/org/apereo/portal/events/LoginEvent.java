@@ -24,9 +24,7 @@ import java.util.Map;
 import java.util.Set;
 import org.apache.commons.lang.Validate;
 
-/**
- * @since 2.6
- */
+/** @since 2.6 */
 public final class LoginEvent extends PortalEvent {
     private static final long serialVersionUID = 1L;
 

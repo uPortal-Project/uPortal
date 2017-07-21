@@ -31,7 +31,6 @@ import org.springframework.stereotype.Service;
  * recognize when "something bad" is happening with a uPortal cache. Those listeners quickly contact
  * this service with the details. Periodically this service produces a report on bad things that are
  * occurring, if any, and writes it to the log.
- *
  */
 @Service("cacheHealthReporterService")
 public class CacheHealthReporterService {

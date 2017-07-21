@@ -14,9 +14,7 @@
  */
 package org.apereo.portal.groups;
 
-/**
- * Factory interface for creating an <code>IEntityStore</code>.
- */
+/** Factory interface for creating an <code>IEntityStore</code>. */
 public interface IEntityStoreFactory {
     public IEntityStore newEntityStore() throws GroupsException;
 }

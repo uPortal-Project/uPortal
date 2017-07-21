@@ -69,7 +69,7 @@ public class ComponentGroupServiceDescriptor extends HashMap<String, Object> {
     }
 
     public void setCachingEnabled(boolean caching) {
-        put(CACHE_ENABLED, new Boolean(caching));
+        put(CACHE_ENABLED, caching);
     }
 
     public void setEntitySearcherFactoryName(String esfName) {
@@ -85,7 +85,7 @@ public class ComponentGroupServiceDescriptor extends HashMap<String, Object> {
     }
 
     public void setInternallyManaged(boolean internal) {
-        put(INTERNALLY_MANAGED, new Boolean(internal));
+        put(INTERNALLY_MANAGED, internal);
     }
 
     public void setName(String name) {

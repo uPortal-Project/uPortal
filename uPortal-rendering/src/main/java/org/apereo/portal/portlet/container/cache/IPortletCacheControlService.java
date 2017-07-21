@@ -19,9 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apereo.portal.portlet.om.IPortletWindowId;
 import org.apereo.portal.portlet.rendering.PortletRenderResult;
 
-/**
- * Interface defining mechanism for retrieving {@link CacheControl}s.
- */
+/** Interface defining mechanism for retrieving {@link CacheControl}s. */
 public interface IPortletCacheControlService {
 
     /** @return the maximum size of cached portlet output, in bytes */

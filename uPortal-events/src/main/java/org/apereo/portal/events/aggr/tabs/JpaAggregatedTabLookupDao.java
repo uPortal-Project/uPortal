@@ -39,10 +39,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 
-/**
- * JPA dao to manage aggregated tab mappings
- *
- */
+/** JPA dao to manage aggregated tab mappings */
 @Repository
 public class JpaAggregatedTabLookupDao extends BaseAggrEventsJpaDao
         implements AggregatedTabLookupDao {
@@ -100,7 +97,8 @@ public class JpaAggregatedTabLookupDao extends BaseAggrEventsJpaDao
     public AggregatedTabMapping getTabMapping(final String fragmentName, final String tabName) {
         final CacheKey key = CacheKey.build(this.getClass().getName(), tabName);
 
-        AggregatedTabMapping tabMapping = this.entityManagerCache.get(BaseAggrEventsJpaDao.PERSISTENCE_UNIT_NAME, key);
+        AggregatedTabMapping tabMapping =
+                this.entityManagerCache.get(BaseAggrEventsJpaDao.PERSISTENCE_UNIT_NAME, key);
         if (tabMapping != null) {
             return tabMapping;
         }
@@ -111,7 +109,8 @@ public class JpaAggregatedTabLookupDao extends BaseAggrEventsJpaDao
         query.using(AggregatedTabMappingImpl_.tabName, tabName);
         tabMapping = query.load();
         if (tabMapping != null) {
-            this.entityManagerCache.put(BaseAggrEventsJpaDao.PERSISTENCE_UNIT_NAME, key, tabMapping);
+            this.entityManagerCache.put(
+                    BaseAggrEventsJpaDao.PERSISTENCE_UNIT_NAME, key, tabMapping);
             return tabMapping;
         }
 
@@ -126,7 +125,9 @@ public class JpaAggregatedTabLookupDao extends BaseAggrEventsJpaDao
 
                                 logger.debug("Created {}", aggregatedGroupMapping);
                                 entityManagerCache.put(
-                                        BaseAggrEventsJpaDao.PERSISTENCE_UNIT_NAME, key, aggregatedGroupMapping);
+                                        BaseAggrEventsJpaDao.PERSISTENCE_UNIT_NAME,
+                                        key,
+                                        aggregatedGroupMapping);
 
                                 return aggregatedGroupMapping;
                             }

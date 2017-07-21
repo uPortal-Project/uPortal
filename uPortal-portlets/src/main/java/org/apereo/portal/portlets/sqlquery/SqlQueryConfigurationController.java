@@ -32,10 +32,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-/**
- * Handles CONFIG mode for the SQL query portlet.
- *
- */
+/** Handles CONFIG mode for the SQL query portlet. */
 @Controller
 @RequestMapping("CONFIG")
 public class SqlQueryConfigurationController {

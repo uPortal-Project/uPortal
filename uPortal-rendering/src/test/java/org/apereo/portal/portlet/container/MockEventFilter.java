@@ -22,8 +22,7 @@ import javax.portlet.filter.EventFilter;
 import javax.portlet.filter.FilterChain;
 import javax.portlet.filter.FilterConfig;
 
-/**
- */
+/** */
 public class MockEventFilter implements EventFilter {
 
     /* (non-Javadoc)

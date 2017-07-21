@@ -95,5 +95,4 @@ public final class InjectAttributeRegexTester extends BaseAttributeTester {
 
         return rslt;
     }
-
 }

@@ -16,10 +16,7 @@ package org.apereo.portal.events.aggr;
 
 import org.joda.time.DateMidnight;
 
-/**
- * Details about a term of the year
- *
- */
+/** Details about a term of the year */
 public interface AcademicTermDetail
         extends DateRange<DateMidnight>, Comparable<AcademicTermDetail> {
     /** @return The name of the term, cannot be null */

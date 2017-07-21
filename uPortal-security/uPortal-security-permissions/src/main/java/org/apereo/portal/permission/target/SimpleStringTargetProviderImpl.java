@@ -60,6 +60,7 @@ public class SimpleStringTargetProviderImpl implements IPermissionTargetProvider
      * (non-Javadoc)
      * @see org.apereo.portal.permission.target.IPermissionTargetProvider#getTarget(java.lang.String)
      */
+    @Override
     public IPermissionTarget getTarget(String key) {
         return targetMap.get(key);
     }
@@ -68,6 +69,7 @@ public class SimpleStringTargetProviderImpl implements IPermissionTargetProvider
      * (non-Javadoc)
      * @see org.apereo.portal.permission.target.IPermissionTargetProvider#searchTargets(java.lang.String)
      */
+    @Override
     public Collection<IPermissionTarget> searchTargets(String term) {
 
         // ensure that the search term is all lowercase to aid in string comparison

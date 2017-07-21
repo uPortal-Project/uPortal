@@ -14,7 +14,6 @@
  */
 package org.apereo.portal.security;
 
-
 public class RuntimeAuthorizationException extends RuntimeException {
 
     private static final long serialVersionUID = 7655381218623647649L;

@@ -21,8 +21,7 @@ import java.util.Map;
 import org.junit.Assert;
 import org.junit.Test;
 
-/**
- */
+/** */
 public class UrlStringBuilderTest {
 
     @Test

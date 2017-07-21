@@ -31,9 +31,7 @@ import org.apereo.portal.services.GroupService;
 import org.apereo.portal.spring.locator.EntityTypesLocator;
 import org.junit.Ignore;
 
-/**
- * Tests the groups framework (a start).
- */
+/** Tests the groups framework (a start). */
 @Ignore // These tests wreak havoc
 public class GroupsTester extends TestCase {
     private static Class GROUP_CLASS;

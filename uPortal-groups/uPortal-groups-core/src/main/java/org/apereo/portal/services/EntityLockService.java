@@ -62,7 +62,6 @@ import org.apereo.portal.properties.PropertiesManager;
  * <p>A READ lock guarantees shared access; other clients can get READ locks but not WRITE locks. A
  * WRITE lock guarantees exclusive access; no other clients can get either READ or WRITE locks on
  * the entity.
- *
  */
 public class EntityLockService {
 

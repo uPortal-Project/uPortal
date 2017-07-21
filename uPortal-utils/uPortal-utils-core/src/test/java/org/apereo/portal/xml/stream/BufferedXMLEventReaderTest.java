@@ -22,8 +22,7 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.events.XMLEvent;
 import org.junit.Test;
 
-/**
- */
+/** */
 public class BufferedXMLEventReaderTest {
 
     @Test

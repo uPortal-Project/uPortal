@@ -17,10 +17,7 @@ package org.apereo.portal.jpa;
 import javax.persistence.EntityManager;
 import org.springframework.context.ApplicationEvent;
 
-/**
- * Base {@link EntityManager} related event.
- *
- */
+/** Base {@link EntityManager} related event. */
 public abstract class AbstractEntityManagerEvent extends ApplicationEvent {
     private static final long serialVersionUID = 1L;
 

@@ -16,8 +16,7 @@ package org.apereo.portal.utils;
 
 import java.util.Collection;
 
-/**
- */
+/** */
 public final class IncludeExcludeUtils {
     private IncludeExcludeUtils() {}
 

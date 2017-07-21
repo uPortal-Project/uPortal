@@ -18,8 +18,7 @@ import java.util.Map;
 import org.apereo.portal.portlet.om.IPortletType;
 import org.apereo.portal.portletpublishing.xml.PortletPublishingDefinition;
 
-/**
- */
+/** */
 public interface IChannelPublishingDefinitionDao {
     PortletPublishingDefinition getChannelPublishingDefinition(int channelTypeId);
 

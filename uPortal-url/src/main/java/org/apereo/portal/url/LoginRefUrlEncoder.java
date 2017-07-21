@@ -20,7 +20,6 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * Encode the originally requested URL for use as a RefUrl parameter in various login use cases
  * (internal, external CAS, etc.).
- *
  */
 public interface LoginRefUrlEncoder {
 

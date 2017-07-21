@@ -29,7 +29,6 @@ import org.springframework.core.io.ResourceLoader;
  * A URIResolver that uses a provided Spring {@link ResourceLoader} to resolve references in a XSL
  * document. Assumes that the provided 'base + href' argument or if base is null 'href' argument can
  * be correctly resolved by the {@link ResourceLoader}
- *
  */
 public class ResourceLoaderURIResolver implements URIResolver {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());

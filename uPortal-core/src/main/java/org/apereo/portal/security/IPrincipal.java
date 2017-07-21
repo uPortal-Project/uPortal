@@ -20,7 +20,6 @@ import java.io.Serializable;
  * An interface that defines the required methods for assigning and retrieving information about the
  * authenticated principal (user). Providers requiring additional principal information should
  * extend this interface rather than replacing it.
- *
  */
 public interface IPrincipal extends Serializable {
 

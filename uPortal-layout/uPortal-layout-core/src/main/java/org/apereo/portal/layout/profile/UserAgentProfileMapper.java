@@ -28,7 +28,6 @@ import org.slf4j.LoggerFactory;
  * Maps User-Agents to profile names using regular expressions. A list of {@link Mapping}s is
  * evaluated in order and the first match is returned. If the user agent header is null or no match
  * is found the {@link #setDefaultProfileName(String)} value is used.
- *
  */
 public class UserAgentProfileMapper implements IProfileMapper {
     protected Logger logger = LoggerFactory.getLogger(getClass());

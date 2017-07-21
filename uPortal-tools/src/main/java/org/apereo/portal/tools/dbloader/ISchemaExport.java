@@ -14,10 +14,7 @@
  */
 package org.apereo.portal.tools.dbloader;
 
-/**
- * Handles portal schema drop/create/update
- *
- */
+/** Handles portal schema drop/create/update */
 public interface ISchemaExport {
 
     /** @return The name of the JPA persistence unit this bean functions against */

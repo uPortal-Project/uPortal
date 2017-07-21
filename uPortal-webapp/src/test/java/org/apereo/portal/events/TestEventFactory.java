@@ -25,7 +25,6 @@ import org.apereo.portal.security.IPerson;
  * for tests a way to create them is needed.
  *
  * <p>Add events creation methods here as needed for tests
- *
  */
 public final class TestEventFactory {
     private TestEventFactory() {}

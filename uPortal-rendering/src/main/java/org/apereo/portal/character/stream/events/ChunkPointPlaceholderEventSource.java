@@ -28,7 +28,6 @@ import org.apereo.portal.xml.stream.ChunkingEventReader;
  * user or page specific (username, page title, session key, etc.). This allows the string
  * de-duplication logic of the {@link CharacterDataEventImpl} to be more effective as more users
  * will have common character event strings in their rendering pipeline.
- *
  */
 public class ChunkPointPlaceholderEventSource extends BasePlaceholderEventSource {
     /** Represents <chunk-point> layout element */

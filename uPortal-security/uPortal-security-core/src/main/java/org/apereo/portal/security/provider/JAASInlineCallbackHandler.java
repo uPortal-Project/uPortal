@@ -21,10 +21,7 @@ import javax.security.auth.callback.NameCallback;
 import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
 
-/**
- * Used by JAAS security provider checks userid and credentials using JAAS.
- *
- */
+/** Used by JAAS security provider checks userid and credentials using JAAS. */
 public class JAASInlineCallbackHandler implements CallbackHandler {
 
     private String username = null;
@@ -42,6 +39,7 @@ public class JAASInlineCallbackHandler implements CallbackHandler {
         this.username = username;
     }
 
+    @Override
     public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
 
         for (int i = 0; i < callbacks.length; i++) {

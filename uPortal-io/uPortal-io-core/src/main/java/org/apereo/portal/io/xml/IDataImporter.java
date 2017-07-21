@@ -17,10 +17,7 @@ package org.apereo.portal.io.xml;
 import java.util.Set;
 import org.springframework.oxm.Unmarshaller;
 
-/**
- * Defines a class that can import a specific type of portal data
- *
- */
+/** Defines a class that can import a specific type of portal data */
 public interface IDataImporter<T> {
     /** @return The {@link PortalDataKey}s that this importer can import */
     public Set<PortalDataKey> getImportDataKeys();

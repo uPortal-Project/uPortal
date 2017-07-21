@@ -22,10 +22,7 @@ import org.apereo.portal.hibernate.DelegatingHibernateIntegrator.HibernateConfig
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-/**
- * Injects the {@link HibernateConfiguration} into beans that want to know about it
- *
- */
+/** Injects the {@link HibernateConfiguration} into beans that want to know about it */
 @Service("hibernateConfigurationAwareInjector")
 public final class HibernateConfigurationAwareInjector {
     private Collection<HibernateConfigurationAware> hibernateConfigurationAwareBeans =

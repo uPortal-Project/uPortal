@@ -18,10 +18,7 @@ import java.util.List;
 import org.apereo.portal.events.aggr.DateDimension;
 import org.joda.time.DateMidnight;
 
-/**
- * DAO for creation/lookup of date dimensions
- *
- */
+/** DAO for creation/lookup of date dimensions */
 public interface DateDimensionDao {
 
     /** @return The newest (largest time in millis) date dimension in the persistent store */

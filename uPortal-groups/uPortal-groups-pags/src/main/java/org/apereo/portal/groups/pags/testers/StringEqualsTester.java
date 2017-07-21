@@ -21,7 +21,6 @@ import org.apereo.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
  * possibly multiple values of the attribute equals the test value.
  *
  * <p>
- *
  */
 public class StringEqualsTester extends AbstractStringTester {
 
@@ -30,8 +29,8 @@ public class StringEqualsTester extends AbstractStringTester {
         super(definition);
     }
 
+    @Override
     public boolean test(String att) {
         return att.equals(testValue);
     }
-
 }

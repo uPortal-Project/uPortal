@@ -31,10 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
-/**
- * Base class for portlet preferences
- *
- */
+/** Base class for portlet preferences */
 public abstract class AbstractPortletPreferencesImpl<C> implements PortletPreferences {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 

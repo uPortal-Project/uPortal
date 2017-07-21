@@ -19,10 +19,7 @@ import static junit.framework.Assert.assertEquals;
 import java.util.Random;
 import org.junit.Test;
 
-/**
- * Test generation of random tokens
- *
- */
+/** Test generation of random tokens */
 public class RandomTokenGeneratorTest {
     @Test
     public void testTokenGeneration() {

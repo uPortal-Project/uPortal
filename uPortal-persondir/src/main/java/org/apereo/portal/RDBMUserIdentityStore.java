@@ -64,7 +64,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 /**
  * SQL implementation for managing creation and removal of User Portal Data
  *
- *     Dalquist - edalquist@unicon.net)
+ * <p>Dalquist - edalquist@unicon.net)
  */
 @Service("userIdentityStore")
 public class RDBMUserIdentityStore implements IUserIdentityStore {
@@ -149,6 +149,7 @@ public class RDBMUserIdentityStore implements IUserIdentityStore {
      * @return uPortalUID number
      * @throws Exception if no user is found.
      */
+    @Override
     public int getPortalUID(IPerson person) throws AuthorizationException {
         int uPortalUID = -1;
         uPortalUID = this.getPortalUID(person, false);
@@ -285,6 +286,7 @@ public class RDBMUserIdentityStore implements IUserIdentityStore {
      * @throws AuthorizationException if createPortalData is false and no user is found or if a sql
      *     error is encountered
      */
+    @Override
     public int getPortalUID(IPerson person, boolean createPortalData)
             throws AuthorizationException {
         int uid;
@@ -305,6 +307,7 @@ public class RDBMUserIdentityStore implements IUserIdentityStore {
     /* (non-javadoc)
      * @see org.apereo.portal.IUserIdentityStore#getPortalUserName(int)
      */
+    @Override
     public String getPortalUserName(final int uPortalUID) {
         final List<String> results =
                 this.jdbcOperations.queryForList(
@@ -995,7 +998,7 @@ public class RDBMUserIdentityStore implements IUserIdentityStore {
         return CounterStoreLocator.getCounterStore().getNextId(PROFILE_TABLE);
     }
 
-    protected class PortalUser {
+    protected static class PortalUser {
         String userName;
         int userId;
         int defaultUserId;
@@ -1025,7 +1028,7 @@ public class RDBMUserIdentityStore implements IUserIdentityStore {
         }
     }
 
-    protected class TemplateUser {
+    protected static class TemplateUser {
         String userName;
         int userId;
         int defaultLayoutId;

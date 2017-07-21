@@ -30,8 +30,7 @@ import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-/**
- */
+/** */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:jpaAggrEventsTestContext.xml")
 public class JpaAggregatedTabLookupDaoTest extends BaseAggrEventsJpaDaoTest {

@@ -16,10 +16,7 @@ package org.apereo.portal.portlets.translator;
 
 import java.io.Serializable;
 
-/**
- * This domain class represents the original and localized translation of portlet definiton.
- *
- */
+/** This domain class represents the original and localized translation of portlet definiton. */
 class PortletDefinitionTranslation implements Serializable {
 
     private static final long serialVersionUID = -7503311752482005801L;

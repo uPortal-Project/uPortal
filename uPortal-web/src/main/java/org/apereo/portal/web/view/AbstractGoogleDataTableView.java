@@ -21,10 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.web.servlet.view.AbstractView;
 
-/**
- * Base class for views that serialize {@link DataTable} objects
- *
- */
+/** Base class for views that serialize {@link DataTable} objects */
 public abstract class AbstractGoogleDataTableView extends AbstractView {
     public static final String DATA_TABLE_MODEL_ATTRIBUTE = "dataTable";
 

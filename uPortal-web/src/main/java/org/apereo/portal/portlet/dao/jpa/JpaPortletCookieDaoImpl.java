@@ -38,10 +38,7 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
-/**
- * JPA implementation of {@link IPortletCookieDao}.
- *
- */
+/** JPA implementation of {@link IPortletCookieDao}. */
 @Repository("portletCookieDao")
 @Qualifier("persistence")
 public class JpaPortletCookieDaoImpl extends BasePortalJpaDao implements IPortletCookieDao {

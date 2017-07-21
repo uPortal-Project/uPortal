@@ -38,10 +38,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.annotation.Autowired;
 
-/**
- * Adds information about the portlet window to the layout xml data
- *
- */
+/** Adds information about the portlet window to the layout xml data */
 public class PortletWindowAttributeSource implements AttributeSource, BeanNameAware {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 

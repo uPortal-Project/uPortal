@@ -16,10 +16,7 @@ package org.apereo.portal.events.aggr.tabs;
 
 import java.util.Set;
 
-/**
- * Used to map portal group keys to a more static group mapping object
- *
- */
+/** Used to map portal group keys to a more static group mapping object */
 public interface AggregatedTabLookupDao {
 
     /** Get the tab mapping object for the specified tab mapping id */

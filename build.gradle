@@ -1,15 +1,19 @@
+plugins {
+    // Top level plugins
+    id 'com.gradle.build-scan' version '1.7.4'
+    id 'build-announcements'
+    id 'com.github.kt3k.coveralls' version '2.8.1'
+    id 'com.moowork.node' version '1.2.0'
+    id 'me.champeau.buildscan-recipes' version '0.2.0'
+    id 'org.standardout.versioneye' version '1.4.0'
+
+    // Sub project plugins
+    id 'com.github.sherter.google-java-format' version '0.6' apply false
+    id 'nebula.lint' version '7.9.1' apply false
+    id 'net.ltgt.errorprone' version '0.0.10' apply false
+}
+
 description = "Apereo uPortal $version"
-
-// Build Scans provide detailed information about many aspects of your
-// build right in your browser.  (https://scans.gradle.com/plugin)
-apply plugin: 'com.gradle.build-scan'
-apply plugin: 'com.github.kt3k.coveralls'
-apply plugin: me.champeau.gradle.buildscans.RecipesPlugin
-apply plugin: 'build-announcements'
-apply plugin: 'org.standardout.versioneye'
-
-// Adds support for Node.js scripts
-apply plugin: 'com.moowork.node'
 
 /*======== Dependency Management ========**/
 repositories {
@@ -18,27 +22,8 @@ repositories {
     mavenLocal()
 }
 
-buildscript {
-    repositories {
-        maven {
-            url 'https://plugins.gradle.org/m2/'
-        }
-        jcenter()
-        mavenLocal()
-    }
-    dependencies {
-        classpath 'com.gradle:build-scan-plugin:1.7.4'
-        classpath 'com.moowork.gradle:gradle-node-plugin:0.13'
-        classpath 'gradle.plugin.com.github.sherter.google-java-format:google-java-format-gradle-plugin:0.6'
-        classpath 'com.netflix.nebula:gradle-lint-plugin:latest.release'
-        classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.1'
-        classpath 'me.champeau.gradle:buildscan-recipes-plugin:0.2.0'
-        classpath 'org.standardout:gradle-versioneye-plugin:1.4.0'
-    }
-}
-
 node {
-    version = '8.0.0'
+    version = "${nodejsVersion}"
     download = true
 }
 
@@ -52,14 +37,19 @@ buildScanRecipes {
 }
 
 versioneye {
-  includeSubProjects = true
-  exclude project.configurations.findAll { !it.canBeResolved }*.name as String[]
+    includeSubProjects = true
+    exclude project.configurations.findAll { !it.canBeResolved }*.name as String[]
 }
 
 allprojects {
     apply plugin: 'java'
     apply plugin: 'jacoco'
+    apply plugin: 'eclipse'
+    apply plugin: 'findbugs'
+    apply plugin: 'idea'
     apply plugin: 'nebula.lint'
+    apply plugin: 'com.github.sherter.google-java-format'
+    apply plugin: 'net.ltgt.errorprone'
 
     sourceCompatibility = 1.8
 
@@ -70,19 +60,33 @@ allprojects {
       'empty-closure',
       'duplicate-dependency-class'
     ]
+
+    /*======== Static Analysis ========*/
+    findbugs {
+        toolVersion = '3.0.1'
+        ignoreFailures = true
+    }
+    tasks.withType(FindBugs) {
+        enabled = gradle.startParameter.taskNames.contains(it.name)
+    }
+    googleJavaFormat {
+        toolVersion '1.3'
+        options style: 'AOSP'
+        exclude '**/generated-sources'
+    }
 }
 
 /*======== Child Projects ========*/
 subprojects {
 
     /*======== Plugins ========*/
-    apply plugin: 'com.github.sherter.google-java-format'
-    apply plugin: 'eclipse'
-    apply plugin: 'findbugs'
-    apply plugin: 'idea'
+    apply plugin: 'maven-publish'
     apply plugin: 'maven'
     apply plugin: 'signing'
     apply plugin: 'maven-publish'
+    apply plugin: 'com.github.sherter.google-java-format'
+    apply plugin: 'net.ltgt.errorprone'
+
 
     /*======== Dependency Management ========**/
     repositories {
@@ -186,24 +190,14 @@ subprojects {
             }
         }
     }
-
-    /*======== Static Analysis ========*/
-    findbugs {
-        toolVersion = '3.0.1'
-        ignoreFailures = true
-    }
-    googleJavaFormat {
-        toolVersion '1.3'
-        options style: 'AOSP'
-    }
 }
 
 task jacocoAggregateReport(type: org.gradle.testing.jacoco.tasks.JacocoReport) {
-    dependsOn = subprojects.test
-    additionalSourceDirs = files(subprojects.sourceSets.main.allSource.srcDirs)
-    sourceDirectories = files(subprojects.sourceSets.main.allSource.srcDirs)
-    classDirectories = files(subprojects.sourceSets.main.output)
-    executionData = files(subprojects.jacocoTestReport.executionData)
+    dependsOn = allprojects.test
+    additionalSourceDirs = files(allprojects.sourceSets.main.allSource.srcDirs)
+    sourceDirectories = files(allprojects.sourceSets.main.allSource.srcDirs)
+    classDirectories = files(allprojects.sourceSets.main.output)
+    executionData = files(allprojects.jacocoTestReport.executionData)
     reports {
         xml.enabled = true
         html.enabled = true
@@ -220,5 +214,5 @@ task jacocoAggregateReport(type: org.gradle.testing.jacoco.tasks.JacocoReport) {
 
 coveralls {
     jacocoReportPath = "${buildDir}/reports/jacoco/jacocoAggregateReport/jacocoAggregateReport.xml"
-    sourceDirs = files(subprojects.sourceSets.main.allSource.srcDirs).files.absolutePath
+    sourceDirs = files(allprojects.sourceSets.main.allSource.srcDirs).files.absolutePath
 }

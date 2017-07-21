@@ -6,6 +6,7 @@ dependencies {
     compile project(':uPortal-layout:uPortal-layout-impl')
     compile project(':uPortal-security:uPortal-security-permissions')
     compileOnly project(':uPortal-api:uPortal-api-platform')
+    compileOnly "org.apache.portals.pluto:pluto-container-api:${plutoVersion}"
 
     compile("commons-beanutils:commons-beanutils:${commonsBeanutilsVersion}") {
         exclude group: 'commons-logging', module: 'commons-logging'

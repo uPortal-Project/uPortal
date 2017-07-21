@@ -17,8 +17,7 @@ package org.apereo.portal.tools.dbloader;
 import java.util.Map;
 import org.hibernate.mapping.Table;
 
-/**
- */
+/** */
 public interface ITableDataProvider {
 
     public Map<String, Table> getTables();

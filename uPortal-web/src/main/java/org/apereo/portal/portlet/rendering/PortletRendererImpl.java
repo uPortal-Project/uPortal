@@ -63,10 +63,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-/**
- * Executes methods on portlets using Pluto
- *
- */
+/** Executes methods on portlets using Pluto */
 @Service
 public class PortletRendererImpl implements IPortletRenderer {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -446,7 +443,8 @@ public class PortletRendererImpl implements IPortletRenderer {
                 new PortletMimeHttpServletResponseWrapper(
                         httpServletResponse, portletWindow, portletOutputHandler, cacheControl);
 
-        httpServletRequest.setAttribute(IPortletRenderer.ATTRIBUTE__PORTLET_CACHE_CONTROL, cacheControl);
+        httpServletRequest.setAttribute(
+                IPortletRenderer.ATTRIBUTE__PORTLET_CACHE_CONTROL, cacheControl);
         httpServletRequest.setAttribute(
                 IPortletRenderer.ATTRIBUTE__PORTLET_OUTPUT_HANDLER, cachingPortletOutputHandler);
 
@@ -674,7 +672,8 @@ public class PortletRendererImpl implements IPortletRenderer {
                 new PortletResourceHttpServletResponseWrapper(
                         httpServletResponse, portletWindow, portletOutputHandler, cacheControl);
 
-        httpServletRequest.setAttribute(IPortletRenderer.ATTRIBUTE__PORTLET_CACHE_CONTROL, cacheControl);
+        httpServletRequest.setAttribute(
+                IPortletRenderer.ATTRIBUTE__PORTLET_CACHE_CONTROL, cacheControl);
         httpServletRequest.setAttribute(
                 IPortletRenderer.ATTRIBUTE__PORTLET_OUTPUT_HANDLER, cachingPortletOutputHandler);
 

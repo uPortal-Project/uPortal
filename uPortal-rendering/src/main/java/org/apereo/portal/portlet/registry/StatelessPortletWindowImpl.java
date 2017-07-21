@@ -29,7 +29,6 @@ import org.apereo.portal.portlet.om.IPortletWindowId;
 /**
  * Implementation of the {@link IPortletWindow} interface that tracks the current state of the
  * portlet.
- *
  */
 class StatelessPortletWindowImpl implements IPortletWindow, PortletWindow {
     private final PortletDefinition portletDefinition;

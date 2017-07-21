@@ -20,10 +20,7 @@ import org.apereo.portal.events.aggr.BaseAggregationDao;
 import org.apereo.portal.events.aggr.groups.AggregatedGroupMapping;
 import org.joda.time.DateTime;
 
-/**
- * DAO used to query information about portlet layout aggregates
- *
- */
+/** DAO used to query information about portlet layout aggregates */
 public interface PortletLayoutAggregationDao<T extends PortletLayoutAggregation>
         extends BaseAggregationDao<T, PortletLayoutAggregationKey> {
     /**

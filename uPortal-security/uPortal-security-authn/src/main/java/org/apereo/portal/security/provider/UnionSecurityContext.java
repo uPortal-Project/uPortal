@@ -21,7 +21,6 @@ import org.apereo.portal.security.PortalSecurityException;
 /**
  * A simple extension of ChainingSecurityContext that acts merely as a placeholder but considers
  * itself in an "authenticated" state if any of its subcontexts are "authenticated."
- *
  */
 class UnionSecurityContext extends ChainingSecurityContext {
     private final int UNION_SECURITY_AUTHTYPE = 0xFF0A;

@@ -19,10 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Default implementation of {@link IPortletExecutionInterceptor} which does nothing.
- *
- */
+/** Default implementation of {@link IPortletExecutionInterceptor} which does nothing. */
 public class PortletExecutionInterceptorAdaptor implements IPortletExecutionInterceptor {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 

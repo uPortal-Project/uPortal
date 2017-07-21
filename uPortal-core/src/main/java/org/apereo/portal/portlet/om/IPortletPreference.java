@@ -16,8 +16,7 @@ package org.apereo.portal.portlet.om;
 
 import org.apache.pluto.container.PortletPreference;
 
-/**
- */
+/** */
 public interface IPortletPreference extends PortletPreference {
     /** Sets the read only state of the preference */
     void setReadOnly(boolean readOnly);

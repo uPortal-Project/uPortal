@@ -42,10 +42,7 @@ import org.springframework.jdbc.UncategorizedSQLException;
 import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.jdbc.core.JdbcOperations;
 
-/**
- * Runs the Hibernate Schema Export tool using the specified DataSource for the target DB.
- *
- */
+/** Runs the Hibernate Schema Export tool using the specified DataSource for the target DB. */
 public class DataSourceSchemaExport implements ISchemaExport, HibernateConfigurationAware {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 

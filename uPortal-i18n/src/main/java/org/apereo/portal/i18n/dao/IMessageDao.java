@@ -18,10 +18,7 @@ import java.util.Locale;
 import java.util.Set;
 import org.apereo.portal.i18n.Message;
 
-/**
- * Interface for creating/retrieving/updating/deleting {@link Message}s.
- *
- */
+/** Interface for creating/retrieving/updating/deleting {@link Message}s. */
 public interface IMessageDao {
 
     /**

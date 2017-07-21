@@ -28,10 +28,7 @@ import org.apereo.portal.user.IUserInstanceManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-/**
- * Simple autowired registry of {@link IUrlNodeSyntaxHelper} beans.
- *
- */
+/** Simple autowired registry of {@link IUrlNodeSyntaxHelper} beans. */
 @Service
 public class UrlNodeSyntaxHelperRegistryImpl implements IUrlNodeSyntaxHelperRegistry {
     private IUserInstanceManager userInstanceManager;

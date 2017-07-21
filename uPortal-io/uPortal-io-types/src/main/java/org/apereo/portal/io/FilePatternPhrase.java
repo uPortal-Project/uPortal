@@ -50,17 +50,20 @@ public class FilePatternPhrase implements Phrase {
                     String.class,
                     "File pattern to use in an Import operation.");
 
+    @Override
     public Formula getFormula() {
         Reagent[] reagents = new Reagent[] {PATTERN};
         return new SimpleFormula(FilePatternPhrase.class, reagents);
     }
 
+    @Override
     public void init(EntityConfig config) {
 
         // Instance Members.
         this.pattern = (Phrase) config.getValue(PATTERN);
     }
 
+    @Override
     public Object evaluate(TaskRequest req, TaskResponse res) {
 
         String rslt = DEFAULT_VALUE;

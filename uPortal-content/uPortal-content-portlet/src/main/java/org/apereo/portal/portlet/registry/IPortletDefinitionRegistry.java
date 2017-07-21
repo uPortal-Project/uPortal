@@ -22,10 +22,7 @@ import org.apereo.portal.portlet.om.IPortletDefinitionId;
 import org.apereo.portal.utils.Tuple;
 import org.springframework.dao.DataRetrievalFailureException;
 
-/**
- * Provides methods for creating and accessing {@link IPortletDefinition} and related objects.
- *
- */
+/** Provides methods for creating and accessing {@link IPortletDefinition} and related objects. */
 public interface IPortletDefinitionRegistry {
     /**
      * Get an existing portlet definition for the definition id. If no definition exists for the id

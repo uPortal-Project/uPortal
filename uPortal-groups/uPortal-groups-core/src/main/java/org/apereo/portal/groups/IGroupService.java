@@ -51,8 +51,7 @@ public interface IGroupService {
      * the <code>EntityIdentifier</code>, which refers to the UNDERLYING entity for the <code>
      * IGroupMember</code>.
      */
-    IGroupMember getGroupMember(EntityIdentifier underlyingEntityIdentifier)
-            throws GroupsException;
+    IGroupMember getGroupMember(EntityIdentifier underlyingEntityIdentifier) throws GroupsException;
 
     /** Returns an <code>IEntityGroupStore</code>. */
     IEntityGroupStore getGroupStore() throws GroupsException;
@@ -80,5 +79,4 @@ public interface IGroupService {
      */
     EntityIdentifier[] searchForEntities(String query, int method, Class type)
             throws GroupsException;
-
 }

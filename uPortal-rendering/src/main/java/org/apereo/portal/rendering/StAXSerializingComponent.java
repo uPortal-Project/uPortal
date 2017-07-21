@@ -40,7 +40,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 /**
  * Converts a StAX event stream into a {@link CharacterEvent} stream. Breaking up the stream into
  * chunks based on specific elements
- *
  */
 public class StAXSerializingComponent implements CharacterPipelineComponent {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());

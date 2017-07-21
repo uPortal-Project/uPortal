@@ -236,7 +236,7 @@
        Namespace: region-customizeDrawer
        ========================================================================== */
     #region-customize {
-        position: absolute;
+        position: relative;
         z-index: 1;
 
         button {
@@ -267,11 +267,11 @@
             .border(@grayscale4);
         }
 
-        #customizeOptions.collapse + button i:after {
+        #customizeOptions + button i:after {
             content: "\f0d7";
         }
 
-        #customizeOptions + button i:after {
+        #customizeOptions.in + button i:after {
             content: "\f0d8";
         }
     }

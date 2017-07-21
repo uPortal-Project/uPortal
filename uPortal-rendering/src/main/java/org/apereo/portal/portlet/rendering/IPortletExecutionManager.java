@@ -34,7 +34,6 @@ import org.apereo.portal.portlet.om.IPortletWindowId;
  *
  * <p>There is no mention of the order of these 2 render calls; we assume it is acceptable to invoke
  * them in either order.
- *
  */
 public interface IPortletExecutionManager {
 

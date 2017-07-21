@@ -16,10 +16,7 @@ package org.apereo.portal.security.xslt;
 
 import org.apereo.portal.security.IPerson;
 
-/**
- * Authorization helper APIs.
- *
- */
+/** Authorization helper APIs. */
 public interface IXalanAuthorizationHelper {
 
     /**

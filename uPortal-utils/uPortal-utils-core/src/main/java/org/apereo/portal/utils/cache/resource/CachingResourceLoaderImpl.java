@@ -32,10 +32,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
-/**
- * Uses an {@link Ehcache} to handle caching of the resources.
- *
- */
+/** Uses an {@link Ehcache} to handle caching of the resources. */
 @Service
 public class CachingResourceLoaderImpl implements CachingResourceLoader {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());

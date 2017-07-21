@@ -19,7 +19,6 @@ import org.apereo.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
 /**
  * Tests whether or not the user has <em>some</em> value for a particular attribute. This tester
  * ignores the test-value field. If the attribute has any value, then it returns true.
- *
  */
 public class ValueExistsTester extends AbstractStringTester {
 
@@ -28,6 +27,7 @@ public class ValueExistsTester extends AbstractStringTester {
         super(definition);
     }
 
+    @Override
     public boolean test(String att) {
         boolean result = false;
         if (att != null && !att.equals("")) {
@@ -35,5 +35,4 @@ public class ValueExistsTester extends AbstractStringTester {
         }
         return result;
     }
-
 }

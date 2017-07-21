@@ -19,10 +19,7 @@ import org.apereo.portal.layout.IStylesheetUserPreferencesService.PreferencesSco
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Returns structure stylesheet descriptor and preferences data
- *
- */
+/** Returns structure stylesheet descriptor and preferences data */
 public class StructureAttributeSource extends StylesheetAttributeSource {
     private static final Logger LOGGER = LoggerFactory.getLogger(StructureAttributeSource.class);
 

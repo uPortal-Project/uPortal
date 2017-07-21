@@ -27,7 +27,6 @@ import javax.servlet.http.HttpServletResponseWrapper;
 /**
  * Wrapper for a {@link HttpServletResponse} that makes the response inaccessible once the worker
  * has been canceled.
- *
  */
 public class GuardingHttpServletResponse extends HttpServletResponseWrapper {
     private final AtomicBoolean canceled;

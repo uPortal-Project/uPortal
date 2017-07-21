@@ -110,6 +110,7 @@ public class DatabaseMetaDataImpl implements IDatabaseMetadata, InitializingBean
     /* (non-Javadoc)
      * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
      */
+    @Override
     public void afterPropertiesSet() throws Exception {
         this.transactionTemplate = new TransactionTemplate(this.transactionManager);
         this.transactionTemplate.setPropagationBehavior(
@@ -132,22 +133,26 @@ public class DatabaseMetaDataImpl implements IDatabaseMetadata, InitializingBean
     }
 
     /** @see IDatabaseMetadata#getJoinQuery() */
+    @Override
     public final IJoinQueryString getJoinQuery() {
         return this.joinTest;
     }
 
     /** @see IDatabaseMetadata#supportsOuterJoins() */
+    @Override
     public final boolean supportsOuterJoins() {
         return (this.joinTest != null);
     }
 
     /** @see IDatabaseMetadata#supportsTransactions() */
+    @Override
     public final boolean supportsTransactions() {
         //We never run on DBs that don't support transactions any more
         return true;
     }
 
     /** @see IDatabaseMetadata#supportsPreparedStatements() */
+    @Override
     public final boolean supportsPreparedStatements() {
         //We never run on DBs that don't support prepared statements any more
         return true;
@@ -156,6 +161,7 @@ public class DatabaseMetaDataImpl implements IDatabaseMetadata, InitializingBean
     /* (non-Javadoc)
      * @see org.apereo.portal.jdbc.IDatabaseMetadata#getJdbcDriver()
      */
+    @Override
     public String getJdbcDriver() {
         return this.driverName;
     }
@@ -163,6 +169,7 @@ public class DatabaseMetaDataImpl implements IDatabaseMetadata, InitializingBean
     /* (non-Javadoc)
      * @see org.apereo.portal.jdbc.IDatabaseMetadata#getDatabaseProductName()
      */
+    @Override
     public String getDatabaseProductName() {
         return this.databaseProductName;
     }
@@ -170,6 +177,7 @@ public class DatabaseMetaDataImpl implements IDatabaseMetadata, InitializingBean
     /* (non-Javadoc)
      * @see org.apereo.portal.jdbc.IDatabaseMetadata#getDatabaseProductVersion()
      */
+    @Override
     public String getDatabaseProductVersion() {
         return this.databaseProductVersion;
     }
@@ -177,6 +185,7 @@ public class DatabaseMetaDataImpl implements IDatabaseMetadata, InitializingBean
     /* (non-Javadoc)
      * @see org.apereo.portal.jdbc.IDatabaseMetadata#getJdbcDriverVersion()
      */
+    @Override
     public String getJdbcDriverVersion() {
         return this.driverVersion;
     }
@@ -184,6 +193,7 @@ public class DatabaseMetaDataImpl implements IDatabaseMetadata, InitializingBean
     /* (non-Javadoc)
      * @see org.apereo.portal.jdbc.IDatabaseMetadata#getJdbcUrl()
      */
+    @Override
     public String getJdbcUrl() {
         return this.dbUrl;
     }
@@ -191,16 +201,19 @@ public class DatabaseMetaDataImpl implements IDatabaseMetadata, InitializingBean
     /* (non-Javadoc)
      * @see org.apereo.portal.jdbc.IDatabaseMetadata#getJdbcUser()
      */
+    @Override
     public String getJdbcUser() {
         return this.userName;
     }
 
     /** @see IDatabaseMetadata#sqlTimeStamp() */
+    @Override
     public String sqlTimeStamp() {
         return this.sqlTimeStamp(System.currentTimeMillis());
     }
 
     /** @see IDatabaseMetadata#sqlTimeStamp(long) */
+    @Override
     public String sqlTimeStamp(final long date) {
         final StringBuffer sqlTS = new StringBuffer();
 
@@ -223,6 +236,7 @@ public class DatabaseMetaDataImpl implements IDatabaseMetadata, InitializingBean
     }
 
     /** @see IDatabaseMetadata#sqlTimeStamp(java.util.Date) */
+    @Override
     public String sqlTimeStamp(final Date date) {
         if (date == null) {
             return "NULL";

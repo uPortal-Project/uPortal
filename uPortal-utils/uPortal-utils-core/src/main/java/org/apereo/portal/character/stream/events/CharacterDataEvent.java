@@ -14,8 +14,7 @@
  */
 package org.apereo.portal.character.stream.events;
 
-/**
- */
+/** */
 public interface CharacterDataEvent extends CharacterEvent {
     public String getData();
 }

@@ -25,8 +25,7 @@ import org.apereo.portal.xml.XmlUtilities;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 
-/**
- */
+/** */
 public class StaticTransformerSource implements TransformerSource {
     private Resource stylesheet;
     private XmlUtilities xmlUtilities;

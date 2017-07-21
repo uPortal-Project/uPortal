@@ -39,9 +39,7 @@ import org.apereo.portal.services.AuthorizationService;
 import org.apereo.portal.services.GroupService;
 import org.junit.Ignore;
 
-/**
- * Tests the authorization framework.
- */
+/** Tests the authorization framework. */
 @Ignore // Breaks on move to Gradlde
 public class AuthorizationTester extends TestCase {
     private String OWNER = "UP_FRAMEWORK";
@@ -81,10 +79,7 @@ public class AuthorizationTester extends TestCase {
                 IPermissionTarget target)
                 throws AuthorizationException {
             // Seems the only value this method provides is NPE detection
-            return !(service.equals(service))
-                    && (principal.equals(principal))
-                    && (owner.equals(owner))
-                    && (activity.equals(activity));
+            return service == null && principal != null && owner != null && activity != null;
         }
 
         public String toString() {
@@ -105,10 +100,7 @@ public class AuthorizationTester extends TestCase {
                 IPermissionTarget target)
                 throws AuthorizationException {
             // Seems the only value this method provides is NPE detection
-            return (service.equals(service))
-                    && (principal.equals(principal))
-                    && (owner.equals(owner))
-                    && (activity.equals(activity));
+            return service != null && principal != null && owner != null && activity != null;
         }
 
         public String toString() {

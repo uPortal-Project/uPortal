@@ -75,7 +75,6 @@ import org.w3c.dom.Node;
  *
  * <p>Prior to uPortal 2.5, this class existed in the org.jasig.portal package. It was moved to its
  * present package to express that it is part of the Simple Layout Manager implementation.
- *
  */
 public abstract class RDBMUserLayoutStore implements IUserLayoutStore, InitializingBean {
 
@@ -505,12 +504,17 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                                                                         try {
                                                                             if (rs.next()) {
                                                                                 newUserId =
-                                                                                        rs.getInt(1);
+                                                                                        rs.getInt(
+                                                                                                1);
                                                                                 newLayoutId =
-                                                                                        rs.getInt(2);
+                                                                                        rs.getInt(
+                                                                                                2);
                                                                             } else {
-                                                                                final String msg = "Unable to find default user for USER_ID=" + realUserId;
-                                                                                throw new SQLException(msg);
+                                                                                final String msg =
+                                                                                        "Unable to find default user for USER_ID="
+                                                                                                + realUserId;
+                                                                                throw new SQLException(
+                                                                                        msg);
                                                                             }
                                                                         } finally {
                                                                             rs.close();
@@ -530,10 +534,14 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                                                                         try {
                                                                             if (rs.next()) {
                                                                                 nextStructId =
-                                                                                        rs.getInt(1);
+                                                                                        rs.getInt(
+                                                                                                1);
                                                                             } else {
-                                                                                final String msg = "Unable to find NEXT_STRUCT_ID for USER_ID=" + realUserId;
-                                                                                throw new SQLException(msg);
+                                                                                final String msg =
+                                                                                        "Unable to find NEXT_STRUCT_ID for USER_ID="
+                                                                                                + realUserId;
+                                                                                throw new SQLException(
+                                                                                        msg);
                                                                             }
                                                                         } finally {
                                                                             rs.close();
@@ -558,10 +566,16 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                                                                             try {
                                                                                 if (rs.next()) {
                                                                                     realNextStructId =
-                                                                                            rs.getInt(1);
+                                                                                            rs
+                                                                                                    .getInt(
+                                                                                                            1);
                                                                                 } else {
-                                                                                    final String msg = "Unable to find NEXT_STRUCT_ID for USER_ID=" + realUserId;
-                                                                                    throw new SQLException(msg);
+                                                                                    final String
+                                                                                            msg =
+                                                                                                    "Unable to find NEXT_STRUCT_ID for USER_ID="
+                                                                                                            + realUserId;
+                                                                                    throw new SQLException(
+                                                                                            msg);
                                                                                 }
                                                                             } finally {
                                                                                 rs.close();

@@ -23,10 +23,7 @@ import javax.portlet.WindowState;
 import org.apache.commons.lang.Validate;
 import org.apereo.portal.portlet.om.IPortletWindowId;
 
-/**
- * Builds a portlet URL
- *
- */
+/** Builds a portlet URL */
 class PortletUrlBuilder extends AbstractUrlBuilder implements IPortletUrlBuilder {
     private final IPortletWindowId portletWindowId;
     private final IPortalUrlBuilder portalUrlBuilder;

@@ -22,7 +22,6 @@ import org.slf4j.LoggerFactory;
 /**
  * Handles converting the data stored in {@link ThemeStylesheetUserPreferences} into additional
  * attributes
- *
  */
 public class ThemeAttributeSource extends StylesheetAttributeSource {
     private static final Logger LOGGER = LoggerFactory.getLogger(ThemeAttributeSource.class);

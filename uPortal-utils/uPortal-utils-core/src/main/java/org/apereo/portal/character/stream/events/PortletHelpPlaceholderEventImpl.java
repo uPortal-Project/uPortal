@@ -16,9 +16,7 @@ package org.apereo.portal.character.stream.events;
 
 import org.apereo.portal.portlet.om.IPortletWindowId;
 
-/**
- * @deprecated As of Jul 2015 It does not look like this class is actually used.
- */
+/** @deprecated As of Jul 2015 It does not look like this class is actually used. */
 public final class PortletHelpPlaceholderEventImpl extends PortletPlaceholderEventImpl
         implements PortletHelpPlaceholderEvent {
     private static final long serialVersionUID = 1L;

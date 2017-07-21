@@ -21,10 +21,7 @@ import org.apereo.portal.events.PortalEvent;
 import org.apereo.portal.events.tincan.om.LocalizedString;
 import org.apereo.portal.events.tincan.om.LrsObject;
 
-/**
- * Converter for Logout events.
- *
- */
+/** Converter for Logout events. */
 public class LogoutEventConverter extends AbstractPortalEventToLrsStatementConverter {
     @Override
     public boolean supports(PortalEvent event) {

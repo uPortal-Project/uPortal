@@ -17,9 +17,6 @@ package org.apereo.portal.portlets.statistics;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.google.visualization.datasource.datatable.DataTable;
 
-/**
- * JsonDataTable extends Google's DataTable class so that we can use a custom Json serializer.
- *
- */
+/** JsonDataTable extends Google's DataTable class so that we can use a custom Json serializer. */
 @JsonSerialize(using = GoogleDataTableSerializer.class)
 public class JsonDataTable extends DataTable {}

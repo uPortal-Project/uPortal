@@ -33,7 +33,6 @@ import org.springframework.context.ApplicationContext;
 /**
  * This Group tester checks the current session's user profile theme against the test value ignoring
  * case.
- *
  */
 public class ThemeNameEqualsIgnoreCaseTester implements IPersonTester {
 
@@ -60,6 +59,7 @@ public class ThemeNameEqualsIgnoreCaseTester implements IPersonTester {
                         "stylesheetDescriptorDao", IStylesheetDescriptorDao.class);
     }
 
+    @Override
     public boolean test(IPerson person) {
         HttpServletRequest currentPortalRequest = getCurrentHttpServletRequest();
         if (currentPortalRequest == null) {
@@ -106,5 +106,4 @@ public class ThemeNameEqualsIgnoreCaseTester implements IPersonTester {
         }
         return testResult;
     }
-
 }

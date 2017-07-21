@@ -22,8 +22,7 @@ import org.apache.tools.ant.DirectoryScanner;
 import org.junit.Ignore;
 import org.junit.Test;
 
-/**
- */
+/** */
 public class AntPatternFileFilterTest {
     @Test
     public void testWindowsPathMatching() {

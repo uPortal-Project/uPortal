@@ -14,10 +14,7 @@
  */
 package org.apereo.portal.utils.cache;
 
-/**
- * Simple cache entry tag that uses two strings
- *
- */
+/** Simple cache entry tag that uses two strings */
 public class SimpleCacheEntryTag<V> implements CacheEntryTag {
     private static final long serialVersionUID = 1L;
 

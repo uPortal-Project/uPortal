@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.portlet.PortletPreferences;
 import javax.portlet.PortletRequest;
-
 import org.apereo.portal.UserPreferencesManager;
 import org.apereo.portal.layout.IUserLayout;
 import org.apereo.portal.layout.IUserLayoutManager;
@@ -61,8 +60,7 @@ public class FavoritesController extends AbstractFavoritesController {
      */
     public static final String MAX_HEIGHT_PIXELS_PREFERENCE = "FavoritesController.maxHeightPixels";
 
-    @Autowired
-    private IAuthorizationService authorizationService;
+    @Autowired private IAuthorizationService authorizationService;
 
     /**
      * Handles all Favorites portlet VIEW mode renders. Populates model with user's favorites and
@@ -103,7 +101,8 @@ public class FavoritesController extends AbstractFavoritesController {
                 FavoritesUtils.getFavoriteCollections(userLayout);
         model.addAttribute("collections", collections);
 
-        final List<IUserLayoutNodeDescription> rawFavorites = FavoritesUtils.getFavoritePortlets(userLayout);
+        final List<IUserLayoutNodeDescription> rawFavorites =
+                FavoritesUtils.getFavoritePortlets(userLayout);
 
         /*
          * Filter the collection by SUBSCRIBE permission.
@@ -112,7 +111,10 @@ public class FavoritesController extends AbstractFavoritesController {
          * the rendering engine.  It will refuse to spawn a worker for a portlet to which you
          * cannot SUBSCRIBE.
          */
-        final String username = req.getRemoteUser() != null ? req.getRemoteUser() : PersonFactory.GUEST_USERNAMES.get(0); // First item is the default
+        final String username =
+                req.getRemoteUser() != null
+                        ? req.getRemoteUser()
+                        : PersonFactory.GUEST_USERNAMES.get(0); // First item is the default
         final IAuthorizationPrincipal principal =
                 authorizationService.newPrincipal(username, IPerson.class);
         final List<IUserLayoutNodeDescription> favorites = new ArrayList<>();
@@ -123,9 +125,7 @@ public class FavoritesController extends AbstractFavoritesController {
                 if (principal.canRender(channelDescription.getChannelPublishId())) {
                     favorites.add(nodeDescription);
                 }
-
             }
-
         }
 
         model.addAttribute("favorites", favorites);
@@ -151,5 +151,4 @@ public class FavoritesController extends AbstractFavoritesController {
         final Integer rslt = value != null ? Integer.valueOf(value) : null;
         return rslt;
     }
-
 }

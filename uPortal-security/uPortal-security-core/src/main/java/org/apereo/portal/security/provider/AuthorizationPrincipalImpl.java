@@ -22,8 +22,7 @@ import org.apereo.portal.security.IAuthorizationService;
 import org.apereo.portal.security.IPermission;
 import org.apereo.portal.security.IPermissionPolicy;
 
-/**
- */
+/** */
 public class AuthorizationPrincipalImpl implements IAuthorizationPrincipal {
     private final String key;
     private final Class type;
@@ -142,16 +141,7 @@ public class AuthorizationPrincipalImpl implements IAuthorizationPrincipal {
     IAuthorizationService getAuthorizationService() {
         return authorizationService;
     }
-    /**
-     * Return a Vector of IChannels.
-     *
-     * @return a <code>java.util.Vector</code> of IChannels
-     * @exception AuthorizationException indicates authorization information could not be retrieved.
-     */
-    @Override
-    public java.util.Vector getAuthorizedChannels() throws AuthorizationException {
-        return getAuthorizationService().getAuthorizedChannels(this);
-    }
+
     /** @return String */
     @Override
     public String getKey() {

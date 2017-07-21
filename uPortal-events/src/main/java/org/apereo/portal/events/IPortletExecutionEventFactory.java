@@ -20,10 +20,7 @@ import org.apereo.portal.portlet.om.IPortletWindowId;
 import org.apereo.portal.portlet.rendering.worker.IPortletExecutionWorker;
 import org.apereo.portal.url.IPortalRequestInfo;
 
-/**
- * Publishes events related to portlet execution
- *
- */
+/** Publishes events related to portlet execution */
 public interface IPortletExecutionEventFactory {
 
     //********** Portlet Hung Events **********//

@@ -19,7 +19,6 @@ import java.io.Serializable;
 /**
  * Used to cache data associated with a specific EntityManager. The EntityManager specified by the
  * Persistent Unit Name must be active in the current Thread.
- *
  */
 public interface EntityManagerCache {
 

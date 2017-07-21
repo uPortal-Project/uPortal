@@ -23,8 +23,7 @@ import javax.portlet.ResourceURL;
 import javax.portlet.WindowState;
 import org.apereo.portal.portlet.om.IPortletWindowId;
 
-/**
- */
+/** */
 class PortletRequestInfoImpl implements IPortletRequestInfo {
     private final Object readOnlySync = new Object();
 

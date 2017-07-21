@@ -42,7 +42,6 @@ import org.springframework.web.portlet.mvc.AbstractController;
  *     <tr><td>subcaption</td><td>The subcaption of the image to display</td><td>Updated Once per Minute During Daylight Hours</td><td>no</td></tr>
  *     <tr><td>alt-text</td><td>Text to include as the 'alt' attribute of the img tag</td><td>Almost live shot of Hamilton library front enterance</td><td>no, but highly recommended in support of non-visual browsers</td></tr>
  *   </table>
- *
  */
 public class ImagePortletController extends AbstractController {
     private IPortalSpELService portalSpELService;

@@ -21,7 +21,6 @@ import javax.servlet.http.HttpServletResponse;
  * Provides APIs a class can implement if it wishes to be part of the request parameter processing
  * chain. Implementations can read and write request parameters before any other part of the
  * framework deals with the request.
- *
  */
 public interface IRequestParameterProcessor {
 

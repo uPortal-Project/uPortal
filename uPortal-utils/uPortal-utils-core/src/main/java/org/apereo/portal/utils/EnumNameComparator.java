@@ -14,10 +14,7 @@
  */
 package org.apereo.portal.utils;
 
-/**
- * Compare Enums by name
- *
- */
+/** Compare Enums by name */
 public class EnumNameComparator extends ComparableExtractingComparator<Enum<?>, String> {
     public static final EnumNameComparator INSTANCE = new EnumNameComparator();
 

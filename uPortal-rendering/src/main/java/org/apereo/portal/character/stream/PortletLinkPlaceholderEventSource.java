@@ -20,8 +20,7 @@ import org.apereo.portal.character.stream.events.CharacterEvent;
 import org.apereo.portal.character.stream.events.PortletLinkPlaceholderEventImpl;
 import org.apereo.portal.portlet.om.IPortletWindowId;
 
-/**
- */
+/** */
 public class PortletLinkPlaceholderEventSource extends PortletPlaceholderEventSource {
 
     @Override

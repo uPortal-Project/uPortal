@@ -16,8 +16,7 @@ package org.apereo.portal.aop;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-/**
- */
+/** */
 public class TestAspect {
     private final AtomicInteger callCount = new AtomicInteger();
 

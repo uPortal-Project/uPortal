@@ -18,6 +18,5 @@ package org.apereo.portal.groups;
  * <code>IEntity</code> is the leaf sub-type of <code>IGroupMember</code>.
  *
  * <p>
- *
  */
 public interface IEntity extends IGroupMember {}

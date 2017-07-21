@@ -16,10 +16,7 @@ package org.apereo.portal.portlet.rendering.worker;
 
 import org.apereo.portal.portlet.rendering.PortletRenderResult;
 
-/**
- * Worker that executes a portlet render request
- *
- */
+/** Worker that executes a portlet render request */
 public interface IPortletRenderExecutionWorker
         extends IPortletExecutionWorker<PortletRenderResult> {
 

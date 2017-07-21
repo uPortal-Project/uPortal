@@ -23,10 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apereo.portal.utils.cache.CacheKey;
 import org.apereo.portal.utils.cache.CacheKey.CacheKeyBuilder;
 
-/**
- * Merges the results of multiple {@link TransformerConfigurationSource}s
- *
- */
+/** Merges the results of multiple {@link TransformerConfigurationSource}s */
 public class MergingTransformerConfigurationSource implements TransformerConfigurationSource {
     private List<TransformerConfigurationSource> sources;
 

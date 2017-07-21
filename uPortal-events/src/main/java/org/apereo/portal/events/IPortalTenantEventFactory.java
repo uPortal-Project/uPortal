@@ -17,10 +17,7 @@ package org.apereo.portal.events;
 import javax.servlet.http.HttpServletRequest;
 import org.apereo.portal.tenants.ITenant;
 
-/**
- * Publishes events related to tenants in the portal.
- *
- */
+/** Publishes events related to tenants in the portal. */
 public interface IPortalTenantEventFactory {
 
     void publishTenantCreatedTenantEvent(HttpServletRequest request, Object source, ITenant tenant);

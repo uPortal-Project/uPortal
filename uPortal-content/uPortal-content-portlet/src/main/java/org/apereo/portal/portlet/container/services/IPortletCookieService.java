@@ -19,10 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apereo.portal.portlet.om.IPortletWindowId;
 
-/**
- * Service interface for implementing Cookie support for Portlets.
- *
- */
+/** Service interface for implementing Cookie support for Portlets. */
 public interface IPortletCookieService {
     public static final String DEFAULT_PORTAL_COOKIE_NAME = "org.apereo.portal.PORTLET_COOKIE";
     public static final String DEFAULT_PORTAL_COOKIE_COMMENT = "uPortal Portlet Master Cookie";

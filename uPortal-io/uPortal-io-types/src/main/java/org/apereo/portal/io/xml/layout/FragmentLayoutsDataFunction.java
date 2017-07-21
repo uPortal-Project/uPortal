@@ -24,10 +24,7 @@ import org.apereo.portal.layout.dlm.ConfigurationLoader;
 import org.apereo.portal.layout.dlm.FragmentDefinition;
 import org.springframework.beans.factory.annotation.Autowired;
 
-/**
- * Lists each fragment owner in the portal
- *
- */
+/** Lists each fragment owner in the portal */
 public class FragmentLayoutsDataFunction
         implements Function<IPortalDataType, Iterable<? extends IPortalData>> {
     private ConfigurationLoader configurationLoader;

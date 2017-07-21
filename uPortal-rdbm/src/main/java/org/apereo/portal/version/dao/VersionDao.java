@@ -16,10 +16,7 @@ package org.apereo.portal.version.dao;
 
 import org.apereo.portal.version.om.Version;
 
-/**
- * Access information about version numbers for various parts of uPortal
- *
- */
+/** Access information about version numbers for various parts of uPortal */
 public interface VersionDao {
     /** Get the version information for the specified product, returns null if no version is set. */
     Version getVersion(String product);

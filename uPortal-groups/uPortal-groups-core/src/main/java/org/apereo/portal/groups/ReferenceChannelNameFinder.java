@@ -20,10 +20,7 @@ import org.apereo.portal.portlet.om.IPortletDefinition;
 import org.apereo.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.apereo.portal.spring.locator.PortletDefinitionRegistryLocator;
 
-/**
- * Reference implementation of <code>IEntityNameFinder</code> for <code>Channels</code>.
- *
- */
+/** Reference implementation of <code>IEntityNameFinder</code> for <code>Channels</code>. */
 public class ReferenceChannelNameFinder implements IEntityNameFinder {
 
     private static IEntityNameFinder _instance = null;
@@ -43,6 +40,7 @@ public class ReferenceChannelNameFinder implements IEntityNameFinder {
      *
      * @param key java.lang.String
      */
+    @Override
     public String getName(String key) throws Exception {
         IPortletDefinitionRegistry registry =
                 PortletDefinitionRegistryLocator.getPortletDefinitionRegistry();
@@ -61,6 +59,7 @@ public class ReferenceChannelNameFinder implements IEntityNameFinder {
      *
      * @return java.lang.Class
      */
+    @Override
     public Class getType() {
         return type;
     }

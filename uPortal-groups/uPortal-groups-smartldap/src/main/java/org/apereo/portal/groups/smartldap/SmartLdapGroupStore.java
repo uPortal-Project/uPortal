@@ -355,7 +355,7 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
                 "Invoking searchForGroups():  query={}, method={}, leaftype=",
                 query,
                 method,
-                leaftype.getClass().getName());
+                leaftype.getName());
 
         // We only match the IPerson leaf type...
         final IEntityGroup root = getRootGroup();

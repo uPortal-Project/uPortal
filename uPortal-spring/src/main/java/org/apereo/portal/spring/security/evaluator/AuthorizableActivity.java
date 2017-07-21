@@ -17,7 +17,6 @@ package org.apereo.portal.spring.security.evaluator;
 /**
  * AuthorizableActivity represents a uPortal owner and activity combination for use by the
  * PortalPermissionEvaluator.
- *
  */
 public class AuthorizableActivity {
 

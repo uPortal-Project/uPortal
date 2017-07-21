@@ -19,10 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apereo.portal.dao.usertype.FunctionalNameType;
 import org.apereo.portal.portlet.om.IPortletWindowId;
 
-/**
- * Provides information to the URL generation code about layout nodes for navigation.
- *
- */
+/** Provides information to the URL generation code about layout nodes for navigation. */
 public interface IUrlNodeSyntaxHelper {
     /**
      * @return The unique name of this url node syntax helper. Must be a valid {@link

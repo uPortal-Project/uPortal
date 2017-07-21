@@ -22,10 +22,7 @@ import org.apache.commons.lang.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Base IPortalDataType implementation that should simplify most implementations
- *
- */
+/** Base IPortalDataType implementation that should simplify most implementations */
 public abstract class AbstractPortalDataType implements IPortalDataType {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 

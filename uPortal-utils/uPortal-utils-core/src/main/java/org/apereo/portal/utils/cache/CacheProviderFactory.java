@@ -30,7 +30,6 @@ import org.springframework.stereotype.Service;
  * CacheFactory impl that provides Map instances that wrap a configured {@link CacheProviderFacade}.
  * This uses the {@link MapCacheProvider} to perform the wrapping. Refer to that class for which
  * operations on the {@link Map} interface are supported.
- *
  */
 @Service("cacheFactory")
 public class CacheProviderFactory implements CacheFactory {
@@ -50,6 +49,7 @@ public class CacheProviderFactory implements CacheFactory {
     /* (non-Javadoc)
      * @see org.apereo.portal.utils.cache.CacheFactory#getCache()
      */
+    @Override
     public <K extends Serializable, V> Map<K, V> getCache() {
         return this.getCache(DEFAULT);
     }
@@ -57,6 +57,7 @@ public class CacheProviderFactory implements CacheFactory {
     /* (non-Javadoc)
      * @see org.apereo.portal.utils.cache.CacheFactory#getCache(java.lang.String)
      */
+    @Override
     @SuppressWarnings("unchecked")
     public <K extends Serializable, V> Map<K, V> getCache(String cacheName)
             throws IllegalArgumentException {

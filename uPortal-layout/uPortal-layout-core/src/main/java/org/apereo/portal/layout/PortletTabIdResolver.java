@@ -27,7 +27,6 @@ import org.w3c.dom.Node;
  * introspection (~0.1ms), than XPath queries (0-60ms <a
  * href="http://stackoverflow.com/questions/6340802/java-xpath-apache-jaxp-implementation-performance">
  * without optimization</a>).
- *
  */
 public class PortletTabIdResolver implements INodeIdResolver {
 

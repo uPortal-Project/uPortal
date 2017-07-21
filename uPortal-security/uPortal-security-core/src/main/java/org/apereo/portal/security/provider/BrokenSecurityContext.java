@@ -28,7 +28,6 @@ import org.apereo.portal.security.PortalSecurityException;
  *
  * <p>This class is a descendent of edu.yale.its.tp.portal.security.BrokenSecurityContext, which was
  * distributed in the Yale CAS uPortal security provider module version 3.0.0.
- *
  */
 public class BrokenSecurityContext extends ChainingSecurityContext {
 
@@ -41,11 +40,13 @@ public class BrokenSecurityContext extends ChainingSecurityContext {
         super();
     }
 
+    @Override
     public int getAuthType() {
         return BROKEN_AUTH_TYPE;
     }
 
-    public void authenticate() throws PortalSecurityException {
+    @Override
+    public synchronized void authenticate() throws PortalSecurityException {
         if (log.isTraceEnabled()) {
             log.trace("entering authenticate()");
         }
@@ -57,6 +58,7 @@ public class BrokenSecurityContext extends ChainingSecurityContext {
         return;
     }
 
+    @Override
     public String toString() {
         StringBuffer sb = new StringBuffer();
         sb.append(this.getClass().getName());

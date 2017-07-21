@@ -30,7 +30,6 @@ import java.util.WeakHashMap;
  * The references kept the the ThreadLocal instances is done using a weak set so this tracking
  * subclass will not cause leaks by holding on to thread local instances that are no longer
  * referenced.
- *
  */
 public class TrackingThreadLocal<T> extends ThreadLocal<T> {
     @SuppressWarnings("unchecked")

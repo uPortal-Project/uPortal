@@ -17,10 +17,7 @@ package org.apereo.portal.rendering;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Wraps another {@link PipelineComponent}
- *
- */
+/** Wraps another {@link PipelineComponent} */
 public abstract class PipelineComponentWrapper<R, E> implements PipelineComponent<R, E> {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 

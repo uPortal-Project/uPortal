@@ -19,10 +19,7 @@ import org.apereo.portal.concurrency.FunctionWithoutResult;
 import org.apereo.portal.events.PortalEvent;
 import org.joda.time.DateTime;
 
-/**
- * Persists, retrieves and deletes portal events from a persistent store
- *
- */
+/** Persists, retrieves and deletes portal events from a persistent store */
 public interface IPortalEventDao {
     void storePortalEvent(PortalEvent portalEvent);
 

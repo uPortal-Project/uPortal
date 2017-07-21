@@ -79,6 +79,7 @@ public class ClassApplicationEventFilter<E extends ApplicationEvent>
         }
     }
 
+    @Override
     public void afterPropertiesSet() throws Exception {
         //Figure out the generic type's Class, cribbed from SmartApplicationListener
         Class<?> typeArg =

@@ -36,10 +36,7 @@ import org.springframework.beans.factory.annotation.Required;
 import org.springframework.oxm.Marshaller;
 import org.springframework.oxm.XmlMappingException;
 
-/**
- * Base class used for exporting DOM4j data
- *
- */
+/** Base class used for exporting DOM4j data */
 public abstract class AbstractDom4jExporter
         implements IDataExporter<Tuple<String, Element>>, Marshaller {
     protected final Logger logger = LoggerFactory.getLogger(getClass());

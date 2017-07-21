@@ -40,7 +40,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 /**
  * Simple servlet to handle user logout. When a user logs out, their session gets invalidated and
  * they are returned to the guest page.
- *
  */
 @Controller
 @RequestMapping("/Logout")

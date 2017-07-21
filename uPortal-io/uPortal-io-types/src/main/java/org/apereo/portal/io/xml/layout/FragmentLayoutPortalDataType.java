@@ -20,10 +20,7 @@ import javax.xml.namespace.QName;
 import org.apereo.portal.io.xml.AbstractPortalDataType;
 import org.apereo.portal.io.xml.PortalDataKey;
 
-/**
- * Describes a fragment owner's layout in the portal
- *
- */
+/** Describes a fragment owner's layout in the portal */
 public class FragmentLayoutPortalDataType extends AbstractPortalDataType {
     public static final QName LEGACY_LAYOUT_QNAME = new QName("fragment-layout");
 

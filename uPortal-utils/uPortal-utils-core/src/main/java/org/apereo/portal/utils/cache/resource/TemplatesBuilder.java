@@ -33,10 +33,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 
-/**
- * Parses the provided input stream into a {@link Templates} object.
- *
- */
+/** Parses the provided input stream into a {@link Templates} object. */
 @Service
 public class TemplatesBuilder implements Loader<Templates>, ResourceLoaderAware {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());

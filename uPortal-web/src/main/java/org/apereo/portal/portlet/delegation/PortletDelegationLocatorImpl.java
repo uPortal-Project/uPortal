@@ -35,8 +35,7 @@ import org.apereo.portal.url.IPortalUrlProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-/**
- */
+/** */
 @Service
 public class PortletDelegationLocatorImpl implements PortletDelegationLocator {
     private IPortletDefinitionRegistry portletDefinitionRegistry;

@@ -16,10 +16,7 @@ package org.apereo.portal.events.aggr;
 
 import org.apereo.portal.events.aggr.groups.AggregatedGroupMapping;
 
-/**
- * Basic impl of {@link BaseAggregationKey}
- *
- */
+/** Basic impl of {@link BaseAggregationKey} */
 public abstract class BaseAggregationKeyImpl implements BaseAggregationKey {
     private static final long serialVersionUID = 1L;
 

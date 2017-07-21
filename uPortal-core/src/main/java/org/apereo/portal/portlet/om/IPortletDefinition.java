@@ -21,10 +21,7 @@ import java.util.Set;
 import org.apereo.portal.IBasicEntity;
 import org.apereo.portal.io.xml.IPortalData;
 
-/**
- * A portlet definition is equivalent to a published ChannelDefinition.
- *
- */
+/** A portlet definition is equivalent to a published ChannelDefinition. */
 public interface IPortletDefinition extends IBasicEntity, IPortalData {
 
     String EDITABLE_PARAM = "editable";

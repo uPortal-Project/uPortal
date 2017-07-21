@@ -27,10 +27,7 @@ import org.apache.commons.lang.Validate;
 import org.apereo.portal.dao.usertype.FunctionalNameType;
 import org.apereo.portal.portlet.om.IPortletWindowId;
 
-/**
- * Constructor assumes that Map passed in is completely immutable
- *
- */
+/** Constructor assumes that Map passed in is completely immutable */
 public abstract class PortletExecutionEvent extends PortalEvent {
     private static final long serialVersionUID = 1L;
 

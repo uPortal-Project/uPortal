@@ -40,10 +40,7 @@ import org.apereo.portal.url.IPortletUrlBuilder;
 import org.apereo.portal.url.UrlType;
 import org.springframework.beans.factory.annotation.Autowired;
 
-/**
- * The search service that captures marketplace entries.
- *
- */
+/** The search service that captures marketplace entries. */
 public class MarketplaceSearchService implements IPortalSearchService {
 
     private IPortletDefinitionRegistry portletDefinitionRegistry;

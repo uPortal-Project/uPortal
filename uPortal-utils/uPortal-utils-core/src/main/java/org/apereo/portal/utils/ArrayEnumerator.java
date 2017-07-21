@@ -17,10 +17,7 @@ package org.apereo.portal.utils;
 import java.util.Enumeration;
 import java.util.NoSuchElementException;
 
-/**
- * Implements the Enumeration interface over an Array
- *
- */
+/** Implements the Enumeration interface over an Array */
 public class ArrayEnumerator<T> implements Enumeration<T> {
     private final T[] array;
     private int index;

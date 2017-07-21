@@ -33,7 +33,6 @@ import org.springframework.web.portlet.bind.annotation.ResourceMapping;
  * selection, exact entity must be retrieved using {@link #getEntity(String, String)} in order to
  * fill in the form. Upon form sumission, another AJAX call submits form values and {@link
  * #postTranslation(String, String, String)} updates the message.
- *
  */
 @Controller
 @RequestMapping(value = "VIEW", params = "entity=portlet")

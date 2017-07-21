@@ -25,7 +25,6 @@ import org.springframework.web.context.request.WebRequest;
  * language. Strings are assumed to be a potential mixture of SpEL expressions contained inside a ${
  * } and text string content. For example, a portal-relative URL path might be formatted as
  * ${request.contextPath}/my/path.
- *
  */
 public interface IPortalSpELService {
 

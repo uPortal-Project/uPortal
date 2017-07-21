@@ -20,10 +20,7 @@ import org.apereo.portal.portlet.om.IPortletEntity;
 import org.apereo.portal.portlet.om.IPortletEntityId;
 import org.apereo.portal.security.IPerson;
 
-/**
- * Provides APIs for creating, storing and retrieving {@link IPortletEntity} objects.
- *
- */
+/** Provides APIs for creating, storing and retrieving {@link IPortletEntity} objects. */
 public interface IPortletEntityDao {
     /**
      * Creates, initializes and persists a new {@link IPortletEntity} based on the specified {@link

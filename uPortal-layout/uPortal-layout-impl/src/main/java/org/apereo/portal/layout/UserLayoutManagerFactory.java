@@ -23,9 +23,7 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.stereotype.Component;
 
-/**
- * A factory class for obtaining {@link IUserLayoutManager} implementations.
- */
+/** A factory class for obtaining {@link IUserLayoutManager} implementations. */
 @Component
 public class UserLayoutManagerFactory implements BeanFactoryAware {
     public static final String USER_LAYOUT_MANAGER_PROTOTYPE_BEAN_NAME = "userLayoutManager";

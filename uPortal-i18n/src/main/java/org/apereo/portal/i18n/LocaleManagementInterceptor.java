@@ -24,7 +24,6 @@ import org.springframework.web.servlet.support.RequestContextUtils;
  * This interceptor sets response locale to the value determined by localeResolver. This allows to
  * use <code>response.getLocale()</code> in order to determine the portal locale whenever request
  * object is available.
- *
  */
 public class LocaleManagementInterceptor extends HandlerInterceptorAdapter {
 

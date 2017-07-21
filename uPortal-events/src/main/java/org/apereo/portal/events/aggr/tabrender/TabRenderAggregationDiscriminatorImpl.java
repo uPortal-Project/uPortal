@@ -19,10 +19,7 @@ import org.apereo.portal.events.aggr.groups.AggregatedGroupMapping;
 import org.apereo.portal.events.aggr.tabs.AggregatedTabMapping;
 import org.apereo.portal.utils.ComparableExtractingComparator;
 
-/**
- * Basic impl of {@link org.apereo.portal.events.aggr.tabrender.TabRenderAggregationKey}
- *
- */
+/** Basic impl of {@link org.apereo.portal.events.aggr.tabrender.TabRenderAggregationKey} */
 public final class TabRenderAggregationDiscriminatorImpl
         extends BaseGroupedAggregationDiscriminatorImpl
         implements TabRenderAggregationDiscriminator {

@@ -22,8 +22,7 @@ import javax.portlet.filter.FilterChain;
 import javax.portlet.filter.FilterConfig;
 import javax.portlet.filter.ResourceFilter;
 
-/**
- */
+/** */
 public class MockResourceFilter implements ResourceFilter {
 
     /* (non-Javadoc)

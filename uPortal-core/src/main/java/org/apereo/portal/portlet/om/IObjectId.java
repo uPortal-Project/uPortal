@@ -16,8 +16,7 @@ package org.apereo.portal.portlet.om;
 
 import java.io.Serializable;
 
-/**
- */
+/** */
 public interface IObjectId extends Serializable {
     /**
      * Returns the unique string ID of a object

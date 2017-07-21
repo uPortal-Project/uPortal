@@ -18,10 +18,7 @@ import java.io.Serializable;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.portal.i18n.LocaleManager;
 
-/**
- * A user profile associates a user layout with a structure and theme stylesheet.
- *
- */
+/** A user profile associates a user layout with a structure and theme stylesheet. */
 public class UserProfile implements Serializable, IUserProfile {
     private static final long serialVersionUID = 1L;
 

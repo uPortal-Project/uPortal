@@ -16,10 +16,7 @@ package org.apereo.portal.io.xml;
 
 import org.apache.commons.lang.Validate;
 
-/**
- * Simple {@link IPortalData} impl that just uses string fields
- *
- */
+/** Simple {@link IPortalData} impl that just uses string fields */
 public class SimpleStringPortalData implements IPortalData {
     private final String dataId;
     private final String dataTitle;

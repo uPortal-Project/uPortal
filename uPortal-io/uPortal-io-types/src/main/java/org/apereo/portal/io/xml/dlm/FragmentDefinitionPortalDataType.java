@@ -20,10 +20,7 @@ import javax.xml.namespace.QName;
 import org.apereo.portal.io.xml.AbstractPortalDataType;
 import org.apereo.portal.io.xml.PortalDataKey;
 
-/**
- * Describes an entity-type data type in the portal
- *
- */
+/** Describes an entity-type data type in the portal */
 public class FragmentDefinitionPortalDataType extends AbstractPortalDataType {
     public static final QName LEGACY_ENTITY_TYPE_QNAME = new QName("fragment-definition");
 

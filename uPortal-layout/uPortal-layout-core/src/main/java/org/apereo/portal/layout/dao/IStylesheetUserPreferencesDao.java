@@ -20,10 +20,7 @@ import org.apereo.portal.layout.om.IStylesheetDescriptor;
 import org.apereo.portal.layout.om.IStylesheetUserPreferences;
 import org.apereo.portal.security.IPerson;
 
-/**
- * Describes CRUD operations on {@link IStylesheetUserPreferences}
- *
- */
+/** Describes CRUD operations on {@link IStylesheetUserPreferences} */
 public interface IStylesheetUserPreferencesDao {
     public IStylesheetUserPreferences createStylesheetUserPreferences(
             IStylesheetDescriptor stylesheetDescriptor, IPerson person, IUserProfile profile);

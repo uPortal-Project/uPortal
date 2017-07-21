@@ -33,7 +33,6 @@ import javax.servlet.http.HttpSession;
 /**
  * Wrapper for a {@link HttpServletRequest} that makes the request inaccessible once the worker has
  * been canceled.
- *
  */
 public class GuardingHttpServletRequest extends HttpServletRequestWrapper {
     private final AtomicBoolean canceled;

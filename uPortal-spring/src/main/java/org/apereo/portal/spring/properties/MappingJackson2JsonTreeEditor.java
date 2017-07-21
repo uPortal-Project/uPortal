@@ -21,10 +21,7 @@ import java.io.IOException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 
-/**
- * Converts to/from the generic {@link JsonNode} API
- *
- */
+/** Converts to/from the generic {@link JsonNode} API */
 public class MappingJackson2JsonTreeEditor extends PropertyEditorSupport {
     private ObjectMapper objectMapper = new ObjectMapper();
 

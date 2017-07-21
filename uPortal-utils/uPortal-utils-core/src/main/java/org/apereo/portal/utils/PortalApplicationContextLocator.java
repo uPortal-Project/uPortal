@@ -41,7 +41,6 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
  * via the {@link #getWebApplicationContext()} and {@link #getRequiredWebApplicationContext()}.
  * These methods are deprecated as any code that requires a {@link WebApplicationContext} should
  * either be refactored as a Spring managed bean or have access to the {@link ServletContext}
- *
  */
 public class PortalApplicationContextLocator implements ServletContextListener {
     private static String LOGGER_NAME = PortalApplicationContextLocator.class.getName();

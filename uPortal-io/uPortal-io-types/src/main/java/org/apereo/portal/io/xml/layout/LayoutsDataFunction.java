@@ -33,10 +33,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
-/**
- * Lists each fragment owner in the portal
- *
- */
+/** Lists each fragment owner in the portal */
 public class LayoutsDataFunction
         implements Function<IPortalDataType, Iterable<? extends IPortalData>>, InitializingBean {
     private ConfigurationLoader configurationLoader;

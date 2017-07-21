@@ -23,10 +23,7 @@ import org.apereo.portal.security.IPerson;
 import org.jasig.services.persondir.IPersonAttributeDao;
 import org.jasig.services.persondir.support.ComplexStubPersonAttributeDao;
 
-/**
- * Testcase for PersonDirNameFinder
- *
- */
+/** Testcase for PersonDirNameFinder */
 public class PersonDirNameFinderTest extends TestCase {
 
     /** Test PersonDirNameFinder instance backed by a stub IPersonAttributeDao. */

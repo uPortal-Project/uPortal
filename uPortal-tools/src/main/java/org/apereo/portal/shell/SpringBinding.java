@@ -20,8 +20,7 @@ import java.util.Map;
 import java.util.Set;
 import org.springframework.context.ApplicationContext;
 
-/**
- */
+/** */
 public class SpringBinding extends Binding implements Map<String, Object> {
     private final ApplicationContext context;
 

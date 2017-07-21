@@ -16,8 +16,7 @@ package org.apereo.portal.xml.stream;
 
 import javax.xml.stream.XMLStreamConstants;
 
-/**
- */
+/** */
 public class XMLStreamConstantsUtils {
     /** Get the human readable event name for the numeric event id */
     public static String getEventName(int eventId) {

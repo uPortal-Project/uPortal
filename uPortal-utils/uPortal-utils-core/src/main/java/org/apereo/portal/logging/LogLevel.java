@@ -16,10 +16,7 @@ package org.apereo.portal.logging;
 
 import org.slf4j.Logger;
 
-/**
- * LogLevel
- *
- */
+/** LogLevel */
 public enum LogLevel {
     TRACE {
         @Override

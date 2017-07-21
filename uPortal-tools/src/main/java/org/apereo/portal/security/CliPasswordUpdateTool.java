@@ -30,7 +30,6 @@ import org.springframework.transaction.annotation.Transactional;
  * A utility class that demonstrates changing and locking md5 passwords in the UP_PERSON_DIR table.
  * The program accepts two optional flags <code>-c</code> causes the user to be created if he/she
  * doesn't exist. The <code>-l</code> flag causes the specified user's account to be locked.
- *
  */
 @Service("passwordUpdateTool")
 public class CliPasswordUpdateTool implements IPasswordUpdateTool {

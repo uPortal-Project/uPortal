@@ -44,7 +44,6 @@ import org.w3c.dom.Element;
  *   <li>Layout node's locale preferences
  *   <li>User profile's locale preferences
  * </ol>
- *
  */
 public class LocaleManager implements Serializable {
 
@@ -349,6 +348,7 @@ public class LocaleManager implements Serializable {
         return doc;
     }
 
+    @Override
     public String toString() {
         StringBuffer sb = new StringBuffer(1024);
         sb.append("LocaleManager's locales").append("\n");

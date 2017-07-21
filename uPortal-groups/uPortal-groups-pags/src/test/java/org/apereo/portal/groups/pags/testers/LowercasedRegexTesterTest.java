@@ -22,8 +22,10 @@ public class LowercasedRegexTesterTest {
 
     @Test
     public void testRegexPatterns() {
-        LowercasedRegexTester tester = new LowercasedRegexTester(
-                new TestPersonAttributesGroupTestDefinition("fakeAttribute", "^02([a-d])*"));
+        LowercasedRegexTester tester =
+                new LowercasedRegexTester(
+                        new TestPersonAttributesGroupTestDefinition(
+                                "fakeAttribute", "^02([a-d])*"));
         Assert.assertTrue(tester.test("02A"));
         Assert.assertTrue(tester.test("02ABCD"));
         Assert.assertFalse(tester.test("A02D"));

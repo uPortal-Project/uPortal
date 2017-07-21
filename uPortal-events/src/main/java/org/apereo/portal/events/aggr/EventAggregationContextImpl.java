@@ -19,10 +19,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Basic context impl
- *
- */
+/** Basic context impl */
 class EventAggregationContextImpl implements EventAggregationContext {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 

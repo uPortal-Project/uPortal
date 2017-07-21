@@ -27,8 +27,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.web.context.request.WebRequest;
 
-/**
- */
+/** */
 public class PortalSpELServiceImplTest {
 
     PortalSpELServiceImpl provider;

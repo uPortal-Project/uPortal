@@ -25,10 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-/**
- * Injects a parameter marking if the current user is impersonating another using the ID Swapper
- *
- */
+/** Injects a parameter marking if the current user is impersonating another using the ID Swapper */
 public class UserImpersonationTransformerConfigurationSource
         implements TransformerConfigurationSource {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());

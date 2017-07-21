@@ -30,7 +30,6 @@ import org.apereo.portal.portlet.om.IPortletWindowId;
 /**
  * Implementation of the {@link IPortletWindow} that is backed by a {@link PortletWindowData}
  * object. Tracks changes both locally and in the backing object.
- *
  */
 class PortletWindowImpl implements IPortletWindow, PortletWindow {
 

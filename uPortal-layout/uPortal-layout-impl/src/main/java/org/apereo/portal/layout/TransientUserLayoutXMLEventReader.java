@@ -30,10 +30,7 @@ import org.apereo.portal.xml.stream.InjectingXMLEventReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * XMLEventReader that can return dynamically created content to add into the document.
- *
- */
+/** XMLEventReader that can return dynamically created content to add into the document. */
 public class TransientUserLayoutXMLEventReader extends InjectingXMLEventReader {
     private static final XMLEventFactory EVENT_FACTORY = XMLEventFactory.newFactory();
 

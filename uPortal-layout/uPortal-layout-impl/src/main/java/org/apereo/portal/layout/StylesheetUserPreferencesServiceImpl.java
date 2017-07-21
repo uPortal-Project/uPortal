@@ -47,10 +47,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.util.WebUtils;
 
-/**
- * Handles retrieving and storing the various scopes of stylesheet user preference data.
- *
- */
+/** Handles retrieving and storing the various scopes of stylesheet user preference data. */
 @Service
 public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPreferencesService {
     private static final String OUTPUT_PROPERTIES_KEY =
@@ -119,6 +116,7 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
                             + "]";
         }
 
+        @Override
         public String toString() {
             return this.str;
         }
@@ -956,6 +954,7 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
 
     @Transactional
     @Override
+    @SuppressWarnings("FallThrough")
     public String removeLayoutAttribute(
             HttpServletRequest request, PreferencesScope prefScope, String nodeId, String name) {
         final StylesheetPreferencesKey stylesheetPreferencesKey =

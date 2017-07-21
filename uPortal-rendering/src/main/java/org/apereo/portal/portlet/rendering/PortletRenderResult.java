@@ -16,10 +16,7 @@ package org.apereo.portal.portlet.rendering;
 
 import java.io.Serializable;
 
-/**
- * The result of rendering a portlet
- *
- */
+/** The result of rendering a portlet */
 public class PortletRenderResult implements Serializable {
     private static final long serialVersionUID = 1L;
 

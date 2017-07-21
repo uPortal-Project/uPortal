@@ -35,8 +35,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-/**
- */
+/** */
 @Service("portalInfoProvider")
 public class PortalInfoProviderImpl implements IPortalInfoProvider, ReadWriteCallback<String> {
     protected final Logger logger = LoggerFactory.getLogger(getClass());

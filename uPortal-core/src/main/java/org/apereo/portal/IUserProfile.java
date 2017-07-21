@@ -16,8 +16,7 @@ package org.apereo.portal;
 
 import org.apereo.portal.i18n.LocaleManager;
 
-/**
- */
+/** */
 public interface IUserProfile {
 
     public static final String USER_PROFILE = "UserProfile";

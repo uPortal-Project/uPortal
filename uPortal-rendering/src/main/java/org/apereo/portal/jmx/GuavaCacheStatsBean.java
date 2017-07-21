@@ -18,10 +18,7 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheStats;
 import org.apereo.portal.character.stream.events.CharacterDataEventImpl;
 
-/**
- * Base bean to expose a {@link CacheStats} object
- *
- */
+/** Base bean to expose a {@link CacheStats} object */
 public abstract class GuavaCacheStatsBean {
     private volatile Cache<?, ?> cache = null;
     private volatile CacheStats cacheStats = null;

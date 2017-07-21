@@ -69,7 +69,6 @@ import org.apache.pluto.container.driver.AdministrativeRequestListener;
  *         <td valign="top">false</td>
  *     </tr>
  * </table>
- *
  */
 public class AdministrativeRequestListenerController
         implements org.apache.pluto.container.driver.AdministrativeRequestListener {
@@ -122,6 +121,7 @@ public class AdministrativeRequestListenerController
      *     org.apache.pluto.spi.optional.AdministrativeRequestListener#administer(javax.portlet.PortletRequest,
      *     javax.portlet.PortletResponse)
      */
+    @Override
     public void administer(PortletRequest request, PortletResponse response) {
         final String listenerKey = (String) request.getAttribute(this.listenerKeyAttribute);
         if (this.logger.isDebugEnabled()) {

@@ -39,7 +39,6 @@ import org.apereo.portal.utils.Populator;
  * pre-computes the hashCode. <br>
  * Tags can be added to a key which are used with the {@link TaggedCacheEntry} facilities. These
  * tags ARE NOT included in CacheKey comparison.
- *
  */
 public final class CacheKey implements Serializable, TaggedCacheEntry {
     private static final long serialVersionUID = 1L;
@@ -106,6 +105,7 @@ public final class CacheKey implements Serializable, TaggedCacheEntry {
             return this;
         }
 
+        @Override
         public CacheKeyBuilder<K, V> put(K k, V v) {
             checkKeyMap();
 
@@ -122,6 +122,7 @@ public final class CacheKey implements Serializable, TaggedCacheEntry {
             return this;
         }
 
+        @Override
         public CacheKeyBuilder<K, V> putAll(Map<? extends K, ? extends V> vm) {
             checkKeyMap();
 

@@ -65,6 +65,7 @@ public class PortalEventPurgerImpl implements PortalEventPurger {
         this.purgeDelay = purgeDelay;
     }
 
+    @Override
     @AggrEventsTransactional
     public EventProcessingResult doPurgeRawEvents() {
         if (!this.clusterLockService.isLockOwner(PURGE_RAW_EVENTS_LOCK_NAME)) {

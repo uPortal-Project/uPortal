@@ -40,10 +40,7 @@ import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionOperations;
 import org.springframework.transaction.support.TransactionTemplate;
 
-/**
- * Database implementation of locale storage interface.
- *
- */
+/** Database implementation of locale storage interface. */
 @Repository("localeStore")
 public class RDBMLocaleStore implements ILocaleStore {
 

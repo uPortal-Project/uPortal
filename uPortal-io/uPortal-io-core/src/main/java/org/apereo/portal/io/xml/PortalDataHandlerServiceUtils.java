@@ -25,8 +25,7 @@ import org.apereo.portal.utils.TableFormatter;
 import org.apereo.portal.utils.TableFormatter.TableEntry;
 import org.slf4j.Logger;
 
-/**
- */
+/** */
 public final class PortalDataHandlerServiceUtils {
     private PortalDataHandlerServiceUtils() {}
 

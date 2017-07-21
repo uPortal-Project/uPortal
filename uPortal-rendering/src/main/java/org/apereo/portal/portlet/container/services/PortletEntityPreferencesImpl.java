@@ -38,10 +38,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionOperations;
 
-/**
- * Preferences impl that manipulates the portlet entity level preference data
- *
- */
+/** Preferences impl that manipulates the portlet entity level preference data */
 public class PortletEntityPreferencesImpl extends AbstractPortletPreferencesImpl<IPortletEntity> {
     private final PortletRequestContext portletRequestContext;
     private final IPortletEntityId portletEntityId;

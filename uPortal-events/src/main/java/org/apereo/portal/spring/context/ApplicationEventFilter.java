@@ -16,10 +16,7 @@ package org.apereo.portal.spring.context;
 
 import org.springframework.context.ApplicationEvent;
 
-/**
- * Filter for determining if an {@link ApplicationEvent} is supported
- *
- */
+/** Filter for determining if an {@link ApplicationEvent} is supported */
 public interface ApplicationEventFilter<E extends ApplicationEvent> {
     /** @return true if the event is supported, false if not */
     boolean supports(E event);

@@ -32,9 +32,7 @@ import org.apereo.portal.groups.pags.testers.ValueMissingTester;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.provider.PersonImpl;
 
-/**
- * Tests the PAGS testers.
- */
+/** Tests the PAGS testers. */
 public class PAGSTest extends TestCase {
     private static final Log LOG = LogFactory.getLog(PAGSTest.class);
 
@@ -144,11 +142,22 @@ public class PAGSTest extends TestCase {
         msg = "Testing IPerson " + newPerson;
         print(msg);
 
-        IPersonTester tester1 = new StringEqualsTester(new TestPersonAttributesGroupTestDefinition(key1, randomStrings[0]));
-        IPersonTester tester2 = new StringEqualsTester(new TestPersonAttributesGroupTestDefinition(key2, randomStrings[1]));
-        IPersonTester tester3 = new StringEqualsTester(new TestPersonAttributesGroupTestDefinition(key3, randomStrings[testVectorSize - 1]));
-        IPersonTester tester4 = new StringEqualsTester(new TestPersonAttributesGroupTestDefinition(key3, randomStrings[0] + "x"));
-        IPersonTester tester5 = new StringEqualsTester(new TestPersonAttributesGroupTestDefinition(missingKey, randomStrings[0]));
+        IPersonTester tester1 =
+                new StringEqualsTester(
+                        new TestPersonAttributesGroupTestDefinition(key1, randomStrings[0]));
+        IPersonTester tester2 =
+                new StringEqualsTester(
+                        new TestPersonAttributesGroupTestDefinition(key2, randomStrings[1]));
+        IPersonTester tester3 =
+                new StringEqualsTester(
+                        new TestPersonAttributesGroupTestDefinition(
+                                key3, randomStrings[testVectorSize - 1]));
+        IPersonTester tester4 =
+                new StringEqualsTester(
+                        new TestPersonAttributesGroupTestDefinition(key3, randomStrings[0] + "x"));
+        IPersonTester tester5 =
+                new StringEqualsTester(
+                        new TestPersonAttributesGroupTestDefinition(missingKey, randomStrings[0]));
 
         msg = "Testing " + tester1;
         assertTrue(msg, tester1.test(newPerson));
@@ -182,8 +191,12 @@ public class PAGSTest extends TestCase {
         print(msg);
 
         String testKey = randomStrings[0].toLowerCase();
-        IPersonTester tester1 = new StringEqualsIgnoreCaseTester(new TestPersonAttributesGroupTestDefinition(key1, testKey));
-        IPersonTester tester2 = new StringEqualsIgnoreCaseTester(new TestPersonAttributesGroupTestDefinition(key2, randomStrings[1]));
+        IPersonTester tester1 =
+                new StringEqualsIgnoreCaseTester(
+                        new TestPersonAttributesGroupTestDefinition(key1, testKey));
+        IPersonTester tester2 =
+                new StringEqualsIgnoreCaseTester(
+                        new TestPersonAttributesGroupTestDefinition(key2, randomStrings[1]));
 
         msg = "Testing " + tester1;
         assertTrue(msg, tester1.test(newPerson));
@@ -210,10 +223,18 @@ public class PAGSTest extends TestCase {
         msg = "Testing IPerson " + newPerson;
         print(msg);
 
-        IPersonTester tester1 = new IntegerEQTester(new TestPersonAttributesGroupTestDefinition(key1, randomIntStrings[0]));
-        IPersonTester tester2 = new IntegerEQTester(new TestPersonAttributesGroupTestDefinition(key2, randomIntStrings[1]));
-        IPersonTester tester3 = new IntegerEQTester(new TestPersonAttributesGroupTestDefinition(key3, randomIntStrings[testVectorSize - 1]));
-        IPersonTester tester4 = new IntegerEQTester(new TestPersonAttributesGroupTestDefinition(key3, "0"));
+        IPersonTester tester1 =
+                new IntegerEQTester(
+                        new TestPersonAttributesGroupTestDefinition(key1, randomIntStrings[0]));
+        IPersonTester tester2 =
+                new IntegerEQTester(
+                        new TestPersonAttributesGroupTestDefinition(key2, randomIntStrings[1]));
+        IPersonTester tester3 =
+                new IntegerEQTester(
+                        new TestPersonAttributesGroupTestDefinition(
+                                key3, randomIntStrings[testVectorSize - 1]));
+        IPersonTester tester4 =
+                new IntegerEQTester(new TestPersonAttributesGroupTestDefinition(key3, "0"));
 
         msg = "Testing " + tester1;
         assertTrue(msg, tester1.test(newPerson));
@@ -246,15 +267,22 @@ public class PAGSTest extends TestCase {
         print(msg);
 
         // test value == attribute value.  Should answer false.
-        IPersonTester tester1 = new IntegerGTTester(new TestPersonAttributesGroupTestDefinition(key1, randomIntStrings[0]));
+        IPersonTester tester1 =
+                new IntegerGTTester(
+                        new TestPersonAttributesGroupTestDefinition(key1, randomIntStrings[0]));
         // test value < attribute value.  Should answer true.
-        IPersonTester tester2 = new IntegerGTTester(new TestPersonAttributesGroupTestDefinition(key2, "0"));
+        IPersonTester tester2 =
+                new IntegerGTTester(new TestPersonAttributesGroupTestDefinition(key2, "0"));
         // test value > any attribute value.  Should answer false.
-        IPersonTester tester3 = new IntegerGTTester(new TestPersonAttributesGroupTestDefinition(key3, INTEGER_MAX));
+        IPersonTester tester3 =
+                new IntegerGTTester(new TestPersonAttributesGroupTestDefinition(key3, INTEGER_MAX));
         // test value < any attribute value.  Should answer true.
-        IPersonTester tester4 = new IntegerGTTester(new TestPersonAttributesGroupTestDefinition(key3, "" + INTEGER_MIN));
+        IPersonTester tester4 =
+                new IntegerGTTester(
+                        new TestPersonAttributesGroupTestDefinition(key3, "" + INTEGER_MIN));
         // attribute value not present.  Should answer false.
-        IPersonTester tester5 = new IntegerGTTester(new TestPersonAttributesGroupTestDefinition(missingKey, "0"));
+        IPersonTester tester5 =
+                new IntegerGTTester(new TestPersonAttributesGroupTestDefinition(missingKey, "0"));
 
         msg = "Testing " + tester1;
         assertFalse(msg, tester1.test(newPerson));
@@ -289,15 +317,24 @@ public class PAGSTest extends TestCase {
         print(msg);
 
         // test value == attribute value.  Should answer false.
-        IPersonTester tester1 = new IntegerLTTester(new TestPersonAttributesGroupTestDefinition(key1, randomIntStrings[0]));
+        IPersonTester tester1 =
+                new IntegerLTTester(
+                        new TestPersonAttributesGroupTestDefinition(key1, randomIntStrings[0]));
         // test value < attribute value.  Should answer false.
-        IPersonTester tester2 = new IntegerLTTester(new TestPersonAttributesGroupTestDefinition(key2, "0"));
+        IPersonTester tester2 =
+                new IntegerLTTester(new TestPersonAttributesGroupTestDefinition(key2, "0"));
         // test value > any attribute value.  Should answer true.
-        IPersonTester tester3 = new IntegerLTTester(new TestPersonAttributesGroupTestDefinition(key3, "" + INTEGER_MAX));
+        IPersonTester tester3 =
+                new IntegerLTTester(
+                        new TestPersonAttributesGroupTestDefinition(key3, "" + INTEGER_MAX));
         // test value < any attribute value.  Should answer false.
-        IPersonTester tester4 = new IntegerLTTester(new TestPersonAttributesGroupTestDefinition(key3, "" + INTEGER_MIN));
+        IPersonTester tester4 =
+                new IntegerLTTester(
+                        new TestPersonAttributesGroupTestDefinition(key3, "" + INTEGER_MIN));
         // test value > attribute value.  Should answer true.
-        IPersonTester tester5 = new IntegerLTTester(new TestPersonAttributesGroupTestDefinition(key1, "" + INTEGER_MAX));
+        IPersonTester tester5 =
+                new IntegerLTTester(
+                        new TestPersonAttributesGroupTestDefinition(key1, "" + INTEGER_MAX));
 
         msg = "Testing " + tester1;
         assertFalse(msg, tester1.test(newPerson));
@@ -332,15 +369,24 @@ public class PAGSTest extends TestCase {
         print(msg);
 
         // test value == attribute value.  Should answer true.
-        IPersonTester tester1 = new IntegerGETester(new TestPersonAttributesGroupTestDefinition(key1, randomIntStrings[0]));
+        IPersonTester tester1 =
+                new IntegerGETester(
+                        new TestPersonAttributesGroupTestDefinition(key1, randomIntStrings[0]));
         // test value < attribute value.  Should answer true.
-        IPersonTester tester2 = new IntegerGETester(new TestPersonAttributesGroupTestDefinition(key2, "0"));
+        IPersonTester tester2 =
+                new IntegerGETester(new TestPersonAttributesGroupTestDefinition(key2, "0"));
         // test value > any attribute value.  Should answer false.
-        IPersonTester tester3 = new IntegerGETester(new TestPersonAttributesGroupTestDefinition(key3, "" + INTEGER_MAX));
+        IPersonTester tester3 =
+                new IntegerGETester(
+                        new TestPersonAttributesGroupTestDefinition(key3, "" + INTEGER_MAX));
         // test value < any attribute value.  Should answer true.
-        IPersonTester tester4 = new IntegerGETester(new TestPersonAttributesGroupTestDefinition(key3, "" + INTEGER_MIN));
+        IPersonTester tester4 =
+                new IntegerGETester(
+                        new TestPersonAttributesGroupTestDefinition(key3, "" + INTEGER_MIN));
         // test value > attribute value.  Should answer false.
-        IPersonTester tester5 = new IntegerGETester(new TestPersonAttributesGroupTestDefinition(key1, "" + INTEGER_MAX));
+        IPersonTester tester5 =
+                new IntegerGETester(
+                        new TestPersonAttributesGroupTestDefinition(key1, "" + INTEGER_MAX));
 
         msg = "Testing " + tester1;
         assertTrue(msg, tester1.test(newPerson));
@@ -372,15 +418,24 @@ public class PAGSTest extends TestCase {
         newPerson.setAttribute(key3, intStringVector);
 
         // test value == attribute value.  Should answer true.
-        IPersonTester tester1 = new IntegerLETester(new TestPersonAttributesGroupTestDefinition(key1, randomIntStrings[0]));
+        IPersonTester tester1 =
+                new IntegerLETester(
+                        new TestPersonAttributesGroupTestDefinition(key1, randomIntStrings[0]));
         // test value < attribute value.  Should answer false.
-        IPersonTester tester2 = new IntegerLETester(new TestPersonAttributesGroupTestDefinition(key2, "0"));
+        IPersonTester tester2 =
+                new IntegerLETester(new TestPersonAttributesGroupTestDefinition(key2, "0"));
         // test value > any attribute value.  Should answer true.
-        IPersonTester tester3 = new IntegerLETester(new TestPersonAttributesGroupTestDefinition(key3, "" + INTEGER_MAX));
+        IPersonTester tester3 =
+                new IntegerLETester(
+                        new TestPersonAttributesGroupTestDefinition(key3, "" + INTEGER_MAX));
         // test value < any attribute value.  Should answer false.
-        IPersonTester tester4 = new IntegerLETester(new TestPersonAttributesGroupTestDefinition(key3, "" + INTEGER_MIN));
+        IPersonTester tester4 =
+                new IntegerLETester(
+                        new TestPersonAttributesGroupTestDefinition(key3, "" + INTEGER_MIN));
         // test value > attribute value.  Should answer true.
-        IPersonTester tester5 = new IntegerLETester(new TestPersonAttributesGroupTestDefinition(key1, "" + INTEGER_MAX));
+        IPersonTester tester5 =
+                new IntegerLETester(
+                        new TestPersonAttributesGroupTestDefinition(key1, "" + INTEGER_MAX));
 
         msg = "Testing IPerson " + newPerson;
         print(msg);
@@ -418,27 +473,34 @@ public class PAGSTest extends TestCase {
         print(msg);
 
         //  test equals attribute.  Should return true.
-        IPersonTester tester1 = new RegexTester(new TestPersonAttributesGroupTestDefinition(key1, randomStrings[0]));
+        IPersonTester tester1 =
+                new RegexTester(
+                        new TestPersonAttributesGroupTestDefinition(key1, randomStrings[0]));
 
         // test and attribute begin with same String.  Should return true.
         String testValue2 = randomStrings[0].substring(0, 1) + ".*";
-        IPersonTester tester2 = new RegexTester(new TestPersonAttributesGroupTestDefinition(key1, testValue2));
+        IPersonTester tester2 =
+                new RegexTester(new TestPersonAttributesGroupTestDefinition(key1, testValue2));
 
         // test and attribute begin with different String.  Should return false.
         String testValue3 = "^[0]";
-        IPersonTester tester3 = new RegexTester(new TestPersonAttributesGroupTestDefinition(key1, testValue3));
+        IPersonTester tester3 =
+                new RegexTester(new TestPersonAttributesGroupTestDefinition(key1, testValue3));
 
         //  test and attribute end with same String.  Should return true.
         String testValue4 = ".*" + randomStrings[1].substring(randomStrings[1].length() - 1) + "$";
-        IPersonTester tester4 = new RegexTester(new TestPersonAttributesGroupTestDefinition(key2, testValue4));
+        IPersonTester tester4 =
+                new RegexTester(new TestPersonAttributesGroupTestDefinition(key2, testValue4));
 
         // test and attribute end with different String.  Should return false.
         String testValue5 = ".*9$";
-        IPersonTester tester5 = new RegexTester(new TestPersonAttributesGroupTestDefinition(key2, testValue5));
+        IPersonTester tester5 =
+                new RegexTester(new TestPersonAttributesGroupTestDefinition(key2, testValue5));
 
         // test value is same as last String in Vector.  Should return true.
         String testValue6 = "^" + ((String) stringVector.lastElement()) + "$";
-        IPersonTester tester6 = new RegexTester(new TestPersonAttributesGroupTestDefinition(key3, testValue6));
+        IPersonTester tester6 =
+                new RegexTester(new TestPersonAttributesGroupTestDefinition(key3, testValue6));
 
         msg = "Testing " + tester1;
         assertTrue(msg, tester1.test(newPerson));
@@ -475,10 +537,14 @@ public class PAGSTest extends TestCase {
 
         String testKey = randomStrings[0].toLowerCase();
         // These tests should pass since the IPerson attribute exists.
-        IPersonTester tester1 = new ValueExistsTester(new TestPersonAttributesGroupTestDefinition(key1, testKey));
-        IPersonTester tester2 = new ValueExistsTester(new TestPersonAttributesGroupTestDefinition(key2, null));
+        IPersonTester tester1 =
+                new ValueExistsTester(new TestPersonAttributesGroupTestDefinition(key1, testKey));
+        IPersonTester tester2 =
+                new ValueExistsTester(new TestPersonAttributesGroupTestDefinition(key2, null));
         // This test should fail; the IPerson does not have a value for key3.
-        IPersonTester tester3 = new ValueExistsTester(new TestPersonAttributesGroupTestDefinition(key3, new String()));
+        IPersonTester tester3 =
+                new ValueExistsTester(
+                        new TestPersonAttributesGroupTestDefinition(key3, new String()));
 
         msg = "Testing " + tester1;
         assertTrue(msg, tester1.test(newPerson));
@@ -509,11 +575,15 @@ public class PAGSTest extends TestCase {
 
         String testKey = randomStrings[0].toLowerCase();
         // This test should fail since the IPerson attribute exists.
-        IPersonTester tester1 = new ValueMissingTester(new TestPersonAttributesGroupTestDefinition(key1, randomStrings[0]));
+        IPersonTester tester1 =
+                new ValueMissingTester(
+                        new TestPersonAttributesGroupTestDefinition(key1, randomStrings[0]));
         // This test should pass; the attribute is blank.
-        IPersonTester tester2 = new ValueMissingTester(new TestPersonAttributesGroupTestDefinition(key2, testKey));
+        IPersonTester tester2 =
+                new ValueMissingTester(new TestPersonAttributesGroupTestDefinition(key2, testKey));
         // This test should pass; the IPerson does not have a value for key3.
-        IPersonTester tester3 = new ValueMissingTester(new TestPersonAttributesGroupTestDefinition(key3, testKey));
+        IPersonTester tester3 =
+                new ValueMissingTester(new TestPersonAttributesGroupTestDefinition(key3, testKey));
 
         msg = "Testing " + tester1;
         assertFalse(msg, tester1.test(newPerson));

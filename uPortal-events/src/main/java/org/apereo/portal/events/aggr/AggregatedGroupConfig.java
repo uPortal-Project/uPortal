@@ -16,9 +16,6 @@ package org.apereo.portal.events.aggr;
 
 import org.apereo.portal.events.aggr.groups.AggregatedGroupMapping;
 
-/**
- * Configuration of group includes/excludes
- *
- */
+/** Configuration of group includes/excludes */
 public interface AggregatedGroupConfig
         extends BaseAggregatedDimensionConfig<AggregatedGroupMapping> {}

@@ -22,9 +22,7 @@ import java.util.concurrent.TimeUnit;
 import javax.portlet.CacheControl;
 import org.apereo.portal.portlet.rendering.PortletOutputHandler;
 
-/**
- * Java bean to represent the data cached for a portlet request via {@link CacheControl}s.
- */
+/** Java bean to represent the data cached for a portlet request via {@link CacheControl}s. */
 public class CachedPortletData<T extends Serializable>
         implements CachedPortletResultHolder<T>, Serializable {
     private static final long serialVersionUID = 5509299103587289000L;
@@ -85,6 +83,7 @@ public class CachedPortletData<T extends Serializable>
     /**
      * The time since the epoch in milliseconds that this content expires. -1 if it never expires
      */
+    @Override
     public long getExpirationTime() {
         return expirationTime;
     }
@@ -99,6 +98,7 @@ public class CachedPortletData<T extends Serializable>
         }
     }
 
+    @Override
     public T getPortletResult() {
         return portletResult;
     }
@@ -115,10 +115,12 @@ public class CachedPortletData<T extends Serializable>
         return contentType;
     }
 
+    @Override
     public String getEtag() {
         return etag;
     }
 
+    @Override
     public long getTimeStored() {
         return timeStored;
     }

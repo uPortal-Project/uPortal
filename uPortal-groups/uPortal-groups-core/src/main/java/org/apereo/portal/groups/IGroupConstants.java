@@ -14,10 +14,7 @@
  */
 package org.apereo.portal.groups;
 
-/**
- * Defines constants for Groups related classes
- *
- */
+/** Defines constants for Groups related classes */
 public interface IGroupConstants {
 
     //Search method constants

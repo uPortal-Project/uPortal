@@ -32,10 +32,7 @@ import org.apereo.portal.spring.locator.CounterStoreLocator;
 import org.apereo.portal.spring.locator.EntityTypesLocator;
 import org.apereo.portal.utils.SqlTransaction;
 
-/**
- * Store for <code>EntityGroupImpl</code>.
- *
- */
+/** Store for <code>EntityGroupImpl</code>. */
 public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants {
     private static final Log log = LogFactory.getLog(RDBMEntityGroupStore.class);
     private static RDBMEntityGroupStore singleton;
@@ -148,6 +145,7 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
      * @param group org.apereo.portal.groups.IEntityGroup
      * @param member org.apereo.portal.groups.IGroupMember
      */
+    @Override
     public boolean contains(IEntityGroup group, IGroupMember member) throws GroupsException {
         return (member.isGroup())
                 ? containsGroup(group, (IEntityGroup) member)
@@ -237,6 +235,7 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
      *
      * @param group org.apereo.portal.groups.IEntityGroup
      */
+    @Override
     public void delete(IEntityGroup group) throws GroupsException {
         if (existsInDatabase(group)) {
             try {
@@ -264,6 +263,7 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
      * @param groupID the group ID
      * @return org.apereo.portal.groups.IEntityGroup
      */
+    @Override
     public IEntityGroup find(String groupID) throws GroupsException {
         return primFind(groupID, false);
     }
@@ -299,6 +299,7 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
      * @param gm the group member in question
      * @return java.util.Iterator
      */
+    @Override
     public Iterator findParentGroups(IGroupMember gm) throws GroupsException {
         if (gm.isGroup()) {
             IEntityGroup group = (IEntityGroup) gm;
@@ -421,6 +422,7 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
      * @param group the entity group in question
      * @return java.util.Iterator
      */
+    @Override
     public Iterator findEntitiesForGroup(IEntityGroup group) throws GroupsException {
         Collection entities = new ArrayList();
         Connection conn = null;
@@ -476,6 +478,7 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
      * @param groupID the group ID
      * @return org.apereo.portal.groups.ILockableEntityGroup
      */
+    @Override
     public ILockableEntityGroup findLockable(String groupID) throws GroupsException {
         return (ILockableEntityGroup) primFind(groupID, true);
     }
@@ -486,6 +489,7 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
      * @param group the org.apereo.portal.groups.IEntityGroup
      * @return String[]
      */
+    @Override
     public String[] findMemberGroupKeys(IEntityGroup group) throws GroupsException {
         java.sql.Connection conn = null;
         Collection groupKeys = new ArrayList();
@@ -531,6 +535,7 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
      * @param group org.apereo.portal.groups.IEntityGroup
      * @return java.util.Iterator
      */
+    @Override
     public Iterator findMemberGroups(IEntityGroup group) throws GroupsException {
         java.sql.Connection conn = null;
         Collection groups = new ArrayList();
@@ -895,7 +900,7 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
 
         String key = rs.getString(1);
         String creatorID = rs.getString(2);
-        Integer entityTypeID = new Integer(rs.getInt(3));
+        Integer entityTypeID = rs.getInt(3);
         Class entityType = EntityTypesLocator.getEntityTypes().getEntityTypeFromID(entityTypeID);
         String groupName = rs.getString(4);
         String description = rs.getString(5);
@@ -919,7 +924,7 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
 
         String key = rs.getString(1);
         String creatorID = rs.getString(2);
-        Integer entityTypeID = new Integer(rs.getInt(3));
+        Integer entityTypeID = rs.getInt(3);
         Class entityType = EntityTypesLocator.getEntityTypes().getEntityTypeFromID(entityTypeID);
         String groupName = rs.getString(4);
         String description = rs.getString(5);
@@ -939,6 +944,7 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
         return GroupService.getEntity(key, type);
     }
     /** @return org.apereo.portal.groups.IEntityGroup */
+    @Override
     public IEntityGroup newInstance(Class type) throws GroupsException {
         if (EntityTypesLocator.getEntityTypes().getEntityIDFromType(type) == null) {
             throw new GroupsException("Invalid group type: " + type);
@@ -1323,6 +1329,7 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
         SqlTransaction.rollback(conn);
     }
 
+    @Override
     public EntityIdentifier[] searchForGroups(String query, int method, Class leaftype)
             throws GroupsException {
         EntityIdentifier[] r = new EntityIdentifier[0];
@@ -1407,6 +1414,7 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
      *
      * @param group org.apereo.portal.groups.IEntityGroup
      */
+    @Override
     public void update(IEntityGroup group) throws GroupsException {
         Connection conn = null;
         boolean exists = existsInDatabase(group);
@@ -1446,6 +1454,7 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
      *
      * @param eg org.apereo.portal.groups.IEntityGroup
      */
+    @Override
     public void updateMembers(IEntityGroup eg) throws GroupsException {
         Connection conn = null;
         EntityGroupImpl egi = (EntityGroupImpl) eg;

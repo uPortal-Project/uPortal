@@ -17,8 +17,7 @@ package org.apereo.portal.events;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
-/**
- */
+/** */
 public final class PortletRenderExecutionEvent extends PortletExecutionEvent {
     private static final long serialVersionUID = 1L;
 

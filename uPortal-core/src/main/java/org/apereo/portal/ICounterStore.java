@@ -14,9 +14,7 @@
  */
 package org.apereo.portal;
 
-/**
- * A store interface that keeps track of multiple unique ID counters.
- */
+/** A store interface that keeps track of multiple unique ID counters. */
 public interface ICounterStore {
 
     /**

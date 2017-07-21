@@ -20,10 +20,7 @@ import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-/**
- * Layout processing action for changing a channel parameter in a user's layout.
- *
- */
+/** Layout processing action for changing a channel parameter in a user's layout. */
 public class LPAChangeParameter implements ILayoutProcessingAction {
     private String nodeId = null;
     private String name = null;

@@ -23,10 +23,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.stereotype.Component;
 
-/**
- * Update the portal db from 4.0.2
- *
- */
+/** Update the portal db from 4.0.2 */
 @Component
 public class Version402PortalDatabaseUpdateHelper implements IVersionedDatabaseUpdateHelper {
     private final Version version = VersionUtils.parseVersion("4.0.2");

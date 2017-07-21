@@ -69,6 +69,7 @@ public class EntityLockImpl implements IEntityLock {
      * @param newType int
      * @exception org.apereo.portal.concurrency.LockingException - if the conversion fails.
      */
+    @Override
     public void convert(int newType) throws LockingException {
         getService().convert(this, newType);
     }
@@ -79,6 +80,7 @@ public class EntityLockImpl implements IEntityLock {
      * @param duration int
      * @exception org.apereo.portal.concurrency.LockingException - if the conversion fails.
      */
+    @Override
     public void convert(int newType, int duration) throws LockingException {
         getService().convert(this, newType);
     }
@@ -87,6 +89,7 @@ public class EntityLockImpl implements IEntityLock {
      * @return true if these Objects are equal; false otherwise.
      * @see java.util.Hashtable
      */
+    @Override
     public boolean equals(Object obj) {
         if (obj == null) return false;
         if (obj == this) return true;
@@ -104,6 +107,7 @@ public class EntityLockImpl implements IEntityLock {
         setExpirationTime(new Date(0));
     }
     /** @return java.lang.String */
+    @Override
     public String getEntityKey() {
         return entityKey;
     }
@@ -111,10 +115,12 @@ public class EntityLockImpl implements IEntityLock {
      * @see EntityTypes for known types.
      * @return java.lang.Class
      */
+    @Override
     public Class getEntityType() {
         return entityType;
     }
     /** @return java.util.Date */
+    @Override
     public Date getExpirationTime() {
         return expirationTime;
     }
@@ -123,6 +129,7 @@ public class EntityLockImpl implements IEntityLock {
      *
      * @return java.lang.String
      */
+    @Override
     public String getLockOwner() {
         return lockOwner;
     }
@@ -131,6 +138,7 @@ public class EntityLockImpl implements IEntityLock {
      *
      * @return int
      */
+    @Override
     public int getLockType() {
         return lockType;
     }
@@ -144,6 +152,7 @@ public class EntityLockImpl implements IEntityLock {
      * @return an integer hash code for the receiver
      * @see java.util.Hashtable
      */
+    @Override
     public int hashCode() {
         return getEntityType().hashCode() + getEntityKey().hashCode() + getLockOwner().hashCode();
     }
@@ -160,18 +169,22 @@ public class EntityLockImpl implements IEntityLock {
      *
      * @return boolean
      */
+    @Override
     public boolean isValid() throws LockingException {
         return getService().isValid(this);
     }
     /** Delegate to the service. */
+    @Override
     public void release() throws LockingException {
         getService().release(this);
     }
     /** Delegate to the service. */
+    @Override
     public void renew() throws LockingException {
         getService().renew(this);
     }
     /** Delegate to the service. */
+    @Override
     public void renew(int duration) throws LockingException {
         getService().renew(this, duration);
     }
@@ -204,6 +217,7 @@ public class EntityLockImpl implements IEntityLock {
      *
      * @return a string representation of the receiver
      */
+    @Override
     public String toString() {
         return "EntityLockImpl for "
                 + getEntityType().getName()

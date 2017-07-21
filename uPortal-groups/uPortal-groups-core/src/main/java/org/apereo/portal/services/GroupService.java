@@ -35,10 +35,7 @@ import org.apereo.portal.utils.threading.SingletonDoubleCheckedCreator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Bootstrap class for the IGroupService implementation.
- *
- */
+/** Bootstrap class for the IGroupService implementation. */
 public final class GroupService implements IGroupConstants {
 
     private static final String GROUP_SERVICE_KEY = "org.apereo.portal.services.GroupService.key_";

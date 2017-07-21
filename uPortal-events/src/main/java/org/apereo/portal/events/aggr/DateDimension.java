@@ -18,10 +18,7 @@ import java.io.Serializable;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTimeFieldType;
 
-/**
- * Describes a dimension in time (hours). Each object represents one minute in a 24 period
- *
- */
+/** Describes a dimension in time (hours). Each object represents one minute in a 24 period */
 public interface DateDimension extends Serializable {
     /** @return The ID of the dimension */
     long getId();

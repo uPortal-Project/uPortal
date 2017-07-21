@@ -40,10 +40,7 @@ import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionOperations;
 import org.springframework.transaction.support.TransactionTemplate;
 
-/**
- * DB based locking DAO using JPA2 locking APIs
- *
- */
+/** DB based locking DAO using JPA2 locking APIs */
 @Repository
 public class JpaClusterLockDao extends BasePortalJpaDao implements IClusterLockDao {
     private static final String CLUSTER_MUTEX_SOURCE =
@@ -235,7 +232,8 @@ public class JpaClusterLockDao extends BasePortalJpaDao implements IClusterLockD
                         query.using(ClusterMutex_.name, mutexName);
                         clusterMutex = query.load();
 
-                        entityManagerCache.put(BasePortalJpaDao.PERSISTENCE_UNIT_NAME, key, clusterMutex);
+                        entityManagerCache.put(
+                                BasePortalJpaDao.PERSISTENCE_UNIT_NAME, key, clusterMutex);
 
                         return clusterMutex;
                     }

@@ -18,8 +18,7 @@ import static junit.framework.Assert.assertTrue;
 
 import org.junit.Test;
 
-/**
- */
+/** */
 public class ParameterMapTest {
     @Test
     public void testParameterMapClone() {

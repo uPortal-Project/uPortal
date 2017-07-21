@@ -23,10 +23,7 @@ import javax.xml.stream.events.EndElement;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
-/**
- * Wraps an {@link XMLEvent} delegating all method calls to it
- *
- */
+/** Wraps an {@link XMLEvent} delegating all method calls to it */
 public class XMLEventWrapper implements XMLEvent {
     private final XMLEvent event;
 

@@ -22,9 +22,7 @@ import org.apereo.portal.portlet.om.IPortletEntityId;
 import org.apereo.portal.portlet.om.IPortletWindowId;
 import org.apereo.portal.user.IUserInstance;
 
-/**
- * Provides methods for creating and accessing {@link IPortletEntity} and related objects.
- */
+/** Provides methods for creating and accessing {@link IPortletEntity} and related objects. */
 public interface IPortletEntityRegistry {
     /**
      * @param portletEntityId The ID of the portlet entity to get a lock for

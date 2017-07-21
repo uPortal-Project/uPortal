@@ -18,7 +18,6 @@ package org.apereo.portal.version.om;
  * Describes a version number, based on http://apr.apache.org/versioning.html <br>
  * Versions MUST implement equality as checking if the Major, Minor, Patch, and Local values ALL
  * match
- *
  */
 public interface Version extends Comparable<Version> {
     /** Describes the fields of the version number */

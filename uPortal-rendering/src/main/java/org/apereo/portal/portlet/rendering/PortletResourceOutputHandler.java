@@ -19,10 +19,7 @@ import javax.portlet.ResourceResponse;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 
-/**
- * Used to handle output from portlet resource requests.
- *
- */
+/** Used to handle output from portlet resource requests. */
 public interface PortletResourceOutputHandler extends PortletOutputHandler {
 
     /**

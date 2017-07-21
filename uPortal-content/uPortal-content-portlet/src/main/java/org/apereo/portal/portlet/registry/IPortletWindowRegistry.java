@@ -30,7 +30,6 @@ import org.apereo.portal.utils.Tuple;
  *
  * <p>Methods require a {@link HttpServletRequest} object due to the nature of IPortletWindows and
  * how they are tracked.
- *
  */
 public interface IPortletWindowRegistry {
     /**

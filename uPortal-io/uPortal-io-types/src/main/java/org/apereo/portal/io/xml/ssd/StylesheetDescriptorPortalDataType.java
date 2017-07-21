@@ -21,10 +21,7 @@ import org.apereo.portal.io.xml.AbstractPortalDataType;
 import org.apereo.portal.io.xml.PortalDataKey;
 import org.apereo.portal.layout.om.IStylesheetDescriptor;
 
-/**
- * Describes the {@link IStylesheetDescriptor} for import and export.
- *
- */
+/** Describes the {@link IStylesheetDescriptor} for import and export. */
 public class StylesheetDescriptorPortalDataType extends AbstractPortalDataType {
     public static final QName STYLESHEET_DESCRIPTOR_QNAME =
             new QName(

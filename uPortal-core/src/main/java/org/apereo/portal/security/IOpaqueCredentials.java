@@ -20,7 +20,6 @@ import java.io.Serializable;
  * Our OpaqueCredentials interface stores password or passphrase information for authentication. The
  * same structure stores information that can potentially be used post-authentication to keep
  * Kerberos TGT's or other useful security context authenticators.
- *
  */
 public interface IOpaqueCredentials extends Serializable {
 

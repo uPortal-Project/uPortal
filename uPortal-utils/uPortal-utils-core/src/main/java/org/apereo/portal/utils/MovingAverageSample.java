@@ -16,9 +16,7 @@ package org.apereo.portal.utils;
 
 import java.io.Serializable;
 
-/**
- * @since 2.5
- */
+/** @since 2.5 */
 public final class MovingAverageSample implements IMovingAverageSample, Serializable {
     //public static long SerialVersionUID = 2006l;
 
@@ -51,26 +49,32 @@ public final class MovingAverageSample implements IMovingAverageSample, Serializ
         this.totalSamples = totalSamples;
     }
 
+    @Override
     public long getAverage() {
         return average;
     }
 
+    @Override
     public long getHighMax() {
         return highMax;
     }
 
+    @Override
     public long getLastSample() {
         return lastSample;
     }
 
+    @Override
     public long getMax() {
         return max;
     }
 
+    @Override
     public long getMin() {
         return min;
     }
 
+    @Override
     public long getTotalSamples() {
         return totalSamples;
     }

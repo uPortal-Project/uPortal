@@ -20,9 +20,7 @@ import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
-/**
- * @since 2.5.3
- */
+/** @since 2.5.3 */
 public class SAXErrorHandler implements ErrorHandler {
 
     private static final Log log = LogFactory.getLog(SAXErrorHandler.class);
@@ -35,6 +33,7 @@ public class SAXErrorHandler implements ErrorHandler {
     /* (non-Javadoc)
      * @see org.xml.sax.ErrorHandler#warning(org.xml.sax.SAXParseException)
      */
+    @Override
     public void warning(SAXParseException exception) throws SAXException {
         log.warn(invoker, exception);
     }
@@ -42,6 +41,7 @@ public class SAXErrorHandler implements ErrorHandler {
     /* (non-Javadoc)
      * @see org.xml.sax.ErrorHandler#error(org.xml.sax.SAXParseException)
      */
+    @Override
     public void error(SAXParseException exception) throws SAXException {
         log.error(invoker, exception);
     }
@@ -49,6 +49,7 @@ public class SAXErrorHandler implements ErrorHandler {
     /* (non-Javadoc)
      * @see org.xml.sax.ErrorHandler#fatalError(org.xml.sax.SAXParseException)
      */
+    @Override
     public void fatalError(SAXParseException exception) throws SAXException {
         log.fatal(invoker, exception);
     }

@@ -16,10 +16,7 @@ package org.apereo.portal.events.aggr;
 
 import org.joda.time.DateTime;
 
-/**
- * Bean that tracks the status of portal event aggregator work.
- *
- */
+/** Bean that tracks the status of portal event aggregator work. */
 public interface IEventAggregatorStatus {
     /** Types of aggregator processing */
     public enum ProcessingType {

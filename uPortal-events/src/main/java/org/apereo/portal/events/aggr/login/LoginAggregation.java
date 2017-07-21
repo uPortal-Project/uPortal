@@ -17,8 +17,7 @@ package org.apereo.portal.events.aggr.login;
 import org.apereo.portal.events.LoginEvent;
 import org.apereo.portal.events.aggr.BaseAggregation;
 
-/**
- */
+/** */
 public interface LoginAggregation
         extends BaseAggregation<LoginAggregationKey, LoginAggregationDiscriminator> {
     /** @return Total number of {@link LoginEvent}s that occurred in the interval */

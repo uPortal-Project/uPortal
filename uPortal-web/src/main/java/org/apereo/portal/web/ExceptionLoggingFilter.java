@@ -29,7 +29,6 @@ import org.slf4j.LoggerFactory;
 /**
  * Filter that logs exceptions before re-throwing. Used to make sure that all portal related
  * exceptions end up in the portal log
- *
  */
 public class ExceptionLoggingFilter implements Filter {
     protected final Logger logger = LoggerFactory.getLogger(getClass());

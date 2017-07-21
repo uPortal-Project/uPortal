@@ -22,7 +22,6 @@ import org.springframework.beans.factory.config.AbstractFactoryBean;
 /**
  * Factory bean that gets a Map<K extends Serializable, V> cache wrapper from the configured {@link
  * CacheFactory} for the specified cache name. If no name is specified the default cache is used.
- *
  */
 public class MapCacheFactoryBean extends AbstractFactoryBean<Map> {
     private CacheFactory cacheFactory;

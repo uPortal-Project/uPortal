@@ -21,8 +21,7 @@ import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.Namespace;
 import javax.xml.stream.events.StartElement;
 
-/**
- */
+/** */
 public class StartElementWrapper extends XMLEventWrapper implements StartElement {
     private final StartElement startElement;
 

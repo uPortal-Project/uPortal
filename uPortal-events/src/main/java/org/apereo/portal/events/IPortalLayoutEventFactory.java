@@ -17,10 +17,7 @@ package org.apereo.portal.events;
 import javax.servlet.http.HttpServletRequest;
 import org.apereo.portal.security.IPerson;
 
-/**
- * Publishes events related to layouts
- *
- */
+/** Publishes events related to layouts */
 public interface IPortalLayoutEventFactory {
 
     //  ********** Portlet in Layout Events **********//

@@ -16,10 +16,7 @@ package org.apereo.portal.events.aggr;
 
 import org.joda.time.ReadableInstant;
 
-/**
- * Describes a basic date range with an inclusive start and and exclusive end
- *
- */
+/** Describes a basic date range with an inclusive start and and exclusive end */
 public interface DateRange<DT> {
 
     /** @return Start of the range, inclusive */

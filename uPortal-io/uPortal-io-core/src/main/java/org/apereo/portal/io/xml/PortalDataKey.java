@@ -22,10 +22,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
-/**
- * Describes the type and version of a portal data XML file.
- *
- */
+/** Describes the type and version of a portal data XML file. */
 public class PortalDataKey {
     /**
      * The XML Attribute on the root element that contains the cernunnos script that denotes the

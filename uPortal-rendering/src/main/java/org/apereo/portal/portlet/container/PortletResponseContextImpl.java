@@ -33,8 +33,7 @@ import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-/**
- */
+/** */
 public class PortletResponseContextImpl extends AbstractPortletContextImpl
         implements PortletResponseContext {
     private boolean closed = false;

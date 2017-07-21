@@ -29,10 +29,7 @@ import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
-/**
- * Tests for {@link PortletCookieServiceImpl}.
- *
- */
+/** Tests for {@link PortletCookieServiceImpl}. */
 public class PortletCookieServiceImplTest {
 
     /**
@@ -259,10 +256,7 @@ public class PortletCookieServiceImplTest {
         EasyMock.verify(portletCookieDao, mockWindowId);
     }
 
-    /**
-     * Mock {@link IPortalCookie} used in these tests.
-     *
-     */
+    /** Mock {@link IPortalCookie} used in these tests. */
     class MockPortalCookie implements IPortalCookie {
 
         private DateTime created = DateTime.now();

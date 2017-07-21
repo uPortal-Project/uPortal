@@ -23,8 +23,7 @@ import org.apereo.portal.utils.web.PortalWebUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-/**
- */
+/** */
 @Service
 public class PortletDelegationManagerImpl implements IPortletDelegationManager {
     private static final String DELEGATION_REQUEST_MAP_ATTR =

@@ -16,8 +16,7 @@ package org.apereo.portal.security;
 
 import java.util.Date;
 
-/**
- */
+/** */
 public interface IPermission {
 
     /*
@@ -127,30 +126,26 @@ public interface IPermission {
     /** Non-owner-specific view activity (used by ERROR_PORTLET) */
     String VIEW_ACTIVITY = "VIEW";
 
-    /**
-     * Determines whether a user is visible within the portal.
-     */
+    /** Determines whether a user is visible within the portal. */
     String VIEW_USER_ACTIVITY = "VIEW_USER";
 
     /**
-     * Governs which user attributes are visible within the portal, applies
-     * to attributes of others as well as one's own attributes.
+     * Governs which user attributes are visible within the portal, applies to attributes of others
+     * as well as one's own attributes.
      */
     String VIEW_USER_ATTRIBUTE_ACTIVITY = "VIEW_USER_ATTRIBUTE";
 
     /**
-     * Governs additional visibility of one's own user attributes.  When it comes to their own
-     * attributes, users may view those for which they have either
-     * <code>VIEW_USER_ATTRIBUTE_ACTIVITY</code> or <code>VIEW_OWN_USER_ATTRIBUTE_ACTIVITY</code>
+     * Governs additional visibility of one's own user attributes. When it comes to their own
+     * attributes, users may view those for which they have either <code>
+     * VIEW_USER_ATTRIBUTE_ACTIVITY</code> or <code>VIEW_OWN_USER_ATTRIBUTE_ACTIVITY</code>
      * permission.
      *
      * @since 5.0
      */
     String VIEW_OWN_USER_ATTRIBUTE_ACTIVITY = "VIEW_OWN_USER_ATTRIBUTE";
 
-    /**
-     * Governs the ability to become another user through the User Manager.
-     */
+    /** Governs the ability to become another user through the User Manager. */
     String IMPERSONATE_USER_ACTIVITY = "IMPERSONATE";
 
     String VIEW_PERMISSIONS_ACTIVITY = "VIEW_PERMISSIONS";
@@ -303,5 +298,4 @@ public interface IPermission {
      * @param newPrincipal String
      */
     void setPrincipal(String newPrincipal);
-
 }

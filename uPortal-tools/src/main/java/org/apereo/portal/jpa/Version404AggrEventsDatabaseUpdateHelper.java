@@ -24,10 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
-/**
- * Update the aggregate stats db from 4.0.4
- *
- */
+/** Update the aggregate stats db from 4.0.4 */
 @Component
 public class Version404AggrEventsDatabaseUpdateHelper implements IVersionedDatabaseUpdateHelper {
     protected final Logger logger = LoggerFactory.getLogger(getClass());

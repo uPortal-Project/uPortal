@@ -16,10 +16,7 @@ package org.apereo.portal.groups;
 
 import org.apereo.portal.EntityIdentifier;
 
-/**
- * Defines an api for searching for entities
- *
- */
+/** Defines an api for searching for entities */
 public interface IEntitySearcher {
     /**
      * Find EntityIdentifiers for entities whose name matches the query string according to the

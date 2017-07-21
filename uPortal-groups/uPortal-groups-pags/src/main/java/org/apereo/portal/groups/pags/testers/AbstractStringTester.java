@@ -17,15 +17,10 @@ package org.apereo.portal.groups.pags.testers;
 import org.apereo.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
 import org.apereo.portal.security.IPerson;
 
-/**
- * Abstract class tests a possibly multi-valued attribute against a test value.
- *
- */
+/** Abstract class tests a possibly multi-valued attribute against a test value. */
 public abstract class AbstractStringTester extends BaseAttributeTester {
 
-    /**
-     * @since 4.3
-     */
+    /** @since 4.3 */
     public AbstractStringTester(IPersonAttributesGroupTestDefinition definition) {
         super(definition);
     }
@@ -49,9 +44,6 @@ public abstract class AbstractStringTester extends BaseAttributeTester {
         return result;
     }
 
-    /**
-     * Subclasses provide a concrete implementation of this method to perform their testing.
-     */
+    /** Subclasses provide a concrete implementation of this method to perform their testing. */
     public abstract boolean test(String att);
-
 }

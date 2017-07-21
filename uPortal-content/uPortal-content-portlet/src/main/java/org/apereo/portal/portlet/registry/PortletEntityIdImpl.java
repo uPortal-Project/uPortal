@@ -17,10 +17,7 @@ package org.apereo.portal.portlet.registry;
 import org.apereo.portal.portlet.om.IPortletDefinitionId;
 import org.apereo.portal.portlet.om.IPortletEntityId;
 
-/**
- * Standard IPortletEntityId
- *
- */
+/** Standard IPortletEntityId */
 class PortletEntityIdImpl implements IPortletEntityId {
     private static final long serialVersionUID = 2L;
 

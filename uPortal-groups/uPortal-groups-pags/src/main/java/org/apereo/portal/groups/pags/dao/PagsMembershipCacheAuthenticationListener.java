@@ -55,6 +55,7 @@ public class PagsMembershipCacheAuthenticationListener implements IAuthenticatio
         usernameSearchAttribute = membershipCache.getSearchAttribute(SEARCH_ATTRIBUTE_NAME);
     }
 
+    @Override
     public void userAuthenticated(IPerson user) {
 
         /*

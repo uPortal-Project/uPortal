@@ -18,10 +18,7 @@ import org.apereo.portal.groups.GroupsException;
 import org.apereo.portal.groups.IEntitySearcher;
 import org.apereo.portal.groups.IEntitySearcherFactory;
 
-/**
- * Returns an instance of the ldap <code>IEntitySearcher</code>.
- *
- */
+/** Returns an instance of the ldap <code>IEntitySearcher</code>. */
 public class LDAPEntitySearcherFactory implements IEntitySearcherFactory {
     /** LdapEntitySearcherFactory constructor. */
     public LDAPEntitySearcherFactory() {

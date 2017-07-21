@@ -18,10 +18,7 @@ import org.apereo.portal.PortalException;
 import org.apereo.portal.security.IPerson;
 import org.w3c.dom.Element;
 
-/**
- * Layout processing to reset a channel parameter to the value specified by the owning fragment.
- *
- */
+/** Layout processing to reset a channel parameter to the value specified by the owning fragment. */
 public class LPAResetParameter implements ILayoutProcessingAction {
     private String nodeId = null;
     private String name = null;

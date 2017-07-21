@@ -19,7 +19,6 @@ import groovy.lang.GroovyShell;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.HelpFormatter;
@@ -65,8 +64,7 @@ public class PortalShell {
         try {
             final Binding binding = new SpringBinding(applicationContext);
             binding.setVariable("logger", LOGGER);
-            final CompilerConfiguration conf =
-                    new CompilerConfiguration(System.getProperties());
+            final CompilerConfiguration conf = new CompilerConfiguration(System.getProperties());
             final GroovyShell shell = new GroovyShell(binding, conf);
 
             if (commandLine.hasOption("script")) {

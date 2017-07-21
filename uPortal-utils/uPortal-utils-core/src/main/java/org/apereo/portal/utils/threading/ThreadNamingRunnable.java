@@ -14,10 +14,7 @@
  */
 package org.apereo.portal.utils.threading;
 
-/**
- * Adds a suffix to the current thread name for the duration of the wrapped runnable execution
- *
- */
+/** Adds a suffix to the current thread name for the duration of the wrapped runnable execution */
 public class ThreadNamingRunnable implements Runnable {
     private final String threadNameSuffix;
     private final Runnable runnable;

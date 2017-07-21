@@ -14,10 +14,7 @@
  */
 package org.apereo.portal.groups;
 
-/**
- * Factory interface for creating <code>IEntityNameFinders</code>.
- *
- */
+/** Factory interface for creating <code>IEntityNameFinders</code>. */
 public interface IEntityNameFinderFactory {
     /**
      * Return a finder instance.

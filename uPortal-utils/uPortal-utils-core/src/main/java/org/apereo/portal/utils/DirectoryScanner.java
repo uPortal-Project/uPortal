@@ -20,10 +20,7 @@ import java.io.FileFilter;
 import java.util.Map;
 import org.springframework.core.io.Resource;
 
-/**
- * Scans a directory structure for files.
- *
- */
+/** Scans a directory structure for files. */
 public interface DirectoryScanner {
 
     /**

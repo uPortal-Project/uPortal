@@ -17,7 +17,10 @@
   "eslintConfig": {
     "extends": "google",
     "rules": {
-      "indent": ["warn", 4]
+      "indent": [
+        "warn",
+        4
+      ]
     }
   },
   "remarkConfig": {

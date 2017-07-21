@@ -16,10 +16,7 @@ package org.apereo.portal.events.aggr.groups;
 
 import java.util.Set;
 
-/**
- * Used to map portal group keys to a more static group mapping object
- *
- */
+/** Used to map portal group keys to a more static group mapping object */
 public interface AggregatedGroupLookupDao {
     /** Get the group mapping object for the specified group mapping id */
     AggregatedGroupMapping getGroupMapping(long groupMappingId);

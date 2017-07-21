@@ -24,7 +24,6 @@ import org.jasig.services.persondir.IPersonAttributes;
 /**
  * Implementation of <code>IEntityNameFinder</code> for <code>IPersons</code> by looking up
  * displayName from an <code>IPersonAttributeDao</code>.
- *
  */
 public class PersonDirNameFinder implements IEntityNameFinder {
 
@@ -44,6 +43,7 @@ public class PersonDirNameFinder implements IEntityNameFinder {
         this.paDao = pa;
     }
 
+    @Override
     public String getName(String key) {
         String name = this.names.get(key);
 
@@ -56,6 +56,7 @@ public class PersonDirNameFinder implements IEntityNameFinder {
         return name;
     }
 
+    @Override
     public Class<IPerson> getType() {
         return IPerson.class;
     }

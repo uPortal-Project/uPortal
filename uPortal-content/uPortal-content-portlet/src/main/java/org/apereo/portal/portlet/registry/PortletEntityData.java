@@ -19,10 +19,7 @@ import org.apereo.portal.portlet.om.IPortletDefinitionId;
 import org.apereo.portal.portlet.om.IPortletEntityDescriptor;
 import org.apereo.portal.portlet.om.IPortletEntityId;
 
-/**
- * Session persistent data stored for portlet entities
- *
- */
+/** Session persistent data stored for portlet entities */
 class PortletEntityData implements Serializable, IPortletEntityDescriptor {
     private static final long serialVersionUID = 1L;
 

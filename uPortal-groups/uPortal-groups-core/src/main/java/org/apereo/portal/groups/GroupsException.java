@@ -21,7 +21,6 @@ import org.apereo.portal.PortalException;
  * of a structural problem is an attempt to create a circular reference. If the problem arises
  * retrieving or updating the groups store, the GroupsException should wrap an Exception specific to
  * the store, probably a java.sql.SQLException or a javax.naming.NamingException.
- *
  */
 public class GroupsException extends PortalException {
 

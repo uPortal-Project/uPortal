@@ -26,10 +26,7 @@ import org.apereo.portal.events.aggr.TimeDimension;
 import org.apereo.portal.events.aggr.groups.AggregatedGroupMapping;
 import org.springframework.stereotype.Repository;
 
-/**
- * DAO for Concurrent User Aggregations
- *
- */
+/** DAO for Concurrent User Aggregations */
 @Repository
 public class JpaConcurrentUserAggregationDao
         extends JpaBaseAggregationDao<ConcurrentUserAggregationImpl, ConcurrentUserAggregationKey>

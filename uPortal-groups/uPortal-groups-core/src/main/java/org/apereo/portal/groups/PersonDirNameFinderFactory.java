@@ -20,7 +20,6 @@ import org.jasig.services.persondir.IPersonAttributeDao;
 /**
  * Factory for creating and obtaining reference to a static singleton <code>PersonDirNameFinder
  * </code>.
- *
  */
 public class PersonDirNameFinderFactory implements IEntityNameFinderFactory {
 
@@ -40,6 +39,7 @@ public class PersonDirNameFinderFactory implements IEntityNameFinderFactory {
      *
      * @return the static singleton PersonDirNameFinder backed by PersonDirectory
      */
+    @Override
     public IEntityNameFinder newFinder() {
 
         if (PERSON_DIR_NAME_FINDER_INSTANCE == null) {

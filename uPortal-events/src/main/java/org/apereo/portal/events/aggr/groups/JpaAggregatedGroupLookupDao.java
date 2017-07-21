@@ -35,10 +35,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 
-/**
- * JPA dao to manage aggregated group mappings
- *
- */
+/** JPA dao to manage aggregated group mappings */
 @Repository
 public class JpaAggregatedGroupLookupDao extends BaseAggrEventsJpaDao
         implements AggregatedGroupLookupDao {

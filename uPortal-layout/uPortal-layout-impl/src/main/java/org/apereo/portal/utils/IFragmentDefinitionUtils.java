@@ -23,10 +23,7 @@ import org.apereo.portal.layout.dlm.UserView;
 import org.apereo.portal.security.IPerson;
 import org.w3c.dom.Document;
 
-/**
- * Interface for classes providing utility methods for dealing with {@link FragmentDefinition}s.
- *
- */
+/** Interface for classes providing utility methods for dealing with {@link FragmentDefinition}s. */
 public interface IFragmentDefinitionUtils {
 
     List<FragmentDefinition> getFragmentDefinitions();

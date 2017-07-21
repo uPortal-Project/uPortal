@@ -31,10 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-/**
- * Top level class that initiates rendering via a {@link CharacterPipelineComponent}
- *
- */
+/** Top level class that initiates rendering via a {@link CharacterPipelineComponent} */
 public class DynamicRenderingPipeline implements IPortalRenderingPipeline {
     public static final String CHARACTER_SET = "UTF-8";
     public static final String DEFAULT_MEDIA_TYPE = "text/html";

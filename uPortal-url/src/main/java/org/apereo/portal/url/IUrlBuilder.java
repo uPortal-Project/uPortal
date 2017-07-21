@@ -17,10 +17,7 @@ package org.apereo.portal.url;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Base class to define common methods for URL builders
- *
- */
+/** Base class to define common methods for URL builders */
 public interface IUrlBuilder {
     /**
      * Sets a URL parameter

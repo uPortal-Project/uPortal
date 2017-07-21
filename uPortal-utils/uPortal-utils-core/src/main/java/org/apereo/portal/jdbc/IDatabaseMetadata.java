@@ -16,8 +16,7 @@ package org.apereo.portal.jdbc;
 
 import java.util.Date;
 
-/**
- */
+/** */
 public interface IDatabaseMetadata {
     /**
      * Gets the appropriate {@link IJoinQueryString} implemenation for the database. If {@link

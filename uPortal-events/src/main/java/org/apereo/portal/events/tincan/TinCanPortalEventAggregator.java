@@ -27,10 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 
-/**
- * Event aggregator that processes events and converts them to xAPI events.
- *
- */
+/** Event aggregator that processes events and converts them to xAPI events. */
 public class TinCanPortalEventAggregator extends BasePortalEventAggregator<PortalEvent>
         implements SimplePortalEventAggregator<PortalEvent> {
     private static final Logger log = LoggerFactory.getLogger(TinCanPortalEventAggregator.class);
