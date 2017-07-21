@@ -7,4 +7,6 @@ dependencies {
 
     compileOnly "${portletApiDependency}"
     compileOnly "${servletApiDependency}"
+
+    testCompile "${portletApiDependency}"
 }

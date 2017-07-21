@@ -20,6 +20,7 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
+import org.springframework.util.Assert;
 
 /** Set state and mode for the delegate portlet */
 public class DelegateState {
@@ -32,6 +33,9 @@ public class DelegateState {
      *     used
      */
     public DelegateState(PortletMode portletMode, WindowState windowState) {
+        Assert.notNull(portletMode, "Argument 'portletMode' cannot be null");
+        Assert.notNull(windowState, "Argument 'windowState' cannot be null");
+
         this.portletMode = portletMode;
         this.windowState = windowState;
     }
