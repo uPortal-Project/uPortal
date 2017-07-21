@@ -14,11 +14,40 @@
  */
 package org.apereo.portal.api.permissions;
 
-import java.io.Serializable;
 
-public interface Target extends Serializable {
+import org.junit.Assert;
+import org.junit.Test;
 
-    public String getKey();
+public class OwnerImplTest {
+    OwnerImpl owner;
 
-    public String getName();
+    @Test
+    public void test() {
+        owner = new OwnerImpl("key","name");
+        owner.getKey();
+    }
+
+    @Test
+    public void testGetKey(){
+        owner = new OwnerImpl("key","name");
+        Assert.assertEquals("key",owner.getKey());
+    }
+
+    @Test
+    public void testGetName(){
+        owner = new OwnerImpl("key","name");
+        Assert.assertEquals("name",owner.getName());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testGetKeyNull(){
+        owner = new OwnerImpl(null,null);
+        owner.getKey();
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testGetNameNull(){
+        owner = new OwnerImpl(null,null);
+        owner.getName();
+    }
 }

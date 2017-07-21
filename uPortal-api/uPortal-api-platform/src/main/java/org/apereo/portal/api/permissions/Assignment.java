@@ -19,13 +19,13 @@ import org.apereo.portal.api.Principal;
 
 public interface Assignment extends Serializable {
 
-    Owner getOwner();
+    public Owner getOwner();
 
-    Activity getActivity();
+    public Activity getActivity();
 
-    Principal getPrincipal();
+    public Principal getPrincipal();
 
-    Target getTarget();
+    public Target getTarget();
 
-    boolean isInherited();
+    public boolean isInherited();
 }

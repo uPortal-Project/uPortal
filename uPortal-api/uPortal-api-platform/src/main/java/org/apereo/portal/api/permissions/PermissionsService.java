@@ -17,5 +17,5 @@ package org.apereo.portal.api.permissions;
 import java.util.Set;
 
 public interface PermissionsService {
-    Set<Assignment> getAssignmentsForPerson(String username, boolean includeInherited);
+    public Set<Assignment> getAssignmentsForPerson(String username, boolean includeInherited);
 }

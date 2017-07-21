@@ -14,11 +14,40 @@
  */
 package org.apereo.portal.api.permissions;
 
-import java.io.Serializable;
 
-public interface Target extends Serializable {
+import org.junit.Assert;
+import org.junit.Test;
 
-    public String getKey();
+public class TargetImplTest {
+    TargetImpl target;
 
-    public String getName();
+    @Test
+    public void test() {
+        target = new TargetImpl("key","name");
+        target.getKey();
+    }
+
+    @Test
+    public void testGetKey(){
+        target = new TargetImpl("key","name");
+        Assert.assertEquals("key",target.getKey());
+    }
+
+    @Test
+    public void testGetName(){
+        target = new TargetImpl("key","name");
+        Assert.assertEquals("name",target.getName());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testGetKeyNull(){
+        target = new TargetImpl(null,null);
+        target.getKey();
+    }
+
+    @Test
+    public void testGetNameNull(){
+        target = new TargetImpl(null,null);
+        Assert.assertNull(target.getName());
+    }
 }
