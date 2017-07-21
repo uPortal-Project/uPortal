@@ -18,7 +18,7 @@ import java.io.Serializable;
 
 public interface Principal extends Serializable {
 
-    String getKey();
+    public String getKey();
 
-    String getName();
+    public  String getName();
 }
