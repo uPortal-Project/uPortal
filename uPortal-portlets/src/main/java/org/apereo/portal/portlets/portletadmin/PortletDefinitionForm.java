@@ -172,6 +172,8 @@ public class PortletDefinitionForm implements Serializable {
                 case EXPIRED:
                     this.setExpirationDateTime(lastLifecycleEntry.getDate());
                     break;
+                default:
+                    // Other lifecycle states are not affected by this consideration
             }
         }
 
