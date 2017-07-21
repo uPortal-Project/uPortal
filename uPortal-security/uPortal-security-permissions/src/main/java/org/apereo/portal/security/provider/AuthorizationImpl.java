@@ -284,7 +284,8 @@ public class AuthorizationImpl implements IAuthorizationService {
 
         final IPortletLifecycleEntry highestLifecycleEntryDefined =
                 portlet.getLifecycle().get(portlet.getLifecycle().size() - 1);
-        String activity = null;
+
+        String activity;
         switch (highestLifecycleEntryDefined.getLifecycleState()) {
             case CREATED:
                 activity = IPermission.PORTLET_MANAGER_CREATED_ACTIVITY;
@@ -301,11 +302,9 @@ public class AuthorizationImpl implements IAuthorizationService {
             case MAINTENANCE:
                 activity = IPermission.PORTLET_MANAGER_MAINTENANCE_ACTIVITY;
                 break;
-        }
-
-        if (activity == null) {
-            final String msg = "Unrecognized portlet lifecycle state:  " + highestLifecycleEntryDefined.getLifecycleState();
-            throw new IllegalStateException(msg);
+            default:
+                final String msg = "Unrecognized portlet lifecycle state:  " + highestLifecycleEntryDefined.getLifecycleState();
+                throw new IllegalStateException(msg);
         }
 
         return doesPrincipalHavePermission(principal, owner, activity, target);

@@ -16,8 +16,6 @@ package org.apereo.portal.portlets.portletadmin;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -1140,7 +1138,7 @@ public final class PortletAdministrationHelper implements ServletContextAware {
          *
          * NOTE 2:  permissions for this step have already been checked in savePortletRegistration.
          */
-        portletDef.setLifecycleState(selectedLifecycleState, publisher);
+        portletDef.updateLifecycleState(selectedLifecycleState, publisher);
 
         /*
          * Step Two:  depending on which state was selected, we may have extra work to do.
@@ -1151,7 +1149,7 @@ public final class PortletAdministrationHelper implements ServletContextAware {
                 if (form.getPublishDate() != null && hasLifecyclePermission(
                         publisher, PortletLifecycleState.PUBLISHED, form.getCategories())) {
                     // We are also the 'publisher' if we scheduled the portlet for (future) publication...
-                    portletDef.setLifecycleState(PortletLifecycleState.PUBLISHED, publisher,
+                    portletDef.updateLifecycleState(PortletLifecycleState.PUBLISHED, publisher,
                             form.getPublishDateTime());
                 }
                 break;
@@ -1160,7 +1158,7 @@ public final class PortletAdministrationHelper implements ServletContextAware {
                 if (form.getExpirationDate() != null && hasLifecyclePermission(
                         publisher, PortletLifecycleState.EXPIRED, form.getCategories())) {
                     // We are also the 'expirer' if we scheduled the portlet for (future) expiration...
-                    portletDef.setLifecycleState(PortletLifecycleState.EXPIRED, publisher,
+                    portletDef.updateLifecycleState(PortletLifecycleState.EXPIRED, publisher,
                             form.getExpirationDateTime());
 
                 }

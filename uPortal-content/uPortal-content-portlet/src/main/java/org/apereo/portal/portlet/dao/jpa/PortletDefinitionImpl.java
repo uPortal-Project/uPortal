@@ -22,6 +22,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
+
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -666,53 +668,41 @@ public class PortletDefinitionImpl implements IPortletDefinition {
     @Override
     public PortletLifecycleState getLifecycleState() {
 
-        /*
-         * NB:  A portlet definition may have a current lifecycle
-         * state of null if it has not yet been completely created.
-         */
-        PortletLifecycleState rslt = null;
-
         final Date now = new Date();
-        for (IPortletLifecycleEntry entry : lifecycleEntries) {
-            /*
-             * A lifecycle change that is scheduled for the
-             * future is not a candidate for the current state.
-             */
-            if (entry.getDate().before(now)) {
-                rslt = entry.getLifecycleState();
-            } else {
-                /*
-                 * NOTE (per JPA docs):  "If the ordering element is not specified,
-                 * ordering by the primary key of the associated entity is assumed."
-                 */
-                break;
-            }
-        }
-
-        return rslt;
+        final IPortletLifecycleEntry currentEntry = lifecycleEntries.stream()
+                .filter(entry -> entry.getDate().before(now)) // Not entries in the future
+                .reduce((e1, e2) -> e1.getDate().after(e2.getDate()) ? e1 : e2) // Only the latest
+                .orElse(null); // Possible if the portlet is not yet fully created
+        return currentEntry != null ? currentEntry.getLifecycleState() : null;
 
     }
 
     @Override
-    public void setLifecycleState(PortletLifecycleState lifecycleState, IPerson user) {
-        setLifecycleState(lifecycleState, user, new Date());
+    public void updateLifecycleState(PortletLifecycleState lifecycleState, IPerson user) {
+        updateLifecycleState(lifecycleState, user, new Date());
     }
 
+    /**
+     * In {@link PortletDefinitionImpl}, this overload does all the work.  (The other overload
+     * forwards.)  Adding <code>synchronized</code> in case two threads try to modify the
+     * collection at the same time.
+     */
     @Override
-    public void setLifecycleState(PortletLifecycleState lifecycleState, IPerson user, Date timestamp) {
-        // Avoid a ConcurrentModificationException
-        final List<IPortletLifecycleEntry> list = new ArrayList<>(lifecycleEntries);
-        for (IPortletLifecycleEntry entry : list) {
-            /*
-             * Lifecycle entries that are scheduled for a
-             * date following the new entry must be cleared.
-             */
-            if (entry.getDate().after(timestamp)) {
-                lifecycleEntries.remove(entry);
-            }
-        }
-        IPortletLifecycleEntry newEntry = new PortletLifecycleEntryImpl(user.getID(), lifecycleState, timestamp);
+    public synchronized void updateLifecycleState(PortletLifecycleState lifecycleState, IPerson user, Date timestamp) {
+
+        /*
+         * Lifecycle entries that are scheduled for a
+         * date following the new entry must be cleared.
+         */
+        final Set<IPortletLifecycleEntry> canceledStateChanges =
+                lifecycleEntries.stream()
+                .filter(entry -> entry.getDate().after(timestamp))
+                .collect(Collectors.toSet());
+        lifecycleEntries.removeAll(canceledStateChanges);
+
+        final IPortletLifecycleEntry newEntry = new PortletLifecycleEntryImpl(user.getID(), lifecycleState, timestamp);
         lifecycleEntries.add(newEntry);
+
     }
 
     @Override

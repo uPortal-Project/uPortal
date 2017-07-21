@@ -67,13 +67,13 @@ public interface IPortletDefinition extends IBasicEntity, IPortalData {
      * Adds the specified state to the lifecycle history at the present moment, removing any
      * lifecycle changes scheduled for the future.
      */
-    void setLifecycleState(PortletLifecycleState lifecycleState, IPerson user);
+    void updateLifecycleState(PortletLifecycleState lifecycleState, IPerson user);
 
     /**
      * Schedules the specified state change for the specified moment, removing any lifecycle
      * changes scheduled beyond that.
      */
-    void setLifecycleState(PortletLifecycleState lifecycleState, IPerson user, Date timestamp);
+    void updateLifecycleState(PortletLifecycleState lifecycleState, IPerson user, Date timestamp);
 
     /**
      * Returns the entire lifecycle history of the portlet:  past, present, and future.  Entries in

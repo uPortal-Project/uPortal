@@ -216,13 +216,13 @@ import org.springframework.stereotype.Component;
              * For backwards-compatibility, a complete absence of
              * lifecycle information means the portlet is published.
              */
-            portletDefinition.setLifecycleState(PortletLifecycleState.PUBLISHED, systemUser);
+            portletDefinition.updateLifecycleState(PortletLifecycleState.PUBLISHED, systemUser);
         } else if (lifecycle.getEntries().isEmpty()) {
             /*
              * According to the comments for 4.3, we're supposed
              * to leave the portlet in CREATED state.
              */
-            portletDefinition.setLifecycleState(PortletLifecycleState.CREATED, systemUser);
+            portletDefinition.updateLifecycleState(PortletLifecycleState.CREATED, systemUser);
         } else {
             /*
              * Use a TreeMap because we need to be certain the the entries
@@ -269,7 +269,7 @@ import org.springframework.stereotype.Component;
              * Apply them to the portlet definition
              */
             convertedEntries.forEach((k,v) -> {
-                portletDefinition.setLifecycleState(k.getLifecycleState(), v, k.getDate());
+                portletDefinition.updateLifecycleState(k.getLifecycleState(), v, k.getDate());
             });
         }
 

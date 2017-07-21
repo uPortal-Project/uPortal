@@ -433,13 +433,13 @@ public class MarketplacePortletDefinition implements IPortletDefinition {
     }
 
     @Override
-    public void setLifecycleState(PortletLifecycleState lifecycleState, IPerson user) {
-        portletDefinition.setLifecycleState(lifecycleState, user);
+    public void updateLifecycleState(PortletLifecycleState lifecycleState, IPerson user) {
+        portletDefinition.updateLifecycleState(lifecycleState, user);
     }
 
     @Override
-    public void setLifecycleState(PortletLifecycleState lifecycleState, IPerson user, Date timestamp) {
-        portletDefinition.setLifecycleState(lifecycleState, user, timestamp);
+    public void updateLifecycleState(PortletLifecycleState lifecycleState, IPerson user, Date timestamp) {
+        portletDefinition.updateLifecycleState(lifecycleState, user, timestamp);
     }
 
     @Override
