@@ -14,18 +14,33 @@
  */
 package org.apereo.portal.api.permissions;
 
-import java.io.Serializable;
-import org.apereo.portal.api.Principal;
+import org.junit.Assert;
+import org.junit.Test;
 
-public interface Assignment extends Serializable {
+public class ActivityImplTest {
+    ActivityImpl activity;
 
-    Owner getOwner();
+    @Test
+    public void testGetKey(){
+        activity = new ActivityImpl("key","name");
+        Assert.assertEquals("key",activity.getKey());
+    }
 
-    Activity getActivity();
+    @Test
+    public void testGetName(){
+        activity = new ActivityImpl("key","name");
+        Assert.assertEquals("name",activity.getName());
+    }
 
-    Principal getPrincipal();
+    @Test(expected = IllegalArgumentException.class)
+    public void testGetKeyNull(){
+        activity = new ActivityImpl(null,null);
+        activity.getKey();
+    }
 
-    Target getTarget();
-
-    boolean isInherited();
+    @Test(expected = IllegalArgumentException.class)
+    public void testGetNameNull(){
+        activity = new ActivityImpl(null,null);
+        activity.getName();
+    }
 }

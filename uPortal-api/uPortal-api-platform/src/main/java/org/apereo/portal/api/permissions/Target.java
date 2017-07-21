@@ -18,7 +18,7 @@ import java.io.Serializable;
 
 public interface Target extends Serializable {
 
-    public String getKey();
+    String getKey();
 
-    public String getName();
+    String getName();
 }
