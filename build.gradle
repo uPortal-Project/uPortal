@@ -48,10 +48,17 @@ allprojects {
     apply plugin: 'findbugs'
     apply plugin: 'idea'
     apply plugin: 'nebula.lint'
+    apply plugin: 'groovy'
+    apply plugin: 'codenarc'
     apply plugin: 'com.github.sherter.google-java-format'
     apply plugin: 'net.ltgt.errorprone'
 
     sourceCompatibility = 1.8
+
+    codenarc {
+        toolVersion = '0.27.0'
+        reportFormat = 'console'
+    }
 
     gradleLint.criticalRules = [
       'overridden-dependency-version',
