@@ -37,20 +37,20 @@ class SpELDataTemplatingStrategyTest {
     void testProcessText() {
         ITenant tenant = [
             getName: { 'Mordor' },
-            getFname: { 'mordor'}
+            getFname: { 'mordor'},
         ] as ITenant;
         StandardEvaluationContext ctx = new StandardEvaluationContext();
         ctx.setRootObject(new TemplateDataTenantOperationsListener.RootObjectImpl(tenant));
         IDataTemplatingStrategy templating = new SpELDataTemplatingStrategy(portalSpELService, ctx);
 
-        def inputs = [
+        Map inputs = [
             'foobar': 'foobar',
             '${tenant.name}': 'Mordor',
             'Something ${tenant.name}': 'Something Mordor',
             '${tenant.name} Something': 'Mordor Something',
             '${tenant.fname}': 'mordor',
             'Something ${tenant.fname}': 'Something mordor',
-            '${tenant.fname} Something': 'mordor Something'
+            '${tenant.fname} Something': 'mordor Something',
         ];
 
         inputs.each { k,v ->

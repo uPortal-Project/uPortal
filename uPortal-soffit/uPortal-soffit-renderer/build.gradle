@@ -16,9 +16,7 @@ dependencies {
      */
     compile "org.springframework:spring-webmvc:4.3.1.RELEASE"
 
-    testCompile("junit:junit:${junitVersion}") {
-        exclude group: 'org.hamcrest', module: 'hamcrest-core'
-    }
+    testCompile "junit:junit:${junitVersion}"
     testCompile "org.mockito:mockito-core:${mockitoVersion}"
     testCompile "${servletApiDependency}"
 

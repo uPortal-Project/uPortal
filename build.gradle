@@ -55,6 +55,14 @@ allprojects {
 
     sourceCompatibility = 1.8
 
+    configurations {
+        // Banned dependencies
+        all*.exclude group: 'commons-logging', module: 'commons-logging'
+        all*.exclude group: 'commons-logging', module: 'commons-logging-api'
+        all*.exclude group: 'log4j', module: 'log4j'
+        all*.exclude group: 'org.hamcrest', module: 'hamcrest-core'
+    }
+
     codenarc {
         toolVersion = '0.27.0'
         reportFormat = 'console'
@@ -101,17 +109,8 @@ subprojects {
         mavenCentral()
     }
 
-    configurations {
-        // Banned dependencies
-        all*.exclude group: 'commons-logging', module: 'commons-logging'
-        all*.exclude group: 'commons-logging', module: 'commons-logging-api'
-        all*.exclude group: 'log4j', module: 'log4j'
-    }
-
     dependencies {
-        testCompile("junit:junit:${junitVersion}") {
-            exclude group: 'org.hamcrest', module: 'hamcrest-core'
-        }
+        testCompile "junit:junit:${junitVersion}"
         testCompile "org.easymock:easymock:${easymockVersion}"
         testCompile "org.hamcrest:hamcrest-all:${hamcrestVersion}"
         testCompile "org.mockito:mockito-core:${mockitoVersion}"

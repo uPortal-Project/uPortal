@@ -22,9 +22,9 @@ import org.apereo.portal.portlet.dao.IPortletDefinitionDao
 import org.apereo.portal.portlet.dao.jpa.PortletDefinitionImpl
 import org.apereo.portal.portlet.dao.jpa.PortletTypeImpl
 import org.apereo.portal.portlet.om.PortletLifecycleState
-import org.apereo.portal.rendering.PortletDefinitionAttributeSource
-
 import javax.xml.stream.XMLEventFactory
+import javax.xml.stream.events.Attribute
+import javax.xml.stream.events.StartElement
 
 /**
  * Tests PortletDefinitionAttributeSource.
@@ -33,21 +33,22 @@ import javax.xml.stream.XMLEventFactory
 
 class PortletDefinitionAttributeSourceTest extends GroovyTestCase {
     void testGetAdditionalAttributesPortlet() {
-        def portletDefn = new PortletDefinitionImpl(new PortletTypeImpl('name', 'cpdUri'),
+        PortletDefinitionImpl portletDefn = new PortletDefinitionImpl(new PortletTypeImpl('name', 'cpdUri'),
             'theFname', 'name', 'title', 'webappName', 'portletName', false)
-        def portletDefinitionDao = [
+        IPortletDefinitionDao portletDefinitionDao = [
                 getPortletDefinitionByFname: { String fname ->
                     assert 'theFname' == fname
-                    portletDefn }] as IPortletDefinitionDao
-        def testClass = new PortletDefinitionAttributeSource()
+                    portletDefn },
+                ] as IPortletDefinitionDao
+        PortletDefinitionAttributeSource testClass = new PortletDefinitionAttributeSource()
         testClass.setPortletDefinitionDao(portletDefinitionDao)
-        def factory = XMLEventFactory.newFactory()
-        def attr = factory.createAttribute('fname', 'theFname')
-        def element = factory.createStartElement('', '', 'channel',attr.iterator(), null)
-        def attrIterator = testClass.getAdditionalAttributes(null, null, element)
-        def attributeMap = [:]
+        XMLEventFactory factory = XMLEventFactory.newFactory()
+        Attribute attr = factory.createAttribute('fname', 'theFname')
+        StartElement element = factory.createStartElement('', '', 'channel',attr.iterator(), null)
+        Iterator attrIterator = testClass.getAdditionalAttributes(null, null, element)
+        Map attributeMap = [:]
         while (attrIterator.hasNext()) {
-            def attrItem = attrIterator.next()
+            Attribute attrItem = attrIterator.next()
             attributeMap[attrItem.getName().getLocalPart()] = attrItem.getValue()
         }
         assert attributeMap.size() == 3
@@ -57,21 +58,21 @@ class PortletDefinitionAttributeSourceTest extends GroovyTestCase {
     }
 
     void testGetAdditionalAttributesFrameworkPortlet() {
-        def portletDefn = new PortletDefinitionImpl(new PortletTypeImpl('name', 'cpdUri'),
-                'theFname', 'name', 'title', null, 'portletName', true)
-        def portletDefinitionDao = [
+        PortletDefinitionImpl portletDefn = new PortletDefinitionImpl(new PortletTypeImpl('name', 'cpdUri'),
+                'theFname', 'name', 'title', null, 'portletName', true,)
+        IPortletDefinitionDao portletDefinitionDao = [
                 getPortletDefinitionByFname: { String fname ->
                     assert 'theFname' == fname
-                    portletDefn }] as IPortletDefinitionDao
-        def testClass = new PortletDefinitionAttributeSource()
+                    portletDefn },] as IPortletDefinitionDao
+        PortletDefinitionAttributeSource testClass = new PortletDefinitionAttributeSource()
         testClass.setPortletDefinitionDao(portletDefinitionDao)
-        def factory = XMLEventFactory.newFactory()
-        def attr = factory.createAttribute('fname', 'theFname')
-        def element = factory.createStartElement('', '', 'channel',attr.iterator(), null)
-        def attrIterator = testClass.getAdditionalAttributes(null, null, element)
-        def attributeMap = [:]
+        XMLEventFactory factory = XMLEventFactory.newFactory()
+        Attribute attr = factory.createAttribute('fname', 'theFname')
+        StartElement element = factory.createStartElement('', '', 'channel',attr.iterator(), null)
+        Iterator attrIterator = testClass.getAdditionalAttributes(null, null, element)
+        Map attributeMap = [:]
         while (attrIterator.hasNext()) {
-            def attrItem = attrIterator.next()
+            Attribute attrItem = attrIterator.next()
             attributeMap[attrItem.getName().getLocalPart()] = attrItem.getValue()
         }
         assert attributeMap.size() == 3
@@ -79,18 +80,18 @@ class PortletDefinitionAttributeSourceTest extends GroovyTestCase {
         assert attributeMap[PortletDefinitionAttributeSource.FRAMEWORK_PORTLET_ATTRIBUTE] == 'true'
     }
 
-        void testGetAdditionalAttributesDoesNotThrowExceptionIfNoPortletDefinitionFound() {
-        def portletDefn = null
-        def portletDefinitionDao = [
+    void testGetAdditionalAttributesDoesNotThrowExceptionIfNoPortletDefinitionFound() {
+        Object portletDefn = null
+        IPortletDefinitionDao portletDefinitionDao = [
                 getPortletDefinitionByFname: { String fname ->
                     assert 'theFname' == fname
-                    portletDefn }] as IPortletDefinitionDao
-        def testClass = new PortletDefinitionAttributeSource()
+                    portletDefn },] as IPortletDefinitionDao
+        PortletDefinitionAttributeSource testClass = new PortletDefinitionAttributeSource()
         testClass.setPortletDefinitionDao(portletDefinitionDao)
-        def factory = XMLEventFactory.newFactory()
-        def attr = factory.createAttribute('fname', 'theFname')
-        def element = factory.createStartElement('', '', 'channel',attr.iterator(), null)
-        def attrIterator = testClass.getAdditionalAttributes(null, null, element)
+        XMLEventFactory factory = XMLEventFactory.newFactory()
+        Attribute attr = factory.createAttribute('fname', 'theFname')
+        StartElement element = factory.createStartElement('', '', 'channel',attr.iterator(), null)
+        Iterator attrIterator = testClass.getAdditionalAttributes(null, null, element)
     }
 
 }

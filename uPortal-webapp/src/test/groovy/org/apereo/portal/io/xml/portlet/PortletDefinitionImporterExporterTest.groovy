@@ -67,18 +67,18 @@ public class PortletDefinitionImporterExporterTest extends Specification {
     private PortletDefinitionImporterExporter importer = new PortletDefinitionImporterExporter(
         portletTypeRegistry: typeRegistry,
         portletDefinitionDao: definitionDao,
-        portletCategoryRegistry: categoryRegistry
+        portletCategoryRegistry: categoryRegistry,
     );
 
 
-    def setupSpec() {
+    void setupSpec() {
         // grr.  hack around some of the static GroupService methods...
         // This is FAR from ideal.  If any other tests need to mock the group
         // service, this will get in the way (or get broken).  For now, it does
         // not cause conflicts on other tests.  Long term, need to convert
         // GroupService to a spring bean, but I think that may be quite involved.
-        def groupServiceConfig = GroupServiceConfiguration.getConfiguration();
-        def attrs = groupServiceConfig.getAttributes();
+        GroupServiceConfiguration groupServiceConfig = GroupServiceConfiguration.getConfiguration();
+        Map attrs = groupServiceConfig.getAttributes();
         attrs.put('compositeFactory', MockCompositeGroupServiceFactory.class.getName());
 
         // hack around the static AuthorizationService methods...
@@ -88,7 +88,7 @@ public class PortletDefinitionImporterExporterTest extends Specification {
             authServiceInvocationHandler
         );
 
-        def locator = new AbstractBeanLocator<IAuthorizationService>(proxyAuthorizationService, IAuthorizationService.class) {
+        AbstractBeanLocator locator = new AbstractBeanLocator<IAuthorizationService>(proxyAuthorizationService, IAuthorizationService.class) {
             @Override
             protected void setLocator(AbstractBeanLocator<IAuthorizationService> locator) {}
             @Override
@@ -98,7 +98,7 @@ public class PortletDefinitionImporterExporterTest extends Specification {
     }
 
 
-    def setup() {
+    void setup() {
         // point the static var at the composite service object so that the
         // guts of the GroupService can be mocked (since GroupService can't be
         // directly mocked.
@@ -109,27 +109,27 @@ public class PortletDefinitionImporterExporterTest extends Specification {
     }
 
     // Verifies a date is after the test started and at or before now
-    def checkDateTimeInRange (Date dateTime) {
+    void checkDateTimeInRange (Date dateTime) {
         assert dateTime.after(testClassStart)
-        def now = new Date()
+        Date now = new Date()
         assert dateTime.before(now) || dateTime.equals(now)
     }
 
 
-    def 'should support importing simple portlets'() {
+    void 'should support importing simple portlets'() {
         given:
-            def portletType = new PortletTypeImpl('Portlet', 'CpdUri');
-            def portletDef = null;
+            PortletTypeImpl portletType = new PortletTypeImpl('Portlet', 'CpdUri');
+            Object portletDef = null;
 
         and: 'I setup a sample portlet definition'
-            def input = new ExternalPortletDefinition(
+            ExternalPortletDefinition input = new ExternalPortletDefinition(
                 name: 'test',
                 title: 'title',
                 fname: 'test-new',
                 desc: 'desc',
                 type: 'Portlet',
                 portletDescriptor: new PortletDescriptor(webAppName: "test", portletName: "test", isFramework: false),
-                categories: []
+                categories: [],
             );
 
         when: 'I import the portlet'
@@ -169,13 +169,13 @@ public class PortletDefinitionImporterExporterTest extends Specification {
     }
 
 
-    def 'should support importing portlets with lifecycle but bad future dates'() {
+    void 'should support importing portlets with lifecycle but bad future dates'() {
         given:
-        def portletType = new PortletTypeImpl('Portlet', 'CpdUri');
-        def portletDef = null;
+        PortletTypeImpl portletType = new PortletTypeImpl('Portlet', 'CpdUri');
+        Object portletDef = null;
 
         and: 'I setup a sample portlet definition'
-        def input = new ExternalPortletDefinition(
+        ExternalPortletDefinition input = new ExternalPortletDefinition(
                 name: 'test',
                 title: 'title',
                 fname: 'test-new',
@@ -193,9 +193,9 @@ public class PortletDefinitionImporterExporterTest extends Specification {
                         ),
                         expiration: new LifecycleEntry(
                                 value: getCalendar(futureTime)
-                        )
+                        ),
                 ),
-                categories: []
+                categories: [],
         );
 
         when: 'I import the portlet'
@@ -234,14 +234,14 @@ public class PortletDefinitionImporterExporterTest extends Specification {
         });
     }
 
-    def 'should support importing portlets with created lifecycle'() {
+    void 'should support importing portlets with created lifecycle'() {
         given:
-        def portletType = new PortletTypeImpl('Portlet', 'CpdUri');
-        def portletDef = null;
-        def testStart = new Date()
+        PortletTypeImpl portletType = new PortletTypeImpl('Portlet', 'CpdUri');
+        Object portletDef = null;
+        Date testStart = new Date()
 
         and: 'I setup a sample portlet definition'
-        def input = new ExternalPortletDefinition(
+        ExternalPortletDefinition input = new ExternalPortletDefinition(
                 name: 'test',
                 title: 'title',
                 fname: 'test-new',
@@ -251,7 +251,7 @@ public class PortletDefinitionImporterExporterTest extends Specification {
                 lifecycle: new Lifecycle(
                         // No properties specified; e.g. created
                 ),
-                categories: []
+                categories: [],
         );
 
         when: 'I import the portlet'
@@ -289,14 +289,14 @@ public class PortletDefinitionImporterExporterTest extends Specification {
         });
     }
 
-    def 'should support importing portlets with approval lifecycle'() {
+    void 'should support importing portlets with approval lifecycle'() {
         given:
-        def portletType = new PortletTypeImpl('Portlet', 'CpdUri');
-        def portletDef = null;
-        def testStart = new Date()
+        PortletTypeImpl portletType = new PortletTypeImpl('Portlet', 'CpdUri');
+        Object portletDef = null;
+        Date testStart = new Date()
 
         and: 'I setup a sample portlet definition'
-        def input = new ExternalPortletDefinition(
+        ExternalPortletDefinition input = new ExternalPortletDefinition(
                 name: 'test',
                 title: 'title',
                 fname: 'test-new',
@@ -308,7 +308,7 @@ public class PortletDefinitionImporterExporterTest extends Specification {
                                 value: getCalendar(testStart)
                         )
                 ),
-                categories: []
+                categories: [],
         );
 
         when: 'I import the portlet'
@@ -348,12 +348,12 @@ public class PortletDefinitionImporterExporterTest extends Specification {
     }
 
 
-    def 'should support updating existing portlets'() {
+    void 'should support updating existing portlets'() {
         given: 'A portlet definition exists'
-            def portletType = new PortletTypeImpl('Portlet', 'CpdUri');
-            def portletDef = new PortletDefinitionImpl(portletType, 'fname', 'name', 'title', 'webapp', 'portletName', true);
+            PortletTypeImpl portletType = new PortletTypeImpl('Portlet', 'CpdUri');
+            PortletDefinitionImpl portletDef = new PortletDefinitionImpl(portletType, 'fname', 'name', 'title', 'webapp', 'portletName', true);
             portletDef.portletDefinitionId = new MockPortletDefinitionId(100l);
-            def testStart = new Date()
+            Date testStart = new Date()
 
             // groups assigned to old entity
             IEntityGroup oldGroupStudent = Mock();
@@ -372,7 +372,7 @@ public class PortletDefinitionImporterExporterTest extends Specification {
             IPermission newPermissionTeacher = Mock();
 
         and: 'I setup an external portlet definition with the same fname'
-            def input = new ExternalPortletDefinition(
+            ExternalPortletDefinition input = new ExternalPortletDefinition(
                 name: 'test',
                 title: 'title',
                 fname: 'fname',
@@ -386,7 +386,7 @@ public class PortletDefinitionImporterExporterTest extends Specification {
                 ),
                 groups: [ "Portal Administrator", "Teacher" ],
                 portletDescriptor: new PortletDescriptor(webAppName: "test", portletName: "test", isFramework: false),
-                categories: []
+                categories: [],
             );
 
         when: 'I import the portlet'
@@ -417,7 +417,7 @@ public class PortletDefinitionImporterExporterTest extends Specification {
             1 * portletDefEntity.getAncestorGroups() >> {
                 return [
                     oldGroupStudent,
-                    oldGroupStaff
+                    oldGroupStaff,
                 ];
             };
 
@@ -438,10 +438,10 @@ public class PortletDefinitionImporterExporterTest extends Specification {
     }
 
 
-    def 'should support extended permissions'() {
+    void 'should support extended permissions'() {
         given: 'A portlet definition exists'
-            def portletType = new PortletTypeImpl('Portlet', 'CpdUri');
-            def portletDef = new PortletDefinitionImpl(portletType, 'fname', 'name', 'title', 'webapp', 'portletName', true);
+            PortletTypeImpl portletType = new PortletTypeImpl('Portlet', 'CpdUri');
+            PortletDefinitionImpl portletDef = new PortletDefinitionImpl(portletType, 'fname', 'name', 'title', 'webapp', 'portletName', true);
             portletDef.portletDefinitionId = new MockPortletDefinitionId(100l);
 
             // groups assigned to old entity
@@ -464,7 +464,7 @@ public class PortletDefinitionImporterExporterTest extends Specification {
             IPermission newPermissionStudent = Mock();
 
         and: 'I setup an external portlet definition with the same fname'
-            def input = new ExternalPortletDefinition(
+            ExternalPortletDefinition input = new ExternalPortletDefinition(
                 name: 'test',
                 title: 'title',
                 fname: 'fname',
@@ -485,7 +485,7 @@ public class PortletDefinitionImporterExporterTest extends Specification {
                     ]
                 ),
                 portletDescriptor: new PortletDescriptor(webAppName: "test", portletName: "test", isFramework: false),
-                categories: []
+                categories: [],
             );
 
         when: 'I import the portlet'
@@ -509,7 +509,7 @@ public class PortletDefinitionImporterExporterTest extends Specification {
             1 * portletDefEntity.getAncestorGroups() >> {
                 return [
                     oldGroupStudent,
-                    oldGroupStaff
+                    oldGroupStaff,
                 ];
             };
 
