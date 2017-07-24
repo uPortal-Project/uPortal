@@ -23,31 +23,34 @@ public class DelegationActionResponseTest {
 
     @Test
     public void testGetRenderUrlParamNameNull() {
-        delegationActionResponse = new DelegationActionResponse(null, null,null,null);
+        delegationActionResponse = new DelegationActionResponse(null, null, null, null);
         Assert.assertNull(delegationActionResponse.getRenderUrlParamName());
     }
 
     @Test
     public void testGetRenderUrlParamName() {
-        delegationActionResponse = new DelegationActionResponse(null,  "redirect:/index.html","renderparam");
-        Assert.assertEquals("renderparam",delegationActionResponse.getRenderUrlParamName());
+        delegationActionResponse =
+                new DelegationActionResponse(null, "redirect:/index.html", "renderparam");
+        Assert.assertEquals("renderparam", delegationActionResponse.getRenderUrlParamName());
     }
 
     @Test
-    public void testGetRedirectLocationNull(){
-        delegationActionResponse = new DelegationActionResponse(null, null,null,null);
+    public void testGetRedirectLocationNull() {
+        delegationActionResponse = new DelegationActionResponse(null, null, null, null);
         Assert.assertNull(delegationActionResponse.getRedirectLocation());
     }
 
     @Test
-    public void testGetRedirectLocation(){
-        delegationActionResponse = new DelegationActionResponse(null,  "redirect:/index.html","renderparam");
-        Assert.assertEquals("redirect:/index.html",delegationActionResponse.getRedirectLocation());
+    public void testGetRedirectLocation() {
+        delegationActionResponse =
+                new DelegationActionResponse(null, "redirect:/index.html", "renderparam");
+        Assert.assertEquals("redirect:/index.html", delegationActionResponse.getRedirectLocation());
     }
 
     @Test
     public void testGetRenderParameters() {
-        delegationActionResponse = new DelegationActionResponse(null,  "redirect:/index.html","renderparam");
+        delegationActionResponse =
+                new DelegationActionResponse(null, "redirect:/index.html", "renderparam");
         Assert.assertTrue(delegationActionResponse.getRenderParameters().isEmpty());
     }
 }

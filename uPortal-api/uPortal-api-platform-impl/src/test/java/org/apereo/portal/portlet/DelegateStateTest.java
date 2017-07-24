@@ -14,10 +14,8 @@
  */
 package org.apereo.portal.portlet;
 
-
 import javax.portlet.PortletMode;
 import javax.portlet.WindowState;
-
 import org.apereo.portal.api.portlet.DelegateState;
 import org.junit.Assert;
 import org.junit.Before;
@@ -29,18 +27,21 @@ public class DelegateStateTest {
 
     @Before
     public void setup() {
-        delegateState = new DelegateState(new Mockito().mock(PortletMode.class), new Mockito().mock(WindowState.class));
+        delegateState =
+                new DelegateState(
+                        new Mockito().mock(PortletMode.class),
+                        new Mockito().mock(WindowState.class));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testGetPortletModeNull() {
-        delegateState = new DelegateState(null,null);
+        delegateState = new DelegateState(null, null);
         delegateState.getPortletMode();
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testGetWindowStateNull() {
-        delegateState = new DelegateState(null,null);
+        delegateState = new DelegateState(null, null);
         delegateState.getWindowState();
     }
 
