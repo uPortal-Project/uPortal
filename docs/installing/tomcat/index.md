@@ -1,6 +1,9 @@
 # Installing Tomcat
 
-Apache Tomcat is the recommended servlet container to use with uPortal. While uPortal requires a Servlet 3.0-compatible servlet container and another servlet container may be used, most uPortal implementers deploy to Apache Tomcat. Choosing Tomcat 8.x will likely allow uPortal adopters to get the best advice from the community.
+Apache Tomcat is the recommended servlet container to use with uPortal. While uPortal requires a
+Servlet 3.0-compatible servlet container and another servlet container may be used, most uPortal
+implementers deploy to Apache Tomcat. Choosing Tomcat 8.x will likely allow uPortal adopters to get
+the best advice from the community.
 
 See also
 
@@ -72,14 +75,13 @@ Unzip the download into a suitable directory. For example, you may unzip the fil
 
 ### 3. Set environment variables
 
-You will need to create two environment variables `CATALINA_HOME` and `JAVA_HOME`.
+You will need to define the `JAVA_HOME` environment variable.
 
 ```shell
-CATALINA_HOME : C:\apache-tomcat-8.x
 JAVA_HOME : C:\Program Files\Java\jdk1.x
 ```
 
-For Windows (different versions may vary) you can create these environment variables by doing the following: right-click 'My Computer' select properties and then the Advanced tab. Then click Environment Variables and under System variables click New. From here, you can enter the name and value for `CATALINA_HOME` and again for `JAVA_HOME` if it's not already created.
+For Windows (different versions may vary) you can create these environment variables by doing the following: right-click 'My Computer' select properties and then the Advanced tab. Then click Environment Variables and under System variables click New. From here, you can enter the name and value for `JAVA_HOME` if it's not already created.
 
 ### 4. Start Tomcat
 
@@ -135,7 +137,7 @@ uPortal requires a larger than standard `PermGen` space (Java 7 only) and more h
 -XX:MaxPermSize=384m (Java 7 only) -Xmx2048m
 ```
 
-To add these, create a file called either `setenv.sh` (Linux/Mac) or `setenv.bat` (Windows) in your `CATALINA_HOME/bin` directory and add the configuration as follows. Note for production settings you would typically want more heap space, at least 4GB. See Additional Tomcat Configuration below.
+To add these, create a file called either `setenv.sh` (Linux/Mac) or `setenv.bat` (Windows) in your Tomcat `bin` directory and add the configuration as follows. Note for production settings you would typically want more heap space, at least 4GB. See Additional Tomcat Configuration below.
 
 ```
 JAVA_OPTS="$JAVA_OPTS -XX:+PrintCommandLineFlags -XX:MaxPermSize=384m -Xms1024m -Xmx2048m -Djsse.enableSNIExtension=false"
