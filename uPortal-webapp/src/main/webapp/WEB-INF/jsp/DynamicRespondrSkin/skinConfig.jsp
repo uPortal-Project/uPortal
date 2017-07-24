@@ -22,12 +22,12 @@
 <c:set var="n"><portlet:namespace/></c:set>
 
 <style type="text/css">
-    #${n}skinManagerConfig .loadingMessage {
-        position: relative;
-        top: -150px;
-        left: 250px;
-        font-size: 50px;
-    }
+#${n}skinManagerConfig .loadingMessage {
+    position: relative;
+    top: -150px;
+    left: 250px;
+    font-size: 50px;
+}
 </style>
 
 <portlet:actionURL var="saveUrl"><portlet:param name="action" value="update"/></portlet:actionURL>
