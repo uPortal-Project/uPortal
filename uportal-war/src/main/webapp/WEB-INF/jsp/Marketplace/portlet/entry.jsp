@@ -164,8 +164,13 @@
     }
 
     #${n} .marketplace_dropdown_menu li a[disabled] {
-        color: #666666;
-        background-color: #c0c0c0;
+        color: #DDDDDD;
+        background-color: #333333;
+    }
+
+    #${n} .btn.btn-default.disabled {
+        background-color: #E0E0E0;
+        opacity: 1;
     }
 
     #${n} .marketplace_section.row {
@@ -267,16 +272,17 @@
 </style>
 
 <script type="text/template" id="${n}options-menu">
-    <li>
+    <li role="menuitem">
         <a href="javascript:;" title='<spring:message code="link.to" text="Link to ..." />' data-toggle="modal" data-target="#${n}copy-modal" id="${n}linkto">
             <spring:message code="link.to" text="Link to ..."/>
         </a>
     </li>
-    <li class="divider"></li>
-    <li>
+    <li aria-hidden="true" class="divider"></li>
+    <li role="menuitem">
         <spring:message code="add.this.portlet.to.my.favorite" text="Add this Portlet to My Favorites" var="atptmfTitle"/>
-        <a href="javascript:;" title="${atptmfTitle}"
-                class="{% if (isFavorite) { print('marketplace_remove_favorite'); } else { print('marketplace_add_favorite'); } %}">
+        <a role="button" href="javascript:;" title="${atptmfTitle}"
+                class="{% if (isFavorite) { print('marketplace_remove_favorite'); } else { print('marketplace_add_favorite'); } %}"
+                aria-pressed="{% if (isFavorite) { print('true'); } else { print('false'); } %}">
             {% if (isFavorite) { %}
                 <i class="fa fa-star"></i>
             {% } else { %}
@@ -287,15 +293,15 @@
             </span>
         </a>
     </li>
-    <li>
-        <a href="javascript://" disabled>
+    <li role="menuitem">
+        <a href="javascript://" aria-disabled="true" disabled>
                 <span>
                     <spring:message code="marketplace.add.to.tab" text="Add portlet to tab:"/>
                 </span>
         </a>
     </li>
     {% _.each(tabs, function(tab) { %}
-        <li>
+        <li role="menuitem">
             <a href="javascript:;" class="marketplace_add_to_tab_link" data-tab-id="{%= tab.id %}">
                 <span>
                     {%- tab.name %}
@@ -352,13 +358,13 @@
 </script>
 
 <div id="${n}">
-    <div>
+    <div class="col-xs-12">
         <div class="row">
-            <div class="col-xs-1">
+            <div class="col-xs-6">
                 <portlet:renderURL var="initialViewURL" windowState="MAXIMIZED"/>
                 <a class="btn btn-default" href="${initialViewURL}"><i class="fa fa-arrow-left"></i> <spring:message code="back.to.list" text="Back to List"/></a>
             </div>
-            <div class="col-md-offset-5 col-md-6 col-xs-6" class="${n}go_button">
+            <div class="col-xs-6" class="${n}go_button">
                 <div class="btn-group marketplace_button_group" style="float:right">
                     <a href="${marketplaceEntry.renderUrl}" id="marketplace_go_button"
                        class="btn btn-default marketplace_dropdown_button" role="button">
@@ -374,18 +380,18 @@
             </div>
         </div>
         <div class="row header-info-wrapper">
-            <div class="col-sm-1 header-img">
+            <div class="col-sm-1 col-xs-4 header-img">
                 <c:url value="/media/skins/icons/mobile/default.png" var="defaultIcon"/>
                     <c:choose>
                         <c:when test="${empty marketplaceEntry.getParameter('mobileIconUrl')}">
-                            <img src="${defaultIcon}">
+                            <img src="${defaultIcon}" alt="">
                         </c:when>
                         <c:otherwise>
-                            <img src="${marketplaceEntry.getParameter('mobileIconUrl').value}">
+                            <img src="${marketplaceEntry.getParameter('mobileIconUrl').value}" alt="">
                         </c:otherwise>
                 </c:choose>
             </div>
-            <div class="col-sm-11">
+            <div class="col-sm-11 col-xs-8">
                 <div class="marketplace_description_title">
                     <h1>${marketplaceEntry.title}</h1>
                 </div>
@@ -421,7 +427,8 @@
                         </div>
                         <c:if test="${enableReviews}">
                         <div class="form-group">
-                            <textarea id="${n}marketplace_user_review_input" name="review" class="form-control col-xs-12 col-med-6" rows="3"></textarea>
+                            <label for="${n}marketplace_user_review_input" id="review-label"><spring:message code="rating.leave.review"/></label>
+                            <textarea id="${n}marketplace_user_review_input" aria-labelledby="review-label" name="review" class="form-control col-xs-12 col-med-6" rows="3"></textarea>
                             <div id="${n}input_chars_remaining"></div>
                         </div>
                         </c:if>
@@ -482,10 +489,10 @@
                                     <div class="portlet-icon">
                                         <c:choose>
                                             <c:when test="${empty relatedPortlet.getParameter('mobileIconUrl')}">
-                                                <img src="${defaultIcon}">
+                                                <img src="${defaultIcon}" alt="">
                                             </c:when>
                                             <c:otherwise>
-                                                <img src="${relatedPortlet.getParameter('mobileIconUrl').value}">
+                                                <img src="${relatedPortlet.getParameter('mobileIconUrl').value}" alt="">
                                             </c:otherwise>
                                         </c:choose>
                                     </div>
@@ -508,12 +515,14 @@
             <div class="row">
             <div class = "col-xs-12 col-md-4">
                 <span class="marketplace_section_header"><spring:message code="categories" text="CATEGORIES" /></span>
+                <ul>
                     <c:forEach var="portletCategory" items="${portletCategories}">
                         <portlet:renderURL var="initialViewWithFilterURL" windowState="MAXIMIZED">
                             <portlet:param name="initialFilter" value="${portletCategory}"/>
                         </portlet:renderURL>
                         <li>- <a href="${initialViewWithFilterURL}">${portletCategory}</a></li>
                     </c:forEach>
+                </ul>   
                 </div>
             </div>
             <br>
@@ -529,10 +538,10 @@
         </div>
     </div>                      
 </div>
-<div class="modal fade" id="${n}copy-modal" tabindex="-1" role="dialog" aria-labelledby="LinkToModal" aria-hidden="true">
+<div class="modal fade" id="${n}copy-modal" tabindex="-1" role="dialog" aria-labelledby="LinkToModal" aria-modal="true">
     <div class="modal-dialog" style="text-align:center">
         <div class="modal-content" style="white-space: nowrap">
-            <h4 class="modal-title">
+            <h4 id="LinkToModal" class="modal-title">
                 <strong>
                     <spring:message code="link.to.this" text="Link to This"/>
                 </strong>
@@ -542,7 +551,7 @@
                 <div class="form-group">
                     <label for="inputDeep" class="col-sm-2 control-label"><spring:message code="link" text="Link"/></label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" id="inputDeep"
+                        <input tabindex="0" type="text" class="form-control" id="inputDeep"
                                value="${marketplaceEntry.renderUrl}"></input>
                     </div>
                 </div>
@@ -550,14 +559,14 @@
                     <div class="form-group">
                         <label for="smallLink" class="col-sm-2 control-label"><spring:message code="shortLink" text="Short Link"/></label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" id="smallLink" value="${shortURL}"></input>
+                            <input tabindex="0" type="text" class="form-control" id="smallLink" value="${shortURL}"></input>
                         </div>
                     </div>
                 </c:if>
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal"><spring:message code="close" text="Close"/></button>
+                <button tabindex="0" role="button" type="button" class="btn btn-default" data-dismiss="modal"><spring:message code="close" text="Close"/></button>
             </div>
         </div>
     </div>
