@@ -18,7 +18,7 @@ import java.io.Serializable;
 
 public interface Activity extends Serializable {
 
-   String getKey();
+    String getKey();
 
-   String getName();
+    String getName();
 }

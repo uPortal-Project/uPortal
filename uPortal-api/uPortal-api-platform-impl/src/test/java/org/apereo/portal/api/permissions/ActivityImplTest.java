@@ -21,26 +21,26 @@ public class ActivityImplTest {
     ActivityImpl activity;
 
     @Test
-    public void testGetKey(){
-        activity = new ActivityImpl("key","name");
-        Assert.assertEquals("key",activity.getKey());
+    public void testGetKey() {
+        activity = new ActivityImpl("key", "name");
+        Assert.assertEquals("key", activity.getKey());
     }
 
     @Test
-    public void testGetName(){
-        activity = new ActivityImpl("key","name");
-        Assert.assertEquals("name",activity.getName());
+    public void testGetName() {
+        activity = new ActivityImpl("key", "name");
+        Assert.assertEquals("name", activity.getName());
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testGetKeyNull(){
-        activity = new ActivityImpl(null,null);
+    public void testGetKeyNull() {
+        activity = new ActivityImpl(null, null);
         activity.getKey();
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testGetNameNull(){
-        activity = new ActivityImpl(null,null);
+    public void testGetNameNull() {
+        activity = new ActivityImpl(null, null);
         activity.getName();
     }
 }

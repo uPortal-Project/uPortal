@@ -14,7 +14,6 @@
  */
 package org.apereo.portal.api.permissions;
 
-
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -23,31 +22,31 @@ public class OwnerImplTest {
 
     @Test
     public void test() {
-        owner = new OwnerImpl("key","name");
+        owner = new OwnerImpl("key", "name");
         owner.getKey();
     }
 
     @Test
-    public void testGetKey(){
-        owner = new OwnerImpl("key","name");
-        Assert.assertEquals("key",owner.getKey());
+    public void testGetKey() {
+        owner = new OwnerImpl("key", "name");
+        Assert.assertEquals("key", owner.getKey());
     }
 
     @Test
-    public void testGetName(){
-        owner = new OwnerImpl("key","name");
-        Assert.assertEquals("name",owner.getName());
+    public void testGetName() {
+        owner = new OwnerImpl("key", "name");
+        Assert.assertEquals("name", owner.getName());
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testGetKeyNull(){
-        owner = new OwnerImpl(null,null);
+    public void testGetKeyNull() {
+        owner = new OwnerImpl(null, null);
         owner.getKey();
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testGetNameNull(){
-        owner = new OwnerImpl(null,null);
+    public void testGetNameNull() {
+        owner = new OwnerImpl(null, null);
         owner.getName();
     }
 }
