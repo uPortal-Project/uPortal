@@ -71,7 +71,7 @@
                |  Any property defined in the above files that is referenced in the Spring context 
                |  may be overridden in one (or both) of these files.
                |
-               |  The default location for overrides is ${CATALINA_HOME}/portal/overrides.properties;  
+               |  The default location for overrides is ${catalina.base}/portal/overrides.properties;
                |  you can use a custom location by specifying PORTAL_HOME as a JVM startup argument 
                |  or as an environment variable.
                |
@@ -80,9 +80,9 @@
                |  files also).  The latter two files (uPortal_overrides.properties) are for properties
                |  that are specific to uPortal (portlets should not read these files).
                +-->
-              <value>file:${CATALINA_HOME}/portal/overrides.properties</value>
+              <value>file:${catalina.base}/portal/overrides.properties</value>
               <value>file:${PORTAL_HOME}/overrides.properties</value>
-              <value>file:${CATALINA_HOME}/portal/uPortal_overrides.properties</value>
+              <value>file:${catalina.base}/portal/uPortal_overrides.properties</value>
               <value>file:${PORTAL_HOME}/uPortal_overrides.properties</value>
             </list>
         </property>
