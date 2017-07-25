@@ -35,8 +35,8 @@ public class EntityServiceTest {
     }
 
     @Test
-    public void testLokupEntityNameByEntityId() {
-        String returnString = entityService.lookupEntityName(null, "id1");
+    public void testLookupEntityNameByEntityIdNull() {
+        String returnString = entityService.lookupEntityName(null, null);
         Assert.assertNull(returnString);
     }
 
