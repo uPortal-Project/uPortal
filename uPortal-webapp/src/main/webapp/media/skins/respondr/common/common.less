@@ -19,9 +19,6 @@
  /**
   * NOTE: this file is located outside the less/ directory due to a limitation
   * in the LESS CSS Maven Plugin's inability to traverse relative paths.
-  *
-  * Also, due to a limitation in the LESS CSS Maven Plugin, whitespace before an
-  * @import will cause a compile error.
   */
 
  /* ==========================================================================*
@@ -70,67 +67,70 @@
   /* ==========================================================================
      Header
      ========================================================================== */
-@import "less/header.less";
+  @import "less/header.less";
 
   /* ==========================================================================
      Navigation
      ========================================================================== */
-@import "less/navigation";
+  @import "less/navigation";
 
   /* ==========================================================================
      Content
      ========================================================================== */
-@import "less/content.less";
+  @import "less/content.less";
 
   /* ==========================================================================
      Portlet
      ========================================================================== */
-@import "less/portlet.less";
+  @import "less/portlet.less";
 
   /* ==========================================================================
      Portlets without chrome
      ========================================================================== */
-@import "less/no-chrome.less";
+  @import "less/no-chrome.less";
 
   /* ==========================================================================
      Personalization
      ========================================================================== */
-@import "less/personalization.less";
+  @import "less/personalization.less";
 
   /* ==========================================================================
      Portlet Config
      ========================================================================== */
-@import "less/portlet-manager.less";
+  @import "less/portlet-manager.less";
 
   /* ==========================================================================
      Portal Administration
      ========================================================================== */
-@import "less/portal-admin.less";
+  @import "less/portal-admin.less";
 
   /* ==========================================================================
      Search
      ========================================================================== */
-@import "less/search.less";
+  @import "less/search.less";
 
   /* ==========================================================================
      Entity Selector
      ========================================================================== */
-@import "less/entity-selector.less";
+  @import "less/entity-selector.less";
 
   /* ==========================================================================
      Footer
      ========================================================================== */
-@import "less/footer.less";
+  @import "less/footer.less";
 
   /* ==========================================================================
      Fluid stop-gap file - This will be removed when Universality and Fluid Components are EOL
      ========================================================================== */
-@import "less/fluid_stopgap.less";
+  @import "less/fluid_stopgap.less";
 
   /* ==========================================================================
      JSR 168 and JSR 268 css.
      ========================================================================== */
+  @import "less/jsr-168.less";
 
-@import "less/jsr-168.less";
-
-} // end .portal
+  /* ==========================================================================
+     View styles targeting a single specific view within uPortal.
+     ========================================================================== */
+  @import "less/views.less";
+}
