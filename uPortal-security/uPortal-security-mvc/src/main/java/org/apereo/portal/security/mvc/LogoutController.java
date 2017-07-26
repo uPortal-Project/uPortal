@@ -15,7 +15,6 @@
 package org.apereo.portal.security.mvc;
 
 import java.io.IOException;
-import java.util.Enumeration;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -30,7 +29,7 @@ import org.apereo.portal.security.IdentitySwapperManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -42,16 +41,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/Logout")
 public class LogoutController {
 
-    /* package-private */ static final String LOGOUT_REDIRECT_PREFIX = "logoutRedirect.";
-    /* package-private */ static final String LOGOUT_REDIRECT_ROOT = "root";
-
     private final Logger logger = LoggerFactory.getLogger(getClass());
+
+    @Value("${logout.redirect:}")
+    private String logoutRedirect;
 
     private IPortalAuthEventFactory portalEventFactory;
     private IPersonManager personManager;
     private IdentitySwapperManager identitySwapperManager;
-
-    private Environment environment;
 
     @Autowired
     public void setIdentitySwapperManager(IdentitySwapperManager identitySwapperManager) {
@@ -68,11 +65,6 @@ public class LogoutController {
         this.portalEventFactory = portalEventFactory;
     }
 
-    @Autowired
-    public void setEnvironment(Environment environment) {
-        this.environment = environment;
-    }
-
     /**
      * Process the incoming request and response.
      *
@@ -86,7 +78,7 @@ public class LogoutController {
         final HttpSession session = request.getSession(false);
 
         if (session != null) {
-            // Record that an authenticated user is requesting to logger out
+            // Record that an authenticated user is requesting to log out
             try {
                 final IPerson person = personManager.getPerson(request);
                 if (person != null && person.getSecurityContext().isAuthenticated()) {
@@ -127,18 +119,10 @@ public class LogoutController {
     }
 
     /**
-     * The redirect location is chosen based upon the user's authentication status (if applicable).
-     * The highest priority is a <code>logoutRedirect</code> setting defined for the specific
-     * {@link ISecurityContext} through which the user is authenticated.  If there isn't a specific
-     * setting -- and commonly there isn't -- the LogoutController chooses the
-     * <code>logoutRedirect</code> setting defined for <code>root</code>.
+     * The redirect location is specified as <code>logoutRedirect.root</code> in the Spring
+     * environment.
      *
-     * <p>NOTE: All known security contexts extend the ChainingSecurityContext class. If a
-     * context has the variable stopWhenAuthenticated set to false, the user may be logged into
-     * multiple security contexts. If this is the case, the first one found "wins."  (The logout
-     * process currently implemented does not accommodate multiple logouts.
-     *
-     * @return String representing the redirection URL
+     * @return The redirection URL
      */
     private String selectRedirectionUrl(HttpServletRequest request) {
 
@@ -151,53 +135,20 @@ public class LogoutController {
                 : "[unavailable]";
 
         if (person != null) {
-
             // Analyze the user's authentication status
             final ISecurityContext securityContext = person.getSecurityContext();
-            if (securityContext.isAuthenticated()) {
-
-                // Prefer a 'logoutRedirect' specific to the context
-                final Enumeration subCtxNames = securityContext.getSubContextNames();
-                while (subCtxNames.hasMoreElements()) {
-                    final String subCtxName = (String) subCtxNames.nextElement();
-                    logger.debug("Considering authenticated subCtxName='{}' for user='{}'", subCtxName, username);
-                    final ISecurityContext sc = securityContext.getSubContext(subCtxName);
-                    if (sc.isAuthenticated()) {
-                        rslt = getRedirectionUrlForSubContext(subCtxName);
-                        if (StringUtils.isNotBlank(rslt)) {
-                            break;
-                        }
-                    }
-                }
-
-                // But fall back to 'root'
-                if (rslt == null) {
-                    final String rootRedirectProperty = LOGOUT_REDIRECT_PREFIX + LOGOUT_REDIRECT_ROOT;
-                    if (environment.containsProperty(rootRedirectProperty)) {
-                        // Apparently a logoutRedirect defined at the root level takes priority...
-                        rslt = environment.getProperty(rootRedirectProperty);
-                    }
-                }
-
+            if (securityContext.isAuthenticated() && StringUtils.isNotBlank(logoutRedirect)) {
+                rslt = logoutRedirect;
             }
         }
 
-        // Use a sensible default if we don't have one...
+        // Otherwise use a sensible default...
         rslt = rslt != null ? rslt : request.getContextPath() + "/";
 
         logger.debug("Calculated redirectionURL='{}' for user='{}'", rslt, username);
 
         return rslt;
 
-    }
-
-    /* package-private */ String getRedirectionUrlForSubContext(String subCtxName) {
-        String rslt = null; // default
-        final String subCtxRedirectProperty = LOGOUT_REDIRECT_PREFIX + subCtxName;
-        if (environment.containsProperty(subCtxRedirectProperty)) {
-            rslt = environment.getProperty(subCtxRedirectProperty);
-        }
-        return rslt;
     }
 
 }
