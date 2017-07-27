@@ -20,7 +20,7 @@ import org.apereo.portal.EntityIdentifier;
 import org.apereo.portal.security.IAuthorizationPrincipal;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.IPersonManager;
-import org.apereo.portal.services.AuthorizationService;
+import org.apereo.portal.services.AuthorizationServiceFacade;
 import org.apereo.portal.url.IPortalRequestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -61,7 +61,7 @@ public class PortalWebFlowUtilsImpl implements IPortalWebFlowUtils {
     public IAuthorizationPrincipal getCurrentPrincipal(final ExternalContext externalContext) {
         final IPerson person = getCurrentPerson(externalContext);
         final EntityIdentifier ei = person.getEntityIdentifier();
-        return AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
+        return AuthorizationServiceFacade.instance().newPrincipal(ei.getKey(), ei.getType());
     }
 
     /**

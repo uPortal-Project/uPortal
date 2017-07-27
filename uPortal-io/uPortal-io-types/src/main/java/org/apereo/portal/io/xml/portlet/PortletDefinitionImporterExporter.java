@@ -62,7 +62,7 @@ import org.apereo.portal.security.IUpdatingPermissionManager;
 import org.apereo.portal.security.PermissionHelper;
 import org.apereo.portal.security.PersonFactory;
 import org.apereo.portal.security.SystemPerson;
-import org.apereo.portal.services.AuthorizationService;
+import org.apereo.portal.services.AuthorizationServiceFacade;
 import org.apereo.portal.services.EntityNameFinderService;
 import org.apereo.portal.services.GroupService;
 import org.apereo.portal.utils.SafeFilenameUtils;
@@ -468,7 +468,7 @@ public class PortletDefinitionImporterExporter
             }
 
             // Set groups
-            final AuthorizationService authService = AuthorizationService.instance();
+            final AuthorizationServiceFacade authService = AuthorizationServiceFacade.instance();
             final String target =
                     PermissionHelper.permissionTargetIdForPortletDefinition(definition);
 
@@ -541,7 +541,7 @@ public class PortletDefinitionImporterExporter
         }
 
         // Delete permissions records that refer to this portlet
-        AuthorizationService authService = AuthorizationService.instance();
+        AuthorizationServiceFacade authService = AuthorizationServiceFacade.instance();
         String target = PermissionHelper.permissionTargetIdForPortletDefinition(portletDefinition);
         IUpdatingPermissionManager upm =
                 authService.newUpdatingPermissionManager(IPermission.PORTAL_SUBSCRIBE);
@@ -711,8 +711,8 @@ public class PortletDefinitionImporterExporter
             ExternalPermissionDefinition permDef,
             List<String> groupList,
             List<String> userList) {
-        final AuthorizationService authService =
-                org.apereo.portal.services.AuthorizationService.instance();
+        final AuthorizationServiceFacade authService =
+                AuthorizationServiceFacade.instance();
         final IPermissionManager pm = authService.newPermissionManager(permDef.getSystem());
         final String portletTargetId = PermissionHelper.permissionTargetIdForPortletDefinition(def);
         final IAuthorizationPrincipal[] principals =

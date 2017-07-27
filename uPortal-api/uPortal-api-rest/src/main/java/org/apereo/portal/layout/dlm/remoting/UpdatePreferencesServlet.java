@@ -68,7 +68,7 @@ import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.PermissionHelper;
 import org.apereo.portal.security.PersonFactory;
 import org.apereo.portal.security.provider.RestrictedPerson;
-import org.apereo.portal.services.AuthorizationService;
+import org.apereo.portal.services.AuthorizationServiceFacade;
 import org.apereo.portal.services.GroupService;
 import org.apereo.portal.user.IUserInstance;
 import org.apereo.portal.user.IUserInstanceManager;
@@ -1493,7 +1493,7 @@ public class UpdatePreferencesServlet {
             return null;
         }
 
-        final AuthorizationService authService = AuthorizationService.instance();
+        final AuthorizationServiceFacade authService = AuthorizationServiceFacade.instance();
         return authService.newPrincipal(user);
     }
 

@@ -27,7 +27,7 @@ import org.apereo.portal.groups.IEntityNameFinder;
 import org.apereo.portal.groups.IGroupMember;
 import org.apereo.portal.portlets.groupselector.EntityEnum;
 import org.apereo.portal.security.IAuthorizationPrincipal;
-import org.apereo.portal.services.AuthorizationService;
+import org.apereo.portal.services.AuthorizationServiceFacade;
 import org.apereo.portal.services.EntityNameFinderService;
 import org.apereo.portal.services.GroupService;
 import org.apereo.portal.utils.threading.SingletonDoubleCheckedCreator;
@@ -175,7 +175,7 @@ public final class EntityService {
         }
 
         // construct an authorization principal for this JsonEntityBean
-        AuthorizationService authService = AuthorizationService.instance();
+        AuthorizationServiceFacade authService = AuthorizationServiceFacade.instance();
         IAuthorizationPrincipal p = authService.newPrincipal(entity.getId(), entityType);
         return p;
     }

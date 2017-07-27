@@ -24,7 +24,7 @@ import org.apereo.portal.security.IPermission;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.IPersonManager;
 import org.apereo.portal.security.PersonFactory;
-import org.apereo.portal.services.AuthorizationService;
+import org.apereo.portal.services.AuthorizationServiceFacade;
 import org.apereo.portal.url.IPortalRequestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.PermissionEvaluator;
@@ -49,13 +49,13 @@ public class PortalPermissionEvaluator implements PermissionEvaluator {
         this.groupListHelper = groupListHelper;
     }
 
-    private AuthorizationService authorizationService;
+    private AuthorizationServiceFacade authorizationServiceFacade;
 
     @Override
     public boolean hasPermission(
             Authentication authentication, Object targetDomainObject, Object permission) {
-        if (authorizationService == null) {
-            authorizationService = AuthorizationService.instance();
+        if (authorizationServiceFacade == null) {
+            authorizationServiceFacade = AuthorizationServiceFacade.instance();
         }
 
         final IAuthorizationPrincipal principal = getAuthorizationPrincipal(authentication);
@@ -103,8 +103,8 @@ public class PortalPermissionEvaluator implements PermissionEvaluator {
             Serializable targetId,
             String targetType,
             Object permission) {
-        if (authorizationService == null) {
-            authorizationService = AuthorizationService.instance();
+        if (authorizationServiceFacade == null) {
+            authorizationServiceFacade = AuthorizationServiceFacade.instance();
         }
 
         final IAuthorizationPrincipal principal = getAuthorizationPrincipal(authentication);
@@ -157,7 +157,7 @@ public class PortalPermissionEvaluator implements PermissionEvaluator {
             username = person.getUserName();
         }
 
-        return authorizationService.newPrincipal(username, IPerson.class);
+        return authorizationServiceFacade.newPrincipal(username, IPerson.class);
     }
 
     private AuthorizableActivity getViewActivity(

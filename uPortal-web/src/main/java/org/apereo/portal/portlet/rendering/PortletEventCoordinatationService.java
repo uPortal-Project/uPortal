@@ -65,7 +65,7 @@ import org.apereo.portal.portlet.registry.IPortletEntityRegistry;
 import org.apereo.portal.portlet.registry.IPortletWindowRegistry;
 import org.apereo.portal.security.IAuthorizationPrincipal;
 import org.apereo.portal.security.IPerson;
-import org.apereo.portal.services.AuthorizationService;
+import org.apereo.portal.services.AuthorizationServiceFacade;
 import org.apereo.portal.url.IPortalRequestUtils;
 import org.apereo.portal.user.IUserInstance;
 import org.apereo.portal.user.IUserInstanceManager;
@@ -328,7 +328,7 @@ public class PortletEventCoordinatationService implements IPortletEventCoordinat
                 final IPerson user = userInstance.getPerson();
                 final EntityIdentifier ei = user.getEntityIdentifier();
                 final IAuthorizationPrincipal ap =
-                        AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
+                        AuthorizationServiceFacade.instance().newPrincipal(ei.getKey(), ei.getType());
 
                 //If the event is global there might still be portlet definitions that need targeting
                 for (final IPortletDefinition portletDefinition : portletDefinitions) {

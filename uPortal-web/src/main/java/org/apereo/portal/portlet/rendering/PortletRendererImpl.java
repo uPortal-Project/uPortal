@@ -51,7 +51,7 @@ import org.apereo.portal.portlet.session.PortletSessionAdministrativeRequestList
 import org.apereo.portal.security.IAuthorizationPrincipal;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.IPersonManager;
-import org.apereo.portal.services.AuthorizationService;
+import org.apereo.portal.services.AuthorizationServiceFacade;
 import org.apereo.portal.url.IPortalRequestInfo;
 import org.apereo.portal.url.IUrlSyntaxProvider;
 import org.apereo.portal.url.ParameterMap;
@@ -967,9 +967,9 @@ public class PortletRendererImpl implements IPortletRenderer {
                 final IPerson person = this.personManager.getPerson(httpServletRequest);
 
                 final EntityIdentifier ei = person.getEntityIdentifier();
-                final AuthorizationService authorizationService = AuthorizationService.instance();
+                final AuthorizationServiceFacade authorizationServiceFacade = AuthorizationServiceFacade.instance();
                 final IAuthorizationPrincipal ap =
-                        authorizationService.newPrincipal(ei.getKey(), ei.getType());
+                        authorizationServiceFacade.newPrincipal(ei.getKey(), ei.getType());
 
                 final IPortletEntity portletEntity = portletWindow.getPortletEntity();
                 final IPortletDefinition portletDefinition = portletEntity.getPortletDefinition();
