@@ -62,7 +62,6 @@ import org.springframework.web.util.UrlPathHelper;
 /**
  * {@link IPortalUrlProvider} and {@link IUrlSyntaxProvider} implementation that uses a consistent
  * human readable URL format.
- *
  */
 @Component("portalUrlProvider")
 public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
@@ -518,6 +517,7 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                                                     IPortletRenderer.EXCLUSIVE);
                                         }
                                         break;
+
                                     default:
                                         // Nothing to do -- some cases don't need treatment
                                 }
