@@ -34,9 +34,7 @@ class TrustSecurityContext extends ChainingSecurityContext implements ISecurityC
 
     private final int TRUSTSECURITYAUTHTYPE = 0xFF01;
 
-    TrustSecurityContext() {
-        super();
-    }
+    /* package-private */ TrustSecurityContext() {}
 
     public int getAuthType() {
         return this.TRUSTSECURITYAUTHTYPE;

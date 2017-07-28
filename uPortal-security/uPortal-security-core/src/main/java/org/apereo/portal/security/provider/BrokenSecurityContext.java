@@ -35,11 +35,6 @@ public class BrokenSecurityContext extends ChainingSecurityContext {
 
     public static final int BROKEN_AUTH_TYPE = 666;
 
-    /** Instantiate a BrokenSecurityContext */
-    public BrokenSecurityContext() {
-        super();
-    }
-
     @Override
     public int getAuthType() {
         return BROKEN_AUTH_TYPE;

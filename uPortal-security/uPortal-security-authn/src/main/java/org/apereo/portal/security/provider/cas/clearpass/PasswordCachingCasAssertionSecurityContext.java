@@ -31,7 +31,6 @@ public class PasswordCachingCasAssertionSecurityContext extends CasAssertionSecu
     private byte[] cachedCredentials;
 
     protected PasswordCachingCasAssertionSecurityContext(final String clearPassUrl) {
-        super();
         Assert.notNull(clearPassUrl, "clearPassUrl cannot be null.");
         this.clearPassUrl = clearPassUrl;
     }

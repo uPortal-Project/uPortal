@@ -15,11 +15,9 @@
 package org.apereo.portal.security.mvc;
 
 import java.io.IOException;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.portal.events.IPortalAuthEventFactory;
 import org.apereo.portal.security.IPerson;
@@ -72,7 +70,8 @@ public class LogoutController {
      * @param response HttpServletResponse object
      */
     @RequestMapping
-    public void doLogout(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void doLogout(HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
 
         String redirect = this.selectRedirectionUrl(request);
         final HttpSession session = request.getSession(false);
@@ -85,7 +84,8 @@ public class LogoutController {
                     this.portalEventFactory.publishLogoutEvent(request, this, person);
                 }
             } catch (final Exception e) {
-                logger.error("Exception recording logout " + "associated with request " + request, e);
+                logger.error(
+                        "Exception recording logout " + "associated with request " + request, e);
             }
 
             final String originalUid = this.identitySwapperManager.getOriginalUsername(session);
@@ -110,12 +110,12 @@ public class LogoutController {
         }
 
         if (logger.isTraceEnabled()) {
-            logger.trace("Redirecting to " + redirect + " to send the user back to the guest page.");
+            logger.trace(
+                    "Redirecting to " + redirect + " to send the user back to the guest page.");
         }
 
         final String encodedRedirectURL = response.encodeRedirectURL(redirect);
         response.sendRedirect(encodedRedirectURL);
-
     }
 
     /**
@@ -130,9 +130,7 @@ public class LogoutController {
 
         // Get the person object associated with the request
         final IPerson person = this.personManager.getPerson(request);
-        final String username = person != null
-                ? person.getUserName()
-                : "[unavailable]";
+        final String username = person != null ? person.getUserName() : "[unavailable]";
 
         if (person != null) {
             // Analyze the user's authentication status
@@ -148,7 +146,5 @@ public class LogoutController {
         logger.debug("Calculated redirectionURL='{}' for user='{}'", rslt, username);
 
         return rslt;
-
     }
-
 }

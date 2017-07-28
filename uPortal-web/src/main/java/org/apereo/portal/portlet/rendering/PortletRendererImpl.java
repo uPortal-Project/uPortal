@@ -967,7 +967,8 @@ public class PortletRendererImpl implements IPortletRenderer {
                 final IPerson person = this.personManager.getPerson(httpServletRequest);
 
                 final EntityIdentifier ei = person.getEntityIdentifier();
-                final AuthorizationServiceFacade authorizationServiceFacade = AuthorizationServiceFacade.instance();
+                final AuthorizationServiceFacade authorizationServiceFacade =
+                        AuthorizationServiceFacade.instance();
                 final IAuthorizationPrincipal ap =
                         authorizationServiceFacade.newPrincipal(ei.getKey(), ei.getType());
 

@@ -711,8 +711,7 @@ public class PortletDefinitionImporterExporter
             ExternalPermissionDefinition permDef,
             List<String> groupList,
             List<String> userList) {
-        final AuthorizationServiceFacade authService =
-                AuthorizationServiceFacade.instance();
+        final AuthorizationServiceFacade authService = AuthorizationServiceFacade.instance();
         final IPermissionManager pm = authService.newPermissionManager(permDef.getSystem());
         final String portletTargetId = PermissionHelper.permissionTargetIdForPortletDefinition(def);
         final IAuthorizationPrincipal[] principals =

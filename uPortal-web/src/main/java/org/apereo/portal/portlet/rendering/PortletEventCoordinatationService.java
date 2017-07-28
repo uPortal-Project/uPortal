@@ -328,7 +328,8 @@ public class PortletEventCoordinatationService implements IPortletEventCoordinat
                 final IPerson user = userInstance.getPerson();
                 final EntityIdentifier ei = user.getEntityIdentifier();
                 final IAuthorizationPrincipal ap =
-                        AuthorizationServiceFacade.instance().newPrincipal(ei.getKey(), ei.getType());
+                        AuthorizationServiceFacade.instance()
+                                .newPrincipal(ei.getKey(), ei.getType());
 
                 //If the event is global there might still be portlet definitions that need targeting
                 for (final IPortletDefinition portletDefinition : portletDefinitions) {

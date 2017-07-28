@@ -16,16 +16,40 @@ package org.apereo.portal.security.provider.cas;
 
 import org.apereo.portal.security.ISecurityContext;
 import org.apereo.portal.security.ISecurityContextFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 /**
- * Factory to construct new instances of {@link
- * org.apereo.portal.security.provider.cas.CasAssertionSecurityContext}.
+ * Factory to construct new instances of {@link CasAssertionSecurityContext}.
  *
  * @since 3.2
  */
+@Component
 public class CasAssertionSecurityContextFactory implements ISecurityContextFactory {
+
+    @Value("${org.apereo.portal.security.provider.cas.CasAssertionSecurityContextFactory.enabled:false}")
+    private boolean enabled;
+
+    @Value("${org.apereo.portal.security.provider.cas.CasAssertionSecurityContextFactory.credentialToken:ticket}")
+    private String credentialToken;
+
+    @Override
+    public String getName() {
+        return "cas";
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    @Override
+    public String getCredentialToken() {
+        return credentialToken;
+    }
 
     public ISecurityContext getSecurityContext() {
         return new CasAssertionSecurityContext();
     }
+
 }

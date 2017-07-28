@@ -14,10 +14,8 @@
  */
 package org.apereo.portal.security.provider;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 import java.util.Random;
 import junit.framework.TestCase;
 import junit.textui.TestRunner;
@@ -33,8 +31,6 @@ import org.apereo.portal.security.IAuthorizationService;
 import org.apereo.portal.security.IPermission;
 import org.apereo.portal.security.IPermissionPolicy;
 import org.apereo.portal.security.IPermissionStore;
-import org.apereo.portal.security.PortalSecurityException;
-import org.apereo.portal.services.AuthorizationServiceFacade;
 import org.apereo.portal.services.GroupService;
 import org.apereo.portal.spring.locator.AuthorizationServiceLocator;
 import org.junit.Ignore;
