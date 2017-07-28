@@ -430,7 +430,7 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                                 break;
                             }
                         }
-                    // fall through
+                        // fall through
                     case PORTLET:
                         {
                             parseStep = ParseStep.STATE;
@@ -462,7 +462,7 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                                                 targetedPortletString);
                             }
                         }
-                    // fall through
+                        // fall through
                     case STATE:
                         {
                             parseStep = ParseStep.TYPE;
@@ -525,7 +525,7 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                                 break;
                             }
                         }
-                    // fall through
+                        // fall through
                     case TYPE:
                         {
                             parseStep = ParseStep.COMPLETE;
@@ -561,7 +561,7 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                                 }
                             }
                         }
-                    // fall through
+                        // fall through
                     default:
                         // Nothing to do -- some cases don't need treatment
                 }
@@ -1049,7 +1049,7 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                         portletUrlBuilder.setResourceId(portletRequestInfo.getResourceId());
                     }
 
-                // fall through
+                    // fall through
                 case RENDER:
                 case ACTION:
                     {
