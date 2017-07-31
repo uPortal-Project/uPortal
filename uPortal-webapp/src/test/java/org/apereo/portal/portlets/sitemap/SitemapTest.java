@@ -53,8 +53,6 @@ public class SitemapTest {
 
     @InjectMocks private XsltPortalUrlProvider xsltPortalUrlProvider = new XsltPortalUrlProvider();
 
-    private boolean useTabGroups = true;
-
     private MessageSource messageSource;
 
     public SitemapTest() {
@@ -79,7 +77,7 @@ public class SitemapTest {
                 new StreamSource(resource.getInputStream(), resource.getURI().toASCIIString());
         try {
             Transformer transformer = TransformerFactory.newInstance().newTransformer(source);
-            transformer.setParameter(SitemapPortletController.USE_TAB_GROUPS, useTabGroups);
+
             transformer.setParameter(SitemapPortletController.USER_LANG, "en_US");
             transformer.setParameter(XsltPortalUrlProvider.CURRENT_REQUEST, request);
             transformer.setParameter(

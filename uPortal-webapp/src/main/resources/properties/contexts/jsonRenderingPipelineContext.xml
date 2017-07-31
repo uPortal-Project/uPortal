@@ -128,7 +128,6 @@
                                         <ref bean="xslPortalUrlProvider"/>
                                     </entry>
                                     <entry key="EXTERNAL_LOGIN_URL" value="${org.apereo.portal.channels.CLogin.CasLoginUrl:}" />
-                                    <entry key="useTabGroups" value="${org.apereo.portal.layout.useTabGroups}"/>
                                 </map>
                             </property>
                             <property name="parameterExpressions">
