@@ -40,9 +40,7 @@
   <xsl:param name="CURRENT_REQUEST" />
   <xsl:param name="XSLT_PORTAL_URL_PROVIDER" />
   
-  <!-- Whether to use tab groups or not -->
-  <xsl:param name="USE_TAB_GROUPS" select="false" />
-  
+
   <!-- Maximum number of tabs in a row when no tab groups are used -->
   <xsl:param name="TAB_WRAP_COUNT" select="4" />
 
@@ -50,44 +48,7 @@
   <xsl:key name="tabGroupKey" match="layout/folder/folder[@hidden='false' and @type='regular']" use="@tabGroup"/>
     
   <xsl:template match="/">
-    <xsl:choose>
-      <xsl:when test="$USE_TAB_GROUPS"><xsl:call-template name="tabGroupLayout" /></xsl:when>
-      <xsl:otherwise><xsl:call-template name="noTabGroupLayout" /></xsl:otherwise>
-    </xsl:choose>
-  </xsl:template>
-
-  <xsl:template name="tabGroupLayout">
-    <!-- Tab group layout:
-     |Tabgroup1
-     |   Tab1            Tab2          Tab3         (<== no limit to tab count)
-     |     -portlet1     -portlet4     -portlet6
-     |     -portlet2     -portlet5     -portlet7
-     |     -portlet3                   -...
-     |Tabgroup1
-     |   Tab4            ...
-     |     -portlet8
-     |     -portlet9
-     |     -...
-     |....
-     +-->
-    <xsl:for-each select="/layout/folder/folder[@type='regular' and @hidden='false']"><!-- These are standard tabs -->
-      <!-- Process only the first tab in each Tab Group (avoid duplicates) -->
-      <xsl:if test="self::node()[generate-id() = generate-id(key('tabGroupKey',@tabGroup)[1])]">
-        <xsl:variable name="CURRENT_TAB_GROUP" select="@tabGroup" />
-        <xsl:variable name="TABGROUP_LABEL">
-          <xsl:choose>
-            <xsl:when test="@name='DEFAULT_TABGROUP'"><xsl:value-of select="upMsg:getMessage('navigation.tabgroup.default', $USER_LANG)" /></xsl:when>
-            <xsl:otherwise><xsl:value-of select="upMsg:getMessage($CURRENT_TAB_GROUP, $USER_LANG)" /></xsl:otherwise>
-          </xsl:choose>
-        </xsl:variable>
-        <div class="fl-container-flex">
-          <h2><xsl:value-of select="$TABGROUP_LABEL" /></h2>
-          <xsl:for-each select="/layout/folder/folder[@type='regular' and @hidden='false' and @tabGroup=$CURRENT_TAB_GROUP]">
-            <xsl:apply-templates select="." mode="tab" />
-          </xsl:for-each>
-        </div>
-      </xsl:if>
-    </xsl:for-each>
+      <xsl:call-template name="noTabGroupLayout" />
   </xsl:template>
 
   <xsl:template name="noTabGroupLayout">

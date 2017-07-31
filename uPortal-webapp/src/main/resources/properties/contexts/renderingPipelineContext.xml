@@ -179,7 +179,6 @@
                                         <ref bean="xslPortalUrlProvider"/>
                                     </entry>
                                     <entry key="EXTERNAL_LOGIN_URL" value="${org.apereo.portal.channels.CLogin.CasLoginUrl}" />
-                                    <entry key="useTabGroups" value="${org.apereo.portal.layout.useTabGroups}"/>
                                     <entry key="UP_VERSION" value="${org.apereo.portal.version}"/>
                                     <entry key="USE_FLYOUT_MENUS" value="${org.apereo.portal.layout.useFlyoutMenus:false}" />
                                 </map>

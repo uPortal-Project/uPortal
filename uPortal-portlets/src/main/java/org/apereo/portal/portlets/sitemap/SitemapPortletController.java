@@ -31,7 +31,6 @@ import org.apereo.portal.url.IPortalRequestUtils;
 import org.apereo.portal.url.xml.XsltPortalUrlProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.portlet.ModelAndView;
@@ -46,12 +45,6 @@ import org.springframework.web.portlet.ModelAndView;
 @Controller
 @RequestMapping("VIEW")
 public class SitemapPortletController {
-
-    /**
-     * Name of XSL parameter indicating whether to use tab groups or not (configured in
-     * portal.properties).
-     */
-    public static final String USE_TAB_GROUPS = "USE_TAB_GROUPS";
 
     /** Name of XSL parameter representing user's locale. */
     public static final String USER_LANG = "USER_LANG";
@@ -109,17 +102,6 @@ public class SitemapPortletController {
     }
 
     /**
-     * Whether to use tab groups or not. The value of this attribute will be passed to XSL using
-     * {@value #USE_TAB_GROUPS} as parameter name.
-     */
-    private boolean useTabGroups;
-
-    @Value("${org.apereo.portal.layout.useTabGroups}")
-    public void setUseTabGroups(boolean useTabGroups) {
-        this.useTabGroups = useTabGroups;
-    }
-
-    /**
      * Display the user sitemap.
      *
      * @param request
@@ -164,7 +146,6 @@ public class SitemapPortletController {
         model.put("source", source);
         model.put(XsltPortalUrlProvider.CURRENT_REQUEST, httpServletRequest);
         model.put(XsltPortalUrlProvider.XSLT_PORTAL_URL_PROVIDER, this.xsltPortalUrlProvider);
-        model.put(USE_TAB_GROUPS, useTabGroups);
         model.put(USER_LANG, ObjectUtils.toString(request.getLocale()));
 
         return new ModelAndView("sitemapView", model);
