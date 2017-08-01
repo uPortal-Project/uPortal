@@ -141,4 +141,30 @@
             </map>
         </property>
     </bean>
+
+    <!--
+     | Spring-managed instance of  Cas20ProxyReceivingTicketValidationFilter.  This setup allows us
+     | to configure CAS authentication in the preferred, externalizable way.  (It means we can
+     | source configuration settings from the primaryPropertyPlaceholderConfigurer.)
+     +-->
+    <bean name="ticketValidationFilter" class="org.jasig.cas.client.validation.Cas20ProxyReceivingTicketValidationFilter">
+        <property name="service" value="${cas.ticketValidationFilter.uportal.protocol}://${cas.ticketValidationFilter.uportal.server}${cas.ticketValidationFilter.uportal.context}/Login" />
+        <property name="proxyReceptorUrl" value="/CasProxyServlet" />
+        <property name="ticketValidator">
+            <bean class="org.jasig.cas.client.validation.Cas20ServiceTicketValidator">
+                <constructor-arg index="0" value="${cas.ticketValidationFilter.cas.protocol}://${cas.ticketValidationFilter.cas.server}${cas.ticketValidationFilter.cas.context}" />
+                <property name="proxyCallbackUrl" value="${cas.ticketValidationFilter.uportal.protocol}://${cas.ticketValidationFilter.uportal.server}${cas.ticketValidationFilter.uportal.context}/CasProxyServlet" />
+            </bean>
+        </property>
+        <!--
+         | For CAS PGT replication for CAS ClearPass in a clustered uPortal environment.
+         | See "Replicating PGT using "proxyGrantingTicketStorageClass" and Distributed Caching" in
+         | https://wiki.jasig.org/display/CASC/Configuring+the+Jasig+CAS+Client+for+Java+in+the+web.xml.
+         | If CAS ClearPass is not enabled in security.properties, this parameter has no effect.
+         +-->
+        <property name="proxyGrantingTicketStorage">
+            <bean class="org.jasig.cas.client.proxy.EhcacheBackedProxyGrantingTicketStorageImpl" />
+        </property>
+    </bean>
+
 </beans>
