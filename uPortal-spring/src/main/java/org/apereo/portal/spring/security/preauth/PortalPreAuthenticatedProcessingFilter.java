@@ -15,6 +15,7 @@
 package org.apereo.portal.spring.security.preauth;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -68,7 +69,8 @@ public class PortalPreAuthenticatedProcessingFilter
 
     private boolean clearSecurityContextPriorToPortalAuthentication = true; //default
 
-    @Autowired private Set<ISecurityContextFactory> securityContextFactories;
+    // Empty set is the default for automated tests
+    private Set<ISecurityContextFactory> securityContextFactories = Collections.emptySet();
 
     @Autowired
     public void setIdentitySwapperManager(IdentitySwapperManager identitySwapperManager) {
@@ -87,6 +89,11 @@ public class PortalPreAuthenticatedProcessingFilter
 
     public void setClearSecurityContextPriorToPortalAuthentication(boolean b) {
         this.clearSecurityContextPriorToPortalAuthentication = b;
+    }
+
+    @Autowired
+    public void setSecurityContextFactories(Set<ISecurityContextFactory> securityContextFactories) {
+        this.securityContextFactories = securityContextFactories;
     }
 
     @Override
