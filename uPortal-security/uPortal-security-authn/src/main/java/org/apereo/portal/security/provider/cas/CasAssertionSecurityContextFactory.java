@@ -27,10 +27,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class CasAssertionSecurityContextFactory implements ISecurityContextFactory {
 
-    @Value("${org.apereo.portal.security.provider.cas.CasAssertionSecurityContextFactory.enabled:false}")
+    @Value(
+            "${org.apereo.portal.security.provider.cas.CasAssertionSecurityContextFactory.enabled:false}")
     private boolean enabled;
 
-    @Value("${org.apereo.portal.security.provider.cas.CasAssertionSecurityContextFactory.credentialToken:ticket}")
+    @Value(
+            "${org.apereo.portal.security.provider.cas.CasAssertionSecurityContextFactory.credentialToken:ticket}")
     private String credentialToken;
 
     @Override
@@ -51,5 +53,4 @@ public class CasAssertionSecurityContextFactory implements ISecurityContextFacto
     public ISecurityContext getSecurityContext() {
         return new CasAssertionSecurityContext();
     }
-
 }

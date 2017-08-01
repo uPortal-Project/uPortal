@@ -42,5 +42,4 @@ public class TrustSecurityContextFactory implements ISecurityContextFactory {
     public ISecurityContext getSecurityContext() {
         return new TrustSecurityContext();
     }
-
 }

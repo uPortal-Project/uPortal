@@ -25,7 +25,6 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -69,8 +68,7 @@ public class PortalPreAuthenticatedProcessingFilter
 
     private boolean clearSecurityContextPriorToPortalAuthentication = true; //default
 
-    @Autowired
-    private Set<ISecurityContextFactory> securityContextFactories;
+    @Autowired private Set<ISecurityContextFactory> securityContextFactories;
 
     @Autowired
     public void setIdentitySwapperManager(IdentitySwapperManager identitySwapperManager) {

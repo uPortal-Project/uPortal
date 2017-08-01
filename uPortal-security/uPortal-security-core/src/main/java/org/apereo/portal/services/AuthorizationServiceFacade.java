@@ -25,9 +25,9 @@ import org.apereo.portal.spring.locator.AuthorizationServiceLocator;
 import org.apereo.portal.utils.threading.SingletonDoubleCheckedCreator;
 
 /**
- * This class is a static facade that provides access to the Spring-managed
- * <code>authorizationService</code> bean.  The things that use it should be refactored so they
- * don't, and this class should be removed.
+ * This class is a static facade that provides access to the Spring-managed <code>
+ * authorizationService</code> bean. The things that use it should be refactored so they don't, and
+ * this class should be removed.
  *
  * @deprecated Use the Spring-managed <code>authorizationService</code> bean instead
  */
@@ -102,5 +102,4 @@ public class AuthorizationServiceFacade {
             throws AuthorizationException {
         return m_authorization.newUpdatingPermissionManager(owner);
     }
-
 }

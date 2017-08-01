@@ -24,10 +24,12 @@ import org.springframework.stereotype.Component;
 public final class PasswordCachingCasAssertionSecurityContextFactory
         implements ISecurityContextFactory {
 
-    @Value("${org.apereo.portal.security.provider.cas.clearpass.PasswordCachingCasAssertionSecurityContextFactory.enabled:false}")
+    @Value(
+            "${org.apereo.portal.security.provider.cas.clearpass.PasswordCachingCasAssertionSecurityContextFactory.enabled:false}")
     private boolean enabled;
 
-    @Value("${org.apereo.portal.security.provider.cas.clearpass.PasswordCachingCasAssertionSecurityContextFactory.clearPassCasUrl:}")
+    @Value(
+            "${org.apereo.portal.security.provider.cas.clearpass.PasswordCachingCasAssertionSecurityContextFactory.clearPassCasUrl:}")
     private String clearPassCasUrl;
 
     @Override
@@ -51,5 +53,4 @@ public final class PasswordCachingCasAssertionSecurityContextFactory
                         "clearPassUrl not configured.  Cannot create an instance of [%s] without it.",
                         getClass().getSimpleName()));
     }
-
 }

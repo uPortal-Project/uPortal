@@ -42,5 +42,4 @@ public class RemoteUserSecurityContextFactory implements ISecurityContextFactory
     public ISecurityContext getSecurityContext() {
         return new RemoteUserSecurityContext();
     }
-
 }

@@ -29,10 +29,12 @@ public class SimpleSecurityContextFactory implements ISecurityContextFactory {
     @Value("${org.apereo.portal.security.provider.SimpleSecurityContextFactory.enabled:false}")
     private boolean enabled;
 
-    @Value("${org.apereo.portal.security.provider.SimpleSecurityContextFactory.principalToken:userName}")
+    @Value(
+            "${org.apereo.portal.security.provider.SimpleSecurityContextFactory.principalToken:userName}")
     private String principalToken;
 
-    @Value("${org.apereo.portal.security.provider.SimpleSecurityContextFactory.credentialToken:password}")
+    @Value(
+            "${org.apereo.portal.security.provider.SimpleSecurityContextFactory.credentialToken:password}")
     private String credentialToken;
 
     @Override
@@ -58,5 +60,4 @@ public class SimpleSecurityContextFactory implements ISecurityContextFactory {
     public ISecurityContext getSecurityContext() {
         return new SimpleSecurityContext();
     }
-
 }

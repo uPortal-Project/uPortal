@@ -36,8 +36,7 @@ public abstract class AbstractPersonManager implements IPersonManager {
 
     @Autowired private IUserIdentityStore userIdentityStore;
 
-    @Autowired
-    private InitialSecurityContextFactory initialSecurityContextFactory;
+    @Autowired private InitialSecurityContextFactory initialSecurityContextFactory;
 
     @PostConstruct
     public void init() {
@@ -107,5 +106,4 @@ public abstract class AbstractPersonManager implements IPersonManager {
         }
         map.put(username, userId);
     }
-
 }

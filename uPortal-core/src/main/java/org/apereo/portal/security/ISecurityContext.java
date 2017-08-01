@@ -141,5 +141,4 @@ public interface ISecurityContext extends Serializable {
      * @param ctx The security context object to register.
      */
     void addSubContext(String name, ISecurityContext ctx) throws PortalSecurityException;
-
 }

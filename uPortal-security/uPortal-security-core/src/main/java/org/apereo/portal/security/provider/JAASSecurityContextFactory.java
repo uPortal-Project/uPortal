@@ -43,5 +43,4 @@ public class JAASSecurityContextFactory implements ISecurityContextFactory {
     public ISecurityContext getSecurityContext() {
         return new JAASSecurityContext();
     }
-
 }
