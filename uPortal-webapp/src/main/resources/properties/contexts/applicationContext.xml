@@ -55,9 +55,9 @@
     <bean id="primaryPropertyPlaceholderConfigurer" class="org.springframework.context.support.PortalPropertySourcesPlaceholderConfigurer">
         <property name="locations">
             <list>
+                <value>classpath:/properties/portal.properties</value>
                 <value>classpath:/properties/rdbm.properties</value>
                 <value>classpath:/properties/security.properties</value>
-                <value>classpath:/properties/portal.properties</value>
                 <!--
                  | The following optional files allow deployers to set or override most uPortal
                  | configuration settings in a manner that is outside the footprint of the
