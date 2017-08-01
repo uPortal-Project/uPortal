@@ -34,9 +34,7 @@ public class SimpleSecurityContext extends ChainingSecurityContext implements IS
 
     private final int SIMPLESECURITYAUTHTYPE = 0xFF02;
 
-    SimpleSecurityContext() {
-        super();
-    }
+    /* package-private */ SimpleSecurityContext() {}
 
     public int getAuthType() {
         return this.SIMPLESECURITYAUTHTYPE;

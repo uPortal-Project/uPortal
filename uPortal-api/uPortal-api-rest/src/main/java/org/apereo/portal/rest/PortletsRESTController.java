@@ -34,7 +34,7 @@ import org.apereo.portal.portlet.rendering.IPortletExecutionManager;
 import org.apereo.portal.security.IAuthorizationPrincipal;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.IPersonManager;
-import org.apereo.portal.services.AuthorizationService;
+import org.apereo.portal.services.AuthorizationServiceFacade;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -156,7 +156,7 @@ public class PortletsRESTController {
         IPerson user = personManager.getPerson(req);
         EntityIdentifier ei = user.getEntityIdentifier();
         IAuthorizationPrincipal rslt =
-                AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
+                AuthorizationServiceFacade.instance().newPrincipal(ei.getKey(), ei.getType());
         return rslt;
     }
 
