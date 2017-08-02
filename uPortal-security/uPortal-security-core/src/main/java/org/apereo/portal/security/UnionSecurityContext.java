@@ -12,11 +12,10 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apereo.portal.security.provider;
+package org.apereo.portal.security;
 
 import java.util.Enumeration;
-import org.apereo.portal.security.ISecurityContext;
-import org.apereo.portal.security.PortalSecurityException;
+import org.apereo.portal.security.provider.ChainingSecurityContext;
 
 /**
  * A simple extension of ChainingSecurityContext that acts merely as a placeholder but considers

@@ -28,7 +28,7 @@ import org.apereo.portal.security.IAuthorizationPrincipal;
 import org.apereo.portal.security.IPermission;
 import org.apereo.portal.security.IPermissionStore;
 import org.apereo.portal.security.IPerson;
-import org.apereo.portal.services.AuthorizationService;
+import org.apereo.portal.services.AuthorizationServiceFacade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -60,7 +60,7 @@ public class PermissionAdministrationHelper implements IPermissionAdministration
     public boolean canEditOwner(IPerson currentUser, String owner) {
         EntityIdentifier ei = currentUser.getEntityIdentifier();
         IAuthorizationPrincipal ap =
-                AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
+                AuthorizationServiceFacade.instance().newPrincipal(ei.getKey(), ei.getType());
         return (ap.hasPermission(
                 IPermission.PORTAL_PERMISSIONS,
                 IPermission.EDIT_PERMISSIONS_ACTIVITY,
@@ -70,7 +70,7 @@ public class PermissionAdministrationHelper implements IPermissionAdministration
     public boolean canViewOwner(IPerson currentUser, String owner) {
         EntityIdentifier ei = currentUser.getEntityIdentifier();
         IAuthorizationPrincipal ap =
-                AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
+                AuthorizationServiceFacade.instance().newPrincipal(ei.getKey(), ei.getType());
         return (ap.hasPermission(
                 IPermission.PORTAL_PERMISSIONS,
                 IPermission.VIEW_PERMISSIONS_ACTIVITY,
@@ -80,7 +80,7 @@ public class PermissionAdministrationHelper implements IPermissionAdministration
     public boolean canEditActivity(IPerson currentUser, String activity) {
         EntityIdentifier ei = currentUser.getEntityIdentifier();
         IAuthorizationPrincipal ap =
-                AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
+                AuthorizationServiceFacade.instance().newPrincipal(ei.getKey(), ei.getType());
         return (ap.hasPermission(
                 IPermission.PORTAL_PERMISSIONS,
                 IPermission.EDIT_PERMISSIONS_ACTIVITY,
@@ -90,7 +90,7 @@ public class PermissionAdministrationHelper implements IPermissionAdministration
     public boolean canViewActivity(IPerson currentUser, String activity) {
         EntityIdentifier ei = currentUser.getEntityIdentifier();
         IAuthorizationPrincipal ap =
-                AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
+                AuthorizationServiceFacade.instance().newPrincipal(ei.getKey(), ei.getType());
         return (ap.hasPermission(
                 IPermission.PORTAL_PERMISSIONS,
                 IPermission.VIEW_PERMISSIONS_ACTIVITY,
@@ -104,7 +104,7 @@ public class PermissionAdministrationHelper implements IPermissionAdministration
 
         EntityIdentifier ei = currentUser.getEntityIdentifier();
         IAuthorizationPrincipal ap =
-                AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
+                AuthorizationServiceFacade.instance().newPrincipal(ei.getKey(), ei.getType());
         return (ap.hasPermission(
                 IPermission.PORTAL_PERMISSIONS,
                 IPermission.EDIT_PERMISSIONS_ACTIVITY,
@@ -118,7 +118,7 @@ public class PermissionAdministrationHelper implements IPermissionAdministration
 
         EntityIdentifier ei = currentUser.getEntityIdentifier();
         IAuthorizationPrincipal ap =
-                AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
+                AuthorizationServiceFacade.instance().newPrincipal(ei.getKey(), ei.getType());
         return (ap.hasPermission(
                 IPermission.PORTAL_PERMISSIONS,
                 IPermission.VIEW_PERMISSIONS_ACTIVITY,

@@ -55,35 +55,34 @@
     <bean id="primaryPropertyPlaceholderConfigurer" class="org.springframework.context.support.PortalPropertySourcesPlaceholderConfigurer">
         <property name="locations">
             <list>
-              <value>classpath:/properties/rdbm.properties</value>
-              <value>classpath:/properties/security.properties</value>
-              <value>classpath:/properties/portal.properties</value>
-              <!-- 
-               |  The following files optionally allow deployers to set or override many uPortal
-               |  configuration settings in a outside the control of the build/deploy cycle, SCM, 
-               |  and Tomcat.
-               |
-               |  Reasons for choosing that may include:
-               |    - Desire to keep sensitive information out of your Git repository
-               |    - Ability to change some common settings without a full build and deploy cycle
-               |    - Building a WAR/EAR that is environment-independent.
-               |
-               |  Any property defined in the above files that is referenced in the Spring context 
-               |  may be overridden in one (or both) of these files.
-               |
-               |  The default location for overrides is ${catalina.base}/portal/overrides.properties;
-               |  you can use a custom location by specifying PORTAL_HOME as a JVM startup argument 
-               |  or as an environment variable.
-               |
-               |  The first two files (overrides.properties) are intended to contain properties,
-               |  such as database secrets, that are shared with portlets (they read those property
-               |  files also).  The latter two files (uPortal_overrides.properties) are for properties
-               |  that are specific to uPortal (portlets should not read these files).
-               +-->
-              <value>file:${catalina.base}/portal/overrides.properties</value>
-              <value>file:${PORTAL_HOME}/overrides.properties</value>
-              <value>file:${catalina.base}/portal/uPortal_overrides.properties</value>
-              <value>file:${PORTAL_HOME}/uPortal_overrides.properties</value>
+                <value>classpath:/properties/portal.properties</value>
+                <value>classpath:/properties/rdbm.properties</value>
+                <value>classpath:/properties/security.properties</value>
+                <!--
+                 | The following optional files allow deployers to set or override most uPortal
+                 | configuration settings in a manner that is outside the footprint of the
+                 | build/deploy cycle and SCM.
+                 |
+                 | Reasons for choosing that may include:
+                 |   - Desire to keep sensitive information out of your Git repository
+                 |   - Ability to change some common settings without a full build and deploy cycle
+                 |   - Building a WAR/EAR that is environment-independent
+                 |
+                 | Any property defined in the above files that is referenced in the Spring context
+                 | may be overridden in one (or both) of these files.  Later files override earlier
+                 | files.
+                 |
+                 | The conventional location of ${portal.home} is ${catalina.base}/portal;  but you
+                 | can (typically) override that location using a PORTAL_HOME environment variable.
+                 | (Ultimately it depends on your setenv.sh or setenv.bat file.)
+                 |
+                 | The first file (global.properties) may contain properties that are shared with
+                 | other modules (e.g. portlets) in Tomcat.  Several Apereo portlets source
+                 | global.properties automatically.  The second file (uPortal.properties) is
+                 | (should be) sourced by uPortal exclusively.
+                 +-->
+                <value>file:${portal.home}/global.properties</value>
+                <value>file:${portal.home}/uPortal.properties</value>
             </list>
         </property>
     </bean>

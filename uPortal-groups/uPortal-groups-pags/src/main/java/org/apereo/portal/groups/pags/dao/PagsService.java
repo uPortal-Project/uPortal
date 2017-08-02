@@ -26,7 +26,7 @@ import org.apereo.portal.security.IAuthorizationPrincipal;
 import org.apereo.portal.security.IPermission;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.RuntimeAuthorizationException;
-import org.apereo.portal.services.AuthorizationService;
+import org.apereo.portal.services.AuthorizationServiceFacade;
 import org.apereo.portal.services.GroupService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -227,7 +227,7 @@ public final class PagsService {
     private boolean hasPermission(IPerson person, String permission, String target) {
         EntityIdentifier ei = person.getEntityIdentifier();
         IAuthorizationPrincipal ap =
-                AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
+                AuthorizationServiceFacade.instance().newPrincipal(ei.getKey(), ei.getType());
         return ap.hasPermission(IPermission.PORTAL_GROUPS, permission, target);
     }
 

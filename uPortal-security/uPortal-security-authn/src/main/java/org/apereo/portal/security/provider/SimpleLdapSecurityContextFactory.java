@@ -20,8 +20,42 @@ package org.apereo.portal.security.provider;
  */
 import org.apereo.portal.security.ISecurityContext;
 import org.apereo.portal.security.ISecurityContextFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
+@Component
 public class SimpleLdapSecurityContextFactory implements ISecurityContextFactory {
+
+    @Value("${org.apereo.portal.security.provider.SimpleLdapSecurityContextFactory.enabled:false}")
+    private boolean enabled;
+
+    @Value(
+            "${org.apereo.portal.security.provider.SimpleLdapSecurityContextFactory.principalToken:userName}")
+    private String principalToken;
+
+    @Value(
+            "${org.apereo.portal.security.provider.SimpleLdapSecurityContextFactory.credentialToken:password}")
+    private String credentialToken;
+
+    @Override
+    public String getName() {
+        return "simpleLdap";
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    @Override
+    public String getPrincipalToken() {
+        return principalToken;
+    }
+
+    @Override
+    public String getCredentialToken() {
+        return credentialToken;
+    }
 
     public ISecurityContext getSecurityContext() {
         return new SimpleLdapSecurityContext();

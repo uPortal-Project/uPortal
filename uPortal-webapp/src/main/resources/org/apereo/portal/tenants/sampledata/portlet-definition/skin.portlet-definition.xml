@@ -42,10 +42,10 @@
     </parameter>
     <parameter>
         <name>iconUrl</name>
-        <value>/ResourceServingWebapp/rs/tango/0.8.90/32x32/actions/preferences-desktop-theme.png</value>
+        <value>/ResourceServingWebapp/rs/tango/0.8.90/32x32/apps/preferences-desktop-theme.png</value>
     </parameter>
     <parameter>
         <name>mobileIconUrl</name>
-        <value>/ResourceServingWebapp/rs/tango/0.8.90/32x32/actions/preferences-desktop-theme.png</value>
+        <value>/ResourceServingWebapp/rs/tango/0.8.90/32x32/apps/preferences-desktop-theme.png</value>
     </parameter>
 </portlet-definition>

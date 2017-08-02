@@ -30,7 +30,7 @@ import org.apereo.portal.layout.dlm.FragmentDefinition;
 import org.apereo.portal.layout.dlm.providers.SubscribedTabEvaluatorFactory;
 import org.apereo.portal.security.IAuthorizationPrincipal;
 import org.apereo.portal.security.IPerson;
-import org.apereo.portal.services.AuthorizationService;
+import org.apereo.portal.services.AuthorizationServiceFacade;
 import org.apereo.portal.user.IUserInstance;
 import org.apereo.portal.user.IUserInstanceManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,7 +79,7 @@ public class SubscribableTabsRESTController {
         /** Retrieve the IPerson and IAuthorizationPrincipal for the currently authenticated user */
         IUserInstance userInstance = userInstanceManager.getUserInstance(request);
         IPerson person = userInstance.getPerson();
-        AuthorizationService authService = AuthorizationService.instance();
+        AuthorizationServiceFacade authService = AuthorizationServiceFacade.instance();
         IAuthorizationPrincipal principal =
                 authService.newPrincipal(person.getUserName(), IPerson.class);
 

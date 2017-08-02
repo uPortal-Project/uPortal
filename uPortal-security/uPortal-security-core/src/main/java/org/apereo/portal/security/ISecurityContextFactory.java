@@ -19,9 +19,26 @@ package org.apereo.portal.security;
  * for each context provider. The provider's constructor should not be public to discourage it's
  * instantiation through means other than the corresponding factory. This formalism should be
  * followed for consistency even when the factory performs no additional value-add than
- * instantiating the appropriate context class.
+ * instantiating the appropriate context class. Objects that implement this interface are
+ * Spring-managed beans.
  */
 public interface ISecurityContextFactory {
 
-    public ISecurityContext getSecurityContext();
+    /**
+     * The name assigned to this security context. All {@link ISecurityContext} instances of the
+     * same concrete class will have the same name.
+     */
+    String getName();
+
+    boolean isEnabled();
+
+    default String getPrincipalToken() {
+        return null;
+    }
+
+    default String getCredentialToken() {
+        return null;
+    }
+
+    ISecurityContext getSecurityContext();
 }

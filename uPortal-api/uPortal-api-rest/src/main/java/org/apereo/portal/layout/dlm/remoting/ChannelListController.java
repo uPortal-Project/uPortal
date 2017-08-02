@@ -40,7 +40,7 @@ import org.apereo.portal.security.IAuthorizationPrincipal;
 import org.apereo.portal.security.IAuthorizationService;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.IPersonManager;
-import org.apereo.portal.services.AuthorizationService;
+import org.apereo.portal.services.AuthorizationServiceFacade;
 import org.apereo.portal.spring.spel.IPortalSpELService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -218,7 +218,7 @@ public class ChannelListController {
 
         EntityIdentifier ei = user.getEntityIdentifier();
         IAuthorizationPrincipal ap =
-                AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
+                AuthorizationServiceFacade.instance().newPrincipal(ei.getKey(), ei.getType());
 
         // construct a new channel category bean for this category
         String uncategorizedString =
@@ -258,7 +258,7 @@ public class ChannelListController {
         Set<IPortletDefinition> portlets = portletCategoryRegistry.getChildPortlets(category);
         EntityIdentifier ei = user.getEntityIdentifier();
         IAuthorizationPrincipal ap =
-                AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
+                AuthorizationServiceFacade.instance().newPrincipal(ei.getKey(), ei.getType());
 
         for (IPortletDefinition portlet : portlets) {
 
@@ -359,7 +359,7 @@ public class ChannelListController {
 
             EntityIdentifier ei = user.getEntityIdentifier();
             IAuthorizationPrincipal ap =
-                    AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
+                    AuthorizationServiceFacade.instance().newPrincipal(ei.getKey(), ei.getType());
 
             Set<PortletDefinitionBean> marketplacePortlets = new HashSet<>();
             for (IPortletDefinition portlet : portletsNotYetCategorized) {
@@ -411,7 +411,7 @@ public class ChannelListController {
         Set<IPortletDefinition> portlets = portletCategoryRegistry.getChildPortlets(category);
         EntityIdentifier ei = user.getEntityIdentifier();
         IAuthorizationPrincipal ap =
-                AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
+                AuthorizationServiceFacade.instance().newPrincipal(ei.getKey(), ei.getType());
 
         Set<PortletDefinitionBean> marketplacePortlets = new HashSet<>();
         for (IPortletDefinition portlet : portlets) {

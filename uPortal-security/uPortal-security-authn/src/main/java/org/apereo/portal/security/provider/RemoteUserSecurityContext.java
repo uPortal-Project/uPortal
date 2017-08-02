@@ -46,8 +46,7 @@ class RemoteUserSecurityContext extends ChainingSecurityContext implements ISecu
      *
      * @param user Description of the Parameter
      */
-    RemoteUserSecurityContext(String user) {
-        super();
+    /* package-private */ RemoteUserSecurityContext(String user) {
         remoteUser = user;
     }
 

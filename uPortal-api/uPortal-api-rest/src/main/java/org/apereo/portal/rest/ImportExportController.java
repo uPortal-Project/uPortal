@@ -35,7 +35,7 @@ import org.apereo.portal.security.IAuthorizationPrincipal;
 import org.apereo.portal.security.IPermission;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.IPersonManager;
-import org.apereo.portal.services.AuthorizationService;
+import org.apereo.portal.services.AuthorizationServiceFacade;
 import org.apereo.portal.xml.StaxUtils;
 import org.apereo.portal.xml.XmlUtilities;
 import org.apereo.portal.xml.stream.BufferedXMLEventReader;
@@ -90,7 +90,7 @@ public class ImportExportController {
         final IPerson person = personManager.getPerson(request);
         final EntityIdentifier ei = person.getEntityIdentifier();
         final IAuthorizationPrincipal ap =
-                AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
+                AuthorizationServiceFacade.instance().newPrincipal(ei.getKey(), ei.getType());
         if (!ap.hasPermission(
                 "UP_SYSTEM", "IMPORT_ENTITY", portalDataKey.getName().getLocalPart())) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -143,7 +143,7 @@ public class ImportExportController {
         final IPerson person = personManager.getPerson(request);
         final EntityIdentifier ei = person.getEntityIdentifier();
         final IAuthorizationPrincipal ap =
-                AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
+                AuthorizationServiceFacade.instance().newPrincipal(ei.getKey(), ei.getType());
 
         if (!ap.hasPermission(IPermission.PORTAL_SYSTEM, IPermission.DELETE_ACTIVITY, entityType)) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -170,7 +170,7 @@ public class ImportExportController {
         final IPerson person = personManager.getPerson(request);
         final EntityIdentifier ei = person.getEntityIdentifier();
         final IAuthorizationPrincipal ap =
-                AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
+                AuthorizationServiceFacade.instance().newPrincipal(ei.getKey(), ei.getType());
 
         // if the current user does not have permission to delete this database
         // object type, return a 401 error code

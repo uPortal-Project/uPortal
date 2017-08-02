@@ -309,7 +309,6 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
      * @see org.apereo.portal.url.IPortalUrlProvider#getPortalRequestInfo(javax.servlet.http.HttpServletRequest)
      */
     @Override
-    @SuppressWarnings("FallThrough")
     public IPortalRequestInfo getPortalRequestInfo(HttpServletRequest request) {
         request = this.portalRequestUtils.getOriginalPortalRequest(request);
         final IPortalRequestInfo cachedPortalRequestInfo =
@@ -431,6 +430,7 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                                 break;
                             }
                         }
+                        // fall through
                     case PORTLET:
                         {
                             parseStep = ParseStep.STATE;
@@ -462,6 +462,7 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                                                 targetedPortletString);
                             }
                         }
+                        // fall through
                     case STATE:
                         {
                             parseStep = ParseStep.TYPE;
@@ -515,11 +516,16 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                                             targetedPortletRequestInfo.setWindowState(
                                                     IPortletRenderer.EXCLUSIVE);
                                         }
+                                        break;
+
                                     default:
-                                        // Do thing
+                                        // Nothing to do -- some cases don't need treatment
                                 }
+
+                                break;
                             }
                         }
+                        // fall through
                     case TYPE:
                         {
                             parseStep = ParseStep.COMPLETE;
@@ -555,8 +561,9 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                                 }
                             }
                         }
+                        // fall through
                     default:
-                        // Do nothing
+                        // Nothing to do -- some cases don't need treatment
                 }
             }
 
@@ -972,7 +979,6 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
         return fullName.substring(prefix.length());
     }
 
-    @SuppressWarnings("FallThrough")
     @Override
     public String getCanonicalUrl(HttpServletRequest request) {
 
@@ -1043,6 +1049,7 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                         portletUrlBuilder.setResourceId(portletRequestInfo.getResourceId());
                     }
 
+                    // fall through
                 case RENDER:
                 case ACTION:
                     {
@@ -1051,8 +1058,6 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                         portletUrlBuilder.setPortletMode(portletRequestInfo.getPortletMode());
                         break;
                     }
-                default:
-                    // Do nothing
             }
         }
 

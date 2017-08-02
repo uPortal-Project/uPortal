@@ -14,7 +14,6 @@
  */
 package org.apereo.portal.security.provider;
 
-import java.util.Properties;
 import javax.naming.AuthenticationException;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
@@ -25,7 +24,6 @@ import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 import org.apereo.portal.ldap.ILdapServer;
 import org.apereo.portal.ldap.LdapServices;
-import org.apereo.portal.security.IConfigurableSecurityContext;
 import org.apereo.portal.security.PortalSecurityException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,15 +33,9 @@ import org.slf4j.LoggerFactory;
  * directory. It expects to be able to bind to the LDAP directory as the user so that it can
  * authenticate the user.
  *
- * <p>By implementing the {@link IConfigurableSecurityContext} interface this context may have
- * properties set on it. The one property the <code>SimpleLdapSecurityContext</code> looks for is
- * defined by the String {@link #LDAP_PROPERTIES_CONNECTION_NAME} "connection". This property allows
- * a specific, named, LDAP connection to be used by the context. If no "connection" property is
- * specified the default LDAP connection returned by {@link org.apereo.portal.ldap.LdapServices} is
- * used.
+ * <p>The default LDAP connection returned by {@link org.apereo.portal.ldap.LdapServices} is used.
  */
-public class SimpleLdapSecurityContext extends ChainingSecurityContext
-        implements IConfigurableSecurityContext {
+public class SimpleLdapSecurityContext extends ChainingSecurityContext {
 
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
@@ -59,21 +51,8 @@ public class SimpleLdapSecurityContext extends ChainingSecurityContext
     };
 
     public static final String LDAP_PROPERTIES_CONNECTION_NAME = "connection";
-    private Properties ctxProperties;
 
-    SimpleLdapSecurityContext() {
-        super();
-        ctxProperties = new Properties();
-    }
-
-    /**
-     * Sets the properties to use for this security context.
-     *
-     * @see IConfigurableSecurityContext#setProperties(java.util.Properties)
-     */
-    public void setProperties(Properties props) {
-        ctxProperties = props;
-    }
+    /* package-private */ SimpleLdapSecurityContext() {}
 
     /**
      * Returns the type of authentication this class provides.
@@ -94,10 +73,7 @@ public class SimpleLdapSecurityContext extends ChainingSecurityContext
         this.isauth = false;
         ILdapServer ldapConn;
 
-        String propFile = ctxProperties.getProperty(LDAP_PROPERTIES_CONNECTION_NAME);
-        if (propFile != null && propFile.length() > 0)
-            ldapConn = LdapServices.getLdapServer(propFile);
-        else ldapConn = LdapServices.getDefaultLdapServer();
+        ldapConn = LdapServices.getDefaultLdapServer();
 
         String creds = new String(this.myOpaqueCredentials.credentialstring);
         if (this.myPrincipal.UID != null
