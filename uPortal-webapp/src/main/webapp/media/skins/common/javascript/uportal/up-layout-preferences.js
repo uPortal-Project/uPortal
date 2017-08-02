@@ -497,13 +497,12 @@ var uportal = uportal || {};
                         }
                     );
                 },
-                onTabAdd: function (tabLabel, columns, tabGroup) {
+                onTabAdd: function (tabLabel, columns) {
                     that.persistence.update(
                         {
                             action: "addTab",
                             tabName: tabLabel,
-                            widths: columns,
-                            tabGroup: tabGroup
+                            widths: columns
                         },
                         function (data) {
                             window.location = that.urlProvider.getTabUrl(data.tabId);
