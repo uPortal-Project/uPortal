@@ -31,7 +31,7 @@ import org.apereo.portal.AuthorizationException;
 import org.apereo.portal.EntityIdentifier;
 import org.apereo.portal.security.IAuthorizationPrincipal;
 import org.apereo.portal.security.IPerson;
-import org.apereo.portal.services.AuthorizationService;
+import org.apereo.portal.services.AuthorizationServiceFacade;
 import org.apereo.portal.utils.DocumentFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -72,7 +72,7 @@ public class ILFBuilder {
         // build the auth principal for determining if pushed channels can be
         // used by this user
         EntityIdentifier ei = person.getEntityIdentifier();
-        AuthorizationService authS = AuthorizationService.instance();
+        AuthorizationServiceFacade authS = AuthorizationServiceFacade.instance();
         IAuthorizationPrincipal ap = authS.newPrincipal(ei.getKey(), ei.getType());
 
         // now merge fragments one at a time into ILF document

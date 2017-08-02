@@ -46,7 +46,7 @@ import org.apereo.portal.security.IAuthorizationPrincipal;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.IPersonManager;
 import org.apereo.portal.security.IPortalPasswordService;
-import org.apereo.portal.services.AuthorizationService;
+import org.apereo.portal.services.AuthorizationServiceFacade;
 import org.apereo.portal.services.GroupService;
 import org.apereo.portal.url.IPortalUrlBuilder;
 import org.apereo.portal.url.IPortalUrlProvider;
@@ -189,7 +189,7 @@ public class UserAccountHelper {
 
         EntityIdentifier ei = currentUser.getEntityIdentifier();
         IAuthorizationPrincipal ap =
-                AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
+                AuthorizationServiceFacade.instance().newPrincipal(ei.getKey(), ei.getType());
 
         // if the target represents the current user, determine if they can
         // edit their own account
@@ -216,7 +216,7 @@ public class UserAccountHelper {
 
         EntityIdentifier ei = currentUser.getEntityIdentifier();
         IAuthorizationPrincipal ap =
-                AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
+                AuthorizationServiceFacade.instance().newPrincipal(ei.getKey(), ei.getType());
 
         List<Preference> allowedAttributes = new ArrayList<Preference>();
         for (Preference attr : accountEditAttributes) {
@@ -279,7 +279,7 @@ public class UserAccountHelper {
 
         EntityIdentifier ei = currentUser.getEntityIdentifier();
         IAuthorizationPrincipal ap =
-                AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
+                AuthorizationServiceFacade.instance().newPrincipal(ei.getKey(), ei.getType());
         // TODO create new user editing permission
         return (ap.hasPermission("UP_USERS", "DELETE_USER", target));
     }
@@ -339,7 +339,7 @@ public class UserAccountHelper {
         // Used w/ check #2
         EntityIdentifier ei = currentUser.getEntityIdentifier();
         IAuthorizationPrincipal ap =
-                AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
+                AuthorizationServiceFacade.instance().newPrincipal(ei.getKey(), ei.getType());
 
         // update the account attributes to match those specified in the form
         List<Preference> editableAttributes = getEditableUserAttributes(currentUser);

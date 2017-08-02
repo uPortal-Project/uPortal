@@ -14,10 +14,8 @@
  */
 package org.apereo.portal.security.provider;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 import java.util.Random;
 import junit.framework.TestCase;
 import junit.textui.TestRunner;
@@ -30,13 +28,11 @@ import org.apereo.portal.permission.target.IPermissionTarget;
 import org.apereo.portal.properties.PropertiesManager;
 import org.apereo.portal.security.IAuthorizationPrincipal;
 import org.apereo.portal.security.IAuthorizationService;
-import org.apereo.portal.security.IAuthorizationServiceFactory;
 import org.apereo.portal.security.IPermission;
 import org.apereo.portal.security.IPermissionPolicy;
 import org.apereo.portal.security.IPermissionStore;
-import org.apereo.portal.security.PortalSecurityException;
-import org.apereo.portal.services.AuthorizationService;
 import org.apereo.portal.services.GroupService;
+import org.apereo.portal.spring.locator.AuthorizationServiceLocator;
 import org.junit.Ignore;
 
 /** Tests the authorization framework. */
@@ -199,7 +195,7 @@ public class AuthorizationTester extends TestCase {
         }
         return positivePermissionPolicy;
     }
-    /** @return org.apereo.portal.security.AuthorizationService */
+    /** @return org.apereo.portal.security.AuthorizationServiceFacade */
     private IAuthorizationService getService() throws AuthorizationException {
         if (authorizationService == null) {
             initializeAuthorizationService();
@@ -208,40 +204,7 @@ public class AuthorizationTester extends TestCase {
     }
     /** Create an implementation of IAuthorizationService. */
     private void initializeAuthorizationService() throws AuthorizationException {
-        // Get the security properties file
-        java.io.InputStream secprops =
-                AuthorizationService.class.getResourceAsStream("/properties/security.properties");
-
-        // Get the properties from the security properties file
-        Properties pr = new Properties();
-        String s_factoryName = null;
-
-        try {
-            pr.load(secprops);
-            // Look for our authorization factory and instantiate an instance of it or die trying.
-            if ((s_factoryName = pr.getProperty("authorizationProvider")) == null) {
-                print(
-                        "ERROR: AuthorizationProvider not specified or incorrect in security.properties");
-            } else {
-                try {
-                    IAuthorizationServiceFactory factory =
-                            (IAuthorizationServiceFactory)
-                                    Class.forName(s_factoryName).newInstance();
-                    authorizationService = factory.getAuthorization();
-                } catch (Exception e) {
-                    print("ERROR: Failed to instantiate " + s_factoryName);
-                }
-            }
-
-        } catch (IOException e) {
-            print("ERROR: " + e.getMessage());
-        } finally {
-            try {
-                if (secprops != null) secprops.close();
-            } catch (IOException ioe) {
-                print(new PortalSecurityException(ioe.getMessage()).toString());
-            }
-        }
+        authorizationService = AuthorizationServiceLocator.getAuthorizationService();
     }
 
     /** Create an implementation of IPermissionStore. */

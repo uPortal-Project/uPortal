@@ -55,9 +55,7 @@ class CacheSecurityContext extends ChainingSecurityContext
     private ISecurityContext parentContext;
     private byte[] cachedcredentials;
 
-    CacheSecurityContext() {
-        super();
-    }
+    /* package-private */ CacheSecurityContext() {}
 
     public int getAuthType() {
         return CACHESECURITYAUTHTYPE;

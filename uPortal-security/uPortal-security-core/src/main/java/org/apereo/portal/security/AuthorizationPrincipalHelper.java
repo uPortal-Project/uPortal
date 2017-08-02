@@ -16,7 +16,7 @@ package org.apereo.portal.security;
 
 import org.apache.commons.lang3.Validate;
 import org.apereo.portal.EntityIdentifier;
-import org.apereo.portal.services.AuthorizationService;
+import org.apereo.portal.services.AuthorizationServiceFacade;
 
 /**
  * Static convenience methods for working with IAuthorizationPricipal.
@@ -49,7 +49,7 @@ public final class AuthorizationPrincipalHelper {
         Validate.notNull(userEntityType, "The user object is defective: lacks entity type.");
 
         final IAuthorizationPrincipal principal =
-                AuthorizationService.instance().newPrincipal(userEntityKey, userEntityType);
+                AuthorizationServiceFacade.instance().newPrincipal(userEntityKey, userEntityType);
 
         return principal;
     }

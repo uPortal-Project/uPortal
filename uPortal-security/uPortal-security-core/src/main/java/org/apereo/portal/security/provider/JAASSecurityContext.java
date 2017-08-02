@@ -32,9 +32,7 @@ class JAASSecurityContext extends ChainingSecurityContext
     private final int JAASSECURITYAUTHTYPE = 0xFF05;
     private IAdditionalDescriptor additionalDescriptor;
 
-    JAASSecurityContext() {
-        super();
-    }
+    /* package-private */ JAASSecurityContext() {}
 
     @Override
     public int getAuthType() {

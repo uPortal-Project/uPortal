@@ -18,10 +18,25 @@ import org.apereo.portal.security.ISecurityContext;
 import org.apereo.portal.security.ISecurityContextFactory;
 
 /**
- * The factory class for the cache security context. Just returns a new instance of the
- * CacheSecurityContext. See the notes and warnings associated with the CacheSecurityContext class.
+ * The factory class for the cache security context. Unlike most {@link ISecurityContextFactory}
+ * implementations, objects of this class are not Spring-managed beans. This class must be leveraged
+ * from within another {@link ISecurityContextFactory} that is a Spring-managed bean. See the notes
+ * and warnings associated with the CacheSecurityContext class.
  */
 public class CacheSecurityContextFactory implements ISecurityContextFactory {
+
+    @Override
+    public String getName() {
+        return "cache";
+    }
+
+    @Override
+    public boolean isEnabled() {
+        final String msg =
+                "CacheSecurityContextFactory must not be used directly by "
+                        + "InitalSecurityContextFactory";
+        throw new UnsupportedOperationException(msg);
+    }
 
     public ISecurityContext getSecurityContext() {
         return new CacheSecurityContext();
