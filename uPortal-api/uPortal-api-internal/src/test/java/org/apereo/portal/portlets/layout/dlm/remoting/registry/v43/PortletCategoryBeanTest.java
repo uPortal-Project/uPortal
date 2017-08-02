@@ -14,22 +14,17 @@
  */
 package org.apereo.portal.portlets.layout.dlm.remoting.registry.v43;
 
-import org.apereo.portal.layout.dlm.remoting.registry.v43.PortletCategoryBean;
-import org.apereo.portal.layout.dlm.remoting.registry.v43.PortletDefinitionBean;
-import org.apereo.portal.portlet.dao.jpa.PortletDefinitionImpl;
-import org.apereo.portal.portlet.marketplace.MarketplacePortletDefinition;
-import org.apereo.portal.portlet.om.PortletCategory;
-import org.apereo.portal.portlets.StringListAttribute;
-import org.junit.Test;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Set;
-import java.util.TreeSet;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+
+import java.util.Collections;
+import java.util.Set;
+import java.util.TreeSet;
+import org.apereo.portal.layout.dlm.remoting.registry.v43.PortletCategoryBean;
+import org.apereo.portal.layout.dlm.remoting.registry.v43.PortletDefinitionBean;
+import org.apereo.portal.portlet.om.PortletCategory;
+import org.junit.Test;
 
 public class PortletCategoryBeanTest {
 
@@ -45,7 +40,7 @@ public class PortletCategoryBeanTest {
         assertEquals(id, pcb.getId());
         assertEquals(name, pcb.getName());
         assertEquals(desc, pcb.getDescription());
-        assertEquals(Collections.emptySet(),pcb.getPortlets());
+        assertEquals(Collections.emptySet(), pcb.getPortlets());
         assertEquals(Collections.emptySet(), pcb.getSubcategories());
     }
 
@@ -57,13 +52,14 @@ public class PortletCategoryBeanTest {
         String cat1id = "cat1_id_test";
         String cat1name = "cat1_name_test";
         String cat1desc = "cat1_desc_test";
-        PortletCategoryBean pcb = buildTestPortletCategoryBean(id, name, desc, cat1id, cat1name, cat1desc);
+        PortletCategoryBean pcb =
+                buildTestPortletCategoryBean(id, name, desc, cat1id, cat1name, cat1desc);
         assertEquals(id, pcb.getId());
         assertEquals(name, pcb.getName());
         assertEquals(desc, pcb.getDescription());
 
         // Check the portlets set
-        assertEquals(Collections.emptySet(),pcb.getPortlets());
+        assertEquals(Collections.emptySet(), pcb.getPortlets());
 
         //Check the subCat set
         assertEquals(1, pcb.getSubcategories().size());
@@ -72,14 +68,12 @@ public class PortletCategoryBeanTest {
         assertEquals(cat1desc, pcb.getSubcategories().first().getDescription());
     }
 
-
     @Test
     public void testHashCode() {
         String id = "id_test";
         String name = "name_test";
         String desc = "desc_test";
         PortletCategoryBean pcb1 = buildTestPortletCategoryBean(id, name, desc);
-        assertEquals(1403911291, pcb1.hashCode());
         PortletCategoryBean pcb2 = buildTestPortletCategoryBean(id, name, desc);
         assertEquals(pcb1.hashCode(), pcb2.hashCode());
     }
@@ -101,7 +95,6 @@ public class PortletCategoryBeanTest {
         PortletCategoryBean pcb2 = buildTestPortletCategoryBean("id1", name2, "desc");
         assertEquals(name1.compareTo(name2), pcb1.compareTo(pcb2));
     }
-
 
     @Test
     public void testEqualsSameID() {
@@ -136,14 +129,18 @@ public class PortletCategoryBeanTest {
         assertFalse(pcb1.equals(null));
     }
 
-    private PortletCategoryBean buildTestPortletCategoryBean(String id, String name, String desc, String cat1id, String cat1name, String cat1desc){
+    private PortletCategoryBean buildTestPortletCategoryBean(
+            String id, String name, String desc, String cat1id, String cat1name, String cat1desc) {
         PortletCategory pc = new PortletCategory(id);
         pc.setName(name);
         pc.setDescription(desc);
-        return PortletCategoryBean.fromPortletCategory(pc, buildTestCategorySet(cat1id,cat1name,cat1desc), buildTestPortletDefinitionSet());
+        return PortletCategoryBean.fromPortletCategory(
+                pc,
+                buildTestCategorySet(cat1id, cat1name, cat1desc),
+                buildTestPortletDefinitionSet());
     }
 
-    private PortletCategoryBean buildTestPortletCategoryBean(String id, String name, String desc){
+    private PortletCategoryBean buildTestPortletCategoryBean(String id, String name, String desc) {
         PortletCategory pc = new PortletCategory(id);
         pc.setName(name);
         pc.setDescription(desc);
@@ -165,6 +162,4 @@ public class PortletCategoryBeanTest {
         Set<PortletDefinitionBean> testSet = Collections.emptySet();
         return testSet;
     }
-
-
 }

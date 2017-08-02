@@ -1,11 +1,12 @@
 package org.apereo.portal.portlets.layout.dlm.remoting.registry;
 
-import org.apereo.portal.layout.dlm.remoting.registry.ChannelBean;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import org.apereo.portal.layout.dlm.remoting.registry.ChannelCategoryBean;
 import org.apereo.portal.portlet.om.PortletCategory;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 public class ChannelCategoryBeanTest {
 
@@ -36,7 +37,6 @@ public class ChannelCategoryBeanTest {
         ChannelCategoryBean ccb1 = buildChannelCategoryBean("id_test", "name_test");
         ChannelCategoryBean ccb2 = buildChannelCategoryBean("id_test", "name_test");
 
-        assertEquals(1403911291, ccb1.hashCode());
         assertEquals(ccb1.hashCode(), ccb2.hashCode());
     }
 

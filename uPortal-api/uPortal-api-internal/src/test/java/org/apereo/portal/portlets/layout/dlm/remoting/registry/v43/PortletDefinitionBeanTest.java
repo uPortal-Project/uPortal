@@ -14,12 +14,32 @@
  */
 package org.apereo.portal.portlets.layout.dlm.remoting.registry.v43;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import com.google.common.collect.ImmutableSet;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 import org.apereo.portal.EntityIdentifier;
 import org.apereo.portal.layout.dlm.remoting.registry.v43.PortletDefinitionBean;
 import org.apereo.portal.portlet.marketplace.IMarketplaceService;
 import org.apereo.portal.portlet.marketplace.MarketplacePortletDefinition;
-import org.apereo.portal.portlet.om.*;
+import org.apereo.portal.portlet.om.IPortletDefinition;
+import org.apereo.portal.portlet.om.IPortletDefinitionId;
+import org.apereo.portal.portlet.om.IPortletDefinitionParameter;
+import org.apereo.portal.portlet.om.IPortletDescriptorKey;
+import org.apereo.portal.portlet.om.IPortletPreference;
+import org.apereo.portal.portlet.om.IPortletType;
+import org.apereo.portal.portlet.om.PortletCategory;
+import org.apereo.portal.portlet.om.PortletLifecycleState;
 import org.apereo.portal.portlet.registry.IPortletCategoryRegistry;
 import org.apereo.portal.rest.layout.MarketplaceEntry;
 import org.apereo.portal.security.IAuthorizationPrincipal;
@@ -30,19 +50,11 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-import java.util.*;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 public class PortletDefinitionBeanTest {
 
-    @Mock
-    private IPortletPreference portletPref;
+    @Mock private IPortletPreference portletPref;
 
-    @Mock
-    private IPortletDefinitionParameter portletDefParam;
+    @Mock private IPortletDefinitionParameter portletDefParam;
 
     //Static test data
     private String title = "testTitle";
@@ -65,7 +77,7 @@ public class PortletDefinitionBeanTest {
         Long id = 345L;
         String name = "testName";
 
-        String[] keywords = new String[]{"val1","val2"};
+        String[] keywords = new String[] {"val1", "val2"};
         List<IPortletPreference> prefs = new ArrayList<>();
         prefs.add(portletPref);
         Mockito.when(portletPref.getName()).thenReturn("keywords");
@@ -74,12 +86,13 @@ public class PortletDefinitionBeanTest {
         Map<String, IPortletDefinitionParameter> params = new HashMap<>();
         params.put("test1", portletDefParam);
 
-        MarketplacePortletDefinition mpd = buildMarketplacePortletDefinition(id, name, prefs, params);
+        MarketplacePortletDefinition mpd =
+                buildMarketplacePortletDefinition(id, name, prefs, params);
 
-        PortletDefinitionBean pdb = PortletDefinitionBean.fromMarketplacePortletDefinition(
-                mpd, Locale.ENGLISH);
+        PortletDefinitionBean pdb =
+                PortletDefinitionBean.fromMarketplacePortletDefinition(mpd, Locale.ENGLISH);
         assertEquals(averageRating, pdb.getAverageRating());
-        assertEquals(id, (Long)pdb.getId());
+        assertEquals(id, (Long) pdb.getId());
         assertEquals(fName, pdb.getFname());
         assertEquals(title, pdb.getTitle());
         assertEquals(name, pdb.getName());
@@ -97,7 +110,7 @@ public class PortletDefinitionBeanTest {
         String name = "testName";
 
         // Create a non-keyword list
-        String[] nonKeywords = new String[]{"val1","val2"};
+        String[] nonKeywords = new String[] {"val1", "val2"};
         List<IPortletPreference> prefs = new ArrayList<>();
         prefs.add(portletPref);
         Mockito.when(portletPref.getName()).thenReturn("non-keywords");
@@ -105,22 +118,23 @@ public class PortletDefinitionBeanTest {
 
         MarketplacePortletDefinition mpd = buildMarketplacePortletDefinition(id, name, prefs, null);
 
-        PortletDefinitionBean pdb = PortletDefinitionBean.fromMarketplacePortletDefinition(
-                mpd, Locale.ENGLISH);
+        PortletDefinitionBean pdb =
+                PortletDefinitionBean.fromMarketplacePortletDefinition(mpd, Locale.ENGLISH);
         assertEquals(Collections.EMPTY_LIST, pdb.getKeywords());
     }
 
     @Test
     public void testFromMarketplacePortletDefinitionHashCode() {
-        MarketplacePortletDefinition mpd1 = buildMarketplacePortletDefinition(678L, "testName1", null, null);
-        MarketplacePortletDefinition mpd2 = buildMarketplacePortletDefinition(678L, "testName2", null, null);
+        MarketplacePortletDefinition mpd1 =
+                buildMarketplacePortletDefinition(678L, "testName1", null, null);
+        MarketplacePortletDefinition mpd2 =
+                buildMarketplacePortletDefinition(678L, "testName2", null, null);
 
-        PortletDefinitionBean pdb1 = PortletDefinitionBean.fromMarketplacePortletDefinition(
-                mpd1, Locale.ENGLISH);
-        PortletDefinitionBean pdb2 = PortletDefinitionBean.fromMarketplacePortletDefinition(
-                mpd2, Locale.ENGLISH);
+        PortletDefinitionBean pdb1 =
+                PortletDefinitionBean.fromMarketplacePortletDefinition(mpd1, Locale.ENGLISH);
+        PortletDefinitionBean pdb2 =
+                PortletDefinitionBean.fromMarketplacePortletDefinition(mpd2, Locale.ENGLISH);
 
-        assertEquals(-248900117, pdb1.hashCode());
         assertEquals(pdb1.hashCode(), pdb2.hashCode());
     }
 
@@ -128,13 +142,15 @@ public class PortletDefinitionBeanTest {
     public void testCompareToDifferent() {
         String name1 = "testName1";
         String name2 = "testName2";
-        MarketplacePortletDefinition mpd1 = buildMarketplacePortletDefinition(678L, name1, null, null);
-        MarketplacePortletDefinition mpd2 = buildMarketplacePortletDefinition(678L, name2, null, null);
+        MarketplacePortletDefinition mpd1 =
+                buildMarketplacePortletDefinition(678L, name1, null, null);
+        MarketplacePortletDefinition mpd2 =
+                buildMarketplacePortletDefinition(678L, name2, null, null);
 
-        PortletDefinitionBean pdb1 = PortletDefinitionBean.fromMarketplacePortletDefinition(
-                mpd1, Locale.ENGLISH);
-        PortletDefinitionBean pdb2 = PortletDefinitionBean.fromMarketplacePortletDefinition(
-                mpd2, Locale.ENGLISH);
+        PortletDefinitionBean pdb1 =
+                PortletDefinitionBean.fromMarketplacePortletDefinition(mpd1, Locale.ENGLISH);
+        PortletDefinitionBean pdb2 =
+                PortletDefinitionBean.fromMarketplacePortletDefinition(mpd2, Locale.ENGLISH);
 
         assertEquals(name1.compareTo(name2), pdb1.compareTo(pdb2));
     }
@@ -143,30 +159,33 @@ public class PortletDefinitionBeanTest {
     public void testCompareToSimilar() {
         String name1 = "testName1";
         String name2 = "testName1";
-        MarketplacePortletDefinition mpd1 = buildMarketplacePortletDefinition(678L, name1, null, null);
-        MarketplacePortletDefinition mpd2 = buildMarketplacePortletDefinition(678L, name2, null, null);
+        MarketplacePortletDefinition mpd1 =
+                buildMarketplacePortletDefinition(678L, name1, null, null);
+        MarketplacePortletDefinition mpd2 =
+                buildMarketplacePortletDefinition(678L, name2, null, null);
 
-        PortletDefinitionBean pdb1 = PortletDefinitionBean.fromMarketplacePortletDefinition(
-                mpd1, Locale.ENGLISH);
-        PortletDefinitionBean pdb2 = PortletDefinitionBean.fromMarketplacePortletDefinition(
-                mpd2, Locale.ENGLISH);
+        PortletDefinitionBean pdb1 =
+                PortletDefinitionBean.fromMarketplacePortletDefinition(mpd1, Locale.ENGLISH);
+        PortletDefinitionBean pdb2 =
+                PortletDefinitionBean.fromMarketplacePortletDefinition(mpd2, Locale.ENGLISH);
 
         assertEquals(name1.compareTo(name2), pdb1.compareTo(pdb2));
     }
-
 
     @Test
     public void testEqualsSameID() {
         Long id1 = 678L;
         Long id2 = 678L;
 
-        MarketplacePortletDefinition mpd1 = buildMarketplacePortletDefinition(id1, "testName", null, null);
-        MarketplacePortletDefinition mpd2 = buildMarketplacePortletDefinition(id2, "testName", null, null);
+        MarketplacePortletDefinition mpd1 =
+                buildMarketplacePortletDefinition(id1, "testName", null, null);
+        MarketplacePortletDefinition mpd2 =
+                buildMarketplacePortletDefinition(id2, "testName", null, null);
 
-        PortletDefinitionBean pdb1 = PortletDefinitionBean.fromMarketplacePortletDefinition(
-                mpd1, Locale.ENGLISH);
-        PortletDefinitionBean pdb2 = PortletDefinitionBean.fromMarketplacePortletDefinition(
-                mpd2, Locale.ENGLISH);
+        PortletDefinitionBean pdb1 =
+                PortletDefinitionBean.fromMarketplacePortletDefinition(mpd1, Locale.ENGLISH);
+        PortletDefinitionBean pdb2 =
+                PortletDefinitionBean.fromMarketplacePortletDefinition(mpd2, Locale.ENGLISH);
 
         assertTrue(pdb1.equals(pdb2));
     }
@@ -176,43 +195,48 @@ public class PortletDefinitionBeanTest {
         Long id1 = 678L;
         Long id2 = 732L;
 
-        MarketplacePortletDefinition mpd1 = buildMarketplacePortletDefinition(id1, "testName", null, null);
-        MarketplacePortletDefinition mpd2 = buildMarketplacePortletDefinition(id2, "testName", null, null);
+        MarketplacePortletDefinition mpd1 =
+                buildMarketplacePortletDefinition(id1, "testName", null, null);
+        MarketplacePortletDefinition mpd2 =
+                buildMarketplacePortletDefinition(id2, "testName", null, null);
 
-        PortletDefinitionBean pdb1 = PortletDefinitionBean.fromMarketplacePortletDefinition(
-                mpd1, Locale.ENGLISH);
-        PortletDefinitionBean pdb2 = PortletDefinitionBean.fromMarketplacePortletDefinition(
-                mpd2, Locale.ENGLISH);
+        PortletDefinitionBean pdb1 =
+                PortletDefinitionBean.fromMarketplacePortletDefinition(mpd1, Locale.ENGLISH);
+        PortletDefinitionBean pdb2 =
+                PortletDefinitionBean.fromMarketplacePortletDefinition(mpd2, Locale.ENGLISH);
 
         assertFalse(pdb1.equals(pdb2));
     }
 
     @Test
     public void testEqualsSelf() {
-        MarketplacePortletDefinition mpd1 = buildMarketplacePortletDefinition(45L, "testName", null, null);
+        MarketplacePortletDefinition mpd1 =
+                buildMarketplacePortletDefinition(45L, "testName", null, null);
 
-        PortletDefinitionBean pdb1 = PortletDefinitionBean.fromMarketplacePortletDefinition(
-                mpd1, Locale.ENGLISH);
+        PortletDefinitionBean pdb1 =
+                PortletDefinitionBean.fromMarketplacePortletDefinition(mpd1, Locale.ENGLISH);
 
         assertTrue(pdb1.equals(pdb1));
     }
 
     @Test
     public void testEqualsOtherObject() {
-        MarketplacePortletDefinition mpd1 = buildMarketplacePortletDefinition(45L, "testName", null, null);
+        MarketplacePortletDefinition mpd1 =
+                buildMarketplacePortletDefinition(45L, "testName", null, null);
 
-        PortletDefinitionBean pdb1 = PortletDefinitionBean.fromMarketplacePortletDefinition(
-                mpd1, Locale.ENGLISH);
+        PortletDefinitionBean pdb1 =
+                PortletDefinitionBean.fromMarketplacePortletDefinition(mpd1, Locale.ENGLISH);
 
         assertFalse(pdb1.equals("id1"));
     }
 
     @Test
     public void testEqualsNull() {
-        MarketplacePortletDefinition mpd1 = buildMarketplacePortletDefinition(45L, "testName", null, null);
+        MarketplacePortletDefinition mpd1 =
+                buildMarketplacePortletDefinition(45L, "testName", null, null);
 
-        PortletDefinitionBean pdb1 = PortletDefinitionBean.fromMarketplacePortletDefinition(
-                mpd1, Locale.ENGLISH);
+        PortletDefinitionBean pdb1 =
+                PortletDefinitionBean.fromMarketplacePortletDefinition(mpd1, Locale.ENGLISH);
 
         assertFalse(pdb1.equals(null));
     }
@@ -222,18 +246,21 @@ public class PortletDefinitionBeanTest {
      * Instead, created near-empty shells that get some test parameters.
      */
     private MarketplacePortletDefinition buildMarketplacePortletDefinition(
-            Long id, String name, List<IPortletPreference> prefs, Map<String, IPortletDefinitionParameter> params) {
+            Long id,
+            String name,
+            List<IPortletPreference> prefs,
+            Map<String, IPortletDefinitionParameter> params) {
 
         List<IPortletPreference> prefsToUse = prefs;
-        if(prefs == null) {
+        if (prefs == null) {
             prefsToUse = new ArrayList<>();
             prefsToUse.add(portletPref);
             Mockito.when(portletPref.getName()).thenReturn("keywords");
-            Mockito.when(portletPref.getValues()).thenReturn(new String[]{"val1","val2"});
+            Mockito.when(portletPref.getValues()).thenReturn(new String[] {"val1", "val2"});
         }
 
         Map<String, IPortletDefinitionParameter> paramsToUse = params;
-        if(params == null) {
+        if (params == null) {
             paramsToUse = new HashMap<>();
             paramsToUse.put("test1", portletDefParam);
         }
@@ -259,6 +286,7 @@ public class PortletDefinitionBeanTest {
         String title;
         Long id;
         int typeId;
+
         public void setId(Long id) {
             this.id = id;
         }
@@ -278,7 +306,7 @@ public class PortletDefinitionBeanTest {
 
                 @Override
                 public String getStringId() {
-                    return ""+id;
+                    return "" + id;
                 }
             };
         }
@@ -308,18 +336,21 @@ public class PortletDefinitionBeanTest {
         }
 
         String fname;
+
         @Override
         public String getFName() {
             return fname;
         }
 
         String name;
+
         @Override
         public String getName() {
             return name;
         }
 
         String descr;
+
         @Override
         public String getDescription() {
             return this.descr;
@@ -384,14 +415,10 @@ public class PortletDefinitionBeanTest {
                 }
 
                 @Override
-                public void setDescription(String descr) {
-
-                }
+                public void setDescription(String descr) {}
 
                 @Override
-                public void setCpdUri(String cpdUri) {
-
-                }
+                public void setCpdUri(String cpdUri) {}
 
                 @Override
                 public String getDataId() {
@@ -451,9 +478,11 @@ public class PortletDefinitionBeanTest {
         }
 
         Map<String, IPortletDefinitionParameter> params;
+
         public void setParameters(Map<String, IPortletDefinitionParameter> params) {
             this.params = params;
         }
+
         @Override
         public Map<String, IPortletDefinitionParameter> getParametersAsUnmodifiableMap() {
             return params;
@@ -505,86 +534,55 @@ public class PortletDefinitionBeanTest {
         }
 
         @Override
-        public void setTimeout(int timeout) {
-
-        }
+        public void setTimeout(int timeout) {}
 
         @Override
-        public void setActionTimeout(Integer actionTimeout) {
-
-        }
+        public void setActionTimeout(Integer actionTimeout) {}
 
         @Override
-        public void setEventTimeout(Integer eventTimeout) {
-
-        }
+        public void setEventTimeout(Integer eventTimeout) {}
 
         @Override
-        public void setRenderTimeout(Integer renderTimeout) {
-
-        }
+        public void setRenderTimeout(Integer renderTimeout) {}
 
         @Override
-        public void setResourceTimeout(Integer resourceTimeout) {
-
-        }
+        public void setResourceTimeout(Integer resourceTimeout) {}
 
         @Override
-        public void setType(IPortletType channelType) {
-
-        }
+        public void setType(IPortletType channelType) {}
 
         @Override
-        public void setPublisherId(int publisherId) {
-
-        }
+        public void setPublisherId(int publisherId) {}
 
         @Override
-        public void setApproverId(int approvalId) {
-
-        }
+        public void setApproverId(int approvalId) {}
 
         @Override
-        public void setPublishDate(Date publishDate) {
-
-        }
+        public void setPublishDate(Date publishDate) {}
 
         @Override
-        public void setApprovalDate(Date approvalDate) {
-
-        }
+        public void setApprovalDate(Date approvalDate) {}
 
         @Override
-        public void setExpirerId(int expirerId) {
-
-        }
+        public void setExpirerId(int expirerId) {}
 
         @Override
-        public void setExpirationDate(Date expirationDate) {
-
-        }
+        public void setExpirationDate(Date expirationDate) {}
 
         @Override
-        public void setParameters(Set<IPortletDefinitionParameter> parameters) {
-
-        }
+        public void setParameters(Set<IPortletDefinitionParameter> parameters) {}
 
         @Override
-        public void addLocalizedTitle(String locale, String chanTitle) {
-
-        }
+        public void addLocalizedTitle(String locale, String chanTitle) {}
 
         @Override
-        public void addLocalizedName(String locale, String chanName) {
-
-        }
+        public void addLocalizedName(String locale, String chanName) {}
 
         @Override
-        public void addLocalizedDescription(String locale, String chanDesc) {
-
-        }
+        public void addLocalizedDescription(String locale, String chanDesc) {}
 
         Double rating;
+
         @Override
         public Double getRating() {
             return rating;
@@ -596,6 +594,7 @@ public class PortletDefinitionBeanTest {
         }
 
         Long usersRated;
+
         @Override
         public Long getUsersRated() {
             return usersRated;
@@ -607,24 +606,16 @@ public class PortletDefinitionBeanTest {
         }
 
         @Override
-        public void addParameter(IPortletDefinitionParameter parameter) {
-
-        }
+        public void addParameter(IPortletDefinitionParameter parameter) {}
 
         @Override
-        public void addParameter(String name, String value) {
-
-        }
+        public void addParameter(String name, String value) {}
 
         @Override
-        public void removeParameter(IPortletDefinitionParameter parameter) {
-
-        }
+        public void removeParameter(IPortletDefinitionParameter parameter) {}
 
         @Override
-        public void removeParameter(String name) {
-
-        }
+        public void removeParameter(String name) {}
 
         @Override
         public EntityIdentifier getEntityIdentifier() {
@@ -650,32 +641,38 @@ public class PortletDefinitionBeanTest {
     class MarketplaceServiceImplShell implements IMarketplaceService {
 
         @Override
-        public ImmutableSet<MarketplaceEntry> browseableMarketplaceEntriesFor(IPerson user, Set<PortletCategory> categories) {
+        public ImmutableSet<MarketplaceEntry> browseableMarketplaceEntriesFor(
+                IPerson user, Set<PortletCategory> categories) {
             return null;
         }
 
         @Override
-        public Set<PortletCategory> browseableNonEmptyPortletCategoriesFor(IPerson user, Set<PortletCategory> categories) {
+        public Set<PortletCategory> browseableNonEmptyPortletCategoriesFor(
+                IPerson user, Set<PortletCategory> categories) {
             return null;
         }
 
         @Override
-        public boolean mayBrowsePortlet(IAuthorizationPrincipal principal, IPortletDefinition portletDefinition) {
+        public boolean mayBrowsePortlet(
+                IAuthorizationPrincipal principal, IPortletDefinition portletDefinition) {
             return false;
         }
 
         @Override
-        public Set<MarketplaceEntry> featuredEntriesForUser(IPerson user, Set<PortletCategory> categories) {
+        public Set<MarketplaceEntry> featuredEntriesForUser(
+                IPerson user, Set<PortletCategory> categories) {
             return null;
         }
 
         @Override
-        public MarketplacePortletDefinition getOrCreateMarketplacePortletDefinition(IPortletDefinition portletDefinition) {
+        public MarketplacePortletDefinition getOrCreateMarketplacePortletDefinition(
+                IPortletDefinition portletDefinition) {
             return null;
         }
 
         @Override
-        public MarketplacePortletDefinition getOrCreateMarketplacePortletDefinitionIfTheFnameExists(String fname) {
+        public MarketplacePortletDefinition getOrCreateMarketplacePortletDefinitionIfTheFnameExists(
+                String fname) {
             return null;
         }
 

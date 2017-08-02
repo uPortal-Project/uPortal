@@ -1,10 +1,11 @@
 package org.apereo.portal.portlets.layout.dlm.remoting.registry;
 
-import org.apereo.portal.layout.dlm.remoting.registry.ChannelBean;
-import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+
+import org.apereo.portal.layout.dlm.remoting.registry.ChannelBean;
+import org.junit.Test;
 
 public class ChannelBeanTest {
 
@@ -20,7 +21,6 @@ public class ChannelBeanTest {
         ChannelBean cb1 = buildChannelBean("id_test", "name_test");
         ChannelBean cb2 = buildChannelBean("id_test", "name_test");
 
-        assertEquals(1403911291, cb1.hashCode());
         assertEquals(cb1.hashCode(), cb2.hashCode());
     }
 
@@ -81,7 +81,9 @@ public class ChannelBeanTest {
     @Test
     public void testToStringAllNulls() {
         ChannelBean cb = new ChannelBean();
-        assertEquals("ID: null title: null Description: null fname: null name: null state: null typeID: 0 iconUrl: null", cb.toString());
+        assertEquals(
+                "ID: null title: null Description: null fname: null name: null state: null typeID: 0 iconUrl: null",
+                cb.toString());
     }
 
     @Test
@@ -94,6 +96,8 @@ public class ChannelBeanTest {
         cb.setState("myState");
         cb.setTypeId(324);
         cb.setIconUrl("myIconUrl");
-        assertEquals("ID: myId title: myTitle Description: null fname: myFname name: myName state: myState typeID: 324 iconUrl: myIconUrl", cb.toString());
+        assertEquals(
+                "ID: myId title: myTitle Description: null fname: myFname name: myName state: myState typeID: 324 iconUrl: myIconUrl",
+                cb.toString());
     }
 }
