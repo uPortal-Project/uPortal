@@ -55,7 +55,6 @@
 <xsl:param name="CONTEXT" select="'header'"/>
 <xsl:param name="subscriptionsSupported">true</xsl:param>
 <xsl:param name="USE_FLYOUT_MENUS">false</xsl:param> <!-- Moved to parameter in renderingPipelineContext.xml with configuration in portal.properties. -->
-<xsl:param name="useTabGroups">false</xsl:param>
 <xsl:param name="PORTAL_VIEW">
   <xsl:choose>
     <xsl:when test="//layout_fragment">detached</xsl:when>
@@ -63,13 +62,7 @@
     <xsl:otherwise>dashboard</xsl:otherwise>
   </xsl:choose>
 </xsl:param>
-<xsl:variable name="USE_TAB_GROUPS">
-  <xsl:choose>
-    <!-- Shut off Tab Groups automatically if there's only one -->
-    <xsl:when test="count(/layout/navigation/tabGroupsList/tabGroup) &lt; 2">false</xsl:when>
-    <xsl:otherwise><xsl:value-of select="$useTabGroups"/></xsl:otherwise>
-  </xsl:choose>
-</xsl:variable>
+
 <xsl:variable name="ACTIVE_TAB_GROUP" select="/layout/navigation/tabGroupsList/@activeTabGroup"/>
 <!-- USE_SUBNAVIGATION_ROW
  | Sets the use of the sub navigation row, which lists out links to the portlets on the active tab.
@@ -109,7 +102,7 @@
             <div id="portalNavigation" class="fl-widget">
               <div id="portalNavigationInner" class="fl-widget-inner header">
                   <ul id="portalNavigationList" class="menu fl-tabs flc-reorderer-column list-group list-group-horizontal">
-                     <xsl:apply-templates select="tab[$USE_TAB_GROUPS!='true' or @tabGroup=$ACTIVE_TAB_GROUP]">
+                     <xsl:apply-templates select="tab[@tabGroup=$ACTIVE_TAB_GROUP]">
                        <xsl:with-param name="CONTEXT">header</xsl:with-param>
                      </xsl:apply-templates>
 
