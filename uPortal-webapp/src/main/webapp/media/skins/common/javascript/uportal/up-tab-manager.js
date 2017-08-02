@@ -188,9 +188,8 @@ var up = up || {};
     var addTabHandler = function (that) {
         var add, tabGroup;
         add = that.locate("add");
-        tabGroup = that.container.find(that.options.selectors.tabGroup).text();
         add.bind("click", function () {
-            that.events.onTabAdd.fire(that.options.addTabLabel, that.options.addTabWidths, tabGroup);
+            that.events.onTabAdd.fire(that.options.addTabLabel, that.options.addTabWidths, that.options.selectors.text);
         });
     };//end: function.
     
@@ -341,7 +340,6 @@ var up = up || {};
             grabHandle: ".portal-navigation-gripper",
             tabList: "#portalNavigationList",
             tabListItems: ".portal-navigation",
-            tabGroup: "#activeTabGroup"
         },
         events: {
             onTabEdit: null,
