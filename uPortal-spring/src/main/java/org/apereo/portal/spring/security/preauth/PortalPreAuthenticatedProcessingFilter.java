@@ -15,10 +15,10 @@
 package org.apereo.portal.spring.security.preauth;
 
 import java.io.IOException;
-import java.util.Enumeration;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
+import java.util.Set;
 import java.util.UUID;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -26,23 +26,22 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apereo.portal.PortalException;
 import org.apereo.portal.layout.profile.ProfileSelectionEvent;
 import org.apereo.portal.portlets.swapper.IdentitySwapperPrincipal;
 import org.apereo.portal.portlets.swapper.IdentitySwapperSecurityContext;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.IPersonManager;
+import org.apereo.portal.security.ISecurityContextFactory;
 import org.apereo.portal.security.IdentitySwapperManager;
 import org.apereo.portal.security.mvc.LoginController;
 import org.apereo.portal.services.Authentication;
 import org.apereo.portal.spring.security.PortalPersonUserDetails;
-import org.apereo.portal.utils.ResourceLoader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.preauth.AbstractPreAuthenticatedProcessingFilter;
 
 /**
@@ -55,20 +54,23 @@ import org.springframework.security.web.authentication.preauth.AbstractPreAuthen
 public class PortalPreAuthenticatedProcessingFilter
         extends AbstractPreAuthenticatedProcessingFilter {
 
-    protected final Log swapperLog = LogFactory.getLog("org.jasig.portal.portlets.swapper");
+    private final Log swapperLog = LogFactory.getLog("org.jasig.portal.portlets.swapper");
 
     private String loginPath = "/Login";
     private String logoutPath = "/Logout";
 
-    protected HashMap<String, String> credentialTokens;
-    protected HashMap<String, String> principalTokens;
-    protected Authentication authenticationService = null;
+    private HashMap<String, String> credentialTokens;
+    private HashMap<String, String> principalTokens;
+    private Authentication authenticationService = null;
 
     private IPersonManager personManager;
     private IdentitySwapperManager identitySwapperManager;
     private ApplicationEventPublisher eventPublisher;
 
     private boolean clearSecurityContextPriorToPortalAuthentication = true; //default
+
+    // Empty set is the default for automated tests
+    private Set<ISecurityContextFactory> securityContextFactories = Collections.emptySet();
 
     @Autowired
     public void setIdentitySwapperManager(IdentitySwapperManager identitySwapperManager) {
@@ -89,12 +91,17 @@ public class PortalPreAuthenticatedProcessingFilter
         this.clearSecurityContextPriorToPortalAuthentication = b;
     }
 
+    @Autowired
+    public void setSecurityContextFactories(Set<ISecurityContextFactory> securityContextFactories) {
+        this.securityContextFactories = securityContextFactories;
+    }
+
     @Override
     public void afterPropertiesSet() {
         super.afterPropertiesSet();
         this.credentialTokens = new HashMap<String, String>(1);
         this.principalTokens = new HashMap<String, String>(1);
-        this.retrieveCredentialAndPrincipalTokensFromPropertiesFile();
+        this.retrieveCredentialAndPrincipalTokens();
     }
 
     /**
@@ -166,7 +173,7 @@ public class PortalPreAuthenticatedProcessingFilter
             final HttpServletRequest httpr = (HttpServletRequest) request;
             logger.debug(
                     "FINISHED ["
-                            + uuid.toString()
+                            + uuid
                             + "] for URI="
                             + httpr.getRequestURI()
                             + " in "
@@ -196,8 +203,7 @@ public class PortalPreAuthenticatedProcessingFilter
         }
         // otherwise, use the current IPerson as the UserDetails
         final IPerson person = personManager.getPerson(request);
-        final UserDetails details = new PortalPersonUserDetails(person);
-        return details;
+        return new PortalPersonUserDetails(person);
     }
 
     private void doPortalAuthentication(
@@ -233,8 +239,8 @@ public class PortalPreAuthenticatedProcessingFilter
 
             if (identitySwapHelper != null && identitySwapHelper.isSwapOrUnswapRequest()) {
                 this.handleIdentitySwap(person, s, identitySwapHelper);
-                principals = new HashMap<String, String>();
-                credentials = new HashMap<String, String>();
+                principals = new HashMap<>();
+                credentials = new HashMap<>();
             }
             //Norm authN path
             else {
@@ -459,31 +465,16 @@ public class PortalPreAuthenticatedProcessingFilter
         }
     }
 
-    private void retrieveCredentialAndPrincipalTokensFromPropertiesFile() {
-        try {
-            String key;
-            // We retrieve the tokens representing the credential and principal
-            // parameters from the security properties file.
-            Properties props =
-                    ResourceLoader.getResourceAsProperties(
-                            getClass(), "/properties/security.properties");
-            Enumeration<?> propNames = props.propertyNames();
-            while (propNames.hasMoreElements()) {
-                String propName = (String) propNames.nextElement();
-                String propValue = props.getProperty(propName);
-                if (propName.startsWith("credentialToken.")) {
-                    key = propName.substring(16);
-                    this.credentialTokens.put(key, propValue);
-                }
-                if (propName.startsWith("principalToken.")) {
-                    key = propName.substring(15);
-                    this.principalTokens.put(key, propValue);
-                }
+    private void retrieveCredentialAndPrincipalTokens() {
+        for (ISecurityContextFactory fac : securityContextFactories) {
+            final String principalToken = fac.getPrincipalToken();
+            if (StringUtils.isNotBlank(principalToken)) {
+                principalTokens.put(fac.getName(), principalToken);
             }
-        } catch (PortalException pe) {
-            logger.error("LoginServlet::static ", pe);
-        } catch (IOException ioe) {
-            logger.error("LoginServlet::static ", ioe);
+            final String credentialToken = fac.getCredentialToken();
+            if (StringUtils.isNotBlank(credentialToken)) {
+                credentialTokens.put(fac.getName(), credentialToken);
+            }
         }
     }
 
@@ -499,12 +490,12 @@ public class PortalPreAuthenticatedProcessingFilter
             HashMap<String, String> tokens, HttpServletRequest request) {
         // Iterate through all of the other property keys looking for the first property
         // named like propname that has a value in the request
-        HashMap<String, String> retHash = new HashMap<String, String>(1);
+        HashMap<String, String> retHash = new HashMap<>();
 
         for (Map.Entry<String, String> entry : tokens.entrySet()) {
             String contextName = entry.getKey();
             String parmName = entry.getValue();
-            String parmValue = null;
+            String parmValue;
             if (request.getAttribute(parmName) != null) {
                 // Upstream components (like servlet filters) may supply information
                 // for the authentication process using request attributes.

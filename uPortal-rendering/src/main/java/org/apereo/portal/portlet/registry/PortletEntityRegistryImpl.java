@@ -52,7 +52,7 @@ import org.apereo.portal.portlet.om.IPortletWindowId;
 import org.apereo.portal.portlet.om.PortletLifecycleState;
 import org.apereo.portal.security.IAuthorizationPrincipal;
 import org.apereo.portal.security.IPerson;
-import org.apereo.portal.services.AuthorizationService;
+import org.apereo.portal.services.AuthorizationServiceFacade;
 import org.apereo.portal.url.IPortalRequestUtils;
 import org.apereo.portal.user.IUserInstance;
 import org.apereo.portal.user.IUserInstanceManager;
@@ -516,7 +516,7 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
         final IPerson person = userInstance.getPerson();
         final EntityIdentifier ei = person.getEntityIdentifier();
         final IAuthorizationPrincipal ap =
-                AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
+                AuthorizationServiceFacade.instance().newPrincipal(ei.getKey(), ei.getType());
         if (ap.canRender(portletDefinition.getPortletDefinitionId().getStringId())) {
             return portletDefinition;
         }

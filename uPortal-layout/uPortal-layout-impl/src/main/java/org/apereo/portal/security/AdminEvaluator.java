@@ -19,7 +19,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apereo.portal.groups.GroupsException;
 import org.apereo.portal.groups.IEntityGroup;
 import org.apereo.portal.groups.IGroupMember;
-import org.apereo.portal.services.AuthorizationService;
+import org.apereo.portal.services.AuthorizationServiceFacade;
 import org.apereo.portal.services.GroupService;
 
 /**
@@ -45,7 +45,7 @@ public class AdminEvaluator {
      */
     public static boolean isAdmin(IPerson p) {
         IAuthorizationPrincipal iap =
-                AuthorizationService.instance()
+                AuthorizationServiceFacade.instance()
                         .newPrincipal(
                                 p.getEntityIdentifier().getKey(),
                                 p.getEntityIdentifier().getType());
@@ -58,7 +58,7 @@ public class AdminEvaluator {
      * administrator group or any of its sub groups.
      */
     public static boolean isAdmin(IAuthorizationPrincipal ap) {
-        IGroupMember member = AuthorizationService.instance().getGroupMember(ap);
+        IGroupMember member = AuthorizationServiceFacade.instance().getGroupMember(ap);
         return isAdmin(member);
     }
 

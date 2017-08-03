@@ -194,74 +194,16 @@ Additional information about uPortal is available in the Manual.
 ## Requirements
 
 *   JDK 1.8 - The JRE alone is NOT sufficient, a full JDK is required
-*   Servlet 3.1 Container - [Tomcat](https://tomcat.apache.org/) 8.0 is required.  (NOTE:  Tomcat 7 may continue to workin the early 4.3 period.  We reserve the right to use leverage Servlet 3.1, JSP 2.3, EL 3.0 and Web Socket 1.1)  There some configuration changes that must be made for Tomcat which are documented in the [uPortal manual](https://wiki.jasig.org/display/UPM42/Installing+Tomcat).
-*   [Maven](https://maven.apache.org/) 3.2.2 or later
-*   [Ant](https://ant.apache.org/) 1.8.2 or 1.9.3 or later.
+*   GIT
+
+## uPortal-start
+
+uPortal is now meant to be deployed via uPortal-start, which is responsible for servlet container (ie Tomcat), DB, and portal configurations.  uPortal-start deals with the low-level configurations and setup, while letting the adopter focus on the business configuration side of the deployment.  However, it is possible to run uPortal without uPortal-start.  The uPortal 5.0 manual explains how.
 
 ## Building and Deploying
 
-uPortal uses Maven for its project configuration and build system. An Ant
-*build.xml* is also provided which handles the initialization and deployment
-related tasks. As a uPortal deployer you will likely only ever need to use the
-Ant tasks. Ant 1.8.2 or 1.9.3 or later is required
+uPortal uses Gradle for its project configuration and build system.  uPortal comes with a Gradle wrapper if you don't want to install the build tool (`./gradlew` in the root directory of the repo).
 
-### Ant tasks
+### Gradle tasks
 
-For a full list of ant tasks run `ant -p`
-
-*   **hsql** - Starts a HSQL database instance. The default uPortal configuration points
-to this database and it can be used for portal development.
-*   **initportal** - Runs the 'deploy-ear' and 'init-db' ant targets, should be the first
-and only task run when setting up a new uPortal instance **WARNING**: This runs 'init-db'
-which **DROPS** and re-creates the uPortal database
-*   **deploy-ear** - Ensures the latest changes have been compiled and packaged then
-deploys uPortal, shared libraries and all packaged portlets to the container
-*   **initdb** - Sets up the uPortal database. **DROPS ALL EXISTING** uPortal tables
-re-creates them and populates them with the default uPortal data **WARNING**: This DROPS
-and re-creates the uPortal database
-*   **deploy-war** - Ensures the latest uPortal changes have been compiled and packaged
-then deploys the uPortal WAR to the container.
-*   **deployPortletApp** - Deploys the specified portlet application to the container.
-This is the required process to deploy any portlet to a uPortal instance.
-
-``` shell
-ant deployPortletApp -DportletApp=/path/to/portlet.war
-```
-
-## Other Notes
-
-### Initial Configuration
-
-To deploy uPortal you must set the server.home variable in the
-build.properties file to the instance of Tomcat you want to deploy to.
-
-
-### Build approach
-
-The approach here is that there is a generic *pom.xml* and *build.xml* that you
-should not have to edit, alongside a *build.properties* that you absolutely must
-edit to reflect your local configuration. Edit build.properties to reflect such
-configuration as where your Tomcat is, what context you would like uPortal to
-be deployed as, etc.
-
-
-### Initial Deployment
-
-You must run the initportal target before uPortal is started the first time.
-This target will take care of compiling, deploying, database population and
-other initial tasks. Running initportal again is similar to hitting a reset
-button on the portal. Any saved configuration in the portal is lost and a clean
-version of the portal is configured.
-
-### Logging
-
-The */uportal-war/src/main/resources/logback.xml* Logback configuration
-file will end up on the classpath for Logback to find. You'll
-need to either change that configuration then run deploy-war. You can configure
-the logging level, where the file should be, or even choose a different logging
-approach.
-
-### Database configuration
-
-Database connection information is read from */uportal-war/src/main/resources/properties/rdbm.properties*,
-but is normally configured in *filters/{environment.name}.properties*.
+For a full list of Gradle tasks run `./gradlew tasks` from the root directory.

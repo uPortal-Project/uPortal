@@ -12,20 +12,23 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apereo.portal.security;
+package org.apereo.portal.api.groups;
 
-import java.util.Properties;
+import org.apereo.portal.portlets.groupselector.EntityEnum;
+import org.junit.Assert;
+import org.junit.Test;
 
-/**
- * Allows an ISecurityContext to note that it can have a Properties passed to it via a setter
- * method.
- */
-public interface IConfigurableSecurityContext extends ISecurityContext {
+public class EntityFactoryTest {
 
-    /**
-     * Method used to set the properties of the SecurityContext.
-     *
-     * @param props The properties to set on the SecurityContext.
-     */
-    public abstract void setProperties(Properties props);
+    @Test
+    public void testCreateEnitityMemberNull() {
+        Entity entity = EntityFactory.createEntity(null, EntityEnum.PERSON);
+        Assert.assertNull(entity);
+    }
+
+    @Test
+    public void testCreateEnittyGroupNull() {
+        Entity entity = EntityFactory.createEntity(null, EntityEnum.GROUP);
+        Assert.assertNull(entity);
+    }
 }

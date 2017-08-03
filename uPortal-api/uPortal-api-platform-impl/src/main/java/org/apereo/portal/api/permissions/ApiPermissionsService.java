@@ -16,6 +16,7 @@ package org.apereo.portal.api.permissions;
 
 import java.util.HashSet;
 import java.util.Set;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apereo.portal.api.Principal;
@@ -54,7 +55,9 @@ public class ApiPermissionsService implements PermissionsService {
     public Set<Assignment> getAssignmentsForPerson(String username, boolean includeInherited) {
 
         Set<Assignment> rslt = new HashSet<Assignment>();
-
+        if (StringUtils.isBlank(username)) {
+            return null;
+        }
         IAuthorizationPrincipal authP =
                 this.authorizationService.newPrincipal(username, EntityEnum.PERSON.getClazz());
 

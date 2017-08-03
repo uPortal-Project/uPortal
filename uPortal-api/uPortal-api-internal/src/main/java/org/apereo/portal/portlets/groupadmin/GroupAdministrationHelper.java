@@ -26,7 +26,7 @@ import org.apereo.portal.security.IAuthorizationPrincipal;
 import org.apereo.portal.security.IPermission;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.RuntimeAuthorizationException;
-import org.apereo.portal.services.AuthorizationService;
+import org.apereo.portal.services.AuthorizationServiceFacade;
 import org.apereo.portal.services.GroupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -238,7 +238,7 @@ public class GroupAdministrationHelper {
     public boolean canEditGroup(IPerson currentUser, String target) {
         EntityIdentifier ei = currentUser.getEntityIdentifier();
         IAuthorizationPrincipal ap =
-                AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
+                AuthorizationServiceFacade.instance().newPrincipal(ei.getKey(), ei.getType());
         return (ap.hasPermission(
                 IPermission.PORTAL_GROUPS, IPermission.EDIT_GROUP_ACTIVITY, target));
     }
@@ -246,7 +246,7 @@ public class GroupAdministrationHelper {
     public boolean canDeleteGroup(IPerson currentUser, String target) {
         EntityIdentifier ei = currentUser.getEntityIdentifier();
         IAuthorizationPrincipal ap =
-                AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
+                AuthorizationServiceFacade.instance().newPrincipal(ei.getKey(), ei.getType());
         return (ap.hasPermission(
                 IPermission.PORTAL_GROUPS, IPermission.DELETE_GROUP_ACTIVITY, target));
     }
@@ -254,7 +254,7 @@ public class GroupAdministrationHelper {
     public boolean canCreateMemberGroup(IPerson currentUser, String target) {
         EntityIdentifier ei = currentUser.getEntityIdentifier();
         IAuthorizationPrincipal ap =
-                AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
+                AuthorizationServiceFacade.instance().newPrincipal(ei.getKey(), ei.getType());
         return (ap.hasPermission(
                 IPermission.PORTAL_GROUPS, IPermission.CREATE_GROUP_ACTIVITY, target));
     }
@@ -262,7 +262,7 @@ public class GroupAdministrationHelper {
     public boolean canViewGroup(IPerson currentUser, String target) {
         EntityIdentifier ei = currentUser.getEntityIdentifier();
         IAuthorizationPrincipal ap =
-                AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
+                AuthorizationServiceFacade.instance().newPrincipal(ei.getKey(), ei.getType());
         return (ap.hasPermission(
                 IPermission.PORTAL_GROUPS, IPermission.VIEW_GROUP_ACTIVITY, target));
     }
@@ -275,6 +275,6 @@ public class GroupAdministrationHelper {
      */
     protected IAuthorizationPrincipal getPrincipalForUser(final IPerson person) {
         final EntityIdentifier ei = person.getEntityIdentifier();
-        return AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
+        return AuthorizationServiceFacade.instance().newPrincipal(ei.getKey(), ei.getType());
     }
 }
