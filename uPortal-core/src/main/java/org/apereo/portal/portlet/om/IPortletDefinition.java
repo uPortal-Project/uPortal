@@ -71,7 +71,7 @@ public interface IPortletDefinition extends IBasicEntity, IPortalData {
 
     /**
      * Schedules the specified state change for the specified moment, removing any lifecycle
-     * changes scheduled beyond that.
+     * changes scheduled at or beyond that point.
      */
     void updateLifecycleState(PortletLifecycleState lifecycleState, IPerson user, Date timestamp);
 
@@ -81,6 +81,12 @@ public interface IPortletDefinition extends IBasicEntity, IPortalData {
      * out of the same state multiple times, and the lifecycle history will reflect those changes.
      */
     List<IPortletLifecycleEntry> getLifecycle();
+
+    /**
+     * Used in Import/Export to reset the lifecycle of this portlet, because data after an import
+     * should reflect <em>exactly</em> what the document specifies.
+     */
+    void clearLifecycle();
 
     String getFName();
 

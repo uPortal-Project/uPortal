@@ -1032,6 +1032,9 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
                 public List<IPortletLifecycleEntry> getLifecycle() { return null; }
 
                 @Override
+                public void clearLifecycle() {}
+
+                @Override
                 public String getFName() {
                     return null;
                 }

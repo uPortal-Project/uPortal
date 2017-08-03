@@ -47,6 +47,8 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicLong;
+
+import javax.annotation.PostConstruct;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -124,6 +126,16 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
     private static final MediaType MT_XZ = MediaType.application("x-xz");
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
+
+    /*
+     * The following collections are (apparently) optional.  In circumstances where they are used,
+     * they will be wired by the Spring Application Context and then used in @PostConstruct
+     * method(s) to build other member variables.
+     */
+    private Collection<IDataImporter<? extends Object>> dataImporters = Collections.emptySet();
+    private Collection<IDataExporter<? extends Object>> dataExporters = Collections.emptySet();
+    private Collection<IDataDeleter<? extends Object>> dataDeleters = Collections.emptySet();
+    private Collection<IDataUpgrader> dataUpgraders = Collections.emptySet();
 
     // Order in which data must be imported
     private List<PortalDataKey> dataKeyImportOrder = Collections.emptyList();
@@ -217,9 +229,48 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
     }
 
     /** {@link IDataImporter} implementations to delegate import operations to. */
-    @SuppressWarnings("unchecked")
     @Autowired(required = false)
     public void setDataImporters(Collection<IDataImporter<? extends Object>> dataImporters) {
+        this.dataImporters = dataImporters;
+    }
+
+    /** {@link IDataExporter} implementations to delegate export operations to. */
+    @Autowired(required = false)
+    public void setDataExporters(Collection<IDataExporter<? extends Object>> dataExporters) {
+        this.dataExporters = dataExporters;
+    }
+
+    /** {@link IDataDeleter} implementations to delegate delete operations to. */
+    @Autowired(required = false)
+    public void setDataDeleters(Collection<IDataDeleter<? extends Object>> dataDeleters) {
+        this.dataDeleters = dataDeleters;
+    }
+
+    /** {@link IDataUpgrader} implementations to delegate upgrade operations to. */
+    @Autowired(required = false)
+    public void setDataUpgraders(Collection<IDataUpgrader> dataUpgraders) {
+        this.dataUpgraders = dataUpgraders;
+    }
+
+    /**
+     * Optional set of all portal data types to export. If not specified all available portal data
+     * types will be listed.
+     */
+    @javax.annotation.Resource(name = "exportAllPortalDataTypes")
+    public void setExportAllPortalDataTypes(Set<IPortalDataType> exportAllPortalDataTypes) {
+        this.exportAllPortalDataTypes = ImmutableSet.copyOf(exportAllPortalDataTypes);
+    }
+
+    @PostConstruct
+    public void init() {
+        initDataImporters();
+        initDataExporters();
+        initDataDeleters();
+        initDataUpgraders();
+    }
+
+    @SuppressWarnings("unchecked")
+    public void initDataImporters() {
         final Map<PortalDataKey, IDataImporter<Object>> dataImportersMap =
                 new LinkedHashMap<>();
 
@@ -251,10 +302,8 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
         this.portalDataImporters = Collections.unmodifiableMap(dataImportersMap);
     }
 
-    /** {@link IDataExporter} implementations to delegate export operations to. */
     @SuppressWarnings("unchecked")
-    @Autowired(required = false)
-    public void setDataExporters(Collection<IDataExporter<? extends Object>> dataExporters) {
+    public void initDataExporters() {
         final Map<String, IDataExporter<Object>> dataExportersMap =
                 new LinkedHashMap<>();
 
@@ -289,19 +338,8 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
         this.exportPortalDataTypes = Collections.unmodifiableSet(portalDataTypes);
     }
 
-    /**
-     * Optional set of all portal data types to export. If not specified all available portal data
-     * types will be listed.
-     */
-    @javax.annotation.Resource(name = "exportAllPortalDataTypes")
-    public void setExportAllPortalDataTypes(Set<IPortalDataType> exportAllPortalDataTypes) {
-        this.exportAllPortalDataTypes = ImmutableSet.copyOf(exportAllPortalDataTypes);
-    }
-
-    /** {@link IDataDeleter} implementations to delegate delete operations to. */
     @SuppressWarnings("unchecked")
-    @Autowired(required = false)
-    public void setDataDeleters(Collection<IDataDeleter<? extends Object>> dataDeleters) {
+    public void initDataDeleters() {
         final Map<String, IDataDeleter<Object>> dataDeletersMap =
                 new LinkedHashMap<>();
 
@@ -337,8 +375,7 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
     }
 
     /** {@link IDataUpgrader} implementations to delegate upgrade operations to. */
-    @Autowired(required = false)
-    public void setDataUpgraders(Collection<IDataUpgrader> dataUpgraders) {
+    public void initDataUpgraders() {
         final Map<PortalDataKey, IDataUpgrader> dataUpgraderMap =
                 new LinkedHashMap<>();
 

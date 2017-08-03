@@ -186,9 +186,9 @@ public class PortletDefinitionImpl implements IPortletDefinition {
             fetch = FetchType.EAGER,
             orphanRemoval = true
     )
-    @JoinColumn(name = "PORLTET_DEF_ID", nullable = false)
+    @JoinColumn(name = "PORTLET_DEF_ID", nullable = false)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-    @Fetch(FetchMode.JOIN)
+    @Fetch(FetchMode.SELECT)  // FM JOIN does BAD things to collections that support duplicates
     @OrderBy("ENTRY_DATE ASC")
     private List<IPortletLifecycleEntry> lifecycleEntries = new ArrayList<>();
 
@@ -202,7 +202,7 @@ public class PortletDefinitionImpl implements IPortletDefinition {
         fetch = FetchType.EAGER,
         orphanRemoval = true
     )
-    @JoinColumn(name = "PORLTET_DEF_ID", nullable = false)
+    @JoinColumn(name = "PORTLET_DEF_ID", nullable = false)
     @MapKey(name = "name")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @Fetch(FetchMode.JOIN)
@@ -691,12 +691,13 @@ public class PortletDefinitionImpl implements IPortletDefinition {
     public synchronized void updateLifecycleState(PortletLifecycleState lifecycleState, IPerson user, Date timestamp) {
 
         /*
-         * Lifecycle entries that are scheduled for a
-         * date following the new entry must be cleared.
+         * Lifecycle entries that are scheduled for an instant
+         * on or after the new entry must be cleared.
          */
         final Set<IPortletLifecycleEntry> canceledStateChanges =
                 lifecycleEntries.stream()
-                .filter(entry -> entry.getDate().after(timestamp))
+                // NB:  entry.getDate.equals(timestamp) does not work as expected.
+                .filter(entry -> entry.getDate().compareTo(timestamp) >= 0)
                 .collect(Collectors.toSet());
         lifecycleEntries.removeAll(canceledStateChanges);
 
@@ -709,6 +710,13 @@ public class PortletDefinitionImpl implements IPortletDefinition {
     public List<IPortletLifecycleEntry> getLifecycle() {
         return Collections.unmodifiableList(lifecycleEntries);
     }
+
+    @Override
+    public void clearLifecycle() {
+        // Necessary for Import/Export
+        lifecycleEntries.clear();
+    }
+
 
     @Override
     public int hashCode() {

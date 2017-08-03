@@ -448,6 +448,11 @@ public class MarketplacePortletDefinition implements IPortletDefinition {
     }
 
     @Override
+    public void clearLifecycle() {
+        portletDefinition.clearLifecycle();
+    }
+
+    @Override
     public String getFName() {
         return this.portletDefinition.getFName();
     }

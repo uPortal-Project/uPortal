@@ -211,6 +211,13 @@ import org.springframework.stereotype.Component;
     /* package-private */ void unmarshallLifecycle(final Lifecycle lifecycle,
                                                    final IPortletDefinition portletDefinition) {
 
+        /*
+         * If this is an existing portletDefinition, it may (probably does) already contain
+         * lifecycle entries.  We need to remove those, because the lifecycle of a portlet after
+         * import should reflect what the document says exactly.
+         */
+        portletDefinition.clearLifecycle();
+
         if (lifecycle == null) {
             /*
              * For backwards-compatibility, a complete absence of

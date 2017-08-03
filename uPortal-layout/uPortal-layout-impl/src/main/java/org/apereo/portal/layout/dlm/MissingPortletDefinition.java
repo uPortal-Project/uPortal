@@ -236,6 +236,9 @@ public class MissingPortletDefinition implements IPortletDefinition {
     public List<IPortletLifecycleEntry> getLifecycle() { return null; }
 
     @Override
+    public void clearLifecycle() {}
+
+    @Override
     public IPortletDefinitionId getPortletDefinitionId() {
         return new MissingPortletDefinitionId();
     }
