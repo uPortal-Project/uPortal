@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Set;
 import org.apereo.portal.IBasicEntity;
 import org.apereo.portal.io.xml.IPortalData;
+import org.apereo.portal.security.IPerson;
 
 /** A portlet definition is equivalent to a published ChannelDefinition. */
 public interface IPortletDefinition extends IBasicEntity, IPortalData {
@@ -56,7 +57,36 @@ public interface IPortletDefinition extends IBasicEntity, IPortalData {
      */
     boolean setPortletPreferences(List<IPortletPreference> portletPreferences);
 
+    /**
+     * The current lifecycle state is equal to the last entry in the lifecycle history that is not
+     * in the future.
+     */
     PortletLifecycleState getLifecycleState();
+
+    /**
+     * Adds the specified state to the lifecycle history at the present moment, removing any
+     * lifecycle changes scheduled for the future.
+     */
+    void updateLifecycleState(PortletLifecycleState lifecycleState, IPerson user);
+
+    /**
+     * Schedules the specified state change for the specified moment, removing any lifecycle changes
+     * scheduled at or beyond that point.
+     */
+    void updateLifecycleState(PortletLifecycleState lifecycleState, IPerson user, Date timestamp);
+
+    /**
+     * Returns the entire lifecycle history of the portlet: past, present, and future. Entries in
+     * the lifecycle history will always be in chronological order. A portlet may be placed in and
+     * out of the same state multiple times, and the lifecycle history will reflect those changes.
+     */
+    List<IPortletLifecycleEntry> getLifecycle();
+
+    /**
+     * Used in Import/Export to reset the lifecycle of this portlet, because data after an import
+     * should reflect <em>exactly</em> what the document specifies.
+     */
+    void clearLifecycle();
 
     String getFName();
 
@@ -92,18 +122,6 @@ public interface IPortletDefinition extends IBasicEntity, IPortalData {
     Integer getResourceTimeout();
 
     IPortletType getType();
-
-    int getPublisherId();
-
-    int getApproverId();
-
-    Date getPublishDate();
-
-    Date getApprovalDate();
-
-    int getExpirerId();
-
-    Date getExpirationDate();
 
     /** @return a READ-ONLY copy of the parameters */
     Set<IPortletDefinitionParameter> getParameters();
@@ -172,18 +190,6 @@ public interface IPortletDefinition extends IBasicEntity, IPortalData {
     void setResourceTimeout(Integer resourceTimeout);
 
     void setType(IPortletType channelType);
-
-    void setPublisherId(int publisherId);
-
-    void setApproverId(int approvalId);
-
-    void setPublishDate(Date publishDate);
-
-    void setApprovalDate(Date approvalDate);
-
-    void setExpirerId(int expirerId);
-
-    void setExpirationDate(Date expirationDate);
 
     void setParameters(Set<IPortletDefinitionParameter> parameters);
 

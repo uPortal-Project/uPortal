@@ -15,25 +15,19 @@
 package org.apereo.portal.security.mvc;
 
 import java.io.IOException;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apereo.portal.PortalException;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.portal.events.IPortalAuthEventFactory;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.IPersonManager;
 import org.apereo.portal.security.ISecurityContext;
 import org.apereo.portal.security.IdentitySwapperManager;
-import org.apereo.portal.utils.ResourceLoader;
-import org.springframework.beans.factory.InitializingBean;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -43,11 +37,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
  */
 @Controller
 @RequestMapping("/Logout")
-public class LogoutController implements InitializingBean {
+public class LogoutController {
 
-    private static final Log log = LogFactory.getLog(LogoutController.class);
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    private Map<String, String> redirectMap;
+    @Value("${logout.redirect:}")
+    private String logoutRedirect;
+
     private IPortalAuthEventFactory portalEventFactory;
     private IPersonManager personManager;
     private IdentitySwapperManager identitySwapperManager;
@@ -67,52 +63,17 @@ public class LogoutController implements InitializingBean {
         this.portalEventFactory = portalEventFactory;
     }
 
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        final Map<String, String> rdHash = new HashMap<String, String>(1);
-
-        try {
-            // We retrieve the redirect strings for each context
-            // from the security properties file.
-            String key;
-            final Properties props =
-                    ResourceLoader.getResourceAsProperties(
-                            LogoutController.class, "/properties/security.properties");
-            final Enumeration propNames = props.propertyNames();
-            while (propNames.hasMoreElements()) {
-                final String propName = (String) propNames.nextElement();
-                final String propValue = props.getProperty(propName);
-                if (propName.startsWith("logoutRedirect.")) {
-                    key = propName.substring(15);
-                    key = key.startsWith("root.") ? key.substring(5) : key;
-                    if (log.isDebugEnabled()) {
-                        log.debug("Redirect key=" + key + ", value=" + propValue);
-                    }
-
-                    rdHash.put(key, propValue);
-                }
-            }
-        } catch (final PortalException pe) {
-            log.error("Failed to load logout redirect URLs", pe);
-        } catch (final IOException ioe) {
-            log.error("Failed to load logout redirect URLs", ioe);
-        }
-
-        this.redirectMap = rdHash;
-    }
-
     /**
      * Process the incoming request and response.
      *
      * @param request HttpServletRequest object
      * @param response HttpServletResponse object
-     * @throws ServletException
-     * @throws IOException
      */
     @RequestMapping
-    public void service(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        String redirect = this.getRedirectionUrl(request);
+    public void doLogout(HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
+
+        String redirect = this.selectRedirectionUrl(request);
         final HttpSession session = request.getSession(false);
 
         if (session != null) {
@@ -123,7 +84,8 @@ public class LogoutController implements InitializingBean {
                     this.portalEventFactory.publishLogoutEvent(request, this, person);
                 }
             } catch (final Exception e) {
-                log.error("Exception recording logout " + "associated with request " + request, e);
+                logger.error(
+                        "Exception recording logout " + "associated with request " + request, e);
             }
 
             final String originalUid = this.identitySwapperManager.getOriginalUsername(session);
@@ -138,8 +100,8 @@ public class LogoutController implements InitializingBean {
                     // IllegalStateException indicates session was already invalidated.
                     // This is fine.  LogoutController is looking to guarantee the logged out session is invalid;
                     // it need not insist that it be the one to perform the invalidating.
-                    if (log.isTraceEnabled()) {
-                        log.trace(
+                    if (logger.isTraceEnabled()) {
+                        logger.trace(
                                 "LogoutController encountered IllegalStateException invalidating a presumably already-invalidated session.",
                                 ise);
                     }
@@ -147,8 +109,9 @@ public class LogoutController implements InitializingBean {
             }
         }
 
-        if (log.isTraceEnabled()) {
-            log.trace("Redirecting to " + redirect + " to send the user back to the guest page.");
+        if (logger.isTraceEnabled()) {
+            logger.trace(
+                    "Redirecting to " + redirect + " to send the user back to the guest page.");
         }
 
         final String encodedRedirectURL = response.encodeRedirectURL(redirect);
@@ -156,95 +119,32 @@ public class LogoutController implements InitializingBean {
     }
 
     /**
-     * The redirect is determined based upon the context that passed authentication The
-     * LogoutController looks at each authenticated context and determines if a redirect exists for
-     * that context in the redirectMap variable (loaded from security.properties file). The redirect
-     * is returned for the first authenticated context that has an associated redirect string. If
-     * such a context is not found, we use the default DEFAULT_REDIRECT that was originally setup.
+     * The redirect location is specified as <code>logoutRedirect.root</code> in the Spring
+     * environment.
      *
-     * <p>NOTE: This will work or not work based upon the logic in the root context. At this time,
-     * all known security contexts extend the ChainingSecurityContext class. If a context has the
-     * variable stopWhenAuthenticated set to false, the user may be logged into multiple security
-     * contexts. If this is the case, the logout process currently implemented does not accommodate
-     * multiple logouts. As a reference implemention, the current implementation assumes only one
-     * security context has been authenticated. Modifications to perform multiple logouts should be
-     * considered when a concrete need arises and can be handled by this class or through a change
-     * in the ISecurityConext API where a context knows how to perform it's own logout.
-     *
-     * @param request
-     * @return String representing the redirection URL
+     * @return The redirection URL
      */
-    private String getRedirectionUrl(HttpServletRequest request) {
-        String redirect = null;
-        final String defaultRedirect = request.getContextPath() + "/";
-        IPerson person = null;
-        if (this.redirectMap == null) {
-            return defaultRedirect;
-        }
-        try {
-            // Get the person object associated with the request
-            person = this.personManager.getPerson(request);
-            if (person != null) {
-                // Retrieve the security context for the user
-                final ISecurityContext securityContext = person.getSecurityContext();
-                if (securityContext.isAuthenticated()) {
-                    if (log.isDebugEnabled()) {
-                        log.debug(
-                                "LogoutController::getRedirectionUrl()"
-                                        + " Looking for redirect string for the root context");
-                    }
-                    redirect = this.redirectMap.get("root");
-                    if (redirect != null && !redirect.equals("")) {
-                        return redirect;
-                    }
-                }
-                final Enumeration subCtxNames = securityContext.getSubContextNames();
-                while (subCtxNames.hasMoreElements()) {
-                    final String subCtxName = (String) subCtxNames.nextElement();
-                    if (log.isDebugEnabled()) {
-                        log.debug(
-                                "LogoutController::getRedirectionUrl() "
-                                        + " subCtxName = "
-                                        + subCtxName);
-                    }
-                    // strip off "root." part of name
-                    final ISecurityContext sc = securityContext.getSubContext(subCtxName);
-                    if (log.isDebugEnabled()) {
-                        log.debug(
-                                "LogoutController::getRedirectionUrl()"
-                                        + " subCtxName isAuth = "
-                                        + sc.isAuthenticated());
-                    }
-                    if (sc.isAuthenticated()) {
-                        if (log.isDebugEnabled()) {
-                            log.debug(
-                                    "LogoutController::getRedirectionUrl()"
-                                            + " Looking for redirect string for subCtxName = "
-                                            + subCtxName);
-                        }
-                        redirect = this.redirectMap.get(subCtxName);
-                        if (redirect != null && !redirect.equals("")) {
-                            if (log.isDebugEnabled()) {
-                                log.debug(
-                                        "LogoutController::getRedirectionUrl()"
-                                                + " subCtxName redirect = "
-                                                + redirect);
-                            }
-                            break;
-                        }
-                    }
-                }
+    private String selectRedirectionUrl(HttpServletRequest request) {
+
+        String rslt = null; // default
+
+        // Get the person object associated with the request
+        final IPerson person = this.personManager.getPerson(request);
+        final String username = person != null ? person.getUserName() : "[unavailable]";
+
+        if (person != null) {
+            // Analyze the user's authentication status
+            final ISecurityContext securityContext = person.getSecurityContext();
+            if (securityContext.isAuthenticated() && StringUtils.isNotBlank(logoutRedirect)) {
+                rslt = logoutRedirect;
             }
-        } catch (final Exception e) {
-            // Log the exception
-            log.error("LogoutController::getRedirectionUrl() Error:", e);
         }
-        if (redirect == null) {
-            redirect = defaultRedirect;
-        }
-        if (log.isDebugEnabled()) {
-            log.debug("LogoutController::getRedirectionUrl()" + " redirectionURL = " + redirect);
-        }
-        return redirect;
+
+        // Otherwise use a sensible default...
+        rslt = rslt != null ? rslt : request.getContextPath() + "/";
+
+        logger.debug("Calculated redirectionURL='{}' for user='{}'", rslt, username);
+
+        return rslt;
     }
 }

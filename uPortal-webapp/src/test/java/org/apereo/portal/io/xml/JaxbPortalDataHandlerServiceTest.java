@@ -157,14 +157,13 @@ public class JaxbPortalDataHandlerServiceTest {
 
     protected List<IDataImporter<? extends Object>> setupAllImporters(
             MockDataImporterSetup setupCallback) {
-        final Builder<IDataImporter<? extends Object>> importersBuilder =
-                ImmutableList.<IDataImporter<? extends Object>>builder();
+        final Builder<IDataImporter<? extends Object>> importersBuilder = ImmutableList.builder();
 
         for (final IPortalDataType portalDataType : getPortalDataTypes()) {
 
             final IDataImporter importer = mock(IDataImporter.class);
             when(importer.getImportDataKeys())
-                    .thenReturn(new HashSet<PortalDataKey>(portalDataType.getDataKeyImportOrder()));
+                    .thenReturn(new HashSet<>(portalDataType.getDataKeyImportOrder()));
             if (setupCallback != null) {
                 setupCallback.setup(portalDataType, importer);
             }
@@ -205,6 +204,7 @@ public class JaxbPortalDataHandlerServiceTest {
         Collection<IDataImporter<?>> dataImporters = new LinkedList<IDataImporter<?>>();
         dataImporters.add(userDataImporter);
         dataImportExportService.setDataImporters(dataImporters);
+        dataImportExportService.init();
 
         final Resource resource =
                 resourceLoader.getResource(
@@ -238,6 +238,7 @@ public class JaxbPortalDataHandlerServiceTest {
                         });
 
         this.dataImportExportService.setDataImporters(importers);
+        dataImportExportService.init();
 
         final Resource archiveResource =
                 new ClassPathResource("/org/apereo/portal/io/xml/import_archive.jar");
@@ -267,6 +268,7 @@ public class JaxbPortalDataHandlerServiceTest {
                         });
 
         this.dataImportExportService.setDataImporters(importers);
+        dataImportExportService.init();
 
         final Resource archiveResource =
                 new ClassPathResource("/org/apereo/portal/io/xml/import_archive.zip");
@@ -296,6 +298,7 @@ public class JaxbPortalDataHandlerServiceTest {
                         });
 
         this.dataImportExportService.setDataImporters(importers);
+        dataImportExportService.init();
 
         final Resource archiveResource =
                 new ClassPathResource("/org/apereo/portal/io/xml/import_archive.tar.gz");
@@ -325,6 +328,7 @@ public class JaxbPortalDataHandlerServiceTest {
                         });
 
         this.dataImportExportService.setDataImporters(importers);
+        dataImportExportService.init();
 
         final Resource archiveResource =
                 new ClassPathResource("/org/apereo/portal/io/xml/import_archive.tgz");

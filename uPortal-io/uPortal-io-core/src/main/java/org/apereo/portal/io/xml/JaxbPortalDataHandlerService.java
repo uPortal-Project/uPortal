@@ -47,6 +47,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicLong;
+import javax.annotation.PostConstruct;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -110,7 +111,7 @@ import org.w3c.dom.Node;
 public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
 
     /** Tracks the base import directory to allow for easier to read logging when importing */
-    private static final ThreadLocal<String> IMPORT_BASE_DIR = new ThreadLocal<String>();
+    private static final ThreadLocal<String> IMPORT_BASE_DIR = new ThreadLocal<>();
 
     private static final String REPORT_FORMAT = "%s,%s,%.2fms\n";
 
@@ -124,6 +125,16 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
     private static final MediaType MT_XZ = MediaType.application("x-xz");
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
+
+    /*
+     * The following collections are (apparently) optional.  In circumstances where they are used,
+     * they will be wired by the Spring Application Context and then used in @PostConstruct
+     * method(s) to build other member variables.
+     */
+    private Collection<IDataImporter<? extends Object>> dataImporters = Collections.emptySet();
+    private Collection<IDataExporter<? extends Object>> dataExporters = Collections.emptySet();
+    private Collection<IDataDeleter<? extends Object>> dataDeleters = Collections.emptySet();
+    private Collection<IDataUpgrader> dataUpgraders = Collections.emptySet();
 
     // Order in which data must be imported
     private List<PortalDataKey> dataKeyImportOrder = Collections.emptyList();
@@ -185,9 +196,9 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
     @javax.annotation.Resource(name = "dataTypeImportOrder")
     public void setDataTypeImportOrder(List<IPortalDataType> dataTypeImportOrder) {
         final ArrayList<PortalDataKey> dataKeyImportOrder =
-                new ArrayList<PortalDataKey>(dataTypeImportOrder.size() * 2);
+                new ArrayList<>(dataTypeImportOrder.size() * 2);
         final Map<PortalDataKey, IPortalDataType> dataKeyTypes =
-                new LinkedHashMap<PortalDataKey, IPortalDataType>(dataTypeImportOrder.size() * 2);
+                new LinkedHashMap<>(dataTypeImportOrder.size() * 2);
 
         for (final IPortalDataType portalDataType : dataTypeImportOrder) {
             final List<PortalDataKey> supportedDataKeys = portalDataType.getDataKeyImportOrder();
@@ -217,11 +228,49 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
     }
 
     /** {@link IDataImporter} implementations to delegate import operations to. */
-    @SuppressWarnings("unchecked")
     @Autowired(required = false)
     public void setDataImporters(Collection<IDataImporter<? extends Object>> dataImporters) {
-        final Map<PortalDataKey, IDataImporter<Object>> dataImportersMap =
-                new LinkedHashMap<PortalDataKey, IDataImporter<Object>>();
+        this.dataImporters = dataImporters;
+    }
+
+    /** {@link IDataExporter} implementations to delegate export operations to. */
+    @Autowired(required = false)
+    public void setDataExporters(Collection<IDataExporter<? extends Object>> dataExporters) {
+        this.dataExporters = dataExporters;
+    }
+
+    /** {@link IDataDeleter} implementations to delegate delete operations to. */
+    @Autowired(required = false)
+    public void setDataDeleters(Collection<IDataDeleter<? extends Object>> dataDeleters) {
+        this.dataDeleters = dataDeleters;
+    }
+
+    /** {@link IDataUpgrader} implementations to delegate upgrade operations to. */
+    @Autowired(required = false)
+    public void setDataUpgraders(Collection<IDataUpgrader> dataUpgraders) {
+        this.dataUpgraders = dataUpgraders;
+    }
+
+    /**
+     * Optional set of all portal data types to export. If not specified all available portal data
+     * types will be listed.
+     */
+    @javax.annotation.Resource(name = "exportAllPortalDataTypes")
+    public void setExportAllPortalDataTypes(Set<IPortalDataType> exportAllPortalDataTypes) {
+        this.exportAllPortalDataTypes = ImmutableSet.copyOf(exportAllPortalDataTypes);
+    }
+
+    @PostConstruct
+    public void init() {
+        initDataImporters();
+        initDataExporters();
+        initDataDeleters();
+        initDataUpgraders();
+    }
+
+    @SuppressWarnings("unchecked")
+    public void initDataImporters() {
+        final Map<PortalDataKey, IDataImporter<Object>> dataImportersMap = new LinkedHashMap<>();
 
         for (final IDataImporter<?> dataImporter : dataImporters) {
 
@@ -251,14 +300,11 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
         this.portalDataImporters = Collections.unmodifiableMap(dataImportersMap);
     }
 
-    /** {@link IDataExporter} implementations to delegate export operations to. */
     @SuppressWarnings("unchecked")
-    @Autowired(required = false)
-    public void setDataExporters(Collection<IDataExporter<? extends Object>> dataExporters) {
-        final Map<String, IDataExporter<Object>> dataExportersMap =
-                new LinkedHashMap<String, IDataExporter<Object>>();
+    public void initDataExporters() {
+        final Map<String, IDataExporter<Object>> dataExportersMap = new LinkedHashMap<>();
 
-        final Set<IPortalDataType> portalDataTypes = new LinkedHashSet<IPortalDataType>();
+        final Set<IPortalDataType> portalDataTypes = new LinkedHashSet<>();
 
         for (final IDataExporter<?> dataExporter : dataExporters) {
 
@@ -289,23 +335,11 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
         this.exportPortalDataTypes = Collections.unmodifiableSet(portalDataTypes);
     }
 
-    /**
-     * Optional set of all portal data types to export. If not specified all available portal data
-     * types will be listed.
-     */
-    @javax.annotation.Resource(name = "exportAllPortalDataTypes")
-    public void setExportAllPortalDataTypes(Set<IPortalDataType> exportAllPortalDataTypes) {
-        this.exportAllPortalDataTypes = ImmutableSet.copyOf(exportAllPortalDataTypes);
-    }
-
-    /** {@link IDataDeleter} implementations to delegate delete operations to. */
     @SuppressWarnings("unchecked")
-    @Autowired(required = false)
-    public void setDataDeleters(Collection<IDataDeleter<? extends Object>> dataDeleters) {
-        final Map<String, IDataDeleter<Object>> dataDeletersMap =
-                new LinkedHashMap<String, IDataDeleter<Object>>();
+    public void initDataDeleters() {
+        final Map<String, IDataDeleter<Object>> dataDeletersMap = new LinkedHashMap<>();
 
-        final Set<IPortalDataType> portalDataTypes = new LinkedHashSet<IPortalDataType>();
+        final Set<IPortalDataType> portalDataTypes = new LinkedHashSet<>();
 
         for (final IDataDeleter<?> dataDeleter : dataDeleters) {
 
@@ -337,10 +371,8 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
     }
 
     /** {@link IDataUpgrader} implementations to delegate upgrade operations to. */
-    @Autowired(required = false)
-    public void setDataUpgraders(Collection<IDataUpgrader> dataUpgraders) {
-        final Map<PortalDataKey, IDataUpgrader> dataUpgraderMap =
-                new LinkedHashMap<PortalDataKey, IDataUpgrader>();
+    public void initDataUpgraders() {
+        final Map<PortalDataKey, IDataUpgrader> dataUpgraderMap = new LinkedHashMap<>();
 
         for (final IDataUpgrader dataUpgrader : dataUpgraders) {
 
@@ -563,8 +595,8 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
                     continue;
                 }
 
-                final Queue<ImportFuture<?>> importFutures = new LinkedList<ImportFuture<?>>();
-                final List<FutureHolder<?>> failedFutures = new LinkedList<FutureHolder<?>>();
+                final Queue<ImportFuture<?>> importFutures = new LinkedList<>();
+                final List<FutureHolder<?>> failedFutures = new LinkedList<>();
 
                 final int fileCount = files.size();
                 logger.info("Importing {} files of type {}", fileCount, portalDataKey);
@@ -949,7 +981,7 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
     @Override
     public void exportAllDataOfType(
             Set<String> typeIds, File directory, BatchExportOptions options) {
-        final Queue<ExportFuture<?>> exportFutures = new ConcurrentLinkedQueue<ExportFuture<?>>();
+        final Queue<ExportFuture<?>> exportFutures = new ConcurrentLinkedQueue<>();
         final boolean failOnError = options != null ? options.isFailOnError() : true;
 
         //Determine the parent directory to log to
@@ -966,7 +998,7 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
 
         try {
             for (final String typeId : typeIds) {
-                final List<FutureHolder<?>> failedFutures = new LinkedList<FutureHolder<?>>();
+                final List<FutureHolder<?>> failedFutures = new LinkedList<>();
 
                 final File typeDir = new File(directory, typeId);
                 logger.info("Adding all data of type {} to export queue: {}", typeId, typeDir);
@@ -1039,7 +1071,7 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
             portalDataTypes = this.exportPortalDataTypes;
         }
 
-        final Set<String> typeIds = new LinkedHashSet<String>();
+        final Set<String> typeIds = new LinkedHashSet<>();
         for (final IPortalDataType portalDataType : portalDataTypes) {
             typeIds.add(portalDataType.getTypeId());
         }
@@ -1086,7 +1118,7 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
             final boolean wait)
             throws InterruptedException {
 
-        final List<FutureHolder<?>> failedFutures = new LinkedList<FutureHolder<?>>();
+        final List<FutureHolder<?>> failedFutures = new LinkedList<>();
 
         for (Iterator<? extends FutureHolder<?>> futuresItr = futures.iterator();
                 futuresItr.hasNext();

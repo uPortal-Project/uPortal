@@ -14,47 +14,38 @@
  */
 package org.apereo.portal.security.provider.cas.clearpass;
 
-import java.io.InputStream;
-import java.util.Properties;
-import org.apache.commons.io.IOUtils;
 import org.apereo.portal.security.ISecurityContext;
 import org.apereo.portal.security.ISecurityContextFactory;
 import org.jasig.cas.client.util.CommonUtils;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
+@Component
 public final class PasswordCachingCasAssertionSecurityContextFactory
         implements ISecurityContextFactory {
 
-    private static final String DEFAULT_PORTAL_SECURITY_PROPERTY_FILE =
-            "properties/security.properties";
+    @Value(
+            "${org.apereo.portal.security.provider.cas.clearpass.PasswordCachingCasAssertionSecurityContextFactory.enabled:false}")
+    private boolean enabled;
 
-    private static final String CLEARPASS_CAS_URL_PROPERTY =
-            PasswordCachingCasAssertionSecurityContextFactory.class.getName() + ".clearPassCasUrl";
+    @Value(
+            "${org.apereo.portal.security.provider.cas.clearpass.PasswordCachingCasAssertionSecurityContextFactory.clearPassCasUrl:}")
+    private String clearPassCasUrl;
 
-    private final String clearPassUrl;
+    @Override
+    public String getName() {
+        // Shares name w/ CasAssertionSecurityContextFactory b/c there must only be one
+        return "cas";
+    }
 
-    public PasswordCachingCasAssertionSecurityContextFactory() {
-        final Resource resource =
-                new ClassPathResource(
-                        DEFAULT_PORTAL_SECURITY_PROPERTY_FILE, getClass().getClassLoader());
-        final Properties securityProperties = new Properties();
-        InputStream inputStream = null;
-
-        try {
-            inputStream = resource.getInputStream();
-            securityProperties.load(inputStream);
-            this.clearPassUrl = securityProperties.getProperty(CLEARPASS_CAS_URL_PROPERTY);
-        } catch (final Exception e) {
-            throw new RuntimeException(e);
-        } finally {
-            IOUtils.closeQuietly(inputStream);
-        }
+    @Override
+    public boolean isEnabled() {
+        return enabled;
     }
 
     public ISecurityContext getSecurityContext() {
-        if (CommonUtils.isNotBlank(this.clearPassUrl)) {
-            return new PasswordCachingCasAssertionSecurityContext(this.clearPassUrl);
+        if (CommonUtils.isNotBlank(this.clearPassCasUrl)) {
+            return new PasswordCachingCasAssertionSecurityContext(this.clearPassCasUrl);
         }
 
         throw new IllegalStateException(

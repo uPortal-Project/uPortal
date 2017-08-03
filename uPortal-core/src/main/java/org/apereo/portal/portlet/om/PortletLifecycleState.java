@@ -21,13 +21,26 @@ public enum PortletLifecycleState {
     EXPIRED(3),
     MAINTENANCE(4);
 
-    public static final String MAINTENANCE_MODE_PARAMETER_NAME =
-            "PortletLifecycleState.inMaintenanceMode";
-
     private final int order;
 
-    private PortletLifecycleState(int order) {
+    PortletLifecycleState(int order) {
         this.order = order;
+    }
+
+    public static PortletLifecycleState forOrderValue(int orderValue) {
+        PortletLifecycleState rslt = null;
+        for (PortletLifecycleState state : PortletLifecycleState.values()) {
+            if (state.getOrder() == orderValue) {
+                rslt = state;
+                break;
+            }
+        }
+        if (rslt == null) {
+            final String msg =
+                    "PortletLifecycleState not found for the specified order value:  " + orderValue;
+            throw new IllegalArgumentException(msg);
+        }
+        return rslt;
     }
 
     public int getOrder() {

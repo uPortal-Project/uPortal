@@ -20,8 +20,24 @@ package org.apereo.portal.security.provider;
  */
 import org.apereo.portal.security.ISecurityContext;
 import org.apereo.portal.security.ISecurityContextFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
+@Component
 public class RemoteUserSecurityContextFactory implements ISecurityContextFactory {
+
+    @Value("${org.apereo.portal.security.provider.RemoteUserSecurityContextFactory.enabled:false}")
+    private boolean enabled;
+
+    @Override
+    public String getName() {
+        return "remoteUser";
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return enabled;
+    }
 
     public ISecurityContext getSecurityContext() {
         return new RemoteUserSecurityContext();

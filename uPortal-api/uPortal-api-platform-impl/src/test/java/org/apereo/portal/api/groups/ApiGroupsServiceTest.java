@@ -12,23 +12,31 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apereo.portal.security.provider;
+package org.apereo.portal.api.groups;
 
-import org.apereo.portal.AuthorizationException;
-import org.apereo.portal.security.IAuthorizationService;
-import org.apereo.portal.security.IAuthorizationServiceFactory;
-import org.apereo.portal.spring.locator.AuthorizationServiceLocator;
+import java.util.Set;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
-/**
- * The factory class for the uPortal reference IAuthorizationService implementation.
- *
- * @deprecated
- */
-@Deprecated
-public class AuthorizationServiceFactoryImpl implements IAuthorizationServiceFactory {
+public class ApiGroupsServiceTest {
 
-    @Override
-    public IAuthorizationService getAuthorization() throws AuthorizationException {
-        return AuthorizationServiceLocator.getAuthorizationService();
+    ApiGroupsService apiGroupsService;
+
+    @Before
+    public void setup() {
+        apiGroupsService = new ApiGroupsService();
+    }
+
+    @Test
+    public void testGetGroupsForMemberNull() {
+        Set<Entity> groups = apiGroupsService.getGroupsForMember(null);
+        Assert.assertTrue(groups.isEmpty());
+    }
+
+    @Test
+    public void testGetGroupsForMemberEmpty() {
+        Set<Entity> groups = apiGroupsService.getGroupsForMember("");
+        Assert.assertTrue(groups.isEmpty());
     }
 }

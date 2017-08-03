@@ -28,8 +28,6 @@ import org.apereo.portal.io.xml.IPortalDataType;
 import org.apereo.portal.io.xml.PortalDataKey;
 import org.apereo.portal.io.xml.SimpleStringPortalData;
 import org.apereo.portal.security.IPerson;
-import org.apereo.portal.security.provider.BrokenSecurityContext;
-import org.apereo.portal.security.provider.PersonImpl;
 import org.apereo.portal.utils.SafeFilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -115,27 +113,21 @@ public class SubscribedFragmentImporterExporter
     }
 
     private IPerson getPerson(final String username, boolean create) {
-        final IPerson person = new PersonImpl();
-        person.setUserName(username);
-
-        int userId;
+        IPerson rslt;
         try {
-            userId = this.userIdentityStore.getPortalUID(person);
-        } catch (final Throwable t) {
+            // Try once w/ false, even if create=true...
+            rslt = userIdentityStore.getPerson(username, false);
+        } catch (final Exception e) {
             if (!create || this.errorOnMissingUser) {
                 throw new RuntimeException(
-                        "Unrecognized user "
-                                + person.getUserName()
-                                + "; you must import users before their layouts.",
-                        t);
+                        "Unrecognized user '"
+                                + username
+                                + "'; you must import users before their layouts.",
+                        e);
             }
-
-            userId = this.userIdentityStore.getPortalUID(person, true);
+            rslt = userIdentityStore.getPerson(username, true);
         }
-
-        person.setID(userId);
-        person.setSecurityContext(new BrokenSecurityContext());
-        return person;
+        return rslt;
     }
 
     /*

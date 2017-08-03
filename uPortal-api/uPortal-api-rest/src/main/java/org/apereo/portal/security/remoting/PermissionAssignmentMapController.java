@@ -37,7 +37,7 @@ import org.apereo.portal.security.IPermissionStore;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.IPersonManager;
 import org.apereo.portal.security.provider.PermissionImpl;
-import org.apereo.portal.services.AuthorizationService;
+import org.apereo.portal.services.AuthorizationServiceFacade;
 import org.apereo.portal.services.GroupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -275,7 +275,7 @@ public class PermissionAssignmentMapController extends AbstractPermissionsContro
             member = GroupService.getGroupMember(a.getPrincipal().getId(), entityEnum.getClazz());
         }
 
-        AuthorizationService authService = AuthorizationService.instance();
+        AuthorizationServiceFacade authService = AuthorizationServiceFacade.instance();
         Iterator<?> it = GroupService.getCompositeGroupService().findParentGroups(member);
         if (it.hasNext()) {
             // This member must be nested within its parent(s)...

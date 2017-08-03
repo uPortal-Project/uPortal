@@ -23,7 +23,7 @@ import org.apereo.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.apereo.portal.security.IAuthorizationPrincipal;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.IPersonManager;
-import org.apereo.portal.services.AuthorizationService;
+import org.apereo.portal.services.AuthorizationServiceFacade;
 import org.apereo.portal.services.GroupService;
 import org.apereo.portal.url.IPortalRequestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -124,7 +124,7 @@ public class XalanAuthorizationHelperBean implements IXalanAuthorizationHelper {
             return null;
         }
 
-        final AuthorizationService authService = AuthorizationService.instance();
+        final AuthorizationServiceFacade authService = AuthorizationServiceFacade.instance();
         return authService.newPrincipal(user);
     }
 }

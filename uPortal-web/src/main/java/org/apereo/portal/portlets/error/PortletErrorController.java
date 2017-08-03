@@ -33,7 +33,7 @@ import org.apereo.portal.portlet.registry.IPortletWindowRegistry;
 import org.apereo.portal.portlet.rendering.IPortletRenderer;
 import org.apereo.portal.security.IAuthorizationPrincipal;
 import org.apereo.portal.security.IPermission;
-import org.apereo.portal.services.AuthorizationService;
+import org.apereo.portal.services.AuthorizationServiceFacade;
 import org.apereo.portal.url.IPortalRequestUtils;
 import org.apereo.portal.url.IPortalUrlBuilder;
 import org.apereo.portal.url.IPortalUrlProvider;
@@ -180,7 +180,7 @@ public class PortletErrorController {
     protected boolean hasAdminPrivileges(IUserInstance userInstance) {
         EntityIdentifier ei = userInstance.getPerson().getEntityIdentifier();
         IAuthorizationPrincipal ap =
-                AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
+                AuthorizationServiceFacade.instance().newPrincipal(ei.getKey(), ei.getType());
         return ap.hasPermission(
                 IPermission.ERROR_PORTLET, IPermission.VIEW_ACTIVITY, IPermission.DETAILS_TARGET);
     }

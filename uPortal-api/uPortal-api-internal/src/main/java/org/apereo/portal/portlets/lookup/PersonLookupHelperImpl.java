@@ -39,7 +39,7 @@ import org.apereo.portal.portlets.search.DisplayNameComparator;
 import org.apereo.portal.security.IAuthorizationPrincipal;
 import org.apereo.portal.security.IPermission;
 import org.apereo.portal.security.IPerson;
-import org.apereo.portal.services.AuthorizationService;
+import org.apereo.portal.services.AuthorizationServiceFacade;
 import org.jasig.services.persondir.IPersonAttributeDao;
 import org.jasig.services.persondir.IPersonAttributes;
 import org.jasig.services.persondir.support.NamedPersonImpl;
@@ -406,7 +406,7 @@ public class PersonLookupHelperImpl implements IPersonLookupHelper {
      */
     protected IAuthorizationPrincipal getPrincipalForUser(final IPerson person) {
         final EntityIdentifier ei = person.getEntityIdentifier();
-        return AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
+        return AuthorizationServiceFacade.instance().newPrincipal(ei.getKey(), ei.getType());
     }
 
     /**

@@ -12,17 +12,35 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apereo.portal.security;
+package org.apereo.portal.api.permissions;
 
-import org.apereo.portal.AuthorizationException;
+import org.junit.Assert;
+import org.junit.Test;
 
-/**
- * A context-specific factory class interface that should be implemented by factory classes defined
- * for each context provider. The provider's constructor should not be public to discourage it's
- * instantiation through means other than the corresponding factory. This formalism should be
- * followed for consistency even when the factory performs no additional value-add than
- * instantiating the appropriate context class.
- */
-public interface IAuthorizationServiceFactory {
-    public IAuthorizationService getAuthorization() throws AuthorizationException;
+public class TargetImplTest {
+    TargetImpl target;
+
+    @Test
+    public void test() {
+        target = new TargetImpl("key", "name");
+        target.getKey();
+    }
+
+    @Test
+    public void testGetKey() {
+        target = new TargetImpl("key", "name");
+        Assert.assertEquals("key", target.getKey());
+    }
+
+    @Test
+    public void testGetName() {
+        target = new TargetImpl("key", "name");
+        Assert.assertEquals("name", target.getName());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testGetKeyNull() {
+        target = new TargetImpl(null, null);
+        target.getKey();
+    }
 }

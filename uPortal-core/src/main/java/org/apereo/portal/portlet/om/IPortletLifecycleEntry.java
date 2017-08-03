@@ -12,18 +12,23 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apereo.portal.security.provider;
+package org.apereo.portal.portlet.om;
+
+import java.io.Serializable;
+import java.util.Date;
 
 /**
- * The factory class for the simple security context. Just returns a new instance of the
- * TruestSecurityContext.
+ * Represents a state change in a portlet's lifecycle. Lifecycle states are hierarchical, starting
+ * at the bottom with <code>CREATED</code> and ending with <code>MAINTENANCE</code> at the top.
+ * Setting a portlet's current lifecycle state clears all entries at or above the specified state,
+ * and creates a new entry -- with the current user's Id and the current data -- at the specified
+ * state.
  */
-import org.apereo.portal.security.ISecurityContext;
-import org.apereo.portal.security.ISecurityContextFactory;
+public interface IPortletLifecycleEntry extends Comparable<IPortletLifecycleEntry>, Serializable {
 
-public class UnionSecurityContextFactory implements ISecurityContextFactory {
+    int getUserId();
 
-    public ISecurityContext getSecurityContext() {
-        return new UnionSecurityContext();
-    }
+    PortletLifecycleState getLifecycleState();
+
+    Date getDate();
 }

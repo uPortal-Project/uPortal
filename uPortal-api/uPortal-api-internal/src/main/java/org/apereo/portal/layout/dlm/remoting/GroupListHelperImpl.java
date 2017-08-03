@@ -33,7 +33,7 @@ import org.apereo.portal.security.AuthorizationPrincipalHelper;
 import org.apereo.portal.security.IAuthorizationPrincipal;
 import org.apereo.portal.security.IPermission;
 import org.apereo.portal.security.IPerson;
-import org.apereo.portal.services.AuthorizationService;
+import org.apereo.portal.services.AuthorizationServiceFacade;
 import org.apereo.portal.services.EntityNameFinderService;
 import org.apereo.portal.services.GroupService;
 import org.apereo.portal.spring.locator.EntityTypesLocator;
@@ -390,7 +390,7 @@ public class GroupListHelperImpl implements IGroupListHelper {
         }
 
         // construct an authorization principal for this JsonEntityBean
-        AuthorizationService authService = AuthorizationService.instance();
+        AuthorizationServiceFacade authService = AuthorizationServiceFacade.instance();
         IAuthorizationPrincipal p = authService.newPrincipal(entity.getId(), entityType);
         return p;
     }
