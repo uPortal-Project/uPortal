@@ -310,6 +310,7 @@
         <!-- Reference anchor for page focus on refresh and link to focused view of channel. -->
         <xsl:element name="a">
           <xsl:attribute name="id"><xsl:value-of select="@ID"/></xsl:attribute>
+          <xsl:attribute name="title"><xsl:value-of select="@title"/></xsl:attribute>
           <xsl:choose>
             <xsl:when test="parameter[@name='alternativeMaximizedLink'] and string-length(parameter[@name='alternativeMaximizedLink']/@value) > 0">
               <xsl:attribute name="href"><xsl:value-of select="parameter[@name='alternativeMaximizedLink']/@value" /></xsl:attribute>

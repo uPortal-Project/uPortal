@@ -91,6 +91,15 @@
 
 .portlet-title {
   .border-radiuses-top(5px);
+
+  /* title text */
+  & > a {
+    display: block;
+    width: 80%; // fallback for browsers that don't support calc
+    width: calc(~"100% - 85px"); // tilde is used to escape string, preventing less from mangling math
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 }
 
 .portlet-content {
