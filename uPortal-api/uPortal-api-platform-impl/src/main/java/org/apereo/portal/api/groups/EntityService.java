@@ -17,6 +17,7 @@ package org.apereo.portal.api.groups;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apereo.portal.EntityIdentifier;
@@ -48,7 +49,9 @@ public final class EntityService {
     }
 
     public Set<Entity> search(String entityType, String searchTerm) {
-
+        if (StringUtils.isBlank(entityType) && StringUtils.isBlank(searchTerm)) {
+            return null;
+        }
         Set<Entity> results = new HashSet<Entity>();
         EntityEnum entityEnum = EntityEnum.getEntityEnum(entityType);
         EntityIdentifier[] identifiers;
@@ -84,6 +87,9 @@ public final class EntityService {
     public Entity getEntity(String entityType, String entityId, boolean populateChildren) {
 
         // get the EntityEnum for the specified entity type
+        if (StringUtils.isBlank(entityType) && StringUtils.isBlank(entityId)) {
+            return null;
+        }
         EntityEnum entityEnum = EntityEnum.getEntityEnum(entityType);
 
         // if the entity type is a group, use the group service's findGroup method
@@ -129,7 +135,9 @@ public final class EntityService {
     }
 
     public Entity getEntity(IGroupMember member) {
-
+        if (member == null) {
+            return null;
+        }
         // get the type of this member entity
         EntityEnum entityEnum = getEntityType(member);
 
@@ -167,6 +175,9 @@ public final class EntityService {
     public IAuthorizationPrincipal getPrincipalForEntity(Entity entity) {
 
         // attempt to determine the entity type class for this principal
+        if (entity == null) {
+            return null;
+        }
         Class entityType;
         if (entity.getEntityType().equals(EntityEnum.GROUP.toString())) {
             entityType = IEntityGroup.class;
@@ -187,11 +198,17 @@ public final class EntityService {
      * @return groupMember's name or null if there's an error
      */
     public String lookupEntityName(Entity entity) {
+        if (entity == null) {
+            return null;
+        }
         EntityEnum entityEnum = EntityEnum.getEntityEnum(entity.getEntityType());
         return lookupEntityName(entityEnum, entity.getId());
     }
 
     public String lookupEntityName(EntityEnum entityType, String entityId) {
+        if (entityType == null && (StringUtils.isBlank(entityId))) {
+            return null;
+        }
         IEntityNameFinder finder;
         if (entityType.isGroup()) {
             finder = EntityNameFinderService.instance().getNameFinder(IEntityGroup.class);
