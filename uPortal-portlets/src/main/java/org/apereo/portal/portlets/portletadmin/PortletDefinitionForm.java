@@ -33,6 +33,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apereo.portal.layout.dlm.remoting.JsonEntityBean;
 import org.apereo.portal.portlet.om.IPortletDefinition;
 import org.apereo.portal.portlet.om.IPortletDefinitionParameter;
+import org.apereo.portal.portlet.om.IPortletLifecycleEntry;
 import org.apereo.portal.portlet.om.IPortletPreference;
 import org.apereo.portal.portlet.om.PortletLifecycleState;
 import org.apereo.portal.portletpublishing.xml.MultiValuedPreferenceInputType;
@@ -115,11 +116,7 @@ public class PortletDefinitionForm implements Serializable {
     /** Default constructor */
     public PortletDefinitionForm() {}
 
-    /**
-     * Construct a new PortletDefinitionForm from a PortletDefinition
-     *
-     * @param def
-     */
+    /** Construct a new PortletDefinitionForm from a PortletDefinition */
     public PortletDefinitionForm(IPortletDefinition def) {
         this.setId(def.getPortletDefinitionId().getStringId());
         this.setFname(def.getFName());
@@ -151,14 +148,32 @@ public class PortletDefinitionForm implements Serializable {
                     Boolean.parseBoolean(
                             def.getParameter(IPortletDefinition.HAS_ABOUT_PARAM).getValue()));
         }
-        this.setLifecycleState(def.getLifecycleState());
 
-        if (def.getLifecycleState().equals(PortletLifecycleState.APPROVED)) {
-            this.setPublishDateTime(def.getPublishDate());
-        }
-
-        if (def.getLifecycleState().equals(PortletLifecycleState.PUBLISHED)) {
-            this.setExpirationDateTime(def.getExpirationDate());
+        /*
+         * Lifecycle
+         */
+        final PortletLifecycleState lifecycleState = def.getLifecycleState();
+        this.setLifecycleState(lifecycleState);
+        final IPortletLifecycleEntry lastLifecycleEntry =
+                def.getLifecycle().isEmpty()
+                        ? null
+                        : def.getLifecycle().get(def.getLifecycle().size() - 1);
+        if (lastLifecycleEntry != null
+                && !lastLifecycleEntry.getLifecycleState().equals(lifecycleState)) {
+            /*
+             * We're in one state, but there's a future date
+             * where we automatically switch to another.
+             */
+            switch (lastLifecycleEntry.getLifecycleState()) {
+                case PUBLISHED:
+                    this.setPublishDateTime(lastLifecycleEntry.getDate());
+                    break;
+                case EXPIRED:
+                    this.setExpirationDateTime(lastLifecycleEntry.getDate());
+                    break;
+                default:
+                    // Other lifecycle states are not affected by this consideration
+            }
         }
 
         for (IPortletDefinitionParameter param : def.getParameters()) {
@@ -177,20 +192,12 @@ public class PortletDefinitionForm implements Serializable {
         }
     }
 
-    /**
-     * Indicates whether this portlet has been previously published.
-     *
-     * @return
-     */
+    /** Indicates whether this portlet has been previously published. */
     public boolean isNew() {
         return id == null || id.equals("-1");
     }
 
-    /**
-     * Sets the Java class name and parameter defaults based on the PortletPublishingDefinition.
-     *
-     * @param cpd
-     */
+    /** Sets the Java class name and parameter defaults based on the PortletPublishingDefinition. */
     public void setChannelPublishingDefinition(PortletPublishingDefinition cpd) {
 
         // Set appName/portletName if a descriptor is present.  If a framework

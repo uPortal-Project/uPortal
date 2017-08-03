@@ -32,6 +32,11 @@ public class PortletPortalDataType extends AbstractPortalDataType {
     @Deprecated
     public static final QName LEGACY_CHANNEL_DEFINITION_QNAME = new QName("channel-definition");
 
+    public static final PortalDataKey IMPORT_50_DATA_KEY =
+            new PortalDataKey(PORTLET_DEFINITION_QNAME, null, "5.0");
+
+    /** @deprecated used for importing old data files */
+    @Deprecated
     public static final PortalDataKey IMPORT_43_DATA_KEY =
             new PortalDataKey(PORTLET_DEFINITION_QNAME, null, "4.3");
 
@@ -79,7 +84,8 @@ public class PortletPortalDataType extends AbstractPortalDataType {
                     IMPORT_31_DATA_KEY,
                     IMPORT_32_DATA_KEY,
                     IMPORT_40_DATA_KEY,
-                    IMPORT_43_DATA_KEY);
+                    IMPORT_43_DATA_KEY,
+                    IMPORT_50_DATA_KEY);
 
     public PortletPortalDataType() {
         super(PORTLET_DEFINITION_QNAME);
