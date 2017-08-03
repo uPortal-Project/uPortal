@@ -186,7 +186,7 @@ var up = up || {};
      * @param {Object} that- reference to an instance of the TabManger component.
      */
     var addTabHandler = function (that) {
-        var add, tabGroup;
+        var add;
         add = that.locate("add");
         add.bind("click", function () {
             that.events.onTabAdd.fire(that.options.addTabLabel, that.options.addTabWidths, that.options.selectors.text);
