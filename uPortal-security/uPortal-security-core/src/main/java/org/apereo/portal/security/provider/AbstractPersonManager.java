@@ -36,6 +36,8 @@ public abstract class AbstractPersonManager implements IPersonManager {
 
     @Autowired private IUserIdentityStore userIdentityStore;
 
+    @Autowired private InitialSecurityContextFactory initialSecurityContextFactory;
+
     @PostConstruct
     public void init() {
         // Make sure we have a guestUsernameSelectors collection & sort it
@@ -85,7 +87,7 @@ public abstract class AbstractPersonManager implements IPersonManager {
         final IPerson rslt = PersonFactory.createPerson();
         rslt.setAttribute(IPerson.USERNAME, username);
         rslt.setID(guestUserId);
-        rslt.setSecurityContext(InitialSecurityContextFactory.getInitialContext("root"));
+        rslt.setSecurityContext(initialSecurityContextFactory.getInitialContext());
 
         return rslt;
     }

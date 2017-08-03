@@ -43,7 +43,7 @@
 
 <script id="${n}settingsTemplate" type="text/template">
    <div>
-      <label><a href="{{= settingsUrl }}" target="_blank" rel="noopener noreferrer">{{= settingsName }}:</a></label>                        
+      <label><a href="{{= settingsUrl }}" target="_blank" rel="noopener noreferrer">{{= settingsName }}:</a></label>
       <input class="settingName" name="settingName" value=""/>:
       <input class="settingValue" name="settingValue" value=""/>
       <button class="addSetting">+</button>
@@ -55,51 +55,13 @@
    <span class="view name">
       <label>{{= name }}</label>:
    </span>
-    
+
    <span class="view value">
       <label>{{= value }}</label>
    </span>
 
    <a class="setting destroy"></a>
 </script>
-
-<style>
-    .google-analytics-config div.analytics-host {
-        border-style: solid;
-        border-width: thin;
-        padding: 1em;
-        max-width: 600px;
-    }
-    
-    .google-analytics-config div.setting-container {
-        font-size: 16px;
-    }
-    
-    .google-analytics-config .destroy {
-        cursor: pointer;
-        width: 15px;
-        height: 15px;
-        background: url(${renderRequest.contextPath}/media/skins/icons/destroy.png) no-repeat;
-    }
-
-    .google-analytics-config .destroy:hover {
-        background-position: 0 -15px;
-    }
-    
-    .google-analytics-config div.setting-container .setting.destroy {
-        right: 5px;
-        top: 20px;
-        display: none;
-    }
-
-    .google-analytics-config div.setting-container:hover .setting.destroy {
-        display: inline-block;
-    }
-    
-    .google-analytics-config .property.destroy {
-        float: right;
-    }
-</style>
 
 <portlet:resourceURL var="getDataUrl" id="getData" escapeXml="false" />
 <portlet:resourceURL var="storeDataUrl" id="storeData" escapeXml="false" />
@@ -205,8 +167,8 @@ up.analytics.config.view = up.analytics.config.view || {};
          modelData["settingsName"] = this.settingsName;
          modelData["settingsUrl"] = this.settingsUrl;
          $(this.el).html(this.template(modelData));
-         
-         
+
+
          var container = document.createDocumentFragment();
          _.forEach(this.model.models, function(setting) {
             var view = new up.analytics.config.view.SettingView({
@@ -215,8 +177,8 @@ up.analytics.config.view = up.analytics.config.view || {};
             container.appendChild(view.render().el);
          }, this);
          this.$(".setting-data").html(container);
-         
-         
+
+
          return this;
       },
 
@@ -269,7 +231,7 @@ up.analytics.config.view = up.analytics.config.view || {};
       },
       render : function() {
          $(this.el).html(this.template(this.model.toJSON()));
-         
+
          if (this.isDefaultConfig) {
              this.$("div.default-property-name").show();
              this.$("input[name=propertyName]").hide();
@@ -292,7 +254,7 @@ up.analytics.config.view = up.analytics.config.view || {};
                   settingsUrl : "https://support.google.com/analytics/answer/2709829"
                });
          this.$(".property-dimensions").html((dimensionSettings.render().el));
-         
+
          return this;
       },
       updatePropertyId : function() {
@@ -361,7 +323,7 @@ up.analytics.config.view = up.analytics.config.view || {};
               dataType: 'json',
               data: {config:JSON.stringify(globalConfig)},
               success: function (data) {
-                  //TODO force sync of globalConfig with returned data 
+                  //TODO force sync of globalConfig with returned data
               }
           });
       },
@@ -371,12 +333,12 @@ up.analytics.config.view = up.analytics.config.view || {};
    });
 
    var globalConfig = new up.analytics.config.model.GlobalConfiguration(data);
-   
+
    new up.analytics.config.view.GlobalConfigurationView({
       model : globalConfig
    });
-   
-   
+
+
 
 })(up.jQuery, up.Backbone, up._);
 </script>

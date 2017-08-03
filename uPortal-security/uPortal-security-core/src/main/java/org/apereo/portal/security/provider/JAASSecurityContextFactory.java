@@ -20,8 +20,25 @@ package org.apereo.portal.security.provider;
  */
 import org.apereo.portal.security.ISecurityContext;
 import org.apereo.portal.security.ISecurityContextFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
+@Component
 public class JAASSecurityContextFactory implements ISecurityContextFactory {
+
+    @Value("${org.apereo.portal.security.provider.JAASSecurityContextFactory.enabled:false}")
+    private boolean enabled;
+
+    @Override
+    public String getName() {
+        return "jaas";
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return enabled;
+    }
+
     @Override
     public ISecurityContext getSecurityContext() {
         return new JAASSecurityContext();

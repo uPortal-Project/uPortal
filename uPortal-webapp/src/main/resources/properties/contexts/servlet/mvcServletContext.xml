@@ -88,6 +88,7 @@
     <context:component-scan base-package="org.apereo.portal.portlets.permissionsadmin"/>
     <context:component-scan base-package="org.apereo.portal.security.remoting"/>
     <context:component-scan base-package="org.apereo.portal.rest"/>
-    <context:property-placeholder location="classpath:/properties/portal.properties"/>
+
+    <bean parent="primaryPropertyPlaceholderConfigurer" />
 
 </beans>

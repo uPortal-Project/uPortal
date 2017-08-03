@@ -12,17 +12,23 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apereo.portal.security;
+package org.apereo.portal.api.groups;
 
-import org.apereo.portal.AuthorizationException;
+import org.apereo.portal.portlets.groupselector.EntityEnum;
+import org.junit.Assert;
+import org.junit.Test;
 
-/**
- * A context-specific factory class interface that should be implemented by factory classes defined
- * for each context provider. The provider's constructor should not be public to discourage it's
- * instantiation through means other than the corresponding factory. This formalism should be
- * followed for consistency even when the factory performs no additional value-add than
- * instantiating the appropriate context class.
- */
-public interface IAuthorizationServiceFactory {
-    public IAuthorizationService getAuthorization() throws AuthorizationException;
+public class EntityFactoryTest {
+
+    @Test
+    public void testCreateEnitityMemberNull() {
+        Entity entity = EntityFactory.createEntity(null, EntityEnum.PERSON);
+        Assert.assertNull(entity);
+    }
+
+    @Test
+    public void testCreateEnittyGroupNull() {
+        Entity entity = EntityFactory.createEntity(null, EntityEnum.GROUP);
+        Assert.assertNull(entity);
+    }
 }

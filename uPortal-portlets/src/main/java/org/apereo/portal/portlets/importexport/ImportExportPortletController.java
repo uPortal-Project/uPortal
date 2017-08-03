@@ -29,7 +29,7 @@ import org.apereo.portal.security.IAuthorizationPrincipal;
 import org.apereo.portal.security.IPermission;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.IPersonManager;
-import org.apereo.portal.services.AuthorizationService;
+import org.apereo.portal.services.AuthorizationServiceFacade;
 import org.apereo.portal.url.IPortalRequestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -132,7 +132,7 @@ public class ImportExportPortletController {
         final IPerson person = personManager.getPerson(httpServletRequest);
         final EntityIdentifier ei = person.getEntityIdentifier();
         final IAuthorizationPrincipal ap =
-                AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
+                AuthorizationServiceFacade.instance().newPrincipal(ei.getKey(), ei.getType());
 
         // filter the list of configured import/export types by user permission
         final List<IPortalDataType> results = new ArrayList<IPortalDataType>();

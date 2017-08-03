@@ -36,7 +36,7 @@ import org.apereo.portal.portlet.om.IPortletDefinition;
 import org.apereo.portal.security.IAuthorizationPrincipal;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.IPersonManager;
-import org.apereo.portal.services.AuthorizationService;
+import org.apereo.portal.services.AuthorizationServiceFacade;
 import org.apereo.portal.services.GroupService;
 import org.apereo.portal.url.IPortalRequestUtils;
 import org.joda.time.DateTime;
@@ -132,7 +132,7 @@ public class PopularPortletsController {
                         begin, end, AGGREGATION_INTERVAL, group);
 
         final EntityIdentifier ei = user.getEntityIdentifier();
-        final AuthorizationService authService = AuthorizationService.instance();
+        final AuthorizationServiceFacade authService = AuthorizationServiceFacade.instance();
         final IAuthorizationPrincipal ap = authService.newPrincipal(ei.getKey(), ei.getType());
 
         final Map<String, PortletUsage> resultBuilder = new HashMap<String, PortletUsage>();
