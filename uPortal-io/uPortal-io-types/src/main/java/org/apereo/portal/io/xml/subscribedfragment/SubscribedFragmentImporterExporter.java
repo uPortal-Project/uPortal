@@ -19,7 +19,6 @@ import com.google.common.collect.Collections2;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-
 import org.apereo.portal.IUserIdentityStore;
 import org.apereo.portal.fragment.subscribe.IUserFragmentSubscription;
 import org.apereo.portal.fragment.subscribe.dao.IUserFragmentSubscriptionDao;
@@ -120,8 +119,11 @@ public class SubscribedFragmentImporterExporter
             rslt = userIdentityStore.getPerson(username, false);
         } catch (final Exception e) {
             if (!create || this.errorOnMissingUser) {
-                throw new RuntimeException("Unrecognized user '" + username +
-                        "'; you must import users before their layouts.", e);
+                throw new RuntimeException(
+                        "Unrecognized user '"
+                                + username
+                                + "'; you must import users before their layouts.",
+                        e);
             }
             rslt = userIdentityStore.getPerson(username, true);
         }

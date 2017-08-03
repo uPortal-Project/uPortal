@@ -116,9 +116,7 @@ public class PortletDefinitionForm implements Serializable {
     /** Default constructor */
     public PortletDefinitionForm() {}
 
-    /**
-     * Construct a new PortletDefinitionForm from a PortletDefinition
-     */
+    /** Construct a new PortletDefinitionForm from a PortletDefinition */
     public PortletDefinitionForm(IPortletDefinition def) {
         this.setId(def.getPortletDefinitionId().getStringId());
         this.setFname(def.getFName());
@@ -156,9 +154,10 @@ public class PortletDefinitionForm implements Serializable {
          */
         final PortletLifecycleState lifecycleState = def.getLifecycleState();
         this.setLifecycleState(lifecycleState);
-        final IPortletLifecycleEntry lastLifecycleEntry = def.getLifecycle().isEmpty()
-                ? null
-                : def.getLifecycle().get(def.getLifecycle().size() - 1);
+        final IPortletLifecycleEntry lastLifecycleEntry =
+                def.getLifecycle().isEmpty()
+                        ? null
+                        : def.getLifecycle().get(def.getLifecycle().size() - 1);
         if (lastLifecycleEntry != null
                 && !lastLifecycleEntry.getLifecycleState().equals(lifecycleState)) {
             /*
@@ -193,16 +192,12 @@ public class PortletDefinitionForm implements Serializable {
         }
     }
 
-    /**
-     * Indicates whether this portlet has been previously published.
-     */
+    /** Indicates whether this portlet has been previously published. */
     public boolean isNew() {
         return id == null || id.equals("-1");
     }
 
-    /**
-     * Sets the Java class name and parameter defaults based on the PortletPublishingDefinition.
-     */
+    /** Sets the Java class name and parameter defaults based on the PortletPublishingDefinition. */
     public void setChannelPublishingDefinition(PortletPublishingDefinition cpd) {
 
         // Set appName/portletName if a descriptor is present.  If a framework

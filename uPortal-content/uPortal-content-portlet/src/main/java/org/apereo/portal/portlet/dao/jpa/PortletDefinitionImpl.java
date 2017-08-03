@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -74,9 +73,7 @@ import org.hibernate.annotations.NaturalIdCache;
 import org.hibernate.annotations.Type;
 import org.springframework.util.StringUtils;
 
-/**
- * Concrete JPA-managed implementation of {@link IPortletDefinition} .
- */
+/** Concrete JPA-managed implementation of {@link IPortletDefinition} . */
 @Entity
 @Table(name = "UP_PORTLET_DEF")
 @SequenceGenerator(
@@ -133,16 +130,13 @@ public class PortletDefinitionImpl implements IPortletDefinition {
     private final PortletPreferencesImpl portletPreferences;
 
     /**
-     * Name shows in admin tools, not typically to end users.
-     * Name is useful for administratively distinguishing multiple portlet
-     * publications that share a title.
+     * Name shows in admin tools, not typically to end users. Name is useful for administratively
+     * distinguishing multiple portlet publications that share a title.
      */
     @Column(name = "PORTLET_NAME", length = 128, nullable = false, unique = true)
     private String name;
 
-    /**
-     * The "fName" of a portlet is its human-assigned unique identifier.
-     */
+    /** The "fName" of a portlet is its human-assigned unique identifier. */
     @NaturalId(mutable = true)
     @Column(name = "PORTLET_FNAME", length = 255, nullable = false)
     @Type(type = "fname")
@@ -181,20 +175,20 @@ public class PortletDefinitionImpl implements IPortletDefinition {
     private Integer resourceTimeout = null;
 
     @OneToMany(
-            targetEntity = PortletLifecycleEntryImpl.class,
-            cascade = CascadeType.ALL,
-            fetch = FetchType.EAGER,
-            orphanRemoval = true
+        targetEntity = PortletLifecycleEntryImpl.class,
+        cascade = CascadeType.ALL,
+        fetch = FetchType.EAGER,
+        orphanRemoval = true
     )
     @JoinColumn(name = "PORTLET_DEF_ID", nullable = false)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-    @Fetch(FetchMode.SELECT)  // FM JOIN does BAD things to collections that support duplicates
+    @Fetch(FetchMode.SELECT) // FM JOIN does BAD things to collections that support duplicates
     @OrderBy("ENTRY_DATE ASC")
     private List<IPortletLifecycleEntry> lifecycleEntries = new ArrayList<>();
 
     /**
-     * Portlet publishing parameters are portlet-specific settings defined,
-     * managed, and (typically) consumed by uPortal itself.
+     * Portlet publishing parameters are portlet-specific settings defined, managed, and (typically)
+     * consumed by uPortal itself.
      */
     @OneToMany(
         targetEntity = PortletDefinitionParameterImpl.class,
@@ -206,16 +200,14 @@ public class PortletDefinitionImpl implements IPortletDefinition {
     @MapKey(name = "name")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @Fetch(FetchMode.JOIN)
-    private Map<String, IPortletDefinitionParameter> parameters =
-            new LinkedHashMap<>();
+    private Map<String, IPortletDefinitionParameter> parameters = new LinkedHashMap<>();
 
     @ElementCollection(fetch = FetchType.EAGER, targetClass = PortletLocalizationData.class)
     @JoinTable(name = "UP_PORTLET_DEF_MDATA", joinColumns = @JoinColumn(name = "PORTLET_ID"))
     @MapKeyColumn(name = "LOCALE", length = 64, nullable = false)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @Fetch(FetchMode.JOIN)
-    private final Map<String, PortletLocalizationData> localizations =
-            new LinkedHashMap<>();
+    private final Map<String, PortletLocalizationData> localizations = new LinkedHashMap<>();
 
     @Embedded private PortletDescriptorKeyImpl portletDescriptorKey;
 
@@ -577,8 +569,7 @@ public class PortletDefinitionImpl implements IPortletDefinition {
 
     @Override
     public Set<IPortletDefinitionParameter> getParameters() {
-        return Collections.unmodifiableSet(
-                new LinkedHashSet<>(parameters.values()));
+        return Collections.unmodifiableSet(new LinkedHashSet<>(parameters.values()));
     }
 
     @Override
@@ -669,12 +660,17 @@ public class PortletDefinitionImpl implements IPortletDefinition {
     public PortletLifecycleState getLifecycleState() {
 
         final Date now = new Date();
-        final IPortletLifecycleEntry currentEntry = lifecycleEntries.stream()
-                .filter(entry -> entry.getDate().before(now)) // Not entries in the future
-                .reduce((e1, e2) -> e1.getDate().after(e2.getDate()) ? e1 : e2) // Only the latest
-                .orElse(null); // Possible if the portlet is not yet fully created
+        final IPortletLifecycleEntry currentEntry =
+                lifecycleEntries
+                        .stream()
+                        .filter(entry -> entry.getDate().before(now)) // Not entries in the future
+                        .reduce(
+                                (e1, e2) ->
+                                        e1.getDate().after(e2.getDate())
+                                                ? e1
+                                                : e2) // Only the latest
+                        .orElse(null); // Possible if the portlet is not yet fully created
         return currentEntry != null ? currentEntry.getLifecycleState() : null;
-
     }
 
     @Override
@@ -683,27 +679,29 @@ public class PortletDefinitionImpl implements IPortletDefinition {
     }
 
     /**
-     * In {@link PortletDefinitionImpl}, this overload does all the work.  (The other overload
-     * forwards.)  Adding <code>synchronized</code> in case two threads try to modify the
-     * collection at the same time.
+     * In {@link PortletDefinitionImpl}, this overload does all the work. (The other overload
+     * forwards.) Adding <code>synchronized</code> in case two threads try to modify the collection
+     * at the same time.
      */
     @Override
-    public synchronized void updateLifecycleState(PortletLifecycleState lifecycleState, IPerson user, Date timestamp) {
+    public synchronized void updateLifecycleState(
+            PortletLifecycleState lifecycleState, IPerson user, Date timestamp) {
 
         /*
          * Lifecycle entries that are scheduled for an instant
          * on or after the new entry must be cleared.
          */
         final Set<IPortletLifecycleEntry> canceledStateChanges =
-                lifecycleEntries.stream()
-                // NB:  entry.getDate.equals(timestamp) does not work as expected.
-                .filter(entry -> entry.getDate().compareTo(timestamp) >= 0)
-                .collect(Collectors.toSet());
+                lifecycleEntries
+                        .stream()
+                        // NB:  entry.getDate.equals(timestamp) does not work as expected.
+                        .filter(entry -> entry.getDate().compareTo(timestamp) >= 0)
+                        .collect(Collectors.toSet());
         lifecycleEntries.removeAll(canceledStateChanges);
 
-        final IPortletLifecycleEntry newEntry = new PortletLifecycleEntryImpl(user.getID(), lifecycleState, timestamp);
+        final IPortletLifecycleEntry newEntry =
+                new PortletLifecycleEntryImpl(user.getID(), lifecycleState, timestamp);
         lifecycleEntries.add(newEntry);
-
     }
 
     @Override
@@ -716,7 +714,6 @@ public class PortletDefinitionImpl implements IPortletDefinition {
         // Necessary for Import/Export
         lifecycleEntries.clear();
     }
-
 
     @Override
     public int hashCode() {

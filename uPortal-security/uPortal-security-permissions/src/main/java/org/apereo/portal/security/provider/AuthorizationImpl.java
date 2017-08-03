@@ -248,7 +248,8 @@ public class AuthorizationImpl implements IAuthorizationService {
      *
      * @param principal IAuthorizationPrincipal The user who wants to manage the portlet
      * @param portletDefinitionId The Id of the portlet being managed
-     * @return True if the specified user is allowed to manage the specified portlet;  otherwise false
+     * @return True if the specified user is allowed to manage the specified portlet; otherwise
+     *     false
      * @exception AuthorizationException indicates authorization information could not be retrieved.
      */
     @Override
@@ -303,12 +304,13 @@ public class AuthorizationImpl implements IAuthorizationService {
                 activity = IPermission.PORTLET_MANAGER_MAINTENANCE_ACTIVITY;
                 break;
             default:
-                final String msg = "Unrecognized portlet lifecycle state:  " + highestLifecycleEntryDefined.getLifecycleState();
+                final String msg =
+                        "Unrecognized portlet lifecycle state:  "
+                                + highestLifecycleEntryDefined.getLifecycleState();
                 throw new IllegalStateException(msg);
         }
 
         return doesPrincipalHavePermission(principal, owner, activity, target);
-
     }
 
     /**

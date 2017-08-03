@@ -47,7 +47,6 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicLong;
-
 import javax.annotation.PostConstruct;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
@@ -271,8 +270,7 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
 
     @SuppressWarnings("unchecked")
     public void initDataImporters() {
-        final Map<PortalDataKey, IDataImporter<Object>> dataImportersMap =
-                new LinkedHashMap<>();
+        final Map<PortalDataKey, IDataImporter<Object>> dataImportersMap = new LinkedHashMap<>();
 
         for (final IDataImporter<?> dataImporter : dataImporters) {
 
@@ -304,8 +302,7 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
 
     @SuppressWarnings("unchecked")
     public void initDataExporters() {
-        final Map<String, IDataExporter<Object>> dataExportersMap =
-                new LinkedHashMap<>();
+        final Map<String, IDataExporter<Object>> dataExportersMap = new LinkedHashMap<>();
 
         final Set<IPortalDataType> portalDataTypes = new LinkedHashSet<>();
 
@@ -340,8 +337,7 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
 
     @SuppressWarnings("unchecked")
     public void initDataDeleters() {
-        final Map<String, IDataDeleter<Object>> dataDeletersMap =
-                new LinkedHashMap<>();
+        final Map<String, IDataDeleter<Object>> dataDeletersMap = new LinkedHashMap<>();
 
         final Set<IPortalDataType> portalDataTypes = new LinkedHashSet<>();
 
@@ -376,8 +372,7 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
 
     /** {@link IDataUpgrader} implementations to delegate upgrade operations to. */
     public void initDataUpgraders() {
-        final Map<PortalDataKey, IDataUpgrader> dataUpgraderMap =
-                new LinkedHashMap<>();
+        final Map<PortalDataKey, IDataUpgrader> dataUpgraderMap = new LinkedHashMap<>();
 
         for (final IDataUpgrader dataUpgrader : dataUpgraders) {
 

@@ -12,14 +12,13 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apereo.portal.portlet.om;
 
 import java.io.Serializable;
 import java.util.Date;
 
 /**
- * Represents a state change in a portlet's lifecycle.  Lifecycle states are hierarchical, starting
+ * Represents a state change in a portlet's lifecycle. Lifecycle states are hierarchical, starting
  * at the bottom with <code>CREATED</code> and ending with <code>MAINTENANCE</code> at the top.
  * Setting a portlet's current lifecycle state clears all entries at or above the specified state,
  * and creates a new entry -- with the current user's Id and the current data -- at the specified
@@ -32,5 +31,4 @@ public interface IPortletLifecycleEntry extends Comparable<IPortletLifecycleEntr
     PortletLifecycleState getLifecycleState();
 
     Date getDate();
-
 }

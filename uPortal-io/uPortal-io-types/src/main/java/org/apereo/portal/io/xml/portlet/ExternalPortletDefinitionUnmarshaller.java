@@ -12,7 +12,6 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apereo.portal.io.xml.portlet;
 
 import java.math.BigInteger;
@@ -26,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.portal.IUserIdentityStore;
 import org.apereo.portal.portlet.dao.IPortletDefinitionDao;
@@ -52,39 +50,36 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 /**
- * Responsible for taking an {@link ExternalPortletDefinition} and producing an
- * {@link IPortletDefinition}.
+ * Responsible for taking an {@link ExternalPortletDefinition} and producing an {@link
+ * IPortletDefinition}.
  */
 @Component
 /* package-private */ class ExternalPortletDefinitionUnmarshaller {
 
     /**
      * Represents a special datetime value that helps us solve a problem we have with supporting
-     * older portlet-definition entities in MAINTENANCE mode.  We used to handle MAINTENANCE with
-     * a parameter;  now it is a first class lifecycle state in the database and in XML.  Lifecycle
+     * older portlet-definition entities in MAINTENANCE mode. We used to handle MAINTENANCE with a
+     * parameter; now it is a first class lifecycle state in the database and in XML. Lifecycle
      * states require a data, but the older, parameter-based MAINTENANCE model doesn't include one.
      * We will use the current instant in these cases, but we need a way for the XML to signal that
-     * we should do so.  According to the XSD, the datetime value cannot be empty in any way.  This
+     * we should do so. According to the XSD, the datetime value cannot be empty in any way. This
      * datetime is the last second before the present millennium -- more than 10 years before
-     * MAINTENANCE mode was implemented.  When we see this datetime, we will substitute the present
+     * MAINTENANCE mode was implemented. When we see this datetime, we will substitute the present
      * datetime.
      */
-    /* package-private */ static final String USE_CURRENT_DATETIME_SIGNAL_DATE = "1999-12-31T23:59:59.000Z";
+    /* package-private */ static final String USE_CURRENT_DATETIME_SIGNAL_DATE =
+            "1999-12-31T23:59:59.000Z";
 
     @Value("${org.apereo.portal.io.errorOnChannel:false}")
     private boolean errorOnChannel;
 
-    @Autowired
-    private IPortletTypeRegistry portletTypeRegistry;
+    @Autowired private IPortletTypeRegistry portletTypeRegistry;
 
-    @Autowired
-    private IPortletCategoryRegistry portletCategoryRegistry;
+    @Autowired private IPortletCategoryRegistry portletCategoryRegistry;
 
-    @Autowired
-    private IPortletDefinitionDao portletDefinitionDao;
+    @Autowired private IPortletDefinitionDao portletDefinitionDao;
 
-    @Autowired
-    private IUserIdentityStore userIdentityStore;
+    @Autowired private IUserIdentityStore userIdentityStore;
 
     private final Date useCurrentDatetimeSignal;
 
@@ -98,12 +93,10 @@ import org.springframework.stereotype.Component;
             useCurrentDatetimeSignal = dateFormat.parse(USE_CURRENT_DATETIME_SIGNAL_DATE);
         } catch (ParseException e) {
             throw new RuntimeException(e);
-       }
+        }
     }
 
-    /**
-     * For unit tests.
-     */
+    /** For unit tests. */
     /* package-private */ void setUserIdentityStore(IUserIdentityStore userIdentityStore) {
         this.userIdentityStore = userIdentityStore;
     }
@@ -131,21 +124,21 @@ import org.springframework.stereotype.Component;
         // get the portlet type
         final IPortletType portletType = portletTypeRegistry.getPortletType(epd.getType());
         if (portletType == null) {
-            throw new IllegalArgumentException(
-                    "No portlet type registered for: " + epd.getType());
+            throw new IllegalArgumentException("No portlet type registered for: " + epd.getType());
         }
 
         final String fname = epd.getFname();
         IPortletDefinition rslt = portletDefinitionDao.getPortletDefinitionByFname(fname);
         if (rslt == null) {
-            rslt = new PortletDefinitionImpl(
-                    portletType,
-                    fname,
-                    epd.getName(),
-                    epd.getTitle(),
-                    portletDescriptor.getWebAppName(),
-                    portletDescriptor.getPortletName(),
-                    isFramework != null ? isFramework : false);
+            rslt =
+                    new PortletDefinitionImpl(
+                            portletType,
+                            fname,
+                            epd.getName(),
+                            epd.getTitle(),
+                            portletDescriptor.getWebAppName(),
+                            portletDescriptor.getPortletName(),
+                            isFramework != null ? isFramework : false);
         } else {
             final IPortletDescriptorKey portletDescriptorKey = rslt.getPortletDescriptorKey();
             portletDescriptorKey.setPortletName(portletDescriptor.getPortletName());
@@ -185,8 +178,7 @@ import org.springframework.stereotype.Component;
 
         unmarshallLifecycle(epd.getLifecycle(), rslt);
 
-        final Set<IPortletDefinitionParameter> parameters =
-                new LinkedHashSet<>();
+        final Set<IPortletDefinitionParameter> parameters = new LinkedHashSet<>();
         for (ExternalPortletParameter param : epd.getParameters()) {
             parameters.add(new PortletDefinitionParameterImpl(param.getName(), param.getValue()));
         }
@@ -205,11 +197,10 @@ import org.springframework.stereotype.Component;
         rslt.setPortletPreferences(preferenceList);
 
         return rslt;
-
     }
 
-    /* package-private */ void unmarshallLifecycle(final Lifecycle lifecycle,
-                                                   final IPortletDefinition portletDefinition) {
+    /* package-private */ void unmarshallLifecycle(
+            final Lifecycle lifecycle, final IPortletDefinition portletDefinition) {
 
         /*
          * If this is an existing portletDefinition, it may (probably does) already contain
@@ -235,51 +226,59 @@ import org.springframework.stereotype.Component;
              * Use a TreeMap because we need to be certain the the entries
              * get applied to the new portlet definition in a sane order...
              */
-            Map<IPortletLifecycleEntry,IPerson> convertedEntries = new TreeMap<>();
+            Map<IPortletLifecycleEntry, IPerson> convertedEntries = new TreeMap<>();
             /*
              * Convert each LifecycleEntry (JAXB) to an IPortletLifecycleEntry (internal)
              */
             for (LifecycleEntry entry : lifecycle.getEntries()) {
-                final IPerson user = StringUtils.isNotBlank(entry.getUser())
-                        ? userIdentityStore.getPerson(entry.getUser(), true)
-                        : systemUser; // default
+                final IPerson user =
+                        StringUtils.isNotBlank(entry.getUser())
+                                ? userIdentityStore.getPerson(entry.getUser(), true)
+                                : systemUser; // default
                 // We will support case insensitivity of entry/@name in the XML
-                final PortletLifecycleState state = PortletLifecycleState.valueOf(entry.getName().toUpperCase());
+                final PortletLifecycleState state =
+                        PortletLifecycleState.valueOf(entry.getName().toUpperCase());
                 // Entries added by an upgrade transform will not have a date
-                final Date date = entry.getValue().equals(useCurrentDatetimeSignal)
-                        ? new Date()
-                        : entry.getValue().getTime();
-                convertedEntries.put(new IPortletLifecycleEntry() {
-                    @Override
-                    public int getUserId() {
-                        return user.getID();
-                    }
-                    @Override
-                    public PortletLifecycleState getLifecycleState() {
-                        return state;
-                    }
-                    @Override
-                    public Date getDate() {
-                        return date;
-                    }
-                    @Override
-                    public int compareTo(IPortletLifecycleEntry o) {
-                        int rslt = date.compareTo(o.getDate());
-                        if (rslt == 0) {
-                            rslt = state.getOrder() - o.getLifecycleState().getOrder();
-                        }
-                        return rslt;
-                    }
-                }, user);
+                final Date date =
+                        entry.getValue().equals(useCurrentDatetimeSignal)
+                                ? new Date()
+                                : entry.getValue().getTime();
+                convertedEntries.put(
+                        new IPortletLifecycleEntry() {
+                            @Override
+                            public int getUserId() {
+                                return user.getID();
+                            }
+
+                            @Override
+                            public PortletLifecycleState getLifecycleState() {
+                                return state;
+                            }
+
+                            @Override
+                            public Date getDate() {
+                                return date;
+                            }
+
+                            @Override
+                            public int compareTo(IPortletLifecycleEntry o) {
+                                int rslt = date.compareTo(o.getDate());
+                                if (rslt == 0) {
+                                    rslt = state.getOrder() - o.getLifecycleState().getOrder();
+                                }
+                                return rslt;
+                            }
+                        },
+                        user);
             }
             /*
              * Apply them to the portlet definition
              */
-            convertedEntries.forEach((k,v) -> {
-                portletDefinition.updateLifecycleState(k.getLifecycleState(), v, k.getDate());
-            });
+            convertedEntries.forEach(
+                    (k, v) -> {
+                        portletDefinition.updateLifecycleState(
+                                k.getLifecycleState(), v, k.getDate());
+                    });
         }
-
     }
-
 }

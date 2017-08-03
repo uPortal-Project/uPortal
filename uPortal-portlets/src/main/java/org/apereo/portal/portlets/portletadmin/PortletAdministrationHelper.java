@@ -780,43 +780,45 @@ public final class PortletAdministrationHelper implements ServletContextAware {
             }
 
             final List<? extends PortletDefinition> portlets = applicationDefninition.getPortlets();
-            portlets.sort(new ComparableExtractingComparator<PortletDefinition, String>(
-                    String.CASE_INSENSITIVE_ORDER) {
-                @Override
-                protected String getComparable(PortletDefinition o) {
-                    final List<? extends DisplayName> displayNames = o.getDisplayNames();
-                    if (displayNames != null && displayNames.size() > 0) {
-                        return displayNames.get(0).getDisplayName();
-                    }
+            portlets.sort(
+                    new ComparableExtractingComparator<PortletDefinition, String>(
+                            String.CASE_INSENSITIVE_ORDER) {
+                        @Override
+                        protected String getComparable(PortletDefinition o) {
+                            final List<? extends DisplayName> displayNames = o.getDisplayNames();
+                            if (displayNames != null && displayNames.size() > 0) {
+                                return displayNames.get(0).getDisplayName();
+                            }
 
-                    return o.getPortletName();
-                }
-            });
+                            return o.getPortletName();
+                        }
+                    });
 
             contexts.add(applicationDefninition);
         }
 
-        contexts.sort(new ComparableExtractingComparator<PortletApplicationDefinition, String>(
-                String.CASE_INSENSITIVE_ORDER) {
-            @Override
-            protected String getComparable(PortletApplicationDefinition o) {
-                final String portletContextName = o.getName();
-                if (portletContextName != null) {
-                    return portletContextName;
-                }
+        contexts.sort(
+                new ComparableExtractingComparator<PortletApplicationDefinition, String>(
+                        String.CASE_INSENSITIVE_ORDER) {
+                    @Override
+                    protected String getComparable(PortletApplicationDefinition o) {
+                        final String portletContextName = o.getName();
+                        if (portletContextName != null) {
+                            return portletContextName;
+                        }
 
-                final String applicationName = o.getContextPath();
-                if ("/".equals(applicationName)) {
-                    return "ROOT";
-                }
+                        final String applicationName = o.getContextPath();
+                        if ("/".equals(applicationName)) {
+                            return "ROOT";
+                        }
 
-                if (applicationName.startsWith("/")) {
-                    return applicationName.substring(1);
-                }
+                        if (applicationName.startsWith("/")) {
+                            return applicationName.substring(1);
+                        }
 
-                return applicationName;
-            }
-        });
+                        return applicationName;
+                    }
+                });
         return contexts;
     }
 
@@ -1146,28 +1148,27 @@ public final class PortletAdministrationHelper implements ServletContextAware {
         switch (selectedLifecycleState) {
             case APPROVED:
                 // Check for an auto-publish date...
-                if (form.getPublishDate() != null && hasLifecyclePermission(
-                        publisher, PortletLifecycleState.PUBLISHED, form.getCategories())) {
+                if (form.getPublishDate() != null
+                        && hasLifecyclePermission(
+                                publisher, PortletLifecycleState.PUBLISHED, form.getCategories())) {
                     // We are also the 'publisher' if we scheduled the portlet for (future) publication...
-                    portletDef.updateLifecycleState(PortletLifecycleState.PUBLISHED, publisher,
-                            form.getPublishDateTime());
+                    portletDef.updateLifecycleState(
+                            PortletLifecycleState.PUBLISHED, publisher, form.getPublishDateTime());
                 }
                 break;
             case PUBLISHED:
                 // Check for an expiration date...
-                if (form.getExpirationDate() != null && hasLifecyclePermission(
-                        publisher, PortletLifecycleState.EXPIRED, form.getCategories())) {
+                if (form.getExpirationDate() != null
+                        && hasLifecyclePermission(
+                                publisher, PortletLifecycleState.EXPIRED, form.getCategories())) {
                     // We are also the 'expirer' if we scheduled the portlet for (future) expiration...
-                    portletDef.updateLifecycleState(PortletLifecycleState.EXPIRED, publisher,
-                            form.getExpirationDateTime());
-
+                    portletDef.updateLifecycleState(
+                            PortletLifecycleState.EXPIRED, publisher, form.getExpirationDateTime());
                 }
                 break;
             default:
                 // No extra work
                 break;
         }
-
     }
-
 }

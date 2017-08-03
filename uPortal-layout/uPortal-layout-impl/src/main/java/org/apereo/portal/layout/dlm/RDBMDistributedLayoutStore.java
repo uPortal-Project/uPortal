@@ -1588,8 +1588,10 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
             final IPortletDefinition channelDef =
                     this.portletDefinitionRegistry.getPortletDefinition(
                             String.valueOf(ls.getChanId()));
-            if (channelDef != null && channelDef.getLifecycleState()
-                    .isEqualToOrAfter(PortletLifecycleState.APPROVED)) {
+            if (channelDef != null
+                    && channelDef
+                            .getLifecycleState()
+                            .isEqualToOrAfter(PortletLifecycleState.APPROVED)) {
                 structure =
                         this.getElementForChannel(
                                 doc, channelPrefix + ls.getStructId(), channelDef, ls.getLocale());

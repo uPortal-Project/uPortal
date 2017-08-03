@@ -27,7 +27,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.apereo.portal.EntityIdentifier;
 import org.apereo.portal.IUserIdentityStore;
 import org.apereo.portal.groups.IEntity;
@@ -67,8 +66,7 @@ public class PortletDefinitionImporterExporter
         extends AbstractJaxbDataHandler<ExternalPortletDefinition>
         implements IPortletPublishingService {
 
-    @Autowired
-    private ExternalPortletDefinitionUnmarshaller portletDefinitionUnmarshaller;
+    @Autowired private ExternalPortletDefinitionUnmarshaller portletDefinitionUnmarshaller;
 
     private PortletPortalDataType portletPortalDataType;
     private IPortletDefinitionDao portletDefinitionDao;
@@ -163,7 +161,6 @@ public class PortletDefinitionImporterExporter
         }
 
         savePortletDefinition(def, categories, permissions);
-
     }
 
     // Returns the username for a valid userId, else the system username

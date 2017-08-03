@@ -17,7 +17,6 @@ package org.apereo.portal.portlet.om;
 /**
  * Parameters based on <code>IPortletDefinitionParameter</code> function as defaults for a portlet
  * and may sometimes be overridden by end users.
- *
  */
 public interface IPortletDefinitionParameter {
 
@@ -55,5 +54,4 @@ public interface IPortletDefinitionParameter {
      * @param descr description of this channel parameter.
      */
     void setDescription(String descr);
-
 }

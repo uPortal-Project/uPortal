@@ -15,7 +15,6 @@
 package org.apereo.portal.portlet.om;
 
 public enum PortletLifecycleState {
-
     CREATED(0),
     APPROVED(1),
     PUBLISHED(2),
@@ -37,7 +36,8 @@ public enum PortletLifecycleState {
             }
         }
         if (rslt == null) {
-            final String msg = "PortletLifecycleState not found for the specified order value:  " + orderValue;
+            final String msg =
+                    "PortletLifecycleState not found for the specified order value:  " + orderValue;
             throw new IllegalArgumentException(msg);
         }
         return rslt;
@@ -66,5 +66,4 @@ public enum PortletLifecycleState {
     public boolean isEqualToOrAfter(PortletLifecycleState state) {
         return (this.getOrder() >= state.getOrder());
     }
-
 }

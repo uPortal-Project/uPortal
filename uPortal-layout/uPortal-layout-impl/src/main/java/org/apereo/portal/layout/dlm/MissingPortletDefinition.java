@@ -230,10 +230,13 @@ public class MissingPortletDefinition implements IPortletDefinition {
     public void updateLifecycleState(PortletLifecycleState lifecycleState, IPerson user) {}
 
     @Override
-    public void updateLifecycleState(PortletLifecycleState lifecycleState, IPerson user, Date timestamp) {}
+    public void updateLifecycleState(
+            PortletLifecycleState lifecycleState, IPerson user, Date timestamp) {}
 
     @Override
-    public List<IPortletLifecycleEntry> getLifecycle() { return null; }
+    public List<IPortletLifecycleEntry> getLifecycle() {
+        return null;
+    }
 
     @Override
     public void clearLifecycle() {}

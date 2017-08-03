@@ -314,9 +314,7 @@ public class RDBMUserIdentityStore implements IUserIdentityStore {
         rslt.setID(getPortalUID(rslt, createPortalData));
         rslt.setSecurityContext(new BrokenSecurityContext());
         return rslt;
-
     }
-
 
     /* (non-javadoc)
      * @see org.apereo.portal.IUserIdentityStore#getPortalUserName(int)

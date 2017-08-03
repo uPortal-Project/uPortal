@@ -40,9 +40,9 @@ public interface IUserIdentityStore {
     int getPortalUID(IPerson person, boolean createPortalData) throws AuthorizationException;
 
     /**
-     * Returns the portal {@link IPerson} corresponding with the specified userName.  The
-     * <code>createPortalData</code> flag indicates whether the user should be created in
-     * the case that s/he doesn't already exist.
+     * Returns the portal {@link IPerson} corresponding with the specified userName. The <code>
+     * createPortalData</code> flag indicates whether the user should be created in the case that
+     * s/he doesn't already exist.
      *
      * @param userName The identity of the requested user
      * @param createPortalData Indicates whether to try to create all uPortal data for a new user
@@ -73,5 +73,4 @@ public interface IUserIdentityStore {
 
     /** Returns true if the specified String satisfies all criteria for a valid username. */
     boolean validateUsername(String username);
-
 }

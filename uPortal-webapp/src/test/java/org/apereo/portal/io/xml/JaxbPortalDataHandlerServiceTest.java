@@ -157,8 +157,7 @@ public class JaxbPortalDataHandlerServiceTest {
 
     protected List<IDataImporter<? extends Object>> setupAllImporters(
             MockDataImporterSetup setupCallback) {
-        final Builder<IDataImporter<? extends Object>> importersBuilder =
-                ImmutableList.builder();
+        final Builder<IDataImporter<? extends Object>> importersBuilder = ImmutableList.builder();
 
         for (final IPortalDataType portalDataType : getPortalDataTypes()) {
 
