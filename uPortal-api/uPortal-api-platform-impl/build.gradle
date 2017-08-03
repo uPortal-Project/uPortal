@@ -8,6 +8,7 @@ dependencies {
     compileOnly "${portletApiDependency}"
     compileOnly "${servletApiDependency}"
 
+    testCompile "${portletApiDependency}"
     testCompile project(':uPortal-api:uPortal-api-platform')
     testCompile "org.mockito:mockito-inline:${mockitoVersion}"
     testCompile "${servletApiDependency}"
