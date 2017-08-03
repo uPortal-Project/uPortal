@@ -12,13 +12,35 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apereo.portal.api;
+package org.apereo.portal.api.permissions;
 
-import java.io.Serializable;
+import org.junit.Assert;
+import org.junit.Test;
 
-public interface Principal extends Serializable {
+public class TargetImplTest {
+    TargetImpl target;
 
-    public String getKey();
+    @Test
+    public void test() {
+        target = new TargetImpl("key", "name");
+        target.getKey();
+    }
 
-    public String getName();
+    @Test
+    public void testGetKey() {
+        target = new TargetImpl("key", "name");
+        Assert.assertEquals("key", target.getKey());
+    }
+
+    @Test
+    public void testGetName() {
+        target = new TargetImpl("key", "name");
+        Assert.assertEquals("name", target.getName());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testGetKeyNull() {
+        target = new TargetImpl(null, null);
+        target.getKey();
+    }
 }
