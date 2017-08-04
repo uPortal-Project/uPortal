@@ -45,7 +45,7 @@ import org.apereo.portal.search.SearchResults;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.IPersonManager;
 import org.apereo.portal.url.IPortalRequestUtils;
-import org.jasig.services.persondir.IPersonAttributes;
+import org.apereo.services.persondir.IPersonAttributes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;

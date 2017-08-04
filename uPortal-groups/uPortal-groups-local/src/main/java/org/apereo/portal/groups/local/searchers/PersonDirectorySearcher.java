@@ -26,9 +26,9 @@ import org.apereo.portal.IBasicEntity;
 import org.apereo.portal.groups.GroupsException;
 import org.apereo.portal.groups.local.ITypedEntitySearcher;
 import org.apereo.portal.security.IPerson;
-import org.jasig.services.persondir.IPersonAttributeDao;
-import org.jasig.services.persondir.IPersonAttributes;
-import org.jasig.services.persondir.support.IUsernameAttributeProvider;
+import org.apereo.services.persondir.IPersonAttributeDao;
+import org.apereo.services.persondir.IPersonAttributes;
+import org.apereo.services.persondir.support.IUsernameAttributeProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

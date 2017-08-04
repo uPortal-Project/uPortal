@@ -20,8 +20,8 @@ import java.util.List;
 import java.util.Map;
 import junit.framework.TestCase;
 import org.apereo.portal.security.IPerson;
-import org.jasig.services.persondir.IPersonAttributeDao;
-import org.jasig.services.persondir.support.ComplexStubPersonAttributeDao;
+import org.apereo.services.persondir.IPersonAttributeDao;
+import org.apereo.services.persondir.support.ComplexStubPersonAttributeDao;
 
 /** Testcase for PersonDirNameFinder */
 public class PersonDirNameFinderTest extends TestCase {

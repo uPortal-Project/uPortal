@@ -30,7 +30,7 @@ import org.apereo.portal.security.provider.ChainingSecurityContext;
 import org.apereo.portal.spring.locator.ApplicationContextLocator;
 import org.jasig.cas.client.util.AssertionHolder;
 import org.jasig.cas.client.validation.Assertion;
-import org.jasig.services.persondir.support.IAdditionalDescriptors;
+import org.apereo.services.persondir.support.IAdditionalDescriptors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;

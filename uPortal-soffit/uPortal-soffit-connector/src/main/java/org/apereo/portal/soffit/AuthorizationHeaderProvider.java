@@ -33,8 +33,8 @@ import org.apereo.portal.services.GroupService;
 import org.apereo.portal.soffit.connector.AbstractHeaderProvider;
 import org.apereo.portal.soffit.model.v1_0.Bearer;
 import org.apereo.portal.soffit.service.BearerService;
-import org.jasig.services.persondir.IPersonAttributeDao;
-import org.jasig.services.persondir.IPersonAttributes;
+import org.apereo.services.persondir.IPersonAttributeDao;
+import org.apereo.services.persondir.IPersonAttributes;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**

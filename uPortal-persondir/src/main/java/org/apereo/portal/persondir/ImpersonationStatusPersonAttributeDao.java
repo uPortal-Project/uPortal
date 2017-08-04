@@ -23,10 +23,10 @@ import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.IPersonManager;
 import org.apereo.portal.security.IdentitySwapperManager;
 import org.apereo.portal.url.IPortalRequestUtils;
-import org.jasig.services.persondir.IPersonAttributes;
-import org.jasig.services.persondir.support.AbstractDefaultAttributePersonAttributeDao;
-import org.jasig.services.persondir.support.CaseInsensitiveNamedPersonImpl;
-import org.jasig.services.persondir.support.IUsernameAttributeProvider;
+import org.apereo.services.persondir.IPersonAttributes;
+import org.apereo.services.persondir.support.AbstractDefaultAttributePersonAttributeDao;
+import org.apereo.services.persondir.support.CaseInsensitiveNamedPersonImpl;
+import org.apereo.services.persondir.support.IUsernameAttributeProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**

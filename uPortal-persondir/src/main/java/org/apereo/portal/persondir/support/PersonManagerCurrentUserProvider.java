@@ -20,7 +20,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.IPersonManager;
 import org.apereo.portal.url.IPortalRequestUtils;
-import org.jasig.services.persondir.support.ICurrentUserProvider;
+import org.apereo.services.persondir.support.ICurrentUserProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /** Provides the username of the current portal user */

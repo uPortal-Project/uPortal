@@ -37,7 +37,7 @@
     <!--
      | Provides the default username attribute to use to the rest of the DAOs
      +-->
-    <bean id="usernameAttributeProvider" class="org.jasig.services.persondir.support.SimpleUsernameAttributeProvider">
+    <bean id="usernameAttributeProvider" class="org.apereo.services.persondir.support.SimpleUsernameAttributeProvider">
         <property name="usernameAttribute" value="username" />
     </bean>
     
@@ -69,11 +69,11 @@
      | Merges attributes from the request with those from other DAOs
      +-->
     <bean id="requestAttributeMergingDao"
-        class="org.jasig.services.persondir.support.MergingPersonAttributeDaoImpl">
+        class="org.apereo.services.persondir.support.MergingPersonAttributeDaoImpl">
         <property name="usernameAttributeProvider" ref="usernameAttributeProvider" />
         <property name="merger">
             <bean
-                class="org.jasig.services.persondir.support.merger.ReplacingAttributeAdder" />
+                class="org.apereo.services.persondir.support.merger.ReplacingAttributeAdder" />
         </property>
         <property name="personAttributeDaos">
             <list>
@@ -87,7 +87,7 @@
      | Servlet filter that creates an attribute for the serverName
      +-->
     <bean id="requestAttributeSourceFilter"
-        class="org.jasig.services.persondir.support.web.RequestAttributeSourceFilter">
+        class="org.apereo.services.persondir.support.web.RequestAttributeSourceFilter">
         <property name="additionalDescriptors" ref="requestAdditionalDescriptors" />
         <property name="usernameAttribute" value="remoteUser" />
         <property name="remoteUserAttribute" value="remoteUser" />
@@ -115,7 +115,7 @@
      | bean and request-scoped bean.  See http://permalink.gmane.org/gmane.comp.java.jasig.uportal/10771
      | for more information.
      +-->
-    <bean id="requestAdditionalDescriptors" class="org.jasig.services.persondir.support.MediatingAdditionalDescriptors">
+    <bean id="requestAdditionalDescriptors" class="org.apereo.services.persondir.support.MediatingAdditionalDescriptors">
         <property name="delegateDescriptors">
             <list>
                 <ref bean="sessionScopeAdditionalDescriptors"/>
@@ -124,10 +124,10 @@
         </property>
     </bean>
     <!-- Do not change this bean id without altering CasAssertionSecurityContext to refer to the new id. -->
-    <bean id="sessionScopeAdditionalDescriptors" class="org.jasig.services.persondir.support.AdditionalDescriptors" scope="globalSession">
+    <bean id="sessionScopeAdditionalDescriptors" class="org.apereo.services.persondir.support.AdditionalDescriptors" scope="globalSession">
         <aop:scoped-proxy />
     </bean>
-    <bean id="requestScopeAdditionalDescriptors" class="org.jasig.services.persondir.support.AdditionalDescriptors" scope="request">
+    <bean id="requestScopeAdditionalDescriptors" class="org.apereo.services.persondir.support.AdditionalDescriptors" scope="request">
         <aop:scoped-proxy />
     </bean>
 
@@ -136,7 +136,7 @@
      | username may not always be provided by the request object.
      +-->
     <bean id="requestAttributesDao"
-        class="org.jasig.services.persondir.support.AdditionalDescriptorsPersonAttributeDao">
+        class="org.apereo.services.persondir.support.AdditionalDescriptorsPersonAttributeDao">
         <property name="descriptors" ref="requestAdditionalDescriptors" />
         <property name="usernameAttributeProvider" ref="usernameAttributeProvider" />
         <property name="currentUserProvider" ref="currentUserProvider" />
@@ -150,18 +150,18 @@
      | caching DAO 
      +-->
     <bean id="mergedPersonAttributeDao"
-		class="org.jasig.services.persondir.support.CachingPersonAttributeDaoImpl">
+		class="org.apereo.services.persondir.support.CachingPersonAttributeDaoImpl">
         <property name="usernameAttributeProvider" ref="usernameAttributeProvider" />
         <property name="cacheNullResults" value="true" />
         <property name="userInfoCache">
             <bean class="org.apereo.portal.utils.cache.MapCacheFactoryBean">
                 <property name="cacheFactory" ref="cacheFactory" />
-                <property name="cacheName" value="org.jasig.services.persondir.USER_INFO.merged" />
+                <property name="cacheName" value="org.apereo.services.persondir.USER_INFO.merged" />
             </bean>
         </property>
         <property name="cacheKeyGenerator" ref="userAttributeCacheKeyGenerator" />
         <property name="cachedPersonAttributesDao" >
-            <bean class="org.jasig.services.persondir.support.MergingPersonAttributeDaoImpl">
+            <bean class="org.apereo.services.persondir.support.MergingPersonAttributeDaoImpl">
                 <property name="merger">
                     <!-- This is a "first one wins" strategy. I.e. the first value found for
                     any given result attribute will be assigned to the user. Different values
@@ -174,14 +174,14 @@
                         ReplacingAttributeAdder - "Last one wins" strategy. I.e. the opposite of
                           NoncollidingAttributeAdder.
                     -->
-                    <bean class="org.jasig.services.persondir.support.merger.NoncollidingAttributeAdder" />
+                    <bean class="org.apereo.services.persondir.support.merger.NoncollidingAttributeAdder" />
                 </property>
                 <property name="usernameAttributeProvider" ref="usernameAttributeProvider" />
                 <property name="personAttributeDaos">
                     <list>
                         <!-- Provides a single attribute (but only for the current logged in user):  impersonating='true'|'false' -->
                         <bean class="org.apereo.portal.persondir.ImpersonationStatusPersonAttributeDao" />
-                        <bean class="org.jasig.services.persondir.support.CascadingPersonAttributeDao">
+                        <bean class="org.apereo.services.persondir.support.CascadingPersonAttributeDao">
                             <property name="usernameAttributeProvider" ref="usernameAttributeProvider" />
                             <property name="personAttributeDaos">
                                 <list>
@@ -237,18 +237,18 @@
      | portal database and is searched for by username, results are cached by the outer caching DAO
      +-->
     <bean id="uPortalJdbcUserSource"
-          class="org.jasig.services.persondir.support.CachingPersonAttributeDaoImpl">
+          class="org.apereo.services.persondir.support.CachingPersonAttributeDaoImpl">
         <property name="usernameAttributeProvider" ref="usernameAttributeProvider" />
         <property name="cacheNullResults" value="true" />
         <property name="userInfoCache">
             <bean class="org.apereo.portal.utils.cache.MapCacheFactoryBean">
                 <property name="cacheFactory" ref="cacheFactory" />
-                <property name="cacheName" value="org.jasig.services.persondir.USER_INFO.up_user" />
+                <property name="cacheName" value="org.apereo.services.persondir.USER_INFO.up_user" />
             </bean>
         </property>
         <property name="cacheKeyGenerator" ref="userAttributeCacheKeyGenerator" />
         <property name="cachedPersonAttributesDao" >
-            <bean class="org.jasig.services.persondir.support.jdbc.SingleRowJdbcPersonAttributeDao">
+            <bean class="org.apereo.services.persondir.support.jdbc.SingleRowJdbcPersonAttributeDao">
                 <constructor-arg index="0" ref="PersonDB" />
                 <constructor-arg>
                     <value>

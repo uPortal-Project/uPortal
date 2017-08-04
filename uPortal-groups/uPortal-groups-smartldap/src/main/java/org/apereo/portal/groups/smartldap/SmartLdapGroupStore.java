@@ -44,7 +44,7 @@ import org.apereo.portal.security.PersonFactory;
 import org.danann.cernunnos.Task;
 import org.danann.cernunnos.runtime.RuntimeRequestResponse;
 import org.danann.cernunnos.runtime.ScriptRunner;
-import org.jasig.services.persondir.IPersonAttributeDao;
+import org.apereo.services.persondir.IPersonAttributeDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
