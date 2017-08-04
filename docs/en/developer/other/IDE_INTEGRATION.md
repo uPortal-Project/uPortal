@@ -14,7 +14,7 @@ Using these scripts removes the need to run custom import and configuration to i
 4. Open intellij
 5. Go to the welcome page
 6. Select open
-![open in intellij](../../images/intellij_open.png)
+![open in intellij](../../../images/intellij_open.png)
 7. Navigate to the uPortal folder
 8. Open it
 
@@ -29,6 +29,6 @@ Using these scripts removes the need to run custom import and configuration to i
 4. Open eclipse
 6. Select file > import
 7. Search for "Existing Projects into Workspace"
-![open in eclipse](../../images/eclipse_import.png)
+![open in eclipse](../../../images/eclipse_import.png)
 7. Navigate to the uPortal folder
 8. Open it
