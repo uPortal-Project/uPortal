@@ -76,14 +76,7 @@
     </xsl:variable>
 
     <!-- Evaluate the 'activeTabGroup' (optional feature) -->
-    <xsl:variable name="activeTabGroup">
-        <xsl:choose>
-            <xsl:when test="//folder[@ID=$activeTabID]/@tabGroup">
-                <xsl:value-of select="//folder[@ID=$activeTabID]/@tabGroup"/>
-            </xsl:when>
-            <xsl:otherwise>DEFAULT_TABGROUP</xsl:otherwise>
-        </xsl:choose>
-    </xsl:variable>
+    <xsl:variable name="activeTabGroup" select="'DEFAULT_TABGROUP'"/>
 
     <!-- ROOT template.  Chooses between templates that produce <layout_fragment> 
          (in DETACHED window state) and simply <layout> (in the general case). -->
