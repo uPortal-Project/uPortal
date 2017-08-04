@@ -43,7 +43,7 @@
     </xsl:variable>
 
     <!-- Used to build the tabGroupsList:  discover tab groups, add each to the list ONLY ONCE -->
-  <!--  <xsl:key name="tabGroupKey" match="layout/folder/folder[@hidden='false' and @type='regular']" use="@tabGroup"/> -->
+    <xsl:key name="tabGroupKey" match="layout/folder/folder[@hidden='false' and @type='regular']" use="@tabGroup"/>
 
     <xsl:variable name="activeTabGroup">DEFAULT_TABGROUP</xsl:variable>
 
