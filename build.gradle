@@ -74,6 +74,13 @@ allprojects {
         options style: 'AOSP'
         exclude '**/generated-sources'
     }
+
+    /*======== Aggregate Dependencies Report ========*/
+    task dependenciesRecursive(type: DependencyReportTask) {
+        group = 'Help'
+        description = 'Provides a complete report on project dependencies;  use option (e.g.) --configuration compile to narrow'
+    }
+
 }
 
 /*======== Child Projects ========*/
