@@ -32,7 +32,8 @@ public class JsonWrapperFilteringCharacterPipelineComponent
      * @see org.apereo.portal.rendering.PipelineComponent#getCacheKey(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
     @Override
-    public CacheKey getCacheKey(HttpServletRequest request, HttpServletResponse response) {
+    public CacheKey getCacheKey(HttpServletRequest request, HttpServletResponse response)
+            throws IllegalStateException {
         if (this.wrappedComponent != null) {
             return this.wrappedComponent.getCacheKey(request, response);
         } else {
@@ -46,7 +47,7 @@ public class JsonWrapperFilteringCharacterPipelineComponent
      */
     @Override
     public PipelineEventReader<CharacterEventReader, CharacterEvent> getEventReader(
-            HttpServletRequest request, HttpServletResponse response) {
+            HttpServletRequest request, HttpServletResponse response) throws IllegalStateException {
         if (this.wrappedComponent != null) {
             final PipelineEventReader<CharacterEventReader, CharacterEvent> pipelineEventReader =
                     this.wrappedComponent.getEventReader(request, response);
