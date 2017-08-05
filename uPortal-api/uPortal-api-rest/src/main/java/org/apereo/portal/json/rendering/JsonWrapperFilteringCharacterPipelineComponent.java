@@ -35,8 +35,10 @@ public class JsonWrapperFilteringCharacterPipelineComponent
     public CacheKey getCacheKey(HttpServletRequest request, HttpServletResponse response) {
         if (this.wrappedComponent != null) {
             return this.wrappedComponent.getCacheKey(request, response);
+        } else {
+            logger.debug("PipelineComponentWrapper.wrapperComponent is null");
+            throw new IllegalStateException("PipelineComponentWrapper.wrapperComponent is null");
         }
-        return null;
     }
 
     /* (non-Javadoc)
@@ -55,7 +57,9 @@ public class JsonWrapperFilteringCharacterPipelineComponent
             final Map<String, String> outputProperties = pipelineEventReader.getOutputProperties();
             return new PipelineEventReaderImpl<CharacterEventReader, CharacterEvent>(
                     jsonWrapperFilteringCharacterEventReader, outputProperties);
+        } else {
+            logger.warn("PipelineComponentWrapper.wrapperComponent is null");
+            throw new IllegalStateException("PipelineComponentWrapper.wrapperComponent is null");
         }
-        return null;
     }
 }

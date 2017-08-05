@@ -50,7 +50,10 @@ public class GroupRESTController {
         IPerson person = personManager.getPerson(request);
         Set<Entity> groups = Collections.EMPTY_SET;
         if (person != null) {
-            groups = groupService.getGroupsForMember(person.getUserName());
+            String username = person.getUserName();
+            if (username != null) {
+                groups = groupService.getGroupsForMember(username);
+            }
         }
 
         return new ModelAndView("json", "groups", groups);
