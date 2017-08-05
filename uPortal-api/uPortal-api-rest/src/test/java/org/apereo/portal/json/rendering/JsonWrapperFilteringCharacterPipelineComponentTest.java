@@ -48,7 +48,7 @@ public class JsonWrapperFilteringCharacterPipelineComponentTest {
         MockitoAnnotations.initMocks(this);
     }
 
-    @Test
+    @Test(expected = IllegalStateException.class)
     public void testGetEventReaderNull() {
         jsonWrapperFilteringCharacterPipelineComponent.setWrappedComponent(null);
         Assert.assertNull(jsonWrapperFilteringCharacterPipelineComponent.getEventReader(req, res));
@@ -66,7 +66,7 @@ public class JsonWrapperFilteringCharacterPipelineComponentTest {
         Mockito.verify(wrappedComponent).getEventReader(req, res);
     }
 
-    @Test
+    @Test(expected = IllegalStateException.class)
     public void testGetCacheKeyNull() {
         CacheKey cacheKey = jsonWrapperFilteringCharacterPipelineComponent.getCacheKey(req, res);
         Assert.assertNull(cacheKey);

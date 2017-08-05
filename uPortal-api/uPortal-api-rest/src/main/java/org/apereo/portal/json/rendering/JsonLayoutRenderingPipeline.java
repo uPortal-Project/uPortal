@@ -96,7 +96,11 @@ public class JsonLayoutRenderingPipeline implements IPortalRenderingPipeline {
                 writer.flush();
                 res.flushBuffer();
             }
+        } else {
+            logger.warn("PipelineEventReader is null");
+            throw new IllegalStateException("PipelineEventReader is null");
         }
+
         final long executionTime = System.nanoTime() - startTime;
 
         final IPortalRequestInfo portalRequestInfo =

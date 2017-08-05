@@ -48,7 +48,7 @@ public class JsonLayoutRenderingPipelineTest {
         MockitoAnnotations.initMocks(this);
     }
 
-    @Test
+    @Test(expected = IllegalStateException.class)
     public void testRenderStateNull() throws ServletException, IOException {
         pipeline = mock(CharacterPipelineComponent.class);
         jsonLayoutRenderingPipeline.setPipeline(pipeline);
