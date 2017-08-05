@@ -37,7 +37,7 @@ import org.springframework.beans.factory.annotation.Required;
 public class OverwritingPersonAttributeDao extends AbstractFlatteningPersonAttributeDao {
     private final IAttributeMerger attributeMerger = new ReplacingAttributeAdder();
     private Map<String, Map<String, List<Object>>> attributeOverridesMap =
-            new ConcurrentHashMap<String, Map<String, List<Object>>>();
+            new ConcurrentHashMap<>();
 
     private IPersonAttributeDao delegatePersonAttributeDao;
 
