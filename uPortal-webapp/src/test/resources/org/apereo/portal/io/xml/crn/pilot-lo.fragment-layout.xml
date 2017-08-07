@@ -35,10 +35,6 @@
     <folder ID="s12" hidden="false" dlm:deleteAllowed="false"
       dlm:editAllowed="false" dlm:moveAllowed="false" immutable="true"
       name="Award Record" type="regular" unremovable="true">
-      <structure-attribute type="folder">
-        <name>tabGroup</name>
-        <value>Pilot</value>
-      </structure-attribute>
       <folder ID="s121" dlm:deleteAllowed="false"
         dlm:editAllowed="false" dlm:moveAllowed="false" hidden="false"
         immutable="true" name="registration folder" type="regular"
