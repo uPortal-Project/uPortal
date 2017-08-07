@@ -4,5 +4,6 @@ gems:
   - jekyll-optional-front-matter
   - jekyll-readme-index
   - jekyll-titles-from-headings
+  - jekyll-redirect-from
 
 theme: jekyll-theme-dinky
