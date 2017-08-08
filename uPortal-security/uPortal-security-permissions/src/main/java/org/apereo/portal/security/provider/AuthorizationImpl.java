@@ -39,6 +39,7 @@ import org.apereo.portal.permission.target.IPermissionTarget;
 import org.apereo.portal.permission.target.IPermissionTargetProvider;
 import org.apereo.portal.permission.target.IPermissionTargetProviderRegistry;
 import org.apereo.portal.portlet.om.IPortletDefinition;
+import org.apereo.portal.portlet.om.IPortletLifecycleEntry;
 import org.apereo.portal.portlet.om.PortletCategory;
 import org.apereo.portal.portlet.om.PortletLifecycleState;
 import org.apereo.portal.portlet.registry.IPortletDefinitionRegistry;
@@ -245,29 +246,32 @@ public class AuthorizationImpl implements IAuthorizationService {
     /**
      * Answers if the principal has permission to MANAGE this Channel.
      *
-     * @return boolean
-     * @param principal IAuthorizationPrincipal
-     * @param portletDefinitionId
+     * @param principal IAuthorizationPrincipal The user who wants to manage the portlet
+     * @param portletDefinitionId The Id of the portlet being managed
+     * @return True if the specified user is allowed to manage the specified portlet; otherwise
+     *     false
      * @exception AuthorizationException indicates authorization information could not be retrieved.
      */
     @Override
     @RequestCache
     public boolean canPrincipalManage(IAuthorizationPrincipal principal, String portletDefinitionId)
             throws AuthorizationException {
-        String owner = IPermission.PORTAL_PUBLISH;
-        String target = IPermission.PORTLET_PREFIX + portletDefinitionId;
 
-        // retrieve the indicated channel from the channel registry store and
-        // determine its current lifecycle state
+        final String owner = IPermission.PORTAL_PUBLISH;
+        final String target = IPermission.PORTLET_PREFIX + portletDefinitionId;
+
+        // Retrieve the indicated portlet from the portlet registry store and
+        // determine its current lifecycle state.
         IPortletDefinition portlet =
                 this.portletDefinitionRegistry.getPortletDefinition(portletDefinitionId);
         if (portlet == null) {
+            /*
+             * Is this what happens when a portlet is new?  Shouldn't we
+             * be checking PORTLET_MANAGER_CREATED_ACTIVITY in that case?
+             */
             return doesPrincipalHavePermission(
                     principal, owner, IPermission.PORTLET_MANAGER_APPROVED_ACTIVITY, target);
-            //    	throw new AuthorizationException("Unable to locate channel " + channelPublishId);
         }
-        PortletLifecycleState state = portlet.getLifecycleState();
-        int order = state.getOrder();
 
         /*
          * The following code assumes that later lifecycle states imply permission
@@ -279,45 +283,34 @@ public class AuthorizationImpl implements IAuthorizationService {
          * may not yet be published or expired.
          */
 
-        String activity = IPermission.PORTLET_MANAGER_MAINTENANCE_ACTIVITY;
-        if (order <= PortletLifecycleState.MAINTENANCE.getOrder()
-                && doesPrincipalHavePermission(principal, owner, activity, target)) {
-            return true;
+        final IPortletLifecycleEntry highestLifecycleEntryDefined =
+                portlet.getLifecycle().get(portlet.getLifecycle().size() - 1);
+
+        String activity;
+        switch (highestLifecycleEntryDefined.getLifecycleState()) {
+            case CREATED:
+                activity = IPermission.PORTLET_MANAGER_CREATED_ACTIVITY;
+                break;
+            case APPROVED:
+                activity = IPermission.PORTLET_MANAGER_APPROVED_ACTIVITY;
+                break;
+            case PUBLISHED:
+                activity = IPermission.PORTLET_MANAGER_ACTIVITY;
+                break;
+            case EXPIRED:
+                activity = IPermission.PORTLET_MANAGER_EXPIRED_ACTIVITY;
+                break;
+            case MAINTENANCE:
+                activity = IPermission.PORTLET_MANAGER_MAINTENANCE_ACTIVITY;
+                break;
+            default:
+                final String msg =
+                        "Unrecognized portlet lifecycle state:  "
+                                + highestLifecycleEntryDefined.getLifecycleState();
+                throw new IllegalStateException(msg);
         }
 
-        activity = IPermission.PORTLET_MANAGER_EXPIRED_ACTIVITY;
-        if ((order <= PortletLifecycleState.EXPIRED.getOrder()
-                        || portlet.getExpirationDate() != null)
-                && doesPrincipalHavePermission(principal, owner, activity, target)) {
-            return true;
-        }
-
-        activity = IPermission.PORTLET_MANAGER_ACTIVITY;
-        if ((order <= PortletLifecycleState.PUBLISHED.getOrder()
-                        || portlet.getPublishDate() != null)
-                && doesPrincipalHavePermission(principal, owner, activity, target)) {
-            return true;
-        }
-
-        activity = IPermission.PORTLET_MANAGER_APPROVED_ACTIVITY;
-        log.debug(
-                "order: "
-                        + order
-                        + ", approved order: "
-                        + PortletLifecycleState.APPROVED.getOrder());
-        if (order <= PortletLifecycleState.APPROVED.getOrder()
-                && doesPrincipalHavePermission(principal, owner, activity, target)) {
-            return true;
-        }
-
-        activity = IPermission.PORTLET_MANAGER_CREATED_ACTIVITY;
-        if (order <= PortletLifecycleState.CREATED.getOrder()
-                && doesPrincipalHavePermission(principal, owner, activity, target)) {
-            return true;
-        }
-
-        // if no permissions were found, return false
-        return false;
+        return doesPrincipalHavePermission(principal, owner, activity, target);
     }
 
     /**

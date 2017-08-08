@@ -29,7 +29,7 @@
             <jaxb:package name="org.apereo.portal.io.xml" />
         </jaxb:schemaBindings>
     </jaxb:bindings>
-    <jaxb:bindings schemaLocation="../resources/xsd/portlet-definition-4.3.xsd">
+    <jaxb:bindings schemaLocation="../resources/xsd/portlet-definition-5.0.xsd">
         <jaxb:bindings node="//xs:element[@name='portlet-definition']">
             <jaxb:class name="ExternalPortletDefinition"/>
         </jaxb:bindings>

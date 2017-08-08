@@ -28,8 +28,8 @@
     xmlns:io="https://source.jasig.org/schemas/uportal/io"
     elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0">
 
-    <xs:import namespace="https://source.jasig.org/schemas/uportal" schemaLocation="common-types-4.0.xsd"/>
-    <xs:import namespace="https://source.jasig.org/schemas/uportal/io" schemaLocation="common-io-types-4.0.xsd"/>
+    <xs:import namespace="https://source.jasig.org/schemas/uportal" schemaLocation="../../common-types-4.0.xsd"/>
+    <xs:import namespace="https://source.jasig.org/schemas/uportal/io" schemaLocation="../common-io-types-4.0.xsd"/>
 
     <xs:element name="portlet-definition">
         <xs:complexType>

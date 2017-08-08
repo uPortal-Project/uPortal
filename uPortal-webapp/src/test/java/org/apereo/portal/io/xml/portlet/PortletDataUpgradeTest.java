@@ -96,7 +96,19 @@ public class PortletDataUpgradeTest extends BaseXsltDataUpgraderTest {
                         "/org/apereo/portal/io/xml/portlet/test-portlet-1_40.portlet-definitionl.xml"),
                 new ClassPathResource(
                         "/org/apereo/portal/io/xml/portlet/test-portlet-1_40-43_expected.portlet-definition.xml"),
-                new ClassPathResource("/xsd/portlet-definition-4.3.xsd"));
+                new ClassPathResource("/xsd/io/portlet-definition/portlet-definition-4.3.xsd"));
+    }
+
+    @Test
+    public void testUpgradeTestPortlet43to50() throws Exception {
+        testXsltUpgrade(
+                new ClassPathResource("/org/apereo/portal/io/xml/portlet/upgradePortlet_43.xsl"),
+                PortletPortalDataType.IMPORT_43_DATA_KEY,
+                new ClassPathResource(
+                        "/org/apereo/portal/io/xml/portlet/test-portlet-1_43.portlet-definition.xml"),
+                new ClassPathResource(
+                        "/org/apereo/portal/io/xml/portlet/test-portlet-1_43-50_expected.portlet-definition.xml"),
+                new ClassPathResource("/xsd/portlet-definition-5.0.xsd"));
     }
 
     @Test
