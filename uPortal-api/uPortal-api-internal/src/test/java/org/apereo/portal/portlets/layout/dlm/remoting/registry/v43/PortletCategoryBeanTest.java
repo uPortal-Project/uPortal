@@ -14,17 +14,17 @@
  */
 package org.apereo.portal.portlets.layout.dlm.remoting.registry.v43;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import org.apereo.portal.layout.dlm.remoting.registry.v43.PortletCategoryBean;
+import org.apereo.portal.portlet.om.PortletCategory;
+import org.junit.Test;
 
 import java.util.Collections;
 import java.util.Set;
 import java.util.TreeSet;
-import org.apereo.portal.layout.dlm.remoting.registry.v43.PortletCategoryBean;
-import org.apereo.portal.layout.dlm.remoting.registry.v43.PortletDefinitionBean;
-import org.apereo.portal.portlet.om.PortletCategory;
-import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class PortletCategoryBeanTest {
 
@@ -137,7 +137,7 @@ public class PortletCategoryBeanTest {
         return PortletCategoryBean.fromPortletCategory(
                 pc,
                 buildTestCategorySet(cat1id, cat1name, cat1desc),
-                buildTestPortletDefinitionSet());
+                Collections.emptySet());
     }
 
     private PortletCategoryBean buildTestPortletCategoryBean(String id, String name, String desc) {
@@ -155,11 +155,5 @@ public class PortletCategoryBeanTest {
         Set<PortletCategoryBean> testCategorySet = new TreeSet<>();
         testCategorySet.add(pcb);
         return testCategorySet;
-    }
-
-    private Set<PortletDefinitionBean> buildTestPortletDefinitionSet() {
-        //TODO The PortletDefinitionBean is a fairly involved class to mock
-        Set<PortletDefinitionBean> testSet = Collections.emptySet();
-        return testSet;
     }
 }

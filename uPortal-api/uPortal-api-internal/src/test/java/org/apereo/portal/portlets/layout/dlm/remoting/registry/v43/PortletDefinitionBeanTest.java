@@ -14,20 +14,7 @@
  */
 package org.apereo.portal.portlets.layout.dlm.remoting.registry.v43;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import com.google.common.collect.ImmutableSet;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
 import org.apereo.portal.EntityIdentifier;
 import org.apereo.portal.layout.dlm.remoting.registry.v43.PortletDefinitionBean;
 import org.apereo.portal.portlet.marketplace.IMarketplaceService;
@@ -36,6 +23,7 @@ import org.apereo.portal.portlet.om.IPortletDefinition;
 import org.apereo.portal.portlet.om.IPortletDefinitionId;
 import org.apereo.portal.portlet.om.IPortletDefinitionParameter;
 import org.apereo.portal.portlet.om.IPortletDescriptorKey;
+import org.apereo.portal.portlet.om.IPortletLifecycleEntry;
 import org.apereo.portal.portlet.om.IPortletPreference;
 import org.apereo.portal.portlet.om.IPortletType;
 import org.apereo.portal.portlet.om.PortletCategory;
@@ -49,6 +37,20 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class PortletDefinitionBeanTest {
 
@@ -331,6 +333,26 @@ public class PortletDefinitionBeanTest {
             return state;
         }
 
+        @Override
+        public void updateLifecycleState(PortletLifecycleState lifecycleState, IPerson user) {
+
+        }
+
+        @Override
+        public void updateLifecycleState(PortletLifecycleState lifecycleState, IPerson user, Date timestamp) {
+
+        }
+
+        @Override
+        public List<IPortletLifecycleEntry> getLifecycle() {
+            return null;
+        }
+
+        @Override
+        public void clearLifecycle() {
+
+        }
+
         public void setLifecycleState(PortletLifecycleState state) {
             this.state = state;
         }
@@ -438,36 +460,6 @@ public class PortletDefinitionBeanTest {
         }
 
         @Override
-        public int getPublisherId() {
-            return 0;
-        }
-
-        @Override
-        public int getApproverId() {
-            return 0;
-        }
-
-        @Override
-        public Date getPublishDate() {
-            return null;
-        }
-
-        @Override
-        public Date getApprovalDate() {
-            return null;
-        }
-
-        @Override
-        public int getExpirerId() {
-            return 0;
-        }
-
-        @Override
-        public Date getExpirationDate() {
-            return null;
-        }
-
-        @Override
         public Set<IPortletDefinitionParameter> getParameters() {
             return null;
         }
@@ -550,24 +542,6 @@ public class PortletDefinitionBeanTest {
 
         @Override
         public void setType(IPortletType channelType) {}
-
-        @Override
-        public void setPublisherId(int publisherId) {}
-
-        @Override
-        public void setApproverId(int approvalId) {}
-
-        @Override
-        public void setPublishDate(Date publishDate) {}
-
-        @Override
-        public void setApprovalDate(Date approvalDate) {}
-
-        @Override
-        public void setExpirerId(int expirerId) {}
-
-        @Override
-        public void setExpirationDate(Date expirationDate) {}
 
         @Override
         public void setParameters(Set<IPortletDefinitionParameter> parameters) {}
