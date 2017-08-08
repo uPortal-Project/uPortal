@@ -55,8 +55,9 @@ public class GroupListHelperImpl implements IGroupListHelper {
         Set<JsonEntityBean> results = new HashSet<JsonEntityBean>();
 
         EntityEnum entityEnum = EntityEnum.getEntityEnum(entityType);
-        if(entityEnum == null) {
-            throw new IllegalArgumentException(String.format("Parameter entityType has an unknown value of [%s]", entityType));
+        if (entityEnum == null) {
+            throw new IllegalArgumentException(
+                    String.format("Parameter entityType has an unknown value of [%s]", entityType));
         }
 
         EntityIdentifier[] identifiers;
@@ -287,8 +288,9 @@ public class GroupListHelperImpl implements IGroupListHelper {
 
         // get the EntityEnum for the specified entity type
         EntityEnum entityEnum = EntityEnum.getEntityEnum(entityType);
-        if(entityEnum == null) {
-            throw new IllegalArgumentException(String.format("Parameter entityType has an unknown value of [%s]", entityType));
+        if (entityEnum == null) {
+            throw new IllegalArgumentException(
+                    String.format("Parameter entityType has an unknown value of [%s]", entityType));
         }
         // if the entity type is a group, use the group service's findGroup method
         // to locate it
@@ -365,7 +367,7 @@ public class GroupListHelperImpl implements IGroupListHelper {
 
     @Override
     public JsonEntityBean getEntityForPrincipal(String principalString) {
-        if(principalString == null) {
+        if (principalString == null) {
             throw new IllegalArgumentException("Parameter cannot be null.");
         }
         // split the principal string into its type and key components
@@ -388,14 +390,14 @@ public class GroupListHelperImpl implements IGroupListHelper {
 
     @Override
     public IAuthorizationPrincipal getPrincipalForEntity(JsonEntityBean entity) {
-        if(entity == null) {
+        if (entity == null) {
             throw new IllegalArgumentException("Parameter cannot be null.");
         }
 
         // attempt to determine the entity type class for this principal
         Class entityType;
         EntityEnum jsonType = entity.getEntityType();
-        if(jsonType == null) {
+        if (jsonType == null) {
             throw new IllegalArgumentException("Parameter's entityType cannot be null.");
         }
         if (jsonType.isGroup()) {
@@ -443,7 +445,7 @@ public class GroupListHelperImpl implements IGroupListHelper {
      */
     @Override
     public EntityEnum getEntityType(IGroupMember entity) {
-        if(entity == null) {
+        if (entity == null) {
             throw new IllegalArgumentException("Parameter must not be null");
         }
 
@@ -482,12 +484,15 @@ public class GroupListHelperImpl implements IGroupListHelper {
      */
     @Override
     public String lookupEntityName(JsonEntityBean entity) {
-        if(entity == null) {
+        if (entity == null) {
             throw new IllegalArgumentException("Parameter cannot be null.");
         }
         EntityEnum entityEnum = entity.getEntityType();
-        if(entityEnum == null) {
-            throw new IllegalArgumentException(String.format("Parameter's entityType has an unknown value of [%s]", entity.getEntityType()));
+        if (entityEnum == null) {
+            throw new IllegalArgumentException(
+                    String.format(
+                            "Parameter's entityType has an unknown value of [%s]",
+                            entity.getEntityType()));
         }
         IEntityNameFinder finder;
         if (entityEnum.isGroup()) {

@@ -1,5 +1,12 @@
 package org.apereo.portal.portlets.layout.dlm.remoting;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Set;
+import javax.naming.Name;
 import org.apereo.portal.EntityIdentifier;
 import org.apereo.portal.IBasicEntity;
 import org.apereo.portal.groups.GroupsException;
@@ -16,23 +23,11 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-import javax.naming.Name;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Set;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 public class GroupListHelperImplTest {
 
+    @Mock private IEntityGroup entityGroup;
 
-    @Mock
-    private IEntityGroup entityGroup;
-
-    @Mock
-    private IGroupMember groupMember;
-
+    @Mock private IGroupMember groupMember;
 
     @Before
     public void setup() throws Exception {
@@ -40,6 +35,7 @@ public class GroupListHelperImplTest {
         groupMember = Mockito.mock(IGroupMember.class);
         MockitoAnnotations.initMocks(this);
     }
+
     @Test
     public void testGetEntityTypesForGroupTypeGroup() {
         GroupListHelperImpl helper = new GroupListHelperImpl();
@@ -100,7 +96,6 @@ public class GroupListHelperImplTest {
         helper.getEntityType(null);
     }
 
-
     @Test
     public void testGetEntityTypePortlet() {
         GroupListHelperImpl helper = new GroupListHelperImpl();
@@ -113,7 +108,8 @@ public class GroupListHelperImplTest {
     @Test
     public void testGetEntityTypeCategory() {
         GroupListHelperImpl helper = new GroupListHelperImpl();
-        MockedGroupMemberEntityGroup mocked = new MockedGroupMemberEntityGroup(IPortletDefinition.class);
+        MockedGroupMemberEntityGroup mocked =
+                new MockedGroupMemberEntityGroup(IPortletDefinition.class);
 
         EntityEnum ee = helper.getEntityType(mocked);
         assertEquals("category", ee.toString());
@@ -133,7 +129,6 @@ public class GroupListHelperImplTest {
         jeb.setEntityType(ee);
         helper.getPrincipalForEntity(jeb);
     }
-
 
     @Test(expected = IllegalArgumentException.class)
     public void testLookupEntityNameNull() {
@@ -164,7 +159,6 @@ public class GroupListHelperImplTest {
         helper.lookupEntityName(null);
     }
 
-
     @Test(expected = IllegalArgumentException.class)
     public void testGetEntityByGroupMemberNull() {
         GroupListHelperImpl helper = new GroupListHelperImpl();
@@ -172,19 +166,18 @@ public class GroupListHelperImplTest {
         helper.getEntity(null);
     }
 
-
     @Test
     public void testGetEntityBeansNull() {
         GroupListHelperImpl helper = new GroupListHelperImpl();
 
-        assertEquals(Collections.EMPTY_LIST,helper.getEntityBeans(null));
+        assertEquals(Collections.EMPTY_LIST, helper.getEntityBeans(null));
     }
 
     @Test
     public void testGetEntityBeansEmpty() {
         GroupListHelperImpl helper = new GroupListHelperImpl();
 
-        assertEquals(Collections.EMPTY_LIST,helper.getEntityBeans(new ArrayList<String>()));
+        assertEquals(Collections.EMPTY_LIST, helper.getEntityBeans(new ArrayList<String>()));
     }
 
     private IGroupMember manuallyMockGroupMember(Class<? extends IBasicEntity> leafType) {
@@ -252,6 +245,7 @@ public class GroupListHelperImplTest {
         public MockedGroupMemberEntityGroup(Class<? extends IBasicEntity> leafType) {
             this.leafType = leafType;
         }
+
         @Override
         public boolean hasMembers() throws GroupsException {
             return false;
@@ -278,14 +272,10 @@ public class GroupListHelperImplTest {
         }
 
         @Override
-        public void addChild(IGroupMember gm) throws GroupsException {
-
-        }
+        public void addChild(IGroupMember gm) throws GroupsException {}
 
         @Override
-        public void delete() throws GroupsException {
-
-        }
+        public void delete() throws GroupsException {}
 
         @Override
         public String getCreatorID() {
@@ -318,39 +308,26 @@ public class GroupListHelperImplTest {
         }
 
         @Override
-        public void removeChild(IGroupMember gm) throws GroupsException {
-
-        }
+        public void removeChild(IGroupMember gm) throws GroupsException {}
 
         @Override
-        public void setCreatorID(String userID) {
-
-        }
+        public void setCreatorID(String userID) {}
 
         @Override
-        public void setDescription(String name) {
-
-        }
+        public void setDescription(String name) {}
 
         @Override
-        public void setName(String name) throws GroupsException {
-
-        }
+        public void setName(String name) throws GroupsException {}
 
         @Override
-        public void update() throws GroupsException {
-
-        }
+        public void update() throws GroupsException {}
 
         @Override
-        public void updateMembers() throws GroupsException {
-
-        }
+        public void updateMembers() throws GroupsException {}
 
         @Override
-        public void setLocalGroupService(IIndividualGroupService groupService) throws GroupsException {
-
-        }
+        public void setLocalGroupService(IIndividualGroupService groupService)
+                throws GroupsException {}
 
         @Override
         public Set<IEntityGroup> getAncestorGroups() throws GroupsException {
@@ -407,5 +384,4 @@ public class GroupListHelperImplTest {
             return null;
         }
     }
-
 }
