@@ -14,17 +14,16 @@
  */
 package org.apereo.portal.portlets.layout.dlm.remoting.registry.v43;
 
-import org.apereo.portal.layout.dlm.remoting.registry.v43.PortletCategoryBean;
-import org.apereo.portal.portlet.om.PortletCategory;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Collections;
 import java.util.Set;
 import java.util.TreeSet;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import org.apereo.portal.layout.dlm.remoting.registry.v43.PortletCategoryBean;
+import org.apereo.portal.portlet.om.PortletCategory;
+import org.junit.Test;
 
 public class PortletCategoryBeanTest {
 
@@ -135,9 +134,7 @@ public class PortletCategoryBeanTest {
         pc.setName(name);
         pc.setDescription(desc);
         return PortletCategoryBean.fromPortletCategory(
-                pc,
-                buildTestCategorySet(cat1id, cat1name, cat1desc),
-                Collections.emptySet());
+                pc, buildTestCategorySet(cat1id, cat1name, cat1desc), Collections.emptySet());
     }
 
     private PortletCategoryBean buildTestPortletCategoryBean(String id, String name, String desc) {

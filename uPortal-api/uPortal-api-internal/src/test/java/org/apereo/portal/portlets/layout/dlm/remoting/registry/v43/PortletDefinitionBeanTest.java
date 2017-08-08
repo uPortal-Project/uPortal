@@ -14,7 +14,20 @@
  */
 package org.apereo.portal.portlets.layout.dlm.remoting.registry.v43;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import com.google.common.collect.ImmutableSet;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 import org.apereo.portal.EntityIdentifier;
 import org.apereo.portal.layout.dlm.remoting.registry.v43.PortletDefinitionBean;
 import org.apereo.portal.portlet.marketplace.IMarketplaceService;
@@ -37,20 +50,6 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 public class PortletDefinitionBeanTest {
 
@@ -334,14 +333,11 @@ public class PortletDefinitionBeanTest {
         }
 
         @Override
-        public void updateLifecycleState(PortletLifecycleState lifecycleState, IPerson user) {
-
-        }
+        public void updateLifecycleState(PortletLifecycleState lifecycleState, IPerson user) {}
 
         @Override
-        public void updateLifecycleState(PortletLifecycleState lifecycleState, IPerson user, Date timestamp) {
-
-        }
+        public void updateLifecycleState(
+                PortletLifecycleState lifecycleState, IPerson user, Date timestamp) {}
 
         @Override
         public List<IPortletLifecycleEntry> getLifecycle() {
@@ -349,9 +345,7 @@ public class PortletDefinitionBeanTest {
         }
 
         @Override
-        public void clearLifecycle() {
-
-        }
+        public void clearLifecycle() {}
 
         public void setLifecycleState(PortletLifecycleState state) {
             this.state = state;
