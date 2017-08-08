@@ -52,6 +52,12 @@ public class JsonEntityBean implements Serializable, Comparable<JsonEntityBean> 
 
     public JsonEntityBean(IGroupMember groupMember, EntityEnum entityType) {
         this.entityType = entityType;
+        if (groupMember == null) {
+            throw new IllegalArgumentException("groupMember cannot be null.");
+        }
+        if (entityType == null) {
+            throw new IllegalArgumentException("entityType cannot be null.");
+        }
         this.id = groupMember.getKey();
         String prefix = ""; // default
         switch (entityType) {
@@ -68,6 +74,12 @@ public class JsonEntityBean implements Serializable, Comparable<JsonEntityBean> 
     }
 
     public JsonEntityBean(IEntityGroup entityGroup, EntityEnum entityType) {
+        if (entityGroup == null) {
+            throw new IllegalArgumentException("entityGroup cannot be null.");
+        }
+        if (entityType == null) {
+            throw new IllegalArgumentException("entityType cannot be null.");
+        }
         this.entityType = entityType;
         this.id = entityGroup.getKey();
         this.name = entityGroup.getName();
@@ -235,9 +247,8 @@ public class JsonEntityBean implements Serializable, Comparable<JsonEntityBean> 
                 .append(this.entityType, entity.getEntityType())
                 .append(this.creatorId, entity.getCreatorId())
                 .append(this.description, entity.getDescription())
-                .append(this.entityType, entity.getEntityType())
                 .append(this.id, entity.getId())
-                .append(this.principalString, this.getPrincipalString())
+                .append(this.principalString, entity.getPrincipalString())
                 .toComparison();
     }
 
