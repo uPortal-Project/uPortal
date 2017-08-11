@@ -85,13 +85,13 @@ The color variables 1-6 are the values that the dynamic respondr skin portlet cu
 @color6
 ```
 
-![Dynamic Respondr Skin Portlet Page](images/dynamic-respondr-skin.png)
+![Dynamic Respondr Skin Portlet Page](../images/dynamic-respondr-skin.png)
 
 ### Page Effects
 
 Portal background color and image can have special effects applied.
 Setting `@portal-page-body-background-image-filter` allows for any combination [css filters](https://developer.mozilla.org/en-US/docs/Web/CSS/filter) to be applied.
 
-![No background effect](images/background-filter-none.png)
+![No background effect](../images/background-filter-none.png)
 
-![Sepia background effect](images/background-filter-sepia.png)
+![Sepia background effect](../images/background-filter-sepia.png)
