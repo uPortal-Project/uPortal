@@ -199,6 +199,7 @@ public class PersonDirectoryConfiguration {
      * Merges attributes from the request with those from other DAOs.
      */
     @Bean(name = "requestAttributeMergingDao")
+    @Qualifier("uPortalInternal")
     public IPersonAttributeDao getRequestAttributeMergingDao() {
         final MergingPersonAttributeDaoImpl rslt = new MergingPersonAttributeDaoImpl();
         rslt.setUsernameAttributeProvider(getUsernameAttributeProvider());
@@ -215,6 +216,7 @@ public class PersonDirectoryConfiguration {
      * currentUserProvider since the username may not always be provided by the request object.
      */
     @Bean(name = "requestAttributesDao")
+    @Qualifier("uPortalInternal")
     public IPersonAttributeDao getRequestAttributesDao() {
         final AdditionalDescriptorsPersonAttributeDao rslt = new AdditionalDescriptorsPersonAttributeDao();
         rslt.setDescriptors(getRequestAdditionalDescriptors());
@@ -228,6 +230,7 @@ public class PersonDirectoryConfiguration {
      * caching DAO.
      */
     @Bean(name = "cachingPersonAttributeDao")
+    @Qualifier("uPortalInternal")
     public IPersonAttributeDao getCachingPersonAttributeDao() {
         final CachingPersonAttributeDaoImpl rslt = new CachingPersonAttributeDaoImpl();
         rslt.setUsernameAttributeProvider(getUsernameAttributeProvider());
@@ -239,6 +242,7 @@ public class PersonDirectoryConfiguration {
     }
 
     @Bean(name = "mergingPersonAttributeDao")
+    @Qualifier("uPortalInternal")
     public IPersonAttributeDao getMergingPersonAttributeDao() {
         final MergingPersonAttributeDaoImpl rslt = new MergingPersonAttributeDaoImpl();
         rslt.setUsernameAttributeProvider(getUsernameAttributeProvider());
@@ -257,7 +261,12 @@ public class PersonDirectoryConfiguration {
          */
         rslt.setMerger(new NoncollidingAttributeAdder());
 
-        rslt.setPersonAttributeDaos(getInnerMergedPersonAttributeDaoList());
+        /*
+         * NB:  The beans in the  innerMergedPersonAttributeDaoList -- together with adopter-defined
+         * IPersonAttributeDao beans -- will be added to the mergingPersonAttributeDao by the
+         * AdopterDataSourcesIncorporator.
+         */
+
         return rslt;
     }
 
@@ -279,6 +288,7 @@ public class PersonDirectoryConfiguration {
      * impersonating='true'|'false'
      */
     @Bean(name = "impersonationStatusPersonAttributeDao")
+    @Qualifier("uPortalInternal")
     public IPersonAttributeDao getImpersonationStatusPersonAttributeDao() {
         return new ImpersonationStatusPersonAttributeDao();
     }
@@ -289,6 +299,7 @@ public class PersonDirectoryConfiguration {
      * the underlying DAO.
      */
     @Bean(name = "uPortalAccountUserSource")
+    @Qualifier("uPortalInternal")
     public IPersonAttributeDao getUPortalAccountUserSource() {
         final LocalAccountPersonAttributeDao rslt = new LocalAccountPersonAttributeDao();
         rslt.setLocalAccountDao(localAccountDao);
@@ -315,6 +326,7 @@ public class PersonDirectoryConfiguration {
      * outer caching DAO.
      */
     @Bean(name = "uPortalJdbcUserSource")
+    @Qualifier("uPortalInternal")
     public IPersonAttributeDao getUPortalJdbcUserSource() {
         final String sql = "SELECT USER_NAME FROM UP_USER WHERE {0}";
         final SingleRowJdbcPersonAttributeDao rslt = new SingleRowJdbcPersonAttributeDao(personDb, sql);
