@@ -151,7 +151,6 @@ below.
 
 ## Sections
 
-* [Ant Help](antHelp.txt)
 * [Implementing uPortal](implement/README.md)
 * [Skinning uPortal](SKINNING_UPORTAL.md)
 * [Using Angular](USING_ANGULAR.md)
