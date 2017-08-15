@@ -1,3 +1,5 @@
+<link rel="stylesheet" href="../css/image_reset_size.css">
+
 # uPortal Documentation
 
 **NOTE:**  This area is a work-in-progress.  It is intended to serve as primary
