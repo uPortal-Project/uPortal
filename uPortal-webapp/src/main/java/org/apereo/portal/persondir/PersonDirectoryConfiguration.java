@@ -24,11 +24,9 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 import javax.annotation.Resource;
 import javax.servlet.Filter;
 import javax.sql.DataSource;
-
 import net.sf.ehcache.Cache;
 import org.apereo.portal.persondir.support.PersonManagerCurrentUserProvider;
 import org.apereo.portal.portlets.swapper.OverwritingPersonAttributeDao;
@@ -57,10 +55,10 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springmodules.cache.key.CacheKeyGenerator;
 
 /**
- * This @Configuration class sets up (roughly) the same beans that personDirectoryContext.xml did
- * in uP4.
+ * This @Configuration class sets up (roughly) the same beans that personDirectoryContext.xml did in
+ * uP4.
  *
- * @Since 5.0
+ * @since 5.0
  */
 @Configuration
 public class PersonDirectoryConfiguration {
@@ -88,17 +86,13 @@ public class PersonDirectoryConfiguration {
     @Resource(name = "PersonDB")
     private DataSource personDb;
 
-    /**
-     * Provides user name for the current portal user if the thread is handling a request.
-     */
+    /** Provides user name for the current portal user if the thread is handling a request. */
     @Bean(name = "currentUserProvider")
     public ICurrentUserProvider getCurrentUserProvider() {
         return new PersonManagerCurrentUserProvider();
     }
 
-    /**
-     * Provides the default username attribute to use to the rest of the DAOs.
-     */
+    /** Provides the default username attribute to use to the rest of the DAOs. */
     @Bean(name = "usernameAttributeProvider")
     public IUsernameAttributeProvider getUsernameAttributeProvider() {
         final SimpleUsernameAttributeProvider rslt = new SimpleUsernameAttributeProvider();
@@ -114,21 +108,21 @@ public class PersonDirectoryConfiguration {
     }
 
     @Bean(name = "sessionScopeAdditionalDescriptors")
-    @Scope(value="globalSession", proxyMode = ScopedProxyMode.TARGET_CLASS)
+    @Scope(value = "globalSession", proxyMode = ScopedProxyMode.TARGET_CLASS)
     public IAdditionalDescriptors getSessionScopeAdditionalDescriptors() {
         return new AdditionalDescriptors();
     }
 
     @Bean(name = "requestScopeAdditionalDescriptors")
-    @Scope(value="request", proxyMode = ScopedProxyMode.TARGET_CLASS)
+    @Scope(value = "request", proxyMode = ScopedProxyMode.TARGET_CLASS)
     public IAdditionalDescriptors getRequestScopeAdditionalDescriptors() {
         return new AdditionalDescriptors();
     }
 
     /**
-     * Session-scoped descriptors object. One of these will exist for each user in their session.
-     * It will store the attributes from the request set by the requestAttributeSourceFilter.  This
-     * must hold both a session-scoped bean and request-scoped bean.  See
+     * Session-scoped descriptors object. One of these will exist for each user in their session. It
+     * will store the attributes from the request set by the requestAttributeSourceFilter. This must
+     * hold both a session-scoped bean and request-scoped bean. See
      * http://permalink.gmane.org/gmane.comp.java.jasig.uportal/10771 for more information.
      */
     @Bean(name = "requestAdditionalDescriptors")
@@ -141,9 +135,7 @@ public class PersonDirectoryConfiguration {
         return rslt;
     }
 
-    /**
-     * Servlet filter that creates an attribute for the serverName
-     */
+    /** Servlet filter that creates an attribute for the serverName */
     @Bean(name = "requestAttributeSourceFilter")
     public Filter getRequestAttributeSourceFilter() {
         final RequestAttributeSourceFilter rslt = new RequestAttributeSourceFilter();
@@ -164,7 +156,7 @@ public class PersonDirectoryConfiguration {
 
         Set<String> userAgent = new HashSet<>();
         userAgent.add(AGENT_DEVICE_ATTRIBUTE);
-        Map<String,Set<String>> headerAttributeMapping = new HashMap<>();
+        Map<String, Set<String>> headerAttributeMapping = new HashMap<>();
         headerAttributeMapping.put(USER_AGENT_KEY, userAgent);
         rslt.setHeaderAttributeMapping(headerAttributeMapping);
 
@@ -176,7 +168,7 @@ public class PersonDirectoryConfiguration {
      * users and swapped attributes will be cleaned up on user logout.
      */
     @Bean(name = "sessionAttributesOverridesMap")
-    @Scope(value="globalSession", proxyMode = ScopedProxyMode.TARGET_CLASS)
+    @Scope(value = "globalSession", proxyMode = ScopedProxyMode.TARGET_CLASS)
     public Map getSessionAttributesOverridesMap() {
         return new ConcurrentHashMap();
     }
@@ -194,10 +186,7 @@ public class PersonDirectoryConfiguration {
         return rslt;
     }
 
-
-    /**
-     * Merges attributes from the request with those from other DAOs.
-     */
+    /** Merges attributes from the request with those from other DAOs. */
     @Bean(name = "requestAttributeMergingDao")
     @Qualifier("uPortalInternal")
     public IPersonAttributeDao getRequestAttributeMergingDao() {
@@ -218,7 +207,8 @@ public class PersonDirectoryConfiguration {
     @Bean(name = "requestAttributesDao")
     @Qualifier("uPortalInternal")
     public IPersonAttributeDao getRequestAttributesDao() {
-        final AdditionalDescriptorsPersonAttributeDao rslt = new AdditionalDescriptorsPersonAttributeDao();
+        final AdditionalDescriptorsPersonAttributeDao rslt =
+                new AdditionalDescriptorsPersonAttributeDao();
         rslt.setDescriptors(getRequestAdditionalDescriptors());
         rslt.setUsernameAttributeProvider(getUsernameAttributeProvider());
         rslt.setCurrentUserProvider(getCurrentUserProvider());
@@ -305,14 +295,15 @@ public class PersonDirectoryConfiguration {
         rslt.setLocalAccountDao(localAccountDao);
         rslt.setUsernameAttributeProvider(getUsernameAttributeProvider());
 
-        final Map<String,String> queryAttributeMapping = new HashMap<>();
+        final Map<String, String> queryAttributeMapping = new HashMap<>();
         queryAttributeMapping.put(USERNAME_ATTRIBUTE, USERNAME_ATTRIBUTE);
         queryAttributeMapping.put(GIVEN_NAME_ATTRIBUTE, GIVEN_NAME_ATTRIBUTE);
         queryAttributeMapping.put(SIR_NAME_ATTRIBUTE, SIR_NAME_ATTRIBUTE);
         rslt.setQueryAttributeMapping(queryAttributeMapping);
 
-        final Map<String,Set<String>> resultAttributeMapping = new HashMap<>();
-        resultAttributeMapping.put(USERNAME_ATTRIBUTE,
+        final Map<String, Set<String>> resultAttributeMapping = new HashMap<>();
+        resultAttributeMapping.put(
+                USERNAME_ATTRIBUTE,
                 Stream.of(USERNAME_ATTRIBUTE, UID_ATTRIBUTE, USER_LOGIN_ID_ATTRIBUTE)
                         .collect(Collectors.toSet()));
         rslt.setResultAttributeMapping(resultAttributeMapping);
@@ -329,15 +320,17 @@ public class PersonDirectoryConfiguration {
     @Qualifier("uPortalInternal")
     public IPersonAttributeDao getUPortalJdbcUserSource() {
         final String sql = "SELECT USER_NAME FROM UP_USER WHERE {0}";
-        final SingleRowJdbcPersonAttributeDao rslt = new SingleRowJdbcPersonAttributeDao(personDb, sql);
+        final SingleRowJdbcPersonAttributeDao rslt =
+                new SingleRowJdbcPersonAttributeDao(personDb, sql);
         rslt.setUsernameAttributeProvider(getUsernameAttributeProvider());
-        rslt.setQueryAttributeMapping(Collections.singletonMap(USERNAME_ATTRIBUTE, USERNAME_COLUMN_NAME));
-        final Map<String,Set<String>> resultAttributeMapping = new HashMap<>();
-        resultAttributeMapping.put(USERNAME_COLUMN_NAME,
+        rslt.setQueryAttributeMapping(
+                Collections.singletonMap(USERNAME_ATTRIBUTE, USERNAME_COLUMN_NAME));
+        final Map<String, Set<String>> resultAttributeMapping = new HashMap<>();
+        resultAttributeMapping.put(
+                USERNAME_COLUMN_NAME,
                 Stream.of(USERNAME_ATTRIBUTE, UID_ATTRIBUTE, USER_LOGIN_ID_ATTRIBUTE)
                         .collect(Collectors.toSet()));
         rslt.setResultAttributeMapping(resultAttributeMapping);
         return rslt;
     }
-
 }
