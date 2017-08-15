@@ -154,14 +154,14 @@ below.
 ## Sections
 
 * [Ant Help](antHelp.txt)
-* [Implementing uPortal](implement/README.md)
+* [Implementing uPortal](implement)
 * [Skinning uPortal](SKINNING_UPORTAL.md)
 * [Using Angular](USING_ANGULAR.md)
 * [Supported web browsers](SUPPORTED_BROWSERS.md)
 * [Configuring using JNDI](configure-using-jndi.md)
 * [Redirect Guest to CAS Sign-In](redirect-guest-to-cas.md)
 * [CAS 5 ClearPass: Credential Caching and Replay](Cas5ClearPass.md)
-* [Developer's Guide](developer/README.md)
+* [Developer's Guide](developer)
 * [Accessibility](ACCESSIBILITY.md)
 * [Project Committers](COMMITTERS.md)
 
