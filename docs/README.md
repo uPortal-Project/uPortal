@@ -1,4 +1,4 @@
-<link rel="stylesheet" href="../css/image_reset_size.css">
+<link rel="stylesheet" href="css/image_reset_size.css">
 
 # uPortal Documentation
 
