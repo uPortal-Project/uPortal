@@ -36,7 +36,7 @@ uPortal setup for this feature is straight-forward. The hardest part is configur
 In uportal-war/src/main/resources/properties/security.properties make the following changes (assuming the key file was moved to `/etc/cas/private.p8`):
 
 ```properties
- ## Flag to determine if the portal should convert CAS assertion attributes to user attributes - defaults to false
+## Flag to determine if the portal should convert CAS assertion attributes to user attributes - defaults to false
 org.apereo.portal.security.cas.assertion.copyAttributesToUserAttributes=true
  
 ## Flag to determine if credential attribute from CAS should be decrypted to password - defaults to false
