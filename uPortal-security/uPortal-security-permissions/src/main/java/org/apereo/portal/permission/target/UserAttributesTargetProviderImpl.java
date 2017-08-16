@@ -18,7 +18,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import org.apereo.portal.permission.target.IPermissionTarget.TargetType;
-import org.jasig.services.persondir.IPersonAttributeDao;
+import org.apereo.services.persondir.IPersonAttributeDao;
 
 public class UserAttributesTargetProviderImpl implements IPermissionTargetProvider {
 

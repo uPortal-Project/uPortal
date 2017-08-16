@@ -15,7 +15,7 @@
 package org.apereo.portal.portlets.swapper;
 
 import java.util.Set;
-import org.jasig.services.persondir.IPersonAttributes;
+import org.apereo.services.persondir.IPersonAttributes;
 import org.springframework.webflow.context.ExternalContext;
 
 /** Defines helper methods for the attribute-swapper flow. */

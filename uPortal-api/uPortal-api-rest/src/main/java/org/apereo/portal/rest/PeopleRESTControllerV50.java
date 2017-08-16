@@ -25,7 +25,7 @@ import org.apache.http.HttpHeaders;
 import org.apereo.portal.portlets.lookup.PersonLookupHelperImpl;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.IPersonManager;
-import org.jasig.services.persondir.IPersonAttributes;
+import org.apereo.services.persondir.IPersonAttributes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;

@@ -52,7 +52,7 @@ import org.apereo.portal.url.IPortalUrlBuilder;
 import org.apereo.portal.url.IPortalUrlProvider;
 import org.apereo.portal.url.IPortletUrlBuilder;
 import org.apereo.portal.url.UrlType;
-import org.jasig.services.persondir.IPersonAttributes;
+import org.apereo.services.persondir.IPersonAttributes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;

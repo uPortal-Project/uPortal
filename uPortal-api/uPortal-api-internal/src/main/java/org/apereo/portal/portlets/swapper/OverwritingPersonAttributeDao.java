@@ -21,13 +21,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import org.apache.commons.lang.Validate;
-import org.jasig.services.persondir.IPersonAttributeDao;
-import org.jasig.services.persondir.IPersonAttributes;
-import org.jasig.services.persondir.support.AbstractFlatteningPersonAttributeDao;
-import org.jasig.services.persondir.support.MultivaluedPersonAttributeUtils;
-import org.jasig.services.persondir.support.NamedPersonImpl;
-import org.jasig.services.persondir.support.merger.IAttributeMerger;
-import org.jasig.services.persondir.support.merger.ReplacingAttributeAdder;
+import org.apereo.services.persondir.IPersonAttributeDao;
+import org.apereo.services.persondir.IPersonAttributes;
+import org.apereo.services.persondir.support.AbstractFlatteningPersonAttributeDao;
+import org.apereo.services.persondir.support.MultivaluedPersonAttributeUtils;
+import org.apereo.services.persondir.support.NamedPersonImpl;
+import org.apereo.services.persondir.support.merger.IAttributeMerger;
+import org.apereo.services.persondir.support.merger.ReplacingAttributeAdder;
 import org.springframework.beans.factory.annotation.Required;
 
 /**
@@ -37,7 +37,7 @@ import org.springframework.beans.factory.annotation.Required;
 public class OverwritingPersonAttributeDao extends AbstractFlatteningPersonAttributeDao {
     private final IAttributeMerger attributeMerger = new ReplacingAttributeAdder();
     private Map<String, Map<String, List<Object>>> attributeOverridesMap =
-            new ConcurrentHashMap<String, Map<String, List<Object>>>();
+            new ConcurrentHashMap<>();
 
     private IPersonAttributeDao delegatePersonAttributeDao;
 

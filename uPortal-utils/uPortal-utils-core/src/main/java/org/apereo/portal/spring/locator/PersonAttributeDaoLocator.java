@@ -18,7 +18,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apereo.portal.utils.AbstractBeanLocator;
 import org.apereo.portal.utils.PortalApplicationContextLocator;
-import org.jasig.services.persondir.IPersonAttributeDao;
+import org.apereo.services.persondir.IPersonAttributeDao;
 import org.springframework.context.ApplicationContext;
 
 /**

@@ -24,7 +24,7 @@ import org.apereo.portal.PortalException;
 import org.apereo.portal.UserProfile;
 import org.apereo.portal.security.PersonFactory;
 import org.apereo.portal.security.provider.RestrictedPerson;
-import org.jasig.services.persondir.IPersonAttributes;
+import org.apereo.services.persondir.IPersonAttributes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 
