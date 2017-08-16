@@ -21,7 +21,7 @@ You can define a new bean that implements `IPersonAttributeDao` in a Spring XML 
 within the `overlays/uPortal/src/main/resources/properties/contextOverrides/' directory.
 
 ```xml
-<bean id="uPortalLdapAttributeSource" class="org.jasig.services.persondir.support.ldap.LdapPersonAttributeDao">
+<bean id="uPortalLdapAttributeSource" class="org.apereo.services.persondir.support.ldap.LdapPersonAttributeDao">
     <property name="contextSource" ref="defaultLdapContext" />
  
     <!--
