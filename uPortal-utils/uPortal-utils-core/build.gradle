@@ -19,12 +19,8 @@ dependencies {
     compile("org.codehaus.woodstox:woodstox-core-asl:${woodstoxVersion}") {
         exclude group: 'javax.xml.stream', module: 'stax-api'
     }
-    compile("org.jasig.resourceserver:resource-server-api:${resourceServerVersion}") {
-        exclude group: 'commons-logging', module: 'commons-logging'
-    }
-    compile("org.jasig.resourceserver:resource-server-utils:${resourceServerVersion}") {
-        exclude group: 'commons-logging', module: 'commons-logging'
-    }
+    compile "org.jasig.resourceserver:resource-server-api:${resourceServerVersion}"
+    compile "org.jasig.resourceserver:resource-server-utils:${resourceServerVersion}"
     compile("org.jasig.service.persondir:person-directory-impl:${personDirectoryVersion}") {
         exclude group: 'com.google.guava', module: 'guava'
         exclude group: 'org.springframework', module: 'spring-beans'
@@ -40,19 +36,11 @@ dependencies {
     compile "org.springframework:spring-orm:${springVersion}"
     compile "org.springframework:spring-web:${springVersion}"
     compile "org.springframework:spring-webmvc-portlet:${springVersion}"
-    compile("org.springframework.ldap:spring-ldap-core:${springLdapVersion}") {
-        exclude group: 'commons-logging', module: 'commons-logging'
-    }
+    compile "org.springframework.ldap:spring-ldap-core:${springLdapVersion}"
     compile "org.springframework.security:spring-security-web:${springSecurityVersion}"
-    compile("org.springframework.webflow:spring-binding:${springWebflowVersion}") {
-        exclude group: 'commons-logging', module: 'commons-logging'
-    }
-    compile("org.springframework.webflow:spring-webflow:${springWebflowVersion}") {
-        exclude group: 'commons-logging', module: 'commons-logging'
-    }
+    compile "org.springframework.webflow:spring-binding:${springWebflowVersion}"
+    compile "org.springframework.webflow:spring-webflow:${springWebflowVersion}"
     compile("org.springmodules:spring-modules-cache:${springModulesCacheVersion}") {
-        exclude group: 'log4j', module: 'log4j'
-        exclude group: 'commons-logging', module: 'commons-logging'
         exclude group: 'org.springframework', module: 'spring'
         exclude group: 'gigaspaces', module: 'gigaspaces-ce'
         exclude group: 'jini', module: 'jsk-lib'

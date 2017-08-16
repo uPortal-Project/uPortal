@@ -64,14 +64,14 @@ class AnyUnblockedGrantPermissionPolicyTest extends AnyUnblockedGrantPermissionP
     @Test
     void testContainsType() {
         Set<IPermission> onlyGrant = new HashSet([
-            activeGrantPermission
+            activeGrantPermission,
         ]);
         Set<IPermission> onlyDeny = new HashSet([
-            activeDenyPermission
+            activeDenyPermission,
         ]);
         Set<IPermission> bothGrantAndDeny = new HashSet([
             activeGrantPermission,
-            activeDenyPermission
+            activeDenyPermission,
         ]);
 
         assertEquals('Incorrect output from containsType() -- ',
@@ -92,11 +92,11 @@ class AnyUnblockedGrantPermissionPolicyTest extends AnyUnblockedGrantPermissionP
     @Test
     void testRemoveInactivePermissions() {
         IPermission[] activePermissions = [
-            activeGrantPermission
+            activeGrantPermission,
         ];
         IPermission[] inactivePermissions = [
             expiredGrantPermission,
-            futureGrantPermission
+            futureGrantPermission,
         ];
 
         IPermission[] inpt = activePermissions + inactivePermissions;

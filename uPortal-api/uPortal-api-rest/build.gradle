@@ -8,9 +8,7 @@ dependencies {
     compileOnly project(':uPortal-api:uPortal-api-platform')
     compileOnly "org.apache.portals.pluto:pluto-container-api:${plutoVersion}"
 
-    compile("commons-beanutils:commons-beanutils:${commonsBeanutilsVersion}") {
-        exclude group: 'commons-logging', module: 'commons-logging'
-    }
+    compile "commons-beanutils:commons-beanutils:${commonsBeanutilsVersion}"
     compile "org.json:json:${orgJsonVersion}"
 
     compileOnly "${portletApiDependency}"

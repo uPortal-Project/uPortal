@@ -28,7 +28,7 @@ class LoginControllerTest extends GroovyTestCase {
     void testParseLocalRefUrl() {
 
         final HttpServletRequest req = [
-            getRequestURL: { return new StringBuffer('http://localhost:8080/uPortal'); }
+            getRequestURL: { return new StringBuffer('http://localhost:8080/uPortal'); },
         ] as HttpServletRequest;
 
         final LoginController loginController = new LoginController();
