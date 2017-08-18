@@ -6,6 +6,7 @@ plugins {
     id 'com.moowork.node' version '1.2.0'
     id 'me.champeau.buildscan-recipes' version '0.2.0'
     id 'org.standardout.versioneye' version '1.5.0'
+    id 'net.researchgate.release' version '2.4.0'
 
     // Sub project plugins
     id 'com.github.sherter.google-java-format' version '0.6' apply false
@@ -197,7 +198,18 @@ subprojects {
             }
         }
     }
+    afterReleaseBuild.dependsOn uploadArchives
 }
+
+/*
+ * Configuration for the 'gradle-release' plugin (https://github.com/researchgate/gradle-release)
+ */
+release {
+    git {
+        requireBranch = ''
+    }
+}
+
 
 task jacocoAggregateReport(type: org.gradle.testing.jacoco.tasks.JacocoReport) {
     dependsOn = allprojects.test
