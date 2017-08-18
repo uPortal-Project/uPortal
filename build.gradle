@@ -200,6 +200,14 @@ subprojects {
     }
 }
 
+/*
+ * Configuration for the 'gradle-release' plugin (https://github.com/researchgate/gradle-release)
+ */
+release {
+    git {
+        requireBranch = ''
+    }
+}
 afterReleaseBuild.dependsOn uploadArchives
 
 task jacocoAggregateReport(type: org.gradle.testing.jacoco.tasks.JacocoReport) {
