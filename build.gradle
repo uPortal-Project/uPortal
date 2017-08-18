@@ -198,6 +198,7 @@ subprojects {
             }
         }
     }
+    afterReleaseBuild.dependsOn uploadArchives
 }
 
 /*
@@ -208,7 +209,7 @@ release {
         requireBranch = ''
     }
 }
-afterReleaseBuild.dependsOn uploadArchives
+
 
 task jacocoAggregateReport(type: org.gradle.testing.jacoco.tasks.JacocoReport) {
     dependsOn = allprojects.test
