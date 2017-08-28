@@ -52,6 +52,10 @@ allprojects {
     apply plugin: 'com.github.sherter.google-java-format'
     apply plugin: 'net.ltgt.errorprone'
 
+    dependencies {
+      errorprone 'com.google.errorprone:error_prone_core:2.0.21'
+    }
+
     sourceCompatibility = 1.8
 
     gradleLint.criticalRules = [
