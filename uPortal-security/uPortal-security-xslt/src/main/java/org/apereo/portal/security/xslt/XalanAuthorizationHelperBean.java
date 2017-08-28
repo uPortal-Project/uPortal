@@ -100,6 +100,7 @@ public class XalanAuthorizationHelperBean implements IXalanAuthorizationHelper {
 
     @Override
     public boolean hasPermission(final String owner, final String activity, final String target) {
+        logger.warn(String.format("BEACH Test:  in XAHBean.hasPermission:  owner=[%s], activity=[%s], target=[%s] ", owner, activity, target));
 
         // owner & activity are required (but not target)
         if (owner == null || activity == null) {

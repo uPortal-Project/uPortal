@@ -14,6 +14,8 @@
  */
 package org.apereo.portal.security.xslt;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,8 +24,11 @@ import org.springframework.stereotype.Service;
 public class XalanAuthorizationHelper {
     private static IXalanAuthorizationHelper authorizationHelper;
 
+    protected static final Logger logger = LoggerFactory.getLogger(XalanAuthorizationHelper.class);
+
     @Autowired
     public void setAuthorizationHelper(IXalanAuthorizationHelper authorizationHelper) {
+        logger.warn("BEACH Test:  in setAuthorizationHelper and the upAuth helper is:  " + authorizationHelper.getClass());
         XalanAuthorizationHelper.authorizationHelper = authorizationHelper;
     }
 
@@ -34,6 +39,7 @@ public class XalanAuthorizationHelper {
 
     public static boolean hasPermission(
             final String owner, final String activity, final String target) {
+        logger.warn("BEACH Test:  in hasPermission and the upAuth helper is:  " + authorizationHelper.getClass());
         return authorizationHelper.hasPermission(owner, activity, target);
     }
 }
