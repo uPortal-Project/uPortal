@@ -116,7 +116,7 @@ public final class PortletAdministrationHelper implements ServletContextAware {
     private static final String PORTLET_FNAME_FRAGMENT_ADMIN_PORTLET = "fragment-admin";
 
     public static final String[] PORTLET_SUBSCRIBE_ACTIVITIES = {
-        IPermission.PORTLET_SUBSCRIBER_ACTIVITY, IPermission.PORTLET_BROWSE_ACTIVITY
+        IPermission.PORTLET_SUBSCRIBER_ACTIVITY, IPermission.PORTLET_BROWSE_ACTIVITY, IPermission.PORTLET_CONFIGURE_ACTIVITY
     };
 
     /*
@@ -268,7 +268,7 @@ public final class PortletAdministrationHelper implements ServletContextAware {
      */
     public PortletDefinitionForm savePortletRegistration(
             IPerson publisher, PortletDefinitionForm form) throws Exception {
-
+        logger.warn("BEACH TEST:  In savePortletRegistration for: "+form.getPortletName());
         /* TODO:  Service-Layer Security Reboot (great need of refactoring with a community-approved plan in place) */
 
         // User must have the selected lifecycle permission over AT LEAST ONE
@@ -327,21 +327,30 @@ public final class PortletAdministrationHelper implements ServletContextAware {
         // create the principal array from the form's principal list -- only principals with permissions
         final Set<IGroupMember> subscribePrincipalSet = new HashSet<>(form.getPrincipals().size());
         final Set<IGroupMember> browsePrincipalSet = new HashSet<>(form.getPrincipals().size());
+        final Set<IGroupMember> configurePrincipalSet = new HashSet<>(form.getPrincipals().size());
         for (JsonEntityBean bean : form.getPrincipals()) {
             final String subscribePerm =
                     bean.getTypeAndIdHash() + "_" + IPermission.PORTLET_SUBSCRIBER_ACTIVITY;
             final String browsePerm =
                     bean.getTypeAndIdHash() + "_" + IPermission.PORTLET_BROWSE_ACTIVITY;
+            final String configurePerm =
+                    bean.getTypeAndIdHash() + "_" + IPermission.PORTLET_CONFIGURE_ACTIVITY;
             final EntityEnum entityEnum = bean.getEntityType();
             final IGroupMember principal =
                     entityEnum.isGroup()
                             ? (GroupService.findGroup(bean.getId()))
                             : (GroupService.getGroupMember(bean.getId(), entityEnum.getClazz()));
             if (form.getPermissions().contains(subscribePerm)) {
+                logger.warn("BEACH TEST (savePortletRegistration): Found a subscribePerm for principal: "+principal);
                 subscribePrincipalSet.add(principal);
             }
             if (form.getPermissions().contains(browsePerm)) {
+                logger.warn("BEACH TEST (savePortletRegistration): Found a browsePerm for principal: "+principal);
                 browsePrincipalSet.add(principal);
+            }
+            if (form.getPermissions().contains(configurePerm)) {
+                logger.warn("BEACH TEST (savePortletRegistration): Found a configurePerm for principal: "+principal);
+                configurePrincipalSet.add(principal);
             }
         }
 
@@ -419,6 +428,7 @@ public final class PortletAdministrationHelper implements ServletContextAware {
                 portletDef, publisher, categories, new ArrayList<>(subscribePrincipalSet));
         //updatePermissions(portletDef, subscribePrincipalSet, IPermission.PORTLET_SUBSCRIBER_ACTIVITY);
         updatePermissions(portletDef, browsePrincipalSet, IPermission.PORTLET_BROWSE_ACTIVITY);
+        updatePermissions(portletDef, configurePrincipalSet, IPermission.PORTLET_CONFIGURE_ACTIVITY);
 
         return this.createPortletDefinitionForm(
                 publisher, portletDef.getPortletDefinitionId().getStringId());
@@ -446,6 +456,8 @@ public final class PortletAdministrationHelper implements ServletContextAware {
             permission.setActivity(activity);
             permission.setTarget(portletTargetId);
             newPermissions.add(permission);
+            logger.warn("BEACH TEST:  (updatePermissions) adding a new permission of: " + permission);
+
         }
 
         /* Remove former permissions for this portlet / activity */
@@ -747,7 +759,10 @@ public final class PortletAdministrationHelper implements ServletContextAware {
         final String ending = "_" + activity;
         for (final String name : request.getParameterMap().keySet()) {
             if (name.endsWith(ending)) {
+                logger.info("Adding permission request: "+name);
                 form.addPermission(name);
+            } else {
+                logger.info("For permissions, ignoring request parameter: " + name);
             }
         }
     }
