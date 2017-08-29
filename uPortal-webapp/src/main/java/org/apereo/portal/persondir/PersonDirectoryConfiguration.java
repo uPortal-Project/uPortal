@@ -29,7 +29,6 @@ import javax.servlet.Filter;
 import javax.sql.DataSource;
 import net.sf.ehcache.Cache;
 import org.apereo.portal.persondir.support.PersonManagerCurrentUserProvider;
-import org.apereo.portal.portlets.swapper.OverwritingPersonAttributeDao;
 import org.apereo.portal.utils.cache.MapCacheProvider;
 import org.apereo.portal.utils.cache.PersonDirectoryCacheKeyGenerator;
 import org.apereo.services.persondir.IPersonAttributeDao;
@@ -180,7 +179,7 @@ public class PersonDirectoryConfiguration {
     @Bean(name = "personAttributeDao")
     @Qualifier("personAttributeDao")
     public IPersonAttributeDao getPersonAttributeDao() {
-        final OverwritingPersonAttributeDao rslt = new OverwritingPersonAttributeDao();
+        final PortalRootPersonAttributeDao rslt = new PortalRootPersonAttributeDao();
         rslt.setDelegatePersonAttributeDao(getRequestAttributeMergingDao());
         rslt.setAttributeOverridesMap(getSessionAttributesOverridesMap());
         return rslt;
