@@ -241,6 +241,7 @@ public class AuthorizationImpl implements IAuthorizationService {
         }
 
         final String activity = IPermission.PORTLET_MODE_CONFIG;
+        
         return doesPrincipalHavePermission(principal, owner, activity, target);
     }
     /**
