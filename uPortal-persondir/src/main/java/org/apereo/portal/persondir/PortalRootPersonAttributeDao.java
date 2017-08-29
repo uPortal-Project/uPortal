@@ -35,9 +35,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
 
 /**
- * This bean is the root of the User Attributes subsystem in uPortal.  It provides support for
+ * This bean is the root of the User Attributes subsystem in uPortal. It provides support for
  * overriding certain attributes for certain users. (By default it uses a concurrent hash map to
- * manage admin-specified overrides.)  It will also do it's best to fill required uPortal attributes
+ * manage admin-specified overrides.) It will also do it's best to fill required uPortal attributes
  * if they are absent.
  */
 public class PortalRootPersonAttributeDao extends AbstractFlatteningPersonAttributeDao {
@@ -50,8 +50,7 @@ public class PortalRootPersonAttributeDao extends AbstractFlatteningPersonAttrib
 
     private IPersonAttributeDao delegatePersonAttributeDao;
 
-    @Autowired
-    private IUsernameAttributeProvider usernameAttributeProvider;
+    @Autowired private IUsernameAttributeProvider usernameAttributeProvider;
 
     /** @return the delegatePersonAttributeDao */
     public IPersonAttributeDao getDelegatePersonAttributeDao() {
@@ -100,7 +99,6 @@ public class PortalRootPersonAttributeDao extends AbstractFlatteningPersonAttrib
         }
 
         return postProcessPerson(rslt, uid);
-
     }
 
     @Override
@@ -135,8 +133,8 @@ public class PortalRootPersonAttributeDao extends AbstractFlatteningPersonAttrib
 
     /**
      * Implements support for overriding attributes by administrator choice and for intelligently
-     * selecting (if possible) values for 'username' and 'displayName' if none have been provided
-     * by other data sources.
+     * selecting (if possible) values for 'username' and 'displayName' if none have been provided by
+     * other data sources.
      *
      * @param person The user
      * @param uidInQuery The username specified in the PersonDirectory query, if certain
@@ -147,13 +145,13 @@ public class PortalRootPersonAttributeDao extends AbstractFlatteningPersonAttrib
         // Verify the person has a name
         final String name = person.getName();
         if (name == null) {
-            logger.warn("IPerson '{}' has no name and therefore cannot be post-processed",
-                    person);
+            logger.warn("IPerson '{}' has no name and therefore cannot be post-processed", person);
             return person;
         }
 
         // First apply specified overrides
-        IPersonAttributes rslt = applyOverridesIfPresent(person); // default -- won't normally need to do anything
+        IPersonAttributes rslt =
+                applyOverridesIfPresent(person); // default -- won't normally need to do anything
 
         /*
          * And secondly there are two attributes in uPortal that cause havoc if they're missing:
@@ -167,7 +165,6 @@ public class PortalRootPersonAttributeDao extends AbstractFlatteningPersonAttrib
         rslt = selectDisplayNameIfAbsent(rslt);
 
         return rslt;
-
     }
 
     private IPersonAttributes applyOverridesIfPresent(IPersonAttributes person) {
@@ -177,8 +174,10 @@ public class PortalRootPersonAttributeDao extends AbstractFlatteningPersonAttrib
         // Check for & process overrides
         final Map<String, List<Object>> overrides = overridesMap.get(person.getName());
         if (overrides != null) {
-            logger.debug("Overriding the following collection of attributes for user '{}':  {}",
-                    person.getName(), overrides);
+            logger.debug(
+                    "Overriding the following collection of attributes for user '{}':  {}",
+                    person.getName(),
+                    overrides);
             final Map<String, List<Object>> attributes = person.getAttributes();
             final Map<String, List<Object>> mutableMap = new LinkedHashMap<>(attributes);
             final Map<String, List<Object>> mergedAttributes =
@@ -187,7 +186,6 @@ public class PortalRootPersonAttributeDao extends AbstractFlatteningPersonAttrib
         }
 
         return rslt;
-
     }
 
     private IPersonAttributes selectUsernameIfAbsent(IPersonAttributes person, String uidInQuery) {
@@ -197,8 +195,8 @@ public class PortalRootPersonAttributeDao extends AbstractFlatteningPersonAttrib
         final String usernameAttribute = usernameAttributeProvider.getUsernameAttribute();
         if (!rslt.getAttributes().containsKey(usernameAttribute) && uidInQuery != null) {
             // Use the username specified in the query
-            logger.debug("Selected new username of '{}' for user '{}'",
-                    uidInQuery, person.getName());
+            logger.debug(
+                    "Selected new username of '{}' for user '{}'", uidInQuery, person.getName());
             final Map<String, List<Object>> attributes = person.getAttributes();
             final Map<String, List<Object>> mutableMap = new LinkedHashMap<>(attributes);
             mutableMap.put(usernameAttribute, Collections.singletonList(uidInQuery));
@@ -206,7 +204,6 @@ public class PortalRootPersonAttributeDao extends AbstractFlatteningPersonAttrib
         }
 
         return rslt;
-
     }
 
     private IPersonAttributes selectDisplayNameIfAbsent(IPersonAttributes person) {
@@ -221,12 +218,14 @@ public class PortalRootPersonAttributeDao extends AbstractFlatteningPersonAttrib
             final StringBuilder displayName = new StringBuilder();
 
             final Map<String, List<Object>> attributes = person.getAttributes();
-            final String firstName = attributes.containsKey(FIRST_NAME_ATTRIBUTE)
-                    ? attributes.get(FIRST_NAME_ATTRIBUTE).get(0).toString()
-                    : null;
-            final String lastName = attributes.containsKey(LAST_NAME_ATTRIBUTE)
-                    ? attributes.get(LAST_NAME_ATTRIBUTE).get(0).toString()
-                    : null;
+            final String firstName =
+                    attributes.containsKey(FIRST_NAME_ATTRIBUTE)
+                            ? attributes.get(FIRST_NAME_ATTRIBUTE).get(0).toString()
+                            : null;
+            final String lastName =
+                    attributes.containsKey(LAST_NAME_ATTRIBUTE)
+                            ? attributes.get(LAST_NAME_ATTRIBUTE).get(0).toString()
+                            : null;
 
             if (StringUtils.isNotBlank(firstName) && StringUtils.isNotBlank(lastName)) {
                 // Prefer "${firstName} ${lastName}"
@@ -243,17 +242,18 @@ public class PortalRootPersonAttributeDao extends AbstractFlatteningPersonAttrib
             }
 
             if (displayName.length() > 0) {
-                logger.debug("Selected new displayName of '{}' for user '{}'",
-                        displayName, person.getName());
+                logger.debug(
+                        "Selected new displayName of '{}' for user '{}'",
+                        displayName,
+                        person.getName());
                 final Map<String, List<Object>> mutableMap = new LinkedHashMap<>(attributes);
-                mutableMap.put(ILocalAccountPerson.ATTR_DISPLAY_NAME, Collections.singletonList(displayName.toString()));
+                mutableMap.put(
+                        ILocalAccountPerson.ATTR_DISPLAY_NAME,
+                        Collections.singletonList(displayName.toString()));
                 rslt = new NamedPersonImpl(person.getName(), mutableMap);
             }
-
         }
 
         return rslt;
-
     }
-
 }

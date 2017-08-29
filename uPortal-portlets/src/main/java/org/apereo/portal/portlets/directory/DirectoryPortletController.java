@@ -240,8 +240,11 @@ public class DirectoryPortletController {
         // get the set of people matching the search query
         people = this.lookupHelper.searchForPeople(currentUser, queryAttributes);
 
-        log.debug("Directory portlet search outcome:\n\tqueryAttributes="
-                + queryAttributes + "\n\tsearchResult=" + people);
+        log.debug(
+                "Directory portlet search outcome:\n\tqueryAttributes="
+                        + queryAttributes
+                        + "\n\tsearchResult="
+                        + people);
 
         return people;
     }
