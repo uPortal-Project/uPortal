@@ -39,11 +39,13 @@ import org.springframework.beans.factory.annotation.Required;
  * overriding certain attributes for certain users. (By default it uses a concurrent hash map to
  * manage admin-specified overrides.) It will also do it's best to fill required uPortal attributes
  * if they are absent.
+ *
+ * @since 5.0
  */
 public class PortalRootPersonAttributeDao extends AbstractFlatteningPersonAttributeDao {
 
-    private static final String FIRST_NAME_ATTRIBUTE = "givenName";
-    private static final String LAST_NAME_ATTRIBUTE = "sn";
+    private static final String CUSTOMARY_FIRST_NAME_ATTRIBUTE = "givenName";
+    private static final String CUSTOMARY_LAST_NAME_ATTRIBUTE = "sn";
 
     private final IAttributeMerger attributeMerger = new ReplacingAttributeAdder();
     private Map<String, Map<String, List<Object>>> overridesMap = new ConcurrentHashMap<>();
@@ -89,6 +91,13 @@ public class PortalRootPersonAttributeDao extends AbstractFlatteningPersonAttrib
         overridesMap.remove(uid);
     }
 
+    /**
+     * This method is for "filling" a specific individual.
+     *
+     * @param uid The username (identity) of a known individual
+     * @return A completely "filled" person, including overrides, or <code>null</code> if the person
+     *     is unknown
+     */
     @Override
     public IPersonAttributes getPerson(String uid) {
 
@@ -101,6 +110,10 @@ public class PortalRootPersonAttributeDao extends AbstractFlatteningPersonAttrib
         return postProcessPerson(rslt, uid);
     }
 
+    /**
+     * This method is for matching a search query. Each matching item will subsequently be passed to
+     * <code>getPerson(uid)</code> for "filling."
+     */
     @Override
     public Set<IPersonAttributes> getPeopleWithMultivaluedAttributes(
             Map<String, List<Object>> query) {
@@ -113,7 +126,10 @@ public class PortalRootPersonAttributeDao extends AbstractFlatteningPersonAttrib
         final Set<IPersonAttributes> modifiedPeople = new LinkedHashSet<>();
 
         for (final IPersonAttributes person : people) {
-            // WARNING:  Not safe to use the uidInQuery in this scenario
+            /*
+             * WARNING:  Not safe to pass uidInQuery in this scenario;  results will be "filled" by
+             * getPerson(uid) subsequently.
+             */
             final IPersonAttributes mergedPerson = postProcessPerson(person, null);
             modifiedPeople.add(mergedPerson);
         }
@@ -219,12 +235,12 @@ public class PortalRootPersonAttributeDao extends AbstractFlatteningPersonAttrib
 
             final Map<String, List<Object>> attributes = person.getAttributes();
             final String firstName =
-                    attributes.containsKey(FIRST_NAME_ATTRIBUTE)
-                            ? attributes.get(FIRST_NAME_ATTRIBUTE).get(0).toString()
+                    attributes.containsKey(CUSTOMARY_FIRST_NAME_ATTRIBUTE)
+                            ? attributes.get(CUSTOMARY_FIRST_NAME_ATTRIBUTE).get(0).toString()
                             : null;
             final String lastName =
-                    attributes.containsKey(LAST_NAME_ATTRIBUTE)
-                            ? attributes.get(LAST_NAME_ATTRIBUTE).get(0).toString()
+                    attributes.containsKey(CUSTOMARY_LAST_NAME_ATTRIBUTE)
+                            ? attributes.get(CUSTOMARY_LAST_NAME_ATTRIBUTE).get(0).toString()
                             : null;
 
             if (StringUtils.isNotBlank(firstName) && StringUtils.isNotBlank(lastName)) {
