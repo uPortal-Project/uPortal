@@ -31,28 +31,32 @@ import org.apereo.services.persondir.support.MultivaluedPersonAttributeUtils;
 import org.apereo.services.persondir.support.NamedPersonImpl;
 import org.apereo.services.persondir.support.merger.IAttributeMerger;
 import org.apereo.services.persondir.support.merger.ReplacingAttributeAdder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
 
 /**
  * This bean is the root of the User Attributes subsystem in uPortal. It provides support for
  * overriding certain attributes for certain users. (By default it uses a concurrent hash map to
- * manage admin-specified overrides.) It will also do it's best to fill required uPortal attributes
+ * manage admin-specified overrides.) It will also do its best to fill required uPortal attributes
  * if they are absent.
  *
  * @since 5.0
  */
 public class PortalRootPersonAttributeDao extends AbstractFlatteningPersonAttributeDao {
 
-    private static final String CUSTOMARY_FIRST_NAME_ATTRIBUTE = "givenName";
-    private static final String CUSTOMARY_LAST_NAME_ATTRIBUTE = "sn";
+    protected static final String CUSTOMARY_FIRST_NAME_ATTRIBUTE = "givenName";
+    protected static final String CUSTOMARY_LAST_NAME_ATTRIBUTE = "sn";
 
     private final IAttributeMerger attributeMerger = new ReplacingAttributeAdder();
     private Map<String, Map<String, List<Object>>> overridesMap = new ConcurrentHashMap<>();
 
     private IPersonAttributeDao delegatePersonAttributeDao;
 
-    @Autowired private IUsernameAttributeProvider usernameAttributeProvider;
+    private IUsernameAttributeProvider usernameAttributeProvider;
+
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     /** @return the delegatePersonAttributeDao */
     public IPersonAttributeDao getDelegatePersonAttributeDao() {
@@ -64,6 +68,11 @@ public class PortalRootPersonAttributeDao extends AbstractFlatteningPersonAttrib
     public void setDelegatePersonAttributeDao(IPersonAttributeDao delegatePersonAttributeDao) {
         Validate.notNull(delegatePersonAttributeDao, "delegatePersonAttributeDao can not be null");
         this.delegatePersonAttributeDao = delegatePersonAttributeDao;
+    }
+
+    @Autowired
+    public void setUsernameAttributeProvider(IUsernameAttributeProvider usernameAttributeProvider) {
+        this.usernameAttributeProvider = usernameAttributeProvider;
     }
 
     /** @return the overridesMap */
@@ -183,7 +192,7 @@ public class PortalRootPersonAttributeDao extends AbstractFlatteningPersonAttrib
         return rslt;
     }
 
-    private IPersonAttributes applyOverridesIfPresent(IPersonAttributes person) {
+    protected IPersonAttributes applyOverridesIfPresent(IPersonAttributes person) {
 
         IPersonAttributes rslt = person; // default -- won't normally need to do anything
 
@@ -204,7 +213,8 @@ public class PortalRootPersonAttributeDao extends AbstractFlatteningPersonAttrib
         return rslt;
     }
 
-    private IPersonAttributes selectUsernameIfAbsent(IPersonAttributes person, String uidInQuery) {
+    protected IPersonAttributes selectUsernameIfAbsent(
+            IPersonAttributes person, String uidInQuery) {
 
         IPersonAttributes rslt = person; // default -- won't normally need to do anything
 
@@ -222,7 +232,7 @@ public class PortalRootPersonAttributeDao extends AbstractFlatteningPersonAttrib
         return rslt;
     }
 
-    private IPersonAttributes selectDisplayNameIfAbsent(IPersonAttributes person) {
+    protected IPersonAttributes selectDisplayNameIfAbsent(IPersonAttributes person) {
 
         IPersonAttributes rslt = person; // default -- won't normally need to do anything
 
