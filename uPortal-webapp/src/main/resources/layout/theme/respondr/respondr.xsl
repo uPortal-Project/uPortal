@@ -734,7 +734,7 @@
                                    </div>
                                 </div>
                             </a>
-                            <xsl:call-template name="region.pre-header" />
+                            <xsl:call-template name="region.eyebrow" />
                         </div>
                     </div>
                     <xsl:call-template name="region.header-top" />

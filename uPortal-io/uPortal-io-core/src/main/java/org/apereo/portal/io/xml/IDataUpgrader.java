@@ -23,8 +23,9 @@ import javax.xml.transform.Source;
  * upgraders may be run in succession to translate very old data into the most recent format.
  */
 public interface IDataUpgrader {
+
     /** @return The {@link PortalDataKey}s this upgrader can operate on */
-    public Set<PortalDataKey> getSourceDataTypes();
+    Set<PortalDataKey> getSourceDataTypes();
 
     /**
      * Upgrade the external XML data format to a newer format
@@ -32,5 +33,5 @@ public interface IDataUpgrader {
      * @return true if the caller should handle the importing of the result, false if this class
      *     handled it internally.
      */
-    public boolean upgradeData(Source source, Result result);
+    boolean upgradeData(Source source, Result result);
 }

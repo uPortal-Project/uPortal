@@ -100,15 +100,15 @@
         </xsl:if>
     </xsl:template>
 
-    <!-- ========== TEMPLATE: PRE-HEADER ========== -->
+    <!-- ========== TEMPLATE: EYEBROW ========== -->
     <!-- ========================================== -->
     <!--
      | This template renders portlets in the top-right greeting area.
     -->
-    <xsl:template name="region.pre-header">
-        <xsl:if test="//region[@name='pre-header']/channel">
-            <div id="region-pre-header" class="portal-user">
-                <xsl:for-each select="//region[@name='pre-header']/channel">
+    <xsl:template name="region.eyebrow">
+        <xsl:if test="//region[@name='eyebrow']/channel">
+            <div id="region-eyebrow" class="portal-user">
+                <xsl:for-each select="//region[@name='eyebrow']/channel">
                     <xsl:call-template name="regions.portlet.decorator" />
                 </xsl:for-each>
             </div>
