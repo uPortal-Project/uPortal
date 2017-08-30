@@ -226,7 +226,7 @@ public class DirectoryPortletController {
      * @return
      */
     protected List<IPersonAttributes> searchDirectory(String query, PortletRequest request) {
-        final Map<String, Object> queryAttributes = new HashMap<String, Object>();
+        final Map<String, Object> queryAttributes = new HashMap<>();
         for (String attr : directoryQueryAttributes) {
             queryAttributes.put(attr, query);
         }
@@ -239,6 +239,13 @@ public class DirectoryPortletController {
 
         // get the set of people matching the search query
         people = this.lookupHelper.searchForPeople(currentUser, queryAttributes);
+
+        log.debug(
+                "Directory portlet search outcome:\n\tqueryAttributes="
+                        + queryAttributes
+                        + "\n\tsearchResult="
+                        + people);
+
         return people;
     }
 
