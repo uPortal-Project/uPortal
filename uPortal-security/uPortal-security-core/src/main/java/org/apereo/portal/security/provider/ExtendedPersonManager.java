@@ -20,9 +20,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.PortalSecurityException;
-import org.jasig.services.persondir.IPersonAttributes;
-import org.jasig.services.persondir.support.merger.IAttributeMerger;
-import org.jasig.services.persondir.support.merger.MultivaluedAttributeMerger;
+import org.apereo.services.persondir.IPersonAttributes;
+import org.apereo.services.persondir.support.merger.IAttributeMerger;
+import org.apereo.services.persondir.support.merger.MultivaluedAttributeMerger;
 
 /**
  * Manages the storage of an IPerson object in a user's session, and add request attributes to the

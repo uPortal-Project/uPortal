@@ -63,7 +63,7 @@ public class JsonLayoutRenderingPipeline implements IPortalRenderingPipeline {
 
     @Override
     public void renderState(HttpServletRequest req, HttpServletResponse res)
-            throws ServletException, IOException {
+            throws ServletException, IOException, IllegalStateException {
         //Disable page caching
         res.setHeader("pragma", "no-cache");
         res.setHeader("Cache-Control", "no-cache, max-age=0, must-revalidate");
@@ -75,25 +75,30 @@ public class JsonLayoutRenderingPipeline implements IPortalRenderingPipeline {
                 this.pipeline.getEventReader(req, res);
 
         // set the response mime type
+
         final String contentType = "application/json; charset=" + CHARACTER_SET;
         res.setContentType(contentType);
 
         final PrintWriter writer = res.getWriter();
+        if (pipelineEventReader != null) {
+            for (final CharacterEvent event : pipelineEventReader) {
+                if (CharacterEventTypes.CHARACTER != event.getEventType()) {
+                    throw new RenderingPipelineConfigurationException(
+                            "Only "
+                                    + CharacterEventTypes.CHARACTER
+                                    + " events are supported in the top level renderer. "
+                                    + event.getEventType()
+                                    + " is not supported.");
+                }
 
-        for (final CharacterEvent event : pipelineEventReader) {
-            if (CharacterEventTypes.CHARACTER != event.getEventType()) {
-                throw new RenderingPipelineConfigurationException(
-                        "Only "
-                                + CharacterEventTypes.CHARACTER
-                                + " events are supported in the top level renderer. "
-                                + event.getEventType()
-                                + " is not supported.");
+                final String data = ((CharacterDataEvent) event).getData();
+                writer.print(data);
+                writer.flush();
+                res.flushBuffer();
             }
-
-            final String data = ((CharacterDataEvent) event).getData();
-            writer.print(data);
-            writer.flush();
-            res.flushBuffer();
+        } else {
+            logger.warn("PipelineEventReader is null");
+            throw new IllegalStateException("PipelineEventReader is null");
         }
 
         final long executionTime = System.nanoTime() - startTime;

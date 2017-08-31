@@ -225,20 +225,22 @@ public class PermissionsRESTController {
             throws Exception {
 
         IPermissionActivity activity = permissionOwnerDao.getPermissionActivity(activityId);
-        IPermissionTargetProvider provider =
-                targetProviderRegistry.getTargetProvider(activity.getTargetProviderKey());
+        Collection<IPermissionTarget> targets = Collections.EMPTY_LIST;
+        if (activity != null) {
+            IPermissionTargetProvider provider =
+                    targetProviderRegistry.getTargetProvider(activity.getTargetProviderKey());
 
-        SortedSet<IPermissionTarget> matchingTargets = new TreeSet<IPermissionTarget>();
-        // add matching results for this identifier provider to the set
-        Collection<IPermissionTarget> targets = provider.searchTargets(query);
-        for (IPermissionTarget target : targets) {
-            if ((StringUtils.isNotBlank(target.getName())
-                            && target.getName().toLowerCase().contains(query))
-                    || target.getKey().toLowerCase().contains(query)) {
-                matchingTargets.addAll(targets);
+            SortedSet<IPermissionTarget> matchingTargets = new TreeSet<IPermissionTarget>();
+            // add matching results for this identifier provider to the set
+            targets = provider.searchTargets(query);
+            for (IPermissionTarget target : targets) {
+                if ((StringUtils.isNotBlank(target.getName())
+                                && target.getName().toLowerCase().contains(query))
+                        || target.getKey().toLowerCase().contains(query)) {
+                    matchingTargets.addAll(targets);
+                }
             }
         }
-
         ModelAndView mv = new ModelAndView();
         mv.addObject("targets", targets);
         mv.setViewName("json");
@@ -308,66 +310,69 @@ public class PermissionsRESTController {
         }
 
         JsonEntityBean entity = groupListHelper.getEntityForPrincipal(target);
-        IAuthorizationPrincipal p =
-                this.authorizationService.newPrincipal(
-                        entity.getId(), entity.getEntityType().getClazz());
-
         Set<UniquePermission> inheritedAssignments = new HashSet<UniquePermission>();
-        if (includeInherited) {
-            IGroupMember member = GroupService.getGroupMember(p.getKey(), p.getType());
-            for (IEntityGroup parent : member.getAncestorGroups()) {
-                IAuthorizationPrincipal parentPrincipal =
-                        this.authorizationService.newPrincipal(parent);
-                IPermission[] parentPermissions =
-                        permissionStore.select(null, null, null, parentPrincipal.getKey(), null);
-                for (IPermission permission : parentPermissions) {
-                    inheritedAssignments.add(
-                            new UniquePermission(
-                                    permission.getOwner(),
-                                    permission.getActivity(),
-                                    permission.getPrincipal(),
-                                    true));
+        List<JsonPermission> permissions = new ArrayList<JsonPermission>();
+        if (entity != null) {
+            IAuthorizationPrincipal p =
+                    this.authorizationService.newPrincipal(
+                            entity.getId(), entity.getEntityType().getClazz());
+
+            if (includeInherited) {
+                IGroupMember member = GroupService.getGroupMember(p.getKey(), p.getType());
+                for (IEntityGroup parent : member.getAncestorGroups()) {
+                    IAuthorizationPrincipal parentPrincipal =
+                            this.authorizationService.newPrincipal(parent);
+                    IPermission[] parentPermissions =
+                            permissionStore.select(
+                                    null, null, null, parentPrincipal.getKey(), null);
+                    for (IPermission permission : parentPermissions) {
+                        inheritedAssignments.add(
+                                new UniquePermission(
+                                        permission.getOwner(),
+                                        permission.getActivity(),
+                                        permission.getPrincipal(),
+                                        true));
+                    }
                 }
             }
+
+            for (UniquePermission permission : directAssignments) {
+                JsonEntityBean e =
+                        groupListHelper.getEntityForPrincipal(permission.getIdentifier());
+                Class<?> clazz;
+                EntityEnum entityType = EntityEnum.getEntityEnum(e.getEntityTypeAsString());
+                if (entityType.isGroup()) {
+                    clazz = IEntityGroup.class;
+                } else {
+                    clazz = entityType.getClazz();
+                }
+                IAuthorizationPrincipal principal =
+                        this.authorizationService.newPrincipal(e.getId(), clazz);
+                if (principal.hasPermission(
+                        permission.getOwner(), permission.getActivity(), p.getKey())) {
+                    permissions.add(getPermissionOnTarget(permission, entity));
+                }
+            }
+
+            for (UniquePermission permission : inheritedAssignments) {
+                JsonEntityBean e =
+                        groupListHelper.getEntityForPrincipal(permission.getIdentifier());
+                Class<?> clazz;
+                EntityEnum entityType = EntityEnum.getEntityEnum(e.getEntityTypeAsString());
+                if (entityType.isGroup()) {
+                    clazz = IEntityGroup.class;
+                } else {
+                    clazz = entityType.getClazz();
+                }
+                IAuthorizationPrincipal principal =
+                        this.authorizationService.newPrincipal(e.getId(), clazz);
+                if (principal.hasPermission(
+                        permission.getOwner(), permission.getActivity(), p.getKey())) {
+                    permissions.add(getPermissionOnTarget(permission, entity));
+                }
+            }
+            Collections.sort(permissions);
         }
-
-        List<JsonPermission> permissions = new ArrayList<JsonPermission>();
-
-        for (UniquePermission permission : directAssignments) {
-            JsonEntityBean e = groupListHelper.getEntityForPrincipal(permission.getIdentifier());
-            Class<?> clazz;
-            EntityEnum entityType = EntityEnum.getEntityEnum(e.getEntityTypeAsString());
-            if (entityType.isGroup()) {
-                clazz = IEntityGroup.class;
-            } else {
-                clazz = entityType.getClazz();
-            }
-            IAuthorizationPrincipal principal =
-                    this.authorizationService.newPrincipal(e.getId(), clazz);
-            if (principal.hasPermission(
-                    permission.getOwner(), permission.getActivity(), p.getKey())) {
-                permissions.add(getPermissionOnTarget(permission, entity));
-            }
-        }
-
-        for (UniquePermission permission : inheritedAssignments) {
-            JsonEntityBean e = groupListHelper.getEntityForPrincipal(permission.getIdentifier());
-            Class<?> clazz;
-            EntityEnum entityType = EntityEnum.getEntityEnum(e.getEntityTypeAsString());
-            if (entityType.isGroup()) {
-                clazz = IEntityGroup.class;
-            } else {
-                clazz = entityType.getClazz();
-            }
-            IAuthorizationPrincipal principal =
-                    this.authorizationService.newPrincipal(e.getId(), clazz);
-            if (principal.hasPermission(
-                    permission.getOwner(), permission.getActivity(), p.getKey())) {
-                permissions.add(getPermissionOnTarget(permission, entity));
-            }
-        }
-        Collections.sort(permissions);
-
         ModelAndView mv = new ModelAndView();
         mv.addObject("assignments", permissions);
         mv.setViewName("json");

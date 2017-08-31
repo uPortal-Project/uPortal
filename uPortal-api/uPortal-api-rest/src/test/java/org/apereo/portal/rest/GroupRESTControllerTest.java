@@ -90,7 +90,7 @@ public class GroupRESTControllerTest {
         Assert.assertFalse(returnGroups.isEmpty());
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testGetUsersGroupPersonNULL() {
         IPerson person = new PersonImpl();
         person.setUserName("jdoe");
@@ -104,5 +104,6 @@ public class GroupRESTControllerTest {
 
         ModelAndView modelAndView = groupRESTController.getUsersGroup(req, res);
         Set<Entity> returnGroups = (Set<Entity>) modelAndView.getModel().get("groups");
+        Assert.assertTrue(returnGroups.isEmpty());
     }
 }

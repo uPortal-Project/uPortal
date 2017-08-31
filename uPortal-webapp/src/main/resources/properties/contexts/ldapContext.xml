@@ -40,26 +40,23 @@
      | Required for:
      |  - SimpleLdapSecurityContext
      +-->
-    <!--
     <bean id="defaultLdapServer" class="org.apereo.portal.ldap.ContextSourceLdapServerImpl">
         <property name="contextSource">
             <bean id="legacyLdapContext" class="org.springframework.ldap.core.support.LdapContextSource">    
-                <property name="url" value="${ldap.url}"/>
-                <property name="userDn" value="${ldap.userName}"/>
-                <property name="password" value="${ldap.password}"/>
+                <property name="url" value="${ldap.defaultLdapContext.url:}"/>
+                <property name="userDn" value="${ldap.defaultLdapContext.user:}"/>
+                <property name="password" value="${ldap.defaultLdapContext.password:}"/>
                 <property name="pooled" value="false"/>
             </bean>
         </property>
         <property name="uidAttribute" value="uid"/>
-        <property name="baseDN" value="${ldap.baseDn}"/>
+        <property name="baseDN" value="${ldap.defaultLdapContext.baseDn:}"/>
     </bean>
-    -->
-    
+
     <!--
      | Example LDAP Server Configuration for LDAP person attribute lookups
      +-->
     <!-- Declare the standard spring-ldap ContextSource objects to define LDAP server connections -->
-    <!--
     <bean id="defaultLdapContext" class="org.springframework.ldap.pool.factory.PoolingContextSource">
         <property name="contextSource" ref="defaultLdapContext_target"/>
         <property name="dirContextValidator">
@@ -86,12 +83,11 @@
     </bean>
     
     <bean id="defaultLdapContext_target" class="org.springframework.ldap.core.support.LdapContextSource">
-        <property name="url" value="${ldap.url}"/>
-        <property name="base" value="${ldap.baseDn}"/>
-        <property name="userDn" value="${ldap.userName}"/>
-        <property name="password" value="${ldap.password}"/>
+        <property name="url" value="${ldap.defaultLdapContext.url:}"/>
+        <property name="base" value="${ldap.defaultLdapContext.baseDn:}"/>
+        <property name="userDn" value="${ldap.defaultLdapContext.user:}"/>
+        <property name="password" value="${ldap.defaultLdapContext.password:}"/>
         <property name="pooled" value="false"/>
     </bean>
-    -->
 
 </beans>

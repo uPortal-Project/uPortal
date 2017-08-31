@@ -25,12 +25,12 @@ import java.util.Map;
 import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
-import org.jasig.services.persondir.IPersonAttributes;
-import org.jasig.services.persondir.support.AbstractDefaultAttributePersonAttributeDao;
-import org.jasig.services.persondir.support.AttributeNamedPersonImpl;
-import org.jasig.services.persondir.support.IUsernameAttributeProvider;
-import org.jasig.services.persondir.support.MultivaluedPersonAttributeUtils;
-import org.jasig.services.persondir.support.NamedPersonImpl;
+import org.apereo.services.persondir.IPersonAttributes;
+import org.apereo.services.persondir.support.AbstractDefaultAttributePersonAttributeDao;
+import org.apereo.services.persondir.support.AttributeNamedPersonImpl;
+import org.apereo.services.persondir.support.IUsernameAttributeProvider;
+import org.apereo.services.persondir.support.MultivaluedPersonAttributeUtils;
+import org.apereo.services.persondir.support.NamedPersonImpl;
 
 /**
  * LocalAccountPersonAttributeDao provides a person directory implementation that uses uPortal's

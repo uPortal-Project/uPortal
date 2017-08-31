@@ -1,0 +1,5 @@
+/* reset image resizing applied by Jekyll Dinky theme */
+img {
+  margin: 0;
+  padding: 0;
+}

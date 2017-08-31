@@ -17,8 +17,12 @@ signing.secretKeyRingFile=/Users/me/.gnupg/secring.gpg
 
 ## Running a release
 
-Run
+Run the following commands:
 
 ```sh
-./gradlew clean uploadArtifacts
+./gradlew clean release
+git push origin --tags
 ```
+
+:warning: During the `release` task, you will be prompted for a release version (e.g. `5.0.3`) and a
+new version number for the branch (e.g. `5.0.4-SNAPSHOT`)

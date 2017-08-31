@@ -1,16 +1,17 @@
 plugins {
     // Top level plugins
-    id 'com.gradle.build-scan' version '1.7.4'
+    id 'com.gradle.build-scan' version '1.8'
     id 'build-announcements'
     id 'com.github.kt3k.coveralls' version '2.8.1'
     id 'com.moowork.node' version '1.2.0'
     id 'me.champeau.buildscan-recipes' version '0.2.0'
-    id 'org.standardout.versioneye' version '1.4.0'
+    id 'org.standardout.versioneye' version '1.5.0'
+    id 'net.researchgate.release' version '2.4.0'
 
     // Sub project plugins
     id 'com.github.sherter.google-java-format' version '0.6' apply false
-    id 'nebula.lint' version '7.9.1' apply false
-    id 'net.ltgt.errorprone' version '0.0.10' apply false
+    id 'nebula.lint' version '7.9.5' apply false
+    id 'net.ltgt.errorprone' version '0.0.11' apply false
 }
 
 description = "Apereo uPortal $version"
@@ -51,6 +52,10 @@ allprojects {
     apply plugin: 'com.github.sherter.google-java-format'
     apply plugin: 'net.ltgt.errorprone'
 
+    dependencies {
+      errorprone 'com.google.errorprone:error_prone_core:2.0.21'
+    }
+
     sourceCompatibility = 1.8
 
     gradleLint.criticalRules = [
@@ -74,6 +79,13 @@ allprojects {
         options style: 'AOSP'
         exclude '**/generated-sources'
     }
+
+    /*======== Aggregate Dependencies Report ========*/
+    task dependenciesRecursive(type: DependencyReportTask) {
+        group = 'Help'
+        description = 'Provides a complete report on project dependencies;  use option (e.g.) --configuration compile to narrow'
+    }
+
 }
 
 /*======== Child Projects ========*/
@@ -190,7 +202,18 @@ subprojects {
             }
         }
     }
+    afterReleaseBuild.dependsOn uploadArchives
 }
+
+/*
+ * Configuration for the 'gradle-release' plugin (https://github.com/researchgate/gradle-release)
+ */
+release {
+    git {
+        requireBranch = ''
+    }
+}
+
 
 task jacocoAggregateReport(type: org.gradle.testing.jacoco.tasks.JacocoReport) {
     dependsOn = allprojects.test

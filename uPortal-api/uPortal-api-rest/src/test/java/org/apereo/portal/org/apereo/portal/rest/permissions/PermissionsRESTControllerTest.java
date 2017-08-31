@@ -185,7 +185,7 @@ public class PermissionsRESTControllerTest {
         Assert.assertTrue(targets.isEmpty());
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testGetTargetsNullActivity() throws Exception {
         Long activityId = 2L;
         String query = "activity1";
@@ -206,6 +206,7 @@ public class PermissionsRESTControllerTest {
                 permissionsRESTController.getTargets(activityId, query, req, res);
         Collection<IPermissionTarget> targets =
                 (Collection<IPermissionTarget>) modelAndView.getModel().get("targets");
+        Assert.assertTrue(targets.isEmpty());
     }
 
     @Test(expected = NullPointerException.class)
@@ -235,7 +236,7 @@ public class PermissionsRESTControllerTest {
         return personBean;
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testGetgetAssignmentsForTargetNull() throws Exception {
         String target = "target";
         boolean includeInherited = false;

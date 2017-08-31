@@ -18,8 +18,8 @@ import java.util.Map;
 import org.apache.commons.collections.map.ReferenceMap;
 import org.apache.commons.lang.StringUtils;
 import org.apereo.portal.security.IPerson;
-import org.jasig.services.persondir.IPersonAttributeDao;
-import org.jasig.services.persondir.IPersonAttributes;
+import org.apereo.services.persondir.IPersonAttributeDao;
+import org.apereo.services.persondir.IPersonAttributes;
 
 /**
  * Implementation of <code>IEntityNameFinder</code> for <code>IPersons</code> by looking up

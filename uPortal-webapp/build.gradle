@@ -22,8 +22,9 @@ description = "Apereo uPortal Webapp (WAR)"
  * TODO:  Groovy-based tests (in src/test/groovy) are not currently run by the Gradle build.
  */
 
-// Support for filtering properties files
-import org.apache.tools.ant.filters.ReplaceTokens
+configurations {
+    webjars
+}
 
 dependencies {
     compile project(':uPortal-groups:uPortal-groups-filesystem')
@@ -66,20 +67,9 @@ dependencies {
      */
     runtime "org.hsqldb:hsqldb:${hsqldbVersion}"
 
-    /*
-     * Additional runtime dependencies that were present in uP 4.3.x and may
-     * (or may not) be needed at this point.
-     */
-    // runtime "jline:jline:${jlineVersion}"
-    // runtime "org.codehaus.groovy:groovy-xml:${groovyVersion}"
-    // runtime "org.fusesource.jansi:jansi:${jansiVersion}"
-    // runtime("org.jasig.cas:cas-server-extension-clearpass:${casServerVersion}") {
-    //     // NOTE:  ClearPass is no longer a feature of CAS,
-    //     // and uPortal already supports the new mechanism
-    //     exclude group: 'org.jasig.cas', module: 'cas-server-core'
-    //     exclude group: 'javax.validation', module: 'validation-api'
-    //     exclude group: 'org.slf4j', module: 'slf4j-log4j12'
-    // }
+    compileOnly "${servletApiDependency}"
+
+    webjars "org.webjars.npm:bootstrap:${bootstrapVersion}"
 }
 
 node {
@@ -87,21 +77,45 @@ node {
     download = true
 }
 
+// Support for filtering properties files
+import org.apache.tools.ant.filters.ReplaceTokens
 processResources {
     filter(ReplaceTokens, tokens:['projectVersion': project.version])
 }
 
-war {
-    // Add generated CSS for Respondr skins to the war file
-    with {
-        from 'build/generated-sources/skin/main/webapp'
-        into '/'
+task prepareSkinResources {
+    // Unpack WebJars (part of the skin)
+    configurations.webjars.allDependencies.each {
+        String webjarName = it.name
+        String webjarVersion = it.version
+        String webjarFile = configurations.webjars.files(it).getAt(0)
+        // Stage 1:  Exploded WebJar
+        doLast {
+            copy {
+                from zipTree(webjarFile)
+                into "${buildDir}/webjars/${webjarName}-${webjarVersion}"
+            }
+        }
+        // Stage 2:  Contents of the WebJar included in the skin
+        doLast {
+            copy {
+                from "${buildDir}/webjars/${webjarName}-${webjarVersion}/META-INF/resources/webjars/${webjarName}/${webjarVersion}"
+                into "${buildDir}/generated-sources/skin/main/webapp/webjars/${webjarName}"
+            }
+        }
+    }
+    // Add Respondr LESS sources
+    doLast {
+        copy {
+            from 'src/main/webapp/media/skins/respondr'
+            into "${buildDir}/generated-sources/skin/main/webapp/media/skins/respondr"
+        }
     }
 }
 
-import org.jasig.resource.aggr.AggregationRequest;
-import org.jasig.resource.aggr.ResourcesAggregator;
-import org.jasig.resource.aggr.ResourcesAggregatorImpl;
+import org.jasig.resource.aggr.AggregationRequest
+import org.jasig.resource.aggr.ResourcesAggregator
+import org.jasig.resource.aggr.ResourcesAggregatorImpl
 task aggregateRespondrSkins {
     doLast {
         final ResourcesAggregator aggr = new ResourcesAggregatorImpl();
@@ -128,5 +142,14 @@ task aggregateRespondrSkins {
 }
 
 // Generate CSS for Respondr skins
+project.tasks.getByName('npm_run_compile-less').dependsOn(prepareSkinResources)
 aggregateRespondrSkins.dependsOn('npm_run_compile-less')
 processResources.dependsOn(aggregateRespondrSkins)
+
+war {
+    // Add generated CSS for Respondr skins to the war file
+    with {
+        from "${buildDir}/generated-sources/skin/main/webapp"
+        into '/'
+    }
+}

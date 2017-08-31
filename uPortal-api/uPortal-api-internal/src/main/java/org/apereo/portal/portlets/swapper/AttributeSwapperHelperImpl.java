@@ -31,13 +31,14 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apereo.portal.persondir.PortalRootPersonAttributeDao;
 import org.apereo.portal.portlets.Attribute;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.IPersonManager;
 import org.apereo.portal.url.IPortalRequestUtils;
-import org.jasig.services.persondir.IPersonAttributeDao;
-import org.jasig.services.persondir.IPersonAttributes;
-import org.jasig.services.persondir.support.MultivaluedPersonAttributeUtils;
+import org.apereo.services.persondir.IPersonAttributeDao;
+import org.apereo.services.persondir.IPersonAttributes;
+import org.apereo.services.persondir.support.MultivaluedPersonAttributeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.webflow.context.ExternalContext;
@@ -49,17 +50,17 @@ public class AttributeSwapperHelperImpl implements IAttributeSwapperHelper {
 
     protected final Log logger = LogFactory.getLog(this.getClass());
 
-    private OverwritingPersonAttributeDao overwritingPersonAttributeDao;
+    private PortalRootPersonAttributeDao portalRootPersonAttributeDao;
     private IPersonManager personManager;
     private IPortalRequestUtils portalRequestUtils;
 
-    public OverwritingPersonAttributeDao getPersonAttributeDao() {
-        return overwritingPersonAttributeDao;
+    public PortalRootPersonAttributeDao getPersonAttributeDao() {
+        return portalRootPersonAttributeDao;
     }
-    /** The {@link OverwritingPersonAttributeDao} instance to use to override attributes */
+    /** The {@link PortalRootPersonAttributeDao} instance to use to override attributes */
     @Required
-    public void setPersonAttributeDao(OverwritingPersonAttributeDao personAttributeDao) {
-        this.overwritingPersonAttributeDao = personAttributeDao;
+    public void setPersonAttributeDao(PortalRootPersonAttributeDao personAttributeDao) {
+        this.portalRootPersonAttributeDao = personAttributeDao;
     }
 
     public IPersonManager getPersonManager() {
@@ -102,7 +103,7 @@ public class AttributeSwapperHelperImpl implements IAttributeSwapperHelper {
         } else {
             //If no prefs try the 'possibleUserAttributeNames' from the IPersonAttributeDao
             final Set<String> possibleAttributes =
-                    this.overwritingPersonAttributeDao.getPossibleUserAttributeNames();
+                    this.portalRootPersonAttributeDao.getPossibleUserAttributeNames();
             if (possibleAttributes != null) {
                 swappableAttributes = new TreeSet<String>(possibleAttributes);
             }
@@ -136,7 +137,7 @@ public class AttributeSwapperHelperImpl implements IAttributeSwapperHelper {
     @Override
     public IPersonAttributes getOriginalUserAttributes(String uid) {
         final IPersonAttributeDao delegatePersonAttributeDao =
-                this.overwritingPersonAttributeDao.getDelegatePersonAttributeDao();
+                this.portalRootPersonAttributeDao.getDelegatePersonAttributeDao();
         return delegatePersonAttributeDao.getPerson(uid);
     }
 
@@ -148,7 +149,7 @@ public class AttributeSwapperHelperImpl implements IAttributeSwapperHelper {
             ExternalContext externalContext, AttributeSwapRequest attributeSwapRequest) {
         final Principal currentUser = externalContext.getCurrentUser();
         final String uid = currentUser.getName();
-        final IPersonAttributes person = this.overwritingPersonAttributeDao.getPerson(uid);
+        final IPersonAttributes person = this.portalRootPersonAttributeDao.getPerson(uid);
 
         final Map<String, Attribute> currentAttributes =
                 attributeSwapRequest.getCurrentAttributes();
@@ -238,7 +239,7 @@ public class AttributeSwapperHelperImpl implements IAttributeSwapperHelper {
         this.logger.warn("User '" + uid + "' setting attribute overrides: " + attributes);
 
         //Override attributes retrieved the person directory
-        this.overwritingPersonAttributeDao.setUserAttributeOverride(uid, attributes);
+        this.portalRootPersonAttributeDao.setUserAttributeOverride(uid, attributes);
 
         //Update the IPerson, setting the overridden attributes
         final HttpServletRequest portalRequest =
@@ -262,7 +263,7 @@ public class AttributeSwapperHelperImpl implements IAttributeSwapperHelper {
         this.logger.warn("User '" + uid + "' reseting to default attributes");
 
         //Remove the person directory override
-        this.overwritingPersonAttributeDao.removeUserAttributeOverride(uid);
+        this.portalRootPersonAttributeDao.removeUserAttributeOverride(uid);
 
         //Remove the IPerson attribute override, bit of a hack as we really just remove all overrides
         //then re-add all attributes from person directory

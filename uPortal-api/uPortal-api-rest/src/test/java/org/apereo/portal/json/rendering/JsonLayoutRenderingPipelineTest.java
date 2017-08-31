@@ -14,11 +14,19 @@
  */
 package org.apereo.portal.json.rendering;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import java.io.IOException;
 import javax.servlet.ServletException;
+import org.apereo.portal.events.IPortletExecutionEventFactory;
+import org.apereo.portal.rendering.CharacterPipelineComponent;
+import org.apereo.portal.url.IUrlSyntaxProvider;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -28,6 +36,9 @@ public class JsonLayoutRenderingPipelineTest {
     @InjectMocks JsonLayoutRenderingPipeline jsonLayoutRenderingPipeline;
     private MockHttpServletRequest req;
     private MockHttpServletResponse res;
+    private CharacterPipelineComponent pipeline;
+    @Mock private IUrlSyntaxProvider urlSyntaxProvider;
+    @Mock private IPortletExecutionEventFactory portalEventFactory;
 
     @Before
     public void setup() {
@@ -37,8 +48,12 @@ public class JsonLayoutRenderingPipelineTest {
         MockitoAnnotations.initMocks(this);
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test(expected = IllegalStateException.class)
     public void testRenderStateNull() throws ServletException, IOException {
+        pipeline = mock(CharacterPipelineComponent.class);
+        jsonLayoutRenderingPipeline.setPipeline(pipeline);
+        when(pipeline.getEventReader(req, res)).thenReturn(null);
         jsonLayoutRenderingPipeline.renderState(req, res);
+        verify(urlSyntaxProvider).getPortalRequestInfo(req);
     }
 }

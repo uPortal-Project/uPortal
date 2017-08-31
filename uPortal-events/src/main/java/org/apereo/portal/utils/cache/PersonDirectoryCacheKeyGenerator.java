@@ -28,7 +28,7 @@ import org.aopalliance.intercept.MethodInvocation;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.services.persondir.support.IUsernameAttributeProvider;
+import org.apereo.services.persondir.support.IUsernameAttributeProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springmodules.cache.key.CacheKeyGenerator;
 

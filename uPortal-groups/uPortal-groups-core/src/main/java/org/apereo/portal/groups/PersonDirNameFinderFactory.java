@@ -15,7 +15,7 @@
 package org.apereo.portal.groups;
 
 import org.apereo.portal.spring.locator.PersonAttributeDaoLocator;
-import org.jasig.services.persondir.IPersonAttributeDao;
+import org.apereo.services.persondir.IPersonAttributeDao;
 
 /**
  * Factory for creating and obtaining reference to a static singleton <code>PersonDirNameFinder

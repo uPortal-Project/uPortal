@@ -9,7 +9,7 @@ import java.util.HashSet;
 import java.util.Set;
 import org.apereo.portal.security.IAuthorizationPrincipal;
 import org.apereo.portal.security.IPermission;
-import org.jasig.services.persondir.IPersonAttributeDao;
+import org.apereo.services.persondir.IPersonAttributeDao;
 import org.junit.Before;
 import org.junit.Test;
 

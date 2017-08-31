@@ -32,8 +32,14 @@ public class JsonWrapperFilteringCharacterPipelineComponent
      * @see org.apereo.portal.rendering.PipelineComponent#getCacheKey(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
     @Override
-    public CacheKey getCacheKey(HttpServletRequest request, HttpServletResponse response) {
-        return this.wrappedComponent.getCacheKey(request, response);
+    public CacheKey getCacheKey(HttpServletRequest request, HttpServletResponse response)
+            throws IllegalStateException {
+        if (this.wrappedComponent != null) {
+            return this.wrappedComponent.getCacheKey(request, response);
+        } else {
+            logger.debug("PipelineComponentWrapper.wrapperComponent is null");
+            throw new IllegalStateException("PipelineComponentWrapper.wrapperComponent is null");
+        }
     }
 
     /* (non-Javadoc)
@@ -41,14 +47,20 @@ public class JsonWrapperFilteringCharacterPipelineComponent
      */
     @Override
     public PipelineEventReader<CharacterEventReader, CharacterEvent> getEventReader(
-            HttpServletRequest request, HttpServletResponse response) {
-        final PipelineEventReader<CharacterEventReader, CharacterEvent> pipelineEventReader =
-                this.wrappedComponent.getEventReader(request, response);
-        final CharacterEventReader eventReader = pipelineEventReader.getEventReader();
-        final JsonWrapperFilteringCharacterEventReader jsonWrapperFilteringCharacterEventReader =
-                new JsonWrapperFilteringCharacterEventReader(eventReader);
-        final Map<String, String> outputProperties = pipelineEventReader.getOutputProperties();
-        return new PipelineEventReaderImpl<CharacterEventReader, CharacterEvent>(
-                jsonWrapperFilteringCharacterEventReader, outputProperties);
+            HttpServletRequest request, HttpServletResponse response) throws IllegalStateException {
+        if (this.wrappedComponent != null) {
+            final PipelineEventReader<CharacterEventReader, CharacterEvent> pipelineEventReader =
+                    this.wrappedComponent.getEventReader(request, response);
+            final CharacterEventReader eventReader = pipelineEventReader.getEventReader();
+            final JsonWrapperFilteringCharacterEventReader
+                    jsonWrapperFilteringCharacterEventReader =
+                            new JsonWrapperFilteringCharacterEventReader(eventReader);
+            final Map<String, String> outputProperties = pipelineEventReader.getOutputProperties();
+            return new PipelineEventReaderImpl<CharacterEventReader, CharacterEvent>(
+                    jsonWrapperFilteringCharacterEventReader, outputProperties);
+        } else {
+            logger.warn("PipelineComponentWrapper.wrapperComponent is null");
+            throw new IllegalStateException("PipelineComponentWrapper.wrapperComponent is null");
+        }
     }
 }

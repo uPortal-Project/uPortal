@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.apereo.portal.security.IPerson;
-import org.jasig.services.persondir.IPersonAttributes;
+import org.apereo.services.persondir.IPersonAttributes;
 import org.springframework.webflow.context.ExternalContext;
 
 public interface IPersonLookupHelper {
