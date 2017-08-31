@@ -14,11 +14,13 @@
  */
 package org.apereo.portal.rest;
 
+import java.util.Collections;
 import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apereo.portal.api.groups.ApiGroupsService;
 import org.apereo.portal.api.groups.Entity;
+import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.IPersonManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -45,8 +47,15 @@ public class GroupRESTController {
 
     @RequestMapping(value = "/groups", method = RequestMethod.GET)
     public ModelAndView getUsersGroup(HttpServletRequest request, HttpServletResponse response) {
-        Set<Entity> groups =
-                groupService.getGroupsForMember(personManager.getPerson(request).getUserName());
+        IPerson person = personManager.getPerson(request);
+        Set<Entity> groups = Collections.EMPTY_SET;
+        if (person != null) {
+            String username = person.getUserName();
+            if (username != null) {
+                groups = groupService.getGroupsForMember(username);
+            }
+        }
+
         return new ModelAndView("json", "groups", groups);
     }
 }
