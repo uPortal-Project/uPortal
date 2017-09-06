@@ -244,8 +244,10 @@ public class AuthorizationImpl implements IAuthorizationService {
         final String activity = IPermission.PORTLET_MODE_CONFIG;
         final String activitySubscribe = IPermission.PORTLET_CONFIGURE_ACTIVITY;
 
-        return doesPrincipalHavePermission(principal, owner, activity, target) ||
-                doesPrincipalHavePermission(principal, ownerSubscribe, activitySubscribe, target);
+        boolean byAdmin = doesPrincipalHavePermission(principal, owner, activity, target);
+        boolean byPrincipal = doesPrincipalHavePermission(principal, ownerSubscribe, activitySubscribe, target);
+        log.info("BEACH TEST:  Checking portlet configure abilities.  ByAdmin?=["+byAdmin+"], ByPrincipal?=["+byPrincipal+"]" );
+        return byAdmin || byPrincipal;
     }
     /**
      * Answers if the principal has permission to MANAGE this Channel.
