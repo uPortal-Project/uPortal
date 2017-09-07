@@ -268,7 +268,9 @@ public final class PortletAdministrationHelper implements ServletContextAware {
      */
     public PortletDefinitionForm savePortletRegistration(
             IPerson publisher, PortletDefinitionForm form) throws Exception {
-        logger.warn("BEACH TEST:  In savePortletRegistration for: "+form.getPortletName());
+        if (this.logger.isInfoEnabled()) {
+            logger.info("In savePortletRegistration() - for: "+form.getPortletName());
+        }
         /* TODO:  Service-Layer Security Reboot (great need of refactoring with a community-approved plan in place) */
 
         // User must have the selected lifecycle permission over AT LEAST ONE
@@ -341,15 +343,21 @@ public final class PortletAdministrationHelper implements ServletContextAware {
                             ? (GroupService.findGroup(bean.getId()))
                             : (GroupService.getGroupMember(bean.getId(), entityEnum.getClazz()));
             if (form.getPermissions().contains(subscribePerm)) {
-                logger.warn("BEACH TEST (savePortletRegistration): Found a subscribePerm for principal: "+principal);
+                if (this.logger.isInfoEnabled()) {
+                    logger.info("In savePortletRegistration() - Found a subscribePerm for principal: "+principal);
+                }
                 subscribePrincipalSet.add(principal);
             }
             if (form.getPermissions().contains(browsePerm)) {
-                logger.warn("BEACH TEST (savePortletRegistration): Found a browsePerm for principal: "+principal);
+                if (this.logger.isInfoEnabled()) {
+                    logger.info("In savePortletRegistration() - Found a browsePerm for principal: "+principal);
+                }
                 browsePrincipalSet.add(principal);
             }
             if (form.getPermissions().contains(configurePerm)) {
-                logger.warn("BEACH TEST (savePortletRegistration): Found a configurePerm for principal: "+principal);
+                if (this.logger.isInfoEnabled()) {
+                    logger.info("In savePortletRegistration() - Found a configurePerm for principal: "+principal);
+                }
                 configurePrincipalSet.add(principal);
             }
         }
@@ -456,8 +464,9 @@ public final class PortletAdministrationHelper implements ServletContextAware {
             permission.setActivity(activity);
             permission.setTarget(portletTargetId);
             newPermissions.add(permission);
-            logger.warn("BEACH TEST:  (updatePermissions) adding a new permission of: " + permission);
-
+            if (this.logger.isInfoEnabled()) {
+                logger.info("In updatePermissions() - adding a new permission of: " + permission);
+            }
         }
 
         /* Remove former permissions for this portlet / activity */
@@ -759,10 +768,14 @@ public final class PortletAdministrationHelper implements ServletContextAware {
         final String ending = "_" + activity;
         for (final String name : request.getParameterMap().keySet()) {
             if (name.endsWith(ending)) {
-                logger.info("Adding permission request: "+name);
+                if (this.logger.isInfoEnabled()) {
+                    logger.info("In addPermissionsFromRequestToForm() - Adding permission request: "+name);
+                }
                 form.addPermission(name);
             } else {
-                logger.info("For permissions, ignoring request parameter: " + name);
+                if (this.logger.isInfoEnabled()) {
+                    logger.info("In addPermissionsFromRequestToForm() - For permissions, ignoring request parameter: "+name);
+                }
             }
         }
     }
