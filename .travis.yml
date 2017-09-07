@@ -16,4 +16,5 @@ script: ./gradlew -u -i -q -S build jacocoAggregateReport coveralls
 
 cache:
   directories:
+    - $HOME/.npm/
     - $HOME/.gradle/

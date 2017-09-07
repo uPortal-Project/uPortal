@@ -8,5 +8,5 @@ install:
 build: off
 test_script: gradlew.bat -u -i -S build
 cache:
-  - .gradle
+  - C:\Users\appveyor\.npm
   - C:\Users\appveyor\.gradle
