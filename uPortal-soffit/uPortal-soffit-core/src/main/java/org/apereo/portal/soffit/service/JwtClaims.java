@@ -45,6 +45,9 @@ public enum JwtClaims {
     /** List of group names to which the user belongs; used by Bearer objects. */
     GROUPS("groups"),
 
+    /** List of portlet preferences for this portlet; used by Bearer objects. */
+    PREFERENCES("preferences"),
+
     /** List of group names to which the user belongs; used by Bearer objects. */
     PROPERTIES("properties"),
 

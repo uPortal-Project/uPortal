@@ -29,16 +29,19 @@ public class Bearer extends AbstractTokenizable {
     private final String username;
     private final Map<String, List<String>> attributes;
     private final List<String> groups;
+    private final Map<String, String[]> preferences;
 
     public Bearer(
             String encryptedToken,
             String username,
             Map<String, List<String>> attributes,
-            List<String> groups) {
+            List<String> groups,
+            Map<String, String[]> preferences) {
         super(encryptedToken);
         this.username = username;
         this.attributes = Collections.unmodifiableMap(attributes);
         this.groups = Collections.unmodifiableList(groups);
+        this.preferences = Collections.unmodifiableMap(preferences);
     }
 
     public String getUsername() {
@@ -53,12 +56,17 @@ public class Bearer extends AbstractTokenizable {
         return groups;
     }
 
+    public Map<String, String[]> getPreferences() {
+        return preferences;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
         result = prime * result + ((attributes == null) ? 0 : attributes.hashCode());
         result = prime * result + ((groups == null) ? 0 : groups.hashCode());
+        result = prime * result + ((preferences == null) ? 0 : preferences.hashCode());
         result = prime * result + ((username == null) ? 0 : username.hashCode());
         return result;
     }
@@ -75,6 +83,9 @@ public class Bearer extends AbstractTokenizable {
         if (groups == null) {
             if (other.groups != null) return false;
         } else if (!groups.equals(other.groups)) return false;
+        if (preferences == null) {
+            if (other.preferences != null) return false;
+        } else if (!preferences.equals(other.preferences)) return false;
         if (username == null) {
             if (other.username != null) return false;
         } else if (!username.equals(other.username)) return false;
@@ -87,6 +98,7 @@ public class Bearer extends AbstractTokenizable {
                 .append("username", username)
                 .append("attributes", attributes)
                 .append("groups", groups)
+                .append("preferences", preferences)
                 .append("getEncryptedToken()", this.getEncryptedToken())
                 .toString();
     }
