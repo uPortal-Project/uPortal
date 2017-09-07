@@ -245,9 +245,13 @@ public class AuthorizationImpl implements IAuthorizationService {
         final String activitySubscribe = IPermission.PORTLET_CONFIGURE_ACTIVITY;
 
         boolean byAdmin = doesPrincipalHavePermission(principal, owner, activity, target);
-        boolean byPrincipal = doesPrincipalHavePermission(principal, ownerSubscribe, activitySubscribe, target);
+        boolean byPrincipal =
+                doesPrincipalHavePermission(principal, ownerSubscribe, activitySubscribe, target);
         if (this.log.isInfoEnabled()) {
-            log.info(String.format("In canPrincipalConfigure() - principal.key=[%s], ByAdmin?=[%s], ByPrincipal?=[%s]", principal.getKey(), byAdmin, byPrincipal));
+            log.info(
+                    String.format(
+                            "In canPrincipalConfigure() - principal.key=[%s], ByAdmin?=[%s], ByPrincipal?=[%s]",
+                            principal.getKey(), byAdmin, byPrincipal));
         }
         return byAdmin || byPrincipal;
     }

@@ -91,7 +91,10 @@ public class PortalPermissionEvaluator implements PermissionEvaluator {
                             + targetDomainObject.getClass());
         }
         if (this.logger.isInfoEnabled()) {
-            logger.info(String.format("In hasPermission() - owner=[%s], activity=[%s], targetId=[%s] ", activity.getOwnerFname(), activity.getActivityFname(), targetId));
+            logger.info(
+                    String.format(
+                            "In hasPermission() - owner=[%s], activity=[%s], targetId=[%s] ",
+                            activity.getOwnerFname(), activity.getActivityFname(), targetId));
         }
 
         if (activity != null) {

@@ -116,7 +116,9 @@ public final class PortletAdministrationHelper implements ServletContextAware {
     private static final String PORTLET_FNAME_FRAGMENT_ADMIN_PORTLET = "fragment-admin";
 
     public static final String[] PORTLET_SUBSCRIBE_ACTIVITIES = {
-        IPermission.PORTLET_SUBSCRIBER_ACTIVITY, IPermission.PORTLET_BROWSE_ACTIVITY, IPermission.PORTLET_CONFIGURE_ACTIVITY
+        IPermission.PORTLET_SUBSCRIBER_ACTIVITY,
+        IPermission.PORTLET_BROWSE_ACTIVITY,
+        IPermission.PORTLET_CONFIGURE_ACTIVITY
     };
 
     /*
@@ -269,7 +271,7 @@ public final class PortletAdministrationHelper implements ServletContextAware {
     public PortletDefinitionForm savePortletRegistration(
             IPerson publisher, PortletDefinitionForm form) throws Exception {
         if (this.logger.isInfoEnabled()) {
-            logger.info("In savePortletRegistration() - for: "+form.getPortletName());
+            logger.info("In savePortletRegistration() - for: " + form.getPortletName());
         }
         /* TODO:  Service-Layer Security Reboot (great need of refactoring with a community-approved plan in place) */
 
@@ -344,19 +346,25 @@ public final class PortletAdministrationHelper implements ServletContextAware {
                             : (GroupService.getGroupMember(bean.getId(), entityEnum.getClazz()));
             if (form.getPermissions().contains(subscribePerm)) {
                 if (this.logger.isInfoEnabled()) {
-                    logger.info("In savePortletRegistration() - Found a subscribePerm for principal: "+principal);
+                    logger.info(
+                            "In savePortletRegistration() - Found a subscribePerm for principal: "
+                                    + principal);
                 }
                 subscribePrincipalSet.add(principal);
             }
             if (form.getPermissions().contains(browsePerm)) {
                 if (this.logger.isInfoEnabled()) {
-                    logger.info("In savePortletRegistration() - Found a browsePerm for principal: "+principal);
+                    logger.info(
+                            "In savePortletRegistration() - Found a browsePerm for principal: "
+                                    + principal);
                 }
                 browsePrincipalSet.add(principal);
             }
             if (form.getPermissions().contains(configurePerm)) {
                 if (this.logger.isInfoEnabled()) {
-                    logger.info("In savePortletRegistration() - Found a configurePerm for principal: "+principal);
+                    logger.info(
+                            "In savePortletRegistration() - Found a configurePerm for principal: "
+                                    + principal);
                 }
                 configurePrincipalSet.add(principal);
             }
@@ -436,7 +444,8 @@ public final class PortletAdministrationHelper implements ServletContextAware {
                 portletDef, publisher, categories, new ArrayList<>(subscribePrincipalSet));
         //updatePermissions(portletDef, subscribePrincipalSet, IPermission.PORTLET_SUBSCRIBER_ACTIVITY);
         updatePermissions(portletDef, browsePrincipalSet, IPermission.PORTLET_BROWSE_ACTIVITY);
-        updatePermissions(portletDef, configurePrincipalSet, IPermission.PORTLET_CONFIGURE_ACTIVITY);
+        updatePermissions(
+                portletDef, configurePrincipalSet, IPermission.PORTLET_CONFIGURE_ACTIVITY);
 
         return this.createPortletDefinitionForm(
                 publisher, portletDef.getPortletDefinitionId().getStringId());
@@ -769,12 +778,16 @@ public final class PortletAdministrationHelper implements ServletContextAware {
         for (final String name : request.getParameterMap().keySet()) {
             if (name.endsWith(ending)) {
                 if (this.logger.isInfoEnabled()) {
-                    logger.info("In addPermissionsFromRequestToForm() - Adding permission request: "+name);
+                    logger.info(
+                            "In addPermissionsFromRequestToForm() - Adding permission request: "
+                                    + name);
                 }
                 form.addPermission(name);
             } else {
                 if (this.logger.isInfoEnabled()) {
-                    logger.info("In addPermissionsFromRequestToForm() - For permissions, ignoring request parameter: "+name);
+                    logger.info(
+                            "In addPermissionsFromRequestToForm() - For permissions, ignoring request parameter: "
+                                    + name);
                 }
             }
         }
