@@ -145,7 +145,7 @@ public class PortletDefinitionRegistryImpl
             return portletRegistryService.getPortletApplication(portletDescriptorKeys.first);
         } catch (PortletContainerException e) {
             this.logger.warn(
-                    "No portlet application descriptor could be found likely not deplotyed. For portlet definition: "
+                    "No portlet application descriptor could be found likely not deployed. For portlet definition: "
                             + portletDefinition,
                     e);
             return null;
