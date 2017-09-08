@@ -64,7 +64,7 @@
             connection_username="${hibernate.connection.username}"
             connection_password="${hibernate.connection.password}"
             connection_driver="${hibernate.connection.driver_class}"
-            initialize_sql="CREATE TABLE JGROUPSPING (own_addr varchar(200) NOT NULL, cluster_name varchar(200) NOT NULL, ping_data blob DEFAULT NULL, PRIMARY KEY (own_addr, cluster_name) )"
+            initialize_sql="${jgroupsInitSql}"
     />
     <MERGE2  min_interval="10000"
              max_interval="30000"/>
