@@ -98,7 +98,16 @@
 
     <!-- define default DDL used by most databases -->
     <bean id="jgroupsDefaultInitSql" class="java.lang.String">
-        <constructor-arg value="CREATE TABLE JGROUPSPING (own_addr varchar(200) NOT NULL, cluster_name varchar(200) NOT NULL, ping_data blob DEFAULT NULL, PRIMARY KEY (own_addr, cluster_name) )"/>
+        <constructor-arg>
+            <value>
+                CREATE TABLE JGROUPSPING (
+                    own_addr varchar(200) NOT NULL,
+                    cluster_name varchar(200) NOT NULL,
+                    ping_data blob DEFAULT NULL,
+                    PRIMARY KEY (own_addr, cluster_name)
+                )
+            </value>
+        </constructor-arg>
     </bean>
 
     <!-- map of JGroups DDL by hibernate.dialect -->
@@ -108,7 +117,16 @@
         <entry key="org.hibernate.dialect.Oracle10gDialect" value="#{@jgroupsDefaultInitSql}" />
         <entry key="org.hibernate.dialect.MySQLDialect" value="#{@jgroupsDefaultInitSql}" />
         <entry key="org.hibernate.dialect.PostgreSQL81Dialect" value="#{@jgroupsDefaultInitSql}" />
-        <entry key="org.hibernate.dialect.SQLServerDialect" value="CREATE TABLE JGROUPSPING (own_addr varchar(200) NOT NULL, cluster_name varchar(200) NOT NULL, ping_data varbinary DEFAULT NULL, PRIMARY KEY (own_addr, cluster_name) )" />
+        <entry key="org.hibernate.dialect.SQLServerDialect">
+            <value>
+                CREATE TABLE JGROUPSPING (
+                    own_addr varchar(200) NOT NULL,
+                    cluster_name varchar(200) NOT NULL,
+                    ping_data varbinary DEFAULT NULL,
+                    PRIMARY KEY (own_addr, cluster_name)
+                )
+            </value>
+        </entry>
         <entry key="org.hibernate.dialect.HSQLDialect" value="#{@jgroupsDefaultInitSql}" />
     </util:map>
 
