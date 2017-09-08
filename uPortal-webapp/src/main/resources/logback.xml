@@ -140,6 +140,13 @@
   </logger>
   -->
 
+  <logger name="org.apereo.portal.ValueLogger" additivity="false" level="DEBUG">
+    <appender-ref ref="PORTAL"/>
+  </logger>
+  <logger name="log4j.logger.org.springframework.beans.factory.support.DefaultListableBeanFactory" additivity="false" level="DEBUG">
+    <appender-ref ref="PORTAL"/>
+  </logger>
+
   <!--  Log all TX, SQL and SQL Parameters
   <logger name="org.springframework.orm.jpa.JpaTransactionManager" additivity="false" level="DEBUG">
     <appender-ref ref="PORTAL"/>
