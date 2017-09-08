@@ -52,4 +52,11 @@ public class PortletAdministrationHelperTest {
 
         assertNull(helper.updateFormForSinglePortletType(portletDefinitions, form));
     }
+
+    /**
+     * Note: Not unit testing PortletAdministrationHelper.savePortletRegistration().
+     * Reason:  There is an upfront call to hasLifecyclePermission() which relies on the
+     * authorizationService to be available.
+     */
+
 }
