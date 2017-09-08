@@ -96,24 +96,9 @@
         <constructor-arg value="${hibernate.dialect}"/>
     </bean>
 
-    <bean id="logDialect" class="org.apereo.portal.ValueLogger" lazy-init="false">
-        <property name="name" value="hibernateDialect" />
-        <property name="value" ref="hibernateDialect" />
-    </bean>
-
     <!-- define default DDL used by most databases -->
     <bean id="jgroupsDefaultInitSql" class="java.lang.String">
-        <constructor-arg value="CREATE TABLE JGROUPSPING (own_addr varchar(200) NOT NULL, cluster_name varchar(200) NOT NULL, ping_data blob DEFAULT NULL, test1 varchar(20), PRIMARY KEY (own_addr, cluster_name) )"/>
-    </bean>
-
-    <bean id="testDefault" class="org.apereo.portal.ValueLogger" lazy-init="false">
-        <property name="name" value="jgroupsDefaultInitSql" />
-        <property name="value" ref="jgroupsDefaultInitSql" />
-    </bean>
-
-    <bean id="testDefault2" class="org.apereo.portal.ValueLogger" lazy-init="false">
-        <property name="name" value="jgroupsDefaultInitSql" />
-        <property name="value" value="#{@jgroupsDefaultInitSql}"/>
+        <constructor-arg value="CREATE TABLE JGROUPSPING (own_addr varchar(200) NOT NULL, cluster_name varchar(200) NOT NULL, ping_data blob DEFAULT NULL, PRIMARY KEY (own_addr, cluster_name) )"/>
     </bean>
 
     <!-- map of JGroups DDL by hibernate.dialect -->
@@ -126,12 +111,6 @@
         <entry key="org.hibernate.dialect.SQLServerDialect" value="CREATE TABLE JGROUPSPING (own_addr varchar(200) NOT NULL, cluster_name varchar(200) NOT NULL, ping_data varbinary DEFAULT NULL, PRIMARY KEY (own_addr, cluster_name) )" />
         <entry key="org.hibernate.dialect.HSQLDialect" value="#{@jgroupsDefaultInitSql}" />
     </util:map>
-
-
-    <bean id="testDefault3" class="org.apereo.portal.ValueLogger" lazy-init="false">
-        <property name="name" value="jgroupsInitSql[@hibernateDialect]" />
-        <property name="value" value="#{@jgroupsInitSqlMap[@hibernateDialect]}"/>
-    </bean>
 
     <!-- add properties for jgroups.xml as that is not a Spring context -->
     <bean id="systemPropertySetter" class="org.apereo.portal.spring.context.SystemPropertySetter">
