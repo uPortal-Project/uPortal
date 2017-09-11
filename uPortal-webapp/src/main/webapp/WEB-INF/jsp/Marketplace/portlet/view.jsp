@@ -140,6 +140,10 @@
     text-decoration: none;
 }
 
+#${n}marketplace .pagination > .disabled > a {
+    color: #333;
+}
+
 #${n}marketplace .paging_full_numbers a.paginate_button,
     .paging_full_numbers a.paginate_active {
     border: 1px solid #aaa;
@@ -166,9 +170,7 @@
 }
 
 @media only screen and (max-width: 768px) {
-    #${n}marketplace #unseen table th:nth-child(1),
-    #unseen table th:nth-child(3),
-    #unseen table td:nth-child(2),
+    #${n}marketplace #unseen table td:nth-child(2),
     #unseen table th:nth-child(2){display: none;}
     #${n}marketplace .dataTables_filter{
         text-align: left;
@@ -312,10 +314,10 @@
                                     <c:choose>
                                         <c:when test="${empty featuredPortlet.getParameter('mobileIconUrl')}">
 
-                                            <img src="${defaultIcon}">
+                                            <img src="${defaultIcon}" alt="">
                                         </c:when>
                                         <c:otherwise>
-                                            <img src="${featuredPortlet.getParameter('mobileIconUrl').value}">
+                                            <img src="${featuredPortlet.getParameter('mobileIconUrl').value}" alt="">
                                         </c:otherwise>
                                     </c:choose>
                                 </div>
@@ -399,22 +401,23 @@
     <table id="${n}portletTable" class="display table">
         <thead>
             <tr>
-                <th class="essential" style="border:none;">
+                <th class="essential" style="border:none;" scope="col">
                     <spring:message code="marketplace.title" />
                 </th>
-                <th class="optional" style="border:none;">
+                <th class="optional" style="border:none;" scope="col">
                     <spring:message code="marketplace.description" />
                 </th>
-                    <th class="essential" style="border:none;">
+                <th class="essential" style="border:none;" scope="col">
+                    <spring:message code="marketplace.details" />
                 </th>
             </tr>
         </thead>
         <tbody>
             <c:forEach var="portlet" items="${marketplaceEntries}">
                 <tr>
-                    <td class="essential" style="white-space: nowrap; border:none;">
+                    <th class="essential" style="white-space: nowrap; border:none;" scope="row">
                         <strong><a href="${portlet.renderUrl}">${portlet.title} <i class="fa fa-external-link"></i></a></strong>
-                    </td>
+                    </th>
                     <td class="optional" style="border:none;">
                         ${portlet.description}
                     </td>
@@ -479,7 +482,7 @@
             var myDataTable = $('#${n}portletTable').dataTable({
                 "aoColumnDefs": [{"bSortable": false, "aTargets": [ 2 ] }, { "bVisible": false, "aTargets": [ 3 ] }],
                 "fnRowCallback": function(nRow, aData, iDisplayIndex, iDisplayIndexFull){
-                       applyEllipsis(nRow,1,75);
+                       applyEllipsis(nRow,0,75);
                       },
                 "sDom": '<rt'+
                     '<"row ${n}bottom" <"col-xs-6 col-sm-8 col-md-3" i>'+
