@@ -10,7 +10,7 @@ plugins {
 
     // Sub project plugins
     id 'com.github.sherter.google-java-format' version '0.6' apply false
-    id 'nebula.lint' version '7.9.5' apply false
+    id 'nebula.lint' version '8.3.1' apply false
     id 'net.ltgt.errorprone' version '0.0.11' apply false
 }
 
@@ -24,7 +24,7 @@ repositories {
 }
 
 node {
-    version = "${nodejsVersion}"
+    version = nodejsVersion
     download = true
 }
 
@@ -53,7 +53,7 @@ allprojects {
     apply plugin: 'net.ltgt.errorprone'
 
     dependencies {
-      errorprone 'com.google.errorprone:error_prone_core:2.0.21'
+      errorprone 'com.google.errorprone:error_prone_core:2.1.1'
     }
 
     sourceCompatibility = 1.8

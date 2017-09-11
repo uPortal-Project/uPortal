@@ -73,7 +73,7 @@ dependencies {
 }
 
 node {
-    version = "${nodejsVersion}"
+    version = nodejsVersion
     download = true
 }
 
