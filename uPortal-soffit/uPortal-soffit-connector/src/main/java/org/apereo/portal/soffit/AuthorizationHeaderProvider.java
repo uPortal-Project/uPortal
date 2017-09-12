@@ -72,6 +72,9 @@ public class AuthorizationHeaderProvider extends AbstractHeaderProvider {
         logger.debug(
                 "Found the following user attributes for username='{}':  {}", username, attributes);
 
+        // Preferences
+        final Map<String, String[]> preferences = renderRequest.getPreferences().getMap();
+
         // Groups
         final List<String> groups = new ArrayList<>();
         final IGroupMember groupMember = GroupService.getGroupMember(username, IPerson.class);
@@ -92,7 +95,7 @@ public class AuthorizationHeaderProvider extends AbstractHeaderProvider {
                                 + ((long) portletSession.getMaxInactiveInterval() * 1000L));
 
         // Authorization header
-        final Bearer bearer = bearerService.createBearer(username, attributes, groups, expires);
+        final Bearer bearer = bearerService.createBearer(username, attributes, groups, preferences, expires);
         final Header rslt =
                 new BasicHeader(
                         Headers.AUTHORIZATION.getName(),

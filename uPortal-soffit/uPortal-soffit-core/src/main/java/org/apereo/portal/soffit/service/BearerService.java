@@ -32,6 +32,7 @@ public class BearerService extends AbstractJwtService {
             String username,
             Map<String, List<String>> attributes,
             List<String> groups,
+            Map<String, String[]> preferences,
             Date expires) {
 
         final Claims claims = createClaims(Bearer.class, username, expires);
@@ -58,10 +59,13 @@ public class BearerService extends AbstractJwtService {
             }
         }
 
+        // Preferences
+        claims.put(JwtClaims.PREFERENCES.getName(), preferences);
+
         // Groups
         claims.put(JwtClaims.GROUPS.getName(), groups);
 
-        return new Bearer(generateEncryptedToken(claims), username, attributes, groups);
+        return new Bearer(generateEncryptedToken(claims), username, attributes, groups, preferences);
     }
 
     public Bearer parseBearerToken(String bearerToken) {
@@ -92,7 +96,10 @@ public class BearerService extends AbstractJwtService {
         @SuppressWarnings("unchecked")
         final List<String> groups = (List<String>) claims.getBody().get(JwtClaims.GROUPS.getName());
 
-        Bearer rslt = new Bearer(bearerToken, username, attributes, groups);
+        @SuppressWarnings("unchecked")
+        final Map<String, String[]> preferences = (Map<String, String[]>) claims.getBody().get(JwtClaims.PREFERENCES.getName());
+
+        Bearer rslt = new Bearer(bearerToken, username, attributes, groups, preferences);
         logger.debug("Produced the following Bearer for user '{}':  {}", username, rslt);
         return rslt;
     }
