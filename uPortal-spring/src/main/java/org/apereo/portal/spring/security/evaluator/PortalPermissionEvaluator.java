@@ -90,8 +90,8 @@ public class PortalPermissionEvaluator implements PermissionEvaluator {
                     "Unable to determine permission target id for type "
                             + targetDomainObject.getClass());
         }
-        if (this.logger.isInfoEnabled()) {
-            logger.info(
+        if (this.logger.isTraceEnabled()) {
+            logger.trace(
                     String.format(
                             "In hasPermission() - owner=[%s], activity=[%s], targetId=[%s] ",
                             activity.getOwnerFname(), activity.getActivityFname(), targetId));

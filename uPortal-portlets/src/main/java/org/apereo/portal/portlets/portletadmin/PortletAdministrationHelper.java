@@ -270,8 +270,8 @@ public final class PortletAdministrationHelper implements ServletContextAware {
      */
     public PortletDefinitionForm savePortletRegistration(
             IPerson publisher, PortletDefinitionForm form) throws Exception {
-        if (this.logger.isInfoEnabled()) {
-            logger.info("In savePortletRegistration() - for: " + form.getPortletName());
+        if (this.logger.isTraceEnabled()) {
+            logger.trace("In savePortletRegistration() - for: " + form.getPortletName());
         }
         /* TODO:  Service-Layer Security Reboot (great need of refactoring with a community-approved plan in place) */
 
@@ -473,8 +473,8 @@ public final class PortletAdministrationHelper implements ServletContextAware {
             permission.setActivity(activity);
             permission.setTarget(portletTargetId);
             newPermissions.add(permission);
-            if (this.logger.isInfoEnabled()) {
-                logger.info("In updatePermissions() - adding a new permission of: " + permission);
+            if (this.logger.isTraceEnabled()) {
+                logger.trace("In updatePermissions() - adding a new permission of: " + permission);
             }
         }
 
