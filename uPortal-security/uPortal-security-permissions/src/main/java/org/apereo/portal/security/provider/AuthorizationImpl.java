@@ -247,8 +247,8 @@ public class AuthorizationImpl implements IAuthorizationService {
         boolean byAdmin = doesPrincipalHavePermission(principal, owner, activity, target);
         boolean byPrincipal =
                 doesPrincipalHavePermission(principal, ownerSubscribe, activitySubscribe, target);
-        if (this.log.isInfoEnabled()) {
-            log.info(
+        if (this.log.isTraceEnabled()) {
+            log.trace(
                     String.format(
                             "In canPrincipalConfigure() - principal.key=[%s], ByAdmin?=[%s], ByPrincipal?=[%s]",
                             principal.getKey(), byAdmin, byPrincipal));
