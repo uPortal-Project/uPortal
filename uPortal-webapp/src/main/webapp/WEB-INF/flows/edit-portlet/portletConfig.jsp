@@ -464,19 +464,19 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                                                 <td class="col-sm-3 text-nowrap">
                                                     <spring:message code="edit.browse"/>
                                                     <a href="javascript:void(0)" data-toggle="tooltip" data-placement="top" title="<spring:message code='edit.browse.tooltip'/>">
-                                                        <i class="fa fa-info-circle"></i>
+                                                        <i class="fa fa-info-circle" aria-hidden="true"></i> <span class="sr-only"><spring:message code='edit.browse.tooltip'/></span>
                                                     </a>
                                                 </td>
                                                 <td class="col-sm-3 text-nowrap">
                                                     <spring:message code="edit.subscribe"/>
                                                     <a href="javascript:void(0)" data-toggle="tooltip" data-placement="top" title="<spring:message code='edit.subscribe.tooltip'/>">
-                                                        <i class="fa fa-info-circle"></i>
+                                                        <i class="fa fa-info-circle" aria-hidden="true"></i> <span class="sr-only"><spring:message code='edit.subscribe.tooltip'/></span>
                                                     </a>
                                                 </td>
                                                 <td class="col-sm-3 text-nowrap">
                                                     <spring:message code="edit.configure"/>
                                                     <a href="javascript:void(0)" data-toggle="tooltip" data-placement="top" title="<spring:message code='edit.configure.tooltip'/>">
-                                                        <i class="fa fa-info-circle"></i>
+                                                        <i class="fa fa-info-circle" aria-hidden="true"></i> <span class="sr-only"><spring:message code='edit.configure.tooltip'/></span>
                                                     </a>
                                                 </td>
                                             </tr>
