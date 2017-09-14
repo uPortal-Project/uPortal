@@ -88,15 +88,15 @@
         </property>
     </bean>
 
-    <!-- resolver that can be used to dynamically look up property values at run-time -->
+    <!-- Resolver that can be used to dynamically look up property values at run-time -->
     <bean id="propertyResolver" factory-bean="primaryPropertyPlaceholderConfigurer" factory-method="getPropertyResolver"/>
 
-    <!-- need to capture this value in a bean for map key, using el -->
+    <!-- Need to capture this value in a bean for map key, using el -->
     <bean id="hibernateDialect" class="java.lang.String">
         <constructor-arg value="${hibernate.dialect}"/>
     </bean>
 
-    <!-- define default DDL used by most databases -->
+    <!-- Define default JGROUPS DDL used by most databases -->
     <bean id="jgroupsDefaultInitSql" class="java.lang.String">
         <constructor-arg>
             <value>
@@ -110,14 +110,9 @@
         </constructor-arg>
     </bean>
 
-    <!-- map of JGroups DDL by hibernate.dialect -->
-    <util:map id="jgroupsInitSqlMap" map-class="java.util.HashMap">
-        <entry key="org.hibernate.dialect.Oracle8iDialect" value="#{@jgroupsDefaultInitSql}" />
-        <entry key="org.hibernate.dialect.Oracle9iDialect" value="#{@jgroupsDefaultInitSql}" />
-        <entry key="org.hibernate.dialect.Oracle10gDialect" value="#{@jgroupsDefaultInitSql}" />
-        <entry key="org.hibernate.dialect.MySQLDialect" value="#{@jgroupsDefaultInitSql}" />
-        <entry key="org.hibernate.dialect.PostgreSQL81Dialect" value="#{@jgroupsDefaultInitSql}" />
-        <entry key="org.hibernate.dialect.SQLServerDialect">
+    <!-- And JGROUPS DDL used by MS SQL Server -->
+    <bean id="jgroupsSqlServerInitSql" class="java.lang.String">
+        <constructor-arg>
             <value>
                 CREATE TABLE JGROUPSPING (
                     own_addr varchar(200) NOT NULL,
@@ -126,11 +121,17 @@
                     PRIMARY KEY (own_addr, cluster_name)
                 )
             </value>
-        </entry>
-        <entry key="org.hibernate.dialect.HSQLDialect" value="#{@jgroupsDefaultInitSql}" />
+        </constructor-arg>
+    </bean>
+
+    <!-- Map of JGroups DDL by hibernate.dialect (all Hibernate dialects not listed here will use jgroupsDefaultInitSql) -->
+    <util:map id="jgroupsInitSqlMap" map-class="java.util.HashMap">
+        <!-- Most RDBMS platforms use standard DDL, but MS SQL Server uses something different -->
+        <entry key="org.hibernate.dialect.SQLServerDialect" value="#{@jgroupsSqlServerInitSql}" />
+        <entry key="org.hibernate.dialect.SQLServer2008Dialect" value="#{@jgroupsSqlServerInitSql}" />
     </util:map>
 
-    <!-- add properties for jgroups.xml as that is not a Spring context -->
+    <!-- Add properties for jgroups.xml as that is not a Spring context -->
     <bean id="systemPropertySetter" class="org.apereo.portal.spring.context.SystemPropertySetter">
         <property name="systemProperties">
             <props>
@@ -140,7 +141,7 @@
                 <prop key="hibernate.connection.url">${hibernate.connection.url}</prop>
                 <prop key="hibernate.connection.username">${hibernate.connection.username}</prop>
                 <prop key="hibernate.connection.password">${hibernate.connection.password}</prop>
-                <prop key="jgroupsInitSql">#{@jgroupsInitSqlMap[@hibernateDialect]}</prop>
+                <prop key="jgroupsInitSql">#{@jgroupsInitSqlMap[@hibernateDialect] != null ? @jgroupsInitSqlMap[@hibernateDialect] : @jgroupsDefaultInitSql}</prop>
             </props>
         </property>
     </bean>
