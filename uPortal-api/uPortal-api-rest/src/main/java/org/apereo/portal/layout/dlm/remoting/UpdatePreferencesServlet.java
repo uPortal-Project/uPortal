@@ -93,10 +93,6 @@ import org.w3c.dom.NodeList;
 @RequestMapping("/layout")
 public class UpdatePreferencesServlet {
 
-    private static final String TAB_GROUP_PARAMETER = "tabGroup"; // matches incoming JS
-    private static final String TAB_GROUP_DEFAULT =
-            "DEFAULT_TABGROUP"; // matches default in structure transform
-
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     private IPortletDefinitionRegistry portletDefinitionRegistry;
@@ -1080,23 +1076,6 @@ public class UpdatePreferencesServlet {
                 UserPrefsHandler.setUserPreference(folder, "width", per);
             } catch (Exception e) {
                 logger.error("Error saving new column widths", e);
-            }
-        }
-
-        // ## 'tabGroup' value (optional feature)
-        // Set the 'tabGroup' attribute on the folder element that describes
-        // this new tab;  use the currently active tabGroup.
-        if (request.getParameter(TAB_GROUP_PARAMETER) != null) {
-
-            String tabGroup = request.getParameter(TAB_GROUP_PARAMETER).trim();
-            if (logger.isDebugEnabled()) {
-                logger.debug(TAB_GROUP_PARAMETER + "=" + tabGroup);
-            }
-
-            if (!TAB_GROUP_DEFAULT.equals(tabGroup) && tabGroup.length() != 0) {
-                // Persists SSUP values to the database
-                this.stylesheetUserPreferencesService.setLayoutAttribute(
-                        request, PreferencesScope.STRUCTURE, tabId, TAB_GROUP_PARAMETER, tabGroup);
             }
         }
 

@@ -80,11 +80,12 @@
                  user might or might not actually have permission to add a tab, which is evaluated later (in the theme) -->
             <xsl:attribute name="allowAddTab">true</xsl:attribute>
             <!-- The tabGroups (optional feature) -->
-            <tabGroupsList>
+             <tabGroupsList>
                 <xsl:attribute name="activeTabGroup">
                     <xsl:value-of select="$activeTabGroup"/>
                 </xsl:attribute>
-                <xsl:for-each select="/layout/folder/folder[@type='regular' and @hidden='false']"><!-- These are standard tabs -->
+                <xsl:for-each select="/layout/folder/folder[@type='regular' and @hidden='false']">
+                <!-- These are standard tabs -->
                     <!-- Process only the first tab in each Tab Group (avoid duplicates) -->
                     <xsl:if test="self::node()[generate-id() = generate-id(key('tabGroupKey',@tabGroup)[1])]">
                         <tabGroup name="{@tabGroup}" firstTabId="{@ID}">
