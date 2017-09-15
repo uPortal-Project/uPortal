@@ -179,6 +179,8 @@ public class UrlCanonicalizingFilter extends OncePerRequestFilter {
         final Cookie cookie = new Cookie(COOKIE_NAME, "");
         cookie.setPath(request.getContextPath());
         cookie.setMaxAge(0);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
         response.addCookie(cookie);
     }
 
@@ -187,6 +189,8 @@ public class UrlCanonicalizingFilter extends OncePerRequestFilter {
         final Cookie cookie = new Cookie(COOKIE_NAME, Integer.toString(count));
         cookie.setPath(request.getContextPath());
         cookie.setMaxAge(30);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
         response.addCookie(cookie);
     }
 
