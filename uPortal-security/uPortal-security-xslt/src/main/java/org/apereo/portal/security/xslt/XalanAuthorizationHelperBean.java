@@ -100,7 +100,6 @@ public class XalanAuthorizationHelperBean implements IXalanAuthorizationHelper {
 
     @Override
     public boolean hasPermission(final String owner, final String activity, final String target) {
-
         // owner & activity are required (but not target)
         if (owner == null || activity == null) {
             return false;
@@ -115,6 +114,12 @@ public class XalanAuthorizationHelperBean implements IXalanAuthorizationHelper {
                 authPrincipal != null
                         ? authPrincipal.hasPermission(owner, activity, target)
                         : false;
+        if (this.logger.isTraceEnabled()) {
+            logger.trace(
+                    String.format(
+                            "In hasPermission() - owner=[%s], activity=[%s], target=[%s], result=[%s] ",
+                            owner, activity, target, rslt));
+        }
         return rslt;
     }
 

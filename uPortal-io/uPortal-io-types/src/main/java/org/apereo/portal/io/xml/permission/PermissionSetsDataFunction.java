@@ -46,6 +46,9 @@ public class PermissionSetsDataFunction
                     + "%')\n "
                     + "AND NOT (UPP.ACTIVITY = 'BROWSE' AND UPP.TARGET LIKE '"
                     + IPermission.PORTLET_PREFIX
+                    + "%')\n "
+                    + "AND NOT (UPP.ACTIVITY = 'PORTLET_MODE_CONFIG' AND UPP.TARGET LIKE '"
+                    + IPermission.PORTLET_PREFIX
                     + "%')\n ";
 
     @Required
