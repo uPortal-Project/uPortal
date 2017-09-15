@@ -40,11 +40,6 @@ public interface IPermission {
      */
     String PORTLET_SUBSCRIBER_ACTIVITY = "SUBSCRIBE";
     /**
-     * The standard <code>CONFIGURE</code> activity. Allows the user to configure the portlet that
-     * is in the <code>PUBLISHED</code> lifecycle state.
-     */
-    String PORTLET_CONFIGURE_ACTIVITY = "CONFIGURE_PORTLET";
-    /**
      * Allows the user to view or add to his or her layout a portlet that is in the <code>EXPIRED
      * </code> lifecycle state.
      */

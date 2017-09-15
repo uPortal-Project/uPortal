@@ -230,7 +230,6 @@ public class AuthorizationImpl implements IAuthorizationService {
             IAuthorizationPrincipal principal, String portletDefinitionId)
             throws AuthorizationException {
         String owner = IPermission.PORTAL_PUBLISH;
-        String ownerSubscribe = IPermission.PORTAL_SUBSCRIBE;
         String target = IPermission.PORTLET_PREFIX + portletDefinitionId;
 
         // retrieve the indicated channel from the channel registry store and
@@ -242,18 +241,15 @@ public class AuthorizationImpl implements IAuthorizationService {
         }
 
         final String activity = IPermission.PORTLET_MODE_CONFIG;
-        final String activitySubscribe = IPermission.PORTLET_CONFIGURE_ACTIVITY;
 
-        boolean byAdmin = doesPrincipalHavePermission(principal, owner, activity, target);
-        boolean byPrincipal =
-                doesPrincipalHavePermission(principal, ownerSubscribe, activitySubscribe, target);
+        boolean isAllowed = doesPrincipalHavePermission(principal, owner, activity, target);
         if (this.log.isTraceEnabled()) {
             log.trace(
                     String.format(
-                            "In canPrincipalConfigure() - principal.key=[%s], ByAdmin?=[%s], ByPrincipal?=[%s]",
-                            principal.getKey(), byAdmin, byPrincipal));
+                            "In canPrincipalConfigure() - principal.key=[%s], is allowed?=[%s]",
+                            principal.getKey(), isAllowed));
         }
-        return byAdmin || byPrincipal;
+        return isAllowed;
     }
     /**
      * Answers if the principal has permission to MANAGE this Channel.

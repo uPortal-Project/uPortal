@@ -25,7 +25,7 @@ import org.apereo.portal.security.IPermission;
 public enum ExternalPermissionDefinition {
     SUBSCRIBE(IPermission.PORTAL_SUBSCRIBE, IPermission.PORTLET_SUBSCRIBER_ACTIVITY, false),
     BROWSE(IPermission.PORTAL_SUBSCRIBE, IPermission.PORTLET_BROWSE_ACTIVITY, true),
-    CONFIGURE(IPermission.PORTAL_SUBSCRIBE, IPermission.PORTLET_CONFIGURE_ACTIVITY, true);
+    CONFIGURE(IPermission.PORTAL_PUBLISH, IPermission.PORTLET_MODE_CONFIG, true);
 
     private final String system;
     private final String activity;

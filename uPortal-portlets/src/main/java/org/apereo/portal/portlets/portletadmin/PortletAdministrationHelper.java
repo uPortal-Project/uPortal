@@ -115,10 +115,12 @@ public final class PortletAdministrationHelper implements ServletContextAware {
 
     private static final String PORTLET_FNAME_FRAGMENT_ADMIN_PORTLET = "fragment-admin";
 
-    public static final String[] PORTLET_SUBSCRIBE_ACTIVITIES = {
-        IPermission.PORTLET_SUBSCRIBER_ACTIVITY,
-        IPermission.PORTLET_BROWSE_ACTIVITY,
-        IPermission.PORTLET_CONFIGURE_ACTIVITY
+    public static final String[] PORTLET_PRINCIPAL_SUBSCRIBE_ACTIVITIES = {
+        IPermission.PORTLET_SUBSCRIBER_ACTIVITY, IPermission.PORTLET_BROWSE_ACTIVITY
+    };
+
+    public static final String[] PORTLET_PRINCIPAL_PUBLISH_ACTIVITIES = {
+        IPermission.PORTLET_MODE_CONFIG
     };
 
     /*
@@ -172,7 +174,13 @@ public final class PortletAdministrationHelper implements ServletContextAware {
                 form.addCategory(new JsonEntityBean(cat));
             }
 
-            addSubscribePermissionsToForm(def, form);
+            addPrincipalPermissionsToForm(
+                    def,
+                    form,
+                    IPermission.PORTAL_SUBSCRIBE,
+                    PORTLET_PRINCIPAL_SUBSCRIBE_ACTIVITIES);
+            addPrincipalPermissionsToForm(
+                    def, form, IPermission.PORTAL_PUBLISH, PORTLET_PRINCIPAL_PUBLISH_ACTIVITIES);
         } else {
             form = createNewPortletDefinitionForm();
         }
@@ -194,16 +202,15 @@ public final class PortletAdministrationHelper implements ServletContextAware {
     }
 
     /*
-     * Add to the form SUBSCRIBE and BROWSE activity permissions, along with their principals,
+     * Add to the form SUBSCRIBE, BROWSE, and CONFIGURE activity permissions, along with their principals,
      * assigned to the portlet.
      */
-    private void addSubscribePermissionsToForm(IPortletDefinition def, PortletDefinitionForm form) {
+    private void addPrincipalPermissionsToForm(
+            IPortletDefinition def, PortletDefinitionForm form, String owner, String[] activities) {
         final String portletTargetId = PermissionHelper.permissionTargetIdForPortletDefinition(def);
 
-        /* We are concerned with PORTAL_SUBSCRIBE system */
-        final IPermissionManager pm =
-                authorizationService.newPermissionManager(IPermission.PORTAL_SUBSCRIBE);
-        for (String activity : PORTLET_SUBSCRIBE_ACTIVITIES) {
+        final IPermissionManager pm = authorizationService.newPermissionManager(owner);
+        for (String activity : activities) {
             /* Obtain the principals that have permission for the activity on this portlet */
             final IAuthorizationPrincipal[] principals =
                     pm.getAuthorizedPrincipals(activity, portletTargetId);
@@ -255,9 +262,11 @@ public final class PortletAdministrationHelper implements ServletContextAware {
         JsonEntityBean everyoneBean =
                 new JsonEntityBean(everyoneGroup, groupListHelper.getEntityType(everyoneGroup));
         form.addPrincipal(everyoneBean);
-        for (String activity : PORTLET_SUBSCRIBE_ACTIVITIES) {
+        for (String activity : PORTLET_PRINCIPAL_SUBSCRIBE_ACTIVITIES) {
             form.addPermission(everyoneBean.getTypeAndIdHash() + "_" + activity);
         }
+        // Purposefully did not add the permissions in PORTLET_PRINCIPAL_PUBLISH_ACTIVITIES for 'everyone'
+        // since they are more of an admin-level set of activities.
         return form;
     }
 
@@ -338,7 +347,7 @@ public final class PortletAdministrationHelper implements ServletContextAware {
             final String browsePerm =
                     bean.getTypeAndIdHash() + "_" + IPermission.PORTLET_BROWSE_ACTIVITY;
             final String configurePerm =
-                    bean.getTypeAndIdHash() + "_" + IPermission.PORTLET_CONFIGURE_ACTIVITY;
+                    bean.getTypeAndIdHash() + "_" + IPermission.PORTLET_MODE_CONFIG;
             final EntityEnum entityEnum = bean.getEntityType();
             final IGroupMember principal =
                     entityEnum.isGroup()
@@ -443,25 +452,34 @@ public final class PortletAdministrationHelper implements ServletContextAware {
         portletPublishingService.savePortletDefinition(
                 portletDef, publisher, categories, new ArrayList<>(subscribePrincipalSet));
         //updatePermissions(portletDef, subscribePrincipalSet, IPermission.PORTLET_SUBSCRIBER_ACTIVITY);
-        updatePermissions(portletDef, browsePrincipalSet, IPermission.PORTLET_BROWSE_ACTIVITY);
         updatePermissions(
-                portletDef, configurePrincipalSet, IPermission.PORTLET_CONFIGURE_ACTIVITY);
+                portletDef,
+                browsePrincipalSet,
+                IPermission.PORTAL_SUBSCRIBE,
+                IPermission.PORTLET_BROWSE_ACTIVITY);
+        updatePermissions(
+                portletDef,
+                configurePrincipalSet,
+                IPermission.PORTAL_PUBLISH,
+                IPermission.PORTLET_MODE_CONFIG);
 
         return this.createPortletDefinitionForm(
                 publisher, portletDef.getPortletDefinitionId().getStringId());
     }
 
     /*
-     * Update permissions for activity for portlet definition. Adds new principals' permissions passed in and removes
+     * Update permissions for a given owner, activity, and portlet definition combination. Adds new principals' permissions passed in and removes
      * principals' permissions if not in the list for the given activity.
      */
     private void updatePermissions(
-            IPortletDefinition def, Set<IGroupMember> newPrincipals, String activity) {
+            IPortletDefinition def,
+            Set<IGroupMember> newPrincipals,
+            String owner,
+            String activity) {
         final String portletTargetId = PermissionHelper.permissionTargetIdForPortletDefinition(def);
 
-        /* We are concerned with PORTAL_SUBSCRIBE system */
         final IUpdatingPermissionManager pm =
-                authorizationService.newUpdatingPermissionManager(IPermission.PORTAL_SUBSCRIBE);
+                authorizationService.newUpdatingPermissionManager(owner);
 
         /* Create the new permissions array */
         final List<IPermission> newPermissions = new ArrayList<>();
@@ -651,7 +669,10 @@ public final class PortletAdministrationHelper implements ServletContextAware {
     public void cleanOptions(PortletDefinitionForm form, PortletRequest request) {
         // Add permission parameters to permissions collection
         form.clearPermissions();
-        for (String activity : PORTLET_SUBSCRIBE_ACTIVITIES) {
+        for (String activity : PORTLET_PRINCIPAL_SUBSCRIBE_ACTIVITIES) {
+            addPermissionsFromRequestToForm(form, request, activity);
+        }
+        for (String activity : PORTLET_PRINCIPAL_PUBLISH_ACTIVITIES) {
             addPermissionsFromRequestToForm(form, request, activity);
         }
 
