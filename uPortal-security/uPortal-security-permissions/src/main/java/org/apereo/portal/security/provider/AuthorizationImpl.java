@@ -241,7 +241,15 @@ public class AuthorizationImpl implements IAuthorizationService {
         }
 
         final String activity = IPermission.PORTLET_MODE_CONFIG;
-        return doesPrincipalHavePermission(principal, owner, activity, target);
+
+        boolean isAllowed = doesPrincipalHavePermission(principal, owner, activity, target);
+        if (this.log.isTraceEnabled()) {
+            log.trace(
+                    String.format(
+                            "In canPrincipalConfigure() - principal.key=[%s], is allowed?=[%s]",
+                            principal.getKey(), isAllowed));
+        }
+        return isAllowed;
     }
     /**
      * Answers if the principal has permission to MANAGE this Channel.

@@ -26,6 +26,8 @@ import org.apereo.portal.security.IPersonManager;
 import org.apereo.portal.security.PersonFactory;
 import org.apereo.portal.services.AuthorizationServiceFacade;
 import org.apereo.portal.url.IPortalRequestUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
@@ -37,6 +39,8 @@ import org.springframework.security.core.userdetails.UserDetails;
  * permissions framework to Spring Security and will need future adjustment and expansion.
  */
 public class PortalPermissionEvaluator implements PermissionEvaluator {
+
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired private IPortalRequestUtils portalRequestUtils;
 
@@ -85,6 +89,13 @@ public class PortalPermissionEvaluator implements PermissionEvaluator {
             throw new RuntimeException(
                     "Unable to determine permission target id for type "
                             + targetDomainObject.getClass());
+        }
+
+        if (this.logger.isTraceEnabled()) {
+            logger.trace(
+                    String.format(
+                            "In hasPermission() - owner=[%s], activity=[%s], targetId=[%s] ",
+                            activity.getOwnerFname(), activity.getActivityFname(), targetId));
         }
 
         if (activity != null) {
