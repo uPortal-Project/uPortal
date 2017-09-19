@@ -91,12 +91,11 @@ public class PortalPermissionEvaluator implements PermissionEvaluator {
                             + targetDomainObject.getClass());
         }
 
-        if (this.logger.isTraceEnabled()) {
-            logger.trace(
-                    String.format(
-                            "In hasPermission() - owner=[%s], activity=[%s], targetId=[%s] ",
-                            activity.getOwnerFname(), activity.getActivityFname(), targetId));
-        }
+        logger.trace(
+                "In hasPermission() - owner=[{}], activity=[{}], targetId=[{}] ",
+                activity.getOwnerFname(),
+                activity.getActivityFname(),
+                targetId);
 
         if (activity != null) {
             final boolean hasPermission =

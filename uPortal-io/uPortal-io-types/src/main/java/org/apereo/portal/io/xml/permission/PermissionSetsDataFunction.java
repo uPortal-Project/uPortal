@@ -33,21 +33,27 @@ public class PermissionSetsDataFunction
     private JdbcOperations jdbcOperations;
 
     /**
-     * NOTE: Both SUBSCRIBE and BROWSE are handled inside the portlet-definition.xml file whenever
-     * they apply to <em>portlets</em>. (They are handled here, per normal, when they apply to
-     * categories.)
+     * NOTE: The SUBSCRIBE, BROWSE, and PORTLET_MODE_CONFIG are handled inside the
+     * portlet-definition.xml file whenever they apply to <em>portlets</em>. (SUBSCRIBE and BROWSE
+     * are handled here, per normal, when they apply to categories.)
      */
     private static final String QUERY =
             "SELECT DISTINCT UPP.OWNER, UPET.ENTITY_TYPE_NAME, UPP.PRINCIPAL_KEY, UPP.ACTIVITY, UPP.PRINCIPAL_TYPE\n "
                     + "FROM UP_PERMISSION UPP\n "
                     + "LEFT JOIN UP_ENTITY_TYPE UPET ON UPP.PRINCIPAL_TYPE = UPET.ENTITY_TYPE_ID\n "
-                    + "WHERE NOT (UPP.ACTIVITY = 'SUBSCRIBE' AND UPP.TARGET LIKE '"
+                    + "WHERE NOT (UPP.ACTIVITY = '"
+                    + IPermission.PORTLET_SUBSCRIBER_ACTIVITY
+                    + "' AND UPP.TARGET LIKE '"
                     + IPermission.PORTLET_PREFIX
                     + "%')\n "
-                    + "AND NOT (UPP.ACTIVITY = 'PORTLET_MODE_CONFIG' AND UPP.TARGET LIKE '"
+                    + "AND NOT (UPP.ACTIVITY = '"
+                    + IPermission.PORTLET_MODE_CONFIG
+                    + "' AND UPP.TARGET LIKE '"
                     + IPermission.PORTLET_PREFIX
                     + "%')\n "
-                    + "AND NOT (UPP.ACTIVITY = 'BROWSE' AND UPP.TARGET LIKE '"
+                    + "AND NOT (UPP.ACTIVITY = '"
+                    + IPermission.PORTLET_BROWSE_ACTIVITY
+                    + "' AND UPP.TARGET LIKE '"
                     + IPermission.PORTLET_PREFIX
                     + "%')\n ";
 

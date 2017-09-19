@@ -1,4 +1,4 @@
 # uPortal System Administration
 
-## Portlet Administration
-* [Portlet Setup](portlet-admin/Portlet-setup.md)
+## Load Balancing
+* [F5](F5-load-balancer.md)
