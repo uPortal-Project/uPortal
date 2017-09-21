@@ -460,18 +460,26 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                                     <table class="table table-condensed permissions-options-table">
                                         <thead>
                                             <tr>
-                                                <td class="col-sm-6"></td>
+                                                <td class="col-sm-3"></td>
                                                 <td class="col-sm-3 text-nowrap">
                                                     <spring:message code="edit.browse"/>
                                                     <a href="javascript:void(0)" data-toggle="tooltip" data-placement="top" title="<spring:message code='edit.browse.tooltip'/>">
-                                                        <i class="fa fa-info-circle"></i>
+                                                        <i class="fa fa-info-circle" aria-hidden="true"></i> <span class="sr-only"><spring:message code='edit.browse.tooltip'/></span>
                                                     </a>
                                                 </td>
                                                 <td class="col-sm-3 text-nowrap">
                                                     <spring:message code="edit.subscribe"/>
                                                     <a href="javascript:void(0)" data-toggle="tooltip" data-placement="top" title="<spring:message code='edit.subscribe.tooltip'/>">
-                                                        <i class="fa fa-info-circle"></i>
-                                                    </a>
+                                                        <i class="fa fa-info-circle" aria-hidden="true"></i> <span class="sr-only"><spring:message code='edit.subscribe.tooltip'/></span>
+                                                     </a>
+                                                </td>
+                                                <td class="col-sm-3 text-nowrap">
+                                                    <c:if test="${supportsConfig}">
+                                                        <spring:message code="edit.configure"/>
+                                                        <a href="javascript:void(0)" data-toggle="tooltip" data-placement="top" title="<spring:message code='edit.configure.tooltip'/>">
+                                                            <i class="fa fa-info-circle" aria-hidden="true"></i> <span class="sr-only"><spring:message code='edit.configure.tooltip'/></span>
+                                                        </a>
+                                                    </c:if>
                                                 </td>
                                             </tr>
                                         </thead>
@@ -480,24 +488,20 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                                                 <c:set var="principal_name" value="${fn:escapeXml(principal.name)}" />
                                                 <c:set var="principal_browse_perm" value="${principal.typeAndIdHash}_BROWSE" />
                                                 <c:set var="principal_subscribe_perm" value="${principal.typeAndIdHash}_SUBSCRIBE" />
+                                                <c:set var="principal_configure_perm" value="${principal.typeAndIdHash}_PORTLET_MODE_CONFIG" />
                                                 <tr>
                                                     <td><i class="fa fa-users"></i> ${principal_name}</td>
-                                                    <c:choose>
-                                                      <c:when test="${portlet.permissions.contains(principal_browse_perm) || !portlet.permissions.contains(principal_subscribe_perm)}">
-                                                        <td class=text-center><input type="checkbox" name="${principal_browse_perm}" checked></td>
-                                                      </c:when>
-                                                      <c:otherwise>
-                                                        <td class=text-center><input type="checkbox" name="${principal_browse_perm}"></td>
-                                                      </c:otherwise>
-                                                    </c:choose>
-                                                    <c:choose>
-                                                      <c:when test="${portlet.permissions.contains(principal_subscribe_perm) || !portlet.permissions.contains(principal_browse_perm)}">
-                                                        <td class=text-center><input type="checkbox" name="${principal_subscribe_perm}" checked></td>
-                                                      </c:when>
-                                                      <c:otherwise>
-                                                        <td class=text-center><input type="checkbox" name="${principal_subscribe_perm}"></td>
-                                                      </c:otherwise>
-                                                    </c:choose>
+                                                    <td class=text-center>
+                                                        <input type="checkbox" name="${principal_browse_perm}"${portlet.permissions.contains(principal_browse_perm) ? ' checked' : ''}>
+                                                    </td>
+                                                    <td class=text-center>
+                                                        <input type="checkbox" name="${principal_subscribe_perm}"${portlet.permissions.contains(principal_subscribe_perm) ? ' checked' : ''}>
+                                                    </td>
+                                                    <td class=text-center>
+                                                        <c:if test="${supportsConfig}">
+                                                            <input type="checkbox" name="${principal_configure_perm}"${portlet.permissions.contains(principal_configure_perm) ? ' checked' : ''}>
+                                                        </c:if>
+                                                    </td>
                                                 </tr>
                                             </c:forEach>
                                         </tbody>

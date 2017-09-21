@@ -241,7 +241,13 @@ public class AuthorizationImpl implements IAuthorizationService {
         }
 
         final String activity = IPermission.PORTLET_MODE_CONFIG;
-        return doesPrincipalHavePermission(principal, owner, activity, target);
+
+        boolean isAllowed = doesPrincipalHavePermission(principal, owner, activity, target);
+        log.trace(
+                "In canPrincipalConfigure() - principal.key=[{}], is allowed?=[{}]",
+                principal.getKey(),
+                isAllowed);
+        return isAllowed;
     }
     /**
      * Answers if the principal has permission to MANAGE this Channel.
@@ -586,20 +592,13 @@ public class AuthorizationImpl implements IAuthorizationService {
             al.addAll(Arrays.asList(perms));
         }
 
-        if (log.isTraceEnabled()) {
-            log.trace(
-                    "query for all permissions for principal=["
-                            + principal
-                            + "], owner=["
-                            + owner
-                            + "], activity=["
-                            + activity
-                            + "], target=["
-                            + target
-                            + "] returned permissions ["
-                            + al
-                            + "]");
-        }
+        log.trace(
+                "query for all permissions for principal=[{}], owner=[{}], activity=[{}], target=[{}] returned permissions [{}]",
+                principal,
+                owner,
+                activity,
+                target,
+                al);
 
         return ((IPermission[]) al.toArray(new IPermission[al.size()]));
     }
@@ -642,15 +641,10 @@ public class AuthorizationImpl implements IAuthorizationService {
 
         IGroupMember gm = GroupService.getGroupMember(principal.getKey(), principal.getType());
 
-        if (log.isDebugEnabled()) {
-            log.debug(
-                    "AuthorizationImpl.getGroupMemberForPrincipal(): principal ["
-                            + principal
-                            + "] "
-                            + "got group member ["
-                            + gm
-                            + "]");
-        }
+        log.debug(
+                "AuthorizationImpl.getGroupMemberForPrincipal(): principal [{}] got group member [{}]",
+                principal,
+                gm);
 
         return gm;
     }
@@ -879,8 +873,7 @@ public class AuthorizationImpl implements IAuthorizationService {
         String key = groupMember.getKey();
         Class type = groupMember.getType();
 
-        if (log.isDebugEnabled())
-            log.debug("AuthorizationImpl.newPrincipal(): for " + type + "(" + key + ")");
+        log.debug("AuthorizationImpl.newPrincipal(): for {} ({})", type, key);
 
         return newPrincipal(key, type);
     }
@@ -1040,33 +1033,22 @@ public class AuthorizationImpl implements IAuthorizationService {
             }
         }
 
-        if (log.isTraceEnabled()) {
-            log.trace(
-                    "AuthorizationImpl.primGetPermissionsForPrincipal(): "
-                            + "Principal: "
-                            + principal
-                            + " owner: "
-                            + owner
-                            + " activity: "
-                            + activity
-                            + " target: "
-                            + target
-                            + " : permissions retrieved: "
-                            + al);
-        } else if (log.isDebugEnabled()) {
-            log.debug(
-                    "AuthorizationImpl.primGetPermissionsForPrincipal(): "
-                            + "Principal: "
-                            + principal
-                            + " owner: "
-                            + owner
-                            + " activity: "
-                            + activity
-                            + " target: "
-                            + target
-                            + " : number of permissions retrieved: "
-                            + al.size());
-        }
+        log.trace(
+                "AuthorizationImpl.primGetPermissionsForPrincipal(): "
+                        + "Principal: {} owner: {} activity: {} target: {} : permissions retrieved: {}",
+                principal,
+                owner,
+                activity,
+                target,
+                al);
+        log.debug(
+                "AuthorizationImpl.primGetPermissionsForPrincipal(): "
+                        + "Principal: {} owner: {} activity: {} target: {} : number of permissions retrieved: {}",
+                principal,
+                owner,
+                activity,
+                target,
+                al.size());
 
         return ((IPermission[]) al.toArray(new IPermission[al.size()]));
     }

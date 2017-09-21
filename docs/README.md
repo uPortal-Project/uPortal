@@ -155,6 +155,7 @@ below.
 
 * [Building / Deploying uPortal](building-and-deploying-uportal.md)
 * [Implementing uPortal](implement/README.md)
+* [uPortal System Administration](sysadmin/README.md)
 * [Developer's Guide](developer/README.md)
 * [Supported web browsers](SUPPORTED_BROWSERS.md)
 * [Accessibility](ACCESSIBILITY.md)
