@@ -470,32 +470,41 @@ public class PortletDefinitionForm implements Serializable {
             default: // Replacing an existing collection -- need to do some work
                 final Set<JsonEntityBean> previousPrincipals = new HashSet<>(this.principals);
                 this.principals.clear();
-                principals.stream()
-                        .forEach(bean -> {
-                            this.principals.add(bean);
-                            if (!previousPrincipals.contains(bean)) {
-                                /*
-                                 * Previously unknown principals receive BROWSE & SUBSCRIBE by
-                                 * default (but not CONFIGURE!);  known principals do not receive
-                                 * this treatment b/c we don't want to reset previous selections.
-                                 */
-                                initPermissionsForPrincipal(bean);
-                            }
-                        });
+                principals
+                        .stream()
+                        .forEach(
+                                bean -> {
+                                    this.principals.add(bean);
+                                    if (!previousPrincipals.contains(bean)) {
+                                        /*
+                                         * Previously unknown principals receive BROWSE & SUBSCRIBE by
+                                         * default (but not CONFIGURE!);  known principals do not receive
+                                         * this treatment b/c we don't want to reset previous selections.
+                                         */
+                                        initPermissionsForPrincipal(bean);
+                                    }
+                                });
                 break;
         }
-
     }
 
     /**
-     * Sets the default collection of permissions for newly-added principals.  They are BROWSE and
+     * Sets the default collection of permissions for newly-added principals. They are BROWSE and
      * SUBSCRIBE.
      *
      * @since 5.0
      */
     /* package-private */ void initPermissionsForPrincipal(JsonEntityBean principal) {
-        permissions.add(principal.getTypeAndIdHash() + "_" + PortletAdministrationHelper.PortletPermissionsOnForm.BROWSE.getActivity());
-        permissions.add(principal.getTypeAndIdHash() + "_" + PortletAdministrationHelper.PortletPermissionsOnForm.SUBSCRIBE.getActivity());
+        permissions.add(
+                principal.getTypeAndIdHash()
+                        + "_"
+                        + PortletAdministrationHelper.PortletPermissionsOnForm.BROWSE
+                                .getActivity());
+        permissions.add(
+                principal.getTypeAndIdHash()
+                        + "_"
+                        + PortletAdministrationHelper.PortletPermissionsOnForm.SUBSCRIBE
+                                .getActivity());
     }
 
     public Set<String> getPermissions() {

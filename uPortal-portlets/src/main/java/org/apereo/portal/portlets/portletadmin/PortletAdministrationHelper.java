@@ -226,7 +226,9 @@ public final class PortletAdministrationHelper implements ServletContextAware {
         Map<String, IPermissionManager> permManagers = new HashMap<>();
         for (PortletPermissionsOnForm perm : PortletPermissionsOnForm.values()) {
             if (!permManagers.containsKey(perm.getOwner())) {
-                permManagers.put(perm.getOwner(), authorizationService.newPermissionManager(perm.getOwner()));
+                permManagers.put(
+                        perm.getOwner(),
+                        authorizationService.newPermissionManager(perm.getOwner()));
             }
             final IPermissionManager pm = permManagers.get(perm.getOwner());
             /* Obtain the principals that have permission for the activity on this portlet */
