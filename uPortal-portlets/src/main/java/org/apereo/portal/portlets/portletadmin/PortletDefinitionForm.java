@@ -457,13 +457,45 @@ public class PortletDefinitionForm implements Serializable {
         return Collections.unmodifiableSortedSet(principals);
     }
 
-    public void setPrincipals(SortedSet<JsonEntityBean> principals) {
-        this.principals.clear();
-        this.principals.addAll(principals);
+    public void setPrincipals(Set<JsonEntityBean> principals) {
+
+        /*
+         * Important distinction -- are we adding principals to this form object for the first time?
+         * Or are we replacing an existing collection?
+         */
+        switch (this.principals.size()) {
+            case 0: // This is a new form object -- take it at face value
+                this.principals.addAll(principals);
+                break;
+            default: // Replacing an existing collection -- need to do some work
+                final Set<JsonEntityBean> previousPrincipals = new HashSet<>(this.principals);
+                this.principals.clear();
+                principals.stream()
+                        .forEach(bean -> {
+                            this.principals.add(bean);
+                            if (!previousPrincipals.contains(bean)) {
+                                /*
+                                 * Previously unknown principals receive BROWSE & SUBSCRIBE by
+                                 * default (but not CONFIGURE!);  known principals do not receive
+                                 * this treatment b/c we don't want to reset previous selections.
+                                 */
+                                initPermissionsForPrincipal(bean);
+                            }
+                        });
+                break;
+        }
+
     }
 
-    public void addPrincipal(JsonEntityBean principal) {
-        this.principals.add(principal);
+    /**
+     * Sets the default collection of permissions for newly-added principals.  They are BROWSE and
+     * SUBSCRIBE.
+     *
+     * @since 5.0
+     */
+    /* package-private */ void initPermissionsForPrincipal(JsonEntityBean principal) {
+        permissions.add(principal.getTypeAndIdHash() + "_" + PortletAdministrationHelper.PortletPermissionsOnForm.BROWSE.getActivity());
+        permissions.add(principal.getTypeAndIdHash() + "_" + PortletAdministrationHelper.PortletPermissionsOnForm.SUBSCRIBE.getActivity());
     }
 
     public Set<String> getPermissions() {

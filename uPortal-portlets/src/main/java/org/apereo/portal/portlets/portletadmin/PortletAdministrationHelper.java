@@ -16,6 +16,7 @@ package org.apereo.portal.portlets.portletadmin;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -115,17 +116,30 @@ public final class PortletAdministrationHelper implements ServletContextAware {
 
     private static final String PORTLET_FNAME_FRAGMENT_ADMIN_PORTLET = "fragment-admin";
 
-    private enum PortletPermissionsOnForm {
+    /**
+     * Enumeration of the portlet-related permissions that may be managed in the Portlet Manager.
+     *
+     * @since 5.0
+     */
+    /* package-private */ enum PortletPermissionsOnForm {
         SUBSCRIBE(IPermission.PORTAL_SUBSCRIBE, IPermission.PORTLET_SUBSCRIBER_ACTIVITY),
         BROWSE(IPermission.PORTAL_SUBSCRIBE, IPermission.PORTLET_BROWSE_ACTIVITY),
         CONFIGURE(IPermission.PORTAL_PUBLISH, IPermission.PORTLET_MODE_CONFIG);
 
-        final String owner;
-        final String activity;
+        private final String owner;
+        private final String activity;
 
         PortletPermissionsOnForm(String owner, String activity) {
             this.owner = owner;
             this.activity = activity;
+        }
+
+        public String getOwner() {
+            return owner;
+        }
+
+        public String getActivity() {
+            return activity;
         }
     };
 
@@ -208,48 +222,47 @@ public final class PortletAdministrationHelper implements ServletContextAware {
     private void addPrincipalPermissionsToForm(IPortletDefinition def, PortletDefinitionForm form) {
         final String portletTargetId = PermissionHelper.permissionTargetIdForPortletDefinition(def);
 
+        final Set<JsonEntityBean> principalBeans = new HashSet<>();
         Map<String, IPermissionManager> permManagers = new HashMap<>();
         for (PortletPermissionsOnForm perm : PortletPermissionsOnForm.values()) {
-            if (!permManagers.containsKey(perm.owner)) {
-                permManagers.put(perm.owner, authorizationService.newPermissionManager(perm.owner));
+            if (!permManagers.containsKey(perm.getOwner())) {
+                permManagers.put(perm.getOwner(), authorizationService.newPermissionManager(perm.getOwner()));
             }
-            final IPermissionManager pm = permManagers.get(perm.owner);
+            final IPermissionManager pm = permManagers.get(perm.getOwner());
             /* Obtain the principals that have permission for the activity on this portlet */
             final IAuthorizationPrincipal[] principals =
-                    pm.getAuthorizedPrincipals(perm.activity, portletTargetId);
+                    pm.getAuthorizedPrincipals(perm.getActivity(), portletTargetId);
 
             for (IAuthorizationPrincipal principal : principals) {
                 JsonEntityBean principalBean;
 
                 // first assume this is a group
-                IEntityGroup group = GroupService.findGroup(principal.getKey());
+                final IEntityGroup group = GroupService.findGroup(principal.getKey());
                 if (group != null) {
                     // principal is a group
                     principalBean = new JsonEntityBean(group, EntityEnum.GROUP);
                 } else {
                     // not a group, so it must be a person
-                    IGroupMember member = authorizationService.getGroupMember(principal);
+                    final IGroupMember member = authorizationService.getGroupMember(principal);
                     principalBean = new JsonEntityBean(member, EntityEnum.PERSON);
                     // set the name
-                    String name = groupListHelper.lookupEntityName(principalBean);
+                    final String name = groupListHelper.lookupEntityName(principalBean);
                     principalBean.setName(name);
                 }
 
-                /* Make sure we capture the principal just once*/
-                if (!form.getPrincipals().contains(principalBean)) {
-                    form.addPrincipal(principalBean);
-                }
+                principalBeans.add(principalBean);
 
-                form.addPermission(principalBean.getTypeAndIdHash() + "_" + perm.activity);
+                form.addPermission(principalBean.getTypeAndIdHash() + "_" + perm.getActivity());
             }
         }
+        form.setPrincipals(principalBeans);
     }
 
     /*
      * Create a {@code PortletDefinitionForm} and pre-populate it with default categories and principal permissions.
      */
     private PortletDefinitionForm createNewPortletDefinitionForm() {
-        PortletDefinitionForm form = new PortletDefinitionForm();
+        final PortletDefinitionForm form = new PortletDefinitionForm();
 
         // pre-populate with top-level category
         final IEntityGroup portletCategoriesGroup =
@@ -262,17 +275,11 @@ public final class PortletAdministrationHelper implements ServletContextAware {
         // pre-populate with top-level group
         final IEntityGroup everyoneGroup =
                 GroupService.getDistinguishedGroup(IPerson.DISTINGUISHED_GROUP);
-        JsonEntityBean everyoneBean =
+        final JsonEntityBean everyoneBean =
                 new JsonEntityBean(everyoneGroup, groupListHelper.getEntityType(everyoneGroup));
-        form.addPrincipal(everyoneBean);
-        for (PortletPermissionsOnForm perm : PortletPermissionsOnForm.values()) {
-            // Purposefully did not add the Publish / Configure permission for 'everyone'
-            // since it's more of an admin-level activity.
-            if (!perm.owner.equals(IPermission.PORTAL_PUBLISH)
-                    || !perm.activity.equals(IPermission.PORTLET_MODE_CONFIG)) {
-                form.addPermission(everyoneBean.getTypeAndIdHash() + "_" + perm.activity);
-            }
-        }
+        form.setPrincipals(Collections.singleton(everyoneBean));
+        form.initPermissionsForPrincipal(everyoneBean);
+
         return form;
     }
 
@@ -674,7 +681,7 @@ public final class PortletAdministrationHelper implements ServletContextAware {
         // Add permission parameters to permissions collection
         form.clearPermissions();
         for (PortletPermissionsOnForm perm : PortletPermissionsOnForm.values()) {
-            addPermissionsFromRequestToForm(form, request, perm.activity);
+            addPermissionsFromRequestToForm(form, request, perm.getActivity());
         }
 
         //Names of valid preferences and parameters
