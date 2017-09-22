@@ -34,23 +34,23 @@
     	<property name="baseObjectName" value="uPortal:section=DataSource,name=" />
         <property name="mBeanServer" ref="mbeanServer" />
       
-        <property name="initialSize" value="1" />
-        <property name="minIdle" value="1" />
-        <property name="maxActive" value="100" />
-        <property name="maxIdle" value="50" />
-        <property name="maxWait" value="5000" /> <!-- 5 seconds -->
-        <property name="maxAge" value="3600000" /> <!-- 1 hour -->
-        <property name="minEvictableIdleTimeMillis" value="300000" /> <!-- 5 minutes -->
+        <property name="initialSize" value="${tomcat.jdbc.pool.basePooledDataSource.initialSize:1}" />
+        <property name="minIdle" value="${tomcat.jdbc.pool.basePooledDataSource.minIdle:1}" />
+        <property name="maxActive" value="${tomcat.jdbc.pool.basePooledDataSource.maxActive:100}" />
+        <property name="maxIdle" value="${tomcat.jdbc.pool.basePooledDataSource.maxIdle:50}" />
+        <property name="maxWait" value="${tomcat.jdbc.pool.basePooledDataSource.maxWait:5000}" /> <!-- 5 seconds -->
+        <property name="maxAge" value="${tomcat.jdbc.pool.basePooledDataSource.maxAge:3600000}" /> <!-- 1 hour -->
+        <property name="minEvictableIdleTimeMillis" value="${tomcat.jdbc.pool.basePooledDataSource.minEvictableIdleTimeMillis:300000}" /> <!-- 5 minutes -->
         
-        <property name="abandonWhenPercentageFull" value="70" />
-        <property name="removeAbandoned" value="true" />
-        <property name="removeAbandonedTimeout" value="300" />
-        <property name="logAbandoned" value="${tomcat.jdbc.pool.logAbandoned:false}"/>
+        <property name="abandonWhenPercentageFull" value="${tomcat.jdbc.pool.basePooledDataSource.abandonWhenPercentageFull:70}" />
+        <property name="removeAbandoned" value="${tomcat.jdbc.pool.basePooledDataSource.removeAbandoned:true}" />
+        <property name="removeAbandonedTimeout" value="${tomcat.jdbc.pool.basePooledDataSource.removeAbandonedTimeout:300}" />
+        <property name="logAbandoned" value="${tomcat.jdbc.pool.basePooledDataSource.logAbandoned:false}"/>
         
-        <property name="jdbcInterceptors" value="ConnectionState(useEquals=true);ResetAbandonedTimer"/>
-        
-        <property name="testWhileIdle" value="true" />
-        <property name="testOnBorrow" value="true" />
+        <property name="jdbcInterceptors" value="${tomcat.jdbc.pool.basePooledDataSource.jdbcInterceptors:ConnectionState(useEquals=true);StatementFinalizer(trace=true);ResetAbandonedTimer;SlowQueryReport}"/>
+
+        <property name="testWhileIdle" value="${tomcat.jdbc.pool.basePooledDataSource.testWhileIdle:true}" />
+        <property name="testOnBorrow" value="${tomcat.jdbc.pool.basePooledDataSource.testOnBorrow:true}" />
         <property name="delayedValidationQueryResolver" ref="delayedValidationQueryResolver" />
     </bean>
 
@@ -78,7 +78,15 @@
         <property name="url" value="${RawEventsJdbcUrl}" />
         <property name="username" value="${RawEventsJdbcUser}" />
         <property name="password" value="${RawEventsJdbcPassword}" />
-    </bean>    
+
+        <property name="initialSize" value="${tomcat.jdbc.pool.rawEventsDataSource.initialSize:1}" />
+        <property name="minIdle" value="${tomcat.jdbc.pool.rawEventsDataSource.minIdle:1}" />
+        <property name="maxActive" value="${tomcat.jdbc.pool.rawEventsDataSource.maxActive:100}" />
+        <property name="maxIdle" value="${tomcat.jdbc.pool.rawEventsDataSource.maxIdle:50}" />
+        <property name="maxWait" value="${tomcat.jdbc.pool.rawEventsDataSource.maxWait:5000}" /> <!-- 5 seconds -->
+        <property name="maxAge" value="${tomcat.jdbc.pool.rawEventsDataSource.maxAge:3600000}" /> <!-- 1 hour -->
+        <property name="minEvictableIdleTimeMillis" value="${tomcat.jdbc.pool.rawEventsDataSource.minEvictableIdleTimeMillis:300000}" /> <!-- 5 minutes -->
+    </bean>
     <!-- 
      | DataSource used to store aggregated portal event data, wrapper is used instead of alias so that Spring treats each
      | DataSource as unique.
@@ -89,7 +97,15 @@
         <property name="url" value="${AggrEventsJdbcUrl}" />
         <property name="username" value="${AggrEventsJdbcUser}" />
         <property name="password" value="${AggrEventsJdbcPassword}" />
-    </bean>    
+
+        <property name="initialSize" value="${tomcat.jdbc.pool.aggrEventsDataSource.initialSize:1}" />
+        <property name="minIdle" value="${tomcat.jdbc.pool.aggrEventsDataSource.minIdle:1}" />
+        <property name="maxActive" value="${tomcat.jdbc.pool.aggrEventsDataSource.maxActive:100}" />
+        <property name="maxIdle" value="${tomcat.jdbc.pool.aggrEventsDataSource.maxIdle:50}" />
+        <property name="maxWait" value="${tomcat.jdbc.pool.aggrEventsDataSource.maxWait:5000}" /> <!-- 5 seconds -->
+        <property name="maxAge" value="${tomcat.jdbc.pool.aggrEventsDataSource.maxAge:3600000}" /> <!-- 1 hour -->
+        <property name="minEvictableIdleTimeMillis" value="${tomcat.jdbc.pool.aggrEventsDataSource.minEvictableIdleTimeMillis:300000}" /> <!-- 5 minutes -->
+    </bean>
     
     <bean id="delayedValidationQueryResolver" class="org.apereo.portal.utils.jdbc.DelayedValidationQueryResolverImpl">
     	<property name="persistenceUnit">
