@@ -71,15 +71,15 @@
                 </property>
             </bean>
         </property>
-        <property name="minIdle" value="1" />
-        <property name="maxActive" value="32" />
-        <property name="maxIdle" value="32" />
-        <property name="maxWait" value="1000"/>
-        <property name="testOnBorrow" value="true"/>
-        <property name="testWhileIdle" value="true"/>
-        <property name="timeBetweenEvictionRunsMillis" value="120000"/>
-        <property name="minEvictableIdleTimeMillis" value="900000"/>
-        <property name="numTestsPerEvictionRun" value="6"/>
+        <property name="minIdle" value="${ldap.defaultLdapContext.pool.minIdle:1}" />
+        <property name="maxActive" value="${ldap.defaultLdapContext.pool.maxActive:32}" />
+        <property name="maxIdle" value="${ldap.defaultLdapContext.pool.maxIdle:32}" />
+        <property name="maxWait" value="${ldap.defaultLdapContext.pool.maxWait:1000}"/>
+        <property name="testOnBorrow" value="${ldap.defaultLdapContext.pool.testOnBorrow:true}"/>
+        <property name="testWhileIdle" value="${ldap.defaultLdapContext.pool.testWhileIdle:true}"/>
+        <property name="timeBetweenEvictionRunsMillis" value="${ldap.defaultLdapContext.pool.timeBetweenEvictionRunsMillis:120000}"/>
+        <property name="minEvictableIdleTimeMillis" value="${ldap.defaultLdapContext.pool.minEvictableIdleTimeMillis:900000}"/>
+        <property name="numTestsPerEvictionRun" value="${ldap.defaultLdapContext.pool.numTestsPerEvictionRun:6}"/>
     </bean>
     
     <bean id="defaultLdapContext_target" class="org.springframework.ldap.core.support.LdapContextSource">
@@ -87,7 +87,7 @@
         <property name="base" value="${ldap.defaultLdapContext.baseDn:}"/>
         <property name="userDn" value="${ldap.defaultLdapContext.user:}"/>
         <property name="password" value="${ldap.defaultLdapContext.password:}"/>
-        <property name="pooled" value="false"/>
+        <property name="pooled" value="${ldap.defaultLdapContext.pooled:false}"/>
     </bean>
 
 </beans>
