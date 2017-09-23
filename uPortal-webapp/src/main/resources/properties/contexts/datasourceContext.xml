@@ -33,15 +33,7 @@
     <bean id="basePooledDataSource" class="org.jasig.portlet.utils.jdbc.TomcatDataSourceFactory" abstract="true">
     	<property name="baseObjectName" value="uPortal:section=DataSource,name=" />
         <property name="mBeanServer" ref="mbeanServer" />
-      
-        <property name="initialSize" value="${tomcat.jdbc.pool.basePooledDataSource.initialSize:1}" />
-        <property name="minIdle" value="${tomcat.jdbc.pool.basePooledDataSource.minIdle:1}" />
-        <property name="maxActive" value="${tomcat.jdbc.pool.basePooledDataSource.maxActive:100}" />
-        <property name="maxIdle" value="${tomcat.jdbc.pool.basePooledDataSource.maxIdle:50}" />
-        <property name="maxWait" value="${tomcat.jdbc.pool.basePooledDataSource.maxWait:5000}" /> <!-- 5 seconds -->
-        <property name="maxAge" value="${tomcat.jdbc.pool.basePooledDataSource.maxAge:3600000}" /> <!-- 1 hour -->
-        <property name="minEvictableIdleTimeMillis" value="${tomcat.jdbc.pool.basePooledDataSource.minEvictableIdleTimeMillis:300000}" /> <!-- 5 minutes -->
-        
+
         <property name="abandonWhenPercentageFull" value="${tomcat.jdbc.pool.basePooledDataSource.abandonWhenPercentageFull:70}" />
         <property name="removeAbandoned" value="${tomcat.jdbc.pool.basePooledDataSource.removeAbandoned:true}" />
         <property name="removeAbandonedTimeout" value="${tomcat.jdbc.pool.basePooledDataSource.removeAbandonedTimeout:300}" />
@@ -60,6 +52,14 @@
         <property name="url" value="${hibernate.connection.url}" />
         <property name="username" value="${hibernate.connection.username}" />
         <property name="password" value="${hibernate.connection.password}" />
+
+        <property name="initialSize" value="${tomcat.jdbc.pool.PortalDb.initialSize:1}" />
+        <property name="minIdle" value="${tomcat.jdbc.pool.PortalDb.minIdle:1}" />
+        <property name="maxActive" value="${tomcat.jdbc.pool.PortalDb.maxActive:100}" />
+        <property name="maxIdle" value="${tomcat.jdbc.pool.PortalDb.maxIdle:50}" />
+        <property name="maxWait" value="${tomcat.jdbc.pool.PortalDb.maxWait:5000}" /> <!-- 5 seconds -->
+        <property name="maxAge" value="${tomcat.jdbc.pool.PortalDb.maxAge:3600000}" /> <!-- 1 hour -->
+        <property name="minEvictableIdleTimeMillis" value="${tomcat.jdbc.pool.PortalDb.minEvictableIdleTimeMillis:300000}" /> <!-- 5 minutes -->
     </bean>
     <bean id="PortalDB.metadata" class="org.apereo.portal.jdbc.DatabaseMetaDataImpl">
         <constructor-arg index="0" ref="PortalDb" />
