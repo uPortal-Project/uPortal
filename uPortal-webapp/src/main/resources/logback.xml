@@ -28,13 +28,13 @@
 <!--                                                                -->
 <configuration scan="true" scanPeriod="30 seconds">
   <contextName>uPortal</contextName>
- 
+
   <contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
     <resetJUL>true</resetJUL>
   </contextListener>
-  
+
   <jmxConfigurator />
-  
+
   <appender name="PORTAL" class="ch.qos.logback.core.rolling.RollingFileAppender">
     <!--See http://logback.qos.ch/manual/appenders.html#RollingFileAppender-->
     <!--and http://logback.qos.ch/manual/appenders.html#TimeBasedRollingPolicy-->
@@ -60,7 +60,7 @@
       <fileNamePattern>${catalina.base}/logs/portal/portal-events.log.%d{yyyy-MM-dd}</fileNamePattern>
     </rollingPolicy>
   </appender>
-  
+
   <appender name="TINCAN" class="ch.qos.logback.core.rolling.RollingFileAppender">
     <!--See http://logback.qos.ch/manual/appenders.html#RollingFileAppender-->
     <!--and http://logback.qos.ch/manual/appenders.html#TimeBasedRollingPolicy-->
@@ -73,7 +73,7 @@
       <fileNamePattern>${catalina.base}/logs/portal/portal-events.log.%d{yyyy-MM-dd}</fileNamePattern>
     </rollingPolicy>
   </appender>
-  
+
   <appender name="SWAPPER" class="ch.qos.logback.core.rolling.RollingFileAppender">
     <!--See http://logback.qos.ch/manual/appenders.html#RollingFileAppender-->
     <!--and http://logback.qos.ch/manual/appenders.html#TimeBasedRollingPolicy-->
@@ -86,7 +86,7 @@
       <fileNamePattern>${catalina.base}/logs/audit/portal.audit.log.%d{yyyy-MM-dd}</fileNamePattern>
     </rollingPolicy>
   </appender>
-  
+
   <appender name="JG" class="ch.qos.logback.core.rolling.RollingFileAppender">
     <!--See http://logback.qos.ch/manual/appenders.html#RollingFileAppender-->
     <!--and http://logback.qos.ch/manual/appenders.html#TimeBasedRollingPolicy-->
@@ -99,11 +99,11 @@
       <fileNamePattern>${catalina.base}/logs/jgroups/portal.jgroups.log.%d{yyyy-MM-dd}</fileNamePattern>
     </rollingPolicy>
   </appender>
-  
+
   <root level="INFO">
     <appender-ref ref="PORTAL"/>
   </root>
-  
+
   <!-- Log use of the identity and attribute swapper -->
   <logger name="org.apereo.portal.portlets.swapper" additivity="false" level="INFO">
     <appender-ref ref="SWAPPER"/>
@@ -113,12 +113,12 @@
   <logger name="org.apereo.portal.events" additivity="false" level="INFO">
     <appender-ref ref="EVENT"/>
   </logger>
-  
+
   <!--  Portal Tin Can Events -->
   <logger name="org.apereo.portal.events.tincan.providers.LogEventTinCanAPIProvider" additivity="false" level="DEBUG">
     <appender-ref ref="TINCAN"/>
   </logger>
- 
+
   <!-- Debug CAS Clearpass
   <logger name="org.apereo.portal.security.provider.cas" additivity="false" level="TRACE">
     <appender-ref ref="PORTAL"/>
@@ -151,13 +151,13 @@
     <appender-ref ref="PORTAL"/>
   </logger>
    -->
-   
+
   <!-- Portlet Event handling logging
   <logger name="org.apereo.portal.portlet.rendering.PortletEventCoordinatationService" additivity="false" level="DEBUG">
     <appender-ref ref="PORTAL"/>
   </logger>
   -->
-  
+
   <!-- Uncomment to see the XML at various stages in the rendering pipeline
   <logger name="org.apereo.portal.rendering.LoggingStAXComponent" additivity="false" level="DEBUG">
     <appender-ref ref="PORTAL"/>
@@ -169,7 +169,7 @@
     <appender-ref ref="PORTAL"/>
   </logger>
   -->
-  
+
   <!-- Uncomment to monitor portlet-spec caching behavior
   <logger name="org.apereo.portal.portlet.rendering.PortletRendererImpl" additivity="false" level="DEBUG">
     <appender-ref ref="PORTAL"/>
@@ -187,5 +187,5 @@
   <logger name="org.hibernate.cfg.annotations.reflection.JPAOverriddenAnnotationReader" additivity="false" level="ERROR"/>
   <logger name="org.hibernate.ejb.metamodel.MetadataContext" additivity="false" level="FATAL"/>
   <logger name="org.hibernate.engine.jdbc.spi.SqlExceptionHelper" additivity="false" level="FATAL"/>
-  
+
 </configuration>
