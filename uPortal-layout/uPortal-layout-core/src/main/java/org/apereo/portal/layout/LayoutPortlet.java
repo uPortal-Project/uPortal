@@ -25,7 +25,7 @@ import org.apereo.portal.portlet.om.IPortletPreference;
 public class LayoutPortlet {
     private static final String CONTENT_PORTLET_PREFERENCE = "content";
     private static final String PITHY_CONTENT_PORTLET_PREFERENCE = "pithyContent";
-    private static final String WIDGET_URL_PORLTET_PREFERENCE = "widgetURL";
+    private static final String WIDGET_URL_PORTLET_PREFERENCE = "widgetURL";
     private static final String WIDGET_TYPE_PORTLET_PREFERENCE = "widgetType";
     private static final String WIDGET_CONFIG_PORTLET_PREFERENCE = "widgetConfig";
     private static final String WIDGET_TEMPLATE_PORTLET_PREFERENCE = "widgetTemplate";
@@ -93,7 +93,7 @@ public class LayoutPortlet {
                     this.setPithyStaticContent(pref.getValues()[0]);
                     efficencyFlag[1] = true;
                 } else if (!efficencyFlag[2]
-                        && WIDGET_URL_PORLTET_PREFERENCE.equals(pref.getName())) {
+                        && WIDGET_URL_PORTLET_PREFERENCE.equals(pref.getName())) {
                     this.setWidgetURL(pref.getValues()[0]);
                     efficencyFlag[2] = true;
                 } else if (!efficencyFlag[3]
