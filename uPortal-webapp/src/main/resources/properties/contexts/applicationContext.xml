@@ -124,11 +124,27 @@
         </constructor-arg>
     </bean>
 
+    <!-- And JGROUPS DDL used by PostgresSQL Server -->
+    <bean id="jgroupsPostgreSQLInitSql" class="java.lang.String">
+        <constructor-arg>
+            <value>
+                CREATE TABLE IF NOT EXISTS JGROUPSPING (
+                    own_addr varchar(200) NOT NULL,
+                    cluster_name varchar(200) NOT NULL,
+                    ping_data BYTEA DEFAULT NULL,
+                    PRIMARY KEY (own_addr, cluster_name)
+                )
+            </value>
+        </constructor-arg>
+    </bean>
+
     <!-- Map of JGroups DDL by hibernate.dialect (all Hibernate dialects not listed here will use jgroupsDefaultInitSql) -->
     <util:map id="jgroupsInitSqlMap" map-class="java.util.HashMap">
         <!-- Most RDBMS platforms use standard DDL, but MS SQL Server uses something different -->
         <entry key="org.hibernate.dialect.SQLServerDialect" value="#{@jgroupsSqlServerInitSql}" />
         <entry key="org.hibernate.dialect.SQLServer2008Dialect" value="#{@jgroupsSqlServerInitSql}" />
+        <entry key="org.hibernate.dialect.PostgreSQLDialect" value="#{@jgroupsPostgreSQLInitSql}" />
+        <entry key="org.hibernate.dialect.PostgresPlusDialect" value="#{@jgroupsPostgreSQLInitSql}" />
     </util:map>
 
     <!-- Add properties for jgroups.xml as that is not a Spring context -->
