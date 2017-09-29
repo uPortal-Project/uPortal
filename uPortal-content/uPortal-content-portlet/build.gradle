@@ -9,7 +9,7 @@ dependencies {
     compile project(':uPortal-layout:uPortal-layout-core')
     compile project(':uPortal-rdbm')
 
-    compileOnly "org.apache.portals.pluto:pluto-container-api:${plutoVersion}"
+    compile "org.apache.portals.pluto:pluto-container-api:${plutoVersion}"
     compileOnly "org.hibernate:hibernate-jpamodelgen:${hibernateJpamodelgenVersion}" // Required for javac -s
     compileOnly "${portletApiDependency}"
     compileOnly "${servletApiDependency}"
