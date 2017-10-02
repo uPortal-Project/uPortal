@@ -34,7 +34,7 @@ public interface IPortletExecutionInterceptor {
      *     to the worker so be careful.
      * @param context The portlet execution context
      */
-    public void preSubmit(
+    void preSubmit(
             HttpServletRequest request,
             HttpServletResponse response,
             IPortletExecutionContext context);
@@ -49,7 +49,7 @@ public interface IPortletExecutionInterceptor {
      *     to the worker so be careful.
      * @param context The portlet execution context
      */
-    public void preExecution(
+    void preExecution(
             HttpServletRequest request,
             HttpServletResponse response,
             IPortletExecutionContext context);
@@ -65,7 +65,7 @@ public interface IPortletExecutionInterceptor {
      * @param context The portlet execution context
      * @param e Exception thrown during execution, null if no exception was thrown
      */
-    public void postExecution(
+    void postExecution(
             HttpServletRequest request,
             HttpServletResponse response,
             IPortletExecutionContext context,

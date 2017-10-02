@@ -19,17 +19,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.orm.jpa.EntityManagerFactoryUtils;
 import org.springframework.orm.jpa.EntityManagerHolder;
-import org.springframework.orm.jpa.JpaAccessor;
-import org.springframework.orm.jpa.JpaInterceptor;
+import org.springframework.orm.jpa.support.OpenEntityManagerInViewInterceptor;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 /**
  * Opens and closes an {@link EntityManager} around the execution of a portlet, participates in an
  * existing {@link EntityManager} if one already exists.
- *
- * @see JpaInterceptor
  */
-public class JpaPortletExecutionInterceptor extends JpaAccessor
+public class JpaPortletExecutionInterceptor extends OpenEntityManagerInViewInterceptor
         implements IPortletExecutionInterceptor {
     private static final String IS_NEW = JpaPortletExecutionInterceptor.class.getName() + ".IS_NEW";
     private static final String ENTITY_MANAGER_FACTORY =
