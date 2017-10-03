@@ -249,43 +249,22 @@ public class SearchPortletController {
             ActionResponse response,
             @RequestParam(value = "ajax", required = false) final boolean ajax)
             throws IOException {
-        final PortletSession session = request.getPortletSession();
 
+        final PortletSession session = request.getPortletSession();
         final String queryId = RandomStringUtils.randomAlphanumeric(32);
 
-        Cache<String, Boolean> searchCounterCache;
-        synchronized (org.springframework.web.portlet.util.PortletUtils.getSessionMutex(session)) {
-            searchCounterCache = (Cache<String, Boolean>) session.getAttribute(SEARCH_COUNTER_NAME);
-            if (searchCounterCache == null) {
-                searchCounterCache =
-                        CacheBuilder.newBuilder().expireAfterAccess(1, TimeUnit.MINUTES).build();
-                session.setAttribute(SEARCH_COUNTER_NAME, searchCounterCache);
+        if (isTooManyQueries(session, queryId)) {
+            logger.debug("Rejecting search for '{}', exceeded max queries per minute for user", query);
+            if (!ajax) {
+                response.setRenderParameter("hitMaxQueries", Boolean.TRUE.toString());
+                response.setRenderParameter("query", query);
+            } else {
+                // For Ajax return to a nonexistent file to generate the 404 error since it was easier for the
+                // UI to have an error response.
+                final String contextPath = request.getContextPath();
+                response.sendRedirect(contextPath + AJAX_MAX_QUERIES_URL);
             }
-        }
-
-        //Store the query id to track number of searches/minute
-        searchCounterCache.put(queryId, Boolean.TRUE);
-        if (searchCounterCache.size() > this.maximumSearchesPerMinute) {
-            //Make sure old data is expired
-            searchCounterCache.cleanUp();
-
-            //Too many searches in the last minute, fail the search
-            if (searchCounterCache.size() > this.maximumSearchesPerMinute) {
-                logger.debug(
-                        "Rejecting search for '{}', exceeded max queries per minute for user",
-                        query);
-
-                if (!ajax) {
-                    response.setRenderParameter("hitMaxQueries", Boolean.TRUE.toString());
-                    response.setRenderParameter("query", query);
-                } else {
-                    // For Ajax return to a nonexistent file to generate the 404 error since it was easier for the
-                    // UI to have an error response.
-                    final String contextPath = request.getContextPath();
-                    response.sendRedirect(contextPath + AJAX_MAX_QUERIES_URL);
-                }
-                return;
-            }
+            return;
         }
 
         // construct a new search query object from the string query
@@ -293,28 +272,7 @@ public class SearchPortletController {
         queryObj.setQueryId(queryId);
         queryObj.setSearchTerms(query);
 
-        // Create the session-shared results object
-        final PortalSearchResults results =
-                new PortalSearchResults(defaultTabKey, resultTypeMappings);
-
-        // place the portal search results object in the session using the queryId to namespace it
-        Cache<String, PortalSearchResults> searchResultsCache;
-        synchronized (org.springframework.web.portlet.util.PortletUtils.getSessionMutex(session)) {
-            searchResultsCache =
-                    (Cache<String, PortalSearchResults>)
-                            session.getAttribute(SEARCH_RESULTS_CACHE_NAME);
-            if (searchResultsCache == null) {
-                searchResultsCache =
-                        CacheBuilder.newBuilder()
-                                .maximumSize(20)
-                                .expireAfterAccess(5, TimeUnit.MINUTES)
-                                .build();
-                session.setAttribute(SEARCH_RESULTS_CACHE_NAME, searchResultsCache);
-            }
-            // Save the last queryId for an ajax autocomplete search response.
-            session.setAttribute(SEARCH_LAST_QUERY_ID, queryId);
-        }
-        searchResultsCache.put(queryId, results);
+        setupSearchResultsObjInSession(session, queryId);
 
         /*
          * TODO:  For autocomplete I wish we didn't have to go through a whole render phase just
@@ -339,6 +297,61 @@ public class SearchPortletController {
         logger.debug("Query initiated for queryId {}, query {}", queryId, query);
         response.setRenderParameter("queryId", queryId);
         response.setRenderParameter("query", query);
+    }
+
+    private boolean isTooManyQueries(PortletSession session, String queryId) {
+        boolean tooManyQueries = false;
+        Cache<String, Boolean> searchCounterCache = getSearchCounterCache(session);
+
+        //Store the query id to track number of searches/minute
+        searchCounterCache.put(queryId, Boolean.TRUE);
+        if (searchCounterCache.size() > this.maximumSearchesPerMinute) {
+            //Make sure old data is expired
+            searchCounterCache.cleanUp();
+
+            //Too many searches in the last minute, fail the search
+            if (searchCounterCache.size() > this.maximumSearchesPerMinute) {
+                tooManyQueries = true;
+           }
+        }
+        return tooManyQueries;
+    }
+
+    private Cache<String, Boolean> getSearchCounterCache(PortletSession session) {
+        Cache<String, Boolean> searchCounterCache;
+        synchronized (org.springframework.web.portlet.util.PortletUtils.getSessionMutex(session)) {
+            searchCounterCache = (Cache<String, Boolean>) session.getAttribute(SEARCH_COUNTER_NAME);
+            if (searchCounterCache == null) {
+                searchCounterCache = CacheBuilder.newBuilder().expireAfterAccess(1, TimeUnit.MINUTES).build();
+                session.setAttribute(SEARCH_COUNTER_NAME, searchCounterCache);
+            }
+        }
+        return searchCounterCache;
+    }
+
+    private void setupSearchResultsObjInSession(PortletSession session, String queryId) {
+        // Create the session-shared results object
+        final PortalSearchResults results =
+                new PortalSearchResults(defaultTabKey, resultTypeMappings);
+
+        // place the portal search results object in the session using the queryId to namespace it
+        Cache<String, PortalSearchResults> searchResultsCache;
+        synchronized (org.springframework.web.portlet.util.PortletUtils.getSessionMutex(session)) {
+            searchResultsCache =
+                    (Cache<String, PortalSearchResults>)
+                            session.getAttribute(SEARCH_RESULTS_CACHE_NAME);
+            if (searchResultsCache == null) {
+                searchResultsCache =
+                        CacheBuilder.newBuilder()
+                                .maximumSize(20)
+                                .expireAfterAccess(5, TimeUnit.MINUTES)
+                                .build();
+                session.setAttribute(SEARCH_RESULTS_CACHE_NAME, searchResultsCache);
+            }
+            // Save the last queryId for an ajax autocomplete search response.
+            session.setAttribute(SEARCH_LAST_QUERY_ID, queryId);
+        }
+        searchResultsCache.put(queryId, results);
     }
 
     /**

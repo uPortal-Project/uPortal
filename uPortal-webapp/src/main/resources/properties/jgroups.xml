@@ -27,38 +27,22 @@
 -->
 <config xmlns="urn:org:jgroups"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="urn:org:jgroups http://www.jgroups.org/schema/JGroups-3.1.xsd">
-    <TCP bind_port="${uPortal.cacheManager.jgroups.tcp.bind_port}"
-         loopback="false"
-         recv_buf_size="${tcp.recv_buf_size:20M}"
-         send_buf_size="${tcp.send_buf_size:640K}"
+        xsi:schemaLocation="urn:org:jgroups http://www.jgroups.org/schema/JGroups-3.6.xsd">
+
+    <!-- bind_addr should be set via environment properties -->
+    <!-- initial_hosts should be set with other nodes. Format = IP[port],... -->
+    <TCP bind_port="${jgroups.tcp.bind_port:7800}"
+         recv_buf_size="${jgroups.tcp.recv_buf_size:20M}"
+         send_buf_size="${jgroups.tcp.send_buf_size:640K}"
          max_bundle_size="64K"
-         max_bundle_timeout="30"
-         use_send_queues="true"
          sock_conn_timeout="300"
 
-         timer_type="new"
-         timer.min_threads="4"
-         timer.max_threads="10"
-         timer.keep_alive_time="3000"
-         timer.queue_max_size="500"
-         
-         thread_pool.enabled="true"
-         thread_pool.min_threads="1"
-         thread_pool.max_threads="10"
-         thread_pool.keep_alive_time="5000"
-         thread_pool.queue_enabled="false"
-         thread_pool.queue_max_size="100"
-         thread_pool.rejection_policy="discard"
+         thread_pool.min_threads="0"
+         thread_pool.max_threads="20"
+         thread_pool.keep_alive_time="30000"
+    />
 
-         oob_thread_pool.enabled="true"
-         oob_thread_pool.min_threads="1"
-         oob_thread_pool.max_threads="8"
-         oob_thread_pool.keep_alive_time="5000"
-         oob_thread_pool.queue_enabled="false"
-         oob_thread_pool.queue_max_size="100"
-         oob_thread_pool.rejection_policy="discard"/>
-
+    <!-- user database for discovery -->
     <JDBC_PING
             connection_url="${hibernate.connection.url}"
             connection_username="${hibernate.connection.username}"
@@ -66,27 +50,35 @@
             connection_driver="${hibernate.connection.driver_class}"
             initialize_sql="${jgroupsInitSql}"
     />
-    <MERGE2  min_interval="10000"
-             max_interval="30000"/>
-    <FD_SOCK start_port="${uPortal.cacheManager.jgroups.fd_sock.start_port}"/>
+    <MERGE3  min_interval="5000"
+             max_interval="30000"
+    />
+    <FD_SOCK />
     <FD timeout="3000" max_tries="3" />
-    <VERIFY_SUSPECT timeout="1500"  />
+    <VERIFY_SUSPECT timeout="1500" />
     <BARRIER />
-    <ENCRYPT encrypt_entire_message="false" sym_init="128" sym_algorithm="AES/ECB/PKCS5Padding" asym_init="512" asym_algorithm="RSA"/>
+    <ASYM_ENCRYPT
+            encrypt_entire_message="true"
+            sym_keylength="128"
+            sym_algorithm="AES/ECB/PKCS5Padding"
+            asym_keylength="512"
+            asym_algorithm="RSA"
+    />
     <pbcast.NAKACK2 use_mcast_xmit="false"
-                   discard_delivered_msgs="true"/>
-    <UNICAST />
-    <pbcast.STABLE stability_delay="1000" desired_avg_gossip="50000"
-                   max_bytes="4M"/>
-    <!-- <AUTH auth_class="org.apereo.portal.jgroups.auth.HashedDaoAuthToken"/> -->
-    <pbcast.GMS print_local_addr="true" join_timeout="2000"
-                max_join_attempts="3"
-                view_bundling="true"/>
-    <UFC max_credits="2M"
-         min_threshold="0.4"/>
+                    discard_delivered_msgs="true"
+    />
+    <UNICAST3 />
+    <AUTH auth_class="org.jgroups.auth.MD5Token"
+          auth_value="chris"
+          token_hash="MD5"
+    />
+    <pbcast.STABLE desired_avg_gossip="50000"
+                   max_bytes="4M"
+    />
+    <pbcast.GMS print_local_addr="true" join_timeout="1000" max_join_attempts="4" />
     <MFC max_credits="2M"
-         min_threshold="0.4"/>
-    <FRAG2 frag_size="60K"  />
-    <!--RSVP resend_interval="2000" timeout="10000"/-->
-    <pbcast.STATE_TRANSFER/>
+         min_threshold="0.4"
+    />
+    <FRAG2 frag_size="60K" />
+    <pbcast.STATE_TRANSFER />
 </config>
