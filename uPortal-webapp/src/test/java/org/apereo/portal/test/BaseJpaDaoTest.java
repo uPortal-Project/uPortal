@@ -35,7 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.orm.jpa.JpaInterceptor;
+import org.springframework.orm.jpa.support.OpenEntityManagerInViewInterceptor;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionOperations;
@@ -47,11 +47,11 @@ import org.springframework.transaction.support.TransactionOperations;
 public abstract class BaseJpaDaoTest {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-    protected JpaInterceptor jpaInterceptor;
+    protected OpenEntityManagerInViewInterceptor jpaInterceptor;
     protected TransactionOperations transactionOperations;
 
     @Autowired
-    public final void setJpaInterceptor(JpaInterceptor jpaInterceptor) {
+    public final void setJpaInterceptor(OpenEntityManagerInViewInterceptor jpaInterceptor) {
         this.jpaInterceptor = jpaInterceptor;
     }
 
@@ -114,7 +114,7 @@ public abstract class BaseJpaDaoTest {
         MockitoFactoryBean.resetAllMocks();
     }
 
-    /** Executes the callback inside of a {@link JpaInterceptor}. */
+    /** Executes the callback inside of a {@link OpenEntityManagerInViewInterceptor}. */
     @SuppressWarnings("unchecked")
     public final <T> T execute(final Callable<T> callable) {
         try {
@@ -131,7 +131,7 @@ public abstract class BaseJpaDaoTest {
     }
 
     /**
-     * Executes the callback inside of a {@link JpaInterceptor} inside of a {@link
+     * Executes the callback inside of a {@link OpenEntityManagerInViewInterceptor} inside of a {@link
      * TransactionCallback}
      */
     public final <T> T executeInTransaction(final Callable<T> callable) {
@@ -157,7 +157,7 @@ public abstract class BaseJpaDaoTest {
     }
 
     /**
-     * Executes the callback in a new thread inside of a {@link JpaInterceptor}. Waits for the
+     * Executes the callback in a new thread inside of a {@link OpenEntityManagerInViewInterceptor}. Waits for the
      * Thread to return.
      */
     public final <T> T executeInThread(String name, final Callable<T> callable) {
