@@ -117,7 +117,6 @@ public final class SearchRESTController {
 
     private Map<String, String> getPortletAttrs(IPortletDefinition portlet, String url) {
         Map<String, String> attrs = new TreeMap<>();
-        /* TODO: move this list to Spring configuration xml */
         attrs.put("name", portlet.getName());
         attrs.put("fname", portlet.getFName());
         attrs.put("title", portlet.getTitle());
