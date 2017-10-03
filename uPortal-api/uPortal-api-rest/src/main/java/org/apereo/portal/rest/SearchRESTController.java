@@ -25,7 +25,10 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.http.HttpHeaders;
+import org.apereo.portal.portlet.om.IPortletDefinition;
+import org.apereo.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.apereo.portal.portlets.lookup.PersonLookupHelperImpl;
+import org.apereo.portal.rest.utils.PortletRegistryUtil;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.IPersonManager;
 import org.apereo.services.persondir.IPersonAttributes;
@@ -34,37 +37,27 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
-import org.apereo.portal.portlet.om.IPortletDefinition;
-import org.apereo.portal.portlet.registry.IPortletDefinitionRegistry;
-import org.apereo.portal.rest.utils.PortletRegistryUtil;
 /**
- * REST Search endpoint that aggregates search of various types:
- * - People
- * - Portlet names and descriptions
+ * REST Search endpoint that aggregates search of various types.
  *
- * JSON results example:
+ * <p>JSON results example:
  *
- * {"people" : [...],
- *  "portlets" : [...] }
+ * <p>{"people" : [...], "portlets" : [...] }
  *
  * @since 5.0
- **/
+ */
 @Controller
 @RequestMapping("/search")
 public final class SearchRESTController {
 
     private static final Logger logger = LoggerFactory.getLogger(SearchRESTController.class);
 
-    @Autowired
-    private ObjectMapper jsonMapper;
+    @Autowired private ObjectMapper jsonMapper;
 
-    @Autowired
-    private IPersonManager personManager;
+    @Autowired private IPersonManager personManager;
 
     private PersonLookupHelperImpl lookupHelper;
 
@@ -82,11 +75,9 @@ public final class SearchRESTController {
     }
     */
 
-    @Autowired
-    private IPortletDefinitionRegistry portletDefinitionRegistry;
+    @Autowired private IPortletDefinitionRegistry portletDefinitionRegistry;
 
-    @Autowired
-    private PortletRegistryUtil portletRegistryUtil;
+    @Autowired private PortletRegistryUtil portletRegistryUtil;
 
     @RequestMapping(method = RequestMethod.GET)
     public void search(
@@ -106,7 +97,7 @@ public final class SearchRESTController {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
         } else {
             logger.error("send back json");
-            Map<String,List<Object>> results = new TreeMap<>();
+            Map<String, List<Object>> results = new TreeMap<>();
             results.put("people", matchingPeople);
             results.put("portlets", matchingPortlets);
             response.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
@@ -117,7 +108,8 @@ public final class SearchRESTController {
     private List<Object> getMatchingPortlets(String query, HttpServletRequest request) {
         List<Object> results = new ArrayList<>();
 
-        final List<IPortletDefinition> portlets = portletDefinitionRegistry.getAllPortletDefinitions();
+        final List<IPortletDefinition> portlets =
+                portletDefinitionRegistry.getAllPortletDefinitions();
         for (IPortletDefinition portlet : portlets) {
             if (portletRegistryUtil.matches(query, portlet)) {
                 String url = portletRegistryUtil.buildPortletUrl(request, portlet);
@@ -158,5 +150,4 @@ public final class SearchRESTController {
         }
         return results;
     }
-
 }

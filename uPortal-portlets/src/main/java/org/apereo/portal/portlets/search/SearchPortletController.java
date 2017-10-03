@@ -254,7 +254,8 @@ public class SearchPortletController {
         final String queryId = RandomStringUtils.randomAlphanumeric(32);
 
         if (isTooManyQueries(session, queryId)) {
-            logger.debug("Rejecting search for '{}', exceeded max queries per minute for user", query);
+            logger.debug(
+                    "Rejecting search for '{}', exceeded max queries per minute for user", query);
             if (!ajax) {
                 response.setRenderParameter("hitMaxQueries", Boolean.TRUE.toString());
                 response.setRenderParameter("query", query);
@@ -312,7 +313,7 @@ public class SearchPortletController {
             //Too many searches in the last minute, fail the search
             if (searchCounterCache.size() > this.maximumSearchesPerMinute) {
                 tooManyQueries = true;
-           }
+            }
         }
         return tooManyQueries;
     }
@@ -322,7 +323,8 @@ public class SearchPortletController {
         synchronized (org.springframework.web.portlet.util.PortletUtils.getSessionMutex(session)) {
             searchCounterCache = (Cache<String, Boolean>) session.getAttribute(SEARCH_COUNTER_NAME);
             if (searchCounterCache == null) {
-                searchCounterCache = CacheBuilder.newBuilder().expireAfterAccess(1, TimeUnit.MINUTES).build();
+                searchCounterCache =
+                        CacheBuilder.newBuilder().expireAfterAccess(1, TimeUnit.MINUTES).build();
                 session.setAttribute(SEARCH_COUNTER_NAME, searchCounterCache);
             }
         }
