@@ -80,17 +80,14 @@ public final class SearchRESTController {
             HttpServletResponse response)
             throws IOException {
 
-        logger.error("entering search");
-
         List<Object> matchingPeople = getMatchingPeople(query, request);
 
         List<Object> matchingPortlets = getMatchingPortlets(query, request);
 
         if (matchingPeople.isEmpty() && matchingPortlets.isEmpty()) {
-            logger.error("nothing found");
+            logger.debug("nothing found");
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
         } else {
-            logger.error("send back json");
             Map<String, List<Object>> results = new TreeMap<>();
             results.put("people", matchingPeople);
             results.put("portlets", matchingPortlets);
