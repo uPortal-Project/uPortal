@@ -69,12 +69,6 @@ public final class SearchRESTController {
     @Resource(name = "directoryQueryAttributes")
     private List<String> directoryQueryAttributes;
 
-    /*
-    public void setDirectoryQueryAttributes(List<String> attributes) {
-        this.directoryQueryAttributes = attributes;
-    }
-    */
-
     @Autowired private IPortletDefinitionRegistry portletDefinitionRegistry;
 
     @Autowired private PortletRegistryUtil portletRegistryUtil;
