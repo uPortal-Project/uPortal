@@ -131,8 +131,8 @@ public abstract class BaseJpaDaoTest {
     }
 
     /**
-     * Executes the callback inside of a {@link OpenEntityManagerInViewInterceptor} inside of a {@link
-     * TransactionCallback}
+     * Executes the callback inside of a {@link OpenEntityManagerInViewInterceptor} inside of a
+     * {@link TransactionCallback}
      */
     public final <T> T executeInTransaction(final Callable<T> callable) {
         return execute(
@@ -157,8 +157,8 @@ public abstract class BaseJpaDaoTest {
     }
 
     /**
-     * Executes the callback in a new thread inside of a {@link OpenEntityManagerInViewInterceptor}. Waits for the
-     * Thread to return.
+     * Executes the callback in a new thread inside of a {@link OpenEntityManagerInViewInterceptor}.
+     * Waits for the Thread to return.
      */
     public final <T> T executeInThread(String name, final Callable<T> callable) {
         final List<RuntimeException> exception = new LinkedList<RuntimeException>();

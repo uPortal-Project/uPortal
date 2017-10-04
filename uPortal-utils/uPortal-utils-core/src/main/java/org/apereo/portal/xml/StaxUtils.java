@@ -41,5 +41,4 @@ public final class StaxUtils {
         }
         return rootElement.asStartElement();
     }
-
 }

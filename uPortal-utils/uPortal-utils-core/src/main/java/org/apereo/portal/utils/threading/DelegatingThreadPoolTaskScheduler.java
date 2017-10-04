@@ -164,9 +164,9 @@ public class DelegatingThreadPoolTaskScheduler extends ThreadPoolTaskScheduler
         final DelegatingRunnable delegatingRunnable =
                 new DelegatingRunnable(this.executorService, task);
         @SuppressWarnings("unchecked")
-        final ScheduledFuture<?> future =
-                super.schedule(delegatingRunnable, wrappedTrigger);
-        return (ScheduledFuture<ScheduledFuture<?>>) new DelegatingForwardingScheduledFuture(future);
+        final ScheduledFuture<?> future = super.schedule(delegatingRunnable, wrappedTrigger);
+        return (ScheduledFuture<ScheduledFuture<?>>)
+                new DelegatingForwardingScheduledFuture(future);
     }
 
     @Override
@@ -176,9 +176,9 @@ public class DelegatingThreadPoolTaskScheduler extends ThreadPoolTaskScheduler
         final DelegatingRunnable delegatingRunnable =
                 new DelegatingRunnable(this.executorService, task);
         @SuppressWarnings("unchecked")
-        final ScheduledFuture<?> future =
-                super.schedule(delegatingRunnable, startTime);
-        return (ScheduledFuture<ScheduledFuture<?>>) new DelegatingForwardingScheduledFuture(future);
+        final ScheduledFuture<?> future = super.schedule(delegatingRunnable, startTime);
+        return (ScheduledFuture<ScheduledFuture<?>>)
+                new DelegatingForwardingScheduledFuture(future);
     }
 
     @Override
@@ -192,7 +192,8 @@ public class DelegatingThreadPoolTaskScheduler extends ThreadPoolTaskScheduler
         @SuppressWarnings("unchecked")
         final ScheduledFuture<?> future =
                 super.scheduleAtFixedRate(delegatingRunnable, startTime, period);
-        return (ScheduledFuture<ScheduledFuture<?>>) new DelegatingForwardingScheduledFuture(future);
+        return (ScheduledFuture<ScheduledFuture<?>>)
+                new DelegatingForwardingScheduledFuture(future);
     }
 
     @Override
@@ -207,14 +208,13 @@ public class DelegatingThreadPoolTaskScheduler extends ThreadPoolTaskScheduler
         final DelegatingRunnable delegatingRunnable =
                 new DelegatingRunnable(this.executorService, task);
         @SuppressWarnings("unchecked")
-        final ScheduledFuture<?> future =
-                super.scheduleAtFixedRate(delegatingRunnable, period);
-        return (ScheduledFuture<ScheduledFuture<?>>) new DelegatingForwardingScheduledFuture(future);
+        final ScheduledFuture<?> future = super.scheduleAtFixedRate(delegatingRunnable, period);
+        return (ScheduledFuture<ScheduledFuture<?>>)
+                new DelegatingForwardingScheduledFuture(future);
     }
 
     @Override
-    public ScheduledFuture<?> scheduleWithFixedDelay(
-            Runnable task, Date startTime, long delay) {
+    public ScheduledFuture<?> scheduleWithFixedDelay(Runnable task, Date startTime, long delay) {
         task = wrapRunnable(task);
         startTime = getDelayedStartDate(startTime); //Add scheduled task delay
         startTime = new Date(startTime.getTime() + delay); //Add period to inital run time
@@ -224,7 +224,8 @@ public class DelegatingThreadPoolTaskScheduler extends ThreadPoolTaskScheduler
         @SuppressWarnings("unchecked")
         final ScheduledFuture<?> future =
                 super.scheduleWithFixedDelay(delegatingRunnable, startTime, delay);
-        return (ScheduledFuture<ScheduledFuture<?>>) new DelegatingForwardingScheduledFuture(future);
+        return (ScheduledFuture<ScheduledFuture<?>>)
+                new DelegatingForwardingScheduledFuture(future);
     }
 
     @Override
@@ -239,9 +240,9 @@ public class DelegatingThreadPoolTaskScheduler extends ThreadPoolTaskScheduler
         final DelegatingRunnable delegatingRunnable =
                 new DelegatingRunnable(this.executorService, task);
         @SuppressWarnings("unchecked")
-        final ScheduledFuture<?> future =
-                super.scheduleWithFixedDelay(delegatingRunnable, delay);
-        return (ScheduledFuture<ScheduledFuture<?>>) new DelegatingForwardingScheduledFuture(future);
+        final ScheduledFuture<?> future = super.scheduleWithFixedDelay(delegatingRunnable, delay);
+        return (ScheduledFuture<ScheduledFuture<?>>)
+                new DelegatingForwardingScheduledFuture(future);
     }
 
     private static class DelegatingRunnable implements Runnable {
