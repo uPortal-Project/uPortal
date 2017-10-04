@@ -130,7 +130,7 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @since 5.0
  */
 @Controller
-@RequestMapping("/search")
+@RequestMapping("/v5-0/portal/search")
 public final class SearchRESTController {
 
     private static final Logger logger = LoggerFactory.getLogger(SearchRESTController.class);
