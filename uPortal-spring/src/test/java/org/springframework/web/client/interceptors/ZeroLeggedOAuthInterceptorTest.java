@@ -81,8 +81,7 @@ public class ZeroLeggedOAuthInterceptorTest {
         ZeroLeggedOAuthInterceptor interceptor = new ZeroLeggedOAuthInterceptor();
         interceptor.setPropertyResolver(resolver);
         interceptor.setId(id);
-        List<ClientHttpRequestInterceptor> interceptors =
-                new ArrayList<ClientHttpRequestInterceptor>();
+        List<ClientHttpRequestInterceptor> interceptors = new ArrayList<>();
         interceptors.add(interceptor);
 
         RestTemplate rest = new RestTemplate(factory);

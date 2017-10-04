@@ -33,6 +33,7 @@
         <security:custom-filter position="PRE_AUTH_FILTER" ref="portalPreAuthenticationFilter" />
         <security:intercept-url pattern="**" />
         <security:session-management session-authentication-strategy-ref="sessionAuthenticationStrategy" />
+        <!-- Spring Security's baked-in CSRF solution would be a challenge to integrate with portlets -->
         <security:csrf disabled="true" />
     </security:http>
 

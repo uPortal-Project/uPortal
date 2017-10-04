@@ -72,7 +72,7 @@
         <property name="generateDdl" value="true" />
     </bean>
 
-    <bean id="jpaInterceptor" class="org.springframework.orm.jpa.support.OpenEntityManagerInViewInterceptor">
+    <bean id="jpaInterceptor" class="org.apereo.portal.test.PortalJpaInterceptor">
         <property name="entityManagerFactory" ref="factoryBean" />
     </bean>
 

@@ -35,23 +35,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.orm.jpa.support.OpenEntityManagerInViewInterceptor;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionOperations;
 
 /**
  * Base class for JPA based unit tests that want TX and entity manager support. Also deletes all
- * hibernate managed data from the database after each test execution
+ * hibernate managed data from the database after each test execution.
  */
 public abstract class BaseJpaDaoTest {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-    protected OpenEntityManagerInViewInterceptor jpaInterceptor;
+    protected PortalJpaInterceptor jpaInterceptor;
     protected TransactionOperations transactionOperations;
 
     @Autowired
-    public final void setJpaInterceptor(OpenEntityManagerInViewInterceptor jpaInterceptor) {
+    public final void setJpaInterceptor(PortalJpaInterceptor jpaInterceptor) {
         this.jpaInterceptor = jpaInterceptor;
     }
 
@@ -68,10 +67,10 @@ public abstract class BaseJpaDaoTest {
         final EntityManager entityManager = getEntityManager();
         final EntityManagerFactory entityManagerFactory = entityManager.getEntityManagerFactory();
         final Metamodel metamodel = entityManagerFactory.getMetamodel();
-        Set<EntityType<?>> entityTypes = new LinkedHashSet<EntityType<?>>(metamodel.getEntities());
+        Set<EntityType<?>> entityTypes = new LinkedHashSet<>(metamodel.getEntities());
 
         do {
-            final Set<EntityType<?>> failedEntitieTypes = new HashSet<EntityType<?>>();
+            final Set<EntityType<?>> failedEntitieTypes = new HashSet<>();
 
             for (final EntityType<?> entityType : entityTypes) {
                 final String entityClassName = entityType.getBindableJavaType().getName();
@@ -114,11 +113,11 @@ public abstract class BaseJpaDaoTest {
         MockitoFactoryBean.resetAllMocks();
     }
 
-    /** Executes the callback inside of a {@link OpenEntityManagerInViewInterceptor}. */
+    /** Executes the callback inside of an interceptor. */
     @SuppressWarnings("unchecked")
     public final <T> T execute(final Callable<T> callable) {
         try {
-            return (T) this.jpaInterceptor.invoke(new MethodInvocationCallable<T>(callable));
+            return (T) this.jpaInterceptor.invoke(new MethodInvocationCallable<>(callable));
         } catch (Throwable e) {
             if (e instanceof RuntimeException) {
                 throw (RuntimeException) e;
@@ -131,7 +130,7 @@ public abstract class BaseJpaDaoTest {
     }
 
     /**
-     * Executes the callback inside of a {@link OpenEntityManagerInViewInterceptor} inside of a
+     * Executes the callback inside of an interceptor inside of a
      * {@link TransactionCallback}
      */
     public final <T> T executeInTransaction(final Callable<T> callable) {
@@ -157,12 +156,12 @@ public abstract class BaseJpaDaoTest {
     }
 
     /**
-     * Executes the callback in a new thread inside of a {@link OpenEntityManagerInViewInterceptor}.
+     * Executes the callback in a new thread inside of an interceptor.
      * Waits for the Thread to return.
      */
     public final <T> T executeInThread(String name, final Callable<T> callable) {
-        final List<RuntimeException> exception = new LinkedList<RuntimeException>();
-        final List<T> retVal = new LinkedList<T>();
+        final List<RuntimeException> exception = new LinkedList<>();
+        final List<T> retVal = new LinkedList<>();
 
         final Thread t2 =
                 new Thread(

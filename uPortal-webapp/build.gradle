@@ -25,17 +25,6 @@ description = "Apereo uPortal Webapp (WAR)"
 configurations {
     // These get packaged with the war in a special way
     webjars
-
-    /*
-     * uPortal puts a handful of dependencies into shared/lib within
-     * Tomcat; these jars MUST NOT be present inside the uPortal.war
-     */
-    all*.exclude group: 'javax.ccpp', module: 'ccpp'
-    all*.exclude group: 'org.apache.portals', module: 'portlet-api_2.1.0_spec' // Same as ${portletApiDependency}
-    all*.exclude group: 'org.apache.portals.pluto', module: 'pluto-container-api'
-    all*.exclude group: 'org.apache.portals.pluto', module: 'pluto-container-driver-api'
-    all*.exclude group: 'org.apache.portals.pluto', module: 'pluto-taglib'
-    all*.exclude group: 'org.jasig.portal', module: 'uPortal-api-platform'
 }
 
 dependencies {
@@ -49,6 +38,9 @@ dependencies {
     compile project(':uPortal-security:uPortal-security-xslt')
     compile project(':uPortal-soffit:uPortal-soffit-connector')
     compile project(':uPortal-utils:uPortal-utils-jmx')
+
+    compileOnly "org.apereo.service.persondir:person-directory-api:${personDirectoryVersion}"
+    compileOnly "${servletApiDependency}"
 
     testCompile "org.apache.portals.pluto:pluto-container-api:${plutoVersion}"
     testCompile "org.apache.portals.pluto:pluto-container-driver-api:${plutoVersion}"
@@ -78,9 +70,6 @@ dependencies {
      * from Apereo;  aditional JDBC drivers may be added in the overlay process
      */
     runtime "org.hsqldb:hsqldb:${hsqldbVersion}"
-
-    providedCompile "org.apereo.service.persondir:person-directory-api:${personDirectoryVersion}"
-    providedCompile "${servletApiDependency}"
 
     webjars "org.webjars.npm:bootstrap:${bootstrapVersion}"
 }
