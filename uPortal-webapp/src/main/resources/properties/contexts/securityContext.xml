@@ -33,6 +33,7 @@
         <security:custom-filter position="PRE_AUTH_FILTER" ref="portalPreAuthenticationFilter" />
         <security:intercept-url pattern="**" />
         <security:session-management session-authentication-strategy-ref="sessionAuthenticationStrategy" />
+        <security:csrf disabled="true" />
     </security:http>
 
     <bean id="sessionAuthenticationStrategy" class="org.springframework.security.web.authentication.session.NullAuthenticatedSessionStrategy" />
