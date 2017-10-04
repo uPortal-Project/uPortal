@@ -16,7 +16,6 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/*package org.apereo.portal.portlet.registry;*/
 package org.apereo.portal.rest.utils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -37,7 +36,7 @@ import org.springframework.stereotype.Component;
 /**
  * Collection of useful methods for searching portlet definitions.
  *
- * <p>- matches(query, portlet) tests the query against protlet title, name and description
+ * <p>- matches(query, portlet) tests the query against portlet title, name and description
  *
  * <p>- buildPortletUrl(servletRequest, portletDef) builds a portal URL to the specific portlet if
  * the remote user in the request has browse permissions

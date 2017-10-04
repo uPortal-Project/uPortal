@@ -33,7 +33,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
 /**
- * Return portlet search results based on title, name and description matching.
+ * Return portlet search results based on matching specific portlet definition values. Currently,
+ * the values tested are:
+ *
+ * <ul>
+ *   <li>name
+ *   <li>fname
+ *   <li>title
+ *   <li>description
+ * </ul>
+ *
+ * <p>Portlet content is not matched.
  *
  * <p>Results comply with requester's permissions.
  */

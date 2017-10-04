@@ -85,7 +85,7 @@ public final class SearchRESTController {
         List<Object> matchingPortlets = getMatchingPortlets(query, request);
 
         if (matchingPeople.isEmpty() && matchingPortlets.isEmpty()) {
-            logger.debug("nothing found");
+            logger.debug("Nothing found for query string: {}", query);
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
         } else {
             Map<String, List<Object>> results = new TreeMap<>();
@@ -103,6 +103,7 @@ public final class SearchRESTController {
                 portletDefinitionRegistry.getAllPortletDefinitions();
         for (IPortletDefinition portlet : portlets) {
             if (portletRegistryUtil.matches(query, portlet)) {
+                /* requester permissions checked in buildPortletUrl() */
                 String url = portletRegistryUtil.buildPortletUrl(request, portlet);
                 if (url != null) {
                     results.add(getPortletAttrs(portlet, url));
