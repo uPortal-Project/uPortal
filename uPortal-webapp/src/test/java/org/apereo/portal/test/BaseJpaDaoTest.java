@@ -129,10 +129,7 @@ public abstract class BaseJpaDaoTest {
         }
     }
 
-    /**
-     * Executes the callback inside of an interceptor inside of a
-     * {@link TransactionCallback}
-     */
+    /** Executes the callback inside of an interceptor inside of a {@link TransactionCallback} */
     public final <T> T executeInTransaction(final Callable<T> callable) {
         return execute(
                 new Callable<T>() {
@@ -156,8 +153,8 @@ public abstract class BaseJpaDaoTest {
     }
 
     /**
-     * Executes the callback in a new thread inside of an interceptor.
-     * Waits for the Thread to return.
+     * Executes the callback in a new thread inside of an interceptor. Waits for the Thread to
+     * return.
      */
     public final <T> T executeInThread(String name, final Callable<T> callable) {
         final List<RuntimeException> exception = new LinkedList<>();
