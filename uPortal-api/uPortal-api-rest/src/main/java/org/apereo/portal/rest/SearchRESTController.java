@@ -43,9 +43,89 @@ import org.springframework.web.bind.annotation.RequestParam;
 /**
  * REST Search endpoint that aggregates search of various types.
  *
- * <p>JSON results example:
+ * <p>JSON results example (whitespace added for clarity):
  *
- * <p>{"people" : [...], "portlets" : [...] }
+ * <pre><code>
+ * {
+ *   "people": [
+ *     {
+ *       "telephoneNumber": [
+ *         "(555) 555-5555"
+ *       ],
+ *       "mail": [
+ *         "amy.administrator@university.edu"
+ *       ],
+ *       "displayName": [
+ *         "Amy Administrator"
+ *       ],
+ *       "givenName": [
+ *         "Amy"
+ *       ],
+ *       "sn": [
+ *         "Administrator"
+ *       ],
+ *       "title": [
+ *         "Portal Administrator"
+ *       ],
+ *       "department": [
+ *         "IT Services"
+ *       ],
+ *       "username": [
+ *         "admin"
+ *       ]
+ *     },
+ *     {
+ *       "telephoneNumber": [
+ *         "(555) 555-5555"
+ *       ],
+ *       "mail": [
+ *         "samuel.staff@example.org"
+ *       ],
+ *       "displayName": [
+ *         "Samuel Staff"
+ *       ],
+ *       "givenName": [
+ *         "Samuel"
+ *       ],
+ *       "sn": [
+ *         "Staff"
+ *       ],
+ *       "title": [
+ *         "Database Administrator"
+ *       ],
+ *       "department": [
+ *         "IT Services"
+ *       ],
+ *       "username": [
+ *         "staff"
+ *       ]
+ *     }
+ *   ],
+ *   "portlets": [
+ *     {
+ *       "description": "Campus News",
+ *       "fname": "campus-news",
+ *       "name": "Campus News",
+ *       "title": "Campus News",
+ *       "url": "/uPortal/f/news-fav-collection/p/campus-news.u33l1n8/max/render.uP"
+ *     },
+ *     {
+ *       "description": "Top stories from The Chronicle of Higher Education: Wired Campus Edition",
+ *       "fname": "chronicle-wired",
+ *       "name": "The Chronicle: Wired Campus",
+ *       "title": "The Chronicle: Wired Campus",
+ *       "url": "/uPortal/f/news-fav-collection/p/chronicle-wired.u33l1n9/max/render.uP"
+ *     },
+ *     {
+ *       "description": "Calendar of campus, academic, and personal events.",
+ *       "fname": "calendar",
+ *       "name": "Calendar",
+ *       "title": "Calendar",
+ *       "url": "/uPortal/f/welcome/p/calendar.u17l1n13/max/render.uP"
+ *     }
+ *   ]
+ * }
+ * </code></pre>
  *
  * @since 5.0
  */
