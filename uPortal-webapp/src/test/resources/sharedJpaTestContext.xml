@@ -25,9 +25,9 @@
     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
                         http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
                         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
-                        
+
     <import resource="classpath:commonTestContext.xml"/>
-    
+
     <bean id="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="locations">
             <list merge="true">
@@ -41,7 +41,7 @@
         <property name="url" value="${hibernate.connection.url}" />
         <property name="username" value="${hibernate.connection.username}" />
         <property name="password" value="${hibernate.connection.password}" />
-        
+
         <property name="maxActive" value="50" />
         <property name="maxIdle" value="10" />
         <property name="maxWait" value="1000" />
@@ -50,7 +50,7 @@
         <property name="logAbandoned" value="true" />
         <property name="poolPreparedStatements" value="false" />
     </bean>
-    
+
     <bean id="factoryBean" class="org.apereo.portal.jpa.EventingLocalContainerEntityManagerFactoryBean" depends-on="" autowire="byType">
         <property name="jpaVendorAdapter" ref="jpaVendorAdapter" />
         <property name="persistenceUnitName" value="${persistenceUnitName}" />
@@ -71,42 +71,42 @@
     <bean id="jpaVendorAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
         <property name="generateDdl" value="true" />
     </bean>
-    
-    <bean id="jpaInterceptor" class="org.springframework.orm.jpa.JpaInterceptor">
+
+    <bean id="jpaInterceptor" class="org.apereo.portal.test.PortalJpaInterceptor">
         <property name="entityManagerFactory" ref="factoryBean" />
     </bean>
-    
+
     <bean class="org.apereo.portal.hibernate.HibernateConfigurationAwareInjector" />
-    
+
     <bean class="org.apereo.portal.jpa.OpenEntityManagerAspect" />
 
-    <!-- This mimics what <tx:annotation-driven/> does but uses our custom TransactionManagerCachingTransactionInterceptor -->    
-    <bean id="org.springframework.transaction.annotation.AnnotationTransactionAttributeSource#0" 
+    <!-- This mimics what <tx:annotation-driven/> does but uses our custom TransactionManagerCachingTransactionInterceptor -->
+    <bean id="org.springframework.transaction.annotation.AnnotationTransactionAttributeSource#0"
             class="org.springframework.transaction.annotation.AnnotationTransactionAttributeSource"/>
     <bean id="org.springframework.transaction.interceptor.TransactionInterceptor#0"
             class="org.apereo.portal.spring.tx.DialectAwareTransactionInterceptor">
         <property name="transactionAttributeSource" ref="org.springframework.transaction.annotation.AnnotationTransactionAttributeSource#0" />
         <property name="transactionManagerBeanName" value="transactionManager" />
     </bean>
-    <bean id="org.springframework.transaction.config.internalTransactionAdvisor" 
+    <bean id="org.springframework.transaction.config.internalTransactionAdvisor"
             class="org.springframework.transaction.interceptor.BeanFactoryTransactionAttributeSourceAdvisor">
         <property name="transactionAttributeSource" ref="org.springframework.transaction.annotation.AnnotationTransactionAttributeSource#0" />
         <property name="adviceBeanName" value="org.springframework.transaction.interceptor.TransactionInterceptor#0" />
     </bean>
-    
+
     <aop:config>
-        <aop:pointcut id="daoExecution" 
+        <aop:pointcut id="daoExecution"
             expression="within(@org.springframework.stereotype.Repository *) &amp;&amp; execution(* org.apereo.portal..*.*(..))"/>
-            
+
         <aop:aspect ref="sqlNextExceptionLoggerAspect">
             <aop:after-throwing pointcut-ref="daoExecution" method="logBatchUpdateExceptions" throwing="t"/>
         </aop:aspect>
     </aop:config>
-    
+
     <bean id="sqlNextExceptionLoggerAspect" class="org.apereo.portal.portlet.dao.jpa.SQLNextExceptionLoggerAspect" />
-    
+
     <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" lazy-init="false" />
-    
+
     <bean class="org.apereo.portal.jpa.cache.EntityManagerCacheImpl">
         <property name="contentCache">
             <bean id="portalInfoProvider" class="org.apereo.portal.spring.MockitoFactoryBean">
@@ -114,7 +114,7 @@
             </bean>
         </property>
     </bean>
-    
+
     <bean id="taggedCacheEntryPurger" class="org.apereo.portal.spring.MockitoFactoryBean">
         <constructor-arg value="org.apereo.portal.utils.cache.TaggedCacheEntryPurger" />
     </bean>

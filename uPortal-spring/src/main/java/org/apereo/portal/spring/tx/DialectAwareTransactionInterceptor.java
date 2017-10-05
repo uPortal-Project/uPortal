@@ -218,7 +218,7 @@ public class DialectAwareTransactionInterceptor
 
             //Determine interfaces to proxy
             @SuppressWarnings("rawtypes")
-            final Set<Class> interfaces = ClassUtils.getAllInterfacesAsSet(transactionAttribute);
+            final Set<Class<?>> interfaces = ClassUtils.getAllInterfacesAsSet(transactionAttribute);
             interfaces.add(SkipTransactionAttribute.class);
 
             //Proxy the existing transactionAttribute to mix in our SkipTransactionAttribute interface
