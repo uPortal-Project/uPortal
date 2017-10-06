@@ -275,6 +275,7 @@ public class SearchPortletController {
 
         setupSearchResultsObjInSession(session, queryId);
 
+        if (!isRestSearch(request)) {
         /*
          * TODO:  For autocomplete I wish we didn't have to go through a whole render phase just
          * to trigger the events-based features of the portlet, but atm I don't
@@ -292,8 +293,9 @@ public class SearchPortletController {
          * the portal needlessly.
          */
 
-        // send a search query event
-        response.setEvent(SearchConstants.SEARCH_REQUEST_QNAME, queryObj);
+            // send a search query event
+            response.setEvent(SearchConstants.SEARCH_REQUEST_QNAME, queryObj);
+        }
 
         logger.debug("Query initiated for queryId {}, query {}", queryId, query);
         response.setRenderParameter("queryId", queryId);
@@ -520,13 +522,19 @@ public class SearchPortletController {
     public ModelAndView showSearchForm(RenderRequest request, RenderResponse response) {
         final Map<String, Object> model = new HashMap<>();
 
-        // Determine if this portlet displays the search launch view or regular search view.
-        PortletPreferences prefs = request.getPreferences();
-        final boolean isMobile = isMobile(request);
-        String viewName = isMobile ? "/jsp/Search/mobileSearch" : "/jsp/Search/search";
+        String viewName;
+        // Determine if the new REST search should be used
+        if (isRestSearch(request)) {
+            viewName = "/jsp/Search/searchRest";
+        } else {
+            // Determine if this portlet displays the search launch view or regular search view.
+            final boolean isMobile = isMobile(request);
+            viewName = isMobile ? "/jsp/Search/mobileSearch" : "/jsp/Search/search";
+        }
 
         // If this search portlet is configured to be the searchLauncher, calculate the URLs to the indicated
         // search portlet.
+        PortletPreferences prefs = request.getPreferences();
         final String searchLaunchFname = prefs.getValue(SEARCH_LAUNCH_FNAME, null);
         if (searchLaunchFname != null) {
             model.put("searchLaunchUrl", calculateSearchLaunchUrl(request, response));
@@ -581,6 +589,12 @@ public class SearchPortletController {
 
         final Map<String, Object> model = new HashMap<>();
         model.put("query", query);
+
+        // Determine if the new REST search should be used
+        if (isRestSearch(request)) {
+            // we only need query, so the model at this point is sufficient
+            return new ModelAndView("/jsp/Search/searchRest", model);
+        }
 
         ConcurrentMap<String, List<Tuple<SearchResult, String>>> results =
                 new ConcurrentHashMap<>();
@@ -890,6 +904,12 @@ public class SearchPortletController {
     public boolean isMobile(PortletRequest request) {
         String themeName = request.getProperty(IPortletRenderer.THEME_NAME_PROPERTY);
         return "UniversalityMobile".equals(themeName);
+    }
+
+    private boolean isRestSearch(PortletRequest request) {
+        final PortletPreferences pref = request.getPreferences();
+        final String restSearch = pref.getValue("RESTSearch", null);
+        return (boolean) (restSearch != null && Boolean.valueOf(restSearch));
     }
 
     /**
