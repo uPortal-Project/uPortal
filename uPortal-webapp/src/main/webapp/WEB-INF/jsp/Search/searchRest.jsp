@@ -69,22 +69,34 @@
 <script src="https://rawgit.com/webcomponents/template/v1.0.0/template.js"></script>
 <script src="https://rawgit.com/taylorhakes/promise-polyfill/6.0.2/promise.js"></script>
 <style>
-            dt,
-            dd {
+            #search-results-tab-panel dt,
+            #search-results-tab-panel dd {
                 display: inline;
             }
 
-            dt {
+            #search-results-tab-panel dt {
                 font-weight: bold;
             }
 
-            dt::before {
+            #search-results-tab-panel dt::before {
                 content: '';
                 display: block;
             }
 
-            .mdl-list__item-text-body {
+            #search-results-tab-panel .mdl-list__item-text-body {
                 padding-left: 56px !important;
+            }
+
+            #search-results-tab-panel #people .mdl-list__item--three-line {
+                height: 152px;
+            }
+
+            #search-results-tab-panel #people .mdl-list__item--three-line .mdl-list__item-primary-content {
+                height: 116px;
+            }
+
+            #search-results-tab-panel #people .mdl-list__item--three-line .mdl-list__item-text-body {
+                height: 94px;
             }
 </style>
 <div id="search-results-tab-panel" class="mdl-tabs mdl-js-tabs mdl-js-ripple-effect">
