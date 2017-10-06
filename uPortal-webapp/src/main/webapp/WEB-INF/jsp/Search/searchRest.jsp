@@ -29,12 +29,10 @@
 <template id="search-result-item-template">
     <li class="mdl-list__item mdl-list__item--five-line">
         <span class="mdl-list__item-primary-content">
-            <div>
             <i class="material-icons mdl-list__item-avatar"></i>
             <span class="up-list-item-title"></span>
-            <div>
             <span class="mdl-list__item-text-body">
-                <table />
+                <dl></dl>
             </span>
         </span>
         <span class="mdl-list__item-secondary-content">
@@ -48,10 +46,8 @@
 </template>
 
 <template id="search-result-item-detail-template">
-    <tr>
-    <td class="attrName text-right" />
-    <td class="attrValue" />
-    </tr>
+    <dt></dt>
+    <dd></dd>
 </template>
 
 <template id="search-result-no-results-template">
@@ -140,8 +136,7 @@ fetch('${url}', {credentials: 'same-origin'})
                     } else {
                         searchResult.querySelector('.mdl-list__item-secondary-content').style.visibility = 'hidden';
                     }
-                    var resultAttributeList = searchResult.querySelector('table');
-                    console.log(resultAttributeList);
+                    var resultAttributeList = searchResult.querySelector('dl');
                     // QUESTION: should that attribute picking be handled server-side?
                     // add each attribute that should be shown for a result
                     _.forEach(metadata[tabProperty].attributes, function (attributeName) {
@@ -151,10 +146,8 @@ fetch('${url}', {credentials: 'same-origin'})
                             var attributePairTemplate = document.getElementById('search-result-item-detail-template');
                             var attributePair = document.importNode(attributePairTemplate.content, true);
                             // add values
-                            console.log("values");
-                            attributePair.querySelector('td.attrName').textContent = _.startCase(attributeName);
-                            attributePair.querySelector('td.attrValue').textContent = attributeValue;
-                            console.log(attributePair);
+                            attributePair.querySelector('dt').textContent = _.startCase(attributeName);
+                            attributePair.querySelector('dd').textContent = attributeValue;
                             // add attributes to the result
                             resultAttributeList.appendChild(attributePair);
                         }
