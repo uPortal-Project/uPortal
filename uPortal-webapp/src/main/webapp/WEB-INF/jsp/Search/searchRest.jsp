@@ -61,10 +61,13 @@
 <!-- TODO: use existing material design lite from resource server -->
 <script src="https://code.getmdl.io/1.3.0/material.min.js"></script>
 <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
+<!-- above 2 are required for Material Design -->
 
 <!-- TODO: move material design icons, lodash/lodash, github/fetch, webcomponents/template, and taylorhakes/promise-polyfill to resource server -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<!-- similar to fontawesome? -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js"></script>
+<!-- Does the above replace underscore? -->
 <script src="https://rawgit.com/github/fetch/v2.0.3/fetch.js"></script>
 <script src="https://rawgit.com/webcomponents/template/v1.0.0/template.js"></script>
 <script src="https://rawgit.com/taylorhakes/promise-polyfill/6.0.2/promise.js"></script>
