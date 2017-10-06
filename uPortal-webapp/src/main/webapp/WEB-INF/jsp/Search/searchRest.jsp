@@ -27,7 +27,7 @@
 </template>
 
 <template id="search-result-item-template">
-    <li class="mdl-list__item mdl-list__item--five-line">
+    <li class="mdl-list__item mdl-list__item--three-line">
         <span class="mdl-list__item-primary-content">
             <i class="material-icons mdl-list__item-avatar"></i>
             <span class="up-list-item-title"></span>
@@ -68,7 +68,25 @@
 <script src="https://rawgit.com/github/fetch/v2.0.3/fetch.js"></script>
 <script src="https://rawgit.com/webcomponents/template/v1.0.0/template.js"></script>
 <script src="https://rawgit.com/taylorhakes/promise-polyfill/6.0.2/promise.js"></script>
+<style>
+            dt,
+            dd {
+                display: inline;
+            }
 
+            dt {
+                font-weight: bold;
+            }
+
+            dt::before {
+                content: '';
+                display: block;
+            }
+
+            .mdl-list__item-text-body {
+                padding-left: 56px !important;
+            }
+</style>
 <div id="search-results-tab-panel" class="mdl-tabs mdl-js-tabs mdl-js-ripple-effect">
     <div id="search-results-tab-header" class="mdl-tabs__tab-bar"></div>
 </div>
@@ -76,7 +94,7 @@
 <script language="javascript" type="text/javascript">
 // search results metadata
 var metadata = { "people" : { "avatar" : "person", "attributes" : [ "displayName", "title", "department", "telephone", "mail" ] },
-                 "portlets" : { "avatar" : "featured_video", "attributes" : [ "title", "description" ] } };
+                 "portlets" : { "avatar" : "apps", "attributes" : [ "title", "description" ] } };
 // fetch search results
 <c:url value="/api/v5-0/portal/search" var="url">
     <c:param name="q" value="${param.query}" />
@@ -130,7 +148,6 @@ fetch('${url}', {credentials: 'same-origin'})
                     // add top level content
                     searchResult.querySelector('.mdl-list__item-avatar').textContent = metadata[tabProperty].avatar;
                     searchResult.querySelector('.up-list-item-title').textContent = result[metadata[tabProperty].attributes[0]];
-                    // TODO: add destination link for result
                     if (result.url) {
                         searchResult.querySelector('.mdl-list__item-secondary-action').href = result.url;
                     } else {
