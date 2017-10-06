@@ -249,19 +249,62 @@ public class SearchPortletController {
             ActionResponse response,
             @RequestParam(value = "ajax", required = false) final boolean ajax)
             throws IOException {
-        final PortletSession session = request.getPortletSession();
 
+        final PortletSession session = request.getPortletSession();
         final String queryId = RandomStringUtils.randomAlphanumeric(32);
 
-        Cache<String, Boolean> searchCounterCache;
-        synchronized (org.springframework.web.portlet.util.PortletUtils.getSessionMutex(session)) {
-            searchCounterCache = (Cache<String, Boolean>) session.getAttribute(SEARCH_COUNTER_NAME);
-            if (searchCounterCache == null) {
-                searchCounterCache =
-                        CacheBuilder.newBuilder().expireAfterAccess(1, TimeUnit.MINUTES).build();
-                session.setAttribute(SEARCH_COUNTER_NAME, searchCounterCache);
+        if (isTooManyQueries(session, queryId)) {
+            logger.debug(
+                    "Rejecting search for '{}', exceeded max queries per minute for user", query);
+            if (!ajax) {
+                response.setRenderParameter("hitMaxQueries", Boolean.TRUE.toString());
+                response.setRenderParameter("query", query);
+            } else {
+                // For Ajax return to a nonexistent file to generate the 404 error since it was easier for the
+                // UI to have an error response.
+                final String contextPath = request.getContextPath();
+                response.sendRedirect(contextPath + AJAX_MAX_QUERIES_URL);
             }
+            return;
         }
+
+        // construct a new search query object from the string query
+        final SearchRequest queryObj = new SearchRequest();
+        queryObj.setQueryId(queryId);
+        queryObj.setSearchTerms(query);
+
+        setupSearchResultsObjInSession(session, queryId);
+
+        if (!isRestSearch(request)) {
+        /*
+         * TODO:  For autocomplete I wish we didn't have to go through a whole render phase just
+         * to trigger the events-based features of the portlet, but atm I don't
+         * see a way around it, since..
+         *
+         *   - (1) You can only start an event chain in the Action phase;  and
+         *   - (2) You can only return JSON in a Resource phase;  and
+         *   - (3) An un-redirected Action phase leads to a Render phase, not a
+         *     Resource phase :(
+         *
+         * It would be awesome either (first choice) to do Action > Event > Resource,
+         * or Action > sendRedirect() followed by a Resource request.
+         *
+         * As it stands, this implementation will trigger a complete render on
+         * the portal needlessly.
+         */
+
+            // send a search query event
+            response.setEvent(SearchConstants.SEARCH_REQUEST_QNAME, queryObj);
+        }
+
+        logger.debug("Query initiated for queryId {}, query {}", queryId, query);
+        response.setRenderParameter("queryId", queryId);
+        response.setRenderParameter("query", query);
+    }
+
+    private boolean isTooManyQueries(PortletSession session, String queryId) {
+        boolean tooManyQueries = false;
+        Cache<String, Boolean> searchCounterCache = getSearchCounterCache(session);
 
         //Store the query id to track number of searches/minute
         searchCounterCache.put(queryId, Boolean.TRUE);
@@ -271,28 +314,26 @@ public class SearchPortletController {
 
             //Too many searches in the last minute, fail the search
             if (searchCounterCache.size() > this.maximumSearchesPerMinute) {
-                logger.debug(
-                        "Rejecting search for '{}', exceeded max queries per minute for user",
-                        query);
-
-                if (!ajax) {
-                    response.setRenderParameter("hitMaxQueries", Boolean.TRUE.toString());
-                    response.setRenderParameter("query", query);
-                } else {
-                    // For Ajax return to a nonexistent file to generate the 404 error since it was easier for the
-                    // UI to have an error response.
-                    final String contextPath = request.getContextPath();
-                    response.sendRedirect(contextPath + AJAX_MAX_QUERIES_URL);
-                }
-                return;
+                tooManyQueries = true;
             }
         }
+        return tooManyQueries;
+    }
 
-        // construct a new search query object from the string query
-        final SearchRequest queryObj = new SearchRequest();
-        queryObj.setQueryId(queryId);
-        queryObj.setSearchTerms(query);
+    private Cache<String, Boolean> getSearchCounterCache(PortletSession session) {
+        Cache<String, Boolean> searchCounterCache;
+        synchronized (org.springframework.web.portlet.util.PortletUtils.getSessionMutex(session)) {
+            searchCounterCache = (Cache<String, Boolean>) session.getAttribute(SEARCH_COUNTER_NAME);
+            if (searchCounterCache == null) {
+                searchCounterCache =
+                        CacheBuilder.newBuilder().expireAfterAccess(1, TimeUnit.MINUTES).build();
+                session.setAttribute(SEARCH_COUNTER_NAME, searchCounterCache);
+            }
+        }
+        return searchCounterCache;
+    }
 
+    private void setupSearchResultsObjInSession(PortletSession session, String queryId) {
         // Create the session-shared results object
         final PortalSearchResults results =
                 new PortalSearchResults(defaultTabKey, resultTypeMappings);
@@ -315,30 +356,6 @@ public class SearchPortletController {
             session.setAttribute(SEARCH_LAST_QUERY_ID, queryId);
         }
         searchResultsCache.put(queryId, results);
-
-        /*
-         * TODO:  For autocomplete I wish we didn't have to go through a whole render phase just
-         * to trigger the events-based features of the portlet, but atm I don't
-         * see a way around it, since..
-         *
-         *   - (1) You can only start an event chain in the Action phase;  and
-         *   - (2) You can only return JSON in a Resource phase;  and
-         *   - (3) An un-redirected Action phase leads to a Render phase, not a
-         *     Resource phase :(
-         *
-         * It would be awesome either (first choice) to do Action > Event > Resource,
-         * or Action > sendRedirect() followed by a Resource request.
-         *
-         * As it stands, this implementation will trigger a complete render on
-         * the portal needlessly.
-         */
-
-        // send a search query event
-        response.setEvent(SearchConstants.SEARCH_REQUEST_QNAME, queryObj);
-
-        logger.debug("Query initiated for queryId {}, query {}", queryId, query);
-        response.setRenderParameter("queryId", queryId);
-        response.setRenderParameter("query", query);
     }
 
     /**
@@ -505,13 +522,19 @@ public class SearchPortletController {
     public ModelAndView showSearchForm(RenderRequest request, RenderResponse response) {
         final Map<String, Object> model = new HashMap<>();
 
-        // Determine if this portlet displays the search launch view or regular search view.
-        PortletPreferences prefs = request.getPreferences();
-        final boolean isMobile = isMobile(request);
-        String viewName = isMobile ? "/jsp/Search/mobileSearch" : "/jsp/Search/search";
+        String viewName;
+        // Determine if the new REST search should be used
+        if (isRestSearch(request)) {
+            viewName = "/jsp/Search/searchRest";
+        } else {
+            // Determine if this portlet displays the search launch view or regular search view.
+            final boolean isMobile = isMobile(request);
+            viewName = isMobile ? "/jsp/Search/mobileSearch" : "/jsp/Search/search";
+        }
 
         // If this search portlet is configured to be the searchLauncher, calculate the URLs to the indicated
         // search portlet.
+        PortletPreferences prefs = request.getPreferences();
         final String searchLaunchFname = prefs.getValue(SEARCH_LAUNCH_FNAME, null);
         if (searchLaunchFname != null) {
             model.put("searchLaunchUrl", calculateSearchLaunchUrl(request, response));
@@ -566,6 +589,12 @@ public class SearchPortletController {
 
         final Map<String, Object> model = new HashMap<>();
         model.put("query", query);
+
+        // Determine if the new REST search should be used
+        if (isRestSearch(request)) {
+            // we only need query, so the model at this point is sufficient
+            return new ModelAndView("/jsp/Search/searchRest", model);
+        }
 
         ConcurrentMap<String, List<Tuple<SearchResult, String>>> results =
                 new ConcurrentHashMap<>();
@@ -875,6 +904,12 @@ public class SearchPortletController {
     public boolean isMobile(PortletRequest request) {
         String themeName = request.getProperty(IPortletRenderer.THEME_NAME_PROPERTY);
         return "UniversalityMobile".equals(themeName);
+    }
+
+    private boolean isRestSearch(PortletRequest request) {
+        final PortletPreferences pref = request.getPreferences();
+        final String restSearch = pref.getValue("RESTSearch", null);
+        return (boolean) (restSearch != null && Boolean.valueOf(restSearch));
     }
 
     /**
