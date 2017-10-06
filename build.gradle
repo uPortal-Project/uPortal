@@ -209,7 +209,7 @@ subprojects {
  * Configuration for the 'gradle-release' plugin (https://github.com/researchgate/gradle-release)
  */
 release {
-    tagTemplate = 'uportal-${version}' // Looks like it should be a GString, but not necessary
+    tagTemplate = 'v${version}' // Looks like it should be a GString, but not necessary
     git {
         requireBranch = ''
     }
