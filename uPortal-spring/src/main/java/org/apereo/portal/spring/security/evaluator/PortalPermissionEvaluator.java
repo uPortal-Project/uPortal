@@ -92,7 +92,8 @@ public class PortalPermissionEvaluator implements PermissionEvaluator {
         }
 
         logger.trace(
-                "In hasPermission() - owner=[{}], activity=[{}], targetId=[{}] ",
+                "In hasPermission() - principal=[{}], owner=[{}], activity=[{}], targetId=[{}] ",
+                principal,
                 activity.getOwnerFname(),
                 activity.getActivityFname(),
                 targetId);
@@ -152,18 +153,20 @@ public class PortalPermissionEvaluator implements PermissionEvaluator {
     /** Prepare a uPortal IAuthorizationPrincipal based in the Spring principal */
     private IAuthorizationPrincipal getAuthorizationPrincipal(Authentication authentication) {
 
-        String username =
-                PersonFactory.GUEST_USERNAMES.get(0); // default -- first unauthenticated user
+        final Object authPrincipal = authentication.getPrincipal();
+        logger.trace("getAuthorizationPrincipal -- authPrincipal=[{}]", authPrincipal);
 
-        Object authPrincipal = authentication.getPrincipal();
+        String username;
         if (authPrincipal instanceof UserDetails) {
             // User is authenticated
             UserDetails userDetails = (UserDetails) authPrincipal;
+            logger.trace("getAuthorizationPrincipal -- AUTHENTICATED, userDetails=[{}]", userDetails);
             username = userDetails.getUsername();
         } else {
             // Which guest user are we?
             final HttpServletRequest req = portalRequestUtils.getCurrentPortalRequest();
             final IPerson person = personManager.getPerson(req);
+            logger.trace("getAuthorizationPrincipal -- UNAUTHENTICATED, person=[{}]", person);
             username = person.getUserName();
         }
 

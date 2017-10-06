@@ -16,15 +16,15 @@ package org.apereo.portal.security.provider;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.PortalSecurityException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /** Manages the storage of an IPerson object in a user's session. */
 public class SimplePersonManager extends AbstractPersonManager {
 
-    private static final Log log = LogFactory.getLog(SimplePersonManager.class);
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     /**
      * Retrieve an IPerson object for the incoming request
@@ -40,15 +40,17 @@ public class SimplePersonManager extends AbstractPersonManager {
         // Return the person object if it exists in the user's session
         if (session != null) {
             person = (IPerson) session.getAttribute(PERSON_SESSION_KEY);
+            logger.debug("getPerson -- person object retrieved from session is [{}]", person);
         }
 
         if (person == null) {
             try {
                 // Create a guest person
                 person = createGuestPerson(request);
+                logger.debug("getPerson -- created a new guest person [{}]", person);
             } catch (Exception e) {
                 // Log the exception
-                log.error("Exception creating guest person.", e);
+                logger.error("Exception creating guest person.", e);
             }
             // Add this person object to the user's session
             if (person != null && session != null) {

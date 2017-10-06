@@ -42,7 +42,7 @@
     <bean id="portalPreAuthenticationFilter"
         class="org.apereo.portal.spring.security.preauth.PortalPreAuthenticatedProcessingFilter">
         <property name="authenticationManager" ref="authenticationManager" />
-        <property name="clearSecurityContextPriorToPortalAuthentication" value="false" />
+        <property name="clearSecurityContextPriorToPortalAuthentication" value="true" />
     </bean>
 
     <bean id="preAuthProvider"
