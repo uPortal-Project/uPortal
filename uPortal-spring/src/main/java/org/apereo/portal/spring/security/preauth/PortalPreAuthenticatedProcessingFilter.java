@@ -56,14 +56,11 @@ public class PortalPreAuthenticatedProcessingFilter
 
     private static final String SWAPPER_LOG_NAME = "org.jasig.portal.portlets.swapper";
 
-    /**
-     * Log for identity swapper activity.
-     */
+    /** Log for identity swapper activity. */
     private final Logger swapperLog = LoggerFactory.getLogger(SWAPPER_LOG_NAME);
 
     /**
-     * "Regular" log.  This variable covers a commons-logging log of the same name in the
-     * superclass.
+     * "Regular" log. This variable covers a commons-logging log of the same name in the superclass.
      */
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -177,9 +174,11 @@ public class PortalPreAuthenticatedProcessingFilter
 
         if (logger.isDebugEnabled()) {
             final HttpServletRequest httpr = (HttpServletRequest) request;
-            logger.debug("FINISHED [{}] for URI='{}' in {}ms #milestone", uuid,
-                httpr.getRequestURI(),
-                Long.toString(System.currentTimeMillis() - timestamp));
+            logger.debug(
+                    "FINISHED [{}] for URI='{}' in {}ms #milestone",
+                    uuid,
+                    httpr.getRequestURI(),
+                    Long.toString(System.currentTimeMillis() - timestamp));
         }
     }
 
@@ -216,13 +215,16 @@ public class PortalPreAuthenticatedProcessingFilter
         IdentitySwapHelper identitySwapHelper = null;
         final String requestedSessionId = request.getRequestedSessionId();
         if (request.isRequestedSessionIdValid()) {
-            logger.debug("doPortalAuthentication for valid requested session id='{}'",
-                requestedSessionId);
+            logger.debug(
+                    "doPortalAuthentication for valid requested session id='{}'",
+                    requestedSessionId);
             identitySwapHelper =
                     getIdentitySwapDataAndInvalidateSession(request, originalAuthentication);
         } else {
-            logger.trace("Requested session id='{}' was not valid, so no attempt to apply " +
-                "swapping rules.", requestedSessionId);
+            logger.trace(
+                    "Requested session id='{}' was not valid, so no attempt to apply "
+                            + "swapping rules.",
+                    requestedSessionId);
         }
 
         HttpSession s = request.getSession(true);
@@ -406,7 +408,8 @@ public class PortalPreAuthenticatedProcessingFilter
                             this, identitySwapHelper.getTargetProfile(), person, request);
             this.publishProfileSelectionEvent(event);
         } else {
-            logger.trace("No requested or swapper profile requested so no profile selection event.");
+            logger.trace(
+                    "No requested or swapper profile requested so no profile selection event.");
         }
     }
 
@@ -421,18 +424,24 @@ public class PortalPreAuthenticatedProcessingFilter
     }
 
     private void logForLoginPath(final String currentPath) {
-        logger.debug("Path [{}] is loginPath, so cleared security context so we can re-establish " +
-                "it once the new session is established.", currentPath);
+        logger.debug(
+                "Path [{}] is loginPath, so cleared security context so we can re-establish "
+                        + "it once the new session is established.",
+                currentPath);
     }
 
     private void logForLogoutPath(final String currentPath) {
-        logger.debug("Path [{}] is logoutPath, so cleared security context so can re-establish " +
-            "it once the new session is established.", currentPath);
+        logger.debug(
+                "Path [{}] is logoutPath, so cleared security context so can re-establish "
+                        + "it once the new session is established.",
+                currentPath);
     }
 
     private void logForNonLoginOrLogoutPath(final String currentPath) {
-        logger.trace("Path [{}] is neither a login nor a logout path, so no uPortal-custom " +
-            "filtering.", currentPath);
+        logger.trace(
+                "Path [{}] is neither a login nor a logout path, so no uPortal-custom "
+                        + "filtering.",
+                currentPath);
     }
 
     private void retrieveCredentialAndPrincipalTokens() {
@@ -507,5 +516,4 @@ public class PortalPreAuthenticatedProcessingFilter
         super.setApplicationEventPublisher(anApplicationEventPublisher);
         this.eventPublisher = anApplicationEventPublisher;
     }
-
 }

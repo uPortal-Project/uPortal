@@ -23,7 +23,6 @@ import org.apereo.portal.security.IAuthorizationPrincipal;
 import org.apereo.portal.security.IPermission;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.IPersonManager;
-import org.apereo.portal.security.PersonFactory;
 import org.apereo.portal.services.AuthorizationServiceFacade;
 import org.apereo.portal.url.IPortalRequestUtils;
 import org.slf4j.Logger;
@@ -160,7 +159,8 @@ public class PortalPermissionEvaluator implements PermissionEvaluator {
         if (authPrincipal instanceof UserDetails) {
             // User is authenticated
             UserDetails userDetails = (UserDetails) authPrincipal;
-            logger.trace("getAuthorizationPrincipal -- AUTHENTICATED, userDetails=[{}]", userDetails);
+            logger.trace(
+                    "getAuthorizationPrincipal -- AUTHENTICATED, userDetails=[{}]", userDetails);
             username = userDetails.getUsername();
         } else {
             // Which guest user are we?
