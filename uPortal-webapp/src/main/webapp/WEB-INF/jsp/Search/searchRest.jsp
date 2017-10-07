@@ -22,23 +22,23 @@
 
 <template id="search-results-tab-panel-template">
     <div class="up-search-panel tab-pane">
-        <ul class="up-search-list"></ul>
+        <ul class="up-search-list list-group"></ul>
     </div>
 </template>
 
 <template id="search-result-item-template">
-    <li class="up-search-list-item up-search-list-item-three-line">
-        <span class="up-search-list-item-primary-content">
-            <i class="fa up-search-list-item-avatar"></i>
-            <span class="up-search-list-item-title"></span>
-            <span class="up-search-list-item-body">
-                <dl></dl>
-            </span>
-        </span>
-        <span class="up-search-list-item-secondary-content">
+    <li class="up-search-list-item list-group-item">
+        <span class="up-search-list-item-secondary-content pull-right">
             <a class="up-search-list-item-secondary-action" href="#">
                 <i class="fa fa-window-maximize" aria-hidden="true"></i>
             </a>
+        </span>
+        <span class="up-search-list-item-primary-content">
+            <i class="up-search-list-item-avatar pull-left fa"></i>
+            <h3 class="up-search-list-item-title list-group-item-heading"></h3>
+            <span class="up-search-list-item-body list-group-item-text">
+                <dl></dl>
+            </span>
         </span>
     </li>
 </template>
@@ -67,6 +67,25 @@
         display: inline-block;
     }
 
+    .up-search-list {
+        margin: 0 6rem;
+    }
+
+    .up-search-list .up-search-list-item .up-search-list-item-avatar {
+        margin-left: 2rem;
+        font-size: 4rem;
+    }
+
+    .up-search-list .up-search-list-item .up-search-list-item-title {
+        font-weight: bold;
+    }
+
+    .up-search-list .up-search-list-item .up-search-list-item-title,
+    .up-search-list .up-search-list-item .up-search-list-item-body dl {
+        margin-left: 8rem;
+        margin-bottom: .5rem;
+    }
+
     #search-results-tab-panel dt,
     #search-results-tab-panel dd {
         display: inline;
@@ -81,20 +100,12 @@
         display: block;
     }
 
-    #search-results-tab-panel .up-search-list-item-body {
-        padding-left: 56px !important;
+    .up-search-list .up-search-list-item .up-search-list-item-secondary-content {
+        margin-right: 2rem;
     }
 
-    #search-results-tab-panel #people .up-search-list-item-three-line {
-        height: 152px;
-    }
-
-    #search-results-tab-panel #people .up-search-list-item-three-line .up-search-list-item-primary-content {
-        height: 116px;
-    }
-
-    #search-results-tab-panel #people .up-search-list-item-three-line .up-search-list-item-body {
-        height: 94px;
+    .up-search-list .up-search-list-item .up-search-list-item-secondary-action i {
+        font-size: 2rem;
     }
 </style>
 <div id="search-results-tab-panel" class="">
