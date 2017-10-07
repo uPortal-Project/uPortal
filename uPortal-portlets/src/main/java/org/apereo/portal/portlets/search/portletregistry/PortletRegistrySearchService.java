@@ -24,7 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apereo.portal.portlet.om.IPortletDefinition;
 import org.apereo.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.apereo.portal.portlets.search.IPortalSearchService;
-import org.apereo.portal.rest.utils.PortletRegistryUtil;
+import org.apereo.portal.portlets.search.PortletRegistryUtil;
 import org.apereo.portal.search.SearchRequest;
 import org.apereo.portal.search.SearchResult;
 import org.apereo.portal.search.SearchResults;

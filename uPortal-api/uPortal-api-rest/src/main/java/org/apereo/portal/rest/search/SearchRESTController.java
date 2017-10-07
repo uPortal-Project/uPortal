@@ -12,26 +12,17 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apereo.portal.rest;
+package org.apereo.portal.rest.search;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.http.HttpHeaders;
-import org.apereo.portal.portlet.om.IPortletDefinition;
-import org.apereo.portal.portlet.registry.IPortletDefinitionRegistry;
-import org.apereo.portal.portlets.lookup.PersonLookupHelperImpl;
-import org.apereo.portal.rest.utils.PortletRegistryUtil;
-import org.apereo.portal.security.IPerson;
-import org.apereo.portal.security.IPersonManager;
-import org.apereo.services.persondir.IPersonAttributes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,8 +31,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+
 /**
- * REST Search endpoint that aggregates search of various types.
+ * REST Search endpoint that aggregates search results from pluggable strategies.
  *
  * <p>JSON results example (whitespace added for clarity):
  *
@@ -131,27 +123,14 @@ import org.springframework.web.bind.annotation.RequestParam;
  */
 @Controller
 @RequestMapping("/v5-0/portal/search")
-public final class SearchRESTController {
+public class SearchRESTController {
 
-    private static final Logger logger = LoggerFactory.getLogger(SearchRESTController.class);
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    @Autowired private ObjectMapper jsonMapper;
+    private final ObjectMapper jsonMapper = new ObjectMapper();
 
-    @Autowired private IPersonManager personManager;
-
-    private PersonLookupHelperImpl lookupHelper;
-
-    @Autowired(required = true)
-    public void setPersonLookupHelper(PersonLookupHelperImpl lookupHelper) {
-        this.lookupHelper = lookupHelper;
-    }
-
-    @Resource(name = "directoryQueryAttributes")
-    private List<String> directoryQueryAttributes;
-
-    @Autowired private IPortletDefinitionRegistry portletDefinitionRegistry;
-
-    @Autowired private PortletRegistryUtil portletRegistryUtil;
+    @Autowired
+    private Set<ISearchStrategy> searchStrategies;
 
     @RequestMapping(method = RequestMethod.GET)
     public void search(
@@ -160,65 +139,19 @@ public final class SearchRESTController {
             HttpServletResponse response)
             throws IOException {
 
-        List<Object> matchingPeople = getMatchingPeople(query, request);
+        final Map<String, List<?>> searchResults = new TreeMap<>();
 
-        List<Object> matchingPortlets = getMatchingPortlets(query, request);
+        for (ISearchStrategy strategy : searchStrategies) {
+            searchResults.put(strategy.getResultTypeName(), strategy.search(query, request));
+        }
 
-        if (matchingPeople.isEmpty() && matchingPortlets.isEmpty()) {
+        if (searchResults.isEmpty()) {
             logger.debug("Nothing found for query string: {}", query);
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
         } else {
-            Map<String, List<Object>> results = new TreeMap<>();
-            results.put("people", matchingPeople);
-            results.put("portlets", matchingPortlets);
             response.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
-            jsonMapper.writeValue(response.getOutputStream(), results);
+            jsonMapper.writeValue(response.getOutputStream(), searchResults);
         }
     }
 
-    private List<Object> getMatchingPortlets(String query, HttpServletRequest request) {
-        List<Object> results = new ArrayList<>();
-
-        final List<IPortletDefinition> portlets =
-                portletDefinitionRegistry.getAllPortletDefinitions();
-        for (IPortletDefinition portlet : portlets) {
-            if (portletRegistryUtil.matches(query, portlet)) {
-                /* requester permissions checked in buildPortletUrl() */
-                String url = portletRegistryUtil.buildPortletUrl(request, portlet);
-                if (url != null) {
-                    results.add(getPortletAttrs(portlet, url));
-                }
-            }
-        }
-        return results;
-    }
-
-    private Map<String, String> getPortletAttrs(IPortletDefinition portlet, String url) {
-        Map<String, String> attrs = new TreeMap<>();
-        attrs.put("name", portlet.getName());
-        attrs.put("fname", portlet.getFName());
-        attrs.put("title", portlet.getTitle());
-        attrs.put("description", portlet.getDescription());
-        attrs.put("url", url);
-        return attrs;
-    }
-
-    private List<Object> getMatchingPeople(String query, HttpServletRequest request) {
-        List<Object> results = new ArrayList<>();
-
-        final IPerson user = personManager.getPerson(request);
-
-        Map<String, Object> queryPplAttrMap = new HashMap<>();
-        for (String attr : directoryQueryAttributes) {
-            queryPplAttrMap.put(attr, query);
-        }
-
-        List<IPersonAttributes> people = lookupHelper.searchForPeople(user, queryPplAttrMap);
-        if (people != null) {
-            for (IPersonAttributes p : people) {
-                results.add(p.getAttributes());
-            }
-        }
-        return results;
-    }
 }
