@@ -17,29 +17,27 @@
 <%@ include file="/WEB-INF/jsp/include.jsp"%>
 
 <template id="search-results-tab-header-template">
-    <a class="mdl-tabs__tab"></a>
+    <li role="presentation" class="up-search-tab"><a href="" data-toggle="tab"></a></li>
 </template>
 
 <template id="search-results-tab-panel-template">
-    <div class="mdl-tabs__panel">
-        <ul class="mdl-list"></ul>
+    <div class="up-search-panel tab-pane">
+        <ul class="up-search-list"></ul>
     </div>
 </template>
 
 <template id="search-result-item-template">
-    <li class="mdl-list__item mdl-list__item--three-line">
-        <span class="mdl-list__item-primary-content">
-            <i class="material-icons mdl-list__item-avatar"></i>
-            <span class="up-list-item-title"></span>
-            <span class="mdl-list__item-text-body">
+    <li class="up-search-list-item up-search-list-item-three-line">
+        <span class="up-search-list-item-primary-content">
+            <i class="fa up-search-list-item-avatar"></i>
+            <span class="up-search-list-item-title"></span>
+            <span class="up-search-list-item-body">
                 <dl></dl>
             </span>
         </span>
-        <span class="mdl-list__item-secondary-content">
-            <a class="mdl-list__item-secondary-action" href="#">
-                <i class="material-icons">
-                    open_in_browser
-                </i>
+        <span class="up-search-list-item-secondary-content">
+            <a class="up-search-list-item-secondary-action" href="#">
+                <i class="fa fa-window-maximize" aria-hidden="true"></i>
             </a>
         </span>
     </li>
@@ -52,64 +50,65 @@
 
 <template id="search-result-no-results-template">
     <div class="h3 text-center">
-         <i class="material-icons">warning</i>
+         <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
          No Results Found
-         <i class="material-icons">warning</i>
+         <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
      </div>
 </template>
 
-<!-- TODO: use existing material design lite from resource server -->
-<script src="https://code.getmdl.io/1.3.0/material.min.js"></script>
-<link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
-<!-- above 2 are required for Material Design -->
-
-<!-- TODO: move material design icons, lodash/lodash, github/fetch, webcomponents/template, and taylorhakes/promise-polyfill to resource server -->
-<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-<!-- similar to fontawesome? -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js"></script>
 <!-- Does the above replace underscore? -->
 <script src="https://rawgit.com/github/fetch/v2.0.3/fetch.js"></script>
 <script src="https://rawgit.com/webcomponents/template/v1.0.0/template.js"></script>
 <script src="https://rawgit.com/taylorhakes/promise-polyfill/6.0.2/promise.js"></script>
+<!-- WTF are the three above? -->
 <style>
-            #search-results-tab-panel dt,
-            #search-results-tab-panel dd {
-                display: inline;
-            }
+    #search-results-tab-header {
+        display: inline-block;
+    }
 
-            #search-results-tab-panel dt {
-                font-weight: bold;
-            }
+    #search-results-tab-panel dt,
+    #search-results-tab-panel dd {
+        display: inline;
+    }
 
-            #search-results-tab-panel dt::before {
-                content: '';
-                display: block;
-            }
+    #search-results-tab-panel dt {
+        font-weight: bold;
+    }
 
-            #search-results-tab-panel .mdl-list__item-text-body {
-                padding-left: 56px !important;
-            }
+    #search-results-tab-panel dt::before {
+        content: '';
+        display: block;
+    }
 
-            #search-results-tab-panel #people .mdl-list__item--three-line {
-                height: 152px;
-            }
+    #search-results-tab-panel .up-search-list-item-body {
+        padding-left: 56px !important;
+    }
 
-            #search-results-tab-panel #people .mdl-list__item--three-line .mdl-list__item-primary-content {
-                height: 116px;
-            }
+    #search-results-tab-panel #people .up-search-list-item-three-line {
+        height: 152px;
+    }
 
-            #search-results-tab-panel #people .mdl-list__item--three-line .mdl-list__item-text-body {
-                height: 94px;
-            }
+    #search-results-tab-panel #people .up-search-list-item-three-line .up-search-list-item-primary-content {
+        height: 116px;
+    }
+
+    #search-results-tab-panel #people .up-search-list-item-three-line .up-search-list-item-body {
+        height: 94px;
+    }
 </style>
-<div id="search-results-tab-panel" class="mdl-tabs mdl-js-tabs mdl-js-ripple-effect">
-    <div id="search-results-tab-header" class="mdl-tabs__tab-bar"></div>
+<div id="search-results-tab-panel" class="">
+    <div class="text-center">
+        <ul id="search-results-tab-header" class="nav nav-pills"></ul>
+    </div>
+    <div id="search-results-tab-content" class="tab-content clearfix"></div>
 </div>
 
 <script language="javascript" type="text/javascript">
 // search results metadata
-var metadata = { "people" : { "avatar" : "person", "attributes" : [ "displayName", "title", "department", "telephone", "mail" ] },
-                 "portlets" : { "avatar" : "apps", "attributes" : [ "title", "description" ] } };
+// TODO: This solution doesn't honor local configuration or internationalization
+var metadata = { "people" : { "avatar" : "fa-user-circle", "attributes" : [ "displayName", "title", "department", "telephone", "mail" ] },
+                 "portlets" : { "avatar" : "fa-th", "attributes" : [ "title", "description" ] } };
 // fetch search results
 <c:url value="/api/v5-0/portal/search" var="url">
     <c:param name="q" value="${param.query}" />
@@ -131,17 +130,17 @@ fetch('${url}', {credentials: 'same-origin'})
     })
     .then(function (response) {
         _.forEach(response, function (resultSet, tabProperty) {
-            // generate formatted text
+            // Generate formatted text
             var tabName = _.startCase(tabProperty);
             var tabId = _.kebabCase(tabProperty);
-            // setup tab header template
+            // Setup tab header template
             var tabTemplate = document.getElementById('search-results-tab-header-template');
             var tabHeader = document.importNode(tabTemplate.content, true);
-            // add content to tab header template
+            // Add content to tab header template
             var tabHeaderLink = tabHeader.querySelector('a');
             tabHeaderLink.textContent = tabName;
             tabHeaderLink.href = '#' + tabId;
-            // add tab header to page
+            // Add tab header to page
             document.getElementById('search-results-tab-header').appendChild(tabHeader);
 
             // setup the tab panel template
@@ -161,15 +160,15 @@ fetch('${url}', {credentials: 'same-origin'})
                     var searchResultTemplate = document.getElementById('search-result-item-template');
                     var searchResult = document.importNode(searchResultTemplate.content, true);
                     // add top level content
-                    searchResult.querySelector('.mdl-list__item-avatar').textContent = metadata[tabProperty].avatar;
-                    searchResult.querySelector('.up-list-item-title').textContent = result[metadata[tabProperty].attributes[0]];
+                    searchResult.querySelector('.up-search-list-item-avatar').classList.add(metadata[tabProperty].avatar);
+                    searchResult.querySelector('.up-search-list-item-title').textContent = result[metadata[tabProperty].attributes[0]];
                     if (result.url) {
-                        searchResult.querySelector('.mdl-list__item-secondary-action').href = result.url;
+                        searchResult.querySelector('.up-search-list-item-secondary-action').href = result.url;
                     } else {
-                        searchResult.querySelector('.mdl-list__item-secondary-content').style.visibility = 'hidden';
+                        searchResult.querySelector('.up-search-list-item-secondary-content').style.visibility = 'hidden';
                     }
                     var resultAttributeList = searchResult.querySelector('dl');
-                    // QUESTION: should that attribute picking be handled server-side?
+                    // QUESTION: should that attribute picking be handled server-side? YES
                     // add each attribute that should be shown for a result
                     _.forEach(metadata[tabProperty].attributes, function (attributeName) {
                         var attributeValue = result[attributeName];
@@ -189,14 +188,14 @@ fetch('${url}', {credentials: 'same-origin'})
                 });
             }
             // add the tab panel to the page
-            document.getElementById('search-results-tab-panel').appendChild(tabPanel);
+            document.getElementById('search-results-tab-content').appendChild(tabPanel);
         });
 
         // set first tab active
-        var firstTab = document.querySelector('#search-results-tab-header .mdl-tabs__tab');
-        if (firstTab) firstTab.classList.add('is-active');
-        var firstPanel = document.querySelector('#search-results-tab-panel .mdl-tabs__panel');
-        if (firstPanel) firstPanel.classList.add('is-active');
+        var firstTab = document.querySelector('#search-results-tab-header .up-search-tab');
+        if (firstTab) firstTab.classList.add('active');
+        var firstPanel = document.querySelector('#search-results-tab-panel .up-search-panel');
+        if (firstPanel) firstPanel.classList.add('active');
     })
     // log error to browser console
     .catch(function(error) {
