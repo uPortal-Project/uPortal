@@ -14,7 +14,7 @@ dependencies {
      * We are working to upgrade the rest of uPortal to Spring 4.  When that happens, this
      * difference can & should be removed.
      */
-    compile "org.springframework:spring-webmvc:4.3.1.RELEASE"
+    compile "org.springframework:spring-webmvc:${springVersion}"
 
     testCompile("junit:junit:${junitVersion}") {
         exclude group: 'org.hamcrest', module: 'hamcrest-core'
