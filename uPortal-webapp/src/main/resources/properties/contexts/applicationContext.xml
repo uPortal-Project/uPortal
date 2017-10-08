@@ -38,6 +38,7 @@
         <context:include-filter type="assignable" expression="org.apereo.portal.portlets.account.IPasswordResetNotification"/>
         <context:include-filter type="assignable" expression="org.apereo.portal.portlets.login.LoginPortletHelper"/>
         <context:include-filter type="assignable" expression="org.apereo.portal.portlets.portletadmin.xmlsupport.IChannelPublishingDefinitionDao"/>
+        <context:include-filter type="assignable" expression="org.apereo.portal.portlets.search.PortletRegistryUtil"/>
     </context:component-scan>
     <context:component-scan base-package="org.apereo.portal" use-default-filters="false">
         <context:include-filter type="regex" expression=".*\.rendering\.PortletEventCoordinatationService"/>
