@@ -236,13 +236,17 @@ fetch('${searchApiUrl}', {credentials: 'same-origin'})
 
         // set first tab active
         var firstTab = document.querySelector('#search-results-tab-header .up-search-tab');
-        if (firstTab) firstTab.classList.add('active');
+        if (firstTab) {
+            firstTab.classList.add('active');
+        }
         var firstPanel = document.querySelector('#search-results-tab-panel .up-search-panel');
-        if (firstPanel) firstPanel.classList.add('active');
+        if (firstPanel) {
+            firstPanel.classList.add('active');
+        }
     })
     // log error to browser console
     .catch(function(error) {
-        if (error.response.status == 404) {
+        if (error.response.status === 404) {
             var tabPanel = document.getElementById('search-results-tab-panel');
             var noResultsTemplate = document.getElementById('search-result-no-results-template');
             var noResults = document.importNode(noResultsTemplate.content, true);
