@@ -12,29 +12,22 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apereo.portal.rest.search;
 
 import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * Spring-managed beans that implement this interface provide search results to the
- * {@link SearchRESTController}.  The controller detects all such beans and uses them.
+ * Spring-managed beans that implement this interface provide search results to the {@link
+ * SearchRESTController}. The controller detects all such beans and uses them.
  *
  * @since 5.0
  */
 public interface ISearchStrategy {
 
-    /**
-     * Indicates the type of objects in the result list, e.g. 'people' or 'portlets.'
-     */
+    /** Indicates the type of objects in the result list, e.g. 'people' or 'portlets.' */
     String getResultTypeName();
 
-    /**
-     * Provide strategy-specific results.
-     */
+    /** Provide strategy-specific results. */
     List<?> search(String query, HttpServletRequest request);
-
 }

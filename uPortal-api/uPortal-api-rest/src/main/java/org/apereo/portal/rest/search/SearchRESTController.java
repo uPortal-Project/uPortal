@@ -129,8 +129,7 @@ public class SearchRESTController {
 
     private final ObjectMapper jsonMapper = new ObjectMapper();
 
-    @Autowired
-    private Set<ISearchStrategy> searchStrategies;
+    @Autowired private Set<ISearchStrategy> searchStrategies;
 
     @RequestMapping(method = RequestMethod.GET)
     public void search(
@@ -153,5 +152,4 @@ public class SearchRESTController {
             jsonMapper.writeValue(response.getOutputStream(), searchResults);
         }
     }
-
 }

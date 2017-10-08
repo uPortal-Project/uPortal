@@ -12,16 +12,13 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apereo.portal.rest.search;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-
 import javax.servlet.http.HttpServletRequest;
-
 import org.apereo.portal.portlet.om.IPortletDefinition;
 import org.apereo.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.apereo.portal.portlets.search.PortletRegistryUtil;
@@ -38,8 +35,7 @@ public class PortletsSearchStrategy implements ISearchStrategy {
 
     private static final String RESULT_TYPE_NAME = "portlets";
 
-    @Autowired
-    private IPortletDefinitionRegistry portletDefinitionRegistry;
+    @Autowired private IPortletDefinitionRegistry portletDefinitionRegistry;
 
     @Autowired private PortletRegistryUtil portletRegistryUtil;
 
@@ -53,7 +49,7 @@ public class PortletsSearchStrategy implements ISearchStrategy {
         final List<Object> rslt = new ArrayList<>();
 
         final List<IPortletDefinition> portlets =
-            portletDefinitionRegistry.getAllPortletDefinitions();
+                portletDefinitionRegistry.getAllPortletDefinitions();
         for (IPortletDefinition portlet : portlets) {
             if (portletRegistryUtil.matches(query, portlet)) {
                 /* requester permissions checked in buildPortletUrl() */
@@ -75,5 +71,4 @@ public class PortletsSearchStrategy implements ISearchStrategy {
         rslt.put("url", url);
         return rslt;
     }
-
 }

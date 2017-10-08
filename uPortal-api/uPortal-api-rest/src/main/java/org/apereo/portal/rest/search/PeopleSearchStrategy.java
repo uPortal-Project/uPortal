@@ -12,17 +12,14 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apereo.portal.rest.search;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-
 import org.apereo.portal.portlets.lookup.PersonLookupHelperImpl;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.IPersonManager;
@@ -40,11 +37,9 @@ public class PeopleSearchStrategy implements ISearchStrategy {
 
     private static final String RESULT_TYPE_NAME = "people";
 
-    @Autowired
-    private IPersonManager personManager;
+    @Autowired private IPersonManager personManager;
 
-    @Autowired
-    private PersonLookupHelperImpl lookupHelper;
+    @Autowired private PersonLookupHelperImpl lookupHelper;
 
     @Resource(name = "directoryQueryAttributes")
     private List<String> directoryQueryAttributes;
@@ -72,7 +67,5 @@ public class PeopleSearchStrategy implements ISearchStrategy {
             }
         }
         return rslt;
-
     }
-
 }

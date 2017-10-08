@@ -276,22 +276,22 @@ public class SearchPortletController {
         setupSearchResultsObjInSession(session, queryId);
 
         if (!isRestSearch(request)) {
-        /*
-         * TODO:  For autocomplete I wish we didn't have to go through a whole render phase just
-         * to trigger the events-based features of the portlet, but atm I don't
-         * see a way around it, since..
-         *
-         *   - (1) You can only start an event chain in the Action phase;  and
-         *   - (2) You can only return JSON in a Resource phase;  and
-         *   - (3) An un-redirected Action phase leads to a Render phase, not a
-         *     Resource phase :(
-         *
-         * It would be awesome either (first choice) to do Action > Event > Resource,
-         * or Action > sendRedirect() followed by a Resource request.
-         *
-         * As it stands, this implementation will trigger a complete render on
-         * the portal needlessly.
-         */
+            /*
+             * TODO:  For autocomplete I wish we didn't have to go through a whole render phase just
+             * to trigger the events-based features of the portlet, but atm I don't
+             * see a way around it, since..
+             *
+             *   - (1) You can only start an event chain in the Action phase;  and
+             *   - (2) You can only return JSON in a Resource phase;  and
+             *   - (3) An un-redirected Action phase leads to a Render phase, not a
+             *     Resource phase :(
+             *
+             * It would be awesome either (first choice) to do Action > Event > Resource,
+             * or Action > sendRedirect() followed by a Resource request.
+             *
+             * As it stands, this implementation will trigger a complete render on
+             * the portal needlessly.
+             */
 
             // send a search query event
             response.setEvent(SearchConstants.SEARCH_REQUEST_QNAME, queryObj);
