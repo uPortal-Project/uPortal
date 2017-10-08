@@ -56,12 +56,10 @@
      </div>
 </template>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js"></script>
-<!-- Does the above replace underscore? -->
-<script src="https://rawgit.com/github/fetch/v2.0.3/fetch.js"></script>
-<script src="https://rawgit.com/webcomponents/template/v1.0.0/template.js"></script>
-<script src="https://rawgit.com/taylorhakes/promise-polyfill/6.0.2/promise.js"></script>
-<!-- WTF are the three above? -->
+<script src="<rs:resourceURL value="/rs/lodash/4.17.4/lodash.min.js"/>"></script>
+<script src="<rs:resourceURL value="/rs/fetch/2.0.3/fetch.js"/>"></script>
+<script src="<rs:resourceURL value="/rs/template/1.0.0/template.js"/>"></script>
+<script src="<rs:resourceURL value="/rs/promise-polyfill/6.0.2/promise.js"/>"></script>
 <style>
     #search-results-tab-header {
         display: inline-block;
@@ -83,7 +81,7 @@
     .up-search-list .up-search-list-item .up-search-list-item-title,
     .up-search-list .up-search-list-item .up-search-list-item-body dl {
         margin-left: 8rem;
-        margin-bottom: .5rem;
+        margin-bottom: 0.5rem;
     }
 
     #search-results-tab-panel dt,
@@ -115,16 +113,51 @@
     <div id="search-results-tab-content" class="tab-content clearfix"></div>
 </div>
 
-<script language="javascript" type="text/javascript">
-// search results metadata
-// TODO: This solution doesn't honor local configuration or internationalization
-var metadata = { "people" : { "avatar" : "fa-user-circle", "attributes" : [ "displayName", "title", "department", "telephone", "mail" ] },
-                 "portlets" : { "avatar" : "fa-th", "attributes" : [ "title", "description" ] } };
-// fetch search results
-<c:url value="/api/v5-0/portal/search" var="url">
+<%-- API URL for fetching search results --%>
+<c:url value="/api/v5-0/portal/search" var="searchApiUrl">
     <c:param name="q" value="${param.query}" />
 </c:url>
-fetch('${url}', {credentials: 'same-origin'})
+
+<%--
+    UI strings for i18n
+
+    This solution is not great;  the JSP is not in a
+    position to know what attributes will be displayed.
+--%>
+<spring:message var="i18n_username" code="attribute.displayName.username" />
+<spring:message var="i18n_givenName" code="attribute.displayName.givenName" />
+<spring:message var="i18n_sn" code="attribute.displayName.sn" />
+<spring:message var="i18n_mail" code="attribute.displayName.mail" />
+<spring:message var="i18n_telephoneNumber" code="attribute.displayName.telephoneNumber" />
+<spring:message var="i18n_name" code="name" />
+<spring:message var="i18n_description" code="description" />
+
+<script language="javascript" type="text/javascript">
+// This metadata object tells us which avatar (icon) and which
+// attribute to use as a primary display name for each result type
+var metadata = {
+    'people': {
+        'avatar': 'fa-user-circle',
+        'attributes': [ 'displayName' ]
+    },
+    'portlets': {
+        'avatar': 'fa-th',
+        'attributes' : [ 'title' ]
+    }
+};
+
+// If it's not in the list, it won't appear in the UI
+var i18n = {
+    'username': '${i18n_username}',
+    'givenName': '${i18n_givenName}',
+    'sn': '${i18n_sn}',
+    'mail': '${i18n_mail}',
+    'telephoneNumber': '${i18n_telephoneNumber}',
+    'name': '${i18n_name}',
+    'description': '${i18n_description}'
+};
+
+fetch('${searchApiUrl}', {credentials: 'same-origin'})
     // check for HTTP 2XX Okay response
     .then(function (response) {
         if (response.status >= 200 && response.status < 300) {
@@ -179,16 +212,15 @@ fetch('${url}', {credentials: 'same-origin'})
                         searchResult.querySelector('.up-search-list-item-secondary-content').style.visibility = 'hidden';
                     }
                     var resultAttributeList = searchResult.querySelector('dl');
-                    // QUESTION: should that attribute picking be handled server-side? YES
-                    // add each attribute that should be shown for a result
-                    _.forEach(metadata[tabProperty].attributes, function (attributeName) {
-                        var attributeValue = result[attributeName];
-                        if (attributeValue) {
+                    _.forOwn(result, function(attributeValue, attributeName){
+                        // We will only display the items in the i18n list
+                        if (i18n.hasOwnProperty(attributeName)) {
+                            var translatedAttributeName = i18n[attributeName];
                             // setup attribute pairing template
                             var attributePairTemplate = document.getElementById('search-result-item-detail-template');
                             var attributePair = document.importNode(attributePairTemplate.content, true);
                             // add values
-                            attributePair.querySelector('dt').textContent = _.startCase(attributeName);
+                            attributePair.querySelector('dt').textContent = _.startCase(translatedAttributeName) + ':';
                             attributePair.querySelector('dd').textContent = attributeValue;
                             // add attributes to the result
                             resultAttributeList.appendChild(attributePair);
