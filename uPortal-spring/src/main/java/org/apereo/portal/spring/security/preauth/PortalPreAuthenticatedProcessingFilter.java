@@ -95,6 +95,14 @@ public class PortalPreAuthenticatedProcessingFilter
         this.authenticationService = authenticationService;
     }
 
+    /**
+     * This setting controls whether Spring's <code>SecurityContextHolder</code> will be reset
+     * (emptied) whenever a login request is processed.  The default is <code>true</code>, and this
+     * option should only be set to <code>false</code> with extreme care.  Problems occur When this
+     * setting is <code>false</code> in portals that permits unauthenticated users because
+     * authenticated users tend to retain their unauthenticated identity (e.g. 'guest') in Spring
+     * Security.
+     */
     public void setClearSecurityContextPriorToPortalAuthentication(boolean b) {
         this.clearSecurityContextPriorToPortalAuthentication = b;
     }
@@ -107,9 +115,9 @@ public class PortalPreAuthenticatedProcessingFilter
     @Override
     public void afterPropertiesSet() {
         super.afterPropertiesSet();
-        this.credentialTokens = new HashMap<>(1);
-        this.principalTokens = new HashMap<>(1);
-        this.retrieveCredentialAndPrincipalTokens();
+        credentialTokens = new HashMap<>(1);
+        principalTokens = new HashMap<>(1);
+        retrieveCredentialAndPrincipalTokens();
     }
 
     /**
@@ -155,20 +163,20 @@ public class PortalPreAuthenticatedProcessingFilter
         if (loginPath.equals(currentPath)) {
             final org.springframework.security.core.Authentication originalAuthentication =
                     SecurityContextHolder.getContext().getAuthentication();
-            if (this.clearSecurityContextPriorToPortalAuthentication) {
+            if (clearSecurityContextPriorToPortalAuthentication) {
                 SecurityContextHolder.clearContext();
             }
-            this.logForLoginPath(currentPath);
-            this.doPortalAuthentication((HttpServletRequest) request, originalAuthentication);
+            logForLoginPath(currentPath);
+            doPortalAuthentication((HttpServletRequest) request, originalAuthentication);
             chain.doFilter(request, response);
         } else if (logoutPath.equals(currentPath)) {
             SecurityContextHolder.clearContext();
-            this.logForLogoutPath(currentPath);
+            logForLogoutPath(currentPath);
             chain.doFilter(request, response);
         }
         // otherwise, call the base class logic
         else {
-            this.logForNonLoginOrLogoutPath(currentPath);
+            logForNonLoginOrLogoutPath(currentPath);
             super.doFilter(request, response, chain);
         }
 
@@ -235,7 +243,7 @@ public class PortalPreAuthenticatedProcessingFilter
             person = personManager.getPerson(request);
 
             if (identitySwapHelper != null && identitySwapHelper.isSwapOrUnswapRequest()) {
-                this.handleIdentitySwap(person, s, identitySwapHelper);
+                handleIdentitySwap(person, s, identitySwapHelper);
                 principals = new HashMap<>();
                 credentials = new HashMap<>();
             }
@@ -258,7 +266,7 @@ public class PortalPreAuthenticatedProcessingFilter
             request.getSession(true).setAttribute(LoginController.AUTH_ERROR_KEY, Boolean.TRUE);
         }
 
-        this.publishProfileSelectionEvent(person, request, identitySwapHelper);
+        publishProfileSelectionEvent(person, request, identitySwapHelper);
     }
 
     /**
@@ -284,48 +292,48 @@ public class PortalPreAuthenticatedProcessingFilter
         }
 
         public boolean isSwapRequest() {
-            return this.originalUsername == null && this.targetUsername != null;
+            return originalUsername == null && targetUsername != null;
         }
 
         public boolean isUnswapRequest() {
-            return this.originalUsername != null;
+            return originalUsername != null;
         }
 
         public boolean isSwapOrUnswapRequest() {
-            return this.isSwapRequest() || this.isUnswapRequest();
+            return isSwapRequest() || isUnswapRequest();
         }
 
         public org.springframework.security.core.Authentication getOriginalAuthenticationForSwap() {
-            return this.originalAuthenticationForSwap;
+            return originalAuthenticationForSwap;
         }
 
         public org.springframework.security.core.Authentication
                 getOriginalAuthenticationForUnswap() {
-            return this.originalAuthenticationForUnswap;
+            return originalAuthenticationForUnswap;
         }
 
         public String getSwapFromUid() {
-            if (this.isSwapRequest()) {
-                return this.personName;
+            if (isSwapRequest()) {
+                return personName;
             }
-            if (this.isUnswapRequest()) {
-                return this.targetUsername;
+            if (isUnswapRequest()) {
+                return targetUsername;
             }
             return null;
         }
 
         public String getSwapToUid() {
-            if (this.isSwapRequest()) {
-                return this.targetUsername;
+            if (isSwapRequest()) {
+                return targetUsername;
             }
-            if (this.isUnswapRequest()) {
-                return this.originalUsername;
+            if (isUnswapRequest()) {
+                return originalUsername;
             }
             return null;
         }
 
         public String getTargetProfile() {
-            return this.targetProfile;
+            return targetProfile;
         }
 
         public void setOriginalAuthenticationForSwap(
@@ -365,7 +373,7 @@ public class PortalPreAuthenticatedProcessingFilter
         String msgFormat;
         if (identitySwapHelper.isSwapRequest()) {
             msgFormat = "Swapping identity for '%s' to '%s'";
-            this.identitySwapperManager.setOriginalUser(
+            identitySwapperManager.setOriginalUser(
                     session,
                     identitySwapHelper.getSwapFromUid(),
                     identitySwapHelper.getSwapToUid(),
@@ -401,12 +409,12 @@ public class PortalPreAuthenticatedProcessingFilter
         if (requestedProfile != null) {
             final ProfileSelectionEvent event =
                     new ProfileSelectionEvent(this, requestedProfile, person, request);
-            this.publishProfileSelectionEvent(event);
+            publishProfileSelectionEvent(event);
         } else if (identitySwapHelper != null && identitySwapHelper.isSwapRequest()) {
             final ProfileSelectionEvent event =
                     new ProfileSelectionEvent(
                             this, identitySwapHelper.getTargetProfile(), person, request);
-            this.publishProfileSelectionEvent(event);
+            publishProfileSelectionEvent(event);
         } else {
             logger.trace(
                     "No requested or swapper profile requested so no profile selection event.");
@@ -415,7 +423,7 @@ public class PortalPreAuthenticatedProcessingFilter
 
     private void publishProfileSelectionEvent(final ProfileSelectionEvent event) {
         try {
-            this.eventPublisher.publishEvent(event);
+            eventPublisher.publishEvent(event);
         } catch (final Exception e) {
             // failing to swap as the desired profile selection is bad,
             // but preventing login entirely is worse.  Log the exception and continue.
