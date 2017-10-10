@@ -363,7 +363,7 @@
             <div class="input-group">
                 <input type="search" class="form-control" id="${n}portletTable_filter" placeholder="<spring:message code="marketplace.searchPortlets"/>" aria-label="<spring:message code="marketplace.searchPortlets"/>">
                 <span class="input-group-btn">
-                    <button class="btn btn-default" id="${n}clear_filter_button">
+                    <button class="btn btn-default" id="${n}clear_filter_button" aria-controls="${n}portletTable_filter">
                         <spring:message code="marketplace.clear" />
                     </button>
                 </span>
