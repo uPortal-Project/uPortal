@@ -103,7 +103,7 @@
     #${n} .marketplace_show{
         display:block;
     }
-    
+
     #${n} #marketplace_show_more_less_link{
         font-family: 'Arial';
         font-weight: 400;
@@ -112,11 +112,11 @@
         float: right;
         cursor: pointer;
     }
-    
+
     #${n} .marketplace_average_rating .rating-input{
        padding: 0;
     }
-    
+
     #${n} .marketplace_user_rating {
         border-radius: 8px;
         border: 1px solid #ddd;
@@ -134,7 +134,7 @@
         -moz-border-radius: 25px;
         -webkit-border-radius: 25px;
     }
-    
+
     #${n} .marketplace_carousel_inner img {
         max-height : 20em;
         position:absolute;
@@ -143,7 +143,7 @@
         right:0;
         left:0;
     }
-    
+
     #${n} .marketplace_carousel_inner .item{
         height: 20em;
     }
@@ -451,7 +451,7 @@
                         <c:if test="${not empty marketplaceEntry.portletReleaseNotes.releaseDate}">
                             <span class="marketplace_release_date"> (Released <joda:format value="${marketplaceEntry.portletReleaseNotes.releaseDate}" pattern="dd-MM-yyyy" />)</span>
                         </c:if>
-                        
+
                     </p>
                     <p>
                         <c:if test="${not empty marketplaceEntry.portletReleaseNotes.releaseNotes}">
@@ -516,7 +516,7 @@
             <div class="row">
             <div class = "col-xs-12 col-md-4">
                 <span class="marketplace_section_header"><spring:message code="categories" text="CATEGORIES" /></span>
-                <ul>    
+                <ul>
                     <c:forEach var="portletCategory" items="${portletCategories}">
                         <portlet:renderURL var="initialViewWithFilterURL" windowState="MAXIMIZED">
                             <portlet:param name="initialFilter" value="${portletCategory}"/>
@@ -537,7 +537,7 @@
 
             </div>
         </div>
-    </div>                      
+    </div>
 </div>
 <div class="modal fade" id="${n}copy-modal" tabindex="-1" role="dialog" aria-labelledby="LinkToModal" aria-modal="true">
     <div class="modal-dialog" style="text-align:center">
@@ -735,6 +735,7 @@
 
         var defaults = {
             textReviewCharLimit : 160,
+            textReviewRemainingWarning: 10,
             visibleReleaseNoteCount: 3
         };
         var remainingCharsAvailable = defaults.textReviewCharLimit;
@@ -904,16 +905,25 @@
         <c:if test="${enableReviews}">
         // Optional Reviews feature...
         var updateCharactersRemaining = function() {
-            if($("#${n}marketplace_user_review_input").val().length > defaults.textReviewCharLimit) {
-                $("#${n}marketplace_user_review_input").val($("#${n}marketplace_user_review_input").val().substr(0, defaults.textReviewCharLimit));
-            }
-            remainingCharsAvailable = defaults.textReviewCharLimit - $("#${n}marketplace_user_review_input").val().length;
-            $("#${n}input_chars_remaining").html('<spring:message code="characters.remaining" text="Characters Remaining: "/> &nbsp' + remainingCharsAvailable);
-            if(remainingCharsAvailable <= 10) {
-                $("#${n}input_chars_remaining").css("color","red");
-            }
-            else{
-                $("#${n}input_chars_remaining").css("color","black");
+            var textArea = $('#${n}marketplace_user_review_input');
+            var remainingIndicator = $('#${n}input_chars_remaining');
+
+            // Set limit to default
+            textArea.attr('maxlength', defaults.textReviewCharLimit);
+
+            // update remaining characters text
+            var remainingCharsAvailable = defaults.textReviewCharLimit - textArea.val().length;
+            remainingIndicator.html('<spring:message code="characters.remaining" text="Characters Remaining: "/> &nbsp' + remainingCharsAvailable);
+
+            // visual and audio feedback on limit
+            if (remainingCharsAvailable <= defaults.textReviewRemainingWarning) {
+                remainingIndicator
+                    .css('color', 'red')
+                    .attr('aria-live', 'assertive');
+            } else {
+                remainingIndicator
+                    .css('color', 'black')
+                    .attr('aria-live', 'polite');
             }
         };
         updateCharactersRemaining();
