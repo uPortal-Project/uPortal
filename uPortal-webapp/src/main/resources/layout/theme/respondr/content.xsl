@@ -435,8 +435,8 @@
           </xsl:variable>
           <xsl:variable name="permissionChannelId">PORTLET_ID.<xsl:value-of select="@chanID"/></xsl:variable>
           <xsl:variable name="canConfigure">
-            <!-- This option is special in that it evaluates both whether (1) the portlet supports CONFIG mode and (2) this user is allowed to access it. -->
-            <xsl:if test="parameter[@name='configurable']/@value = 'true' and upAuth:hasPermission('UP_PORTLET_PUBLISH', 'PORTLET_MODE_CONFIG', $permissionChannelId)">true</xsl:if>
+              <!-- This option is special in that it evaluates both whether (1) the portlet supports CONFIG mode and (2) this user is allowed to access it. -->
+              <xsl:if test="parameter[@name='configurable']/@value = 'true' and upAuth:hasPermission('UP_PORTLET_PUBLISH', 'PORTLET_MODE_CONFIG', $permissionChannelId)">true</xsl:if>
           </xsl:variable>
           <xsl:variable name="printable">
             <xsl:if test="parameter[@name='printable']/@value = 'true'">true</xsl:if>

@@ -30,7 +30,7 @@
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
 
     <aop:aspectj-autoproxy/>
-    
+
     <context:annotation-config/>
     <context:component-scan base-package="org.apereo.portal.portlets" use-default-filters="false">
         <context:include-filter type="assignable" expression="org.apereo.portal.portlets.PortletPreferencesJsonDao" />
@@ -38,6 +38,7 @@
         <context:include-filter type="assignable" expression="org.apereo.portal.portlets.account.IPasswordResetNotification"/>
         <context:include-filter type="assignable" expression="org.apereo.portal.portlets.login.LoginPortletHelper"/>
         <context:include-filter type="assignable" expression="org.apereo.portal.portlets.portletadmin.xmlsupport.IChannelPublishingDefinitionDao"/>
+        <context:include-filter type="assignable" expression="org.apereo.portal.portlets.search.PortletRegistryUtil"/>
     </context:component-scan>
     <context:component-scan base-package="org.apereo.portal" use-default-filters="false">
         <context:include-filter type="regex" expression=".*\.rendering\.PortletEventCoordinatationService"/>
@@ -88,15 +89,15 @@
         </property>
     </bean>
 
-    <!-- resolver that can be used to dynamically look up property values at run-time -->
+    <!-- Resolver that can be used to dynamically look up property values at run-time -->
     <bean id="propertyResolver" factory-bean="primaryPropertyPlaceholderConfigurer" factory-method="getPropertyResolver"/>
 
-    <!-- need to capture this value in a bean for map key, using el -->
+    <!-- Need to capture this value in a bean for map key, using el -->
     <bean id="hibernateDialect" class="java.lang.String">
         <constructor-arg value="${hibernate.dialect}"/>
     </bean>
 
-    <!-- define default DDL used by most databases -->
+    <!-- Define default JGROUPS DDL used by most databases -->
     <bean id="jgroupsDefaultInitSql" class="java.lang.String">
         <constructor-arg>
             <value>
@@ -110,27 +111,44 @@
         </constructor-arg>
     </bean>
 
-    <!-- map of JGroups DDL by hibernate.dialect -->
-    <util:map id="jgroupsInitSqlMap" map-class="java.util.HashMap">
-        <entry key="org.hibernate.dialect.Oracle8iDialect" value="#{@jgroupsDefaultInitSql}" />
-        <entry key="org.hibernate.dialect.Oracle9iDialect" value="#{@jgroupsDefaultInitSql}" />
-        <entry key="org.hibernate.dialect.Oracle10gDialect" value="#{@jgroupsDefaultInitSql}" />
-        <entry key="org.hibernate.dialect.MySQLDialect" value="#{@jgroupsDefaultInitSql}" />
-        <entry key="org.hibernate.dialect.PostgreSQL81Dialect" value="#{@jgroupsDefaultInitSql}" />
-        <entry key="org.hibernate.dialect.SQLServerDialect">
+    <!-- And JGROUPS DDL used by MS SQL Server -->
+    <bean id="jgroupsSqlServerInitSql" class="java.lang.String">
+        <constructor-arg>
             <value>
                 CREATE TABLE JGROUPSPING (
                     own_addr varchar(200) NOT NULL,
                     cluster_name varchar(200) NOT NULL,
-                    ping_data varbinary DEFAULT NULL,
+                    ping_data varbinary(5000) DEFAULT NULL,
                     PRIMARY KEY (own_addr, cluster_name)
                 )
             </value>
-        </entry>
-        <entry key="org.hibernate.dialect.HSQLDialect" value="#{@jgroupsDefaultInitSql}" />
+        </constructor-arg>
+    </bean>
+
+    <!-- And JGROUPS DDL used by PostgresSQL Server -->
+    <bean id="jgroupsPostgreSQLInitSql" class="java.lang.String">
+        <constructor-arg>
+            <value>
+                CREATE TABLE IF NOT EXISTS JGROUPSPING (
+                    own_addr varchar(200) NOT NULL,
+                    cluster_name varchar(200) NOT NULL,
+                    ping_data BYTEA DEFAULT NULL,
+                    PRIMARY KEY (own_addr, cluster_name)
+                )
+            </value>
+        </constructor-arg>
+    </bean>
+
+    <!-- Map of JGroups DDL by hibernate.dialect (all Hibernate dialects not listed here will use jgroupsDefaultInitSql) -->
+    <util:map id="jgroupsInitSqlMap" map-class="java.util.HashMap">
+        <!-- Most RDBMS platforms use standard DDL, but MS SQL Server uses something different -->
+        <entry key="org.hibernate.dialect.SQLServerDialect" value="#{@jgroupsSqlServerInitSql}" />
+        <entry key="org.hibernate.dialect.SQLServer2008Dialect" value="#{@jgroupsSqlServerInitSql}" />
+        <entry key="org.hibernate.dialect.PostgreSQLDialect" value="#{@jgroupsPostgreSQLInitSql}" />
+        <entry key="org.hibernate.dialect.PostgresPlusDialect" value="#{@jgroupsPostgreSQLInitSql}" />
     </util:map>
 
-    <!-- add properties for jgroups.xml as that is not a Spring context -->
+    <!-- Add properties for jgroups.xml as that is not a Spring context -->
     <bean id="systemPropertySetter" class="org.apereo.portal.spring.context.SystemPropertySetter">
         <property name="systemProperties">
             <props>
@@ -140,11 +158,12 @@
                 <prop key="hibernate.connection.url">${hibernate.connection.url}</prop>
                 <prop key="hibernate.connection.username">${hibernate.connection.username}</prop>
                 <prop key="hibernate.connection.password">${hibernate.connection.password}</prop>
-                <prop key="jgroupsInitSql">#{@jgroupsInitSqlMap[@hibernateDialect]}</prop>
+                <prop key="jgroupsInitSql">#{@jgroupsInitSqlMap[@hibernateDialect] != null ? @jgroupsInitSqlMap[@hibernateDialect] : @jgroupsDefaultInitSql}</prop>
+                <prop key="org.apereo.portal.jgroups.auth.token">${org.apereo.portal.jgroups.auth.token:DEV-345B45TB3}</prop>
             </props>
         </property>
     </bean>
-    
+
     <util:map id="productVersions" value-type="org.apereo.portal.version.om.Version">
     	<entry value="4.1.0">
     		<key><util:constant static-field="org.apereo.portal.jpa.BasePortalJpaDao.PERSISTENCE_UNIT_NAME"/></key>
@@ -156,9 +175,9 @@
     		<key><util:constant static-field="org.apereo.portal.jpa.BaseAggrEventsJpaDao.PERSISTENCE_UNIT_NAME"/></key>
     	</entry>
     </util:map>
-    
+
     <bean class="org.springframework.beans.factory.annotation.RequiredAnnotationBeanPostProcessor" lazy-init="false" />
-    
+
     <bean id="portalPropertyEditorRegistrar" class="org.apereo.portal.spring.properties.PortalPropertyEditorRegistrar">
         <property name="propertyEditors">
             <map key-type="java.lang.Class">
@@ -183,7 +202,7 @@
             </list>
         </property>
     </bean>
-    
+
     <bean class="org.springframework.beans.factory.config.CustomScopeConfigurer">
         <property name="scopes">
             <map>
@@ -213,6 +232,6 @@
             </map>
         </property>
     </bean>
-    
+
     <bean id="objectMapper" class="org.apereo.portal.spring.beans.factory.ObjectMapperFactoryBean" />
 </beans>

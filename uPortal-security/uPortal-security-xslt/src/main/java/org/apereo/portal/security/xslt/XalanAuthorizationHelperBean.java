@@ -115,6 +115,12 @@ public class XalanAuthorizationHelperBean implements IXalanAuthorizationHelper {
                 authPrincipal != null
                         ? authPrincipal.hasPermission(owner, activity, target)
                         : false;
+        if (this.logger.isTraceEnabled()) {
+            logger.trace(
+                    String.format(
+                            "In hasPermission() - owner=[%s], activity=[%s], target=[%s], result=[%s] ",
+                            owner, activity, target, rslt));
+        }
         return rslt;
     }
 

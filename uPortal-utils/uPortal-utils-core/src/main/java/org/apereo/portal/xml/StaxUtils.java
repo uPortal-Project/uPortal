@@ -15,12 +15,9 @@
 package org.apereo.portal.xml;
 
 import javax.xml.stream.XMLEventReader;
-import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
-import org.springframework.util.xml.StaxEventLexicalContentHandler;
-import org.xml.sax.ContentHandler;
 
 /** Stax utility methods */
 public final class StaxUtils {
@@ -43,9 +40,5 @@ public final class StaxUtils {
                     "Bad XML document for import, no root element could be found");
         }
         return rootElement.asStartElement();
-    }
-
-    public static ContentHandler createLexicalContentHandler(XMLEventWriter eventWriter) {
-        return new StaxEventLexicalContentHandler(eventWriter);
     }
 }

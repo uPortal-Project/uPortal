@@ -13,6 +13,8 @@ dependencies {
     compileOnly "org.hibernate:hibernate-jpamodelgen:${hibernateJpamodelgenVersion}" // Required for javac -s
     compileOnly "${portletApiDependency}"
     compileOnly "${servletApiDependency}"
+
+    testCompile "org.apache.portals.pluto:pluto-container-api:${plutoVersion}"
 }
 
 /*

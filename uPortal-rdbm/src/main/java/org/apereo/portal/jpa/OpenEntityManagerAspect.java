@@ -40,7 +40,6 @@ import org.springframework.util.StringUtils;
  * Aspect opens an entity manager around a method invocation
  *
  * @see OpenEntityManager
- * @see org.springframework.orm.jpa.JpaInterceptor
  */
 @Aspect
 @Component("openEntityManagerAspect")

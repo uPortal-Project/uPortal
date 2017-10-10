@@ -23,6 +23,7 @@ description = "Apereo uPortal Webapp (WAR)"
  */
 
 configurations {
+    // These get packaged with the war in a special way
     webjars
 }
 
@@ -37,6 +38,9 @@ dependencies {
     compile project(':uPortal-security:uPortal-security-xslt')
     compile project(':uPortal-soffit:uPortal-soffit-connector')
     compile project(':uPortal-utils:uPortal-utils-jmx')
+
+    compileOnly "org.apereo.service.persondir:person-directory-api:${personDirectoryVersion}"
+    compileOnly "${servletApiDependency}"
 
     testCompile "org.apache.portals.pluto:pluto-container-api:${plutoVersion}"
     testCompile "org.apache.portals.pluto:pluto-container-driver-api:${plutoVersion}"
@@ -67,13 +71,11 @@ dependencies {
      */
     runtime "org.hsqldb:hsqldb:${hsqldbVersion}"
 
-    compileOnly "${servletApiDependency}"
-
     webjars "org.webjars.npm:bootstrap:${bootstrapVersion}"
 }
 
 node {
-    version = "${nodejsVersion}"
+    version = nodejsVersion
     download = true
 }
 

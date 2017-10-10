@@ -24,7 +24,7 @@
        xmlns:security="http://www.springframework.org/schema/security"
        xsi:schemaLocation="
            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
-           http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.2.xsd">
+           http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.2.xsd">
 
    <security:global-method-security />
 
@@ -33,6 +33,8 @@
         <security:custom-filter position="PRE_AUTH_FILTER" ref="portalPreAuthenticationFilter" />
         <security:intercept-url pattern="**" />
         <security:session-management session-authentication-strategy-ref="sessionAuthenticationStrategy" />
+        <!-- Spring Security's baked-in CSRF solution would be a challenge to integrate with portlets -->
+        <security:csrf disabled="true" />
     </security:http>
 
     <bean id="sessionAuthenticationStrategy" class="org.springframework.security.web.authentication.session.NullAuthenticatedSessionStrategy" />
