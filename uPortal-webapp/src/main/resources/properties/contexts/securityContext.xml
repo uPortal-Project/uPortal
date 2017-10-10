@@ -168,4 +168,14 @@
         </property>
     </bean>
 
+    <!--
+     | Spring-managed instance of CAS AuthenticationFilter. As above, this allows us to configure
+     | CAS authentication in the preferred approach. This is only needed for 'Guest Redirect to CAS'.
+     +-->
+    <bean name="casAuthenticationFilter" class="org.jasig.cas.client.authentication.AuthenticationFilter">
+        <property name="casServerLoginUrl" value="${cas.authenticationFilter.cas.login.url}" />
+        <property name="service" value="${cas.authenticationFilter.service}" />
+        <property name="gateway" value="false" />
+        <property name="encodeServiceUrl" value="true" />
+    </bean>
 </beans>
