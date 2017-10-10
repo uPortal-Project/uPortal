@@ -97,8 +97,8 @@ public class PortalPreAuthenticatedProcessingFilter
 
     /**
      * This setting controls whether Spring's <code>SecurityContextHolder</code> will be reset
-     * (emptied) whenever a login request is processed.  The default is <code>true</code>, and this
-     * option should only be set to <code>false</code> with extreme care.  Problems occur When this
+     * (emptied) whenever a login request is processed. The default is <code>true</code>, and this
+     * option should only be set to <code>false</code> with extreme care. Problems occur When this
      * setting is <code>false</code> in portals that permits unauthenticated users because
      * authenticated users tend to retain their unauthenticated identity (e.g. 'guest') in Spring
      * Security.
