@@ -18,6 +18,7 @@
     under the License.
 
 --%>
+<%@page contentType="text/html;charset=UTF-8"%>
 <%@ include file="/WEB-INF/jsp/include.jsp"%>
 <c:set var="n"><portlet:namespace/></c:set>
 <c:set var="rootContext">${pageContext.request.contextPath}</c:set>
@@ -406,14 +407,86 @@
         </div>
         <div class="row">
             <div class="col-xs-12">
-                <h1><spring:message code="rating.and.review.cap" text="Ratings & Reviews"/></h1>
+                <h1>
+                    <spring:message code="rating.and.review.cap" text="Ratings & Reviews"/>
+                </h1>
                 <div class="col-xs-3 marketplace_average_rating">
-                    <div>
-                        <input type="number" data-max="5" data-min="1" value="${marketplaceEntry.rating}" data-readonly="true" name="My Rating System" id="Demo" class="rating"/>
-                    </div>
+                    <fieldset class="rating">
+                        <input
+                            name="overallrating"
+                            type="radio"
+                            id="overallrating5"
+                            value="5"
+                            aria-label="5 stars"
+                            readonly
+                            ${marketplaceEntry.rating == 5 ? "checked" : ""}>
+                        <label
+                            for="overallrating5"
+                            title="5 stars">
+                            ☆
+                        </label>
+
+                        <input
+                            name="overallrating"
+                            type="radio"
+                            id="overallrating4"
+                            value="4"
+                            aria-label="4 stars"
+                            readonly
+                            ${marketplaceEntry.rating == 4 ? "checked" : ""}>
+                        <label
+                            for="rating4"
+                            title="4 stars">
+                            ☆
+                        </label>
+
+                        <input
+                            name="overallrating"
+                            type="radio"
+                            id="overallrating3"
+                            value="3"
+                            aria-label="3 stars"
+                            readonly
+                            ${marketplaceEntry.rating == 3 ? "checked" : ""}>
+                        <label
+                            for="rating3"
+                            title="3 stars">
+                            ☆
+                        </label>
+
+                        <input
+                            name="overallrating"
+                            type="radio"
+                            id="overallrating2"
+                            value="2"
+                            aria-label="2 stars"
+                            readonly
+                            ${marketplaceEntry.rating == 2 ? "checked" : ""}>
+                        <label
+                            for="overallrating"
+                            title="2 stars">
+                            ☆
+                        </label>
+
+                        <input
+                            name="overallrating"
+                            type="radio"
+                            id="overallrating1"
+                            value="1"
+                            aria-label="1 star"
+                            readonly
+                            ${marketplaceEntry.rating == 1 ? "checked" : ""}>
+                        <label
+                            for="rating1"
+                            title="1 star">
+                            ☆
+                        </label>
+                    </fieldset>
                 </div>
                 <div id="col-xs-9 marketplace_users_rated">
-                    <span id="marketplace_average_rating_description">(${marketplaceEntry.userRated} reviews)</span>
+                    <span id="marketplace_average_rating_description">
+                        (${marketplaceEntry.userRated} reviews)
+                    </span>
                 </div>
             </div>
         </div>
@@ -423,9 +496,72 @@
                     <h4><spring:message code="rate.this.portlet" text="Rate this portlet"/></h4>
                     <div id="${n}marketplace_rating_instructions" class="help-block"></div>
                     <form id="${n}save_rating_form">
-                        <div class="form-group">
-                            <input id="${n}marketplace_user_rating" type="number" data-max="5" data-min="1" value="${marketplaceRating.rating}" name="rating" class="rating"/>
-                        </div>
+                        <fieldset class="rating">
+                            <input
+                                name="rating"
+                                type="radio"
+                                id="rating5"
+                                value="5"
+                                aria-label="5 stars"
+                                ${marketplaceRating.rating == 5 ? "checked" : ""}>
+                            <label
+                                for="rating5"
+                                title="5 stars">
+                                ☆
+                            </label>
+
+                            <input
+                                name="rating"
+                                type="radio"
+                                id="rating4"
+                                value="4"
+                                aria-label="4 stars"
+                                ${marketplaceRating.rating == 4 ? "checked" : ""}>
+                            <label
+                                for="rating4"
+                                title="4 stars">
+                                ☆
+                            </label>
+
+                            <input
+                                name="rating"
+                                type="radio"
+                                id="rating3"
+                                value="3"
+                                aria-label="3 stars"
+                                ${marketplaceRating.rating == 3 ? "checked" : ""}>
+                            <label
+                                for="rating3"
+                                title="3 stars">
+                                ☆
+                            </label>
+
+                            <input
+                                name="rating"
+                                type="radio"
+                                id="rating2"
+                                value="2"
+                                aria-label="2 stars"
+                                ${marketplaceRating.rating == 2 ? "checked" : ""}>
+                            <label
+                                for="rating2"
+                                title="2 stars">
+                                ☆
+                            </label>
+
+                            <input
+                                name="rating"
+                                type="radio"
+                                id="rating1"
+                                value="1"
+                                aria-label="1 star"
+                                ${marketplaceRating.rating == 1 ? "checked" : ""}>
+                            <label
+                                for="rating1"
+                                title="1 star">
+                                ☆
+                            </label>
+                        </fieldset>
                         <c:if test="${enableReviews}">
                         <div class="form-group">
                             <label for="${n}marketplace_user_review_input" id="review-label"><spring:message code="rating.leave.review"/></label>
@@ -888,14 +1024,13 @@
             e.innerHTML = input;
             return e.childNodes.length === 0 ? "" : e.childNodes[0].nodeValue;
         };
-        if($("#${n}marketplace_user_rating").val().length>0) {
-            $("#${n}marketplace_user_rating_submit_button").removeClass("disabled");
+        if($("input[name=rating][type=radio]:checked").size() > 0) {
             updateRatingInstructions('<spring:message code="rating.instructions.rated"
             text='You have already rated "{0}"; adjust your rating if you wish.'
             arguments="${marketplaceEntry.title}"
             htmlEscape="true" />');
             $("#${n}marketplace_user_review_input").val(htmlDecode("<c:out value="${marketplaceRating.review}"/>"));
-        }else{
+        } else {
             updateRatingInstructions('<spring:message code="rating.instructions.unrated"
             text='You have not yet rated "{0}".'
             arguments="${marketplaceEntry.title}"
@@ -937,9 +1072,11 @@
             var reviewText = $("#${n}marketplace_user_review_input").val();
             $.ajax({
                 url: '${saveRatingUrl}',
-                data: {rating: $("#${n}marketplace_user_rating").val(),
+                data: {
+                    rating: $("input[name=rating][type=radio]:checked").val(),
                     portletFName: "${marketplaceEntry.fname}",
-                    review: reviewText ? reviewText.trim() : ''},
+                    review: reviewText ? reviewText.trim() : ''
+                },
                 type: 'POST',
                 success: function() {
                     $('#up-notification').noty({
