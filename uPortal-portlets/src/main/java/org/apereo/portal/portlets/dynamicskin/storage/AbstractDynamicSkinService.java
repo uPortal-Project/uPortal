@@ -17,7 +17,6 @@ package org.apereo.portal.portlets.dynamicskin.storage;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.URL;
 import java.text.MessageFormat;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -42,7 +41,6 @@ import org.lesscss.LessException;
 import org.lesscss.LessSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.Assert;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
@@ -51,39 +49,35 @@ import org.xml.sax.SAXException;
 /** Abstract base class for {@link DynamicSkinService} classes. */
 public abstract class AbstractDynamicSkinService implements DynamicSkinService {
 
-    protected static final String LESS_CSS_JAVASCRIPT_URL =
-            "/media/skins/common/javascript/less/less-1.6.2.js";
-    protected static final String DYNASKIN_TEMPLATE_INCLUDE_FILE = "{0}/{1}.less";
-    protected static final String DYNASKIN_INCLUDE_FILE = "{0}/configuredSkin-{1}.less";
-    protected static final String DYNAMIC_SKIN_FILENAME_BASE = "skin";
+    private static final String DYNASKIN_TEMPLATE_INCLUDE_FILE = "{0}/{1}.less";
+    private static final String DYNASKIN_INCLUDE_FILE = "{0}/configuredSkin-{1}.less";
 
-    protected final Logger log = LoggerFactory.getLogger(getClass());
-
-    protected MessageFormat skinTemplateIncludeFile =
+    private MessageFormat skinTemplateIncludeFile =
             new MessageFormat(DYNASKIN_TEMPLATE_INCLUDE_FILE);
-    protected MessageFormat skinIncludeFile = new MessageFormat(DYNASKIN_INCLUDE_FILE);
+    private MessageFormat skinIncludeFile = new MessageFormat(DYNASKIN_INCLUDE_FILE);
 
     protected String localRelativeRootPath =
             DynamicRespondrSkinConstants.DEFAULT_RELATIVE_ROOT_FOLDER;
-    protected String lessCssJavascriptUrlPath = LESS_CSS_JAVASCRIPT_URL;
 
     /**
      * Set of CSS instance keys for skin files that currently exist. Thread-safe for concurrent
      * reads and inserts.
      */
-    protected Set<String> instanceKeysForExistingCss = new CopyOnWriteArraySet<String>();
+    private Set<String> instanceKeysForExistingCss = new CopyOnWriteArraySet<>();
 
-    protected Cache cssSkinFailureCache;
+    private Cache cssSkinFailureCache;
     private DynamicSkinUniqueTokenGenerator uniqueTokenGenerator;
     private DynamicSkinCssFileNamer cssFileNamer;
+
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     public AbstractDynamicSkinService(
             final DynamicSkinUniqueTokenGenerator uniqueTokenGenerator,
             final DynamicSkinCssFileNamer namer,
             final Cache failureCache) {
-        Assert.notNull(failureCache);
-        Assert.notNull(uniqueTokenGenerator);
-        Assert.notNull(namer);
+        Assert.notNull(failureCache, "Argument 'failureCache' is required");
+        Assert.notNull(uniqueTokenGenerator, "Argument 'uniqueTokenGenerator' is required");
+        Assert.notNull(namer, "Argument 'namer' is required");
         this.cssSkinFailureCache = failureCache;
         this.uniqueTokenGenerator = uniqueTokenGenerator;
         this.cssFileNamer = namer;
@@ -92,46 +86,42 @@ public abstract class AbstractDynamicSkinService implements DynamicSkinService {
     @Override
     public abstract String getSkinCssPath(DynamicSkinInstanceData data);
 
-    public String getSkinLessTemplatePath(DynamicSkinInstanceData data) {
+    private String getSkinLessTemplatePath(DynamicSkinInstanceData data) {
         final String templateRelativePath =
-                this.skinTemplateIncludeFile.format(
-                        new Object[] {this.localRelativeRootPath, data.getSkinName()});
+                skinTemplateIncludeFile.format(
+                        new Object[] {localRelativeRootPath, data.getSkinName()});
         return data.getPortletAbsolutePathRoot() + templateRelativePath;
     }
 
-    public String getSkinLessPath(DynamicSkinInstanceData data) {
+    private String getSkinLessPath(DynamicSkinInstanceData data) {
         final String includeRelativePath =
-                this.skinIncludeFile.format(
-                        new Object[] {this.localRelativeRootPath, this.getUniqueToken(data)});
+                skinIncludeFile.format(new Object[] {localRelativeRootPath, getUniqueToken(data)});
         return data.getPortletAbsolutePathRoot() + includeRelativePath;
     }
 
     /**
      * Return true if the skin file already exists. Check memory first in a concurrent manner to
      * allow multiple threads to check simultaneously.
-     *
-     * @param filePathname Fully-qualified file path name of the .css file
-     * @return True if file exists on the file system.
      */
     @Override
     public boolean skinCssFileExists(DynamicSkinInstanceData data) {
-        final String cssInstanceKey = this.getCssInstanceKey(data);
+        final String cssInstanceKey = getCssInstanceKey(data);
         // Check the existing map first since it is faster than accessing the actual file.
-        if (this.instanceKeysForExistingCss.contains(cssInstanceKey)) {
+        if (instanceKeysForExistingCss.contains(cssInstanceKey)) {
             return true;
         }
-        boolean exists = this.innerSkinCssFileExists(data);
+        boolean exists = innerSkinCssFileExists(data);
         if (exists) {
-            if (!this.supportsRetainmentOfNonCurrentCss()) {
-                this.instanceKeysForExistingCss.clear();
+            if (!supportsRetainmentOfNonCurrentCss()) {
+                instanceKeysForExistingCss.clear();
             }
-            this.instanceKeysForExistingCss.add(cssInstanceKey);
+            instanceKeysForExistingCss.add(cssInstanceKey);
         }
         return exists;
     }
 
-    protected String getCssInstanceKey(DynamicSkinInstanceData data) {
-        return data.getSkinName() + this.getUniqueToken(data);
+    private String getCssInstanceKey(DynamicSkinInstanceData data) {
+        return data.getSkinName() + getUniqueToken(data);
     }
 
     /**
@@ -148,11 +138,10 @@ public abstract class AbstractDynamicSkinService implements DynamicSkinService {
 
     /**
      * Method that subclasses should define to do expensive check to see if the skin CSS file
-     * exists. This method should differ from {@link #skinFileExists(DynamicSkinInstanceData)} in
+     * exists. This method should differ from {@link #skinCssFileExists(DynamicSkinInstanceData)} in
      * that it does actual check for the existence of the file on every request versus only when an
      * in-memory cached marker value is not found.
      *
-     * @see #compiledCssFilepaths
      * @param data skin instance data
      * @return true if css file exists, false otherwise
      */
@@ -173,9 +162,9 @@ public abstract class AbstractDynamicSkinService implements DynamicSkinService {
      */
     @Override
     public void generateSkinCssFile(DynamicSkinInstanceData data) {
-        final String cssInstanceKey = this.getCssInstanceKey(data);
+        final String cssInstanceKey = getCssInstanceKey(data);
         synchronized (cssInstanceKey) {
-            if (this.instanceKeysForExistingCss.contains(cssInstanceKey)) {
+            if (instanceKeysForExistingCss.contains(cssInstanceKey)) {
                 /*
                  * Two or more threads needing the same CSS file managed to invoke
                  * this method.  An earlier thread has already generated the file
@@ -187,24 +176,24 @@ public abstract class AbstractDynamicSkinService implements DynamicSkinService {
                 return;
             }
             try {
-                if (!this.cssSkinFailureCache.getKeysWithExpiryCheck().contains(cssInstanceKey)) {
-                    this.createLessIncludeFile(data);
-                    this.processLessFile(data);
-                    if (!this.supportsRetainmentOfNonCurrentCss()) {
-                        this.instanceKeysForExistingCss.clear();
+                if (!cssSkinFailureCache.getKeysWithExpiryCheck().contains(cssInstanceKey)) {
+                    createLessIncludeFile(data);
+                    processLessFile(data);
+                    if (!supportsRetainmentOfNonCurrentCss()) {
+                        instanceKeysForExistingCss.clear();
                     }
-                    this.instanceKeysForExistingCss.add(cssInstanceKey);
+                    instanceKeysForExistingCss.add(cssInstanceKey);
                 } else {
                     // Though this should never happen except when developers are modifying the LESS files and make a mistake,
                     // if we previously tried to create the CSS file and failed for some reason, don't try to compile it
                     // again for a bit since the process is so processor intensive. It would virtually hang the uPortal
                     // service trying to compile a bad LESS file repeatedly on different threads.
-                    log.warn(
+                    logger.warn(
                             "Skipping generation of CSS file {} due to previous LESS compilation failures",
                             cssInstanceKey);
                 }
             } catch (Exception e) {
-                this.cssSkinFailureCache.put(new Element(cssInstanceKey, cssInstanceKey));
+                cssSkinFailureCache.put(new Element(cssInstanceKey, cssInstanceKey));
                 throw new RuntimeException(
                         "Error compiling the LESS file to create:  " + cssInstanceKey, e);
             }
@@ -219,22 +208,17 @@ public abstract class AbstractDynamicSkinService implements DynamicSkinService {
      * <p>For preferences that end in "URL" or "Url", the values must be written as: url('<value>');
      * So for example, preference PREFmyImageUrl with value "http://fake.site/images/blah.png" would
      * be written to the less file as @myImageUrl: url('http://fake.site/images/blah.png');
-     *
-     * @param prefs Portlet preferences
-     * @param filename name of the less include file to create
-     * @param templateFile template less include file
-     * @throws IOException
      */
-    protected void createLessIncludeFile(DynamicSkinInstanceData data) throws IOException {
+    private void createLessIncludeFile(DynamicSkinInstanceData data) throws IOException {
         // Create a set of less variable assignments.
         final StringBuilder str = new StringBuilder();
         for (Entry<String, String> entry : data.getVariableNameToValueMap().entrySet()) {
-            this.appendPrefAsVariable(str, entry.getKey(), entry.getValue());
+            appendPrefAsVariable(str, entry.getKey(), entry.getValue());
         }
 
         // Create byte[]s of the template and preferences content
         byte[] prefsContent = str.toString().getBytes();
-        File f = new File(this.getSkinLessTemplatePath(data));
+        File f = new File(getSkinLessTemplatePath(data));
         byte[] templateContent = IOUtils.toByteArray(f.toURI());
 
         // Create a less include file by appending the less variable definitions to the end of the template less
@@ -251,14 +235,14 @@ public abstract class AbstractDynamicSkinService implements DynamicSkinService {
                 fileContent,
                 templateContent.length + newline.length,
                 prefsContent.length);
-        File lessInclude = new File(this.getSkinLessPath(data));
+        File lessInclude = new File(getSkinLessPath(data));
         IOUtils.write(fileContent, new FileOutputStream(lessInclude));
     }
 
     private void appendPrefAsVariable(
             final StringBuilder str, final String name, final String value) {
         if (StringUtils.isBlank(value)) {
-            log.warn("Dynamic Skin Variable \"{}\" is not set", name);
+            logger.warn("Dynamic Skin Variable \"{}\" is not set", name);
         } else {
             str.append("@").append(name).append(": ").append(value).append(";\n");
         }
@@ -268,77 +252,70 @@ public abstract class AbstractDynamicSkinService implements DynamicSkinService {
      * Less compile the include file into a temporary css file. When done rename the temporary css
      * file to the correct output filename. Since the less compilation phase takes several seconds,
      * this insures the output css file is does not exist on the filesystem until it is complete.
-     *
-     * @param lessIncludeFilepath less include file that includes all dependencies
-     * @param outputFilepath name of the output css file
-     * @param lessCssJavascriptUrl lessCssJavascript compiler url
-     * @throws IOException
-     * @throws LessException
      */
     private void processLessFile(DynamicSkinInstanceData data) throws IOException, LessException {
-        final PortletContext ctx = data.getPortletRequest().getPortletSession().getPortletContext();
-        final URL lessCssJavascriptUrl = ctx.getResource(this.lessCssJavascriptUrlPath);
-        final LessSource lessSource = new LessSource(new File(this.getSkinLessPath(data)));
-        if (log.isDebugEnabled()) {
+
+        // Prepare the LESS sources for compilation
+        final LessSource lessSource = new LessSource(new File(getSkinLessPath(data)));
+
+        if (logger.isDebugEnabled()) {
             final String result = lessSource.getNormalizedContent();
             final File lessSourceOutput =
-                    new File(this.getSkinCssTempFileAbsolutePath(data) + "lesssource");
+                    new File(getSkinCssTempFileAbsolutePath(data) + "lesssource");
             IOUtils.write(result, new FileOutputStream(lessSourceOutput));
-            log.debug(
-                    "Full Less source from include file {0}, using lessCssJavascript at {1}"
-                            + ", is at {2}, output css will be written to {3}",
-                    this.getSkinLessPath(data),
-                    lessCssJavascriptUrl.toString(),
+            logger.debug(
+                    "Full Less source from include file {} is at {}, output css will be written to {}",
+                    getSkinLessPath(data),
                     lessSourceOutput,
-                    this.getSkinCssPath(data));
+                    getSkinCssPath(data));
         }
+
         final LessCompiler compiler = new LessCompiler();
-        compiler.setLessJs(lessCssJavascriptUrl);
         compiler.setCompress(true);
-        final File tempOutputFile = new File(this.getSkinCssTempFileAbsolutePath(data));
+        final File tempOutputFile = new File(getSkinCssTempFileAbsolutePath(data));
         compiler.compile(lessSource, tempOutputFile);
-        this.moveCssFileToFinalLocation(data, tempOutputFile);
+        moveCssFileToFinalLocation(data, tempOutputFile);
     }
 
-    protected String getLocalRootAbsoluteFilepath(DynamicSkinInstanceData data) {
-        return data.getPortletAbsolutePathRoot() + this.localRelativeRootPath;
+    private String getLocalRootAbsoluteFilepath(DynamicSkinInstanceData data) {
+        return data.getPortletAbsolutePathRoot() + localRelativeRootPath;
     }
 
     protected String getSkinCssFilename(final DynamicSkinInstanceData data) {
-        final String result = this.cssFileNamer.generateCssFileName(data);
+        final String result = cssFileNamer.generateCssFileName(data);
         if (StringUtils.isBlank(result)) {
             throw new DynamicSkinException("Dynamic Skin CSS filename cannot be null or empty.");
         }
         return result;
     }
 
-    protected String getSkinCssTempFileAbsolutePath(DynamicSkinInstanceData data) {
-        return this.getLocalRootAbsoluteFilepath(data) + this.getSkinCssFilename(data);
+    private String getSkinCssTempFileAbsolutePath(DynamicSkinInstanceData data) {
+        return getLocalRootAbsoluteFilepath(data) + getSkinCssFilename(data);
     }
 
     protected abstract void moveCssFileToFinalLocation(
             DynamicSkinInstanceData data, final File tempCssFile);
 
     protected String getUniqueToken(DynamicSkinInstanceData data) {
-        final String result = this.uniqueTokenGenerator.generateToken(data);
+        final String result = uniqueTokenGenerator.generateToken(data);
         if (StringUtils.isBlank(result)) {
             throw new DynamicSkinException("Dynamic Skin unique token cannot be null or empty.");
         }
         return result;
     }
 
-    @Override
     /**
      * Returns the set of skins to use. This implementation parses the skinList.xml file and returns
      * the set of skin-key element values. If there is an error parsing the XML file, return an
      * empty set.
      */
+    @Override
     public SortedSet<String> getSkinNames(PortletRequest request) {
         // Context to access the filesystem
         PortletContext ctx = request.getPortletSession().getPortletContext();
 
         // Determine the full path to the skins directory
-        String skinsFilepath = ctx.getRealPath(this.localRelativeRootPath + "/skinList.xml");
+        String skinsFilepath = ctx.getRealPath(localRelativeRootPath + "/skinList.xml");
 
         // Create File object to access the filesystem
         File skinList = new File(skinsFilepath);
@@ -354,19 +331,14 @@ public abstract class AbstractDynamicSkinService implements DynamicSkinService {
             for (int temp = 0; temp < nList.getLength(); temp++) {
                 org.w3c.dom.Element element = (org.w3c.dom.Element) nList.item(temp);
                 String skinName = element.getTextContent();
-                log.debug("Found skin-key value {}", skinName);
+                logger.debug("Found skin-key value {}", skinName);
                 skins.add(skinName);
             }
         } catch (SAXException | ParserConfigurationException | IOException e) {
-            log.error("Error processing skinsFilepath {}", skinsFilepath, e);
+            logger.error("Error processing skinsFilepath {}", skinsFilepath, e);
         }
 
         return skins;
-    }
-
-    @Value("${dynamic-skin.less-css-javascript-location:" + LESS_CSS_JAVASCRIPT_URL + "}")
-    public void setLessCssJavascriptUrlPath(String lessCssJavascriptUrlPath) {
-        this.lessCssJavascriptUrlPath = lessCssJavascriptUrlPath;
     }
 
     public void setLocalRelativeRootPath(String path) {

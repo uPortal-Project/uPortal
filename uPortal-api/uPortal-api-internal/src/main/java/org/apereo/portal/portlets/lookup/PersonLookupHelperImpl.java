@@ -123,13 +123,13 @@ public class PersonLookupHelperImpl implements IPersonLookupHelper {
 
         //If attributes are configured in portlet prefs just use them
         if (configuredAttributes != null) {
-            queryAttributes = new LinkedHashSet<String>(Arrays.asList(configuredAttributes));
+            queryAttributes = new LinkedHashSet<>(Arrays.asList(configuredAttributes));
         }
         //Otherwise provide all available attributes from the IPersonAttributeDao
         else {
             final Set<String> availableAttributes =
                     this.personAttributeDao.getAvailableQueryAttributes();
-            queryAttributes = new TreeSet<String>(availableAttributes);
+            queryAttributes = new TreeSet<>(availableAttributes);
         }
 
         //Remove excluded attributes
@@ -159,13 +159,12 @@ public class PersonLookupHelperImpl implements IPersonLookupHelper {
 
         //If attributes are configured in portlet prefs use those the user has
         if (configuredAttributes != null) {
-            displayAttributes = new LinkedHashSet<String>();
+            displayAttributes = new LinkedHashSet<>();
             displayAttributes.addAll(Arrays.asList(configuredAttributes));
         }
         //Otherwise provide all available attributes from the IPersonAttributes
         else {
-            displayAttributes =
-                    new TreeSet<String>(personAttributeDao.getPossibleUserAttributeNames());
+            displayAttributes = new TreeSet<>(personAttributeDao.getPossibleUserAttributeNames());
         }
 
         //Remove any excluded attributes
@@ -245,7 +244,7 @@ public class PersonLookupHelperImpl implements IPersonLookupHelper {
         List<IPersonAttributes> peopleList = new ArrayList<>(people);
         if (peopleList.size() > maxResults && allListItemsHaveDisplayName(peopleList)) {
             logger.debug(
-                    "All items contained displayName; pre-sorting list of size {} and truncating to",
+                    "All items contained displayName; pre-sorting list of size {} and truncating to {}",
                     peopleList.size(),
                     maxResults);
             // sort the list by display name
