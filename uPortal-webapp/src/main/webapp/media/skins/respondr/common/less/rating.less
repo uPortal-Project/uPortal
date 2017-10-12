@@ -31,7 +31,10 @@
  * </fieldset>
  */
 
-.rating {
+
+
+.rating,
+.rating-readonly {
   padding: 0; // to prevent flicker when mousing over padding
   border: none;  // to prevent flicker when mousing over border
   unicode-bidi: bidi-override;
@@ -46,6 +49,14 @@
     position: relative;
   }
 
+  > input {
+    width: 0;
+    opacity: 0;
+    margin-left: -(@font-size-base / 2); // center behind star
+  }
+}
+
+.rating {
   /* the stars */
   &
   > *:hover,
@@ -63,10 +74,18 @@
      left: 0;
      color: @rating-selected-color;
   }
+}
 
-  > input {
-    width: 0;
-    opacity: 0;
-    margin-left: -(@font-size-base / 2); // center behind star
+.rating-readonly {
+  > input:checked ~ label {
+    color: transparent;  // reveal the contour star from the HTML markup
+    cursor: inherit; // avoid a cursor transition from arrow/pointer to text selection
+  }
+
+  > input:checked ~ label:before {
+     content: '★';
+     position: absolute;
+     left: 0;
+     color: @rating-selected-color;
   }
 }

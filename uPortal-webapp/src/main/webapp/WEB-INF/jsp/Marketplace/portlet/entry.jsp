@@ -408,10 +408,10 @@
         <div class="row">
             <div class="col-xs-12">
                 <h1>
-                    <spring:message code="rating.and.review.cap" text="Ratings & Reviews"/>
+                    <spring:message code="rating.and.review.cap" text="Ratings &amp; Reviews"/>
                 </h1>
                 <div class="col-xs-3 marketplace_average_rating">
-                    <fieldset class="rating">
+                    <fieldset class="rating-readonly">
                         <input
                             name="overallrating"
                             type="radio"
@@ -570,7 +570,9 @@
                         </div>
                         </c:if>
                         <div class="form-group">
-                            <button id="${n}marketplace_user_rating_submit_button" type="submit" class="btn btn-default disabled"><spring:message code="submit" text="Submit"/></button>
+                            <button id="${n}marketplace_user_rating_submit_button" type="submit" class="btn btn-default">
+                                <spring:message code="submit" text="Submit"/>
+                            </button>
                         </div>
                     </form>
                     <div class="clearfix"></div>
@@ -1099,9 +1101,6 @@
                 }
             });
             e.preventDefault();
-        });
-        $("#${n}marketplace_user_rating").change(function() {
-            $("#${n}marketplace_user_rating_submit_button").removeClass("disabled");
         });
     });
 
