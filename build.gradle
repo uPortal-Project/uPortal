@@ -7,6 +7,7 @@ plugins {
     id 'me.champeau.buildscan-recipes' version '0.2.0'
     id 'org.standardout.versioneye' version '1.5.0'
     id 'net.researchgate.release' version '2.4.0'
+    id 'cz.malohlava' version '1.0.3'
 
     // Sub project plugins
     id 'com.github.sherter.google-java-format' version '0.6' apply false
