@@ -95,8 +95,7 @@ public abstract class AbstractDynamicSkinService implements DynamicSkinService {
 
     private String getSkinLessPath(DynamicSkinInstanceData data) {
         final String includeRelativePath =
-                skinIncludeFile.format(
-                        new Object[] {localRelativeRootPath, getUniqueToken(data)});
+                skinIncludeFile.format(new Object[] {localRelativeRootPath, getUniqueToken(data)});
         return data.getPortletAbsolutePathRoot() + includeRelativePath;
     }
 
@@ -276,7 +275,6 @@ public abstract class AbstractDynamicSkinService implements DynamicSkinService {
         final File tempOutputFile = new File(getSkinCssTempFileAbsolutePath(data));
         compiler.compile(lessSource, tempOutputFile);
         moveCssFileToFinalLocation(data, tempOutputFile);
-
     }
 
     private String getLocalRootAbsoluteFilepath(DynamicSkinInstanceData data) {

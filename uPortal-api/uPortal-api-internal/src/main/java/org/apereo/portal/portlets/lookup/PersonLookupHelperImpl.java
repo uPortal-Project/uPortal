@@ -164,8 +164,7 @@ public class PersonLookupHelperImpl implements IPersonLookupHelper {
         }
         //Otherwise provide all available attributes from the IPersonAttributes
         else {
-            displayAttributes =
-                    new TreeSet<>(personAttributeDao.getPossibleUserAttributeNames());
+            displayAttributes = new TreeSet<>(personAttributeDao.getPossibleUserAttributeNames());
         }
 
         //Remove any excluded attributes

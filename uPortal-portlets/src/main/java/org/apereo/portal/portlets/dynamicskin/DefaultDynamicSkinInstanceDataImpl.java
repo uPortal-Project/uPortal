@@ -79,7 +79,7 @@ public class DefaultDynamicSkinInstanceDataImpl implements DynamicSkinInstanceDa
                         DynamicRespondrSkinConstants.PREF_SKIN_NAME,
                         DynamicRespondrSkinConstants.DEFAULT_SKIN_NAME);
 
-        this.variableNameToValueMap = new HashMap<String, String>();
+        this.variableNameToValueMap = new HashMap<>();
         final Enumeration<String> prefNames = prefs.getNames();
         while (prefNames.hasMoreElements()) {
             final String prefName = prefNames.nextElement();
