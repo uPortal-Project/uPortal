@@ -172,7 +172,7 @@
      | Spring-managed instance of CAS AuthenticationFilter. As above, this allows us to configure
      | CAS authentication in the preferred approach. This is only needed for 'Guest Redirect to CAS'.
      +-->
-    <bean name="casAuthenticationFilter" class="org.apereo.portal.spring.web.BypassFilterDecorator">
+    <bean name="casAuthenticationFilter" class="org.apereo.portal.spring.web.OptionalFilterDecorator">
         <property name="wrappedFilter" ref="casInnerAuthenticationFilter" />
         <property name="enable" value="${cas.enable.redirect.guest.to.login:false}" />
     </bean>
