@@ -241,7 +241,6 @@
             (function($) {
                 $( document ).ready(function() {
                     $('#ratePortletModal<xsl:value-of select="@ID"/>').createRatingModal();
-                    $('#ratePortletModal<xsl:value-of select="@ID"/>').find('input').rating();
                 });
             })(up.jQuery);
         </script>
