@@ -29,7 +29,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 
-public class BypassFilterDecoratorTest {
+public class OptionalFilterDecoratorTest {
 
     @Mock private FilterChain chain;
     @Mock private FilterConfig filterConfig;
@@ -43,7 +43,7 @@ public class BypassFilterDecoratorTest {
 
     @Test
     public void testNoSettings() throws Exception {
-        BypassFilterDecorator decorator = new BypassFilterDecorator();
+        OptionalFilterDecorator decorator = new OptionalFilterDecorator();
         exception.expect(ServletException.class);
         decorator.init(filterConfig);
         exception.expect(ServletException.class);
@@ -53,18 +53,18 @@ public class BypassFilterDecoratorTest {
 
     @Test
     public void testDefaultBypass() throws Exception {
-        BypassFilterDecorator decorator = new BypassFilterDecorator();
+        OptionalFilterDecorator decorator = new OptionalFilterDecorator();
         decorator.setWrappedFilter(filter);
         runDecorator(decorator);
-        verify(filter, times(1)).init(filterConfig);
-        verify(filter, times(1)).doFilter(request, response, chain);
-        verify(filter, times(1)).destroy();
+        verify(filter, times(0)).init(filterConfig);
+        verify(filter, times(0)).doFilter(request, response, chain);
+        verify(filter, times(0)).destroy();
     }
 
     @Test
     public void testFilterCalled() throws Exception {
-        BypassFilterDecorator decorator = new BypassFilterDecorator();
-        decorator.setBypass(false);
+        OptionalFilterDecorator decorator = new OptionalFilterDecorator();
+        decorator.setEnable(true);
         decorator.setWrappedFilter(filter);
         runDecorator(decorator);
         verify(filter, times(1)).init(filterConfig);
@@ -74,8 +74,8 @@ public class BypassFilterDecoratorTest {
 
     @Test
     public void testFilterBypassed() throws Exception {
-        BypassFilterDecorator decorator = new BypassFilterDecorator();
-        decorator.setBypass(true);
+        OptionalFilterDecorator decorator = new OptionalFilterDecorator();
+        decorator.setEnable(false);
         decorator.setWrappedFilter(bypassedFilter);
         runDecorator(decorator);
         verify(bypassedFilter, times(0)).init(filterConfig);
@@ -83,7 +83,7 @@ public class BypassFilterDecoratorTest {
         verify(bypassedFilter, times(0)).destroy();
     }
 
-    private void runDecorator(BypassFilterDecorator decorator) throws Exception {
+    private void runDecorator(OptionalFilterDecorator decorator) throws Exception {
         decorator.init(filterConfig);
         decorator.doFilter(request, response, chain);
         decorator.destroy();

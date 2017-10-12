@@ -174,7 +174,7 @@
      +-->
     <bean name="casAuthenticationFilter" class="org.apereo.portal.spring.web.BypassFilterDecorator">
         <property name="wrappedFilter" ref="casInnerAuthenticationFilter" />
-        <property name="bypass" value="${cas.bypass.redirect.guest.to.login:false}" />
+        <property name="enable" value="${cas.enable.redirect.guest.to.login:false}" />
     </bean>
 
     <bean name="casInnerAuthenticationFilter" class="org.jasig.cas.client.authentication.AuthenticationFilter">

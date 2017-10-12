@@ -22,16 +22,14 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
-/** Decorator to bypass a filter based on a configuration property. */
-public class BypassFilterDecorator implements Filter {
+/** Decorator to enable/disable a filter based on a configuration property. */
+public class OptionalFilterDecorator implements Filter {
 
-    private boolean bypass = false;
+    private boolean enable = false;
     private Filter wrappedFilter;
 
-    public BypassFilterDecorator() {}
-
-    public void setBypass(boolean bypass) {
-        this.bypass = bypass;
+    public void setEnable(boolean enable) {
+        this.enable = enable;
     }
 
     public void setWrappedFilter(Filter wrappedFilter) {
@@ -44,7 +42,7 @@ public class BypassFilterDecorator implements Filter {
             throw new ServletException("No wrappedFilter configured");
         }
 
-        if (!this.bypass) {
+        if (this.enable) {
             this.wrappedFilter.init(filterConfig);
         }
     }
@@ -56,7 +54,7 @@ public class BypassFilterDecorator implements Filter {
             throw new ServletException("No wrappedFilter configured");
         }
 
-        if (!this.bypass) {
+        if (this.enable) {
             this.wrappedFilter.doFilter(request, response, chain);
         } else {
             chain.doFilter(request, response);
@@ -65,7 +63,7 @@ public class BypassFilterDecorator implements Filter {
 
     @Override
     public void destroy() {
-        if (!this.bypass && this.wrappedFilter != null) {
+        if (this.enable && this.wrappedFilter != null) {
             this.wrappedFilter.destroy();
         }
     }

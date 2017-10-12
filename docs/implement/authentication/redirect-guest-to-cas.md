@@ -1,7 +1,17 @@
 # Redirecting Guests to CAS for Sign-In
 
 An occasionally feature request is for uPortal to only support authenticated users,
-skipping a guest experience all together.
+skipping a guest experience all together. There are two solutions depending on which version of uPortal is in use.
+
+## uPortal 5+
+
+To enable the redirect, set the following property to true in `uPortal.properties`:
+
+```properties
+cas.enable.redirect.guest.to.login=true
+```
+
+## uPortal 4.x
 
 This can be accomplished by wrapping the CAS Authentication Filter around `/Login`.
 
