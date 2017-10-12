@@ -36,7 +36,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 | and more, refer to:
 | docs/SKINNING_UPORTAL.md
 -->
-    
+
 <!-- Portlet -->
 <div class="fl-widget portlet ptl-mgr view-configmode" role="section">
 
@@ -46,16 +46,16 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
       <spring:message code="edit.portlet.configuration"/>
     </h2>
   </div> <!-- end: portlet-titlebar -->
-  
+
   <!-- Portlet Content -->
   <div class="fl-widget-content content portlet-content" role="main">
-    <up:render-delegate fname="${PORTLET_FNAME}" portletMode="CONFIG">
+    <up:render-delegate fname="${PORTLET_FNAME}" portletMode="CONFIG" windowState="maximized">
         <up:parent-url>
             <up:param name="execution" value="${flowExecutionKey}"/>
             <up:param name="_eventId" value="configModeAction"/>
         </up:parent-url>
     </up:render-delegate>
-    
+
   </div> <!-- end: portlet-content -->
-  
+
 </div> <!-- end: portlet -->

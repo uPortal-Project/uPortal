@@ -14,7 +14,9 @@ dependencies {
         exclude group: 'log4j', module: 'log4j'
     }
     compile "org.antlr:stringtemplate:${stringtemplateVersion}"
-    compile "org.lesscss:lesscss:${lesscssVersion}"
+    compile("org.lesscss:lesscss:${lesscssVersion}") {
+        exclude group: 'org.slf4j', module: 'slf4j-simple'
+    }
     compile "org.springframework:spring-context-support:${springVersion}"
 
     testCompile "org.apache.portals.pluto:pluto-container-api:${plutoVersion}"
