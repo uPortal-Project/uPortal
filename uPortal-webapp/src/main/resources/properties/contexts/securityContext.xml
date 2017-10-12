@@ -150,11 +150,11 @@
      +-->
     <bean name="ticketValidationFilter" class="org.jasig.cas.client.validation.Cas20ProxyReceivingTicketValidationFilter">
         <property name="service" value="${cas.ticketValidationFilter.service}" />
-        <property name="proxyReceptorUrl" value="${cas.ticketValidationFilter.proxyReceptorUrl}" />
+        <property name="proxyReceptorUrl" value="${cas.ticketValidationFilter.proxyReceptorUrl:}" />
         <property name="ticketValidator">
             <bean class="org.jasig.cas.client.validation.Cas20ServiceTicketValidator">
                 <constructor-arg index="0" value="${cas.ticketValidationFilter.ticketValidator.server}" />
-                <property name="proxyCallbackUrl" value="${cas.ticketValidationFilter.ticketValidator.proxyCallbackUrl}" />
+                <property name="proxyCallbackUrl" value="${cas.ticketValidationFilter.ticketValidator.proxyCallbackUrl:}" />
             </bean>
         </property>
         <!--
