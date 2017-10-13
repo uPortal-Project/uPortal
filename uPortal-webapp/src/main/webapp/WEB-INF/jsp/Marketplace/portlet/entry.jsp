@@ -419,7 +419,7 @@
                             value="5"
                             aria-label="5 stars"
                             readonly
-                            ${marketplaceEntry.rating == 5 ? "checked" : ""}>
+                            ${marketplaceEntry.rating gt 4.5 ? "checked" : ""}>
                         <label
                             for="overallrating5"
                             title="5 stars">
@@ -433,7 +433,7 @@
                             value="4"
                             aria-label="4 stars"
                             readonly
-                            ${marketplaceEntry.rating == 4 ? "checked" : ""}>
+                            ${(marketplaceEntry.rating gt 3.5 && marketplaceEntry.rating le 4.5) ? "checked" : ""}>
                         <label
                             for="rating4"
                             title="4 stars">
@@ -447,7 +447,7 @@
                             value="3"
                             aria-label="3 stars"
                             readonly
-                            ${marketplaceEntry.rating == 3 ? "checked" : ""}>
+                            ${(marketplaceEntry.rating gt 2.5 && marketplaceEntry.rating le 3.5) ? "checked" : ""}>
                         <label
                             for="rating3"
                             title="3 stars">
@@ -461,13 +461,14 @@
                             value="2"
                             aria-label="2 stars"
                             readonly
-                            ${marketplaceEntry.rating == 2 ? "checked" : ""}>
+                            ${(marketplaceEntry.rating gt 1.5 && marketplaceEntry.rating le 2.5) ? "checked" : ""}>
                         <label
                             for="overallrating"
                             title="2 stars">
                             ☆
                         </label>
 
+                        <!-- NOTE:  An unrated portlet will have a rating of zero;  display no stars. -->
                         <input
                             name="overallrating"
                             type="radio"
@@ -475,7 +476,7 @@
                             value="1"
                             aria-label="1 star"
                             readonly
-                            ${marketplaceEntry.rating == 1 ? "checked" : ""}>
+                            ${(marketplaceEntry.rating gt 0.5 && marketplaceEntry.rating le 1.5) ? "checked" : ""}>
                         <label
                             for="rating1"
                             title="1 star">
