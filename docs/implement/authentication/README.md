@@ -1,17 +1,18 @@
 # uPortal Authentication
-uPortal supports various methods to authenticate users.
 
-+  Internal Authentication (TBD)
-+ [Redirect Guest to CAS Sign-In](redirect-guest-to-cas.md)
-+ [CAS 5 ClearPass: Credential Caching and Replay](Cas5ClearPass.md)
+uPortal supports a comprehensive list of strategies for authenticating users, including [Apereo
+Central Authentication Service][] (CAS), [Shibboleth][]/SAML, [LDAP][], and several others.
 
-## Redirecting Guests to CAS for Sign-In
+This strategies may also be mixed or combined in any way.
 
-An occasional feature request is for uPortal to only support authenticated users,
-skipping a guest experience all together.
+## Available Strategies
 
-To enable the redirect, set the following property to true in `${portal.home}/uPortal.properties`:
+- [Central Authentication Service (CAS)](cas.md)
+- Shibboleth (TBD)
+- `REMOTE_USER` (TBD)
+- LDAP (TBD)
+- Local (Database) (TBD)
 
-```properties
-cas.enable.redirect.guest.to.login=true
-```
+[Apereo Central Authentication Service]:https://www.apereo.org/projects/cas
+[Shibboleth]:https://www.shibboleth.net/
+[LDAP]:https://en.wikipedia.org/wiki/Lightweight_Directory_Access_Protocol
