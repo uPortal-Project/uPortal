@@ -7,6 +7,9 @@ plugins {
     id 'me.champeau.buildscan-recipes' version '0.2.0'
     id 'org.standardout.versioneye' version '1.5.0'
     id 'net.researchgate.release' version '2.4.0'
+    // Records all tasks in task graph, generates `build/reports/visteg.dot`
+    // dot file can be converted to an image using graphviz. `dot -Tsvg -O -v visteg.dot`
+    id 'cz.malohlava' version '1.0.3'
 
     // Sub project plugins
     id 'com.github.sherter.google-java-format' version '0.6' apply false
@@ -56,6 +59,7 @@ allprojects {
       errorprone 'com.google.errorprone:error_prone_core:2.1.1'
     }
 
+    // Version has to be set directly here, using a variable does not set Java compatability version
     sourceCompatibility = 1.8
 
     gradleLint.criticalRules = [
