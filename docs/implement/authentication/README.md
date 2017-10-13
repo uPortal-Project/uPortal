@@ -3,7 +3,7 @@
 uPortal supports a comprehensive list of strategies for authenticating users, including [Apereo
 Central Authentication Service][] (CAS), [Shibboleth][]/SAML, [LDAP][], and several others.
 
-This strategies may also be mixed or combined in any way.
+These strategies may also be mixed or combined in any way.
 
 ## Available Strategies
 
