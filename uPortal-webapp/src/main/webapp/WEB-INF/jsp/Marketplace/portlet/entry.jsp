@@ -18,6 +18,7 @@
     under the License.
 
 --%>
+<%@page contentType="text/html;charset=UTF-8"%>
 <%@ include file="/WEB-INF/jsp/include.jsp"%>
 <c:set var="n"><portlet:namespace/></c:set>
 <c:set var="rootContext">${pageContext.request.contextPath}</c:set>
@@ -103,7 +104,7 @@
     #${n} .marketplace_show{
         display:block;
     }
-    
+
     #${n} #marketplace_show_more_less_link{
         font-family: 'Arial';
         font-weight: 400;
@@ -112,11 +113,11 @@
         float: right;
         cursor: pointer;
     }
-    
+
     #${n} .marketplace_average_rating .rating-input{
        padding: 0;
     }
-    
+
     #${n} .marketplace_user_rating {
         border-radius: 8px;
         border: 1px solid #ddd;
@@ -134,7 +135,7 @@
         -moz-border-radius: 25px;
         -webkit-border-radius: 25px;
     }
-    
+
     #${n} .marketplace_carousel_inner img {
         max-height : 20em;
         position:absolute;
@@ -143,7 +144,7 @@
         right:0;
         left:0;
     }
-    
+
     #${n} .marketplace_carousel_inner .item{
         height: 20em;
     }
@@ -164,8 +165,13 @@
     }
 
     #${n} .marketplace_dropdown_menu li a[disabled] {
-        color: #666666;
-        background-color: #c0c0c0;
+        color: #DDDDDD;
+        background-color: #333333;
+    }
+
+    #${n} .btn.btn-default.disabled {
+        background-color: #E0E0E0;
+        opacity: 1;
     }
 
     #${n} .marketplace_section.row {
@@ -267,14 +273,14 @@
 </style>
 
 <script type="text/template" id="${n}options-menu">
-    <li>
+    <li role="menuitem">
         <a href="#" title='<spring:message code="link.to" text="Link to ..." />' data-toggle="modal" data-target="#${n}copy-modal" id="${n}linkto">
             <spring:message code="link.to" text="Link to ..."/>
         </a>
     </li>
-    <li class="divider"></li>
+    <li aria-hidden="true" class="divider"></li>
     {% if (canFavorite) { %}
-    <li>
+    <li role="menuitem">
         <spring:message code="add.this.portlet.to.my.favorite" text="Add this Portlet to My Favorites" var="atptmfTitle"/>
         <a href="#" title="${atptmfTitle}"
                 class="{% if (isFavorite) { print('marketplace_remove_favorite'); } else { print('marketplace_add_favorite'); } %}">
@@ -289,15 +295,15 @@
         </a>
     </li>
     {% } %}
-    <li>
-        <a href="javascript://" disabled>
+    <li role="menuitem">
+        <a href="javascript://" aria-disabled="true" disabled>
                 <span>
                     <spring:message code="marketplace.add.to.tab" text="Add portlet to tab:"/>
                 </span>
         </a>
     </li>
     {% _.each(tabs, function(tab) { %}
-        <li>
+        <li role="menuitem">
             <a href="#" class="marketplace_add_to_tab_link" data-tab-id="{%= tab.id %}">
                 <span>
                     {%- tab.name %}
@@ -354,13 +360,13 @@
 </script>
 
 <div id="${n}">
-    <div>
+    <div class="col-xs-12">
         <div class="row">
-            <div class="col-xs-1">
+            <div class="col-xs-6">
                 <portlet:renderURL var="initialViewURL" windowState="MAXIMIZED"/>
                 <a class="btn btn-default" href="${initialViewURL}"><i class="fa fa-arrow-left"></i> <spring:message code="back.to.list" text="Back to List"/></a>
             </div>
-            <div class="col-md-offset-5 col-md-6 col-xs-6" class="${n}go_button">
+            <div class="col-xs-6" class="${n}go_button">
                 <div class="btn-group marketplace_button_group" style="float:right">
                     <a href="${marketplaceEntry.renderUrl}" id="marketplace_go_button"
                        class="btn btn-default marketplace_dropdown_button" role="button">
@@ -376,18 +382,18 @@
             </div>
         </div>
         <div class="row header-info-wrapper">
-            <div class="col-sm-1 header-img">
+            <div class="col-sm-1 col-xs-4 header-img">
                 <c:url value="/media/skins/icons/mobile/default.png" var="defaultIcon"/>
                     <c:choose>
                         <c:when test="${empty marketplaceEntry.getParameter('mobileIconUrl')}">
-                            <img src="${defaultIcon}">
+                            <img src="${defaultIcon}" alt="">
                         </c:when>
                         <c:otherwise>
-                            <img src="${marketplaceEntry.getParameter('mobileIconUrl').value}">
+                            <img src="${marketplaceEntry.getParameter('mobileIconUrl').value}" alt="">
                         </c:otherwise>
                 </c:choose>
             </div>
-            <div class="col-sm-11">
+            <div class="col-sm-11 col-xs-8">
                 <div class="marketplace_description_title">
                     <h1>${marketplaceEntry.title}</h1>
                 </div>
@@ -401,14 +407,87 @@
         </div>
         <div class="row">
             <div class="col-xs-12">
-                <h1><spring:message code="rating.and.review.cap" text="Ratings & Reviews"/></h1>
+                <h1>
+                    <spring:message code="rating.and.review.cap" text="Ratings &amp; Reviews"/>
+                </h1>
                 <div class="col-xs-3 marketplace_average_rating">
-                    <div>
-                        <input type="number" data-max="5" data-min="1" value="${marketplaceEntry.rating}" data-readonly="true" name="My Rating System" id="Demo" class="rating"/>
-                    </div>
+                    <fieldset class="rating-readonly">
+                        <input
+                            name="overallrating"
+                            type="radio"
+                            id="overallrating5"
+                            value="5"
+                            aria-label="5 stars"
+                            readonly
+                            ${marketplaceEntry.rating gt 4.5 ? "checked" : ""}>
+                        <label
+                            for="overallrating5"
+                            title="5 stars">
+                            ☆
+                        </label>
+
+                        <input
+                            name="overallrating"
+                            type="radio"
+                            id="overallrating4"
+                            value="4"
+                            aria-label="4 stars"
+                            readonly
+                            ${(marketplaceEntry.rating gt 3.5 && marketplaceEntry.rating le 4.5) ? "checked" : ""}>
+                        <label
+                            for="rating4"
+                            title="4 stars">
+                            ☆
+                        </label>
+
+                        <input
+                            name="overallrating"
+                            type="radio"
+                            id="overallrating3"
+                            value="3"
+                            aria-label="3 stars"
+                            readonly
+                            ${(marketplaceEntry.rating gt 2.5 && marketplaceEntry.rating le 3.5) ? "checked" : ""}>
+                        <label
+                            for="rating3"
+                            title="3 stars">
+                            ☆
+                        </label>
+
+                        <input
+                            name="overallrating"
+                            type="radio"
+                            id="overallrating2"
+                            value="2"
+                            aria-label="2 stars"
+                            readonly
+                            ${(marketplaceEntry.rating gt 1.5 && marketplaceEntry.rating le 2.5) ? "checked" : ""}>
+                        <label
+                            for="overallrating"
+                            title="2 stars">
+                            ☆
+                        </label>
+
+                        <!-- NOTE:  An unrated portlet will have a rating of zero;  display no stars. -->
+                        <input
+                            name="overallrating"
+                            type="radio"
+                            id="overallrating1"
+                            value="1"
+                            aria-label="1 star"
+                            readonly
+                            ${(marketplaceEntry.rating gt 0.5 && marketplaceEntry.rating le 1.5) ? "checked" : ""}>
+                        <label
+                            for="rating1"
+                            title="1 star">
+                            ☆
+                        </label>
+                    </fieldset>
                 </div>
                 <div id="col-xs-9 marketplace_users_rated">
-                    <span id="marketplace_average_rating_description">(${marketplaceEntry.userRated} reviews)</span>
+                    <span id="marketplace_average_rating_description">
+                        (${marketplaceEntry.userRated} reviews)
+                    </span>
                 </div>
             </div>
         </div>
@@ -418,17 +497,83 @@
                     <h4><spring:message code="rate.this.portlet" text="Rate this portlet"/></h4>
                     <div id="${n}marketplace_rating_instructions" class="help-block"></div>
                     <form id="${n}save_rating_form">
-                        <div class="form-group">
-                            <input id="${n}marketplace_user_rating" type="number" data-max="5" data-min="1" value="${marketplaceRating.rating}" name="rating" class="rating"/>
-                        </div>
+                        <fieldset class="rating">
+                            <input
+                                name="rating"
+                                type="radio"
+                                id="rating5"
+                                value="5"
+                                aria-label="5 stars"
+                                ${marketplaceRating.rating == 5 ? "checked" : ""}>
+                            <label
+                                for="rating5"
+                                title="5 stars">
+                                ☆
+                            </label>
+
+                            <input
+                                name="rating"
+                                type="radio"
+                                id="rating4"
+                                value="4"
+                                aria-label="4 stars"
+                                ${marketplaceRating.rating == 4 ? "checked" : ""}>
+                            <label
+                                for="rating4"
+                                title="4 stars">
+                                ☆
+                            </label>
+
+                            <input
+                                name="rating"
+                                type="radio"
+                                id="rating3"
+                                value="3"
+                                aria-label="3 stars"
+                                ${marketplaceRating.rating == 3 ? "checked" : ""}>
+                            <label
+                                for="rating3"
+                                title="3 stars">
+                                ☆
+                            </label>
+
+                            <input
+                                name="rating"
+                                type="radio"
+                                id="rating2"
+                                value="2"
+                                aria-label="2 stars"
+                                ${marketplaceRating.rating == 2 ? "checked" : ""}>
+                            <label
+                                for="rating2"
+                                title="2 stars">
+                                ☆
+                            </label>
+
+                            <input
+                                name="rating"
+                                type="radio"
+                                id="rating1"
+                                value="1"
+                                aria-label="1 star"
+                                ${marketplaceRating.rating == 1 ? "checked" : ""}>
+                            <label
+                                for="rating1"
+                                title="1 star">
+                                ☆
+                            </label>
+                        </fieldset>
                         <c:if test="${enableReviews}">
                         <div class="form-group">
-                            <textarea id="${n}marketplace_user_review_input" name="review" class="form-control col-xs-12 col-med-6" rows="3"></textarea>
+                            <label for="${n}marketplace_user_review_input" id="review-label"><spring:message code="rating.leave.review"/></label>
+                            <textarea id="${n}marketplace_user_review_input" aria-labelledby="review-label" name="review" class="form-control col-xs-12 col-med-6" rows="3"></textarea>
                             <div id="${n}input_chars_remaining"></div>
                         </div>
                         </c:if>
                         <div class="form-group">
-                            <button id="${n}marketplace_user_rating_submit_button" type="submit" class="btn btn-default disabled"><spring:message code="submit" text="Submit"/></button>
+                            <button id="${n}marketplace_user_rating_submit_button" type="submit" class="btn btn-default">
+                                <spring:message code="submit" text="Submit"/>
+                            </button>
                         </div>
                     </form>
                     <div class="clearfix"></div>
@@ -445,7 +590,7 @@
                         <c:if test="${not empty marketplaceEntry.portletReleaseNotes.releaseDate}">
                             <span class="marketplace_release_date"> (Released <joda:format value="${marketplaceEntry.portletReleaseNotes.releaseDate}" pattern="dd-MM-yyyy" />)</span>
                         </c:if>
-                        
+
                     </p>
                     <p>
                         <c:if test="${not empty marketplaceEntry.portletReleaseNotes.releaseNotes}">
@@ -484,10 +629,10 @@
                                     <div class="portlet-icon">
                                         <c:choose>
                                             <c:when test="${empty relatedPortlet.getParameter('mobileIconUrl')}">
-                                                <img src="${defaultIcon}">
+                                                <img src="${defaultIcon}" alt="">
                                             </c:when>
                                             <c:otherwise>
-                                                <img src="${relatedPortlet.getParameter('mobileIconUrl').value}">
+                                                <img src="${relatedPortlet.getParameter('mobileIconUrl').value}" alt="">
                                             </c:otherwise>
                                         </c:choose>
                                     </div>
@@ -510,12 +655,14 @@
             <div class="row">
             <div class = "col-xs-12 col-md-4">
                 <span class="marketplace_section_header"><spring:message code="categories" text="CATEGORIES" /></span>
+                <ul>
                     <c:forEach var="portletCategory" items="${portletCategories}">
                         <portlet:renderURL var="initialViewWithFilterURL" windowState="MAXIMIZED">
                             <portlet:param name="initialFilter" value="${portletCategory}"/>
                         </portlet:renderURL>
                         <li>- <a href="${initialViewWithFilterURL}">${portletCategory}</a></li>
                     </c:forEach>
+                </ul>
                 </div>
             </div>
             <br>
@@ -529,12 +676,12 @@
 
             </div>
         </div>
-    </div>                      
+    </div>
 </div>
-<div class="modal fade" id="${n}copy-modal" tabindex="-1" role="dialog" aria-labelledby="LinkToModal" aria-hidden="true">
+<div class="modal fade" id="${n}copy-modal" tabindex="-1" role="dialog" aria-labelledby="LinkToModal" aria-modal="true">
     <div class="modal-dialog" style="text-align:center">
         <div class="modal-content" style="white-space: nowrap">
-            <h4 class="modal-title">
+            <h4 id="LinkToModal" class="modal-title">
                 <strong>
                     <spring:message code="link.to.this" text="Link to This"/>
                 </strong>
@@ -544,7 +691,7 @@
                 <div class="form-group">
                     <label for="inputDeep" class="col-sm-2 control-label"><spring:message code="link" text="Link"/></label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" id="inputDeep"
+                        <input tabindex="0" type="text" class="form-control" id="inputDeep"
                                value="${marketplaceEntry.renderUrl}"></input>
                     </div>
                 </div>
@@ -552,14 +699,14 @@
                     <div class="form-group">
                         <label for="smallLink" class="col-sm-2 control-label"><spring:message code="shortLink" text="Short Link"/></label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" id="smallLink" value="${shortURL}"></input>
+                            <input tabindex="0" type="text" class="form-control" id="smallLink" value="${shortURL}"></input>
                         </div>
                     </div>
                 </c:if>
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal"><spring:message code="close" text="Close"/></button>
+                <button tabindex="0" role="button" type="button" class="btn btn-default" data-dismiss="modal"><spring:message code="close" text="Close"/></button>
             </div>
         </div>
     </div>
@@ -727,6 +874,7 @@
 
         var defaults = {
             textReviewCharLimit : 160,
+            textReviewRemainingWarning: 10,
             visibleReleaseNoteCount: 3
         };
         var remainingCharsAvailable = defaults.textReviewCharLimit;
@@ -879,14 +1027,13 @@
             e.innerHTML = input;
             return e.childNodes.length === 0 ? "" : e.childNodes[0].nodeValue;
         };
-        if($("#${n}marketplace_user_rating").val().length>0) {
-            $("#${n}marketplace_user_rating_submit_button").removeClass("disabled");
+        if($("input[name=rating][type=radio]:checked").size() > 0) {
             updateRatingInstructions('<spring:message code="rating.instructions.rated"
             text='You have already rated "{0}"; adjust your rating if you wish.'
             arguments="${marketplaceEntry.title}"
             htmlEscape="true" />');
             $("#${n}marketplace_user_review_input").val(htmlDecode("<c:out value="${marketplaceRating.review}"/>"));
-        }else{
+        } else {
             updateRatingInstructions('<spring:message code="rating.instructions.unrated"
             text='You have not yet rated "{0}".'
             arguments="${marketplaceEntry.title}"
@@ -896,16 +1043,25 @@
         <c:if test="${enableReviews}">
         // Optional Reviews feature...
         var updateCharactersRemaining = function() {
-            if($("#${n}marketplace_user_review_input").val().length > defaults.textReviewCharLimit) {
-                $("#${n}marketplace_user_review_input").val($("#${n}marketplace_user_review_input").val().substr(0, defaults.textReviewCharLimit));
-            }
-            remainingCharsAvailable = defaults.textReviewCharLimit - $("#${n}marketplace_user_review_input").val().length;
-            $("#${n}input_chars_remaining").html('<spring:message code="characters.remaining" text="Characters Remaining: "/> &nbsp' + remainingCharsAvailable);
-            if(remainingCharsAvailable <= 10) {
-                $("#${n}input_chars_remaining").css("color","red");
-            }
-            else{
-                $("#${n}input_chars_remaining").css("color","black");
+            var textArea = $('#${n}marketplace_user_review_input');
+            var remainingIndicator = $('#${n}input_chars_remaining');
+
+            // Set limit to default
+            textArea.attr('maxlength', defaults.textReviewCharLimit);
+
+            // update remaining characters text
+            var remainingCharsAvailable = defaults.textReviewCharLimit - textArea.val().length;
+            remainingIndicator.html('<spring:message code="characters.remaining" text="Characters Remaining: "/> &nbsp' + remainingCharsAvailable);
+
+            // visual and audio feedback on limit
+            if (remainingCharsAvailable <= defaults.textReviewRemainingWarning) {
+                remainingIndicator
+                    .css('color', 'red')
+                    .attr('aria-live', 'assertive');
+            } else {
+                remainingIndicator
+                    .css('color', 'black')
+                    .attr('aria-live', 'polite');
             }
         };
         updateCharactersRemaining();
@@ -919,9 +1075,11 @@
             var reviewText = $("#${n}marketplace_user_review_input").val();
             $.ajax({
                 url: '${saveRatingUrl}',
-                data: {rating: $("#${n}marketplace_user_rating").val(),
+                data: {
+                    rating: $("input[name=rating][type=radio]:checked").val(),
                     portletFName: "${marketplaceEntry.fname}",
-                    review: reviewText ? reviewText.trim() : ''},
+                    review: reviewText ? reviewText.trim() : ''
+                },
                 type: 'POST',
                 success: function() {
                     $('#up-notification').noty({
@@ -944,9 +1102,6 @@
                 }
             });
             e.preventDefault();
-        });
-        $("#${n}marketplace_user_rating").change(function() {
-            $("#${n}marketplace_user_rating_submit_button").removeClass("disabled");
         });
     });
 
