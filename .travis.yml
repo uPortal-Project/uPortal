@@ -8,19 +8,32 @@ matrix:
       dist: trusty
       jdk: oraclejdk8
     - os: linux
+      dist: trusty
+      jdk: openjdk8
+    - os: linux
       dist: precise
       jdk: oraclejdk8
+    - os: linux
+      dist: precise
+      jdk: openjdk8
     - os: linux
       dist: trusty
       jdk: openjdk7
     - os: linux
       dist: precise
       jdk: openjdk7
+      before_install:
+        # Fix buffer overflow in getLocalHostName of OpenJDK 7 by shortening the host name
+        - cat /etc/hosts
+        - sudo hostname "$(hostname | cut -c1-63)"
+        - sed -e "s/^\\(127\\.0\\.0\\.1.*\\)/\\1 $(hostname | cut -c1-63)/" /etc/hosts > /tmp/hosts
+        - sudo mv /tmp/hosts /etc/hosts
+        - cat /etc/hosts
     - os: linux
       dist: precise
       jdk: oraclejdk7
     - os: osx
-      osx_image: xcode8.3 # OS X 10.12
+      osx_image: xcode9.1 # OS X 10.12
     - os: osx
       osx_image: xcode7.3 # OS X 10.11
     - os: osx
