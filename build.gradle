@@ -86,7 +86,11 @@ allprojects {
         exclude '**/generated-sources'
     }
     license {
-        header = rootProject.file('LICENSE')
+        header = rootProject.file('docs/short-license-header.txt')
+        strictCheck = true
+        mapping {
+            java = 'SLASHSTAR_STYLE'
+        }
     }
 
     /*======== Aggregate Dependencies Report ========*/
