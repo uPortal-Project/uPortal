@@ -15,6 +15,7 @@ plugins {
     id 'com.github.sherter.google-java-format' version '0.6' apply false
     id 'nebula.lint' version '8.3.1' apply false
     id 'net.ltgt.errorprone' version '0.0.11' apply false
+    id 'com.github.hierynomus.license' version '0.14.0' apply false
 }
 
 description = "Apereo uPortal $version"
@@ -54,6 +55,7 @@ allprojects {
     apply plugin: 'nebula.lint'
     apply plugin: 'com.github.sherter.google-java-format'
     apply plugin: 'net.ltgt.errorprone'
+    apply plugin: 'license'
 
     dependencies {
       errorprone 'com.google.errorprone:error_prone_core:2.1.1'
@@ -82,6 +84,9 @@ allprojects {
         toolVersion '1.3'
         options style: 'AOSP'
         exclude '**/generated-sources'
+    }
+    license {
+        header = rootProject.file('LICENSE')
     }
 
     /*======== Aggregate Dependencies Report ========*/
