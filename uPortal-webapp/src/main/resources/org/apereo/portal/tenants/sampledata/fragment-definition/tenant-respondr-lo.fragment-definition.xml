@@ -19,7 +19,6 @@
     under the License.
 
 -->
-
 <!-- If in your tenant use case there will only be one tenant tab and you won't have multiple tabs such as
      a students tab, a staff tab, etc. you can optionally collapse this layout fragment into the tenant-lo
      fragment for a simpler implementation and fewer fragments. -->

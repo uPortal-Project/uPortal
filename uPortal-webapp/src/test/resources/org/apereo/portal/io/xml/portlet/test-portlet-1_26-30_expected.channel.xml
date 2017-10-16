@@ -1,23 +1,25 @@
-<?xml version="1.0" encoding="UTF-8"?><!--
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
 
-    Licensed to Jasig under one or more contributor license
+    Licensed to Apereo under one or more contributor license
     agreements. See the NOTICE file distributed with this work
     for additional information regarding copyright ownership.
-    Jasig licenses this file to you under the Apache License,
+    Apereo licenses this file to you under the Apache License,
     Version 2.0 (the "License"); you may not use this file
-    except in compliance with the License. You may obtain a
-    copy of the License at:
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
 
-    http://www.apache.org/licenses/LICENSE-2.0
+      http://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing,
-    software distributed under the License is distributed on
-    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-    KIND, either express or implied. See the License for the
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
     under the License.
 
---><channel-definition script="classpath://org/jasig/portal/io/import-channel_v3-0.crn">
+-->
+<channel-definition script="classpath://org/jasig/portal/io/import-channel_v3-0.crn">
   <title>Test Portlet 1</title>
   <name>Test Portlet 1</name>
   <fname>test-portlet-1</fname>
@@ -38,14 +40,14 @@
   </groups>
   <parameters>
     <parameter><name>portletApplicationId</name><value>/testsuite</value><description/><ovrd>N</ovrd></parameter><parameter><name>portletName</name><value>TestPortlet1</value><description/><ovrd>N</ovrd></parameter>
-    <parameter> 
-      <name>PORTLET.TestName4</name>  
-      <value>TestValue4</value>  
-      <description/>  
-      <ovrd>N</ovrd> 
+    <parameter>
+      <name>PORTLET.TestName4</name>
+      <value>TestValue4</value>
+      <description/>
+      <ovrd>N</ovrd>
     </parameter>
-    <parameter> 
-      <name>PORTLET.cdata</name>  
+    <parameter>
+      <name>PORTLET.cdata</name>
       <value>
 
   &lt;div&gt;To preview My UW-Madison, use one of these example accounts:&lt;/div&gt;
@@ -90,9 +92,9 @@
     &lt;/tbody&gt;
   &lt;/table&gt;
 
-      </value>  
-      <description/>  
-      <ovrd>N</ovrd> 
+      </value>
+      <description/>
+      <ovrd>N</ovrd>
     </parameter>
   </parameters>
 </channel-definition>
