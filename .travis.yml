@@ -14,9 +14,6 @@ matrix:
       dist: precise
       jdk: oraclejdk8
     - os: linux
-      dist: precise
-      jdk: openjdk8
-    - os: linux
       dist: trusty
       jdk: openjdk7
     - os: linux
