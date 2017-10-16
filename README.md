@@ -33,6 +33,9 @@
           <th>
             Coverage
           </th>
+          <th>
+            Dependencies
+          </th>
         </tr>
         <tr>
           <td>
@@ -53,6 +56,11 @@
           <td>
             <a href="https://coveralls.io/github/Jasig/uPortal?branch=master">
               <img src="https://coveralls.io/repos/github/Jasig/uPortal/badge.svg?branch=master" alt="Coverage Status">
+            </a>
+          </td>
+          <td>
+            <a href='https://www.versioneye.com/user/projects/59e525762de28c000f9188ae'>
+              <img src='https://www.versioneye.com/user/projects/59e525762de28c000f9188ae/badge.svg?style=flat-square' alt="Dependency Status" />
             </a>
           </td>
         </tr>
@@ -76,6 +84,9 @@
             <a href="https://coveralls.io/github/Jasig/uPortal?branch=rel-4-3-patches">
               <img src="https://coveralls.io/repos/github/Jasig/uPortal/badge.svg?branch=rel-4-3-patches" alt="Coverage Status">
             </a>
+          </td>
+          <td>
+            N/A
           </td>
         </tr>
       </table>
