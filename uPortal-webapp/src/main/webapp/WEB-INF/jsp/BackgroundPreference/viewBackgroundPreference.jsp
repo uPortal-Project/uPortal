@@ -146,12 +146,8 @@
 </div>
 
 <script id="backgroundScript">
-(function(){
-    var BackgroundChanger = function() {
-        if (typeof up !== 'undefined') {
-            var $ = up.jQuery;
-        }
-        
+(function($){
+    var BackgroundChanger = function() {        
         var elements = {
             button: '',
             menu: '',
@@ -232,7 +228,7 @@
         };
 
     }();
-})();
+})(up.jQuery);
 
 </script>
 </c:if>
