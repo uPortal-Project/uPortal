@@ -147,7 +147,7 @@
 
 <script id="backgroundScript">
 (function($){
-    var BackgroundChanger = function() {        
+    var BackgroundChanger = function() {
         var elements = {
             button: '',
             menu: '',
