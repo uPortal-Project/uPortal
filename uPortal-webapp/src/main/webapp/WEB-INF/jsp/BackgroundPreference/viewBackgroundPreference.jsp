@@ -148,6 +148,10 @@
 <script id="backgroundScript">
 (function(){
     var BackgroundChanger = function() {
+        if (typeof up !== 'undefined') {
+            var $ = up.jQuery;
+        }
+        
         var elements = {
             button: '',
             menu: '',
@@ -216,10 +220,6 @@
         };
 
         (function init() {
-            if (typeof up !== 'undefined') {
-                $ = up.jQuery;
-            }
-
             $(function() {
                 privateInit();
             });
