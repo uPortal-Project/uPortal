@@ -9,3 +9,4 @@ users, groups, layouts, *etc.*
 4. Layout Management (TBD)
 5. Content (TBD)
 6. [Frontend](frontend/README.md)
+7. [Security](security.md)

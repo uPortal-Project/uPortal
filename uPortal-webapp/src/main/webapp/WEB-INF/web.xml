@@ -79,10 +79,6 @@
     <filter>
         <filter-name>corsFilter</filter-name>
         <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
-        <init-param>
-            <param-name>targetBeanName</param-name>
-            <param-value>corsFilter</param-value>
-        </init-param>
     </filter>
 
     <filter>
