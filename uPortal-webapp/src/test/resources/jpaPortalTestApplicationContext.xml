@@ -39,13 +39,12 @@
     <bean id="portletEntityDao" class="org.apereo.portal.portlet.dao.jpa.JpaPortletEntityDao" />
     <bean id="stylesheetDescriptorDao" class="org.apereo.portal.layout.dao.jpa.JpaStylesheetDescriptorDao" />
     <bean id="stylesheetUserPreferencesDao" class="org.apereo.portal.layout.dao.jpa.JpaStylesheetUserPreferencesDao" />
-    <bean id="userFragmentSubscriptionDao" class="org.apereo.portal.fragment.subscribe.dao.jpa.JpaUserFragmentSubscriptionDaoImpl" />
     <bean id="versionDao" class="org.apereo.portal.version.dao.jpa.JpaVersionDao" />
     <bean id="marketplaceRatingDAO" class="org.apereo.portal.portlet.dao.jpa.JpaMarketplaceRatingDao"/>
     <bean id="authDao" class="org.apereo.portal.jgroups.auth.JdbcAuthDao">
         <property name="jdbcOperations" ref="jdbcOperations" />
     </bean>
-    
+
     <bean id="localPropertyPlaceholderConfigurer" parent="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="properties">
             <props>
@@ -70,5 +69,3 @@
     </bean>
     <import resource="classpath:sharedJpaTestContext.xml"/>
 </beans>
-
-

@@ -83,18 +83,6 @@
 
 
     <!--
-     |  Subscribed Fragment Beans
-     +-->
-    <bean class="org.apereo.portal.io.xml.subscribedfragment.SubscribedFragmentPortalDataType" />
-    <bean id="subscribedFragmentImporterExporter" class="org.apereo.portal.io.xml.subscribedfragment.SubscribedFragmentImporterExporter">
-        <property name="contextPath" value="org.apereo.portal.io.xml.subscribedfragment" />
-        <property name="schema" value="classpath:/xsd/subscribed-fragment-4.0.xsd" />
-        <property name="schemaLocation" value="https://source.jasig.org/schemas/uportal/io/subscribed-fragment https://source.jasig.org/schemas/uportal/io/subscribed-fragment/subscribed-fragment-4.0.xsd" />
-    </bean>
-
-
-
-    <!--
      |  Support Beans
      +-->
     <bean id="counterStore" class="org.apereo.portal.spring.MockitoFactoryBean">

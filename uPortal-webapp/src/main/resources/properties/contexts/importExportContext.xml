@@ -48,7 +48,6 @@
     <bean id="layoutPortalDataType" class="org.apereo.portal.io.xml.layout.LayoutPortalDataType"/>
     <bean id="fragmentDefinitionPortalDataType" class="org.apereo.portal.io.xml.dlm.FragmentDefinitionPortalDataType"/>
     <bean id="eventAggregationConfigurationPortalDataType" class="org.apereo.portal.io.xml.eventaggr.EventAggregationConfigurationPortalDataType" />
-    <bean id="subscribedFragmentPortalDataType" class="org.apereo.portal.io.xml.subscribedfragment.SubscribedFragmentPortalDataType" />
     <bean id="personAttributesGroupStorePortalDataType" class="org.apereo.portal.io.xml.pags.PersonAttributesGroupStorePortalDataType" />
 
     <!--
@@ -72,7 +71,6 @@
         <ref bean="fragmentDefinitionPortalDataType" />
         <ref bean="fragmentLayoutPortalDataType" />
         <ref bean="layoutPortalDataType" />
-        <ref bean="subscribedFragmentPortalDataType" />
         <ref bean="eventAggregationConfigurationPortalDataType" />
     </util:list>
 
@@ -83,7 +81,6 @@
         <ref bean="fragmentLayoutPortalDataType" />
         <ref bean="groupMembershipPortalDataType" />
         <ref bean="layoutPortalDataType" />
-        <ref bean="subscribedFragmentPortalDataType" />
         <ref bean="permissionOwnerPortalDataType" />
         <ref bean="permissionSetPortalDataType" />
         <ref bean="portletTypePortalDataType" />
@@ -116,7 +113,6 @@
         <value>**/*.fragment-layout</value>
         <value>**/*.layout</value>
         <value>**/*.fragment-definition</value>
-        <value>**/*.subscribed-fragment</value>
     </util:set>
 
     <!--
@@ -169,11 +165,6 @@
         <property name="contextPath" value="org.apereo.portal.io.xml.eventaggr" />
         <property name="schema" value="classpath:/xsd/event-aggregation-4.0.xsd" />
         <property name="schemaLocation" value="https://source.jasig.org/schemas/uportal/io/event-aggregation https://source.jasig.org/schemas/uportal/io/event-aggregation/event-aggregation-4.0.xsd" />
-    </bean>
-    <bean id="subscribedFragmentImporterExporter" class="org.apereo.portal.io.xml.subscribedfragment.SubscribedFragmentImporterExporter">
-        <property name="contextPath" value="org.apereo.portal.io.xml.subscribedfragment" />
-        <property name="schema" value="classpath:/xsd/subscribed-fragment-4.0.xsd" />
-        <property name="schemaLocation" value="https://source.jasig.org/schemas/uportal/io/subscribed-fragment https://source.jasig.org/schemas/uportal/io/subscribed-fragment/subscribed-fragment-4.0.xsd" />
     </bean>
 
     <!--
@@ -375,12 +366,6 @@
             </set>
         </property>
         <property name="xslResource" value="classpath:/org/apereo/portal/io/xml/portlet/upgradePortlet_43.xsl" />
-    </bean>
-    <bean id="subscribedFragment32DataUpgrader" class="org.apereo.portal.io.xml.XsltDataUpgrader">
-        <property name="portalDataKeys">
-            <util:constant static-field="org.apereo.portal.io.xml.subscribedfragment.SubscribedFragmentPortalDataType.IMPORT_32_DATA_KEY"/>
-        </property>
-        <property name="xslResource" value="classpath:/org/apereo/portal/io/xml/subscribed-fragment/upgrade-subscribed-fragment_3-2.xsl" />
     </bean>
 
     <!--

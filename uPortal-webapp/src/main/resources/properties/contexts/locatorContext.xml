@@ -20,20 +20,20 @@
 
 -->
 <beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns="http://www.springframework.org/schema/beans" 
+       xmlns="http://www.springframework.org/schema/beans"
        xsi:schemaLocation="
            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd"
        default-autowire="constructor">
-    
-    <!-- 
+
+    <!--
      | The beans below are deprecated and should NEVER be referenced by other beans.
      | They exist to support legacy code that is not managed by spring
      +-->
-    
+
     <bean id="org.apereo.portal.spring.locator.ApplicationContextLocator"
             class="org.apereo.portal.spring.locator.ApplicationContextLocator">
     </bean>
-    
+
     <bean id="org.apereo.portal.spring.locator.UserLayoutStoreLocator"
             class="org.apereo.portal.spring.locator.UserLayoutStoreLocator">
         <constructor-arg index="0" ref="userLayoutStore" />
@@ -58,12 +58,12 @@
             class="org.apereo.portal.spring.locator.EntityCachingServiceLocator">
         <constructor-arg index="0" ref="entityCachingService" />
     </bean>
-    
+
     <bean id="org.apereo.portal.spring.locator.PersonAttributeDaoLocator"
             class="org.apereo.portal.spring.locator.PersonAttributeDaoLocator">
         <constructor-arg index="0" ref="personAttributeDao" />
     </bean>
-    
+
     <bean id="org.apereo.portal.spring.locator.CounterStoreLocator"
             class="org.apereo.portal.spring.locator.CounterStoreLocator">
         <constructor-arg index="0" ref="counterStore" />
@@ -74,30 +74,26 @@
         <constructor-arg index="0" ref="stringEncryptionService" />
     </bean>
 
-    <bean id="org.apereo.portal.spring.locator.UserFragmentSubscriptionDaoLocator"
-        class="org.apereo.portal.spring.locator.UserFragmentSubscriptionDaoLocator">
-    </bean>
-    
     <bean id="org.apereo.portal.spring.locator.LocalAccountDaoLocator"
         class="org.apereo.portal.spring.locator.LocalAccountDaoLocator">
     </bean>
-    
+
     <bean id="org.apereo.portal.spring.locator.PortalPasswordServiceLocator"
         class="org.apereo.portal.spring.locator.PortalPasswordServiceLocator">
     </bean>
-    
+
     <bean id="org.apereo.portal.spring.locator.ReferenceEntitySearcherLocator"
         class="org.apereo.portal.spring.locator.ReferenceEntitySearcherLocator">
     </bean>
-    
+
     <bean id="org.apereo.portal.spring.locator.AuthorizationServiceLocator"
         class="org.apereo.portal.spring.locator.AuthorizationServiceLocator">
         <constructor-arg ref="authorizationService" />
     </bean>
-    
+
     <bean id="org.apereo.portal.spring.locator.EntityTypesLocator"
         class="org.apereo.portal.spring.locator.EntityTypesLocator">
         <constructor-arg ref="entityTypes" />
     </bean>
-    
+
 </beans>

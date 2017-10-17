@@ -30,7 +30,6 @@
   <js>javascript/uportal/up-layout-draggable-manager.js</js>
   <js>javascript/uportal/up-layout-gallery.js</js>
   <js>javascript/uportal/up-fragment-permissions-manager.js</js>
-  <js>javascript/uportal/up-subscription-browser.js</js>
   <js>javascript/uportal/up-layout-selector.js</js>
   <js>javascript/uportal/up-skin-selector.js</js>
   <js>javascript/uportal/up-tab-manager.js</js>
