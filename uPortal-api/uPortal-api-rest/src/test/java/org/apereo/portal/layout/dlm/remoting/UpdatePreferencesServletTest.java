@@ -18,7 +18,6 @@ import java.io.IOException;
 import javax.portlet.WindowState;
 import org.apereo.portal.IUserIdentityStore;
 import org.apereo.portal.UserInstance;
-import org.apereo.portal.fragment.subscribe.dao.IUserFragmentSubscriptionDao;
 import org.apereo.portal.layout.IStylesheetUserPreferencesService;
 import org.apereo.portal.layout.IUserLayoutStore;
 import org.apereo.portal.portlet.registry.IPortletDefinitionRegistry;
@@ -42,7 +41,6 @@ public class UpdatePreferencesServletTest {
     @InjectMocks UpdatePreferencesServlet updatePreferencesServlet;
     @Mock private IPortletDefinitionRegistry portletDefinitionRegistry;
     @Mock private IUserIdentityStore userIdentityStore;
-    @Mock private IUserFragmentSubscriptionDao userFragmentInfoDao;
     @Mock private IUserInstanceManager userInstanceManager;
     @Mock private IStylesheetUserPreferencesService stylesheetUserPreferencesService;
     @Mock private IUserLayoutStore userLayoutStore;
@@ -80,11 +78,6 @@ public class UpdatePreferencesServletTest {
 
         Mockito.when(userInstanceManager.getUserInstance(req)).thenReturn(userInstace);
         ModelAndView modelAndView = updatePreferencesServlet.removeByFName(req, res, "fname");
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void testSubscribeToTab() throws IOException {
-        ModelAndView modelAndView = updatePreferencesServlet.subscribeToTab(req, res);
     }
 
     @Test(expected = NullPointerException.class)

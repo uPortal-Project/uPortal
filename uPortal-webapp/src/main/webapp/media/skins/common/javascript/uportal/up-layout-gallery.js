@@ -344,37 +344,9 @@ var up = up || {};
             that.locate("ui").show();
         };
 
-        that.showPortletList = function () {
-            that.locate("portletList").show();
-            that.locate("fragmentList").hide();
-            that.locate("fragmentMenuDetail").slideUp(300, function () {
-                that.locate("portletMenu").addClass("active");
-                that.locate("fragmentMenu").removeClass("active");
-                that.locate("portletMenuDetail").slideDown(300);
-            });
-        };
-
-        that.showFragmentList = function () {
-            that.locate("portletList").hide();
-            that.locate("fragmentList").show();
-            that.locate("portletMenuDetail").slideUp(300, function () {
-                that.locate("portletMenu").removeClass("active");
-                that.locate("fragmentMenu").addClass("active");
-                that.locate("fragmentMenuDetail").slideDown(300);
-            });
-            if (!that.fragmentBrowser) {
-                that.showLoading();
-                that.fragmentBrowser = fluid.initSubcomponent(that, "fragmentBrowser", [that.locate("pane"), fluid.COMPONENT_OPTIONS]);
-                that.hideLoading();
-            }
-        };
-
         that.locate("paneLink").click(function () {
             overallThat.showPane(that.options.key);
         });
-
-        that.locate("portletListLink").click(that.showPortletList);
-        that.locate("fragmentListLink").click(that.showFragmentList);
 
         return that;
 
@@ -400,12 +372,6 @@ var up = up || {};
                 }
             }
         },
-        fragmentBrowser: {
-            type: "up.FragmentBrowser",
-            options: {
-                fragmentServiceUrl: "tab-list.js"
-            }
-        },
         key: 'add-content',
         selectors: {
             pane: ".add-content",
@@ -417,11 +383,6 @@ var up = up || {};
             portletMenuDetail: ".add-content .categories-wrapper",
             portletListLink: ".add-content .portlet-list-link",
             portletList: ".add-content .portlet-results",
-
-            fragmentMenu: ".packages-column",
-            fragmentMenuDetail: ".packages-wrapper",
-            fragmentListLink: ".package-list-link",
-            fragmentList: ".package-results"
         },
         events: {
             onInitialize: null,

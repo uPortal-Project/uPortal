@@ -27,21 +27,14 @@ import javax.annotation.PostConstruct;
 import javax.portlet.WindowState;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
 import org.apache.commons.beanutils.BeanPredicate;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.functors.EqualPredicate;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.math.NumberUtils;
 import org.apereo.portal.IUserIdentityStore;
 import org.apereo.portal.PortalException;
 import org.apereo.portal.UserPreferencesManager;
-import org.apereo.portal.fragment.subscribe.IUserFragmentSubscription;
-import org.apereo.portal.fragment.subscribe.dao.IUserFragmentSubscriptionDao;
 import org.apereo.portal.groups.IEntity;
 import org.apereo.portal.layout.IStylesheetUserPreferencesService;
 import org.apereo.portal.layout.IStylesheetUserPreferencesService.PreferencesScope;
@@ -49,8 +42,6 @@ import org.apereo.portal.layout.IUserLayout;
 import org.apereo.portal.layout.IUserLayoutManager;
 import org.apereo.portal.layout.IUserLayoutStore;
 import org.apereo.portal.layout.PortletSubscribeIdResolver;
-import org.apereo.portal.layout.dlm.Constants;
-import org.apereo.portal.layout.dlm.DistributedUserLayout;
 import org.apereo.portal.layout.dlm.UserPrefsHandler;
 import org.apereo.portal.layout.node.IUserLayoutChannelDescription;
 import org.apereo.portal.layout.node.IUserLayoutFolderDescription;
@@ -66,8 +57,6 @@ import org.apereo.portal.security.IAuthorizationPrincipal;
 import org.apereo.portal.security.IPermission;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.PermissionHelper;
-import org.apereo.portal.security.PersonFactory;
-import org.apereo.portal.security.provider.RestrictedPerson;
 import org.apereo.portal.services.AuthorizationServiceFacade;
 import org.apereo.portal.services.GroupService;
 import org.apereo.portal.user.IUserInstance;
@@ -84,9 +73,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.support.RequestContextUtils;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 
 /** Provides targets for AJAX preference setting calls. */
 @Controller
@@ -101,7 +88,6 @@ public class UpdatePreferencesServlet {
 
     private IPortletDefinitionRegistry portletDefinitionRegistry;
     private IUserIdentityStore userIdentityStore;
-    private IUserFragmentSubscriptionDao userFragmentInfoDao;
     private IUserInstanceManager userInstanceManager;
     private IStylesheetUserPreferencesService stylesheetUserPreferencesService;
     private IUserLayoutStore userLayoutStore;
@@ -144,11 +130,6 @@ public class UpdatePreferencesServlet {
     }
 
     @Autowired
-    public void setUserFragmentInfoDao(IUserFragmentSubscriptionDao userFragmentInfoDao) {
-        this.userFragmentInfoDao = userFragmentInfoDao;
-    }
-
-    @Autowired
     public void setUserInstanceManager(IUserInstanceManager userInstanceManager) {
         this.userInstanceManager = userInstanceManager;
     }
@@ -186,34 +167,23 @@ public class UpdatePreferencesServlet {
 
         try {
 
-            // if the element ID starts with the fragment prefix and is a folder,
-            // attempt first to treat it as a pulled fragment subscription
+            // Delete the requested element node.  This code is the same for
+            // all node types, so we can just have a generic action.
             String elementId = request.getParameter("elementID");
-            if (elementId != null
-                    && elementId.startsWith(Constants.FRAGMENT_ID_USER_PREFIX)
-                    && ulm.getNode(elementId)
-                            instanceof org.apereo.portal.layout.node.UserLayoutFolderDescription) {
-
-                removeSubscription(per, elementId, ulm);
-
-            } else {
-                // Delete the requested element node.  This code is the same for
-                // all node types, so we can just have a generic action.
-                if (!ulm.deleteNode(elementId)) {
-                    logger.info(
-                            "Failed to remove element ID {} from layout root folder ID {}, delete node returned false",
-                            elementId,
-                            ulm.getRootFolderId());
-                    response.sendError(HttpServletResponse.SC_FORBIDDEN);
-                    return new ModelAndView(
-                            "jsonView",
-                            Collections.singletonMap(
-                                    "error",
-                                    getMessage(
-                                            "error.element.update",
-                                            "Unable to update element",
-                                            RequestContextUtils.getLocale(request))));
-                }
+            if (!ulm.deleteNode(elementId)) {
+                logger.info(
+                        "Failed to remove element ID {} from layout root folder ID {}, delete node returned false",
+                        elementId,
+                        ulm.getRootFolderId());
+                response.sendError(HttpServletResponse.SC_FORBIDDEN);
+                return new ModelAndView(
+                        "jsonView",
+                        Collections.singletonMap(
+                                "error",
+                                getMessage(
+                                        "error.element.update",
+                                        "Unable to update element",
+                                        RequestContextUtils.getLocale(request))));
             }
 
             ulm.saveUserLayout();
@@ -250,14 +220,7 @@ public class UpdatePreferencesServlet {
         try {
             String elementId =
                     ulm.getUserLayout().findNodeId(new PortletSubscribeIdResolver(fname));
-            if (elementId != null
-                    && elementId.startsWith(Constants.FRAGMENT_ID_USER_PREFIX)
-                    && ulm.getNode(elementId)
-                            instanceof org.apereo.portal.layout.node.UserLayoutFolderDescription) {
-
-                removeSubscription(per, elementId, ulm);
-
-            } else if (elementId != null) {
+            if (elementId != null) {
                 // Delete the requested element node.  This code is the same for
                 // all node types, so we can just have a generic action.
                 if (!ulm.deleteNode(elementId)) {
@@ -284,92 +247,6 @@ public class UpdatePreferencesServlet {
 
             return new ModelAndView("jsonView", Collections.EMPTY_MAP);
 
-        } catch (PortalException e) {
-            return handlePersistError(request, response, e);
-        }
-    }
-
-    /**
-     * Subscribe a user to a pre-formatted tab (pulled DLM fragment).
-     *
-     * @param request
-     * @param response
-     * @return
-     * @throws IOException
-     */
-    @RequestMapping(method = RequestMethod.POST, params = "action=subscribeToTab")
-    public ModelAndView subscribeToTab(HttpServletRequest request, HttpServletResponse response)
-            throws IOException {
-
-        IUserInstance ui = userInstanceManager.getUserInstance(request);
-        IPerson per = getPerson(ui, response);
-
-        UserPreferencesManager upm = (UserPreferencesManager) ui.getPreferencesManager();
-        IUserLayoutManager ulm = upm.getUserLayoutManager();
-
-        // Get the fragment owner's name from the request and construct
-        // an IPerson object representing that user
-        String fragmentOwnerName = request.getParameter("sourceID");
-        if (StringUtils.isBlank(fragmentOwnerName)) {
-            logger.warn("Attempted to subscribe to tab with null owner ID");
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
-            return new ModelAndView(
-                    "jsonView",
-                    Collections.singletonMap(
-                            "error", "Attempted to subscribe to tab with null owner ID"));
-        }
-        RestrictedPerson fragmentOwner = PersonFactory.createRestrictedPerson();
-        fragmentOwner.setUserName(fragmentOwnerName);
-
-        // Mark the currently-authenticated user as subscribed to this fragment.
-        // If an inactivated fragment registration already exists, update it
-        // as an active subscription.  Otherwise, create a new fragment
-        // subscription.
-        IUserFragmentSubscription userFragmentInfo =
-                userFragmentInfoDao.getUserFragmentInfo(per, fragmentOwner);
-        if (userFragmentInfo == null) {
-            userFragmentInfo = userFragmentInfoDao.createUserFragmentInfo(per, fragmentOwner);
-        } else {
-            userFragmentInfo.setActive(true);
-            userFragmentInfoDao.updateUserFragmentInfo(userFragmentInfo);
-        }
-
-        try {
-            // reload user layout and stylesheet to incorporate new DLM fragment
-            ulm.loadUserLayout(true);
-
-            // get the target node this new tab should be moved after
-            String destinationId = request.getParameter("elementID");
-
-            // get the user layout for the currently-authenticated user
-            int uid = userIdentityStore.getPortalUID(fragmentOwner, false);
-            final DistributedUserLayout userLayout =
-                    userLayoutStore.getUserLayout(per, upm.getUserProfile());
-            Document layoutDocument = userLayout.getLayout();
-
-            // attempt to find the new subscribed tab in the layout so we can
-            // move it
-            StringBuilder expression =
-                    new StringBuilder("//folder[@type='root']/folder[starts-with(@ID,'")
-                            .append(Constants.FRAGMENT_ID_USER_PREFIX)
-                            .append(uid)
-                            .append("')]");
-            XPathFactory fac = XPathFactory.newInstance();
-            XPath xpath = fac.newXPath();
-            NodeList nodes =
-                    (NodeList)
-                            xpath.evaluate(
-                                    expression.toString(), layoutDocument, XPathConstants.NODESET);
-            String sourceId = nodes.item(0).getAttributes().getNamedItem("ID").getTextContent();
-            ulm.moveNode(sourceId, ulm.getParentId(destinationId), destinationId);
-
-            ulm.saveUserLayout();
-
-            return new ModelAndView("jsonView", Collections.singletonMap("tabId", sourceId));
-
-        } catch (XPathExpressionException e) {
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            return new ModelAndView("jsonView", Collections.singletonMap("error", "Xpath error"));
         } catch (PortalException e) {
             return handlePersistError(request, response, e);
         }
@@ -1395,37 +1272,6 @@ public class UpdatePreferencesServlet {
                                 "error.persisting.attribute.change",
                                 "Unable to save attribute changes",
                                 RequestContextUtils.getLocale(request))));
-    }
-
-    protected void removeSubscription(IPerson per, String elementId, IUserLayoutManager ulm) {
-
-        // get the fragment owner's ID from the element string
-        String userIdString =
-                StringUtils.substringBetween(
-                        elementId,
-                        Constants.FRAGMENT_ID_USER_PREFIX,
-                        Constants.FRAGMENT_ID_LAYOUT_PREFIX);
-        int userId = NumberUtils.toInt(userIdString, 0);
-
-        // construct a new person object representing the fragment owner
-        RestrictedPerson fragmentOwner = PersonFactory.createRestrictedPerson();
-        fragmentOwner.setID(userId);
-        fragmentOwner.setUserName(userIdentityStore.getPortalUserName(userId));
-
-        // attempt to find a subscription for this fragment
-        IUserFragmentSubscription subscription =
-                userFragmentInfoDao.getUserFragmentInfo(per, fragmentOwner);
-
-        // if a subscription was found, remove it's registration
-        if (subscription != null) {
-            userFragmentInfoDao.deleteUserFragmentInfo(subscription);
-            ulm.loadUserLayout(true);
-        }
-
-        // otherwise, delete the node
-        else {
-            ulm.deleteNode(elementId);
-        }
     }
 
     /**

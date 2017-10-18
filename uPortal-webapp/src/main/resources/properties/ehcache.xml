@@ -617,31 +617,6 @@
     </cache>
 
     <!--
-     | Caches UserFragmentSubscriptions
-     | - 1 per fragment subscription per user
-     +-->
-    <cache name="org.apereo.portal.fragment.subscribe.dao.jpa.UserFragmentSubscriptionImpl"
-        eternal="false" maxElementsInMemory="2500" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
-        <cacheEventListenerFactory
-            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-            properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
-    <cache name="org.apereo.portal.fragment.subscribe.dao.jpa.UserFragmentSubscriptionImpl.Query"
-        eternal="false" maxElementsInMemory="2500" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
-        <cacheEventListenerFactory
-            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-            properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
-
-    <!--
      | Caches message
      | - 1 per each translated message (max = messages * supported locales)
      +-->
@@ -944,16 +919,6 @@
                 replicateRemovals=true "/>
     </cache>
     <cache name="org.apereo.portal.layout.dlm.providers.ProfileEvaluator"
-        eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
-        <cacheEventListenerFactory
-            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-            properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
-    <cache name="org.apereo.portal.layout.dlm.providers.SubscribedTabEvaluator"
         eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory
@@ -2061,10 +2026,10 @@
            eternal="false" maxElementsInMemory="2000" overflowToDisk="false" diskPersistent="false"
            timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" />
 
-    <!-- 
+    <!--
      | Caches out output of remote soffits;  timeToLiveSeconds will be set on
      | each Element according to the cache-control header send by the remote soffit.
-     | - 1 x unique combination of (soffit+mode+windowState) [x user for private scope] 
+     | - 1 x unique combination of (soffit+mode+windowState) [x user for private scope]
      | - not replicated
      +-->
     <cache name="org.apereo.portlet.soffit.connector.SoffitConnectorController.RESPONSE_CACHE"

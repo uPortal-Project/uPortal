@@ -28,7 +28,7 @@
         <property name="hibernate.session_factory_name_is_jndi">false</property>
         <property name="hibernate.format_sql">true</property>
         <property name="hibernate.generate_statistics">true</property>
-        
+
         <property name="hibernate.max_fetch_depth">3</property>
         <property name="hibernate.default_batch_fetch_size">4</property>
         <property name="hibernate.jdbc.batch_size">25</property>
@@ -37,11 +37,11 @@
         <property name="hibernate.cache.use_query_cache">true</property>
         <property name="hibernate.cache.use_second_level_cache">true</property>
         <property name="hibernate.cache.use_minimal_puts">true</property>
-        
+
         <property name="hibernate.current_session_context_class">thread</property>
-        
+
         <mapping resource="properties/db/global.hbm.xml"/>
-        
+
         <mapping class="org.apereo.portal.layout.dao.jpa.StylesheetDescriptorImpl"/>
         <mapping class="org.apereo.portal.layout.dao.jpa.LayoutAttributeDescriptorImpl"/>
         <mapping class="org.apereo.portal.layout.dao.jpa.OutputPropertyDescriptorImpl"/>
@@ -54,7 +54,6 @@
         <mapping class="org.apereo.portal.layout.dlm.providers.AttributeEvaluator" />
         <mapping class="org.apereo.portal.layout.dlm.providers.GroupMembershipEvaluator" />
         <mapping class="org.apereo.portal.layout.dlm.providers.ProfileEvaluator" />
-        <mapping class="org.apereo.portal.layout.dlm.providers.SubscribedTabEvaluator" />
         <mapping class="org.apereo.portal.layout.dlm.providers.GuestUserEvaluatorFactory" />
         <mapping class="org.apereo.portal.layout.dlm.providers.EvaluatorGroup" />
         <mapping class="org.apereo.portal.layout.dlm.providers.Paren" />
@@ -75,7 +74,6 @@
         <mapping class="org.apereo.portal.portlet.dao.jpa.PortletPreferenceImpl" />
         <mapping class="org.apereo.portal.tenants.JpaTenant"/>
         <mapping class="org.apereo.portal.portlet.dao.jpa.MarketplaceRatingImpl" />
-        <mapping class="org.apereo.portal.fragment.subscribe.dao.jpa.UserFragmentSubscriptionImpl" />
         <mapping class="org.apereo.portal.persondir.dao.jpa.LocalAccountPersonImpl"/>
         <mapping class="org.apereo.portal.persondir.dao.jpa.LocalAccountPersonAttributeImpl"/>
         <mapping class="org.apereo.portal.i18n.dao.jpa.MessageImpl"/>

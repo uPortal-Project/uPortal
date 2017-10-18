@@ -70,7 +70,6 @@
 @galleryCatLink                 : @grayscale3;
 @galleryCatLinkHover            : @color1;
 @galleryCatActiveLink           : @white;
-@galleryPackagesText            : @grayscale2;
 @galleryResultsBottomPadding    : 5px;
 @galleryResultsText             : @grayscale4;
 @galleryRIBackground            : @grayscale8;
@@ -367,22 +366,16 @@
             color: @galleryCatActiveLink;
           }
         }
-
-        .packages-wrapper {
-          /* Filter packages */
-          color: @galleryPackagesText;
-        }
       } /* end .content-filters-wrapper*/
 
       .results-wrapper {
-        /* Results section of the gallery. Lists portlets, packages, skins, or layout options. */
+        /* Results section of the gallery. Lists portlets, skins, or layout options. */
         padding-bottom: @galleryResultsBottomPadding;
         color: @galleryResultsText;
 
         .layout-wrapper .ri-link,
         .skins-wrapper .ri-link,
-        .portlet.result-item,
-        .package.results-item {
+        .portlet.result-item {
           background: @grayscale10;
 
           .border(@grayscale5);
@@ -460,8 +453,7 @@
           }
         }
 
-        .portlet-wrapper,
-        .package-wrapper {
+        .portlet-wrapper {
           .ri-link {
             color: @galleryRILink;
             display: none;
@@ -472,9 +464,7 @@
         }
 
         .portlet-wrapper:hover,
-        .portlet-wrapper:focus,
-        .package-wrapper:hover,
-        .package-wrapper:focus {
+        .portlet-wrapper:focus {
           .ri-link {
             background: @galleryRILinkBackgroundHover;
             display: block;
@@ -684,40 +674,24 @@
   width: 157px;
 }
 
-.up-gallery .categories-column,
-.up-gallery .packages-column {
+.up-gallery .categories-column {
   padding: 0;
 }
 
-.up-gallery .categories-column,
-.up-gallery .packages-column {
+.up-gallery .categories-column {
   clear: both;
 }
 
-.up-gallery .packages-column h3 {
-  position: absolute;
-  top: 0;
-  left: 56px;
-}
-
-.up-gallery .categories-column .categories-wrapper,
-.up-gallery .packages-column .packages-wrapper {
+.up-gallery .categories-column .categories-wrapper {
   display: none;
 }
 
-.up-gallery .categories-column.active .categories-wrapper,
-.up-gallery .packages-column.active .packages-wrapper {
+.up-gallery .categories-column.active .categories-wrapper {
   display: block;
 }
 
-.portal .up-gallery .packages-wrapper,
 .portal .up-gallery .categories-wrapper {
   padding: 10px;
-}
-
-.up-gallery .packages p {
-  margin: 0;
-  font-size: 11px;
 }
 
 .up-gallery .categories-column h4 {
@@ -798,7 +772,7 @@
 }
 
 /* Gallery Results List
- * General formatting for results lists (portlets, packages, skins, and layouts).
+ * General formatting for results lists (portlets, skins, and layouts).
  */
 .up-gallery .results-wrapper {
   font-size: 10px;
@@ -890,22 +864,19 @@
   display: inline;
 }
 
-/* Gallery Portlet and Package Lists
- * The list of portlets and packages for add and use.
+/* Gallery Portlet List
+ * The list of portlets for add and use.
  */
-.up-gallery .portlet-list li,
-.up-gallery .package-list li {
+.up-gallery .portlet-list li {
   width: 32%;
   height: 50%;
 }
 
-.up-gallery .portlet-list li .portlet-wrapper,
-.up-gallery .package-list li .package-wrapper {
+.up-gallery .portlet-list li .portlet-wrapper {
   height: 80px;
 }
 
-.up-gallery .portlet-wrapper .ri-link,
-.up-gallery .package-wrapper .ri-link {
+.up-gallery .portlet-wrapper .ri-link {
   position: absolute;
   top: 0;
   right: 0;
@@ -915,13 +886,11 @@
   text-align: center;
 }
 
-.up-gallery .portlet-wrapper .ri-icon,
-.up-gallery .package-wrapper .ri-icon {
+.up-gallery .portlet-wrapper .ri-icon {
   width: 32px;
   height: 32px;
 }
 
-.up-gallery .package-wrapper .ri-content,
 .up-gallery .portlet-wrapper .ri-content {
   padding: 5px;
 }
@@ -931,8 +900,7 @@
 // .up-gallery .portlet-thumb-gripper span {display: block; width: 16px; height: 16px; overflow: hidden; visibility: hidden;}
 
 /* IE7 adjustments*/
-*:first-child + html .up-gallery .results-wrapper .portlet-list li,
-*:first-child + html .up-gallery .results-wrapper .package-list li {
+*:first-child + html .up-gallery .results-wrapper .portlet-list li {
   width: 24%;
 }
 

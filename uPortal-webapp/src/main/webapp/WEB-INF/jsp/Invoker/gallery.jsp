@@ -43,7 +43,6 @@
         </div>
         <div class="fl-col-main content-wrapper" role="tabpanel">
             <div class="fl-fix content">
-                <!--xsl:call-template name="gallery-add-content-pane"/-->
                 <div class="fl-fix fl-col-mixed fl-col-mixed2 pane add-content">
                     <div class="fl-col-fixed fl-force-left content-filters-wrapper">
                         <div class="categories-column active">
@@ -71,14 +70,6 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="packages-column">
-                            <h3 class="package-list-link"><span><spring:message code="packaged.stuff"/></span></h3>
-                            <div class="packages-wrapper">
-                                <div class="packages">
-                                    <p><spring:message code="add.package.instruction"/></p>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                     <div class="content-results-wrapper fl-col-main">
                         <div class="column-inner">
@@ -88,9 +79,6 @@
                                     </div>
                                 </div>
                                 <div class="results-column fl-col-main fl-fix">
-                                    <!--xsl:call-template name="gallery-add-content-pane-portlet-list">
-                                        <xsl:with-param name="CONTEXT" select="'addContent'"/>
-                                    </xsl:call-template-->
                                     <div class="results-wrapper portlet-results fl-col-mixed2">
                                         <div class="pager-column fl-col-side fl-force-right">
                                             <div class="column-inner">
@@ -145,57 +133,6 @@
                                             </ul>
                                         </div>
                                     </div>
-                                    <!--xsl:call-template name="gallery-add-content-pane-fragment-list"/-->
-                                    <div class="results-wrapper package-results fl-col-mixed2" style="display:none">
-                                        <div class="pager-column fl-col-side fl-force-right">
-                                            <div class="column-inner">
-                                                <div class="pager flc-pager-top">
-                                                    <!--Previous-->
-                                                    <div class="pager-button-up flc-pager-previous">
-                                                        <a class="pager-button-up-inner" href="#">
-                                                            <span><spring:message code="up"/></span>
-                                                        </a>
-                                                    </div>
-                                                    <!--Pager Links-->
-                                                    <div style="display:none">
-                                                        <ul class="fl-pager-links flc-pager-links" style="margin:0; display:inline">
-                                                            <li class="flc-pager-pageLink"><a href="#">1</a></li>
-                                                            <li class="flc-pager-pageLink-disabled">2</li>
-                                                            <li class="flc-pager-pageLink"><a href="#">3</a></li>
-                                                        </ul>
-                                                    </div>
-                                                    <!--Pagination-->
-                                                    <div class="pager-pagination"></div>
-                                                    <!--Pager Summary-->
-                                                    <div style="display:none">
-                                                        <span class="flc-pager-summary"><spring:message code="show"/></span>
-                                                        <span><select class="pager-page-size flc-pager-page-size"></select></span>
-                                                    </div>
-                                                    <!--Next-->
-                                                    <div class="pager-button-down flc-pager-next">
-                                                        <a class="pager-button-down-inner" href="#">
-                                                            <span><spring:message code="down"/></span>
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="results-column fl-col-main">
-                                            <ul class="results-list package-list ui-helper-clearfix">
-                                                <li class="results-item package">
-                                                   <div class="ri-wrapper package-wrapper">
-                                                       <div class="ri-utility"></div>
-                                                       <a href="#" class="ri-link package-link"><span><spring:message code="subscribe"/></span></a>
-                                                       <div class="ri-content package-content ui-helper-clearfix">
-                                                           <div class="ri-titlebar package-titlebar">Titlebar</div>
-                                                           <div class="ri-icon package-icon"><span>Thumbnail</span></div>
-                                                           <div class="ri-description package-description">Description</div>
-                                                       </div>
-                                                   </div>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
                                 </div>
                                 <div class="clear-float"></div>
                             </div>
@@ -204,7 +141,6 @@
                     <div class="content-modal content-loading"></div>
                 </div>
 
-                <!--xsl:call-template name="gallery-use-content-pane"/-->
                 <div class="fl-fix fl-col-mixed fl-col-mixed2 use-content" style="display:none">
                     <div class="fl-col-fixed fl-force-left content-filters-wrapper">
                         <div class="categories-column active">
@@ -241,9 +177,6 @@
                                     </div>
                                 </div>
                                 <div class="results-column fl-col-main fl-fix">
-                                    <!--xsl:call-template name="gallery-add-content-pane-portlet-list">
-                                        <xsl:with-param name="CONTEXT" select="'useContent'"/>
-                                    </xsl:call-template-->
                                     <div class="results-wrapper portlet-results fl-col-mixed2">
                                         <div class="pager-column fl-col-side fl-force-right">
                                             <div class="column-inner">
@@ -304,7 +237,6 @@
                         </div>
                     </div>
                 </div>
-                <!--xsl:call-template name="gallery-skin-pane"/-->
                 <div class="skins" style="display:none">
                     <div class="content-results-wrapper">
                         <div class="column-inner">
@@ -327,7 +259,6 @@
                         </div>
                     </div>
                 </div>
-                <!--xsl:call-template name="gallery-layout-pane"/-->
                 <div class="layouts" style="display:none">
                     <div class="content-results-wrapper">
                         <div class="column-inner">

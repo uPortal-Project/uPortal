@@ -349,38 +349,6 @@ var uportal = uportal || {};
                                     }
                                 }
                             }
-                        },
-
-                        // "packaged stuff" sub-pane
-                        fragmentBrowser: {
-                            options: {
-                                fragmentServiceUrl: that.options.subscribableTabUrl,
-                                listeners: {
-                                    onFragmentSelect: function(componentThat, fragment) {
-                                        var lastTab, targetId;
-
-                                        // use the current last tab as the target id
-                                        lastTab = $("[id*=portalNavigation_]:last");
-                                        targetId = up.defaultNodeIdExtractor(lastTab);
-
-                                        // update the layout with the new
-                                        // tab subscription
-                                        that.persistence.update(
-                                            {
-                                                action: "subscribeToTab",
-                                                sourceID: fragment.ownerID,
-                                                method: 'appendAfter',
-                                                elementID: targetId
-                                            },
-                                            function(data) {
-                                                // redirect the browser to the
-                                                // new tab
-                                                window.location = that.urlProvider.getTabUrl(data.tabId);
-                                            }
-                                        );
-                                    }
-                                }
-                            }
                         }
                     }
                 },
