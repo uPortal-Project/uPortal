@@ -122,12 +122,22 @@ public class CorsFilter implements Filter {
     /** Determines if the request should be decorated or not. */
     private boolean decorateRequest;
 
+
+    /** Determines if the filter should be enabled or bypassed. */
+    private boolean enabled;
+
     @Override
     public void doFilter(
             final ServletRequest servletRequest,
             final ServletResponse servletResponse,
             final FilterChain filterChain)
             throws IOException, ServletException {
+        if (!enabled) {
+            // Forward the request down the filter chain.
+            filterChain.doFilter(servletRequest, servletResponse);
+            return;
+        }
+
         if (!(servletRequest instanceof HttpServletRequest)
                 || !(servletResponse instanceof HttpServletResponse)) {
             throw new ServletException("CORS doesn't support non-HTTP request or response");
@@ -179,6 +189,7 @@ public class CorsFilter implements Filter {
     public CorsFilter() throws ServletException {
         // set defaults
         parseAndStore(
+                DEFAULT_ENABLED,
                 DEFAULT_ALLOWED_ORIGINS,
                 DEFAULT_ALLOWED_HTTP_METHODS,
                 DEFAULT_ALLOWED_HTTP_HEADERS,
@@ -196,6 +207,7 @@ public class CorsFilter implements Filter {
 
     public void init() throws ServletException {
         parseAndStore(
+                getInitParameter(PARAM_CORS_ENABLED, DEFAULT_ENABLED),
                 getInitParameter(PARAM_CORS_ALLOWED_ORIGINS, DEFAULT_ALLOWED_ORIGINS),
                 getInitParameter(PARAM_CORS_ALLOWED_METHODS, DEFAULT_ALLOWED_HTTP_METHODS),
                 getInitParameter(PARAM_CORS_ALLOWED_HEADERS, DEFAULT_ALLOWED_HTTP_HEADERS),
@@ -706,6 +718,7 @@ public class CorsFilter implements Filter {
      * @throws ServletException
      */
     private void parseAndStore(
+            final String enabled,
             final String allowedOrigins,
             final String allowedHttpMethods,
             final String allowedHttpHeaders,
@@ -714,6 +727,8 @@ public class CorsFilter implements Filter {
             final String preflightMaxAge,
             final String decorateRequest)
             throws ServletException {
+
+        setEnabled(enabled);
 
         setAllowedOrigins(allowedOrigins);
 
@@ -728,6 +743,12 @@ public class CorsFilter implements Filter {
         setPreflightMaxAge(preflightMaxAge);
 
         setDecorateRequest(decorateRequest);
+    }
+
+    public void setEnabled(String enabled) {
+        log.debug("setEnabled set to {}", enabled);
+        // For any value other then 'true' this will be false.
+        this.enabled = Boolean.parseBoolean(enabled);
     }
 
     public void setDecorateRequest(String decorateRequest) {
@@ -1053,6 +1074,9 @@ public class CorsFilter implements Filter {
                             "text/plain"));
 
     // ------------------------------------------------ Configuration Defaults
+    /** By default, enabled is turned off. */
+    public static final String DEFAULT_ENABLED = "false";
+
     /** By default, all origins are allowed to make requests. */
     public static final String DEFAULT_ALLOWED_ORIGINS = "*";
 
@@ -1080,6 +1104,9 @@ public class CorsFilter implements Filter {
     public static final String DEFAULT_DECORATE_REQUEST = "true";
 
     // ----------------------------------------Filter Config Init param-name(s)
+    /** Key to determine if CORS filter is enabled or bypassed. */
+    public static final String PARAM_CORS_ENABLED = "cors.enabled";
+
     /** Key to retrieve allowed origins from {@link javax.servlet.FilterConfig}. */
     public static final String PARAM_CORS_ALLOWED_ORIGINS = "cors.allowed.origins";
 

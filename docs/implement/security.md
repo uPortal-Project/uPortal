@@ -13,6 +13,11 @@ enables cross-origin requests.
 ### CORS Filter Configuration Options
 
 <dl>
+    <dt><code>cors.enabled</code></td>
+    <dd>
+      <p>A flag to control if this filter is enabled or not.
+      <strong>Defaults:</strong> <code>false</code></p>
+    </dd>
     <dt><code>cors.allowed.origins</code></td>
     <dd>
       <p>A list of <a href="http://tools.ietf.org/html/rfc6454">origins</a>

@@ -102,6 +102,7 @@
      | Security-related filters
      +-->
     <bean id="corsFilter" class="org.apereo.portal.security.filter.CorsFilter">
+        <property name="enabled" value="${cors.enabled:false}" />
         <property name="allowedOrigins" value="${cors.allowed.origins:*}" />
         <property name="allowedHttpMethods" value="${cors.allowed.methods:GET,HEAD}" />
         <property name="allowedHttpHeaders" value="${cors.allowed.headers:Origin,Accept,X-Requested-With,Content-Type,Access-Control-Request-Method,Access-Control-Request-Headers}" />
