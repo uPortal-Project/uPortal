@@ -26,7 +26,10 @@
            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
            http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.2.xsd">
 
-   <security:global-method-security />
+    <!--
+     | Spring-managed Security
+     +-->
+    <security:global-method-security />
 
     <!-- Spring Security pre-authentication -->
     <security:http auto-config='true'>
@@ -93,6 +96,19 @@
     </bean>
     <bean id="decryptCredentialToPasswordAlgorithm" class="java.lang.String">
         <constructor-arg index="0" value="${org.apereo.portal.security.cas.assertion.decryptCredentialToPasswordAlgorithm:'RSA'}"/>
+    </bean>
+
+    <!--
+     | Security-related filters
+     +-->
+    <bean id="corsFilter" class="org.apereo.portal.security.filter.CorsFilter">
+        <property name="allowedOrigins" value="${cors.allowed.origins:*}" />
+        <property name="allowedHttpMethods" value="${cors.allowed.methods:GET,HEAD}" />
+        <property name="allowedHttpHeaders" value="${cors.allowed.headers:Origin,Accept,X-Requested-With,Content-Type,Access-Control-Request-Method,Access-Control-Request-Headers}" />
+        <property name="exposedHeaders" value="${cors.exposed.headers:}" />
+        <property name="supportsCredentials" value="${cors.support.credentials:true}" />
+        <property name="preflightMaxAge" value="${cors.preflight.maxage:1800}" />
+        <property name="decorateRequest" value="${cors.request.decorate:true}" />
     </bean>
 
     <!--
