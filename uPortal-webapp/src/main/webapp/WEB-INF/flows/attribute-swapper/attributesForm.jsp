@@ -42,11 +42,11 @@
             </ul>
         </div>
     </div>
-	
+
     <!-- Portlet Content -->
 	<div class="fl-widget-content content portlet-content" role="main">
-		
-        <form:form modelAttribute="attributeSwapRequest" action="${attributeSwapUrl}">
+
+        <form:form modelAttribute="attributeSwapRequest" action="${attributeSwapUrl}" method="POST">
             <table class="portlet-table table table-hover">
                 <thead>
                     <tr>
@@ -87,11 +87,11 @@
                     </c:forEach>
                 </tbody>
             </table>
-                
+
             <div class="buttons">
                 <spring:message var="updateAttributesText" code="update.attributes" />
                 <input type="submit" class="button btn primary" name="_eventId_updateAttributes" value="${updateAttributesText}" />
-                
+
                 <spring:message var="resetAttributesText" code="reset.attributes" />
                 <input type="submit" class="button btn" name="_eventId_resetAttributes" value="${resetAttributesText}" />
             </div>

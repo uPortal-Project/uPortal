@@ -19,32 +19,32 @@
 
 --%>
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
-<portlet:renderURL var="formUrl">
+<portlet:actionURL var="formUrl">
     <portlet:param name="execution" value="${flowExecutionKey}" />
-</portlet:renderURL>
+</portlet:actionURL>
 <c:set var="n"><portlet:namespace/></c:set>
 
 <!-- Portlet -->
 <div class="fl-widget portlet grp-mgr view-editdetails" role="section">
-    
+
     <!-- Portlet Title -->
     <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
         <h2 class="title" role="heading"><spring:message code="edit.group.details"/></h2>
     </div> <!-- end: portlet-title -->
-    
+
     <!-- Portlet Body -->
     <div class="fl-widget-content content portlet-content" role="main">
         <form:form action="${ formUrl }" method="POST" modelAttribute="group">
-        
+
             <!-- Portlet Messages -->
             <spring:hasBindErrors name="group">
                 <div class="portlet-msg-error portlet-msg error" role="alert">
                     <form:errors path="*" element="div"/>
                 </div> <!-- end: portlet-msg -->
             </spring:hasBindErrors>
-            
+
             <div class="portlet-form">
-            
+
                 <table class="table table-hover purpose-layout" summary="<spring:message code="basicInfo.generalSettingsTableSummary"/>">
                     <thead>
                         <tr>
@@ -56,11 +56,11 @@
                         <tr>
                             <td class="label"><label for="name"><spring:message code="name"/>:</label></td>
                             <td><form:input path="name"/></td>
-                        </tr>  
+                        </tr>
                         <tr>
                             <td class="label"><label for="description"><spring:message code="description"/>:</label></td>
                             <td><form:input path="description"/></td>
-                        </tr>  
+                        </tr>
                     </tbody>
                 </table>
                 <div class="buttons">

@@ -23,63 +23,64 @@ import org.apereo.portal.portlet.om.IPortletWindowId;
 
 /** Builds a URL for a specific portlet. */
 public interface IPortletUrlBuilder extends IUrlBuilder {
+
     /** @return The portlet window this url builder is for */
-    public IPortletWindowId getPortletWindowId();
+    IPortletWindowId getPortletWindowId();
 
     /** @return The parent {@link IPortalUrlBuilder} of this {@link IPortletUrlBuilder} */
-    public IPortalUrlBuilder getPortalUrlBuilder();
+    IPortalUrlBuilder getPortalUrlBuilder();
 
     /**
      * @see PortletURL#setWindowState(WindowState)
      * @throws IllegalStateException If parent {@link IPortalUrlBuilder#getUrlType()} returns {@link
      *     UrlType#RESOURCE}
      */
-    public void setWindowState(WindowState windowState);
+    void setWindowState(WindowState windowState);
     /**
      * @see PortletURL#getWindowState()
      * @throws IllegalStateException If parent {@link IPortalUrlBuilder#getUrlType()} returns {@link
      *     UrlType#RESOURCE}
      */
-    public WindowState getWindowState();
+    WindowState getWindowState();
 
     /**
      * @see PortletURL#setPortletMode(PortletMode)
      * @throws IllegalStateException If parent {@link IPortalUrlBuilder#getUrlType()} returns {@link
      *     UrlType#RESOURCE}
      */
-    public void setPortletMode(PortletMode portletMode);
+    void setPortletMode(PortletMode portletMode);
     /**
      * @see PortletURL#getPortletMode()
      * @throws IllegalStateException If parent {@link IPortalUrlBuilder#getUrlType()} returns {@link
      *     UrlType#RESOURCE}
      */
-    public PortletMode getPortletMode();
+    PortletMode getPortletMode();
 
     /**
      * @see ResourceURL#setResourceID(String)
      * @throws IllegalStateException If parent {@link IPortalUrlBuilder#getUrlType()} does not
      *     return {@link UrlType#RESOURCE}
      */
-    public void setResourceId(String resourceId);
+    void setResourceId(String resourceId);
     /**
      * @see ResourceURL#setResourceID(String)
      * @throws IllegalStateException If parent {@link IPortalUrlBuilder#getUrlType()} does not
      *     return {@link UrlType#RESOURCE}
      */
-    public String getResourceId();
+    String getResourceId();
 
     /**
      * @see ResourceURL#setCacheability(String)
      * @throws IllegalStateException If parent {@link IPortalUrlBuilder#getUrlType()} does not
      *     return {@link UrlType#RESOURCE}
      */
-    public void setCacheability(String cacheability);
+    void setCacheability(String cacheability);
     /**
      * @see ResourceURL#getCacheability()
      * @throws IllegalStateException If parent {@link IPortalUrlBuilder#getUrlType()} does not
      *     return {@link UrlType#RESOURCE}
      */
-    public String getCacheability();
+    String getCacheability();
 
     /**
      * Get the public render parameters set by this portlet. The Map is mutable and making changes
@@ -87,14 +88,14 @@ public interface IPortletUrlBuilder extends IUrlBuilder {
      *
      * @return Map containing currently set parameters.
      */
-    public Map<String, String[]> getPublicRenderParameters();
+    Map<String, String[]> getPublicRenderParameters();
 
     /**
      * @param copyCurrentRenderParameters If set to true all current private render parameters are
      *     copied to the URL
      */
-    public void setCopyCurrentRenderParameters(boolean copyCurrentRenderParameters);
+    void setCopyCurrentRenderParameters(boolean copyCurrentRenderParameters);
 
     /** @return If the current private render parameters should be copied to the generared URL */
-    public boolean getCopyCurrentRenderParameters();
+    boolean getCopyCurrentRenderParameters();
 }

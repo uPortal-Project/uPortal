@@ -33,8 +33,8 @@
         <security:custom-filter position="PRE_AUTH_FILTER" ref="portalPreAuthenticationFilter" />
         <security:intercept-url pattern="**" />
         <security:session-management session-authentication-strategy-ref="sessionAuthenticationStrategy" />
-        <!-- Spring Security's baked-in CSRF solution would be a challenge to integrate with portlets -->
-        <security:csrf disabled="true" />
+        <!-- Apply Spring Security's baked-in CSRF solution to most non-GET, non-HEAD requests -->
+        <security:csrf request-matcher-ref="portalCsrfSecurityRequestMatcher"/>
     </security:http>
 
     <bean id="sessionAuthenticationStrategy" class="org.springframework.security.web.authentication.session.NullAuthenticatedSessionStrategy" />

@@ -56,6 +56,7 @@ import org.apereo.portal.xml.xpath.XPathOperations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UrlPathHelper;
 
@@ -106,6 +107,8 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
             UrlSyntaxProviderImpl.class.getName() + ".PORTAL_REQUEST_INFO";
     private static final String PORTAL_REQUEST_PARSING_IN_PROGRESS_ATTR =
             UrlSyntaxProviderImpl.class.getName() + ".PORTAL_REQUEST_PARSING_IN_PROGRESS";
+
+    private static final String CSRF_PARAMETER_NAME = "_csrf";
 
     /**
      * Utility enum used for parsing parameters that can appear multiple times on one URL and may or
@@ -1186,6 +1189,23 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
             else {
                 url.addParameter(PARAM_TARGET_PORTLET, targetedPortletString);
             }
+
+            /*
+             * CSRF Prevention
+             *
+             * Add the Spring-managed CSRF token to requests that need them.  This list _should_
+             * include Action URLs only, but several Resource URLs are currently being used with
+             * POST requests in Apereo portlets.  We need to include Resource URLs as well, since
+             * (just now) we don't have the time to correct all those usages.  We should work to
+             * correct those cases, and remove handling of Resource URLs when we can.
+             */
+            if (UrlType.ACTION.equals(urlType) || UrlType.RESOURCE.equals(urlType)) {
+                final CsrfToken token = (CsrfToken) request.getAttribute(CSRF_PARAMETER_NAME);
+                if (token != null) {
+                    url.setParameter(token.getParameterName(), token.getToken());
+                }
+            }
+
         } else {
             final String targetFolderId = portalUrlBuilder.getTargetFolderId();
             final List<String> folderNames =
