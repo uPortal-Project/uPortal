@@ -19,6 +19,7 @@ import java.util.Map;
 
 /** Base class to define common methods for URL builders */
 public interface IUrlBuilder {
+
     /**
      * Sets a URL parameter
      *
@@ -27,9 +28,10 @@ public interface IUrlBuilder {
      * @param name The parameter name
      * @param values The value or values for the parameter
      */
-    public void setParameter(String name, String... values);
+    void setParameter(String name, String... values);
+
     /** @see #setParameter(String, String...) */
-    public void setParameter(String name, List<String> values);
+    void setParameter(String name, List<String> values);
 
     /**
      * Adds a URL parameter
@@ -40,7 +42,7 @@ public interface IUrlBuilder {
      * @param name The parameter name
      * @param values The value or values for the parameter
      */
-    public void addParameter(String name, String... values);
+    void addParameter(String name, String... values);
 
     /**
      * Sets a parameter map for this URL.
@@ -49,7 +51,7 @@ public interface IUrlBuilder {
      *
      * @param parameters Map containing parameters
      */
-    public void setParameters(Map<String, List<String>> parameters);
+    void setParameters(Map<String, List<String>> parameters);
 
     /**
      * Get the current parameters. The Map is mutable and making changes to the Map will affect the
@@ -57,5 +59,5 @@ public interface IUrlBuilder {
      *
      * @return Map containing currently set parameters.
      */
-    public Map<String, String[]> getParameters();
+    Map<String, String[]> getParameters();
 }

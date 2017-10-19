@@ -21,13 +21,14 @@ import javax.servlet.http.HttpServletRequest;
  * IPortalRequestInfo}
  */
 public interface IUrlSyntaxProvider {
+
     /**
      * Get the portal request information for the specified request.
      *
      * @param request The current portal request
      * @return Information about the current request
      */
-    public IPortalRequestInfo getPortalRequestInfo(HttpServletRequest request);
+    IPortalRequestInfo getPortalRequestInfo(HttpServletRequest request);
 
     /**
      * Get the canonical url for this portal request.
@@ -35,7 +36,7 @@ public interface IUrlSyntaxProvider {
      * @param request The current portal request
      * @return The canonical URL for the request
      */
-    public String getCanonicalUrl(HttpServletRequest request);
+    String getCanonicalUrl(HttpServletRequest request);
 
     /**
      * @param request The current request
@@ -43,7 +44,7 @@ public interface IUrlSyntaxProvider {
      * @return A URL to be used in markup or as a redirect. The URL will be absolute, starting with
      *     a / or with a protocol such as http://
      */
-    public String generateUrl(HttpServletRequest request, IPortalUrlBuilder portalUrlBuilder);
+    String generateUrl(HttpServletRequest request, IPortalUrlBuilder portalUrlBuilder);
 
     /**
      * @param request The current request
@@ -51,8 +52,7 @@ public interface IUrlSyntaxProvider {
      * @return A URL to be used in markup or as a redirect. The URL will be absolute, starting with
      *     a / or with a protocol such as http://
      */
-    public String generateUrl(
-            HttpServletRequest request, IPortalActionUrlBuilder portalActionUrlBuilder);
+    String generateUrl(HttpServletRequest request, IPortalActionUrlBuilder portalActionUrlBuilder);
 
     /**
      * Attempts to answer whether the two URLs <strong>definitely refer to different</strong>
@@ -61,6 +61,6 @@ public interface IUrlSyntaxProvider {
      *
      * @return TRUE if the two URLs certainly refer to different content; otherwise FALSE
      */
-    public boolean doesRequestPathReferToSpecificAndDifferentContentVsCanonicalPath(
+    boolean doesRequestPathReferToSpecificAndDifferentContentVsCanonicalPath(
             String requestPath, String canonicalPath);
 }
