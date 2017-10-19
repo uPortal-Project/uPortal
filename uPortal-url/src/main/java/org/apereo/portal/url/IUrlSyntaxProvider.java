@@ -52,8 +52,7 @@ public interface IUrlSyntaxProvider {
      * @return A URL to be used in markup or as a redirect. The URL will be absolute, starting with
      *     a / or with a protocol such as http://
      */
-    String generateUrl(
-            HttpServletRequest request, IPortalActionUrlBuilder portalActionUrlBuilder);
+    String generateUrl(HttpServletRequest request, IPortalActionUrlBuilder portalActionUrlBuilder);
 
     /**
      * Attempts to answer whether the two URLs <strong>definitely refer to different</strong>

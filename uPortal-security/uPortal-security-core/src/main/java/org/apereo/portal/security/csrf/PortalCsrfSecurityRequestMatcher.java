@@ -17,10 +17,8 @@ package org.apereo.portal.security.csrf;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
@@ -30,17 +28,15 @@ import org.springframework.stereotype.Component;
 
 /**
  * Concrete implementation of Spring's <code>RequestMatcher</code> that tells Spring Security which
- * requests (URLs) to protect with CSRF tokens.  Nearly all URLs are protected.  The exceptions are
+ * requests (URLs) to protect with CSRF tokens. Nearly all URLs are protected. The exceptions are
  * uPortal's REST APIs (which are secured by other means and should be available to non-portal
  * clients) and a few odds-and-ends like /Login.
  */
 @Component("portalCsrfSecurityRequestMatcher")
 public class PortalCsrfSecurityRequestMatcher implements RequestMatcher {
 
-    private static final String[] IGNORED_METHODS = new String[] {
-        HttpMethod.GET.toString(),
-        HttpMethod.HEAD.toString()
-    };
+    private static final String[] IGNORED_METHODS =
+            new String[] {HttpMethod.GET.toString(), HttpMethod.HEAD.toString()};
 
     private static final String LOGIN_PATTERN = "/Login.*";
 
@@ -48,11 +44,8 @@ public class PortalCsrfSecurityRequestMatcher implements RequestMatcher {
 
     private static final String API_PATTERN = "/api.*";
 
-    private static final String[] IGNORED_PATTERNS = new String[] {
-        LOGIN_PATTERN,
-        LOGOUT_PATTERN,
-        API_PATTERN
-    };
+    private static final String[] IGNORED_PATTERNS =
+            new String[] {LOGIN_PATTERN, LOGOUT_PATTERN, API_PATTERN};
 
     private final Set<RequestMatcher> ignoredMatchers = new HashSet<>();
 
@@ -61,29 +54,34 @@ public class PortalCsrfSecurityRequestMatcher implements RequestMatcher {
     @PostConstruct
     public void init() {
         Arrays.stream(IGNORED_PATTERNS)
-            .forEach(pattern -> ignoredMatchers.add(new RegexRequestMatcher(pattern, null)));
-        logger.info("CSRF token protection ignoring the following methods: {}", Arrays.asList(IGNORED_METHODS));
-        logger.info("CSRF token protection ignoring the following patterns: {}", Arrays.asList(IGNORED_PATTERNS));
+                .forEach(pattern -> ignoredMatchers.add(new RegexRequestMatcher(pattern, null)));
+        logger.info(
+                "CSRF token protection ignoring the following methods: {}",
+                Arrays.asList(IGNORED_METHODS));
+        logger.info(
+                "CSRF token protection ignoring the following patterns: {}",
+                Arrays.asList(IGNORED_PATTERNS));
     }
 
     @Override
     public boolean matches(HttpServletRequest request) {
 
         // Check the method
-        boolean rslt = Arrays.stream(IGNORED_METHODS)
-            .noneMatch(s -> s.equalsIgnoreCase(request.getMethod()));
+        boolean rslt =
+                Arrays.stream(IGNORED_METHODS)
+                        .noneMatch(s -> s.equalsIgnoreCase(request.getMethod()));
 
         // Check URI
         if (rslt) {
-            rslt = ignoredMatchers.stream()
-                .noneMatch(matcher -> matcher.matches(request));
+            rslt = ignoredMatchers.stream().noneMatch(matcher -> matcher.matches(request));
         }
 
-        logger.trace("Spring CSRF protection for method='{}', URI='{}' is {}",
-            request.getMethod(), request.getRequestURI(), rslt ? "ENABLED" : "DISABLED");
+        logger.trace(
+                "Spring CSRF protection for method='{}', URI='{}' is {}",
+                request.getMethod(),
+                request.getRequestURI(),
+                rslt ? "ENABLED" : "DISABLED");
 
         return rslt;
-
     }
-
 }
