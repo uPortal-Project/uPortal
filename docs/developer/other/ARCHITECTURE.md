@@ -13,7 +13,11 @@ The most complete view of the task graph and build dependency structure comes fr
 
 There are some interesting architectural features that can be extracted from the overall task graph.
 
-### Loosely Coupled Subprojects
+### Code coupling
+
+:notebook: N.B. JavaDoc tasks do tend to be highly linked together, however cross-linking across JavaDoc does not necessarily signal tight coupling.
+
+#### Loosely Coupling
 
 Loosely coupled subprojects will usually keep grouped together in the task graph, with limited linking out to other subprojects.
 For example: the five subprojects shown below are completely decoupled.
@@ -22,14 +26,13 @@ For example: the five subprojects shown below are completely decoupled.
 
 :notebook: N.B. JavaDoc tasks do tend to be highly linked together, however cross-linking across JavaDoc does not necessarily signal tight coupling.
 
-### Tightly coupled Subprojects
+#### Tightly coupling
 
 Projects with tight coupling tend to be pulled toward the center of the graph, and have many lines going outward from their `compileJava` task.
+Projects that have many dependencies will appear toward the top of the graph, projects that are highly depended on toward the bottom.
 For example: the `uPortal-security/uPortal-security-authn` subproject depends on 23 other subprojects.
 
 ![tight coupling in task graph](../../images/release-task-graph-tight-coupling.png)
-
-:notebook: N.B. JavaDoc tasks do tend to be highly linked together, however cross-linking across JavaDoc does not necessarily signal tight coupling.
 
 [Gradle]: https://gradle.org
 [projects and tasks]: https://docs.gradle.org/current/userguide/tutorial_using_tasks.html
