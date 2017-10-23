@@ -6,3 +6,4 @@ uPortal Framework sources and content modules for uPortal.
 * [uPortal Soffits](soffits/README.md)
 * [IDE Integration](other/IDE_INTEGRATION.md)
 * [Releasing uPortal](other/RELEASE.md)
+* [uPortal Architecture](other/ARCHITECTURE.md)
