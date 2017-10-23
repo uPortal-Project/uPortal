@@ -223,29 +223,6 @@ public class AnyUnblockedGrantPermissionPolicy implements IPermissionPolicy {
         return rslt;
     }
 
-    /**
-     * Allows an outside actor to force this policy to evaluate and cache an authorization decision.
-     * Permissions checking can be expensive; a well-primed cache can make the task perform better.
-     * This method will create the cache entry whether it exists already or not, forcibly resetting
-     * the TTL.
-     *
-     * @since 4.3
-     */
-    public void loadInCache(
-            IAuthorizationService service,
-            IAuthorizationPrincipal principal,
-            IPermissionOwner owner,
-            IPermissionActivity activity,
-            IPermissionTarget target) {
-
-        final Set<IGroupMember> seenGroups = new HashSet<>();
-        final CacheKey cacheKey = getCacheKey(principal, owner, activity, target);
-        final boolean answer =
-                hasUnblockedPathToGrant(service, principal, owner, activity, target, seenGroups);
-        final Element element = new Element(cacheKey, answer);
-        hasUnblockedGrantCache.put(element);
-    }
-
     private boolean hasUnblockedPathToGrantWithCache(
             IAuthorizationService service,
             IAuthorizationPrincipal principal,
