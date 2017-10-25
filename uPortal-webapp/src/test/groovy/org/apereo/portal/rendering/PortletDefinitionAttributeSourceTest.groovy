@@ -90,7 +90,7 @@ class PortletDefinitionAttributeSourceTest extends GroovyTestCase {
         def factory = XMLEventFactory.newFactory()
         def attr = factory.createAttribute('fname', 'theFname')
         def element = factory.createStartElement('', '', 'channel',attr.iterator(), null)
-        def attrIterator = testClass.getAdditionalAttributes(null, null, element)
+        testClass.getAdditionalAttributes(null, null, element)
     }
 
 }

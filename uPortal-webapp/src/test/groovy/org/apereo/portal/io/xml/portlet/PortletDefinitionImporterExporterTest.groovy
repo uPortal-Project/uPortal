@@ -238,7 +238,6 @@ public class PortletDefinitionImporterExporterTest extends Specification {
         given:
         def portletType = new PortletTypeImpl('Portlet', 'CpdUri');
         def portletDef = null;
-        def testStart = new Date()
 
         and: 'I setup a sample portlet definition'
         def input = new ExternalPortletDefinition(

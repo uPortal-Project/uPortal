@@ -3,7 +3,7 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://codenarc.org/ruleset/1.0 http://codenarc.org/ruleset-schema.xsd"
         xsi:noNamespaceSchemaLocation="http://codenarc.org/ruleset-schema.xsd">
-    <ruleset-ref path='rulesets/basic.xml' />
+    <!-- <ruleset-ref path='rulesets/basic.xml' />
     <ruleset-ref path='rulesets/braces.xml' />
     <ruleset-ref path='rulesets/concurrency.xml' />
     <ruleset-ref path='rulesets/convention.xml' />
@@ -18,6 +18,6 @@
     <ruleset-ref path='rulesets/logging.xml' />
     <ruleset-ref path='rulesets/security.xml' />
     <ruleset-ref path='rulesets/serialization.xml' />
-    <ruleset-ref path='rulesets/unnecessary.xml' />
+    <ruleset-ref path='rulesets/unnecessary.xml' /> -->
     <ruleset-ref path='rulesets/unused.xml' />
 </ruleset>
