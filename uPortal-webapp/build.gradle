@@ -45,6 +45,8 @@ dependencies {
     testCompile "org.apache.portals.pluto:pluto-container-api:${plutoVersion}"
     testCompile "org.apache.portals.pluto:pluto-container-driver-api:${plutoVersion}"
     testCompile "org.skyscreamer:jsonassert:${jsonassertVersion}"
+    testCompile "org.codehaus.groovy:groovy-test:${groovyVersion}"
+    testCompile "org.spockframework:spock-core:${spockVersion}"
     testCompile "${portletApiDependency}"
     testCompile "${servletApiDependency}"
 
