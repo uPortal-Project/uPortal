@@ -57,6 +57,14 @@ allprojects {
     apply plugin: 'com.github.sherter.google-java-format'
     apply plugin: 'net.ltgt.errorprone'
 
+    configurations {
+        // Banned dependencies
+        all*.exclude group: 'commons-logging', module: 'commons-logging'
+        all*.exclude group: 'commons-logging', module: 'commons-logging-api'
+        all*.exclude group: 'log4j', module: 'log4j'
+        all*.exclude group: 'org.hamcrest', module: 'hamcrest-core'
+    }
+
     dependencies {
       errorprone 'com.google.errorprone:error_prone_core:2.1.1'
     }
@@ -117,17 +125,8 @@ subprojects {
         mavenCentral()
     }
 
-    configurations {
-        // Banned dependencies
-        all*.exclude group: 'commons-logging', module: 'commons-logging'
-        all*.exclude group: 'commons-logging', module: 'commons-logging-api'
-        all*.exclude group: 'log4j', module: 'log4j'
-    }
-
     dependencies {
-        testCompile("junit:junit:${junitVersion}") {
-            exclude group: 'org.hamcrest', module: 'hamcrest-core'
-        }
+        testCompile "junit:junit:${junitVersion}"
         testCompile "org.easymock:easymock:${easymockVersion}"
         testCompile "org.hamcrest:hamcrest-all:${hamcrestVersion}"
         testCompile "org.mockito:mockito-core:${mockitoVersion}"

@@ -6,7 +6,6 @@ dependencies {
     compile project(':uPortal-spring')
 
     compile("org.jasig.cas.client:cas-client-core:${casClientVersion}") {
-        exclude group: 'commons-logging', module: 'commons-logging'
         exclude group: 'org.opensaml', module: 'opensaml'
     }
 

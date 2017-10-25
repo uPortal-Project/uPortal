@@ -4,9 +4,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath("org.jasig.resourceserver:resource-server-core:${resourceServerVersion}") {
-            exclude group: 'commons-logging', module: 'commons-logging'
-        }
+        classpath "org.jasig.resourceserver:resource-server-core:${resourceServerVersion}"
     }
 }
 
@@ -55,13 +53,9 @@ dependencies {
     runtime "org.aspectj:aspectjweaver:${aspectjVersion}"
     runtime "org.codehaus.groovy:groovy-jsr223:${groovyVersion}"
     runtime "org.hibernate:hibernate-entitymanager:${hibernateVersion}"
-    runtime("org.jasig.cas.client:cas-client-support-distributed-ehcache:${casClientVersion}") {
-        exclude group: 'commons-logging', module: 'commons-logging'
-    }
+    runtime "org.jasig.cas.client:cas-client-support-distributed-ehcache:${casClientVersion}"
     runtime "org.jasig.ehcache:ehcache-jgroups3replication:${ehcacheJgroups3ReplicationVersion}"
-    runtime("org.jasig.portlet.utils:portlet-ws-util:${apereoPortletUtilsVersion}") {
-        exclude group: 'commons-logging', module: 'commons-logging'
-    }
+    runtime "org.jasig.portlet.utils:portlet-ws-util:${apereoPortletUtilsVersion}"
     runtime "org.slf4j:jul-to-slf4j:${slf4jVersion}"
     runtime "org.slf4j:log4j-over-slf4j:${slf4jVersion}"
     runtime "org.springframework.security:spring-security-config:${springSecurityVersion}"
