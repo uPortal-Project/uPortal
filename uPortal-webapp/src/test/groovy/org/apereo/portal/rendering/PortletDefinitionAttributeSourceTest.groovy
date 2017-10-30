@@ -25,12 +25,13 @@ import org.apereo.portal.portlet.om.PortletLifecycleState
 import org.apereo.portal.rendering.PortletDefinitionAttributeSource
 
 import javax.xml.stream.XMLEventFactory
+import org.junit.Ignore
 
 /**
  * Tests PortletDefinitionAttributeSource.
  *
  */
-
+@Ignore
 class PortletDefinitionAttributeSourceTest extends GroovyTestCase {
     void testGetAdditionalAttributesPortlet() {
         def portletDefn = new PortletDefinitionImpl(new PortletTypeImpl('name', 'cpdUri'),
