@@ -296,7 +296,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
     public synchronized void loadUserLayout(boolean reload) throws PortalException {
         Document uli = null;
         try {
-            //Clear the loaded document first if this is a forced reload
+            // Clear the loaded document first if this is a forced reload
             if (reload) {
                 this.layoutCachingService.removeCachedLayout(owner, profile);
             }
@@ -1408,11 +1408,11 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
                 updateCacheKey();
                 getUserLayoutDOM();
             }
-            //if (isFragmentOwner)
-            //{
+            // if (isFragmentOwner)
+            // {
             //
             //    store.updateOwnerLayout(person);
-            //}
+            // }
             layoutWasReset = true;
         } catch (Exception e) {
             LOG.error(

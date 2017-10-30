@@ -168,15 +168,15 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider {
             HttpServletRequest request, IPortletWindow portletWindow, UrlType urlType) {
         final IPortletWindowId portletWindowId = portletWindow.getPortletWindowId();
 
-        //See if the targeted portlet is actually a delegate
+        // See if the targeted portlet is actually a delegate
         final IPortletWindowId parentPortletWindowId = portletWindow.getDelegationParentId();
         if (parentPortletWindowId != null) {
-            //Get the portal url builder that targets the parent
+            // Get the portal url builder that targets the parent
             final IPortalUrlBuilder portalUrlBuilder =
                     this.getPortalUrlBuilderByPortletWindow(
                             request, parentPortletWindowId, urlType);
 
-            //See if there is additional delegation request data that needs to be added to the URL
+            // See if there is additional delegation request data that needs to be added to the URL
             final DelegationRequest delegationRequest =
                     this.portletDelegationManager.getDelegationRequest(request, portletWindowId);
             if (delegationRequest != null) {
@@ -203,7 +203,7 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider {
             return portalUrlBuilder;
         }
 
-        //create the portlet url builder
+        // create the portlet url builder
         final String layoutNodeId = this.verifyPortletWindowId(request, portletWindowId);
         return new PortalUrlBuilder(
                 this.urlSyntaxProvider, request, layoutNodeId, portletWindowId, urlType);

@@ -494,7 +494,7 @@ public class PortalEventFactoryImpl implements IPortalEventFactory, ApplicationE
                 this.createPortletExecutionEventBuilder(
                         eventBuilder, portletWindowId, executionTime, false);
 
-        //Get the resource Id
+        // Get the resource Id
         final IPortalRequestInfo portalRequestInfo =
                 this.urlSyntaxProvider.getPortalRequestInfo(request);
         final String resourceId = getResourceId(portletWindowId, portalRequestInfo);
@@ -589,18 +589,18 @@ public class PortalEventFactoryImpl implements IPortalEventFactory, ApplicationE
 
         final HttpServletRequest portalRequest = portalEventBuilder.getPortalRequest();
 
-        //Get the portlet's fname
+        // Get the portlet's fname
         final IPortletWindow portletWindow =
                 this.portletWindowRegistry.getPortletWindow(portalRequest, portletWindowId);
         final IPortletEntity portletEntity = portletWindow.getPortletEntity();
         final IPortletDefinition portletDefinition = portletEntity.getPortletDefinition();
         final String fname = portletDefinition.getFName();
 
-        //Get the parameters used for the portlet execution
+        // Get the parameters used for the portlet execution
         final Map<String, List<String>> parameters =
                 getParameters(portalRequest, portletWindowId, renderRequest);
 
-        //Get the state & mode used for this request
+        // Get the state & mode used for this request
         final WindowState windowState = portletWindow.getWindowState();
         final PortletMode portletMode = portletWindow.getPortletMode();
 
@@ -640,7 +640,7 @@ public class PortalEventFactoryImpl implements IPortalEventFactory, ApplicationE
             return pruneParameters(parameters);
         }
 
-        //Only re-use render parameters on a render request
+        // Only re-use render parameters on a render request
         if (renderRequest) {
             final IPortletWindow portletWindow =
                     this.portletWindowRegistry.getPortletWindow(
@@ -678,20 +678,20 @@ public class PortalEventFactoryImpl implements IPortalEventFactory, ApplicationE
             try {
                 request = this.portalRequestUtils.getCurrentPortalRequest();
             } catch (IllegalStateException e) {
-                //System person is immutable, track their session id locally
+                // System person is immutable, track their session id locally
                 if (person == SystemPerson.INSTANCE) {
                     String sessionId = this.systemSessionId.get();
                     if (sessionId == null) {
                         sessionId = createSessionId(person);
                         if (!systemSessionId.compareAndSet(null, sessionId)) {
-                            //Another thread beat us to CaS, grab the set value
+                            // Another thread beat us to CaS, grab the set value
                             sessionId = systemSessionId.get();
                         }
                     }
                     return sessionId;
                 }
 
-                //Try tracking sessionId in person object directly
+                // Try tracking sessionId in person object directly
                 synchronized (person) {
                     String sessionId = (String) person.getAttribute(EVENT_SESSION_ID_ATTR);
                     if (sessionId == null) {
@@ -706,7 +706,7 @@ public class PortalEventFactoryImpl implements IPortalEventFactory, ApplicationE
 
         final HttpSession session = request.getSession();
 
-        //Need to sync on session scoped object to ensure only one id exists per HttpSession
+        // Need to sync on session scoped object to ensure only one id exists per HttpSession
         final Object eventSessionMutex = this.getEventSessionMutex(session);
         synchronized (eventSessionMutex) {
             String eventSessionId = (String) session.getAttribute(EVENT_SESSION_ID_ATTR);

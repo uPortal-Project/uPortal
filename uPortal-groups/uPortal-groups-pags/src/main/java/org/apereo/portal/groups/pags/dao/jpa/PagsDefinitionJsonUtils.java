@@ -140,8 +140,7 @@ public final class PagsDefinitionJsonUtils {
                         new PersonAttributesGroupTestGroupDefinitionImpl();
                 Set<IPersonAttributesGroupTestDefinition> testDefs = new HashSet<>();
                 for (Iterator<JsonNode> testNodes = testGroupNode.get("tests").elements();
-                        testNodes.hasNext();
-                        ) {
+                        testNodes.hasNext(); ) {
                     JsonNode testNode = testNodes.next();
                     IPersonAttributesGroupTestDefinition testDef =
                             new PersonAttributesGroupTestDefinitionImpl();

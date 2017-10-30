@@ -57,7 +57,7 @@ public class JpaMarketplaceRatingDaoTest extends BasePortalJpaDaoTest {
     @Before
     public void setup() {
         List<ILocalAccountPerson> personList = localAccountDao.getAllAccounts();
-        //Just a quick assertion that this is utilizing the correct db
+        // Just a quick assertion that this is utilizing the correct db
         assertEquals(personList.size(), 0);
         /*
          * Let's make two users (user1, user2)
@@ -93,12 +93,12 @@ public class JpaMarketplaceRatingDaoTest extends BasePortalJpaDaoTest {
                     public Object call() throws Exception {
                         List<IPortletDefinition> portletList =
                                 portletDefinitionDao.getPortletDefinitions();
-                        //Just a quick assertion that this is utilizing the correct db
+                        // Just a quick assertion that this is utilizing the correct db
                         assertEquals(portletList.size(), 0);
-                        //Create portletType
+                        // Create portletType
                         final IPortletType channelType =
                                 jpaChannelTypeDao.createPortletType("BaseType", "foobar");
-                        //Create a definition
+                        // Create a definition
                         final IPortletDefinition portletDef1 =
                                 new PortletDefinitionImpl(
                                         channelType,
@@ -109,7 +109,7 @@ public class JpaMarketplaceRatingDaoTest extends BasePortalJpaDaoTest {
                                         "portletName1",
                                         false);
                         portletDefinitionDao.savePortletDefinition(portletDef1);
-                        //Create a second definition with the same app/portlet
+                        // Create a second definition with the same app/portlet
                         final IPortletDefinition portletDef2 =
                                 new PortletDefinitionImpl(
                                         channelType,
@@ -127,7 +127,7 @@ public class JpaMarketplaceRatingDaoTest extends BasePortalJpaDaoTest {
 
     @Test
     public void testCreateAndRetrieveRating() {
-        //Easy Test Can we make every combination of portlet and user rating
+        // Easy Test Can we make every combination of portlet and user rating
         this.execute(
                 new Callable<Object>() {
                     @Override
@@ -153,7 +153,7 @@ public class JpaMarketplaceRatingDaoTest extends BasePortalJpaDaoTest {
                         return null;
                     }
                 });
-        //Now let's retrieve our objects and delete them
+        // Now let's retrieve our objects and delete them
         this.execute(
                 new Callable<Object>() {
                     @Override
@@ -171,7 +171,7 @@ public class JpaMarketplaceRatingDaoTest extends BasePortalJpaDaoTest {
 
     @Test
     public void testUpdateRatings() {
-        //Let's create some ratings
+        // Let's create some ratings
         this.execute(
                 new Callable<Object>() {
                     @Override
@@ -197,7 +197,7 @@ public class JpaMarketplaceRatingDaoTest extends BasePortalJpaDaoTest {
                         return null;
                     }
                 });
-        //Now let's update with random numbers
+        // Now let's update with random numbers
         this.execute(
                 new Callable<Object>() {
                     @Override
@@ -224,7 +224,7 @@ public class JpaMarketplaceRatingDaoTest extends BasePortalJpaDaoTest {
                         return null;
                     }
                 });
-        //Now let's retrieve our objects and delete them
+        // Now let's retrieve our objects and delete them
         this.execute(
                 new Callable<Object>() {
                     @Override
@@ -246,7 +246,7 @@ public class JpaMarketplaceRatingDaoTest extends BasePortalJpaDaoTest {
                 new Callable<Object>() {
                     @Override
                     public Object call() throws Exception {
-                        //first create some ratings
+                        // first create some ratings
                         List<IPortletDefinition> portletList =
                                 portletDefinitionDao.getPortletDefinitions();
                         List<ILocalAccountPerson> personList = localAccountDao.getAllAccounts();
@@ -265,10 +265,10 @@ public class JpaMarketplaceRatingDaoTest extends BasePortalJpaDaoTest {
                                 marketplaceRatingDao.createOrUpdateRating(rating);
                             }
                         }
-                        //now aggregate them
+                        // now aggregate them
                         marketplaceRatingDao.aggregateMarketplaceRating();
 
-                        //now verified the portlet definitions are up-to-date with aggregated data
+                        // now verified the portlet definitions are up-to-date with aggregated data
                         List<IPortletDefinition> updatedPortletList =
                                 portletDefinitionDao.getPortletDefinitions();
                         for (IPortletDefinition def : updatedPortletList) {

@@ -78,12 +78,12 @@ class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences {
     @JoinColumn(name = "UP_SS_DESCRIPTOR_ID", nullable = false)
     private final IStylesheetDescriptor stylesheetDescriptor;
 
-    //TODO eventually turn into object reference to IPerson
+    // TODO eventually turn into object reference to IPerson
     @NaturalId
     @Column(name = "USER_ID", nullable = false, updatable = false)
     private final int userId;
 
-    //TODO eventually turn into object reference to UserProfile
+    // TODO eventually turn into object reference to UserProfile
     @NaturalId
     @Column(name = "PROFILE_ID", nullable = false, updatable = false)
     private final int profileId;
@@ -91,7 +91,7 @@ class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences {
     @ElementCollection(fetch = FetchType.EAGER)
     @MapKeyColumn(name = "PROP_NAME", nullable = false, length = 500)
     @Column(name = "PROP_VALUE", nullable = false, length = 2000)
-    @Type(type = "nullSafeString") //only applies to map values
+    @Type(type = "nullSafeString") // only applies to map values
     @CollectionTable(
         name = "UP_SS_USER_PREF_OUTPUT_PROP",
         joinColumns = @JoinColumn(name = "SS_USER_PREF_ID", nullable = false)
@@ -103,7 +103,7 @@ class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences {
     @ElementCollection(fetch = FetchType.EAGER)
     @MapKeyColumn(name = "PARAM_NAME", nullable = false, length = 500)
     @Column(name = "PARAM_VALUE", nullable = false, length = 2000)
-    @Type(type = "nullSafeString") //only applies to map values
+    @Type(type = "nullSafeString") // only applies to map values
     @CollectionTable(
         name = "UP_SS_USER_PREF_PARAM",
         joinColumns = @JoinColumn(name = "SS_USER_PREF_ID", nullable = false)
@@ -144,13 +144,12 @@ class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences {
     }
 
     @PrePersist
-    @SuppressWarnings("unused") //Called by jpa/hibernate via reflection
+    @SuppressWarnings("unused") // Called by jpa/hibernate via reflection
     private void purgeEmptyLayoutNodes() {
-        //Remove layout attribute objects when they have no values left.
+        // Remove layout attribute objects when they have no values left.
         for (final Iterator<LayoutNodeAttributesImpl> layoutNodeAttrsItr =
                         this.layoutAttributes.values().iterator();
-                layoutNodeAttrsItr.hasNext();
-                ) {
+                layoutNodeAttrsItr.hasNext(); ) {
 
             final LayoutNodeAttributesImpl layoutNodeAttrs = layoutNodeAttrsItr.next();
             if (layoutNodeAttrs.getAttributes().isEmpty()) {

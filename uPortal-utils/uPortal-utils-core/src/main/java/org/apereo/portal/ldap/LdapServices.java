@@ -64,7 +64,7 @@ public final class LdapServices {
         try {
             ldapServer = (ILdapServer) applicationContext.getBean(name, ILdapServer.class);
         } catch (NoSuchBeanDefinitionException nsbde) {
-            //Ignore the exception for not finding the named bean.
+            // Ignore the exception for not finding the named bean.
         }
 
         if (LOG.isDebugEnabled()) {

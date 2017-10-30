@@ -157,7 +157,8 @@ public class JpaEventSessionDao extends BaseAggrEventsJpaDao implements EventSes
 
         eventSession = naturalIdQuery.load();
         if (eventSession == null) {
-            //No event session, somehow we missed the login event. Look at the groups the user is currently a member of
+            // No event session, somehow we missed the login event. Look at the groups the user is
+            // currently a member of
             final Set<AggregatedGroupMapping> groupMappings = this.getGroupsForEvent(event);
 
             final DateTime eventDate = event.getTimestampAsDate();
@@ -227,8 +228,7 @@ public class JpaEventSessionDao extends BaseAggrEventsJpaDao implements EventSes
             for (@SuppressWarnings("unchecked")
                     final Iterator<IEntityGroup> containingGroups =
                             this.compositeGroupService.findParentGroups(groupMember);
-                    containingGroups.hasNext();
-                    ) {
+                    containingGroups.hasNext(); ) {
                 final IEntityGroup group = containingGroups.next();
                 final AggregatedGroupMapping groupMapping =
                         this.aggregatedGroupLookupDao.getGroupMapping(

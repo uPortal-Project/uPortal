@@ -34,7 +34,7 @@ public class FrameworkMBeanImpl implements FrameworkMBean {
      */
     @Override
     public Date getStartedAt() {
-        return new Date(0); //PortalSessionManager.STARTED_AT;
+        return new Date(0); // PortalSessionManager.STARTED_AT;
     }
 
     /*
@@ -71,7 +71,7 @@ public class FrameworkMBeanImpl implements FrameworkMBean {
     }
 
     public MovingAverageSample getLastRender() {
-        return null; //StaticRenderingPipeline.getLastRenderSample();
+        return null; // StaticRenderingPipeline.getLastRenderSample();
     }
 
     /*
@@ -161,6 +161,6 @@ public class FrameworkMBeanImpl implements FrameworkMBean {
     // Threads
     @Override
     public long getThreadCount() {
-        return -1; //PortalSessionManager.getThreadGroup().activeCount();
+        return -1; // PortalSessionManager.getThreadGroup().activeCount();
     }
 }

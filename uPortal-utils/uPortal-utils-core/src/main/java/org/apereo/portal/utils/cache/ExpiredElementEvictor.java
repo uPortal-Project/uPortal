@@ -39,7 +39,7 @@ public class ExpiredElementEvictor {
         final String[] cacheNames;
 
         if (!evictLock.tryLock()) {
-            //Lock is already held, skip eviction
+            // Lock is already held, skip eviction
             return;
         }
         try {

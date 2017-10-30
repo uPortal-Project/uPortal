@@ -262,18 +262,18 @@ public final class CacheKey implements Serializable, TaggedCacheEntry {
 
     @Override
     public String toString() {
-        //Try to use a JSON formatter for generating the toString
+        // Try to use a JSON formatter for generating the toString
         try {
             return WRITER.writeValueAsString(this);
         } catch (JsonGenerationException e) {
-            //ignore
+            // ignore
         } catch (JsonMappingException e) {
-            //ignore
+            // ignore
         } catch (IOException e) {
-            //ignore
+            // ignore
         }
 
-        //Fall back on a simpler tostring
+        // Fall back on a simpler tostring
         return "CacheKey [source="
                 + source
                 + ", key="

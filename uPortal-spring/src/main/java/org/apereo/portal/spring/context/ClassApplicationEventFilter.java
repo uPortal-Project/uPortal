@@ -81,7 +81,7 @@ public class ClassApplicationEventFilter<E extends ApplicationEvent>
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        //Figure out the generic type's Class, cribbed from SmartApplicationListener
+        // Figure out the generic type's Class, cribbed from SmartApplicationListener
         Class<?> typeArg =
                 GenericTypeResolver.resolveTypeArgument(this.getClass(), ApplicationListener.class);
         if (typeArg == null || typeArg.equals(ApplicationEvent.class)) {
@@ -124,14 +124,14 @@ public class ClassApplicationEventFilter<E extends ApplicationEvent>
             return true;
         }
 
-        //Check inheritance for includes match if no explicitly matching
+        // Check inheritance for includes match if no explicitly matching
         for (final Class<? extends ApplicationEvent> includedType : this.ignoredEvents) {
             if (includedType.isAssignableFrom(eventType)) {
                 return false;
             }
         }
 
-        //Check inheritance for includes match if no explicitly matching
+        // Check inheritance for includes match if no explicitly matching
         for (final Class<? extends ApplicationEvent> includedType : this.supportedEvents) {
             if (includedType.isAssignableFrom(eventType)) {
                 return true;

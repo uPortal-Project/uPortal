@@ -346,7 +346,7 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
         final IStylesheetDescriptor stylesheetDescriptor =
                 stylesheetPreferencesKey.stylesheetDescriptor;
 
-        //Get the scoped sources once
+        // Get the scoped sources once
         final IStylesheetUserPreferences stylesheetUserPreferences =
                 this.getStylesheetUserPreferences(request, stylesheetPreferencesKey);
 
@@ -368,7 +368,7 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
                         OUTPUT_PROPERTIES_KEY + stylesheetPreferencesKey.toString(),
                         false);
 
-        //Try getting each output property to populate the Properties
+        // Try getting each output property to populate the Properties
         for (final IOutputPropertyDescriptor outputPropertyDescriptor :
                 stylesheetDescriptor.getOutputPropertyDescriptors()) {
             final String name = outputPropertyDescriptor.getName();
@@ -413,12 +413,12 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
                     }
             }
 
-            //Don't add unset properties
+            // Don't add unset properties
             if (value == null) {
                 continue;
             }
 
-            //If the value is equal to the default value remove the property and return null
+            // If the value is equal to the default value remove the property and return null
             if (this.compareValues(value, outputPropertyDescriptor.getDefaultValue())) {
                 this.removeOutputProperty(request, prefScope, name);
                 continue;
@@ -477,7 +477,7 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
             return null;
         }
 
-        //If the value is equal to the default value remove the property and return null
+        // If the value is equal to the default value remove the property and return null
         if (this.compareValues(value, stylesheetParameterDescriptor.getDefaultValue())) {
             this.removeStylesheetParameter(request, prefScope, name);
             return null;
@@ -608,7 +608,7 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
         final IStylesheetDescriptor stylesheetDescriptor =
                 stylesheetPreferencesKey.stylesheetDescriptor;
 
-        //Get the scoped sources once
+        // Get the scoped sources once
         final IStylesheetUserPreferences stylesheetUserPreferences =
                 this.getStylesheetUserPreferences(request, stylesheetPreferencesKey);
         final Map<String, String> sessionStylesheetParameters;
@@ -628,7 +628,7 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
                         STYLESHEET_PARAMETERS_KEY + stylesheetPreferencesKey.toString(),
                         false);
 
-        //Try getting each stylesheet parameter to populate the Map
+        // Try getting each stylesheet parameter to populate the Map
         for (final IStylesheetParameterDescriptor stylesheetParameterDescriptor :
                 stylesheetDescriptor.getStylesheetParameterDescriptors()) {
             final String name = stylesheetParameterDescriptor.getName();
@@ -673,12 +673,12 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
                     }
             }
 
-            //Don't add unset properties
+            // Don't add unset properties
             if (value == null) {
                 continue;
             }
 
-            //If the value is equal to the default value remove the property and return null
+            // If the value is equal to the default value remove the property and return null
             if (this.compareValues(value, stylesheetParameterDescriptor.getDefaultValue())) {
                 this.removeStylesheetParameter(request, prefScope, name);
                 continue;
@@ -706,7 +706,7 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
             return null;
         }
 
-        //Load the default value
+        // Load the default value
         String defaultValue = null;
         final IStylesheetUserPreferences distributedStylesheetUserPreferences =
                 this.getDistributedStylesheetUserPreferences(request, prefScope);
@@ -720,7 +720,8 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
             }
 
             if (this.compareValues(defaultValue, layoutAttributeDescriptor.getDefaultValue())) {
-                //DLM attribute value matches the stylesheet descriptor default, remove the DLM value
+                // DLM attribute value matches the stylesheet descriptor default, remove the DLM
+                // value
                 distributedStylesheetUserPreferences.removeLayoutAttribute(nodeId, name);
                 defaultValue = null;
             }
@@ -766,13 +767,13 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
 
         if (!this.isFragmentOwnerStylesheetPreferencesKey(stylesheetPreferencesKey)) {
             if (this.compareValues(value, layoutAttributeDescriptor.getDefaultValue())
-                    || //Value is equal to stylesheet descriptor default
+                    || // Value is equal to stylesheet descriptor default
                     (defaultValue != null
                             && this.compareValues(
-                                    value,
-                                    defaultValue))) { //Value is equal to DLM stylesheet preferences default
+                                    value, defaultValue))) { // Value is equal to DLM stylesheet
+                // preferences default
 
-                //Remove the user's customized value
+                // Remove the user's customized value
                 this.removeLayoutAttribute(request, prefScope, nodeId, name);
                 return null;
             }
@@ -863,7 +864,7 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
         }
 
         if (this.compareValues(value, layoutAttributeDescriptor.getDefaultValue())) {
-            //Value matches the default value, remove the attribute
+            // Value matches the default value, remove the attribute
             return this.removeLayoutAttribute(request, prefScope, nodeId, name);
         }
 
@@ -873,7 +874,7 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
             final String defaultValue =
                     distributedStylesheetUserPreferences.getLayoutAttribute(nodeId, name);
             if (this.compareValues(value, defaultValue)) {
-                //Value matches the DLM preferences value, remove the value
+                // Value matches the DLM preferences value, remove the value
                 return this.removeLayoutAttribute(request, prefScope, nodeId, name);
             }
         }
@@ -904,7 +905,7 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
             default:
                 {
 
-                    //Determine the mutex to use for accessing the nodeAttributes map
+                    // Determine the mutex to use for accessing the nodeAttributes map
                     final Object mutex;
                     switch (scope) {
                         case REQUEST:
@@ -925,7 +926,7 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
                             }
                     }
 
-                    //Get/Create the nodeAttributes map
+                    // Get/Create the nodeAttributes map
                     Map<String, String> nodeAttributes;
                     synchronized (mutex) {
                         nodeAttributes =
@@ -1086,7 +1087,7 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
 
         final HttpSession session = request.getSession(false);
         if (session != null) {
-            //nodeId, name, value
+            // nodeId, name, value
             final Map<String, Map<String, String>> sessionLayoutAttributes =
                     getSessionLayoutAttributes(session, stylesheetPreferencesKey);
             getAllNodesAndValuesForAttribute(sessionLayoutAttributes, name, result);
@@ -1111,7 +1112,7 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
 
         for (Map.Entry<String, Map<String, String>> layoutNodeAttributesEntry :
                 layoutAttributes.entrySet()) {
-            //name, value
+            // name, value
             final Map<String, String> layoutNodeAttribute = layoutNodeAttributesEntry.getValue();
             final String value = layoutNodeAttribute.get(name);
             if (value != null) {
@@ -1132,7 +1133,7 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
         final IStylesheetDescriptor stylesheetDescriptor =
                 stylesheetPreferencesKey.stylesheetDescriptor;
 
-        //Get the scoped sources once
+        // Get the scoped sources once
         final IStylesheetUserPreferences stylesheetUserPreferences =
                 this.getStylesheetUserPreferences(request, stylesheetPreferencesKey);
         final Map<String, Map<String, String>> sessionLayoutAttributes;
@@ -1151,7 +1152,7 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
             distributedStylesheetUserPreferences.populateLayoutAttributes(nodeId, layoutAttributes);
         }
 
-        //Try getting each layout attribute to populate the Map
+        // Try getting each layout attribute to populate the Map
         for (final ILayoutAttributeDescriptor layoutAttributeDescriptor :
                 stylesheetDescriptor.getLayoutAttributeDescriptors()) {
             final String name = layoutAttributeDescriptor.getName();
@@ -1210,12 +1211,12 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
                     }
             }
 
-            //Don't add unset properties
+            // Don't add unset properties
             if (value == null) {
                 continue;
             }
 
-            //If the value is equal to the default value remove the property and return null
+            // If the value is equal to the default value remove the property and return null
             if (this.compareValues(value, layoutAttributeDescriptor.getDefaultValue())) {
                 this.removeLayoutAttribute(request, prefScope, nodeId, name);
                 continue;

@@ -56,7 +56,7 @@ public class CounterStoreTest {
 
     @Test
     public void testCounterSingleThread() {
-        //Get until DB has to increment
+        // Get until DB has to increment
         this.getValue(this.counterStoreOne, "Test1", 1, 7, 1);
 
         this.getValue(this.counterStoreTwo, "Test1", 1, 10, 4);

@@ -75,14 +75,15 @@ public abstract class FilteringXMLEventReader extends BaseXMLEventReader {
         do {
             event = super.getParent().nextEvent();
 
-            //If there are pruned elements in the queue filtering events is still needed
+            // If there are pruned elements in the queue filtering events is still needed
             if (!prunedElements.isEmpty()) {
-                //If another start element add it to the queue
+                // If another start element add it to the queue
                 if (event.isStartElement()) {
                     final StartElement startElement = event.asStartElement();
                     prunedElements.push(startElement.getName());
                 }
-                //If end element pop the newest name of the queue and double check that the start/end elements match up
+                // If end element pop the newest name of the queue and double check that the
+                // start/end elements match up
                 else if (event.isEndElement()) {
                     final QName startElementName = prunedElements.pop();
 
@@ -102,8 +103,9 @@ public abstract class FilteringXMLEventReader extends BaseXMLEventReader {
             } else {
                 final XMLEvent filteredEvent = this.filterEvent(event, peek);
 
-                //If the event is being removed and it is a start element all elements until the matching
-                //end element need to be removed as well
+                // If the event is being removed and it is a start element all elements until the
+                // matching
+                // end element need to be removed as well
                 if (filteredEvent == null && event.isStartElement()) {
                     final StartElement startElement = event.asStartElement();
                     final QName name = startElement.getName();

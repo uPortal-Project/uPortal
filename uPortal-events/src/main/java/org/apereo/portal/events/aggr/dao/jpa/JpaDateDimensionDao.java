@@ -117,7 +117,7 @@ public class JpaDateDimensionDao extends BaseAggrEventsJpaDao implements DateDim
                                 final Root<DateDimensionImpl> dimensionRoot =
                                         criteriaQuery.from(DateDimensionImpl.class);
 
-                                //Build subquery for max date
+                                // Build subquery for max date
                                 final Subquery<LocalDate> maxDateSub =
                                         criteriaQuery.subquery(LocalDate.class);
                                 final Root<DateDimensionImpl> maxDateDimensionSub =
@@ -126,7 +126,7 @@ public class JpaDateDimensionDao extends BaseAggrEventsJpaDao implements DateDim
                                         cb.greatest(
                                                 maxDateDimensionSub.get(DateDimensionImpl_.date)));
 
-                                //Get the date dimension
+                                // Get the date dimension
                                 criteriaQuery
                                         .select(dimensionRoot)
                                         .where(
@@ -148,7 +148,7 @@ public class JpaDateDimensionDao extends BaseAggrEventsJpaDao implements DateDim
                                 final Root<DateDimensionImpl> dimensionRoot =
                                         criteriaQuery.from(DateDimensionImpl.class);
 
-                                //Build subquery for max date
+                                // Build subquery for max date
                                 final Subquery<LocalDate> maxDateSub =
                                         criteriaQuery.subquery(LocalDate.class);
                                 final Root<DateDimensionImpl> maxDateDimensionSub =
@@ -156,7 +156,7 @@ public class JpaDateDimensionDao extends BaseAggrEventsJpaDao implements DateDim
                                 maxDateSub.select(
                                         cb.least(maxDateDimensionSub.get(DateDimensionImpl_.date)));
 
-                                //Get the date dimension
+                                // Get the date dimension
                                 criteriaQuery
                                         .select(dimensionRoot)
                                         .where(

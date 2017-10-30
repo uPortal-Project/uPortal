@@ -152,7 +152,7 @@ public class FragmentDefinitionImporter
 
         final XMLEventReader xmlEventReader = staxSource.getXMLEventReader();
 
-        //Wrap the event reader in a stream reader to avoid a JDK bug
+        // Wrap the event reader in a stream reader to avoid a JDK bug
         final XMLStreamReader streamReader;
         try {
             streamReader = new VersionCachingXMLEventStreamReader(xmlEventReader);

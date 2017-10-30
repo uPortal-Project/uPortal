@@ -362,7 +362,8 @@ public class PortletRendererImplTest {
                 new TestingCacheState<
                         CachedPortletData<PortletRenderResult>, PortletRenderResult>();
         CacheControl cacheControl = cacheState.getCacheControl();
-        // by setting useCachedContent to true, we are saying even though content is expired, replay it anyways (since etag is still valid)
+        // by setting useCachedContent to true, we are saying even though content is expired, replay
+        // it anyways (since etag is still valid)
         cacheControl.setUseCachedContent(true);
         cacheControl.setETag("123456");
         cacheControl.setExpirationTime(300);
@@ -735,7 +736,7 @@ public class PortletRendererImplTest {
 
         ResourcePortletOutputHandler handler = new ResourcePortletOutputHandler(response);
         portletRenderer.doServeResource(portletWindowId, request, response, handler);
-        //byte [] fromResponse = response.getContentAsByteArray();
+        // byte [] fromResponse = response.getContentAsByteArray();
 
         Assert.assertEquals(0, response.getContentLength());
         Assert.assertEquals(304, response.getStatus());
@@ -782,7 +783,7 @@ public class PortletRendererImplTest {
 
         ResourcePortletOutputHandler handler = new ResourcePortletOutputHandler(response);
         portletRenderer.doServeResource(portletWindowId, request, response, handler);
-        //byte [] fromResponse = response.getContentAsByteArray();
+        // byte [] fromResponse = response.getContentAsByteArray();
 
         Assert.assertEquals(0, response.getContentLength());
         Assert.assertEquals(304, response.getStatus());

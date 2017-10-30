@@ -129,7 +129,7 @@ public final class FavoritesUtils {
         Enumeration<String> childrenOfRoot = userLayout.getChildIds(userLayout.getRootId());
 
         while (childrenOfRoot
-                .hasMoreElements()) { //loop over folders that might be the favorites folder
+                .hasMoreElements()) { // loop over folders that might be the favorites folder
             String nodeId = childrenOfRoot.nextElement();
 
             try {
@@ -155,7 +155,7 @@ public final class FavoritesUtils {
         }
 
         logger.warn("Favorite tab was searched for but not found");
-        return null; //didn't find favorite tab
+        return null; // didn't find favorite tab
     }
 
     /**
@@ -174,7 +174,7 @@ public final class FavoritesUtils {
         Enumeration<String> childrenOfRoot = userLayout.getChildIds(userLayout.getRootId());
 
         while (childrenOfRoot
-                .hasMoreElements()) { //loop over folders that might be the favorites folder
+                .hasMoreElements()) { // loop over folders that might be the favorites folder
             String nodeId = childrenOfRoot.nextElement();
 
             try {
@@ -188,10 +188,11 @@ public final class FavoritesUtils {
                             (IUserLayoutFolderDescription) nodeDescription;
 
                     if (FAVORITES_TYPE.equalsIgnoreCase(folderDescription.getFolderType())) {
-                        // TODO: assumes columns structure, but should traverse tree to collect all portlets regardless
+                        // TODO: assumes columns structure, but should traverse tree to collect all
+                        // portlets regardless
                         Enumeration<String> columns = userLayout.getChildIds(nodeId);
 
-                        //loop through columns to gather beloved portlets
+                        // loop through columns to gather beloved portlets
                         while (columns.hasMoreElements()) {
                             String column = columns.nextElement();
                             Enumeration<String> portlets = userLayout.getChildIds(column);
@@ -235,7 +236,8 @@ public final class FavoritesUtils {
     public static boolean hasAnyFavorites(IUserLayout layout) {
         Validate.notNull(layout, "Cannot determine whether a null layout contains favorites.");
 
-        // (premature) performance optimization: short circuit returns true if nonzero favorite portlets
+        // (premature) performance optimization: short circuit returns true if nonzero favorite
+        // portlets
         return (!getFavoritePortlets(layout).isEmpty()
                 || !getFavoriteCollections(layout).isEmpty());
     }

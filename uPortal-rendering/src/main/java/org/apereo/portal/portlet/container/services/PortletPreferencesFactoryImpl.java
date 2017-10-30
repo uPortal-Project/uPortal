@@ -122,7 +122,8 @@ public class PortletPreferencesFactoryImpl implements PortletPreferencesFactory 
     }
 
     protected boolean isGuestUser(HttpServletRequest containerRequest) {
-        //Checking for isAuth instead of isGuest to allow for authenticated guest customization of prefs
+        // Checking for isAuth instead of isGuest to allow for authenticated guest customization of
+        // prefs
         final IPerson person = this.personManager.getPerson(containerRequest);
         final ISecurityContext securityContext = person.getSecurityContext();
         return !securityContext.isAuthenticated();

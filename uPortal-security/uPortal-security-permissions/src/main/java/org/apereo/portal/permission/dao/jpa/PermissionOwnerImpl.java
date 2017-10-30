@@ -95,7 +95,7 @@ class PermissionOwnerImpl implements IPermissionOwner, Serializable {
     @Fetch(FetchMode.JOIN)
     private Set<IPermissionActivity> activities = new HashSet<IPermissionActivity>();
 
-    //For use by hibernate reflection
+    // For use by hibernate reflection
     @SuppressWarnings("unused")
     private PermissionOwnerImpl() {
         this.id = -1l;

@@ -306,12 +306,12 @@ public class PortletCacheControlServiceImplTest {
                 .thenReturn(portalRequestInfo);
         when(portalRequestInfo.getPortletRequestInfoMap()).thenReturn(Collections.EMPTY_MAP);
 
-        //Get the initial cache state
+        // Get the initial cache state
         final CacheState<CachedPortletData<PortletRenderResult>, PortletRenderResult>
                 firstCacheState =
                         cacheControlService.getPortletRenderState(httpRequest, portletWindowId);
 
-        //Fake Render execution
+        // Fake Render execution
         final CacheControl cacheControl = firstCacheState.getCacheControl();
         cacheControl.setExpirationTime(300);
 
@@ -330,11 +330,11 @@ public class PortletCacheControlServiceImplTest {
 
         assertTrue(cacheControlService.shouldOutputBeCached(cacheControl));
 
-        //Cache the results
+        // Cache the results
         cacheControlService.cachePortletRenderOutput(
                 portletWindowId, httpRequest, firstCacheState, cachedPortletData);
 
-        //Check the cached results
+        // Check the cached results
         final CacheState<CachedPortletData<PortletRenderResult>, PortletRenderResult>
                 secondCacheState =
                         cacheControlService.getPortletRenderState(httpRequest, portletWindowId);
@@ -368,11 +368,11 @@ public class PortletCacheControlServiceImplTest {
                 .thenReturn(portalRequestInfo);
         when(portalRequestInfo.getPortletRequestInfoMap()).thenReturn(Collections.EMPTY_MAP);
 
-        //Get the initial cache state
+        // Get the initial cache state
         final CacheState<CachedPortletResourceData<Long>, Long> firstCacheState =
                 cacheControlService.getPortletResourceState(httpRequest, portletWindowId);
 
-        //Fake resource execution
+        // Fake resource execution
         final CacheControl cacheControl = firstCacheState.getCacheControl();
         cacheControl.setExpirationTime(300);
 
@@ -393,11 +393,11 @@ public class PortletCacheControlServiceImplTest {
 
         assertTrue(cacheControlService.shouldOutputBeCached(cacheControl));
 
-        //Cache the results
+        // Cache the results
         cacheControlService.cachePortletResourceOutput(
                 portletWindowId, httpRequest, firstCacheState, cachedPortletResourceData);
 
-        //Check the cached results
+        // Check the cached results
         final CacheState<CachedPortletResourceData<Long>, Long> secondCacheState =
                 cacheControlService.getPortletResourceState(httpRequest, portletWindowId);
 

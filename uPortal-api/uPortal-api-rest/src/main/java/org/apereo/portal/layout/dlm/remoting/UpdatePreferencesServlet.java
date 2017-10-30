@@ -479,7 +479,8 @@ public class UpdatePreferencesServlet {
             this.stylesheetUserPreferencesService.setLayoutAttribute(
                     request, PreferencesScope.STRUCTURE, columnId, "width", widths[count] + "%");
             try {
-                // This sets the column attribute in memory but doesn't persist it.  Comment says saves changes "prior to persisting"
+                // This sets the column attribute in memory but doesn't persist it.  Comment says
+                // saves changes "prior to persisting"
                 Element folder = ulm.getUserLayoutDOM().getElementById(columnId);
                 UserPrefsHandler.setUserPreference(folder, "width", per);
             } catch (Exception e) {
@@ -593,11 +594,11 @@ public class UpdatePreferencesServlet {
 
         final IUserLayoutChannelDescription channel = new UserLayoutChannelDescription(pdef);
 
-        //get favorite tab
+        // get favorite tab
         final String favoriteTabNodeId = FavoritesUtils.getFavoriteTabNodeId(ulm.getUserLayout());
 
         if (favoriteTabNodeId != null) {
-            //add portlet to favorite tab
+            // add portlet to favorite tab
             final IUserLayoutNodeDescription node = addNodeToTab(ulm, channel, favoriteTabNodeId);
 
             if (node == null) {
@@ -619,7 +620,7 @@ public class UpdatePreferencesServlet {
                 return handlePersistError(request, response, e);
             }
 
-            //document success for notifications
+            // document success for notifications
             final Map<String, String> model = new HashMap<String, String>();
             final String channelTitle = channel.getTitle();
             model.put(
@@ -674,7 +675,7 @@ public class UpdatePreferencesServlet {
             List<IUserLayoutNodeDescription> favoritePortlets =
                     FavoritesUtils.getFavoritePortlets(ulm.getUserLayout());
 
-            //search for the favorite to delete
+            // search for the favorite to delete
             EqualPredicate nameEqlPredicate = new EqualPredicate(functionalName);
             Object result =
                     CollectionUtils.find(
@@ -709,7 +710,7 @@ public class UpdatePreferencesServlet {
                     return handlePersistError(request, response, e);
                 }
 
-                //document success for notifications
+                // document success for notifications
                 Map<String, String> model = new HashMap<String, String>();
                 model.put(
                         "response",
@@ -779,7 +780,7 @@ public class UpdatePreferencesServlet {
         } else {
             boolean isInsert = method != null && method.equals("insertBefore");
 
-            //If neither an insert or type folder - Can't "insert into" non-folder
+            // If neither an insert or type folder - Can't "insert into" non-folder
             if (!(isInsert || isFolder(ulm, destinationId))) {
                 logger.error("Cannot insert into portlet element");
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -952,7 +953,8 @@ public class UpdatePreferencesServlet {
             this.stylesheetUserPreferencesService.setLayoutAttribute(
                     request, PreferencesScope.STRUCTURE, newColumn.getId(), "width", width + "%");
             try {
-                // This sets the column attribute in memory but doesn't persist it.  Comment says saves changes "prior to persisting"
+                // This sets the column attribute in memory but doesn't persist it.  Comment says
+                // saves changes "prior to persisting"
                 Element folder = ulm.getUserLayoutDOM().getElementById(newColumn.getId());
                 UserPrefsHandler.setUserPreference(folder, "width", per);
             } catch (Exception e) {
@@ -1201,7 +1203,8 @@ public class UpdatePreferencesServlet {
                 return handlePersistError(request, response, e);
             }
 
-            //TODO why do we have to do this, shouldn't modifying the layout be enough to trigger a full re-render (layout's cache key changes)
+            // TODO why do we have to do this, shouldn't modifying the layout be enough to trigger a
+            // full re-render (layout's cache key changes)
             this.stylesheetUserPreferencesService.setLayoutAttribute(
                     request, PreferencesScope.STRUCTURE, tabId, "name", tabName);
         }
@@ -1348,7 +1351,7 @@ public class UpdatePreferencesServlet {
         Enumeration<String> childrenOfRoot = userLayout.getChildIds(userLayout.getRootId());
 
         while (childrenOfRoot
-                .hasMoreElements()) { //loop over folders that might be the favorites folder
+                .hasMoreElements()) { // loop over folders that might be the favorites folder
             String nodeId = childrenOfRoot.nextElement();
 
             try {
@@ -1371,7 +1374,7 @@ public class UpdatePreferencesServlet {
         }
 
         logger.warn("Tab " + tabName + " was searched for but not found");
-        return null; //didn't find tab
+        return null; // didn't find tab
     }
 
     /**
@@ -1393,7 +1396,7 @@ public class UpdatePreferencesServlet {
                 destinationId,
                 method);
 
-        if (StringUtils.isEmpty(destinationId)) { //shortcut for beginning and end
+        if (StringUtils.isEmpty(destinationId)) { // shortcut for beginning and end
             return true;
         }
         IUserInstance ui = userInstanceManager.getUserInstance(request);
@@ -1421,7 +1424,8 @@ public class UpdatePreferencesServlet {
                 // add the column to our layout
                 IUserLayoutNodeDescription col = ulm.addNode(newColumn, destinationId, null);
 
-                // If column was created (might not if the tab had addChild=false), move the channel.
+                // If column was created (might not if the tab had addChild=false), move the
+                // channel.
                 if (col != null) {
                     success = attemptNodeMove(ulm, sourceId, col.getId(), null);
                 } else {

@@ -566,7 +566,8 @@ public final class RequestParameterPolicyEnforcementFilterTests {
         final Set<String> parametersToCheck = new HashSet<String>();
         parametersToCheck.add("dogName");
 
-        // set up a parameter map with a multi-valued parameter with a name not matching those to check
+        // set up a parameter map with a multi-valued parameter with a name not matching those to
+        // check
         final Map<String, String[]> parameterMap = new HashMap<String, String[]>();
         parameterMap.put("catName", new String[] {"Reggie", "Shenanigans"});
 
@@ -677,7 +678,8 @@ public final class RequestParameterPolicyEnforcementFilterTests {
     /** Test that not all parametersToCheck need be present on the request. */
     @Test
     public void testAllowsCheckedParameterNotPresent() {
-        // this test added in response to a stupid NullPointerException defect, to prevent regression.
+        // this test added in response to a stupid NullPointerException defect, to prevent
+        // regression.
 
         final Set<String> parametersToCheck = new HashSet<String>();
         parametersToCheck.add("catName");

@@ -41,7 +41,7 @@ class FailSafePortletUrlBuilder implements IPortletUrlBuilder {
      */
     @Override
     public void setParameter(String name, String... values) {
-        //NOOP
+        // NOOP
     }
 
     /* (non-Javadoc)
@@ -49,7 +49,7 @@ class FailSafePortletUrlBuilder implements IPortletUrlBuilder {
      */
     @Override
     public void setParameter(String name, List<String> values) {
-        //NOOP
+        // NOOP
     }
 
     /* (non-Javadoc)
@@ -57,7 +57,7 @@ class FailSafePortletUrlBuilder implements IPortletUrlBuilder {
      */
     @Override
     public void addParameter(String name, String... values) {
-        //NOOP
+        // NOOP
     }
 
     /* (non-Javadoc)
@@ -65,7 +65,7 @@ class FailSafePortletUrlBuilder implements IPortletUrlBuilder {
      */
     @Override
     public void setParameters(Map<String, List<String>> parameters) {
-        //NOOP
+        // NOOP
     }
 
     /* (non-Javadoc)
@@ -73,7 +73,7 @@ class FailSafePortletUrlBuilder implements IPortletUrlBuilder {
      */
     @Override
     public void setCopyCurrentRenderParameters(boolean copyCurrentRenderParameters) {
-        //NOOP
+        // NOOP
     }
 
     /* (non-Javadoc)
@@ -113,7 +113,7 @@ class FailSafePortletUrlBuilder implements IPortletUrlBuilder {
      */
     @Override
     public void setWindowState(WindowState windowState) {
-        //NOOP
+        // NOOP
     }
 
     /* (non-Javadoc)
@@ -121,7 +121,7 @@ class FailSafePortletUrlBuilder implements IPortletUrlBuilder {
      */
     @Override
     public WindowState getWindowState() {
-        //NOOP
+        // NOOP
         return null;
     }
 
@@ -130,7 +130,7 @@ class FailSafePortletUrlBuilder implements IPortletUrlBuilder {
      */
     @Override
     public void setPortletMode(PortletMode portletMode) {
-        //NOOP
+        // NOOP
     }
 
     /* (non-Javadoc)
@@ -138,7 +138,7 @@ class FailSafePortletUrlBuilder implements IPortletUrlBuilder {
      */
     @Override
     public PortletMode getPortletMode() {
-        //NOOP
+        // NOOP
         return null;
     }
 
@@ -147,7 +147,7 @@ class FailSafePortletUrlBuilder implements IPortletUrlBuilder {
      */
     @Override
     public void setResourceId(String resourceId) {
-        //NOOP
+        // NOOP
     }
 
     /* (non-Javadoc)
@@ -155,7 +155,7 @@ class FailSafePortletUrlBuilder implements IPortletUrlBuilder {
      */
     @Override
     public String getResourceId() {
-        //NOOP
+        // NOOP
         return null;
     }
 
@@ -164,7 +164,7 @@ class FailSafePortletUrlBuilder implements IPortletUrlBuilder {
      */
     @Override
     public void setCacheability(String cacheability) {
-        //NOOP
+        // NOOP
     }
 
     /* (non-Javadoc)
@@ -172,13 +172,13 @@ class FailSafePortletUrlBuilder implements IPortletUrlBuilder {
      */
     @Override
     public String getCacheability() {
-        //NOOP
+        // NOOP
         return null;
     }
 
     @Override
     public Map<String, String[]> getPublicRenderParameters() {
-        //NOOP
+        // NOOP
         return publicParameters;
     }
 }

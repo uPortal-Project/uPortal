@@ -204,7 +204,7 @@ public class JpaEventAggregationManagementDao extends BaseAggrEventsJpaDao
         query.using(EventAggregatorStatusImpl_.processingType, processingType);
         EventAggregatorStatusImpl status = query.load();
 
-        //Create the status object if it doesn't yet exist
+        // Create the status object if it doesn't yet exist
         if (status == null && create) {
             status =
                     this.getTransactionOperations()
@@ -360,7 +360,7 @@ public class JpaEventAggregationManagementDao extends BaseAggrEventsJpaDao
             return new ArrayList<QuarterDetail>(results);
         }
 
-        //No valid quarters config in db, populate the standard quarters
+        // No valid quarters config in db, populate the standard quarters
         return this.getTransactionOperations()
                 .execute(
                         new TransactionCallback<List<QuarterDetail>>() {
@@ -386,11 +386,10 @@ public class JpaEventAggregationManagementDao extends BaseAggrEventsJpaDao
                 new HashSet<QuarterDetailImpl>(query.getResultList());
 
         for (final Iterator<QuarterDetail> newQuarterDetailsItr = newQuarterDetails.iterator();
-                newQuarterDetailsItr.hasNext();
-                ) {
+                newQuarterDetailsItr.hasNext(); ) {
             final QuarterDetail quarterDetail = newQuarterDetailsItr.next();
 
-            //If QD exists in both new and existing remove it from both
+            // If QD exists in both new and existing remove it from both
             if (existingQuarterDetails.remove(quarterDetail)) {
                 newQuarterDetailsItr.remove();
             }
@@ -398,14 +397,14 @@ public class JpaEventAggregationManagementDao extends BaseAggrEventsJpaDao
 
         final EntityManager entityManager = this.getEntityManager();
 
-        //Delete all existing QDs that were not in the new list
+        // Delete all existing QDs that were not in the new list
         for (final QuarterDetailImpl existingQuarterDetail : existingQuarterDetails) {
             entityManager.remove(existingQuarterDetail);
         }
 
         entityManager.flush();
 
-        //Add all new QDs that were not in the existing set
+        // Add all new QDs that were not in the existing set
         for (final QuarterDetail newQuarterDetail : newQuarterDetails) {
             entityManager.persist(newQuarterDetail);
         }
@@ -430,11 +429,10 @@ public class JpaEventAggregationManagementDao extends BaseAggrEventsJpaDao
 
         for (final Iterator<AcademicTermDetail> newAcademicTermDetailsItr =
                         newAcademicTermDetails.iterator();
-                newAcademicTermDetailsItr.hasNext();
-                ) {
+                newAcademicTermDetailsItr.hasNext(); ) {
             final AcademicTermDetail academicTermDetail = newAcademicTermDetailsItr.next();
 
-            //If ATD exists in both new and existing remove it from both
+            // If ATD exists in both new and existing remove it from both
             if (existingAcademicTermDetails.remove(academicTermDetail)) {
                 newAcademicTermDetailsItr.remove();
             }
@@ -442,7 +440,7 @@ public class JpaEventAggregationManagementDao extends BaseAggrEventsJpaDao
 
         final EntityManager entityManager = this.getEntityManager();
 
-        //Delete all existing ATDs that were not in the new list
+        // Delete all existing ATDs that were not in the new list
         for (final AcademicTermDetailImpl existingAcademicTermDetail :
                 existingAcademicTermDetails) {
             entityManager.remove(existingAcademicTermDetail);
@@ -450,7 +448,7 @@ public class JpaEventAggregationManagementDao extends BaseAggrEventsJpaDao
 
         entityManager.flush();
 
-        //Add all new ATDs that were not in the existing set
+        // Add all new ATDs that were not in the existing set
         for (final AcademicTermDetail newAcademicTermDetail : newAcademicTermDetails) {
             entityManager.persist(newAcademicTermDetail);
         }

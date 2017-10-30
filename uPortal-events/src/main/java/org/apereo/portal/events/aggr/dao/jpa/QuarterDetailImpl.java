@@ -109,7 +109,7 @@ public class QuarterDetailImpl implements QuarterDetail, Serializable {
     public DateMidnight getStartDateMidnight(ReadableInstant instant) {
         final MonthDay instantMonthDay = new MonthDay(instant);
 
-        //If the quarter wraps a year boundary AND
+        // If the quarter wraps a year boundary AND
         //   the instant MonthDay is before the start AND
         //   the end is after the instant MonthDay
         // then shift the start year back by one to deal with the year boundary
@@ -126,7 +126,7 @@ public class QuarterDetailImpl implements QuarterDetail, Serializable {
     public DateMidnight getEndDateMidnight(ReadableInstant instant) {
         final MonthDay instantMonthDay = new MonthDay(instant);
 
-        //If the quarter wraps a year boundary AND
+        // If the quarter wraps a year boundary AND
         //   the end is NOT after the instant MonthDay AND
         //   the instant MonthDay is NOT before the start
         // then shift the end year forward by one to deal with the year boundary

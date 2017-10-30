@@ -141,7 +141,7 @@ public class AuthorizationTester extends TestCase {
 
         private void runAndSleep(int cycles, boolean expectedResult) {
             for (int i = 0; i < cycles; i++) {
-                //print(printID + " running test # " + (i+1));
+                // print(printID + " running test # " + (i+1));
                 try {
                     String msg =
                             "Testing  for "
@@ -154,7 +154,7 @@ public class AuthorizationTester extends TestCase {
                 } catch (Exception ex) {
                 }
                 int sleepMillis = random.nextInt(10);
-                //print(printID + " will now sleep for " + sleepMillis + " ms.");
+                // print(printID + " will now sleep for " + sleepMillis + " ms.");
                 try {
                     Thread.sleep(sleepMillis);
                 } catch (Exception ex) {
@@ -164,7 +164,7 @@ public class AuthorizationTester extends TestCase {
 
         private boolean runTest() throws AuthorizationException {
             IAuthorizationPrincipal principal = getService().newPrincipal(key, type);
-            //print("Testing  principal for " + testPermission);
+            // print("Testing  principal for " + testPermission);
             return principal.hasPermission(OWNER, TEST_ACTIVITY, testPermission.getTarget());
         }
     }

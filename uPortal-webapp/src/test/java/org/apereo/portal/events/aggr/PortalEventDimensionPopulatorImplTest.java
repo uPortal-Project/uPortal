@@ -65,7 +65,7 @@ public class PortalEventDimensionPopulatorImplTest {
         final TimeDimension td = mock(TimeDimension.class);
 
         when(td.getTime())
-                .thenReturn(time.minuteOfHour().roundFloorCopy()); //truncate at minute level
+                .thenReturn(time.minuteOfHour().roundFloorCopy()); // truncate at minute level
         when(td.getHour()).thenReturn(time.getHourOfDay());
         when(td.getMinute()).thenReturn(time.getMinuteOfHour());
         when(td.getFiveMinuteIncrement()).thenReturn(time.getMinuteOfHour() / 5);

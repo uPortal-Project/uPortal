@@ -70,7 +70,8 @@ import org.hibernate.annotations.Type;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 class PortletEntityImpl implements IPortletEntity {
-    //Properties are final to stop changes in code, hibernate overrides the final via reflection to set their values
+    // Properties are final to stop changes in code, hibernate overrides the final via reflection to
+    // set their values
     @Id
     @GeneratedValue(generator = "UP_PORTLET_ENT_GEN")
     @Column(name = "PORTLET_ENT_ID")
@@ -90,7 +91,8 @@ class PortletEntityImpl implements IPortletEntity {
     @Column(name = "USER_ID", nullable = false)
     private final int userId;
 
-    //Hidden reference to the parent portlet definition, used by hibernate for referential integrity
+    // Hidden reference to the parent portlet definition, used by hibernate for referential
+    // integrity
     @ManyToOne(
         targetEntity = PortletDefinitionImpl.class,
         cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}

@@ -170,7 +170,7 @@ public class LocaleManager implements Serializable {
         addToLocaleList(locales, userLocales);
         // We will ignore browser locales until we know how to
         // translate them into proper java.util.Locales
-        //addToLocaleList(locales, browserLocales);
+        // addToLocaleList(locales, browserLocales);
         addToLocaleList(locales, portalLocales);
         addToLocaleList(locales, new Locale[] {jvmLocale});
         return (Locale[]) locales.toArray(new Locale[0]);
@@ -243,7 +243,7 @@ public class LocaleManager implements Serializable {
         } else if (language != null) {
             // Uncomment the following line
             // when we can count on JDK 1.4!
-            //locale = new Locale(language);
+            // locale = new Locale(language);
             locale = new Locale(language, "");
         }
 

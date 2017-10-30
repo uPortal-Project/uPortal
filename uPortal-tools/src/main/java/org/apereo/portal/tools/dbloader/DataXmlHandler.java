@@ -114,8 +114,7 @@ public class DataXmlHandler extends BaseDbXmlHandler {
 
         int index = 0;
         for (final Iterator<Entry<String, String>> rowIterator = this.rowData.entrySet().iterator();
-                rowIterator.hasNext();
-                ) {
+                rowIterator.hasNext(); ) {
             final Entry<String, String> row = rowIterator.next();
             final String columnName = row.getKey();
             columns.append(columnName);

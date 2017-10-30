@@ -179,7 +179,8 @@ public class SimpleLdapSecurityContext extends ChainingSecurityContext {
             }
         } else {
             // If the principal and/or credential are missing, the context authentication
-            // simply fails. It should not be construed that this is an error. It happens for guest access.
+            // simply fails. It should not be construed that this is an error. It happens for guest
+            // access.
             log.info("Principal or OpaqueCredentials not initialized prior to authenticate");
         }
         // Ok...we are now ready to authenticate all of our subcontexts.

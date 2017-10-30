@@ -104,20 +104,20 @@ public class DelayedValidationQueryResolverImpl
     }
 
     protected String resolveValidationQuery(final Class<? extends Dialect> dialectType) {
-        //First try a direct lookup
+        // First try a direct lookup
         String validationQuery = this.validationQueryMap.get(dialectType);
         if (validationQuery != null) {
             return validationQuery;
         }
 
-        //Next search the mappings looking for a sublcass match
+        // Next search the mappings looking for a sublcass match
         for (final Map.Entry<Class<? extends Dialect>, String> validationQueryEntry :
                 this.validationQueryMap.entrySet()) {
             final Class<? extends Dialect> dialectEntryType = validationQueryEntry.getKey();
             if (dialectEntryType.isAssignableFrom(dialectType)) {
                 validationQuery = validationQueryEntry.getValue();
 
-                //Cache the resolution for future tests
+                // Cache the resolution for future tests
                 this.validationQueryMap.put(dialectType, validationQuery);
                 return validationQuery;
             }

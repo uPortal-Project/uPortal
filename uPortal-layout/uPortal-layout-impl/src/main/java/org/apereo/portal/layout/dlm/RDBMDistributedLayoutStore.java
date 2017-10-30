@@ -194,7 +194,8 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
      * @return Map
      */
     public Map<String, Document> getFragmentLayoutCopies() {
-        // since this is only visible in fragment list in administrative portlet, use default portal locale
+        // since this is only visible in fragment list in administrative portlet, use default portal
+        // locale
         final Locale defaultLocale = LocaleManager.getPortalLocales()[0];
 
         final Map<String, Document> layouts = new HashMap<String, Document>();
@@ -243,7 +244,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
             final FragmentDefinition fragmentDefinition =
                     this.fragmentUtils.getFragmentDefinitionByName(fragName);
 
-            //UserView may be missing if the fragment isn't defined correctly
+            // UserView may be missing if the fragment isn't defined correctly
             final UserView userView = this.fragmentUtils.getUserView(fragmentDefinition, locale);
             if (userView == null) {
                 logger.warn(
@@ -252,7 +253,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
                 continue;
             }
 
-            //IStylesheetUserPreferences only exist if something was actually set
+            // IStylesheetUserPreferences only exist if something was actually set
             final IStylesheetUserPreferences fragmentStylesheetUserPreferences =
                     this.stylesheetUserPreferencesDao.getStylesheetUserPreferences(
                             stylesheetDescriptor, userView.getUserId(), userView.getProfileId());
@@ -260,7 +261,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
                 continue;
             }
 
-            //Get the info needed to DLMify node IDs
+            // Get the info needed to DLMify node IDs
             final Element root = userView.getLayout().getDocumentElement();
             final String labelBase = root.getAttribute(Constants.ATT_ID);
 
@@ -292,8 +293,10 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
                             userNodeId, name, value);
 
                     // Clean out user preferences data that matches data from the fragment.
-                    // Skip for fragment owners since their user preference data and the fragment stylesheet user prefs
-                    // are identical and removing layout attributes here would affect the fragment layout.
+                    // Skip for fragment owners since their user preference data and the fragment
+                    // stylesheet user prefs
+                    // are identical and removing layout attributes here would affect the fragment
+                    // layout.
                     if (stylesheetUserPreferences != null && !isFragmentOwner) {
                         final String userValue =
                                 stylesheetUserPreferences.getLayoutAttribute(userNodeId, name);
@@ -376,12 +379,11 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
 
         org.dom4j.Element preferencesElement = null;
         for (final Iterator<IPortletEntity> entityItr = portletEntities.iterator();
-                entityItr.hasNext();
-                ) {
+                entityItr.hasNext(); ) {
             final IPortletEntity portletEntity = entityItr.next();
             final List<IPortletPreference> preferencesList = portletEntity.getPortletPreferences();
 
-            //Only bother with entities that have preferences
+            // Only bother with entities that have preferences
             if (!preferencesList.isEmpty()) {
                 final String layoutNodeId = portletEntity.getLayoutNodeId();
                 final Pathref dlmPathref =
@@ -502,8 +504,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
         for (final Iterator<org.dom4j.Element> orphanedChannels =
                         (Iterator<org.dom4j.Element>)
                                 layoutDoc.selectNodes("//channel[@fname = '']").iterator();
-                orphanedChannels.hasNext();
-                ) {
+                orphanedChannels.hasNext(); ) {
             // These elements represent UP_LAYOUT_STRUCT rows where the
             // CHAN_ID field was not recognized by ChannelRegistryStore;
             // best thing to do is remove the elements...
@@ -543,8 +544,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
         for (final Iterator<org.dom4j.Attribute> origins =
                         (Iterator<org.dom4j.Attribute>)
                                 layoutDoc.selectNodes("//@dlm:origin").iterator();
-                origins.hasNext();
-                ) {
+                origins.hasNext(); ) {
             final org.dom4j.Attribute org = origins.next();
             final Pathref dlmPathref =
                     this.nodeReferenceFactory.getPathrefFromNoderef(
@@ -567,8 +567,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
         for (final Iterator<org.dom4j.Attribute> it =
                         (Iterator<org.dom4j.Attribute>)
                                 layoutDoc.selectNodes("//@dlm:target").iterator();
-                it.hasNext();
-                ) {
+                it.hasNext(); ) {
             final org.dom4j.Attribute target = it.next();
             final Pathref dlmPathref =
                     this.nodeReferenceFactory.getPathrefFromNoderef(
@@ -591,8 +590,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
         for (final Iterator<org.dom4j.Attribute> names =
                         (Iterator<org.dom4j.Attribute>)
                                 layoutDoc.selectNodes("//dlm:*/@name").iterator();
-                names.hasNext();
-                ) {
+                names.hasNext(); ) {
             final org.dom4j.Attribute n = names.next();
             if (n.getValue() == null || n.getValue().trim().length() == 0) {
                 // Outer <dlm:positionSet> elements don't seem to use the name
@@ -636,8 +634,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
             for (final Iterator<org.dom4j.Attribute> plfid =
                             (Iterator<org.dom4j.Attribute>)
                                     layoutDoc.selectNodes("//@dlm:plfID").iterator();
-                    plfid.hasNext();
-                    ) {
+                    plfid.hasNext(); ) {
                 final org.dom4j.Attribute plf = plfid.next();
                 plf.getParent().remove(plf);
             }
@@ -646,8 +643,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
             for (final Iterator<org.dom4j.Attribute> ids =
                             (Iterator<org.dom4j.Attribute>)
                                     layoutDoc.selectNodes("//@ID").iterator();
-                    ids.hasNext();
-                    ) {
+                    ids.hasNext(); ) {
                 final org.dom4j.Attribute a = ids.next();
                 a.getParent().remove(a);
             }
@@ -738,13 +734,13 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
             layout.add(new Namespace("dlm", Constants.NS_URI));
         }
 
-        //Remove comments from the DOM they break import
+        // Remove comments from the DOM they break import
         final List<org.dom4j.Node> comments = layout.selectNodes("//comment()");
         for (final org.dom4j.Node comment : comments) {
             comment.detach();
         }
 
-        //Get a ref to the prefs element and then remove it from the layout
+        // Get a ref to the prefs element and then remove it from the layout
         final org.dom4j.Node preferencesElement = layout.selectSingleNode("preferences");
         if (preferencesElement != null) {
             preferencesElement.getParent().remove(preferencesElement);
@@ -752,7 +748,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
 
         final String ownerUsername = layout.valueOf("@username");
 
-        //Get a ref to the profile element and then remove it from the layout
+        // Get a ref to the profile element and then remove it from the layout
         final org.dom4j.Node profileElement = layout.selectSingleNode("profile");
         if (profileElement != null) {
             profileElement.getParent().remove(profileElement);
@@ -771,7 +767,8 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
 
         int ownerId;
         try {
-            //Can't just pass true for create here, if the user actually exists the create flag also updates the user data
+            // Can't just pass true for create here, if the user actually exists the create flag
+            // also updates the user data
             ownerId = this.userIdentityStore.getPortalUID(person);
         } catch (final AuthorizationException t) {
             if (this.errorOnMissingUser) {
@@ -782,7 +779,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
                         t);
             }
 
-            //Create the missing user
+            // Create the missing user
             ownerId = this.userIdentityStore.getPortalUID(person, true);
         }
 
@@ -811,8 +808,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
         for (final Iterator<org.dom4j.Element> it =
                         (Iterator<org.dom4j.Element>)
                                 layout.selectNodes("folder | dlm:* | channel").iterator();
-                it.hasNext();
-                ) {
+                it.hasNext(); ) {
             nextId = this.addIdAttributesIfNecessary(it.next(), nextId);
         }
         // Now update UP_USER...
@@ -823,8 +819,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
         for (final Iterator<org.dom4j.Attribute> itr =
                         (Iterator<org.dom4j.Attribute>)
                                 layout.selectNodes("//@dlm:origin").iterator();
-                itr.hasNext();
-                ) {
+                itr.hasNext(); ) {
             final org.dom4j.Attribute a = itr.next();
             final Noderef dlmNoderef =
                     nodeReferenceFactory.getNoderefFromPathref(
@@ -842,8 +837,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
         for (final Iterator<org.dom4j.Attribute> itr =
                         (Iterator<org.dom4j.Attribute>)
                                 layout.selectNodes("//@dlm:target").iterator();
-                itr.hasNext();
-                ) {
+                itr.hasNext(); ) {
             final org.dom4j.Attribute a = itr.next();
             final Noderef dlmNoderef =
                     nodeReferenceFactory.getNoderefFromPathref(
@@ -854,8 +848,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
         for (final Iterator<org.dom4j.Attribute> names =
                         (Iterator<org.dom4j.Attribute>)
                                 layout.selectNodes("//dlm:*/@name").iterator();
-                names.hasNext();
-                ) {
+                names.hasNext(); ) {
             final org.dom4j.Attribute a = names.next();
             final String value = a.getValue().trim();
             if (!VALID_PATHREF_PATTERN.matcher(value).matches()) {
@@ -887,8 +880,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
         // (3) Restore chanID attributes on <channel> elements...
         for (final Iterator<org.dom4j.Element> it =
                         (Iterator<org.dom4j.Element>) layout.selectNodes("//channel").iterator();
-                it.hasNext();
-                ) {
+                it.hasNext(); ) {
             final org.dom4j.Element c = it.next();
             final String fname = c.valueOf("@fname");
             final IPortletDefinition cd =
@@ -905,7 +897,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
                     throw new IllegalArgumentException(msg);
                 } else {
                     logger.warn(msg);
-                    //Remove the bad channel node
+                    // Remove the bad channel node
                     c.getParent().remove(c);
                 }
             } else {
@@ -932,8 +924,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
             for (final Iterator<org.dom4j.Text> it =
                             (Iterator<org.dom4j.Text>)
                                     layout.selectNodes("descendant::text()").iterator();
-                    it.hasNext();
-                    ) {
+                    it.hasNext(); ) {
                 // How many years have we used Java & XML, and this still isn't easy?
                 final org.dom4j.Text txt = it.next();
                 if (txt.getText().trim().length() == 0) {
@@ -962,9 +953,11 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
 
         if (preferencesElement != null) {
             final int ownerUserId = this.userIdentityStore.getPortalUserId(ownerUsername);
-            //TODO this assumes a single layout, when multi-layout support exists portlet entities will need to be re-worked to allow for a layout id to be associated with the entity
+            // TODO this assumes a single layout, when multi-layout support exists portlet entities
+            // will need to be re-worked to allow for a layout id to be associated with the entity
 
-            //track which entities from the user's pre-existing set are touched (all non-touched entities will be removed)
+            // track which entities from the user's pre-existing set are touched (all non-touched
+            // entities will be removed)
             final Set<IPortletEntity> oldPortletEntities =
                     new LinkedHashSet<IPortletEntity>(
                             this.portletEntityDao.getPortletEntitiesForUser(ownerUserId));
@@ -1001,7 +994,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
                 }
             }
 
-            //Delete all portlet preferences for entities that were not imported
+            // Delete all portlet preferences for entities that were not imported
             for (final IPortletEntity portletEntity : oldPortletEntities) {
                 portletEntity.setPortletPreferences(null);
 
@@ -1015,14 +1008,14 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
     }
 
     private IPortletEntity getPortletEntity(String fName, String layoutNodeId, int userId) {
-        //Try getting the entity
+        // Try getting the entity
         final IPortletEntity portletEntity =
                 this.portletEntityDao.getPortletEntity(layoutNodeId, userId);
         if (portletEntity != null) {
             return portletEntity;
         }
 
-        //Load the portlet definition
+        // Load the portlet definition
         final IPortletDefinition portletDefinition;
         try {
             portletDefinition = this.portletDefinitionRegistry.getPortletDefinitionByFname(fName);
@@ -1031,13 +1024,13 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
                     "Failed to retrieve ChannelDefinition for fName='" + fName + "'", e);
         }
 
-        //The channel definition for the fName MUST exist for this class to function
+        // The channel definition for the fName MUST exist for this class to function
         if (portletDefinition == null) {
             throw new EmptyResultDataAccessException(
                     "No ChannelDefinition exists for fName='" + fName + "'", 1);
         }
 
-        //create the portlet entity
+        // create the portlet entity
         final IPortletDefinitionId portletDefinitionId = portletDefinition.getPortletDefinitionId();
         return this.portletEntityDao.createPortletEntity(portletDefinitionId, layoutNodeId, userId);
     }
@@ -1102,7 +1095,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
                     continue;
                 }
 
-                //Remove from the old attrs set as we've updated it
+                // Remove from the old attrs set as we've updated it
                 final Map<String, String> oldAttrs = oldLayoutAttributes.get(nodeId);
                 if (oldAttrs != null) {
                     oldAttrs.remove(name);
@@ -1114,7 +1107,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
                 layoutElement.remove(structureAttribute);
             }
 
-            //Purge orphaned entries
+            // Purge orphaned entries
             for (final Entry<String, Map<String, String>> oldAttributeEntry :
                     oldLayoutAttributes.entrySet()) {
                 final String nodeId = oldAttributeEntry.getKey();
@@ -1183,8 +1176,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
         for (final Iterator<org.dom4j.Element> itr =
                         (Iterator<org.dom4j.Element>)
                                 e.selectNodes("folder | channel | dlm:*").iterator();
-                itr.hasNext();
-                ) {
+                itr.hasNext(); ) {
             final org.dom4j.Element child = itr.next();
             idAfterThisOne = this.addIdAttributesIfNecessary(child, idAfterThisOne);
         }
@@ -1729,7 +1721,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
             return 0;
         }
         if (node.getNodeName().equals("parameter")) {
-            //parameter, skip it and go on to the next node
+            // parameter, skip it and go on to the next node
             return this.saveStructure(node.getNextSibling(), structStmt, parmStmt);
         }
         if (!(node instanceof Element)) {
@@ -1766,7 +1758,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
             portletDef =
                     this.portletDefinitionRegistry.getPortletDefinition(String.valueOf(chanId));
             if (portletDef == null) {
-                //Portlet doesn't exist any more, drop the layout node
+                // Portlet doesn't exist any more, drop the layout node
                 return 0;
             }
         }

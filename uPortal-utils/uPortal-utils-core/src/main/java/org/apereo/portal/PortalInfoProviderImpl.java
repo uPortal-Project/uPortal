@@ -124,7 +124,7 @@ public class PortalInfoProviderImpl implements IPortalInfoProvider, ReadWriteCal
         this.logger.info(
                 "Attempting to resolve serverName by iterating over NetworkInterface.getNetworkInterfaces()");
 
-        //Fail back to our best attempt at resolution
+        // Fail back to our best attempt at resolution
         final Enumeration<NetworkInterface> networkInterfaceEnum;
         try {
             networkInterfaceEnum = NetworkInterface.getNetworkInterfaces();
@@ -133,14 +133,14 @@ public class PortalInfoProviderImpl implements IPortalInfoProvider, ReadWriteCal
             return null;
         }
 
-        //Use a local variable here to try and return the first hostName found that doesn't start with localhost
+        // Use a local variable here to try and return the first hostName found that doesn't start
+        // with localhost
         String name = null;
         while (networkInterfaceEnum.hasMoreElements()) {
             final NetworkInterface networkInterface = networkInterfaceEnum.nextElement();
 
             for (Enumeration<InetAddress> inetAddressEnum = networkInterface.getInetAddresses();
-                    inetAddressEnum.hasMoreElements();
-                    ) {
+                    inetAddressEnum.hasMoreElements(); ) {
                 final InetAddress inetAddress = inetAddressEnum.nextElement();
                 name = inetAddress.getHostName();
                 if (!name.startsWith("localhost")) {

@@ -123,7 +123,7 @@ public class IndentingXMLEventWriter extends EventWriterDelegate {
             try {
                 wrappedWriter.add(indentEvent);
             } catch (XMLStreamException e) {
-                //Ignore exceptions caused by indentation
+                // Ignore exceptions caused by indentation
             }
             afterMarkup(); // indentation was written
         }
@@ -165,7 +165,7 @@ public class IndentingXMLEventWriter extends EventWriterDelegate {
             try {
                 wrappedWriter.add(indentEvent);
             } catch (XMLStreamException e) {
-                //Ignore exceptions caused by indentation
+                // Ignore exceptions caused by indentation
             }
         }
     }

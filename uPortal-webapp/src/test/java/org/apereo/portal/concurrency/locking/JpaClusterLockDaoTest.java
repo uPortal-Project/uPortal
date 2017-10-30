@@ -216,7 +216,7 @@ public class JpaClusterLockDaoTest extends BasePortalJpaDaoTest {
     @Test
     @Ignore
     public void testNotAbandoned() throws Exception {
-        //Used to make a 'mutable string'
+        // Used to make a 'mutable string'
         final AtomicReference<String> currentServer = new AtomicReference<String>("ServerA");
         final String mutexName = "testNotAbandoned";
 
@@ -230,7 +230,7 @@ public class JpaClusterLockDaoTest extends BasePortalJpaDaoTest {
                             }
                         });
 
-        //get/create the mutex
+        // get/create the mutex
         execute(
                 new CallableWithoutResult() {
                     @Override
@@ -240,7 +240,7 @@ public class JpaClusterLockDaoTest extends BasePortalJpaDaoTest {
                     }
                 });
 
-        //lock serverA
+        // lock serverA
         currentServer.set("ServerA");
         final ClusterMutex lockedMutex =
                 execute(
@@ -253,9 +253,10 @@ public class JpaClusterLockDaoTest extends BasePortalJpaDaoTest {
                             }
                         });
 
-        //test context configures a 100ms abandoned lock timeout, spin in tryLock/updateLock for 110ms
+        // test context configures a 100ms abandoned lock timeout, spin in tryLock/updateLock for
+        // 110ms
         while (lockedMutex.getLockStart() + 110 > System.currentTimeMillis()) {
-            //try lock ServerB
+            // try lock ServerB
             currentServer.set("ServerB");
             execute(
                     new CallableWithoutResult() {
@@ -266,7 +267,7 @@ public class JpaClusterLockDaoTest extends BasePortalJpaDaoTest {
                         }
                     });
             TimeUnit.MILLISECONDS.sleep(1);
-            //ServerA update ping
+            // ServerA update ping
             currentServer.set("ServerA");
             execute(
                     new CallableWithoutResult() {
@@ -297,7 +298,7 @@ public class JpaClusterLockDaoTest extends BasePortalJpaDaoTest {
     @Test
     @Ignore
     public void testAbandoned() throws Exception {
-        //Used to make a 'mutable string'
+        // Used to make a 'mutable string'
         final AtomicReference<String> currentServer = new AtomicReference<String>("ServerA");
         final String mutexName = "testNotAbandoned";
 
@@ -311,7 +312,7 @@ public class JpaClusterLockDaoTest extends BasePortalJpaDaoTest {
                             }
                         });
 
-        //get/create the mutex
+        // get/create the mutex
         execute(
                 new CallableWithoutResult() {
                     @Override
@@ -321,7 +322,7 @@ public class JpaClusterLockDaoTest extends BasePortalJpaDaoTest {
                     }
                 });
 
-        //lock serverA
+        // lock serverA
         currentServer.set("ServerA");
         execute(
                 new CallableWithoutResult() {
@@ -337,9 +338,9 @@ public class JpaClusterLockDaoTest extends BasePortalJpaDaoTest {
 
         currentServer.set("ServerB");
 
-        //test context configures a 100ms abandoned lock timeout, wait 110 between tests
+        // test context configures a 100ms abandoned lock timeout, wait 110 between tests
         for (int i = 0; i < 5 && !serverBLocked.get(); i++) {
-            //try lock ServerB
+            // try lock ServerB
             execute(
                     new CallableWithoutResult() {
                         @Override
@@ -372,7 +373,7 @@ public class JpaClusterLockDaoTest extends BasePortalJpaDaoTest {
 
     @Test(expected = IllegalMonitorStateException.class)
     public void testUnlockedUpdate() throws Exception {
-        //Used to make a 'mutable string'
+        // Used to make a 'mutable string'
         final AtomicReference<String> currentServer = new AtomicReference<String>("ServerA");
         final String mutexName = "testUnlockedUpdate";
 
@@ -386,7 +387,7 @@ public class JpaClusterLockDaoTest extends BasePortalJpaDaoTest {
                             }
                         });
 
-        //get/create the mutex
+        // get/create the mutex
         execute(
                 new CallableWithoutResult() {
                     @Override
@@ -398,7 +399,7 @@ public class JpaClusterLockDaoTest extends BasePortalJpaDaoTest {
 
     @Test(expected = IllegalMonitorStateException.class)
     public void testUnlockedRelease() throws Exception {
-        //Used to make a 'mutable string'
+        // Used to make a 'mutable string'
         final AtomicReference<String> currentServer = new AtomicReference<String>("ServerA");
         final String mutexName = "testUnlockedRelease";
 
@@ -412,7 +413,7 @@ public class JpaClusterLockDaoTest extends BasePortalJpaDaoTest {
                             }
                         });
 
-        //get/create the mutex
+        // get/create the mutex
         execute(
                 new CallableWithoutResult() {
                     @Override
@@ -424,7 +425,7 @@ public class JpaClusterLockDaoTest extends BasePortalJpaDaoTest {
 
     @Test(expected = IllegalMonitorStateException.class)
     public void testWrongServerUpdate() throws Exception {
-        //Used to make a 'mutable string'
+        // Used to make a 'mutable string'
         final AtomicReference<String> currentServer = new AtomicReference<String>("ServerA");
         final String mutexName = "testUnlockedUpdate";
 
@@ -438,7 +439,7 @@ public class JpaClusterLockDaoTest extends BasePortalJpaDaoTest {
                             }
                         });
 
-        //get/create the mutex
+        // get/create the mutex
         execute(
                 new CallableWithoutResult() {
                     @Override
@@ -448,7 +449,7 @@ public class JpaClusterLockDaoTest extends BasePortalJpaDaoTest {
                 });
 
         currentServer.set("ServerB");
-        //get/create the mutex
+        // get/create the mutex
         execute(
                 new CallableWithoutResult() {
                     @Override
@@ -460,7 +461,7 @@ public class JpaClusterLockDaoTest extends BasePortalJpaDaoTest {
 
     @Test(expected = IllegalMonitorStateException.class)
     public void testWrongServerRelease() throws Exception {
-        //Used to make a 'mutable string'
+        // Used to make a 'mutable string'
         final AtomicReference<String> currentServer = new AtomicReference<String>("ServerA");
         final String mutexName = "testUnlockedRelease";
 
@@ -474,7 +475,7 @@ public class JpaClusterLockDaoTest extends BasePortalJpaDaoTest {
                             }
                         });
 
-        //get/create the mutex
+        // get/create the mutex
         execute(
                 new CallableWithoutResult() {
                     @Override
@@ -485,7 +486,7 @@ public class JpaClusterLockDaoTest extends BasePortalJpaDaoTest {
 
         currentServer.set("ServerB");
 
-        //get/create the mutex
+        // get/create the mutex
         execute(
                 new CallableWithoutResult() {
                     @Override

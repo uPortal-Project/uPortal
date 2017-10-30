@@ -39,7 +39,8 @@ public class TagTrackingCacheEventListener extends CacheEventListenerAdapter
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     // tag type -> set of caches that contain keys tagged with that type
-    // I don't believe that this will leak Ehcache references as this class should have the same lifecycle as the CacheManager
+    // I don't believe that this will leak Ehcache references as this class should have the same
+    // lifecycle as the CacheManager
     private final LoadingCache<String, Set<Ehcache>> taggedCaches =
             CacheBuilder.newBuilder()
                     .build(
@@ -83,23 +84,23 @@ public class TagTrackingCacheEventListener extends CacheEventListenerAdapter
         final String tagType = tag.getTagType();
         final Set<Ehcache> caches = taggedCaches.getIfPresent(tagType);
 
-        //Tag exists in cache(s)
+        // Tag exists in cache(s)
         if (caches == null || caches.isEmpty()) {
             return 0;
         }
 
         int purgeCount = 0;
 
-        //Iterate over each cache to remove the tagged entries
+        // Iterate over each cache to remove the tagged entries
         for (final Ehcache cache : caches) {
             final String cacheName = cache.getName();
 
-            //See if there are any tagged cache keys for the cache
+            // See if there are any tagged cache keys for the cache
             final LoadingCache<CacheEntryTag, Set<Object>> cacheKeys =
                     taggedCacheKeys.getIfPresent(cacheName);
             if (cacheKeys != null) {
 
-                //Remove all cache keys from the cache
+                // Remove all cache keys from the cache
                 final Set<Object> taggedKeys = cacheKeys.asMap().remove(tag);
                 if (taggedKeys != null) {
                     final int keyCount = taggedKeys.size();
@@ -133,7 +134,7 @@ public class TagTrackingCacheEventListener extends CacheEventListenerAdapter
     protected void putElement(Ehcache cache, Element element) {
         final Set<CacheEntryTag> tags = this.getTags(element);
 
-        //Check if the key is tagged
+        // Check if the key is tagged
         if (tags != null && !tags.isEmpty()) {
             final String cacheName = cache.getName();
             final Object key = element.getObjectKey();
@@ -142,14 +143,14 @@ public class TagTrackingCacheEventListener extends CacheEventListenerAdapter
 
             logger.debug("Tracking {} tags in cache {} for key {}", tags.size(), cacheName, key);
 
-            //Add all the tags to the tracking map
+            // Add all the tags to the tracking map
             for (final CacheEntryTag tag : tags) {
-                //Record that this tag type is stored in this cache
+                // Record that this tag type is stored in this cache
                 final String tagType = tag.getTagType();
                 final Set<Ehcache> caches = taggedCaches.getUnchecked(tagType);
                 caches.add(cache);
 
-                //Record the tag->key association
+                // Record the tag->key association
                 final Set<Object> taggedKeys = cacheKeys.getUnchecked(tag);
                 taggedKeys.add(key);
             }
@@ -160,13 +161,13 @@ public class TagTrackingCacheEventListener extends CacheEventListenerAdapter
     protected void removeElement(Ehcache cache, Element element) {
         final Set<CacheEntryTag> tags = this.getTags(element);
 
-        //Check if the key is tagged
+        // Check if the key is tagged
         if (tags != null && !tags.isEmpty()) {
             final String cacheName = cache.getName();
             final LoadingCache<CacheEntryTag, Set<Object>> cacheKeys =
                     taggedCacheKeys.getIfPresent(cacheName);
 
-            //If there are tracked tagged keys remove matching tags
+            // If there are tracked tagged keys remove matching tags
             if (cacheKeys != null) {
                 final Object key = element.getObjectKey();
 
@@ -176,7 +177,7 @@ public class TagTrackingCacheEventListener extends CacheEventListenerAdapter
                 for (final CacheEntryTag tag : tags) {
                     final Set<Object> taggedKeys = cacheKeys.getIfPresent(tag);
 
-                    //Remove the tagged key
+                    // Remove the tagged key
                     if (taggedKeys != null) {
                         taggedKeys.remove(key);
                     }

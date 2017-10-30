@@ -78,7 +78,7 @@ public class PortletDefinitionPreferencesImpl
     protected void loadBasePortletPreferences(
             IPortletDefinition portletDefinition,
             Map<String, IPortletPreference> basePortletPreferences) {
-        //Add descriptor prefs to base Map
+        // Add descriptor prefs to base Map
         final IPortletDefinitionId portletDefinitionId = portletDefinition.getPortletDefinitionId();
         final PortletDefinition portletDescriptor =
                 this.portletDefinitionRegistry.getParentPortletDescriptor(portletDefinitionId);
@@ -91,7 +91,7 @@ public class PortletDefinitionPreferencesImpl
 
     @Override
     protected boolean isReadOnly(IPortletPreference portletPreference) {
-        //In config mode (editing definition prefs) we ignore the read-only flag
+        // In config mode (editing definition prefs) we ignore the read-only flag
         return false;
     }
 
@@ -102,7 +102,7 @@ public class PortletDefinitionPreferencesImpl
                 new TransactionCallback<Boolean>() {
                     @Override
                     public Boolean doInTransaction(TransactionStatus status) {
-                        //Refresh the entity to avoid optimistic locking errors
+                        // Refresh the entity to avoid optimistic locking errors
                         final IPortletDefinition portletDefinition =
                                 portletDefinitionRegistry.getPortletDefinition(portletDefinitionId);
 
@@ -114,7 +114,7 @@ public class PortletDefinitionPreferencesImpl
                                 portletDefinition.setPortletPreferences(
                                         new ArrayList<IPortletPreference>(values));
                         if (!modified) {
-                            //Nothing actually changed, skip the store
+                            // Nothing actually changed, skip the store
                             return Boolean.FALSE;
                         }
 

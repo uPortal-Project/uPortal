@@ -36,8 +36,8 @@ public abstract class AbstractPortletContextImpl {
     protected final IPortletWindow portletWindow;
     protected final IPortletCookieService portletCookieService;
 
-    //Objects provided by the PortletServlet via the init method
-    //The servlet objects are from the scope of the cross-context dispatch
+    // Objects provided by the PortletServlet via the init method
+    // The servlet objects are from the scope of the cross-context dispatch
     protected HttpServletRequest servletRequest;
     protected HttpServletResponse servletResponse;
 

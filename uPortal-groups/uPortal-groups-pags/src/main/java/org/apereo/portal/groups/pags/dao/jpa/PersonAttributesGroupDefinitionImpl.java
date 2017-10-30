@@ -113,7 +113,8 @@ public class PersonAttributesGroupDefinitionImpl implements IPersonAttributesGro
     @LazyCollection(LazyCollectionOption.FALSE)
     @JsonDeserialize(
         using = PagsDefinitionJsonUtils.TestGroupJsonDeserializer.class
-    ) // Auto-serialization of interface references works; deserialization doesn't (besides we have some extra work to do)
+    ) // Auto-serialization of interface references works; deserialization doesn't (besides we have
+    // some extra work to do)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<IPersonAttributesGroupTestGroupDefinition> testGroups =
             new HashSet<IPersonAttributesGroupTestGroupDefinition>(0);

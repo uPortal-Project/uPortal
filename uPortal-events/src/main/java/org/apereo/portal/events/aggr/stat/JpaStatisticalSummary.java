@@ -63,7 +63,7 @@ public class JpaStatisticalSummary implements TimedAggregationStatistics {
     /** variance of values that have been added */
     @Transient private Variance variance;
 
-    //***** ALL FIELDS ARE LAZILY INITIALIZED HERE *****//
+    // ***** ALL FIELDS ARE LAZILY INITIALIZED HERE *****//
 
     private SecondMoment _getSecondMoment() {
         if (this.secondMoment == null) {

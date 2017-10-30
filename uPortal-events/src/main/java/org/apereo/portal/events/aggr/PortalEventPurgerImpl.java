@@ -79,17 +79,17 @@ public class PortalEventPurgerImpl implements PortalEventPurger {
                 eventAggregationManagementDao.getEventAggregatorStatus(
                         IEventAggregatorStatus.ProcessingType.PURGING, true);
 
-        //Update status with current server name
+        // Update status with current server name
         final String serverName = this.portalInfoProvider.getUniqueServerName();
         eventPurgerStatus.setServerName(serverName);
         eventPurgerStatus.setLastStart(new DateTime());
 
-        //Determine date of most recently aggregated data
+        // Determine date of most recently aggregated data
         final IEventAggregatorStatus eventAggregatorStatus =
                 eventAggregationManagementDao.getEventAggregatorStatus(
                         IEventAggregatorStatus.ProcessingType.AGGREGATION, false);
         if (eventAggregatorStatus == null || eventAggregatorStatus.getLastEventDate() == null) {
-            //Nothing has been aggregated, skip purging
+            // Nothing has been aggregated, skip purging
 
             eventPurgerStatus.setLastEnd(new DateTime());
             eventAggregationManagementDao.updateEventAggregatorStatus(eventPurgerStatus);
@@ -98,17 +98,18 @@ public class PortalEventPurgerImpl implements PortalEventPurger {
         }
         boolean complete = true;
 
-        //Calculate purge end date from most recent aggregation minus the purge delay
+        // Calculate purge end date from most recent aggregation minus the purge delay
         final DateTime lastAggregated = eventAggregatorStatus.getLastEventDate();
         DateTime purgeEnd = lastAggregated.minus(this.purgeDelay);
 
-        //Determine the DateTime of the oldest event
+        // Determine the DateTime of the oldest event
         DateTime oldestEventDate = eventPurgerStatus.getLastEventDate();
         if (oldestEventDate == null) {
             oldestEventDate = this.portalEventDao.getOldestPortalEventTimestamp();
         }
 
-        //Make sure purgeEnd is no more than 1 hour after the oldest event date to limit delete scope
+        // Make sure purgeEnd is no more than 1 hour after the oldest event date to limit delete
+        // scope
         final DateTime purgeEndLimit = oldestEventDate.plusHours(1);
         if (purgeEndLimit.isBefore(purgeEnd)) {
             purgeEnd = purgeEndLimit;
@@ -121,17 +122,18 @@ public class PortalEventPurgerImpl implements PortalEventPurger {
         try {
             currentThread.setName(currentName + "-" + purgeEnd);
 
-            //Purge events
+            // Purge events
             logger.debug("Starting purge of events before {}", purgeEnd);
             events = portalEventDao.deletePortalEventsBefore(purgeEnd);
         } finally {
             currentThread.setName(currentName);
         }
 
-        //Update the status object and store it
+        // Update the status object and store it
         purgeEnd =
                 purgeEnd.minusMillis(
-                        100); //decrement by 100ms since deletePortalEventsBefore uses lessThan and not lessThanEqualTo
+                        100); // decrement by 100ms since deletePortalEventsBefore uses lessThan and
+        // not lessThanEqualTo
         eventPurgerStatus.setLastEventDate(purgeEnd);
         eventPurgerStatus.setLastEnd(new DateTime());
         eventAggregationManagementDao.updateEventAggregatorStatus(eventPurgerStatus);

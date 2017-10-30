@@ -144,7 +144,7 @@ public class JpaPortalEventStore extends BaseRawEventsJpaDao implements IPortalE
                                 final Root<PersistentPortalEvent> eventRoot =
                                         criteriaQuery.from(PersistentPortalEvent.class);
 
-                                //Get the largest event timestamp
+                                // Get the largest event timestamp
                                 criteriaQuery.select(
                                         cb.greatest(
                                                 eventRoot.get(PersistentPortalEvent_.timestamp)));
@@ -163,7 +163,7 @@ public class JpaPortalEventStore extends BaseRawEventsJpaDao implements IPortalE
                                 final Root<PersistentPortalEvent> eventRoot =
                                         criteriaQuery.from(PersistentPortalEvent.class);
 
-                                //Get the smallest event timestamp
+                                // Get the smallest event timestamp
                                 criteriaQuery.select(
                                         cb.least(eventRoot.get(PersistentPortalEvent_.timestamp)));
 
@@ -247,8 +247,7 @@ public class JpaPortalEventStore extends BaseRawEventsJpaDao implements IPortalE
 
         int resultCount = 0;
         for (final ScrollableResults results = query.scroll(ScrollMode.FORWARD_ONLY);
-                results.next();
-                ) {
+                results.next(); ) {
             final PersistentPortalEvent persistentPortalEvent =
                     (PersistentPortalEvent) results.get(0);
             final PortalEvent portalEvent;
@@ -263,7 +262,8 @@ public class JpaPortalEventStore extends BaseRawEventsJpaDao implements IPortalE
                                 + persistentPortalEvent,
                         e);
 
-                //Mark the event as error and store the mark to prevent trying to reprocess the broken event data
+                // Mark the event as error and store the mark to prevent trying to reprocess the
+                // broken event data
                 persistentPortalEvent.setErrorAggregating(true);
                 session.persist(persistentPortalEvent);
 
@@ -279,11 +279,11 @@ public class JpaPortalEventStore extends BaseRawEventsJpaDao implements IPortalE
                     return false;
                 }
 
-                //Mark the event as aggregated and store the mark
+                // Mark the event as aggregated and store the mark
                 persistentPortalEvent.setAggregated(true);
                 session.persist(persistentPortalEvent);
 
-                //periodic flush and clear of session to manage memory demands
+                // periodic flush and clear of session to manage memory demands
                 if (++resultCount % this.flushPeriod == 0) {
                     this.logger.debug(
                             "Aggregated {} events, flush and clear {} EntityManager.",
@@ -295,7 +295,8 @@ public class JpaPortalEventStore extends BaseRawEventsJpaDao implements IPortalE
 
             } catch (Exception e) {
                 this.logger.warn("Failed to aggregate portal event: " + persistentPortalEvent, e);
-                //mark the event as erred and move on. This will not be picked up by processing again
+                // mark the event as erred and move on. This will not be picked up by processing
+                // again
                 persistentPortalEvent.setErrorAggregating(true);
                 session.persist(persistentPortalEvent);
             }
@@ -325,8 +326,7 @@ public class JpaPortalEventStore extends BaseRawEventsJpaDao implements IPortalE
         }
 
         for (final ScrollableResults results = query.scroll(ScrollMode.FORWARD_ONLY);
-                results.next();
-                ) {
+                results.next(); ) {
             final PersistentPortalEvent persistentPortalEvent =
                     (PersistentPortalEvent) results.get(0);
             final PortalEvent portalEvent =

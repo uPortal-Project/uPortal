@@ -53,12 +53,13 @@ public class BufferedXMLEventReader extends BaseXMLEventReader {
      */
     @Override
     protected XMLEvent internalNextEvent() throws XMLStreamException {
-        //If there is an iterator to read from reset was called, use the iterator
-        //until it runs out of events.
+        // If there is an iterator to read from reset was called, use the iterator
+        // until it runs out of events.
         if (this.bufferReader != null) {
             final XMLEvent event = this.bufferReader.next();
 
-            //If nothing left in the iterator, remove the reference and fall through to direct reading
+            // If nothing left in the iterator, remove the reference and fall through to direct
+            // reading
             if (!this.bufferReader.hasNext()) {
                 this.bufferReader = null;
             }
@@ -66,14 +67,14 @@ public class BufferedXMLEventReader extends BaseXMLEventReader {
             return event;
         }
 
-        //Get the next event from the underlying reader
+        // Get the next event from the underlying reader
         final XMLEvent event = this.getParent().nextEvent();
 
-        //if buffering add the event
+        // if buffering add the event
         if (this.eventLimit != 0) {
             this.eventBuffer.offer(event);
 
-            //If limited buffer size and buffer is too big trim the buffer.
+            // If limited buffer size and buffer is too big trim the buffer.
             if (this.eventLimit > 0 && this.eventBuffer.size() > this.eventLimit) {
                 this.eventBuffer.poll();
             }
@@ -91,7 +92,7 @@ public class BufferedXMLEventReader extends BaseXMLEventReader {
     public XMLEvent peek() throws XMLStreamException {
         if (this.bufferReader != null) {
             final XMLEvent event = this.bufferReader.next();
-            this.bufferReader.previous(); //move the iterator back
+            this.bufferReader.previous(); // move the iterator back
             return event;
         }
         return super.peek();
@@ -111,14 +112,15 @@ public class BufferedXMLEventReader extends BaseXMLEventReader {
     public void mark(int eventLimit) {
         this.eventLimit = eventLimit;
 
-        //Buffering no events now, clear the buffer and buffered reader
+        // Buffering no events now, clear the buffer and buffered reader
         if (this.eventLimit == 0) {
             this.eventBuffer.clear();
             this.bufferReader = null;
         }
-        //Buffering limited set of events, lets trim the buffer if needed
+        // Buffering limited set of events, lets trim the buffer if needed
         else if (this.eventLimit > 0) {
-            //If there is an iterator check its current position and calculate the new iterator start position
+            // If there is an iterator check its current position and calculate the new iterator
+            // start position
             int iteratorIndex = 0;
             if (this.bufferReader != null) {
                 final int nextIndex = this.bufferReader.nextIndex();
@@ -126,12 +128,12 @@ public class BufferedXMLEventReader extends BaseXMLEventReader {
                         Math.max(0, nextIndex - (this.eventBuffer.size() - this.eventLimit));
             }
 
-            //Trim the buffer until it is not larger than the limit
+            // Trim the buffer until it is not larger than the limit
             while (this.eventBuffer.size() > this.eventLimit) {
                 this.eventBuffer.poll();
             }
 
-            //If there is an iterator re-create it using the newly calculated index
+            // If there is an iterator re-create it using the newly calculated index
             if (this.bufferReader != null) {
                 this.bufferReader = this.eventBuffer.listIterator(iteratorIndex);
             }

@@ -149,8 +149,8 @@ public class ParameterEditManager {
          * further restricting which channel parameters can be edited beyond
          * what the channel definition specifies during publishing.
          */
-        //Attr editAllowed = targetParm.getAttributeNode( Constants.ATT_EDIT_ALLOWED );
-        //if ( editAllowed != null && editAllowed.getNodeValue().equals("false"))
+        // Attr editAllowed = targetParm.getAttributeNode( Constants.ATT_EDIT_ALLOWED );
+        // if ( editAllowed != null && editAllowed.getNodeValue().equals("false"))
         //    return false;
 
         // target parm found. See if channel definition will still allow changes.

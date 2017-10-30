@@ -73,7 +73,8 @@ public class PortletMimeHttpServletResponseWrapper extends PortletHttpServletRes
                             }) {
                         @Override
                         public void close() throws IOException {
-                            //Don't close the ServletOutputStream if useCachedContent is true, the PortletRendererImpl will be replaying cached content
+                            // Don't close the ServletOutputStream if useCachedContent is true, the
+                            // PortletRendererImpl will be replaying cached content
                             if (!PortletMimeHttpServletResponseWrapper.this.cacheControl
                                     .useCachedContent()) {
                                 super.close();
@@ -98,7 +99,8 @@ public class PortletMimeHttpServletResponseWrapper extends PortletHttpServletRes
                             }) {
                         @Override
                         public void close() {
-                            //Don't close the PrintWriter if useCachedContent is true, the PortletRendererImpl will be replaying cached content
+                            // Don't close the PrintWriter if useCachedContent is true, the
+                            // PortletRendererImpl will be replaying cached content
                             if (!PortletMimeHttpServletResponseWrapper.this.cacheControl
                                     .useCachedContent()) {
                                 super.close();

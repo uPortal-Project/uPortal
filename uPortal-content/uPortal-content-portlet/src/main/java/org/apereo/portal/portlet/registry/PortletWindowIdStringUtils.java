@@ -82,10 +82,13 @@ public class PortletWindowIdStringUtils {
      * "146_dlg-5-ctf1-18.tw_18", "1" }
      */
     private static String[] parseParts(final String portletWindowIdString) {
-        // Note that we cannot simply use the ID_PART_SEPARATOR_PATTERN on 'portletWindowIdString' because it may have a
-        // 'delegate' layout node id that itself has a portlet window instance id, and thus the period in the layout node ID part
+        // Note that we cannot simply use the ID_PART_SEPARATOR_PATTERN on 'portletWindowIdString'
+        // because it may have a
+        // 'delegate' layout node id that itself has a portlet window instance id, and thus the
+        // period in the layout node ID part
         // will mess up the parsing.
-        // Example:  "146_dlg-5-ctf1-18.tw_18.1" would parse into { "146_dlg-5-ctf1-18", "tw_18", "1"} instead of { "146_dlg-5-ctf1-18.tw_18", "1" }
+        // Example:  "146_dlg-5-ctf1-18.tw_18.1" would parse into { "146_dlg-5-ctf1-18", "tw_18",
+        // "1"} instead of { "146_dlg-5-ctf1-18.tw_18", "1" }
         final UserIdAndOtherParts userIdAndOtherParts =
                 parseUserIdAndOtherParts(portletWindowIdString);
         if (userIdAndOtherParts.portletWindowInstanceId == null) {

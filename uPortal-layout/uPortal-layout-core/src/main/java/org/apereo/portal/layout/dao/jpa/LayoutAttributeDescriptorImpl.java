@@ -67,7 +67,7 @@ public class LayoutAttributeDescriptorImpl extends AbstractStylesheetDataImpl
     @Fetch(FetchMode.JOIN)
     private Set<String> targetElementNames;
 
-    //Required by hibernate for reflective creation
+    // Required by hibernate for reflective creation
     @SuppressWarnings("unused")
     private LayoutAttributeDescriptorImpl() {
         this.id = -1;

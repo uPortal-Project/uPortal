@@ -53,19 +53,19 @@ public final class IdentityImportExportTestUtilities {
         final XMLEventReader xmlEventReader =
                 xmlInputFactory.createXMLEventReader(new StringReader(importData));
 
-        //Unmarshall from XML
+        // Unmarshall from XML
         final Unmarshaller unmarshaller = dataImporter.getUnmarshaller();
         final StAXSource source = new StAXSource(xmlEventReader);
         @SuppressWarnings("unchecked")
         final T dataImport = (T) unmarshaller.unmarshal(source);
 
-        //Make sure the data was unmarshalled
+        // Make sure the data was unmarshalled
         assertNotNull("Unmarshalled import data was null", dataImport);
 
-        //Import the data
+        // Import the data
         dataImporter.importData(dataImport);
 
-        //Export the data
+        // Export the data
         final String name = getName.apply(dataImport);
         final Object dataExport =
                 transactionOperations.execute(
@@ -79,16 +79,16 @@ public final class IdentityImportExportTestUtilities {
                             }
                         });
 
-        //Make sure the data was exported
+        // Make sure the data was exported
         assertNotNull("Exported data was null", dataExport);
 
-        //Marshall to XML
+        // Marshall to XML
         final Marshaller marshaller = dataExporter.getMarshaller();
 
         final StringWriter result = new StringWriter();
         marshaller.marshal(dataExport, new StreamResult(result));
 
-        //Compare the exported XML data with the imported XML data, they should match
+        // Compare the exported XML data with the imported XML data, they should match
         final String resultString = result.toString();
         try {
             XMLUnit.setIgnoreWhitespace(true);

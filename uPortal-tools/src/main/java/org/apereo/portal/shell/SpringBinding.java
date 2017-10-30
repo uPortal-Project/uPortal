@@ -52,7 +52,7 @@ public class SpringBinding extends Binding implements Map<String, Object> {
         return this;
     }
 
-    //******************** MAP INTERFACE IMPL ********************//
+    // ******************** MAP INTERFACE IMPL ********************//
 
     @Override
     public int size() {

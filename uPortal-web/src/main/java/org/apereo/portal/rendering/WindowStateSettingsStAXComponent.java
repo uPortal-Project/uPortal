@@ -72,7 +72,7 @@ public class WindowStateSettingsStAXComponent extends StAXPipelineComponentWrapp
      */
     @Override
     public CacheKey getCacheKey(HttpServletRequest request, HttpServletResponse response) {
-        //Initiating rendering of portlets will change the stream at all
+        // Initiating rendering of portlets will change the stream at all
         return this.wrappedComponent.getCacheKey(request, response);
     }
 
@@ -99,20 +99,20 @@ public class WindowStateSettingsStAXComponent extends StAXPipelineComponentWrapp
                     stylesheetDescriptor.getStylesheetParameterDescriptor(
                             "dashboardForcedWindowState");
             if (defaultWindowStateParam != null) {
-                //Set all window states to the specified default
+                // Set all window states to the specified default
                 final WindowState windowState =
                         PortletUtils.getWindowState(defaultWindowStateParam.getDefaultValue());
                 filteredEventReader =
                         new SinglePortletWindowStateSettingXMLEventReader(
                                 request, eventReader, windowState);
             } else {
-                //Make sure there aren't any portlets in a "targeted" window state
+                // Make sure there aren't any portlets in a "targeted" window state
                 filteredEventReader =
                         new NonTargetedPortletWindowStateSettingXMLEventReader(
                                 request, eventReader);
             }
         } else {
-            //Not mobile, don't bother filtering
+            // Not mobile, don't bother filtering
             filteredEventReader = eventReader;
         }
 
@@ -150,7 +150,7 @@ public class WindowStateSettingsStAXComponent extends StAXPipelineComponentWrapp
 
                     final WindowState windowState = getWindowState(portletWindow);
 
-                    //Set the portlet's state, skip if the state is already correct
+                    // Set the portlet's state, skip if the state is already correct
                     final WindowState currentWindowState = portletWindow.getWindowState();
                     if (!windowState.equals(currentWindowState)) {
                         portletWindow.setWindowState(windowState);

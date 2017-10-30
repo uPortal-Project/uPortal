@@ -66,7 +66,7 @@ class PortletWindowCache<T extends IPortletWindowDescriptor> implements Serializ
     public T storeIfAbsentWindow(T window) {
         final IPortletWindowId portletWindowId = window.getPortletWindowId();
 
-        //Check if the entity already exists (uses a read lock)
+        // Check if the entity already exists (uses a read lock)
         T existingWindow = this.getWindow(portletWindowId);
         if (existingWindow != null) {
             return existingWindow;
@@ -74,7 +74,7 @@ class PortletWindowCache<T extends IPortletWindowDescriptor> implements Serializ
 
         writeLock.lock();
         try {
-            //Check again inside the write lock
+            // Check again inside the write lock
             existingWindow = this.windowsById.get(portletWindowId);
             if (existingWindow != null) {
                 return existingWindow;

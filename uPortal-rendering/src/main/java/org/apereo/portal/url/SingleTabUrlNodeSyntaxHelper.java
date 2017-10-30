@@ -64,7 +64,8 @@ public class SingleTabUrlNodeSyntaxHelper implements IUrlNodeSyntaxHelper {
 
     private String defaultLayoutNodeIdExpression =
             "/layout/folder/folder[@type='regular' and @hidden!='true'][$defaultTab]/@ID";
-    //    private String tabIdExpression = "/layout/folder/folder[@ID=$nodeId or descendant::node()[@ID=$nodeId]]/@ID";
+    //    private String tabIdExpression = "/layout/folder/folder[@ID=$nodeId or
+    // descendant::node()[@ID=$nodeId]]/@ID";
     private String defaultTabParameter = "defaultTab";
 
     private IUserInstanceManager userInstanceManager;
@@ -113,7 +114,7 @@ public class SingleTabUrlNodeSyntaxHelper implements IUrlNodeSyntaxHelper {
 
         final IUserLayout userLayout = userLayoutManager.getUserLayout();
 
-        //This logic is specific to tab/column layouts
+        // This logic is specific to tab/column layouts
         final String defaultTabIndex = this.getDefaultTabIndex(httpServletRequest);
         if (defaultTabIndex != null) {
             final String defaultTabId = this.getTabId(userLayout, defaultTabIndex);
@@ -262,7 +263,7 @@ public class SingleTabUrlNodeSyntaxHelper implements IUrlNodeSyntaxHelper {
             return null;
         }
 
-        //Check if the folder name is compound and parse it if it is
+        // Check if the folder name is compound and parse it if it is
         String folderName = folderNames.get(0);
         String layoutNodeId = null;
         final int seperatorIndex = folderName.indexOf(PORTLET_PATH_ELEMENT_SEPERATOR);
@@ -286,13 +287,15 @@ public class SingleTabUrlNodeSyntaxHelper implements IUrlNodeSyntaxHelper {
                         request, PreferencesScope.STRUCTURE, EXTERNAL_ID_ATTR);
         for (final Entry<String, String> entry : allNodesAndValuesForAttribute.entrySet()) {
             final String value = entry.getValue();
-            //Have to test against the fname safe version of the externalId since the folderName could have already been translated
+            // Have to test against the fname safe version of the externalId since the folderName
+            // could have already been translated
             if (value.equals(folderName)
                     || FunctionalNameType.makeValid(value).equals(folderName)) {
                 final String nodeId = entry.getKey();
 
                 if (nodeId.equals(layoutNodeId)) {
-                    //ExternalId matched as well as the layoutNodeId, clear the firstMatchingNodeId since we found the nodeId here
+                    // ExternalId matched as well as the layoutNodeId, clear the firstMatchingNodeId
+                    // since we found the nodeId here
 
                     logger.trace("Parsed folder names {} to nodeId {}.", folderNames, nodeId);
 
@@ -303,16 +306,17 @@ public class SingleTabUrlNodeSyntaxHelper implements IUrlNodeSyntaxHelper {
             }
         }
 
-        //If an explicit nodeId match isn't found but at least one matching externalId was found use that match
+        // If an explicit nodeId match isn't found but at least one matching externalId was found
+        // use that match
         if (firstMatchingNodeId != null) {
             layoutNodeId = firstMatchingNodeId;
         }
-        //In this case the folderName must not have been an externalId, assume it is a layout node
+        // In this case the folderName must not have been an externalId, assume it is a layout node
         else if (layoutNodeId == null) {
             layoutNodeId = folderName;
         }
 
-        //Verify the parsed layoutNodeId matches a node in the user's layout
+        // Verify the parsed layoutNodeId matches a node in the user's layout
         final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
         final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
         final IUserLayoutManager userLayoutManager = preferencesManager.getUserLayoutManager();
@@ -361,14 +365,14 @@ public class SingleTabUrlNodeSyntaxHelper implements IUrlNodeSyntaxHelper {
         final String fname = portletDefinition.getFName();
         final String layoutNodeId = portletEntity.getLayoutNodeId();
 
-        //Build the targeted portlet string (fname + subscribeId)
+        // Build the targeted portlet string (fname + subscribeId)
         return fname + PORTLET_PATH_ELEMENT_SEPERATOR + layoutNodeId;
     }
 
     @Override
     public IPortletWindowId getPortletForFolderName(
             HttpServletRequest request, String targetedLayoutNodeId, String folderName) {
-        //Basic parsing of the
+        // Basic parsing of the
         final String fname;
         String subscribeId = null;
         final int seperatorIndex = folderName.indexOf(PORTLET_PATH_ELEMENT_SEPERATOR);
@@ -379,7 +383,7 @@ public class SingleTabUrlNodeSyntaxHelper implements IUrlNodeSyntaxHelper {
             subscribeId = folderName.substring(seperatorIndex + 1);
         }
 
-        //If a subscribeId was provided validate that it matches up with the fname
+        // If a subscribeId was provided validate that it matches up with the fname
         if (subscribeId != null) {
             final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
             final IPortletEntity portletEntity =
@@ -387,10 +391,12 @@ public class SingleTabUrlNodeSyntaxHelper implements IUrlNodeSyntaxHelper {
                             request, userInstance, subscribeId);
             if (portletEntity == null
                     || !fname.equals(portletEntity.getPortletDefinition().getFName())) {
-                //If no entity found or the fname doesn't match ignore the provided subscribeId by setting it to null
+                // If no entity found or the fname doesn't match ignore the provided subscribeId by
+                // setting it to null
                 subscribeId = null;
             } else {
-                //subscribeId matches fname, lookup the window for the entity and return the windowId
+                // subscribeId matches fname, lookup the window for the entity and return the
+                // windowId
                 final IPortletEntityId portletEntityId = portletEntity.getPortletEntityId();
                 final IPortletWindow portletWindow =
                         this.portletWindowRegistry.getOrCreateDefaultPortletWindow(
@@ -403,19 +409,20 @@ public class SingleTabUrlNodeSyntaxHelper implements IUrlNodeSyntaxHelper {
             }
         }
 
-        //No valid subscribeId, find the best match based on the fname
+        // No valid subscribeId, find the best match based on the fname
 
-        //If a layout node is targeted then look for a matching subscribeId under that targeted node
+        // If a layout node is targeted then look for a matching subscribeId under that targeted
+        // node
         if (targetedLayoutNodeId != null) {
             final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
             final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
             final IUserLayoutManager userLayoutManager = preferencesManager.getUserLayoutManager();
 
-            //First look for the layout node only under the specified folder
+            // First look for the layout node only under the specified folder
             subscribeId = userLayoutManager.getSubscribeId(targetedLayoutNodeId, fname);
         }
 
-        //Find a subscribeId based on the fname
+        // Find a subscribeId based on the fname
         final IPortletWindow portletWindow;
         if (subscribeId == null) {
             portletWindow =

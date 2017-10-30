@@ -35,7 +35,7 @@ class FailSafePortalUrlBuilder implements IPortalUrlBuilder {
      */
     @Override
     public void setParameter(String name, String... values) {
-        //NOOP
+        // NOOP
     }
 
     /* (non-Javadoc)
@@ -43,7 +43,7 @@ class FailSafePortalUrlBuilder implements IPortalUrlBuilder {
      */
     @Override
     public void setParameter(String name, List<String> values) {
-        //NOOP
+        // NOOP
     }
 
     /* (non-Javadoc)
@@ -51,7 +51,7 @@ class FailSafePortalUrlBuilder implements IPortalUrlBuilder {
      */
     @Override
     public void addParameter(String name, String... values) {
-        //NOOP
+        // NOOP
     }
 
     /* (non-Javadoc)
@@ -59,7 +59,7 @@ class FailSafePortalUrlBuilder implements IPortalUrlBuilder {
      */
     @Override
     public void setParameters(Map<String, List<String>> parameters) {
-        //NOOP
+        // NOOP
     }
 
     /* (non-Javadoc)
@@ -75,7 +75,7 @@ class FailSafePortalUrlBuilder implements IPortalUrlBuilder {
      */
     @Override
     public String getTargetFolderId() {
-        //NOOP
+        // NOOP
         return null;
     }
 
@@ -84,7 +84,7 @@ class FailSafePortalUrlBuilder implements IPortalUrlBuilder {
      */
     @Override
     public IPortletWindowId getTargetPortletWindowId() {
-        //NOOP
+        // NOOP
         return null;
     }
 
@@ -93,7 +93,7 @@ class FailSafePortalUrlBuilder implements IPortalUrlBuilder {
      */
     @Override
     public UrlType getUrlType() {
-        //NOOP
+        // NOOP
         return null;
     }
 
@@ -120,7 +120,7 @@ class FailSafePortalUrlBuilder implements IPortalUrlBuilder {
      */
     @Override
     public IPortletUrlBuilder getTargetedPortletUrlBuilder() {
-        //NOOP
+        // NOOP
         return null;
     }
 

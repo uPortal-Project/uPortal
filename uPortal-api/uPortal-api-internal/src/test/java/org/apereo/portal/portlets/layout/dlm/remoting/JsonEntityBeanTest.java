@@ -18,7 +18,7 @@ import org.mockito.MockitoAnnotations;
 
 public class JsonEntityBeanTest {
 
-    //Static test data
+    // Static test data
     String key = "test-key";
     String name = "test-name";
     String cId = "test-creator-id";

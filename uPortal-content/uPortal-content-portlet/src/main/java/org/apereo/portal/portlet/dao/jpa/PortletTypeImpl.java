@@ -60,8 +60,10 @@ public class PortletTypeImpl implements Serializable, IPortletType {
     @Column(name = "ENTITY_VERSION")
     private final long entityVersion;
 
-    //Hidden reference to the child portlet definitions, used to allow cascading deletes where when a portlet type is deleted all associated definitions are also deleted
-    //MUST BE LAZY FETCH, this set should never actually be populated at runtime or performance will be TERRIBLE
+    // Hidden reference to the child portlet definitions, used to allow cascading deletes where when
+    // a portlet type is deleted all associated definitions are also deleted
+    // MUST BE LAZY FETCH, this set should never actually be populated at runtime or performance
+    // will be TERRIBLE
     @SuppressWarnings("unused")
     @OneToMany(
         mappedBy = "portletType",

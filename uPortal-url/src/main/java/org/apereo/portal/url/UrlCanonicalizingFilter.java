@@ -83,8 +83,10 @@ public class UrlCanonicalizingFilter extends OncePerRequestFilter {
             String requestURI = request.getRequestURI();
             // If cookies are disabled and Tomcat has appended the sessionId to the URL, remove the
             // jsessionid for the purposes of comparing the request URI to the canonical URI.  This
-            // allows a search indexing engine such as Googlebot to access the guest view of a uportal
-            // page which typically renders OK (not guaranteed depending upon content).  See UP-4414.
+            // allows a search indexing engine such as Googlebot to access the guest view of a
+            // uportal
+            // page which typically renders OK (not guaranteed depending upon content).  See
+            // UP-4414.
             if (requestURI.contains(";jsessionid")) {
                 requestURI = requestURI.substring(0, requestURI.indexOf(";"));
             }
@@ -166,7 +168,8 @@ public class UrlCanonicalizingFilter extends OncePerRequestFilter {
         httpServletRequestWrapper.setHeader(
                 IPortalRequestInfo.URL_STATE_HEADER, urlState.toString());
 
-        //Hack to make PortalController work in light of https://jira.springsource.org/secure/attachment/18283/SPR7346.patch
+        // Hack to make PortalController work in light of
+        // https://jira.springsource.org/secure/attachment/18283/SPR7346.patch
         httpServletRequestWrapper.setHeader(
                 IPortalRequestInfo.URL_TYPE_HEADER + "." + urlType, Boolean.TRUE.toString());
         httpServletRequestWrapper.setHeader(

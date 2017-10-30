@@ -73,10 +73,10 @@ public class SequenceGeneratorPhrase implements Phrase {
     }
 
     protected String getSafeFileName(String name) {
-        //Replace slashes with .
+        // Replace slashes with .
         name = name.replaceAll("/|\\\\", ".");
 
-        //Replace all non-ok char with _
+        // Replace all non-ok char with _
         name = name.replaceAll("[^a-zA-Z0-9_.-]", "_");
 
         return name;

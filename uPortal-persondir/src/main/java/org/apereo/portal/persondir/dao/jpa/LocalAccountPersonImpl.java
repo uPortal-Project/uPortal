@@ -237,8 +237,7 @@ class LocalAccountPersonImpl implements Serializable, ILocalAccountPerson {
     @Override
     public boolean removeAttribute(String name) {
         for (final Iterator<LocalAccountPersonAttributeImpl> itr = attributes.iterator();
-                itr.hasNext();
-                ) {
+                itr.hasNext(); ) {
             if (itr.next().getName().equals(name)) {
                 itr.remove();
                 return true;
@@ -252,32 +251,32 @@ class LocalAccountPersonImpl implements Serializable, ILocalAccountPerson {
      */
     @Override
     public void setAttributes(Map<String, List<String>> attributes) {
-        //Tries to modify as many of the existing attributes in place to reduce DB churn in hibernate
+        // Tries to modify as many of the existing attributes in place to reduce DB churn in
+        // hibernate
 
-        //Make a local copy so we don't edit the original reference
+        // Make a local copy so we don't edit the original reference
         attributes = new LinkedHashMap<String, List<String>>(attributes);
 
         for (final Iterator<LocalAccountPersonAttributeImpl> attributesItr =
                         this.attributes.iterator();
-                attributesItr.hasNext();
-                ) {
+                attributesItr.hasNext(); ) {
             final LocalAccountPersonAttributeImpl attribute = attributesItr.next();
 
-            //Remove the new values for the attribute from the input map
+            // Remove the new values for the attribute from the input map
             final String name = attribute.getName();
             final List<String> newValues = attributes.remove(name);
 
-            //If no new values remove the attribute
+            // If no new values remove the attribute
             if (newValues == null) {
                 attributesItr.remove();
             }
-            //Otherwise update the existing values
+            // Otherwise update the existing values
             else {
                 attribute.setValues(new ArrayList<String>(newValues));
             }
         }
 
-        //Add any remaining new attributes to the list
+        // Add any remaining new attributes to the list
         for (final Map.Entry<String, List<String>> attribute : attributes.entrySet()) {
             final String name = attribute.getKey();
             final List<String> values = attribute.getValue();

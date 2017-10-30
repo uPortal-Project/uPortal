@@ -121,7 +121,7 @@ public class ClusterLockServiceImpl implements IClusterLockService {
 
         this.logger.trace("doInLock({})", mutexName);
 
-        //Thread coordination objects
+        // Thread coordination objects
         final CountDownLatch dbLockLatch = new CountDownLatch(1);
         final CountDownLatch workCompleteLatch = new CountDownLatch(1);
         final AtomicReference<ClusterMutex> mutexRef = new AtomicReference<ClusterMutex>(null);
@@ -137,7 +137,7 @@ public class ClusterLockServiceImpl implements IClusterLockService {
         try {
             this.logger.trace("acquired local lock for {}", mutexName);
 
-            //Check last lock time
+            // Check last lock time
             final long lastRunDelay = lockOptions.getLastRunDelay();
             final long serverBiasDelay = lockOptions.getServerBiasDelay();
             if (lastRunDelay > 0 || serverBiasDelay > 0) {
@@ -182,16 +182,16 @@ public class ClusterLockServiceImpl implements IClusterLockService {
                             currentThread, mutexRef, mutexName, dbLockLatch, workCompleteLatch);
             lockFuture = this.lockMonitorExecutorService.submit(databaseLockWorker);
 
-            //Wait for DB lock acquisition
+            // Wait for DB lock acquisition
             final boolean dbLocked =
                     dbLockLatch.await(dbLockTimeout.getMillis(), TimeUnit.MILLISECONDS);
             if (!dbLocked) {
-                //Worker never started or got to db level mutex acquisition
+                // Worker never started or got to db level mutex acquisition
 
-                //Cancel the lock worker
+                // Cancel the lock worker
                 lockFuture.cancel(true);
 
-                //Return skipped result
+                // Return skipped result
                 this.logger.trace(
                         "failed to aquire database lock due to DatabaseLockWorker not executing, returning notExecuted result for: {}",
                         mutexName);
@@ -200,24 +200,24 @@ public class ClusterLockServiceImpl implements IClusterLockService {
 
             final ClusterMutex mutex = mutexRef.get();
             if (mutex == null) {
-                //Failed to get DB lock, stop now
+                // Failed to get DB lock, stop now
                 this.logger.trace(
                         "failed to aquire database lock, returning notExecuted result for: {}",
                         mutexName);
                 return TryLockFunctionResultImpl.getSkippedInstance(LockStatus.SKIPPED_LOCKED);
             }
 
-            //Execute the lockFunction
+            // Execute the lockFunction
             final T result = lockFunction.apply(mutex);
 
-            //Return the result
+            // Return the result
             return new TryLockFunctionResultImpl<T>(result);
         } finally {
-            //Signal db lock worker to release the lock
+            // Signal db lock worker to release the lock
             workCompleteLatch.countDown();
 
             if (lockFuture != null) {
-                //Wait for the db lock worker to complete
+                // Wait for the db lock worker to complete
                 try {
                     lockFuture.get();
                 } catch (ExecutionException e) {
@@ -229,7 +229,7 @@ public class ClusterLockServiceImpl implements IClusterLockService {
                 }
             }
 
-            //Release the local lock
+            // Release the local lock
             lock.unlock();
             this.logger.trace("released local lock for: {}", mutexName);
         }
@@ -242,7 +242,7 @@ public class ClusterLockServiceImpl implements IClusterLockService {
             return false;
         }
 
-        //local lock is owned by this thread, now make sure the server names match
+        // local lock is owned by this thread, now make sure the server names match
         final ClusterMutex clusterMutex = this.clusterLockDao.getClusterMutex(mutexName);
         final String uniqueServerName = portalInfoProvider.getUniqueServerName();
         return uniqueServerName.equals(clusterMutex.getServerId());
@@ -295,32 +295,36 @@ public class ClusterLockServiceImpl implements IClusterLockService {
                 final long lockTimeout =
                         System.currentTimeMillis() + maximumLockDuration.getMillis();
                 try {
-                    //Try to acquire the lock, set the success to the dbLocked holder
+                    // Try to acquire the lock, set the success to the dbLocked holder
                     final ClusterMutex mutex = clusterLockDao.getLock(this.mutexName);
                     this.mutexRef.set(mutex);
 
-                    //If acquisition failed return immediately
+                    // If acquisition failed return immediately
                     if (mutex == null) {
                         logger.trace("failed to acquire db lock for: {}", this.mutexName);
                         return false;
                     }
                     logger.trace("acquired db lock for: {}", this.mutexName);
                 } finally {
-                    //Signal the work thread that we've attempted to get the DB lock, done in finally so
-                    //the work thread won't hang if something goes wrong during acquisition
+                    // Signal the work thread that we've attempted to get the DB lock, done in
+                    // finally so
+                    // the work thread won't hang if something goes wrong during acquisition
                     this.dbLockLatch.countDown();
                     logger.trace("Signaled dbLockLatch for: {}", this.mutexName);
                 }
 
-                //wait for the work to complete using the updateLockRate as the wait duration, if the wait time
-                //passes without the work thread signaling completion update the mutex (signal we still have the lock)
-                //and wait again
+                // wait for the work to complete using the updateLockRate as the wait duration, if
+                // the wait time
+                // passes without the work thread signaling completion update the mutex (signal we
+                // still have the lock)
+                // and wait again
                 while (!this.workCompleteLatch.await(
                         updateLockRate.getMillis(), TimeUnit.MILLISECONDS)) {
                     clusterLockDao.updateLock(this.mutexName);
 
                     if (lockTimeout < System.currentTimeMillis()) {
-                        //Interrupt the worker thread to notify it that the lock has been given up on
+                        // Interrupt the worker thread to notify it that the lock has been given up
+                        // on
                         this.worker.interrupt();
                         throw new RuntimeException(
                                 "The database lock has been held for more than "
@@ -338,11 +342,13 @@ public class ClusterLockServiceImpl implements IClusterLockService {
             } finally {
                 currentThread.setName(currentName);
 
-                //If the db lock was acquired release it
+                // If the db lock was acquired release it
                 if (this.mutexRef.get() != null) {
                     if (this.workCompleteLatch.getCount() != 0) {
-                        //Worker isn't done but we're in the finally block, must have hit an exception
-                        //Interrupt the worker thread to notify it that the lock has been given up on
+                        // Worker isn't done but we're in the finally block, must have hit an
+                        // exception
+                        // Interrupt the worker thread to notify it that the lock has been given up
+                        // on
                         this.worker.interrupt();
                         logger.trace(
                                 "Work thread {} for lock {} is not complete, interrupting.",

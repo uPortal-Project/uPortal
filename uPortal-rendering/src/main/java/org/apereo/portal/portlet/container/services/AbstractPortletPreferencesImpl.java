@@ -180,7 +180,7 @@ public abstract class AbstractPortletPreferencesImpl<C> implements PortletPrefer
         final Map<String, IPortletPreference> targetPortletPreferences =
                 this.getTargetPortletPreferences();
 
-        //Check if there is a base preference for the key
+        // Check if there is a base preference for the key
         final Map<String, IPortletPreference> basePortletPreferences =
                 this.getBasePortletPreferences();
         final IPortletPreference basePreference = basePortletPreferences.get(key);
@@ -189,7 +189,7 @@ public abstract class AbstractPortletPreferencesImpl<C> implements PortletPrefer
                 throw new ReadOnlyException("Preference '" + key + "' is read only");
             }
 
-            //if the set value matches base value, delete any target pref
+            // if the set value matches base value, delete any target pref
             if (Arrays.equals(values, basePreference.getValues())) {
                 this.reset(key);
                 return;
@@ -197,7 +197,7 @@ public abstract class AbstractPortletPreferencesImpl<C> implements PortletPrefer
         }
 
         IPortletPreference portletPreference = targetPortletPreferences.get(key);
-        //No target preference exists yet, create it and then update the composite map
+        // No target preference exists yet, create it and then update the composite map
         if (portletPreference == null) {
             portletPreference =
                     new PortletPreferenceImpl(key, false, values != null ? values.clone() : null);
@@ -209,7 +209,7 @@ public abstract class AbstractPortletPreferencesImpl<C> implements PortletPrefer
 
             this.modified = true;
         }
-        //Update the existing preference if the values array is different
+        // Update the existing preference if the values array is different
         else if (!Arrays.equals(values, portletPreference.getValues())) {
             portletPreference.setValues(values != null ? values.clone() : null);
 
@@ -242,7 +242,7 @@ public abstract class AbstractPortletPreferencesImpl<C> implements PortletPrefer
                 this.getTargetPortletPreferences();
         final IPortletPreference removed = targetPortletPreferences.remove(key);
 
-        //There was a target preference with that key, update the composite preferences map
+        // There was a target preference with that key, update the composite preferences map
         if (removed != null) {
             final Map<String, IPortletPreference> compositePortletPreferences =
                     this.getCompositePortletPreferences();

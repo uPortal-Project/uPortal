@@ -186,7 +186,7 @@ public abstract class BaseStatisticsReportController<
      * set
      */
     protected final void setReportFormDateRangeAndInterval(final F report) {
-        //Determine default interval based on the intervals available for this aggregation
+        // Determine default interval based on the intervals available for this aggregation
         if (report.getInterval() == null) {
             report.setInterval(AggregationInterval.DAY);
             final Set<AggregationInterval> intervals = this.getIntervals();
@@ -198,7 +198,7 @@ public abstract class BaseStatisticsReportController<
             }
         }
 
-        //Set the report end date as today
+        // Set the report end date as today
         final DateMidnight reportEnd;
         if (report.getEnd() == null) {
             reportEnd = new DateMidnight();
@@ -207,7 +207,7 @@ public abstract class BaseStatisticsReportController<
             reportEnd = report.getEnd();
         }
 
-        //Determine the best start date based on the selected interval
+        // Determine the best start date based on the selected interval
         if (report.getStart() == null) {
             final DateMidnight start;
             switch (report.getInterval()) {
@@ -406,40 +406,41 @@ public abstract class BaseStatisticsReportController<
 
     /** Build the aggregation {@link DataTable} */
     protected final DataTable buildAggregationReport(F form) throws TypeMismatchException {
-        //Pull data out of form for per-group fetching
+        // Pull data out of form for per-group fetching
         final AggregationInterval interval = form.getInterval();
         final DateMidnight start = form.getStart();
         final DateMidnight end = form.getEnd();
 
         final DateTime startDateTime = start.toDateTime();
-        //Use a query end of the end date at 23:59:59
+        // Use a query end of the end date at 23:59:59
         final DateTime endDateTime = end.plusDays(1).toDateTime().minusSeconds(1);
 
-        //Get the list of DateTimes used on the X axis in the report
+        // Get the list of DateTimes used on the X axis in the report
         final List<DateTime> reportTimes =
                 this.intervalHelper.getIntervalStartDateTimesBetween(
                         interval, startDateTime, endDateTime, maxIntervals);
 
         final Map<D, SortedSet<T>> groupedAggregations = createColumnDiscriminatorMap(form);
 
-        //Determine the ValueType of the date/time column. Use the most specific column type possible
+        // Determine the ValueType of the date/time column. Use the most specific column type
+        // possible
         final ValueType dateTimeColumnType;
         if (interval.isHasTimePart()) {
-            //If start/end are the same day just display the time
+            // If start/end are the same day just display the time
             if (startDateTime.toDateMidnight().equals(endDateTime.toDateMidnight())) {
                 dateTimeColumnType = ValueType.TIMEOFDAY;
             }
-            //interval has time data and start/end are on different days, show full date time
+            // interval has time data and start/end are on different days, show full date time
             else {
                 dateTimeColumnType = ValueType.DATETIME;
             }
         }
-        //interval is date only
+        // interval is date only
         else {
             dateTimeColumnType = ValueType.DATE;
         }
 
-        //Setup the date/time column description
+        // Setup the date/time column description
         final ColumnDescription dateTimeColumn;
         switch (dateTimeColumnType) {
             case TIMEOFDAY:
@@ -456,7 +457,7 @@ public abstract class BaseStatisticsReportController<
         final DataTable table = new JsonDataTable();
         table.addColumn(dateTimeColumn);
 
-        //Setup columns in the DataTable
+        // Setup columns in the DataTable
         final Set<D> columnGroups = groupedAggregations.keySet();
         for (final D columnMapping : columnGroups) {
             final Collection<ColumnDescription> columnDescriptions =
@@ -464,23 +465,25 @@ public abstract class BaseStatisticsReportController<
             table.addColumns(columnDescriptions);
         }
 
-        //Query for all aggregation data in the time range for all groups.  Only the
-        //interval and discriminator data is used from the keys.
+        // Query for all aggregation data in the time range for all groups.  Only the
+        // interval and discriminator data is used from the keys.
         final Set<K> keys = createAggregationsQueryKeyset(columnGroups, form);
         final BaseAggregationDao<T, K> baseAggregationDao = this.getBaseAggregationDao();
         final Collection<T> aggregations =
                 baseAggregationDao.getAggregations(
                         startDateTime, endDateTime, keys, extractGroupsArray(columnGroups));
 
-        //Organize the results by group and sort them chronologically by adding them to the sorted set
+        // Organize the results by group and sort them chronologically by adding them to the sorted
+        // set
         for (final T aggregation : aggregations) {
             final D discriminator = aggregation.getAggregationDiscriminator();
             final SortedSet<T> results = groupedAggregations.get(discriminator);
             results.add(aggregation);
         }
 
-        //Build Map from discriminator column mapping to result iterator to allow putting results into
-        //the correct column AND the correct time slot in the column
+        // Build Map from discriminator column mapping to result iterator to allow putting results
+        // into
+        // the correct column AND the correct time slot in the column
         Comparator<? super D> comparator = getDiscriminatorComparator();
         final Map<D, PeekingIterator<T>> groupedAggregationIterators =
                 new TreeMap<D, PeekingIterator<T>>((comparator));
@@ -541,19 +544,19 @@ public abstract class BaseStatisticsReportController<
                 if (groupedAggregationIteratorEntry.hasNext()) {
                     final T aggr = groupedAggregationIteratorEntry.peek();
                     if (rowTime.equals(aggr.getDateTime())) {
-                        //Data is for the correct time slot, advance the iterator
+                        // Data is for the correct time slot, advance the iterator
                         groupedAggregationIteratorEntry.next();
 
                         values = createRowValues(aggr, form);
                     }
                 }
 
-                //Gap in the data, fill it in using a null aggregation
+                // Gap in the data, fill it in using a null aggregation
                 if (values == null) {
                     values = createRowValues(null, form);
                 }
 
-                //Add the values to the row
+                // Add the values to the row
                 for (final Value value : values) {
                     row.addCell(value);
                 }

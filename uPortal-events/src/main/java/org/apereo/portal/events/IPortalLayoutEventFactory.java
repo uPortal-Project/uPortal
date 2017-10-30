@@ -72,7 +72,7 @@ public interface IPortalLayoutEventFactory {
             long layoutId,
             String newFolderId);
 
-    //********** Folder in Layout Events **********//
+    // ********** Folder in Layout Events **********//
 
     void publishFolderAddedToLayoutPortalEvent(
             Object source, IPerson layoutOwner, long layoutId, String newFolderId);

@@ -56,7 +56,7 @@ public class SpringBeanEhCacheRegionFactory extends AbstractEhcacheRegionFactory
     /** {@inheritDoc} */
     @Override
     public void stop() {
-        //Assume spring will stop the cache manager
+        // Assume spring will stop the cache manager
         manager = null;
     }
 }

@@ -184,9 +184,12 @@ public abstract class AbstractDynamicSkinService implements DynamicSkinService {
                     }
                     instanceKeysForExistingCss.add(cssInstanceKey);
                 } else {
-                    // Though this should never happen except when developers are modifying the LESS files and make a mistake,
-                    // if we previously tried to create the CSS file and failed for some reason, don't try to compile it
-                    // again for a bit since the process is so processor intensive. It would virtually hang the uPortal
+                    // Though this should never happen except when developers are modifying the LESS
+                    // files and make a mistake,
+                    // if we previously tried to create the CSS file and failed for some reason,
+                    // don't try to compile it
+                    // again for a bit since the process is so processor intensive. It would
+                    // virtually hang the uPortal
                     // service trying to compile a bad LESS file repeatedly on different threads.
                     logger.warn(
                             "Skipping generation of CSS file {} due to previous LESS compilation failures",
@@ -221,8 +224,10 @@ public abstract class AbstractDynamicSkinService implements DynamicSkinService {
         File f = new File(getSkinLessTemplatePath(data));
         byte[] templateContent = IOUtils.toByteArray(f.toURI());
 
-        // Create a less include file by appending the less variable definitions to the end of the template less
-        // include file.  Insure there is a newline at the end of the template content or the first preference
+        // Create a less include file by appending the less variable definitions to the end of the
+        // template less
+        // include file.  Insure there is a newline at the end of the template content or the first
+        // preference
         // value will be lost.
         byte[] newline = "\n".getBytes();
         byte[] fileContent =

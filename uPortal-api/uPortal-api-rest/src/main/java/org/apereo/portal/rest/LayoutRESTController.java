@@ -144,7 +144,7 @@ public class LayoutRESTController {
 
                     portlet.setNodeId(attributes.getNamedItem("ID").getNodeValue());
 
-                    //get alt max URL
+                    // get alt max URL
                     String alternativeMaximizedLink = def.getAlternativeMaximizedLink();
                     if (alternativeMaximizedLink != null) {
                         portlet.setUrl(alternativeMaximizedLink);

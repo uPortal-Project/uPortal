@@ -89,7 +89,7 @@ public class LogoutController {
             }
 
             final String originalUid = this.identitySwapperManager.getOriginalUsername(session);
-            //Logging out from a swapped user, just redirect to the Login servlet
+            // Logging out from a swapped user, just redirect to the Login servlet
             if (originalUid != null) {
                 redirect = request.getContextPath() + "/Login";
             } else {
@@ -98,7 +98,8 @@ public class LogoutController {
                     session.invalidate();
                 } catch (final IllegalStateException ise) {
                     // IllegalStateException indicates session was already invalidated.
-                    // This is fine.  LogoutController is looking to guarantee the logged out session is invalid;
+                    // This is fine.  LogoutController is looking to guarantee the logged out
+                    // session is invalid;
                     // it need not insist that it be the one to perform the invalidating.
                     if (logger.isTraceEnabled()) {
                         logger.trace(

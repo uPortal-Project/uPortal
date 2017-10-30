@@ -91,8 +91,10 @@ abstract class PortletExecutionWorker<V> implements IPortletExecutionWorker<V> {
         // based on the information from the portlet.xml, such as the <security-role-ref> and
         // <user-attribute> elements.
         //
-        // However one IMPORTANT thing to note is that when SpringSecurity is in the mix the response
-        // objects are org.springframework.security.web.context.SaveContextOnUpdateOrErrorResponseWrapper
+        // However one IMPORTANT thing to note is that when SpringSecurity is in the mix the
+        // response
+        // objects are
+        // org.springframework.security.web.context.SaveContextOnUpdateOrErrorResponseWrapper
         // objects which save the current SpringSecurityContext to the
         // HttpSessionSecurityContextRepository when the response is flushed or closed,
         // when an error occurs, or when an HTTP redirect is issued.
@@ -100,21 +102,27 @@ abstract class PortletExecutionWorker<V> implements IPortletExecutionWorker<V> {
         // At least when Spring Webflow is in the mix (which the admin pages currently use, and who
         // knows when else it might occur), response objects (including the
         // response objects GuardingHttpServletResponse delegates method calls to) are also
-        // org.springframework.security.web.context.SaveContextOnUpdateOrErrorResponseWrapper objects.
+        // org.springframework.security.web.context.SaveContextOnUpdateOrErrorResponseWrapper
+        // objects.
         //
-        // If using the standard HTTP Session storage strategy, this means each portlet worker thread could replace
-        // the SpringSecurityContext in HTTP Session if the SpringSecurityContext object in the worker
+        // If using the standard HTTP Session storage strategy, this means each portlet worker
+        // thread could replace
+        // the SpringSecurityContext in HTTP Session if the SpringSecurityContext object in the
+        // worker
         // thread is not set or it was different than what was in HTTP Session, though once all
         // worker threads complete (ASSUMING there is no issue and they all complete or abort BEFORE
         // the HTTP Thread), the completion of the HTTP Thread would restore its thread-local
         // SpringSecurityContext back into the HTTP Session.  Still, there is an uncomfortable and
         // VERY error-prone period of time where the SpringSecurityContext in HTTP Session
-        // is wrong.  If another HTTP thread simultaneously executes for the same HTTP Session, it would
+        // is wrong.  If another HTTP thread simultaneously executes for the same HTTP Session, it
+        // would
         // execute using the wrong SpringSecurityContext object which would be very bad.
         //
-        // So for now and possibly forever, we want the same SpringSecurityContext object in the worker
+        // So for now and possibly forever, we want the same SpringSecurityContext object in the
+        // worker
         // thread as was in the HTTP thread.  However in the future we could create a smarter
-        // SecurityContextRepository implementation (similar to HttpSessionSecurityContextRepository)
+        // SecurityContextRepository implementation (similar to
+        // HttpSessionSecurityContextRepository)
         // that would save the SpringSecurityContext into HTTP Session for an HTTP thread
         // but for a portlet worker thread save it into a portlet's session or not save it at all.
         this.springSecurityContext = SecurityContextHolder.getContext();
@@ -162,7 +170,7 @@ abstract class PortletExecutionWorker<V> implements IPortletExecutionWorker<V> {
         this.submitted = System.currentTimeMillis();
 
         try {
-            //Run pre-submit interceptors
+            // Run pre-submit interceptors
             for (final IPortletExecutionInterceptor interceptor : this.interceptors) {
                 interceptor.preSubmit(request, response, this);
             }
@@ -180,7 +188,8 @@ abstract class PortletExecutionWorker<V> implements IPortletExecutionWorker<V> {
 
             this.future = this.executorService.submit(callable);
         } catch (final Exception e) {
-            //All is not well do the basic portlet execution lifecycle and then, return a Future that simply rethrows the exception
+            // All is not well do the basic portlet execution lifecycle and then, return a Future
+            // that simply rethrows the exception
 
             final Callable<Future<V>> callable =
                     new ExecutionLifecycleCallable<Future<V>>(
@@ -194,7 +203,7 @@ abstract class PortletExecutionWorker<V> implements IPortletExecutionWorker<V> {
             try {
                 this.future = callable.call();
             } catch (Exception e1) {
-                //We know this will never throw
+                // We know this will never throw
             }
         }
     }
@@ -226,7 +235,7 @@ abstract class PortletExecutionWorker<V> implements IPortletExecutionWorker<V> {
     }
 
     private void startExecution() {
-        //grab the current thread
+        // grab the current thread
         workerThread = Thread.currentThread();
 
         // Initialize the Spring Security Context for this thread.
@@ -234,7 +243,7 @@ abstract class PortletExecutionWorker<V> implements IPortletExecutionWorker<V> {
 
         started = System.currentTimeMillis();
 
-        //signal any threads waiting for the worker to start
+        // signal any threads waiting for the worker to start
         startLatch.countDown();
     }
 
@@ -260,7 +269,7 @@ abstract class PortletExecutionWorker<V> implements IPortletExecutionWorker<V> {
     }
 
     private void doPostExecution(Exception e) {
-        //Iterate over handlers in reverse for post execution
+        // Iterate over handlers in reverse for post execution
         final ListIterator<IPortletExecutionInterceptor> listIterator =
                 this.interceptors.listIterator(this.interceptors.size());
         while (listIterator.hasPrevious()) {
@@ -300,7 +309,7 @@ abstract class PortletExecutionWorker<V> implements IPortletExecutionWorker<V> {
 
     @Override
     public final long waitForStart(long timeout) throws InterruptedException {
-        //Wait for start Callable to start
+        // Wait for start Callable to start
         this.startLatch.await(timeout, TimeUnit.MILLISECONDS);
         return this.started;
     }
@@ -359,19 +368,20 @@ abstract class PortletExecutionWorker<V> implements IPortletExecutionWorker<V> {
             return;
         }
 
-        //Mark worker as retrieved
+        // Mark worker as retrieved
         this.retrieved = true;
 
-        //Notify the guarding req/res wrappers that cancel has been called
+        // Notify the guarding req/res wrappers that cancel has been called
         this.canceled.set(true);
 
-        //Cancel the future, interrupting the thread
+        // Cancel the future, interrupting the thread
         this.future.cancel(true);
 
-        //Track the number of times cancel has been called
+        // Track the number of times cancel has been called
         final int count = this.cancelCount.getAndIncrement();
         if (count > 0) {
-            //Since Future.cancel only interrupts the thread on the first call interrupt the thread directly
+            // Since Future.cancel only interrupts the thread on the first call interrupt the thread
+            // directly
             final Thread thread = this.workerThread;
             if (thread != null) {
                 thread.interrupt();

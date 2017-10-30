@@ -131,7 +131,7 @@ public abstract class AbstractDom4jExporter
             throw new RuntimeException("Failed to load identity Transformer", e);
         }
 
-        //Setup the transformer to pretty-print the output
+        // Setup the transformer to pretty-print the output
         transformer.setOutputProperty(OutputKeys.INDENT, "yes");
         transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
 

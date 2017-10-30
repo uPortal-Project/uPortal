@@ -51,7 +51,7 @@ public class SQLNextExceptionLoggerAspect implements Ordered {
 
         SQLException sqle = (SQLException) t;
 
-        //If the SQLException is the root chain the results of getNextException as initCauses
+        // If the SQLException is the root chain the results of getNextException as initCauses
         if (sqle.getCause() == null) {
             SQLException nextException;
             while ((nextException = sqle.getNextException()) != null) {
@@ -59,7 +59,7 @@ public class SQLNextExceptionLoggerAspect implements Ordered {
                 sqle = nextException;
             }
         }
-        //The SQLException already has a cause so log the results of all getNextException calls
+        // The SQLException already has a cause so log the results of all getNextException calls
         else {
             while ((sqle = sqle.getNextException()) != null) {
                 this.logger.error("Logging getNextException for root SQLException: " + t, sqle);

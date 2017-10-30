@@ -101,7 +101,7 @@ public class PortletDelegationDispatcherImpl implements PortletDelegationDispatc
         final HttpServletResponse response =
                 this.portalRequestUtils.getOriginalPortalResponse(actionRequest);
 
-        //Sanity check that the dispatch is being called by the same user it was created for
+        // Sanity check that the dispatch is being called by the same user it was created for
         final IPerson person = this.personManager.getPerson(request);
         if (this.userId != person.getID()) {
             throw new IllegalStateException(
@@ -115,28 +115,30 @@ public class PortletDelegationDispatcherImpl implements PortletDelegationDispatc
 
         final IPortletWindowId portletWindowId = this.portletWindow.getPortletWindowId();
         try {
-            //TODO canRender permission checks!
+            // TODO canRender permission checks!
             this.portletRenderer.doAction(portletWindowId, request, response);
         } catch (RuntimeException e) {
             this.logger.error("Failed to execute action on delegate", e);
             throw e;
         }
 
-        //Get the portal URL builders for this request and check if a redirect was sent
+        // Get the portal URL builders for this request and check if a redirect was sent
         final IPortalActionUrlBuilder portalActionUrlBuilder =
                 this.portalUrlProvider.getPortalActionUrlBuilder(request);
         final String redirectLocation = portalActionUrlBuilder.getRedirectLocation();
         if (redirectLocation != null) {
             final String renderUrlParamName = portalActionUrlBuilder.getRenderUrlParamName();
 
-            //clear out the redirect from the delegate, leave it up to the parent if the redirect should happen
+            // clear out the redirect from the delegate, leave it up to the parent if the redirect
+            // should happen
             portalActionUrlBuilder.setRedirectLocation(null, null);
 
             return new DelegationActionResponse(
                     this.getDelegateState(), redirectLocation, renderUrlParamName);
         }
 
-        //No redirect so get the portlet's url builder and copy the state-changing data into the delegate response
+        // No redirect so get the portlet's url builder and copy the state-changing data into the
+        // delegate response
         final IPortletUrlBuilder portletUrlBuilder =
                 portalActionUrlBuilder.getPortletUrlBuilder(portletWindowId);
 
@@ -183,7 +185,7 @@ public class PortletDelegationDispatcherImpl implements PortletDelegationDispatc
         final HttpServletResponse response =
                 this.portalRequestUtils.getOriginalPortalResponse(resourceRequest);
 
-        //Sanity check that the dispatch is being called by the same user it was created for
+        // Sanity check that the dispatch is being called by the same user it was created for
         final IPerson person = this.personManager.getPerson(request);
         if (this.userId != person.getID()) {
             throw new IllegalStateException(
@@ -196,7 +198,7 @@ public class PortletDelegationDispatcherImpl implements PortletDelegationDispatc
         this.setupDelegateRequestInfo(request, delegationRequest);
 
         try {
-            //TODO canRender permission checks!
+            // TODO canRender permission checks!
             this.portletRenderer.doServeResource(
                     this.portletWindow.getPortletWindowId(),
                     request,
@@ -255,7 +257,7 @@ public class PortletDelegationDispatcherImpl implements PortletDelegationDispatc
         final HttpServletResponse response =
                 this.portalRequestUtils.getOriginalPortalResponse(renderRequest);
 
-        //Sanity check that the dispatch is being called by the same user it was created for
+        // Sanity check that the dispatch is being called by the same user it was created for
         final IPerson person = this.personManager.getPerson(request);
         if (this.userId != person.getID()) {
             throw new IllegalStateException(
@@ -268,7 +270,7 @@ public class PortletDelegationDispatcherImpl implements PortletDelegationDispatc
         this.setupDelegateRequestInfo(request, delegationRequest);
 
         try {
-            //TODO canRender permission checks!
+            // TODO canRender permission checks!
             this.portletRenderer.doRenderMarkup(
                     this.portletWindow.getPortletWindowId(),
                     request,
@@ -316,7 +318,7 @@ public class PortletDelegationDispatcherImpl implements PortletDelegationDispatc
 
         final IPortletWindowId portletWindowId = this.portletWindow.getPortletWindowId();
 
-        //Store the DelegationRequest so it can be accessed elsewhere
+        // Store the DelegationRequest so it can be accessed elsewhere
         this.portletDelegationManager.setDelegationRequest(
                 request, portletWindowId, delegationRequest);
     }

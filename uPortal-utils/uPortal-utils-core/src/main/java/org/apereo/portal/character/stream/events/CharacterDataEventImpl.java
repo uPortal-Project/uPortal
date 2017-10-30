@@ -27,7 +27,8 @@ public final class CharacterDataEventImpl implements CharacterDataEvent {
     /** Character data for an empty string */
     public static final CharacterDataEvent EMPTY_CHARACTER_DATA = new CharacterDataEventImpl("");
 
-    //Since the cache using weak refs for the events it should never be a cause for object retention therefor no max-size is needed
+    // Since the cache using weak refs for the events it should never be a cause for object
+    // retention therefor no max-size is needed
     private static final LoadingCache<String, CharacterDataEvent> WEAK_EVENT_CACHE =
             CacheBuilder.newBuilder()
                     .weakValues()
@@ -47,7 +48,7 @@ public final class CharacterDataEventImpl implements CharacterDataEvent {
 
         CharacterDataEvent event = WEAK_EVENT_CACHE.getIfPresent(data);
         if (event == null) {
-            //Make sure the String reference is using a minimal char[]
+            // Make sure the String reference is using a minimal char[]
             data = new String(data);
             event = WEAK_EVENT_CACHE.getUnchecked(data);
         }

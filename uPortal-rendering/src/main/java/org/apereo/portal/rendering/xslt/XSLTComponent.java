@@ -94,10 +94,10 @@ public class XSLTComponent extends StAXPipelineComponentWrapper
 
         final Transformer transformer = this.transformerSource.getTransformer(request, response);
 
-        //Setup a URIResolver based on the current resource loader
+        // Setup a URIResolver based on the current resource loader
         transformer.setURIResolver(this.uriResolver);
 
-        //Configure the Transformer via injected class
+        // Configure the Transformer via injected class
         if (this.xsltParameterSource != null) {
             final Map<String, Object> transformerParameters =
                     this.xsltParameterSource.getParameters(request, response);
@@ -127,10 +127,10 @@ public class XSLTComponent extends StAXPipelineComponentWrapper
             }
         }
 
-        //The event reader from the previous component in the pipeline
+        // The event reader from the previous component in the pipeline
         final XMLEventReader eventReader = pipelineEventReader.getEventReader();
 
-        //Wrap the event reader in a stream reader to avoid a JDK bug
+        // Wrap the event reader in a stream reader to avoid a JDK bug
         final XMLStreamReader streamReader;
         try {
             streamReader = new FixedXMLEventStreamReader(eventReader);
@@ -139,10 +139,11 @@ public class XSLTComponent extends StAXPipelineComponentWrapper
         }
         final Source xmlReaderSource = new StAXSource(streamReader);
 
-        //Setup logging for the transform
+        // Setup logging for the transform
         transformer.setErrorListener(this.errorListener);
 
-        //Transform to a SAX ContentHandler to avoid JDK bug: http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6775588
+        // Transform to a SAX ContentHandler to avoid JDK bug:
+        // http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6775588
         final XMLEventBufferWriter eventWriterBuffer = new XMLEventBufferWriter();
         final ContentHandler contentHandler = StaxUtils.createContentHandler(eventWriterBuffer);
         contentHandler.setDocumentLocator(new LocatorImpl());

@@ -61,7 +61,7 @@ import org.hibernate.annotations.Type;
     @ElementCollection(fetch = FetchType.EAGER)
     @MapKeyColumn(name = "ATTR_NAME", nullable = false, length = 500)
     @Column(name = "ATTR_VALUE", nullable = false, length = 2000)
-    @Type(type = "nullSafeString") //only applies to map values
+    @Type(type = "nullSafeString") // only applies to map values
     @CollectionTable(
         name = "UP_TENANT_ATTRIBUTES",
         joinColumns = @JoinColumn(name = "TENANT_ID", nullable = false)

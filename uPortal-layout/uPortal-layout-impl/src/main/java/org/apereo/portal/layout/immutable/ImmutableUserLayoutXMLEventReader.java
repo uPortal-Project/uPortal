@@ -83,8 +83,7 @@ public class ImmutableUserLayoutXMLEventReader extends FilteringXMLEventReader {
             final Map<QName, Attribute> attributes = new LinkedHashMap<QName, Attribute>();
 
             for (final Iterator<Attribute> attributeItr = super.getAttributes();
-                    attributeItr.hasNext();
-                    ) {
+                    attributeItr.hasNext(); ) {
                 final Attribute attribute = attributeItr.next();
                 attributes.put(attribute.getName(), attribute);
             }

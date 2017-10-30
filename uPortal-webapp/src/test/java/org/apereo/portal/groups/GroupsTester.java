@@ -103,7 +103,8 @@ public class GroupsTester extends TestCase {
             int numMembers = 0, numContainingGroups = 0;
             numMembers = group.getChildren().size();
             numContainingGroups = group.getParentGroups().size();
-            //          print (printID + " members: " + numMembers + " entities: " + numEntities + " containing groups: " + numContainingGroups);
+            //          print (printID + " members: " + numMembers + " entities: " + numEntities + "
+            // containing groups: " + numContainingGroups);
         }
     }
 

@@ -20,7 +20,7 @@ import java.util.concurrent.locks.ReentrantLock;
 public class DbOnlyClusterLockServiceImpl extends ClusterLockServiceImpl {
     @Override
     protected ReentrantLock getLocalLock(String mutexName) {
-        //Returning a new lock every time results in no local locking
+        // Returning a new lock every time results in no local locking
         return new ReentrantLock();
     }
 }

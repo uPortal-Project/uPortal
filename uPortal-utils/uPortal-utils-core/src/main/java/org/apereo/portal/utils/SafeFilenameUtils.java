@@ -46,7 +46,7 @@ public final class SafeFilenameUtils {
 
     /** Makes 'safe' filename */
     public static String makeSafeFilename(String filename) {
-        //Replace invalid characters
+        // Replace invalid characters
         for (final Map.Entry<Pattern, String> pair : REPLACEMENT_PAIRS.entrySet()) {
             final Pattern pattern = pair.getKey();
             final Matcher matcher = pattern.matcher(filename);

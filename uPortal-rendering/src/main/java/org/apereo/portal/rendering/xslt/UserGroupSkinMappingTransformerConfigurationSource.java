@@ -102,7 +102,7 @@ public class UserGroupSkinMappingTransformerConfigurationSource
                         .debug(
                                 "Setting skin override {} for {} because they are a member of {}",
                                 new Object[] {skin, person.getUserName(), group});
-                //Cache the resolution
+                // Cache the resolution
                 return skin;
             }
         }
@@ -134,13 +134,13 @@ public class UserGroupSkinMappingTransformerConfigurationSource
         }
 
         protected IGroupMember findGroup(String group) {
-            //Find group by ID
+            // Find group by ID
             final IGroupMember groupMember = GroupService.findGroup(group);
             if (groupMember != null) {
                 return groupMember;
             }
 
-            //No matching ID, search by name
+            // No matching ID, search by name
             final EntityIdentifier[] results =
                     GroupService.searchForGroups(group, GroupService.IS, IPerson.class);
             if (results == null || results.length == 0) {
@@ -152,7 +152,7 @@ public class UserGroupSkinMappingTransformerConfigurationSource
                 return null;
             }
 
-            //Warn if multiple results are found
+            // Warn if multiple results are found
             if (results.length > 1) {
                 getLogger()
                         .warn(

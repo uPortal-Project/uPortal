@@ -110,7 +110,7 @@ public class IdentityImportExportTest extends BasePortalJpaDaoTest {
                             }
                         });
 
-        //Needed for user import/export test
+        // Needed for user import/export test
         runSql(
                 "CREATE TABLE UP_USER\n"
                         + "(\n"

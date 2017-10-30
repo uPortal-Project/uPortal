@@ -102,7 +102,7 @@ public class TemplatesBuilder implements Loader<Templates>, ResourceLoaderAware 
             try {
                 lastModified = resource.lastModified();
             } catch (IOException e) {
-                //Ignore, not all resources can have a valid lastModified returned
+                // Ignore, not all resources can have a valid lastModified returned
             }
             resolvedResources.put(resource, lastModified);
 

@@ -20,6 +20,7 @@ import org.apache.commons.io.output.NullWriter;
 import org.apache.commons.io.output.StringBuilderWriter;
 import org.junit.Assert;
 import org.junit.Test;
+
 /** Tests for {@link LimitingTeeWriter}. */
 public class LimitingTeeWriterTest {
 

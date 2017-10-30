@@ -279,7 +279,8 @@ public class EntityPersonAttributesGroupStore
         List<String> keys = new ArrayList<String>();
         PagsGroup groupDef =
                 convertEntityToGroupDef(
-                        group); // Will prevent wasting time on non-PAGS groups, if those calls even happen
+                        group); // Will prevent wasting time on non-PAGS groups, if those calls even
+        // happen
         if (groupDef != null) {
             for (Iterator<String> i = groupDef.getMembers().iterator(); i.hasNext(); ) {
                 keys.add(i.next());

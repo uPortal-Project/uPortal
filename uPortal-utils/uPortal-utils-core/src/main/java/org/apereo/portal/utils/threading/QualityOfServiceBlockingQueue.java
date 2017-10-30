@@ -59,8 +59,9 @@ public abstract class QualityOfServiceBlockingQueue<K, T> implements BlockingQue
     private final Condition notEmpty = writeLock.newCondition();
     private final Condition notFull = writeLock.newCondition();
 
-    //Track the total size of the queue and peek data, these fields MUST be accessed within a read or write lock and
-    //updated ONLY from within a write lock
+    // Track the total size of the queue and peek data, these fields MUST be accessed within a read
+    // or write lock and
+    // updated ONLY from within a write lock
     private int size = 0;
     private K peekedKey = null;
 
@@ -147,7 +148,7 @@ public abstract class QualityOfServiceBlockingQueue<K, T> implements BlockingQue
 
         final long start = getWriteLockWithOptionalWait(timeout, unit);
         if (start == Long.MIN_VALUE) {
-            //Min value signals a timeout while waiting
+            // Min value signals a timeout while waiting
             return false;
         }
         final long maxWait = start >= 0 ? unit.toMillis(timeout) : -1;
@@ -183,13 +184,13 @@ public abstract class QualityOfServiceBlockingQueue<K, T> implements BlockingQue
     public final T poll(final long timeout, final TimeUnit unit) throws InterruptedException {
         final long start = getWriteLockWithOptionalWait(timeout, unit);
         if (start == Long.MIN_VALUE) {
-            //Min value signals a timeout while waiting
+            // Min value signals a timeout while waiting
             return null;
         }
         final long maxWait = start >= 0 ? unit.toMillis(timeout) : -1;
 
         try {
-            //Wait for an element to be available to return
+            // Wait for an element to be available to return
             if (!this.waitForAdd(start, maxWait)) {
                 return null;
             }
@@ -218,7 +219,7 @@ public abstract class QualityOfServiceBlockingQueue<K, T> implements BlockingQue
      */
     @Override
     public final boolean remove(Object o) {
-        //Short circuit using read-lock
+        // Short circuit using read-lock
         if (this.isEmpty()) {
             return false;
         }
@@ -271,7 +272,7 @@ public abstract class QualityOfServiceBlockingQueue<K, T> implements BlockingQue
      */
     @Override
     public final int drainTo(Collection<? super T> c, int maxElements) {
-        //Short circuit using read-lock
+        // Short circuit using read-lock
         if (this.isEmpty()) {
             return 0;
         }
@@ -315,7 +316,7 @@ public abstract class QualityOfServiceBlockingQueue<K, T> implements BlockingQue
      */
     @Override
     public final T remove() {
-        //Short circuit using read-lock
+        // Short circuit using read-lock
         if (this.isEmpty()) {
             throw new NoSuchElementException();
         }
@@ -332,7 +333,7 @@ public abstract class QualityOfServiceBlockingQueue<K, T> implements BlockingQue
      */
     @Override
     public final T poll() {
-        //Short circuit using read-lock
+        // Short circuit using read-lock
         if (this.isEmpty()) {
             return null;
         }
@@ -345,7 +346,7 @@ public abstract class QualityOfServiceBlockingQueue<K, T> implements BlockingQue
      */
     @Override
     public final T element() {
-        //Short circuit using read-lock
+        // Short circuit using read-lock
         if (this.isEmpty()) {
             throw new NoSuchElementException();
         }
@@ -362,12 +363,12 @@ public abstract class QualityOfServiceBlockingQueue<K, T> implements BlockingQue
      */
     @Override
     public final T peek() {
-        //Short circuit using read-lock
+        // Short circuit using read-lock
         if (this.isEmpty()) {
             return null;
         }
 
-        //No existing peeked element, need to read it off the next queue
+        // No existing peeked element, need to read it off the next queue
         return this.pollInternal(true);
     }
 
@@ -421,7 +422,7 @@ public abstract class QualityOfServiceBlockingQueue<K, T> implements BlockingQue
     public final <AT> AT[] toArray(AT[] a) {
         this.readLock.lock();
         try {
-            //Verify the array size
+            // Verify the array size
             if (a.length < this.size) {
                 a =
                         (AT[])
@@ -429,10 +430,10 @@ public abstract class QualityOfServiceBlockingQueue<K, T> implements BlockingQue
                                         a.getClass().getComponentType(), this.size);
             }
 
-            //Trick to avoid generics warning
+            // Trick to avoid generics warning
             final Object[] result = a;
 
-            //Copy over all elements
+            // Copy over all elements
             int index = 0;
             for (final Queue<T> queue : this.keyedQueues.values()) {
                 for (final T e : queue) {
@@ -440,7 +441,7 @@ public abstract class QualityOfServiceBlockingQueue<K, T> implements BlockingQue
                 }
             }
 
-            //If array is too big set next element null
+            // If array is too big set next element null
             if (a.length > this.size) {
                 a[this.size] = null;
             }
@@ -456,7 +457,7 @@ public abstract class QualityOfServiceBlockingQueue<K, T> implements BlockingQue
      */
     @Override
     public final boolean containsAll(Collection<?> c) {
-        //Short circuit with size comparison first
+        // Short circuit with size comparison first
         final int size = this.size();
         if (size == 0 || size < c.size()) {
             return false;
@@ -515,11 +516,11 @@ public abstract class QualityOfServiceBlockingQueue<K, T> implements BlockingQue
                 newSize += queue.size();
             }
 
-            //Update the queue size
+            // Update the queue size
             final int oldSize = this.size;
             this.size = newSize;
 
-            //If the updated size and old size differ things changed
+            // If the updated size and old size differ things changed
             return this.size != oldSize;
         } finally {
             this.writeLock.unlock();
@@ -595,29 +596,29 @@ public abstract class QualityOfServiceBlockingQueue<K, T> implements BlockingQue
     private T pollInternal(boolean peek) {
         this.writeLock.lock();
         try {
-            //Re-check size within the write lock
+            // Re-check size within the write lock
             if (this.size == 0) {
                 return null;
             }
 
             final K key;
             if (this.peekedKey != null) {
-                //If there is a peeked key use it
+                // If there is a peeked key use it
                 key = this.peekedKey;
                 if (!peek) {
-                    //If not a peek consume the peekedKey
+                    // If not a peek consume the peekedKey
                     this.peekedKey = null;
                 }
             } else {
-                //Get the next element key
+                // Get the next element key
                 key = this.getNextElementKey();
                 if (peek) {
-                    //If a peek store the key
+                    // If a peek store the key
                     this.peekedKey = key;
                 }
             }
 
-            //Get the associated Queue and sanitity check the value from getNextElementKey()
+            // Get the associated Queue and sanitity check the value from getNextElementKey()
             final Queue<T> queue = this.keyedQueues.get(key);
             if (queue == null || queue.isEmpty()) {
                 throw new IllegalStateException(
@@ -627,11 +628,11 @@ public abstract class QualityOfServiceBlockingQueue<K, T> implements BlockingQue
             }
 
             if (peek) {
-                //If a peek just return a peek from the queue
+                // If a peek just return a peek from the queue
                 return queue.peek();
             }
 
-            //Not a peek, decrement the size and poll the queue
+            // Not a peek, decrement the size and poll the queue
             this.size--;
             this.notFull.signal();
             return queue.poll();
@@ -664,14 +665,15 @@ public abstract class QualityOfServiceBlockingQueue<K, T> implements BlockingQue
      */
     private long getWriteLockWithOptionalWait(final long timeout, final TimeUnit unit)
             throws InterruptedException {
-        //Get the write lock and capture start time and max wait time if waiting a specified timeout
+        // Get the write lock and capture start time and max wait time if waiting a specified
+        // timeout
         final long start;
         if (timeout >= 0) {
             start = System.currentTimeMillis();
 
             final boolean locked = this.writeLock.tryLock(timeout, unit);
             if (!locked) {
-                //Hit timeout waiting for lock
+                // Hit timeout waiting for lock
                 return Long.MIN_VALUE;
             }
         } else {
@@ -704,13 +706,13 @@ public abstract class QualityOfServiceBlockingQueue<K, T> implements BlockingQue
             final long waited = System.currentTimeMillis() - waitStart;
             final long waitTime = maxWait - waited;
             if (waitTime <= 0) {
-                //Hit timeout waiting for new element
+                // Hit timeout waiting for new element
                 return false;
             }
 
             final boolean notified = condition.await(waitTime, TimeUnit.MILLISECONDS);
             if (!notified) {
-                //Hit timeout waiting for new element
+                // Hit timeout waiting for new element
                 return false;
             }
         } else {
@@ -780,8 +782,7 @@ public abstract class QualityOfServiceBlockingQueue<K, T> implements BlockingQue
 
             for (final Iterator<Entry<K, Queue<T>>> entryItr =
                             this.keyedQueues.entrySet().iterator();
-                    entryItr.hasNext();
-                    ) {
+                    entryItr.hasNext(); ) {
                 final Entry<K, Queue<T>> entry = entryItr.next();
                 final K key = entry.getKey();
                 final Queue<T> queue = entry.getValue();

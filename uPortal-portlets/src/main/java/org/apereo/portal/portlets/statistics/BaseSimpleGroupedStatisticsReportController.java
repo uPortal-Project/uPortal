@@ -49,21 +49,22 @@ public abstract class BaseSimpleGroupedStatisticsReportController<
      */
     protected Map<D, SortedSet<T>> getDefaultGroupedColumnDiscriminatorMap(F form) {
         List<Long> groups = form.getGroups();
-        //Collections used to track the queried groups and the results
+        // Collections used to track the queried groups and the results
         final Map<D, SortedSet<T>> groupedAggregations =
                 new TreeMap<D, SortedSet<T>>((Comparator<? super D>) getDiscriminatorComparator());
 
-        //Get concrete group mapping objects that are being queried for
+        // Get concrete group mapping objects that are being queried for
         for (final Long queryGroupId : groups) {
             final D groupMapping =
                     createGroupedDiscriminatorInstance(
                             this.aggregatedGroupDao.getGroupMapping(queryGroupId));
 
-            //Create the set the aggregations for this report column will be stored in, sorted chronologically
+            // Create the set the aggregations for this report column will be stored in, sorted
+            // chronologically
             final SortedSet<T> aggregations =
                     new TreeSet<T>(BaseAggregationDateTimeComparator.INSTANCE);
 
-            //Map the group to the set
+            // Map the group to the set
             groupedAggregations.put(groupMapping, aggregations);
         }
 

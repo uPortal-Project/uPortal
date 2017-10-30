@@ -17,7 +17,7 @@ package org.apereo.portal.groups;
 /** Defines constants for Groups related classes */
 public interface IGroupConstants {
 
-    //Search method constants
+    // Search method constants
     int IS = 1;
     int STARTS_WITH = 2;
     int ENDS_WITH = 3;

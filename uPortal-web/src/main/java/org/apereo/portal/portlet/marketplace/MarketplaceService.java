@@ -160,7 +160,8 @@ public class MarketplaceService implements IMarketplaceService, ApplicationListe
                  * Collection not in cache -- need to recreate it
                  */
 
-                // Gather the complete collection of allowable categories (specified categories & their descendants)
+                // Gather the complete collection of allowable categories (specified categories &
+                // their descendants)
                 final Set<PortletCategory> allSpecifiedAndDecendantCategories = new HashSet<>();
                 for (PortletCategory pc : categories) {
                     collectSpecifiedAndDescendantCategories(pc, allSpecifiedAndDecendantCategories);
@@ -392,7 +393,7 @@ public class MarketplaceService implements IMarketplaceService, ApplicationListe
         Validate.notNull(
                 portletDefinition,
                 "Cannot determine whether a user can browse a null portlet definition.");
-        //short-cut for guest user, it will always be false for guest, otherwise evaluate
+        // short-cut for guest user, it will always be false for guest, otherwise evaluate
         return user.isGuest()
                 ? false
                 : authorizationService.canPrincipalSubscribe(

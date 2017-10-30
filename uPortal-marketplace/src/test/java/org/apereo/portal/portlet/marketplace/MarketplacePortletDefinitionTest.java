@@ -80,7 +80,7 @@ public class MarketplacePortletDefinitionTest {
                 new MarketplacePortletDefinition(
                         anotherPortletDefinition, service, categoryRegistry);
 
-        //fnames of both are null, so they are equal
+        // fnames of both are null, so they are equal
         assertTrue(marketplacePortletDefinition.equals(anotherMarketplacePortletDefinition));
 
         when(portletDefinition.getFName()).thenReturn("snooper");

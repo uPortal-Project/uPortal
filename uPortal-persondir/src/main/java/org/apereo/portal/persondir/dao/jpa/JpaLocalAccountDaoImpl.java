@@ -190,7 +190,7 @@ public class JpaLocalAccountDaoImpl extends BasePortalJpaDao implements ILocalAc
         final ListJoin<LocalAccountPersonAttributeImpl, String> attributeValues =
                 attributes.join(LocalAccountPersonAttributeImpl_.values);
 
-        //Due to the joins multiple rows are returned for each result
+        // Due to the joins multiple rows are returned for each result
         criteriaQuery.distinct(true);
         criteriaQuery.select(accountRoot);
 
@@ -205,7 +205,7 @@ public class JpaLocalAccountDaoImpl extends BasePortalJpaDao implements ILocalAc
             params.put(this.nameParameter, query.getName());
         }
 
-        //Build Predicate for each attribute being queried
+        // Build Predicate for each attribute being queried
         int paramCount = 0;
         for (Map.Entry<String, List<String>> entry : query.getAttributes().entrySet()) {
             final List<String> values = entry.getValue();
@@ -213,13 +213,14 @@ public class JpaLocalAccountDaoImpl extends BasePortalJpaDao implements ILocalAc
                 continue;
             }
 
-            //For each value create a Predicate checking the attribute name and value together
+            // For each value create a Predicate checking the attribute name and value together
             for (final String value : values) {
                 if (StringUtils.isBlank(value)) {
                     continue;
                 }
 
-                //Create Parameter objects for the name and value, stick them in the params map for later use
+                // Create Parameter objects for the name and value, stick them in the params map for
+                // later use
                 final ParameterExpression<String> nameParam =
                         this.createParameterExpression(String.class, "attrName" + paramCount);
                 final ParameterExpression<String> valueParam =
@@ -228,7 +229,8 @@ public class JpaLocalAccountDaoImpl extends BasePortalJpaDao implements ILocalAc
                 params.put(nameParam, entry.getKey());
                 params.put(valueParam, "%" + value.toLowerCase() + "%");
 
-                //Build the and(eq, like) predicate and add it to the list of predicates for the where clause
+                // Build the and(eq, like) predicate and add it to the list of predicates for the
+                // where clause
                 whereParts.add(
                         cb.and(
                                 cb.equal(
@@ -240,13 +242,13 @@ public class JpaLocalAccountDaoImpl extends BasePortalJpaDao implements ILocalAc
             }
         }
 
-        //Add the Predicates to the where clause
+        // Add the Predicates to the where clause
         criteriaQuery.where(cb.or(whereParts.toArray(new Predicate[whereParts.size()])));
 
-        //Create the query
+        // Create the query
         final TypedQuery<LocalAccountPersonImpl> jpaQuery = this.createCachedQuery(criteriaQuery);
 
-        //Add all of the stored up parameters to the query
+        // Add all of the stored up parameters to the query
         for (Map.Entry<Parameter<String>, String> entry : params.entrySet()) {
             final Parameter<String> parameter = entry.getKey();
             final String value = entry.getValue();

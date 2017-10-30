@@ -730,7 +730,7 @@ public class UrlSyntaxProviderImplTest {
         request.addParameter("pCr_30_dlg-16-ctf3-5_5", "preview");
         request.addParameter("pP_execution", "e2s3");
         request.addParameter("pP__eventId", "configModeAction");
-        request.addParameter("content", "<div>some content</div>"); //not on URL, was posted
+        request.addParameter("content", "<div>some content</div>"); // not on URL, was posted
 
         final MockPortletWindowId portletWindowId1 = new MockPortletWindowId("16_ctf3_5");
         final MockPortletWindowId portletWindowId2 = new MockPortletWindowId("30_dlg-16-ctf3-5_5");
@@ -1235,8 +1235,10 @@ public class UrlSyntaxProviderImplTest {
                                 "/uPortal/f/welcome/p/uportal-links.u32l1n12/max/render.uP"));
     }
 
-    // Verifies ignores the state and url type.  Assumption is canonical path would have been properly derived
-    // from 1st path string so don't need to concern ourselves with the defaulting mechanism being correct in
+    // Verifies ignores the state and url type.  Assumption is canonical path would have been
+    // properly derived
+    // from 1st path string so don't need to concern ourselves with the defaulting mechanism being
+    // correct in
     // this test method.
     @Test
     public void

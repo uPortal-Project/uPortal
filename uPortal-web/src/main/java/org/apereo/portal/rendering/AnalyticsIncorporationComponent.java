@@ -60,8 +60,8 @@ public class AnalyticsIncorporationComponent extends CharacterPipelineComponentW
         static final String FILTER_NAME = "PortletRenderExecutionEventFilter";
     }
 
-    //Ignored until https://github.com/FasterXML/jackson-databind/issues/245 is fixed
-    //Delete the mapper related code in afterPropertiesSet once the issue is fixed
+    // Ignored until https://github.com/FasterXML/jackson-databind/issues/245 is fixed
+    // Delete the mapper related code in afterPropertiesSet once the issue is fixed
     //    @Autowired
     //    public void setMapper(ObjectMapper mapper) {
     //
@@ -133,7 +133,7 @@ public class AnalyticsIncorporationComponent extends CharacterPipelineComponentW
     }
 
     protected String serializePortletRenderExecutionEvents(final Set<PortalEvent> portalEvents) {
-        //Filter to include just portlet render events
+        // Filter to include just portlet render events
         final Map<String, PortletRenderExecutionEvent> renderEvents =
                 new HashMap<String, PortletRenderExecutionEvent>();
         for (final PortalEvent portalEvent : portalEvents) {
@@ -141,7 +141,7 @@ public class AnalyticsIncorporationComponent extends CharacterPipelineComponentW
                 final PortletRenderExecutionEvent portletRenderEvent =
                         (PortletRenderExecutionEvent) portalEvent;
 
-                //Don't write out info for minimized portlets
+                // Don't write out info for minimized portlets
                 if (!WindowState.MINIMIZED.equals(portletRenderEvent.getWindowState())) {
                     final IPortletWindowId portletWindowId =
                             portletRenderEvent.getPortletWindowId();
@@ -221,7 +221,7 @@ public class AnalyticsIncorporationComponent extends CharacterPipelineComponentW
             switch (event.getEventType()) {
                 case PORTLET_ANALYTICS_DATA:
                     {
-                        //Get the set of events for the request
+                        // Get the set of events for the request
                         final Set<PortalEvent> portalEvents =
                                 requestScopedEventsTracker.getRequestEvents(request);
 

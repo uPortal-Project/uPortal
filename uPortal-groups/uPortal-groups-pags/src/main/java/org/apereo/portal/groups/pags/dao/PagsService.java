@@ -110,7 +110,8 @@ public final class PagsService {
                 parent != null
                         ? parent.getEntityIdentifier().getKey()
                         : IPermission
-                                .ALL_GROUPS_TARGET; // Must have blanket permission to create one w/o a parent
+                                .ALL_GROUPS_TARGET; // Must have blanket permission to create one
+        // w/o a parent
 
         // Verify permission
         if (!hasPermission(person, IPermission.CREATE_GROUP_ACTIVITY, target)) {

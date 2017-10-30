@@ -52,7 +52,7 @@ class PortalRequestInfoImpl implements IPortalRequestInfo {
                 return;
             }
 
-            //Make all the PortletRequestInfoImpl intances read-only
+            // Make all the PortletRequestInfoImpl intances read-only
             for (final PortletRequestInfoImpl portletRequestInfo :
                     this.portletRequestInfo.values()) {
                 portletRequestInfo.makeReadOnly();
@@ -104,7 +104,7 @@ class PortalRequestInfoImpl implements IPortalRequestInfo {
         }
 
         if (this.readOnly) {
-            //Could in theory return null?
+            // Could in theory return null?
             return this.portletRequestInfo.get(this.targetedPortletWindowId);
         }
 
@@ -120,7 +120,7 @@ class PortalRequestInfoImpl implements IPortalRequestInfo {
     public PortletRequestInfoImpl getPortletRequestInfo(IPortletWindowId portletWindowId) {
         PortletRequestInfoImpl portletRequestInfo = this.portletRequestInfo.get(portletWindowId);
         if (readOnly || portletRequestInfo != null) {
-            //If read only return null is ok
+            // If read only return null is ok
             return portletRequestInfo;
         }
 

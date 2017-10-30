@@ -44,7 +44,7 @@ public class PortletEventQueue implements Iterable<IPortletWindowId> {
             new ConcurrentHashMap<IPortletWindowId, Queue<QueuedEvent>>();
 
     PortletEventQueue() {
-        //Only allow code in the same package to create the queue
+        // Only allow code in the same package to create the queue
     }
 
     /** Add the collection of events to the raw event queue */

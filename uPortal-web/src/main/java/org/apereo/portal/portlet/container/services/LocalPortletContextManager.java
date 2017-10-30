@@ -152,9 +152,11 @@ public class LocalPortletContextManager implements PortletRegistryService, Portl
                                 + portletContext.getApplicationName());
             }
 
-            //TODO have the portlet servlet provide the portlet's classloader as parameter to this method
-            //This approach is needed as all pluto callbacks in uPortal have an aspect that switches the thread classloader back
-            //to uPortal's classloader.
+            // TODO have the portlet servlet provide the portlet's classloader as parameter to this
+            // method
+            // This approach is needed as all pluto callbacks in uPortal have an aspect that
+            // switches the thread classloader back
+            // to uPortal's classloader.
             ClassLoader classLoader = ThreadContextClassLoaderAspect.getPreviousClassLoader();
             if (classLoader == null) {
                 classLoader = Thread.currentThread().getContextClassLoader();

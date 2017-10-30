@@ -92,10 +92,14 @@ public class UserLayoutParameterProcessor implements IRequestParameterProcessor 
                     request, PreferencesScope.STRUCTURE, "focusedTabID", tabId);
         }
 
-        // If the layout manager is a transient layout manager, reset the focusedId.  This addresses the use case of a
-        // user focusing on a transient portlet (one not on their layout), then doing something like clicking on
-        // another tab.  If we didn't reset the focused ID the layout processing will again create a transient folder
-        // and portlet node even though the current URL doesn't specify focusing on a portlet. If the URL does focus
+        // If the layout manager is a transient layout manager, reset the focusedId.  This addresses
+        // the use case of a
+        // user focusing on a transient portlet (one not on their layout), then doing something like
+        // clicking on
+        // another tab.  If we didn't reset the focused ID the layout processing will again create a
+        // transient folder
+        // and portlet node even though the current URL doesn't specify focusing on a portlet. If
+        // the URL does focus
         // on a portlet, it will get overwritten with the new value below.
         if (userLayoutManager instanceof TransientUserLayoutManagerWrapper) {
             final TransientUserLayoutManagerWrapper transientUserLayoutManagerWrapper =
@@ -138,7 +142,7 @@ public class UserLayoutParameterProcessor implements IRequestParameterProcessor 
                             transientUserLayoutManagerWrapper.setFocusedId(channelSubscribeId);
                         }
 
-                        //If portletRequestInfo was null just fall through to NORMAL state
+                        // If portletRequestInfo was null just fall through to NORMAL state
                         break;
                     }
                 }

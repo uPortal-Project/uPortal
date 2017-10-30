@@ -135,7 +135,7 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
             HttpServletRequest request, IPortletEntityId portletEntityId) {
         Validate.notNull(portletEntityId, "portletEntityId can not be null");
 
-        //Sync on the request map to make sure duplicate IPortletEntitys aren't ever created
+        // Sync on the request map to make sure duplicate IPortletEntitys aren't ever created
         final PortletEntityCache<IPortletEntity> portletEntityCache =
                 this.getPortletEntityMap(request);
 
@@ -166,12 +166,12 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
                     "No portlet definition found for id '" + portletDefinitionId + "'.");
         }
 
-        //Determine the appropriate portlet window ID for the definition
+        // Determine the appropriate portlet window ID for the definition
         final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
         final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
         final IUserLayoutManager userLayoutManager = preferencesManager.getUserLayoutManager();
 
-        //Determine the subscribe ID
+        // Determine the subscribe ID
         final String portletFName = portletDefinition.getFName();
         final String layoutNodeId = userLayoutManager.getSubscribeId(portletFName);
         if (layoutNodeId == null) {
@@ -193,7 +193,7 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
         final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
         final IUserLayoutManager userLayoutManager = preferencesManager.getUserLayoutManager();
 
-        //Find the channel and portlet definitions
+        // Find the channel and portlet definitions
         final IUserLayoutChannelDescription channelNode =
                 (IUserLayoutChannelDescription) userLayoutManager.getNode(layoutNodeId);
         if (channelNode == null) {
@@ -233,19 +233,20 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
             int userId) {
         final PortletEntityCache<IPortletEntity> portletEntityCache = getPortletEntityMap(request);
 
-        //Try just getting an existing entity first
+        // Try just getting an existing entity first
         IPortletEntity portletEntity =
                 this.getPortletEntity(request, portletEntityCache, null, layoutNodeId, userId);
 
-        //Found an existing entity!
+        // Found an existing entity!
         if (portletEntity != null) {
-            //Verify the definition IDs match, this is a MUST in the case where the subscribed portlet changes
+            // Verify the definition IDs match, this is a MUST in the case where the subscribed
+            // portlet changes
             final IPortletDefinition portletDefinition = portletEntity.getPortletDefinition();
             if (portletDefinitionId.equals(portletDefinition.getPortletDefinitionId())) {
                 return portletEntity;
             }
 
-            //Remove the entity if the definition IDs don't match
+            // Remove the entity if the definition IDs don't match
             this.logger.warn(
                     "Found portlet entity '{}' is not the correct entity for portlet definition id: {}. The entity will be deleted and a new one created.",
                     portletEntity,
@@ -253,7 +254,7 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
             this.deletePortletEntity(request, portletEntity, false);
         }
 
-        //Create the entity data object and store it in the session map (if not already there)
+        // Create the entity data object and store it in the session map (if not already there)
         final PortletEntityCache<PortletEntityData> portletEntityDataMap =
                 this.getPortletEntityDataMap(request);
 
@@ -265,7 +266,7 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
 
         portletEntity = wrapPortletEntityData(portletEntityData);
 
-        //Stick the wrapper in the request map
+        // Stick the wrapper in the request map
         portletEntity = portletEntityCache.storeIfAbsentEntity(portletEntity);
 
         return portletEntity;
@@ -292,17 +293,18 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
                             request, userInstance, preferredChannelSubscribeId);
 
             if (portletEntity != null) {
-                //Verify the fname matches before returning the entity
+                // Verify the fname matches before returning the entity
                 final IPortletDefinition portletDefinition = portletEntity.getPortletDefinition();
                 if (fname.equals(portletDefinition.getFName())) {
                     return portletEntity;
                 }
             }
         } catch (PortalException pe) {
-            //Ignored, can be the case if no layout node exists for the specified subscribe ID
+            // Ignored, can be the case if no layout node exists for the specified subscribe ID
         }
 
-        //Either the layout node didn't exist or the entity for the node doesn't match the requested fname
+        // Either the layout node didn't exist or the entity for the node doesn't match the
+        // requested fname
         return this.getOrCreatePortletEntityByFname(request, userInstance, fname);
     }
 
@@ -311,17 +313,17 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
             HttpServletRequest request,
             IPortletWindowId parentPortletWindowId,
             IPortletDefinitionId delegatePortletDefinitionId) {
-        //Create a special synthetic layout node ID for the delegate entity
+        // Create a special synthetic layout node ID for the delegate entity
         final String layoutNodeId =
                 PortletWindowIdStringUtils.convertToDelegateLayoutNodeId(
                         parentPortletWindowId.toString());
 
-        //Grab the current user
+        // Grab the current user
         final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
         final IPerson person = userInstance.getPerson();
         final int userId = person.getID();
 
-        //Use the general API, the only thing special is the layout node id
+        // Use the general API, the only thing special is the layout node id
         return getOrCreatePortletEntity(request, delegatePortletDefinitionId, layoutNodeId, userId);
     }
 
@@ -335,7 +337,7 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
         final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
         final IPerson person = userInstance.getPerson();
         if (person.isGuest()) {
-            //Never persist things for the guest user, just rely on in-memory storage
+            // Never persist things for the guest user, just rely on in-memory storage
             return;
         }
 
@@ -346,16 +348,16 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
             final boolean shouldBePersisted = this.shouldBePersisted(portletEntity);
 
             if (portletEntity instanceof PersistentPortletEntityWrapper) {
-                //Unwrap the persistent entity
+                // Unwrap the persistent entity
                 final IPortletEntity persistentEntity =
                         ((PersistentPortletEntityWrapper) portletEntity).getPersistentEntity();
 
-                //Already persistent entity that still has prefs
+                // Already persistent entity that still has prefs
                 if (shouldBePersisted) {
                     try {
                         this.portletEntityDao.updatePortletEntity(persistentEntity);
                     } catch (HibernateOptimisticLockingFailureException e) {
-                        //Check if this exception is from the entity being deleted from under us.
+                        // Check if this exception is from the entity being deleted from under us.
                         final boolean exists =
                                 this.portletEntityDao.portletEntityExists(
                                         persistentEntity.getPortletEntityId());
@@ -371,25 +373,25 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
                         }
                     }
                 }
-                //Already persistent entity that should not be, DELETE!
+                // Already persistent entity that should not be, DELETE!
                 else {
-                    //Capture identifiers needed to recreate the entity as session persistent
+                    // Capture identifiers needed to recreate the entity as session persistent
                     final IPortletDefinitionId portletDefinitionId =
                             portletEntity.getPortletDefinitionId();
                     final String layoutNodeId = portletEntity.getLayoutNodeId();
                     final int userId = portletEntity.getUserId();
 
-                    //Delete the persistent entity
+                    // Delete the persistent entity
                     this.deletePortletEntity(request, portletEntity, false);
 
-                    //Create a new entity and stick it in the cache
+                    // Create a new entity and stick it in the cache
                     this.getOrCreatePortletEntity(
                             request, portletDefinitionId, layoutNodeId, userId);
                 }
             } else if (portletEntity instanceof SessionPortletEntityImpl) {
-                //There are preferences on the interim entity, create an store it
+                // There are preferences on the interim entity, create an store it
                 if (shouldBePersisted) {
-                    //Remove the session scoped entity from the request and session caches
+                    // Remove the session scoped entity from the request and session caches
                     this.deletePortletEntity(request, portletEntity, false);
 
                     final IPortletEntity persistentEntity =
@@ -403,9 +405,9 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
                                         + persistentEntity.getPortletEntityId());
                     }
                 }
-                //Session scoped entity that is still session scoped,
+                // Session scoped entity that is still session scoped,
                 else {
-                    //Look for a persistent entity and delete it
+                    // Look for a persistent entity and delete it
                     final String channelSubscribeId = portletEntity.getLayoutNodeId();
                     final int userId = portletEntity.getUserId();
                     IPortletEntity existingPersistentEntity =
@@ -423,12 +425,12 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
                                         + ". The passed entity has no preferences so the persistent version will be deleted");
                         this.deletePortletEntity(request, existingPersistentEntity, false);
 
-                        //Add to request cache
+                        // Add to request cache
                         final PortletEntityCache<IPortletEntity> portletEntityMap =
                                 this.getPortletEntityMap(request);
                         portletEntityMap.storeIfAbsentEntity(portletEntity);
 
-                        //Add to session cache
+                        // Add to session cache
                         final PortletEntityCache<PortletEntityData> portletEntityDataMap =
                                 this.getPortletEntityDataMap(request);
                         portletEntityDataMap.storeIfAbsentEntity(
@@ -449,13 +451,14 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
     public Lock getPortletEntityLock(HttpServletRequest request, IPortletEntityId portletEntityId) {
         final ConcurrentMap<IPortletEntityId, Lock> lockMap = getPortletEntityLockMap(request);
 
-        //See if the lock already exist, return if it does
+        // See if the lock already exist, return if it does
         Lock lock = lockMap.get(portletEntityId);
         if (lock != null) {
             return lock;
         }
 
-        //Create a new lock and do a putIfAbsent to avoid synchronizing but still get a single lock instance for the session.
+        // Create a new lock and do a putIfAbsent to avoid synchronizing but still get a single lock
+        // instance for the session.
         lock = createPortletEntityLock();
         return ConcurrentMapUtils.putIfAbsent(lockMap, portletEntityId, lock);
     }
@@ -545,12 +548,12 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
                             portletDefinitionId, layoutNodeId, userId);
         }
 
-        //Copy over preferences to avoid modifying any part of the interim entity by reference
+        // Copy over preferences to avoid modifying any part of the interim entity by reference
         final List<IPortletPreference> existingPreferences = portletEntity.getPortletPreferences();
         final List<IPortletPreference> persistentPreferences =
                 persistentEntity.getPortletPreferences();
 
-        //Only do the copy if the List objects are not the same instance
+        // Only do the copy if the List objects are not the same instance
         if (persistentPreferences != existingPreferences) {
             persistentPreferences.clear();
             for (final IPortletPreference preference : existingPreferences) {
@@ -558,7 +561,7 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
             }
         }
 
-        //Copy over WindowStates
+        // Copy over WindowStates
         final Map<Long, WindowState> windowStates = portletEntity.getWindowStates();
         for (Map.Entry<Long, WindowState> windowStateEntry : windowStates.entrySet()) {
             final Long stylesheetDescriptorId = windowStateEntry.getKey();
@@ -578,12 +581,12 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
             HttpServletRequest request, IPortletEntity portletEntity, boolean cacheOnly) {
         final IPortletEntityId portletEntityId = portletEntity.getPortletEntityId();
 
-        //Remove from request cache
+        // Remove from request cache
         final PortletEntityCache<IPortletEntity> portletEntityMap =
                 this.getPortletEntityMap(request);
         portletEntityMap.removeEntity(portletEntityId);
 
-        //Remove from session cache
+        // Remove from session cache
         final PortletEntityCache<PortletEntityData> portletEntityDataMap =
                 this.getPortletEntityDataMap(request);
         portletEntityDataMap.removeEntity(portletEntityId);
@@ -619,7 +622,7 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
 
         IPortletEntity portletEntity;
 
-        //First look in the request map
+        // First look in the request map
         if (portletEntityId != null) {
             portletEntity = portletEntityCache.getEntity(portletEntityId);
         } else {
@@ -632,7 +635,7 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
             return portletEntity;
         }
 
-        //Didn't find it, next look in the session map
+        // Didn't find it, next look in the session map
         final PortletEntityCache<PortletEntityData> portletEntityDataMap =
                 this.getPortletEntityDataMap(request);
         final PortletEntityData portletEntityData;
@@ -644,14 +647,16 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
 
         if (portletEntityData != null) {
 
-            //Stick the entity wrapper in the request map (if it wasn't already added by another thread)
+            // Stick the entity wrapper in the request map (if it wasn't already added by another
+            // thread)
             portletEntity =
                     portletEntityCache.storeIfAbsentEntity(
                             portletEntityData.getPortletEntityId(),
                             new Function<IPortletEntityId, IPortletEntity>() {
                                 @Override
                                 public IPortletEntity apply(IPortletEntityId input) {
-                                    //Found a session stored entity, wrap it to make it a real IPortletEntity
+                                    // Found a session stored entity, wrap it to make it a real
+                                    // IPortletEntity
                                     logger.trace(
                                             "Found PortletEntityData {} in session cache, caching wrapper in the request",
                                             portletEntityData.getPortletEntityId());
@@ -663,7 +668,7 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
             return portletEntity;
         }
 
-        //Still didn't find it, look in the persistent store
+        // Still didn't find it, look in the persistent store
         if (portletEntityId != null) {
             if (portletEntityId instanceof PortletEntityIdImpl) {
                 final PortletEntityIdImpl consistentPortletEntityId =
@@ -680,14 +685,16 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
             portletEntity = this.portletEntityDao.getPortletEntity(layoutNodeId, userId);
         }
 
-        //Found a persistent entity, wrap it to make the id consistent between the persistent and session stored entities
+        // Found a persistent entity, wrap it to make the id consistent between the persistent and
+        // session stored entities
         if (portletEntity != null) {
             final IPortletEntityId consistentPortletEntityId =
                     this.createConsistentPortletEntityId(portletEntity);
 
             final IPortletEntity anonPortletEntity = portletEntity;
 
-            //Stick the entity wrapper in the request map (if it wasn't already added by another thread)
+            // Stick the entity wrapper in the request map (if it wasn't already added by another
+            // thread)
             portletEntity =
                     portletEntityCache.storeIfAbsentEntity(
                             consistentPortletEntityId,
@@ -706,7 +713,7 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
             return portletEntity;
         }
 
-        //Didn't find an entity, just return null
+        // Didn't find an entity, just return null
         return null;
     }
 
@@ -727,7 +734,7 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
             HttpServletRequest request, String consistentEntityIdString) {
         Validate.notNull(consistentEntityIdString, "consistentEntityIdString can not be null");
 
-        //Check in the cache first
+        // Check in the cache first
         final Element element = this.entityIdParseCache.get(consistentEntityIdString);
         if (element != null) {
             final Object value = element.getObjectValue();
@@ -742,7 +749,7 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
                             + consistentEntityIdString);
         }
 
-        //Verify the portlet definition id
+        // Verify the portlet definition id
         final String portletDefinitionIdString =
                 PortletEntityIdStringUtils.parsePortletDefinitionId(consistentEntityIdString);
         final IPortletDefinition portletDefinition =
@@ -760,7 +767,7 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
         final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
         final IUserLayoutManager userLayoutManager = preferencesManager.getUserLayoutManager();
 
-        //Verify non-delegate layout node id exists and is for a portlet
+        // Verify non-delegate layout node id exists and is for a portlet
         final String layoutNodeId =
                 PortletEntityIdStringUtils.parseLayoutNodeId(consistentEntityIdString);
         if (!PortletEntityIdStringUtils.isDelegateLayoutNode(layoutNodeId)) {
@@ -773,8 +780,8 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
                                 + consistentEntityIdString);
             }
 
-            //TODO is this doable for delegation?
-            //Verify the portlet definition matches
+            // TODO is this doable for delegation?
+            // Verify the portlet definition matches
             final IUserLayoutChannelDescription portletNode = (IUserLayoutChannelDescription) node;
             final String channelPublishId = portletNode.getChannelPublishId();
             if (!portletDefinitionId.getStringId().equals(channelPublishId)) {
@@ -788,8 +795,8 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
             }
         }
 
-        //TODO when there is a JPA backed user dao actually verify this mapping
-        //User just conver to an int
+        // TODO when there is a JPA backed user dao actually verify this mapping
+        // User just conver to an int
         final int userId;
         final String userIdAsString =
                 PortletEntityIdStringUtils.parseUserIdAsString(consistentEntityIdString);
@@ -807,7 +814,7 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
         final IPortletEntityId portletEntityId =
                 createConsistentPortletEntityId(portletDefinitionId, layoutNodeId, userId);
 
-        //Cache the resolution
+        // Cache the resolution
         this.entityIdParseCache.put(new Element(consistentEntityIdString, portletEntityId));
 
         return portletEntityId;
@@ -827,10 +834,11 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
     protected PortletEntityCache<IPortletEntity> getPortletEntityMap(HttpServletRequest request) {
         request = portalRequestUtils.getOriginalPortletOrPortalRequest(request);
 
-        //create the thread specific cache name
+        // create the thread specific cache name
         final String entityMapAttribute = PORTLET_ENTITY_ATTRIBUTE + Thread.currentThread().getId();
 
-        //No need to do this in a request attribute mutex since the map is scoped to a specific thread
+        // No need to do this in a request attribute mutex since the map is scoped to a specific
+        // thread
         @SuppressWarnings("unchecked")
         PortletEntityCache<IPortletEntity> cache =
                 (PortletEntityCache<IPortletEntity>) request.getAttribute(entityMapAttribute);
@@ -869,13 +877,14 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
 
     @Override
     public boolean shouldBePersisted(IPortletEntity portletEntity) {
-        //Delegate entities should NEVER be persisted
+        // Delegate entities should NEVER be persisted
         final String layoutNodeId = portletEntity.getLayoutNodeId();
         if (PortletEntityIdStringUtils.isDelegateLayoutNode(layoutNodeId)) {
             return false;
         }
 
-        //Only non delegate entities with preferences or a non-null window state should be persisted
+        // Only non delegate entities with preferences or a non-null window state should be
+        // persisted
         final List<IPortletPreference> preferences = portletEntity.getPortletPreferences();
         return CollectionUtils.isNotEmpty(preferences)
                 || !portletEntity.getWindowStates().isEmpty();

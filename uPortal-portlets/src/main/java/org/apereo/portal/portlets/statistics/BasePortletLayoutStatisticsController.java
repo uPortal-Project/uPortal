@@ -98,7 +98,7 @@ public abstract class BasePortletLayoutStatisticsController<F extends BasePortle
         return sortedGroupMappings;
     }
 
-    //public abstract Set<AggregatedPortletMapping> getPortlets();
+    // public abstract Set<AggregatedPortletMapping> getPortlets();
 
     @Override
     protected BaseAggregationDao<PortletLayoutAggregation, PortletLayoutAggregationKey>
@@ -132,7 +132,7 @@ public abstract class BasePortletLayoutStatisticsController<F extends BasePortle
 
     protected Map<PortletLayoutAggregationDiscriminator, SortedSet<PortletLayoutAggregation>>
             createColumnDiscriminatorMap(F form) {
-        //Collections used to track the queried groups and the results
+        // Collections used to track the queried groups and the results
         final Map<PortletLayoutAggregationDiscriminator, SortedSet<PortletLayoutAggregation>>
                 groupedAggregations =
                         new TreeMap<
@@ -140,7 +140,7 @@ public abstract class BasePortletLayoutStatisticsController<F extends BasePortle
                                 SortedSet<PortletLayoutAggregation>>(
                                 PortletLayoutAggregationDiscriminatorImpl.Comparator.INSTANCE);
 
-        //Get concrete group mapping objects that are being queried for
+        // Get concrete group mapping objects that are being queried for
         List<Long> groups = form.getGroups();
         Set<String> portletFNames = form.getPortlets();
         for (final Long queryGroupId : groups) {
@@ -151,12 +151,13 @@ public abstract class BasePortletLayoutStatisticsController<F extends BasePortle
                         this.aggregatedPortletLookupDao.getMappedPortletForFname(portletFName);
                 final PortletLayoutAggregationDiscriminator mapping =
                         new PortletLayoutAggregationDiscriminatorImpl(groupMapping, tabMapping);
-                //Create the set the aggregations for this report column will be stored in, sorted chronologically
+                // Create the set the aggregations for this report column will be stored in, sorted
+                // chronologically
                 final SortedSet<PortletLayoutAggregation> aggregations =
                         new TreeSet<PortletLayoutAggregation>(
                                 BaseAggregationDateTimeComparator.INSTANCE);
 
-                //Map the group to the set
+                // Map the group to the set
                 groupedAggregations.put(mapping, aggregations);
             }
         }

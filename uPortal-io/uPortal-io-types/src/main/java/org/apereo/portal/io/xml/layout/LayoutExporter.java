@@ -59,7 +59,7 @@ public class LayoutExporter extends AbstractDom4jExporter {
             return null;
         }
 
-        //Setup empty IPerson used to interact with the layout store
+        // Setup empty IPerson used to interact with the layout store
         final PersonImpl person = new PersonImpl();
         person.setUserName(userName);
         person.setID(userId);

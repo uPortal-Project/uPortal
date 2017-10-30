@@ -165,7 +165,7 @@ public final class EventDateTimeUtils {
         }
 
         if (!(dateRanges instanceof RandomAccess)) {
-            //Not random access not much use doing a binary search
+            // Not random access not much use doing a binary search
             return findDateRange(instant, dateRanges);
         }
 

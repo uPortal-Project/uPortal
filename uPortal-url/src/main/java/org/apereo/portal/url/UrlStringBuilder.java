@@ -310,7 +310,7 @@ public final class UrlStringBuilder extends BaseEncodedStringBuilder {
     public String toString() {
         final StringBuilder url = new StringBuilder();
 
-        //Add protocol://host:port if they are set
+        // Add protocol://host:port if they are set
         if (this.host != null) {
             url.append(this.protocol).append("://").append(this.host);
 
@@ -323,24 +323,23 @@ public final class UrlStringBuilder extends BaseEncodedStringBuilder {
             url.append("/").append(context);
         }
 
-        //If no host/port/context and no path start with a /
+        // If no host/port/context and no path start with a /
         else if (this.path.size() == 0) {
             url.append("/");
         }
 
-        //Add the path
+        // Add the path
         for (final String element : this.path) {
             url.append("/").append(this.encode(element));
         }
 
-        //Add parameters
+        // Add parameters
         if (this.parameters.size() > 0) {
             url.append("?");
 
             for (final Iterator<Map.Entry<String, List<String>>> paramEntryItr =
                             this.parameters.entrySet().iterator();
-                    paramEntryItr.hasNext();
-                    ) {
+                    paramEntryItr.hasNext(); ) {
                 final Entry<String, List<String>> paramEntry = paramEntryItr.next();
                 String name = paramEntry.getKey();
                 final List<String> values = paramEntry.getValue();
@@ -351,8 +350,7 @@ public final class UrlStringBuilder extends BaseEncodedStringBuilder {
                     url.append(name);
                 } else {
                     for (final Iterator<String> valueItr = values.iterator();
-                            valueItr.hasNext();
-                            ) {
+                            valueItr.hasNext(); ) {
                         String value = valueItr.next();
                         if (value == null) {
                             value = "";

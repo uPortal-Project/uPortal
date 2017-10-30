@@ -79,7 +79,7 @@ public final class PeopleRESTControllerV50 {
             return;
         }
 
-        //Unwrap attributes
+        // Unwrap attributes
         List<Object> results = new ArrayList<>();
         for (IPersonAttributes p : people) {
             results.add(p.getAttributes());
@@ -115,7 +115,7 @@ public final class PeopleRESTControllerV50 {
         final IPerson me = personManager.getPerson(request);
 
         if (me == null) {
-            //If null, this person does not have a proper portal session.
+            // If null, this person does not have a proper portal session.
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return null;
         }

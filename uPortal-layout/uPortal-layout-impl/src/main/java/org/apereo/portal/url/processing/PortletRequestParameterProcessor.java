@@ -84,7 +84,7 @@ public class PortletRequestParameterProcessor implements IRequestParameterProces
                         portletWindow.setRenderParameters(
                                 ParameterMap.convertListMap(portletParameters));
 
-                        //fall through, render uses state/mode info
+                        // fall through, render uses state/mode info
                     }
                 case ACTION:
                     {
@@ -105,7 +105,7 @@ public class PortletRequestParameterProcessor implements IRequestParameterProces
                     // Do nothing
             }
 
-            //Override the window state of the targeted portlet window based on the url state
+            // Override the window state of the targeted portlet window based on the url state
             if (portletWindowId.equals(targetedPortletWindowId)) {
                 final UrlState urlState = portalRequestInfo.getUrlState();
                 switch (urlState) {

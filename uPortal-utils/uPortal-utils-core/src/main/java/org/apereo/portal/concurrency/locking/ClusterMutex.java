@@ -37,7 +37,7 @@ import org.springframework.util.Assert;
 @Table(name = "UP_MUTEX")
 @SequenceGenerator(name = "UP_MUTEX_GEN", sequenceName = "UP_MUTEX_SEQ", allocationSize = 1)
 @TableGenerator(name = "UP_MUTEX_GEN", pkColumnValue = "UP_MUTEX_PROP", allocationSize = 1)
-//THIS CLASS CANNOT BE CACHED
+// THIS CLASS CANNOT BE CACHED
 @NaturalIdCache(region = "org.apereo.portal.concurrency.locking.ClusterMutex-NaturalId")
 public class ClusterMutex implements Serializable {
     private static final long serialVersionUID = 1L;

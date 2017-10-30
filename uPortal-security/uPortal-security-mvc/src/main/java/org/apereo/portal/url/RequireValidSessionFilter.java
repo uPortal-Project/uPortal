@@ -31,7 +31,7 @@ public class RequireValidSessionFilter extends OncePerRequestFilter {
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         final HttpSession session = request.getSession(false);
         if (session != null && !session.isNew()) {
-            //Session exists and is not new, don't bother filtering
+            // Session exists and is not new, don't bother filtering
             return true;
         }
 
@@ -42,7 +42,8 @@ public class RequireValidSessionFilter extends OncePerRequestFilter {
     protected void doFilterInternal(
             HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-        //Assume shouldNotFilter was called first and returned false, session is invalid and user needs login
+        // Assume shouldNotFilter was called first and returned false, session is invalid and user
+        // needs login
 
         final StringBuilder loginRedirect = new StringBuilder();
 

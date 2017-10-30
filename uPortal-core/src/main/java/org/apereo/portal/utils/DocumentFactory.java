@@ -107,7 +107,7 @@ public final class DocumentFactory {
         public DocumentBuilder get() {
             DocumentBuilder documentBuilder = super.get();
 
-            //Handle a DocumentBuilder not getting created correctly
+            // Handle a DocumentBuilder not getting created correctly
             if (documentBuilder == null) {
                 log.warn(
                         "No DocumentBuilder existed for this thread, an initialValue() call must have failed");

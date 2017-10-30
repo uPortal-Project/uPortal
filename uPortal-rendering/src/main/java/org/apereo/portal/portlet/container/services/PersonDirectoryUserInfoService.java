@@ -99,7 +99,7 @@ public class PersonDirectoryUserInfoService implements UserInfoService {
     @Override
     public Map<String, String> getUserInfo(PortletRequest request, PortletWindow plutoPortletWindow)
             throws PortletContainerException {
-        //Get the remote user
+        // Get the remote user
         final String remoteUser = request.getRemoteUser();
         if (remoteUser == null) {
             return null;
@@ -126,7 +126,7 @@ public class PersonDirectoryUserInfoService implements UserInfoService {
     protected Map<String, String> getUserInfo(
             String remoteUser, HttpServletRequest httpServletRequest, IPortletWindow portletWindow)
             throws PortletContainerException {
-        //Get the list of user attributes the portal knows about the user
+        // Get the list of user attributes the portal knows about the user
         final IPersonAttributes personAttributes = this.personAttributeDao.getPerson(remoteUser);
         if (personAttributes == null) {
             return Collections.emptyMap();
@@ -154,12 +154,13 @@ public class PersonDirectoryUserInfoService implements UserInfoService {
         final Map<String, String> portletUserAttributes =
                 new HashMap<String, String>(expectedUserAttributes.size());
 
-        //Copy expected attributes to the USER_INFO Map
+        // Copy expected attributes to the USER_INFO Map
         final Map<String, List<Object>> attributes = personAttributes.getAttributes();
         for (final UserAttribute userAttributeDD : expectedUserAttributes) {
             final String attributeName = userAttributeDD.getName();
 
-            //TODO a personAttributes.hasAttribute(String) API is needed here, if hasAttribute and null then put the key with no value in the returned map
+            // TODO a personAttributes.hasAttribute(String) API is needed here, if hasAttribute and
+            // null then put the key with no value in the returned map
             if (attributes.containsKey(attributeName)) {
                 final Object valueObj = personAttributes.getAttributeValue(attributeName);
                 final String value = valueObj == null ? null : String.valueOf(valueObj);

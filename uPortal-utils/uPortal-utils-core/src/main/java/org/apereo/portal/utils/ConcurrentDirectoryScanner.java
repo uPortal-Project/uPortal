@@ -130,7 +130,7 @@ public final class ConcurrentDirectoryScanner implements DirectoryScanner {
 
         final File[] children = directory.listFiles(fileFilter);
         for (final File child : children) {
-            //If the child is a directory and recursion is on recurse on it
+            // If the child is a directory and recursion is on recurse on it
             if (child.isDirectory()) {
                 if (recursive) {
                     if (processDirectories) {
@@ -140,13 +140,13 @@ public final class ConcurrentDirectoryScanner implements DirectoryScanner {
                     submitDirectoryRecurse(futures, results, child, fileFilter, fileProcessor);
                 }
             }
-            //Otherwise pass the file into the fileHandler via the executor service
+            // Otherwise pass the file into the fileHandler via the executor service
             else {
                 submitProcessFile(futures, child, fileProcessor);
             }
         }
 
-        //Clean up any completed futures from the queue
+        // Clean up any completed futures from the queue
         cleanFutures(futures, results);
     }
 
@@ -193,8 +193,7 @@ public final class ConcurrentDirectoryScanner implements DirectoryScanner {
     protected <T> void cleanFutures(
             final Queue<Tuple<File, Future<T>>> futures, final ConcurrentMap<File, T> results) {
         for (final Iterator<Tuple<File, Future<T>>> futureItr = futures.iterator();
-                futureItr.hasNext();
-                ) {
+                futureItr.hasNext(); ) {
             final Tuple<File, Future<T>> future = futureItr.next();
             if (future.second.isDone()) {
                 futureItr.remove();

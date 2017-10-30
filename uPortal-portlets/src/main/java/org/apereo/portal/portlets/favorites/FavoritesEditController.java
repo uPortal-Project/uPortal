@@ -75,9 +75,12 @@ public class FavoritesEditController extends AbstractFavoritesController {
 
         // TODO: the portlet could predicate including a non-null marketplace portlet fname
         // on the accessing user having permission to render the portlet referenced by that fname
-        // so that portlet would gracefully degrade when configured with bad marketplace portlet fname
-        // and also gracefully degrade when the accessing user doesn't have permission to access an otherwise
-        // viable configured marketplace.  This complexity may not be worth it.  Anyway it is not yet implemented.
+        // so that portlet would gracefully degrade when configured with bad marketplace portlet
+        // fname
+        // and also gracefully degrade when the accessing user doesn't have permission to access an
+        // otherwise
+        // viable configured marketplace.  This complexity may not be worth it.  Anyway it is not
+        // yet implemented.
 
         model.addAttribute("marketplaceFname", this.marketplaceFName);
 
@@ -182,7 +185,8 @@ public class FavoritesEditController extends AbstractFavoritesController {
 
         } catch (Exception e) {
 
-            // TODO: this log message is kind of useless without the username to put the node in context
+            // TODO: this log message is kind of useless without the username to put the node in
+            // context
             logger.error("Something went wrong unfavoriting nodeId [{}].", nodeId);
 
             // may have failed to load node description, so fall back on describing by id

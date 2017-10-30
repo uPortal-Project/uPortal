@@ -109,7 +109,7 @@ public abstract class BaseJpaDaoTest {
             entityTypes = failedEntitieTypes;
         } while (!entityTypes.isEmpty());
 
-        //Reset all spring managed mocks after every test
+        // Reset all spring managed mocks after every test
         MockitoFactoryBean.resetAllMocks();
     }
 

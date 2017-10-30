@@ -1337,7 +1337,7 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
         Connection conn = null;
         PreparedStatement ps = null;
         int type = EntityTypesLocator.getEntityTypes().getEntityIDFromType(leaftype).intValue();
-        //System.out.println("Checking out groups of leaftype "+leaftype.getName()+" or "+type);
+        // System.out.println("Checking out groups of leaftype "+leaftype.getName()+" or "+type);
 
         try {
             conn = RDBMServices.getConnection();
@@ -1367,9 +1367,9 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
                 ps.setString(2, query);
                 ResultSet rs = ps.executeQuery();
                 try {
-                    //System.out.println(ps.toString());
+                    // System.out.println(ps.toString());
                     while (rs.next()) {
-                        //System.out.println("result");
+                        // System.out.println("result");
                         ar.add(
                                 new EntityIdentifier(
                                         rs.getString(1), ICompositeGroupService.GROUP_ENTITY_TYPE));

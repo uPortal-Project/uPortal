@@ -80,21 +80,21 @@ public class JpaPortletLayoutAggregationDao
 
                                 final List<Predicate> keyPredicates = new ArrayList<Predicate>();
                                 keyPredicates.add(
-                                        cb.and( //Restrict results by outer date range
+                                        cb.and( // Restrict results by outer date range
                                                 cb.greaterThanOrEqualTo(
                                                         dd.get(DateDimensionImpl_.date), startDate),
                                                 cb.lessThan(
                                                         dd.get(DateDimensionImpl_.date),
                                                         endPlusOneDate)));
                                 keyPredicates.add(
-                                        cb.or( //Restrict start of range by time as well
+                                        cb.or( // Restrict start of range by time as well
                                                 cb.greaterThan(
                                                         dd.get(DateDimensionImpl_.date), startDate),
                                                 cb.greaterThanOrEqualTo(
                                                         td.get(TimeDimensionImpl_.time),
                                                         startTime)));
                                 keyPredicates.add(
-                                        cb.or( //Restrict end of range by time as well
+                                        cb.or( // Restrict end of range by time as well
                                                 cb.lessThan(
                                                         dd.get(DateDimensionImpl_.date), endDate),
                                                 cb.lessThan(

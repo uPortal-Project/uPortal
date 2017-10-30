@@ -43,7 +43,7 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 
-//@Ignore
+// @Ignore
 @RunWith(MockitoJUnitRunner.class)
 public class ClusterLockServiceImplTest {
     @InjectMocks
@@ -347,5 +347,5 @@ public class ClusterLockServiceImplTest {
         assertFalse(result.isExecuted());
     }
 
-    //test exec serv not actually execing
+    // test exec serv not actually execing
 }

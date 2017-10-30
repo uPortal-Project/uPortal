@@ -95,7 +95,7 @@ public class AnalyticsIncorporationComponentEventSerializationTest {
         }
     }
 
-    //Tests to demonstrate: https://github.com/FasterXML/jackson-databind/issues/245
+    // Tests to demonstrate: https://github.com/FasterXML/jackson-databind/issues/245
 
     @JsonFilter(PortletRenderExecutionEventFilterMixIn.FILTER_NAME)
     private interface PortletRenderExecutionEventFilterMixIn {
@@ -150,7 +150,7 @@ public class AnalyticsIncorporationComponentEventSerializationTest {
         ObjectMapper mapper = new ObjectMapper();
         mapper.findAndRegisterModules();
 
-        //Clone from "shared" ObjectMapper
+        // Clone from "shared" ObjectMapper
         mapper = mapper.copy();
 
         mapper.addMixInAnnotations(Object.class, PortletRenderExecutionEventFilterMixIn.class);

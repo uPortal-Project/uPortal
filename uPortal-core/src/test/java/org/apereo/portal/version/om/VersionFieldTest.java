@@ -27,7 +27,7 @@ public class VersionFieldTest {
         try {
             Version.Field.LOCAL.isLessImportantThan(null);
         } catch (IllegalArgumentException e) {
-            //expected
+            // expected
         }
 
         assertFalse(Version.Field.LOCAL.isLessImportantThan(Version.Field.LOCAL));
@@ -41,7 +41,7 @@ public class VersionFieldTest {
         try {
             Version.Field.PATCH.isLessImportantThan(null);
         } catch (IllegalArgumentException e) {
-            //expected
+            // expected
         }
 
         assertFalse(Version.Field.PATCH.isLessImportantThan(Version.Field.LOCAL));
@@ -55,7 +55,7 @@ public class VersionFieldTest {
         try {
             Version.Field.MINOR.isLessImportantThan(null);
         } catch (IllegalArgumentException e) {
-            //expected
+            // expected
         }
 
         assertFalse(Version.Field.MINOR.isLessImportantThan(Version.Field.LOCAL));
@@ -69,7 +69,7 @@ public class VersionFieldTest {
         try {
             Version.Field.MAJOR.isLessImportantThan(null);
         } catch (IllegalArgumentException e) {
-            //expected
+            // expected
         }
 
         assertFalse(Version.Field.MAJOR.isLessImportantThan(Version.Field.LOCAL));

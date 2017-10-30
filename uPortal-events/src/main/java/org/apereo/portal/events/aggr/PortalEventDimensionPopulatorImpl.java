@@ -120,7 +120,7 @@ public class PortalEventDimensionPopulatorImpl extends BaseAggrEventsJpaDao
         doPopulateDateDimensions();
         doUpdateDateDimensions();
 
-        //Immediately flush all date/time dimension changes to the database
+        // Immediately flush all date/time dimension changes to the database
         this.getEntityManager().flush();
 
         this.checkedDimensions = true;
@@ -128,7 +128,7 @@ public class PortalEventDimensionPopulatorImpl extends BaseAggrEventsJpaDao
 
     private void checkShutdown() {
         if (shutdown) {
-            //Mark ourselves as interupted and throw an exception
+            // Mark ourselves as interupted and throw an exception
             Thread.currentThread().interrupt();
             throw new RuntimeException(
                     "uPortal is shutting down, throwing an exeption to stop processing");
@@ -174,7 +174,7 @@ public class PortalEventDimensionPopulatorImpl extends BaseAggrEventsJpaDao
             nextTime = dimensionTime.plusMinutes(1);
         }
 
-        //Add any missing times from the tail
+        // Add any missing times from the tail
         while (nextTime.isBefore(lastTime) || nextTime.equals(lastTime)) {
             checkShutdown();
             this.timeDimensionDao.createTimeDimension(nextTime);
@@ -253,7 +253,7 @@ public class PortalEventDimensionPopulatorImpl extends BaseAggrEventsJpaDao
             nextDate = dimensionDate.plusDays(1);
         }
 
-        //Add any missing dates from the tail
+        // Add any missing dates from the tail
         while (nextDate.isBefore(end)) {
             checkShutdown();
             createDateDimension(quartersDetails, academicTermDetails, nextDate);

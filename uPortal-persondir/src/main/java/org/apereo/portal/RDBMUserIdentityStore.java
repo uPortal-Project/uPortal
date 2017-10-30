@@ -78,7 +78,7 @@ public class RDBMUserIdentityStore implements IUserIdentityStore {
     private static final Pattern USERNAME_VALIDATOR_PATTERN =
             Pattern.compile(USERNAME_VALIDATOR_REGEX);
 
-    //*********************************************************************
+    // *********************************************************************
     // Constants
     private static final String templateAttrName = "uPortalTemplateUserName";
 
@@ -222,14 +222,14 @@ public class RDBMUserIdentityStore implements IUserIdentityStore {
                         jdbcOperations.update(
                                 "DELETE FROM UP_USER_LOCALE     WHERE USER_ID = ?", userId);
 
-                        //Purge all portlet entity data
+                        // Purge all portlet entity data
                         final Set<IPortletEntity> portletEntities =
                                 portletEntityDao.getPortletEntitiesForUser(userId);
                         for (final IPortletEntity portletEntity : portletEntities) {
                             portletEntityDao.deletePortletEntity(portletEntity);
                         }
 
-                        //Purge all stylesheet preference data
+                        // Purge all stylesheet preference data
                         final List<? extends IStylesheetUserPreferences> stylesheetUserPreferences =
                                 stylesheetUserPreferencesDao.getStylesheetUserPreferencesForUser(
                                         userId);
@@ -376,22 +376,24 @@ public class RDBMUserIdentityStore implements IUserIdentityStore {
             portalUser = getPortalUser(userName);
 
             if (createPortalData) {
-                //If we are allowed to modify the database
+                // If we are allowed to modify the database
 
                 if (portalUser != null) {
-                    //If the user has logged in we may have to update their template user information
+                    // If the user has logged in we may have to update their template user
+                    // information
 
                     boolean hasSavedLayout = userHasSavedLayout(portalUser.getUserId());
                     if (!hasSavedLayout) {
 
                         TemplateUser templateUser = getTemplateUser(templateName);
                         if (portalUser.getDefaultUserId() != templateUser.getUserId()) {
-                            //Update user data with new template user's data
+                            // Update user data with new template user's data
                             updateUser(portalUser.getUserId(), person, templateUser);
                         }
                     }
                 } else {
-                    //User hasn't logged in before, some data needs to be created for them based on their template user
+                    // User hasn't logged in before, some data needs to be created for them based on
+                    // their template user
 
                     // Retrieve the information for the template user
                     TemplateUser templateUser = getTemplateUser(templateName);
@@ -412,7 +414,7 @@ public class RDBMUserIdentityStore implements IUserIdentityStore {
                     portalUser.setUserId(newPortalUID);
                 }
             } else if (portalUser == null) {
-                //If this is a new user and we can't create them
+                // If this is a new user and we can't create them
                 throw new AuthorizationException(
                         "No portal information exists for user " + userName);
             }
@@ -819,7 +821,8 @@ public class RDBMUserIdentityStore implements IUserIdentityStore {
                                                 queryStmt.close();
                                                 insertStmt.close();
 
-                                                // If we made it all the way though, commit the transaction
+                                                // If we made it all the way though, commit the
+                                                // transaction
                                                 if (RDBMServices.getDbMetaData()
                                                         .supportsTransactions()) con.commit();
 
@@ -976,7 +979,8 @@ public class RDBMUserIdentityStore implements IUserIdentityStore {
                                                     insertStmt = null;
                                                 }
 
-                                                // If we made it all the way though, commit the transaction
+                                                // If we made it all the way though, commit the
+                                                // transaction
                                                 if (RDBMServices.getDbMetaData()
                                                         .supportsTransactions()) con.commit();
 

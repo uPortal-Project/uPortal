@@ -82,7 +82,7 @@ public class ImportExportController {
             HttpServletResponse response)
             throws IOException, XMLStreamException {
 
-        //Get a StAX reader for the source to determine info about the data to import
+        // Get a StAX reader for the source to determine info about the data to import
         final BufferedXMLEventReader bufferedXmlEventReader =
                 createSourceXmlEventReader(entityFile);
         final PortalDataKey portalDataKey = getPortalDataKey(bufferedXmlEventReader);
@@ -179,7 +179,7 @@ public class ImportExportController {
             return;
         }
 
-        //Export the data into a string buffer
+        // Export the data into a string buffer
         final StringWriter exportBuffer = new StringWriter();
         final String fileName =
                 portalDataHandlerService.exportData(

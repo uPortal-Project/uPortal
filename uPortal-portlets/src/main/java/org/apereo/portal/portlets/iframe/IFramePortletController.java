@@ -104,7 +104,7 @@ public final class IFramePortletController {
             model.put(attr, prefs.getValue(attr, defaultValue));
         }
 
-        //Legacy support for url attribute
+        // Legacy support for url attribute
         if (model.get("src") == null) {
             model.put("src", prefs.getValue("url", IFRAME_ATTRS.get("src")));
         }

@@ -104,7 +104,8 @@ public class SqlQueryPortletController extends AbstractController {
                         DATASOURCE_BEAN_NAME_PARAM_NAME, BasePortalJpaDao.PERSISTENCE_UNIT_NAME);
         String viewName = preferences.getValue(VIEW_PARAM_NAME, "jsp/SqlQuery/results");
 
-        // Allow substituting attributes from the request and userInfo objects using the SPEL ${} notation..
+        // Allow substituting attributes from the request and userInfo objects using the SPEL ${}
+        // notation..
         String spelSqlQuery = evaluateSpelExpression(sqlQuery, request);
 
         List<Map<String, Object>> results = null;

@@ -40,7 +40,8 @@ public class ConfigurablePreferencesBasedTokenGenerator implements DynamicSkinUn
     public String generateToken(final DynamicSkinInstanceData data) {
         final PortletPreferences preferences = data.getPortletRequest().getPreferences();
         int hash = 0;
-        // Add the list of preference names to an ordered list so we can get reliable hashcode calculations.
+        // Add the list of preference names to an ordered list so we can get reliable hashcode
+        // calculations.
         final Map<String, String[]> prefs = preferences.getMap();
         final TreeSet<String> orderedNames = new TreeSet<String>(prefs.keySet());
         final Iterator<String> iterator = orderedNames.iterator();

@@ -160,7 +160,7 @@ public class LocalAccountPersonAttributeDao extends AbstractDefaultAttributePers
             Map<String, List<Object>> query) {
         Validate.notNull(query, "query may not be null.");
 
-        //Generate the query to pass to the subclass
+        // Generate the query to pass to the subclass
         final LocalAccountQuery queryBuilder = this.generateQuery(query);
         if (queryBuilder == null) {
             this.logger.debug(
@@ -169,17 +169,17 @@ public class LocalAccountPersonAttributeDao extends AbstractDefaultAttributePers
             return null;
         }
 
-        //Get the username from the query, if specified
+        // Get the username from the query, if specified
         final IUsernameAttributeProvider usernameAttributeProvider =
                 this.getUsernameAttributeProvider();
 
-        //Execute the query in the subclass
+        // Execute the query in the subclass
         final List<ILocalAccountPerson> unmappedPeople = localAccountDao.getPeople(queryBuilder);
         if (unmappedPeople == null) {
             return null;
         }
 
-        //Map the attributes of the found people according to resultAttributeMapping if it is set
+        // Map the attributes of the found people according to resultAttributeMapping if it is set
         final Set<IPersonAttributes> mappedPeople = new LinkedHashSet<IPersonAttributes>();
         for (final ILocalAccountPerson unmappedPerson : unmappedPeople) {
             final IPersonAttributes mappedPerson = this.mapPersonAttributes(unmappedPerson);
@@ -258,20 +258,20 @@ public class LocalAccountPersonAttributeDao extends AbstractDefaultAttributePers
                 this.getResultAttributeMapping().entrySet()) {
             final String dataKey = resultAttrEntry.getKey();
 
-            //Only map found data attributes
+            // Only map found data attributes
             if (mappedAttributes.containsKey(dataKey)) {
                 Set<String> resultKeys = resultAttrEntry.getValue();
 
-                //If dataKey has no mapped resultKeys just use the dataKey
+                // If dataKey has no mapped resultKeys just use the dataKey
                 if (resultKeys == null) {
                     resultKeys = Collections.singleton(dataKey);
                 }
 
-                //Add the value to the mapped attributes for each mapped key
+                // Add the value to the mapped attributes for each mapped key
                 final List<Object> value = mappedAttributes.get(dataKey);
                 for (final String resultKey : resultKeys) {
                     if (resultKey == null) {
-                        //TODO is this possible?
+                        // TODO is this possible?
                         if (!mappedAttributes.containsKey(dataKey)) {
                             mappedAttributes.put(dataKey, value);
                         }
@@ -301,7 +301,7 @@ public class LocalAccountPersonAttributeDao extends AbstractDefaultAttributePers
      *     either.
      */
     protected String getConfiguredUserNameAttribute() {
-        //If configured explicitly use it
+        // If configured explicitly use it
         if (this.unmappedUsernameAttribute != null) {
             return this.unmappedUsernameAttribute;
         }

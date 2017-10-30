@@ -143,15 +143,15 @@ public class GroupMembershipPortalDataType extends AbstractPortalDataType {
     public Set<PortalDataKey> postProcessPortalDataKey(
             String systemId, PortalDataKey portalDataKey, XMLEventReader reader) {
         if (IMPORT_30_DATA_KEY.equals(portalDataKey)) {
-            //Split the import into two phases
+            // Split the import into two phases
             return GROUP_MEMBERS_30_KEYS;
         }
         if (IMPORT_32_DATA_KEY.equals(portalDataKey)) {
-            //Split the import into two phases
+            // Split the import into two phases
             return GROUP_MEMBERS_32_KEYS;
         }
         if (IMPORT_50_DATA_KEY.equals(portalDataKey)) {
-            //Split the import into two phases
+            // Split the import into two phases
             return GROUP_MEMBERS_50_KEYS;
         }
 

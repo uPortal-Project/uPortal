@@ -87,16 +87,16 @@ public class PortalRootPersonAttributeDao extends AbstractFlatteningPersonAttrib
     }
 
     public void setUserAttributeOverride(String uid, Map<String, Object> attributes) {
-        //Not really a seed but the function still works
+        // Not really a seed but the function still works
         final Map<String, List<Object>> multivaluedAttributes =
                 MultivaluedPersonAttributeUtils.toMultivaluedMap(attributes);
 
-        //Update the overrides map
+        // Update the overrides map
         overridesMap.put(uid, multivaluedAttributes);
     }
 
     public void removeUserAttributeOverride(String uid) {
-        //Remove the uid from the overrides map
+        // Remove the uid from the overrides map
         overridesMap.remove(uid);
     }
 

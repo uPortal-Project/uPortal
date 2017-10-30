@@ -173,7 +173,7 @@ public class MarketplaceEntry implements Serializable {
     public Set<MarketplaceEntry> getRelatedPortlets() {
 
         if (!generateRelatedPortlets) {
-            //disabled so we don't have infinite related portlets.
+            // disabled so we don't have infinite related portlets.
             return null;
         }
         if (relatedEntries == null) {

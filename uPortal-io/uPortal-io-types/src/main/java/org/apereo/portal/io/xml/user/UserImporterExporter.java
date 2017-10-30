@@ -140,7 +140,7 @@ public class UserImporterExporter extends AbstractJaxbDataHandler<UserType> {
 
         final Integer defaultUserId = defaultUserInfo != null ? defaultUserInfo.first : null;
 
-        //Update or Insert
+        // Update or Insert
         final int rowsUpdated =
                 this.jdbcOperations.update(
                         "UPDATE UP_USER \n"
@@ -166,12 +166,12 @@ public class UserImporterExporter extends AbstractJaxbDataHandler<UserType> {
         final String password = userType.getPassword();
         final List<Attribute> attributes = userType.getAttributes();
         if (password == null && attributes.isEmpty()) {
-            //No local account data, clean up the DB
+            // No local account data, clean up the DB
             if (account != null) {
                 this.localAccountDao.deleteAccount(account);
             }
         } else {
-            //Create or Update local account info
+            // Create or Update local account info
             if (account == null) {
                 account = this.localAccountDao.createPerson(username);
             }
@@ -211,7 +211,7 @@ public class UserImporterExporter extends AbstractJaxbDataHandler<UserType> {
         return null;
     }
 
-    //TODO cache the lookup of default user data
+    // TODO cache the lookup of default user data
     protected Tuple<Integer, Long> getDefaultUserInfo(String defaultUsername) {
         if (defaultUsername == null) {
             return null;
@@ -336,7 +336,8 @@ public class UserImporterExporter extends AbstractJaxbDataHandler<UserType> {
     @Transactional
     @Override
     public ExternalUser deleteData(String id) {
-        //		IPortletType portletType = this.portletTypeRegistry.getPortletType(Integer.parseInt(id));
+        //		IPortletType portletType =
+        // this.portletTypeRegistry.getPortletType(Integer.parseInt(id));
         //		if(null == portletType) {
         //			return null;
         //		} else {

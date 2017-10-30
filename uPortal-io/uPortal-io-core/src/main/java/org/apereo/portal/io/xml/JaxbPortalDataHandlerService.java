@@ -141,7 +141,8 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
     // Map to lookup the associated IPortalDataType for each known PortalDataKey
     private Map<PortalDataKey, IPortalDataType> dataKeyTypes = Collections.emptyMap();
 
-    // Ant path matcher patterns that a file must match when scanning directories (unless a pattern is explicitly specified)
+    // Ant path matcher patterns that a file must match when scanning directories (unless a pattern
+    // is explicitly specified)
     private Set<String> dataFileIncludes = Collections.emptySet();
     private Set<String> dataFileExcludes =
             ImmutableSet.copyOf(DirectoryScanner.getDefaultExcludes());
@@ -414,15 +415,16 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
             Resource archive, InputStream resourceStream, BatchImportOptions options) {
         BufferedInputStream bufferedResourceStream = null;
         try {
-            //Make sure the stream is buffered
+            // Make sure the stream is buffered
             if (resourceStream instanceof BufferedInputStream) {
                 bufferedResourceStream = (BufferedInputStream) resourceStream;
             } else {
                 bufferedResourceStream = new BufferedInputStream(resourceStream);
             }
 
-            //Buffer up to 100MB, bad things will happen if we bust this buffer.
-            //TODO see if there is a buffered stream that will write to a file once the buffer fills up
+            // Buffer up to 100MB, bad things will happen if we bust this buffer.
+            // TODO see if there is a buffered stream that will write to a file once the buffer
+            // fills up
             bufferedResourceStream.mark(100 * 1024 * 1024);
             final MediaType type = getMediaType(bufferedResourceStream, archive.getFilename());
 
@@ -531,7 +533,7 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
         } finally {
             IOUtils.closeQuietly(tikaInputStreamStream);
 
-            //Reset the buffered stream to make up for anything read by the detector
+            // Reset the buffered stream to make up for anything read by the detector
             inputStream.reset();
         }
     }
@@ -544,7 +546,7 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
                     "The specified directory '" + directory + "' does not exist");
         }
 
-        //Create the file filter to use when searching for files to import
+        // Create the file filter to use when searching for files to import
         final FileFilter fileFilter;
         if (pattern != null) {
             fileFilter = new AntPatternFileFilter(true, false, pattern, this.dataFileExcludes);
@@ -554,10 +556,10 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
                             true, false, this.dataFileIncludes, this.dataFileExcludes);
         }
 
-        //Determine the parent directory to log to
+        // Determine the parent directory to log to
         final File logDirectory = determineLogDirectory(options, "import");
 
-        //Setup reporting file
+        // Setup reporting file
         final File importReport = new File(logDirectory, "data-import.txt");
         final PrintWriter reportWriter;
         try {
@@ -568,12 +570,12 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
             throw new RuntimeException("Failed to create FileWriter for: " + importReport, e);
         }
 
-        //Convert directory to URI String to provide better logging output
+        // Convert directory to URI String to provide better logging output
         final URI directoryUri = directory.toURI();
         final String directoryUriStr = directoryUri.toString();
         IMPORT_BASE_DIR.set(directoryUriStr);
         try {
-            //Scan the specified directory for files to import
+            // Scan the specified directory for files to import
             logger.info("Scanning for files to Import from: {}", directory);
             final PortalDataKeyFileProcessor fileProcessor =
                     new PortalDataKeyFileProcessor(this.dataKeyTypes, options);
@@ -581,14 +583,14 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
             final long resourceCount = fileProcessor.getResourceCount();
             logger.info("Found {} files to Import from: {}", resourceCount, directory);
 
-            //See if the import should fail on error
+            // See if the import should fail on error
             final boolean failOnError = options != null ? options.isFailOnError() : true;
 
-            //Map of files to import, grouped by type
+            // Map of files to import, grouped by type
             final ConcurrentMap<PortalDataKey, Queue<Resource>> dataToImport =
                     fileProcessor.getDataToImport();
 
-            //Import the data files
+            // Import the data files
             for (final PortalDataKey portalDataKey : this.dataKeyImportOrder) {
                 final Queue<Resource> files = dataToImport.remove(portalDataKey);
                 if (files == null) {
@@ -605,14 +607,15 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
                 while (!files.isEmpty()) {
                     final Resource file = files.poll();
 
-                    //Check for completed futures on every iteration, needed to fail as fast as possible on an import exception
+                    // Check for completed futures on every iteration, needed to fail as fast as
+                    // possible on an import exception
                     final List<FutureHolder<?>> newFailed =
                             waitForFutures(importFutures, reportWriter, logDirectory, false);
                     failedFutures.addAll(newFailed);
 
                     final AtomicLong importTime = new AtomicLong(-1);
 
-                    //Create import task
+                    // Create import task
                     final Callable<Object> task =
                             new CallableWithoutResult() {
                                 @Override
@@ -628,15 +631,15 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
                                 }
                             };
 
-                    //Submit the import task
+                    // Submit the import task
                     final Future<?> importFuture = this.importExportThreadPool.submit(task);
 
-                    //Add the future for tracking
+                    // Add the future for tracking
                     importFutures.offer(
                             new ImportFuture(importFuture, file, portalDataKey, importTime));
                 }
 
-                //Wait for all of the imports on of this type to complete
+                // Wait for all of the imports on of this type to complete
                 final List<FutureHolder<?>> newFailed =
                         waitForFutures(importFutures, reportWriter, logDirectory, true);
                 failedFutures.addAll(newFailed);
@@ -700,10 +703,10 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
 
     @Override
     public final void importData(final Source source, PortalDataKey portalDataKey) {
-        //Get a StAX reader for the source to determine info about the data to import
+        // Get a StAX reader for the source to determine info about the data to import
         final BufferedXMLEventReader bufferedXmlEventReader = createSourceXmlEventReader(source);
 
-        //If no PortalDataKey was passed build it from the source
+        // If no PortalDataKey was passed build it from the source
         if (portalDataKey == null) {
             final StartElement rootElement = StaxUtils.getRootElement(bufferedXmlEventReader);
             portalDataKey = new PortalDataKey(rootElement);
@@ -712,7 +715,7 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
 
         final String systemId = source.getSystemId();
 
-        //Post Process the PortalDataKey to see if more complex import operations are needed
+        // Post Process the PortalDataKey to see if more complex import operations are needed
         final IPortalDataType portalDataType = this.dataKeyTypes.get(portalDataKey);
         if (portalDataType == null) {
             throw new RuntimeException(
@@ -726,19 +729,19 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
                         systemId, portalDataKey, bufferedXmlEventReader);
         bufferedXmlEventReader.reset();
 
-        //If only a single result from post processing import
+        // If only a single result from post processing import
         if (postProcessedPortalDataKeys.size() == 1) {
             this.importOrUpgradeData(
                     systemId,
                     DataAccessUtils.singleResult(postProcessedPortalDataKeys),
                     bufferedXmlEventReader);
         }
-        //If multiple results from post processing ordering is needed
+        // If multiple results from post processing ordering is needed
         else {
-            //Iterate over the data key order list to run the imports in the correct order
+            // Iterate over the data key order list to run the imports in the correct order
             for (final PortalDataKey orderedPortalDataKey : this.dataKeyImportOrder) {
                 if (postProcessedPortalDataKeys.contains(orderedPortalDataKey)) {
-                    //Reset the to start of the XML document for each import/upgrade call
+                    // Reset the to start of the XML document for each import/upgrade call
                     bufferedXmlEventReader.reset();
                     this.importOrUpgradeData(
                             systemId, orderedPortalDataKey, bufferedXmlEventReader);
@@ -783,7 +786,7 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
     /** Run the import/update process on the data */
     protected final void importOrUpgradeData(
             String systemId, PortalDataKey portalDataKey, XMLEventReader xmlEventReader) {
-        //See if there is a registered importer for the data, if so import
+        // See if there is a registered importer for the data, if so import
         final IDataImporter<Object> dataImporterExporter =
                 this.portalDataImporters.get(portalDataKey);
         if (dataImporterExporter != null) {
@@ -794,12 +797,12 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
             return;
         }
 
-        //No importer, see if there is an upgrader, if so upgrade
+        // No importer, see if there is an upgrader, if so upgrade
         final IDataUpgrader dataUpgrader = this.portalDataUpgraders.get(portalDataKey);
         if (dataUpgrader != null) {
             this.logger.debug("Upgrading: {}", getPartialSystemId(systemId));
 
-            //Convert the StAX stream to a DOM node, due to poor JDK support for StAX with XSLT
+            // Convert the StAX stream to a DOM node, due to poor JDK support for StAX with XSLT
             final Node sourceNode;
             try {
                 sourceNode = xmlUtilities.convertToDom(xmlEventReader);
@@ -812,7 +815,8 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
             final DOMResult result = new DOMResult();
             final boolean doImport = dataUpgrader.upgradeData(source, result);
             if (doImport) {
-                //If the upgrader didn't handle the import as well wrap the result DOM in a new Source and start the import process over again
+                // If the upgrader didn't handle the import as well wrap the result DOM in a new
+                // Source and start the import process over again
                 final org.w3c.dom.Node node = result.getNode();
                 final PortalDataKey upgradedPortalDataKey = new PortalDataKey(node);
                 if (this.logger.isTraceEnabled()) {
@@ -839,7 +843,7 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
             return;
         }
 
-        //No importer or upgrader found, fail
+        // No importer or upgrader found, fail
         throw new IllegalArgumentException(
                 "Provided data "
                         + portalDataKey
@@ -865,7 +869,7 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
     }
 
     protected BufferedXMLEventReader createSourceXmlEventReader(final Source source) {
-        //If it is a StAXSource see if we can do better handling of it
+        // If it is a StAXSource see if we can do better handling of it
         if (source instanceof StAXSource) {
             final StAXSource staxSource = (StAXSource) source;
             XMLEventReader xmlEventReader = staxSource.getXMLEventReader();
@@ -984,10 +988,10 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
         final Queue<ExportFuture<?>> exportFutures = new ConcurrentLinkedQueue<>();
         final boolean failOnError = options != null ? options.isFailOnError() : true;
 
-        //Determine the parent directory to log to
+        // Determine the parent directory to log to
         final File logDirectory = determineLogDirectory(options, "export");
 
-        //Setup reporting file
+        // Setup reporting file
         final File exportReport = new File(logDirectory, "data-export.txt");
         final PrintWriter reportWriter;
         try {
@@ -1009,14 +1013,15 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
                 for (final IPortalData data : dataForType) {
                     final String dataId = data.getDataId();
 
-                    //Check for completed futures on every iteration, needed to fail as fast as possible on an import exception
+                    // Check for completed futures on every iteration, needed to fail as fast as
+                    // possible on an import exception
                     final List<FutureHolder<?>> newFailed =
                             waitForFutures(exportFutures, reportWriter, logDirectory, false);
                     failedFutures.addAll(newFailed);
 
                     final AtomicLong exportTime = new AtomicLong(-1);
 
-                    //Create export task
+                    // Create export task
                     Callable<Object> task =
                             new CallableWithoutResult() {
                                 @Override
@@ -1030,10 +1035,10 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
                                 }
                             };
 
-                    //Submit the export task
+                    // Submit the export task
                     final Future<?> exportFuture = this.importExportThreadPool.submit(task);
 
-                    //Add the future for tracking
+                    // Add the future for tracking
                     final ExportFuture futureHolder =
                             new ExportFuture(exportFuture, typeId, dataId, exportTime);
                     exportFutures.offer(futureHolder);
@@ -1121,17 +1126,16 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
         final List<FutureHolder<?>> failedFutures = new LinkedList<>();
 
         for (Iterator<? extends FutureHolder<?>> futuresItr = futures.iterator();
-                futuresItr.hasNext();
-                ) {
+                futuresItr.hasNext(); ) {
             final FutureHolder<?> futureHolder = futuresItr.next();
 
-            //If waiting, or if not waiting but the future is already done do the get
+            // If waiting, or if not waiting but the future is already done do the get
             final Future<?> future = futureHolder.getFuture();
             if (wait || (!wait && future.isDone())) {
                 futuresItr.remove();
 
                 try {
-                    //Don't bother doing a get() on canceled futures
+                    // Don't bother doing a get() on canceled futures
                     if (!future.isCancelled()) {
                         if (this.maxWait > 0) {
                             future.get(this.maxWait, this.maxWaitTimeUnit);
@@ -1146,7 +1150,7 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
                                 futureHolder.getExecutionTimeMillis());
                     }
                 } catch (CancellationException e) {
-                    //Ignore cancellation exceptions
+                    // Ignore cancellation exceptions
                 } catch (ExecutionException e) {
                     logger.error("Failed: " + futureHolder);
 

@@ -93,7 +93,7 @@ public class UserInstanceManagerImpl implements IUserInstanceManager {
         try {
             request = this.portalRequestUtils.getOriginalPortalRequest(request);
         } catch (IllegalArgumentException iae) {
-            //ignore, just means that this isn't a wrapped request
+            // ignore, just means that this isn't a wrapped request
         }
 
         // Use request attributes first for the fastest possible retrieval
@@ -139,7 +139,7 @@ public class UserInstanceManagerImpl implements IUserInstanceManager {
         final IUserProfile userProfile =
                 this.getUserProfile(request, person, localeManager, userAgent);
 
-        //Create the user layout manager and user instance object
+        // Create the user layout manager and user instance object
         IUserLayoutManager userLayoutManager =
                 userLayoutManagerFactory.getUserLayoutManager(person, userProfile);
 
@@ -147,7 +147,7 @@ public class UserInstanceManagerImpl implements IUserInstanceManager {
                 new UserPreferencesManager(person, userProfile, userLayoutManager);
         userInstance = new UserInstance(person, userPreferencesManager, localeManager);
 
-        //Ensure the newly created UserInstance is cached in the session
+        // Ensure the newly created UserInstance is cached in the session
         if (userInstanceHolder == null) {
             userInstanceHolder = new UserInstanceHolder();
         }

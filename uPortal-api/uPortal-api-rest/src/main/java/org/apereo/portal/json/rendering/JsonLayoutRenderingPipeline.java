@@ -64,7 +64,7 @@ public class JsonLayoutRenderingPipeline implements IPortalRenderingPipeline {
     @Override
     public void renderState(HttpServletRequest req, HttpServletResponse res)
             throws ServletException, IOException, IllegalStateException {
-        //Disable page caching
+        // Disable page caching
         res.setHeader("pragma", "no-cache");
         res.setHeader("Cache-Control", "no-cache, max-age=0, must-revalidate");
         res.setDateHeader("Expires", 0);

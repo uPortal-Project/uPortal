@@ -30,7 +30,7 @@ public class UrlStringBuilderTest {
             new UrlStringBuilder("NOT VALID", null);
             Assert.fail("Encoding 'NOT VALID' should throw an exception");
         } catch (RuntimeException re) {
-            //expected
+            // expected
         }
     }
 

@@ -111,7 +111,7 @@ public class ILFBuilder {
     private static void mergeChildren(
             Element source, Element dest, IAuthorizationPrincipal ap, Set visitedNodes)
             throws AuthorizationException {
-        //Record this node in the visited nodes set. If add returns false a loop has been detected
+        // Record this node in the visited nodes set. If add returns false a loop has been detected
         if (!visitedNodes.add(source)) {
             final String msg =
                     "mergeChildren has encountered a loop in the source DOM. currentNode='"
@@ -152,7 +152,7 @@ public class ILFBuilder {
             item = item.getNextSibling();
         }
 
-        //Remove this node from the visited nodes set
+        // Remove this node from the visited nodes set
         visitedNodes.remove(source);
     }
 

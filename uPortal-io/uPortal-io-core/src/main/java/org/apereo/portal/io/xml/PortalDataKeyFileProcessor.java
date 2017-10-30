@@ -56,16 +56,17 @@ public final class PortalDataKeyFileProcessor implements Function<Resource, Obje
 
         this.xmlInputFactory = XMLInputFactory.newFactory();
 
-        //Set the input buffer to 2k bytes. This appears to work for reading just enough to get the start element event for
-        //all of the data files in a single read operation.
+        // Set the input buffer to 2k bytes. This appears to work for reading just enough to get the
+        // start element event for
+        // all of the data files in a single read operation.
         this.xmlInputFactory.setProperty(WstxInputProperties.P_INPUT_BUFFER_LENGTH, 2000);
         this.xmlInputFactory.setProperty(
                 XMLInputFactory2.P_LAZY_PARSING,
-                true); //Do as little parsing as possible, just want basic info
+                true); // Do as little parsing as possible, just want basic info
         this.xmlInputFactory.setProperty(
-                XMLInputFactory.IS_VALIDATING, false); //Don't do any validation here
+                XMLInputFactory.IS_VALIDATING, false); // Don't do any validation here
         this.xmlInputFactory.setProperty(
-                XMLInputFactory.SUPPORT_DTD, false); //Don't load referenced DTDs here
+                XMLInputFactory.SUPPORT_DTD, false); // Don't load referenced DTDs here
     }
 
     /** @return total number of resources to import */
@@ -129,14 +130,15 @@ public final class PortalDataKeyFileProcessor implements Function<Resource, Obje
             return null;
         }
 
-        //Allow the PortalDataType to do any necessary post-processing of the input, needed as some types require extra work
+        // Allow the PortalDataType to do any necessary post-processing of the input, needed as some
+        // types require extra work
         final String resourceUri = ResourceUtils.getResourceUri(input);
         final Set<PortalDataKey> processedPortalDataKeys =
                 portalDataType.postProcessPortalDataKey(resourceUri, portalDataKey, xmlEventReader);
         xmlEventReader.reset();
 
         for (final PortalDataKey processedPortalDataKey : processedPortalDataKeys) {
-            //Add the PortalDataKey and File into the map
+            // Add the PortalDataKey and File into the map
             Queue<Resource> queue = this.dataToImport.get(processedPortalDataKey);
             if (queue == null) {
                 queue =

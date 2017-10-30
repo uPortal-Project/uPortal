@@ -121,7 +121,8 @@ public class LoginTotalsStatisticsController
 
         if (form.isTotalLogins() && form.isUniqueLogins()) {
             return ImmutableList.of(
-                    //THE ORDER OF RETURNED COLUMNS HERE MUST MATCH THE ORDER OF THE VALUES RETURNED IN createRowValues
+                    // THE ORDER OF RETURNED COLUMNS HERE MUST MATCH THE ORDER OF THE VALUES
+                    // RETURNED IN createRowValues
                     new ColumnDescription(
                             groupName + "-uniqueLogins",
                             ValueType.NUMBER,
@@ -159,7 +160,8 @@ public class LoginTotalsStatisticsController
 
         if (form.isTotalLogins() && form.isUniqueLogins()) {
             return ImmutableList.<Value>of(
-                    //THE ORDER OF RETURNED VALUES HERE MUST MATCH THE ORDER OF THE COLUMNS RETURNED IN getColumnDescriptions
+                    // THE ORDER OF RETURNED VALUES HERE MUST MATCH THE ORDER OF THE COLUMNS
+                    // RETURNED IN getColumnDescriptions
                     new NumberValue(uniqueLoginCount), new NumberValue(loginCount));
         } else if (form.isUniqueLogins()) {
             return Collections.<Value>singletonList(new NumberValue(uniqueLoginCount));

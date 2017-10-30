@@ -158,7 +158,7 @@ public class JpaPortalEventStoreTest extends BaseRawEventsJpaDaoTest {
                 new CallableWithoutResult() {
                     @Override
                     protected void callWithoutResult() {
-                        //Get all events
+                        // Get all events
                         final List<PortalEvent> portalEvents = new LinkedList<PortalEvent>();
                         portalEventDao.getPortalEvents(
                                 startDate,
@@ -191,13 +191,13 @@ public class JpaPortalEventStoreTest extends BaseRawEventsJpaDaoTest {
                 new CallableWithoutResult() {
                     @Override
                     protected void callWithoutResult() {
-                        //Get all events
+                        // Get all events
                         final List<PortalEvent> portalEvents = new LinkedList<PortalEvent>();
 
                         final AtomicReference<DateTime> nextStart =
                                 new AtomicReference<DateTime>(startDate);
 
-                        //aggregate all events, 5 at a time.
+                        // aggregate all events, 5 at a time.
                         final int loadSize = 10;
                         int startSize;
                         do {
@@ -238,7 +238,7 @@ public class JpaPortalEventStoreTest extends BaseRawEventsJpaDaoTest {
                     @Override
                     protected void callWithoutResult() {
 
-                        //Delete the events
+                        // Delete the events
                         portalEventDao.deletePortalEventsBefore(endDate);
                     }
                 });

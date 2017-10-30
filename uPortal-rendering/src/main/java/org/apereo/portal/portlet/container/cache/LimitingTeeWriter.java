@@ -78,7 +78,7 @@ public class LimitingTeeWriter extends TeeWriter {
         if (this.maximumCharacters > 0
                 && !this.limitReached
                 && this.characterCount > this.maximumCharacters) {
-            //Hit limit, replace tee'd writer with a null writer
+            // Hit limit, replace tee'd writer with a null writer
             this.limitReached = true;
             this.setBranch(NullWriter.NULL_WRITER);
 

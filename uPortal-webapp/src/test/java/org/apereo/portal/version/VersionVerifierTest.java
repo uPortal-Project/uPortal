@@ -36,11 +36,11 @@ public class VersionVerifierTest {
 
     @Test
     public void testSameVersions() throws Exception {
-        //Code version 4.0.6
+        // Code version 4.0.6
         versionVerifier.setRequiredProductVersions(
                 ImmutableMap.of("uPortalDb", VersionUtils.parseVersion("4.0.6")));
 
-        //DB version 4.0.6
+        // DB version 4.0.6
         when(versionDao.getVersion("uPortalDb")).thenReturn(VersionUtils.parseVersion("4.0.6"));
 
         versionVerifier.afterPropertiesSet();
@@ -48,11 +48,11 @@ public class VersionVerifierTest {
 
     @Test
     public void testNewerDatabaseVersion() throws Exception {
-        //Code version 4.0.5
+        // Code version 4.0.5
         versionVerifier.setRequiredProductVersions(
                 ImmutableMap.of("uPortalDb", VersionUtils.parseVersion("4.0.5")));
 
-        //DB version 4.0.6
+        // DB version 4.0.6
         when(versionDao.getVersion("uPortalDb")).thenReturn(VersionUtils.parseVersion("4.0.6"));
 
         versionVerifier.afterPropertiesSet();
@@ -60,12 +60,12 @@ public class VersionVerifierTest {
 
     @Test(expected = ApplicationContextException.class)
     public void testNewerCodePatchVersionNoAutoUpdate() throws Exception {
-        //Code version 4.0.6
+        // Code version 4.0.6
         versionVerifier.setRequiredProductVersions(
                 ImmutableMap.of("uPortalDb", VersionUtils.parseVersion("4.0.6")));
         versionVerifier.setUpdatePolicy(null);
 
-        //DB version 4.0.5
+        // DB version 4.0.5
         when(versionDao.getVersion("uPortalDb")).thenReturn(VersionUtils.parseVersion("4.0.5"));
 
         versionVerifier.afterPropertiesSet();
@@ -73,12 +73,12 @@ public class VersionVerifierTest {
 
     @Test
     public void testNewerCodePatchVersionWithPatchAutoUpdate() throws Exception {
-        //Code version 4.0.6
+        // Code version 4.0.6
         versionVerifier.setRequiredProductVersions(
                 ImmutableMap.of("uPortalDb", VersionUtils.parseVersion("4.0.6")));
         versionVerifier.setUpdatePolicy(Version.Field.PATCH);
 
-        //DB version 4.0.5
+        // DB version 4.0.5
         when(versionDao.getVersion("uPortalDb")).thenReturn(VersionUtils.parseVersion("4.0.5"));
 
         versionVerifier.afterPropertiesSet();
@@ -89,12 +89,12 @@ public class VersionVerifierTest {
 
     @Test(expected = ApplicationContextException.class)
     public void testNewerCodePatchVersionWithLocalAutoUpdate() throws Exception {
-        //Code version 4.0.6
+        // Code version 4.0.6
         versionVerifier.setRequiredProductVersions(
                 ImmutableMap.of("uPortalDb", VersionUtils.parseVersion("4.0.6")));
         versionVerifier.setUpdatePolicy(Version.Field.LOCAL);
 
-        //DB version 4.0.5
+        // DB version 4.0.5
         when(versionDao.getVersion("uPortalDb")).thenReturn(VersionUtils.parseVersion("4.0.5"));
 
         versionVerifier.afterPropertiesSet();
@@ -102,12 +102,12 @@ public class VersionVerifierTest {
 
     @Test(expected = ApplicationContextException.class)
     public void testNewerCodeLocalVersionNoAutoUpdate() throws Exception {
-        //Code version 4.0.5.1
+        // Code version 4.0.5.1
         versionVerifier.setRequiredProductVersions(
                 ImmutableMap.of("uPortalDb", VersionUtils.parseVersion("4.0.5.1")));
         versionVerifier.setUpdatePolicy(null);
 
-        //DB version 4.0.5
+        // DB version 4.0.5
         when(versionDao.getVersion("uPortalDb")).thenReturn(VersionUtils.parseVersion("4.0.5"));
 
         versionVerifier.afterPropertiesSet();
@@ -115,12 +115,12 @@ public class VersionVerifierTest {
 
     @Test
     public void testNewerCodeLocalVersionWithPatchAutoUpdate() throws Exception {
-        //Code version 4.0.5.1
+        // Code version 4.0.5.1
         versionVerifier.setRequiredProductVersions(
                 ImmutableMap.of("uPortalDb", VersionUtils.parseVersion("4.0.5.1")));
         versionVerifier.setUpdatePolicy(Version.Field.PATCH);
 
-        //DB version 4.0.5
+        // DB version 4.0.5
         when(versionDao.getVersion("uPortalDb")).thenReturn(VersionUtils.parseVersion("4.0.5"));
 
         versionVerifier.afterPropertiesSet();
@@ -131,12 +131,12 @@ public class VersionVerifierTest {
 
     @Test
     public void testNewerCodeLocalVersionWithLocalAutoUpdate() throws Exception {
-        //Code version 4.0.5.1
+        // Code version 4.0.5.1
         versionVerifier.setRequiredProductVersions(
                 ImmutableMap.of("uPortalDb", VersionUtils.parseVersion("4.0.5.1")));
         versionVerifier.setUpdatePolicy(Version.Field.LOCAL);
 
-        //DB version 4.0.5
+        // DB version 4.0.5
         when(versionDao.getVersion("uPortalDb")).thenReturn(VersionUtils.parseVersion("4.0.5"));
 
         versionVerifier.afterPropertiesSet();

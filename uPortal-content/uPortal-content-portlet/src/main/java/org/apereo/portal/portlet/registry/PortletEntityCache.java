@@ -61,7 +61,7 @@ class PortletEntityCache<T extends IPortletEntityDescriptor> implements Serializ
 
     public T storeIfAbsentEntity(
             IPortletEntityId portletEntityId, Function<IPortletEntityId, T> entityCreator) {
-        //Check if the entity already exists (uses a read lock)
+        // Check if the entity already exists (uses a read lock)
         T existingEntity = this.getEntity(portletEntityId);
         if (existingEntity != null) {
             return existingEntity;
@@ -69,7 +69,7 @@ class PortletEntityCache<T extends IPortletEntityDescriptor> implements Serializ
 
         writeLock.lock();
         try {
-            //Check again inside the write lock
+            // Check again inside the write lock
             existingEntity = this.entitiesById.get(portletEntityId);
             if (existingEntity != null) {
                 return existingEntity;
@@ -88,7 +88,7 @@ class PortletEntityCache<T extends IPortletEntityDescriptor> implements Serializ
     public T storeIfAbsentEntity(T entity) {
         final IPortletEntityId portletEntityId = entity.getPortletEntityId();
 
-        //Check if the entity already exists (uses a read lock)
+        // Check if the entity already exists (uses a read lock)
         T existingEntity = this.getEntity(portletEntityId);
         if (existingEntity != null) {
             return existingEntity;
@@ -96,7 +96,7 @@ class PortletEntityCache<T extends IPortletEntityDescriptor> implements Serializ
 
         writeLock.lock();
         try {
-            //Check again inside the write lock
+            // Check again inside the write lock
             existingEntity = this.entitiesById.get(portletEntityId);
             if (existingEntity != null) {
                 return existingEntity;

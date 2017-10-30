@@ -100,8 +100,7 @@ public abstract class GroupMemberImpl implements IGroupMember {
 
         final Set<IEntityGroup> rslt = new HashSet<>();
         for (Iterator it = GroupService.getCompositeGroupService().findParentGroups(this);
-                it.hasNext();
-                ) {
+                it.hasNext(); ) {
             final IEntityGroup eg = (IEntityGroup) it.next();
             rslt.add(eg);
         }

@@ -27,7 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * IUserLayoutStore#isFragmentOwner(String)} are also included
  */
 public class PropertiesFilesIsIncludedUser implements Function<String, Boolean> {
-    //userLayoutStore.isFragmentOwner
+    // userLayoutStore.isFragmentOwner
     private IUserLayoutStore userLayoutStore;
     private Set<String> userNames;
     private boolean allUsers = false;

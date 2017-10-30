@@ -53,7 +53,7 @@ public class StylesheetParameterDescriptorImpl extends AbstractStylesheetDataImp
     @Column(name = "ENTITY_VERSION")
     private final long entityVersion;
 
-    //Required by hibernate for reflective creation
+    // Required by hibernate for reflective creation
     @SuppressWarnings("unused")
     private StylesheetParameterDescriptorImpl() {
         this.id = -1;

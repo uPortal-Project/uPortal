@@ -91,7 +91,7 @@ public class AttributeSwapperHelperImpl implements IAttributeSwapperHelper {
 
         final Set<String> swappableAttributes;
 
-        //Use prefs configured list if available
+        // Use prefs configured list if available
         final String[] configuredAttributes =
                 preferences.getValues(ATTRIBUTE_SWAPPER_ATTRIBUTES_FORM_SWAPPABLE_ATTRIBUTES, null);
         final String[] excludedAttributes =
@@ -101,13 +101,13 @@ public class AttributeSwapperHelperImpl implements IAttributeSwapperHelper {
         if (configuredAttributes != null) {
             swappableAttributes = new LinkedHashSet<String>(Arrays.asList(configuredAttributes));
         } else {
-            //If no prefs try the 'possibleUserAttributeNames' from the IPersonAttributeDao
+            // If no prefs try the 'possibleUserAttributeNames' from the IPersonAttributeDao
             final Set<String> possibleAttributes =
                     this.portalRootPersonAttributeDao.getPossibleUserAttributeNames();
             if (possibleAttributes != null) {
                 swappableAttributes = new TreeSet<String>(possibleAttributes);
             }
-            //If no possible names try getting the current user's attributes and use the key set
+            // If no possible names try getting the current user's attributes and use the key set
             else {
                 final Principal currentUser = externalContext.getCurrentUser();
                 final IPersonAttributes baseUserAttributes =
@@ -170,7 +170,7 @@ public class AttributeSwapperHelperImpl implements IAttributeSwapperHelper {
     @Override
     public void swapAttributes(
             ExternalContext externalContext, AttributeSwapRequest attributeSwapRequest) {
-        //Collate the swap request into a single overrides map
+        // Collate the swap request into a single overrides map
         final Map<String, Object> attributes = new HashMap<String, Object>();
 
         final Map<String, Attribute> currentAttributes =
@@ -184,11 +184,10 @@ public class AttributeSwapperHelperImpl implements IAttributeSwapperHelper {
         final String uid = currentUser.getName();
         final IPersonAttributes originalUserAttributes = this.getOriginalUserAttributes(uid);
 
-        //Filter out unchanged attributes
+        // Filter out unchanged attributes
         for (final Iterator<Map.Entry<String, Object>> overrideAttrEntryItr =
                         attributes.entrySet().iterator();
-                overrideAttrEntryItr.hasNext();
-                ) {
+                overrideAttrEntryItr.hasNext(); ) {
             final Entry<String, Object> overrideAttrEntry = overrideAttrEntryItr.next();
             final String attribute = overrideAttrEntry.getKey();
 
@@ -209,7 +208,7 @@ public class AttributeSwapperHelperImpl implements IAttributeSwapperHelper {
                 preferences.getValues(
                         ATTRIBUTE_SWAPPER_ATTRIBUTES_FORM_SWAPPABLE_ATTRIBUTES_EXCLUDES, null);
 
-        //Calculate the Set of attributes that are OK to be swapped
+        // Calculate the Set of attributes that are OK to be swapped
         final Set<String> allowedAttributes = new LinkedHashSet<String>();
         if (configuredAttributes != null) {
             allowedAttributes.addAll(Arrays.asList(configuredAttributes));
@@ -220,10 +219,9 @@ public class AttributeSwapperHelperImpl implements IAttributeSwapperHelper {
             allowedAttributes.removeAll(Arrays.asList(excludedAttributes));
         }
 
-        //Filter the attributes map
+        // Filter the attributes map
         for (final Iterator<String> attributeItr = attributes.keySet().iterator();
-                attributeItr.hasNext();
-                ) {
+                attributeItr.hasNext(); ) {
             final String attribute = attributeItr.next();
             if (!allowedAttributes.contains(attribute)) {
                 attributeItr.remove();
@@ -238,10 +236,10 @@ public class AttributeSwapperHelperImpl implements IAttributeSwapperHelper {
 
         this.logger.warn("User '" + uid + "' setting attribute overrides: " + attributes);
 
-        //Override attributes retrieved the person directory
+        // Override attributes retrieved the person directory
         this.portalRootPersonAttributeDao.setUserAttributeOverride(uid, attributes);
 
-        //Update the IPerson, setting the overridden attributes
+        // Update the IPerson, setting the overridden attributes
         final HttpServletRequest portalRequest =
                 this.portalRequestUtils.getPortletHttpRequest(portletRequest);
 
@@ -262,11 +260,12 @@ public class AttributeSwapperHelperImpl implements IAttributeSwapperHelper {
 
         this.logger.warn("User '" + uid + "' reseting to default attributes");
 
-        //Remove the person directory override
+        // Remove the person directory override
         this.portalRootPersonAttributeDao.removeUserAttributeOverride(uid);
 
-        //Remove the IPerson attribute override, bit of a hack as we really just remove all overrides
-        //then re-add all attributes from person directory
+        // Remove the IPerson attribute override, bit of a hack as we really just remove all
+        // overrides
+        // then re-add all attributes from person directory
         final PortletRequest portletRequest = (PortletRequest) externalContext.getNativeRequest();
         final HttpServletRequest portalRequest =
                 this.portalRequestUtils.getPortletHttpRequest(portletRequest);

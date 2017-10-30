@@ -218,7 +218,7 @@ public class PortalRawEventsAggregatorImpl extends BaseAggrEventsJpaDao
 
     private void checkShutdown() {
         if (shutdown) {
-            //Mark ourselves as interupted and throw an exception
+            // Mark ourselves as interupted and throw an exception
             Thread.currentThread().interrupt();
             throw new RuntimeException(
                     "uPortal is shutting down, throwing an exception to stop processing");
@@ -228,7 +228,8 @@ public class PortalRawEventsAggregatorImpl extends BaseAggrEventsJpaDao
     @RawEventsTransactional
     @Override
     public EventProcessingResult doAggregateRawEvents() {
-        //Do RawTX around AggrTX. The AggrTX is MUCH more likely to fail than the RawTX and this results in both rolling back
+        // Do RawTX around AggrTX. The AggrTX is MUCH more likely to fail than the RawTX and this
+        // results in both rolling back
         return this.getTransactionOperations()
                 .execute(
                         new TransactionCallback<EventProcessingResult>() {
@@ -285,17 +286,17 @@ public class PortalRawEventsAggregatorImpl extends BaseAggrEventsJpaDao
                 eventAggregationManagementDao.getEventAggregatorStatus(
                         IEventAggregatorStatus.ProcessingType.CLEAN_UNCLOSED, true);
 
-        //Update status with current server name
+        // Update status with current server name
         final String serverName = this.portalInfoProvider.getUniqueServerName();
         cleanUnclosedStatus.setServerName(serverName);
         cleanUnclosedStatus.setLastStart(new DateTime());
 
-        //Determine date of most recently aggregated data
+        // Determine date of most recently aggregated data
         final IEventAggregatorStatus eventAggregatorStatus =
                 eventAggregationManagementDao.getEventAggregatorStatus(
                         IEventAggregatorStatus.ProcessingType.AGGREGATION, false);
         if (eventAggregatorStatus == null || eventAggregatorStatus.getLastEventDate() == null) {
-            //Nothing has been aggregated, skip unclosed cleanup
+            // Nothing has been aggregated, skip unclosed cleanup
 
             cleanUnclosedStatus.setLastEnd(new DateTime());
             eventAggregationManagementDao.updateEventAggregatorStatus(cleanUnclosedStatus);
@@ -305,8 +306,8 @@ public class PortalRawEventsAggregatorImpl extends BaseAggrEventsJpaDao
 
         final DateTime lastAggregatedDate = eventAggregatorStatus.getLastEventDate();
 
-        //If lastCleanUnclosedDate is null use the oldest date dimension as there can be
-        //no aggregations that exist before it
+        // If lastCleanUnclosedDate is null use the oldest date dimension as there can be
+        // no aggregations that exist before it
         final DateTime lastCleanUnclosedDate;
         if (cleanUnclosedStatus.getLastEventDate() == null) {
             final DateDimension oldestDateDimension =
@@ -323,12 +324,12 @@ public class PortalRawEventsAggregatorImpl extends BaseAggrEventsJpaDao
             return new EventProcessingResult(0, lastCleanUnclosedDate, lastAggregatedDate, true);
         }
 
-        //Switch to flush on commit to avoid flushes during queries
+        // Switch to flush on commit to avoid flushes during queries
         final EntityManager entityManager = this.getEntityManager();
         entityManager.flush();
         entityManager.setFlushMode(FlushModeType.COMMIT);
 
-        //Track the number of closed aggregations and the last date of a cleaned interval
+        // Track the number of closed aggregations and the last date of a cleaned interval
         int closedAggregations = 0;
         int cleanedIntervals = 0;
         DateTime cleanUnclosedEnd;
@@ -339,19 +340,19 @@ public class PortalRawEventsAggregatorImpl extends BaseAggrEventsJpaDao
             currentThread.setName(
                     currentName + "-" + lastCleanUnclosedDate + "-" + lastAggregatedDate);
 
-            //Local caches used to reduce db io
+            // Local caches used to reduce db io
             final IntervalsForAggregatorHelper intervalsForAggregatorHelper =
                     new IntervalsForAggregatorHelper();
             final Map<AggregationInterval, AggregationIntervalInfo> previousIntervals =
                     new HashMap<AggregationInterval, AggregationIntervalInfo>();
 
-            //A DateTime within the next interval to close aggregations in
+            // A DateTime within the next interval to close aggregations in
             DateTime nextIntervalDate = lastCleanUnclosedDate;
             do {
-                //Reset our goal of catching up to the last aggregated event on every iteration
+                // Reset our goal of catching up to the last aggregated event on every iteration
                 cleanUnclosedEnd = lastAggregatedDate;
 
-                //For each interval the aggregator supports, cleanup the unclosed aggregations
+                // For each interval the aggregator supports, cleanup the unclosed aggregations
                 for (final AggregationInterval interval :
                         intervalsForAggregatorHelper.getHandledIntervals()) {
                     final AggregationIntervalInfo previousInterval =
@@ -365,7 +366,8 @@ public class PortalRawEventsAggregatorImpl extends BaseAggrEventsJpaDao
                         continue;
                     }
 
-                    //The END date of the last clean session will find us the next interval to clean
+                    // The END date of the last clean session will find us the next interval to
+                    // clean
                     final AggregationIntervalInfo nextIntervalToClean =
                             intervalHelper.getIntervalInfo(interval, nextIntervalDate);
                     previousIntervals.put(interval, nextIntervalToClean);
@@ -382,7 +384,7 @@ public class PortalRawEventsAggregatorImpl extends BaseAggrEventsJpaDao
                         continue;
                     }
 
-                    //Track the oldest interval end, this ensures that nothing is missed
+                    // Track the oldest interval end, this ensures that nothing is missed
                     if (end.isBefore(cleanUnclosedEnd)) {
                         cleanUnclosedEnd = end;
                     }
@@ -398,12 +400,13 @@ public class PortalRawEventsAggregatorImpl extends BaseAggrEventsJpaDao
                         final Class<? extends IPortalEventAggregator<?>> aggregatorType =
                                 getClass(portalEventAggregator);
 
-                        //Get aggregator specific interval info config
+                        // Get aggregator specific interval info config
                         final AggregatedIntervalConfig aggregatorIntervalConfig =
                                 intervalsForAggregatorHelper.getAggregatorIntervalConfig(
                                         aggregatorType);
 
-                        //If the aggregator is being used for the specified interval call cleanUnclosedAggregations
+                        // If the aggregator is being used for the specified interval call
+                        // cleanUnclosedAggregations
                         if (aggregatorIntervalConfig.isIncluded(interval)) {
                             closedAggregations +=
                                     portalEventAggregator.cleanUnclosedAggregations(
@@ -414,7 +417,7 @@ public class PortalRawEventsAggregatorImpl extends BaseAggrEventsJpaDao
                     cleanedIntervals++;
                 }
 
-                //Set the next interval to the end date from the last aggregation run
+                // Set the next interval to the end date from the last aggregation run
                 nextIntervalDate = cleanUnclosedEnd;
 
                 logger.debug(
@@ -425,7 +428,8 @@ public class PortalRawEventsAggregatorImpl extends BaseAggrEventsJpaDao
                             cleanUnclosedEnd,
                             lastAggregatedDate
                         });
-                //Loop until either the batchSize of cleaned aggregations has been reached or no aggregation work is done
+                // Loop until either the batchSize of cleaned aggregations has been reached or no
+                // aggregation work is done
             } while (closedAggregations <= cleanUnclosedAggregationsBatchSize
                     && cleanedIntervals <= cleanUnclosedIntervalsBatchSize
                     && cleanUnclosedEnd.isBefore(lastAggregatedDate));
@@ -433,7 +437,7 @@ public class PortalRawEventsAggregatorImpl extends BaseAggrEventsJpaDao
             currentThread.setName(currentName);
         }
 
-        //Update the status object and store it
+        // Update the status object and store it
         cleanUnclosedStatus.setLastEventDate(cleanUnclosedEnd);
         cleanUnclosedStatus.setLastEnd(new DateTime());
         eventAggregationManagementDao.updateEventAggregatorStatus(cleanUnclosedStatus);
@@ -481,7 +485,8 @@ public class PortalRawEventsAggregatorImpl extends BaseAggrEventsJpaDao
         }
 
         if (!this.portalEventDimensionPopulator.isCheckedDimensions()) {
-            //First time aggregation has happened, run populateDimensions to ensure enough dimension data exists
+            // First time aggregation has happened, run populateDimensions to ensure enough
+            // dimension data exists
             final boolean populatedDimensions =
                     this.portalEventAggregationManager.populateDimensions();
             if (!populatedDimensions) {
@@ -491,7 +496,7 @@ public class PortalRawEventsAggregatorImpl extends BaseAggrEventsJpaDao
             }
         }
 
-        //Flush any dimension creation before aggregation
+        // Flush any dimension creation before aggregation
         final EntityManager entityManager = this.getEntityManager();
         entityManager.flush();
         entityManager.setFlushMode(FlushModeType.COMMIT);
@@ -500,7 +505,7 @@ public class PortalRawEventsAggregatorImpl extends BaseAggrEventsJpaDao
                 eventAggregationManagementDao.getEventAggregatorStatus(
                         IEventAggregatorStatus.ProcessingType.AGGREGATION, true);
 
-        //Update status with current server name
+        // Update status with current server name
         final String serverName = this.portalInfoProvider.getUniqueServerName();
         final String previousServerName = eventAggregatorStatus.getServerName();
         if (previousServerName != null && !serverName.equals(previousServerName)) {
@@ -514,17 +519,18 @@ public class PortalRawEventsAggregatorImpl extends BaseAggrEventsJpaDao
 
         eventAggregatorStatus.setServerName(serverName);
 
-        //Calculate date range for aggregation
+        // Calculate date range for aggregation
         DateTime lastAggregated = eventAggregatorStatus.getLastEventDate();
         if (lastAggregated == null) {
             lastAggregated = portalEventDao.getOldestPortalEventTimestamp();
 
-            //No portal events to aggregate, skip aggregation
+            // No portal events to aggregate, skip aggregation
             if (lastAggregated == null) {
                 return new EventProcessingResult(0, null, null, true);
             }
 
-            //First time aggregation has run, initialize the CLEAN_UNCLOSED status to save catch-up time
+            // First time aggregation has run, initialize the CLEAN_UNCLOSED status to save catch-up
+            // time
             final IEventAggregatorStatus cleanUnclosedStatus =
                     eventAggregationManagementDao.getEventAggregatorStatus(
                             IEventAggregatorStatus.ProcessingType.CLEAN_UNCLOSED, true);
@@ -551,7 +557,7 @@ public class PortalRawEventsAggregatorImpl extends BaseAggrEventsJpaDao
                     lastAggregated,
                     newestEventTime);
 
-            //Do aggregation, capturing the start and end dates
+            // Do aggregation, capturing the start and end dates
             eventAggregatorStatus.setLastStart(DateTime.now());
 
             complete =
@@ -568,7 +574,7 @@ public class PortalRawEventsAggregatorImpl extends BaseAggrEventsJpaDao
             currentThread.setName(currentName);
         }
 
-        //Store the results of the aggregation
+        // Store the results of the aggregation
         eventAggregationManagementDao.updateEventAggregatorStatus(eventAggregatorStatus);
 
         complete =
@@ -599,7 +605,7 @@ public class PortalRawEventsAggregatorImpl extends BaseAggrEventsJpaDao
             this.defaultAggregatedIntervalConfig =
                     eventAggregationManagementDao.getDefaultAggregatedIntervalConfig();
 
-            //Create the set of intervals that are actually being aggregated
+            // Create the set of intervals that are actually being aggregated
             final Set<AggregationInterval> handledIntervalsNotIncluded =
                     EnumSet.allOf(AggregationInterval.class);
             final Set<AggregationInterval> handledIntervalsBuilder =
@@ -609,14 +615,13 @@ public class PortalRawEventsAggregatorImpl extends BaseAggrEventsJpaDao
                 final Class<? extends IPortalEventAggregator<?>> aggregatorType =
                         PortalRawEventsAggregatorImpl.this.getClass(portalEventAggregator);
 
-                //Get aggregator specific interval info config
+                // Get aggregator specific interval info config
                 final AggregatedIntervalConfig aggregatorIntervalConfig =
                         this.getAggregatorIntervalConfig(aggregatorType);
 
                 for (final Iterator<AggregationInterval> intervalsIterator =
                                 handledIntervalsNotIncluded.iterator();
-                        intervalsIterator.hasNext();
-                        ) {
+                        intervalsIterator.hasNext(); ) {
                     final AggregationInterval interval = intervalsIterator.next();
                     if (aggregatorIntervalConfig.isIncluded(interval)) {
                         handledIntervalsBuilder.add(interval);
@@ -656,7 +661,7 @@ public class PortalRawEventsAggregatorImpl extends BaseAggrEventsJpaDao
     }
 
     private final class AggregateEventsHandler implements Function<PortalEvent, Boolean> {
-        //Event Aggregation Context - used by aggregators to track state
+        // Event Aggregation Context - used by aggregators to track state
         private final EventAggregationContext eventAggregationContext =
                 new EventAggregationContextImpl();
         private final MutableInt eventCounter;
@@ -664,12 +669,13 @@ public class PortalRawEventsAggregatorImpl extends BaseAggrEventsJpaDao
         private final IEventAggregatorStatus eventAggregatorStatus;
         private int intervalsCrossed = 0;
 
-        //Local tracking of the current aggregation interval and info about said interval
+        // Local tracking of the current aggregation interval and info about said interval
         private final Map<AggregationInterval, AggregationIntervalInfo> currentIntervalInfo =
                 new EnumMap<AggregationInterval, AggregationIntervalInfo>(
                         AggregationInterval.class);
 
-        //Local caches of per-aggregator config data, shouldn't ever change for the duration of an aggregation run
+        // Local caches of per-aggregator config data, shouldn't ever change for the duration of an
+        // aggregation run
         private final IntervalsForAggregatorHelper intervalsForAggregatorHelper =
                 new IntervalsForAggregatorHelper();
         private final Map<Class<? extends IPortalEventAggregator<?>>, AggregatedGroupConfig>
@@ -700,7 +706,7 @@ public class PortalRawEventsAggregatorImpl extends BaseAggrEventsJpaDao
         @Override
         public Boolean apply(PortalEvent event) {
             if (shutdown) {
-                //Mark ourselves as interupted and throw an exception
+                // Mark ourselves as interupted and throw an exception
                 Thread.currentThread().interrupt();
                 throw new RuntimeException(
                         "uPortal is shutting down, throwing an exeption to stop aggregation");
@@ -709,12 +715,12 @@ public class PortalRawEventsAggregatorImpl extends BaseAggrEventsJpaDao
             final DateTime eventDate = event.getTimestampAsDate();
             this.lastEventDate.setValue(eventDate);
 
-            //If no interval data yet populate it.
+            // If no interval data yet populate it.
             if (this.currentIntervalInfo.isEmpty()) {
                 initializeIntervalInfo(eventDate);
             }
 
-            //Check each interval to see if an interval boundary has been crossed
+            // Check each interval to see if an interval boundary has been crossed
             boolean intervalCrossed = false;
             for (final AggregationInterval interval :
                     this.intervalsForAggregatorHelper.getHandledIntervals()) {
@@ -722,8 +728,9 @@ public class PortalRawEventsAggregatorImpl extends BaseAggrEventsJpaDao
                 if (intervalInfo != null
                         && !intervalInfo
                                 .getEnd()
-                                .isAfter(
-                                        eventDate)) { //if there is no IntervalInfo that interval must not be supported in the current environment
+                                .isAfter(eventDate)) { // if there is no IntervalInfo that interval
+                    // must not be supported in the current
+                    // environment
                     logger.debug("Crossing {} Interval, triggered by {}", interval, event);
                     this.doHandleIntervalBoundary(interval, this.currentIntervalInfo);
 
@@ -731,7 +738,8 @@ public class PortalRawEventsAggregatorImpl extends BaseAggrEventsJpaDao
                     this.currentIntervalInfo.put(interval, intervalInfo);
 
                     this.aggregatorReadOnlyIntervalInfo
-                            .clear(); //Clear out cached per-aggregator interval info whenever a current interval info changes
+                            .clear(); // Clear out cached per-aggregator interval info whenever a
+                    // current interval info changes
 
                     intervalCrossed = true;
                 }
@@ -739,19 +747,20 @@ public class PortalRawEventsAggregatorImpl extends BaseAggrEventsJpaDao
             if (intervalCrossed) {
                 this.intervalsCrossed++;
 
-                //If we have crossed more intervals than the interval batch size return false to stop aggregation before handling the triggering event
+                // If we have crossed more intervals than the interval batch size return false to
+                // stop aggregation before handling the triggering event
                 if (this.intervalsCrossed >= intervalAggregationBatchSize) {
                     return false;
                 }
             }
 
-            //Aggregate the event
+            // Aggregate the event
             this.doAggregateEvent(event);
 
-            //Update the status object with the event date
+            // Update the status object with the event date
             this.lastEventDate.setValue(eventDate);
 
-            //Continue processing
+            // Continue processing
             return true;
         }
 
@@ -759,10 +768,11 @@ public class PortalRawEventsAggregatorImpl extends BaseAggrEventsJpaDao
             final DateTime intervalDate;
             final DateTime lastEventDate = this.eventAggregatorStatus.getLastEventDate();
             if (lastEventDate != null) {
-                //If there was a previously aggregated event use that date to make sure an interval is not missed
+                // If there was a previously aggregated event use that date to make sure an interval
+                // is not missed
                 intervalDate = lastEventDate;
             } else {
-                //Otherwise just use the current event date
+                // Otherwise just use the current event date
                 intervalDate = eventDate;
             }
 
@@ -794,21 +804,21 @@ public class PortalRawEventsAggregatorImpl extends BaseAggrEventsJpaDao
             }
             logger.trace("Aggregating event {} - {}", eventCounter, item);
 
-            //Load or create the event session
+            // Load or create the event session
             EventSession eventSession = getEventSession(item);
 
-            //Give each interval aware aggregator a chance at the event
+            // Give each interval aware aggregator a chance at the event
             for (final IntervalAwarePortalEventAggregator<PortalEvent> portalEventAggregator :
                     intervalAwarePortalEventAggregators) {
                 if (checkSupports(portalEventAggregator, item)) {
                     final Class<? extends IPortalEventAggregator<?>> aggregatorType =
                             PortalRawEventsAggregatorImpl.this.getClass(portalEventAggregator);
 
-                    //Get aggregator specific interval info map
+                    // Get aggregator specific interval info map
                     final Map<AggregationInterval, AggregationIntervalInfo> aggregatorIntervalInfo =
                             this.getAggregatorIntervalInfo(aggregatorType);
 
-                    //If there is an event session get the aggregator specific version of it
+                    // If there is an event session get the aggregator specific version of it
                     if (eventSession != null) {
                         final AggregatedGroupConfig aggregatorGroupConfig =
                                 getAggregatorGroupConfig(aggregatorType);
@@ -828,13 +838,13 @@ public class PortalRawEventsAggregatorImpl extends BaseAggrEventsJpaDao
                         eventSession = filteredEventSession;
                     }
 
-                    //Aggregation magic happens here!
+                    // Aggregation magic happens here!
                     portalEventAggregator.aggregateEvent(
                             item, eventSession, eventAggregationContext, aggregatorIntervalInfo);
                 }
             }
 
-            //Give each simple aggregator a chance at the event
+            // Give each simple aggregator a chance at the event
             for (final SimplePortalEventAggregator<PortalEvent> portalEventAggregator :
                     simplePortalEventAggregators) {
                 if (checkSupports(portalEventAggregator, item)) {
@@ -860,8 +870,8 @@ public class PortalRawEventsAggregatorImpl extends BaseAggrEventsJpaDao
         protected EventSession getEventSession(PortalEvent item) {
             final String eventSessionId = item.getEventSessionId();
 
-            //First check the aggregation context for a cached session event, fall back
-            //to asking the DAO if nothing in the context, cache the result
+            // First check the aggregation context for a cached session event, fall back
+            // to asking the DAO if nothing in the context, cache the result
             final CacheKey key = CacheKey.build(EVENT_SESSION_CACHE_KEY_SOURCE, eventSessionId);
             EventSession eventSession = this.eventAggregationContext.getAttribute(key);
             if (eventSession == null) {
@@ -869,7 +879,7 @@ public class PortalRawEventsAggregatorImpl extends BaseAggrEventsJpaDao
                 this.eventAggregationContext.setAttribute(key, eventSession);
             }
 
-            //Record the session access
+            // Record the session access
             eventSession.recordAccess(item.getTimestampAsDate());
             eventSessionDao.storeEventSession(eventSession);
 
@@ -888,7 +898,8 @@ public class PortalRawEventsAggregatorImpl extends BaseAggrEventsJpaDao
                         this.intervalsForAggregatorHelper.getAggregatorIntervalConfig(
                                 aggregatorType);
 
-                //If the aggreagator is configured to use the interval notify it of the interval boundary
+                // If the aggreagator is configured to use the interval notify it of the interval
+                // boundary
                 if (aggregatorIntervalConfig.isIncluded(interval)) {
                     final Map<AggregationInterval, AggregationIntervalInfo> aggregatorIntervalInfo =
                             this.getAggregatorIntervalInfo(aggregatorType);

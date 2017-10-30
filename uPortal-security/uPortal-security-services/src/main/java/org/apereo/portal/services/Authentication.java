@@ -113,7 +113,7 @@ public class Authentication {
         // Retrieve the security context for the user
         final ISecurityContext securityContext = person.getSecurityContext();
 
-        //Set the principals and credentials for the security context chain
+        // Set the principals and credentials for the security context chain
         this.configureSecurityContextChain(
                 principals, credentials, person, securityContext, BASE_CONTEXT_NAME);
 
@@ -160,7 +160,7 @@ public class Authentication {
                 authListener.userAuthenticated(person);
             }
 
-            //Clear all existing cached data about the person
+            // Clear all existing cached data about the person
             this.usernameTaggedCacheEntryPurger.purgeTaggedCacheEntries(userName);
 
             // Retrieve the additional descriptor from the security context
@@ -188,8 +188,7 @@ public class Authentication {
                     final Map<?, ?> additionalAttributes = (Map<?, ?>) addInfo;
                     // Copy each additional attribute into the person object
                     for (final Iterator<?> keys = additionalAttributes.keySet().iterator();
-                            keys.hasNext();
-                            ) {
+                            keys.hasNext(); ) {
                         // Get a key
                         final String key = (String) keys.next();
                         // Set the attribute
@@ -235,8 +234,10 @@ public class Authentication {
                 }
 
                 if (personAttributes != null) {
-                    // attribs may be null.  IPersonAttributeDao returns null when it does not recognize a user at all, as
-                    // distinguished from returning an empty Map of attributes when it recognizes a user has having no
+                    // attribs may be null.  IPersonAttributeDao returns null when it does not
+                    // recognize a user at all, as
+                    // distinguished from returning an empty Map of attributes when it recognizes a
+                    // user has having no
                     // attributes.
 
                     person.setAttributes(personAttributes.getAttributes());
@@ -266,7 +267,8 @@ public class Authentication {
             final boolean autocreate =
                     PropertiesManager.getPropertyAsBoolean(
                             "org.apereo.portal.services.Authentication.autoCreateUsers");
-            // If we are going to be auto creating accounts then we must find the default template to use
+            // If we are going to be auto creating accounts then we must find the default template
+            // to use
             if (autocreate && person.getAttribute("uPortalTemplateUserName") == null) {
                 final String defaultTemplateUserName =
                         PropertiesManager.getProperty(
@@ -284,7 +286,7 @@ public class Authentication {
             }
         }
 
-        //Publish a login event for the person
+        // Publish a login event for the person
         this.portalEventFactory.publishLoginEvent(request, this, person);
     }
 
@@ -385,11 +387,10 @@ public class Authentication {
 
         // load principals and credentials for the subContexts
         for (final Enumeration<String> subCtxNames = securityContext.getSubContextNames();
-                subCtxNames.hasMoreElements();
-                ) {
+                subCtxNames.hasMoreElements(); ) {
             final String fullSubCtxName = subCtxNames.nextElement();
 
-            //Strip off the base of the name
+            // Strip off the base of the name
             String localSubCtxName = fullSubCtxName;
             if (fullSubCtxName.startsWith(baseContextName + ".")) {
                 localSubCtxName = localSubCtxName.substring(baseContextName.length() + 1);

@@ -91,7 +91,8 @@ public class EntityTypes {
                         CLASS_ROW_MAPPER,
                         id);
         @SuppressWarnings(
-                "unchecked") // There is an unused(?) row for java.lang.Object that looks as though it will fail here
+                "unchecked") // There is an unused(?) row for java.lang.Object that looks as though
+        // it will fail here
         Class<? extends IBasicEntity> rslt =
                 (Class<? extends IBasicEntity>) DataAccessUtils.singleResult(result);
         return rslt;
@@ -136,7 +137,7 @@ public class EntityTypes {
             throws java.lang.Exception {
         final Integer existingId = this.getEntityIDFromType(newType);
         if (existingId != null) {
-            //Entity type already exists, ignore call
+            // Entity type already exists, ignore call
             return;
         }
 

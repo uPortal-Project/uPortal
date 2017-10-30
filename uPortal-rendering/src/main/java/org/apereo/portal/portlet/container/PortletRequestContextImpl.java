@@ -57,8 +57,8 @@ public class PortletRequestContextImpl extends AbstractPortletContextImpl
     protected final IPortletRequestInfo portletRequestInfo;
     protected final RequestAttributeService requestAttributeService;
 
-    //Objects provided by the PortletServlet via the init method
-    //The servlet objects are from the scope of the cross-context dispatch
+    // Objects provided by the PortletServlet via the init method
+    // The servlet objects are from the scope of the cross-context dispatch
     protected PortletConfig portletConfig;
     protected ServletContext servletContext;
 
@@ -209,7 +209,7 @@ public class PortletRequestContextImpl extends AbstractPortletContextImpl
             return ParameterMap.convertListMap(portletParameters);
         }
 
-        //Only re-use render parameters on a render request
+        // Only re-use render parameters on a render request
         if (this.portalRequestInfo.getUrlType() == UrlType.RENDER) {
             return this.portletWindow.getRenderParameters();
         }
@@ -235,7 +235,7 @@ public class PortletRequestContextImpl extends AbstractPortletContextImpl
      */
     @Override
     public Map<String, String[]> getPublicParameterMap() {
-        //Only re-use render parameters on a render request
+        // Only re-use render parameters on a render request
         if (this.portalRequestInfo.getUrlType() == UrlType.RENDER) {
             return this.portletWindow.getPublicRenderParameters();
         }

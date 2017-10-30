@@ -90,8 +90,7 @@ public class RemoteUserSettingFilter implements Filter {
                         public Enumeration<String> getHeaderNames() {
                             final LinkedHashSet<String> headers = new LinkedHashSet<String>();
                             for (final Enumeration<String> headersEnum = super.getHeaderNames();
-                                    headersEnum.hasMoreElements();
-                                    ) {
+                                    headersEnum.hasMoreElements(); ) {
                                 headers.add(headersEnum.nextElement());
                             }
                             headers.add("REMOTE_USER");

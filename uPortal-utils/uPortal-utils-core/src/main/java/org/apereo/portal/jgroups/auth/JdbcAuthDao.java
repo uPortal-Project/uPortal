@@ -139,7 +139,7 @@ public class JdbcAuthDao implements AuthDao, InitializingBean {
                 return token;
             }
 
-            //No token found, try creating it
+            // No token found, try creating it
             createToken(serviceName);
         }
 
@@ -155,8 +155,10 @@ public class JdbcAuthDao implements AuthDao, InitializingBean {
                         @Override
                         public Object doInConnection(Connection con)
                                 throws SQLException, DataAccessException {
-                            //This is horribly hacky but we can't rely on the main uPortal TM directly or we get
-                            //into a circular dependency loop from JPA to Ehcache to jGroups and back to JPA
+                            // This is horribly hacky but we can't rely on the main uPortal TM
+                            // directly or we get
+                            // into a circular dependency loop from JPA to Ehcache to jGroups and
+                            // back to JPA
                             final DataSource ds = new SingleConnectionDataSource(con, true);
                             final PlatformTransactionManager ptm =
                                     new DataSourceTransactionManager(ds);
@@ -185,9 +187,9 @@ public class JdbcAuthDao implements AuthDao, InitializingBean {
                         }
                     });
         } catch (ConstraintViolationException e) {
-            //Ignore, just means a concurrent token creation
+            // Ignore, just means a concurrent token creation
         } catch (DataIntegrityViolationException e) {
-            //Ignore, just means a concurrent token creation
+            // Ignore, just means a concurrent token creation
         }
     }
 

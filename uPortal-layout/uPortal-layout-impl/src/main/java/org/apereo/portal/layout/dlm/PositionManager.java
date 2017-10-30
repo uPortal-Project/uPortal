@@ -418,7 +418,8 @@ public class PositionManager {
             for (Element nextPlaceholder =
                             (Element)
                                     placeholder
-                                            .getNextSibling(); // Start with the next dlm:position element after placeholder
+                                            .getNextSibling(); // Start with the next dlm:position
+                    // element after placeholder
                     nextPlaceholder != null; // As long as we have a placeholder to look at
                     nextPlaceholder =
                             (Element)

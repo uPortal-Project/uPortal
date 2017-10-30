@@ -89,7 +89,8 @@ public class VersionedDataUpdaterImpl implements VersionedDataUpdater {
     @Override
     @OpenEntityManager(unitName = BasePortalJpaDao.PERSISTENCE_UNIT_NAME)
     public void preUpdateDatabase(String product) {
-        //This happens first because even if there are no updaters we need to make sure the attempted update is valid
+        // This happens first because even if there are no updaters we need to make sure the
+        // attempted update is valid
         final Version dbVersion = getAndVerifyDatabaseVersionForUpdate(product);
 
         final SortedSet<IVersionedDatabaseUpdateHelper> updateHelpers =
@@ -99,7 +100,8 @@ public class VersionedDataUpdaterImpl implements VersionedDataUpdater {
                     "No IVersionedDatabaseUpdateHelpers configured for database {}, nothing will be done in preUpdate",
                     product);
         } else {
-            //updateHelpers is sorted oldest to newest by version so iterate through and run the updaters that apply
+            // updateHelpers is sorted oldest to newest by version so iterate through and run the
+            // updaters that apply
             for (final IVersionedDatabaseUpdateHelper updateHelper : updateHelpers) {
                 final Version updateVersion = updateHelper.getVersion();
                 if (dbVersion.equals(updateVersion) || dbVersion.isBefore(updateVersion)) {
@@ -118,7 +120,8 @@ public class VersionedDataUpdaterImpl implements VersionedDataUpdater {
     @Override
     @PortalTransactional
     public void postUpdateDatabase(String product) {
-        //This happens first because even if there are no updaters we need to make sure the attempted update is valid
+        // This happens first because even if there are no updaters we need to make sure the
+        // attempted update is valid
         final Version dbVersion = getAndVerifyDatabaseVersionForUpdate(product);
 
         final SortedSet<IVersionedDatabaseUpdateHelper> updateHelpers =
@@ -128,7 +131,8 @@ public class VersionedDataUpdaterImpl implements VersionedDataUpdater {
                     "No IVersionedDatabaseUpdateHelpers configured for database {}, nothing will be done in postUpdate",
                     product);
         } else {
-            //updateHelpers is sorted oldest to newest by version so iterate through and run the updaters that apply
+            // updateHelpers is sorted oldest to newest by version so iterate through and run the
+            // updaters that apply
             for (final IVersionedDatabaseUpdateHelper updateHelper : updateHelpers) {
                 final Version updateVersion = updateHelper.getVersion();
                 if (dbVersion.equals(updateVersion) || dbVersion.isBefore(updateVersion)) {
@@ -143,7 +147,7 @@ public class VersionedDataUpdaterImpl implements VersionedDataUpdater {
             }
         }
 
-        //Update the db version number
+        // Update the db version number
         final Version codeVersion = this.requiredProductVersions.get(product);
         logger.info("PostUpdate - Set {} version to {}", product, codeVersion);
         this.versionDao.setVersion(product, codeVersion);
@@ -157,7 +161,7 @@ public class VersionedDataUpdaterImpl implements VersionedDataUpdater {
 
         Version dbVersion = this.versionDao.getVersion(product);
         if (dbVersion == null) {
-            //If null assume version 4.0.0
+            // If null assume version 4.0.0
             dbVersion = VersionUtils.parseVersion("4.0.0");
         }
 

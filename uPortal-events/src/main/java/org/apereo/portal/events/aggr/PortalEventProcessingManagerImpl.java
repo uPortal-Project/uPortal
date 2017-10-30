@@ -195,14 +195,14 @@ public class PortalEventProcessingManagerImpl
                 logger.info(
                         "doAggregateRawEvents signaled that not all eligible events were aggregated in a single transaction, running aggregation again.");
 
-                //Set aggr period to 0 to allow immediate re-run locally
+                // Set aggr period to 0 to allow immediate re-run locally
                 aggregateLastRunDelay = 0;
             }
 
             try {
                 long start = System.nanoTime();
 
-                //Try executing aggregation within lock
+                // Try executing aggregation within lock
                 result =
                         clusterLockService.doInTryLock(
                                 PortalRawEventsAggregator.AGGREGATION_LOCK_NAME,
@@ -217,7 +217,7 @@ public class PortalEventProcessingManagerImpl
                                 });
                 aggrResult = result.getResult();
 
-                //Check the result, warn if null
+                // Check the result, warn if null
                 if (result.getLockStatus() == LockStatus.EXECUTED && aggrResult == null) {
                     logger.warn("doAggregateRawEvents did not execute");
                 } else if (aggrResult != null) {
@@ -228,7 +228,8 @@ public class PortalEventProcessingManagerImpl
                                 start);
                     }
 
-                    //If events were processed purge old aggregations from the cache and then clean unclosed aggregations
+                    // If events were processed purge old aggregations from the cache and then clean
+                    // unclosed aggregations
                     if (aggrResult.getProcessed() > 0) {
                         final Map<Class<?>, Collection<Serializable>> evictedEntities =
                                 evictedEntitiesHolder.get();
@@ -239,7 +240,7 @@ public class PortalEventProcessingManagerImpl
                         TryLockFunctionResult<EventProcessingResult> cleanAggrResult;
                         EventProcessingResult cleanResult;
                         do {
-                            //Update start time so logging is accurate
+                            // Update start time so logging is accurate
                             start = System.nanoTime();
                             cleanAggrResult =
                                     clusterLockService.doInTryLock(
@@ -264,7 +265,8 @@ public class PortalEventProcessingManagerImpl
                                         start);
                             }
 
-                            //Loop if doCloseAggregations returns false, that means there is more to clean
+                            // Loop if doCloseAggregations returns false, that means there is more
+                            // to clean
                         } while (cleanAggrResult.getLockStatus() == LockStatus.EXECUTED
                                 && cleanResult != null
                                 && !cleanResult.isComplete());
@@ -278,11 +280,12 @@ public class PortalEventProcessingManagerImpl
                 logger.error("aggregateRawEvents failed", e);
                 throw e;
             } finally {
-                //Make sure we clean up the thread local
+                // Make sure we clean up the thread local
                 evictedEntitiesHolder.remove();
             }
 
-            //Loop if doAggregateRawEvents returns false, this means that there is more to aggregate
+            // Loop if doAggregateRawEvents returns false, this means that there is more to
+            // aggregate
         } while (result.getLockStatus() == LockStatus.EXECUTED
                 && aggrResult != null
                 && !aggrResult.isComplete());
@@ -316,7 +319,7 @@ public class PortalEventProcessingManagerImpl
                 logger.debug(
                         "doPurgeRawEvents signaled that not all eligibe events were purged in a single transaction, running purge again.");
 
-                //Set purge period to 0 to allow immediate re-run locally
+                // Set purge period to 0 to allow immediate re-run locally
                 purgeLastRunDelay = 0;
             }
 
@@ -335,7 +338,7 @@ public class PortalEventProcessingManagerImpl
                                 });
                 purgeResult = result.getResult();
 
-                //Check the result, warn if null
+                // Check the result, warn if null
                 if (result.getLockStatus() == LockStatus.EXECUTED && purgeResult == null) {
                     logger.warn("doPurgeRawEvents did not execute");
                 } else if (purgeResult != null && logger.isInfoEnabled()) {
@@ -353,7 +356,7 @@ public class PortalEventProcessingManagerImpl
                 throw e;
             }
 
-            //Loop if doPurgeRawEvents returns false, this means that there is more to purge
+            // Loop if doPurgeRawEvents returns false, this means that there is more to purge
         } while (result.getLockStatus() == LockStatus.EXECUTED
                 && purgeResult != null
                 && !purgeResult.isComplete());
@@ -395,7 +398,7 @@ public class PortalEventProcessingManagerImpl
                             });
             final EventProcessingResult purgeResult = result.getResult();
 
-            //Check the result, warn if null
+            // Check the result, warn if null
             if (result.getLockStatus() == LockStatus.EXECUTED && purgeResult == null) {
                 logger.warn("doPurgeRawEvents did not execute");
             } else if (purgeResult != null && logger.isInfoEnabled()) {

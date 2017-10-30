@@ -38,7 +38,7 @@ public class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences
             new ConcurrentHashMap<String, String>();
     private final ConcurrentMap<String, String> parameters =
             new ConcurrentHashMap<String, String>();
-    //NodeId -> Name -> Value
+    // NodeId -> Name -> Value
     private final ConcurrentMap<String, ConcurrentMap<String, String>> layoutAttributes =
             new ConcurrentHashMap<String, ConcurrentMap<String, String>>();
 

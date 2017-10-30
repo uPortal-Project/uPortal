@@ -83,14 +83,15 @@ public abstract class BaseJpaDao implements InitializingBean, ApplicationContext
 
         final CriteriaQuery<T> criteriaQuery = builder.apply(criteriaBuilder);
 
-        //Do in TX so the EM gets closed correctly
+        // Do in TX so the EM gets closed correctly
         final TransactionOperations transactionOperations = this.getTransactionOperations();
         transactionOperations.execute(
                 new TransactionCallbackWithoutResult() {
                     @Override
                     protected void doInTransactionWithoutResult(TransactionStatus status) {
                         entityManager.createQuery(
-                                criteriaQuery); //pre-compile critera query to avoid race conditions when setting aliases
+                                criteriaQuery); // pre-compile critera query to avoid race
+                        // conditions when setting aliases
                     }
                 });
 

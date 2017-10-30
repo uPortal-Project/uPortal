@@ -107,6 +107,6 @@ public class MapBackedEntityCache implements IEntityCache {
      */
     @Deprecated
     public void cleanupCache() throws CachingException {
-        //NOOP
+        // NOOP
     }
 }

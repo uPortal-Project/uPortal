@@ -55,7 +55,7 @@ public class HungWorkerAnalyzer
     private final ConcurrentMap<String, AtomicInteger> hungPortletCounts =
             new ConcurrentHashMap<String, AtomicInteger>();
 
-    //Read only view that returns Integer instead of AtomicInteger, used for JMX stats
+    // Read only view that returns Integer instead of AtomicInteger, used for JMX stats
     private final Map<String, Integer> hungPortletCountsView =
             Maps.transformValues(
                     this.hungPortletCounts,
@@ -94,7 +94,8 @@ public class HungWorkerAnalyzer
     @Autowired
     public void setPortletThreadPool(
             @Qualifier("portletThreadPool") ExecutorService portletThreadPool) {
-        //Note this is injected as a ExecutorService then cast due to the original object being created by a FactoryBean that declares itself as an ExecutorService
+        // Note this is injected as a ExecutorService then cast due to the original object being
+        // created by a FactoryBean that declares itself as an ExecutorService
         this.portletThreadPool = (ThreadPoolExecutor) portletThreadPool;
     }
 
@@ -188,20 +189,20 @@ public class HungWorkerAnalyzer
             HttpServletResponse response,
             IPortletExecutionContext context) {
         if (this.percentPermittedErrantByFname <= 0) {
-            //Hung worker starving is disabled, let everything execute
+            // Hung worker starving is disabled, let everything execute
             return;
         }
 
         final String portletFname = context.getPortletFname();
         final AtomicInteger count = this.hungPortletCounts.get(portletFname);
         if (count == null) {
-            //Never had a hung worker, good job go execute
+            // Never had a hung worker, good job go execute
             return;
         }
 
         final int hungWorkers = count.get();
         if (hungWorkers == 0) {
-            //Currently no hung workers, good job go execute
+            // Currently no hung workers, good job go execute
             return;
         }
 
@@ -209,7 +210,7 @@ public class HungWorkerAnalyzer
         final int availableWorkers = maximumPoolSize - this.portletThreadPool.getActiveCount();
         final double hungWorkerLimit = this.percentPermittedErrantByFname * availableWorkers;
         if (hungWorkers < Math.ceil(hungWorkerLimit)) {
-            //Number of hung workers is less than the calculated hung worker limit
+            // Number of hung workers is less than the calculated hung worker limit
             return;
         }
 

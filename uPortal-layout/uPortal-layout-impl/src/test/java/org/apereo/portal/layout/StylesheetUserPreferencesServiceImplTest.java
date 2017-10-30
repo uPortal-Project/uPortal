@@ -46,9 +46,9 @@ public class StylesheetUserPreferencesServiceImplTest {
     /** @throws Exception */
     @Test
     public void testThemeStylesheetUserPreferences() throws Exception {
-        //Setup mocks
+        // Setup mocks
         final HttpServletRequest request = new MockHttpServletRequest();
-        request.getSession(); //initialize the session
+        request.getSession(); // initialize the session
         final IStylesheetDescriptorDao stylesheetDescriptorDao =
                 mock(IStylesheetDescriptorDao.class);
         final IUserInstanceManager userInstanceManager = mock(IUserInstanceManager.class);
@@ -114,7 +114,7 @@ public class StylesheetUserPreferencesServiceImplTest {
                 .thenReturn(null)
                 .thenReturn("red");
 
-        //Create and initialize service bean
+        // Create and initialize service bean
         final StylesheetUserPreferencesServiceImpl stylesheetUserPreferencesService =
                 new StylesheetUserPreferencesServiceImpl();
         stylesheetUserPreferencesService.setStylesheetDescriptorDao(stylesheetDescriptorDao);
@@ -123,7 +123,7 @@ public class StylesheetUserPreferencesServiceImplTest {
                 stylesheetUserPreferencesDao);
         stylesheetUserPreferencesService.setFragmentDefinitionUtils(fragmentUtils);
 
-        //Run test
+        // Run test
         String actual;
 
         actual =

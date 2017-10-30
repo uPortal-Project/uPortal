@@ -42,7 +42,7 @@ public class FixedXMLEventStreamReader extends AbstractXMLStreamReader {
     /** See https://jira.springsource.org/browse/SPR-8457 */
     @Override
     public String getText() {
-        if (event.isCharacters()) { //Handles CHARACTERS, CDATA, & SPACE
+        if (event.isCharacters()) { // Handles CHARACTERS, CDATA, & SPACE
             return event.asCharacters().getData();
         } else if (event.getEventType() == XMLEvent.COMMENT) {
             return ((Comment) event).getText();

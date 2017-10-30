@@ -44,7 +44,7 @@ public class DelegatingHibernateIntegrator implements Integrator {
     public static void registerConfigurationAwareBeans(
             HibernateConfigurationAwareInjector configurationAwareBean) {
         synchronized (configurationAwareBeans) {
-            //make sure any hibernate configs already loaded get injected
+            // make sure any hibernate configs already loaded get injected
             for (final Map.Entry<String, HibernateConfiguration> configEntry :
                     hibernateInfoMap.entrySet()) {
                 configurationAwareBean.setConfiguration(
@@ -103,7 +103,7 @@ public class DelegatingHibernateIntegrator implements Integrator {
     public void disintegrate(
             SessionFactoryImplementor sessionFactory,
             SessionFactoryServiceRegistry serviceRegistry) {
-        //ignore
+        // ignore
     }
 
     public static final class HibernateConfiguration {

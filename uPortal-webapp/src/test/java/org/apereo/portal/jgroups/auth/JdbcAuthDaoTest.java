@@ -39,7 +39,7 @@ public class JdbcAuthDaoTest extends BasePortalJpaDaoTest {
     public void testSimpleGetCreate() throws UnknownHostException {
         final String service = "foo";
 
-        //Create & Return
+        // Create & Return
         final String token =
                 this.execute(
                         new Callable<String>() {
@@ -65,7 +65,7 @@ public class JdbcAuthDaoTest extends BasePortalJpaDaoTest {
     public void testConcurrentCreate() throws UnknownHostException {
         final String service = "foo";
 
-        //Create & Return
+        // Create & Return
         final String token =
                 this.execute(
                         new Callable<String>() {

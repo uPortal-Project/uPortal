@@ -31,7 +31,7 @@ public class PortletSessionAdministrativeRequestListener implements Administrati
 
     public enum SessionAction {
         /** Removes all attributes from the session for the specified scope */
-        CLEAR(false, 0), //No arguments
+        CLEAR(false, 0), // No arguments
 
         /** Stores an attribute in the session for the specified scope */
         SET_ATTRIBUTE(true, 2); // arg[0]=Attribute Name, arg[1]=Attribute Value
@@ -64,7 +64,7 @@ public class PortletSessionAdministrativeRequestListener implements Administrati
         final Object[] arguments = this.getArguments(request);
         final int scope = this.getScope(request);
 
-        //Check the argument count
+        // Check the argument count
         final int argumentCount = arguments != null ? arguments.length : 0;
         if (argumentCount != action.getArgumentCount()) {
             throw new IllegalArgumentException(
@@ -77,7 +77,7 @@ public class PortletSessionAdministrativeRequestListener implements Administrati
                             + " arguments were provided.");
         }
 
-        //Get the session according to the action
+        // Get the session according to the action
         final PortletSession portletSession =
                 request.getPortletSession(action.isRequiresCreation());
 
@@ -88,8 +88,7 @@ public class PortletSessionAdministrativeRequestListener implements Administrati
                         for (final Enumeration<String> attributeNames =
                                         (Enumeration<String>)
                                                 portletSession.getAttributeNames(scope);
-                                attributeNames.hasMoreElements();
-                                ) {
+                                attributeNames.hasMoreElements(); ) {
                             final String attributeName = attributeNames.nextElement();
                             portletSession.removeAttribute(attributeName, scope);
                         }

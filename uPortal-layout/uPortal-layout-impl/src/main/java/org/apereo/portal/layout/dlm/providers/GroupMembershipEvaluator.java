@@ -110,9 +110,12 @@ public class GroupMembershipEvaluator extends Evaluator {
 
         IEntityGroup group = getGroup(groupKey);
 
-        // Should not happen, but with the XML to Entity PAGS change some sites may have altered their configuration
-        // but not updated their group keys in the database or vice versa, especially with an update.  To help
-        // troubleshoot this, try to catch this error and give a bit more useful error message than you'd get from
+        // Should not happen, but with the XML to Entity PAGS change some sites may have altered
+        // their configuration
+        // but not updated their group keys in the database or vice versa, especially with an
+        // update.  To help
+        // troubleshoot this, try to catch this error and give a bit more useful error message than
+        // you'd get from
         // the lower-level methods.
         if (group == null) {
             throw new RuntimeException(
