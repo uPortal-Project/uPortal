@@ -24,6 +24,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.stream.Collectors;
+
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -32,6 +34,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -261,8 +264,12 @@ public class CorsFilter implements Filter {
                             + CorsFilter.CORSRequestType.ACTUAL);
         }
 
-        final String origin = request.getHeader(CorsFilter.REQUEST_HEADER_ORIGIN);
-        final String method = request.getMethod();
+        final String originOrNull = request.getHeader(CorsFilter.REQUEST_HEADER_ORIGIN);
+        log.debug("Request origin: {}", originOrNull);
+        final String origin = originOrNull == null ? "" : originOrNull.toLowerCase(Locale.ENGLISH);
+        final String methodOrNull = request.getMethod();
+        log.debug("Request method: {}", methodOrNull);
+        final String method = methodOrNull == null ? "" : methodOrNull.toUpperCase(Locale.ENGLISH);
 
         // Section 6.1.2
         if (!isOriginAllowed(origin)) {
@@ -776,7 +783,9 @@ public class CorsFilter implements Filter {
 
     public void setAllowedHttpMethods(String allowedHttpMethods) {
         log.debug("setAllowedHttpMethods set to {}", allowedHttpMethods);
-        Set<String> setAllowedHttpMethods = parseStringToSet(allowedHttpMethods);
+        Set<String> setAllowedHttpMethods = parseStringToSet(allowedHttpMethods).stream()
+            .map(x -> x.toUpperCase(Locale.ENGLISH))
+            .collect(Collectors.toSet());
         this.allowedHttpMethods.clear();
         this.allowedHttpMethods.addAll(setAllowedHttpMethods);
     }
@@ -787,7 +796,9 @@ public class CorsFilter implements Filter {
             this.anyOriginAllowed = true;
         } else {
             this.anyOriginAllowed = false;
-            Set<String> setAllowedOrigins = parseStringToSet(allowedOrigins);
+            Set<String> setAllowedOrigins = parseStringToSet(allowedOrigins).stream()
+                .map(x -> x.toLowerCase(Locale.ENGLISH))
+                .collect(Collectors.toSet());
             this.allowedOrigins.clear();
             this.allowedOrigins.addAll(setAllowedOrigins);
         }
