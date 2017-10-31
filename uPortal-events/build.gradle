@@ -12,9 +12,7 @@ dependencies {
     compile "org.apache.commons:commons-math3:${commonsMath3Version}"
     // NOTE:  String that the group and version don't seem to
     // match, but apparently this version is correct.
-    compile("org.apache.httpcomponents:httpclient:${httpclientVersion}") {
-        exclude group: 'commons-logging', module: 'commons-logging'
-    }
+    compile "org.apache.httpcomponents:httpclient:${httpclientVersion}"
 
     compileOnly "org.apache.portals.pluto:pluto-container-api:${plutoVersion}"
     compileOnly "org.hibernate:hibernate-jpamodelgen:${hibernateJpamodelgenVersion}" // Required for javac -s
@@ -46,4 +44,3 @@ compileJava {
     }
     options.compilerArgs += ['-s', generatedSourcesDir]
 }
-

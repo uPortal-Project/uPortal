@@ -25,12 +25,13 @@ import org.apereo.portal.portlet.om.PortletLifecycleState
 import org.apereo.portal.rendering.PortletDefinitionAttributeSource
 
 import javax.xml.stream.XMLEventFactory
+import org.junit.Ignore
 
 /**
  * Tests PortletDefinitionAttributeSource.
  *
  */
-
+@Ignore
 class PortletDefinitionAttributeSourceTest extends GroovyTestCase {
     void testGetAdditionalAttributesPortlet() {
         def portletDefn = new PortletDefinitionImpl(new PortletTypeImpl('name', 'cpdUri'),
@@ -90,7 +91,7 @@ class PortletDefinitionAttributeSourceTest extends GroovyTestCase {
         def factory = XMLEventFactory.newFactory()
         def attr = factory.createAttribute('fname', 'theFname')
         def element = factory.createStartElement('', '', 'channel',attr.iterator(), null)
-        def attrIterator = testClass.getAdditionalAttributes(null, null, element)
+        testClass.getAdditionalAttributes(null, null, element)
     }
 
 }

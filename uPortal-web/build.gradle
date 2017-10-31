@@ -13,9 +13,7 @@ dependencies {
     compile project(':uPortal-rendering')
     compileOnly project(':uPortal-api:uPortal-api-platform')
 
-    compile("com.google.visualization:visualization-datasource:${googleVisualizationVersion}") {
-        exclude group: 'commons-logging', module: 'commons-logging'
-    }
+    compile "com.google.visualization:visualization-datasource:${googleVisualizationVersion}"
 
     testCompile "org.apache.portals.pluto:pluto-container-api:${plutoVersion}"
     testCompile "${servletApiDependency}"
