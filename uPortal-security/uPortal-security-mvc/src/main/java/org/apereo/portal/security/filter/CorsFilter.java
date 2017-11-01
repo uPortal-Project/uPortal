@@ -619,6 +619,8 @@ public class CorsFilter implements Filter {
                             } else {
                                 requestType = CORSRequestType.ACTUAL;
                             }
+                        } else {
+                            requestType = CORSRequestType.ACTUAL;
                         }
                     } else {
                         requestType = CORSRequestType.ACTUAL;
