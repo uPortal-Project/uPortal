@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
  * appropriate response headers are added to {@link HttpServletResponse}.
  *
  * <p>This implementation is mostly a copy of CorsFilter from Apache Tomcat. Customization adds
- * setters to support Spring {@Code DelegatingFilterProxy}. Subclassing would be preferred; however,
+ * setters to support Spring {@code DelegatingFilterProxy}. Subclassing would be preferred; however,
  * the member variables to set are private. Another change is the removal of Tomcat inner
  * dependencies.
  *
@@ -654,7 +654,7 @@ public class CorsFilter implements Filter {
         target.append(host);
 
         int port = request.getServerPort();
-        if ("http".equals(scheme) && port != 80 || "https".equals(scheme) && port != 443) {
+        if (("http".equals(scheme) && port != 80) || ("https".equals(scheme) && port != 443)) {
             target.append(':');
             target.append(port);
         }
