@@ -112,7 +112,7 @@ public class RenderPortletTag extends TagSupport {
 
     @Override
     public int doEndTag() throws JspException {
-        //From portlet:defineObjects
+        // From portlet:defineObjects
         final RenderRequest renderRequest =
                 (RenderRequest) this.pageContext.getAttribute("renderRequest");
         final RenderResponse renderResponse =
@@ -131,7 +131,7 @@ public class RenderPortletTag extends TagSupport {
 
         final PortletDelegationDispatcher portletDelegationDispatcher;
         final DelegateState delegateState;
-        //No id in session, create a new dispatcher
+        // No id in session, create a new dispatcher
         if (portletWindowId == null) {
             portletDelegationDispatcher =
                     portletDelegationLocator.createRequestDispatcher(renderRequest, this.fname);
@@ -143,7 +143,7 @@ public class RenderPortletTag extends TagSupport {
 
             delegateState = new DelegateState(portletMode, windowState);
         }
-        //id in session, get the old dispatcher
+        // id in session, get the old dispatcher
         else {
             portletDelegationDispatcher =
                     portletDelegationLocator.getRequestDispatcher(renderRequest, portletWindowId);
@@ -153,7 +153,7 @@ public class RenderPortletTag extends TagSupport {
         final DelegationRequest delegationRequest = new DelegationRequest();
         delegationRequest.setDelegateState(delegateState);
 
-        //Setup base for portlet URLs
+        // Setup base for portlet URLs
         delegationRequest.setParentPortletMode(this.parentUrlMode);
         delegationRequest.setParentWindowState(this.parentUrlState);
         delegationRequest.setParentParameters(this.parentUrlParameters);
@@ -192,10 +192,10 @@ public class RenderPortletTag extends TagSupport {
     }
 
     private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
-        //Read & validate non-transient fields
+        // Read & validate non-transient fields
         ois.defaultReadObject();
 
-        //Read & validate transient fields
+        // Read & validate transient fields
         final String portletModeStr = (String) ois.readObject();
         if (portletModeStr == null) {
             throw new InvalidObjectException("portletMode can not be null");

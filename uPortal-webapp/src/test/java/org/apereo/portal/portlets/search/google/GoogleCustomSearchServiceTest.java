@@ -58,7 +58,7 @@ public class GoogleCustomSearchServiceTest {
 
     @Before
     public void setup() throws Exception {
-        //Add handling of text/javascript content type
+        // Add handling of text/javascript content type
         final MappingJackson2HttpMessageConverter converter =
                 new MappingJackson2HttpMessageConverter();
         final List<MediaType> supportedMediaTypes =
@@ -72,8 +72,8 @@ public class GoogleCustomSearchServiceTest {
 
         this.googleSearchController.setRestOperations(restTemplate);
 
-        //Uncomment to make real requests
-        //restTemplate.setRequestFactory(new CommonsClientHttpRequestFactory());
+        // Uncomment to make real requests
+        // restTemplate.setRequestFactory(new CommonsClientHttpRequestFactory());
 
         when(clientHttpRequest.getHeaders()).thenReturn(requestHttpHeaders);
         when(clientHttpRequest.execute()).thenReturn(clientHttpResponse);

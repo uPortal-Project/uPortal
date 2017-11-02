@@ -131,7 +131,8 @@ public class LayoutPortalDataType extends AbstractPortalDataType {
             return convertToFragmentKey(portalDataKey);
         }
 
-        //Check if the layout is for an older style that includes the profile data (only possible in 2.6 and 3.0 format layout files)
+        // Check if the layout is for an older style that includes the profile data (only possible
+        // in 2.6 and 3.0 format layout files)
         if (IMPORT_26_DATA_KEY.equals(portalDataKey) || IMPORT_30_DATA_KEY.equals(portalDataKey)) {
             final StartElement startElement = StaxUtils.getRootElement(reader);
             final Attribute usernameAttr = startElement.getAttributeByName(new QName("username"));

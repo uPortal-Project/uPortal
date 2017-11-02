@@ -56,14 +56,15 @@ public class FilterManagerImpl implements FilterManager {
         if (filterMappingList != null) {
             for (FilterMapping filterMapping : filterMappingList) {
                 if (isFilter(filterMapping, portletName)) {
-                    //the filter is specified for the portlet, check the filter for the lifecycle
+                    // the filter is specified for the portlet, check the filter for the lifecycle
                     List<? extends Filter> filterList = portletApp.getFilters();
                     for (Filter filter : filterList) {
-                        //search for the filter in the filter
+                        // search for the filter in the filter
                         if (filter.getFilterName().equals(filterMapping.getFilterName())) {
-                            //check the lifecycle
+                            // check the lifecycle
                             if (isLifeCycle(filter, lifeCycle)) {
-                                //the filter match to the portlet and has the specified lifecycle -> add to chain
+                                // the filter match to the portlet and has the specified lifecycle
+                                // -> add to chain
                                 filterchain.addFilter(filter);
                             }
                         }
@@ -137,7 +138,7 @@ public class FilterManagerImpl implements FilterManager {
         for (String portletNameFromFilterList : portletNamesList) {
             if (portletNameFromFilterList.endsWith("*")) {
                 if (portletNameFromFilterList.length() == 1) {
-                    //if name contains only *
+                    // if name contains only *
                     return true;
                 }
                 portletNameFromFilterList =

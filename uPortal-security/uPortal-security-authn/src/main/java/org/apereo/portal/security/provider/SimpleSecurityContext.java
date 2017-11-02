@@ -86,7 +86,8 @@ public class SimpleSecurityContext extends ChainingSecurityContext implements IS
             }
         }
         // If the principal and/or credential are missing, the context authentication
-        // simply fails. It should not be construed that this is an error. It happens for guest access.
+        // simply fails. It should not be construed that this is an error. It happens for guest
+        // access.
         else {
             log.info("Principal or OpaqueCredentials not initialized prior to authenticate");
         }

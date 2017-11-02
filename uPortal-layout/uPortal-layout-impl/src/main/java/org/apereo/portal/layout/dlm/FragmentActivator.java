@@ -91,7 +91,8 @@ public class FragmentActivator {
                             public Object createEntry(Object key) throws Exception {
                                 final UserViewKey userViewKey = (UserViewKey) key;
 
-                                //Check if there was an exception the last time a load attempt was made and re-throw
+                                // Check if there was an exception the last time a load attempt was
+                                // made and re-throw
                                 final net.sf.ehcache.Element exceptionElement =
                                         userViewErrors.get(userViewKey);
                                 if (exceptionElement != null) {
@@ -482,7 +483,7 @@ public class FragmentActivator {
     public void clearChacheForOwner(final String ownerId) {
         final List<Locale> locales = fragmentOwnerLocales.getIfPresent(ownerId);
         if (locales == null) {
-            //Nothing to purge
+            // Nothing to purge
             return;
         }
 

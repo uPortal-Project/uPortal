@@ -212,7 +212,8 @@ public class PortletMarketplaceController {
 
         if (!this.marketplaceService.mayBrowsePortlet(principal, result)) {
             // TODO: provide an error experience
-            // currently at least blocks rendering the entry for the portlet the user is not authorized to see.
+            // currently at least blocks rendering the entry for the portlet the user is not
+            // authorized to see.
             this.setUpInitialView(webRequest, portletRequest, model, null);
             return "jsp/Marketplace/portlet/view";
         }
@@ -365,7 +366,7 @@ public class PortletMarketplaceController {
 
         model.addAttribute("featuredEntries", featuredPortlets);
 
-        //Determine if the marketplace is going to show the root category
+        // Determine if the marketplace is going to show the root category
         String showRootCategoryPreferenceValue =
                 preferences.getValue(SHOW_ROOT_CATEGORY_PREFERENCE, "false");
         boolean showRootCategory = Boolean.parseBoolean(showRootCategoryPreferenceValue);

@@ -35,9 +35,9 @@ public class LocalPortletURLListenerServiceImpl implements PortletURLListenerSer
             PortletApplicationDefinition app) {
         List<PortletURLGenerationListener> listeners =
                 new ArrayList<PortletURLGenerationListener>();
-        //this list is needed for the classnames
+        // this list is needed for the classnames
         List<? extends Listener> portletURLFilterList = app.getListeners();
-        //Iterate over the classnames and for each entry in the list the filter..URL is called.
+        // Iterate over the classnames and for each entry in the list the filter..URL is called.
         if (portletURLFilterList != null) {
             for (Listener listener : portletURLFilterList) {
                 ClassLoader loader = Thread.currentThread().getContextClassLoader();

@@ -131,8 +131,7 @@ public class PortalHttpServletRequestWrapper extends AbstractHttpServletRequestW
         final Set<String> headerNames = new LinkedHashSet<String>();
 
         for (final Enumeration<String> headerNamesEnum = super.getHeaderNames();
-                headerNamesEnum.hasMoreElements();
-                ) {
+                headerNamesEnum.hasMoreElements(); ) {
             final String name = headerNamesEnum.nextElement();
             headerNames.add(name);
         }
@@ -209,13 +208,13 @@ public class PortalHttpServletRequestWrapper extends AbstractHttpServletRequestW
             return super.isUserInRole(role);
         }
 
-        //Check the wrapped request first
+        // Check the wrapped request first
         final boolean isUserInRole = super.isUserInRole(role);
         if (isUserInRole) {
             return true;
         }
 
-        //Find the group for the role, if not found return false
+        // Find the group for the role, if not found return false
         IEntityGroup groupForRole = GroupService.findGroup(role);
         if (groupForRole == null) {
             final EntityIdentifier[] results =
@@ -239,7 +238,7 @@ public class PortalHttpServletRequestWrapper extends AbstractHttpServletRequestW
             groupForRole = member.asGroup();
         }
 
-        //Load the group information about the current user
+        // Load the group information about the current user
         final IUserInstance userInstance =
                 this.userInstanceManager.getUserInstance(this.getWrappedRequest());
         final IPerson person = userInstance.getPerson();

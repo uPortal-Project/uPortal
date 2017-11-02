@@ -226,21 +226,21 @@ public abstract class JpaBaseAggregationDao<
 
                                 final List<Predicate> keyPredicates = new ArrayList<Predicate>();
                                 keyPredicates.add(
-                                        cb.and( //Restrict results by outer date range
+                                        cb.and( // Restrict results by outer date range
                                                 cb.greaterThanOrEqualTo(
                                                         dd.get(DateDimensionImpl_.date), startDate),
                                                 cb.lessThan(
                                                         dd.get(DateDimensionImpl_.date),
                                                         endPlusOneDate)));
                                 keyPredicates.add(
-                                        cb.or( //Restrict start of range by time as well
+                                        cb.or( // Restrict start of range by time as well
                                                 cb.greaterThan(
                                                         dd.get(DateDimensionImpl_.date), startDate),
                                                 cb.greaterThanOrEqualTo(
                                                         td.get(TimeDimensionImpl_.time),
                                                         startTime)));
                                 keyPredicates.add(
-                                        cb.or( //Restrict end of range by time as well
+                                        cb.or( // Restrict end of range by time as well
                                                 cb.lessThan(
                                                         dd.get(DateDimensionImpl_.date), endDate),
                                                 cb.lessThan(
@@ -288,20 +288,20 @@ public abstract class JpaBaseAggregationDao<
 
                                 final List<Predicate> keyPredicates = new ArrayList<Predicate>();
                                 keyPredicates.add(
-                                        cb.and( //Restrict results by outer date range
+                                        cb.and( // Restrict results by outer date range
                                                 cb.greaterThanOrEqualTo(
                                                         dd.get(DateDimensionImpl_.date), startDate),
                                                 cb.lessThan(
                                                         dd.get(DateDimensionImpl_.date), endDate)));
                                 keyPredicates.add(
-                                        cb.or( //Restrict start of range by time as well
+                                        cb.or( // Restrict start of range by time as well
                                                 cb.greaterThan(
                                                         dd.get(DateDimensionImpl_.date), startDate),
                                                 cb.greaterThanOrEqualTo(
                                                         td.get(TimeDimensionImpl_.time),
                                                         startTime)));
                                 keyPredicates.add(
-                                        cb.or( //Restrict end of range by time as well
+                                        cb.or( // Restrict end of range by time as well
                                                 cb.lessThan(
                                                         dd.get(DateDimensionImpl_.date),
                                                         endPlusOneDate),
@@ -311,7 +311,8 @@ public abstract class JpaBaseAggregationDao<
                                         cb.equal(
                                                 ba.get(BaseAggregationImpl_.interval),
                                                 intervalParameter));
-                                //No aggregation specific key bits here, we only have start/end/interval parameters to work with
+                                // No aggregation specific key bits here, we only have
+                                // start/end/interval parameters to work with
                                 addUnclosedPredicate(cb, ba, keyPredicates);
 
                                 criteriaQuery.select(ba);
@@ -490,7 +491,7 @@ public abstract class JpaBaseAggregationDao<
 
         query.setParameter(this.intervalParameter, interval);
 
-        //Need set to handle duplicate results from join
+        // Need set to handle duplicate results from join
         return new LinkedHashSet<T>(query.getResultList());
     }
 

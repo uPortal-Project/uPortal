@@ -121,18 +121,18 @@ public class PersonLookupHelperImpl implements IPersonLookupHelper {
         final String[] excludedAttributes =
                 preferences.getValues(PERSON_LOOKUP_PERSON_LOOKUP_QUERY_ATTRIBUTES_EXCLUDES, null);
 
-        //If attributes are configured in portlet prefs just use them
+        // If attributes are configured in portlet prefs just use them
         if (configuredAttributes != null) {
             queryAttributes = new LinkedHashSet<>(Arrays.asList(configuredAttributes));
         }
-        //Otherwise provide all available attributes from the IPersonAttributeDao
+        // Otherwise provide all available attributes from the IPersonAttributeDao
         else {
             final Set<String> availableAttributes =
                     this.personAttributeDao.getAvailableQueryAttributes();
             queryAttributes = new TreeSet<>(availableAttributes);
         }
 
-        //Remove excluded attributes
+        // Remove excluded attributes
         if (excludedAttributes != null) {
             for (final String excludedAttribute : excludedAttributes) {
                 queryAttributes.remove(excludedAttribute);
@@ -157,17 +157,17 @@ public class PersonLookupHelperImpl implements IPersonLookupHelper {
                 preferences.getValues(
                         PERSON_LOOKUP_PERSON_DETAILS_DETAILS_ATTRIBUTES_EXCLUDES, null);
 
-        //If attributes are configured in portlet prefs use those the user has
+        // If attributes are configured in portlet prefs use those the user has
         if (configuredAttributes != null) {
             displayAttributes = new LinkedHashSet<>();
             displayAttributes.addAll(Arrays.asList(configuredAttributes));
         }
-        //Otherwise provide all available attributes from the IPersonAttributes
+        // Otherwise provide all available attributes from the IPersonAttributes
         else {
             displayAttributes = new TreeSet<>(personAttributeDao.getPossibleUserAttributeNames());
         }
 
-        //Remove any excluded attributes
+        // Remove any excluded attributes
         if (excludedAttributes != null) {
             for (final String excludedAttribute : excludedAttributes) {
                 displayAttributes.remove(excludedAttribute);
@@ -234,11 +234,14 @@ public class PersonLookupHelperImpl implements IPersonLookupHelper {
         // To improve efficiency and not do as many permission checks or person directory searches,
         // if we have too many results and all people in the returned set of personAttributes have
         // a displayName, pre-sort the set and limit it to maxResults. The typical use case is that
-        // LDAP returns results that have the displayName populated.  Note that a disadvantage of this
+        // LDAP returns results that have the displayName populated.  Note that a disadvantage of
+        // this
         // approach is that the smaller result set may have entries that permissions prevent the
         // current users from viewing the person and thus reduce the number of final results, but
-        // that is rare (typical use case is users can't view administrative internal accounts or the
-        // system account, none of which tend to be in LDAP).  We could retain a few more than maxResults
+        // that is rare (typical use case is users can't view administrative internal accounts or
+        // the
+        // system account, none of which tend to be in LDAP).  We could retain a few more than
+        // maxResults
         // to offset that chance, but IMHO not worth the cost of extra external queries.
 
         List<IPersonAttributes> peopleList = new ArrayList<>(people);
@@ -286,10 +289,12 @@ public class PersonLookupHelperImpl implements IPersonLookupHelper {
         List<Future<IPersonAttributes>> futures = new ArrayList<>();
         List<IPersonAttributes> list = new ArrayList<>();
 
-        // Ugly.  PersonDirectory requires RequestContextHolder to be set for each thread, so pass it
+        // Ugly.  PersonDirectory requires RequestContextHolder to be set for each thread, so pass
+        // it
         // into the callable.
         RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
-        // For each person in the list, check to see if the current user has permission to view this user
+        // For each person in the list, check to see if the current user has permission to view this
+        // user
         for (IPersonAttributes person : peopleList) {
             Callable<IPersonAttributes> worker =
                     new FetchVisiblePersonCallable(
@@ -484,8 +489,10 @@ public class PersonLookupHelperImpl implements IPersonLookupHelper {
             final IPersonAttributes person,
             final Set<String> generallyPermittedAttributes) {
 
-        // first check to see if the principal has permission to view this person.  Unfortunately for
-        // non-admin users, this will result in a call to PersonDirectory (which may go out to LDAP or
+        // first check to see if the principal has permission to view this person.  Unfortunately
+        // for
+        // non-admin users, this will result in a call to PersonDirectory (which may go out to LDAP
+        // or
         // other external systems) to find out what groups the person is in to see if the principal
         // has permission or deny through one of the contained groups.
         if (person.getName() != null

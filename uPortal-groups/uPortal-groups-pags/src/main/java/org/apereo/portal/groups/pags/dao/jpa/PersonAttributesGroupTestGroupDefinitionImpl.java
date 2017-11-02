@@ -94,7 +94,8 @@ public class PersonAttributesGroupTestGroupDefinitionImpl
         targetEntity = PersonAttributesGroupTestDefinitionImpl.class,
         orphanRemoval = true
     )
-    @JsonManagedReference // Managing infinite recursion;  this is a "forward" reference and WILL be included
+    @JsonManagedReference // Managing infinite recursion;  this is a "forward" reference and WILL be
+    // included
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<IPersonAttributesGroupTestDefinition> tests =
             new HashSet<IPersonAttributesGroupTestDefinition>(0);

@@ -85,7 +85,7 @@ public class XsltPortalUrlProviderTest {
         this.tFactory.setErrorListener(
                 new SimpleTransformErrorListener(LogFactory.getLog(getClass())));
 
-        //Load the XML document so it reads the same way the rendering pipeline reads XML
+        // Load the XML document so it reads the same way the rendering pipeline reads XML
         final XMLInputFactory xmlInputFactory = XMLInputFactory.newFactory();
         final XMLEventReader eventReader =
                 xmlInputFactory.createXMLEventReader(
@@ -112,7 +112,7 @@ public class XsltPortalUrlProviderTest {
         transformer.setParameter(
                 XsltPortalUrlProvider.XSLT_PORTAL_URL_PROVIDER, xsltPortalUrlProvider);
         transformer.setParameter("CURRENT_REQUEST", request);
-        transformer.setParameter("TEST", "defaultUrl"); //xsl template mode to use
+        transformer.setParameter("TEST", "defaultUrl"); // xsl template mode to use
 
         // set up configuration in the transformer impl
         final StringWriter resultWriter = new StringWriter();
@@ -142,7 +142,7 @@ public class XsltPortalUrlProviderTest {
         transformer.setParameter(
                 XsltPortalUrlProvider.XSLT_PORTAL_URL_PROVIDER, xsltPortalUrlProvider);
         transformer.setParameter("CURRENT_REQUEST", request);
-        transformer.setParameter("TEST", "layoutUrlById"); //xsl template mode to use
+        transformer.setParameter("TEST", "layoutUrlById"); // xsl template mode to use
 
         // set up configuration in the transformer impl
         final StringWriter resultWriter = new StringWriter();
@@ -179,7 +179,7 @@ public class XsltPortalUrlProviderTest {
         transformer.setParameter(
                 XsltPortalUrlProvider.XSLT_PORTAL_URL_PROVIDER, xsltPortalUrlProvider);
         transformer.setParameter("CURRENT_REQUEST", request);
-        transformer.setParameter("TEST", "portletUrlById"); //xsl template mode to use
+        transformer.setParameter("TEST", "portletUrlById"); // xsl template mode to use
 
         // set up configuration in the transformer impl
         final StringWriter resultWriter = new StringWriter();
@@ -231,7 +231,7 @@ public class XsltPortalUrlProviderTest {
         transformer.setParameter(
                 XsltPortalUrlProvider.XSLT_PORTAL_URL_PROVIDER, xsltPortalUrlProvider);
         transformer.setParameter("CURRENT_REQUEST", request);
-        transformer.setParameter("TEST", "multiPortletUrlById"); //xsl template mode to use
+        transformer.setParameter("TEST", "multiPortletUrlById"); // xsl template mode to use
 
         // set up configuration in the transformer impl
         final StringWriter resultWriter = new StringWriter();

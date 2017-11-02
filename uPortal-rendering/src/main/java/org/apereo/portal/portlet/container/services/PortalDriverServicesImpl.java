@@ -41,14 +41,14 @@ import org.springframework.stereotype.Service;
  */
 @Service("portalDriverServices")
 public class PortalDriverServicesImpl implements PortalDriverServices {
-    //RequiredContainerServices
+    // RequiredContainerServices
     private PortalContext portalContext;
     private EventCoordinationService eventCoordinationService;
     private FilterManagerService filterManagerService;
     private PortletRequestContextService portletRequestContextService;
     private PortletURLListenerService portletURLListenerService;
 
-    //OptionalContainerServices
+    // OptionalContainerServices
     private UserInfoService userInfoService;
     private PortalAdministrationService portalAdministrationService;
     private PortletEnvironmentService portletEnvironmentService;

@@ -69,7 +69,7 @@ public class DelegatingThreadPoolTaskScheduler extends ThreadPoolTaskScheduler
 
     /** @return the additional start delay to add to any scheduled task */
     protected long getAdditionalStartDelay() {
-        //Only bother recalculating the start delay if the last time it was resulted in a delay
+        // Only bother recalculating the start delay if the last time it was resulted in a delay
         if (this.lastStartDelay != 0) {
             this.lastStartDelay =
                     Math.max(
@@ -141,7 +141,8 @@ public class DelegatingThreadPoolTaskScheduler extends ThreadPoolTaskScheduler
     @Override
     public ScheduledFuture<?> schedule(Runnable task, final Trigger trigger) {
         task = wrapRunnable(task);
-        //Wrap the trigger so that the first call to nextExecutionTime adds in the additionalStartDelay
+        // Wrap the trigger so that the first call to nextExecutionTime adds in the
+        // additionalStartDelay
         final Trigger wrappedTrigger =
                 new Trigger() {
                     boolean firstExecution = false;
@@ -184,8 +185,8 @@ public class DelegatingThreadPoolTaskScheduler extends ThreadPoolTaskScheduler
     @Override
     public ScheduledFuture<?> scheduleAtFixedRate(Runnable task, Date startTime, long period) {
         task = wrapRunnable(task);
-        startTime = getDelayedStartDate(startTime); //Add scheduled task delay
-        startTime = new Date(startTime.getTime() + period); //Add period to inital run time
+        startTime = getDelayedStartDate(startTime); // Add scheduled task delay
+        startTime = new Date(startTime.getTime() + period); // Add period to inital run time
 
         final DelegatingRunnable delegatingRunnable =
                 new DelegatingRunnable(this.executorService, task);
@@ -201,7 +202,7 @@ public class DelegatingThreadPoolTaskScheduler extends ThreadPoolTaskScheduler
         task = wrapRunnable(task);
         final long additionalStartDelay = this.getAdditionalStartDelay();
         if (additionalStartDelay > 0) {
-            //If there is an additional delay use the alternate call which includes a startTime
+            // If there is an additional delay use the alternate call which includes a startTime
             return this.scheduleAtFixedRate(task, new Date(), period);
         }
 
@@ -216,8 +217,8 @@ public class DelegatingThreadPoolTaskScheduler extends ThreadPoolTaskScheduler
     @Override
     public ScheduledFuture<?> scheduleWithFixedDelay(Runnable task, Date startTime, long delay) {
         task = wrapRunnable(task);
-        startTime = getDelayedStartDate(startTime); //Add scheduled task delay
-        startTime = new Date(startTime.getTime() + delay); //Add period to inital run time
+        startTime = getDelayedStartDate(startTime); // Add scheduled task delay
+        startTime = new Date(startTime.getTime() + delay); // Add period to inital run time
 
         final DelegatingRunnable delegatingRunnable =
                 new DelegatingRunnable(this.executorService, task);
@@ -233,7 +234,7 @@ public class DelegatingThreadPoolTaskScheduler extends ThreadPoolTaskScheduler
         task = wrapRunnable(task);
         final long additionalStartDelay = this.getAdditionalStartDelay();
         if (additionalStartDelay > 0) {
-            //If there is an additional delay use the alternate call which includes a startTime
+            // If there is an additional delay use the alternate call which includes a startTime
             return this.scheduleWithFixedDelay(task, new Date(), delay);
         }
 

@@ -244,7 +244,7 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
             try {
                 portletRenderExecutionWorker.get(0);
             } catch (Exception e) {
-                //Ignore exception here, we just want to get this worker to complete
+                // Ignore exception here, we just want to get this worker to complete
             }
         }
 
@@ -278,11 +278,10 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
         }
 
         for (final Iterator<IPortletExecutionWorker<?>> workerItr = this.hungWorkers.iterator();
-                workerItr.hasNext();
-                ) {
+                workerItr.hasNext(); ) {
             final IPortletExecutionWorker<?> worker = workerItr.next();
 
-            //If the worker completed remove it from queue
+            // If the worker completed remove it from queue
             if (worker.isComplete()) {
                 workerItr.remove();
                 this.logger.debug(
@@ -292,9 +291,9 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
 
                 this.portletExecutionEventFactory.publishPortletHungCompleteEvent(this, worker);
             }
-            //If the worker is still running cancel it
+            // If the worker is still running cancel it
             else {
-                //Log a warning about the worker once every 30 seconds or so
+                // Log a warning about the worker once every 30 seconds or so
                 final int cancelCount = worker.getCancelCount();
                 if (cancelCount % 150 == 0) {
                     this.logger.warn(
@@ -365,7 +364,7 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
             portletFailureMap.put(portletWindowId, e);
         }
 
-        //If the worker is still running add it to the hung-workers queue
+        // If the worker is still running add it to the hung-workers queue
         if (!portletActionExecutionWorker.isComplete()) {
             cancelWorker(request, portletActionExecutionWorker);
         }
@@ -400,13 +399,13 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
         final Map<IPortletWindowId, IPortletExecutionWorker<Long>> eventWorkers =
                 new LinkedHashMap<IPortletWindowId, IPortletExecutionWorker<Long>>();
 
-        //TODO what to do if we hit the max iterations?
+        // TODO what to do if we hit the max iterations?
         int iteration = 0;
         for (; iteration < this.maxEventIterations; iteration++) {
-            //Make sure all queued events have been resolved
+            // Make sure all queued events have been resolved
             this.eventCoordinationService.resolvePortletEvents(request, eventQueue);
 
-            //Create and submit an event worker for each window with a queued event
+            // Create and submit an event worker for each window with a queued event
             for (final IPortletWindowId eventWindowId : eventQueue) {
                 if (eventWorkers.containsKey(eventWindowId)) {
                     /*
@@ -428,26 +427,25 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
                 }
             }
 
-            //If no event workers exist we're done with event processing!
+            // If no event workers exist we're done with event processing!
             if (eventWorkers.isEmpty()) {
                 return;
             }
 
-            //See if any of the events have completed
+            // See if any of the events have completed
             int completedEventWorkers = 0;
             final Set<Entry<IPortletWindowId, IPortletExecutionWorker<Long>>> entrySet =
                     eventWorkers.entrySet();
             for (final Iterator<Entry<IPortletWindowId, IPortletExecutionWorker<Long>>>
                             eventWorkerEntryItr = entrySet.iterator();
-                    eventWorkerEntryItr.hasNext();
-                    ) {
+                    eventWorkerEntryItr.hasNext(); ) {
                 final Entry<IPortletWindowId, IPortletExecutionWorker<Long>> eventWorkerEntry =
                         eventWorkerEntryItr.next();
 
                 final IPortletExecutionWorker<Long> eventWorker = eventWorkerEntry.getValue();
                 if (eventWorker.isComplete()) {
                     final IPortletWindowId portletWindowId = eventWorkerEntry.getKey();
-                    //TODO return number of new queued events, use to break the loop earlier
+                    // TODO return number of new queued events, use to break the loop earlier
                     waitForEventWorker(request, eventQueue, eventWorker, portletWindowId);
 
                     eventWorkerEntryItr.remove();
@@ -493,7 +491,7 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
             eventWorker.get(timeout);
         } catch (Exception e) {
             // put the exception into the error map for the session
-            //TODO event error handling?
+            // TODO event error handling?
             final IPortletWindow portletWindow =
                     this.portletWindowRegistry.getPortletWindow(request, portletWindowId);
             logger.warn(
@@ -502,7 +500,7 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
                     e);
         }
 
-        //If the worker is still running add it to the hung-workers queue
+        // If the worker is still running add it to the hung-workers queue
         if (!eventWorker.isComplete()) {
             cancelWorker(request, eventWorker);
         }
@@ -582,7 +580,8 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
         try {
             resourceWorker.get(timeout);
         } catch (Exception e) {
-            // Log the exception but not this thread's stacktrace. The portlet worker has already logged its stack trace
+            // Log the exception but not this thread's stacktrace. The portlet worker has already
+            // logged its stack trace
             this.logger.error(
                     "resource worker {} failed with exception {}", resourceWorker, e.toString());
             // render generic serveResource error
@@ -598,7 +597,7 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
             }
         }
 
-        //If the worker is still running add it to the hung-workers queue
+        // If the worker is still running add it to the hung-workers queue
         if (!resourceWorker.isComplete()) {
             cancelWorker(request, resourceWorker);
         }
@@ -961,7 +960,8 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
                     portletWindowRegistry.getPortletWindow(request, portletWindowId);
             IPortletDefinition portletDef = portletWindow.getPortletEntity().getPortletDefinition();
             if (portletDef.getLifecycleState().equals(PortletLifecycleState.MAINTENANCE)) {
-                // Prevent the portlet from rendering;  replace with a helpful "Out of Service" message
+                // Prevent the portlet from rendering;  replace with a helpful "Out of Service"
+                // message
                 portletRenderExecutionWorker =
                         this.portletWorkerFactory.createFailureWorker(
                                 request, response, portletWindowId, new MaintenanceModeException());

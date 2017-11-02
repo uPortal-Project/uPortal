@@ -78,7 +78,8 @@ public class FailsafeSingletonScope implements Scope, DisposableBean {
                         this.logger.debug("Creating singleton instance for bean '" + name + "'");
                     }
 
-                    //Add to instances map before creating to ensure if a destruction callback is added it is caught
+                    // Add to instances map before creating to ensure if a destruction callback is
+                    // added it is caught
                     instanceHolder = new InstanceHolder(name);
                     this.instances.put(name, instanceHolder);
 

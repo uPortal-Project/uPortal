@@ -194,7 +194,9 @@ public class HibernateStyleCounterStore implements ICounterStore {
                                                                                     identifierType
                                                                                             .getReturnedClass());
 
-                                                            //Try and load the current value, returns true if the expected row exists, null otherwise
+                                                            // Try and load the current value,
+                                                            // returns true if the expected row
+                                                            // exists, null otherwise
                                                             final boolean selected =
                                                                     jdbcOperations.query(
                                                                             SELECT_QUERY,
@@ -220,7 +222,8 @@ public class HibernateStyleCounterStore implements ICounterStore {
                                                                             },
                                                                             counterName);
 
-                                                            //No row exists for the counter, insert it
+                                                            // No row exists for the counter, insert
+                                                            // it
                                                             if (!selected) {
                                                                 value.initialize(initialValue);
 
@@ -241,7 +244,7 @@ public class HibernateStyleCounterStore implements ICounterStore {
                                                                         });
                                                             }
 
-                                                            //Increment the counter row value
+                                                            // Increment the counter row value
                                                             final IntegralDataTypeHolder
                                                                     updateValue = value.copy();
                                                             if (optimizer
@@ -251,7 +254,9 @@ public class HibernateStyleCounterStore implements ICounterStore {
                                                                 updateValue.increment();
                                                             }
 
-                                                            //Update the counter row, if rows returns 0 the update failed due to a race condition, it will be retried
+                                                            // Update the counter row, if rows
+                                                            // returns 0 the update failed due to a
+                                                            // race condition, it will be retried
                                                             int rowsAltered =
                                                                     jdbcOperations.update(
                                                                             UPDATE_QUERY,

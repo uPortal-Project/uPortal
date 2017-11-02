@@ -144,7 +144,7 @@ public class JpaAggregatedTabLookupDao extends BaseAggrEventsJpaDao
     }
 
     protected final Tuple<String, String> resolveTabName(final String targetedLayoutNodeId) {
-        //Check the cache first
+        // Check the cache first
         final Element element = layoutNodeIdNameResolutionCache.get(targetedLayoutNodeId);
         if (element != null) {
             return (Tuple<String, String>) element.getObjectValue();
@@ -153,7 +153,7 @@ public class JpaAggregatedTabLookupDao extends BaseAggrEventsJpaDao
         final String fragmentName;
         final String tabName;
         if (targetedLayoutNodeId == null) {
-            //No layout node id, return null placeholder
+            // No layout node id, return null placeholder
             fragmentName = AggregatedTabMapping.MISSING_TAB_FRAGMENT_NAME;
             tabName = AggregatedTabMapping.MISSING_TAB_NAME;
         } else {
@@ -171,10 +171,10 @@ public class JpaAggregatedTabLookupDao extends BaseAggrEventsJpaDao
                                 layoutId,
                                 nodeId);
                 if (tabNameResult.isEmpty()) {
-                    //No tab name found, fall back to using the bare layout node id
+                    // No tab name found, fall back to using the bare layout node id
                     tabName = targetedLayoutNodeId;
                 } else {
-                    //Use the found tab name
+                    // Use the found tab name
                     tabName = tabNameResult.iterator().next();
                 }
 
@@ -184,20 +184,20 @@ public class JpaAggregatedTabLookupDao extends BaseAggrEventsJpaDao
                                 String.class,
                                 userId);
                 if (userNameResult.isEmpty()) {
-                    //No user name found, use the missing user placeholder
+                    // No user name found, use the missing user placeholder
                     fragmentName = AggregatedTabMapping.MISSING_USER_FRAGMENT_NAME;
                 } else {
-                    //Use the found user name
+                    // Use the found user name
                     fragmentName = userNameResult.iterator().next();
                 }
             } else {
-                //Node isn't from DLM return personal placeholder
+                // Node isn't from DLM return personal placeholder
                 fragmentName = AggregatedTabMapping.PERSONAL_TAB_FRAGMENT_NAME;
                 tabName = AggregatedTabMapping.PERSONAL_TAB_NAME;
             }
         }
 
-        //cache the resolution
+        // cache the resolution
         final Tuple<String, String> tuple = new Tuple<String, String>(fragmentName, tabName);
         layoutNodeIdNameResolutionCache.put(new Element(targetedLayoutNodeId, tuple));
         return tuple;

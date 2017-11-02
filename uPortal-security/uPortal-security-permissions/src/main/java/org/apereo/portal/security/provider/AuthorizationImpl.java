@@ -332,7 +332,8 @@ public class AuthorizationImpl implements IAuthorizationService {
             IAuthorizationPrincipal principal, PortletLifecycleState state, String categoryId)
             throws AuthorizationException {
         //    return doesPrincipalHavePermission
-        //      (principal, IPermission.PORTAL_FRAMEWORK, IPermission.CHANNEL_PUBLISHER_ACTIVITY, null);
+        //      (principal, IPermission.PORTAL_FRAMEWORK, IPermission.CHANNEL_PUBLISHER_ACTIVITY,
+        // null);
         String owner = IPermission.PORTAL_PUBLISH;
 
         // retrieve the indicated channel from the channel registry store and
@@ -858,7 +859,7 @@ public class AuthorizationImpl implements IAuthorizationService {
     public IAuthorizationPrincipal newPrincipal(String key, Class type) {
         final Tuple<String, Class> principalKey = new Tuple<String, Class>(key, type);
         final Element element = this.principalCache.get(principalKey);
-        //principalCache is self populating, it can never return a null entry
+        // principalCache is self populating, it can never return a null entry
         return (IAuthorizationPrincipal) element.getObjectValue();
     }
 
@@ -959,17 +960,22 @@ public class AuthorizationImpl implements IAuthorizationService {
             } else {
                 containingGroups = new HashSet<String>();
 
-                //Ignore target entity lookups for the various synthetic ALL targets
+                // Ignore target entity lookups for the various synthetic ALL targets
                 if (!IPermission.ALL_CATEGORIES_TARGET.equals(target)
                         && !IPermission.ALL_GROUPS_TARGET.equals(target)
                         && !IPermission.ALL_PORTLETS_TARGET.equals(target)
                         && !IPermission.ALL_TARGET.equals(target)) {
 
-                    // UP-4410; It would be ideal if the target string indicated it was a group or entity that might be
-                    // a member of a group so we could determine whether to check what groups the target entity might be
-                    // contained within to see if the principal has permission to the containing group, but it does not
-                    // (too significant to refactor database values at this point).  If the owner and activity strings map to
-                    // a type of target that might be a group name or entity name, create a set of the groups the target
+                    // UP-4410; It would be ideal if the target string indicated it was a group or
+                    // entity that might be
+                    // a member of a group so we could determine whether to check what groups the
+                    // target entity might be
+                    // contained within to see if the principal has permission to the containing
+                    // group, but it does not
+                    // (too significant to refactor database values at this point).  If the owner
+                    // and activity strings map to
+                    // a type of target that might be a group name or entity name, create a set of
+                    // the groups the target
                     // entity is contained in.
                     boolean checkTargetForContainingGroups = true;
                     if (owner != null && activity != null) {

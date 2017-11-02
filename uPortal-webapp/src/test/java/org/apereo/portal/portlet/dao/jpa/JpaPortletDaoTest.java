@@ -104,7 +104,7 @@ public class JpaPortletDaoTest extends BasePortalJpaDaoTest {
                                 final IPortletType channelType =
                                         jpaChannelTypeDao.createPortletType("BaseType", "foobar");
 
-                                //Create a definition
+                                // Create a definition
                                 final IPortletDefinition chanDef1 =
                                         new PortletDefinitionImpl(
                                                 channelType,
@@ -116,14 +116,14 @@ public class JpaPortletDaoTest extends BasePortalJpaDaoTest {
                                                 false);
                                 jpaPortletDefinitionDao.savePortletDefinition(chanDef1);
 
-                                //Try all of the retrieval options
+                                // Try all of the retrieval options
                                 final IPortletDefinition portDef1a =
                                         jpaPortletDefinitionDao.getPortletDefinition(
                                                 chanDef1.getPortletDefinitionId());
                                 jpaPortletDefinitionDao.savePortletDefinition(chanDef1);
                                 assertEquals(chanDef1, portDef1a);
 
-                                //Create a second definition with the same app/portlet
+                                // Create a second definition with the same app/portlet
                                 final IPortletDefinition chanDef2 =
                                         new PortletDefinitionImpl(
                                                 channelType,
@@ -234,7 +234,7 @@ public class JpaPortletDaoTest extends BasePortalJpaDaoTest {
                                 final IPortletType channelType =
                                         jpaChannelTypeDao.createPortletType("BaseType", "foobar");
 
-                                //Create a definition
+                                // Create a definition
                                 final IPortletDefinition chanDef1 =
                                         new PortletDefinitionImpl(
                                                 channelType,
@@ -294,7 +294,7 @@ public class JpaPortletDaoTest extends BasePortalJpaDaoTest {
                 new Callable<Object>() {
                     @Override
                     public Object call() throws Exception {
-                        //Add entity and preferences
+                        // Add entity and preferences
                         final IPortletDefinition portDef1 =
                                 jpaPortletDefinitionDao.getPortletDefinition(portletDefinitionId);
                         portDef1.getPortletPreferences()
@@ -316,7 +316,7 @@ public class JpaPortletDaoTest extends BasePortalJpaDaoTest {
                 new Callable<Object>() {
                     @Override
                     public Object call() throws Exception {
-                        //Delete whole tree
+                        // Delete whole tree
                         final IPortletDefinition portDef2 =
                                 jpaPortletDefinitionDao.getPortletDefinition(portletDefinitionId);
                         jpaPortletDefinitionDao.deletePortletDefinition(portDef2);
@@ -329,7 +329,7 @@ public class JpaPortletDaoTest extends BasePortalJpaDaoTest {
                 new Callable<Object>() {
                     @Override
                     public Object call() throws Exception {
-                        //Verify it is gone
+                        // Verify it is gone
                         final Set<IPortletEntity> portletEntities2 =
                                 jpaPortletEntityDao.getPortletEntities(portletDefinitionId);
                         assertEquals(Collections.emptySet(), portletEntities2);

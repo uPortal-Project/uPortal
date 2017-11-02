@@ -58,15 +58,19 @@ public class RemoteUserPersonManager extends AbstractPersonManager {
             // Create a new instance of a person
             person = createGuestPerson(request);
 
-            // If the user has authenticated with the server which has implemented web authentication,
+            // If the user has authenticated with the server which has implemented web
+            // authentication,
             // the REMOTE_USER environment variable will be set.
             String remoteUser = request.getRemoteUser();
 
-            // We don't want to ignore the security contexts which are already configured in security.properties, so we
-            // retrieve the existing security contexts.  If one of the existing security contexts is a RemoteUserSecurityContext,
+            // We don't want to ignore the security contexts which are already configured in
+            // security.properties, so we
+            // retrieve the existing security contexts.  If one of the existing security contexts is
+            // a RemoteUserSecurityContext,
             // we set the REMOTE_USER field of the existing RemoteUserSecurityContext context.
             //
-            // If a RemoteUserSecurityContext does not already exist, we create one and populate the REMOTE_USER field.
+            // If a RemoteUserSecurityContext does not already exist, we create one and populate the
+            // REMOTE_USER field.
 
             ISecurityContext context = null;
             Enumeration subContexts = null;
@@ -79,7 +83,8 @@ public class RemoteUserPersonManager extends AbstractPersonManager {
             if (subContexts != null) {
                 while (subContexts.hasMoreElements()) {
                     ISecurityContext ctx = (ISecurityContext) subContexts.nextElement();
-                    // Check to see if a RemoteUserSecurityContext already exists, and set the REMOTE_USER
+                    // Check to see if a RemoteUserSecurityContext already exists, and set the
+                    // REMOTE_USER
                     if (ctx instanceof RemoteUserSecurityContext) {
                         RemoteUserSecurityContext remoteuserctx = (RemoteUserSecurityContext) ctx;
                         remoteuserctx.setRemoteUser(remoteUser);

@@ -55,7 +55,7 @@ public class PortalSessionScope implements Scope {
      */
     @Override
     public Object resolveContextualObject(String arg0) {
-        //TODO implement me!
+        // TODO implement me!
         return null;
     }
     /* (non-Javadoc)

@@ -136,7 +136,7 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
         Validate.notNull(request, "request can not be null");
         Validate.notNull(plutoPortletWindow, "portletWindow can not be null");
 
-        //Conver the pluto portlet window ID into a uPortal portlet window ID
+        // Conver the pluto portlet window ID into a uPortal portlet window ID
         final PortletWindowID plutoWindowId = plutoPortletWindow.getId();
         final IPortletWindowId portletWindowId;
         if (plutoWindowId instanceof IPortletWindowId) {
@@ -145,7 +145,7 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
             portletWindowId = this.getPortletWindowId(request, plutoWindowId.getStringId());
         }
 
-        //Do a new get to make sure the referenced data gets updated correctly
+        // Do a new get to make sure the referenced data gets updated correctly
         return this.getPortletWindow(request, portletWindowId);
     }
 
@@ -221,7 +221,7 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
 
         final PortletWindowCache<IPortletWindow> portletWindowMap = getPortletWindowMap(request);
 
-        //Check if there is portlet window cached in the request
+        // Check if there is portlet window cached in the request
         IPortletWindow portletWindow = portletWindowMap.getWindow(portletWindowId);
         if (portletWindow != null) {
             logger.trace(
@@ -236,7 +236,7 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
             return null;
         }
 
-        //Cache the wrapped window in the request
+        // Cache the wrapped window in the request
         return portletWindowMap.storeIfAbsentWindow(portletWindow);
     }
 
@@ -261,7 +261,7 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
         final PortletWindowIdImpl localPortletWindowId =
                 this.convertPortletWindowId(request, portletWindowId);
 
-        //Find the window data from the correct window data map
+        // Find the window data from the correct window data map
         final PortletWindowData portletWindowData;
         if (STATELESS_PORTLET_WINDOW_ID.equals(localPortletWindowId.getWindowInstanceId())) {
             final PortletWindowCache<PortletWindowData> statelessPortletWindowDataMap =
@@ -282,7 +282,7 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
 
         portletWindow = this.wrapPortletWindowData(request, portletWindowData);
 
-        //Cache the wrapped window in the request
+        // Cache the wrapped window in the request
         return portletWindowMap.storeIfAbsentWindow(portletWindow);
     }
 
@@ -343,14 +343,15 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
         Validate.notNull(request, "request can not be null");
         Validate.notNull(portletEntityId, "portletEntityId can not be null");
 
-        //TODO does a delegate portlet entity need some sort of special treatment or do we just assume that the calling code is using one?
+        // TODO does a delegate portlet entity need some sort of special treatment or do we just
+        // assume that the calling code is using one?
 
         final IPortletWindowId portletWindowId =
                 this.getDefaultPortletWindowId(request, portletEntityId);
 
         final PortletWindowCache<IPortletWindow> portletWindowMap = getPortletWindowMap(request);
 
-        //Check if there is portlet window cached in the request
+        // Check if there is portlet window cached in the request
         IPortletWindow portletWindow = portletWindowMap.getWindow(portletWindowId);
         if (portletWindow != null) {
             logger.trace(
@@ -366,7 +367,7 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
             return null;
         }
 
-        //Cache the wrapped window in the request
+        // Cache the wrapped window in the request
         return portletWindowMap.storeIfAbsentWindow(portletWindow);
     }
 
@@ -380,13 +381,13 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
         final Set<IPortletWindow> portletWindows =
                 new LinkedHashSet<IPortletWindow>(portletWindowMap.getWindows(portletEntityId));
 
-        //Check for session cached windows that haven't been accessed in this request
+        // Check for session cached windows that haven't been accessed in this request
         final PortletWindowCache<PortletWindowData> portletWindowDataMap =
                 this.getPortletWindowDataMap(request);
         this.addPortletWindowData(
                 request, portletEntityId, portletWindows, portletWindowMap, portletWindowDataMap);
 
-        //Check for stateless windows that exist on this request
+        // Check for stateless windows that exist on this request
         final PortletWindowCache<PortletWindowData> statelessPortletWindowDataMap =
                 this.getStatelessPortletWindowDataMap(request, false);
         if (statelessPortletWindowDataMap != null) {
@@ -398,7 +399,7 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
                     statelessPortletWindowDataMap);
         }
 
-        //If there were no windows in the set create the default one for the entity
+        // If there were no windows in the set create the default one for the entity
         if (portletWindows.isEmpty()) {
             final IPortletWindow portletWindow =
                     this.getOrCreateDefaultPortletWindow(request, portletEntityId);
@@ -411,7 +412,7 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
     @Override
     public Tuple<IPortletWindow, StartElement> getPortletWindow(
             HttpServletRequest request, StartElement element) {
-        //Check if the layout node explicitly specifies the window id
+        // Check if the layout node explicitly specifies the window id
         final Attribute windowIdAttribute = element.getAttributeByName(PORTLET_WINDOW_ID_ATTR_NAME);
         if (windowIdAttribute != null) {
             final String windowIdStr = windowIdAttribute.getValue();
@@ -420,7 +421,7 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
             return new Tuple<IPortletWindow, StartElement>(portletWindow, element);
         }
 
-        //No explicit window id, look it up based on the layout node id
+        // No explicit window id, look it up based on the layout node id
         final Attribute nodeIdAttribute =
                 element.getAttributeByName(IUserLayoutManager.ID_ATTR_NAME);
         final String layoutNodeId = nodeIdAttribute.getValue();
@@ -428,7 +429,7 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
         IPortletWindow portletWindow =
                 this.getOrCreateDefaultPortletWindowByLayoutNodeId(request, layoutNodeId);
         if (portletWindow == null) {
-            //No window for the layout node, return null
+            // No window for the layout node, return null
             return null;
         }
 
@@ -464,7 +465,7 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
                 xmlEventFactory.createAttribute(
                         PORTLET_WINDOW_ID_ATTR_NAME, portletWindowId.getStringId());
 
-        //Clone the start element to add the new attribute
+        // Clone the start element to add the new attribute
         final QName name = element.getName();
         final String prefix = name.getPrefix();
         final String namespaceURI = name.getNamespaceURI();
@@ -475,7 +476,7 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
         final Iterator<Namespace> namespaces = element.getNamespaces();
         final NamespaceContext namespaceContext = element.getNamespaceContext();
 
-        //Create a new iterator of the existing attributes + the new window id attribute
+        // Create a new iterator of the existing attributes + the new window id attribute
         final Iterator<Attribute> newAttributes =
                 Iterators.concat(attributes, Iterators.forArray(windowIdAttribute));
 
@@ -505,13 +506,14 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
         for (final PortletWindowData portletWindowData : windows) {
             final IPortletWindowId portletWindowId = portletWindowData.getPortletWindowId();
 
-            //Skip data windows that aren't for this entity and for windows that are already in the request cache
+            // Skip data windows that aren't for this entity and for windows that are already in the
+            // request cache
             if (!portletEntityId.equals(portletWindowData.getPortletEntityId())
                     || portletWindowMap.containsWindow(portletWindowId)) {
                 continue;
             }
 
-            //Wrap the data in a window and stick it in the request cache
+            // Wrap the data in a window and stick it in the request cache
             IPortletWindow portletWindow = this.wrapPortletWindowData(request, portletWindowData);
             portletWindow = portletWindowMap.storeIfAbsentWindow(portletWindow);
 
@@ -522,35 +524,36 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
     @Override
     public IPortletWindow getOrCreateStatelessPortletWindow(
             HttpServletRequest request, IPortletWindowId basePortletWindowId) {
-        //Need the basePortletWindowId to be an instance of PortletWindowIdImpl so that we can extract the entity ID
+        // Need the basePortletWindowId to be an instance of PortletWindowIdImpl so that we can
+        // extract the entity ID
         if (!(basePortletWindowId instanceof PortletWindowIdImpl)) {
             final String basePortletWindowIdStr = basePortletWindowId.getStringId();
             basePortletWindowId = this.getPortletWindowId(request, basePortletWindowIdStr);
         }
 
-        //Get the entity ID for the portlet window
+        // Get the entity ID for the portlet window
         final IPortletEntityId portletEntityId =
                 ((PortletWindowIdImpl) basePortletWindowId).getPortletEntityId();
 
-        //Create the stateless ID
+        // Create the stateless ID
         final PortletWindowIdImpl statelessPortletWindowId =
                 this.createPortletWindowId(STATELESS_PORTLET_WINDOW_ID, portletEntityId);
 
-        //See if there is already a request cached stateless window
+        // See if there is already a request cached stateless window
         IPortletWindow statelessPortletWindow =
                 this.getPortletWindow(request, statelessPortletWindowId);
         if (statelessPortletWindow != null) {
             return statelessPortletWindow;
         }
 
-        //Lookup the base portlet window to clone the stateless from
+        // Lookup the base portlet window to clone the stateless from
         final IPortletWindow basePortletWindow =
                 this.getPortletWindow(request, basePortletWindowId);
 
         final PortletWindowCache<PortletWindowData> statelessPortletWindowDataMap =
                 this.getStatelessPortletWindowDataMap(request, true);
 
-        //If no base to clone from lookup the entity and pluto definition data
+        // If no base to clone from lookup the entity and pluto definition data
         if (basePortletWindow == null) {
             final IPortletEntity portletEntity =
                     this.portletEntityRegistry.getPortletEntity(request, portletEntityId);
@@ -576,7 +579,7 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
                     new StatelessPortletWindowImpl(
                             portletWindowData, portletEntity, portletDescriptor);
         }
-        //Clone the existing base window
+        // Clone the existing base window
         else {
             final PortletWindowData portletWindowData =
                     new PortletWindowData(statelessPortletWindowId, portletEntityId);
@@ -597,7 +600,7 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
                             portletWindowData, portletEntity, portletDescriptor);
         }
 
-        //Cache the stateless window in the request
+        // Cache the stateless window in the request
         final PortletWindowCache<IPortletWindow> portletWindowMap =
                 this.getPortletWindowMap(request);
         portletWindowMap.storeWindow(statelessPortletWindow);
@@ -625,7 +628,7 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
         final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
         final IPerson person = userInstance.getPerson();
         if (person.isGuest()) {
-            //Never persist things for the guest user, just rely on in-memory storage
+            // Never persist things for the guest user, just rely on in-memory storage
             return;
         }
 
@@ -638,22 +641,22 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
         final WindowState entityWindowState =
                 portletEntity.getWindowState(themeStylesheetDescriptor);
 
-        //If the window and entity states are different
+        // If the window and entity states are different
         if (windowState != entityWindowState && !windowState.equals(entityWindowState)) {
             final WindowState defaultWindowState =
                     this.getDefaultWindowState(themeStylesheetDescriptor);
 
-            //If a window state is set and is one of the persistent states set it on the entity
+            // If a window state is set and is one of the persistent states set it on the entity
             if (!defaultWindowState.equals(windowState)
                     && persistentWindowStates.contains(windowState)) {
                 portletEntity.setWindowState(themeStylesheetDescriptor, windowState);
             }
-            //If not remove the state from the entity
+            // If not remove the state from the entity
             else if (entityWindowState != null) {
                 portletEntity.setWindowState(themeStylesheetDescriptor, null);
             }
 
-            //Persist the modified entity
+            // Persist the modified entity
             this.portletEntityRegistry.storePortletEntity(request, portletEntity);
         }
     }
@@ -756,7 +759,8 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
 
         final String mapAttributeName = PORTLET_WINDOW_ATTRIBUTE + Thread.currentThread().getId();
 
-        //No need to do this in a request attribute mutex since the map is scoped to a specific thread
+        // No need to do this in a request attribute mutex since the map is scoped to a specific
+        // thread
         @SuppressWarnings("unchecked")
         PortletWindowCache<IPortletWindow> windowCache =
                 (PortletWindowCache<IPortletWindow>) request.getAttribute(mapAttributeName);
@@ -831,10 +835,10 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
             IPortletEntityId portletEntityId,
             IPortletWindowId portletWindowId,
             IPortletWindowId delegationParentId) {
-        //Sync on session map to make sure duplicate PortletWindowData is never created
+        // Sync on session map to make sure duplicate PortletWindowData is never created
         final PortletWindowCache<PortletWindowData> portletWindowDataMap =
                 getPortletWindowDataMap(request);
-        //Check if there portlet window data cached in the session
+        // Check if there portlet window data cached in the session
         PortletWindowData portletWindowData = portletWindowDataMap.getWindow(portletWindowId);
         if (portletWindowData != null) {
             logger.trace(
@@ -843,12 +847,12 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
             return portletWindowData;
         }
 
-        //Create new window data for and initialize
+        // Create new window data for and initialize
         portletWindowData =
                 new PortletWindowData(portletWindowId, portletEntityId, delegationParentId);
         this.initializePortletWindowData(request, portletWindowData);
 
-        //Store in the session cache
+        // Store in the session cache
         portletWindowData = portletWindowDataMap.storeIfAbsentWindow(portletWindowData);
         logger.trace(
                 "Created PortletWindowData {} and stored session cache, wrapping as IPortletWindow and returning",
@@ -871,7 +875,7 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
         if (persistentWindowStates.contains(entityWindowState)) {
             portletWindowData.setWindowState(entityWindowState);
         } else if (entityWindowState != null) {
-            //Set of persistent window states must have changed, nuke the old value
+            // Set of persistent window states must have changed, nuke the old value
             this.logger.warn(
                     "PortletEntity.windowState="
                             + entityWindowState

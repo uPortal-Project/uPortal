@@ -90,7 +90,7 @@ public class PortletEntityPreferencesImpl extends AbstractPortletPreferencesImpl
             IPortletEntity portletEntity, Map<String, IPortletPreference> basePortletPreferences) {
         final IPortletDefinition portletDefinition = portletEntity.getPortletDefinition();
 
-        //Add descriptor prefs to base Map
+        // Add descriptor prefs to base Map
         final IPortletDefinitionId portletDefinitionId = portletDefinition.getPortletDefinitionId();
         final PortletDefinition portletDescriptor =
                 this.portletDefinitionRegistry.getParentPortletDescriptor(portletDefinitionId);
@@ -100,7 +100,7 @@ public class PortletEntityPreferencesImpl extends AbstractPortletPreferencesImpl
             basePortletPreferences.put(preferenceWrapper.getName(), preferenceWrapper);
         }
 
-        //Add definition prefs to base Map
+        // Add definition prefs to base Map
         final List<IPortletPreference> definitionPreferences =
                 portletDefinition.getPortletPreferences();
         for (final IPortletPreference preference : definitionPreferences) {
@@ -118,7 +118,8 @@ public class PortletEntityPreferencesImpl extends AbstractPortletPreferencesImpl
         final Lock portletEntityLock =
                 this.portletEntityRegistry.getPortletEntityLock(containerRequest, portletEntityId);
 
-        //Do a tryLock first so that we can warn about concurrent preference modification if it fails
+        // Do a tryLock first so that we can warn about concurrent preference modification if it
+        // fails
         boolean locked = portletEntityLock.tryLock();
         try {
             if (!locked) {
@@ -138,7 +139,7 @@ public class PortletEntityPreferencesImpl extends AbstractPortletPreferencesImpl
                     new TransactionCallback<Boolean>() {
                         @Override
                         public Boolean doInTransaction(TransactionStatus status) {
-                            //Refresh the entity to avoid optimistic locking errors
+                            // Refresh the entity to avoid optimistic locking errors
                             final IPortletEntity portletEntity =
                                     portletEntityRegistry.getPortletEntity(
                                             containerRequest, portletEntityId);
@@ -151,7 +152,7 @@ public class PortletEntityPreferencesImpl extends AbstractPortletPreferencesImpl
                                     portletEntity.setPortletPreferences(
                                             new ArrayList<IPortletPreference>(values));
                             if (!modified) {
-                                //Nothing actually changed, skip the store
+                                // Nothing actually changed, skip the store
                                 return Boolean.FALSE;
                             }
 
@@ -162,7 +163,8 @@ public class PortletEntityPreferencesImpl extends AbstractPortletPreferencesImpl
                         }
                     });
         } finally {
-            //check if locked, needed due to slightly more complex logic around the tryLock and logging
+            // check if locked, needed due to slightly more complex logic around the tryLock and
+            // logging
             if (locked) {
                 portletEntityLock.unlock();
             }

@@ -56,8 +56,8 @@ public class DatabaseMetaDataImpl implements IDatabaseMetadata, InitializingBean
 
     /** Define the oracle TO_DATE format */
 
-    //Define the different join queries we know about with the
-    //appropriately typed JoinQueryString implementation.
+    // Define the different join queries we know about with the
+    // appropriately typed JoinQueryString implementation.
     private static final JoinQueryString jdbcDb =
             new DatabaseMetaDataImpl.JdbcDb(
                     "{oj UP_USER LEFT OUTER JOIN UP_USER_LAYOUT ON UP_USER.USER_ID = UP_USER_LAYOUT.USER_ID} WHERE");
@@ -83,7 +83,7 @@ public class DatabaseMetaDataImpl implements IDatabaseMetadata, InitializingBean
 
     private boolean dbmdSupportsOuterJoins = false;
 
-    //Database meta information
+    // Database meta information
     private boolean portalTablesExist = false;
     private boolean useTSWrapper = false;
     private boolean useToDate = false;
@@ -147,14 +147,14 @@ public class DatabaseMetaDataImpl implements IDatabaseMetadata, InitializingBean
     /** @see IDatabaseMetadata#supportsTransactions() */
     @Override
     public final boolean supportsTransactions() {
-        //We never run on DBs that don't support transactions any more
+        // We never run on DBs that don't support transactions any more
         return true;
     }
 
     /** @see IDatabaseMetadata#supportsPreparedStatements() */
     @Override
     public final boolean supportsPreparedStatements() {
-        //We never run on DBs that don't support prepared statements any more
+        // We never run on DBs that don't support prepared statements any more
         return true;
     }
 
@@ -286,8 +286,8 @@ public class DatabaseMetaDataImpl implements IDatabaseMetadata, InitializingBean
         Connection conn = null;
         try {
             conn = this.dataSource.getConnection();
-            //The order of these tests is IMPORTANT, each may depend on the
-            //results of the previous tests.
+            // The order of these tests is IMPORTANT, each may depend on the
+            // results of the previous tests.
             this.getMetaData(conn);
             final JdbcTemplate jdbcTemplate = new JdbcTemplate(this.dataSource);
 
@@ -385,7 +385,7 @@ public class DatabaseMetaDataImpl implements IDatabaseMetadata, InitializingBean
     /** Test the database to find the supported timestamp format */
     private void testTimeStamp(final JdbcTemplate jdbcTemplate) {
         try {
-            //Try using {ts }
+            // Try using {ts }
             final String timeStampTestQuery =
                     "SELECT USER_ID "
                             + "FROM UP_USER "
@@ -399,7 +399,7 @@ public class DatabaseMetaDataImpl implements IDatabaseMetadata, InitializingBean
                 LOG.debug(logMessage1, dae1);
             }
 
-            //Try using TO_DATE()
+            // Try using TO_DATE()
             try {
                 final String toDateTestQuery =
                         "SELECT USER_ID "

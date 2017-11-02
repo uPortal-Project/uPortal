@@ -68,7 +68,7 @@ public class PortalUrlProviderImplTest {
 
     @Test
     public void testGetDefaultUrlNoTargets() {
-        //Setup mock objects
+        // Setup mock objects
         when(urlProviderLayoutHelper.getDefaultLayoutNodeId(request)).thenReturn(folderNodeId);
         when(userInstanceManager.getUserInstance(request)).thenReturn(userInstance);
         when(userInstance.getPreferencesManager()).thenReturn(preferencesManager);
@@ -77,7 +77,7 @@ public class PortalUrlProviderImplTest {
         when(urlNodeSyntaxHelperRegistry.getCurrentUrlNodeSyntaxHelper(request))
                 .thenReturn(urlNodeSyntaxHelper);
 
-        //Run the test
+        // Run the test
         final IPortalUrlBuilder urlBuilder = portalUrlProvider.getDefaultUrl(request);
 
         assertNotNull(urlBuilder);
@@ -89,7 +89,7 @@ public class PortalUrlProviderImplTest {
 
     @Test
     public void testGetDefaultUrl() {
-        //Setup mock objects
+        // Setup mock objects
         when(urlProviderLayoutHelper.getDefaultLayoutNodeId(request)).thenReturn(folderNodeId);
         when(userInstanceManager.getUserInstance(request)).thenReturn(userInstance);
         when(userInstance.getPreferencesManager()).thenReturn(preferencesManager);
@@ -100,7 +100,7 @@ public class PortalUrlProviderImplTest {
                 .thenReturn(urlNodeSyntaxHelper);
         when(urlNodeSyntaxHelper.getDefaultLayoutNodeId(request)).thenReturn(folderNodeId);
 
-        //Run the test
+        // Run the test
         final IPortalUrlBuilder urlBuilder = portalUrlProvider.getDefaultUrl(request);
 
         assertNotNull(urlBuilder);
@@ -112,7 +112,7 @@ public class PortalUrlProviderImplTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testGetDefaultUrlMissingLayoutNode() {
-        //Setup mock objects
+        // Setup mock objects
         when(urlProviderLayoutHelper.getDefaultLayoutNodeId(request)).thenReturn(folderNodeId);
         when(userInstanceManager.getUserInstance(request)).thenReturn(userInstance);
         when(userInstance.getPreferencesManager()).thenReturn(preferencesManager);
@@ -122,13 +122,13 @@ public class PortalUrlProviderImplTest {
                 .thenReturn(urlNodeSyntaxHelper);
         when(urlNodeSyntaxHelper.getDefaultLayoutNodeId(request)).thenReturn(folderNodeId);
 
-        //Run the test
+        // Run the test
         portalUrlProvider.getDefaultUrl(request);
     }
 
     @Test
     public void testGetPortalUrlBuilderByLayoutNode() {
-        //Setup mock objects
+        // Setup mock objects
         when(urlProviderLayoutHelper.getDefaultLayoutNodeId(request)).thenReturn(folderNodeId);
         when(userInstanceManager.getUserInstance(request)).thenReturn(userInstance);
         when(userInstance.getPreferencesManager()).thenReturn(preferencesManager);
@@ -136,7 +136,7 @@ public class PortalUrlProviderImplTest {
         when(userLayoutManager.getNode(folderNodeId)).thenReturn(node);
         when(node.getType()).thenReturn(LayoutNodeType.FOLDER);
 
-        //Run the test
+        // Run the test
         final IPortalUrlBuilder urlBuilder =
                 portalUrlProvider.getPortalUrlBuilderByLayoutNode(
                         request, folderNodeId, UrlType.RENDER);
@@ -150,13 +150,13 @@ public class PortalUrlProviderImplTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testGetPortalUrlBuilderByMissingPortletLayoutNode() {
-        //Setup mock objects
+        // Setup mock objects
         when(urlProviderLayoutHelper.getDefaultLayoutNodeId(request)).thenReturn(folderNodeId);
         when(userInstanceManager.getUserInstance(request)).thenReturn(userInstance);
         when(userInstance.getPreferencesManager()).thenReturn(preferencesManager);
         when(preferencesManager.getUserLayoutManager()).thenReturn(userLayoutManager);
 
-        //Run the test
+        // Run the test
         final IPortalUrlBuilder urlBuilder =
                 portalUrlProvider.getPortalUrlBuilderByLayoutNode(
                         request, folderNodeId, UrlType.RENDER);
@@ -172,7 +172,7 @@ public class PortalUrlProviderImplTest {
 
     @Test
     public void testGetPortalUrlBuilderByPortletLayoutNode() {
-        //Setup mock objects
+        // Setup mock objects
         when(urlProviderLayoutHelper.getDefaultLayoutNodeId(request)).thenReturn(folderNodeId);
         when(userInstanceManager.getUserInstance(request)).thenReturn(userInstance);
         when(userInstance.getPreferencesManager()).thenReturn(preferencesManager);
@@ -184,7 +184,7 @@ public class PortalUrlProviderImplTest {
                 .thenReturn(portletWindow);
         when(portletWindow.getPortletWindowId()).thenReturn(portletWindowId);
 
-        //Run the test
+        // Run the test
         final IPortalUrlBuilder urlBuilder =
                 portalUrlProvider.getPortalUrlBuilderByLayoutNode(
                         request, folderNodeId, UrlType.RENDER);
@@ -198,7 +198,7 @@ public class PortalUrlProviderImplTest {
 
     @Test
     public void testGetPortalUrlBuilderByPortletWindowId() {
-        //Setup mock objects
+        // Setup mock objects
         when(urlProviderLayoutHelper.getDefaultLayoutNodeId(request)).thenReturn(folderNodeId);
         when(portletWindow.getPortletEntity()).thenReturn(portletEntity);
         when(portletEntity.getLayoutNodeId()).thenReturn(folderNodeId);
@@ -214,7 +214,7 @@ public class PortalUrlProviderImplTest {
                 .thenReturn(portletWindow);
         when(node.getId()).thenReturn(folderNodeId);
 
-        //Run the test
+        // Run the test
         final IPortalUrlBuilder urlBuilder =
                 portalUrlProvider.getPortalUrlBuilderByPortletWindow(
                         request, portletWindowId, UrlType.RENDER);
@@ -228,7 +228,7 @@ public class PortalUrlProviderImplTest {
 
     @Test
     public void testGetPortalUrlBuilderByPortletFname() {
-        //Setup mock objects
+        // Setup mock objects
         when(urlProviderLayoutHelper.getDefaultLayoutNodeId(request)).thenReturn(folderNodeId);
         when(portletWindow.getPortletEntity()).thenReturn(portletEntity);
         when(portletEntity.getLayoutNodeId()).thenReturn(folderNodeId);
@@ -245,7 +245,7 @@ public class PortalUrlProviderImplTest {
                 .thenReturn(portletWindow);
         when(node.getId()).thenReturn(folderNodeId);
 
-        //Run the test
+        // Run the test
         final IPortalUrlBuilder urlBuilder =
                 portalUrlProvider.getPortalUrlBuilderByPortletFName(
                         request, portletDefinitionFname, UrlType.RENDER);

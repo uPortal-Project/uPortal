@@ -181,7 +181,7 @@ public class PortletEventCoordinatationService implements IPortletEventCoordinat
                 this.portletWindowRegistry.convertPortletWindow(request, plutoPortletWindow);
         final IPortletWindowId portletWindowId = portletWindow.getPortletWindowId();
 
-        //Add list transformer to convert Event to QueuedEvent
+        // Add list transformer to convert Event to QueuedEvent
         final List<QueuedEvent> queuedEvents =
                 Lists.transform(
                         events,
@@ -203,17 +203,17 @@ public class PortletEventCoordinatationService implements IPortletEventCoordinat
             HttpServletRequest request, PortletEventQueue portletEventQueue) {
         final Queue<QueuedEvent> events = portletEventQueue.getUnresolvedEvents();
 
-        //Skip all processing if there are no new events.
+        // Skip all processing if there are no new events.
         if (events.isEmpty()) {
             return;
         }
 
-        //Get all the portlets the user is subscribed to
+        // Get all the portlets the user is subscribed to
         final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
         final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
         final IUserLayoutManager userLayoutManager = preferencesManager.getUserLayoutManager();
 
-        //Make a local copy so we can remove data from it
+        // Make a local copy so we can remove data from it
         final Set<String> allLayoutNodeIds =
                 new LinkedHashSet<String>(userLayoutManager.getAllSubscribedChannels());
 
@@ -223,7 +223,7 @@ public class PortletEventCoordinatationService implements IPortletEventCoordinat
         while (!events.isEmpty()) {
             final QueuedEvent queuedEvent = events.poll();
             if (queuedEvent == null) {
-                //no more queued events, done resolving
+                // no more queued events, done resolving
                 return;
             }
 
@@ -239,10 +239,9 @@ public class PortletEventCoordinatationService implements IPortletEventCoordinat
                         this.portletDefinitionRegistry.getAllPortletDefinitions());
             }
 
-            //Check each subscription to see what events it is registered to see
+            // Check each subscription to see what events it is registered to see
             for (final Iterator<String> layoutNodeIdItr = allLayoutNodeIds.iterator();
-                    layoutNodeIdItr.hasNext();
-                    ) {
+                    layoutNodeIdItr.hasNext(); ) {
                 final String layoutNodeId = layoutNodeIdItr.next();
 
                 IPortletEntity portletEntity = portletEntityCache.get(layoutNodeId);
@@ -251,7 +250,8 @@ public class PortletEventCoordinatationService implements IPortletEventCoordinat
                             this.portletEntityRegistry.getOrCreatePortletEntity(
                                     request, userInstance, layoutNodeId);
 
-                    // if portlet entity registry returned null, then portlet has been deleted - remove it (see UP-3378)
+                    // if portlet entity registry returned null, then portlet has been deleted -
+                    // remove it (see UP-3378)
                     if (portletEntity == null) {
                         layoutNodeIdItr.remove();
                         continue;
@@ -263,14 +263,16 @@ public class PortletEventCoordinatationService implements IPortletEventCoordinat
                             this.portletDefinitionRegistry.getParentPortletDescriptor(
                                     portletDefinitionId);
                     if (portletDescriptor == null) {
-                        //Missconfigured portlet, remove it from the list so we don't check again and ignore it
+                        // Missconfigured portlet, remove it from the list so we don't check again
+                        // and ignore it
                         layoutNodeIdItr.remove();
                         continue;
                     }
 
                     final List<? extends EventDefinitionReference> supportedProcessingEvents =
                             portletDescriptor.getSupportedProcessingEvents();
-                    //Skip portlets that don't handle any events and remove them from the set so they are not checked again
+                    // Skip portlets that don't handle any events and remove them from the set so
+                    // they are not checked again
                     if (supportedProcessingEvents == null
                             || supportedProcessingEvents.size() == 0) {
                         layoutNodeIdItr.remove();
@@ -286,7 +288,8 @@ public class PortletEventCoordinatationService implements IPortletEventCoordinat
                 if (this.supportsEvent(event, portletDefinitionId)) {
                     this.logger.debug("{} supports event {}", portletDefinition, event);
 
-                    //If this is the default portlet entity remove the definition from the all defs set to avoid duplicate processing
+                    // If this is the default portlet entity remove the definition from the all defs
+                    // set to avoid duplicate processing
                     final IPortletEntity defaultPortletEntity =
                             this.portletEntityRegistry.getOrCreateDefaultPortletEntity(
                                     request, portletDefinitionId);
@@ -294,7 +297,8 @@ public class PortletEventCoordinatationService implements IPortletEventCoordinat
                         portletDefinitions.remove(portletDefinition);
                     }
 
-                    // Is this portlet permitted to receive events?  (Or is it disablePortletEvents=true?)
+                    // Is this portlet permitted to receive events?  (Or is it
+                    // disablePortletEvents=true?)
                     IPortletDefinitionParameter disablePortletEvents =
                             portletDefinition.getParameter(
                                     PortletExecutionManager.DISABLE_PORTLET_EVENTS_PARAMETER);
@@ -331,10 +335,12 @@ public class PortletEventCoordinatationService implements IPortletEventCoordinat
                         AuthorizationServiceFacade.instance()
                                 .newPrincipal(ei.getKey(), ei.getType());
 
-                //If the event is global there might still be portlet definitions that need targeting
+                // If the event is global there might still be portlet definitions that need
+                // targeting
                 for (final IPortletDefinition portletDefinition : portletDefinitions) {
 
-                    // Is this portlet permitted to receive events?  (Or is it disablePortletEvents=true?)
+                    // Is this portlet permitted to receive events?  (Or is it
+                    // disablePortletEvents=true?)
                     IPortletDefinitionParameter disablePortletEvents =
                             portletDefinition.getParameter(
                                     PortletExecutionManager.DISABLE_PORTLET_EVENTS_PARAMETER);
@@ -348,7 +354,7 @@ public class PortletEventCoordinatationService implements IPortletEventCoordinat
 
                     final IPortletDefinitionId portletDefinitionId =
                             portletDefinition.getPortletDefinitionId();
-                    //Check if the user can render the portlet definition before doing event tests
+                    // Check if the user can render the portlet definition before doing event tests
                     if (ap.canRender(portletDefinitionId.getStringId())) {
                         if (this.supportsEvent(event, portletDefinitionId)) {
                             this.logger.debug("{} supports event {}", portletDefinition, event);
@@ -407,7 +413,7 @@ public class PortletEventCoordinatationService implements IPortletEventCoordinat
     }
 
     protected Event unmarshall(IPortletWindow portletWindow, Event event) {
-        //TODO make two types of Event impls, one for marshalled data and one for unmarshalled data
+        // TODO make two types of Event impls, one for marshalled data and one for unmarshalled data
         String value = (String) event.getValue();
 
         final XMLInputFactory xmlInputFactory = this.xmlUtilities.getXmlInputFactory();
@@ -450,7 +456,7 @@ public class PortletEventCoordinatationService implements IPortletEventCoordinat
                     e);
         }
 
-        //TODO cache JAXBContext in registered portlet application
+        // TODO cache JAXBContext in registered portlet application
         final JAXBElement<? extends Serializable> result;
         try {
             final JAXBContext jc = JAXBContext.newInstance(clazz);
@@ -468,7 +474,7 @@ public class PortletEventCoordinatationService implements IPortletEventCoordinat
         return new EventImpl(event.getQName(), result.getValue());
     }
 
-    //TODO cache this resolution
+    // TODO cache this resolution
     protected EventDefinition getEventDefintion(IPortletWindow portletWindow, QName name) {
         PortletApplicationDefinition appDD =
                 portletWindow.getPlutoPortletWindow().getPortletDefinition().getApplication();
@@ -511,11 +517,11 @@ public class PortletEventCoordinatationService implements IPortletEventCoordinat
     protected boolean supportsEvent(Event event, IPortletDefinitionId portletDefinitionId) {
         final QName eventName = event.getQName();
 
-        //The cache key to use
+        // The cache key to use
         final Tuple<IPortletDefinitionId, QName> key =
                 new Tuple<IPortletDefinitionId, QName>(portletDefinitionId, eventName);
 
-        //Check in the cache if the portlet definition supports this event
+        // Check in the cache if the portlet definition supports this event
         final Element element = this.supportedEventCache.get(key);
         if (element != null) {
             final Boolean supported = (Boolean) element.getObjectValue();
@@ -535,7 +541,7 @@ public class PortletEventCoordinatationService implements IPortletEventCoordinat
 
         final String defaultNamespace = portletApplicationDescriptor.getDefaultNamespace();
 
-        //No support found so far, do more complex namespace matching
+        // No support found so far, do more complex namespace matching
         final PortletDefinition portletDescriptor =
                 this.portletDefinitionRegistry.getParentPortletDescriptor(portletDefinitionId);
         if (portletDescriptor == null) {
@@ -550,14 +556,14 @@ public class PortletEventCoordinatationService implements IPortletEventCoordinat
                 continue;
             }
 
-            //See if the supported qname and event qname match explicitly
-            //Look for alias names
+            // See if the supported qname and event qname match explicitly
+            // Look for alias names
             if (qualifiedName.equals(eventName) || aliases.contains(qualifiedName)) {
                 this.supportedEventCache.put(new Element(key, Boolean.TRUE));
                 return true;
             }
 
-            //Look for namespaced events
+            // Look for namespaced events
             if (StringUtils.isEmpty(qualifiedName.getNamespaceURI())) {
                 final QName namespacedName =
                         new QName(defaultNamespace, qualifiedName.getLocalPart());

@@ -76,7 +76,7 @@ public class LimitingTeeOutputStream extends TeeOutputStream {
         this.byteCount += n;
 
         if (this.maximumBytes > 0 && !this.limitReached && this.byteCount > this.maximumBytes) {
-            //Hit limit, replace tee'd OutputStream with a null OutputStream
+            // Hit limit, replace tee'd OutputStream with a null OutputStream
             this.limitReached = true;
             this.setBranch(NullOutputStream.NULL_OUTPUT_STREAM);
 

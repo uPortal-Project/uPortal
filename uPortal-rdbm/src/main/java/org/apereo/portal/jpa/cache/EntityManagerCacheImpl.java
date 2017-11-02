@@ -53,11 +53,11 @@ public class EntityManagerCacheImpl
     private static final String CACHE_TAG = "entityManagerId";
     private static final String CACHE_KEY_SOURCE = EntityManagerCacheImpl.class.getName();
 
-    //Thread local map of PersistenceUnit name to the Stack of EntityManagerIds
+    // Thread local map of PersistenceUnit name to the Stack of EntityManagerIds
     private static final ThreadLocal<Map<String, Deque<String>>> CURRENT_ENTITY_MANAGER_SESSIONS =
             new ThreadLocal<Map<String, Deque<String>>>();
 
-    //Map of PersistentUnit names to current open EntityManager count
+    // Map of PersistentUnit names to current open EntityManager count
     private static final LoadingCache<String, AtomicInteger> OPEN_EM_COUNTER =
             CacheBuilder.newBuilder()
                     .build(
@@ -174,7 +174,7 @@ public class EntityManagerCacheImpl
                                 + Thread.currentThread().getName());
             }
 
-            //Get/Create the currentEntityManagers Map
+            // Get/Create the currentEntityManagers Map
             Map<String, Deque<String>> currentEntityManagers =
                     CURRENT_ENTITY_MANAGER_SESSIONS.get();
             if (currentEntityManagers == null) {
@@ -182,14 +182,14 @@ public class EntityManagerCacheImpl
                 CURRENT_ENTITY_MANAGER_SESSIONS.set(currentEntityManagers);
             }
 
-            //Get/Create the Deque of current entityManagerIds
+            // Get/Create the Deque of current entityManagerIds
             Deque<String> entityManagerIds = currentEntityManagers.get(persistenceUnitName);
             if (entityManagerIds == null) {
                 entityManagerIds = new LinkedList<String>();
                 currentEntityManagers.put(persistenceUnitName, entityManagerIds);
             }
 
-            //Set the current EMiD for this PU
+            // Set the current EMiD for this PU
             entityManagerIds.offerFirst(entityManagerId);
         } else if (event instanceof EntityManagerClosingEvent) {
             final int count = counter.decrementAndGet();
@@ -203,11 +203,11 @@ public class EntityManagerCacheImpl
                                 + Thread.currentThread().getName());
             }
 
-            //Purge any cached data related to this entity manager
+            // Purge any cached data related to this entity manager
             taggedCacheEntryPurger.purgeCacheEntries(
                     new SimpleCacheEntryTag(CACHE_TAG, entityManagerId));
 
-            //Get the currentEntityManagers Map
+            // Get the currentEntityManagers Map
             final Map<String, Deque<String>> currentEntityManagers =
                     CURRENT_ENTITY_MANAGER_SESSIONS.get();
             if (currentEntityManagers == null || currentEntityManagers.isEmpty()) {
@@ -218,7 +218,7 @@ public class EntityManagerCacheImpl
                         new Throwable());
             }
 
-            //Get the Deque of current entityManagerIds
+            // Get the Deque of current entityManagerIds
             final Deque<String> entityManagerIds = currentEntityManagers.get(persistenceUnitName);
             if (entityManagerIds == null || entityManagerIds.isEmpty()) {
                 logger.error(
@@ -228,7 +228,7 @@ public class EntityManagerCacheImpl
                         new Throwable());
             }
 
-            //Get the current EMiD for this PU
+            // Get the current EMiD for this PU
             final String currentEntityManagerId = entityManagerIds.getFirst();
             if (!currentEntityManagerId.equals(entityManagerId)) {
                 logger.error(
@@ -239,15 +239,15 @@ public class EntityManagerCacheImpl
                         new Throwable());
             }
 
-            //Remove the current EMiD
+            // Remove the current EMiD
             entityManagerIds.removeFirst();
 
-            //If nothing else is tracked for this PU remove the deque
+            // If nothing else is tracked for this PU remove the deque
             if (entityManagerIds.isEmpty()) {
                 currentEntityManagers.remove(persistenceUnitName);
             }
 
-            //If nothing else is tracked for this thread remove the local
+            // If nothing else is tracked for this thread remove the local
             if (currentEntityManagers.isEmpty()) {
                 CURRENT_ENTITY_MANAGER_SESSIONS.remove();
             }

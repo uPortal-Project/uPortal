@@ -88,7 +88,7 @@ public class PersonAttributesGroupStorePortalDataType extends AbstractPortalData
     public Set<PortalDataKey> postProcessPortalDataKey(
             String systemId, PortalDataKey portalDataKey, XMLEventReader reader) {
         if (IMPORT_PAGS_41_DATA_KEY.equals(portalDataKey)) {
-            //Split the import into two phases
+            // Split the import into two phases
             return PAGS_GROUP_MEMBERS_41_KEYS;
         }
 

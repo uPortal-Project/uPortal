@@ -94,14 +94,14 @@ final class PortletFailureExecutionWorker implements IPortletFailureExecutionWor
 
         this.submitted = System.currentTimeMillis();
 
-        //Run pre-submit interceptors
+        // Run pre-submit interceptors
         for (final IPortletExecutionInterceptor interceptor : this.interceptors) {
             interceptor.preSubmit(request, response, this);
         }
     }
 
     private void doPostExecution(Exception e) {
-        //Iterate over handlers in reverse for post execution
+        // Iterate over handlers in reverse for post execution
         final ListIterator<IPortletExecutionInterceptor> listIterator =
                 this.interceptors.listIterator(this.interceptors.size());
         while (listIterator.hasPrevious()) {
@@ -138,7 +138,7 @@ final class PortletFailureExecutionWorker implements IPortletFailureExecutionWor
      */
     @Override
     public void cancel() {
-        //NOOP
+        // NOOP
     }
 
     /* (non-Javadoc)
@@ -150,12 +150,12 @@ final class PortletFailureExecutionWorker implements IPortletFailureExecutionWor
     }
 
     protected synchronized void renderError(long timeout) {
-        //Make sure the error rendering only happens once
+        // Make sure the error rendering only happens once
         if (this.completed > 0) {
             return;
         }
 
-        //Wrap the request to scope the attributes to just this execution
+        // Wrap the request to scope the attributes to just this execution
         final PortletHttpServletRequestWrapper wrappedRequest =
                 new PortletHttpServletRequestWrapper(request);
         wrappedRequest.setAttribute(
@@ -164,12 +164,13 @@ final class PortletFailureExecutionWorker implements IPortletFailureExecutionWor
         wrappedRequest.setAttribute(
                 PortletErrorController.REQUEST_ATTRIBUTE__CURRENT_EXCEPTION_CAUSE, cause);
 
-        //Run pre-execution interceptors
+        // Run pre-execution interceptors
         for (final IPortletExecutionInterceptor interceptor : this.interceptors) {
             interceptor.preExecution(request, response, this);
         }
 
-        //Aggressive exception handling to make sure at least something is written out when an error happens.
+        // Aggressive exception handling to make sure at least something is written out when an
+        // error happens.
         try {
             final String characterEncoding = response.getCharacterEncoding();
             final RenderPortletOutputHandler renderPortletOutputHandler =

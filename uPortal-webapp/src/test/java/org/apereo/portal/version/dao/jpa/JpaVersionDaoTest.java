@@ -41,7 +41,7 @@ public class JpaVersionDaoTest extends BasePortalJpaDaoTest {
     public void testVersionLifecycle() {
         final String productName = "TEST_VERSION";
 
-        //Doesn't exist
+        // Doesn't exist
         this.execute(
                 new CallableWithoutResult() {
                     @Override
@@ -51,7 +51,7 @@ public class JpaVersionDaoTest extends BasePortalJpaDaoTest {
                     }
                 });
 
-        //Create
+        // Create
         this.execute(
                 new CallableWithoutResult() {
                     @Override
@@ -67,7 +67,7 @@ public class JpaVersionDaoTest extends BasePortalJpaDaoTest {
                     }
                 });
 
-        //Update
+        // Update
         this.execute(
                 new CallableWithoutResult() {
                     @Override
@@ -88,7 +88,7 @@ public class JpaVersionDaoTest extends BasePortalJpaDaoTest {
                     }
                 });
 
-        //verify
+        // verify
         this.execute(
                 new CallableWithoutResult() {
                     @Override
@@ -107,7 +107,7 @@ public class JpaVersionDaoTest extends BasePortalJpaDaoTest {
     public void testVersionBadSql() {
         final String productName = "TEST_VERSION";
 
-        //Create
+        // Create
         this.execute(
                 new CallableWithoutResult() {
                     @Override
@@ -125,7 +125,7 @@ public class JpaVersionDaoTest extends BasePortalJpaDaoTest {
 
         jdbcOperations.execute("ALTER TABLE UP_VERSION DROP LOCAL_VER");
         try {
-            //Doesn't exist
+            // Doesn't exist
             this.execute(
                     new CallableWithoutResult() {
                         @Override

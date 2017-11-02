@@ -95,18 +95,18 @@ public class RequestCacheAspect implements InitializingBean {
             currentPortalRequest = this.portalRequestUtils.getCurrentPortalRequest();
         } catch (IllegalStateException e) {
             logger.trace("No current portal request, will not cache result of: {}", cacheKey);
-            //No current request, simply proceed
+            // No current request, simply proceed
             return pjp.proceed();
         }
 
         final CacheStatistics cacheStatistics = this.getCacheStatistics(pjp, requestCache);
 
-        //Check in the cache for a result
+        // Check in the cache for a result
         final ConcurrentMap<CacheKey, Object> cache =
                 PortalWebUtils.getMapRequestAttribute(currentPortalRequest, CACHE_MAP);
         Object result = cache.get(cacheKey);
 
-        //Return null if placeholder was cached
+        // Return null if placeholder was cached
         if (requestCache.cacheNull() && result == NULL_PLACEHOLDER) {
             final long time = System.nanoTime() - start;
             cacheStatistics.recordHit(time);
@@ -114,7 +114,7 @@ public class RequestCacheAspect implements InitializingBean {
             logger.debug("Found cached null for invocation of: {}", cacheKey);
             return null;
         }
-        //Rethrow if exception was cached
+        // Rethrow if exception was cached
         if (requestCache.cacheException() && result instanceof ExceptionHolder) {
             final long time = System.nanoTime() - start;
             cacheStatistics.recordHit(time);
@@ -122,7 +122,7 @@ public class RequestCacheAspect implements InitializingBean {
             logger.debug("Found cached exception for invocation of: {}", cacheKey);
             throw ((ExceptionHolder) result).getThrowable();
         }
-        //Return cached result
+        // Return cached result
         if (result != null) {
             final long time = System.nanoTime() - start;
             cacheStatistics.recordHit(time);
@@ -132,18 +132,18 @@ public class RequestCacheAspect implements InitializingBean {
         }
 
         try {
-            //Execute the annotated method
+            // Execute the annotated method
             result = pjp.proceed();
             final long time = System.nanoTime() - start;
             cacheStatistics.recordMissAndLoad(time);
             overallStats.recordMissAndLoad(time);
 
             if (result != null) {
-                //Cache the not-null result
+                // Cache the not-null result
                 cache.put(cacheKey, result);
                 logger.debug("Cached result for invocation of: {}", cacheKey);
             } else if (requestCache.cacheNull()) {
-                //If caching nulls cache the placeholder
+                // If caching nulls cache the placeholder
                 cache.put(cacheKey, NULL_PLACEHOLDER);
                 logger.debug("Cached null for invocation of: {}", cacheKey);
             }
@@ -154,7 +154,7 @@ public class RequestCacheAspect implements InitializingBean {
             cacheStatistics.recordMissAndException(time);
             overallStats.recordMissAndException(time);
             if (requestCache.cacheException()) {
-                //If caching exceptions wrapp the exception and cache it
+                // If caching exceptions wrapp the exception and cache it
                 cache.put(cacheKey, new ExceptionHolder(t));
                 logger.debug("Cached exception for invocation of: {}", cacheKey);
             }

@@ -158,8 +158,7 @@ public class PropertyToAttributePropertiesManager extends BaseRequestPropertiesM
 
         for (@SuppressWarnings("unchecked")
                 final Enumeration<String> attributeNames = portalRequest.getAttributeNames();
-                attributeNames.hasMoreElements();
-                ) {
+                attributeNames.hasMoreElements(); ) {
             final String fullAttributeName = attributeNames.nextElement();
             final String propertyName = getPropertyName(windowIdStr, fullAttributeName);
             if (propertyName == null) {

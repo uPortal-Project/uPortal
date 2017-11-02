@@ -71,7 +71,7 @@ public class RequestAttributeServiceImpl implements RequestAttributeService {
             String attributeName) {
         if (IPortletRenderer.MULTIVALUED_USERINFO_MAP_ATTRIBUTE.equals(attributeName)) {
 
-            //Get the list of user attributes the portal knows about the user
+            // Get the list of user attributes the portal knows about the user
             final String remoteUser = httpServletRequest.getRemoteUser();
             if (remoteUser == null) {
                 return null;
@@ -105,12 +105,12 @@ public class RequestAttributeServiceImpl implements RequestAttributeService {
         final Map<String, List<Object>> resultUserInfoMap =
                 new HashMap<String, List<Object>>(expectedUserAttributes.size());
 
-        //Copy expected attributes to the USER_INFO Map
+        // Copy expected attributes to the USER_INFO Map
         final Map<String, List<Object>> attributes = personAttributes.getAttributes();
         for (final UserAttribute userAttributeDD : expectedUserAttributes) {
             final String userAttributeName = userAttributeDD.getName();
 
-            //containsKey check to handle attributes with a single null value
+            // containsKey check to handle attributes with a single null value
             if (attributes.containsKey(userAttributeName)) {
                 final List<Object> list_valueObjs = attributes.get(userAttributeName);
                 resultUserInfoMap.put(userAttributeName, list_valueObjs);

@@ -28,13 +28,13 @@ public class CharacterEventBufferReader implements CharacterEventReader {
 
     @Override
     public void close() {
-        //NO-OP
+        // NO-OP
     }
 
     @Override
     public CharacterEvent peek() {
         final CharacterEvent event = this.eventBuffer.next();
-        //Step back by one in the list
+        // Step back by one in the list
         this.eventBuffer.previous();
 
         return event;

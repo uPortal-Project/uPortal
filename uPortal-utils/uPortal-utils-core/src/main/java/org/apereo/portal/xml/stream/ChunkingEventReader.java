@@ -51,10 +51,10 @@ public class ChunkingEventReader extends BaseXMLEventReader {
     private final StringWriter writer;
     private boolean removeXmlDeclaration = true;
 
-    //to handle peek() calls
+    // to handle peek() calls
     private XMLEvent peekedEvent = null;
 
-    //Handle chunking immediately after a StartElement
+    // Handle chunking immediately after a StartElement
     private StartElement captureEvent = null;
 
     public ChunkingEventReader(
@@ -106,7 +106,7 @@ public class ChunkingEventReader extends BaseXMLEventReader {
     protected XMLEvent internalNextEvent() throws XMLStreamException {
         XMLEvent event = null;
 
-        //Read from the buffer if there was a peek
+        // Read from the buffer if there was a peek
         if (this.peekedEvent != null) {
             event = this.peekedEvent;
             this.peekedEvent = null;
@@ -142,20 +142,21 @@ public class ChunkingEventReader extends BaseXMLEventReader {
             if (previousEvent != null && previousEvent.isStartElement()) {
                 this.captureEvent = startElement;
 
-                //Write an empty Character event to force the serializer to finish writing the previous StartElement
-                //It is left open since ATTRIBUTE events can follow a START_ELEMENT event.
+                // Write an empty Character event to force the serializer to finish writing the
+                // previous StartElement
+                // It is left open since ATTRIBUTE events can follow a START_ELEMENT event.
                 return EVENT_FACTORY.createCharacters("");
             }
 
-            //Capture the characters written out to this point then clear the buffer
+            // Capture the characters written out to this point then clear the buffer
             this.captureCharacterDataEvent();
 
-            //Get the generated events for the element
+            // Get the generated events for the element
             final XMLEventReader parent = this.getParent();
             characterEventSource.generateCharacterEvents(
                     this.request, parent, startElement, this.characterEvents);
 
-            //Read the next event off the reader
+            // Read the next event off the reader
             final XMLEvent nextEvent = parent.nextEvent();
             if (nextEvent.isStartElement()) {
                 startElement = nextEvent.asStartElement();
@@ -172,7 +173,7 @@ public class ChunkingEventReader extends BaseXMLEventReader {
     protected void captureCharacterDataEvent() throws XMLStreamException {
         this.xmlEventWriter.flush();
 
-        //Add character chunk to events
+        // Add character chunk to events
         this.chunkString(this.characterEvents, this.writer.toString(), 0);
 
         this.clearWriter();
@@ -192,7 +193,7 @@ public class ChunkingEventReader extends BaseXMLEventReader {
             final List<CharacterEvent> characterEvents,
             final CharSequence buffer,
             int patternIndex) {
-        //Iterate over the chunking patterns
+        // Iterate over the chunking patterns
         for (; patternIndex < this.chunkingPatterns.length; patternIndex++) {
             final Pattern pattern = this.chunkingPatterns[patternIndex];
 
@@ -203,20 +204,21 @@ public class ChunkingEventReader extends BaseXMLEventReader {
                 int prevMatchEnd = 0;
 
                 do {
-                    //Add all of the text up to the match as a new chunk, use subSequence to avoid extra string alloc
+                    // Add all of the text up to the match as a new chunk, use subSequence to avoid
+                    // extra string alloc
                     this.chunkString(
                             characterEvents,
                             buffer.subSequence(prevMatchEnd, matcher.start()),
                             patternIndex + 1);
 
-                    //Get the generated CharacterEvents for the match
+                    // Get the generated CharacterEvents for the match
                     final MatchResult matchResult = matcher.toMatchResult();
                     eventSource.generateCharacterEvents(this.request, matchResult, characterEvents);
 
                     prevMatchEnd = matcher.end();
                 } while (matcher.find());
 
-                //Add any remaining text from the original CharacterDataEvent
+                // Add any remaining text from the original CharacterDataEvent
                 if (prevMatchEnd < buffer.length()) {
                     this.chunkString(
                             characterEvents,
@@ -228,9 +230,9 @@ public class ChunkingEventReader extends BaseXMLEventReader {
             }
         }
 
-        //Buffer didn't match anything, just append the string data
+        // Buffer didn't match anything, just append the string data
 
-        //de-duplication of the event string data
+        // de-duplication of the event string data
         final String eventString = buffer.toString();
         characterEvents.add(CharacterDataEventImpl.create(eventString));
     }

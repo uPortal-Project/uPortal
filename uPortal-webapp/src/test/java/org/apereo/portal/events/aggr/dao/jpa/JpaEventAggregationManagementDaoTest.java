@@ -293,14 +293,14 @@ public class JpaEventAggregationManagementDaoTest extends BaseAggrEventsJpaDaoTe
                                         academicTermDetail);
                                 fail();
                             } catch (IllegalArgumentException e) {
-                                //expected
+                                // expected
                             }
                         }
                     });
 
             fail();
         } catch (TransactionSystemException e) {
-            //Expected
+            // Expected
         }
 
         this.executeInTransaction(

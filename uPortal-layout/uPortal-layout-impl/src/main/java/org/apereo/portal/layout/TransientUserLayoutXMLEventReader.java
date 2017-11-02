@@ -59,16 +59,18 @@ public class TransientUserLayoutXMLEventReader extends InjectingXMLEventReader {
         if (event.isStartElement()) {
             final StartElement startElement = event.asStartElement();
 
-            //All following logic requires an ID attribute, ignore any element without one
+            // All following logic requires an ID attribute, ignore any element without one
             final Attribute idAttribute =
                     startElement.getAttributeByName(IUserLayoutManager.ID_ATTR_NAME);
             if (idAttribute == null) {
                 return null;
             }
 
-            // Create and return a transient (dynamically created) folder that includes a transient channel
+            // Create and return a transient (dynamically created) folder that includes a transient
+            // channel
             // if we are processing the tart element of the root node
-            // iff the subscribeId is present and describes a transient channel and not a regular layout channel.
+            // iff the subscribeId is present and describes a transient channel and not a regular
+            // layout channel.
             final String subscribeId = this.userLayoutManager.getFocusedId();
             if (this.rootFolderId.equals(idAttribute.getValue())
                     && subscribeId != null
@@ -130,7 +132,8 @@ public class TransientUserLayoutXMLEventReader extends InjectingXMLEventReader {
                                     null);
                     transientEventBuffer.add(transientFolder);
 
-                    //TODO Move IChannelDefinition/IPortletDefinition -> StAX events code somewhere reusable
+                    // TODO Move IChannelDefinition/IPortletDefinition -> StAX events code somewhere
+                    // reusable
                     final Collection<Attribute> channelAttrs = new LinkedList<Attribute>();
                     channelAttrs.add(EVENT_FACTORY.createAttribute("ID", subscribeId));
                     channelAttrs.add(
@@ -207,7 +210,8 @@ public class TransientUserLayoutXMLEventReader extends InjectingXMLEventReader {
 
     @Override
     protected XMLEvent getPeekEvent(XMLEvent event) {
-        //Not the most efficient way of doing this since the whole deque is built but we only need the first element.
+        // Not the most efficient way of doing this since the whole deque is built but we only need
+        // the first element.
         final Deque<XMLEvent> additionalEvents = this.getAdditionalEvents(event);
         if (additionalEvents != null) {
             return additionalEvents.pop();

@@ -93,7 +93,7 @@ public class CachingPortletOutputHandlerTest {
         printWriter.write(output);
         printWriter.write(output);
 
-        //Verify limit was hit
+        // Verify limit was hit
         CachedPortletData<Long> cachedPortletData =
                 cachingOutputHandler.getCachedPortletData(1l, new CacheControlImpl());
         assertNull(cachedPortletData);
@@ -102,7 +102,7 @@ public class CachingPortletOutputHandlerTest {
 
         printWriter.write(output);
 
-        //Verify limit reset
+        // Verify limit reset
         cachedPortletData = cachingOutputHandler.getCachedPortletData(1l, new CacheControlImpl());
         assertNotNull(cachedPortletData);
         assertEquals(output, cachedPortletData.getCachedWriterOutput());

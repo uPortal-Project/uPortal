@@ -150,7 +150,8 @@ public class SitemapPortletController {
                             + "auto-wire");
         }
 
-        // retrieve the user layout with structure attributes applied (required in order to display tab groups)
+        // retrieve the user layout with structure attributes applied (required in order to display
+        // tab groups)
         final HttpServletRequest httpServletRequest =
                 this.portalRequestUtils.getPortletHttpRequest(request);
         final HttpServletResponse httpServletResponse =

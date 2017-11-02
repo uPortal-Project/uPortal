@@ -160,7 +160,7 @@ public class CasAssertionSecurityContext extends ChainingSecurityContext
             postAuthenticate(assertion);
         }
 
-        this.myAdditionalDescriptor = null; //no additional descriptor from CAS
+        this.myAdditionalDescriptor = null; // no additional descriptor from CAS
         super.authenticate();
         if (log.isTraceEnabled()) {
             log.trace("Finished CAS Authentication");

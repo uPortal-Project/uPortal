@@ -143,7 +143,7 @@ public class MarketplaceSearchService implements IPortalSearchService {
                     fNameParam.getValue().add(portlet.getFName());
                     url.getParam().add(fNameParam);
                     result.setPortletUrl(url);
-                    //Add the result to list to return
+                    // Add the result to list to return
                     results.getSearchResult().add(result);
                 }
             }

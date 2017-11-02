@@ -72,13 +72,15 @@ public class PasswordCachingCasAssertionSecurityContext extends CasAssertionSecu
      *     also updated
      */
     protected byte[] retrievePasswordFromCasServer(Assertion assertion) {
-        // Get the Proxy Granting Ticket from the assertion and use it to obtain the user's password.
+        // Get the Proxy Granting Ticket from the assertion and use it to obtain the user's
+        // password.
         log.debug(
                 "Attempting to get CAS ClearPass Proxy Ticket for user {} using PGTIOU in assertion",
                 assertion.getPrincipal().getName());
         String proxyTicket = assertion.getPrincipal().getProxyTicketFor(this.clearPassUrl);
 
-        // If we were able to get the proxy ticket (it was delivered to this server or replicated to this server),
+        // If we were able to get the proxy ticket (it was delivered to this server or replicated to
+        // this server),
         // invoke CAS to retrieve the password.
         if (proxyTicket != null) {
             log.debug(
@@ -95,8 +97,10 @@ public class PasswordCachingCasAssertionSecurityContext extends CasAssertionSecu
         }
 
         if (cachedCredentials == null) {
-            // If the proxy ticket is not available because it was sent to another server and hasn't replicated to this
-            // server yet, or if the password retrieval from CAS failed for some reason we'll log a message.
+            // If the proxy ticket is not available because it was sent to another server and hasn't
+            // replicated to this
+            // server yet, or if the password retrieval from CAS failed for some reason we'll log a
+            // message.
             log.error(
                     "Unable to obtain {} for {} from CAS ClearPass. Check your"
                             + " uPortal and CAS configuration.  See uPortal manual section on Caching and"

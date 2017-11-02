@@ -34,13 +34,13 @@ public class XMLEventBufferReader implements XMLEventReader {
 
     @Override
     public void close() {
-        //NO-OP
+        // NO-OP
     }
 
     @Override
     public XMLEvent peek() {
         final XMLEvent event = this.eventBuffer.next();
-        //Step back by one in the list
+        // Step back by one in the list
         this.eventBuffer.previous();
 
         return event;
@@ -95,7 +95,7 @@ public class XMLEventBufferReader implements XMLEventReader {
                 case XMLStreamConstants.COMMENT:
                 case XMLStreamConstants.PROCESSING_INSTRUCTION:
                     {
-                        //Ignore
+                        // Ignore
                         break;
                     }
                 default:

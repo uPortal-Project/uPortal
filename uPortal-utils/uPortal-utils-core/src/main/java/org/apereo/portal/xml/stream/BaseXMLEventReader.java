@@ -102,7 +102,7 @@ public abstract class BaseXMLEventReader extends EventReaderDelegate {
                 case XMLStreamConstants.COMMENT:
                 case XMLStreamConstants.PROCESSING_INSTRUCTION:
                     {
-                        //Ignore
+                        // Ignore
                         break;
                     }
                 default:

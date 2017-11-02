@@ -70,7 +70,7 @@ public final class PortletCachingHeaderUtils {
             }
 
             if (maxAge < 0) {
-                //If caching "forever" set expires and max-age to 1 year
+                // If caching "forever" set expires and max-age to 1 year
                 maxAge = YEAR_OF_SECONDS;
             }
 

@@ -53,11 +53,11 @@ public class EventingLocalContainerEntityManagerFactoryBean
     protected EntityManagerFactory createNativeEntityManagerFactory() throws PersistenceException {
         final String persistenceUnitName = this.getPersistenceUnitName();
 
-        //Create actual EMF
+        // Create actual EMF
         final EntityManagerFactory nativeEntityManagerFactory =
                 super.createNativeEntityManagerFactory();
 
-        //Add a proxy to the EMF which results in events
+        // Add a proxy to the EMF which results in events
         final ProxyFactory proxyFactory = new ProxyFactory(nativeEntityManagerFactory);
         proxyFactory.addAdvice(
                 new EventingEntityMangerFactoryInterceptor(
@@ -97,7 +97,7 @@ public class EventingLocalContainerEntityManagerFactoryBean
                                 this, entityManagerId, persistenceUnitName, entityManager);
                 applicationEventPublisher.publishEvent(entityManagerCreatedEvent);
 
-                //Add a proxy to the EMF which results in events
+                // Add a proxy to the EMF which results in events
                 final ProxyFactory proxyFactory = new ProxyFactory(entityManager);
                 proxyFactory.addAdvice(
                         new EventingEntityMangerInterceptor(

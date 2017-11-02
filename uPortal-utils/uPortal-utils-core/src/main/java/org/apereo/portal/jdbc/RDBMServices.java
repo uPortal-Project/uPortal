@@ -57,7 +57,7 @@ public class RDBMServices {
 
     private static final Log LOG = LogFactory.getLog(RDBMServices.class);
 
-    //DBFlag constants
+    // DBFlag constants
     private static final String FLAG_TRUE = "Y";
     private static final String FLAG_TRUE_OTHER = "T";
     private static final String FLAG_FALSE = "N";
@@ -189,7 +189,8 @@ public class RDBMServices {
      */
     @Deprecated
     public static void releaseConnection(final Connection con) {
-        // If we had failed allocating the connection, insure we don't try to count it or close it. UP-4446
+        // If we had failed allocating the connection, insure we don't try to count it or close it.
+        // UP-4446
         if (con != null) {
             try {
                 activeConnections.decrementAndGet();
@@ -201,9 +202,9 @@ public class RDBMServices {
         }
     }
 
-    //******************************************
+    // ******************************************
     // Utility Methods
-    //******************************************
+    // ******************************************
 
     /**
      * Close a ResultSet
@@ -312,9 +313,9 @@ public class RDBMServices {
         return dbMetaData.getJdbcUser();
     }
 
-    //******************************************
+    // ******************************************
     // Data Type / Formatting Methods
-    //******************************************
+    // ******************************************
 
     /**
      * Return DB format of a boolean. "Y" for true and "N" for false.

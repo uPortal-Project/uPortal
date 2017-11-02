@@ -34,7 +34,7 @@ import org.apache.commons.logging.LogFactory;
  * </code> to true.
  */
 public class JavaManagementServerListener implements ServletContextListener {
-    //Init-parameters
+    // Init-parameters
     public static final String JMX_RMI_HOST =
             "org.apereo.portal.servlet.JavaManagementServerListener.host";
     public static final String JMX_RMI_PORT_1 =
@@ -79,10 +79,10 @@ public class JavaManagementServerListener implements ServletContextListener {
     public void contextInitialized(ServletContextEvent event) {
         final ServletContext servletContext = event.getServletContext();
 
-        //Create the bean
+        // Create the bean
         this.javaManagementServerBean = new JavaManagementServerBean();
 
-        //Get the failOnException option
+        // Get the failOnException option
         final String failOnExceptionStr = servletContext.getInitParameter(FAIL_ON_EXCEPTION);
         boolean failOnException = Boolean.parseBoolean(failOnExceptionStr);
         this.javaManagementServerBean.setFailOnException(failOnException);
@@ -90,7 +90,7 @@ public class JavaManagementServerListener implements ServletContextListener {
         final String host = servletContext.getInitParameter(JMX_RMI_HOST);
         this.javaManagementServerBean.setHost(host);
 
-        //Get the base rmi port from the init parameters
+        // Get the base rmi port from the init parameters
         final String portOneStr = servletContext.getInitParameter(JMX_RMI_PORT_1);
         try {
             final int portOne = Integer.parseInt(portOneStr);
@@ -106,7 +106,7 @@ public class JavaManagementServerListener implements ServletContextListener {
                             nfe);
         }
 
-        //Get the second rmi port from the init parameters
+        // Get the second rmi port from the init parameters
         final String portTwoStr = servletContext.getInitParameter(JMX_RMI_PORT_2);
         try {
             final int portTwo = Integer.parseInt(portTwoStr);

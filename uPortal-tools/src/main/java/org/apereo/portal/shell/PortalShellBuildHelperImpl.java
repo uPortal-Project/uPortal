@@ -97,7 +97,7 @@ public class PortalShellBuildHelperImpl implements PortalShellBuildHelper {
             PortalShell.LOGGER.info("");
             PortalShell.LOGGER.info("");
 
-            //DbLoader Script
+            // DbLoader Script
             final DbLoaderConfigBuilder dbLoaderConfig = new DbLoaderConfigBuilder();
             dbLoaderConfig.setTablesFile(tablesFile);
             dbLoaderConfig.setDataFile(dataFile);
@@ -164,7 +164,7 @@ public class PortalShellBuildHelperImpl implements PortalShellBuildHelper {
     @Override
     public void hibernateUpdate(
             String target, String databaseQualifier, boolean export, String outputFile) {
-        //TODO add upgrade-state to up_version table to handle a failure during the hbm2ddl update
+        // TODO add upgrade-state to up_version table to handle a failure during the hbm2ddl update
         this.versionedDataUpdater.preUpdateDatabase(databaseQualifier);
 
         updateScript(target, databaseQualifier, outputFile, export);
@@ -211,7 +211,7 @@ public class PortalShellBuildHelperImpl implements PortalShellBuildHelper {
     public void dataList(String target, String type) {
         try {
             if (StringUtils.isBlank(type)) {
-                //List Data Types Script
+                // List Data Types Script
                 PortalShell.LOGGER.info("");
                 PortalShell.LOGGER.info("");
                 PortalShell.LOGGER.info("Export and Delete Support by Data Type");
@@ -219,7 +219,7 @@ public class PortalShellBuildHelperImpl implements PortalShellBuildHelper {
                 PortalShell.LOGGER.info(
                         "Add -Dtype=dataType To get a list of data keys for the type");
             } else {
-                //List Data Script
+                // List Data Script
                 final Iterable<? extends IPortalData> data =
                         portalDataHandlerService.getPortalData(type);
                 PortalShell.LOGGER.info("");
@@ -360,7 +360,7 @@ public class PortalShellBuildHelperImpl implements PortalShellBuildHelper {
 
     @Override
     public void dataDelete(String target, String type, String sysid) {
-        //Data Delete Script
+        // Data Delete Script
         PortalShell.LOGGER.info("");
         PortalShell.LOGGER.info("");
 
@@ -377,7 +377,7 @@ public class PortalShellBuildHelperImpl implements PortalShellBuildHelper {
     @Override
     public void deleteUser(String target, String user) {
         try {
-            //Delete USer Script
+            // Delete USer Script
             PortalShell.LOGGER.info("");
             PortalShell.LOGGER.info("");
 

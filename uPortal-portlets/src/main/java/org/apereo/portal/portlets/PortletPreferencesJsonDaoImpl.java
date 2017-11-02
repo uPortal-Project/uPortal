@@ -81,7 +81,7 @@ public class PortletPreferencesJsonDaoImpl implements PortletPreferencesJsonDao 
     public JsonNode getJsonNode(PortletPreferences prefs, String key) throws IOException {
         final String prefValue = StringUtils.trimToNull(prefs.getValue(key, null));
         if (prefValue == null) {
-            //Default to an empty object
+            // Default to an empty object
             return mapper.createObjectNode();
         }
         return mapper.readTree(prefValue);

@@ -272,7 +272,7 @@ public class GrouperEntityGroupStore implements IEntityGroupStore, IEntityStore,
                                         + " from group: "
                                         + group.getLocalKey());
                     }
-                    //use the name instead of id as it shows better in the display
+                    // use the name instead of id as it shows better in the display
                     IGroupMember member = new EntityImpl(gInfo.getName(), IPerson.class);
                     members.add(member);
                 }
@@ -379,7 +379,7 @@ public class GrouperEntityGroupStore implements IEntityGroupStore, IEntityStore,
             final int method,
             @SuppressWarnings("unchecked") final Class leaftype) {
 
-        //only search for groups
+        // only search for groups
         if (leaftype != IPerson.class) {
             return new EntityIdentifier[] {};
         }
@@ -398,7 +398,7 @@ public class GrouperEntityGroupStore implements IEntityGroupStore, IEntityStore,
 
             GcFindGroups groupSearch = new GcFindGroups();
             WsQueryFilter filter = new WsQueryFilter();
-            //is this an exact search or fuzzy
+            // is this an exact search or fuzzy
             if (method == IGroupConstants.IS) {
                 filter.setQueryFilterType("FIND_BY_GROUP_NAME_EXACT");
             } else {

@@ -130,7 +130,8 @@ public class DataSourceSchemaExport implements ISchemaExport, HibernateConfigura
                     } catch (BadSqlGrammarException | UncategorizedSQLException e) {
                         // For HSQL database and ant db-update to avoid failing when attempting to
                         // delete a sequence that does not exist.
-                        // Needed until Hibernate 5.  See https://hibernate.atlassian.net/browse/HHH-7002.
+                        // Needed until Hibernate 5.  See
+                        // https://hibernate.atlassian.net/browse/HHH-7002.
                         if (sqlCommand.contains("drop constraint")) {
                             logger.info(
                                     "Failed to execute (probably ignorable): {}, error message {}",

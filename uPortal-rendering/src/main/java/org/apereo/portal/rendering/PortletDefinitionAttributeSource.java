@@ -78,14 +78,15 @@ public class PortletDefinitionAttributeSource implements AttributeSource, BeanNa
         final QName eventName = event.getName();
         final String localEventName = eventName.getLocalPart();
 
-        //Only pay attention to channel events
+        // Only pay attention to channel events
         if (!IUserLayoutManager.CHANNEL.equals(localEventName)) {
             return null;
         }
 
         final Collection<Attribute> attributes = new LinkedList<Attribute>();
 
-        // Add the portlet's portlet name and either the webapp URL or framework flag to the list of attributes.
+        // Add the portlet's portlet name and either the webapp URL or framework flag to the list of
+        // attributes.
         final Attribute fnameAttribute = event.getAttributeByName(PORTLET_FNAME_ATTR_NAME);
         if (fnameAttribute != null) {
             final String fname = fnameAttribute.getValue();

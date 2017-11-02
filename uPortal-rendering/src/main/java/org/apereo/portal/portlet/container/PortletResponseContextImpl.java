@@ -68,7 +68,7 @@ public class PortletResponseContextImpl extends AbstractPortletContextImpl
 
     @Override
     public final void addProperty(String key, Element element) {
-        //uPortal doesn't support XML properties
+        // uPortal doesn't support XML properties
     }
 
     @Override

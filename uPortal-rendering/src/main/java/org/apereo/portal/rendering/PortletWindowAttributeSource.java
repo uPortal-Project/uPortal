@@ -62,7 +62,7 @@ public class PortletWindowAttributeSource implements AttributeSource, BeanNameAw
         final QName eventName = event.getName();
         final String localEventName = eventName.getLocalPart();
 
-        //Only pay attention to channel events
+        // Only pay attention to channel events
         if (!IUserLayoutManager.CHANNEL.equals(localEventName)) {
             return null;
         }
@@ -74,19 +74,19 @@ public class PortletWindowAttributeSource implements AttributeSource, BeanNameAw
             return null;
         }
 
-        //Lookup the portlet window for the layout node
+        // Lookup the portlet window for the layout node
         final IPortletWindow portletWindow = portletWindowAndElement.first;
 
-        //Create the attributes
+        // Create the attributes
         final Collection<Attribute> attributes = new LinkedList<Attribute>();
 
-        //Add window state data
+        // Add window state data
         final WindowState windowState = getWindowState(request, portletWindow);
         final Attribute windowStateAttribute =
                 xmlEventFactory.createAttribute("windowState", windowState.toString());
         attributes.add(windowStateAttribute);
 
-        //Add portlet mode data
+        // Add portlet mode data
         final PortletMode portletMode = portletWindow.getPortletMode();
         final Attribute portletModeAttribute =
                 xmlEventFactory.createAttribute("portletMode", portletMode.toString());

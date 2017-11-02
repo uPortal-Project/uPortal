@@ -194,7 +194,7 @@ public class DialectAwareTransactionInterceptor
             final TransactionAttribute transactionAttribute =
                     transactionAttributeSource.getTransactionAttribute(method, targetClass);
 
-            //No dialect ignore support if transactionAttribute is null
+            // No dialect ignore support if transactionAttribute is null
             if (transactionAttribute == null) {
                 return transactionAttribute;
             }
@@ -202,26 +202,28 @@ public class DialectAwareTransactionInterceptor
             final DialectAwareTransactional ann =
                     getDialectAwareTransactionalAnnotation(method, targetClass);
 
-            //No DialectAwareTransactional annotation, just return the original transactionAttribute
+            // No DialectAwareTransactional annotation, just return the original
+            // transactionAttribute
             if (ann == null) {
                 return transactionAttribute;
             }
 
-            //Check if a TX is needed for the Dialect
+            // Check if a TX is needed for the Dialect
             final Class<? extends Dialect> dialect = determineDialect(method, transactionAttribute);
             final boolean ignored = isDialectIgnored(dialect, ann);
 
-            //Dialect is ignored
+            // Dialect is ignored
             if (!ignored) {
                 return transactionAttribute;
             }
 
-            //Determine interfaces to proxy
+            // Determine interfaces to proxy
             @SuppressWarnings("rawtypes")
             final Set<Class<?>> interfaces = ClassUtils.getAllInterfacesAsSet(transactionAttribute);
             interfaces.add(SkipTransactionAttribute.class);
 
-            //Proxy the existing transactionAttribute to mix in our SkipTransactionAttribute interface
+            // Proxy the existing transactionAttribute to mix in our SkipTransactionAttribute
+            // interface
             return (TransactionAttribute)
                     Proxy.newProxyInstance(
                             DialectAwareTransactionInterceptor.class.getClassLoader(),

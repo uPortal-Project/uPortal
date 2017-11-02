@@ -61,7 +61,8 @@ class JAASSecurityContext extends ChainingSecurityContext
                                 new JAASInlineCallbackHandler(
                                         this.myPrincipal.UID,
                                         (new String(this.myOpaqueCredentials.credentialstring))
-                                                .toCharArray())); // could not come up w/ a better way to do this
+                                                .toCharArray())); // could not come up w/ a better
+                // way to do this
 
                 lc.login();
                 additionalDescriptor = new JAASSubject(lc.getSubject());

@@ -63,18 +63,19 @@ public class PersonDirectoryCacheKeyGenerator implements CacheKeyGenerator {
 
     @Override
     public Serializable generateKey(MethodInvocation methodInvocation) {
-        //Determine the targeted CachableMethod
+        // Determine the targeted CachableMethod
         final CachableMethod cachableMethod =
                 this.resolvedMethodCache.getUnchecked(methodInvocation.getMethod());
 
-        //Use the resolved cachableMethod to determine the seed Map and then get the hash of the key elements
+        // Use the resolved cachableMethod to determine the seed Map and then get the hash of the
+        // key elements
         final Object[] methodArguments = methodInvocation.getArguments();
 
         final CacheKey.CacheKeyBuilder<String, Serializable> cacheKeyBuilder =
                 CacheKey.builder(cachableMethod.getName());
 
         switch (cachableMethod) {
-                //Both methods that take a Map argument can just have the first argument returned
+                // Both methods that take a Map argument can just have the first argument returned
             case PEOPLE_MAP:
             case PEOPLE_MULTIVALUED_MAP:
             case MULTIVALUED_USER_ATTRIBUTES__MAP:
@@ -82,7 +83,7 @@ public class PersonDirectoryCacheKeyGenerator implements CacheKeyGenerator {
                 {
                     final Map<String, Object> queryMap = (Map<String, Object>) methodArguments[0];
 
-                    //If possible tag the cache key with the username
+                    // If possible tag the cache key with the username
                     final String usernameAttribute =
                             this.usernameAttributeProvider.getUsernameAttribute();
                     Object usernameValue = queryMap.get(usernameAttribute);
@@ -106,7 +107,7 @@ public class PersonDirectoryCacheKeyGenerator implements CacheKeyGenerator {
                         final String key = e.getKey();
                         final Object value = e.getValue();
 
-                        //Skip null/empty attribute values
+                        // Skip null/empty attribute values
                         if (ignoreEmptyAttributes
                                 && (value == null
                                         || (value instanceof Collection
@@ -126,7 +127,8 @@ public class PersonDirectoryCacheKeyGenerator implements CacheKeyGenerator {
                     break;
                 }
 
-                //The multivalued attributes with a string needs to be converted to Map<String, List<Object>>
+                // The multivalued attributes with a string needs to be converted to Map<String,
+                // List<Object>>
             case MULTIVALUED_USER_ATTRIBUTES__STR:
                 {
                     final String uid = (String) methodArguments[0];
@@ -139,7 +141,8 @@ public class PersonDirectoryCacheKeyGenerator implements CacheKeyGenerator {
                     break;
                 }
 
-                //The single valued attributes with a string needs to be converted to Map<String, Object>
+                // The single valued attributes with a string needs to be converted to Map<String,
+                // Object>
             case PERSON_STR:
             case USER_ATTRIBUTES__STR:
                 {

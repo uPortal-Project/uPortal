@@ -120,14 +120,17 @@ public class SearchPortletController {
     private int maximumSearchesPerMinute = 18;
 
     private int maxAutocompleteSearchResults = 10;
-    // Map of (search result type, priority) to prioritize search autocomplete results.  0 is default priority.
+    // Map of (search result type, priority) to prioritize search autocomplete results.  0 is
+    // default priority.
     // > 0 is higher priority, < 0 is lower priority.
     private Map<String, Integer> autocompleteResultTypeToPriorityMap = new HashMap<>();
 
     private IPortalSpELService spELService;
 
-    // TODO: It would be better to revise the search event to have a set of ignored types and expect the
-    // search event listeners to voluntarily ignore the search event if they are one of the ignored types (and
+    // TODO: It would be better to revise the search event to have a set of ignored types and expect
+    // the
+    // search event listeners to voluntarily ignore the search event if they are one of the ignored
+    // types (and
     // again filtering here in case the search event listener doesn't respect the ignore set).
     // This requires changing the SearchEvent and unfortunately there is not time for that now.
     private Set<String> autocompleteIgnoreResultTypes = new HashSet<>();
@@ -189,7 +192,7 @@ public class SearchPortletController {
      */
     @SuppressWarnings("unchecked")
     @Resource(name = "searchTabs")
-    //Map of tab-key to string or collection<string> of search result types
+    // Map of tab-key to string or collection<string> of search result types
     public void setSearchTabs(Map<String, Object> searchTabMappings) {
         final Map<String, Set<String>> resultTypeMappingsBuilder = new LinkedHashMap<>();
         final List<String> tabKeysBuilder = new ArrayList<>(searchTabMappings.size());
@@ -260,7 +263,8 @@ public class SearchPortletController {
                 response.setRenderParameter("hitMaxQueries", Boolean.TRUE.toString());
                 response.setRenderParameter("query", query);
             } else {
-                // For Ajax return to a nonexistent file to generate the 404 error since it was easier for the
+                // For Ajax return to a nonexistent file to generate the 404 error since it was
+                // easier for the
                 // UI to have an error response.
                 final String contextPath = request.getContextPath();
                 response.sendRedirect(contextPath + AJAX_MAX_QUERIES_URL);
@@ -306,13 +310,13 @@ public class SearchPortletController {
         boolean tooManyQueries = false;
         Cache<String, Boolean> searchCounterCache = getSearchCounterCache(session);
 
-        //Store the query id to track number of searches/minute
+        // Store the query id to track number of searches/minute
         searchCounterCache.put(queryId, Boolean.TRUE);
         if (searchCounterCache.size() > this.maximumSearchesPerMinute) {
-            //Make sure old data is expired
+            // Make sure old data is expired
             searchCounterCache.cleanUp();
 
-            //Too many searches in the last minute, fail the search
+            // Too many searches in the last minute, fail the search
             if (searchCounterCache.size() > this.maximumSearchesPerMinute) {
                 tooManyQueries = true;
             }
@@ -366,24 +370,30 @@ public class SearchPortletController {
     @SuppressWarnings("unchecked")
     @EventMapping(SearchConstants.SEARCH_REQUEST_QNAME_STRING)
     public void handleSearchRequest(EventRequest request, EventResponse response) {
-        // UP-3887 Design flaw.  Both the searchLauncher portlet instance and the search portlet instance receive
-        // searchRequest and searchResult events because they are in the same portlet code base (to share
-        // autosuggest_handler.jsp and because we have to calculate the search portlet url for the ajax call)
+        // UP-3887 Design flaw.  Both the searchLauncher portlet instance and the search portlet
+        // instance receive
+        // searchRequest and searchResult events because they are in the same portlet code base (to
+        // share
+        // autosuggest_handler.jsp and because we have to calculate the search portlet url for the
+        // ajax call)
         // and share the portlet.xml which defines the event handling behavior.
-        // If this instance is the searchLauncher, ignore the searchResult. The search was submitted to the search
+        // If this instance is the searchLauncher, ignore the searchResult. The search was submitted
+        // to the search
         // portlet instance.
         final String searchLaunchFname =
                 request.getPreferences().getValue(SEARCH_LAUNCH_FNAME, null);
         if (searchLaunchFname != null) {
             // Noisy in debug mode so commented out log statement
-            // logger.debug("SearchLauncher does not participate in SearchRequest events so discarding message");
+            // logger.debug("SearchLauncher does not participate in SearchRequest events so
+            // discarding message");
             return;
         }
 
         final Event event = request.getEvent();
         final SearchRequest searchQuery = (SearchRequest) event.getValue();
 
-        //Map used to track searches that have been handled, used so that one search doesn't get duplicate results
+        // Map used to track searches that have been handled, used so that one search doesn't get
+        // duplicate results
         ConcurrentMap<String, Boolean> searchHandledCache;
         final PortletSession session = request.getPortletSession();
         synchronized (org.springframework.web.portlet.util.PortletUtils.getSessionMutex(session)) {
@@ -407,17 +417,17 @@ public class SearchPortletController {
 
         final String queryId = searchQuery.getQueryId();
         if (searchHandledCache.putIfAbsent(queryId, Boolean.TRUE) != null) {
-            //Already handled this search request
+            // Already handled this search request
             return;
         }
 
-        //Create the results
+        // Create the results
         final SearchResults results = new SearchResults();
         results.setQueryId(queryId);
         results.setWindowId(request.getWindowID());
         final List<SearchResult> searchResultList = results.getSearchResult();
 
-        //Run the search for each service appending the results
+        // Run the search for each service appending the results
         for (IPortalSearchService searchService : searchServices) {
             try {
                 logger.debug(
@@ -442,7 +452,7 @@ public class SearchPortletController {
             }
         }
 
-        //Respond with a results event if results were found
+        // Respond with a results event if results were found
         if (!searchResultList.isEmpty()) {
             response.setEvent(SearchConstants.SEARCH_RESULTS_QNAME, results);
         }
@@ -452,17 +462,22 @@ public class SearchPortletController {
     @EventMapping(SearchConstants.SEARCH_RESULTS_QNAME_STRING)
     public void handleSearchResult(EventRequest request) {
 
-        // UP-3887 Design flaw.  Both the searchLauncher portlet instance and the search portlet instance receive
-        // searchRequest and searchResult events because they are in the same portlet code base (to share
-        // autosuggest_handler.jsp and because we have to calculate the search portlet url for the ajax call)
+        // UP-3887 Design flaw.  Both the searchLauncher portlet instance and the search portlet
+        // instance receive
+        // searchRequest and searchResult events because they are in the same portlet code base (to
+        // share
+        // autosuggest_handler.jsp and because we have to calculate the search portlet url for the
+        // ajax call)
         // and share the portlet.xml which defines the event handling behavior.
-        // If this instance is the searchLauncher, ignore the searchResult. The search was submitted to the search
+        // If this instance is the searchLauncher, ignore the searchResult. The search was submitted
+        // to the search
         // portlet instance.
         final String searchLaunchFname =
                 request.getPreferences().getValue(SEARCH_LAUNCH_FNAME, null);
         if (searchLaunchFname != null) {
             // Noisy in debug mode so commenting out debug message
-            // logger.debug("SearchLauncher does not process SearchResponse events so discarding message");
+            // logger.debug("SearchLauncher does not process SearchResponse events so discarding
+            // message");
             return;
         }
 
@@ -495,7 +510,7 @@ public class SearchPortletController {
         final IPortletWindowId portletWindowId =
                 this.portletWindowRegistry.getPortletWindowId(httpServletRequest, windowId);
 
-        //Add the other portlet's results to the main search results object
+        // Add the other portlet's results to the main search results object
         this.addSearchResults(portletSearchResults, results, httpServletRequest, portletWindowId);
     }
 
@@ -532,7 +547,8 @@ public class SearchPortletController {
             viewName = isMobile ? "/jsp/Search/mobileSearch" : "/jsp/Search/search";
         }
 
-        // If this search portlet is configured to be the searchLauncher, calculate the URLs to the indicated
+        // If this search portlet is configured to be the searchLauncher, calculate the URLs to the
+        // indicated
         // search portlet.
         PortletPreferences prefs = request.getPreferences();
         final String searchLaunchFname = prefs.getValue(SEARCH_LAUNCH_FNAME, null);
@@ -739,7 +755,8 @@ public class SearchPortletController {
         return prioritizedResultsMap;
     }
 
-    // Remove extraneous spaces, newlines, returns, tabs, etc. and limit the length.  This helps improve performance
+    // Remove extraneous spaces, newlines, returns, tabs, etc. and limit the length.  This helps
+    // improve performance
     // for slower network connections and makes autocomplete UI results smaller/shorter.
     private String cleanAndTrimString(String text, int maxTextLength) {
         if (StringUtils.isNotBlank(text)) {
@@ -819,7 +836,8 @@ public class SearchPortletController {
             SearchResult result,
             final HttpServletRequest httpServletRequest,
             final IPortletWindowId portletWindowId) {
-        // If the title contains a SpEL expression, parse it with the portlet definition in the evaluation context.
+        // If the title contains a SpEL expression, parse it with the portlet definition in the
+        // evaluation context.
         if (result.getType().size() > 0 && result.getTitle().contains("${")) {
             final IPortletWindow portletWindow =
                     this.portletWindowRegistry.getPortletWindow(

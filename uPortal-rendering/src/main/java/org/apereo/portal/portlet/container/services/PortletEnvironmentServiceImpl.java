@@ -79,7 +79,8 @@ public class PortletEnvironmentServiceImpl implements PortletEnvironmentService 
     @Override
     public PortletSession createPortletSession(
             PortletContext portletContext, PortletWindow portletWindow, HttpSession session) {
-        // TODO pluto 1.1 PortletEnvironmentService#createPortletSession passed in the request; now use IPortalRequestUtils#getCurrentPortalRequest()?
+        // TODO pluto 1.1 PortletEnvironmentService#createPortletSession passed in the request; now
+        // use IPortalRequestUtils#getCurrentPortalRequest()?
         final HttpServletRequest request = portalRequestUtils.getCurrentPortalRequest();
         final IPortletWindow internalPortletWindow =
                 this.portletWindowRegistry.convertPortletWindow(request, portletWindow);

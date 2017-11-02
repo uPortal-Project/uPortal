@@ -66,12 +66,12 @@ public class CachedPortletResourceData<T extends Serializable>
     }
 
     public final void replay(PortletResourceOutputHandler portletOutputHandler) throws IOException {
-        //Write status
+        // Write status
         if (status != null) {
             portletOutputHandler.setStatus(status);
         }
 
-        //Write out headers
+        // Write out headers
         for (final Entry<String, List<Serializable>> headerEntry : headers.entrySet()) {
             final String name = headerEntry.getKey();
             for (final Serializable value : headerEntry.getValue()) {
@@ -85,7 +85,7 @@ public class CachedPortletResourceData<T extends Serializable>
             }
         }
 
-        //Set explicit parameters
+        // Set explicit parameters
         if (characterEncoding != null) {
             portletOutputHandler.setCharacterEncoding(characterEncoding);
         }
@@ -96,7 +96,7 @@ public class CachedPortletResourceData<T extends Serializable>
             portletOutputHandler.setLocale(locale);
         }
 
-        //Set the caching related headers
+        // Set the caching related headers
         PortletCachingHeaderUtils.setCachingHeaders(cachedPortletData, portletOutputHandler);
 
         this.cachedPortletData.replay(portletOutputHandler);

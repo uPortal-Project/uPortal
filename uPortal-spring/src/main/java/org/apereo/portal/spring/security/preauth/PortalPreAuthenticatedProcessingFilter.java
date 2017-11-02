@@ -75,7 +75,7 @@ public class PortalPreAuthenticatedProcessingFilter
     private IdentitySwapperManager identitySwapperManager;
     private ApplicationEventPublisher eventPublisher;
 
-    private boolean clearSecurityContextPriorToPortalAuthentication = true; //default
+    private boolean clearSecurityContextPriorToPortalAuthentication = true; // default
 
     // Empty set is the default for automated tests
     private Set<ISecurityContextFactory> securityContextFactories = Collections.emptySet();
@@ -192,7 +192,8 @@ public class PortalPreAuthenticatedProcessingFilter
 
     @Override
     protected Object getPreAuthenticatedCredentials(HttpServletRequest request) {
-        // if there's no session, the user hasn't yet visited the login servlet and we should just give up
+        // if there's no session, the user hasn't yet visited the login servlet and we should just
+        // give up
         HttpSession session = request.getSession(false);
         if (session == null) {
             return null;
@@ -205,7 +206,8 @@ public class PortalPreAuthenticatedProcessingFilter
 
     @Override
     protected Object getPreAuthenticatedPrincipal(HttpServletRequest request) {
-        // if there's no session, the user hasn't yet visited the login servlet and we should just give up
+        // if there's no session, the user hasn't yet visited the login servlet and we should just
+        // give up
         HttpSession session = request.getSession(false);
         if (session == null) {
             return null;
@@ -247,7 +249,7 @@ public class PortalPreAuthenticatedProcessingFilter
                 principals = new HashMap<>();
                 credentials = new HashMap<>();
             }
-            //Norm authN path
+            // Norm authN path
             else {
                 // WE grab all of the principals and credentials from the request and load
                 // them into their respective HashMaps.
@@ -359,7 +361,8 @@ public class PortalPreAuthenticatedProcessingFilter
             }
         } catch (IllegalStateException ise) {
             // ISE indicates session was already invalidated.
-            // This is fine.  This servlet trying to guarantee that the session has been invalidated;
+            // This is fine.  This servlet trying to guarantee that the session has been
+            // invalidated;
             // it doesn't have to insist that it is the one that invalidated it.
             logger.trace("LoginServlet attempted to invalidate an already invalid session.", ise);
         }
@@ -393,7 +396,7 @@ public class PortalPreAuthenticatedProcessingFilter
                         identitySwapHelper.getSwapToUid());
         swapperLog.warn(msg);
 
-        //Setup the custom security context
+        // Setup the custom security context
         final IdentitySwapperPrincipal identitySwapperPrincipal =
                 new IdentitySwapperPrincipal(person);
         final IdentitySwapperSecurityContext identitySwapperSecurityContext =

@@ -102,7 +102,8 @@ class PortletPreferencesImpl {
             final String name = newPreference.getName();
             for (final IPortletPreference oldPreference : portletPreferences) {
                 if (name.equals(oldPreference.getName())) {
-                    //Don't add the new preference, just replace the existing one when a match is found
+                    // Don't add the new preference, just replace the existing one when a match is
+                    // found
                     oldPreference.setValues(newPreference.getValues());
                     oldPreference.setReadOnly(newPreference.isReadOnly());
 
@@ -135,7 +136,7 @@ class PortletPreferencesImpl {
         }
 
         boolean modified = false;
-        //Build map of existing preferences for tracking which preferences have been removed
+        // Build map of existing preferences for tracking which preferences have been removed
         final Map<String, IPortletPreference> oldPreferences =
                 new LinkedHashMap<String, IPortletPreference>();
         for (final IPortletPreference preference : this.portletPreferences) {
@@ -146,17 +147,17 @@ class PortletPreferencesImpl {
         for (final IPortletPreference preference : newPreferences) {
             final String name = preference.getName();
 
-            //Remove the existing preference from the map since it is supposed to be persisted
+            // Remove the existing preference from the map since it is supposed to be persisted
             final IPortletPreference existingPreference = oldPreferences.remove(name);
             if (existingPreference == null) {
                 modified = true;
 
-                //New preference, add it to the list
+                // New preference, add it to the list
                 this.portletPreferences.add(preference);
             } else {
                 modified = modified || !existingPreference.equals(preference);
 
-                //Existing preference, update the fields
+                // Existing preference, update the fields
                 existingPreference.setValues(preference.getValues());
                 existingPreference.setReadOnly(preference.isReadOnly());
                 this.portletPreferences.add(existingPreference);

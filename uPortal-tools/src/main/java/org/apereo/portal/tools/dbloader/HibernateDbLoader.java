@@ -123,9 +123,9 @@ public class HibernateDbLoader
 
         final ITableDataProvider tableData = this.loadTables(configuration, dialect);
 
-        //Handle table drop/create
+        // Handle table drop/create
         if (configuration.isDropTables() || configuration.isCreateTables()) {
-            //Load Table object model
+            // Load Table object model
             final Map<String, Table> tables = tableData.getTables();
 
             final Mapping mapping = this.configuration.buildMapping();
@@ -136,7 +136,7 @@ public class HibernateDbLoader
             final Map<String, DataAccessException> failedSql =
                     new LinkedHashMap<String, DataAccessException>();
 
-            //Generate and execute drop table scripts
+            // Generate and execute drop table scripts
             if (configuration.isDropTables()) {
                 final List<String> dropScript =
                         this.dropScript(tables.values(), dialect, defaultCatalog, defaultSchema);
@@ -158,7 +158,7 @@ public class HibernateDbLoader
                 }
             }
 
-            //Log any drop/create statements that failed
+            // Log any drop/create statements that failed
             for (final Map.Entry<String, DataAccessException> failedSqlEntry :
                     failedSql.entrySet()) {
                 this.logger.warn(
@@ -168,7 +168,7 @@ public class HibernateDbLoader
                                 + failedSqlEntry.getValue());
             }
 
-            //Generate and execute create table scripts
+            // Generate and execute create table scripts
             if (configuration.isCreateTables()) {
                 final List<String> createScript =
                         this.createScript(
@@ -186,7 +186,7 @@ public class HibernateDbLoader
             }
         }
 
-        //Perform database population
+        // Perform database population
         if (script == null && configuration.isPopulateTables()) {
             this.logger.info("Populating database");
             final Map<String, Map<String, Integer>> tableColumnTypes =
@@ -194,11 +194,10 @@ public class HibernateDbLoader
             this.populateTables(configuration, tableColumnTypes);
         }
 
-        //Write out the script file
+        // Write out the script file
         if (script != null) {
             for (final ListIterator<String> iterator = script.listIterator();
-                    iterator.hasNext();
-                    ) {
+                    iterator.hasNext(); ) {
                 final String sql = iterator.next();
                 iterator.set(sql + ";");
             }
@@ -211,14 +210,14 @@ public class HibernateDbLoader
 
     protected ITableDataProvider loadTables(DbLoaderConfig configuration, Dialect dialect)
             throws ParserConfigurationException, SAXException, IOException {
-        //Locate tables.xml
+        // Locate tables.xml
         final String tablesFileName = configuration.getTablesFile();
         final Resource tablesFile = this.resourceLoader.getResource(tablesFileName);
         if (!tablesFile.exists()) {
             throw new IllegalArgumentException("Could not find tables file: " + tablesFile);
         }
 
-        //Setup parser with custom handler to generate Table model and parse
+        // Setup parser with custom handler to generate Table model and parse
         final SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
         final TableXmlHandler dh = new TableXmlHandler(dialect);
         saxParser.parse(new InputSource(tablesFile.getInputStream()), dh);
@@ -239,8 +238,7 @@ public class HibernateDbLoader
             for (final Table table : tables) {
                 if (table.isPhysicalTable()) {
                     for (final Iterator<ForeignKey> subIter = table.getForeignKeyIterator();
-                            subIter.hasNext();
-                            ) {
+                            subIter.hasNext(); ) {
                         final ForeignKey fk = subIter.next();
                         if (fk.isPhysicalConstraint()) {
                             script.add(fk.sqlDropString(dialect, defaultCatalog, defaultSchema));
@@ -278,8 +276,7 @@ public class HibernateDbLoader
         for (final Table table : tables) {
             if (table.isPhysicalTable()) {
                 for (final Iterator<UniqueKey> subIter = table.getUniqueKeyIterator();
-                        subIter.hasNext();
-                        ) {
+                        subIter.hasNext(); ) {
                     final UniqueKey uk = subIter.next();
                     final String constraintString =
                             uk.sqlCreateString(dialect, mapping, defaultCatalog, defaultSchema);
@@ -289,8 +286,7 @@ public class HibernateDbLoader
                 }
 
                 for (final Iterator<Index> subIter = table.getIndexIterator();
-                        subIter.hasNext();
-                        ) {
+                        subIter.hasNext(); ) {
                     final Index index = subIter.next();
                     script.add(
                             index.sqlCreateString(dialect, mapping, defaultCatalog, defaultSchema));
@@ -298,8 +294,7 @@ public class HibernateDbLoader
 
                 if (dialect.hasAlterTable()) {
                     for (final Iterator<ForeignKey> subIter = table.getForeignKeyIterator();
-                            subIter.hasNext();
-                            ) {
+                            subIter.hasNext(); ) {
                         final ForeignKey fk = subIter.next();
                         if (fk.isPhysicalConstraint()) {
                             script.add(
@@ -317,14 +312,14 @@ public class HibernateDbLoader
     protected void populateTables(
             DbLoaderConfig configuration, Map<String, Map<String, Integer>> tableColumnTypes)
             throws ParserConfigurationException, SAXException, IOException {
-        //Locate tables.xml
+        // Locate tables.xml
         final String dataFileName = configuration.getDataFile();
         final Resource dataFile = this.resourceLoader.getResource(dataFileName);
         if (!dataFile.exists()) {
             throw new IllegalArgumentException("Could not find data file: " + dataFile);
         }
 
-        //Setup parser with custom handler to generate Table model and parse
+        // Setup parser with custom handler to generate Table model and parse
         final SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
         final DataXmlHandler dh =
                 new DataXmlHandler(jdbcOperations, transactionOperations, tableColumnTypes);

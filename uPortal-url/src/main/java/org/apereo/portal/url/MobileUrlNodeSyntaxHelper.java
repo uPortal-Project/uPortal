@@ -71,7 +71,7 @@ public class MobileUrlNodeSyntaxHelper implements IUrlNodeSyntaxHelper {
      */
     @Override
     public String getDefaultLayoutNodeId(HttpServletRequest httpServletRequest) {
-        //Mobile view never targets a node for the default url
+        // Mobile view never targets a node for the default url
         return null;
     }
 
@@ -82,7 +82,7 @@ public class MobileUrlNodeSyntaxHelper implements IUrlNodeSyntaxHelper {
     @Override
     public List<String> getFolderNamesForLayoutNode(
             HttpServletRequest request, String layoutNodeId) {
-        //layout node folders are never part of the mobile url
+        // layout node folders are never part of the mobile url
         return Collections.emptyList();
     }
 
@@ -110,7 +110,7 @@ public class MobileUrlNodeSyntaxHelper implements IUrlNodeSyntaxHelper {
         final String fname = portletDefinition.getFName();
         final String channelSubscribeId = portletEntity.getLayoutNodeId();
 
-        //Build the targeted portlet string (fname + subscribeId)
+        // Build the targeted portlet string (fname + subscribeId)
         return fname + PORTLET_PATH_ELEMENT_SEPERATOR + channelSubscribeId;
     }
 

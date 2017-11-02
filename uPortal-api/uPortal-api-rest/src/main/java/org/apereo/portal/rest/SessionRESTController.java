@@ -80,7 +80,7 @@ public class SessionRESTController {
             attributes.put("displayName", person.isGuest() ? "Guest" : person.getFullName());
             attributes.put(
                     "sessionKey",
-                    person.isGuest() ? null : key); //only provide keys to non guest users
+                    person.isGuest() ? null : key); // only provide keys to non guest users
             attributes.put("version", uPortalVersion);
 
             if (swapperManager != null) {

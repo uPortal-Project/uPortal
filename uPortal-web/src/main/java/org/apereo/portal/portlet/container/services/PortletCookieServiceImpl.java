@@ -161,15 +161,16 @@ public class PortletCookieServiceImpl implements IPortletCookieService, ServletC
      */
     @Override
     public void updatePortalCookie(HttpServletRequest request, HttpServletResponse response) {
-        //Get the portal cookie object
+        // Get the portal cookie object
         final IPortalCookie portalCookie = this.getOrCreatePortalCookie(request);
 
-        //Create the browser cookie
+        // Create the browser cookie
         final Cookie cookie =
                 this.convertToCookie(
                         portalCookie, this.portalCookieAlwaysSecure || request.isSecure());
 
-        //Update the expiration date of the portal cookie stored in the DB if the update interval has passed
+        // Update the expiration date of the portal cookie stored in the DB if the update interval
+        // has passed
         final DateTime expires = portalCookie.getExpires();
         if (DateTime.now()
                 .minusMillis(this.maxAgeUpdateInterval)
@@ -178,9 +179,12 @@ public class PortletCookieServiceImpl implements IPortletCookieService, ServletC
                 this.portletCookieDao.updatePortalCookieExpiration(
                         portalCookie, cookie.getMaxAge());
             } catch (HibernateOptimisticLockingFailureException e) {
-                // Especially with ngPortal UI multiple requests for individual portlet content may come at
-                // the same time.  Sometimes another thread updated the portal cookie between our dao fetch and
-                // dao update.  If this happens, simply ignore the update since another thread has already
+                // Especially with ngPortal UI multiple requests for individual portlet content may
+                // come at
+                // the same time.  Sometimes another thread updated the portal cookie between our
+                // dao fetch and
+                // dao update.  If this happens, simply ignore the update since another thread has
+                // already
                 // made the update.
                 logger.debug(
                         "Attempted to update expired portal cookie but another thread beat me to it."
@@ -191,7 +195,7 @@ public class PortletCookieServiceImpl implements IPortletCookieService, ServletC
             // Update expiration dates of portlet cookies stored in session
             removeExpiredPortletCookies(request);
         }
-        //Update the cookie in the users browser
+        // Update the cookie in the users browser
         response.addCookie(cookie);
     }
 
@@ -217,14 +221,15 @@ public class PortletCookieServiceImpl implements IPortletCookieService, ServletC
             HttpServletRequest request, IPortletWindowId portletWindowId) {
         final IPortalCookie portalCookie = this.getPortalCookie(request);
 
-        //Get the cookies from the servlet request
+        // Get the cookies from the servlet request
         Cookie[] servletCookies = request.getCookies();
         if (servletCookies == null) {
             servletCookies = new Cookie[0];
         } else if (portalCookie != null) {
             for (int i = 0; i < servletCookies.length; i++) {
                 if (servletCookies[i].getName().equals(this.cookieName)) {
-                    // replace cookie in the array with converted IPortalCookie (so secure, domain, path, maxAge are set)
+                    // replace cookie in the array with converted IPortalCookie (so secure, domain,
+                    // path, maxAge are set)
                     servletCookies[i] =
                             convertToCookie(
                                     portalCookie,
@@ -233,7 +238,7 @@ public class PortletCookieServiceImpl implements IPortletCookieService, ServletC
             }
         }
 
-        //Get cookies that have been set by portlets, suppressing expired
+        // Get cookies that have been set by portlets, suppressing expired
         Set<IPortletCookie> portletCookies = new HashSet<IPortletCookie>();
         if (portalCookie != null) {
             for (IPortletCookie portletCookie : portalCookie.getPortletCookies()) {
@@ -249,7 +254,7 @@ public class PortletCookieServiceImpl implements IPortletCookieService, ServletC
         Collection<SessionOnlyPortletCookieImpl> sessionOnlyCookies =
                 sessionOnlyPortletCookieMap.values();
 
-        //Merge into a single array
+        // Merge into a single array
         final Cookie[] cookies =
                 new Cookie
                         [servletCookies.length + portletCookies.size() + sessionOnlyCookies.size()];
@@ -285,7 +290,8 @@ public class PortletCookieServiceImpl implements IPortletCookieService, ServletC
             SessionOnlyPortletCookieImpl existing =
                     sessionOnlyPortletCookies.remove(cookie.getName());
             if (null == existing) {
-                // returning null from map#remove means cookie wasn't in the session, trigger portletCookieDao update
+                // returning null from map#remove means cookie wasn't in the session, trigger
+                // portletCookieDao update
                 this.portletCookieDao.addOrUpdatePortletCookie(portalCookie, cookie);
             }
         } else {
@@ -353,7 +359,7 @@ public class PortletCookieServiceImpl implements IPortletCookieService, ServletC
     protected Cookie convertToCookie(IPortalCookie portalCookie, boolean secure) {
         final Cookie cookie = new Cookie(this.cookieName, portalCookie.getValue());
 
-        //Set the cookie's fields
+        // Set the cookie's fields
         cookie.setComment(this.comment);
         cookie.setMaxAge(this.maxAge);
         cookie.setSecure(secure);

@@ -57,7 +57,7 @@ public class PortletDefinitionBeanTest {
 
     @Mock private IPortletDefinitionParameter portletDefParam;
 
-    //Static test data
+    // Static test data
     private String title = "testTitle";
     private String fName = "testFName";
     private Double averageRating = 4.7;

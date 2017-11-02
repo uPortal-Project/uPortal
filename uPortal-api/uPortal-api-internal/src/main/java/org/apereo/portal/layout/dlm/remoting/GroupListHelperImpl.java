@@ -177,7 +177,8 @@ public class GroupListHelperImpl implements IGroupListHelper {
             }
         }
 
-        // So much for the easy path -- see if the user has any records at all for this specific owner/activity
+        // So much for the easy path -- see if the user has any records at all for this specific
+        // owner/activity
         JsonEntityBean rslt = null; // Default
         final List<IPermission> permissionsOfRelevantActivity = new ArrayList<IPermission>();
         for (String activity : permissionActivities) {

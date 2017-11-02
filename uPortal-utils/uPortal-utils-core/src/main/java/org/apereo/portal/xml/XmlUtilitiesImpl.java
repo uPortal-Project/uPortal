@@ -161,7 +161,7 @@ public class XmlUtilitiesImpl implements XmlUtilities {
     @Override
     public Node convertToDom(XMLEventReader xmlEventReader) throws XMLStreamException {
 
-        //Convert the XmlEventReader into a DOM
+        // Convert the XmlEventReader into a DOM
         final XMLOutputFactory xmlOutputFactory = this.getXmlOutputFactory();
         final DOMResult sourceDom = new DOMResult(DocumentFactory.getThreadDocument());
         final XMLEventWriter sourceWriter = xmlOutputFactory.createXMLEventWriter(sourceDom);

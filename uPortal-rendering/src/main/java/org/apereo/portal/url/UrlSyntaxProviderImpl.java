@@ -337,7 +337,8 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
         }
 
         try {
-            // Clone the parameter map so data can be removed from it as it is parsed to help determine
+            // Clone the parameter map so data can be removed from it as it is parsed to help
+            // determine
             // what to do with non-namespaced parameters
             final Map<String, String[]> parameterMap = new ParameterMap(request.getParameterMap());
 
@@ -404,7 +405,8 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                                             pathPartIndex--;
                                             pathPart = requestPathParts[pathPartIndex];
 
-                                            // If a state was added to the folder list remove it and step back one so
+                                            // If a state was added to the folder list remove it and
+                                            // step back one so
                                             // other code can handle it
                                             if (UrlState.valueOfIngoreCase(pathPart, null)
                                                     != null) {
@@ -453,7 +455,7 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                                 break;
                             }
 
-                            //See if a portlet was targeted by parameter
+                            // See if a portlet was targeted by parameter
                             final String[] targetedPortletIds =
                                     parameterMap.remove(PARAM_TARGET_PORTLET);
                             if (targetedPortletIds != null && targetedPortletIds.length > 0) {
@@ -470,18 +472,19 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                         {
                             parseStep = ParseStep.TYPE;
 
-                            //States other than the default only make sense if a portlet is being targeted
+                            // States other than the default only make sense if a portlet is being
+                            // targeted
                             if (targetedPortletWindowId == null) {
                                 break;
                             }
 
                             requestedUrlState = UrlState.valueOfIngoreCase(pathPart, null);
 
-                            //Set the URL state
+                            // Set the URL state
                             if (requestedUrlState != null) {
                                 portalRequestInfo.setUrlState(requestedUrlState);
 
-                                //If the request is stateless
+                                // If the request is stateless
                                 if (statelessUrlStates.contains(requestedUrlState)) {
                                     final IPortletWindow statelessPortletWindow =
                                             this.portletWindowRegistry
@@ -491,14 +494,15 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                                             statelessPortletWindow.getPortletWindowId();
                                 }
 
-                                //Create the portlet request info
+                                // Create the portlet request info
                                 targetedPortletRequestInfo =
                                         portalRequestInfo.getPortletRequestInfo(
                                                 targetedPortletWindowId);
                                 portalRequestInfo.setTargetedPortletWindowId(
                                         targetedPortletWindowId);
 
-                                //Set window state based on URL State first then look for the window state parameter
+                                // Set window state based on URL State first then look for the
+                                // window state parameter
                                 switch (requestedUrlState) {
                                     case MAX:
                                         {
@@ -542,7 +546,8 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                                                 pathPart.length() - REQUEST_TYPE_SUFFIX.length());
                                 final UrlType urlType;
 
-                                //Handle inline resourceIds, look for a . in the request type string and use the suffix as the urlType
+                                // Handle inline resourceIds, look for a . in the request type
+                                // string and use the suffix as the urlType
                                 final int lastPeriod = urlTypePart.lastIndexOf('.');
                                 if (lastPeriod >= 0 && lastPeriod < urlTypePart.length()) {
                                     final String urlTypePartSuffix =
@@ -570,14 +575,15 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                 }
             }
 
-            //If a targeted portlet window ID is found but no targeted portlet request info has been retrieved yet, set it up
+            // If a targeted portlet window ID is found but no targeted portlet request info has
+            // been retrieved yet, set it up
             if (targetedPortletWindowId != null && targetedPortletRequestInfo == null) {
                 targetedPortletRequestInfo =
                         portalRequestInfo.getPortletRequestInfo(targetedPortletWindowId);
                 portalRequestInfo.setTargetedPortletWindowId(targetedPortletWindowId);
             }
 
-            //Get the set of portlet window ids that also have parameters on the url
+            // Get the set of portlet window ids that also have parameters on the url
             final String[] additionalPortletIdArray = parameterMap.remove(PARAM_ADDITIONAL_PORTLET);
             final Set<String> additionalPortletIds =
                     Sets.newHashSet(
@@ -585,17 +591,16 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                                     ? additionalPortletIdArray
                                     : new String[0]);
 
-            //Used if there is delegation to capture form-submit and other non-prefixed parameters
-            //Map of parent id to delegate id
+            // Used if there is delegation to capture form-submit and other non-prefixed parameters
+            // Map of parent id to delegate id
             final Map<IPortletWindowId, IPortletWindowId> delegateIdMappings =
                     new LinkedHashMap<IPortletWindowId, IPortletWindowId>(0);
 
-            //Parse all remaining parameters from the request
+            // Parse all remaining parameters from the request
             final Set<Entry<String, String[]>> parameterEntrySet = parameterMap.entrySet();
             for (final Iterator<Entry<String, String[]>> parameterEntryItr =
                             parameterEntrySet.iterator();
-                    parameterEntryItr.hasNext();
-                    ) {
+                    parameterEntryItr.hasNext(); ) {
                 final Entry<String, String[]> parameterEntry = parameterEntryItr.next();
 
                 final String name = parameterEntry.getKey();
@@ -603,7 +608,7 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
 
                 /* NOTE: continues are being used to allow fall-through behavior like a switch statement would provide */
 
-                //Portal Parameters, just need to remove the prefix
+                // Portal Parameters, just need to remove the prefix
                 if (name.startsWith(PORTAL_PARAM_PREFIX)) {
                     final Map<String, List<String>> portalParameters =
                             portalRequestInfo.getPortalParameters();
@@ -613,14 +618,15 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                     continue;
                 }
 
-                //Generic portlet parameters, have to remove the prefix and see if there was a portlet windowId between the prefix and parameter name
+                // Generic portlet parameters, have to remove the prefix and see if there was a
+                // portlet windowId between the prefix and parameter name
                 if (name.startsWith(PORTLET_PARAM_PREFIX)) {
                     final Tuple<String, IPortletWindowId> portletParameterParts =
                             this.parsePortletParameterName(request, name, additionalPortletIds);
                     final IPortletWindowId portletWindowId = portletParameterParts.second;
                     final String paramName = portletParameterParts.first;
 
-                    //Get the portlet parameter map to add the parameter to
+                    // Get the portlet parameter map to add the parameter to
                     final Map<String, List<String>> portletParameters;
                     if (portletWindowId == null) {
                         if (targetedPortletRequestInfo == null) {
@@ -645,17 +651,18 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                     continue;
                 }
 
-                // Portlet control parameters are either used directly or as a prefix to a windowId. Use the
+                // Portlet control parameters are either used directly or as a prefix to a windowId.
+                // Use the
                 // SuffixedPortletParameter to simplify their parsing
                 for (final SuffixedPortletParameter suffixedPortletParameter :
                         SuffixedPortletParameter.values()) {
                     final String parameterPrefix = suffixedPortletParameter.getParameterPrefix();
-                    //Skip to the next parameter prefix if the current doesn't match
+                    // Skip to the next parameter prefix if the current doesn't match
                     if (!name.startsWith(parameterPrefix)) {
                         continue;
                     }
 
-                    //All of these parameters require at least one value
+                    // All of these parameters require at least one value
                     if (values.isEmpty()) {
                         this.logger.warn(
                                 "Ignoring parameter {} as it must have a value. Value: {}",
@@ -664,7 +671,7 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                         break;
                     }
 
-                    //Verify the parameter is being used on the correct type of URL
+                    // Verify the parameter is being used on the correct type of URL
                     final Set<UrlType> validUrlTypes = suffixedPortletParameter.getValidUrlTypes();
                     if (!validUrlTypes.contains(portalRequestInfo.getUrlType())) {
                         this.logger.warn(
@@ -677,7 +684,7 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                         break;
                     }
 
-                    //Determine the portlet window and request info the parameter targets
+                    // Determine the portlet window and request info the parameter targets
                     final IPortletWindowId portletWindowId =
                             this.parsePortletWindowIdSuffix(
                                     request, parameterPrefix, additionalPortletIds, name);
@@ -695,7 +702,7 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
 
                     parameterEntryItr.remove();
 
-                    //Use the enum helper to store the parameter values on the request info
+                    // Use the enum helper to store the parameter values on the request info
                     suffixedPortletParameter.updateRequestInfo(
                             request,
                             portletWindowRegistry,
@@ -706,12 +713,13 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                 }
             }
 
-            //Any non-namespaced parameters still need processing?
+            // Any non-namespaced parameters still need processing?
             if (!parameterMap.isEmpty()) {
-                //If the parameter was not ignored by a previous parser add it to whatever was targeted (portlet or portal)
+                // If the parameter was not ignored by a previous parser add it to whatever was
+                // targeted (portlet or portal)
                 final Map<String, List<String>> parameters;
                 if (!delegateIdMappings.isEmpty()) {
-                    //Resolve the last portlet window in the chain of delegation
+                    // Resolve the last portlet window in the chain of delegation
                     PortletRequestInfoImpl delegatePortletRequestInfo = null;
                     for (final IPortletWindowId delegatePortletWindowId :
                             delegateIdMappings.values()) {
@@ -747,7 +755,7 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                 ParameterMap.putAllList(parameters, parameterMap);
             }
 
-            //If a portlet is targeted but no layout node is targeted must be maximized
+            // If a portlet is targeted but no layout node is targeted must be maximized
             if (targetedPortletRequestInfo != null
                     && portalRequestInfo.getTargetedLayoutNodeId() == null
                     && (requestedUrlState == null || requestedUrlState == UrlState.NORMAL)) {
@@ -755,7 +763,7 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                 targetedPortletRequestInfo.setWindowState(WindowState.MAXIMIZED);
             }
 
-            //Make the request info object read-only, once parsed the request info should be static
+            // Make the request info object read-only, once parsed the request info should be static
             portalRequestInfo.makeReadOnly();
 
             request.setAttribute(PORTAL_REQUEST_INFO_ATTR, portalRequestInfo);
@@ -786,43 +794,44 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                 final PortletRequestInfoImpl portletRequestInfo =
                         portalRequestInfo.getPortletRequestInfo(portletWindowId);
 
-                //Check the portlet request type
+                // Check the portlet request type
                 final String[] type = parameterMap.remove(LEGACY_PARAM_PORTLET_REQUEST_TYPE);
                 if (type != null && type.length > 0 && "ACTION".equals(type[0])) {
                     portalRequestInfo.setUrlType(UrlType.ACTION);
                 }
 
-                //Set the window state
+                // Set the window state
                 final String[] state = parameterMap.remove(LEGACY_PARAM_PORTLET_STATE);
                 if (state != null && state.length > 0) {
                     final WindowState windowState = PortletUtils.getWindowState(state[0]);
 
-                    //If this isn't an action request only allow PATH communicated WindowStates as none of the other options make sense
+                    // If this isn't an action request only allow PATH communicated WindowStates as
+                    // none of the other options make sense
                     if (portalRequestInfo.getUrlType() == UrlType.ACTION
                             || PATH_WINDOW_STATES.contains(windowState)) {
                         portletRequestInfo.setWindowState(windowState);
                     }
                 }
 
-                //If no window state was set assume MAXIMIZED
+                // If no window state was set assume MAXIMIZED
                 if (portletRequestInfo.getWindowState() == null) {
                     portletRequestInfo.setWindowState(WindowState.MAXIMIZED);
                 }
 
-                //Set the portlet mode
+                // Set the portlet mode
                 final String[] mode = parameterMap.remove(LEGACY_PARAM_PORTLET_MODE);
                 if (mode != null && mode.length > 0) {
                     final PortletMode portletMode = PortletUtils.getPortletMode(mode[0]);
                     portletRequestInfo.setPortletMode(portletMode);
                 }
 
-                //Set the parameters
+                // Set the parameters
                 final Map<String, List<String>> portletParameters =
                         portletRequestInfo.getPortletParameters();
                 for (final Map.Entry<String, String[]> parameterEntry : parameterMap.entrySet()) {
                     final String prefixedName = parameterEntry.getKey();
 
-                    //If the parameter starts with the portlet param prefix
+                    // If the parameter starts with the portlet param prefix
                     if (prefixedName.startsWith(LEGACY_PARAM_PORTLET_PARAM_PREFX)) {
                         final String name =
                                 prefixedName.substring(LEGACY_PARAM_PORTLET_PARAM_PREFX.length());
@@ -831,7 +840,7 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                     }
                 }
 
-                //Set the url state based on the window state
+                // Set the url state based on the window state
                 final UrlState urlState =
                         this.determineUrlState(portletWindow, portletRequestInfo.getWindowState());
                 portalRequestInfo.setUrlState(urlState);
@@ -841,21 +850,21 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
             }
         }
 
-        //Check root=uP_root
+        // Check root=uP_root
         final String[] root = parameterMap.remove(LEGACY_PARAM_LAYOUT_ROOT);
         if (root != null && root.length > 0) {
             if (LEGACY_PARAM_LAYOUT_ROOT_VALUE.equals(root[0])) {
 
-                //Check uP_sparam=activeTab
+                // Check uP_sparam=activeTab
                 final String[] structParam = parameterMap.remove(LEGACY_PARAM_LAYOUT_STRUCT_PARAM);
                 if (structParam != null && structParam.length > 0) {
                     if (LEGACY_PARAM_LAYOUT_TAB_ID.equals(structParam[0])) {
 
-                        //Get the active tab id
+                        // Get the active tab id
                         final String[] activeTabId =
                                 parameterMap.remove(LEGACY_PARAM_LAYOUT_TAB_ID);
                         if (activeTabId != null && activeTabId.length > 0) {
-                            //Get the user's layout and do xpath for tab at index=activeTabId[0]
+                            // Get the user's layout and do xpath for tab at index=activeTabId[0]
                             final IUserInstance userInstance =
                                     this.userInstanceManager.getUserInstance(request);
                             final IUserPreferencesManager preferencesManager =
@@ -876,7 +885,7 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                                                 }
                                             });
 
-                            //Found nodeId for activeTabId
+                            // Found nodeId for activeTabId
                             if (nodeId != null) {
                                 logger.debug(
                                         "Found layout node {} for legacy activeTabId parameter {}",
@@ -920,7 +929,7 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
      */
     protected Tuple<String, IPortletWindowId> parsePortletParameterName(
             HttpServletRequest request, String name, Set<String> additionalPortletIds) {
-        //Look for a 2nd separator which might indicate a portlet window id
+        // Look for a 2nd separator which might indicate a portlet window id
         for (final String additionalPortletId : additionalPortletIds) {
             final int windowIdIdx = name.indexOf(additionalPortletId);
             if (windowIdIdx == -1) {
@@ -951,13 +960,13 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
             final String prefix,
             final Set<String> additionalPortletIds,
             final String name) {
-        //See if the parameter name has an additional separator
+        // See if the parameter name has an additional separator
         final int windowIdStartIdx = name.indexOf(SEPARATOR, prefix.length());
         if (windowIdStartIdx < (prefix.length() + SEPARATOR.length()) - 1) {
             return null;
         }
 
-        //Extract the windowId string and see if it was listed as an additional windowId
+        // Extract the windowId string and see if it was listed as an additional windowId
         final String portletWindowIdStr = name.substring(windowIdStartIdx + SEPARATOR.length());
         if (additionalPortletIds.contains(portletWindowIdStr)) {
             try {
@@ -1004,7 +1013,7 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                 portalRequestInfo.getTargetedPortletWindowId();
         final String targetedLayoutNodeId = portalRequestInfo.getTargetedLayoutNodeId();
 
-        //Create a portal url builder with the appropriate target
+        // Create a portal url builder with the appropriate target
         final IPortalUrlBuilder portalUrlBuilder;
         if (targetedPortletWindowId != null) {
             portalUrlBuilder =
@@ -1019,10 +1028,11 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
             isRedirectionToDefaultUrl = request.getPathInfo() != null;
         }
 
-        //Copy over portal parameters
+        // Copy over portal parameters
         Map<String, List<String>> portalParameters = portalRequestInfo.getPortalParameters();
 
-        if (isRedirectionToDefaultUrl) { //add in redirect parameter so we know that we were redirected
+        if (isRedirectionToDefaultUrl) { // add in redirect parameter so we know that we were
+            // redirected
             Map<String, List<String>> portalParamsWithRedirect =
                     new HashMap<String, List<String>>(portalParameters);
 
@@ -1032,14 +1042,14 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
             portalUrlBuilder.setParameters(portalParameters);
         }
 
-        //Copy data for each portlet
+        // Copy data for each portlet
         for (final IPortletRequestInfo portletRequestInfo :
                 portalRequestInfo.getPortletRequestInfoMap().values()) {
             final IPortletWindowId portletWindowId = portletRequestInfo.getPortletWindowId();
             final IPortletUrlBuilder portletUrlBuilder =
                     portalUrlBuilder.getPortletUrlBuilder(portletWindowId);
 
-            //Parameters
+            // Parameters
             final Map<String, List<String>> portletParameters =
                     portletRequestInfo.getPortletParameters();
             portletUrlBuilder.setParameters(portletParameters);
@@ -1047,7 +1057,7 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
             switch (urlType) {
                 case RESOURCE:
                     {
-                        //cacheability and resourceId for resource requests
+                        // cacheability and resourceId for resource requests
                         portletUrlBuilder.setCacheability(portletRequestInfo.getCacheability());
                         portletUrlBuilder.setResourceId(portletRequestInfo.getResourceId());
                     }
@@ -1056,7 +1066,7 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                 case RENDER:
                 case ACTION:
                     {
-                        //state & mode for all requests
+                        // state & mode for all requests
                         portletUrlBuilder.setWindowState(portletRequestInfo.getWindowState());
                         portletUrlBuilder.setPortletMode(portletRequestInfo.getPortletMode());
                         break;
@@ -1071,36 +1081,36 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
     public String generateUrl(
             HttpServletRequest request, IPortalActionUrlBuilder portalActionUrlBuilder) {
         final String redirectLocation = portalActionUrlBuilder.getRedirectLocation();
-        //If no redirect location just generate the portal url
+        // If no redirect location just generate the portal url
         if (redirectLocation == null) {
             return this.generateUrl(request, (IPortalUrlBuilder) portalActionUrlBuilder);
         }
 
         final String renderUrlParamName = portalActionUrlBuilder.getRenderUrlParamName();
-        //If no render param name just return the redirect url
+        // If no render param name just return the redirect url
         if (renderUrlParamName == null) {
             return redirectLocation;
         }
 
-        //Need to stick the generated portal url onto the redirect url
+        // Need to stick the generated portal url onto the redirect url
 
         final StringBuilder redirectLocationBuilder = new StringBuilder(redirectLocation);
 
         final int queryParamStartIndex = redirectLocationBuilder.indexOf("?");
-        //Already has parameters, add the new one correctly
+        // Already has parameters, add the new one correctly
         if (queryParamStartIndex > -1) {
             redirectLocationBuilder.append('&');
         }
-        //No parameters, add parm seperator
+        // No parameters, add parm seperator
         else {
             redirectLocationBuilder.append('?');
         }
 
-        //Generate the portal url
+        // Generate the portal url
         final String portalRenderUrl =
                 this.generateUrl(request, (IPortalUrlBuilder) portalActionUrlBuilder);
 
-        //Encode the render param name and the render url
+        // Encode the render param name and the render url
         final String encoding = this.getEncoding(request);
         final String encodedRenderUrlParamName;
         final String encodedPortalRenderUrl;
@@ -1123,16 +1133,16 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
         Validate.notNull(request, "HttpServletRequest was null");
         Validate.notNull(portalUrlBuilder, "IPortalPortletUrl was null");
 
-        //Convert the callback request to the portal request
+        // Convert the callback request to the portal request
         request = this.portalRequestUtils.getOriginalPortalRequest(request);
 
         final IUrlNodeSyntaxHelper urlNodeSyntaxHelper =
                 this.urlNodeSyntaxHelperRegistry.getCurrentUrlNodeSyntaxHelper(request);
 
-        //Get the encoding and create a new URL string builder
+        // Get the encoding and create a new URL string builder
         final String encoding = this.getEncoding(request);
 
-        //Add the portal's context path
+        // Add the portal's context path
         final String contextPath = this.getCleanedContextPath(request);
         final UrlStringBuilder url =
                 new UrlStringBuilder(encoding, contextPath.length() > 0 ? contextPath : null);
@@ -1140,7 +1150,7 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
         final Map<IPortletWindowId, IPortletUrlBuilder> portletUrlBuilders =
                 portalUrlBuilder.getPortletUrlBuilders();
 
-        //Build folder path based on targeted portlet or targeted folder
+        // Build folder path based on targeted portlet or targeted folder
         final IPortletWindowId targetedPortletWindowId =
                 portalUrlBuilder.getTargetPortletWindowId();
         final UrlType urlType = portalUrlBuilder.getUrlType();
@@ -1151,7 +1161,7 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                     this.portletWindowRegistry.getPortletWindow(request, targetedPortletWindowId);
             final IPortletEntity portletEntity = portletWindow.getPortletEntity();
 
-            //Add folder information if available: /f/tabId
+            // Add folder information if available: /f/tabId
             final String channelSubscribeId = portletEntity.getLayoutNodeId();
             final List<String> folderNames =
                     urlNodeSyntaxHelper.getFolderNamesForLayoutNode(request, channelSubscribeId);
@@ -1165,27 +1175,29 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
             final IPortletUrlBuilder targetedPortletUrlBuilder =
                     portletUrlBuilders.get(targetedPortletWindowId);
 
-            //Determine the resourceId for resource requests
+            // Determine the resourceId for resource requests
             if (urlType == UrlType.RESOURCE && targetedPortletUrlBuilder != null) {
                 resourceId = targetedPortletUrlBuilder.getResourceId();
             } else {
                 resourceId = null;
             }
 
-            //Resource requests will never have a requested window state
+            // Resource requests will never have a requested window state
             urlState = this.determineUrlState(portletWindow, targetedPortletUrlBuilder);
 
             final String targetedPortletString =
                     urlNodeSyntaxHelper.getFolderNameForPortlet(request, targetedPortletWindowId);
 
-            //If a non-normal render url or an action/resource url stick the portlet info in the path
+            // If a non-normal render url or an action/resource url stick the portlet info in the
+            // path
             if ((urlType == UrlType.RENDER && urlState != UrlState.NORMAL)
                     || urlType == UrlType.ACTION
                     || urlType == UrlType.RESOURCE) {
                 url.addPath(PORTLET_PATH_PREFIX);
                 url.addPath(targetedPortletString);
             }
-            //For normal render requests (generally multiple portlets on a page) add the targeted portlet as a parameter
+            // For normal render requests (generally multiple portlets on a page) add the targeted
+            // portlet as a parameter
             else {
                 url.addParameter(PARAM_TARGET_PORTLET, targetedPortletString);
             }
@@ -1221,24 +1233,24 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
             resourceId = null;
         }
 
-        //Add the state of the URL
+        // Add the state of the URL
         url.addPath(urlState.toLowercaseString());
 
-        //File part specifying the type of URL, resource URLs include the resourceId
+        // File part specifying the type of URL, resource URLs include the resourceId
         if (urlType == UrlType.RESOURCE && resourceId != null) {
             url.addPath(resourceId + "." + urlType.toLowercaseString() + REQUEST_TYPE_SUFFIX);
         } else {
             url.addPath(urlType.toLowercaseString() + REQUEST_TYPE_SUFFIX);
         }
 
-        //Add all portal parameters
+        // Add all portal parameters
         final Map<String, String[]> portalParameters = portalUrlBuilder.getParameters();
         url.addParametersArray(PORTAL_PARAM_PREFIX, portalParameters);
 
-        //Is this URL stateless
+        // Is this URL stateless
         final boolean statelessUrl = statelessUrlStates.contains(urlState);
 
-        //Add parameters for every portlet URL
+        // Add parameters for every portlet URL
         for (final IPortletUrlBuilder portletUrlBuilder : portletUrlBuilders.values()) {
             this.addPortletUrlData(
                     request,
@@ -1270,10 +1282,11 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
 
         IPortletWindow portletWindow = null;
 
-        //The targeted portlet doesn't need namespaced parameters
+        // The targeted portlet doesn't need namespaced parameters
         final String prefixedPortletWindowId;
         final String suffixedPortletWindowId;
-        // Track whether or not we are adding parameters to the URL for non-targeted or delegate portlets.
+        // Track whether or not we are adding parameters to the URL for non-targeted or delegate
+        // portlets.
         boolean addedNonTargetedPortletParam = false;
         if (targeted) {
             prefixedPortletWindowId = "";
@@ -1283,7 +1296,8 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
             prefixedPortletWindowId = SEPARATOR + portletWindowIdStr;
             suffixedPortletWindowId = portletWindowIdStr + SEPARATOR;
 
-            //targeted portlets can never be delegates (it is always the top most parent that is targeted)
+            // targeted portlets can never be delegates (it is always the top most parent that is
+            // targeted)
             portletWindow = this.portletWindowRegistry.getPortletWindow(request, portletWindowId);
             final IPortletWindowId delegationParentId = portletWindow.getDelegationParentId();
             if (delegationParentId != null) {
@@ -1308,7 +1322,8 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                     final String resourceId = portletUrlBuilder.getResourceId();
                     if (!targeted && resourceId != null) {
                         url.addParameter(PARAM_RESOURCE_ID + prefixedPortletWindowId, resourceId);
-                        // We know we are !targeted, but kept the assignement consistent with the other similar
+                        // We know we are !targeted, but kept the assignement consistent with the
+                        // other similar
                         // assignments for clarity.
                         addedNonTargetedPortletParam =
                                 !targeted ? true : addedNonTargetedPortletParam;
@@ -1318,7 +1333,7 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                 }
             default:
                 {
-                    //Add requested portlet mode
+                    // Add requested portlet mode
                     final PortletMode portletMode = portletUrlBuilder.getPortletMode();
                     if (portletMode != null) {
                         url.addParameter(
@@ -1336,13 +1351,14 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                         url.addParameter(
                                 PARAM_PORTLET_MODE + prefixedPortletWindowId,
                                 currentPortletMode.toString());
-                        // We know we are targeted, but kept the assignement consistent with the other similar
+                        // We know we are targeted, but kept the assignement consistent with the
+                        // other similar
                         // assignments for clarity. Will always be a nop.
                         addedNonTargetedPortletParam =
                                 !targeted ? true : addedNonTargetedPortletParam;
                     }
 
-                    //Add requested window state if it isn't included on the path
+                    // Add requested window state if it isn't included on the path
                     final WindowState windowState = portletUrlBuilder.getWindowState();
                     if (windowState != null
                             && (!targeted || !PATH_WINDOW_STATES.contains(windowState))) {
@@ -1368,10 +1384,14 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
             addedNonTargetedPortletParam = !targeted ? true : addedNonTargetedPortletParam;
         }
 
-        // UP-4566 If we have added a portlet parameter for a non-targeted (or delegate) portlet add in the
-        // additional-portlet parameter to aid in URL parsing later on.  Among other things the practical impact
-        // of this is when we do a search which sends an event to all porlets the user has access to which adds a
-        // bunch of portletUrlBuilders to the request, we don't add a bunch of unnecessary &PCa parameters to the
+        // UP-4566 If we have added a portlet parameter for a non-targeted (or delegate) portlet add
+        // in the
+        // additional-portlet parameter to aid in URL parsing later on.  Among other things the
+        // practical impact
+        // of this is when we do a search which sends an event to all porlets the user has access to
+        // which adds a
+        // bunch of portletUrlBuilders to the request, we don't add a bunch of unnecessary &PCa
+        // parameters to the
         // URL since there are no parameters actually being passed to the searched portlets.
         if (addedNonTargetedPortletParam) {
             url.addParameter(PARAM_ADDITIONAL_PORTLET, portletWindowId.toString());
@@ -1395,7 +1415,7 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
     /** Determine the {@link UrlState} to use for the targeted portlet window */
     protected UrlState determineUrlState(
             final IPortletWindow portletWindow, final WindowState requestedWindowState) {
-        //Determine the UrlState based on the WindowState of the targeted portlet
+        // Determine the UrlState based on the WindowState of the targeted portlet
         final WindowState currentWindowState = portletWindow.getWindowState();
         final WindowState urlWindowState =
                 requestedWindowState != null ? requestedWindowState : currentWindowState;
@@ -1447,12 +1467,12 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
             return "";
         }
 
-        //Make sure the context path doesn't start with a /
+        // Make sure the context path doesn't start with a /
         if (contextPath.charAt(0) == '/') {
             contextPath = contextPath.substring(1);
         }
 
-        //Make sure the URL ends with a /
+        // Make sure the URL ends with a /
         if (contextPath.charAt(contextPath.length() - 1) == '/') {
             contextPath = contextPath.substring(0, contextPath.length() - 1);
         }
@@ -1577,7 +1597,8 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                 return false;
             }
 
-            // If either or both of the folders are null, return true.  Otherwise if the folders are not the same,
+            // If either or both of the folders are null, return true.  Otherwise if the folders are
+            // not the same,
             // return false.
             if (folder == null || other.folder == null) {
                 return true;

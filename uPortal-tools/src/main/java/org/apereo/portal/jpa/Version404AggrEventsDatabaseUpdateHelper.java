@@ -51,11 +51,11 @@ public class Version404AggrEventsDatabaseUpdateHelper implements IVersionedDatab
     @AggrEventsTransactional
     @Override
     public void preUpdate() {
-        //Drop the aggregate events database tables
+        // Drop the aggregate events database tables
         logger.info("Dropping aggregate event tables for upgrade from " + getVersion());
         this.schemaExport.drop(true, null, true);
 
-        //Create the aggregate events database tables
+        // Create the aggregate events database tables
         logger.info("Creating aggregate event tables for upgrade from " + getVersion());
         this.schemaExport.create(true, null, true);
 

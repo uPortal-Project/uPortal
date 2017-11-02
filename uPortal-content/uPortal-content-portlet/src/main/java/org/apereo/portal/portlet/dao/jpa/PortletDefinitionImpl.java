@@ -160,7 +160,7 @@ public class PortletDefinitionImpl implements IPortletDefinition {
     private Long usersRated;
 
     @Column(name = "PORTLET_TIMEOUT", nullable = false)
-    private int timeout = 20000; //Default to a reasonable value
+    private int timeout = 20000; // Default to a reasonable value
 
     @Column(name = "ACTION_TIMEOUT")
     private Integer actionTimeout = null;
@@ -297,7 +297,7 @@ public class PortletDefinitionImpl implements IPortletDefinition {
         this.portletDescriptorKey.setFrameworkPortlet(isFramework);
     }
 
-    //** APIs for import/export support **//
+    // ** APIs for import/export support **//
     @Override
     public String getDataId() {
         return this.getFName();
@@ -313,7 +313,7 @@ public class PortletDefinitionImpl implements IPortletDefinition {
         return this.getDescription();
     }
 
-    //** APIs for portlet definitions **//
+    // ** APIs for portlet definitions **//
 
     /** @return the rating */
     @Override
@@ -583,27 +583,27 @@ public class PortletDefinitionImpl implements IPortletDefinition {
                 this.parameters.put(parameter.getName(), parameter);
             }
         } else {
-            //Build map of existing parameters for tracking which parameters have been removed
+            // Build map of existing parameters for tracking which parameters have been removed
             final Map<String, IPortletDefinitionParameter> oldPreferences =
                     new LinkedHashMap<>(this.parameters);
 
             for (final IPortletDefinitionParameter parameter : newParameters) {
                 final String name = parameter.getName();
 
-                //Remove the existing parameter from the map since it is supposed to be persisted
+                // Remove the existing parameter from the map since it is supposed to be persisted
                 final IPortletDefinitionParameter existingParameter = oldPreferences.remove(name);
                 if (existingParameter == null) {
-                    //New parameter, add it to the list
+                    // New parameter, add it to the list
                     this.parameters.put(name, parameter);
                 } else {
-                    //Existing parameter, update the fields
+                    // Existing parameter, update the fields
                     existingParameter.setDescription(parameter.getDescription());
                     existingParameter.setValue(parameter.getValue());
                     this.parameters.put(name, existingParameter);
                 }
             }
 
-            //Remove old parameters
+            // Remove old parameters
             this.parameters.keySet().removeAll(oldPreferences.keySet());
         }
     }

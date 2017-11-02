@@ -123,16 +123,16 @@ public class JpaPortletCookieDaoImpl extends BasePortalJpaDao implements IPortle
     @Override
     @PortalTransactional
     public IPortalCookie createPortalCookie(int maxAge) {
-        //Make sure our unique ID doesn't already exist by really small random chance
+        // Make sure our unique ID doesn't already exist by really small random chance
         String uniqueId;
         do {
             uniqueId = generateNewCookieId();
         } while (this.getPortalCookie(uniqueId) != null);
 
-        //Calculate the expiration date for the cookie
+        // Calculate the expiration date for the cookie
         final DateTime expiration = DateTime.now().plusSeconds(maxAge);
 
-        //Create and persist
+        // Create and persist
         final IPortalCookie portalCookie = new PortalCookieImpl(uniqueId, expiration);
         this.getEntityManager().persist(portalCookie);
 
@@ -152,7 +152,7 @@ public class JpaPortletCookieDaoImpl extends BasePortalJpaDao implements IPortle
     @PortalTransactional
     public IPortalCookie updatePortalCookieExpiration(IPortalCookie portalCookie, int maxAge) {
 
-        //Calculate expiration date and update the portal cookie
+        // Calculate expiration date and update the portal cookie
         final DateTime expiration = DateTime.now().plusSeconds(maxAge);
         portalCookie.setExpires(expiration);
 
@@ -204,8 +204,8 @@ public class JpaPortletCookieDaoImpl extends BasePortalJpaDao implements IPortle
 
         final Query deleteEmptyPortalCookieQuery =
                 entityManager.createQuery(this.deleteEmptyPortalCookieQueryString);
-        //Add the maxAge to now and then subtract the emptyCookieMaxAge
-        //For example (now + 1 year) - 1 day == the empty-cookie expiration date
+        // Add the maxAge to now and then subtract the emptyCookieMaxAge
+        // For example (now + 1 year) - 1 day == the empty-cookie expiration date
         final DateTime emptyExpiration = now.plusSeconds(maxAge).minusSeconds(emptyCookieMaxAge);
         deleteEmptyPortalCookieQuery.setParameter(this.nowParameter.getName(), emptyExpiration);
         final int deletedEmptyPortalCookies = deleteEmptyPortalCookieQuery.executeUpdate();
@@ -228,11 +228,10 @@ public class JpaPortletCookieDaoImpl extends BasePortalJpaDao implements IPortle
         final String name = cookie.getName();
         final EntityManager entityManager = this.getEntityManager();
         for (final Iterator<IPortletCookie> portletCookieItr = portletCookies.iterator();
-                portletCookieItr.hasNext();
-                ) {
+                portletCookieItr.hasNext(); ) {
             final IPortletCookie portletCookie = portletCookieItr.next();
             if (name.equals(portletCookie.getName())) {
-                //Delete cookies with a maxAge of 0
+                // Delete cookies with a maxAge of 0
                 if (cookie.getMaxAge() == 0) {
                     portletCookieItr.remove();
                     entityManager.remove(portletCookie);

@@ -96,7 +96,7 @@ public class TabRenderStatisticsController
     /** Set the tab names to have first selected by default */
     private void setReportFormTabs(final TabRenderReportForm report) {
         if (!report.getTabs().isEmpty()) {
-            //Tabs are already set, do nothing
+            // Tabs are already set, do nothing
             return;
         }
 
@@ -157,14 +157,14 @@ public class TabRenderStatisticsController
 
     protected Map<TabRenderAggregationDiscriminator, SortedSet<TabRenderAggregation>>
             createColumnDiscriminatorMap(TabRenderReportForm form) {
-        //Collections used to track the queried groups and the results
+        // Collections used to track the queried groups and the results
         final Map<TabRenderAggregationDiscriminator, SortedSet<TabRenderAggregation>>
                 groupedAggregations =
                         new TreeMap<
                                 TabRenderAggregationDiscriminator, SortedSet<TabRenderAggregation>>(
                                 TabRenderAggregationDiscriminatorImpl.Comparator.INSTANCE);
 
-        //Get concrete group mapping objects that are being queried for
+        // Get concrete group mapping objects that are being queried for
         List<Long> groups = form.getGroups();
         List<Long> tabs = form.getTabs();
         for (final Long queryGroupId : groups) {
@@ -174,12 +174,13 @@ public class TabRenderStatisticsController
                 AggregatedTabMapping tabMapping = this.aggregatedTabLookupDao.getTabMapping(tabId);
                 final TabRenderAggregationDiscriminator mapping =
                         new TabRenderAggregationDiscriminatorImpl(groupMapping, tabMapping);
-                //Create the set the aggregations for this report column will be stored in, sorted chronologically
+                // Create the set the aggregations for this report column will be stored in, sorted
+                // chronologically
                 final SortedSet<TabRenderAggregation> aggregations =
                         new TreeSet<TabRenderAggregation>(
                                 BaseAggregationDateTimeComparator.INSTANCE);
 
-                //Map the group to the set
+                // Map the group to the set
                 groupedAggregations.put(mapping, aggregations);
             }
         }

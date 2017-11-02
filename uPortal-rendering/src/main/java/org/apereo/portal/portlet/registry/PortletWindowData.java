@@ -238,7 +238,7 @@ class PortletWindowData implements IPortletWindowDescriptor, Serializable {
     }
 
     private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
-        //Read & validate non-transient fields
+        // Read & validate non-transient fields
         ois.defaultReadObject();
 
         if (this.portletWindowId == null) {
@@ -248,7 +248,7 @@ class PortletWindowData implements IPortletWindowDescriptor, Serializable {
             throw new InvalidObjectException("portletEntityId can not be null");
         }
 
-        //Read & validate transient fields
+        // Read & validate transient fields
         final String portletModeStr = (String) ois.readObject();
         if (portletModeStr == null) {
             throw new InvalidObjectException("portletMode can not be null");

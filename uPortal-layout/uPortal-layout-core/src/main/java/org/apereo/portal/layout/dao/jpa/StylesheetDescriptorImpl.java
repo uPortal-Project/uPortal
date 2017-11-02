@@ -68,8 +68,10 @@ public class StylesheetDescriptorImpl implements IStylesheetDescriptor {
     @Column(name = "ENTITY_VERSION")
     private final long entityVersion;
 
-    //Hidden reference to the child stylesheet user preferences, used to allow cascading deletes where when a stylesheet descriptor is deleted all associated preferences are also deleted
-    //MUST BE LAZY FETCH, this set should never actually be populated at runtime or performance will be TERRIBLE
+    // Hidden reference to the child stylesheet user preferences, used to allow cascading deletes
+    // where when a stylesheet descriptor is deleted all associated preferences are also deleted
+    // MUST BE LAZY FETCH, this set should never actually be populated at runtime or performance
+    // will be TERRIBLE
     @SuppressWarnings("unused")
     @OneToMany(
         mappedBy = "stylesheetDescriptor",
@@ -133,7 +135,7 @@ public class StylesheetDescriptorImpl implements IStylesheetDescriptor {
     private Map<String, ILayoutAttributeDescriptor> layoutAttributes =
             new LinkedHashMap<String, ILayoutAttributeDescriptor>(0);
 
-    //Required for Hibernate reflection
+    // Required for Hibernate reflection
     @SuppressWarnings("unused")
     private StylesheetDescriptorImpl() {
         this.id = -1;
@@ -300,7 +302,7 @@ public class StylesheetDescriptorImpl implements IStylesheetDescriptor {
             dataMap.put(name, newData);
         }
 
-        //Remove all old data entries that were not updated
+        // Remove all old data entries that were not updated
         dataMap.keySet().removeAll(oldDataKeys);
     }
 

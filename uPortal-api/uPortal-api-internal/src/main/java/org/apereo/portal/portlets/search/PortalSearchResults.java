@@ -34,10 +34,10 @@ public class PortalSearchResults implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private final Set<String> defaultTab;
-    //Map of <result type, Set<result tabs>>
+    // Map of <result type, Set<result tabs>>
     private final Map<String, Set<String>> resultTypeMappings;
 
-    //Map of <tab-key, List<result, url>>
+    // Map of <tab-key, List<result, url>>
     private final LoadingCache<String, List<Tuple<SearchResult, String>>> results;
 
     public PortalSearchResults(String defaultTab, Map<String, Set<String>> resultTypeMappings) {
@@ -73,14 +73,14 @@ public class PortalSearchResults implements Serializable {
     protected Set<String> getTabs(SearchResult result) {
         final List<String> types = result.getType();
 
-        //Result set no type, use the default tab
+        // Result set no type, use the default tab
         if (types == null || types.isEmpty()) {
             return this.defaultTab;
         }
 
         final Set<String> tabs = new HashSet<>();
 
-        //For each type the search result declares lookup the tab(s) mapped to that type
+        // For each type the search result declares lookup the tab(s) mapped to that type
         for (final String type : types) {
             final Set<String> mappedTabs = this.resultTypeMappings.get(type);
             if (mappedTabs != null) {

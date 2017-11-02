@@ -59,7 +59,8 @@ public interface IPortalUrlProvider {
             HttpServletRequest request, String layoutNodeId, UrlType urlType);
 
     //  Not implemented until all folders have fnames?
-    //  public IPortalUrlBuilder getPortalUrlBuilderByLayoutFName(HttpServletRequest request, String folderFname, UrlType urlType);
+    //  public IPortalUrlBuilder getPortalUrlBuilderByLayoutFName(HttpServletRequest request, String
+    // folderFname, UrlType urlType);
 
     /**
      * Get a portal URL builder that targets the specified portlet window.

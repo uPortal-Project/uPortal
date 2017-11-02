@@ -75,10 +75,14 @@ public class DynamicRespondrSkinViewController {
     public ModelAndView displaySkinCssHeader(
             RenderRequest request, RenderResponse response, Model model) throws IOException {
 
-        // NOTE:  RENDER_HEADERS phase may be called before or at the same time as the RENDER_MARKUP. The spec is
-        // silent on this issue and uPortal does not guarantee order or timing of render execution, but does
-        // guarantee order of render output processing (output of RENDER_HEADERS phase is included before
-        // RENDER_MARKUP phase).  uPortal inserts the HTML markup returned from RENDER_HEADERS execution into the HEAD
+        // NOTE:  RENDER_HEADERS phase may be called before or at the same time as the
+        // RENDER_MARKUP. The spec is
+        // silent on this issue and uPortal does not guarantee order or timing of render execution,
+        // but does
+        // guarantee order of render output processing (output of RENDER_HEADERS phase is included
+        // before
+        // RENDER_MARKUP phase).  uPortal inserts the HTML markup returned from RENDER_HEADERS
+        // execution into the HEAD
         // section of the page.
 
         if (PortletRequest.RENDER_HEADERS.equals(

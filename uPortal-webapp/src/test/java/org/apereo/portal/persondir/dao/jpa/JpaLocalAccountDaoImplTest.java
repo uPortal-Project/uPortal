@@ -39,7 +39,7 @@ public class JpaLocalAccountDaoImplTest extends BasePortalJpaDaoTest {
 
     @Test
     public void testAccountSearch() throws Exception {
-        //Create users
+        // Create users
         this.execute(
                 new Callable<Object>() {
                     @Override
@@ -58,7 +58,7 @@ public class JpaLocalAccountDaoImplTest extends BasePortalJpaDaoTest {
                     }
                 });
 
-        //Direct Access
+        // Direct Access
         this.execute(
                 new Callable<Object>() {
                     @Override
@@ -76,7 +76,7 @@ public class JpaLocalAccountDaoImplTest extends BasePortalJpaDaoTest {
                     }
                 });
 
-        //Query 0
+        // Query 0
         this.execute(
                 new Callable<Object>() {
                     @Override
@@ -93,7 +93,7 @@ public class JpaLocalAccountDaoImplTest extends BasePortalJpaDaoTest {
                     }
                 });
 
-        //Query 1
+        // Query 1
         this.execute(
                 new Callable<Object>() {
                     @Override
@@ -111,7 +111,7 @@ public class JpaLocalAccountDaoImplTest extends BasePortalJpaDaoTest {
                     }
                 });
 
-        //Query 2
+        // Query 2
         this.execute(
                 new Callable<Object>() {
                     @Override

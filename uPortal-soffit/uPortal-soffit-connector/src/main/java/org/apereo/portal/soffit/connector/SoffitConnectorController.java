@@ -164,7 +164,8 @@ public class SoffitConnectorController implements ApplicationContextAware {
                     }
                 } finally {
                     if (null != httpResponse) {
-                        // Ensures that the entity content is fully consumed and the content stream, if exists, is closed.
+                        // Ensures that the entity content is fully consumed and the content stream,
+                        // if exists, is closed.
                         EntityUtils.consumeQuietly(httpResponse.getEntity());
                     }
                 }
@@ -263,9 +264,11 @@ public class SoffitConnectorController implements ApplicationContextAware {
                          * Looks like we're using the expiration cache feature.
                          */
                         CacheTuple cacheTuple = null;
-                        // TODO:  Need to find a polished utility that parses a cache-control header, or write one
+                        // TODO:  Need to find a polished utility that parses a cache-control
+                        // header, or write one
                         final String[] tokens = cacheControlValue.split(",");
-                        // At present, we expect all valid values to be in the form '[public|private], max-age=300'
+                        // At present, we expect all valid values to be in the form
+                        // '[public|private], max-age=300'
                         if (tokens.length == 2) {
                             final String maxAge = tokens[1].trim().substring("max-age=".length());
                             int timeToLive = Integer.parseInt(maxAge);

@@ -56,7 +56,7 @@ public class ServerProfileMapperImplTest {
 
         MockitoAnnotations.initMocks(this);
 
-        //regex matches everything that isn't *.wisconsin.edu*
+        // regex matches everything that isn't *.wisconsin.edu*
         serverRegex = "^((?!.\\.wisconsin\\.edu).)*$";
         pattern = Pattern.compile(serverRegex);
         serverProfileMapper.setServerRegex(serverRegex);
@@ -66,12 +66,12 @@ public class ServerProfileMapperImplTest {
         matchingHost2 = "my.university-of-wisconsin.edu/money";
         matchingHost3 = "my.uwrf.edu";
 
-        //Make sure that matching hosts match
+        // Make sure that matching hosts match
         assertTrue(pattern.matcher(matchingHost1).matches());
         assertTrue(pattern.matcher(matchingHost2).matches());
         assertTrue(pattern.matcher(matchingHost3).matches());
 
-        //Make sure that unmatching hosts don't match
+        // Make sure that unmatching hosts don't match
         assertFalse(pattern.matcher(nonMatchingHost1).matches());
         assertFalse(pattern.matcher(nonMatchingHost2).matches());
     }

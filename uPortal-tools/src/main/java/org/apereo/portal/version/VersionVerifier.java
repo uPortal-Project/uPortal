@@ -86,7 +86,7 @@ public class VersionVerifier implements InitializingBean {
                     VersionUtils.getMostSpecificMatchingField(dbVersion, codeVersion);
 
             switch (mostSpecificMatchingField) {
-                    //Versions completely match
+                    // Versions completely match
                 case LOCAL:
                     {
                         logger.info(
@@ -95,12 +95,12 @@ public class VersionVerifier implements InitializingBean {
                                 product);
                         continue;
                     }
-                    //Versions match except for local part
+                    // Versions match except for local part
                 case PATCH:
-                    //Versions match except for patch.local part
+                    // Versions match except for patch.local part
                 case MINOR:
                     {
-                        //If db is before code and auto-update is enabled run hibernate-update
+                        // If db is before code and auto-update is enabled run hibernate-update
                         final Field upgradeField = mostSpecificMatchingField.getLessImportant();
 
                         if (dbVersion.isBefore(codeVersion)
@@ -117,13 +117,13 @@ public class VersionVerifier implements InitializingBean {
                                     "automated-hibernate-update", product, true, null);
                             continue;
                         } else if (codeVersion.isBefore(dbVersion)) {
-                            //It is ok to run older code on a newer DB within the local/patch range
+                            // It is ok to run older code on a newer DB within the local/patch range
                             continue;
                         }
                     }
-                    //Versions match except for minor.patch.local part
+                    // Versions match except for minor.patch.local part
                 case MAJOR:
-                    //Versions do not match at all
+                    // Versions do not match at all
                 default:
                     {
                         if (dbVersion.isBefore(codeVersion)) {

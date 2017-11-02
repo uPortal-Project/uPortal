@@ -134,7 +134,8 @@ public final class RequestParameterPolicyEnforcementFilter implements Filter {
     public void init(final FilterConfig filterConfig) throws ServletException {
 
         // verify there are no init parameters configured that are not recognized
-        // since an unrecognized init param might be the adopter trying to configure this filter in an important way
+        // since an unrecognized init param might be the adopter trying to configure this filter in
+        // an important way
         // and accidentally ignoring that intent might have security implications.
         final Enumeration initParamNames = filterConfig.getInitParameterNames();
         throwIfUnrecognizedParamName(initParamNames);

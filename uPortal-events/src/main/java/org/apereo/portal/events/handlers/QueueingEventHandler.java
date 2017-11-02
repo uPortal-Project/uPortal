@@ -36,7 +36,7 @@ public abstract class QueueingEventHandler<E extends ApplicationEvent>
     private final Lock flushLock = new ReentrantLock();
     private int batchSize = 25;
 
-    //Used to hold events to flush, MUST only be read/written from within the flushLock
+    // Used to hold events to flush, MUST only be read/written from within the flushLock
     private List<E> eventBuffer = new ArrayList<E>(this.batchSize);
 
     /** The maximum number of events to be flushed to the {@link BatchingEventHandler} per call. */
@@ -81,23 +81,23 @@ public abstract class QueueingEventHandler<E extends ApplicationEvent>
      */
     public final void flush() {
         if (eventQueue.isEmpty()) {
-            //No events to flush
+            // No events to flush
             logger.trace("No events to flush, returning.");
             return;
         }
 
-        //Only one thread should be flushing at a time, try to get the flush lock and if it
-        //is already held just return.
+        // Only one thread should be flushing at a time, try to get the flush lock and if it
+        // is already held just return.
         if (!this.flushLock.tryLock()) {
             logger.trace("FlushLock already held, returning.");
             return;
         }
         try {
             while (!this.eventQueue.isEmpty()) {
-                //Clear the buffer for re-use
+                // Clear the buffer for re-use
                 eventBuffer.clear();
 
-                //Pop events off the queue into the buffer
+                // Pop events off the queue into the buffer
                 while (!this.eventQueue.isEmpty() && eventBuffer.size() < this.batchSize) {
                     final E event = eventQueue.poll();
                     eventBuffer.add(event);
@@ -107,7 +107,7 @@ public abstract class QueueingEventHandler<E extends ApplicationEvent>
                     this.logger.debug("Flushing " + eventBuffer.size() + " events");
                 }
 
-                //Write events out to batching listener
+                // Write events out to batching listener
                 try {
                     this.onApplicationEvents(eventBuffer);
                 } catch (Throwable t) {
@@ -139,7 +139,7 @@ public abstract class QueueingEventHandler<E extends ApplicationEvent>
             }
 
         } finally {
-            //Clear the buffer to avoid memory leaks
+            // Clear the buffer to avoid memory leaks
             eventBuffer.clear();
 
             this.flushLock.unlock();

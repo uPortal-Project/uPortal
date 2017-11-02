@@ -33,6 +33,6 @@ public class UportalPortletContainerImpl extends PortletContainerImpl {
     protected void redirect(
             HttpServletRequest request, HttpServletResponse response, String location)
             throws IOException {
-        //uPortal handles redirects itself, no need for pluto to do it
+        // uPortal handles redirects itself, no need for pluto to do it
     }
 }

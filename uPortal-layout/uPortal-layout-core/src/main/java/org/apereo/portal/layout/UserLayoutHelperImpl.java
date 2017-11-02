@@ -106,7 +106,8 @@ public class UserLayoutHelperImpl extends JdbcDaoSupport implements IUserLayoutH
             IUserProfile userProfile =
                     userLayoutStore.getUserProfileByFname(person, DEFAULT_LAYOUT_FNAME);
 
-            // Finally set the layout id to 0.  This orphans the existing layout but it will be replaced by the default
+            // Finally set the layout id to 0.  This orphans the existing layout but it will be
+            // replaced by the default
             // when the user logs in
             userProfile.setLayoutId(0);
 

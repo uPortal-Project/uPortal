@@ -89,7 +89,7 @@ public class StAXSerializingComponent implements CharacterPipelineComponent {
         final PipelineEventReader<XMLEventReader, XMLEvent> eventReader =
                 this.wrappedComponent.getEventReader(request, response);
 
-        //Writer shared by the ChunkingEventReader and the StAX Serializer
+        // Writer shared by the ChunkingEventReader and the StAX Serializer
         final StringWriter writer = new StringWriter();
 
         final XMLOutputFactory outputFactory = this.xmlUtilities.getHtmlOutputFactory();
@@ -100,7 +100,7 @@ public class StAXSerializingComponent implements CharacterPipelineComponent {
             throw new RuntimeException("Failed to create XMLEventWriter", e);
         }
 
-        //Add the chunking wrapper to the XMLEventReader
+        // Add the chunking wrapper to the XMLEventReader
         final XMLEventReader xmlEventReader = eventReader.getEventReader();
         final ChunkingEventReader chunkingEventReader =
                 new ChunkingEventReader(
@@ -121,7 +121,7 @@ public class StAXSerializingComponent implements CharacterPipelineComponent {
             throw new RuntimeException("Failed to write events to Writer", e);
         }
 
-        //Return the chunked data
+        // Return the chunked data
         final List<CharacterEvent> characterEvents = chunkingEventReader.getCharacterEvents();
         final CharacterEventBufferReader characterEventReader =
                 new CharacterEventBufferReader(characterEvents.listIterator());

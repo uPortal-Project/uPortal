@@ -320,7 +320,7 @@ public enum SupportedFileTypes {
     }
 
     protected final String makeSafe(String name) {
-        //Replace invalid characters
+        // Replace invalid characters
         for (final Map.Entry<Pattern, String> pair : REPLACEMENT_PAIRS.entrySet()) {
             final Pattern pattern = pair.getKey();
             final Matcher matcher = pattern.matcher(name);

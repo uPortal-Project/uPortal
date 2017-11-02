@@ -84,7 +84,8 @@ public class CachingResourceLoaderImpl implements CachingResourceLoader {
             return this.loadResource(resource, builder);
         }
 
-        //Look for the resource in the cache, since it has been wrapped with a SelfPopulatingCache it should never return null.
+        // Look for the resource in the cache, since it has been wrapped with a SelfPopulatingCache
+        // it should never return null.
         final GetResourceArguments<T> arguments = new GetResourceArguments<T>(resource, builder);
         final Element element =
                 this.entryFactory.getWithData(this.resourceCache, resource, arguments);
@@ -94,7 +95,7 @@ public class CachingResourceLoaderImpl implements CachingResourceLoader {
             this.logger.trace("Found " + cachedResource + " in cache");
         }
 
-        //Found it, now check if the last-load time is within the check interval
+        // Found it, now check if the last-load time is within the check interval
         final long lastCheckTime = cachedResource.getLastCheckTime();
         if (lastCheckTime + checkInterval >= System.currentTimeMillis()) {
             if (this.logger.isTraceEnabled()) {
@@ -114,19 +115,19 @@ public class CachingResourceLoaderImpl implements CachingResourceLoader {
                             + ", checking for modification");
         }
 
-        //If the resource has not been modified return the cached resource.
+        // If the resource has not been modified return the cached resource.
         final boolean resourceModified = this.checkIfModified(cachedResource);
         if (!resourceModified) {
             cachedResource.setLastCheckTime(System.currentTimeMillis());
             this.resourceCache.put(
-                    element); //do a cache put to notify the cache the object has been modified
+                    element); // do a cache put to notify the cache the object has been modified
             return cachedResource;
         }
 
-        //The resource has been modified, reload it.
+        // The resource has been modified, reload it.
         cachedResource = this.loadResource(resource, builder);
 
-        //Cache the loaded resource
+        // Cache the loaded resource
         this.resourceCache.put(new Element(resource, cachedResource));
 
         if (this.logger.isDebugEnabled()) {
@@ -140,7 +141,7 @@ public class CachingResourceLoaderImpl implements CachingResourceLoader {
     protected <T> boolean checkIfModified(CachedResource<T> cachedResource) {
         final Resource resource = cachedResource.getResource();
 
-        //Check if the resource has been modified since it was last loaded.
+        // Check if the resource has been modified since it was last loaded.
         final long lastLoadTime = cachedResource.getLastLoadTime();
         final long mainLastModified = this.getLastModified(resource);
         boolean resourceModified = lastLoadTime < mainLastModified;
@@ -151,7 +152,7 @@ public class CachingResourceLoaderImpl implements CachingResourceLoader {
             return true;
         }
 
-        //If the main resource hasn't changed check additional resources for modifications
+        // If the main resource hasn't changed check additional resources for modifications
         for (final Map.Entry<Resource, Long> additionalResourceEntry :
                 cachedResource.getAdditionalResources().entrySet()) {
             final Resource additionalResource = additionalResourceEntry.getKey();
@@ -196,16 +197,16 @@ public class CachingResourceLoaderImpl implements CachingResourceLoader {
         try {
             lastModified = resource.lastModified();
         } catch (IOException e) {
-            //Ignore, not all resources can have a valid lastModified returned
+            // Ignore, not all resources can have a valid lastModified returned
         }
 
-        //Build the resource using the callback
+        // Build the resource using the callback
         final LoadedResource<T> loadedResource = builder.loadResource(resource);
 
         final Serializable cacheKey =
                 (Serializable) Arrays.asList(lastModified, loadedResource.getAdditionalResources());
 
-        //Create the CachedResource based on if digesting was enabled
+        // Create the CachedResource based on if digesting was enabled
         return new CachedResourceImpl<T>(resource, loadedResource, lastLoadTime, cacheKey);
     }
 

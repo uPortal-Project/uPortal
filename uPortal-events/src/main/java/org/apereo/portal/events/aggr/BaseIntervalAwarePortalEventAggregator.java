@@ -93,7 +93,7 @@ public abstract class BaseIntervalAwarePortalEventAggregator<
                 currentIntervals.entrySet()) {
             final AggregationIntervalInfo intervalInfo = intervalInfoEntry.getValue();
 
-            //Map used to cache aggregations locally after loading
+            // Map used to cache aggregations locally after loading
             Map<K, T> aggregationsCache =
                     eventAggregationContext.getAttribute(this.aggregationsCacheKey);
             if (aggregationsCache == null) {
@@ -101,30 +101,30 @@ public abstract class BaseIntervalAwarePortalEventAggregator<
                 eventAggregationContext.setAttribute(this.aggregationsCacheKey, aggregationsCache);
             }
 
-            //Groups this event is for
+            // Groups this event is for
             final Set<AggregatedGroupMapping> groupMappings = eventSession.getGroupMappings();
 
-            //For each group get/create then update the aggregation
+            // For each group get/create then update the aggregation
             for (final AggregatedGroupMapping groupMapping : groupMappings) {
                 final K key =
                         this.createAggregationKey(
                                 e, eventAggregationContext, intervalInfo, groupMapping);
 
-                //Load the aggregation, try from the cache first
+                // Load the aggregation, try from the cache first
                 T aggregation = aggregationsCache.get(key);
                 if (aggregation == null) {
-                    //Then try loading from the db
+                    // Then try loading from the db
                     aggregation = aggregationDao.getAggregation(key);
                     if (aggregation == null) {
-                        //Finally create the aggregation
+                        // Finally create the aggregation
                         aggregation = aggregationDao.createAggregation(key);
                     }
 
-                    //Store the loaded/created aggregation in the local cache
+                    // Store the loaded/created aggregation in the local cache
                     aggregationsCache.put(key, aggregation);
                 }
 
-                //Update the aggregation with the event
+                // Update the aggregation with the event
                 updateAggregation(e, eventAggregationContext, intervalInfo, aggregation);
             }
         }
@@ -141,24 +141,26 @@ public abstract class BaseIntervalAwarePortalEventAggregator<
 
         final BaseAggregationPrivateDao<T, K> aggregationDao = this.getAggregationDao();
 
-        //Complete all of the aggregations that have been touched by this session, can be null if no events of
-        //the handled type have been seen so far in this session
+        // Complete all of the aggregations that have been touched by this session, can be null if
+        // no events of
+        // the handled type have been seen so far in this session
         Map<K, T> aggregationsForInterval =
                 eventAggregationContext.getAttribute(this.aggregationsCacheKey);
         if (aggregationsForInterval == null) {
-            //No aggregations have been seen in this interval, nothing to do
+            // No aggregations have been seen in this interval, nothing to do
             return;
         }
 
-        //Tracks the aggregations that need to be updated, estimate size based on intervals/aggregations ratio
+        // Tracks the aggregations that need to be updated, estimate size based on
+        // intervals/aggregations ratio
         final Collection<T> updatedAggregations =
                 new ArrayList<T>(aggregationsForInterval.size() / intervals.size());
 
-        //Mark each aggregation that matches the interval complete and remove it from the map of tracked aggregations
+        // Mark each aggregation that matches the interval complete and remove it from the map of
+        // tracked aggregations
         final Collection<T> aggregations = aggregationsForInterval.values();
         for (final Iterator<T> aggregationItr = aggregations.iterator();
-                aggregationItr.hasNext();
-                ) {
+                aggregationItr.hasNext(); ) {
             final T aggregation = aggregationItr.next();
             if (aggregation.getInterval() == interval) {
                 final int duration = intervalInfo.getTotalDuration();
@@ -168,7 +170,8 @@ public abstract class BaseIntervalAwarePortalEventAggregator<
             }
         }
 
-        //Instruct the DAO to remove the aggregation from cache after updating, once closed it will never be visited again
+        // Instruct the DAO to remove the aggregation from cache after updating, once closed it will
+        // never be visited again
         aggregationDao.updateAggregations(updatedAggregations, true);
     }
 

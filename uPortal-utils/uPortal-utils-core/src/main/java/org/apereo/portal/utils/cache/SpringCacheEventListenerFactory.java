@@ -74,16 +74,17 @@ public class SpringCacheEventListenerFactory extends CacheEventListenerFactory
         private CacheEventListener getDelegate() {
             CacheEventListener d = this.delegate;
             if (d == null) {
-                //Need a local reference here to avoid locking around cacheEventListeners reference changes
+                // Need a local reference here to avoid locking around cacheEventListeners reference
+                // changes
                 final Map<String, CacheEventListener> cel = cacheEventListeners;
                 if (cel == null) {
-                    //either pre-init or post-destroy, return noop logger
+                    // either pre-init or post-destroy, return noop logger
                     return NOOP_CACHE_EVENT_LISTENER;
                 }
 
                 final CacheEventListener cacheEventListener = cel.get(beanName);
                 if (cacheEventListener == null) {
-                    //If no listener is found just use the noop listener
+                    // If no listener is found just use the noop listener
                     LOGGER.warn(
                             "No CacheEventListener bean found for name '"
                                     + beanName

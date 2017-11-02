@@ -119,11 +119,11 @@ public class JpaVersionDao extends BasePortalJpaDao implements VersionDao {
         }
 
         if (coreNumbers == null) {
-            //Table exists but no version data for the product
+            // Table exists but no version data for the product
             return null;
         }
 
-        //Pull out the maj/min/pat values
+        // Pull out the maj/min/pat values
         final Integer major =
                 coreNumbers.get(
                         VersionImpl_.major.getName(), VersionImpl_.major.getBindableJavaType());
@@ -134,7 +134,7 @@ public class JpaVersionDao extends BasePortalJpaDao implements VersionDao {
                 coreNumbers.get(
                         VersionImpl_.patch.getName(), VersionImpl_.patch.getBindableJavaType());
 
-        //See if the optional local version value exists
+        // See if the optional local version value exists
         Integer local;
         try {
             final TypedQuery<Integer> localNumberQuery =

@@ -134,7 +134,8 @@ public class PortalController {
             }
         }
 
-        //Stuff the action-redirect URL builder into the request so other code can use it during request processing
+        // Stuff the action-redirect URL builder into the request so other code can use it during
+        // request processing
         this.portalUrlProvider.convertToPortalActionUrlBuilder(request, actionRedirectUrl);
 
         if (portletRequestInfo != null) {
@@ -148,7 +149,7 @@ public class PortalController {
                                 + portletRequestInfo,
                         e);
 
-                //TODO this should be a constant right?
+                // TODO this should be a constant right?
                 actionRedirectUrl.setParameter("portletActionError", targetWindowId.toString());
             }
         }

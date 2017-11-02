@@ -46,14 +46,14 @@ public class CachingPortletResourceOutputHandler extends CachingPortletOutputHan
     public <T extends Serializable> CachedPortletResourceData<T> getCachedPortletResourceData(
             T portletResult, CacheControl cacheControl) {
         if (status != null && status != HttpServletResponse.SC_OK) {
-            //Only cache OK responses
+            // Only cache OK responses
             return null;
         }
 
         final CachedPortletData<T> cachedPortletData =
                 super.getCachedPortletData(portletResult, cacheControl);
         if (cachedPortletData == null) {
-            //Hit the caching limit, nothing to return
+            // Hit the caching limit, nothing to return
             return null;
         }
 

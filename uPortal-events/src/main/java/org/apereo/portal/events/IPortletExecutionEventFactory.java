@@ -23,14 +23,14 @@ import org.apereo.portal.url.IPortalRequestInfo;
 /** Publishes events related to portlet execution */
 public interface IPortletExecutionEventFactory {
 
-    //********** Portlet Hung Events **********//
+    // ********** Portlet Hung Events **********//
 
     void publishPortletHungEvent(
             HttpServletRequest request, Object source, IPortletExecutionWorker<?> worker);
 
     void publishPortletHungCompleteEvent(Object source, IPortletExecutionWorker<?> worker);
 
-    //********** Portlet Execution Events **********//
+    // ********** Portlet Execution Events **********//
 
     void publishPortletActionExecutionEvent(
             HttpServletRequest request,
@@ -69,7 +69,7 @@ public interface IPortletExecutionEventFactory {
             boolean usedBrowserCache,
             boolean usedPortalCache);
 
-    //********** Portal Rendering Pipeline Events **********//
+    // ********** Portal Rendering Pipeline Events **********//
 
     void publishPortalRenderEvent(
             HttpServletRequest request,

@@ -63,7 +63,7 @@ public class RenderingPipelineIntegrationTest {
 
     private PipelineComponent<?, ?> component;
 
-    //Mocked Beans
+    // Mocked Beans
     private IPortalUrlProvider portalUrlProvider;
     private IPortletWindowRegistry portletWindowRegistry;
     private IPortletEntityRegistry portletEntityRegistry;

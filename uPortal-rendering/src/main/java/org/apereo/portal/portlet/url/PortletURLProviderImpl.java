@@ -57,7 +57,7 @@ public class PortletURLProviderImpl implements PortletURLProvider {
      */
     @Override
     public Map<String, List<String>> getProperties() {
-        //TODO
+        // TODO
         return Collections.emptyMap();
     }
 
@@ -66,7 +66,7 @@ public class PortletURLProviderImpl implements PortletURLProvider {
      */
     @Override
     public Map<String, String[]> getPublicRenderParameters() {
-        //TODO
+        // TODO
         return Collections.emptyMap();
     }
 

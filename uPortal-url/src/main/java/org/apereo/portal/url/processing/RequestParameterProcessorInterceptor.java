@@ -82,17 +82,16 @@ public class RequestParameterProcessorInterceptor extends HandlerInterceptorAdap
         final List<IRequestParameterProcessor> incompleteDynamicProcessors =
                 new LinkedList<IRequestParameterProcessor>(this.dynamicRequestParameterProcessors);
 
-        //Loop while there are still dynamic processors to execute
+        // Loop while there are still dynamic processors to execute
         int cycles = 0;
         while (incompleteDynamicProcessors.size() > 0) {
-            //Run all dynamic processors that are not yet complete
+            // Run all dynamic processors that are not yet complete
             for (final Iterator<IRequestParameterProcessor> processorItr =
                             incompleteDynamicProcessors.iterator();
-                    processorItr.hasNext();
-                    ) {
+                    processorItr.hasNext(); ) {
                 final IRequestParameterProcessor requestParameterProcessor = processorItr.next();
 
-                //If a dynamic processor completes remove it from the list.
+                // If a dynamic processor completes remove it from the list.
                 final boolean complete =
                         requestParameterProcessor.processParameters(request, response);
                 if (complete) {
@@ -102,7 +101,8 @@ public class RequestParameterProcessorInterceptor extends HandlerInterceptorAdap
 
             cycles++;
 
-            //If the max cycle count is reached log a warning and break out of the dynamic processing loop
+            // If the max cycle count is reached log a warning and break out of the dynamic
+            // processing loop
             if (cycles >= this.maxNumberOfProcessingCycles) {
                 this.logger.warn(
                         incompleteDynamicProcessors.size()

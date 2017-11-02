@@ -33,7 +33,7 @@ public class RandomTokenGeneratorTest {
         assertEquals(
                 "4.954196310386876",
                 Double.toString(
-                        bits)); //easier to copy/paste from junit if comparing doubles as strings
+                        bits)); // easier to copy/paste from junit if comparing doubles as strings
         assertEquals(length, reqLength);
 
         token = randomTokenGenerator.generateRandomToken(++length);

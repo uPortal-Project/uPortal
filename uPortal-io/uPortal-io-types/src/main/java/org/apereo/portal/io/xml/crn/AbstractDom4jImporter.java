@@ -65,7 +65,7 @@ public abstract class AbstractDom4jImporter
 
     @Override
     public void importData(Tuple<String, Element> data) {
-        //Have to make local reference since importLock is NOT immutable
+        // Have to make local reference since importLock is NOT immutable
         final Lock lock = this.lock;
         lock.lock();
         try {
@@ -82,7 +82,7 @@ public abstract class AbstractDom4jImporter
         return this;
     }
 
-    //** Unmarshaller APIs **/
+    // ** Unmarshaller APIs **/
 
     @Override
     public boolean supports(Class<?> clazz) {
@@ -91,7 +91,7 @@ public abstract class AbstractDom4jImporter
 
     @Override
     public Tuple<String, Element> unmarshal(Source source) throws IOException, XmlMappingException {
-        //Convert the StAX XMLEventReader to a dom4j Element
+        // Convert the StAX XMLEventReader to a dom4j Element
         final Element node = convertToElement(source);
         return new Tuple<String, Element>(source.getSystemId(), node);
     }

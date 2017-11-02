@@ -188,7 +188,7 @@ public abstract class BaseTimedAggregationStatsImpl<
             return;
         }
 
-        //Lazily init the statistics object
+        // Lazily init the statistics object
         if (this.statisticalSummary == null) {
             this.statisticalSummary = new JpaStatisticalSummary();
         }
@@ -209,7 +209,7 @@ public abstract class BaseTimedAggregationStatsImpl<
             return;
         }
 
-        //Update statistic values
+        // Update statistic values
         this.count = (int) this.statisticalSummary.getN();
         this.sum = this.statisticalSummary.getSum();
         this.sumsq = this.statisticalSummary.getSumsq();

@@ -333,7 +333,8 @@ public class AnyUnblockedGrantPermissionPolicy implements IPermissionPolicy {
                     if (parentHasUnblockedPathToGrant) {
                         return true;
                     }
-                    // Parent didn't have a path to grant, fall through and try another parent (if any)
+                    // Parent didn't have a path to grant, fall through and try another parent (if
+                    // any)
                 }
             } catch (Exception e) {
                 // problem evaluating this path, but let's not let it stop

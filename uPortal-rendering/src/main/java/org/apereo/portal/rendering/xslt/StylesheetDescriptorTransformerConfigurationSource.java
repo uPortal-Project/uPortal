@@ -61,7 +61,7 @@ public abstract class StylesheetDescriptorTransformerConfigurationSource
                 this.stylesheetUserPreferencesService.getStylesheetDescriptor(
                         request, preferencesScope);
 
-        //Build key from stylesheet descriptor parameters
+        // Build key from stylesheet descriptor parameters
         for (final IStylesheetParameterDescriptor stylesheetParameterDescriptor :
                 stylesheetDescriptor.getStylesheetParameterDescriptors()) {
             final String defaultValue = stylesheetParameterDescriptor.getDefaultValue();
@@ -83,7 +83,7 @@ public abstract class StylesheetDescriptorTransformerConfigurationSource
                 this.stylesheetUserPreferencesService.getStylesheetDescriptor(
                         request, preferencesScope);
 
-        //Build map of stylesheet descriptor parameters
+        // Build map of stylesheet descriptor parameters
         final LinkedHashMap<String, Object> parameters = new LinkedHashMap<String, Object>();
         for (final IStylesheetParameterDescriptor stylesheetParameterDescriptor :
                 stylesheetDescriptor.getStylesheetParameterDescriptors()) {

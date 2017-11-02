@@ -77,7 +77,7 @@ public class StAXSerializingComponentTest {
 
         when(xmlUtilities.getHtmlOutputFactory()).thenReturn(XMLOutputFactory.newFactory());
 
-        //Setup a simple pass-through parent
+        // Setup a simple pass-through parent
         staxSerializingComponent.setWrappedComponent(new SimpleStAXSource());
         staxSerializingComponent.setXmlUtilities(xmlUtilities);
 
@@ -122,7 +122,7 @@ public class StAXSerializingComponentTest {
         final PipelineEventReader<CharacterEventReader, CharacterEvent> eventReader =
                 staxSerializingComponent.getEventReader(request, response);
 
-        //Expected events structure, leaving the data out to make it at least a little simpler
+        // Expected events structure, leaving the data out to make it at least a little simpler
         final List<? extends CharacterEvent> expectedEvents = this.getExpectedEvents();
 
         final Iterator<CharacterEvent> eventItr = eventReader.iterator();

@@ -76,7 +76,7 @@ public abstract class CachingPipelineComponent<R, E> extends PipelineComponentWr
             return this.wrappedComponent.getEventReader(request, response);
         }
 
-        //Get the key for this request from the target component and see if there is a cache entry
+        // Get the key for this request from the target component and see if there is a cache entry
         final CacheKey cacheKey = this.wrappedComponent.getCacheKey(request, response);
         Element element = this.cache.get(cacheKey);
         CachedEventReader<E> cachedEventReader = null;
@@ -84,9 +84,9 @@ public abstract class CachingPipelineComponent<R, E> extends PipelineComponentWr
             cachedEventReader = (CachedEventReader<E>) element.getObjectValue();
         }
 
-        //If there was a cached reader return it immediately
+        // If there was a cached reader return it immediately
         if (cachedEventReader == null) {
-            //No cached data for key, call target component to get events and an updated cache key
+            // No cached data for key, call target component to get events and an updated cache key
             logger.debug(
                     "{} - No cached events found for key {}, calling parent",
                     this.beanName,
@@ -94,10 +94,10 @@ public abstract class CachingPipelineComponent<R, E> extends PipelineComponentWr
             final PipelineEventReader<R, E> pipelineEventReader =
                     this.wrappedComponent.getEventReader(request, response);
 
-            //Copy the events from the reader into a buffer to be cached
+            // Copy the events from the reader into a buffer to be cached
             final List<E> eventCache = new LinkedList<E>();
             for (final E event : pipelineEventReader) {
-                //TODO add de-duplication logic here
+                // TODO add de-duplication logic here
                 eventCache.add(event);
             }
 
@@ -106,7 +106,7 @@ public abstract class CachingPipelineComponent<R, E> extends PipelineComponentWr
                     new CachedEventReader<E>(
                             eventCache, new LinkedHashMap<String, String>(outputProperties));
 
-            //Cache the buffer
+            // Cache the buffer
             element = new Element(cacheKey, cachedEventReader);
             this.cache.put(element);
             logger.debug(
@@ -122,6 +122,6 @@ public abstract class CachingPipelineComponent<R, E> extends PipelineComponentWr
         return new PipelineEventReaderImpl<R, E>(eventReader, outputProperties);
     }
 
-    //Ugly!!! Needed because XMLEventReader implements Iterator but does not parameterize it
+    // Ugly!!! Needed because XMLEventReader implements Iterator but does not parameterize it
     protected abstract R createEventReader(ListIterator<E> eventCache);
 }

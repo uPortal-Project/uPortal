@@ -35,7 +35,8 @@ import org.springframework.stereotype.Service;
 public class CacheProviderFactory implements CacheFactory {
     protected final Log logger = LogFactory.getLog(this.getClass());
 
-    // Stores caches that are created with a soft reference to the cache Map to avoid re-creating wrapper objects without need
+    // Stores caches that are created with a soft reference to the cache Map to avoid re-creating
+    // wrapper objects without need
     private final MapCacheCreator mapCacheCreator = new MapCacheCreator();
 
     private CacheManager cacheManager;
@@ -95,7 +96,8 @@ public class CacheProviderFactory implements CacheFactory {
                 try {
                     cacheManager.addCache(cacheName);
                 } catch (ObjectExistsException oee) {
-                    //Ignore, some other thread created the cache while we were trying to do the same thing
+                    // Ignore, some other thread created the cache while we were trying to do the
+                    // same thing
                 }
                 cache = cacheManager.getCache(cacheName);
 

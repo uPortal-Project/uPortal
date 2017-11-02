@@ -90,7 +90,7 @@ public class TableFormatter {
     public TableFormatter(Formatter f, TableEntry<?> firstHeading, TableEntry<?>... headings) {
         Validate.notNull(firstHeading);
 
-        //Setup scratch objects used for formatting data
+        // Setup scratch objects used for formatting data
         this.scratchBuilder = new StringBuilder();
         this.scratchFormatter = new Formatter(scratchBuilder, f != null ? f.locale() : null);
 
@@ -139,10 +139,10 @@ public class TableFormatter {
     }
 
     public void format(Formatter formatter) {
-        //Write out table header
+        // Write out table header
         this.formatRow(formatter, this.headerRow);
 
-        //Write out separator row
+        // Write out separator row
         this.clearScratchBuilder();
         this.scratchBuilder.append('-');
         for (int column = 0; column < this.columnWidths.size(); column++) {
@@ -158,7 +158,7 @@ public class TableFormatter {
         this.scratchBuilder.append("-%n");
         formatter.format(this.scratchBuilder.toString());
 
-        //Write out rows
+        // Write out rows
         for (final List<TableEntry<?>> row : this.rows) {
             this.formatRow(formatter, row);
         }

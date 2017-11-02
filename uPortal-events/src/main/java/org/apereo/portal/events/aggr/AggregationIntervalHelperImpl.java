@@ -62,40 +62,42 @@ public class AggregationIntervalHelperImpl implements AggregationIntervalHelper 
 
     @Override
     public int intervalsBetween(AggregationInterval interval, DateTime start, DateTime end) {
-        //For intervals that support native determination
+        // For intervals that support native determination
         if (interval.isSupportsDetermination()) {
             return interval.determineIntervalsBetween(start, end);
         }
 
-        //Special handling for intervals that don't support determination
+        // Special handling for intervals that don't support determination
 
         if (interval == AggregationInterval.ACADEMIC_TERM) {
-            //Since terms can have gaps all terms must be checked
+            // Since terms can have gaps all terms must be checked
 
-            //Find the first term than is in the range via binary search
+            // Find the first term than is in the range via binary search
             final List<AcademicTermDetail> terms = getAcademicTermsAfter(start);
 
-            //Count all the terms that are in the range, breaking the loop on the first non-matching term
+            // Count all the terms that are in the range, breaking the loop on the first
+            // non-matching term
             int count = 0;
             for (final AcademicTermDetail academicTerm : terms) {
                 final DateMidnight termStart = academicTerm.getStart();
                 if (end.isAfter(termStart) && !start.isAfter(termStart)) {
                     count++;
                 } else if (count > 0) {
-                    //getAcademicTermDetails returns the list in order, after at least one match has been found
-                    //a term that doesn't match means no more matches will be found
+                    // getAcademicTermDetails returns the list in order, after at least one match
+                    // has been found
+                    // a term that doesn't match means no more matches will be found
                     break;
                 }
             }
             return count;
         }
 
-        //Fallback for any other interval type that needs explicit iteration
+        // Fallback for any other interval type that needs explicit iteration
         AggregationIntervalInfo nextInterval = this.getIntervalInfo(interval, start);
 
         int count = 0;
         while (nextInterval.getStart().isBefore(end)) {
-            //Needed to make sure we don't count a partial first interval
+            // Needed to make sure we don't count a partial first interval
             if (!start.isAfter(nextInterval.getStart())) {
                 count++;
             }
@@ -110,24 +112,25 @@ public class AggregationIntervalHelperImpl implements AggregationIntervalHelper 
     public List<DateTime> getIntervalStartDateTimesBetween(
             AggregationInterval interval, DateTime start, DateTime end, int maxTimes) {
         if (interval.isSupportsDetermination()) {
-            //Get the interval count for the date-time field type and verify it is in the valid range.
+            // Get the interval count for the date-time field type and verify it is in the valid
+            // range.
             final int intervals = interval.determineIntervalsBetween(start, end);
             verifyIntervalCount(start, end, maxTimes, intervals);
 
-            //Result list
+            // Result list
             final List<DateTime> result = new ArrayList<DateTime>(intervals);
 
-            //Check if first interval in the range
+            // Check if first interval in the range
             DateTime intervalStart = interval.determineStart(start);
             if (!intervalStart.isBefore(start)) {
                 result.add(intervalStart);
             }
 
-            //Move one step forward in the range
+            // Move one step forward in the range
             DateTime intervalEnd = interval.determineEnd(intervalStart);
             intervalStart = interval.determineStart(intervalEnd);
 
-            //Step through the interval start/end values to build the full list
+            // Step through the interval start/end values to build the full list
             while (intervalStart.isBefore(end)) {
                 result.add(intervalStart);
 
@@ -138,32 +141,34 @@ public class AggregationIntervalHelperImpl implements AggregationIntervalHelper 
             return result;
         }
 
-        //Special handling for intervals that don't support determination
+        // Special handling for intervals that don't support determination
         if (interval == AggregationInterval.ACADEMIC_TERM) {
-            //Since terms can have gaps all terms must be checked
+            // Since terms can have gaps all terms must be checked
             final List<AcademicTermDetail> terms = getAcademicTermsAfter(start);
 
-            //Use all the terms that are in the range, breaking the loop on the first non-matching term
+            // Use all the terms that are in the range, breaking the loop on the first non-matching
+            // term
             final List<DateTime> result = new ArrayList<DateTime>(terms.size());
             for (final AcademicTermDetail academicTerm : terms) {
                 final DateMidnight termStart = academicTerm.getStart();
                 if (end.isAfter(termStart) && !start.isAfter(termStart)) {
                     result.add(start);
                 } else if (!result.isEmpty()) {
-                    //getAcademicTermDetails returns the list in order, after at least one match has been found
-                    //a term that doesn't match means no more matches will be found
+                    // getAcademicTermDetails returns the list in order, after at least one match
+                    // has been found
+                    // a term that doesn't match means no more matches will be found
                     break;
                 }
             }
             return result;
         }
 
-        //Fallback for any other interval type that needs explicit iteration
+        // Fallback for any other interval type that needs explicit iteration
         AggregationIntervalInfo nextInterval = this.getIntervalInfo(interval, start);
 
         final List<DateTime> result = new ArrayList<DateTime>();
         while (nextInterval.getStart().isBefore(end)) {
-            //Needed to make sure we don't count a partial first interval
+            // Needed to make sure we don't count a partial first interval
             if (!start.isAfter(nextInterval.getStart())) {
                 result.add(nextInterval.getStart());
 
@@ -187,7 +192,7 @@ public class AggregationIntervalHelperImpl implements AggregationIntervalHelper 
 
     @Override
     public AggregationIntervalInfo getIntervalInfo(AggregationInterval interval, DateTime date) {
-        //Chop off everything below the minutes (seconds, millis)
+        // Chop off everything below the minutes (seconds, millis)
         final DateTime instant = date.minuteOfHour().roundFloorCopy();
 
         final DateTime start, end;

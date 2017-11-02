@@ -88,17 +88,17 @@ public class JpaClusterLockDao extends BasePortalJpaDao implements IClusterLockD
 
     @Override
     public ClusterMutex getClusterMutex(final String mutexName) {
-        //Do a get first
+        // Do a get first
         ClusterMutex clusterMutex = this.getClusterMutexInternal(mutexName);
         if (clusterMutex != null) {
             logger.trace("Retrieved {}", clusterMutex);
             return clusterMutex;
         }
 
-        //No mutex found, try to create it
+        // No mutex found, try to create it
         createClusterMutex(mutexName);
 
-        //Must have been a concurrent create, do another get
+        // Must have been a concurrent create, do another get
         clusterMutex = this.getClusterMutexInternal(mutexName);
         if (clusterMutex != null) {
             logger.trace("Retrieved {}", clusterMutex);
@@ -118,23 +118,23 @@ public class JpaClusterLockDao extends BasePortalJpaDao implements IClusterLockD
 
                         final ClusterMutex clusterMutex = getClusterMutex(mutexName);
 
-                        //Check if the mutex is already locked
+                        // Check if the mutex is already locked
                         if (clusterMutex.isLocked()) {
-                            //Check if the mutex is abandoned
+                            // Check if the mutex is abandoned
                             if (isLockAbandoned(clusterMutex)) {
-                                //Unlock the abandoned mutex
+                                // Unlock the abandoned mutex
                                 unlockAbandonedLock(mutexName);
 
-                                //Attempt to get the lock again
+                                // Attempt to get the lock again
                                 return getLock(mutexName);
                             }
 
-                            //Already locked
+                            // Already locked
                             logger.trace("Mutex {} is already locked: {}", mutexName, clusterMutex);
                             return null;
                         }
 
-                        //Lock the mutex and update the DB
+                        // Lock the mutex and update the DB
                         final String uniqueServerName = portalInfoProvider.getUniqueServerName();
                         clusterMutex.lock(uniqueServerName);
                         entityManager.persist(clusterMutex);
@@ -257,7 +257,7 @@ public class JpaClusterLockDao extends BasePortalJpaDao implements IClusterLockD
                             logger.trace("Created {}", clusterMutex);
                         } catch (PersistenceException e) {
                             if (e.getCause() instanceof ConstraintViolationException) {
-                                //ignore, another thread beat us to creation
+                                // ignore, another thread beat us to creation
                                 logger.debug(
                                         "Failed to create mutex, it was likely created concurrently by another thread: "
                                                 + clusterMutex,
@@ -265,7 +265,7 @@ public class JpaClusterLockDao extends BasePortalJpaDao implements IClusterLockD
                                 return;
                             }
 
-                            //re-throw exception with unhandled cause
+                            // re-throw exception with unhandled cause
                             throw e;
                         }
                     }
@@ -301,7 +301,7 @@ public class JpaClusterLockDao extends BasePortalJpaDao implements IClusterLockD
                         final ClusterMutex clusterMutex = getClusterMutex(mutexName);
 
                         if (!isLockAbandoned(clusterMutex)) {
-                            //No longer abandoned
+                            // No longer abandoned
                             return;
                         }
 
@@ -334,15 +334,15 @@ public class JpaClusterLockDao extends BasePortalJpaDao implements IClusterLockD
      */
     protected <T> T executeIgnoreRollback(TransactionCallback<T> action, T rollbackValue) {
         try {
-            //Try to create the mutex in a new TX
+            // Try to create the mutex in a new TX
             return this.newTransactionTemplate.execute(action);
         } catch (TransactionSystemException e) {
             if (e.getCause() instanceof RollbackException) {
-                //Ignore rollbacks
+                // Ignore rollbacks
                 return rollbackValue;
             }
 
-            //re-throw exception with unhandled cause
+            // re-throw exception with unhandled cause
             throw e;
         }
     }

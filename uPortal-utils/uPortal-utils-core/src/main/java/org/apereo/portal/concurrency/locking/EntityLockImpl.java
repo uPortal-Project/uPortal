@@ -19,6 +19,7 @@ import org.apereo.portal.EntityTypes;
 import org.apereo.portal.concurrency.IEntityLock;
 import org.apereo.portal.concurrency.IEntityLockService;
 import org.apereo.portal.concurrency.LockingException;
+
 /**
  * An implementation of IEntityLock. A lock is granted to a <code>lockOwner</code> for an <code>
  * entityType</code> and <code>entityKey</code>. It guarantees some degree of exclusive access to

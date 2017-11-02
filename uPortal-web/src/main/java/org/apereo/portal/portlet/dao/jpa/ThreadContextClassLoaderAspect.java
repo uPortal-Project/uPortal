@@ -65,7 +65,7 @@ public class ThreadContextClassLoaderAspect implements Ordered {
             currentThread.setContextClassLoader(previousClassLoader);
             deque.removeFirst();
             if (deque.isEmpty()) {
-                //clean up the threadlocal when the deque is empty
+                // clean up the threadlocal when the deque is empty
                 PREVIOUS_CLASS_LOADER.remove();
             }
         }

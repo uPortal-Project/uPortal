@@ -45,7 +45,7 @@ public class IdentitySwapperSecurityContext implements ISecurityContext {
      */
     @Override
     public void authenticate() throws PortalSecurityException {
-        //Do Nothing
+        // Do Nothing
     }
 
     /* (non-Javadoc)
@@ -125,7 +125,7 @@ public class IdentitySwapperSecurityContext implements ISecurityContext {
      */
     @Override
     public boolean isAuthenticated() {
-        //Always says the user is authenticated
+        // Always says the user is authenticated
         return true;
     }
 }

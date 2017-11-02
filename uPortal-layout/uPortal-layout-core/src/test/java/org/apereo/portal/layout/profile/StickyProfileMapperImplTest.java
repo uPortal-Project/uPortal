@@ -115,7 +115,8 @@ public class StickyProfileMapperImplTest {
         verify(registry).registerUserProfileSelection("bobby", "profileFName1");
 
         // this verifyNoMoreInteractions() is questionable
-        // it makes the test over-specified, but it would catch some weird bugs wherein the profile mapper
+        // it makes the test over-specified, but it would catch some weird bugs wherein the profile
+        // mapper
         // might have done weird unexpected things to the registry.
         verifyNoMoreInteractions(registry);
     }

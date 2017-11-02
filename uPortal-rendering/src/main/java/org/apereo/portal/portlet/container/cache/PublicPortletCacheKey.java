@@ -77,7 +77,7 @@ public class PublicPortletCacheKey implements Serializable, TaggedCacheEntry {
         WindowState reqWindowState = null;
         PortletMode reqPortletMode = null;
 
-        //First look for data in IPortletRequest info
+        // First look for data in IPortletRequest info
         final IPortletRequestInfo portletRequestInfo =
                 portalRequestInfo.getPortletRequestInfo(portletWindow.getPortletWindowId());
         if (portletRequestInfo != null) {
@@ -86,21 +86,21 @@ public class PublicPortletCacheKey implements Serializable, TaggedCacheEntry {
             reqWindowState = portletRequestInfo.getWindowState();
             reqPortletMode = portletRequestInfo.getPortletMode();
         }
-        //Only re-use render parameters on a render request
+        // Only re-use render parameters on a render request
         else if (portalRequestInfo.getUrlType() == UrlType.RENDER) {
             this.parameters = ParameterMap.convertArrayMap(portletWindow.getRenderParameters());
         } else {
             this.parameters = Collections.emptyMap();
         }
 
-        //Grab the resource id
+        // Grab the resource id
         if (portalRequestInfo.getUrlType() == UrlType.RESOURCE) {
             this.resourceId = portletRequestInfo.getResourceId();
         } else {
             this.resourceId = null;
         }
 
-        //Grab window state and portlet mode
+        // Grab window state and portlet mode
         if (reqWindowState == null) {
             this.windowState = portletWindow.getWindowState().toString();
         } else {

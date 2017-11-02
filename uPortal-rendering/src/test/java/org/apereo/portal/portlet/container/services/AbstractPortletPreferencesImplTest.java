@@ -133,7 +133,8 @@ public class AbstractPortletPreferencesImplTest {
         String value = portletPreferences.getValue("key0", "FOOBAR");
         assertEquals("FOOBAR", value);
 
-        // Next 3 asserts check whether null values are treated like non-existent values as specified in
+        // Next 3 asserts check whether null values are treated like non-existent values as
+        // specified in
         // PortletPreferences#getValue(String, String)
         value = portletPreferences.getValue("key1", "FOOBAR");
         assertEquals("FOOBAR", value);
@@ -236,7 +237,7 @@ public class AbstractPortletPreferencesImplTest {
     public void testSetReadOnlyValue() throws ReadOnlyException, ValidatorException, IOException {
         addPref(basePrefs, "key", true, new String[] {"default"});
 
-        //Set a modified value
+        // Set a modified value
         portletPreferences.setValue("key", "modified");
     }
 
@@ -244,7 +245,7 @@ public class AbstractPortletPreferencesImplTest {
     public void testSetReadOnlyValues() throws ReadOnlyException, ValidatorException, IOException {
         addPref(basePrefs, "key", true, new String[] {"default"});
 
-        //Set a modified value
+        // Set a modified value
         portletPreferences.setValues("key", new String[] {"modified"});
     }
 
@@ -252,13 +253,13 @@ public class AbstractPortletPreferencesImplTest {
     public void testSetMatchesBase() throws ReadOnlyException, ValidatorException, IOException {
         addPref(basePrefs, "key", false, new String[] {"default"});
 
-        //Set a modified value
+        // Set a modified value
         portletPreferences.setValues("key", new String[] {"modified"});
 
-        //Initial store, check that correct stored map is created
+        // Initial store, check that correct stored map is created
         portletPreferences.store();
 
-        //Actually "store" the stored prefs
+        // Actually "store" the stored prefs
         this.targetPrefs = new LinkedHashMap<String, IPortletPreference>(this.storedPrefs);
 
         assertEquals(1, this.storedPrefs.size());
@@ -269,10 +270,10 @@ public class AbstractPortletPreferencesImplTest {
         assertArrayEquals(new String[] {"modified"}, pref.getValues());
         assertFalse(pref.isReadOnly());
 
-        //Set the default value
+        // Set the default value
         portletPreferences.setValues("key", new String[] {"default"});
 
-        //Store again, should have nothing stored after this
+        // Store again, should have nothing stored after this
         portletPreferences.store();
 
         assertEquals(0, this.storedPrefs.size());
@@ -282,13 +283,13 @@ public class AbstractPortletPreferencesImplTest {
     public void testSetUpdateExisting() throws ReadOnlyException, ValidatorException, IOException {
         addPref(basePrefs, "key", false, new String[] {"default"});
 
-        //Set a modified value
+        // Set a modified value
         portletPreferences.setValues("key", new String[] {"modified"});
 
-        //Initial store, check that correct stored map is created
+        // Initial store, check that correct stored map is created
         portletPreferences.store();
 
-        //Actually "store" the stored prefs
+        // Actually "store" the stored prefs
         this.targetPrefs = new LinkedHashMap<String, IPortletPreference>(this.storedPrefs);
 
         assertEquals(1, this.storedPrefs.size());
@@ -299,13 +300,13 @@ public class AbstractPortletPreferencesImplTest {
         assertArrayEquals(new String[] {"modified"}, pref.getValues());
         assertFalse(pref.isReadOnly());
 
-        //Set a modified value
+        // Set a modified value
         portletPreferences.setValues("key", null);
 
-        //Initial store, check that correct stored map is created
+        // Initial store, check that correct stored map is created
         portletPreferences.store();
 
-        //Actually "store" the stored prefs
+        // Actually "store" the stored prefs
         this.targetPrefs = new LinkedHashMap<String, IPortletPreference>(this.storedPrefs);
 
         assertEquals(1, this.storedPrefs.size());
@@ -327,7 +328,7 @@ public class AbstractPortletPreferencesImplTest {
                 ImmutableSet.of("key", "key1"),
                 new HashSet<String>(EnumerationUtils.toList(names)));
 
-        //Set a modified value
+        // Set a modified value
         portletPreferences.setValues("key", new String[] {"modified"});
         portletPreferences.setValues("key3", new String[] {"modified"});
 
@@ -336,10 +337,10 @@ public class AbstractPortletPreferencesImplTest {
                 ImmutableSet.of("key", "key1", "key3"),
                 new HashSet<String>(EnumerationUtils.toList(names)));
 
-        //Initial store, check that correct stored map is created
+        // Initial store, check that correct stored map is created
         portletPreferences.store();
 
-        //Actually "store" the stored prefs
+        // Actually "store" the stored prefs
         this.targetPrefs = new LinkedHashMap<String, IPortletPreference>(this.storedPrefs);
 
         names = portletPreferences.getNames();
@@ -354,10 +355,10 @@ public class AbstractPortletPreferencesImplTest {
                 ImmutableSet.of("key", "key1"),
                 new HashSet<String>(EnumerationUtils.toList(names)));
 
-        //Initial store, check that correct stored map is created
+        // Initial store, check that correct stored map is created
         portletPreferences.store();
 
-        //Actually "store" the stored prefs
+        // Actually "store" the stored prefs
         this.targetPrefs = new LinkedHashMap<String, IPortletPreference>(this.storedPrefs);
 
         names = portletPreferences.getNames();
@@ -377,7 +378,7 @@ public class AbstractPortletPreferencesImplTest {
                         "key", ImmutableList.of("default"), "key1", ImmutableList.of("default")),
                 ParameterMap.convertArrayMap(map));
 
-        //Set a modified value
+        // Set a modified value
         portletPreferences.setValues("key", new String[] {"modified"});
         portletPreferences.setValues("key3", new String[] {"modified"});
 
@@ -392,10 +393,10 @@ public class AbstractPortletPreferencesImplTest {
                         ImmutableList.of("modified")),
                 ParameterMap.convertArrayMap(map));
 
-        //Initial store, check that correct stored map is created
+        // Initial store, check that correct stored map is created
         portletPreferences.store();
 
-        //Actually "store" the stored prefs
+        // Actually "store" the stored prefs
         this.targetPrefs = new LinkedHashMap<String, IPortletPreference>(this.storedPrefs);
 
         map = portletPreferences.getMap();
@@ -417,10 +418,10 @@ public class AbstractPortletPreferencesImplTest {
                         "key", ImmutableList.of("modified"), "key1", ImmutableList.of("default")),
                 ParameterMap.convertArrayMap(map));
 
-        //Initial store, check that correct stored map is created
+        // Initial store, check that correct stored map is created
         portletPreferences.store();
 
-        //Actually "store" the stored prefs
+        // Actually "store" the stored prefs
         this.targetPrefs = new LinkedHashMap<String, IPortletPreference>(this.storedPrefs);
 
         map = portletPreferences.getMap();
@@ -441,13 +442,13 @@ public class AbstractPortletPreferencesImplTest {
     public void testResetToBase() throws ReadOnlyException, ValidatorException, IOException {
         addPref(basePrefs, "key", false, new String[] {"default"});
 
-        //Set a modified value
+        // Set a modified value
         portletPreferences.setValues("key", new String[] {"modified"});
 
-        //Initial store, check that correct stored map is created
+        // Initial store, check that correct stored map is created
         portletPreferences.store();
 
-        //Actually "store" the stored prefs
+        // Actually "store" the stored prefs
         this.targetPrefs = new LinkedHashMap<String, IPortletPreference>(this.storedPrefs);
 
         assertEquals(1, this.storedPrefs.size());
@@ -458,21 +459,21 @@ public class AbstractPortletPreferencesImplTest {
         assertArrayEquals(new String[] {"modified"}, pref.getValues());
         assertFalse(pref.isReadOnly());
 
-        //Get the current value
+        // Get the current value
         String[] values = portletPreferences.getValues("key", null);
         assertArrayEquals(new String[] {"modified"}, values);
 
-        //Reset it
+        // Reset it
         portletPreferences.reset("key");
 
-        //Get the default value
+        // Get the default value
         values = portletPreferences.getValues("key", null);
         assertArrayEquals(new String[] {"default"}, values);
 
-        //Do another store to verify nothing gets stored
+        // Do another store to verify nothing gets stored
         portletPreferences.store();
 
-        //Actually "store" the stored prefs
+        // Actually "store" the stored prefs
         this.targetPrefs = new LinkedHashMap<String, IPortletPreference>(this.storedPrefs);
 
         assertEquals(0, this.storedPrefs.size());

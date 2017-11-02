@@ -53,7 +53,7 @@ public class OutputPropertyDescriptorImpl extends AbstractStylesheetDataImpl
     @Column(name = "ENTITY_VERSION")
     private final long entityVersion;
 
-    //Required by hibernate for reflective creation
+    // Required by hibernate for reflective creation
     @SuppressWarnings("unused")
     private OutputPropertyDescriptorImpl() {
         this.id = -1;

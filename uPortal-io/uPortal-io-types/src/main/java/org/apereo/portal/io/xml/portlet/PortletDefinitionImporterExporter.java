@@ -226,8 +226,8 @@ public class PortletDefinitionImporterExporter
         final String defId = definition.getPortletDefinitionId().getStringId();
         final IEntity portletDefEntity = GroupService.getEntity(defId, IPortletDefinition.class);
 
-        //Sync on groups during update. This really should be a portal wide thread-safety check or
-        //The groups service needs to deal with concurrent modification better.
+        // Sync on groups during update. This really should be a portal wide thread-safety check or
+        // The groups service needs to deal with concurrent modification better.
         synchronized (this.groupUpdateLock) {
             // Delete existing category memberships for this channel
             if (!newChannel) {
@@ -277,7 +277,8 @@ public class PortletDefinitionImporterExporter
                     }
                 }
 
-                // If modifying the channel, remove the existing permissions before adding the new ones
+                // If modifying the channel, remove the existing permissions before adding the new
+                // ones
                 if (!newChannel) {
                     for (ExternalPermissionDefinition permissionName : permissionMap.keySet()) {
                         IPermission[] oldPermissions =
@@ -328,7 +329,7 @@ public class PortletDefinitionImporterExporter
         // Delete any ratings (incl. reviews) associated with the portlet
         marketplaceRatingDao.clearRatingsForPortlet(portletDef);
 
-        //Delete the portlet itself.
+        // Delete the portlet itself.
         portletDefinitionDao.deletePortletDefinition(portletDef);
     }
 
@@ -417,7 +418,7 @@ public class PortletDefinitionImporterExporter
 
             final List<String> value = externalPortletPreference.getValues();
             value.addAll(Arrays.asList(pref.getValues()));
-            //no sorting of preference values, order is specified by the portlet
+            // no sorting of preference values, order is specified by the portlet
 
             portletPreferenceList.add(externalPortletPreference);
         }

@@ -51,7 +51,7 @@ public class ProfileSelectionDaoImpl extends BasePortalJpaDao implements IProfil
         Validate.notNull(profileSelection);
 
         if (!getEntityManager().contains(profileSelection)) {
-            //Entity is not managed
+            // Entity is not managed
             return getEntityManager().merge(profileSelection);
         } else {
             getEntityManager().persist(profileSelection);

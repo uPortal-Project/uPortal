@@ -40,7 +40,8 @@ public class PortalDialectResolver extends AbstractDialectResolver {
             return new PostgreSQL81Dialect();
         }
 
-        // This is due to a jTDS not supporting SQL Server 2008+, hence does not support some new types like TIME.
+        // This is due to a jTDS not supporting SQL Server 2008+, hence does not support some new
+        // types like TIME.
         if ("Microsoft SQL Server".equals(databaseName) && databaseMajorVersion > 9) {
             return new SQLServer2005Dialect();
         }

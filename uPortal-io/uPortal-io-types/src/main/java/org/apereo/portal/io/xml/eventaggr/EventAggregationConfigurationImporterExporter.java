@@ -106,7 +106,7 @@ public class EventAggregationConfigurationImporterExporter
     @Transactional("aggrEventsTransactionManager")
     @Override
     public void importData(ExternalEventAggregationConfiguration data) {
-        //Import interval configs
+        // Import interval configs
         final Set<AggregatedIntervalConfig> oldAggregatedIntervalConfigs =
                 new HashSet<AggregatedIntervalConfig>(
                         this.aggregationManagementDao.getAggregatedIntervalConfigs());
@@ -124,10 +124,10 @@ public class EventAggregationConfigurationImporterExporter
                                 aggregatorType);
             }
 
-            //Remove the config from the old configs set, marking it as updated
+            // Remove the config from the old configs set, marking it as updated
             oldAggregatedIntervalConfigs.remove(aggregatedIntervalConfig);
 
-            //Copy over excludes
+            // Copy over excludes
             final Set<AggregationInterval> excluded = aggregatedIntervalConfig.getExcluded();
             excluded.clear();
             for (final ExternalAggregationInterval extInterval :
@@ -135,7 +135,7 @@ public class EventAggregationConfigurationImporterExporter
                 excluded.add(convert(extInterval));
             }
 
-            //Copy over includes
+            // Copy over includes
             final Set<AggregationInterval> included = aggregatedIntervalConfig.getIncluded();
             included.clear();
             for (final ExternalAggregationInterval extInterval :
@@ -146,13 +146,13 @@ public class EventAggregationConfigurationImporterExporter
             this.aggregationManagementDao.updateAggregatedIntervalConfig(aggregatedIntervalConfig);
         }
 
-        //Delete interval configs that were not updated
+        // Delete interval configs that were not updated
         for (final AggregatedIntervalConfig aggregatedIntervalConfig :
                 oldAggregatedIntervalConfigs) {
             this.aggregationManagementDao.deleteAggregatedIntervalConfig(aggregatedIntervalConfig);
         }
 
-        //Import Group configs
+        // Import Group configs
         final Set<AggregatedGroupConfig> oldAggregatedGroupConfigs =
                 new HashSet<AggregatedGroupConfig>(
                         this.aggregationManagementDao.getAggregatedGroupConfigs());
@@ -169,10 +169,10 @@ public class EventAggregationConfigurationImporterExporter
                         this.aggregationManagementDao.createAggregatedGroupConfig(aggregatorType);
             }
 
-            //Remove the config from the old configs set, marking it as updated
+            // Remove the config from the old configs set, marking it as updated
             oldAggregatedGroupConfigs.remove(aggregatedGroupConfig);
 
-            //Copy over excludes
+            // Copy over excludes
             final Set<AggregatedGroupMapping> excluded = aggregatedGroupConfig.getExcluded();
             excluded.clear();
             for (final ExternalAggregatedGroupMapping extGroup :
@@ -180,7 +180,7 @@ public class EventAggregationConfigurationImporterExporter
                 excluded.add(convert(extGroup));
             }
 
-            //Copy over includes
+            // Copy over includes
             final Set<AggregatedGroupMapping> included = aggregatedGroupConfig.getIncluded();
             included.clear();
             for (final ExternalAggregatedGroupMapping extGroup :
@@ -191,12 +191,12 @@ public class EventAggregationConfigurationImporterExporter
             this.aggregationManagementDao.updateAggregatedGroupConfig(aggregatedGroupConfig);
         }
 
-        //Delete interval configs that were not updated
+        // Delete interval configs that were not updated
         for (final AggregatedGroupConfig aggregatedGroupConfig : oldAggregatedGroupConfigs) {
             this.aggregationManagementDao.deleteAggregatedGroupConfig(aggregatedGroupConfig);
         }
 
-        //Set quarter details if configured or set default quarters
+        // Set quarter details if configured or set default quarters
         final List<ExternalQuarterDetail> extQuarterDetails = data.getQuarterDetails();
         final List<QuarterDetail> quarterDetails;
         if (!extQuarterDetails.isEmpty()) {
@@ -206,7 +206,7 @@ public class EventAggregationConfigurationImporterExporter
         }
         this.aggregationManagementDao.setQuarterDetails(quarterDetails);
 
-        //Set academic term if configured
+        // Set academic term if configured
         final List<AcademicTermDetail> academicTerms =
                 Lists.transform(
                         data.getTermDetails(),
@@ -286,7 +286,7 @@ public class EventAggregationConfigurationImporterExporter
         final ExternalEventAggregationConfiguration externalData =
                 new ExternalEventAggregationConfiguration();
 
-        //Copy interval configs
+        // Copy interval configs
         final List<ExternalAggregatedIntervalConfig> aggregatedIntervalConfigs =
                 externalData.getAggregatedIntervalConfigs();
         for (final AggregatedIntervalConfig aggregatedIntervalConfig :
@@ -315,7 +315,7 @@ public class EventAggregationConfigurationImporterExporter
         Collections.sort(
                 aggregatedIntervalConfigs, ExternalAggregatedDimensionConfigComparator.INSTANCE);
 
-        //Copy group configs
+        // Copy group configs
         final List<ExternalAggregatedGroupConfig> aggregatedGroupConfigs =
                 externalData.getAggregatedGroupConfigs();
         for (final AggregatedGroupConfig aggregatedGroupConfig :
@@ -344,7 +344,7 @@ public class EventAggregationConfigurationImporterExporter
         Collections.sort(
                 aggregatedGroupConfigs, ExternalAggregatedDimensionConfigComparator.INSTANCE);
 
-        //Copy term details
+        // Copy term details
         final List<ExternalTermDetail> externalTermDetails = externalData.getTermDetails();
         for (final AcademicTermDetail academicTermDetail :
                 this.aggregationManagementDao.getAcademicTermDetails()) {
@@ -356,7 +356,7 @@ public class EventAggregationConfigurationImporterExporter
         }
         Collections.sort(externalTermDetails, ExternalTermDetailComparator.INSTANCE);
 
-        //Copy quarter details
+        // Copy quarter details
         final List<ExternalQuarterDetail> quarterDetails = externalData.getQuarterDetails();
         for (final QuarterDetail quarterDetail :
                 this.aggregationManagementDao.getQuartersDetails()) {

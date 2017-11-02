@@ -84,7 +84,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
     private static final String UNSUPPORTED_MULTIPLE_LAYOUTS_FOUND =
             "User ID {}'s profiles contain more than one non-zero layout id.  This is currently not supported.";
 
-    //This class is instantiated ONCE so NO class variables can be used to keep state between calls
+    // This class is instantiated ONCE so NO class variables can be used to keep state between calls
     protected static final String channelPrefix = "n";
     protected static final String folderPrefix = "s";
 
@@ -454,7 +454,8 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                         Statement insertStmt = con.createStatement();
                         try {
                             long startTime = System.currentTimeMillis();
-                            // eventually, we need to fix template layout implementations so you can just do this:
+                            // eventually, we need to fix template layout implementations so you can
+                            // just do this:
                             //        int layoutId=profile.getLayoutId();
                             // but for now:
                             int layoutId = getLayoutID(userId, profile.getProfileId());
@@ -509,7 +510,9 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                                                                             rs.close();
                                                                         }
 
-                                                                        // Make sure the next struct id is set in case the user adds a channel
+                                                                        // Make sure the next struct
+                                                                        // id is set in case the
+                                                                        // user adds a channel
                                                                         sQuery =
                                                                                 "SELECT NEXT_STRUCT_ID FROM UP_USER WHERE USER_ID="
                                                                                         + newUserId;
@@ -540,8 +543,13 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
 
                                                                         if (realUserId
                                                                                 != newUserId) {
-                                                                            // But never make the existing value SMALLER, change it only to make it LARGER
-                                                                            // (so, get existing value)
+                                                                            // But never make the
+                                                                            // existing value
+                                                                            // SMALLER, change it
+                                                                            // only to make it
+                                                                            // LARGER
+                                                                            // (so, get existing
+                                                                            // value)
                                                                             sQuery =
                                                                                     "SELECT NEXT_STRUCT_ID FROM UP_USER WHERE USER_ID="
                                                                                             + realUserId;
@@ -600,14 +608,15 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
 
                             int firstStructId = -1;
 
-                            //Flags to enable a default layout lookup if it's needed
+                            // Flags to enable a default layout lookup if it's needed
                             boolean foundLayout = false;
                             boolean triedDefault = false;
 
-                            //This loop is used to ensure a layout is found for a user. It tries
-                            //looking up the layout for the current userID. If one isn't found
-                            //the userID is replaced with the template user ID for this user and
-                            //the layout is searched for again. This loop should only ever loop once.
+                            // This loop is used to ensure a layout is found for a user. It tries
+                            // looking up the layout for the current userID. If one isn't found
+                            // the userID is replaced with the template user ID for this user and
+                            // the layout is searched for again. This loop should only ever loop
+                            // once.
                             do {
                                 String sQuery =
                                         "SELECT INIT_STRUCT_ID FROM UP_USER_LAYOUT WHERE USER_ID="
@@ -659,15 +668,16 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                                 logger.debug("getUserLayout(): {}", sql);
                                 rs = stmt.executeQuery(sql);
 
-                                //check for rows in the result set
+                                // check for rows in the result set
                                 foundLayout = rs.next();
 
                                 if (!foundLayout && !triedDefault && userId == realUserId) {
-                                    //If we didn't find any rows and we haven't tried the default user yet
+                                    // If we didn't find any rows and we haven't tried the default
+                                    // user yet
                                     triedDefault = true;
                                     rs.close();
 
-                                    //Get the default user ID and layout ID
+                                    // Get the default user ID and layout ID
                                     sQuery =
                                             "SELECT USER_DFLT_USR_ID, USER_DFLT_LAY_ID FROM UP_USER WHERE USER_ID="
                                                     + userId;
@@ -681,7 +691,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                                         rs.close();
                                     }
                                 } else {
-                                    //We tried the default or actually found a layout
+                                    // We tried the default or actually found a layout
                                     break;
                                 }
                             } while (!foundLayout);
@@ -696,7 +706,8 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                                 if (foundLayout) {
                                     int structId = rs.getInt(1);
                                     // Result Set returns 0 by default if structId was null
-                                    // Except if you are using poolman 2.0.4 in which case you get -1 back
+                                    // Except if you are using poolman 2.0.4 in which case you get
+                                    // -1 back
                                     if (rs.wasNull()) {
                                         structId = 0;
                                     }
@@ -717,7 +728,8 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                                         }
                                         String temp5 =
                                                 rs.getString(
-                                                        5); // Some JDBC drivers require columns accessed in order
+                                                        5); // Some JDBC drivers require columns
+                                        // accessed in order
                                         String temp6 =
                                                 rs.getString(
                                                         6); // Access 5 and 6 now, save till needed.
@@ -762,10 +774,11 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                                             do {
                                                 String name = rs.getString(name_index);
                                                 String value =
-                                                        rs.getString(
-                                                                value_index); // Oracle JDBC requires us to do this for longs
-                                                if (name
-                                                        != null) { // may not be there because of the join
+                                                        rs.getString(value_index); // Oracle JDBC
+                                                // requires us to do
+                                                // this for longs
+                                                if (name != null) { // may not be there because of
+                                                    // the join
                                                     ls.addParameter(name, value);
                                                 }
                                                 if (!rs.next()) {
@@ -776,7 +789,8 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                                                     structId = 0;
                                                 }
                                             } while (structId == lastStructId);
-                                        } else { // Do second SELECT later on for structure parameters
+                                        } else { // Do second SELECT later on for structure
+                                            // parameters
                                             if (ls.isChannel()) {
                                                 structChanIds.append(sepChar + ls.getChanId());
                                                 sepChar = ",";
@@ -813,7 +827,8 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                                 String sep = "";
                                 rs = stmt.executeQuery(sql);
                                 try {
-                                    // use the results to build a correct list of struct ids to look for
+                                    // use the results to build a correct list of struct ids to look
+                                    // for
                                     while (rs.next()) {
                                         structIdsSB.append(sep + rs.getString(1));
                                         sep = ",";
@@ -941,7 +956,8 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                                             }
                                             int structSsId = rs.getInt(6);
                                             if (rs.wasNull()) {
-                                                // This is probably a data issue and probably an export operation;  defer to the system user...
+                                                // This is probably a data issue and probably an
+                                                // export operation;  defer to the system user...
                                                 if (!person.equals(getSystemUser())) {
                                                     structSsId =
                                                             getSystemProfileByFname(profileFname)
@@ -954,7 +970,8 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                                             }
                                             int themeSsId = rs.getInt(7);
                                             if (rs.wasNull()) {
-                                                // This is probably a data issue and probably an export operation;  defer to the system user...
+                                                // This is probably a data issue and probably an
+                                                // export operation;  defer to the system user...
                                                 if (!person.equals(getSystemUser())) {
                                                     themeSsId =
                                                             getSystemProfileByFname(profileFname)
@@ -1144,8 +1161,10 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                                         int layoutId = 0;
                                         ResultSet rs;
 
-                                        // Eventually we want to be able to just get layoutId from the
-                                        // profile, but because of the template user layouts we have to do this for now ...
+                                        // Eventually we want to be able to just get layoutId from
+                                        // the
+                                        // profile, but because of the template user layouts we have
+                                        // to do this for now ...
                                         layoutId = getLayoutID(userId, profileId);
 
                                         boolean firstLayout = false;
@@ -1215,7 +1234,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                                             parmStmt.close();
                                         }
 
-                                        //Check to see if the user has a matching layout
+                                        // Check to see if the user has a matching layout
                                         sql =
                                                 "SELECT * FROM UP_USER_LAYOUT WHERE USER_ID=? AND LAYOUT_ID=?";
                                         pstmt = con.prepareStatement(sql);
@@ -1228,7 +1247,9 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
 
                                             try {
                                                 if (!rs.next()) {
-                                                    // If not, the default user is found and the layout rows from the default user are copied for the current user.
+                                                    // If not, the default user is found and the
+                                                    // layout rows from the default user are copied
+                                                    // for the current user.
                                                     int defaultUserId;
 
                                                     sql =
@@ -1264,7 +1285,8 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                                                         ResultSet rs2 = pstmt2.executeQuery();
                                                         try {
                                                             if (rs2.next()) {
-                                                                // There is a row for this user's template user...
+                                                                // There is a row for this user's
+                                                                // template user...
                                                                 sql =
                                                                         "INSERT INTO UP_USER_LAYOUT (USER_ID, LAYOUT_ID, LAYOUT_TITLE, INIT_STRUCT_ID) VALUES (?,?,?,?)";
                                                                 PreparedStatement pstmt3 =
@@ -1290,7 +1312,8 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                                                                     pstmt3.close();
                                                                 }
                                                             } else {
-                                                                // We can't rely on the template user, but we still need a row...
+                                                                // We can't rely on the template
+                                                                // user, but we still need a row...
                                                                 sql =
                                                                         "INSERT INTO UP_USER_LAYOUT (USER_ID, LAYOUT_ID, LAYOUT_TITLE, INIT_STRUCT_ID) VALUES (?,?,?,?)";
                                                                 PreparedStatement pstmt3 =
@@ -1322,7 +1345,8 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                                             pstmt.close();
                                         }
 
-                                        //Update the users layout with the correct inital structure ID
+                                        // Update the users layout with the correct inital structure
+                                        // ID
                                         sql =
                                                 "UPDATE UP_USER_LAYOUT SET INIT_STRUCT_ID=? WHERE USER_ID=? AND LAYOUT_ID=?";
                                         pstmt = con.prepareStatement(sql);
@@ -1337,7 +1361,8 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                                             pstmt.close();
                                         }
 
-                                        // Update the last time the user saw the list of available channels
+                                        // Update the last time the user saw the list of available
+                                        // channels
                                         if (channelsAdded) {
                                             sql =
                                                     "UPDATE UP_USER SET LST_CHAN_UPDT_DT=? WHERE USER_ID=?";

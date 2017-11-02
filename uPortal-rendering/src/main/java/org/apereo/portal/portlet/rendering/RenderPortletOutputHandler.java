@@ -70,7 +70,7 @@ public class RenderPortletOutputHandler implements PortletOutputHandler {
             try {
                 this.writerOutputStream.flush();
             } catch (IOException e) {
-                //No way the output stream can throw an IOE here
+                // No way the output stream can throw an IOE here
             }
         }
         this.printWriter.flush();
@@ -104,7 +104,7 @@ public class RenderPortletOutputHandler implements PortletOutputHandler {
 
     @Override
     public void setBufferSize(int size) {
-        //Ignore, we can always buffer the max string length
+        // Ignore, we can always buffer the max string length
     }
 
     @Override

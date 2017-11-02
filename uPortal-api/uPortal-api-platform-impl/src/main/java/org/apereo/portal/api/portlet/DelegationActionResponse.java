@@ -84,7 +84,7 @@ public class DelegationActionResponse extends DelegationResponse {
     }
 
     public Map<String, String[]> getRenderParameters() {
-        //Have to clone to make sure the value arrays don't get modified
+        // Have to clone to make sure the value arrays don't get modified
         return new ParameterMap(this.renderParameters);
     }
 

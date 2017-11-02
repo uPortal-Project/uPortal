@@ -69,6 +69,7 @@ public interface AggregationIntervalHelper {
     //     * @param missingDataCreator Function used to create zero-value aggregation objects
     //     * @return
     //     */
-    //    <T extends BaseAggregation<?>> List<T> fillInBlanks(AggregationInterval interval, DateTime start, DateTime end, List<T> data, Function<AggregationIntervalInfo, T> missingDataCreator);
+    //    <T extends BaseAggregation<?>> List<T> fillInBlanks(AggregationInterval interval, DateTime
+    // start, DateTime end, List<T> data, Function<AggregationIntervalInfo, T> missingDataCreator);
 
 }

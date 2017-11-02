@@ -229,17 +229,17 @@ public class TransientPortletEntityDao implements IPortletEntityDao {
     }
 
     protected String determineDatabaseChannelSubscribeId(String layoutNodeId) {
-        //Find the referenced Node in the user's layout
+        // Find the referenced Node in the user's layout
         final IUserLayoutManager userLayoutManager = this.getUserLayoutManager();
         final IUserLayoutChannelDescription channelNode =
                 (IUserLayoutChannelDescription) userLayoutManager.getNode(layoutNodeId);
 
-        //Lookup the IportletDefinition for the node
+        // Lookup the IportletDefinition for the node
         final String portletPublishId = channelNode.getChannelPublishId();
         final IPortletDefinition portletDefinition =
                 this.portletDefinitionRegistry.getPortletDefinition(portletPublishId);
 
-        //Generate the subscribe ID used for the database
+        // Generate the subscribe ID used for the database
         return this.getPersistentLayoutNodeId(portletDefinition.getPortletDefinitionId());
     }
 

@@ -84,7 +84,7 @@ public abstract class BaseXsltDataUpgraderTest {
         xsltDataUpgrader.setXmlUtilities(xmlUtilities);
         xsltDataUpgrader.afterPropertiesSet();
 
-        //Create XmlEventReader (what the JaxbPortalDataHandlerService has)
+        // Create XmlEventReader (what the JaxbPortalDataHandlerService has)
         final XMLInputFactory xmlInputFactory = xmlUtilities.getXmlInputFactory();
         final XMLEventReader xmlEventReader =
                 xmlInputFactory.createXMLEventReader(inputResource.getInputStream());
@@ -94,7 +94,7 @@ public abstract class BaseXsltDataUpgraderTest {
         final DOMResult result = new DOMResult();
         xsltDataUpgrader.upgradeData(source, result);
 
-        //XSD Validation
+        // XSD Validation
         final String resultString = XmlUtilitiesImpl.toString(result.getNode());
         if (xsdResource != null) {
             final Schema schema =

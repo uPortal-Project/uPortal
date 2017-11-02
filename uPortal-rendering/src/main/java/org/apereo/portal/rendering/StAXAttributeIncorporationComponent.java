@@ -68,7 +68,7 @@ public class StAXAttributeIncorporationComponent extends StAXPipelineComponentWr
     @Override
     public PipelineEventReader<XMLEventReader, XMLEvent> getEventReader(
             HttpServletRequest request, HttpServletResponse response) {
-        //Get the reader from the parent and add the attribute incorporating wrapper
+        // Get the reader from the parent and add the attribute incorporating wrapper
         final PipelineEventReader<XMLEventReader, XMLEvent> cachingEventReader =
                 this.wrappedComponent.getEventReader(request, response);
         final XMLEventReader eventReader =
@@ -92,12 +92,12 @@ public class StAXAttributeIncorporationComponent extends StAXPipelineComponentWr
 
         @Override
         protected XMLEvent filterEvent(XMLEvent event, boolean peek) {
-            //Only filtering start elements to add attributes
+            // Only filtering start elements to add attributes
             if (!event.isStartElement()) {
                 return event;
             }
 
-            //Get the additional attributes, return if there are no attributes for this element
+            // Get the additional attributes, return if there are no attributes for this element
             final StartElement startElement = event.asStartElement();
             final Iterator<Attribute> additionalAttributes =
                     attributeSource.getAdditionalAttributes(request, response, startElement);
@@ -105,13 +105,12 @@ public class StAXAttributeIncorporationComponent extends StAXPipelineComponentWr
                 return event;
             }
 
-            //Merge the additional attributes with the existing attributes
-            //additional attributes overwrite
+            // Merge the additional attributes with the existing attributes
+            // additional attributes overwrite
             final Map<QName, Attribute> mergedAttributes = new LinkedHashMap<QName, Attribute>();
 
             for (final Iterator<Attribute> attributes = startElement.getAttributes();
-                    attributes.hasNext();
-                    ) {
+                    attributes.hasNext(); ) {
                 final Attribute attribute = attributes.next();
                 mergedAttributes.put(attribute.getName(), attribute);
             }
@@ -131,7 +130,7 @@ public class StAXAttributeIncorporationComponent extends StAXPipelineComponentWr
                 }
             }
 
-            //Create the modified StartElement with the additional attribute data
+            // Create the modified StartElement with the additional attribute data
             final StartElement modifiedStartElement =
                     eventFactory.createStartElement(
                             startElement.getName(),

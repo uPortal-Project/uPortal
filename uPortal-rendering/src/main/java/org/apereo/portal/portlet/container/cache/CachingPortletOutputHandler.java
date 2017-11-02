@@ -50,7 +50,7 @@ public class CachingPortletOutputHandler implements PortletOutputHandler {
             T portletResult, CacheControl cacheControl) {
         if ((this.teeWriter != null && this.teeWriter.isLimitReached())
                 || (this.teeStream != null && this.teeStream.isLimitReached())) {
-            //Hit the caching limit, nothing to return
+            // Hit the caching limit, nothing to return
             return null;
         }
 
@@ -95,7 +95,8 @@ public class CachingPortletOutputHandler implements PortletOutputHandler {
             final PrintWriter delegateWriter = this.portletOutputHandler.getPrintWriter();
             this.cachingWriter = new StringBuilderWriter();
 
-            //Create the limiting tee writer to write to the actual PrintWriter and the cachingWriter
+            // Create the limiting tee writer to write to the actual PrintWriter and the
+            // cachingWriter
             this.teeWriter =
                     new LimitingTeeWriter(
                             this.maximumSize,
@@ -104,13 +105,13 @@ public class CachingPortletOutputHandler implements PortletOutputHandler {
                             new Function<LimitingTeeWriter, Object>() {
                                 @Override
                                 public Object apply(LimitingTeeWriter input) {
-                                    //Limit hit, clear the cache
+                                    // Limit hit, clear the cache
                                     clearCachedWriter();
                                     return null;
                                 }
                             });
 
-            //Wrap the limiting tee writer in a PrintWriter to return to the caller
+            // Wrap the limiting tee writer in a PrintWriter to return to the caller
             this.printWriter = new PrintWriter(this.teeWriter);
         }
 
@@ -127,7 +128,8 @@ public class CachingPortletOutputHandler implements PortletOutputHandler {
             final OutputStream delegateOutputStream = this.portletOutputHandler.getOutputStream();
             this.cachingOutputStream = new ByteArrayOutputStream();
 
-            //Create the limiting tee output stream to the actual OutputStream and the cachingOutputStream
+            // Create the limiting tee output stream to the actual OutputStream and the
+            // cachingOutputStream
             this.teeStream =
                     new LimitingTeeOutputStream(
                             this.maximumSize,
@@ -136,7 +138,7 @@ public class CachingPortletOutputHandler implements PortletOutputHandler {
                             new Function<LimitingTeeOutputStream, Object>() {
                                 @Override
                                 public Object apply(LimitingTeeOutputStream input) {
-                                    //Limit hit, clear the cache
+                                    // Limit hit, clear the cache
                                     clearCachedStream();
                                     return null;
                                 }
@@ -165,7 +167,7 @@ public class CachingPortletOutputHandler implements PortletOutputHandler {
     public void reset() {
         this.portletOutputHandler.reset();
 
-        //Parent reset worked, clear the caches
+        // Parent reset worked, clear the caches
         resetCached();
     }
 
@@ -173,7 +175,7 @@ public class CachingPortletOutputHandler implements PortletOutputHandler {
     public void resetBuffer() {
         this.portletOutputHandler.resetBuffer();
 
-        //Parent reset worked, clear the caches
+        // Parent reset worked, clear the caches
         resetCached();
     }
 

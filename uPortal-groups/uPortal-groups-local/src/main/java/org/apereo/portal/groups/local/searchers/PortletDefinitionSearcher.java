@@ -72,8 +72,7 @@ public class PortletDefinitionSearcher implements ITypedEntitySearcher {
 
         // add an identifier for each matching portlet
         for (final ListIterator<IPortletDefinition> defIter = definitions.listIterator();
-                defIter.hasNext();
-                ) {
+                defIter.hasNext(); ) {
             final IPortletDefinition definition = defIter.next();
             identifiers[defIter.previousIndex()] =
                     new EntityIdentifier(

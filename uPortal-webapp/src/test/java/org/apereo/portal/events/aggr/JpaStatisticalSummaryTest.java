@@ -49,7 +49,8 @@ public class JpaStatisticalSummaryTest extends BaseAggrEventsJpaDaoTest {
     //        final long id = this.executeInTransaction(new Callable<Long>() {
     //            @Override
     //            public Long call() throws Exception {
-    //                final JpaStatisticalSummary jpaStatisticalSummary = new JpaStatisticalSummary();
+    //                final JpaStatisticalSummary jpaStatisticalSummary = new
+    // JpaStatisticalSummary();
     //
     //                final Random r = new Random(0);
     //                for (int i = 0; i < 10; i++) {
@@ -70,7 +71,8 @@ public class JpaStatisticalSummaryTest extends BaseAggrEventsJpaDaoTest {
     //        this.executeInTransaction(new CallableWithoutResult() {
     //            @Override
     //            protected void callWithoutResult() {
-    //                final JpaStatisticalSummary jpaStatisticalSummary = getEntityManager().find(JpaStatisticalSummary.class, id);
+    //                final JpaStatisticalSummary jpaStatisticalSummary =
+    // getEntityManager().find(JpaStatisticalSummary.class, id);
     //
     //                System.out.println(jpaStatisticalSummary);
     //            }
@@ -114,7 +116,7 @@ public class JpaStatisticalSummaryTest extends BaseAggrEventsJpaDaoTest {
         final ObjectMapper mapper = new ObjectMapper();
         mapper.findAndRegisterModules();
 
-        //Configure Jackson to just use fields
+        // Configure Jackson to just use fields
         mapper.setVisibility(PropertyAccessor.FIELD, Visibility.ANY);
         mapper.setVisibility(PropertyAccessor.GETTER, Visibility.NONE);
         mapper.setVisibility(PropertyAccessor.IS_GETTER, Visibility.NONE);

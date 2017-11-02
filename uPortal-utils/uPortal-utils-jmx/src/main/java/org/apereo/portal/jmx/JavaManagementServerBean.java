@@ -76,7 +76,7 @@ import org.springframework.beans.factory.annotation.Required;
  * generational GC to reguarly clean up RMI objects.
  */
 public class JavaManagementServerBean {
-    //System properties
+    // System properties
     private static final String JMX_ENABLED_PROPERTY = "com.sun.management.jmxremote";
     private static final String JMX_SSL_PROPERTY = "com.sun.management.jmxremote.ssl";
     private static final String JMX_PASSWORD_FILE_PROPERTY =
@@ -84,7 +84,7 @@ public class JavaManagementServerBean {
     private static final String JMX_ACCESS_FILE_PROPERTY =
             "com.sun.management.jmxremote.access.file";
 
-    //JMX properties
+    // JMX properties
     private static final String JMX_REMOTE_X_ACCESS_FILE = "jmx.remote.x.access.file";
     private static final String JMX_REMOTE_X_PASSWORD_FILE = "jmx.remote.x.password.file";
 
@@ -142,13 +142,13 @@ public class JavaManagementServerBean {
         }
 
         try {
-            //Get the base rmi port
+            // Get the base rmi port
             final int portOne = this.getPortOne();
 
-            //Get the second rmi port or calculate it
+            // Get the second rmi port or calculate it
             final int portTwo = this.calculatePortTwo(portOne);
 
-            //Create the RMI registry on the base port
+            // Create the RMI registry on the base port
             try {
                 LocateRegistry.createRegistry(portOne);
 
@@ -160,16 +160,16 @@ public class JavaManagementServerBean {
                         "Could not create RMI Registry on port " + portOne, re);
             }
 
-            //Generate the JMX Service URL
+            // Generate the JMX Service URL
             final JMXServiceURL jmxServiceUrl = this.getServiceUrl(portOne, portTwo);
 
-            //Map for the JMX environment configuration
+            // Map for the JMX environment configuration
             final Map<String, Object> jmxEnv = this.getJmxServerEnvironment();
 
-            //Create the MBean Server
+            // Create the MBean Server
             final MBeanServer mbeanServer = ManagementFactory.getPlatformMBeanServer();
 
-            //Create the JMX Connector
+            // Create the JMX Connector
             try {
                 this.jmxConnectorServer =
                         JMXConnectorServerFactory.newJMXConnectorServer(
@@ -197,7 +197,7 @@ public class JavaManagementServerBean {
                         ioe);
             }
 
-            //Start the JMX Connector
+            // Start the JMX Connector
             try {
                 this.jmxConnectorServer.start();
                 this.logger.info(
@@ -316,7 +316,7 @@ public class JavaManagementServerBean {
     protected Map<String, Object> getJmxServerEnvironment() {
         final Map<String, Object> jmxEnv = new HashMap<String, Object>();
 
-        //SSL Options
+        // SSL Options
         final String enableSSL = System.getProperty(JMX_SSL_PROPERTY);
         if (Boolean.getBoolean(enableSSL)) {
             SslRMIClientSocketFactory csf = new SslRMIClientSocketFactory();
@@ -326,13 +326,13 @@ public class JavaManagementServerBean {
             jmxEnv.put(RMIConnectorServer.RMI_SERVER_SOCKET_FACTORY_ATTRIBUTE, ssf);
         }
 
-        //Password file options
+        // Password file options
         final String passwordFile = System.getProperty(JMX_PASSWORD_FILE_PROPERTY);
         if (passwordFile != null) {
             jmxEnv.put(JMX_REMOTE_X_PASSWORD_FILE, passwordFile);
         }
 
-        //Access file options
+        // Access file options
         final String accessFile = System.getProperty(JMX_ACCESS_FILE_PROPERTY);
         if (accessFile != null) {
             jmxEnv.put(JMX_REMOTE_X_ACCESS_FILE, accessFile);

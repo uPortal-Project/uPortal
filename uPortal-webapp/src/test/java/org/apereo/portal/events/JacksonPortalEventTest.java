@@ -97,7 +97,7 @@ public class JacksonPortalEventTest {
 
         PortalEvent event;
 
-        //TODO: Will uncomment once we add in attribute swapper event processing.
+        // TODO: Will uncomment once we add in attribute swapper event processing.
         /*event = new AttributeSwapEvent(eventBuilder, Collections.EMPTY_MAP);
         assertEventJsonEquals("{\"@c\":\".AttributeSwapEvent\",\"timestamp\":1371745598080,\"serverId\":\"example.com\",\"eventSessionId\":\"1234567890123_system_AAAAAAAAAAA\",\"userName\":\"system\",\"swappedAttributes\":{}}", event);
 

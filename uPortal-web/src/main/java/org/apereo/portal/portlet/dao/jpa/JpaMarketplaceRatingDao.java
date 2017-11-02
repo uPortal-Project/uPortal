@@ -88,10 +88,10 @@ public class JpaMarketplaceRatingDao extends BasePortalJpaDao implements IMarket
         IMarketplaceRating temp =
                 this.getRating(marketplaceRatingImplementation.getMarketplaceRatingPK());
         if (!entityManager.contains(marketplaceRatingImplementation) && temp != null) {
-            //Entity is not managed and there is a rating for this portlet/user - update needed
+            // Entity is not managed and there is a rating for this portlet/user - update needed
             temp = entityManager.merge(marketplaceRatingImplementation);
         } else {
-            //Entity is either already managed or doesn't exist - create needed
+            // Entity is either already managed or doesn't exist - create needed
             temp = marketplaceRatingImplementation;
         }
         entityManager.persist(temp);
@@ -139,7 +139,7 @@ public class JpaMarketplaceRatingDao extends BasePortalJpaDao implements IMarket
     @OpenEntityManager(unitName = PERSISTENCE_UNIT_NAME)
     public Set<IMarketplaceRating> getRatingsByFname(String fname) {
 
-        //Build criteria to fetch MarketplaceRatingImpl based on the incoming portlet name.
+        // Build criteria to fetch MarketplaceRatingImpl based on the incoming portlet name.
         final EntityManager entityManager = this.getEntityManager();
         final CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         final CriteriaQuery<IMarketplaceRating> getByPortlet =
@@ -147,7 +147,7 @@ public class JpaMarketplaceRatingDao extends BasePortalJpaDao implements IMarket
         final Root<MarketplaceRatingImpl> imr = getByPortlet.from(MarketplaceRatingImpl.class);
         getByPortlet.select(imr);
 
-        //Define the path to the portlet fName
+        // Define the path to the portlet fName
         final Path<MarketplaceRatingPK> mrPK = imr.get("marketplaceRatingPK");
         final Path<PortletDefinitionImpl> mrIPD = mrPK.get("portletDefinition");
 
@@ -266,10 +266,10 @@ public class JpaMarketplaceRatingDao extends BasePortalJpaDao implements IMarket
     @Override
     @PortalTransactional
     public void aggregateMarketplaceRating() {
-        //setup
+        // setup
         EntityManager em = this.getEntityManager();
 
-        //get list of average ratings
+        // get list of average ratings
         Query aggregatedQuery =
                 em.createQuery(
                         "SELECT AVG(m.rating) as rating, "
@@ -281,7 +281,7 @@ public class JpaMarketplaceRatingDao extends BasePortalJpaDao implements IMarket
         @SuppressWarnings("unchecked")
         List<Object[]> aggregatedResults = aggregatedQuery.getResultList();
 
-        //update the portlet definition with the average rating
+        // update the portlet definition with the average rating
         for (Object[] result : aggregatedResults) {
             if (result != null && result.length == 3) {
                 try {

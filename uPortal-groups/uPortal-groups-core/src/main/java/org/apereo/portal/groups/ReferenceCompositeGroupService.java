@@ -169,13 +169,13 @@ public class ReferenceCompositeGroupService extends ReferenceComponentGroupServi
                     getComponentServices().put(leafServiceName, service);
                 }
 
-                // Otherwise, get its leaf services and for each, push our node onto the service Name
+                // Otherwise, get its leaf services and for each, push our node onto the service
+                // Name
                 // and add the service to the Map.
                 else {
                     Map componentMap = service.getComponentServices();
                     for (Iterator components = componentMap.values().iterator();
-                            components.hasNext();
-                            ) {
+                            components.hasNext(); ) {
                         IIndividualGroupService leafService =
                                 (IIndividualGroupService) components.next();
                         leafServiceName = leafService.getServiceName();

@@ -350,7 +350,8 @@ public final class PortletAdministrationHelper implements ServletContextAware {
             }
         }
 
-        // create the principal array from the form's principal list -- only principals with permissions
+        // create the principal array from the form's principal list -- only principals with
+        // permissions
         final Set<IGroupMember> subscribePrincipalSet = new HashSet<>(form.getPrincipals().size());
         final Set<IGroupMember> browsePrincipalSet = new HashSet<>(form.getPrincipals().size());
         final Set<IGroupMember> configurePrincipalSet = new HashSet<>(form.getPrincipals().size());
@@ -458,7 +459,8 @@ public final class PortletAdministrationHelper implements ServletContextAware {
         // The final parameter of IGroupMembers is used to set the initial SUBSCRIBE permission set
         portletPublishingService.savePortletDefinition(
                 portletDef, publisher, categories, new ArrayList<>(subscribePrincipalSet));
-        //updatePermissions(portletDef, subscribePrincipalSet, IPermission.PORTLET_SUBSCRIBER_ACTIVITY);
+        // updatePermissions(portletDef, subscribePrincipalSet,
+        // IPermission.PORTLET_SUBSCRIBER_ACTIVITY);
         updatePermissions(
                 portletDef,
                 browsePrincipalSet,
@@ -659,7 +661,7 @@ public final class PortletAdministrationHelper implements ServletContextAware {
                 portletAppId,
                 portletName);
 
-        //Iterate over supported portlet modes, this ignores the content types for now
+        // Iterate over supported portlet modes, this ignores the content types for now
         final List<? extends Supports> supports = portletDescriptor.getSupports();
         for (final Supports support : supports) {
             logger.trace("Checking Supports instance:  {}", support.getMimeType());
@@ -686,11 +688,11 @@ public final class PortletAdministrationHelper implements ServletContextAware {
             addPermissionsFromRequestToForm(form, request, perm.getActivity());
         }
 
-        //Names of valid preferences and parameters
+        // Names of valid preferences and parameters
         final Set<String> preferenceNames = new HashSet<>();
         final Set<String> parameterNames = new HashSet<>();
 
-        //Read all of the submitted channel parameter and portlet preference names from the request
+        // Read all of the submitted channel parameter and portlet preference names from the request
         for (final Enumeration<String> e = request.getParameterNames(); e.hasMoreElements(); ) {
             final String name = e.nextElement();
             final Matcher nameMatcher = PARAM_PATTERN.matcher(name);
@@ -706,7 +708,8 @@ public final class PortletAdministrationHelper implements ServletContextAware {
             }
         }
 
-        //Add all of the parameter and preference names that have default values in the CPD into the valid name sets
+        // Add all of the parameter and preference names that have default values in the CPD into
+        // the valid name sets
         final PortletPublishingDefinition cpd =
                 this.portletPublishingDefinitionDao.getChannelPublishingDefinition(
                         form.getTypeId());
@@ -750,7 +753,8 @@ public final class PortletAdministrationHelper implements ServletContextAware {
             }
         }
 
-        //Remove portlet preferences from the form object that were not part of this request or defined in the CPD
+        // Remove portlet preferences from the form object that were not part of this request or
+        // defined in the CPD
         // - do it only if portlet doesn't support configMode
         if (!this.supportsConfigMode(form)) {
             final Map<String, StringListAttribute> portletPreferences =
@@ -760,8 +764,7 @@ public final class PortletAdministrationHelper implements ServletContextAware {
 
             for (final Iterator<Entry<String, StringListAttribute>> portletPreferenceEntryItr =
                             portletPreferences.entrySet().iterator();
-                    portletPreferenceEntryItr.hasNext();
-                    ) {
+                    portletPreferenceEntryItr.hasNext(); ) {
                 final Map.Entry<String, StringListAttribute> portletPreferenceEntry =
                         portletPreferenceEntryItr.next();
                 final String key = portletPreferenceEntry.getKey();
@@ -789,8 +792,7 @@ public final class PortletAdministrationHelper implements ServletContextAware {
 
         for (final Iterator<Entry<String, Attribute>> parameterEntryItr =
                         parameters.entrySet().iterator();
-                parameterEntryItr.hasNext();
-                ) {
+                parameterEntryItr.hasNext(); ) {
             final Entry<String, Attribute> parameterEntry = parameterEntryItr.next();
             final String key = parameterEntry.getKey();
             final Attribute value = parameterEntry.getValue();
@@ -833,8 +835,7 @@ public final class PortletAdministrationHelper implements ServletContextAware {
 
         for (final Iterator<String> iter =
                         portletRegistryService.getRegisteredPortletApplicationNames();
-                iter.hasNext();
-                ) {
+                iter.hasNext(); ) {
             final String applicationName = iter.next();
             final PortletApplicationDefinition applicationDefninition;
             try {
@@ -1090,7 +1091,7 @@ public final class PortletAdministrationHelper implements ServletContextAware {
                         && !IPortletRenderer.CONFIG.equals(delegationResponse.getPortletMode()))
                 || !IPortletRenderer.CONFIG.equals(delegateState.getPortletMode())) {
 
-            //The portlet sent a redirect OR changed it's mode away from CONFIG, assume it is done
+            // The portlet sent a redirect OR changed it's mode away from CONFIG, assume it is done
             return true;
         }
 
@@ -1219,7 +1220,8 @@ public final class PortletAdministrationHelper implements ServletContextAware {
                 if (form.getPublishDate() != null
                         && hasLifecyclePermission(
                                 publisher, PortletLifecycleState.PUBLISHED, form.getCategories())) {
-                    // We are also the 'publisher' if we scheduled the portlet for (future) publication...
+                    // We are also the 'publisher' if we scheduled the portlet for (future)
+                    // publication...
                     portletDef.updateLifecycleState(
                             PortletLifecycleState.PUBLISHED, publisher, form.getPublishDateTime());
                 }
@@ -1229,7 +1231,8 @@ public final class PortletAdministrationHelper implements ServletContextAware {
                 if (form.getExpirationDate() != null
                         && hasLifecyclePermission(
                                 publisher, PortletLifecycleState.EXPIRED, form.getCategories())) {
-                    // We are also the 'expirer' if we scheduled the portlet for (future) expiration...
+                    // We are also the 'expirer' if we scheduled the portlet for (future)
+                    // expiration...
                     portletDef.updateLifecycleState(
                             PortletLifecycleState.EXPIRED, publisher, form.getExpirationDateTime());
                 }

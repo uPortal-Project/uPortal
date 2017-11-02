@@ -63,7 +63,7 @@ public class DynamicRenderingPipeline implements IPortalRenderingPipeline {
     @Override
     public void renderState(HttpServletRequest req, HttpServletResponse res)
             throws ServletException, IOException {
-        //Disable page caching
+        // Disable page caching
         res.setHeader("pragma", "no-cache");
         res.setHeader("Cache-Control", "no-cache, max-age=0, must-revalidate");
         res.setDateHeader("Expires", 0);

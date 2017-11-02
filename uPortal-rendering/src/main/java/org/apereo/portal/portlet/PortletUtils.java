@@ -132,7 +132,7 @@ public final class PortletUtils {
         if (portletUrl == null) {
             return null;
         }
-        //Default urlType
+        // Default urlType
         UrlType urlType = UrlType.RENDER;
         final PortletUrlType type = portletUrl.getType();
         switch (type) {

@@ -98,24 +98,24 @@ public final class UserFilteringPortalEventHandler<E extends PortalEvent>
             return false;
         }
 
-        //Guest support check
+        // Guest support check
         final IPerson person = event.getPerson();
         if (person != null && !this.supportGuest && person.isGuest()) {
             return false;
         }
 
-        //userName check
+        // userName check
         final String userName = event.getUserName();
         if (this.supportedUserNames != null && this.supportedUserNames.contains(userName)) {
             return true;
         }
 
-        //ignored userName check
+        // ignored userName check
         if (this.ignoredUserNames != null && this.ignoredUserNames.contains(userName)) {
             return false;
         }
 
-        //ignored userName pattern check
+        // ignored userName pattern check
         if (this.ignoredUserNamePatterns != null) {
             for (final Pattern ignoredUserNamePattern : this.ignoredUserNamePatterns) {
                 if (ignoredUserNamePattern.matcher(userName).matches()) {

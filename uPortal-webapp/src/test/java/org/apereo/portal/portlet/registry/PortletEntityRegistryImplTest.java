@@ -68,14 +68,14 @@ public class PortletEntityRegistryImplTest extends BasePortalJpaDaoTest {
                 @Override
                 protected IPortletDefinition getPortletDefinition(
                         HttpServletRequest request, String portletDefinitionIdStr) {
-                    //Can't unit test authZ code so this is a stand in
+                    // Can't unit test authZ code so this is a stand in
                     return jpaPortletDefinitionDao.getPortletDefinition(portletDefinitionIdStr);
                 }
 
                 @Override
                 protected IPortletDefinition getPortletDefinition(
                         HttpServletRequest request, IPortletDefinitionId portletDefinitionId) {
-                    //Can't unit test authZ code so this is a stand in
+                    // Can't unit test authZ code so this is a stand in
                     return jpaPortletDefinitionDao.getPortletDefinition(portletDefinitionId);
                 }
 
@@ -84,14 +84,14 @@ public class PortletEntityRegistryImplTest extends BasePortalJpaDaoTest {
                         HttpServletRequest request,
                         IUserInstance userInstance,
                         String portletDefinitionIdStr) {
-                    //Can't unit test authZ code so this is a stand in
+                    // Can't unit test authZ code so this is a stand in
                     return jpaPortletDefinitionDao.getPortletDefinition(portletDefinitionIdStr);
                 }
 
                 @Override
                 protected IPortletDefinition getPortletDefinition(
                         IUserInstance userInstance, IPortletDefinitionId portletDefinitionId) {
-                    //Can't unit test authZ code so this is a stand in
+                    // Can't unit test authZ code so this is a stand in
                     return jpaPortletDefinitionDao.getPortletDefinition(portletDefinitionId);
                 }
             };
@@ -138,7 +138,7 @@ public class PortletEntityRegistryImplTest extends BasePortalJpaDaoTest {
                         final IPortletType channelType =
                                 jpaPortletTypeDao.createPortletType("BaseType", "foobar");
 
-                        //Create a definition
+                        // Create a definition
                         final IPortletDefinition portletDef =
                                 new PortletDefinitionImpl(
                                         channelType,
@@ -163,14 +163,14 @@ public class PortletEntityRegistryImplTest extends BasePortalJpaDaoTest {
                 });
     }
 
-    //persistent with prefs & not in db - create new & update
+    // persistent with prefs & not in db - create new & update
     @Test
     @Ignore // Hopelessly arcane issues troubleshooting org.hibernate.StaleObjectStateException
     public void testPersistentWithPrefsNotInDb() throws Throwable {
         final IPortletDefinitionId portDefId1 = this.createDefaultPorltetDefinition();
         final String nodeId = "u1l1n1";
 
-        //Mock setup
+        // Mock setup
         final MockHttpServletRequest request = new MockHttpServletRequest();
 
         when(portalRequestUtils.getOriginalPortalRequest(request)).thenReturn(request);
@@ -190,7 +190,7 @@ public class PortletEntityRegistryImplTest extends BasePortalJpaDaoTest {
                         new Callable<IPortletEntityId>() {
                             @Override
                             public IPortletEntityId call() throws Exception {
-                                //T1 - Create the entity
+                                // T1 - Create the entity
                                 final IPortletEntity portletEntity =
                                         portletEntityRegistry.getOrCreatePortletEntity(
                                                 request, portDefId1, nodeId, 12);
@@ -215,14 +215,14 @@ public class PortletEntityRegistryImplTest extends BasePortalJpaDaoTest {
                         final IPortletEntity portletEntity =
                                 portletEntityRegistry.getPortletEntity(request, portletEntityId);
 
-                        //Add a preference
+                        // Add a preference
                         final List<IPortletPreference> preferences =
                                 portletEntity.getPortletPreferences();
                         final IPortletPreference portletPreference =
                                 new PortletPreferenceImpl("pref", false, "value");
                         preferences.add(portletPreference);
 
-                        //Store the entity
+                        // Store the entity
                         portletEntityRegistry.storePortletEntity(request, portletEntity);
 
                         return null;
@@ -233,7 +233,7 @@ public class PortletEntityRegistryImplTest extends BasePortalJpaDaoTest {
                 new Callable<Object>() {
                     @Override
                     public Object call() throws Exception {
-                        //T1 - Verify it was converted from interim to persistent
+                        // T1 - Verify it was converted from interim to persistent
                         final IPortletEntity portletEntity =
                                 portletEntityRegistry.getPortletEntity(request, portletEntityId);
                         assertEquals(
@@ -242,26 +242,26 @@ public class PortletEntityRegistryImplTest extends BasePortalJpaDaoTest {
                                 portletEntity.getPortletPreferences();
                         assertEquals(1, preferences.size());
 
-                        //T2 - get the entity and add preferences
+                        // T2 - get the entity and add preferences
                         final IPortletEntityId localPortletEntityId =
                                 executeInThread(
                                         "T2.1",
                                         new Callable<IPortletEntityId>() {
                                             @Override
                                             public IPortletEntityId call() throws Exception {
-                                                //T2 - Get entity
+                                                // T2 - Get entity
                                                 final IPortletEntity portletEntity =
                                                         portletEntityRegistry.getPortletEntity(
                                                                 request,
                                                                 portletEntityId.getStringId());
                                                 assertEquals(portletEntity, portletEntity);
 
-                                                //T2 - add preference
+                                                // T2 - add preference
                                                 final List<IPortletPreference> preferences =
                                                         portletEntity.getPortletPreferences();
                                                 preferences.clear();
 
-                                                //T2 - Store the entity
+                                                // T2 - Store the entity
                                                 portletEntityRegistry.storePortletEntity(
                                                         request, portletEntity);
 
@@ -269,14 +269,14 @@ public class PortletEntityRegistryImplTest extends BasePortalJpaDaoTest {
                                             }
                                         });
 
-                        //T2 - verify entity was made persistent
+                        // T2 - verify entity was made persistent
                         executeInThread(
                                 "T2.2",
                                 new Callable<Object>() {
                                     @Override
                                     public Object call() throws Exception {
 
-                                        //T2 - Verify it was converted from persistent to interim
+                                        // T2 - Verify it was converted from persistent to interim
                                         final IPortletEntity portletEntity =
                                                 portletEntityRegistry.getPortletEntity(
                                                         request, localPortletEntityId);
@@ -292,12 +292,12 @@ public class PortletEntityRegistryImplTest extends BasePortalJpaDaoTest {
                                     }
                                 });
 
-                        //T1 - add preference 2
+                        // T1 - add preference 2
                         final IPortletPreference portletPreference =
                                 new PortletPreferenceImpl("pref2", false, "value");
                         preferences.add(portletPreference);
 
-                        //T1 - Store the entity
+                        // T1 - Store the entity
                         portletEntityRegistry.storePortletEntity(request, portletEntity);
 
                         return null;
@@ -308,7 +308,7 @@ public class PortletEntityRegistryImplTest extends BasePortalJpaDaoTest {
                 new Callable<Object>() {
                     @Override
                     public Object call() throws Exception {
-                        //T1 - Verify it was converted from interim to persistent
+                        // T1 - Verify it was converted from interim to persistent
                         final IPortletEntity portletEntity =
                                 portletEntityRegistry.getPortletEntity(request, portletEntityId);
                         assertEquals(
@@ -322,14 +322,14 @@ public class PortletEntityRegistryImplTest extends BasePortalJpaDaoTest {
                 });
     }
 
-    //persistent with no prefs & not in db - noop
+    // persistent with no prefs & not in db - noop
     @Test
     @Ignore // Hopelessly arcane issues troubleshooting org.hibernate.StaleObjectStateException
     public void testPersistentNoPrefsNotInDb() throws Throwable {
         final IPortletDefinitionId portDefId1 = this.createDefaultPorltetDefinition();
         final String nodeId = "u1l1n1";
 
-        //Mock setup
+        // Mock setup
         final MockHttpServletRequest request = new MockHttpServletRequest();
 
         when(portalRequestUtils.getOriginalPortalRequest(request)).thenReturn(request);
@@ -349,7 +349,7 @@ public class PortletEntityRegistryImplTest extends BasePortalJpaDaoTest {
                         new Callable<IPortletEntityId>() {
                             @Override
                             public IPortletEntityId call() throws Exception {
-                                //T1 - Create the entity
+                                // T1 - Create the entity
                                 final IPortletEntity portletEntity =
                                         portletEntityRegistry.getOrCreatePortletEntity(
                                                 request, portDefId1, nodeId, 12);
@@ -368,14 +368,14 @@ public class PortletEntityRegistryImplTest extends BasePortalJpaDaoTest {
                         final IPortletEntity portletEntity =
                                 portletEntityRegistry.getPortletEntity(request, portletEntityId);
 
-                        //Add a preference
+                        // Add a preference
                         final List<IPortletPreference> preferences =
                                 portletEntity.getPortletPreferences();
                         final IPortletPreference portletPreference =
                                 new PortletPreferenceImpl("pref", false, "value");
                         preferences.add(portletPreference);
 
-                        //Store the entity
+                        // Store the entity
                         portletEntityRegistry.storePortletEntity(request, portletEntity);
 
                         return null;
@@ -386,7 +386,7 @@ public class PortletEntityRegistryImplTest extends BasePortalJpaDaoTest {
                 new Callable<Object>() {
                     @Override
                     public Object call() throws Exception {
-                        //T1 - Verify it was converted from interim to persistent
+                        // T1 - Verify it was converted from interim to persistent
                         final IPortletEntity portletEntity =
                                 portletEntityRegistry.getPortletEntity(request, portletEntityId);
                         assertEquals(
@@ -395,26 +395,26 @@ public class PortletEntityRegistryImplTest extends BasePortalJpaDaoTest {
                                 portletEntity.getPortletPreferences();
                         assertEquals(1, preferences.size());
 
-                        //T2 - get the entity and add preferences
+                        // T2 - get the entity and add preferences
                         final IPortletEntityId localPortletEntityId =
                                 executeInThread(
                                         "T2.1",
                                         new Callable<IPortletEntityId>() {
                                             @Override
                                             public IPortletEntityId call() throws Exception {
-                                                //T2 - Get entity
+                                                // T2 - Get entity
                                                 final IPortletEntity portletEntity =
                                                         portletEntityRegistry.getPortletEntity(
                                                                 request,
                                                                 portletEntityId.getStringId());
                                                 assertEquals(portletEntity, portletEntity);
 
-                                                //T2 - remove preferences
+                                                // T2 - remove preferences
                                                 final List<IPortletPreference> preferences =
                                                         portletEntity.getPortletPreferences();
                                                 preferences.clear();
 
-                                                //T2 - Store the entity
+                                                // T2 - Store the entity
                                                 portletEntityRegistry.storePortletEntity(
                                                         request, portletEntity);
 
@@ -422,14 +422,14 @@ public class PortletEntityRegistryImplTest extends BasePortalJpaDaoTest {
                                             }
                                         });
 
-                        //T2 - verify entity was made persistent
+                        // T2 - verify entity was made persistent
                         executeInThread(
                                 "T2.2",
                                 new Callable<Object>() {
                                     @Override
                                     public Object call() throws Exception {
 
-                                        //T2 - Verify it was converted from persistent to interim
+                                        // T2 - Verify it was converted from persistent to interim
                                         IPortletEntity portletEntity =
                                                 portletEntityRegistry.getPortletEntity(
                                                         request, localPortletEntityId);
@@ -444,10 +444,10 @@ public class PortletEntityRegistryImplTest extends BasePortalJpaDaoTest {
                                     }
                                 });
 
-                        //T1 - remove all preferences
+                        // T1 - remove all preferences
                         preferences.clear();
 
-                        //T1 - Store the entity
+                        // T1 - Store the entity
                         portletEntityRegistry.storePortletEntity(request, portletEntity);
 
                         return null;
@@ -458,7 +458,7 @@ public class PortletEntityRegistryImplTest extends BasePortalJpaDaoTest {
                 new Callable<Object>() {
                     @Override
                     public Object call() throws Exception {
-                        //T1 - Verify it was converted from interim to persistent
+                        // T1 - Verify it was converted from interim to persistent
                         final IPortletEntity portletEntity =
                                 portletEntityRegistry.getPortletEntity(request, portletEntityId);
                         assertEquals(SessionPortletEntityImpl.class, portletEntity.getClass());
@@ -471,13 +471,13 @@ public class PortletEntityRegistryImplTest extends BasePortalJpaDaoTest {
                 });
     }
 
-    //interim with no prefs & in db - delete db version
+    // interim with no prefs & in db - delete db version
     @Test
     public void testInterimNoPrefsAlreadyPersistent() throws Throwable {
         final IPortletDefinitionId portDefId1 = this.createDefaultPorltetDefinition();
         final String nodeId = "u1l1n1";
 
-        //Mock setup
+        // Mock setup
         final MockHttpServletRequest request = new MockHttpServletRequest();
 
         when(portalRequestUtils.getOriginalPortalRequest(request)).thenReturn(request);
@@ -497,7 +497,7 @@ public class PortletEntityRegistryImplTest extends BasePortalJpaDaoTest {
                         new Callable<IPortletEntityId>() {
                             @Override
                             public IPortletEntityId call() throws Exception {
-                                //T1 - Create the entity
+                                // T1 - Create the entity
                                 final IPortletEntity portletEntity =
                                         portletEntityRegistry.getOrCreatePortletEntity(
                                                 request, portDefId1, nodeId, 12);
@@ -505,7 +505,7 @@ public class PortletEntityRegistryImplTest extends BasePortalJpaDaoTest {
                                 assertEquals(
                                         SessionPortletEntityImpl.class, portletEntity.getClass());
 
-                                //T2 - get the entity and add preferences
+                                // T2 - get the entity and add preferences
                                 final IPortletEntityId portletEntityId =
                                         executeInThread(
                                                 "T2.1",
@@ -513,7 +513,7 @@ public class PortletEntityRegistryImplTest extends BasePortalJpaDaoTest {
                                                     @Override
                                                     public IPortletEntityId call()
                                                             throws Exception {
-                                                        //T2 - Get entity
+                                                        // T2 - Get entity
                                                         final IPortletEntity localPortletEntity =
                                                                 portletEntityRegistry
                                                                         .getPortletEntity(
@@ -524,7 +524,7 @@ public class PortletEntityRegistryImplTest extends BasePortalJpaDaoTest {
                                                         assertEquals(
                                                                 portletEntity, localPortletEntity);
 
-                                                        //T2 - Add a preference
+                                                        // T2 - Add a preference
                                                         final List<IPortletPreference> preferences =
                                                                 localPortletEntity
                                                                         .getPortletPreferences();
@@ -533,7 +533,7 @@ public class PortletEntityRegistryImplTest extends BasePortalJpaDaoTest {
                                                                         "pref2", false, "value");
                                                         preferences.add(portletPreference);
 
-                                                        //T2 - Store the entity
+                                                        // T2 - Store the entity
                                                         portletEntityRegistry.storePortletEntity(
                                                                 request, localPortletEntity);
 
@@ -542,14 +542,15 @@ public class PortletEntityRegistryImplTest extends BasePortalJpaDaoTest {
                                                     }
                                                 });
 
-                                //T2 - verify entity was made persistent
+                                // T2 - verify entity was made persistent
                                 executeInThread(
                                         "T2.2",
                                         new Callable<Object>() {
                                             @Override
                                             public Object call() throws Exception {
 
-                                                //T2 - Verify it was converted from interim to persistent
+                                                // T2 - Verify it was converted from interim to
+                                                // persistent
                                                 IPortletEntity portletEntity =
                                                         portletEntityRegistry.getPortletEntity(
                                                                 request, portletEntityId);
@@ -564,12 +565,12 @@ public class PortletEntityRegistryImplTest extends BasePortalJpaDaoTest {
                                             }
                                         });
 
-                                //T1 - clear preferences
+                                // T1 - clear preferences
                                 final List<IPortletPreference> preferences =
                                         portletEntity.getPortletPreferences();
                                 preferences.clear();
 
-                                //T1 - Store the entity
+                                // T1 - Store the entity
                                 portletEntityRegistry.storePortletEntity(request, portletEntity);
 
                                 return portletEntity.getPortletEntityId();
@@ -580,7 +581,7 @@ public class PortletEntityRegistryImplTest extends BasePortalJpaDaoTest {
                 new Callable<Object>() {
                     @Override
                     public Object call() throws Exception {
-                        //T1 - Verify it was converted from interim to persistent
+                        // T1 - Verify it was converted from interim to persistent
                         final IPortletEntity portletEntity =
                                 portletEntityRegistry.getPortletEntity(request, portletEntityId);
                         assertEquals(SessionPortletEntityImpl.class, portletEntity.getClass());
@@ -593,13 +594,13 @@ public class PortletEntityRegistryImplTest extends BasePortalJpaDaoTest {
                 });
     }
 
-    //interim with prefs & in db - get db version & update
+    // interim with prefs & in db - get db version & update
     @Test
     public void testInterimAddingPrefsAlreadyPersistent() throws Throwable {
         final IPortletDefinitionId portDefId1 = this.createDefaultPorltetDefinition();
         final String nodeId = "u1l1n1";
 
-        //Mock setup
+        // Mock setup
         final MockHttpServletRequest request = new MockHttpServletRequest();
 
         when(portalRequestUtils.getOriginalPortalRequest(request)).thenReturn(request);
@@ -626,7 +627,7 @@ public class PortletEntityRegistryImplTest extends BasePortalJpaDaoTest {
                         new Callable<IPortletEntityId>() {
                             @Override
                             public IPortletEntityId call() throws Exception {
-                                //T1 - Create the entity
+                                // T1 - Create the entity
                                 final IPortletEntity portletEntity =
                                         portletEntityRegistry.getOrCreatePortletEntity(
                                                 request, portDefId1, nodeId, 12);
@@ -634,7 +635,7 @@ public class PortletEntityRegistryImplTest extends BasePortalJpaDaoTest {
                                 assertEquals(
                                         SessionPortletEntityImpl.class, portletEntity.getClass());
 
-                                //T2 - get the entity and add preferences
+                                // T2 - get the entity and add preferences
                                 final IPortletEntityId portletEntityId =
                                         executeInThread(
                                                 "T2.1",
@@ -642,7 +643,7 @@ public class PortletEntityRegistryImplTest extends BasePortalJpaDaoTest {
                                                     @Override
                                                     public IPortletEntityId call()
                                                             throws Exception {
-                                                        //T2 - Get entity
+                                                        // T2 - Get entity
                                                         final IPortletEntity localPortletEntity =
                                                                 portletEntityRegistry
                                                                         .getPortletEntity(
@@ -653,7 +654,7 @@ public class PortletEntityRegistryImplTest extends BasePortalJpaDaoTest {
                                                         assertEquals(
                                                                 portletEntity, localPortletEntity);
 
-                                                        //T2 - Add a preference
+                                                        // T2 - Add a preference
                                                         final List<IPortletPreference> preferences =
                                                                 localPortletEntity
                                                                         .getPortletPreferences();
@@ -662,7 +663,7 @@ public class PortletEntityRegistryImplTest extends BasePortalJpaDaoTest {
                                                                         "pref2", false, "value");
                                                         preferences.add(portletPreference);
 
-                                                        //T2 - Store the entity
+                                                        // T2 - Store the entity
                                                         portletEntityRegistry.storePortletEntity(
                                                                 request, localPortletEntity);
 
@@ -671,14 +672,15 @@ public class PortletEntityRegistryImplTest extends BasePortalJpaDaoTest {
                                                     }
                                                 });
 
-                                //T2 - verify entity was made persistent
+                                // T2 - verify entity was made persistent
                                 executeInThread(
                                         "T2.2",
                                         new Callable<Object>() {
                                             @Override
                                             public Object call() throws Exception {
 
-                                                //T2 - Verify it was converted from interim to persistent
+                                                // T2 - Verify it was converted from interim to
+                                                // persistent
                                                 IPortletEntity portletEntity =
                                                         portletEntityRegistry.getPortletEntity(
                                                                 request, portletEntityId);
@@ -693,14 +695,14 @@ public class PortletEntityRegistryImplTest extends BasePortalJpaDaoTest {
                                             }
                                         });
 
-                                //T1 - Add a preference
+                                // T1 - Add a preference
                                 final List<IPortletPreference> preferences =
                                         portletEntity.getPortletPreferences();
                                 final IPortletPreference portletPreference =
                                         new PortletPreferenceImpl("pref1", false, "value");
                                 preferences.add(portletPreference);
 
-                                //T1 - Store the entity
+                                // T1 - Store the entity
                                 portletEntityRegistry.storePortletEntity(request, portletEntity);
 
                                 return portletEntity.getPortletEntityId();
@@ -711,7 +713,7 @@ public class PortletEntityRegistryImplTest extends BasePortalJpaDaoTest {
                 new Callable<Object>() {
                     @Override
                     public Object call() throws Exception {
-                        //T1 - Verify it was converted from interim to persistent
+                        // T1 - Verify it was converted from interim to persistent
                         final IPortletEntity portletEntity =
                                 portletEntityRegistry.getPortletEntity(request, portletEntityId);
                         assertEquals(
@@ -725,13 +727,13 @@ public class PortletEntityRegistryImplTest extends BasePortalJpaDaoTest {
                 });
     }
 
-    //persistent with no prefs & in db - delete & create interim
+    // persistent with no prefs & in db - delete & create interim
     @Test
     public void testPersistentRemovePrefs() throws Exception {
         final IPortletDefinitionId portletDefId = this.createDefaultPorltetDefinition();
         final String nodeId = "u1l1n1";
 
-        //Mock setup
+        // Mock setup
         final MockHttpServletRequest request = new MockHttpServletRequest();
 
         when(portalRequestUtils.getOriginalPortalRequest(request)).thenReturn(request);
@@ -751,7 +753,7 @@ public class PortletEntityRegistryImplTest extends BasePortalJpaDaoTest {
                         new Callable<IPortletEntityId>() {
                             @Override
                             public IPortletEntityId call() throws Exception {
-                                //Create the entity
+                                // Create the entity
                                 IPortletEntity portletEntity =
                                         portletEntityRegistry.getOrCreatePortletEntity(
                                                 request, portletDefId, nodeId, 12);
@@ -769,14 +771,14 @@ public class PortletEntityRegistryImplTest extends BasePortalJpaDaoTest {
                         final IPortletEntity portletEntity =
                                 portletEntityRegistry.getPortletEntity(request, portletEntityId);
 
-                        //Add a preference
+                        // Add a preference
                         final List<IPortletPreference> preferences =
                                 portletEntity.getPortletPreferences();
                         final IPortletPreference portletPreference =
                                 new PortletPreferenceImpl("pref", false, "value");
                         preferences.add(portletPreference);
 
-                        //Store the entity
+                        // Store the entity
                         portletEntityRegistry.storePortletEntity(request, portletEntity);
 
                         return null;
@@ -787,7 +789,7 @@ public class PortletEntityRegistryImplTest extends BasePortalJpaDaoTest {
                 new Callable<Object>() {
                     @Override
                     public Object call() throws Exception {
-                        //Verify it was converted from interim to persistent
+                        // Verify it was converted from interim to persistent
                         final IPortletEntity portletEntity =
                                 portletEntityRegistry.getPortletEntity(request, portletEntityId);
                         assertEquals(
@@ -796,10 +798,10 @@ public class PortletEntityRegistryImplTest extends BasePortalJpaDaoTest {
                                 portletEntity.getPortletPreferences();
                         assertEquals(1, preferences.size());
 
-                        //remove all preferences
+                        // remove all preferences
                         preferences.clear();
 
-                        //Store the entity
+                        // Store the entity
                         portletEntityRegistry.storePortletEntity(request, portletEntity);
 
                         return null;
@@ -810,7 +812,7 @@ public class PortletEntityRegistryImplTest extends BasePortalJpaDaoTest {
                 new Callable<Object>() {
                     @Override
                     public Object call() throws Exception {
-                        //Verify it switched from persistent to interim
+                        // Verify it switched from persistent to interim
                         final IPortletEntity portletEntity =
                                 portletEntityRegistry.getPortletEntity(request, portletEntityId);
                         assertEquals(SessionPortletEntityImpl.class, portletEntity.getClass());
@@ -823,13 +825,13 @@ public class PortletEntityRegistryImplTest extends BasePortalJpaDaoTest {
                 });
     }
 
-    //persistent with prefs & in db - update
+    // persistent with prefs & in db - update
     @Test
     public void testPersistentUpdatingPrefs() throws Exception {
         final IPortletDefinitionId portletDefId = this.createDefaultPorltetDefinition();
         final String nodeId = "u1l1n1";
 
-        //Mock setup
+        // Mock setup
         final MockHttpServletRequest request = new MockHttpServletRequest();
 
         when(portalRequestUtils.getOriginalPortalRequest(request)).thenReturn(request);
@@ -849,7 +851,7 @@ public class PortletEntityRegistryImplTest extends BasePortalJpaDaoTest {
                         new Callable<IPortletEntityId>() {
                             @Override
                             public IPortletEntityId call() throws Exception {
-                                //Create the entity
+                                // Create the entity
                                 IPortletEntity portletEntity =
                                         portletEntityRegistry.getOrCreatePortletEntity(
                                                 request, portletDefId, nodeId, 12);
@@ -867,14 +869,14 @@ public class PortletEntityRegistryImplTest extends BasePortalJpaDaoTest {
                         final IPortletEntity portletEntity =
                                 portletEntityRegistry.getPortletEntity(request, portletEntityId);
 
-                        //Add a preference
+                        // Add a preference
                         final List<IPortletPreference> preferences =
                                 portletEntity.getPortletPreferences();
                         final IPortletPreference portletPreference =
                                 new PortletPreferenceImpl("pref", false, "value");
                         preferences.add(portletPreference);
 
-                        //Store the entity
+                        // Store the entity
                         portletEntityRegistry.storePortletEntity(request, portletEntity);
 
                         return null;
@@ -885,7 +887,7 @@ public class PortletEntityRegistryImplTest extends BasePortalJpaDaoTest {
                 new Callable<Object>() {
                     @Override
                     public Object call() throws Exception {
-                        //Verify it was converted from interim to persistent
+                        // Verify it was converted from interim to persistent
                         final IPortletEntity portletEntity =
                                 portletEntityRegistry.getPortletEntity(request, portletEntityId);
                         assertEquals(
@@ -894,12 +896,12 @@ public class PortletEntityRegistryImplTest extends BasePortalJpaDaoTest {
                                 portletEntity.getPortletPreferences();
                         assertEquals(1, preferences.size());
 
-                        //add another preference
+                        // add another preference
                         final PortletPreferenceImpl portletPreference =
                                 new PortletPreferenceImpl("pref2", false, "valuea");
                         preferences.add(portletPreference);
 
-                        //Store the entity
+                        // Store the entity
                         portletEntityRegistry.storePortletEntity(request, portletEntity);
 
                         return null;
@@ -910,7 +912,7 @@ public class PortletEntityRegistryImplTest extends BasePortalJpaDaoTest {
                 new Callable<Object>() {
                     @Override
                     public Object call() throws Exception {
-                        //Verify it was converted from interim to persistent
+                        // Verify it was converted from interim to persistent
                         final IPortletEntity portletEntity =
                                 portletEntityRegistry.getPortletEntity(request, portletEntityId);
                         assertEquals(
@@ -924,13 +926,13 @@ public class PortletEntityRegistryImplTest extends BasePortalJpaDaoTest {
                 });
     }
 
-    //interim with no prefs & not in db - noop
+    // interim with no prefs & not in db - noop
     @Test
     public void testInterimNoPrefs() throws Exception {
         final IPortletDefinitionId portletDefId = this.createDefaultPorltetDefinition();
         final String nodeId = "u1l1n1";
 
-        //Mock setup
+        // Mock setup
         final MockHttpServletRequest request = new MockHttpServletRequest();
 
         when(portalRequestUtils.getOriginalPortalRequest(request)).thenReturn(request);
@@ -950,7 +952,7 @@ public class PortletEntityRegistryImplTest extends BasePortalJpaDaoTest {
                         new Callable<IPortletEntityId>() {
                             @Override
                             public IPortletEntityId call() throws Exception {
-                                //Create the entity
+                                // Create the entity
                                 IPortletEntity portletEntity =
                                         portletEntityRegistry.getOrCreatePortletEntity(
                                                 request, portletDefId, nodeId, 12);
@@ -968,7 +970,7 @@ public class PortletEntityRegistryImplTest extends BasePortalJpaDaoTest {
                         final IPortletEntity portletEntity =
                                 portletEntityRegistry.getPortletEntity(request, portletEntityId);
 
-                        //Store the entity
+                        // Store the entity
                         portletEntityRegistry.storePortletEntity(request, portletEntity);
 
                         return null;
@@ -982,7 +984,7 @@ public class PortletEntityRegistryImplTest extends BasePortalJpaDaoTest {
                         final IPortletEntity portletEntity =
                                 portletEntityRegistry.getPortletEntity(request, portletEntityId);
 
-                        //Verify it is still interim
+                        // Verify it is still interim
                         assertEquals(SessionPortletEntityImpl.class, portletEntity.getClass());
 
                         return null;
@@ -990,13 +992,13 @@ public class PortletEntityRegistryImplTest extends BasePortalJpaDaoTest {
                 });
     }
 
-    //interim with prefs & not in db - create new & update, delete interim
+    // interim with prefs & not in db - create new & update, delete interim
     @Test
     public void testInterimAddingPrefs() throws Exception {
         final IPortletDefinitionId portletDefId = this.createDefaultPorltetDefinition();
         final String nodeId = "u1l1n1";
 
-        //Mock setup
+        // Mock setup
         final MockHttpServletRequest request = new MockHttpServletRequest();
 
         when(portalRequestUtils.getOriginalPortalRequest(request)).thenReturn(request);
@@ -1016,7 +1018,7 @@ public class PortletEntityRegistryImplTest extends BasePortalJpaDaoTest {
                         new Callable<IPortletEntityId>() {
                             @Override
                             public IPortletEntityId call() throws Exception {
-                                //Create the entity
+                                // Create the entity
                                 IPortletEntity portletEntity =
                                         portletEntityRegistry.getOrCreatePortletEntity(
                                                 request, portletDefId, nodeId, 12);
@@ -1034,14 +1036,14 @@ public class PortletEntityRegistryImplTest extends BasePortalJpaDaoTest {
                         final IPortletEntity portletEntity =
                                 portletEntityRegistry.getPortletEntity(request, portletEntityId);
 
-                        //Add a preference
+                        // Add a preference
                         final List<IPortletPreference> preferences =
                                 portletEntity.getPortletPreferences();
                         final IPortletPreference portletPreference =
                                 new PortletPreferenceImpl("pref", false, "value");
                         preferences.add(portletPreference);
 
-                        //Store the entity
+                        // Store the entity
                         portletEntityRegistry.storePortletEntity(request, portletEntity);
 
                         return null;
@@ -1052,7 +1054,7 @@ public class PortletEntityRegistryImplTest extends BasePortalJpaDaoTest {
                 new Callable<Object>() {
                     @Override
                     public Object call() throws Exception {
-                        //Verify it was converted from interim to persistent
+                        // Verify it was converted from interim to persistent
                         final IPortletEntity portletEntity =
                                 portletEntityRegistry.getPortletEntity(request, portletEntityId);
                         assertEquals(

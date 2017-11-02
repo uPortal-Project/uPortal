@@ -71,7 +71,8 @@ public class MarketplacePortletDefinition implements IPortletDefinition {
     private PortletReleaseNotes releaseNotes;
     private Set<PortletCategory> categories;
 
-    // that MarketplacePortletDefinition contains more MarketplacePortletDefinition is okay only so long as
+    // that MarketplacePortletDefinition contains more MarketplacePortletDefinition is okay only so
+    // long as
     // related portlets are lazy-initialized on access and are not always accessed.
     private Set<MarketplacePortletDefinition> relatedPortlets;
     private Set<PortletCategory> parentCategories;
@@ -100,8 +101,10 @@ public class MarketplacePortletDefinition implements IPortletDefinition {
         this.initShortURL();
         this.initKeywords();
 
-        // deliberately does *not* init related portlets, to avoid infinite recursion of initing related portlets.
-        // TODO: use a caching registry so that get some cache hits when referencing MarketplacePortletDefinitions
+        // deliberately does *not* init related portlets, to avoid infinite recursion of initing
+        // related portlets.
+        // TODO: use a caching registry so that get some cache hits when referencing
+        // MarketplacePortletDefinitions
     }
 
     private void initKeywords() {
@@ -136,9 +139,9 @@ public class MarketplacePortletDefinition implements IPortletDefinition {
                 new ArrayList<IPortletPreference>(portletPreferences.size());
         List<ScreenShot> screenShots = new ArrayList<ScreenShot>();
 
-        //Creates a list of captions and list of urls
+        // Creates a list of captions and list of urls
         for (int i = 0; i < portletPreferences.size(); i++) {
-            //Most screenshots possible is i
+            // Most screenshots possible is i
             urls.add(null);
             captions.add(null);
             for (int j = 0; j < portletPreferences.size(); j++) {
@@ -393,7 +396,8 @@ public class MarketplacePortletDefinition implements IPortletDefinition {
 
         final String contextPath = PortalWebUtils.currentRequestContextPath();
 
-        // TODO: stop abstraction violation of relying on knowledge of uPortal URL implementation details
+        // TODO: stop abstraction violation of relying on knowledge of uPortal URL implementation
+        // details
         return contextPath + "/p/" + getFName() + "/render.uP";
     }
 

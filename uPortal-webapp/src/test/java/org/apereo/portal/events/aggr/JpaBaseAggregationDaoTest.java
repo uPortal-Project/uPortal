@@ -98,12 +98,12 @@ public abstract class JpaBaseAggregationDaoTest<
         when(compositeGroupService.findGroup("local.1")).thenReturn(entityGroupB);
 
         final DateTime instant =
-                new DateTime(1326734644000l, DateTimeZone.UTC); //just a random time
+                new DateTime(1326734644000l, DateTimeZone.UTC); // just a random time
 
-        //Create required date and time dimensions
+        // Create required date and time dimensions
         populateDateTimeDimensions(instant.minusHours(2), instant.plusHours(2), null);
 
-        //Create aggregations
+        // Create aggregations
         final Map<K, T> createdAggrs =
                 this.executeInTransaction(
                         new Callable<Map<K, T>>() {
@@ -135,7 +135,7 @@ public abstract class JpaBaseAggregationDaoTest<
                             }
                         });
 
-        //Verify aggregations were created
+        // Verify aggregations were created
         this.execute(
                 new CallableWithoutResult() {
                     @Override
@@ -169,7 +169,7 @@ public abstract class JpaBaseAggregationDaoTest<
                     }
                 });
 
-        //Update Aggregations
+        // Update Aggregations
         final Map<K, T> updatedAggrs =
                 this.executeInTransaction(
                         new Callable<Map<K, T>>() {
@@ -217,7 +217,7 @@ public abstract class JpaBaseAggregationDaoTest<
                             }
                         });
 
-        //Verify aggregations were updated
+        // Verify aggregations were updated
         this.execute(
                 new CallableWithoutResult() {
                     @Override
@@ -251,7 +251,7 @@ public abstract class JpaBaseAggregationDaoTest<
                     }
                 });
 
-        //Complete intervals
+        // Complete intervals
         final Map<K, T> completeAggrs =
                 this.executeInTransaction(
                         new Callable<Map<K, T>>() {
@@ -297,7 +297,7 @@ public abstract class JpaBaseAggregationDaoTest<
                             }
                         });
 
-        //Verify aggregations were completed
+        // Verify aggregations were completed
         this.execute(
                 new CallableWithoutResult() {
                     @Override
@@ -348,7 +348,7 @@ public abstract class JpaBaseAggregationDaoTest<
 
         final MutableInt aggrs = new MutableInt();
 
-        //Create 2 days of login aggregates ... every 5 minutes
+        // Create 2 days of login aggregates ... every 5 minutes
         final DateTime start =
                 new DateTime(1326734644000l, DateTimeZone.UTC).minuteOfDay().roundFloorCopy();
         final DateTime end = start.plusDays(2);
@@ -421,10 +421,10 @@ public abstract class JpaBaseAggregationDaoTest<
                     }
                 });
 
-        //Verify all aggrs created
+        // Verify all aggrs created
         assertEquals(1152, aggrs.intValue());
 
-        //Find aggrs for one day
+        // Find aggrs for one day
         this.execute(
                 new CallableWithoutResult() {
                     @Override
@@ -449,7 +449,7 @@ public abstract class JpaBaseAggregationDaoTest<
                     }
                 });
 
-        //Find aggrs for second day
+        // Find aggrs for second day
         this.execute(
                 new CallableWithoutResult() {
                     @Override
@@ -475,7 +475,7 @@ public abstract class JpaBaseAggregationDaoTest<
                     }
                 });
 
-        //Find all aggrs
+        // Find all aggrs
         this.execute(
                 new CallableWithoutResult() {
                     @Override
@@ -497,7 +497,7 @@ public abstract class JpaBaseAggregationDaoTest<
                     }
                 });
 
-        //Find first days worth
+        // Find first days worth
         this.execute(
                 new CallableWithoutResult() {
                     @Override
@@ -519,7 +519,7 @@ public abstract class JpaBaseAggregationDaoTest<
                     }
                 });
 
-        //Find second days worth
+        // Find second days worth
         this.execute(
                 new CallableWithoutResult() {
                     @Override
@@ -541,7 +541,7 @@ public abstract class JpaBaseAggregationDaoTest<
                     }
                 });
 
-        //Find first 12 hours worth
+        // Find first 12 hours worth
         this.execute(
                 new CallableWithoutResult() {
                     @Override
@@ -563,7 +563,7 @@ public abstract class JpaBaseAggregationDaoTest<
                     }
                 });
 
-        //Find middle 24 hours worth
+        // Find middle 24 hours worth
         this.execute(
                 new CallableWithoutResult() {
                     @Override
@@ -585,7 +585,7 @@ public abstract class JpaBaseAggregationDaoTest<
                     }
                 });
 
-        //Find middle 24 hours worth for one group
+        // Find middle 24 hours worth for one group
         this.execute(
                 new CallableWithoutResult() {
                     @Override
@@ -604,7 +604,7 @@ public abstract class JpaBaseAggregationDaoTest<
                     }
                 });
 
-        //Find last 12 hours worth
+        // Find last 12 hours worth
         this.execute(
                 new CallableWithoutResult() {
                     @Override
@@ -626,7 +626,7 @@ public abstract class JpaBaseAggregationDaoTest<
                     }
                 });
 
-        //TODO Query for intervals that are stored
+        // TODO Query for intervals that are stored
         this.execute(
                 new CallableWithoutResult() {
                     @Override
@@ -651,7 +651,7 @@ public abstract class JpaBaseAggregationDaoTest<
 
         final MutableInt aggrs = new MutableInt();
 
-        //Create 10 minutes of aggregations
+        // Create 10 minutes of aggregations
         final DateTime start =
                 new DateTime(1326734644000l, DateTimeZone.UTC).minuteOfDay().roundFloorCopy();
         final DateTime end = start.plusMinutes(10);
@@ -713,10 +713,10 @@ public abstract class JpaBaseAggregationDaoTest<
                     }
                 });
 
-        //Verify all aggrs created
+        // Verify all aggrs created
         assertEquals(2, aggrs.intValue());
 
-        //Find unclosed 1 aggr
+        // Find unclosed 1 aggr
         this.execute(
                 new CallableWithoutResult() {
                     @Override
@@ -739,7 +739,7 @@ public abstract class JpaBaseAggregationDaoTest<
                                     aggregationIntervalHelper.getIntervalInfo(interval, instant);
                             updateAggregation(intervalInfo, baseAggregationImpl, r);
 
-                            //TODO verify unchanged
+                            // TODO verify unchanged
                         }
                     }
                 });
@@ -759,7 +759,7 @@ public abstract class JpaBaseAggregationDaoTest<
 
         final MutableInt aggrs = new MutableInt();
 
-        //Create 10 minutes of aggregations
+        // Create 10 minutes of aggregations
         final DateTime start =
                 new DateTime(1326734644000l, DateTimeZone.UTC).minuteOfDay().roundFloorCopy();
         final DateTime end = start.plusMinutes(10);
@@ -834,10 +834,10 @@ public abstract class JpaBaseAggregationDaoTest<
                     }
                 });
 
-        //Verify all aggrs created
+        // Verify all aggrs created
         assertEquals(4, aggrs.intValue());
 
-        //Find unclosed 1 aggr
+        // Find unclosed 1 aggr
         this.execute(
                 new CallableWithoutResult() {
                     @Override
@@ -856,7 +856,7 @@ public abstract class JpaBaseAggregationDaoTest<
                     }
                 });
 
-        //Find unclosed 0 aggr
+        // Find unclosed 0 aggr
         this.execute(
                 new CallableWithoutResult() {
                     @Override
@@ -890,7 +890,7 @@ public abstract class JpaBaseAggregationDaoTest<
                         DateTime nextDateTime = start.minuteOfDay().roundFloorCopy();
                         while (nextDateTime.isBefore(end)) {
 
-                            //get/create TimeDimension
+                            // get/create TimeDimension
                             final LocalTime localTime = nextDateTime.toLocalTime();
                             TimeDimension td = times.get(localTime);
                             if (td == null) {
@@ -898,7 +898,7 @@ public abstract class JpaBaseAggregationDaoTest<
                                 times.put(localTime, td);
                             }
 
-                            //get/create DateDimension
+                            // get/create DateDimension
                             final DateMidnight dateMidnight = nextDateTime.toDateMidnight();
                             DateDimension dd = dates.get(dateMidnight);
                             if (dd == null) {
@@ -906,7 +906,7 @@ public abstract class JpaBaseAggregationDaoTest<
                                 dates.put(dateMidnight, dd);
                             }
 
-                            //Let callback do work
+                            // Let callback do work
                             if (newDimensionHandler != null) {
                                 final RT result =
                                         newDimensionHandler.apply(

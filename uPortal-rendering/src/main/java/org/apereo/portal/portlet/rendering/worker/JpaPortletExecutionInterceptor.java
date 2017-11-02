@@ -48,7 +48,7 @@ public class JpaPortletExecutionInterceptor extends OpenEntityManagerInViewInter
             TransactionSynchronizationManager.bindResource(
                     getEntityManagerFactory(), new EntityManagerHolder(em));
 
-            //For new EM store as attribute so it can be closed
+            // For new EM store as attribute so it can be closed
             context.setExecutionAttribute(ENTITY_MANAGER_FACTORY, em);
         }
 
@@ -78,6 +78,6 @@ public class JpaPortletExecutionInterceptor extends OpenEntityManagerInViewInter
             HttpServletRequest request,
             HttpServletResponse response,
             IPortletExecutionContext context) {
-        //noop
+        // noop
     }
 }

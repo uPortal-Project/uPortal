@@ -150,7 +150,7 @@ public class MaxInactiveInterceptor extends HandlerInterceptorAdapter {
             if (rulingGrant != null || rulingDeny != null) {
                 // We only want to intervene if there's some actual value
                 // specified... otherwise we'll just let the container settings
-                //govern.
+                // govern.
                 int maxInactive =
                         rulingGrant != null
                                 ? rulingGrant.intValue()

@@ -95,11 +95,11 @@ public abstract class DoubleCheckedCreator<T> {
      * @return A retrieved or created object.
      */
     public final T get(Object... args) {
-        //Grab a read lock to try retrieving the object
+        // Grab a read lock to try retrieving the object
         this.readLock.lock();
         try {
 
-            //See if the object already exists and is valid
+            // See if the object already exists and is valid
             final T value = this.retrieve(args);
             if (!this.invalid(value, args)) {
                 if (getLogger().isDebugEnabled()) {
@@ -109,18 +109,18 @@ public abstract class DoubleCheckedCreator<T> {
                 return value;
             }
         } finally {
-            //Release the read lock
+            // Release the read lock
             this.readLock.unlock();
         }
 
-        //Object must not be valid, switch to a write lock
+        // Object must not be valid, switch to a write lock
         this.writeLock.lock();
         try {
-            //Check again if the object exists and is valid
+            // Check again if the object exists and is valid
             T value = this.retrieve(args);
             if (this.invalid(value, args)) {
 
-                //Object is not valid, create it
+                // Object is not valid, create it
                 value = this.create(args);
 
                 if (getLogger().isDebugEnabled()) {
@@ -132,7 +132,7 @@ public abstract class DoubleCheckedCreator<T> {
 
             return value;
         } finally {
-            //switch back to the read lock
+            // switch back to the read lock
             this.writeLock.unlock();
         }
     }

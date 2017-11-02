@@ -98,7 +98,7 @@ public class PortletExecutionStatisticsController
     /** Select the first portlet name by default for the form */
     private void selectFormDefaultPortlet(final PortletExecutionReportForm report) {
         if (!report.getPortlets().isEmpty()) {
-            //Portlets already selected, do nothin
+            // Portlets already selected, do nothin
             return;
         }
 
@@ -129,7 +129,7 @@ public class PortletExecutionStatisticsController
     /** Select the XXXX execution type by default for the form */
     private void selectFormExecutionType(final PortletExecutionReportForm report) {
         if (!report.getExecutionTypeNames().isEmpty()) {
-            //Already execution types set, do nothing
+            // Already execution types set, do nothing
             return;
         }
 
@@ -180,7 +180,7 @@ public class PortletExecutionStatisticsController
 
     protected Map<PortletExecutionAggregationDiscriminator, SortedSet<PortletExecutionAggregation>>
             createColumnDiscriminatorMap(PortletExecutionReportForm form) {
-        //Collections used to track the queried groups and the results
+        // Collections used to track the queried groups and the results
         final Map<PortletExecutionAggregationDiscriminator, SortedSet<PortletExecutionAggregation>>
                 groupedAggregations =
                         new TreeMap<
@@ -188,7 +188,7 @@ public class PortletExecutionStatisticsController
                                 SortedSet<PortletExecutionAggregation>>(
                                 PortletExecutionAggregationDiscriminatorImpl.Comparator.INSTANCE);
 
-        //Get concrete group mapping objects that are being queried for
+        // Get concrete group mapping objects that are being queried for
         List<Long> groups = form.getGroups();
         Set<String> portletFNames = form.getPortlets();
         Set<String> executionTypes = form.getExecutionTypeNames();
@@ -202,12 +202,13 @@ public class PortletExecutionStatisticsController
                     final PortletExecutionAggregationDiscriminator mapping =
                             new PortletExecutionAggregationDiscriminatorImpl(
                                     groupMapping, tabMapping, ExecutionType.valueOf(executionType));
-                    //Create the set the aggregations for this report column will be stored in, sorted chronologically
+                    // Create the set the aggregations for this report column will be stored in,
+                    // sorted chronologically
                     final SortedSet<PortletExecutionAggregation> aggregations =
                             new TreeSet<PortletExecutionAggregation>(
                                     BaseAggregationDateTimeComparator.INSTANCE);
 
-                    //Map the group to the set
+                    // Map the group to the set
                     groupedAggregations.put(mapping, aggregations);
                 }
             }

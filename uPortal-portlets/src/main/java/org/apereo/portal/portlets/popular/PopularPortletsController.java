@@ -148,7 +148,7 @@ public class PopularPortletsController {
                 if (portletDefinition == null
                         || !ap.canSubscribe(
                                 portletDefinition.getPortletDefinitionId().getStringId())) {
-                    //Skip portlets that no longer exist or cannot be subscribed to
+                    // Skip portlets that no longer exist or cannot be subscribed to
                     continue;
                 }
 

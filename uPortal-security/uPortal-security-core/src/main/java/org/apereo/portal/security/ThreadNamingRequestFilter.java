@@ -54,7 +54,7 @@ public class ThreadNamingRequestFilter extends OncePerRequestFilter {
 
         final String username = getUserName(request);
         if (username == null) {
-            //No user, skip thread naming
+            // No user, skip thread naming
             filterChain.doFilter(request, response);
         } else {
             final Thread currentThread = Thread.currentThread();

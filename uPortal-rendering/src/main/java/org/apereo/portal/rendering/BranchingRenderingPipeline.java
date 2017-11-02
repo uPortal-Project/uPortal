@@ -48,7 +48,8 @@ public class BranchingRenderingPipeline implements IPortalRenderingPipeline {
     public void renderState(final HttpServletRequest request, final HttpServletResponse response)
             throws ServletException, IOException {
 
-        // render either the true or false pipe, depending on the trueness or falseness of the predicate
+        // render either the true or false pipe, depending on the trueness or falseness of the
+        // predicate
 
         if (predicate.apply(request)) {
             logger.trace("Branching to the true pipe [{}].", truePipe);

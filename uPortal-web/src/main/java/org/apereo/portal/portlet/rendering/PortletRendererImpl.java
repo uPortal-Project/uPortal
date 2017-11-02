@@ -133,7 +133,7 @@ public class PortletRendererImpl implements IPortletRenderer {
         httpServletResponse =
                 new PortletHttpServletResponseWrapper(httpServletResponse, portletWindow);
 
-        //Execute the action,
+        // Execute the action,
         this.logger.debug("Executing portlet action for window '{}'", portletWindow);
 
         final long start = System.nanoTime();
@@ -196,7 +196,7 @@ public class PortletRendererImpl implements IPortletRenderer {
         httpServletResponse =
                 new PortletHttpServletResponseWrapper(httpServletResponse, portletWindow);
 
-        //Execute the action,
+        // Execute the action,
         this.logger.debug("Executing portlet event for window '{}'", portletWindow);
 
         final long start = System.nanoTime();
@@ -437,7 +437,7 @@ public class PortletRendererImpl implements IPortletRenderer {
 
         final CacheControl cacheControl = cacheState.getCacheControl();
 
-        //Setup the request and response
+        // Setup the request and response
         httpServletRequest = this.setupPortletRequest(httpServletRequest);
         httpServletResponse =
                 new PortletMimeHttpServletResponseWrapper(
@@ -480,7 +480,7 @@ public class PortletRendererImpl implements IPortletRenderer {
 
         final long executionTime = System.nanoTime() - renderStartTime;
 
-        //See if the portlet signaled to use the cached content
+        // See if the portlet signaled to use the cached content
         final boolean useCachedContent = cacheControl.useCachedContent();
         if (useCachedContent) {
             final CachedPortletData<PortletRenderResult> cachedPortletData =
@@ -495,7 +495,7 @@ public class PortletRendererImpl implements IPortletRenderer {
                         portletWindow);
             }
 
-            //Update the expiration time and re-store in the cache
+            // Update the expiration time and re-store in the cache
             cachedPortletData.updateExpirationTime(cacheControl.getExpirationTime());
 
             renderPart.cachePortletOutput(
@@ -516,11 +516,11 @@ public class PortletRendererImpl implements IPortletRenderer {
 
         publishRenderEvent(portletWindow, httpServletRequest, renderPart, executionTime, false);
 
-        //Build the render result
+        // Build the render result
         final PortletRenderResult portletRenderResult =
                 constructPortletRenderResult(httpServletRequest, executionTime);
 
-        //Check if the portlet's output should be cached
+        // Check if the portlet's output should be cached
         if (cacheState != null) {
             boolean shouldCache =
                     this.portletCacheControlService.shouldOutputBeCached(cacheControl);
@@ -585,7 +585,7 @@ public class PortletRendererImpl implements IPortletRenderer {
 
         final IPortletWindowId portletWindowId = portletWindow.getPortletWindowId();
 
-        //Determine if the portlet was targeted
+        // Determine if the portlet was targeted
         final IPortalRequestInfo portalRequestInfo =
                 this.urlSyntaxProvider.getPortalRequestInfo(httpServletRequest);
         final boolean targeted =
@@ -663,10 +663,10 @@ public class PortletRendererImpl implements IPortletRenderer {
                 new CachingPortletResourceOutputHandler(portletOutputHandler, cacheSizeThreshold);
 
         CacheControl cacheControl = cacheState.getCacheControl();
-        //Wrap the cache control so it immediately sets the caching related response headers
+        // Wrap the cache control so it immediately sets the caching related response headers
         cacheControl = new HeaderSettingCacheControl(cacheControl, cachingPortletOutputHandler);
 
-        //Setup the request and response
+        // Setup the request and response
         httpServletRequest = this.setupPortletRequest(httpServletRequest);
         httpServletResponse =
                 new PortletResourceHttpServletResponseWrapper(
@@ -707,14 +707,14 @@ public class PortletRendererImpl implements IPortletRenderer {
         }
         final long executionTime = System.nanoTime() - start;
 
-        //See if the portlet signaled to use the cached content
+        // See if the portlet signaled to use the cached content
         final boolean useCachedContent = cacheControl.useCachedContent();
         if (useCachedContent) {
             final CachedPortletResourceData<Long> cachedPortletResourceData =
                     cacheState.getCachedPortletData();
 
             if (cachedPortletResourceData != null) {
-                //Update the expiration time and re-store in the cache
+                // Update the expiration time and re-store in the cache
                 final CachedPortletData<Long> cachedPortletData =
                         cachedPortletResourceData.getCachedPortletData();
                 cachedPortletData.updateExpirationTime(cacheControl.getExpirationTime());
@@ -724,7 +724,7 @@ public class PortletRendererImpl implements IPortletRenderer {
 
             if (cacheState.isBrowserSetEtag()) {
                 logger.trace("doServeResource-useCachedContent, Reusing browser data");
-                //Browser-side content matches, send a 304
+                // Browser-side content matches, send a 304
                 return doResourceReplayBrowserContent(
                         portletWindow, httpServletRequest, cacheState, portletOutputHandler);
             }
@@ -784,7 +784,7 @@ public class PortletRendererImpl implements IPortletRenderer {
         final CachedPortletResourceData<Long> cachedPortletResourceData =
                 cacheState.getCachedPortletData();
         if (cachedPortletResourceData != null) {
-            //Freshen up the various caching related headers
+            // Freshen up the various caching related headers
             final CachedPortletData<Long> cachedPortletData =
                     cachedPortletResourceData.getCachedPortletData();
             PortletCachingHeaderUtils.setCachingHeaders(cachedPortletData, portletOutputHandler);
@@ -865,7 +865,8 @@ public class PortletRendererImpl implements IPortletRenderer {
             HttpServletRequest httpServletRequest,
             HttpServletResponse httpServletResponse) {
 
-        // Don't enforce config mode restriction because this is going to snap the portlet window back into view mode.
+        // Don't enforce config mode restriction because this is going to snap the portlet window
+        // back into view mode.
 
         final IPortletWindow portletWindow =
                 this.portletWindowRegistry.getPortletWindow(httpServletRequest, portletWindowId);
@@ -888,8 +889,10 @@ public class PortletRendererImpl implements IPortletRenderer {
                     PortletSessionAdministrativeRequestListener.SCOPE,
                     PortletSession.PORTLET_SCOPE);
 
-            //TODO modify PortletContainer.doAdmin to create a specific "admin" req/res object and context so we don't have to fake it with a render req
-            //These are required for a render request to be created and admin requests use a render request under the hood
+            // TODO modify PortletContainer.doAdmin to create a specific "admin" req/res object and
+            // context so we don't have to fake it with a render req
+            // These are required for a render request to be created and admin requests use a render
+            // request under the hood
             final String characterEncoding = httpServletResponse.getCharacterEncoding();
             httpServletRequest.setAttribute(
                     IPortletRenderer.ATTRIBUTE__PORTLET_OUTPUT_HANDLER,

@@ -117,14 +117,14 @@ public class ResourceLoader {
         final Tuple<Class<?>, String> cacheKey =
                 new Tuple<Class<?>, String>(requestingClass, resource);
 
-        //Look for a cached URL
+        // Look for a cached URL
         final Map<Tuple<Class<?>, String>, URL> resourceUrlCache = ResourceLoader.resourceUrlCache;
         URL resourceURL = resourceUrlCache != null ? resourceUrlCache.get(cacheKey) : null;
         if (resourceURL != null) {
             return resourceURL;
         }
 
-        //Look for a failed lookup
+        // Look for a failed lookup
         final Map<Tuple<Class<?>, String>, ResourceMissingException> resourceUrlNotFoundCache =
                 ResourceLoader.resourceUrlNotFoundCache;
         ResourceMissingException exception =
@@ -184,7 +184,7 @@ public class ResourceLoader {
         final URL contentUrl = getResourceAsURL(requestingClass, resource);
         final String contentFileName = contentUrl.getFile();
 
-        //Use JAR modified time if the resource is in a .jar file denoted by ! delimeter
+        // Use JAR modified time if the resource is in a .jar file denoted by ! delimeter
         final int delimIndex = contentFileName.indexOf('!');
 
         final File contentFile;

@@ -52,7 +52,7 @@ public class PortletRenderingInitiationCharacterComponent
      */
     @Override
     public CacheKey getCacheKey(HttpServletRequest request, HttpServletResponse response) {
-        //Initiating rendering of portlets will change the stream at all
+        // Initiating rendering of portlets will change the stream at all
         return this.wrappedComponent.getCacheKey(request, response);
     }
 

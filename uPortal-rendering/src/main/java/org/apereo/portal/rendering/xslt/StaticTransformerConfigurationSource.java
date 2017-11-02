@@ -91,11 +91,11 @@ public class StaticTransformerConfigurationSource implements TransformerConfigur
             HttpServletRequest request, HttpServletResponse response) {
         final ServletWebRequest webRequest = new ServletWebRequest(request, response);
 
-        //Clone the static parameter map
+        // Clone the static parameter map
         final LinkedHashMap<String, Object> parameters =
                 new LinkedHashMap<String, Object>(this.parameters);
 
-        //Add in any SpEL based parameters
+        // Add in any SpEL based parameters
         if (this.parameterExpressions != null) {
             for (final Map.Entry<String, Expression> expressionEntry :
                     this.parameterExpressions.entrySet()) {

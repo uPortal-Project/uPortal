@@ -90,7 +90,7 @@ public class GuestPortletEntityPreferencesImpl
             IPortletEntity portletEntity, Map<String, IPortletPreference> basePortletPreferences) {
         final IPortletDefinition portletDefinition = portletEntity.getPortletDefinition();
 
-        //Add descriptor prefs to base Map
+        // Add descriptor prefs to base Map
         final IPortletDefinitionId portletDefinitionId = portletDefinition.getPortletDefinitionId();
         final PortletDefinition portletDescriptor =
                 this.portletDefinitionRegistry.getParentPortletDescriptor(portletDefinitionId);
@@ -100,14 +100,14 @@ public class GuestPortletEntityPreferencesImpl
             basePortletPreferences.put(preferenceWrapper.getName(), preferenceWrapper);
         }
 
-        //Add definition prefs to base Map
+        // Add definition prefs to base Map
         final List<IPortletPreference> definitionPreferences =
                 portletDefinition.getPortletPreferences();
         for (final IPortletPreference preference : definitionPreferences) {
             basePortletPreferences.put(preference.getName(), preference);
         }
 
-        //Add entity prefs to base Map
+        // Add entity prefs to base Map
         final List<IPortletPreference> entityPreferences = portletEntity.getPortletPreferences();
         for (final IPortletPreference preference : entityPreferences) {
             basePortletPreferences.put(preference.getName(), preference);
@@ -142,7 +142,7 @@ public class GuestPortletEntityPreferencesImpl
 
         final Map<IPortletEntityId, Map<String, IPortletPreference>> portletPreferences;
 
-        //Sync on the session to ensure the Map isn't in the process of being created
+        // Sync on the session to ensure the Map isn't in the process of being created
         synchronized (session) {
             portletPreferences =
                     (Map<IPortletEntityId, Map<String, IPortletPreference>>)
@@ -165,7 +165,7 @@ public class GuestPortletEntityPreferencesImpl
 
         Map<IPortletEntityId, Map<String, IPortletPreference>> portletPreferences;
 
-        //Sync on the session to ensure other threads aren't creating the Map at the same time
+        // Sync on the session to ensure other threads aren't creating the Map at the same time
         synchronized (session) {
             portletPreferences =
                     (Map<IPortletEntityId, Map<String, IPortletPreference>>)

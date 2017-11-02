@@ -141,7 +141,8 @@ public class ChannelListController {
         final IPerson user = personManager.getPerson(request);
         final Map<String, SortedSet<?>> registry = getRegistryOriginal(webRequest, user);
 
-        // Since type=manage was deprecated channels is always empty but retained for backwards compatibility
+        // Since type=manage was deprecated channels is always empty but retained for backwards
+        // compatibility
         registry.put("channels", new TreeSet<ChannelBean>());
 
         return new ModelAndView("jsonView", "registry", registry);
@@ -335,7 +336,8 @@ public class ChannelListController {
                         ? new HashSet<IPortletDefinition>(
                                 portletDefinitionRegistry.getAllPortletDefinitions())
                         : new HashSet<
-                                IPortletDefinition>(); // Not necessary to fetch them if we're not tracking them
+                                IPortletDefinition>(); // Not necessary to fetch them if we're not
+        // tracking them
 
         // construct a new channel registry
         Map<String, SortedSet<?>> rslt = new TreeMap<String, SortedSet<?>>();

@@ -142,7 +142,7 @@ public class LayoutPortlet {
             while (parser.nextToken() != null) {}
             valid = true;
         } catch (Exception jpe) {
-            //eat error
+            // eat error
             valid = false;
         }
 

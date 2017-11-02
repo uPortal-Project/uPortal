@@ -60,7 +60,7 @@ public class PortletCategoryBeanTest {
         // Check the portlets set
         assertEquals(Collections.emptySet(), pcb.getPortlets());
 
-        //Check the subCat set
+        // Check the subCat set
         assertEquals(1, pcb.getSubcategories().size());
         assertEquals(cat1id, pcb.getSubcategories().first().getId());
         assertEquals(cat1name, pcb.getSubcategories().first().getName());

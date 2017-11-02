@@ -143,7 +143,8 @@ public class RoleBasedBackgroundSetSelectionStrategy implements BackgroundSetSel
 
         if (StringUtils.isNotBlank(backgroundImage)) {
 
-            // We are trying to choose a background;  first verify the requested image is actually in the set...
+            // We are trying to choose a background;  first verify the requested image is actually
+            // in the set...
             String[] images =
                     prefs.getValues(names.getImageSetPreferenceName(), EMPTY_STRING_ARRAY);
             for (int i = 0; i < images.length; i++) {

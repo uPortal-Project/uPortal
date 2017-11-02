@@ -31,14 +31,14 @@ public class StatisticsJacksonColumnMapper extends JacksonColumnMapper {
 
     @Override
     protected void customizeObjectMapper(ObjectMapper mapper) {
-        //Just operate on fields
+        // Just operate on fields
         mapper.setVisibility(PropertyAccessor.FIELD, Visibility.ANY);
         mapper.setVisibility(PropertyAccessor.GETTER, Visibility.NONE);
         mapper.setVisibility(PropertyAccessor.IS_GETTER, Visibility.NONE);
         mapper.setVisibility(PropertyAccessor.SETTER, Visibility.NONE);
         mapper.setVisibility(PropertyAccessor.CREATOR, Visibility.NONE);
 
-        //Ignore the empty storedData field in all of the stat summary objects
+        // Ignore the empty storedData field in all of the stat summary objects
         filters =
                 new SimpleFilterProvider()
                         .addFilter(
