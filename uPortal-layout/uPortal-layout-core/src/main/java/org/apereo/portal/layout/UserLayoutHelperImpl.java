@@ -87,7 +87,7 @@ public class UserLayoutHelperImpl extends JdbcDaoSupport implements IUserLayoutH
     /**
      * @param personAttributes
      * @see
-     *     org.apereo.portal.layout.IUserLayoutHelper#resetUserLayout(org.jasig.services.persondir.IPersonAttributes)
+     *     org.apereo.portal.layout.IUserLayoutHelper#resetUserLayout(org.apereo.services.persondir.IPersonAttributes)
      */
     @Override
     public void resetUserLayout(final IPersonAttributes personAttributes) {

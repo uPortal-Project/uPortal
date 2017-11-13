@@ -151,3 +151,14 @@ war {
         into '/'
     }
 }
+
+compileJava {
+    doFirst {
+        options.compilerArgs = [
+            '--class-path', classpath.asPath, 
+            '--module-path', classpath.asPath, 
+            '--add-modules', 'java.xml.bind',
+        ]
+        //classpath = files()
+    }
+}
