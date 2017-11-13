@@ -23,8 +23,8 @@
     xsi:schemaLocation="http://www.springframework.org/schema/webflow
                           http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
 
-    <input name="person" type="org.jasig.services.persondir.IPersonAttributes" required="true" />
-    
+    <input name="person" type="org.apereo.services.persondir.IPersonAttributes" required="true" />
+
     <view-state id="reset-confirm">
         <transition on="confirm" to="reset-result">
             <!-- Choose resetUserLayoutAllProfiles if on layout reset, you need
@@ -33,10 +33,10 @@
         </transition>
         <transition on="cancel" to="reset-complete"/>
     </view-state>
-    
+
     <view-state id="reset-result">
-        <transition on="continue" to="reset-complete" />        
+        <transition on="continue" to="reset-complete" />
     </view-state>
-    
+
     <end-state id="reset-complete"/>
 </flow>

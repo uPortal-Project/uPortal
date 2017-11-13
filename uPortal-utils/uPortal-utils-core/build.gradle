@@ -8,6 +8,8 @@ ext {
 dependencies {
     compile project(':uPortal-concurrency')
 
+    compile "javax.xml.bind:jaxb-api:2.3.0"
+    compile "javax.annotation:javax.annotation-api:${javaxmlVersion}"
     compile "com.fasterxml.jackson.core:jackson-annotations:${jacksonVersion}"
     compile "com.fasterxml.jackson.core:jackson-core:${jacksonVersion}"
     compile "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
@@ -78,6 +80,9 @@ dependencies {
     compileOnly "${servletApiDependency}"
 }
 
+sourceCompatibility = '9'
+targetCompatibility = '9'
+ 
 /*
  * This section is the key to IDE integration.  IDE will look for source files in both...
  *
@@ -96,6 +101,13 @@ sourceSets {
 // These are the only modifications to build process that are required.
 compileJava {
     doFirst {
+        options.compilerArgs += [
+            '--class-path', classpath.asPath, 
+            '--module-path', classpath.asPath, 
+            '--add-modules', 'java.sql',
+        ]
+        classpath = files()
+
         // Generated sources directory should be present & empty before compilation
         generatedSourcesDir.deleteDir()
         generatedSourcesDir.mkdirs()

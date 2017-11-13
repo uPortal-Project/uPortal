@@ -3,7 +3,10 @@ description = "Apereo uPortal Import/Export Core"
 dependencies {
     compile project(':uPortal-utils:uPortal-utils-core')
 
+    compile "javax.xml.bind:jaxb-api:2.3.0"
+    compile "javax.annotation:javax.annotation-api:${javaxmlVersion}"
     compile "commons-lang:commons-lang:${commonsLangVersion}"
+    compile 'jaxb:activation:1.0.2'
     compile "org.apache.commons:commons-compress:${commonsCompressVersion}"
     compile "org.apache.tika:tika-core:${tikaVersion}"
     compile "org.slf4j:slf4j-api:${slf4jVersion}"

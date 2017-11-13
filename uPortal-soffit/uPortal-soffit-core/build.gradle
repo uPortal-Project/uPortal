@@ -1,6 +1,7 @@
 description = "Apereo uPortal Soffit Core"
 
 dependencies {
+    compile "javax.annotation:javax.annotation-api:${javaxmlVersion}"
     compile "io.jsonwebtoken:jjwt:${jjwtVersion}"
     compile "org.apache.commons:commons-lang3:${commonsLang3Version}"
     compile "org.jasypt:jasypt:${jasyptVersion}"
