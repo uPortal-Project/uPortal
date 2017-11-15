@@ -14,7 +14,7 @@ plugins {
     // Sub project plugins
     id 'com.github.sherter.google-java-format' version '0.6' apply false
     id 'nebula.lint' version '8.3.1' apply false
-    id 'net.ltgt.errorprone' version '0.0.13' apply false
+    //id 'net.ltgt.errorprone' version '0.0.13' apply false
 }
 
 description = "Apereo uPortal $version"
@@ -55,7 +55,7 @@ allprojects {
     apply plugin: 'groovy'
     apply plugin: 'codenarc'
     apply plugin: 'com.github.sherter.google-java-format'
-    apply plugin: 'net.ltgt.errorprone'
+    //apply plugin: 'net.ltgt.errorprone'
 
     configurations {
         // Banned dependencies
@@ -66,7 +66,7 @@ allprojects {
     }
 
     dependencies {
-      errorprone 'com.google.errorprone:error_prone_core:2.1.2'
+      //errorprone 'com.google.errorprone:error_prone_core:2.1.2'
     }
 
     codenarc {

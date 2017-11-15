@@ -13,3 +13,14 @@ dependencies {
     compileOnly "${portletApiDependency}"
     compileOnly "${servletApiDependency}"
 }
+
+compileJava {
+    doFirst {
+        options.compilerArgs += [
+            '--class-path', classpath.asPath,
+            '--module-path', classpath.asPath,
+        ]
+        classpath = files()
+    }
+}
+

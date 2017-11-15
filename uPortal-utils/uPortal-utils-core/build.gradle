@@ -101,16 +101,16 @@ sourceSets {
 // These are the only modifications to build process that are required.
 compileJava {
     doFirst {
-        options.compilerArgs += [
-            '--class-path', classpath.asPath, 
-            '--module-path', classpath.asPath, 
-            '--add-modules', 'java.sql',
-        ]
-        classpath = files()
-
         // Generated sources directory should be present & empty before compilation
         generatedSourcesDir.deleteDir()
         generatedSourcesDir.mkdirs()
     }
-    options.compilerArgs += ['-s', generatedSourcesDir]
+
+    options.compilerArgs += [
+        '--class-path', classpath.asPath, 
+        '--module-path', classpath.asPath, 
+        '--add-modules', 'java.sql',
+        '-s', generatedSourcesDir,
+    ]
+    //classpath = files()
 }
