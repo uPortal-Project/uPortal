@@ -136,12 +136,16 @@
             Join the Conversation
           </td>
           <td>
-            <a href="https://gitter.im/Jasig/uPortal?utm_source=badge&amp;utm_medium=badge&amp;utm_campaign=pr-badge">
-              <img src="https://badges.gitter.im/Jasig/uPortal.svg" alt="Gitter">
+            <a href="https://groups.google.com/a/apereo.org/forum/#!forum/uportal-dev">
+              <img src="https://img.shields.io/badge/uPortal-user-green.svg?style=flat" alt="uPortal user mailing list"
             </a>
             <br>
-            <a href="https://www.irccloud.com/invite?channel=%23jasig-uportal&amp;hostname=irc.freenode.net&amp;port=6697&amp;ssl=1">
-              <img src="https://img.shields.io/badge/IRC-%23jasig--uportal-1e72ff.svg?style=flat" alt="uPortal on IRC">
+            <a href="https://groups.google.com/a/apereo.org/forum/#!forum/uportal-dev">
+              <img src="https://img.shields.io/badge/uPortal-dev-blue.svg?style=flat" alt="uPortal developer mailing list"
+            </a>
+            <br>
+            <a href="https://apereo.slack.com">
+              <img src="https://img.shields.io/badge/chat-on_slack-E01765.svg?style=flat" alt="chat on slack"
             </a>
             <br>
             <a href="https://twitter.com/uPortal">
@@ -157,28 +161,32 @@
 ## About
 
 uPortal is the leading open source enterprise portal framework built by and for
-the higher education community. uPortal continues to evolve through contributions
-from its global community and is supported by resources, grants, donations, and
-memberships fees from academic institutions, commercial affiliates, and non-profit
-foundations. uPortal is built on open standards-based technologies such as Java
-and XML, and enables easy, standards-based integration with authentication and
-security infrastructures, single sign-on secure access, campus applications,
-web-based content, and end user customization. uPortal can easily integrate with
-other enterprise systems and can be customized for specific local needs.
+the higher education community. uPortal continues to evolve through
+contributions from its global community and is supported by resources, grants,
+donations, and memberships fees from academic institutions, commercial
+affiliates, and non-profit foundations. uPortal is built on open standards-based
+technologies such as Java and XML, and enables easy, standards-based integration
+with authentication and security infrastructures, single sign-on secure access,
+campus applications, web-based content, and end user customization. uPortal can
+easily integrate with other enterprise systems and can be customized for
+specific local needs.
 
 ### Forever Free!
 
 You may [download uPortal](https://github.com/Jasig/uPortal/releases) and use it
-on your site at no cost. Unlike our competitors, uPortal is 100% free open source
-software managed by [Apereo](https://www.apereo.org/content/about). Our community
-has access to all releases of the uPortal software with absolutely no costs. We
-welcome [contributions from our community](https://github.com/Jasig/uPortal/graphs/contributors)
+on your site at no cost. Unlike our competitors, uPortal is 100% free open
+source software managed by [Apereo](https://www.apereo.org/content/about). Our
+community has access to all releases of the uPortal software with absolutely no
+costs. We welcome
+[contributions from our community](https://github.com/Jasig/uPortal/graphs/contributors)
 of all types and sizes.
 
 ### Accessible
 
-uPortal strives to conform with [Web Content Accessibility Guidelines Version 2.0](https://www.w3.org/TR/WCAG20/) Level AA.
-The most recent accessibility audit results can be seen in [UP-4735](https://issues.jasig.org/browse/UP-4735).
+uPortal strives to conform with
+[Web Content Accessibility Guidelines Version 2.0](https://www.w3.org/TR/WCAG20/)
+Level AA. The most recent accessibility audit results can be seen in
+[UP-4735](https://issues.jasig.org/browse/UP-4735).
 
 ## Help and Support
 
@@ -186,34 +194,41 @@ The [uportal-user@apereo.org](https://wiki.jasig.org/display/JSG/uportal-user)
 email address is the best place to go with questions related to configuring or
 deploying uPortal.
 
-The [uPortal manual](#manual) is a collaborative resource which has more detailed documentation for
-each uPortal release.
+The [uPortal manual](#manual) is a collaborative resource which has more
+detailed documentation for each uPortal release.
 
 ### Manual
 
 Additional information about uPortal is available in the Manual.
 
-*   [uPortal 5.0 Manual](https://jasig.github.io/uPortal)
-*   [uPortal 4.3 Manual](https://wiki.jasig.org/display/UPM43/Home)
-*   [uPortal 4.2 Manual](https://wiki.jasig.org/display/UPM42/Home)
-*   [uPortal 4.1 Manual](https://wiki.jasig.org/display/UPM41/Home)
-*   [uPortal 4.0 Manual](https://wiki.jasig.org/display/UPM40/Home)
-*   [uPortal 3.2 Manual](https://wiki.jasig.org/display/UPM32/Home)
-*   [uPortal 3.1 Manual](https://wiki.jasig.org/display/UPM31/Home)
-*   [uPortal 3.0 Manual](https://wiki.jasig.org/display/UPM30/Home)
+* [uPortal 5.0 Manual](https://jasig.github.io/uPortal)
+* [uPortal 4.3 Manual](https://wiki.jasig.org/display/UPM43/Home)
+* [uPortal 4.2 Manual](https://wiki.jasig.org/display/UPM42/Home)
+* [uPortal 4.1 Manual](https://wiki.jasig.org/display/UPM41/Home)
+* [uPortal 4.0 Manual](https://wiki.jasig.org/display/UPM40/Home)
+* [uPortal 3.2 Manual](https://wiki.jasig.org/display/UPM32/Home)
+* [uPortal 3.1 Manual](https://wiki.jasig.org/display/UPM31/Home)
+* [uPortal 3.0 Manual](https://wiki.jasig.org/display/UPM30/Home)
 
 ## Requirements
 
-*   JDK 1.8 - The JRE alone is NOT sufficient, a full JDK is required
-*   GIT
+* JDK 1.8 - The JRE alone is NOT sufficient, a full JDK is required
+* GIT
 
 ## uPortal-start
 
-uPortal is now meant to be deployed via uPortal-start, which is responsible for servlet container (ie Tomcat), DB, and portal configurations.  uPortal-start deals with the low-level configurations and setup, while letting the adopter focus on the business configuration side of the deployment.  However, it is possible to run uPortal without uPortal-start.  The uPortal 5.0 manual explains how.
+uPortal is now meant to be deployed via uPortal-start, which is responsible for
+servlet container (ie Tomcat), DB, and portal configurations. uPortal-start
+deals with the low-level configurations and setup, while letting the adopter
+focus on the business configuration side of the deployment. However, it is
+possible to run uPortal without uPortal-start. The uPortal 5.0 manual explains
+how.
 
 ## Building and Deploying
 
-uPortal uses Gradle for its project configuration and build system.  uPortal comes with a Gradle wrapper if you don't want to install the build tool (`./gradlew` in the root directory of the repo).
+uPortal uses Gradle for its project configuration and build system. uPortal
+comes with a Gradle wrapper if you don't want to install the build tool
+(`./gradlew` in the root directory of the repo).
 
 ### Gradle tasks
 

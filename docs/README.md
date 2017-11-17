@@ -2,10 +2,10 @@
 
 # uPortal Documentation
 
-**NOTE:**  This area is a work-in-progress.  It is intended to serve as primary
+**NOTE:** This area is a work-in-progress. It is intended to serve as primary
 documentation for uPortal version 5.0 (expected mid-2017) and above.
 Documentation for earlier versions of uPortal is available in
-[Confluence](https://wiki.jasig.org).  See *Documentation for Previous Releases*
+[Confluence](https://wiki.jasig.org). See _Documentation for Previous Releases_
 below.
 
 <table border="0">
@@ -144,12 +144,16 @@ below.
             Join the Conversation
           </td>
           <td>
-            <a href="https://gitter.im/Jasig/uPortal?utm_source=badge&amp;utm_medium=badge&amp;utm_campaign=pr-badge">
-              <img src="https://badges.gitter.im/Jasig/uPortal.svg" alt="Gitter">
+            <a href="https://groups.google.com/a/apereo.org/forum/#!forum/uportal-user">
+              <img src="https://img.shields.io/badge/uPortal-user-green.svg?style=flat" alt="uPortal user mailing list"
             </a>
             <br>
-            <a href="https://www.irccloud.com/invite?channel=%23jasig-uportal&amp;hostname=irc.freenode.net&amp;port=6697&amp;ssl=1">
-              <img src="https://img.shields.io/badge/IRC-%23jasig--uportal-1e72ff.svg?style=flat" alt="uPortal on IRC">
+            <a href="https://groups.google.com/a/apereo.org/forum/#!forum/uportal-dev">
+              <img src="https://img.shields.io/badge/uPortal-dev-blue.svg?style=flat" alt="uPortal developer mailing list"
+            </a>
+            <br>
+            <a href="https://apereo.slack.com">
+              <img src="https://img.shields.io/badge/chat-on_slack-E01765.svg?style=flat" alt="chat on slack"
             </a>
             <br>
             <a href="https://twitter.com/uPortal">
