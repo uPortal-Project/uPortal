@@ -15,10 +15,13 @@
 package org.apereo.portal.rendering.xslt;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apereo.portal.spring.spel.IPortalSpELService;
@@ -36,7 +39,8 @@ public class StaticTransformerConfigurationSource implements TransformerConfigur
     private Properties outputProperties;
     private LinkedHashMap<String, Object> parameters;
     private IPortalSpELService portalSpELService;
-    private Map<String, Expression> parameterExpressions;
+    private final Map<String, String> unparsedParameterExpressions = new HashMap<>();
+    private final Map<String, Expression> parameterExpressions = new LinkedHashMap<>();
     private Set<String> cacheKeyExcludedParameters = Collections.emptySet();
 
     @Autowired
@@ -49,25 +53,25 @@ public class StaticTransformerConfigurationSource implements TransformerConfigur
     }
 
     public void setParameters(Map<String, Object> transformerParameters) {
-        this.parameters = new LinkedHashMap<String, Object>(transformerParameters);
+        this.parameters = new LinkedHashMap<>(transformerParameters);
     }
 
     public void setParameterExpressions(Map<String, String> parameterExpressions) {
-        final Map<String, Expression> parameterExpressionsBuilder =
-                new LinkedHashMap<String, Expression>();
-
-        for (final Map.Entry<String, String> expressionEntry : parameterExpressions.entrySet()) {
-            final String string = expressionEntry.getValue();
-            final Expression expression = this.portalSpELService.parseExpression(string);
-            parameterExpressionsBuilder.put(expressionEntry.getKey(), expression);
-        }
-
-        this.parameterExpressions = parameterExpressionsBuilder;
+        unparsedParameterExpressions.putAll(parameterExpressions);
     }
 
     /** Parameter keys to exclude from the cache key. */
     public void setCacheKeyExcludedParameters(Set<String> cacheKeyExcludedParameters) {
         this.cacheKeyExcludedParameters = cacheKeyExcludedParameters;
+    }
+
+    @PostConstruct
+    public void init() {
+        for (final Map.Entry<String, String> expressionEntry : unparsedParameterExpressions.entrySet()) {
+            final String string = expressionEntry.getValue();
+            final Expression expression = portalSpELService.parseExpression(string);
+            parameterExpressions.put(expressionEntry.getKey(), expression);
+        }
     }
 
     @Override
@@ -93,18 +97,16 @@ public class StaticTransformerConfigurationSource implements TransformerConfigur
 
         // Clone the static parameter map
         final LinkedHashMap<String, Object> parameters =
-                new LinkedHashMap<String, Object>(this.parameters);
+                new LinkedHashMap<>(this.parameters);
 
         // Add in any SpEL based parameters
-        if (this.parameterExpressions != null) {
-            for (final Map.Entry<String, Expression> expressionEntry :
-                    this.parameterExpressions.entrySet()) {
-                final Expression expression = expressionEntry.getValue();
-                final Object value = this.portalSpELService.getValue(expression, webRequest);
+        for (final Map.Entry<String, Expression> expressionEntry :
+            this.parameterExpressions.entrySet()) {
+            final Expression expression = expressionEntry.getValue();
+            final Object value = this.portalSpELService.getValue(expression, webRequest);
 
-                if (value != null) {
-                    parameters.put(expressionEntry.getKey(), value);
-                }
+            if (value != null) {
+                parameters.put(expressionEntry.getKey(), value);
             }
         }
 

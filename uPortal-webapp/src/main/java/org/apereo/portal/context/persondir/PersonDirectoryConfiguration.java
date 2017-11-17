@@ -12,7 +12,7 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apereo.portal.persondir;
+package org.apereo.portal.context.persondir;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,6 +28,10 @@ import javax.annotation.Resource;
 import javax.servlet.Filter;
 import javax.sql.DataSource;
 import net.sf.ehcache.Cache;
+import org.apereo.portal.persondir.ILocalAccountDao;
+import org.apereo.portal.persondir.ImpersonationStatusPersonAttributeDao;
+import org.apereo.portal.persondir.LocalAccountPersonAttributeDao;
+import org.apereo.portal.persondir.PortalRootPersonAttributeDao;
 import org.apereo.portal.persondir.support.PersonManagerCurrentUserProvider;
 import org.apereo.portal.utils.cache.MapCacheProvider;
 import org.apereo.portal.utils.cache.PersonDirectoryCacheKeyGenerator;
