@@ -145,15 +145,15 @@ below.
           </td>
           <td>
             <a href="https://groups.google.com/a/apereo.org/forum/#!forum/uportal-user">
-              <img src="https://img.shields.io/badge/uPortal-user-green.svg?style=flat" alt="uPortal user mailing list"
+              <img src="https://img.shields.io/badge/uPortal-user-green.svg?style=flat" alt="uPortal user mailing list">
             </a>
             <br>
             <a href="https://groups.google.com/a/apereo.org/forum/#!forum/uportal-dev">
-              <img src="https://img.shields.io/badge/uPortal-dev-blue.svg?style=flat" alt="uPortal developer mailing list"
+              <img src="https://img.shields.io/badge/uPortal-dev-blue.svg?style=flat" alt="uPortal developer mailing list">
             </a>
             <br>
             <a href="https://apereo.slack.com">
-              <img src="https://img.shields.io/badge/chat-on_slack-E01765.svg?style=flat" alt="chat on slack"
+              <img src="https://img.shields.io/badge/chat-on_slack-E01765.svg?style=flat" alt="chat on slack">
             </a>
             <br>
             <a href="https://twitter.com/uPortal">
