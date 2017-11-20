@@ -14,8 +14,9 @@
  */
 package org.apereo.portal.rendering;
 
-import com.google.common.base.Predicate;
 import java.io.IOException;
+import java.util.function.Predicate;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -51,7 +52,7 @@ public class BranchingRenderingPipeline implements IPortalRenderingPipeline {
         // render either the true or false pipe, depending on the trueness or falseness of the
         // predicate
 
-        if (predicate.apply(request)) {
+        if (predicate.test(request)) {
             logger.trace("Branching to the true pipe [{}].", truePipe);
             truePipe.renderState(request, response);
         } else {

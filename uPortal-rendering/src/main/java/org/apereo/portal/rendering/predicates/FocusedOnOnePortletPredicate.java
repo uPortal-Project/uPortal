@@ -14,7 +14,8 @@
  */
 package org.apereo.portal.rendering.predicates;
 
-import com.google.common.base.Predicate;
+import java.util.function.Predicate;
+
 import javax.servlet.http.HttpServletRequest;
 import org.apereo.portal.url.IPortalRequestInfo;
 import org.apereo.portal.url.IUrlSyntaxProvider;
@@ -37,7 +38,7 @@ public class FocusedOnOnePortletPredicate implements Predicate<HttpServletReques
     private IUrlSyntaxProvider urlSyntaxProvider;
 
     @Override
-    public boolean apply(final HttpServletRequest request) {
+    public boolean test(final HttpServletRequest request) {
 
         final IPortalRequestInfo portalRequestInfo =
                 this.urlSyntaxProvider.getPortalRequestInfo(request);

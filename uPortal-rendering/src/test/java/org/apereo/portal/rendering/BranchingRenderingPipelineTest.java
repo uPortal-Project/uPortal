@@ -18,8 +18,9 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
-import com.google.common.base.Predicate;
 import java.io.IOException;
+import java.util.function.Predicate;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -42,7 +43,7 @@ public class BranchingRenderingPipelineTest {
 
     @Mock private IPortalRenderingPipeline falsePipe;
 
-    @Mock private Predicate predicate;
+    @Mock private Predicate<HttpServletRequest> predicate;
 
     private BranchingRenderingPipeline branchingRenderingPipeline;
 
@@ -66,7 +67,7 @@ public class BranchingRenderingPipelineTest {
     @Test
     public void rendersTruePipeWhenPredicateIsTrue() throws ServletException, IOException {
 
-        when(predicate.apply(request)).thenReturn(true);
+        when(predicate.test(request)).thenReturn(true);
 
         branchingRenderingPipeline.renderState(request, response);
 
@@ -84,7 +85,7 @@ public class BranchingRenderingPipelineTest {
     @Test
     public void rendersFalsePipeWhenPredicateIsFalse() throws ServletException, IOException {
 
-        when(predicate.apply(request)).thenReturn(false);
+        when(predicate.test(request)).thenReturn(false);
 
         branchingRenderingPipeline.renderState(request, response);
 

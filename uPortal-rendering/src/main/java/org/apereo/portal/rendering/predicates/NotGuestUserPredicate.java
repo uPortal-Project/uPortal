@@ -14,7 +14,8 @@
  */
 package org.apereo.portal.rendering.predicates;
 
-import com.google.common.base.Predicate;
+import java.util.function.Predicate;
+
 import javax.servlet.http.HttpServletRequest;
 import org.apereo.portal.user.IUserInstance;
 import org.apereo.portal.user.IUserInstanceManager;
@@ -27,7 +28,7 @@ public class NotGuestUserPredicate implements Predicate<HttpServletRequest> {
     private IUserInstanceManager userInstanceManager;
 
     @Override
-    public boolean apply(final HttpServletRequest request) {
+    public boolean test(final HttpServletRequest request) {
 
         final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
         return !userInstance.getPerson().isGuest();
