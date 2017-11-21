@@ -25,9 +25,21 @@
     "extends": "google",
     "rules": {
       "indent": [
-        "warn",
+        "error",
         4
-      ]
+      ],
+      "arrow-parens": "off",
+      "constructor-super": "off",
+      "generator-star-spacing": "off",
+      "no-new-symbol": "off",
+      "no-this-before-super": "off",
+      "no-invalid-this": "off",
+      "no-var": "off",
+      "prefer-rest-params": "off",
+      "prefer-spread": "off",
+      "valid-jsdoc": "warn",
+      "rest-spread-spacing": "off",
+      "yield-star-spacing": "off"
     }
   },
   "remarkConfig": {
