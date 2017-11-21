@@ -14,15 +14,20 @@
  */
 package org.apereo.portal.context.rendering;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import net.sf.ehcache.Cache;
 import org.apereo.portal.character.stream.CharacterEventSource;
@@ -46,6 +51,7 @@ import org.apereo.portal.rendering.PortletRenderingIncorporationComponent;
 import org.apereo.portal.rendering.PortletRenderingInitiationCharacterComponent;
 import org.apereo.portal.rendering.PortletRenderingInitiationStAXComponent;
 import org.apereo.portal.rendering.PortletWindowAttributeSource;
+import org.apereo.portal.rendering.RenderingPipelineBranchPoint;
 import org.apereo.portal.rendering.StAXAttributeIncorporationComponent;
 import org.apereo.portal.rendering.StAXPipelineComponent;
 import org.apereo.portal.rendering.StAXPipelineComponentWrapper;
@@ -131,21 +137,59 @@ public class RenderingPipelineConfiguration {
     @Resource(name = "org.apereo.portal.rendering.THEME_TRANSFORM")
     private Cache themeTransformCache;
 
+    @Autowired(required = false)
+    private List<RenderingPipelineBranchPoint> branchPoints;
+
     /**
-     * This bean is the entry point into the uPortal Rendering Pipeline.
+     * This bean is the entry point into the uPortal Rendering Pipeline.  It supports
+     * {@link RenderingPipelineBranchPoint} beans, which are an extension point for adopters.
      */
     @Bean(name = "portalRenderingPipeline")
     @Qualifier(value = "main")
     public IPortalRenderingPipeline getPortalRenderingPipeline() {
-        final DynamicRenderingPipeline rslt = new DynamicRenderingPipeline();
-        rslt.setPipeline(getAnalyticsIncorporationComponent());
-        return rslt;
+
+        // Rendering Pipeline Branches (adopter extension point)
+        final List<RenderingPipelineBranchPoint> sortedList = (branchPoints != null)
+                ? new LinkedList<>(branchPoints)
+                : Collections.emptyList();
+        Collections.sort(sortedList);
+        final List<RenderingPipelineBranchPoint> branches = Collections.unmodifiableList(sortedList);
+
+        // "Classic" Pipeline
+        final IPortalRenderingPipeline classicRenderingPipeline = getClassicRenderingPipeline();
+
+        return new IPortalRenderingPipeline() {
+            @Override
+            public void renderState(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+                for (RenderingPipelineBranchPoint branchPoint : branches) {
+                    if (branchPoint.renderStateIfApplicable(req, res)) {
+                        /*
+                         * Rendering bas been processed by the branch point -- no need to continue.
+                         */
+                        return;
+                    }
+                }
+                /*
+                 * Reaching this point means that a branch was not followed; use the "classic"
+                 * pipeline.
+                 */
+                classicRenderingPipeline.renderState(req, res);
+            }
+        };
+
     }
 
     /*
      * Beans below this point are elements of the "classic" uPortal Rendering Pipeline -- where the
      * uPortal webapp renders all elements of the UI and handles all requests.
      */
+
+    @Bean(name = "classicRenderingPipeline")
+    public IPortalRenderingPipeline getClassicRenderingPipeline() {
+        final DynamicRenderingPipeline rslt = new DynamicRenderingPipeline();
+        rslt.setPipeline(getAnalyticsIncorporationComponent());
+        return rslt;
+    }
 
     @Bean(name = "userLayoutStoreComponent")
     public StAXPipelineComponent getUserLayoutStoreComponent() {
