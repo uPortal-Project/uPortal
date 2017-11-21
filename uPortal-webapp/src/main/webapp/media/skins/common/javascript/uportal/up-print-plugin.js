@@ -60,9 +60,7 @@ var up = up || {};
 							var className = this.className.toLowerCase();
 
 							className = className.replace(new RegExp("layout-.-columns","gi"),"layout-1-columns");
-							className = className.replace(new RegExp("","gi"),"");
 							className = className.replace(new RegExp("left","gi"),"single");
-							className = className.replace(new RegExp("","gi"),"");
 							oneElement += ' class="'+className+'"' ;
 						}
 						oneElement += ' >' ;

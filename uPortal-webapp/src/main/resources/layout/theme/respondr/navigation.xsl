@@ -375,7 +375,7 @@
         // all the navigation elements with subnavigation flyouts
         var flyouts = new Array();
         var flyoutOptions = { flyoutMenu: '.portal-flyout-container' };
-        up.jQuery("ulli.portal-navigation").each( function() {
+        up.jQuery("ul li.portal-navigation").each( function() {
           flyouts.push(uportal.flyoutmenu(this, flyoutOptions));
         });
       });

@@ -23,52 +23,52 @@
  * the fluid simple text inline editor component is somewhat overkill. As work continues
  * on enhancing uPortal's Tab management, the TabManger component will most likely
  * be renamed to house forthcoming tab management features.
- * 
+ *
  * For more information on planned tab management options, please see the below url:
  * https://wiki.jasig.org/display/UPC/Manage+Tabs
- * 
+ *
  * -------------------
  * Available selectors
  * -------------------
- * 
+ *
  * ----------------
  * Available events
  * ----------------
- * 
+ *
  * ---------------------------
  * Other Configuration Options
  * ---------------------------
- * 
+ *
  */
 
 "use strict";
 var up = up || {};
 
 (function ($, fluid) {
-  
+
     /**
      * Set up the edit container and append the edit field to the container.  If an edit container
      * is not provided, default markup is created.
-     * 
-     * @param {Object} displayContainer The display mode container 
-     * @param {Object} editField The edit field that is to be appended to the edit container 
-     * @param {Object} editContainer The edit container markup provided by the integrator   
-     * 
-     * @return eContainer The edit container containing the edit field   
+     *
+     * @param {Object} displayContainer The display mode container
+     * @param {Object} editField The edit field that is to be appended to the edit container
+     * @param {Object} editContainer The edit container markup provided by the integrator
+     *
+     * @return eContainer The edit container containing the edit field
      */
     fluid.inlineEdit.setupEditContainer = function (displayContainer, editField, editContainer) {
         var eContainer = $(editContainer);
-        eContainer = eContainer.length ? eContainer : $("<div class='</div>");
+        eContainer = eContainer.length ? eContainer : $("<div class=''></div>");
         displayContainer.parent().after(eContainer);
         eContainer.append(editField);
-        
+
         return eContainer;
     };
-  
+
     /**
      * Set up the textEditButton. Append a background image with appropriate
      * descriptive text to the button.
-     * 
+     *
      * @return {jQuery} The accessible button located after the display text
      */
     fluid.inlineEdit.setupTextEditButton = function (that) {
@@ -77,39 +77,39 @@ var up = up || {};
 
         if (textEditButton.length === 0) {
             var markup = $("<span class='flc-inlineEdit-textEditButton'></span>");
-            markup.addClass(opts.styles.textEditButton);       
-          
+            markup.addClass(opts.styles.textEditButton);
+
             /**
              * Set text for the button and listen
              * for modelChanged to keep it updated
-             */ 
+             */
             fluid.inlineEdit.updateTextEditButton(markup, that.model.value || opts.defaultViewText, opts.strings.textEditButton);
             that.events.modelChanged.addListener(function () {
                 fluid.inlineEdit.updateTextEditButton(markup, that.model.value || opts.defaultViewText, opts.strings.textEditButton);
-            });        
-          
+            });
+
             that.locate("text").after(markup);
 
             // Refresh the textEditButton with the newly appended options
             textEditButton = that.locate("textEditButton");
-        } 
+        }
         return textEditButton;
     };
-    
+
     /**
      * Private. Initializes the fluid.inlineEditor component to be used with
      * the active portal tab, as long as the active tab is editable.
-     * 
+     *
      * @param {Object} that- reference to an instance of the TabManger component.
      */
     var editTabHandler = function (that) {
         var edit, remove, text, gripper, editorOptions, numOfPortlets;
-        
+
         // Cache DOM elements.
         edit = that.locate("edit");
         remove = that.locate("remove");
         gripper = that.locate("grabHandle");
-        
+
         if (edit.length > 0) {
             // Initialize & configure fluid.inlineEdit component.
             that.inlineEditor = fluid.inlineEdits(that.container, {
@@ -129,7 +129,7 @@ var up = up || {};
                         remove.show();
                         gripper.filter(".active").show();
                         edit.show();
-                        
+
                         // Fire afterFinishEdit event.
                         that.events.onTabEdit.fire(newValue, oldValue, editNode, viewNode);
                     }
@@ -137,7 +137,7 @@ var up = up || {};
                 submitOnEnter: that.options.submitOnEnter,
                 useTooltip: false
             });
-            
+
             // Mouseenter event listener. Give focus to the
             // tab name on mouseenter. The mouseenter event
             // only triggers its handler on the element to which
@@ -147,7 +147,7 @@ var up = up || {};
                 text.css("cursor", "text");
                 text.focus();
             });
-            
+
             // Mouseleave event listener. Remove focus from
             // the tab name on mouseleave. The mouseleave event
             // only triggers its handler on the element to which
@@ -156,7 +156,7 @@ var up = up || {};
                 text.css("cursor", "pointer");
                 text.blur();
             });
-            
+
             // Trigger edit mode.
             numOfPortlets = parseInt(that.options.numberOfPortlets);
             if (numOfPortlets === 0 && text.text() === that.options.addTabLabel) {
@@ -164,11 +164,11 @@ var up = up || {};
             }//end:if.
         }//end:if.
     };//end:function.
-    
+
     /**
-     * Private. Fires the onRemove event when the 'remove' icon is clicked. Passes a 
+     * Private. Fires the onRemove event when the 'remove' icon is clicked. Passes a
      * reference to the onRemove listener.
-     * 
+     *
      * @param {Object} that- reference to an instance of the TabManger component.
      */
     var removeTabHandler = function (that) {
@@ -178,11 +178,11 @@ var up = up || {};
             that.events.onTabRemove.fire(this);
         });
     };//end: function.
-    
+
     /**
-     * Private. Fires the onAddTab event when the 'Add Tab' link is clicked. Passes new 
+     * Private. Fires the onAddTab event when the 'Add Tab' link is clicked. Passes new
      * tab configurations to the onAddTab listener.
-     * 
+     *
      * @param {Object} that- reference to an instance of the TabManger component.
      */
     var addTabHandler = function (that) {
@@ -193,11 +193,11 @@ var up = up || {};
             that.events.onTabAdd.fire(that.options.addTabLabel, that.options.addTabWidths, tabGroup);
         });
     };//end: function.
-    
+
     /**
      * Private. Initializes & configures the fluid.reorderLayout component
      * based upon the TabManager options.
-     * 
+     *
      * @param {Object} that- reference to an instance of the TabManger component.
      */
     var moveTabHandler = function (that) {
@@ -209,19 +209,10 @@ var up = up || {};
                 lockedModules: that.options.selectors.lockedModules,
                 grabHandle: (that.options.tabContext === "header") ? that.options.selectors.grabHandle : ""
             },
-            styles: {
-                defaultStyle: "" + that.options.tabContext + "-movable-default",
-                selected: "" + that.options.tabContext + "-movable-selected",
-                dragging: "" + that.options.tabContext + "-movable-dragging",
-                mouseDrag: "" + that.options.tabContext + "-movable-dragging",
-                hover: "" + that.options.tabContext + "-movable-hover",
-                dropMarker: "" + that.options.tabContext + "-dropMarker",
-                avatar: "" + that.options.tabContext + "-avatar"
-            },
             listeners: {
                 afterMove: function (item, requestedPosition, movables) {
                     var tab, tabShortId, method, targetTab, targetTabShortId, tabPosition, listItems;
-                    
+
                     // Capture moved tab & set defaults.
                     tab = $(item);
                     tabShortId = up.defaultNodeIdExtractor(tab);
@@ -230,7 +221,7 @@ var up = up || {};
                     targetTabShortId = null;
                     tabPosition = 1;
                     listItems = that.locate("tabListItems");
-                    
+
                     // Determine when tab is the last tab and
                     // calculate the targetTab and targetTabShortId.
                     if (tab.is(":last-child")) {
@@ -241,17 +232,17 @@ var up = up || {};
                         targetTab = tab.next();
                         targetTabShortId = tab.next().attr("id").split("_")[1];
                     }//end:if.
-                    
-                    // Calculate tab position and apply styles based upon 
+
+                    // Calculate tab position and apply styles based upon
                     // tab position.
                     $.each(listItems, function (idx, obj) {
                         var li = $(obj);
-                        
+
                         // Find position of moved item.
                         if (li.attr("id") === tab.attr("id")) {
                             tabPosition = (idx + 1);
                         }//end:if.
-                        
+
                         if (listItems.length === 1) {
                             // Apply & remove styles for a single tab.
                             li.removeClass(that.options.styles.firstTab).removeClass(that.options.styles.lastTab).addClass(that.options.styles.singleTab);
@@ -266,43 +257,43 @@ var up = up || {};
                             li.removeClass(that.options.styles.singleTab).removeClass(that.options.styles.lastTab).removeClass(that.options.styles.firstTab);
                         }//end:if.
                     });//end:loop.
-                    
+
                     // Fire afterTabMove event.
                     that.events.onTabMove.fire(tabShortId, method, targetTabShortId, tabPosition);
                 }
             }
         });
     };//end: function.
-    
+
     /**
      * Private. Evaluates the list of tabs for the last instance of a 'locked' tab.
      * Once found, this function adds a 'locked' class to all previously rendered tabs
      * and it also hides the drag & drop grab handle from 'locked' tabs.
-     * 
+     *
      * @param {Object} that- reference to an instance of the TabManger component.
      */
     var manageLockedTabs = function (that) {
         var tabList, lastLockedTab;
-        
+
         // Find the last instance of a locked tab and add a 'locked' class name
         // to all previous tabs. Hide all drag & drop grab handles from 'locked' tabs.
         tabList = that.locate("tabList");
         lastLockedTab = tabList.find(that.options.selectors.lockedModules).last();
-        
+
         if (lastLockedTab.length > 0) {
             lastLockedTab.find(that.options.selectors.grabHandle).hide();
             lastLockedTab.prevAll()
                          .addClass(that.options.styles.lockedTab)
                          .find(that.options.selectors.grabHandle).hide();
         }//end:if.
-        
+
         // Initialize drag & drop.
         moveTabHandler(that);
     };//end:function.
-    
+
     /**
      * Private. Executes initialization functions for the TabManager component.
-     * 
+     *
      * @param {Object} that- reference to an instance of the TabManger component.
      */
     var initialize = function (that) {
@@ -311,21 +302,21 @@ var up = up || {};
         addTabHandler(that);
         manageLockedTabs(that);
     };//end:function.
-    
+
     /**
      * Creator function for the TabManger component.
-     * 
+     *
      * @param {Object} container - reference to HTML DOM element by ID.
      * @param {Object} options - reference to object containing all configurations.
      -------------------------------------------------------*/
     up.TabManager = function (container, options) {
         var that;
         that = fluid.initView("up.TabManager", container, options);
-        
+
         initialize(that);
         return that;
     };//end:component.
-    
+
     /**
      * Defaults function for the TabManger component.
      -------------------------------------------------------*/
