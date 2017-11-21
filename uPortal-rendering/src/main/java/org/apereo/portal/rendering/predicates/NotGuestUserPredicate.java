@@ -15,7 +15,6 @@
 package org.apereo.portal.rendering.predicates;
 
 import java.util.function.Predicate;
-
 import javax.servlet.http.HttpServletRequest;
 import org.apereo.portal.user.IUserInstance;
 import org.apereo.portal.user.IUserInstanceManager;

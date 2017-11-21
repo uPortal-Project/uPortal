@@ -23,12 +23,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import javax.annotation.Resource;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import net.sf.ehcache.Cache;
 import org.apereo.portal.character.stream.CharacterEventSource;
 import org.apereo.portal.character.stream.PortletContentPlaceholderEventSource;
@@ -88,33 +86,45 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * This @Configuration class sets up (roughly) the same beans that renderingPipelineContext.xml did in
- * uP4.
+ * This @Configuration class sets up (roughly) the same beans that renderingPipelineContext.xml did
+ * in uP4.
  *
  * @since 5.0
  */
 @Configuration
 public class RenderingPipelineConfiguration {
 
-    private static final String POST_USER_LAYOUT_STORE_LOGGER_NAME = "org.apereo.portal.rendering.LoggingStAXComponent.POST_LAYOUT";
-    private static final String POST_USER_LAYOUT_STORE_LOGGER_STEP_IDENTIFIER = "postUserLayoutStoreLogger";
+    private static final String POST_USER_LAYOUT_STORE_LOGGER_NAME =
+            "org.apereo.portal.rendering.LoggingStAXComponent.POST_LAYOUT";
+    private static final String POST_USER_LAYOUT_STORE_LOGGER_STEP_IDENTIFIER =
+            "postUserLayoutStoreLogger";
 
-    private static final String PRE_STRUCTURE_TRANSFORM_LOGGER_NAME = "org.apereo.portal.rendering.LoggingStAXComponent.PRE_STRUCTURE";
-    private static final String PRE_STRUCTURE_TRANSFORM_LOGGER_STEP_IDENTIFIER = "preStructureTransformLogger";
+    private static final String PRE_STRUCTURE_TRANSFORM_LOGGER_NAME =
+            "org.apereo.portal.rendering.LoggingStAXComponent.PRE_STRUCTURE";
+    private static final String PRE_STRUCTURE_TRANSFORM_LOGGER_STEP_IDENTIFIER =
+            "preStructureTransformLogger";
 
-    private static final String POST_STRUCTURE_TRANSFORM_LOGGER_NAME = "org.apereo.portal.rendering.LoggingStAXComponent.POST_STRUCTURE";
-    private static final String POST_STRUCTURE_TRANSFORM_LOGGER_STEP_IDENTIFIER = "postStructureTransformLogger";
+    private static final String POST_STRUCTURE_TRANSFORM_LOGGER_NAME =
+            "org.apereo.portal.rendering.LoggingStAXComponent.POST_STRUCTURE";
+    private static final String POST_STRUCTURE_TRANSFORM_LOGGER_STEP_IDENTIFIER =
+            "postStructureTransformLogger";
 
-    private static final String PRE_THEME_TRANSFORM_LOGGER_NAME = "org.apereo.portal.rendering.LoggingStAXComponent.PRE_THEME";
-    private static final String PRE_THEME_TRANSFORM_LOGGER_STEP_IDENTIFIER = "preThemeTransformLogger";
+    private static final String PRE_THEME_TRANSFORM_LOGGER_NAME =
+            "org.apereo.portal.rendering.LoggingStAXComponent.PRE_THEME";
+    private static final String PRE_THEME_TRANSFORM_LOGGER_STEP_IDENTIFIER =
+            "preThemeTransformLogger";
 
-    private static final String POST_THEME_TRANSFORM_LOGGER_NAME = "org.apereo.portal.rendering.LoggingStAXComponent.POST_THEME";
-    private static final String POST_THEME_TRANSFORM_LOGGER_STEP_IDENTIFIER = "postThemeTransformLogger";
+    private static final String POST_THEME_TRANSFORM_LOGGER_NAME =
+            "org.apereo.portal.rendering.LoggingStAXComponent.POST_THEME";
+    private static final String POST_THEME_TRANSFORM_LOGGER_STEP_IDENTIFIER =
+            "postThemeTransformLogger";
 
     private static final String PORTLET_TITLE_PATTERN = "\\{up-portlet-title\\(([^\\)]+)\\)\\}";
     private static final String PORTLET_HELP_PATTERN = "\\{up-portlet-help\\(([^\\)]+)\\)\\}";
-    private static final String PORTLET_NEW_ITEM_COUNT_PATTERN = "\\{up-portlet-new-item-count\\(([^\\)]+)\\)\\}";
-    private static final String PORTLET_LINK_PATTERN = "\\{up-portlet-link\\(([^,]+),([^\\)]+)\\)\\}";
+    private static final String PORTLET_NEW_ITEM_COUNT_PATTERN =
+            "\\{up-portlet-new-item-count\\(([^\\)]+)\\)\\}";
+    private static final String PORTLET_LINK_PATTERN =
+            "\\{up-portlet-link\\(([^,]+),([^\\)]+)\\)\\}";
 
     @Value("${org.apereo.portal.version}")
     private String uPortalVersion;
@@ -122,8 +132,7 @@ public class RenderingPipelineConfiguration {
     @Resource(name = "org.apereo.portal.rendering.STRUCTURE_TRANSFORM")
     private Cache structureTransformCache;
 
-    @Autowired
-    private XsltPortalUrlProvider xslPortalUrlProvider;
+    @Autowired private XsltPortalUrlProvider xslPortalUrlProvider;
 
     @Value("${org.apereo.portal.channels.CLogin.CasLoginUrl}")
     private String casLoginUrl;
@@ -141,26 +150,27 @@ public class RenderingPipelineConfiguration {
     private List<RenderingPipelineBranchPoint> branchPoints;
 
     /**
-     * This bean is the entry point into the uPortal Rendering Pipeline.  It supports
-     * {@link RenderingPipelineBranchPoint} beans, which are an extension point for adopters.
+     * This bean is the entry point into the uPortal Rendering Pipeline. It supports {@link
+     * RenderingPipelineBranchPoint} beans, which are an extension point for adopters.
      */
     @Bean(name = "portalRenderingPipeline")
     @Qualifier(value = "main")
     public IPortalRenderingPipeline getPortalRenderingPipeline() {
 
         // Rendering Pipeline Branches (adopter extension point)
-        final List<RenderingPipelineBranchPoint> sortedList = (branchPoints != null)
-                ? new LinkedList<>(branchPoints)
-                : Collections.emptyList();
+        final List<RenderingPipelineBranchPoint> sortedList =
+                (branchPoints != null) ? new LinkedList<>(branchPoints) : Collections.emptyList();
         Collections.sort(sortedList);
-        final List<RenderingPipelineBranchPoint> branches = Collections.unmodifiableList(sortedList);
+        final List<RenderingPipelineBranchPoint> branches =
+                Collections.unmodifiableList(sortedList);
 
         // "Classic" Pipeline
         final IPortalRenderingPipeline classicRenderingPipeline = getClassicRenderingPipeline();
 
         return new IPortalRenderingPipeline() {
             @Override
-            public void renderState(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+            public void renderState(HttpServletRequest req, HttpServletResponse res)
+                    throws ServletException, IOException {
                 for (RenderingPipelineBranchPoint branchPoint : branches) {
                     if (branchPoint.renderStateIfApplicable(req, res)) {
                         /*
@@ -176,7 +186,6 @@ public class RenderingPipelineConfiguration {
                 classicRenderingPipeline.renderState(req, res);
             }
         };
-
     }
 
     /*
@@ -263,18 +272,21 @@ public class RenderingPipelineConfiguration {
     }
 
     @Bean
-    public TransformerConfigurationSource getStructureStylesheetDescriptorTransformerConfigurationSource() {
+    public TransformerConfigurationSource
+            getStructureStylesheetDescriptorTransformerConfigurationSource() {
         return new StructureStylesheetDescriptorTransformerConfigurationSource();
     }
 
     @Bean
-    public TransformerConfigurationSource getStructureStylesheetUserPreferencesTransformerConfigurationSource() {
+    public TransformerConfigurationSource
+            getStructureStylesheetUserPreferencesTransformerConfigurationSource() {
         return new StructureStylesheetUserPreferencesTransformerConfigurationSource();
     }
 
     @Bean
     public TransformerConfigurationSource getStaticTransformerConfigurationSourceForStructure() {
-        final StaticTransformerConfigurationSource rslt = new StaticTransformerConfigurationSource();
+        final StaticTransformerConfigurationSource rslt =
+                new StaticTransformerConfigurationSource();
         rslt.setParameters(Collections.singletonMap("version-UP_FRAMEWORK", uPortalVersion));
         return rslt;
     }
@@ -294,7 +306,8 @@ public class RenderingPipelineConfiguration {
         sources.add(getStructureStylesheetUserPreferencesTransformerConfigurationSource());
         sources.add(getStaticTransformerConfigurationSourceForStructure());
         sources.add(getUserImpersonationTransformerConfigurationSource());
-        final MergingTransformerConfigurationSource mtcs = new MergingTransformerConfigurationSource();
+        final MergingTransformerConfigurationSource mtcs =
+                new MergingTransformerConfigurationSource();
         mtcs.setSources(sources);
         rslt.setXsltParameterSource(mtcs);
         return rslt;
@@ -321,7 +334,8 @@ public class RenderingPipelineConfiguration {
 
     @Bean(name = "portletRenderingInitiationComponent")
     public StAXPipelineComponentWrapper getPortletRenderingInitiationComponent() {
-        final PortletRenderingInitiationStAXComponent rslt = new PortletRenderingInitiationStAXComponent();
+        final PortletRenderingInitiationStAXComponent rslt =
+                new PortletRenderingInitiationStAXComponent();
         rslt.setWrappedComponent(getStructureCachingComponent());
         return rslt;
     }
@@ -351,26 +365,28 @@ public class RenderingPipelineConfiguration {
     }
 
     @Bean
-    public TransformerConfigurationSource getThemeStylesheetDescriptorTransformerConfigurationSource() {
+    public TransformerConfigurationSource
+            getThemeStylesheetDescriptorTransformerConfigurationSource() {
         return new ThemeStylesheetDescriptorTransformerConfigurationSource();
     }
 
     @Bean
-    public TransformerConfigurationSource getThemeStylesheetUserPreferencesTransformerConfigurationSource() {
+    public TransformerConfigurationSource
+            getThemeStylesheetUserPreferencesTransformerConfigurationSource() {
         return new ThemeStylesheetUserPreferencesTransformerConfigurationSource();
     }
 
     @Bean
     public TransformerConfigurationSource getStaticTransformerConfigurationSourceForTheme() {
 
-        final Map<String,Object> parameters = new HashMap<>();
+        final Map<String, Object> parameters = new HashMap<>();
         parameters.put(XsltPortalUrlProvider.XSLT_PORTAL_URL_PROVIDER, xslPortalUrlProvider);
         parameters.put("EXTERNAL_LOGIN_URL", casLoginUrl);
         parameters.put("useTabGroups", useTabGroups);
         parameters.put("UP_VERSION", uPortalVersion);
         parameters.put("USE_FLYOUT_MENUS", useFlyoutMenus);
 
-        final Map<String,String> parameterExpressions = new HashMap<>();
+        final Map<String, String> parameterExpressions = new HashMap<>();
         parameterExpressions.put("CURRENT_REQUEST", "request.nativeRequest");
         parameterExpressions.put("CONTEXT_PATH", "request.contextPath");
         parameterExpressions.put("HOST_NAME", "request.nativeRequest.serverName");
@@ -378,19 +394,23 @@ public class RenderingPipelineConfiguration {
         parameterExpressions.put("userName", "person.fullName");
         parameterExpressions.put("USER_ID", "person.userName");
         parameterExpressions.put("SERVER_NAME", "@portalInfoProvider.serverName");
-        parameterExpressions.put("STATS_SESSION_ID", "@portalEventFactory.getPortalEventSessionId(request.nativeRequest, person)");
+        parameterExpressions.put(
+                "STATS_SESSION_ID",
+                "@portalEventFactory.getPortalEventSessionId(request.nativeRequest, person)");
 
         final Set<String> cacheKeyExcludedParameters = new HashSet<>();
         cacheKeyExcludedParameters.add("CURRENT_REQUEST");
-        cacheKeyExcludedParameters.add(org.apereo.portal.web.skin.ResourcesElementsXsltcHelper.RESOURCES_ELEMENTS_HELPER);
-        cacheKeyExcludedParameters.add(org.apereo.portal.url.xml.XsltPortalUrlProvider.XSLT_PORTAL_URL_PROVIDER);
+        cacheKeyExcludedParameters.add(
+                org.apereo.portal.web.skin.ResourcesElementsXsltcHelper.RESOURCES_ELEMENTS_HELPER);
+        cacheKeyExcludedParameters.add(
+                org.apereo.portal.url.xml.XsltPortalUrlProvider.XSLT_PORTAL_URL_PROVIDER);
 
-        final StaticTransformerConfigurationSource rslt = new StaticTransformerConfigurationSource();
+        final StaticTransformerConfigurationSource rslt =
+                new StaticTransformerConfigurationSource();
         rslt.setParameters(parameters);
         rslt.setParameterExpressions(parameterExpressions);
         rslt.setCacheKeyExcludedParameters(cacheKeyExcludedParameters);
         return rslt;
-
     }
 
     @Bean
@@ -414,7 +434,8 @@ public class RenderingPipelineConfiguration {
         sources.add(getStaticTransformerConfigurationSourceForTheme());
         sources.add(getLocaleTransformerConfigurationSource());
         sources.add(getResourcesElementsXsltcHelper());
-        final MergingTransformerConfigurationSource mtcs = new MergingTransformerConfigurationSource();
+        final MergingTransformerConfigurationSource mtcs =
+                new MergingTransformerConfigurationSource();
         mtcs.setSources(sources);
         rslt.setXsltParameterSource(mtcs);
         return rslt;
@@ -482,18 +503,26 @@ public class RenderingPipelineConfiguration {
         final StAXSerializingComponent rslt = new StAXSerializingComponent();
         rslt.setWrappedComponent(getPostThemeTransformLogger());
 
-        final Map<String,CharacterEventSource> chunkingElements = new HashMap<>();
+        final Map<String, CharacterEventSource> chunkingElements = new HashMap<>();
         chunkingElements.put(IUserLayoutManager.CHANNEL, getPortletContentPlaceholderEventSource());
-        chunkingElements.put(IUserLayoutManager.CHANNEL_HEADER, getPortletHeaderPlaceholderEventSource());
-        chunkingElements.put(ChunkPointPlaceholderEventSource.CHUNK_POINT, getChunkPointPlaceholderEventSource());
-        chunkingElements.put(PortletAnalyticsDataPlaceholderEventSource.PORTLET_ANALYTICS_SCRIPT, getPortletAnalyticsDataPlaceholderEventSource());
-        chunkingElements.put(PageAnalyticsDataPlaceholderEventSource.PAGE_ANALYTICS_SCRIPT, getPageAnalyticsDataPlaceholderEventSource());
+        chunkingElements.put(
+                IUserLayoutManager.CHANNEL_HEADER, getPortletHeaderPlaceholderEventSource());
+        chunkingElements.put(
+                ChunkPointPlaceholderEventSource.CHUNK_POINT,
+                getChunkPointPlaceholderEventSource());
+        chunkingElements.put(
+                PortletAnalyticsDataPlaceholderEventSource.PORTLET_ANALYTICS_SCRIPT,
+                getPortletAnalyticsDataPlaceholderEventSource());
+        chunkingElements.put(
+                PageAnalyticsDataPlaceholderEventSource.PAGE_ANALYTICS_SCRIPT,
+                getPageAnalyticsDataPlaceholderEventSource());
         rslt.setChunkingElements(chunkingElements);
 
-        final Map<String,CharacterEventSource> chunkingPatterns = new HashMap<>();
+        final Map<String, CharacterEventSource> chunkingPatterns = new HashMap<>();
         chunkingPatterns.put(PORTLET_TITLE_PATTERN, getPortletTitlePlaceholderEventSource());
         chunkingPatterns.put(PORTLET_HELP_PATTERN, getPortletHelpPlaceholderEventSource());
-        chunkingPatterns.put(PORTLET_NEW_ITEM_COUNT_PATTERN, getPortletNewItemCountPlaceholderEventSource());
+        chunkingPatterns.put(
+                PORTLET_NEW_ITEM_COUNT_PATTERN, getPortletNewItemCountPlaceholderEventSource());
         chunkingPatterns.put(PORTLET_LINK_PATTERN, getPortletLinkPlaceholderEventSource());
         rslt.setChunkingPatterns(chunkingPatterns);
 
@@ -518,14 +547,16 @@ public class RenderingPipelineConfiguration {
 
     @Bean(name = "portletRenderingInitiationCharacterComponent")
     public CharacterPipelineComponent getPortletRenderingInitiationCharacterComponent() {
-        final PortletRenderingInitiationCharacterComponent rslt = new PortletRenderingInitiationCharacterComponent();
+        final PortletRenderingInitiationCharacterComponent rslt =
+                new PortletRenderingInitiationCharacterComponent();
         rslt.setWrappedComponent(getThemeCachingComponent());
         return rslt;
     }
 
     @Bean(name = "portletRenderingIncorporationComponent")
     public CharacterPipelineComponent getPortletRenderingIncorporationComponent() {
-        final PortletRenderingIncorporationComponent rslt = new PortletRenderingIncorporationComponent();
+        final PortletRenderingIncorporationComponent rslt =
+                new PortletRenderingIncorporationComponent();
         rslt.setWrappedComponent(getPortletRenderingInitiationCharacterComponent());
         return rslt;
     }
@@ -538,7 +569,7 @@ public class RenderingPipelineConfiguration {
     }
 
     /**
-     * This bean is not an element of the rendering pipeline.  It is a DAO for reading and writing
+     * This bean is not an element of the rendering pipeline. It is a DAO for reading and writing
      * <code>Resources</code> objects to files.
      */
     @Bean(name = "resourcesDao")
@@ -546,14 +577,11 @@ public class RenderingPipelineConfiguration {
         return new ResourcesDaoImpl();
     }
 
-    /**
-     * This bean is not an element of the rendering pipeline.
-     */
+    /** This bean is not an element of the rendering pipeline. */
     @Bean(name = "resourcesElementsProvider")
     public ResourcesElementsProvider getResourcesElementsProvider() {
         ResourcesElementsProviderImpl rslt = new ResourcesElementsProviderImpl();
         rslt.setResourcesDao(getResourcesDao());
         return rslt;
     }
-
 }

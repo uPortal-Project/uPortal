@@ -32,5 +32,6 @@ public interface IPortalRenderingPipeline {
      * @param res the <code>HttpServletResponse</code>
      * @exception PortalException if an error occurs
      */
-    void renderState(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException;
+    void renderState(HttpServletRequest req, HttpServletResponse res)
+            throws ServletException, IOException;
 }

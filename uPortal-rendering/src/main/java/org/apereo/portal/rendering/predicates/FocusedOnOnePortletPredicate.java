@@ -15,7 +15,6 @@
 package org.apereo.portal.rendering.predicates;
 
 import java.util.function.Predicate;
-
 import javax.servlet.http.HttpServletRequest;
 import org.apereo.portal.url.IPortalRequestInfo;
 import org.apereo.portal.url.IUrlSyntaxProvider;

@@ -20,7 +20,6 @@ import static org.mockito.MockitoAnnotations.initMocks;
 
 import java.io.IOException;
 import java.util.function.Predicate;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -70,7 +69,6 @@ public class RenderingPipelineBranchPointTest {
 
         assertTrue("Expected outcome == true", outcome);
         verify(alternatePipe).renderState(request, response);
-
     }
 
     /**
@@ -88,7 +86,6 @@ public class RenderingPipelineBranchPointTest {
 
         assertFalse("Expected outcome == true", outcome);
         verifyZeroInteractions(alternatePipe);
-
     }
 
     /** Test that RenderingPipelineBranchPoint has a friendly toString() implementation. */

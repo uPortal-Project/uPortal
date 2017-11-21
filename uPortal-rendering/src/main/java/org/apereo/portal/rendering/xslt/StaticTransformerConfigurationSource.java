@@ -20,7 +20,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -67,7 +66,8 @@ public class StaticTransformerConfigurationSource implements TransformerConfigur
 
     @PostConstruct
     public void init() {
-        for (final Map.Entry<String, String> expressionEntry : unparsedParameterExpressions.entrySet()) {
+        for (final Map.Entry<String, String> expressionEntry :
+                unparsedParameterExpressions.entrySet()) {
             final String string = expressionEntry.getValue();
             final Expression expression = portalSpELService.parseExpression(string);
             parameterExpressions.put(expressionEntry.getKey(), expression);
@@ -96,12 +96,11 @@ public class StaticTransformerConfigurationSource implements TransformerConfigur
         final ServletWebRequest webRequest = new ServletWebRequest(request, response);
 
         // Clone the static parameter map
-        final LinkedHashMap<String, Object> parameters =
-                new LinkedHashMap<>(this.parameters);
+        final LinkedHashMap<String, Object> parameters = new LinkedHashMap<>(this.parameters);
 
         // Add in any SpEL based parameters
         for (final Map.Entry<String, Expression> expressionEntry :
-            this.parameterExpressions.entrySet()) {
+                this.parameterExpressions.entrySet()) {
             final Expression expression = expressionEntry.getValue();
             final Object value = this.portalSpELService.getValue(expression, webRequest);
 
