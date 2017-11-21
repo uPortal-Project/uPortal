@@ -25,15 +25,15 @@
 <c:set var="n"><portlet:namespace/></c:set>
 
 <!-- Portlet -->
-<div class="fl-widget portlet" role="section">
+<div class="portlet" role="section">
 
     <!-- Portlet Titlebar -->
-    <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead" data-role="header">
+    <div class="titlebar portlet-titlebar" role="sectionhead" data-role="header">
         <h2 class="title" role="heading"><spring:message code="set.new.account.password"/></h2>
     </div> <!-- end: portlet-titlebar -->
 
     <!-- Portlet Body -->
-    <div class="fl-widget-content content portlet-content" role="main" data-role="content">
+    <div class="content portlet-content" role="main" data-role="content">
 
         <form:form modelAttribute="accountForm" action="${formUrl}" method="POST">
 

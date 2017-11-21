@@ -25,15 +25,15 @@
 <c:set var="n"><portlet:namespace/></c:set>
 
 <!-- Portlet -->
-<div class="fl-widget portlet grp-mgr view-editdetails" role="section">
+<div class="portlet grp-mgr view-editdetails" role="section">
 
     <!-- Portlet Title -->
-    <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
+    <div class="titlebar portlet-titlebar" role="sectionhead">
         <h2 class="title" role="heading"><spring:message code="edit.group.details"/></h2>
     </div> <!-- end: portlet-title -->
 
     <!-- Portlet Body -->
-    <div class="fl-widget-content content portlet-content" role="main">
+    <div class="content portlet-content" role="main">
         <form:form action="${ formUrl }" method="POST" modelAttribute="group">
 
             <!-- Portlet Messages -->

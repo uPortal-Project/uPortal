@@ -52,21 +52,21 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 
 <%-- Styles specific to this portlet --%>
 
-<div class="fl-widget portlet ptl-mgr" id="${n}">
+<div class="portlet ptl-mgr" id="${n}">
 
 <form:form modelAttribute="portlet" action="${queryUrl}" method="POST" role="form" class="form-horizontal portlet-config">
     <!-- Portlet -->
     <div class="view-basicinfo" role="section">
 
         <!-- Portlet Titlebar -->
-        <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
+        <div class="titlebar portlet-titlebar" role="sectionhead">
             <h2 class="title" role="heading">
                 <spring:message code="${ completed ? 'edit.portlet' : 'register.new.portlet' }"/>
             </h2>
         </div> <!-- end: portlet-titlebar -->
 
         <!-- Portlet Content -->
-        <div class="fl-widget-content content portlet-content" role="main">
+        <div class="content portlet-content" role="main">
 
             <!-- Portlet Messages -->
             <spring:hasBindErrors name="portlet">
@@ -181,9 +181,9 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     </div> <!-- end: portlet -->
 
     <!-- Portlet -->
-    <div class="fl-widget portlet ptl-mgr view-setparameters" role="section">
+    <div class="portlet ptl-mgr view-setparameters" role="section">
         <!-- Portlet Content -->
-        <div class="fl-widget-content content portlet-content" role="main">
+        <div class="content portlet-content" role="main">
 
             <!-- Add a note to the page if the portlet supports config mode  -->
             <c:if test="${supportsConfig}">
@@ -436,9 +436,9 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     </div> <!-- end: portlet -->
 
     <!-- Portlet config Permissions and categories -->
-    <div id="${n}PortletPrincipalsCategories" class="fl-widget portlet ptl-mgr view-principals-cats" role="section">
+    <div id="${n}PortletPrincipalsCategories" class="portlet ptl-mgr view-principals-cats" role="section">
         <!-- Portlet Content -->
-        <div class="fl-widget-content content portlet-content" role="main">
+        <div class="content portlet-content" role="main">
             <!-- Portlet Section -->
             <div class="portlet-section" role="region">
                 <div class="titlebar">
@@ -541,9 +541,9 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     </div>
 
     <!-- Portlet Lifecycle -->
-    <div id="${n}PortletLifecycle" class="fl-widget portlet ptl-mgr view-lifecycle" role="section">
+    <div id="${n}PortletLifecycle" class="portlet ptl-mgr view-lifecycle" role="section">
         <!-- Portlet Content -->
-        <div class="fl-widget-content content portlet-content" role="main">
+        <div class="content portlet-content" role="main">
             <!-- Portlet Section -->
             <div class="portlet-section" role="region">
                 <div class="titlebar">
@@ -612,7 +612,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                         </thead>
                         <tbody>
                         <tr>
-                            <td class="fl-text-align-right">
+                            <td class="">
                                 <label for="expirationDate">
                                     <spring:message code="auto.publish.date.time"/>
                                 </label>
@@ -664,7 +664,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                         </thead>
                         <tbody>
                             <tr>
-                                <td class="fl-text-align-right"><spring:message code="auto.expire.date.time"/></td>
+                                <td class=""><spring:message code="auto.expire.date.time"/></td>
                                 <td>
                                     <form:input path="expirationDateString" size="10" cssClass="cal-datepicker"/>
                                     <span style="${ portlet.expirationDate == null ? 'display:none' : '' }">

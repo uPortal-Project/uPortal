@@ -89,11 +89,11 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 -->
 
 <!-- Portlet -->
-<div id="${n}portletBrowser" class="fl-widget portlet" role="section">
+<div id="${n}portletBrowser" class="portlet" role="section">
 <form id="${n}form">
 
   <!-- Portlet Title -->
-  <div class="fl-widget-titlebar portlet-title" role="sectionhead">
+  <div class="portlet-title" role="sectionhead">
     <h2 role="heading"><spring:message code="most.frequently.added"/></h2>
   </div> <!-- end: portlet-title -->
 
@@ -112,10 +112,10 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
   </div> <!-- end: portlet-toolbar -->
 
     <!-- Portlet Body -->
-  <div class="fl-widget-content portlet-body" role="main">
+  <div class="portlet-body" role="main">
 
     <!-- Portlet Section -->
-    <div id="${n}popularPortlets" class="portlet-section fl-pager" role="region">
+    <div id="${n}popularPortlets" class="portlet-section " role="region">
 
       <div class="portlet-section-body">
         <table id="${n}portletsTable" style="width:100%;">

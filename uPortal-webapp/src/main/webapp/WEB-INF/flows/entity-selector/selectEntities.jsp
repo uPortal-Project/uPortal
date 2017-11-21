@@ -41,9 +41,9 @@
 <!--
 | Portlet.
 ================================================-->
-<div class="fl-widget portlet grp-mgr view-selectgroups" role="section">
+<div class="portlet grp-mgr view-selectgroups" role="section">
     <!--titlebar-->
-    <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
+    <div class="titlebar portlet-titlebar" role="sectionhead">
         <h2 class="title" role="heading"><spring:message code="${pageTitleCode}" text="${pageTitleText}"/></h2>
         <h3 class="subtitle"><spring:message code="${pageSubtitleCode}" arguments="${pageSubtitleArgument}" text="${pageSubtitleText}"/></h3>
     </div>
@@ -78,10 +78,10 @@
         <p><i class="fa fa-exclamation-circle">Unknown error. Contact your administrator.</i></p>
     </div>
 
-    <div id="${n}chooseGroupsBody" class="fl-widget-content content portlet-content container-fluid" role="main">
+    <div id="${n}chooseGroupsBody" class="content portlet-content container-fluid" role="main">
         <div class="${selectionMode ? 'view-multi-select' : 'view-single-select'}">
             <div class="columns-2 row-fluid row">
-                <div class="fl-container-flex60 span8 col-md-8">
+                <div class="span8 col-md-8">
                     <!-- entity -->
                     <div id="${n}entityBrowserContent" class="entity-browser row">
                         <div class="content row">
@@ -150,7 +150,7 @@
                         </div>
                     </div><!--end: content row -->
                 </div>
-                <div class="fl-container-flex40 span4 col-md-4">
+                <div class="span4 col-md-4">
                     <!--selection-->
                     <div class="portlet-selection">
                         <!--titlebar-->

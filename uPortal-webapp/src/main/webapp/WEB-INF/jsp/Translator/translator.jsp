@@ -22,7 +22,7 @@
 <portlet:resourceURL var="resourceUrl" />
 <c:set var="ns"><portlet:namespace /></c:set>
 
-<div class="fl-widget portlet" id="${ns}container">
+<div class="portlet" id="${ns}container">
   <form id="${ns}form" class="portlet-form" style="position: relative;">
     <c:set var="entityTypeSelection">
       <select id="${ns}entityType" class="form-control" aria-label="<spring:message code="translator.portlet.or.message" />">

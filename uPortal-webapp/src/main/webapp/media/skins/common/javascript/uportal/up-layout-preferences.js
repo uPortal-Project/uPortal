@@ -84,10 +84,10 @@ var uportal = uportal || {};
         var columns = [];
 
         // iterate through the CSS classnames for each column and parse
-        // the fl-container-flex classnames to determine the width percentage for
+        // the classnames to determine the width percentage for
         // each column
         $('#portalPageBodyColumns > [id^=column_]').each(function(){
-            var flClass = $(this).get(0).className.match("fl-container-flex[0-9]+");
+            var flClass = $(this).get(0).className.match("");
             if (flClass != null) {
                 columns.push(Number(flClass[0].match("[0-9]+")[0]));
             }
@@ -547,7 +547,7 @@ var uportal = uportal || {};
                          }
                      },
                      styles: {
-                         mouseDrag: "fl-reorderer-movable-dragging-mouse"
+                         mouseDrag: ""
                      }
                 }
             );
@@ -579,9 +579,9 @@ var uportal = uportal || {};
         currentSkin: null,
         isFragmentMode: false,
         gallerySelector: '.up-gallery',  // Pass null/false to disable
-        columnWidthClassPattern: "fl-container-flex",
+        columnWidthClassPattern: "",
         columnWidthClassFunction: function(column) {
-            return "fl-container-flex" + column;
+            return "" + column;
         },
         messages: {
             persistenceError: "Error persisting layout change"

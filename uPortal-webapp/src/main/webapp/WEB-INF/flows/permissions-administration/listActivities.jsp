@@ -38,11 +38,11 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 -->
 
 <!-- Portlet -->
-<div class="fl-widget portlet prm-mgr view-listperms" role="section">
+<div class="portlet prm-mgr view-listperms" role="section">
   
   
   <!-- Portlet Titlebar -->
-	<div role="sectionhead" class="fl-widget-titlebar titlebar portlet-titlebar">
+	<div role="sectionhead" class="titlebar portlet-titlebar">
 	  	<div class="breadcrumb">
 	    	<span class="breadcrumb-1"><a href="${ backUrl }"><spring:message code="categories"/></a></span>
 	        <span class="separator">&gt; </span>
@@ -53,7 +53,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
   
   
   <!-- Portlet Content -->
-  <div class="fl-widget-content portlet-content" role="main">
+  <div class="portlet-content" role="main">
   
     <!-- Portlet Section -->    
 		

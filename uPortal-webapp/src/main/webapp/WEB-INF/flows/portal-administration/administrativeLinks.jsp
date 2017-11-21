@@ -22,15 +22,15 @@
 <c:set var="n"><portlet:namespace/></c:set>
 
 <!-- Portlet -->
-<div id="${n}adminLinks" class="fl-widget portlet portal-adm view-links" role="section">
+<div id="${n}adminLinks" class="portlet portal-adm view-links" role="section">
 
   <!-- Portlet Titlebar -->
-  <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
+  <div class="titlebar portlet-titlebar" role="sectionhead">
     <h2 class="title" role="heading">Portal Administration Tools</h2>
   </div>
 
   <!-- Portlet Content -->
-  <div class="fl-widget-content content portlet-content" role="main">
+  <div class="content portlet-content" role="main">
 
     <!-- Portlet Section -->
     <div class="portlet-section" role="region">

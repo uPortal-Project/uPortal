@@ -24,13 +24,13 @@
 </portlet:actionURL>
         
 <!-- Portlet -->
-<div class="fl-widget portlet cache-mgr view-flushall" role="section">
+<div class="portlet cache-mgr view-flushall" role="section">
 	<!-- Portlet Titlebar -->
-	<div class="fl-widget-titlebar titlebar portlet-titlebar">
+	<div class="titlebar portlet-titlebar">
     	<h2 class="title"><spring:message code="flush.cache"/></h2>
     </div>
     <!-- Portlet Body -->
-    <div class="fl-widget-content content portlet-content" role="main">
+    <div class="content portlet-content" role="main">
         
         <!-- Messages -->
         <div class="portlet-msg-alert portlet-msg alert" role="alert">

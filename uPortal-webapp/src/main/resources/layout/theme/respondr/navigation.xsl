@@ -106,9 +106,9 @@
     <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
       <nav class="portal-nav">
         <div id="sidebar" class="sidebar-offcanvas container-fluid">
-            <div id="portalNavigation" class="fl-widget">
-              <div id="portalNavigationInner" class="fl-widget-inner header">
-                  <ul id="portalNavigationList" class="menu fl-tabs flc-reorderer-column list-group list-group-horizontal">
+            <div id="portalNavigation" class="">
+              <div id="portalNavigationInner" class="header">
+                  <ul id="portalNavigationList" class="menu flc-reorderer-column list-group list-group-horizontal">
                      <xsl:apply-templates select="tab[$USE_TAB_GROUPS!='true' or @tabGroup=$ACTIVE_TAB_GROUP]">
                        <xsl:with-param name="CONTEXT">header</xsl:with-param>
                      </xsl:apply-templates>
@@ -150,7 +150,7 @@
     </xsl:variable>
     <xsl:variable name="NAV_ACTIVE"> <!-- Determine which navigation option is the active (current selection) and add a css hook. -->
       <xsl:choose>
-        <xsl:when test="@activeTab='true'">active fl-tabs-active</xsl:when>
+        <xsl:when test="@activeTab='true'">active </xsl:when>
         <xsl:otherwise></xsl:otherwise>
       </xsl:choose>
     </xsl:variable>
@@ -375,7 +375,7 @@
         // all the navigation elements with subnavigation flyouts
         var flyouts = new Array();
         var flyoutOptions = { flyoutMenu: '.portal-flyout-container' };
-        up.jQuery("ul.fl-tabs li.portal-navigation").each( function() {
+        up.jQuery("ulli.portal-navigation").each( function() {
           flyouts.push(uportal.flyoutmenu(this, flyoutOptions));
         });
       });

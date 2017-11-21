@@ -33,7 +33,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 -->
 
 <!-- Portlet -->
-<div class="fl-widget portlet portal-activity" role="section">
+<div class="portlet portal-activity" role="section">
     <form id="${n}form">
 
         <!-- Portlet Body -->

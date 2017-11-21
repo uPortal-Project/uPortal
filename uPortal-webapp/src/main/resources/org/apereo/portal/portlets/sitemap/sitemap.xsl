@@ -80,7 +80,7 @@
             <xsl:otherwise><xsl:value-of select="upMsg:getMessage($CURRENT_TAB_GROUP, $USER_LANG)" /></xsl:otherwise>
           </xsl:choose>
         </xsl:variable>
-        <div class="fl-container-flex">
+        <div class="">
           <h2><xsl:value-of select="$TABGROUP_LABEL" /></h2>
           <xsl:for-each select="/layout/folder/folder[@type='regular' and @hidden='false' and @tabGroup=$CURRENT_TAB_GROUP]">
             <xsl:apply-templates select="." mode="tab" />
@@ -106,7 +106,7 @@
     <xsl:for-each select="/layout/folder/folder[@type='regular' and @hidden='false']">
       <xsl:if test="(position() mod $TAB_WRAP_COUNT)=1">
         <xsl:variable name="ROW_NUM" select="ceiling(position() div $TAB_WRAP_COUNT)" />
-        <div class="fl-container-flex fl-col-flex4">
+        <div class="">
           <xsl:for-each select="/layout/folder/folder[@type='regular' and @hidden='false']">
             <xsl:if test="ceiling(position() div $TAB_WRAP_COUNT) = $ROW_NUM">
               <xsl:apply-templates select="." mode="tab" />
@@ -140,7 +140,7 @@
             </xsl:otherwise>
         </xsl:choose>
     </xsl:variable>
-    <div class="fl-col">
+    <div class="">
       <div><a href="{$tabLinkUrl}" class="{$NAV_TRANSIENT}"><xsl:value-of select="upElemTitle:getTitle(@ID, $USER_LANG, @name)"/></a></div>
       <ul><xsl:apply-templates select="folder" mode="column" /></ul>
     </div>

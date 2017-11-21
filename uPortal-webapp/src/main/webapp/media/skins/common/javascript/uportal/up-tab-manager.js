@@ -58,7 +58,7 @@ var up = up || {};
      */
     fluid.inlineEdit.setupEditContainer = function (displayContainer, editField, editContainer) {
         var eContainer = $(editContainer);
-        eContainer = eContainer.length ? eContainer : $("<div class='fl-inlineEditContainer'></div>");
+        eContainer = eContainer.length ? eContainer : $("<div class='</div>");
         displayContainer.parent().after(eContainer);
         eContainer.append(editField);
         
@@ -210,13 +210,13 @@ var up = up || {};
                 grabHandle: (that.options.tabContext === "header") ? that.options.selectors.grabHandle : ""
             },
             styles: {
-                defaultStyle: "fl-reorderer-" + that.options.tabContext + "-movable-default",
-                selected: "fl-reorderer-" + that.options.tabContext + "-movable-selected",
-                dragging: "fl-reorderer-" + that.options.tabContext + "-movable-dragging",
-                mouseDrag: "fl-reorderer-" + that.options.tabContext + "-movable-dragging",
-                hover: "fl-reorderer-" + that.options.tabContext + "-movable-hover",
-                dropMarker: "fl-reorderer-" + that.options.tabContext + "-dropMarker",
-                avatar: "fl-reorderer-" + that.options.tabContext + "-avatar"
+                defaultStyle: "" + that.options.tabContext + "-movable-default",
+                selected: "" + that.options.tabContext + "-movable-selected",
+                dragging: "" + that.options.tabContext + "-movable-dragging",
+                mouseDrag: "" + that.options.tabContext + "-movable-dragging",
+                hover: "" + that.options.tabContext + "-movable-hover",
+                dropMarker: "" + that.options.tabContext + "-dropMarker",
+                avatar: "" + that.options.tabContext + "-avatar"
             },
             listeners: {
                 afterMove: function (item, requestedPosition, movables) {

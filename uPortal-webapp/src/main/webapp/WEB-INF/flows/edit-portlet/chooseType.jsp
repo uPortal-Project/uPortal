@@ -38,17 +38,17 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 -->
     
 <!-- Portlet -->
-<div class="fl-widget portlet ptl-mgr view-choosetype" role="section">
+<div class="portlet ptl-mgr view-choosetype" role="section">
 
 	<!-- Portlet Titlebar -->
-  <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
+  <div class="titlebar portlet-titlebar" role="sectionhead">
   	<h2 class="title" role="heading">
         <spring:message code="${ completed ? 'edit.portlet' : 'register.new.portlet' }"/>
     </h2>
   </div> <!-- end: portlet-titlebar -->
   
 	<!-- Portlet Content -->
-  <div class="fl-widget-content content portlet-content" role="main">
+  <div class="content portlet-content" role="main">
      
     <form:form modelAttribute="portlet" action="${queryUrl}" method="POST">
 	

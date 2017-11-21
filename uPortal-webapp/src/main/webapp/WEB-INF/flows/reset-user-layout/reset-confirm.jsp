@@ -29,10 +29,10 @@
 </portlet:actionURL>
         
 <!-- Portlet -->
-<div class="fl-widget portlet reset-layout view-result" role="section">
+<div class="portlet reset-layout view-result" role="section">
 
     <!-- Portlet Title -->
-    <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
+    <div class="titlebar portlet-titlebar" role="sectionhead">
     	<h2 class="title" role="heading">
             <a href="${ userUrl }">${ fn:escapeXml(person.name )}</a> >
     	    <spring:message code="reset.user.layout"/>
@@ -40,7 +40,7 @@
     </div> <!-- end: portlet-titlebar -->
     
     <!-- Portlet Content -->
-	<div class="fl-widget-content content portlet-content" role="main">
+	<div class="content portlet-content" role="main">
 
         <form action="${formUrl}" method="POST">
 

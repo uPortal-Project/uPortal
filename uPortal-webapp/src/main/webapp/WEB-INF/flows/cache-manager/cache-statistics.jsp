@@ -29,15 +29,15 @@
 </portlet:actionURL>
         
 <!-- Portlet -->
-<div class="fl-widget portlet cache-mgr view-statistics" role="section">
+<div class="portlet cache-mgr view-statistics" role="section">
   <!-- Portlet Titlebar -->
-  <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
+  <div class="titlebar portlet-titlebar" role="sectionhead">
     <h2 class="title" role="heading"><spring:message code="cache.statistics"/></h2>
     <h3 class="subtitle">${fn:escapeXml(cacheName)}</h3>
   </div> <!-- end: portlet-titlebar -->
 
   <!-- Portlet Content -->
-  <div class="fl-widget-content content portlet-content" role="main">
+  <div class="content portlet-content" role="main">
       
         <table class="portlet-table table table-hover">
             <thead>

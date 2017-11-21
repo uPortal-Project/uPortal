@@ -476,11 +476,11 @@
 
     <xsl:if test="$IS_FRAGMENT_ADMIN_MODE='true'">
         <div class="edit-page-permissions-dialog" title="{upMsg:getMessage('edit.page.permissions', $USER_LANG)}">
-            <div class="fl-widget portlet">
-                <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
+            <div class="portlet">
+                <div class="titlebar portlet-titlebar" role="sectionhead">
                     <h2 class="title" role="heading"><xsl:value-of select="/layout/navigation/tab[@activeTab='true']/@name"/></h2>
                 </div>
-                <div class="fl-widget-content content portlet-content" role="main">
+                <div class="content portlet-content" role="main">
                     <div class="portlet-section" role="region">
                         <div class="titlebar">
                             <h3 class="title" role="heading"><xsl:value-of select="upMsg:getMessage('allow.users.to', $USER_LANG)"/>:</h3>
@@ -504,11 +504,11 @@
             </div>
         </div>
         <div class="edit-column-permissions-dialog" title="{upMsg:getMessage('edit.column.permissions', $USER_LANG)}">
-            <div class="fl-widget portlet">
-                <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
+            <div class="portlet">
+                <div class="titlebar portlet-titlebar" role="sectionhead">
                     <h2 class="title" role="heading"></h2>
                 </div>
-                <div class="fl-widget-content content portlet-content" role="main">
+                <div class="content portlet-content" role="main">
                     <form>
                         <p><xsl:value-of select="upMsg:getMessage('allow.users.to', $USER_LANG)"/>:</p>
                         <p>
@@ -526,11 +526,11 @@
             </div>
         </div>
         <div class="edit-portlet-permissions-dialog" title="{upMsg:getMessage('edit.portlet.permissions', $USER_LANG)}">
-            <div class="fl-widget portlet">
-                <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
+            <div class="portlet">
+                <div class="titlebar portlet-titlebar" role="sectionhead">
                     <h2 class="title" role="heading"></h2>
                 </div>
-                <div class="fl-widget-content content portlet-content" role="main">
+                <div class="content portlet-content" role="main">
                     <div class="portlet-section" role="region">
                         <div class="titlebar">
                             <h3 class="title" role="heading"><xsl:value-of select="upMsg:getMessage('allow.users.to', $USER_LANG)"/>:</h3>
@@ -717,7 +717,7 @@
                  aren't committing to support IE8 and this minor change makes IE8 work better. -->
             <script src="{$CONTEXT_PATH}/scripts/respond-1.4.2.min.js" type="text/javascript"></script>
         </head>
-        <body class="up dashboard portal fl-theme-mist">
+        <body class="up dashboard portal ">
           <xsl:call-template name="skipnav" />
           <div class="row-offcanvas">
             <div id="up-notification"></div>
@@ -779,7 +779,7 @@
                                     <div class="row">
                                         <div class="col-md-9"></div>
                                         <div class="col-md-3">
-                                            <div id="portalEditPagePermissions" class="fl-fix">
+                                            <div id="portalEditPagePermissions" class="">
                                                 <a class="button" id="editPagePermissionsLink" href="#" title="{upMsg:getMessage('edit.page.permissions', $USER_LANG)}">
                                                     <i class="fa fa-align-justify"></i>
                                                     <xsl:value-of select="upMsg:getMessage('edit.page.permissions', $USER_LANG)"/>
@@ -862,7 +862,7 @@
              aren't committing to support IE8 and this minor change makes IE8 work better. -->
         <script src="{$CONTEXT_PATH}/scripts/respond-1.4.2.min.js" type="text/javascript"></script>
     </head>
-    <body class="up dashboard portal fl-theme-mist detachedHeader">
+    <body class="up dashboard portal detachedHeader">
         <xsl:call-template name="skipnav" />
         <div id="wrapper">
             <xsl:call-template name="region.hidden-top" />

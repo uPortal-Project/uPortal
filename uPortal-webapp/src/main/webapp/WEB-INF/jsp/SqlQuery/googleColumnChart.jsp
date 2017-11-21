@@ -24,10 +24,10 @@
 <script type="text/javascript" src="http://www.google.com/jsapi?key=ABQIAAAA6IxXqpYkVvIBECmLUV99fRT2yXp_ZAY8_ufC3CFXhHIE1NvwkxRKtN-K3WJJ0qPp2xOcWG-RdEe73Q"></script>
     
 <!-- Portlet -->
-<div class="fl-widget portlet" role="section">
+<div class="portlet" role="section">
   
   <!-- Portlet Body -->
-  <div class="fl-widget-content portlet-body" role="main">
+  <div class="portlet-body" role="main">
   
     <!-- Portlet Section -->
     <div id="${n}sqlPager" class="portlet-section" role="region">

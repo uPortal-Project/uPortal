@@ -29,9 +29,9 @@
 
 <%-- Do not namespace webSearchContainer or webSearchSubmit. They are referenced in less files. You can change to
      class names, but that may impact users who have customized their less files. --%>
-<div id="webSearchContainer" class="fl-widget">
-    <div class="fl-widget-inner">
-      <div class="fl-widget-content">
+<div id="webSearchContainer" class="">
+    <div class="">
+      <div class="">
         <c:set var="searchLabel"><spring:message code="search"/></c:set>
         <form class="form-search" role="form" method="post" action="${searchLaunchUrl}" id="${n}webSearchForm">
           <div class="input-group">

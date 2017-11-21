@@ -117,10 +117,10 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 -->
 
 <!-- Portlet -->
-<div id="${n}activityBrowser" class="fl-widget portlet prm-mgr" role="section">
+<div id="${n}activityBrowser" class="portlet prm-mgr" role="section">
   
   <!-- Portlet Titlebar -->
-    <div role="sectionhead" class="fl-widget-titlebar titlebar portlet-titlebar">
+    <div role="sectionhead" class="titlebar portlet-titlebar">
         <div class="breadcrumb">
             <span class="breadcrumb-1"><a href="${ ownersUrl }"><spring:message code="categories"/></a></span>
             <span class="separator">&gt; </span>
@@ -138,7 +138,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     </div>
   
   <!-- Portlet Content -->
-  <div class="fl-widget-content portlet-content" role="main">
+  <div class="portlet-content" role="main">
   
     <!-- Portlet Section -->
     <div id="${n}permissionAddingTabs" class="portlet-section" role="region">

@@ -263,7 +263,7 @@ var uportal = uportal || {};
     * they are used
     */
    var addFlyoutHandlers = function() {
-      $("ul.fl-tabs li.portal-navigation a.portal-subnav-link").click(function(event) {
+      $("ulli.portal-navigation a.portal-subnav-link").click(function(event) {
          var clickedLink = $(this);
 
          // Find the target portlet's title

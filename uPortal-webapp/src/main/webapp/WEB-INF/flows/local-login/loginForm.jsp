@@ -30,10 +30,10 @@
 </portlet:renderURL>
 
 <!-- Portlet -->
-<div class="fl-widget portlet portlet-content" role="section" data-role="content">
+<div class="portlet portlet-content" role="section" data-role="content">
 
   <!-- Portlet Body -->
-  <div class="fl-widget-content portlet-body" role="main">
+  <div class="portlet-body" role="main">
 
     <!-- Portlet Section -->
     <div id="${n}search" class="portlet-section" role="region">

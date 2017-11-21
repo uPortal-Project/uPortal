@@ -116,10 +116,10 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 -->
 
 <!-- Portlet -->
-<div class="fl-widget portlet prm-mgr" role="section">
+<div class="portlet prm-mgr" role="section">
 
     <!-- Portlet Titlebar -->
-    <div class="fl-widget-titlebar portlet-titlebar" role="sectionhead">
+    <div class="portlet-titlebar" role="sectionhead">
         <h2 class="title" role="heading">
             <a href="${ userUrl }">${ fn:escapeXml(person.name )}</a> >
             <spring:message code="permissions"/>
@@ -127,7 +127,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     </div> <!-- end: portlet-titlebar -->
 
     <!-- Portlet Content -->
-    <div id="${n}permissionBrowser" class="fl-widget-content portlet-content" role="main">
+    <div id="${n}permissionBrowser" class="portlet-content" role="main">
 
         <!-- Portlet Section -->
         <div id="${n}permissionAddingTabs" class="portlet-section view-permissions" role="region">

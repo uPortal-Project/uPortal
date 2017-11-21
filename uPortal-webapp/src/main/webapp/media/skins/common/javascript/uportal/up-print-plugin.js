@@ -60,9 +60,9 @@ var up = up || {};
 							var className = this.className.toLowerCase();
 
 							className = className.replace(new RegExp("layout-.-columns","gi"),"layout-1-columns");
-							className = className.replace(new RegExp("fl-col-flex.","gi"),"fl-col-flex1");
+							className = className.replace(new RegExp("","gi"),"");
 							className = className.replace(new RegExp("left","gi"),"single");
-							className = className.replace(new RegExp("fl-col-flex..","gi"),"fl-col-flex");
+							className = className.replace(new RegExp("","gi"),"");
 							oneElement += ' class="'+className+'"' ;
 						}
 						oneElement += ' >' ;
@@ -72,7 +72,7 @@ var up = up || {};
 				});
 				html += htmlTree;
 				html +='<div id="portletContent_' + id + '" class="' + $('#portletContent_'+id).get(0).className + '">';
-				// class="fl-widget-content fl-fix up-portlet-content-wrapper"
+				// class="up-portlet-content-wrapper"
 				html += $('#portletContent_'+id).clone().html();
 				html +='</div>';
 

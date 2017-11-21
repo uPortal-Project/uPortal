@@ -21,8 +21,8 @@
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
 
 <div class="up-gallery">
-    <div class="fl-fix fl-col-mixed fl-col-mixed2 gallery-inner" style="display:none">
-        <div class="fl-col-side fl-force-left menu-wrapper">
+    <div class="gallery-inner" style="display:none">
+        <div class="menu-wrapper">
             <ul class="menu" role="menu">
                 <li class="add-content-link active" role="tab">
                     <a href="#"><span><spring:message code="add.stuff"/></span></a>
@@ -41,10 +41,10 @@
                 <a class="button"><span><spring:message code="im.done"/></span></a>
             </div-->
         </div>
-        <div class="fl-col-main content-wrapper" role="tabpanel">
-            <div class="fl-fix content">
-                <div class="fl-fix fl-col-mixed fl-col-mixed2 pane add-content">
-                    <div class="fl-col-fixed fl-force-left content-filters-wrapper">
+        <div class="content-wrapper" role="tabpanel">
+            <div class="content">
+                <div class="pane add-content">
+                    <div class="content-filters-wrapper">
                         <div class="categories-column active">
                             <h3 class="portlet-list-link"><span><spring:message code="stuff"/></span></h3>
                             <div class="categories-wrapper active">
@@ -71,16 +71,16 @@
                             </div>
                         </div>
                     </div>
-                    <div class="content-results-wrapper fl-col-main">
+                    <div class="content-results-wrapper ">
                         <div class="column-inner">
-                            <div class="results-wrapper fl-col-mixed2">
-                                <div class="pager-column fl-col-side fl-force-right">
+                            <div class="results-wrapper ">
+                                <div class="pager-column ">
                                     <div class="column-inner">
                                     </div>
                                 </div>
-                                <div class="results-column fl-col-main fl-fix">
-                                    <div class="results-wrapper portlet-results fl-col-mixed2">
-                                        <div class="pager-column fl-col-side fl-force-right">
+                                <div class="results-column ">
+                                    <div class="results-wrapper portlet-results ">
+                                        <div class="pager-column ">
                                             <div class="column-inner">
                                                 <div class="pager flc-pager-top">
                                                     <!--Previous-->
@@ -91,7 +91,7 @@
                                                     </div>
                                                     <!--Pager Links-->
                                                     <div style="display:none">
-                                                        <ul class="fl-pager-links flc-pager-links" style="margin:0; display:inline">
+                                                        <ul class="flc-pager-links" style="margin:0; display:inline">
                                                             <li class="flc-pager-pageLink"><a href="#">1</a></li>
                                                             <li class="flc-pager-pageLink-disabled">2</li>
                                                             <li class="flc-pager-pageLink"><a href="#">3</a></li>
@@ -113,7 +113,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="results-column fl-col-main ui-helper-clearfix">
+                                        <div class="results-column ui-helper-clearfix">
                                             <ul id="addContentPortletList" class="results-list portlet-list">
                                                 <li class="result-item portlet">
                                                     <div class="ri-wrapper portlet-wrapper">
@@ -141,8 +141,8 @@
                     <div class="content-modal content-loading"></div>
                 </div>
 
-                <div class="fl-fix fl-col-mixed fl-col-mixed2 use-content" style="display:none">
-                    <div class="fl-col-fixed fl-force-left content-filters-wrapper">
+                <div class="use-content" style="display:none">
+                    <div class="content-filters-wrapper">
                         <div class="categories-column active">
                             <h3 class="portlet-list-link"><span><spring:message code="stuff"/></span></h3>
                             <div class="categories-wrapper active">
@@ -169,16 +169,16 @@
                             </div>
                         </div>
                     </div>
-                    <div class="content-results-wrapper fl-col-main">
+                    <div class="content-results-wrapper ">
                         <div class="column-inner">
-                            <div class="results-wrapper fl-col-mixed2">
-                                <div class="pager-column fl-col-side fl-force-right">
+                            <div class="results-wrapper ">
+                                <div class="pager-column ">
                                     <div class="column-inner">
                                     </div>
                                 </div>
-                                <div class="results-column fl-col-main fl-fix">
-                                    <div class="results-wrapper portlet-results fl-col-mixed2">
-                                        <div class="pager-column fl-col-side fl-force-right">
+                                <div class="results-column ">
+                                    <div class="results-wrapper portlet-results ">
+                                        <div class="pager-column ">
                                             <div class="column-inner">
                                                 <div class="pager flc-pager-top">
                                                     <!--Previous-->
@@ -189,7 +189,7 @@
                                                     </div>
                                                     <!--Pager Links-->
                                                     <div style="display:none">
-                                                        <ul class="fl-pager-links flc-pager-links" style="margin:0; display:inline">
+                                                        <ul class="flc-pager-links" style="margin:0; display:inline">
                                                             <li class="flc-pager-pageLink"><a href="#">1</a></li>
                                                             <li class="flc-pager-pageLink-disabled">2</li>
                                                             <li class="flc-pager-pageLink"><a href="#">3</a></li>
@@ -211,7 +211,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="results-column fl-col-main ui-helper-clearfix">
+                                        <div class="results-column ui-helper-clearfix">
                                             <ul id="useContentPortletList" class="results-list portlet-list">
                                                 <li class="result-item portlet">
                                                     <div class="ri-wrapper portlet-wrapper">

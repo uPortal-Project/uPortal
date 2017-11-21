@@ -286,7 +286,7 @@
               <!-- ****** PORTLET TOOLBAR ****** -->
               <xsl:call-template name="portlet-toolbar"/>
               <!-- ****** PORTLET CONTENT ****** -->
-              <div id="portletContent_{@ID}" class="fl-widget-content fl-fix up-portlet-content-wrapper round-bottom"> <!-- Portlet content container. -->
+              <div id="portletContent_{@ID}" class="up-portlet-content-wrapper round-bottom"> <!-- Portlet content container. -->
                 <div class="up-portlet-content-wrapper-inner">  <!-- Inner div for additional presentation/formatting options. -->
                   <xsl:call-template name="portlet-content"/>
                 </div>
@@ -304,7 +304,7 @@
   <!-- ============================================== -->
   <!-- Renders the portlet toolbar -->
   <xsl:template name="portlet-toolbar">
-    <div id="toolbar_{@ID}" class="fl-widget-titlebar up-portlet-titlebar up-standard-chrome round-top"> <!-- Portlet toolbar. -->
+    <div id="toolbar_{@ID}" class="up-portlet-titlebar up-standard-chrome round-top"> <!-- Portlet toolbar. -->
       <!-- Portlet Title -->
       <h2 class="portlet-title round-top">
         <!-- Reference anchor for page focus on refresh and link to focused view of channel. -->
