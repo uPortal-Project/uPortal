@@ -47,6 +47,10 @@ public class RenderingPipelineBranchPoint implements Comparable<RenderingPipelin
     // dependency-injected
     private IPortalRenderingPipeline alternatePipe;
 
+    public int getOrder() {
+        return order;
+    }
+
     public void setOrder(int order) {
         this.order = order;
     }

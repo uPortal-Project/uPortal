@@ -50,6 +50,7 @@ import org.apereo.portal.rendering.PortletRenderingInitiationCharacterComponent;
 import org.apereo.portal.rendering.PortletRenderingInitiationStAXComponent;
 import org.apereo.portal.rendering.PortletWindowAttributeSource;
 import org.apereo.portal.rendering.RenderingPipelineBranchPoint;
+import org.apereo.portal.rendering.RenderingPipelineConfigurationException;
 import org.apereo.portal.rendering.StAXAttributeIncorporationComponent;
 import org.apereo.portal.rendering.StAXPipelineComponent;
 import org.apereo.portal.rendering.StAXPipelineComponentWrapper;
@@ -79,6 +80,8 @@ import org.jasig.resourceserver.aggr.ResourcesDao;
 import org.jasig.resourceserver.aggr.ResourcesDaoImpl;
 import org.jasig.resourceserver.utils.aggr.ResourcesElementsProvider;
 import org.jasig.resourceserver.utils.aggr.ResourcesElementsProviderImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -149,6 +152,8 @@ public class RenderingPipelineConfiguration {
     @Autowired(required = false)
     private List<RenderingPipelineBranchPoint> branchPoints;
 
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+
     /**
      * This bean is the entry point into the uPortal Rendering Pipeline. It supports {@link
      * RenderingPipelineBranchPoint} beans, which are an extension point for adopters.
@@ -163,6 +168,27 @@ public class RenderingPipelineConfiguration {
         Collections.sort(sortedList);
         final List<RenderingPipelineBranchPoint> branches =
                 Collections.unmodifiableList(sortedList);
+
+        /*
+         * Sanity check:  if you have multiple RenderingPipelineBranchPoint beans, you can specify
+         * an 'order' property on some or all of them to control the sequence of processing.
+         * Having 2 RenderingPipelineBranchPoint beans with the same order value will produce
+         * non-deterministic results and is a likely source of misconfiguration.
+         */
+        final Set<Integer> usedOderValues = new HashSet<>();
+        boolean hasCollision =
+                branches.stream()
+                        .anyMatch(
+                                branchPoint -> {
+                                    final boolean rslt =
+                                            usedOderValues.contains(branchPoint.getOrder());
+                                    usedOderValues.add(branchPoint.getOrder());
+                                    return rslt;
+                                });
+        if (hasCollision) {
+            throw new RenderingPipelineConfigurationException(
+                    "Multiple RenderingPipelineBranchPoint beans have the same 'order' value, which likely a misconfiguration");
+        }
 
         // "Classic" Pipeline
         final IPortalRenderingPipeline classicRenderingPipeline = getClassicRenderingPipeline();
