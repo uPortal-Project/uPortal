@@ -29,33 +29,30 @@ import org.junit.Test;
 import org.mockito.Mock;
 
 /**
- * Unit tests for BranchingRedneringPipeline.
+ * Unit tests for RenderingPipelineBranchPoint.
  *
- * @since 4.2
+ * @since 5.0
  */
-public class BranchingRenderingPipelineTest {
+public class RenderingPipelineBranchPointTest {
 
     @Mock private HttpServletRequest request;
 
     @Mock private HttpServletResponse response;
 
-    @Mock private IPortalRenderingPipeline truePipe;
-
-    @Mock private IPortalRenderingPipeline falsePipe;
+    @Mock private IPortalRenderingPipeline alternatePipe;
 
     @Mock private Predicate<HttpServletRequest> predicate;
 
-    private BranchingRenderingPipeline branchingRenderingPipeline;
+    private RenderingPipelineBranchPoint renderingPipelineBranchPoint;
 
     @Before
     public void setUp() throws Exception {
 
         initMocks(this);
 
-        branchingRenderingPipeline = new BranchingRenderingPipeline();
-        branchingRenderingPipeline.setTruePipe(truePipe);
-        branchingRenderingPipeline.setFalsePipe(falsePipe);
-        branchingRenderingPipeline.setPredicate(predicate);
+        renderingPipelineBranchPoint = new RenderingPipelineBranchPoint();
+        renderingPipelineBranchPoint.setPredicate(predicate);
+        renderingPipelineBranchPoint.setAlternatePipe(alternatePipe);
     }
 
     /**
@@ -69,11 +66,11 @@ public class BranchingRenderingPipelineTest {
 
         when(predicate.test(request)).thenReturn(true);
 
-        branchingRenderingPipeline.renderState(request, response);
+        boolean outcome = renderingPipelineBranchPoint.renderStateIfApplicable(request, response);
 
-        verify(truePipe).renderState(request, response);
+        assertTrue("Expected outcome == true", outcome);
+        verify(alternatePipe).renderState(request, response);
 
-        verifyZeroInteractions(falsePipe);
     }
 
     /**
@@ -87,27 +84,25 @@ public class BranchingRenderingPipelineTest {
 
         when(predicate.test(request)).thenReturn(false);
 
-        branchingRenderingPipeline.renderState(request, response);
+        boolean outcome = renderingPipelineBranchPoint.renderStateIfApplicable(request, response);
 
-        verify(falsePipe).renderState(request, response);
+        assertFalse("Expected outcome == true", outcome);
+        verifyZeroInteractions(alternatePipe);
 
-        verifyZeroInteractions(truePipe);
     }
 
-    /** Test that BranchingRenderingPipeline has a friendly toString() implementation. */
+    /** Test that RenderingPipelineBranchPoint has a friendly toString() implementation. */
     @Test
     public void hasFriendlyToString() {
 
         when(predicate.toString()).thenReturn("String representation of the predicate.");
-        when(truePipe.toString()).thenReturn("String representation of truePipe.");
-        when(falsePipe.toString()).thenReturn("String representation of falsePipe.");
+        when(alternatePipe.toString()).thenReturn("String representation of alternatePipe.");
 
         final String friendlyToString =
-                "BranchingRenderingPipeline which considering predicate "
+                "RenderingPipelineBranchPoint with predicate "
                         + "[String representation of the predicate.]"
-                        + " proceeds down pipe [String representation of truePipe.] when the predicate is true"
-                        + " and proceeds down pipe [String representation of falsePipe.] when the predicate is false.";
+                        + " proceeds down pipe [String representation of alternatePipe.] when the predicate is true.";
 
-        assertEquals(friendlyToString, branchingRenderingPipeline.toString());
+        assertEquals(friendlyToString, renderingPipelineBranchPoint.toString());
     }
 }
