@@ -1,0 +1,10 @@
+{
+  "name": "uportal-webapp",
+  "private": true,
+  "scripts": {
+    "compile-less": "lessc build/generated-sources/skin/main/webapp/media/skins/respondr/defaultSkin.less build/generated-sources/skin/main/webapp/media/skins/respondr/defaultSkin.css"
+  },
+  "devDependencies": {
+    "less": "^2.7.2"
+  }
+}

@@ -1,0 +1,7 @@
+description = "Apereo uPortal Security MVC"
+
+dependencies {
+    compile project(':uPortal-security:uPortal-security-core')
+
+    compileOnly "${servletApiDependency}"
+}

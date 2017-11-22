@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to Apereo under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Apereo licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
+       xmlns:security="http://www.springframework.org/schema/security"
+       xsi:schemaLocation="
+           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+           http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.2.xsd">
+
+    <!--
+     | Spring-managed Security
+     +-->
+    <security:global-method-security />
+
+    <!-- Spring Security pre-authentication -->
+    <security:http auto-config='true'>
+        <security:custom-filter position="PRE_AUTH_FILTER" ref="portalPreAuthenticationFilter" />
+        <security:intercept-url pattern="**" />
+        <security:session-management session-authentication-strategy-ref="sessionAuthenticationStrategy" />
+        <!-- Apply Spring Security's baked-in CSRF solution to most non-GET, non-HEAD requests -->
+        <security:csrf request-matcher-ref="portalCsrfSecurityRequestMatcher"/>
+    </security:http>
+
+    <bean id="sessionAuthenticationStrategy" class="org.springframework.security.web.authentication.session.NullAuthenticatedSessionStrategy" />
+
+    <bean id="portalPreAuthenticationFilter"
+        class="org.apereo.portal.spring.security.preauth.PortalPreAuthenticatedProcessingFilter">
+        <property name="authenticationManager" ref="authenticationManager" />
+    </bean>
+
+    <bean id="preAuthProvider"
+        class="org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationProvider">
+        <property name="preAuthenticatedUserDetailsService" ref="portalPreAuthenticatedUserDetailsService"/>
+    </bean>
+
+    <security:authentication-manager alias="authenticationManager">
+        <security:authentication-provider ref="preAuthProvider"/>
+    </security:authentication-manager>
+
+    <!--  String encryption service -->
+    <bean id="stringEncryptionService" class="org.apereo.portal.security.JasyptPBEStringEncryptionServiceImpl">
+        <property name="stringEncryptor">
+            <bean class="org.jasypt.encryption.pbe.StandardPBEStringEncryptor">
+
+                <!-- Before using the string encryption service you should first set a password.  The default
+                     password works but is not secure.
+                -->
+                <property name="password" value="${org.apereo.portal.portlets.passwordEncryptionKey}"/>
+
+                <!--
+                    Example BouncyCastle-powered AES encryption
+
+                    To use AES encryption, uncomment the following section, add
+                    the unrestricted JCE provider files to your JVM, and add
+                    the JVM-version-appropriate BouncyCastle dependency to uPortal
+                -->
+                <!--
+                <property name="algorithm" value="PBEWITHSHA256AND128BITAES-CBC-BC"/>
+                <property name="provider">
+                    <bean class="org.bouncycastle.jce.provider.BouncyCastleProvider"/>
+                </property>
+                -->
+            </bean>
+        </property>
+    </bean>
+
+    <!-- These are used in CasAssertionSecurityContext.  Putting them here just to avoid
+         introducing static variables, or re-reading security.properties repeatedly. -->
+    <bean id="casCopyAssertionAttributesToUserAttributes" class="java.lang.String">
+        <constructor-arg index="0" value="${org.apereo.portal.security.cas.assertion.copyAttributesToUserAttributes:false}"/>
+    </bean>
+    <bean id="decryptCredentialToPassword" class="java.lang.String">
+        <constructor-arg index="0" value="${org.apereo.portal.security.cas.assertion.decryptCredentialToPassword:false}"/>
+    </bean>
+    <bean id="decryptCredentialToPasswordPrivateKey" class="java.lang.String">
+        <constructor-arg index="0" value="${org.apereo.portal.security.cas.assertion.decryptCredentialToPasswordPrivateKey:''}"/>
+    </bean>
+    <bean id="decryptCredentialToPasswordAlgorithm" class="java.lang.String">
+        <constructor-arg index="0" value="${org.apereo.portal.security.cas.assertion.decryptCredentialToPasswordAlgorithm:'RSA'}"/>
+    </bean>
+
+    <!--
+     | Security-related filters
+     +-->
+    <bean id="corsFilter" class="org.apereo.portal.security.filter.CorsFilter">
+        <property name="allowedOrigins" value="${cors.allowed.origins:}" />
+        <property name="allowedHttpMethods" value="${cors.allowed.methods:GET,HEAD}" />
+        <property name="allowedHttpHeaders" value="${cors.allowed.headers:Origin,Accept,X-Requested-With,Content-Type,Access-Control-Request-Method,Access-Control-Request-Headers}" />
+        <property name="exposedHeaders" value="${cors.exposed.headers:}" />
+        <property name="supportsCredentials" value="${cors.support.credentials:true}" />
+        <property name="preflightMaxAge" value="${cors.preflight.maxage:1800}" />
+        <property name="decorateRequest" value="${cors.request.decorate:true}" />
+    </bean>
+
+    <!--
+     | Spring-managed instance of Cas20ProxyReceivingTicketValidationFilter.  This setup allows us
+     | to configure CAS authentication in the preferred, externalizable way.  (It means we can
+     | source configuration settings from the primaryPropertyPlaceholderConfigurer.)
+     +-->
+    <bean name="ticketValidationFilter" class="org.jasig.cas.client.validation.Cas20ProxyReceivingTicketValidationFilter">
+        <property name="service" value="${cas.ticketValidationFilter.service}" />
+        <property name="proxyReceptorUrl" value="${cas.ticketValidationFilter.proxyReceptorUrl:}" />
+        <property name="ticketValidator">
+            <bean class="org.jasig.cas.client.validation.Cas20ServiceTicketValidator">
+                <constructor-arg index="0" value="${cas.ticketValidationFilter.ticketValidator.server}" />
+                <property name="proxyCallbackUrl" value="${cas.ticketValidationFilter.ticketValidator.proxyCallbackUrl:}" />
+            </bean>
+        </property>
+        <!--
+         | For CAS PGT replication for CAS ClearPass in a clustered uPortal environment.
+         | See "Replicating PGT using "proxyGrantingTicketStorageClass" and Distributed Caching" in
+         | https://wiki.jasig.org/display/CASC/Configuring+the+Jasig+CAS+Client+for+Java+in+the+web.xml.
+         | If CAS ClearPass is not enabled in security.properties, this parameter has no effect.
+         +-->
+        <property name="proxyGrantingTicketStorage">
+            <bean class="org.jasig.cas.client.proxy.EhcacheBackedProxyGrantingTicketStorageImpl" />
+        </property>
+    </bean>
+
+    <!--
+     | Spring-managed instance of CAS AuthenticationFilter. As above, this allows us to configure
+     | CAS authentication in the preferred approach. This is only needed for 'Guest Redirect to CAS'.
+     +-->
+    <bean name="casAuthenticationFilter" class="org.apereo.portal.spring.web.OptionalFilterDecorator">
+        <property name="wrappedFilter" ref="casInnerAuthenticationFilter" />
+        <property name="enable" value="${cas.enable.redirect.guest.to.login:false}" />
+    </bean>
+
+    <bean name="casInnerAuthenticationFilter" class="org.jasig.cas.client.authentication.AuthenticationFilter">
+        <property name="casServerLoginUrl" value="${cas.authenticationFilter.cas.login.url}" />
+        <property name="service" value="${cas.authenticationFilter.service}" />
+        <property name="gateway" value="false" />
+        <property name="encodeServiceUrl" value="true" />
+    </bean>
+</beans>

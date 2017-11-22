@@ -1,0 +1,10 @@
+description = "Apereo uPortal Groups Core"
+
+dependencies {
+    compile project(':uPortal-content:uPortal-content-portlet')
+    compile project(':uPortal-rdbm')
+
+    compile "com.google.guava:guava:${guavaVersion}"
+
+    compileOnly "${servletApiDependency}"
+}

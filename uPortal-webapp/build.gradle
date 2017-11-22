@@ -1,0 +1,153 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.jasig.resourceserver:resource-server-core:${resourceServerVersion}"
+    }
+}
+
+plugins {
+    id 'war'
+}
+
+apply plugin: 'com.moowork.node'
+
+description = "Apereo uPortal Webapp (WAR)"
+
+/*
+ * TODO:  Groovy-based tests (in src/test/groovy) are not currently run by the Gradle build.
+ */
+
+configurations {
+    // These get packaged with the war in a special way
+    webjars
+}
+
+dependencies {
+    compile project(':uPortal-groups:uPortal-groups-filesystem')
+    compile project(':uPortal-groups:uPortal-groups-grouper')
+    compile project(':uPortal-groups:uPortal-groups-ldap')
+    compile project(':uPortal-groups:uPortal-groups-local')
+    compile project(':uPortal-groups:uPortal-groups-smartldap')
+    compile project(':uPortal-portlets')
+    compile project(':uPortal-security:uPortal-security-authn')
+    compile project(':uPortal-security:uPortal-security-xslt')
+    compile project(':uPortal-soffit:uPortal-soffit-connector')
+    compile project(':uPortal-utils:uPortal-utils-jmx')
+
+    compileOnly "org.apereo.service.persondir:person-directory-api:${personDirectoryVersion}"
+    compileOnly "${servletApiDependency}"
+
+    testCompile "org.apache.portals.pluto:pluto-container-api:${plutoVersion}"
+    testCompile "org.apache.portals.pluto:pluto-container-driver-api:${plutoVersion}"
+    testCompile "org.skyscreamer:jsonassert:${jsonassertVersion}"
+    testCompile "org.codehaus.groovy:groovy-test:${groovyVersion}"
+    testCompile "org.spockframework:spock-core:${spockVersion}"
+    testCompile "${portletApiDependency}"
+    testCompile "${servletApiDependency}"
+
+    runtime "ch.qos.logback:logback-classic:${logbackVersion}"
+    runtime "joda-time:joda-time-jsptags:${jodaTimeJsptagsVersion}"
+    runtime "org.aspectj:aspectjweaver:${aspectjVersion}"
+    runtime "org.codehaus.groovy:groovy-jsr223:${groovyVersion}"
+    runtime "org.hibernate:hibernate-entitymanager:${hibernateVersion}"
+    runtime "org.jasig.cas.client:cas-client-support-distributed-ehcache:${casClientVersion}"
+    runtime "org.jasig.ehcache:ehcache-jgroups3replication:${ehcacheJgroups3ReplicationVersion}"
+    runtime "org.jasig.portlet.utils:portlet-ws-util:${apereoPortletUtilsVersion}"
+    runtime "org.slf4j:jul-to-slf4j:${slf4jVersion}"
+    runtime "org.slf4j:log4j-over-slf4j:${slf4jVersion}"
+    runtime "org.springframework.security:spring-security-config:${springSecurityVersion}"
+    runtime "com.thoughtworks.xstream:xstream:${xstreamVersion}"
+
+    /*
+     * The HSQL driver jar should always be included with 'vanilla' uPortal
+     * from Apereo;  aditional JDBC drivers may be added in the overlay process
+     */
+    runtime "org.hsqldb:hsqldb:${hsqldbVersion}"
+
+    webjars "org.webjars.npm:bootstrap:${bootstrapVersion}"
+}
+
+node {
+    version = nodejsVersion
+    download = true
+}
+
+// Support for filtering properties files
+import org.apache.tools.ant.filters.ReplaceTokens
+processResources {
+    filter(ReplaceTokens, tokens:['projectVersion': project.version])
+}
+
+task prepareSkinResources {
+    // Unpack WebJars (part of the skin)
+    configurations.webjars.allDependencies.each {
+        String webjarName = it.name
+        String webjarVersion = it.version
+        String webjarFile = configurations.webjars.files(it).getAt(0)
+        // Stage 1:  Exploded WebJar
+        doLast {
+            copy {
+                from zipTree(webjarFile)
+                into "${buildDir}/webjars/${webjarName}-${webjarVersion}"
+            }
+        }
+        // Stage 2:  Contents of the WebJar included in the skin
+        doLast {
+            copy {
+                from "${buildDir}/webjars/${webjarName}-${webjarVersion}/META-INF/resources/webjars/${webjarName}/${webjarVersion}"
+                into "${buildDir}/generated-sources/skin/main/webapp/webjars/${webjarName}"
+            }
+        }
+    }
+    // Add Respondr LESS sources
+    doLast {
+        copy {
+            from 'src/main/webapp/media/skins/respondr'
+            into "${buildDir}/generated-sources/skin/main/webapp/media/skins/respondr"
+        }
+    }
+}
+
+import org.jasig.resource.aggr.AggregationRequest
+import org.jasig.resource.aggr.ResourcesAggregator
+import org.jasig.resource.aggr.ResourcesAggregatorImpl
+task aggregateRespondrSkins {
+    doLast {
+        final ResourcesAggregator aggr = new ResourcesAggregatorImpl();
+        aggr.setDisplayJsWarnings(false);
+
+        final File resourcesXmlFile = new File(projectDir, 'src/main/webapp/media/skins/respondr/defaultSkin/skin.xml');
+        final File fullOutputDirectory = new File(buildDir, 'generated-sources/skin/main/webapp/media/skins/respondr/defaultSkin');
+        final File sharedJavaScriptDirectory = new File(buildDir, 'generated-sources/skin/main/webapp/media/skins/respondr');
+
+        // Provide the paths we evaluated in DEBUG logging
+        logger.debug("resourcesXmlFile=${resourcesXmlFile}");
+        logger.debug("fullOutputDirectory=${fullOutputDirectory}");
+        logger.debug("sharedJavaScriptDirectory=${sharedJavaScriptDirectory}");
+
+        final AggregationRequest aggregationRequest = new AggregationRequest();
+        aggregationRequest
+                .setResourcesXml(resourcesXmlFile)
+                .setOutputBaseDirectory(fullOutputDirectory)
+                .addAdditionalSourceDirectory(fullOutputDirectory)
+                .setSharedJavaScriptDirectory(sharedJavaScriptDirectory);
+        aggr.aggregate(aggregationRequest);
+
+    }
+}
+
+// Generate CSS for Respondr skins
+project.tasks.getByName('npm_run_compile-less').dependsOn(prepareSkinResources)
+aggregateRespondrSkins.dependsOn('npm_run_compile-less')
+processResources.dependsOn(aggregateRespondrSkins)
+
+war {
+    // Add generated CSS for Respondr skins to the war file
+    with {
+        from "${buildDir}/generated-sources/skin/main/webapp"
+        into '/'
+    }
+}

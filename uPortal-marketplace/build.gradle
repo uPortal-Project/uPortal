@@ -1,0 +1,10 @@
+description = "Apereo uPortal Marketplace"
+
+dependencies {
+    compile project(':uPortal-layout:uPortal-layout-core')
+    compile project(':uPortal-security:uPortal-security-core')
+
+    testCompile "org.apache.portals.pluto:pluto-container-api:${plutoVersion}"
+
+    compileOnly "org.apache.portals.pluto:pluto-container-api:${plutoVersion}"
+}

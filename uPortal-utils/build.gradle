@@ -1,11 +1,10 @@
-description = "Apereo uPortal Utilities"
-
-dependencies {
-    compile "org.apache.commons:commons-lang3:${commonsLang3Version}"
-    compile "org.slf4j:jcl-over-slf4j:${slf4jVersion}"
-    compile "org.springframework:spring-beans:${springVersion}"
-    compile "org.springframework:spring-context:${springVersion}"
-    compile "org.springframework:spring-web:${springVersion}"
-
-    provided "${servletApiDependency}"
+/*
+ * Skip installing and uploading this level of the hierarchy;  it's merely a convenient grouping
+ * for submodules.
+ */
+install {
+    enabled = false
+}
+uploadArchives {
+    enabled = false
 }

@@ -1,0 +1,126 @@
+<?xml version="1.0"?>
+<!--
+
+    Licensed to Apereo under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Apereo licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<!--
+This list of component group services is processed by the composite, or "root" service as it assembles itself.  Each service element has 2 required elements: name and service_factory.  The values of all service elements are delivered to the service_factory.
+-->
+
+<servicelist defaultService="local"
+             compositeFactory="org.apereo.portal.groups.ReferenceCompositeGroupServiceFactory"
+             nodeSeparator=".">
+  <!-- IMPORTANT: The local service is REQUIRED for uPortal to correctly function, do not comment this service out -->
+  <service>
+    <name>local</name>
+    <service_factory>org.apereo.portal.groups.ReferenceIndividualGroupServiceFactory</service_factory>
+    <entity_store_factory>org.apereo.portal.groups.ReferenceEntityStoreFactory</entity_store_factory>
+    <group_store_factory>org.apereo.portal.groups.ReferenceEntityGroupStoreFactory</group_store_factory>
+    <entity_searcher_factory>org.apereo.portal.groups.ReferenceEntitySearcherFactory</entity_searcher_factory>
+    <internally_managed>true</internally_managed>
+    <caching_enabled>true</caching_enabled>
+  </service>
+
+<!--
+ | Configure your person attributes groups for the entity implementation of PAGS.  PAGS data is defined in
+ | *.pags-group.xml files that are imported into the database.
+ |
+ | IMPORTANT: The pags service is REQUIRED for uPortal to correctly function.  Do not comment out
+ | this service unless you uncomment the XML PAGS implementation below.
+ |
+ | Note: caching is disabled because group management does not go through this service. Relying on caching
+ | in the JPA layer.
+ +-->
+  <service>
+    <name>pags</name>
+    <service_factory>org.apereo.portal.groups.ReferenceIndividualGroupServiceFactory</service_factory>
+    <entity_store_factory>org.apereo.portal.groups.pags.dao.EntityPersonAttributesEntityStoreFactory</entity_store_factory>
+    <group_store_factory>org.apereo.portal.groups.pags.dao.EntityPersonAttributesGroupStoreFactory</group_store_factory>
+    <entity_searcher_factory>org.apereo.portal.groups.pags.dao.EntityPersonAttributesEntitySearcherFactory</entity_searcher_factory>
+    <internally_managed>false</internally_managed>
+    <caching_enabled>false</caching_enabled>
+  </service>
+
+<!--  Uncomment to configure an LDAP group service component.  Be sure to edit LDAPGroupStoreConfig.xml with your values. -->
+<!--
+  <service>
+    <name>ldap</name>
+    <service_factory>org.apereo.portal.groups.ReferenceIndividualGroupServiceFactory</service_factory>
+    <entity_store_factory>org.apereo.portal.groups.ldap.LDAPEntityStoreFactory</entity_store_factory>
+    <group_store_factory>org.apereo.portal.groups.ldap.LDAPGroupStoreFactory</group_store_factory>
+    <entity_searcher_factory>org.apereo.portal.groups.ldap.LDAPEntitySearcherFactory</entity_searcher_factory>
+    <internally_managed>false</internally_managed>
+    <caching_enabled>false</caching_enabled>
+  </service>
+-->
+
+<!-- Uncomment to configure a file system group service component.  Change groupsRoot as appropriate. -->
+<!--
+  <service groupsRoot="C:/groups">
+    <name>filesystem</name>
+    <service_factory>org.apereo.portal.groups.ReferenceIndividualGroupServiceFactory</service_factory>
+    <entity_store_factory>org.apereo.portal.groups.filesystem.FileSystemGroupStoreFactory</entity_store_factory>
+    <group_store_factory>org.apereo.portal.groups.filesystem.FileSystemGroupStoreFactory</group_store_factory>
+    <entity_searcher_factory>org.apereo.portal.groups.filesystem.FileSystemEntitySearcherFactory</entity_searcher_factory>
+    <internally_managed>false</internally_managed>
+    <caching_enabled>false</caching_enabled>
+  </service>
+-->
+
+<!--
+ | Uncomment to configure a SmartLdap group service component.  Be sure to edit
+ | SmartLdapGroupStoreConfig.xml to apply your settings.
+ |
+ | SmartLdapGroupStore is a GaP implementation that recognizes groups defined in
+ | an LDAP directory and makes them available in the portal.  You can read about
+ | this technology here:  https://wiki.jasig.org/display/UPM43/LDAP+User+Attribute+Sources
+ +-->
+<!--
+  <service>
+    <name>smartldap</name>
+    <service_factory>org.apereo.portal.groups.ReferenceIndividualGroupServiceFactory</service_factory>
+    <entity_store_factory>org.apereo.portal.groups.smartldap.SmartLdapEntityStore$Factory</entity_store_factory>
+    <group_store_factory>org.apereo.portal.groups.smartldap.SmartLdapGroupStore$Factory</group_store_factory>
+    <entity_searcher_factory>org.apereo.portal.groups.smartldap.SmartLdapEntitySearcher$Factory</entity_searcher_factory>
+    <internally_managed>false</internally_managed>
+    <caching_enabled>true</caching_enabled>
+  </service>
+-->
+
+<!--
+ | Uncomment to configure a Grouper group service component.  Be sure to edit
+ | grouper.client.properties and grouper.lib.properties to apply your settings.
+ |
+ | GrouperEntityGroupStore is a GaP implementation that recognizes groups defined
+ | on a Grouper server and makes them available in the portal.  You can read about
+ | this technology here:  https://wiki.jasig.org/display/UPM43/Grouper
+ +-->
+<!--
+  <service>
+    <name>grouper</name>
+    <service_factory>org.apereo.portal.groups.ReferenceIndividualGroupServiceFactory</service_factory>
+    <entity_store_factory>org.apereo.portal.groups.grouper.GrouperEntityStoreFactory</entity_store_factory>
+    <group_store_factory>org.apereo.portal.groups.grouper.GrouperEntityGroupStoreFactory</group_store_factory>
+    <entity_searcher_factory>org.apereo.portal.groups.grouper.GrouperEntitySearcherFactory</entity_searcher_factory>
+    <internally_managed>false</internally_managed>
+    <caching_enabled>true</caching_enabled>
+  </service>
+-->
+
+</servicelist>

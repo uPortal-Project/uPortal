@@ -1,9 +1,0 @@
-description = "Apereo uPortal Soffit Renderer"
-
-dependencies {
-    compile project(':uPortal-soffit')
-
-    compile "org.springframework:spring-webmvc:${springVersion}"
-
-    provided "${servletApiDependency}"
-}

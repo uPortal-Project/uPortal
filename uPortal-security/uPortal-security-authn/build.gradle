@@ -1,0 +1,15 @@
+description = "Apereo uPortal Security Authentication"
+
+dependencies {
+    compile project(':uPortal-persondir')
+    compile project(':uPortal-security:uPortal-security-core')
+    compile project(':uPortal-spring')
+
+    compile("org.jasig.cas.client:cas-client-core:${casClientVersion}") {
+        exclude group: 'org.opensaml', module: 'opensaml'
+    }
+
+    compileOnly "org.apache.portals.pluto:pluto-container-api:${plutoVersion}"
+    compileOnly "${portletApiDependency}"
+    compileOnly "${servletApiDependency}"
+}

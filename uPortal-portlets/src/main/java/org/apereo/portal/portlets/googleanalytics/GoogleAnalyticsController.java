@@ -1,0 +1,162 @@
+/**
+ * Licensed to Apereo under one or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information regarding copyright ownership. Apereo
+ * licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at the
+ * following location:
+ *
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apereo.portal.portlets.googleanalytics;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import javax.portlet.PortletPreferences;
+import javax.portlet.RenderRequest;
+import javax.servlet.http.HttpServletRequest;
+import org.apereo.portal.EntityIdentifier;
+import org.apereo.portal.groups.IEntityGroup;
+import org.apereo.portal.groups.IGroupMember;
+import org.apereo.portal.portlets.PortletPreferencesJsonDao;
+import org.apereo.portal.security.IPerson;
+import org.apereo.portal.security.IPersonManager;
+import org.apereo.portal.services.GroupService;
+import org.apereo.portal.url.IPortalRequestUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.portlet.bind.annotation.RenderMapping;
+
+@Controller
+@RequestMapping("VIEW")
+public class GoogleAnalyticsController {
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
+
+    private PortletPreferencesJsonDao portletPreferencesJsonDao;
+
+    @Autowired private IPortalRequestUtils portalRequestUtils;
+
+    @Autowired private IPersonManager personManager;
+
+    @Autowired
+    public void setPortletPreferencesJsonDao(PortletPreferencesJsonDao portletPreferencesJsonDao) {
+        this.portletPreferencesJsonDao = portletPreferencesJsonDao;
+    }
+
+    @RenderMapping
+    public String renderAnalyticsHeader(RenderRequest request, ModelMap model) throws IOException {
+
+        // For which user account are we logging portal activity?
+        final HttpServletRequest req = portalRequestUtils.getCurrentPortalRequest();
+        final IPerson person = personManager.getPerson(req);
+        final String username = person.getUserName();
+
+        final IGroupMember groupMember = GroupService.getGroupMember(username, IPerson.class);
+        final Map<String, Boolean> isMemberCache = new HashMap<>();
+
+        final PortletPreferences preferences = request.getPreferences();
+        final JsonNode config =
+                this.portletPreferencesJsonDao.getJsonNode(
+                        preferences, GoogleAnalyticsConfigController.CONFIG_PREF_NAME);
+
+        final JsonNode propertyConfig = config.get("defaultConfig");
+        this.filterAnalyticsGroups(groupMember, propertyConfig, isMemberCache);
+
+        final JsonNode hosts = config.get("hosts");
+        if (hosts != null) {
+            for (final Iterator<JsonNode> hostsItr = hosts.elements(); hostsItr.hasNext(); ) {
+                final JsonNode institution = hostsItr.next();
+                this.filterAnalyticsGroups(groupMember, institution, isMemberCache);
+            }
+        }
+
+        model.put("data", config);
+
+        if (propertyConfig == null || propertyConfig.get("propertyId") == null) {
+            return "jsp/GoogleAnalytics/noop";
+        } else {
+            return "jsp/GoogleAnalytics/init";
+        }
+    }
+
+    /** Remove groups from the AnalyticsConfig that the current user is not a member of */
+    private void filterAnalyticsGroups(
+            IGroupMember groupMember, JsonNode config, Map<String, Boolean> isMemberCache) {
+        if (config == null) {
+            return;
+        }
+
+        final JsonNode dimensionGroups = config.get("dimensionGroups");
+        if (dimensionGroups == null) {
+            return;
+        }
+
+        for (final Iterator<JsonNode> groupItr = dimensionGroups.elements(); groupItr.hasNext(); ) {
+            final JsonNode group = groupItr.next();
+
+            final JsonNode valueNode = group.get("value");
+            if (valueNode == null) {
+                continue;
+            }
+
+            final String groupName = valueNode.asText();
+
+            Boolean isMember = isMemberCache.get(groupName);
+            if (isMember == null) {
+                isMember = isMember(groupMember, groupName);
+                isMemberCache.put(groupName, isMember);
+            }
+
+            if (!isMember) {
+                groupItr.remove();
+            }
+        }
+    }
+
+    /** Check if the user is a member of the specified group name */
+    private boolean isMember(IGroupMember groupMember, String groupName) {
+        try {
+            IEntityGroup group = GroupService.findGroup(groupName);
+            if (group != null) {
+                return groupMember.isDeepMemberOf(group);
+            }
+
+            final EntityIdentifier[] results =
+                    GroupService.searchForGroups(groupName, GroupService.IS, IPerson.class);
+            if (results == null || results.length == 0) {
+                this.logger.warn(
+                        "No portal group found for '{}' no users will be placed in that group for analytics",
+                        groupName);
+                return false;
+            }
+
+            if (results.length > 1) {
+                this.logger.warn(
+                        "{} groups were found for groupName '{}'. The first result will be used.",
+                        results.length,
+                        groupName);
+            }
+
+            group = (IEntityGroup) GroupService.getGroupMember(results[0]);
+            return groupMember.isDeepMemberOf(group);
+        } catch (Exception e) {
+            this.logger.warn(
+                    "Failed to determine if {} is a member of {}, returning false",
+                    groupMember,
+                    groupName,
+                    e);
+            return false;
+        }
+    }
+}

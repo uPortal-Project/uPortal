@@ -1,0 +1,41 @@
+/**
+ * Styles google analytics configuration
+ * @see jsp/GoogleAnalytics
+ */
+.google-analytics-config {
+    .analytics-host {
+        border-style: solid;
+        border-width: thin;
+        padding: 1em;
+        max-width: 600px;
+    }
+
+    .setting-container {
+        font-size: 16px;
+
+        .setting.destroy {
+            right: 5px;
+            top: 20px;
+            display: none;
+        }
+
+        &:hover .setting.destroy {
+            display: inline-block;
+        }
+    }
+
+    .destroy {
+        cursor: pointer;
+        width: 15px;
+        height: 15px;
+        background: url(${renderRequest.contextPath}/media/skins/icons/destroy.png) no-repeat;
+
+        &:hover {
+            background-position: 0 -15px;
+        }
+
+        &.property {
+            float: right;
+        }
+    }
+}

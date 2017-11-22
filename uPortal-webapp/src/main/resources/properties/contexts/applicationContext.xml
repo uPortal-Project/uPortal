@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to Apereo under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Apereo licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
+
+    <aop:aspectj-autoproxy/>
+
+    <context:annotation-config/>
+    <context:component-scan base-package="org.apereo.portal.portlets" use-default-filters="false">
+        <context:include-filter type="assignable" expression="org.apereo.portal.portlets.PortletPreferencesJsonDao" />
+        <context:include-filter type="assignable" expression="org.apereo.portal.portlets.account.UserAccountHelper" />
+        <context:include-filter type="assignable" expression="org.apereo.portal.portlets.account.IPasswordResetNotification"/>
+        <context:include-filter type="assignable" expression="org.apereo.portal.portlets.login.LoginPortletHelper"/>
+        <context:include-filter type="assignable" expression="org.apereo.portal.portlets.portletadmin.xmlsupport.IChannelPublishingDefinitionDao"/>
+        <context:include-filter type="assignable" expression="org.apereo.portal.portlets.search.PortletRegistryUtil"/>
+    </context:component-scan>
+    <context:component-scan base-package="org.apereo.portal" use-default-filters="false">
+        <context:include-filter type="regex" expression=".*\.rendering\.PortletEventCoordinatationService"/>
+    </context:component-scan>
+    <context:component-scan base-package="org.apereo.portal">
+        <context:exclude-filter type="regex" expression="org\.apereo\.portal\.json\.rendering\..+"/>
+        <context:exclude-filter type="regex" expression="org\.apereo\.portal\.layout\.dlm\.remoting\..+"/>
+        <context:exclude-filter type="regex" expression="org\.apereo\.portal\.portlets\..+"/>
+        <context:exclude-filter type="regex" expression="org\.apereo\.portal\.redirect\..+"/>
+        <context:exclude-filter type="regex" expression="org\.apereo\.portal\.rendering\..+"/>
+        <context:exclude-filter type="regex" expression="org\.apereo\.portal\.rest\..+"/>
+        <context:exclude-filter type="regex" expression="org\.apereo\.portal\.security\.mvc\..+"/>
+        <context:exclude-filter type="regex" expression="org\.apereo\.portal\.security\.remoting\..+"/>
+    </context:component-scan>
+
+    <bean id="primaryPropertyPlaceholderConfigurer" class="org.springframework.context.support.PortalPropertySourcesPlaceholderConfigurer">
+        <property name="locations">
+            <list>
+                <value>classpath:/properties/portal.properties</value>
+                <value>classpath:/properties/rdbm.properties</value>
+                <value>classpath:/properties/security.properties</value>
+                <!--
+                 | The following optional files allow deployers to set or override most uPortal
+                 | configuration settings in a manner that is outside the footprint of the
+                 | build/deploy cycle and SCM.
+                 |
+                 | Reasons for choosing that may include:
+                 |   - Desire to keep sensitive information out of your Git repository
+                 |   - Ability to change some common settings without a full build and deploy cycle
+                 |   - Building a WAR/EAR that is environment-independent
+                 |
+                 | Any property defined in the above files that is referenced in the Spring context
+                 | may be overridden in one (or both) of these files.  Later files override earlier
+                 | files.
+                 |
+                 | The conventional location of ${portal.home} is ${catalina.base}/portal;  but you
+                 | can (typically) override that location using a PORTAL_HOME environment variable.
+                 | (Ultimately it depends on your setenv.sh or setenv.bat file.)
+                 |
+                 | The first file (global.properties) may contain properties that are shared with
+                 | other modules (e.g. portlets) in Tomcat.  Several Apereo portlets source
+                 | global.properties automatically.  The second file (uPortal.properties) is
+                 | (should be) sourced by uPortal exclusively.
+                 +-->
+                <value>file:${portal.home}/global.properties</value>
+                <value>file:${portal.home}/uPortal.properties</value>
+            </list>
+        </property>
+    </bean>
+
+    <!-- Resolver that can be used to dynamically look up property values at run-time -->
+    <bean id="propertyResolver" factory-bean="primaryPropertyPlaceholderConfigurer" factory-method="getPropertyResolver"/>
+
+    <!-- Need to capture this value in a bean for map key, using el -->
+    <bean id="hibernateDialect" class="java.lang.String">
+        <constructor-arg value="${hibernate.dialect}"/>
+    </bean>
+
+    <!-- Define default JGROUPS DDL used by most databases -->
+    <bean id="jgroupsDefaultInitSql" class="java.lang.String">
+        <constructor-arg>
+            <value>
+                CREATE TABLE JGROUPSPING (
+                    own_addr varchar(200) NOT NULL,
+                    cluster_name varchar(200) NOT NULL,
+                    ping_data blob DEFAULT NULL,
+                    PRIMARY KEY (own_addr, cluster_name)
+                )
+            </value>
+        </constructor-arg>
+    </bean>
+
+    <!-- And JGROUPS DDL used by MS SQL Server -->
+    <bean id="jgroupsSqlServerInitSql" class="java.lang.String">
+        <constructor-arg>
+            <value>
+                CREATE TABLE JGROUPSPING (
+                    own_addr varchar(200) NOT NULL,
+                    cluster_name varchar(200) NOT NULL,
+                    ping_data varbinary(5000) DEFAULT NULL,
+                    PRIMARY KEY (own_addr, cluster_name)
+                )
+            </value>
+        </constructor-arg>
+    </bean>
+
+    <!-- And JGROUPS DDL used by PostgresSQL Server -->
+    <bean id="jgroupsPostgreSQLInitSql" class="java.lang.String">
+        <constructor-arg>
+            <value>
+                CREATE TABLE IF NOT EXISTS JGROUPSPING (
+                    own_addr varchar(200) NOT NULL,
+                    cluster_name varchar(200) NOT NULL,
+                    ping_data BYTEA DEFAULT NULL,
+                    PRIMARY KEY (own_addr, cluster_name)
+                )
+            </value>
+        </constructor-arg>
+    </bean>
+
+    <!-- Map of JGroups DDL by hibernate.dialect (all Hibernate dialects not listed here will use jgroupsDefaultInitSql) -->
+    <util:map id="jgroupsInitSqlMap" map-class="java.util.HashMap">
+        <!-- Most RDBMS platforms use standard DDL, but MS SQL Server uses something different -->
+        <entry key="org.hibernate.dialect.SQLServerDialect" value="#{@jgroupsSqlServerInitSql}" />
+        <entry key="org.hibernate.dialect.SQLServer2008Dialect" value="#{@jgroupsSqlServerInitSql}" />
+        <entry key="org.hibernate.dialect.PostgreSQLDialect" value="#{@jgroupsPostgreSQLInitSql}" />
+        <entry key="org.hibernate.dialect.PostgresPlusDialect" value="#{@jgroupsPostgreSQLInitSql}" />
+    </util:map>
+
+    <!-- Add properties for jgroups.xml as that is not a Spring context -->
+    <bean id="systemPropertySetter" class="org.apereo.portal.spring.context.SystemPropertySetter">
+        <property name="systemProperties">
+            <props>
+                <prop key="uPortal.cacheManager.jgroups.fd_sock.start_port">${uPortal.cacheManager.jgroups.fd_sock.start_port:}</prop>
+                <prop key="uPortal.cacheManager.jgroups.tcp.bind_port">${uPortal.cacheManager.jgroups.tcp.bind_port:}</prop>
+                <prop key="hibernate.connection.driver_class">${hibernate.connection.driver_class}</prop>
+                <prop key="hibernate.connection.url">${hibernate.connection.url}</prop>
+                <prop key="hibernate.connection.username">${hibernate.connection.username}</prop>
+                <prop key="hibernate.connection.password">${hibernate.connection.password}</prop>
+                <prop key="jgroupsInitSql">#{@jgroupsInitSqlMap[@hibernateDialect] != null ? @jgroupsInitSqlMap[@hibernateDialect] : @jgroupsDefaultInitSql}</prop>
+                <prop key="org.apereo.portal.jgroups.auth.token">${org.apereo.portal.jgroups.auth.token:DEV-345B45TB3}</prop>
+            </props>
+        </property>
+    </bean>
+
+    <util:map id="productVersions" value-type="org.apereo.portal.version.om.Version">
+    	<entry value="4.1.0">
+    		<key><util:constant static-field="org.apereo.portal.jpa.BasePortalJpaDao.PERSISTENCE_UNIT_NAME"/></key>
+    	</entry>
+    	<entry value="4.1.0">
+    		<key><util:constant static-field="org.apereo.portal.jpa.BaseRawEventsJpaDao.PERSISTENCE_UNIT_NAME"/></key>
+    	</entry>
+    	<entry value="4.1.0">
+    		<key><util:constant static-field="org.apereo.portal.jpa.BaseAggrEventsJpaDao.PERSISTENCE_UNIT_NAME"/></key>
+    	</entry>
+    </util:map>
+
+    <bean class="org.springframework.beans.factory.annotation.RequiredAnnotationBeanPostProcessor" lazy-init="false" />
+
+    <bean id="portalPropertyEditorRegistrar" class="org.apereo.portal.spring.properties.PortalPropertyEditorRegistrar">
+        <property name="propertyEditors">
+            <map key-type="java.lang.Class">
+                <entry key="javax.portlet.PortletMode"><bean class="org.apereo.portal.spring.properties.PortletModeEditor" /></entry>
+                <entry key="javax.portlet.WindowState"><bean class="org.apereo.portal.spring.properties.WindowStateEditor" /></entry>
+                <entry key="org.joda.time.ReadablePeriod"><bean class="org.apereo.portal.spring.properties.ReadablePeriodEditor" /></entry>
+                <entry key="org.joda.time.ReadableDuration"><bean class="org.apereo.portal.spring.properties.ReadableDurationEditor" /></entry>
+                <entry key="org.apereo.portal.version.om.Version"><bean class="org.apereo.portal.spring.properties.VersionEditor"/></entry>
+                <entry key="com.fasterxml.jackson.databind.JsonNode">
+                    <bean class="org.apereo.portal.spring.properties.MappingJackson2JsonTreeEditor">
+                        <property name="objectMapper" ref="objectMapper" />
+                    </bean>
+                </entry>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="customEditorConfigurer" class="org.springframework.beans.factory.config.CustomEditorConfigurer">
+        <property name="propertyEditorRegistrars">
+            <list>
+                <ref bean="portalPropertyEditorRegistrar"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean class="org.springframework.beans.factory.config.CustomScopeConfigurer">
+        <property name="scopes">
+            <map>
+                <entry key="globalSession">
+                    <bean class="org.apereo.portal.spring.web.context.support.FailsafeSingletonScope">
+                        <constructor-arg>
+                            <bean class="org.apereo.portal.spring.web.context.support.PortalSessionScope">
+                                <property name="portalRequestUtils" ref="portalRequestUtils" />
+                            </bean>
+                        </constructor-arg>
+                    </bean>
+                </entry>
+                <entry key="session">
+                    <bean class="org.apereo.portal.spring.web.context.support.FailsafeSingletonScope">
+                        <constructor-arg>
+                            <bean class="org.springframework.web.context.request.SessionScope" />
+                        </constructor-arg>
+                    </bean>
+                </entry>
+                <entry key="request">
+                    <bean class="org.apereo.portal.spring.web.context.support.FailsafeSingletonScope">
+                        <constructor-arg>
+                            <bean class="org.springframework.web.context.request.RequestScope" />
+                        </constructor-arg>
+                    </bean>
+                </entry>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="objectMapper" class="org.apereo.portal.spring.beans.factory.ObjectMapperFactoryBean" />
+</beans>

@@ -1,0 +1,353 @@
+/**
+ * Licensed to Apereo under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work
+ * for additional information regarding copyright ownership.
+ * Apereo licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+@portletWrapperBorderRadius: 5px;
+
+#portalPageBody {
+  background-color: @content-background-color;
+  min-height: 300px;
+
+  /* Need for the offcanvas open effect */
+  position: relative;
+
+  /* Do not change this z-index value without side effects on bootstrap modal for rate this portlet see comments and further references in defaultSkin/skin.less */
+  z-index: auto;
+
+  // add background image in a pseudo dom tag
+  &::before {
+    // empty content
+    content: '';
+
+    // background positioning and sizing
+    display: block;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+
+    // add image and filter(s)
+    background-image: @portal-page-body-background-image;
+    filter: @portal-page-body-background-image-filter;
+  }
+
+  .portal-page-column {
+    .portal-page-column-inner {
+      min-height: 100px;
+
+      section {
+        margin-bottom: 20px;
+      }
+    }
+  }
+}
+
+/** Page Message for returned action messages */
+#portalPageBodyMessage {
+  display: none;
+  margin-bottom: 1em;
+  .border-radius(7px);
+}
+
+#portalPageBodyMessage.error {
+  background-color: @color2-lighter;
+  .border(@color2-dark);
+}
+
+#portalPageBodyMessage.warn {
+  background-color: @color2-lighter;
+  .border(@color2-dark);
+}
+
+#portalPageBodyMessage.success {
+  background-color: @color2-lighter;
+  .border(@color2-dark);
+}
+
+#portalPageBodyMessage p {
+  font-weight: bold;
+  margin-bottom: 2px;
+  text-align: center;
+}
+
+.portlet {
+  margin-bottom: 2px;
+  padding: 10px;
+}
+
+.portlet-title {
+  .border-radiuses-top(5px);
+
+  /* title text */
+  & > a {
+    display: block;
+    width: 80%; // fallback for browsers that don't support calc
+    width: calc(~"100% - 85px"); // tilde is used to escape string, preventing less from mangling math
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+.portlet-content {
+  color: @grayscale8;
+  padding: 0 20px 20px;
+}
+
+.borderless {
+  background: @grayscale10;
+  border-color: @black;
+
+  .portlet-header {
+    display: none;
+  }
+
+  .portlet-content {
+    color: @grayscale2;
+    padding: 20px;
+  }
+}
+
+section h1 {
+  font-size: 135%;
+}
+
+section h2 {
+  font-size: 125%;
+}
+
+section h3 {
+  font-size: 115%;
+}
+
+section h4 {
+  font-size: 105%;
+}
+
+.up-portlet-wrapper-inner {
+  margin: 10px 0;
+}
+
+.up-portlet-titlebar.up-standard-chrome {
+  background-color: @portlet-titlebar-background-color; /* Old browsers */
+  position: relative;
+
+  #gradient > .vertical(lighten(@portlet-titlebar-background-color, 5%), darken(@portlet-titlebar-background-color, 10%), 0%, 100%);
+  .border(@portlet-header-border-color);
+  .border-radiuses-top(@portlet-border-radius);
+
+  border-bottom: none;
+
+  > h2 {
+    font-size: 14px;
+    padding: 7px;
+    margin: 0;
+    list-style: none;
+    line-height: 20px;
+
+    > a {
+      color: @portlet-titlebar-link-color;
+
+      &:hover {
+        color: darken(@portlet-titlebar-link-color, 20%);
+      }
+    }
+  }
+
+  .portlet-controls {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 0;
+
+    .portlet-options-menu > a {
+      color: @portlet-options-link-color;
+      font-weight: normal;
+      padding: 9px;
+      padding-right: 15px;
+
+      .caret {
+        border-top-color: @portlet-options-link-color;
+      }
+
+      &:hover {
+        color: @portlet-options-link-hover-color;
+
+        .caret {
+          border-top-color: @portlet-options-link-hover-color;
+        }
+      }
+    }
+
+    .locked-icon {
+      display: inline-block;
+      font-size: 1.75rem;
+    }
+
+    .grab-handle {
+      display: inline-block;
+      position: relative;
+      top: 3px;
+      font-size: 18px;
+      margin-left: 3px;
+    }
+  }
+}
+
+.up-portlet-content-wrapper {
+  background-color: @white;
+  overflow: hidden;
+  padding: 10px;
+
+  .border(@portlet-border-color);
+  .border-radiuses-bottom(@portletWrapperBorderRadius);
+
+  border-top: none;
+
+  .stacktrace {
+    text-align: left;
+  }
+}
+
+.btn-skin,
+a.btn-skin,
+button.btn-skin {
+  .pretty-buttons(@btn-skin-text-color, @btn-skin-background-color);
+}
+
+.btn-skin-alt,
+a.btn-skin-alt,
+button.btn-skin-alt {
+  .pretty-buttons(@btn-skin-alt-text-color, @btn-skin-alt-background-color);
+
+  .btn-link {
+    color: @btn-skin-alt-text-color;
+  }
+}
+
+.btn-inline-group {
+  margin: 10px 0;
+}
+
+#portal-sticky-header {
+  margin-top: @detached-header-height;
+
+  .navbar {
+    background: @detached-header-backbround-color;
+    min-height: @detached-header-height;
+    max-height: @detached-header-height;
+    padding-top: 5px;
+
+    a {
+      color: @detached-header-link-color;
+    }
+
+    .navbar-header {
+      font-size: 16pt;
+    }
+  }
+
+  .portal-global {
+    padding: 0;
+  }
+}
+
+#portalTip,
+#region-customize {
+  display: none;
+}
+
+section.emergency-alert {
+  margin-bottom: 1em;
+  border-radius: 5px;
+
+  .view-alert {
+    padding-top: 15px !important;
+    padding-bottom: 30px !important;
+  }
+}
+
+#config-lightbox .modal-dialog {
+  position: initial;
+  width: auto;
+  max-width: 1000px;
+  min-width: 600px;
+}
+
+#config-lightbox .loading {
+  width: 100%;
+  height: 100px;
+  background-image: url('../common/images/loading.gif');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100px;
+}
+
+/* ==========================================================================
+ Responsive Design
+ ========================================================================== */
+
+/*
+* Breakpoints: are defined in bootstrap/variables.less
+*/
+
+/*
+* When the screen size is larger than small screen size
+*/
+
+@media only screen and (min-width: @screen-sm-min) {
+  #portalTip,
+  #region-customize {
+    display: block;
+  }
+
+  .portlet {
+    margin-bottom: 10px;
+    .border-radius;
+  }
+}
+
+/* large screens show all 6 columns. */
+@media only screen and (min-width: @screen-sm-min) {
+  .portal-page-column.col-md-2 {
+    width: percentage(1 / 6);
+    float: left;
+  }
+}
+
+@media only screen and (max-width: @screen-xs-max) {
+  /* collapse from 6 to 3 columns */
+  .portal-page-column.col-md-2 {
+    width: percentage(1 / 3);
+    float: left;
+  }
+}
+
+// average between small and extra small
+@media only screen and (max-width: (@screen-xs-max + @screen-xs-min) / 2) {
+  /* collapse from 6 to 2 columns */
+  .portal-page-column.col-md-2 {
+    width: percentage(1 / 2);
+    float: left;
+  }
+}
+
+@media only screen and (max-width: @screen-xs-min / 2) {
+  /* on really small screen collapse to a single column */
+  .portal-page-column.col-md-2 {
+    width: percentage(1 / 1);
+  }
+}

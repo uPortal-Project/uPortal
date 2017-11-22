@@ -1,0 +1,14 @@
+description = "Apereo uPortal Security Core"
+
+dependencies {
+    compile project(':uPortal-content:uPortal-content-portlet')
+    compile project(':uPortal-groups:uPortal-groups-core')
+    compile project(':uPortal-i18n')
+
+    compile "org.jasypt:jasypt:${jasyptVersion}"
+
+    testCompile "${servletApiDependency}"
+
+    compileOnly "${portletApiDependency}"
+    compileOnly "${servletApiDependency}"
+}

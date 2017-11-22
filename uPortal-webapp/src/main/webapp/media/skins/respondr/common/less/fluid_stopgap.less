@@ -1,0 +1,133 @@
+/**
+ * Licensed to Apereo under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work
+ * for additional information regarding copyright ownership.
+ * Apereo licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+.fl-widget .fl-widget-content {
+  zoom: 1;
+}
+
+.portlet .flc-pager-top {
+  margin-bottom: 0.5em;
+}
+
+.flc-pager-links a {
+  vertical-align: middle;
+}
+
+.email-list .flc-pager-links .flc-pager-pageLink a {
+  text-decoration: underline;
+  color: #5a95cf;
+}
+
+.portlet .fl-pager .fl-pager-ui li {
+  list-style-type: none;
+  display: inline-block;
+
+  &.fl-pager-disabled {
+    cursor: default !important;
+
+    a {
+      color: @grayscale7 !important;
+      cursor: default !important;
+
+      &:hover {
+        text-decoration: none;
+      }
+    }
+  }
+}
+
+.fl-pager caption {
+  padding: 0.63em 0;
+  margin-bottom: 0;
+}
+
+.fl-pager th {
+  cursor: pointer;
+}
+
+.fl-pager-controls {
+  padding: 0.69em;
+}
+
+.flc-pager-links a {
+  vertical-align: middle;
+}
+
+.portlet .flc-pager-page-size,
+#allFolders {
+  margin-top: 10px;
+}
+
+.portlet .flc-pager-page-size {
+  width: 60px;
+}
+
+#allFolders {
+  width: 150px;
+}
+
+.fl-theme-mist th {
+  border: 0.1em solid #5a95cf;
+  background-color: #dfefff;
+}
+
+.fl-col-side.fl-force-left.span4 {
+  margin-left: 0;
+}
+
+.fl-col-flex2 .fl-col {
+  width: 48.85%;
+  margin-left: 0.25%;
+  margin-right: 0.25%;
+  padding-left: 0.25%;
+  padding-right: 0.25%;
+}
+
+.fl-col-flex2,
+.fl-col-flex3,
+.fl-col-flex4,
+.fl-col-flex5 {
+  overflow: auto;
+  zoom: 1;
+}
+
+.fl-col {
+  float: left;
+  display: inline;
+}
+
+.fl-offScreen-hidden {
+  height: 1px;
+  left: -10000px;
+  overflow: hidden;
+  position: absolute;
+  top: auto;
+  width: 1px;
+}
+
+.fl-inlineEdit-editModeInstruction {
+  display: none !important;
+}
+
+@media (max-width: 979px) {
+  [class*="span"].pull-right,
+  .row-fluid [class*="span"].pull-right {
+    float: none;
+  }
+}
