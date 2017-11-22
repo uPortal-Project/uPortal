@@ -23,11 +23,11 @@ public interface CharacterEventReader extends Iterator<CharacterEvent> {
      * Check the next XMLEvent without reading it from the stream. Returns null if the stream is at
      * EOF or has no more XMLEvents. A call to peek() will be equal to the next return of next().
      */
-    public CharacterEvent peek();
+    CharacterEvent peek();
 
     /**
      * Frees any resources associated with this Reader. This method does not close the underlying
      * input source.
      */
-    public void close();
+    void close();
 }

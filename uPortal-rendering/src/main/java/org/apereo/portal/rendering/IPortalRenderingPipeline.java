@@ -22,6 +22,7 @@ import org.apereo.portal.PortalException;
 
 /** Describes the entry point into the uPortal rendering pipeline. */
 public interface IPortalRenderingPipeline {
+
     /**
      * <code>renderState</code> method orchestrates the rendering pipeline which includes worker
      * dispatching, and the rendering process from layout access, to channel rendering, to writing
@@ -31,6 +32,6 @@ public interface IPortalRenderingPipeline {
      * @param res the <code>HttpServletResponse</code>
      * @exception PortalException if an error occurs
      */
-    public void renderState(HttpServletRequest req, HttpServletResponse res)
+    void renderState(HttpServletRequest req, HttpServletResponse res)
             throws ServletException, IOException;
 }

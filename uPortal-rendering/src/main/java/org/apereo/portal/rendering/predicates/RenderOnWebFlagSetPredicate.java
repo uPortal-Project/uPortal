@@ -14,8 +14,8 @@
  */
 package org.apereo.portal.rendering.predicates;
 
-import com.google.common.base.Predicate;
 import java.util.Iterator;
+import java.util.function.Predicate;
 import javax.servlet.http.HttpServletRequest;
 import org.apereo.portal.portlet.om.IPortletDefinition;
 import org.apereo.portal.portlet.om.IPortletPreference;
@@ -24,7 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class RenderOnWebFlagSet implements Predicate<HttpServletRequest> {
+public class RenderOnWebFlagSetPredicate implements Predicate<HttpServletRequest> {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -36,7 +36,7 @@ public class RenderOnWebFlagSet implements Predicate<HttpServletRequest> {
     }
 
     @Override
-    public boolean apply(final HttpServletRequest request) {
+    public boolean test(final HttpServletRequest request) {
         try {
             final IPortletDefinition portletDefinition =
                     utils.getPortletDefinitionFromServletRequest(request);

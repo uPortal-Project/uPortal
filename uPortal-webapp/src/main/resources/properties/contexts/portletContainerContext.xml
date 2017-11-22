@@ -25,7 +25,7 @@
        xsi:schemaLocation="
            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
-   
+
     <!--
      | Thread pool used to execute portlets for all requests types.  The default value (which can be
      | overridden in uPortal.properties) is based on the following (potentially aggressive)
@@ -51,7 +51,7 @@
         <property name="allowCoreThreadTimeOut" value="true" />
         <property name="rejectedExecutionHandler" ref="loggingAbortHandler" />
     </bean>
-    
+
     <util:list id="portletExecutionInterceptors" value-type="org.apereo.portal.portlet.rendering.worker.IPortletExecutionInterceptor">
         <ref bean="hungWorkerAnalyzer"/>
         <ref bean="JpaPortletExecutionInterceptor"/>
@@ -61,24 +61,24 @@
         <ref bean="ThreadNamingPortletExecutionInterceptorAdaptor"/>
         <ref bean="portletExecutionManager"/>
     </util:list>
-    
+
     <bean id="JpaPortletExecutionInterceptor" class="org.apereo.portal.portlet.rendering.worker.JpaPortletExecutionInterceptor">
         <property name="entityManagerFactory" ref="PortalDbEntityManagerFactory" />
     </bean>
-    
-    <!-- 
+
+    <!--
      | See PropertyToAttributePropertiesManager.setPropertyMappings
      +-->
     <util:map id="portletPropertyToAttributeMappings">
     </util:map>
-    <!-- 
+    <!--
      | See PropertyToAttributePropertiesManager.setNonNamespacedProperties
      +-->
     <util:set id="nonNamespacedPortletProperties">
     </util:set>
-    
+
     <bean id="portletContainer" class="org.apereo.portal.portlet.container.UportalPortletContainerImpl" destroy-method="destroy" init-method="init">
-        <constructor-arg value="#{servletContext.contextPath + '-PlutoPortletContainer'}" />
+        <constructor-arg value="#{containsObject('servletContext') ? servletContext.contextPath + '-PlutoPortletContainer' : '/uPortal-PlutoPortletContainer'}" />
         <constructor-arg>
             <!-- TODO this setup will never let the portal webapp restart without leaking memory -->
             <bean class="org.apache.pluto.container.driver.PlutoServices">
@@ -86,7 +86,7 @@
             </bean>
         </constructor-arg>
     </bean>
-    
+
     <bean id="portalContext" class="org.apereo.portal.portlet.container.PortalContextImpl">
         <property name="windowStates">
             <set value-type="javax.portlet.WindowState">
@@ -113,7 +113,7 @@
         </property>
         <property name="portalVersion" value="${org.apereo.portal.version}" />
     </bean>
-    
+
     <bean id="personDirectoryUserInfoService" class="org.apereo.portal.portlet.container.services.PersonDirectoryUserInfoService">
         <property name="personAttributeDao" ref="personAttributeDao" />
     </bean>
@@ -144,7 +144,7 @@
         class="org.apereo.portal.portlet.container.services.CachedPasswordUserInfoService">
         <property name="decryptPassword" value="false"/>
     </bean-->
-    
+
     <bean id="portalAdministrationService" class="org.apache.pluto.driver.container.DefaultPortalAdministrationService">
     	<property name="administrativeRequestListeners">
     		<list>
@@ -165,17 +165,17 @@
             </list>
     	</property>
     </bean>
-    
+
     <!-- Portlet Container Services from Pluto -->
     <bean id="portletInvokerService" class="org.apache.pluto.driver.container.DefaultPortletInvokerService" autowire="constructor" />
     <bean id="namespaceMapper" class="org.apache.pluto.driver.container.DefaultNamespaceMapper"/>
     <bean id="requestDispatcherService" class="org.apache.pluto.container.impl.RequestDispatcherServiceImpl" />
-    
+
     <!--  <bean id="portletSessionExpirationManager" class="org.apereo.portal.portlet.session.PortletSessionExpirationManager" /> -->
-    <!--  
+    <!--
     <bean id="requestAttributeService" class="org.apereo.portal.portlet.container.services.RequestAttributeServiceImpl">
     	<property name="personAttributeDao" ref="personAttributeDao" />
     </bean>
     -->
-    
+
 </beans>

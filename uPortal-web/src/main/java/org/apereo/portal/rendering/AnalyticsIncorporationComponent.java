@@ -57,7 +57,7 @@ public class AnalyticsIncorporationComponent extends CharacterPipelineComponentW
 
     @JsonFilter(PortletRenderExecutionEventFilterMixIn.FILTER_NAME)
     private interface PortletRenderExecutionEventFilterMixIn {
-        static final String FILTER_NAME = "PortletRenderExecutionEventFilter";
+        String FILTER_NAME = "PortletRenderExecutionEventFilter";
     }
 
     // Ignored until https://github.com/FasterXML/jackson-databind/issues/245 is fixed
@@ -128,14 +128,12 @@ public class AnalyticsIncorporationComponent extends CharacterPipelineComponentW
                 new AnalyticsIncorporatingEventReader(eventReader, request, startTime);
 
         final Map<String, String> outputProperties = pipelineEventReader.getOutputProperties();
-        return new PipelineEventReaderImpl<CharacterEventReader, CharacterEvent>(
-                portletIncorporatingEventReader, outputProperties);
+        return new PipelineEventReaderImpl<>(portletIncorporatingEventReader, outputProperties);
     }
 
     protected String serializePortletRenderExecutionEvents(final Set<PortalEvent> portalEvents) {
         // Filter to include just portlet render events
-        final Map<String, PortletRenderExecutionEvent> renderEvents =
-                new HashMap<String, PortletRenderExecutionEvent>();
+        final Map<String, PortletRenderExecutionEvent> renderEvents = new HashMap<>();
         for (final PortalEvent portalEvent : portalEvents) {
             if (portalEvent instanceof PortletRenderExecutionEvent) {
                 final PortletRenderExecutionEvent portletRenderEvent =
@@ -173,7 +171,7 @@ public class AnalyticsIncorporationComponent extends CharacterPipelineComponentW
     }
 
     protected String serializePageData(HttpServletRequest request, long startTime) {
-        final Map<String, Object> pageData = new HashMap<String, Object>();
+        final Map<String, Object> pageData = new HashMap<>();
         pageData.put("executionTimeNano", System.nanoTime() - startTime);
 
         final IPortalRequestInfo portalRequestInfo =
