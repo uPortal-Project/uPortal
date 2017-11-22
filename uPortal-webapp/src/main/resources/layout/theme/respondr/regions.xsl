@@ -387,7 +387,7 @@
      | This template decorates a portlet that appears in a region (in lieu of chrome).
     -->
     <xsl:template name="regions.portlet.decorator">
-        <section id="portlet_{@ID}" class="up-portlet-wrapper {@fname}">
+        <section id="portlet_{@ID}" class="up-portlet-wrapper {@fname}" aria-selected="false">
             <xsl:if test="@portletMode!='edit' and @portletMode!='config' and @windowState!='minimized'">
                 <xsl:call-template name="regions.hover-menu"/>
             </xsl:if>
