@@ -68,6 +68,7 @@ dependencies {
     runtime "org.hsqldb:hsqldb:${hsqldbVersion}"
 
     webjars "org.webjars.npm:bootstrap:${bootstrapVersion}"
+    webjars "org.webjars.npm:jstree:${jstreeVersion}"
 }
 
 node {
