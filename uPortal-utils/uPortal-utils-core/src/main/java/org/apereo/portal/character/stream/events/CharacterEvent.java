@@ -18,5 +18,5 @@ import java.io.Serializable;
 
 /** */
 public interface CharacterEvent extends Serializable {
-    public CharacterEventTypes getEventType();
+    CharacterEventTypes getEventType();
 }

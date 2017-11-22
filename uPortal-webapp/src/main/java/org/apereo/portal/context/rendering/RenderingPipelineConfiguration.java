@@ -190,8 +190,8 @@ public class RenderingPipelineConfiguration {
                     "Multiple RenderingPipelineBranchPoint beans have the same 'order' value, which likely a misconfiguration");
         }
 
-        // "Classic" Pipeline
-        final IPortalRenderingPipeline classicRenderingPipeline = getClassicRenderingPipeline();
+        // "Standard" Pipeline
+        final IPortalRenderingPipeline standardRenderingPipeline = getStandardRenderingPipeline();
 
         return new IPortalRenderingPipeline() {
             @Override
@@ -206,21 +206,21 @@ public class RenderingPipelineConfiguration {
                     }
                 }
                 /*
-                 * Reaching this point means that a branch was not followed; use the "classic"
+                 * Reaching this point means that a branch was not followed; use the "standard"
                  * pipeline.
                  */
-                classicRenderingPipeline.renderState(req, res);
+                standardRenderingPipeline.renderState(req, res);
             }
         };
     }
 
     /*
-     * Beans below this point are elements of the "classic" uPortal Rendering Pipeline -- where the
+     * Beans below this point are elements of the "standard" uPortal Rendering Pipeline -- where the
      * uPortal webapp renders all elements of the UI and handles all requests.
      */
 
-    @Bean(name = "classicRenderingPipeline")
-    public IPortalRenderingPipeline getClassicRenderingPipeline() {
+    @Bean(name = "standardRenderingPipeline")
+    public IPortalRenderingPipeline getStandardRenderingPipeline() {
         final DynamicRenderingPipeline rslt = new DynamicRenderingPipeline();
         rslt.setPipeline(getAnalyticsIncorporationComponent());
         return rslt;

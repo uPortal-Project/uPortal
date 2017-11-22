@@ -168,13 +168,13 @@ below.
 
 ## Sections
 
-* [Building / Deploying uPortal](building-and-deploying-uportal.md)
-* [Implementing uPortal](implement/README.md)
-* [uPortal System Administration](sysadmin/README.md)
-* [Developer's Guide](developer/README.md)
-* [Supported web browsers](SUPPORTED_BROWSERS.md)
-* [Accessibility](ACCESSIBILITY.md)
-* [Project Committers](COMMITTERS.md)
+1. [Building / Deploying uPortal](building-and-deploying-uportal.md)
+2. [Implementing uPortal](implement/README.md)
+3. [uPortal System Administration](sysadmin/README.md)
+4. [Developer's Guide](developer/README.md)
+5. [Supported web browsers](SUPPORTED_BROWSERS.md)
+6. [Accessibility](ACCESSIBILITY.md)
+7. [Project Committers](COMMITTERS.md)
 
 ## External Links
 
