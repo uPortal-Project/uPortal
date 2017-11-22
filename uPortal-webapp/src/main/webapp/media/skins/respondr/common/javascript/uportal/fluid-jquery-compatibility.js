@@ -20,19 +20,19 @@
 
 /*
  * The role of this library is to support the continued use of Fluid Infusion 1.4
- * in Respondr for as long as we need it (with any luck, not long).  Boostrap 3
+ * in Respondr for as long as we need it (with any luck, not long).  Bootstrap 3
  * requires jQuery 1.9.x or higher;  but Fluid 1.4 (still the most recent)
  * supports only 1.6.x.  uPortal has a lot of interfaces written with Fluid.
  * The short-term strategy will be to deal with this issue as follows:
- * 
+ *
  *   - Load jQuery 1.6.x (compatible with Fluid 1.4)
  *   - Load jQueryUI 1.8.x (compatible with Fluid 1.4)
  *   - Load Fluid 1.4
  *   - Remove jQuery 1.6.x from the global namespace (this file)
  *   - Load jQuery 1.10.x (compatible with Bootstrap 3)
- * 
+ *
  * This approach means that we will be loading two copies of the jQuery library
- * in the theme alone (before we even consider portlets).  These steps MUST BE 
+ * in the theme alone (before we even consider portlets).  These steps MUST BE
  * PERFORMED IN THIS ORDER.
  */
 
