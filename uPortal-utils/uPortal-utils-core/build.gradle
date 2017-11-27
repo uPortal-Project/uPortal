@@ -79,9 +79,6 @@ dependencies {
     compileOnly "${portletApiDependency}"
     compileOnly "${servletApiDependency}"
 }
-
-sourceCompatibility = '9'
-targetCompatibility = '9'
  
 /*
  * This section is the key to IDE integration.  IDE will look for source files in both...
@@ -106,11 +103,5 @@ compileJava {
         generatedSourcesDir.mkdirs()
     }
 
-    options.compilerArgs += [
-        '--class-path', classpath.asPath, 
-        '--module-path', classpath.asPath, 
-        '--add-modules', 'java.sql',
-        '-s', generatedSourcesDir,
-    ]
-    //classpath = files()
+    options.compilerArgs += ['-s', generatedSourcesDir,]
 }
