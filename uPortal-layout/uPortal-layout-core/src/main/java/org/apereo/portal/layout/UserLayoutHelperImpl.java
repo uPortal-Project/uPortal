@@ -16,15 +16,20 @@ package org.apereo.portal.layout;
 
 import java.util.Hashtable;
 import javax.sql.DataSource;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apereo.portal.IUserIdentityStore;
 import org.apereo.portal.IUserProfile;
 import org.apereo.portal.PortalException;
 import org.apereo.portal.UserProfile;
+import org.apereo.portal.jpa.BasePortalJpaDao;
+import org.apereo.portal.layout.dao.IStylesheetDescriptorDao;
+import org.apereo.portal.layout.dao.IStylesheetUserPreferencesDao;
+import org.apereo.portal.layout.om.IStylesheetDescriptor;
+import org.apereo.portal.layout.om.IStylesheetUserPreferences;
+import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.PersonFactory;
-import org.apereo.portal.security.provider.RestrictedPerson;
 import org.apereo.services.persondir.IPersonAttributes;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 
@@ -37,12 +42,17 @@ public class UserLayoutHelperImpl extends JdbcDaoSupport implements IUserLayoutH
 
     protected static final String DEFAULT_LAYOUT_FNAME = "default";
 
-    protected final Log logger = LogFactory.getLog(this.getClass());
     private IUserIdentityStore userIdentityStore;
 
     private IUserLayoutStore userLayoutStore;
 
-    @Autowired(required = true)
+    private IStylesheetUserPreferencesDao stylesheetUserPreferencesDao;
+
+    private IStylesheetDescriptorDao stylesheetDescriptorDao;
+
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
+
+    @Autowired
     public void setUserLayoutStore(IUserLayoutStore userLayoutStore) {
         this.userLayoutStore = userLayoutStore;
     }
@@ -53,35 +63,35 @@ public class UserLayoutHelperImpl extends JdbcDaoSupport implements IUserLayoutH
         this.userIdentityStore = userIdentityStore;
     }
 
+    @Autowired
+    public void setStylesheetUserPreferencesDao(
+            IStylesheetUserPreferencesDao stylesheetUserPreferencesDao) {
+        this.stylesheetUserPreferencesDao = stylesheetUserPreferencesDao;
+    }
+
+    @Autowired
+    public void setStylesheetDescriptorDao(IStylesheetDescriptorDao stylesheetDescriptorDao) {
+        this.stylesheetDescriptorDao = stylesheetDescriptorDao;
+    }
+
     /**
      * Resets a users layout for all the users profiles
      *
      * @param personAttributes
      */
+    @BasePortalJpaDao.PortalTransactional
     public void resetUserLayoutAllProfiles(final IPersonAttributes personAttributes) {
-
-        RestrictedPerson person = PersonFactory.createRestrictedPerson();
+        final IPerson person = PersonFactory.createRestrictedPerson();
         person.setAttributes(personAttributes.getAttributes());
         // get the integer uid into the person object without creating any new person data
         int uid = userIdentityStore.getPortalUID(person, false);
         person.setID(uid);
 
-        try {
-            Hashtable<Integer, UserProfile> userProfileList =
-                    userLayoutStore.getUserProfileList(person);
-            for (Integer key : userProfileList.keySet()) {
-                UserProfile userProfile = userProfileList.get(key);
-                userProfile.setLayoutId(0);
-                userLayoutStore.updateUserProfile(person, userProfile);
-                logger.info(
-                        "resetUserLayout complete for " + person + "for profile " + userProfile);
-            }
-        } catch (Exception e) {
-            final String msg = "Exception caught during resetUserLayout for " + person;
-            logger.error(msg, e);
-            throw new PortalException(msg, e);
+        final Hashtable<Integer, UserProfile> map = userLayoutStore.getUserProfileList(person);
+        for (UserProfile profile : map.values()) {
+            resetUserLayoutForProfileByName(person, profile);
+            resetStylesheetUserPreferencesForProfile(person, profile);
         }
-        return;
     }
 
     /**
@@ -89,35 +99,107 @@ public class UserLayoutHelperImpl extends JdbcDaoSupport implements IUserLayoutH
      * @see
      *     org.apereo.portal.layout.IUserLayoutHelper#resetUserLayout(org.apereo.services.persondir.IPersonAttributes)
      */
+    @BasePortalJpaDao.PortalTransactional
     @Override
     public void resetUserLayout(final IPersonAttributes personAttributes) {
         // Create an empty RestrictedPerson object
-        RestrictedPerson person = PersonFactory.createRestrictedPerson();
+        final IPerson person = PersonFactory.createRestrictedPerson();
 
         // populate the person with the supplied attributes
         person.setAttributes(personAttributes.getAttributes());
 
         // get the integer uid into the person object without creating any new person data
-        int uid = userIdentityStore.getPortalUID(person, false);
+        final int uid = userIdentityStore.getPortalUID(person, false);
         person.setID(uid);
 
-        try {
-            // determine user profile
-            IUserProfile userProfile =
-                    userLayoutStore.getUserProfileByFname(person, DEFAULT_LAYOUT_FNAME);
+        final IUserProfile profile =
+                userLayoutStore.getUserProfileByFname(person, DEFAULT_LAYOUT_FNAME);
+        resetUserLayoutForProfileByName(person, profile);
 
+        resetStylesheetUserPreferencesForProfile(person, profile);
+    }
+
+    private void resetUserLayoutForProfileByName(IPerson person, IUserProfile profile) {
+
+        try {
             // Finally set the layout id to 0.  This orphans the existing layout but it will be
             // replaced by the default
             // when the user logs in
-            userProfile.setLayoutId(0);
+            profile.setLayoutId(0);
 
             // persist the change
-            userLayoutStore.updateUserProfile(person, userProfile);
-            logger.info("resetUserLayout complete for " + person);
+            userLayoutStore.updateUserProfile(person, profile);
+            logger.info(
+                    "resetUserLayoutForProfileByName complete for person [{}] and profile='{}'",
+                    person,
+                    profile.getProfileFname());
         } catch (Exception e) {
-            final String msg = "Exception caught during resetUserLayout for " + person;
-            logger.error(msg, e);
-            throw new PortalException(msg, e);
+            logger.error(
+                    "Error during resetUserLayoutForProfileByName for person [{}] and profile='{}'",
+                    person,
+                    profile.getProfileFname(),
+                    e);
+            throw new PortalException("Error during resetUserLayoutForProfileByName", e);
+        }
+    }
+
+    private void resetStylesheetUserPreferencesForProfile(IPerson person, IUserProfile profile) {
+
+        try {
+            // Structure
+            final IStylesheetDescriptor sDescriptor =
+                    stylesheetDescriptorDao.getStylesheetDescriptor(
+                            profile.getStructureStylesheetId());
+            logger.debug(
+                    "Obtained the following IStylesheetDescriptor for person [{}] and profile='{}':  [{}]",
+                    person,
+                    profile.getProfileFname(),
+                    sDescriptor);
+            final IStylesheetUserPreferences sPreferences =
+                    stylesheetUserPreferencesDao.getStylesheetUserPreferences(
+                            sDescriptor, person, profile);
+            logger.debug(
+                    "Obtained the following IStylesheetUserPreferences for descriptor [{}], person [{}], and profile='{}':  [{}]",
+                    sDescriptor,
+                    person,
+                    profile.getProfileFname(),
+                    sPreferences);
+            if (sPreferences != null) {
+                stylesheetUserPreferencesDao.deleteStylesheetUserPreferences(sPreferences);
+            }
+
+            // Theme
+            final IStylesheetDescriptor tDescriptor =
+                    stylesheetDescriptorDao.getStylesheetDescriptor(profile.getThemeStylesheetId());
+            logger.debug(
+                    "Obtained the following IStylesheetDescriptor for person [{}] and profile='{}':  [{}]",
+                    person,
+                    profile.getProfileFname(),
+                    tDescriptor);
+            final IStylesheetUserPreferences tPreferences =
+                    stylesheetUserPreferencesDao.getStylesheetUserPreferences(
+                            tDescriptor, person, profile);
+            logger.debug(
+                    "Obtained the following IStylesheetUserPreferences for descriptor [{}], person [{}], and profile='{}':  [{}]",
+                    tDescriptor,
+                    person,
+                    profile.getProfileFname(),
+                    tPreferences);
+            if (tPreferences != null) {
+                stylesheetUserPreferencesDao.deleteStylesheetUserPreferences(tPreferences);
+            }
+
+            logger.info(
+                    "resetStylesheetUserPreferencesForProfile complete for person [{}] and profile='{}'",
+                    person,
+                    profile.getProfileFname());
+        } catch (Exception e) {
+            logger.error(
+                    "Error during resetStylesheetUserPreferencesForProfile for person [{}] and profile='{}'",
+                    person,
+                    profile.getProfileFname(),
+                    e);
+            throw new PortalException("Error during resetStylesheetUserPreferencesForProfile", e);
         }
     }
 }

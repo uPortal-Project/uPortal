@@ -73,6 +73,12 @@ import org.w3c.dom.NodeList;
  */
 public class DistributedLayoutManager implements IUserLayoutManager, InitializingBean {
 
+    /**
+     * The attribute used to convey a custom template account from which to copy the initial layout
+     * for a user.
+     */
+    public static final String TEMPLATE_USER_NAME_ATT = "uPortalTemplateUserName";
+
     private static final Log LOG = LogFactory.getLog(DistributedLayoutManager.class);
 
     private XmlUtilities xmlUtilities;
@@ -1393,8 +1399,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
             // set template user override so reload of layout comes from
             // fragment template user
             person.setAttribute(
-                    org.apereo.portal.Constants.TEMPLATE_USER_NAME_ATT,
-                    FragmentDefinition.getDefaultLayoutOwnerId());
+                    TEMPLATE_USER_NAME_ATT, FragmentDefinition.getDefaultLayoutOwnerId());
         }
 
         try {
