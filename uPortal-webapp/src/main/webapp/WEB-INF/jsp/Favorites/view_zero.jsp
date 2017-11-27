@@ -26,7 +26,7 @@
     <c:set var="marketplaceUrl">${renderRequest.contextPath}/p/${marketplaceFname}/max/render.uP</c:set>
 </c:if>
 
-<div>
+<div class="alert alert-warning">
   <p><spring:message code="favorites.have.none" text="You have no favorites."/></p>
 
   <%-- Display invitation to go favorite some portlets in marketplace if available, suppress otherwise --%>
