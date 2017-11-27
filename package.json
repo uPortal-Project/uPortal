@@ -15,7 +15,7 @@
     "stylelint-config-standard": "^17.0.0"
   },
   "scripts": {
-    "lint-js": "eslint . --ignore-path .gitignore --ignore-pattern *.min.js --ignore-pattern jstree.js --ignore-pattern less-1.6.2.js",
+    "lint-js": "eslint . --ignore-path .gitignore --ignore-pattern *.min.js",
     "lint-less": "stylelint --syntax less **/*.less !**/bootstrap/**/*.less",
     "lint-md": "remark -f *.md docs/**",
     "format-js": "prettier-eslint --write \"uPortal-webapp/src/**/*.js\"",

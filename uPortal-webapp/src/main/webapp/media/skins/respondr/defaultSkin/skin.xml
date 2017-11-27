@@ -38,10 +38,6 @@
   <css included="plain">/ResourceServingWebapp/rs/jqueryui/1.10.3/theme/smoothness/jquery-ui-1.10.3-smoothness.css</css>
   <css included="aggregated">/ResourceServingWebapp/rs/jqueryui/1.10.3/theme/smoothness/jquery-ui-1.10.3-smoothness.min.css</css>
 
-  <!-- jsTree (entity-selector) -->
-  <css included="plain" resource="true">/scripts/jstree/style.css</css>
-  <css included="aggregated" resource="true">/scripts/jstree/style.min.css</css>
-
   <!--
    | The skin is applied in lieu of using the Dynamic Skin Portlet.  Follow configuration information in skinList.xml
    | and disable Dynamic Skin Portlet.
