@@ -78,17 +78,17 @@ var uportal = uportal || {};
          fragmentName = fragmentName || up.analytics.pageData.tab.fragmentName;
          tabName = tabName || up.analytics.pageData.tab.tabName
       }
-      
+
       var uri = '/';
-      
+
       if (fragmentName != null) {
          uri += 'tab/' + fragmentName;
-         
+
          if (tabName != null) {
             uri += '/' + tabName;
          }
       }
-      
+
       return uri
    };
 
@@ -100,7 +100,7 @@ var uportal = uportal || {};
          fragmentName = fragmentName || up.analytics.pageData.tab.fragmentName;
          tabName = tabName || up.analytics.pageData.tab.tabName
       }
-      
+
       var title;
       if (tabName != null) {
          title = 'Tab: ' + tabName;
@@ -111,7 +111,7 @@ var uportal = uportal || {};
       else {
          title = "No Tab"
       }
-      
+
       ga('set', {
          'page' : getTabUri(fragmentName, tabName),
          'title' : title
@@ -177,7 +177,7 @@ var uportal = uportal || {};
          'title' : 'Portlet: ' + portletTitle
       });
    };
-   
+
    /**
     * Finds a child element based on the selector and then return the first
     * class element that is not equal to excludedClasses or contained in the
@@ -188,7 +188,7 @@ var uportal = uportal || {};
       if (!_.isArray(excludedClasses)) {
          excludedClasses = [excludedClasses];
       }
-      
+
       var classAttr = selectorFunction().attr("class");
       if (classAttr == null) {
          return null;
@@ -263,7 +263,7 @@ var uportal = uportal || {};
     * they are used
     */
    var addFlyoutHandlers = function() {
-      $("ul.fl-tabs li.portal-navigation a.portal-subnav-link").click(function(event) {
+      $("ul li.portal-navigation a.portal-subnav-link").click(function(event) {
          var clickedLink = $(this);
 
          // Find the target portlet's title
@@ -310,22 +310,22 @@ var uportal = uportal || {};
          }
       });
    };
-   
+
    var addMobileListTabHandlers = function() {
       $('ul.up-portal-nav li.up-tab').click(function(event) {
          var clickedTab = $(this);
-         
+
          //Ignore clicks on already open tabs
          if (clickedTab.hasClass("up-tab-open")) {
             return;
          }
-         
+
          var fragmentName = getInfoClass(function() {
                return clickedTab.find("div.up-tab-owner");
             }, "up-tab-owner");
 
          var tabName = clickedTab.find("span.up-tab-name").text().trim();
-         
+
          setPageVariables(fragmentName, tabName);
          ga('send', 'pageview');
       });
@@ -385,7 +385,7 @@ var uportal = uportal || {};
 
       // Add handlers to deal with click events on external links
       addExternalLinkHandlers();
-      
+
       // Add handlers to deal with "tab" clicks on the mobile accordian view
       addMobileListTabHandlers();
    });

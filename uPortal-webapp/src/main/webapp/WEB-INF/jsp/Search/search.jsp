@@ -26,16 +26,16 @@
 <c:set var="n"><portlet:namespace/></c:set>
 
 <!-- Portlet -->
-<div class="fl-widget portlet search-portlet" role="section">
+<div class="portlet search-portlet" role="section">
 
     <!-- Portlet Titlebar
-        <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
+        <div class="titlebar portlet-titlebar" role="sectionhead">
         <h2 class="title" role="heading"><spring:message code="search"/></h2>
     </div>
     -->
 
     <!-- Portlet Body -->
-    <div class="fl-widget-content portlet-body" role="main">
+    <div class="portlet-body" role="main">
 
         <!-- Portlet Section -->
         <div id="${n}search" class="portlet-section" role="region">

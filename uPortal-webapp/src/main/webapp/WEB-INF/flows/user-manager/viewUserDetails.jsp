@@ -46,10 +46,10 @@
 <c:set var="n"><portlet:namespace/></c:set>
 
 <!-- Portlet -->
-<div class="fl-widget portlet user-mgr view-reviewuser" role="section">
+<div class="portlet user-mgr view-reviewuser" role="section">
 
     <!-- Portlet Titlebar -->
-    <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
+    <div class="titlebar portlet-titlebar" role="sectionhead">
         <h2 class="title" role="heading">${ fn:escapeXml(person.name )}</h2>
         <div class="btn-group toolbar">
                 <c:if test="${ canEdit }">
@@ -81,7 +81,7 @@
     </div> <!-- end: portlet-titlebar -->
     
     <!-- Portlet Body -->
-    <div class="fl-widget-content content portlet-content" role="main">
+    <div class="content portlet-content" role="main">
 
         <!-- Portlet Section -->
         <div class="portlet-section" role="region">

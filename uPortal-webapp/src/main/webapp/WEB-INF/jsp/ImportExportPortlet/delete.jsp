@@ -21,10 +21,10 @@
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
 
 <!-- Portlet -->
-<section class="fl-widget portlet imp-exp view-delete">
+<section class="portlet imp-exp view-delete">
 
     <!-- Portlet Titlebar -->
-    <header class="fl-widget-titlebar titlebar portlet-titlebar">
+    <header class="titlebar portlet-titlebar">
         <h2 class="title">
             <spring:message code="delete.portlet.entities"/>
         </h2>
@@ -47,7 +47,7 @@
     </div>
 
     <!-- Portlet Content -->
-    <div class="fl-widget-content content portlet-content" role="main">
+    <div class="content portlet-content" role="main">
 
         <!-- Messages -->
         <div class="portlet-msg-error portlet-msg error alert alert-danger" role="alert">

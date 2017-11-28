@@ -39,16 +39,16 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 -->
 
 <!-- Portlet -->
-<div class="fl-widget portlet prm-mgr view-listperms container-fluid" role="section">
+<div class="portlet prm-mgr view-listperms container-fluid" role="section">
 
   <!-- Portlet Titlebar -->
-  <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
+  <div class="titlebar portlet-titlebar" role="sectionhead">
       <h2 role="heading" class="title"><spring:message code="permissions.by.category"/></h2>
   </div>
   <!-- end: portlet-titlebar -->
 
   <!-- Portlet Content -->
-  <div class="fl-widget-content portlet-content row" role="main">
+  <div class="portlet-content row" role="main">
 
     <div class="permission-lookup">
         <form id="${n}permissionLookupForm" class="form-inline" action="${permissionLookupUrl}" method="POST">
@@ -101,10 +101,10 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     </div>
 
   	<!-- Panel list -->
-    <div class="fl-col-flex2 panel-list icon-large">
+    <div class="panel-list icon-large">
 
         <!-- 2 column layout -->
-        <div class="fl-col fl-force-left">
+        <div class="">
             <c:set var="numOwners" value="${ fn:length(owners) }" />
             <c:set var="split" value="${ numOwners / 2 }" />
             <c:forEach items="${ owners }" var="owner" varStatus="ownerStatus">
@@ -138,7 +138,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                 <c:if test="${ split <= ownerStatus.index+1 and ownerStatus.index+1 < split+1 }">
                     </div>
                     <!-- Second column -->
-                    <div class="fl-col">
+                    <div class="">
                 </c:if>
 
             </c:forEach>

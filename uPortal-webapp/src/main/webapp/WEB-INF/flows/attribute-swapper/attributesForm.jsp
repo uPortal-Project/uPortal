@@ -29,10 +29,10 @@
 </portlet:actionURL>
 
 <!-- Portlet -->
-<div class="fl-widget portlet atr-swp view-attributesform" role="section">
+<div class="portlet atr-swp view-attributesform" role="section">
 
 	<!-- Portlet Titlebar -->
-    <div class="fl-widget-titlebar titlebar portlet-titlebar">
+    <div class="titlebar portlet-titlebar">
     	<h2 class="title"><spring:message code="attributes"/></h2>
         <div class="toolbar" role="toolbar">
             <ul>
@@ -44,7 +44,7 @@
     </div>
 
     <!-- Portlet Content -->
-	<div class="fl-widget-content content portlet-content" role="main">
+	<div class="content portlet-content" role="main">
 
         <form:form modelAttribute="attributeSwapRequest" action="${attributeSwapUrl}" method="POST">
             <table class="portlet-table table table-hover">

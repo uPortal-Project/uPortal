@@ -37,7 +37,7 @@
  *          the <ul class="skin-list"> container.
  *         
  * skinWidget
- *         :Reference to <div> DOM container with the .fl-widget class name, which is housed under
+ *         :Reference to <div> DOM container with the class name, which is housed under
  *          the <ul class="skin-list"> container.
  *         
  * skinName

@@ -26,10 +26,10 @@
 </portlet:actionURL>
 
 <!-- Portlet -->
-<div class="fl-widget portlet cache-mgr view-list" role="section">
+<div class="portlet cache-mgr view-list" role="section">
 
   <!-- Portlet Titlebar -->
-    <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
+    <div class="titlebar portlet-titlebar" role="sectionhead">
         <h2 class="title" role="heading"><spring:message code="uportal.cache.manager"/></h2>
         <div class="toolbar" role="toolbar">
             <a class="button btn btn-primary" href="${flushAllUrl}"><span><spring:message code="empty.all.caches" />&nbsp;&nbsp;<i class="fa fa-refresh"></i></span></a>
@@ -37,7 +37,7 @@
     </div> <!-- end: portlet-titlebar -->
     
   <!-- Portlet Content -->
-  <div class="fl-widget-content content portlet-content" role="main">
+  <div class="content portlet-content" role="main">
     <!-- Portlet Section -->
     <div class="portlet-section" role="region">
     	<div class="titlebar">

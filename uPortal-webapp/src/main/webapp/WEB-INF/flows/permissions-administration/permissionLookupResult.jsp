@@ -98,17 +98,17 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 -->
 
 <!-- Portlet -->
-<div id="${n}permissionBrowser" class="fl-widget portlet prm-mgr" role="section">
+<div id="${n}permissionBrowser" class="portlet prm-mgr" role="section">
   
   <!-- Portlet Titlebar -->
-  <div class="fl-widget-titlebar portlet-titlebar" role="sectionhead">
+  <div class="portlet-titlebar" role="sectionhead">
     <h2 class="title" role="heading">
         <spring:message code="activityName.permissions.assigned.to.principalName" arguments="${ fn:escapeXml(activityDisplayName) }, ${ principalDisplayName }"/>
     </h2>
   </div> <!-- end: portlet-titlebar -->
   
   <!-- Portlet Content -->
-  <div class="fl-widget-content portlet-content" role="main">
+  <div class="portlet-content" role="main">
       <div class="titlebar">
           <h3 class="title" role="heading"><spring:message code="assignments"/></h3>
       </div>

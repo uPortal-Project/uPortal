@@ -24,15 +24,15 @@
 </portlet:actionURL>
         
 <!-- Portlet -->
-<div class="fl-widget portlet reset-layout view-result" role="section">
+<div class="portlet reset-layout view-result" role="section">
 
     <!-- Portlet Titlebar -->
-    <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
+    <div class="titlebar portlet-titlebar" role="sectionhead">
     	<h2 class="title" role="heading"><spring:message code="reset.user.layout"/></h2>
     </div>
     
     <!-- Portlet Content -->
-	<div class="fl-widget-content content portlet-content" role="main">
+	<div class="content portlet-content" role="main">
     
     <!-- Messages --> 
     <div class="portlet-msg-success portlet-msg success" role="status">

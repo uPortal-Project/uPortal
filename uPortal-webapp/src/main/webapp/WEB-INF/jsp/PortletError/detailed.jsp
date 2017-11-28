@@ -20,9 +20,9 @@
 --%>
 <%@ include file="/WEB-INF/jsp/include.jsp"%>
 <c:set var="n"><portlet:namespace/>-${portletWindowId}-</c:set>
-<div class="fl-widget portlet error view-detailed" role="section">
+<div class="portlet error view-detailed" role="section">
 
-<div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
+<div class="titlebar portlet-titlebar" role="sectionhead">
 <p><spring:message code="errorportlet.main"/></p>
 <div class="breadcrumb">
 <portlet:actionURL var="userResetUrl">
@@ -33,7 +33,7 @@
 </div> <!-- end breadcrumbs -->
 </div> <!-- end section head -->
 
-<div class="fl-widget-content fl-fix up-portlet-content-wrapper">
+<div class="up-portlet-content-wrapper">
 <ul>
 <li>Portlet Window ID: ${fn:escapeXml(portletWindowId)}</li>
 <li>Channel Definition Name: ${fn:escapeXml(channelDefinition.name)}</li>

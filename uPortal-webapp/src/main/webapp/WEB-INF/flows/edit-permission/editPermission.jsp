@@ -42,10 +42,10 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 -->
 
 <!-- Portlet -->
-<div class="fl-widget portlet prm-mgr view-editperm" role="section">
+<div class="portlet prm-mgr view-editperm" role="section">
 
     <!-- Portlet Titlebar -->
-    <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
+    <div class="titlebar portlet-titlebar" role="sectionhead">
     	<div class="breadcrumb">
             <c:forEach items="${ breadcrumbs }" var="breadcrumb" varStatus="status">
                 <portlet:actionURL var="breadcrumbUrl">
@@ -75,7 +75,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     </div>
 
     <!-- Portlet Content -->
-    <div class="fl-widget-content content portlet-content" role="main">
+    <div class="content portlet-content" role="main">
 
             <form method="POST" id="${n}editPermissionForm" action="javascript:;">
 

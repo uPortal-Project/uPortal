@@ -27,15 +27,15 @@
 </portlet:actionURL>
 
 <!-- Portlet -->
-<div class="fl-widget portlet" role="section">
+<div class="portlet" role="section">
 
     <!-- Portlet Title -->
-  <div class="fl-widget-titlebar portlet-title" role="sectionhead">
+  <div class="portlet-title" role="sectionhead">
     <h2 role="heading">SQL Query Portlet Configuration</h2>
   </div> <!-- end: portlet-title -->
   
   <!-- Portlet Body -->
-  <div class="fl-widget-content portlet-body" role="main">
+  <div class="portlet-body" role="main">
 
     <form:form class="form-horizontal" role="form" modelAttribute="form" action="${formUrl}" method="POST">
     

@@ -19,9 +19,9 @@
 
 --%>
 <%@ include file="/WEB-INF/jsp/include.jsp"%>
-<div class="fl-widget portlet error view-detailed" role="section">
+<div class="portlet error view-detailed" role="section">
 
-  <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
+  <div class="titlebar portlet-titlebar" role="sectionhead">
       <h3><spring:message code="errorportlet.maintenance.title"/></h3>
       <p><spring:message code="errorportlet.maintenance.text"/></p>
   </div> <!-- end sectionhead -->

@@ -21,22 +21,22 @@
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
 
 <!-- Portlet -->
-<div id="portalFragAdminList" class="fl-widget portlet snooper view-main" role="section">
+<div id="portalFragAdminList" class="portlet snooper view-main" role="section">
 
 	
     <!-- Portlet Titlebar -->
-    <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
+    <div class="titlebar portlet-titlebar" role="sectionhead">
     	<h2 class="title" role="heading">Fragment Administration</h2>
     </div>
     
     <!-- Portlet Content -->
-	<div class="fl-widget-content content portlet-content" role="main">
+	<div class="content portlet-content" role="main">
 
         <!-- Future version to use an unordered list and form submission via javascript.
         <form method="POST" id="fragmentAdminForm" name="fragmentAdminForm" action="<portlet:actionURL><portlet:param name="action" value="becomeFragmentOwner"/></portlet:actionURL>">
         	<input type="hidden" id="fragmentOwner" name="impersonateUser" />
         </form>
-        <ul class="fl-listmenu">
+        <ul class="">
             <c:forEach items="${FRAGMENTS}" var="item">
             	<li><a id="${fn:escapeXml(item.key)}" href="#" title="Administer fragment ${fn:escapeXml(item.value)}"><span>${fn:escapeXml(item.value)}</span></a></li>
             </c:forEach>
