@@ -47,7 +47,7 @@
         <ul class="list-group favorites-list">
             <c:forEach var="collection" items="${collections}">
                 <li class="list-group-item">
-                    <span class="glyphicon glyphicon-chevron-right pull-right"></span>
+                    <i class="fa fa-chevron-right pull-right" aria-hidden="true"></i>
                     <a href="${renderRequest.contextPath}/f/${collection.id}/render.uP">
                         <span class="favorites-icon">
                             <i class="fa fa-sitemap" aria-hidden="true"></i>
@@ -59,7 +59,9 @@
 
             <c:forEach var="favorite" items="${favorites}">
                 <li class="list-group-item">
-                    <span class="glyphicon glyphicon-star pull-right"></span>
+                    <a class="up-favorite-remove pull-right" data-portlet-id="${favorite.channelPublishId}" title="<spring:message code="remove.from.my.favorites" />" href="javascript:void(0);">
+                        <i class="fa fa-star" aria-hidden="true"></i>
+                    </a>
                     <c:set var="favoriteAnchorContent">
                         <c:choose>
                             <c:when test="${not empty favorite.parameterMap['alternativeMaximizedLink']}">href="${favorite.parameterMap['alternativeMaximizedLink']}" target="_blank" rel="noopener noreferrer"</c:when>
@@ -98,3 +100,15 @@
     <p><spring:message code="favorites.instruction.add.via.contextual.menu"
             text="Favorite any portlet via the contextual options menu accessed from its title bar."/></p>
 </div>
+
+<script type="text/javascript">
+(function($){
+    $('#${n} .up-favorite-remove').click({
+        context : '${renderRequest.contextPath}'
+    }, function(event) {
+        event.data.portletId = $(this).attr('data-portlet-id');
+        up.removeFromFavorite(event);
+        $(this).parent().slideUp();
+    });
+})(up.jQuery);
+</script>
