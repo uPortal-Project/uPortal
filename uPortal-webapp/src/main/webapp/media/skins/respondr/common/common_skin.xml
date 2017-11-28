@@ -94,6 +94,7 @@
     <!-- jsTree Includes (entity-selector) -->
     <js included="plain" resource="true">/webjars/jstree/dist/jstree.js</js>
     <js included="aggregated" resource="true">/webjars/jstree/dist/jstree.min.js</js>
+
     <css included="plain" resource="true">/webjars/jstree/dist/themes/default/style.css</css>
     <css included="aggregated" resource="true">/webjars/jstree/dist/themes/default/style.min.css</css>
 

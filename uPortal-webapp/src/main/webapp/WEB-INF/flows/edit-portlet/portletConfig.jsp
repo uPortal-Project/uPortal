@@ -194,7 +194,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                     </p>
                 </div>
             </c:if>
-            <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+            <div class="panel-group" id="accordion" role="tablist">
                 <div class="panel panel-info">
                     <div class="panel-heading" role="tab" id="portletConfigAccordionHeading">
                         <h4 class="panel-title">
