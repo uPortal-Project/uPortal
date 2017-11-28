@@ -20,8 +20,6 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Map;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apereo.portal.PortalException;
 import org.apereo.portal.portlet.om.IPortletDefinition;
 import org.apereo.portal.portlet.om.IPortletDefinitionParameter;
@@ -32,8 +30,6 @@ import org.w3c.dom.Node;
 /** A class managing information contained in a user layout channel node. */
 public class UserLayoutChannelDescription extends UserLayoutNodeDescription
         implements IUserLayoutChannelDescription {
-
-    private static final Log log = LogFactory.getLog(UserLayoutChannelDescription.class);
 
     Hashtable parameters = new Hashtable();
 
