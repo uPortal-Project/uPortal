@@ -65,7 +65,7 @@ public class FocusedOnOnePortletPredicateTest {
 
         predicate.setUrlSyntaxProvider(this.syntaxProvider);
 
-        assertFalse(predicate.apply(this.mockRequest));
+        assertFalse(predicate.test(this.mockRequest));
     }
 
     /**
@@ -79,7 +79,7 @@ public class FocusedOnOnePortletPredicateTest {
                 .thenReturn(this.portalRequestInfo);
         when(this.portalRequestInfo.getUrlState()).thenReturn(UrlState.MAX);
 
-        assertTrue(predicate.apply(this.mockRequest));
+        assertTrue(predicate.test(this.mockRequest));
     }
 
     /**
@@ -93,7 +93,7 @@ public class FocusedOnOnePortletPredicateTest {
                 .thenReturn(this.portalRequestInfo);
         when(this.portalRequestInfo.getUrlState()).thenReturn(UrlState.EXCLUSIVE);
 
-        assertTrue(predicate.apply(this.mockRequest));
+        assertTrue(predicate.test(this.mockRequest));
     }
 
     /**
@@ -107,7 +107,7 @@ public class FocusedOnOnePortletPredicateTest {
                 .thenReturn(this.portalRequestInfo);
         when(this.portalRequestInfo.getUrlState()).thenReturn(UrlState.DETACHED);
 
-        assertTrue(predicate.apply(this.mockRequest));
+        assertTrue(predicate.test(this.mockRequest));
     }
 
     /**
@@ -119,7 +119,7 @@ public class FocusedOnOnePortletPredicateTest {
 
         when(this.syntaxProvider.getPortalRequestInfo(mockRequest)).thenReturn(null);
 
-        assertFalse(predicate.apply(this.mockRequest));
+        assertFalse(predicate.test(this.mockRequest));
     }
 
     @Test

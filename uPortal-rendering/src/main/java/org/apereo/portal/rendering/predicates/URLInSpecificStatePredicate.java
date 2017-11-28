@@ -14,7 +14,7 @@
  */
 package org.apereo.portal.rendering.predicates;
 
-import com.google.common.base.Predicate;
+import java.util.function.Predicate;
 import javax.servlet.http.HttpServletRequest;
 import org.apereo.portal.url.IPortalRequestInfo;
 import org.apereo.portal.url.IUrlSyntaxProvider;
@@ -29,7 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  *
  * @since 4.2
  */
-public class URLInSpecificState implements Predicate<HttpServletRequest> {
+public class URLInSpecificStatePredicate implements Predicate<HttpServletRequest> {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -40,7 +40,7 @@ public class URLInSpecificState implements Predicate<HttpServletRequest> {
     private boolean isNegated;
 
     @Override
-    public boolean apply(final HttpServletRequest request) {
+    public boolean test(final HttpServletRequest request) {
 
         final IPortalRequestInfo portalRequestInfo =
                 this.urlSyntaxProvider.getPortalRequestInfo(request);

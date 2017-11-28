@@ -86,7 +86,7 @@ public class ProfileFNamePredicateTest {
         // configure to look for the profile fname that will be found
         predicate.setProfileFNameToMatch("exampleUserProfileFname");
 
-        assertTrue(predicate.apply(request));
+        assertTrue(predicate.test(request));
     }
 
     /**
@@ -99,7 +99,7 @@ public class ProfileFNamePredicateTest {
         // configure to look for a profile fname that will not be found.
         predicate.setProfileFNameToMatch("willNotFindThis");
 
-        assertFalse(predicate.apply(request));
+        assertFalse(predicate.test(request));
     }
 
     @Test
