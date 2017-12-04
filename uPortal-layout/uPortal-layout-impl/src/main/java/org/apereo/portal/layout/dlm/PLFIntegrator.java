@@ -14,9 +14,9 @@
  */
 package org.apereo.portal.layout.dlm;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apereo.portal.PortalException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -28,7 +28,7 @@ import org.w3c.dom.NodeList;
  */
 public class PLFIntegrator {
 
-    private static Log LOG = LogFactory.getLog(PLFIntegrator.class);
+    private static Logger LOG = LoggerFactory.getLogger(PLFIntegrator.class);
 
     public static void mergePLFintoILF(Document plf, Document ilf, IntegrationResult result)
             throws PortalException {
