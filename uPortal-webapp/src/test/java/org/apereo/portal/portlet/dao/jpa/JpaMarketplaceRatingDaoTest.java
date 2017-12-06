@@ -14,6 +14,8 @@
  */
 package org.apereo.portal.portlet.dao.jpa;
 
+import java.util.Calendar;
+import java.util.Date;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
@@ -147,6 +149,7 @@ public class JpaMarketplaceRatingDaoTest extends BasePortalJpaDaoTest {
                                 ratingPK.setPortletDefinition((PortletDefinitionImpl) portlet);
                                 ratingPK.setUserName(person.getName());
                                 rating.setMarketplaceRatingPK(ratingPK);
+                                rating.setRatingDate( new Date() );
                                 marketplaceRatingDao.createOrUpdateRating(rating);
                             }
                         }
@@ -218,6 +221,7 @@ public class JpaMarketplaceRatingDaoTest extends BasePortalJpaDaoTest {
                                 ratingPK.setPortletDefinition((PortletDefinitionImpl) portlet);
                                 ratingPK.setUserName(person.getName());
                                 rating.setMarketplaceRatingPK(ratingPK);
+                                rating.setRatingDate( new Date() );
                                 marketplaceRatingDao.createOrUpdateRating(rating);
                             }
                         }
@@ -262,6 +266,7 @@ public class JpaMarketplaceRatingDaoTest extends BasePortalJpaDaoTest {
                                 ratingPK.setPortletDefinition((PortletDefinitionImpl) portlet);
                                 ratingPK.setUserName(person.getName());
                                 rating.setMarketplaceRatingPK(ratingPK);
+                                rating.setRatingDate( new Date() );
                                 marketplaceRatingDao.createOrUpdateRating(rating);
                             }
                         }
@@ -279,4 +284,121 @@ public class JpaMarketplaceRatingDaoTest extends BasePortalJpaDaoTest {
                     }
                 });
     }
+    
+    @Test
+    public void testGetRatingsLastXDays() {
+        //Easy Test Can we make every combination of portlet and user rating
+        this.execute(new Callable<Object>() {
+            @Override
+            public Object call() throws Exception {
+
+                Calendar today = Calendar.getInstance();
+
+                List<IPortletDefinition> portletList = portletDefinitionDao.getPortletDefinitions();
+                List<ILocalAccountPerson> personList = localAccountDao.getAllAccounts();
+                assertNotEquals(portletList.size(), 0);
+                assertNotEquals(personList.size(), 0);
+                int i = 1;
+                for (IPortletDefinition portlet : portletList) {
+
+                    for (ILocalAccountPerson person : personList) {
+                        today.add(Calendar.DAY_OF_YEAR, 0 - i);
+                        System.out.println("Testing get ratings using " + today.getTime() + " for portlet creation date.");
+                        MarketplaceRatingImpl rating = new MarketplaceRatingImpl();
+                        int starRating = random.nextInt(MarketplaceRatingImpl.MAX_RATING) + 1;
+                        rating.setRating(starRating);
+                        MarketplaceRatingPK ratingPK = new MarketplaceRatingPK();
+                        ratingPK.setPortletDefinition((PortletDefinitionImpl) portlet);
+                        ratingPK.setUserName(person.getName());
+                        rating.setMarketplaceRatingPK(ratingPK);
+                        rating.setRatingDate(today.getTime());
+                        rating.setReview("comment for " + ratingPK.getPortletDefinition().getFName());
+                        marketplaceRatingDao.createOrUpdateRating(rating);
+                        i = i + 20;
+                    }
+
+                }
+                return null;
+            }
+        });
+        //Now let's retrieve our objects 
+        this.execute(new Callable<Object>() {
+            @Override
+            public Object call() throws Exception {
+
+                int daysBack = 7;
+                Set<IMarketplaceRating> ratingList = marketplaceRatingDao.getAllRatingsInLastXDays(daysBack);
+                 assertEquals(ratingList.size(), 1);
+
+                daysBack = 30;
+                ratingList = marketplaceRatingDao.getAllRatingsInLastXDays(daysBack);
+                assertEquals(ratingList.size(), 2);
+
+                daysBack = 5000;
+                ratingList = marketplaceRatingDao.getAllRatingsInLastXDays(daysBack);
+                assertEquals(ratingList.size(), 4);
+
+                return null;
+            }
+        });
+    }
+
+    
+    @Test
+    public void testGetAllRatingsForPortletInLastXDays() {
+        //Let's create some ratings
+        this.execute(new Callable<Object>() {
+            @Override
+            public Object call() throws Exception {
+
+                Calendar today = Calendar.getInstance();
+
+                List<IPortletDefinition> portletList = portletDefinitionDao.getPortletDefinitions();
+                List<ILocalAccountPerson> personList = localAccountDao.getAllAccounts();
+                assertNotEquals(portletList.size(), 0);
+                assertNotEquals(personList.size(), 0);
+                int i = 1;
+                for (IPortletDefinition portlet : portletList) {
+
+                    for (ILocalAccountPerson person : personList) {
+                        today.add(Calendar.DAY_OF_YEAR, 0 - i);
+                        System.out.println("Testing get ratings using " + today.getTime() + " for portlet creation date. Porlet is " + portlet.getFName() );
+                        MarketplaceRatingImpl rating = new MarketplaceRatingImpl();
+                        int starRating = random.nextInt(MarketplaceRatingImpl.MAX_RATING) + 1;
+                        rating.setRating(starRating);
+                        MarketplaceRatingPK ratingPK = new MarketplaceRatingPK();
+                        ratingPK.setPortletDefinition((PortletDefinitionImpl) portlet);
+                        ratingPK.setUserName(person.getName());
+                        rating.setMarketplaceRatingPK(ratingPK);
+                        rating.setRatingDate(today.getTime());
+                        rating.setReview("comment for " + ratingPK.getPortletDefinition().getFName());
+                        marketplaceRatingDao.createOrUpdateRating(rating);
+                        i = i + 20;
+                    }
+
+                }
+                return null;
+            }
+        });
+        //Now let's test getting a rating for specific portlet and specific number of
+        //days back
+        this.execute(new Callable<Object>() {
+            @Override
+            public Object call() throws Exception {
+                int daysBack = 7;
+                Set<IMarketplaceRating> ratingList = marketplaceRatingDao.getAllRatingsForPortletInLastXDays(daysBack, "fname1");
+                assertEquals(ratingList.size(), 1);
+                
+                daysBack = 30;
+                ratingList = marketplaceRatingDao.getAllRatingsForPortletInLastXDays(daysBack, "fname1");
+                assertEquals(ratingList.size(), 2);
+                return null;
+            }
+        });
+
+    }
+
+    
+    
+    
 }
