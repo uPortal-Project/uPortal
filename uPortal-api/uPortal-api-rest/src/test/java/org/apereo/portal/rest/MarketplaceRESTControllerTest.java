@@ -110,7 +110,7 @@ public class MarketplaceRESTControllerTest {
         ModelAndView modelAndView = marketplaceRESTController.getUserRating(req, F_NAME);
         Assert.assertNull(modelAndView.getModel().get("rating"));
     }
-    
+
     @Test
     public void testAllPortletRatingDaysBack() {
 
@@ -123,7 +123,7 @@ public class MarketplaceRESTControllerTest {
         PortletDefinitionImpl tempPortlet =
                 new PortletDefinitionImpl(
                         portletType, "John", "Doe", "Course", "app-id", "Courses", true);
-        
+
         Mockito.when(
                         marketplaceService.getOrCreateMarketplacePortletDefinitionIfTheFnameExists(
                                 remoteUser))
