@@ -40,9 +40,8 @@ public interface IMarketplaceRating {
      * @param review a text review of the portlet
      */
     public void setReview(String review);
-    
-    public void setRatingDate(Date ratingDate);
-    
-    public Date getRatingDate();
 
+    public void setRatingDate(Date ratingDate);
+
+    public Date getRatingDate();
 }
