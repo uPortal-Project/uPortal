@@ -52,22 +52,26 @@ public interface IPermission {
 
     /**
      * Allows the user to browse for a portlet that is in the <code>CREATED</code> lifecycle state.
+     *
      * @since 5.0
      */
     String PORTLET_BROWSE_CREATED_ACTIVITY = "BROWSE_CREATED";
     /**
      * Allows the user to browse for a portlet that is in the <code>APPROVED</code> lifecycle state.
+     *
      * @since 5.0
      */
     String PORTLET_BROWSE_APPROVED_ACTIVITY = "BROWSE_APPROVED";
     /**
-     * The standard <code>BROWSE</code> activity. Allows the user to browse marketplace
-     * entries and search for a portlet in the <code>PUBLISHED</code> lifecycle state.
+     * The standard <code>BROWSE</code> activity. Allows the user to browse marketplace entries and
+     * search for a portlet in the <code>PUBLISHED</code> lifecycle state.
+     *
      * @since 4.1
      */
     String PORTLET_BROWSE_ACTIVITY = "BROWSE";
     /**
      * Allows the user to browse for a portlet that is in the <code>EXPIRED</code> lifecycle state.
+     *
      * @since 5.0
      */
     String PORTLET_BROWSE_EXPIRED_ACTIVITY = "BROWSE_EXPIRED";
