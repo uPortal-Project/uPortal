@@ -307,10 +307,6 @@ public class JpaMarketplaceRatingDaoTest extends BasePortalJpaDaoTest {
 
                             for (ILocalAccountPerson person : personList) {
                                 today.add(Calendar.DAY_OF_YEAR, 0 - numberOfDaysBack);
-                                System.out.println(
-                                        "Testing get ratings using "
-                                                + today.getTime()
-                                                + " for portlet creation date.");
                                 MarketplaceRatingImpl rating = new MarketplaceRatingImpl();
                                 int starRating =
                                         random.nextInt(MarketplaceRatingImpl.MAX_RATING) + 1;
