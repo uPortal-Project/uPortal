@@ -418,12 +418,34 @@ public class AuthorizationImpl implements IAuthorizationService {
     @RequestCache
     public boolean canPrincipalBrowse(
             IAuthorizationPrincipal principal, IPortletDefinition portlet) {
+
+        String owner = IPermission.PORTAL_SUBSCRIBE;
         String target = PermissionHelper.permissionTargetIdForPortletDefinition(portlet);
-        return doesPrincipalHavePermission(
-                principal,
-                IPermission.PORTAL_SUBSCRIBE,
-                IPermission.PORTLET_BROWSE_ACTIVITY,
-                target);
+        PortletLifecycleState state = portlet.getLifecycleState();
+
+        /*
+         * Each channel lifecycle state now has its own browse permission.  The
+         * following logic checks the appropriate permission for the lifecycle.
+         */
+        String permission;
+        if (state.equals(PortletLifecycleState.PUBLISHED)
+            || state.equals(PortletLifecycleState.MAINTENANCE)) {
+            // NB:  There is no separate BROWSE permission for MAINTENANCE
+            // mode;  everyone simply sees the 'out of service' message
+            permission = IPermission.PORTLET_BROWSE_ACTIVITY;
+        } else if (state.equals(PortletLifecycleState.APPROVED)) {
+            permission = IPermission.PORTLET_BROWSE_APPROVED_ACTIVITY;
+        } else if (state.equals(PortletLifecycleState.CREATED)) {
+            permission = IPermission.PORTLET_BROWSE_CREATED_ACTIVITY;
+        } else if (state.equals(PortletLifecycleState.EXPIRED)) {
+            permission = IPermission.PORTLET_BROWSE_EXPIRED_ACTIVITY;
+        } else {
+            throw new AuthorizationException(
+                "Unrecognized lifecycle state for channel " + portlet.getPortletDefinitionId().getStringId());
+        }
+
+        // Test the appropriate permission.
+        return doesPrincipalHavePermission(principal, owner, permission, target);
     }
 
     /**

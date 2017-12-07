@@ -289,9 +289,7 @@ public class MarketplaceService implements IMarketplaceService, ApplicationListe
                 portletDefinition,
                 "Cannot determine whether a user can browse a null portlet definition.");
 
-        final String portletPermissionEntityId =
-                PermissionHelper.permissionTargetIdForPortletDefinition(portletDefinition);
-        return mayBrowse(principal, portletPermissionEntityId);
+        return authorizationService.canPrincipalBrowse(principal, portletDefinition);
     }
 
     @Override
