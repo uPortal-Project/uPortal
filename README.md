@@ -136,7 +136,7 @@
             Join the Conversation
           </td>
           <td>
-            <a href="https://groups.google.com/a/apereo.org/forum/#!forum/uportal-dev">
+            <a href="https://groups.google.com/a/apereo.org/forum/#!forum/uportal-user">
               <img src="https://img.shields.io/badge/uPortal-user-green.svg?style=flat" alt="uPortal user mailing list"
             </a>
             <br>
