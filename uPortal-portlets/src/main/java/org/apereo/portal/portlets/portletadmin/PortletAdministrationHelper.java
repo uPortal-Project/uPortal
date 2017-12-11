@@ -257,7 +257,7 @@ public final class PortletAdministrationHelper implements ServletContextAware {
                 form.addPermission(principalBean.getTypeAndIdHash() + "_" + perm.getActivity());
             }
         }
-        form.setPrincipals(principalBeans);
+        form.setPrincipals(principalBeans, false);
     }
 
     /*
@@ -279,8 +279,7 @@ public final class PortletAdministrationHelper implements ServletContextAware {
                 GroupService.getDistinguishedGroup(IPerson.DISTINGUISHED_GROUP);
         final JsonEntityBean everyoneBean =
                 new JsonEntityBean(everyoneGroup, groupListHelper.getEntityType(everyoneGroup));
-        form.setPrincipals(Collections.singleton(everyoneBean));
-        form.initPermissionsForPrincipal(everyoneBean);
+        form.setPrincipals(Collections.singleton(everyoneBean), true);
 
         return form;
     }
