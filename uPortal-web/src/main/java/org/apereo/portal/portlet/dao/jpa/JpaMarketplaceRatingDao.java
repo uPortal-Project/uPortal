@@ -354,8 +354,8 @@ public class JpaMarketplaceRatingDao extends BasePortalJpaDao implements IMarket
     @OpenEntityManager(unitName = PERSISTENCE_UNIT_NAME)
     public Set<IMarketplaceRating> getAllRatingsInLastXDays(int numberOfDaysBack) {
 
-        final Calendar queryDate = Calendar.getInstance();
-        queryDate.add(Calendar.DAY_OF_YEAR, 0 - numberOfDaysBack);
+        LocalDateTime todayMinusNumberOfDaysBack = LocalDateTime.now().minusDays(numberOfDaysBack);   
+        
         final TypedQuery<MarketplaceRatingImpl> query =
                 this.createQuery(
                         this.createCriteriaQuery(
@@ -372,7 +372,7 @@ public class JpaMarketplaceRatingDao extends BasePortalJpaDao implements IMarket
                                                 input.greaterThanOrEqualTo(
                                                         definitionRoot.<java.util.Date>get(
                                                                 "ratingDate"),
-                                                        queryDate.getTime());
+                                                        todayMinusNumberOfDaysBack.toDate());
 
                                         criteriaQuery
                                                 .select(definitionRoot)
