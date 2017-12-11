@@ -81,8 +81,8 @@ et ce, dans n'importe quel ordre:
 * `Preferences`
 * `Definition`
 
-[Bearer]: ../../../uPortal-soffit/src/main/java/org/apereo/portal/soffit/model/v1_0/Bearer.java
-[PortalRequest]: ../../../uPortal-soffit/src/main/java/org/apereo/portal/soffit/model/v1_0/PortalRequest.java
-[Preferences]: ../../../uPortal-soffit/src/main/java/org/apereo/portal/soffit/model/v1_0/Preferences.java
-[Definition]: ../../../uPortal-soffit/src/main/java/org/apereo/portal/soffit/model/v1_0/Definition.java
-[@SoffitModelAttribute]: ../../../uPortal-soffit-renderer/src/main/java/org/apereo/portal/soffit/renderer/SoffitModelAttribute.java
+[Bearer]: ../../../../uPortal-soffit/src/main/java/org/apereo/portal/soffit/model/v1_0/Bearer.java
+[PortalRequest]: ../../../../uPortal-soffit/src/main/java/org/apereo/portal/soffit/model/v1_0/PortalRequest.java
+[Preferences]: ../../../../uPortal-soffit/src/main/java/org/apereo/portal/soffit/model/v1_0/Preferences.java
+[Definition]: ../../../../uPortal-soffit/src/main/java/org/apereo/portal/soffit/model/v1_0/Definition.java
+[@SoffitModelAttribute]: ../../../../uPortal-soffit-renderer/src/main/java/org/apereo/portal/soffit/renderer/SoffitModelAttribute.java

@@ -1,8 +1,8 @@
 # Déploiement de uPortal
 
-## Setup
+## Installer
 
-dans `$HOME/.gradle/gradle.properties` vos informations d'identification pour Sonatype OSS Repository Hosting et vos
+Ajoutez dans `$HOME/.gradle/gradle.properties` vos informations d'identification pour Sonatype OSS Repository Hosting et vos
 informations de configuration pour la signature des artefacts avec GNU Privacy Guard (GnuPG).
 ([détails](https://docs.gradle.org/current/userguide/signing_plugin.html#sec:signatory_credentials)).
 
