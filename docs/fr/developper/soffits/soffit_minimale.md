@@ -1,7 +1,7 @@
 # Soffit Minimale
 
 L'interactivité d'une soffit avec le portail est basée sur HTTP. Il est possible d'écrire une
-soffit dans n'importe quelle language ou plate-forme pouvant accepter, traiter et répondre à une
+soffit dans n'importe quel langage ou plate-forme pouvant accepter, traiter et répondre à une
 connexion via HTTP. À l'heure actuelle, les créateurs de Soffit s'attendent à
 Développer les soffits principalement avec [Java][] et [Spring Boot][].
 
@@ -41,7 +41,7 @@ C'est tout! Vous avez maintenant une application Soffit minimale fonctionnant su
 
 Vous devrez modifier le fichier de construction du projet dans l'éditeur de votre choix.
 ** NOTE : **assurez-vous de spécifier la version de dépendance correcte; Il se peut que cela ne soit
-plus `5.0.0-SNAPSHOT` au moment où vous lisez ce guide.
+plus `5.0.0-SNAPSHOT` au moment où vous lisez ce guide.**
 
 Exemple Gradle (`build.gradle`):
 

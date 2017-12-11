@@ -72,7 +72,7 @@ ATTENTION : `ant clean` est potenciellement destructeur. Vous devez savoir ce qu
 Lancez un `ant clean deploy-war` et redémarrez Tomcat ( pour recupérer l'entrée
 JNDI ). La valeur définie dans JNDI doit être utilisée maintenant dans uPortal.
 
-## Define uPortal DataSources
+## Définir des sources de données d'uPortal
 
 La définition de sources de données externes à une application a été l'une des premières utilisations de JNDI. uPortal prend en charge les sources de données JNDI. En outre, un Factory bean auxiliaire peut être configuré pour utiliser le premier bean. Cela permet la définition d'un JNDI DataSource bean  avec
  un bean de secours qui est défini avec des valeurs d'un fichier de filtre pour des fins de test.
@@ -125,7 +125,7 @@ Exemple depuis datasourceContext.xml:
 
 ```
 
-## Configuration de Filtres CAS
+## Configuration des Filtres CAS
 
 Le Client CAS est JNDI-aware. Les valeurs de JNDI se substituent aux valeurs définis dans `web.xml`.
 Encore une fois, les names JNDI sont mappés en global names dans `uportal-war/src/main/webapp/META-INF/context.xml`.

@@ -1,6 +1,6 @@
-# Publication d'un soffite
+# Publication d'un soffit
 
-Suivez ces étapes pour voir votre soffite dans uPortal.
+Suivez ces étapes pour voir votre soffit dans uPortal.
 
 ## Dans le gestionnaire de portlet
 

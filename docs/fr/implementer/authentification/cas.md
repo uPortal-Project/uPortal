@@ -24,8 +24,6 @@ cas.enable.redirect.guest.to.login=true
 
 ## CAS 5 ClearPass: Credential Caching and Replay
 
-
-225/5000
 À partir de CAS 4, l'ancienne fonctionnalité ClearPass a été dépréciée au lieu de transmettre le mot de passe, crypté, comme tout autre attribut utilisateur. Cela nécessite une coordination supplémentaire entre CAS et uPortal avec le partage de clés.
 
 ### Configuration de CAS pour passer des mots de passe cryptés
