@@ -365,11 +365,11 @@ public class JpaMarketplaceRatingDaoTest extends BasePortalJpaDaoTest {
                         List<ILocalAccountPerson> personList = localAccountDao.getAllAccounts();
                         assertNotEquals(portletList.size(), 0);
                         assertNotEquals(personList.size(), 0);
-                        int i = 1;
+                        int numberOfDaysBack = 1;
                         for (IPortletDefinition portlet : portletList) {
 
                             for (ILocalAccountPerson person : personList) {
-                                today.add(Calendar.DAY_OF_YEAR, 0 - i);
+                                today.add(Calendar.DAY_OF_YEAR, 0 - numberOfDaysBack);
                                 System.out.println(
                                         "Testing get ratings using "
                                                 + today.getTime()
@@ -388,7 +388,7 @@ public class JpaMarketplaceRatingDaoTest extends BasePortalJpaDaoTest {
                                         "comment for "
                                                 + ratingPK.getPortletDefinition().getFName());
                                 marketplaceRatingDao.createOrUpdateRating(rating);
-                                i = i + 20;
+                                numberOfDaysBack = numberOfDaysBack + TEST_DATE_INCREMENT;
                             }
                         }
                         return null;
