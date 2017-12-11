@@ -15,7 +15,6 @@
 package org.apereo.portal.portlet.dao.jpa;
 
 import com.google.common.base.Function;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -354,8 +353,8 @@ public class JpaMarketplaceRatingDao extends BasePortalJpaDao implements IMarket
     @OpenEntityManager(unitName = PERSISTENCE_UNIT_NAME)
     public Set<IMarketplaceRating> getAllRatingsInLastXDays(int numberOfDaysBack) {
 
-        LocalDateTime todayMinusNumberOfDaysBack = LocalDateTime.now().minusDays(numberOfDaysBack);   
-        
+        LocalDateTime todayMinusNumberOfDaysBack = LocalDateTime.now().minusDays(numberOfDaysBack);
+
         final TypedQuery<MarketplaceRatingImpl> query =
                 this.createQuery(
                         this.createCriteriaQuery(
