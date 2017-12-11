@@ -218,7 +218,7 @@ public class PortletDefinitionForm implements Serializable {
                 for (Parameter param : step.getParameters()) {
                     // if this parameter doesn't currently have a value, check
                     // for a default in the CPD
-                    Attribute attribute = this.parameters.get(param.getName());
+                    Attribute attribute = parameters.get(param.getName());
                     if (attribute == null
                             || attribute.getValue() == null
                             || attribute.getValue().trim().equals("")) {
@@ -226,7 +226,7 @@ public class PortletDefinitionForm implements Serializable {
                         // use the default value if one exists
                         ParameterInputType input = param.getParameterInput().getValue();
                         if (input != null) {
-                            this.parameters.put(param.getName(), new Attribute(input.getDefault()));
+                            parameters.put(param.getName(), new Attribute(input.getDefault()));
                         }
                     }
                 }
@@ -235,18 +235,18 @@ public class PortletDefinitionForm implements Serializable {
                 for (Preference pref : step.getPreferences()) {
                     // if this parameter doesn't currently have a value, check
                     // for a default in the CPD
-                    if (!this.portletPreferences.containsKey(pref.getName())
-                            || this.portletPreferences.get(pref.getName()).getValue().size() == 0
-                            || (this.portletPreferences.get(pref.getName()).getValue().size() == 1
-                                    && this.portletPreferences
+                    if (!portletPreferences.containsKey(pref.getName())
+                            || portletPreferences.get(pref.getName()).getValue().size() == 0
+                            || (portletPreferences.get(pref.getName()).getValue().size() == 1
+                                    && portletPreferences
                                             .get(pref.getName())
                                             .getValue()
                                             .get(0)
                                             .trim()
                                             .equals(""))) {
 
-                        if (!this.portletPreferences.containsKey(pref.getName())) {
-                            this.portletPreferences.put(pref.getName(), new StringListAttribute());
+                        if (!portletPreferences.containsKey(pref.getName())) {
+                            portletPreferences.put(pref.getName(), new StringListAttribute());
                         }
 
                         // use the default value if one exists
@@ -255,7 +255,7 @@ public class PortletDefinitionForm implements Serializable {
                             SingleValuedPreferenceInputType singleValued =
                                     (SingleValuedPreferenceInputType) input;
                             if (singleValued.getDefault() != null) {
-                                this.portletPreferences
+                                portletPreferences
                                         .get(pref.getName())
                                         .getValue()
                                         .add(singleValued.getDefault());
@@ -264,7 +264,7 @@ public class PortletDefinitionForm implements Serializable {
                             MultiValuedPreferenceInputType multiValued =
                                     (MultiValuedPreferenceInputType) input;
                             if (multiValued.getDefaults() != null) {
-                                this.portletPreferences
+                                portletPreferences
                                         .get(pref.getName())
                                         .getValue()
                                         .addAll(multiValued.getDefaults());
@@ -457,34 +457,44 @@ public class PortletDefinitionForm implements Serializable {
         return Collections.unmodifiableSortedSet(principals);
     }
 
+    /**
+     * Replaces this form's collection of principals and <em>always</em> sets default permissions
+     * (SUBSCRIBE+BROWSE) for new principals
+     *
+     * @param principals
+     */
     public void setPrincipals(Set<JsonEntityBean> principals) {
+        setPrincipals(principals, true);
+    }
 
-        /*
-         * Important distinction -- are we adding principals to this form object for the first time?
-         * Or are we replacing an existing collection?
-         */
-        switch (this.principals.size()) {
-            case 0: // This is a new form object -- take it at face value
-                this.principals.addAll(principals);
-                break;
-            default: // Replacing an existing collection -- need to do some work
-                final Set<JsonEntityBean> previousPrincipals = new HashSet<>(this.principals);
-                this.principals.clear();
-                principals
-                        .stream()
-                        .forEach(
-                                bean -> {
-                                    this.principals.add(bean);
-                                    if (!previousPrincipals.contains(bean)) {
-                                        /*
-                                         * Previously unknown principals receive BROWSE & SUBSCRIBE by
-                                         * default (but not CONFIGURE!);  known principals do not receive
-                                         * this treatment b/c we don't want to reset previous selections.
-                                         */
-                                        initPermissionsForPrincipal(bean);
-                                    }
-                                });
-                break;
+    /**
+     * Replaces this form's collection of principals and <em>optionally</em> sets default
+     * permissions (SUBSCRIBE+BROWSE) for new principals
+     *
+     * @param newPrincipals
+     * @param initPermissionsForNew Give new principals <code>BROWSE</code> and <code>SUBSCRIBE
+     *     </code> permission when true
+     */
+    public void setPrincipals(Set<JsonEntityBean> newPrincipals, boolean initPermissionsForNew) {
+
+        final Set<JsonEntityBean> previousPrincipals = new HashSet<>(principals);
+        principals.clear();
+        principals.addAll(newPrincipals);
+
+        if (initPermissionsForNew) {
+            principals
+                    .stream()
+                    .forEach(
+                            bean -> {
+                                if (!previousPrincipals.contains(bean)) {
+                                    /*
+                                     * Previously unknown principals receive BROWSE & SUBSCRIBE by
+                                     * default (but not CONFIGURE!);  known principals do not receive
+                                     * this treatment b/c we don't want to reset previous selections.
+                                     */
+                                    initPermissionsForPrincipal(bean);
+                                }
+                            });
         }
     }
 
@@ -494,7 +504,7 @@ public class PortletDefinitionForm implements Serializable {
      *
      * @since 5.0
      */
-    /* package-private */ void initPermissionsForPrincipal(JsonEntityBean principal) {
+    private void initPermissionsForPrincipal(JsonEntityBean principal) {
         permissions.add(
                 principal.getTypeAndIdHash()
                         + "_"
@@ -521,7 +531,7 @@ public class PortletDefinitionForm implements Serializable {
     }
 
     public void clearPermissions() {
-        this.permissions.clear();
+        permissions.clear();
     }
 
     public SortedSet<JsonEntityBean> getCategories() {
@@ -534,11 +544,11 @@ public class PortletDefinitionForm implements Serializable {
     }
 
     public void addCategory(JsonEntityBean category) {
-        this.categories.add(category);
+        categories.add(category);
     }
 
     public int getPublishHour() {
-        return this.publishHour;
+        return publishHour;
     }
 
     public void setPublishHour(int publishHour) {
@@ -546,7 +556,7 @@ public class PortletDefinitionForm implements Serializable {
     }
 
     public int getPublishMinute() {
-        return this.publishMinute;
+        return publishMinute;
     }
 
     public void setPublishMinute(int publishMinute) {
@@ -554,7 +564,7 @@ public class PortletDefinitionForm implements Serializable {
     }
 
     public int getPublishAmPm() {
-        return this.publishAmPm;
+        return publishAmPm;
     }
 
     public void setPublishAmPm(int publishAmPm) {
@@ -562,7 +572,7 @@ public class PortletDefinitionForm implements Serializable {
     }
 
     public int getExpirationHour() {
-        return this.expirationHour;
+        return expirationHour;
     }
 
     public void setExpirationHour(int expirationHour) {
@@ -570,7 +580,7 @@ public class PortletDefinitionForm implements Serializable {
     }
 
     public int getExpirationMinute() {
-        return this.expirationMinute;
+        return expirationMinute;
     }
 
     public void setExpirationMinute(int expirationMinute) {
@@ -578,7 +588,7 @@ public class PortletDefinitionForm implements Serializable {
     }
 
     public int getExpirationAmPm() {
-        return this.expirationAmPm;
+        return expirationAmPm;
     }
 
     public void setExpirationAmPm(int expirationAmPm) {
@@ -592,17 +602,17 @@ public class PortletDefinitionForm implements Serializable {
      * @return
      */
     public Date getPublishDateTime() {
-        if (this.getPublishDate() == null) {
+        if (getPublishDate() == null) {
             return null;
         }
 
         Calendar cal = Calendar.getInstance();
-        cal.setTime(this.getPublishDate());
-        cal.set(Calendar.HOUR, this.getPublishHour());
-        cal.set(Calendar.MINUTE, this.getPublishMinute());
+        cal.setTime(getPublishDate());
+        cal.set(Calendar.HOUR, getPublishHour());
+        cal.set(Calendar.MINUTE, getPublishMinute());
         cal.set(Calendar.SECOND, 0);
         cal.set(Calendar.MILLISECOND, 0);
-        cal.set(Calendar.AM_PM, this.getPublishAmPm());
+        cal.set(Calendar.AM_PM, getPublishAmPm());
         return cal.getTime();
     }
 
@@ -613,17 +623,17 @@ public class PortletDefinitionForm implements Serializable {
      * @return
      */
     public Date getExpirationDateTime() {
-        if (this.getExpirationDate() == null) {
+        if (getExpirationDate() == null) {
             return null;
         }
 
         Calendar cal = Calendar.getInstance();
-        cal.setTime(this.getExpirationDate());
-        cal.set(Calendar.HOUR, this.getExpirationHour());
-        cal.set(Calendar.MINUTE, this.getExpirationMinute());
+        cal.setTime(getExpirationDate());
+        cal.set(Calendar.HOUR, getExpirationHour());
+        cal.set(Calendar.MINUTE, getExpirationMinute());
         cal.set(Calendar.SECOND, 0);
         cal.set(Calendar.MILLISECOND, 0);
-        cal.set(Calendar.AM_PM, this.getExpirationAmPm());
+        cal.set(Calendar.AM_PM, getExpirationAmPm());
         return cal.getTime();
     }
 
@@ -657,16 +667,16 @@ public class PortletDefinitionForm implements Serializable {
 
     public void setPublishDateTime(Date publish) {
         if (publish != null) {
-            this.setPublishDate(publish);
+            setPublishDate(publish);
             Calendar cal = Calendar.getInstance();
             cal.setTime(publish);
             if (cal.get(Calendar.HOUR) == 0) {
-                this.setPublishHour(12);
+                setPublishHour(12);
             } else {
-                this.setPublishHour(cal.get(Calendar.HOUR));
+                setPublishHour(cal.get(Calendar.HOUR));
             }
-            this.setPublishMinute(cal.get(Calendar.MINUTE));
-            this.setPublishAmPm(cal.get(Calendar.AM_PM));
+            setPublishMinute(cal.get(Calendar.MINUTE));
+            setPublishAmPm(cal.get(Calendar.AM_PM));
         }
     }
 
@@ -700,16 +710,16 @@ public class PortletDefinitionForm implements Serializable {
 
     public void setExpirationDateTime(Date expire) {
         if (expire != null) {
-            this.setExpirationDate(expire);
+            setExpirationDate(expire);
             Calendar cal = Calendar.getInstance();
             cal.setTime(expire);
             if (cal.get(Calendar.HOUR) == 0) {
-                this.setExpirationHour(12);
+                setExpirationHour(12);
             } else {
-                this.setExpirationHour(cal.get(Calendar.HOUR));
+                setExpirationHour(cal.get(Calendar.HOUR));
             }
-            this.setExpirationMinute(cal.get(Calendar.MINUTE));
-            this.setExpirationAmPm(cal.get(Calendar.AM_PM));
+            setExpirationMinute(cal.get(Calendar.MINUTE));
+            setExpirationAmPm(cal.get(Calendar.AM_PM));
         }
     }
 }
