@@ -1364,7 +1364,6 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
 
         return new DistributedUserLayout(
                 ILF,
-                fragmentNames,
                 distributedStructureStylesheetUserPreferences,
                 distributedThemeStylesheetUserPreferences);
     }

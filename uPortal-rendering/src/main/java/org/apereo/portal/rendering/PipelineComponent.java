@@ -29,9 +29,9 @@ import org.apereo.portal.utils.cache.CacheKey;
 public interface PipelineComponent<R, E> {
 
     /** Get the cache key for the request */
-    public CacheKey getCacheKey(HttpServletRequest request, HttpServletResponse response);
+    CacheKey getCacheKey(HttpServletRequest request, HttpServletResponse response);
 
     /** Get the event reader and corresponding cache key for the request */
-    public PipelineEventReader<R, E> getEventReader(
+    PipelineEventReader<R, E> getEventReader(
             HttpServletRequest request, HttpServletResponse response);
 }

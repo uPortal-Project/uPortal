@@ -20,20 +20,20 @@ import org.apereo.portal.layout.om.IStylesheetDescriptor;
 /** Defines CRUD operations on {@link IStylesheetDescriptor} objects */
 public interface IStylesheetDescriptorDao {
     /** Create and persist a new stylesheet descriptor, name and resource are required */
-    public IStylesheetDescriptor createStylesheetDescriptor(String name, String stylesheetResource);
+    IStylesheetDescriptor createStylesheetDescriptor(String name, String stylesheetResource);
 
     /** @return all of the persisted stylesheet descriptors */
-    public List<? extends IStylesheetDescriptor> getStylesheetDescriptors();
+    List<? extends IStylesheetDescriptor> getStylesheetDescriptors();
 
     /** Lookup a descriptor by id */
-    public IStylesheetDescriptor getStylesheetDescriptor(long id);
+    IStylesheetDescriptor getStylesheetDescriptor(long id);
 
     /** Lookup a descriptor by name */
-    public IStylesheetDescriptor getStylesheetDescriptorByName(String name);
+    IStylesheetDescriptor getStylesheetDescriptorByName(String name);
 
     /** Update a descriptor */
-    public void updateStylesheetDescriptor(IStylesheetDescriptor stylesheetDescriptor);
+    void updateStylesheetDescriptor(IStylesheetDescriptor stylesheetDescriptor);
 
     /** Delete a descriptor */
-    public void deleteStylesheetDescriptor(IStylesheetDescriptor stylesheetDescriptor);
+    void deleteStylesheetDescriptor(IStylesheetDescriptor stylesheetDescriptor);
 }

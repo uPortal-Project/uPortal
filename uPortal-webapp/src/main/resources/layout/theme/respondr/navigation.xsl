@@ -106,7 +106,7 @@
     <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
       <nav class="portal-nav">
         <div id="sidebar" class="sidebar-offcanvas container-fluid">
-            <div id="portalNavigation" class="fl-widget">
+            <div id="portalNavigation" class="fl-widget" aria-selected="false">
               <div id="portalNavigationInner" class="fl-widget-inner header">
                   <ul id="portalNavigationList" class="menu fl-tabs flc-reorderer-column list-group list-group-horizontal">
                      <xsl:apply-templates select="tab[$USE_TAB_GROUPS!='true' or @tabGroup=$ACTIVE_TAB_GROUP]">

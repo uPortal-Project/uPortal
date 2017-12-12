@@ -22,36 +22,33 @@ import org.apereo.portal.security.IPerson;
 
 /** Describes CRUD operations on {@link IStylesheetUserPreferences} */
 public interface IStylesheetUserPreferencesDao {
-    public IStylesheetUserPreferences createStylesheetUserPreferences(
+    IStylesheetUserPreferences createStylesheetUserPreferences(
             IStylesheetDescriptor stylesheetDescriptor, IPerson person, IUserProfile profile);
     /**
      * @deprecated Use {@link #createStylesheetUserPreferences(IStylesheetDescriptor, IPerson,
      *     IUserProfile)}
      */
     @Deprecated
-    public IStylesheetUserPreferences createStylesheetUserPreferences(
+    IStylesheetUserPreferences createStylesheetUserPreferences(
             IStylesheetDescriptor stylesheetDescriptor, int userId, int profileId);
 
-    public List<? extends IStylesheetUserPreferences> getStylesheetUserPreferences();
+    List<? extends IStylesheetUserPreferences> getStylesheetUserPreferences();
 
-    public List<? extends IStylesheetUserPreferences> getStylesheetUserPreferencesForUser(
-            int personId);
+    List<? extends IStylesheetUserPreferences> getStylesheetUserPreferencesForUser(int personId);
 
-    public IStylesheetUserPreferences getStylesheetUserPreferences(long id);
+    IStylesheetUserPreferences getStylesheetUserPreferences(long id);
 
-    public IStylesheetUserPreferences getStylesheetUserPreferences(
+    IStylesheetUserPreferences getStylesheetUserPreferences(
             IStylesheetDescriptor stylesheetDescriptor, IPerson person, IUserProfile profile);
     /**
      * @deprecated Use {@link #getStylesheetUserPreferences(IStylesheetDescriptor, IPerson,
      *     IUserProfile)}
      */
     @Deprecated
-    public IStylesheetUserPreferences getStylesheetUserPreferences(
+    IStylesheetUserPreferences getStylesheetUserPreferences(
             IStylesheetDescriptor stylesheetDescriptor, int personId, int profileId);
 
-    public void storeStylesheetUserPreferences(
-            IStylesheetUserPreferences stylesheetUserPreferences);
+    void storeStylesheetUserPreferences(IStylesheetUserPreferences stylesheetUserPreferences);
 
-    public void deleteStylesheetUserPreferences(
-            IStylesheetUserPreferences stylesheetUserPreferences);
+    void deleteStylesheetUserPreferences(IStylesheetUserPreferences stylesheetUserPreferences);
 }

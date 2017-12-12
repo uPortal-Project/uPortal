@@ -26,13 +26,14 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apereo.portal.PortalException;
 import org.apereo.portal.layout.IUserLayoutStore;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.spring.locator.UserLayoutStoreLocator;
 import org.apereo.portal.xml.XmlUtilitiesImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -45,7 +46,7 @@ import org.w3c.dom.NodeList;
  */
 public class PositionManager {
 
-    private static Log LOG = LogFactory.getLog(PositionManager.class);
+    private static Logger LOG = LoggerFactory.getLogger(PositionManager.class);
     private static IUserLayoutStore dls = null;
 
     /**
@@ -180,12 +181,24 @@ public class PositionManager {
         }
 
         // now for any left over after the insert point remove them.
-
-        while (nodeToInsertBefore.getNextSibling() != null)
-            positionSet.removeChild(nodeToInsertBefore.getNextSibling());
+        int removeFails = 0; // avoid infinite loop, if stuck
+        while (nodeToInsertBefore.getNextSibling() != null && removeFails < 5) {
+            Node toRemove = nodeToInsertBefore.getNextSibling();
+            try {
+                toRemove.getParentNode().removeChild(toRemove);
+            } catch (DOMException de) {
+                LOG.error(
+                        "DOM issue removing next child after insert point: {} -- {}",
+                        toRemove.toString(),
+                        de.getLocalizedMessage());
+                removeFails++;
+            }
+        }
 
         // now remove the insertion point
-        positionSet.removeChild(nodeToInsertBefore);
+        if (nodeToInsertBefore.getParentNode() != null) {
+            nodeToInsertBefore.getParentNode().removeChild(nodeToInsertBefore);
+        }
     }
 
     /**

@@ -85,7 +85,7 @@
         </xsl:choose>
     </xsl:variable>
 
-    <!-- ROOT template.  Chooses between templates that produce <layout_fragment> 
+    <!-- ROOT template.  Chooses between templates that produce <layout_fragment>
          (in DETACHED window state) and simply <layout> (in the general case). -->
     <xsl:template match="layout">
         <xsl:choose>
@@ -98,7 +98,7 @@
         </xsl:choose>
     </xsl:template>
 
-    <!-- NORMAL page template.  Governs the overall structure when the page is 
+    <!-- NORMAL page template.  Governs the overall structure when the page is
          non-detached. -->
     <xsl:template match="folder[@type='root']" mode="NORMAL">
         <layout>
@@ -209,7 +209,7 @@
         </layout>
     </xsl:template>
 
-    <!-- DETACHED page template.  Governs the overall structure when the page is 
+    <!-- DETACHED page template.  Governs the overall structure when the page is
          rendering a portlet in detached window state. -->
     <xsl:template match="folder[@type='root']" mode="DETACHED">
         <layout_fragment>
@@ -229,7 +229,7 @@
                 <!-- For detached mode, include regions hidden-top, page-top, page-bottom, and hidden-bottom. -->
                 <xsl:for-each select="child::folder[@type='hidden-top' or @type='page-top' or @type='page-bottom' or @type='hidden-bottom']">
                     <xsl:call-template name="region"/>
-                </xsl:for-each> 
+                </xsl:for-each>
             </regions>
             <content>
                 <xsl:attribute name="hasFavorites"><xsl:value-of select="$hasFavorites" /></xsl:attribute>
@@ -308,32 +308,10 @@
 
     <xsl:template name="column">
         <column>
-            <xsl:attribute name="ID">
-                <xsl:value-of select="@ID"/>
-            </xsl:attribute>
-            <xsl:attribute name="priority">
-                <xsl:value-of select="@priority"/>
-            </xsl:attribute>
-            <xsl:attribute name="width">
-                <xsl:value-of select="@width"/>
-            </xsl:attribute>
-            <xsl:if test="@dlm:moveAllowed = 'false'">
-                <xsl:attribute name="dlm:moveAllowed">false</xsl:attribute>
-            </xsl:if>
-            <xsl:if test="@dlm:deleteAllowed = 'false'">
-                <xsl:attribute name="dlm:deleteAllowed">false</xsl:attribute>
-            </xsl:if>
-            <xsl:if test="@dlm:editAllowed = 'false'">
-                <xsl:attribute name="dlm:editAllowed">false</xsl:attribute>
-            </xsl:if>
-            <xsl:if test="@dlm:addChildAllowed = 'false'">
-                <xsl:attribute name="dlm:addChildAllowed">false</xsl:attribute>
-            </xsl:if>
-            <xsl:if test="@dlm:precedence > 0">
-                <xsl:attribute name="dlm:precedence">
-                    <xsl:value-of select="@dlm:precedence"/>
-                </xsl:attribute>
-            </xsl:if>
+            <!-- Copy folder attributes verbatim -->
+            <xsl:for-each select="attribute::*">
+                <xsl:attribute name="{name()}"><xsl:value-of select="."/></xsl:attribute>
+            </xsl:for-each>
             <xsl:apply-templates/>
         </column>
     </xsl:template>

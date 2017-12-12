@@ -14,16 +14,12 @@
  */
 package org.apereo.portal.layout.dlm;
 
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Set;
 import org.apereo.portal.layout.om.IStylesheetUserPreferences;
 import org.w3c.dom.Document;
 
 /** A user's layout and meta-data about that layout */
 public class DistributedUserLayout {
     private final Document layout;
-    private final Set<String> fragmentNames;
     private final IStylesheetUserPreferences distributedStructureStylesheetUserPreferences;
     private final IStylesheetUserPreferences distributedThemeStylesheetUserPreferences;
 
@@ -34,7 +30,6 @@ public class DistributedUserLayout {
      */
     public DistributedUserLayout(Document layout) {
         this.layout = layout;
-        this.fragmentNames = Collections.emptySet();
         this.distributedStructureStylesheetUserPreferences = null;
         this.distributedThemeStylesheetUserPreferences = null;
     }
@@ -46,11 +41,9 @@ public class DistributedUserLayout {
      */
     public DistributedUserLayout(
             Document layout,
-            Set<String> fragmentNames,
             IStylesheetUserPreferences distributedStructureStylesheetUserPreferences,
             IStylesheetUserPreferences distributedThemeStylesheetUserPreferences) {
         this.layout = layout;
-        this.fragmentNames = Collections.unmodifiableSet(new LinkedHashSet<String>(fragmentNames));
         this.distributedStructureStylesheetUserPreferences =
                 distributedStructureStylesheetUserPreferences;
         this.distributedThemeStylesheetUserPreferences = distributedThemeStylesheetUserPreferences;

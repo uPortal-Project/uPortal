@@ -21,7 +21,7 @@
 -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0"
                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                xmlns:portlet="https://source.jasig.org/schemas/uportal/io/portlet-definition"
+                xmlns="https://source.jasig.org/schemas/uportal/io/portlet-definition"
                 xmlns:ns2="https://source.jasig.org/schemas/uportal">
 
     <xsl:output indent="yes"/>

@@ -37,7 +37,6 @@ import org.apereo.portal.security.IAuthorizationPrincipal;
 import org.apereo.portal.security.IAuthorizationService;
 import org.apereo.portal.security.IPermission;
 import org.apereo.portal.security.IPerson;
-import org.apereo.portal.security.PermissionHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -289,9 +288,7 @@ public class MarketplaceService implements IMarketplaceService, ApplicationListe
                 portletDefinition,
                 "Cannot determine whether a user can browse a null portlet definition.");
 
-        final String portletPermissionEntityId =
-                PermissionHelper.permissionTargetIdForPortletDefinition(portletDefinition);
-        return mayBrowse(principal, portletPermissionEntityId);
+        return authorizationService.canPrincipalBrowse(principal, portletDefinition);
     }
 
     @Override
