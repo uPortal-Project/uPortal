@@ -5,6 +5,8 @@ buildscript {
     }
     dependencies {
         classpath "org.jasig.resourceserver:resource-server-core:${resourceServerVersion}"
+        classpath 'javax.xml.bind:jaxb-api:2.3.0'
+        classpath 'org.eclipse.persistence:eclipselink:2.7.0'
     }
 }
 
@@ -112,6 +114,8 @@ task prepareSkinResources {
     }
 }
 
+// Java 9 workaround https://stackoverflow.com/a/46455026
+System.setProperty('javax.xml.bind.JAXBContextFactory', 'org.eclipse.persistence.jaxb.JAXBContextFactory');
 import org.jasig.resource.aggr.AggregationRequest
 import org.jasig.resource.aggr.ResourcesAggregator
 import org.jasig.resource.aggr.ResourcesAggregatorImpl
@@ -156,8 +160,8 @@ war {
 compileJava {
     doFirst {
         options.compilerArgs = [
-            '--class-path', classpath.asPath, 
-            '--module-path', classpath.asPath, 
+            '--class-path', classpath.asPath,
+            '--module-path', classpath.asPath,
             '--add-modules', 'java.xml.bind',
         ]
         //classpath = files()
