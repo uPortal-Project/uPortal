@@ -22,7 +22,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Root;
 import org.apache.commons.lang.Validate;
@@ -39,6 +38,7 @@ import org.springframework.stereotype.Repository;
 /** JPA implementation of the portlet definition DAO */
 @Repository
 public class JpaPortletDefinitionDao extends BasePortalJpaDao implements IPortletDefinitionDao {
+
     private CriteriaQuery<PortletDefinitionImpl> findAllPortletDefinitions;
     private CriteriaQuery<PortletDefinitionImpl> findDefinitionByNameQuery;
     private CriteriaQuery<PortletDefinitionImpl> findDefinitionByNameOrTitleQuery;
@@ -61,7 +61,6 @@ public class JpaPortletDefinitionDao extends BasePortalJpaDao implements IPortle
                                 final Root<PortletDefinitionImpl> definitionRoot =
                                         criteriaQuery.from(PortletDefinitionImpl.class);
                                 criteriaQuery.select(definitionRoot);
-                                addFetches(definitionRoot);
 
                                 return criteriaQuery;
                             }
@@ -77,7 +76,6 @@ public class JpaPortletDefinitionDao extends BasePortalJpaDao implements IPortle
                                 final Root<PortletDefinitionImpl> definitionRoot =
                                         criteriaQuery.from(PortletDefinitionImpl.class);
                                 criteriaQuery.select(definitionRoot);
-                                addFetches(definitionRoot);
                                 criteriaQuery.where(
                                         cb.equal(
                                                 definitionRoot.get(PortletDefinitionImpl_.name),
@@ -97,7 +95,6 @@ public class JpaPortletDefinitionDao extends BasePortalJpaDao implements IPortle
                                 final Root<PortletDefinitionImpl> definitionRoot =
                                         criteriaQuery.from(PortletDefinitionImpl.class);
                                 criteriaQuery.select(definitionRoot);
-                                addFetches(definitionRoot);
                                 criteriaQuery.where(
                                         cb.or(
                                                 cb.equal(
@@ -123,7 +120,6 @@ public class JpaPortletDefinitionDao extends BasePortalJpaDao implements IPortle
                                 final Root<PortletDefinitionImpl> definitionRoot =
                                         criteriaQuery.from(PortletDefinitionImpl.class);
                                 criteriaQuery.select(definitionRoot);
-                                addFetches(definitionRoot);
                                 criteriaQuery.where(
                                         cb.or(
                                                 cb.like(
@@ -138,16 +134,6 @@ public class JpaPortletDefinitionDao extends BasePortalJpaDao implements IPortle
                                 return criteriaQuery;
                             }
                         });
-    }
-
-    /** Add all the fetches needed for completely loading the object graph */
-    protected void addFetches(final Root<PortletDefinitionImpl> definitionRoot) {
-        definitionRoot
-                .fetch(PortletDefinitionImpl_.portletPreferences, JoinType.LEFT)
-                .fetch(PortletPreferencesImpl_.portletPreferences, JoinType.LEFT)
-                .fetch(PortletPreferenceImpl_.values, JoinType.LEFT);
-        definitionRoot.fetch(PortletDefinitionImpl_.parameters, JoinType.LEFT);
-        definitionRoot.fetch(PortletDefinitionImpl_.localizations, JoinType.LEFT);
     }
 
     @Override
