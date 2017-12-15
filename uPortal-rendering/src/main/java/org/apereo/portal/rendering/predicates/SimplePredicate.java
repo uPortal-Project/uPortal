@@ -15,17 +15,15 @@
 package org.apereo.portal.rendering.predicates;
 
 import java.util.function.Predicate;
-
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.beans.factory.annotation.Required;
 
 /**
  * It's great that Java 8 provides native, language-level support for predicates, but they don't
  * make it easy to configure them in Spring EL (which is something we do for the Rendering
- * Pipeline).  This class is essentially a hard-coded <code>Predicate</code>;  you specify
- * <code>true</code> or <code>false</code>.  The <code>HttpServletRequest</code> is ignored.
+ * Pipeline). This class is essentially a hard-coded <code>Predicate</code>; you specify <code>true
+ * </code> or <code>false</code>. The <code>HttpServletRequest</code> is ignored.
  *
  * @since 5.0
  */
@@ -40,7 +38,7 @@ public class SimplePredicate implements Predicate<HttpServletRequest> {
     }
 
     @PostConstruct
-    public void init(){
+    public void init() {
         value = Boolean.valueOf(valueString);
     }
 
