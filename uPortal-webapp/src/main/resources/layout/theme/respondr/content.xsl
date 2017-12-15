@@ -450,7 +450,7 @@
           </xsl:variable>
 
           <xsl:if test="$AUTHENTICATED='true'">
-            <li>
+            <li class="up-portlet-options-item rate">
               <a href="#" title="{upMsg:getMessage('rate.this.portlet', $USER_LANG)}" class="rateThisPortlet{@ID}" data-toggle="modal" data-target="#ratePortletModal{@ID}">
                 <span><xsl:value-of select="upMsg:getMessage('rate.this.portlet', $USER_LANG)"/></span>
               </a>
@@ -461,7 +461,7 @@
           <xsl:if test="$hasFavorites='true' and upAuth:hasPermission('UP_SYSTEM', 'FAVORITE', $permissionChannelId)">
               <xsl:choose>
                   <xsl:when test="$isInFavorites!='true'"><!-- Add to favorite. -->
-                      <li>
+                      <li class="up-portlet-options-item favorite">
                           <a href="#" title="{upMsg:getMessage('add.this.portlet.to.my.favorite', $USER_LANG)}"
                              class="addToFavoriteLink{@chanID}">
                               <span><xsl:value-of select="upMsg:getMessage('add.to.my.favorites', $USER_LANG)"/></span>
@@ -480,7 +480,7 @@
                       </li>
                   </xsl:when>
                   <xsl:otherwise><!-- Remove From favorites. -->
-                      <li>
+                      <li class="up-portlet-options-item favorite">
                           <a href="#"
                              title="{upMsg:getMessage('remove.this.portlet.from.my.favorite', $USER_LANG)}"
                              class="removeFromFavoriteLink{@chanID}">
@@ -501,7 +501,7 @@
 
           <xsl:if test="$PORTLET_LOCKED='movable' or $IS_FRAGMENT_ADMIN_MODE='true'">
               <xsl:variable name="moveText"><xsl:value-of select="upMsg:getMessage('move.this.portlet', $USER_LANG)"/></xsl:variable>
-              <li>
+              <li class="up-portlet-options-item move">
                   <a id="movePortlet_{@ID}" title="{$moveText}" href="javascript:void(0);" class="up-portlet-control move" data-move-text="{$moveText}" data-cancel-move-text="{upMsg:getMessage('cancel.portlet.move', $USER_LANG)}"><xsl:value-of select="$moveText"/></a>
               </li>
           </xsl:if>
@@ -509,7 +509,7 @@
           <!-- Add to Layout Icon -->
           <!-- Add if not in layout and user has BROWSE permission to portlet -->
           <xsl:if test="//focused[@in-user-layout='no'] and $AUTHENTICATED='true' and upAuth:hasPermission('UP_PORTLET_SUBSCRIBE', 'BROWSE', $permissionChannelId)">
-              <li>
+              <li class="up-portlet-options-item add">
                   <a id="focusedContentDialogLink" href="#"
                      title="{upMsg:getMessage('add.this.portlet.to.my.layout', $USER_LANG)}" class="up-portlet-control add">
                       <span><xsl:value-of select="upMsg:getMessage('add.to.my.layout', $USER_LANG)"/></span>
@@ -522,7 +522,7 @@
           <xsl:if test="not(@dlm:deleteAllowed='false') or $IS_FRAGMENT_ADMIN_MODE='true'">
             <xsl:if test="not(//focused)"><!-- Don't offer 'Remove' in MAXIMIZED window state -->
               <!-- calls a layout api on click that removes the current node from the layout -->
-              <li>
+              <li class="up-portlet-options-item remove">
                 <a id="removePortlet_{@ID}" title="{upMsg:getMessage('are.you.sure.remove.portlet', $USER_LANG)}" href="javascript:void(0);" class="up-portlet-control remove"><xsl:value-of select="upMsg:getMessage('remove', $USER_LANG)"/></a>
               </li>
             </xsl:if>
@@ -530,7 +530,7 @@
 
       <!-- Focus Icon -->
       <xsl:if test="not(//focused) and not(//layout_fragment) and @windowState!='minimized'">
-        <li>
+        <li class="up-portlet-options-item maximize">
           <xsl:element name="a">
             <xsl:attribute name="title"><xsl:value-of select="upMsg:getMessage('enter.maximized.mode.for.this.portlet', $USER_LANG)" /></xsl:attribute>
             <xsl:choose>
@@ -572,7 +572,7 @@
                 </xsl:with-param>
               </xsl:call-template>
         </xsl:variable>
-        <li>
+        <li class="up-portlet-options-item dashboard">
           <a href="{$portletReturnUrl}" title="{upMsg:getMessage('return.to.dashboard.view', $USER_LANG)}" class="up-portlet-control return"><xsl:value-of select="upMsg:getMessage('return.to.dashboard', $USER_LANG)"/></a>
         </li>
       </xsl:if>
@@ -592,7 +592,7 @@
                     </xsl:with-param>
                   </xsl:call-template>
                 </xsl:variable>
-                <li>
+                <li class="up-portlet-options-item minimize">
                   <a href="{$portletReturnUrl}" title="{upMsg:getMessage('return.to.dashboard.view', $USER_LANG)}" class="up-portlet-control show-content"><xsl:value-of select="upMsg:getMessage('return.to.dashboard', $USER_LANG)"/></a>
                 </li>
               </xsl:when>
@@ -607,7 +607,7 @@
                     </xsl:with-param>
                   </xsl:call-template>
                 </xsl:variable>
-                <li>
+                <li class="up-portlet-options-item minimize">
                   <a href="{$portletMinUrl}" title="{upMsg:getMessage('enter.minimized.mode.for.this.portlet', $USER_LANG)}" class="up-portlet-control hide-content"><xsl:value-of select="upMsg:getMessage('minimize', $USER_LANG)"/></a>
                 </li>
               </xsl:otherwise>
@@ -627,7 +627,7 @@
             </xsl:with-param>
           </xsl:call-template>
         </xsl:variable>
-        <li>
+        <li class="up-portlet-options-item edit">
           <a href="{$portletEditUrl}#{@ID}" title="{upMsg:getMessage('edit.portlet', $USER_LANG)}" class="up-portlet-control edit"><xsl:value-of select="upMsg:getMessage('edit', $USER_LANG)"/></a>
         </li>
       </xsl:if>
@@ -645,7 +645,7 @@
               </xsl:with-param>
             </xsl:call-template>
           </xsl:variable>
-          <li>
+          <li class="up-portlet-options-item configure">
             <a href="{$portletConfigureUrl}" title="{upMsg:getMessage('configure.portlet', $USER_LANG)}" class="up-portlet-control configure"><xsl:value-of select="upMsg:getMessage('configure', $USER_LANG)"/></a>
           </li>
         </xsl:if>
@@ -663,7 +663,7 @@
             </xsl:with-param>
           </xsl:call-template>
         </xsl:variable>
-        <li>
+        <li class="up-portlet-options-item print">
           <a href="{$portletPrintUrl}#{@ID}" title="{upMsg:getMessage('print.portlet', $USER_LANG)}" class="up-portlet-control print"><xsl:value-of select="upMsg:getMessage('print', $USER_LANG)"/></a>
         </li>
       </xsl:if>
@@ -680,7 +680,7 @@
                       </xsl:with-param>
                   </xsl:call-template>
               </xsl:variable>
-              <li>
+              <li class="up-portlet-options-item about">
                   <a href="{$portletAboutUrl}#{@ID}" title="{upMsg:getMessage('view.information.about.portlet', $USER_LANG)}" class="up-portlet-control about"><xsl:value-of select="upMsg:getMessage('view.information.about.portlet', $USER_LANG)"/></a>
               </li>
           </xsl:if>
@@ -697,13 +697,13 @@
                       </xsl:with-param>
                   </xsl:call-template>
               </xsl:variable>
-              <li>
+              <li class="up-portlet-options-item help">
                   <a href="{$portletHelpUrl}#{@ID}" title="{upMsg:getMessage('view.help.for.portlet', $USER_LANG)}" class="up-portlet-control help"><xsl:value-of select="upMsg:getMessage('help', $USER_LANG)"/></a>
               </li>
           </xsl:if>
 
           <xsl:if test="$IS_FRAGMENT_ADMIN_MODE='true'">
-            <li>
+            <li class="up-portlet-options-item permissions">
               <a class="up-portlet-control permissions portlet-permissions-link" href="#" title="{upMsg:getMessage('edit.permissions.for.this.portlet', $USER_LANG)}"><xsl:value-of select="upMsg:getMessage('edit.permissions', $USER_LANG)"/></a>
             </li>
           </xsl:if>
