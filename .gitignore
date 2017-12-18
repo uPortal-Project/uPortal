@@ -423,11 +423,13 @@ modules.xml
 
 /docs/_site
 
+# There should already be a rule ignoring these, but somehow they're not being ignored
+uPortal-api/uPortal-api-search/out/
+uPortal-io/uPortal-io-jaxb/out/
+uPortal-soffit/uPortal-soffit-connector/out/
+uPortal-webapp/out/
+
 # Project specific includes
-!**/filters/local.properties
-!bootstrap/lib/*.jar
-!uportal-portlets-overlay/CalendarPortlet/3rd-party/repository/org/osaf/caldav4j/0.7/*.jar
-!uportal-portlets-overlay/CalendarPortlet/3rd-party/repository/slide/jakarta-slide-webdavlib/2.2pre1-httpclient-3.0/*.jar
 !**/src/**/target/
 !**/src/**/tags/
 !**/src/test/**/*.jar
