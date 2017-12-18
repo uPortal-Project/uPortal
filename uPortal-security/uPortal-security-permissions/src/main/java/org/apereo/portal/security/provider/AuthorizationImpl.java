@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.Element;
 import net.sf.ehcache.constructs.blocking.CacheEntryFactory;
@@ -80,10 +81,7 @@ public class AuthorizationImpl implements IAuthorizationService {
      * missing data, currently 5 minutes. Without this throttle, the logs would quickly fill with
      * the same message when there is missing data.
      */
-    private static final long MISSING_DATA_LOG_PERIOD_MILLIS =
-            1000L * // Millis in a second
-                    60L * // Seconds in a minute
-                    5L; // Minutes in five minutes
+    private static final long MISSING_DATA_LOG_PERIOD_MILLIS = TimeUnit.MINUTES.toMillis(5L);
 
     /** Instance of log in order to log events. */
     protected final Logger logger = LoggerFactory.getLogger(getClass());
