@@ -20,7 +20,7 @@ signing.secretKeyRingFile=/Users/me/.gnupg/secring.gpg
 Run the following command:
 
 ```sh
-./gradlew clean release -Dorg.gradle.parallel=false
+./gradlew clean release --no-parallel
 ```
 
 :warning: During the `release` task, you will be prompted for a release version (e.g. `5.0.3`) and a

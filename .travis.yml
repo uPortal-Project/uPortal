@@ -19,7 +19,7 @@ env:
 
 # The 'build' task runs most things, including test, check, & static analysis
 install: true
-script: ./gradlew -u -i -q -S build jacocoAggregateReport coveralls
+script: ./gradlew -u -i -S --no-build-cache --no-parallel build jacocoAggregateReport coveralls
 
 cache:
   directories:
