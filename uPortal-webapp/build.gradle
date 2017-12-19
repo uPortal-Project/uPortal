@@ -5,6 +5,8 @@ buildscript {
     }
     dependencies {
         classpath "org.jasig.resourceserver:resource-server-core:${resourceServerVersion}"
+        classpath 'javax.xml.bind:jaxb-api:2.3.0'
+        classpath 'org.eclipse.persistence:eclipselink:2.7.0'
     }
 }
 
@@ -48,6 +50,7 @@ dependencies {
     testCompile "${portletApiDependency}"
     testCompile "${servletApiDependency}"
 
+    runtime "javax.xml.bind:jaxb-api:2.3.0"
     runtime "ch.qos.logback:logback-classic:${logbackVersion}"
     runtime "joda-time:joda-time-jsptags:${jodaTimeJsptagsVersion}"
     runtime "org.aspectj:aspectjweaver:${aspectjVersion}"
@@ -116,6 +119,10 @@ import org.jasig.resource.aggr.AggregationRequest
 import org.jasig.resource.aggr.ResourcesAggregator
 import org.jasig.resource.aggr.ResourcesAggregatorImpl
 task aggregateRespondrSkins {
+    doFirst {
+       System.setProperty("javax.xml.bind.JAXBContextFactory", "org.eclipse.persistence.jaxb.JAXBContextFactory");
+    }
+
     doLast {
         final ResourcesAggregator aggr = new ResourcesAggregatorImpl();
         aggr.setDisplayJsWarnings(false);
@@ -150,16 +157,5 @@ war {
     with {
         from "${buildDir}/generated-sources/skin/main/webapp"
         into '/'
-    }
-}
-
-compileJava {
-    doFirst {
-        options.compilerArgs = [
-            '--class-path', classpath.asPath, 
-            '--module-path', classpath.asPath, 
-            '--add-modules', 'java.xml.bind',
-        ]
-        //classpath = files()
     }
 }
