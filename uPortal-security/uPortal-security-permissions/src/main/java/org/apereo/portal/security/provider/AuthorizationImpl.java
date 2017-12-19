@@ -20,7 +20,10 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.Element;
 import net.sf.ehcache.constructs.blocking.CacheEntryFactory;
@@ -73,8 +76,15 @@ import org.springframework.stereotype.Service;
 @Service("authorizationService")
 public class AuthorizationImpl implements IAuthorizationService {
 
+    /**
+     * Period during which this service will not complain (in the logs) about the same item of
+     * missing data, currently 5 minutes. Without this throttle, the logs would quickly fill with
+     * the same message when there is missing data.
+     */
+    private static final long MISSING_DATA_LOG_PERIOD_MILLIS = TimeUnit.MINUTES.toMillis(5L);
+
     /** Instance of log in order to log events. */
-    protected final Logger log = LoggerFactory.getLogger(getClass());
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     /** Constant representing the separator used in the principal key. */
     private static final String PRINCIPAL_SEPARATOR = ".";
@@ -107,6 +117,8 @@ public class AuthorizationImpl implements IAuthorizationService {
     private boolean cachePermissions = true;
 
     private Set<String> nonEntityPermissionTargetProviders = new HashSet<>();
+
+    private Map<Object, Long> missingDataLogTracker = new ConcurrentHashMap<>();
 
     @Autowired private IPermissionOwnerDao permissionOwnerDao;
 
@@ -243,7 +255,7 @@ public class AuthorizationImpl implements IAuthorizationService {
         final String activity = IPermission.PORTLET_MODE_CONFIG;
 
         boolean isAllowed = doesPrincipalHavePermission(principal, owner, activity, target);
-        log.trace(
+        logger.trace(
                 "In canPrincipalConfigure() - principal.key=[{}], is allowed?=[{}]",
                 principal.getKey(),
                 isAllowed);
@@ -560,6 +572,8 @@ public class AuthorizationImpl implements IAuthorizationService {
             return (Boolean) element.getValue();
         }
 
+        boolean rslt = false; // fail closed
+
         /*
          * Convert to (strongly-typed) Java objects based on interfaces in
          * o.j.p.permission before we make the actual check with IPermissionPolicy;
@@ -571,22 +585,54 @@ public class AuthorizationImpl implements IAuthorizationService {
         final IPermissionOwner ipOwner = permissionOwnerDao.getPermissionOwner(owner);
         final IPermissionActivity ipActivity =
                 permissionOwnerDao.getPermissionActivity(owner, activity);
-        if (ipActivity == null) {
-            // Means needed data is missing;  much clearer than NPE
-            String msg =
-                    "The following activity is not defined for owner '" + owner + "':  " + activity;
-            throw new RuntimeException(msg);
+        if (ipActivity != null) {
+            final IPermissionTargetProvider targetProvider =
+                    targetProviderRegistry.getTargetProvider(ipActivity.getTargetProviderKey());
+            final IPermissionTarget ipTarget = targetProvider.getTarget(target);
+            rslt =
+                    policy.doesPrincipalHavePermission(
+                            this, principal, ipOwner, ipActivity, ipTarget);
+        } else {
+            /*
+             * This circumstance means that a piece of the fundamental Permissions data expected by
+             * the code is missing in the database.  It normally happens when a newer version of the
+             * uPortal code is run against an existing database, and a required data update was
+             * overlooked.  This condition is not great, but probably not catastrophic;  it means
+             * that no one will (or can) have the new permission.  This method returns false.
+             *
+             * Administrators, however, have permission to do anything, including this unknown
+             * activity.  It's most common in uPortal for only Administrators to have access to
+             * exotic activities, so in most cases this omission is a wash.
+             *
+             * We need to log a WARNing, but this method is invoked a lot, and we don't want to do
+             * it incessantly.
+             */
+            final Long now = System.currentTimeMillis();
+            final String missingDataTrackerKey = owner + ":" + activity;
+            final Long lastLogMessageTime = missingDataLogTracker.get(missingDataTrackerKey);
+            if (lastLogMessageTime == null
+                    || lastLogMessageTime < now - MISSING_DATA_LOG_PERIOD_MILLIS) {
+                logger.warn(
+                        "Activity '{}' is not defined for owner '{}';  only admins will be "
+                                + "able to access this function;  this warning usually means that expected data "
+                                + "was not imported",
+                        activity,
+                        owner);
+                missingDataLogTracker.put(missingDataTrackerKey, now);
+            }
+            // This pass becomes a check for superuser (Portal Administrators)
+            rslt =
+                    doesPrincipalHavePermission(
+                            principal,
+                            IPermission.PORTAL_SYSTEM,
+                            IPermission.ALL_PERMISSIONS_ACTIVITY,
+                            IPermission.ALL_TARGET,
+                            policy);
         }
-        final IPermissionTargetProvider targetProvider =
-                targetProviderRegistry.getTargetProvider(ipActivity.getTargetProviderKey());
-        final IPermissionTarget ipTarget = targetProvider.getTarget(target);
 
-        final boolean doesPrincipalHavePermission =
-                policy.doesPrincipalHavePermission(this, principal, ipOwner, ipActivity, ipTarget);
+        this.doesPrincipalHavePermissionCache.put(new Element(key, rslt));
 
-        this.doesPrincipalHavePermissionCache.put(new Element(key, doesPrincipalHavePermission));
-
-        return doesPrincipalHavePermission;
+        return rslt;
     }
 
     /**
@@ -609,7 +655,7 @@ public class AuthorizationImpl implements IAuthorizationService {
             IAuthorizationPrincipal principal, String owner, String activity, String target)
             throws AuthorizationException {
         IPermission[] perms = getPermissionsForPrincipal(principal, owner, activity, target);
-        ArrayList<IPermission> al = new ArrayList<IPermission>(Arrays.asList(perms));
+        ArrayList<IPermission> al = new ArrayList<>(Arrays.asList(perms));
         Iterator i = getInheritedPrincipals(principal);
         while (i.hasNext()) {
             IAuthorizationPrincipal p = (IAuthorizationPrincipal) i.next();
@@ -617,7 +663,7 @@ public class AuthorizationImpl implements IAuthorizationService {
             al.addAll(Arrays.asList(perms));
         }
 
-        log.trace(
+        logger.trace(
                 "query for all permissions for principal=[{}], owner=[{}], activity=[{}], target=[{}] returned permissions [{}]",
                 principal,
                 owner,
@@ -666,7 +712,7 @@ public class AuthorizationImpl implements IAuthorizationService {
 
         IGroupMember gm = GroupService.getGroupMember(principal.getKey(), principal.getType());
 
-        log.debug(
+        logger.debug(
                 "AuthorizationImpl.getGroupMemberForPrincipal(): principal [{}] got group member [{}]",
                 principal,
                 gm);
@@ -698,7 +744,7 @@ public class AuthorizationImpl implements IAuthorizationService {
     private Iterator getInheritedPrincipals(IAuthorizationPrincipal principal)
             throws AuthorizationException {
         Iterator i = null;
-        ArrayList<IAuthorizationPrincipal> al = new ArrayList<IAuthorizationPrincipal>(5);
+        ArrayList<IAuthorizationPrincipal> al = new ArrayList<>(5);
 
         try {
             i = getGroupsForPrincipal(principal);
@@ -881,7 +927,7 @@ public class AuthorizationImpl implements IAuthorizationService {
      */
     @Override
     public IAuthorizationPrincipal newPrincipal(String key, Class type) {
-        final Tuple<String, Class> principalKey = new Tuple<String, Class>(key, type);
+        final Tuple<String, Class> principalKey = new Tuple<>(key, type);
         final Element element = this.principalCache.get(principalKey);
         // principalCache is self populating, it can never return a null entry
         return (IAuthorizationPrincipal) element.getObjectValue();
@@ -898,7 +944,7 @@ public class AuthorizationImpl implements IAuthorizationService {
         String key = groupMember.getKey();
         Class type = groupMember.getType();
 
-        log.debug("AuthorizationImpl.newPrincipal(): for {} ({})", type, key);
+        logger.debug("AuthorizationImpl.newPrincipal(): for {} ({})", type, key);
 
         return newPrincipal(key, type);
     }
@@ -982,7 +1028,7 @@ public class AuthorizationImpl implements IAuthorizationService {
             if (element != null) {
                 containingGroups = (Set<String>) element.getObjectValue();
             } else {
-                containingGroups = new HashSet<String>();
+                containingGroups = new HashSet<>();
 
                 // Ignore target entity lookups for the various synthetic ALL targets
                 if (!IPermission.ALL_CATEGORIES_TARGET.equals(target)
@@ -1011,7 +1057,7 @@ public class AuthorizationImpl implements IAuthorizationService {
                         }
                     }
                     if (checkTargetForContainingGroups) {
-                        log.debug(
+                        logger.debug(
                                 "Target '{}' is an entity. Checking for group or groups containing entity",
                                 target);
 
@@ -1039,10 +1085,10 @@ public class AuthorizationImpl implements IAuthorizationService {
             }
 
         } else {
-            containingGroups = new HashSet<String>();
+            containingGroups = new HashSet<>();
         }
 
-        List<IPermission> al = new ArrayList<IPermission>(perms.length);
+        List<IPermission> al = new ArrayList<>(perms.length);
 
         for (int i = 0; i < perms.length; i++) {
             String permissionTarget = perms[i].getTarget();
@@ -1063,7 +1109,7 @@ public class AuthorizationImpl implements IAuthorizationService {
             }
         }
 
-        log.trace(
+        logger.trace(
                 "AuthorizationImpl.primGetPermissionsForPrincipal(): "
                         + "Principal: {} owner: {} activity: {} target: {} : permissions retrieved: {}",
                 principal,
@@ -1071,7 +1117,7 @@ public class AuthorizationImpl implements IAuthorizationService {
                 activity,
                 target,
                 al);
-        log.debug(
+        logger.debug(
                 "AuthorizationImpl.primGetPermissionsForPrincipal(): "
                         + "Principal: {} owner: {} activity: {} target: {} : number of permissions retrieved: {}",
                 principal,
