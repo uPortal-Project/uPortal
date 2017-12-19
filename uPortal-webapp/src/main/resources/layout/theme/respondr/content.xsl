@@ -59,9 +59,18 @@
   <xsl:template match="content">
     <!-- Handles dashboard mode -->
     <xsl:if test="column">
-      <xsl:call-template name="columns">
-        <xsl:with-param name="COLUMNS"><xsl:value-of select="count(column)"/></xsl:with-param>
-      </xsl:call-template>
+      <xsl:choose>
+        <xsl:when test="column[@flexColumns]">
+          <!-- Columns based on CSS Flex (newer) -->
+          <xsl:call-template name="flex-columns"></xsl:call-template>
+        </xsl:when>
+        <xsl:otherwise>
+          <!-- uPortal "classic" columns -->
+          <xsl:call-template name="columns">
+            <xsl:with-param name="COLUMNS"><xsl:value-of select="count(column)"/></xsl:with-param>
+          </xsl:call-template>
+        </xsl:otherwise>
+      </xsl:choose>
     </xsl:if>
     <!-- Handles focused mode -->
     <xsl:apply-templates select="focused/channel">
@@ -72,7 +81,7 @@
   <!-- ========== TEMPLATE: BODY COLUMNS ========== -->
   <!-- ============================================ -->
   <!--
-   | This template renders the columns of the page body.
+   | This template renders the columns of the page body in the classic uPortal way.
   -->
   <xsl:template name="columns">
     <xsl:param name="COLUMNS" />
@@ -138,6 +147,33 @@
     <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
   </xsl:template>
   <!-- ============================================ -->
+
+    <!-- ========== TEMPLATE: FLEX COLUMNS ========== -->
+    <!-- ============================================ -->
+    <!--
+     | This template renders the columns of the page body using the new CSS Flex strategy.
+    -->
+    <xsl:template name="flex-columns">
+      <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
+      <div id="portalPageBodyColumns" class="row">
+        <xsl:variable name="COLUMN_SIZE_CSS_CLASSES">
+          <xsl:choose>
+            <!-- (Officially) supported values of @flexColumns are 6, 4, 3, and 2. -->
+            <xsl:when test="column/@flexColumns='6'">up-col-xs-2 up-col-sm-3 up-col-md-4 up-col-lg-6</xsl:when>
+            <xsl:when test="column/@flexColumns='4'">up-col-xs-1 up-col-sm-2 up-col-md-3 up-col-lg-4</xsl:when>
+            <xsl:when test="column/@flexColumns='3'">up-col-xs-1 up-col-sm-1 up-col-md-2 up-col-lg-3</xsl:when>
+            <!-- The only other officially supported value is 2, but any value EXCEPT 6, 4, or 3 will be treated as 2. -->
+            <xsl:otherwise>up-col-xs-1 up-col-sm-1 up-col-md-2 up-col-lg-2</xsl:otherwise>
+          </xsl:choose>
+        </xsl:variable>
+        <div class="up-grid up-matching-height up-constant-columns {$COLUMN_SIZE_CSS_CLASSES}">
+          <xsl:apply-templates select="column/channel|column/blocked-channel"/> <!-- Render the column's portlets.  -->
+        </div>
+      </div>
+      <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
+    </xsl:template>
+    <!-- ============================================ -->
+
 
   <!-- ========== TEMPLATE: PORTLET ========== -->
   <!-- ======================================= -->

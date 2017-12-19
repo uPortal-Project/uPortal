@@ -308,8 +308,8 @@
 
     <xsl:template name="column">
         <column>
-            <!-- Copy folder attributes verbatim -->
-            <xsl:for-each select="attribute::*">
+            <!-- Copy non-empty folder attributes verbatim -->
+            <xsl:for-each select="attribute::*[. != '']">
                 <xsl:attribute name="{name()}"><xsl:value-of select="."/></xsl:attribute>
             </xsl:for-each>
             <xsl:apply-templates/>
@@ -337,7 +337,7 @@
     <xsl:template name="tab">
         <tab>
             <!-- Copy folder attributes verbatim -->
-            <xsl:for-each select="attribute::*">
+            <xsl:for-each select="attribute::*[. != '']">
                 <xsl:attribute name="{name()}"><xsl:value-of select="."/></xsl:attribute>
             </xsl:for-each>
             <xsl:if test="@ID = $focusedFolderId">
