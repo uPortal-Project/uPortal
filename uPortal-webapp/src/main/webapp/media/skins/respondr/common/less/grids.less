@@ -23,8 +23,8 @@
 .fn-set-width-column-for-size(@number-of-columns; @screen-size) {
   @interpolate-media-query: "screen-@{screen-size}-min";
 
-  .up-col-@{screen-size}-@{number-of-columns} {
-    .up-portlet {
+  &.up-col-@{screen-size}-@{number-of-columns} {
+    .up-portlet-wrapper {
       @media (min-width: @@interpolate-media-query) {
         width: percentage(1 / @number-of-columns);
       }
