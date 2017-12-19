@@ -59,22 +59,11 @@
   <xsl:template match="content">
     <!-- Handles dashboard mode -->
     <xsl:if test="column">
-      <xsl:choose>
-        <xsl:when test="count(column)=1 and column[@flexColumns]">
-          <!-- Use columns based on CSS Flex (newer) -->
-          <xsl:call-template name="flex-columns"></xsl:call-template>
-        </xsl:when>
-        <xsl:otherwise>
-          <!-- Use uPortal "classic" columns -->
-          <xsl:call-template name="columns">
-            <xsl:with-param name="COLUMNS"><xsl:value-of select="count(column)"/></xsl:with-param>
-          </xsl:call-template>
-        </xsl:otherwise>
-      </xsl:choose>
+      <xsl:call-template name="columns" />
     </xsl:if>
     <!-- Handles focused mode -->
     <xsl:apply-templates select="focused/channel">
-      <xsl:with-param name="WIDTH_CSS_CLASS">col-md-12</xsl:with-param>
+      <xsl:with-param name="CLASSIC_WIDTH_CSS_CLASSES">col-md-12</xsl:with-param>
     </xsl:apply-templates>
   </xsl:template>
 
@@ -84,22 +73,49 @@
    | This template renders the columns of the page body in the classic uPortal way.
   -->
   <xsl:template name="columns">
-    <xsl:param name="COLUMNS" />
     <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
     <div id="portalPageBodyColumns" class="row">
+      <!--
+       | uPortal Classic vs. Flex
+       |
+       | "Classic" columns are the default;  the newer flexColumns strategy goes into effect if
+       | (1) there is a single column, and (2) it has a flexColumns attribute.
+       +-->
+      <xsl:variable name="USE_FLEX_COLUMNS">
+        <xsl:value-of select="count(column)=1 and column[@flexColumns]" />
+      </xsl:variable>
       <xsl:for-each select="column">
         <xsl:variable name="NUMBER">
             <xsl:value-of select="position()" />
         </xsl:variable>
         <!-- Determine column place in the layout and add appropriate class. -->
         <xsl:variable name="POSITION_CSS_CLASS">column-<xsl:value-of select="$NUMBER" /></xsl:variable>
-        <!--
-         | Per up-layout-selector.js, current valid width selections are 25%,
-         | 33%, 34%, 40%, 50%, 60%, and 100%.  The following approach works
-         | with all of those.  (8.3333 == percentage of total width occupied
-         | by 1 column in a 12-column grid.)
-         +-->
-        <xsl:variable name="WIDTH_CSS_CLASS">col-md-<xsl:value-of select="round(number(substring-before(@width,'%')) div 8.3333)" /></xsl:variable>
+
+        <xsl:variable name="CLASSIC_WIDTH_CSS_CLASSES">
+          <xsl:choose>
+            <xsl:when test="$USE_FLEX_COLUMNS"></xsl:when><!-- Not used in flexColumns -->
+            <!--
+             | Per up-layout-selector.js, current valid width selections are 25%,
+             | 33%, 34%, 40%, 50%, 60%, and 100%.  The following approach works
+             | with all of those.  (8.3333 == percentage of total width occupied
+             | by 1 column in a 12-column grid.)
+             +-->
+            <xsl:otherwise>col-md-<xsl:value-of select="round(number(substring-before(@width,'%')) div 8.3333)" /></xsl:otherwise>
+          </xsl:choose>
+        </xsl:variable>
+
+        <xsl:variable name="FLEX_COLUMNS_CSS_CLASSES">
+          <xsl:choose>
+            <!-- (Officially) supported values of @flexColumns are 6, 4, 3, and 2. -->
+            <xsl:when test="$USE_FLEX_COLUMNS and @flexColumns='6'">up-grid up-matching-height up-constant-columns up-col-xs-2 up-col-sm-3 up-col-md-4 up-col-lg-6</xsl:when>
+            <xsl:when test="$USE_FLEX_COLUMNS and @flexColumns='4'">up-grid up-matching-height up-constant-columns up-col-xs-1 up-col-sm-2 up-col-md-3 up-col-lg-4</xsl:when>
+            <xsl:when test="$USE_FLEX_COLUMNS and @flexColumns='3'">up-grid up-matching-height up-constant-columns up-col-xs-1 up-col-sm-1 up-col-md-2 up-col-lg-3</xsl:when>
+            <!-- The only other officially supported value is 2, but any value EXCEPT 6, 4, or 3 will be treated as 2. -->
+            <xsl:when test="$USE_FLEX_COLUMNS">up-grid up-matching-height up-constant-columns up-col-xs-1 up-col-sm-1 up-col-md-2 up-col-lg-2</xsl:when>
+            <xsl:otherwise></xsl:otherwise><!-- Not used in "classic" layouts -->
+          </xsl:choose>
+        </xsl:variable>
+
         <xsl:variable name="MOVABLE">
           <xsl:choose>
             <xsl:when test="not(@dlm:moveAllowed='false')">movable</xsl:when>
@@ -134,8 +150,8 @@
           </xsl:choose>
         </xsl:variable>
 
-        <div id="column_{@ID}" class="portal-page-column {$POSITION_CSS_CLASS} {$WIDTH_CSS_CLASS} {$MOVABLE} {$DELETABLE} {$EDITABLE} {$CAN_ADD_CHILDREN} {$FRAGMENT_OWNER_CSS}"> <!-- Unique column_ID needed for drag and drop. -->
-          <div id="inner-column_{@ID}" class="portal-page-column-inner"> <!-- Column inner div for additional presentation/formatting options.  -->
+        <div id="column_{@ID}" class="portal-page-column {$POSITION_CSS_CLASS} {$CLASSIC_WIDTH_CSS_CLASSES} {$MOVABLE} {$DELETABLE} {$EDITABLE} {$CAN_ADD_CHILDREN} {$FRAGMENT_OWNER_CSS}"> <!-- Unique column_ID needed for drag and drop. -->
+          <div id="inner-column_{@ID}" class="portal-page-column-inner {$FLEX_COLUMNS_CSS_CLASSES}"> <!-- Column inner div for additional presentation/formatting options.  -->
             <xsl:if test="$IS_FRAGMENT_ADMIN_MODE='true'">
                 <div class="column-permissions"><a class="button portal-column-permissions-link" href="#"><span class="icon permissions"></span><xsl:value-of select="upMsg:getMessage('edit.column.x.permissions', $USER_LANG, $NUMBER)"/></a></div>
             </xsl:if>
@@ -147,60 +163,6 @@
     <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
   </xsl:template>
   <!-- ============================================ -->
-
-    <!-- ========== TEMPLATE: FLEX COLUMNS ========== -->
-    <!-- ============================================ -->
-    <!--
-     | This template renders the columns of the page body using the new CSS Flex strategy.
-    -->
-    <xsl:template name="flex-columns">
-      <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
-      <div id="portalPageBodyColumns" class="row">
-        <xsl:for-each select="column"><!-- Should only be 1 per logic in the calling template -->
-          <xsl:variable name="COLUMN_SIZE_CSS_CLASSES">
-            <xsl:choose>
-              <!-- (Officially) supported values of @flexColumns are 6, 4, 3, and 2. -->
-              <xsl:when test="@flexColumns='6'">up-col-xs-2 up-col-sm-3 up-col-md-4 up-col-lg-6</xsl:when>
-              <xsl:when test="@flexColumns='4'">up-col-xs-1 up-col-sm-2 up-col-md-3 up-col-lg-4</xsl:when>
-              <xsl:when test="@flexColumns='3'">up-col-xs-1 up-col-sm-1 up-col-md-2 up-col-lg-3</xsl:when>
-              <!-- The only other officially supported value is 2, but any value EXCEPT 6, 4, or 3 will be treated as 2. -->
-              <xsl:otherwise>up-col-xs-1 up-col-sm-1 up-col-md-2 up-col-lg-2</xsl:otherwise>
-            </xsl:choose>
-          </xsl:variable>
-          <xsl:variable name="MOVABLE">
-            <xsl:choose>
-              <xsl:when test="not(@dlm:moveAllowed='false')">movable</xsl:when>
-              <xsl:otherwise></xsl:otherwise>
-            </xsl:choose>
-          </xsl:variable>
-          <xsl:variable name="DELETABLE">
-            <xsl:choose>
-              <xsl:when test="not(@dlm:deleteAllowed='false')">deletable</xsl:when>
-              <xsl:otherwise></xsl:otherwise>
-            </xsl:choose>
-          </xsl:variable>
-          <xsl:variable name="EDITABLE">
-            <xsl:choose>
-              <xsl:when test="not(@dlm:editAllowed='false')">editable</xsl:when>
-              <xsl:otherwise></xsl:otherwise>
-            </xsl:choose>
-          </xsl:variable>
-          <xsl:variable name="CAN_ADD_CHILDREN">
-            <xsl:choose>
-              <xsl:when test="not(@dlm:addChildAllowed='false')">canAddChildren</xsl:when>
-              <xsl:otherwise></xsl:otherwise>
-            </xsl:choose>
-          </xsl:variable>
-          <div id="column_{@ID}" class="portal-page-column {$MOVABLE} {$DELETABLE} {$EDITABLE} {$CAN_ADD_CHILDREN}">
-            <div id="inner-column_{@ID}" class="portal-page-column-inner up-grid up-matching-height up-constant-columns {$COLUMN_SIZE_CSS_CLASSES}">
-              <xsl:apply-templates select="channel|blocked-channel"/> <!-- Render the column's portlets.  -->
-            </div>
-          </div>
-        </xsl:for-each>
-      </div>
-      <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
-    </xsl:template>
-    <!-- ============================================ -->
 
 
   <!-- ========== TEMPLATE: PORTLET ========== -->
