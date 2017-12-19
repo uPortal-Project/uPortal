@@ -711,11 +711,6 @@
             </xsl:for-each>
             -->
             <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
-            <!-- For IE 8 support per http://getbootstrap.com/getting-started/#support. The user will see a
-                 'flicker' on the interface because of the time delay from the start of this script to when all
-                 CSS files present get re-loaded after being processed by this script, but that's OK since we
-                 aren't committing to support IE8 and this minor change makes IE8 work better. -->
-            <script src="{$CONTEXT_PATH}/scripts/respond-1.4.2.min.js" type="text/javascript"></script>
         </head>
         <body class="up dashboard portal fl-theme-mist">
           <xsl:call-template name="skipnav" />
@@ -856,11 +851,6 @@
         <xsl:for-each select="//header/descendant::channel-header">
             <xsl:copy-of select="."/>
         </xsl:for-each>
-        <!-- For IE 8 support per http://getbootstrap.com/getting-started/#support. The user will see a
-             'flicker' on the interface because of the time delay from the start of this script to when all
-             CSS files present get re-loaded after being processed by this script, but that's OK since we
-             aren't committing to support IE8 and this minor change makes IE8 work better. -->
-        <script src="{$CONTEXT_PATH}/scripts/respond-1.4.2.min.js" type="text/javascript"></script>
     </head>
     <body class="up dashboard portal fl-theme-mist detachedHeader">
         <xsl:call-template name="skipnav" />
