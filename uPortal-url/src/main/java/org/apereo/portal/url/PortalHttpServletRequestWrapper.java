@@ -22,8 +22,10 @@ import java.util.LinkedHashSet;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -198,6 +200,8 @@ public class PortalHttpServletRequestWrapper extends AbstractHttpServletRequestW
      * Determines whether or not the user is in the given role. The wrapped request is consulted
      * first then the {@link GroupService} is used to determine if a group exists for the specified
      * role and if the user is a member of it.
+     * 
+     * Role is case sensitive.
      *
      * @see
      *     org.apereo.portal.utils.web.AbstractHttpServletRequestWrapper#isUserInRole(java.lang.String)
@@ -218,7 +222,7 @@ public class PortalHttpServletRequestWrapper extends AbstractHttpServletRequestW
         IEntityGroup groupForRole = GroupService.findGroup(role);
         if (groupForRole == null) {
             final EntityIdentifier[] results =
-                    GroupService.searchForGroups(role, GroupService.IS, IPerson.class);
+                    GroupService.searchForGroups(role, GroupService.SearchMethod.DISCRETE, IPerson.class);
             if (results == null || results.length == 0) {
                 return false;
             }

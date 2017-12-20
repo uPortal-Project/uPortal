@@ -17,6 +17,7 @@ package org.apereo.portal.layout.dlm.providers;
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+
 import org.apereo.portal.EntityIdentifier;
 import org.apereo.portal.groups.GroupsException;
 import org.apereo.portal.groups.IEntityGroup;
@@ -76,10 +77,11 @@ public class GroupMembershipEvaluator extends Evaluator {
         this.groupKey = getGroupKey();
     }
 
+    // Internal search, thus case sensitive. 
     private String getGroupKey() {
         EntityIdentifier[] groups = null;
         try {
-            groups = GroupService.searchForGroups(groupName, IGroupConstants.IS, IPerson.class);
+            groups = GroupService.searchForGroups(groupName, IGroupConstants.SearchMethod.DISCRETE, IPerson.class);
         } catch (GroupsException e1) {
             throw new RuntimeException(
                     "An exception occurred searching for " + "the group " + groupName + ".", e1);
