@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.regex.Pattern;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apereo.portal.EntityIdentifier;
@@ -715,20 +716,22 @@ public class FileSystemGroupStore implements IEntityGroupStore, IEntityStore, IE
      * Find EntityIdentifiers for entities whose name matches the query string according to the
      * specified method and is of the specified type
      */
-    public EntityIdentifier[] searchForEntities(String query, int method, Class type)
+    public EntityIdentifier[] searchForEntities(String query, SearchMethod method, Class type)
             throws GroupsException {
         return new EntityIdentifier[0];
     }
     /**
      * Returns an EntityIdentifier[] of groups of the given leaf type whose names match the query
      * string according to the search method.
+     * 
+     * Treats case sensitive and case insensitive searches the same.
      *
      * @param query String the string used to match group names.
      * @param searchMethod see org.apereo.portal.groups.IGroupConstants.
      * @param leafType the leaf type of the groups we are searching for.
      * @return EntityIdentifier[]
      */
-    public EntityIdentifier[] searchForGroups(String query, int searchMethod, Class leafType)
+    public EntityIdentifier[] searchForGroups(String query, SearchMethod searchMethod, Class leafType)
             throws GroupsException {
         List ids = new ArrayList();
         File baseDir = getFileRoot(leafType);
@@ -747,16 +750,20 @@ public class FileSystemGroupStore implements IEntityGroupStore, IEntityStore, IE
             String nameFilter = null;
 
             switch (searchMethod) {
-                case IS:
+                case DISCRETE:
+                case DISCRETE_CI:
                     nameFilter = query;
                     break;
                 case STARTS_WITH:
+                case STARTS_WITH_CI:
                     nameFilter = query + ".*";
                     break;
                 case ENDS_WITH:
+                case ENDS_WITH_CI:
                     nameFilter = ".*" + query;
                     break;
                 case CONTAINS:
+                case CONTAINS_CI:
                     nameFilter = ".*" + query + ".*";
                     break;
                 default:

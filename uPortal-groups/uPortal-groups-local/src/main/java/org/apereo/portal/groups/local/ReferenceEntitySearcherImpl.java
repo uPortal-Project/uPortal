@@ -17,9 +17,11 @@ package org.apereo.portal.groups.local;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+
 import org.apereo.portal.EntityIdentifier;
 import org.apereo.portal.groups.GroupsException;
 import org.apereo.portal.groups.IEntitySearcher;
+import org.apereo.portal.groups.IGroupConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -37,7 +39,7 @@ public class ReferenceEntitySearcherImpl implements IEntitySearcher {
     }
 
     @Override
-    public EntityIdentifier[] searchForEntities(String query, int method, Class type)
+    public EntityIdentifier[] searchForEntities(String query, IGroupConstants.SearchMethod method, Class type)
             throws GroupsException {
         final List<EntityIdentifier> entityIdentifiers = new LinkedList<EntityIdentifier>();
 

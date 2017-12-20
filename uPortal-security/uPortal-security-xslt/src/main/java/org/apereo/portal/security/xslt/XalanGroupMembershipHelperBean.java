@@ -115,11 +115,13 @@ public class XalanGroupMembershipHelperBean implements IXalanGroupMembershipHelp
 
     /* (non-Javadoc)
      * @see org.apereo.portal.security.xslt.IXalanGroupMembershipHelper#isUserDeepMemberOfGroupName(java.lang.String, java.lang.String)
+     * 
+     * groupName is case sensitive.
      */
     @Override
     public boolean isUserDeepMemberOfGroupName(String userName, String groupName) {
         final EntityIdentifier[] results =
-                GroupService.searchForGroups(groupName, GroupService.IS, IPerson.class);
+                GroupService.searchForGroups(groupName, GroupService.SearchMethod.DISCRETE, IPerson.class);
         if (results == null || results.length == 0) {
             return false;
         }

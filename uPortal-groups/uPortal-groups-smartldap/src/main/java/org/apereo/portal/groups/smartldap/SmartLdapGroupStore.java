@@ -23,8 +23,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.concurrent.ConcurrentException;
 import org.apache.commons.lang3.concurrent.LazyInitializer;
@@ -36,7 +38,6 @@ import org.apereo.portal.groups.GroupsException;
 import org.apereo.portal.groups.IEntityGroup;
 import org.apereo.portal.groups.IEntityGroupStore;
 import org.apereo.portal.groups.IEntityGroupStoreFactory;
-import org.apereo.portal.groups.IGroupConstants;
 import org.apereo.portal.groups.IGroupMember;
 import org.apereo.portal.groups.ILockableEntityGroup;
 import org.apereo.portal.security.IPerson;
@@ -344,7 +345,8 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
         throw new UnsupportedOperationException(UNSUPPORTED_MESSAGE);
     }
 
-    public EntityIdentifier[] searchForGroups(String query, int method, Class leaftype)
+    // Treats case sensitive and case insensitive searching the same.
+    public EntityIdentifier[] searchForGroups(String query, SearchMethod method, Class leaftype)
             throws GroupsException {
 
         if (isTreeRefreshRequired()) {
@@ -389,16 +391,20 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
         // Establish the regex pattern to match on...
         String regex;
         switch (method) {
-            case IGroupConstants.IS:
+            case DISCRETE:
+            case DISCRETE_CI:
                 regex = query.toUpperCase();
                 break;
-            case IGroupConstants.STARTS_WITH:
+            case STARTS_WITH:
+            case STARTS_WITH_CI:
                 regex = query.toUpperCase() + ".*";
                 break;
-            case IGroupConstants.ENDS_WITH:
+            case ENDS_WITH:
+            case ENDS_WITH_CI:
                 regex = ".*" + query.toUpperCase();
                 break;
-            case IGroupConstants.CONTAINS:
+            case CONTAINS:
+            case CONTAINS_CI:
                 regex = ".*" + query.toUpperCase() + ".*";
                 break;
             default:

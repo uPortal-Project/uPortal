@@ -31,6 +31,8 @@
  |
  | To debug, it is probably easier to change log.debug to log.error within this script because the script
  | classname is dynamic; e.g. Script1, Script 13, etc., so it is a pain to have the right value in logback.xml.
+ |
+ | Import/Export function, thus the group search is case sensitive.
  +-->
 <with-attribute key="PARENT_GROUP_NAME" value="${valueOf(parent)}">
     <groovy>
@@ -46,8 +48,8 @@
 
             def log = LoggerFactory.getLogger(this.getClass());
 
-            def entityIdArr = GroupService.searchForGroups(PARENT_GROUP_NAME, IGroupConstants.IS, org.apereo.portal.security.IPerson.class);
-            entityIdArr = entityIdArr.size() > 0 ? entityIdArr : GroupService.searchForGroups(PARENT_GROUP_NAME, IGroupConstants.IS, org.apereo.portal.portlet.om.IPortletDefinition.class);
+            def entityIdArr = GroupService.searchForGroups(PARENT_GROUP_NAME, IGroupConstants.SearchMethod.DISCRETE, org.apereo.portal.security.IPerson.class);
+            entityIdArr = entityIdArr.size() > 0 ? entityIdArr : GroupService.searchForGroups(PARENT_GROUP_NAME, IGroupConstants.SearchMethod.DISCRETE, org.apereo.portal.portlet.om.IPortletDefinition.class);
             switch (entityIdArr.size()) {
                 case 0:
                     throw new RuntimeException("Unable to find group with name $PARENT_GROUP_NAME");

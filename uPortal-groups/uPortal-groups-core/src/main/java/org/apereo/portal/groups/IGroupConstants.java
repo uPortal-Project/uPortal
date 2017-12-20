@@ -18,10 +18,17 @@ package org.apereo.portal.groups;
 public interface IGroupConstants {
 
     // Search method constants
-    int IS = 1;
-    int STARTS_WITH = 2;
-    int ENDS_WITH = 3;
-    int CONTAINS = 4;
+    // It's implied that if it doesn't state _CI (case insensitive), it's case sensitive.
+    enum SearchMethod {
+        DISCRETE_CI,
+        DISCRETE,
+        STARTS_WITH_CI,
+        STARTS_WITH,
+        ENDS_WITH_CI,
+        ENDS_WITH,
+        CONTAINS_CI,
+        CONTAINS
+    }
 
     // Composite group service:
     String NODE_SEPARATOR = ".";

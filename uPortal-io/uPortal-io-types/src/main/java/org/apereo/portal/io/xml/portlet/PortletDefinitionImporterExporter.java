@@ -27,6 +27,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.apereo.portal.EntityIdentifier;
 import org.apereo.portal.IUserIdentityStore;
 import org.apereo.portal.groups.IEntity;
@@ -120,9 +121,10 @@ public class PortletDefinitionImporterExporter
 
         final List<PortletCategory> categories = new ArrayList<>();
         for (String categoryName : portletRep.getCategories()) {
+            // Import/Export function, thus the group search is case sensitive.
             EntityIdentifier[] cats =
                     GroupService.searchForGroups(
-                            categoryName, IGroupConstants.IS, IPortletDefinition.class);
+                            categoryName, IGroupConstants.SearchMethod.DISCRETE, IPortletDefinition.class);
 
             PortletCategory category;
             if (cats != null && cats.length > 0) {
@@ -512,14 +514,15 @@ public class PortletDefinitionImporterExporter
     /**
      * Convert a list of group names to a list of groups.
      *
-     * @param groupNames the list of group names
+     * @param groupNames the list of group names - case sensitive.
      * @return the list of groups.
      */
     private Set<IGroupMember> toGroupMembers(List<String> groupNames, String fname) {
         final Set<IGroupMember> groups = new HashSet<>();
         for (String groupName : groupNames) {
+            // Assumes the groupName case matches the DB values.
             EntityIdentifier[] gs =
-                    GroupService.searchForGroups(groupName, IGroupConstants.IS, IPerson.class);
+                    GroupService.searchForGroups(groupName, IGroupConstants.SearchMethod.DISCRETE, IPerson.class);
             IGroupMember group;
             if (gs != null && gs.length > 0) {
                 group = GroupService.findGroup(gs[0].getKey());

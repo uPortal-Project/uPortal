@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apereo.portal.EntityIdentifier;
@@ -52,24 +53,28 @@ public class PersonDirectorySearcher implements ITypedEntitySearcher {
     }
 
     @Override
-    public EntityIdentifier[] searchForEntities(String query, int method) throws GroupsException {
-
+    public EntityIdentifier[] searchForEntities(String query, SearchMethod method) throws GroupsException {
+        // Ignores CS / CI
         switch (method) {
-            case IS:
+            case DISCRETE:
+            case DISCRETE_CI:
                 {
                     break;
                 }
             case STARTS_WITH:
+            case STARTS_WITH_CI:
                 {
                     query = query + IPersonAttributeDao.WILDCARD;
                     break;
                 }
             case ENDS_WITH:
+            case ENDS_WITH_CI:
                 {
                     query = IPersonAttributeDao.WILDCARD + query;
                     break;
                 }
             case CONTAINS:
+            case CONTAINS_CI:
                 {
                     query = IPersonAttributeDao.WILDCARD + query + IPersonAttributeDao.WILDCARD;
                     break;

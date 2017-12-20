@@ -60,6 +60,7 @@ public class GroupKeyOrLiteralPhrase implements Phrase {
         this.element = (Phrase) config.getValue(ELEMENT);
     }
 
+    // Internal search, thus case sensitive. 
     @Override
     public Object evaluate(TaskRequest req, TaskResponse res) {
 
@@ -74,7 +75,7 @@ public class GroupKeyOrLiteralPhrase implements Phrase {
 
                 for (Class c : types) {
                     EntityIdentifier[] eis =
-                            GroupService.searchForGroups(e.getText(), IGroupConstants.IS, c);
+                            GroupService.searchForGroups(e.getText(), IGroupConstants.SearchMethod.DISCRETE, c);
                     switch (eis.length) {
                         case 1:
                             // This is good -- what we hope for...

@@ -17,6 +17,7 @@ package org.apereo.portal.api.groups;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -48,6 +49,7 @@ public final class EntityService {
         return instance.get();
     }
 
+    // External search, thus case insensitive.
     public Set<Entity> search(String entityType, String searchTerm) {
         if (StringUtils.isBlank(entityType) && StringUtils.isBlank(searchTerm)) {
             return null;
@@ -62,14 +64,14 @@ public final class EntityService {
         if (entityEnum.isGroup()) {
             identifiers =
                     GroupService.searchForGroups(
-                            searchTerm, GroupService.CONTAINS, entityEnum.getClazz());
+                            searchTerm, GroupService.SearchMethod.CONTAINS_CI, entityEnum.getClazz());
             identifierType = IEntityGroup.class;
         }
         // otherwise use the getGroupMember method
         else {
             identifiers =
                     GroupService.searchForEntities(
-                            searchTerm, GroupService.CONTAINS, entityEnum.getClazz());
+                            searchTerm, GroupService.SearchMethod.CONTAINS_CI, entityEnum.getClazz());
             identifierType = entityEnum.getClazz();
         }
 

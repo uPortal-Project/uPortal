@@ -14,9 +14,6 @@
  */
 package org.apereo.portal.groups.pags.testers;
 
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Element;
 import org.apereo.portal.EntityIdentifier;
 import org.apereo.portal.groups.IEntityGroup;
 import org.apereo.portal.groups.IGroupMember;
@@ -28,6 +25,10 @@ import org.apereo.portal.spring.locator.ApplicationContextLocator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
+
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
 
 /**
  * Immutable PAGS Tester for inclusive/exclusive membership in sets of groups. To avoid infinite
@@ -124,16 +125,16 @@ public final class AdHocGroupTester implements IPersonTester {
     }
 
     /**
-     * Find {@link IEntityGroup} from group name.
-     *
+     * Find {@link IEntityGroup} from group name (case sensitive).
+     * 
      * @param groupName name of group to search from {@code GroupService}
      * @return {@code IEntityGroup} with given name or null if no group with given name found
-     * @see org.apereo.portal.services.GroupService#searchForEntities(String, int, Class)
+     * @see org.apereo.portal.services.GroupService#searchForEntities(String, org.apereo.portal.groups.IGroupConstants.SearchMethod, Class)
      * @see org.apereo.portal.services.GroupService#findGroup(String)
      */
     private static IEntityGroup findGroupByName(String groupName) {
         EntityIdentifier[] identifiers =
-                GroupService.searchForGroups(groupName, GroupService.IS, IPerson.class);
+                GroupService.searchForGroups(groupName, GroupService.SearchMethod.CONTAINS, IPerson.class);
         for (EntityIdentifier entityIdentifier : identifiers) {
             if (entityIdentifier.getType().equals(IEntityGroup.class)) {
                 return GroupService.findGroup(entityIdentifier.getKey());

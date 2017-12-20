@@ -21,8 +21,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import javax.naming.InvalidNameException;
 import javax.naming.Name;
+
 import org.apereo.portal.EntityIdentifier;
 import org.apereo.portal.concurrency.CachingException;
 import org.apereo.portal.services.EntityCachingService;
@@ -219,7 +221,7 @@ public class ReferenceCompositeGroupService extends ReferenceComponentGroupServi
      * specified method and is of the specified type
      */
     @Override
-    public EntityIdentifier[] searchForEntities(String query, int method, Class type)
+    public EntityIdentifier[] searchForEntities(String query, IGroupConstants.SearchMethod method, Class type)
             throws GroupsException {
         Set allIds = new HashSet();
 
@@ -238,7 +240,7 @@ public class ReferenceCompositeGroupService extends ReferenceComponentGroupServi
      */
     @Override
     public EntityIdentifier[] searchForEntities(
-            String query, int method, Class type, IEntityGroup ancestor) throws GroupsException {
+        String query, IGroupConstants.SearchMethod method, Class type, IEntityGroup ancestor) throws GroupsException {
         Set allIds = new HashSet();
 
         for (Iterator services = getComponentServices().values().iterator(); services.hasNext(); ) {
@@ -255,7 +257,7 @@ public class ReferenceCompositeGroupService extends ReferenceComponentGroupServi
      * specified method and matches the provided leaf type
      */
     @Override
-    public EntityIdentifier[] searchForGroups(String query, int method, Class leaftype)
+    public EntityIdentifier[] searchForGroups(String query, IGroupConstants.SearchMethod method, Class leaftype)
             throws GroupsException {
         Set allIds = new HashSet();
 
@@ -280,7 +282,7 @@ public class ReferenceCompositeGroupService extends ReferenceComponentGroupServi
      */
     @Override
     public EntityIdentifier[] searchForGroups(
-            String query, int method, Class leaftype, IEntityGroup ancestor)
+            String query, IGroupConstants.SearchMethod method, Class leaftype, IEntityGroup ancestor)
             throws GroupsException {
         Set allIds = new HashSet();
 

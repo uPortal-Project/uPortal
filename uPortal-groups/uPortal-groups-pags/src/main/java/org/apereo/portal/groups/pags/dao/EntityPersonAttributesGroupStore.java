@@ -21,9 +21,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Element;
+
 import org.apereo.portal.EntityIdentifier;
 import org.apereo.portal.groups.EntityImpl;
 import org.apereo.portal.groups.EntityTestingGroupImpl;
@@ -49,6 +47,10 @@ import org.apereo.services.persondir.IPersonAttributes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
+
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
 
 /**
  * The Person Attributes Group Store uses attributes stored in the IPerson object to determine group
@@ -311,7 +313,7 @@ public class EntityPersonAttributesGroupStore
     }
 
     @Override
-    public EntityIdentifier[] searchForGroups(String query, int method, Class leaftype)
+    public EntityIdentifier[] searchForGroups(String query, SearchMethod method, Class leaftype)
             throws GroupsException {
         if (leaftype != IPERSON_CLASS) {
             return EMPTY_SEARCH_RESULTS;
@@ -320,7 +322,15 @@ public class EntityPersonAttributesGroupStore
                 personAttributesGroupDefinitionDao.getPersonAttributesGroupDefinitions();
         List<EntityIdentifier> results = new ArrayList<EntityIdentifier>();
         switch (method) {
-            case IS:
+            case DISCRETE:
+                for (IPersonAttributesGroupDefinition pagsGroup : pagsGroups) {
+                    IEntityGroup g = convertPagsGroupToEntity(pagsGroup);
+                    if (g.getName().equals(query)) {
+                        results.add(g.getEntityIdentifier());
+                    }
+                }
+                break;
+            case DISCRETE_CI:
                 for (IPersonAttributesGroupDefinition pagsGroup : pagsGroups) {
                     IEntityGroup g = convertPagsGroupToEntity(pagsGroup);
                     if (g.getName().equalsIgnoreCase(query)) {
@@ -331,6 +341,14 @@ public class EntityPersonAttributesGroupStore
             case STARTS_WITH:
                 for (IPersonAttributesGroupDefinition pagsGroup : pagsGroups) {
                     IEntityGroup g = convertPagsGroupToEntity(pagsGroup);
+                    if (g.getName().startsWith(query)) {
+                        results.add(g.getEntityIdentifier());
+                    }
+                }
+                break;
+            case STARTS_WITH_CI:
+                for (IPersonAttributesGroupDefinition pagsGroup : pagsGroups) {
+                    IEntityGroup g = convertPagsGroupToEntity(pagsGroup);
                     if (g.getName().toUpperCase().startsWith(query.toUpperCase())) {
                         results.add(g.getEntityIdentifier());
                     }
@@ -339,12 +357,28 @@ public class EntityPersonAttributesGroupStore
             case ENDS_WITH:
                 for (IPersonAttributesGroupDefinition pagsGroup : pagsGroups) {
                     IEntityGroup g = convertPagsGroupToEntity(pagsGroup);
+                    if (g.getName().endsWith(query)) {
+                        results.add(g.getEntityIdentifier());
+                    }
+                }
+                break;
+            case ENDS_WITH_CI:
+                for (IPersonAttributesGroupDefinition pagsGroup : pagsGroups) {
+                    IEntityGroup g = convertPagsGroupToEntity(pagsGroup);
                     if (g.getName().toUpperCase().endsWith(query.toUpperCase())) {
                         results.add(g.getEntityIdentifier());
                     }
                 }
                 break;
             case CONTAINS:
+                for (IPersonAttributesGroupDefinition pagsGroup : pagsGroups) {
+                    IEntityGroup g = convertPagsGroupToEntity(pagsGroup);
+                    if (g.getName().indexOf(query) != -1) {
+                        results.add(g.getEntityIdentifier());
+                    }
+                }
+                break;
+            case CONTAINS_CI:
                 for (IPersonAttributesGroupDefinition pagsGroup : pagsGroups) {
                     IEntityGroup g = convertPagsGroupToEntity(pagsGroup);
                     if (g.getName().toUpperCase().indexOf(query.toUpperCase()) != -1) {
@@ -381,7 +415,7 @@ public class EntityPersonAttributesGroupStore
     }
 
     @Override
-    public EntityIdentifier[] searchForEntities(String query, int method, Class type)
+    public EntityIdentifier[] searchForEntities(String query, SearchMethod method, Class type)
             throws GroupsException {
         return EMPTY_SEARCH_RESULTS;
     }

@@ -102,9 +102,10 @@
                          in quickstart and the below if condition could be removed.  -->
                     <if test="${jexl(MEMBER_COUNT > 0)}">
                         <!-- Use methods similar to GroupAdministrationHelper to reflect updates through the GroupServices
-                             so caches get cleared and replicated to other nodes. -->
+                             so caches get cleared and replicated to other nodes. 
+                             Import/Export function, thus the group search is case sensitive. -->
                         <with>
-                            <attribute key="group">${groovy(org.apereo.portal.services.GroupService.findGroup(org.apereo.portal.services.GroupService.searchForGroups(GROUP_NAME, org.apereo.portal.groups.IGroupConstants.IS, Class.forName(ENTITY_TYPE_NAME))[0].key))}</attribute>
+                            <attribute key="group">${groovy(org.apereo.portal.services.GroupService.findGroup(org.apereo.portal.services.GroupService.searchForGroups(GROUP_NAME, org.apereo.portal.groups.IGroupConstants.SearchMethod.DISCRETE, Class.forName(ENTITY_TYPE_NAME))[0].key))}</attribute>
                             <subtasks>
                                 <groovy>
                                     <script>

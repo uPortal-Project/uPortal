@@ -15,6 +15,7 @@
 package org.apereo.portal.groups;
 
 import java.util.Iterator;
+
 import org.apereo.portal.EntityIdentifier;
 
 /**
@@ -70,13 +71,13 @@ public interface IGroupService {
      * Find EntityIdentifiers for groups whose name matches the query string according to the
      * specified method and matches the provided leaf type
      */
-    EntityIdentifier[] searchForGroups(String query, int method, Class leaftype)
+    EntityIdentifier[] searchForGroups(String query, IGroupConstants.SearchMethod method, Class leaftype)
             throws GroupsException;
 
     /**
      * Find EntityIdentifiers for entities whose name matches the query string according to the
      * specified method and is of the specified type
      */
-    EntityIdentifier[] searchForEntities(String query, int method, Class type)
+    EntityIdentifier[] searchForEntities(String query, IGroupConstants.SearchMethod method, Class type)
             throws GroupsException;
 }

@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+
 import javax.naming.Context;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
@@ -31,6 +32,7 @@ import javax.naming.directory.InitialDirContext;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 import javax.xml.parsers.ParserConfigurationException;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apereo.portal.EntityIdentifier;
@@ -559,13 +561,20 @@ public class LDAPGroupStore implements IEntityGroupStore, IEntityStore, IEntityS
         return (GroupShadow[]) groups.values().toArray(new GroupShadow[0]);
     }
 
-    public EntityIdentifier[] searchForGroups(String query, int method, Class leaftype)
+    public EntityIdentifier[] searchForGroups(String query, SearchMethod method, Class leaftype)
             throws GroupsException {
         ArrayList ids = new ArrayList();
         GroupShadow[] g = getGroupShadows();
         int i;
         switch (method) {
-            case IS:
+            case DISCRETE:
+                for (i = 0; i < g.length; i++) {
+                    if (g[i].name.equals(query)) {
+                        ids.add(new EntityIdentifier(g[i].key, group));
+                    }
+                }
+                break;
+            case DISCRETE_CI:
                 for (i = 0; i < g.length; i++) {
                     if (g[i].name.equalsIgnoreCase(query)) {
                         ids.add(new EntityIdentifier(g[i].key, group));
@@ -574,6 +583,13 @@ public class LDAPGroupStore implements IEntityGroupStore, IEntityStore, IEntityS
                 break;
             case STARTS_WITH:
                 for (i = 0; i < g.length; i++) {
+                    if (g[i].name.startsWith(query)) {
+                        ids.add(new EntityIdentifier(g[i].key, group));
+                    }
+                }
+                break;
+            case STARTS_WITH_CI:
+                for (i = 0; i < g.length; i++) {
                     if (g[i].name.toUpperCase().startsWith(query.toUpperCase())) {
                         ids.add(new EntityIdentifier(g[i].key, group));
                     }
@@ -581,12 +597,26 @@ public class LDAPGroupStore implements IEntityGroupStore, IEntityStore, IEntityS
                 break;
             case ENDS_WITH:
                 for (i = 0; i < g.length; i++) {
+                    if (g[i].name.endsWith(query)) {
+                        ids.add(new EntityIdentifier(g[i].key, group));
+                    }
+                }
+                break;
+            case ENDS_WITH_CI:
+                for (i = 0; i < g.length; i++) {
                     if (g[i].name.toUpperCase().endsWith(query.toUpperCase())) {
                         ids.add(new EntityIdentifier(g[i].key, group));
                     }
                 }
                 break;
             case CONTAINS:
+                for (i = 0; i < g.length; i++) {
+                    if (g[i].name.indexOf(query) > -1) {
+                        ids.add(new EntityIdentifier(g[i].key, group));
+                    }
+                }
+                break;
+            case CONTAINS_CI:
                 for (i = 0; i < g.length; i++) {
                     if (g[i].name.toUpperCase().indexOf(query.toUpperCase()) > -1) {
                         ids.add(new EntityIdentifier(g[i].key, group));
@@ -614,7 +644,7 @@ public class LDAPGroupStore implements IEntityGroupStore, IEntityStore, IEntityS
         return new EntityImpl(key, type);
     }
 
-    public EntityIdentifier[] searchForEntities(String query, int method, Class type)
+    public EntityIdentifier[] searchForEntities(String query, SearchMethod method, Class type)
             throws GroupsException {
         if (type != group && type != iperson) return new EntityIdentifier[0];
         // Guarantee that LDAP injection is prevented by replacing LDAP special characters
@@ -623,14 +653,20 @@ public class LDAPGroupStore implements IEntityGroupStore, IEntityStore, IEntityS
         ArrayList ids = new ArrayList();
         switch (method) {
             case STARTS_WITH:
+            case STARTS_WITH_CI:
                 query = query + "*";
                 break;
             case ENDS_WITH:
+            case ENDS_WITH_CI:
                 query = "*" + query;
                 break;
             case CONTAINS:
+            case CONTAINS_CI:
                 query = "*" + query + "*";
                 break;
+            case DISCRETE:
+            case DISCRETE_CI:
+                //Already handled.
         }
         query = namefield + "=" + query;
         DirContext context = getConnection();
