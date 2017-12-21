@@ -21,7 +21,9 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
 import org.apereo.portal.EntityIdentifier;
 import org.apereo.portal.groups.EntityImpl;
 import org.apereo.portal.groups.EntityTestingGroupImpl;
@@ -47,10 +49,6 @@ import org.apereo.services.persondir.IPersonAttributes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
-
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Element;
 
 /**
  * The Person Attributes Group Store uses attributes stored in the IPerson object to determine group

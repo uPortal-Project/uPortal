@@ -17,7 +17,6 @@ package org.apereo.portal.groups.pags.dao;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.portal.EntityIdentifier;
 import org.apereo.portal.groups.IEntityGroup;
@@ -139,10 +138,13 @@ public final class PagsService {
 
         // VALIDATION STEP:  We don't have a group by that name already
         EntityIdentifier[] people =
-                GroupService.searchForGroups(groupName, IGroupConstants.SearchMethod.DISCRETE_CI, IPerson.class);
+                GroupService.searchForGroups(
+                        groupName, IGroupConstants.SearchMethod.DISCRETE_CI, IPerson.class);
         EntityIdentifier[] portlets =
                 GroupService.searchForGroups(
-                        groupName, IGroupConstants.SearchMethod.DISCRETE_CI, IPortletDefinition.class);
+                        groupName,
+                        IGroupConstants.SearchMethod.DISCRETE_CI,
+                        IPortletDefinition.class);
         if (people.length != 0 || portlets.length != 0) {
             throw new IllegalArgumentException("Specified groupName already in use:  " + groupName);
         }

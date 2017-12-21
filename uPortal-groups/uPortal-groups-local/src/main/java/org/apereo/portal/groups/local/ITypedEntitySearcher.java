@@ -20,7 +20,8 @@ import org.apereo.portal.groups.IGroupConstants;
 
 /** An API for a searcher that knows about a single type, used by EntitySearcherImpl */
 public interface ITypedEntitySearcher extends IGroupConstants {
-    public EntityIdentifier[] searchForEntities(String query, SearchMethod method) throws GroupsException;
+    public EntityIdentifier[] searchForEntities(String query, SearchMethod method)
+            throws GroupsException;
 
     public Class getType();
 }

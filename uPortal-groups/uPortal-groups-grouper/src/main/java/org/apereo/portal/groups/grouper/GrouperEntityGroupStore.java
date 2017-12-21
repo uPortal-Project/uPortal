@@ -14,30 +14,6 @@
  */
 package org.apereo.portal.groups.grouper;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apereo.portal.EntityIdentifier;
-import org.apereo.portal.groups.EntityGroupImpl;
-import org.apereo.portal.groups.EntityImpl;
-import org.apereo.portal.groups.GroupsException;
-import org.apereo.portal.groups.ICompositeGroupService;
-import org.apereo.portal.groups.IEntity;
-import org.apereo.portal.groups.IEntityGroup;
-import org.apereo.portal.groups.IEntityGroupStore;
-import org.apereo.portal.groups.IEntitySearcher;
-import org.apereo.portal.groups.IEntityStore;
-import org.apereo.portal.groups.IGroupMember;
-import org.apereo.portal.groups.ILockableEntityGroup;
-import org.apereo.portal.security.IPerson;
-import org.apereo.portal.spring.locator.EntityTypesLocator;
-
 import edu.internet2.middleware.grouperClient.api.GcAddMember;
 import edu.internet2.middleware.grouperClient.api.GcFindGroups;
 import edu.internet2.middleware.grouperClient.api.GcGetGroups;
@@ -62,6 +38,28 @@ import edu.internet2.middleware.grouperClient.ws.beans.WsQueryFilter;
 import edu.internet2.middleware.grouperClient.ws.beans.WsStemLookup;
 import edu.internet2.middleware.grouperClient.ws.beans.WsSubject;
 import edu.internet2.middleware.grouperClient.ws.beans.WsSubjectLookup;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apereo.portal.EntityIdentifier;
+import org.apereo.portal.groups.EntityGroupImpl;
+import org.apereo.portal.groups.EntityImpl;
+import org.apereo.portal.groups.GroupsException;
+import org.apereo.portal.groups.ICompositeGroupService;
+import org.apereo.portal.groups.IEntity;
+import org.apereo.portal.groups.IEntityGroup;
+import org.apereo.portal.groups.IEntityGroupStore;
+import org.apereo.portal.groups.IEntitySearcher;
+import org.apereo.portal.groups.IEntityStore;
+import org.apereo.portal.groups.IGroupMember;
+import org.apereo.portal.groups.ILockableEntityGroup;
+import org.apereo.portal.security.IPerson;
+import org.apereo.portal.spring.locator.EntityTypesLocator;
 
 /**
  * GrouperEntityGroupStore provides an implementation of the group store interface capable of
@@ -439,7 +437,10 @@ public class GrouperEntityGroupStore implements IEntityGroupStore, IEntityStore,
         }
     }
 
-    /** @see IEntitySearcher#searchForEntities(java.lang.String, org.apereo.portal.groups.IGroupConstants.SearchMethod, java.lang.Class) */
+    /**
+     * @see IEntitySearcher#searchForEntities(java.lang.String,
+     *     org.apereo.portal.groups.IGroupConstants.SearchMethod, java.lang.Class)
+     */
     @SuppressWarnings("unchecked")
     public EntityIdentifier[] searchForEntities(String query, SearchMethod method, Class type)
             throws GroupsException {

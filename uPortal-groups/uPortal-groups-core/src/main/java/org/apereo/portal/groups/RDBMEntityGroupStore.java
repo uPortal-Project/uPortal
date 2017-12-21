@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apereo.portal.EntityIdentifier;
@@ -88,45 +87,45 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
 
     // SQL group search string
     private static String searchGroupsPartialCaseInsensitive =
-        "SELECT "
-            + GROUP_ID_COLUMN
-            + " FROM "
-            + GROUP_TABLE
-            + " WHERE "
-            + GROUP_TYPE_COLUMN
-            + "=? AND UPPER("
-            + GROUP_NAME_COLUMN
-            + ") LIKE UPPER(?)";
+            "SELECT "
+                    + GROUP_ID_COLUMN
+                    + " FROM "
+                    + GROUP_TABLE
+                    + " WHERE "
+                    + GROUP_TYPE_COLUMN
+                    + "=? AND UPPER("
+                    + GROUP_NAME_COLUMN
+                    + ") LIKE UPPER(?)";
     private static String searchGroupsPartial =
-        "SELECT "
-            + GROUP_ID_COLUMN
-            + " FROM "
-            + GROUP_TABLE
-            + " WHERE "
-            + GROUP_TYPE_COLUMN
-            + "=? AND "
-            + GROUP_NAME_COLUMN
-            + " LIKE ?";
+            "SELECT "
+                    + GROUP_ID_COLUMN
+                    + " FROM "
+                    + GROUP_TABLE
+                    + " WHERE "
+                    + GROUP_TYPE_COLUMN
+                    + "=? AND "
+                    + GROUP_NAME_COLUMN
+                    + " LIKE ?";
     private static String searchGroupsCaseInsensitive =
-        "SELECT "
-            + GROUP_ID_COLUMN
-            + " FROM "
-            + GROUP_TABLE
-            + " WHERE "
-            + GROUP_TYPE_COLUMN
-            + "=? AND UPPER("
-            + GROUP_NAME_COLUMN
-            + ") = UPPER(?)";
+            "SELECT "
+                    + GROUP_ID_COLUMN
+                    + " FROM "
+                    + GROUP_TABLE
+                    + " WHERE "
+                    + GROUP_TYPE_COLUMN
+                    + "=? AND UPPER("
+                    + GROUP_NAME_COLUMN
+                    + ") = UPPER(?)";
     private static String searchGroups =
-        "SELECT "
-            + GROUP_ID_COLUMN
-            + " FROM "
-            + GROUP_TABLE
-            + " WHERE "
-            + GROUP_TYPE_COLUMN
-            + "=? AND "
-            + GROUP_NAME_COLUMN
-            + " = ?";
+            "SELECT "
+                    + GROUP_ID_COLUMN
+                    + " FROM "
+                    + GROUP_TABLE
+                    + " WHERE "
+                    + GROUP_TYPE_COLUMN
+                    + "=? AND "
+                    + GROUP_NAME_COLUMN
+                    + " = ?";
 
     /** RDBMEntityGroupStore constructor. */
     public RDBMEntityGroupStore() {
@@ -1376,7 +1375,9 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
                     break;
                 case STARTS_WITH_CI:
                     query = query + "%";
-                    ps = conn.prepareStatement(RDBMEntityGroupStore.searchGroupsPartialCaseInsensitive);
+                    ps =
+                            conn.prepareStatement(
+                                    RDBMEntityGroupStore.searchGroupsPartialCaseInsensitive);
                     break;
                 case ENDS_WITH:
                     query = "%" + query;
@@ -1384,7 +1385,9 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
                     break;
                 case ENDS_WITH_CI:
                     query = "%" + query;
-                    ps = conn.prepareStatement(RDBMEntityGroupStore.searchGroupsPartialCaseInsensitive);
+                    ps =
+                            conn.prepareStatement(
+                                    RDBMEntityGroupStore.searchGroupsPartialCaseInsensitive);
                     break;
                 case CONTAINS:
                     query = "%" + query + "%";
@@ -1392,7 +1395,9 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
                     break;
                 case CONTAINS_CI:
                     query = "%" + query + "%";
-                    ps = conn.prepareStatement(RDBMEntityGroupStore.searchGroupsPartialCaseInsensitive);
+                    ps =
+                            conn.prepareStatement(
+                                    RDBMEntityGroupStore.searchGroupsPartialCaseInsensitive);
                     break;
                 default:
                     throw new GroupsException("Unknown search type");
