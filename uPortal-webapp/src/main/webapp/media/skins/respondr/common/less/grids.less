@@ -24,7 +24,8 @@
   @interpolate-media-query: "screen-@{screen-size}-min";
 
   &.up-col-@{screen-size}-@{number-of-columns} {
-    .up-portlet-wrapper {
+    .up-portlet-wrapper,
+    .fl-reorderer-dropMarker { // required for drag and drop styling to work
       @media (min-width: @@interpolate-media-query) {
         width: percentage(1 / @number-of-columns);
       }
