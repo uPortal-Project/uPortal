@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-
 import javax.portlet.PortletPreferences;
 import javax.portlet.PortletRequest;
 import javax.portlet.RenderRequest;
@@ -38,7 +37,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
-
+import net.sf.ehcache.Cache;
 import org.apache.commons.lang.Validate;
 import org.apereo.portal.EntityIdentifier;
 import org.apereo.portal.UserPreferencesManager;
@@ -85,8 +84,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
-import net.sf.ehcache.Cache;
 
 @Controller
 @RequestMapping("VIEW")
@@ -544,12 +541,15 @@ public class PortletMarketplaceController {
             net.sf.ehcache.Element cacheElement = marketplaceCategoryCache.get(cacheKey);
 
             if (cacheElement == null) {
-                // Nothing in cache currently;  need to populate cache;  categoryName is case sensitive.
+                // Nothing in cache currently;  need to populate cache;  categoryName is case
+                // sensitive.
                 HashSet<PortletCategory> portletCategories = new HashSet<>();
                 for (final String categoryName : permittedCategories) {
                     EntityIdentifier[] cats =
                             GroupService.searchForGroups(
-                                    categoryName, IGroupConstants.SearchMethod.DISCRETE, IPortletDefinition.class);
+                                    categoryName,
+                                    IGroupConstants.SearchMethod.DISCRETE,
+                                    IPortletDefinition.class);
                     if (cats != null && cats.length > 0) {
                         PortletCategory pc =
                                 portletCategoryRegistry.getPortletCategory(cats[0].getKey());

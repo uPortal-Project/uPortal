@@ -19,7 +19,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apereo.portal.EntityIdentifier;
@@ -53,7 +52,8 @@ public class PersonDirectorySearcher implements ITypedEntitySearcher {
     }
 
     @Override
-    public EntityIdentifier[] searchForEntities(String query, SearchMethod method) throws GroupsException {
+    public EntityIdentifier[] searchForEntities(String query, SearchMethod method)
+            throws GroupsException {
         // Ignores CS / CI
         switch (method) {
             case DISCRETE:

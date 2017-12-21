@@ -41,8 +41,8 @@ public class SmartLdapEntitySearcher implements IEntitySearcher {
         }
     }
 
-    public EntityIdentifier[] searchForEntities(String query, IGroupConstants.SearchMethod method, Class type)
-            throws GroupsException {
+    public EntityIdentifier[] searchForEntities(
+            String query, IGroupConstants.SearchMethod method, Class type) throws GroupsException {
         return store.searchForGroups(query, method, type);
     }
 

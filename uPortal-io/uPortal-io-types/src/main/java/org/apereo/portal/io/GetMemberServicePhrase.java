@@ -81,7 +81,8 @@ public class GetMemberServicePhrase implements Phrase {
             Class[] leafTypes = new Class[] {IPerson.class, IPortletDefinition.class};
             for (int i = 0; i < leafTypes.length && rslt == null; i++) {
                 EntityIdentifier[] eis =
-                        GroupService.searchForGroups(memberValue, IGroupConstants.SearchMethod.DISCRETE, leafTypes[i]);
+                        GroupService.searchForGroups(
+                                memberValue, IGroupConstants.SearchMethod.DISCRETE, leafTypes[i]);
                 if (eis.length == 1) {
                     // Match!
                     if (eis[0].getType() == IEntityGroup.class) {

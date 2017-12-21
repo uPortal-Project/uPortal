@@ -19,9 +19,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-
 import javax.servlet.http.HttpServletRequest;
-
 import org.apereo.portal.EntityIdentifier;
 import org.apereo.portal.groups.IGroupConstants;
 import org.apereo.portal.groups.IGroupMember;
@@ -137,7 +135,6 @@ public class UserGroupSkinMappingTransformerConfigurationSource
         }
 
         /**
-         * 
          * @param group - case sensitive
          * @return
          */
@@ -150,7 +147,8 @@ public class UserGroupSkinMappingTransformerConfigurationSource
 
             // No matching ID, search by name
             final EntityIdentifier[] results =
-                    GroupService.searchForGroups(group, IGroupConstants.SearchMethod.DISCRETE, IPerson.class);
+                    GroupService.searchForGroups(
+                            group, IGroupConstants.SearchMethod.DISCRETE, IPerson.class);
             if (results == null || results.length == 0) {
                 getLogger()
                         .warn(

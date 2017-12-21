@@ -16,7 +16,6 @@ package org.apereo.portal.groups.local.searchers;
 
 import java.util.List;
 import java.util.ListIterator;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apereo.portal.EntityIdentifier;
@@ -42,7 +41,8 @@ public class PortletDefinitionSearcher implements ITypedEntitySearcher {
 
     // Internal search, so shouldn't be called as case insensitive.
     @Override
-    public EntityIdentifier[] searchForEntities(String query, SearchMethod method) throws GroupsException {
+    public EntityIdentifier[] searchForEntities(String query, SearchMethod method)
+            throws GroupsException {
         boolean allowPartial = true;
 
         switch (method) {

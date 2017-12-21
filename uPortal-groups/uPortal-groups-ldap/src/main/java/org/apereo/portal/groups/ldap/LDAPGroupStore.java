@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
-
 import javax.naming.Context;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
@@ -32,7 +31,6 @@ import javax.naming.directory.InitialDirContext;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 import javax.xml.parsers.ParserConfigurationException;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apereo.portal.EntityIdentifier;
@@ -666,7 +664,7 @@ public class LDAPGroupStore implements IEntityGroupStore, IEntityStore, IEntityS
                 break;
             case DISCRETE:
             case DISCRETE_CI:
-                //Already handled.
+                // Already handled.
         }
         query = namefield + "=" + query;
         DirContext context = getConnection();

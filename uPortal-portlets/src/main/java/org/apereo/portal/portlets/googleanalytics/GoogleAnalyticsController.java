@@ -24,7 +24,6 @@ import javax.portlet.RenderRequest;
 import javax.servlet.http.HttpServletRequest;
 import org.apereo.portal.EntityIdentifier;
 import org.apereo.portal.groups.IEntityGroup;
-import org.apereo.portal.groups.IGroupConstants;
 import org.apereo.portal.groups.IGroupMember;
 import org.apereo.portal.portlets.PortletPreferencesJsonDao;
 import org.apereo.portal.security.IPerson;
@@ -125,9 +124,10 @@ public class GoogleAnalyticsController {
         }
     }
 
-    /** Check if the user is a member of the specified group name 
-     * 
-     *  Internal search, thus case sensitive. 
+    /**
+     * Check if the user is a member of the specified group name
+     *
+     * <p>Internal search, thus case sensitive.
      */
     private boolean isMember(IGroupMember groupMember, String groupName) {
         try {
@@ -137,7 +137,8 @@ public class GoogleAnalyticsController {
             }
 
             final EntityIdentifier[] results =
-                    GroupService.searchForGroups(groupName, GroupService.SearchMethod.DISCRETE, IPerson.class);
+                    GroupService.searchForGroups(
+                            groupName, GroupService.SearchMethod.DISCRETE, IPerson.class);
             if (results == null || results.length == 0) {
                 this.logger.warn(
                         "No portal group found for '{}' no users will be placed in that group for analytics",

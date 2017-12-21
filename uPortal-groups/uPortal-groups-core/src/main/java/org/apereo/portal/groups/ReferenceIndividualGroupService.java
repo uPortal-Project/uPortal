@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 import org.apereo.portal.EntityIdentifier;
 import org.apereo.portal.concurrency.CachingException;
 import org.apereo.portal.concurrency.IEntityLock;
@@ -556,26 +555,31 @@ public class ReferenceIndividualGroupService extends ReferenceCompositeGroupServ
     }
 
     @Override
-    public EntityIdentifier[] searchForEntities(String query, IGroupConstants.SearchMethod method, Class type)
-            throws GroupsException {
+    public EntityIdentifier[] searchForEntities(
+            String query, IGroupConstants.SearchMethod method, Class type) throws GroupsException {
         return removeDuplicates(entitySearcher.searchForEntities(query, method, type));
     }
 
     @Override
     public EntityIdentifier[] searchForEntities(
-        String query, IGroupConstants.SearchMethod method, Class type, IEntityGroup ancestor) throws GroupsException {
+            String query, IGroupConstants.SearchMethod method, Class type, IEntityGroup ancestor)
+            throws GroupsException {
         return filterEntities(searchForEntities(query, method, type), ancestor);
     }
 
     @Override
-    public EntityIdentifier[] searchForGroups(String query, IGroupConstants.SearchMethod method, Class leaftype)
+    public EntityIdentifier[] searchForGroups(
+            String query, IGroupConstants.SearchMethod method, Class leaftype)
             throws GroupsException {
         return removeDuplicates(groupFactory.searchForGroups(query, method, leaftype));
     }
 
     @Override
     public EntityIdentifier[] searchForGroups(
-            String query, IGroupConstants.SearchMethod method, Class leaftype, IEntityGroup ancestor)
+            String query,
+            IGroupConstants.SearchMethod method,
+            Class leaftype,
+            IEntityGroup ancestor)
             throws GroupsException {
         return filterEntities(searchForGroups(query, method, leaftype), ancestor);
     }

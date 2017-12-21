@@ -17,7 +17,6 @@ package org.apereo.portal.api.groups;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-
 import org.apache.commons.lang.StringUtils;
 import org.apereo.portal.EntityIdentifier;
 import org.apereo.portal.groups.IEntityGroup;
@@ -63,14 +62,16 @@ public class ApiGroupsService implements GroupsService {
         return EntityService.instance().search(Entity.ENTITY_GROUP, searchTerm);
     }
 
-	// Internal search, thus case sensitive.
+    // Internal search, thus case sensitive.
     @Override
     public Set<Entity> getGroupsForMember(String memberName) {
         Set<Entity> groups = new HashSet<Entity>();
         if (StringUtils.isNotEmpty(memberName)) {
             EntityIdentifier[] identifiers =
                     GroupService.searchForEntities(
-                            memberName, GroupService.SearchMethod.DISCRETE, EntityEnum.PERSON.getClazz());
+                            memberName,
+                            GroupService.SearchMethod.DISCRETE,
+                            EntityEnum.PERSON.getClazz());
             for (EntityIdentifier entityIdentifier : identifiers) {
                 if (entityIdentifier.getType().equals(EntityEnum.PERSON.getClazz())) {
                     IGroupMember groupMember = GroupService.getGroupMember(entityIdentifier);
@@ -115,7 +116,9 @@ public class ApiGroupsService implements GroupsService {
         if (StringUtils.isNotEmpty(groupName)) {
             EntityIdentifier[] identifiers =
                     GroupService.searchForGroups(
-                            groupName, GroupService.SearchMethod.DISCRETE, EntityEnum.GROUP.getClazz());
+                            groupName,
+                            GroupService.SearchMethod.DISCRETE,
+                            EntityEnum.GROUP.getClazz());
             for (EntityIdentifier entityIdentifier : identifiers) {
                 if (entityIdentifier.getType().equals(IEntityGroup.class)) {
                     IGroupMember groupMember = GroupService.getGroupMember(entityIdentifier);
