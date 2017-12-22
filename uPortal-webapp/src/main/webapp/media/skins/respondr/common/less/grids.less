@@ -68,6 +68,16 @@
      */
     &.up-constant-columns {
       .fn-even-columns(6);
+
+      .up-portlet-wrapper-inner {
+        margin: 10px;
+        height: 100%;
+
+        .up-portlet-content-wrapper {
+          // total height of wrapper inner - titlebar height
+          height: calc(~"100% - 34px");
+        }
+      }
     }
   }
 }
