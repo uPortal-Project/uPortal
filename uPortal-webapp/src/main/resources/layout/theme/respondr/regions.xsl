@@ -292,19 +292,14 @@
     <!-- ========== TEMPLATE: FOOTER FIRST REGION =============== -->
     <!-- ======================================================== -->
     <!--
-     | This template renders region intended to hold the site navigation.
+     | This template renders the region intended to hold the sitemap.
      -->
     <xsl:template name="region.footer.first">
-        <!-- Following condition should be '//region[@name='footer-first']/channel' 
-             but needs to be 'true()' as long as the footer.nav template is present
-             and desired -->
-        <xsl:if test="true()">
+        <xsl:if test="//region[@name='footer-first']/channel">
             <footer id="region-footer-first">
                 <xsl:for-each select="//region[@name='footer-first']/channel">
                     <xsl:call-template name="regions.portlet.decorator" />
                 </xsl:for-each>
-                <!-- TODO:  This XSLT template needs to be converted to a portlet somehow -->
-                <xsl:call-template name="footer.nav" />
             </footer>
         </xsl:if>
     </xsl:template>
@@ -314,8 +309,7 @@
     <!-- ========== TEMPLATE: FOOTER SECOND REGION (License links) =============== -->
     <!-- ========================================================================= -->
     <!--
-     | This template renders region intended to hold the license portlet.
-     | TODO:  Move footer.nav to footer.first and convert to a portlet (see UP-4103)
+     | This template renders the region intended to hold the license portlet.
      -->
     <xsl:template name="region.footer.second">
         <xsl:if test="//region[@name='footer-second']/channel">
