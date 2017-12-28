@@ -211,7 +211,8 @@ var uportal = uportal || {};
                 // remove any deleted columns from the page
                 $(deletes).each(function(idx, del){
                     $(this).find("[id^=portlet_]").each(function(idx, portlet){
-                        $(portlet).appendTo(acceptor);
+                        var innerColumn = acceptor.find('.portal-page-column-inner');
+                        $(portlet).appendTo(innerColumn);
                     });
                     $(this).remove();
                 });
@@ -232,11 +233,15 @@ var uportal = uportal || {};
                         }
                     });
                     var columnWidthClass = that.options.columnWidthClassFunction(newcolumns[i]);
-                    $(column).addClass(columnWidthClass);
+                    columnWidthClass && $(column).addClass(columnWidthClass);
+
+                    // div.inner-column CSS classes
+                    var innerColumn = $(column).find('.portal-page-column-inner');
+                    innerColumn.attr('class', 'portal-page-column-inner'); // Reset to minimum
+                    var innerColumnClasses = that.options.innerColumnClassesFunction(newcolumns[i]);
+                    innerColumnClasses && innerColumn.addClass(innerColumnClasses);
 
                 });
-
-                $('#portalPageBodyColumns').attr("class", "columns-" + newcolumns.length);
 
                 that.components.gallery.refreshPaneLink();
 
@@ -584,9 +589,12 @@ var uportal = uportal || {};
         currentSkin: null,
         isFragmentMode: false,
         gallerySelector: '.up-gallery',  // Pass null/false to disable
-        columnWidthClassPattern: "fl-container-flex",
+        columnWidthClassPattern: "col-md-",
         columnWidthClassFunction: function(column) {
-            return "fl-container-flex" + column;
+            console.error('The columnWidthClassFunction option must be specified.');
+        },
+        innerColumnClassesFunction: function(column) {
+            console.error('The innerColumnClassesFunction option must be specified.');
         },
         messages: {
             persistenceError: "Error persisting layout change"

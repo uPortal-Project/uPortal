@@ -394,7 +394,7 @@
   <xsl:template match="focused">
     <div class="fluid-row">
         <div class="col-md-12">
-            <div id="portalPageBodyColumns" class="columns-1">
+            <div id="portalPageBodyColumns">
                 <div class="portal-page-column column-1">
                     <div class="portal-page-column-inner"> <!-- Column inner div for additional presentation/formatting options.  -->
                     <xsl:apply-templates select="channel|blocked-channel"/>
