@@ -147,9 +147,7 @@ public class UpdatePreferencesServlet {
         this.portletWindowRegistry = portletWindowRegistry;
     }
 
-    /**
-     * Default name given to newly created tabs.  <em>Requires internationalization.</em>
-     */
+    /** Default name given to newly created tabs. <em>Requires internationalization.</em> */
     protected static final String DEFAULT_TAB_NAME = "New Tab";
 
     /**
@@ -353,7 +351,9 @@ public class UpdatePreferencesServlet {
      *   <li>If method=appendAfter does append at end of parent(elementId), result of which is a
      *       column. Used by UI to add to end of column (elementId is last portlet in column).
      * </ul>
-     *++
+     *
+     * ++
+     *
      * @param request
      * @param response
      * @param sourceId id of the element to move
@@ -480,7 +480,8 @@ public class UpdatePreferencesServlet {
          * columns use a 'width' attribute, while the new(er) columns based on CSS Flex use a
          * 'flexColumns' attribute.
          */
-        resetColumnStylesheetUserPreferences(request, person, ulm, columnList); // Clear previous selections
+        resetColumnStylesheetUserPreferences(
+                request, person, ulm, columnList); // Clear previous selections
 
         // Choose a column layout strategy...
         boolean useFlexStrategy = false; // default is "classic"
@@ -928,12 +929,17 @@ public class UpdatePreferencesServlet {
             ulm.addNode(newColumn, tabId, null);
 
             this.stylesheetUserPreferencesService.setLayoutAttribute(
-                    request, PreferencesScope.STRUCTURE, newColumn.getId(), CLASSIC_COLUMNS_WIDTH_USER_PREFERENCE_NAME, width + "%");
+                    request,
+                    PreferencesScope.STRUCTURE,
+                    newColumn.getId(),
+                    CLASSIC_COLUMNS_WIDTH_USER_PREFERENCE_NAME,
+                    width + "%");
             try {
                 // This sets the column attribute in memory but doesn't persist it.  Comment says
                 // saves changes "prior to persisting"
                 Element folder = ulm.getUserLayoutDOM().getElementById(newColumn.getId());
-                UserPrefsHandler.setUserPreference(folder, CLASSIC_COLUMNS_WIDTH_USER_PREFERENCE_NAME, person);
+                UserPrefsHandler.setUserPreference(
+                        folder, CLASSIC_COLUMNS_WIDTH_USER_PREFERENCE_NAME, person);
             } catch (Exception e) {
                 logger.error("Error saving new column widths", e);
             }
@@ -1202,20 +1208,34 @@ public class UpdatePreferencesServlet {
         return new ModelAndView("jsonView", Collections.emptyMap());
     }
 
-    private void resetColumnStylesheetUserPreferences(HttpServletRequest request, IPerson person, IUserLayoutManager ulm, List<String> columnList) {
+    private void resetColumnStylesheetUserPreferences(
+            HttpServletRequest request,
+            IPerson person,
+            IUserLayoutManager ulm,
+            List<String> columnList) {
 
         for (String columnId : columnList) {
             // Remove pre-existing "width" user preference...
             stylesheetUserPreferencesService.removeLayoutAttribute(
-                request, PreferencesScope.STRUCTURE, columnId, CLASSIC_COLUMNS_WIDTH_USER_PREFERENCE_NAME);
+                    request,
+                    PreferencesScope.STRUCTURE,
+                    columnId,
+                    CLASSIC_COLUMNS_WIDTH_USER_PREFERENCE_NAME);
             // Remove pre-existing "flexColumns" user preference...
             stylesheetUserPreferencesService.removeLayoutAttribute(
-                request, PreferencesScope.STRUCTURE, columnId, FLEX_COLUMNS_COUNT_USER_PREFERENCE_NAME);
+                    request,
+                    PreferencesScope.STRUCTURE,
+                    columnId,
+                    FLEX_COLUMNS_COUNT_USER_PREFERENCE_NAME);
         }
-
     }
 
-    private void updateColumnStylesheetUserPreferencesFlex(HttpServletRequest request, IPerson person, IUserLayoutManager ulm, List<String> columnList, String[] widths) {
+    private void updateColumnStylesheetUserPreferencesFlex(
+            HttpServletRequest request,
+            IPerson person,
+            IUserLayoutManager ulm,
+            List<String> columnList,
+            String[] widths) {
 
         final int flexColumnsIntValue = Integer.parseInt(widths[0]) - 100;
         String flexColumns; // Allowable values are 6, 4, 3, and 2
@@ -1237,40 +1257,53 @@ public class UpdatePreferencesServlet {
         }
         for (String columnId : columnList) {
             stylesheetUserPreferencesService.setLayoutAttribute(
-                request, PreferencesScope.STRUCTURE, columnId, FLEX_COLUMNS_COUNT_USER_PREFERENCE_NAME, flexColumns);
+                    request,
+                    PreferencesScope.STRUCTURE,
+                    columnId,
+                    FLEX_COLUMNS_COUNT_USER_PREFERENCE_NAME,
+                    flexColumns);
             try {
                 // For fragment-based column nodes, signal to DLM that it will need
                 // to replay the user's selection of the "flexColumns" attribute...
                 final Element folder = ulm.getUserLayoutDOM().getElementById(columnId);
-                UserPrefsHandler.setUserPreference(folder, FLEX_COLUMNS_COUNT_USER_PREFERENCE_NAME, person);
+                UserPrefsHandler.setUserPreference(
+                        folder, FLEX_COLUMNS_COUNT_USER_PREFERENCE_NAME, person);
             } catch (Exception e) {
                 logger.error("Error saving new column layout", e);
             }
         }
-
     }
 
-    private void updateColumnStylesheetUserPreferencesClassic(HttpServletRequest request, IPerson person, IUserLayoutManager ulm, List<String> columnList, String[] widths) {
+    private void updateColumnStylesheetUserPreferencesClassic(
+            HttpServletRequest request,
+            IPerson person,
+            IUserLayoutManager ulm,
+            List<String> columnList,
+            String[] widths) {
 
         int count = 0;
         for (String columnId : columnList) {
             stylesheetUserPreferencesService.setLayoutAttribute(
-                request, PreferencesScope.STRUCTURE, columnId, CLASSIC_COLUMNS_WIDTH_USER_PREFERENCE_NAME, widths[count] + "%");
+                    request,
+                    PreferencesScope.STRUCTURE,
+                    columnId,
+                    CLASSIC_COLUMNS_WIDTH_USER_PREFERENCE_NAME,
+                    widths[count] + "%");
             try {
                 // For fragment-based column nodes, signal to DLM that it will need
                 // to replay the user's selection of the "width" attribute...
                 final Element folder = ulm.getUserLayoutDOM().getElementById(columnId);
-                UserPrefsHandler.setUserPreference(folder, CLASSIC_COLUMNS_WIDTH_USER_PREFERENCE_NAME, person);
+                UserPrefsHandler.setUserPreference(
+                        folder, CLASSIC_COLUMNS_WIDTH_USER_PREFERENCE_NAME, person);
             } catch (Exception e) {
                 logger.error("Error saving new column layout", e);
             }
             ++count;
         }
-
     }
 
     private IUserLayoutNodeDescription addNodeToTab(
-        IUserLayoutManager ulm, IUserLayoutChannelDescription channel, String tabId) {
+            IUserLayoutManager ulm, IUserLayoutChannelDescription channel, String tabId) {
         IUserLayoutNodeDescription node = null;
 
         Enumeration<String> columns = ulm.getChildIds(tabId);
@@ -1310,19 +1343,19 @@ public class UpdatePreferencesServlet {
      * @param attributes
      */
     private void setObjectAttributes(
-        IUserLayoutNodeDescription node,
-        HttpServletRequest request,
-        Map<String, Map<String, String>> attributes) {
+            IUserLayoutNodeDescription node,
+            HttpServletRequest request,
+            Map<String, Map<String, String>> attributes) {
         // Attempt to set the object attributes
         for (String name : attributes.get("attributes").keySet()) {
             try {
                 BeanUtils.setProperty(node, name, attributes.get(name));
             } catch (IllegalAccessException | InvocationTargetException e) {
                 logger.warn(
-                    "Unable to set attribute: "
-                        + name
-                        + "on object of type: "
-                        + node.getType());
+                        "Unable to set attribute: "
+                                + name
+                                + "on object of type: "
+                                + node.getType());
             }
         }
 
@@ -1331,11 +1364,11 @@ public class UpdatePreferencesServlet {
         if (structureAttributes != null) {
             for (String name : structureAttributes.keySet()) {
                 this.stylesheetUserPreferencesService.setLayoutAttribute(
-                    request,
-                    PreferencesScope.STRUCTURE,
-                    node.getId(),
-                    name,
-                    structureAttributes.get(name));
+                        request,
+                        PreferencesScope.STRUCTURE,
+                        node.getId(),
+                        name,
+                        structureAttributes.get(name));
             }
         }
     }

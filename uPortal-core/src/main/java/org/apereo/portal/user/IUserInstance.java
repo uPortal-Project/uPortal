@@ -29,5 +29,4 @@ public interface IUserInstance {
 
     /** @return the localeManager for the user instance */
     LocaleManager getLocaleManager();
-
 }
