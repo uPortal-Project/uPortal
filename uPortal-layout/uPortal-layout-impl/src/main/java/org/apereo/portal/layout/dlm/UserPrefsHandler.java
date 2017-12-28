@@ -22,11 +22,15 @@ import org.w3c.dom.NodeList;
 
 /**
  * Applies user changes that are part of the uPortal User Preferences storage (not part of the
- * layout structure) to the user's plf prior to persisting.
+ * layout structure) to the user's plf prior to persisting.  The need for this class arises from
+ * DLM's pattern of <em>replaying</em> user customizations to fragments when the user logs in.
+ * This system tracks the changes users make to fragments that would be Stylesheet User Preferences,
+ * rather than added, moved, or removed elements in the layout DOM.
  *
  * @since 2.5
  */
 public class UserPrefsHandler {
+
     /**
      * Records changes made to element attributes that are defined as being part of a user's user
      * preferences object and not part of the layout. These attributes are specified in the .sdf
@@ -42,8 +46,8 @@ public class UserPrefsHandler {
 
         boolean layoutOwner = false;
         boolean templateUser = false;
-        Attr attrib = null;
-        Element e = null;
+        Attr attrib;
+        Element e;
         // Search Elements in nodelist
         for (int i = 0; i < nodes.getLength(); i++) {
             e = (Element) nodes.item(i);

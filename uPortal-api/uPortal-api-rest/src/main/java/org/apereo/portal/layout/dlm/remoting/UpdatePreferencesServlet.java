@@ -84,6 +84,9 @@ public class UpdatePreferencesServlet {
     private static final String TAB_GROUP_DEFAULT =
             "DEFAULT_TABGROUP"; // matches default in structure transform
 
+    private static final String CLASSIC_COLUMNS_WIDTH_USER_PREFERENCE_NAME = "width";
+    private static final String FLEX_COLUMNS_COUNT_USER_PREFERENCE_NAME = "flexColumns";
+
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     private IPortletDefinitionRegistry portletDefinitionRegistry;
@@ -144,7 +147,9 @@ public class UpdatePreferencesServlet {
         this.portletWindowRegistry = portletWindowRegistry;
     }
 
-    // default tab name
+    /**
+     * Default name given to newly created tabs.  <em>Requires internationalization.</em>
+     */
     protected static final String DEFAULT_TAB_NAME = "New Tab";
 
     /**
@@ -188,7 +193,7 @@ public class UpdatePreferencesServlet {
 
             ulm.saveUserLayout();
 
-            return new ModelAndView("jsonView", Collections.EMPTY_MAP);
+            return new ModelAndView("jsonView", Collections.emptyMap());
 
         } catch (PortalException e) {
             return handlePersistError(request, response, e);
@@ -208,11 +213,10 @@ public class UpdatePreferencesServlet {
     public ModelAndView removeByFName(
             HttpServletRequest request,
             HttpServletResponse response,
-            @RequestParam(value = "fname", required = true) String fname)
+            @RequestParam(value = "fname") String fname)
             throws IOException {
 
         IUserInstance ui = userInstanceManager.getUserInstance(request);
-        IPerson per = getPerson(ui, response);
 
         UserPreferencesManager upm = (UserPreferencesManager) ui.getPreferencesManager();
         IUserLayoutManager ulm = upm.getUserLayoutManager();
@@ -245,7 +249,7 @@ public class UpdatePreferencesServlet {
 
             ulm.saveUserLayout();
 
-            return new ModelAndView("jsonView", Collections.EMPTY_MAP);
+            return new ModelAndView("jsonView", Collections.emptyMap());
 
         } catch (PortalException e) {
             return handlePersistError(request, response, e);
@@ -261,7 +265,7 @@ public class UpdatePreferencesServlet {
      * @param previousNodeId if nextNodeId is not blank, moves portlet to end of list previousNodeId
      *     is in
      * @param nextNodeId nodeId to insert sourceId before.
-     * @return
+     * @return JSON containing a success message or an error message
      */
     @RequestMapping(method = RequestMethod.POST, params = "action=movePortletAjax")
     public ModelAndView movePortletAjax(
@@ -349,7 +353,7 @@ public class UpdatePreferencesServlet {
      *   <li>If method=appendAfter does append at end of parent(elementId), result of which is a
      *       column. Used by UI to add to end of column (elementId is last portlet in column).
      * </ul>
-     *
+     *++
      * @param request
      * @param response
      * @param sourceId id of the element to move
@@ -410,31 +414,31 @@ public class UpdatePreferencesServlet {
             @RequestParam(value = "acceptor", required = false) String acceptor)
             throws IOException, PortalException {
 
-        IUserInstance ui = userInstanceManager.getUserInstance(request);
-        IPerson per = getPerson(ui, response);
+        final IUserInstance ui = userInstanceManager.getUserInstance(request);
+        final IPerson person = getPerson(ui, response);
 
-        UserPreferencesManager upm = (UserPreferencesManager) ui.getPreferencesManager();
-        IUserLayoutManager ulm = upm.getUserLayoutManager();
+        final UserPreferencesManager upm = (UserPreferencesManager) ui.getPreferencesManager();
+        final IUserLayoutManager ulm = upm.getUserLayoutManager();
 
-        int newColumnCount = widths.length;
+        final int newColumnCount = widths.length;
 
         // build a list of the current columns for this tab
-        Enumeration<String> columns = ulm.getChildIds(tabId);
-        List<String> columnList = new ArrayList<String>();
+        final Enumeration<String> columns = ulm.getChildIds(tabId);
+        final List<String> columnList = new ArrayList<>();
         while (columns.hasMoreElements()) {
             columnList.add(columns.nextElement());
         }
-        int oldColumnCount = columnList.size();
+        final int oldColumnCount = columnList.size();
 
-        Map<String, Object> model = new HashMap<String, Object>();
+        final Map<String, Object> model = new HashMap<>();
 
         // if the new layout has more columns
         if (newColumnCount > oldColumnCount) {
-            List<String> newColumnIds = new ArrayList<String>();
+            final List<String> newColumnIds = new ArrayList<>();
             for (int i = columnList.size(); i < newColumnCount; i++) {
 
                 // create new column element
-                IUserLayoutFolderDescription newColumn = new UserLayoutFolderDescription();
+                final IUserLayoutFolderDescription newColumn = new UserLayoutFolderDescription();
                 newColumn.setName("Column");
                 newColumn.setId("tbd");
                 newColumn.setFolderType(IUserLayoutFolderDescription.REGULAR_TYPE);
@@ -443,7 +447,7 @@ public class UpdatePreferencesServlet {
                 newColumn.setImmutable(false);
 
                 // add the column to our layout
-                IUserLayoutNodeDescription node = ulm.addNode(newColumn, tabId, null);
+                final IUserLayoutNodeDescription node = ulm.addNode(newColumn, tabId, null);
                 newColumnIds.add(node.getId());
 
                 model.put("newColumnIds", newColumnIds);
@@ -455,14 +459,10 @@ public class UpdatePreferencesServlet {
         // if the new layout has fewer columns
         else if (deleted != null && deleted.length > 0) {
 
-            if (columnList.size() != widths.length + deleted.length) {
-                // TODO: error?
-            }
-
             for (String columnId : deleted) {
 
                 // move all channels in the current column to the last valid column
-                Enumeration channels = ulm.getChildIds(columnId);
+                final Enumeration channels = ulm.getChildIds(columnId);
                 while (channels.hasMoreElements()) {
                     ulm.addNode(ulm.getNode((String) channels.nextElement()), acceptor, null);
                 }
@@ -474,19 +474,30 @@ public class UpdatePreferencesServlet {
             }
         }
 
-        int count = 0;
-        for (String columnId : columnList) {
-            this.stylesheetUserPreferencesService.setLayoutAttribute(
-                    request, PreferencesScope.STRUCTURE, columnId, "width", widths[count] + "%");
-            try {
-                // This sets the column attribute in memory but doesn't persist it.  Comment says
-                // saves changes "prior to persisting"
-                Element folder = ulm.getUserLayoutDOM().getElementById(columnId);
-                UserPrefsHandler.setUserPreference(folder, "width", per);
-            } catch (Exception e) {
-                logger.error("Error saving new column widths", e);
+        /*
+         * Now that the number of columns is established, the appearance and behavior of the columns
+         * on the page is determined by Structure Stylesheet User Preferences.  "Classic" uPortal
+         * columns use a 'width' attribute, while the new(er) columns based on CSS Flex use a
+         * 'flexColumns' attribute.
+         */
+        resetColumnStylesheetUserPreferences(request, person, ulm, columnList); // Clear previous selections
+
+        // Choose a column layout strategy...
+        boolean useFlexStrategy = false; // default is "classic"
+        if (columnList.size() == 1) {
+            int firstColumnWidthAsInt = Integer.parseInt(widths[0]);
+            if (firstColumnWidthAsInt > 100) {
+                // A single column with a width parameter creater than 100(%)
+                // signals that we want the flexColumns strategy.
+                useFlexStrategy = true;
             }
-            count++;
+        }
+
+        // Update Structure Stylesheet User Preferences based on the selected strategy
+        if (useFlexStrategy) {
+            updateColumnStylesheetUserPreferencesFlex(request, person, ulm, columnList, widths);
+        } else {
+            updateColumnStylesheetUserPreferencesClassic(request, person, ulm, columnList, widths);
         }
 
         try {
@@ -621,7 +632,7 @@ public class UpdatePreferencesServlet {
             }
 
             // document success for notifications
-            final Map<String, String> model = new HashMap<String, String>();
+            final Map<String, String> model = new HashMap<>();
             final String channelTitle = channel.getTitle();
             model.put(
                     "response",
@@ -711,7 +722,7 @@ public class UpdatePreferencesServlet {
                 }
 
                 // document success for notifications
-                Map<String, String> model = new HashMap<String, String>();
+                Map<String, String> model = new HashMap<>();
                 model.put(
                         "response",
                         getMessage(
@@ -760,7 +771,7 @@ public class UpdatePreferencesServlet {
             }
         }
 
-        IPortletDefinition definition = null;
+        IPortletDefinition definition;
         if (sourceId != null) definition = portletDefinitionRegistry.getPortletDefinition(sourceId);
         else if (fname != null)
             definition = portletDefinitionRegistry.getPortletDefinitionByFname(fname);
@@ -773,7 +784,7 @@ public class UpdatePreferencesServlet {
 
         IUserLayoutChannelDescription channel = new UserLayoutChannelDescription(definition);
 
-        IUserLayoutNodeDescription node = null;
+        IUserLayoutNodeDescription node;
         if (isTab(ulm, destinationId)) {
             node = addNodeToTab(ulm, channel, destinationId);
 
@@ -821,50 +832,16 @@ public class UpdatePreferencesServlet {
             return handlePersistError(request, response, e);
         }
 
-        Map<String, String> model = new HashMap<String, String>();
+        Map<String, String> model = new HashMap<>();
         model.put("response", getMessage("success.add.portlet", "Added a new channel", locale));
         model.put("newNodeId", nodeId);
         return new ModelAndView("jsonView", model);
-    }
-
-    private IUserLayoutNodeDescription addNodeToTab(
-            IUserLayoutManager ulm, IUserLayoutChannelDescription channel, String tabId) {
-        IUserLayoutNodeDescription node = null;
-
-        Enumeration<String> columns = ulm.getChildIds(tabId);
-        if (columns.hasMoreElements()) {
-            while (columns.hasMoreElements()) {
-                // attempt to add this channel to the column
-                node = ulm.addNode(channel, columns.nextElement(), null);
-                // if it couldn't be added to this column, go on and try the next
-                // one.  otherwise, we're set.
-                if (node != null) break;
-            }
-        } else {
-
-            IUserLayoutFolderDescription newColumn = new UserLayoutFolderDescription();
-            newColumn.setName("Column");
-            newColumn.setId("tbd");
-            newColumn.setFolderType(IUserLayoutFolderDescription.REGULAR_TYPE);
-            newColumn.setHidden(false);
-            newColumn.setUnremovable(false);
-            newColumn.setImmutable(false);
-
-            // add the column to our layout
-            IUserLayoutNodeDescription col = ulm.addNode(newColumn, tabId, null);
-
-            // add the channel
-            node = ulm.addNode(channel, col.getId(), null);
-        }
-
-        return node;
     }
 
     /**
      * Update the user's preferred skin.
      *
      * @param request HTTP Request
-     * @param response HTTP Response
      * @param skinName name of the Skin
      * @throws IOException
      * @throws PortalException
@@ -876,7 +853,7 @@ public class UpdatePreferencesServlet {
         this.stylesheetUserPreferencesService.setStylesheetParameter(
                 request, PreferencesScope.THEME, "skin", skinName);
 
-        return new ModelAndView("jsonView", Collections.EMPTY_MAP);
+        return new ModelAndView("jsonView", Collections.emptyMap());
     }
 
     /**
@@ -894,17 +871,17 @@ public class UpdatePreferencesServlet {
             throws IOException {
 
         IUserInstance ui = userInstanceManager.getUserInstance(request);
-        IPerson per = getPerson(ui, response);
+        IPerson person = getPerson(ui, response);
         UserPreferencesManager upm = (UserPreferencesManager) ui.getPreferencesManager();
         IUserLayoutManager ulm = upm.getUserLayoutManager();
 
         // Verify that the user has permission to add this tab
-        final IAuthorizationPrincipal authPrincipal = this.getUserPrincipal(per.getUserName());
+        final IAuthorizationPrincipal authPrincipal = this.getUserPrincipal(person.getUserName());
         if (!authPrincipal.hasPermission(
                 IPermission.PORTAL_SYSTEM, IPermission.ADD_TAB_ACTIVITY, IPermission.ALL_TARGET)) {
             logger.warn(
                     "Attempt to add a tab through the REST API by unauthorized user '"
-                            + per.getUserName()
+                            + person.getUserName()
                             + "'");
             response.sendError(HttpServletResponse.SC_FORBIDDEN);
             return new ModelAndView(
@@ -951,12 +928,12 @@ public class UpdatePreferencesServlet {
             ulm.addNode(newColumn, tabId, null);
 
             this.stylesheetUserPreferencesService.setLayoutAttribute(
-                    request, PreferencesScope.STRUCTURE, newColumn.getId(), "width", width + "%");
+                    request, PreferencesScope.STRUCTURE, newColumn.getId(), CLASSIC_COLUMNS_WIDTH_USER_PREFERENCE_NAME, width + "%");
             try {
                 // This sets the column attribute in memory but doesn't persist it.  Comment says
                 // saves changes "prior to persisting"
                 Element folder = ulm.getUserLayoutDOM().getElementById(newColumn.getId());
-                UserPrefsHandler.setUserPreference(folder, "width", per);
+                UserPrefsHandler.setUserPreference(folder, CLASSIC_COLUMNS_WIDTH_USER_PREFERENCE_NAME, person);
             } catch (Exception e) {
                 logger.error("Error saving new column widths", e);
             }
@@ -1050,44 +1027,6 @@ public class UpdatePreferencesServlet {
         model.put("folderId", newFolder.getId());
         model.put("immutable", newFolder.isImmutable());
         return new ModelAndView("jsonView", model);
-    }
-
-    /**
-     * Attempt to map the attribute values to the given object.
-     *
-     * @param node
-     * @param request
-     * @param attributes
-     */
-    private void setObjectAttributes(
-            IUserLayoutNodeDescription node,
-            HttpServletRequest request,
-            Map<String, Map<String, String>> attributes) {
-        // Attempt to set the object attributes
-        for (String name : attributes.get("attributes").keySet()) {
-            try {
-                BeanUtils.setProperty(node, name, attributes.get(name));
-            } catch (IllegalAccessException | InvocationTargetException e) {
-                logger.warn(
-                        "Unable to set attribute: "
-                                + name
-                                + "on object of type: "
-                                + node.getType());
-            }
-        }
-
-        // Set the structure-attributes, whatever they may be
-        Map<String, String> structureAttributes = attributes.get("structureAttributes");
-        if (structureAttributes != null) {
-            for (String name : structureAttributes.keySet()) {
-                this.stylesheetUserPreferencesService.setLayoutAttribute(
-                        request,
-                        PreferencesScope.STRUCTURE,
-                        node.getId(),
-                        name,
-                        structureAttributes.get(name));
-            }
-        }
     }
 
     /**
@@ -1260,7 +1199,145 @@ public class UpdatePreferencesServlet {
             return handlePersistError(request, response, e);
         }
 
-        return new ModelAndView("jsonView", Collections.EMPTY_MAP);
+        return new ModelAndView("jsonView", Collections.emptyMap());
+    }
+
+    private void resetColumnStylesheetUserPreferences(HttpServletRequest request, IPerson person, IUserLayoutManager ulm, List<String> columnList) {
+
+        for (String columnId : columnList) {
+            // Remove pre-existing "width" user preference...
+            stylesheetUserPreferencesService.removeLayoutAttribute(
+                request, PreferencesScope.STRUCTURE, columnId, CLASSIC_COLUMNS_WIDTH_USER_PREFERENCE_NAME);
+            // Remove pre-existing "flexColumns" user preference...
+            stylesheetUserPreferencesService.removeLayoutAttribute(
+                request, PreferencesScope.STRUCTURE, columnId, FLEX_COLUMNS_COUNT_USER_PREFERENCE_NAME);
+        }
+
+    }
+
+    private void updateColumnStylesheetUserPreferencesFlex(HttpServletRequest request, IPerson person, IUserLayoutManager ulm, List<String> columnList, String[] widths) {
+
+        final int flexColumnsIntValue = Integer.parseInt(widths[0]) - 100;
+        String flexColumns; // Allowable values are 6, 4, 3, and 2
+        switch (flexColumnsIntValue) {
+            case 6:
+                flexColumns = "6";
+                break;
+            case 4:
+                flexColumns = "4";
+                break;
+            case 3:
+                flexColumns = "3";
+                break;
+            default:
+                // Rather than risk a disallowed value getting into the DB,
+                // we'll convert anything besides 6, 4, or 3 into a 2.
+                flexColumns = "2";
+                break;
+        }
+        for (String columnId : columnList) {
+            stylesheetUserPreferencesService.setLayoutAttribute(
+                request, PreferencesScope.STRUCTURE, columnId, FLEX_COLUMNS_COUNT_USER_PREFERENCE_NAME, flexColumns);
+            try {
+                // For fragment-based column nodes, signal to DLM that it will need
+                // to replay the user's selection of the "flexColumns" attribute...
+                final Element folder = ulm.getUserLayoutDOM().getElementById(columnId);
+                UserPrefsHandler.setUserPreference(folder, FLEX_COLUMNS_COUNT_USER_PREFERENCE_NAME, person);
+            } catch (Exception e) {
+                logger.error("Error saving new column layout", e);
+            }
+        }
+
+    }
+
+    private void updateColumnStylesheetUserPreferencesClassic(HttpServletRequest request, IPerson person, IUserLayoutManager ulm, List<String> columnList, String[] widths) {
+
+        int count = 0;
+        for (String columnId : columnList) {
+            stylesheetUserPreferencesService.setLayoutAttribute(
+                request, PreferencesScope.STRUCTURE, columnId, CLASSIC_COLUMNS_WIDTH_USER_PREFERENCE_NAME, widths[count] + "%");
+            try {
+                // For fragment-based column nodes, signal to DLM that it will need
+                // to replay the user's selection of the "width" attribute...
+                final Element folder = ulm.getUserLayoutDOM().getElementById(columnId);
+                UserPrefsHandler.setUserPreference(folder, CLASSIC_COLUMNS_WIDTH_USER_PREFERENCE_NAME, person);
+            } catch (Exception e) {
+                logger.error("Error saving new column layout", e);
+            }
+            ++count;
+        }
+
+    }
+
+    private IUserLayoutNodeDescription addNodeToTab(
+        IUserLayoutManager ulm, IUserLayoutChannelDescription channel, String tabId) {
+        IUserLayoutNodeDescription node = null;
+
+        Enumeration<String> columns = ulm.getChildIds(tabId);
+        if (columns.hasMoreElements()) {
+            while (columns.hasMoreElements()) {
+                // attempt to add this channel to the column
+                node = ulm.addNode(channel, columns.nextElement(), null);
+                // if it couldn't be added to this column, go on and try the next
+                // one.  otherwise, we're set.
+                if (node != null) break;
+            }
+        } else {
+
+            IUserLayoutFolderDescription newColumn = new UserLayoutFolderDescription();
+            newColumn.setName("Column");
+            newColumn.setId("tbd");
+            newColumn.setFolderType(IUserLayoutFolderDescription.REGULAR_TYPE);
+            newColumn.setHidden(false);
+            newColumn.setUnremovable(false);
+            newColumn.setImmutable(false);
+
+            // add the column to our layout
+            IUserLayoutNodeDescription col = ulm.addNode(newColumn, tabId, null);
+
+            // add the channel
+            node = ulm.addNode(channel, col.getId(), null);
+        }
+
+        return node;
+    }
+
+    /**
+     * Attempt to map the attribute values to the given object.
+     *
+     * @param node
+     * @param request
+     * @param attributes
+     */
+    private void setObjectAttributes(
+        IUserLayoutNodeDescription node,
+        HttpServletRequest request,
+        Map<String, Map<String, String>> attributes) {
+        // Attempt to set the object attributes
+        for (String name : attributes.get("attributes").keySet()) {
+            try {
+                BeanUtils.setProperty(node, name, attributes.get(name));
+            } catch (IllegalAccessException | InvocationTargetException e) {
+                logger.warn(
+                    "Unable to set attribute: "
+                        + name
+                        + "on object of type: "
+                        + node.getType());
+            }
+        }
+
+        // Set the structure-attributes, whatever they may be
+        Map<String, String> structureAttributes = attributes.get("structureAttributes");
+        if (structureAttributes != null) {
+            for (String name : structureAttributes.keySet()) {
+                this.stylesheetUserPreferencesService.setLayoutAttribute(
+                    request,
+                    PreferencesScope.STRUCTURE,
+                    node.getId(),
+                    name,
+                    structureAttributes.get(name));
+            }
+        }
     }
 
     private ModelAndView handlePersistError(
@@ -1336,7 +1413,7 @@ public class UpdatePreferencesServlet {
         }
     }
 
-    protected IAuthorizationPrincipal getUserPrincipal(final String userName) {
+    private IAuthorizationPrincipal getUserPrincipal(final String userName) {
         final IEntity user = GroupService.getEntity(userName, IPerson.class);
         if (user == null) {
             return null;
@@ -1346,7 +1423,7 @@ public class UpdatePreferencesServlet {
         return authService.newPrincipal(user);
     }
 
-    protected String getTabIdFromName(IUserLayout userLayout, String tabName) {
+    private String getTabIdFromName(IUserLayout userLayout, String tabName) {
         @SuppressWarnings("unchecked")
         Enumeration<String> childrenOfRoot = userLayout.getChildIds(userLayout.getRootId());
 

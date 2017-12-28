@@ -75,15 +75,15 @@
   <xsl:template name="columns">
     <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
     <div id="portalPageBodyColumns" class="row">
+
       <!--
        | uPortal Classic vs. Flex
        |
        | "Classic" columns are the default;  the newer flexColumns strategy goes into effect if
        | (1) there is a single column, and (2) it has a flexColumns attribute.
        +-->
-      <xsl:variable name="USE_FLEX_COLUMNS">
-        <xsl:value-of select="count(column)=1 and column[@flexColumns]" />
-      </xsl:variable>
+      <xsl:variable name="USE_FLEX_COLUMNS" select="count(column)=1 and column[@flexColumns]" />
+
       <xsl:for-each select="column">
         <xsl:variable name="NUMBER">
             <xsl:value-of select="position()" />

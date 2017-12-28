@@ -22,11 +22,12 @@ import org.apereo.portal.layout.om.IStylesheetUserPreferences;
 import org.apereo.portal.utils.Populator;
 
 /**
- * Provides access to stylesheet user preference data. This is how any runtime code that needs
- * access to theme or structure stylesheet user preferences. All of the details around default
- * values, scoping and persistence are taken care of here.
+ * Provides read and write access to stylesheet user preference data. This is how any runtime code that needs
+ * access to theme or structure stylesheet user preferences information can get at it. All of the details around default
+ * values, scoping and persistence are handled internally by this service.
  */
 public interface IStylesheetUserPreferencesService {
+
     enum PreferencesScope {
         THEME {
             @Override
@@ -82,7 +83,6 @@ public interface IStylesheetUserPreferencesService {
      *
      * @param request The current request
      * @param prefScope The stylesheet preferences scope
-     * @see IStylesheetUserPreferences#populateOutputProperties(Populator)
      */
     <P extends Populator<String, String>> P populateOutputProperties(
             HttpServletRequest request, PreferencesScope prefScope, P properties);

@@ -600,6 +600,10 @@
                     even: '<xsl:value-of select="upMsg:getMessageForEmacsScript('even', $USER_LANG)"/>',
                     wideNarrow: '<xsl:value-of select="upMsg:getMessageForEmacsScript('wide.narrow', $USER_LANG)"/>',
                     narrowWideNarrow: '<xsl:value-of select="upMsg:getMessageForEmacsScript('narrow.wide.narrow', $USER_LANG)"/>',
+                    flexTwo: '<xsl:value-of select="upMsg:getMessageForEmacsScript('flex.two', $USER_LANG)"/>',
+                    flexThree: '<xsl:value-of select="upMsg:getMessageForEmacsScript('flex.three', $USER_LANG)"/>',
+                    flexFour: '<xsl:value-of select="upMsg:getMessageForEmacsScript('flex.four', $USER_LANG)"/>',
+                    flexSix: '<xsl:value-of select="upMsg:getMessageForEmacsScript('flex.six', $USER_LANG)"/>',
                     searchForStuff: '<xsl:value-of select="upMsg:getMessageForEmacsScript('search.for.stuff', $USER_LANG)"/>',
                     allCategories: '<xsl:value-of select="upMsg:getMessageForEmacsScript('all(categories)', $USER_LANG)"/>',
                     persistenceError: '<xsl:value-of select="upMsg:getMessageForEmacsScript('error.persisting.layout.change', $USER_LANG)"/>'
