@@ -20,7 +20,7 @@
 var up = up || {};
 
 (function ($, fluid) {
-    
+
     var getComponentTree = function (that) {
         var currentLayoutString, tree;
 
@@ -31,15 +31,15 @@ var up = up || {};
         $(that.options.layouts).each(function (idx, layout) {
             var layoutString = layout.columns.join("-"),
                 classes = "";
-            
+
             if (layout.columns.join("-") === currentLayoutString) {
                 classes += "selected";
             }
-            
+
             if (layout.disabled) {
                 classes += " disabled";
             }
-            
+
             tree.children.push({
                 ID: "layoutContainer:",
                 decorators: [
@@ -52,44 +52,44 @@ var up = up || {};
                     {
                         ID: "layoutLink",
                         decorators: [
-                            { type: "jQuery", func: "click", 
+                            { type: "jQuery", func: "click",
                                 args: function () {
                                     if (!layout.disabled) {
                                         that.options.currentLayout = layout.columns;
                                         that.refresh();
                                         that.events.onLayoutSelect.fire(layout, that);
                                     }
-                                } 
+                                }
                             }
                         ]
                     },
                     { ID: "layoutTitle", value: layout.columns.length + " " + that.options.strings[layout.columns.length == 1 ? 'column' : 'columns' ] },
                     { ID: "layoutDescription", value: that.options.strings[layout.nameKey] },
                     {
-                        ID: "layoutThumb", 
+                        ID: "layoutThumb",
                         decorators: [
                             {
                                 type: "attrs",
                                 attributes: {
-                                    style: 'background: url(' + that.options.imagePath + 'layout_' + layoutString + '.gif' + ') top left no-repeat;'
+                                    style: 'background: url(' + that.options.imagePath + 'layout_' + layoutString + '.svg' + ') top left no-repeat;'
                                 }
                             }
                         ]
                     }
                 ]
             });
-            
+
         });
-        
+
         return tree;
-        
+
     };
-    
+
     up.LayoutSelector = function (container, options) {
         var that, cutpoints;
-        
+
         that = fluid.initView("up.LayoutSelector", container, options);
-        
+
         cutpoints = [
             { id: "layoutContainer:", selector: that.options.selectors.layoutContainer },
             { id: "layout", selector: that.options.selectors.layout },
@@ -98,7 +98,7 @@ var up = up || {};
             { id: "layoutDescription", selector: that.options.selectors.layoutDescription },
             { id: "layoutThumb", selector: that.options.selectors.layoutThumb }
         ];
-        
+
         /**
          * Refresh the rendered skin selector view
          */
@@ -106,13 +106,13 @@ var up = up || {};
             var tree = getComponentTree(that);
             fluid.reRender(that.templates, $(container), tree, { cutpoints: cutpoints });
         };
-        
+
         that.templates = fluid.selfRender($(container), getComponentTree(that), { cutpoints: cutpoints });
-        
+
         return that;
     };
 
-    
+
     // defaults
     fluid.defaults("up.LayoutSelector", {
         currentLayout: [ 50, 50 ],
@@ -126,16 +126,7 @@ var up = up || {};
             columns: "Columns",
             sixColumn: "Narrow Columns"
         },
-        layouts: [ 
-            { nameKey: "fullWidth", columns: [ 100 ] },
-            { nameKey: "narrowWide", columns: [ 40, 60 ] },
-            { nameKey: "even", columns: [ 50, 50 ] },
-            { nameKey: "wideNarrow", columns: [ 60, 40 ] },
-            { nameKey: "even", columns: [ 33, 34, 33 ] },
-            { nameKey: "narrowWideNarrow", columns: [ 25, 50, 25 ] },
-            { nameKey: "even", columns: [ 25, 25, 25, 25 ] },
-            { nameKey: "sixColumn", columns: [17, 17, 16, 16, 17, 17] }
-        ],
+        layouts: [], // Default is an empty array b/c layouts are filtered by permissions in up-layout-preferences.js
         imagePath: "test/",
         selectors: {
             layoutContainer: ".layout",
@@ -152,5 +143,5 @@ var up = up || {};
             onLayoutSelect: null
         }
     });
-    
+
 })(jQuery, fluid);

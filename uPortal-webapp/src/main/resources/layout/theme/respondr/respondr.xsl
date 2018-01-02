@@ -586,7 +586,39 @@
                 subscribableTabUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/api/subscribableTabs.json',
                 columnWidthClassPattern: 'col-md-',
                 columnWidthClassFunction: function(column) {
-                    return 'col-md-' + Math.round(column / 8.3333);
+                    if (column > 100) {
+                        // Flex columns -- no columnWidthClass on the main column div
+                        return false;
+                    } else {
+                        // uPortal classic columns
+                        return 'col-md-' + Math.round(column / 8.3333);
+                    }
+                },
+                innerColumnClassesFunction: function(column) {
+                    if (column > 100) {
+                        // Flex columns -- logic mirrors how they're drawn server-side
+                        var rslt = 'up-grid up-matching-height up-constant-columns ';
+                        switch(column) {
+                            case 106:
+                                rslt += 'up-col-xs-2 up-col-sm-3 up-col-md-4 up-col-lg-6';
+                                break;
+                            case 104:
+                                rslt += 'up-col-xs-1 up-col-sm-2 up-col-md-3 up-col-lg-4';
+                                break;
+                            case 103:
+                                rslt += 'up-col-xs-1 up-col-sm-1 up-col-md-2 up-col-lg-3';
+                                break;
+                            default:
+                                // The only other officially supported value is 102, but
+                                // any other value over 100 will be treated as 102.
+                                rslt += 'up-col-xs-1 up-col-sm-1 up-col-md-2 up-col-lg-2';
+                                break;
+                        }
+                        return rslt;
+                    } else {
+                        // uPortal classic columns -- no innerColumnClasses used
+                        return false;
+                    }
                 },
                 messages: {
                     confirmRemoveTab: '<xsl:value-of select="upMsg:getMessageForEmacsScript('are.you.sure.remove.tab', $USER_LANG)"/>',
@@ -600,6 +632,10 @@
                     even: '<xsl:value-of select="upMsg:getMessageForEmacsScript('even', $USER_LANG)"/>',
                     wideNarrow: '<xsl:value-of select="upMsg:getMessageForEmacsScript('wide.narrow', $USER_LANG)"/>',
                     narrowWideNarrow: '<xsl:value-of select="upMsg:getMessageForEmacsScript('narrow.wide.narrow', $USER_LANG)"/>',
+                    flexTwo: '<xsl:value-of select="upMsg:getMessageForEmacsScript('flex.two', $USER_LANG)"/>',
+                    flexThree: '<xsl:value-of select="upMsg:getMessageForEmacsScript('flex.three', $USER_LANG)"/>',
+                    flexFour: '<xsl:value-of select="upMsg:getMessageForEmacsScript('flex.four', $USER_LANG)"/>',
+                    flexSix: '<xsl:value-of select="upMsg:getMessageForEmacsScript('flex.six', $USER_LANG)"/>',
                     searchForStuff: '<xsl:value-of select="upMsg:getMessageForEmacsScript('search.for.stuff', $USER_LANG)"/>',
                     allCategories: '<xsl:value-of select="upMsg:getMessageForEmacsScript('all(categories)', $USER_LANG)"/>',
                     persistenceError: '<xsl:value-of select="upMsg:getMessageForEmacsScript('error.persisting.layout.change', $USER_LANG)"/>'
