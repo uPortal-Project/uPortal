@@ -199,6 +199,8 @@ public class PortalHttpServletRequestWrapper extends AbstractHttpServletRequestW
      * first then the {@link GroupService} is used to determine if a group exists for the specified
      * role and if the user is a member of it.
      *
+     * <p>Role is case sensitive.
+     *
      * @see
      *     org.apereo.portal.utils.web.AbstractHttpServletRequestWrapper#isUserInRole(java.lang.String)
      */
@@ -218,7 +220,8 @@ public class PortalHttpServletRequestWrapper extends AbstractHttpServletRequestW
         IEntityGroup groupForRole = GroupService.findGroup(role);
         if (groupForRole == null) {
             final EntityIdentifier[] results =
-                    GroupService.searchForGroups(role, GroupService.IS, IPerson.class);
+                    GroupService.searchForGroups(
+                            role, GroupService.SearchMethod.DISCRETE, IPerson.class);
             if (results == null || results.length == 0) {
                 return false;
             }

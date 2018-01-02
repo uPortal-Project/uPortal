@@ -19,6 +19,7 @@ import org.apereo.portal.groups.GroupsException;
 import org.apereo.portal.groups.IEntityGroupStore;
 import org.apereo.portal.groups.IEntitySearcher;
 import org.apereo.portal.groups.IEntitySearcherFactory;
+import org.apereo.portal.groups.IGroupConstants;
 
 public class SmartLdapEntitySearcher implements IEntitySearcher {
 
@@ -40,8 +41,8 @@ public class SmartLdapEntitySearcher implements IEntitySearcher {
         }
     }
 
-    public EntityIdentifier[] searchForEntities(String query, int method, Class type)
-            throws GroupsException {
+    public EntityIdentifier[] searchForEntities(
+            String query, IGroupConstants.SearchMethod method, Class type) throws GroupsException {
         return store.searchForGroups(query, method, type);
     }
 

@@ -541,12 +541,15 @@ public class PortletMarketplaceController {
             net.sf.ehcache.Element cacheElement = marketplaceCategoryCache.get(cacheKey);
 
             if (cacheElement == null) {
-                // Nothing in cache currently;  need to populate cache
+                // Nothing in cache currently;  need to populate cache;  categoryName is case
+                // sensitive.
                 HashSet<PortletCategory> portletCategories = new HashSet<>();
                 for (final String categoryName : permittedCategories) {
                     EntityIdentifier[] cats =
                             GroupService.searchForGroups(
-                                    categoryName, IGroupConstants.IS, IPortletDefinition.class);
+                                    categoryName,
+                                    IGroupConstants.SearchMethod.DISCRETE,
+                                    IPortletDefinition.class);
                     if (cats != null && cats.length > 0) {
                         PortletCategory pc =
                                 portletCategoryRegistry.getPortletCategory(cats[0].getKey());

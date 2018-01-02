@@ -47,6 +47,9 @@ public class GroupListHelperImpl implements IGroupListHelper {
     /*
      * (non-Javadoc)
      * @see org.apereo.portal.layout.dlm.remoting.IGroupListHelper#search(java.lang.String, java.lang.String)
+     *
+     * External search, thus case insensitive.
+     *
      */
     @SuppressWarnings("unchecked")
     @Override
@@ -69,7 +72,9 @@ public class GroupListHelperImpl implements IGroupListHelper {
         if (entityEnum.isGroup()) {
             identifiers =
                     GroupService.searchForGroups(
-                            searchTerm, GroupService.CONTAINS, entityEnum.getClazz());
+                            searchTerm,
+                            GroupService.SearchMethod.CONTAINS_CI,
+                            entityEnum.getClazz());
             identifierType = IEntityGroup.class;
         }
 
@@ -77,7 +82,9 @@ public class GroupListHelperImpl implements IGroupListHelper {
         else {
             identifiers =
                     GroupService.searchForEntities(
-                            searchTerm, GroupService.CONTAINS, entityEnum.getClazz());
+                            searchTerm,
+                            GroupService.SearchMethod.CONTAINS_CI,
+                            entityEnum.getClazz());
             identifierType = entityEnum.getClazz();
         }
 

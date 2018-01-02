@@ -89,7 +89,7 @@ public interface IEntityGroupStore extends IGroupConstants {
      * Find EntityIdentifiers for groups whose name matches the query string according to the
      * specified method and matches the provided leaf type
      */
-    EntityIdentifier[] searchForGroups(String query, int method, Class leaftype)
+    EntityIdentifier[] searchForGroups(String query, SearchMethod method, Class leaftype)
             throws GroupsException;
     /**
      * Adds or updates the <code>IEntityGroup</code> AND ITS MEMBERSHIPS to the data store, as

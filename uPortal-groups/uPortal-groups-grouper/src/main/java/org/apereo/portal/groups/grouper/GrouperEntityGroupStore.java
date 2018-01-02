@@ -56,7 +56,6 @@ import org.apereo.portal.groups.IEntityGroup;
 import org.apereo.portal.groups.IEntityGroupStore;
 import org.apereo.portal.groups.IEntitySearcher;
 import org.apereo.portal.groups.IEntityStore;
-import org.apereo.portal.groups.IGroupConstants;
 import org.apereo.portal.groups.IGroupMember;
 import org.apereo.portal.groups.ILockableEntityGroup;
 import org.apereo.portal.security.IPerson;
@@ -376,7 +375,7 @@ public class GrouperEntityGroupStore implements IEntityGroupStore, IEntityStore,
      */
     public EntityIdentifier[] searchForGroups(
             final String query,
-            final int method,
+            final SearchMethod method,
             @SuppressWarnings("unchecked") final Class leaftype) {
 
         // only search for groups
@@ -399,7 +398,7 @@ public class GrouperEntityGroupStore implements IEntityGroupStore, IEntityStore,
             GcFindGroups groupSearch = new GcFindGroups();
             WsQueryFilter filter = new WsQueryFilter();
             // is this an exact search or fuzzy
-            if (method == IGroupConstants.IS) {
+            if ((method == SearchMethod.DISCRETE_CI) || (method == SearchMethod.DISCRETE)) {
                 filter.setQueryFilterType("FIND_BY_GROUP_NAME_EXACT");
             } else {
                 filter.setQueryFilterType("FIND_BY_GROUP_NAME_APPROXIMATE");
@@ -438,9 +437,12 @@ public class GrouperEntityGroupStore implements IEntityGroupStore, IEntityStore,
         }
     }
 
-    /** @see IEntitySearcher#searchForEntities(java.lang.String, int, java.lang.Class) */
+    /**
+     * @see IEntitySearcher#searchForEntities(java.lang.String,
+     *     org.apereo.portal.groups.IGroupConstants.SearchMethod, java.lang.Class)
+     */
     @SuppressWarnings("unchecked")
-    public EntityIdentifier[] searchForEntities(String query, int method, Class type)
+    public EntityIdentifier[] searchForEntities(String query, SearchMethod method, Class type)
             throws GroupsException {
 
         // only search for groups
