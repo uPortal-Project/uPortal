@@ -147,8 +147,8 @@ public class UpdatePreferencesServlet {
         this.portletWindowRegistry = portletWindowRegistry;
     }
 
-    /** Default name given to newly created tabs. <em>Requires internationalization.</em> */
-    protected static final String DEFAULT_TAB_NAME = "New Tab";
+    /** Default name given to newly created tabs. */
+    protected static final String DEFAULT_TAB_NAME = "New Tab"; // TODO: Requires i18n!
 
     /**
      * Remove an element from the layout.
@@ -351,8 +351,6 @@ public class UpdatePreferencesServlet {
      *   <li>If method=appendAfter does append at end of parent(elementId), result of which is a
      *       column. Used by UI to add to end of column (elementId is last portlet in column).
      * </ul>
-     *
-     * ++
      *
      * @param request
      * @param response
