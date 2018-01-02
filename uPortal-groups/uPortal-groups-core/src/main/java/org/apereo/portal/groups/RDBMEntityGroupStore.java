@@ -34,59 +34,37 @@ import org.apereo.portal.utils.SqlTransaction;
 
 /** Store for <code>EntityGroupImpl</code>. */
 public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants {
-    private static final Log log = LogFactory.getLog(RDBMEntityGroupStore.class);
+
     private static RDBMEntityGroupStore singleton;
 
     // Constant SQL strings:
-    private static String EQ = " = ";
-    private static String QUOTE = "'";
-    private static String EQUALS_PARAM = EQ + "?";
+    private static final String EQ = " = ";
+    private static final String QUOTE = "'";
+    private static final String EQUALS_PARAM = EQ + "?";
 
     // Constant strings for GROUP table:
-    private static String GROUP_TABLE = "UP_GROUP";
-    private static String GROUP_TABLE_ALIAS = "T1";
-    private static String GROUP_TABLE_WITH_ALIAS = GROUP_TABLE + " " + GROUP_TABLE_ALIAS;
-    private static String GROUP_ID_COLUMN = "GROUP_ID";
-    private static String GROUP_CREATOR_COLUMN = "CREATOR_ID";
-    private static String GROUP_TYPE_COLUMN = "ENTITY_TYPE_ID";
-    private static String GROUP_NAME_COLUMN = "GROUP_NAME";
-    private static String GROUP_DESCRIPTION_COLUMN = "DESCRIPTION";
-
-    // SQL strings for GROUP crud:
-    private static String allGroupColumns;
-    private static String allGroupColumnsWithTableAlias;
-    private static String countAMemberGroupSql;
-    private static String countMemberGroupsNamedSql;
-    private static String countAMemberEntitySql;
-    private static String findParentGroupsForEntitySql;
-    private static String findParentGroupsForGroupSql;
-    private static String findGroupSql;
-    private static String findMemberGroupKeysSql;
-    private static String findMemberGroupsSql;
-    private static String insertGroupSql;
-    private static String updateGroupSql;
+    private static final String GROUP_TABLE = "UP_GROUP";
+    private static final String GROUP_TABLE_ALIAS = "T1";
+    private static final String GROUP_TABLE_WITH_ALIAS = GROUP_TABLE + " " + GROUP_TABLE_ALIAS;
+    private static final String GROUP_ID_COLUMN = "GROUP_ID";
+    private static final String GROUP_CREATOR_COLUMN = "CREATOR_ID";
+    private static final String GROUP_TYPE_COLUMN = "ENTITY_TYPE_ID";
+    private static final String GROUP_NAME_COLUMN = "GROUP_NAME";
+    private static final String GROUP_DESCRIPTION_COLUMN = "DESCRIPTION";
 
     // Constant strings for MEMBERS table:
-    private static String MEMBER_TABLE = "UP_GROUP_MEMBERSHIP";
-    private static String MEMBER_TABLE_ALIAS = "T2";
-    private static String MEMBER_TABLE_WITH_ALIAS = MEMBER_TABLE + " " + MEMBER_TABLE_ALIAS;
-    private static String MEMBER_GROUP_ID_COLUMN = "GROUP_ID";
-    private static String MEMBER_MEMBER_SERVICE_COLUMN = "MEMBER_SERVICE";
-    private static String MEMBER_MEMBER_KEY_COLUMN = "MEMBER_KEY";
-    private static String MEMBER_IS_GROUP_COLUMN = "MEMBER_IS_GROUP";
-    private static String MEMBER_IS_ENTITY = "F";
-    private static String MEMBER_IS_GROUP = "T";
-    private static String GROUP_NODE_SEPARATOR;
-
-    // SQL strings for group MEMBERS crud:
-    private static String allMemberColumns;
-    private static String deleteMembersInGroupSql;
-    private static String deleteMemberGroupSql;
-    private static String deleteMemberEntitySql;
-    private static String insertMemberSql;
+    private static final String MEMBER_TABLE = "UP_GROUP_MEMBERSHIP";
+    private static final String MEMBER_TABLE_ALIAS = "T2";
+    private static final String MEMBER_TABLE_WITH_ALIAS = MEMBER_TABLE + " " + MEMBER_TABLE_ALIAS;
+    private static final String MEMBER_GROUP_ID_COLUMN = "GROUP_ID";
+    private static final String MEMBER_MEMBER_SERVICE_COLUMN = "MEMBER_SERVICE";
+    private static final String MEMBER_MEMBER_KEY_COLUMN = "MEMBER_KEY";
+    private static final String MEMBER_IS_GROUP_COLUMN = "MEMBER_IS_GROUP";
+    private static final String MEMBER_IS_ENTITY = "F";
+    private static final String MEMBER_IS_GROUP = "T";
 
     // SQL group search string
-    private static String searchGroupsPartialCaseInsensitive =
+    private static final String SEARCH_GROUPS_PARTIAL_CASE_INSENSITIVE =
             "SELECT "
                     + GROUP_ID_COLUMN
                     + " FROM "
@@ -96,7 +74,7 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
                     + "=? AND UPPER("
                     + GROUP_NAME_COLUMN
                     + ") LIKE UPPER(?)";
-    private static String searchGroupsPartial =
+    private static final String SEARCH_GROUPS_PARTIAL =
             "SELECT "
                     + GROUP_ID_COLUMN
                     + " FROM "
@@ -106,7 +84,7 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
                     + "=? AND "
                     + GROUP_NAME_COLUMN
                     + " LIKE ?";
-    private static String searchGroupsCaseInsensitive =
+    private static final String SEARCH_GROUPS_CASE_INSENSITIVE =
             "SELECT "
                     + GROUP_ID_COLUMN
                     + " FROM "
@@ -116,7 +94,7 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
                     + "=? AND UPPER("
                     + GROUP_NAME_COLUMN
                     + ") = UPPER(?)";
-    private static String searchGroups =
+    private static final String SEARCH_GROUPS =
             "SELECT "
                     + GROUP_ID_COLUMN
                     + " FROM "
@@ -127,34 +105,57 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
                     + GROUP_NAME_COLUMN
                     + " = ?";
 
+    private static final Log LOG = LogFactory.getLog(RDBMEntityGroupStore.class);
+
+    private static String groupNodeSeparator;
+
+    // SQL strings for GROUP crud:
+    private static String allGroupColumns;
+    private static String allGroupColumnsWithTableAlias;
+    private static String countAMemberGroupSql;
+    private static String countAMemberEntitySql;
+    private static String findParentGroupsForEntitySql;
+    private static String findParentGroupsForGroupSql;
+    private static String findGroupSql;
+    private static String findMemberGroupKeysSql;
+    private static String findMemberGroupsSql;
+    private static String insertGroupSql;
+    private static String updateGroupSql;
+
+    // SQL strings for group MEMBERS crud:
+    private static String allMemberColumns;
+    private static String deleteMembersInGroupSql;
+    private static String deleteMemberGroupSql;
+    private static String deleteMemberEntitySql;
+    private static String insertMemberSql;
+
     /** RDBMEntityGroupStore constructor. */
     public RDBMEntityGroupStore() {
-        super();
         initialize();
     }
 
     /**
      * Get the node separator character from the GroupServiceConfiguration. Default it to
-     * IGroupConstants.NODE_SEPARATOR.
+     * IGroupConstants.DEFAULT_NODE_SEPARATOR.
      */
     private void initialize() {
         String sep;
         try {
             sep = GroupServiceConfiguration.getConfiguration().getNodeSeparator();
         } catch (Exception ex) {
-            sep = NODE_SEPARATOR;
+            sep = DEFAULT_NODE_SEPARATOR;
         }
-        GROUP_NODE_SEPARATOR = sep;
-        if (log.isDebugEnabled()) {
-            log.debug("RDBMEntityGroupStore.initialize(): Node separator set to " + sep);
+        groupNodeSeparator = sep;
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("RDBMEntityGroupStore.initialize(): Node separator set to " + sep);
         }
     }
 
     /**
-     * @param conn java.sql.Connection
-     * @exception java.sql.SQLException
+     * @param conn Connection
+     * @exception SQLException
      */
-    protected static void commit(Connection conn) throws java.sql.SQLException {
+    protected static void commit(Connection conn) throws SQLException {
         SqlTransaction.commit(conn);
     }
 
@@ -162,8 +163,8 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
      * Answers if <code>IGroupMember</code> member is a member of <code>group</code>.
      *
      * @return boolean
-     * @param group org.apereo.portal.groups.IEntityGroup
-     * @param member org.apereo.portal.groups.IGroupMember
+     * @param group IEntityGroup
+     * @param member IGroupMember
      */
     @Override
     public boolean contains(IEntityGroup group, IGroupMember member) throws GroupsException {
@@ -183,8 +184,8 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
                 ps.clearParameters();
                 ps.setString(1, groupKey);
                 ps.setString(2, memberKey);
-                if (log.isDebugEnabled())
-                    log.debug(
+                if (LOG.isDebugEnabled())
+                    LOG.debug(
                             "RDBMEntityGroupStore.containsEntity(): "
                                     + ps
                                     + " ("
@@ -202,7 +203,7 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
                 ps.close();
             }
         } catch (Exception e) {
-            log.error("RDBMEntityGroupStore.containsEntity(): " + e);
+            LOG.error("RDBMEntityGroupStore.containsEntity(): " + e);
             throw new GroupsException("Problem retrieving data from store: " + e);
         } finally {
             RDBMServices.releaseConnection(conn);
@@ -222,8 +223,8 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
                 ps.setString(1, groupKey);
                 ps.setString(2, memberKey);
                 ps.setString(3, memberService);
-                if (log.isDebugEnabled())
-                    log.debug(
+                if (LOG.isDebugEnabled())
+                    LOG.debug(
                             "RDBMEntityGroupStore.containsGroup(): "
                                     + ps
                                     + " ("
@@ -243,7 +244,7 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
                 ps.close();
             }
         } catch (Exception e) {
-            log.error("RDBMEntityGroupStore.containsGroup(): " + e);
+            LOG.error("RDBMEntityGroupStore.containsGroup(): " + e);
             throw new GroupsException("Problem retrieving data from store: " + e);
         } finally {
             RDBMServices.releaseConnection(conn);
@@ -253,7 +254,7 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
     /**
      * If this entity exists, delete it.
      *
-     * @param group org.apereo.portal.groups.IEntityGroup
+     * @param group IEntityGroup
      */
     @Override
     public void delete(IEntityGroup group) throws GroupsException {
@@ -281,7 +282,7 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
      * Find and return an instance of the group.
      *
      * @param groupID the group ID
-     * @return org.apereo.portal.groups.IEntityGroup
+     * @return IEntityGroup
      */
     @Override
     public IEntityGroup find(String groupID) throws GroupsException {
@@ -303,7 +304,7 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
     /**
      * Find the groups that this group belongs to.
      *
-     * @param group org.apereo.portal.groups.IEntityGroup
+     * @param group IEntityGroup
      * @return java.util.Iterator
      */
     public java.util.Iterator findParentGroups(IEntityGroup group) throws GroupsException {
@@ -339,7 +340,7 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
      */
     private java.util.Iterator findParentGroupsForEntity(String memberKey, int type)
             throws GroupsException {
-        java.sql.Connection conn = null;
+        Connection conn = null;
         Collection groups = new ArrayList();
         IEntityGroup eg = null;
 
@@ -350,8 +351,8 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
             try {
                 ps.setString(1, memberKey);
                 ps.setInt(2, type);
-                if (log.isDebugEnabled())
-                    log.debug(
+                if (LOG.isDebugEnabled())
+                    LOG.debug(
                             "RDBMEntityGroupStore.findParentGroupsForEntity(): "
                                     + ps
                                     + " ("
@@ -359,7 +360,7 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
                                     + ", "
                                     + type
                                     + ", memberIsGroup = F)");
-                java.sql.ResultSet rs = ps.executeQuery();
+                ResultSet rs = ps.executeQuery();
                 try {
                     while (rs.next()) {
                         eg = instanceFromResultSet(rs);
@@ -372,7 +373,7 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
                 ps.close();
             }
         } catch (Exception e) {
-            log.error("RDBMEntityGroupStore.findParentGroupsForEntity(): " + e);
+            LOG.error("RDBMEntityGroupStore.findParentGroupsForEntity(): " + e);
             throw new GroupsException("Problem retrieving containing groups: " + e);
         } finally {
             RDBMServices.releaseConnection(conn);
@@ -391,7 +392,7 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
      */
     private java.util.Iterator findParentGroupsForGroup(
             String serviceName, String memberKey, int type) throws GroupsException {
-        java.sql.Connection conn = null;
+        Connection conn = null;
         Collection groups = new ArrayList();
         IEntityGroup eg = null;
 
@@ -403,8 +404,8 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
                 ps.setString(1, serviceName);
                 ps.setString(2, memberKey);
                 ps.setInt(3, type);
-                if (log.isDebugEnabled())
-                    log.debug(
+                if (LOG.isDebugEnabled())
+                    LOG.debug(
                             "RDBMEntityGroupStore.findParentGroupsForGroup(): "
                                     + ps
                                     + " ("
@@ -414,7 +415,7 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
                                     + ", "
                                     + type
                                     + ", memberIsGroup = T)");
-                java.sql.ResultSet rs = ps.executeQuery();
+                ResultSet rs = ps.executeQuery();
                 try {
                     while (rs.next()) {
                         eg = instanceFromResultSet(rs);
@@ -427,7 +428,7 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
                 ps.close();
             }
         } catch (Exception e) {
-            log.error("RDBMEntityGroupStore.findParentGroupsForGroup(): " + e);
+            LOG.error("RDBMEntityGroupStore.findParentGroupsForGroup(): " + e);
             throw new GroupsException("Problem retrieving containing groups: " + e);
         } finally {
             RDBMServices.releaseConnection(conn);
@@ -483,7 +484,7 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
                 stmnt.close();
             }
         } catch (SQLException sqle) {
-            log.error("Problem retrieving Entities for Group: " + group, sqle);
+            LOG.error("Problem retrieving Entities for Group: " + group, sqle);
             throw new GroupsException("Problem retrieving Entities for Group", sqle);
         } finally {
             RDBMServices.releaseConnection(conn);
@@ -496,7 +497,7 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
      * Find and return an instance of the group.
      *
      * @param groupID the group ID
-     * @return org.apereo.portal.groups.ILockableEntityGroup
+     * @return ILockableEntityGroup
      */
     @Override
     public ILockableEntityGroup findLockable(String groupID) throws GroupsException {
@@ -506,12 +507,12 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
     /**
      * Find the keys of groups that are members of group.
      *
-     * @param group the org.apereo.portal.groups.IEntityGroup
+     * @param group the IEntityGroup
      * @return String[]
      */
     @Override
     public String[] findMemberGroupKeys(IEntityGroup group) throws GroupsException {
-        java.sql.Connection conn = null;
+        Connection conn = null;
         Collection groupKeys = new ArrayList();
         String groupKey = null;
 
@@ -521,17 +522,17 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
             PreparedStatement ps = conn.prepareStatement(sql);
             try {
                 ps.setString(1, group.getLocalKey());
-                if (log.isDebugEnabled())
-                    log.debug(
+                if (LOG.isDebugEnabled())
+                    LOG.debug(
                             "RDBMEntityGroupStore.findMemberGroupKeys(): "
                                     + ps
                                     + " ("
                                     + group.getLocalKey()
                                     + ")");
-                java.sql.ResultSet rs = ps.executeQuery();
+                ResultSet rs = ps.executeQuery();
                 try {
                     while (rs.next()) {
-                        groupKey = rs.getString(1) + GROUP_NODE_SEPARATOR + rs.getString(2);
+                        groupKey = rs.getString(1) + groupNodeSeparator + rs.getString(2);
                         groupKeys.add(groupKey);
                     }
                 } finally {
@@ -541,7 +542,7 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
                 ps.close();
             }
         } catch (Exception sqle) {
-            log.error("RDBMEntityGroupStore.findMemberGroupKeys(): " + sqle);
+            LOG.error("RDBMEntityGroupStore.findMemberGroupKeys(): " + sqle);
             throw new GroupsException("Problem retrieving member group keys: " + sqle);
         } finally {
             RDBMServices.releaseConnection(conn);
@@ -552,12 +553,12 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
     /**
      * Find the IUserGroups that are members of the group.
      *
-     * @param group org.apereo.portal.groups.IEntityGroup
+     * @param group IEntityGroup
      * @return java.util.Iterator
      */
     @Override
     public Iterator findMemberGroups(IEntityGroup group) throws GroupsException {
-        java.sql.Connection conn = null;
+        Connection conn = null;
         Collection groups = new ArrayList();
         IEntityGroup eg = null;
         String serviceName = group.getServiceName().toString();
@@ -570,8 +571,8 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
             try {
                 ps.setString(1, localKey);
                 ps.setString(2, serviceName);
-                if (log.isDebugEnabled())
-                    log.debug(
+                if (LOG.isDebugEnabled())
+                    LOG.debug(
                             "RDBMEntityGroupStore.findMemberGroups(): "
                                     + ps
                                     + " ("
@@ -579,7 +580,7 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
                                     + ", "
                                     + serviceName
                                     + ")");
-                java.sql.ResultSet rs = ps.executeQuery();
+                ResultSet rs = ps.executeQuery();
                 try {
                     while (rs.next()) {
                         eg = instanceFromResultSet(rs);
@@ -592,7 +593,7 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
                 ps.close();
             }
         } catch (Exception sqle) {
-            log.error("RDBMEntityGroupStore.findMemberGroups(): " + sqle);
+            LOG.error("RDBMEntityGroupStore.findMemberGroups(): " + sqle);
             throw new GroupsException("Problem retrieving member groups: " + sqle);
         } finally {
             RDBMServices.releaseConnection(conn);
@@ -600,8 +601,8 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
 
         return groups.iterator();
     }
-    /** @return java.lang.String */
-    private static java.lang.String getAllGroupColumns() {
+    /** @return String */
+    private static String getAllGroupColumns() {
 
         if (allGroupColumns == null) {
             StringBuffer buff = new StringBuffer(100);
@@ -619,8 +620,8 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
         }
         return allGroupColumns;
     }
-    /** @return java.lang.String */
-    private static java.lang.String getAllGroupColumnsWithTableAlias() {
+    /** @return String */
+    private static String getAllGroupColumnsWithTableAlias() {
 
         if (allGroupColumnsWithTableAlias == null) {
             StringBuffer buff = new StringBuffer(100);
@@ -638,8 +639,8 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
         }
         return allGroupColumnsWithTableAlias;
     }
-    /** @return java.lang.String */
-    private static java.lang.String getAllMemberColumns() {
+    /** @return String */
+    private static String getAllMemberColumns() {
         if (allMemberColumns == null) {
             StringBuffer buff = new StringBuffer(100);
 
@@ -655,8 +656,8 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
         }
         return allMemberColumns;
     }
-    /** @return java.lang.String */
-    private static java.lang.String getCountAMemberEntitySql() {
+    /** @return String */
+    private static String getCountAMemberEntitySql() {
         if (countAMemberEntitySql == null) {
             StringBuffer buff = new StringBuffer(100);
             buff.append("SELECT COUNT(*) FROM " + MEMBER_TABLE);
@@ -667,8 +668,8 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
         }
         return countAMemberEntitySql;
     }
-    /** @return java.lang.String */
-    private static java.lang.String getCountAMemberGroupSql() {
+    /** @return String */
+    private static String getCountAMemberGroupSql() {
         if (countAMemberGroupSql == null) {
             StringBuffer buff = new StringBuffer(100);
             buff.append("SELECT COUNT(*) FROM " + MEMBER_TABLE);
@@ -681,8 +682,8 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
         return countAMemberGroupSql;
     }
 
-    /** @return java.lang.String */
-    private static java.lang.String getDeleteGroupSql(IEntityGroup group) {
+    /** @return String */
+    private static String getDeleteGroupSql(IEntityGroup group) {
         StringBuffer buff = new StringBuffer(100);
         buff.append("DELETE FROM ");
         buff.append(GROUP_TABLE);
@@ -690,8 +691,8 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
         buff.append(GROUP_ID_COLUMN + EQ + sqlQuote(group.getLocalKey()));
         return buff.toString();
     }
-    /** @return java.lang.String */
-    private static java.lang.String getDeleteMemberEntitySql() {
+    /** @return String */
+    private static String getDeleteMemberEntitySql() {
         if (deleteMemberEntitySql == null) {
             StringBuffer buff = new StringBuffer(100);
             buff.append("DELETE FROM ");
@@ -707,8 +708,8 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
         }
         return deleteMemberEntitySql;
     }
-    /** @return java.lang.String */
-    private static java.lang.String getDeleteMemberGroupSql() {
+    /** @return String */
+    private static String getDeleteMemberGroupSql() {
         if (deleteMemberGroupSql == null) {
             StringBuffer buff = new StringBuffer(100);
             buff.append("DELETE FROM ");
@@ -725,8 +726,8 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
         }
         return deleteMemberGroupSql;
     }
-    /** @return java.lang.String */
-    private static java.lang.String getDeleteMembersInGroupSql() {
+    /** @return String */
+    private static String getDeleteMembersInGroupSql() {
         if (deleteMembersInGroupSql == null) {
             StringBuffer buff = new StringBuffer(100);
             buff.append("DELETE FROM ");
@@ -738,12 +739,12 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
         }
         return deleteMembersInGroupSql;
     }
-    /** @return java.lang.String */
-    private static java.lang.String getDeleteMembersInGroupSql(IEntityGroup group) {
+    /** @return String */
+    private static String getDeleteMembersInGroupSql(IEntityGroup group) {
         return getDeleteMembersInGroupSql() + sqlQuote(group.getLocalKey());
     }
-    /** @return java.lang.String */
-    private static java.lang.String getFindParentGroupsForEntitySql() {
+    /** @return String */
+    private static String getFindParentGroupsForEntitySql() {
         if (findParentGroupsForEntitySql == null) {
             StringBuffer buff = new StringBuffer(500);
             buff.append("SELECT ");
@@ -763,8 +764,8 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
         }
         return findParentGroupsForEntitySql;
     }
-    /** @return java.lang.String */
-    private static java.lang.String getFindParentGroupsForGroupSql() {
+    /** @return String */
+    private static String getFindParentGroupsForGroupSql() {
         if (findParentGroupsForGroupSql == null) {
             StringBuffer buff = new StringBuffer(500);
             buff.append("SELECT ");
@@ -790,8 +791,8 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
         return findParentGroupsForGroupSql;
     }
 
-    /** @return java.lang.String */
-    private static java.lang.String getFindGroupSql() {
+    /** @return String */
+    private static String getFindGroupSql() {
 
         if (findGroupSql == null) {
             StringBuffer buff = new StringBuffer(200);
@@ -806,8 +807,8 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
         }
         return findGroupSql;
     }
-    /** @return java.lang.String */
-    private static java.lang.String getFindMemberGroupKeysSql() {
+    /** @return String */
+    private static String getFindMemberGroupKeysSql() {
         if (findMemberGroupKeysSql == null) {
             StringBuffer buff = new StringBuffer(200);
             buff.append("SELECT ");
@@ -825,8 +826,8 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
 
         return findMemberGroupKeysSql;
     }
-    /** @return java.lang.String */
-    private static java.lang.String getFindMemberGroupsSql() {
+    /** @return String */
+    private static String getFindMemberGroupsSql() {
         if (findMemberGroupsSql == null) {
             StringBuffer buff = new StringBuffer(500);
             buff.append("SELECT ");
@@ -851,8 +852,8 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
 
         return findMemberGroupsSql;
     }
-    /** @return java.lang.String */
-    private static java.lang.String getInsertGroupSql() {
+    /** @return String */
+    private static String getInsertGroupSql() {
         if (insertGroupSql == null) {
             StringBuffer buff = new StringBuffer(200);
             buff.append("INSERT INTO ");
@@ -865,8 +866,8 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
         }
         return insertGroupSql;
     }
-    /** @return java.lang.String */
-    private static java.lang.String getInsertMemberSql() {
+    /** @return String */
+    private static String getInsertMemberSql() {
         if (insertMemberSql == null) {
             StringBuffer buff = new StringBuffer(200);
             buff.append("INSERT INTO ");
@@ -880,14 +881,14 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
         return insertMemberSql;
     }
     /**
-     * @return java.lang.String
+     * @return String
      * @exception java.lang.Exception
      */
     private String getNextKey() throws java.lang.Exception {
         return Integer.toString(CounterStoreLocator.getCounterStore().getNextId(GROUP_TABLE));
     }
-    /** @return java.lang.String */
-    private static java.lang.String getUpdateGroupSql() {
+    /** @return String */
+    private static String getUpdateGroupSql() {
         if (updateGroupSql == null) {
             StringBuffer buff = new StringBuffer(200);
             buff.append("UPDATE ");
@@ -912,10 +913,9 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
      * Find and return an instance of the group.
      *
      * @param rs the SQL result set
-     * @return org.apereo.portal.groups.IEntityGroup
+     * @return IEntityGroup
      */
-    private IEntityGroup instanceFromResultSet(java.sql.ResultSet rs)
-            throws SQLException, GroupsException {
+    private IEntityGroup instanceFromResultSet(ResultSet rs) throws SQLException, GroupsException {
         IEntityGroup eg = null;
 
         String key = rs.getString(1);
@@ -936,9 +936,9 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
      * Find and return an instance of the group.
      *
      * @param rs the SQL result set
-     * @return org.apereo.portal.groups.ILockableEntityGroup
+     * @return ILockableEntityGroup
      */
-    private ILockableEntityGroup lockableInstanceFromResultSet(java.sql.ResultSet rs)
+    private ILockableEntityGroup lockableInstanceFromResultSet(ResultSet rs)
             throws SQLException, GroupsException {
         ILockableEntityGroup eg = null;
 
@@ -956,14 +956,14 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
         return eg;
     }
 
-    /** @return org.apereo.portal.groups.IEntity */
+    /** @return IEntity */
     public IEntity newEntity(Class type, String key) throws GroupsException {
         if (EntityTypesLocator.getEntityTypes().getEntityIDFromType(type) == null) {
             throw new GroupsException("Invalid group type: " + type);
         }
         return GroupService.getEntity(key, type);
     }
-    /** @return org.apereo.portal.groups.IEntityGroup */
+    /** @return IEntityGroup */
     @Override
     public IEntityGroup newInstance(Class type) throws GroupsException {
         if (EntityTypesLocator.getEntityTypes().getEntityIDFromType(type) == null) {
@@ -975,7 +975,7 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
             throw new GroupsException("Could not create new group", ex);
         }
     }
-    /** @return org.apereo.portal.groups.IEntityGroup */
+    /** @return IEntityGroup */
     private IEntityGroup newInstance(
             String newKey,
             Class newType,
@@ -989,7 +989,7 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
         egi.setDescription(newDescription);
         return egi;
     }
-    /** @return org.apereo.portal.groups.ILockableEntityGroup */
+    /** @return ILockableEntityGroup */
     private ILockableEntityGroup newLockableInstance(
             String newKey,
             Class newType,
@@ -1003,20 +1003,20 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
         group.setDescription(newDescription);
         return group;
     }
-    /** @return java.lang.String */
-    private static java.lang.String groupAlias(String column) {
+    /** @return String */
+    private static String groupAlias(String column) {
         return GROUP_TABLE_ALIAS + "." + column;
     }
 
-    /** @return java.lang.String */
-    private static java.lang.String memberAlias(String column) {
+    /** @return String */
+    private static String memberAlias(String column) {
         return MEMBER_TABLE_ALIAS + "." + column;
     }
 
     /**
      * Insert the entity into the database.
      *
-     * @param group org.apereo.portal.groups.IEntityGroup
+     * @param group IEntityGroup
      * @param conn the database connection
      */
     private void primAdd(IEntityGroup group, Connection conn) throws SQLException, GroupsException {
@@ -1032,8 +1032,8 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
                 ps.setString(4, group.getName());
                 ps.setString(5, group.getDescription());
 
-                if (log.isDebugEnabled())
-                    log.debug(
+                if (LOG.isDebugEnabled())
+                    LOG.debug(
                             "RDBMEntityGroupStore.primAdd(): "
                                     + ps
                                     + "("
@@ -1052,25 +1052,25 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
 
                 if (rc != 1) {
                     String errString = "Problem adding " + group;
-                    log.error(errString);
+                    LOG.error(errString);
                     throw new GroupsException(errString);
                 }
             } finally {
                 ps.close();
             }
-        } catch (java.sql.SQLException sqle) {
-            log.error("Error inserting an entity into the database. Group:" + group, sqle);
+        } catch (SQLException sqle) {
+            LOG.error("Error inserting an entity into the database. Group:" + group, sqle);
             throw sqle;
         }
     }
     /**
      * Delete this entity from the database after first deleting its memberships. Exception
-     * java.sql.SQLException - if we catch a SQLException, we rollback and re-throw it.
+     * SQLException - if we catch a SQLException, we rollback and re-throw it.
      *
-     * @param group org.apereo.portal.groups.IEntityGroup
+     * @param group IEntityGroup
      */
     private void primDelete(IEntityGroup group) throws SQLException {
-        java.sql.Connection conn = null;
+        Connection conn = null;
         String deleteGroupSql = getDeleteGroupSql(group);
         String deleteMembershipSql = getDeleteMembersInGroupSql(group);
 
@@ -1080,13 +1080,13 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
             setAutoCommit(conn, false);
 
             try {
-                if (log.isDebugEnabled())
-                    log.debug("RDBMEntityGroupStore.primDelete(): " + deleteMembershipSql);
+                if (LOG.isDebugEnabled())
+                    LOG.debug("RDBMEntityGroupStore.primDelete(): " + deleteMembershipSql);
 
                 stmnt.executeUpdate(deleteMembershipSql);
 
-                if (log.isDebugEnabled())
-                    log.debug("RDBMEntityGroupStore.primDelete(): " + deleteGroupSql);
+                if (LOG.isDebugEnabled())
+                    LOG.debug("RDBMEntityGroupStore.primDelete(): " + deleteGroupSql);
                 stmnt.executeUpdate(deleteGroupSql);
             } finally {
                 stmnt.close();
@@ -1109,20 +1109,20 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
      *
      * @param groupID the group ID
      * @param lockable boolean
-     * @return org.apereo.portal.groups.IEntityGroup
+     * @return IEntityGroup
      */
     private IEntityGroup primFind(String groupID, boolean lockable) throws GroupsException {
         IEntityGroup eg = null;
-        java.sql.Connection conn = null;
+        Connection conn = null;
         try {
             conn = RDBMServices.getConnection();
             String sql = getFindGroupSql();
             PreparedStatement ps = conn.prepareStatement(sql);
             try {
                 ps.setString(1, groupID);
-                if (log.isDebugEnabled())
-                    log.debug("RDBMEntityGroupStore.find(): " + ps + " (" + groupID + ")");
-                java.sql.ResultSet rs = ps.executeQuery();
+                if (LOG.isDebugEnabled())
+                    LOG.debug("RDBMEntityGroupStore.find(): " + ps + " (" + groupID + ")");
+                ResultSet rs = ps.executeQuery();
                 try {
                     while (rs.next()) {
                         eg =
@@ -1137,7 +1137,7 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
                 ps.close();
             }
         } catch (Exception e) {
-            log.error("RDBMEntityGroupStore.find(): ", e);
+            LOG.error("RDBMEntityGroupStore.find(): ", e);
             throw new GroupsException("Error retrieving " + groupID + ": ", e);
         } finally {
             RDBMServices.releaseConnection(conn);
@@ -1149,7 +1149,7 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
     /**
      * Update the entity in the database.
      *
-     * @param group org.apereo.portal.groups.IEntityGroup
+     * @param group IEntityGroup
      * @param conn the database connection
      */
     private void primUpdate(IEntityGroup group, Connection conn)
@@ -1168,8 +1168,8 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
                 ps.setString(4, group.getDescription());
                 ps.setString(5, group.getLocalKey());
 
-                if (log.isDebugEnabled())
-                    log.debug(
+                if (LOG.isDebugEnabled())
+                    LOG.debug(
                             "RDBMEntityGroupStore.primUpdate(): "
                                     + ps
                                     + "("
@@ -1188,14 +1188,14 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
 
                 if (rc != 1) {
                     String errString = "Problem updating " + group;
-                    log.error(errString);
+                    LOG.error(errString);
                     throw new GroupsException(errString);
                 }
             } finally {
                 ps.close();
             }
-        } catch (java.sql.SQLException sqle) {
-            log.error("Error updating entity in database. Group: " + group, sqle);
+        } catch (SQLException sqle) {
+            LOG.error("Error updating entity in database. Group: " + group, sqle);
             throw sqle;
         }
     }
@@ -1203,11 +1203,10 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
     /**
      * Insert and delete group membership rows. The transaction is maintained by the caller.
      *
-     * @param egi org.apereo.portal.groups.EntityGroupImpl
+     * @param egi EntityGroupImpl
      * @param conn the database connection
      */
-    private void primUpdateMembers(EntityGroupImpl egi, Connection conn)
-            throws java.sql.SQLException {
+    private void primUpdateMembers(EntityGroupImpl egi, Connection conn) throws SQLException {
         String groupKey = egi.getLocalKey();
         String memberKey, isGroup, serviceName = null;
         try {
@@ -1239,8 +1238,8 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
                             psDeleteMemberGroup.setString(2, serviceName);
                             psDeleteMemberGroup.setString(3, memberKey);
 
-                            if (log.isDebugEnabled())
-                                log.debug(
+                            if (LOG.isDebugEnabled())
+                                LOG.debug(
                                         "RDBMEntityGroupStore.primUpdateMembers(): "
                                                 + psDeleteMemberGroup
                                                 + "("
@@ -1272,8 +1271,8 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
                             psDeleteMemberEntity.setString(1, groupKey);
                             psDeleteMemberEntity.setString(2, memberKey);
 
-                            if (log.isDebugEnabled())
-                                log.debug(
+                            if (LOG.isDebugEnabled())
+                                LOG.debug(
                                         "RDBMEntityGroupStore.primUpdateMembers(): "
                                                 + psDeleteMemberEntity
                                                 + "("
@@ -1316,8 +1315,8 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
                         psAdd.setString(3, memberKey);
                         psAdd.setString(4, isGroup);
 
-                        if (log.isDebugEnabled())
-                            log.debug(
+                        if (LOG.isDebugEnabled())
+                            LOG.debug(
                                     "RDBMEntityGroupStore.primUpdateMembers(): "
                                             + psAdd
                                             + "("
@@ -1336,16 +1335,16 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
             }
 
         } catch (SQLException sqle) {
-            log.error("Error inserting/deleting membership rows.", sqle);
+            LOG.error("Error inserting/deleting membership rows.", sqle);
             throw sqle;
         }
     }
 
     /**
-     * @param conn java.sql.Connection
-     * @exception java.sql.SQLException
+     * @param conn Connection
+     * @exception SQLException
      */
-    protected static void rollback(Connection conn) throws java.sql.SQLException {
+    protected static void rollback(Connection conn) throws SQLException {
         SqlTransaction.rollback(conn);
     }
 
@@ -1364,40 +1363,40 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
 
             switch (method) {
                 case DISCRETE:
-                    ps = conn.prepareStatement(RDBMEntityGroupStore.searchGroups);
+                    ps = conn.prepareStatement(RDBMEntityGroupStore.SEARCH_GROUPS);
                     break;
                 case DISCRETE_CI:
-                    ps = conn.prepareStatement(RDBMEntityGroupStore.searchGroupsCaseInsensitive);
+                    ps = conn.prepareStatement(RDBMEntityGroupStore.SEARCH_GROUPS_CASE_INSENSITIVE);
                     break;
                 case STARTS_WITH:
                     query = query + "%";
-                    ps = conn.prepareStatement(RDBMEntityGroupStore.searchGroupsPartial);
+                    ps = conn.prepareStatement(RDBMEntityGroupStore.SEARCH_GROUPS_PARTIAL);
                     break;
                 case STARTS_WITH_CI:
                     query = query + "%";
                     ps =
                             conn.prepareStatement(
-                                    RDBMEntityGroupStore.searchGroupsPartialCaseInsensitive);
+                                    RDBMEntityGroupStore.SEARCH_GROUPS_PARTIAL_CASE_INSENSITIVE);
                     break;
                 case ENDS_WITH:
                     query = "%" + query;
-                    ps = conn.prepareStatement(RDBMEntityGroupStore.searchGroupsPartial);
+                    ps = conn.prepareStatement(RDBMEntityGroupStore.SEARCH_GROUPS_PARTIAL);
                     break;
                 case ENDS_WITH_CI:
                     query = "%" + query;
                     ps =
                             conn.prepareStatement(
-                                    RDBMEntityGroupStore.searchGroupsPartialCaseInsensitive);
+                                    RDBMEntityGroupStore.SEARCH_GROUPS_PARTIAL_CASE_INSENSITIVE);
                     break;
                 case CONTAINS:
                     query = "%" + query + "%";
-                    ps = conn.prepareStatement(RDBMEntityGroupStore.searchGroupsPartial);
+                    ps = conn.prepareStatement(RDBMEntityGroupStore.SEARCH_GROUPS_PARTIAL);
                     break;
                 case CONTAINS_CI:
                     query = "%" + query + "%";
                     ps =
                             conn.prepareStatement(
-                                    RDBMEntityGroupStore.searchGroupsPartialCaseInsensitive);
+                                    RDBMEntityGroupStore.SEARCH_GROUPS_PARTIAL_CASE_INSENSITIVE);
                     break;
                 default:
                     throw new GroupsException("Unknown search type");
@@ -1422,7 +1421,7 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
                 close(ps);
             }
         } catch (Exception e) {
-            log.error("RDBMChannelDefSearcher.searchForEntities(): " + ps, e);
+            LOG.error("RDBMChannelDefSearcher.searchForEntities(): " + ps, e);
         } finally {
             RDBMServices.releaseConnection(conn);
         }
@@ -1430,30 +1429,29 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
     }
 
     /**
-     * @param conn java.sql.Connection
+     * @param conn Connection
      * @param newValue boolean
-     * @exception java.sql.SQLException The exception description.
+     * @exception SQLException The exception description.
      */
-    protected static void setAutoCommit(Connection conn, boolean newValue)
-            throws java.sql.SQLException {
+    protected static void setAutoCommit(Connection conn, boolean newValue) throws SQLException {
         SqlTransaction.setAutoCommit(conn, newValue);
     }
 
-    /** @return org.apereo.portal.groups.RDBMEntityGroupStore */
+    /** @return RDBMEntityGroupStore */
     public static synchronized RDBMEntityGroupStore singleton() throws GroupsException {
         if (singleton == null) {
             singleton = new RDBMEntityGroupStore();
         }
         return singleton;
     }
-    /** @return java.lang.String */
-    private static java.lang.String sqlQuote(Object o) {
+    /** @return String */
+    private static String sqlQuote(Object o) {
         return QUOTE + o + QUOTE;
     }
     /**
      * Commit this entity AND ITS MEMBERSHIPS to the underlying store.
      *
-     * @param group org.apereo.portal.groups.IEntityGroup
+     * @param group IEntityGroup
      */
     @Override
     public void update(IEntityGroup group) throws GroupsException {
@@ -1493,7 +1491,7 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
     /**
      * Insert and delete group membership rows inside a transaction.
      *
-     * @param eg org.apereo.portal.groups.IEntityGroup
+     * @param eg IEntityGroup
      */
     @Override
     public void updateMembers(IEntityGroup eg) throws GroupsException {
@@ -1531,7 +1529,7 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
             try {
                 statement.close();
             } catch (SQLException e) {
-                log.warn("problem closing statement", e);
+                LOG.warn("problem closing statement", e);
             }
         }
     }
@@ -1541,7 +1539,7 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
             try {
                 resultset.close();
             } catch (SQLException e) {
-                log.warn("problem closing resultset", e);
+                LOG.warn("problem closing resultset", e);
             }
         }
     }

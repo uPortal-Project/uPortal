@@ -31,5 +31,5 @@ public interface IGroupConstants {
     }
 
     // Composite group service:
-    String NODE_SEPARATOR = ".";
+    String DEFAULT_NODE_SEPARATOR = ".";
 }

@@ -119,7 +119,9 @@ public class GroupServiceConfiguration {
 
     public String getNodeSeparator() {
         Object nodeSeparator = getAttributes().get("nodeSeparator");
-        return (nodeSeparator == null) ? IGroupConstants.NODE_SEPARATOR : (String) nodeSeparator;
+        return (nodeSeparator == null)
+                ? IGroupConstants.DEFAULT_NODE_SEPARATOR
+                : (String) nodeSeparator;
     }
 
     public List getServiceDescriptors() {
