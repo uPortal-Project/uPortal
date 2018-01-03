@@ -292,7 +292,8 @@
     <!-- ========== TEMPLATE: FOOTER FIRST REGION =============== -->
     <!-- ======================================================== -->
     <!--
-     | This template renders the region intended to hold the sitemap.
+     | This template renders the footer-first region if there is content available for it.  In the
+     | quickstart data set, this region contains the sitemap portlet.
      -->
     <xsl:template name="region.footer.first">
         <xsl:if test="//region[@name='footer-first']/channel">
@@ -309,7 +310,8 @@
     <!-- ========== TEMPLATE: FOOTER SECOND REGION (License links) =============== -->
     <!-- ========================================================================= -->
     <!--
-     | This template renders the region intended to hold the license portlet.
+     | This template renders the footer-second region if there is content available for it.  In the
+     | quickstart data set, this region contains the legal-footer portlet.
      -->
     <xsl:template name="region.footer.second">
         <xsl:if test="//region[@name='footer-second']/channel">
@@ -393,7 +395,7 @@
     <!-- ========== TEMPLATE: REGIONS HOVER MENU ========== -->
     <!-- ========================================================= -->
     <!--
-     | For portlets in regions, the markup in this template provides access to 
+     | For portlets in regions, the markup in this template provides access to
      | some functions that normally appear in portlet chrome (e.g. EDIT and CONFIG).
     -->
     <xsl:template name="regions.hover-menu">
@@ -454,7 +456,7 @@
                     var $ = up.jQuery;
                     $('section.<xsl:value-of select="@fname" />').hover(function() {
                         $(this).find('.hover-chrome').stop(true, true).slideDown('medium');
-                    }, 
+                    },
                     function() {
                         $(this).find('.hover-chrome').stop(true,true).slideUp('medium');
                     });
