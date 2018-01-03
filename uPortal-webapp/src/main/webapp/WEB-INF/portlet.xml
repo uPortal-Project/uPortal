@@ -515,25 +515,6 @@
     </portlet>
 
     <portlet>
-        <portlet-name>Sitemap</portlet-name>
-        <display-name xml:lang="en">Sitemap</display-name>
-        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
-        <init-param>
-            <name>contextConfigLocation</name>
-            <value>classpath:/properties/contexts/portlet/Sitemap-portlet.xml</value>
-        </init-param>
-        <expiration-cache>0</expiration-cache>
-        <supports>
-            <mime-type>text/html</mime-type>
-            <portlet-mode>VIEW</portlet-mode>
-        </supports>
-        <supported-locale>en</supported-locale>
-        <portlet-info>
-            <title>Sitemap</title>
-        </portlet-info>
-    </portlet>
-
-    <portlet>
         <portlet-name>UserAdministration</portlet-name>
         <display-name xml:lang="en">User Administration</display-name>
         <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
