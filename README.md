@@ -33,9 +33,6 @@
           <th>
             Coverage
           </th>
-          <th>
-            Dependencies
-          </th>
         </tr>
         <tr>
           <td>
@@ -56,11 +53,6 @@
           <td>
             <a href="https://coveralls.io/github/Jasig/uPortal?branch=master">
               <img src="https://coveralls.io/repos/github/Jasig/uPortal/badge.svg?branch=master" alt="Coverage Status">
-            </a>
-          </td>
-          <td>
-            <a href='https://www.versioneye.com/user/projects/59e525762de28c000f9188ae'>
-              <img src='https://www.versioneye.com/user/projects/59e525762de28c000f9188ae/badge.svg?style=flat-square' alt="Dependency Status" />
             </a>
           </td>
         </tr>
@@ -84,9 +76,6 @@
             <a href="https://coveralls.io/github/Jasig/uPortal?branch=rel-4-3-patches">
               <img src="https://coveralls.io/repos/github/Jasig/uPortal/badge.svg?branch=rel-4-3-patches" alt="Coverage Status">
             </a>
-          </td>
-          <td>
-            N/A
           </td>
         </tr>
       </table>
@@ -137,15 +126,15 @@
           </td>
           <td>
             <a href="https://groups.google.com/a/apereo.org/forum/#!forum/uportal-user">
-              <img src="https://img.shields.io/badge/uPortal-user-green.svg?style=flat" alt="uPortal user mailing list"
+              <img src="https://img.shields.io/badge/uPortal-user-green.svg?style=flat" alt="uPortal user mailing list">
             </a>
             <br>
             <a href="https://groups.google.com/a/apereo.org/forum/#!forum/uportal-dev">
-              <img src="https://img.shields.io/badge/uPortal-dev-blue.svg?style=flat" alt="uPortal developer mailing list"
+              <img src="https://img.shields.io/badge/uPortal-dev-blue.svg?style=flat" alt="uPortal developer mailing list">
             </a>
             <br>
             <a href="https://apereo.slack.com">
-              <img src="https://img.shields.io/badge/chat-on_slack-E01765.svg?style=flat" alt="chat on slack"
+              <img src="https://img.shields.io/badge/chat-on_slack-E01765.svg?style=flat" alt="chat on slack">
             </a>
             <br>
             <a href="https://twitter.com/uPortal">
