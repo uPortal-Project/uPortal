@@ -13,10 +13,6 @@ matrix:
     - os: osx
       osx_image: xcode9.1 # OSX 10.12, Oracle Java 8
 
-env:
-  global:
-    secure: aJtucm9bUlpbBOxkDulRJ+4Y7XLCDgNbfn2TGcDieQrklAEMf1YgV8cYjKxe/Ddno7Ifc3RsSle8aAU7GNmd59ed8YGhgdzJ1Ozla8YiClh9X/XiMzBjMCyYfrHeMHmpnRcO4BX7tZ98SGUOrln3rpf3CbIix5m8gdiFeMpuE+M=
-
 # The 'build' task runs most things, including test, check, & static analysis
 install: true
 script: ./gradlew -u -i -q -S build jacocoAggregateReport coveralls
@@ -25,10 +21,3 @@ cache:
   directories:
     - $HOME/.npm/
     - $HOME/.gradle/
-
-# publish VersionEye results for master branch
-deploy:
-  provider: script
-  script: ./gradlew versioneye-update -Pversioneye.api_key=$VERSION_EYE_TOKEN
-  on:
-    branch: master
