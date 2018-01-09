@@ -5,9 +5,11 @@ matrix:
   allow_failures:
     - os: osx
       osx_image: xcode9.2 # OSX 10.12, Oracle Java 8
+      script: ./gradlew -u -S --no-daemon --no-parallel build
   include:
     - os: osx
       osx_image: xcode9.2 # OSX 10.12, Oracle Java 8
+      script: ./gradlew -u -S --no-daemon --no-parallel build
     - os: linux
       dist: trusty
       jdk: oraclejdk8
