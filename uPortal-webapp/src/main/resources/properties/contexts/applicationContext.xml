@@ -92,62 +92,6 @@
     <!-- Resolver that can be used to dynamically look up property values at run-time -->
     <bean id="propertyResolver" factory-bean="primaryPropertyPlaceholderConfigurer" factory-method="getPropertyResolver"/>
 
-    <!-- Need to capture this value in a bean for map key, using el -->
-    <bean id="hibernateDialect" class="java.lang.String">
-        <constructor-arg value="${hibernate.dialect}"/>
-    </bean>
-
-    <!-- Define default JGROUPS DDL used by most databases -->
-    <bean id="jgroupsDefaultInitSql" class="java.lang.String">
-        <constructor-arg>
-            <value>
-                CREATE TABLE JGROUPSPING (
-                    own_addr varchar(200) NOT NULL,
-                    cluster_name varchar(200) NOT NULL,
-                    ping_data blob DEFAULT NULL,
-                    PRIMARY KEY (own_addr, cluster_name)
-                )
-            </value>
-        </constructor-arg>
-    </bean>
-
-    <!-- And JGROUPS DDL used by MS SQL Server -->
-    <bean id="jgroupsSqlServerInitSql" class="java.lang.String">
-        <constructor-arg>
-            <value>
-                CREATE TABLE JGROUPSPING (
-                    own_addr varchar(200) NOT NULL,
-                    cluster_name varchar(200) NOT NULL,
-                    ping_data varbinary(5000) DEFAULT NULL,
-                    PRIMARY KEY (own_addr, cluster_name)
-                )
-            </value>
-        </constructor-arg>
-    </bean>
-
-    <!-- And JGROUPS DDL used by PostgresSQL Server -->
-    <bean id="jgroupsPostgreSQLInitSql" class="java.lang.String">
-        <constructor-arg>
-            <value>
-                CREATE TABLE IF NOT EXISTS JGROUPSPING (
-                    own_addr varchar(200) NOT NULL,
-                    cluster_name varchar(200) NOT NULL,
-                    ping_data BYTEA DEFAULT NULL,
-                    PRIMARY KEY (own_addr, cluster_name)
-                )
-            </value>
-        </constructor-arg>
-    </bean>
-
-    <!-- Map of JGroups DDL by hibernate.dialect (all Hibernate dialects not listed here will use jgroupsDefaultInitSql) -->
-    <util:map id="jgroupsInitSqlMap" map-class="java.util.HashMap">
-        <!-- Most RDBMS platforms use standard DDL, but MS SQL Server uses something different -->
-        <entry key="org.hibernate.dialect.SQLServerDialect" value="#{@jgroupsSqlServerInitSql}" />
-        <entry key="org.hibernate.dialect.SQLServer2008Dialect" value="#{@jgroupsSqlServerInitSql}" />
-        <entry key="org.hibernate.dialect.PostgreSQLDialect" value="#{@jgroupsPostgreSQLInitSql}" />
-        <entry key="org.hibernate.dialect.PostgresPlusDialect" value="#{@jgroupsPostgreSQLInitSql}" />
-    </util:map>
-
     <!-- Add properties for jgroups.xml as that is not a Spring context -->
     <bean id="systemPropertySetter" class="org.apereo.portal.spring.context.SystemPropertySetter">
         <property name="systemProperties">
@@ -158,7 +102,6 @@
                 <prop key="hibernate.connection.url">${hibernate.connection.url}</prop>
                 <prop key="hibernate.connection.username">${hibernate.connection.username}</prop>
                 <prop key="hibernate.connection.password">${hibernate.connection.password}</prop>
-                <prop key="jgroupsInitSql">#{@jgroupsInitSqlMap[@hibernateDialect] != null ? @jgroupsInitSqlMap[@hibernateDialect] : @jgroupsDefaultInitSql}</prop>
                 <prop key="org.apereo.portal.jgroups.auth.token">${org.apereo.portal.jgroups.auth.token:DEV-345B45TB3}</prop>
             </props>
         </property>
