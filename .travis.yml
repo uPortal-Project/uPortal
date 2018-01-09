@@ -5,17 +5,16 @@ matrix:
     - os: linux
       dist: trusty
       jdk: oraclejdk8
-      sudo: required
     - os: linux
       dist: trusty
       jdk: openjdk8
-      sudo: required
     - os: osx
-      osx_image: xcode9.1 # OSX 10.12, Oracle Java 8
+      osx_image: xcode9.2 # OSX 10.12, Oracle Java 8
+      script: ./gradlew -u -S --no-daemon --no-parallel build # skip coveralls on MacOS
 
 # The 'build' task runs most things, including test, check, & static analysis
 install: true
-script: ./gradlew -u -i -q -S build jacocoAggregateReport coveralls
+script: ./gradlew -u -S --no-daemon --no-parallel build jacocoAggregateReport coveralls
 
 cache:
   directories:
