@@ -15,7 +15,7 @@ Certaines caractéristiques architecturales intéressantes peuvent être extrait
 
 ### Couplage de code
 
-:note: N.B. Les tâches JavaDoc ont tendance à être fortement liées entre elles, mais des liaisons croisées sur la JavaDoc ne signalent pas nécessairement un couplage étroit.
+:note: N.B. Les tâches JavaDoc ont tendance à être fortement liées entre elles, cependant des liaisons croisées sur la JavaDoc ne signalent pas nécessairement un couplage étroit.
 
 #### Couplage lâche
 

@@ -2,9 +2,9 @@
 
 # Documentation uPortal
 
-**NOTE :**  Cette partie est en construction. Son intension est de servir de base
+**NOTE :** Cette partie est en construction. Son intension est de servir de base
 pour la documentation d'uPortal version 5.0 (sortie fin 2017) et supérieures.
-Les documentationspour les versions antérieures sont disponible dans
+Les documentations pour les versions antérieures sont disponible dans
 [Confluence](https://wiki.jasig.org).  Référez vous à *Documentation des précédentes versions* \[en\]
 ci-aprsès.
 
@@ -164,8 +164,8 @@ ci-aprsès.
 
 ## Sections
 
-* [Monter / Deployer uPortal](monter-et-deployer-uportal.md)
-* [Implementer uPortal](implementer/README.md)
+* [Construire / Déployer uPortal](monter-et-deployer-uportal.md)
+* [Implémenter uPortal](implementer/README.md)
 * [Administration Système d'uPortal](sysadmin/README.md)
 * [Guide du développeur](developper/README.md)
 * [Navigateurs Web supportés](NAVIGATEURS_SUPPORTES.md)

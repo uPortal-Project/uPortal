@@ -23,5 +23,5 @@ Lancez la commande suivante :
 ./gradlew clean release -Dorg.gradle.parallel=false
 ```
 
-:attention: Durant la tâche de `release`, il vous sera demander une version de release (e.g. `5.0.3`) et une 
+:attention: Durant la tâche de `release`, il vous sera demandé une version de release (e.g. `5.0.3`) et une 
 nouvelle version de branch (e.g. `5.0.4-SNAPSHOT`)

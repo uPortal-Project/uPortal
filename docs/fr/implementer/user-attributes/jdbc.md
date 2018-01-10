@@ -1,3 +1,3 @@
-# Sources de données d'attribut utilisateur JDBC
+# Source de données JDBC des attributs utilisateur
 
 à faire.

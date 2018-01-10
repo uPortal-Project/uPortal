@@ -4,8 +4,8 @@
 
 ## Redirection des invités vers CAS pour la connexion
 
-Par défaut, uPortal permet aux utilisateurs non authentifiés (_ "guests" _) d'afficher le portail. Environ la moitié des adoptants d'uPortal utilisent cette fonctionnalité pour présenter un contenu général non sensible au public.  
-(Les autres adopteurs uPortal préfèrent autoriser uniquement les utilisateurs authentifiés à accéder au portail.) Cette fonctionnalité est une façon de configurer uPortal pour exiger une authentification.
+Par défaut, uPortal permet aux utilisateurs non authentifiés (_ "guests" _) d'afficher le portail. Environ la moitié des adoptants d'uPortal utilisent cette fonctionnalité pour présenter généralement un contenu non sensible au public.  
+(Les autres adopteurs uPortal préfèrent uniquement autoriser les utilisateurs authentifiés à accéder au portail.) Cette fonctionnalité est une façon de configurer uPortal pour exiger une authentification.
 
 Pour configurer uPortal afin de rediriger les utilisateurs non authentifiés vers l'interface de connexion CAS, ajoutez 
 l'option de configuration suivante à `${portal.home}/uPortal.properties`:
@@ -19,8 +19,8 @@ cas.enable.redirect.guest.to.login=true
 :attention: Il y a quelques inconvénients à activer ce paramètre :
 
 - Ce paramètre ne fonctionne que pour l'authentification CAS (à l'avenir, la communauté uPortal peut proposer une fonctionnalité unique prenant en charge plusieurs stratégies d'authentification)
-- L'activation de cette fonctionnalité ** désactive toutes les autres formes d'authentification **
-- Cette fonctionnalité ne prend pas en charge le _deep linking_ qui survit au processus d'authentification (_en d'autres termes_ si vous devez vous authentifier, vous n'atteindrez pas la page que vous essayiez d'atteindre si vous avez suivi un lien)
+- L'activation de cette fonctionnalité **désactive toutes les autres formes d'authentification**
+- Cette fonctionnalité ne prend pas en charge le _deep linking_ qui survit au processus d'authentification (_en d'autres termes_ si vous devez vous authentifier, vous n'atteindrez pas la page que vous essayiez d'atteindre si vous avez suivi un lien profond)
 
 ## CAS 5 ClearPass: Credential Caching and Replay
 
@@ -68,5 +68,5 @@ org.apereo.portal.security.cas.assertion.decryptCredentialToPassword=true
 org.apereo.portal.security.cas.assertion.decryptCredentialToPasswordPrivateKey=/etc/cas/private.p8
 ```
 
-:attention : ** Attention: Impossible d'utiliser localhost ni HTTP! **
+:attention : **Attention: Impossible d'utiliser localhost ni HTTP!**
  :attention :CAS requiert que le trafic passe par une connexion **HTTPS** cryptée. En outre, un nom d'hôte autre que *localhost* est requis.

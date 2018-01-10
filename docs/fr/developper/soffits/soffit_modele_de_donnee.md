@@ -1,7 +1,7 @@
 # Modèle de donnée d'une Soffit
 
 Pour être d'une quelconque utilité, une vraie Soffit doit aller plus loin qu'un simple _Hello World!_.
-Une Soffit embarque avec elle un riche modèle de donnée pour échanger des données entre le portail et votre application.
+Une Soffit embarque avec elle un modèle de données riche pour échanger des données entre le portail et votre application.
 Il y a (actuellement) cinq objets dans ce modèle de donnée :
 
 * L'objet [Bearer][] contient les informations de l'utilisateur : _username_,
@@ -49,7 +49,7 @@ public class Settings {
 ```
 
 Annoter une méthode sur un bean Spring avec `@SoffitModelAttribute` pour permettre à votre Soffit
-d'invoquer la méthode et retourner la valeur de retour disponible dans votre JSP.
+d'invoquer la méthode et retourner la valeur disponible dans votre JSP.
 
 ``` java
 @Component
@@ -71,7 +71,7 @@ public class Attributes {
 ```
 
 Les signatures des méthodes annotées avec `@SoffitModelAttribute` sont flexibles; 
-vous pouvez prendre n'importe quel, tous ou aucun des objets suivants en tant que paramètres, 
+vous pouvez prendre n'importe lequel, tous ou aucun des objets suivants en tant que paramètres, 
 et ce, dans n'importe quel ordre:
 
 * `HttpServletRequest`

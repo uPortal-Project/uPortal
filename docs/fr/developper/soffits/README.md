@@ -9,11 +9,10 @@ Vous êtes un développeur d'applications Web Java. Vous êtes chargé de dével
 pour [Apereo uPortal][].
 
 Vous n'êtes pas enthousiasmé par le développement de Java Portlet
-[de manière traditionnelle][] ou même en utilisant [Spring Portlet MVC][]. Vous avez correctement
-conclure que les API Java Portlet sont _lourdes_, _obtuses_ et _interférantes activement_ avec les pratiques 
+[de manière traditionnelle][] ou même en utilisant [Spring Portlet MVC][]. À raison vous en avez conclu que les API Java Portlet sont _lourdes_, _obtues_ et _interférent activement_ avec les pratiques 
 de développement web contemporain et les frameworks que vous voulez utiliser.
 
-Aperto Soffit est une approche alternative à la production de contenu pour uPortal qui
+Apereo Soffit est une approche alternative à la production de contenu pour uPortal qui
 n'est pas basé sur JSR-286 ou le conteneur de portlet.
 
 ## Point clefs

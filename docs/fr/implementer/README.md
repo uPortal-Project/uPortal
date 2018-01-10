@@ -1,7 +1,7 @@
 # Implémentation d'uPortal
 
 Cette section couvre les sujets liés à la mise en œuvre du portail : l'ajout d'
-utilisateurs, de groupes, sa mises en page, * etc. *
+utilisateurs, de groupes, sa mises en page, *etc.*
 
 1. [Authentification](authentification/README.md)
 2. [Attributs utilisateur](user-attributes/README.md)

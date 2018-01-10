@@ -1,4 +1,4 @@
-# Sources de données d'attribut utilisateur LDAP
+# Source de données LDAP des attributs utilisateur
 
 uPortal est capable de récupérer des attributs utilisateur à partir d'une source LDAP. Pour configurer ce comportement, vous devez procéder comme suit.
 

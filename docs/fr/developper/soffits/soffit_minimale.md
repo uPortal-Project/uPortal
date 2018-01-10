@@ -3,7 +3,7 @@
 L'interactivité d'une soffit avec le portail est basée sur HTTP. Il est possible d'écrire une
 soffit dans n'importe quel langage ou plate-forme pouvant accepter, traiter et répondre à une
 connexion via HTTP. À l'heure actuelle, les créateurs de Soffit s'attendent à
-Développer les soffits principalement avec [Java][] et [Spring Boot][].
+développer les soffits principalement avec [Java][] et [Spring Boot][].
 
 ## Minimal Soffit Setup Instructions Using Spring Boot
 
@@ -21,7 +21,7 @@ Développer les soffits principalement avec [Java][] et [Spring Boot][].
 2.  Ajoutez Soffit comme une dépendence de votre projet (voir _Ajout de la dépendance Soofit_ ci-dessous)
 3.  Ajoutez la dépendence `tomcat-embed-jasper` à votre projet (voir _Ajout de la dépendence `tomcat-embed-jasper`_ ci-dessous)
 4.  Ajoutez l'annotation `@SoffitApplication` à la application class (celle déjà annotée avec `@SpringBootApplication`) **NOTE:**  n'oubliez pas d'ajouter `import org.apereo.portal.soffit.renderer.SoffitApplication;` de manière appropriée en haut du fichier.
-5.  Créer le reprtoire `src/main/webapp/WEB-INF/soffit/`
+5.  Créer le répertoire `src/main/webapp/WEB-INF/soffit/`
 6.  Choisissez un nom pour votre soffit et créez un répertoire avec ce nom à l'intérieur
     `/soffit/` (ci-dessus); recommandé: utilisez uniquement des lettres minuscules et des tirets
     ('-') dans le nom
@@ -40,7 +40,7 @@ C'est tout! Vous avez maintenant une application Soffit minimale fonctionnant su
 ### Ajout de la dépendance Soffit
 
 Vous devrez modifier le fichier de construction du projet dans l'éditeur de votre choix.
-** NOTE : **assurez-vous de spécifier la version de dépendance correcte; Il se peut que cela ne soit
+**NOTE :** assurez-vous de spécifier la version de dépendance correcte; Il se peut que cela ne soit
 plus `5.0.0-SNAPSHOT` au moment où vous lisez ce guide.**
 
 Exemple Gradle (`build.gradle`):

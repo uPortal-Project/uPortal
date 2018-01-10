@@ -1,10 +1,10 @@
-# User Attributes
+# Attributs Utilisateur
 
 Cette section décrit comment configurer vos propres sources d'attributs utilisateur et les intégrer dans uPortal.
 
 ## Première connexion des utilisateurs
 
-:warning: Les trois attributs suivants sont couramment utilisés dans les  uPortal et dansles portlets Apereo:
+:warning: Les trois attributs suivants sont couramment utilisés dans uPortal et dans les portlets Apereo:
 
  * `uid`
  * `username`
@@ -18,7 +18,7 @@ portail au moins une fois** ou qui ont été importés via Import / Export. Il e
 
 La classe de base pour un utilisateur uPotal est une implémentation de l'interface `IPerson`. Le _uPortal Person Directory Service_ est utilisé pour remplir et récupérer les attributs de l'utilisateur. Person Directory est géré comme un [projet indépendant avec son propre code source appelé PersonDirectory][]. Les attributs peuvent être acquis à partir de sources multiples via LDAP, JDBC ou d'autres sources selon les besoins.
 
-Le sous-système Person Directory est basé sur des implémentations concrètes de l'interface `IPersonAttributeDao`. Ces objets sont des beans gérés par Spring. uPortal 5 est préconfiguré avec plusieurs instances de `IPersonAttributeDao`, mais les sources les plus intéressantes (et les plus importantes!) d'informations d'attributs utilisateur sont celles que vous fournissez vous-même.
+Le sous-système Person Directory est basé sur des implémentations concrètes de l'interface `IPersonAttributeDao`. Ces objets sont des beans gérés par Spring. uPortal 5 est préconfiguré avec plusieurs instances de `IPersonAttributeDao`, mais les sources d'informations les plus intéressantes (et les plus importantes!) des attributs utilisateur sont celles que vous fournissez.
 
 Ajoutez vos sources d'attributs utilisateur à uPortal en configurant des beans implémentant `IPersonAttributeDao` et en les ajoutant au contexte d'application Spring. uPortal trouvera les beans que vous déclarez et les ajoutera au sous-système User Attributes de manière appropriée.
 
@@ -65,10 +65,10 @@ Il existe plusieurs façons d'ajouter des beans au contexte d'application uPorta
 </beans>
 ```
 
-## Sources de données d'attribut utilisateur
+## Sources de données des attributs utilisateur
 
- * [Sources de données d'attribut utilisateur LDAP](ldap.md)
- * [Sources de données d'attribut utilisateur JDBC](jdbc.md)
+ * [Source de données LDAP des attributs utilisateur](ldap.md)
+ * [Source de données JDBC des attributs utilisateur](jdbc.md)
 
 [projet indépendant avec son propre code source appelé PersonDirectory]: https://github.com/apereo/person-directory
 [uPortal-start]: https://github.com/Jasig/uPortal-start

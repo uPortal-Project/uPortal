@@ -3,10 +3,10 @@
 ## Table des matières
 
 1. [Introduction](#introduction)
-2. [Pre-Requisites](#pre-requisites)
-3. [Configuring an LTM](#configuring-an-ltm)
-4. [Configuring the GTM](#configuring-the-gtm)
-5. [Configuring connectors in Tomcat](#configuring-connectors-in-tomcat)
+2. [Pré-Requis](#pre-requis)
+3. [Configurer un LTM](#configurer-un-ltm)
+4. [Configurer le GTM](#configurer-le-gtm)
+5. [Configuration des connecteurs dans Tomcat](#configuration-des-connecteurs-dans-tomcat)
 
 ## Introduction
 
@@ -22,7 +22,7 @@ Dans cet exemple, le service DNS principal est configuré pour "aliasé" le serv
 
 ## Pré-Requis
 
-Vous devrez d'abord coordonneravec votre équipe réseau quelques modifications IP/DNS.
+Vous devrez d'abord coordonner avec votre équipe réseau quelques modifications IP/DNS.
 
 | éléments                                                | Example value for this install        |
 | --------------------------------------------------- | ------------------------------------- |
@@ -34,7 +34,7 @@ Vous devrez d'abord coordonneravec votre équipe réseau quelques modifications 
 
 Les détails pour la configuration de F5 sont au-delà de ce document. Ces éléments servent à configurer un nouveau service uPortal.
 
-## Configurer un LTM (gestionnaires de trafic locaux)
+## Configurer un LTM
 
 Les premiers systèmes à configurer sont les LTM.
 
@@ -46,26 +46,26 @@ Cette étape rend disponible la clé et le certificat pour le service Web uPorta
 Cela est similaire à la configuration d'Apache en front d'uPortal et le trafic SSL.
 Les fichiers de clé et de certificat sont les mêmes que ceux attendus par Apache pour SSL.
 
-1. Naviguez à System > File Management > SSL Certificate List > Import...
+1. Naviguer à System > File Management > SSL Certificate List > Import...
 2. Importer Type: Key
 3. Key Name: utilisez URL (par exemple : my.ucmerced.edu)
-4. Cliquez sur Choose File
-5. Find and select the key file
-6. Cliquez sur Import
-7. Cliquez sur URL link (i.e. my.ucmerced.edu)
-8. Cliquez sur Import...
-9. Cliquez sur Choose File
-10. Rechercher et selectionnez le fichier de certificat
-11. Cliquez sur Import
+4. Cliquer sur Choose File
+5. Rechercher le fichier de Clef
+6. Cliquer sur Import
+7. Cliquer sur URL link (i.e. my.ucmerced.edu)
+8. Cliquer sur Import...
+9. Cliquer sur Choose File
+10. Rechercher et selectionner le fichier de certificat
+11. Cliquer sur Import
 
 ### Créer un moniteur (monitor)
 
 Un moniteur (monitor) vérifie la disponibilité des serveurs uPortal. Il interroge essentiellement chaque serveur, à la recherche d'une
 réponse, pour confirmer qu'il est opérationnel.
 
-1. Déterminez la string à chercher depuis la page initiale (i.e. "portal")
-2. Naviguez à LTM > Virtual Servers > Monitors
-3. Ajouter un Moniteur (Monitor) :
+1. Déterminer la string à chercher depuis la page initiale (i.e. "portal")
+2. Naviguer à LTM > Virtual Servers > Monitors
+3. Ajouter un Moniteur (*Monitor*) :
     1. Name: qqchose reférençant le service et "mon" (i.e. portal-http-mon)
     2. Description: des détails si vous le souhaitez
     3. Type: HTTP (ouvre plus de champs)
@@ -77,8 +77,8 @@ réponse, pour confirmer qu'il est opérationnel.
 Un pool est une liste des serveurs qui forment le service uPortal pour un LTM. Une approche commune est de loger
 un LTM et chaque data center. Le pool comprendrait alors les serveurs uPortal dans ce data center.
 
-1. Déterminez le nom du pool (i.e. prod_portal_pool)
-2. Naviguez à LTM > Virtual Servers > Pools
+1. Déterminer le nom du pool (i.e. prod_portal_pool)
+2. Naviguer à LTM > Virtual Servers > Pools
 3. Ajouter un Pool:
     1. Configuration: Advanced
     2. Name: qqchose reférençant le service et "pool" (i.e. prod_portal_pool)
@@ -87,15 +87,15 @@ un LTM et chaque data center. Le pool comprendrait alors les serveurs uPortal da
     5. Action On Service Down: Reject
     6. Load Balancing Method: Predictive (member), ou Dynamic Ratio (member)
         - Lisez l'Aide pour faire une meilleur choix initial, puis testez.
-    7. New Members: ajoutez nodes = IPs + ports des serveurs uPortal
+    7. New Members: ajouter nodes = IPs + ports des serveurs uPortal
     
 ### Créer le profil SSL
 
 Le profil SSL connecte la clé SSL et le certificat avec le(s) pool(s) uPortal.
 
-1. Naviguez à LTM > Virtual Servers > Profiles > SSL > client
-2. Cliquez sur Create ...
-3. Entrez les valeurs suivantes :
+1. Naviguer à LTM > Virtual Servers > Profiles > SSL > client
+2. Cliquer sur Create ...
+3. Entrer les valeurs suivantes :
     1. Name: un nom approprié (par exemple : portal_clientssl)
     2. Parent Profile: clientssl
     3. Selectionnez 'Advanced' depuis le menu
@@ -107,9 +107,9 @@ Le profil SSL connecte la clé SSL et le certificat avec le(s) pool(s) uPortal.
 
 Cette étape crée une redirection pour le trafic sur l'adresse IP virtuelle d'uPortal, port 80, vers HTTPS (port 443). 
 
-1. Naviguez à Virtual Servers > Virtual Server List
-2. Cliquez sur Create ...
-3. Entrez les valeurs suivantes :
+1. Naviguer à Virtual Servers > Virtual Server List
+2. Cliquer sur Create ...
+3. Entrer les valeurs suivantes :
     1. Name: Quelque chose qui combine "vs" plus le service portal (i.e. vs_portal_80)
     2. Destination: Virtual IP pour cette LTM (voir pré-requis)
     3. Service Port: HTTP (80)
@@ -121,9 +121,9 @@ Cette étape crée une redirection pour le trafic sur l'adresse IP virtuelle d'u
 
 Cette étape achemine le trafic entrant sur l'adresse IP virtuelle pour uPortal vers les serveurs uPortal.
 
-1. Naviguez à Virtual Servers > Virtual Server List
-2. Cliquez sur Create ...
-3. Entrez les valeurs suivantes :
+1. Naviguer à Virtual Servers > Virtual Server List
+2. Cliquer sur Create ...
+3. Entrer les valeurs suivantes :
     1. Name: Quelque chose qui combine "vs" plus le service portal plus le port (i.e. vs_portal_443)
     2. Destination: Virtual IP pour cette LTM (voir pré-requis)
     3. Service Port: HTTPS (443)
@@ -145,9 +145,9 @@ Connectez-vous au client Web GTM (nécessite un accès administrateur).
 
 Le pool est la liste définitive des adresses IP virtuelles uPortal pointant vers tous les LTM actifs.
 
-1. Naviguez à Pools
-2. Cliquez sur Create ...
-3. Entrez les valeurs suivantes :
+1. Naviguer à Pools
+2. Cliquer sur Create ...
+3. Entrer les valeurs suivantes :
     1. Name: Quelque chose avec le nom du service et "pool" (i.e. uportal_pool)
     2. Load Balancing Method: Topology, Global Availability, Return to DNS
         - Voir l'aide pour des options additionnelles
@@ -157,9 +157,9 @@ Le pool est la liste définitive des adresses IP virtuelles uPortal pointant ver
 
 Cette étape suppose que le DNS est correctement configuré à la fois sur le DNS global et le service DNS GTM.
 
-1. Naviguez à Wide IPs
-2. Cliquez sur Create ...
-3. Entrez les valeurs suivantes :
+1. Naviguer à Wide IPs
+2. Cliquer sur Create ...
+3. Entrer les valeurs suivantes :
     1. Name: CNAME (DNS) de l'enregistrement A géré par le F5
     2. Pool: sélectionnez le pool créer auparavant
 

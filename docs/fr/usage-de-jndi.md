@@ -142,6 +142,6 @@ Les names global (et valeurs actuelles) sont définis dans Tomcat.
     <ResourceLink name="cas/casServerLoginUrl" global="cas/casServerLoginUrl" type="java.lang.String" />
 ```
 
-Notez dans l'exemple ci-dessus, faites attention aux configurations conflictuelles. Chaque Filtre CAS lira toutes les valeurs pour les valeurs CAS définies.
+ Comme indiqué dans l'exemple, faites attention aux configurations conflictuelles. Chaque filtre CAS lira toutes les valeurs CAS définies.
 
 Source: [uportal-user@ thread](https://groups.google.com/a/apereo.org/d/topic/uportal-user/IM0SnpIlJC0/discussion).

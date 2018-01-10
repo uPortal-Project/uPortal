@@ -17,5 +17,5 @@ Suivez ces étapes pour voir votre soffit dans uPortal.
     `http://localhost:8080/my-porject/soffit/my-soffit` s'exécutant dans Tomcat
 6. Cliquez sur _Enregister_
 
-Après avoir terminé ces étapes, vous devriez être en mesure de trouver votre soffit en utilisant le
+Après avoir terminé ces étapes, vous devriez être en mesure de trouver votre soffit en utilisant 
 l'interface de recherche ou ajoutez-la à votre layout à l'aide de la galerie de personnalisation.

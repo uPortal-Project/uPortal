@@ -1,7 +1,7 @@
 # Integration IDE
 
 Ces scripts génèrent automatiquement la configuration du projet pour les éditeurs Intellij et Eclipse.
-L'utilisation de ces scripts supprime le besoin d'exécuter une importation et une configuration personnalisées pour intégrer uPortal à l'environnement de développement intégré ( Integrated Development Environment IDE).
+L'utilisation de ces scripts supprime le besoin de faire un import et une configuration personnalisée pour intégrer uPortal à l'Environnement de Développement Intégré (EDI) (Integrated Development Environment IDE).
 
 ## Intellij
 

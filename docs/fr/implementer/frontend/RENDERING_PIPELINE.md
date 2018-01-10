@@ -3,7 +3,7 @@
 uPortal implémente le rendu complet de pages en utilisant un _pipeline_: une structure imbriquée d'éléments discrets, 
 pluggables, qui implémentent chacun la même interface Java. Le mot "pipeline" est approprié 
 parce qu'il invoque les concepts de _mouvement_ et de _flux_, mais dans le logiciel, cette conception est également
-connu sous le nom [Pattern décorateur][].
+connu sous le nom [Decorator pattern][].
 
 L'interface Java au centre du pipeline de rendu uPortal est `IPortalRenderingPipeline`. 
 Les instances de `IPortalRenderingPipeline` sont des beans gérés par Spring. Le bean primaire du pipline du rendu 
@@ -54,35 +54,26 @@ Le pipeline standard comprend (à ce jour) les composants suivants (étapes):
 
 L'ordre de traitement pour ces composants de pipeline est essentiellement _rétroactif_: du bas vers le haut.
 
-## Usiliser les Beans `RenderingPipelineBranchPoint`
+## Utiliser les Beans `RenderingPipelineBranchPoint`
 
-Les adopteur d'uPortal peuvent configurer le pipeline de rendu en fonction deleur leur besoin. La plupart des cas d'utilisation 
-peuvent être satifaits en utilisant les Beans `RenderingPipelineBranchPoint`. les "Rendering branchpoints sont des 
-Object Java (Beans gérés par Spring) qui indique à quelques (ou toutes les) requêtes HTTP de suivre un chemin different. 
+Les intégrateurs d'uPortal peuvent configurer le pipeline de rendu en fonction de leur besoin. La plupart des cas d'utilisation 
+peuvent être satifaits en utilisant les Beans `RenderingPipelineBranchPoint`. les *Rendering branchpoints* sont des 
+Object Java (Beans gérés par Spring) qui indiquent à quelques (ou toutes les) requêtes HTTP de suivre un chemin different. 
 Les Rendering branch points (points de branchement de rendu) suivent la stratégie de configuration uPortal 5 standard pour des Beans gérés par Spring : 
 si vous fournissez un Bean correctement configuré du type correct (_viz._ 
 `RenderingPipelineBranchPoint`) au contexte d'application Spring, uPortal le _découvrira_ et 
-_fera la bonne chose_. (uPortal le fournira comme une dépendance aux composants qui sauront quoi 
+_ l'appliquera_. (uPortal le fournira comme une dépendance aux composants qui sauront quoi 
 faire avec.)
 
-uPortal adopters may configure the Rendering Pipeline to suit their needs.  Most common use cases
-can be satisfied using `RenderingPipelineBranchPoint` beans.  Rendering branch points are Java
-objects (Spring-managed beans) that tell some (or all) HTTP requests to follow a different path.
-Rendering branch points follow the standard uPortal 5 configuration strategy for Spring-managed
-beans:  if you supply a properly-configured bean of the correct type (_viz._
-`RenderingPipelineBranchPoint`) to the Spring Application Context, uPortal will _discover_ it and
-_do the right thing_.  (uPortal will provide it as a dependency to the components that know what
-to do with it.)
-
-uPortal évalut les Beans `RenderingPipelineBranchPoint`, si présent, dans un ordre spécifique.  Si une
-branche indique qu'elle _doit_ être suivie, il _va_ la suivre et aucun autre branches ne sera 
+uPortal évalue les Beans `RenderingPipelineBranchPoint`, si présent, dans un ordre spécifique.  Si une
+branche indique qu'elle _doit_ être suivie, il _va_ la suivre et aucune autre branches ne sera 
 testée. Si aucune branche n'est suivie, le pipeline de rendu standart sera utilisé.
 
 Le Beans `RenderingPipelineBranchPoint` acceptent les paramètres de configuration suivant :
 
 | Propriétés | Type | Requis ? | Notes |
 | -------- | ---- |:---------:| ----- |
-| `order` | `int` | N* | Définit la séquence des points de branchement lorsqu'il y en a plusieurs (dans ce cas, `order` est requis). Les branches avec des valeurs d'ordre inférieures viennent avant les valeurs plus élevées. |
+| `order` | `int` | N° | Définit la séquence des points de branchement lorsqu'il y en a plusieurs (dans ce cas, `order` est requis). Les branches avec des valeurs d'ordre inférieures viennent avant les valeurs plus élevées. |
 | `predicate` | `java.util.function.Predicate<HttpServletRequest>` | O | Si le `predicate` renvoie `true`, la branch sera suivie; sinon la branche suivante sera testée. |
 | `alternatePipe` | `IPortalRenderingPipeline` | O | Le chemin de rendu qui sera suivi si le `predicate` renvoie` true`.. |
 
@@ -195,5 +186,5 @@ instructing uPortal-home to render a particular portlet statically. -->
 </bean>
 ```
 
-[Pattern décorateur]: https://en.wikipedia.org/wiki/Decorator_pattern
+[Decorator pattern]: https://en.wikipedia.org/wiki/Decorator_pattern
 [uPortal-home]: https://github.com/uPortal-Project/uportal-home
