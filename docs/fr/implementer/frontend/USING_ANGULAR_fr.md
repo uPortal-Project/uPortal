@@ -1,40 +1,38 @@
-# Strategy for employing Angular.js in portal skins and/or portlets.
+# Stratégie pour utiliser Angular.js (1.xx) dans les skins et/ou les portlets du portail.
 
-## Definitions
+## Définitions
 
-The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
-"SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be
-interpreted as described in RFC 2119.
+Les mots clés "DOIT OBLIGATOIREMENT", "NE DOIT SURTOUT PAS", "OBLIGATOIRE", "DOIT", "NE DOIT PAS", "DEVRAIT",
+"NE DEVRAIT PAS", "RECOMMANDÉ", "POURRAIT", et "FACULTATIF" dans ce document doivent être
+interprété comme décrit dans RFC 2119.
 
 ## Abstract
 
-AngularJS has become a very popular framework for developing user-facing
-functionality. Because of the way Angular prohibits nested bootstrapping of
-modules, special care is required for ensuring that multiple users of Angular do
-not conflict, which would degrade usability, regardless of how the page skin or
-page fragments are combined.
+AngularJS est devenu un framework très populaire pour le développement côté client. En raison de la façon dont Angular interdit le "bootstrapping" imbriqué de
+modules, un soin particulier doit obligatoirement être requis pour s'assurer que plusieurs  programmes Angular ne rentrent 
+pas de conflit, ce qui dégraderait l'usabilité, indépendamment de la façon dont la skin ou
+les fragments de page sont combinés.
 
-This document lays out a strategy in which Portal and/or portlets can both use
-Angular, and may coexist without conflicting.
+Ce document présente une stratégie dans laquelle uPortal et/ou des portlets peuvent utiliser Angular et coexister sans conflit.
 
-Practically this means that:
+Pratiquement cela signifie que:
 
--   Angular may be used in portal skins
--   Angular portlets may be used, even multiple on the same page without conflict
--   Angular portlets may be used in an Angular portal skin without conflict
+- Angular peut être utilisé dans les Skins d'uPortal
+- Les portlets Angular peuvent être utilisées, même à plusieurs sur la même page sans conflit
+- Les portlets Angular peuvent être utilisées dans une Skin d'un portail Angular sans conflit
 
-## Skins/Portal
+## Skins/Portail
 
--   MUST enable angular portlets doing one of the following:
-    -   Check portlet content for the `<!-- uportal-use-angular -->` comment
-        "directive," and if found, use the $compile service on the DOM nodes.
-    -   Use the `$compile` service to compile DOM nodes of all loaded portlets.
-    -   This has the added benefit of allowing a portal to apply directives to
-        existing standard portlet content if desired.
--   MUST create a global window.up.ngApp directive that exposes the Angular
-    functions `$controllerProvider.register` (with name controller),
-    `$provide.service`, `$provide.factory`, `$provide.value`, and
-    `$compileProvider.directive`. See the code directly below for an example.
+-   on DOIT activer les portlets Angular en effectuant l'une des opérations suivantes:
+    - Vérifier dans le contenu de la portlet, le commentaire de la "directive" 
+    `<!-- uportal-use-angular -->`, et s'il est trouvé, utilisez le service de $compile sur les noeuds DOM.
+    - Utilisez le service `$compile` pour compiler les nœuds DOM de toutes les portlets chargées.
+    - Cela a l'avantage supplémentaire de permettre à un portail d'appliquer des directives
+      à des contenus de portlet standard existante si vous le souhaitez.
+    
+-   on DOIT Obligatoirement créer une directive globale window.up.ngApp qui va exposer les fonctions Angular `$controllerProvider.register` (avec un nom de contrôleur),
+    `$provide.service`, `$provide.factory`, `$provide.value`, et
+    `$compileProvider.directive`. Voir le code directement ci-dessous en exemple.
 
 ```javascript
 angular.module('foo').config(function getLazyLoaders($compileProvider,
@@ -60,61 +58,54 @@ $controllerProvider, $provide) {
   };
 ```
 
-## Portlets
+## Les Portlets
 
--   MUST check for existence of Angular in two ways.
-    -   On global window object (`window.angular`)
-    -   As an as-yet-unloaded script tag with id 'uportal-Angular-script'.
--   MUST NOT use the ng-app directive or attempt to bootstrap outside their boundaries/chrome.
--   MUST be written as portably as possible and will be expected to work well
-    with any version of Angular 1.x, as the precise version of Angular is unknown
-    for most implementations.
--   MUST namespace their module names if bootstrapping, as recommended in
-    [JavaScript Best
+- DOIVENT OBLIGATOIREMENT vérifier l'existence d'Angular de deux manières.
+     - Sur l'objet `fenêtre` global (`window.angular`)
+     - En tant que balise script non encore chargée avec l'identifiant 'uportal-Angular-script'.
+- NE DOIVENT SURTOUT PAS utiliser la directive ng-app ou tenter de s'amorcer en dehors de leurs limites/cadre.
+- DOIVENT être écrites de façon la plus portable possible et devraient fonctionner correctement
+     avec n'importe quelle version d'Angular 1.x, puisque la version précise d'Angular sera inconnue
+     pour la plupart des implémentations.
+- DOIVENT avoir un namespace dans leurs noms de module en cas de "bootstrapping", comme recommandé dans [JavaScript Best
     Practices](https://wiki.jasig.org/display/UPM41/JavaScript+Best+Practices)
--   SHOULD use the `<!-- uportal-use-angular -->` "directive" as an indicator to
-    portals that do not $compile all portlet content.
+- DEVRAIENT utiliser la directive `<!-- uportal-use-angular -->`comme indicateur
+     au portail qui ne compile pas (avec $compile) tout le contenu de toutes les portlets.
 
-### Behavior for Angular checks
+### Comportement pour les contrôles Angular
 
--   If Angular is found, (e.g. `window.Angular === undefined`, or `typeof Angular
-    === 'undefined'`) portlets MUST check for the lazy-loader window.up.ngApp
-    and, if found, use the lazy-loader to register its components.
--   If Angular is found, and lazy-loader is not found, then the portlet SHOULD
-    assume that another portlet is using Angular, proceed to register its own
-    module, and MUST use Angular.bootstrap to attach itself to the portlet
-    fragment. For an example, see the bootstrap() function in the [code below](#boilerplate-portal-code).
--   If Angular is not found but an existing script element with id
-    'uportal-Angular-script' is found, the portlet MUST NOT create a new script
-    element but rather attach its event handler to the existing script tag.
--   If Angular is not found on global scope, portlet MUST create a script DOM
-    element with id 'uportal-Angular-script', and attach to said DOM element a
-    'load' event handler to bootstrap itself, or use `$(window).load` to do so.
+-   Si Angular est trouvé, (e.g. `window.Angular === undefined`, or `typeof Angular
+    === 'undefined'`) les portlets DOIVENT chercher le lazy-loader window.up.ngApp
+    et, s'il est trouvé, utiliser the lazy-loader pour enregistrer ses composants.
+-   Si Angular est trouvé, et le lazy-loader  n'est pas trouvé, alors le portlet DEVRAIT
+    assumer qu'un autre portlet utilise Angular, et procéder à enregistrer son propre
+    module, et DOIT utiliser Angular.bootstrap pour se joindre elle-même itself au fragment. Pour un exemple, voir la fonction bootstrap() dans le [code ci-dessous](#boilerplate-portal-code).
+-   Si Angular n'est pas trouvé mais un élément de script existant avec id
+    'uportal-Angular-script' est trouvé, le portlet NE DOIT PAS créer un nouvel élément script, mais attacher plutôt son gestionnaire d'événements à la balise de script existante.
+-   Si Angular n'est pas trouvé sur la portée globale, le portlet DOIT créer une balise
+    script DOM avec id 'uportal-Angular-script', et attacher au dit élément DOM un event handler
+    'load' pour s'amorcer, ou utiliser `$(window).load` pour le faire.
 
-### External Script Files
+### Fichiers de script externes
 
--   External script files:
-    -   MUST safely create a `window.up.ngBootstrap` object for registration of
-        bootstrap functions.
-    -   MUST register a `bootstrap` function that takes as a parameter the instance
-        id as a string.
-    -   MUST check for `up.ngApp` lazy loaders and use them to register if
-        available.
--   JSP files:
-    -   MUST wait until all scripts are loaded (e.g.
-        `$(window).load` , and then call the given bootstrap function, passing in
-        its instance id.
-    -   MUST still check for the existence of Angular, and add the script tag if
-        needed.
+-   Les Fichiers de script externes :
+    -   DOIVENT créer en toute sécurité un objet `window.up.ngBootstrap` pour enregistrer leur fonctions d'amorçage.
+    -   DOIVENT comporter une fonction `bootstrap` qui prendra en paramètre une instance d'id comme une chaîne `string`.
+    -   DOIVENT vérifier l'existence des lazy loaders `up.ngApp`  et les utiliser pour s'enregistrer si ils sont disponibles.
+    
+-   Les fichiers JSP :
+    -   DOIVENT attendre que tous les scripts soient chargés (e.g.
+        `$(window).load` , et alors après seulement appeler ladite function d'amorçage en lui passant son instance d'id.
+    -   DOIVENT toujours vérifier l'existence d'Angular, et ajouter la balise de script si           nécessaire.
 
 
 ### Boilerplate Portal Code
 
--   [Also available](https://github.com/andrewstuart/generator-ng-portlet) as a
-    [yeoman](http://yeoman.io) generator for convenience.
+-   [Aussi disponible](https://github.com/andrewstuart/generator-ng-portlet) comme générateur
+    [yeoman](http://yeoman.io) pour plus de commodité.
 
 
-#### Inline script
+#### Script Inline
 
 ```jsp
 <%@ page contentType="text/html" isELIgnored="false" %>
@@ -185,7 +176,7 @@ $controllerProvider, $provide) {
 </div>
 ```
 
-### External scripts
+### Scripts externes
 
 ```jsp
 <%@ page contentType="text/html" isELIgnored="false" %>
@@ -275,8 +266,6 @@ $controllerProvider, $provide) {
 })(window, up.underscore);
 ```
 
-## Administrators
+## Administrateurs
 
--   Administrators SHOULD be warned that any portlets they add to their portal
-    should be checked in a safe environment to ensure functionality and
-    compatibility
+-   Les administrateurs DEVRAIENT être avertis que toutes les portlets qu'ils ajoutent à leur portail devraient être vérifiées dans un environnement sûr pour s'assurer de leur fonctionnalité et leur compatibilité
