@@ -1,8 +1,5 @@
 language: java
-sudo: false
-
 matrix:
-  fast_finish: true
   include:
     - os: linux
       dist: trusty
