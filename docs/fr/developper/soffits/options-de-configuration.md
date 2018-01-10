@@ -4,7 +4,6 @@
 
 La mise en cache d'une Soffit est possible _via_ le header HTTP standard
 `Cache-Control`.  Vous devez définir `Cache-Control` comme une entête de réponse HTTP
-pour profiter de cette fonctionnalité.
 
 ### Exemple
 

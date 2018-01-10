@@ -96,11 +96,10 @@ $controllerProvider, $provide) {
 -   Les fichiers JSP :
     -   DOIVENT attendre que tous les scripts soient chargés (e.g.
         `$(window).load` , et alors après seulement appeler ladite function d'amorçage en lui passant son instance d'id.
-    -   DOIVENT toujours vérifier l'existence d'Angular, et ajouter la balise de script si           nécessaire.
+    -   DOIVENT toujours vérifier l'existence d'Angular, et ajouter la balise de script si nécessaire.
 
 
 ### Boilerplate Portal Code
-
 -   [Aussi disponible](https://github.com/andrewstuart/generator-ng-portlet) comme générateur
     [yeoman](http://yeoman.io) pour plus de commodité.
 

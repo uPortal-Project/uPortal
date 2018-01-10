@@ -29,3 +29,4 @@ Les produits de l'écosystème uPortal peuvent ou non fonctionner sur d'autres n
 Le Web évolue toujours grâce à de meilleures technologies. uPortal souhaite tirer le meilleur parti de ces technologies. Par conséquent, uPortal est conçu pour fonctionner et être supporté par les navigateurs modernes.
 
 uPortal fonctionne avec la version précédente des navigateurs de sorte que si un utilisateur utilise toujours la dernière version maintenue d'un navigateur celui-ci aura toujours une version compatible, même avec l'alternance des versions et des mises à jour utilisateur.
+

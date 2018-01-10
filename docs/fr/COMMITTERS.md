@@ -56,6 +56,7 @@ Nous faisons des adaptations locales nécessaires ou pragmatiques.
 + Les Committers forment le "PMC" aux fins des règles Apache.
 + Nous utilisons les listes que nous avons. Actuellement, la liste de référence est publique `uportal-dev @ apereo.org`. Si nous avions des listes plus différenciées, nous les utiliserions comme un projet Apache les utiliserait.
 
+
 ## L'échec de la gouvernance: le Comité de Pilotage d'uPortal
 
 Le Comité de Pilotage d'uPortal ou l'organe de gouvernance successeur peut, à tout moment et pour n'importe quelle raison, modifier arbitrairement la liste des Committers de ce projet.

@@ -10,6 +10,7 @@ ce repo, [uPortal-start](https://github.com/Jasig/uPortal-start) est recommandé
 ## Installation d'uPortal sur un Maven Local
 
 Pour faire des modifications dans le code source et vouloir les tester localement,
+
 faite un build d'uPortal et stockez les binary dans votre repo local Maven. Vous pouvez le faire depuis le dossier root d'uPortal :
 
 ```bash
