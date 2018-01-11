@@ -1,12 +1,12 @@
-﻿<link rel="stylesheet" href="css/reset_image_size.css">
+﻿<link rel="stylesheet" href="../css/reset_image_size.css">
 
 # Documentation uPortal
 
-**NOTE :** Cette partie est en construction. Son intension est de servir de base
+**NOTE :** Cette partie est en construction. Son intention est de servir de base
 pour la documentation d'uPortal version 5.0 (sortie fin 2017) et supérieures.
-Les documentations pour les versions antérieures sont disponible dans
+Les documentations pour les versions antérieures sont disponibles dans
 [Confluence](https://wiki.jasig.org).  Référez vous à *Documentation des précédentes versions* \[en\]
-ci-aprsès.
+ci-après.
 
 <table border="0">
   <tr>
@@ -186,7 +186,7 @@ ci-aprsès.
 
 ## Sections
 
-* [Construire / Déployer uPortal](monter-et-deployer-uportal.md)
+* [Build / Déployer uPortal](monter-et-deployer-uportal.md)
 * [Implémenter uPortal](implementer/README.md)
 * [Administration Système d'uPortal](sysadmin/README.md)
 * [Guide du développeur](developper/README.md)

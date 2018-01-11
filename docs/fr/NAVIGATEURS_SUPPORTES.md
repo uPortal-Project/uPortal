@@ -2,7 +2,7 @@
 
 ## Politique
 
-uPortal prend en charge **la dernière version grand public **et** une version précédente **de ces principaux navigateurs** :
+uPortal prend en charge **la dernière version grand public** et **une version précédente** de ces principaux navigateurs :
 
 +   Chrome (sur Android, MacOS, Windows) (avec support pour TalkBack)
 +   Firefox (sur MacOS et sur Windows)

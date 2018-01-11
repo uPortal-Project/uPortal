@@ -31,7 +31,7 @@ Les Committers sont les intendants du projet.
 
 L'engagement est un état d'esprit. Les Committers sont des Committers parce que les autres Committers les reconnaissent comme Committers et parce qu'ils se reconnaissent comme (et agissent) comme des Committers.
 
-Cet engagement n'est * pas * un accès pour écrire des modifications. Les Committers ont certes le droit d'accès en écriture et ainsi que d'autres privilèges d'infrastructure similaires, mais «un accès en écriture» n'est pas le but, c'est juste un outil. Vous n'êtes pas un Committers parce que vous avez un accès en écriture ; vous pourriez avoir un accès en écriture parce que vous êtes un Committers.
+Cet engagement n'est *pas* un accès pour écrire des modifications. Les Committers ont certes le droit d'accès en écriture et ainsi que d'autres privilèges d'infrastructure similaires, mais «un accès en écriture» n'est pas le but, c'est juste un outil. Vous n'êtes pas un Committers parce que vous avez un accès en écriture ; vous pourriez avoir un accès en écriture parce que vous êtes un Committers.
 
 ## Comment devenir un Committer?
 
@@ -68,7 +68,7 @@ Ceci est un projet open source sous la licence du logiciel open source Apache 2.
 
 Comme tous les projets open source, l'ultime sécurité est la liberté de contourner - fork -. N'importe qui peut adopter ce code source, le replanter ailleurs et recommencer un projet vivant, animé autour de celui-ci.
 
-Tout le monde peut le faire. Mais ils ne gagnerait probablement pas à le faire. Il est préférable de s'engager ici à la place.
+Tout le monde peut le faire. Mais il ne gagnerait probablement pas à le faire. Il est préférable de s'engager ici à la place.
 
 ## Références
 

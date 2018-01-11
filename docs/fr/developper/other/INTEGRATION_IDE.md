@@ -5,30 +5,30 @@ L'utilisation de ces scripts supprime le besoin de faire un import et une config
 
 ## Intellij
 
-1. Ouvrez un terminal
+1. Ouvrir un terminal
 2. `cd` jusqu'au dossier uPortal
-3. Lancez
+3. Lancer
 ```sh
 ./gradlew idea
 ```
-4. Ouvrez intellij
-5. Allez sur la page d'accueil
-6. Selectionnez Ouvrir
-![open in intellij](../../images/intellij_open.png)
-7. Naviguez vers le dossier uPortal
-8. Ouvrez le
+4. Ouvrir intellij
+5. Aller sur la page d'accueil
+6. Selectionner Ouvrir
+![open in intellij](../../../images/intellij_open.png)
+7. Naviguer vers le dossier uPortal
+8. Ouvrir le dossier
 
 ## Eclipse
 
-1. Ouvrez un terminal
+1. Ouvrir un terminal
 2. `cd` jusqu'au dossier uPortal
-3. Lancez
+3. Lancer
 ```sh
 ./gradlew eclipse
 ```
-4. Ouvrez eclipse
-6. Selectionnez file > import
-7. Recherchez  "Existing Projects into Workspace"
-![open in eclipse](../../images/eclipse_import.png)
-7. Naviguez vers le dossier uPortal
-8. Ouvrez le
+4. Ouvrir eclipse
+6. Selectionner file > import
+7. Rechercher  "Existing Projects into Workspace"
+![open in eclipse](../../../images/eclipse_import.png)
+7. Naviguer vers le dossier uPortal
+8. Ouvrir le dossier

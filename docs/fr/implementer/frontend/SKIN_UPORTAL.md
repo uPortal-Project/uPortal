@@ -2,7 +2,7 @@
 
 ## Table des matières
 
-1.  [Créer une Skin](#creer-une-skin)
+1.  [Créer une Skin](#créer-une-skin)
 2.  [Configuration du Skin](#configuration-du-skin)
 3.  [Notes additionnelles](#notes-additionnelles)
     1.  [Dynamic Respondr Skin](#dynamic-respondr-skin)
@@ -26,8 +26,8 @@
     @import "wolverine/less/skin.less";
     ```
 
-6. Accédez au dossier *uportal-war/src/main/webapp/media/skins/respondr*
-7. Editez *skinList.xml* pour pointer les noms `<skin-name>` et `<skin-key>` vers le nouveau nom de skin. Par exemple.
+6. Accéder au dossier *uportal-war/src/main/webapp/media/skins/respondr*
+7. Éditer *skinList.xml* pour pointer les noms `<skin-name>` et `<skin-key>` vers le nouveau nom de skin. Par exemple.
 
     ``` xml
     <skin>
@@ -40,7 +40,7 @@
     ```
 
 8.  Accéder au dossier *uportal-war/src/main/data/default_entities/portlet-definition*
-9.  Editer *dynamic-respondr-skin.portlet-definition.xml* et ajouter une `<portal-preference>` avec un `<name>` de `PREFdynamicSkinName` et une `<value>` avec le nom de la Skin. Par exemple.
+9.  Éditer *dynamic-respondr-skin.portlet-definition.xml* et ajouter une `<portal-preference>` avec un `<name>` de `PREFdynamicSkinName` et une `<value>` avec le nom de la Skin. Par exemple.
 
     ``` xml
     <portlet-preference>
@@ -50,7 +50,7 @@
     ```
 
 10. Accéder au dossier *uportal-war/src/main/data/required_entities/stylesheet-descriptor*
-11. Editer *Respondr.stylesheet-descriptor.xml* et changer la `<default-value>` pour le nom de la Skin. Par exemple. 
+11. Éditer *Respondr.stylesheet-descriptor.xml* et changer la `<default-value>` pour le nom de la Skin. Par exemple. 
 
     ``` xml
     <stylesheet-parameter>
@@ -63,11 +63,11 @@
 
 12. Lancer `ant initdb` pour appliquer ces changements en base.
 13. Lancer `ant clean deploy-war` pour lancer un Build du portail avec la nouvelle Skin.
-14. **N'oubliez pas d'ajouter la Skin à Git!**
+14. **Ne pas oublier d'ajouter la Skin à Git!**
 
 ## Configuration du Skin
 
-uPortal utilise des [variables Less](http://lesscss.org/features/#variables-feature) pour gérer les changement globaux de Skin.
+uPortal utilise des [variables Less](http://lesscss.org/features/#variables-feature) pour gérer les changements globaux de Skin.
 Des Changements peuvent être fait pour surcharger les [variables Bootstrap](/uportal-war/src/main/webapp/media/skins/respondr/common/bootstrap/variables.less) ou les [variables uPortal](/uportal-war/src/main/webapp/media/skins/respondr/defaultSkin/less/variables.less), les changements devraient surtout être fait au niveau du fichier `variable.less`.
 
 ## Notes additionnelles
@@ -85,13 +85,13 @@ Les variables de `@color` 1-6 sont des valeurs personnalisables via la portlet d
 @color6
 ```
 
-![Dynamic Respondr Skin Portlet Page](images/dynamic-respondr-skin.png)
+![Dynamic Respondr Skin Portlet Page](../../../images/dynamic-respondr-skin.png)
 
 ### Effets de Page
 
 La couleur de fond et l'image de fond du portail peuvent recevoir des effets spéciaux.
 Modifier `@portal-page-body-background-image-filter` permet toutes les combinaisons possible de [filtres css](https://developer.mozilla.org/en-US/docs/Web/CSS/filter) d'être appliqué.
 
-![Effet sans background](../../../../images/background-filter-none.png)
+![Effet sans background](../../../images/background-filter-none.png)
 
-![Effet Sepia](../../../../images/background-filter-sepia.png)
+![Effet Sepia](../../../images/background-filter-sepia.png)

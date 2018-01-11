@@ -18,4 +18,8 @@ faite un build d'uPortal et stockez les binary dans votre repo local Maven. Vous
 
 ## Tâches Gradle
 
-Pour une liste exhaustive des tâches Gradle disponible, faîtes `./gradlew tasks` depuis le dossier root.
+Pour une liste exhaustive des tâches Gradle disponible, faire depuis le dossier root.
+
+```bash
+./gradlew tasks
+```

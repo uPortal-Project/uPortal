@@ -48,7 +48,7 @@ Sauvegarder `private.p8` dans un endroit connu.
 uPortal utilise une version plus ancienne pour son service intégré CAS. Pour utiliser cette fonctionnalité ClearPass, le filtre de validation doit être basculé de CAS Protocol 2 à 3. Ceci est simplement fait en éditant le nom de classe du filtre dans web.xml:
 
 ```xml
-        <filter-class>org.jasig.cas.client.validation.Cas30ProxyReceivingTicketValidationFilter</filter-class>
+<filter-class>org.jasig.cas.client.validation.Cas30ProxyReceivingTicketValidationFilter</filter-class>
 ```
 
 ### Configuration de uPortal pour accepter les mots de passe cryptés
@@ -68,5 +68,6 @@ org.apereo.portal.security.cas.assertion.decryptCredentialToPassword=true
 org.apereo.portal.security.cas.assertion.decryptCredentialToPasswordPrivateKey=/etc/cas/private.p8
 ```
 
-:attention : **Attention: Impossible d'utiliser localhost ni HTTP!**
- :attention :CAS requiert que le trafic passe par une connexion **HTTPS** cryptée. En outre, un nom d'hôte autre que *localhost* est requis.
+_Attention_ : **Attention: Impossible d'utiliser localhost ni HTTP!**
+
+_Attention_ : CAS requiert que le trafic passe par une connexion **HTTPS** cryptée. En outre, un nom d'hôte autre que *localhost* est requis.
