@@ -33,7 +33,7 @@ permet des requêtes d'origines croisées.
    </dd>
    <dt><code>cors.allowed.headers</code></dt>
    <dd>
-      <p>Une liste d'entêtes de requête séparées par des virgules <code> , </code> qui peuvent être utilisées quand
+      <p>Une liste d'en-têtes de requête séparées par des virgules <code> , </code> qui peuvent être utilisées quand
          on fait effectivement une requête. Ces en-têtes seront également retournés dans le cadre
          de l'en-tête <code> Access-Control-Allow-Headers </code> dans le pré-envoi de la
          réponse. Par exemple: <code>Origin,Accept</code>. <strong> Valeurs par défaut: </strong>
@@ -53,7 +53,7 @@ permet des requêtes d'origines croisées.
       <p>La quantité de secondes, qu'un navigateur est autorisé à mettre en cache le résultat de la 
          requête. Cela sera inclus dans l'en-tête 
          <code> Access-Control-Max-Age </code> dans le pré-envoi de la réponse. 
-         Une valeur négative empêchera le filtre CORS d'ajouter cette entête de réponse 
+         Une valeur négative empêchera le filtre CORS d'ajouter cette en-tête de réponse 
          dans le pré-envoi de la réponse. <strong> Par défaut :</strong> 
          <code> 1800 </code></p>
    </dd>

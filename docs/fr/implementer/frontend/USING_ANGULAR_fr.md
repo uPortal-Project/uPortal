@@ -10,12 +10,12 @@ interprété comme décrit dans RFC 2119.
 
 AngularJS est devenu un framework très populaire pour le développement côté client. En raison de la façon dont Angular interdit le "bootstrapping" imbriqué de
 modules, un soin particulier doit obligatoirement être requis pour s'assurer que plusieurs  programmes Angular ne rentrent 
-pas de conflit, ce qui dégraderait l'usabilité, indépendamment de la façon dont la skin ou
+pas en conflit, ce qui dégraderait l'usage, indépendamment de la façon dont la skin ou
 les fragments de page sont combinés.
 
 Ce document présente une stratégie dans laquelle uPortal et/ou des portlets peuvent utiliser Angular et coexister sans conflit.
 
-Pratiquement cela signifie que:
+Concrètement cela signifie que:
 
 - Angular peut être utilisé dans les Skins d'uPortal
 - Les portlets Angular peuvent être utilisées, même à plusieurs sur la même page sans conflit
@@ -23,16 +23,13 @@ Pratiquement cela signifie que:
 
 ## Skins/Portail
 
--   on DOIT activer les portlets Angular en effectuant l'une des opérations suivantes:
+- On DOIT activer les portlets Angular en effectuant l'une des opérations suivantes:
     - Vérifier dans le contenu de la portlet, le commentaire de la "directive" 
     `<!-- uportal-use-angular -->`, et s'il est trouvé, utilisez le service de $compile sur les noeuds DOM.
     - Utilisez le service `$compile` pour compiler les nœuds DOM de toutes les portlets chargées.
-    - Cela a l'avantage supplémentaire de permettre à un portail d'appliquer des directives
-      à des contenus de portlet standard existante si vous le souhaitez.
+    - En supplément cela à l'avantage de permettre au portail d'appliquer des directives à des contenus standard de portlets existants si vous le souhaitez.
     
--   on DOIT Obligatoirement créer une directive globale window.up.ngApp qui va exposer les fonctions Angular `$controllerProvider.register` (avec un nom de contrôleur),
-    `$provide.service`, `$provide.factory`, `$provide.value`, et
-    `$compileProvider.directive`. Voir le code directement ci-dessous en exemple.
+- On DOIT Obligatoirement créer une directive globale window.up.ngApp qui va exposer les fonctions Angular `$controllerProvider.register` (avec un nom de contrôleur), `$provide.service`, `$provide.factory`, `$provide.value`, et `$compileProvider.directive`. Voir le code directement ci-dessous en exemple.
 
 ```javascript
 angular.module('foo').config(function getLazyLoaders($compileProvider,
@@ -61,30 +58,20 @@ $controllerProvider, $provide) {
 ## Les Portlets
 
 - DOIVENT OBLIGATOIREMENT vérifier l'existence d'Angular de deux manières.
-     - Sur l'objet `fenêtre` global (`window.angular`)
-     - En tant que balise script non encore chargée avec l'identifiant 'uportal-Angular-script'.
+    - Sur l'objet `fenêtre` global (`window.angular`)
+    - En tant que balise script non encore chargée avec l'identifiant 'uportal-Angular-script'.
 - NE DOIVENT SURTOUT PAS utiliser la directive ng-app ou tenter de s'amorcer en dehors de leurs limites/cadre.
-- DOIVENT être écrites de façon la plus portable possible et devraient fonctionner correctement
-     avec n'importe quelle version d'Angular 1.x, puisque la version précise d'Angular sera inconnue
-     pour la plupart des implémentations.
+- DOIVENT être écrites de façon la plus portable possible et devraient fonctionner correctement avec n'importe quelle version d'Angular 1.x, puisque la version précise d'Angular sera inconnue pour la plupart des implémentations.
 - DOIVENT avoir un namespace dans leurs noms de module en cas de "bootstrapping", comme recommandé dans [JavaScript Best
     Practices](https://wiki.jasig.org/display/UPM41/JavaScript+Best+Practices)
-- DEVRAIENT utiliser la directive `<!-- uportal-use-angular -->`comme indicateur
-     au portail qui ne compile pas (avec $compile) tout le contenu de toutes les portlets.
+- DEVRAIENT utiliser la directive `<!-- uportal-use-angular -->`comme indicateur au portail de ne pas compiler (avec $compile) tout le contenu de toutes les portlets.
 
 ### Comportement pour les contrôles Angular
 
--   Si Angular est trouvé, (e.g. `window.Angular === undefined`, or `typeof Angular
-    === 'undefined'`) les portlets DOIVENT chercher le lazy-loader window.up.ngApp
-    et, s'il est trouvé, utiliser the lazy-loader pour enregistrer ses composants.
--   Si Angular est trouvé, et le lazy-loader  n'est pas trouvé, alors le portlet DEVRAIT
-    assumer qu'un autre portlet utilise Angular, et procéder à enregistrer son propre
-    module, et DOIT utiliser Angular.bootstrap pour se joindre elle-même itself au fragment. Pour un exemple, voir la fonction bootstrap() dans le [code ci-dessous](#boilerplate-portal-code).
--   Si Angular n'est pas trouvé mais un élément de script existant avec id
-    'uportal-Angular-script' est trouvé, le portlet NE DOIT PAS créer un nouvel élément script, mais attacher plutôt son gestionnaire d'événements à la balise de script existante.
--   Si Angular n'est pas trouvé sur la portée globale, le portlet DOIT créer une balise
-    script DOM avec id 'uportal-Angular-script', et attacher au dit élément DOM un event handler
-    'load' pour s'amorcer, ou utiliser `$(window).load` pour le faire.
+- Si Angular est trouvé, (e.g. `window.Angular === undefined`, or `typeof Angular === 'undefined'`) les portlets DOIVENT chercher le lazy-loader window.up.ngApp et, s'il est trouvé, utiliser the lazy-loader pour enregistrer ses composants.
+- Si Angular est trouvé, et le lazy-loader  n'est pas trouvé, alors le portlet DEVRAIT assumer qu'un autre portlet utilise Angular, et procéder à enregistrer son propre  module, et DOIT utiliser Angular.bootstrap pour se joindre elle-même itself au fragment. Pour un exemple, voir la fonction bootstrap() dans le [code ci-dessous](#boilerplate-portal-code).
+- Si Angular n'est pas trouvé mais un élément de script existant avec id 'uportal-Angular-script' est trouvé, le portlet NE DOIT PAS créer un nouvel élément script, mais attacher plutôt son gestionnaire d'événements à la balise de script existante.
+- Si Angular n'est pas trouvé sur la portée globale, le portlet DOIT créer une balise script DOM avec id 'uportal-Angular-script', et attacher au dit élément DOM un event handler 'load' pour s'amorcer, ou utiliser `$(window).load` pour le faire.
 
 ### Fichiers de script externes
 
@@ -95,9 +82,8 @@ $controllerProvider, $provide) {
     
 -   Les fichiers JSP :
     -   DOIVENT attendre que tous les scripts soient chargés (e.g.
-        `$(window).load` , et alors après seulement appeler ladite function d'amorçage en lui passant son instance d'id.
-    -   DOIVENT toujours vérifier l'existence d'Angular, et ajouter la balise de script si           nécessaire.
-
+        `$(window).load` , et alors après seulement appeler la dite function d'amorçage en lui passant son instance d'id.
+    -   DOIVENT toujours vérifier l'existence d'Angular, et ajouter la balise de script si nécessaire.
 
 ### Boilerplate Portal Code
 

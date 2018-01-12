@@ -3,7 +3,7 @@
 ## Table des matières
 
 1. [Introduction](#introduction)
-2. [Pré-Requis](#pre-requis)
+2. [Pré-Requis](#pré-requis)
 3. [Configurer un LTM](#configurer-un-ltm)
 4. [Configurer le GTM](#configurer-le-gtm)
 5. [Configuration des connecteurs dans Tomcat](#configuration-des-connecteurs-dans-tomcat)
@@ -48,7 +48,7 @@ Les fichiers de clé et de certificat sont les mêmes que ceux attendus par Apac
 
 1. Naviguer à System > File Management > SSL Certificate List > Import...
 2. Importer Type: Key
-3. Key Name: utilisez URL (par exemple : my.ucmerced.edu)
+3. Key Name: utiliser URL (par exemple : my.ucmerced.edu)
 4. Cliquer sur Choose File
 5. Rechercher le fichier de Clef
 6. Cliquer sur Import
@@ -83,10 +83,10 @@ un LTM et chaque data center. Le pool comprendrait alors les serveurs uPortal da
     1. Configuration: Advanced
     2. Name: qqchose reférençant le service et "pool" (i.e. prod_portal_pool)
     3. Description: des détails si vous le souhaitez
-    4. Health Monitors: selectionnez le monitor créer auparavant
+    4. Health Monitors: selectionner le monitor créer auparavant
     5. Action On Service Down: Reject
     6. Load Balancing Method: Predictive (member), ou Dynamic Ratio (member)
-        - Lisez l'Aide pour faire une meilleur choix initial, puis testez.
+        - Lire l'Aide pour faire une meilleur choix initial, puis tester.
     7. New Members: ajouter nodes = IPs + ports des serveurs uPortal
     
 ### Créer le profil SSL
@@ -98,7 +98,7 @@ Le profil SSL connecte la clé SSL et le certificat avec le(s) pool(s) uPortal.
 3. Entrer les valeurs suivantes :
     1. Name: un nom approprié (par exemple : portal_clientssl)
     2. Parent Profile: clientssl
-    3. Selectionnez 'Advanced' depuis le menu
+    3. Selectionner 'Advanced' depuis le menu
     4. Certificate: vérifier et changer pour le profil SSL créé auparavant
     5. Key: vérifier et changer pour le profil SSL créé auparavant
     6. Chain: vérifier et changer pour une intermédiaire si cela est requis par votre certificat
@@ -128,10 +128,10 @@ Cette étape achemine le trafic entrant sur l'adresse IP virtuelle pour uPortal 
     2. Destination: Virtual IP pour cette LTM (voir pré-requis)
     3. Service Port: HTTPS (443)
     4. HTTP Profile: http
-    5. SSL Profile (Client): sélectionnez le profil SSL créé auparavant
+    5. SSL Profile (Client): sélectionner le profil SSL créé auparavant
     6. VLAN and Tunnels: external_vip_vlan
     7. SNAT Pool: Auto Map
-    8. Default Pool: sélectionnez le pool créé auparavant
+    8. Default Pool: sélectionner le pool créé auparavant
     9. Default Persistence Profile: cookie
 
 ## Configurer le GTM
@@ -161,7 +161,7 @@ Cette étape suppose que le DNS est correctement configuré à la fois sur le DN
 2. Cliquer sur Create ...
 3. Entrer les valeurs suivantes :
     1. Name: CNAME (DNS) de l'enregistrement A géré par le F5
-    2. Pool: sélectionnez le pool créer auparavant
+    2. Pool: sélectionner le pool créer auparavant
 
 ## Configuration des connecteurs dans Tomcat
 

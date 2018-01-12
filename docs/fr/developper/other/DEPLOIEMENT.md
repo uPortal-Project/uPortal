@@ -2,7 +2,7 @@
 
 ## Installer
 
-Ajoutez dans `$HOME/.gradle/gradle.properties` vos informations d'identification pour Sonatype OSS 
+Ajouter dans `$HOME/.gradle/gradle.properties` vos informations d'identification pour Sonatype OSS 
 Repository Hosting et vos informations de configuration pour la signature des artefacts avec 
 GNU Privacy Guard (GnuPG).
 ([détails](https://docs.gradle.org/current/userguide/signing_plugin.html#sec:signatory_credentials)).
@@ -18,7 +18,7 @@ signing.secretKeyRingFile=/Users/me/.gnupg/secring.gpg
 
 ## Lancer une release
 
-Lancez la commande suivante :
+Lancer la commande suivante :
 
 ```sh
 ./gradlew clean release --no-parallel
