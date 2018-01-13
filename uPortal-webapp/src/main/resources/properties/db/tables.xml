@@ -424,6 +424,27 @@
     <not-null>ENTITY_KEY</not-null>
   </table>
 
+  <!-- Used by the the JGroups JDBC_Ping component;  see http://www.fafonso.com/jgroups/unicast/postgresql/jdbc/ping/cluster/2016/08/07/jgroups-with-postgresql.html. -->
+  <table sinceMajor="5" sinceMinor="0">
+    <name>JGROUPSPING</name>
+    <desc>Each row represents a web server or CLI node participating in the cluster for invalidation caching.</desc>
+    <columns>
+      <column> <name>own_addr</name>       <type>VARCHAR</type>     <param>200</param>
+        <desc>Idintifies the node individually within the cluster</desc>
+      </column>
+      <column> <name>cluster_name</name>       <type>VARCHAR</type>     <param>200</param>
+        <desc>The JDBC_Ping component supports multiple clusters, though uPortal uses only one</desc>
+      </column>
+      <column> <name>ping_data</name>       <type>VARBINARY</type>     <param>5000</param>
+        <desc>The JDBC_Ping component supports multiple clusters, though uPortal uses only one</desc>
+      </column>
+    </columns>
+    <primary-key>own_addr</primary-key>
+    <primary-key>cluster_name</primary-key>
+    <not-null>own_addr</not-null>
+    <not-null>cluster_name</not-null>
+  </table>
+
 </tables>
 
 
