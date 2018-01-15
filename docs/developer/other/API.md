@@ -14,4 +14,4 @@ org.apereo.portal.rest.swagger.SwaggerConfiguration.enabled=true
 
 After restarting the Tomcat container, you can access the Swagger UI at `/uPortal/api/swagger-ui.html`.
 
-![Swagger API documentation](../../images/swager.png)
+![Swagger API documentation](../../images/swagger.png)
