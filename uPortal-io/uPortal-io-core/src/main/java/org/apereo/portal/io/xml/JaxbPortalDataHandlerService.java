@@ -16,11 +16,11 @@ package org.apereo.portal.io.xml;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.io.Files;
-import com.google.common.io.InputSupplier;
 import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -485,19 +485,11 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
             ArchiveEntry archiveEntry;
             while ((archiveEntry = resourceStream.getNextEntry()) != null) {
                 final File entryFile = new File(tempDir, archiveEntry.getName());
-                if (archiveEntry.isDirectory()) {
-                    entryFile.mkdirs();
-                } else {
+                if (!archiveEntry.isDirectory()) {
                     entryFile.getParentFile().mkdirs();
-
-                    Files.copy(
-                            new InputSupplier<InputStream>() {
-                                @Override
-                                public InputStream getInput() throws IOException {
-                                    return new CloseShieldInputStream(resourceStream);
-                                }
-                            },
-                            entryFile);
+                    IOUtils.copy(
+                            new CloseShieldInputStream(resourceStream),
+                            new FileOutputStream(entryFile));
                 }
             }
 
