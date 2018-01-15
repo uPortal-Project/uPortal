@@ -1,0 +1,83 @@
+/*
+ * creates a list of percentages for generating @number of evenly sized columns
+ * includes selectors to allow targeting: xs, sm, md, lg, and xl screensizes.
+ * Screensizes are inherited from Bootstrap.
+ */
+.fn-even-columns(@number-of-columns) when (@number-of-columns > 0) {
+  .fn-even-columns((@number-of-columns - 1)); // recursive iterator
+
+  .fn-set-width-column-for-size(@number-of-columns, xs);
+  .fn-set-width-column-for-size(@number-of-columns, sm);
+  .fn-set-width-column-for-size(@number-of-columns, md);
+  .fn-set-width-column-for-size(@number-of-columns, lg);
+}
+
+/*
+ * creates an percentage width for screens of a given screensize
+ *
+ * E.G.
+ *  .fn-set-width-column-for-size(2, xs);
+ *  // creates a `.up-col-xs-2 .up-portlet` selector
+ *  // that applys 50% width, for bootstrap xs and larger screen sizes
+ */
+.fn-set-width-column-for-size(@number-of-columns; @screen-size) {
+  @interpolate-media-query: "screen-@{screen-size}-min";
+
+  &.up-col-@{screen-size}-@{number-of-columns} {
+    .up-portlet-wrapper,
+    .fl-reorderer-dropMarker { // required for drag and drop styling to work
+      @media (min-width: @@interpolate-media-query) {
+        width: percentage(1 / @number-of-columns);
+      }
+    }
+  }
+}
+
+.up-grid {
+  /*
+   * Leverage css flex to make the height of all elements in the row match.
+   */
+  &.up-matching-height {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+
+    /*
+     * A grid layout which will always provide an absolute and constant width
+     * for portlet size, while allowing the number of columns presented to
+     * dynamically vary.
+     *
+     * E.G.
+     * <div class="up-grid up-matching-height up-constant-width-variable-columns">
+     *   <section class="up-portlet">...</section>
+     * </div>
+     */
+    &.up-constant-width-variable-columns .up-portlet {
+      width: @up-flex-constant-width;
+      max-width: 100%;
+    }
+
+    /*
+     * A grid layout which will always have a constant max number of portlets in
+     * a row.
+     *
+     * E.G.
+     * <div class="up-grid up-matching-height up-constant-columns up-col-xs-2 up-col-sm-3 up-col-md-4 up-col-lg-5">
+     *   <section class="up-portlet">...</section>
+     * </div>
+     */
+    &.up-constant-columns {
+      .fn-even-columns(6);
+
+      .up-portlet-wrapper-inner {
+        margin: 10px;
+        height: 100%;
+
+        .up-portlet-content-wrapper {
+          // total height of wrapper inner - titlebar height
+          height: calc(~"100% - 34px");
+        }
+      }
+    }
+  }
+}

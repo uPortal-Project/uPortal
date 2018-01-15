@@ -376,8 +376,8 @@ public final class GroupService implements IGroupConstants {
         return new CompositeServiceIdentifier(serviceName).getServiceName();
     }
 
-    public static EntityIdentifier[] searchForEntities(String query, int method, Class<?> type)
-            throws GroupsException {
+    public static EntityIdentifier[] searchForEntities(
+            String query, SearchMethod method, Class<?> type) throws GroupsException {
         LOGGER.trace(
                 "Invoking searchForEntities for query='{}', method='{}', type='{}'",
                 query,
@@ -387,7 +387,8 @@ public final class GroupService implements IGroupConstants {
     }
 
     public static EntityIdentifier[] searchForEntities(
-            String query, int method, Class<?> type, IEntityGroup ancestor) throws GroupsException {
+            String query, SearchMethod method, Class<?> type, IEntityGroup ancestor)
+            throws GroupsException {
         LOGGER.trace(
                 "Invoking searchForEntities for query='{}', method='{}', type='{}', ancestor='{}'",
                 query,
@@ -397,8 +398,8 @@ public final class GroupService implements IGroupConstants {
         return instance().compositeGroupService.searchForEntities(query, method, type, ancestor);
     }
 
-    public static EntityIdentifier[] searchForGroups(String query, int method, Class<?> leaftype)
-            throws GroupsException {
+    public static EntityIdentifier[] searchForGroups(
+            String query, SearchMethod method, Class<?> leaftype) throws GroupsException {
         LOGGER.trace(
                 "Invoking searchForGroups for query='{}', method='{}', leaftype='{}'",
                 query,
@@ -408,7 +409,7 @@ public final class GroupService implements IGroupConstants {
     }
 
     public static EntityIdentifier[] searchForGroups(
-            String query, int method, Class<?> leaftype, IEntityGroup ancestor)
+            String query, SearchMethod method, Class<?> leaftype, IEntityGroup ancestor)
             throws GroupsException {
         LOGGER.trace(
                 "Invoking searchForGroups for query='{}', method='{}', leaftype='{}', ancestor='{}'",

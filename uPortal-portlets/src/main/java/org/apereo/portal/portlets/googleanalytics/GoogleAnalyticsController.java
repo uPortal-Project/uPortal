@@ -124,7 +124,11 @@ public class GoogleAnalyticsController {
         }
     }
 
-    /** Check if the user is a member of the specified group name */
+    /**
+     * Check if the user is a member of the specified group name
+     *
+     * <p>Internal search, thus case sensitive.
+     */
     private boolean isMember(IGroupMember groupMember, String groupName) {
         try {
             IEntityGroup group = GroupService.findGroup(groupName);
@@ -133,7 +137,8 @@ public class GoogleAnalyticsController {
             }
 
             final EntityIdentifier[] results =
-                    GroupService.searchForGroups(groupName, GroupService.IS, IPerson.class);
+                    GroupService.searchForGroups(
+                            groupName, GroupService.SearchMethod.DISCRETE, IPerson.class);
             if (results == null || results.length == 0) {
                 this.logger.warn(
                         "No portal group found for '{}' no users will be placed in that group for analytics",

@@ -35,7 +35,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * REST Controller that leverages PagsAdministrationHelper and related form classes to provide a
@@ -86,6 +90,7 @@ public class PagsRESTController {
         return respondPagsGroupJson(res, pagsGroup, person, HttpServletResponse.SC_FOUND);
     }
 
+    // Parent group name is expected to be case sensitive.
     @RequestMapping(
         value = "/v4-3/pags/{parentGroupName}.json",
         produces = MediaType.APPLICATION_JSON_VALUE,
@@ -121,7 +126,8 @@ public class PagsRESTController {
 
         // Obtain a real reference to the parent group
         EntityIdentifier[] eids =
-                GroupService.searchForGroups(name, IGroupConstants.IS, IPerson.class);
+                GroupService.searchForGroups(
+                        name, IGroupConstants.SearchMethod.DISCRETE, IPerson.class);
         if (eids.length == 0) {
             res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return "{ 'error': 'Parent group does not exist: " + name + "' }";

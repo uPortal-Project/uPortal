@@ -48,6 +48,7 @@ public final class EntityService {
         return instance.get();
     }
 
+    // External search, thus case insensitive.
     public Set<Entity> search(String entityType, String searchTerm) {
         if (StringUtils.isBlank(entityType) && StringUtils.isBlank(searchTerm)) {
             return null;
@@ -62,14 +63,18 @@ public final class EntityService {
         if (entityEnum.isGroup()) {
             identifiers =
                     GroupService.searchForGroups(
-                            searchTerm, GroupService.CONTAINS, entityEnum.getClazz());
+                            searchTerm,
+                            GroupService.SearchMethod.CONTAINS_CI,
+                            entityEnum.getClazz());
             identifierType = IEntityGroup.class;
         }
         // otherwise use the getGroupMember method
         else {
             identifiers =
                     GroupService.searchForEntities(
-                            searchTerm, GroupService.CONTAINS, entityEnum.getClazz());
+                            searchTerm,
+                            GroupService.SearchMethod.CONTAINS_CI,
+                            entityEnum.getClazz());
             identifierType = entityEnum.getClazz();
         }
 

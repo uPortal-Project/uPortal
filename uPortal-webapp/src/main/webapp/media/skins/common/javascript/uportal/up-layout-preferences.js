@@ -22,14 +22,18 @@ var uportal = uportal || {};
 (function($, fluid){
 
     var layouts = [
-       { nameKey: "fullWidth", columns: [ 100 ] },
-       { nameKey: "narrowWide", columns: [ 40, 60 ] },
-       { nameKey: "even", columns: [ 50, 50 ] },
-       { nameKey: "wideNarrow", columns: [ 60, 40 ] },
-       { nameKey: "even", columns: [ 33, 34, 33 ] },
-       { nameKey: "narrowWideNarrow", columns: [ 25, 50, 25 ] },
-       { nameKey: "even", columns: [ 25, 25, 25, 25 ] },
-       { nameKey: "sixColumn", columns: [17, 17, 16, 16, 17, 17] }
+       { nameKey: 'fullWidth', columns: [ 100 ] },
+       { nameKey: 'narrowWide', columns: [ 40, 60 ] },
+       { nameKey: 'even', columns: [ 50, 50 ] },
+       { nameKey: 'wideNarrow', columns: [ 60, 40 ] },
+       { nameKey: 'even', columns: [ 33, 34, 33 ] },
+       { nameKey: 'narrowWideNarrow', columns: [ 25, 50, 25 ] },
+       { nameKey: 'even', columns: [ 25, 25, 25, 25 ] },
+       { nameKey: 'sixColumn', columns: [17, 17, 16, 16, 17, 17] },
+       { nameKey: 'flexTwo', columns: [102] },
+       { nameKey: 'flexThree', columns: [103] },
+       { nameKey: 'flexFour', columns: [104] },
+       { nameKey: 'flexSix', columns: [106] }
    ];
 
     /*
@@ -48,9 +52,10 @@ var uportal = uportal || {};
     };
 
     var typeMsg = { ERROR : "error",
-		WARN : "warn",
-		SUCCESS : "success"
-	};
+        WARN : "warn",
+		    SUCCESS : "success"
+    };
+
     /*
      * Diplay messages
      * msg : should be text
@@ -60,14 +65,14 @@ var uportal = uportal || {};
     var showMessage = function (msg, type, callback) {
         var messageDiv = $("#portalPageBodyMessage");
         if (msg && type) {
-		var delay = (type == typeMsg.ERROR) ? 5000 : 2000;
-		if (messageDiv.length != 0) {
-			messageDiv.html('<p>' + msg + '</p>');
-			messageDiv.removeClass().addClass(type).show().delay(delay).fadeOut(400, callback);
-		} else return callback;
-	} else {
-		return callback;
-	}
+		        var delay = (type == typeMsg.ERROR) ? 5000 : 2000;
+		        if (messageDiv.length != 0) {
+			          messageDiv.html('<p>' + msg + '</p>');
+			          messageDiv.removeClass().addClass(type).show().delay(delay).fadeOut(400, callback);
+		        } else return callback;
+	      } else {
+		        return callback;
+	      }
     };
 
 
@@ -206,7 +211,8 @@ var uportal = uportal || {};
                 // remove any deleted columns from the page
                 $(deletes).each(function(idx, del){
                     $(this).find("[id^=portlet_]").each(function(idx, portlet){
-                        $(portlet).appendTo(acceptor);
+                        var innerColumn = acceptor.find('.portal-page-column-inner');
+                        $(portlet).appendTo(innerColumn);
                     });
                     $(this).remove();
                 });
@@ -227,11 +233,15 @@ var uportal = uportal || {};
                         }
                     });
                     var columnWidthClass = that.options.columnWidthClassFunction(newcolumns[i]);
-                    $(column).addClass(columnWidthClass);
+                    columnWidthClass && $(column).addClass(columnWidthClass);
+
+                    // div.inner-column CSS classes
+                    var innerColumn = $(column).find('.portal-page-column-inner');
+                    innerColumn.attr('class', 'portal-page-column-inner'); // Reset to minimum
+                    var innerColumnClasses = that.options.innerColumnClassesFunction(newcolumns[i]);
+                    innerColumnClasses && innerColumn.addClass(innerColumnClasses);
 
                 });
-
-                $('#portalPageBodyColumns').attr("class", "columns-" + newcolumns.length);
 
                 that.components.gallery.refreshPaneLink();
 
@@ -579,9 +589,12 @@ var uportal = uportal || {};
         currentSkin: null,
         isFragmentMode: false,
         gallerySelector: '.up-gallery',  // Pass null/false to disable
-        columnWidthClassPattern: "fl-container-flex",
+        columnWidthClassPattern: "col-md-",
         columnWidthClassFunction: function(column) {
-            return "fl-container-flex" + column;
+            console.error('The columnWidthClassFunction option must be specified.');
+        },
+        innerColumnClassesFunction: function(column) {
+            console.error('The innerColumnClassesFunction option must be specified.');
         },
         messages: {
             persistenceError: "Error persisting layout change"

@@ -39,12 +39,14 @@ public class PortletDefinitionSearcher implements ITypedEntitySearcher {
         this.portletDefinitionRegistry = portletDefinitionRegistry;
     }
 
+    // Internal search, so shouldn't be called as case insensitive.
     @Override
-    public EntityIdentifier[] searchForEntities(String query, int method) throws GroupsException {
+    public EntityIdentifier[] searchForEntities(String query, SearchMethod method)
+            throws GroupsException {
         boolean allowPartial = true;
 
         switch (method) {
-            case IS:
+            case DISCRETE:
                 allowPartial = false;
                 break;
             case STARTS_WITH:

@@ -1,5 +1,7 @@
 # Accessibility in uPortal
 
+Additionally See [VPAT 2.0](VPAT-2.0.odt)
+
 <iframe src="https://www.w3.org/WAI/WCAG20/quickref/?levels=aaa&technologies=smil%2Cpdf%2Cflash%2Csl&hidesidebar=true" width="100%" height="1000"></iframe>
 
 | Name      | Platform       | Site                                                                               | Licensing   | Cost |

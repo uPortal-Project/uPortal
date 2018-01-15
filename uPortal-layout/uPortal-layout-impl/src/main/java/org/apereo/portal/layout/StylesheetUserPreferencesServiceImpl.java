@@ -937,7 +937,7 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
                                         LAYOUT_ATTRIBUTES_KEY,
                                         nodeId);
                         if (nodeAttributes == null) {
-                            nodeAttributes = new ConcurrentHashMap<String, String>();
+                            nodeAttributes = new ConcurrentHashMap<>();
                             this.putDataValue(
                                     request,
                                     stylesheetPreferencesKey,

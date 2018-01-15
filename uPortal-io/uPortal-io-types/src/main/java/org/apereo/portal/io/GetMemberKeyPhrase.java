@@ -68,6 +68,7 @@ public class GetMemberKeyPhrase implements Phrase {
         return getPhrase(e.getName(), e.getText());
     }
 
+    // Internal search, thus case sensitive.
     public static String getPhrase(String name, String memberValue) {
 
         String rslt = null;
@@ -91,7 +92,8 @@ public class GetMemberKeyPhrase implements Phrase {
             Class[] leafTypes = new Class[] {IPerson.class, IPortletDefinition.class};
             for (int i = 0; i < leafTypes.length && rslt == null; i++) {
                 EntityIdentifier[] eis =
-                        GroupService.searchForGroups(memberValue, IGroupConstants.IS, leafTypes[i]);
+                        GroupService.searchForGroups(
+                                memberValue, IGroupConstants.SearchMethod.DISCRETE, leafTypes[i]);
                 if (eis.length == 1) {
                     // Match!
                     IEntityGroup g = GroupService.findGroup(eis[0].getKey());

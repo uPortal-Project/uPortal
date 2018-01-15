@@ -63,7 +63,7 @@ public class CompositeEntityIdentifier extends EntityIdentifier implements IGrou
         try {
             sep = GroupServiceConfiguration.getConfiguration().getNodeSeparator();
         } catch (Exception ex) {
-            sep = IGroupConstants.NODE_SEPARATOR;
+            sep = IGroupConstants.DEFAULT_NODE_SEPARATOR;
         }
         separator = sep;
     }

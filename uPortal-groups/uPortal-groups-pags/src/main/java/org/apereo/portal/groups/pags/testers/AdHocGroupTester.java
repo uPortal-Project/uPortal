@@ -124,16 +124,18 @@ public final class AdHocGroupTester implements IPersonTester {
     }
 
     /**
-     * Find {@link IEntityGroup} from group name.
+     * Find {@link IEntityGroup} from group name (case sensitive).
      *
      * @param groupName name of group to search from {@code GroupService}
      * @return {@code IEntityGroup} with given name or null if no group with given name found
-     * @see org.apereo.portal.services.GroupService#searchForEntities(String, int, Class)
+     * @see org.apereo.portal.services.GroupService#searchForEntities(String,
+     *     org.apereo.portal.groups.IGroupConstants.SearchMethod, Class)
      * @see org.apereo.portal.services.GroupService#findGroup(String)
      */
     private static IEntityGroup findGroupByName(String groupName) {
         EntityIdentifier[] identifiers =
-                GroupService.searchForGroups(groupName, GroupService.IS, IPerson.class);
+                GroupService.searchForGroups(
+                        groupName, GroupService.SearchMethod.CONTAINS, IPerson.class);
         for (EntityIdentifier entityIdentifier : identifiers) {
             if (entityIdentifier.getType().equals(IEntityGroup.class)) {
                 return GroupService.findGroup(entityIdentifier.getKey());

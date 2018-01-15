@@ -22,6 +22,6 @@ public interface IEntitySearcher {
      * Find EntityIdentifiers for entities whose name matches the query string according to the
      * specified method and is of the specified type
      */
-    public EntityIdentifier[] searchForEntities(String query, int method, Class type)
-            throws GroupsException;
+    public EntityIdentifier[] searchForEntities(
+            String query, IGroupConstants.SearchMethod method, Class type) throws GroupsException;
 }

@@ -67,24 +67,30 @@ public interface ICompositeGroupService extends IComponentGroupService {
      * Find EntityIdentifiers for entities whose name matches the query string according to the
      * specified method and is of the specified type
      */
-    public EntityIdentifier[] searchForEntities(String query, int method, Class type)
-            throws GroupsException;
+    public EntityIdentifier[] searchForEntities(
+            String query, IGroupConstants.SearchMethod method, Class type) throws GroupsException;
     /**
      * Find EntityIdentifiers for entities whose name matches the query string according to the
      * specified method, is of the specified type and descends from the specified group
      */
     public EntityIdentifier[] searchForEntities(
-            String query, int method, Class type, IEntityGroup ancestor) throws GroupsException;
+            String query, IGroupConstants.SearchMethod method, Class type, IEntityGroup ancestor)
+            throws GroupsException;
     /**
      * Find EntityIdentifiers for groups whose name matches the query string according to the
      * specified method and matches the provided leaf type
      */
-    public EntityIdentifier[] searchForGroups(String query, int method, Class leaftype)
+    public EntityIdentifier[] searchForGroups(
+            String query, IGroupConstants.SearchMethod method, Class leaftype)
             throws GroupsException;
     /**
      * Find EntityIdentifiers for groups whose name matches the query string according to the
      * specified method, has the provided leaf type and descends from the specified group
      */
     public EntityIdentifier[] searchForGroups(
-            String query, int method, Class leaftype, IEntityGroup ancestor) throws GroupsException;
+            String query,
+            IGroupConstants.SearchMethod method,
+            Class leaftype,
+            IEntityGroup ancestor)
+            throws GroupsException;
 }

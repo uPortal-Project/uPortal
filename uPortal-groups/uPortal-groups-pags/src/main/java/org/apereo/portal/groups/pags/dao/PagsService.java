@@ -101,7 +101,7 @@ public final class PagsService {
         return rslt;
     }
 
-    /** Verifies permissions and that the group doesn't already exist */
+    /** Verifies permissions and that the group doesn't already exist (case insensitive) */
     public IPersonAttributesGroupDefinition createPagsDefinition(
             IPerson person, IEntityGroup parent, String groupName, String description) {
 
@@ -138,10 +138,13 @@ public final class PagsService {
 
         // VALIDATION STEP:  We don't have a group by that name already
         EntityIdentifier[] people =
-                GroupService.searchForGroups(groupName, IGroupConstants.IS, IPerson.class);
+                GroupService.searchForGroups(
+                        groupName, IGroupConstants.SearchMethod.DISCRETE_CI, IPerson.class);
         EntityIdentifier[] portlets =
                 GroupService.searchForGroups(
-                        groupName, IGroupConstants.IS, IPortletDefinition.class);
+                        groupName,
+                        IGroupConstants.SearchMethod.DISCRETE_CI,
+                        IPortletDefinition.class);
         if (people.length != 0 || portlets.length != 0) {
             throw new IllegalArgumentException("Specified groupName already in use:  " + groupName);
         }
