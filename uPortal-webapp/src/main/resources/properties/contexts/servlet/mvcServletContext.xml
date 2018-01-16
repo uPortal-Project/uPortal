@@ -96,8 +96,11 @@
     <context:component-scan base-package="org.apereo.portal.rest"/>
 
     <!--
-     | Supports Swagger API documentation and tooling
-     | Solution based on http://www.baeldung.com/swagger-2-documentation-for-spring-rest-api
+     | Supports Swagger API documentation and tooling;  Solution based on
+     | http://www.baeldung.com/swagger-2-documentation-for-spring-rest-api
+     |
+     | NOTE:  It would be a good idea to toggle Swagger support (including these endpoints) based on
+     | a Spring Profile, once we have a reasonably elegant way to manage profiles in uPortal-start.
      +-->
     <mvc:resources mapping="swagger-ui.html" location="classpath:/META-INF/resources/" />
     <mvc:resources mapping="/webjars/**" location="classpath:/META-INF/resources/webjars/" />
