@@ -62,10 +62,10 @@ dependencies {
     runtime "com.thoughtworks.xstream:xstream:${xstreamVersion}"
 
     /*
-     * The HSQL driver jar should always be included with 'vanilla' uPortal
-     * from Apereo;  aditional JDBC drivers may be added in the overlay process
+     * The HSQL driver jar should always be provided by uPortal-start;
+     * that way, it has complete control over the version in the deployment.
      */
-    runtime "org.hsqldb:hsqldb:${hsqldbVersion}"
+    providedRuntime "org.hsqldb:hsqldb:${hsqldbVersion}"
 
     webjars "org.webjars.npm:bootstrap:${bootstrapVersion}"
     webjars "org.webjars.npm:jstree:${jstreeVersion}"
