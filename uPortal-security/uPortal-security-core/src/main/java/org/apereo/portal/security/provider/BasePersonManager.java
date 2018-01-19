@@ -21,7 +21,6 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-
 import org.apereo.portal.IUserIdentityStore;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.IPersonManager;
@@ -55,10 +54,10 @@ public class BasePersonManager implements IPersonManager {
     }
 
     /**
-     * This is a basic implementation of <code>getPerson</code> that formerly appeared in
-     * <code>SimplePersonManager</code>.  For uPortal 5, it's better to avoid unnecessary bean
-     * tweaking on the part of deployers, so the various flavors of PersonManager were combined in a
-     * manner where the appropriate behavior triggers automatically (based on AuthN settings).
+     * This is a basic implementation of <code>getPerson</code> that formerly appeared in <code>
+     * SimplePersonManager</code>. For uPortal 5, it's better to avoid unnecessary bean tweaking on
+     * the part of deployers, so the various flavors of PersonManager were combined in a manner
+     * where the appropriate behavior triggers automatically (based on AuthN settings).
      *
      * @param request the servlet request object
      * @return the IPerson object for the incoming request
