@@ -17,37 +17,46 @@ package org.apereo.portal.security.provider;
 import java.util.Enumeration;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.ISecurityContext;
 import org.apereo.portal.security.PortalSecurityException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * When retrieving a new person, the value of the <code>REMOTEUSER</code> environment variable is
  * passed to the security context. If it is set then the server has authenticated the user and the
  * username may be used for login.
  */
-public class RemoteUserPersonManager extends AbstractPersonManager {
+public class RemoteUserPersonManager extends BasePersonManager {
 
-    private static final Log log = LogFactory.getLog(RemoteUserPersonManager.class);
+    @Autowired private RemoteUserSecurityContextFactory remoteUserSecurityContextFactory;
 
-    /** Description of the Field */
-    public static final String REMOTE_USER = "remote_user";
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     /**
      * Retrieve an IPerson object for the incoming request
      *
-     * @param request
+     * @param request The current HttpServletRequest
      * @return IPerson object for the incoming request
      * @exception PortalSecurityException Description of the Exception
      */
+    @Override
     public IPerson getPerson(HttpServletRequest request) throws PortalSecurityException {
+
+        /*
+         * This method overrides the implementation of getPerson() in BasePersonManager, but we only
+         * want the RemoteUser behavior here if we're using RemoteUser AuthN.
+         */
+        if (!remoteUserSecurityContextFactory.isEnabled()) {
+            return super.getPerson(request);
+        }
+
         // Return the person object if it exists in the user's session
         final HttpSession session = request.getSession(false);
         IPerson person = null;
         if (session != null) {
-
             person = (IPerson) session.getAttribute(PERSON_SESSION_KEY);
             if (person != null) {
                 return person;
@@ -72,7 +81,7 @@ public class RemoteUserPersonManager extends AbstractPersonManager {
             // If a RemoteUserSecurityContext does not already exist, we create one and populate the
             // REMOTE_USER field.
 
-            ISecurityContext context = null;
+            ISecurityContext context;
             Enumeration subContexts = null;
             boolean remoteUserSecurityContextExists = false;
 
@@ -101,7 +110,7 @@ public class RemoteUserPersonManager extends AbstractPersonManager {
             }
         } catch (Exception e) {
             // Log the exception
-            log.error("Exception creating person for request " + request, e);
+            logger.error("Exception creating person for request: {}", request, e);
         }
         if (session != null) {
             // Add this person object to the user's session
