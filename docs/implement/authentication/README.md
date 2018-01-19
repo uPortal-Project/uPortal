@@ -9,7 +9,7 @@ These strategies may also be mixed or combined in any way.
 
 - [Central Authentication Service (CAS)](cas.md)
 - Shibboleth (TBD)
-- `REMOTE_USER` (TBD)
+- [REMOTE_USER](REMOTE_USER.md)
 - LDAP (TBD)
 - Local (Database) (TBD)
 
