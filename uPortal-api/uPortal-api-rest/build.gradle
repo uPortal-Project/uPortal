@@ -9,6 +9,8 @@ dependencies {
     compileOnly "org.apache.portals.pluto:pluto-container-api:${plutoVersion}"
 
     compile "commons-beanutils:commons-beanutils:${commonsBeanutilsVersion}"
+    compile "io.springfox:springfox-swagger2:${springfoxSwaggerVersion}"
+    compile "io.springfox:springfox-swagger-ui:${springfoxSwaggerVersion}"
     compile "org.json:json:${orgJsonVersion}"
 
     compileOnly "${portletApiDependency}"

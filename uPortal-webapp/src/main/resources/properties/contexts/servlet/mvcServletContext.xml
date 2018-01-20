@@ -23,10 +23,22 @@
        xmlns="http://www.springframework.org/schema/beans"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:security="http://www.springframework.org/schema/security"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
        xsi:schemaLocation="
            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd
-           http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.2.xsd">
+           http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.2.xsd
+           http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd">
+
+    <!--
+     | Registers a RequestMappingHandlerMapping, a RequestMappingHandlerAdapter, and an
+     | ExceptionHandlerExceptionResolver (among others) in support of processing requests with
+     | annotated controller methods using annotations such as @RequestMapping, @ExceptionHandler,
+     | etc.
+     +-->
+    <mvc:annotation-driven />
+
+    <bean parent="primaryPropertyPlaceholderConfigurer" />
 
     <!-- Enable annotation-based Spring Security permission evaluation -->
     <security:global-method-security pre-post-annotations="enabled">
@@ -38,14 +50,6 @@
             <bean class="org.apereo.portal.spring.security.evaluator.PortalPermissionEvaluator"/>
         </property>
     </bean>
-
-	<!--
-	 | rest controllers require useDefaultSuffixPattern set to false
-	 -->
-	<bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping">
-  		<property name="useDefaultSuffixPattern" value="false"/>
-	</bean>
-    <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter"/>
 
     <!--
      | This bean is needed for the EntitiesRESTController to convert JsonEntityBean objects into
@@ -82,13 +86,23 @@
         </property>
     </bean>
 
-    <!-- even though context:component-scan is defined in applicationContext, we need an additional reference
-    for this context as it's unique to the DispatcherServlet -->
+    <!--
+     | Even though context:component-scan is defined in applicationContext, we need an additional
+     | reference for this context as it's unique to the DispatcherServlet
+     +-->
     <context:component-scan base-package="org.apereo.portal.layout.dlm.remoting"/>
     <context:component-scan base-package="org.apereo.portal.portlets.permissionsadmin"/>
     <context:component-scan base-package="org.apereo.portal.security.remoting"/>
     <context:component-scan base-package="org.apereo.portal.rest"/>
 
-    <bean parent="primaryPropertyPlaceholderConfigurer" />
+    <!--
+     | Supports Swagger API documentation and tooling;  Solution based on
+     | http://www.baeldung.com/swagger-2-documentation-for-spring-rest-api
+     |
+     | NOTE:  It would be a good idea to toggle Swagger support (including these endpoints) based on
+     | a Spring Profile, once we have a reasonably elegant way to manage profiles in uPortal-start.
+     +-->
+    <mvc:resources mapping="swagger-ui.html" location="classpath:/META-INF/resources/" />
+    <mvc:resources mapping="/webjars/**" location="classpath:/META-INF/resources/webjars/" />
 
 </beans>
