@@ -16,21 +16,27 @@ package org.apereo.portal.layout.dlm;
 
 import org.w3c.dom.Document;
 
-/** @since 2.5 */
-public class UserView implements IUserView {
+/**
+ * Strategy for content of a DLM fragment based on the fragment owner's persisted layout.  This is
+ * the original approach to DLM;  previous to 5.1, it was the exclusive strategy.
+ *
+ * @since 5.1
+ */
+public class OwnerLayoutUserView implements IUserView {
 
-    private final int userId;
+    private int userId;
     private Document layout = null;
     private int layoutId = 0;
     private int profileId = 1;
 
-    UserView(int fragmentOwnerUserId) {
-        this.userId = fragmentOwnerUserId;
-    }
-
     @Override
     public int getUserId() {
         return this.userId;
+    }
+
+    @Override
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
     @Override

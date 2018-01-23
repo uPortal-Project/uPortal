@@ -22,9 +22,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.regex.Pattern;
+
 import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.constructs.blocking.CacheEntryFactory;
 import net.sf.ehcache.constructs.blocking.SelfPopulatingCache;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apereo.portal.AuthorizationException;
@@ -49,6 +51,8 @@ import org.w3c.dom.NodeList;
 public class FragmentActivator {
     private static final String NEWLY_CREATED_ATTR = "newlyCreated";
     private static final Log LOG = LogFactory.getLog(FragmentActivator.class);
+
+    private static final Class<? extends IUserView> DEFAULT_USER_VIEW = OwnerLayoutUserView.class;
 
     private final LoadingCache<String, List<Locale>> fragmentOwnerLocales =
             CacheBuilder.newBuilder()
@@ -203,7 +207,18 @@ public class FragmentActivator {
         }
 
         IPerson owner = bindToOwner(fd);
-        IUserView view = new UserView(owner.getID());
+
+        IUserView view;
+        try {
+            Class<? extends IUserView> userViewImpl = StringUtils.isNotBlank(fd.getUserView())
+                ? (Class<? extends IUserView>) Class.forName(fd.getUserView())
+                : DEFAULT_USER_VIEW;
+            view = userViewImpl.newInstance();
+        } catch (Exception e) {
+            throw new RuntimeException("Invalid UserView:  " + fd.getUserView(), e);
+        }
+
+        view.setUserId(owner.getID());
         loadLayout(view, fd, owner, locale);
 
         // if owner just created we need to push the layout into

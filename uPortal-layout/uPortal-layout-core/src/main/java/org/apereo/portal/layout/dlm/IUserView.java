@@ -18,16 +18,20 @@ import org.w3c.dom.Document;
 
 /**
  * Represents a ready-to-use DLM fragment and supports pluggable strategies for layout content.  The
- * {@link UserView} class has existed since the dawn of DLM, but this interface is a recent
+ * UserView concept has existed since the dawn of DLM, but this interface is a recent
  * addition.  Originally DLM supported only one strategy for layout content:  the layout owner's
  * persisted layout.  Refactoring the <code>UserView</code> into an interface-based abstraction
  * opens the door to pluggable strategies, such as metadata matching.
+ *
+ * <p>Concrete implementations must provide a no-arg constructor.
  *
  * @since 5.1
  */
 public interface IUserView {
 
     int getUserId();
+
+    void setUserId(int userId);
 
     Document getLayout();
 

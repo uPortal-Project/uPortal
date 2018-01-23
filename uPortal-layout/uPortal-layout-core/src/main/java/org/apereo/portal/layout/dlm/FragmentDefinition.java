@@ -63,6 +63,14 @@ public class FragmentDefinition extends EvaluatorGroup {
     @Column(name = "PRECEDENCE")
     private double precedence = 0.0; // precedence of fragment
 
+    /**
+     * Name of the concrete {@link IUserView} implementation class.  Nullable
+     *
+     * @since 5.1
+     */
+    @Column(name = "USER_VIEW")
+    private String userView;
+
     @Column(name = "DESCRIPTION")
     private String description;
 
@@ -105,6 +113,7 @@ public class FragmentDefinition extends EvaluatorGroup {
 
         this.ownerID = loadAttribute("ownerID", atts, REQUIRED, e);
         this.defaultLayoutOwnerID = loadAttribute("defaultLayoutOwnerID", atts, NOT_REQUIRED, e);
+        this.userView = loadAttribute("userView", atts, NOT_REQUIRED, e);
         this.description = loadAttribute("description", atts, NOT_REQUIRED, e);
 
         String precedence = loadAttribute("precedence", atts, REQUIRED, e);
@@ -137,6 +146,16 @@ public class FragmentDefinition extends EvaluatorGroup {
 
     public double getPrecedence() {
         return this.precedence;
+    }
+
+    /**
+     * Name of the concrete {@link IUserView} implementation class, or <code>null</code> to use the
+     * default of {@link OwnerLayoutUserView}.
+     *
+     * @since 5.1
+     */
+    public String getUserView() {
+        return userView;
     }
 
     public String getDescription() {
