@@ -14,6 +14,7 @@
  */
 package org.apereo.portal.layout.dlm;
 
+import org.apereo.portal.security.IPerson;
 import org.w3c.dom.Document;
 
 /**
@@ -67,5 +68,14 @@ public class OwnerLayoutUserView implements IUserView {
     @Override
     public void setProfileId(int profileId) {
         this.profileId = profileId;
+    }
+
+    @Override
+    public Document getFragmentContentForUser(IPerson user) {
+        /*
+         * This concrete IUserView implementation represents the "classic" DLM strategy of defining
+         * fragment content based on the fragment owner's personal layout.
+         */
+        return getLayout();
     }
 }

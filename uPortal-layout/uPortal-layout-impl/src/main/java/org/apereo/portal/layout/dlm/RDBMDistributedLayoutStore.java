@@ -1290,7 +1290,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
                     this.fragmentUtils.getFragmentDefinitionsApplicableToPerson(person);
             final List<Document> applicableLayouts =
                     this.fragmentUtils.getFragmentDefinitionUserViewLayouts(
-                            applicableFragmentDefinitions, locale);
+                            applicableFragmentDefinitions, person, locale);
             final IntegrationResult integrationResult = new IntegrationResult();
             ILF = this.createCompositeILF(person, PLF, applicableLayouts, integrationResult);
             // push optimizations made during merge back into db.

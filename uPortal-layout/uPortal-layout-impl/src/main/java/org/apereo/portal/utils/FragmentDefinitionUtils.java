@@ -61,23 +61,23 @@ public class FragmentDefinitionUtils implements IFragmentDefinitionUtils {
 
     @Override
     public FragmentDefinition getFragmentDefinitionByName(final String fragmentName) {
-        return this.configurationLoader.getFragmentByName(fragmentName);
+        return configurationLoader.getFragmentByName(fragmentName);
     }
 
     @Override
     public FragmentDefinition getFragmentDefinitionByOwner(final IPerson person) {
-        return this.getFragmentDefinitionByOwner(person.getUserName());
+        return getFragmentDefinitionByOwner(person.getUserName());
     }
 
     @Override
     public FragmentDefinition getFragmentDefinitionByOwner(final String ownerId) {
-        return this.configurationLoader.getFragmentByOwnerId(ownerId);
+        return configurationLoader.getFragmentByOwnerId(ownerId);
     }
 
     @Override
     public List<FragmentDefinition> getFragmentDefinitionsApplicableToPerson(final IPerson person) {
         final List<FragmentDefinition> result = new ArrayList<>();
-        final List<FragmentDefinition> definitions = this.configurationLoader.getFragments();
+        final List<FragmentDefinition> definitions = configurationLoader.getFragments();
         logger.debug("About to check applicability of {} fragments", definitions.size());
 
         for (final FragmentDefinition fragmentDefinition : definitions) {
@@ -94,12 +94,12 @@ public class FragmentDefinitionUtils implements IFragmentDefinitionUtils {
 
     @Override
     public List<Document> getFragmentDefinitionUserViewLayouts(
-            final List<FragmentDefinition> fragmentDefinitions, final Locale locale) {
+            final List<FragmentDefinition> fragmentDefinitions, final IPerson user, final Locale locale) {
         final List<Document> result = new LinkedList<>();
         final List<IUserView> userViews =
-                this.getFragmentDefinitionUserViews(fragmentDefinitions, locale);
+                getFragmentDefinitionUserViews(fragmentDefinitions, locale);
         for (IUserView userView : userViews) {
-            result.add(userView.getLayout());
+            result.add(userView.getFragmentContentForUser(user));
         }
         return result;
     }
@@ -115,16 +115,15 @@ public class FragmentDefinitionUtils implements IFragmentDefinitionUtils {
 
     @Override
     public IUserView getUserView(final FragmentDefinition fragmentDefinition, final Locale locale) {
-        return this.fragmentActivator.getUserView(fragmentDefinition, locale);
+        return fragmentActivator.getUserView(fragmentDefinition, locale);
     }
 
     private List<IUserView> getFragmentDefinitionUserViews(
         final List<FragmentDefinition> fragmentDefinitions, final Locale locale) {
         final List<IUserView> result = new LinkedList<>();
         if (fragmentDefinitions != null) {
-            final FragmentActivator activator = this.fragmentActivator;
             for (FragmentDefinition definition : fragmentDefinitions) {
-                final IUserView userView = activator.getUserView(definition, locale);
+                final IUserView userView = fragmentActivator.getUserView(definition, locale);
                 if (userView != null) {
                     result.add(userView);
                 }

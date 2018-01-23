@@ -14,6 +14,7 @@
  */
 package org.apereo.portal.layout.dlm;
 
+import org.apereo.portal.security.IPerson;
 import org.w3c.dom.Document;
 
 /**
@@ -29,20 +30,53 @@ import org.w3c.dom.Document;
  */
 public interface IUserView {
 
+    /**
+     * Obtains the userId (numeric) of the fragment owner account.
+     */
     int getUserId();
 
+    /**
+     * Updates the userId (numeric) of the fragment owner account.
+     */
     void setUserId(int userId);
 
+    /**
+     * Obtains the "fragmentized" (processed) layout Document of the fragment owner account.
+     */
     Document getLayout();
 
+    /**
+     * Updates the "fragmentized" (processed) layout Document of the fragment owner account.
+     */
     void setLayout(Document layout);
 
+    /**
+     * Obtains the id of the fragment owner's layout associated with the fragment.
+     */
     int getLayoutId();
 
+    /**
+     * Updates the id of the fragment owner's layout associated with the fragment.
+     */
     void setLayoutId(int layoutId);
 
+    /**
+     * Obtains the id of the fragment owner's profile associated with the fragment.
+     */
     int getProfileId();
 
+    /**
+     * Updates the id of the fragment owner's profile associated with the fragment.
+     */
     void setProfileId(int profileId);
+
+    /**
+     * Obtains the content stemming from this fragment that will be applied to the specified user's
+     * layout.  The returned <code>Document</code> may or may not be the same as the value of
+     * <code>getLayout</code>.
+     *
+     * @since 5.1
+     */
+    Document getFragmentContentForUser(IPerson user);
 
 }
