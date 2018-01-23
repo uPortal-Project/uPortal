@@ -36,15 +36,8 @@ public interface IFragmentDefinitionUtils {
 
     List<FragmentDefinition> getFragmentDefinitionsApplicableToPerson(final IPerson person);
 
-    List<UserView> getFragmentDefinitionUserViews(final Locale locale);
-
-    List<UserView> getFragmentDefinitionUserViews(
-            final List<FragmentDefinition> fragmentDefinitions, final Locale locale);
-
     List<Document> getFragmentDefinitionUserViewLayouts(
             final List<FragmentDefinition> fragmentDefinitions, final Locale locale);
-
-    Set<String> getFragmentNames();
 
     Set<String> getFragmentNames(final Collection<FragmentDefinition> fragmentDefinitions);
 

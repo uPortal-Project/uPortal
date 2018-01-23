@@ -121,7 +121,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
         this.profile = profile;
 
         // Must always initialize the cacheKey to a generated value
-        this.updateCacheKey();
+        updateCacheKey();
     }
 
     @Autowired
@@ -163,41 +163,26 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
     public void afterPropertiesSet() throws Exception {
         // Ensure a new layout gets loaded whenever a user logs in except for guest users
         if (!owner.isGuest()) {
-            this.layoutCachingService.removeCachedLayout(owner, profile);
+            layoutCachingService.removeCachedLayout(owner, profile);
         }
 
-        this.loadUserLayout();
+        loadUserLayout();
 
         // verify that we have the minimum layout necessary to render the
         // portal and reset it if we do not.
-        this.getRootFolderId();
-
-        // This listener determines if one or more channels have been
-        // added, and sets a state variable which is reset when the
-        // layout saved event is triggered.
-        //        this.addLayoutEventListener(new LayoutEventListenerAdapter()
-        //        {
-        //            @Override
-        //            public void channelAdded(LayoutEvent ev) {
-        //                channelsAdded = true;
-        //            }
-        //            @Override
-        //            public void layoutSaved() {
-        //                channelsAdded = false;
-        //            }
-        //        });
+        getRootFolderId();
     }
 
     private void setUserLayoutDOM(DistributedUserLayout userLayout) {
 
-        this.layoutCachingService.cacheLayout(owner, profile, userLayout);
-        this.updateCacheKey();
+        layoutCachingService.cacheLayout(owner, profile, userLayout);
+        updateCacheKey();
 
         // determine if this is a layout fragment by looking at the root node
         // for a cp:fragment attribute.
         Element layout = userLayout.getLayout().getDocumentElement();
         Node attr = layout.getAttributeNodeNS(Constants.NS_URI, Constants.LCL_FRAGMENT_NAME);
-        this.isFragmentOwner = attr != null;
+        isFragmentOwner = attr != null;
     }
 
     @SuppressWarnings("deprecation")
@@ -210,12 +195,12 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
 
     protected DistributedUserLayout getDistributedUserLayout() {
         DistributedUserLayout userLayout =
-                this.layoutCachingService.getCachedLayout(owner, profile);
+                layoutCachingService.getCachedLayout(owner, profile);
         if (null == userLayout) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Load from store for " + owner.getAttribute(IPerson.USERNAME));
             }
-            userLayout = this.distributedLayoutStore.getUserLayout(this.owner, this.profile);
+            userLayout = distributedLayoutStore.getUserLayout(owner, profile);
 
             final Document userLayoutDocument = userLayout.getLayout();
 
@@ -258,7 +243,6 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
                                 }
                             }
                         } catch (Throwable t) {
-                            // Log this...
                             LOG.warn(
                                     "RDBMUserLayoutStore was unable to analyze channel element with Id="
                                             + ch.getAttribute("chanID"),
@@ -275,14 +259,14 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
 
     @Override
     public XMLEventReader getUserLayoutReader() {
-        Document ul = this.getUserLayoutDOM();
+        Document ul = getUserLayoutDOM();
         if (ul == null) {
             throw new PortalException(
                     "User layout has not been initialized for "
                             + owner.getAttribute(IPerson.USERNAME));
         }
 
-        final XMLInputFactory xmlInputFactory = this.xmlUtilities.getXmlInputFactory();
+        final XMLInputFactory xmlInputFactory = xmlUtilities.getXmlInputFactory();
 
         final DOMSource layoutSoure = new DOMSource(ul);
         try {
@@ -296,7 +280,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
     }
 
     public synchronized void loadUserLayout() throws PortalException {
-        this.loadUserLayout(false);
+        loadUserLayout(false);
     }
 
     public synchronized void loadUserLayout(boolean reload) throws PortalException {
@@ -304,7 +288,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
         try {
             // Clear the loaded document first if this is a forced reload
             if (reload) {
-                this.layoutCachingService.removeCachedLayout(owner, profile);
+                layoutCachingService.removeCachedLayout(owner, profile);
             }
 
             uli = getUserLayoutDOM();
@@ -312,9 +296,9 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
             throw new PortalException(
                     "Exception encountered while "
                             + "reading a layout for userId="
-                            + this.owner.getID()
+                            + owner.getID()
                             + ", profileId="
-                            + this.profile.getProfileId(),
+                            + profile.getProfileId(),
                     e);
         }
         if (uli == null) {
@@ -331,7 +315,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
     }
 
     public synchronized void saveUserLayout() throws PortalException {
-        Document uld = this.getUserLayoutDOM();
+        Document uld = getUserLayoutDOM();
 
         if (uld == null) {
             throw new PortalException(
@@ -340,23 +324,23 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
                             + ".");
         }
         try {
-            this.distributedLayoutStore.setUserLayout(this.owner, this.profile, uld, channelsAdded);
+            distributedLayoutStore.setUserLayout(owner, profile, uld, channelsAdded);
         } catch (Exception e) {
             throw new PortalException(
                     "Exception encountered while "
                             + "saving layout for userId="
-                            + this.owner.getID()
+                            + owner.getID()
                             + ", profileId="
-                            + this.profile.getProfileId(),
+                            + profile.getProfileId(),
                     e);
         }
 
-        this.channelsAdded = false;
+        channelsAdded = false;
     }
 
     @Override
     public Set<String> getAllSubscribedChannels() {
-        final Document uld = this.getUserLayoutDOM();
+        final Document uld = getUserLayoutDOM();
 
         if (uld == null) {
             throw new PortalException(
@@ -380,7 +364,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
     public IUserLayoutNodeDescription getNode(String nodeId) throws PortalException {
         if (nodeId == null) return null;
 
-        Document uld = this.getUserLayoutDOM();
+        Document uld = getUserLayoutDOM();
 
         if (uld == null)
             throw new PortalException(
@@ -407,15 +391,15 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
             IUserLayoutNodeDescription node, String parentId, String nextSiblingId)
             throws PortalException {
         boolean isChannel = false;
-        IUserLayoutNodeDescription parent = this.getNode(parentId);
+        IUserLayoutNodeDescription parent = getNode(parentId);
         if (canAddNode(node, parent, nextSiblingId)) {
             // assign new Id
             try {
                 if (node instanceof IUserLayoutChannelDescription) {
                     isChannel = true;
-                    node.setId(this.distributedLayoutStore.generateNewChannelSubscribeId(owner));
+                    node.setId(distributedLayoutStore.generateNewChannelSubscribeId(owner));
                 } else {
-                    node.setId(this.distributedLayoutStore.generateNewFolderId(owner));
+                    node.setId(distributedLayoutStore.generateNewFolderId(owner));
                 }
             } catch (Exception e) {
                 throw new PortalException(
@@ -437,21 +421,21 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
             // register element id
             childElement.setIdAttribute(Constants.ATT_ID, true);
             childElement.setAttribute(Constants.ATT_ID, node.getId());
-            this.updateCacheKey();
+            updateCacheKey();
 
             // push into the user's real layout that gets persisted.
             HandlerUtils.createPlfNodeAndPath(childElement, isChannel, owner);
 
             // fire event
-            final int layoutId = this.getLayoutId();
+            final int layoutId = getLayoutId();
             if (isChannel) {
-                this.channelsAdded = true;
+                channelsAdded = true;
                 final String fname = ((IUserLayoutChannelDescription) node).getFunctionalName();
-                this.portalEventFactory.publishPortletAddedToLayoutPortalEvent(
-                        this, this.owner, layoutId, parent.getId(), fname);
+                portalEventFactory.publishPortletAddedToLayoutPortalEvent(
+                        this, owner, layoutId, parent.getId(), fname);
             } else {
-                this.portalEventFactory.publishFolderAddedToLayoutPortalEvent(
-                        this, this.owner, layoutId, node.getId());
+                portalEventFactory.publishFolderAddedToLayoutPortalEvent(
+                        this, owner, layoutId, node.getId());
             }
 
             return node;
@@ -461,12 +445,12 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
 
     public boolean moveNode(String nodeId, String parentId, String nextSiblingId)
             throws PortalException {
-        IUserLayoutNodeDescription parent = this.getNode(parentId);
-        IUserLayoutNodeDescription node = this.getNode(nodeId);
+        IUserLayoutNodeDescription parent = getNode(parentId);
+        IUserLayoutNodeDescription node = getNode(nodeId);
         String oldParentNodeId = getParentId(nodeId);
         if (canMoveNode(node, parent, nextSiblingId)) {
             // must be a folder
-            Document uld = this.getUserLayoutDOM();
+            Document uld = getUserLayoutDOM();
             Element childElement = uld.getElementById(nodeId);
             Element parentElement = uld.getElementById(parentId);
             if (nextSiblingId == null) {
@@ -475,21 +459,21 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
                 Node nextSibling = uld.getElementById(nextSiblingId);
                 parentElement.insertBefore(childElement, nextSibling);
             }
-            this.updateCacheKey();
+            updateCacheKey();
 
             // propagate the change into the PLF
             Element oldParent = uld.getElementById(oldParentNodeId);
             TabColumnPrefsHandler.moveElement(childElement, oldParent, owner);
             // fire event
-            final int layoutId = this.getLayoutId();
+            final int layoutId = getLayoutId();
             if (node instanceof IUserLayoutChannelDescription) {
-                this.channelsAdded = true;
+                channelsAdded = true;
                 final String fname = ((IUserLayoutChannelDescription) node).getFunctionalName();
-                this.portalEventFactory.publishPortletMovedInLayoutPortalEvent(
-                        this, this.owner, layoutId, oldParentNodeId, parent.getId(), fname);
+                portalEventFactory.publishPortletMovedInLayoutPortalEvent(
+                        this, owner, layoutId, oldParentNodeId, parent.getId(), fname);
             } else {
-                this.portalEventFactory.publishFolderMovedInLayoutPortalEvent(
-                        this, this.owner, layoutId, oldParentNodeId, parent.getId());
+                portalEventFactory.publishFolderMovedInLayoutPortalEvent(
+                        this, owner, layoutId, oldParentNodeId, parent.getId());
             }
             return true;
         }
@@ -498,10 +482,10 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
 
     public boolean deleteNode(String nodeId) throws PortalException {
         if (canDeleteNode(nodeId)) {
-            IUserLayoutNodeDescription nodeDescription = this.getNode(nodeId);
-            String parentNodeId = this.getParentId(nodeId);
+            IUserLayoutNodeDescription nodeDescription = getNode(nodeId);
+            String parentNodeId = getParentId(nodeId);
 
-            Document uld = this.getUserLayoutDOM();
+            Document uld = getUserLayoutDOM();
             Element ilfNode = uld.getElementById(nodeId);
             Node parent = ilfNode.getParentNode();
             if (parent != null) {
@@ -514,25 +498,25 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
                                 + owner.getAttribute(IPerson.USERNAME)
                                 + ".");
             }
-            this.updateCacheKey();
+            updateCacheKey();
 
             // now push into the PLF
             TabColumnPrefsHandler.deleteNode(ilfNode, owner);
             // inform the listeners
-            final int layoutId = this.getLayoutId();
+            final int layoutId = getLayoutId();
             if (nodeDescription instanceof IUserLayoutChannelDescription) {
                 final IUserLayoutChannelDescription userLayoutChannelDescription =
                         (IUserLayoutChannelDescription) nodeDescription;
-                this.portalEventFactory.publishPortletDeletedFromLayoutPortalEvent(
+                portalEventFactory.publishPortletDeletedFromLayoutPortalEvent(
                         this,
-                        this.owner,
+                        owner,
                         layoutId,
                         parentNodeId,
                         userLayoutChannelDescription.getFunctionalName());
             } else {
-                this.portalEventFactory.publishFolderDeletedFromLayoutPortalEvent(
+                portalEventFactory.publishFolderDeletedFromLayoutPortalEvent(
                         this,
-                        this.owner,
+                        owner,
                         layoutId,
                         parentNodeId,
                         nodeDescription.getId(),
@@ -579,7 +563,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
                     updateFolderNode(nodeId, newFolderDesc, oldFolderDesc);
                 }
             }
-            this.updateCacheKey();
+            updateCacheKey();
             return true;
         }
         return false;
@@ -679,7 +663,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
                  * Is a change to this attribute allowed?
                  */
                 FragmentNodeInfo fragNodeInf =
-                        this.distributedLayoutStore.getFragmentNodeInfo(nodeId);
+                        distributedLayoutStore.getFragmentNodeInfo(nodeId);
                 if (fragNodeInf == null) {
                     /*
                      * null should only happen if a node was deleted in the
@@ -787,7 +771,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
         Map pubParms = getPublishedChannelParametersMap(newChanDesc.getChannelPublishId());
 
         if (isIncorporated)
-            fragChanInf = this.distributedLayoutStore.getFragmentChannelInfo(nodeId);
+            fragChanInf = distributedLayoutStore.getFragmentChannelInfo(nodeId);
         Map oldParms = new HashMap(oldChanDesc.getParameterMap());
         for (Iterator itr = newChanDesc.getParameterMap().entrySet().iterator(); itr.hasNext(); ) {
             Map.Entry e = (Entry) itr.next();
@@ -911,7 +895,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
     public boolean canAddNode(
             IUserLayoutNodeDescription node, String parentId, String nextSiblingId)
             throws PortalException {
-        return this.canAddNode(node, this.getNode(parentId), nextSiblingId);
+        return canAddNode(node, getNode(parentId), nextSiblingId);
     }
 
     protected boolean canAddNode(
@@ -980,7 +964,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
 
     public boolean canMoveNode(String nodeId, String parentId, String nextSiblingId)
             throws PortalException {
-        return this.canMoveNode(this.getNode(nodeId), this.getNode(parentId), nextSiblingId);
+        return canMoveNode(getNode(nodeId), getNode(parentId), nextSiblingId);
     }
 
     protected boolean canMoveNode(
@@ -998,7 +982,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
                     && canAddNode(node, parent, nextSiblingId);
 
         // same parent. which direction are we moving?
-        Document uld = this.getUserLayoutDOM();
+        Document uld = getUserLayoutDOM();
         Element parentE = uld.getElementById(parent.getId());
         Element child = (Element) parentE.getFirstChild();
         int idx = 0;
@@ -1058,7 +1042,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
     }
 
     public boolean canDeleteNode(String nodeId) throws PortalException {
-        return canDeleteNode(this.getNode(nodeId));
+        return canDeleteNode(getNode(nodeId));
     }
 
     /**
@@ -1106,7 +1090,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
     }
 
     public String getParentId(String nodeId) throws PortalException {
-        Document uld = this.getUserLayoutDOM();
+        Document uld = getUserLayoutDOM();
         Element nelement = uld.getElementById(nodeId);
         if (nelement != null) {
             Node parent = nelement.getParentNode();
@@ -1131,7 +1115,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
     }
 
     public String getNextSiblingId(String nodeId) throws PortalException {
-        Document uld = this.getUserLayoutDOM();
+        Document uld = getUserLayoutDOM();
         Element nelement = uld.getElementById(nodeId);
         if (nelement != null) {
             Node nsibling = nelement.getNextSibling();
@@ -1155,7 +1139,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
     }
 
     public String getPreviousSiblingId(String nodeId) throws PortalException {
-        Document uld = this.getUserLayoutDOM();
+        Document uld = getUserLayoutDOM();
         Element nelement = uld.getElementById(nodeId);
         if (nelement != null) {
             Node nsibling = nelement.getPreviousSibling();
@@ -1190,7 +1174,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
         Vector<String> v = new Vector<String>();
         IUserLayoutNodeDescription node = getNode(nodeId);
         if (node instanceof IUserLayoutFolderDescription) {
-            Document uld = this.getUserLayoutDOM();
+            Document uld = getUserLayoutDOM();
             Element felement = uld.getElementById(nodeId);
             for (Node n = felement.getFirstChild(); n != null; n = n.getNextSibling()) {
                 if (n.getNodeType() == Node.ELEMENT_NODE
@@ -1211,7 +1195,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
 
     @Override
     public String getCacheKey() {
-        return this.cacheKey;
+        return cacheKey;
     }
 
     /**
@@ -1222,7 +1206,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
      * changes to the user layout are cyclic.
      */
     private void updateCacheKey() {
-        this.cacheKey = Long.toString(rnd.nextLong());
+        cacheKey = Long.toString(rnd.nextLong());
     }
 
     public int getLayoutId() {
@@ -1235,7 +1219,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
      */
     @Override
     public String getSubscribeId(String fname) {
-        final Document userLayout = this.getUserLayoutDOM();
+        final Document userLayout = getUserLayoutDOM();
         return new PortletSubscribeIdResolver(fname).traverseDocument(userLayout);
     }
 
@@ -1244,9 +1228,9 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
         variables.put("parentFolderId", parentFolderId);
         variables.put("fname", fname);
 
-        final Document userLayout = this.getUserLayoutDOM();
+        final Document userLayout = getUserLayoutDOM();
         final Element fnameNode =
-                this.xpathOperations.evaluate(
+                xpathOperations.evaluate(
                         "//folder[@ID=$parentFolderId]/descendant::channel[@fname=$fname]",
                         variables,
                         userLayout,
@@ -1265,7 +1249,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
         // Copied from SimpleLayoutManager since our layouts are regular
         // simple layouts, ie Documents.
         return new SimpleLayout(
-                this.getDistributedUserLayout(), String.valueOf(profile.getLayoutId()));
+                getDistributedUserLayout(), String.valueOf(profile.getLayoutId()));
     }
 
     /* Returns the ID attribute of the root folder of the layout. This folder
@@ -1279,7 +1263,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
             Document layout = getUserLayoutDOM();
 
             Element rootNode =
-                    this.xpathOperations.evaluate("//layout/folder", layout, XPathConstants.NODE);
+                    xpathOperations.evaluate("//layout/folder", layout, XPathConstants.NODE);
             if (rootNode == null
                     || !rootNode.getAttribute(Constants.ATT_TYPE)
                             .equals(Constants.ROOT_FOLDER_ID)) {
@@ -1290,7 +1274,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
                 resetLayout((String) null);
 
                 rootNode =
-                        this.xpathOperations.evaluate(
+                        xpathOperations.evaluate(
                                 "//layout/folder", layout, XPathConstants.NODE);
                 if (rootNode == null
                         || !rootNode.getAttribute(Constants.ATT_TYPE)
@@ -1395,7 +1379,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
          * isFramentOwner variable in this class since we could be resetting
          * another user's layout.
          */
-        if (this.distributedLayoutStore.isFragmentOwner(person)) {
+        if (distributedLayoutStore.isFragmentOwner(person)) {
             // set template user override so reload of layout comes from
             // fragment template user
             person.setAttribute(
@@ -1409,15 +1393,11 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
             // see if the current user was the one to reset their layout and if
             // so we need to refresh our local copy of their layout
             if (person == owner) {
-                this.layoutCachingService.removeCachedLayout(person, profile);
+                layoutCachingService.removeCachedLayout(person, profile);
                 updateCacheKey();
                 getUserLayoutDOM();
             }
-            // if (isFragmentOwner)
-            // {
-            //
-            //    store.updateOwnerLayout(person);
-            // }
+
             layoutWasReset = true;
         } catch (Exception e) {
             LOG.error(

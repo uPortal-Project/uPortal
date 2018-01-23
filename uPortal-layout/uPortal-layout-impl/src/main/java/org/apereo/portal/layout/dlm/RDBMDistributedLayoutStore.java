@@ -1246,7 +1246,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
         final FragmentDefinition ownedFragment =
                 this.fragmentUtils.getFragmentDefinitionByOwner(person);
         final boolean isLayoutOwnerDefault = this.isLayoutOwnerDefault(person);
-        final Set<String> fragmentNames = new LinkedHashSet<String>();
+        final Set<String> fragmentNames = new LinkedHashSet<>();
 
         final Document ILF;
         final Document PLF = this.getPLF(person, profile);

@@ -14,7 +14,6 @@
  */
 package org.apereo.portal.layout;
 
-/** Interface by which portal talks to the database */
 import com.google.common.cache.Cache;
 import java.util.Hashtable;
 import java.util.Map;
@@ -27,6 +26,7 @@ import org.apereo.portal.security.IPerson;
 import org.apereo.portal.utils.Tuple;
 import org.w3c.dom.Document;
 
+/** Interface by which portal talks to the database */
 public interface IUserLayoutStore {
 
     void setLayoutImportExportCache(Cache<Tuple<String, String>, Document> layoutCache);

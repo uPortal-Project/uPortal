@@ -52,11 +52,11 @@ public class FragmentActivator {
 
     private final LoadingCache<String, List<Locale>> fragmentOwnerLocales =
             CacheBuilder.newBuilder()
-                    .<String, List<Locale>>build(
+                    .build(
                             new CacheLoader<String, List<Locale>>() {
                                 @Override
                                 public List<Locale> load(String key) throws Exception {
-                                    return new CopyOnWriteArrayList<Locale>();
+                                    return new CopyOnWriteArrayList<>();
                                 }
                             });
 
@@ -239,10 +239,6 @@ public class FragmentActivator {
 
     /**
      * Saves the loaded layout in the database for the user and profile.
-     *
-     * @param view
-     * @param owner
-     * @throws Exception
      */
     private void saveLayout(UserView view, IPerson owner) throws Exception {
         IUserProfile profile = new UserProfile();
@@ -275,8 +271,8 @@ public class FragmentActivator {
     }
 
     private int createOwner(IPerson owner, FragmentDefinition fragment) {
-        String defaultUser = null;
-        int userID = -1;
+        String defaultUser;
+        int userID;
 
         if (fragment.defaultLayoutOwnerID != null) {
             defaultUser = fragment.defaultLayoutOwnerID;
@@ -351,7 +347,7 @@ public class FragmentActivator {
         // and will have a hard coded id of 1 which is the default for profiles.
         // If anyone changes this user all heck could break loose for dlm. :-(
 
-        Document layout = null;
+        Document layout;
 
         try {
             // fix hard coded 1 later for multiple profiles

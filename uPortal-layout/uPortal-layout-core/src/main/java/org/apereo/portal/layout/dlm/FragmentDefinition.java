@@ -94,10 +94,10 @@ public class FragmentDefinition extends EvaluatorGroup {
         NamedNodeMap atts = e.getAttributes();
         this.name = loadAttribute("name", atts, true, e);
 
-        loadFromEelement(e);
+        loadFromElement(e);
     }
 
-    public void loadFromEelement(Element e) {
+    public void loadFromElement(Element e) {
         final boolean REQUIRED = true;
         final boolean NOT_REQUIRED = false;
 

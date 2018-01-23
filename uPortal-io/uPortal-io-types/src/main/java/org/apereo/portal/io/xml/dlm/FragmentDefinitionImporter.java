@@ -97,7 +97,7 @@ public class FragmentDefinitionImporter
             fragmentDefinition = new FragmentDefinition(fragmentDefElement);
         }
 
-        fragmentDefinition.loadFromEelement(fragmentDefElement);
+        fragmentDefinition.loadFromElement(fragmentDefElement);
 
         this.fragmentDefinitionDao.updateFragmentDefinition(fragmentDefinition);
     }
