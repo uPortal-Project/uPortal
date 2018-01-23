@@ -26,6 +26,7 @@ import org.apereo.portal.layout.dlm.FragmentActivator;
 import org.apereo.portal.layout.dlm.FragmentDefinition;
 import org.apereo.portal.layout.dlm.IUserView;
 import org.apereo.portal.security.IPerson;
+import org.apereo.portal.xml.XmlUtilitiesImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -99,7 +100,12 @@ public class FragmentDefinitionUtils implements IFragmentDefinitionUtils {
         final List<IUserView> userViews =
                 getFragmentDefinitionUserViews(fragmentDefinitions, locale);
         for (IUserView userView : userViews) {
-            result.add(userView.getFragmentContentForUser(user));
+            final Document content = userView.getFragmentContentForUser(user);
+            if (logger.isDebugEnabled()) { // XmlUtilitiesImpl.toString() is too expensive
+                logger.debug("UserView with userId='{}' returned the following content for user '{}'\n{}",
+                    userView.getUserId(), user.getUserName(), XmlUtilitiesImpl.toString(content));
+            }
+            result.add(content);
         }
         return result;
     }

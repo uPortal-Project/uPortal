@@ -79,4 +79,19 @@ public interface IUserView {
      */
     Document getFragmentContentForUser(IPerson user);
 
+//    Sample XML Output for getFragmentContentForUser()
+//
+//    <?xml version="1.0"?>
+//    <layout xmlns:dlm="http://www.uportal.org/layout/dlm" ID="u25l1">
+//      <folder ID="u25l1s1" dlm:fragment="0" dlm:precedence="80.0" hidden="false" immutable="false" locale="en_US" name="Root folder" type="root" unremovable="true">
+//        <folder ID="u25l1s100" dlm:fragment="0" dlm:precedence="80.0" hidden="false" immutable="true" locale="en_US" name="Page Top folder" type="page-top" unremovable="true">
+//          <channel ID="u25l1n110" chanID="41" description="Compiles Bootstrap LESS dynamically, allowing administrators to make some skin configuration choices in a UI.  Supports the optional 'dynamic' strategy for Respondr." dlm:fragment="0" dlm:precedence="80.0" fname="dynamic-respondr-skin" hidden="false" immutable="false" locale="en_US" name="Dynamic Respondr Skin" timeout="30000" title="Dynamic Respondr Skin" typeID="3" unremovable="false">
+//            <parameter name="mobileIconUrl" value="/ResourceServingWebapp/rs/tango/0.8.90/32x32/apps/preferences-desktop-theme.png"/>
+//            <parameter name="iconUrl" value="/ResourceServingWebapp/rs/tango/0.8.90/32x32/apps/preferences-desktop-theme.png"/>
+//            <parameter name="disableDynamicTitle" value="true"/>
+//            <parameter name="configurable" value="true"/>
+//          </channel>
+//        </folder>
+//      </folder>
+//    </layout>
 }

@@ -64,12 +64,13 @@ public class FragmentDefinition extends EvaluatorGroup {
     private double precedence = 0.0; // precedence of fragment
 
     /**
-     * Name of the concrete {@link IUserView} implementation class.  Nullable
+     * Name of the concrete factory class that knows how to construct {@link IUserView} objects of
+     * the appropriate type.  Nullable.
      *
      * @since 5.1
      */
-    @Column(name = "USER_VIEW")
-    private String userView;
+    @Column(name = "USER_VIEW_FACTORY")
+    private String userViewFactory;
 
     @Column(name = "DESCRIPTION")
     private String description;
@@ -113,7 +114,7 @@ public class FragmentDefinition extends EvaluatorGroup {
 
         this.ownerID = loadAttribute("ownerID", atts, REQUIRED, e);
         this.defaultLayoutOwnerID = loadAttribute("defaultLayoutOwnerID", atts, NOT_REQUIRED, e);
-        this.userView = loadAttribute("userView", atts, NOT_REQUIRED, e);
+        this.userViewFactory = loadAttribute("userViewFactory", atts, NOT_REQUIRED, e);
         this.description = loadAttribute("description", atts, NOT_REQUIRED, e);
 
         String precedence = loadAttribute("precedence", atts, REQUIRED, e);
@@ -149,13 +150,13 @@ public class FragmentDefinition extends EvaluatorGroup {
     }
 
     /**
-     * Name of the concrete {@link IUserView} implementation class, or <code>null</code> to use the
-     * default of {@link OwnerLayoutUserView}.
+     * Name of the concrete factory class that knows how to construct {@link IUserView} objects of
+     * the appropriate type.  Nullable.
      *
      * @since 5.1
      */
-    public String getUserView() {
-        return userView;
+    public String getUserViewFactory() {
+        return userViewFactory;
     }
 
     public String getDescription() {

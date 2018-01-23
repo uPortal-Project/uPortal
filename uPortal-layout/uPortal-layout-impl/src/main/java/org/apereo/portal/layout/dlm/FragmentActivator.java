@@ -18,8 +18,12 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import java.io.Serializable;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.regex.Pattern;
 
@@ -52,7 +56,7 @@ public class FragmentActivator {
     private static final String NEWLY_CREATED_ATTR = "newlyCreated";
     private static final Log LOG = LogFactory.getLog(FragmentActivator.class);
 
-    private static final Class<? extends IUserView> DEFAULT_USER_VIEW = OwnerLayoutUserView.class;
+    private static final Class<? extends IUserViewFactory> DEFAULT_USER_VIEW_FACTORY_CLASS = OwnerLayoutUserViewFactory.class;
 
     private final LoadingCache<String, List<Locale>> fragmentOwnerLocales =
             CacheBuilder.newBuilder()
@@ -69,6 +73,7 @@ public class FragmentActivator {
     private IUserIdentityStore identityStore;
     private IUserLayoutStore userLayoutStore;
     private ConfigurationLoader configurationLoader;
+    private Map<Class<? extends IUserViewFactory>,IUserViewFactory> userViewFactories;
 
     private static final String PROPERTY_ALLOW_EXPANDED_CONTENT =
             "org.apereo.portal.layout.dlm.allowExpandedContent";
@@ -126,6 +131,15 @@ public class FragmentActivator {
     @Autowired
     public void setUserLayoutStore(IUserLayoutStore userLayoutStore) {
         this.userLayoutStore = userLayoutStore;
+    }
+
+    @Autowired
+    public void setUserViewFactories(Set<IUserViewFactory> userViewFactoryBeans) {
+        Map<Class<? extends IUserViewFactory>,IUserViewFactory> map = new HashMap<>();
+        for (IUserViewFactory fac : userViewFactoryBeans) {
+            map.put(fac.getClass(), fac);
+        }
+        userViewFactories = Collections.unmodifiableMap(map);
     }
 
     private static class UserViewKey implements Serializable {
@@ -210,12 +224,13 @@ public class FragmentActivator {
 
         IUserView view;
         try {
-            Class<? extends IUserView> userViewImpl = StringUtils.isNotBlank(fd.getUserView())
-                ? (Class<? extends IUserView>) Class.forName(fd.getUserView())
-                : DEFAULT_USER_VIEW;
-            view = userViewImpl.newInstance();
+            Class<? extends IUserViewFactory> userViewFactoryClass = StringUtils.isNotBlank(fd.getUserViewFactory())
+                ? (Class<? extends IUserViewFactory>) Class.forName(fd.getUserViewFactory())
+                : DEFAULT_USER_VIEW_FACTORY_CLASS;
+            final IUserViewFactory factory = userViewFactories.get(userViewFactoryClass);
+            view = factory.createUserView();
         } catch (Exception e) {
-            throw new RuntimeException("Invalid UserView:  " + fd.getUserView(), e);
+            throw new RuntimeException("Invalid user view factory class:  " + fd.getUserViewFactory(), e);
         }
 
         view.setUserId(owner.getID());
