@@ -203,7 +203,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
         final List<FragmentDefinition> definitions = this.fragmentUtils.getFragmentDefinitions();
         for (final FragmentDefinition fragmentDefinition : definitions) {
             final Document layout = DocumentFactory.getThreadDocument();
-            final UserView userView =
+            final IUserView userView =
                     this.fragmentUtils.getUserView(fragmentDefinition, defaultLocale);
             if (userView == null) {
                 logger.warn(
@@ -245,7 +245,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
                     this.fragmentUtils.getFragmentDefinitionByName(fragName);
 
             // UserView may be missing if the fragment isn't defined correctly
-            final UserView userView = this.fragmentUtils.getUserView(fragmentDefinition, locale);
+            final IUserView userView = this.fragmentUtils.getUserView(fragmentDefinition, locale);
             if (userView == null) {
                 logger.warn(
                         "No UserView is present for fragment {} it will be skipped when loading distributed stylesheet user preferences",
@@ -1399,7 +1399,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
 
         // Fix later to handle multiple profiles
         final Element root = layout.getDocumentElement();
-        final UserView userView = this.fragmentUtils.getUserView(fragment, locale);
+        final IUserView userView = this.fragmentUtils.getUserView(fragment, locale);
         if (userView == null) {
             throw new IllegalStateException(
                     "No UserView found for fragment: " + fragment.getName());
@@ -1544,7 +1544,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
 
         if (info == null) {
             for (final FragmentDefinition fragmentDefinition : fragments) {
-                final UserView userView =
+                final IUserView userView =
                         this.fragmentUtils.getUserView(fragmentDefinition, defaultLocale);
                 if (userView == null) {
                     logger.warn(

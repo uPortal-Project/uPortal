@@ -178,7 +178,7 @@ public class FragmentActivator {
         }
     }
 
-    private UserView activateFragment(final UserViewKey userViewKey) {
+    private IUserView activateFragment(final UserViewKey userViewKey) {
         final String ownerId = userViewKey.getOwnerId();
         final FragmentDefinition fd = configurationLoader.getFragmentByOwnerId(ownerId);
 
@@ -203,7 +203,7 @@ public class FragmentActivator {
         }
 
         IPerson owner = bindToOwner(fd);
-        UserView view = new UserView(owner.getID());
+        IUserView view = new UserView(owner.getID());
         loadLayout(view, fd, owner, locale);
 
         // if owner just created we need to push the layout into
@@ -231,16 +231,16 @@ public class FragmentActivator {
         return view;
     }
 
-    public UserView getUserView(final FragmentDefinition fd, final Locale locale) {
+    public IUserView getUserView(final FragmentDefinition fd, final Locale locale) {
         final UserViewKey userViewKey = new UserViewKey(fd.getOwnerId(), locale);
         final net.sf.ehcache.Element userViewElement = this.userViews.get(userViewKey);
-        return (UserView) userViewElement.getObjectValue();
+        return (IUserView) userViewElement.getObjectValue();
     }
 
     /**
      * Saves the loaded layout in the database for the user and profile.
      */
-    private void saveLayout(UserView view, IPerson owner) throws Exception {
+    private void saveLayout(IUserView view, IPerson owner) throws Exception {
         IUserProfile profile = new UserProfile();
         profile.setProfileId(view.getProfileId());
         userLayoutStore.setUserLayout(owner, profile, view.getLayout(), true, false);
@@ -334,7 +334,7 @@ public class FragmentActivator {
     }
 
     private void loadLayout(
-            UserView view, FragmentDefinition fragment, IPerson owner, Locale locale) {
+            IUserView view, FragmentDefinition fragment, IPerson owner, Locale locale) {
         // if fragment not bound to user can't return any layouts.
         if (view.getUserId() == -1) return;
 
@@ -381,7 +381,7 @@ public class FragmentActivator {
         }
     }
 
-    private void loadPreferences(UserView view, FragmentDefinition fragment) {
+    private void loadPreferences(IUserView view, FragmentDefinition fragment) {
         // if fragment not bound to user can't return any preferences.
         if (view.getUserId() == -1) return;
 
@@ -394,7 +394,7 @@ public class FragmentActivator {
      * Removes unwanted and hidden folders, then changes all node ids to their globally safe
      * incorporated version.
      */
-    private void fragmentizeLayout(UserView view, FragmentDefinition fragment) {
+    private void fragmentizeLayout(IUserView view, FragmentDefinition fragment) {
         // if fragment not bound to user or layout empty due to error, return
         if (view.getUserId() == -1 || view.getLayout() == null) {
             return;

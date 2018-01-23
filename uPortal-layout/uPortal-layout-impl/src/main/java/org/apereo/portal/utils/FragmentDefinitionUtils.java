@@ -24,7 +24,7 @@ import java.util.Set;
 import org.apereo.portal.layout.dlm.ConfigurationLoader;
 import org.apereo.portal.layout.dlm.FragmentActivator;
 import org.apereo.portal.layout.dlm.FragmentDefinition;
-import org.apereo.portal.layout.dlm.UserView;
+import org.apereo.portal.layout.dlm.IUserView;
 import org.apereo.portal.security.IPerson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -96,9 +96,9 @@ public class FragmentDefinitionUtils implements IFragmentDefinitionUtils {
     public List<Document> getFragmentDefinitionUserViewLayouts(
             final List<FragmentDefinition> fragmentDefinitions, final Locale locale) {
         final List<Document> result = new LinkedList<>();
-        final List<UserView> userViews =
+        final List<IUserView> userViews =
                 this.getFragmentDefinitionUserViews(fragmentDefinitions, locale);
-        for (UserView userView : userViews) {
+        for (IUserView userView : userViews) {
             result.add(userView.getLayout());
         }
         return result;
@@ -114,17 +114,17 @@ public class FragmentDefinitionUtils implements IFragmentDefinitionUtils {
     }
 
     @Override
-    public UserView getUserView(final FragmentDefinition fragmentDefinition, final Locale locale) {
+    public IUserView getUserView(final FragmentDefinition fragmentDefinition, final Locale locale) {
         return this.fragmentActivator.getUserView(fragmentDefinition, locale);
     }
 
-    private List<UserView> getFragmentDefinitionUserViews(
+    private List<IUserView> getFragmentDefinitionUserViews(
         final List<FragmentDefinition> fragmentDefinitions, final Locale locale) {
-        final List<UserView> result = new LinkedList<>();
+        final List<IUserView> result = new LinkedList<>();
         if (fragmentDefinitions != null) {
             final FragmentActivator activator = this.fragmentActivator;
             for (FragmentDefinition definition : fragmentDefinitions) {
-                final UserView userView = activator.getUserView(definition, locale);
+                final IUserView userView = activator.getUserView(definition, locale);
                 if (userView != null) {
                     result.add(userView);
                 }

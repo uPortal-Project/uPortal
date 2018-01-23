@@ -17,7 +17,7 @@ package org.apereo.portal.layout.dlm;
 import org.w3c.dom.Document;
 
 /** @since 2.5 */
-public class UserView {
+public class UserView implements IUserView {
 
     private final int userId;
     private Document layout = null;
@@ -28,30 +28,37 @@ public class UserView {
         this.userId = fragmentOwnerUserId;
     }
 
+    @Override
     public int getUserId() {
         return this.userId;
     }
 
+    @Override
     public Document getLayout() {
         return layout;
     }
 
+    @Override
     public void setLayout(Document layout) {
         this.layout = layout;
     }
 
+    @Override
     public int getLayoutId() {
         return layoutId;
     }
 
+    @Override
     public void setLayoutId(int layoutId) {
         this.layoutId = layoutId;
     }
 
+    @Override
     public int getProfileId() {
         return profileId;
     }
 
+    @Override
     public void setProfileId(int profileId) {
         this.profileId = profileId;
     }
