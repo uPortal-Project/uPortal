@@ -23,7 +23,7 @@ var up = up || {};
     /**
      * Instantiate a PortletRegistry component
      *
-     * @param {Object} component Container the element containing the fragment browser
+     * @param {Object} container Container the element containing the fragment browser
      * @param {Object} options configuration options for the components
      */
     up.EntityRegistry = function(container, options) {
