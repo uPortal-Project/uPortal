@@ -144,7 +144,6 @@ up.lightboxConfig =
             var conf;
             var pageLoadedFn;
             var pageLoadErrorFn;
-            var ajaxDoneFn;
 
             conf = $.extend(true, defaultOpts, config);
 

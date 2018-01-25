@@ -123,7 +123,6 @@ var up = up || {};
         var remove;
         var text;
         var gripper;
-        var editorOptions;
         var numOfPortlets;
 
         // Cache DOM elements.
@@ -281,7 +280,6 @@ var up = up || {};
                     var tab;
                     var tabShortId;
                     var method;
-                    var targetTab;
                     var targetTabShortId;
                     var tabPosition;
                     var listItems;

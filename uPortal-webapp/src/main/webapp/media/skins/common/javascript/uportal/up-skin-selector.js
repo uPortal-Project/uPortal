@@ -150,7 +150,6 @@ var up = up || {};
                                 args: function() {
                                     var skinList;
                                     var li;
-                                    var active;
 
                                     // Remove 'skin-active' class from previous.
                                     skinList = that.locate('skinList');
@@ -258,7 +257,6 @@ var up = up || {};
             success: function(xml) {
                 var root;
                 var skinNodes;
-                var skinList;
 
                 root = $(xml);
                 skinNodes = root.find('skin');
@@ -309,8 +307,6 @@ var up = up || {};
      * @param {Object} that - reference to up.SkinSelector component.
      */
     var initialize = function(that) {
-        var form;
-
         // Initialize state map & model array.
         that.state = {};
         that.state.model = [];

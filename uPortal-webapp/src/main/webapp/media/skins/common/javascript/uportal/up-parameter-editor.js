@@ -151,7 +151,6 @@ var up = up || {};
 
     var addValue = function(link, that) {
         var paramPath;
-        var div;
 
         link = $(link);
         paramPath = getParameterPath(link.attr('paramName'), that);

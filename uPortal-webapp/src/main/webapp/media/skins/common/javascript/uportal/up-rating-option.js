@@ -167,10 +167,6 @@ var up = up || {};
                     );
                 },
             });
-            var initModalHeight = $(that)
-                .find('.modal-dialog')
-                .outerHeight();
-            var userScreenHeight = $(window).outerHeight();
             $(that)
                 .find('.modal-dialog')
                 .css('transform', 'translate(0, 50%)');

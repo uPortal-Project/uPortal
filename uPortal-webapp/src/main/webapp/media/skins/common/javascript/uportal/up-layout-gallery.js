@@ -636,7 +636,6 @@ var up = up || {};
         that.hideLoading = function() {
             var modal;
             var ui;
-            var t;
 
             modal = that.locate('loading');
             ui = that.locate('ui');

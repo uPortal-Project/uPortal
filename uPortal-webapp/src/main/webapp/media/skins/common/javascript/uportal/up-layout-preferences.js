@@ -664,9 +664,6 @@ var uportal = uportal || {};
                             } else {
                                 target = $(movedNode).parent();
                             }
-                            var columns = $(
-                                '#portalPageBodyColumns > [id^=column_]'
-                            );
 
                             var options = {
                                 action: 'movePortlet',
