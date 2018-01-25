@@ -17,39 +17,45 @@
  * under the License.
  */
 .ui-autocomplete.ui-menu {
-    padding: 0;
-    overflow: hidden;
+  padding: 0;
+  overflow: hidden;
 }
+
 .ui-autocomplete li {
-    list-style: none;
-    max-width: 315px; /* Fixes Autocomplete on 1st search after page render would have very wide results box off side of window */
-    /*max-height: 75px;*/ /* Limiting # of chars sent tends to keep description to 2 lines in autocomplete results so don't need max-height. */
-    overflow:hidden;
+  list-style: none;
+  max-width: 315px; /* Fixes Autocomplete on 1st search after page render would have very wide results box off side of window */
+
+  /*max-height: 75px;*/
+
+  /* Limiting # of chars sent tends to keep description to 2 lines in autocomplete results so don't need max-height. */
+  overflow: hidden;
 }
 
 .ui-autocomplete .ui-menu-item a {
-    border-bottom: 1px solid #efefef;
-    padding: .5em;
+  border-bottom: 1px solid #efefef;
+  padding: 0.5em;
 }
 
 .ui-autocomplete .ui-menu-item a:hover {
-    cursor: pointer;
+  cursor: pointer;
 }
+
 .ui-autocomplete a.ui-state-focus .autocomplete-header {
-    color: #fff;
+  color: #fff;
 }
 
 .ui-autocomplete a.ui-state-focus {
-    border: 0;
-    background: rgb(62, 70, 79);
-    color: #fff;
-}
-.ui-autocomplete a.ui-corner-all {
-    -webkit-border-radius: 0 0 0 0;
-    border-radius: 0 0 0 0;
-}
-.ui-autocomplete .autocomplete-header {
-    font-weight: 800;
-    color: rgb(123, 34, 64);
+  border: 0;
+  background: rgb(62, 70, 79);
+  color: #fff;
 }
 
+.ui-autocomplete a.ui-corner-all {
+  -webkit-border-radius: 0 0 0 0;
+  border-radius: 0 0 0 0;
+}
+
+.ui-autocomplete .autocomplete-header {
+  font-weight: 800;
+  color: rgb(123, 34, 64);
+}
