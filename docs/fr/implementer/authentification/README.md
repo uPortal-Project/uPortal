@@ -9,7 +9,7 @@ Ces stratégies peuvent également être mélangées ou combinées de quelque ma
 
 - [Central Authentication Service (CAS)](cas.md)
 - Shibboleth (à faire)
-- `REMOTE_USER` (à faire)
+- [REMOTE_USER](REMOTE_USER.md)
 - LDAP (à faire)
 - Local (Database) (à faire)
 
