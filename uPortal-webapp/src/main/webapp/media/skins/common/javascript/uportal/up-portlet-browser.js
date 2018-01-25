@@ -51,7 +51,9 @@ var up = up || {};
      * @param {Object} options configuration options for the components
      */
     up.DefaultPortletSearchView = function(container, portletBrowser, options) {
-        var that, cutpoints, tree;
+        var that;
+        var cutpoints;
+        var tree;
 
         // construct the new component
         that = fluid.initView(

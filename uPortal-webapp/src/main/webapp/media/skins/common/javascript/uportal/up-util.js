@@ -131,7 +131,8 @@ var up = up || {};
      * @param {Object} selector - reference to jQuery selector.
      */
     up.hideLoader = function(selector, time) {
-        var t, duration;
+        var t;
+        var duration;
 
         duration = time === undefined ? 1000 : time;
         t = setTimeout(function() {

@@ -27,7 +27,11 @@ var uportal = uportal || {};
 
         // set the mouseover event
         $(that.container).mouseover(function() {
-            var tab, flyout, flyoutList, foTop, foLeft;
+            var tab;
+            var flyout;
+            var flyoutList;
+            var foTop;
+            var foLeft;
 
             // Cache DOM elements.
             tab = $(this);

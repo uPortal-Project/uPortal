@@ -21,15 +21,16 @@ var up = up || {};
 
 (function($, fluid) {
     var getComponentTree = function(that) {
-        var currentLayoutString, tree;
+        var currentLayoutString;
+        var tree;
 
         // construct a string representing the current layout
         currentLayoutString = that.options.currentLayout.join('-');
 
         tree = {children: []};
         $(that.options.layouts).each(function(idx, layout) {
-            var layoutString = layout.columns.join('-'),
-                classes = '';
+            var layoutString = layout.columns.join('-');
+            var classes = '';
 
             if (layout.columns.join('-') === currentLayoutString) {
                 classes += 'selected';
@@ -106,7 +107,8 @@ var up = up || {};
     };
 
     up.LayoutSelector = function(container, options) {
-        var that, cutpoints;
+        var that;
+        var cutpoints;
 
         that = fluid.initView('up.LayoutSelector', container, options);
 

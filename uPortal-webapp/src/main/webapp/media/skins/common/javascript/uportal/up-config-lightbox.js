@@ -23,10 +23,10 @@ up.lightboxConfig =
     (function(window, $) {
         'use strict';
 
-        var init,
-            defaultOpts,
-            processAjaxResponse,
-            convertExclusiveUrlToPageUrl;
+        var init;
+        var defaultOpts;
+        var processAjaxResponse;
+        var convertExclusiveUrlToPageUrl;
 
         /**
          * Since the portlet config mode is loaded with the exclusive state, need
@@ -41,7 +41,11 @@ up.lightboxConfig =
          * @returns the updated URL as a string.
          */
         convertExclusiveUrlToPageUrl = function(url) {
-            var newUrl, matches, currentPagePortletId, portletId, state;
+            var newUrl;
+            var matches;
+            var currentPagePortletId;
+            var portletId;
+            var state;
 
             matches = /\/p\/([^\/]+)\//.exec(window.location.pathname);
             if (matches && matches[1]) {
@@ -85,7 +89,8 @@ up.lightboxConfig =
             $(tempHtml)
                 .find('form')
                 .each(function(idx, form) {
-                    var action, $form;
+                    var action;
+                    var $form;
 
                     $form = $(form);
                     action = convertExclusiveUrlToPageUrl($form.attr('action'));
@@ -96,7 +101,8 @@ up.lightboxConfig =
             $(tempHtml)
                 .find('a')
                 .each(function(idx, a) {
-                    var href, $a;
+                    var href;
+                    var $a;
 
                     $a = $(a);
 
@@ -135,12 +141,17 @@ up.lightboxConfig =
          * @param config custom options (optional)
          */
         init = function(config) {
-            var conf, pageLoadedFn, pageLoadErrorFn, ajaxDoneFn;
+            var conf;
+            var pageLoadedFn;
+            var pageLoadErrorFn;
+            var ajaxDoneFn;
 
             conf = $.extend(true, defaultOpts, config);
 
             $(conf.selectors.editLinks).click(function(evt) {
-                var url, title, promise;
+                var url;
+                var title;
+                var promise;
 
                 evt.preventDefault();
                 evt.stopPropagation();

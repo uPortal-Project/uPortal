@@ -124,7 +124,10 @@ var up = up || {};
      * @param {Object} that - reference to an instance of the up.entityselection component.
      */
     var updateSelectionStates = function(that) {
-        var content, selectionBasket, button, key;
+        var content;
+        var selectionBasket;
+        var button;
+        var key;
 
         // Get selections.
         selectionBasket = that.locate('selectionBasket');
@@ -149,7 +152,10 @@ var up = up || {};
      * @param {String} key - reference to passed anchor tag attribute. ex: group:local.17
      */
     var deselectEntity = function(that, key) {
-        var selectionBasket, entity, buttonPrimary, newselections;
+        var selectionBasket;
+        var entity;
+        var buttonPrimary;
+        var newselections;
 
         // Cache & reset DOM references.
         selectionBasket = that.locate('selectionBasket');
@@ -198,7 +204,10 @@ var up = up || {};
      * @param {String} key - reference to currrently 'selected' entity. ex: group:local.17
      */
     var selectEntity = function(that, key) {
-        var selectionBasket, buttonPrimary, li, entity;
+        var selectionBasket;
+        var buttonPrimary;
+        var li;
+        var entity;
 
         // Cache DOM elements.
         selectionBasket = that.locate('selectionBasket');
@@ -268,7 +277,8 @@ var up = up || {};
      @ @param {Function} browseFn - function to associate with anchor
      */
     var removeBreadCrumb = function(that, anchor, browseFn) {
-        var crumb, next;
+        var crumb;
+        var next;
 
         // Cache.
         crumb = anchor.parent();
@@ -325,7 +335,9 @@ var up = up || {};
      @ @param {Function} browseFn - function to associate with anchor
      */
     var updateBreadcrumbs = function(that, entity, breadcrumbsSel, browseFn) {
-        var breadcrumbs, key, isKey;
+        var breadcrumbs;
+        var key;
+        var isKey;
 
         // Cache.
         breadcrumbs = that.locate(breadcrumbsSel);
@@ -365,7 +377,9 @@ var up = up || {};
      */
     var browseEntity = function(that, key) {
         console.log('browse ad hoc');
-        var entity, currentEntityName, content;
+        var entity;
+        var currentEntityName;
+        var content;
 
         // Cache.
         entity = that.registry.getEntity(
@@ -390,15 +404,15 @@ var up = up || {};
 
         // For each entity, create a member list item.
         $.each(entity.children, function(idx, obj) {
-            var tdChild,
-                tdButtons,
-                divButtons,
-                selButton,
-                selIcon,
-                tr,
-                table,
-                a,
-                objType;
+            var tdChild;
+            var tdButtons;
+            var divButtons;
+            var selButton;
+            var selIcon;
+            var tr;
+            var table;
+            var a;
+            var objType;
 
             objType = obj.entityType.toLowerCase();
 
@@ -533,7 +547,11 @@ var up = up || {};
      * @param {String} searchTerm - reference to search term.
      */
     var search = function(that, searchTerm, form) {
-        var entities, list, listItem, searchResultsNoMembers, members;
+        var entities;
+        var list;
+        var listItem;
+        var searchResultsNoMembers;
+        var members;
 
         // Filter searchTerm.
         if (searchTerm === that.options.messages.searchValue) {
@@ -595,7 +613,11 @@ var up = up || {};
      * @param {Object} that - reference to an instance of the up.entityselection component.
      */
     var searchEntity = function(that) {
-        var closeSearch, searchForm, searchField, searchDropDown, loader;
+        var closeSearch;
+        var searchForm;
+        var searchField;
+        var searchDropDown;
+        var loader;
 
         // Cache.
         closeSearch = that.locate('closeSearch');
@@ -667,8 +689,8 @@ var up = up || {};
         browseEntity(that, that.options.initialFocusedEntity);
 
         if (that.options.enableAdHocGroups) {
-            var jsTreeIncludes = false,
-                jsTreeExcludes = false;
+            var jsTreeIncludes = false;
+            var jsTreeExcludes = false;
 
             var entityToJSTreeNode = function(entity) {
                 var childNodes = [];
@@ -689,9 +711,9 @@ var up = up || {};
             };
 
             var callback = function(obj, cb) {
-                var key,
-                    entity,
-                    childNodes = [];
+                var key;
+                var entity;
+                var childNodes = [];
                 if (obj.id === '#') {
                     // root tree node, so send back initial node
                     key = that.options.initialFocusedEntity;
@@ -741,14 +763,14 @@ var up = up || {};
             };
 
             that.locate('saveAdHocButton').bind('click', function(e) {
-                var parentKey,
-                    parentName,
-                    includes,
-                    excludes,
-                    tests,
-                    pagsGroup,
-                    json,
-                    xmlhttp;
+                var parentKey;
+                var parentName;
+                var includes;
+                var excludes;
+                var tests;
+                var pagsGroup;
+                var json;
+                var xmlhttp;
                 parentKey = that.locate('currentEntityName').attr('key');
                 parentName = that.locate('currentEntityName').text();
                 includes = [];

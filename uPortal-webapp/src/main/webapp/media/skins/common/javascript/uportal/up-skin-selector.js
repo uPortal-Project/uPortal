@@ -121,7 +121,8 @@ var up = up || {};
      * @param {Object} that - reference to up.SkinSelector component.
      */
     var buildSkinListTree = function(that) {
-        var treeChildren, skinRows;
+        var treeChildren;
+        var skinRows;
 
         treeChildren = [];
         skinRows = fluid.transform(that.state.model, function(obj, index) {
@@ -147,7 +148,9 @@ var up = up || {};
                                 type: 'jQuery',
                                 func: 'click',
                                 args: function() {
-                                    var skinList, li, active;
+                                    var skinList;
+                                    var li;
+                                    var active;
 
                                     // Remove 'skin-active' class from previous.
                                     skinList = that.locate('skinList');
@@ -214,7 +217,8 @@ var up = up || {};
      * @param {Object} that - reference to up.SkinSelector component.
      */
     var doRender = function(that) {
-        var skinList, options;
+        var skinList;
+        var options;
 
         skinList = that.locate('skinList');
         options = {
@@ -252,7 +256,9 @@ var up = up || {};
             dataType: 'xml',
             type: 'GET',
             success: function(xml) {
-                var root, skinNodes, skinList;
+                var root;
+                var skinNodes;
+                var skinList;
 
                 root = $(xml);
                 skinNodes = root.find('skin');
@@ -260,7 +266,11 @@ var up = up || {};
 
                 // Parse skinList.xml & construct ui.
                 $.each(skinNodes, function(idx, obj) {
-                    var skin, key, name, description, thumbnailPath;
+                    var skin;
+                    var key;
+                    var name;
+                    var description;
+                    var thumbnailPath;
 
                     skin = $(obj);
                     key = skin.children('skin-key').text();

@@ -119,7 +119,12 @@ var up = up || {};
      * @param {Object} that- reference to an instance of the TabManger component.
      */
     var editTabHandler = function(that) {
-        var edit, remove, text, gripper, editorOptions, numOfPortlets;
+        var edit;
+        var remove;
+        var text;
+        var gripper;
+        var editorOptions;
+        var numOfPortlets;
 
         // Cache DOM elements.
         edit = that.locate('edit');
@@ -215,7 +220,8 @@ var up = up || {};
      * @param {Object} that- reference to an instance of the TabManger component.
      */
     var addTabHandler = function(that) {
-        var add, tabGroup;
+        var add;
+        var tabGroup;
         add = that.locate('add');
         tabGroup = that.container.find(that.options.selectors.tabGroup).text();
         add.bind('click', function() {
@@ -272,13 +278,13 @@ var up = up || {};
             },
             listeners: {
                 afterMove: function(item, requestedPosition, movables) {
-                    var tab,
-                        tabShortId,
-                        method,
-                        targetTab,
-                        targetTabShortId,
-                        tabPosition,
-                        listItems;
+                    var tab;
+                    var tabShortId;
+                    var method;
+                    var targetTab;
+                    var targetTabShortId;
+                    var tabPosition;
+                    var listItems;
 
                     // Capture moved tab & set defaults.
                     tab = $(item);
@@ -363,7 +369,8 @@ var up = up || {};
      * @param {Object} that- reference to an instance of the TabManger component.
      */
     var manageLockedTabs = function(that) {
-        var tabList, lastLockedTab;
+        var tabList;
+        var lastLockedTab;
 
         // Find the last instance of a locked tab and add a 'locked' class name
         // to all previous tabs. Hide all drag & drop grab handles from 'locked' tabs.

@@ -38,7 +38,8 @@ var up = up || {};
         // --------------------------------------------------
 
         that.searchEntities = function(entityTypes, searchTerm) {
-            var url, entities;
+            var url;
+            var entities;
             url = that.options.entitiesUrl + '.json';
 
             $.ajax({
@@ -56,7 +57,9 @@ var up = up || {};
         };
 
         that.getEntity = function(entityType, entityId) {
-            var fullId, url, entity;
+            var fullId;
+            var url;
+            var entity;
 
             // first check to see if this entity is already in the local cache
             fullId = entityType + ':' + entityId;

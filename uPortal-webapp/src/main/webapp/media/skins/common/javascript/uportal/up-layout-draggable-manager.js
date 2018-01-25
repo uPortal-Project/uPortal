@@ -142,12 +142,12 @@ var up = up || {};
      * @param {Object} target - reference to a DOM element. Specifically, a portal column.
      */
     var dragOverHandler = function(that, target) {
-        var column,
-            portlets,
-            portlet_locked,
-            firstMovablePortlet,
-            children,
-            dropTarget;
+        var column;
+        var portlets;
+        var portlet_locked;
+        var firstMovablePortlet;
+        var children;
+        var dropTarget;
 
         // Obtain reference to column, contained portlets and the dropTarget.
         column = $(target);
@@ -194,7 +194,8 @@ var up = up || {};
      * @param {Object} target - reference to a DOM element. Specifically, a portal column.
      */
     var dragOutHandler = function(that, target) {
-        var column, dropTarget;
+        var column;
+        var dropTarget;
 
         // Obtain reference to the column & contained dropTarget.
         column = $(target);
@@ -209,14 +210,14 @@ var up = up || {};
      * @param {Object} target - reference to a DOM element. Specifically, a portal column.
      */
     var dragDropHandler = function(that, target) {
-        var loader,
-            column,
-            isPortlets,
-            isPortletsMovable,
-            dropTarget,
-            sibling,
-            targetID,
-            method;
+        var loader;
+        var column;
+        var isPortlets;
+        var isPortletsMovable;
+        var dropTarget;
+        var sibling;
+        var targetID;
+        var method;
 
         // Obtain reference to the loading screen, column and contained dropTarget.
         loader = that.elem.loader;
@@ -320,7 +321,8 @@ var up = up || {};
          * @param {Object} that - reference to an instance of the LayoutDraggableManager component.
          */
         that.enableEligibleColumns = function(event, ui) {
-            var eligibleColumns, droppableInnerColumns;
+            var eligibleColumns;
+            var droppableInnerColumns;
 
             // Obtain a reference to all eligible or "droppable" columns.
             eligibleColumns = that.elem.columnContainer.find(
@@ -412,7 +414,8 @@ var up = up || {};
          * @param {Object} pager - reference to an instance of the pager component.
          */
         that.initDragAndDrop = function(newModel, oldModel, pager) {
-            var galleryList, listItem;
+            var galleryList;
+            var listItem;
 
             // DOM Caching.
             galleryList = pager.container.find(

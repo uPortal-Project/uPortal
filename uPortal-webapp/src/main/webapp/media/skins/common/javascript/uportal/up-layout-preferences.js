@@ -181,8 +181,8 @@ var uportal = uportal || {};
         // set disabled to true for layouts not permitted
         $(layouts).each(function(idx, layout) {
             var cannotAddColumns =
-                    !canAddColumns && layout.columns.length > columns.length,
-                cannotRemoveColumns = layout.columns.length < minColumns;
+                !canAddColumns && layout.columns.length > columns.length;
+            var cannotRemoveColumns = layout.columns.length < minColumns;
 
             if (cannotAddColumns || cannotRemoveColumns) {
                 layout.disabled = true;
@@ -352,7 +352,8 @@ var uportal = uportal || {};
                                             componentThat,
                                             portlet
                                         ) {
-                                            var options, firstChannel;
+                                            var options;
+                                            var firstChannel;
 
                                             // set the main options for this persistence
                                             // request
@@ -581,7 +582,8 @@ var uportal = uportal || {};
                         return false;
                     }
 
-                    var li, id;
+                    var li;
+                    var id;
                     li = anchor.parentNode;
                     id = up.defaultNodeIdExtractor(li);
                     that.persistence.update(
@@ -782,7 +784,9 @@ var uportal = uportal || {};
 
             // wire the form to persist portlet addition
             $('.focused-content-dialog form').submit(function() {
-                var portletId, tabId, form;
+                var portletId;
+                var tabId;
+                var form;
 
                 // collect form data
                 form = this;

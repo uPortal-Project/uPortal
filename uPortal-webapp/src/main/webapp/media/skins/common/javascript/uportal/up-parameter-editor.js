@@ -43,7 +43,11 @@ var up = up || {};
      * Add a new parameter to the table.  This method will add a row to the
      */
     var addParameter = function(form, that) {
-        var tr, td, name, paramPath, checkbox;
+        var tr;
+        var td;
+        var name;
+        var paramPath;
+        var checkbox;
 
         // get the new parameter name from the form
         name = $(form)
@@ -146,7 +150,8 @@ var up = up || {};
     };
 
     var addValue = function(link, that) {
-        var paramPath, div;
+        var paramPath;
+        var div;
 
         link = $(link);
         paramPath = getParameterPath(link.attr('paramName'), that);

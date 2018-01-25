@@ -23,14 +23,14 @@ up.SessionTimeout =
     (function($) {
         'use strict';
 
-        var SECONDS = 1000,
-            MINUTES = 60 * SECONDS,
-            timeoutDialog,
-            timerId,
-            LOCAL_STORAGE_LOGOUT_KEY = 'UportalSessionTimeoutLogoutTime',
-            saveLogoutTime,
-            getSavedLogoutTime,
-            that = {};
+        var SECONDS = 1000;
+        var MINUTES = 60 * SECONDS;
+        var timeoutDialog;
+        var timerId;
+        var LOCAL_STORAGE_LOGOUT_KEY = 'UportalSessionTimeoutLogoutTime';
+        var saveLogoutTime;
+        var getSavedLogoutTime;
+        var that = {};
 
         /**
          * Save the logout time to the browser's localStorage.
@@ -54,13 +54,13 @@ up.SessionTimeout =
          * @returns the timeoutDialog instance
          */
         timeoutDialog = function(config) {
-            var display,
-                updateCountdown,
-                doLogout,
-                doRefresh,
-                hideDialog,
-                countdownTimerId,
-                newerTimerExists;
+            var display;
+            var updateCountdown;
+            var doLogout;
+            var doRefresh;
+            var hideDialog;
+            var countdownTimerId;
+            var newerTimerExists;
 
             /**
              * Log out of the app.
@@ -73,7 +73,9 @@ up.SessionTimeout =
              * Refresh the session
              */
             doRefresh = function() {
-                var promise, success, fail;
+                var promise;
+                var success;
+                var fail;
 
                 promise = $.ajax({
                     url: config.resetSessionURL,
@@ -121,8 +123,8 @@ up.SessionTimeout =
              * reaches 0, will auto-logout.
              */
             updateCountdown = function() {
-                var now = new Date().getTime(),
-                    remaining;
+                var now = new Date().getTime();
+                var remaining;
 
                 // Bail out if a newer timer exists.
                 if (newerTimerExists()) {
@@ -192,13 +194,13 @@ up.SessionTimeout =
 
             // start the timer that tracks when a session has expired.
             startTimer = function(newLogoutTime) {
-                var showTimeoutDialog,
-                    sessionTimeoutMS,
-                    dialogDisplayMS,
-                    sleepMS,
-                    bufferMS,
-                    now = new Date().getTime(),
-                    logoutTime;
+                var showTimeoutDialog;
+                var sessionTimeoutMS;
+                var dialogDisplayMS;
+                var sleepMS;
+                var bufferMS;
+                var now = new Date().getTime();
+                var logoutTime;
 
                 // Load timeout values from config.
                 sessionTimeoutMS = config.sessionTimeoutMS || 30 * MINUTES;

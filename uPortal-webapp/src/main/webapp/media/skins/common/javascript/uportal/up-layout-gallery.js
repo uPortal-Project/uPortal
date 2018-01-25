@@ -136,7 +136,8 @@ var up = up || {};
     });
 
     up.AjaxLayoutPortletListView = function(container, overallThat, options) {
-        var that, cutpoints;
+        var that;
+        var cutpoints;
 
         // Construct the new component.
         that = fluid.initView(
@@ -179,7 +180,8 @@ var up = up || {};
         ];
 
         that.refresh = function() {
-            var portlets, members;
+            var portlets;
+            var members;
 
             // Build a list of all portlets that are a deep member of the
             // currently-selected category, sorted by title
@@ -474,7 +476,8 @@ var up = up || {};
     });
 
     up.PortalGalleryPane = function(container, overallThat, options) {
-        var that, initialized;
+        var that;
+        var initialized;
 
         that = fluid.initView('up.PortalGalleryPane', container, options);
 
@@ -631,7 +634,9 @@ var up = up || {};
         };
 
         that.hideLoading = function() {
-            var modal, ui, t;
+            var modal;
+            var ui;
+            var t;
 
             modal = that.locate('loading');
             ui = that.locate('ui');
