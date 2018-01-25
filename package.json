@@ -37,6 +37,8 @@
           "ignoreStrings": true
         }
       ],
+      "new-cap": "warn",
+      "max-len": "warn",
       "arrow-parens": "off",
       "constructor-super": "off",
       "generator-star-spacing": "off",
