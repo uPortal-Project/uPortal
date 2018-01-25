@@ -31,7 +31,7 @@ var up = up || {};
         var that = fluid.initView('up.EntityRegistry', container, options);
 
         that.state = that.state || {};
-        that.state.entityCache = new Array();
+        that.state.entityCache = [];
 
         // --------------------------------------------------
         // PUBLIC METHODS
