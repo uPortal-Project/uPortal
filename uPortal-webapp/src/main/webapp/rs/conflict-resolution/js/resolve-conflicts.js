@@ -16,9 +16,8 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-"use strict";
+'use strict';
 
 // Namespace conflict with fluid and bootstrap, leveraging fluid function as default
 var bootstrapTooltip = $.fn.tooltip.noConflict(); // return $.fn.tooltip to previously assigned value
-$.fn.bootstrapTooltip = bootstrapTooltip;         // give $().bootstrapTooltip the Bootstrap functionality
-
+$.fn.bootstrapTooltip = bootstrapTooltip; // give $().bootstrapTooltip the Bootstrap functionality
