@@ -151,8 +151,13 @@
                 return output;
             };
 
-            // Simple function to escape specific HTML characters so they aren't a problem. &, quote, and single quote
-            // are handled by jQuery so only need to deal with < and >
+            /**
+             * Simple function to escape specific HTML characters so they aren't
+             * a problem. &, quote, and single quote are handled by jQuery so
+             * only need to deal with < and >
+             * @param {string} str - unescaped input
+             * @returns {string} escaped output
+             */
             function htmlEscape(str) {
                 return String(str)
                     .replace(/</g, '&lt;')
