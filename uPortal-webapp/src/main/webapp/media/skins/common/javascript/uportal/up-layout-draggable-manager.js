@@ -144,7 +144,7 @@ var up = up || {};
     var dragOverHandler = function(that, target) {
         var column;
         var portlets;
-        var portlet_locked;
+        var portletLocked;
         var firstMovablePortlet;
         var children;
         var dropTarget;
@@ -157,12 +157,12 @@ var up = up || {};
         // Determine the contents of a column. Does the column contain any portlets?
         if (portlets.length > 0) {
             // Column contains portlets. Are any portlets locked?
-            portlet_locked = column.find(
+            portletLocked = column.find(
                 that.options.selectors.lastPortletLocked
             );
-            if (portlet_locked.length > 0) {
+            if (portletLocked.length > 0) {
                 // Insert drop target after last instance of locked portlet.
-                dropTarget.insertAfter(portlet_locked);
+                dropTarget.insertAfter(portletLocked);
             } else {
                 // Insert drop target before the first movable portlet.
                 firstMovablePortlet = column
