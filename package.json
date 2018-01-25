@@ -28,7 +28,7 @@
         4
       ],
       "max-len": [
-        "error",
+        "warn",
         {
           "code": 80,
           "tabWidth": 4,
@@ -38,7 +38,6 @@
         }
       ],
       "new-cap": "warn",
-      "max-len": "warn",
       "arrow-parens": "off",
       "constructor-super": "off",
       "generator-star-spacing": "off",
