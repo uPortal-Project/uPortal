@@ -14,7 +14,9 @@ matrix:
 
 # The 'build' task runs most things, including test, check, & static analysis
 install: true
-script: ./gradlew -u -S --no-daemon --no-parallel build jacocoAggregateReport coveralls
+script:
+  - ./gradlew -u -S --no-daemon --no-parallel build jacocoAggregateReport coveralls
+  - ./gradlew -u -S --no-daemon --no-parallel :npm_run_lint-js
 
 cache:
   directories:

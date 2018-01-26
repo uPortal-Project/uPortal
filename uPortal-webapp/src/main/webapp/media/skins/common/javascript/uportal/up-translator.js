@@ -16,13 +16,12 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-"use strict";
+'use strict';
 var up = up || {};
 
 (function($, fluid) {
-
     up.TranslatorPortlet = function(container, options) {
-        var that = fluid.initView("up.TranslatorPortlet", container, options);
+        var that = fluid.initView('up.TranslatorPortlet', container, options);
 
         // this will hold the entity template in order to enable later reloading
         var entityTemplate = null;
@@ -33,20 +32,20 @@ var up = up || {};
         var addMessageHandler = function() {
             that.options.entity = null;
             var data = [
-                    { ID: "code", value: "" },
-                    { ID: "locale", value: that.options.locale },
-                    { ID: "value", value: "" }
+                {ID: 'code', value: ''},
+                {ID: 'locale', value: that.options.locale},
+                {ID: 'value', value: ''},
             ];
             var selectorMap = [
-                    { selector: '.uptrans-mfrm-code', id: "code" },
-                    { selector: '.uptrans-mfrm-loc', id: "locale" },
-                    { selector: '.uptrans-mfrm-value', id: "value" }
+                {selector: '.uptrans-mfrm-code', id: 'code'},
+                {selector: '.uptrans-mfrm-loc', id: 'locale'},
+                {selector: '.uptrans-mfrm-value', id: 'value'},
             ];
-            var $form = that.locate("messageForm");
-            $form.find(".uptrans-mfrm-code-fieldset").show();
-            fluid.selfRender($form.show(), data, { cutpoints: selectorMap });
-            that.locate("portletForm").hide();
-            that.locate("formContainer").show();
+            var $form = that.locate('messageForm');
+            $form.find('.uptrans-mfrm-code-fieldset').show();
+            fluid.selfRender($form.show(), data, {cutpoints: selectorMap});
+            that.locate('portletForm').hide();
+            that.locate('formContainer').show();
         };
 
         /**
@@ -56,37 +55,43 @@ var up = up || {};
         var fillMessageForm = function() {
             $.ajax({
                 url: that.options.resourceUrl,
-                dataType: "json",
+                dataType: 'json',
                 data: {
                     action: 'getEntity',
                     id: that.options.entity.id,
                     locale: that.options.locale,
-                    entity: that.options.entityType
+                    entity: that.options.entityType,
                 },
                 success: function(json) {
                     var message = json.message;
                     // if there was no message, then initialize with empty values
                     if (message == null) {
-                        message = { code: that.options.entity.id, locale: that.options.locale, value: "" };
+                        message = {
+                            code: that.options.entity.id,
+                            locale: that.options.locale,
+                            value: '',
+                        };
                     }
                     var data = [
-                            { ID: "code", value: message.code },
-                            { ID: "locale", value: message.locale },
-                            { ID: "value", value: message.value }
+                        {ID: 'code', value: message.code},
+                        {ID: 'locale', value: message.locale},
+                        {ID: 'value', value: message.value},
                     ];
 
                     var selectorMap = [
-                            { selector: '.uptrans-mfrm-code', id: "code" },
-                            { selector: '.uptrans-mfrm-loc', id: "locale" },
-                            { selector: '.uptrans-mfrm-value', id: "value" }
+                        {selector: '.uptrans-mfrm-code', id: 'code'},
+                        {selector: '.uptrans-mfrm-loc', id: 'locale'},
+                        {selector: '.uptrans-mfrm-value', id: 'value'},
                     ];
 
-                    that.locate("portletForm").hide();
-                    that.locate("formContainer").show();
-                    var $form = that.locate("messageForm");
-                    $form.find(".uptrans-mfrm-code-fieldset").hide();
-                    fluid.selfRender($form.show(), data, { cutpoints: selectorMap });
-                }
+                    that.locate('portletForm').hide();
+                    that.locate('formContainer').show();
+                    var $form = that.locate('messageForm');
+                    $form.find('.uptrans-mfrm-code-fieldset').hide();
+                    fluid.selfRender($form.show(), data, {
+                        cutpoints: selectorMap,
+                    });
+                },
             });
         };
 
@@ -96,15 +101,17 @@ var up = up || {};
         var portletFormSubmitHandler = function() {
             var $form = $(this);
             $.ajax({
-                url: $form.attr("action"),
-                type: "POST",
+                url: $form.attr('action'),
+                type: 'POST',
                 data: $form.serialize(),
                 success: function() {
-                    var $msg = that.locate("formContainer").find(".portlet-msg-success");
+                    var $msg = that
+                        .locate('formContainer')
+                        .find('.portlet-msg-success');
                     $msg.html(that.options.messages.portletTranslationSaved);
                     $msg.show();
                     $msg.fadeOut(4000);
-                }
+                },
             });
             return false;
         };
@@ -116,41 +123,70 @@ var up = up || {};
         var fillPortletForm = function() {
             $.ajax({
                 url: that.options.resourceUrl,
-                dataType: "json",
+                dataType: 'json',
                 data: {
                     action: 'getEntity',
                     id: that.options.entity.id,
                     locale: that.options.locale,
-                    entity: that.options.entityType
+                    entity: that.options.entityType,
                 },
                 success: function(json) {
                     var portlet = json.portlet;
                     var data = [
-                            { ID: "id", value: portlet.id },
-                            { ID: "locale", value: portlet.locale },
-                            { ID: "original.title", value: portlet.original.title },
-                            { ID: "localized.title", value: portlet.localized.title },
-                            { ID: "original.name", value: portlet.original.name },
-                            { ID: "localized.name", value: portlet.localized.name },
-                            { ID: "original.description", value: portlet.original.description },
-                            { ID: "localized.description", value: portlet.localized.description },
+                        {ID: 'id', value: portlet.id},
+                        {ID: 'locale', value: portlet.locale},
+                        {ID: 'original.title', value: portlet.original.title},
+                        {
+                            ID: 'localized.title',
+                            value: portlet.localized.title,
+                        },
+                        {ID: 'original.name', value: portlet.original.name},
+                        {ID: 'localized.name', value: portlet.localized.name},
+                        {
+                            ID: 'original.description',
+                            value: portlet.original.description,
+                        },
+                        {
+                            ID: 'localized.description',
+                            value: portlet.localized.description,
+                        },
                     ];
 
                     var selectorMap = [
-                            { selector: '.uptrans-pfrm-id', id: "id" },
-                            { selector: '.uptrans-pfrm-loc', id: "locale" },
-                            { selector: '.uptrans-pfrm-loc-name', id: "localized.name" },
-                            { selector: '.uptrans-pfrm-loc-title', id: "localized.title" },
-                            { selector: '.uptrans-pfrm-loc-descr', id: "localized.description" },
-                            { selector: '.uptrans-pfrm-orig-title', id: "original.title" },
-                            { selector: '.uptrans-pfrm-orig-name', id: "original.name" },
-                            { selector: '.uptrans-pfrm-orig-descr', id: "original.description" }
+                        {selector: '.uptrans-pfrm-id', id: 'id'},
+                        {selector: '.uptrans-pfrm-loc', id: 'locale'},
+                        {
+                            selector: '.uptrans-pfrm-loc-name',
+                            id: 'localized.name',
+                        },
+                        {
+                            selector: '.uptrans-pfrm-loc-title',
+                            id: 'localized.title',
+                        },
+                        {
+                            selector: '.uptrans-pfrm-loc-descr',
+                            id: 'localized.description',
+                        },
+                        {
+                            selector: '.uptrans-pfrm-orig-title',
+                            id: 'original.title',
+                        },
+                        {
+                            selector: '.uptrans-pfrm-orig-name',
+                            id: 'original.name',
+                        },
+                        {
+                            selector: '.uptrans-pfrm-orig-descr',
+                            id: 'original.description',
+                        },
                     ];
 
-                    that.locate("messageForm").hide();
-                    that.locate("formContainer").show();
-                    fluid.selfRender(that.locate("portletForm").show(), data, { cutpoints: selectorMap });
-                }
+                    that.locate('messageForm').hide();
+                    that.locate('formContainer').show();
+                    fluid.selfRender(that.locate('portletForm').show(), data, {
+                        cutpoints: selectorMap,
+                    });
+                },
             });
         };
 
@@ -160,9 +196,9 @@ var up = up || {};
         var updateForm = function() {
             // if no entity is selected, then there's no need to show the form
             if (that.options.entity) {
-                if (that.options.entityType == "portlet") {
+                if (that.options.entityType == 'portlet') {
                     fillPortletForm();
-                } else if (that.options.entityType == "message") {
+                } else if (that.options.entityType == 'message') {
                     fillMessageForm();
                 }
             }
@@ -172,49 +208,63 @@ var up = up || {};
          * Reload translateable entity list.
          */
         var refreshEntities = function(data) {
-            that.locate("formContainer").hide();
+            that.locate('formContainer').hide();
             if (that.options.entityType == 'message') {
-                that.locate("addMessage").show();
+                that.locate('addMessage').show();
             } else {
-                that.locate("addMessage").hide();
+                that.locate('addMessage').hide();
             }
             var entities = [];
-            $(data.entities.sort(up.getStringPropertySortFunction("title"))).each(function(idx, entity) {
+            $(
+                data.entities.sort(up.getStringPropertySortFunction('title'))
+            ).each(function(idx, entity) {
                 entities.push({
-                    ID: that.options.namespace + "data:",
+                    ID: that.options.namespace + 'data:',
                     value: entity.title,
                     decorators: [
                         {
-                            type: "jQuery",
-                            func: "click",
+                            type: 'jQuery',
+                            func: 'click',
                             args: function() {
                                 that.options.entity = entity;
                                 updateForm();
-                            }
+                            },
                         },
                         {
-                            type: "jQuery",
-                            func: "keydown",
+                            type: 'jQuery',
+                            func: 'keydown',
                             args: function() {
                                 // enter key has been clicked
                                 if (event.keyCode == 13) {
                                     that.options.entity = entity;
                                     updateForm();
                                 }
-                            }
-                        }
-                    ]
+                            },
+                        },
+                    ],
                 });
             });
 
             var selectorMap = [
-                    { selector: that.options.selectors.entityList, id: that.options.namespace + "data:" },
-                    { selector: that.options.selectors.entity, id: "name" }
+                {
+                    selector: that.options.selectors.entityList,
+                    id: that.options.namespace + 'data:',
+                },
+                {selector: that.options.selectors.entity, id: 'name'},
             ];
             if (entityTemplate == null) {
-                entityTemplate = fluid.selfRender(that.locate("entities"), entities, { cutpoints: selectorMap });
+                entityTemplate = fluid.selfRender(
+                    that.locate('entities'),
+                    entities,
+                    {cutpoints: selectorMap}
+                );
             } else {
-                fluid.reRender(entityTemplate, that.locate("entities"), entities, { cutpoints: selectorMap });
+                fluid.reRender(
+                    entityTemplate,
+                    that.locate('entities'),
+                    entities,
+                    {cutpoints: selectorMap}
+                );
             }
         };
 
@@ -222,17 +272,17 @@ var up = up || {};
          * Load entities to be translated in specified locale using AJAX.
          */
         var entityTypeSelectionChangedHandler = function() {
-            var entity = that.locate("entityType").val();
-            that.options.entityType = that.locate("entityType").val();
+            var entity = that.locate('entityType').val();
+            that.options.entityType = that.locate('entityType').val();
             that.options.entity = null;
 
             if (entity && entity != '') {
                 // get entities from login
                 $.ajax({
                     url: that.options.resourceUrl,
-                    dataType: "json",
-                    data: { entity: entity, action: 'getEntityList' },
-                    success: refreshEntities
+                    dataType: 'json',
+                    data: {entity: entity, action: 'getEntityList'},
+                    success: refreshEntities,
                 });
             }
         };
@@ -243,33 +293,35 @@ var up = up || {};
         var messageFormSubmitHandler = function() {
             var $form = $(this);
             $.ajax({
-                url: $form.attr("action"),
-                type: "POST",
+                url: $form.attr('action'),
+                type: 'POST',
                 data: $form.serialize(),
                 success: function(data) {
                     // if this is a new key (selected entity was null), then we must reload entity list
                     if (that.options.entity == null) {
                         entityTypeSelectionChangedHandler();
                     }
-                    var $msg = that.locate("formContainer").find(".portlet-msg-success");
+                    var $msg = that
+                        .locate('formContainer')
+                        .find('.portlet-msg-success');
                     $msg.html(that.options.messages.messageTranslationSaved);
                     $msg.show();
                     $msg.fadeOut(4000);
-                }
+                },
             });
             return false;
         };
 
         // init event handlers
-        that.locate("entityType").change(entityTypeSelectionChangedHandler);
-        that.locate("portletForm").submit(portletFormSubmitHandler);
-        that.locate("messageForm").submit(messageFormSubmitHandler);
-        that.locate("entityForm").submit(function() {
+        that.locate('entityType').change(entityTypeSelectionChangedHandler);
+        that.locate('portletForm').submit(portletFormSubmitHandler);
+        that.locate('messageForm').submit(messageFormSubmitHandler);
+        that.locate('entityForm').submit(function() {
             return false;
         });
-        that.locate("addMessage").click(addMessageHandler);
+        that.locate('addMessage').click(addMessageHandler);
 
-        var localeSelector = that.locate("locale");
+        var localeSelector = that.locate('locale');
         localeSelector.change(function() {
             that.options.locale = localeSelector.val();
             updateForm();
@@ -283,8 +335,8 @@ var up = up || {};
         return that;
     };
 
-    fluid.defaults("up.TranslatorPortlet", {
-        namespace: "uptrans",
+    fluid.defaults('up.TranslatorPortlet', {
+        namespace: 'uptrans',
         locale: null,
         entityType: null,
         entity: null,
@@ -299,10 +351,13 @@ var up = up || {};
             portletForm: '#uptrans-portletForm',
             messageForm: '#uptrans-messageForm',
             formContainer: '#uptrans-formContainer',
-            addMessage: '#uptrans-addMessage' },
+            addMessage: '#uptrans-addMessage',
+        },
         messages: {
-            messageTranslationSaved: 'Message translation has been successfully saved',
-            portletTranslationSaved: 'Portlet definition translation has been successfully saved'
-        }
+            messageTranslationSaved:
+                'Message translation has been successfully saved',
+            portletTranslationSaved:
+                'Portlet definition translation has been successfully saved',
+        },
     });
 })(jQuery, fluid);

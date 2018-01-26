@@ -18,9 +18,7 @@
  */
 var up = up || {};
 
-
-(function($, fluid){
-
+(function($, fluid) {
     /**
      * Instantiate a LayoutPersistence component
      *
@@ -28,48 +26,49 @@ var up = up || {};
      * @param {Object} options configuration options for the components
      */
     up.LayoutPreferencesPersistence = function(container, options) {
-
         // construct the new component
-        var that = fluid.initView("up.LayoutPreferencesPersistence", container, options);
+        var that = fluid.initView(
+            'up.LayoutPreferencesPersistence',
+            container,
+            options
+        );
 
         that.update = function(data, success) {
             $.ajax({
                 url: that.options.saveLayoutUrl,
-                type: "POST",
+                type: 'POST',
                 data: data,
-                dataType: "json",
+                dataType: 'json',
                 async: false,
                 success: success,
                 error: function(request, text, error) {
                     that.events.onError.fire(that, request, text, error);
-                }
+                },
             });
         };
 
         return that;
     };
 
-
     // defaults
-    fluid.defaults("up.LayoutPreferencesPersistence", {
+    fluid.defaults('up.LayoutPreferencesPersistence', {
         saveLayoutUrl: null,
         selectors: {
-            errorMessage: ".layout-persistence-error-message"
+            errorMessage: '.layout-persistence-error-message',
         },
         messages: {
-            error: "Error persisting layout change"
+            error: 'Error persisting layout change',
         },
         events: {
             onSuccess: null,
-            onError: null
+            onError: null,
         },
         listeners: {
             onSuccess: null,
             onError: function(that, request, text, error) {
                 if (console) console.log(request, text, error);
-                that.locate("errorMessage").text(that.options.messages.error);
-            }
-        }
+                that.locate('errorMessage').text(that.options.messages.error);
+            },
+        },
     });
-
 })(jQuery, fluid);
