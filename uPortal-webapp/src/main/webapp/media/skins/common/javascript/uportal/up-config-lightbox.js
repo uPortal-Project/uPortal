@@ -18,167 +18,182 @@
  */
 var up = up || {};
 
-up.lightboxConfig = up.lightboxConfig || (function(window, $) {
-    'use strict';
+up.lightboxConfig =
+    up.lightboxConfig ||
+    (function(window, $) {
+        'use strict';
 
+        var init;
+        var defaultOpts;
+        var processAjaxResponse;
+        var convertExclusiveUrlToPageUrl;
 
-    var init, defaultOpts, processAjaxResponse, convertExclusiveUrlToPageUrl;
+        /**
+         * Since the portlet config mode is loaded with the exclusive state, need
+         * to rewrite all the URLS with a more natural state or when the action
+         * occurs, you lose all the portal-y stuff (headers, other portlets, etc...)
+         *
+         * This tries to be kinda smart about it, but is somewhat limited in what
+         * we can do.  If the portlet being editing is maximized, it will try to
+         * retain that.  Otherwise, it will switch back the normal state.
+         *
+         * @param url the url to update
+         * @returns the updated URL as a string.
+         */
+        convertExclusiveUrlToPageUrl = function(url) {
+            var newUrl;
+            var matches;
+            var currentPagePortletId;
+            var portletId;
+            var state;
 
-
-    /**
-     * Since the portlet config mode is loaded with the exclusive state, need
-     * to rewrite all the URLS with a more natural state or when the action
-     * occurs, you lose all the portal-y stuff (headers, other portlets, etc...)
-     *
-     * This tries to be kinda smart about it, but is somewhat limited in what
-     * we can do.  If the portlet being editing is maximized, it will try to
-     * retain that.  Otherwise, it will switch back the normal state.
-     *
-     * @param url the url to update
-     * @returns the updated URL as a string.
-     */
-    convertExclusiveUrlToPageUrl = function(url) {
-        var newUrl, matches, currentPagePortletId, portletId, state;
-
-        matches = /\/p\/([^\/]+)\//.exec(window.location.pathname);
-        if (matches && matches[1]) {
-            currentPagePortletId = matches[1];
-        }
-
-        matches = /\/p\/([^\/]+)\//.exec(url);
-        if (matches && matches[1]) {
-            portletId = matches[1];
-        }
-
-        state = 'normal';
-        // if editing a normal portlet, Try to retain the state.  If editing a
-        // portlet in a region, have to switch back to normal mode.  This is
-        // not ideal, but it's very similar to what the happens now anyhow.
-        if (currentPagePortletId && portletId === currentPagePortletId) {
-            matches = /\/(normal|maximized|exclusive|detached)\/render.uP/.exec(window.location.pathname);
+            matches = /\/p\/([^\/]+)\//.exec(window.location.pathname);
             if (matches && matches[1]) {
-                state = matches[1];
+                currentPagePortletId = matches[1];
             }
-        }
 
-        newUrl = url.replace('/exclusive/', '/' + state + '/');
+            matches = /\/p\/([^\/]+)\//.exec(url);
+            if (matches && matches[1]) {
+                portletId = matches[1];
+            }
 
-        return newUrl;
-    };
+            state = 'normal';
+            // if editing a normal portlet, Try to retain the state.  If editing a
+            // portlet in a region, have to switch back to normal mode.  This is
+            // not ideal, but it's very similar to what the happens now anyhow.
+            if (currentPagePortletId && portletId === currentPagePortletId) {
+                matches = /\/(normal|maximized|exclusive|detached)\/render.uP/.exec(
+                    window.location.pathname
+                );
+                if (matches && matches[1]) {
+                    state = matches[1];
+                }
+            }
 
+            newUrl = url.replace('/exclusive/', '/' + state + '/');
 
-    /**
-     * Grab the page source and rewrite all URLS in the response
-     * to fix the links to exclusive state.
-     *
-     * @param conf the lightbox configuration
-     * @param content the portlet content as a string.
-     */
-    processAjaxResponse = function(conf, content) {
-        var tempHtml = $('<div/>').html(content);
+            return newUrl;
+        };
 
-        // rewrite action URL on all forms...
-        $(tempHtml).find('form').each(function(idx, form) {
-            var action, $form;
+        /**
+         * Grab the page source and rewrite all URLS in the response
+         * to fix the links to exclusive state.
+         *
+         * @param conf the lightbox configuration
+         * @param content the portlet content as a string.
+         */
+        processAjaxResponse = function(conf, content) {
+            var tempHtml = $('<div/>').html(content);
 
-            $form = $(form);
-            action = convertExclusiveUrlToPageUrl($form.attr('action'));
-            $form.attr('action', action);
-        });
+            // rewrite action URL on all forms...
+            $(tempHtml)
+                .find('form')
+                .each(function(idx, form) {
+                    var action;
+                    var $form;
 
-        // rewrite href attr on all links.
-        $(tempHtml).find('a').each(function(idx, a) {
-            var href, $a;
+                    $form = $(form);
+                    action = convertExclusiveUrlToPageUrl($form.attr('action'));
+                    $form.attr('action', action);
+                });
 
-            $a = $(a);
+            // rewrite href attr on all links.
+            $(tempHtml)
+                .find('a')
+                .each(function(idx, a) {
+                    var href;
+                    var $a;
 
-            href = convertExclusiveUrlToPageUrl($a.attr('href'));
-            $a.attr('href', href);
+                    $a = $(a);
 
-            return href;
-        });
+                    href = convertExclusiveUrlToPageUrl($a.attr('href'));
+                    $a.attr('href', href);
 
-        // once URLS are fixed, attach the content.
-        $(conf.selectors.content)
+                    return href;
+                });
+
+            // once URLS are fixed, attach the content.
+            $(conf.selectors.content)
                 .empty()
                 .append(tempHtml);
-    };
+        };
 
+        /**
+         * Overridable options that can be passed to init.
+         */
+        defaultOpts = {
+            selectors: {
+                editLinks: '[data-lightbox-url]',
+                lightbox: '#config-lightbox',
+                title: '#config-lightbox .modal-title',
+                loading: '#config-lightbox .loading',
+                content: '#config-lightbox .modal-body-content',
+            },
+            lightboxOptions: {
+                backdrop: 'static',
+                show: true,
+            },
+        };
 
-    /**
-     * Overridable options that can be passed to init.
-     */
-    defaultOpts = {
-        selectors: {
-            editLinks: '[data-lightbox-url]',
-            lightbox: '#config-lightbox',
-            title: '#config-lightbox .modal-title',
-            loading: '#config-lightbox .loading',
-            content: '#config-lightbox .modal-body-content'
-        },
-        lightboxOptions: {
-            backdrop: 'static',
-            show: true
-        }
-    };
+        /**
+         * Initialize the config lightbox support.
+         *
+         * @param config custom options (optional)
+         */
+        init = function(config) {
+            var conf;
+            var pageLoadedFn;
+            var pageLoadErrorFn;
 
+            conf = $.extend(true, defaultOpts, config);
 
-    /**
-     * Initialize the config lightbox support.
-     *
-     * @param config custom options (optional)
-     */
-    init = function(config) {
-        var conf, pageLoadedFn, pageLoadErrorFn, ajaxDoneFn;
+            $(conf.selectors.editLinks).click(function(evt) {
+                var url;
+                var title;
+                var promise;
 
-        conf = $.extend(true, defaultOpts, config);
+                evt.preventDefault();
+                evt.stopPropagation();
 
-        $(conf.selectors.editLinks).click(function(evt) {
-            var url, title, promise;
+                url = $(evt.currentTarget).data('lightboxUrl');
+                title = $(evt.currentTarget).data('lightboxTitle');
 
-            evt.preventDefault();
-            evt.stopPropagation();
+                pageLoadedFn = function(content) {
+                    processAjaxResponse(conf, content);
 
-            url = $(evt.currentTarget).data('lightboxUrl');
-            title = $(evt.currentTarget).data('lightboxTitle');
+                    $(conf.selectors.loading).fadeOut();
+                    $(conf.selectors.content).fadeIn();
+                };
 
-            pageLoadedFn = function(content) {
-                processAjaxResponse(conf, content);
+                pageLoadErrorFn = function() {
+                    // if the ajax call fails, revert to the classic, inline method
+                    // for handling configuration
+                    window.location.href = $(evt.currentTarget).attr('href');
+                };
 
-                $(conf.selectors.loading).fadeOut();
-                $(conf.selectors.content).fadeIn();
-            };
+                if (title) {
+                    $(conf.selectors.title).text(title);
+                }
 
-            pageLoadErrorFn = function() {
-                // if the ajax call fails, revert to the classic, inline method
-                // for handling configuration
-                window.location.href = $(evt.currentTarget).attr('href');
-            };
+                $(conf.selectors.content).hide();
+                $(conf.selectors.loading).show();
+                $(conf.selectors.lightbox).modal(conf.lightboxOptions);
 
-            if (title) {
-                $(conf.selectors.title).text(title);
-            }
+                promise = $.ajax({
+                    url: url,
+                    contentType: 'text/html',
+                });
 
-            $(conf.selectors.content).hide();
-            $(conf.selectors.loading).show();
-            $(conf.selectors.lightbox).modal(conf.lightboxOptions);
+                promise.then(pageLoadedFn, pageLoadErrorFn);
 
-            promise = $.ajax({
-                url: url,
-                contentType: 'text/html'
+                return false;
             });
+        };
 
-            promise.then(pageLoadedFn, pageLoadErrorFn);
-
-            return false;
-        });
-    };
-
-
-    /**
-     * Return the public API.
-     */
-    return {
-        init: init
-    };
-} (window, jQuery));
+        /**
+         * Return the public API.
+         */
+        return {
+            init: init,
+        };
+    })(window, jQuery);

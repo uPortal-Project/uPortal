@@ -20,14 +20,18 @@ import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import org.apereo.portal.IUserIdentityStore;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.IPersonManager;
 import org.apereo.portal.security.InitialSecurityContextFactory;
 import org.apereo.portal.security.PersonFactory;
+import org.apereo.portal.security.PortalSecurityException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public abstract class AbstractPersonManager implements IPersonManager {
+public class BasePersonManager implements IPersonManager {
 
     private final Map<String, Integer> guestUserIds = new HashMap<>();
 
@@ -38,6 +42,8 @@ public abstract class AbstractPersonManager implements IPersonManager {
 
     @Autowired private InitialSecurityContextFactory initialSecurityContextFactory;
 
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+
     @PostConstruct
     public void init() {
         // Make sure we have a guestUsernameSelectors collection & sort it
@@ -45,6 +51,44 @@ public abstract class AbstractPersonManager implements IPersonManager {
             guestUsernameSelectors = Collections.emptyList();
         }
         Collections.sort(guestUsernameSelectors);
+    }
+
+    /**
+     * This is a basic implementation of <code>getPerson</code> that formerly appeared in <code>
+     * SimplePersonManager</code>. For uPortal 5, it's better to avoid unnecessary bean tweaking on
+     * the part of deployers, so the various flavors of PersonManager were combined in a manner
+     * where the appropriate behavior triggers automatically (based on AuthN settings).
+     *
+     * @param request the servlet request object
+     * @return the IPerson object for the incoming request
+     */
+    @Override
+    public IPerson getPerson(HttpServletRequest request) throws PortalSecurityException {
+        HttpSession session = request.getSession(false);
+        IPerson person = null;
+
+        // Return the person object if it exists in the user's session
+        if (session != null) {
+            person = (IPerson) session.getAttribute(PERSON_SESSION_KEY);
+            logger.debug("getPerson -- person object retrieved from session is [{}]", person);
+        }
+
+        if (person == null) {
+            try {
+                // Create a guest person
+                person = createGuestPerson(request);
+                logger.debug("getPerson -- created a new guest person [{}]", person);
+            } catch (Exception e) {
+                // Log the exception
+                logger.error("Exception creating guest person.", e);
+            }
+            // Add this person object to the user's session
+            if (person != null && session != null) {
+                session.setAttribute(PERSON_SESSION_KEY, person);
+            }
+        }
+
+        return person;
     }
 
     /**

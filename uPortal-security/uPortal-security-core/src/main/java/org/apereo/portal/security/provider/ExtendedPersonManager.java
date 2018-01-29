@@ -27,8 +27,12 @@ import org.apereo.services.persondir.support.merger.MultivaluedAttributeMerger;
 /**
  * Manages the storage of an IPerson object in a user's session, and add request attributes to the
  * user guest.
+ *
+ * @deprecated Since 5.0 because (AFAIK) the use cases for which this class was created were never
+ *     fully implemented, and because (AFAIK) this class is not used by anyone, anywhere.
  */
-public class ExtendedPersonManager extends AbstractPersonManager {
+@Deprecated
+public class ExtendedPersonManager extends BasePersonManager {
 
     /** Logger. */
     private static final Log log = LogFactory.getLog(ExtendedPersonManager.class);

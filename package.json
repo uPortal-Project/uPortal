@@ -27,6 +27,17 @@
         "error",
         4
       ],
+      "max-len": [
+        "warn",
+        {
+          "code": 80,
+          "tabWidth": 4,
+          "ignoreUrls": true,
+          "ignoreComments": true,
+          "ignoreStrings": true
+        }
+      ],
+      "new-cap": "warn",
       "arrow-parens": "off",
       "constructor-super": "off",
       "generator-star-spacing": "off",

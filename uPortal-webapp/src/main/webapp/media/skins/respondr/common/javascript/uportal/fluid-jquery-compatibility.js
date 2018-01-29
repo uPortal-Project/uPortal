@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-"use strict";
+'use strict';
 
 /*
  * The role of this library is to support the continued use of Fluid Infusion 1.4

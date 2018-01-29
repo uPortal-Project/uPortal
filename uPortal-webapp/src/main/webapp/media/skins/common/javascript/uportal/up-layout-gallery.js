@@ -16,140 +16,199 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-"use strict";
+'use strict';
 var up = up || {};
 
-(function ($, fluid) {
-
-    up.AjaxLayoutCategoryListView = function (container, overallThat, options) {
-
+(function($, fluid) {
+    up.AjaxLayoutCategoryListView = function(container, overallThat, options) {
         // construct the new component
-        var that = fluid.initView("up.AjaxLayoutCategoryListView", container, options);
+        var that = fluid.initView(
+            'up.AjaxLayoutCategoryListView',
+            container,
+            options
+        );
 
         // initialize a state map for this component
         that.state = {};
 
         var cutpoints = [
-            { id: "~categoryContainer:", selector: ".category-choice-container" },
-            { id: "category", selector: ".category-choice" },
-            { id: "categoryLink", selector: ".category-choice-link" },
-            { id: "categoryName", selector: ".category-choice-name" }
+            {
+                id: '~categoryContainer:',
+                selector: '.category-choice-container',
+            },
+            {id: 'category', selector: '.category-choice'},
+            {id: 'categoryLink', selector: '.category-choice-link'},
+            {id: 'categoryName', selector: '.category-choice-name'},
         ];
 
-        that.refresh = function () {
+        that.refresh = function() {
             // Build an array of all categories containing at least
             // one deep member, sorted by name
             var categories = [];
             categories.push({
-                id: "",
+                id: '',
                 name: that.options.rootCategoryName,
                 description: that.options.rootCategoryDescription,
                 categories: [],
                 deepCategories: [],
                 portlets: [],
-                deepPortlets: []
+                deepPortlets: [],
             });
-            $(overallThat.registry.getAllCategories()).each(function (idx, category) {
-                if (category.deepPortlets.length > 0 && category.id !== "local.1") {
+            $(overallThat.registry.getAllCategories()).each(function(
+                idx,
+                category
+            ) {
+                if (
+                    category.deepPortlets.length > 0 &&
+                    category.id !== 'local.1'
+                ) {
                     categories.push(category);
                 }
             });
-            categories.sort(up.getStringPropertySortFunction("name", that.options.rootCategoryName));
+            categories.sort(
+                up.getStringPropertySortFunction(
+                    'name',
+                    that.options.rootCategoryName
+                )
+            );
 
-            var tree = { children: [] };
+            var tree = {children: []};
 
-            var s = overallThat.state.currentCategory || "";
+            var s = overallThat.state.currentCategory || '';
 
-            $(categories).each(function (idx, category) {
+            $(categories).each(function(idx, category) {
                 tree.children.push({
-                    ID: "categoryContainer:",
+                    ID: 'categoryContainer:',
                     children: [
                         {
-                            ID: "category",
+                            ID: 'category',
                             decorators: [
-                                { type: "addClass", classes: category.id === s ? "active" : "" }
-                            ]
+                                {
+                                    type: 'addClass',
+                                    classes: category.id === s ? 'active' : '',
+                                },
+                            ],
                         },
                         {
-                            ID: "categoryLink",
+                            ID: 'categoryLink',
                             decorators: [
-                                { type: "jQuery", func: "click",
-                                    args: function () {
-                                        overallThat.events.onCategorySelect.fire(overallThat, category);
-                                        $(".pager-button-up-inner").click();
-                                    }
-                                }
-                            ]
+                                {
+                                    type: 'jQuery',
+                                    func: 'click',
+                                    args: function() {
+                                        overallThat.events.onCategorySelect.fire(
+                                            overallThat,
+                                            category
+                                        );
+                                        $('.pager-button-up-inner').click();
+                                    },
+                                },
+                            ],
                         },
-                        { ID: "categoryName", value: category.name }
-                    ]
+                        {ID: 'categoryName', value: category.name},
+                    ],
                 });
             });
 
             if (that.state.templates) {
-                fluid.reRender(that.state.templates, $(container).find(".categories"), tree, { cutpoints: cutpoints });
+                fluid.reRender(
+                    that.state.templates,
+                    $(container).find('.categories'),
+                    tree,
+                    {cutpoints: cutpoints}
+                );
             } else {
-                that.state.templates = fluid.selfRender($(container).find(".categories"), tree, { cutpoints: cutpoints });
+                that.state.templates = fluid.selfRender(
+                    $(container).find('.categories'),
+                    tree,
+                    {cutpoints: cutpoints}
+                );
             }
-
         };
 
         that.refresh();
         return that;
     };
 
-    fluid.defaults("up.AjaxLayoutCategoryListView", {
-        rootCategoryName: "ALL",
-        rootCategoryDescription: "All Categories"
+    fluid.defaults('up.AjaxLayoutCategoryListView', {
+        rootCategoryName: 'ALL',
+        rootCategoryDescription: 'All Categories',
     });
 
-    up.AjaxLayoutPortletListView = function (container, overallThat, options) {
-        var that, cutpoints;
+    up.AjaxLayoutPortletListView = function(container, overallThat, options) {
+        var that;
+        var cutpoints;
 
         // Construct the new component.
-        that = fluid.initView("up.AjaxLayoutPortletListView", container, options);
+        that = fluid.initView(
+            'up.AjaxLayoutPortletListView',
+            container,
+            options
+        );
 
         // Initialize draggable manager.
-        that.dragManager = fluid.initSubcomponent(that, "dragManager",
-            [that.container, fluid.COMPONENT_OPTIONS]);
+        that.dragManager = fluid.initSubcomponent(that, 'dragManager', [
+            that.container,
+            fluid.COMPONENT_OPTIONS,
+        ]);
 
         // DragManger 'onDropTarget' callback.
-        that.dragManager.events.onDropTarget.addListener(function (method, targetID) {
-            that.state.drag.overall.events.onPortletDrag.fire(that.state.drag.data, method, targetID);
+        that.dragManager.events.onDropTarget.addListener(function(
+            method,
+            targetID
+        ) {
+            that.state.drag.overall.events.onPortletDrag.fire(
+                that.state.drag.data,
+                method,
+                targetID
+            );
         });
 
         // initialize a state map for this component
         that.state = {};
 
         cutpoints = [
-            { id: "portlet:", selector: ".portlet" },
-            { id: "portletWrapper", selector: ".portlet-wrapper"},
-            { id: "portletLink", selector: ".portlet-thumb-link" },
-            { id: "portletTitle", selector: ".portlet-thumb-titlebar" },
-            { id: "portletDescription", selector: ".portlet-thumb-description" },
-            { id: "portletIcon", selector: ".portlet-thumb-icon" }
+            {id: 'portlet:', selector: '.portlet'},
+            {id: 'portletWrapper', selector: '.portlet-wrapper'},
+            {id: 'portletLink', selector: '.portlet-thumb-link'},
+            {id: 'portletTitle', selector: '.portlet-thumb-titlebar'},
+            {
+                id: 'portletDescription',
+                selector: '.portlet-thumb-description',
+            },
+            {id: 'portletIcon', selector: '.portlet-thumb-icon'},
         ];
 
-        that.refresh = function () {
-            var portlets, members;
+        that.refresh = function() {
+            var portlets;
+            var members;
 
             // Build a list of all portlets that are a deep member of the
             // currently-selected category, sorted by title
             portlets = [];
-            members = (overallThat.state.currentCategory && overallThat.state.currentCategory !== "") ? overallThat.registry.getMemberPortlets(overallThat.state.currentCategory, true) : overallThat.registry.getAllPortlets();
-            $(members).each(function (idx, portlet) {
-                if (!overallThat.state.portletRegex ||
-                        overallThat.state.portletRegex.test(portlet.title) ||
-                        overallThat.state.portletRegex.test(portlet.name) ||
-                        overallThat.state.portletRegex.test(portlet.fname) ||
-                        overallThat.state.portletRegex.test(portlet.description)) {
+            members =
+                overallThat.state.currentCategory &&
+                overallThat.state.currentCategory !== ''
+                    ? overallThat.registry.getMemberPortlets(
+                        overallThat.state.currentCategory,
+                        true
+                    )
+                    : overallThat.registry.getAllPortlets();
+            $(members).each(function(idx, portlet) {
+                if (
+                    !overallThat.state.portletRegex ||
+                    overallThat.state.portletRegex.test(portlet.title) ||
+                    overallThat.state.portletRegex.test(portlet.name) ||
+                    overallThat.state.portletRegex.test(portlet.fname) ||
+                    overallThat.state.portletRegex.test(portlet.description)
+                ) {
                     if (!portlet.iconUrl) {
                         portlet.iconUrl = that.options.defaultIconUrl;
                     }
                     portlets.push(portlet);
                 }
             });
-            portlets.sort(up.getStringPropertySortFunction("title"));
+            portlets.sort(up.getStringPropertySortFunction('title'));
 
             if (that.state.pager) {
                 up.refreshPager(that.state.pager, portlets);
@@ -157,77 +216,84 @@ var up = up || {};
                 // define the column structure for the portlets pager
                 var columnDefs = [
                     {
-                        key: "portletWrapper",
-                        valuebinding: "*.id",
-                        components: function (row) {
+                        key: 'portletWrapper',
+                        valuebinding: '*.id',
+                        components: function(row) {
                             return {
-                                decorators:
-                                [
+                                decorators: [
                                     {
-                                        type: "jQuery",
-                                        func: "mousedown",
-                                        args: function () {
+                                        type: 'jQuery',
+                                        func: 'mousedown',
+                                        args: function() {
                                             // Update drag state. This state object is read
                                             // when a thumbnail is dropped into a portal column.
                                             that.state.drag = {
                                                 overall: overallThat,
-                                                data: row
+                                                data: row,
                                             };
-                                        }
+                                        },
                                     },
                                     {
                                         type: 'attrs',
                                         attributes: {
-                                            title: row.title + ' (' + row.name + ')'
-                                        }
-                                    }
-                                ]
+                                            title:
+                                                row.title +
+                                                ' (' +
+                                                row.name +
+                                                ')',
+                                        },
+                                    },
+                                ],
                             };
-                        }
+                        },
                     },
                     {
-                        key: "portletLink",
-                        valuebinding: "*.id",
-                        components: function (row) {
+                        key: 'portletLink',
+                        valuebinding: '*.id',
+                        components: function(row) {
                             return {
-                                decorators:
-                                [
-                                    {
-                                        type: "jQuery",
-                                        func: "click",
-                                        args: function () {
-                                            overallThat.events.onPortletSelect.fire(overallThat, row);
-                                        }
-                                    }
-                                ]
-                            };
-                        }
-                    },
-                    {
-                        key: "portletTitle",
-                        valuebinding: "*.title"
-                    },
-                    {
-                        key: "portletDescription",
-                        valuebinding: "*.description"
-                    },
-                    {
-                        key: "portletIcon",
-                        valuebinding: "*.id",
-                        components: function (row) {
-                              return {
                                 decorators: [
                                     {
-                                        type: "attrs",
-                                        attributes:
-                                        {
-                                            style: 'background: url(' + row.iconUrl + ') top left no-repeat;'
-                                        }
-                                    }
-                                ]
-                              };
-                        }
-                    }
+                                        type: 'jQuery',
+                                        func: 'click',
+                                        args: function() {
+                                            overallThat.events.onPortletSelect.fire(
+                                                overallThat,
+                                                row
+                                            );
+                                        },
+                                    },
+                                ],
+                            };
+                        },
+                    },
+                    {
+                        key: 'portletTitle',
+                        valuebinding: '*.title',
+                    },
+                    {
+                        key: 'portletDescription',
+                        valuebinding: '*.description',
+                    },
+                    {
+                        key: 'portletIcon',
+                        valuebinding: '*.id',
+                        components: function(row) {
+                            return {
+                                decorators: [
+                                    {
+                                        type: 'attrs',
+                                        attributes: {
+                                            style:
+                                                'background: url(' +
+                                                row.iconUrl +
+                                                ') top left no-repeat;',
+                                        },
+                                    },
+                                ],
+                            };
+                        },
+                    },
                 ];
 
                 // set the other pager options
@@ -237,31 +303,31 @@ var up = up || {};
                     columnDefs: columnDefs,
                     components: {
                         bodyRenderer: {
-                            type: "fluid.table.selfRender",
+                            type: 'fluid.table.selfRender',
                             options: {
                                 selectors: {
-                                    root: ".portlet-list"
+                                    root: '.portlet-list',
                                 },
-                                row: "portlet:",
+                                row: 'portlet:',
                                 rendererOptions: {
-                                    cutpoints: cutpoints
-                                }
-                            }
+                                    cutpoints: cutpoints,
+                                },
+                            },
                         },
                         pagerBar: {
-                            type: "fluid.pager.pagerBar",
+                            type: 'fluid.pager.pagerBar',
                             options: {
                                 pageList: {
-                                    type: "fluid.pager.renderedPageList",
+                                    type: 'fluid.pager.renderedPageList',
                                     options: {
-                                        linkBody: "a"
-                                    }
-                                }
-                            }
-                        }
+                                        linkBody: 'a',
+                                    },
+                                },
+                            },
+                        },
                     },
                     listeners: {
-                        onModelChange: function (newModel, oldModel, pager) {
+                        onModelChange: function(newModel, oldModel, pager) {
                             // Temporary solution. The initDragAndDrop() method call has been wrapped
                             // within a setTimeout to resolve a fluid.pager bug (i.e. UP-4000). When
                             // the onModelChange event fires the DOM contained within the pager.container
@@ -273,131 +339,147 @@ var up = up || {};
                             // draggable. Wrapping this method call within a setTimeout with the duration set to
                             // 0 forces the initDragAndDrop() method to be the last JavaScript function executed,
                             // giving time for the DOM to be redrawn.
-                            var timer = setTimeout(function () {
-                                that.dragManager.initDragAndDrop(newModel, oldModel, pager);
+                            var timer = setTimeout(function() {
+                                that.dragManager.initDragAndDrop(
+                                    newModel,
+                                    oldModel,
+                                    pager
+                                );
                                 clearTimeout(timer);
                             }, 0);
-                        }
-                    }
+                        },
+                    },
                 };
 
                 // initialize the pager and set it to 6 items per page.
-                that.state.pager = fluid.pagedTable($(container).find(".portlet-results"), pagerOptions);
-                that.state.pager.events.initiatePageSizeChange.fire(that.options.pageSize);
-            }//end:if.
-        };//end:function.
+                that.state.pager = fluid.pagedTable(
+                    $(container).find('.portlet-results'),
+                    pagerOptions
+                );
+                that.state.pager.events.initiatePageSizeChange.fire(
+                    that.options.pageSize
+                );
+            } // end:if.
+        }; // end:function.
         that.refresh();
 
         return that;
     };
 
-    fluid.defaults("up.AjaxLayoutPortletListView", {
+    fluid.defaults('up.AjaxLayoutPortletListView', {
         dragManager: {
-            type: "up.LayoutDraggableManager"
+            type: 'up.LayoutDraggableManager',
         },
         selectors: {
-            galleryList: ".portlet-list"
+            galleryList: '.portlet-list',
         },
         pageSize: 6,
-        defaultIconUrl: "/ResourceServingWebapp/rs/tango/0.8.90/32x32/categories/applications-other.png"
+        defaultIconUrl:
+            '/ResourceServingWebapp/rs/tango/0.8.90/32x32/categories/applications-other.png',
     });
 
-    up.BrowseContentPane = function (container, overallThat, options) {
-
-        var that = fluid.initView("up.BrowseContentPane", container, options);
+    up.BrowseContentPane = function(container, overallThat, options) {
+        var that = fluid.initView('up.BrowseContentPane', container, options);
 
         var initialized = false;
 
-        that.showPane = function () {
+        that.showPane = function() {
             if (!initialized) {
                 overallThat.showLoading();
                 initialized = true;
-                that.portletBrowser = fluid.initSubcomponent(that, "portletBrowser", [that.locate("pane"), overallThat, fluid.COMPONENT_OPTIONS]);
+                that.portletBrowser = fluid.initSubcomponent(
+                    that,
+                    'portletBrowser',
+                    [that.locate('pane'), overallThat, fluid.COMPONENT_OPTIONS]
+                );
             }
             // show the pane and mark the pane link as active
-            that.locate("pane").show();
-            that.locate("paneLink").addClass("active");
+            that.locate('pane').show();
+            that.locate('paneLink').addClass('active');
             that.events.onShow.fire(that);
         };
 
-        that.hidePane = function () {
-            that.locate("pane").hide();
-            that.locate("paneLink").removeClass("active");
+        that.hidePane = function() {
+            that.locate('pane').hide();
+            that.locate('paneLink').removeClass('active');
         };
 
-        that.hidePaneLink = function () {
-            that.locate("pane").hide();
-            that.locate("paneLink").hide().removeClass("active");
+        that.hidePaneLink = function() {
+            that.locate('pane').hide();
+            that
+                .locate('paneLink')
+                .hide()
+                .removeClass('active');
         };
 
-        that.showPaneLink = function () {
-            that.locate("paneLink").show();
-        }
-
-        that.showLoading = function () {
-            that.locate("ui").hide();
-            that.locate("loading").show();
+        that.showPaneLink = function() {
+            that.locate('paneLink').show();
         };
 
-        that.hideLoading = function () {
-            that.locate("loading").hide();
-            that.locate("ui").show();
+        that.showLoading = function() {
+            that.locate('ui').hide();
+            that.locate('loading').show();
         };
 
-        that.locate("paneLink").click(function () {
+        that.hideLoading = function() {
+            that.locate('loading').hide();
+            that.locate('ui').show();
+        };
+
+        that.locate('paneLink').click(function() {
             overallThat.showPane(that.options.key);
         });
 
         return that;
-
     };
 
-    fluid.defaults("up.BrowseContentPane", {
+    fluid.defaults('up.BrowseContentPane', {
         portletBrowser: {
-            type: "up.PortletBrowser",
+            type: 'up.PortletBrowser',
             options: {
                 portletRegistry: {
-                    options: { portletListUrl: "channel-list.js" }
+                    options: {portletListUrl: 'channel-list.js'},
                 },
                 categoryListView: {
-                    type: "up.AjaxLayoutCategoryListView"
+                    type: 'up.AjaxLayoutCategoryListView',
                 },
                 portletListView: {
-                    type: "up.AjaxLayoutPortletListView"
+                    type: 'up.AjaxLayoutPortletListView',
                 },
                 listeners: {
-                    onLoad: function (portletBrowser, gallery) {
+                    onLoad: function(portletBrowser, gallery) {
                         gallery.hideLoading();
-                    }
-                }
-            }
+                    },
+                },
+            },
         },
         key: 'add-content',
         selectors: {
-            pane: ".add-content",
-            paneLink: ".add-content-link",
-            ui: ".content-results-wrapper",
-            loading: ".content-loading",
+            pane: '.add-content',
+            paneLink: '.add-content-link',
+            ui: '.content-results-wrapper',
+            loading: '.content-loading',
 
-            portletMenu: ".add-content .categories-column",
-            portletMenuDetail: ".add-content .categories-wrapper",
-            portletListLink: ".add-content .portlet-list-link",
-            portletList: ".add-content .portlet-results",
+            portletMenu: '.add-content .categories-column',
+            portletMenuDetail: '.add-content .categories-wrapper',
+            portletListLink: '.add-content .portlet-list-link',
+            portletList: '.add-content .portlet-results',
         },
         events: {
             onInitialize: null,
-            onShow: null
+            onShow: null,
         },
         listeners: {
             onInitialize: null,
-            onShow: null
-        }
+            onShow: null,
+        },
     });
 
-    up.PortalGalleryPane = function (container, overallThat, options) {
-        var that, initialized;
+    up.PortalGalleryPane = function(container, overallThat, options) {
+        var that;
+        var initialized;
 
-        that = fluid.initView("up.PortalGalleryPane", container, options);
+        that = fluid.initView('up.PortalGalleryPane', container, options);
 
         initialized = false;
 
@@ -406,7 +488,7 @@ var up = up || {};
          * called, show the loading screen, initialize the pane, and then
          * hide the loading pane when done.
          */
-        that.showPane = function () {
+        that.showPane = function() {
             // if the pane has not yet been initialized, show the loading
             // screen while we initialize it
             if (!initialized) {
@@ -416,74 +498,100 @@ var up = up || {};
                 overallThat.hideLoading();
             }
             // show the pane and mark the pane link as active
-            that.locate("pane").show();
-            that.locate("paneLink").addClass("active");
+            that.locate('pane').show();
+            that.locate('paneLink').addClass('active');
             that.events.onShow.fire(that);
         };
 
         /**
          * Hide this pane
          */
-        that.hidePane = function () {
-            that.locate("pane").hide();
-            that.locate("paneLink").removeClass("active");
+        that.hidePane = function() {
+            that.locate('pane').hide();
+            that.locate('paneLink').removeClass('active');
         };
 
         // wire the pane link to display the appropriate pane
-        that.locate("paneLink").click(function () {
+        that.locate('paneLink').click(function() {
             overallThat.showPane(that.options.key);
         });
 
         return that;
-
     };
 
-    fluid.defaults("up.PortalGalleryPane", {
+    fluid.defaults('up.PortalGalleryPane', {
         key: null,
         selectors: {
             pane: null,
-            paneLink: null
+            paneLink: null,
         },
         events: {
             onInitialize: null,
-            onShow: null
+            onShow: null,
         },
         listeners: {
             onInitialize: null,
-            onShow: null
-        }
+            onShow: null,
+        },
     });
 
-    up.PortalGallery = function (container, options) {
-
-        var that = fluid.initView("up.PortalGallery", container, options);
+    up.PortalGallery = function(container, options) {
+        var that = fluid.initView('up.PortalGallery', container, options);
 
         that.panes = [];
-        that.panes.push(fluid.initSubcomponent(that, "browseContentPane", [container, that, fluid.COMPONENT_OPTIONS]));
-        that.panes.push(fluid.initSubcomponent(that, "useContentPane", [container, that, fluid.COMPONENT_OPTIONS]));
-        that.panes.push(fluid.initSubcomponent(that, "skinPane", [container, that, fluid.COMPONENT_OPTIONS]));
-        that.panes.push(fluid.initSubcomponent(that, "layoutPane", [container, that, fluid.COMPONENT_OPTIONS]));
+        that.panes.push(
+            fluid.initSubcomponent(that, 'browseContentPane', [
+                container,
+                that,
+                fluid.COMPONENT_OPTIONS,
+            ])
+        );
+        that.panes.push(
+            fluid.initSubcomponent(that, 'useContentPane', [
+                container,
+                that,
+                fluid.COMPONENT_OPTIONS,
+            ])
+        );
+        that.panes.push(
+            fluid.initSubcomponent(that, 'skinPane', [
+                container,
+                that,
+                fluid.COMPONENT_OPTIONS,
+            ])
+        );
+        that.panes.push(
+            fluid.initSubcomponent(that, 'layoutPane', [
+                container,
+                that,
+                fluid.COMPONENT_OPTIONS,
+            ])
+        );
 
-        that.openGallery = function () {
+        that.openGallery = function() {
             that.options.isOpen = true;
-            that.locate("galleryHandle").addClass('handle-arrow-up');
-            that.locate("galleryInner").slideDown(that.options.openSpeed);
-            if ($("#portalPageBodyColumns .portal-page-column").filter(".canAddChildren,.up-fragment-admin")) {
-                that.showPane("add-content");
+            that.locate('galleryHandle').addClass('handle-arrow-up');
+            that.locate('galleryInner').slideDown(that.options.openSpeed);
+            if (
+                $('#portalPageBodyColumns .portal-page-column').filter(
+                    '.canAddChildren,.up-fragment-admin'
+                )
+            ) {
+                that.showPane('add-content');
             } else {
-                that.showPane("use-content");
-                that.hidePaneLink("add-content");
+                that.showPane('use-content');
+                that.hidePaneLink('add-content');
             }
         };
 
-        that.closeGallery = function () {
+        that.closeGallery = function() {
             that.options.isOpen = false;
-            that.locate("galleryHandle").removeClass('handle-arrow-up');
-            that.locate("galleryInner").slideUp(that.options.closeSpeed);
+            that.locate('galleryHandle').removeClass('handle-arrow-up');
+            that.locate('galleryInner').slideUp(that.options.closeSpeed);
         };
 
-        that.showPane = function (key) {
-            $(that.panes).each(function (idx, pane) {
+        that.showPane = function(key) {
+            $(that.panes).each(function(idx, pane) {
                 if (pane.options.key === key) {
                     pane.showPane();
                 } else {
@@ -492,48 +600,53 @@ var up = up || {};
             });
         };
 
-        that.hidePaneLink = function (key) {
-            $(that.panes).each(function (idx, pane) {
+        that.hidePaneLink = function(key) {
+            $(that.panes).each(function(idx, pane) {
                 if (pane.options.key === key) {
                     pane.hidePaneLink();
                 }
             });
         };
 
-        that.showPaneLink = function (key) {
-            $(that.panes).each(function (idx, pane) {
+        that.showPaneLink = function(key) {
+            $(that.panes).each(function(idx, pane) {
                 if (pane.options.key === key) {
                     pane.showPaneLink();
                 }
             });
         };
 
-        that.refreshPaneLink = function (key) {
-            if ($("#portalPageBodyColumns .portal-page-column").filter(".canAddChildren,.up-fragment-admin")) {
-                that.showPaneLink("add-content");
+        that.refreshPaneLink = function(key) {
+            if (
+                $('#portalPageBodyColumns .portal-page-column').filter(
+                    '.canAddChildren,.up-fragment-admin'
+                )
+            ) {
+                that.showPaneLink('add-content');
             } else {
-                that.hidePaneLink("add-content");
+                that.hidePaneLink('add-content');
             }
         };
 
-        that.showLoading = function () {
-            that.locate("ui").hide();
-            that.locate("loading").show();
+        that.showLoading = function() {
+            that.locate('ui').hide();
+            that.locate('loading').show();
         };
 
-        that.hideLoading = function () {
-            var modal, ui, t;
+        that.hideLoading = function() {
+            var modal;
+            var ui;
 
-            modal = that.locate("loading");
-            ui = that.locate("ui");
+            modal = that.locate('loading');
+            ui = that.locate('ui');
 
             ui.show();
-            modal.fadeOut("slow");
+            modal.fadeOut('slow');
         };
 
         // wire the gallery handle to open and close the gallery panel
         // as appropriate
-        that.locate("galleryHandle").click(function () {
+        that.locate('galleryHandle').click(function() {
             if (that.options.isOpen) {
                 that.closeGallery();
             } else {
@@ -542,7 +655,7 @@ var up = up || {};
         });
 
         // wire the configured gallery close link
-        that.locate("closeLink").click(that.closeGallery);
+        that.locate('closeLink').click(that.closeGallery);
 
         // if the gallery is configured to initialize as open, open the gallery
         // before returning
@@ -553,62 +666,61 @@ var up = up || {};
         return that;
     };
 
-    fluid.defaults("up.PortalGallery", {
+    fluid.defaults('up.PortalGallery', {
         isOpen: false,
         openSpeed: 500,
         closeSpeed: 50,
         browseContentPane: {
-            type: "up.BrowseContentPane"
+            type: 'up.BrowseContentPane',
         },
         useContentPane: {
-            type: "up.PortalGalleryPane",
+            type: 'up.PortalGalleryPane',
             options: {
-                key: "use-content",
+                key: 'use-content',
                 selectors: {
-                    pane: ".use-content",
-                    paneLink: ".use-content-link"
+                    pane: '.use-content',
+                    paneLink: '.use-content-link',
                 },
                 listeners: {
-                    onInitialize: null
-                }
-            }
+                    onInitialize: null,
+                },
+            },
         },
         skinPane: {
-            type: "up.PortalGalleryPane",
+            type: 'up.PortalGalleryPane',
             options: {
-                key: "skin",
+                key: 'skin',
                 selectors: {
-                    pane: ".skins",
-                    paneLink: ".skin-link"
+                    pane: '.skins',
+                    paneLink: '.skin-link',
                 },
                 listeners: {
-                    onInitialize: null
-                }
-            }
+                    onInitialize: null,
+                },
+            },
         },
         layoutPane: {
-            type: "up.PortalGalleryPane",
+            type: 'up.PortalGalleryPane',
             options: {
-                key: "layout",
+                key: 'layout',
                 selectors: {
-                    pane: ".layouts",
-                    paneLink: ".layout-link"
+                    pane: '.layouts',
+                    paneLink: '.layout-link',
                 },
                 listeners: {
-                    onInitialize: function (overallThat) {
-                        up.LayoutSelector(".layouts-list", {});
-                    }
-                }
-            }
+                    onInitialize: function(overallThat) {
+                        up.LayoutSelector('.layouts-list', {});
+                    },
+                },
+            },
         },
         selectors: {
-            menu: ".menu",
-            galleryInner: ".gallery-inner",
-            galleryHandle: ".handle span",
-            closeLink: ".close-button",
-            loading: ".gallery-loader",
-            ui: ".content-wrapper .content"
-        }
+            menu: '.menu',
+            galleryInner: '.gallery-inner',
+            galleryHandle: '.handle span',
+            closeLink: '.close-button',
+            loading: '.gallery-loader',
+            ui: '.content-wrapper .content',
+        },
     });
-
 })(jQuery, fluid);
