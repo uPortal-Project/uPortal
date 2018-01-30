@@ -50,6 +50,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.Index;
 import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.Type;
 import org.jasig.portal.layout.om.IStylesheetDescriptor;
@@ -83,6 +84,7 @@ import com.google.common.collect.ImmutableMap.Builder;
 class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences {
     @Id
     @GeneratedValue(generator = "UP_SS_USER_PREF_GEN")
+    @Index(name = "IDX_SS_USER_PREF_ID")
     @Column(name = "SS_USER_PREF_ID")
     private final long id;
     

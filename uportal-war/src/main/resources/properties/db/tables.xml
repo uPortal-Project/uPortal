@@ -53,6 +53,10 @@
         <name>UPU_DFLT_ID_IDX</name>
         <column-ref>USER_DFLT_USR_ID</column-ref>
     </index>
+    <index>
+        <name>UPU_USER_NAME_IDX</name>
+        <column-ref>USER_NAME</column-ref>
+    </index>
     <unique>
         <name>UPU_USER_NAME</name>
         <column-ref>USER_NAME</column-ref>
