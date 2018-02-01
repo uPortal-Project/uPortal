@@ -18,13 +18,19 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import java.io.Serializable;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.regex.Pattern;
+
 import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.constructs.blocking.CacheEntryFactory;
 import net.sf.ehcache.constructs.blocking.SelfPopulatingCache;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apereo.portal.AuthorizationException;
@@ -50,13 +56,15 @@ public class FragmentActivator {
     private static final String NEWLY_CREATED_ATTR = "newlyCreated";
     private static final Log LOG = LogFactory.getLog(FragmentActivator.class);
 
+    private static final Class<? extends IUserViewFactory> DEFAULT_USER_VIEW_FACTORY_CLASS = OwnerLayoutUserViewFactory.class;
+
     private final LoadingCache<String, List<Locale>> fragmentOwnerLocales =
             CacheBuilder.newBuilder()
-                    .<String, List<Locale>>build(
+                    .build(
                             new CacheLoader<String, List<Locale>>() {
                                 @Override
                                 public List<Locale> load(String key) throws Exception {
-                                    return new CopyOnWriteArrayList<Locale>();
+                                    return new CopyOnWriteArrayList<>();
                                 }
                             });
 
@@ -65,6 +73,7 @@ public class FragmentActivator {
     private IUserIdentityStore identityStore;
     private IUserLayoutStore userLayoutStore;
     private ConfigurationLoader configurationLoader;
+    private Map<Class<? extends IUserViewFactory>,IUserViewFactory> userViewFactories;
 
     private static final String PROPERTY_ALLOW_EXPANDED_CONTENT =
             "org.apereo.portal.layout.dlm.allowExpandedContent";
@@ -124,6 +133,15 @@ public class FragmentActivator {
         this.userLayoutStore = userLayoutStore;
     }
 
+    @Autowired
+    public void setUserViewFactories(Set<IUserViewFactory> userViewFactoryBeans) {
+        Map<Class<? extends IUserViewFactory>,IUserViewFactory> map = new HashMap<>();
+        for (IUserViewFactory fac : userViewFactoryBeans) {
+            map.put(fac.getClass(), fac);
+        }
+        userViewFactories = Collections.unmodifiableMap(map);
+    }
+
     private static class UserViewKey implements Serializable {
         private static final long serialVersionUID = 1L;
         private final String ownerId;
@@ -178,7 +196,7 @@ public class FragmentActivator {
         }
     }
 
-    private UserView activateFragment(final UserViewKey userViewKey) {
+    private IUserView activateFragment(final UserViewKey userViewKey) {
         final String ownerId = userViewKey.getOwnerId();
         final FragmentDefinition fd = configurationLoader.getFragmentByOwnerId(ownerId);
 
@@ -203,7 +221,19 @@ public class FragmentActivator {
         }
 
         IPerson owner = bindToOwner(fd);
-        UserView view = new UserView(owner.getID());
+
+        IUserView view;
+        try {
+            Class<? extends IUserViewFactory> userViewFactoryClass = StringUtils.isNotBlank(fd.getUserViewFactory())
+                ? (Class<? extends IUserViewFactory>) Class.forName(fd.getUserViewFactory())
+                : DEFAULT_USER_VIEW_FACTORY_CLASS;
+            final IUserViewFactory factory = userViewFactories.get(userViewFactoryClass);
+            view = factory.createUserView();
+        } catch (Exception e) {
+            throw new RuntimeException("Invalid user view factory class:  " + fd.getUserViewFactory(), e);
+        }
+
+        view.setUserId(owner.getID());
         loadLayout(view, fd, owner, locale);
 
         // if owner just created we need to push the layout into
@@ -231,20 +261,16 @@ public class FragmentActivator {
         return view;
     }
 
-    public UserView getUserView(final FragmentDefinition fd, final Locale locale) {
+    public IUserView getUserView(final FragmentDefinition fd, final Locale locale) {
         final UserViewKey userViewKey = new UserViewKey(fd.getOwnerId(), locale);
         final net.sf.ehcache.Element userViewElement = this.userViews.get(userViewKey);
-        return (UserView) userViewElement.getObjectValue();
+        return (IUserView) userViewElement.getObjectValue();
     }
 
     /**
      * Saves the loaded layout in the database for the user and profile.
-     *
-     * @param view
-     * @param owner
-     * @throws Exception
      */
-    private void saveLayout(UserView view, IPerson owner) throws Exception {
+    private void saveLayout(IUserView view, IPerson owner) throws Exception {
         IUserProfile profile = new UserProfile();
         profile.setProfileId(view.getProfileId());
         userLayoutStore.setUserLayout(owner, profile, view.getLayout(), true, false);
@@ -275,8 +301,8 @@ public class FragmentActivator {
     }
 
     private int createOwner(IPerson owner, FragmentDefinition fragment) {
-        String defaultUser = null;
-        int userID = -1;
+        String defaultUser;
+        int userID;
 
         if (fragment.defaultLayoutOwnerID != null) {
             defaultUser = fragment.defaultLayoutOwnerID;
@@ -338,7 +364,7 @@ public class FragmentActivator {
     }
 
     private void loadLayout(
-            UserView view, FragmentDefinition fragment, IPerson owner, Locale locale) {
+            IUserView view, FragmentDefinition fragment, IPerson owner, Locale locale) {
         // if fragment not bound to user can't return any layouts.
         if (view.getUserId() == -1) return;
 
@@ -351,7 +377,7 @@ public class FragmentActivator {
         // and will have a hard coded id of 1 which is the default for profiles.
         // If anyone changes this user all heck could break loose for dlm. :-(
 
-        Document layout = null;
+        Document layout;
 
         try {
             // fix hard coded 1 later for multiple profiles
@@ -385,7 +411,7 @@ public class FragmentActivator {
         }
     }
 
-    private void loadPreferences(UserView view, FragmentDefinition fragment) {
+    private void loadPreferences(IUserView view, FragmentDefinition fragment) {
         // if fragment not bound to user can't return any preferences.
         if (view.getUserId() == -1) return;
 
@@ -398,7 +424,7 @@ public class FragmentActivator {
      * Removes unwanted and hidden folders, then changes all node ids to their globally safe
      * incorporated version.
      */
-    private void fragmentizeLayout(UserView view, FragmentDefinition fragment) {
+    private void fragmentizeLayout(IUserView view, FragmentDefinition fragment) {
         // if fragment not bound to user or layout empty due to error, return
         if (view.getUserId() == -1 || view.getLayout() == null) {
             return;

@@ -24,8 +24,9 @@ import java.util.Set;
 import org.apereo.portal.layout.dlm.ConfigurationLoader;
 import org.apereo.portal.layout.dlm.FragmentActivator;
 import org.apereo.portal.layout.dlm.FragmentDefinition;
-import org.apereo.portal.layout.dlm.UserView;
+import org.apereo.portal.layout.dlm.IUserView;
 import org.apereo.portal.security.IPerson;
+import org.apereo.portal.xml.XmlUtilitiesImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,79 +62,57 @@ public class FragmentDefinitionUtils implements IFragmentDefinitionUtils {
 
     @Override
     public FragmentDefinition getFragmentDefinitionByName(final String fragmentName) {
-        return this.configurationLoader.getFragmentByName(fragmentName);
+        return configurationLoader.getFragmentByName(fragmentName);
     }
 
     @Override
     public FragmentDefinition getFragmentDefinitionByOwner(final IPerson person) {
-        return this.getFragmentDefinitionByOwner(person.getUserName());
+        return getFragmentDefinitionByOwner(person.getUserName());
     }
 
     @Override
     public FragmentDefinition getFragmentDefinitionByOwner(final String ownerId) {
-        return this.configurationLoader.getFragmentByOwnerId(ownerId);
+        return configurationLoader.getFragmentByOwnerId(ownerId);
     }
 
     @Override
     public List<FragmentDefinition> getFragmentDefinitionsApplicableToPerson(final IPerson person) {
-        final List<FragmentDefinition> result = new ArrayList<FragmentDefinition>();
-        final List<FragmentDefinition> definitions = this.configurationLoader.getFragments();
+        final List<FragmentDefinition> result = new ArrayList<>();
+        final List<FragmentDefinition> definitions = configurationLoader.getFragments();
         logger.debug("About to check applicability of {} fragments", definitions.size());
 
-        if (definitions != null) {
-            for (final FragmentDefinition fragmentDefinition : definitions) {
-                logger.debug(
-                        "Checking applicability of the following fragment: {}",
-                        fragmentDefinition.getName());
-                if (fragmentDefinition.isApplicable(person)) {
-                    result.add(fragmentDefinition);
-                }
+        for (final FragmentDefinition fragmentDefinition : definitions) {
+            logger.debug(
+                "Checking applicability of the following fragment: {}",
+                fragmentDefinition.getName());
+            if (fragmentDefinition.isApplicable(person)) {
+                result.add(fragmentDefinition);
             }
         }
-        return result;
-    }
 
-    @Override
-    public List<UserView> getFragmentDefinitionUserViews(final Locale locale) {
-        return this.getFragmentDefinitionUserViews(this.getFragmentDefinitions(), locale);
-    }
-
-    @Override
-    public List<UserView> getFragmentDefinitionUserViews(
-            final List<FragmentDefinition> fragmentDefinitions, final Locale locale) {
-        final List<UserView> result = new LinkedList<UserView>();
-        if (fragmentDefinitions != null) {
-            final FragmentActivator activator = this.fragmentActivator;
-            for (FragmentDefinition definition : fragmentDefinitions) {
-                final UserView userView = activator.getUserView(definition, locale);
-                if (userView != null) {
-                    result.add(userView);
-                }
-            }
-        }
         return result;
     }
 
     @Override
     public List<Document> getFragmentDefinitionUserViewLayouts(
-            final List<FragmentDefinition> fragmentDefinitions, final Locale locale) {
-        final List<Document> result = new LinkedList<Document>();
-        final List<UserView> userViews =
-                this.getFragmentDefinitionUserViews(fragmentDefinitions, locale);
-        for (UserView userView : userViews) {
-            result.add(userView.getLayout());
+            final List<FragmentDefinition> fragmentDefinitions, final IPerson user, final Locale locale) {
+        final List<Document> result = new LinkedList<>();
+        final List<IUserView> userViews =
+                getFragmentDefinitionUserViews(fragmentDefinitions, locale);
+        for (IUserView userView : userViews) {
+            final Document content = userView.getFragmentContentForUser(user);
+            if (logger.isDebugEnabled()) { // XmlUtilitiesImpl.toString() is too expensive
+                logger.debug("UserView with userId='{}' returned the following content for user '{}'\n{}",
+                    userView.getUserId(), user.getUserName(), XmlUtilitiesImpl.toString(content));
+            }
+            result.add(content);
         }
         return result;
     }
 
     @Override
-    public Set<String> getFragmentNames() {
-        return this.getFragmentNames(this.getFragmentDefinitions());
-    }
-
-    @Override
     public Set<String> getFragmentNames(final Collection<FragmentDefinition> fragmentDefinitions) {
-        final Set<String> result = new HashSet<String>(fragmentDefinitions.size());
+        final Set<String> result = new HashSet<>(fragmentDefinitions.size());
         for (FragmentDefinition definition : fragmentDefinitions) {
             result.add(definition.getName());
         }
@@ -141,7 +120,21 @@ public class FragmentDefinitionUtils implements IFragmentDefinitionUtils {
     }
 
     @Override
-    public UserView getUserView(final FragmentDefinition fragmentDefinition, final Locale locale) {
-        return this.fragmentActivator.getUserView(fragmentDefinition, locale);
+    public IUserView getUserView(final FragmentDefinition fragmentDefinition, final Locale locale) {
+        return fragmentActivator.getUserView(fragmentDefinition, locale);
+    }
+
+    private List<IUserView> getFragmentDefinitionUserViews(
+        final List<FragmentDefinition> fragmentDefinitions, final Locale locale) {
+        final List<IUserView> result = new LinkedList<>();
+        if (fragmentDefinitions != null) {
+            for (FragmentDefinition definition : fragmentDefinitions) {
+                final IUserView userView = fragmentActivator.getUserView(definition, locale);
+                if (userView != null) {
+                    result.add(userView);
+                }
+            }
+        }
+        return result;
     }
 }

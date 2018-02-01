@@ -63,6 +63,15 @@ public class FragmentDefinition extends EvaluatorGroup {
     @Column(name = "PRECEDENCE")
     private double precedence = 0.0; // precedence of fragment
 
+    /**
+     * Name of the concrete factory class that knows how to construct {@link IUserView} objects of
+     * the appropriate type.  Nullable.
+     *
+     * @since 5.1
+     */
+    @Column(name = "USER_VIEW_FACTORY")
+    private String userViewFactory;
+
     @Column(name = "DESCRIPTION")
     private String description;
 
@@ -94,10 +103,10 @@ public class FragmentDefinition extends EvaluatorGroup {
         NamedNodeMap atts = e.getAttributes();
         this.name = loadAttribute("name", atts, true, e);
 
-        loadFromEelement(e);
+        loadFromElement(e);
     }
 
-    public void loadFromEelement(Element e) {
+    public void loadFromElement(Element e) {
         final boolean REQUIRED = true;
         final boolean NOT_REQUIRED = false;
 
@@ -105,6 +114,7 @@ public class FragmentDefinition extends EvaluatorGroup {
 
         this.ownerID = loadAttribute("ownerID", atts, REQUIRED, e);
         this.defaultLayoutOwnerID = loadAttribute("defaultLayoutOwnerID", atts, NOT_REQUIRED, e);
+        this.userViewFactory = loadAttribute("userViewFactory", atts, NOT_REQUIRED, e);
         this.description = loadAttribute("description", atts, NOT_REQUIRED, e);
 
         String precedence = loadAttribute("precedence", atts, REQUIRED, e);
@@ -137,6 +147,16 @@ public class FragmentDefinition extends EvaluatorGroup {
 
     public double getPrecedence() {
         return this.precedence;
+    }
+
+    /**
+     * Name of the concrete factory class that knows how to construct {@link IUserView} objects of
+     * the appropriate type.  Nullable.
+     *
+     * @since 5.1
+     */
+    public String getUserViewFactory() {
+        return userViewFactory;
     }
 
     public String getDescription() {

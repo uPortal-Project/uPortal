@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import org.apereo.portal.layout.dlm.FragmentDefinition;
-import org.apereo.portal.layout.dlm.UserView;
+import org.apereo.portal.layout.dlm.IUserView;
 import org.apereo.portal.security.IPerson;
 import org.w3c.dom.Document;
 
@@ -36,17 +36,10 @@ public interface IFragmentDefinitionUtils {
 
     List<FragmentDefinition> getFragmentDefinitionsApplicableToPerson(final IPerson person);
 
-    List<UserView> getFragmentDefinitionUserViews(final Locale locale);
-
-    List<UserView> getFragmentDefinitionUserViews(
-            final List<FragmentDefinition> fragmentDefinitions, final Locale locale);
-
     List<Document> getFragmentDefinitionUserViewLayouts(
-            final List<FragmentDefinition> fragmentDefinitions, final Locale locale);
-
-    Set<String> getFragmentNames();
+            final List<FragmentDefinition> fragmentDefinitions, final IPerson user, final Locale locale);
 
     Set<String> getFragmentNames(final Collection<FragmentDefinition> fragmentDefinitions);
 
-    UserView getUserView(final FragmentDefinition fragmentDefinition, final Locale locale);
+    IUserView getUserView(final FragmentDefinition fragmentDefinition, final Locale locale);
 }
