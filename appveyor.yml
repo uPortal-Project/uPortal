@@ -1,11 +1,7 @@
+environment:
+  JAVA_HOME: C:\Program Files\Java\jdk9
 os: Visual Studio 2017 # Windows Server 2016
 install:
-  # Java 9 work around
-  # https://github.com/appveyor/ci/issues/1186
-  - cinst jdk9 -version 9.0.1.11 -params 'installdir=C:\\jdk9'
-  - SET JAVA_HOME=C:\jdk9
-  - SET PATH=C:\jdk9\bin;%PATH%
-
   - java -version
   - gradlew.bat --version
 # The 'build' task runs most things, including test, check, & static analysis
