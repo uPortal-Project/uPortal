@@ -408,6 +408,12 @@ gradle-app.setting
 *.ipr
 modules.xml
 
+# There should already be a rule ignoring these, but somehow they're not being ignored
+uPortal-api/uPortal-api-search/out/
+uPortal-io/uPortal-io-jaxb/out/
+uPortal-soffit/uPortal-soffit-connector/out/
+uPortal-webapp/out/
+
 # Project specific ignores
 /build.properties
 /data/
