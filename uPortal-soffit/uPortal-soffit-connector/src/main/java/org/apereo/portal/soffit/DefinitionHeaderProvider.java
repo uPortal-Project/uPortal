@@ -15,6 +15,7 @@
 package org.apereo.portal.soffit;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -27,6 +28,7 @@ import org.apache.http.Header;
 import org.apache.http.message.BasicHeader;
 import org.apereo.portal.i18n.ILocaleStore;
 import org.apereo.portal.i18n.LocaleManager;
+import org.apereo.portal.i18n.LocaleManagerFactory;
 import org.apereo.portal.portlet.marketplace.IMarketplaceService;
 import org.apereo.portal.portlet.marketplace.MarketplacePortletDefinition;
 import org.apereo.portal.portlet.om.IPortletDefinition;
@@ -62,6 +64,8 @@ public class DefinitionHeaderProvider extends AbstractHeaderProvider {
     @Autowired private ILocaleStore localeStore;
 
     @Autowired private DefinitionService definitionService;
+
+    @Autowired private LocaleManagerFactory localeManagerFactory;
 
     @Override
     public Header createHeader(RenderRequest renderRequest, RenderResponse renderResponse) {
@@ -130,8 +134,8 @@ public class DefinitionHeaderProvider extends AbstractHeaderProvider {
     private Locale getUserLocale(IPerson user) {
         // get user locale
         Locale[] locales = localeStore.getUserLocales(user);
-        LocaleManager localeManager = new LocaleManager(user, locales);
-        Locale rslt = localeManager.getLocales()[0];
-        return rslt;
+        LocaleManager localeManager =
+                localeManagerFactory.createLocaleManager(user, Arrays.asList(locales));
+        return localeManager.getLocales().get(0);
     }
 }

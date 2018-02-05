@@ -15,7 +15,7 @@
 package org.apereo.portal.security.xslt;
 
 import java.util.Locale;
-import org.apereo.portal.i18n.LocaleManager;
+import org.apereo.portal.i18n.LocaleManagerFactory;
 import org.apereo.portal.layout.dlm.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -29,9 +29,16 @@ public class XalanLayoutElementTitleHelper {
 
     private static MessageSource messageSource;
 
+    private static LocaleManagerFactory localeManagerFactory;
+
     @Autowired
     public void setMessageSource(MessageSource messageSource) {
         XalanLayoutElementTitleHelper.messageSource = messageSource;
+    }
+
+    @Autowired
+    public void setLocaleManagerFactory(LocaleManagerFactory localeManagerFactory) {
+        XalanLayoutElementTitleHelper.localeManagerFactory = localeManagerFactory;
     }
 
     /**
@@ -49,7 +56,7 @@ public class XalanLayoutElementTitleHelper {
      */
     public static String getTitle(String id, String language, String name) {
         if (id != null && id.startsWith(Constants.FRAGMENT_ID_USER_PREFIX)) {
-            final Locale locale = LocaleManager.parseLocale(language);
+            final Locale locale = localeManagerFactory.parseLocale(language);
             return messageSource.getMessage(name, new Object[] {}, name, locale);
         }
         return name;

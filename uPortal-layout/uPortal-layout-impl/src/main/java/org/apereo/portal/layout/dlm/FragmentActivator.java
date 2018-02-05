@@ -18,6 +18,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -32,6 +33,7 @@ import org.apereo.portal.IUserIdentityStore;
 import org.apereo.portal.IUserProfile;
 import org.apereo.portal.UserProfile;
 import org.apereo.portal.i18n.LocaleManager;
+import org.apereo.portal.i18n.LocaleManagerFactory;
 import org.apereo.portal.layout.IUserLayoutStore;
 import org.apereo.portal.properties.PropertiesManager;
 import org.apereo.portal.security.IPerson;
@@ -65,6 +67,7 @@ public class FragmentActivator {
     private IUserIdentityStore identityStore;
     private IUserLayoutStore userLayoutStore;
     private ConfigurationLoader configurationLoader;
+    private LocaleManagerFactory localeManagerFactory;
 
     private static final String PROPERTY_ALLOW_EXPANDED_CONTENT =
             "org.apereo.portal.layout.dlm.allowExpandedContent";
@@ -122,6 +125,11 @@ public class FragmentActivator {
     @Autowired
     public void setUserLayoutStore(IUserLayoutStore userLayoutStore) {
         this.userLayoutStore = userLayoutStore;
+    }
+
+    @Autowired
+    public void setLocaleManagerFactory(LocaleManagerFactory localeManagerFactory) {
+        this.localeManagerFactory = localeManagerFactory;
     }
 
     private static class UserViewKey implements Serializable {
@@ -356,7 +364,10 @@ public class FragmentActivator {
         try {
             // fix hard coded 1 later for multiple profiles
             IUserProfile profile = userLayoutStore.getUserProfileByFname(owner, "default");
-            profile.setLocaleManager(new LocaleManager(owner, new Locale[] {locale}));
+            final LocaleManager localeManager =
+                    localeManagerFactory.createLocaleManager(
+                            owner, Collections.singletonList(locale));
+            profile.setLocaleManager(localeManager);
 
             // see if we have structure & theme stylesheets for this user yet.
             // If not then fall back on system's selected stylesheets.

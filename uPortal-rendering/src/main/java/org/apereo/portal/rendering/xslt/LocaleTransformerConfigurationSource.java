@@ -15,6 +15,7 @@
 package org.apereo.portal.rendering.xslt;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
@@ -51,9 +52,9 @@ public class LocaleTransformerConfigurationSource extends TransformerConfigurati
             HttpServletRequest request, HttpServletResponse response) {
         final LocaleManager localeManager = this.getLocaleManager(request);
 
-        final Locale[] locales = localeManager.getLocales();
-        if (locales != null && locales.length > 0 && locales[0] != null) {
-            final String locale = locales[0].toString();
+        final List<Locale> locales = localeManager.getLocales();
+        if (locales != null && locales.size() > 0 && locales.get(0) != null) {
+            final String locale = locales.get(0).toString();
             final String xslLocale = locale.replace('_', '-');
             this.logger.debug("Setting USER_LANG to {}", xslLocale);
             return Collections.singletonMap("USER_LANG", (Object) xslLocale);
@@ -69,9 +70,9 @@ public class LocaleTransformerConfigurationSource extends TransformerConfigurati
     public CacheKey getCacheKey(HttpServletRequest request, HttpServletResponse response) {
         final LocaleManager localeManager = this.getLocaleManager(request);
 
-        final Locale[] locales = localeManager.getLocales();
-        if (locales != null && locales.length > 0 && locales[0] != null) {
-            final String locale = locales[0].toString();
+        final List<Locale> locales = localeManager.getLocales();
+        if (locales != null && locales.size() > 0 && locales.get(0) != null) {
+            final String locale = locales.get(0).toString();
             final String xslLocale = locale.replace('_', '-');
             return CacheKey.build(this.getClass().getName(), xslLocale);
         }

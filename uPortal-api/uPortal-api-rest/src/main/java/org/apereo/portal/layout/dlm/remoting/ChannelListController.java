@@ -14,6 +14,7 @@
  */
 package org.apereo.portal.layout.dlm.remoting;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
@@ -25,6 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apereo.portal.EntityIdentifier;
 import org.apereo.portal.i18n.ILocaleStore;
 import org.apereo.portal.i18n.LocaleManager;
+import org.apereo.portal.i18n.LocaleManagerFactory;
 import org.apereo.portal.layout.dlm.remoting.registry.ChannelBean;
 import org.apereo.portal.layout.dlm.remoting.registry.ChannelCategoryBean;
 import org.apereo.portal.layout.dlm.remoting.registry.v43.PortletCategoryBean;
@@ -76,6 +78,7 @@ public class ChannelListController {
     private IPersonManager personManager;
     private IPortalSpELService spELService;
     private ILocaleStore localeStore;
+    private LocaleManagerFactory localeManagerFactory;
     private MessageSource messageSource;
     private IAuthorizationService authorizationService;
 
@@ -110,6 +113,11 @@ public class ChannelListController {
     @Autowired
     public void setLocaleStore(ILocaleStore localeStore) {
         this.localeStore = localeStore;
+    }
+
+    @Autowired
+    public void setLocaleManagerFactory(LocaleManagerFactory localeManagerFactory) {
+        this.localeManagerFactory = localeManagerFactory;
     }
 
     @Autowired
@@ -465,9 +473,9 @@ public class ChannelListController {
     private Locale getUserLocale(IPerson user) {
         // get user locale
         Locale[] locales = localeStore.getUserLocales(user);
-        LocaleManager localeManager = new LocaleManager(user, locales);
-        Locale rslt = localeManager.getLocales()[0];
-        return rslt;
+        LocaleManager localeManager =
+                localeManagerFactory.createLocaleManager(user, Arrays.asList(locales));
+        return localeManager.getLocales().get(0);
     }
 
     /**

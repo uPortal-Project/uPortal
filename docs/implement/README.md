@@ -11,3 +11,4 @@ users, groups, layouts, *etc.*
     5. Content (TBD)
 2. [Frontend](frontend/README.md)
 3. [Security](security.md)
+4. [Internationalization](i18n.md)
