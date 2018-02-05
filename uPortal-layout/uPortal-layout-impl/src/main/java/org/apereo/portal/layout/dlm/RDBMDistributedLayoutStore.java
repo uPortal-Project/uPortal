@@ -37,7 +37,6 @@ import org.apereo.portal.AuthorizationException;
 import org.apereo.portal.IUserIdentityStore;
 import org.apereo.portal.IUserProfile;
 import org.apereo.portal.PortalException;
-import org.apereo.portal.i18n.LocaleManager;
 import org.apereo.portal.io.xml.IPortalDataHandlerService;
 import org.apereo.portal.jdbc.RDBMServices;
 import org.apereo.portal.layout.LayoutStructure;
@@ -196,9 +195,9 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
     public Map<String, Document> getFragmentLayoutCopies() {
         // since this is only visible in fragment list in administrative portlet, use default portal
         // locale
-        final Locale defaultLocale = LocaleManager.getPortalLocales()[0];
+        final Locale defaultLocale = localeManagerFactory.getPortalLocales().get(0);
 
-        final Map<String, Document> layouts = new HashMap<String, Document>();
+        final Map<String, Document> layouts = new HashMap<>();
 
         final List<FragmentDefinition> definitions = this.fragmentUtils.getFragmentDefinitions();
         for (final FragmentDefinition fragmentDefinition : definitions) {
@@ -230,7 +229,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
             Set<String> fragmentNames) {
         final boolean isFragmentOwner = this.isFragmentOwner(person);
 
-        final Locale locale = profile.getLocaleManager().getLocales()[0];
+        final Locale locale = profile.getLocaleManager().getLocales().get(0);
         final IStylesheetDescriptor stylesheetDescriptor =
                 this.stylesheetDescriptorDao.getStylesheetDescriptor(stylesheetDescriptorId);
         final IStylesheetUserPreferences stylesheetUserPreferences =
@@ -278,8 +277,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
                                 ? fragmentNodeId
                                 : labelBase + fragmentNodeId;
 
-                final MapPopulator<String, String> layoutAttributesPopulator =
-                        new MapPopulator<String, String>();
+                final MapPopulator<String, String> layoutAttributesPopulator = new MapPopulator<>();
                 fragmentStylesheetUserPreferences.populateLayoutAttributes(
                         fragmentNodeId, layoutAttributesPopulator);
                 final Map<String, String> layoutAttributes = layoutAttributesPopulator.getMap();
@@ -690,8 +688,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
                     ssup.getAllLayoutAttributeNodeIds();
             for (final String nodeId : allLayoutAttributeNodeIds) {
 
-                final MapPopulator<String, String> layoutAttributesPopulator =
-                        new MapPopulator<String, String>();
+                final MapPopulator<String, String> layoutAttributesPopulator = new MapPopulator<>();
                 ssup.populateLayoutAttributes(nodeId, layoutAttributesPopulator);
                 final Map<String, String> layoutAttributes = layoutAttributesPopulator.getMap();
 
@@ -959,7 +956,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
             // track which entities from the user's pre-existing set are touched (all non-touched
             // entities will be removed)
             final Set<IPortletEntity> oldPortletEntities =
-                    new LinkedHashSet<IPortletEntity>(
+                    new LinkedHashSet<>(
                             this.portletEntityDao.getPortletEntitiesForUser(ownerUserId));
 
             final List<org.dom4j.Element> entries = preferencesElement.selectNodes("entry");
@@ -981,7 +978,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
                             portletEntity.getPortletPreferences();
 
                     final List<org.dom4j.Element> valueElements = entry.selectNodes("value");
-                    final List<String> values = new ArrayList<String>(valueElements.size());
+                    final List<String> values = new ArrayList<>(valueElements.size());
                     for (final org.dom4j.Element valueElement : valueElements) {
                         values.add(valueElement.getText());
                     }
@@ -1061,11 +1058,9 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
                                 stylesheetDescriptor, person, profile);
             }
 
-            final Map<String, Map<String, String>> oldLayoutAttributes =
-                    new HashMap<String, Map<String, String>>();
+            final Map<String, Map<String, String>> oldLayoutAttributes = new HashMap<>();
             for (final String nodeId : ssup.getAllLayoutAttributeNodeIds()) {
-                final MapPopulator<String, String> nodeAttributes =
-                        new MapPopulator<String, String>();
+                final MapPopulator<String, String> nodeAttributes = new MapPopulator<>();
                 ssup.populateLayoutAttributes(nodeId, nodeAttributes);
                 oldLayoutAttributes.put(nodeId, nodeAttributes.getMap());
             }
@@ -1185,7 +1180,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
     }
 
     private final ThreadLocal<Cache<Tuple<String, String>, Document>> layoutCacheHolder =
-            new ThreadLocal<Cache<Tuple<String, String>, Document>>();
+            new ThreadLocal<>();
 
     public void setLayoutImportExportCache(Cache<Tuple<String, String>, Document> layoutCache) {
         if (layoutCache == null) {
@@ -1214,7 +1209,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
 
         final Cache<Tuple<String, String>, Document> layoutCache = getLayoutImportExportCache();
         if (layoutCache != null) {
-            key = new Tuple<String, String>(person.getUserName(), profile.getProfileFname());
+            key = new Tuple<>(person.getUserName(), profile.getProfileFname());
             layoutDoc = layoutCache.getIfPresent(key);
             if (layoutDoc != null) {
                 return (Document) layoutDoc.cloneNode(true);
@@ -1246,7 +1241,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
         final FragmentDefinition ownedFragment =
                 this.fragmentUtils.getFragmentDefinitionByOwner(person);
         final boolean isLayoutOwnerDefault = this.isLayoutOwnerDefault(person);
-        final Set<String> fragmentNames = new LinkedHashSet<String>();
+        final Set<String> fragmentNames = new LinkedHashSet<>();
 
         final Document ILF;
         final Document PLF = this.getPLF(person, profile);
@@ -1285,7 +1280,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
                         (String) person.getAttribute("username"));
             }
         } else {
-            final Locale locale = profile.getLocaleManager().getLocales()[0];
+            final Locale locale = profile.getLocaleManager().getLocales().get(0);
             final List<FragmentDefinition> applicableFragmentDefinitions =
                     this.fragmentUtils.getFragmentDefinitionsApplicableToPerson(person);
             final List<Document> applicableLayouts =
@@ -1393,7 +1388,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
      */
     private void updateCachedLayout(
             Document layout, IUserProfile profile, FragmentDefinition fragment) {
-        final Locale locale = profile.getLocaleManager().getLocales()[0];
+        final Locale locale = profile.getLocaleManager().getLocales().get(0);
         // need to make a copy that we can fragmentize
         layout = (Document) layout.cloneNode(true);
 
@@ -1536,7 +1531,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
     public FragmentNodeInfo getFragmentNodeInfo(String sId) {
         // grab local pointers to variables subject to change at any time
         final List<FragmentDefinition> fragments = this.fragmentUtils.getFragmentDefinitions();
-        final Locale defaultLocale = LocaleManager.getPortalLocales()[0];
+        final Locale defaultLocale = localeManagerFactory.getPortalLocales().get(0);
 
         final net.sf.ehcache.Element element = this.fragmentNodeInfoCache.get(sId);
         FragmentNodeInfo info =
@@ -1608,7 +1603,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
         structure.setAttribute("hidden", (ls.isHidden() ? "true" : "false"));
         structure.setAttribute("immutable", (ls.isImmutable() ? "true" : "false"));
         structure.setAttribute("unremovable", (ls.isUnremovable() ? "true" : "false"));
-        if (localeAware) {
+        if (localeManagerFactory.isLocaleAware()) {
             structure.setAttribute("locale", ls.getLocale()); // for i18n by Shoji
         }
 

@@ -20,6 +20,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -36,6 +37,7 @@ import org.apereo.portal.IUserProfile;
 import org.apereo.portal.UserProfile;
 import org.apereo.portal.i18n.ILocaleStore;
 import org.apereo.portal.i18n.LocaleManager;
+import org.apereo.portal.i18n.LocaleManagerFactory;
 import org.apereo.portal.jdbc.DatabaseMetaDataImpl;
 import org.apereo.portal.jdbc.IDatabaseMetadata;
 import org.apereo.portal.jdbc.IJoinQueryString;
@@ -93,16 +95,19 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
     protected JdbcOperations jdbcOperations;
 
     private ILocaleStore localeStore;
+    protected LocaleManagerFactory localeManagerFactory;
     protected IDatabaseMetadata databaseMetadata;
     protected IPortletDefinitionRegistry portletDefinitionRegistry;
     protected IStylesheetDescriptorDao stylesheetDescriptorDao;
 
-    // I18n property
-    protected static final boolean localeAware = LocaleManager.isLocaleAware();
-
     @Autowired
     public void setLocaleStore(ILocaleStore localeStore) {
         this.localeStore = localeStore;
+    }
+
+    @Autowired
+    public void setLocaleManagerFactory(LocaleManagerFactory localeManagerFactory) {
+        this.localeManagerFactory = localeManagerFactory;
     }
 
     @Autowired
@@ -640,7 +645,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                                 }
 
                                 String sql;
-                                if (localeAware) {
+                                if (localeManagerFactory.isLocaleAware()) {
                                     // This needs to be changed to get the localized strings
                                     sql =
                                             "SELECT ULS.STRUCT_ID,ULS.NEXT_STRUCT_ID,ULS.CHLD_STRUCT_ID,ULS.CHAN_ID,ULS.NAME,ULS.TYPE,ULS.HIDDEN,"
@@ -736,9 +741,9 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
 
                                         // uPortal i18n
                                         int name_index, value_index;
-                                        if (localeAware) {
-                                            Locale[] locales = localeManager.getLocales();
-                                            String locale = locales[0].toString();
+                                        if (localeManagerFactory.isLocaleAware()) {
+                                            List<Locale> locales = localeManager.getLocales();
+                                            String locale = locales.get(0).toString();
                                             ls =
                                                     new LayoutStructure(
                                                             structId,
@@ -993,8 +998,10 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                                                             themeSsId);
                                             final Locale[] userLocales =
                                                     localeStore.getUserLocales(person);
-                                            userProfile.setLocaleManager(
-                                                    new LocaleManager(person, userLocales));
+                                            final LocaleManager localeManager =
+                                                    localeManagerFactory.createLocaleManager(
+                                                            person, Arrays.asList(userLocales));
+                                            userProfile.setLocaleManager(localeManager);
                                             return userProfile;
                                         }
 
@@ -1036,8 +1043,13 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                                                     newUserProfile =
                                                             addUserProfile(person, newUserProfile);
 
-                                                    newUserProfile.setLocaleManager(
-                                                            new LocaleManager(person, userLocales));
+                                                    final LocaleManager localeManager =
+                                                            localeManagerFactory
+                                                                    .createLocaleManager(
+                                                                            person,
+                                                                            Arrays.asList(
+                                                                                    userLocales));
+                                                    newUserProfile.setLocaleManager(localeManager);
                                                     return newUserProfile;
                                                 }
                                             }

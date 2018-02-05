@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -35,7 +36,6 @@ import org.apereo.portal.security.IPerson;
 import org.apereo.portal.services.GroupService;
 import org.apereo.portal.user.IUserInstance;
 import org.apereo.portal.user.IUserInstanceManager;
-import org.apereo.portal.utils.ArrayEnumerator;
 import org.apereo.portal.utils.web.AbstractHttpServletRequestWrapper;
 
 /**
@@ -58,7 +58,7 @@ public class PortalHttpServletRequestWrapper extends AbstractHttpServletRequestW
 
     protected final Log logger = LogFactory.getLog(this.getClass());
 
-    private final Map<String, String> additionalHeaders = new LinkedHashMap<String, String>();
+    private final Map<String, String> additionalHeaders = new LinkedHashMap<>();
     private final HttpServletResponse httpServletResponse;
     private final IUserInstanceManager userInstanceManager;
 
@@ -128,7 +128,7 @@ public class PortalHttpServletRequestWrapper extends AbstractHttpServletRequestW
 
     @Override
     public Enumeration<String> getHeaderNames() {
-        final Set<String> headerNames = new LinkedHashSet<String>();
+        final Set<String> headerNames = new LinkedHashSet<>();
 
         for (final Enumeration<String> headerNamesEnum = super.getHeaderNames();
                 headerNamesEnum.hasMoreElements(); ) {
@@ -263,8 +263,8 @@ public class PortalHttpServletRequestWrapper extends AbstractHttpServletRequestW
         final IUserInstance userInstance =
                 this.userInstanceManager.getUserInstance(this.getWrappedRequest());
         final LocaleManager localeManager = userInstance.getLocaleManager();
-        final Locale[] locales = localeManager.getLocales();
-        return locales[0];
+        final List<Locale> locales = localeManager.getLocales();
+        return locales.get(0);
     }
 
     /* (non-Javadoc)
@@ -279,7 +279,7 @@ public class PortalHttpServletRequestWrapper extends AbstractHttpServletRequestW
         final IUserInstance userInstance =
                 this.userInstanceManager.getUserInstance(this.getWrappedRequest());
         final LocaleManager localeManager = userInstance.getLocaleManager();
-        final Locale[] locales = localeManager.getLocales();
-        return new ArrayEnumerator<Locale>(locales);
+        final List<Locale> locales = localeManager.getLocales();
+        return Collections.enumeration(locales);
     }
 }
