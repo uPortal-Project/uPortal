@@ -17,6 +17,7 @@ package org.apereo.portal.portlets.account;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -36,6 +37,7 @@ import org.apereo.portal.groups.IEntityGroup;
 import org.apereo.portal.groups.IGroupMember;
 import org.apereo.portal.i18n.ILocaleStore;
 import org.apereo.portal.i18n.LocaleManager;
+import org.apereo.portal.i18n.LocaleManagerFactory;
 import org.apereo.portal.layout.dlm.remoting.IGroupListHelper;
 import org.apereo.portal.layout.dlm.remoting.JsonEntityBean;
 import org.apereo.portal.persondir.ILocalAccountDao;
@@ -65,6 +67,7 @@ public class UserAccountHelper {
     private static final String PORTLET_FNAME_LOGIN = "login";
 
     private ILocaleStore localeStore;
+    private LocaleManagerFactory localeManagerFactory;
     private ILocalAccountDao accountDao;
     private IPortalPasswordService passwordService;
     private List<Preference> accountEditAttributes;
@@ -78,6 +81,11 @@ public class UserAccountHelper {
     @Autowired
     public void setLocaleStore(ILocaleStore localeStore) {
         this.localeStore = localeStore;
+    }
+
+    @Autowired
+    public void setLocaleManagerFactory(LocaleManagerFactory localeManagerFactory) {
+        this.localeManagerFactory = localeManagerFactory;
     }
 
     @Autowired
@@ -487,8 +495,9 @@ public class UserAccountHelper {
     protected Locale getCurrentUserLocale(final HttpServletRequest request) {
         final IPerson person = personManager.getPerson(request);
         final Locale[] userLocales = localeStore.getUserLocales(person);
-        final LocaleManager localeManager = new LocaleManager(person, userLocales);
-        final Locale locale = localeManager.getLocales()[0];
+        final LocaleManager localeManager =
+                localeManagerFactory.createLocaleManager(person, Arrays.asList(userLocales));
+        final Locale locale = localeManager.getLocales().get(0);
         return locale;
     }
 

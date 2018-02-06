@@ -15,6 +15,7 @@
 package org.apereo.portal.user;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -27,6 +28,7 @@ import org.apereo.portal.UserInstance;
 import org.apereo.portal.UserPreferencesManager;
 import org.apereo.portal.i18n.ILocaleStore;
 import org.apereo.portal.i18n.LocaleManager;
+import org.apereo.portal.i18n.LocaleManagerFactory;
 import org.apereo.portal.layout.IUserLayoutManager;
 import org.apereo.portal.layout.IUserLayoutStore;
 import org.apereo.portal.layout.UserLayoutManagerFactory;
@@ -51,6 +53,7 @@ public class UserInstanceManagerImpl implements IUserInstanceManager {
     private IPortalRequestUtils portalRequestUtils;
     private IProfileMapper profileMapper;
     private UserLayoutManagerFactory userLayoutManagerFactory;
+    private LocaleManagerFactory localeManagerFactory;
 
     @Autowired
     public void setUserLayoutManagerFactory(UserLayoutManagerFactory userLayoutManagerFactory) {
@@ -80,6 +83,11 @@ public class UserInstanceManagerImpl implements IUserInstanceManager {
     @Autowired
     public void setProfileMapper(IProfileMapper profileMapper) {
         this.profileMapper = profileMapper;
+    }
+
+    @Autowired
+    public void setLocaleManagerFactory(LocaleManagerFactory localeManagerFactory) {
+        this.localeManagerFactory = localeManagerFactory;
     }
 
     /**
@@ -171,7 +179,7 @@ public class UserInstanceManagerImpl implements IUserInstanceManager {
             userProfile = userLayoutStore.getSystemProfileByFname(profileFname);
         }
 
-        if (localeManager != null && LocaleManager.isLocaleAware()) {
+        if (localeManager != null && localeManagerFactory.isLocaleAware()) {
             userProfile.setLocaleManager(localeManager);
         }
 
@@ -181,7 +189,7 @@ public class UserInstanceManagerImpl implements IUserInstanceManager {
     protected LocaleManager getLocaleManager(HttpServletRequest request, IPerson person) {
         final String acceptLanguage = request.getHeader("Accept-Language");
         final Locale[] userLocales = localeStore.getUserLocales(person);
-        return new LocaleManager(person, userLocales, acceptLanguage);
+        return localeManagerFactory.createLocaleManager(person, Arrays.asList(userLocales));
     }
 
     protected String getUserAgent(HttpServletRequest request) {

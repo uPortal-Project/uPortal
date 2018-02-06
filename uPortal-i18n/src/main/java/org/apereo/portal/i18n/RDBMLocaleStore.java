@@ -48,6 +48,7 @@ public class RDBMLocaleStore implements ILocaleStore {
 
     protected TransactionOperations transactionOperations;
     protected JdbcOperations jdbcOperations;
+    private LocaleManagerFactory localeManagerFactory;
 
     @Autowired
     public void setPlatformTransactionManager(
@@ -59,6 +60,11 @@ public class RDBMLocaleStore implements ILocaleStore {
     @Resource(name = BasePortalJpaDao.PERSISTENCE_UNIT_NAME)
     public void setDataSource(DataSource dataSource) {
         this.jdbcOperations = new JdbcTemplate(dataSource);
+    }
+
+    @Autowired
+    public void setLocaleManagerFactory(LocaleManagerFactory localeManagerFactory) {
+        this.localeManagerFactory = localeManagerFactory;
     }
 
     @Override
@@ -81,7 +87,8 @@ public class RDBMLocaleStore implements ILocaleStore {
                             try {
                                 while (rs.next()) {
                                     final String localeString = rs.getString("LOCALE");
-                                    final Locale locale = LocaleManager.parseLocale(localeString);
+                                    final Locale locale =
+                                            localeManagerFactory.parseLocale(localeString);
                                     localeList.add(locale);
                                 }
                             } finally {

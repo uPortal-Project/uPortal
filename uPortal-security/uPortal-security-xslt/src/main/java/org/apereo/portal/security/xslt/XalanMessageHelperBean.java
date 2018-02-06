@@ -16,7 +16,8 @@ package org.apereo.portal.security.xslt;
 
 import java.util.Locale;
 import org.apache.commons.lang3.StringEscapeUtils;
-import org.apereo.portal.i18n.LocaleManager;
+import org.apereo.portal.i18n.LocaleManagerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
 import org.springframework.stereotype.Service;
@@ -25,33 +26,40 @@ import org.springframework.stereotype.Service;
 public class XalanMessageHelperBean implements IXalanMessageHelper, MessageSourceAware {
     private MessageSource messageSource;
 
+    private LocaleManagerFactory localeManagerFactory;
+
     @Override
     public void setMessageSource(MessageSource messageSource) {
         this.messageSource = messageSource;
     }
 
+    @Autowired
+    public void setLocaleManagerFactory(LocaleManagerFactory localeManagerFactory) {
+        this.localeManagerFactory = localeManagerFactory;
+    }
+
     @Override
     public String getMessage(String code, String language) {
-        final Locale locale = LocaleManager.parseLocale(language);
+        final Locale locale = localeManagerFactory.parseLocale(language);
         final String message = messageSource.getMessage(code, null, locale);
         return message;
     }
 
     @Override
     public String getMessage(String code, String language, String arg1) {
-        final Locale locale = LocaleManager.parseLocale(language);
+        final Locale locale = localeManagerFactory.parseLocale(language);
         return messageSource.getMessage(code, new Object[] {arg1}, locale);
     }
 
     @Override
     public String getMessage(String code, String language, String arg1, String arg2) {
-        final Locale locale = LocaleManager.parseLocale(language);
+        final Locale locale = localeManagerFactory.parseLocale(language);
         return messageSource.getMessage(code, new Object[] {arg1, arg2}, locale);
     }
 
     @Override
     public String getMessage(String code, String language, String arg1, String arg2, String arg3) {
-        final Locale locale = LocaleManager.parseLocale(language);
+        final Locale locale = localeManagerFactory.parseLocale(language);
         return messageSource.getMessage(code, new Object[] {arg1, arg2, arg3}, locale);
     }
 
