@@ -25,6 +25,7 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apereo.portal.i18n.LocaleManagerFactory;
 import org.apereo.portal.security.xslt.XalanLayoutElementTitleHelper;
 import org.apereo.portal.security.xslt.XalanMessageHelper;
 import org.apereo.portal.security.xslt.XalanMessageHelperBean;
@@ -65,9 +66,14 @@ public class SitemapTest {
 
     @Before
     public void setup() {
-        new XalanLayoutElementTitleHelper().setMessageSource(messageSource);
+        final LocaleManagerFactory localeManagerFactory = new LocaleManagerFactory();
+        final XalanLayoutElementTitleHelper xalanLayoutElementTitleHelper =
+                new XalanLayoutElementTitleHelper();
+        xalanLayoutElementTitleHelper.setMessageSource(messageSource);
+        xalanLayoutElementTitleHelper.setLocaleManagerFactory(localeManagerFactory);
         XalanMessageHelperBean messageHelper = new XalanMessageHelperBean();
         messageHelper.setMessageSource(messageSource);
+        messageHelper.setLocaleManagerFactory(localeManagerFactory);
         new XalanMessageHelper().setMessageHelper(messageHelper);
     }
 
