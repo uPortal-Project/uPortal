@@ -67,7 +67,6 @@ import org.hibernate.annotations.Type;
 class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences {
     @Id
     @GeneratedValue(generator = "UP_SS_USER_PREF_GEN")
-    @Index(name = "IDX_SS_USER_PREF_ID")
     @Column(name = "SS_USER_PREF_ID")
     private final long id;
 
@@ -120,6 +119,7 @@ class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences {
         fetch = FetchType.EAGER,
         orphanRemoval = true
     )
+    @Index(name = "IDX_SS_USER_PREF_ID")
     @MapKey(name = "nodeId")
     @JoinColumn(name = "SS_USER_PREF_ID", nullable = false)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
