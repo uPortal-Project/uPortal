@@ -84,7 +84,6 @@ import com.google.common.collect.ImmutableMap.Builder;
 class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences {
     @Id
     @GeneratedValue(generator = "UP_SS_USER_PREF_GEN")
-    @Index(name = "IDX_SS_USER_PREF_ID")
     @Column(name = "SS_USER_PREF_ID")
     private final long id;
     
@@ -130,6 +129,7 @@ class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences {
     private final Map<String, String> parameters = new LinkedHashMap<String, String>(0);
 
     @OneToMany(targetEntity = LayoutNodeAttributesImpl.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @Index(name = "IDX_SS_USER_PREF_ID")
     @MapKey(name="nodeId")
     @JoinColumn(name = "SS_USER_PREF_ID", nullable=false)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
