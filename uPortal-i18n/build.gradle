@@ -10,7 +10,7 @@ dependencies {
 
     compile "org.slf4j:log4j-over-slf4j:${slf4jVersion}"
 
-    compileOnly "org.hibernate:hibernate-jpamodelgen:${hibernateJpamodelgenVersion}" // Required for javac -s
+    compileOnly "org.hibernate:hibernate-jpamodelgen:${hibernateVersion}" // Required for javac -s
     compileOnly "${servletApiDependency}"
 }
 

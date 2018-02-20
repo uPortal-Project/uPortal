@@ -12,7 +12,7 @@ dependencies {
     compile project(':uPortal-security:uPortal-security-core')
     compile project(':uPortal-spring')
 
-    compileOnly "org.hibernate:hibernate-jpamodelgen:${hibernateJpamodelgenVersion}" // Required for javac -s
+    compileOnly "org.hibernate:hibernate-jpamodelgen:${hibernateVersion}" // Required for javac -s
 }
 
 /*
