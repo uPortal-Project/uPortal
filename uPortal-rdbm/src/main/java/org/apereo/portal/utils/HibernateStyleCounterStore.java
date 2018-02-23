@@ -49,10 +49,7 @@ import org.apereo.portal.ICounterStore;
 import org.apereo.portal.jpa.BasePortalJpaDao;
 import org.hibernate.id.IdentifierGeneratorHelper;
 import org.hibernate.id.IntegralDataTypeHolder;
-import org.hibernate.id.enhanced.AccessCallback;
-import org.hibernate.id.enhanced.Optimizer;
-import org.hibernate.id.enhanced.OptimizerFactory;
-import org.hibernate.id.enhanced.TableGenerator;
+import org.hibernate.id.enhanced.*;
 import org.hibernate.type.IntegerType;
 import org.hibernate.type.Type;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -134,7 +131,7 @@ public class HibernateStyleCounterStore implements ICounterStore {
 
                                 o =
                                         OptimizerFactory.buildOptimizer(
-                                                OptimizerFactory.StandardOptimizerDescriptor.POOLED
+                                                StandardOptimizerDescriptor.POOLED
                                                         .getExternalName(),
                                                 identifierType.getReturnedClass(),
                                                 incrementSize,
@@ -295,6 +292,11 @@ public class HibernateStyleCounterStore implements ICounterStore {
                                 }
 
                                 return rslt;
+                            }
+
+                            @Override
+                            public String getTenantIdentifier() {
+                                return null;
                             }
                         });
     }
