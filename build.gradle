@@ -60,7 +60,7 @@ allprojects {
     }
 
     dependencies {
-      errorprone 'com.google.errorprone:error_prone_core:2.1.2'
+      errorprone 'com.google.errorprone:error_prone_core:2.2.0'
     }
 
     codenarc {
