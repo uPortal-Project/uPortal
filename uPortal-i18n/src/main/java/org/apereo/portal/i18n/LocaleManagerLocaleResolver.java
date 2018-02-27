@@ -14,6 +14,8 @@
  */
 package org.apereo.portal.i18n;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -53,9 +55,9 @@ public class LocaleManagerLocaleResolver implements LocaleResolver {
         final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
         final LocaleManager localeManager = userInstance.getLocaleManager();
 
-        Locale[] locales = localeManager.getLocales();
-        if (locales != null && locales.length > 0) {
-            return locales[0];
+        List<Locale> locales = localeManager.getLocales();
+        if (locales != null && locales.size() > 0) {
+            return locales.get(0);
         }
 
         // if there was no LocaleManager was not able to determine the locale, return the locale
@@ -67,14 +69,14 @@ public class LocaleManagerLocaleResolver implements LocaleResolver {
     public void setLocale(HttpServletRequest request, HttpServletResponse response, Locale locale) {
         final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
         final LocaleManager localeManager = userInstance.getLocaleManager();
-        localeManager.setSessionLocales(new Locale[] {locale});
+        localeManager.setSessionLocales(Collections.singletonList(locale));
 
         // if the current user is logged in, also update the persisted user locale
         final IUserInstance ui = userInstanceManager.getUserInstance(request);
         final IPerson person = ui.getPerson();
         if (!person.isGuest()) {
             try {
-                localeManager.persistUserLocales(new Locale[] {locale});
+                localeManager.setUserLocales(Collections.singletonList(locale));
                 localeStore.updateUserLocales(person, new Locale[] {locale});
                 final IUserPreferencesManager upm = ui.getPreferencesManager();
                 upm.getUserLayoutManager().loadUserLayout();

@@ -15,6 +15,7 @@
 package org.apereo.portal.portlets.localization;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import javax.portlet.PortletRequest;
@@ -24,6 +25,7 @@ import org.apereo.portal.IUserProfile;
 import org.apereo.portal.PortalException;
 import org.apereo.portal.i18n.ILocaleStore;
 import org.apereo.portal.i18n.LocaleManager;
+import org.apereo.portal.i18n.LocaleManagerFactory;
 import org.apereo.portal.layout.dlm.Constants;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.url.IPortalRequestUtils;
@@ -39,6 +41,7 @@ public class UserLocaleHelper {
     private IUserInstanceManager userInstanceManager;
     private IPortalRequestUtils portalRequestUtils;
     private ILocaleStore localeStore;
+    private LocaleManagerFactory localeManagerFactory;
 
     @Autowired
     public void setLocaleStore(ILocaleStore localeStore) {
@@ -48,7 +51,7 @@ public class UserLocaleHelper {
     /**
      * Set the UserInstanceManager
      *
-     * @param userInstanceManager
+     * @param userInstanceManager The {@link IUserInstanceManager}
      */
     @Autowired
     public void setUserInstanceManager(IUserInstanceManager userInstanceManager) {
@@ -60,6 +63,11 @@ public class UserLocaleHelper {
         this.portalRequestUtils = portalRequestUtils;
     }
 
+    @Autowired
+    public void setLocaleManagerFactory(LocaleManagerFactory localeManagerFactory) {
+        this.localeManagerFactory = localeManagerFactory;
+    }
+
     /**
      * Return a list of LocaleBeans matching the currently available locales for the portal.
      *
@@ -67,10 +75,10 @@ public class UserLocaleHelper {
      * @return
      */
     public List<LocaleBean> getLocales(Locale currentLocale) {
-        List<LocaleBean> locales = new ArrayList<LocaleBean>();
+        List<LocaleBean> locales = new ArrayList<>();
 
         // get the array of locales available from the portal
-        Locale[] portalLocales = getPortalLocales();
+        List<Locale> portalLocales = localeManagerFactory.getPortalLocales();
         for (Locale locale : portalLocales) {
             if (currentLocale != null) {
                 // if a current locale is available, display language names
@@ -86,7 +94,7 @@ public class UserLocaleHelper {
     /**
      * Return the current user's locale.
      *
-     * @param request
+     * @param request The current {@link PortletRequest}
      * @return
      */
     public Locale getCurrentUserLocale(PortletRequest request) {
@@ -98,15 +106,15 @@ public class UserLocaleHelper {
         LocaleManager localeManager = userProfile.getLocaleManager();
 
         // first check the session locales
-        Locale[] sessionLocales = localeManager.getSessionLocales();
-        if (sessionLocales != null && sessionLocales.length > 0) {
-            return sessionLocales[0];
+        List<Locale> sessionLocales = localeManager.getSessionLocales();
+        if (sessionLocales != null && sessionLocales.size() > 0) {
+            return sessionLocales.get(0);
         }
 
         // if no session locales were found, check the user locales
-        Locale[] userLocales = localeManager.getUserLocales();
-        if (userLocales != null && userLocales.length > 0) {
-            return userLocales[0];
+        List<Locale> userLocales = localeManager.getUserLocales();
+        if (userLocales != null && userLocales.size() > 0) {
+            return userLocales.get(0);
         }
 
         // if no selected locale was found either in the session or user layout,
@@ -131,9 +139,9 @@ public class UserLocaleHelper {
 
         if (localeString != null) {
 
-            // build a new Locale[] array from the specified locale
-            Locale userLocale = parseLocale(localeString);
-            Locale[] locales = new Locale[] {userLocale};
+            // build a new List<Locale> from the specified locale
+            Locale userLocale = localeManagerFactory.parseLocale(localeString);
+            List<Locale> locales = Collections.singletonList(userLocale);
 
             // set this locale in the session
             localeManager.setSessionLocales(locales);
@@ -143,7 +151,7 @@ public class UserLocaleHelper {
             final IPerson person = ui.getPerson();
             if (!person.isGuest()) {
                 try {
-                    localeManager.persistUserLocales(new Locale[] {userLocale});
+                    localeManager.setUserLocales(Collections.singletonList(userLocale));
                     localeStore.updateUserLocales(person, new Locale[] {userLocale});
 
                     // remove person layout framgent from session since it contains some of the data
@@ -157,28 +165,5 @@ public class UserLocaleHelper {
                 }
             }
         }
-    }
-
-    /*
-     * Convenience methods to enhance testability by wrapping static methods
-     */
-
-    /**
-     * Get the available portal locales.
-     *
-     * @return
-     */
-    protected Locale[] getPortalLocales() {
-        return LocaleManager.getPortalLocales();
-    }
-
-    /**
-     * Parse a string representation of a locale and return the matching Locale.
-     *
-     * @param localeString
-     * @return
-     */
-    protected Locale parseLocale(String localeString) {
-        return LocaleManager.parseLocale(localeString);
     }
 }

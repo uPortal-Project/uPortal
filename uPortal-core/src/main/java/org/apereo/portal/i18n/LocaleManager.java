@@ -18,14 +18,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.StringTokenizer;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apereo.portal.properties.PropertiesManager;
 import org.apereo.portal.security.IPerson;
-import org.apereo.portal.utils.DocumentFactory;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 /**
  * Manages locales on behalf of a user. This class currently keeps track of locales at the following
@@ -45,113 +38,44 @@ import org.w3c.dom.Element;
  *   <li>User profile's locale preferences
  * </ol>
  */
-public class LocaleManager implements Serializable {
-
-    private static final Log log = LogFactory.getLog(LocaleManager.class);
-
-    /**
-     * Default value for localeAware. This value will be used when the corresponding property cannot
-     * be loaded.
-     */
-    public static final boolean DEFAULT_LOCALE_AWARE = false;
-
-    private static boolean localeAware =
-            PropertiesManager.getPropertyAsBoolean(
-                    "org.apereo.portal.i18n.LocaleManager.locale_aware", DEFAULT_LOCALE_AWARE);
-    private static Locale jvmLocale;
-    private static Locale[] portalLocales;
+public class LocaleManager implements ILocaleManager, Serializable {
 
     private final IPerson person;
-    private Locale[] sessionLocales;
-    private Locale[] browserLocales;
-    private Locale[] userLocales;
+    private List<Locale> sessionLocales;
+    private List<Locale> userLocales;
+    private List<Locale> portalLocales;
 
     /**
      * Constructor that associates a locale manager with a user.
      *
      * @param person the user
      */
-    public LocaleManager(IPerson person, Locale[] userLocales) {
+    /* package-private */ LocaleManager(
+            IPerson person, List<Locale> userLocales, List<Locale> portalLocales) {
         this.person = person;
-        jvmLocale = Locale.getDefault();
-        if (localeAware) {
-            portalLocales = loadPortalLocales();
-            try {
-                this.userLocales = userLocales;
-            } catch (Exception e) {
-                log.error("Error populating userLocals", e);
-            }
-        }
+        this.userLocales = userLocales;
+        this.portalLocales = portalLocales;
     }
 
-    /**
-     * Constructor that sets up locales according to the <code>Accept-Language</code> request header
-     * from a user's browser.
-     *
-     * @param person the user
-     * @param acceptLanguage the Accept-Language request header from a user's browser
-     */
-    public LocaleManager(IPerson person, Locale[] userLocales, String acceptLanguage) {
-        this(person, userLocales);
-        this.browserLocales = parseLocales(acceptLanguage);
-    }
-
-    // Getters
-    public static boolean isLocaleAware() {
-        return localeAware;
-    }
-
-    public static Locale getJvmLocale() {
-        return jvmLocale;
-    }
-
-    public static Locale[] getPortalLocales() {
-        return portalLocales;
-    }
-
-    public Locale[] getBrowserLocales() {
-        return browserLocales;
-    }
-
-    public Locale[] getUserLocales() {
+    @Override
+    public List<Locale> getUserLocales() {
         return userLocales;
     }
 
-    public Locale[] getSessionLocales() {
-        return sessionLocales;
-    }
-
-    // Setters
-    public static void setJvmLocale(Locale jvmLocale) {
-        LocaleManager.jvmLocale = jvmLocale;
-    }
-
-    public static void setPortalLocales(Locale[] portalLocales) {
-        LocaleManager.portalLocales = portalLocales;
-    }
-
-    public void setBrowserLocales(Locale[] browserLocales) {
-        this.browserLocales = browserLocales;
-    }
-
-    public void setUserLocales(Locale[] userLocales) {
+    @Override
+    public void setUserLocales(List<Locale> userLocales) {
         this.userLocales = userLocales;
         this.sessionLocales = userLocales;
     }
 
-    public void setSessionLocales(Locale[] sessionLocales) {
-        this.sessionLocales = sessionLocales;
+    @Override
+    public List<Locale> getSessionLocales() {
+        return sessionLocales;
     }
 
-    /**
-     * Read and parse portal_locales from portal.properties. portal_locales will be in the form of a
-     * comma-separated list, e.g. en_US,ja_JP,sv_SE
-     */
-    private Locale[] loadPortalLocales() {
-        String portalLocalesString =
-                PropertiesManager.getProperty(
-                        "org.apereo.portal.i18n.LocaleManager.portal_locales");
-        return parseLocales(portalLocalesString);
+    @Override
+    public void setSessionLocales(List<Locale> sessionLocales) {
+        this.sessionLocales = sessionLocales;
     }
 
     /**
@@ -160,192 +84,28 @@ public class LocaleManager implements Serializable {
      *
      * @return the sorted list of locales
      */
-    public Locale[] getLocales() {
+    public List<Locale> getLocales() {
         // Need logic to construct ordered locale list.
         // Consider creating a separate ILocaleResolver
         // interface to do this work.
-        List locales = new ArrayList();
+        final List rslt = new ArrayList();
         // Add highest priority locales first
-        addToLocaleList(locales, sessionLocales);
-        addToLocaleList(locales, userLocales);
+        addToLocaleList(rslt, sessionLocales);
+        addToLocaleList(rslt, userLocales);
         // We will ignore browser locales until we know how to
         // translate them into proper java.util.Locales
         // addToLocaleList(locales, browserLocales);
-        addToLocaleList(locales, portalLocales);
-        addToLocaleList(locales, new Locale[] {jvmLocale});
-        return (Locale[]) locales.toArray(new Locale[0]);
+        addToLocaleList(rslt, portalLocales);
+        return rslt;
     }
 
     /** Add locales to the locale list if they aren't in there already */
-    private void addToLocaleList(List localeList, Locale[] locales) {
+    private void addToLocaleList(List localeList, List<Locale> locales) {
         if (locales != null) {
-            for (int i = 0; i < locales.length; i++) {
-                if (locales[i] != null && !localeList.contains(locales[i]))
-                    localeList.add(locales[i]);
+            for (Locale locale : locales) {
+                if (locale != null && !localeList.contains(locale)) localeList.add(locale);
             }
         }
-    }
-
-    /**
-     * Helper method to produce a <code>java.util.Locale</code> array from a comma-delimited locale
-     * string list, e.g. "en_US,ja_JP"
-     *
-     * @param localeStringList the locales to parse
-     * @return an array of locales representing the locale string list
-     */
-    public static Locale[] parseLocales(String localeStringList) {
-        Locale[] locales = null;
-        if (localeStringList != null) {
-            StringTokenizer st = new StringTokenizer(localeStringList, ",");
-            locales = new Locale[st.countTokens()];
-            for (int i = 0; st.hasMoreTokens(); i++) {
-                String localeString = st.nextToken().trim();
-                locales[i] = parseLocale(localeString);
-            }
-        }
-        return locales;
-    }
-
-    /**
-     * Helper method to produce a <code>java.util.Locale</code> object from a locale string such as
-     * en_US or ja_JP.
-     *
-     * @param localeString a locale string such as en_US
-     * @return a java.util.Locale object representing the locale string
-     */
-    public static Locale parseLocale(String localeString) {
-        String language = null;
-        String country = null;
-        String variant = null;
-
-        // Sometimes people specify "en-US" instead of "en_US", so
-        // we'll try to clean that up.
-        localeString = localeString.replaceAll("-", "_");
-
-        StringTokenizer st = new StringTokenizer(localeString, "_");
-
-        if (st.hasMoreTokens()) {
-            language = st.nextToken();
-        }
-        if (st.hasMoreTokens()) {
-            country = st.nextToken();
-        }
-        if (st.hasMoreTokens()) {
-            variant = st.nextToken();
-        }
-
-        Locale locale = null;
-
-        if (variant != null) {
-            locale = new Locale(language, country, variant);
-        } else if (country != null) {
-            locale = new Locale(language, country);
-        } else if (language != null) {
-            // Uncomment the following line
-            // when we can count on JDK 1.4!
-            // locale = new Locale(language);
-            locale = new Locale(language, "");
-        }
-
-        return locale;
-    }
-
-    /**
-     * Constructs a comma-delimited list of locales that could be parsed back into a Locale array
-     * with parseLocales(String localeStringList).
-     *
-     * @param locales the list of locales
-     * @return a string representing the list of locales
-     */
-    public static String stringValueOf(Locale[] locales) {
-        StringBuffer sb = new StringBuffer();
-        for (int i = 0; i < locales.length; i++) {
-            Locale locale = locales[i];
-            sb.append(locale.toString());
-            if (i < locales.length - 1) {
-                sb.append(",");
-            }
-        }
-        return sb.toString();
-    }
-
-    /**
-     * Stores the user locales persistantly.
-     *
-     * @param userLocales the user locales preference
-     * @throws Exception
-     */
-    public void persistUserLocales(Locale[] userLocales) throws Exception {
-        setUserLocales(userLocales);
-    }
-
-    /**
-     * Creates an XML representation of a list of locales.
-     *
-     * @param locales the locale list
-     * @return the locale list as XML
-     */
-    public static Document xmlValueOf(Locale[] locales) {
-        return xmlValueOf(locales, null);
-    }
-
-    /**
-     * Creates an XML representation of a list of locales. If a selected locale is supplied, the XML
-     * element representing the selected locale will have an attribute of selected with value of
-     * true. This is helpful when constructing user interfaces that indicate which locale is
-     * selected.
-     *
-     * @param locales the locale list
-     * @param selectedLocale a locale that should be selected if it is in the list
-     * @return the locale list as XML
-     */
-    public static Document xmlValueOf(Locale[] locales, Locale selectedLocale) {
-        Document doc = DocumentFactory.getThreadDocument();
-
-        // <locales>
-        Element localesE = doc.createElement("locales");
-        for (int i = 0; i < locales.length; i++) {
-            Element locE = doc.createElement("locale");
-            locE.setAttribute("displayName", locales[i].getDisplayName(locales[0]));
-            locE.setAttribute("code", locales[i].toString());
-
-            // Mark which locale is the user's preference
-            if (selectedLocale != null && selectedLocale.equals(locales[i])) {
-                locE.setAttribute("selected", "true");
-            }
-
-            // <language iso2="..." iso3="..." displayName="..."/>
-            Element languageE = doc.createElement("language");
-            languageE.setAttribute("iso2", locales[i].getLanguage());
-            try {
-                languageE.setAttribute("iso3", locales[i].getISO3Language());
-            } catch (Exception e) {
-                // Do nothing
-            }
-            languageE.setAttribute("displayName", locales[i].getDisplayLanguage(locales[0]));
-            locE.appendChild(languageE);
-
-            // <country iso2="..." iso3="..." displayName="..."/>
-            Element countryE = doc.createElement("country");
-            countryE.setAttribute("iso2", locales[i].getCountry());
-            try {
-                countryE.setAttribute("iso3", locales[i].getISO3Country());
-            } catch (Exception e) {
-                // Do nothing
-            }
-            countryE.setAttribute("displayName", locales[i].getDisplayCountry(locales[0]));
-            locE.appendChild(countryE);
-
-            // <variant code="..." displayName="..."/>
-            Element variantE = doc.createElement("variant");
-            variantE.setAttribute("code", locales[i].getVariant());
-            variantE.setAttribute("displayName", locales[i].getDisplayVariant(locales[0]));
-            locE.appendChild(variantE);
-
-            localesE.appendChild(locE);
-        }
-        doc.appendChild(localesE);
-        return doc;
     }
 
     @Override
@@ -363,27 +123,35 @@ public class LocaleManager implements Serializable {
             sb.append(stringValueOf(userLocales));
         }
         sb.append("\n");
-        sb.append("Browser locales: ");
-        if (browserLocales != null) {
-            sb.append(stringValueOf(browserLocales));
-        }
-        sb.append("\n");
         sb.append("Portal locales: ");
         if (portalLocales != null) {
             sb.append(stringValueOf(portalLocales));
         }
         sb.append("\n");
-        sb.append("JVM locale: ");
-        if (jvmLocale != null) {
-            sb.append(jvmLocale.toString());
-        }
-        sb.append("\n");
         sb.append("Sorted locales: ");
-        Locale[] sortedLocales = getLocales();
+        List<Locale> sortedLocales = getLocales();
         if (sortedLocales != null) {
             sb.append(stringValueOf(sortedLocales));
         }
         sb.append("\n");
+        return sb.toString();
+    }
+
+    /**
+     * Constructs a comma-delimited list of locales that could be parsed back into a Locale array
+     * with parseLocales(String localeStringList).
+     *
+     * @param locales the list of locales
+     * @return a string representing the list of locales
+     */
+    private String stringValueOf(List<Locale> locales) {
+        StringBuffer sb = new StringBuffer();
+        for (Locale locale : locales) {
+            if (sb.length() > 0) {
+                sb.append(",");
+            }
+            sb.append(locale.toString());
+        }
         return sb.toString();
     }
 }

@@ -19,19 +19,19 @@
     under the License.
 
 -->
-<beans xmlns="http://www.springframework.org/schema/beans" 
+<beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
                            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd">
-                           
+
     <alias name="staxSerializingComponent" alias="renderingPipeline"/>
-    
+
     <bean id="portletContentPlaceholderEventSource" class="org.apereo.portal.character.stream.PortletContentPlaceholderEventSource" />
     <bean id="portletHeaderPlaceholderEventSource" class="org.apereo.portal.character.stream.PortletHeaderPlaceholderEventSource" />
     <bean id="portletTitlePlaceholderEventSource" class="org.apereo.portal.character.stream.PortletTitlePlaceholderEventSource" />
     <bean id="portletHelpPlaceholderEventSource" class="org.apereo.portal.character.stream.PortletHelpPlaceholderEventSource" />
-    
+
     <!-- StAX to String serialization -->
     <bean id="staxSerializingComponent" class="org.apereo.portal.rendering.StAXSerializingComponent">
         <property name="wrappedComponent" ref="postThemeTransformLogger" />
@@ -52,12 +52,12 @@
             </map>
         </property>
     </bean>
-    
+
     <bean id="postThemeTransformLogger" class="org.apereo.portal.rendering.LoggingStAXComponent">
         <property name="loggerName" value="org.apereo.portal.rendering.LoggingStAXComponent.POST_THEME" />
         <property name="wrappedComponent" ref="themeTransformComponent" />
     </bean>
-    
+
     <!-- theme transformation -->
     <bean id="themeTransformComponent" class="org.apereo.portal.rendering.xslt.XSLTComponent">
         <property name="wrappedComponent" ref="postStructureTransformLogger" />
@@ -96,7 +96,7 @@
         <property name="loggerName" value="org.apereo.portal.rendering.LoggingStAXComponent.POST_STRUCT" />
         <property name="wrappedComponent" ref="structureTransformComponent" />
     </bean>
-    
+
     <bean id="structureTransformComponent" class="org.apereo.portal.rendering.xslt.XSLTComponent">
         <property name="wrappedComponent" ref="postStructureAttributeIncorporationLogger" />
         <property name="transformerSource">
@@ -125,7 +125,7 @@
         <property name="loggerName" value="org.apereo.portal.rendering.LoggingStAXComponent.POST_SAI" />
         <property name="wrappedComponent" ref="structureAttributeIncorporationComponent" />
     </bean>
-    
+
     <!-- structure attribute incorporation -->
     <bean id="structureAttributeIncorporationComponent" class="org.apereo.portal.rendering.StAXAttributeIncorporationComponent">
         <property name="wrappedComponent" ref="postUserLayoutStoreLogger" />
@@ -143,7 +143,7 @@
             </bean>
         </property>
     </bean>
-    
+
     <bean id="postUserLayoutStoreLogger" class="org.apereo.portal.rendering.LoggingStAXComponent">
         <property name="loggerName" value="org.apereo.portal.rendering.LoggingStAXComponent.POST_LAYOUT" />
         <property name="wrappedComponent" ref="userLayoutStoreComponent" />
@@ -157,9 +157,9 @@
 
     <!-- Utility Beans -->
     <bean class="org.apereo.portal.xml.XmlUtilitiesImpl" />
-    
+
     <bean class="org.apereo.portal.utils.cache.resource.TemplatesBuilder">
-        <!-- 
+        <!--
         <property name="transformerAttributes">
             <map>
                 <entry key="generate-translet" value="true" />
@@ -171,58 +171,57 @@
         </property>
          -->
     </bean>
-    
+
     <bean class="org.apereo.portal.utils.cache.resource.CachingResourceLoaderImpl" />
-    
+
     <bean id="testSpelService" class="org.apereo.portal.spring.spel.PortalSpELServiceImpl" />
-    
+
     <bean class="org.apereo.portal.url.PortalRequestUtilsImpl" />
-    
+
     <bean id="org.apereo.portal.utils.cache.resource.CachingResourceLoader" class="org.springframework.cache.ehcache.EhCacheFactoryBean" />
     <bean id="SpELExpressionCache" class="org.springframework.cache.ehcache.EhCacheFactoryBean" />
 
     <bean id="xslPortalUrlProvider" class="org.apereo.portal.url.xml.XsltPortalUrlProvider" />
-    
+
     <bean id="xalanMessageHelper" class="org.apereo.portal.security.xslt.XalanMessageHelper"/>
     <bean id="xalanAuthorizationHelper" class="org.apereo.portal.security.xslt.XalanAuthorizationHelper" />
     <bean id="xalanLayoutElementTitleHelper" class="org.apereo.portal.security.xslt.XalanLayoutElementTitleHelper"/>
     <bean id="xalanRestJsonHelper" class="org.apereo.portal.security.xslt.XalanRestJsonHelper"/>
     <bean id="xalanGroupMembershipHelper" class="org.apereo.portal.security.xslt.XalanGroupMembershipHelper"/>
-    
-    
+
+
     <bean id="userInstanceManager" class="org.apereo.portal.spring.MockitoFactoryBean">
         <constructor-arg value="org.apereo.portal.user.IUserInstanceManager" />
     </bean>
-    
+
     <bean id="portalUrlProvider" class="org.apereo.portal.spring.MockitoFactoryBean">
         <constructor-arg value="org.apereo.portal.url.IPortalUrlProvider" />
     </bean>
-    
+
     <bean id="portletWindowRegistry" class="org.apereo.portal.spring.MockitoFactoryBean">
         <constructor-arg value="org.apereo.portal.portlet.registry.IPortletWindowRegistry" />
     </bean>
-    
+
     <bean id="portletEntityRegistry" class="org.apereo.portal.spring.MockitoFactoryBean">
         <constructor-arg value="org.apereo.portal.portlet.registry.IPortletEntityRegistry" />
     </bean>
-    
+
     <bean id="resourcesElementsProvider" class="org.apereo.portal.spring.MockitoFactoryBean">
         <constructor-arg value="org.jasig.resourceserver.utils.aggr.ResourcesElementsProvider" />
     </bean>
-    
+
     <bean id="xalanMessageHelperBean" class="org.apereo.portal.spring.MockitoFactoryBean">
         <constructor-arg value="org.apereo.portal.security.xslt.IXalanMessageHelper" />
     </bean>
-    
+
     <bean id="xalanAuthorizationHelperBean" class="org.apereo.portal.spring.MockitoFactoryBean">
         <constructor-arg value="org.apereo.portal.security.xslt.IXalanAuthorizationHelper" />
     </bean>
-    
+
     <bean id="xalanGroupMembershipHelperBean" class="org.apereo.portal.spring.MockitoFactoryBean">
         <constructor-arg value="org.apereo.portal.security.xslt.IXalanGroupMembershipHelper" />
     </bean>
-    
-    
+
     <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
         <property name="alwaysUseMessageFormat" value="true" />
         <property name="cacheSeconds" value="60" />
@@ -232,8 +231,9 @@
             <list>
                 <value>classpath:/properties/i18n/Messages</value>
             </list>
-        </property>                                     
+        </property>
     </bean>
-    
-    
+
+    <bean class="org.apereo.portal.i18n.LocaleManagerFactory" />
+
 </beans>

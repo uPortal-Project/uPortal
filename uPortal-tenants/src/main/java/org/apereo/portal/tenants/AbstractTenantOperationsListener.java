@@ -14,12 +14,14 @@
  */
 package org.apereo.portal.tenants;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Locale;
 import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import org.apereo.portal.i18n.ILocaleStore;
 import org.apereo.portal.i18n.LocaleManager;
+import org.apereo.portal.i18n.LocaleManagerFactory;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.IPersonManager;
 import org.apereo.portal.url.IPortalRequestUtils;
@@ -43,6 +45,8 @@ public abstract class AbstractTenantOperationsListener implements ITenantOperati
     @Autowired private IPersonManager personManager;
 
     @Autowired private ILocaleStore localeStore;
+
+    @Autowired private LocaleManagerFactory localeManagerFactory;
 
     @Autowired private MessageSource messageSource;
 
@@ -107,8 +111,9 @@ public abstract class AbstractTenantOperationsListener implements ITenantOperati
         final HttpServletRequest req = this.portalRequestUtils.getCurrentPortalRequest();
         final IPerson person = personManager.getPerson(req);
         final Locale[] userLocales = localeStore.getUserLocales(person);
-        final LocaleManager localeManager = new LocaleManager(person, userLocales);
-        final Locale locale = localeManager.getLocales()[0];
+        final LocaleManager localeManager =
+                localeManagerFactory.createLocaleManager(person, Arrays.asList(userLocales));
+        final Locale locale = localeManager.getLocales().get(0);
         return locale;
     }
 

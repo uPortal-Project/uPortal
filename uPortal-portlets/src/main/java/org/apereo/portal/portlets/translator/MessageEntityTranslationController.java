@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
-import org.apereo.portal.i18n.LocaleManager;
+import org.apereo.portal.i18n.LocaleManagerFactory;
 import org.apereo.portal.i18n.Message;
 import org.apereo.portal.i18n.dao.IMessageDao;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,10 +42,16 @@ import org.springframework.web.portlet.bind.annotation.ResourceMapping;
 public class MessageEntityTranslationController {
 
     private IMessageDao messageDao;
+    private LocaleManagerFactory localeManagerFactory;
 
     @Autowired
     public void setMessageDao(IMessageDao messageDao) {
         this.messageDao = messageDao;
+    }
+
+    @Autowired
+    public void setLocaleManagerFactory(LocaleManagerFactory localeManagerFactory) {
+        this.localeManagerFactory = localeManagerFactory;
     }
 
     @ResourceMapping
@@ -67,7 +73,7 @@ public class MessageEntityTranslationController {
     @RequestMapping(params = "action=getEntity")
     public ModelAndView getEntity(
             @RequestParam("id") String code, @RequestParam("locale") String localeStr) {
-        final Locale locale = LocaleManager.parseLocale(localeStr);
+        final Locale locale = localeManagerFactory.parseLocale(localeStr);
         final Message message = messageDao.getMessage(code, locale);
         return new ModelAndView("json", "message", message);
     }
@@ -78,7 +84,7 @@ public class MessageEntityTranslationController {
             @RequestParam("id") String code,
             @RequestParam("locale") String localeStr,
             @RequestParam("value") String value) {
-        final Locale locale = LocaleManager.parseLocale(localeStr);
+        final Locale locale = localeManagerFactory.parseLocale(localeStr);
         if (locale != null && StringUtils.hasText(code) && StringUtils.hasText(value)) {
             final Message message = messageDao.getMessage(code, locale);
             if (message != null) {
