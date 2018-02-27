@@ -9,13 +9,14 @@ ext {
 }
 
 dependencies {
-    // All 6 of the following are for the 'org.openrepose.gradle.plugins.jaxb' plugin
+    // All 7 of the following are for the 'org.openrepose.gradle.plugins.jaxb' plugin
+    jaxb "com.sun.xml.bind:jaxb-core:${jaxbVersion}"
     jaxb "com.sun.xml.bind:jaxb-xjc:${jaxbVersion}"
     jaxb "com.sun.xml.bind:jaxb-impl:${jaxbVersion}"
     jaxb "javax.xml.bind:jaxb-api:${jaxbVersion}"
     jaxb "org.jvnet.jaxb2_commons:jaxb2-basics-ant:${jaxb2basicsVersion}"
     jaxb "org.jvnet.jaxb2_commons:jaxb2-basics:${jaxb2basicsVersion}"
-    jaxb "org.jvnet.jaxb2_commons:jaxb2-basics-annotate:${jaxb2basicsVersion}"
+    jaxb "org.jvnet.jaxb2_commons:jaxb2-basics-annotate:${jaxb2basicsAnnotateVersion}"
 }
 
 /*
