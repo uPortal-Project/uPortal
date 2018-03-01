@@ -8,7 +8,7 @@ ext {
 dependencies {
     compile project(':uPortal-concurrency')
 
-    compile "javax.xml.bind:jaxb-api:2.3.0"
+    compile "javax.xml.bind:jaxb-api:${jaxbApiVersion}"
     compile "javax.annotation:javax.annotation-api:${javaxmlVersion}"
     compile "com.fasterxml.jackson.core:jackson-annotations:${jacksonVersion}"
     compile "com.fasterxml.jackson.core:jackson-core:${jacksonVersion}"
@@ -17,7 +17,7 @@ dependencies {
     compile "net.sf.ehcache:ehcache-core:${ehcacheVersion}"
     compile "org.apache.ant:ant:${antVersion}"
     compile "org.apache.commons:commons-lang3:${commonsLang3Version}"
-    compile "org.aspectj:aspectjrt:${aspectjVersion}"
+    compile "org.aspectj:aspectjweaver:${aspectjVersion}"
     compile("org.codehaus.woodstox:woodstox-core-asl:${woodstoxVersion}") {
         exclude group: 'javax.xml.stream', module: 'stax-api'
     }
