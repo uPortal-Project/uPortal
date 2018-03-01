@@ -9,15 +9,13 @@ ext {
 }
 
 dependencies {
-    //jaxb "javax.annotation:javax.annotation-api:${javaxmlVersion}"
-    compile "javax.xml.bind:jaxb-api:2.3.0"
+    compile "javax.xml.bind:jaxb-api:${jaxbApiVersion}"
     compile "jaxb:activation:${activationVersion}"
-    
 
     // All 6 of the following are for the 'com.github.jacobono.jaxb' plugin
     jaxb 'com.sun.xml.bind:jaxb-xjc:2.2.7-b41'
     jaxb 'com.sun.xml.bind:jaxb-impl:2.2.7-b41'
-    jaxb "javax.xml.bind:jaxb-api:2.3.0"
+    jaxb "javax.xml.bind:jaxb-api:${jaxbApiVersion}"
     jaxb "jaxb:activation:${activationVersion}"
     jaxb 'org.jvnet.jaxb2_commons:jaxb2-basics-ant:0.6.5'
     jaxb 'org.jvnet.jaxb2_commons:jaxb2-basics:0.6.4'

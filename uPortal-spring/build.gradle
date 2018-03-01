@@ -11,6 +11,7 @@ dependencies {
     compile "net.oauth.core:oauth:${oauthVersion}"
     compile "org.jasypt:jasypt:${jasyptVersion}"
     compile "org.slf4j:slf4j-api:${slf4jVersion}"
+    compile "javax.xml.bind:jaxb-api:${jaxbApiVersion}"
     compile "org.springframework:spring-web:${springVersion}"
     compile "org.springframework:spring-webmvc:${springVersion}"
     compile "org.springframework:spring-webmvc-portlet:${springVersion}"

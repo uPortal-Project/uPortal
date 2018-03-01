@@ -39,6 +39,8 @@ dependencies {
     compile project(':uPortal-soffit:uPortal-soffit-connector')
     compile project(':uPortal-utils:uPortal-utils-jmx')
 
+    compile "javax.xml.bind:jaxb-api:${jaxbApiVersion}"
+
     compileOnly "org.apereo.service.persondir:person-directory-api:${personDirectoryVersion}"
     compileOnly "${servletApiDependency}"
 
@@ -50,7 +52,7 @@ dependencies {
     testCompile "${portletApiDependency}"
     testCompile "${servletApiDependency}"
 
-    runtime "javax.xml.bind:jaxb-api:2.3.0"
+    runtime "javax.xml.bind:jaxb-api:${jaxbApiVersion}"
     runtime "ch.qos.logback:logback-classic:${logbackVersion}"
     runtime "joda-time:joda-time-jsptags:${jodaTimeJsptagsVersion}"
     runtime "org.aspectj:aspectjweaver:${aspectjVersion}"
