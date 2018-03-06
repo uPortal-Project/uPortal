@@ -43,7 +43,6 @@
 
         <property name="testWhileIdle" value="${tomcat.jdbc.pool.basePooledDataSource.testWhileIdle:true}" />
         <property name="testOnBorrow" value="${tomcat.jdbc.pool.basePooledDataSource.testOnBorrow:true}" />
-        <property name="delayedValidationQueryResolver" ref="delayedValidationQueryResolver" />
     </bean>
 
     <bean id="PortalDb" parent="basePooledDataSource">
@@ -52,6 +51,7 @@
         <property name="url" value="${hibernate.connection.url}" />
         <property name="username" value="${hibernate.connection.username}" />
         <property name="password" value="${hibernate.connection.password}" />
+        <property name="validationQuery" value="${hibernate.connection.validationQuery}" />
 
         <property name="initialSize" value="${tomcat.jdbc.pool.PortalDb.initialSize:1}" />
         <property name="minIdle" value="${tomcat.jdbc.pool.PortalDb.minIdle:1}" />
@@ -78,6 +78,8 @@
         <property name="url" value="${RawEventsJdbcUrl}" />
         <property name="username" value="${RawEventsJdbcUser}" />
         <property name="password" value="${RawEventsJdbcPassword}" />
+        <property name="validationQuery" value="${RawEventsValidationQuery}" />
+
 
         <property name="initialSize" value="${tomcat.jdbc.pool.rawEventsDataSource.initialSize:1}" />
         <property name="minIdle" value="${tomcat.jdbc.pool.rawEventsDataSource.minIdle:1}" />
@@ -97,6 +99,7 @@
         <property name="url" value="${AggrEventsJdbcUrl}" />
         <property name="username" value="${AggrEventsJdbcUser}" />
         <property name="password" value="${AggrEventsJdbcPassword}" />
+        <property name="validationQuery" value="${AggrEventsValidationQuery}" />
 
         <property name="initialSize" value="${tomcat.jdbc.pool.aggrEventsDataSource.initialSize:1}" />
         <property name="minIdle" value="${tomcat.jdbc.pool.aggrEventsDataSource.minIdle:1}" />
@@ -105,24 +108,5 @@
         <property name="maxWait" value="${tomcat.jdbc.pool.aggrEventsDataSource.maxWait:5000}" /> <!-- 5 seconds -->
         <property name="maxAge" value="${tomcat.jdbc.pool.aggrEventsDataSource.maxAge:3600000}" /> <!-- 1 hour -->
         <property name="minEvictableIdleTimeMillis" value="${tomcat.jdbc.pool.aggrEventsDataSource.minEvictableIdleTimeMillis:300000}" /> <!-- 5 minutes -->
-    </bean>
-    
-    <bean id="delayedValidationQueryResolver" class="org.apereo.portal.utils.jdbc.DelayedValidationQueryResolverImpl">
-    	<property name="persistenceUnit">
-    		<util:constant static-field="org.apereo.portal.jpa.BasePortalJpaDao.PERSISTENCE_UNIT_NAME"/>
-    	</property>
-    	<property name="validationQueryMap">
-            <!-- todo: Change to simply use ${hibernate.connection.validationQuery} instead of a map -->
-    		<map>
-                <entry key="org.hibernate.dialect.OracleDialect" value="SELECT 1 FROM DUAL" />
-                <entry key="org.hibernate.dialect.Oracle8iDialect" value="SELECT 1 FROM DUAL" />
-                <entry key="org.hibernate.dialect.Oracle9iDialect" value="SELECT 1 FROM DUAL" />
-                <entry key="org.hibernate.dialect.Oracle10gDialect" value="SELECT 1 FROM DUAL" />
-    			<entry key="org.hibernate.dialect.MySQLDialect" value="SELECT 1" />
-    			<entry key="org.hibernate.dialect.PostgreSQL81Dialect" value="SELECT 1" />
-    			<entry key="org.hibernate.dialect.SQLServerDialect" value="SELECT 1" />
-    			<entry key="org.hibernate.dialect.HSQLDialect" value="select 1 from INFORMATION_SCHEMA.SYSTEM_USERS" />
-    		</map>
-    	</property>
     </bean>
 </beans>
