@@ -117,7 +117,7 @@ public class FavoritesController extends AbstractFavoritesController {
         final String username =
                 req.getRemoteUser() != null
                         ? req.getRemoteUser()
-                        : PersonFactory.GUEST_USERNAMES.get(0); // First item is the default
+                        : PersonFactory.getGuestUsernames().get(0); // First item is the default
         final IAuthorizationPrincipal principal =
                 authorizationService.newPrincipal(username, IPerson.class);
         final List<IUserLayoutNodeDescription> favorites = new ArrayList<>();
