@@ -17,10 +17,7 @@ package org.apereo.portal.security;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
 import javax.annotation.PostConstruct;
-
-import org.apereo.portal.properties.PropertiesManager;
 import org.apereo.portal.security.provider.PersonImpl;
 import org.apereo.portal.security.provider.RestrictedPerson;
 import org.springframework.beans.factory.annotation.Value;
@@ -52,7 +49,8 @@ public class PersonFactory {
 
     @PostConstruct
     public void init() {
-        guestUsernames = Collections.unmodifiableList(Arrays.asList(guestUsernamesProperty.split(",")));
+        guestUsernames =
+                Collections.unmodifiableList(Arrays.asList(guestUsernamesProperty.split(",")));
     }
 
     /**
@@ -64,7 +62,8 @@ public class PersonFactory {
      */
     public static List<String> getGuestUsernames() {
         if (guestUsernames == null) {
-            throw new IllegalStateException("The guestUsernames collection has not been initialized");
+            throw new IllegalStateException(
+                    "The guestUsernames collection has not been initialized");
         }
         return guestUsernames;
     }
