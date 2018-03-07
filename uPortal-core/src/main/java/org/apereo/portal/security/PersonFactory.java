@@ -17,9 +17,14 @@ package org.apereo.portal.security;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
+import javax.annotation.PostConstruct;
+
 import org.apereo.portal.properties.PropertiesManager;
 import org.apereo.portal.security.provider.PersonImpl;
 import org.apereo.portal.security.provider.RestrictedPerson;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 /**
  * Creates a person.
@@ -37,11 +42,18 @@ import org.apereo.portal.security.provider.RestrictedPerson;
  *       </code>.
  * </ol>
  */
+@Component
 public class PersonFactory {
 
-    private static final String GUEST_USERNAMES_PROPERTY =
-            PropertiesManager.getProperty(
-                    "org.apereo.portal.security.PersonFactory.guest_user_names", "guest");
+    @Value("${org.apereo.portal.security.PersonFactory.guest_user_names:guest}")
+    private String guestUsernamesProperty;
+
+    private static List<String> guestUsernames = null;
+
+    @PostConstruct
+    public void init() {
+        guestUsernames = Collections.unmodifiableList(Arrays.asList(guestUsernamesProperty.split(",")));
+    }
 
     /**
      * Collection of guest user names specified in portal.properties as <code>
@@ -50,8 +62,12 @@ public class PersonFactory {
      *
      * @since 5.0
      */
-    public static final List<String> GUEST_USERNAMES =
-            Collections.unmodifiableList(Arrays.asList(GUEST_USERNAMES_PROPERTY.split(",")));
+    public static List<String> getGuestUsernames() {
+        if (guestUsernames == null) {
+            throw new IllegalStateException("The guestUsernames collection has not been initialized");
+        }
+        return guestUsernames;
+    }
 
     /**
      * Creates an empty <code>IPerson</code> implementation.

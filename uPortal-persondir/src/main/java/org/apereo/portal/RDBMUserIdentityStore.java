@@ -164,7 +164,7 @@ public class RDBMUserIdentityStore implements IUserIdentityStore {
                 new TransactionCallbackWithoutResult() {
                     @Override
                     protected void doInTransactionWithoutResult(TransactionStatus arg0) {
-                        if (PersonFactory.GUEST_USERNAMES.contains(userName)) {
+                        if (PersonFactory.getGuestUsernames().contains(userName)) {
                             throw new IllegalArgumentException(
                                     "CANNOT RESET LAYOUT FOR A GUEST USER");
                         }
@@ -295,7 +295,7 @@ public class RDBMUserIdentityStore implements IUserIdentityStore {
         String username = (String) person.getAttribute(IPerson.USERNAME);
 
         // only synchronize a non-guest request.
-        if (PersonFactory.GUEST_USERNAMES.contains(username)) {
+        if (PersonFactory.getGuestUsernames().contains(username)) {
             uid = __getPortalUID(person, createPortalData);
         } else {
             Object lock = getLock(person);
