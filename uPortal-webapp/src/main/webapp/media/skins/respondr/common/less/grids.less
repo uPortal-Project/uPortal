@@ -10,6 +10,14 @@
   .fn-set-width-column-for-size(@number-of-columns, sm);
   .fn-set-width-column-for-size(@number-of-columns, md);
   .fn-set-width-column-for-size(@number-of-columns, lg);
+
+  // On smaller than xs screen sizes all content should be full screen
+  @media (max-width: @screen-xs-max) {
+    .up-portlet-wrapper,
+    .fl-reorderer-dropMarker {
+      width: 100%;
+    }
+  }
 }
 
 /*
