@@ -29,7 +29,7 @@ public class UsernameTaggedCacheEntryPurger implements ApplicationListener<Logou
     public static final String TAG_TYPE = "username";
 
     public static CacheEntryTag createCacheEntryTag(String username) {
-        return new SimpleCacheEntryTag<String>(TAG_TYPE, username);
+        return new SimpleCacheEntryTag<>(TAG_TYPE, username);
     }
 
     private TaggedCacheEntryPurger taggedCacheEntryPurger;
