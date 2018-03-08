@@ -24,26 +24,28 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 /**
- * Creates a person.
+ * Responsible for creating {@link IPerson} instances. Historically, the capabilities of this class
+ * were accessed through static methods and constants, but with uP5 (and beyond) we need to
+ * configure this class through the <code>PropertySourcesPlaceholderConfigurer</code>. At present
+ * this class brideges both worlds, but in the future it would be good to move away from static
+ * methods.
  *
- * <p>Can create representations of a <i>system</i> user and a <i>guest</i> user.
+ * <p>Can create representations of a <i>system</i> as well as <i>guest</i> users.
  *
- * <p><i>system</i> users have an ID of 0
+ * <p>The <i>system</i> user has an ID of 0
  *
- * <p><i>guest</i> users have both of the following characteristics<br>
+ * <p><i>guest</i> users exhibit both of the following characteristics<br>
  *
  * <ol>
- *   <li>User is not successfully authenticated with the portal.
- *   <li>User name matches the value of the property <code>
- *       org.apereo.portal.security.PersonFactory.guest_user_name</code> in <code>portal.properties
- *       </code>.
+ *   <li>User is not (successfully) authenticated with the portal.
+ *   <li>Username is included in the list specified by the property <code>
+ *       org.apereo.portal.security.PersonFactory.guest_user_names</code>.
  * </ol>
  */
 @Component
 public class PersonFactory {
 
-    @Value("${org.apereo.portal.security.PersonFactory.guest_user_names:guest}")
-    private String guestUsernamesProperty;
+    private String guestUsernamesProperty = "guest"; // default;  for unit tests
 
     private static List<String> guestUsernames = null;
 
@@ -97,5 +99,16 @@ public class PersonFactory {
     public static RestrictedPerson createRestrictedPerson() {
         IPerson person = createPerson();
         return new RestrictedPerson(person);
+    }
+
+    /**
+     * In addition to supporting the Spring context, this setter allows unit tests to bootstrap this
+     * class so that downstream features won't break.
+     *
+     * @since 5.0
+     */
+    @Value("${org.apereo.portal.security.PersonFactory.guest_user_names:guest}")
+    public void setGuestUsernamesProperty(String guestUsernamesProperty) {
+        this.guestUsernamesProperty = guestUsernamesProperty;
     }
 }

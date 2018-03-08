@@ -30,6 +30,7 @@ import org.apereo.portal.groups.pags.testers.StringEqualsTester;
 import org.apereo.portal.groups.pags.testers.ValueExistsTester;
 import org.apereo.portal.groups.pags.testers.ValueMissingTester;
 import org.apereo.portal.security.IPerson;
+import org.apereo.portal.security.PersonFactory;
 import org.apereo.portal.security.provider.PersonImpl;
 
 /** Tests the PAGS testers. */
@@ -86,6 +87,10 @@ public class PAGSTest extends TestCase {
     }
 
     protected void setUp() {
+
+        PersonFactory fac = new PersonFactory();
+        fac.init();
+
         try {
             if (IPERSON_CLASS == null) {
                 IPERSON_CLASS = Class.forName("org.apereo.portal.security.IPerson");
