@@ -23,6 +23,9 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 /**
  * A key and type that uniquely identify a portal entity.
  *
+ * <p>In the case of users, the key will be the username and the type will be {@link
+ * org.apereo.portal.security.IPerson}.
+ *
  * @see IBasicEntity
  */
 public class EntityIdentifier implements Serializable {

@@ -174,7 +174,7 @@ public final class CacheKey implements Serializable, TaggedCacheEntry {
 
     public static <K extends Serializable, V extends Serializable> CacheKeyBuilder<K, V> builder(
             String source) {
-        return new CacheKeyBuilder<K, V>(source);
+        return new CacheKeyBuilder<>(source);
     }
 
     public static CacheKey build(String source, Serializable... key) {
