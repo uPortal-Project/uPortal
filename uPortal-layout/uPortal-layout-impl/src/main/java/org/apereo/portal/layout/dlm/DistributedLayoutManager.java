@@ -1383,7 +1383,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
     /** Resets the layout of the specified user. */
     private boolean resetLayout(IPerson person) {
         final String userName = person.getUserName();
-        if (PersonFactory.GUEST_USERNAMES.contains(userName)) {
+        if (PersonFactory.getGuestUsernames().contains(userName)) {
             throw new IllegalArgumentException("CANNOT RESET LAYOUT FOR A GUEST USER: " + person);
         }
         LOG.warn("Resetting user layout for: " + userName, new Throwable());
