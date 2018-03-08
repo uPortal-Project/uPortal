@@ -16,11 +16,19 @@ package org.apereo.portal.groups.pags.testers;
 
 import org.apereo.portal.groups.pags.TestPersonAttributesGroupTestDefinition;
 import org.apereo.portal.security.IPerson;
+import org.apereo.portal.security.PersonFactory;
 import org.apereo.portal.security.provider.PersonImpl;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 public class GuestUserTesterTest {
+
+    @Before
+    public void setUp() {
+        PersonFactory fac = new PersonFactory();
+        fac.init();
+    }
 
     @Test
     public void testGuestTrue() throws Exception {

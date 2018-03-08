@@ -18,6 +18,7 @@ import java.util.Map;
 import org.apereo.portal.events.PortalEventFactoryImpl;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.IPersonManager;
+import org.apereo.portal.security.PersonFactory;
 import org.apereo.portal.security.provider.PersonImpl;
 import org.junit.Assert;
 import org.junit.Before;
@@ -47,6 +48,9 @@ public class SessionRESTControllerTest {
 
     @Before
     public void setup() {
+        PersonFactory fac = new PersonFactory();
+        fac.init();
+
         sessionRESTController = new SessionRESTController();
         res = new MockHttpServletResponse();
         req = new MockHttpServletRequest();
