@@ -22,9 +22,12 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 import org.apereo.portal.EntityIdentifier;
+import org.apereo.portal.security.IPerson;
 import org.apereo.portal.services.GroupService;
 import org.apereo.portal.spring.locator.ApplicationContextLocator;
 import org.apereo.portal.spring.locator.EntityTypesLocator;
+import org.apereo.portal.utils.cache.CacheKey;
+import org.apereo.portal.utils.cache.UsernameTaggedCacheEntryPurger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -68,7 +71,7 @@ public abstract class GroupMemberImpl implements IGroupMember {
      */
     @Override
     public Set<IEntityGroup> getAncestorGroups() throws GroupsException {
-        return primGetAncestorGroups(this, new HashSet<IEntityGroup>());
+        return primGetAncestorGroups(this, new HashSet<>());
     }
 
     /**
@@ -129,9 +132,6 @@ public abstract class GroupMemberImpl implements IGroupMember {
     /**
      * Answers if this <code>IGroupMember</code> is, recursively, a member of <code>IGroupMember
      * </code> gm.
-     *
-     * @return boolean
-     * @param gm org.apereo.portal.groups.IGroupMember
      */
     @Override
     public boolean isDeepMemberOf(IEntityGroup group) throws GroupsException {
@@ -143,17 +143,13 @@ public abstract class GroupMemberImpl implements IGroupMember {
     public boolean isGroup() {
         return false;
     }
+
     /** @return boolean. */
     protected boolean isKnownEntityType(Class anEntityType) throws GroupsException {
         return (EntityTypesLocator.getEntityTypes().getEntityIDFromType(anEntityType) != null);
     }
 
-    /**
-     * Answers if this <code>IGroupMember</code> is a member of <code>IGroupMember</code> gm.
-     *
-     * @param gm org.apereo.portal.groups.IGroupMember
-     * @return boolean
-     */
+    /** Answers if this <code>IGroupMember</code> is a member of <code>IGroupMember</code> gm. */
     @Override
     public boolean isMemberOf(IEntityGroup group) throws GroupsException {
         return getParentGroups().contains(group);
@@ -215,5 +211,17 @@ public abstract class GroupMemberImpl implements IGroupMember {
         for (IGroupMember member : members) {
             parentGroupsCache.remove(member.getEntityIdentifier());
         }
+    }
+
+    protected CacheKey getCacheKey(EntityIdentifier entityIdentifier) {
+        // Use tagged keys for users (only) so the cache entries will be dropped when they
+        // authenticate
+        return IPerson.class.equals(entityIdentifier.getType())
+                ? CacheKey.buildTagged(
+                        getClass().getName(),
+                        UsernameTaggedCacheEntryPurger.createCacheEntryTag(
+                                entityIdentifier.getKey()),
+                        entityIdentifier)
+                : CacheKey.build(getClass().getName(), entityIdentifier);
     }
 }

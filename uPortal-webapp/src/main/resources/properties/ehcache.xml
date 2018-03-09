@@ -392,6 +392,7 @@
     <cache name="org.apereo.portal.groups.GroupMemberImpl.parentGroups"
         eternal="false" maxElementsInMemory="5000" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory class="org.apereo.portal.utils.cache.SpringCacheEventListenerFactory" properties="beanName=tagTrackingCacheEventListener" listenFor="local" />
         <cacheEventListenerFactory
             class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
             properties="replicateAsynchronously=true,
