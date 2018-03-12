@@ -37,7 +37,6 @@ public interface IUserLayoutStore {
      * @param Person an <code>IPerson</code> object specifying the user
      * @param profile a user profile
      * @return a <code>Document</code> containing user layout (conforms to userLayout.dtd)
-     * @exception Exception if an error occurs
      */
     DistributedUserLayout getUserLayout(IPerson Person, IUserProfile profile);
 
@@ -53,7 +52,6 @@ public interface IUserLayoutStore {
      * @param profile A valid profile for <code>person</code>
      * @return A streamlined <code>Document</code> containing user layout and <code>UserPreferences
      *     </code> data
-     * @exception Exception if an error occurs
      */
     org.dom4j.Element exportLayout(IPerson person, IUserProfile profile);
 
@@ -75,7 +73,6 @@ public interface IUserLayoutStore {
      *     userLayout.dtd)
      * @param channelsAdded a boolean flag specifying if new channels have been added to the current
      *     user layout (for performance optimization purposes)
-     * @exception Exception if an error occurs
      */
     void setUserLayout(
             IPerson Person, IUserProfile profile, Document layoutXML, boolean channelsAdded);
@@ -122,7 +119,7 @@ public interface IUserLayoutStore {
     IUserProfile getSystemProfileByFname(String profileFname);
 
     /**
-     * Obtain a list of system profiles. Used in the User Manager.
+     * Obtain a list of system profiles. Used in the Webflow for User Manager.
      *
      * @return a <code>Hashtable</code> mapping system profile ids (<code>Integer</code> objects) to
      *     the {@link UserProfile} objects
@@ -135,7 +132,6 @@ public interface IUserLayoutStore {
      *
      * @param person an <code>IPerson</code> value
      * @return a <code>String</code> value
-     * @exception Exception if an error occurs
      */
     String generateNewChannelSubscribeId(IPerson person);
 
@@ -144,7 +140,6 @@ public interface IUserLayoutStore {
      *
      * @param person an <code>IPerson</code> value
      * @return a <code>String</code> value
-     * @exception Exception if an error occurs
      */
     String generateNewFolderId(IPerson person);
 
@@ -180,9 +175,6 @@ public interface IUserLayoutStore {
 
     /**
      * Determines if a user is a fragment owner.
-     *
-     * @param person
-     * @return
      */
     boolean isFragmentOwner(IPerson person);
 
