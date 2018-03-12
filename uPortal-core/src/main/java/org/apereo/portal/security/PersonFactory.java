@@ -20,7 +20,10 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import org.apereo.portal.security.provider.PersonImpl;
 import org.apereo.portal.security.provider.RestrictedPerson;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 /**
@@ -43,16 +46,20 @@ import org.springframework.stereotype.Component;
  * </ol>
  */
 @Component
+@Lazy(false) // Force this bean to load in Import/Export via the CLI
 public class PersonFactory {
 
     private String guestUsernamesProperty = "guest"; // default;  for unit tests
 
     private static List<String> guestUsernames = null;
 
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+
     @PostConstruct
     public void init() {
         guestUsernames =
                 Collections.unmodifiableList(Arrays.asList(guestUsernamesProperty.split(",")));
+        logger.info("Found the following guest usernames:  {}", guestUsernames);
     }
 
     /**
