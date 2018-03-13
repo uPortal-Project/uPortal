@@ -109,7 +109,7 @@ public final class AdHocGroupTester implements IPersonTester {
                 rslt,
                 person.getUserName(),
                 isNotTest ? "is not" : "is",
-                groupName);
+                entityGroup.getName());
         return rslt;
     }
 
@@ -141,7 +141,7 @@ public final class AdHocGroupTester implements IPersonTester {
     private static IEntityGroup findGroupByName(String groupName) {
         EntityIdentifier[] identifiers =
                 GroupService.searchForGroups(
-                        groupName, GroupService.SearchMethod.CONTAINS, IPerson.class);
+                        groupName, GroupService.SearchMethod.DISCRETE, IPerson.class);
         for (EntityIdentifier entityIdentifier : identifiers) {
             if (entityIdentifier.getType().equals(IEntityGroup.class)) {
                 return GroupService.findGroup(entityIdentifier.getKey());

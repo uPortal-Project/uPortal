@@ -26,8 +26,6 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.Validate;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apereo.portal.EntityIdentifier;
 import org.apereo.portal.groups.IEntityGroup;
 import org.apereo.portal.groups.IGroupMember;
@@ -37,6 +35,8 @@ import org.apereo.portal.services.GroupService;
 import org.apereo.portal.user.IUserInstance;
 import org.apereo.portal.user.IUserInstanceManager;
 import org.apereo.portal.utils.web.AbstractHttpServletRequestWrapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Portal wide request wrapper. Provides portal specific information for request parameters,
@@ -56,7 +56,7 @@ public class PortalHttpServletRequestWrapper extends AbstractHttpServletRequestW
     public static final String ATTRIBUTE__HTTP_SERVLET_RESPONSE =
             PortalHttpServletRequestWrapper.class.getName() + ".PORTAL_HTTP_SERVLET_RESPONSE";
 
-    protected final Log logger = LogFactory.getLog(this.getClass());
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     private final Map<String, String> additionalHeaders = new LinkedHashMap<>();
     private final HttpServletResponse httpServletResponse;
@@ -248,7 +248,14 @@ public class PortalHttpServletRequestWrapper extends AbstractHttpServletRequestW
         final EntityIdentifier personEntityId = person.getEntityIdentifier();
         final IGroupMember personGroupMember = GroupService.getGroupMember(personEntityId);
 
-        return personGroupMember.isDeepMemberOf(groupForRole);
+        final boolean rslt = personGroupMember.isDeepMemberOf(groupForRole);
+        logger.trace(
+                "Answering {} for isUserInRole where user='{}', role='{}', and groupForRole='{}'",
+                rslt,
+                person.getUserName(),
+                role,
+                groupForRole.getName());
+        return rslt;
     }
 
     /* (non-Javadoc)
