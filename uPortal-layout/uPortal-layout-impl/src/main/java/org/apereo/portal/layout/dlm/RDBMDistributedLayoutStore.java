@@ -192,6 +192,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
      *
      * @return Map
      */
+    @Override
     public Map<String, Document> getFragmentLayoutCopies() {
         // since this is only visible in fragment list in administrative portlet, use default portal
         // locale
@@ -359,7 +360,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
         }
 
         final int struct_count =
-                this.jdbcOperations.queryForObject(
+                jdbcOperations.queryForObject(
                         "SELECT COUNT(*) FROM up_layout_struct WHERE user_id = ?",
                         Integer.class,
                         person.getID());
@@ -1367,6 +1368,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
      * Convenience method for fragment activator to obtain raw layouts for fragments during
      * initialization.
      */
+    @Override
     public Document getFragmentLayout(IPerson person, IUserProfile profile) {
 
         return this._safeGetUserLayout(person, profile);
@@ -1478,6 +1480,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
      * stored in the user's person layout fragment or PLF. If this person is a layout owner then
      * their changes are pushed into the appropriate layout fragment.
      */
+    @Override
     public void setUserLayout(
             IPerson person, IUserProfile profile, Document layoutXML, boolean channelsAdded) {
 

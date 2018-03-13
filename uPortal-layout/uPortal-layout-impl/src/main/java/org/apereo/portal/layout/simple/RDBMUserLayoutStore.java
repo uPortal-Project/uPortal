@@ -80,13 +80,11 @@ import org.w3c.dom.Node;
  */
 public abstract class RDBMUserLayoutStore implements IUserLayoutStore, InitializingBean {
 
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
-    private static String PROFILE_TABLE = "UP_USER_PROFILE";
+    private static final String PROFILE_TABLE_NAME = "UP_USER_PROFILE";
 
     private static final String UNSUPPORTED_MULTIPLE_LAYOUTS_FOUND =
             "User ID {}'s profiles contain more than one non-zero layout id.  This is currently not supported.";
 
-    // This class is instantiated ONCE so NO class variables can be used to keep state between calls
     protected static final String channelPrefix = "n";
     protected static final String folderPrefix = "s";
 
@@ -99,6 +97,8 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
     protected IDatabaseMetadata databaseMetadata;
     protected IPortletDefinitionRegistry portletDefinitionRegistry;
     protected IStylesheetDescriptorDao stylesheetDescriptorDao;
+
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
     public void setLocaleStore(ILocaleStore localeStore) {
@@ -119,20 +119,20 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
     public void setPlatformTransactionManager(
             @Qualifier(BasePortalJpaDao.PERSISTENCE_UNIT_NAME)
                     PlatformTransactionManager platformTransactionManager) {
-        this.transactionOperations = new TransactionTemplate(platformTransactionManager);
+        transactionOperations = new TransactionTemplate(platformTransactionManager);
 
         final DefaultTransactionDefinition nextStructTransactionDefinition =
                 new DefaultTransactionDefinition();
         nextStructTransactionDefinition.setPropagationBehavior(
                 DefaultTransactionDefinition.PROPAGATION_REQUIRES_NEW);
-        this.nextStructTransactionOperations =
+        nextStructTransactionOperations =
                 new TransactionTemplate(
                         platformTransactionManager, nextStructTransactionDefinition);
     }
 
     @Resource(name = BasePortalJpaDao.PERSISTENCE_UNIT_NAME)
     public void setDataSource(DataSource dataSource) {
-        this.jdbcOperations = new JdbcTemplate(dataSource);
+        jdbcOperations = new JdbcTemplate(dataSource);
     }
 
     @Autowired
@@ -146,9 +146,9 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
     }
 
     @Override
-    public void afterPropertiesSet() throws Exception {
-        if (this.databaseMetadata.supportsOuterJoins()) {
-            final IJoinQueryString joinQuery = this.databaseMetadata.getJoinQuery();
+    public void afterPropertiesSet() {
+        if (databaseMetadata.supportsOuterJoins()) {
+            final IJoinQueryString joinQuery = databaseMetadata.getJoinQuery();
 
             if (joinQuery instanceof DatabaseMetaDataImpl.JdbcDb) {
                 joinQuery.addQuery(
@@ -200,8 +200,8 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                 }
             };
 
-    private final IPerson getSystemUser() {
-        return this.systemPersonCreator.get();
+    private IPerson getSystemUser() {
+        return systemPersonCreator.get();
     }
 
     /**
@@ -210,23 +210,23 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
      * @param person
      * @param profile
      * @return userProfile
-     * @exception Exception
      */
+    @Override
     public UserProfile addUserProfile(final IPerson person, final IUserProfile profile) {
         final int userId = person.getID();
         final int layoutId = getLayoutId(person, profile);
         // generate an id for this profile
 
-        return this.jdbcOperations.execute(
+        return jdbcOperations.execute(
                 new ConnectionCallback<UserProfile>() {
                     @Override
                     public UserProfile doInConnection(Connection con)
                             throws SQLException, DataAccessException {
-                        String sQuery = null;
+                        String sQuery;
                         PreparedStatement pstmt =
                                 con.prepareStatement(
                                         "INSERT INTO UP_USER_PROFILE "
-                                                + "(USER_ID,PROFILE_ID,PROFILE_FNAME,PROFILE_NAME,STRUCTURE_SS_ID,THEME_SS_ID,"
+                                                + "(USER_ID, PROFILE_ID, PROFILE_FNAME, PROFILE_NAME, STRUCTURE_SS_ID, THEME_SS_ID,"
                                                 + "DESCRIPTION, LAYOUT_ID) VALUES (?,?,?,?,?,?,?,?)");
                         int profileId = getNextKey();
                         pstmt.setInt(1, userId);
@@ -238,7 +238,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                         pstmt.setString(7, profile.getProfileDescription());
                         pstmt.setInt(8, layoutId);
                         sQuery =
-                                "INSERT INTO UP_USER_PROFILE (USER_ID,PROFILE_ID,PROFILE_FNAME,PROFILE_NAME,STRUCTURE_SS_ID,THEME_SS_ID,DESCRIPTION, LAYOUT_ID) VALUES ("
+                                "INSERT INTO UP_USER_PROFILE (USER_ID, PROFILE_ID, PROFILE_FNAME, PROFILE_NAME, STRUCTURE_SS_ID, THEME_SS_ID, DESCRIPTION, LAYOUT_ID) VALUES ("
                                         + userId
                                         + ",'"
                                         + profileId
@@ -289,7 +289,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
      * elsewhere to always be one)
      */
     private int getLayoutId(final IPerson person, final IUserProfile profile) {
-        final Hashtable<Integer, UserProfile> profiles = this.getUserProfileList(person);
+        final Hashtable<Integer, UserProfile> profiles = getUserProfileList(person);
         int layoutId = profile.getLayoutId();
         Set<Integer> layoutIds = getAllNonZeroLayoutIdsFromProfiles(profiles.values());
         if (!layoutIds.isEmpty()) {
@@ -304,7 +304,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
 
     private Set<Integer> getAllNonZeroLayoutIdsFromProfiles(
             final Collection<UserProfile> profiles) {
-        Set<Integer> layoutIds = new HashSet<Integer>();
+        Set<Integer> layoutIds = new HashSet<>();
         for (UserProfile profile : profiles) {
             int userProfileLayoutId = profile.getLayoutId();
             if (userProfileLayoutId != 0) {
@@ -315,7 +315,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
     }
 
     private int getNextKey() {
-        return CounterStoreLocator.getCounterStore().getNextId(PROFILE_TABLE);
+        return CounterStoreLocator.getCounterStore().getNextId(PROFILE_TABLE_NAME);
     }
 
     /**
@@ -354,8 +354,8 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
      * @param value to check
      * @result boolean
      */
-    protected static final boolean xmlBool(String value) {
-        return (value != null && value.equals("true") ? true : false);
+    protected static boolean xmlBool(String value) {
+        return (value != null && value.equals("true"));
     }
 
     /**
@@ -364,6 +364,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
      * @param person
      * @return the next available channel structure id
      */
+    @Override
     public String generateNewChannelSubscribeId(IPerson person) {
         return getNextStructId(person, channelPrefix);
     }
@@ -373,8 +374,8 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
      *
      * @param person
      * @return a <code>String</code> that is the next free structure ID
-     * @exception Exception
      */
+    @Override
     public String generateNewFolderId(IPerson person) {
         return getNextStructId(person, folderPrefix);
     }
@@ -385,11 +386,10 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
      * @param person
      * @param prefix
      * @return next free structure ID
-     * @exception Exception
      */
     protected String getNextStructId(final IPerson person, final String prefix) {
         final int userId = person.getID();
-        return this.nextStructTransactionOperations.execute(
+        return nextStructTransactionOperations.execute(
                 new TransactionCallback<String>() {
                     @Override
                     public String doInTransaction(TransactionStatus status) {
@@ -598,8 +598,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                                                                                     sQuery);
                                                                         }
 
-                                                                        return new Tuple<
-                                                                                Integer, Integer>(
+                                                                        return new Tuple<>(
                                                                                 newUserId,
                                                                                 newLayoutId);
                                                                     }
@@ -611,10 +610,10 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                                 layoutId = userLayoutIds.second;
                             }
 
-                            int firstStructId = -1;
+                            int firstStructId;
 
                             // Flags to enable a default layout lookup if it's needed
-                            boolean foundLayout = false;
+                            boolean foundLayout;
                             boolean triedDefault = false;
 
                             // This loop is used to ensure a layout is found for a user. It tries
@@ -900,27 +899,30 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
     }
 
     private final ThreadLocal<Cache<Tuple<String, String>, UserProfile>> profileCacheHolder =
-            new ThreadLocal<Cache<Tuple<String, String>, UserProfile>>();
+            new ThreadLocal<>();
+
     /** Cache used during import/export operations */
+    @Override
     public void setProfileImportExportCache(
             Cache<Tuple<String, String>, UserProfile> profileCache) {
         if (profileCache == null) {
-            this.profileCacheHolder.remove();
+            profileCacheHolder.remove();
         } else {
-            this.profileCacheHolder.set(profileCache);
+            profileCacheHolder.set(profileCache);
         }
     }
 
     private Cache<Tuple<String, String>, UserProfile> getProfileImportExportCache() {
-        return this.profileCacheHolder.get();
+        return profileCacheHolder.get();
     }
 
+    @Override
     public UserProfile getUserProfileByFname(final IPerson person, final String profileFname) {
         Tuple<String, String> key = null;
         final Cache<Tuple<String, String>, UserProfile> profileCache =
                 getProfileImportExportCache();
         if (profileCache != null) {
-            key = new Tuple<String, String>(person.getUserName(), profileFname);
+            key = new Tuple<>(person.getUserName(), profileFname);
             final UserProfile profile = profileCache.getIfPresent(key);
             if (profile != null) {
                 return profile;
@@ -1074,6 +1076,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
         return userProfile;
     }
 
+    @Override
     public Hashtable<Integer, UserProfile> getUserProfileList(final IPerson person) {
         final int userId = person.getID();
 
@@ -1083,7 +1086,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                     public Hashtable<Integer, UserProfile> doInConnection(Connection con)
                             throws SQLException, DataAccessException {
 
-                        Hashtable<Integer, UserProfile> pv = new Hashtable<Integer, UserProfile>();
+                        Hashtable<Integer, UserProfile> pv = new Hashtable<>();
                         Statement stmt = con.createStatement();
                         try {
                             String sQuery =
@@ -1142,6 +1145,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
      * @param layoutXML
      * @throws Exception
      */
+    @Override
     public void setUserLayout(
             final IPerson person,
             final IUserProfile profile,
@@ -1160,7 +1164,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
             return;
         }
 
-        this.transactionOperations.execute(
+        transactionOperations.execute(
                 new TransactionCallback<Object>() {
                     @Override
                     public Object doInTransaction(TransactionStatus status) {
@@ -1423,9 +1427,10 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
         }
     }
 
+    @Override
     public void updateUserProfile(final IPerson person, final IUserProfile profile) {
         final int userId = person.getID();
-        this.transactionOperations.execute(
+        transactionOperations.execute(
                 new TransactionCallback<Object>() {
                     @Override
                     public Object doInTransaction(TransactionStatus status) {
@@ -1436,8 +1441,8 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                                             throws SQLException, DataAccessException {
 
                                         String query =
-                                                "UPDATE UP_USER_PROFILE SET LAYOUT_ID=?,THEME_SS_ID=?,STRUCTURE_SS_ID=?,"
-                                                        + "DESCRIPTION=?,PROFILE_NAME=?, PROFILE_FNAME=? WHERE USER_ID=? AND PROFILE_ID=?";
+                                                "UPDATE UP_USER_PROFILE SET LAYOUT_ID=?, THEME_SS_ID=?, STRUCTURE_SS_ID=?, "
+                                                        + "DESCRIPTION=?, PROFILE_NAME=?, PROFILE_FNAME=? WHERE USER_ID=? AND PROFILE_ID=?";
                                         PreparedStatement pstmt = con.prepareStatement(query);
                                         pstmt.setInt(1, profile.getLayoutId());
                                         pstmt.setInt(2, profile.getThemeStylesheetId());
@@ -1471,14 +1476,16 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                 });
     }
 
+    @Override
     public IUserProfile getSystemProfileByFname(String profileFname) {
-        IUserProfile up = this.getUserProfileByFname(this.getSystemUser(), profileFname);
+        IUserProfile up = getUserProfileByFname(getSystemUser(), profileFname);
         up.setSystemProfile(true);
         return up;
     }
 
+    @Override
     public Hashtable getSystemProfileList() {
-        Hashtable pl = this.getUserProfileList(this.getSystemUser());
+        Hashtable pl = getUserProfileList(getSystemUser());
         for (Enumeration e = pl.elements(); e.hasMoreElements(); ) {
             IUserProfile up = (IUserProfile) e.nextElement();
             up.setSystemProfile(true);
@@ -1497,7 +1504,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
         public void setID(int sID) {}
 
         public int getID() {
-            return this.systemUserId;
+            return systemUserId;
         }
 
         public String getUserName() {
@@ -1596,9 +1603,4 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                     }
                 });
     }
-
-    /* (non-Javadoc)
-     * @see org.apereo.portal.layout.IUserLayoutStore#importLayout(org.dom4j.Element)
-     */
-    public abstract void importLayout(org.dom4j.Element layout);
 }
