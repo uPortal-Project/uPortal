@@ -173,9 +173,7 @@ public interface IUserLayoutStore {
      */
     FragmentNodeInfo getFragmentNodeInfo(String sId);
 
-    /**
-     * Determines if a user is a fragment owner.
-     */
+    /** Determines if a user is a fragment owner. */
     boolean isFragmentOwner(IPerson person);
 
     boolean isFragmentOwner(String username);

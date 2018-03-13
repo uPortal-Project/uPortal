@@ -24,8 +24,6 @@ import javax.xml.xpath.XPathFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apereo.portal.PortalException;
-import org.apereo.portal.layout.INodeIdResolver;
-import org.apereo.portal.layout.IUserLayout;
 import org.apereo.portal.layout.dlm.DistributedUserLayout;
 import org.apereo.portal.layout.node.IUserLayoutFolderDescription;
 import org.apereo.portal.layout.node.IUserLayoutNodeDescription;
@@ -35,9 +33,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-/**
- * The simple user layout implementation. This layout is based on an XML Document.
- */
+/** The simple user layout implementation. This layout is based on an XML Document. */
 public class SimpleLayout implements IUserLayout {
 
     private final DistributedUserLayout userLayout;
