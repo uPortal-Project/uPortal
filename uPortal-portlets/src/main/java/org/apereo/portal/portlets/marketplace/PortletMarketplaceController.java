@@ -340,7 +340,7 @@ public class PortletMarketplaceController {
             WebRequest webRequest,
             PortletRequest portletRequest,
             Model model,
-            String initialFilter) {
+            final String initialFilter) {
 
         // We'll track and potentially log the time it takes to perform this initialization
         final long timestamp = System.currentTimeMillis();
@@ -379,8 +379,21 @@ public class PortletMarketplaceController {
             categoryList.remove(this.portletCategoryRegistry.getTopLevelPortletCategory());
         }
 
+        logger.debug("initialFilter: {}", initialFilter);
+        String filter =
+                initialFilter == null
+                        ? null
+                        : categoryList
+                                .stream()
+                                .parallel()
+                                .map(PortletCategory::getName)
+                                .filter(cat -> cat.equals(initialFilter))
+                                .findAny()
+                                .orElse("");
+        logger.debug("filter: {}", filter);
+
         model.addAttribute("categoryList", categoryList);
-        model.addAttribute("initialFilter", initialFilter);
+        model.addAttribute("initialFilter", filter);
 
         logger.debug(
                 "Marketplace took {}ms in setUpInitialView for user '{}'",
