@@ -18,6 +18,8 @@
  */
 package org.jasig.portal.portlets.marketplace;
 
+import static java.lang.String.format;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -26,7 +28,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-
 import javax.portlet.PortletPreferences;
 import javax.portlet.PortletRequest;
 import javax.portlet.RenderRequest;
@@ -40,7 +41,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
-
+import net.sf.ehcache.Cache;
 import org.apache.commons.lang.Validate;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.UserPreferencesManager;
@@ -85,10 +86,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
-import net.sf.ehcache.Cache;
-
-import static java.lang.String.format;
 
 /**
  * 
@@ -297,7 +294,7 @@ public class PortletMarketplaceController {
         return "json";
     }
 
-    private void setUpInitialView(WebRequest webRequest, PortletRequest portletRequest, Model model, String initialFilter){
+    private void setUpInitialView(WebRequest webRequest, PortletRequest portletRequest, Model model, final String initialFilter){
 
         // We'll track and potentially log the time it takes to perform this initialization
         final long timestamp = System.currentTimeMillis();
@@ -333,6 +330,18 @@ public class PortletMarketplaceController {
         if(showRootCategory == false){
             categoryList.remove(this.portletCategoryRegistry.getTopLevelPortletCategory());
         }
+
+        logger.debug("initialFilter: {}", initialFilter);
+        String filter = initialFilter;
+        if (filter != null) {
+            for (PortletCategory cat : categoryList) {
+                if (cat.getName().equals(initialFilter)) {
+                    filter = cat.getName();
+                    break;
+                }
+            }
+        }
+        logger.debug("filter: {}", filter);
 
         model.addAttribute("categoryList", categoryList);
         model.addAttribute("initialFilter", initialFilter);
