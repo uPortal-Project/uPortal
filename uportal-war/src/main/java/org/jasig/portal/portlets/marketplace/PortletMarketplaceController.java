@@ -88,7 +88,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
- * 
+ *
  * @author vertein
  * A controller with a public method to return a list of portlets
  */
@@ -251,7 +251,7 @@ public class PortletMarketplaceController {
             review = null;
         }
 
-        marketplaceRatingDAO.createOrUpdateRating(Integer.parseInt(rating), 
+        marketplaceRatingDAO.createOrUpdateRating(Integer.parseInt(rating),
             portletRequest.getRemoteUser(),
             review,
             portletDefinitionDao.getPortletDefinitionByFname(portletFName));
@@ -332,19 +332,21 @@ public class PortletMarketplaceController {
         }
 
         logger.debug("initialFilter: {}", initialFilter);
-        String filter = initialFilter;
-        if (filter != null) {
+        if (initialFilter != null) {
             for (PortletCategory cat : categoryList) {
                 if (cat.getName().equals(initialFilter)) {
-                    filter = cat.getName();
+                    model.addAttribute("initialFilter", cat.getName());
                     break;
                 }
             }
         }
-        logger.debug("filter: {}", filter);
+        if (model.containsAttribute("initialFilter")) {
+            logger.debug("initialFilter validated");
+        } else {
+            logger.warn("initialFilter is not a valid category name!!");
+        }
 
         model.addAttribute("categoryList", categoryList);
-        model.addAttribute("initialFilter", initialFilter);
 
         logger.debug("Marketplace took {}ms in setUpInitialView for user '{}'",
                 System.currentTimeMillis() - timestamp, user.getUserName());
