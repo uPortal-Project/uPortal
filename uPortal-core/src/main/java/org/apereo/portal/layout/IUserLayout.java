@@ -22,11 +22,12 @@ import org.apereo.portal.layout.om.IStylesheetUserPreferences;
 
 /** An interface representing the user layout. */
 public interface IUserLayout {
+
     /**
      * The name to use for the root node of the layout. This should be used with regard to rendering
      * position within the layout tree.
      */
-    static final String ROOT_NODE_NAME = "root";
+    String ROOT_NODE_NAME = "root";
 
     /**
      * Obtain a description of a node (channel or a folder) in a given user layout.

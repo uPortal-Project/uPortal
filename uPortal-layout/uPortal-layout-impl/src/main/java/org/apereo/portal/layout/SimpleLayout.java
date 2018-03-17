@@ -12,7 +12,7 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apereo.portal.layout.simple;
+package org.apereo.portal.layout;
 
 import java.util.Enumeration;
 import java.util.Vector;
@@ -24,8 +24,6 @@ import javax.xml.xpath.XPathFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apereo.portal.PortalException;
-import org.apereo.portal.layout.INodeIdResolver;
-import org.apereo.portal.layout.IUserLayout;
 import org.apereo.portal.layout.dlm.DistributedUserLayout;
 import org.apereo.portal.layout.node.IUserLayoutFolderDescription;
 import org.apereo.portal.layout.node.IUserLayoutNodeDescription;
@@ -35,12 +33,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-/**
- * The simple user layout implementation. This layout is based on a Document.
- *
- * <p>Prior to uPortal 2.5, this class existed in the org.apereo.portal.layout package. It was moved
- * to its present package to reflect that it is part of the Simple Layout Management implementation.
- */
+/** The simple user layout implementation. This layout is based on an XML Document. */
 public class SimpleLayout implements IUserLayout {
 
     private final DistributedUserLayout userLayout;

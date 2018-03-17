@@ -103,7 +103,7 @@ public class BasePersonManager implements IPersonManager {
     protected IPerson createGuestPerson(HttpServletRequest request) throws Exception {
 
         // First we need to know the guest username
-        String username = PersonFactory.GUEST_USERNAMES.get(0); // First item is the default
+        String username = PersonFactory.getGuestUsernames().get(0); // First item is the default
 
         // Pluggable strategy for supporting multiple guest users
         for (IGuestUsernameSelector selector : guestUsernameSelectors) {
@@ -115,7 +115,7 @@ public class BasePersonManager implements IPersonManager {
         }
 
         // Sanity check...
-        if (!PersonFactory.GUEST_USERNAMES.contains(username)) {
+        if (!PersonFactory.getGuestUsernames().contains(username)) {
             final String msg =
                     "The specified guest username is not in the configured list:  " + username;
             throw new IllegalStateException(msg);

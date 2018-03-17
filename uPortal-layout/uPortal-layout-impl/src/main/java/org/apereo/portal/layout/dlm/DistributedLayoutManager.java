@@ -41,12 +41,12 @@ import org.apereo.portal.layout.IUserLayout;
 import org.apereo.portal.layout.IUserLayoutManager;
 import org.apereo.portal.layout.IUserLayoutStore;
 import org.apereo.portal.layout.PortletSubscribeIdResolver;
+import org.apereo.portal.layout.SimpleLayout;
 import org.apereo.portal.layout.node.IUserLayoutChannelDescription;
 import org.apereo.portal.layout.node.IUserLayoutFolderDescription;
 import org.apereo.portal.layout.node.IUserLayoutNodeDescription;
 import org.apereo.portal.layout.node.IUserLayoutNodeDescription.LayoutNodeType;
 import org.apereo.portal.layout.node.UserLayoutFolderDescription;
-import org.apereo.portal.layout.simple.SimpleLayout;
 import org.apereo.portal.portlet.om.IPortletDefinition;
 import org.apereo.portal.portlet.om.IPortletDefinitionParameter;
 import org.apereo.portal.portlet.registry.IPortletDefinitionRegistry;
@@ -1383,7 +1383,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
     /** Resets the layout of the specified user. */
     private boolean resetLayout(IPerson person) {
         final String userName = person.getUserName();
-        if (PersonFactory.GUEST_USERNAMES.contains(userName)) {
+        if (PersonFactory.getGuestUsernames().contains(userName)) {
             throw new IllegalArgumentException("CANNOT RESET LAYOUT FOR A GUEST USER: " + person);
         }
         LOG.warn("Resetting user layout for: " + userName, new Throwable());

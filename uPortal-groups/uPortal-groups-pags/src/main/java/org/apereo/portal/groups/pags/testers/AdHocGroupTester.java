@@ -70,7 +70,7 @@ public final class AdHocGroupTester implements IPersonTester {
     /*
      * At some point, a person is being tested for group membership. During that test, the thread hits an ad hoc group
      * tester. When that tester calls isDeepMemberOf, a test for group membership is triggered. During this call stack,
-     * the second call the the ad hoc group tester returns false. Assuming the group hierarchy is not itself recursive
+     * the second call to the ad hoc group tester returns false. Assuming the group hierarchy is not itself recursive
      * for the group containing the ad hoc group test, the test returns a usable value.
      *
      * If there is no caching and the second person object only exists for the recursive call, then the implementation
@@ -93,7 +93,7 @@ public final class AdHocGroupTester implements IPersonTester {
         IGroupMember gmPerson = findPersonAsGroupMember(person);
         if (currentTests.getQuiet(personHash) != null) {
             logger.debug(
-                    "Returning from test() for {} due to recusion for person = {}",
+                    "Returning from test() for {} due to recursion for person = {}",
                     personHash,
                     person.toString());
             return false; // stop recursing
@@ -103,8 +103,14 @@ public final class AdHocGroupTester implements IPersonTester {
         // method that potentially recurs
         boolean isPersonGroupMember = gmPerson.isDeepMemberOf(entityGroup);
         currentTests.remove(personHash);
-        logger.debug("Returning from test() for {}", personHash);
-        return isPersonGroupMember ^ isNotTest;
+        final boolean rslt = isPersonGroupMember ^ isNotTest;
+        logger.debug(
+                "Returning '{}' from test() for '{}' {} a (deep) member of '{}'",
+                rslt,
+                person.getUserName(),
+                isNotTest ? "is not" : "is",
+                entityGroup.getName());
+        return rslt;
     }
 
     /**
@@ -135,7 +141,7 @@ public final class AdHocGroupTester implements IPersonTester {
     private static IEntityGroup findGroupByName(String groupName) {
         EntityIdentifier[] identifiers =
                 GroupService.searchForGroups(
-                        groupName, GroupService.SearchMethod.CONTAINS, IPerson.class);
+                        groupName, GroupService.SearchMethod.DISCRETE, IPerson.class);
         for (EntityIdentifier entityIdentifier : identifiers) {
             if (entityIdentifier.getType().equals(IEntityGroup.class)) {
                 return GroupService.findGroup(entityIdentifier.getKey());

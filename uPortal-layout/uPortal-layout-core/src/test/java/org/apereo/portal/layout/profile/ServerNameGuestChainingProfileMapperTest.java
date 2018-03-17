@@ -19,8 +19,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apereo.portal.security.IPerson;
+import org.apereo.portal.security.PersonFactory;
 import org.apereo.portal.security.provider.PersonImpl;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.BlockJUnit4ClassRunner;
@@ -29,12 +31,18 @@ import org.springframework.mock.web.MockHttpServletRequest;
 @RunWith(BlockJUnit4ClassRunner.class)
 public class ServerNameGuestChainingProfileMapperTest {
 
-    private Map<String, String> configMap = new HashMap<String, String>();
+    private Map<String, String> configMap = new HashMap<>();
 
     {
         configMap.put("test-lycee.portail.ent", "lycees");
         configMap.put("test-cfa.portail.ent", "cfa");
         configMap.put("test.college.ent", "clg37");
+    }
+
+    @Before
+    public void setUp() {
+        PersonFactory fac = new PersonFactory();
+        fac.init();
     }
 
     @Test
@@ -106,12 +114,12 @@ public class ServerNameGuestChainingProfileMapperTest {
         ServerNameGuestChainingProfileMapper profileMapper =
                 new ServerNameGuestChainingProfileMapper();
         profileMapper.setAuthorizedServerNames(configMap);
-        List<IProfileMapper> subMappers = new ArrayList<IProfileMapper>();
+        List<IProfileMapper> subMappers = new ArrayList<>();
         SessionAttributeProfileMapperImpl subMapper = new SessionAttributeProfileMapperImpl();
         subMappers.add(subMapper);
         subMapper.setDefaultProfileName("submapper_default");
         subMapper.setAttributeName("session_attr");
-        Map<String, String> mapping = new HashMap<String, String>();
+        Map<String, String> mapping = new HashMap<>();
         mapping.put("session_attr", "sub_fname");
         subMapper.setMappings(mapping);
         profileMapper.setSubMappers(subMappers);
@@ -132,12 +140,12 @@ public class ServerNameGuestChainingProfileMapperTest {
         ServerNameGuestChainingProfileMapper profileMapper =
                 new ServerNameGuestChainingProfileMapper();
         profileMapper.setAuthorizedServerNames(configMap);
-        List<IProfileMapper> subMappers = new ArrayList<IProfileMapper>();
+        List<IProfileMapper> subMappers = new ArrayList<>();
         SessionAttributeProfileMapperImpl subMapper = new SessionAttributeProfileMapperImpl();
         subMappers.add(subMapper);
         subMapper.setDefaultProfileName("submapper_default");
         subMapper.setAttributeName("session_attr");
-        Map<String, String> mapping = new HashMap<String, String>();
+        Map<String, String> mapping = new HashMap<>();
         mapping.put("session_attr", "sub_fname");
         subMapper.setMappings(mapping);
         profileMapper.setSubMappers(subMappers);
@@ -158,12 +166,12 @@ public class ServerNameGuestChainingProfileMapperTest {
         ServerNameGuestChainingProfileMapper profileMapper =
                 new ServerNameGuestChainingProfileMapper();
         profileMapper.setAuthorizedServerNames(configMap);
-        List<IProfileMapper> subMappers = new ArrayList<IProfileMapper>();
+        List<IProfileMapper> subMappers = new ArrayList<>();
         SessionAttributeProfileMapperImpl subMapper = new SessionAttributeProfileMapperImpl();
         subMappers.add(subMapper);
         subMapper.setDefaultProfileName("submapper_default");
         subMapper.setAttributeName("session_attr");
-        Map<String, String> mapping = new HashMap<String, String>();
+        Map<String, String> mapping = new HashMap<>();
         mapping.put("session_attr", "sub_fname");
         subMapper.setMappings(mapping);
         profileMapper.setSubMappers(subMappers);
@@ -184,12 +192,12 @@ public class ServerNameGuestChainingProfileMapperTest {
         ServerNameGuestChainingProfileMapper profileMapper =
                 new ServerNameGuestChainingProfileMapper();
         profileMapper.setAuthorizedServerNames(configMap);
-        List<IProfileMapper> subMappers = new ArrayList<IProfileMapper>();
+        List<IProfileMapper> subMappers = new ArrayList<>();
         SessionAttributeProfileMapperImpl subMapper = new SessionAttributeProfileMapperImpl();
         subMappers.add(subMapper);
         subMapper.setDefaultProfileName("submapper_default");
         subMapper.setAttributeName("session_attr");
-        Map<String, String> mapping = new HashMap<String, String>();
+        Map<String, String> mapping = new HashMap<>();
         mapping.put("session_attr", "sub_fname");
         subMapper.setMappings(mapping);
         profileMapper.setSubMappers(subMappers);
@@ -210,12 +218,12 @@ public class ServerNameGuestChainingProfileMapperTest {
         ServerNameGuestChainingProfileMapper profileMapper =
                 new ServerNameGuestChainingProfileMapper();
         profileMapper.setAuthorizedServerNames(configMap);
-        List<IProfileMapper> subMappers = new ArrayList<IProfileMapper>();
+        List<IProfileMapper> subMappers = new ArrayList<>();
         SessionAttributeProfileMapperImpl subMapper = new SessionAttributeProfileMapperImpl();
         subMappers.add(subMapper);
         subMapper.setDefaultProfileName("submapper_default");
         subMapper.setAttributeName("session_attr");
-        Map<String, String> mapping = new HashMap<String, String>();
+        Map<String, String> mapping = new HashMap<>();
         mapping.put("session_attr", "sub_fname");
         subMapper.setMappings(mapping);
         profileMapper.setSubMappers(subMappers);
@@ -237,13 +245,13 @@ public class ServerNameGuestChainingProfileMapperTest {
         ServerNameGuestChainingProfileMapper profileMapper =
                 new ServerNameGuestChainingProfileMapper();
         profileMapper.setAuthorizedServerNames(configMap);
-        List<IProfileMapper> subMappers = new ArrayList<IProfileMapper>();
+        List<IProfileMapper> subMappers = new ArrayList<>();
         SessionAttributeProfileMapperImpl subMapper = new SessionAttributeProfileMapperImpl();
         subMappers.add(subMapper);
         subMapper.setDefaultProfileName("submapper_default");
         subMapper.setAttributeName("session_attr");
         subMapper.setDefaultProfileName("");
-        Map<String, String> mapping = new HashMap<String, String>();
+        Map<String, String> mapping = new HashMap<>();
         mapping.put("session_attr", "sub_fname");
         subMapper.setMappings(mapping);
         profileMapper.setSubMappers(subMappers);
@@ -259,14 +267,14 @@ public class ServerNameGuestChainingProfileMapperTest {
         Assert.assertEquals("guest-clg37-default", fname);
     }
 
-    protected static IPerson createGuestPerson() throws Exception {
+    private static IPerson createGuestPerson() throws Exception {
         IPerson person = new PersonImpl();
         person.setAttribute(IPerson.USERNAME, "guest");
 
         return person;
     }
 
-    protected static IPerson createPerson() throws Exception {
+    private static IPerson createPerson() throws Exception {
         IPerson person = new PersonImpl();
         person.setAttribute(IPerson.USERNAME, "non_guest");
 

@@ -177,7 +177,7 @@ public class EntityGroupImpl extends GroupMemberImpl implements IEntityGroup {
         boolean found = false;
         Iterator<IEntityGroup> it = getMemberGroups();
         while (it.hasNext() && !found) {
-            IEntityGroup group = (IEntityGroup) it.next();
+            IEntityGroup group = it.next();
             if (group != null) {
                 found = group.deepContains(gm);
             } else {

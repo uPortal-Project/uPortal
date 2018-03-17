@@ -75,25 +75,7 @@
  | Sets the use of the sub navigation row, which lists out links to the portlets on the active tab.
  | Values are 'true' or 'false'
 -->
-<!-- Use the INSTITUTION parameter to configure the subnavigation row on a per skin/institution basis. -->
 <xsl:param name="USE_SUBNAVIGATION_ROW" select="false" />
-
-  <!--
-   | The unofficial "theme-switcher".
-   | The INSTITUTION variable can be used to make logical tests and configure the theme on a per skin basis.
-   | Allows the the theme to configure differently for a skin or group of skins, yet not break for other skins that might require a different configuration.
-   | The implementation is hard-coded, but it works.
-   | May require the addition of an xsl:choose statement around parameters, vairables, and template calls.
-  -->
-  <xsl:variable name="INSTITUTION">
-    <xsl:choose>
-      <xsl:when test="$SKIN='university' or $SKIN='university-div1' or $SKIN='university-div2'">university</xsl:when> <!-- Set all institution skins to a specific theme configuration  -->
-      <xsl:when test="$SKIN='coal'">coal</xsl:when>
-      <xsl:when test="$SKIN='ivy'">ivy</xsl:when>
-      <xsl:when test="$SKIN='hc'">hc</xsl:when>
-      <xsl:otherwise>uportal</xsl:otherwise>
-    </xsl:choose>
-  </xsl:variable>
 
   <!-- ========== TEMPLATE: NAVIGATION ========== -->
   <!-- ========================================== -->
