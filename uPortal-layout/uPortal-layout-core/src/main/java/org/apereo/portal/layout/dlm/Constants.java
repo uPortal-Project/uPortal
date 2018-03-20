@@ -53,7 +53,10 @@ public class Constants {
     public static final String LCL_ORIGIN = "origin";
     public static final String ATT_ORIGIN = NS + LCL_ORIGIN;
     public static final String ATT_PRECEDENCE = NS + "precedence";
+
+    /** Represents the fragment's unique, numeric identifier. */
     public static final String ATT_FRAGMENT = NS + "fragment";
+
     public static final String LCL_FRAGMENT_NAME = "fragmentName";
     public static final String ATT_FRAGMENT_NAME = NS + LCL_FRAGMENT_NAME;
     public static final String LCL_IS_TEMPLATE_USER = "isTemplateUser";

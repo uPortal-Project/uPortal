@@ -318,21 +318,18 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
     }
 
     @Override
-    public double getFragmentPrecedence(int index) {
+    public double getFragmentPrecedence(long id) {
         final List<FragmentDefinition> definitions = this.fragmentUtils.getFragmentDefinitions();
-        if (index < 0 || index > definitions.size() - 1) {
-            return 0;
-        }
 
         // must pass through the array looking for the fragment with this
         // index since the array was sorted by precedence and then index
         // within precedence.
         for (final FragmentDefinition fragmentDefinition : definitions) {
-            if (fragmentDefinition.getIndex() == index) {
+            if (fragmentDefinition.getId() == id) {
                 return fragmentDefinition.getPrecedence();
             }
         }
-        return 0; // should never get here.
+        return 0D; // should never get here.
     }
 
     /**
