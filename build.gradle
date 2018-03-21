@@ -65,7 +65,7 @@ allprojects {
     }
 
     // Version has to be set directly here, using a variable does not set Java compatability version
-    sourceCompatibility = 1.9
+    sourceCompatibility = 1.10
 
     gradleLint.criticalRules = [
       'overridden-dependency-version',
