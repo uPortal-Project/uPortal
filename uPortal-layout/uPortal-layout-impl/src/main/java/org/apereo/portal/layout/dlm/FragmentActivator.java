@@ -462,7 +462,7 @@ public class FragmentActivator {
         setIdsAndAttribs(
                 layout,
                 layout.getAttribute(Constants.ATT_ID),
-                "" + fragment.getIndex(),
+                "" + fragment.getId(),
                 "" + fragment.getPrecedence());
     }
 

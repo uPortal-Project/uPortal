@@ -26,12 +26,9 @@ import java.util.Comparator;
  */
 public class FragmentComparator implements Comparator<FragmentDefinition> {
 
-    public int compare(FragmentDefinition obj1, FragmentDefinition obj2) {
-        FragmentDefinition frag1 = (FragmentDefinition) obj1;
-        FragmentDefinition frag2 = (FragmentDefinition) obj2;
-
+    public int compare(FragmentDefinition frag1, FragmentDefinition frag2) {
         if (frag1.getPrecedence() == frag2.getPrecedence()) {
-            return frag1.getIndex() - frag2.getIndex();
+            return (int) (frag1.getId() - frag2.getId());
         } else {
             return (int) (frag2.getPrecedence() - frag1.getPrecedence());
         }

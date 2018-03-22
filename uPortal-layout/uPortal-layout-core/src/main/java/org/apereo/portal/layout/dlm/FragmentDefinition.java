@@ -66,8 +66,6 @@ public class FragmentDefinition extends EvaluatorGroup {
     @Column(name = "DESCRIPTION")
     private String description;
 
-    /* These variables are bound to a uP userId later in the life cycle, not managed by hibernate */
-    @Transient private int index = 0; // index of definition within config file
     @Transient String defaultLayoutOwnerID = null;
 
     /** No-arg constructor required by JPA/Hibernate. */
@@ -149,14 +147,6 @@ public class FragmentDefinition extends EvaluatorGroup {
 
     public List<Evaluator> getEvaluators() {
         return this.evaluators;
-    }
-
-    public int getIndex() {
-        return index;
-    }
-
-    public void setIndex(int index) {
-        this.index = index;
     }
 
     public boolean isNoAudienceIncluded() {

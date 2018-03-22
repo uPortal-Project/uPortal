@@ -307,7 +307,9 @@ public class MarketplacePortletDefinition implements IPortletDefinition {
     }
 
     /**
-     * @return a set of categories that this portlet directly belongs too. Will not traverse up the
+     * Provides the categories this portlet is a member of. Used in the JSP for Portlet Marketplace.
+     *
+     * @return a set of categories that this portlet directly belongs to. Will not traverse up the
      *     category tree and return grandparent categories and farther. Will not return null. Might
      *     return empty set.
      */
@@ -319,6 +321,9 @@ public class MarketplacePortletDefinition implements IPortletDefinition {
     }
 
     /**
+     * Provides a collection of portlets related to this one. Used in the JSP for Portlet
+     * Marketplace.
+     *
      * @return a set of portlets that include all portlets in this portlets immediate categories and
      *     children categories Will not return null. Will not include self in list. Might return an
      *     empty set.
