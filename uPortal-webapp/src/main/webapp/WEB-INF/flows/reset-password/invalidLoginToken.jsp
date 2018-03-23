@@ -34,7 +34,7 @@
     </div> <!-- end: portlet-titlebar -->
     
     <!-- Portlet Body -->
-    <div class="fl-widget-content content portlet-content" role="main" data-role="content">
+    <div class="fl-widget-content content portlet-content" data-role="content">
 
         <p>
             <spring:message code="we.were.unable.to.validate.your.password.reset.url"/>

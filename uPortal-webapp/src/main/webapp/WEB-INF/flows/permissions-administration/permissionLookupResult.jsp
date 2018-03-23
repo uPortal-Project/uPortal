@@ -108,7 +108,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
   </div> <!-- end: portlet-titlebar -->
   
   <!-- Portlet Content -->
-  <div class="fl-widget-content portlet-content" role="main">
+  <div class="fl-widget-content portlet-content">
       <div class="titlebar">
           <h3 class="title" role="heading"><spring:message code="assignments"/></h3>
       </div>

@@ -32,7 +32,7 @@
     </div>
 
     <!-- Portlet Content -->
-    <div class="fl-widget-content content portlet-content" role="main">
+    <div class="fl-widget-content content portlet-content">
       	<div class="portlet-form">
               <form action="${queryUrl}" method="POST">
                   <ul style="margin:0">

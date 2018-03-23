@@ -30,7 +30,7 @@
     	<h2 class="title"><spring:message code="flush.cache"/></h2>
     </div>
     <!-- Portlet Content -->
-    <div class="fl-widget-content content portlet-content" role="main">   
+    <div class="fl-widget-content content portlet-content">
     	
         <!-- Messages -->
         <div class="portlet-msg-alert portlet-msg alert" role="alert">

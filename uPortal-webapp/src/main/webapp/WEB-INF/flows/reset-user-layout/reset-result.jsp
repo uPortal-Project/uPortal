@@ -32,7 +32,7 @@
     </div>
     
     <!-- Portlet Content -->
-	<div class="fl-widget-content content portlet-content" role="main">
+	<div class="fl-widget-content content portlet-content">
     
     <!-- Messages --> 
     <div class="portlet-msg-success portlet-msg success" role="status">

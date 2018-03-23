@@ -138,7 +138,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     </div>
   
   <!-- Portlet Content -->
-  <div class="fl-widget-content portlet-content" role="main">
+  <div class="fl-widget-content portlet-content">
   
     <!-- Portlet Section -->
     <div id="${n}permissionAddingTabs" class="portlet-section" role="region">

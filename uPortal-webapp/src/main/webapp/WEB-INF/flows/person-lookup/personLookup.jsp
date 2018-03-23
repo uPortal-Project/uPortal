@@ -97,7 +97,7 @@
     </div>
 
     <!-- Portlet Content -->
-    <div class="fl-widget-content content portlet-content" role="main">
+    <div class="fl-widget-content content portlet-content">
 
         <div class="portlet-content">
             <form id="${n}searchForm" action="javascript:;">

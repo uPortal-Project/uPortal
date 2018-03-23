@@ -30,7 +30,7 @@
     </div>
     
     <!-- Portlet Content -->
-	<div class="fl-widget-content content portlet-content" role="main">
+	<div class="fl-widget-content content portlet-content">
 
         <!-- Future version to use an unordered list and form submission via javascript.
         <form method="POST" id="fragmentAdminForm" name="fragmentAdminForm" action="<portlet:actionURL><portlet:param name="action" value="becomeFragmentOwner"/></portlet:actionURL>">
