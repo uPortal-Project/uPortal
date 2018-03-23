@@ -186,13 +186,14 @@ ci-après.
 
 ## Sections
 
-* [Build / Déployer uPortal](monter-et-deployer-uportal.md)
-* [Implémenter uPortal](implementer/README.md)
-* [Administration Système d'uPortal](sysadmin/README.md)
-* [Guide du développeur](developper/README.md)
-* [Navigateurs Web supportés](NAVIGATEURS_SUPPORTES.md)
-* [Accessibilité](ACCESSIBILITE.md)
-* [Contributeurs au projet](COMMITTERS.md)
+1.  [Build / Déployer uPortal](monter-et-deployer-uportal.md)
+2.  [Implémenter uPortal](implementer/README.md)
+3.  [Administration Système d'uPortal](sysadmin/README.md)
+4.  [Guide du développeur](developper/README.md)
+5.  [Navigateurs Web supportés](NAVIGATEURS_SUPPORTES.md)
+6.  [Accessibilité](ACCESSIBILITE.md)
+7.  [Contributeurs au projet](COMMITTERS.md)
+8.  [Glossaire](GLOSSAIRE.md)
 
 ## Liens externes
 
