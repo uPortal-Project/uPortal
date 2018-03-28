@@ -112,7 +112,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
   </div> <!-- end: portlet-toolbar -->
 
     <!-- Portlet Body -->
-  <div class="fl-widget-content portlet-body" role="main">
+  <div class="fl-widget-content portlet-body">
 
     <!-- Portlet Section -->
     <div id="${n}popularPortlets" class="portlet-section fl-pager" role="region">

@@ -53,7 +53,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
   
   
   <!-- Portlet Content -->
-  <div class="fl-widget-content portlet-content" role="main">
+  <div class="fl-widget-content portlet-content">
   
     <!-- Portlet Section -->    
 		

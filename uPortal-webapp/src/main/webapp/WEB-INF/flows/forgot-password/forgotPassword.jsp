@@ -35,7 +35,7 @@
     </div>
 
   <!-- Portlet -->
-  <div class="fl-widget-content content portlet-content" role="main" data-role="content">
+  <div class="fl-widget-content content portlet-content" data-role="content">
   
     <!-- Portlet Section -->
     <div class="portlet-section" role="region">

@@ -37,7 +37,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     <form id="${n}form">
 
         <!-- Portlet Body -->
-        <div class="portlet-body" role="main">
+        <div class="portlet-body">
 
             <!-- Portlet Section -->
             <div id="${n}popularPortlets" class="portlet-section" role="region">

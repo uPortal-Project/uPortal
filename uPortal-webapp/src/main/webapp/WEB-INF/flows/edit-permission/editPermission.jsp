@@ -75,7 +75,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     </div>
 
     <!-- Portlet Content -->
-    <div class="fl-widget-content content portlet-content" role="main">
+    <div class="fl-widget-content content portlet-content">
 
             <form method="POST" id="${n}editPermissionForm" action="javascript:;">
 

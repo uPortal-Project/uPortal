@@ -69,7 +69,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
   </div> <!-- end: portlet-titlebar -->
   
   <!-- Portlet Content -->
-  <div class="fl-widget-content content portlet-content" role="main">
+  <div class="fl-widget-content content portlet-content">
 
     <!-- Portlet Section -->
     <div class="portlet-section" role="region">

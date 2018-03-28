@@ -30,7 +30,7 @@
     </div>
     
     <!-- Portlet Content -->
-	<div class="fl-widget-content content portlet-content" role="main">
+	<div class="fl-widget-content content portlet-content">
         
         <portlet:actionURL var="formUrl">
             <portlet:param name="execution" value="${flowExecutionKey}" />

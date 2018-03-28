@@ -48,7 +48,7 @@
     </div> <!-- end: portlet-titlebar -->
 
     <!-- Portlet Body -->
-    <div class="fl-widget-content content portlet-content" role="main">
+    <div class="fl-widget-content content portlet-content">
 
         <form:form modelAttribute="accountForm" action="${formUrl}" method="POST">
 

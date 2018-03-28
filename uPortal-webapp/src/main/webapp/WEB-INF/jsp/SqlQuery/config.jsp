@@ -35,7 +35,7 @@
   </div> <!-- end: portlet-title -->
   
   <!-- Portlet Body -->
-  <div class="fl-widget-content portlet-body" role="main">
+  <div class="fl-widget-content portlet-body">
 
     <form:form class="form-horizontal" role="form" modelAttribute="form" action="${formUrl}" method="POST">
     

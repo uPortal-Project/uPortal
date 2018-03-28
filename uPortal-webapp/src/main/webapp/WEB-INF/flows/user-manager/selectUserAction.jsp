@@ -40,7 +40,7 @@
     </div> <!-- end: portlet-titlebar -->
     
     <!-- Portlet Content -->
-    <div class="fl-widget-content content portlet-content" role="main">
+    <div class="fl-widget-content content portlet-content">
     
         <div class="panel-list icon-large">
             <div class="panel">

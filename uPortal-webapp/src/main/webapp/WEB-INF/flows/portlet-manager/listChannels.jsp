@@ -140,7 +140,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
   </div>
 
   <!-- Portlet Content -->
-  <div class="fl-widget-content content portlet-content" role="main">
+  <div class="fl-widget-content content portlet-content">
       <div>
         <table id="${n}portletsList" class="portlet-table table table-bordered table-striped table-hover" style="width:100%;">
           <thead>
