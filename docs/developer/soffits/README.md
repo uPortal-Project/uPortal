@@ -32,6 +32,10 @@ Normally a Soffit component will render one time;  considerations like state
 changes, transactions, persistence, _etc_. are typically handled with Javascript
 and REST APIs.
 
+## Soffit Dataflow
+
+![soffit dataflow](../../images/soffit-sequence.mmd.png)
+
 ## Sample Soffit Applications
 
 There are several sample applications in [this repo][].
