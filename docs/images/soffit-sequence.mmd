@@ -1,0 +1,7 @@
+sequenceDiagram
+    Portlet Worker   ->>  Soffit Connector: Java Portlet render call
+    Soffit Connector ->>  Remote Soffit:    HTTP GET with JWT
+    Note right of Remote Soffit: JWT signature<br>is checked with<br>public key from<br>properties
+    Remote Soffit    -->> Soffit Connector: DOM fragment text
+    Soffit Connector -->> Portlet Worker:   DOM fragment text
+    Note over Soffit Connector: DOM text is not<br>modified by<br>Soffit Connector
