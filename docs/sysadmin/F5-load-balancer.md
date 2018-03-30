@@ -6,7 +6,7 @@
 2. [Pre-Requisites](#pre-requisites)
 3. [Configuring an LTM](#configuring-an-ltm)
 4. [Configuring the GTM](#configuring-the-gtm)
-5. [Configuring connectors in Tomcat](#configuring-connectors-in-tomcat)
+5. [Configuring Tomcat](#configuring-tomcat)
 
 ## Introduction
 
@@ -163,20 +163,39 @@ This step assumes that DNS is set up correctly both on the global DNS and the GT
     1. Name: CNAME of the F5 managed A record
     2. Pool: select pool created above
 
-## Configuring Connectors in Tomcat
+## Configuring Tomcat
 
-To support decryption at the F5, some additional attributes need to be set for the connectors
-in server.xml in your uPortal Tomcat installs. This change configures Tomcat to accept unencrypted
+The following changes are done in <TOMCAT_HOME>/conf/server.xml.
+
+### Change Connector to Support Decryption at F5
+
+To support decryption at the F5, some additional attributes need to be set for the connector(s)
+receiving traffic from the F5. This change configures Tomcat to accept unencrypted
 packets but consider them secure.
 
 ``` xml
-<Connector port="8080" protocol="HTTP/1.1"
-    ...
-    proxyPort="443"
-    emptySessionPath="true"
-    scheme="https"
-    secure="true"
-/>
+        <Connector port="8080" protocol="HTTP/1.1"
+            ...
+            proxyPort="443"
+            emptySessionPath="true"
+            scheme="https"
+            secure="true"
+        />
 ```
+
+### Add `Remote IP Valve` for Logging and Session ID Generation
+
+It is important that Tomcat and uPortal receive the user IPs rather than the load-balancer IPs. It is used for logging and also generating the user session key. uPortal will use IP plus a small random number to create session keys. So without this valve, there will be high likelyhood of users inadvertantly sharing sessions. Add the remote IP valve next to the other valves near the bottom of the `server.xml` file:
+
+``` xml
+        <Valve className="org.apache.catalina.valves.RemoteIpValve"
+                internalProxies="10\.22\.1\.196, 10\.22\.2\.252"
+                remoteIpHeader="x-forwarded-for"
+                remoteIpProxiesHeader="X-Forwarded-For"
+                protocolHeader="x-forwarded-proto" />
+```
+
+Adjust the IPs to match the ones for your load balancer(s).
+
 
 See [BIG-IP Platform](https://f5.com/products/big-ip)
