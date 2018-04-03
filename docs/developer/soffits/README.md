@@ -23,6 +23,7 @@ is not based on JSR-286 or the portlet container.
 2. [Publishing a Soffit](publishing_a_soffit.md)
 3. [Soffit Data Model](soffit_data_model.md)
 4. [Configuration Options](configuration_options.md)
+5. [Securing APIs](securing_apis.md)
 
 ## A Word on Modern Web User Interfaces
 

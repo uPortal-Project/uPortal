@@ -66,7 +66,7 @@ public class BearerService extends AbstractJwtService {
 
     public Bearer parseBearerToken(String bearerToken) {
 
-        final Jws<Claims> claims = parseEncrypteToken(bearerToken, Bearer.class);
+        final Jws<Claims> claims = parseEncryptedToken(bearerToken, Bearer.class);
 
         final String username = claims.getBody().getSubject();
 

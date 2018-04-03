@@ -12,33 +12,33 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apereo.portal.spring.security;
+package org.apereo.portal.soffit.security;
 
 import java.util.Collection;
 import java.util.Collections;
-import org.apereo.portal.security.IPerson;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 /**
- * PortalPersonUserDetails represents a uPortal-specific implementation of Spring Security's
- * UserDetails interface. This implementation wraps the IPerson object for use by the
- * pre-authentication service.
+ * Implementation of <code>UserDetails</code> (Spring Security) for use with {@link
+ * SoffitApiPreAuthenticatedProcessingFilter}.
  *
- * <p>Passwords, authorities, and account expiration/locking features are not supported by this
- * implementation.
+ * @since 5.1
  */
-public class PortalPersonUserDetails implements UserDetails {
+public class SoffitApiUserDetails implements UserDetails {
 
-    private final IPerson person;
+    private static final long serialVersionUID = 1L;
 
-    public PortalPersonUserDetails(IPerson person) {
-        this.person = person;
+    private final String username;
+
+    public SoffitApiUserDetails(String username) {
+        this.username = username;
     }
 
     @Override
-    public Collection<GrantedAuthority> getAuthorities() {
-        return Collections.emptyList();
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        // This item may need attention later...
+        return Collections.emptySet();
     }
 
     @Override
@@ -48,7 +48,7 @@ public class PortalPersonUserDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        return person.getName();
+        return username;
     }
 
     @Override
@@ -73,6 +73,6 @@ public class PortalPersonUserDetails implements UserDetails {
 
     @Override
     public String toString() {
-        return "UserDetails for user " + getUsername();
+        return "SoffitApiUserDetails{" + "username='" + username + '\'' + '}';
     }
 }

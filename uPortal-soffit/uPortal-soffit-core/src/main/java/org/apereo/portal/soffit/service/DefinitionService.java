@@ -62,7 +62,7 @@ public class DefinitionService extends AbstractJwtService {
 
     public Definition parseDefinition(String definitionToken) {
 
-        final Jws<Claims> claims = parseEncrypteToken(definitionToken, Definition.class);
+        final Jws<Claims> claims = parseEncryptedToken(definitionToken, Definition.class);
 
         final String username = claims.getBody().getSubject();
 
