@@ -24,8 +24,8 @@ import org.springframework.security.core.AuthenticationException;
 /**
  * Concrete <code>AuthenticationManager</code> implementation (Spring Security) for use with {@link
  * SoffitApiPreAuthenticatedProcessingFilter}. Use <code>
- * SoffitApiPreAuthenticatedProcessingFilter.setAuthenticationManager</code> in a when constructing
- * the bean.
+ * SoffitApiPreAuthenticatedProcessingFilter.setAuthenticationManager</code> when constructing the
+ * bean.
  *
  * @since 5.1
  */
