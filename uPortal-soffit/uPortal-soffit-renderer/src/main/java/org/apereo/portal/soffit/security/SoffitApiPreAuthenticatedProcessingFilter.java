@@ -77,8 +77,8 @@ public class SoffitApiPreAuthenticatedProcessingFilter
         if (StringUtils.isBlank(authHeader)
                 || !authHeader.startsWith(Headers.BEARER_TOKEN_PREFIX)) {
             /*
-             * Nothing we can do if (1) the Authorization header is not set or (2) the value isn't a
-             * Bearer token.
+             * We have no opinion if (1) the Authorization header is not set or (2) the value isn't
+             * a Bearer token.
              */
             return null;
         }
@@ -96,10 +96,8 @@ public class SoffitApiPreAuthenticatedProcessingFilter
             request.setAttribute(USER_DETAILS_REQUEST_ATTRIBUTE, rslt);
             return rslt;
         } catch (Exception e) {
-            logger.error(
-                    "Unable to identify pre-authenticated user with Bearer token '{}'",
-                    bearerToken,
-                    e);
+            logger.info("The following Bearer token is unusable:  '{}'", bearerToken);
+            logger.debug("Failed to validate and/or parse the specified Bearer token", e);
         }
 
         return null;
