@@ -35,12 +35,14 @@ import org.springframework.web.bind.annotation.RestController;
  * <p>The value of this endpoint is not (therefore) that it brings support for OIDC to uPortal, but
  * that other modules and services designed to work with uPortal can implement security using
  * standard OIDC approaches.
+ *
+ * @since 5.1
  */
 @RestController
 public class OidcUserInfoController {
 
     public static final String ENDPOINT_URI = "/v5-1/userinfo";
-    public static final String CONTENT_TYPE = "application/json"; // Should be application/jwt?
+    public static final String CONTENT_TYPE = "application/jwt";
 
     @Autowired private IPersonManager personManager;
 
