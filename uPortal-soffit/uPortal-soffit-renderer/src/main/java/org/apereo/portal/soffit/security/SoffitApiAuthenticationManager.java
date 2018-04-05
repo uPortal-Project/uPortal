@@ -18,6 +18,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 
@@ -39,13 +41,17 @@ public class SoffitApiAuthenticationManager implements AuthenticationManager {
 
         logger.debug("Authenticating the following Authentication object:  {}", authentication);
 
-        if (SoffitApiUserDetails.class.isInstance(authentication.getDetails())) {
-            final SoffitApiUserDetails saud = (SoffitApiUserDetails) authentication.getDetails();
-            if (StringUtils.isNotBlank(saud.getUsername())) {
-                authentication.setAuthenticated(true);
-            }
+        if (!SoffitApiUserDetails.class.isInstance(authentication.getPrincipal())) {
+            throw new BadCredentialsException("Unrecognized principal type");
         }
 
-        return authentication;
+        final SoffitApiUserDetails saud = (SoffitApiUserDetails) authentication.getPrincipal();
+
+        if (StringUtils.isBlank(saud.getUsername())) {
+            throw new BadCredentialsException("Missing username");
+        }
+
+        return new UsernamePasswordAuthenticationToken(
+                saud.getUsername(), authentication.getCredentials(), saud.getAuthorities());
     }
 }

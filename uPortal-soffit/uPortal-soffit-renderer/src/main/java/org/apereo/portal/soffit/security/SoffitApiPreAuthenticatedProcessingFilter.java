@@ -17,6 +17,8 @@ package org.apereo.portal.soffit.security;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
+import java.util.Collections;
+import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
@@ -92,7 +94,11 @@ public class SoffitApiPreAuthenticatedProcessingFilter
 
             logger.debug("Found the following pre-authenticated user:  {}", claims.toString());
 
-            final UserDetails rslt = new SoffitApiUserDetails(claims.getBody().getSubject());
+            final List<String> groupsClaim = claims.getBody().get("groups", List.class);
+            final List<String> groupsList =
+                    groupsClaim != null ? groupsClaim : Collections.emptyList();
+            final UserDetails rslt =
+                    new SoffitApiUserDetails(claims.getBody().getSubject(), groupsList);
             request.setAttribute(USER_DETAILS_REQUEST_ATTRIBUTE, rslt);
             return rslt;
         } catch (Exception e) {

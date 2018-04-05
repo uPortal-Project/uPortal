@@ -16,7 +16,10 @@ package org.apereo.portal.soffit.security;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 /**
@@ -31,14 +34,20 @@ public class SoffitApiUserDetails implements UserDetails {
 
     private final String username;
 
-    public SoffitApiUserDetails(String username) {
+    private final Collection<? extends GrantedAuthority> authorities;
+
+    public SoffitApiUserDetails(String username, List<String> groups) {
         this.username = username;
+        this.authorities =
+                Collections.unmodifiableList(
+                        groups.stream()
+                                .map(groupName -> new SimpleGrantedAuthority(groupName))
+                                .collect(Collectors.toList()));
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // This item may need attention later...
-        return Collections.emptySet();
+        return authorities;
     }
 
     @Override

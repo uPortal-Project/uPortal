@@ -19,13 +19,22 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
+import org.apereo.portal.groups.IEntityGroup;
+import org.apereo.portal.groups.IGroupMember;
+import org.apereo.portal.security.IPerson;
+import org.apereo.portal.services.GroupService;
 import org.apereo.portal.soffit.service.AbstractJwtService;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.IPersonAttributes;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -38,6 +47,8 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class IdTokenFactory {
+
+    private final String GROUPS_WHITELIST_SEPARATOR = ",";
 
     @Value("${portal.protocol.server.context}")
     private String issuer;
@@ -56,6 +67,8 @@ public class IdTokenFactory {
     private long timeoutSeconds;
 
     /*
+     * OpenID Standard Claims
+     *
      * Mapping to uPortal user attributes;  defaults (where specified) are based on the Lightweight
      * Directory Access Protocol (LDAP): Schema for User Applications
      * (https://tools.ietf.org/html/rfc4519) and the eduPerson Object Class Specification
@@ -137,19 +150,34 @@ public class IdTokenFactory {
     private String phoneNumberVerifiedAttr;
 
     /*
-     * NB:  The 'address' claim requires additional complexity b/c it's type is JSON object.
+     * NB:  The 'address' claim requires additional complexity b/c it's type is JSON object.  In
+     * light of that, and because most portals don't have address info in the user attributes
+     * collection, we'll skip it (for now),
      */
 
     /** JSON data type 'number' */
     @Value("${org.apereo.portal.security.oauth.IdTokenFactory.mapping.updated_at:}")
     private String updatedAtAttributeName;
 
+    /*
+     * uPortal Custom Claims
+     */
+
+    @Value(
+            "${org.apereo.portal.security.oauth.IdTokenFactory.groups.whitelist:Students,Faculty,Staff,Portal Administrators}")
+    private String groupsWhitelistProperty;
+
     private List<ClaimMapping> mappings;
+
+    private List<String> groupsWhitelist;
+
+    private Logger logger = LoggerFactory.getLogger(getClass());
 
     @PostConstruct
     public void init() {
-        final List<ClaimMapping> list = new ArrayList<>();
 
+        // Attribute mappings
+        final List<ClaimMapping> list = new ArrayList<>();
         list.add(new ClaimMapping("sub", subAttr, DataTypeConverter.STRING));
         list.add(new ClaimMapping("name", nameAttr, DataTypeConverter.STRING));
         list.add(new ClaimMapping("given_name", givenNameAttr, DataTypeConverter.STRING));
@@ -175,8 +203,14 @@ public class IdTokenFactory {
                         phoneNumberVerifiedAttr,
                         DataTypeConverter.BOOLEAN));
         list.add(new ClaimMapping("updated_at", updatedAtAttributeName, DataTypeConverter.NUMBER));
-
         mappings = Collections.unmodifiableList(list);
+
+        // Groups whitelist
+        groupsWhitelist =
+                Collections.unmodifiableList(
+                        Arrays.stream(groupsWhitelistProperty.split(GROUPS_WHITELIST_SEPARATOR))
+                                .map(item -> item.trim())
+                                .collect(Collectors.toList()));
     }
 
     public String createUserInfo(String username) {
@@ -194,6 +228,7 @@ public class IdTokenFactory {
 
         final IPersonAttributes person = personAttributeDao.getPerson(username);
 
+        // Attribute mappings
         mappings.stream()
                 .forEach(
                         item -> {
@@ -205,7 +240,30 @@ public class IdTokenFactory {
                             }
                         });
 
-        return builder.signWith(SignatureAlgorithm.HS512, signatureKey).compact();
+        // Groups
+        final List<String> groups = new ArrayList<>();
+        final IGroupMember groupMember = GroupService.getGroupMember(username, IPerson.class);
+        if (groupMember != null) {
+            Set<IEntityGroup> ancestors = groupMember.getAncestorGroups();
+            for (IEntityGroup g : ancestors) {
+                if (groupsWhitelist.contains(g.getName())) {
+                    groups.add(g.getName());
+                }
+            }
+        }
+        if (!groups.isEmpty()) {
+            /*
+             * If a Claim is not returned, that Claim Name SHOULD be omitted from the JSON object
+             * representing the Claims; it SHOULD NOT be present with a null or empty string value.
+             */
+            builder.claim("groups", groups);
+        }
+
+        final String rslt = builder.signWith(SignatureAlgorithm.HS512, signatureKey).compact();
+
+        logger.debug("Produced the following JWT for username='{}':  {}", username, rslt);
+
+        return rslt;
     }
 
     /*
