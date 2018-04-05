@@ -119,7 +119,7 @@ public class AbstractJwtService {
         return rslt;
     }
 
-    protected Jws<Claims> parseEncrypteToken(
+    protected Jws<Claims> parseEncryptedToken(
             String encryptedToken, Class<? extends ITokenizable> clazz) {
 
         // Decryption

@@ -54,7 +54,7 @@ public class PortalRequestService extends AbstractJwtService {
 
     public PortalRequest parsePortalRequest(String portalRequestToken) {
 
-        final Jws<Claims> claims = parseEncrypteToken(portalRequestToken, PortalRequest.class);
+        final Jws<Claims> claims = parseEncryptedToken(portalRequestToken, PortalRequest.class);
 
         final String username = claims.getBody().getSubject();
 

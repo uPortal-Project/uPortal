@@ -53,37 +53,37 @@ public class LayoutRESTController {
 
     protected final Log log = LogFactory.getLog(getClass());
 
-    IUserLayoutStore userLayoutStore;
+    private IUserLayoutStore userLayoutStore;
 
-    @Autowired(required = true)
+    @Autowired
     public void setUserLayoutStore(IUserLayoutStore userLayoutStore) {
         this.userLayoutStore = userLayoutStore;
     }
 
-    IPersonManager personManager;
+    private IPersonManager personManager;
 
-    @Autowired(required = true)
+    @Autowired
     public void setPersonManager(IPersonManager personManager) {
         this.personManager = personManager;
     }
 
     private IPortalUrlProvider urlProvider;
 
-    @Autowired(required = true)
+    @Autowired
     public void setPortalUrlProvider(IPortalUrlProvider urlProvider) {
         this.urlProvider = urlProvider;
     }
 
     private IUserInstanceManager userInstanceManager;
 
-    @Autowired(required = true)
+    @Autowired
     public void setUserInstanceManager(IUserInstanceManager userInstanceManager) {
         this.userInstanceManager = userInstanceManager;
     }
 
     private IPortletDefinitionDao portletDao;
 
-    @Autowired(required = true)
+    @Autowired
     public void setPortletDao(IPortletDefinitionDao portletDao) {
         this.portletDao = portletDao;
     }
