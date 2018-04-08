@@ -56,16 +56,48 @@ This example defines the following rules for accessing API enpoints that begin w
 @EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
+    @Value("${" + SIGNATURE_KEY_PROPERTY + ":" + DEFAULT_SIGNATURE_KEY + "}")
+    private String signatureKey;
+
+    @Override
+    public void configure(WebSecurity web) throws Exception {
+        /*
+         * Since this module includes portlets, we only want to apply Spring Security to requests
+         * targeting out REST APIs.
+         */
+        final RequestMatcher pathMatcher = new AntPathRequestMatcher("/api/**");
+        final RequestMatcher inverseMatcher = new NegatedRequestMatcher(pathMatcher);
+        web.ignoring().requestMatchers(inverseMatcher);
+    }
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+
+        /*
+         * Provide a SoffitApiPreAuthenticatedProcessingFilter (from uPortal) that is NOT a
+         * top-level bean in the Spring Application Context.
+         */
+        final AbstractPreAuthenticatedProcessingFilter filter =
+                new SoffitApiPreAuthenticatedProcessingFilter(signatureKey);
+        filter.setAuthenticationManager(authenticationManager());
+
         http
-            .addFilter(preAuthenticatedProcessingFilter())
+            .addFilter(filter)
             .authorizeRequests()
                 .antMatchers(HttpMethod.GET,"/api/**").authenticated()
                 .antMatchers(HttpMethod.POST,"/api/**").authenticated()
                 .antMatchers(HttpMethod.DELETE,"/api/**").denyAll()
                 .antMatchers(HttpMethod.PUT,"/api/**").denyAll()
                 .anyRequest().permitAll();
+            .and()
+            /*
+             * Session fixation protection is provided by uPortal.  Since portlet tech requires
+             * sessionCookiePath=/, we will make the portal unusable if other modules are changing
+             * the sessionId as well.
+             */
+            .sessionManagement()
+                .sessionFixation().none();
+
     }
 
     @Bean
@@ -74,10 +106,20 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public AbstractPreAuthenticatedProcessingFilter preAuthenticatedProcessingFilter() {
-        final AbstractPreAuthenticatedProcessingFilter rslt = new SoffitApiPreAuthenticatedProcessingFilter();
-        rslt.setAuthenticationManager(authenticationManager());
-        return rslt;
+    public ErrorPageFilter errorPageFilter() {
+        return new ErrorPageFilter();
+    }
+
+    @Bean
+    public FilterRegistrationBean disableSpringBootErrorFilter() {
+        /*
+         * The ErrorPageFilter (Spring) makes extra calls to HttpServletResponse.flushBuffer(),
+         * and this behavior produces many warnings in the portal logs during portlet requests.
+         */
+        FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean();
+        filterRegistrationBean.setFilter(errorPageFilter());
+        filterRegistrationBean.setEnabled(false);
+        return filterRegistrationBean;
     }
 
 }
