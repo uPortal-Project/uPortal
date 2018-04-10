@@ -19,24 +19,31 @@ import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import java.util.Collections;
 import java.util.List;
-import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.portal.soffit.Headers;
 import org.apereo.portal.soffit.service.AbstractJwtService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.preauth.AbstractPreAuthenticatedProcessingFilter;
 
 /**
  * This concrete implementation of <code>AbstractPreAuthenticatedProcessingFilter</code> (Spring
- * Security) allows REST APIs within Soffits and similar modules to know the identity of a portal
- * users simply and securely. The approach is inspired by (and closely aligned with) OpenID Connect
- * (OIDC). This filter essentially requests and receives an OIDC ID Token from the portal. The token
- * is available if the user has previously signed in.
+ * Security) may be employed by REST APIs within Soffits (and similar modules) to discover the
+ * identity of portal users simply and securely. (It is not used inside the uPortal webapp at all.)
+ * The approach is inspired by (and closely aligned with) OpenID Connect (OIDC). This filter honors
+ * an OIDC ID Token (typically from the portal) presented as a <code>Bearer</code> token in the
+ * <code>Authorization</code> header. A suitable token may be obtained (via JavaScript, etc.) from
+ * the portal's <code>userinfo</code> endpoint if the user has previously signed in.
+ *
+ * <p><strong>Important!</strong> In a module that contains portlets, this filter must not be
+ * defined as a top-level bean in the Spring Application Context. If it is, it will become a member
+ * of the standard filter chain and will be executed for every request, including portlet requests
+ * via a <code>RequestDispatcher</code>. The best way to use this filter in a project that contains
+ * portlets is in Java configuration via <code>HttpSecurity.addFilter()</code> <em>without</em>
+ * obtaining the instance of this filter from a method annotated with <code>@Bean</code>.
  *
  * @since 5.1
  */
@@ -47,27 +54,17 @@ public class SoffitApiPreAuthenticatedProcessingFilter
             SoffitApiPreAuthenticatedProcessingFilter.class.getName()
                     + ".userDetailsRequestAttribute";
 
-    @Value(
-            "${"
-                    + AbstractJwtService.SIGNATURE_KEY_PROPERTY
-                    + ":"
-                    + AbstractJwtService.DEFAULT_SIGNATURE_KEY
-                    + "}")
-    private String signatureKey;
+    private final String signatureKey;
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    public SoffitApiPreAuthenticatedProcessingFilter() {
-        // Check we have the correct principal on each request
-        setCheckForPrincipalChanges(true);
-    }
-
-    @PostConstruct
-    public void init() {
-        // Log a warning if a custom signature key is not specified...
+    public SoffitApiPreAuthenticatedProcessingFilter(String signatureKey) {
+        // Key for signing JWT.  Must match the provider (typically the portal).
+        this.signatureKey = signatureKey;
         if (AbstractJwtService.DEFAULT_SIGNATURE_KEY.equals(signatureKey)) {
             logger.warn(
-                    "A custom value for '{}' has not been specified;  the default value will be used.  This configuration is not production-safe!",
+                    "A custom value for '{}' has not been specified;  the default value will be "
+                            + "used.  This configuration is not production-safe!",
                     AbstractJwtService.SIGNATURE_KEY_PROPERTY);
         }
     }
@@ -79,8 +76,8 @@ public class SoffitApiPreAuthenticatedProcessingFilter
         if (StringUtils.isBlank(authHeader)
                 || !authHeader.startsWith(Headers.BEARER_TOKEN_PREFIX)) {
             /*
-             * We have no opinion if (1) the Authorization header is not set or (2) the value isn't
-             * a Bearer token.
+             * In authenticating the user, this filter has no opinion if either (1) the
+             * Authorization header is not set or (2) the value isn't a Bearer token.
              */
             return null;
         }
