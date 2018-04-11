@@ -19,7 +19,7 @@ fonctionnalité sont disponibles dans la dépendance `uPortal-soffit-renderer`.
 
 :notebook:  Un module n'a pas besoin d'être une Soffit pour utiliser ces fonctionnalités, mais il _doit_ vraiment être un module.
 En d'autres termes, les API qui sont sécurisées en utilisant cette approche doivent fournir des données et des services 
-_dans le portail_ comme leur but original et essentiel. La raison de cette distinction est 
+_dans le portail_ comme but originel et essentiel. La raison de cette distinction est 
 que l'information fournie par cette approche est un proxy du profil de l'utilisateur _dans le portail_, et 
 que cela peut ne pas être (cela n'est pas souvent) la même chose que l'identité de l'utilisateur au sein de l'organisation.
 

@@ -165,7 +165,7 @@ Cette étape suppose que le DNS est correctement configuré à la fois sur le DN
 
 ## Configuration de Tomcat
 
-les changements doivent être fait dans  `<TOMCAT_HOME>/conf/server.xml`.
+Les changement sont a réaliser dans `<TOMCAT_HOME>/conf/server.xml`.
 
 ### Modifier le connecteur pour prendre en charge le décryptage sur le F5
 

@@ -1,5 +1,5 @@
 sequenceDiagram
-    Portlet Worker   ->>  Soffit Connector: Java Portlet render call
+    Portlet Worker   ->>  Soffit Connector: Java Portlet appel de rendu
     Soffit Connector ->>  Soffit Distante:    HTTP GET avec JWT
     Note right of Soffit Distante: La signature JWT<br>est validée par<br>la clef publique <br>depuis les propriétés
     Soffit Distante   -->> Soffit Connector: DOM fragment text
