@@ -6,7 +6,7 @@
 2. [Pré-Requis](#pré-requis)
 3. [Configurer un LTM](#configurer-un-ltm)
 4. [Configurer le GTM](#configurer-le-gtm)
-5. [Configuration des connecteurs dans Tomcat](#configuration-des-connecteurs-dans-tomcat)
+5. [Configuration de Tomcat](#configuration-de-tomcat)
 
 ## Introduction
 
@@ -163,18 +163,37 @@ Cette étape suppose que le DNS est correctement configuré à la fois sur le DN
     1. Name: CNAME (DNS) de l'enregistrement A géré par le F5
     2. Pool: sélectionner le pool créer auparavant
 
-## Configuration des connecteurs dans Tomcat
+## Configuration de Tomcat
 
-Pour prendre en charge le décryptage sur le F5, certains attributs supplémentaires doivent être définis pour les connecteurs du fichier server.xml dans vos installations de Tomcat d'uPortal. Cette modification configure Tomcat pour qu'il accepte les paquets non cryptés mais les considère comme sécurisés.
+Les changement sont a réaliser dans `<TOMCAT_HOME>/conf/server.xml`.
+
+### Modifier le connecteur pour prendre en charge le décryptage sur le F5
+
+Pour prendre en charge le décryptage au niveau du F5, certains attributs supplémentaires doivent être définis pour le(s) connecteur(s)
+recevant le trafic du F5. Ce changement configure Tomcat pour accepter des 
+paquets non cryptés en les considèrant comme sécurisés.
 
 ``` xml
-<Connector port="8080" protocol="HTTP/1.1"
-    ...
-    proxyPort="443"
-    emptySessionPath="true"
-    scheme="https"
-    secure="true"
-/>
+    <Connector port="8080" protocol="HTTP/1.1"
+        ...
+        proxyPort="443"
+        emptySessionPath="true"
+        scheme="https"
+        secure="true"
+    />
 ```
+### Ajouter `Remote IP Valve` pour la génération de la journalisation (Log) et de la Session ID
+
+Il est important que Tomcat et uPortal reçoivent les adresses IP de l'utilisateur plutôt que les adresses IP de l'équilibreur de charge. C'est utilisé pour la journalisation et la génération de la clé de session utilisateur (Session ID). uPortal utilisera l'IP _plus_ un petit nombre aléatoire pour créer des clés de session. Donc, sans cette valve, il y aura une forte probabilité que des utilisateurs partagent des sessions par inadvertance. Ajoutez la `Remote IP Valve` à côté des autres valves proches en bas du fichier `server.xml`:
+
+``` xml
+        <Valve className="org.apache.catalina.valves.RemoteIpValve"
+                internalProxies="10\.22\.1\.196, 10\.22\.2\.252"
+                remoteIpHeader="x-forwarded-for"
+                remoteIpProxiesHeader="X-Forwarded-For"
+                protocolHeader="x-forwarded-proto" />
+```
+
+Ajuster les adresses IP pour qu'elles correspondent à celles du ou des équilibreurs de charge.
 
 Voir [plate-forme BIG-IP](https://f5.com/products/big-ip)

@@ -21,6 +21,7 @@ n'est pas basé sur JSR-286 ou le conteneur de portlet.
 2. [Publication d'une soffit](publier_une_soffit.md)
 3. [Modèle de données de soffit](soffit_modele_de_donnee.md)
 4. [Options de configuration](options-de-configuration.md)
+5. [Sécurisation des API](securisation_apis.md)
 
 ## Un mot sur les interfaces utilisateur Web modernes
 
@@ -29,6 +30,10 @@ frameworks / librairies modernes comme [React][], [AngularJS][], [Backbone.js][]
 Ainsi, un composant Soffit ne sera rendu qu'une fois; considérant que l'état (state), les
 changements, les transactions, la persistance, _etc_. seront généralement gérés avec le Javascript
 et l'API REST.
+
+## Flux de données d'une Soffit
+
+![Flux de données Soffit](../../../images/soffit-sequence_fr.mmd.png)
 
 ## Exemples d'applications de soffits
 
