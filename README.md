@@ -212,7 +212,8 @@ detailed documentation for each uPortal release.
 
 Additional information about uPortal is available in the Manual.
 
-* [uPortal 5.0 Manual](https://jasig.github.io/uPortal)
+* [uPortal 5.1 Manual](https://jasig.github.io/uPortal)
+* [uPortal 5.0 Manual](https://github.com/Jasig/uPortal/tree/v5.0.6/docs)
 * [uPortal 4.3 Manual](https://wiki.jasig.org/display/UPM43/Home)
 * [uPortal 4.2 Manual](https://wiki.jasig.org/display/UPM42/Home)
 * [uPortal 4.1 Manual](https://wiki.jasig.org/display/UPM41/Home)
