@@ -202,6 +202,7 @@ ci-après.
 
 ## Documentation des précédentes versions
 
+* [Manuel uPortal 5.0](https://github.com/Jasig/uPortal/tree/v5.0.6/docs/fr)
 * [uPortal 4.3](https://wiki.jasig.org/display/UPM43/Home)
 * [uPortal 4.2](https://wiki.jasig.org/display/UPM42/Home)
 * [uPortal 4.1](https://wiki.jasig.org/display/UPM41/Home)
