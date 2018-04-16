@@ -48,7 +48,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class IdTokenFactory {
 
-    private final String GROUPS_WHITELIST_SEPARATOR = ",";
+    private final String LIST_SEPARATOR = ",";
 
     @Value("${portal.protocol.server.context}")
     private String issuer;
@@ -163,20 +163,37 @@ public class IdTokenFactory {
      * uPortal Custom Claims
      */
 
+    /**
+     * The custom claim <code>groups</code> may contain some or all of the user's group
+     * affiliations. Use the Spring property <code>
+     * org.apereo.portal.security.oauth.IdTokenFactory.groups.whitelist</code> to control which
+     * portal groups are included in the claim.
+     */
     @Value(
             "${org.apereo.portal.security.oauth.IdTokenFactory.groups.whitelist:Students,Faculty,Staff,Portal Administrators}")
     private String groupsWhitelistProperty;
 
+    /**
+     * Additional user attributes in the portal may be included in the ID Token as custom claims.
+     * Use the Spring property <code>org.apereo.portal.security.oauth.IdTokenFactory.customClaims
+     * </code> to specify which additional attributes to include. The claim name will always be the
+     * same as the attribute name. The JSON type of a custom claim will be inferred from it's value.
+     */
+    @Value("${org.apereo.portal.security.oauth.IdTokenFactory.customClaims:}")
+    private String customClaimsProperty;
+
     private List<ClaimMapping> mappings;
 
     private List<String> groupsWhitelist;
+
+    private List<String> customClaims;
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
     @PostConstruct
     public void init() {
 
-        // Attribute mappings
+        // Mappings for Standard Claims
         final List<ClaimMapping> list = new ArrayList<>();
         list.add(new ClaimMapping("sub", subAttr, DataTypeConverter.STRING));
         list.add(new ClaimMapping("name", nameAttr, DataTypeConverter.STRING));
@@ -205,12 +222,32 @@ public class IdTokenFactory {
         list.add(new ClaimMapping("updated_at", updatedAtAttributeName, DataTypeConverter.NUMBER));
         mappings = Collections.unmodifiableList(list);
 
-        // Groups whitelist
+        if (logger.isInfoEnabled()) {
+            final StringBuilder msg = new StringBuilder();
+            msg.append("Using the following mappings for OIDC Standard Claims:");
+            list.stream().forEach(mapping -> msg.append("\n\t").append(mapping));
+            logger.info(msg.toString());
+        }
+
+        // Portal Groups ('groups' custom claim)
         groupsWhitelist =
                 Collections.unmodifiableList(
-                        Arrays.stream(groupsWhitelistProperty.split(GROUPS_WHITELIST_SEPARATOR))
+                        Arrays.stream(groupsWhitelistProperty.split(LIST_SEPARATOR))
                                 .map(item -> item.trim())
+                                .filter(item -> item.length() != 0)
                                 .collect(Collectors.toList()));
+        logger.info(
+                "Using the following portal groups to build the custom 'groups' claim:  {}",
+                groupsWhitelist);
+
+        // Other Custom Claims (a.k.a user attributes)
+        customClaims =
+                Collections.unmodifiableList(
+                        Arrays.stream(customClaimsProperty.split(LIST_SEPARATOR))
+                                .map(item -> item.trim())
+                                .filter(item -> item.length() != 0)
+                                .collect(Collectors.toList()));
+        logger.info("Using the following custom claims:  {}", customClaims);
     }
 
     public String createUserInfo(String username) {
@@ -258,6 +295,16 @@ public class IdTokenFactory {
              */
             builder.claim("groups", groups);
         }
+
+        // Custom Claims
+        customClaims
+                .stream()
+                .map(
+                        attributeName ->
+                                new CustomClaim(
+                                        attributeName, person.getAttributeValue(attributeName)))
+                .filter(claim -> claim.getClaimValue() != null)
+                .forEach(claim -> builder.claim(claim.getClaimName(), claim.getClaimValue()));
 
         final String rslt = builder.signWith(SignatureAlgorithm.HS512, signatureKey).compact();
 
@@ -318,6 +365,39 @@ public class IdTokenFactory {
 
         public DataTypeConverter getDataTypeConverter() {
             return dataTypeConverter;
+        }
+
+        @Override
+        public String toString() {
+            return "ClaimMapping{"
+                    + "claimName='"
+                    + claimName
+                    + '\''
+                    + ", attributeName='"
+                    + attributeName
+                    + '\''
+                    + ", dataTypeConverter="
+                    + dataTypeConverter
+                    + '}';
+        }
+    }
+
+    private static final class CustomClaim {
+
+        private final String claimName;
+        private final Object claimValue;
+
+        public CustomClaim(String claimName, Object claimValue) {
+            this.claimName = claimName;
+            this.claimValue = claimValue;
+        }
+
+        public String getClaimName() {
+            return claimName;
+        }
+
+        public Object getClaimValue() {
+            return claimValue;
         }
     }
 }
