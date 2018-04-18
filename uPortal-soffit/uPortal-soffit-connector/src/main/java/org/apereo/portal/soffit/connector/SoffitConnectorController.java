@@ -139,7 +139,9 @@ public class SoffitConnectorController implements ApplicationContextAware {
                 // Send the data model as encrypted JWT HTTP headers
                 for (IHeaderProvider headerProvider : headerProviders) {
                     final Header header = headerProvider.createHeader(req, res);
-                    getMethod.addHeader(header);
+                    if (header != null) {
+                        getMethod.addHeader(header);
+                    }
                 }
 
                 // Send the request

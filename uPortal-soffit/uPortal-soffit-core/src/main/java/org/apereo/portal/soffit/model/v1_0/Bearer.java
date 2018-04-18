@@ -41,6 +41,18 @@ public class Bearer extends AbstractTokenizable {
         this.groups = Collections.unmodifiableList(groups);
     }
 
+    /**
+     * Supports proxying a missing data model element.
+     *
+     * @since 5.1
+     */
+    protected Bearer() {
+        super(null);
+        this.username = null;
+        this.attributes = null;
+        this.groups = null;
+    }
+
     public String getUsername() {
         return username;
     }
