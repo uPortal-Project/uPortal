@@ -10,7 +10,6 @@
  - Daniel McCallum (dmccallum)
  - Drew Wills (drewwills)
  - James Wennmacher (jameswennmacher)
- - Jeff Cross (jeffbcross)
  - [Jim Helwig] (jimhelwig)
  - Josh Helmer (jhelmer-unicon)
  - Misagh Moayyed (mmoayyed)
@@ -23,6 +22,7 @@
 ## Committers Emeriti
 
  - Eric Dalquist (edalquist)
+ - Jeff Cross (jeffbcross)
  - Jen Bourey (bourey)
 
 ## What's a Committer?
