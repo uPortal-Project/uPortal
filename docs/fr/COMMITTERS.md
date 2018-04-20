@@ -20,7 +20,7 @@
  - Timothy A Vertein (vertein)
  - William G. Thompson, Jr. (wgthom)
 
-## Committers Emeritus
+## Committers Emeriti
 
  - Eric Dalquist (edalquist)
  - Jen Bourey (bourey)
