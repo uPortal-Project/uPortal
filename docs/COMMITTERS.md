@@ -12,7 +12,6 @@
  - [Jim Helwig] (jimhelwig)
  - Josh Helmer (jhelmer-unicon)
  - Misagh Moayyed (mmoayyed)
- - Nicholas Blair (nblair)
  - Paul Spaude (pspaude)
  - Tim Levett (timlevett)
  - Timothy A Vertein (vertein)
@@ -24,6 +23,7 @@
  - James Wennmacher (jameswennmacher)
  - Jeff Cross (jeffbcross)
  - Jen Bourey (bourey)
+ - Nicholas Blair (nblair)
 
 ## What's a Committer?
 
