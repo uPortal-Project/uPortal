@@ -9,7 +9,6 @@
  - Christian Murphy (ChristianMurphy)
  - Daniel McCallum (dmccallum)
  - Drew Wills (drewwills)
- - James Wennmacher (jameswennmacher)
  - [Jim Helwig] (jimhelwig)
  - Josh Helmer (jhelmer-unicon)
  - Misagh Moayyed (mmoayyed)
@@ -22,6 +21,7 @@
 ## Committers Emeriti
 
  - Eric Dalquist (edalquist)
+ - James Wennmacher (jameswennmacher)
  - Jeff Cross (jeffbcross)
  - Jen Bourey (bourey)
 
