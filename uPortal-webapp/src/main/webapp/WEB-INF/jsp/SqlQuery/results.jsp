@@ -78,7 +78,7 @@
 <div class="fl-widget portlet" role="section">
   
   <!-- Portlet Body -->
-  <div id="${n}resultBrowser" class="fl-widget-content portlet-body" role="main">
+  <div id="${n}resultBrowser" class="fl-widget-content portlet-body">
   
         <table id="${n}sqlResults" style="width:100%;">
             <thead>

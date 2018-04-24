@@ -64,6 +64,10 @@ public abstract class Evaluator {
         entityVersion = -1;
     }
 
+    public long getId() {
+        return evaluatorId;
+    }
+
     public abstract boolean isApplicable(IPerson person);
 
     /**

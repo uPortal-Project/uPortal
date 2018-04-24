@@ -78,7 +78,7 @@
         <p><i class="fa fa-exclamation-circle">Unknown error. Contact your administrator.</i></p>
     </div>
 
-    <div id="${n}chooseGroupsBody" class="fl-widget-content content portlet-content container-fluid" role="main">
+    <div id="${n}chooseGroupsBody" class="fl-widget-content content portlet-content container-fluid">
         <div class="${selectionMode ? 'view-multi-select' : 'view-single-select'}">
             <div class="columns-2 row-fluid row">
                 <div class="fl-container-flex60 span8 col-md-8">

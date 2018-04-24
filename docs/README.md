@@ -179,25 +179,27 @@ below.
 
 ## Sections
 
-1. [Building / Deploying uPortal](building-and-deploying-uportal.md)
-2. [Implementing uPortal](implement/README.md)
-3. [uPortal System Administration](sysadmin/README.md)
-4. [Developer's Guide](developer/README.md)
-5. [Supported web browsers](SUPPORTED_BROWSERS.md)
-6. [Accessibility](ACCESSIBILITY.md)
-7. [Project Committers](COMMITTERS.md)
+1.  [Building / Deploying uPortal](building-and-deploying-uportal.md)
+2.  [Implementing uPortal](implement/README.md)
+3.  [uPortal System Administration](sysadmin/README.md)
+4.  [Developer's Guide](developer/README.md)
+5.  [Supported web browsers](SUPPORTED_BROWSERS.md)
+6.  [Accessibility](ACCESSIBILITY.md)
+7.  [Project Committers](COMMITTERS.md)
+8.  [Glossary](GLOSSARY.md)
 
 ## External Links
 
-* [Apereo Foundation Home](https://www.apereo.org/)
-* [uPortal Wiki](https://wiki.jasig.org/display/UPC/Home)
+*   [Apereo Foundation Home](https://www.apereo.org/)
+*   [uPortal Wiki](https://wiki.jasig.org/display/UPC/Home)
 
 ## Documentation for Previous Releases
 
-* [uPortal 4.3](https://wiki.jasig.org/display/UPM43/Home)
-* [uPortal 4.2](https://wiki.jasig.org/display/UPM42/Home)
-* [uPortal 4.1](https://wiki.jasig.org/display/UPM41/Home)
-* [uPortal 4.0](https://wiki.jasig.org/display/UPM40/Home)
-* [uPortal 3.2](https://wiki.jasig.org/display/UPM32/Home)
-* [uPortal 3.1](https://wiki.jasig.org/display/UPM31/Home)
-* [uPortal 3.0](https://wiki.jasig.org/display/UPM30/Home)
+*   [uPortal 5.0 Manual](https://github.com/Jasig/uPortal/tree/v5.0.6/docs)
+*   [uPortal 4.3](https://wiki.jasig.org/display/UPM43/Home)
+*   [uPortal 4.2](https://wiki.jasig.org/display/UPM42/Home)
+*   [uPortal 4.1](https://wiki.jasig.org/display/UPM41/Home)
+*   [uPortal 4.0](https://wiki.jasig.org/display/UPM40/Home)
+*   [uPortal 3.2](https://wiki.jasig.org/display/UPM32/Home)
+*   [uPortal 3.1](https://wiki.jasig.org/display/UPM31/Home)
+*   [uPortal 3.0](https://wiki.jasig.org/display/UPM30/Home)

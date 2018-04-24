@@ -48,7 +48,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
   <!-- end: portlet-titlebar -->
 
   <!-- Portlet Content -->
-  <div class="fl-widget-content portlet-content row" role="main">
+  <div class="fl-widget-content portlet-content row">
 
     <div class="permission-lookup">
         <form id="${n}permissionLookupForm" class="form-inline" action="${permissionLookupUrl}" method="POST">

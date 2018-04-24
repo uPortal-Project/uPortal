@@ -38,7 +38,7 @@ public class PortalPersonUserDetails implements UserDetails {
 
     @Override
     public Collection<GrantedAuthority> getAuthorities() {
-        return Collections.<GrantedAuthority>emptyList();
+        return Collections.emptyList();
     }
 
     @Override

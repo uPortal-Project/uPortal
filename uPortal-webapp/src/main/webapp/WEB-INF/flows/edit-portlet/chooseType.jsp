@@ -48,7 +48,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
   </div> <!-- end: portlet-titlebar -->
   
 	<!-- Portlet Content -->
-  <div class="fl-widget-content content portlet-content" role="main">
+  <div class="fl-widget-content content portlet-content">
      
     <form:form modelAttribute="portlet" action="${queryUrl}" method="POST">
 	

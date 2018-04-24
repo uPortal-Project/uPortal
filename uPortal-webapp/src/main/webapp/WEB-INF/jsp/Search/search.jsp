@@ -35,7 +35,7 @@
     -->
 
     <!-- Portlet Body -->
-    <div class="fl-widget-content portlet-body" role="main">
+    <div class="fl-widget-content portlet-body">
 
         <!-- Portlet Section -->
         <div id="${n}search" class="portlet-section" role="region">

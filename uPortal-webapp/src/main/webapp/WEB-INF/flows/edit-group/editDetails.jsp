@@ -33,7 +33,7 @@
     </div> <!-- end: portlet-title -->
 
     <!-- Portlet Body -->
-    <div class="fl-widget-content content portlet-content" role="main">
+    <div class="fl-widget-content content portlet-content">
         <form:form action="${ formUrl }" method="POST" modelAttribute="group">
 
             <!-- Portlet Messages -->

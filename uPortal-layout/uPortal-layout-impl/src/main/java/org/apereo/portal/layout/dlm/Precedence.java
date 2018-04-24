@@ -20,7 +20,7 @@ import org.apereo.portal.spring.locator.UserLayoutStoreLocator;
 /** @since 2.5 */
 public final class Precedence {
     private double precedence = 0.0;
-    private int index = -1;
+    private long fragmentId = -1;
     private static Precedence userPrecedence = new Precedence();
 
     private Precedence() {}
@@ -31,13 +31,13 @@ public final class Precedence {
     }
 
     public String toString() {
-        return "p[" + precedence + ", " + index + "]";
+        return "p[" + precedence + ", " + fragmentId + "]";
     }
 
-    private Precedence(String fragmentIdx) {
-        int fragmentIndex = 0;
+    private Precedence(String fragmentId) {
+        long id;
         try {
-            fragmentIndex = Integer.parseInt(fragmentIdx);
+            id = Long.parseLong(fragmentId);
         } catch (Exception e) {
             // if unparsable default to lowest priority.
             return;
@@ -45,21 +45,20 @@ public final class Precedence {
 
         final IUserLayoutStore dls = UserLayoutStoreLocator.getUserLayoutStore();
 
-        this.precedence = dls.getFragmentPrecedence(fragmentIndex);
-        this.index = fragmentIndex;
+        this.precedence = dls.getFragmentPrecedence(id);
+        this.fragmentId = id;
     }
 
     /**
      * Returns true of this complete precedence is less than the complete precedence of the passed
-     * in Precedence object. The complete precedence takes into account the location in the
-     * configuration file of the fragment definition. If the "precedence" value is equal then the
-     * precedence object with the lowest index has the higher complete precedence. And index of -1
-     * indicates the highest index in the file.
+     * in Precedence object. The complete precedence takes into account the Id of the fragment
+     * definition (so that no two fragments may have exactly the same precedence). If the
+     * "precedence" value is equal then the precedence object with the lowest fragmentId has the
+     * higher complete precedence.
      */
     public boolean isLessThan(Precedence p) {
         if (this.precedence < p.precedence
-                || (this.precedence == p.precedence
-                        && (this.index == -1 && p.index > -1 || this.index > p.index))) return true;
+                || (this.precedence == p.precedence && this.fragmentId > p.fragmentId)) return true;
         return false;
     }
 

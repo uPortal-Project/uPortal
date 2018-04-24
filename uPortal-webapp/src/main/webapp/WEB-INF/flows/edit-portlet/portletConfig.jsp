@@ -66,7 +66,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
         </div> <!-- end: portlet-titlebar -->
 
         <!-- Portlet Content -->
-        <div class="fl-widget-content content portlet-content" role="main">
+        <div class="fl-widget-content content portlet-content">
 
             <!-- Portlet Messages -->
             <spring:hasBindErrors name="portlet">
@@ -183,7 +183,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     <!-- Portlet -->
     <div class="fl-widget portlet ptl-mgr view-setparameters" role="section">
         <!-- Portlet Content -->
-        <div class="fl-widget-content content portlet-content" role="main">
+        <div class="fl-widget-content content portlet-content">
 
             <!-- Add a note to the page if the portlet supports config mode  -->
             <c:if test="${supportsConfig}">
@@ -438,7 +438,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     <!-- Portlet config Permissions and categories -->
     <div id="${n}PortletPrincipalsCategories" class="fl-widget portlet ptl-mgr view-principals-cats" role="section">
         <!-- Portlet Content -->
-        <div class="fl-widget-content content portlet-content" role="main">
+        <div class="fl-widget-content content portlet-content">
             <!-- Portlet Section -->
             <div class="portlet-section" role="region">
                 <div class="titlebar">
@@ -543,7 +543,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     <!-- Portlet Lifecycle -->
     <div id="${n}PortletLifecycle" class="fl-widget portlet ptl-mgr view-lifecycle" role="section">
         <!-- Portlet Content -->
-        <div class="fl-widget-content content portlet-content" role="main">
+        <div class="fl-widget-content content portlet-content">
             <!-- Portlet Section -->
             <div class="portlet-section" role="region">
                 <div class="titlebar">

@@ -95,7 +95,7 @@ public enum Headers {
 
     private final String name;
 
-    private Headers(String name) {
+    Headers(String name) {
         this.name = name;
     }
 

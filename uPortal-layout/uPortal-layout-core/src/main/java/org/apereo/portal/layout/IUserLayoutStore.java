@@ -198,5 +198,5 @@ public interface IUserLayoutStore {
      * Returns a double value indicating the precedence value declared for a fragment. Fragments
      * with greater precedence come before those with lower precedence.
      */
-    double getFragmentPrecedence(int index);
+    double getFragmentPrecedence(long id);
 }

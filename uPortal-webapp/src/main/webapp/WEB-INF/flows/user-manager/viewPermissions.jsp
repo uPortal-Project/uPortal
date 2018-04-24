@@ -127,7 +127,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     </div> <!-- end: portlet-titlebar -->
 
     <!-- Portlet Content -->
-    <div id="${n}permissionBrowser" class="fl-widget-content portlet-content" role="main">
+    <div id="${n}permissionBrowser" class="fl-widget-content portlet-content">
 
         <!-- Portlet Section -->
         <div id="${n}permissionAddingTabs" class="portlet-section view-permissions" role="region">

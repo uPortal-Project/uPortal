@@ -1,13 +1,13 @@
 language: java
+sudo: false
 
 matrix:
   include:
-    # TODO add MacOS and OpenJDK 9 to matrix when Travis CI adds support
+    # TODO add MacOS and OpenJDK 10 to matrix when Travis CI adds support
     - os: linux
-      dist: xenial
-      group: edge
-      jdk: oraclejdk9
-      sudo: required
+      jdk: openjdk10
+    - os: linux
+      jdk: oraclejdk10
 
 # The 'build' task runs most things, including test, check, & static analysis
 install: true

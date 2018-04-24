@@ -47,7 +47,7 @@
     </div>
 
     <!-- Portlet Content -->
-    <div class="fl-widget-content content portlet-content" role="main">
+    <div class="fl-widget-content content portlet-content">
 
         <!-- Messages -->
         <div class="portlet-msg-error portlet-msg error alert alert-danger" role="alert">

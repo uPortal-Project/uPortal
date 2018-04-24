@@ -34,7 +34,7 @@
         <h2 class="title" role="heading"><spring:message code="reset.email.sent"/></h2>
     </div>
 
-    <div class="fl-widget-content content portlet-content" role="main" data-role="content">
+    <div class="fl-widget-content content portlet-content" data-role="content">
   
     <!-- Portlet Section -->
     <div class="portlet-section" role="region">

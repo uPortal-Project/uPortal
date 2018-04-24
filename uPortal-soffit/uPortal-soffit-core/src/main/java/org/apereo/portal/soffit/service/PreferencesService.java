@@ -46,7 +46,7 @@ public class PreferencesService extends AbstractJwtService {
 
     public Preferences parsePreferences(String preferencesToken) {
 
-        final Jws<Claims> claims = parseEncrypteToken(preferencesToken, Preferences.class);
+        final Jws<Claims> claims = parseEncryptedToken(preferencesToken, Preferences.class);
 
         final String username = claims.getBody().getSubject();
 

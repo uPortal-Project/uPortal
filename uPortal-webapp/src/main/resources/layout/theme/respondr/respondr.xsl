@@ -384,7 +384,7 @@
                 <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
                     <h2 class="title" role="heading"><xsl:value-of select="/layout/navigation/tab[@activeTab='true']/@name"/></h2>
                 </div>
-                <div class="fl-widget-content content portlet-content" role="main">
+                <div class="fl-widget-content content portlet-content">
                     <div class="portlet-section" role="region">
                         <div class="titlebar">
                             <h3 class="title" role="heading"><xsl:value-of select="upMsg:getMessage('allow.users.to', $USER_LANG)"/>:</h3>
@@ -412,7 +412,7 @@
                 <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
                     <h2 class="title" role="heading"></h2>
                 </div>
-                <div class="fl-widget-content content portlet-content" role="main">
+                <div class="fl-widget-content content portlet-content">
                     <form>
                         <p><xsl:value-of select="upMsg:getMessage('allow.users.to', $USER_LANG)"/>:</p>
                         <p>
@@ -434,7 +434,7 @@
                 <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
                     <h2 class="title" role="heading"></h2>
                 </div>
-                <div class="fl-widget-content content portlet-content" role="main">
+                <div class="fl-widget-content content portlet-content">
                     <div class="portlet-section" role="region">
                         <div class="titlebar">
                             <h3 class="title" role="heading"><xsl:value-of select="upMsg:getMessage('allow.users.to', $USER_LANG)"/>:</h3>
@@ -831,7 +831,7 @@
                     </div>
                 </header>
             </div>
-            <div class="portal-sticky-content" role="main">
+            <div class="portal-sticky-content">
                 <div class="portal-sticky-container container-fluid">
                     <div class="row">
                         <div id="portalPageBodyMessage" class="col-md-12"></div>

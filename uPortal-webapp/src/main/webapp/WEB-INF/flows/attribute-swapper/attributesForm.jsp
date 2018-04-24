@@ -44,7 +44,7 @@
     </div>
 
     <!-- Portlet Content -->
-	<div class="fl-widget-content content portlet-content" role="main">
+	<div class="fl-widget-content content portlet-content">
 
         <form:form modelAttribute="attributeSwapRequest" action="${attributeSwapUrl}" method="POST">
             <table class="portlet-table table table-hover">
