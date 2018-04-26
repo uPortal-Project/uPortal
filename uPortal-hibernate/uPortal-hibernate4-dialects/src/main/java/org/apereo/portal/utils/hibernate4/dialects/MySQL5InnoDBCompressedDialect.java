@@ -12,7 +12,7 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apereo.portal.utils;
+package org.apereo.portal.utils.hibernate4.dialects;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -36,7 +36,7 @@ public class MySQL5InnoDBCompressedDialect extends MySQL5InnoDBDialect {
 
     @Override
     public String getTableTypeString() {
-        return " ENGINE=InnoDB ROW_FORMAT=COMPRESSED";
+        return super.getTableTypeString() + " ROW_FORMAT=COMPRESSED";
     }
 
     @Override

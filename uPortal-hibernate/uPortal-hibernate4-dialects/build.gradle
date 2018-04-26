@@ -1,0 +1,20 @@
+description = "Apereo uPortal Usefull Dialects for hibernate 4"
+
+
+dependencies {
+    compileOnly 'org.hibernate:hibernate-core:4.2.+'
+    compileOnly "org.slf4j:jcl-over-slf4j:${slf4jVersion}"
+}
+
+/*
+ * This section is the key to IDE integration.  IDE will look for source files in both...
+ *
+ *   - src/main/java
+ */
+sourceSets {
+    main {
+        java {
+            srcDir 'src/main/java'
+        }
+    }
+}
