@@ -128,6 +128,7 @@ subprojects {
         publishingUsername = project.hasProperty('ossrhUsername') ? project.getProperty('ossrhUsername') : ""
         publishingPassword = project.hasProperty('ossrhPassword') ? project.getProperty('ossrhPassword') : ""
         publishingRepositoryUrl = project.hasProperty('ossrhUrl') ? project.getProperty('ossrhUrl') : "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+        publishingRepositoryUrlSnapshot = project.hasProperty('ossrhUrlSnapshot') ? project.getProperty('ossrhUrlSnapshot') : "https://oss.sonatype.org/content/repositories/snapshots/"
     }
     signing {
         required { gradle.taskGraph.hasTask('uploadArchives') }
@@ -167,6 +168,10 @@ subprojects {
                 beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
 
                 repository(url: publishingRepositoryUrl) {
+                    authentication(userName: publishingUsername, password: publishingPassword)
+                }
+
+                snapshotRepository(url: publishingRepositoryUrlSnapshot) {
                     authentication(userName: publishingUsername, password: publishingPassword)
                 }
 
