@@ -27,13 +27,13 @@ elements is somewhat risky;  sending fewer (1, 2, or 3) should be safe.
 
 You can instruct uPortal to send each data model object using a dedicated
 <em>portlet preference</em> in the publishing record (metadata) of each soffit.
-The default value of each preference is <code>false</code>;  set it to
-<code>true</code> to send the element.
+The default value of each preference is `false`;  set it to
+`true` to send the element.
 
-* <code>Bearer</code>:  <code>org.apereo.portal.soffit.connector.SoffitConnectorController.includeAuthorization</code>
-* <code>PortalRequest</code>:  <code>org.apereo.portal.soffit.connector.SoffitConnectorController.includePortalRequest</code>
-* <code>Preferences</code>:  <code>org.apereo.portal.soffit.connector.SoffitConnectorController.includePreferences</code>
-* <code>Definition</code>:  <code>org.apereo.portal.soffit.connector.SoffitConnectorController.includeDefinition</code>
+* `Bearer`:  `org.apereo.portal.soffit.connector.SoffitConnectorController.includeAuthorization`
+* `PortalRequest`:  `org.apereo.portal.soffit.connector.SoffitConnectorController.includePortalRequest`
+* `Preferences`:  `org.apereo.portal.soffit.connector.SoffitConnectorController.includePreferences`
+* `Definition`:  `org.apereo.portal.soffit.connector.SoffitConnectorController.includeDefinition`
 
 ## Accessing Data Model Objects in a JSP
 

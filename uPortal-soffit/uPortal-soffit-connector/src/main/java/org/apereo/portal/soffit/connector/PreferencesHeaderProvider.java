@@ -43,7 +43,7 @@ public class PreferencesHeaderProvider extends AbstractHeaderProvider {
     @Override
     public Header createHeader(RenderRequest renderRequest, RenderResponse renderResponse) {
 
-        // Include?
+        // Include this header?
         if (!isIncluded(renderRequest, INCLUDE_PREFERENCE)) {
             return null;
         }
