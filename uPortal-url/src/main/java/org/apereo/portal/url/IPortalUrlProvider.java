@@ -24,7 +24,7 @@ public interface IPortalUrlProvider {
      * @return The current portal action url builder, null if there is no portal action url builder
      *     for this requet
      */
-    public IPortalActionUrlBuilder getPortalActionUrlBuilder(HttpServletRequest request);
+    IPortalActionUrlBuilder getPortalActionUrlBuilder(HttpServletRequest request);
 
     /**
      * Converts a standard {@link IPortalUrlBuilder} to a {@link IPortalActionUrlBuilder}
@@ -33,7 +33,7 @@ public interface IPortalUrlProvider {
      * @param portalUrlBuilder The url builder to convert
      * @return A portal action url builder
      */
-    public IPortalActionUrlBuilder convertToPortalActionUrlBuilder(
+    IPortalActionUrlBuilder convertToPortalActionUrlBuilder(
             HttpServletRequest request, IPortalUrlBuilder portalUrlBuilder);
 
     /**
@@ -43,7 +43,7 @@ public interface IPortalUrlProvider {
      * @param request The current portal request
      * @return Default {@link IPortalUrlBuilder}
      */
-    public IPortalUrlBuilder getDefaultUrl(HttpServletRequest request);
+    IPortalUrlBuilder getDefaultUrl(HttpServletRequest request);
 
     /**
      * Get a portal URL builder that targets the specified layout node.
@@ -55,12 +55,8 @@ public interface IPortalUrlProvider {
      * @throws IllegalArgumentException If the specified ID doesn't exist for a folder in the users
      *     layout.
      */
-    public IPortalUrlBuilder getPortalUrlBuilderByLayoutNode(
+    IPortalUrlBuilder getPortalUrlBuilderByLayoutNode(
             HttpServletRequest request, String layoutNodeId, UrlType urlType);
-
-    //  Not implemented until all folders have fnames?
-    //  public IPortalUrlBuilder getPortalUrlBuilderByLayoutFName(HttpServletRequest request, String
-    // folderFname, UrlType urlType);
 
     /**
      * Get a portal URL builder that targets the specified portlet window.
@@ -72,7 +68,7 @@ public interface IPortalUrlProvider {
      * @throws IllegalArgumentException If the specified ID doesn't exist for a folder in the users
      *     layout.
      */
-    public IPortalUrlBuilder getPortalUrlBuilderByPortletWindow(
+    IPortalUrlBuilder getPortalUrlBuilderByPortletWindow(
             HttpServletRequest request, IPortletWindowId portletWindowId, UrlType urlType);
 
     /**
@@ -85,6 +81,6 @@ public interface IPortalUrlProvider {
      * @throws IllegalArgumentException If the specified ID doesn't exist for a folder in the users
      *     layout.
      */
-    public IPortalUrlBuilder getPortalUrlBuilderByPortletFName(
+    IPortalUrlBuilder getPortalUrlBuilderByPortletFName(
             HttpServletRequest request, String portletFName, UrlType urlType);
 }
