@@ -69,7 +69,7 @@ public class UpdatePreferencesServletTest {
         ModelAndView modelAndView = updatePreferencesServlet.removeByFName(req, res, "fname");
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test(expected = IllegalStateException.class)
     public void testRemoveByFName() throws IOException {
         IPerson person = new PersonImpl();
         person.setUserName("jDoe");
