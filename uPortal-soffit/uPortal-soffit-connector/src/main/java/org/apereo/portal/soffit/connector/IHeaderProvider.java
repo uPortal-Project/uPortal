@@ -26,5 +26,13 @@ import org.apache.http.Header;
  */
 public interface IHeaderProvider {
 
+    /**
+     * Prepares an appropriate HTTP header for inclusion in the outbound request to the remote
+     * soffit. May return <code>null</code>, in which case the header should be ignored.
+     *
+     * @param renderRequest The current <code>RenderRequest</code>
+     * @param renderResponse The current <code>RenderResponse</code>
+     * @return Ann appropriate HTTP header or <code>null</code>
+     */
     Header createHeader(RenderRequest renderRequest, RenderResponse renderResponse);
 }

@@ -15,6 +15,7 @@
 package org.apereo.portal.soffit.connector;
 
 import java.util.Date;
+import javax.portlet.PortletPreferences;
 import javax.portlet.PortletSession;
 import javax.portlet.RenderRequest;
 import org.slf4j.Logger;
@@ -28,6 +29,12 @@ public abstract class AbstractHeaderProvider implements IHeaderProvider {
     private String guestUserName;
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
+
+    protected final boolean isIncluded(RenderRequest renderRequest, String preferenceName) {
+        final PortletPreferences preferences = renderRequest.getPreferences();
+        final String rslt = preferences.getValue(preferenceName, Boolean.FALSE.toString());
+        return Boolean.valueOf(rslt);
+    }
 
     protected final String getUsername(RenderRequest renderRequest) {
         final String rslt =

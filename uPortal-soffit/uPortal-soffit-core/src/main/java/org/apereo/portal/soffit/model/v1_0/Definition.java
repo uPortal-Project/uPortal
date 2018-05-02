@@ -48,6 +48,20 @@ public class Definition extends AbstractTokenizable {
         this.parameters = Collections.unmodifiableMap(parameters);
     }
 
+    /**
+     * Supports proxying a missing data model element.
+     *
+     * @since 5.1
+     */
+    protected Definition() {
+        super(null);
+        this.title = null;
+        this.fname = null;
+        this.description = null;
+        this.categories = null;
+        this.parameters = null;
+    }
+
     public String getTitle() {
         return title;
     }

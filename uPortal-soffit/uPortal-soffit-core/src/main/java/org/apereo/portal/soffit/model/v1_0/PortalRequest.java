@@ -89,7 +89,7 @@ public class PortalRequest extends AbstractTokenizable {
 
         private final String name;
 
-        private Attributes(String name) {
+        Attributes(String name) {
             this.name = name;
         }
 
@@ -111,6 +111,18 @@ public class PortalRequest extends AbstractTokenizable {
         this.properties = Collections.unmodifiableMap(properties);
         this.attributes = Collections.unmodifiableMap(attributes);
         this.parameters = Collections.unmodifiableMap(parameters);
+    }
+
+    /**
+     * Supports proxying a missing data model element.
+     *
+     * @since 5.1
+     */
+    protected PortalRequest() {
+        super(null);
+        this.properties = null;
+        this.attributes = null;
+        this.parameters = null;
     }
 
     /**

@@ -135,26 +135,51 @@ public class SoffitRendererController {
      * Implementation
      */
 
+    /**
+     * Returns the {@link PortalRequest} or a {@link MissingModelElement} proxy if the header is not
+     * present.
+     */
     private PortalRequest getPortalRequest(final HttpServletRequest req) {
         final String portalRequestToken = req.getHeader(Headers.PORTAL_REQUEST.getName());
-        return portalRequestService.parsePortalRequest(portalRequestToken);
+        return StringUtils.isNotBlank(portalRequestToken)
+                ? portalRequestService.parsePortalRequest(portalRequestToken)
+                : MissingModelElement.PORTAL_REQUEST;
     }
 
+    /**
+     * Returns the {@link Bearer} or a {@link MissingModelElement} proxy if the header is not
+     * present.
+     */
     private Bearer getBearer(final HttpServletRequest req) {
         final String authorizationHeader = req.getHeader(Headers.AUTHORIZATION.getName());
-        final String bearerToken =
-                authorizationHeader.substring(Headers.BEARER_TOKEN_PREFIX.length());
-        return bearerService.parseBearerToken(bearerToken);
+        if (StringUtils.isNotBlank(authorizationHeader)) {
+            final String bearerToken =
+                    authorizationHeader.substring(Headers.BEARER_TOKEN_PREFIX.length());
+            return bearerService.parseBearerToken(bearerToken);
+        }
+        return MissingModelElement.BEARER;
     }
 
+    /**
+     * Returns the {@link Preferences} or a {@link MissingModelElement} proxy if the header is not
+     * present.
+     */
     private Preferences getPreferences(final HttpServletRequest req) {
         final String preferencesToken = req.getHeader(Headers.PREFERECES.getName());
-        return preferencesService.parsePreferences(preferencesToken);
+        return StringUtils.isNotBlank(preferencesToken)
+                ? preferencesService.parsePreferences(preferencesToken)
+                : MissingModelElement.PREFERENCES;
     }
 
+    /**
+     * Returns the {@link Definition} or a {@link MissingModelElement} proxy if the header is not
+     * present.
+     */
     private Definition getDefinition(final HttpServletRequest req) {
         final String definitionToken = req.getHeader(Headers.DEFINITION.getName());
-        return definitionService.parseDefinition(definitionToken);
+        return StringUtils.isNotBlank(definitionToken)
+                ? definitionService.parseDefinition(definitionToken)
+                : MissingModelElement.DEFINITION;
     }
 
     private String selectView(
@@ -174,19 +199,24 @@ public class SoffitRendererController {
         final Set<String> moduleResources =
                 req.getSession().getServletContext().getResourcePaths(modulePath);
 
-        // Need to make a selection based on 3 things:  module (above), mode, & windowState
-        final Map<String, List<String>> requestAttributes = portalRequest.getAttributes();
-        final String modeLowercase =
-                !requestAttributes.get(Attributes.MODE.getName()).isEmpty()
-                        ? requestAttributes.get(Attributes.MODE.getName()).get(0).toLowerCase()
-                        : DEFAULT_MODE;
-        final String windowStateLowercase =
-                !requestAttributes.get(Attributes.WINDOW_STATE.getName()).isEmpty()
-                        ? requestAttributes
-                                .get(Attributes.WINDOW_STATE.getName())
-                                .get(0)
-                                .toLowerCase()
-                        : DEFAULT_WINDOW_STATE;
+        // Choose Mode & WindowState
+        String modeLowercase, windowStateLowercase;
+        if (!MissingModelElement.PORTAL_REQUEST.equals(portalRequest)) {
+            // Need to make a selection based on 3 things:  module (above), mode, & windowState
+            final Map<String, List<String>> attr = portalRequest.getAttributes();
+            modeLowercase =
+                    !attr.get(Attributes.MODE.getName()).isEmpty()
+                            ? attr.get(Attributes.MODE.getName()).get(0).toLowerCase()
+                            : DEFAULT_MODE;
+            windowStateLowercase =
+                    !attr.get(Attributes.WINDOW_STATE.getName()).isEmpty()
+                            ? attr.get(Attributes.WINDOW_STATE.getName()).get(0).toLowerCase()
+                            : DEFAULT_WINDOW_STATE;
+        } else {
+            // Use the defaults
+            modeLowercase = DEFAULT_MODE;
+            windowStateLowercase = DEFAULT_WINDOW_STATE;
+        }
 
         final ViewTuple viewTuple = new ViewTuple(modulePath, modeLowercase, windowStateLowercase);
         String rslt = availableViews.get(viewTuple);

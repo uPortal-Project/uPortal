@@ -35,10 +35,18 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 public class PreferencesHeaderProvider extends AbstractHeaderProvider {
 
+    public static final String INCLUDE_PREFERENCE =
+            SoffitConnectorController.class.getName() + ".includePreferences";
+
     @Autowired private PreferencesService preferencesService;
 
     @Override
     public Header createHeader(RenderRequest renderRequest, RenderResponse renderResponse) {
+
+        // Include this header?
+        if (!isIncluded(renderRequest, INCLUDE_PREFERENCE)) {
+            return null;
+        }
 
         // Username
         final String username = getUsername(renderRequest);
