@@ -26,7 +26,7 @@ public class PortalDialectResolver implements DialectResolver {
     @Override
     public Dialect resolveDialect(DialectResolutionInfo metaData) {
         final String databaseName = metaData.getDatabaseName();
-        final int databaseMajorVersion = metaData.getDatabaseMinorVersion();
+        final int databaseMajorVersion = metaData.getDatabaseMajorVersion();
         final int databaseMinorVersion = metaData.getDatabaseMinorVersion();
 
         if ("MySQL".equals(databaseName) && 5 == databaseMajorVersion) {
