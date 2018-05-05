@@ -1,5 +1,5 @@
 plugins {
-    id 'org.openrepose.gradle.plugins.jaxb' version '2.4.1'
+    id 'org.openrepose.gradle.plugins.jaxb' version '2.5.0'
 }
 
 description = 'Apereo uPortal Search API'
