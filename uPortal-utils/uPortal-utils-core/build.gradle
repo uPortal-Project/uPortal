@@ -15,7 +15,7 @@ dependencies {
     compile "net.sf.ehcache:ehcache-core:${ehcacheVersion}"
     compile "org.apache.ant:ant:${antVersion}"
     compile "org.apache.commons:commons-lang3:${commonsLang3Version}"
-    compile "org.aspectj:aspectjrt:${aspectjVersion}"
+    compile "org.aspectj:aspectjweaver:${aspectjVersion}"
     compile("org.codehaus.woodstox:woodstox-core-asl:${woodstoxVersion}") {
         exclude group: 'javax.xml.stream', module: 'stax-api'
     }
