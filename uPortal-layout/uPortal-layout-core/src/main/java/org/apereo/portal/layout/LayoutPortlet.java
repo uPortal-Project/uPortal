@@ -89,7 +89,6 @@ public class LayoutPortlet {
             boolean staticContentParsed = false;
             boolean pithyStaticContentParsed = false;
             boolean widgetTypeParsed = false;
-            boolean widgetConfigParsed = false;
             boolean widgetTemplateParsed = false;
             boolean renderOnWebParsed = false;
 
@@ -119,7 +118,7 @@ public class LayoutPortlet {
                         && WIDGET_TYPE_PORTLET_PREFERENCE.equals(pref.getName())) {
                     this.setWidgetType(pref.getValues()[0]);
                     widgetTypeParsed = true;
-                } else if (!widgetConfigParsed
+                } else if ( (this.widgetConfig == null)
                         && WIDGET_CONFIG_PORTLET_PREFERENCE.equals(pref.getName())) {
                     if (isValidJSON(pref.getValues()[0])) {
                         this.setWidgetConfig(pref.getValues()[0]);
@@ -127,7 +126,6 @@ public class LayoutPortlet {
                         this.setWidgetConfig(
                                 "{\"error\" : \"config JSON not valid, syntax error? Double quotes not escaped?\"}");
                     }
-                    widgetConfigParsed = true;
                 } else if (!widgetTemplateParsed
                         && WIDGET_TEMPLATE_PORTLET_PREFERENCE.equals(pref.getName())) {
                     this.setWidgetTemplate(pref.getValues()[0]);
@@ -139,7 +137,7 @@ public class LayoutPortlet {
                 }
 
                 if (staticContentParsed && pithyStaticContentParsed && (this.widgetURL != null)
-                    && widgetTypeParsed && widgetConfigParsed && widgetTemplateParsed
+                    && widgetTypeParsed && (this.widgetConfig != null) && widgetTemplateParsed
                     && renderOnWebParsed) {
                     // if all the Portlet Preferences that might be harvested into JavaBean
                     // properties have been harvested, then there's nothing more to harvest so stop
