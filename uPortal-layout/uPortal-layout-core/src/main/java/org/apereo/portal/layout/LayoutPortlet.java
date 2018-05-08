@@ -76,18 +76,12 @@ public class LayoutPortlet {
                 this.setFaIcon(faIconParam.getValue());
             }
 
-            // flags tracking which portlet preferences have already been parsed are an attempt
-            // to make more efficient the harvesting of portlet
-            // preferences into JavaBean properties, since portlet preferences are available here
-            // only as a list for iteration and not as a map for efficient lookup. This single-loop
+            // This single-loop
             // solution traverses the list one time handling each
             // preference as it is encountered rather than looping through the preferences for each
-            // preference sought. The flags potentially
-            // further expedite this process by short-circuiting once all the relevant portlet
-            // preferences have been parsed.
+            // preference sought.
 
             boolean staticContentParsed = false;
-            boolean widgetTypeParsed = false;
             boolean renderOnWebParsed = false;
 
             // flag 0: true if staticContent JavaBean property setting is fulfilled
@@ -111,10 +105,9 @@ public class LayoutPortlet {
                 } else if ( (this.widgetURL == null)
                         && WIDGET_URL_PORTLET_PREFERENCE.equals(pref.getName())) {
                     this.setWidgetURL(pref.getValues()[0]);
-                } else if (!widgetTypeParsed
+                } else if ( (this.widgetType == null)
                         && WIDGET_TYPE_PORTLET_PREFERENCE.equals(pref.getName())) {
                     this.setWidgetType(pref.getValues()[0]);
-                    widgetTypeParsed = true;
                 } else if ( (this.widgetConfig == null)
                         && WIDGET_CONFIG_PORTLET_PREFERENCE.equals(pref.getName())) {
                     if (isValidJSON(pref.getValues()[0])) {
@@ -130,18 +123,6 @@ public class LayoutPortlet {
                         && RENDER_ON_WEB_PORTLET_PREFERENCE.equals(pref.getName())) {
                     renderOnWebParsed = true;
                     this.setRenderOnWeb(Boolean.valueOf(pref.getValues()[0]));
-                }
-
-                if (staticContentParsed && (this.pithyStaticContent != null)
-                    && (this.widgetURL != null) && widgetTypeParsed && (this.widgetConfig != null)
-                    && (this.widgetTemplate != null) && renderOnWebParsed) {
-                    // if all the Portlet Preferences that might be harvested into JavaBean
-                    // properties have been harvested, then there's nothing more to harvest so stop
-                    // iterating through portlet preferences. However, since in particular
-                    // pithyStaticContent is not widely adopted and many widgets will use a
-                    // type rather than a custom template, this shortcut will almost never
-                    // obtain
-                    break;
                 }
             }
         }
