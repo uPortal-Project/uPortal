@@ -10,7 +10,7 @@
         <img src="http://issuestats.com/github/Jasig/uPortal/badge/pr" alt="Issue Stats">
       </a>
       <a href="https://google.github.io/styleguide/javaguide.html">
-        <img src="https://img.shields.io/badge/code_style-Google-green.svg?style=flat" alt="Google Code Style">
+        <img src="https://img.shields.io/badge/code_style-Custom-green.svg?style=flat" alt="Custom Code Style">
       </a>
       <a href="https://github.com/search?q=topic%3Auportal+topic%3Asoffit&type=Repositories">
         <img src="https://img.shields.io/badge/discover-soffits-blue.svg?style=flat" alt="Discover Soffits">
