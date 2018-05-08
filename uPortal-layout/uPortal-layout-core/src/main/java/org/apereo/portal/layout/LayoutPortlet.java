@@ -82,7 +82,6 @@ public class LayoutPortlet {
             // preference sought.
 
             boolean staticContentParsed = false;
-            boolean renderOnWebParsed = false;
 
             // flag 0: true if staticContent JavaBean property setting is fulfilled
             // either by the portlet not being a static content portlet so there's nothing to do
@@ -98,30 +97,23 @@ public class LayoutPortlet {
                         && pref.getValues().length == 1) {
                     this.setStaticContent(pref.getValues()[0]);
                     staticContentParsed = true;
-                } else if ( (this.pithyStaticContent == null)
-                        && PITHY_CONTENT_PORTLET_PREFERENCE.equals(pref.getName())
+                } else if ( PITHY_CONTENT_PORTLET_PREFERENCE.equals(pref.getName())
                         && 1 == pref.getValues().length) {
                     this.setPithyStaticContent(pref.getValues()[0]);
-                } else if ( (this.widgetURL == null)
-                        && WIDGET_URL_PORTLET_PREFERENCE.equals(pref.getName())) {
+                } else if ( WIDGET_URL_PORTLET_PREFERENCE.equals(pref.getName())) {
                     this.setWidgetURL(pref.getValues()[0]);
-                } else if ( (this.widgetType == null)
-                        && WIDGET_TYPE_PORTLET_PREFERENCE.equals(pref.getName())) {
+                } else if ( WIDGET_TYPE_PORTLET_PREFERENCE.equals(pref.getName())) {
                     this.setWidgetType(pref.getValues()[0]);
-                } else if ( (this.widgetConfig == null)
-                        && WIDGET_CONFIG_PORTLET_PREFERENCE.equals(pref.getName())) {
+                } else if ( WIDGET_CONFIG_PORTLET_PREFERENCE.equals(pref.getName())) {
                     if (isValidJSON(pref.getValues()[0])) {
                         this.setWidgetConfig(pref.getValues()[0]);
                     } else {
                         this.setWidgetConfig(
                                 "{\"error\" : \"config JSON not valid, syntax error? Double quotes not escaped?\"}");
                     }
-                } else if ( (this.widgetTemplate == null)
-                        && WIDGET_TEMPLATE_PORTLET_PREFERENCE.equals(pref.getName())) {
+                } else if ( WIDGET_TEMPLATE_PORTLET_PREFERENCE.equals(pref.getName())) {
                     this.setWidgetTemplate(pref.getValues()[0]);
-                } else if (!renderOnWebParsed
-                        && RENDER_ON_WEB_PORTLET_PREFERENCE.equals(pref.getName())) {
-                    renderOnWebParsed = true;
+                } else if ( RENDER_ON_WEB_PORTLET_PREFERENCE.equals(pref.getName())) {
                     this.setRenderOnWeb(Boolean.valueOf(pref.getValues()[0]));
                 }
             }
