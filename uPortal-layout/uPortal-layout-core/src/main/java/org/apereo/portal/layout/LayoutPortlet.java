@@ -76,46 +76,52 @@ public class LayoutPortlet {
                 this.setFaIcon(faIconParam.getValue());
             }
 
-            // this "efficencyFlag" is an attempt to make more efficient the harvesting of portlet
+            // flags tracking which portlet preferences have already been parsed are an attempt
+            // to make more efficient the harvesting of portlet
             // preferences into JavaBean properties, since portlet preferences are available here
-            // only as a list for iteration and not as a map for efficient lookup. This solution
-            // allows O(N) computation by traversing the list one time rather than O(N^2)
-            // by potentially having to traverse the list N times.
+            // only as a list for iteration and not as a map for efficient lookup. This single-loop
+            // solution traverses the list one time handling each
+            // preference as it is encountered rather than looping through the preferences for each
+            // preference sought. The flags potentially
+            // further expedite this process by short-circuiting once all the relevant portlet
+            // preferences have been parsed.
 
-            boolean[] efficencyFlag = {false, false, false, false, false, false, false};
+            boolean staticContentParsed = false;
+            boolean pithyStaticContentParsed = false;
+            boolean widgetUrlParsed = false;
+            boolean widgetTypeParsed = false;
+            boolean widgetConfigParsed = false;
+            boolean widgetTemplateParsed = false;
+            boolean renderOnWebParsed = false;
 
             // flag 0: true if staticContent JavaBean property setting is fulfilled
             // either by the portlet not being a static content portlet so there's nothing to do
             // or by the portlet being a static content portlet and the content portlet preference
-            // having been copied into the
-            efficencyFlag[0] =
+            // having been copied into the JavaBean property
+            staticContentParsed =
                     !(portletDef.getPortletDescriptorKey() != null
                             && STATIC_CONTENT_PORTLET_WEBAPP_NAME.equals(
                                     portletDef.getPortletDescriptorKey().getWebAppName()));
             for (IPortletPreference pref : portletDef.getPortletPreferences()) {
-                if (!efficencyFlag[0]
+                if (!staticContentParsed
                         && CONTENT_PORTLET_PREFERENCE.equals(pref.getName())
                         && pref.getValues().length == 1) {
                     this.setStaticContent(pref.getValues()[0]);
-                    efficencyFlag[0] = true;
-                } else if (!efficencyFlag[1]
+                    staticContentParsed = true;
+                } else if (!pithyStaticContentParsed
                         && PITHY_CONTENT_PORTLET_PREFERENCE.equals(pref.getName())
                         && 1 == pref.getValues().length) {
                     this.setPithyStaticContent(pref.getValues()[0]);
-
-                    // flag 1: pithyStaticContent JavaBean property set
-                    efficencyFlag[1] = true;
-                } else if (!efficencyFlag[2]
+                    pithyStaticContentParsed = true;
+                } else if (!widgetUrlParsed
                         && WIDGET_URL_PORTLET_PREFERENCE.equals(pref.getName())) {
                     this.setWidgetURL(pref.getValues()[0]);
-                    // flag 2: widgetUrl JavaBean property set
-                    efficencyFlag[2] = true;
-                } else if (!efficencyFlag[3]
+                    widgetUrlParsed = true;
+                } else if (!widgetTypeParsed
                         && WIDGET_TYPE_PORTLET_PREFERENCE.equals(pref.getName())) {
                     this.setWidgetType(pref.getValues()[0]);
-                    // flag 3: widgetType JavaBean property set
-                    efficencyFlag[3] = true;
-                } else if (!efficencyFlag[4]
+                    widgetTypeParsed = true;
+                } else if (!widgetConfigParsed
                         && WIDGET_CONFIG_PORTLET_PREFERENCE.equals(pref.getName())) {
                     if (isValidJSON(pref.getValues()[0])) {
                         this.setWidgetConfig(pref.getValues()[0]);
@@ -123,39 +129,30 @@ public class LayoutPortlet {
                         this.setWidgetConfig(
                                 "{\"error\" : \"config JSON not valid, syntax error? Double quotes not escaped?\"}");
                     }
-                    // flag 4: widgetConfig JavaBean property sets
-                    efficencyFlag[4] = true;
-                } else if (!efficencyFlag[5]
+                    widgetConfigParsed = true;
+                } else if (!widgetTemplateParsed
                         && WIDGET_TEMPLATE_PORTLET_PREFERENCE.equals(pref.getName())) {
                     this.setWidgetTemplate(pref.getValues()[0]);
-                    // flag 5: widgetTemplate JavaBean property set
-                    efficencyFlag[5] = true;
-                } else if (!efficencyFlag[6]
+                    widgetTemplateParsed = true;
+                } else if (!renderOnWebParsed
                         && RENDER_ON_WEB_PORTLET_PREFERENCE.equals(pref.getName())) {
-                    // flag 6: renderOnWeb JavaBean property set
-                    efficencyFlag[6] = true;
+                    renderOnWebParsed = true;
                     this.setRenderOnWeb(Boolean.valueOf(pref.getValues()[0]));
                 }
 
-                if (allTrue(efficencyFlag)) {
+                if (staticContentParsed && pithyStaticContentParsed && widgetUrlParsed
+                    && widgetTypeParsed && widgetConfigParsed && widgetTemplateParsed
+                    && renderOnWebParsed) {
                     // if all the Portlet Preferences that might be harvested into JavaBean
                     // properties have been harvested, then there's nothing more to harvest so stop
                     // iterating through portlet preferences. However, since in particular
-                    // pithyStaticContent is not widely adopted, this shortcut will almost never
+                    // pithyStaticContent is not widely adopted and many widgets will use a
+                    // type rather than a custom template, this shortcut will almost never
                     // obtain
                     break;
                 }
             }
         }
-    }
-
-    private boolean allTrue(boolean[] arr) {
-        for (int i = 0; i < arr.length; i++) {
-            if (arr[i] == false) {
-                return false;
-            }
-        }
-        return true;
     }
 
     private boolean isValidJSON(final String json) {
