@@ -88,7 +88,6 @@ public class LayoutPortlet {
 
             boolean staticContentParsed = false;
             boolean pithyStaticContentParsed = false;
-            boolean widgetUrlParsed = false;
             boolean widgetTypeParsed = false;
             boolean widgetConfigParsed = false;
             boolean widgetTemplateParsed = false;
@@ -113,10 +112,9 @@ public class LayoutPortlet {
                         && 1 == pref.getValues().length) {
                     this.setPithyStaticContent(pref.getValues()[0]);
                     pithyStaticContentParsed = true;
-                } else if (!widgetUrlParsed
+                } else if ( (this.widgetURL == null)
                         && WIDGET_URL_PORTLET_PREFERENCE.equals(pref.getName())) {
                     this.setWidgetURL(pref.getValues()[0]);
-                    widgetUrlParsed = true;
                 } else if (!widgetTypeParsed
                         && WIDGET_TYPE_PORTLET_PREFERENCE.equals(pref.getName())) {
                     this.setWidgetType(pref.getValues()[0]);
@@ -140,7 +138,7 @@ public class LayoutPortlet {
                     this.setRenderOnWeb(Boolean.valueOf(pref.getValues()[0]));
                 }
 
-                if (staticContentParsed && pithyStaticContentParsed && widgetUrlParsed
+                if (staticContentParsed && pithyStaticContentParsed && (this.widgetURL != null)
                     && widgetTypeParsed && widgetConfigParsed && widgetTemplateParsed
                     && renderOnWebParsed) {
                     // if all the Portlet Preferences that might be harvested into JavaBean
