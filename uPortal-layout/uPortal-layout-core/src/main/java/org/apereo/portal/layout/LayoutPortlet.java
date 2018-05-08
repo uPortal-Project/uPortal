@@ -93,23 +93,23 @@ public class LayoutPortlet {
                     // the extra check of web app name avoids accidentally interpretting some other
                     // kind of portlet's content portlet-preference as static content.
                     this.setStaticContent(pref.getValues()[0]);
-                } else if ( PITHY_CONTENT_PORTLET_PREFERENCE.equals(pref.getName())
+                } else if (PITHY_CONTENT_PORTLET_PREFERENCE.equals(pref.getName())
                     && 1 == pref.getValues().length) {
                     this.setPithyStaticContent(pref.getValues()[0]);
-                } else if ( WIDGET_URL_PORTLET_PREFERENCE.equals(pref.getName())) {
+                } else if (WIDGET_URL_PORTLET_PREFERENCE.equals(pref.getName())) {
                     this.setWidgetURL(pref.getValues()[0]);
-                } else if ( WIDGET_TYPE_PORTLET_PREFERENCE.equals(pref.getName())) {
+                } else if (WIDGET_TYPE_PORTLET_PREFERENCE.equals(pref.getName())) {
                     this.setWidgetType(pref.getValues()[0]);
-                } else if ( WIDGET_CONFIG_PORTLET_PREFERENCE.equals(pref.getName())) {
+                } else if (WIDGET_CONFIG_PORTLET_PREFERENCE.equals(pref.getName())) {
                     if (isValidJSON(pref.getValues()[0])) {
                         this.setWidgetConfig(pref.getValues()[0]);
                     } else {
                         this.setWidgetConfig(
                             "{\"error\" : \"config JSON not valid, syntax error? Double quotes not escaped?\"}");
                     }
-                } else if ( WIDGET_TEMPLATE_PORTLET_PREFERENCE.equals(pref.getName())) {
+                } else if (WIDGET_TEMPLATE_PORTLET_PREFERENCE.equals(pref.getName())) {
                     this.setWidgetTemplate(pref.getValues()[0]);
-                } else if ( RENDER_ON_WEB_PORTLET_PREFERENCE.equals(pref.getName())) {
+                } else if (RENDER_ON_WEB_PORTLET_PREFERENCE.equals(pref.getName())) {
                     this.setRenderOnWeb(Boolean.valueOf(pref.getValues()[0]));
                 }
             }
