@@ -48,10 +48,14 @@ public class LayoutPortlet {
     private boolean isAltMaxUrl = false;
     private boolean isRenderOnWeb;
 
-    /** Fuller static content that you might display in a lightbox or so. */
+    /**
+     * Fuller static content that you might display in a lightbox or so.
+     */
     private String staticContent;
 
-    /** Pithy static content that you might display on a dashboard mosaic view or so. */
+    /**
+     * Pithy static content that you might display on a dashboard mosaic view or so.
+     */
     private String pithyStaticContent;
 
     public LayoutPortlet() {}
