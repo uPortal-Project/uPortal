@@ -76,7 +76,18 @@ public class LayoutPortlet {
                 this.setFaIcon(faIconParam.getValue());
             }
 
+            // this "efficencyFlag" is an attempt to make more efficient the harvesting of portlet
+            // preferences into JavaBean properties, since portlet preferences are available here
+            // only as a list for iteration and not as a map for efficient lookup. This solution
+            // allows O(N) computation by traversing the list one time rather than O(N^2)
+            // by potentially having to traverse the list N times.
+
             boolean[] efficencyFlag = {false, false, false, false, false, false, false};
+
+            // flag 0: true if staticContent JavaBean property setting is fulfilled
+            // either by the portlet not being a static content portlet so there's nothing to do
+            // or by the portlet being a static content portlet and the content portlet preference
+            // having been copied into the
             efficencyFlag[0] =
                     !(portletDef.getPortletDescriptorKey() != null
                             && STATIC_CONTENT_PORTLET_WEBAPP_NAME.equals(
@@ -91,14 +102,18 @@ public class LayoutPortlet {
                         && PITHY_CONTENT_PORTLET_PREFERENCE.equals(pref.getName())
                         && 1 == pref.getValues().length) {
                     this.setPithyStaticContent(pref.getValues()[0]);
+
+                    // flag 1: pithyStaticContent JavaBean property set
                     efficencyFlag[1] = true;
                 } else if (!efficencyFlag[2]
                         && WIDGET_URL_PORTLET_PREFERENCE.equals(pref.getName())) {
                     this.setWidgetURL(pref.getValues()[0]);
+                    // flag 2: widgetUrl JavaBean property set
                     efficencyFlag[2] = true;
                 } else if (!efficencyFlag[3]
                         && WIDGET_TYPE_PORTLET_PREFERENCE.equals(pref.getName())) {
                     this.setWidgetType(pref.getValues()[0]);
+                    // flag 3: widgetType JavaBean property set
                     efficencyFlag[3] = true;
                 } else if (!efficencyFlag[4]
                         && WIDGET_CONFIG_PORTLET_PREFERENCE.equals(pref.getName())) {
@@ -108,18 +123,26 @@ public class LayoutPortlet {
                         this.setWidgetConfig(
                                 "{\"error\" : \"config JSON not valid, syntax error? Double quotes not escaped?\"}");
                     }
+                    // flag 4: widgetConfig JavaBean property sets
                     efficencyFlag[4] = true;
                 } else if (!efficencyFlag[5]
                         && WIDGET_TEMPLATE_PORTLET_PREFERENCE.equals(pref.getName())) {
                     this.setWidgetTemplate(pref.getValues()[0]);
+                    // flag 5: widgetTemplate JavaBean property set
                     efficencyFlag[5] = true;
                 } else if (!efficencyFlag[6]
                         && RENDER_ON_WEB_PORTLET_PREFERENCE.equals(pref.getName())) {
+                    // flag 6: renderOnWeb JavaBean property set
                     efficencyFlag[6] = true;
                     this.setRenderOnWeb(Boolean.valueOf(pref.getValues()[0]));
                 }
 
                 if (allTrue(efficencyFlag)) {
+                    // if all the Portlet Preferences that might be harvested into JavaBean
+                    // properties have been harvested, then there's nothing more to harvest so stop
+                    // iterating through portlet preferences. However, since in particular
+                    // pithyStaticContent is not widely adopted, this shortcut will almost never
+                    // obtain
                     break;
                 }
             }
