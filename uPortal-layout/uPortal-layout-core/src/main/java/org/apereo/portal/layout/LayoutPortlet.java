@@ -58,7 +58,8 @@ public class LayoutPortlet {
      */
     private String pithyStaticContent;
 
-    public LayoutPortlet() {}
+    public LayoutPortlet() {
+    }
 
     public LayoutPortlet(IPortletDefinition portletDef) {
         if (portletDef != null) {
@@ -120,7 +121,8 @@ public class LayoutPortlet {
         boolean valid = false;
         try {
             final JsonParser parser = new ObjectMapper().getFactory().createParser(json);
-            while (parser.nextToken() != null) {}
+            while (parser.nextToken() != null) {
+            }
             valid = true;
         } catch (Exception jpe) {
             // eat error
