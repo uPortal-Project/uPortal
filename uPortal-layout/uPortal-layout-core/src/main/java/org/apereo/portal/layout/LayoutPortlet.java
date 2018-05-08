@@ -89,7 +89,6 @@ public class LayoutPortlet {
             boolean staticContentParsed = false;
             boolean pithyStaticContentParsed = false;
             boolean widgetTypeParsed = false;
-            boolean widgetTemplateParsed = false;
             boolean renderOnWebParsed = false;
 
             // flag 0: true if staticContent JavaBean property setting is fulfilled
@@ -126,10 +125,9 @@ public class LayoutPortlet {
                         this.setWidgetConfig(
                                 "{\"error\" : \"config JSON not valid, syntax error? Double quotes not escaped?\"}");
                     }
-                } else if (!widgetTemplateParsed
+                } else if ( (this.widgetTemplate == null)
                         && WIDGET_TEMPLATE_PORTLET_PREFERENCE.equals(pref.getName())) {
                     this.setWidgetTemplate(pref.getValues()[0]);
-                    widgetTemplateParsed = true;
                 } else if (!renderOnWebParsed
                         && RENDER_ON_WEB_PORTLET_PREFERENCE.equals(pref.getName())) {
                     renderOnWebParsed = true;
@@ -137,8 +135,8 @@ public class LayoutPortlet {
                 }
 
                 if (staticContentParsed && pithyStaticContentParsed && (this.widgetURL != null)
-                    && widgetTypeParsed && (this.widgetConfig != null) && widgetTemplateParsed
-                    && renderOnWebParsed) {
+                    && widgetTypeParsed && (this.widgetConfig != null)
+                    && (this.widgetTemplate != null) && renderOnWebParsed) {
                     // if all the Portlet Preferences that might be harvested into JavaBean
                     // properties have been harvested, then there's nothing more to harvest so stop
                     // iterating through portlet preferences. However, since in particular
