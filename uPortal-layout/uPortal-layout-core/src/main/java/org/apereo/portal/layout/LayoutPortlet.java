@@ -85,12 +85,12 @@ public class LayoutPortlet {
                 if (CONTENT_PORTLET_PREFERENCE.equals(pref.getName())
                     && pref.getValues().length == 1 && portletDef.getPortletDescriptorKey() != null
                     && STATIC_CONTENT_PORTLET_WEBAPP_NAME.equals(
-                        portletDef.getPortletDescriptorKey().getWebAppName())) {
+                    portletDef.getPortletDescriptorKey().getWebAppName())) {
                     // the extra check of web app name avoids accidentally interpretting some other
                     // kind of portlet's content portlet-preference as static content.
                     this.setStaticContent(pref.getValues()[0]);
                 } else if ( PITHY_CONTENT_PORTLET_PREFERENCE.equals(pref.getName())
-                        && 1 == pref.getValues().length) {
+                    && 1 == pref.getValues().length) {
                     this.setPithyStaticContent(pref.getValues()[0]);
                 } else if ( WIDGET_URL_PORTLET_PREFERENCE.equals(pref.getName())) {
                     this.setWidgetURL(pref.getValues()[0]);
@@ -101,7 +101,7 @@ public class LayoutPortlet {
                         this.setWidgetConfig(pref.getValues()[0]);
                     } else {
                         this.setWidgetConfig(
-                                "{\"error\" : \"config JSON not valid, syntax error? Double quotes not escaped?\"}");
+                            "{\"error\" : \"config JSON not valid, syntax error? Double quotes not escaped?\"}");
                     }
                 } else if ( WIDGET_TEMPLATE_PORTLET_PREFERENCE.equals(pref.getName())) {
                     this.setWidgetTemplate(pref.getValues()[0]);
