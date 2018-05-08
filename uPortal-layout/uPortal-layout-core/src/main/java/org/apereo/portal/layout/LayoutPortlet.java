@@ -81,22 +81,14 @@ public class LayoutPortlet {
             // preference as it is encountered rather than looping through the preferences for each
             // preference sought.
 
-            boolean staticContentParsed = false;
-
-            // flag 0: true if staticContent JavaBean property setting is fulfilled
-            // either by the portlet not being a static content portlet so there's nothing to do
-            // or by the portlet being a static content portlet and the content portlet preference
-            // having been copied into the JavaBean property
-            staticContentParsed =
-                    !(portletDef.getPortletDescriptorKey() != null
-                            && STATIC_CONTENT_PORTLET_WEBAPP_NAME.equals(
-                                    portletDef.getPortletDescriptorKey().getWebAppName()));
             for (IPortletPreference pref : portletDef.getPortletPreferences()) {
-                if (!staticContentParsed
-                        && CONTENT_PORTLET_PREFERENCE.equals(pref.getName())
-                        && pref.getValues().length == 1) {
+                if (CONTENT_PORTLET_PREFERENCE.equals(pref.getName())
+                    && pref.getValues().length == 1 && portletDef.getPortletDescriptorKey() != null
+                    && STATIC_CONTENT_PORTLET_WEBAPP_NAME.equals(
+                        portletDef.getPortletDescriptorKey().getWebAppName())) {
+                    // the extra check of web app name avoids accidentally interpretting some other
+                    // kind of portlet's content portlet-preference as static content.
                     this.setStaticContent(pref.getValues()[0]);
-                    staticContentParsed = true;
                 } else if ( PITHY_CONTENT_PORTLET_PREFERENCE.equals(pref.getName())
                         && 1 == pref.getValues().length) {
                     this.setPithyStaticContent(pref.getValues()[0]);
