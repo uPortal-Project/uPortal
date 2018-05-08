@@ -87,7 +87,6 @@ public class LayoutPortlet {
             // preferences have been parsed.
 
             boolean staticContentParsed = false;
-            boolean pithyStaticContentParsed = false;
             boolean widgetTypeParsed = false;
             boolean renderOnWebParsed = false;
 
@@ -105,11 +104,10 @@ public class LayoutPortlet {
                         && pref.getValues().length == 1) {
                     this.setStaticContent(pref.getValues()[0]);
                     staticContentParsed = true;
-                } else if (!pithyStaticContentParsed
+                } else if ( (this.pithyStaticContent == null)
                         && PITHY_CONTENT_PORTLET_PREFERENCE.equals(pref.getName())
                         && 1 == pref.getValues().length) {
                     this.setPithyStaticContent(pref.getValues()[0]);
-                    pithyStaticContentParsed = true;
                 } else if ( (this.widgetURL == null)
                         && WIDGET_URL_PORTLET_PREFERENCE.equals(pref.getName())) {
                     this.setWidgetURL(pref.getValues()[0]);
@@ -134,8 +132,8 @@ public class LayoutPortlet {
                     this.setRenderOnWeb(Boolean.valueOf(pref.getValues()[0]));
                 }
 
-                if (staticContentParsed && pithyStaticContentParsed && (this.widgetURL != null)
-                    && widgetTypeParsed && (this.widgetConfig != null)
+                if (staticContentParsed && (this.pithyStaticContent != null)
+                    && (this.widgetURL != null) && widgetTypeParsed && (this.widgetConfig != null)
                     && (this.widgetTemplate != null) && renderOnWebParsed) {
                     // if all the Portlet Preferences that might be harvested into JavaBean
                     // properties have been harvested, then there's nothing more to harvest so stop
