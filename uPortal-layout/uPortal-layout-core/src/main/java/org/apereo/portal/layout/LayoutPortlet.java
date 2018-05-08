@@ -43,7 +43,8 @@ public class LayoutPortlet {
     private String widgetURL;
     private String widgetType;
     private String widgetTemplate;
-    @JsonRawValue private Object widgetConfig;
+    @JsonRawValue
+    private Object widgetConfig;
 
     private boolean isAltMaxUrl = false;
     private boolean isRenderOnWeb;
