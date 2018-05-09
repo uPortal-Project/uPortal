@@ -23,6 +23,7 @@ import org.apereo.portal.portlet.om.IPortletDefinitionParameter;
 import org.apereo.portal.portlet.om.IPortletPreference;
 
 public class LayoutPortlet {
+
     private static final String CONTENT_PORTLET_PREFERENCE = "content";
     private static final String PITHY_CONTENT_PORTLET_PREFERENCE = "pithyContent";
     private static final String WIDGET_URL_PORTLET_PREFERENCE = "widgetURL";
@@ -76,77 +77,52 @@ public class LayoutPortlet {
                 this.setFaIcon(faIconParam.getValue());
             }
 
-            boolean[] efficencyFlag = {false, false, false, false, false, false, false};
-            efficencyFlag[0] =
-                    !(portletDef.getPortletDescriptorKey() != null
-                            && STATIC_CONTENT_PORTLET_WEBAPP_NAME.equals(
-                                    portletDef.getPortletDescriptorKey().getWebAppName()));
+            // This single-loop
+            // solution traverses the list one time handling each
+            // preference as it is encountered rather than looping through the preferences for each
+            // preference sought.
+
             for (IPortletPreference pref : portletDef.getPortletPreferences()) {
-                if (!efficencyFlag[0]
-                        && CONTENT_PORTLET_PREFERENCE.equals(pref.getName())
-                        && pref.getValues().length == 1) {
+                if (CONTENT_PORTLET_PREFERENCE.equals(pref.getName())
+                        && pref.getValues().length == 1
+                        && portletDef.getPortletDescriptorKey() != null
+                        && STATIC_CONTENT_PORTLET_WEBAPP_NAME.equals(
+                                portletDef.getPortletDescriptorKey().getWebAppName())) {
+                    // the extra check of web app name avoids accidentally interpretting some other
+                    // kind of portlet's content portlet-preference as static content.
                     this.setStaticContent(pref.getValues()[0]);
-                    efficencyFlag[0] = true;
-                } else if (!efficencyFlag[1]
-                        && PITHY_CONTENT_PORTLET_PREFERENCE.equals(pref.getName())
+                } else if (PITHY_CONTENT_PORTLET_PREFERENCE.equals(pref.getName())
                         && 1 == pref.getValues().length) {
                     this.setPithyStaticContent(pref.getValues()[0]);
-                    efficencyFlag[1] = true;
-                } else if (!efficencyFlag[2]
-                        && WIDGET_URL_PORTLET_PREFERENCE.equals(pref.getName())) {
+                } else if (WIDGET_URL_PORTLET_PREFERENCE.equals(pref.getName())) {
                     this.setWidgetURL(pref.getValues()[0]);
-                    efficencyFlag[2] = true;
-                } else if (!efficencyFlag[3]
-                        && WIDGET_TYPE_PORTLET_PREFERENCE.equals(pref.getName())) {
+                } else if (WIDGET_TYPE_PORTLET_PREFERENCE.equals(pref.getName())) {
                     this.setWidgetType(pref.getValues()[0]);
-                    efficencyFlag[3] = true;
-                } else if (!efficencyFlag[4]
-                        && WIDGET_CONFIG_PORTLET_PREFERENCE.equals(pref.getName())) {
+                } else if (WIDGET_CONFIG_PORTLET_PREFERENCE.equals(pref.getName())) {
                     if (isValidJSON(pref.getValues()[0])) {
                         this.setWidgetConfig(pref.getValues()[0]);
                     } else {
                         this.setWidgetConfig(
                                 "{\"error\" : \"config JSON not valid, syntax error? Double quotes not escaped?\"}");
                     }
-                    efficencyFlag[4] = true;
-                } else if (!efficencyFlag[5]
-                        && WIDGET_TEMPLATE_PORTLET_PREFERENCE.equals(pref.getName())) {
+                } else if (WIDGET_TEMPLATE_PORTLET_PREFERENCE.equals(pref.getName())) {
                     this.setWidgetTemplate(pref.getValues()[0]);
-                    efficencyFlag[5] = true;
-                } else if (!efficencyFlag[6]
-                        && RENDER_ON_WEB_PORTLET_PREFERENCE.equals(pref.getName())) {
-                    efficencyFlag[6] = true;
+                } else if (RENDER_ON_WEB_PORTLET_PREFERENCE.equals(pref.getName())) {
                     this.setRenderOnWeb(Boolean.valueOf(pref.getValues()[0]));
                 }
-
-                if (allTrue(efficencyFlag)) {
-                    break;
-                }
             }
         }
-    }
-
-    private boolean allTrue(boolean[] arr) {
-        for (int i = 0; i < arr.length; i++) {
-            if (arr[i] == false) {
-                return false;
-            }
-        }
-        return true;
     }
 
     private boolean isValidJSON(final String json) {
-        boolean valid = false;
         try {
             final JsonParser parser = new ObjectMapper().getFactory().createParser(json);
             while (parser.nextToken() != null) {}
-            valid = true;
+            return true;
         } catch (Exception jpe) {
             // eat error
-            valid = false;
+            return false;
         }
-
-        return valid;
     }
 
     public String getNodeId() {
