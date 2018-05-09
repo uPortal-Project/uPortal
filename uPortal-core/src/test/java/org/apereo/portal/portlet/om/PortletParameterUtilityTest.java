@@ -34,9 +34,7 @@ public class PortletParameterUtilityTest {
         assertEquals(expected, PortletParameterUtility.parameterMapToStringStringMap(input));
     }
 
-    /**
-     * JavaBean implementation of IPortletDefinitionParameter for use in testing.
-     */
+    /** JavaBean implementation of IPortletDefinitionParameter for use in testing. */
     class PortletDefinitionParameter implements IPortletDefinitionParameter {
 
         private String name;
