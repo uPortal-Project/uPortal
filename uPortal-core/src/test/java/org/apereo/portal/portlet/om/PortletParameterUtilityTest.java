@@ -17,8 +17,7 @@ public class PortletParameterUtilityTest {
     public void convertsParameterMapToStringMap() {
         Map<String, IPortletDefinitionParameter> input = new HashMap<>(2);
 
-        IPortletDefinitionParameter iconParam =
-            new PortletDefinitionParameter("icon", "dashboard");
+        IPortletDefinitionParameter iconParam = new PortletDefinitionParameter("icon", "dashboard");
         IPortletDefinitionParameter altMaxUrlParam =
                 new PortletDefinitionParameter(
                         "alternativeMaximizedLink", "https://public.my.wisc.edu");
