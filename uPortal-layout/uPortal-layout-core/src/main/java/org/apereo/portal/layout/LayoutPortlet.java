@@ -23,6 +23,7 @@ import org.apereo.portal.portlet.om.IPortletDefinitionParameter;
 import org.apereo.portal.portlet.om.IPortletPreference;
 
 public class LayoutPortlet {
+
     private static final String CONTENT_PORTLET_PREFERENCE = "content";
     private static final String PITHY_CONTENT_PORTLET_PREFERENCE = "pithyContent";
     private static final String WIDGET_URL_PORTLET_PREFERENCE = "widgetURL";
@@ -43,24 +44,18 @@ public class LayoutPortlet {
     private String widgetURL;
     private String widgetType;
     private String widgetTemplate;
-    @JsonRawValue
-    private Object widgetConfig;
+    @JsonRawValue private Object widgetConfig;
 
     private boolean isAltMaxUrl = false;
     private boolean isRenderOnWeb;
 
-    /**
-     * Fuller static content that you might display in a lightbox or so.
-     */
+    /** Fuller static content that you might display in a lightbox or so. */
     private String staticContent;
 
-    /**
-     * Pithy static content that you might display on a dashboard mosaic view or so.
-     */
+    /** Pithy static content that you might display on a dashboard mosaic view or so. */
     private String pithyStaticContent;
 
-    public LayoutPortlet() {
-    }
+    public LayoutPortlet() {}
 
     public LayoutPortlet(IPortletDefinition portletDef) {
         if (portletDef != null) {
@@ -89,14 +84,15 @@ public class LayoutPortlet {
 
             for (IPortletPreference pref : portletDef.getPortletPreferences()) {
                 if (CONTENT_PORTLET_PREFERENCE.equals(pref.getName())
-                    && pref.getValues().length == 1 && portletDef.getPortletDescriptorKey() != null
-                    && STATIC_CONTENT_PORTLET_WEBAPP_NAME.equals(
-                    portletDef.getPortletDescriptorKey().getWebAppName())) {
+                        && pref.getValues().length == 1
+                        && portletDef.getPortletDescriptorKey() != null
+                        && STATIC_CONTENT_PORTLET_WEBAPP_NAME.equals(
+                                portletDef.getPortletDescriptorKey().getWebAppName())) {
                     // the extra check of web app name avoids accidentally interpretting some other
                     // kind of portlet's content portlet-preference as static content.
                     this.setStaticContent(pref.getValues()[0]);
                 } else if (PITHY_CONTENT_PORTLET_PREFERENCE.equals(pref.getName())
-                    && 1 == pref.getValues().length) {
+                        && 1 == pref.getValues().length) {
                     this.setPithyStaticContent(pref.getValues()[0]);
                 } else if (WIDGET_URL_PORTLET_PREFERENCE.equals(pref.getName())) {
                     this.setWidgetURL(pref.getValues()[0]);
@@ -107,7 +103,7 @@ public class LayoutPortlet {
                         this.setWidgetConfig(pref.getValues()[0]);
                     } else {
                         this.setWidgetConfig(
-                            "{\"error\" : \"config JSON not valid, syntax error? Double quotes not escaped?\"}");
+                                "{\"error\" : \"config JSON not valid, syntax error? Double quotes not escaped?\"}");
                     }
                 } else if (WIDGET_TEMPLATE_PORTLET_PREFERENCE.equals(pref.getName())) {
                     this.setWidgetTemplate(pref.getValues()[0]);
@@ -119,18 +115,14 @@ public class LayoutPortlet {
     }
 
     private boolean isValidJSON(final String json) {
-        boolean valid = false;
         try {
             final JsonParser parser = new ObjectMapper().getFactory().createParser(json);
-            while (parser.nextToken() != null) {
-            }
-            valid = true;
+            while (parser.nextToken() != null) {}
+            return true;
         } catch (Exception jpe) {
             // eat error
-            valid = false;
+            return false;
         }
-
-        return valid;
     }
 
     public String getNodeId() {
