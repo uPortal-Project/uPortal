@@ -11,9 +11,9 @@ import java.util.Map;
 public class PortletParameterUtility {
 
     /**
-     * Converts from Map String->IPortletDefinitionParameter (as offered by IPortletDefinition)
-     * to Map String->String (the view on these parameters that might be simplest for some uses,
-     * e.g. generating JSON.
+     * Converts from Map String->IPortletDefinitionParameter (as offered by IPortletDefinition) to
+     * Map String->String (the view on these parameters that might be simplest for some uses, e.g.
+     * generating JSON.
      *
      * @param parametersMap potentially null Map from String name of parameter to
      *     IPortletDefinitionParameter
