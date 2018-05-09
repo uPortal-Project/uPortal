@@ -230,7 +230,7 @@ Additional information about uPortal is available in the Manual.
 
 ## uPortal-start
 
-uPortal is now meant to be deployed via uPortal-start, which is responsible for
+uPortal is now meant to be deployed via [uPortal-start][], which is responsible for
 servlet container (ie Tomcat), DB, and portal configurations. uPortal-start
 deals with the low-level configurations and setup, while letting the adopter
 focus on the business configuration side of the deployment. However, it is
@@ -248,3 +248,4 @@ comes with a Gradle wrapper if you don't want to install the build tool
 For a full list of Gradle tasks run `./gradlew tasks` from the root directory.
 
 [latest uPortal manual]: (https://jasig.github.io/uPortal)
+[uPortal-start]: https://github.com/Jasig/uPortal-start
