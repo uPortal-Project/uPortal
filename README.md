@@ -212,7 +212,7 @@ detailed documentation for each uPortal release.
 
 Additional information about uPortal is available in the Manual.
 
-*   [uPortal 5.2 Manual](https://jasig.github.io/uPortal)
+*   [uPortal 5.2 Manual][latest uPortal manual]
 *   [uPortal 5.1 Manual](https://github.com/Jasig/uPortal/tree/v5.1.0/docs)
 *   [uPortal 5.0 Manual](https://github.com/Jasig/uPortal/tree/v5.0.7/docs)
 *   [uPortal 4.3 Manual](https://wiki.jasig.org/display/UPM43/Home)
@@ -230,11 +230,11 @@ Additional information about uPortal is available in the Manual.
 
 ## uPortal-start
 
-uPortal is now meant to be deployed via uPortal-start, which is responsible for
+uPortal is now meant to be deployed via [uPortal-start][], which is responsible for
 servlet container (ie Tomcat), DB, and portal configurations. uPortal-start
 deals with the low-level configurations and setup, while letting the adopter
 focus on the business configuration side of the deployment. However, it is
-possible to run uPortal without uPortal-start. The uPortal 5.0 manual explains
+possible to run uPortal without uPortal-start. The [uPortal manual][latest uPortal manual] explains
 how.
 
 ## Building and Deploying
@@ -246,3 +246,6 @@ comes with a Gradle wrapper if you don't want to install the build tool
 ### Gradle tasks
 
 For a full list of Gradle tasks run `./gradlew tasks` from the root directory.
+
+[latest uPortal manual]: (https://jasig.github.io/uPortal)
+[uPortal-start]: https://github.com/Jasig/uPortal-start
