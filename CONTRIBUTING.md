@@ -58,6 +58,9 @@ For a more in-depth description of the git workflow check out the
 
 uPortal uses [Android Open Source Project (AOSP) Java code style][AOSP Java style].
 
+[You can][google-java-format-gradle-plugin_quickstart] check Java style with `./gradlew verGJF`,
+and format Java files with `./gradlew goJF`.
+
 ## Collaborate
 
 Consider pushing your changes to a topic branch in your (public) fork of the repository continually as you work, so that others can see what you are doing and can engage with you on it.  Consider commenting on the JIRA issue and/or on the [uportal-dev@][] email thread letting folks know this branch is available for collaboration.
@@ -104,4 +107,7 @@ If your change is to a user-facing experience, it should not regress support for
 
 [code conventions]: https://wiki.jasig.org/display/UPM41/Code+Styles+and+Conventions
 [AOSP Java style]: https://source.android.com/setup/contribute/code-style
+
+[google-java-format-gradle-plugin_quickstart]: https://github.com/sherter/google-java-format-gradle-plugin#quick-start
+
 [architecture]: https://wiki.jasig.org/pages/viewpage.action?pageId=65274379
