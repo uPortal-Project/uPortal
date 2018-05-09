@@ -56,6 +56,10 @@ For a more in-depth description of the git workflow check out the
 *   Apply uPortal [code conventions][] and [architecture][].
 *   Write automated unit tests exercising existing code you are touching and exercising your new code.  If you are fixing a bug, first write a unit test demonstrating the bug so as to stave off future regression.
 
+uPortal uses [Android Open Source Project (AOSP) Java code style][AOSP Java style].
+
+[You can][google-java-format-gradle-plugin_quickstart] check Java style with `./gradlew verGJF`,
+and format Java files with `./gradlew goJF`.
 
 ## Collaborate
 
@@ -102,4 +106,8 @@ If your change is to a user-facing experience, it should not regress support for
 [uportal-user@]: https://wiki.jasig.org/display/JSG/uportal-user
 
 [code conventions]: https://wiki.jasig.org/display/UPM41/Code+Styles+and+Conventions
+[AOSP Java style]: https://source.android.com/setup/contribute/code-style
+
+[google-java-format-gradle-plugin_quickstart]: https://github.com/sherter/google-java-format-gradle-plugin#quick-start
+
 [architecture]: https://wiki.jasig.org/pages/viewpage.action?pageId=65274379
