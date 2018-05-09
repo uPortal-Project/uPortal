@@ -63,13 +63,9 @@ public class PortletParameterUtilityTest {
         }
 
         @Override
-        public void setValue(String value) {
-
-        }
+        public void setValue(String value) {}
 
         @Override
-        public void setDescription(String descr) {
-
-        }
+        public void setDescription(String descr) {}
     }
 }
