@@ -20,8 +20,8 @@ public class PortletParameterUtility {
      * @return potentially null Map from String param name to String param value
      * @since uPortal 5.2
      */
-    public static Map<String,String> parameterMapToStringStringMap(
-        Map<String,IPortletDefinitionParameter> parametersMap) {
+    public static Map<String, String> parameterMapToStringStringMap(
+            Map<String, IPortletDefinitionParameter> parametersMap) {
 
         if (null == parametersMap) {
             return null;

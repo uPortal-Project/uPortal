@@ -20,7 +20,8 @@ public class PortletParameterUtilityTest {
         IPortletDefinitionParameter iconParam =
             new PortletDefinitionParameter("icon", "dashboard");
         IPortletDefinitionParameter altMaxUrlParam =
-            new PortletDefinitionParameter("alternativeMaximizedLink", "https://public.my.wisc.edu");
+                new PortletDefinitionParameter(
+                        "alternativeMaximizedLink", "https://public.my.wisc.edu");
 
         input.put("icon", iconParam);
         input.put("alternativeMaximizedLink", altMaxUrlParam);

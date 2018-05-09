@@ -82,8 +82,8 @@ public class LayoutPortlet {
             }
 
             this.parameterMap =
-                PortletParameterUtility.parameterMapToStringStringMap(
-                    portletDef.getParametersAsUnmodifiableMap());
+                    PortletParameterUtility.parameterMapToStringStringMap(
+                            portletDef.getParametersAsUnmodifiableMap());
 
             // This single-loop
             // solution traverses the list one time handling each
