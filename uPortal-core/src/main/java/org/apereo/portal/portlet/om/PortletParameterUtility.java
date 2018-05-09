@@ -5,6 +5,7 @@ import java.util.Map;
 
 /**
  * Utilities for working with portlet parameters.
+ *
  * @since uPortal 5.2
  */
 public class PortletParameterUtility {
