@@ -17,6 +17,7 @@ package org.apereo.portal.layout;
 import com.fasterxml.jackson.annotation.JsonRawValue;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apereo.portal.portlet.om.IPortletDefinition;
 import org.apereo.portal.portlet.om.IPortletDefinitionParameter;
