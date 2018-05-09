@@ -14,6 +14,7 @@
  */
 package org.apereo.portal.spring.spel;
 
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
 import javax.servlet.http.HttpServletRequest;
@@ -55,12 +56,12 @@ public class PortalSpELServiceImplTest {
     @Test
     public void testParser() {
         String replaced = provider.parseString("${1+1}", request);
-        assert "2".equals(replaced);
+        assertTrue(("2").equals(replaced));
 
         replaced = provider.parseString("${1+1}/${3+4}", request);
-        assert "2/7".equals(replaced);
+        assertTrue("2/7".equals(replaced));
 
         replaced = provider.parseString("${1+1}/${3+4}/path", request);
-        assert "2/7/path".equals(replaced);
+        assertTrue("2/7/path".equals(replaced));
     }
 }
