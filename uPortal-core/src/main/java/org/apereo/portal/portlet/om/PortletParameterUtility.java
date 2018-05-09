@@ -10,7 +10,6 @@ import java.util.Map;
  */
 public class PortletParameterUtility {
 
-
     /**
      * Converts from Map String->IPortletDefinitionParameter (as offered by IPortletDefinition)
      * to Map String->String (the view on these parameters that might be simplest for some uses,
@@ -36,6 +35,4 @@ public class PortletParameterUtility {
 
         return stringMap;
     }
-
-
 }
