@@ -22,6 +22,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apereo.portal.portlet.om.IPortletDefinition;
 import org.apereo.portal.portlet.om.IPortletDefinitionParameter;
 import org.apereo.portal.portlet.om.IPortletPreference;
+import org.apereo.portal.portlet.om.PortletParameterUtility;
 
 public class LayoutPortlet {
 
@@ -46,6 +47,8 @@ public class LayoutPortlet {
     private String widgetType;
     private String widgetTemplate;
     @JsonRawValue private Object widgetConfig;
+
+    private Map<String, String> parameterMap;
 
     private boolean isAltMaxUrl = false;
     private boolean isRenderOnWeb;
@@ -77,6 +80,10 @@ public class LayoutPortlet {
             if (faIconParam != null) {
                 this.setFaIcon(faIconParam.getValue());
             }
+
+            this.parameterMap =
+                PortletParameterUtility.parameterMapToStringStringMap(
+                    portletDef.getParametersAsUnmodifiableMap());
 
             // This single-loop
             // solution traverses the list one time handling each
@@ -252,5 +259,14 @@ public class LayoutPortlet {
 
     public void setRenderOnWeb(boolean setter) {
         this.isRenderOnWeb = setter;
+    }
+
+    /**
+     * Get a read-only view on the portlet publishing parameters for this portlet.
+     * @return potentially null read-only Map from paramter name to parameter object
+     * @since uPortal 5.2
+     */
+    public Map<String, String> getParameters() {
+        return this.parameterMap;
     }
 }
