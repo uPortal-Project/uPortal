@@ -41,7 +41,7 @@ Naming and describing the portlet:
 About conveying arbitrary configuration:
 
  * `parameters` : a JavaScript map of name-value pairs representing the portlet publishing parameters
-    of the portlet
+    of the portlet (since uPortal 5.2)
 
 About escaping the portlet container:
 
