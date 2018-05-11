@@ -46,6 +46,7 @@ public class LPAEditRestriction implements ILayoutProcessingAction {
      * Pushes the indicated restriction attribute changes into both the ILF and PLF versions of the
      * layouts since this will only be done when editing a fragment.
      */
+    @Override
     public void perform() throws PortalException {
         Element plfNode = HandlerUtils.getPLFNode(ilfNode, person, false, false);
 
