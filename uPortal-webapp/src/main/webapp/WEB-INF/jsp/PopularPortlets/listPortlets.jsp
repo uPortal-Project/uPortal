@@ -130,10 +130,10 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
       <c:if test="${showAdminFeatures}">
         <!-- Portlet Buttons -->
         <div class="portlet-button-group">
-          <portlet:actionURL var="doneUrl">
+          <portlet:renderURL var="doneUrl">
             <portlet:param name="execution" value="${flowExecutionKey}" />
             <portlet:param name="_eventId" value="done" />
-          </portlet:actionURL>
+          </portlet:renderURL>
           <a class="portlet-button portlet-button-primary" href="${doneUrl}"><spring:message code="done"/></a>
         </div>
       </c:if>

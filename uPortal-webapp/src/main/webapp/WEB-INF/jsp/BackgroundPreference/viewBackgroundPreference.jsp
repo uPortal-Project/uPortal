@@ -140,7 +140,7 @@
             </a>
         </c:forEach>
     </div>
-    <form class="background-edit-form" action="${savePreferencesUrl}" method="post">
+    <form class="background-edit-form" action="${savePreferencesUrl}" method="POST">
         <input class="background-value" type="hidden" name="backgroundImage" value="${backgroundImage}" />
    </form>
 </div>

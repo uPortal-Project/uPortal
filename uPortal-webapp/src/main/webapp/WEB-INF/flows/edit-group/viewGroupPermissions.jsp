@@ -21,18 +21,18 @@
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
 
 <c:set var="n"><portlet:namespace/></c:set>
-<portlet:actionURL var="groupUrl">
+<portlet:renderURL var="groupUrl">
     <portlet:param name="execution" value="${flowExecutionKey}" />
     <portlet:param name="_eventId" value="group"/>
-</portlet:actionURL>
+</portlet:renderURL>
 
-<portlet:actionURL var="editUrl" escapeXml="false">
+<portlet:renderURL var="editUrl" escapeXml="false">
   <portlet:param name="execution" value="${flowExecutionKey}" />
   <portlet:param name="_eventId" value="editPermission"/>
   <portlet:param name="owner" value="OWNER"/>
   <portlet:param name="activity" value="ACTIVITY"/>
   <portlet:param name="target" value="TARGET"/>
-</portlet:actionURL>
+</portlet:renderURL>
 
 <style>
 #${n}permissionBrowser .dataTables_filter, #${n}permissionBrowser .first.paginate_button, #${n}permissionBrowser .last.paginate_button{
@@ -108,7 +108,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     <!-- Portlet Titlebar -->
     <div class="fl-widget-titlebar portlet-titlebar" role="sectionhead">
         <h2 class="title" role="heading">
-            <a href="${ groupUrl }">${ fn:escapeXml(group.name )}</a> > 
+            <a href="${ groupUrl }">${ fn:escapeXml(group.name )}</a> >
             <spring:message code="permissions"/>
         </h2>
     </div> <!-- end: portlet-titlebar -->
@@ -163,7 +163,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                     </div>
                 </div>
             </div>
-        </div> 
+        </div>
     </div>
 </div>
 
@@ -224,7 +224,7 @@ up.jQuery(function() {
     }
 
 
-    // Created as its own 
+    // Created as its own
     var initializeTable = function(tableName) {
         var config = null;
         if (tableName == "principal") {
@@ -251,7 +251,7 @@ up.jQuery(function() {
             },
             aoColumns: [
                 { mData: 'ownerName', sType: 'html', sWidth: '25%' },  // Owner
-                { mData: 'principalName', sType: 'html', sWidth: '25%', bVisible: config.showPrincipal },  // Principal 
+                { mData: 'principalName', sType: 'html', sWidth: '25%', bVisible: config.showPrincipal },  // Principal
                 { mData: 'activityName', sType: 'html', sWidth: '25%' },  // Activity
                 { mData: 'targetName', sType: 'html', bSearchable: false, sWidth: '25%', bVisible: config.showTarget },  // Target
                 { mData: 'targetName', sType: 'html', bSearchable: false, sWidth: '25%' }  // Edit Link

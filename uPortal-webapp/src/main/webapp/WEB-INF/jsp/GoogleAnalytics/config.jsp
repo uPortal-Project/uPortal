@@ -328,7 +328,13 @@ up.analytics.config.view = up.analytics.config.view || {};
           });
       },
       completeConfig : function() {
-          window.location.href = "${configDoneUrl}";
+          // The 'done' button requires an actionURL and a POST...
+          var form = $('<form />', {
+              action: '${configDoneUrl}',
+              method: 'POST',
+              style: 'display: none;'
+          });
+          form.appendTo('body').submit();
       }
    });
 
