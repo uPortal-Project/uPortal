@@ -219,6 +219,7 @@ public class MissingPortletDefinition implements IPortletDefinition {
         return new MissingPortletType();
     }
 
+    @Override
     public void setType(IPortletType channelType) {}
 
     @Override
