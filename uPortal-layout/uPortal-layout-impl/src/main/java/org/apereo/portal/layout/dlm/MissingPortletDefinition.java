@@ -320,6 +320,7 @@ public class MissingPortletDefinition implements IPortletDefinition {
             return null;
         }
 
+        @Override
         public void setDescription(String descr) {}
 
         @Override
