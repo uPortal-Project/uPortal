@@ -40,6 +40,7 @@ public class LPAChangeParameter implements ILayoutProcessingAction {
      * Change the parameter for a channel in both the ILF and PLF using the appropriate mechanisms
      * for incorporated nodes versus owned nodes.
      */
+    @Override
     public void perform() throws PortalException {
         // push the change into the PLF
         if (nodeId.startsWith(Constants.FRAGMENT_ID_USER_PREFIX)) {
