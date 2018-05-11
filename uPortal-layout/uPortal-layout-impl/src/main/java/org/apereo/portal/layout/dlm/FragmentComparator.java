@@ -26,6 +26,7 @@ import java.util.Comparator;
  */
 public class FragmentComparator implements Comparator<FragmentDefinition> {
 
+    @Override
     public int compare(FragmentDefinition frag1, FragmentDefinition frag2) {
         if (frag1.getPrecedence() == frag2.getPrecedence()) {
             return (int) (frag1.getId() - frag2.getId());
