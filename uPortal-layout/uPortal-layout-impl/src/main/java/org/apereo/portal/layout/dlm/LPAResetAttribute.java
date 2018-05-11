@@ -39,6 +39,7 @@ public class LPAResetAttribute implements ILayoutProcessingAction {
      * Reset a parameter to not override the value specified by a fragment. This is done by removing
      * the parm edit in the PLF and setting the value in the ILF to the passed-in fragment value.
      */
+    @Override
     public void perform() throws PortalException {
         /*
          * push the change into the PLF
