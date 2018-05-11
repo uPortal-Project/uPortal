@@ -19,34 +19,29 @@
 
 --%>
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
-<portlet:actionURL var="finishUrl">
-    <portlet:param name="execution" value="${flowExecutionKey}" />
-    <portlet:param name="_eventId" value="finish"/>
-</portlet:actionURL>
 <c:set var="n"><portlet:namespace/></c:set>
 
 <!-- Portlet -->
-<div class="fl-widget portlet user-mgr view-reviewuser" role="section">
+<div id="${n}" class="fl-widget portlet user-mgr view-reviewuser" role="section">
 
     <!-- Portlet Titlebar -->
     <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
         <h2 class="title" role="heading"><spring:message code="account.updated"/></h2>
     </div> <!-- end: portlet-titlebar -->
-    
+
     <!-- Portlet Body -->
     <div class="fl-widget-content content portlet-content">
 
-            <!-- Portlet Section -->
-            <div class="portlet-section" role="region">
-                <div class="content">
-                
-                    <p>
-                        <spring:message code="your.account.has.been.successfully.updated.your.changes.will.be.visible.upon.your.next.login"/>
-                    </p>
+        <!-- Portlet Section -->
+        <div class="portlet-section" role="region">
+            <div class="content">
 
-                </div>
+                <p>
+                    <spring:message code="your.account.has.been.successfully.updated.your.changes.will.be.visible.upon.your.next.login"/>
+                </p>
+
             </div>
-            
-        
+        </div>
+
     </div>
 </div>

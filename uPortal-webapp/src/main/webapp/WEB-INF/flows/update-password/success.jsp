@@ -19,32 +19,30 @@
 
 --%>
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
-<portlet:actionURL var="finishUrl">
+<portlet:renderURL var="finishUrl">
     <portlet:param name="execution" value="${flowExecutionKey}" />
     <portlet:param name="_eventId" value="finish"/>
-</portlet:actionURL>
+</portlet:renderURL>
 <c:set var="n"><portlet:namespace/></c:set>
 
 <!-- Portlet -->
-<div class="fl-widget portlet user-mgr view-reviewuser" role="section">
+<div id="${n}" class="fl-widget portlet user-mgr view-reviewuser" role="section">
 
     <!-- Portlet Titlebar -->
     <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
         <h2 class="title" role="heading"><spring:message code="update.my.password"/></h2>
     </div> <!-- end: portlet-titlebar -->
-    
+
     <!-- Portlet Body -->
     <div class="fl-widget-content content portlet-content">
 
             <!-- Portlet Section -->
             <div class="portlet-section" role="region">
                 <div class="content">
-                
                     <p>Your password has been successfully updated.</p>
-
+                    <a class="button btn btn-primary" href="${finishUrl}"><spring:message code="done" /></a>
                 </div>
             </div>
-            
-        
+
     </div>
 </div>

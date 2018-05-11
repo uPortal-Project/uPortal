@@ -47,7 +47,7 @@
 
 <div id="${n}tenantDetails">
     <h2><spring:message code="tenant.details" /> <c:out value="${tenant.name}" /></h2>
-    <form id="updateTenantForm" role="form" class="form-horizontal" action="${doUpdateTenantUrl}" method="post">
+    <form id="updateTenantForm" role="form" class="form-horizontal" action="${doUpdateTenantUrl}" method="POST">
         <c:forEach items="${tenantManagerAttributes}" var="attribute">
             <c:set var="errorCssClass">
                 <c:choose>
@@ -76,10 +76,27 @@
                     <portlet:param name="action" value="doListenerAction"/>
                     <portlet:param name="fname" value="${listenerAction.fname}"/>
                 </portlet:actionURL>
-                <a class="btn btn-default" href="${listenerActionUrl}" onclick="return confirm('<spring:message code="tenant.manager.invoke.action.confirm" />')" role="button"><spring:message code="${listenerAction.messageCode}" htmlEscape="false" /></a>
+                <a class="btn btn-default up-tenant-listener-action" data-href="${listenerActionUrl}" href="javascript:void(0)" role="button"><spring:message code="${listenerAction.messageCode}" htmlEscape="false" /></a>
             </c:forEach>
             <button class="btn btn-primary" type="submit" onclick="return confirm('<spring:message code="tenant.manager.update.attributes.confirm" arguments="${tenant.name}" />')"><spring:message code="tenant.manager.update.attributes" htmlEscape="false" /></button>
             <a class="btn btn-link" href="<portlet:renderURL />" role="button"><spring:message code="cancel" /></a>
         </div>
     </form>
 </div>
+
+<script type="text/javascript">
+(function($) {
+    // Tenant operations listener actions must be invoked with an actionURL and a POST...
+    $('#${n}tenantDetails a.up-tenant-listener-action').click(function() {
+        if (confirm('<spring:message code="tenant.manager.invoke.action.confirm" />')) {
+            var url = $(this).attr('data-href');
+            var form = $('<form />', {
+                action: url,
+                method: 'POST',
+                style: 'display: none;'
+            });
+            form.appendTo('body').submit();
+        }
+    });
+})(up.jQuery);
+</script>
