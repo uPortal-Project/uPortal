@@ -30,6 +30,7 @@ public final class Precedence {
         return new Precedence(fragmentIdx);
     }
 
+    @Override
     public String toString() {
         return "p[" + precedence + ", " + fragmentId + "]";
     }
