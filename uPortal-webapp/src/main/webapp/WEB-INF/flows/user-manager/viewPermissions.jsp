@@ -21,32 +21,18 @@
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
 
 <c:set var="n"><portlet:namespace/></c:set>
-<portlet:actionURL var="userUrl">
+<portlet:renderURL var="userUrl">
     <portlet:param name="execution" value="${flowExecutionKey}" />
     <portlet:param name="_eventId" value="viewUserDetails"/>
-</portlet:actionURL>
-
-<portlet:actionURL var="createUrl">
-    <portlet:param name="execution" value="${flowExecutionKey}" />
-    <portlet:param name="_eventId" value="createPermission"/>
-</portlet:actionURL>
-<portlet:actionURL var="editUrl" escapeXml="false">
+</portlet:renderURL>
+<portlet:renderURL var="editUrl" escapeXml="false">
     <portlet:param name="execution" value="${flowExecutionKey}" />
     <portlet:param name="_eventId" value="editPermission"/>
     <portlet:param name="owner" value="OWNER"/>
     <portlet:param name="activity" value="ACTIVITY"/>
     <portlet:param name="target" value="TARGET"/>
-</portlet:actionURL>
-<portlet:actionURL var="deleteUrl" escapeXml="false">
-    <portlet:param name="execution" value="${flowExecutionKey}" />
-    <portlet:param name="_eventId" value="deletePermission"/>
-    <portlet:param name="owner" value="OWNER"/>
-    <portlet:param name="principalType" value="PRINCIPALTYPE"/>
-    <portlet:param name="principalName" value="PRINCIPALNAME"/>
-    <portlet:param name="activity" value="ACTIVITY"/>
-    <portlet:param name="target" value="TARGET"/>
-    <portlet:param name="permissionType" value="PERMISSIONTYPE"/>
-</portlet:actionURL>
+</portlet:renderURL>
+
 <style>
 #${n}permissionBrowser .dataTables_filter, #${n}permissionBrowser .first.paginate_button, #${n}permissionBrowser .last.paginate_button{
     display: none;
@@ -163,7 +149,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                 </div>
             </c:forTokens>
             </div>
-        </div> 
+        </div>
     </div>
 </div>
 
@@ -223,7 +209,7 @@ up.jQuery(function() {
         return markup;
     }
 
-    // Created as its own 
+    // Created as its own
     var initializeTable = function(tableName) {
         var config = null;
         if (tableName == "principal") {
@@ -250,7 +236,7 @@ up.jQuery(function() {
             },
             aoColumns: [
                 { mData: 'ownerName', sType: 'html', sWidth: '25%' },  // Owner
-                { mData: 'principalName', sType: 'html', sWidth: '25%', bVisible: config.showPrincipal },  // Principal 
+                { mData: 'principalName', sType: 'html', sWidth: '25%', bVisible: config.showPrincipal },  // Principal
                 { mData: 'activityName', sType: 'html', sWidth: '25%' },  // Activity
                 { mData: 'targetName', sType: 'html', bSearchable: false, sWidth: '25%', bVisible: config.showTarget },  // Target
                 { mData: 'targetName', sType: 'html', bSearchable: false, sWidth: '25%' }  // Edit Link

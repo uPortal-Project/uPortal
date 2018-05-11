@@ -46,7 +46,7 @@
 <c:set var="n"><portlet:namespace/></c:set>
 
 <!-- Portlet -->
-<div class="fl-widget portlet user-mgr view-reviewuser" role="section">
+<div id="${n}" class="fl-widget portlet user-mgr view-reviewuser" role="section">
 
     <!-- Portlet Titlebar -->
     <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
@@ -65,21 +65,21 @@
                     <spring:message code="impersonate" text="Impersonate"/>
                     <span class="caret"></span>
                     </a>
-                    <ul class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="dropdownMenuImpersonate">
-                      <li role="presentation"><a role="menuitem" tabindex="-1" href="${ impersonateUrl }"><spring:message code="label.default.profile" text="Default Profile"/></a></li>
+                    <ul class="dropdown-menu dropdown-menu-right up-impersonation-menu" role="menu" aria-labelledby="dropdownMenuImpersonate">
+                      <li role="presentation"><a role="menuitem" tabindex="-1" data-href="${ impersonateUrl }" href="javascript:void(0)"><spring:message code="label.default.profile" text="Default Profile"/></a></li>
                       <c:forEach var="profile" items="${profiles}">
                         <portlet:actionURL var="swapDynamicURL">
                             <portlet:param name="execution" value="${flowExecutionKey}" />
                             <portlet:param name="_eventId" value="swapDynamic"/>
                             <portlet:param name="profile" value="${profile.value.profileFname}" />
                         </portlet:actionURL>
-                        <li role="presentation"><a role="menuitem" tabindex="-1" href="${ swapDynamicURL }">${profile.value.profileName}</a></li>
+                        <li role="presentation"><a role="menuitem" tabindex="-1" data-href="${ swapDynamicURL }" href="javascript:void(0)">${profile.value.profileName}</a></li>
                       </c:forEach>
                     </ul>
                 </c:if>
         </div>
     </div> <!-- end: portlet-titlebar -->
-    
+
     <!-- Portlet Body -->
     <div class="fl-widget-content content portlet-content" role="main">
 
@@ -129,7 +129,22 @@
         </div>
 
         <div class="buttons">
-            <a class="button btn" href="${ backUrl }"><spring:message code="back" text="Back" /></a>
+            <a class="button btn btn-default" href="${ backUrl }"><spring:message code="back" text="Back" /></a>
         </div>
     </div>
 </div>
+
+<script type="text/javascript">
+(function($) {
+    // Impersonation requests must be an actionURL and a POST...
+    $('#${n} .up-impersonation-menu a').click(function() {
+        var url = $(this).attr('data-href');
+        var form = $('<form />', {
+            action: url,
+            method: 'POST',
+            style: 'display: none;'
+        });
+        form.appendTo('body').submit();
+    });
+})(up.jQuery);
+</script>

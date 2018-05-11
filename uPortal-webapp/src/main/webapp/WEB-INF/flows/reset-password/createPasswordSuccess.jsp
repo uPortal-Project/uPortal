@@ -19,10 +19,10 @@
 
 --%>
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
-<portlet:actionURL var="loginFormUrl">
+<portlet:renderURL var="loginFormUrl">
     <portlet:param name="execution" value="${flowExecutionKey}" />
     <portlet:param name="_eventId" value="login"/>
-</portlet:actionURL>
+</portlet:renderURL>
 <c:set var="n"><portlet:namespace/></c:set>
 
 <!-- Portlet -->
@@ -32,17 +32,17 @@
     <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead" data-role="header">
         <h2 class="title" role="heading"><spring:message code="success"/></h2>
     </div> <!-- end: portlet-titlebar -->
-    
+
     <!-- Portlet Body -->
     <div class="fl-widget-content content portlet-content" role="main" data-role="content">
 
         <p>
             <spring:message code="your.password.has.been.updated.successfully"/>
         </p>
-            
+
         <p>
             <a href="${ loginFormUrl }"><spring:message code="login"/></a>
         </p>
-        
+
     </div>
 </div>

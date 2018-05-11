@@ -27,20 +27,20 @@
 
 <c:set var="n"><portlet:namespace/></c:set>
 
-<portlet:actionURL var="newPortletUrl" >
+<portlet:renderURL var="newPortletUrl" >
   <portlet:param name="execution" value="${flowExecutionKey}" />
   <portlet:param name="_eventId" value="createPortlet"/>
-</portlet:actionURL>
-<portlet:actionURL var="editPortletUrl" escapeXml="false">
+</portlet:renderURL>
+<portlet:renderURL var="editPortletUrl" escapeXml="false">
   <portlet:param name="execution" value="${flowExecutionKey}" />
   <portlet:param name="_eventId" value="editPortlet"/>
   <portlet:param name="portletId" value="PORTLETID"/>
-</portlet:actionURL>
-<portlet:actionURL var="removePortletUrl" escapeXml="false">
+</portlet:renderURL>
+<portlet:renderURL var="removePortletUrl" escapeXml="false">
   <portlet:param name="execution" value="${flowExecutionKey}" />
   <portlet:param name="_eventId" value="removePortlet"/>
   <portlet:param name="portletId" value="PORTLETID"/>
-</portlet:actionURL>
+</portlet:renderURL>
 <!-- END: VALUES BEING PASSED FROM BACKEND -->
 
 <!--

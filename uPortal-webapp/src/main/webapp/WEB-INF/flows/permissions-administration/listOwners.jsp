@@ -112,11 +112,11 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                 <div class="permission-owner ${ fn:escapeXml(owner.fname )} panel">
                 	<div class="titlebar">
                         <h2 class="title">
-                            <portlet:actionURL var="ownerUrl">
+                            <portlet:renderURL var="ownerUrl">
                                 <portlet:param name="execution" value="${flowExecutionKey}" />
                                 <portlet:param name="_eventId" value="listActivities"/>
                                 <portlet:param name="ownerFname" value="${ owner.fname }"/>
-                            </portlet:actionURL>
+                            </portlet:renderURL>
                             <a href="${ ownerUrl }">${ fn:escapeXml(owner.name )}</a>
                         </h2>
                         <h3 class="subtitle">${ fn:escapeXml(owner.description )}</h3>
@@ -124,12 +124,12 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                     <div class="content">
                         <span class="link-list">
                             <c:forEach items="${ owner.activities }" var="activity" varStatus="status">
-                                <portlet:actionURL var="activityUrl">
+                                <portlet:renderURL var="activityUrl">
                                     <portlet:param name="execution" value="${ flowExecutionKey }"/>
                                     <portlet:param name="_eventId" value="showActivity"/>
                                     <portlet:param name="ownerFname" value="${ owner.fname }"/>
                                     <portlet:param name="activityFname" value="${ activity.fname }"/>
-                                </portlet:actionURL>
+                                </portlet:renderURL>
                                 <a href="${ activityUrl }">${ fn:escapeXml(activity.name )}</a>${ status.last ? "" : ", " }
                             </c:forEach>
                         </span>

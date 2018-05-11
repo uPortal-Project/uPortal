@@ -24,10 +24,10 @@
 <portlet:actionURL var="submitUrl">
 	<portlet:param name="execution" value="${flowExecutionKey}" />
 </portlet:actionURL>
-<portlet:actionURL var="userUrl">
+<portlet:renderURL var="userUrl">
     <portlet:param name="execution" value="${flowExecutionKey}" />
     <portlet:param name="_eventId" value="cancel"/>
-</portlet:actionURL>
+</portlet:renderURL>
 <!-- END: VALUES BEING PASSED FROM BACKEND -->
 
 <!--
@@ -40,7 +40,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 | and more, refer to:
 | docs/SKINNING_UPORTAL.md
 -->
-    
+
 <!-- Portlet -->
 <div class="fl-widget portlet ptl-mgr view-confirmremove" role="section">
 
@@ -51,7 +51,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
       <spring:message code="remove.user"/>
     </h2>
   </div> <!-- end: portlet-titlebar -->
-  
+
   <!-- Portlet Content -->
   <div class="fl-widget-content content portlet-content" role="main">
 
@@ -73,15 +73,15 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
         <spring:message code="remove.user.confirmation" arguments="${ person.name }"/>
 	  </div>
 	</div> <!-- end: portlet-section -->
-    
+
     <!-- Portlet Buttons -->
     <div class="buttons">
       <input class="button primary btn" type="submit" value="<spring:message code="remove"/>" name="_eventId_remove"/>
       <input class="button btn" type="submit" value="<spring:message code="cancel"/>" name="_eventId_cancel"/>
     </div>
-    
+
     </form:form> <!-- End Form -->
-            
+
 	</div> <!-- end: portlet-content -->
-        
+
 </div> <!-- end: portlet -->

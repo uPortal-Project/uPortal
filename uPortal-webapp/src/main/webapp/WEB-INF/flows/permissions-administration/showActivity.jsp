@@ -21,27 +21,27 @@
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
 
 <c:set var="n"><portlet:namespace/></c:set>
-<portlet:actionURL var="ownersUrl">
+<portlet:renderURL var="ownersUrl">
     <portlet:param name="execution" value="${flowExecutionKey}" />
     <portlet:param name="_eventId" value="owners"/>
-</portlet:actionURL>
-<portlet:actionURL var="activitiesUrl">
+</portlet:renderURL>
+<portlet:renderURL var="activitiesUrl">
     <portlet:param name="execution" value="${flowExecutionKey}" />
     <portlet:param name="_eventId" value="activities"/>
-</portlet:actionURL>
+</portlet:renderURL>
 
-<portlet:actionURL var="createUrl">
+<portlet:renderURL var="createUrl">
   <portlet:param name="execution" value="${flowExecutionKey}" />
   <portlet:param name="_eventId" value="createPermission"/>
-</portlet:actionURL>
-<portlet:actionURL var="editUrl" escapeXml="false">
+</portlet:renderURL>
+<portlet:renderURL var="editUrl" escapeXml="false">
   <portlet:param name="execution" value="${flowExecutionKey}" />
   <portlet:param name="_eventId" value="editPermission"/>
   <portlet:param name="owner" value="OWNER"/>
   <portlet:param name="activity" value="ACTIVITY"/>
   <portlet:param name="target" value="TARGET"/>
-</portlet:actionURL>
-<portlet:actionURL var="deleteUrl" escapeXml="false">
+</portlet:renderURL>
+<portlet:renderURL var="deleteUrl" escapeXml="false"><!-- Actual delete happens on the next screen -->
   <portlet:param name="execution" value="${flowExecutionKey}" />
   <portlet:param name="_eventId" value="delete"/>
   <portlet:param name="owner" value="OWNER"/>
@@ -50,7 +50,7 @@
   <portlet:param name="activity" value="ACTIVITY"/>
   <portlet:param name="targetName" value="TARGET"/>
   <portlet:param name="permissionType" value="PERMISSIONTYPE"/>
-</portlet:actionURL>
+</portlet:renderURL>
 
 <style>
 #${n}activityBrowser .dataTables_filter, #${n}activityBrowser .first.paginate_button, #${n}activityBrowser .last.paginate_button{
@@ -118,7 +118,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 
 <!-- Portlet -->
 <div id="${n}activityBrowser" class="fl-widget portlet prm-mgr" role="section">
-  
+
   <!-- Portlet Titlebar -->
     <div role="sectionhead" class="fl-widget-titlebar titlebar portlet-titlebar">
         <div class="breadcrumb">
@@ -126,7 +126,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
             <span class="separator">&gt; </span>
             <span class="breadcrumb-2"><a href="${ activitiesUrl }">${ fn:escapeXml(owner.name )}</a></span>
             <span class="separator">&gt; </span>
-            
+
         </div>
         <h2 class="title" role="heading"><spring:message code="assignments.for"/> <span class="name">${ fn:escapeXml(activity.name )}</span></h2>
         <h3 class="subtitle">${ fn:escapeXml(activity.description )}</h3>
@@ -136,10 +136,10 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
             </ul>
         </div>
     </div>
-  
+
   <!-- Portlet Content -->
-  <div class="fl-widget-content portlet-content" role="main">
-  
+  <div class="fl-widget-content portlet-content">
+
     <!-- Portlet Section -->
     <div id="${n}permissionAddingTabs" class="portlet-section" role="region">
         <table class="portlet-table table table-hover" id="${n}permissionsTable" title='<spring:message code="assignments.of.this.permission"/>'>
@@ -227,9 +227,9 @@ up.jQuery(function() {
             fnServerData: function (sUrl, aoData, fnCallback, oSettings) {
                 oSettings.jqXHR = $.ajax({
                     url: sUrl,
-                    data: { 
-                        owner: '<spring:escapeBody htmlEscape="false" javaScriptEscape="true">${ owner.fname }</spring:escapeBody>', 
-                        activity: '<spring:escapeBody htmlEscape="false" javaScriptEscape="true">${ activity.fname }</spring:escapeBody>' 
+                    data: {
+                        owner: '<spring:escapeBody htmlEscape="false" javaScriptEscape="true">${ owner.fname }</spring:escapeBody>',
+                        activity: '<spring:escapeBody htmlEscape="false" javaScriptEscape="true">${ activity.fname }</spring:escapeBody>'
                     },
                     dataType: "json",
                     cache: false,

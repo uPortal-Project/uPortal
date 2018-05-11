@@ -23,11 +23,11 @@
   <portlet:param name="execution" value="${flowExecutionKey}" />
 </portlet:actionURL>
 
-<portlet:actionURL var="userUrl">
+<portlet:renderURL var="userUrl">
     <portlet:param name="execution" value="${flowExecutionKey}" />
     <portlet:param name="_eventId" value="cancel"/>
-</portlet:actionURL>
-        
+</portlet:renderURL>
+
 <!-- Portlet -->
 <div class="fl-widget portlet reset-layout view-result" role="section">
 
@@ -38,7 +38,7 @@
     	    <spring:message code="reset.user.layout"/>
     	</h2>
     </div> <!-- end: portlet-titlebar -->
-    
+
     <!-- Portlet Content -->
 	<div class="fl-widget-content content portlet-content" role="main">
 
@@ -62,7 +62,7 @@
         </div>
 
         </form>
-    
+
     </div> <!-- end: portlet-content -->
 
 </div> <!-- end:portlet -->

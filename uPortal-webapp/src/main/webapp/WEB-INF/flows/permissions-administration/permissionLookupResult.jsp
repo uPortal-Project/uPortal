@@ -21,18 +21,18 @@
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
 
 <c:set var="n"><portlet:namespace/></c:set>
-<portlet:actionURL var="ownersUrl">
+<portlet:renderURL var="ownersUrl">
     <portlet:param name="execution" value="${flowExecutionKey}" />
     <portlet:param name="_eventId" value="owners"/>
-</portlet:actionURL>
+</portlet:renderURL>
 
-<portlet:actionURL var="editUrl" escapeXml="false">
+<portlet:renderURL var="editUrl" escapeXml="false">
   <portlet:param name="execution" value="${flowExecutionKey}" />
   <portlet:param name="_eventId" value="editPermission"/>
   <portlet:param name="owner" value="OWNER"/>
   <portlet:param name="activity" value="ACTIVITY"/>
   <portlet:param name="target" value="TARGET"/>
-</portlet:actionURL>
+</portlet:renderURL>
 <style>
 #${n}permissionBrowser .dataTables_filter, #${n}permissionBrowser .first.paginate_button, #${n}permissionBrowser .last.paginate_button{
     display: none;
@@ -99,14 +99,14 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 
 <!-- Portlet -->
 <div id="${n}permissionBrowser" class="fl-widget portlet prm-mgr" role="section">
-  
+
   <!-- Portlet Titlebar -->
   <div class="fl-widget-titlebar portlet-titlebar" role="sectionhead">
     <h2 class="title" role="heading">
         <spring:message code="activityName.permissions.assigned.to.principalName" arguments="${ fn:escapeXml(activityDisplayName) }, ${ principalDisplayName }"/>
     </h2>
   </div> <!-- end: portlet-titlebar -->
-  
+
   <!-- Portlet Content -->
   <div class="fl-widget-content portlet-content" role="main">
       <div class="titlebar">
@@ -125,7 +125,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
           </table>
       </div>
 
-      <a href="${ ownersUrl }">Back to permission owners</a> 
+      <a href="${ ownersUrl }">Back to permission owners</a>
   </div> <!-- end: portlet-content -->
 </div> <!-- end: portlet -->
 
@@ -162,7 +162,7 @@ up.jQuery(function() {
         }
         return markup;
     };
-    
+
     var initializeTable = function() {
         var table = $("#${n}permissionsTable");
         principalList_configuration.main.table = $("#${n}permissionsTable").dataTable({

@@ -20,10 +20,10 @@
 --%>
 <%@ include file="/WEB-INF/jsp/include.jsp"%>
 
-<portlet:actionURL var="newSearchUrl">
+<portlet:renderURL var="newSearchUrl">
     <portlet:param name="execution" value="${flowExecutionKey}" />
     <portlet:param name="_eventId" value="personLookup" />
-</portlet:actionURL>
+</portlet:renderURL>
 <portlet:actionURL var="attributeSwapUrl">
     <portlet:param name="execution" value="${flowExecutionKey}" />
 </portlet:actionURL>

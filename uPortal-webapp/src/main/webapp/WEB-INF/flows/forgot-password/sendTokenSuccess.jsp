@@ -20,10 +20,10 @@
 --%>
 <%@ include file="/WEB-INF/jsp/include.jsp"%>
 
-<portlet:actionURL var="loginUrl">
+<portlet:renderURL var="loginUrl">
   <portlet:param name="execution" value="${flowExecutionKey}" />
   <portlet:param name="_eventId" value="finish"/>
-</portlet:actionURL>
+</portlet:renderURL>
 <c:set var="n"><portlet:namespace/></c:set>
 
 <!-- Portlet -->
@@ -34,19 +34,19 @@
         <h2 class="title" role="heading"><spring:message code="reset.email.sent"/></h2>
     </div>
 
-    <div class="fl-widget-content content portlet-content" role="main" data-role="content">
-  
+    <div class="fl-widget-content content portlet-content" data-role="content">
+
     <!-- Portlet Section -->
     <div class="portlet-section" role="region">
 
       <div class="portlet-section-body">
           <p><spring:message code="password.reset.instructions.have.been.sent.to.your.email.address"/></p>
-          
+
           <p><a href="${ loginUrl }"><spring:message code="return.to.log.in.form"/></a></p>
       </div>
 
     </div>
-    
+
   </div>
 
 </div>

@@ -23,15 +23,15 @@
 
 <c:set var="n"><portlet:namespace/></c:set>
 
-<portlet:actionURL var="removeUrl">
+<portlet:renderURL var="removeUrl"><!-- Removal uses the REST API;  this URL is merely the page that appears after -->
     <portlet:param name="execution" value="${flowExecutionKey}" />
     <portlet:param name="_eventId" value="remove"/>
-</portlet:actionURL>
+</portlet:renderURL>
 
-<portlet:actionURL var="cancelUrl">
+<portlet:renderURL var="cancelUrl">
   <portlet:param name="execution" value="${flowExecutionKey}" />
   <portlet:param name="_eventId" value="cancel"/>
-</portlet:actionURL>
+</portlet:renderURL>
 
 <!--
 PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
@@ -43,31 +43,31 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 | and more, refer to:
 | docs/SKINNING_UPORTAL.md
 -->
-    
+
 <!-- Portlet -->
 <div class="fl-widget portlet ptl-mgr view-confirmremove" role="section">
 
   <!-- Portlet Title -->
   <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
-  
+
     <div class="breadcrumb">
         <c:forEach items="${ breadcrumbs }" var="breadcrumb" varStatus="status">
-            <portlet:actionURL var="breadcrumbUrl">
+            <portlet:renderURL var="breadcrumbUrl">
                 <portlet:param name="execution" value="${flowExecutionKey}" />
                 <portlet:param name="_eventId" value="${ breadcrumb.key }"/>
-            </portlet:actionURL>
+            </portlet:renderURL>
             <span class="breadcrumb-${ status.index + 1 }">
                 <a href="${ breadcrumbUrl }">${ fn:escapeXml(breadcrumb.value )}</a>
             </span>
             <span class="separator">&gt; </span>
         </c:forEach>
     </div>
-  
+
     <h2 class="title" role="heading">
       <spring:message code="remove.permission"/>
     </h2>
   </div> <!-- end: portlet-titlebar -->
-  
+
   <!-- Portlet Content -->
   <div class="fl-widget-content content portlet-content" role="main">
 
@@ -75,24 +75,24 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     <div class="portlet-section" role="region">
       <div class="titlebar">
          <h3class="title" role="heading"><spring:message code="remove.permission.confirmation" arguments="${permissionType},${ activity.name },  ${target.name }, ${principalName}"/></h3>
-        
+
       </div>
     </div> <!-- end: portlet-section -->
-   
+
     <div class="buttons">
-        <a href="${removeUrl}" class="button btn btn-default" name="_eventId_remove" id="${n}deletePermissionButton"><spring:message code="remove"/></a>
+      <a href="${removeUrl}" class="button btn btn-default" name="_eventId_remove" id="${n}deletePermissionButton"><spring:message code="remove"/></a>
       <a href="${cancelUrl}" class="button btn btn-default"><spring:message code="cancel"/></a>
     </div>
-    
+
 
     </div> <!-- end: portlet-content -->
-        
+
 </div> <!-- end: portlet -->
 
 <script type="text/javascript">
 up.jQuery(function() {
     var $ = up.jQuery;
-    
+
     $(document).ready(function(){
         $('#${n}deletePermissionButton').click(function(e){
             e.preventDefault();
@@ -114,6 +114,6 @@ up.jQuery(function() {
             });
         });
     });
-    
+
 });
 </script>

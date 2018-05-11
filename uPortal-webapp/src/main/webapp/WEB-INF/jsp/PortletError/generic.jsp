@@ -19,18 +19,36 @@
 
 --%>
 <%@ include file="/WEB-INF/jsp/include.jsp"%>
-<div class="fl-widget portlet error view-detailed" role="section">
+<c:set var="n"><portlet:namespace/></c:set>
 
-<div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
-<p><spring:message code="errorportlet.main"/></p>
+<div id="${n}" class="fl-widget portlet error view-detailed" role="section">
 
-<div class="breadcrumb">
-<portlet:actionURL var="userResetUrl">
-<portlet:param name="failedPortletWindowId" value="${ portletWindowId.stringId}"/>
-</portlet:actionURL>
-<span class="breadcrumb-1"><a href="${ userResetUrl }"><spring:message code="errorportlet.reset"/></a></span>
-</div> <!-- end breadcrumbs -->
+    <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
+        <p><spring:message code="errorportlet.main"/></p>
 
-</div> <!-- end sectionhead -->
+        <div class="breadcrumb">
+            <portlet:actionURL var="userResetUrl">
+                <portlet:param name="failedPortletWindowId" value="${ portletWindowId.stringId}"/>
+            </portlet:actionURL>
+            <span class="breadcrumb-1"><a data-href="${ userResetUrl }" href="javascript:void(0)"><spring:message code="errorportlet.reset"/></a></span>
+        </div> <!-- end breadcrumbs -->
+
+    </div> <!-- end sectionhead -->
 
 </div> <!--  end portlet -->
+
+<script type="text/javascript">
+(function($) {
+    // Reset requests must be an actionURL and a POST...
+    $('#${n} .breadcrumb a').click(function() {
+        var url = $(this).attr('data-href');
+        var form = $('<form />', {
+            action: url,
+            method: 'POST',
+            style: 'display: none;'
+        });
+        form.appendTo('body').submit();
+    });
+})(up.jQuery);
+</script>
+

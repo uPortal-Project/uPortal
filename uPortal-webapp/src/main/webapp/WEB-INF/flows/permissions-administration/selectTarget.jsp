@@ -24,18 +24,18 @@
 <portlet:actionURL var="formUrl">
   <portlet:param name="execution" value="${flowExecutionKey}" />
 </portlet:actionURL>
-<portlet:actionURL var="ownersUrl">
+<portlet:renderURL var="ownersUrl">
     <portlet:param name="execution" value="${flowExecutionKey}" />
     <portlet:param name="_eventId" value="owners"/>
-</portlet:actionURL>
-<portlet:actionURL var="activitiesUrl">
+</portlet:renderURL>
+<portlet:renderURL var="activitiesUrl">
     <portlet:param name="execution" value="${flowExecutionKey}" />
     <portlet:param name="_eventId" value="activities"/>
-</portlet:actionURL>
-<portlet:actionURL var="permissionsUrl">
+</portlet:renderURL>
+<portlet:renderURL var="permissionsUrl">
     <portlet:param name="execution" value="${flowExecutionKey}" />
     <portlet:param name="_eventId" value="permissions"/>
-</portlet:actionURL>
+</portlet:renderURL>
 
 <!--
 PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
@@ -50,7 +50,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 
 <!-- Portlet -->
 <div class="fl-widget portlet prm-mgr" role="section">
-  
+
 <!-- Portlet Titlebar -->
 	<div role="sectionhead" class="fl-widget-titlebar titlebar portlet-titlebar">
     	<div class="breadcrumb">
@@ -64,12 +64,12 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
         <h2 class="title" role="heading"><spring:message code="add.assignment.to"/> <span class="name">${ fn:escapeXml(activity.name )}</span></h2>
         <h3 class="subtitle">${ fn:escapeXml(activity.description )}</h3>
     </div>
-  
-    
-  
+
+
+
   <!-- Portlet Content -->
-  <div class="fl-widget-content portlet-content" role="main">
-  
+  <div class="fl-widget-content portlet-content">
+
     <!-- Portlet Section -->
     <div class="portlet-form">
         <form id="${n}targetForm" action="${ formUrl }" method="POST">
@@ -98,10 +98,10 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                 <input class="button btn primary" type="submit" value="<spring:message code="submit"/>" name="_eventId_editPermission"/>
                 <input class="button btn" type="submit" value="<spring:message code="cancel"/>" name="_eventId_cancel"/>
             </div> <!-- end: buttons -->
-            
+
         </form>
 	</div>
-    
+
   </div> <!-- end: portlet-content -->
 
 </div> <!-- end: portlet -->
@@ -117,7 +117,7 @@ up.jQuery(function() {
     };
 
     var targetSuggest = up.Autocomplete(
-            "#${n}targetSuggest", 
+            "#${n}targetSuggest",
             {
                 initialText: '<spring:message code="target" htmlEscape="false" javaScriptEscape="true"/>',
                 searchFunction: function(searchterm) {
@@ -138,10 +138,10 @@ up.jQuery(function() {
         );
 
     $(document).ready(function(){
-        
-        
+
+
         $("#${n}targetForm").submit(submitForm);
     });
-    
+
 });
 </script>

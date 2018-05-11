@@ -36,11 +36,11 @@
                     <spring:message code="create.new.user"/>
                 </c:when>
                 <c:otherwise>
-                    <portlet:actionURL var="userUrl">
+                    <portlet:renderURL var="userUrl">
                         <portlet:param name="execution" value="${flowExecutionKey}" />
                         <portlet:param name="_eventId" value="finish"/>
-                    </portlet:actionURL>
-                    <a href="${ userUrl }">${ fn:escapeXml(accountForm.username )}</a> >
+                    </portlet:renderURL>
+                    <a href="${ userUrl }">${ fn:escapeXml(accountForm.username )}</a> &gt;
                     <spring:message code="edit.user"/>
                 </c:otherwise>
             </c:choose>
