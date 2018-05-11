@@ -18,8 +18,8 @@ import java.io.IOException;
 import java.util.Map;
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.FlowExecutionOutcome;
 import org.springframework.webflow.mvc.portlet.AbstractFlowHandler;
 
@@ -28,7 +28,7 @@ import org.springframework.webflow.mvc.portlet.AbstractFlowHandler;
  * flows that require different handling on different outcomes.
  */
 public class MultiOutcomeParamaterizableFlowHandler extends AbstractFlowHandler {
-    protected final Log logger = LogFactory.getLog(this.getClass());
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     private String flowId = "view";
     private Map<String, String> redirectOnEnds;
@@ -37,7 +37,8 @@ public class MultiOutcomeParamaterizableFlowHandler extends AbstractFlowHandler 
     public Map<String, String> getRedirectOnEnds() {
         return this.redirectOnEnds;
     }
-    /** @param redirectOnEnd The location to redirect to at the end of the flow */
+
+    /** @param redirectOnEnds The locations to redirect to at the end of the flow */
     public void setRedirectOnEnds(Map<String, String> redirectOnEnds) {
         this.redirectOnEnds = redirectOnEnds;
     }

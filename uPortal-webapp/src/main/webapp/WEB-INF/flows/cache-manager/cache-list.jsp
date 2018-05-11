@@ -20,10 +20,10 @@
 --%>
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
 
-<portlet:actionURL var="flushAllUrl">
+<portlet:renderURL var="flushAllUrl">
     <portlet:param name="execution" value="${flowExecutionKey}" />
     <portlet:param name="_eventId" value="flush-all"/>
-</portlet:actionURL>
+</portlet:renderURL>
 
 <!-- Portlet -->
 <div class="fl-widget portlet cache-mgr view-list" role="section">
@@ -35,7 +35,7 @@
             <a class="button btn btn-primary" href="${flushAllUrl}"><span><spring:message code="empty.all.caches" />&nbsp;&nbsp;<i class="fa fa-refresh"></i></span></a>
         </div>
     </div> <!-- end: portlet-titlebar -->
-    
+
   <!-- Portlet Content -->
   <div class="fl-widget-content content portlet-content">
     <!-- Portlet Section -->
@@ -45,10 +45,10 @@
             	<spring:message code="available.caches"/>
             </h3>
         </div>
-      
+
       <div class="content">
         <p class="note" role="note"><spring:message code="select.cache.to.view.stats.and.clear.content"/></p>
-      
+
         <table class="portlet-table table-hover cache-table table table-condensed table-striped">
             <thead>
                 <tr>
@@ -61,15 +61,15 @@
             <c:forEach items="${statisticsMap}" var="statisticsEntry">
                 <tr class="cache-member">
                     <td class="cache-name">
-                        <portlet:actionURL var="viewStatsUrl">
+                        <portlet:renderURL var="viewStatsUrl">
                             <portlet:param name="cacheName" value="${statisticsEntry.key}"/>
                             <portlet:param name="execution" value="${flowExecutionKey}" />
                             <portlet:param name="_eventId" value="view-statistics"/>
-                        </portlet:actionURL>
+                        </portlet:renderURL>
                         <a href="${viewStatsUrl}">${fn:escapeXml(statisticsEntry.key)}</a>
                     </td>
                     <td class="cache-used">
-                        <span><fmt:formatNumber value="${statisticsEntry.value.usage}" pattern="00%" /> </span> 
+                        <span><fmt:formatNumber value="${statisticsEntry.value.usage}" pattern="00%" /> </span>
                         <small>(${fn:escapeXml(statisticsEntry.value.size)} / ${fn:escapeXml(statisticsEntry.value.maxSize)})</small>
                     </td>
                     <td class="cache-effectiveness">
@@ -77,11 +77,11 @@
                         <small>(${fn:escapeXml(statisticsEntry.value.hits)} <spring:message code="hits"/>, ${fn:escapeXml(statisticsEntry.value.misses)} <spring:message code="misses"/>)</small>
                     </td>
                     <td class="cache-flush">
-                        <portlet:actionURL var="flushUrl">
+                        <portlet:renderURL var="flushUrl">
                           <portlet:param name="cacheName" value="${statisticsEntry.key}"/>
                           <portlet:param name="_eventId" value="flush"/>
                           <portlet:param name="execution" value="${flowExecutionKey}" />
-                        </portlet:actionURL>
+                        </portlet:renderURL>
                         <a href="${flushUrl}"><spring:message code="flush"/></a>
                     </td>
                 </tr>
@@ -90,5 +90,5 @@
       </div>
     </div>
   </div>
-  
+
 </div>

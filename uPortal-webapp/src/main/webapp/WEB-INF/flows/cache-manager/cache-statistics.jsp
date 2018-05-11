@@ -19,15 +19,15 @@
 
 --%>
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
-<portlet:actionURL var="flushUrl">
+<portlet:renderURL var="flushUrl">
   <portlet:param name="_eventId" value="flush"/>
   <portlet:param name="execution" value="${flowExecutionKey}" />
-</portlet:actionURL>
-<portlet:actionURL var="homeUrl">
+</portlet:renderURL>
+<portlet:renderURL var="homeUrl">
   <portlet:param name="_eventId" value="cache-list"/>
   <portlet:param name="execution" value="${flowExecutionKey}" />
-</portlet:actionURL>
-        
+</portlet:renderURL>
+
 <!-- Portlet -->
 <div class="fl-widget portlet cache-mgr view-statistics" role="section">
   <!-- Portlet Titlebar -->
@@ -38,7 +38,7 @@
 
   <!-- Portlet Content -->
   <div class="fl-widget-content content portlet-content">
-      
+
         <table class="portlet-table table table-hover">
             <thead>
                 <tr><th><spring:message code="cache.property"/></th><th><spring:message code="value"/></th></tr>
@@ -73,7 +73,7 @@
                 </tr>
             </tbody>
         </table>
-        
+
       </div>
     </div>
 
@@ -82,7 +82,7 @@
         <a class="button btn primary" href="${ flushUrl }"><spring:message code="empty.cache"/></a>
         <a class="button btn" href="${ homeUrl }"><spring:message code="cancel"/></a>
     </div>
-    
+
   </div>
-  
+
 </div>

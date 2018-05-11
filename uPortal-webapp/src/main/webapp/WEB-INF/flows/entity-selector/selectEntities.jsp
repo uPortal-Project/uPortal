@@ -159,7 +159,7 @@
                         </div>
                         <!--content-->
                         <div class="content">
-                            <form action="${submitUrl}" method="post">
+                            <form action="${submitUrl}" method="POST">
                                 <div id="${n}selectionBasket" class="selection-basket">
                                     <ul>
                                         <c:choose>

@@ -21,10 +21,10 @@
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
 
 <c:set var="n"><portlet:namespace/></c:set>
-<portlet:actionURL var="backUrl">
+<portlet:renderURL var="backUrl">
     <portlet:param name="execution" value="${flowExecutionKey}" />
     <portlet:param name="_eventId" value="owners"/>
-</portlet:actionURL>
+</portlet:renderURL>
 
 <!--
 PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
@@ -39,8 +39,8 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 
 <!-- Portlet -->
 <div class="fl-widget portlet prm-mgr view-listperms" role="section">
-  
-  
+
+
   <!-- Portlet Titlebar -->
 	<div role="sectionhead" class="fl-widget-titlebar titlebar portlet-titlebar">
 	  	<div class="breadcrumb">
@@ -50,13 +50,13 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 	    <h2 class="title" role="heading"><spring:message code="permissions.in"/> <span class="name">${ fn:escapeXml(owner.name )}</span></h2>
 	    <h3 class="subtitle">${ fn:escapeXml(owner.description )}</h3>
 	</div>
-  
-  
+
+
   <!-- Portlet Content -->
   <div class="fl-widget-content portlet-content">
-  
-    <!-- Portlet Section -->    
-		
+
+    <!-- Portlet Section -->
+
         <table class="portlet-table table table-hover" title="${ fn:escapeXml(owner.description )}">
             <tr>
                 <th><spring:message code="name"/></th>
@@ -66,18 +66,18 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
             <c:forEach items="${ owner.activities }" var="activity">
                 <tr>
                     <td>
-                        <portlet:actionURL var="activityUrl">
+                        <portlet:renderURL var="activityUrl">
                             <portlet:param name="execution" value="${flowExecutionKey}" />
                             <portlet:param name="_eventId" value="showActivity"/>
                             <portlet:param name="activityFname" value="${ activity.fname }"/>
-                        </portlet:actionURL>
+                        </portlet:renderURL>
                         <a href="${ activityUrl }">${ fn:escapeXml(activity.name )}</a>
                     </td>
                     <td>${ fn:escapeXml(activity.fname )}</td>
                     <td>${ fn:escapeXml(activity.description )}</td>
                 </tr>
             </c:forEach>
-        </table>    
+        </table>
 
   </div> <!-- end: portlet-content -->
 

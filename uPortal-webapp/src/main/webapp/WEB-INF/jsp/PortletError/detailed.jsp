@@ -20,44 +20,55 @@
 --%>
 <%@ include file="/WEB-INF/jsp/include.jsp"%>
 <c:set var="n"><portlet:namespace/>-${portletWindowId}-</c:set>
-<div class="fl-widget portlet error view-detailed" role="section">
 
-<div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
-<p><spring:message code="errorportlet.main"/></p>
-<div class="breadcrumb">
-<portlet:actionURL var="userResetUrl">
-<portlet:param name="failedPortletWindowId" value="${ portletWindowId.stringId}"/>
-</portlet:actionURL>
-<span class="breadcrumb-1"><a href="${ adminRetryUrl }"><spring:message code="errorportlet.retry"/></a></span>
-<span class="breadcrumb-2"><a href="${ userResetUrl }"><spring:message code="errorportlet.reset"/> (User Facing)</a></span> 
-</div> <!-- end breadcrumbs -->
-</div> <!-- end section head -->
+<div id="${n}" class="fl-widget portlet error view-detailed" role="section">
 
-<div class="fl-widget-content fl-fix up-portlet-content-wrapper">
-<ul>
-<li>Portlet Window ID: ${fn:escapeXml(portletWindowId)}</li>
-<li>Channel Definition Name: ${fn:escapeXml(channelDefinition.name)}</li>
-<li><spring:message code="errorportlet.causemessage.admin"/>: <i>${fn:escapeXml(rootCauseMessage)}</i></li>
-</ul>
-<div id="${n}stacktracecontainer">
-<p><button class="stacktracetoggle"><spring:message code="errorportlet.toggleshow"/></button></p>
-<div class="stacktrace" >
-<pre>${fn:escapeXml(stackTrace)}</pre>
-</div>
-</div>
-</div> <!-- end content -->
+    <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
+        <p><spring:message code="errorportlet.main"/></p>
+        <div class="breadcrumb">
+            <portlet:actionURL var="userResetUrl">
+                <portlet:param name="failedPortletWindowId" value="${ portletWindowId.stringId}"/>
+            </portlet:actionURL>
+            <span class="breadcrumb-1"><a href="${ adminRetryUrl }"><spring:message code="errorportlet.retry"/></a></span>
+            <span class="breadcrumb-2"><a data-href="${ userResetUrl }" href="javascript:void(0)"><spring:message code="errorportlet.reset"/> (User Facing)</a></span>
+        </div> <!-- end breadcrumbs -->
+    </div> <!-- end section head -->
+
+    <div class="fl-widget-content fl-fix up-portlet-content-wrapper">
+        <ul>
+            <li>Portlet Window ID: ${fn:escapeXml(portletWindowId)}</li>
+            <li>Channel Definition Name: ${fn:escapeXml(channelDefinition.name)}</li>
+            <li><spring:message code="errorportlet.causemessage.admin"/>: <i>${fn:escapeXml(rootCauseMessage)}</i></li>
+        </ul>
+        <div id="${n}stacktracecontainer">
+            <p><button class="stacktracetoggle"><spring:message code="errorportlet.toggleshow"/></button></p>
+            <div class="stacktrace" >
+                <pre>${fn:escapeXml(stackTrace)}</pre>
+            </div>
+        </div>
+    </div> <!-- end content -->
 
 </div> <!-- end portlet -->
+
 <script type="text/javascript">
-up.jQuery(function() {
-    var $ = up.jQuery;
+(function($) {
 
     $(document).ready(function(){
-    	up.showHideToggle('#${n}stacktracecontainer', { 
+    	up.showHideToggle('#${n}stacktracecontainer', {
         	showmessage: '<spring:message code="errorportlet.toggleshow" htmlEscape="false" javaScriptEscape="true"/>',
         	hidemessage: '<spring:message code="errorportlet.togglehide" htmlEscape="false" javaScriptEscape="true"/>'
     	});
     });
 
-});
+    // Reset requests must be an actionURL and a POST...
+    $('#${n} .breadcrumb a').click(function() {
+        var url = $(this).attr('data-href');
+        var form = $('<form />', {
+            action: url,
+            method: 'POST',
+            style: 'display: none;'
+        });
+        form.appendTo('body').submit();
+    });
+})(up.jQuery);
 </script>

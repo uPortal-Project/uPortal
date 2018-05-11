@@ -19,10 +19,10 @@
 
 --%>
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
-<portlet:actionURL var="newTokenUrl">
+<portlet:renderURL var="newTokenUrl">
     <portlet:param name="execution" value="${flowExecutionKey}" />
     <portlet:param name="_eventId" value="newToken"/>
-</portlet:actionURL>
+</portlet:renderURL>
 <c:set var="n"><portlet:namespace/></c:set>
 
 <!-- Portlet -->
@@ -32,17 +32,17 @@
     <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead" data-role="header">
         <h2 class="title" role="heading"><spring:message code="invalid.password.reset.url"/></h2>
     </div> <!-- end: portlet-titlebar -->
-    
+
     <!-- Portlet Body -->
     <div class="fl-widget-content content portlet-content" data-role="content">
 
         <p>
             <spring:message code="we.were.unable.to.validate.your.password.reset.url"/>
         </p>
-            
+
         <p>
             <a href="${ newTokenUrl }"><spring:message code="send.a.new.password.reset.email"/></a>
         </p>
-        
+
     </div>
 </div>

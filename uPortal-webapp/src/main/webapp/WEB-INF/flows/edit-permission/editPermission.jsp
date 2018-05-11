@@ -22,13 +22,10 @@
 
 <c:set var="n"><portlet:namespace/></c:set>
 
-<portlet:actionURL var="choosePrinicipalsUrl">
+<portlet:renderURL var="choosePrinicipalsUrl">
   <portlet:param name="execution" value="${flowExecutionKey}" />
   <portlet:param name="_eventId" value="choosePrinicipals"/>
-</portlet:actionURL>
-<portlet:actionURL var="formUrl">
-  <portlet:param name="execution" value="${flowExecutionKey}" />
-</portlet:actionURL>
+</portlet:renderURL>
 
 <!--
 PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
@@ -80,9 +77,9 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
             <form method="POST" id="${n}editPermissionForm" action="javascript:;">
 
                 <ul id="assignments"></ul>
-  
+
             </form>
-    
+
     </div> <!-- end: portlet-content -->
 
 </div> <!-- end: portlet -->
@@ -97,13 +94,13 @@ up.jQuery(function() {
     var inheritRegex = /INHERIT_/;
     var addAssignments = function(assignments, list) {
         $(assignments).each(function(idx, assignment) {
-            
+
             // determine the current select menu option
             var type = assignment.type;
             if (type.match(inheritRegex)) {
                 type = "INHERIT";
             }
-            
+
             // determine the text for the inherit option
             var inheritText;
             if (assignment.type == 'INHERIT_GRANT') {
@@ -113,7 +110,7 @@ up.jQuery(function() {
             } else {
                 inheritText = "<spring:message code="inherit"/>";
             }
-            
+
             // build up the markup
             var li = $(document.createElement("li"));
             var span = $(document.createElement("span")).addClass("assignment-wrapper")
@@ -139,19 +136,19 @@ up.jQuery(function() {
 
         });
     };
-    
+
     var updatePermission = function(principal, type) {
         $("#assignments").html("");
         $.get(
-            "<c:url value="/api/updatePermission"/>", 
-            { 
+            "<c:url value="/api/updatePermission"/>",
+            {
                 principal: principal,
                 assignment: type,
                 owner: '${ owner.fname }',
                 activity: '${ activity.fname }',
                 target: '${ target.key }',
                 principals: principals
-                
+
             },
             function(data) {
                 allAssignments = data.assignments;
@@ -160,11 +157,11 @@ up.jQuery(function() {
             "json"
         );
     };
-    
+
     var renderPermissionMap = function() {
         $("#assignments").html("");
         $.get(
-                "<c:url value="/api/permissionAssignmentMap"/>", 
+                "<c:url value="/api/permissionAssignmentMap"/>",
                 {
                     owner: '${ owner.fname }',
                     activity: '${ activity.fname }',
@@ -178,7 +175,7 @@ up.jQuery(function() {
                 "json"
             );
     };
-    
+
     $(document).ready(renderPermissionMap);
 
 
