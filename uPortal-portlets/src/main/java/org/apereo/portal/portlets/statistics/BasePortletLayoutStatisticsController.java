@@ -130,6 +130,7 @@ public abstract class BasePortletLayoutStatisticsController<F extends BasePortle
         return PortletLayoutAggregationDiscriminatorImpl.Comparator.INSTANCE;
     }
 
+    @Override
     protected Map<PortletLayoutAggregationDiscriminator, SortedSet<PortletLayoutAggregation>>
             createColumnDiscriminatorMap(F form) {
         // Collections used to track the queried groups and the results
