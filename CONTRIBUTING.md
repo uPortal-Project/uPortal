@@ -2,6 +2,16 @@
 
 Contributions from the community are essential in keeping uPortal (any Open Source project really) strong and successful.  While we try to keep requirements for contributing to a minimum, there are a few guidelines we ask that you mind.
 
+## Most importantly
+
+If you're unsure or afraid of _anything_, just ask or submit the issue or pull request anyways. You 
+won't be yelled at for giving your best effort. The worst that can happen is that you'll be politely
+asked to change something. We appreciate any sort of contributions, and don't want a wall of rules 
+to get in the way of that.
+
+However, for those individuals who want a bit more guidance on the best way to contribute to the 
+project, read on. This document will cover what we're looking for. By addressing all the points 
+we're looking for, it raises the chances we can quickly merge or address your contributions.
 
 ## Individual Contributor License Agreement
 
@@ -95,6 +105,11 @@ If your change is to a user-facing experience, it should not regress support for
 *   Update the JIRA issue, adding a comment including a link to the created pull request.  If the problem or improvement came to be better understood through implementation, update the description and add comments to communicate what was learned.  A release engineer will rely upon the JIRA to summarize release notes for the release including your change and those release notes will link to the JIRA issue, so the JIRA issue as a good place to communicate clearly about _what_ was changed _why_ and _how_.
 
 
+## Acknowledgements
+
+* Portions of these contributing guidelines inspired by 
+  [HashiCorp packer contributing guidelines][].
+
 [Apereo licensing generally]: http://www.apereo.org/licensing
 [contributor licensing agreements specifically]: http://www.apereo.org/licensing/agreements
 [Contributor License Agreement]: http://www.apereo.org/licensing/agreements
@@ -111,3 +126,5 @@ If your change is to a user-facing experience, it should not regress support for
 [google-java-format-gradle-plugin_quickstart]: https://github.com/sherter/google-java-format-gradle-plugin#quick-start
 
 [architecture]: https://wiki.jasig.org/pages/viewpage.action?pageId=65274379
+
+[HashiCorp packer contributing guidelines]: https://github.com/hashicorp/packer/commit/87edf671771680e0989798a3460ff00453b9aa89#diff-6a3371457528722a734f3c51d9238c13
