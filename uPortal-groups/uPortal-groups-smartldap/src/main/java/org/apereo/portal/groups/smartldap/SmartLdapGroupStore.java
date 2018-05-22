@@ -19,12 +19,13 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.concurrent.ConcurrentException;
 import org.apache.commons.lang3.concurrent.LazyInitializer;
@@ -209,7 +210,7 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
             refreshTree();
         }
 
-        List<IEntityGroup> rslt = new LinkedList<>();
+        List<IEntityGroup> rslt = new ArrayList<>();
         final IEntityGroup root = getRootGroup();
         if (gm.isGroup()) {
             // Check the local indeces...
@@ -226,7 +227,7 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
             // Ask the individual...
             EntityIdentifier ei = gm.getUnderlyingEntityIdentifier();
             Map<String, List<Object>> seed = new HashMap<>();
-            List<Object> seedValue = new LinkedList<>();
+            List<Object> seedValue = new ArrayList<>();
             seedValue.add(ei.getKey());
             seed.put(IPerson.USERNAME, seedValue);
             Map<String, List<Object>> attr = personAttributeDao.getMultivaluedUserAttributes(seed);
@@ -240,7 +241,7 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
                 // IPerson returns null if no value is defined for this attribute...
                 if (groupKeys != null) {
 
-                    List<String> list = new LinkedList<>();
+                    List<String> list = new ArrayList<>();
                     for (Object o : groupKeys) {
                         list.add((String) o);
                     }
@@ -300,7 +301,7 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
 
         log.debug("Invoking findMemberGroupKeys() for group:  {}", group.getLocalKey());
 
-        List<String> rslt = new LinkedList<>();
+        List<String> rslt = new ArrayList<>();
         for (Iterator it = findMemberGroups(group); it.hasNext(); ) {
             IEntityGroup g = (IEntityGroup) it.next();
             // Return composite keys here...
@@ -325,7 +326,7 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
 
         log.debug("Invoking findMemberGroups() for group:  {}", group.getLocalKey());
 
-        List<IEntityGroup> rslt = new LinkedList<>();
+        List<IEntityGroup> rslt = new ArrayList<>();
 
         List<String> list = groupsTree.getChildren().get(group.getLocalKey());
         if (list != null) {
@@ -410,7 +411,7 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
                 throw new GroupsException(msg);
         }
 
-        List<EntityIdentifier> rslt = new LinkedList<>();
+        List<EntityIdentifier> rslt = new ArrayList<>();
         for (Map.Entry<String, List<String>> y : groupsTree.getKeysByUpperCaseName().entrySet()) {
             if (y.getKey().matches(regex)) {
                 List<String> keys = y.getValue();
@@ -640,14 +641,14 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
                 List<String> parentsList = newParents.get(childKey);
                 if (parentsList == null) {
                     // first parent for this child...
-                    parentsList = Collections.synchronizedList(new LinkedList<String>());
+                    parentsList = Collections.synchronizedList(new ArrayList<String>());
                     newParents.put(childKey, parentsList);
                 }
                 parentsList.add(g.getLocalKey());
             }
 
             // newChildren...
-            List<String> childrenList = Collections.synchronizedList(new LinkedList<String>());
+            List<String> childrenList = Collections.synchronizedList(new ArrayList<String>());
             for (String childKey : r.getKeysOfChildren()) {
                 // NB:  We're only interested in relationships between
                 // objects in the main catalog (i.e. newGroups);
@@ -662,7 +663,7 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
             List<String> groupsWithMyName = newKeysByUpperCaseName.get(g.getName().toUpperCase());
             if (groupsWithMyName == null) {
                 // I am the first group with my name (pretty likely)...
-                groupsWithMyName = Collections.synchronizedList(new LinkedList<String>());
+                groupsWithMyName = Collections.synchronizedList(new ArrayList<String>());
                 newKeysByUpperCaseName.put(g.getName().toUpperCase(), groupsWithMyName);
             }
             groupsWithMyName.add(g.getLocalKey());
@@ -678,11 +679,11 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
 
         // newParents (I am a parent for all groups that have no other parent)...
         List<String> childrenOfRoot =
-                Collections.synchronizedList(new LinkedList<String>()); // for later...
+                Collections.synchronizedList(new ArrayList<String>()); // for later...
         for (String possibleChildKey : newGroups.keySet()) {
             if (!possibleChildKey.equals(root.getLocalKey())
                     && !newParents.containsKey(possibleChildKey)) {
-                List<String> p = Collections.synchronizedList(new LinkedList<String>());
+                List<String> p = Collections.synchronizedList(new ArrayList<String>());
                 p.add(root.getLocalKey());
                 newParents.put(possibleChildKey, p);
                 childrenOfRoot.add(possibleChildKey); // for later...
@@ -696,7 +697,7 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
         List<String> groupsWithMyName = newKeysByUpperCaseName.get(root.getName().toUpperCase());
         if (groupsWithMyName == null) {
             // I am the first group with my name (pretty likely)...
-            groupsWithMyName = Collections.synchronizedList(new LinkedList<String>());
+            groupsWithMyName = Collections.synchronizedList(new ArrayList<String>());
             newKeysByUpperCaseName.put(root.getName().toUpperCase(), groupsWithMyName);
         }
         groupsWithMyName.add(root.getLocalKey());
