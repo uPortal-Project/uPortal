@@ -42,6 +42,7 @@ import org.apereo.portal.groups.ILockableEntityGroup;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.PersonFactory;
 import org.apereo.services.persondir.IPersonAttributeDao;
+import org.apereo.services.persondir.IPersonAttributes;
 import org.danann.cernunnos.Task;
 import org.danann.cernunnos.runtime.RuntimeRequestResponse;
 import org.danann.cernunnos.runtime.ScriptRunner;
@@ -226,15 +227,11 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
 
             // Ask the individual...
             EntityIdentifier ei = gm.getUnderlyingEntityIdentifier();
-            Map<String, List<Object>> seed = new HashMap<>();
-            List<Object> seedValue = new ArrayList<>();
-            seedValue.add(ei.getKey());
-            seed.put(IPerson.USERNAME, seedValue);
-            Map<String, List<Object>> attr = personAttributeDao.getMultivaluedUserAttributes(seed);
+            IPersonAttributes attr = personAttributeDao.getPerson(ei.getKey());
             // avoid NPEs and unnecessary IPerson creation
-            if (attr != null && !attr.isEmpty()) {
+            if (attr != null && attr.getAttributes() != null && !attr.getAttributes().isEmpty()) {
                 IPerson p = PersonFactory.createPerson();
-                p.setAttributes(attr);
+                p.setAttributes(attr.getAttributes());
 
                 // Analyze its memberships...
                 Object[] groupKeys = p.getAttributeValues(memberOfAttributeName);
