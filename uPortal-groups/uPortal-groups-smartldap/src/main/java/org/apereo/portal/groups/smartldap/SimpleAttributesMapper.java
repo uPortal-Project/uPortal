@@ -68,8 +68,8 @@ public final class SimpleAttributesMapper implements AttributesMapper {
                             + keyAttributeName
                             + "', groupNameAttributeName='"
                             + groupNameAttributeName
-                            + "', groupNameAttributeName='"
-                            + groupNameAttributeName
+                            + "', membershipAttributeName='"
+                            + membershipAttributeName
                             + "'";
             log.debug(msg);
         }
