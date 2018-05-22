@@ -549,6 +549,7 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
         // request can proceed with the newly-expired groupsTree.
         Thread refresh =
                 new Thread("SmartLdap Refresh Worker") {
+                    @Override
                     public void run() {
                         // Replace the old with the new...
                         try {
@@ -780,11 +781,12 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
         /*
          * Public API.
          */
-
+        @Override
         public IEntityGroupStore newGroupStore() throws GroupsException {
             return instance;
         }
 
+        @Override
         public IEntityGroupStore newGroupStore(ComponentGroupServiceDescriptor svcDescriptor)
                 throws GroupsException {
             return instance;
