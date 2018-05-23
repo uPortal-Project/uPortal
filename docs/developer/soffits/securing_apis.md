@@ -63,7 +63,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     public void configure(WebSecurity web) throws Exception {
         /*
          * Since this module includes portlets, we only want to apply Spring Security to requests
-         * targeting out REST APIs.
+         * targeting our REST APIs.
          */
         final RequestMatcher pathMatcher = new AntPathRequestMatcher("/api/**");
         final RequestMatcher inverseMatcher = new NegatedRequestMatcher(pathMatcher);
