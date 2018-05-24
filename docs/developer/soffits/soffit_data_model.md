@@ -15,6 +15,26 @@ are (currently) four objects in this data model:
   portal;  these are settings defined by and consumed by the portal itself, like
   _title_ and _chrome style_
 
+## Sharing Data Model Objects with a Soffit
+
+These objects can be shared by the portal with a soffit on each request, but
+<strong>none of them will be sent automatically</strong>.  Under the hood, data
+model objects are sent to soffits as Jason Web Tokens (JWTs) using HTTP headers.
+Web servers place limits (usually configurable) on the size of the header area
+for inbound and outbound requests.  The more data model elements sent, the
+greater the risk of exceeding this limit.  In typical cases sending all four
+elements is somewhat risky;  sending fewer (1, 2, or 3) should be safe.
+
+You can instruct uPortal to send each data model object using a dedicated
+<em>portlet preference</em> in the publishing record (metadata) of each soffit.
+The default value of each preference is `false`;  set it to
+`true` to send the element.
+
+* `Bearer`:  `org.apereo.portal.soffit.connector.SoffitConnectorController.includeAuthorization`
+* `PortalRequest`:  `org.apereo.portal.soffit.connector.SoffitConnectorController.includePortalRequest`
+* `Preferences`:  `org.apereo.portal.soffit.connector.SoffitConnectorController.includePreferences`
+* `Definition`:  `org.apereo.portal.soffit.connector.SoffitConnectorController.includeDefinition`
+
 ## Accessing Data Model Objects in a JSP
 
 Each of these objects is defined within the Expression Language (EL) Context in

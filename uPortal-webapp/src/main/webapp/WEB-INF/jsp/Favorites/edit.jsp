@@ -66,8 +66,8 @@
           </c:if>
           <c:choose>
             <c:when test="${collection.deleteAllowed}">
-              <a href="${unFavoriteCollectionUrl}">
-                <span class="glyphicon glyphicon-trash pull-right"></span>
+              <a class="up-remove-favorite" data-href="${unFavoriteCollectionUrl}" href="javascript:void(0)">
+                <span class="glyphicon glyphicon-trash pull-right" aria-label="Remove favorite collection"></span>
               </a>
               <a href="${renderRequest.contextPath}/f/${collection.id}/render.uP">
                 ${collection.name}
@@ -100,8 +100,8 @@
           </c:if>
           <c:choose>
             <c:when test="${favorite.deleteAllowed}">
-              <a href="${unFavoritePortletUrl}">
-                <span class="glyphicon glyphicon-trash pull-right"></span>
+              <a class="up-remove-favorite" data-href="${unFavoritePortletUrl}" href="javascript:void(0)">
+                <span class="glyphicon glyphicon-trash pull-right" aria-label="Remove favorite"></span>
               </a>
               <a href="${renderRequest.contextPath}/p/${favorite.functionalName}/render.uP">
                 ${favorite.name}
@@ -119,7 +119,6 @@
         </li>
       </c:forEach>
     </ul>
-
 
     <c:if test="${lockedItemListed}">
       <span class="help-block"><spring:message
@@ -161,6 +160,19 @@ up.jQuery(function() {
             }
         });
         $('#${n}fav_edit li').disableSelection();
+
+        // Removing a favorite requires an actionURL and a POST...
+        $('#${n}fav_edit a.up-remove-favorite').click(function() {
+            var url = $(this).attr('data-href');
+            var form = $('<form />', {
+                action: url,
+                method: 'POST',
+                style: 'display: none;'
+            });
+            form.appendTo('body').submit();
+        });
     });
 });
 </script>
+
+

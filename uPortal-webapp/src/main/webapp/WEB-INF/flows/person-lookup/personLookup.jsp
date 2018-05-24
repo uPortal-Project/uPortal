@@ -20,11 +20,11 @@
 --%>
 <%@ include file="/WEB-INF/jsp/include.jsp"%>
 
-<portlet:actionURL var="selectPersonUrl" escapeXml="false">
+<portlet:renderURL var="selectPersonUrl" escapeXml="false">
     <portlet:param name="execution" value="${flowExecutionKey}" />
     <portlet:param name="_eventId" value="select"/>
     <portlet:param name="username" value="USERNAME"/>
-</portlet:actionURL>
+</portlet:renderURL>
 
 <portlet:renderURL var="cancelUrl">
     <portlet:param name="execution" value="${flowExecutionKey}"/>
@@ -121,9 +121,9 @@
                     <!-- Buttons -->
                     <div class="buttons">
                         <spring:message var="searchButtonText" code="search" />
-                        <input class="button primary btn" type="submit" value="${searchButtonText}" />
+                        <input class="button btn btn-primary" type="submit" value="${searchButtonText}" />
 
-                        <a class="button btn" href="${ cancelUrl }">
+                        <a class="button btn btn-default" href="${ cancelUrl }">
                             <spring:message code="cancel" />
                         </a>
                     </div>

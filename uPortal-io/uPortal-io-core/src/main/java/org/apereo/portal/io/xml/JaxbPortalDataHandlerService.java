@@ -120,7 +120,7 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
     private static final MediaType MT_AR = MediaType.application("x-archive");
     private static final MediaType MT_TAR = MediaType.application("x-tar");
     private static final MediaType MT_BZIP2 = MediaType.application("x-bzip2");
-    private static final MediaType MT_GZIP = MediaType.application("x-gzip");
+    private static final MediaType MT_GZIP = MediaType.application("gzip");
     private static final MediaType MT_PACK200 = MediaType.application("x-java-pack200");
     private static final MediaType MT_XZ = MediaType.application("x-xz");
 

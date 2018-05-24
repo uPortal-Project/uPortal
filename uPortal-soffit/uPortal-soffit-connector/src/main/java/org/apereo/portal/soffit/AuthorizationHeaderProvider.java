@@ -31,6 +31,7 @@ import org.apereo.portal.groups.IGroupMember;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.services.GroupService;
 import org.apereo.portal.soffit.connector.AbstractHeaderProvider;
+import org.apereo.portal.soffit.connector.SoffitConnectorController;
 import org.apereo.portal.soffit.model.v1_0.Bearer;
 import org.apereo.portal.soffit.service.BearerService;
 import org.apereo.services.persondir.IPersonAttributeDao;
@@ -45,12 +46,20 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 public class AuthorizationHeaderProvider extends AbstractHeaderProvider {
 
+    public static final String INCLUDE_PREFERENCE =
+            SoffitConnectorController.class.getName() + ".includeAuthorization";
+
     @Autowired private IPersonAttributeDao personAttributeDao;
 
     @Autowired private BearerService bearerService;
 
     @Override
     public Header createHeader(RenderRequest renderRequest, RenderResponse renderResponse) {
+
+        // Include?
+        if (!isIncluded(renderRequest, INCLUDE_PREFERENCE)) {
+            return null;
+        }
 
         // Username
         final String username = getUsername(renderRequest);

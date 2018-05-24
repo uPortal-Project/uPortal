@@ -51,7 +51,7 @@
 
 <div id="${n}tenantManager">
     <h2><spring:message code="tenant.manager.add" /></h2>
-    <form id="addTenantForm" role="form" class="form-horizontal" action="${doAddTenantUrl}" method="post">
+    <form id="addTenantForm" role="form" class="form-horizontal" action="${doAddTenantUrl}" method="POST">
         <c:set var="errorCssClass">
             <c:choose>
                 <c:when test="${invalidFields['name'] ne null}">has-error</c:when>

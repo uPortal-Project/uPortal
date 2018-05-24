@@ -1075,7 +1075,6 @@
             <preference>
                 <name>enabled</name>
                 <value>true</value>
-                <read-only>false</read-only>
             </preference>
             <preference>
                 <!-- The session timeout warning will start displaying this many seconds before
@@ -1085,19 +1084,16 @@
                 -->
                 <name>dialogDisplaySeconds</name>
                 <value>60</value>
-                <read-only>false</read-only>
             </preference>
             <preference>
                 <!-- This URL is relative to the root of the uPortal instance -->
                 <name>resetSessionURLFragment</name>
                 <value>/api/ajax-success</value>
-                <read-only>false</read-only>
             </preference>
             <preference>
                 <!-- This URL is relative to the root of the uPortal instance -->
                 <name>logoutURLFragment</name>
                 <value>/Logout</value>
-                <read-only>false</read-only>
             </preference>
         </portlet-preferences>
 
@@ -1130,6 +1126,28 @@
             <preference>
                 <!-- This preference identifies the remote service -->
                 <name>org.apereo.portal.soffit.connector.SoffitConnectorController.serviceUrl</name>
+            </preference>
+            <!--
+             | The following preferences control which elements of the data model (HTTP headers)
+             | will be sent to the remote service.  Sending all of them always runs the risk of
+             | exceeding the maximum allowable header size.  For example, the default
+             | maxHttpHeaderSize in Tomcat 8 is 8192 bytes (8 KB).
+             +-->
+            <preference>
+                <name>org.apereo.portal.soffit.connector.SoffitConnectorController.includeAuthorization</name>
+                <value>false</value>
+            </preference>
+            <preference>
+                <name>org.apereo.portal.soffit.connector.SoffitConnectorController.includeDefinition</name>
+                <value>false</value>
+            </preference>
+            <preference>
+                <name>org.apereo.portal.soffit.connector.SoffitConnectorController.includePortalRequest</name>
+                <value>false</value>
+            </preference>
+            <preference>
+                <name>org.apereo.portal.soffit.connector.SoffitConnectorController.includePreferences</name>
+                <value>false</value>
             </preference>
         </portlet-preferences>
     </portlet>

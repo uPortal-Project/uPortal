@@ -3,7 +3,7 @@
 # uPortal Documentation
 
 **NOTE:** This area is a work-in-progress. It is intended to serve as primary
-documentation for uPortal version 5.0 (expected mid-2017) and above.
+documentation for uPortal version 5 and above.
 Documentation for earlier versions of uPortal is available in
 [Confluence](https://wiki.jasig.org). See _Documentation for Previous Releases_
 below.
@@ -17,8 +17,8 @@ below.
       <a href="http://issuestats.com/github/Jasig/uPortal">
         <img src="http://issuestats.com/github/Jasig/uPortal/badge/pr" alt="Issue Stats">
       </a>
-      <a href="https://google.github.io/styleguide/javaguide.html">
-        <img src="https://img.shields.io/badge/code_style-Google-green.svg?style=flat" alt="Google Code Style">
+      <a href="https://source.android.com/setup/contribute/code-style">
+        <img src="https://img.shields.io/badge/code_style-AOSP-green.svg?style=flat" alt="AOSP Code Style">
       </a>
       <a href="https://github.com/search?q=topic%3Auportal+topic%3Asoffit&type=Repositories">
         <img src="https://img.shields.io/badge/discover-soffits-blue.svg?style=flat" alt="Discover Soffits">
@@ -195,11 +195,12 @@ below.
 
 ## Documentation for Previous Releases
 
-*   [uPortal 5.0 Manual](https://github.com/Jasig/uPortal/tree/v5.0.6/docs)
-*   [uPortal 4.3](https://wiki.jasig.org/display/UPM43/Home)
-*   [uPortal 4.2](https://wiki.jasig.org/display/UPM42/Home)
-*   [uPortal 4.1](https://wiki.jasig.org/display/UPM41/Home)
-*   [uPortal 4.0](https://wiki.jasig.org/display/UPM40/Home)
-*   [uPortal 3.2](https://wiki.jasig.org/display/UPM32/Home)
-*   [uPortal 3.1](https://wiki.jasig.org/display/UPM31/Home)
-*   [uPortal 3.0](https://wiki.jasig.org/display/UPM30/Home)
+*   [uPortal 5.1 Manual](https://github.com/Jasig/uPortal/tree/v5.1.0/docs)
+*   [uPortal 5.0 Manual](https://github.com/Jasig/uPortal/tree/v5.0.7/docs)
+*   [uPortal 4.3 Manual](https://wiki.jasig.org/display/UPM43/Home)
+*   [uPortal 4.2 Manual](https://wiki.jasig.org/display/UPM42/Home)
+*   [uPortal 4.1 Manual](https://wiki.jasig.org/display/UPM41/Home)
+*   [uPortal 4.0 Manual](https://wiki.jasig.org/display/UPM40/Home)
+*   [uPortal 3.2 Manual](https://wiki.jasig.org/display/UPM32/Home)
+*   [uPortal 3.1 Manual](https://wiki.jasig.org/display/UPM31/Home)
+*   [uPortal 3.0 Manual](https://wiki.jasig.org/display/UPM30/Home)

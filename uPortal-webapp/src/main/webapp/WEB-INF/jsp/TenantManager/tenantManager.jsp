@@ -73,7 +73,7 @@
                                     <td><a href="${detailsUrl}" title="<spring:message code="tenant.manager.edit" /> ${tenant.name}"><c:out value="${tenant.name}" /></a></td>
                                     <td><c:out value="${tenant.fname}" /></td>
                                     <td><a href="mailto:${tenant.attributesMap['adminContactEmail']}" title="<spring:message code="tenant.manager.email.address.link" />">${tenant.attributesMap['adminContactUsername']}</a></td>
-                                    <td class="text-right"><a href="${removeUrl}" onclick="return confirm('<spring:message code="tenant.manager.remove.tenant.confirm" arguments="${tenant.name}" />')" title="<spring:message code="tenant.manager.remove.tenant" />" class="btn btn-xs btn-danger"><span class="glyphicon glyphicon-trash"></span> <spring:message code="tenant.manager.remove" /></a></td>
+                                    <td class="text-right"><a class="btn btn-xs btn-danger up-tenant-remove" data-href="${removeUrl}" data-confirm="<spring:message code="tenant.manager.remove.tenant.confirm" arguments="${tenant.name}" />" title="<spring:message code="tenant.manager.remove.tenant" />" href="javascript:void(0)"><span class="glyphicon glyphicon-trash"></span> <spring:message code="tenant.manager.remove" /></a></td>
                                 </tr>
                             </c:forEach>
                         </tbody>
@@ -86,3 +86,21 @@
         </div>
     </div>
 </div>
+
+<script type="text/javascript">
+(function($) {
+    // Deleting a tenant requires an actionURL and a POST...
+    $('#${n}tenantManager a.up-tenant-remove').click(function() {
+        var confirmText = $(this).attr('data-confirm');
+        if (confirm(confirmText)) {
+            var url = $(this).attr('data-href');
+            var form = $('<form />', {
+                action: url,
+                method: 'POST',
+                style: 'display: none;'
+            });
+            form.appendTo('body').submit();
+        }
+    });
+})(up.jQuery);
+</script>

@@ -155,6 +155,7 @@ public class TabRenderStatisticsController
         return TabRenderAggregationDiscriminatorImpl.Comparator.INSTANCE;
     }
 
+    @Override
     protected Map<TabRenderAggregationDiscriminator, SortedSet<TabRenderAggregation>>
             createColumnDiscriminatorMap(TabRenderReportForm form) {
         // Collections used to track the queried groups and the results

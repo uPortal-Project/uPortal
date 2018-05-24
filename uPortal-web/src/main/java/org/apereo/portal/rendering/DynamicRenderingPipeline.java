@@ -16,7 +16,6 @@ package org.apereo.portal.rendering;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.transform.OutputKeys;
@@ -61,8 +60,7 @@ public class DynamicRenderingPipeline implements IPortalRenderingPipeline {
     }
 
     @Override
-    public void renderState(HttpServletRequest req, HttpServletResponse res)
-            throws ServletException, IOException {
+    public void renderState(HttpServletRequest req, HttpServletResponse res) throws IOException {
         // Disable page caching
         res.setHeader("pragma", "no-cache");
         res.setHeader("Cache-Control", "no-cache, max-age=0, must-revalidate");

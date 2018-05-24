@@ -717,10 +717,7 @@ public class PortletDefinitionImpl implements IPortletDefinition {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((this.fname == null) ? 0 : this.fname.hashCode());
-        return result;
+        return 31 + ((this.fname == null) ? 0 : this.fname.hashCode());
     }
 
     @Override

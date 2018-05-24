@@ -295,10 +295,12 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
         }
     }
 
+    @Override
     public synchronized void loadUserLayout() throws PortalException {
         this.loadUserLayout(false);
     }
 
+    @Override
     public synchronized void loadUserLayout(boolean reload) throws PortalException {
         Document uli = null;
         try {
@@ -330,6 +332,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
         }
     }
 
+    @Override
     public synchronized void saveUserLayout() throws PortalException {
         Document uld = this.getUserLayoutDOM();
 
@@ -377,6 +380,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
         return allSubscribedChannels;
     }
 
+    @Override
     public IUserLayoutNodeDescription getNode(String nodeId) throws PortalException {
         if (nodeId == null) return null;
 
@@ -403,6 +407,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
         return desc;
     }
 
+    @Override
     public IUserLayoutNodeDescription addNode(
             IUserLayoutNodeDescription node, String parentId, String nextSiblingId)
             throws PortalException {
@@ -459,6 +464,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
         return null;
     }
 
+    @Override
     public boolean moveNode(String nodeId, String parentId, String nextSiblingId)
             throws PortalException {
         IUserLayoutNodeDescription parent = this.getNode(parentId);
@@ -496,6 +502,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
         return false;
     }
 
+    @Override
     public boolean deleteNode(String nodeId) throws PortalException {
         if (canDeleteNode(nodeId)) {
             IUserLayoutNodeDescription nodeDescription = this.getNode(nodeId);
@@ -550,6 +557,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
      * the owning fragment. If the node is a user owned node then the changes are applied directly
      * to the corresponding node in the PLF.
      */
+    @Override
     public synchronized boolean updateNode(IUserLayoutNodeDescription node) throws PortalException {
         if (canUpdateNode(node)) {
             String nodeId = node.getId();
@@ -908,6 +916,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
         }
     }
 
+    @Override
     public boolean canAddNode(
             IUserLayoutNodeDescription node, String parentId, String nextSiblingId)
             throws PortalException {
@@ -978,6 +987,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
         return false; // oops never found the sib
     }
 
+    @Override
     public boolean canMoveNode(String nodeId, String parentId, String nextSiblingId)
             throws PortalException {
         return this.canMoveNode(this.getNode(nodeId), this.getNode(parentId), nextSiblingId);
@@ -1057,6 +1067,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
         return false; // oops never found the sib
     }
 
+    @Override
     public boolean canDeleteNode(String nodeId) throws PortalException {
         return canDeleteNode(this.getNode(nodeId));
     }
@@ -1079,6 +1090,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
      * Returns true if we are dealing with a fragment layout or if editing of attributes is allowed,
      * or the node is a channel since ad-hoc parameters can always be added.
      */
+    @Override
     public boolean canUpdateNode(IUserLayoutNodeDescription node) {
         if (node == null) return false;
 
@@ -1091,6 +1103,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
      * Unsupported operation in DLM. This feature is handled by pluggable processors in the DLM
      * processing pipe. See properties/dlmContext.xml.
      */
+    @Override
     public void markAddTargets(IUserLayoutNodeDescription node) {
         throw new UnsupportedOperationException(
                 "Use an appropriate " + "processor for adding targets.");
@@ -1100,11 +1113,13 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
      * Unsupported operation in DLM. This feature is handled by pluggable processors in the DLM
      * processing pipe. See properties/dlmContext.xml.
      */
+    @Override
     public void markMoveTargets(String nodeId) throws PortalException {
         throw new UnsupportedOperationException(
                 "Use an appropriate " + "processor for adding targets.");
     }
 
+    @Override
     public String getParentId(String nodeId) throws PortalException {
         Document uld = this.getUserLayoutDOM();
         Element nelement = uld.getElementById(nodeId);
@@ -1130,6 +1145,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
                         + ".");
     }
 
+    @Override
     public String getNextSiblingId(String nodeId) throws PortalException {
         Document uld = this.getUserLayoutDOM();
         Element nelement = uld.getElementById(nodeId);
@@ -1154,6 +1170,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
                         + ".");
     }
 
+    @Override
     public String getPreviousSiblingId(String nodeId) throws PortalException {
         Document uld = this.getUserLayoutDOM();
         Element nelement = uld.getElementById(nodeId);
@@ -1177,6 +1194,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
                         + ".");
     }
 
+    @Override
     public Enumeration<String> getChildIds(String nodeId) throws PortalException {
         return getChildIds(nodeId, false);
     }
@@ -1225,6 +1243,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
         this.cacheKey = Long.toString(rnd.nextLong());
     }
 
+    @Override
     public int getLayoutId() {
         return profile.getLayoutId();
     }
@@ -1239,6 +1258,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
         return new PortletSubscribeIdResolver(fname).traverseDocument(userLayout);
     }
 
+    @Override
     public String getSubscribeId(String parentFolderId, String fname) {
         final Map<String, String> variables = new HashMap<String, String>();
         variables.put("parentFolderId", parentFolderId);
@@ -1261,6 +1281,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
     /* (non-Javadoc)
      * @see org.apereo.portal.layout.IUserLayoutManager#getUserLayout()
      */
+    @Override
     public IUserLayout getUserLayout() throws PortalException {
         // Copied from SimpleLayoutManager since our layouts are regular
         // simple layouts, ie Documents.
@@ -1274,6 +1295,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
      * @see org.apereo.portal.layout.IUserLayoutManager#getRootFolderId()
      * @see org.apereo.portal.layout.dlm.RootLocator
      */
+    @Override
     public String getRootFolderId() {
         if (rootNodeId == null) {
             Document layout = getUserLayoutDOM();
@@ -1311,6 +1333,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
      *
      * @see org.apereo.portal.layout.IUserLayoutManager#getDepth(java.lang.String)
      */
+    @Override
     public int getDepth(String nodeId) throws PortalException {
         // can't see what it calling this anywhere so ignoring for now.
         // TODO waiting to hear back from peter/michael

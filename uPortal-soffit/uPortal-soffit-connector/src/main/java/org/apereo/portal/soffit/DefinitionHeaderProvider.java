@@ -40,6 +40,7 @@ import org.apereo.portal.portlet.registry.IPortletWindowRegistry;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.IPersonManager;
 import org.apereo.portal.soffit.connector.AbstractHeaderProvider;
+import org.apereo.portal.soffit.connector.SoffitConnectorController;
 import org.apereo.portal.soffit.model.v1_0.Definition;
 import org.apereo.portal.soffit.service.DefinitionService;
 import org.apereo.portal.url.IPortalRequestUtils;
@@ -52,6 +53,9 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @since 5.0
  */
 public class DefinitionHeaderProvider extends AbstractHeaderProvider {
+
+    public static final String INCLUDE_PREFERENCE =
+            SoffitConnectorController.class.getName() + ".includeDefinition";
 
     @Autowired private IPortalRequestUtils portalRequestUtils;
 
@@ -69,6 +73,11 @@ public class DefinitionHeaderProvider extends AbstractHeaderProvider {
 
     @Override
     public Header createHeader(RenderRequest renderRequest, RenderResponse renderResponse) {
+
+        // Include?
+        if (!isIncluded(renderRequest, INCLUDE_PREFERENCE)) {
+            return null;
+        }
 
         // Username
         final String username = getUsername(renderRequest);

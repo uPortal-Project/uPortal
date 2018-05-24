@@ -97,7 +97,7 @@
                     </div>
                     <div class="buttons">
                         <button type="submit" class="saveButton btn btn-default"><spring:message code="save"/></button>
-                        <button type="button" class="cancelButton btn btn-default" onclick="window.location.href='${cancelUrl}'"><spring:message code="cancel"/></button>
+                        <button type="button" class="cancelButton btn btn-default"><spring:message code="cancel"/></button>
                     </div>
                 </form>
                 <div class="loadingMessage hidden"><i class="fa fa-spinner fa-spin"></i></div>
@@ -113,16 +113,32 @@
     // De-alias jQuery safely within this self-invoking function
     var $ = up.jQuery;
 
-    var initDynSkin = function($, settings, portletSelector, formSelector) {
-        var formUrl = $(settings.formSelector).attr('action');
+    // Invoke cancelUrl to gracefully exit config mode and return whatever the user was doing
+    // without spring webflow errors. I'd have thought we could do a portletUrl
+    // that sets portletMode=View, but it does not seem to work.
+    var exitConfigMode = function() {
         // The url contains &amp; which messes up spring webflow. Change them to & so parameters get passed through properly.
         var cancelUrl = "${cancelUrl}".replace(/&amp;/g,"&");
+
+        // Leaving config mode requires an actionURL and a POST...
+        var form = $('<form />', {
+            action: cancelUrl,
+            method: 'POST',
+            style: 'display: none;'
+        });
+        form.appendTo('body').submit();
+    }
+
+    var initDynSkin = function($, settings, portletSelector, formSelector) {
+        var formUrl = $(settings.formSelector).attr('action');
 
         var showLoading = function() {
             $(settings.formSelector).find(".cancelButton").prop("disabled", true);
             $(settings.formSelector).find(".saveButton").prop("disabled", true);
             $(settings.portletSelector).find(".loadingMessage").removeClass("hidden");
         };
+
+        $('#${n}skinManagerConfig .cancelButton').click(exitConfigMode);
 
         $(settings.formSelector).submit(function (event) {
             showLoading();
@@ -134,10 +150,7 @@
                 // We don't capture error since there is no way the portal will return a different status code on an
                 // action url. If there is an error we'd get a web page with content that displayed an error message.
                 .success(function(data, textStatus, jqXHR) {
-                    // Since it saved successfully, invoke cancelUrl to gracefully exit config mode and return to
-                    // Portlet configuration without spring webflow errors. I'd have thought we could do a portletUrl
-                    // that sets portletMode=View but it does not seem to work.
-                    window.location.href=cancelUrl;
+                    exitConfigMode();
                 });
             event.preventDefault();
         });

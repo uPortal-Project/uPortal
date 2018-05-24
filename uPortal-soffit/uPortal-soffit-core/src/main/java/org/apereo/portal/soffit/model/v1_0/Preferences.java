@@ -34,6 +34,16 @@ public class Preferences extends AbstractTokenizable {
         this.preferencesMap = Collections.unmodifiableMap(preferencesMap);
     }
 
+    /**
+     * Supports proxying a missing data model element.
+     *
+     * @since 5.1
+     */
+    protected Preferences() {
+        super(null);
+        this.preferencesMap = null;
+    }
+
     public List<String> getValues(String name) {
         return preferencesMap.get(name);
     }

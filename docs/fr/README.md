@@ -3,7 +3,7 @@
 # Documentation uPortal
 
 **NOTE :** Cette partie est en construction. Son intention est de servir de base
-pour la documentation d'uPortal version 5.0 (sortie fin 2017) et supérieures.
+pour la documentation d'uPortal version 5 et supérieures.
 Les documentations pour les versions antérieures sont disponibles dans
 [Confluence](https://wiki.jasig.org).  Référez vous à *Documentation des précédentes versions* \[en\]
 ci-après.
@@ -17,8 +17,8 @@ ci-après.
       <a href="http://issuestats.com/github/Jasig/uPortal">
         <img src="http://issuestats.com/github/Jasig/uPortal/badge/pr" alt="Statistiques des Issues">
       </a>
-      <a href="https://google.github.io/styleguide/javaguide.html">
-        <img src="https://img.shields.io/badge/code_style-Google-green.svg?style=flat" alt="Google Code Style">
+      <a href="https://source.android.com/setup/contribute/code-style">
+        <img src="https://img.shields.io/badge/code_style-AOSP-green.svg?style=flat" alt="AOSP Code Style">
       </a>
       <a href="https://github.com/search?q=topic%3Auportal+topic%3Asoffit&type=Repositories">
         <img src="https://img.shields.io/badge/discover-soffits-blue.svg?style=flat" alt="Découvrez les Soffits">

@@ -36,6 +36,7 @@ public class LPAChangeAttribute implements ILayoutProcessingAction {
     }
 
     /** Apply the attribute change. */
+    @Override
     public void perform() throws PortalException {
         // push the change into the PLF
         if (nodeId.startsWith(Constants.FRAGMENT_ID_USER_PREFIX)) {

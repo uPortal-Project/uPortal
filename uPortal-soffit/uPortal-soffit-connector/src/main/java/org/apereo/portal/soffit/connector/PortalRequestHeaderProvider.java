@@ -32,12 +32,19 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 public class PortalRequestHeaderProvider extends AbstractHeaderProvider {
 
+    public static final String INCLUDE_PREFERENCE =
+            SoffitConnectorController.class.getName() + ".includePortalRequest";
     public static final String NAMESPACE_PREFIX = "n_";
 
     @Autowired private PortalRequestService portalRequestService;
 
     @Override
     public Header createHeader(RenderRequest renderRequest, RenderResponse renderResponse) {
+
+        // Include this header?
+        if (!isIncluded(renderRequest, INCLUDE_PREFERENCE)) {
+            return null;
+        }
 
         // Username
         final String username = getUsername(renderRequest);
@@ -84,7 +91,7 @@ public class PortalRequestHeaderProvider extends AbstractHeaderProvider {
             parameters.put(y.getKey(), Arrays.asList(y.getValue()));
         }
 
-        // Preferences header
+        // PortalRequest header
         final PortalRequest portalRequest =
                 portalRequestService.createPortalRequest(
                         properties, attributes, parameters, username, getExpiration(renderRequest));

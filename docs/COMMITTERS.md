@@ -9,21 +9,21 @@
  - Christian Murphy (ChristianMurphy)
  - Daniel McCallum (dmccallum)
  - Drew Wills (drewwills)
- - James Wennmacher (jameswennmacher)
- - Jeff Cross (jeffbcross)
  - [Jim Helwig] (jimhelwig)
  - Josh Helmer (jhelmer-unicon)
  - Misagh Moayyed (mmoayyed)
- - Nicholas Blair (nblair)
  - Paul Spaude (pspaude)
  - Tim Levett (timlevett)
  - Timothy A Vertein (vertein)
  - William G. Thompson, Jr. (wgthom)
 
-## Committers Emeritus
+## Committers Emeriti
 
  - Eric Dalquist (edalquist)
+ - James Wennmacher (jameswennmacher)
+ - Jeff Cross (jeffbcross)
  - Jen Bourey (bourey)
+ - Nicholas Blair (nblair)
 
 ## What's a Committer?
 
