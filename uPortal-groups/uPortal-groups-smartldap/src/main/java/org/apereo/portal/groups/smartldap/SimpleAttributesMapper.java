@@ -17,10 +17,8 @@ package org.apereo.portal.groups.smartldap;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
-
 import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apereo.portal.groups.EntityTestingGroupImpl;
