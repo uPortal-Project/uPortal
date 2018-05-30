@@ -70,7 +70,7 @@
       <pattern>%-5level [%thread] %logger{36} %d{ISO8601} - %msg%n</pattern>
     </encoder>
     <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-      <fileNamePattern>${catalina.base}/logs/portal/portal-events.log.%d{yyyy-MM-dd}</fileNamePattern>
+      <fileNamePattern>${catalina.base}/logs/portal/portal-tincan-events.log.%d{yyyy-MM-dd}</fileNamePattern>
     </rollingPolicy>
   </appender>
 
