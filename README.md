@@ -247,5 +247,5 @@ comes with a Gradle wrapper if you don't want to install the build tool
 
 For a full list of Gradle tasks run `./gradlew tasks` from the root directory.
 
-[latest uPortal manual]: (https://jasig.github.io/uPortal)
+[latest uPortal manual]: https://jasig.github.io/uPortal
 [uPortal-start]: https://github.com/Jasig/uPortal-start
