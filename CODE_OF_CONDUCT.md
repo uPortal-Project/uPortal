@@ -15,7 +15,7 @@ this:
   politely asked to change something. We appreciate any sort of contributions, and don't want a wall
   of rules to get in the way of that.
 
-The uPortal Community is a global community. Because conversations are time-shifted and geo-separated, it is especially important to use appropriate care when communicating. uPortal has a strong tradition of operating through consensus and compromise; flexibility is appreciated and a fair bit of deference is given to the person actually making the contribution. Keeping in mind an emphasis on respect, compassion, and empathy for others helps us avoid or resolve conflicts. When conflicts do arise, we encourage direct communication towards a mutually satisfactory resolution. Ideally we can harness the passion within the community towards effective change and growth. The [uPortal Steering Committee][] acts as a final arbiter for conflict resolution.
+The uPortal Community is a global community. Because conversations are time-shifted and geo-separated, it is especially important to use appropriate care when communicating. uPortal has a strong tradition of operating through consensus and compromise; flexibility is appreciated. Keeping in mind an emphasis on respect, compassion, and empathy for others helps us avoid or resolve conflicts. When conflicts do arise, we encourage direct communication towards a mutually satisfactory resolution. Ideally we can harness the passion within the community towards effective change and growth. The [uPortal Steering Committee][] acts as a final arbiter for conflict resolution.
 
 [Apereo Foundation Welcoming Policy]: https://www.apereo.org/content/apereo-welcoming-policy
 [uPortal Steering Committee]: mailto:uportal-steering-committee@apereo.org
