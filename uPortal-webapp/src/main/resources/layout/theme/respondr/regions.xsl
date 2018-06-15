@@ -273,6 +273,25 @@
         </xsl:if>
     </xsl:template>
 
+    <!-- ========== TEMPLATE: POST-CONTENT ========== -->
+    <!-- =========================================== -->
+    <!--
+     | This template renders portlets in the area just below content (columns or focused portlet).
+    -->
+    <xsl:template name="region.post-content">
+        <xsl:if test="//region[@name='post-content']/channel">
+            <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
+            <div id="region-post-content" class="row">
+                <div class="col-md-12">
+                    <xsl:for-each select="//region[@name='post-content']/channel">
+                        <xsl:call-template name="regions.portlet.decorator" />
+                    </xsl:for-each>
+                </div>
+            </div>
+            <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
+        </xsl:if>
+    </xsl:template>
+
     <!-- ========== TEMPLATE: SIDEBAR-RIGHT ========== -->
     <!-- ============================================= -->
     <!--
