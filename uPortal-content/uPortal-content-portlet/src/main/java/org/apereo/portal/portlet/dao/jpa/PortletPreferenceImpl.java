@@ -77,9 +77,8 @@ public class PortletPreferenceImpl implements IPortletPreference, Cloneable {
     @Column(name = "ENTITY_VERSION")
     private final long entityVersion;
 
-    @Column(name = "PREF_NAME", length = 100000)
-    @Type(type = "org.hibernate.type.TextType")
-    @Lob
+    @Column(name = "PREF_NAME", length = 4000)
+    @Type(type = "org.hibernate.type.StringType")
     private String name = null;
 
     @Column(name = "READ_ONLY", nullable = false)
