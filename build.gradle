@@ -117,7 +117,7 @@ subprojects {
         testCompile "org.hamcrest:hamcrest-all:${hamcrestVersion}"
         testCompile "org.mockito:mockito-core:${mockitoVersion}"
         testCompile "org.springframework:spring-test:${springVersion}"
-        testCompile "xmlunit:xmlunit:${xmlunitVersion}"
+        testCompile "org.xmlunit:xmlunit-legacy:${xmlunitVersion}"
     }
 
     /* Release Management
