@@ -9,6 +9,7 @@ A clear and concise description of what the problem is. Ex. I'm always frustrate
 
 **Describe the solution you'd like**
 A clear and concise description of what you want to happen.
+E.G. As a < type of user >, I want < some goal > so that < some reason >.
 
 **Describe alternatives you've considered**
 A clear and concise description of any alternative solutions or features you've considered.
