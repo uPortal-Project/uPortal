@@ -1,7 +1,7 @@
 <!--
 Thank you for your pull request. Please review below requirements.
 
-Bug fixes and new features should be reported on the issue tracker: https://issues.jasig.org/browse/UP/
+Bug fixes and new features should be reported on the issue tracker: https://github.com/Jasig/uPortal/issues
 
 Contributors guide: https://github.com/Jasig/uPortal/blob/master/CONTRIBUTING.md
 -->

@@ -3,22 +3,6 @@
 <table border="0">
   <tr>
     <td>
-      <a href="https://www.w3.org/TR/WCAG20/">
-        <img src="https://www.w3.org/WAI/wcag2AA-blue-v.svg" alt="WCAG 2 AA Badge">
-      </a>
-      <a href="http://issuestats.com/github/Jasig/uPortal">
-        <img src="http://issuestats.com/github/Jasig/uPortal/badge/pr" alt="Issue Stats">
-      </a>
-      <a href="https://source.android.com/setup/contribute/code-style">
-        <img src="https://img.shields.io/badge/code_style-AOSP-green.svg?style=flat" alt="AOSP Code Style">
-      </a>
-      <a href="https://github.com/search?q=topic%3Auportal+topic%3Asoffit&type=Repositories">
-        <img src="https://img.shields.io/badge/discover-soffits-blue.svg?style=flat" alt="Discover Soffits">
-      </a>
-      <a href="https://github.com/search?q=topic%3Auportal+topic%3Aportlet&type=Repositories">
-        <img src="https://img.shields.io/badge/discover-portlets-blue.svg?style=flat" alt="Discover Portlets">
-      </a>
-      <br>
       <table>
         <tr>
           <th>
@@ -105,42 +89,26 @@
     <td>
       <table>
         <tr>
-          <th>
-            Get Involved
-          </th>
-          <th>
-            Outlet
-          </th>
-        </tr>
-        <tr>
-          <td>
-            Report an Issue
-          </td>
-          <td>
-            <a href="https://issues.jasig.org/browse/UP">
-              <img src="https://img.shields.io/badge/issue_tacker-Jira-green.svg?style=flat" alt="Issue Tracker">
-            </a>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            Request a feature
-          </td>
-          <td>
-            <a href="https://issues.jasig.org/browse/UP">
-              <img src="https://img.shields.io/badge/issue_tacker-Jira-green.svg?style=flat" alt="Issue Tracker">
-            </a>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            Contribute Code
-          </td>
-          <td>
-            <a href="CONTRIBUTING.md">
-              <img src="https://img.shields.io/badge/contributing-guide-green.svg?style=flat" alt="Contributing Guide">
-            </a>
-          </td>
+            <td>
+                Quick links
+            </td>
+            <td>
+                <a href="https://www.w3.org/TR/WCAG20/">
+                  <img src="https://www.w3.org/WAI/wcag2AA-blue-v.svg" alt="WCAG 2 AA Badge">
+                </a>
+                <a href="http://issuestats.com/github/Jasig/uPortal">
+                  <img src="http://issuestats.com/github/Jasig/uPortal/badge/pr" alt="Issue Stats">
+                </a>
+                <a href="https://source.android.com/setup/contribute/code-style">
+                  <img src="https://img.shields.io/badge/code_style-AOSP-green.svg?style=flat" alt="AOSP Code Style">
+                </a>
+                <a href="https://github.com/search?q=topic%3Auportal+topic%3Asoffit&type=Repositories">
+                  <img src="https://img.shields.io/badge/discover-soffits-blue.svg?style=flat" alt="Discover Soffits">
+                </a>
+                <a href="https://github.com/search?q=topic%3Auportal+topic%3Aportlet&type=Repositories">
+                  <img src="https://img.shields.io/badge/discover-portlets-blue.svg?style=flat" alt="Discover Portlets">
+                </a>
+            </td>
         </tr>
         <tr>
           <td>
