@@ -4,7 +4,6 @@ dependencies {
     compile project(':uPortal-core')
 
     compile "com.google.guava:guava:${guavaVersion}"
-    compile "org.apache.commons:commons-collections4:${commonsCollectionsVersion}"
     compile "org.springframework:spring-web:${springVersion}"
 
 }
