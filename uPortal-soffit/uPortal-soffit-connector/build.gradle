@@ -7,7 +7,7 @@ dependencies {
     compile project(':uPortal-soffit:uPortal-soffit-core')
 
     compile "commons-io:commons-io:${commonsIoVersion}"
-    compile "net.sf.ehcache:ehcache-core:${ehcacheVersion}"
+    compile "org.ehcache:ehcache:${ehcacheVersion}"
     compile "org.apache.httpcomponents:httpclient:${httpclientVersion}"
     compile "org.springframework:spring-webmvc-portlet:${springVersion}"
 

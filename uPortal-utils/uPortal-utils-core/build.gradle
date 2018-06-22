@@ -12,7 +12,7 @@ dependencies {
     compile "com.fasterxml.jackson.core:jackson-core:${jacksonVersion}"
     compile "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
     compile "com.google.guava:guava:${guavaVersion}"
-    compile "net.sf.ehcache:ehcache-core:${ehcacheVersion}"
+    compile "org.ehcache:ehcache:${ehcacheVersion}"
     compile "org.apache.ant:ant:${antVersion}"
     compile "org.apache.commons:commons-lang3:${commonsLang3Version}"
     compile "org.aspectj:aspectjrt:${aspectjVersion}"
