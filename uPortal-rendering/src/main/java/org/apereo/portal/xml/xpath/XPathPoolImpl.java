@@ -21,7 +21,8 @@ import javax.xml.namespace.NamespaceContext;
 import javax.xml.namespace.QName;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
-import org.apache.commons.pool.impl.GenericKeyedObjectPool;
+
+import org.apache.commons.pool2.impl.GenericKeyedObjectPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
@@ -52,12 +53,11 @@ public class XPathPoolImpl implements XPathOperations, DisposableBean {
                 new XPathExpressionFactory(this.namespaceContext, variableResolver);
 
         this.pool = new GenericKeyedObjectPool(xpathExpressionfactory);
-        this.pool.setMaxActive(500);
-        this.pool.setMaxIdle(500);
+        this.pool.setMaxTotalPerKey(1000);
+        this.pool.setMaxIdlePerKey(500);
         this.pool.setTimeBetweenEvictionRunsMillis(TimeUnit.SECONDS.toMillis(60));
         this.pool.setMinEvictableIdleTimeMillis(TimeUnit.MINUTES.toMillis(5));
-        this.pool.setNumTestsPerEvictionRun(this.pool.getMaxIdle() / 9);
-        this.pool.setWhenExhaustedAction(GenericKeyedObjectPool.WHEN_EXHAUSTED_FAIL);
+        this.pool.setNumTestsPerEvictionRun(this.pool.getMaxIdlePerKey() / 9);
     }
 
     @Override
@@ -143,28 +143,28 @@ public class XPathPoolImpl implements XPathOperations, DisposableBean {
         return pool.getLifo();
     }
 
-    public int getMaxActive() {
-        return pool.getMaxActive();
+    public int getMaxTotalPerKey() {
+        return pool.getMaxTotalPerKey();
     }
 
-    public int getMaxIdle() {
-        return pool.getMaxIdle();
+    public int getMaxIdlePerKey() {
+        return pool.getMaxIdlePerKey();
     }
 
     public int getMaxTotal() {
         return pool.getMaxTotal();
     }
 
-    public long getMaxWait() {
-        return pool.getMaxWait();
+    public long getMaxWaitMillis() {
+        return pool.getMaxWaitMillis();
     }
 
     public long getMinEvictableIdleTimeMillis() {
         return pool.getMinEvictableIdleTimeMillis();
     }
 
-    public int getMinIdle() {
-        return pool.getMinIdle();
+    public int getMinIdlePerKey() {
+        return pool.getMinIdlePerKey();
     }
 
     public int getNumActive() {
@@ -195,36 +195,32 @@ public class XPathPoolImpl implements XPathOperations, DisposableBean {
         return pool.getTimeBetweenEvictionRunsMillis();
     }
 
-    public byte getWhenExhaustedAction() {
-        return pool.getWhenExhaustedAction();
-    }
-
     public void setLifo(boolean lifo) {
         pool.setLifo(lifo);
     }
 
-    public void setMaxActive(int maxActive) {
-        pool.setMaxActive(maxActive);
+    public void setMaxTotalPerKey(int maxActive) {
+        pool.setMaxTotalPerKey(maxActive);
     }
 
-    public void setMaxIdle(int maxIdle) {
-        pool.setMaxIdle(maxIdle);
+    public void setMaxIdlePerKey(int maxIdle) {
+        pool.setMaxIdlePerKey(maxIdle);
     }
 
     public void setMaxTotal(int maxTotal) {
         pool.setMaxTotal(maxTotal);
     }
 
-    public void setMaxWait(long maxWait) {
-        pool.setMaxWait(maxWait);
+    public void setMaxWaitMillis(long maxWait) {
+        pool.setMaxWaitMillis(maxWait);
     }
 
     public void setMinEvictableIdleTimeMillis(long minEvictableIdleTimeMillis) {
         pool.setMinEvictableIdleTimeMillis(minEvictableIdleTimeMillis);
     }
 
-    public void setMinIdle(int poolSize) {
-        pool.setMinIdle(poolSize);
+    public void setMinIdlePerKey(int poolSize) {
+        pool.setMinIdlePerKey(poolSize);
     }
 
     public void setNumTestsPerEvictionRun(int numTestsPerEvictionRun) {
@@ -245,9 +241,5 @@ public class XPathPoolImpl implements XPathOperations, DisposableBean {
 
     public void setTimeBetweenEvictionRunsMillis(long timeBetweenEvictionRunsMillis) {
         pool.setTimeBetweenEvictionRunsMillis(timeBetweenEvictionRunsMillis);
-    }
-
-    public void setWhenExhaustedAction(byte whenExhaustedAction) {
-        pool.setWhenExhaustedAction(whenExhaustedAction);
     }
 }
