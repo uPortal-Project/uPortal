@@ -46,13 +46,14 @@ class XPathExpressionFactory extends BaseKeyedPooledObjectFactory<String, XPathE
     }
 
     @Override
-    public synchronized PooledObject<XPathExpression> makeObject(String key) throws RuntimeException {
+    public synchronized PooledObject<XPathExpression> makeObject(String key)
+            throws RuntimeException {
         return wrap(create(key));
     }
 
     @Override
     public synchronized XPathExpression create(String key) throws RuntimeException {
-        final String expression = (String) key;
+        final String expression = key;
 
         final XPath xPath = xPathFactory.newXPath();
         if (this.namespaceContext != null) {
@@ -73,7 +74,8 @@ class XPathExpressionFactory extends BaseKeyedPooledObjectFactory<String, XPathE
     }
 
     @Override
-    public void destroyObject(String key, PooledObject<XPathExpression> obj) throws RuntimeException {
+    public void destroyObject(String key, PooledObject<XPathExpression> obj)
+            throws RuntimeException {
         final String expression = key;
         logger.debug("Destroying XPathExpression: {}", expression);
     }
