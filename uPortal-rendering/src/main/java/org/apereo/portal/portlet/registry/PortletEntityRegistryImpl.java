@@ -27,7 +27,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.Element;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.Validate;
 import org.apereo.portal.EntityIdentifier;
 import org.apereo.portal.IUserPreferencesManager;
@@ -65,6 +64,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.orm.hibernate3.HibernateOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.util.WebUtils;
 
 /**
@@ -886,8 +886,7 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
         // Only non delegate entities with preferences or a non-null window state should be
         // persisted
         final List<IPortletPreference> preferences = portletEntity.getPortletPreferences();
-        return CollectionUtils.isNotEmpty(preferences)
-                || !portletEntity.getWindowStates().isEmpty();
+        return !CollectionUtils.isEmpty(preferences) || !portletEntity.getWindowStates().isEmpty();
     }
 
     private static final IPortletDefinition NO_PERMISSION_PORTLET_DEFINITION =

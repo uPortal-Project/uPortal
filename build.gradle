@@ -11,7 +11,7 @@ plugins {
 
     // Sub project plugins
     id 'com.github.sherter.google-java-format' version '0.6' apply false
-    id 'nebula.lint' version '9.3.1' apply false
+    id 'nebula.lint' version '9.3.2' apply false
     //id 'net.ltgt.errorprone' version '0.0.13' apply false
 }
 
@@ -117,7 +117,7 @@ subprojects {
         testCompile "org.hamcrest:hamcrest-all:${hamcrestVersion}"
         testCompile "org.mockito:mockito-core:${mockitoVersion}"
         testCompile "org.springframework:spring-test:${springVersion}"
-        testCompile "xmlunit:xmlunit:${xmlunitVersion}"
+        testCompile "org.xmlunit:xmlunit-legacy:${xmlunitVersion}"
     }
 
     /* Release Management
@@ -127,6 +127,8 @@ subprojects {
     ext {
         publishingUsername = project.hasProperty('ossrhUsername') ? project.getProperty('ossrhUsername') : ""
         publishingPassword = project.hasProperty('ossrhPassword') ? project.getProperty('ossrhPassword') : ""
+        publishingRepositoryUrl = project.hasProperty('ossrhUrl') ? project.getProperty('ossrhUrl') : "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+        publishingRepositoryUrlSnapshot = project.hasProperty('ossrhUrlSnapshot') ? project.getProperty('ossrhUrlSnapshot') : "https://oss.sonatype.org/content/repositories/snapshots/"
     }
     signing {
         required { gradle.taskGraph.hasTask('uploadArchives') }
@@ -165,7 +167,11 @@ subprojects {
             mavenDeployer {
                 beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
 
-                repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                repository(url: publishingRepositoryUrl) {
+                    authentication(userName: publishingUsername, password: publishingPassword)
+                }
+
+                snapshotRepository(url: publishingRepositoryUrlSnapshot) {
                     authentication(userName: publishingUsername, password: publishingPassword)
                 }
 

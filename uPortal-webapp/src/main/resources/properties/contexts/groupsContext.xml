@@ -34,7 +34,7 @@
      | to 'true' in the context of command line tools.  If SmartLDAP is in use (i.e. configured in
      | compositeGroupServices.xml), the bean MUST be initialized before GroupService attempts to use it.
      +-->
-    <bean id="smartLdapGroupStore" class="org.apereo.portal.groups.smartldap.SmartLdapGroupStore" lazy-init="false">
+    <bean id="smartLdapGroupStore" class="org.apereo.portal.groups.smartldap.SmartLdapGroupStore" lazy-init="false" depends-on="defaultLdapContext">
 
         <!--
          | This property is the ContextSource instance that will be used to connect to LDAP.  Uncomment the
@@ -113,4 +113,5 @@
             </bean>
         </property>
     </bean>
+
 </beans>

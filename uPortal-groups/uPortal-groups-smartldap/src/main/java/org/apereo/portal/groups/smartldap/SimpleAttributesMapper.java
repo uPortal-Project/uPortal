@@ -14,8 +14,8 @@
  */
 package org.apereo.portal.groups.smartldap;
 
+import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.LinkedList;
 import java.util.List;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
@@ -45,7 +45,7 @@ public final class SimpleAttributesMapper implements AttributesMapper {
     /*
      * Public API.
      */
-
+    @Override
     public Object mapFromAttributes(Attributes attr) {
 
         // Assertions.
@@ -68,8 +68,8 @@ public final class SimpleAttributesMapper implements AttributesMapper {
                             + keyAttributeName
                             + "', groupNameAttributeName='"
                             + groupNameAttributeName
-                            + "', groupNameAttributeName='"
-                            + groupNameAttributeName
+                            + "', membershipAttributeName='"
+                            + membershipAttributeName
                             + "'";
             log.debug(msg);
         }
@@ -85,7 +85,7 @@ public final class SimpleAttributesMapper implements AttributesMapper {
             g.setCreatorID("System");
             g.setName(groupName);
             g.setDescription(GROUP_DESCRIPTION);
-            List<String> membership = new LinkedList<String>();
+            List<String> membership = new ArrayList<String>();
             Attribute m = attr.get(membershipAttributeName);
             if (m != null) {
                 for (Enumeration<?> en = m.getAll(); en.hasMoreElements(); ) {
