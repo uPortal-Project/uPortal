@@ -16,9 +16,7 @@ dependencies {
     compile "org.apache.ant:ant:${antVersion}"
     compile "org.apache.commons:commons-lang3:${commonsLang3Version}"
     compile "org.aspectj:aspectjrt:${aspectjVersion}"
-    compile("org.codehaus.woodstox:woodstox-core-asl:${woodstoxVersion}") {
-        exclude group: 'javax.xml.stream', module: 'stax-api'
-    }
+    compile "com.fasterxml.woodstox:woodstox-core:${woodstoxVersion}"
     compile "org.jasig.resourceserver:resource-server-api:${resourceServerVersion}"
     compile "org.jasig.resourceserver:resource-server-utils:${resourceServerVersion}"
     compile("org.apereo.service.persondir:person-directory-impl:${personDirectoryVersion}") {
