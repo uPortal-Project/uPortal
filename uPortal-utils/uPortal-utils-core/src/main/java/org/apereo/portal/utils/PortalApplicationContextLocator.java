@@ -20,6 +20,7 @@ import javax.servlet.ServletContextListener;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apereo.portal.utils.threading.SingletonDoubleCheckedCreator;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -225,6 +226,7 @@ public class PortalApplicationContextLocator implements ServletContextListener {
                     new XmlBeanDefinitionReader(genericApplicationContext);
             reader.setDocumentReaderClass(LazyInitByDefaultBeanDefinitionDocumentReader.class);
             reader.loadBeanDefinitions("/properties/contexts/*.xml");
+            reader.loadBeanDefinitions("/properties/contextOverrides/*.xml");
 
             genericApplicationContext.refresh();
             genericApplicationContext.registerShutdownHook();
@@ -236,6 +238,21 @@ public class PortalApplicationContextLocator implements ServletContextListener {
                             "Created new lazily initialized GenericApplicationContext for the portal in "
                                     + (System.currentTimeMillis() - startTime)
                                     + "ms");
+
+            if (getLogger().isDebugEnabled()) {
+                ConfigurableListableBeanFactory beanFactory =
+                        genericApplicationContext.getBeanFactory();
+                for (String beanName : genericApplicationContext.getBeanDefinitionNames()) {
+                    getLogger()
+                            .debug(
+                                    "Bean Name : "
+                                            + beanName
+                                            + " loaded from "
+                                            + beanFactory
+                                                    .getBeanDefinition(beanName)
+                                                    .getResourceDescription());
+                }
+            }
 
             return genericApplicationContext;
         }
