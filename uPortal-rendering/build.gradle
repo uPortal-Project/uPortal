@@ -7,7 +7,7 @@ dependencies {
     compile project(':uPortal-url')
 
     compile "org.apache.httpcomponents:httpcore:${httpcomponentsVersion}"
-    compile "commons-pool:commons-pool:${commonsPoolVersion}"
+    compile "org.apache.commons:commons-pool2:${commonsPoolVersion}"
     compile("org.apache.portals.pluto:pluto-container:${plutoVersion}") {
         exclude group: 'javax.xml.bind', module: 'jaxb-api'
         exclude group: 'com.sun.xml.bind', module: 'jaxb-impl'
