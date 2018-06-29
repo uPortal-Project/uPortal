@@ -20,12 +20,14 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import javax.xml.xpath.XPathVariableResolver;
-import org.apache.commons.pool.BaseKeyedPoolableObjectFactory;
+import org.apache.commons.pool2.BaseKeyedPooledObjectFactory;
+import org.apache.commons.pool2.PooledObject;
+import org.apache.commons.pool2.impl.DefaultPooledObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /** Creates new {@link XPathExpression} instances */
-class XPathExpressionFactory extends BaseKeyedPoolableObjectFactory {
+class XPathExpressionFactory extends BaseKeyedPooledObjectFactory<String, XPathExpression> {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     private final XPathFactory xPathFactory = XPathFactory.newInstance();
@@ -39,8 +41,19 @@ class XPathExpressionFactory extends BaseKeyedPoolableObjectFactory {
     }
 
     @Override
-    public synchronized Object makeObject(Object key) throws Exception {
-        final String expression = (String) key;
+    public PooledObject<XPathExpression> wrap(XPathExpression obj) {
+        return new DefaultPooledObject<>(obj);
+    }
+
+    @Override
+    public synchronized PooledObject<XPathExpression> makeObject(String key)
+            throws RuntimeException {
+        return wrap(create(key));
+    }
+
+    @Override
+    public synchronized XPathExpression create(String key) throws RuntimeException {
+        final String expression = key;
 
         final XPath xPath = xPathFactory.newXPath();
         if (this.namespaceContext != null) {
@@ -61,8 +74,9 @@ class XPathExpressionFactory extends BaseKeyedPoolableObjectFactory {
     }
 
     @Override
-    public void destroyObject(Object key, Object obj) throws Exception {
-        final String expression = (String) key;
+    public void destroyObject(String key, PooledObject<XPathExpression> obj)
+            throws RuntimeException {
+        final String expression = key;
         logger.debug("Destroying XPathExpression: {}", expression);
     }
 }

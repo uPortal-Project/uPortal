@@ -740,6 +740,8 @@
                                 </xsl:choose>
                                 <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
 
+                                <!--add post content here-->
+                                <xsl:call-template name="region.post-content" />
                                 <!-- /USE FLUID ROWS -->
                             </div>
                             <xsl:call-template name="region.sidebar-right" />
