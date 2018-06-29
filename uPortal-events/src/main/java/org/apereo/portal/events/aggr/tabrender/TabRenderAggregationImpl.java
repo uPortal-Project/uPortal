@@ -46,44 +46,36 @@ import org.hibernate.annotations.NaturalIdCache;
 @Table(name = "UP_TAB_RENDER_AGGR")
 @Inheritance(strategy = InheritanceType.JOINED)
 @SequenceGenerator(
-    name = "UP_TAB_RENDER_AGGR_GEN",
-    sequenceName = "UP_TAB_RENDER_AGGR_SEQ",
-    allocationSize = 5000
-)
+        name = "UP_TAB_RENDER_AGGR_GEN",
+        sequenceName = "UP_TAB_RENDER_AGGR_SEQ",
+        allocationSize = 5000)
 @TableGenerator(
-    name = "UP_TAB_RENDER_AGGR_GEN",
-    pkColumnValue = "UP_TAB_RENDER_AGGR_PROP",
-    allocationSize = 5000
-)
+        name = "UP_TAB_RENDER_AGGR_GEN",
+        pkColumnValue = "UP_TAB_RENDER_AGGR_PROP",
+        allocationSize = 5000)
 @org.hibernate.annotations.Table(
-    appliesTo = "UP_TAB_RENDER_AGGR",
-    indexes = {
-        @Index(
-            name = "IDX_UP_TAB_REND_AGGR_DTI",
-            columnNames = {"DATE_DIMENSION_ID", "TIME_DIMENSION_ID", "AGGR_INTERVAL"}
-        ),
-        @Index(
-            name = "IDX_UP_TAB_REND_AGGR_DTIC",
-            columnNames = {
-                "DATE_DIMENSION_ID",
-                "TIME_DIMENSION_ID",
-                "AGGR_INTERVAL",
-                "STATS_COMPLETE"
-            }
-        ),
-        @Index(
-            name = "IDX_UP_TAB_REND_INTRVL",
-            columnNames = {"AGGR_INTERVAL"}
-        ),
-        @Index(
-            name = "IDX_UP_TAB_REND_GRP",
-            columnNames = {"AGGR_GROUP_ID"}
-        )
-    }
-)
+        appliesTo = "UP_TAB_RENDER_AGGR",
+        indexes = {
+            @Index(
+                    name = "IDX_UP_TAB_REND_AGGR_DTI",
+                    columnNames = {"DATE_DIMENSION_ID", "TIME_DIMENSION_ID", "AGGR_INTERVAL"}),
+            @Index(
+                    name = "IDX_UP_TAB_REND_AGGR_DTIC",
+                    columnNames = {
+                        "DATE_DIMENSION_ID",
+                        "TIME_DIMENSION_ID",
+                        "AGGR_INTERVAL",
+                        "STATS_COMPLETE"
+                    }),
+            @Index(
+                    name = "IDX_UP_TAB_REND_INTRVL",
+                    columnNames = {"AGGR_INTERVAL"}),
+            @Index(
+                    name = "IDX_UP_TAB_REND_GRP",
+                    columnNames = {"AGGR_GROUP_ID"})
+        })
 @NaturalIdCache(
-    region = "org.apereo.portal.events.aggr.tabrender.TabRenderAggregationImpl-NaturalId"
-)
+        region = "org.apereo.portal.events.aggr.tabrender.TabRenderAggregationImpl-NaturalId")
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public final class TabRenderAggregationImpl

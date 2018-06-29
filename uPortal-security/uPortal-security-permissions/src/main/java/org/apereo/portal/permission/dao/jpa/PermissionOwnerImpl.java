@@ -48,15 +48,13 @@ import org.hibernate.annotations.Type;
 @Entity
 @Table(name = "UP_PERMISSION_OWNER")
 @SequenceGenerator(
-    name = "UP_PERMISSION_OWNER_GEN",
-    sequenceName = "UP_PERMISSION_OWNER_SEQ",
-    allocationSize = 1
-)
+        name = "UP_PERMISSION_OWNER_GEN",
+        sequenceName = "UP_PERMISSION_OWNER_SEQ",
+        allocationSize = 1)
 @TableGenerator(
-    name = "UP_PERMISSION_OWNER_GEN",
-    pkColumnValue = "UP_PERMISSION_OWNER",
-    allocationSize = 1
-)
+        name = "UP_PERMISSION_OWNER_GEN",
+        pkColumnValue = "UP_PERMISSION_OWNER",
+        allocationSize = 1)
 @NaturalIdCache(region = "org.apereo.portal.permission.dao.jpa.PermissionOwnerImpl-NaturalId")
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
@@ -85,11 +83,10 @@ class PermissionOwnerImpl implements IPermissionOwner, Serializable {
     private String description;
 
     @OneToMany(
-        targetEntity = PermissionActivityImpl.class,
-        fetch = FetchType.EAGER,
-        cascade = {CascadeType.ALL},
-        orphanRemoval = true
-    )
+            targetEntity = PermissionActivityImpl.class,
+            fetch = FetchType.EAGER,
+            cascade = {CascadeType.ALL},
+            orphanRemoval = true)
     @JoinColumn(name = "OWNER_ID")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @Fetch(FetchMode.JOIN)

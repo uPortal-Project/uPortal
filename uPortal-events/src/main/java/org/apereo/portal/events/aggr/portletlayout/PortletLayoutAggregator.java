@@ -38,7 +38,8 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 public class PortletLayoutAggregator
         extends BaseIntervalAwarePortalEventAggregator<
-                PortletLayoutPortalEvent, PortletLayoutAggregationImpl,
+                PortletLayoutPortalEvent,
+                PortletLayoutAggregationImpl,
                 PortletLayoutAggregationKey> {
     private static final String MAPPED_PORTLETS_CACHE_KEY =
             PortletLayoutAggregator.class.getName() + "_MAPPED_PORTLETS";

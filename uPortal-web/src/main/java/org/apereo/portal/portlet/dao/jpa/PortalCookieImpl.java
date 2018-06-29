@@ -45,23 +45,19 @@ import org.joda.time.DateTime;
 @Entity
 @Table(name = "UP_PORTAL_COOKIES")
 @SequenceGenerator(
-    name = "UP_PORTAL_COOKIES_GEN",
-    sequenceName = "UP_PORTAL_COOKIES_SEQ",
-    allocationSize = 100
-)
+        name = "UP_PORTAL_COOKIES_GEN",
+        sequenceName = "UP_PORTAL_COOKIES_SEQ",
+        allocationSize = 100)
 @TableGenerator(
-    name = "UP_PORTAL_COOKIES_GEN",
-    pkColumnValue = "UP_PORTAL_COOKIES",
-    allocationSize = 100
-)
+        name = "UP_PORTAL_COOKIES_GEN",
+        pkColumnValue = "UP_PORTAL_COOKIES",
+        allocationSize = 100)
 @org.hibernate.annotations.Table(
-    appliesTo = "UP_PORTAL_COOKIES",
-    indexes =
-            @Index(
-                name = "IDX_UP_PRTL_CK_EXP",
-                columnNames = {"EXPIRES"}
-            )
-)
+        appliesTo = "UP_PORTAL_COOKIES",
+        indexes =
+                @Index(
+                        name = "IDX_UP_PRTL_CK_EXP",
+                        columnNames = {"EXPIRES"}))
 @NaturalIdCache(region = "org.apereo.portal.portlet.dao.jpa.PortalCookieImpl-NaturalId")
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
@@ -88,11 +84,10 @@ class PortalCookieImpl implements IPortalCookie {
     private final String value;
 
     @OneToMany(
-        targetEntity = PortletCookieImpl.class,
-        cascade = CascadeType.ALL,
-        fetch = FetchType.EAGER,
-        orphanRemoval = true
-    )
+            targetEntity = PortletCookieImpl.class,
+            cascade = CascadeType.ALL,
+            fetch = FetchType.EAGER,
+            orphanRemoval = true)
     @JoinColumn(name = "PORTAL_COOKIE_ID")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @Fetch(FetchMode.JOIN)

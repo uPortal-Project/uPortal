@@ -49,10 +49,9 @@ public class OidcUserInfoController {
     @Autowired private IdTokenFactory idTokenFactory;
 
     @RequestMapping(
-        value = ENDPOINT_URI,
-        produces = CONTENT_TYPE,
-        method = {RequestMethod.GET, RequestMethod.POST}
-    )
+            value = ENDPOINT_URI,
+            produces = CONTENT_TYPE,
+            method = {RequestMethod.GET, RequestMethod.POST})
     public String userInfo(HttpServletRequest request) {
         final IPerson person = personManager.getPerson(request);
         return idTokenFactory.createUserInfo(person.getUserName());

@@ -26,8 +26,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 /** */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(
-    locations = "classpath:/org/apereo/portal/io/xml/aggrImportExportTestContext.xml"
-)
+        locations = "classpath:/org/apereo/portal/io/xml/aggrImportExportTestContext.xml")
 public class AggrIdentityImportExportTest extends BaseAggrEventsJpaDaoTest {
     @javax.annotation.Resource(name = "eventAggregationConfigurationImporterExporter")
     private IDataImporter<ExternalEventAggregationConfiguration>

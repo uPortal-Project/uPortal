@@ -48,8 +48,10 @@ import org.springframework.web.portlet.bind.annotation.ResourceMapping;
 @RequestMapping("VIEW")
 public class ConcurrentUsersStatisticsController
         extends BaseSimpleGroupedStatisticsReportController<
-                ConcurrentUserAggregation, ConcurrentUserAggregationKey,
-                ConcurrentUserAggregationDiscriminator, ConcurrentUserReportForm> {
+                ConcurrentUserAggregation,
+                ConcurrentUserAggregationKey,
+                ConcurrentUserAggregationDiscriminator,
+                ConcurrentUserReportForm> {
 
     private static final String DATA_TABLE_RESOURCE_ID = "concurrentUserData";
     private static final String REPORT_NAME = "concurrent.users";

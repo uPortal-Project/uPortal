@@ -47,32 +47,26 @@ import org.hibernate.annotations.NaturalIdCache;
 @Table(name = "UP_LOGIN_EVENT_AGGR")
 @Inheritance(strategy = InheritanceType.JOINED)
 @SequenceGenerator(
-    name = "UP_LOGIN_EVENT_AGGR_GEN",
-    sequenceName = "UP_LOGIN_EVENT_AGGR_SEQ",
-    allocationSize = 1000
-)
+        name = "UP_LOGIN_EVENT_AGGR_GEN",
+        sequenceName = "UP_LOGIN_EVENT_AGGR_SEQ",
+        allocationSize = 1000)
 @TableGenerator(
-    name = "UP_LOGIN_EVENT_AGGR_GEN",
-    pkColumnValue = "UP_LOGIN_EVENT_AGGR_PROP",
-    allocationSize = 1000
-)
+        name = "UP_LOGIN_EVENT_AGGR_GEN",
+        pkColumnValue = "UP_LOGIN_EVENT_AGGR_PROP",
+        allocationSize = 1000)
 @org.hibernate.annotations.Table(
-    appliesTo = "UP_LOGIN_EVENT_AGGR",
-    indexes = {
-        @Index(
-            name = "IDX_UP_LOGIN_EVENT_AGGR_DTI",
-            columnNames = {"DATE_DIMENSION_ID", "TIME_DIMENSION_ID", "AGGR_INTERVAL"}
-        ),
-        @Index(
-            name = "IDX_UP_LOGIN_EVENT_INTRVL",
-            columnNames = {"AGGR_INTERVAL"}
-        ),
-        @Index(
-            name = "IDX_UP_LOGIN_EVENT_GRP",
-            columnNames = {"AGGR_GROUP_ID"}
-        )
-    }
-)
+        appliesTo = "UP_LOGIN_EVENT_AGGR",
+        indexes = {
+            @Index(
+                    name = "IDX_UP_LOGIN_EVENT_AGGR_DTI",
+                    columnNames = {"DATE_DIMENSION_ID", "TIME_DIMENSION_ID", "AGGR_INTERVAL"}),
+            @Index(
+                    name = "IDX_UP_LOGIN_EVENT_INTRVL",
+                    columnNames = {"AGGR_INTERVAL"}),
+            @Index(
+                    name = "IDX_UP_LOGIN_EVENT_GRP",
+                    columnNames = {"AGGR_GROUP_ID"})
+        })
 @NaturalIdCache(region = "org.apereo.portal.events.aggr.login.LoginAggregationImpl-NaturalId")
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
@@ -93,9 +87,8 @@ public final class LoginAggregationImpl
     private int uniqueLoginCount;
 
     @OneToOne(
-        cascade = {CascadeType.ALL},
-        orphanRemoval = true
-    )
+            cascade = {CascadeType.ALL},
+            orphanRemoval = true)
     @JoinColumn(name = "UNIQUE_STRINGS_ID")
     @Fetch(FetchMode.JOIN)
     private UniqueStrings uniqueStrings;

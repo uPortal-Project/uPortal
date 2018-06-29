@@ -31,15 +31,13 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Entity
 @Table(name = "UP_PORTLET_DEF_PARAM")
 @SequenceGenerator(
-    name = "UP_PORTLET_DEF_PARAM_GEN",
-    sequenceName = "UP_PORTLET_DEF_PARAM_SEQ",
-    allocationSize = 5
-)
+        name = "UP_PORTLET_DEF_PARAM_GEN",
+        sequenceName = "UP_PORTLET_DEF_PARAM_SEQ",
+        allocationSize = 5)
 @TableGenerator(
-    name = "UP_PORTLET_DEF_PARAM_GEN",
-    pkColumnValue = "UP_PORTLET_DEF_PARAM",
-    allocationSize = 5
-)
+        name = "UP_PORTLET_DEF_PARAM_GEN",
+        pkColumnValue = "UP_PORTLET_DEF_PARAM",
+        allocationSize = 5)
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class PortletDefinitionParameterImpl implements IPortletDefinitionParameter, Serializable {

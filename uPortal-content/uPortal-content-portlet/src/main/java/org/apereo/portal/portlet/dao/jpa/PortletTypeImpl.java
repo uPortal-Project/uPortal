@@ -39,10 +39,9 @@ import org.hibernate.annotations.NaturalIdCache;
 @Entity
 @Table(name = "UP_PORTLET_TYPE")
 @SequenceGenerator(
-    name = "UP_PORTLET_TYPE_GEN",
-    sequenceName = "UP_PORTLET_TYPE_SEQ",
-    allocationSize = 1
-)
+        name = "UP_PORTLET_TYPE_GEN",
+        sequenceName = "UP_PORTLET_TYPE_SEQ",
+        allocationSize = 1)
 @TableGenerator(name = "UP_PORTLET_TYPE_GEN", pkColumnValue = "UP_PORTLET_TYPE", allocationSize = 1)
 @NaturalIdCache(region = "org.apereo.portal.portlet.dao.jpa.PortletTypeImpl-NaturalId")
 @Cacheable
@@ -66,12 +65,11 @@ public class PortletTypeImpl implements Serializable, IPortletType {
     // will be TERRIBLE
     @SuppressWarnings("unused")
     @OneToMany(
-        mappedBy = "portletType",
-        targetEntity = PortletDefinitionImpl.class,
-        cascade = {CascadeType.ALL},
-        fetch = FetchType.LAZY,
-        orphanRemoval = true
-    )
+            mappedBy = "portletType",
+            targetEntity = PortletDefinitionImpl.class,
+            cascade = {CascadeType.ALL},
+            fetch = FetchType.LAZY,
+            orphanRemoval = true)
     private transient Set<IPortletDefinition> portletDefinitions = null;
 
     @NaturalId

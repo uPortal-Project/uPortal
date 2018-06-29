@@ -48,10 +48,9 @@ import org.springframework.util.Assert;
 @Entity
 @Table(name = "UP_PERSON_DIR")
 @SequenceGenerator(
-    name = "UP_PERSON_DIR_GEN",
-    sequenceName = "UP_PERSON_DIR_SEQ",
-    allocationSize = 5
-)
+        name = "UP_PERSON_DIR_GEN",
+        sequenceName = "UP_PERSON_DIR_SEQ",
+        allocationSize = 5)
 @TableGenerator(name = "UP_PERSON_DIR_GEN", pkColumnValue = "UP_PERSON_DIR", allocationSize = 5)
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
@@ -78,11 +77,10 @@ class LocalAccountPersonImpl implements Serializable, ILocalAccountPerson {
     private Date lastPasswordChange;
 
     @OneToMany(
-        targetEntity = LocalAccountPersonAttributeImpl.class,
-        fetch = FetchType.EAGER,
-        cascade = CascadeType.ALL,
-        orphanRemoval = true
-    )
+            targetEntity = LocalAccountPersonAttributeImpl.class,
+            fetch = FetchType.EAGER,
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
     @JoinColumn(name = "USER_DIR_ID", nullable = false)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @Fetch(FetchMode.JOIN)

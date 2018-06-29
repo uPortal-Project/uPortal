@@ -47,35 +47,28 @@ import org.hibernate.annotations.NaturalIdCache;
 @Table(name = "UP_CONCURRENT_USER_AGGR")
 @Inheritance(strategy = InheritanceType.JOINED)
 @SequenceGenerator(
-    name = "UP_CONCURRENT_USER_AGGR_GEN",
-    sequenceName = "UP_CONCURRENT_USER_AGGR_SEQ",
-    allocationSize = 1000
-)
+        name = "UP_CONCURRENT_USER_AGGR_GEN",
+        sequenceName = "UP_CONCURRENT_USER_AGGR_SEQ",
+        allocationSize = 1000)
 @TableGenerator(
-    name = "UP_CONCURRENT_USER_AGGR_GEN",
-    pkColumnValue = "UP_CONCURRENT_USER_AGGR_PROP",
-    allocationSize = 1000
-)
+        name = "UP_CONCURRENT_USER_AGGR_GEN",
+        pkColumnValue = "UP_CONCURRENT_USER_AGGR_PROP",
+        allocationSize = 1000)
 @org.hibernate.annotations.Table(
-    appliesTo = "UP_CONCURRENT_USER_AGGR",
-    indexes = {
-        @Index(
-            name = "IDX_UP_CONC_USER_AGGR_DTI",
-            columnNames = {"DATE_DIMENSION_ID", "TIME_DIMENSION_ID", "AGGR_INTERVAL"}
-        ),
-        @Index(
-            name = "IDX_UP_CONC_USER_INTRVL",
-            columnNames = {"AGGR_INTERVAL"}
-        ),
-        @Index(
-            name = "IDX_UP_CONC_USER_GRP",
-            columnNames = {"AGGR_GROUP_ID"}
-        )
-    }
-)
+        appliesTo = "UP_CONCURRENT_USER_AGGR",
+        indexes = {
+            @Index(
+                    name = "IDX_UP_CONC_USER_AGGR_DTI",
+                    columnNames = {"DATE_DIMENSION_ID", "TIME_DIMENSION_ID", "AGGR_INTERVAL"}),
+            @Index(
+                    name = "IDX_UP_CONC_USER_INTRVL",
+                    columnNames = {"AGGR_INTERVAL"}),
+            @Index(
+                    name = "IDX_UP_CONC_USER_GRP",
+                    columnNames = {"AGGR_GROUP_ID"})
+        })
 @NaturalIdCache(
-    region = "org.apereo.portal.events.aggr.concuser.ConcurrentUserAggregationImpl-NaturalId"
-)
+        region = "org.apereo.portal.events.aggr.concuser.ConcurrentUserAggregationImpl-NaturalId")
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public final class ConcurrentUserAggregationImpl
@@ -94,9 +87,8 @@ public final class ConcurrentUserAggregationImpl
     private int concurrentUsers;
 
     @OneToOne(
-        cascade = {CascadeType.ALL},
-        orphanRemoval = true
-    )
+            cascade = {CascadeType.ALL},
+            orphanRemoval = true)
     @JoinColumn(name = "UNIQUE_STRINGS_ID")
     @Fetch(FetchMode.JOIN)
     private UniqueStrings uniqueStrings;

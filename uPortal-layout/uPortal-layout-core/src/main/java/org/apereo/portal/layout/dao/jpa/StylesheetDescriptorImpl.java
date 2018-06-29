@@ -74,12 +74,11 @@ public class StylesheetDescriptorImpl implements IStylesheetDescriptor {
     // will be TERRIBLE
     @SuppressWarnings("unused")
     @OneToMany(
-        mappedBy = "stylesheetDescriptor",
-        targetEntity = StylesheetUserPreferencesImpl.class,
-        cascade = {CascadeType.ALL},
-        fetch = FetchType.LAZY,
-        orphanRemoval = true
-    )
+            mappedBy = "stylesheetDescriptor",
+            targetEntity = StylesheetUserPreferencesImpl.class,
+            cascade = {CascadeType.ALL},
+            fetch = FetchType.LAZY,
+            orphanRemoval = true)
     private Set<IStylesheetUserPreferences> stylesheetUserPreferences = null;
 
     @NaturalId
@@ -97,11 +96,10 @@ public class StylesheetDescriptorImpl implements IStylesheetDescriptor {
     private String stylesheetResource;
 
     @OneToMany(
-        targetEntity = OutputPropertyDescriptorImpl.class,
-        cascade = CascadeType.ALL,
-        fetch = FetchType.EAGER,
-        orphanRemoval = true
-    )
+            targetEntity = OutputPropertyDescriptorImpl.class,
+            cascade = CascadeType.ALL,
+            fetch = FetchType.EAGER,
+            orphanRemoval = true)
     @JoinColumn(name = "SS_DESC_ID", nullable = false)
     @MapKey(name = "name")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
@@ -110,11 +108,10 @@ public class StylesheetDescriptorImpl implements IStylesheetDescriptor {
             new LinkedHashMap<String, IOutputPropertyDescriptor>(0);
 
     @OneToMany(
-        targetEntity = StylesheetParameterDescriptorImpl.class,
-        cascade = CascadeType.ALL,
-        fetch = FetchType.EAGER,
-        orphanRemoval = true
-    )
+            targetEntity = StylesheetParameterDescriptorImpl.class,
+            cascade = CascadeType.ALL,
+            fetch = FetchType.EAGER,
+            orphanRemoval = true)
     @MapKey(name = "name")
     @JoinColumn(name = "SS_DESC_ID", nullable = false)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
@@ -123,11 +120,10 @@ public class StylesheetDescriptorImpl implements IStylesheetDescriptor {
             new LinkedHashMap<String, IStylesheetParameterDescriptor>(0);
 
     @OneToMany(
-        targetEntity = LayoutAttributeDescriptorImpl.class,
-        cascade = CascadeType.ALL,
-        fetch = FetchType.EAGER,
-        orphanRemoval = true
-    )
+            targetEntity = LayoutAttributeDescriptorImpl.class,
+            cascade = CascadeType.ALL,
+            fetch = FetchType.EAGER,
+            orphanRemoval = true)
     @MapKey(name = "name")
     @JoinColumn(name = "SS_DESC_ID", nullable = false)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)

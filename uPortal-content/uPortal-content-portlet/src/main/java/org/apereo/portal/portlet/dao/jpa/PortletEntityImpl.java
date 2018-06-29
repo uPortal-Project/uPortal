@@ -62,10 +62,9 @@ import org.hibernate.annotations.Type;
 @Entity
 @Table(name = "UP_PORTLET_ENT")
 @SequenceGenerator(
-    name = "UP_PORTLET_ENT_GEN",
-    sequenceName = "UP_PORTLET_ENT_SEQ",
-    allocationSize = 10
-)
+        name = "UP_PORTLET_ENT_GEN",
+        sequenceName = "UP_PORTLET_ENT_SEQ",
+        allocationSize = 10)
 @TableGenerator(name = "UP_PORTLET_ENT_GEN", pkColumnValue = "UP_PORTLET_ENT", allocationSize = 10)
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
@@ -94,17 +93,15 @@ class PortletEntityImpl implements IPortletEntity {
     // Hidden reference to the parent portlet definition, used by hibernate for referential
     // integrity
     @ManyToOne(
-        targetEntity = PortletDefinitionImpl.class,
-        cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}
-    )
+            targetEntity = PortletDefinitionImpl.class,
+            cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinColumn(name = "PORTLET_DEF_ID", nullable = false)
     private final IPortletDefinition portletDefinition;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(
-        name = "UP_PORTLET_ENT__STATES",
-        joinColumns = @JoinColumn(name = "PORTLET_ENT_ID")
-    )
+            name = "UP_PORTLET_ENT__STATES",
+            joinColumns = @JoinColumn(name = "PORTLET_ENT_ID"))
     @MapKeyJoinColumn(name = "STYLESHEET_DESCRIPTOR_ID")
     @Column(name = "WINDOW_STATE")
     @Type(type = "windowState")
@@ -112,9 +109,8 @@ class PortletEntityImpl implements IPortletEntity {
             new HashMap<StylesheetDescriptorImpl, WindowState>(0);
 
     @OneToOne(
-        cascade = {CascadeType.ALL},
-        orphanRemoval = true
-    )
+            cascade = {CascadeType.ALL},
+            orphanRemoval = true)
     @JoinColumn(name = "PORTLET_PREFS_ID", nullable = false)
     @Fetch(FetchMode.JOIN)
     private final PortletPreferencesImpl portletPreferences;

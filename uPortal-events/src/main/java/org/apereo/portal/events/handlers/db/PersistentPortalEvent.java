@@ -35,15 +35,13 @@ import org.joda.time.DateTime;
 @Table(name = "UP_RAW_EVENTS")
 @Inheritance(strategy = InheritanceType.JOINED)
 @SequenceGenerator(
-    name = "UP_RAW_EVENTS_GEN",
-    sequenceName = "UP_RAW_EVENTS_SEQ",
-    allocationSize = 1000
-)
+        name = "UP_RAW_EVENTS_GEN",
+        sequenceName = "UP_RAW_EVENTS_SEQ",
+        allocationSize = 1000)
 @TableGenerator(
-    name = "UP_RAW_EVENTS_GEN",
-    pkColumnValue = "UP_RAW_EVENTS_PROP",
-    allocationSize = 1000
-)
+        name = "UP_RAW_EVENTS_GEN",
+        pkColumnValue = "UP_RAW_EVENTS_PROP",
+        allocationSize = 1000)
 public class PersistentPortalEvent implements Serializable {
     private static final long serialVersionUID = 1L;
 

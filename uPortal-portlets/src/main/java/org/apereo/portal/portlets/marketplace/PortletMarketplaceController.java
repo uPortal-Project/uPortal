@@ -110,8 +110,8 @@ public class PortletMarketplaceController {
      */
     @Autowired
     @Qualifier(
-        value = "org.apereo.portal.portlet.marketplace.MarketplaceService.marketplaceCategoryCache"
-    )
+            value =
+                    "org.apereo.portal.portlet.marketplace.MarketplaceService.marketplaceCategoryCache")
     private Cache marketplaceCategoryCache;
 
     private IMarketplaceService marketplaceService;

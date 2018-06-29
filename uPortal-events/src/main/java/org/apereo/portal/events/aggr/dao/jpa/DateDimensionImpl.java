@@ -42,15 +42,13 @@ import org.joda.time.LocalDate;
 @Entity
 @Table(name = "UP_DATE_DIMENSION")
 @SequenceGenerator(
-    name = "UP_DATE_DIMENSION_GEN",
-    sequenceName = "UP_DATE_DIMENSION_SEQ",
-    allocationSize = 1
-)
+        name = "UP_DATE_DIMENSION_GEN",
+        sequenceName = "UP_DATE_DIMENSION_SEQ",
+        allocationSize = 1)
 @TableGenerator(
-    name = "UP_DATE_DIMENSION_GEN",
-    pkColumnValue = "UP_DATE_DIMENSION_PROP",
-    allocationSize = 1
-)
+        name = "UP_DATE_DIMENSION_GEN",
+        pkColumnValue = "UP_DATE_DIMENSION_PROP",
+        allocationSize = 1)
 @NaturalIdCache(region = "org.apereo.portal.events.aggr.dao.jpa.DateDimensionImpl-NaturalId")
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)

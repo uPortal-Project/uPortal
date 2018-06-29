@@ -40,10 +40,9 @@ import org.hibernate.annotations.Type;
 @Entity
 @Table(name = "UP_PERSON_ATTR")
 @SequenceGenerator(
-    name = "UP_PERSON_ATTR_GEN",
-    sequenceName = "UP_PERSON_ATTR_SEQ",
-    allocationSize = 10
-)
+        name = "UP_PERSON_ATTR_GEN",
+        sequenceName = "UP_PERSON_ATTR_SEQ",
+        allocationSize = 10)
 @TableGenerator(name = "UP_PERSON_ATTR_GEN", pkColumnValue = "UP_PERSON_ATTR", allocationSize = 10)
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
