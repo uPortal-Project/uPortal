@@ -96,15 +96,19 @@
                 <a href="https://www.w3.org/TR/WCAG20/">
                   <img src="https://www.w3.org/WAI/wcag2AA-blue-v.svg" alt="WCAG 2 AA Badge">
                 </a>
+                <br>
                 <a href="http://issuestats.com/github/Jasig/uPortal">
                   <img src="http://issuestats.com/github/Jasig/uPortal/badge/pr" alt="Issue Stats">
                 </a>
+                <br>
                 <a href="https://source.android.com/setup/contribute/code-style">
                   <img src="https://img.shields.io/badge/code_style-AOSP-green.svg?style=flat" alt="AOSP Code Style">
                 </a>
+                <br>
                 <a href="https://github.com/search?q=topic%3Auportal+topic%3Asoffit&type=Repositories">
                   <img src="https://img.shields.io/badge/discover-soffits-blue.svg?style=flat" alt="Discover Soffits">
                 </a>
+                <br>
                 <a href="https://github.com/search?q=topic%3Auportal+topic%3Aportlet&type=Repositories">
                   <img src="https://img.shields.io/badge/discover-portlets-blue.svg?style=flat" alt="Discover Portlets">
                 </a>
