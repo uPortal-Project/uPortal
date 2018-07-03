@@ -163,7 +163,7 @@ below.
 
 ## Documentation for Previous Releases
 
-*   [uPortal 5.1 Manual](https://github.com/Jasig/uPortal/tree/v5.1.0/docs)
+*   [uPortal 5.1 Manual](https://github.com/Jasig/uPortal/tree/v5.1.2/docs)
 *   [uPortal 5.0 Manual](https://github.com/Jasig/uPortal/tree/v5.0.7/docs)
 *   [uPortal 4.3 Manual](https://wiki.jasig.org/display/UPM43/Home)
 *   [uPortal 4.2 Manual](https://wiki.jasig.org/display/UPM42/Home)
