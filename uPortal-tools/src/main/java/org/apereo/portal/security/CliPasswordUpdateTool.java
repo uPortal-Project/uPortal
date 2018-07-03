@@ -14,6 +14,8 @@
  */
 package org.apereo.portal.security;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -70,7 +72,7 @@ public class CliPasswordUpdateTool implements IPasswordUpdateTool {
 
         System.out.print("Enter Password for " + user + ": ");
         System.out.flush(); // Needed for prompt to appear when running from Ant.
-        final BufferedReader d = new BufferedReader(new InputStreamReader(System.in));
+        final BufferedReader d = new BufferedReader(new InputStreamReader(System.in, UTF_8));
         final String spass = d.readLine();
 
         // update the user's password

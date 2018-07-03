@@ -14,12 +14,14 @@
  */
 package org.apereo.portal.groups.filesystem;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -607,7 +609,7 @@ public class FileSystemGroupStore implements IEntityGroupStore, IEntityStore, IE
     protected Collection getIdsFromFile(File idFile, boolean groupIds)
             throws IOException, FileNotFoundException {
         Collection ids = new HashSet();
-        BufferedReader br = new BufferedReader(new FileReader(idFile));
+        BufferedReader br = Files.newBufferedReader(idFile.toPath(), UTF_8);
         String line, tok;
 
         line = br.readLine();

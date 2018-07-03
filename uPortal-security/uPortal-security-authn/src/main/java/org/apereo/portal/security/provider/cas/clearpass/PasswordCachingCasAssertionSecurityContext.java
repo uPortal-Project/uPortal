@@ -14,6 +14,8 @@
  */
 package org.apereo.portal.security.provider.cas.clearpass;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import org.apereo.portal.security.IOpaqueCredentials;
 import org.apereo.portal.security.provider.NotSoOpaqueCredentials;
 import org.apereo.portal.security.provider.cas.CasAssertionSecurityContext;
@@ -92,7 +94,7 @@ public class PasswordCachingCasAssertionSecurityContext extends CasAssertionSecu
 
             if (password != null) {
                 log.debug("Password length {} retrieved from ClearPass.", password.length());
-                this.cachedCredentials = password.getBytes();
+                this.cachedCredentials = password.getBytes(UTF_8);
             }
         }
 
@@ -164,7 +166,7 @@ public class PasswordCachingCasAssertionSecurityContext extends CasAssertionSecu
         @Override
         public String getCredentials() {
             log.debug("credentialString is {}", credentialstring != null ? "non-null" : "null");
-            return this.credentialstring != null ? new String(this.credentialstring) : null;
+            return this.credentialstring != null ? new String(this.credentialstring, UTF_8) : null;
         }
     }
 }

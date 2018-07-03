@@ -14,6 +14,8 @@
  */
 package org.apereo.portal.security.provider;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apereo.portal.security.IOpaqueCredentials;
@@ -90,8 +92,8 @@ class CacheSecurityContext extends ChainingSecurityContext
                     PasswordEncryptionServiceLocator.getPasswordEncryptionService();
             String encryptedPassword =
                     encryptionService.encrypt(
-                            new String(this.myOpaqueCredentials.credentialstring));
-            byte[] encryptedPasswordBytes = encryptedPassword.getBytes();
+                            new String(this.myOpaqueCredentials.credentialstring, UTF_8));
+            byte[] encryptedPasswordBytes = encryptedPassword.getBytes(UTF_8);
 
             // Save our encrypted credentials so the parent's authenticate()
             // method doesn't blow them away.
@@ -131,7 +133,7 @@ class CacheSecurityContext extends ChainingSecurityContext
 
         @Override
         public String getCredentials() {
-            if (this.credentialstring != null) return new String(this.credentialstring);
+            if (this.credentialstring != null) return new String(this.credentialstring, UTF_8);
             else return null;
         }
     }

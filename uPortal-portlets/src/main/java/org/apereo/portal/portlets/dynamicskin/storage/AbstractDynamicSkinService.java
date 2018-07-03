@@ -14,6 +14,8 @@
  */
 package org.apereo.portal.portlets.dynamicskin.storage;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -220,7 +222,7 @@ public abstract class AbstractDynamicSkinService implements DynamicSkinService {
         }
 
         // Create byte[]s of the template and preferences content
-        byte[] prefsContent = str.toString().getBytes();
+        byte[] prefsContent = str.toString().getBytes(UTF_8);
         File f = new File(getSkinLessTemplatePath(data));
         byte[] templateContent = IOUtils.toByteArray(f.toURI());
 
@@ -229,7 +231,7 @@ public abstract class AbstractDynamicSkinService implements DynamicSkinService {
         // include file.  Insure there is a newline at the end of the template content or the first
         // preference
         // value will be lost.
-        byte[] newline = "\n".getBytes();
+        byte[] newline = "\n".getBytes(UTF_8);
         byte[] fileContent =
                 new byte[templateContent.length + newline.length + prefsContent.length];
         System.arraycopy(templateContent, 0, fileContent, 0, templateContent.length);
