@@ -30,6 +30,7 @@ public class LDAPEntityStoreFactory implements IEntityStoreFactory {
      * @return IEntityStore
      * @exception GroupsException
      */
+    @Override
     public IEntityStore newEntityStore() throws GroupsException {
         return newInstance();
     }

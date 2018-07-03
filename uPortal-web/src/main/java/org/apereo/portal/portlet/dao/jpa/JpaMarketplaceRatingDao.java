@@ -135,6 +135,7 @@ public class JpaMarketplaceRatingDao extends BasePortalJpaDao implements IMarket
      * @param marketplaceRatingPK the primary key of the entity you want
      * @return Set of ratings per portlet definition
      */
+    @Override
     @PortalTransactionalReadOnly
     @OpenEntityManager(unitName = PERSISTENCE_UNIT_NAME)
     public Set<IMarketplaceRating> getRatingsByFname(String fname) {

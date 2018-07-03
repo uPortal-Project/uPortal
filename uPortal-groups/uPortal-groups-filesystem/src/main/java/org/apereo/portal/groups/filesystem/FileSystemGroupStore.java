@@ -177,6 +177,7 @@ public class FileSystemGroupStore implements IEntityGroupStore, IEntityStore, IE
          * @return <code>true</code> if and only if the name should be included in the file list;
          *     <code>false</code> otherwise.
          */
+        @Override
         public boolean accept(File dir, String name) {
             return (!name.startsWith("#"))
                     && (!name.startsWith("%"))
@@ -215,6 +216,7 @@ public class FileSystemGroupStore implements IEntityGroupStore, IEntityStore, IE
      *
      * @param group org.apereo.portal.groups.IEntityGroup
      */
+    @Override
     public void delete(IEntityGroup group) throws GroupsException {
         throw new UnsupportedOperationException("FileSystemGroupStore.delete() not supported");
     }
@@ -233,6 +235,7 @@ public class FileSystemGroupStore implements IEntityGroupStore, IEntityStore, IE
      * @return org.apereo.portal.groups.IEntityGroup
      * @param key java.lang.String
      */
+    @Override
     public IEntityGroup find(String key) throws GroupsException {
         if (log.isDebugEnabled()) {
             log.debug(DEBUG_CLASS_NAME + ".find(): group key: " + key);
@@ -333,6 +336,7 @@ public class FileSystemGroupStore implements IEntityGroupStore, IEntityStore, IE
      * @return java.util.Iterator
      * @param gm org.apereo.portal.groups.IEntityGroup
      */
+    @Override
     public Iterator findParentGroups(IGroupMember gm) throws GroupsException {
         if (gm.isGroup()) {
             IEntityGroup group = (IEntityGroup) gm;
@@ -349,6 +353,7 @@ public class FileSystemGroupStore implements IEntityGroupStore, IEntityStore, IE
      * @return java.util.Iterator
      * @param group org.apereo.portal.groups.IEntityGroup
      */
+    @Override
     public java.util.Iterator findEntitiesForGroup(IEntityGroup group) throws GroupsException {
         if (log.isDebugEnabled())
             log.debug(
@@ -372,6 +377,7 @@ public class FileSystemGroupStore implements IEntityGroupStore, IEntityStore, IE
      * @return org.apereo.portal.groups.IEntityGroup
      * @param key java.lang.String
      */
+    @Override
     public ILockableEntityGroup findLockable(String key) throws GroupsException {
         throw new UnsupportedOperationException(DEBUG_CLASS_NAME + ".findLockable() not supported");
     }
@@ -386,6 +392,7 @@ public class FileSystemGroupStore implements IEntityGroupStore, IEntityStore, IE
      * @return String[]
      * @param group org.apereo.portal.groups.IEntityGroup
      */
+    @Override
     public java.lang.String[] findMemberGroupKeys(IEntityGroup group) throws GroupsException {
         String[] keys;
         File f = getFile(group);
@@ -416,6 +423,7 @@ public class FileSystemGroupStore implements IEntityGroupStore, IEntityStore, IE
      * @return java.util.Iterator
      * @param group org.apereo.portal.groups.IEntityGroup
      */
+    @Override
     public java.util.Iterator findMemberGroups(IEntityGroup group) throws GroupsException {
         String[] keys = findMemberGroupKeys(group); // No foreign groups here.
         List groups = new ArrayList(keys.length);
@@ -672,11 +680,13 @@ public class FileSystemGroupStore implements IEntityGroupStore, IEntityStore, IE
      * @return org.apereo.portal.groups.IEntityGroup We assume that new groups will be created
      *     updated via the file system, not the group service.
      */
+    @Override
     public IEntityGroup newInstance(Class entityType) throws GroupsException {
         throw new UnsupportedOperationException(
                 DEBUG_CLASS_NAME + ".newInstance(Class cl) not supported");
     }
 
+    @Override
     public IEntity newInstance(String key, Class type) throws GroupsException {
         if (EntityTypesLocator.getEntityTypes().getEntityIDFromType(type) == null) {
             throw new GroupsException("Invalid group type: " + type);
@@ -715,6 +725,7 @@ public class FileSystemGroupStore implements IEntityGroupStore, IEntityStore, IE
      * Find EntityIdentifiers for entities whose name matches the query string according to the
      * specified method and is of the specified type
      */
+    @Override
     public EntityIdentifier[] searchForEntities(String query, SearchMethod method, Class type)
             throws GroupsException {
         return new EntityIdentifier[0];
@@ -730,6 +741,7 @@ public class FileSystemGroupStore implements IEntityGroupStore, IEntityStore, IE
      * @param leafType the leaf type of the groups we are searching for.
      * @return EntityIdentifier[]
      */
+    @Override
     public EntityIdentifier[] searchForGroups(
             String query, SearchMethod searchMethod, Class leafType) throws GroupsException {
         List ids = new ArrayList();
@@ -815,6 +827,7 @@ public class FileSystemGroupStore implements IEntityGroupStore, IEntityStore, IE
      *
      * @param group org.apereo.portal.groups.IEntityGroup
      */
+    @Override
     public void update(IEntityGroup group) throws GroupsException {
         throw new UnsupportedOperationException(DEBUG_CLASS_NAME + ".update() not supported");
     }
@@ -824,6 +837,7 @@ public class FileSystemGroupStore implements IEntityGroupStore, IEntityStore, IE
      *
      * @param group org.apereo.portal.groups.IEntityGroup
      */
+    @Override
     public void updateMembers(IEntityGroup group) throws GroupsException {
         throw new UnsupportedOperationException(
                 DEBUG_CLASS_NAME + ".updateMembers() not supported");
@@ -835,6 +849,7 @@ public class FileSystemGroupStore implements IEntityGroupStore, IEntityStore, IE
      * @param group org.apereo.portal.groups.IEntityGroup
      * @param member org.apereo.portal.groups.IGroupMember
      */
+    @Override
     public boolean contains(IEntityGroup group, IGroupMember member) throws GroupsException {
         File f = getFile(group);
         return (f.isDirectory()) ? directoryContains(f, member) : fileContains(f, member);

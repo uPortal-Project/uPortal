@@ -180,6 +180,7 @@ public class PortletExecutionStatisticsController
         return PortletExecutionAggregationDiscriminatorImpl.Comparator.INSTANCE;
     }
 
+    @Override
     protected Map<PortletExecutionAggregationDiscriminator, SortedSet<PortletExecutionAggregation>>
             createColumnDiscriminatorMap(PortletExecutionReportForm form) {
         // Collections used to track the queried groups and the results

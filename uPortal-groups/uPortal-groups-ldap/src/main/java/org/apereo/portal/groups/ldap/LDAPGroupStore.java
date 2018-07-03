@@ -476,15 +476,18 @@ public class LDAPGroupStore implements IEntityGroupStore, IEntityStore, IEntityS
         return (GroupShadow) groups.get(group.getLocalKey());
     }
 
+    @Override
     public void delete(IEntityGroup group) throws GroupsException {
         throw new java.lang.UnsupportedOperationException(
                 "LDAPGroupStore: Method delete() not supported.");
     }
 
+    @Override
     public IEntityGroup find(String key) throws GroupsException {
         return makeGroup((GroupShadow) this.groups.get(key));
     }
 
+    @Override
     public Iterator findParentGroups(IGroupMember gm) throws GroupsException {
         ArrayList al = new ArrayList();
         String key;
@@ -517,6 +520,7 @@ public class LDAPGroupStore implements IEntityGroupStore, IEntityStore, IEntityS
         return al.iterator();
     }
 
+    @Override
     public String[] findMemberGroupKeys(IEntityGroup group) throws GroupsException {
         List keys = new ArrayList();
         for (Iterator itr = findMemberGroups(group); itr.hasNext(); ) {
@@ -526,6 +530,7 @@ public class LDAPGroupStore implements IEntityGroupStore, IEntityStore, IEntityS
         return (String[]) keys.toArray(new String[keys.size()]);
     }
 
+    @Override
     public Iterator findMemberGroups(IEntityGroup group) throws GroupsException {
         ArrayList al = new ArrayList();
         GroupShadow shadow = getShadow(group);
@@ -535,21 +540,25 @@ public class LDAPGroupStore implements IEntityGroupStore, IEntityStore, IEntityS
         return al.iterator();
     }
 
+    @Override
     public IEntityGroup newInstance(Class entityType) throws GroupsException {
         throw new java.lang.UnsupportedOperationException(
                 "LDAPGroupStore: Method newInstance() not supported");
     }
 
+    @Override
     public void update(IEntityGroup group) throws GroupsException {
         throw new java.lang.UnsupportedOperationException(
                 "LDAPGroupStore: Method update() not supported");
     }
 
+    @Override
     public void updateMembers(IEntityGroup group) throws GroupsException {
         throw new java.lang.UnsupportedOperationException(
                 "LDAPGroupStore: Method updateMembers() not supported");
     }
 
+    @Override
     public ILockableEntityGroup findLockable(String key) throws GroupsException {
         throw new java.lang.UnsupportedOperationException(
                 "LDAPGroupStore: Method findLockable() not supported");
@@ -559,6 +568,7 @@ public class LDAPGroupStore implements IEntityGroupStore, IEntityStore, IEntityS
         return (GroupShadow[]) groups.values().toArray(new GroupShadow[0]);
     }
 
+    @Override
     public EntityIdentifier[] searchForGroups(String query, SearchMethod method, Class leaftype)
             throws GroupsException {
         ArrayList ids = new ArrayList();
@@ -625,6 +635,7 @@ public class LDAPGroupStore implements IEntityGroupStore, IEntityStore, IEntityS
         return (EntityIdentifier[]) ids.toArray(new EntityIdentifier[0]);
     }
 
+    @Override
     public Iterator findEntitiesForGroup(IEntityGroup group) throws GroupsException {
         GroupShadow shadow = getShadow(group);
         ArrayList al = new ArrayList();
@@ -635,6 +646,7 @@ public class LDAPGroupStore implements IEntityGroupStore, IEntityStore, IEntityS
         return al.iterator();
     }
 
+    @Override
     public IEntity newInstance(String key, Class type) throws GroupsException {
         if (EntityTypesLocator.getEntityTypes().getEntityIDFromType(type) == null) {
             throw new GroupsException("Invalid group type: " + type);
@@ -642,6 +654,7 @@ public class LDAPGroupStore implements IEntityGroupStore, IEntityStore, IEntityS
         return new EntityImpl(key, type);
     }
 
+    @Override
     public EntityIdentifier[] searchForEntities(String query, SearchMethod method, Class type)
             throws GroupsException {
         if (type != group && type != iperson) return new EntityIdentifier[0];
@@ -693,6 +706,7 @@ public class LDAPGroupStore implements IEntityGroupStore, IEntityStore, IEntityS
      * @param group org.apereo.portal.groups.IEntityGroup
      * @param member org.apereo.portal.groups.IGroupMember
      */
+    @Override
     public boolean contains(IEntityGroup group, IGroupMember member) throws GroupsException {
         boolean found = false;
         Iterator itr = (member.isGroup()) ? findMemberGroups(group) : findEntitiesForGroup(group);

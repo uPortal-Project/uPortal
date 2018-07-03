@@ -32,6 +32,7 @@ public class GrouperEntityStoreFactory implements IEntityStoreFactory {
      * @return The instance.
      * @see IEntityStoreFactory#newEntityStore()
      */
+    @Override
     public IEntityStore newEntityStore() throws GroupsException {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Creating new Grouper GrouperEntityGroupStoreFactory");

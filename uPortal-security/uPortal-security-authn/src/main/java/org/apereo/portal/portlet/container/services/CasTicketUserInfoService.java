@@ -120,6 +120,7 @@ public class CasTicketUserInfoService implements UserInfoService {
      * (non-Javadoc)
      * @see org.apache.pluto.container.UserInfoService#getUserInfo(javax.portlet.PortletRequest, org.apache.pluto.container.PortletWindow)
      */
+    @Override
     public Map<String, String> getUserInfo(PortletRequest request, PortletWindow portletWindow)
             throws PortletContainerException {
 

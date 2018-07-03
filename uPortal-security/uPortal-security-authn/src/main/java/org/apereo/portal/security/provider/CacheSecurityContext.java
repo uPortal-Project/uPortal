@@ -57,6 +57,7 @@ class CacheSecurityContext extends ChainingSecurityContext
 
     /* package-private */ CacheSecurityContext() {}
 
+    @Override
     public int getAuthType() {
         return CACHESECURITYAUTHTYPE;
     }
@@ -110,6 +111,7 @@ class CacheSecurityContext extends ChainingSecurityContext
      * We need to override this method in order to return a class that implements the
      * NotSoOpaqueCredentials interface.
      */
+    @Override
     public IOpaqueCredentials getOpaqueCredentials() {
         if (parentContext != null && parentContext.isAuthenticated()) {
             NotSoOpaqueCredentials oc = new CacheOpaqueCredentials();
@@ -127,6 +129,7 @@ class CacheSecurityContext extends ChainingSecurityContext
 
         private static final long serialVersionUID = 1L;
 
+        @Override
         public String getCredentials() {
             if (this.credentialstring != null) return new String(this.credentialstring);
             else return null;

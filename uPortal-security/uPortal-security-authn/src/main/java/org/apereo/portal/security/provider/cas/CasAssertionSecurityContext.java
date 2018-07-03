@@ -100,6 +100,7 @@ public class CasAssertionSecurityContext extends ChainingSecurityContext
         }
     }
 
+    @Override
     public int getAuthType() {
         return CAS_AUTHTYPE;
     }
@@ -167,6 +168,7 @@ public class CasAssertionSecurityContext extends ChainingSecurityContext
         }
     }
 
+    @Override
     public final String getCasServiceToken(final String target)
             throws CasProxyTicketAcquisitionException {
         if (log.isTraceEnabled()) {
@@ -202,6 +204,7 @@ public class CasAssertionSecurityContext extends ChainingSecurityContext
         return proxyTicket;
     }
 
+    @Override
     public String toString() {
         return this.getClass().getName() + " assertion:" + this.assertion;
     }

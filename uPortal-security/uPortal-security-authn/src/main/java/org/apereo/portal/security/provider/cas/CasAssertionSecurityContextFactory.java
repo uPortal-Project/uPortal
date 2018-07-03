@@ -50,6 +50,7 @@ public class CasAssertionSecurityContextFactory implements ISecurityContextFacto
         return credentialToken;
     }
 
+    @Override
     public ISecurityContext getSecurityContext() {
         return new CasAssertionSecurityContext();
     }

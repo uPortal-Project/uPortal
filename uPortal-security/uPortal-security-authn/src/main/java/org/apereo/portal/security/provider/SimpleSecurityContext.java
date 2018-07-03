@@ -36,6 +36,7 @@ public class SimpleSecurityContext extends ChainingSecurityContext implements IS
 
     /* package-private */ SimpleSecurityContext() {}
 
+    @Override
     public int getAuthType() {
         return this.SIMPLESECURITYAUTHTYPE;
     }
@@ -45,6 +46,7 @@ public class SimpleSecurityContext extends ChainingSecurityContext implements IS
      *
      * @exception PortalSecurityException
      */
+    @Override
     public synchronized void authenticate() throws PortalSecurityException {
         this.isauth = false;
         if (this.myPrincipal.UID != null && this.myOpaqueCredentials.credentialstring != null) {

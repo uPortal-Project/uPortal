@@ -24,10 +24,12 @@ import org.apereo.portal.security.provider.ChainingSecurityContext;
 class UnionSecurityContext extends ChainingSecurityContext {
     private final int UNION_SECURITY_AUTHTYPE = 0xFF0A;
 
+    @Override
     public int getAuthType() {
         return this.UNION_SECURITY_AUTHTYPE;
     }
 
+    @Override
     public synchronized void authenticate() throws PortalSecurityException {
         // lets chaining invoke authentication on all subcontexts
         // then sets resulting principal, descriptor and isauth based on
@@ -47,6 +49,7 @@ class UnionSecurityContext extends ChainingSecurityContext {
         }
     }
 
+    @Override
     public String toString() {
         StringBuffer sb = new StringBuffer();
         sb.append(this.getClass().getName());

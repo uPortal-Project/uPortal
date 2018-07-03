@@ -60,6 +60,7 @@ public class HungWorkerAnalyzer
             Maps.transformValues(
                     this.hungPortletCounts,
                     new Function<AtomicInteger, Integer>() {
+                        @Override
                         public Integer apply(AtomicInteger value) {
                             return value.get();
                         }

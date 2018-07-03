@@ -1180,6 +1180,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
     private final ThreadLocal<Cache<Tuple<String, String>, Document>> layoutCacheHolder =
             new ThreadLocal<>();
 
+    @Override
     public void setLayoutImportExportCache(Cache<Tuple<String, String>, Document> layoutCache) {
         if (layoutCache == null) {
             layoutCacheHolder.remove();
@@ -1896,12 +1897,14 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
 
                                 // One <channel> element inside another
                                 new FormOfLayoutCorruption() {
+                                    @Override
                                     public boolean detect(org.dom4j.Document layoutDoc) {
                                         return !layoutDoc
                                                 .selectNodes("//channel/descendant::channel")
                                                 .isEmpty();
                                     }
 
+                                    @Override
                                     public String getMessage() {
                                         return "one <channel> element inside another";
                                     };

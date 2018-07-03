@@ -59,6 +59,7 @@ public class SimpleLdapSecurityContext extends ChainingSecurityContext {
      *
      * @return authorization type
      */
+    @Override
     public int getAuthType() {
         /*
          * What is this for?  No one would know what to do with the
@@ -69,6 +70,7 @@ public class SimpleLdapSecurityContext extends ChainingSecurityContext {
     }
 
     /** Authenticates the user. */
+    @Override
     public synchronized void authenticate() throws PortalSecurityException {
         this.isauth = false;
         ILdapServer ldapConn;

@@ -57,6 +57,7 @@ public class SimpleSecurityContextFactory implements ISecurityContextFactory {
         return credentialToken;
     }
 
+    @Override
     public ISecurityContext getSecurityContext() {
         return new SimpleSecurityContext();
     }
