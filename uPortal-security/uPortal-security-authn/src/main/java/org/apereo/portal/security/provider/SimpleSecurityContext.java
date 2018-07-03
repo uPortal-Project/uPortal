@@ -65,7 +65,8 @@ public class SimpleSecurityContext extends ChainingSecurityContext implements IS
                 if (account != null) {
 
                     // get the account password as an ASCII string
-                    String loginPassword = new String(this.myOpaqueCredentials.credentialstring, UTF_8);
+                    String loginPassword =
+                            new String(this.myOpaqueCredentials.credentialstring, UTF_8);
 
                     // if the password provided at login matches the hashed
                     // account password, authenticate the user

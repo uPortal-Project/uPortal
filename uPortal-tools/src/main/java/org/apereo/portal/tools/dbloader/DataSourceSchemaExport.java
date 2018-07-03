@@ -18,9 +18,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.StandardOpenOption.APPEND;
 import static java.nio.file.StandardOpenOption.CREATE;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Writer;
@@ -177,7 +175,13 @@ public class DataSourceSchemaExport implements ISchemaExport, HibernateConfigura
                 if (!file.exists()) {
                     file.getParentFile().mkdirs();
                 }
-                sqlWriter = Files.newBufferedWriter(file.toPath(), UTF_8, append ? new StandardOpenOption[] {CREATE, APPEND} : new StandardOpenOption[] {CREATE});
+                sqlWriter =
+                        Files.newBufferedWriter(
+                                file.toPath(),
+                                UTF_8,
+                                append
+                                        ? new StandardOpenOption[] {CREATE, APPEND}
+                                        : new StandardOpenOption[] {CREATE});
             } catch (IOException e) {
                 throw new RuntimeException("", e);
             }

@@ -86,7 +86,8 @@ public class PortalShell {
 
     protected static void printHelp(final Options options) {
         final HelpFormatter formatter = new HelpFormatter();
-        final PrintWriter pw = new PrintWriter(new BufferedWriter(new OutputStreamWriter(System.err, UTF_8)));
+        final PrintWriter pw =
+                new PrintWriter(new BufferedWriter(new OutputStreamWriter(System.err, UTF_8)));
         formatter.printHelp(
                 pw,
                 HelpFormatter.DEFAULT_WIDTH,

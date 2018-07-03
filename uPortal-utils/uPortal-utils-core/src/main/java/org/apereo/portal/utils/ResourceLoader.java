@@ -342,7 +342,8 @@ public class ResourceLoader {
         try {
             in =
                     new BufferedReader(
-                            new InputStreamReader(getResourceAsStream(requestingClass, resource), UTF_8));
+                            new InputStreamReader(
+                                    getResourceAsStream(requestingClass, resource), UTF_8));
             sbText = new StringBuffer(1024);
             while ((line = in.readLine()) != null) sbText.append(line).append("\n");
         } finally {
