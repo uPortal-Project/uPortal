@@ -49,15 +49,13 @@ import org.slf4j.LoggerFactory;
 @Table(name = "UP_UNIQUE_STR")
 @Inheritance(strategy = InheritanceType.JOINED)
 @SequenceGenerator(
-    name = "UP_UNIQUE_STR_GEN",
-    sequenceName = "UP_UNIQUE_STR_SEQ",
-    allocationSize = 1000
-)
+        name = "UP_UNIQUE_STR_GEN",
+        sequenceName = "UP_UNIQUE_STR_SEQ",
+        allocationSize = 1000)
 @TableGenerator(
-    name = "UP_UNIQUE_STR_GEN",
-    pkColumnValue = "UP_UNIQUE_STR_PROP",
-    allocationSize = 1000
-)
+        name = "UP_UNIQUE_STR_GEN",
+        pkColumnValue = "UP_UNIQUE_STR_PROP",
+        allocationSize = 1000)
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public final class UniqueStrings {

@@ -81,9 +81,8 @@ public class EntityTypes {
     }
 
     @Cacheable(
-        cacheName = "org.apereo.portal.EntityTypes.CLASS_BY_ID",
-        keyGeneratorName = ListCacheKeyGenerator.DEFAULT_BEAN_NAME
-    )
+            cacheName = "org.apereo.portal.EntityTypes.CLASS_BY_ID",
+            keyGeneratorName = ListCacheKeyGenerator.DEFAULT_BEAN_NAME)
     public Class<? extends IBasicEntity> getEntityTypeFromID(Integer id) {
         final List<Class<?>> result =
                 this.jdbcOperations.query(
@@ -99,9 +98,8 @@ public class EntityTypes {
     }
 
     @Cacheable(
-        cacheName = "org.apereo.portal.EntityTypes.ID_BY_CLASS",
-        keyGeneratorName = ListCacheKeyGenerator.DEFAULT_BEAN_NAME
-    )
+            cacheName = "org.apereo.portal.EntityTypes.ID_BY_CLASS",
+            keyGeneratorName = ListCacheKeyGenerator.DEFAULT_BEAN_NAME)
     public Integer getEntityIDFromType(Class<? extends IBasicEntity> type) {
         return DataAccessUtils.singleResult(
                 this.jdbcOperations.queryForList(
@@ -111,9 +109,8 @@ public class EntityTypes {
     }
 
     @Cacheable(
-        cacheName = "org.apereo.portal.EntityTypes.ALL",
-        keyGeneratorName = ListCacheKeyGenerator.DEFAULT_BEAN_NAME
-    )
+            cacheName = "org.apereo.portal.EntityTypes.ALL",
+            keyGeneratorName = ListCacheKeyGenerator.DEFAULT_BEAN_NAME)
     public Iterator<Class<?>> getAllEntityTypes() {
         final List<Class<?>> entityTypes =
                 this.jdbcOperations.query(
@@ -129,9 +126,8 @@ public class EntityTypes {
     }
 
     @TriggersRemove(
-        cacheName = {"org.apereo.portal.EntityTypes.ALL"},
-        removeAll = true
-    )
+            cacheName = {"org.apereo.portal.EntityTypes.ALL"},
+            removeAll = true)
     @Transactional
     public void addEntityTypeIfNecessary(Class<? extends IBasicEntity> newType, String description)
             throws java.lang.Exception {
@@ -150,13 +146,12 @@ public class EntityTypes {
     }
 
     @TriggersRemove(
-        cacheName = {
-            "org.apereo.portal.EntityTypes.CLASS_BY_ID",
-            "org.apereo.portal.EntityTypes.ID_BY_CLASS",
-            "org.apereo.portal.EntityTypes.ALL"
-        },
-        removeAll = true
-    )
+            cacheName = {
+                "org.apereo.portal.EntityTypes.CLASS_BY_ID",
+                "org.apereo.portal.EntityTypes.ID_BY_CLASS",
+                "org.apereo.portal.EntityTypes.ALL"
+            },
+            removeAll = true)
     @Transactional
     public void deleteEntityType(Class<?> type) throws SQLException {
         this.jdbcOperations.update(

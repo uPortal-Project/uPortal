@@ -66,11 +66,10 @@ public class PortalController {
     }
 
     @RequestMapping(
-        headers = {
-            "org.apereo.portal.url.UrlType=RENDER",
-            "org.apereo.portal.url.UrlState.EXCLUSIVE=true"
-        }
-    )
+            headers = {
+                "org.apereo.portal.url.UrlType=RENDER",
+                "org.apereo.portal.url.UrlState.EXCLUSIVE=true"
+            })
     public void renderExclusive(HttpServletRequest request, HttpServletResponse response) {
         final IPortalRequestInfo portalRequestInfo =
                 this.urlSyntaxProvider.getPortalRequestInfo(request);
@@ -111,9 +110,8 @@ public class PortalController {
 
     /** HTTP POST required for security. */
     @RequestMapping(
-        headers = {"org.apereo.portal.url.UrlType=ACTION"},
-        method = RequestMethod.POST
-    )
+            headers = {"org.apereo.portal.url.UrlType=ACTION"},
+            method = RequestMethod.POST)
     public void actionRequest(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
 

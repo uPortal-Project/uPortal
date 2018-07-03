@@ -43,9 +43,8 @@ import org.hibernate.annotations.NaturalIdCache;
 @SequenceGenerator(name = "UP_PAGS_TEST_GEN", sequenceName = "UP_PAGS_TEST_SEQ", allocationSize = 5)
 @TableGenerator(name = "UP_PAGS_TEST_GEN", pkColumnValue = "UP_PAGS_TEST", allocationSize = 5)
 @NaturalIdCache(
-    region =
-            "org.apereo.portal.groups.pags.dao.jpa.PersonAttributesGroupTestDefinitionImpl-NaturalId"
-)
+        region =
+                "org.apereo.portal.groups.pags.dao.jpa.PersonAttributesGroupTestDefinitionImpl-NaturalId")
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class PersonAttributesGroupTestDefinitionImpl
@@ -85,9 +84,8 @@ public class PersonAttributesGroupTestDefinitionImpl
     private String testValue;
 
     @ManyToOne(
-        fetch = FetchType.EAGER,
-        targetEntity = PersonAttributesGroupTestGroupDefinitionImpl.class
-    )
+            fetch = FetchType.EAGER,
+            targetEntity = PersonAttributesGroupTestGroupDefinitionImpl.class)
     @JoinColumn(name = "PAGS_TEST_GROUP_ID", nullable = false)
     @JsonBackReference // Addresses infinite recursion by excluding from serialization
     private IPersonAttributesGroupTestGroupDefinition testGroup;

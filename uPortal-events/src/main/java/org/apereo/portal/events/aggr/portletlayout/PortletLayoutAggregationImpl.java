@@ -45,35 +45,29 @@ import org.hibernate.annotations.NaturalIdCache;
 @Table(name = "UP_PORTLET_LAYOUT_AGGR")
 @Inheritance(strategy = InheritanceType.JOINED)
 @SequenceGenerator(
-    name = "UP_PORTLET_LAYOUT_AGGR_GEN",
-    sequenceName = "UP_PORTLET_LAYOUT_AGGR_SEQ",
-    allocationSize = 1000
-)
+        name = "UP_PORTLET_LAYOUT_AGGR_GEN",
+        sequenceName = "UP_PORTLET_LAYOUT_AGGR_SEQ",
+        allocationSize = 1000)
 @TableGenerator(
-    name = "UP_PORTLET_LAYOUT_AGGR_GEN",
-    pkColumnValue = "UP_PORTLET_LAYOUT_AGGR_PROP",
-    allocationSize = 1000
-)
+        name = "UP_PORTLET_LAYOUT_AGGR_GEN",
+        pkColumnValue = "UP_PORTLET_LAYOUT_AGGR_PROP",
+        allocationSize = 1000)
 @org.hibernate.annotations.Table(
-    appliesTo = "UP_PORTLET_LAYOUT_AGGR",
-    indexes = {
-        @Index(
-            name = "IDX_UP_PORTLET_LAYOUT_AGGR_DTI",
-            columnNames = {"DATE_DIMENSION_ID", "TIME_DIMENSION_ID", "AGGR_INTERVAL"}
-        ),
-        @Index(
-            name = "IDX_UP_PORTLET_LAYOUT_INTRVL",
-            columnNames = {"AGGR_INTERVAL"}
-        ),
-        @Index(
-            name = "IDX_UP_PORTLET_LAYOUT_GRP",
-            columnNames = {"AGGR_GROUP_ID"}
-        )
-    }
-)
+        appliesTo = "UP_PORTLET_LAYOUT_AGGR",
+        indexes = {
+            @Index(
+                    name = "IDX_UP_PORTLET_LAYOUT_AGGR_DTI",
+                    columnNames = {"DATE_DIMENSION_ID", "TIME_DIMENSION_ID", "AGGR_INTERVAL"}),
+            @Index(
+                    name = "IDX_UP_PORTLET_LAYOUT_INTRVL",
+                    columnNames = {"AGGR_INTERVAL"}),
+            @Index(
+                    name = "IDX_UP_PORTLET_LAYOUT_GRP",
+                    columnNames = {"AGGR_GROUP_ID"})
+        })
 @NaturalIdCache(
-    region = "org.apereo.portal.events.aggr.portletlayout.PortletLayoutAggregationImpl-NaturalId"
-)
+        region =
+                "org.apereo.portal.events.aggr.portletlayout.PortletLayoutAggregationImpl-NaturalId")
 @Cacheable
 @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public final class PortletLayoutAggregationImpl

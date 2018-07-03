@@ -10,7 +10,7 @@ plugins {
     id 'cz.malohlava' version '1.0.3'
 
     // Sub project plugins
-    id 'com.github.sherter.google-java-format' version '0.6' apply false
+    id 'com.github.sherter.google-java-format' version '0.7.1' apply false
     id 'nebula.lint' version '9.3.4' apply false
     id 'net.ltgt.errorprone' version '0.0.13' apply false
 }
@@ -84,7 +84,7 @@ allprojects {
         enabled = gradle.startParameter.taskNames.contains(it.name)
     }
     googleJavaFormat {
-        toolVersion '1.5'
+        toolVersion '1.6'
         options style: 'AOSP'
         exclude '**/generated-sources'
     }

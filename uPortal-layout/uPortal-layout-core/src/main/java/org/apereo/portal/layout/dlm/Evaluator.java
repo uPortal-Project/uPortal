@@ -35,15 +35,13 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Entity
 @Table(name = "UP_DLM_EVALUATOR")
 @SequenceGenerator(
-    name = "UP_DLM_EVALUATOR_GEN",
-    sequenceName = "UP_DLM_EVALUATOR_SEQ",
-    allocationSize = 1
-)
+        name = "UP_DLM_EVALUATOR_GEN",
+        sequenceName = "UP_DLM_EVALUATOR_SEQ",
+        allocationSize = 1)
 @TableGenerator(
-    name = "UP_DLM_EVALUATOR_GEN",
-    pkColumnValue = "UP_DLM_EVALUATOR",
-    allocationSize = 1
-)
+        name = "UP_DLM_EVALUATOR_GEN",
+        pkColumnValue = "UP_DLM_EVALUATOR",
+        allocationSize = 1)
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)

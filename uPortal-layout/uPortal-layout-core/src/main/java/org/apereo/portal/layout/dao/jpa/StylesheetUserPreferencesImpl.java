@@ -57,10 +57,9 @@ import org.hibernate.annotations.Type;
 @Entity
 @Table(name = "UP_SS_USER_PREF")
 @SequenceGenerator(
-    name = "UP_SS_USER_PREF_GEN",
-    sequenceName = "UP_SS_USER_PREF_SEQ",
-    allocationSize = 5
-)
+        name = "UP_SS_USER_PREF_GEN",
+        sequenceName = "UP_SS_USER_PREF_SEQ",
+        allocationSize = 5)
 @TableGenerator(name = "UP_SS_USER_PREF_GEN", pkColumnValue = "UP_SS_USER_PREF", allocationSize = 5)
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
@@ -94,9 +93,8 @@ class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences {
     @Column(name = "PROP_VALUE", nullable = false, length = 2000)
     @Type(type = "nullSafeString") // only applies to map values
     @CollectionTable(
-        name = "UP_SS_USER_PREF_OUTPUT_PROP",
-        joinColumns = @JoinColumn(name = "SS_USER_PREF_ID", nullable = false)
-    )
+            name = "UP_SS_USER_PREF_OUTPUT_PROP",
+            joinColumns = @JoinColumn(name = "SS_USER_PREF_ID", nullable = false))
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @Fetch(FetchMode.JOIN)
     private final Map<String, String> outputProperties = new LinkedHashMap<String, String>(0);
@@ -106,19 +104,17 @@ class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences {
     @Column(name = "PARAM_VALUE", nullable = false, length = 2000)
     @Type(type = "nullSafeString") // only applies to map values
     @CollectionTable(
-        name = "UP_SS_USER_PREF_PARAM",
-        joinColumns = @JoinColumn(name = "SS_USER_PREF_ID", nullable = false)
-    )
+            name = "UP_SS_USER_PREF_PARAM",
+            joinColumns = @JoinColumn(name = "SS_USER_PREF_ID", nullable = false))
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @Fetch(FetchMode.JOIN)
     private final Map<String, String> parameters = new LinkedHashMap<String, String>(0);
 
     @OneToMany(
-        targetEntity = LayoutNodeAttributesImpl.class,
-        cascade = CascadeType.ALL,
-        fetch = FetchType.EAGER,
-        orphanRemoval = true
-    )
+            targetEntity = LayoutNodeAttributesImpl.class,
+            cascade = CascadeType.ALL,
+            fetch = FetchType.EAGER,
+            orphanRemoval = true)
     @Index(name = "IDX_SS_USER_PREF_ID")
     @MapKey(name = "nodeId")
     @JoinColumn(name = "SS_USER_PREF_ID", nullable = false)

@@ -57,8 +57,10 @@ import org.springframework.web.portlet.bind.annotation.ResourceMapping;
 @RequestMapping(value = "VIEW")
 public class PortletExecutionStatisticsController
         extends BaseStatisticsReportController<
-                PortletExecutionAggregation, PortletExecutionAggregationKey,
-                PortletExecutionAggregationDiscriminator, PortletExecutionReportForm> {
+                PortletExecutionAggregation,
+                PortletExecutionAggregationKey,
+                PortletExecutionAggregationDiscriminator,
+                PortletExecutionReportForm> {
 
     private static final String DATA_TABLE_RESOURCE_ID = "portletExecutionData";
     private static final String REPORT_NAME = "portletExecution.totals";

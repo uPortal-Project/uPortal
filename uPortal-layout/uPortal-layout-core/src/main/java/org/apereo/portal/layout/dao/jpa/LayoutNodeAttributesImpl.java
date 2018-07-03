@@ -40,15 +40,13 @@ import org.hibernate.annotations.Type;
 @Entity
 @Table(name = "UP_SS_USER_PREF_LAY_ATTR")
 @SequenceGenerator(
-    name = "UP_SS_USER_PREF_LAY_ATTR_GEN",
-    sequenceName = "UP_SS_USER_PREF_LAY_ATTR_SEQ",
-    allocationSize = 5
-)
+        name = "UP_SS_USER_PREF_LAY_ATTR_GEN",
+        sequenceName = "UP_SS_USER_PREF_LAY_ATTR_SEQ",
+        allocationSize = 5)
 @TableGenerator(
-    name = "UP_SS_USER_PREF_LAY_ATTR_GEN",
-    pkColumnValue = "UP_SS_USER_PREF_LAY_ATTR",
-    allocationSize = 5
-)
+        name = "UP_SS_USER_PREF_LAY_ATTR_GEN",
+        pkColumnValue = "UP_SS_USER_PREF_LAY_ATTR",
+        allocationSize = 5)
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 class LayoutNodeAttributesImpl {
@@ -69,9 +67,8 @@ class LayoutNodeAttributesImpl {
     @Column(name = "ATTR_VALUE", nullable = false, length = 2000)
     @Type(type = "nullSafeString") // only applies to map values
     @CollectionTable(
-        name = "UP_SS_USER_PREF_LAY_ATTR_VAL",
-        joinColumns = @JoinColumn(name = "UP_SS_USER_PREF_LAY_ATTR_ID", nullable = false)
-    )
+            name = "UP_SS_USER_PREF_LAY_ATTR_VAL",
+            joinColumns = @JoinColumn(name = "UP_SS_USER_PREF_LAY_ATTR_ID", nullable = false))
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @Fetch(FetchMode.JOIN)
     private Map<String, String> attributes = new LinkedHashMap<String, String>(0);

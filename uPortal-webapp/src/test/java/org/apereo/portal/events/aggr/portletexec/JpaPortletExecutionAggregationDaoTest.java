@@ -38,7 +38,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @ContextConfiguration(locations = "classpath:jpaAggrEventsTestContext.xml")
 public class JpaPortletExecutionAggregationDaoTest
         extends JpaBaseAggregationDaoTest<
-                PortletExecutionAggregationImpl, PortletExecutionAggregationKey,
+                PortletExecutionAggregationImpl,
+                PortletExecutionAggregationKey,
                 PortletExecutionAggregationDiscriminator> {
     @Autowired private PortletExecutionAggregationPrivateDao portletExecutionAggregationDao;
     @Autowired private AggregatedPortletLookupDao aggregatedPortletLookupDao;

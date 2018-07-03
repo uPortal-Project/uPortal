@@ -31,15 +31,13 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Entity
 @Table(name = "UP_SS_DESC_OUTPUT_PROP")
 @SequenceGenerator(
-    name = "UP_SS_DESC_OUTPUT_PROP_GEN",
-    sequenceName = "UP_SS_DESC_OUTPUT_PROP_SEQ",
-    allocationSize = 5
-)
+        name = "UP_SS_DESC_OUTPUT_PROP_GEN",
+        sequenceName = "UP_SS_DESC_OUTPUT_PROP_SEQ",
+        allocationSize = 5)
 @TableGenerator(
-    name = "UP_SS_DESC_OUTPUT_PROP_GEN",
-    pkColumnValue = "UP_SS_DESC_OUTPUT_PROP",
-    allocationSize = 5
-)
+        name = "UP_SS_DESC_OUTPUT_PROP_GEN",
+        pkColumnValue = "UP_SS_DESC_OUTPUT_PROP",
+        allocationSize = 5)
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class OutputPropertyDescriptorImpl extends AbstractStylesheetDataImpl

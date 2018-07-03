@@ -33,15 +33,13 @@ import org.hibernate.annotations.NaturalIdCache;
 @Entity
 @Table(name = "UP_AGGR_TAB_MAPPING")
 @SequenceGenerator(
-    name = "UP_AGGR_TAB_MAPPING_GEN",
-    sequenceName = "UP_AGGR_TAB_MAPPING_SEQ",
-    allocationSize = 10
-)
+        name = "UP_AGGR_TAB_MAPPING_GEN",
+        sequenceName = "UP_AGGR_TAB_MAPPING_SEQ",
+        allocationSize = 10)
 @TableGenerator(
-    name = "UP_AGGR_TAB_MAPPING_GEN",
-    pkColumnValue = "UP_AGGR_TAB_MAPPING_PROP",
-    allocationSize = 10
-)
+        name = "UP_AGGR_TAB_MAPPING_GEN",
+        pkColumnValue = "UP_AGGR_TAB_MAPPING_PROP",
+        allocationSize = 10)
 @Immutable
 @NaturalIdCache(region = "org.apereo.portal.events.aggr.tabs.AggregatedTabMappingImpl-NaturalId")
 @Cacheable

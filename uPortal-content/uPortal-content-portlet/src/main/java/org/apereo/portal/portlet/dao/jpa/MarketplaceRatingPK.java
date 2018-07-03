@@ -37,24 +37,22 @@ public class MarketplaceRatingPK implements Serializable {
     private static final long serialVersionUID = -1294203685313115404L;
 
     @Column(
-        name = "USER_NAME",
-        unique = false,
-        nullable = true,
-        insertable = true,
-        updatable = true
-    )
+            name = "USER_NAME",
+            unique = false,
+            nullable = true,
+            insertable = true,
+            updatable = true)
     protected String userName;
 
     @ManyToOne
     @Cascade({CascadeType.PERSIST})
     @JoinColumn(
-        name = "PORTLET_ID",
-        referencedColumnName = "PORTLET_DEF_ID",
-        unique = false,
-        nullable = true,
-        insertable = true,
-        updatable = true
-    )
+            name = "PORTLET_ID",
+            referencedColumnName = "PORTLET_DEF_ID",
+            unique = false,
+            nullable = true,
+            insertable = true,
+            updatable = true)
     protected PortletDefinitionImpl portletDefinition;
 
     /** Empty constructor is needed for Serializable */

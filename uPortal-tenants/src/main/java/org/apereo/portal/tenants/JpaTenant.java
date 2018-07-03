@@ -63,9 +63,8 @@ import org.hibernate.annotations.Type;
     @Column(name = "ATTR_VALUE", nullable = false, length = 2000)
     @Type(type = "nullSafeString") // only applies to map values
     @CollectionTable(
-        name = "UP_TENANT_ATTRIBUTES",
-        joinColumns = @JoinColumn(name = "TENANT_ID", nullable = false)
-    )
+            name = "UP_TENANT_ATTRIBUTES",
+            joinColumns = @JoinColumn(name = "TENANT_ID", nullable = false))
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @Fetch(FetchMode.JOIN)
     private Map<String, String> attributes = new HashMap<String, String>(0);

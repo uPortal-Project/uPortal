@@ -42,39 +42,31 @@ import org.hibernate.annotations.NaturalIdCache;
 @Table(name = "UP_SEARCH_REQ_AGGR")
 @Inheritance(strategy = InheritanceType.JOINED)
 @SequenceGenerator(
-    name = "UP_SEARCH_REQ_AGGR_GEN",
-    sequenceName = "UP_SEARCH_REQ_AGGR_SEQ",
-    allocationSize = 1000
-)
+        name = "UP_SEARCH_REQ_AGGR_GEN",
+        sequenceName = "UP_SEARCH_REQ_AGGR_SEQ",
+        allocationSize = 1000)
 @TableGenerator(
-    name = "UP_SEARCH_REQ_AGGR_GEN",
-    pkColumnValue = "UP_SEARCH_REQ_AGGR_PROP",
-    allocationSize = 1000
-)
+        name = "UP_SEARCH_REQ_AGGR_GEN",
+        pkColumnValue = "UP_SEARCH_REQ_AGGR_PROP",
+        allocationSize = 1000)
 @org.hibernate.annotations.Table(
-    appliesTo = "UP_SEARCH_REQ_AGGR",
-    indexes = {
-        @Index(
-            name = "IDX_UP_SEARCH_REQ_AGGR_DTI",
-            columnNames = {"DATE_DIMENSION_ID", "TIME_DIMENSION_ID", "AGGR_INTERVAL"}
-        ),
-        @Index(
-            name = "IDX_UP_SEARCH_REQ_INTRVL",
-            columnNames = {"AGGR_INTERVAL"}
-        ),
-        @Index(
-            name = "IDX_UP_SEARCH_REQ_GRP",
-            columnNames = {"AGGR_GROUP_ID"}
-        ),
-        @Index(
-            name = "IDX_UP_SEARCH_REQ_TRM",
-            columnNames = {"SEARCH_TERM"}
-        )
-    }
-)
+        appliesTo = "UP_SEARCH_REQ_AGGR",
+        indexes = {
+            @Index(
+                    name = "IDX_UP_SEARCH_REQ_AGGR_DTI",
+                    columnNames = {"DATE_DIMENSION_ID", "TIME_DIMENSION_ID", "AGGR_INTERVAL"}),
+            @Index(
+                    name = "IDX_UP_SEARCH_REQ_INTRVL",
+                    columnNames = {"AGGR_INTERVAL"}),
+            @Index(
+                    name = "IDX_UP_SEARCH_REQ_GRP",
+                    columnNames = {"AGGR_GROUP_ID"}),
+            @Index(
+                    name = "IDX_UP_SEARCH_REQ_TRM",
+                    columnNames = {"SEARCH_TERM"})
+        })
 @NaturalIdCache(
-    region = "org.apereo.portal.events.aggr.action.SearchRequestAggregationImpl-NaturalId"
-)
+        region = "org.apereo.portal.events.aggr.action.SearchRequestAggregationImpl-NaturalId")
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class SearchRequestAggregationImpl

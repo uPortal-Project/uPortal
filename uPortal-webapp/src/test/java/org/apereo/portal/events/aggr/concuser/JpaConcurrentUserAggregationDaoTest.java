@@ -35,7 +35,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @ContextConfiguration(locations = "classpath:jpaAggrEventsTestContext.xml")
 public class JpaConcurrentUserAggregationDaoTest
         extends JpaBaseAggregationDaoTest<
-                ConcurrentUserAggregationImpl, ConcurrentUserAggregationKey,
+                ConcurrentUserAggregationImpl,
+                ConcurrentUserAggregationKey,
                 ConcurrentUserAggregationDiscriminator> {
     @Autowired private ConcurrentUserAggregationPrivateDao concurrentUserAggregationDao;
 

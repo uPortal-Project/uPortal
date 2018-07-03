@@ -89,8 +89,7 @@ public class SoffitConnectorController implements ApplicationContextAware {
 
     @Autowired
     @Qualifier(
-        value = "org.apereo.portlet.soffit.connector.SoffitConnectorController.RESPONSE_CACHE"
-    )
+            value = "org.apereo.portlet.soffit.connector.SoffitConnectorController.RESPONSE_CACHE")
     private Cache responseCache;
 
     private final Logger logger = LoggerFactory.getLogger(getClass());

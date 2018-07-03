@@ -49,44 +49,37 @@ import org.hibernate.annotations.NaturalIdCache;
 @Table(name = "UP_PORTLET_EXEC_AGGR")
 @Inheritance(strategy = InheritanceType.JOINED)
 @SequenceGenerator(
-    name = "UP_PORTLET_EXEC_AGGR_GEN",
-    sequenceName = "UP_PORTLET_EXEC_AGGR_SEQ",
-    allocationSize = 10000
-)
+        name = "UP_PORTLET_EXEC_AGGR_GEN",
+        sequenceName = "UP_PORTLET_EXEC_AGGR_SEQ",
+        allocationSize = 10000)
 @TableGenerator(
-    name = "UP_PORTLET_EXEC_AGGR_GEN",
-    pkColumnValue = "UP_PORTLET_EXEC_AGGR_PROP",
-    allocationSize = 10000
-)
+        name = "UP_PORTLET_EXEC_AGGR_GEN",
+        pkColumnValue = "UP_PORTLET_EXEC_AGGR_PROP",
+        allocationSize = 10000)
 @org.hibernate.annotations.Table(
-    appliesTo = "UP_PORTLET_EXEC_AGGR",
-    indexes = {
-        @Index(
-            name = "IDX_UP_PLT_EXEC_AGGR_DTI",
-            columnNames = {"DATE_DIMENSION_ID", "TIME_DIMENSION_ID", "AGGR_INTERVAL"}
-        ),
-        @Index(
-            name = "IDX_UP_PLT_EXEC_AGGR_DTIC",
-            columnNames = {
-                "DATE_DIMENSION_ID",
-                "TIME_DIMENSION_ID",
-                "AGGR_INTERVAL",
-                "STATS_COMPLETE"
-            }
-        ),
-        @Index(
-            name = "IDX_UP_PLT_EXEC_INTRVL",
-            columnNames = {"AGGR_INTERVAL"}
-        ),
-        @Index(
-            name = "IDX_UP_PLT_EXEC_GRP",
-            columnNames = {"AGGR_GROUP_ID"}
-        )
-    }
-)
+        appliesTo = "UP_PORTLET_EXEC_AGGR",
+        indexes = {
+            @Index(
+                    name = "IDX_UP_PLT_EXEC_AGGR_DTI",
+                    columnNames = {"DATE_DIMENSION_ID", "TIME_DIMENSION_ID", "AGGR_INTERVAL"}),
+            @Index(
+                    name = "IDX_UP_PLT_EXEC_AGGR_DTIC",
+                    columnNames = {
+                        "DATE_DIMENSION_ID",
+                        "TIME_DIMENSION_ID",
+                        "AGGR_INTERVAL",
+                        "STATS_COMPLETE"
+                    }),
+            @Index(
+                    name = "IDX_UP_PLT_EXEC_INTRVL",
+                    columnNames = {"AGGR_INTERVAL"}),
+            @Index(
+                    name = "IDX_UP_PLT_EXEC_GRP",
+                    columnNames = {"AGGR_GROUP_ID"})
+        })
 @NaturalIdCache(
-    region = "org.apereo.portal.events.aggr.portletexec.PortletExecutionAggregationImpl-NaturalId"
-)
+        region =
+                "org.apereo.portal.events.aggr.portletexec.PortletExecutionAggregationImpl-NaturalId")
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public final class PortletExecutionAggregationImpl

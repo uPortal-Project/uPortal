@@ -48,15 +48,13 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Table(name = "UP_UNIQUE_STR_SEGMENT")
 @Inheritance(strategy = InheritanceType.JOINED)
 @SequenceGenerator(
-    name = "UP_UNIQUE_STR_SEGMENT_GEN",
-    sequenceName = "UP_UNIQUE_STR_SEGMENT_SEQ",
-    allocationSize = 1000
-)
+        name = "UP_UNIQUE_STR_SEGMENT_GEN",
+        sequenceName = "UP_UNIQUE_STR_SEGMENT_SEQ",
+        allocationSize = 1000)
 @TableGenerator(
-    name = "UP_UNIQUE_STR_SEGMENT_GEN",
-    pkColumnValue = "UP_UNIQUE_STR_SEGMENT_PROP",
-    allocationSize = 1000
-)
+        name = "UP_UNIQUE_STR_SEGMENT_GEN",
+        pkColumnValue = "UP_UNIQUE_STR_SEGMENT_PROP",
+        allocationSize = 1000)
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public final class UniqueStringsSegment {
@@ -67,9 +65,8 @@ public final class UniqueStringsSegment {
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(
-        name = "UP_UNIQUE_STR_SEGMENT__UIDS",
-        joinColumns = @JoinColumn(name = "UNIQUE_STR_SEGMENT_ID")
-    )
+            name = "UP_UNIQUE_STR_SEGMENT__UIDS",
+            joinColumns = @JoinColumn(name = "UNIQUE_STR_SEGMENT_ID"))
     @Column(name = "UNIQUE_STR", nullable = false, updatable = false, length = 255)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private final Set<String> uniqueStrings = new HashSet<String>();

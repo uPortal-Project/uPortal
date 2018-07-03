@@ -38,17 +38,15 @@ import org.hibernate.annotations.IndexColumn;
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public abstract class EvaluatorGroup extends Evaluator {
     @OneToMany(
-        targetEntity = Evaluator.class,
-        cascade = CascadeType.ALL,
-        fetch = FetchType.EAGER,
-        orphanRemoval = true
-    )
+            targetEntity = Evaluator.class,
+            cascade = CascadeType.ALL,
+            fetch = FetchType.EAGER,
+            orphanRemoval = true)
     @IndexColumn(name = "EVAL_INDEX")
     @JoinTable(
-        name = "UP_DLM_EVALUATOR_PAREN",
-        joinColumns = @JoinColumn(name = "PAREN_EVAL_ID"),
-        inverseJoinColumns = @JoinColumn(name = "CHILD_EVAL_ID")
-    )
+            name = "UP_DLM_EVALUATOR_PAREN",
+            joinColumns = @JoinColumn(name = "PAREN_EVAL_ID"),
+            inverseJoinColumns = @JoinColumn(name = "CHILD_EVAL_ID"))
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     protected List<Evaluator> evaluators = new LinkedList<Evaluator>();
 

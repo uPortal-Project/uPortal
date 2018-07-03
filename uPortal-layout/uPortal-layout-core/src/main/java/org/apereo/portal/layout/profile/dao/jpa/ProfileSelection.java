@@ -38,15 +38,13 @@ import org.hibernate.annotations.NaturalIdCache;
 @Entity
 @Table(name = "UP_PROFILE_SELECTION")
 @SequenceGenerator(
-    name = "UP_PROFILE_SELECTION_GEN",
-    sequenceName = "UP_PROFILE_SELECTION_SEQ",
-    allocationSize = 1
-)
+        name = "UP_PROFILE_SELECTION_GEN",
+        sequenceName = "UP_PROFILE_SELECTION_SEQ",
+        allocationSize = 1)
 @TableGenerator(
-    name = "UP_PROFILE_SELECTION_GEN",
-    pkColumnValue = "UP_PROFILE_SELECTION",
-    allocationSize = 1
-)
+        name = "UP_PROFILE_SELECTION_GEN",
+        pkColumnValue = "UP_PROFILE_SELECTION",
+        allocationSize = 1)
 @NaturalIdCache
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)

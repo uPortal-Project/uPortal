@@ -40,15 +40,13 @@ import org.joda.time.ReadableInstant;
 @Entity
 @Table(name = "UP_QUARTER_DETAIL")
 @SequenceGenerator(
-    name = "UP_QUARTER_DETAIL_GEN",
-    sequenceName = "UP_QUARTER_DETAIL_SEQ",
-    allocationSize = 1
-)
+        name = "UP_QUARTER_DETAIL_GEN",
+        sequenceName = "UP_QUARTER_DETAIL_SEQ",
+        allocationSize = 1)
 @TableGenerator(
-    name = "UP_QUARTER_DETAIL_GEN",
-    pkColumnValue = "UP_QUARTER_DETAIL_PROP",
-    allocationSize = 1
-)
+        name = "UP_QUARTER_DETAIL_GEN",
+        pkColumnValue = "UP_QUARTER_DETAIL_PROP",
+        allocationSize = 1)
 @Immutable
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)

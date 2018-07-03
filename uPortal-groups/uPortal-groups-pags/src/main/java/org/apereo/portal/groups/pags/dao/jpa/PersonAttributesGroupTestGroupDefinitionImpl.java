@@ -47,19 +47,16 @@ import org.hibernate.annotations.NaturalIdCache;
 @Entity
 @Table(name = "UP_PAGS_TEST_GROUP")
 @SequenceGenerator(
-    name = "UP_PAGS_TEST_GROUP_GEN",
-    sequenceName = "UP_PAGS_TEST_GROUP_SEQ",
-    allocationSize = 5
-)
+        name = "UP_PAGS_TEST_GROUP_GEN",
+        sequenceName = "UP_PAGS_TEST_GROUP_SEQ",
+        allocationSize = 5)
 @TableGenerator(
-    name = "UP_PAGS_TEST_GROUP_GEN",
-    pkColumnValue = "UP_PAGS_TEST_GROUP",
-    allocationSize = 5
-)
+        name = "UP_PAGS_TEST_GROUP_GEN",
+        pkColumnValue = "UP_PAGS_TEST_GROUP",
+        allocationSize = 5)
 @NaturalIdCache(
-    region =
-            "org.apereo.portal.groups.pags.dao.jpa.PersonAttributesGroupTestGroupDefinitionImpl-NaturalId"
-)
+        region =
+                "org.apereo.portal.groups.pags.dao.jpa.PersonAttributesGroupTestGroupDefinitionImpl-NaturalId")
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class PersonAttributesGroupTestGroupDefinitionImpl
@@ -88,12 +85,11 @@ public class PersonAttributesGroupTestGroupDefinitionImpl
     private IPersonAttributesGroupDefinition group;
 
     @OneToMany(
-        cascade = CascadeType.ALL,
-        fetch = FetchType.EAGER,
-        mappedBy = "testGroup",
-        targetEntity = PersonAttributesGroupTestDefinitionImpl.class,
-        orphanRemoval = true
-    )
+            cascade = CascadeType.ALL,
+            fetch = FetchType.EAGER,
+            mappedBy = "testGroup",
+            targetEntity = PersonAttributesGroupTestDefinitionImpl.class,
+            orphanRemoval = true)
     @JsonManagedReference // Managing infinite recursion;  this is a "forward" reference and WILL be
     // included
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)

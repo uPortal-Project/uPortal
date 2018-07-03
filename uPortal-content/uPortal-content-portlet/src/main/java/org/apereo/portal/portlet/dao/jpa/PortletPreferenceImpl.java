@@ -50,19 +50,16 @@ import org.hibernate.annotations.Type;
 @Entity
 @Table(name = "UP_PORTLET_PREF")
 @org.hibernate.annotations.Table(
-    appliesTo = "UP_PORTLET_PREF",
-    indexes = @Index(name = "IDX_UPP_PREFS_ID", columnNames = "PORTLET_PREFS_ID")
-)
+        appliesTo = "UP_PORTLET_PREF",
+        indexes = @Index(name = "IDX_UPP_PREFS_ID", columnNames = "PORTLET_PREFS_ID"))
 @SequenceGenerator(
-    name = "UP_PORTLET_PREF_GEN",
-    sequenceName = "UP_PORTLET_PREF_SEQ",
-    allocationSize = 10
-)
+        name = "UP_PORTLET_PREF_GEN",
+        sequenceName = "UP_PORTLET_PREF_SEQ",
+        allocationSize = 10)
 @TableGenerator(
-    name = "UP_PORTLET_PREF_GEN",
-    pkColumnValue = "UP_PORTLET_PREF",
-    allocationSize = 10
-)
+        name = "UP_PORTLET_PREF_GEN",
+        pkColumnValue = "UP_PORTLET_PREF",
+        allocationSize = 10)
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class PortletPreferenceImpl implements IPortletPreference, Cloneable {
