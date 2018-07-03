@@ -14,12 +14,18 @@
  */
 package org.apereo.portal.tools.dbloader;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.nio.file.StandardOpenOption.APPEND;
+import static java.nio.file.StandardOpenOption.CREATE;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Writer;
+import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
 import java.sql.Connection;
 import java.sql.SQLException;
 import org.apache.commons.io.IOUtils;
@@ -171,7 +177,7 @@ public class DataSourceSchemaExport implements ISchemaExport, HibernateConfigura
                 if (!file.exists()) {
                     file.getParentFile().mkdirs();
                 }
-                sqlWriter = new BufferedWriter(new FileWriter(file, append));
+                sqlWriter = Files.newBufferedWriter(file.toPath(), UTF_8, append ? new StandardOpenOption[] {CREATE, APPEND} : new StandardOpenOption[] {CREATE});
             } catch (IOException e) {
                 throw new RuntimeException("", e);
             }

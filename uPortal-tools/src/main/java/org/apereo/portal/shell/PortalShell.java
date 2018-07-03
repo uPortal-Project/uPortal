@@ -14,10 +14,14 @@
  */
 package org.apereo.portal.shell;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -82,7 +86,7 @@ public class PortalShell {
 
     protected static void printHelp(final Options options) {
         final HelpFormatter formatter = new HelpFormatter();
-        final PrintWriter pw = new PrintWriter(System.err);
+        final PrintWriter pw = new PrintWriter(new BufferedWriter(new OutputStreamWriter(System.err, UTF_8)));
         formatter.printHelp(
                 pw,
                 HelpFormatter.DEFAULT_WIDTH,

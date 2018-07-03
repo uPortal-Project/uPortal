@@ -14,6 +14,8 @@
  */
 package org.apereo.portal.security.provider;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apereo.portal.persondir.ILocalAccountDao;
@@ -63,7 +65,7 @@ public class SimpleSecurityContext extends ChainingSecurityContext implements IS
                 if (account != null) {
 
                     // get the account password as an ASCII string
-                    String loginPassword = new String(this.myOpaqueCredentials.credentialstring);
+                    String loginPassword = new String(this.myOpaqueCredentials.credentialstring, UTF_8);
 
                     // if the password provided at login matches the hashed
                     // account password, authenticate the user
