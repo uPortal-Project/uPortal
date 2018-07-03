@@ -174,6 +174,7 @@ public class FragmentListController {
 
     private enum Sort {
         PRECEDENCE {
+            @Override
             public Comparator<FragmentBean> getComparator() {
                 return new Comparator<FragmentBean>() {
                     @Override
@@ -188,6 +189,7 @@ public class FragmentListController {
         },
 
         NAME {
+            @Override
             public Comparator<FragmentBean> getComparator() {
                 return new Comparator<FragmentBean>() {
                     @Override

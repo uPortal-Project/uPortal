@@ -100,6 +100,7 @@ public class JsonPermission implements Comparable<JsonPermission> {
         this.inherited = inherited;
     }
 
+    @Override
     public int compareTo(JsonPermission permission) {
         return new CompareToBuilder()
                 .append(this.ownerName, permission.ownerName)

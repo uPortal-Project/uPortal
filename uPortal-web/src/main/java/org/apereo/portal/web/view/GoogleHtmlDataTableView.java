@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 
 /** Renders a google {@link DataTable} to HTML */
 public class GoogleHtmlDataTableView extends AbstractGoogleDataTableView {
+    @Override
     protected void renderDataTable(
             Map<String, Object> model,
             DataTable data,

@@ -35,6 +35,7 @@ public class FileSystemEntitySearcherFactory implements IEntitySearcherFactory {
         return new FileSystemGroupStore();
     }
 
+    @Override
     public IEntitySearcher newEntitySearcher() throws GroupsException {
         return getGroupStore();
     }

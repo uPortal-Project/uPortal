@@ -384,6 +384,7 @@ public class MarketplaceService implements IMarketplaceService, ApplicationListe
      * @throws IllegalArgumentException if portletDefinition is null
      * @since 4.2
      */
+    @Override
     @RequestCache
     public boolean mayAddPortlet(final IPerson user, final IPortletDefinition portletDefinition) {
         Validate.notNull(user, "Cannot determine if null users can browse portlets.");

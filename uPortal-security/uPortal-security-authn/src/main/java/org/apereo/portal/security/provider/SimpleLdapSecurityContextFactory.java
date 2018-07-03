@@ -57,6 +57,7 @@ public class SimpleLdapSecurityContextFactory implements ISecurityContextFactory
         return credentialToken;
     }
 
+    @Override
     public ISecurityContext getSecurityContext() {
         return new SimpleLdapSecurityContext();
     }

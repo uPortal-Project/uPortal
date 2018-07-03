@@ -53,6 +53,7 @@ public class GroupMembershipEvaluatorFactory extends PersonEvaluatorFactory {
      * should be a well known group name. Case is important. The mode should be "memberOf" for now.
      * Other modes may be added in the future like, "deepMemberOf".
      */
+    @Override
     public Evaluator getAttributeEvaluator(String name, String mode, String value) {
         return new GroupMembershipEvaluator(mode, name);
     }

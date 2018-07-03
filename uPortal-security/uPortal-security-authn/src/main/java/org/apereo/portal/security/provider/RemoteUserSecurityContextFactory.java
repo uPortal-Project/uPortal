@@ -39,6 +39,7 @@ public class RemoteUserSecurityContextFactory implements ISecurityContextFactory
         return enabled;
     }
 
+    @Override
     public ISecurityContext getSecurityContext() {
         return new RemoteUserSecurityContext();
     }

@@ -37,6 +37,7 @@ public class ConfigurablePreferencesBasedTokenGenerator implements DynamicSkinUn
      *
      * @see DynamicSkinUniqueTokenGenerator#generateToken(DynamicSkinInstanceData)
      */
+    @Override
     public String generateToken(final DynamicSkinInstanceData data) {
         final PortletPreferences preferences = data.getPortletRequest().getPreferences();
         int hash = 0;

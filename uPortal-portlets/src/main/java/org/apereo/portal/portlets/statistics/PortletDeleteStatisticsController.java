@@ -33,11 +33,13 @@ public class PortletDeleteStatisticsController
     private static final String DATA_TABLE_RESOURCE_ID = "portletDeleteData";
     private static final String REPORT_NAME = "portletDelete.totals";
 
+    @Override
     @RenderMapping(value = "MAXIMIZED", params = "report=" + REPORT_NAME)
     public String getLoginView() throws TypeMismatchException {
         return super.getLoginView();
     }
 
+    @Override
     @ResourceMapping(DATA_TABLE_RESOURCE_ID)
     public ModelAndView renderPortletAddAggregationReport(PortletDeleteReportForm form)
             throws TypeMismatchException {

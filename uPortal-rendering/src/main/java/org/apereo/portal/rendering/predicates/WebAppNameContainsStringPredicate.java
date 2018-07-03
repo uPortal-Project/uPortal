@@ -88,6 +88,7 @@ public class WebAppNameContainsStringPredicate implements Predicate<HttpServletR
         return false;
     }
 
+    @Override
     public String toString() {
         return this.getClass().getSimpleName();
     }
