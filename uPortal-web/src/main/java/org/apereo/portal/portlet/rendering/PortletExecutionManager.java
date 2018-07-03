@@ -104,6 +104,7 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
     private final ConcurrentMap<IPortletDescriptorKey, AtomicInteger> executionCount =
             ConcurrentMapUtils.makeDefaultsMap(
                     new Function<IPortletDescriptorKey, AtomicInteger>() {
+                        @Override
                         public AtomicInteger apply(IPortletDescriptorKey key) {
                             return new AtomicInteger();
                         }

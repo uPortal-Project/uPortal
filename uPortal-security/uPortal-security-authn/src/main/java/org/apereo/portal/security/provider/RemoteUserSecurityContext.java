@@ -55,6 +55,7 @@ class RemoteUserSecurityContext extends ChainingSecurityContext implements ISecu
      *
      * @return The authType value
      */
+    @Override
     public int getAuthType() {
         return REMOTEUSERSECURITYAUTHTYPE;
     }
@@ -64,6 +65,7 @@ class RemoteUserSecurityContext extends ChainingSecurityContext implements ISecu
      *
      * @exception PortalSecurityException
      */
+    @Override
     public synchronized void authenticate() throws PortalSecurityException {
         if (this.remoteUser != null) {
             // Set the UID for the principal

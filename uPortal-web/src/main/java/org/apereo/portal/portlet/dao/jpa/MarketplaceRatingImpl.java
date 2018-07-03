@@ -57,11 +57,13 @@ class MarketplaceRatingImpl implements IMarketplaceRating {
     }
 
     /** @return the rating */
+    @Override
     public int getRating() {
         return rating;
     }
 
     /** @param rating must be within range of MAX_RATING and MIN_RATING */
+    @Override
     public void setRating(int rating) {
         if (rating > MAX_RATING || rating < MIN_RATING) {
             throw new IllegalArgumentException();

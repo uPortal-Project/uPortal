@@ -53,6 +53,7 @@ public class GrouperEntityGroupStoreFactory implements IEntityGroupStoreFactory 
      * @throws GroupsException if there is an error
      * @see IEntityGroupStoreFactory #newGroupStore()
      */
+    @Override
     public IEntityGroupStore newGroupStore() throws GroupsException {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Creating New Grouper IEntityGroupStore");
@@ -69,6 +70,7 @@ public class GrouperEntityGroupStoreFactory implements IEntityGroupStoreFactory 
      * @see IEntityGroupStoreFactory
      *     #newGroupStore(org.apereo.portal.groups.ComponentGroupServiceDescriptor)
      */
+    @Override
     public IEntityGroupStore newGroupStore(ComponentGroupServiceDescriptor svcDescriptor)
             throws GroupsException {
         if (LOGGER.isDebugEnabled()) {

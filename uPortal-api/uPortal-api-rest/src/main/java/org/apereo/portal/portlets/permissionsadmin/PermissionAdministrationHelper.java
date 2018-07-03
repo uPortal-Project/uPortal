@@ -57,6 +57,7 @@ public class PermissionAdministrationHelper implements IPermissionAdministration
         this.permissionStore = permissionStore;
     }
 
+    @Override
     public boolean canEditOwner(IPerson currentUser, String owner) {
         EntityIdentifier ei = currentUser.getEntityIdentifier();
         IAuthorizationPrincipal ap =
@@ -67,6 +68,7 @@ public class PermissionAdministrationHelper implements IPermissionAdministration
                 IPermission.ALL_TARGET));
     }
 
+    @Override
     public boolean canViewOwner(IPerson currentUser, String owner) {
         EntityIdentifier ei = currentUser.getEntityIdentifier();
         IAuthorizationPrincipal ap =
@@ -77,6 +79,7 @@ public class PermissionAdministrationHelper implements IPermissionAdministration
                 IPermission.ALL_TARGET));
     }
 
+    @Override
     public boolean canEditActivity(IPerson currentUser, String activity) {
         EntityIdentifier ei = currentUser.getEntityIdentifier();
         IAuthorizationPrincipal ap =
@@ -87,6 +90,7 @@ public class PermissionAdministrationHelper implements IPermissionAdministration
                 IPermission.ALL_TARGET));
     }
 
+    @Override
     public boolean canViewActivity(IPerson currentUser, String activity) {
         EntityIdentifier ei = currentUser.getEntityIdentifier();
         IAuthorizationPrincipal ap =
@@ -100,6 +104,7 @@ public class PermissionAdministrationHelper implements IPermissionAdministration
     /* (non-Javadoc)
      * @see org.apereo.portal.portlets.permissionsadmin.IPermissionAdministrationHelper#canEditPermission(org.apereo.portal.security.IPerson, java.lang.String)
      */
+    @Override
     public boolean canEditPermission(IPerson currentUser, String target) {
 
         EntityIdentifier ei = currentUser.getEntityIdentifier();
@@ -114,6 +119,7 @@ public class PermissionAdministrationHelper implements IPermissionAdministration
     /* (non-Javadoc)
      * @see org.apereo.portal.portlets.permissionsadmin.IPermissionAdministrationHelper#canViewPermission(org.apereo.portal.security.IPerson, java.lang.String)
      */
+    @Override
     public boolean canViewPermission(IPerson currentUser, String target) {
 
         EntityIdentifier ei = currentUser.getEntityIdentifier();
@@ -125,6 +131,7 @@ public class PermissionAdministrationHelper implements IPermissionAdministration
                 IPermission.ALL_TARGET));
     }
 
+    @Override
     public Set<JsonEntityBean> getEntitiesForPrincipals(Collection<String> principals) {
 
         Set<JsonEntityBean> entities = new HashSet<JsonEntityBean>();
@@ -138,6 +145,7 @@ public class PermissionAdministrationHelper implements IPermissionAdministration
         return entities;
     }
 
+    @Override
     public Set<String> getPrincipalsForEntities(Collection<JsonEntityBean> entities) {
 
         Set<String> principals = new HashSet<String>();
@@ -150,6 +158,7 @@ public class PermissionAdministrationHelper implements IPermissionAdministration
         return principals;
     }
 
+    @Override
     public Set<String> getCurrentPrincipals(
             IPermissionOwner owner, IPermissionActivity activity, String targetKey) {
 

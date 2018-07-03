@@ -306,6 +306,7 @@ public class RDBMUserIdentityStore implements IUserIdentityStore {
         return uid;
     }
 
+    @Override
     public IPerson getPerson(String userName, boolean createPortalData)
             throws AuthorizationException {
 

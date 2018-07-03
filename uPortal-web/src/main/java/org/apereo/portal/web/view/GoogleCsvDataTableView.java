@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 public class GoogleCsvDataTableView extends AbstractGoogleDataTableView {
     public static final String OUT_FILE_NAME_ATTRIBUTE = "outFileName";
 
+    @Override
     protected void renderDataTable(
             Map<String, Object> model,
             DataTable data,

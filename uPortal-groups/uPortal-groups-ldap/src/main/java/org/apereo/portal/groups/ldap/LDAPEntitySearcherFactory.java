@@ -30,6 +30,7 @@ public class LDAPEntitySearcherFactory implements IEntitySearcherFactory {
      * @return IEntitySearcher
      * @exception GroupsException
      */
+    @Override
     public IEntitySearcher newEntitySearcher() throws GroupsException {
         return newInstance();
     }

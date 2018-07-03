@@ -32,11 +32,13 @@ public class SmartLdapEntityStore implements IEntityStore {
          * Public API.
          */
 
+        @Override
         public IEntityStore newEntityStore() throws GroupsException {
             return new SmartLdapEntityStore();
         }
     }
 
+    @Override
     public IEntity newInstance(String key, Class type) throws GroupsException {
         return new EntityImpl(key, type);
     }

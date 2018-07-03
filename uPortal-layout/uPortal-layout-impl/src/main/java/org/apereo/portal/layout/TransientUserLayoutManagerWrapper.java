@@ -74,6 +74,7 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
         }
     }
 
+    @Override
     public IUserLayout getUserLayout() throws PortalException {
         return man.getUserLayout();
     }
@@ -88,14 +89,17 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
         return man.getUserLayoutDOM();
     }
 
+    @Override
     public void loadUserLayout() throws PortalException {
         man.loadUserLayout();
     }
 
+    @Override
     public void loadUserLayout(boolean reload) throws PortalException {
         man.loadUserLayout(reload);
     }
 
+    @Override
     public void saveUserLayout() throws PortalException {
         man.saveUserLayout();
     }
@@ -112,6 +116,7 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
         return allSubscribedChannels;
     }
 
+    @Override
     public IUserLayoutNodeDescription getNode(String nodeId) throws PortalException {
         // check to see if it's in the layout first, if not then
         // build it..
@@ -140,12 +145,14 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
         return ulnd;
     }
 
+    @Override
     public IUserLayoutNodeDescription addNode(
             IUserLayoutNodeDescription node, String parentId, String nextSiblingId)
             throws PortalException {
         return man.addNode(node, parentId, nextSiblingId);
     }
 
+    @Override
     public boolean moveNode(String nodeId, String parentId, String nextSiblingId)
             throws PortalException {
         // allow all moves, except for those related to the transient channels and folders
@@ -158,6 +165,7 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
         }
     }
 
+    @Override
     public boolean deleteNode(String nodeId) throws PortalException {
         // allow all deletions, except for those related to the transient channels and folders
         if (nodeId != null
@@ -169,6 +177,7 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
         }
     }
 
+    @Override
     public boolean updateNode(IUserLayoutNodeDescription node) throws PortalException {
         // allow all updates, except for those related to the transient channels and folders
         String nodeId = node.getId();
@@ -181,12 +190,14 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
         }
     }
 
+    @Override
     public boolean canAddNode(
             IUserLayoutNodeDescription node, String parentId, String nextSiblingId)
             throws PortalException {
         return man.canAddNode(node, parentId, nextSiblingId);
     }
 
+    @Override
     public boolean canMoveNode(String nodeId, String parentId, String nextSiblingId)
             throws PortalException {
         // allow all moves, except for those related to the transient channels and folders
@@ -199,6 +210,7 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
         }
     }
 
+    @Override
     public boolean canDeleteNode(String nodeId) throws PortalException {
         // allow all deletions, except for those related to the transient channels and folders
         if (nodeId != null
@@ -210,6 +222,7 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
         }
     }
 
+    @Override
     public boolean canUpdateNode(IUserLayoutNodeDescription node) throws PortalException {
         // allow all updates, except for those related to the transient channels and folders
         String nodeId = node.getId();
@@ -222,14 +235,17 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
         }
     }
 
+    @Override
     public void markAddTargets(IUserLayoutNodeDescription node) throws PortalException {
         man.markAddTargets(node);
     }
 
+    @Override
     public void markMoveTargets(String nodeId) throws PortalException {
         man.markMoveTargets(nodeId);
     }
 
+    @Override
     public String getParentId(String nodeId) throws PortalException {
         if (mChanMap.containsKey(nodeId) || TRANSIENT_FOLDER_ID.equals(nodeId)) {
             return null;
@@ -238,18 +254,22 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
         return man.getParentId(nodeId);
     }
 
+    @Override
     public Enumeration getChildIds(String nodeId) throws PortalException {
         return man.getChildIds(nodeId);
     }
 
+    @Override
     public String getNextSiblingId(String nodeId) throws PortalException {
         return man.getNextSiblingId(nodeId);
     }
 
+    @Override
     public String getPreviousSiblingId(String nodeId) throws PortalException {
         return man.getPreviousSiblingId(nodeId);
     }
 
+    @Override
     public String getCacheKey() throws PortalException {
         // we don't need to worry about extending the base cache key here,
         // because the transient channels are always rendered in a focused
@@ -260,10 +280,12 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
         return man.getCacheKey();
     }
 
+    @Override
     public int getLayoutId() {
         return man.getLayoutId();
     }
 
+    @Override
     public String getRootFolderId() {
         return man.getRootFolderId();
     }
@@ -275,10 +297,12 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
      * @return a depth value
      * @exception PortalException if an error occurs
      */
+    @Override
     public int getDepth(String nodeId) throws PortalException {
         return man.getDepth(nodeId);
     }
 
+    @Override
     public IUserLayoutNodeDescription createNodeDescription(LayoutNodeType nodeType)
             throws PortalException {
         return man.createNodeDescription(nodeType);
@@ -334,6 +358,7 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
      * @param fname the functional name to lookup
      * @return the fname's subscribe id.
      */
+    @Override
     public String getSubscribeId(String fname) throws PortalException {
 
         // see if a given subscribe id is already in the map

@@ -161,6 +161,7 @@ public class PasswordCachingCasAssertionSecurityContext extends CasAssertionSecu
 
         private static final long serialVersionUID = 1l;
 
+        @Override
         public String getCredentials() {
             log.debug("credentialString is {}", credentialstring != null ? "non-null" : "null");
             return this.credentialstring != null ? new String(this.credentialstring) : null;

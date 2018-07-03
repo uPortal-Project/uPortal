@@ -32,6 +32,7 @@ public class GrouperEntitySearcherFactory implements IEntitySearcherFactory {
      * @return The instance.
      * @see IEntitySearcherFactory#newEntitySearcher()
      */
+    @Override
     public IEntitySearcher newEntitySearcher() throws GroupsException {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Creating New Grouper GrouperEntitySearcherFactory");

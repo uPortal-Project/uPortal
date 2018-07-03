@@ -39,6 +39,7 @@ public class TrustSecurityContextFactory implements ISecurityContextFactory {
         return enabled;
     }
 
+    @Override
     public ISecurityContext getSecurityContext() {
         return new TrustSecurityContext();
     }

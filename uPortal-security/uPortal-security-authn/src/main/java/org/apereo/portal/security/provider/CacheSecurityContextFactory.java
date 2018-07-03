@@ -38,6 +38,7 @@ public class CacheSecurityContextFactory implements ISecurityContextFactory {
         throw new UnsupportedOperationException(msg);
     }
 
+    @Override
     public ISecurityContext getSecurityContext() {
         return new CacheSecurityContext();
     }

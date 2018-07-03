@@ -69,6 +69,7 @@ public class PermissionAssignmentMapController extends AbstractPermissionsContro
 
     private IPersonManager personManager;
 
+    @Override
     @Autowired(required = true)
     public void setPersonManager(IPersonManager personManager) {
         this.personManager = personManager;
@@ -83,6 +84,7 @@ public class PermissionAssignmentMapController extends AbstractPermissionsContro
 
     private IAuthorizationService authorizationService;
 
+    @Override
     @Autowired
     public void setAuthorizationService(IAuthorizationService authorizationService) {
         this.authorizationService = authorizationService;
