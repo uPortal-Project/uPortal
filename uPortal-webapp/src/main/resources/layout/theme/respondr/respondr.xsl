@@ -655,7 +655,7 @@
         <body>
           <xsl:attribute name="class">
             <xsl:text>up dashboard portal fl-theme-mist</xsl:text>
-            <xsl:if test="$PORTAL_VIEW='focused'"> focused</xsl:if>
+            <xsl:if test="$PORTAL_VIEW='focused'"> up-focused</xsl:if>
           </xsl:attribute>
           <xsl:call-template name="skipnav" />
           <div class="row-offcanvas">
