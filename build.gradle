@@ -28,12 +28,6 @@ node {
     download = true
 }
 
-/*======== Static Analysis ========*/
-buildScan {
-    licenseAgreementUrl = 'https://gradle.com/terms-of-service'
-    licenseAgree = 'yes'
-}
-
 allprojects {
     apply plugin: 'java'
     apply plugin: 'jacoco'
