@@ -17,7 +17,7 @@
     <ruleset-ref path='rulesets/size.xml' />
     <ruleset-ref path='rulesets/logging.xml' />
     <ruleset-ref path='rulesets/security.xml' />
-    <ruleset-ref path='rulesets/serialization.xml' />
-    <ruleset-ref path='rulesets/unnecessary.xml' /> -->
+    <ruleset-ref path='rulesets/serialization.xml' /> -->
+    <ruleset-ref path='rulesets/unnecessary.xml' />
     <ruleset-ref path='rulesets/unused.xml' />
 </ruleset>

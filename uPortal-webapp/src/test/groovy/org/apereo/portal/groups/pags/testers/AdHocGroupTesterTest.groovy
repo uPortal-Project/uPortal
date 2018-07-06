@@ -24,7 +24,7 @@ class AdHocGroupTesterTest extends GroovyTestCase {
 
     @Test
     void testGroupsHash() {
-        assertEquals("_+Students_#", AdHocGroupTester.calcGroupHash("Students", false))
-        assertEquals("_^Hackers_#", AdHocGroupTester.calcGroupHash("Hackers", true))
+        assertEquals("_+Students_#", AdHocGroupTester.calcGroupHash('Students', false))
+        assertEquals('_^Hackers_#', AdHocGroupTester.calcGroupHash('Hackers', true))
     }
 }
