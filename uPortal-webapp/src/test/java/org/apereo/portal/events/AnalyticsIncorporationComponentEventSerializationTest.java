@@ -83,6 +83,7 @@ public class AnalyticsIncorporationComponentEventSerializationTest {
 
     private static class TestableAnalyticsIncorporationComponent
             extends AnalyticsIncorporationComponent {
+        @Override
         protected String serializePortletRenderExecutionEvents(Set<PortalEvent> portalEvents) {
             // TODO Auto-generated method stub
             return super.serializePortletRenderExecutionEvents(portalEvents);

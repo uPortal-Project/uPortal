@@ -40,6 +40,7 @@ public class MockPortletDefinitionId implements IPortletDefinitionId {
     /* (non-Javadoc)
      * @see org.apache.pluto.PortletDefinitionID#getStringId()
      */
+    @Override
     public String getStringId() {
         return this.portletDefinitionId.toString();
     }

@@ -72,6 +72,7 @@ public class CasSecurityContextMockTest extends TestCase {
                 new CasProxyTicketAcquisitionException(
                         "dummyservice",
                         new Principal() {
+                            @Override
                             public String getName() {
                                 return "test";
                             }

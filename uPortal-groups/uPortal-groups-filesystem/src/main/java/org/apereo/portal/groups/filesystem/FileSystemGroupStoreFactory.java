@@ -43,6 +43,7 @@ public class FileSystemGroupStoreFactory implements IEntityGroupStoreFactory, IE
      * @return IEntityStore
      * @exception GroupsException
      */
+    @Override
     public IEntityStore newEntityStore() throws GroupsException {
         return getGroupStore();
     }
@@ -53,6 +54,7 @@ public class FileSystemGroupStoreFactory implements IEntityGroupStoreFactory, IE
      * @return IEntityGroupStore
      * @exception GroupsException
      */
+    @Override
     public IEntityGroupStore newGroupStore() throws GroupsException {
         throw new UnsupportedOperationException();
     }
@@ -63,6 +65,7 @@ public class FileSystemGroupStoreFactory implements IEntityGroupStoreFactory, IE
      * @return IEntityGroupStore
      * @exception GroupsException
      */
+    @Override
     public IEntityGroupStore newGroupStore(ComponentGroupServiceDescriptor svcDescriptor)
             throws GroupsException {
         FileSystemGroupStore fsGroupStore = (FileSystemGroupStore) getGroupStore();

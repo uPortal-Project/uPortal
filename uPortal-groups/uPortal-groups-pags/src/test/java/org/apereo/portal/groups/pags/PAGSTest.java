@@ -86,6 +86,7 @@ public class PAGSTest extends TestCase {
         LOG.debug(msg);
     }
 
+    @Override
     protected void setUp() {
 
         PersonFactory fac = new PersonFactory();
@@ -128,6 +129,7 @@ public class PAGSTest extends TestCase {
         }
     }
 
+    @Override
     protected void tearDown() {}
 
     public void testStringEqualsTester() throws Exception {
