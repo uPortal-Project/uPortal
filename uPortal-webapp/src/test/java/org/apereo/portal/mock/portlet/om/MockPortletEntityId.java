@@ -35,6 +35,7 @@ public class MockPortletEntityId implements IPortletEntityId {
     /* (non-Javadoc)
      * @see org.apache.pluto.PortletEntityID#getStringId()
      */
+    @Override
     public String getStringId() {
         return this.portletEntityId;
     }

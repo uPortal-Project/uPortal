@@ -63,6 +63,7 @@ public class PortalJpaInterceptor extends EntityManagerFactoryAccessor
         this.exceptionConversionEnabled = exceptionConversionEnabled;
     }
 
+    @Override
     public Object invoke(MethodInvocation methodInvocation) throws Throwable {
         // Determine current EntityManager: either the transactional one
         // managed by the factory or a temporary one for the given invocation.

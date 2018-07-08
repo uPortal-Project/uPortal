@@ -51,10 +51,12 @@ public class GroupsTester extends TestCase {
             entityIdentifier = new EntityIdentifier(entityKey, this.getClass());
         }
 
+        @Override
         public EntityIdentifier getEntityIdentifier() {
             return entityIdentifier;
         }
 
+        @Override
         public boolean equals(Object o) {
             if (o == null) return false;
             if (!(o instanceof IBasicEntity)) return false;
@@ -62,6 +64,7 @@ public class GroupsTester extends TestCase {
             return ent.getEntityIdentifier().equals(getEntityIdentifier());
         }
 
+        @Override
         public String toString() {
             return "TestEntity(" + getEntityIdentifier().getKey() + ")";
         }
@@ -80,6 +83,7 @@ public class GroupsTester extends TestCase {
             testerID = id;
         }
 
+        @Override
         public void run() {
             printID = "Tester " + testerID;
             print(printID + " starting.");
@@ -255,6 +259,7 @@ public class GroupsTester extends TestCase {
         System.out.println("");
     }
 
+    @Override
     protected void setUp() {
         try {
             if (GROUP_CLASS == null) {
@@ -283,6 +288,7 @@ public class GroupsTester extends TestCase {
         }
     }
 
+    @Override
     protected void tearDown() {
         try {
             testEntityKeys = null;

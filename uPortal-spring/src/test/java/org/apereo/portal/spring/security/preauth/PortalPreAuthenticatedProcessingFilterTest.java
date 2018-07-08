@@ -34,6 +34,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 public class PortalPreAuthenticatedProcessingFilterTest
         extends PortalPreAuthenticatedProcessingFilterTestBase {
 
+    @Override
     public void additionalSetup() {}
 
     @Test

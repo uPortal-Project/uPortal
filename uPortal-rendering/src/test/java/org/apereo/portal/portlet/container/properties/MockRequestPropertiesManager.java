@@ -47,6 +47,7 @@ public class MockRequestPropertiesManager implements IRequestPropertiesManager, 
         this.order = order;
     }
 
+    @Override
     public boolean addResponseProperty(
             HttpServletRequest request,
             IPortletWindow portletWindow,
@@ -58,6 +59,7 @@ public class MockRequestPropertiesManager implements IRequestPropertiesManager, 
         return true;
     }
 
+    @Override
     public boolean setResponseProperty(
             HttpServletRequest request,
             IPortletWindow portletWindow,

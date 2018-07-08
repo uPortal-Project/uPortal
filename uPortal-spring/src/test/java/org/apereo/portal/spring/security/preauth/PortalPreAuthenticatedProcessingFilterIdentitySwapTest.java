@@ -29,6 +29,7 @@ public class PortalPreAuthenticatedProcessingFilterIdentitySwapTest
     private String targetProfileKey;
     private String targetUsername;
 
+    @Override
     public void additionalSetup() {
         this.targetProfileKey = "targetProfileKey";
         this.targetUsername = "targetUsername";

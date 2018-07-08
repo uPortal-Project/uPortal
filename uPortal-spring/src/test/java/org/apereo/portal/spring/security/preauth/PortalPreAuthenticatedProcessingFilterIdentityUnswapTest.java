@@ -33,6 +33,7 @@ public class PortalPreAuthenticatedProcessingFilterIdentityUnswapTest
     private String targetUsername;
     @Mock Authentication originalAuthentication;
 
+    @Override
     public void additionalSetup() {
         this.originalUsername = "originalUsername";
         this.targetUsername = "targetUsername";

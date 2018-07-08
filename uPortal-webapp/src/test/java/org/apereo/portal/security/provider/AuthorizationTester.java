@@ -67,6 +67,7 @@ public class AuthorizationTester extends TestCase {
             super();
         }
 
+        @Override
         public boolean doesPrincipalHavePermission(
                 IAuthorizationService service,
                 IAuthorizationPrincipal principal,
@@ -78,6 +79,7 @@ public class AuthorizationTester extends TestCase {
             return service == null && principal != null && owner != null && activity != null;
         }
 
+        @Override
         public String toString() {
             return this.getClass().getName();
         }
@@ -88,6 +90,7 @@ public class AuthorizationTester extends TestCase {
             super();
         }
 
+        @Override
         public boolean doesPrincipalHavePermission(
                 IAuthorizationService service,
                 IAuthorizationPrincipal principal,
@@ -99,6 +102,7 @@ public class AuthorizationTester extends TestCase {
             return service != null && principal != null && owner != null && activity != null;
         }
 
+        @Override
         public String toString() {
             return this.getClass().getName();
         }
@@ -122,6 +126,7 @@ public class AuthorizationTester extends TestCase {
             testPermission = permission;
         }
 
+        @Override
         public void run() {
             printID = "Tester " + testerID;
             print(printID + " starting.");
@@ -253,6 +258,7 @@ public class AuthorizationTester extends TestCase {
         System.out.println("");
     }
 
+    @Override
     protected void setUp() {
         String msg = null;
         IPermission[] retrievedPermissions = null;
@@ -379,6 +385,7 @@ public class AuthorizationTester extends TestCase {
         }
     }
 
+    @Override
     protected void tearDown() {
         try {
             IPermission[] permissions =
