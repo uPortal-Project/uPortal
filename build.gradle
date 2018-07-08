@@ -53,7 +53,7 @@ allprojects {
     }
 
     codenarc {
-        toolVersion = '1.1'
+        toolVersion = '1.2'
         reportFormat = 'console'
     }
 
