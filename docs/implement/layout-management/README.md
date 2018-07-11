@@ -2,12 +2,32 @@
 
 ( Source: https://wiki.jasig.org/display/UPM43/Overview)
 
-In uPortal, layout management refers to how the user interface seen by a user is
-generated and changed.
+Layout is the structure of what the user sees: what items of content, where, in
+what order, etc.
 
-uPortal's Distributed Layout Management (DLM) allows adopters to choose how much
-or how little of the layout is locked in place. These restrictions are
-modifiable at any time.
+Layout management is system for configuring, administering, and executing
+determining layouts for users. This sub-system is called "Distributed Layout
+Management" (often, "DLM"), for historical reasons. DLM merges "distributed"
+bits of layout into the layout a given user experiences.
+
+Layout management in uPortal can
+
++ maintain multiple layout templates for layouts or parts of layouts
++ merge these templates into a unified experience for a given user according to
+  defined rules about who should see what
++ honor or restrict end user preferences customizing these templates for the
+  individual user
++ degrade gracefully according to the user's permissions, suppressing content
+  for which the user lacks authorization
+
+This means that you can
+
++ present different layout templates to different groups of users
++ share layout templates across groups of users
++ include in layout templates items that only some of the template's audience
+  will have authorization to see
++ optionally constrain end users from messing with the layout templates as they
+  experience them
 
 [Presentation by Andrew Petro](http://www.youtube.com/watch?v=YSTONxaX8rc)
 
