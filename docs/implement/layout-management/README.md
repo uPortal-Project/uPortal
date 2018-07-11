@@ -3,24 +3,7 @@
 ( Source: https://wiki.jasig.org/display/UPM43/Overview)
 
 In uPortal, Layout Management refers to how the user interface seen by a user is
-generated and changed. In version 2.0, only Simple Layout Management, SLM, was
-available in the portal. All layout pieces like tabs, columns, and channels were
-owned by the user. There was little control available for an institution to
-control a user's layout. When Sungard SCT, then Campus Pipeline, adopted uPortal
-for their Luminis product they had to allow schools to choose how much or how
-little of the layout is locked in place. Furthermore, this should be modifiable
-at any time and such changes should then appear in the portal. The result was
-Distributed Layout Management or DLM which debuted in Luminis in 2002.
-
-This resulted in JA-SIG designing a similar feature known as Aggregated Layout
-Management or ALM. With the advent of ALM there were two approaches to dynamic
-layout management. However, although they have complementary features, ALM and
-DLM each provide benefits that are not had by the other implementation. In 2004
-Sungard SCT was contacted to see if the features of ALM and DLM could converge
-into a single offering. The benefits are obvious. With the community working to
-enhance the features of a single offering all will benefit. Accordingly, work
-was started in late 2004 to contribute DLM back to the community and have it
-available starting in uPortal version 2.5.0.
+generated and changed.
 
 uPortal's Distributed Layout Management (DLM) allows adopters to choose how much
 or how little of the layout is locked in place. These restrictions are
@@ -32,8 +15,8 @@ modifiable at any time.
 
 A "Fragment" is Born
 
-The resulting layouts-to-be-pushed to end users were modified slightly when
-being preloaded to be included in end user's layouts. For example, end user's
+The resulting layouts-to-be-pushed to end users were modified when
+included in end user's layouts. For example, end user's
 already had a header and footer folder containing channels used by the theme
 stylesheet. These were necessary when the editor of the layout-to-be-pushed
 logged in to edit the layout but were not needed by the user of the layout.
@@ -52,25 +35,17 @@ users, the audience of the fragment, received each fragment when they logged in.
 
 ## The dlm.xml File
 
-When DLM was developed, time was of the essence. A new user interface tailored
-to building fragments and a new database schema was too aggressive an
-undertaking for engineers new to the uPortal code base. Upon further
-investigation of the portal architecture and database schema it was determined
-that a derivative approach could be taken instead. In a derivative approach,
-existing, reliable pieces of the portal could be used to produce layout
-fragments to be pushed to users. Furthermore, there would be no database schema
-changes. Specifically, fragments would be obtained by using regular portal
-accounts to define what each fragment should look like. Such was and is the
-design of DLM. A configuration file, dlm.xml defines fragments, their audiences,
+DLM leverages
+existing, reliable pieces of the portal to produce layout
+fragments to be pushed to users. Specifically, fragments are modeled using
+regular portal
+accounts to define what each fragment should look like. A configuration file,
+dlm.xml defines fragments, their audiences,
 and the special portal accounts used to set up their layouts. (See Future
 Direction on how dlm.xml will be replaced in the near future.)
 
-Although dlm.xml is xml based it does not have a defined schema or DTD. Its
-expected structure is defined by the expectations of the DLM loading
-infrastructure. This is in part due to the extensible nature of dlm.xml as will
-be seen in the declarations of the fragment audience definitions. Therefore, the
-remaining information in this section and related sections will portray the
-implicit structure expected by the DLM loading infrastructure.
+The layout management system in uPortal expects dlm.xml to have a particular
+structure.
 
 The dlm.xml file is located in the properties directory. The top level element
 in dlm.xml is the <managedLayoutFragments> element. It includes the namespace
