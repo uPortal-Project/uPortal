@@ -2,7 +2,7 @@
 
 ( Source: https://wiki.jasig.org/display/UPM43/Overview)
 
-In uPortal, Layout Management refers to how the user interface seen by a user is
+In uPortal, layout management refers to how the user interface seen by a user is
 generated and changed.
 
 uPortal's Distributed Layout Management (DLM) allows adopters to choose how much
