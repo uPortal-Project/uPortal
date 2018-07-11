@@ -67,15 +67,15 @@ The layout management system in uPortal expects dlm.xml to have a particular
 structure.
 
 The dlm.xml file is located in the properties directory. The top level element
-in dlm.xml is the <managedLayoutFragments> element. It includes the namespace
+in dlm.xml is the `<managedLayoutFragments>` element. It includes the namespace
 declaration for DLM used to prefix all expected DLM property, fragment, and
-audience elements. This element appears as follows in dlm.xml.
+audience elements. This element appears as follows in `dlm.xml`.
 
-<managedLayoutFragments xmlns:dlm="http://org.jasig.portal.layout.dlm.config">
+`<managedLayoutFragments xmlns:dlm="http://org.jasig.portal.layout.dlm.config">`
 
-The only two supported child elements for managedLayoutFragments are
-<dlm:property> and <dlm:fragment>. Others may be included but they will be
-ignored. The <dlm:property> element has two required attributes, 'name' and
+The only two supported child elements for `managedLayoutFragments` are
+`<dlm:property>` and `<dlm:fragment>`. Others may be included but they will be
+ignored. The `<dlm:property>` element has two required attributes, 'name' and
 'value'. There are currently only two properties supported by DLM and if not
 defined, suitable defaults will be used as explained below.
 
@@ -263,7 +263,7 @@ layouts is reloaded to force such changes to appear in other servers. This does
 not include instantiating new fragments declared in dlm.xml. This only forces a
 reload of the fragments seen in dlm.xml when the servers were last restarted.
 
-The 'allowExpandedContent' Property
+The `allowExpandedContent` Property
 
 For uPortal 3.2.5 and later, DLM was enhanced to support Expanded Content: for
 fragments: these are portlets outside of tabs – typically in the header and/or
