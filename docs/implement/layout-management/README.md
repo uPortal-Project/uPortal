@@ -61,8 +61,7 @@ fragments to be pushed to users. Specifically, fragments are modeled using
 regular portal
 accounts to define what each fragment should look like. A configuration file,
 dlm.xml defines fragments, their audiences,
-and the special portal accounts used to set up their layouts. (See Future
-Direction on how dlm.xml will be replaced in the near future.)
+and the special portal accounts used to set up their layouts.
 
 The layout management system in uPortal expects dlm.xml to have a particular
 structure.
@@ -295,18 +294,3 @@ these issues from occuring. The easiest way is to remove all existing header and
 footer portlets from DLM fragment owner layouts and from the fragmentTemplate
 layout. It is vital to make sure that users don't get the same header/footer
 portlet(s) from both template users and DLM fragments.
-
-Future Direction
-
-The initial release of DLM in uPortal 2.5.0 was the version of DLM released in
-all Sungard SCT Luminis product versions released from 2002 through 2006. This
-is referred to as DLM 1.0. Luminis IV released in 2007 and incorporated many new
-features including the parameter pipeline, a Fragment Manager channel that
-replaces dlm.xml, subscribe-able fragments and a channel to manage
-subscriptions, and support for delegation of fragment administrative tasks. This
-version of DLM is referred to as DLM 2.0. Although the processor pipe feature is
-included in uPortal 2.6.0, more work is needed to roll the remaining new
-features from the snapshot repository area into the 2.x baseline to bring it
-fully up to the DLM 2.0 level. If you have suggestions or questions on these
-items or would like to assist in that effort please share you thought on the
-uPortal email lists.
