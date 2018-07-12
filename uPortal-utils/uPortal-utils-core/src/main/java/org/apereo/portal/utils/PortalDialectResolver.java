@@ -14,19 +14,18 @@
  */
 package org.apereo.portal.utils;
 
-import java.sql.DatabaseMetaData;
-import java.sql.SQLException;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.dialect.SQLServer2005Dialect;
-import org.hibernate.service.jdbc.dialect.internal.AbstractDialectResolver;
+import org.hibernate.engine.jdbc.dialect.spi.DialectResolutionInfo;
+import org.hibernate.engine.jdbc.dialect.spi.DialectResolver;
 
-/** */
-public class PortalDialectResolver extends AbstractDialectResolver {
+/** @see org.hibernate.engine.jdbc.dialect.internal.StandardDialectResolver */
+public class PortalDialectResolver implements DialectResolver {
     private static final long serialVersionUID = 1L;
 
     @Override
-    protected final Dialect resolveDialectInternal(DatabaseMetaData metaData) throws SQLException {
-        final String databaseName = metaData.getDatabaseProductName();
+    public Dialect resolveDialect(DialectResolutionInfo metaData) {
+        final String databaseName = metaData.getDatabaseName();
         final int databaseMajorVersion = metaData.getDatabaseMajorVersion();
         final int databaseMinorVersion = metaData.getDatabaseMinorVersion();
 

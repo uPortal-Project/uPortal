@@ -15,7 +15,7 @@ dependencies {
     compile "org.apache.ant:ant:${antVersion}"
     compile "org.codehaus.groovy:groovy:${groovyVersion}"
 
-    compileOnly "org.hibernate:hibernate-jpamodelgen:${hibernateJpamodelgenVersion}" // Required for javac -s
+    compileOnly "org.hibernate:hibernate-jpamodelgen:${hibernateVersion}" // Required for javac -s
     compileOnly "${servletApiDependency}"
 }
 
