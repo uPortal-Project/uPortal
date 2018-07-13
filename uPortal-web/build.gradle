@@ -22,7 +22,7 @@ dependencies {
     compileOnly "org.apache.portals.pluto:pluto-container-driver-api:${plutoVersion}"
     compileOnly "org.apache.portals.pluto:pluto-taglib:${plutoVersion}"
     compileOnly "org.hibernate:hibernate-jpamodelgen:${hibernateJpamodelgenVersion}" // Required for javac -s
-    compileOnly "javax.servlet.jsp:jsp-api:${jspApiVersion}"
+    compileOnly "javax.servlet.jsp:javax.servlet.jsp-api:${jspApiVersion}"
     compileOnly "${portletApiDependency}"
     compileOnly "${servletApiDependency}"
 }
