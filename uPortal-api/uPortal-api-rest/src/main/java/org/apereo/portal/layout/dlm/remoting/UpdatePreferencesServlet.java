@@ -96,6 +96,7 @@ public class UpdatePreferencesServlet {
     private IUserLayoutStore userLayoutStore;
     private MessageSource messageSource;
     private IPortletWindowRegistry portletWindowRegistry;
+    private FavoritesUtils favoritesUtils;
 
     @Value("${org.apereo.portal.layout.dlm.remoting.addedWindowState:null}")
     private String addedPortletWindowState;
@@ -145,6 +146,11 @@ public class UpdatePreferencesServlet {
     @Autowired
     public void setPortletWindowRegistry(IPortletWindowRegistry portletWindowRegistry) {
         this.portletWindowRegistry = portletWindowRegistry;
+    }
+
+    @Autowired
+    public void setFavoritesUtils(FavoritesUtils favoritesUtils) {
+        this.favoritesUtils = favoritesUtils;
     }
 
     /** Default name given to newly created tabs. */
@@ -605,7 +611,7 @@ public class UpdatePreferencesServlet {
         final IUserLayoutChannelDescription channel = new UserLayoutChannelDescription(pdef);
 
         // get favorite tab
-        final String favoriteTabNodeId = FavoritesUtils.getFavoriteTabNodeId(ulm.getUserLayout());
+        final String favoriteTabNodeId = favoritesUtils.getFavoriteTabNodeId(ulm.getUserLayout());
 
         if (favoriteTabNodeId != null) {
             // add portlet to favorite tab
@@ -683,7 +689,7 @@ public class UpdatePreferencesServlet {
         if (portletDefinition != null && StringUtils.isNotBlank(portletDefinition.getFName())) {
             String functionalName = portletDefinition.getFName();
             List<IUserLayoutNodeDescription> favoritePortlets =
-                    FavoritesUtils.getFavoritePortlets(ulm.getUserLayout());
+                    favoritesUtils.getFavoritePortlets(ulm.getUserLayout());
 
             // search for the favorite to delete
             EqualPredicate nameEqlPredicate = new EqualPredicate(functionalName);

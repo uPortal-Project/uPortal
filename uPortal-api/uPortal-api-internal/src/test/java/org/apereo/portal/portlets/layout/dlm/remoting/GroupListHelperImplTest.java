@@ -239,8 +239,8 @@ public class GroupListHelperImplTest {
         };
     }
 
-    class MockedGroupMemberEntityGroup implements IGroupMember, IEntityGroup {
-        Class<? extends IBasicEntity> leafType;
+    private static final class MockedGroupMemberEntityGroup implements IGroupMember, IEntityGroup {
+        private Class<? extends IBasicEntity> leafType;
 
         public MockedGroupMemberEntityGroup(Class<? extends IBasicEntity> leafType) {
             this.leafType = leafType;
