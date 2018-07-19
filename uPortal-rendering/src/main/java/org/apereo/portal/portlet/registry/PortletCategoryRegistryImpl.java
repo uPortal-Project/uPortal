@@ -18,9 +18,11 @@ import java.util.HashSet;
 import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apereo.portal.EntityIdentifier;
 import org.apereo.portal.PortalException;
 import org.apereo.portal.groups.IEntity;
 import org.apereo.portal.groups.IEntityGroup;
+import org.apereo.portal.groups.IGroupConstants;
 import org.apereo.portal.groups.IGroupMember;
 import org.apereo.portal.portlet.om.IPortletDefinition;
 import org.apereo.portal.portlet.om.PortletCategory;
@@ -35,17 +37,14 @@ public class PortletCategoryRegistryImpl implements IPortletCategoryRegistry {
 
     private final Log log = LogFactory.getLog(this.getClass());
 
-    @Autowired(required = true)
+    @Autowired
     public void setPortletDefinitionRegistry(IPortletDefinitionRegistry portletDefinitionRegistry) {
         this.portletDefinitionRegistry = portletDefinitionRegistry;
     }
 
-    /* (non-Javadoc)
-     * @see org.apereo.portal.portlet.registry.IPortletCategoryRegistry#getAllChildCategories(org.apereo.portal.portlet.om.PortletCategory)
-     */
     @Override
     public Set<PortletCategory> getAllChildCategories(PortletCategory parent) {
-        Set<PortletCategory> rslt = new HashSet<PortletCategory>();
+        Set<PortletCategory> rslt = new HashSet<>();
 
         for (PortletCategory child : getChildCategories(parent)) {
             // recurse
@@ -56,12 +55,9 @@ public class PortletCategoryRegistryImpl implements IPortletCategoryRegistry {
         return rslt;
     }
 
-    /* (non-Javadoc)
-     * @see org.apereo.portal.portlet.registry.IPortletCategoryRegistry#getAllParentCategories(org.apereo.portal.portlet.om.PortletCategory)
-     */
     @Override
     public Set<PortletCategory> getAllParentCategories(PortletCategory child) {
-        Set<PortletCategory> rslt = new HashSet<PortletCategory>();
+        Set<PortletCategory> rslt = new HashSet<>();
         for (PortletCategory parent : getParentCategories(child)) {
             // recurse
             rslt.add(parent);
@@ -70,23 +66,16 @@ public class PortletCategoryRegistryImpl implements IPortletCategoryRegistry {
         return rslt;
     }
 
-    /* (non-Javadoc)
-     * @see org.apereo.portal.portlet.registry.IPortletCategoryRegistry#getAllChildChannels(org.apereo.portal.portlet.om.PortletCategory)
-     */
     @Override
     public Set<IPortletDefinition> getAllChildPortlets(PortletCategory parent) {
 
-        Set<IPortletDefinition> rslt = new HashSet<IPortletDefinition>();
+        Set<IPortletDefinition> rslt;
 
         try {
-            for (IPortletDefinition portlet : getChildPortlets(parent)) {
-                rslt.add(portlet);
-            }
+            rslt = new HashSet<>(getChildPortlets(parent));
             for (PortletCategory category : getAllChildCategories(parent)) {
-                // append portlets to list for each child category in the tree
-                for (IPortletDefinition portlet : getChildPortlets(category)) {
-                    rslt.add(portlet);
-                }
+                // Append portlets to list for each child category in the tree
+                rslt.addAll(getChildPortlets(category));
             }
 
         } catch (Exception e) {
@@ -101,9 +90,6 @@ public class PortletCategoryRegistryImpl implements IPortletCategoryRegistry {
         return rslt;
     }
 
-    /* (non-Javadoc)
-     * @see org.apereo.portal.portlet.registry.IPortletCategoryRegistry#getPortletCategory(java.lang.String)
-     */
     @Override
     public PortletCategory getPortletCategory(String portletCategoryId) {
         IEntityGroup categoryGroup = GroupService.findGroup(portletCategoryId);
@@ -117,14 +103,34 @@ public class PortletCategoryRegistryImpl implements IPortletCategoryRegistry {
         return category;
     }
 
-    /* (non-Javadoc)
-     * @see org.apereo.portal.portlet.registry.IPortletCategoryRegistry#getChildCategories(org.apereo.portal.portlet.om.PortletCategory)
-     */
+    @Override
+    public PortletCategory getPortletCategoryByName(String portletCategoryName) {
+        final EntityIdentifier[] eids =
+                GroupService.searchForGroups(
+                        portletCategoryName,
+                        IGroupConstants.SearchMethod.DISCRETE_CI,
+                        IPortletDefinition.class);
+        if (eids == null || eids.length == 0) {
+            return null;
+        } else if (eids.length > 1) {
+            throw new IllegalStateException(
+                    "More than one group found with name '"
+                            + portletCategoryName
+                            + "' (case insensitive)");
+        }
+        final IEntityGroup categoryGroup = GroupService.findGroup(eids[0].getKey());
+        final PortletCategory category = new PortletCategory(eids[0].getKey());
+        category.setName(categoryGroup.getName());
+        category.setDescription(categoryGroup.getDescription());
+        category.setCreatorId(categoryGroup.getCreatorID());
+        return category;
+    }
+
     @Override
     public Set<PortletCategory> getChildCategories(PortletCategory parent) {
         String parentKey = String.valueOf(parent.getId());
         IEntityGroup parentGroup = GroupService.findGroup(parentKey);
-        Set<PortletCategory> categories = new HashSet<PortletCategory>();
+        Set<PortletCategory> categories = new HashSet<>();
         for (IGroupMember gm : parentGroup.getChildren()) {
             if (gm.isGroup()) {
                 String categoryId = gm.getKey();
@@ -134,14 +140,11 @@ public class PortletCategoryRegistryImpl implements IPortletCategoryRegistry {
         return categories;
     }
 
-    /* (non-Javadoc)
-     * @see org.apereo.portal.portlet.registry.IPortletCategoryRegistry#getChildChannels(org.apereo.portal.portlet.om.PortletCategory)
-     */
     @Override
     public Set<IPortletDefinition> getChildPortlets(PortletCategory parent) {
         String parentKey = String.valueOf(parent.getId());
         IEntityGroup parentGroup = GroupService.findGroup(parentKey);
-        Set<IPortletDefinition> portletDefs = new HashSet<IPortletDefinition>();
+        Set<IPortletDefinition> portletDefs = new HashSet<>();
         for (IGroupMember gm : parentGroup.getChildren()) {
             if (!gm.isGroup()) {
                 IPortletDefinition portletDefinition =
@@ -170,14 +173,11 @@ public class PortletCategoryRegistryImpl implements IPortletCategoryRegistry {
         return portletDefs;
     }
 
-    /* (non-Javadoc)
-     * @see org.apereo.portal.portlet.registry.IPortletCategoryRegistry#getParentCategories(org.apereo.portal.portlet.om.PortletCategory)
-     */
     @Override
     public Set<PortletCategory> getParentCategories(PortletCategory child) {
         String childKey = String.valueOf(child.getId());
         IEntityGroup childGroup = GroupService.findGroup(childKey);
-        Set<PortletCategory> parents = new HashSet<PortletCategory>();
+        Set<PortletCategory> parents = new HashSet<>();
 
         for (IGroupMember gm : childGroup.getParentGroups()) {
             if (gm.isGroup()) {
@@ -188,14 +188,11 @@ public class PortletCategoryRegistryImpl implements IPortletCategoryRegistry {
         return parents;
     }
 
-    /* (non-Javadoc)
-     * @see org.apereo.portal.portlet.registry.IPortletCategoryRegistry#getParentCategories(org.apereo.portal.portlet.om.IPortletDefinition)
-     */
     @Override
     public Set<PortletCategory> getParentCategories(IPortletDefinition child) {
         String childKey = child.getPortletDefinitionId().getStringId();
         IEntity childEntity = GroupService.getEntity(childKey, IPortletDefinition.class);
-        Set<PortletCategory> parents = new HashSet<PortletCategory>();
+        Set<PortletCategory> parents = new HashSet<>();
 
         for (IGroupMember gm : childEntity.getParentGroups()) {
             if (gm.isGroup()) {
@@ -206,9 +203,6 @@ public class PortletCategoryRegistryImpl implements IPortletCategoryRegistry {
         return parents;
     }
 
-    /* (non-Javadoc)
-     * @see org.apereo.portal.portlet.registry.IPortletCategoryRegistry#getTopLevelPortletCategory()
-     */
     @Override
     public PortletCategory getTopLevelPortletCategory() {
         IEntityGroup categoryGroup =

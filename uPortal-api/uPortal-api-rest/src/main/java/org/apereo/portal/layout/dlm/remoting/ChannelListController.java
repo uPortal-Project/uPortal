@@ -23,6 +23,7 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import javax.servlet.http.HttpServletRequest;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.portal.EntityIdentifier;
 import org.apereo.portal.i18n.ILocaleStore;
 import org.apereo.portal.i18n.LocaleManager;
@@ -84,7 +85,7 @@ public class ChannelListController {
 
     @Autowired private IMarketplaceService marketplaceService;
 
-    /** @param portletDefinitionRegistry */
+    /** @param portletDefinitionRegistry The portlet registry bean */
     @Autowired
     public void setPortletDefinitionRegistry(IPortletDefinitionRegistry portletDefinitionRegistry) {
         this.portletDefinitionRegistry = portletDefinitionRegistry;
@@ -141,7 +142,7 @@ public class ChannelListController {
             HttpServletRequest request,
             @RequestParam(value = "type", required = false) String type) {
 
-        if (type != null && TYPE_MANAGE.equals(type)) {
+        if (TYPE_MANAGE.equals(type)) {
             throw new UnsupportedOperationException(
                     "Moved to PortletRESTController under /api/portlets.json");
         }
@@ -169,16 +170,32 @@ public class ChannelListController {
     public ModelAndView getPortletRegistry(
             WebRequest webRequest,
             HttpServletRequest request,
-            @RequestParam(value = "categoryId", required = false) String categoryId) {
+            @RequestParam(value = "categoryId", required = false) String categoryId,
+            @RequestParam(value = "category", required = false) String categoryName) {
 
-        final PortletCategory rootCategory =
-                categoryId != null
-                        ? portletCategoryRegistry.getPortletCategory(categoryId)
-                        : portletCategoryRegistry.getTopLevelPortletCategory();
-        final boolean includeUncategorized =
-                categoryId != null
-                        ? false // Don't provide uncategorized portlets
-                        : true; // if a specific category was requested
+        /*
+         * Pick a category for the basis of the response
+         */
+        PortletCategory rootCategory =
+                portletCategoryRegistry.getTopLevelPortletCategory(); // default
+        if (StringUtils.isNotBlank(categoryId)) {
+            // Callers can specify a category by Id...
+            rootCategory = portletCategoryRegistry.getPortletCategory(categoryId);
+        } else if (StringUtils.isNotBlank(categoryName)) {
+            // or by name...
+            rootCategory = portletCategoryRegistry.getPortletCategoryByName(categoryName);
+        }
+
+        if (rootCategory == null) {
+            // A specific category was requested, but there was a problem obtaining it
+            throw new IllegalArgumentException("Requested category not found");
+        }
+
+        /*
+         * Don't include uncategorized portlets in the
+         * response if a specific category was requested
+         */
+        final boolean includeUncategorized = categoryId == null;
 
         final IPerson user = personManager.getPerson(request);
         final Map<String, SortedSet<?>> registry =
@@ -202,12 +219,11 @@ public class ChannelListController {
          * tracking which ones are uncategorized.
          */
         Set<IPortletDefinition> portletsNotYetCategorized =
-                new HashSet<IPortletDefinition>(
-                        portletDefinitionRegistry.getAllPortletDefinitions());
+                new HashSet<>(portletDefinitionRegistry.getAllPortletDefinitions());
 
         // construct a new channel registry
-        Map<String, SortedSet<?>> rslt = new TreeMap<String, SortedSet<?>>();
-        SortedSet<ChannelCategoryBean> categories = new TreeSet<ChannelCategoryBean>();
+        Map<String, SortedSet<?>> rslt = new TreeMap<>();
+        SortedSet<ChannelCategoryBean> categories = new TreeSet<>();
 
         // add the root category and all its children to the registry
         final PortletCategory rootCategory = portletCategoryRegistry.getTopLevelPortletCategory();
@@ -341,15 +357,13 @@ public class ChannelListController {
          */
         Set<IPortletDefinition> portletsNotYetCategorized =
                 includeUncategorized
-                        ? new HashSet<IPortletDefinition>(
-                                portletDefinitionRegistry.getAllPortletDefinitions())
-                        : new HashSet<
-                                IPortletDefinition>(); // Not necessary to fetch them if we're not
+                        ? new HashSet<>(portletDefinitionRegistry.getAllPortletDefinitions())
+                        : new HashSet<>(); // Not necessary to fetch them if we're not
         // tracking them
 
         // construct a new channel registry
-        Map<String, SortedSet<?>> rslt = new TreeMap<String, SortedSet<?>>();
-        SortedSet<PortletCategoryBean> categories = new TreeSet<PortletCategoryBean>();
+        Map<String, SortedSet<?>> rslt = new TreeMap<>();
+        SortedSet<PortletCategoryBean> categories = new TreeSet<>();
 
         // add the root category and all its children to the registry
         final Locale locale = getUserLocale(user);
