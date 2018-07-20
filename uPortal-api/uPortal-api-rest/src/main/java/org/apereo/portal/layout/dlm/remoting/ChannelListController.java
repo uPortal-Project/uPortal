@@ -197,6 +197,8 @@ public class ChannelListController {
             @RequestParam(value = "category", required = false) String categoryName,
             @RequestParam(value = "favorite", required = false) String favorite) {
 
+        boolean includeUncategorizedPortlets = true; // default
+
         /*
          * Pick a category for the basis of the response
          */
@@ -205,9 +207,11 @@ public class ChannelListController {
         if (StringUtils.isNotBlank(categoryId)) {
             // Callers can specify a category by Id...
             rootCategory = portletCategoryRegistry.getPortletCategory(categoryId);
+            includeUncategorizedPortlets = false;
         } else if (StringUtils.isNotBlank(categoryName)) {
             // or by name...
             rootCategory = portletCategoryRegistry.getPortletCategoryByName(categoryName);
+            includeUncategorizedPortlets = false;
         }
 
         if (rootCategory == null) {
@@ -215,15 +219,9 @@ public class ChannelListController {
             throw new IllegalArgumentException("Requested category not found");
         }
 
-        /*
-         * Don't include uncategorized portlets in the
-         * response if a specific category was requested
-         */
-        final boolean includeUncategorized = categoryId == null;
-
         final IPerson user = personManager.getPerson(request);
         Map<String, SortedSet<PortletCategoryBean>> rslt =
-                getRegistry43(webRequest, user, rootCategory, includeUncategorized);
+                getRegistry43(webRequest, user, rootCategory, includeUncategorizedPortlets);
 
         /*
          * The 'favorite=true' option means return only portlets that this user has favorited.
