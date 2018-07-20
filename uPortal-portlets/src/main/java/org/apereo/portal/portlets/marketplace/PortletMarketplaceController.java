@@ -442,7 +442,8 @@ public class PortletMarketplaceController {
     }
 
     private boolean isPortletFavorited(IUserLayout layout, String fname) {
-        List<IUserLayoutNodeDescription> favorites = favoritesUtils.getFavoritePortlets(layout);
+        List<IUserLayoutNodeDescription> favorites =
+                favoritesUtils.getFavoritePortletLayoutNodes(layout);
         for (IUserLayoutNodeDescription favorite : favorites) {
             if (favorite instanceof UserLayoutChannelDescription) {
                 String channelId = ((UserLayoutChannelDescription) favorite).getChannelPublishId();

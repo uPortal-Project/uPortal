@@ -91,7 +91,8 @@ public class FavoritesEditController extends AbstractFavoritesController {
                 favoritesUtils.getFavoriteCollections(userLayout);
         model.addAttribute("collections", collections);
 
-        List<IUserLayoutNodeDescription> favorites = favoritesUtils.getFavoritePortlets(userLayout);
+        List<IUserLayoutNodeDescription> favorites =
+                favoritesUtils.getFavoritePortletLayoutNodes(userLayout);
         model.addAttribute("favorites", favorites);
 
         model.addAttribute("successMessageCode", renderRequest.getParameter("successMessageCode"));

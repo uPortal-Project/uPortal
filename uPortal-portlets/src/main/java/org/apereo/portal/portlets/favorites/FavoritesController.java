@@ -107,7 +107,7 @@ public class FavoritesController extends AbstractFavoritesController {
         model.addAttribute("collections", collections);
 
         final List<IUserLayoutNodeDescription> rawFavorites =
-                favoritesUtils.getFavoritePortlets(userLayout);
+                favoritesUtils.getFavoritePortletLayoutNodes(userLayout);
 
         /*
          * Filter the collection by SUBSCRIBE permission.

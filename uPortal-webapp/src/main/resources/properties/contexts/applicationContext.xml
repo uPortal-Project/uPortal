@@ -36,6 +36,7 @@
         <context:include-filter type="assignable" expression="org.apereo.portal.portlets.PortletPreferencesJsonDao" />
         <context:include-filter type="assignable" expression="org.apereo.portal.portlets.account.UserAccountHelper" />
         <context:include-filter type="assignable" expression="org.apereo.portal.portlets.account.IPasswordResetNotification"/>
+        <context:include-filter type="assignable" expression="org.apereo.portal.portlets.favorites.FavoritesUtils"/>
         <context:include-filter type="assignable" expression="org.apereo.portal.portlets.login.LoginPortletHelper"/>
         <context:include-filter type="assignable" expression="org.apereo.portal.portlets.portletadmin.xmlsupport.IChannelPublishingDefinitionDao"/>
         <context:include-filter type="assignable" expression="org.apereo.portal.portlets.search.PortletRegistryUtil"/>

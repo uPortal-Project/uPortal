@@ -689,7 +689,7 @@ public class UpdatePreferencesServlet {
         if (portletDefinition != null && StringUtils.isNotBlank(portletDefinition.getFName())) {
             String functionalName = portletDefinition.getFName();
             List<IUserLayoutNodeDescription> favoritePortlets =
-                    favoritesUtils.getFavoritePortlets(ulm.getUserLayout());
+                    favoritesUtils.getFavoritePortletLayoutNodes(ulm.getUserLayout());
 
             // search for the favorite to delete
             EqualPredicate nameEqlPredicate = new EqualPredicate(functionalName);
