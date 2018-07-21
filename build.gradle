@@ -46,6 +46,7 @@ allprojects {
         all*.exclude group: 'commons-logging', module: 'commons-logging-api'
         all*.exclude group: 'log4j', module: 'log4j'
         all*.exclude group: 'org.hamcrest', module: 'hamcrest-core'
+        all*.exclude group: 'javax.mail', module: 'mail'
     }
 
     dependencies {
