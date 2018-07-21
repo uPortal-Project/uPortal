@@ -50,15 +50,13 @@ import org.hibernate.annotations.IndexColumn;
 @Entity
 @Table(name = "UP_PORTLET_PREFS")
 @SequenceGenerator(
-    name = "UP_PORTLET_PREFS_GEN",
-    sequenceName = "UP_PORTLET_PREFS_SEQ",
-    allocationSize = 10
-)
+        name = "UP_PORTLET_PREFS_GEN",
+        sequenceName = "UP_PORTLET_PREFS_SEQ",
+        allocationSize = 10)
 @TableGenerator(
-    name = "UP_PORTLET_PREFS_GEN",
-    pkColumnValue = "UP_PORTLET_PREFS",
-    allocationSize = 10
-)
+        name = "UP_PORTLET_PREFS_GEN",
+        pkColumnValue = "UP_PORTLET_PREFS",
+        allocationSize = 10)
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 class PortletPreferencesImpl {
@@ -72,11 +70,10 @@ class PortletPreferencesImpl {
     private final long entityVersion;
 
     @OneToMany(
-        cascade = CascadeType.ALL,
-        targetEntity = PortletPreferenceImpl.class,
-        fetch = FetchType.EAGER,
-        orphanRemoval = true
-    )
+            cascade = CascadeType.ALL,
+            targetEntity = PortletPreferenceImpl.class,
+            fetch = FetchType.EAGER,
+            orphanRemoval = true)
     @JoinColumn(name = "PORTLET_PREFS_ID")
     @IndexColumn(name = "PREF_ORDER")
     @Fetch(FetchMode.JOIN)

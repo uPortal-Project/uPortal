@@ -49,7 +49,9 @@ import org.springframework.web.portlet.bind.annotation.ResourceMapping;
 @RequestMapping(value = "VIEW")
 public class LoginTotalsStatisticsController
         extends BaseSimpleGroupedStatisticsReportController<
-                LoginAggregation, LoginAggregationKey, LoginAggregationDiscriminator,
+                LoginAggregation,
+                LoginAggregationKey,
+                LoginAggregationDiscriminator,
                 LoginReportForm> {
 
     private static final String DATA_TABLE_RESOURCE_ID = "loginData";

@@ -45,15 +45,13 @@ import org.hibernate.annotations.NaturalId;
 @Entity
 @Table(name = "UP_EVENT_AGGR_CONF_INTRVL")
 @SequenceGenerator(
-    name = "UP_EVENT_AGGR_CONF_INTRVL_GEN",
-    sequenceName = "UP_EVENT_AGGR_CONF_INTRVL_SEQ",
-    allocationSize = 1
-)
+        name = "UP_EVENT_AGGR_CONF_INTRVL_GEN",
+        sequenceName = "UP_EVENT_AGGR_CONF_INTRVL_SEQ",
+        allocationSize = 1)
 @TableGenerator(
-    name = "UP_EVENT_AGGR_CONF_INTRVL_GEN",
-    pkColumnValue = "UP_EVENT_AGGR_CONF_INTRVL",
-    allocationSize = 1
-)
+        name = "UP_EVENT_AGGR_CONF_INTRVL_GEN",
+        pkColumnValue = "UP_EVENT_AGGR_CONF_INTRVL",
+        allocationSize = 1)
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class AggregatedIntervalConfigImpl
@@ -75,9 +73,8 @@ public class AggregatedIntervalConfigImpl
 
     @ElementCollection(fetch = FetchType.EAGER)
     @JoinTable(
-        name = "UP_EVENT_AGGR_CONF_INTRVL_INC",
-        joinColumns = @JoinColumn(name = "UP_EVENT_AGGR_CONF_INTRVL_ID")
-    )
+            name = "UP_EVENT_AGGR_CONF_INTRVL_INC",
+            joinColumns = @JoinColumn(name = "UP_EVENT_AGGR_CONF_INTRVL_ID"))
     @Fetch(FetchMode.JOIN)
     @Enumerated(EnumType.STRING)
     @Column(name = "AGGR_INTERVAL")
@@ -86,9 +83,8 @@ public class AggregatedIntervalConfigImpl
 
     @ElementCollection(fetch = FetchType.EAGER)
     @JoinTable(
-        name = "UP_EVENT_AGGR_CONF_INTRVL_EXC",
-        joinColumns = @JoinColumn(name = "UP_EVENT_AGGR_CONF_INTRVL_ID")
-    )
+            name = "UP_EVENT_AGGR_CONF_INTRVL_EXC",
+            joinColumns = @JoinColumn(name = "UP_EVENT_AGGR_CONF_INTRVL_ID"))
     @Fetch(FetchMode.JOIN)
     @Enumerated(EnumType.STRING)
     @Column(name = "AGGR_INTERVAL")

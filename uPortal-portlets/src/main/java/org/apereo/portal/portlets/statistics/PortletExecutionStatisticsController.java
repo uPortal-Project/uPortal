@@ -57,8 +57,10 @@ import org.springframework.web.portlet.bind.annotation.ResourceMapping;
 @RequestMapping(value = "VIEW")
 public class PortletExecutionStatisticsController
         extends BaseStatisticsReportController<
-                PortletExecutionAggregation, PortletExecutionAggregationKey,
-                PortletExecutionAggregationDiscriminator, PortletExecutionReportForm> {
+                PortletExecutionAggregation,
+                PortletExecutionAggregationKey,
+                PortletExecutionAggregationDiscriminator,
+                PortletExecutionReportForm> {
 
     private static final String DATA_TABLE_RESOURCE_ID = "portletExecutionData";
     private static final String REPORT_NAME = "portletExecution.totals";
@@ -178,6 +180,7 @@ public class PortletExecutionStatisticsController
         return PortletExecutionAggregationDiscriminatorImpl.Comparator.INSTANCE;
     }
 
+    @Override
     protected Map<PortletExecutionAggregationDiscriminator, SortedSet<PortletExecutionAggregation>>
             createColumnDiscriminatorMap(PortletExecutionReportForm form) {
         // Collections used to track the queried groups and the results

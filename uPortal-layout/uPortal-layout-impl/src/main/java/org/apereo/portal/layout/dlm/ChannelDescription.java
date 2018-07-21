@@ -59,6 +59,7 @@ public class ChannelDescription extends UserLayoutChannelDescription {
         this.setOrigin(xmlNode.getAttributeNS(Constants.NS_URI, Constants.LCL_ORIGIN));
     }
 
+    @Override
     public Element getXML(Document root) {
         Element node = super.getXML(root);
 

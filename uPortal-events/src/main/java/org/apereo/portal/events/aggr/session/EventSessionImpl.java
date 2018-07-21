@@ -50,23 +50,19 @@ import org.joda.time.DateTime;
 @Table(name = "UP_EVENT_SESSION")
 @Inheritance(strategy = InheritanceType.JOINED)
 @SequenceGenerator(
-    name = "UP_EVENT_SESSION_GEN",
-    sequenceName = "UP_EVENT_SESSION_SEQ",
-    allocationSize = 100
-)
+        name = "UP_EVENT_SESSION_GEN",
+        sequenceName = "UP_EVENT_SESSION_SEQ",
+        allocationSize = 100)
 @TableGenerator(
-    name = "UP_EVENT_SESSION_GEN",
-    pkColumnValue = "UP_EVENT_SESSION_PROP",
-    allocationSize = 100
-)
+        name = "UP_EVENT_SESSION_GEN",
+        pkColumnValue = "UP_EVENT_SESSION_PROP",
+        allocationSize = 100)
 @org.hibernate.annotations.Table(
-    appliesTo = "UP_EVENT_SESSION",
-    indexes =
-            @Index(
-                name = "IDX_UP_EVENT_SESSION_DATE",
-                columnNames = {"LAST_ACCESSED"}
-            )
-)
+        appliesTo = "UP_EVENT_SESSION",
+        indexes =
+                @Index(
+                        name = "IDX_UP_EVENT_SESSION_DATE",
+                        columnNames = {"LAST_ACCESSED"}))
 @NaturalIdCache(region = "org.apereo.portal.events.aggr.session.EventSessionImpl-NaturalId")
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
@@ -84,9 +80,8 @@ public class EventSessionImpl implements EventSession, Serializable {
 
     @ManyToMany(targetEntity = AggregatedGroupMappingImpl.class, fetch = FetchType.EAGER)
     @JoinTable(
-        name = "UP_EVENT_SESSION_GROUPS",
-        inverseJoinColumns = @JoinColumn(name = "GROUP_ID")
-    )
+            name = "UP_EVENT_SESSION_GROUPS",
+            inverseJoinColumns = @JoinColumn(name = "GROUP_ID"))
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @Fetch(FetchMode.JOIN)
     private final Set<AggregatedGroupMapping> groupMappings;

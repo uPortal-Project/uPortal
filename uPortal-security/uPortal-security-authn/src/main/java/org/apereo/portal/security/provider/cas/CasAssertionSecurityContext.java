@@ -14,6 +14,8 @@
  */
 package org.apereo.portal.security.provider.cas;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.io.File;
 import java.nio.file.Files;
 import java.security.KeyFactory;
@@ -100,6 +102,7 @@ public class CasAssertionSecurityContext extends ChainingSecurityContext
         }
     }
 
+    @Override
     public int getAuthType() {
         return CAS_AUTHTYPE;
     }
@@ -167,6 +170,7 @@ public class CasAssertionSecurityContext extends ChainingSecurityContext
         }
     }
 
+    @Override
     public final String getCasServiceToken(final String target)
             throws CasProxyTicketAcquisitionException {
         if (log.isTraceEnabled()) {
@@ -202,6 +206,7 @@ public class CasAssertionSecurityContext extends ChainingSecurityContext
         return proxyTicket;
     }
 
+    @Override
     public String toString() {
         return this.getClass().getName() + " assertion:" + this.assertion;
     }
@@ -246,7 +251,7 @@ public class CasAssertionSecurityContext extends ChainingSecurityContext
                     byte[] cred64 = DatatypeConverter.parseBase64Binary(encPwd);
                     cipher.init(Cipher.DECRYPT_MODE, key);
                     final byte[] cipherData = cipher.doFinal(cred64);
-                    final Object pwd = new String(cipherData);
+                    final Object pwd = new String(cipherData, UTF_8);
                     attributes.put(PASSWORD_KEY, Collections.singletonList(pwd));
                 } catch (Exception e) {
                     log.warn("Cannot decipher credential", e);

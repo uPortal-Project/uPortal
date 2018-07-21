@@ -42,15 +42,13 @@ import org.joda.time.LocalTime;
 @Entity
 @Table(name = "UP_TIME_DIMENSION")
 @SequenceGenerator(
-    name = "UP_TIME_DIMENSION_GEN",
-    sequenceName = "UP_TIME_DIMENSION_SEQ",
-    allocationSize = 1
-)
+        name = "UP_TIME_DIMENSION_GEN",
+        sequenceName = "UP_TIME_DIMENSION_SEQ",
+        allocationSize = 1)
 @TableGenerator(
-    name = "UP_TIME_DIMENSION_GEN",
-    pkColumnValue = "UP_TIME_DIMENSION_PROP",
-    allocationSize = 1
-)
+        name = "UP_TIME_DIMENSION_GEN",
+        pkColumnValue = "UP_TIME_DIMENSION_PROP",
+        allocationSize = 1)
 @Immutable
 @NaturalIdCache(region = "org.apereo.portal.events.aggr.dao.jpa.TimeDimensionImpl-NaturalId")
 @Cacheable

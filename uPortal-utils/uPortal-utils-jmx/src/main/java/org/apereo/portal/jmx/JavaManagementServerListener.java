@@ -76,6 +76,7 @@ public class JavaManagementServerListener implements ServletContextListener {
      * @see
      *     javax.servlet.ServletContextListener#contextInitialized(javax.servlet.ServletContextEvent)
      */
+    @Override
     public void contextInitialized(ServletContextEvent event) {
         final ServletContext servletContext = event.getServletContext();
 
@@ -128,6 +129,7 @@ public class JavaManagementServerListener implements ServletContextListener {
     /**
      * @see javax.servlet.ServletContextListener#contextDestroyed(javax.servlet.ServletContextEvent)
      */
+    @Override
     public void contextDestroyed(ServletContextEvent event) {
         this.javaManagementServerBean.stopServer();
         this.javaManagementServerBean = null;

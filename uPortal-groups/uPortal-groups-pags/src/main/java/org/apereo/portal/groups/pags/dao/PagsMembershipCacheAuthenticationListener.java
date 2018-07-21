@@ -42,8 +42,7 @@ public class PagsMembershipCacheAuthenticationListener implements IAuthenticatio
 
     @Autowired
     @Qualifier(
-        value = "org.apereo.portal.groups.pags.dao.EntityPersonAttributesGroupStore.membership"
-    )
+            value = "org.apereo.portal.groups.pags.dao.EntityPersonAttributesGroupStore.membership")
     private Cache membershipCache;
 
     private Attribute<String> usernameSearchAttribute;

@@ -51,14 +51,13 @@ import org.hibernate.annotations.NaturalIdCache;
 @Entity
 @Table(name = "UP_PAGS_GROUP")
 @SequenceGenerator(
-    name = "UP_PAGS_GROUP_GEN",
-    sequenceName = "UP_PAGS_GROUP_SEQ",
-    allocationSize = 5
-)
+        name = "UP_PAGS_GROUP_GEN",
+        sequenceName = "UP_PAGS_GROUP_SEQ",
+        allocationSize = 5)
 @TableGenerator(name = "UP_PAGS_GROUP_GEN", pkColumnValue = "UP_PAGS_GROUP", allocationSize = 5)
 @NaturalIdCache(
-    region = "org.apereo.portal.groups.pags.dao.jpa.PersonAttributesGroupDefinitionImpl-NaturalId"
-)
+        region =
+                "org.apereo.portal.groups.pags.dao.jpa.PersonAttributesGroupDefinitionImpl-NaturalId")
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class PersonAttributesGroupDefinitionImpl implements IPersonAttributesGroupDefinition {
@@ -94,10 +93,9 @@ public class PersonAttributesGroupDefinitionImpl implements IPersonAttributesGro
     @ManyToMany(cascade = CascadeType.ALL, targetEntity = PersonAttributesGroupDefinitionImpl.class)
     @LazyCollection(LazyCollectionOption.FALSE)
     @JoinTable(
-        name = "UP_PAGS_GROUP_MEMBERS",
-        joinColumns = {@JoinColumn(name = "PAGS_GROUP_ID")},
-        inverseJoinColumns = {@JoinColumn(name = "PAGS_GROUP_MEMBER_ID")}
-    )
+            name = "UP_PAGS_GROUP_MEMBERS",
+            joinColumns = {@JoinColumn(name = "PAGS_GROUP_ID")},
+            inverseJoinColumns = {@JoinColumn(name = "PAGS_GROUP_MEMBER_ID")})
     @JsonSerialize(using = PagsDefinitionJsonUtils.DefinitionLinkJsonSerializer.class)
     @JsonDeserialize(using = PagsDefinitionJsonUtils.DefinitionLinkJsonDeserializer.class)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
@@ -105,15 +103,16 @@ public class PersonAttributesGroupDefinitionImpl implements IPersonAttributesGro
             new HashSet<IPersonAttributesGroupDefinition>(0);
 
     @OneToMany(
-        cascade = CascadeType.ALL,
-        mappedBy = "group",
-        targetEntity = PersonAttributesGroupTestGroupDefinitionImpl.class,
-        orphanRemoval = true
-    )
+            cascade = CascadeType.ALL,
+            mappedBy = "group",
+            targetEntity = PersonAttributesGroupTestGroupDefinitionImpl.class,
+            orphanRemoval = true)
     @LazyCollection(LazyCollectionOption.FALSE)
     @JsonDeserialize(
-        using = PagsDefinitionJsonUtils.TestGroupJsonDeserializer.class
-    ) // Auto-serialization of interface references works; deserialization doesn't (besides we have
+            using =
+                    PagsDefinitionJsonUtils.TestGroupJsonDeserializer
+                            .class) // Auto-serialization of interface references works;
+    // deserialization doesn't (besides we have
     // some extra work to do)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<IPersonAttributesGroupTestGroupDefinition> testGroups =

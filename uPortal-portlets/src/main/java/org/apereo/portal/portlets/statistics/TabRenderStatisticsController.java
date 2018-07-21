@@ -55,7 +55,9 @@ import org.springframework.web.portlet.bind.annotation.ResourceMapping;
 @RequestMapping(value = "VIEW")
 public class TabRenderStatisticsController
         extends BaseStatisticsReportController<
-                TabRenderAggregation, TabRenderAggregationKey, TabRenderAggregationDiscriminator,
+                TabRenderAggregation,
+                TabRenderAggregationKey,
+                TabRenderAggregationDiscriminator,
                 TabRenderReportForm> {
     private static final String DATA_TABLE_RESOURCE_ID = "tabRenderData";
     private static final String REPORT_NAME = "tabRender.totals";

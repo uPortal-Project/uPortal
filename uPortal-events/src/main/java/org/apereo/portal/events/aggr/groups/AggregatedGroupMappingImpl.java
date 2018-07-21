@@ -47,19 +47,16 @@ import org.hibernate.annotations.NaturalIdCache;
 @Entity
 @Table(name = "UP_AGGR_GROUP_MAPPING")
 @SequenceGenerator(
-    name = "UP_AGGR_GROUP_MAPPING_GEN",
-    sequenceName = "UP_AGGR_GROUP_MAPPING_SEQ",
-    allocationSize = 10
-)
+        name = "UP_AGGR_GROUP_MAPPING_GEN",
+        sequenceName = "UP_AGGR_GROUP_MAPPING_SEQ",
+        allocationSize = 10)
 @TableGenerator(
-    name = "UP_AGGR_GROUP_MAPPING_GEN",
-    pkColumnValue = "UP_AGGR_GROUP_MAPPING_PROP",
-    allocationSize = 10
-)
+        name = "UP_AGGR_GROUP_MAPPING_GEN",
+        pkColumnValue = "UP_AGGR_GROUP_MAPPING_PROP",
+        allocationSize = 10)
 @Immutable
 @NaturalIdCache(
-    region = "org.apereo.portal.events.aggr.groups.AggregatedGroupMappingImpl-NaturalId"
-)
+        region = "org.apereo.portal.events.aggr.groups.AggregatedGroupMappingImpl-NaturalId")
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 public final class AggregatedGroupMappingImpl implements AggregatedGroupMapping, Serializable {

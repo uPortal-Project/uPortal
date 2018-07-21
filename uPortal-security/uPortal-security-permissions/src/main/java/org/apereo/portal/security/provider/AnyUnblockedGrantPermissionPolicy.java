@@ -76,9 +76,8 @@ public class AnyUnblockedGrantPermissionPolicy implements IPermissionPolicy {
 
     @Autowired
     @Qualifier(
-        value =
-                "org.apereo.portal.security.provider.AnyUnblockedGrantPermissionPolicy.HAS_UNBLOCKED_GRANT"
-    )
+            value =
+                    "org.apereo.portal.security.provider.AnyUnblockedGrantPermissionPolicy.HAS_UNBLOCKED_GRANT")
     private Cache hasUnblockedGrantCache;
 
     @Override

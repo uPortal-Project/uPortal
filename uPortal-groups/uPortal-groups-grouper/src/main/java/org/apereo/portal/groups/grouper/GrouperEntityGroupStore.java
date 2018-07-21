@@ -85,6 +85,7 @@ public class GrouperEntityGroupStore implements IEntityGroupStore, IEntityStore,
     /* (non-Javadoc)
      * @see org.apereo.portal.groups.IEntityGroupStore#contains(org.apereo.portal.groups.IEntityGroup, org.apereo.portal.groups.IGroupMember)
      */
+    @Override
     public boolean contains(IEntityGroup group, IGroupMember member) throws GroupsException {
 
         String groupContainerName = group.getLocalKey();
@@ -109,6 +110,7 @@ public class GrouperEntityGroupStore implements IEntityGroupStore, IEntityStore,
     /* (non-Javadoc)
      * @see org.apereo.portal.groups.IEntityGroupStore#find(java.lang.String)
      */
+    @Override
     public IEntityGroup find(String key) throws GroupsException {
 
         try {
@@ -149,6 +151,7 @@ public class GrouperEntityGroupStore implements IEntityGroupStore, IEntityStore,
     /* (non-Javadoc)
      * @see org.apereo.portal.groups.IEntityGroupStore#findParentGroups(org.apereo.portal.groups.IGroupMember)
      */
+    @Override
     @SuppressWarnings("unchecked")
     public Iterator findParentGroups(IGroupMember gm) throws GroupsException {
 
@@ -230,6 +233,7 @@ public class GrouperEntityGroupStore implements IEntityGroupStore, IEntityStore,
     /* (non-Javadoc)
      * @see org.apereo.portal.groups.IEntityGroupStore#findEntitiesForGroup(org.apereo.portal.groups.IEntityGroup)
      */
+    @Override
     @SuppressWarnings("unchecked")
     public Iterator findEntitiesForGroup(IEntityGroup group) throws GroupsException {
 
@@ -294,6 +298,7 @@ public class GrouperEntityGroupStore implements IEntityGroupStore, IEntityStore,
     /* (non-Javadoc)
      * @see org.apereo.portal.groups.IEntityGroupStore#findMemberGroupKeys(org.apereo.portal.groups.IEntityGroup)
      */
+    @Override
     @SuppressWarnings("unchecked")
     public String[] findMemberGroupKeys(IEntityGroup group) throws GroupsException {
 
@@ -311,6 +316,7 @@ public class GrouperEntityGroupStore implements IEntityGroupStore, IEntityStore,
         return keys.toArray(new String[keys.size()]);
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public Iterator findMemberGroups(IEntityGroup group) throws GroupsException {
         if (LOGGER.isDebugEnabled()) {
@@ -373,6 +379,7 @@ public class GrouperEntityGroupStore implements IEntityGroupStore, IEntityStore,
     /* (non-Javadoc)
      * @see org.apereo.portal.groups.IEntityGroupStore#searchForGroups(java.lang.String, int, java.lang.Class)
      */
+    @Override
     public EntityIdentifier[] searchForGroups(
             final String query,
             final SearchMethod method,
@@ -441,6 +448,7 @@ public class GrouperEntityGroupStore implements IEntityGroupStore, IEntityStore,
      * @see IEntitySearcher#searchForEntities(java.lang.String,
      *     org.apereo.portal.groups.IGroupConstants.SearchMethod, java.lang.Class)
      */
+    @Override
     @SuppressWarnings("unchecked")
     public EntityIdentifier[] searchForEntities(String query, SearchMethod method, Class type)
             throws GroupsException {
@@ -482,6 +490,7 @@ public class GrouperEntityGroupStore implements IEntityGroupStore, IEntityStore,
     }
 
     /** @see IEntityStore#newInstance(java.lang.String, java.lang.Class) */
+    @Override
     @SuppressWarnings("unchecked")
     public IEntity newInstance(String key, Class type) throws GroupsException {
         if (EntityTypesLocator.getEntityTypes().getEntityIDFromType(type) == null) {
@@ -577,6 +586,7 @@ public class GrouperEntityGroupStore implements IEntityGroupStore, IEntityStore,
     }
 
     /** @see IEntityGroupStore#update(IEntityGroup) */
+    @Override
     public void update(IEntityGroup group) throws GroupsException {
 
         // assume key is fully qualified group name
@@ -602,6 +612,7 @@ public class GrouperEntityGroupStore implements IEntityGroupStore, IEntityStore,
     }
 
     /** @see IEntityGroupStore#updateMembers(IEntityGroup) */
+    @Override
     public void updateMembers(IEntityGroup group) throws GroupsException {
 
         // assume key is fully qualified group name
@@ -618,6 +629,7 @@ public class GrouperEntityGroupStore implements IEntityGroupStore, IEntityStore,
     }
 
     /** @see IEntityGroupStore#delete(IEntityGroup) */
+    @Override
     public void delete(IEntityGroup group) throws GroupsException {
 
         String groupName = group.getLocalKey();
@@ -625,6 +637,7 @@ public class GrouperEntityGroupStore implements IEntityGroupStore, IEntityStore,
     }
 
     /** @see IEntityGroupStore#findLockable(java.lang.String) */
+    @Override
     public ILockableEntityGroup findLockable(String key) throws GroupsException {
         throw new UnsupportedOperationException(
                 "Group locking is not supported by the Grouper groups service");
@@ -634,6 +647,7 @@ public class GrouperEntityGroupStore implements IEntityGroupStore, IEntityStore,
      * @see
      * org.apereo.portal.groups.IEntityGroupStore#newInstance(java.lang.Class)
      */
+    @Override
     @SuppressWarnings("unchecked")
     public IEntityGroup newInstance(Class entityType) throws GroupsException {
         throw new UnsupportedOperationException(

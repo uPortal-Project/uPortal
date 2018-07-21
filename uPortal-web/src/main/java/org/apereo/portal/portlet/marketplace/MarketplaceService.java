@@ -73,17 +73,15 @@ public class MarketplaceService implements IMarketplaceService, ApplicationListe
     /** Used to store individual MarketplacePortletDefinition instances. */
     @Autowired
     @Qualifier(
-        value =
-                "org.apereo.portal.portlet.marketplace.MarketplaceService.marketplacePortletDefinitionCache"
-    )
+            value =
+                    "org.apereo.portal.portlet.marketplace.MarketplaceService.marketplacePortletDefinitionCache")
     private Cache marketplacePortletDefinitionCache;
 
     /** Cache of Username -> Future<Set<MarketplaceEntry> */
     @Autowired
     @Qualifier(
-        value =
-                "org.apereo.portal.portlet.marketplace.MarketplaceService.marketplaceUserPortletDefinitionCache"
-    )
+            value =
+                    "org.apereo.portal.portlet.marketplace.MarketplaceService.marketplaceUserPortletDefinitionCache")
     private Cache marketplaceUserPortletDefinitionCache;
 
     /**
@@ -92,8 +90,8 @@ public class MarketplaceService implements IMarketplaceService, ApplicationListe
      */
     @Autowired
     @Qualifier(
-        value = "org.apereo.portal.portlet.marketplace.MarketplaceService.marketplaceCategoryCache"
-    )
+            value =
+                    "org.apereo.portal.portlet.marketplace.MarketplaceService.marketplaceCategoryCache")
     private Cache marketplaceCategoryCache;
 
     @Value("${org.apereo.portal.portlets.marketplacePortlet.loadMarketplaceOnLogin:false}")
@@ -384,6 +382,7 @@ public class MarketplaceService implements IMarketplaceService, ApplicationListe
      * @throws IllegalArgumentException if portletDefinition is null
      * @since 4.2
      */
+    @Override
     @RequestCache
     public boolean mayAddPortlet(final IPerson user, final IPortletDefinition portletDefinition) {
         Validate.notNull(user, "Cannot determine if null users can browse portlets.");

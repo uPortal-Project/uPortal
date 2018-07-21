@@ -29,6 +29,7 @@ public class PersonDirNameFinderTest extends TestCase {
     /** Test PersonDirNameFinder instance backed by a stub IPersonAttributeDao. */
     PersonDirNameFinder finder;
 
+    @Override
     protected void setUp() throws Exception {
         super.setUp();
 
@@ -59,6 +60,7 @@ public class PersonDirNameFinderTest extends TestCase {
         this.finder = new PersonDirNameFinder(paDao);
     }
 
+    @Override
     protected void tearDown() throws Exception {
         super.tearDown();
     }

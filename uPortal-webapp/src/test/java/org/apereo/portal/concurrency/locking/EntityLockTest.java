@@ -79,6 +79,7 @@ public class EntityLockTest extends TestCase {
         System.out.println("");
     }
 
+    @Override
     protected void setUp() {
         try {
             if (GROUP_CLASS == null) {
@@ -130,6 +131,7 @@ public class EntityLockTest extends TestCase {
         }
     }
 
+    @Override
     protected void tearDown() {
         try {
             // delete any remaining test locks.

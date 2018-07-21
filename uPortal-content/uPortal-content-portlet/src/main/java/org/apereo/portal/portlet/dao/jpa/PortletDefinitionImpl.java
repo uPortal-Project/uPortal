@@ -77,10 +77,9 @@ import org.springframework.util.StringUtils;
 @Entity
 @Table(name = "UP_PORTLET_DEF")
 @SequenceGenerator(
-    name = "UP_PORTLET_DEF_GEN",
-    sequenceName = "UP_PORTLET_DEF_SEQ",
-    allocationSize = 5
-)
+        name = "UP_PORTLET_DEF_GEN",
+        sequenceName = "UP_PORTLET_DEF_SEQ",
+        allocationSize = 5)
 @TableGenerator(name = "UP_PORTLET_DEF_GEN", pkColumnValue = "UP_PORTLET_DEF", allocationSize = 5)
 @NaturalIdCache(region = "org.apereo.portal.portlet.dao.jpa.PortletDefinitionImpl-NaturalId")
 @Cacheable
@@ -111,20 +110,18 @@ public class PortletDefinitionImpl implements IPortletDefinition {
      */
     @SuppressWarnings("unused")
     @OneToMany(
-        mappedBy = "portletDefinition",
-        targetEntity = PortletEntityImpl.class,
-        cascade = {CascadeType.ALL},
-        fetch = FetchType.LAZY,
-        orphanRemoval = true
-    )
+            mappedBy = "portletDefinition",
+            targetEntity = PortletEntityImpl.class,
+            cascade = {CascadeType.ALL},
+            fetch = FetchType.LAZY,
+            orphanRemoval = true)
     private Set<IPortletEntity> portletEntities = null;
 
     @OneToOne(
-        targetEntity = PortletPreferencesImpl.class,
-        cascade = {CascadeType.ALL},
-        fetch = FetchType.EAGER,
-        orphanRemoval = true
-    )
+            targetEntity = PortletPreferencesImpl.class,
+            cascade = {CascadeType.ALL},
+            fetch = FetchType.EAGER,
+            orphanRemoval = true)
     @JoinColumn(name = "PORTLET_PREFS_ID", nullable = false)
     @Fetch(FetchMode.JOIN)
     private final PortletPreferencesImpl portletPreferences;
@@ -175,11 +172,10 @@ public class PortletDefinitionImpl implements IPortletDefinition {
     private Integer resourceTimeout = null;
 
     @OneToMany(
-        targetEntity = PortletLifecycleEntryImpl.class,
-        cascade = CascadeType.ALL,
-        fetch = FetchType.EAGER,
-        orphanRemoval = true
-    )
+            targetEntity = PortletLifecycleEntryImpl.class,
+            cascade = CascadeType.ALL,
+            fetch = FetchType.EAGER,
+            orphanRemoval = true)
     @JoinColumn(name = "PORTLET_DEF_ID", nullable = false)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @Fetch(FetchMode.SELECT) // FM JOIN does BAD things to collections that support duplicates
@@ -191,11 +187,10 @@ public class PortletDefinitionImpl implements IPortletDefinition {
      * consumed by uPortal itself.
      */
     @OneToMany(
-        targetEntity = PortletDefinitionParameterImpl.class,
-        cascade = CascadeType.ALL,
-        fetch = FetchType.EAGER,
-        orphanRemoval = true
-    )
+            targetEntity = PortletDefinitionParameterImpl.class,
+            cascade = CascadeType.ALL,
+            fetch = FetchType.EAGER,
+            orphanRemoval = true)
     @JoinColumn(name = "PORTLET_DEF_ID", nullable = false)
     @MapKey(name = "name")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)

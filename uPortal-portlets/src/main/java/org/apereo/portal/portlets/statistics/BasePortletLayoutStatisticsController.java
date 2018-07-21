@@ -47,8 +47,10 @@ import org.springframework.web.portlet.ModelAndView;
 
 public abstract class BasePortletLayoutStatisticsController<F extends BasePortletLayoutReportForm>
         extends BaseStatisticsReportController<
-                PortletLayoutAggregation, PortletLayoutAggregationKey,
-                PortletLayoutAggregationDiscriminator, F> {
+                PortletLayoutAggregation,
+                PortletLayoutAggregationKey,
+                PortletLayoutAggregationDiscriminator,
+                F> {
 
     @Autowired protected PortletLayoutAggregationDao<PortletLayoutAggregation> portletLayoutDao;
 

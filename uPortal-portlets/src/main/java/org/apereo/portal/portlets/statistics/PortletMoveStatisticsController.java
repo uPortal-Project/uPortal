@@ -33,11 +33,13 @@ public class PortletMoveStatisticsController
     private static final String DATA_TABLE_RESOURCE_ID = "portletMoveData";
     private static final String REPORT_NAME = "portletMove.totals";
 
+    @Override
     @RenderMapping(value = "MAXIMIZED", params = "report=" + REPORT_NAME)
     public String getLoginView() throws TypeMismatchException {
         return super.getLoginView();
     }
 
+    @Override
     @ResourceMapping(DATA_TABLE_RESOURCE_ID)
     public ModelAndView renderPortletAddAggregationReport(PortletMoveReportForm form)
             throws TypeMismatchException {

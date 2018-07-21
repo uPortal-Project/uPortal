@@ -43,6 +43,7 @@ public final class PasswordCachingCasAssertionSecurityContextFactory
         return enabled;
     }
 
+    @Override
     public ISecurityContext getSecurityContext() {
         if (CommonUtils.isNotBlank(this.clearPassCasUrl)) {
             return new PasswordCachingCasAssertionSecurityContext(this.clearPassCasUrl);

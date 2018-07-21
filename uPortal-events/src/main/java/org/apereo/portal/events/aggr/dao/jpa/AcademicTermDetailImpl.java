@@ -43,15 +43,13 @@ import org.joda.time.ReadableInstant;
 @Entity
 @Table(name = "UP_ACADEMIC_TERM_DETAIL")
 @SequenceGenerator(
-    name = "UP_ACADEMIC_TERM_DETAIL_GEN",
-    sequenceName = "UP_ACADEMIC_TERM_DETAIL_SEQ",
-    allocationSize = 1
-)
+        name = "UP_ACADEMIC_TERM_DETAIL_GEN",
+        sequenceName = "UP_ACADEMIC_TERM_DETAIL_SEQ",
+        allocationSize = 1)
 @TableGenerator(
-    name = "UP_ACADEMIC_TERM_DETAIL_GEN",
-    pkColumnValue = "UP_ACADEMIC_TERM_DETAIL_PROP",
-    allocationSize = 1
-)
+        name = "UP_ACADEMIC_TERM_DETAIL_GEN",
+        pkColumnValue = "UP_ACADEMIC_TERM_DETAIL_PROP",
+        allocationSize = 1)
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class AcademicTermDetailImpl implements AcademicTermDetail, Serializable {

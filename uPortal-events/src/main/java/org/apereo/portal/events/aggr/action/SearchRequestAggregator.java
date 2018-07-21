@@ -31,7 +31,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 public class SearchRequestAggregator
         extends BaseIntervalAwarePortalEventAggregator<
-                PortletActionExecutionEvent, SearchRequestAggregationImpl,
+                PortletActionExecutionEvent,
+                SearchRequestAggregationImpl,
                 SearchRequestAggregationKey> {
     private static final String TARGET_FNAME = "search";
     private static final String TARGET_PARAM = "query";

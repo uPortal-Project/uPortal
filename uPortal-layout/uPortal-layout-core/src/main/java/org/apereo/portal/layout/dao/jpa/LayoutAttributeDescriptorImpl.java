@@ -38,15 +38,13 @@ import org.hibernate.annotations.FetchMode;
 @Entity
 @Table(name = "UP_SS_DESC_LAY_ATTR")
 @SequenceGenerator(
-    name = "UP_SS_DESC_LAY_ATTR_GEN",
-    sequenceName = "UP_SS_DESC_LAY_ATTR_SEQ",
-    allocationSize = 5
-)
+        name = "UP_SS_DESC_LAY_ATTR_GEN",
+        sequenceName = "UP_SS_DESC_LAY_ATTR_SEQ",
+        allocationSize = 5)
 @TableGenerator(
-    name = "UP_SS_DESC_LAY_ATTR_GEN",
-    pkColumnValue = "UP_SS_DESC_LAY_ATTR",
-    allocationSize = 5
-)
+        name = "UP_SS_DESC_LAY_ATTR_GEN",
+        pkColumnValue = "UP_SS_DESC_LAY_ATTR",
+        allocationSize = 5)
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class LayoutAttributeDescriptorImpl extends AbstractStylesheetDataImpl

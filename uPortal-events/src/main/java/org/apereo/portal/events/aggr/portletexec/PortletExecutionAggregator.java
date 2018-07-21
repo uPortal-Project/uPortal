@@ -37,7 +37,8 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 public class PortletExecutionAggregator
         extends BaseIntervalAwarePortalEventAggregator<
-                PortletExecutionEvent, PortletExecutionAggregationImpl,
+                PortletExecutionEvent,
+                PortletExecutionAggregationImpl,
                 PortletExecutionAggregationKey> {
     private static final String MAPPED_PORTLETS_CACHE_KEY =
             PortletExecutionAggregator.class.getName() + "_MAPPED_PORTLETS";

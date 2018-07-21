@@ -36,6 +36,7 @@ public class MockPortletWindowId implements IPortletWindowId {
     /* (non-Javadoc)
      * @see org.apache.pluto.PortletWindowID#getStringId()
      */
+    @Override
     public String getStringId() {
         return this.portletWindowId;
     }

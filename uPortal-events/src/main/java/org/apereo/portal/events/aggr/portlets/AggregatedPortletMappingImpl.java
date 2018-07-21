@@ -34,19 +34,16 @@ import org.hibernate.annotations.Type;
 @Entity
 @Table(name = "UP_AGGR_PORTLET_MAPPING")
 @SequenceGenerator(
-    name = "UP_AGGR_PORTLET_MAPPING_GEN",
-    sequenceName = "UP_AGGR_PORTLET_MAPPING_SEQ",
-    allocationSize = 10
-)
+        name = "UP_AGGR_PORTLET_MAPPING_GEN",
+        sequenceName = "UP_AGGR_PORTLET_MAPPING_SEQ",
+        allocationSize = 10)
 @TableGenerator(
-    name = "UP_AGGR_PORTLET_MAPPING_GEN",
-    pkColumnValue = "UP_AGGR_PORTLET_MAPPING_PROP",
-    allocationSize = 10
-)
+        name = "UP_AGGR_PORTLET_MAPPING_GEN",
+        pkColumnValue = "UP_AGGR_PORTLET_MAPPING_PROP",
+        allocationSize = 10)
 @Immutable
 @NaturalIdCache(
-    region = "org.apereo.portal.events.aggr.portlets.AggregatedPortletMappingImpl-NaturalId"
-)
+        region = "org.apereo.portal.events.aggr.portlets.AggregatedPortletMappingImpl-NaturalId")
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 public final class AggregatedPortletMappingImpl implements AggregatedPortletMapping, Serializable {

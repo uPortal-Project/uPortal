@@ -33,19 +33,18 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Entity
 @Table(name = "UP_PORTLET_LIFECYCLE")
 @SequenceGenerator(
-    name = "UP_PORTLET_LIFECYCLE_GEN",
-    sequenceName = "UP_PORTLET_LIFECYCLE_SEQ",
-    allocationSize = 5
-)
+        name = "UP_PORTLET_LIFECYCLE_GEN",
+        sequenceName = "UP_PORTLET_LIFECYCLE_SEQ",
+        allocationSize = 5)
 @TableGenerator(
-    name = "UP_PORTLET_LIFECYCLE_GEN",
-    pkColumnValue = "UP_PORTLET_LIFECYCLE",
-    allocationSize = 5
-)
+        name = "UP_PORTLET_LIFECYCLE_GEN",
+        pkColumnValue = "UP_PORTLET_LIFECYCLE",
+        allocationSize = 5)
 @Cacheable
 @Cache(
-    usage = CacheConcurrencyStrategy.READ_ONLY
-) // Should work, AFAIK, since these objects are immutable
+        usage =
+                CacheConcurrencyStrategy
+                        .READ_ONLY) // Should work, AFAIK, since these objects are immutable
 public class PortletLifecycleEntryImpl implements IPortletLifecycleEntry {
 
     private static final long serialVersionUID = 1L;

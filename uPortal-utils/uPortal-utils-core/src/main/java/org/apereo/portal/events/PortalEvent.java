@@ -34,11 +34,10 @@ import org.springframework.context.ApplicationEvent;
  * @since 2.6
  */
 @JsonAutoDetect(
-    getterVisibility = Visibility.NONE,
-    setterVisibility = Visibility.NONE,
-    isGetterVisibility = Visibility.NONE,
-    fieldVisibility = Visibility.ANY
-)
+        getterVisibility = Visibility.NONE,
+        setterVisibility = Visibility.NONE,
+        isGetterVisibility = Visibility.NONE,
+        fieldVisibility = Visibility.ANY)
 @JsonTypeInfo(use = Id.MINIMAL_CLASS)
 @JsonIgnoreProperties(value = "source")
 public abstract class PortalEvent extends ApplicationEvent {

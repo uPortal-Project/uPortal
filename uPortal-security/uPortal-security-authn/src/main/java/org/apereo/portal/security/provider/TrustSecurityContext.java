@@ -36,10 +36,12 @@ class TrustSecurityContext extends ChainingSecurityContext implements ISecurityC
 
     /* package-private */ TrustSecurityContext() {}
 
+    @Override
     public int getAuthType() {
         return this.TRUSTSECURITYAUTHTYPE;
     }
 
+    @Override
     public synchronized void authenticate() throws PortalSecurityException {
         this.isauth = true;
         if (this.myPrincipal.UID != null) {

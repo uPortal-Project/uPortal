@@ -14,6 +14,8 @@
  */
 package org.apereo.portal.utils;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -340,7 +342,8 @@ public class ResourceLoader {
         try {
             in =
                     new BufferedReader(
-                            new InputStreamReader(getResourceAsStream(requestingClass, resource)));
+                            new InputStreamReader(
+                                    getResourceAsStream(requestingClass, resource), UTF_8));
             sbText = new StringBuffer(1024);
             while ((line = in.readLine()) != null) sbText.append(line).append("\n");
         } finally {

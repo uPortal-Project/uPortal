@@ -44,15 +44,13 @@ import org.hibernate.annotations.NaturalId;
 @Entity
 @Table(name = "UP_EVENT_AGGR_CONF_GROUPS")
 @SequenceGenerator(
-    name = "UP_EVENT_AGGR_CONF_GROUPS_GEN",
-    sequenceName = "UP_EVENT_AGGR_CONF_GROUPS_SEQ",
-    allocationSize = 1
-)
+        name = "UP_EVENT_AGGR_CONF_GROUPS_GEN",
+        sequenceName = "UP_EVENT_AGGR_CONF_GROUPS_SEQ",
+        allocationSize = 1)
 @TableGenerator(
-    name = "UP_EVENT_AGGR_CONF_GROUPS_GEN",
-    pkColumnValue = "UP_EVENT_AGGR_CONF_GROUPS",
-    allocationSize = 1
-)
+        name = "UP_EVENT_AGGR_CONF_GROUPS_GEN",
+        pkColumnValue = "UP_EVENT_AGGR_CONF_GROUPS",
+        allocationSize = 1)
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class AggregatedGroupConfigImpl
@@ -76,20 +74,18 @@ public class AggregatedGroupConfigImpl
 
     @OneToMany(targetEntity = AggregatedGroupMappingImpl.class, fetch = FetchType.EAGER)
     @JoinTable(
-        name = "UP_EVENT_AGGR_CONF_GROUPS_INC",
-        joinColumns = @JoinColumn(name = "UP_EVENT_AGGR_CONF_GROUPS_ID"),
-        inverseJoinColumns = @JoinColumn(name = "GROUP_ID")
-    )
+            name = "UP_EVENT_AGGR_CONF_GROUPS_INC",
+            joinColumns = @JoinColumn(name = "UP_EVENT_AGGR_CONF_GROUPS_ID"),
+            inverseJoinColumns = @JoinColumn(name = "GROUP_ID"))
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @Fetch(FetchMode.JOIN)
     private final Set<AggregatedGroupMapping> includedGroups;
 
     @OneToMany(targetEntity = AggregatedGroupMappingImpl.class, fetch = FetchType.EAGER)
     @JoinTable(
-        name = "UP_EVENT_AGGR_CONF_GROUPS_EXC",
-        joinColumns = @JoinColumn(name = "UP_EVENT_AGGR_CONF_GROUPS_ID"),
-        inverseJoinColumns = @JoinColumn(name = "GROUP_ID")
-    )
+            name = "UP_EVENT_AGGR_CONF_GROUPS_EXC",
+            joinColumns = @JoinColumn(name = "UP_EVENT_AGGR_CONF_GROUPS_ID"),
+            inverseJoinColumns = @JoinColumn(name = "GROUP_ID"))
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @Fetch(FetchMode.JOIN)
     private final Set<AggregatedGroupMapping> excludedGroups;

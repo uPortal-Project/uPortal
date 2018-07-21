@@ -32,8 +32,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(
-    locations = "classpath:/org/apereo/portal/io/xml/importExportAggrEventTestContext.xml"
-)
+        locations = "classpath:/org/apereo/portal/io/xml/importExportAggrEventTestContext.xml")
 public class IdentityImportExportAggrEventsTest extends BaseAggrEventsJpaDaoTest {
     private static final TimeZoneTestUtils TIME_ZONE_TEST_UTILS = new TimeZoneTestUtils();
 

@@ -59,6 +59,7 @@ public class CasSecurityContextMock implements ISecurityContext, ICasSecurityCon
     /** Map from subcontext name to ISecurityContext value. */
     private Map subcontexts = new HashMap();
 
+    @Override
     public String getCasServiceToken(String target) throws CasProxyTicketAcquisitionException {
 
         // record the target
@@ -92,57 +93,69 @@ public class CasSecurityContextMock implements ISecurityContext, ICasSecurityCon
         }
     }
 
+    @Override
     public int getAuthType() {
         return ICasSecurityContext.CAS_AUTHTYPE;
     }
 
+    @Override
     public IPrincipal getPrincipalInstance() {
         // TODO Auto-generated method stub
         return null;
     }
 
+    @Override
     public IOpaqueCredentials getOpaqueCredentialsInstance() {
         // TODO Auto-generated method stub
         return null;
     }
 
+    @Override
     public void authenticate() throws PortalSecurityException {
         // TODO Auto-generated method stub
 
     }
 
+    @Override
     public IPrincipal getPrincipal() {
         // TODO Auto-generated method stub
         return null;
     }
 
+    @Override
     public IOpaqueCredentials getOpaqueCredentials() {
         // TODO Auto-generated method stub
         return null;
     }
 
+    @Override
     public IAdditionalDescriptor getAdditionalDescriptor() {
         // TODO Auto-generated method stub
         return null;
     }
 
+    @Override
     public boolean isAuthenticated() {
         return this.authenticated;
     }
 
+    @Override
     public ISecurityContext getSubContext(String ctx) throws PortalSecurityException {
         // TODO Auto-generated method stub
         return null;
     }
 
+    @Override
     public Enumeration getSubContexts() {
         return Collections.enumeration(this.subcontexts.values());
     }
 
+    @Override
     public Enumeration getSubContextNames() {
         return Collections.enumeration(this.subcontexts.keySet());
     }
 
+    @Override
     public void addSubContext(String name, ISecurityContext ctx) throws PortalSecurityException {
         this.subcontexts.put(name, ctx);
     }

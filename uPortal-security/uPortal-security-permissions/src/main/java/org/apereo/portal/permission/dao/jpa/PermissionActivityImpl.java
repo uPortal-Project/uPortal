@@ -39,15 +39,13 @@ import org.hibernate.annotations.Type;
 @Entity
 @Table(name = "UP_PERMISSION_ACTIVITY")
 @SequenceGenerator(
-    name = "UP_PERMISSION_ACTIVITY_GEN",
-    sequenceName = "UP_PERMISSION_ACTIVITY_SEQ",
-    allocationSize = 5
-)
+        name = "UP_PERMISSION_ACTIVITY_GEN",
+        sequenceName = "UP_PERMISSION_ACTIVITY_SEQ",
+        allocationSize = 5)
 @TableGenerator(
-    name = "UP_PERMISSION_ACTIVITY_GEN",
-    pkColumnValue = "UP_PERMISSION_ACTIVITY",
-    allocationSize = 5
-)
+        name = "UP_PERMISSION_ACTIVITY_GEN",
+        pkColumnValue = "UP_PERMISSION_ACTIVITY",
+        allocationSize = 5)
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 class PermissionActivityImpl implements IPermissionActivity, Serializable {

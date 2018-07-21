@@ -61,10 +61,9 @@ public class PagsRESTController {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @RequestMapping(
-        value = "/v4-3/pags/{pagsGroupName}.json",
-        produces = {MediaType.APPLICATION_JSON_VALUE},
-        method = RequestMethod.GET
-    )
+            value = "/v4-3/pags/{pagsGroupName}.json",
+            produces = {MediaType.APPLICATION_JSON_VALUE},
+            method = RequestMethod.GET)
     public @ResponseBody String findPagsGroup(
             HttpServletRequest request,
             HttpServletResponse res,
@@ -92,10 +91,9 @@ public class PagsRESTController {
 
     // Parent group name is expected to be case sensitive.
     @RequestMapping(
-        value = "/v4-3/pags/{parentGroupName}.json",
-        produces = MediaType.APPLICATION_JSON_VALUE,
-        method = RequestMethod.POST
-    )
+            value = "/v4-3/pags/{parentGroupName}.json",
+            produces = MediaType.APPLICATION_JSON_VALUE,
+            method = RequestMethod.POST)
     public @ResponseBody String createPagsGroup(
             HttpServletRequest request,
             HttpServletResponse res,
@@ -168,10 +166,9 @@ public class PagsRESTController {
     }
 
     @RequestMapping(
-        value = "/v4-3/pags/{pagsGroupName}.json",
-        produces = MediaType.APPLICATION_JSON_VALUE,
-        method = RequestMethod.PUT
-    )
+            value = "/v4-3/pags/{pagsGroupName}.json",
+            produces = MediaType.APPLICATION_JSON_VALUE,
+            method = RequestMethod.PUT)
     public @ResponseBody String updatePagsGroup(
             HttpServletRequest req,
             HttpServletResponse res,
