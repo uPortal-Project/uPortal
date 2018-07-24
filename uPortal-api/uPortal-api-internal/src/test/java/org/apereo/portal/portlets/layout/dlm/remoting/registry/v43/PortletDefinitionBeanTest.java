@@ -283,7 +283,7 @@ public class PortletDefinitionBeanTest {
         return new MarketplacePortletDefinition(pdis, msis, pcris);
     }
 
-    class PortletDefinitionImplShell implements IPortletDefinition {
+    private static final class PortletDefinitionImplShell implements IPortletDefinition {
         String title;
         Long id;
         int typeId;
@@ -606,7 +606,7 @@ public class PortletDefinitionBeanTest {
         }
     }
 
-    class MarketplaceServiceImplShell implements IMarketplaceService {
+    private static final class MarketplaceServiceImplShell implements IMarketplaceService {
 
         @Override
         public ImmutableSet<MarketplaceEntry> browseableMarketplaceEntriesFor(
@@ -650,7 +650,8 @@ public class PortletDefinitionBeanTest {
         }
     }
 
-    class PortletCategoryRegistryImplShell implements IPortletCategoryRegistry {
+    private static final class PortletCategoryRegistryImplShell
+            implements IPortletCategoryRegistry {
 
         @Override
         public Set<PortletCategory> getAllChildCategories(PortletCategory parent) {
@@ -669,6 +670,11 @@ public class PortletDefinitionBeanTest {
 
         @Override
         public PortletCategory getPortletCategory(String portletCategoryId) {
+            return null;
+        }
+
+        @Override
+        public PortletCategory getPortletCategoryByName(String portletCategoryName) {
             return null;
         }
 

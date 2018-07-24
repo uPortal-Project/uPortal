@@ -53,6 +53,16 @@ public final class PortletCategoryBean implements Comparable<PortletCategoryBean
                 portlets != null ? portlets : EMPTY_PORTLETS);
     }
 
+    /** Creates a new bean based on the provided inputs. */
+    public static PortletCategoryBean create(
+            String id,
+            String name,
+            String description,
+            Set<PortletCategoryBean> subcategories,
+            Set<PortletDefinitionBean> portlets) {
+        return new PortletCategoryBean(id, name, description, subcategories, portlets);
+    }
+
     public String getId() {
         return this.id;
     }
@@ -104,13 +114,27 @@ public final class PortletCategoryBean implements Comparable<PortletCategoryBean
      */
 
     private PortletCategoryBean(
-            final PortletCategory category,
+            PortletCategory category,
             Set<PortletCategoryBean> subcategories,
             Set<PortletDefinitionBean> portlets) {
-        this.id = category.getId();
-        this.name = category.getName();
-        this.description = category.getDescription();
-        this.subcategories = new TreeSet<PortletCategoryBean>(subcategories);
-        this.portlets = new TreeSet<PortletDefinitionBean>(portlets);
+        this(
+                category.getId(),
+                category.getName(),
+                category.getDescription(),
+                subcategories,
+                portlets);
+    }
+
+    private PortletCategoryBean(
+            String id,
+            String name,
+            String description,
+            Set<PortletCategoryBean> subcategories,
+            Set<PortletDefinitionBean> portlets) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.subcategories = new TreeSet<>(subcategories);
+        this.portlets = new TreeSet<>(portlets);
     }
 }

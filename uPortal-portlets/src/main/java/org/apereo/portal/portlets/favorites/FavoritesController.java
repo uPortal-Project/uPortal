@@ -62,6 +62,8 @@ public class FavoritesController extends AbstractFavoritesController {
 
     @Autowired private IAuthorizationService authorizationService;
 
+    @Autowired private FavoritesUtils favoritesUtils;
+
     /**
      * Handles all Favorites portlet VIEW mode renders. Populates model with user's favorites and
      * selects a view to display those favorites.
@@ -101,11 +103,11 @@ public class FavoritesController extends AbstractFavoritesController {
         model.addAttribute("marketplaceFname", this.marketplaceFName);
 
         final List<IUserLayoutNodeDescription> collections =
-                FavoritesUtils.getFavoriteCollections(userLayout);
+                favoritesUtils.getFavoriteCollections(userLayout);
         model.addAttribute("collections", collections);
 
         final List<IUserLayoutNodeDescription> rawFavorites =
-                FavoritesUtils.getFavoritePortlets(userLayout);
+                favoritesUtils.getFavoritePortletLayoutNodes(userLayout);
 
         /*
          * Filter the collection by SUBSCRIBE permission.

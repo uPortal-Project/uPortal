@@ -44,12 +44,20 @@ public interface IPortletCategoryRegistry {
     Set<IPortletDefinition> getAllChildPortlets(PortletCategory parent);
 
     /**
-     * Gets an existing portlet category.
+     * Obtains an existing portlet category by its Id.
      *
-     * @param portletCategoryId the id of the category to get
-     * @return portletCategory the portlet category
+     * @param portletCategoryId The id of the category to get
+     * @return portletCategory The portlet category
      */
     PortletCategory getPortletCategory(String portletCategoryId);
+
+    /**
+     * Obtains an existing portlet category by its name.
+     *
+     * @param portletCategoryName The name of the category to get
+     * @return portletCategory The portlet category
+     */
+    PortletCategory getPortletCategoryByName(String portletCategoryName);
 
     /**
      * Gets all child portlet categories for a parent category.

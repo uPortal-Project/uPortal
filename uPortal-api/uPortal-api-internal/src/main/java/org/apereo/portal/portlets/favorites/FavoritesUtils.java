@@ -19,23 +19,34 @@ import static org.apereo.portal.layout.node.IUserLayoutFolderDescription.FAVORIT
 import static org.apereo.portal.layout.node.IUserLayoutNodeDescription.LayoutNodeType.FOLDER;
 
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import org.apache.commons.lang3.Validate;
 import org.apereo.portal.layout.IUserLayout;
+import org.apereo.portal.layout.node.IUserLayoutChannelDescription;
 import org.apereo.portal.layout.node.IUserLayoutFolderDescription;
 import org.apereo.portal.layout.node.IUserLayoutNodeDescription;
+import org.apereo.portal.portlet.om.IPortletDefinition;
+import org.apereo.portal.portlet.om.IPortletDefinitionId;
+import org.apereo.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  * Utility class supporting Favorites portlet.
  *
  * @since 4.1
  */
-public final class FavoritesUtils {
+@Component("favoritesUtils")
+public class FavoritesUtils {
 
-    protected static Logger logger = LoggerFactory.getLogger(FavoritesUtils.class);
+    @Autowired private IPortletDefinitionRegistry portletRegistry;
+
+    private Logger logger = LoggerFactory.getLogger(getClass());
 
     /**
      * Get the favorite collections of portlets (i.e. suitable folders ("tabs") in the user layout.)
@@ -44,7 +55,7 @@ public final class FavoritesUtils {
      * @param userLayout
      * @return non-null List of IUserLayoutDescriptions describing the tabs
      */
-    public static List<IUserLayoutNodeDescription> getFavoriteCollections(IUserLayout userLayout) {
+    public List<IUserLayoutNodeDescription> getFavoriteCollections(IUserLayout userLayout) {
 
         if (null == userLayout) {
             throw new IllegalArgumentException(
@@ -123,7 +134,7 @@ public final class FavoritesUtils {
         return results;
     }
 
-    public static String getFavoriteTabNodeId(IUserLayout userLayout) {
+    public String getFavoriteTabNodeId(IUserLayout userLayout) {
 
         @SuppressWarnings("unchecked")
         Enumeration<String> childrenOfRoot = userLayout.getChildIds(userLayout.getRootId());
@@ -165,7 +176,7 @@ public final class FavoritesUtils {
      * @return
      */
     @SuppressWarnings("unchecked")
-    public static List<IUserLayoutNodeDescription> getFavoritePortlets(IUserLayout userLayout) {
+    public List<IUserLayoutNodeDescription> getFavoritePortletLayoutNodes(IUserLayout userLayout) {
 
         logger.trace("Extracting favorite portlets from layout [{}]", userLayout);
 
@@ -173,8 +184,8 @@ public final class FavoritesUtils {
 
         Enumeration<String> childrenOfRoot = userLayout.getChildIds(userLayout.getRootId());
 
-        while (childrenOfRoot
-                .hasMoreElements()) { // loop over folders that might be the favorites folder
+        // loop over folders that might be the favorites folder
+        while (childrenOfRoot.hasMoreElements()) {
             String nodeId = childrenOfRoot.nextElement();
 
             try {
@@ -224,6 +235,40 @@ public final class FavoritesUtils {
         return favorites;
     }
 
+    public Set<IPortletDefinition> getFavoritePortletDefinitions(IUserLayout layout) {
+        final Set<IPortletDefinition> rslt = new HashSet<>();
+        final List<IUserLayoutNodeDescription> favoriteLayoutNodes =
+                getFavoritePortletLayoutNodes(layout);
+        favoriteLayoutNodes
+                .stream()
+                .forEach(
+                        node -> {
+                            if (IUserLayoutChannelDescription.class.isInstance(node)) {
+                                final IUserLayoutChannelDescription chanDef =
+                                        (IUserLayoutChannelDescription) node;
+                                // Not the most usable API...
+                                final IPortletDefinitionId pId =
+                                        new IPortletDefinitionId() {
+                                            @Override
+                                            public long getLongId() {
+                                                return Long.valueOf(chanDef.getChannelPublishId());
+                                            }
+
+                                            @Override
+                                            public String getStringId() {
+                                                return chanDef.getChannelPublishId();
+                                            }
+                                        };
+                                final IPortletDefinition pDef =
+                                        portletRegistry.getPortletDefinition(pId);
+                                if (pDef != null) {
+                                    rslt.add(pDef);
+                                }
+                            }
+                        });
+        return rslt;
+    }
+
     /**
      * True if the layout contains any favorited collections or favorited individual portlets, false
      * otherwise.
@@ -233,12 +278,12 @@ public final class FavoritesUtils {
      *     otherwise
      * @throws IllegalArgumentException if layout is null
      */
-    public static boolean hasAnyFavorites(IUserLayout layout) {
+    public boolean hasAnyFavorites(IUserLayout layout) {
         Validate.notNull(layout, "Cannot determine whether a null layout contains favorites.");
 
         // (premature) performance optimization: short circuit returns true if nonzero favorite
         // portlets
-        return (!getFavoritePortlets(layout).isEmpty()
+        return (!getFavoritePortletLayoutNodes(layout).isEmpty()
                 || !getFavoriteCollections(layout).isEmpty());
     }
 }

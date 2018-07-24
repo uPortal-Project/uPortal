@@ -110,6 +110,39 @@ public final class PortletDefinitionBean
     }
 
     @Override
+    public String toString() {
+        return "PortletDefinitionBean{"
+                + "id="
+                + id
+                + ", fname='"
+                + fname
+                + '\''
+                + ", title='"
+                + title
+                + '\''
+                + ", name='"
+                + name
+                + '\''
+                + ", description='"
+                + description
+                + '\''
+                + ", state='"
+                + state
+                + '\''
+                + ", typeId="
+                + typeId
+                + ", averageRating="
+                + averageRating
+                + ", ratingsCount="
+                + ratingsCount
+                + ", parameters="
+                + parameters
+                + ", keywords="
+                + keywords
+                + '}';
+    }
+
+    @Override
     public boolean equals(Object object) {
         if (object == this) {
             return true;

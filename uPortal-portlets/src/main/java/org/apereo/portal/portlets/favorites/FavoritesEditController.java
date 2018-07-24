@@ -25,6 +25,7 @@ import org.apereo.portal.layout.IUserLayout;
 import org.apereo.portal.layout.IUserLayoutManager;
 import org.apereo.portal.layout.node.IUserLayoutNodeDescription;
 import org.apereo.portal.user.IUserInstance;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,6 +41,8 @@ import org.springframework.web.portlet.bind.annotation.RenderMapping;
 @Controller
 @RequestMapping("EDIT")
 public class FavoritesEditController extends AbstractFavoritesController {
+
+    @Autowired private FavoritesUtils favoritesUtils;
 
     /**
      * Handles all Favorites portlet EDIT mode renders. Populates model with user's favorites and
@@ -85,10 +88,11 @@ public class FavoritesEditController extends AbstractFavoritesController {
         model.addAttribute("marketplaceFname", this.marketplaceFName);
 
         List<IUserLayoutNodeDescription> collections =
-                FavoritesUtils.getFavoriteCollections(userLayout);
+                favoritesUtils.getFavoriteCollections(userLayout);
         model.addAttribute("collections", collections);
 
-        List<IUserLayoutNodeDescription> favorites = FavoritesUtils.getFavoritePortlets(userLayout);
+        List<IUserLayoutNodeDescription> favorites =
+                favoritesUtils.getFavoritePortletLayoutNodes(userLayout);
         model.addAttribute("favorites", favorites);
 
         model.addAttribute("successMessageCode", renderRequest.getParameter("successMessageCode"));
@@ -158,7 +162,7 @@ public class FavoritesEditController extends AbstractFavoritesController {
                     IUserLayout updatedLayout = layoutManager.getUserLayout();
 
                     // if removed last favorite, return to VIEW mode
-                    if (!FavoritesUtils.hasAnyFavorites(updatedLayout)) {
+                    if (!favoritesUtils.hasAnyFavorites(updatedLayout)) {
                         response.setPortletMode(PortletMode.VIEW);
                     }
 

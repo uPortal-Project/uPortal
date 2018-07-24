@@ -123,6 +123,7 @@ public class PortletMarketplaceController {
     private IMarketplaceRatingDao marketplaceRatingDAO;
     private IUserInstanceManager userInstanceManager;
     private IUserLayoutStore userLayoutStore;
+    private FavoritesUtils favoritesUtils;
 
     @Autowired
     public void setMarketplaceService(IMarketplaceService marketplaceService) {
@@ -167,6 +168,11 @@ public class PortletMarketplaceController {
     @Autowired
     public void setUserLayoutStore(final IUserLayoutStore userLayoutStore) {
         this.userLayoutStore = userLayoutStore;
+    }
+
+    @Autowired
+    public void setFavoritesUtils(FavoritesUtils favoritesUtils) {
+        this.favoritesUtils = favoritesUtils;
     }
 
     /**
@@ -436,7 +442,8 @@ public class PortletMarketplaceController {
     }
 
     private boolean isPortletFavorited(IUserLayout layout, String fname) {
-        List<IUserLayoutNodeDescription> favorites = FavoritesUtils.getFavoritePortlets(layout);
+        List<IUserLayoutNodeDescription> favorites =
+                favoritesUtils.getFavoritePortletLayoutNodes(layout);
         for (IUserLayoutNodeDescription favorite : favorites) {
             if (favorite instanceof UserLayoutChannelDescription) {
                 String channelId = ((UserLayoutChannelDescription) favorite).getChannelPublishId();

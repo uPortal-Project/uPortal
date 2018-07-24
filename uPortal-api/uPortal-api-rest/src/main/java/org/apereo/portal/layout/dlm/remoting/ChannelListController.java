@@ -23,10 +23,14 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import javax.servlet.http.HttpServletRequest;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.portal.EntityIdentifier;
+import org.apereo.portal.UserPreferencesManager;
 import org.apereo.portal.i18n.ILocaleStore;
 import org.apereo.portal.i18n.LocaleManager;
 import org.apereo.portal.i18n.LocaleManagerFactory;
+import org.apereo.portal.layout.IUserLayout;
+import org.apereo.portal.layout.IUserLayoutManager;
 import org.apereo.portal.layout.dlm.remoting.registry.ChannelBean;
 import org.apereo.portal.layout.dlm.remoting.registry.ChannelCategoryBean;
 import org.apereo.portal.layout.dlm.remoting.registry.v43.PortletCategoryBean;
@@ -38,12 +42,17 @@ import org.apereo.portal.portlet.om.IPortletDefinitionParameter;
 import org.apereo.portal.portlet.om.PortletCategory;
 import org.apereo.portal.portlet.registry.IPortletCategoryRegistry;
 import org.apereo.portal.portlet.registry.IPortletDefinitionRegistry;
+import org.apereo.portal.portlets.favorites.FavoritesUtils;
 import org.apereo.portal.security.IAuthorizationPrincipal;
 import org.apereo.portal.security.IAuthorizationService;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.IPersonManager;
 import org.apereo.portal.services.AuthorizationServiceFacade;
 import org.apereo.portal.spring.spel.IPortalSpELService;
+import org.apereo.portal.user.IUserInstance;
+import org.apereo.portal.user.IUserInstanceManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
@@ -66,6 +75,7 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class ChannelListController {
 
+    private static final String CATEGORIES_MAP_KEY = "categories";
     private static final String UNCATEGORIZED = "uncategorized";
     private static final String UNCATEGORIZED_DESC = "uncategorized.description";
     private static final String ICON_URL_PARAMETER_NAME = "iconUrl";
@@ -81,10 +91,14 @@ public class ChannelListController {
     private LocaleManagerFactory localeManagerFactory;
     private MessageSource messageSource;
     private IAuthorizationService authorizationService;
+    private IUserInstanceManager userInstanceManager;
+    private FavoritesUtils favoritesUtils;
 
     @Autowired private IMarketplaceService marketplaceService;
 
-    /** @param portletDefinitionRegistry */
+    private Logger logger = LoggerFactory.getLogger(getClass());
+
+    /** @param portletDefinitionRegistry The portlet registry bean */
     @Autowired
     public void setPortletDefinitionRegistry(IPortletDefinitionRegistry portletDefinitionRegistry) {
         this.portletDefinitionRegistry = portletDefinitionRegistry;
@@ -130,6 +144,16 @@ public class ChannelListController {
         this.authorizationService = authorizationService;
     }
 
+    @Autowired
+    public void setUserInstanceManager(IUserInstanceManager userInstanceManager) {
+        this.userInstanceManager = userInstanceManager;
+    }
+
+    @Autowired
+    public void setFavoritesUtils(FavoritesUtils favoritesUtils) {
+        this.favoritesUtils = favoritesUtils;
+    }
+
     /**
      * Original, pre-4.3 version of this API. Always returns the entire contents of the Portlet
      * Registry, including uncategorized portlets, to which the user has access. Access is based on
@@ -141,7 +165,7 @@ public class ChannelListController {
             HttpServletRequest request,
             @RequestParam(value = "type", required = false) String type) {
 
-        if (type != null && TYPE_MANAGE.equals(type)) {
+        if (TYPE_MANAGE.equals(type)) {
             throw new UnsupportedOperationException(
                     "Moved to PortletRESTController under /api/portlets.json");
         }
@@ -169,22 +193,46 @@ public class ChannelListController {
     public ModelAndView getPortletRegistry(
             WebRequest webRequest,
             HttpServletRequest request,
-            @RequestParam(value = "categoryId", required = false) String categoryId) {
+            @RequestParam(value = "categoryId", required = false) String categoryId,
+            @RequestParam(value = "category", required = false) String categoryName,
+            @RequestParam(value = "favorite", required = false) String favorite) {
 
-        final PortletCategory rootCategory =
-                categoryId != null
-                        ? portletCategoryRegistry.getPortletCategory(categoryId)
-                        : portletCategoryRegistry.getTopLevelPortletCategory();
-        final boolean includeUncategorized =
-                categoryId != null
-                        ? false // Don't provide uncategorized portlets
-                        : true; // if a specific category was requested
+        boolean includeUncategorizedPortlets = true; // default
+
+        /*
+         * Pick a category for the basis of the response
+         */
+        PortletCategory rootCategory =
+                portletCategoryRegistry.getTopLevelPortletCategory(); // default
+        if (StringUtils.isNotBlank(categoryId)) {
+            // Callers can specify a category by Id...
+            rootCategory = portletCategoryRegistry.getPortletCategory(categoryId);
+            includeUncategorizedPortlets = false;
+        } else if (StringUtils.isNotBlank(categoryName)) {
+            // or by name...
+            rootCategory = portletCategoryRegistry.getPortletCategoryByName(categoryName);
+            includeUncategorizedPortlets = false;
+        }
+
+        if (rootCategory == null) {
+            // A specific category was requested, but there was a problem obtaining it
+            throw new IllegalArgumentException("Requested category not found");
+        }
 
         final IPerson user = personManager.getPerson(request);
-        final Map<String, SortedSet<?>> registry =
-                getRegistry43(webRequest, user, rootCategory, includeUncategorized);
+        Map<String, SortedSet<PortletCategoryBean>> rslt =
+                getRegistry43(webRequest, user, rootCategory, includeUncategorizedPortlets);
 
-        return new ModelAndView("jsonView", "registry", registry);
+        /*
+         * The 'favorite=true' option means return only portlets that this user has favorited.
+         */
+        if (Boolean.valueOf(favorite)) {
+            logger.debug(
+                    "Filtering out non-favorite portlets because 'favorite=true' was included in the querystring");
+            rslt = filterRegistryFavoritesOnly(rslt, request);
+        }
+
+        return new ModelAndView("jsonView", "registry", rslt);
     }
 
     /*
@@ -202,12 +250,11 @@ public class ChannelListController {
          * tracking which ones are uncategorized.
          */
         Set<IPortletDefinition> portletsNotYetCategorized =
-                new HashSet<IPortletDefinition>(
-                        portletDefinitionRegistry.getAllPortletDefinitions());
+                new HashSet<>(portletDefinitionRegistry.getAllPortletDefinitions());
 
         // construct a new channel registry
-        Map<String, SortedSet<?>> rslt = new TreeMap<String, SortedSet<?>>();
-        SortedSet<ChannelCategoryBean> categories = new TreeSet<ChannelCategoryBean>();
+        Map<String, SortedSet<?>> rslt = new TreeMap<>();
+        SortedSet<ChannelCategoryBean> categories = new TreeSet<>();
 
         // add the root category and all its children to the registry
         final PortletCategory rootCategory = portletCategoryRegistry.getTopLevelPortletCategory();
@@ -248,7 +295,7 @@ public class ChannelListController {
         // Add even if no portlets in category
         categories.add(uncategorizedPortletsBean);
 
-        rslt.put("categories", categories);
+        rslt.put(CATEGORIES_MAP_KEY, categories);
         return rslt;
     }
 
@@ -328,7 +375,7 @@ public class ChannelListController {
      * Gathers and organizes the response based on the specified rootCategory and the permissions of
      * the specified user.
      */
-    private Map<String, SortedSet<?>> getRegistry43(
+    private Map<String, SortedSet<PortletCategoryBean>> getRegistry43(
             WebRequest request,
             IPerson user,
             PortletCategory rootCategory,
@@ -341,15 +388,13 @@ public class ChannelListController {
          */
         Set<IPortletDefinition> portletsNotYetCategorized =
                 includeUncategorized
-                        ? new HashSet<IPortletDefinition>(
-                                portletDefinitionRegistry.getAllPortletDefinitions())
-                        : new HashSet<
-                                IPortletDefinition>(); // Not necessary to fetch them if we're not
+                        ? new HashSet<>(portletDefinitionRegistry.getAllPortletDefinitions())
+                        : new HashSet<>(); // Not necessary to fetch them if we're not
         // tracking them
 
         // construct a new channel registry
-        Map<String, SortedSet<?>> rslt = new TreeMap<String, SortedSet<?>>();
-        SortedSet<PortletCategoryBean> categories = new TreeSet<PortletCategoryBean>();
+        Map<String, SortedSet<PortletCategoryBean>> rslt = new TreeMap<>();
+        SortedSet<PortletCategoryBean> categories = new TreeSet<>();
 
         // add the root category and all its children to the registry
         final Locale locale = getUserLocale(user);
@@ -396,7 +441,7 @@ public class ChannelListController {
             categories.add(unc);
         }
 
-        rslt.put("categories", categories);
+        rslt.put(CATEGORIES_MAP_KEY, categories);
         return rslt;
     }
 
@@ -527,5 +572,93 @@ public class ChannelListController {
                 throw new UnsupportedOperationException();
             }
         };
+    }
+
+    private Map<String, SortedSet<PortletCategoryBean>> filterRegistryFavoritesOnly(
+            Map<String, SortedSet<PortletCategoryBean>> registry, HttpServletRequest request) {
+
+        /*
+         * It's not fantastic, but the storage strategy for favorites in the layout XML doc.  We
+         * have to use it to know which portlets are favorites.
+         */
+        final IUserInstance ui = userInstanceManager.getUserInstance(request);
+        final UserPreferencesManager upm = (UserPreferencesManager) ui.getPreferencesManager();
+        final IUserLayoutManager ulm = upm.getUserLayoutManager();
+        final IUserLayout layout = ulm.getUserLayout();
+        final Set<IPortletDefinition> favoritePortlets =
+                favoritesUtils.getFavoritePortletDefinitions(layout);
+
+        logger.debug(
+                "Found the following favoritePortlets for user='{}':  {}",
+                request.getRemoteUser(),
+                favoritePortlets);
+
+        final Set<PortletCategoryBean> inpt = registry.get(CATEGORIES_MAP_KEY);
+        final SortedSet<PortletCategoryBean> otpt = new TreeSet<>();
+        inpt.forEach(
+                categoryIn -> {
+                    final PortletCategoryBean categoryOut =
+                            filterCategoryFavoritesOnly(categoryIn, favoritePortlets);
+                    if (categoryOut != null) {
+                        otpt.add(categoryOut);
+                    }
+                });
+
+        final Map<String, SortedSet<PortletCategoryBean>> rslt = new TreeMap<>();
+        rslt.put(CATEGORIES_MAP_KEY, otpt);
+        return rslt;
+    }
+
+    /**
+     * Returns the filtered category, or <code>null</code> if there is no content remaining in the
+     * category.
+     */
+    private PortletCategoryBean filterCategoryFavoritesOnly(
+            PortletCategoryBean category, Set<IPortletDefinition> favoritePortlets) {
+
+        // Subcategories
+        final Set<PortletCategoryBean> subcategories = new HashSet<>();
+        category.getSubcategories()
+                .forEach(
+                        sub -> {
+                            final PortletCategoryBean filteredBean =
+                                    filterCategoryFavoritesOnly(sub, favoritePortlets);
+                            if (filteredBean != null) {
+                                subcategories.add(filteredBean);
+                            }
+                        });
+
+        // Portlets
+        final Set<PortletDefinitionBean> portlets = new HashSet<>();
+        category.getPortlets()
+                .forEach(
+                        child -> {
+                            if (isPortletAFavorite(child, favoritePortlets)) {
+                                logger.debug(
+                                        "Including portlet '{}' because it is a favorite:  {}",
+                                        child.getFname());
+                                portlets.add(child);
+                            } else {
+                                logger.debug(
+                                        "Skipping portlet '{}' because it IS NOT a favorite:  {}",
+                                        child.getFname());
+                            }
+                        });
+
+        return !subcategories.isEmpty() || !portlets.isEmpty()
+                ? PortletCategoryBean.create(
+                        category.getId(),
+                        category.getName(),
+                        category.getDescription(),
+                        subcategories,
+                        portlets)
+                : null;
+    }
+
+    private boolean isPortletAFavorite(
+            PortletDefinitionBean portlet, Set<IPortletDefinition> favoritePortlets) {
+        return favoritePortlets
+                .stream()
+                .anyMatch(pDef -> pDef.getFName().equals(portlet.getFname()));
     }
 }
