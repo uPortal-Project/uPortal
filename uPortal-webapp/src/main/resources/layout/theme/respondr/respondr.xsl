@@ -656,6 +656,7 @@
           <xsl:attribute name="class">
             <xsl:text>up dashboard portal fl-theme-mist</xsl:text>
             <xsl:if test="$PORTAL_VIEW='focused'"> up-focused</xsl:if>
+            <xsl:if test="$AUTHENTICATED!='true'"> up-guest</xsl:if>
           </xsl:attribute>
           <xsl:call-template name="skipnav" />
           <div class="row-offcanvas">
@@ -798,7 +799,11 @@
             <xsl:copy-of select="."/>
         </xsl:for-each>
     </head>
-    <body class="up dashboard portal fl-theme-mist detachedHeader">
+    <body>
+        <xsl:attribute name="class">
+            <xsl:text>up dashboard portal fl-theme-mist detachedHeader</xsl:text>
+            <xsl:if test="$AUTHENTICATED!='true'"> up-guest</xsl:if>
+        </xsl:attribute>
         <xsl:call-template name="skipnav" />
         <div id="wrapper">
             <xsl:call-template name="region.hidden-top" />
