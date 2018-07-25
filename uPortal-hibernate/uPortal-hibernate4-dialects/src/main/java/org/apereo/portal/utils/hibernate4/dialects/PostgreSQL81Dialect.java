@@ -12,11 +12,11 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apereo.portal.utils;
+package org.apereo.portal.utils.hibernate4.dialects;
 
 import org.hibernate.dialect.PostgreSQLDialect;
 
-/** */
+/** Specific Dialect for PostgreSQL 8.1 */
 public class PostgreSQL81Dialect extends PostgreSQLDialect {
     @Override
     public boolean supportsIfExistsBeforeTableName() {

@@ -16,6 +16,8 @@ package org.apereo.portal.utils;
 
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
+import org.apereo.portal.utils.hibernate4.dialects.MySQL5InnoDBCompressedDialect;
+import org.apereo.portal.utils.hibernate4.dialects.PostgreSQL81Dialect;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.dialect.SQLServer2005Dialect;
 import org.hibernate.service.jdbc.dialect.internal.AbstractDialectResolver;

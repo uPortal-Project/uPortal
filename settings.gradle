@@ -52,5 +52,8 @@ include 'uPortal-soffit:uPortal-soffit-core'
 include 'uPortal-soffit:uPortal-soffit-connector'
 include 'uPortal-soffit:uPortal-soffit-renderer'
 
+include 'uPortal-hibernate:uPortal-hibernate3-dialects'
+include 'uPortal-hibernate:uPortal-hibernate4-dialects'
+
 include 'uPortal-utils:uPortal-utils-core'
 include 'uPortal-utils:uPortal-utils-jmx'
