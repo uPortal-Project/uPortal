@@ -50,6 +50,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.Index;
 import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.Type;
 import org.jasig.portal.layout.om.IStylesheetDescriptor;
@@ -128,6 +129,7 @@ class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences {
     private final Map<String, String> parameters = new LinkedHashMap<String, String>(0);
 
     @OneToMany(targetEntity = LayoutNodeAttributesImpl.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @Index(name = "IDX_SS_USER_PREF_ID")
     @MapKey(name="nodeId")
     @JoinColumn(name = "SS_USER_PREF_ID", nullable=false)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
