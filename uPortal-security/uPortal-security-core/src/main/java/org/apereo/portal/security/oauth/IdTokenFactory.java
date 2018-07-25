@@ -302,7 +302,7 @@ public class IdTokenFactory {
                 .map(
                         attributeName ->
                                 new CustomClaim(
-                                        attributeName, person.getAttributeValue(attributeName)))
+                                        attributeName, person.getAttributeValues(attributeName)))
                 .filter(claim -> claim.getClaimValue() != null)
                 .forEach(claim -> builder.claim(claim.getClaimName(), claim.getClaimValue()));
 
