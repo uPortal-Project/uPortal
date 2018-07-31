@@ -694,51 +694,40 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
         // folders
         // and maintain the consistency regarding the membership.
         for (String groupKey : newGroups.keySet()) {
-
-            boolean stop = false;
-            boolean isAFolder = false;
             String currentPath = groupKey;
-            while (!stop) {
-                final String containingFolder = getContainingFolder(currentPath);
 
-                if (isAFolder) {
-                    // The group that represents the grouper folder is created.
-                    final IEntityGroup folderGroup =
-                            new EntityTestingGroupImpl(currentPath, IPerson.class);
-                    folderGroup.setCreatorID("System");
-                    folderGroup.setName(currentPath);
-                    folderGroup.setDescription("Grouper Folder");
-                    newFolders.put(currentPath, folderGroup);
-                } else {
-                    // The first entry is the group itself.
-                    isAFolder = true;
+            // The group that represents the grouper folder is created.
+            final IEntityGroup folderGroup = new EntityTestingGroupImpl(currentPath, IPerson.class);
+            folderGroup.setCreatorID("System");
+            folderGroup.setName(currentPath);
+            folderGroup.setDescription("Grouper Folder");
+            newFolders.put(currentPath, folderGroup);
+
+            String containingFolder = this.getContainingFolder(currentPath);
+            while (!containingFolder.isEmpty()) {
+                // Adds the containing folder as a parent of this current path
+                List<String> parentsList = newParents.get(currentPath);
+                if (parentsList == null) {
+                    parentsList = Collections.synchronizedList(new ArrayList<String>());
+                    newParents.put(currentPath, parentsList);
                 }
+                parentsList.add(containingFolder);
 
-                if (StringUtils.isEmpty(containingFolder)) {
-                    // We reached the root folder.
-                    stop = true;
-                } else {
-
-                    // Adds the containing folder as a parent of this current path
-                    List<String> parentsList = newParents.get(currentPath);
-                    if (parentsList == null) {
-                        parentsList = Collections.synchronizedList(new ArrayList<String>());
-                        newParents.put(currentPath, parentsList);
-                    }
-                    parentsList.add(containingFolder);
-
-                    // Adds the current path as a child of the containing folder.
-                    List<String> childrenList = newChildren.get(containingFolder);
-                    if (childrenList == null) {
-                        childrenList = Collections.synchronizedList(new ArrayList<String>());
-                        newChildren.put(containingFolder, childrenList);
-                    }
-                    childrenList.add(currentPath);
-
-                    // The remaining prefix of the group has already been processed.
-                    stop = newFolders.containsKey(containingFolder);
-                    currentPath = containingFolder;
+                // Adds the current path as a child of the containing folder.
+                List<String> childrenList = newChildren.get(containingFolder);
+                if (childrenList == null) {
+                    childrenList = Collections.synchronizedList(new ArrayList<String>());
+                    newChildren.put(containingFolder, childrenList);
                 }
+                childrenList.add(currentPath);
+
+                // The remaining prefix of the group has already been processed.
+                if (newFolders.containsKey(containingFolder)) {
+                    break;
+                }
+                currentPath = containingFolder;
+
+                containingFolder = this.getContainingFolder(currentPath);
             }
         }
 
