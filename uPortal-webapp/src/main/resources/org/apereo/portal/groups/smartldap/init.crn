@@ -18,67 +18,132 @@
     under the License.
 
 -->
-<ldap-search 
-        context-source="${ldapContext}" 
+<with-attribute key="FOLDERS" value="${groovy([:])}">
+    <ldap-search
+        context-source="${ldapContext}"
         base-dn="${baseGroupDn}"
-        filter="${filter}" 
-        scope="${groovy(javax.naming.directory.SearchControls.SUBTREE_SCOPE)}" 
-        attributes-mapper="${attributesMapper}" 
+        filter="${filter}"
+        scope="${groovy(javax.naming.directory.SearchControls.SUBTREE_SCOPE)}"
+        attributes-mapper="${attributesMapper}"
         attribute-name="record"
-	>
+        >
+        <groovy>
+            <script>
+                import org.apereo.portal.groups.smartldap.LdapRecord;
+
+                def req = ScriptAttributes.REQUEST;
+
+                // First we do a little post-processing to detect and remove
+                // circular references.  These may be permitted by the LDAP server,
+                // but they are EXTREMELY TOXIC to GaP.
+                def chain = req.hasAttribute('groupChain') ? req.getAttribute('groupChain') : [];
+                record = smartLdapGroupStore.detectAndEliminateGroupReferences(record, chain);
+                ScriptAttributes.RESPONSE.setAttribute('record', record);
+                def newChain = [];
+                newChain.addAll(chain);
+                newChain.push(record.getGroup().getLocalKey());
+                ScriptAttributes.RESPONSE.setAttribute('groupChain', newChain);
+
+                // Next transform 'resolveDn' into 'resolveDnList' if the first is
+                // present but not the later.  'resolveDn' came before 'resolveDnList,'
+                // and older configs might still be using it;  this code should only
+                // trigger on the first pass.
+                if (req.hasAttribute('resolveDn') &amp;&amp; !req.hasAttribute('resolveDnList')) {
+                    def resolveDnList = [];
+                    resolveDnList.add(resolveDn);
+                    ScriptAttributes.RESPONSE.setAttribute('resolveDnList', resolveDnList);
+                }
+
+                // Finally attempt to add this one to the collection of records.  The
+                // 'isNew' flag indicates whether we have seen this group before;
+                // if we have, there's no need to follow its tree of decendents.
+                boolean isNew = !GROUPS.contains(record);
+                ScriptAttributes.RESPONSE.setAttribute('isNew', isNew);
+                if (isNew) {
+
+                // ESUP Modifications
+                //
+                //    The children are processed in order to
+                //    	- extract the idpath of the groups from their dn
+                //    	- remove the entries that are not groups (eg users).
+
+                def newChildren=[];
+                if (req.hasAttribute('childGroupKeyRegex')) {
+                    def pattern = req.hasAttribute('pattern') ? req.getAttribute('pattern') : java.util.regex.Pattern.compile(ScriptAttributes.REQUEST.getAttribute("childGroupKeyRegex"));
+                    ScriptAttributes.RESPONSE.setAttribute('pattern', pattern);
+                        for (String child : record.getKeysOfChildren()) {
+                            def matcher = pattern.matcher(child);
+                            if (matcher.matches()) {
+                                newChildren.add(matcher.group(1));
+                            }
+                        }
+                        record = new LdapRecord(record.getGroup(), newChildren);
+                    }
+                    GROUPS.add(record);
+
+                    //   Parses the group names in order to handle the Grouper folders.
+
+                    String current = record.getGroup().getName();
+                    int sepPos;
+                    boolean stop = false;
+                    boolean isGroup = true;
+                    while ((sepPos=current.lastIndexOf(':')) > 0 &amp;&amp; ! stop) {
+                        String previous = current;
+                        current = current.substring(0, sepPos);
+
+                         if (FOLDERS.containsKey(current)) {
+                            stop = true;
+                         } else {
+                            FOLDERS.put(current,[]);
+                         }
+
+                         groups = FOLDERS.get(current);
+                         if (isGroup) {
+                             groups.add(record.getGroup().getLocalKey());
+                         } else {
+                             groups.add(previous);
+                         }
+                         isGroup = false;
+                    }
+                }
+            </script>
+            <subtasks>
+                <log level="debug" logger-name="org.apereo.portal.groups.smartldap.init" >SmartLdap adding record for group:  ${groovy(record.getGroup().getName())}</log>
+                <if test="${groovy(isNew &amp;&amp; resolveMemberGroups)}">
+                    <for-each items="${resolveDnList}" attribute-name="resolveDn">
+                        <!-- Be sure we don't waste a lot of time with unnecessary queries -->
+                        <if test="${groovy(smartLdapGroupStore.hasUndiscoveredChildrenWithinDn(record, resolveDn, GROUPS))}">
+                            <with>
+                                <attribute key="baseDn">${resolveDn}</attribute>
+                                <attribute key="filter">(&amp;${baseFilter}(${memberOfAttributeName}=${groovy(record.getGroup().getLocalKey())}))</attribute>
+                                <subtasks>
+                                    <groovy>
+                                        <!-- Count the queries as they occur for reporting purposes -->
+                                        <script>queryCounter.increment()</script>
+                                    </groovy>
+                                    <crn location="init.crn"/>
+                                </subtasks>
+                            </with>
+                        </if>
+                    </for-each>
+                </if>
+            </subtasks>
+        </groovy>
+    </ldap-search>
+    
+    <!--
+        Add the folders in the search result.
+    -->
     <groovy>
         <script>
-            import org.apereo.portal.groups.smartldap.LdapRecord;
-            
-            def req = ScriptAttributes.REQUEST;
-        
-            // First we do a little post-processing to detect and remove 
-            // circular references.  These may be permitted by the LDAP server, 
-            // but they are EXTREMELY TOXIC to GaP.
-            def chain = req.hasAttribute('groupChain') ? req.getAttribute('groupChain') : [];
-            record = smartLdapGroupStore.detectAndEliminateGroupReferences(record, chain);
-            ScriptAttributes.RESPONSE.setAttribute('record', record);
-            def newChain = [];
-            newChain.addAll(chain);
-            newChain.push(record.getGroup().getLocalKey());
-            ScriptAttributes.RESPONSE.setAttribute('groupChain', newChain);
-            
-            // Next transform 'resolveDn' into 'resolveDnList' if the first is 
-            // present but not the later.  'resolveDn' came before 'resolveDnList,' 
-            // and older configs might still be using it;  this code should only 
-            // trigger on the first pass.
-            if (req.hasAttribute('resolveDn') &amp;&amp; !req.hasAttribute('resolveDnList')) {
-                def resolveDnList = [];
-                resolveDnList.add(resolveDn);
-                ScriptAttributes.RESPONSE.setAttribute('resolveDnList', resolveDnList);
+            for (String key : FOLDERS.keySet()) {
+                org.apereo.portal.groups.IEntityGroup g = new org.apereo.portal.groups.EntityTestingGroupImpl(key, org.apereo.portal.security.IPerson.class);
+                g.setCreatorID("System");
+                g.setName(key);
+                g.setDescription("Group associated to a folder in grouper.");
+                GROUPS.add(new org.apereo.portal.groups.smartldap.LdapRecord(g, FOLDERS.get(key)));
             }
-        
-            // Finally attempt to add this one to the collection of records.  The 
-            // 'isNew' flag indicates whether we have seen this group before;  
-            // if we have, there's no need to follow its tree of decendents. 
-            boolean isNew = GROUPS.add(record);
-            ScriptAttributes.RESPONSE.setAttribute('isNew', isNew);
         </script>
-        <subtasks>
-            <log level="debug" logger-name="org.apereo.portal.groups.smartldap.init" >SmartLdap adding record for group:  ${groovy(record.getGroup().getName())}</log>
-            <if test="${groovy(isNew &amp;&amp; resolveMemberGroups)}">
-                <for-each items="${resolveDnList}" attribute-name="resolveDn">
-                    <!-- Be sure we don't waste a lot of time with unnecessary queries --> 
-                    <if test="${groovy(smartLdapGroupStore.hasUndiscoveredChildrenWithinDn(record, resolveDn, GROUPS))}">
-                        <with>
-                            <attribute key="baseDn">${resolveDn}</attribute>
-                            <attribute key="filter">(&amp;${baseFilter}(${memberOfAttributeName}=${groovy(record.getGroup().getLocalKey())}))</attribute>
-                            <subtasks>
-                                <groovy>
-                                    <!-- Count the queries as they occur for reporting purposes -->
-                                    <script>queryCounter.increment()</script>
-                                </groovy>
-                                <crn location="init.crn"/>
-                            </subtasks>
-                        </with>
-                    </if>
-                </for-each>
-            </if>
-        </subtasks>
     </groovy>
-</ldap-search>
+
+</with-attribute>

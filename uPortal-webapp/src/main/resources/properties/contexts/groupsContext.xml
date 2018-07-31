@@ -60,6 +60,27 @@
         <property name="baseGroupDn" value="OU=Membership,DC=unicon,DC=net"/>
 
         <!--
+         | This parameter is used to extract the id path of the groups
+         | from their dn. The id path is expected to be catched from the first group
+         | of the regex.
+         +-->
+        <property name="childGroupKeyRegex" value="cn=(.*),OU=Membership,DC=unicon,DC=net"/>
+
+        <!--
+         | This parameter is used to avoid performance problems with large people's members groups
+         | on groups manager. Default value is false, so comment to disable.
+         +-->
+        <!--
+        <property name="displayPersonMembers" value="true" />
+        -->
+        <!--
+         | Group Tree Separator is used to set the char that is used to compose
+         | Group Id in grouper that represent each tree paths.
+         | Override it if the default value ":" doesn't match
+        -->
+        <!--<property name="groupTreeSeparator" value=":" />-->
+
+        <!--
          | LDAP query string that will be passed to the search.
          +-->
         <property name="filter" value="(objectCategory=group)"/>

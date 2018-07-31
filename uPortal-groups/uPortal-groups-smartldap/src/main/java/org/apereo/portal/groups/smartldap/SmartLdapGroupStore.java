@@ -30,8 +30,10 @@ import org.apache.commons.lang3.concurrent.LazyInitializer;
 import org.apereo.portal.EntityIdentifier;
 import org.apereo.portal.groups.ComponentGroupServiceDescriptor;
 import org.apereo.portal.groups.EntityGroupImpl;
+import org.apereo.portal.groups.EntityImpl;
 import org.apereo.portal.groups.EntityTestingGroupImpl;
 import org.apereo.portal.groups.GroupsException;
+import org.apereo.portal.groups.IEntity;
 import org.apereo.portal.groups.IEntityGroup;
 import org.apereo.portal.groups.IEntityGroupStore;
 import org.apereo.portal.groups.IEntityGroupStoreFactory;
@@ -63,6 +65,18 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
 
     public void setBaseGroupDn(String baseGroupDn) {
         this.baseGroupDn = baseGroupDn;
+    }
+
+    private String childGroupKeyRegex = null;
+
+    public void setChildGroupKeyRegex(String childGroupKeyRegex) {
+        this.childGroupKeyRegex = childGroupKeyRegex;
+    }
+
+    private String groupTreeSeparator = ":";
+
+    public void setGroupTreeSeparator(String groupTreeSeparator) {
+        this.groupTreeSeparator = groupTreeSeparator;
     }
 
     private String filter = "(objectCategory=group)"; // default
@@ -124,6 +138,19 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
     private IPersonAttributeDao personAttributeDao;
 
     private final Logger log = LoggerFactory.getLogger(getClass());
+
+    /**
+     * Set it to true to show peoples that are members of groups. Warning must be tested before
+     * production if set to true !
+     */
+    private boolean displayPersonMembers = false;
+
+    public void setDisplayPersonMembers(boolean displayPersonMembers) {
+        this.displayPersonMembers = displayPersonMembers;
+    }
+
+    private Map<String, IEntity> persons =
+            Collections.synchronizedMap(new HashMap<String, IEntity>());
 
     /*
      * Indexed Collections.
@@ -274,7 +301,19 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
         log.debug("Invoking findEntitiesForGroup() for group:  {}", group.getLocalKey());
 
         // We only deal w/ group-group relationships here...
-        return findMemberGroups(group);
+        // return findMemberGroups(group);
+
+        List<IEntity> rslt = new ArrayList<IEntity>();
+        if (displayPersonMembers) {
+            List<String> list = groupsTree.getPersonChildren().get(group.getLocalKey());
+            if (list != null) {
+                // should only reach this code if its a SmartLdap managed group...
+                for (String s : list) {
+                    rslt.add(persons.get(s));
+                }
+            }
+        }
+        return rslt.iterator();
     }
 
     @Override
@@ -342,6 +381,13 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
         return rslt.iterator();
     }
 
+    /**
+     * Return an UnsupportedOperationException !
+     *
+     * @param entityType
+     * @return
+     * @throws GroupsException
+     */
     @Override
     public IEntityGroup newInstance(Class entityType) throws GroupsException {
         log.warn("Unsupported method accessed:  SmartLdapGroupStore.newInstance");
@@ -583,6 +629,11 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
         lastTreeRefreshTime = System.currentTimeMillis();
     }
 
+    private String getContainingFolder(final String groupName) {
+        final int index = groupName.lastIndexOf(this.groupTreeSeparator);
+        return (index > 0) ? groupName.substring(0, index) : "";
+    }
+
     private GroupsTree buildGroupsTree() {
 
         long timestamp = System.currentTimeMillis();
@@ -596,6 +647,10 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
                 Collections.synchronizedMap(new HashMap<String, List<String>>());
         Map<String, List<String>> newKeysByUpperCaseName =
                 Collections.synchronizedMap(new HashMap<String, List<String>>());
+        Map<String, List<String>> newChildrenPersons =
+                Collections.synchronizedMap(new HashMap<String, List<String>>());
+        Map<String, IEntityGroup> newFolders =
+                Collections.synchronizedMap(new HashMap<String, IEntityGroup>());
 
         // Gather IEntityGroup objects from LDAP...
         RuntimeRequestResponse req = new RuntimeRequestResponse();
@@ -612,6 +667,11 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
         req.setAttribute("baseGroupDn", baseGroupDn);
         if (ldapContext == null) {
             throw new IllegalStateException("ldapContext property not set");
+        }
+        req.setAttribute("childGroupKeyRegex", childGroupKeyRegex);
+        req.setAttribute("groupTreeSeparator", groupTreeSeparator);
+        if (groupTreeSeparator == null) {
+            throw new IllegalStateException("groupTreeSeparator property not set");
         }
         req.setAttribute("ldapContext", ldapContext);
         req.setAttribute("resolveMemberGroups", resolveMemberGroups);
@@ -630,6 +690,50 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
             newGroups.put(g.getLocalKey(), g);
         }
 
+        // Process each group in order to create the groups that will represent the Grouper's
+        // folders
+        // and maintain the consistency regarding the membership.
+        for (String groupKey : newGroups.keySet()) {
+            String currentPath = groupKey;
+
+            // The group that represents the grouper folder is created.
+            final IEntityGroup folderGroup = new EntityTestingGroupImpl(currentPath, IPerson.class);
+            folderGroup.setCreatorID("System");
+            folderGroup.setName(currentPath);
+            folderGroup.setDescription("Grouper Folder");
+            newFolders.put(currentPath, folderGroup);
+
+            String containingFolder = this.getContainingFolder(currentPath);
+            while (!containingFolder.isEmpty()) {
+                // Adds the containing folder as a parent of this current path
+                List<String> parentsList = newParents.get(currentPath);
+                if (parentsList == null) {
+                    parentsList = Collections.synchronizedList(new ArrayList<String>());
+                    newParents.put(currentPath, parentsList);
+                }
+                parentsList.add(containingFolder);
+
+                // Adds the current path as a child of the containing folder.
+                List<String> childrenList = newChildren.get(containingFolder);
+                if (childrenList == null) {
+                    childrenList = Collections.synchronizedList(new ArrayList<String>());
+                    newChildren.put(containingFolder, childrenList);
+                }
+                childrenList.add(currentPath);
+
+                // The remaining prefix of the group has already been processed.
+                if (newFolders.containsKey(containingFolder)) {
+                    break;
+                }
+                currentPath = containingFolder;
+
+                containingFolder = this.getContainingFolder(currentPath);
+            }
+        }
+
+        // The new groups are added to the original ones.
+        newGroups.putAll(newFolders);
+
         // Do a second loop to build local indeces...
         for (LdapRecord r : set) {
 
@@ -641,30 +745,47 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
                 // NB:  We're only interested in relationships between
                 // objects in the main catalog (i.e. newGroups);
                 // discard everything else...
-                if (!newGroups.containsKey(childKey)) {
-                    break;
+                // childkey case of DN
+                final int keyStart = childKey.indexOf('=');
+                final int keyEnd = childKey.indexOf(',');
+                if (keyStart >= 0 && keyEnd >= 0 && keyStart < keyEnd) {
+                    childKey = childKey.substring(keyStart + 1, keyEnd);
                 }
+                if (newGroups.containsKey(childKey)) {
 
-                List<String> parentsList = newParents.get(childKey);
-                if (parentsList == null) {
-                    // first parent for this child...
-                    parentsList = Collections.synchronizedList(new ArrayList<String>());
-                    newParents.put(childKey, parentsList);
+                    List<String> parentsList = newParents.get(childKey);
+                    if (parentsList == null) {
+                        // first parent for this child...
+                        parentsList = Collections.synchronizedList(new ArrayList<String>());
+                        newParents.put(childKey, parentsList);
+                    }
+                    parentsList.add(g.getLocalKey());
                 }
-                parentsList.add(g.getLocalKey());
             }
 
-            // newChildren...
+            // new_children...
             List<String> childrenList = Collections.synchronizedList(new ArrayList<String>());
+            List<String> childrenPersonList = Collections.synchronizedList(new ArrayList<String>());
             for (String childKey : r.getKeysOfChildren()) {
                 // NB:  We're only interested in relationships between
                 // objects in the main catalog (i.e. newGroups);
                 // discard everything else...
+                final int keyStart = childKey.indexOf('=');
+                final int keyEnd = childKey.indexOf(',');
+                if (keyStart >= 0 && keyEnd >= 0 && keyStart < keyEnd) {
+                    childKey = childKey.substring(keyStart + 1, keyEnd);
+                }
                 if (newGroups.containsKey(childKey)) {
                     childrenList.add(childKey);
+                } else if (displayPersonMembers) {
+                    childrenPersonList.add(childKey);
+                    if (!persons.containsKey(childKey)) {
+                        persons.put(childKey, new EntityImpl(childKey, IPerson.class));
+                    }
                 }
             }
             newChildren.put(g.getLocalKey(), childrenList);
+            newChildrenPersons.put(g.getLocalKey(), childrenPersonList);
 
             // newKeysByUpperCaseName...
             List<String> groupsWithMyName = newKeysByUpperCaseName.get(g.getName().toUpperCase());
@@ -771,7 +892,8 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
             log.trace(sbuilder.toString());
         }
 
-        return new GroupsTree(newGroups, newParents, newChildren, newKeysByUpperCaseName);
+        return new GroupsTree(
+                newGroups, newParents, newChildren, newChildrenPersons, newKeysByUpperCaseName);
     }
 
     /*
@@ -807,6 +929,7 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
         private final Map<String, IEntityGroup> groups;
         private final Map<String, List<String>> parents;
         private final Map<String, List<String>> children;
+        private final Map<String, List<String>> personChildren;
         private final Map<String, List<String>> keysByUpperCaseName;
 
         /*
@@ -817,6 +940,7 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
                 Map<String, IEntityGroup> groups,
                 Map<String, List<String>> parents,
                 Map<String, List<String>> children,
+                Map<String, List<String>> personChildren,
                 Map<String, List<String>> keysByUpperCaseName) {
 
             // Assertions.
@@ -832,6 +956,10 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
                 String msg = "Argument 'children' cannot be null.";
                 throw new IllegalArgumentException(msg);
             }
+            if (personChildren == null) {
+                String msg = "Argument 'personChildren' cannot be null.";
+                throw new IllegalArgumentException(msg);
+            }
             if (keysByUpperCaseName == null) {
                 String msg = "Argument 'keysByUpperCaseName' cannot be null.";
                 throw new IllegalArgumentException(msg);
@@ -841,6 +969,7 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
             this.groups = groups;
             this.parents = parents;
             this.children = children;
+            this.personChildren = personChildren;
             this.keysByUpperCaseName = keysByUpperCaseName;
         }
 
@@ -854,6 +983,10 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
 
         public Map<String, List<String>> getChildren() {
             return children;
+        }
+
+        public Map<String, List<String>> getPersonChildren() {
+            return personChildren;
         }
 
         public Map<String, List<String>> getKeysByUpperCaseName() {
