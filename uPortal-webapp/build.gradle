@@ -69,6 +69,7 @@ dependencies {
 
     webjars "org.webjars.npm:bootstrap:${bootstrapVersion}"
     webjars "org.webjars.npm:jstree:${jstreeVersion}"
+    webjars "org.webjars.npm:webcomponents__webcomponentsjs:${webComponentPolyfillVersion}"
 }
 
 node {
