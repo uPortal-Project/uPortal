@@ -9,7 +9,7 @@ dependencies {
     compile project(':uPortal-api:uPortal-api-internal')
     compile project(':uPortal-io:uPortal-io-types')
 
-    compile "javax.mail:mail:${javaxMailVersion}"
+    compile "javax.mail:javax.mail-api:${javaxMailVersion}"
 
     compileOnly "org.hibernate:hibernate-jpamodelgen:${hibernateJpamodelgenVersion}" // Required for javac -s
     compileOnly "${servletApiDependency}"
