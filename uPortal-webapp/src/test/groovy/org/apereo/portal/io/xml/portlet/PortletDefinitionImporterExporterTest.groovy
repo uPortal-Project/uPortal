@@ -25,7 +25,7 @@ import org.apereo.portal.groups.ICompositeGroupServiceFactory
 import org.apereo.portal.groups.IEntity
 import org.apereo.portal.groups.IEntityGroup
 import org.apereo.portal.io.xml.portlettype.ExternalPermissionDefinition
-import org.apereo.portal.mock.portlet.om.MockPortletDefinitionId;
+import org.apereo.portal.mock.portlet.om.MockPortletDefinitionId
 import org.apereo.portal.portlet.dao.IPortletDefinitionDao
 import org.apereo.portal.portlet.dao.jpa.PortletDefinitionImpl
 import org.apereo.portal.portlet.dao.jpa.PortletTypeImpl
@@ -38,7 +38,7 @@ import org.apereo.portal.security.IPermission
 import org.apereo.portal.security.IUpdatingPermissionManager
 import org.apereo.portal.utils.AbstractBeanLocator
 import org.apereo.portal.spring.locator.AuthorizationServiceLocator
-import org.apereo.portal.xml.PortletDescriptor;
+import org.apereo.portal.xml.PortletDescriptor
 import spock.lang.Ignore
 import spock.lang.Specification
 import spock.lang.Subject
@@ -50,17 +50,17 @@ import java.lang.reflect.Proxy
 /**
  */
 public class PortletDefinitionImporterExporterTest extends Specification {
-    private static ICompositeGroupService staticGroupService;
-    private static AuthorizationServiceInvocationHandler authServiceInvocationHandler = new AuthorizationServiceInvocationHandler();
-    private static IAuthorizationService proxyAuthorizationService;
+    private static ICompositeGroupService staticGroupService
+    private static AuthorizationServiceInvocationHandler authServiceInvocationHandler = new AuthorizationServiceInvocationHandler()
+    private static IAuthorizationService proxyAuthorizationService
 
-    private IPortletTypeRegistry typeRegistry = Mock();
-    private IPortletDefinitionDao definitionDao = Mock();
-    private IPortletCategoryRegistry categoryRegistry = Mock();
-    private ICompositeGroupService compositeGroupService = Mock();
-    private IEntity portletDefEntity = Mock();
-    private IAuthorizationService authorizationService = Mock();
-    private IUpdatingPermissionManager updatingPermissionManager = Mock();
+    private IPortletTypeRegistry typeRegistry = Mock()
+    private IPortletDefinitionDao definitionDao = Mock()
+    private IPortletCategoryRegistry categoryRegistry = Mock()
+    private ICompositeGroupService compositeGroupService = Mock()
+    private IEntity portletDefEntity = Mock()
+    private IAuthorizationService authorizationService = Mock()
+    private IUpdatingPermissionManager updatingPermissionManager = Mock()
     private Date testClassStart = new Date(System.currentTimeMillis() - 1000); // A second prior to now
     private Date futureTime = new Date(testClassStart.getTime() + 1000 * 60 * 60 * 24)
 
@@ -69,7 +69,7 @@ public class PortletDefinitionImporterExporterTest extends Specification {
         portletTypeRegistry: typeRegistry,
         portletDefinitionDao: definitionDao,
         portletCategoryRegistry: categoryRegistry
-    );
+    )
 
 
     def setupSpec() {
@@ -78,24 +78,24 @@ public class PortletDefinitionImporterExporterTest extends Specification {
         // service, this will get in the way (or get broken).  For now, it does
         // not cause conflicts on other tests.  Long term, need to convert
         // GroupService to a spring bean, but I think that may be quite involved.
-        def groupServiceConfig = GroupServiceConfiguration.getConfiguration();
-        def attrs = groupServiceConfig.getAttributes();
-        attrs.put('compositeFactory', MockCompositeGroupServiceFactory.class.getName());
+        def groupServiceConfig = GroupServiceConfiguration.getConfiguration()
+        def attrs = groupServiceConfig.getAttributes()
+        attrs.put('compositeFactory', MockCompositeGroupServiceFactory.class.getName())
 
         // hack around the static AuthorizationService methods...
         proxyAuthorizationService = Proxy.newProxyInstance(
             getClass().getClassLoader(),
             (Class[])[ IAuthorizationService.class ].toArray(),
             authServiceInvocationHandler
-        );
+        )
 
         def locator = new AbstractBeanLocator<IAuthorizationService>(proxyAuthorizationService, IAuthorizationService.class) {
             @Override
             protected void setLocator(AbstractBeanLocator<IAuthorizationService> locator) {}
             @Override
-            protected AbstractBeanLocator<IAuthorizationService> getLocator() { return null };
-        };
-        new AuthorizationServiceLocator(proxyAuthorizationService).setLocator(locator);
+            protected AbstractBeanLocator<IAuthorizationService> getLocator() { return null }
+        }
+        new AuthorizationServiceLocator(proxyAuthorizationService).setLocator(locator)
     }
 
 
@@ -103,10 +103,10 @@ public class PortletDefinitionImporterExporterTest extends Specification {
         // point the static var at the composite service object so that the
         // guts of the GroupService can be mocked (since GroupService can't be
         // directly mocked.
-        staticGroupService = compositeGroupService;
+        staticGroupService = compositeGroupService
 
         // hack to mock the guts of the AuthorizationService
-        authServiceInvocationHandler.service = authorizationService;
+        authServiceInvocationHandler.service = authorizationService
     }
 
     // Verifies a date is after the test started and at or before now
@@ -120,8 +120,8 @@ public class PortletDefinitionImporterExporterTest extends Specification {
     @Ignore
     def 'should support importing simple portlets'() {
         given:
-            def portletType = new PortletTypeImpl('Portlet', 'CpdUri');
-            def portletDef = null;
+            def portletType = new PortletTypeImpl('Portlet', 'CpdUri')
+            def portletDef = null
 
         and: 'I setup a sample portlet definition'
             def input = new ExternalPortletDefinition(
@@ -130,19 +130,19 @@ public class PortletDefinitionImporterExporterTest extends Specification {
                 fname: 'test-new',
                 desc: 'desc',
                 type: 'Portlet',
-                portletDescriptor: new PortletDescriptor(webAppName: "test", portletName: "test", isFramework: false),
+                portletDescriptor: new PortletDescriptor(webAppName: 'test', portletName: 'test', isFramework: false),
                 categories: []
-            );
+            )
 
         when: 'I import the portlet'
-            importer.importData(input);
+            importer.importData(input)
 
         then: 'I see that the appropriate interactions were called'
-            1 * typeRegistry.getPortletType('Portlet') >> portletType;
+            1 * typeRegistry.getPortletType('Portlet') >> portletType
 
             2 * definitionDao.getPortletDefinitionByFname(_) >> { return portletDef; }
             1 * definitionDao.savePortletDefinition(_) >> { IPortletDefinition pd ->
-                pd.portletDefinitionId = new MockPortletDefinitionId(100l);
+                pd.portletDefinitionId = new MockPortletDefinitionId(100l)
                 assert pd.getName() == 'test'
                 assert pd.getTitle() == 'title'
                 assert pd.getFName() == 'test-new'
@@ -155,26 +155,26 @@ public class PortletDefinitionImporterExporterTest extends Specification {
                 assert pd.getPublisherId() == 0 // During testing System user = 0
                 assert pd.getExpirationDate() == null
                 assert pd.getExpirerId() < 1
-                portletDef = pd;
-                return portletDef;
-            };
-            1 * compositeGroupService.getEntity(_, _, _) >> portletDefEntity;
+                portletDef = pd
+                return portletDef
+            }
+            1 * compositeGroupService.getEntity(_, _, _) >> portletDefEntity
 
             0 * portletDefEntity.getAncestorGroups() >> [];  // should only be called for existing portlet definitions, not new ones
 
-            1 * authorizationService.newUpdatingPermissionManager(_) >> updatingPermissionManager;
+            1 * authorizationService.newUpdatingPermissionManager(_) >> updatingPermissionManager
             0 * updatingPermissionManager.getPermissions(ExternalPermissionDefinition.SUBSCRIBE.getActivity(), _) >> [];  // should only be called for existing portlet definitions, not new ones
             0 * updatingPermissionManager.removePermissions(_); // should only be called for existing portlet definitions, not new ones
             1 * updatingPermissionManager.addPermissions({ IPermission[] permArray ->
-                return permArray.size() == 0;
-            });
+                return permArray.size() == 0
+            })
     }
 
     @Ignore
     def 'should support importing portlets with lifecycle but bad future dates'() {
         given:
-        def portletType = new PortletTypeImpl('Portlet', 'CpdUri');
-        def portletDef = null;
+        def portletType = new PortletTypeImpl('Portlet', 'CpdUri')
+        def portletDef = null
 
         and: 'I setup a sample portlet definition'
         def input = new ExternalPortletDefinition(
@@ -183,7 +183,7 @@ public class PortletDefinitionImporterExporterTest extends Specification {
                 fname: 'test-new',
                 desc: 'desc',
                 type: 'Portlet',
-                portletDescriptor: new PortletDescriptor(webAppName: "test", portletName: "test", isFramework: false),
+                portletDescriptor: new PortletDescriptor(webAppName: 'test', portletName: 'test', isFramework: false),
                 lifecycle: new Lifecycle(
                         // Test with bad future date for approved and published to insure the dates aer set to reasonable
                         // value (around current date/time)
@@ -198,17 +198,17 @@ public class PortletDefinitionImporterExporterTest extends Specification {
                         )
                 ),
                 categories: []
-        );
+        )
 
         when: 'I import the portlet'
-        importer.importData(input);
+        importer.importData(input)
 
         then: 'I see that the appropriate interactions were called'
-        1 * typeRegistry.getPortletType('Portlet') >> portletType;
+        1 * typeRegistry.getPortletType('Portlet') >> portletType
 
         2 * definitionDao.getPortletDefinitionByFname(_) >> { return portletDef; }
         1 * definitionDao.savePortletDefinition(_) >> { IPortletDefinition pd ->
-            pd.portletDefinitionId = new MockPortletDefinitionId(100l);
+            pd.portletDefinitionId = new MockPortletDefinitionId(100l)
             assert pd.getName() == 'test'
             assert pd.getTitle() == 'title'
             assert pd.getFName() == 'test-new'
@@ -221,26 +221,26 @@ public class PortletDefinitionImporterExporterTest extends Specification {
             assert pd.getPublisherId() == 0 // During testing System user = 0
             assert pd.getExpirationDate() == futureTime
             assert pd.getExpirerId() == 0  // During testing System user = 0
-            portletDef = pd;
-            return portletDef;
-        };
-        1 * compositeGroupService.getEntity(_, _, _) >> portletDefEntity;
+            portletDef = pd
+            return portletDef
+        }
+        1 * compositeGroupService.getEntity(_, _, _) >> portletDefEntity
 
         0 * portletDefEntity.getAncestorGroups() >> [];  // should only be called for existing portlet definitions, not new ones
 
-        1 * authorizationService.newUpdatingPermissionManager(_) >> updatingPermissionManager;
+        1 * authorizationService.newUpdatingPermissionManager(_) >> updatingPermissionManager
         0 * updatingPermissionManager.getPermissions(ExternalPermissionDefinition.SUBSCRIBE.getActivity(), _) >> [];  // should only be called for existing portlet definitions, not new ones
         0 * updatingPermissionManager.removePermissions(_);  // should only be called for existing portlet definitions, not new ones
         1 * updatingPermissionManager.addPermissions({ IPermission[] permArray ->
-            return permArray.size() == 0;
-        });
+            return permArray.size() == 0
+        })
     }
 
     @Ignore
     def 'should support importing portlets with created lifecycle'() {
         given:
-        def portletType = new PortletTypeImpl('Portlet', 'CpdUri');
-        def portletDef = null;
+        def portletType = new PortletTypeImpl('Portlet', 'CpdUri')
+        def portletDef = null
 
         and: 'I setup a sample portlet definition'
         def input = new ExternalPortletDefinition(
@@ -249,22 +249,22 @@ public class PortletDefinitionImporterExporterTest extends Specification {
                 fname: 'test-new',
                 desc: 'desc',
                 type: 'Portlet',
-                portletDescriptor: new PortletDescriptor(webAppName: "test", portletName: "test", isFramework: false),
+                portletDescriptor: new PortletDescriptor(webAppName: 'test', portletName: 'test', isFramework: false),
                 lifecycle: new Lifecycle(
                         // No properties specified; e.g. created
                 ),
                 categories: []
-        );
+        )
 
         when: 'I import the portlet'
-        importer.importData(input);
+        importer.importData(input)
 
         then: 'I see that the appropriate interactions were called'
-        1 * typeRegistry.getPortletType('Portlet') >> portletType;
+        1 * typeRegistry.getPortletType('Portlet') >> portletType
 
         2 * definitionDao.getPortletDefinitionByFname(_) >> { return portletDef; }
         1 * definitionDao.savePortletDefinition(_) >> { IPortletDefinition pd ->
-            pd.portletDefinitionId = new MockPortletDefinitionId(100l);
+            pd.portletDefinitionId = new MockPortletDefinitionId(100l)
             assert pd.getName() == 'test'
             assert pd.getTitle() == 'title'
             assert pd.getFName() == 'test-new'
@@ -276,26 +276,26 @@ public class PortletDefinitionImporterExporterTest extends Specification {
             assert pd.getPublisherId() < 1
             assert pd.getExpirationDate() == null
             assert pd.getExpirerId() < 1
-            portletDef = pd;
-            return portletDef;
-        };
-        1 * compositeGroupService.getEntity(_, _, _) >> portletDefEntity;
+            portletDef = pd
+            return portletDef
+        }
+        1 * compositeGroupService.getEntity(_, _, _) >> portletDefEntity
 
         0 * portletDefEntity.getAncestorGroups() >> [];  // should only be called for existing portlet definitions, not new ones
 
-        1 * authorizationService.newUpdatingPermissionManager(_) >> updatingPermissionManager;
+        1 * authorizationService.newUpdatingPermissionManager(_) >> updatingPermissionManager
         0 * updatingPermissionManager.getPermissions(ExternalPermissionDefinition.SUBSCRIBE.getActivity(), _) >> [];  // should only be called for existing portlet definitions, not new ones
         0 * updatingPermissionManager.removePermissions(_);  // should only be called for existing portlet definitions, not new ones
         1 * updatingPermissionManager.addPermissions({ IPermission[] permArray ->
-            return permArray.size() == 0;
-        });
+            return permArray.size() == 0
+        })
     }
 
     @Ignore
     def 'should support importing portlets with approval lifecycle'() {
         given:
-        def portletType = new PortletTypeImpl('Portlet', 'CpdUri');
-        def portletDef = null;
+        def portletType = new PortletTypeImpl('Portlet', 'CpdUri')
+        def portletDef = null
         def testStart = new Date()
 
         and: 'I setup a sample portlet definition'
@@ -305,24 +305,24 @@ public class PortletDefinitionImporterExporterTest extends Specification {
                 fname: 'test-new',
                 desc: 'desc',
                 type: 'Portlet',
-                portletDescriptor: new PortletDescriptor(webAppName: "test", portletName: "test", isFramework: false),
+                portletDescriptor: new PortletDescriptor(webAppName: 'test', portletName: 'test', isFramework: false),
                 lifecycle: new Lifecycle(
                         approved: new LifecycleEntry(
                                 value: getCalendar(testStart)
                         )
                 ),
                 categories: []
-        );
+        )
 
         when: 'I import the portlet'
-        importer.importData(input);
+        importer.importData(input)
 
         then: 'I see that the appropriate interactions were called'
-        1 * typeRegistry.getPortletType('Portlet') >> portletType;
+        1 * typeRegistry.getPortletType('Portlet') >> portletType
 
         2 * definitionDao.getPortletDefinitionByFname(_) >> { return portletDef; }
         1 * definitionDao.savePortletDefinition(_) >> { IPortletDefinition pd ->
-            pd.portletDefinitionId = new MockPortletDefinitionId(100l);
+            pd.portletDefinitionId = new MockPortletDefinitionId(100l)
             assert pd.getName() == 'test'
             assert pd.getTitle() == 'title'
             assert pd.getFName() == 'test-new'
@@ -335,44 +335,44 @@ public class PortletDefinitionImporterExporterTest extends Specification {
             assert pd.getPublisherId() < 1
             assert pd.getExpirationDate() == null
             assert pd.getExpirerId() < 1
-            portletDef = pd;
-            return portletDef;
-        };
-        1 * compositeGroupService.getEntity(_, _, _) >> portletDefEntity;
+            portletDef = pd
+            return portletDef
+        }
+        1 * compositeGroupService.getEntity(_, _, _) >> portletDefEntity
 
         0 * portletDefEntity.getAncestorGroups() >> []; // should only be called for existing portlet definitions, not new ones
 
-        1 * authorizationService.newUpdatingPermissionManager(_) >> updatingPermissionManager;
+        1 * authorizationService.newUpdatingPermissionManager(_) >> updatingPermissionManager
         0 * updatingPermissionManager.getPermissions(ExternalPermissionDefinition.SUBSCRIBE.getActivity(), _) >> [];  // should only be called for existing portlet definitions, not new ones
         0 * updatingPermissionManager.removePermissions(_);  // should only be called for existing portlet definitions, not new ones
         1 * updatingPermissionManager.addPermissions({ IPermission[] permArray ->
-            return permArray.size() == 0;
-        });
+            return permArray.size() == 0
+        })
     }
 
     @Ignore
     def 'should support updating existing portlets'() {
         given: 'A portlet definition exists'
-            def portletType = new PortletTypeImpl('Portlet', 'CpdUri');
-            def portletDef = new PortletDefinitionImpl(portletType, 'fname', 'name', 'title', 'webapp', 'portletName', true);
-            portletDef.portletDefinitionId = new MockPortletDefinitionId(100l);
+            def portletType = new PortletTypeImpl('Portlet', 'CpdUri')
+            def portletDef = new PortletDefinitionImpl(portletType, 'fname', 'name', 'title', 'webapp', 'portletName', true)
+            portletDef.portletDefinitionId = new MockPortletDefinitionId(100l)
             def testStart = new Date()
 
             // groups assigned to old entity
-            IEntityGroup oldGroupStudent = Mock();
-            IEntityGroup oldGroupStaff = Mock();
+            IEntityGroup oldGroupStudent = Mock()
+            IEntityGroup oldGroupStaff = Mock()
 
             // groups assigned to new entity
-            IEntityGroup newGroupPortalAdmin = Mock();
-            IEntityGroup newGroupTeacher = Mock();
+            IEntityGroup newGroupPortalAdmin = Mock()
+            IEntityGroup newGroupTeacher = Mock()
 
             // authorization pricinpals for the new permissions
-            IAuthorizationPrincipal newPrincipalPortalAdmin = Mock();
-            IAuthorizationPrincipal newPrincipalTeacher = Mock();
+            IAuthorizationPrincipal newPrincipalPortalAdmin = Mock()
+            IAuthorizationPrincipal newPrincipalTeacher = Mock()
 
             // actual permission object that will be created
-            IPermission newPermissionPortalAdmin = Mock();
-            IPermission newPermissionTeacher = Mock();
+            IPermission newPermissionPortalAdmin = Mock()
+            IPermission newPermissionTeacher = Mock()
 
         and: 'I setup an external portlet definition with the same fname'
             def input = new ExternalPortletDefinition(
@@ -387,16 +387,16 @@ public class PortletDefinitionImporterExporterTest extends Specification {
                                 value: getCalendar(testStart)
                         )
                 ),
-                groups: [ "Portal Administrator", "Teacher" ],
-                portletDescriptor: new PortletDescriptor(webAppName: "test", portletName: "test", isFramework: false),
+                groups: [ 'Portal Administrator', 'Teacher' ],
+                portletDescriptor: new PortletDescriptor(webAppName: 'test', portletName: 'test', isFramework: false),
                 categories: []
-            );
+            )
 
         when: 'I import the portlet'
-            importer.importData(input);
+            importer.importData(input)
 
         then: 'I see the appropriate interactions were called'
-            1 * typeRegistry.getPortletType('Portlet') >> portletType;
+            1 * typeRegistry.getPortletType('Portlet') >> portletType
 
             2 * definitionDao.getPortletDefinitionByFname(_) >> { return portletDef; }
 
@@ -409,62 +409,62 @@ public class PortletDefinitionImporterExporterTest extends Specification {
                 assert pd.getPublisherId() < 1
                 assert pd.getExpirationDate() == null
                 assert pd.getExpirerId() == 0  // During testing System user = 0
-                return pd;
-            };
-            1 * compositeGroupService.getEntity(_, _, _) >> portletDefEntity;
-            1 * compositeGroupService.findGroup("Portal Administrator") >> newGroupPortalAdmin;
-            1 * compositeGroupService.findGroup("Teacher") >> newGroupTeacher;
+                return pd
+            }
+            1 * compositeGroupService.getEntity(_, _, _) >> portletDefEntity
+            1 * compositeGroupService.findGroup("Portal Administrator") >> newGroupPortalAdmin
+            1 * compositeGroupService.findGroup("Teacher") >> newGroupTeacher
 
-            1 * oldGroupStudent.removeChild(portletDefEntity);
-            1 * oldGroupStaff.removeChild(portletDefEntity);
+            1 * oldGroupStudent.removeChild(portletDefEntity)
+            1 * oldGroupStaff.removeChild(portletDefEntity)
             1 * portletDefEntity.getAncestorGroups() >> {
                 return [
                     oldGroupStudent,
                     oldGroupStaff
-                ];
-            };
+                ]
+            }
 
-            1 * authorizationService.newUpdatingPermissionManager(_) >> updatingPermissionManager;
-            1 * authorizationService.newPrincipal(newGroupPortalAdmin) >> newPrincipalPortalAdmin;
-            1 * authorizationService.newPrincipal(newGroupTeacher) >> newPrincipalTeacher;
-            1 * updatingPermissionManager.getPermissions(ExternalPermissionDefinition.SUBSCRIBE.getActivity(), _) >> [];
+            1 * authorizationService.newUpdatingPermissionManager(_) >> updatingPermissionManager
+            1 * authorizationService.newPrincipal(newGroupPortalAdmin) >> newPrincipalPortalAdmin
+            1 * authorizationService.newPrincipal(newGroupTeacher) >> newPrincipalTeacher
+            1 * updatingPermissionManager.getPermissions(ExternalPermissionDefinition.SUBSCRIBE.getActivity(), _) >> []
             1 * updatingPermissionManager.newPermission(newPrincipalPortalAdmin) >> newPermissionPortalAdmin
             1 * updatingPermissionManager.newPermission(newPrincipalTeacher) >> newPermissionTeacher
 
-            1 * newPermissionPortalAdmin.setActivity(ExternalPermissionDefinition.SUBSCRIBE.activity);
-            1 * newPermissionTeacher.setActivity(ExternalPermissionDefinition.SUBSCRIBE.activity);
+            1 * newPermissionPortalAdmin.setActivity(ExternalPermissionDefinition.SUBSCRIBE.activity)
+            1 * newPermissionTeacher.setActivity(ExternalPermissionDefinition.SUBSCRIBE.activity)
 
-            1 * updatingPermissionManager.removePermissions(_);
+            1 * updatingPermissionManager.removePermissions(_)
             1 * updatingPermissionManager.addPermissions({ IPermission[] permArray ->
-                return permArray.size() == 2;
-            });
+                return permArray.size() == 2
+            })
     }
 
     @Ignore
     def 'should support extended permissions'() {
         given: 'A portlet definition exists'
-            def portletType = new PortletTypeImpl('Portlet', 'CpdUri');
-            def portletDef = new PortletDefinitionImpl(portletType, 'fname', 'name', 'title', 'webapp', 'portletName', true);
-            portletDef.portletDefinitionId = new MockPortletDefinitionId(100l);
+            def portletType = new PortletTypeImpl('Portlet', 'CpdUri')
+            def portletDef = new PortletDefinitionImpl(portletType, 'fname', 'name', 'title', 'webapp', 'portletName', true)
+            portletDef.portletDefinitionId = new MockPortletDefinitionId(100l)
 
             // groups assigned to old entity
-            IEntityGroup oldGroupStudent = Mock();
-            IEntityGroup oldGroupStaff = Mock();
+            IEntityGroup oldGroupStudent = Mock()
+            IEntityGroup oldGroupStaff = Mock()
 
             // groups assigned to new entity
-            IEntityGroup newGroupPortalAdmin = Mock();
-            IEntityGroup newGroupTeacher = Mock();
-            IEntityGroup newGroupStudent = Mock();
+            IEntityGroup newGroupPortalAdmin = Mock()
+            IEntityGroup newGroupTeacher = Mock()
+            IEntityGroup newGroupStudent = Mock()
 
             // authorization pricinpals for the new permissions
-            IAuthorizationPrincipal newPrincipalPortalAdmin = Mock();
-            IAuthorizationPrincipal newPrincipalTeacher = Mock();
-            IAuthorizationPrincipal newPrincipalStudent = Mock();
+            IAuthorizationPrincipal newPrincipalPortalAdmin = Mock()
+            IAuthorizationPrincipal newPrincipalTeacher = Mock()
+            IAuthorizationPrincipal newPrincipalStudent = Mock()
 
             // actual permission object that will be created
-            IPermission newPermissionPortalAdmin = Mock();
-            IPermission newPermissionTeacher = Mock();
-            IPermission newPermissionStudent = Mock();
+            IPermission newPermissionPortalAdmin = Mock()
+            IPermission newPermissionTeacher = Mock()
+            IPermission newPermissionStudent = Mock()
 
         and: 'I setup an external portlet definition with the same fname'
             def input = new ExternalPortletDefinition(
@@ -473,73 +473,73 @@ public class PortletDefinitionImporterExporterTest extends Specification {
                 fname: 'fname',
                 desc: 'desc',
                 type: 'Portlet',
-                groups: [ "Portal Administrator", "Teacher" ],
+                groups: [ 'Portal Administrator', 'Teacher' ],
                 permissions: new ExternalPermissions(
                     permissions: [
                         new ExternalPermissionMemberList(
                             system: ExternalPermissionDefinition.BROWSE.system,
                             activity: ExternalPermissionDefinition.BROWSE.activity,
                             groups: [
-                                "Portal Administrator",
-                                "Teacher",
-                                "Student"
+                                'Portal Administrator',
+                                'Teacher',
+                                'Student'
                             ]
                         )
                     ]
                 ),
-                portletDescriptor: new PortletDescriptor(webAppName: "test", portletName: "test", isFramework: false),
+                portletDescriptor: new PortletDescriptor(webAppName: 'test', portletName: 'test', isFramework: false),
                 categories: []
-            );
+            )
 
         when: 'I import the portlet'
-            importer.importData(input);
+            importer.importData(input)
 
         then: 'I see the appropriate interactions were called'
-            1 * typeRegistry.getPortletType('Portlet') >> portletType;
+            1 * typeRegistry.getPortletType('Portlet') >> portletType
 
             2 * definitionDao.getPortletDefinitionByFname(_) >> { return portletDef; }
 
             1 * definitionDao.savePortletDefinition(_) >> { IPortletDefinition pd ->
-                return pd;
-            };
-            1 * compositeGroupService.getEntity(_, _, _) >> portletDefEntity;
-            2 * compositeGroupService.findGroup("Portal Administrator") >> newGroupPortalAdmin;
-            2 * compositeGroupService.findGroup("Teacher") >> newGroupTeacher;
-            1 * compositeGroupService.findGroup("Student") >> newGroupStudent;
+                return pd
+            }
+            1 * compositeGroupService.getEntity(_, _, _) >> portletDefEntity
+            2 * compositeGroupService.findGroup("Portal Administrator") >> newGroupPortalAdmin
+            2 * compositeGroupService.findGroup("Teacher") >> newGroupTeacher
+            1 * compositeGroupService.findGroup("Student") >> newGroupStudent
 
-            1 * oldGroupStudent.removeChild(portletDefEntity);
-            1 * oldGroupStaff.removeChild(portletDefEntity);
+            1 * oldGroupStudent.removeChild(portletDefEntity)
+            1 * oldGroupStaff.removeChild(portletDefEntity)
             1 * portletDefEntity.getAncestorGroups() >> {
                 return [
                     oldGroupStudent,
                     oldGroupStaff
-                ];
-            };
+                ]
+            }
 
-            1 * authorizationService.newUpdatingPermissionManager(_) >> updatingPermissionManager;
-            2 * authorizationService.newPrincipal(newGroupPortalAdmin) >> newPrincipalPortalAdmin;
-            2 * authorizationService.newPrincipal(newGroupTeacher) >> newPrincipalTeacher;
-            1 * authorizationService.newPrincipal(newGroupStudent) >> newPrincipalStudent;
+            1 * authorizationService.newUpdatingPermissionManager(_) >> updatingPermissionManager
+            2 * authorizationService.newPrincipal(newGroupPortalAdmin) >> newPrincipalPortalAdmin
+            2 * authorizationService.newPrincipal(newGroupTeacher) >> newPrincipalTeacher
+            1 * authorizationService.newPrincipal(newGroupStudent) >> newPrincipalStudent
 
-            1 * updatingPermissionManager.getPermissions(ExternalPermissionDefinition.SUBSCRIBE.activity, _) >> [];
-            1 * updatingPermissionManager.getPermissions(ExternalPermissionDefinition.BROWSE.activity, _) >> [];
+            1 * updatingPermissionManager.getPermissions(ExternalPermissionDefinition.SUBSCRIBE.activity, _) >> []
+            1 * updatingPermissionManager.getPermissions(ExternalPermissionDefinition.BROWSE.activity, _) >> []
 
             2 * updatingPermissionManager.newPermission(newPrincipalPortalAdmin) >> newPermissionPortalAdmin
             2 * updatingPermissionManager.newPermission(newPrincipalTeacher) >> newPermissionTeacher
             1 * updatingPermissionManager.newPermission(newPrincipalStudent) >> newPermissionStudent
 
-            1 * newPermissionPortalAdmin.setActivity(ExternalPermissionDefinition.SUBSCRIBE.activity);
-            1 * newPermissionTeacher.setActivity(ExternalPermissionDefinition.SUBSCRIBE.activity);
+            1 * newPermissionPortalAdmin.setActivity(ExternalPermissionDefinition.SUBSCRIBE.activity)
+            1 * newPermissionTeacher.setActivity(ExternalPermissionDefinition.SUBSCRIBE.activity)
 
-            1 * newPermissionPortalAdmin.setActivity(ExternalPermissionDefinition.BROWSE.activity);
-            1 * newPermissionTeacher.setActivity(ExternalPermissionDefinition.BROWSE.activity);
-            1 * newPermissionStudent.setActivity(ExternalPermissionDefinition.BROWSE.activity);
+            1 * newPermissionPortalAdmin.setActivity(ExternalPermissionDefinition.BROWSE.activity)
+            1 * newPermissionTeacher.setActivity(ExternalPermissionDefinition.BROWSE.activity)
+            1 * newPermissionStudent.setActivity(ExternalPermissionDefinition.BROWSE.activity)
 
-            2 * updatingPermissionManager.removePermissions(_);
+            2 * updatingPermissionManager.removePermissions(_)
             1 * updatingPermissionManager.addPermissions({ IPermission[] permArray ->
                 // expect this to be called with 2 subscribe and 3 browse permissions...
-                return permArray.size() == 5;
-            });
+                return permArray.size() == 5
+            })
     }
 
 
@@ -551,20 +551,20 @@ public class PortletDefinitionImporterExporterTest extends Specification {
      * is required due to the use of static AuthorizationService methods.
      */
     private static class AuthorizationServiceInvocationHandler implements InvocationHandler {
-        private IAuthorizationService service;
+        private IAuthorizationService service
 
         public void setService(final IAuthorizationService service) {
-            this.service = service;
+            this.service = service
         }
 
 
         @Override
         Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
             if (service != null) {
-                return method.invoke(service, args);
+                return method.invoke(service, args)
             }
 
-            return null;
+            return null
         }
     }
 
@@ -587,21 +587,21 @@ public class PortletDefinitionImporterExporterTest extends Specification {
                     @Override
                     Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
                         if (staticGroupService != null) {
-                            return method.invoke(staticGroupService, args);
+                            return method.invoke(staticGroupService, args)
                         }
 
-                        return null;
+                        return null
                     }
                 }
-            );
+            )
         }
     }
 
     // Utility method to convert a date to a calendar.
     private static Calendar getCalendar(Date date) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
-        return calendar;
+        Calendar calendar = Calendar.getInstance()
+        calendar.setTime(date)
+        return calendar
     }
 
 }

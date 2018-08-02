@@ -20,7 +20,7 @@ package org.apereo.portal.security.mvc
 
 import javax.servlet.http.HttpServletRequest
 
-import org.junit.Test;
+import org.junit.Test
 
 class LoginControllerTest extends GroovyTestCase {
 
@@ -29,15 +29,15 @@ class LoginControllerTest extends GroovyTestCase {
 
         final HttpServletRequest req = [
             getRequestURL: { return new StringBuffer('http://localhost:8080/uPortal'); }
-        ] as HttpServletRequest;
+        ] as HttpServletRequest
 
-        final LoginController loginController = new LoginController();
-        assertNull("'' is blank", loginController.parseLocalRefUrl(req, ""))
-        assertNotNull("'/' is local", loginController.parseLocalRefUrl(req, "/"))
-        assertNotNull("'/foo' is local", loginController.parseLocalRefUrl(req, "/foo"))
-        assertNotNull("'/foo/bar' is local", loginController.parseLocalRefUrl(req, "/foo/bar"))
-        assertNull("'http://www.apereo.org/' is not local", loginController.parseLocalRefUrl(req, "http://www.apereo.org/"))
-        assertNull("'//www.apereo.org/' is not local", loginController.parseLocalRefUrl(req, "//www.apereo.org/"))
+        final LoginController loginController = new LoginController()
+        assertNull(''' is blank', loginController.parseLocalRefUrl(req, ""))
+        assertNotNull(''/' is local', loginController.parseLocalRefUrl(req, '/'))
+        assertNotNull(''/foo' is local', loginController.parseLocalRefUrl(req, '/foo'))
+        assertNotNull(''/foo/bar' is local', loginController.parseLocalRefUrl(req, '/foo/bar'))
+        assertNull(''http://www.apereo.org/' is not local', loginController.parseLocalRefUrl(req, 'http://www.apereo.org/'))
+        assertNull(''//www.apereo.org/' is not local', loginController.parseLocalRefUrl(req, '//www.apereo.org/'))
 
     }
 }

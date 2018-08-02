@@ -19,29 +19,29 @@
 package org.apereo.portal.io.xml
 
 import org.apereo.portal.io.xml.IDataTemplatingStrategy
-import org.apereo.portal.io.xml.SpELDataTemplatingStrategy;
-import org.apereo.portal.spring.spel.IPortalSpELService;
-import org.apereo.portal.spring.spel.PortalSpELServiceImpl;
-import org.apereo.portal.tenants.ITenant;
-import org.apereo.portal.tenants.TemplateDataTenantOperationsListener;
+import org.apereo.portal.io.xml.SpELDataTemplatingStrategy
+import org.apereo.portal.spring.spel.IPortalSpELService
+import org.apereo.portal.spring.spel.PortalSpELServiceImpl
+import org.apereo.portal.tenants.ITenant
+import org.apereo.portal.tenants.TemplateDataTenantOperationsListener
 
-import static org.junit.Assert.*;
-import org.junit.Test;
-import org.springframework.expression.spel.support.StandardEvaluationContext;
+import static org.junit.Assert.*
+import org.junit.Test
+import org.springframework.expression.spel.support.StandardEvaluationContext
 
 class SpELDataTemplatingStrategyTest {
 
-    private IPortalSpELService portalSpELService = new PortalSpELServiceImpl();
+    private IPortalSpELService portalSpELService = new PortalSpELServiceImpl()
 
     @Test
     void testProcessText() {
         ITenant tenant = [
             getName: { 'Mordor' },
             getFname: { 'mordor'}
-        ] as ITenant;
-        StandardEvaluationContext ctx = new StandardEvaluationContext();
-        ctx.setRootObject(new TemplateDataTenantOperationsListener.RootObjectImpl(tenant));
-        IDataTemplatingStrategy templating = new SpELDataTemplatingStrategy(portalSpELService, ctx);
+        ] as ITenant
+        StandardEvaluationContext ctx = new StandardEvaluationContext()
+        ctx.setRootObject(new TemplateDataTenantOperationsListener.RootObjectImpl(tenant))
+        IDataTemplatingStrategy templating = new SpELDataTemplatingStrategy(portalSpELService, ctx)
 
         def inputs = [
             'foobar': 'foobar',
@@ -51,12 +51,12 @@ class SpELDataTemplatingStrategyTest {
             '${tenant.fname}': 'mordor',
             'Something ${tenant.fname}': 'Something mordor',
             '${tenant.fname} Something': 'mordor Something'
-        ];
+        ]
 
         inputs.each { k,v ->
-            String output = templating.processText(k);
-            assertEquals('Unexpected output from processText() -- ', v, output);
-        };
+            String output = templating.processText(k)
+            assertEquals('Unexpected output from processText() -- ', v, output)
+        }
     }
 
 }
