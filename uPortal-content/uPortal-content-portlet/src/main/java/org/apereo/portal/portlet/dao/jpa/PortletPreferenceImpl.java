@@ -74,7 +74,7 @@ public class PortletPreferenceImpl implements IPortletPreference, Cloneable {
     @Column(name = "ENTITY_VERSION")
     private final long entityVersion;
 
-    @Column(name = "PREF_NAME", length = 100000, columnDefinition = "CLOB")
+    @Column(name = "PREF_NAME", length = 100000)
     @Type(type = "org.hibernate.type.StringType")
     @Lob
     private String name = null;
@@ -86,7 +86,7 @@ public class PortletPreferenceImpl implements IPortletPreference, Cloneable {
     @JoinTable(name = "UP_PORTLET_PREF_VALUES", joinColumns = @JoinColumn(name = "PORTLET_PREF_ID"))
     @IndexColumn(name = "VALUE_ORDER")
     @Lob
-    @Column(name = "PREF_VALUE", length = 100000, columnDefinition = "CLOB")
+    @Column(name = "PREF_VALUE", length = 100000)
     @Type(type = "org.hibernate.type.StringType")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @Fetch(FetchMode.JOIN)
