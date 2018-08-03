@@ -165,7 +165,7 @@
                         </xsl:for-each>
                     </xsl:when>
                     <xsl:otherwise>
-                        <!-- Include all regions EXCEPT 'region-customize' when in FOCUSED mode -->
+                        <!-- Include all regions EXCEPT 'region-customize' and 'region-mezzanine' when in FOCUSED mode -->
                         <xsl:for-each select="child::folder[@type!='customize' and @type!='mezzanine' and @type!='regular' and @type!='sidebar' and channel]"><!-- Ignores empty folders -->
                             <xsl:call-template name="region"/>
                         </xsl:for-each>
