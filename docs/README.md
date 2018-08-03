@@ -2,7 +2,7 @@
 
 # uPortal Documentation
 
-**NOTE:** This area is a work-in-progress. It is intended to serve as primary
+**NOTE:** It is intended to serve as primary
 documentation for uPortal version 5 and above.
 Documentation for earlier versions of uPortal is available in
 [Confluence](https://wiki.jasig.org). See _Documentation for Previous Releases_
