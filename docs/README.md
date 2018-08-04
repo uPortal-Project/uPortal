@@ -2,7 +2,7 @@
 
 # uPortal Documentation
 
-**NOTE:** This area is a work-in-progress. It is intended to serve as primary
+**NOTE:** It is intended to serve as primary
 documentation for uPortal version 5 and above.
 Documentation for earlier versions of uPortal is available in
 [Confluence](https://wiki.jasig.org). See _Documentation for Previous Releases_
@@ -29,7 +29,7 @@ below.
         <tr>
           <td>
             <a href="https://github.com/Jasig/uPortal/tree/master">
-              uPortal 5.2
+              uPortal 5.3
             </a>
           </td>
           <td>
@@ -50,6 +50,28 @@ below.
         </tr>
         <tr>
           <td>
+            <a href="https://github.com/Jasig/uPortal/tree/rel-5-2-patches">
+              uPortal 5.2
+            </a>
+          </td>
+          <td>
+            <a href="https://travis-ci.org/Jasig/uPortal">
+              <img src="https://travis-ci.org/Jasig/uPortal.svg?branch=rel-5-2-patches" alt="Linux Build Status">
+            </a>
+          </td>
+          <td>
+            <a href="https://ci.appveyor.com/project/drewwills/uportal/branch/rel-5-2-patches">
+              <img src="https://ci.appveyor.com/api/projects/status/8t95sjt090mf62dh/branch/rel-5-2-patches?svg=true" alt="Windows Build Status">
+            </a>
+          </td>
+          <td>
+            <a href="https://coveralls.io/github/Jasig/uPortal?branch=rel-5-2-patches">
+              <img src="https://coveralls.io/repos/github/Jasig/uPortal/badge.svg?branch=rel-5-2-patches" alt="Coverage Status">
+            </a>
+          </td>
+        </tr>
+        <tr>
+          <td>
             <a href="https://github.com/Jasig/uPortal/tree/rel-5-1-patches">
               uPortal 5.1
             </a>
@@ -61,7 +83,7 @@ below.
           </td>
           <td>
             <a href="https://ci.appveyor.com/project/drewwills/uportal/branch/rel-5-1-patches">
-              <img src="https://ci.appveyor.com/api/projects/status/8t95sjt090mf62dh/branch/rel-5-2-patches?svg=true" alt="Windows Build Status">
+              <img src="https://ci.appveyor.com/api/projects/status/8t95sjt090mf62dh/branch/rel-5-1-patches?svg=true" alt="Windows Build Status">
             </a>
           </td>
           <td>
@@ -184,17 +206,18 @@ below.
 
 ## External Links
 
-*   [Apereo Foundation Home](https://www.apereo.org/)
-*   [uPortal Wiki](https://wiki.jasig.org/display/UPC/Home)
+-   [Apereo Foundation Home](https://www.apereo.org/)
+-   [uPortal Wiki](https://wiki.jasig.org/display/UPC/Home)
 
 ## Documentation for Previous Releases
 
-*   [uPortal 5.1 Manual](https://github.com/Jasig/uPortal/tree/v5.1.2/docs)
-*   [uPortal 5.0 Manual](https://github.com/Jasig/uPortal/tree/v5.0.7/docs)
-*   [uPortal 4.3 Manual](https://wiki.jasig.org/display/UPM43/Home)
-*   [uPortal 4.2 Manual](https://wiki.jasig.org/display/UPM42/Home)
-*   [uPortal 4.1 Manual](https://wiki.jasig.org/display/UPM41/Home)
-*   [uPortal 4.0 Manual](https://wiki.jasig.org/display/UPM40/Home)
-*   [uPortal 3.2 Manual](https://wiki.jasig.org/display/UPM32/Home)
-*   [uPortal 3.1 Manual](https://wiki.jasig.org/display/UPM31/Home)
-*   [uPortal 3.0 Manual](https://wiki.jasig.org/display/UPM30/Home)
+-   [uPortal 5.2 Manual](https://github.com/jasig/uportal/tree/v5.2.0/docs)
+-   [uPortal 5.1 Manual](https://github.com/Jasig/uPortal/tree/v5.1.2/docs)
+-   [uPortal 5.0 Manual](https://github.com/Jasig/uPortal/tree/v5.0.7/docs)
+-   [uPortal 4.3 Manual](https://wiki.jasig.org/display/UPM43/Home)
+-   [uPortal 4.2 Manual](https://wiki.jasig.org/display/UPM42/Home)
+-   [uPortal 4.1 Manual](https://wiki.jasig.org/display/UPM41/Home)
+-   [uPortal 4.0 Manual](https://wiki.jasig.org/display/UPM40/Home)
+-   [uPortal 3.2 Manual](https://wiki.jasig.org/display/UPM32/Home)
+-   [uPortal 3.1 Manual](https://wiki.jasig.org/display/UPM31/Home)
+-   [uPortal 3.0 Manual](https://wiki.jasig.org/display/UPM30/Home)

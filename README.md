@@ -21,7 +21,7 @@
         <tr>
           <td>
             <a href="https://github.com/Jasig/uPortal/tree/master">
-              uPortal 5.2
+              uPortal 5.3
             </a>
           </td>
           <td>
@@ -42,6 +42,28 @@
         </tr>
         <tr>
           <td>
+            <a href="https://github.com/Jasig/uPortal/tree/rel-5-2-patches">
+              uPortal 5.2
+            </a>
+          </td>
+          <td>
+            <a href="https://travis-ci.org/Jasig/uPortal">
+              <img src="https://travis-ci.org/Jasig/uPortal.svg?branch=rel-5-2-patches" alt="Linux Build Status">
+            </a>
+          </td>
+          <td>
+            <a href="https://ci.appveyor.com/project/drewwills/uportal/branch/rel-5-2-patches">
+              <img src="https://ci.appveyor.com/api/projects/status/8t95sjt090mf62dh/branch/rel-5-2-patches?svg=true" alt="Windows Build Status">
+            </a>
+          </td>
+          <td>
+            <a href="https://coveralls.io/github/Jasig/uPortal?branch=rel-5-2-patches">
+              <img src="https://coveralls.io/repos/github/Jasig/uPortal/badge.svg?branch=rel-5-2-patches" alt="Coverage Status">
+            </a>
+          </td>
+        </tr>
+        <tr>
+          <td>
             <a href="https://github.com/Jasig/uPortal/tree/rel-5-1-patches">
               uPortal 5.1
             </a>
@@ -53,7 +75,7 @@
           </td>
           <td>
             <a href="https://ci.appveyor.com/project/drewwills/uportal/branch/rel-5-1-patches">
-              <img src="https://ci.appveyor.com/api/projects/status/8t95sjt090mf62dh/branch/rel-5-2-patches?svg=true" alt="Windows Build Status">
+              <img src="https://ci.appveyor.com/api/projects/status/8t95sjt090mf62dh/branch/rel-5-1-patches?svg=true" alt="Windows Build Status">
             </a>
           </td>
           <td>
@@ -206,21 +228,22 @@ detailed documentation for each uPortal release.
 
 Additional information about uPortal is available in the Manual.
 
-*   [uPortal 5.2 Manual][latest uPortal manual]
-*   [uPortal 5.1 Manual](https://github.com/Jasig/uPortal/tree/v5.1.2/docs)
-*   [uPortal 5.0 Manual](https://github.com/Jasig/uPortal/tree/v5.0.7/docs)
-*   [uPortal 4.3 Manual](https://wiki.jasig.org/display/UPM43/Home)
-*   [uPortal 4.2 Manual](https://wiki.jasig.org/display/UPM42/Home)
-*   [uPortal 4.1 Manual](https://wiki.jasig.org/display/UPM41/Home)
-*   [uPortal 4.0 Manual](https://wiki.jasig.org/display/UPM40/Home)
-*   [uPortal 3.2 Manual](https://wiki.jasig.org/display/UPM32/Home)
-*   [uPortal 3.1 Manual](https://wiki.jasig.org/display/UPM31/Home)
-*   [uPortal 3.0 Manual](https://wiki.jasig.org/display/UPM30/Home)
+-   [uPortal 5.3 Manual][latest uportal manual]
+-   [uPortal 5.2 Manual](https://github.com/jasig/uportal/tree/v5.2.0/docs)
+-   [uPortal 5.1 Manual](https://github.com/Jasig/uPortal/tree/v5.1.2/docs)
+-   [uPortal 5.0 Manual](https://github.com/Jasig/uPortal/tree/v5.0.7/docs)
+-   [uPortal 4.3 Manual](https://wiki.jasig.org/display/UPM43/Home)
+-   [uPortal 4.2 Manual](https://wiki.jasig.org/display/UPM42/Home)
+-   [uPortal 4.1 Manual](https://wiki.jasig.org/display/UPM41/Home)
+-   [uPortal 4.0 Manual](https://wiki.jasig.org/display/UPM40/Home)
+-   [uPortal 3.2 Manual](https://wiki.jasig.org/display/UPM32/Home)
+-   [uPortal 3.1 Manual](https://wiki.jasig.org/display/UPM31/Home)
+-   [uPortal 3.0 Manual](https://wiki.jasig.org/display/UPM30/Home)
 
 ## Requirements
 
-*   JDK 1.8 - The JRE alone is NOT sufficient, a full JDK is required
-*   GIT
+-   JDK 1.8 - The JRE alone is NOT sufficient, a full JDK is required
+-   GIT
 
 ## uPortal-start
 
@@ -228,7 +251,7 @@ uPortal is now meant to be deployed via [uPortal-start][], which is responsible 
 servlet container (ie Tomcat), DB, and portal configurations. uPortal-start
 deals with the low-level configurations and setup, while letting the adopter
 focus on the business configuration side of the deployment. However, it is
-possible to run uPortal without uPortal-start. The [uPortal manual][latest uPortal manual] explains
+possible to run uPortal without uPortal-start. The [uPortal manual][latest uportal manual] explains
 how.
 
 ## Building and Deploying
@@ -241,5 +264,5 @@ comes with a Gradle wrapper if you don't want to install the build tool
 
 For a full list of Gradle tasks run `./gradlew tasks` from the root directory.
 
-[latest uPortal manual]: https://jasig.github.io/uPortal
-[uPortal-start]: https://github.com/Jasig/uPortal-start
+[latest uportal manual]: https://jasig.github.io/uPortal
+[uportal-start]: https://github.com/Jasig/uPortal-start
