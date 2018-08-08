@@ -202,7 +202,8 @@ below.
 5.  [Supported web browsers](SUPPORTED_BROWSERS.md)
 6.  [Accessibility](ACCESSIBILITY.md)
 7.  [Project Committers](COMMITTERS.md)
-8.  [Glossary](GLOSSARY.md)
+8.  [Release History](HISTORY.md)
+9.  [Glossary](GLOSSARY.md)
 
 ## External Links
 
