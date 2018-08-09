@@ -45,10 +45,10 @@
     <!-- User database for discovery;  initialize_sql to blank prevents
          table creation, which we handle with Hibernate via dbloader -->
     <JDBC_PING
-            connection_url="${hibernate.connection.url}"
-            connection_username="${hibernate.connection.username}"
-            connection_password="${hibernate.connection.password}"
-            connection_driver="${hibernate.connection.driver_class}"
+            connection_url="${jgroups.connection.url}"
+            connection_username="${jgroups.connection.username}"
+            connection_password="${jgroups.connection.password}"
+            connection_driver="${jgroups.connection.driver_class}"
             initialize_sql=""
     />
     <MERGE3  min_interval="5000"
