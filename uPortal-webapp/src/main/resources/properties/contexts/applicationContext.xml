@@ -93,16 +93,20 @@
     <!-- Resolver that can be used to dynamically look up property values at run-time -->
     <bean id="propertyResolver" factory-bean="primaryPropertyPlaceholderConfigurer" factory-method="getPropertyResolver"/>
 
-    <!-- Add properties for jgroups.xml as that is not a Spring context -->
+    <!--
+     | Add properties for jgroups.xml as that is not a Spring context;  prefix DB connection
+     | settings with 'jgroups' instead of 'hibernate' b/c the standard hibernate props may impact
+     | other webapps.
+     +-->
     <bean id="systemPropertySetter" class="org.apereo.portal.spring.context.SystemPropertySetter">
         <property name="systemProperties">
             <props>
                 <prop key="uPortal.cacheManager.jgroups.fd_sock.start_port">${uPortal.cacheManager.jgroups.fd_sock.start_port:}</prop>
                 <prop key="uPortal.cacheManager.jgroups.tcp.bind_port">${uPortal.cacheManager.jgroups.tcp.bind_port:}</prop>
-                <prop key="hibernate.connection.driver_class">${hibernate.connection.driver_class}</prop>
-                <prop key="hibernate.connection.url">${hibernate.connection.url}</prop>
-                <prop key="hibernate.connection.username">${hibernate.connection.username}</prop>
-                <prop key="hibernate.connection.password">${hibernate.connection.password}</prop>
+                <prop key="jgroups.connection.driver_class">${hibernate.connection.driver_class}</prop>
+                <prop key="jgroups.connection.url">${hibernate.connection.url}</prop>
+                <prop key="jgroups.connection.username">${hibernate.connection.username}</prop>
+                <prop key="jgroups.connection.password">${hibernate.connection.password}</prop>
                 <prop key="org.apereo.portal.jgroups.auth.token">${org.apereo.portal.jgroups.auth.token:DEV-345B45TB3}</prop>
             </props>
         </property>
