@@ -69,7 +69,7 @@
 
                 def newChildren=[];
                 if (req.hasAttribute('childGroupKeyRegex')) {
-                    def pattern = req.hasAttribute('pattern') ? req.getAttribute('pattern') : java.util.regex.Pattern.compile(ScriptAttributes.REQUEST.getAttribute("childGroupKeyRegex"));
+                    def pattern = req.hasAttribute('pattern') ? req.getAttribute('pattern') : java.util.regex.Pattern.compile(req.getAttribute("childGroupKeyRegex"));
                     ScriptAttributes.RESPONSE.setAttribute('pattern', pattern);
                         for (String child : record.getKeysOfChildren()) {
                             def matcher = pattern.matcher(child);
@@ -87,7 +87,8 @@
                     int sepPos;
                     boolean stop = false;
                     boolean isGroup = true;
-                    while ((sepPos=current.lastIndexOf(':')) > 0 &amp;&amp; ! stop) {
+                    String sep = req.hasAttribute('groupTreeSeparator') ? req.getAttribute("groupTreeSeparator") : ':';
+                    while ((sepPos=current.lastIndexOf(sep)) > 0 &amp;&amp; !stop) {
                         String previous = current;
                         current = current.substring(0, sepPos);
 
