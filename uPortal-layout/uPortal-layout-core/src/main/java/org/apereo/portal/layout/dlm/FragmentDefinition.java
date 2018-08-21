@@ -55,7 +55,7 @@ public class FragmentDefinition extends EvaluatorGroup {
     private static final Log LOG = LogFactory.getLog(FragmentDefinition.class);
 
     @Column(name = "FRAGMENT_NAME")
-    private final String name;
+    private String name;
 
     @Column(name = "OWNER_ID")
     private String ownerID = null;
@@ -385,5 +385,25 @@ public class FragmentDefinition extends EvaluatorGroup {
     public String getSummary() {
         // This method is for audience evaluators...
         throw new UnsupportedOperationException();
+    }
+
+    public String getOwnerID() {
+        return ownerID;
+    }
+
+    public void setOwnerID(String ownerID) {
+        this.ownerID = ownerID;
+    }
+
+    public void setPrecedence(double precedence) {
+        this.precedence = precedence;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }
