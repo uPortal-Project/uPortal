@@ -18,6 +18,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import javax.servlet.http.HttpServletRequest;
 import org.apereo.portal.security.mvc.LoginController;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
 
 /**
@@ -30,13 +31,20 @@ public class CasLoginRefUrlEncoder implements LoginRefUrlEncoder {
 
     private String casLoginUrl;
 
+    private UrlAuthCustomizerRegistry urlCustomizer;
+
     @Required
     public void setCasLoginUrl(String casLoginUrl) {
         this.casLoginUrl = casLoginUrl;
     }
 
-    public String getCasLoginUrl() {
-        return casLoginUrl;
+    @Autowired
+    public void setUrlCustomizer(UrlAuthCustomizerRegistry urlCustomizer) {
+        this.urlCustomizer = urlCustomizer;
+    }
+
+    public String getCasLoginUrl(final HttpServletRequest request) {
+        return urlCustomizer.customizeUrl(request, this.casLoginUrl);
     }
 
     @Override
@@ -58,6 +66,6 @@ public class CasLoginRefUrlEncoder implements LoginRefUrlEncoder {
             loginRedirect.append(URLEncoder.encode(firstEncoding, requestEncoding));
         }
 
-        return loginRedirect.toString();
+        return urlCustomizer.customizeUrl(request, loginRedirect.toString());
     }
 }

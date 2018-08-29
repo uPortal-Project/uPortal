@@ -20,7 +20,7 @@
 
 -->
 <beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns="http://www.springframework.org/schema/beans" 
+       xmlns="http://www.springframework.org/schema/beans"
        xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="
            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
@@ -40,7 +40,7 @@
         <property name="logFullDocument" value="true" />
         <property name="stepIdentifier" value="jsonPreStructureTransformLogger"/>
     </bean>
-    
+
     <!-- structure transformation -->
     <bean id="jsonStructureTransformComponent" class="org.apereo.portal.rendering.xslt.XSLTComponent">
         <property name="wrappedComponent" ref="jsonPreStructureTransformLogger" />
@@ -63,7 +63,7 @@
             </bean>
         </property>
     </bean>
-    
+
     <bean id="jsonPostStructureTransformLogger" class="org.apereo.portal.rendering.LoggingStAXComponent">
         <property name="wrappedComponent" ref="jsonStructureTransformComponent" />
         <property name="loggerName" value="org.apereo.portal.rendering.LoggingStAXComponent.POST_STRUCTURE" />
@@ -71,12 +71,12 @@
         <property name="logFullDocument" value="true" />
         <property name="stepIdentifier" value="jsonPostStructureTransformLogger"/>
     </bean>
-    
+
     <bean id="jsonStructureCachingComponent" class="org.apereo.portal.rendering.cache.CachingStAXPipelineComponent">
         <property name="wrappedComponent" ref="jsonPostStructureTransformLogger" />
         <property name="cache" ref="org.apereo.portal.rendering.STRUCTURE_TRANSFORM" />
     </bean>
-    
+
     <!-- portlet window attribute incorporation -->
     <bean id="jsonPortletWindowAttributeIncorporationComponent" class="org.apereo.portal.rendering.StAXAttributeIncorporationComponent">
         <property name="wrappedComponent" ref="jsonStructureCachingComponent" />
@@ -95,7 +95,7 @@
     <!--<bean id="jsonPortletRenderingInitiationComponent" class="org.apereo.portal.rendering.PortletRenderingInitiationStAXComponent">-->
         <!--<property name="wrappedComponent" ref="jsonPortletWindowAttributeIncorporationComponent" />-->
     <!--</bean>-->
-    
+
     <!-- theme attribute incorporation -->
     <bean id="jsonThemeAttributeIncorporationComponent" class="org.apereo.portal.rendering.StAXAttributeIncorporationComponent">
         <property name="wrappedComponent" ref="jsonPortletDefinitionAttributeIncorporationComponent" />
@@ -109,11 +109,11 @@
         <property name="logFullDocument" value="true" />
         <property name="stepIdentifier" value="jsonPreThemeTransformLogger"/>
     </bean>
-     
+
     <!-- theme transformation -->
     <bean id="jsonThemeTransformComponent" class="org.apereo.portal.rendering.xslt.XSLTComponent">
         <property name="wrappedComponent" ref="jsonPreThemeTransformLogger" />
-        <property name="transformerSource" ref="themeTransformSource"/> 
+        <property name="transformerSource" ref="themeTransformSource"/>
         <property name="xsltParameterSource">
             <bean class="org.apereo.portal.rendering.xslt.MergingTransformerConfigurationSource">
                 <property name="sources">
@@ -136,6 +136,7 @@
                                     <entry key="CURRENT_REQUEST" value="request.nativeRequest" />
                                     <entry key="CONTEXT_PATH" value="request.contextPath" />
                                     <entry key="AUTHENTICATED" value="!person.guest" />
+                                    <entry key="EXTERNAL_LOGIN_URL" value="@casRefUrlEncoder.getCasLoginUrl(request.nativeRequest)" />
                                     <entry key="HOST_NAME" value="request.nativeRequest.serverName" />
                                     <entry key="userName" value="person.fullName" />
                                     <entry key="USER_ID" value="person.userName" />
@@ -156,7 +157,7 @@
             </bean>
         </property>
     </bean>
-    
+
     <bean id="jsonPostThemeTransformLogger" class="org.apereo.portal.rendering.LoggingStAXComponent">
         <property name="wrappedComponent" ref="jsonThemeTransformComponent" />
         <property name="loggerName" value="org.apereo.portal.rendering.LoggingStAXComponent.POST_THEME" />
@@ -165,7 +166,7 @@
         <property name="logFullDocumentAsHtml" value="true" />
         <property name="stepIdentifier" value="jsonPostThemeTransformLogger"/>
     </bean>
-    
+
     <!-- StAX to String serialization -->
     <bean id="jsonStaxSerializingComponent" class="org.apereo.portal.rendering.StAXSerializingComponent">
         <property name="wrappedComponent" ref="jsonPostThemeTransformLogger" />
@@ -182,11 +183,11 @@
             <map/>
         </property>
     </bean>
-    
+
     <bean id="jsonWrapperFilteringCharacterPipelineComponent" class="org.apereo.portal.json.rendering.JsonWrapperFilteringCharacterPipelineComponent">
         <property name="wrappedComponent" ref="jsonStaxSerializingComponent" />
     </bean>
-    
+
     <bean id="jsonThemeCachingComponent" class="org.apereo.portal.rendering.cache.CachingCharacterPipelineComponent">
         <property name="wrappedComponent" ref="jsonWrapperFilteringCharacterPipelineComponent" />
         <property name="cache" ref="org.apereo.portal.rendering.THEME_TRANSFORM" />
@@ -197,7 +198,7 @@
     <!--<bean id="jsonPortletRenderingInitiationCharacterComponent" class="org.apereo.portal.rendering.PortletRenderingInitiationCharacterComponent">-->
         <!--<property name="wrappedComponent" ref="jsonThemeCachingComponent" />-->
     <!--</bean>-->
-    
+
     <!-- portlet content incorporation -->
     <!-- portlet rendering initiation.  Not needed for JSON layout.  We don't want to actually render the portlets
          since we don't need to incorporate the portlet's output into the response.  -->
@@ -208,5 +209,5 @@
         <qualifier value="json"/>
         <property name="pipeline" ref="jsonThemeCachingComponent" />
     </bean>
-    
+
 </beans>

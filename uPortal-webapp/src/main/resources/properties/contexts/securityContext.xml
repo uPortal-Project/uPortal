@@ -118,7 +118,7 @@
      | source configuration settings from the primaryPropertyPlaceholderConfigurer.)
      +-->
     <bean name="ticketValidationFilter" class="org.jasig.cas.client.validation.Cas20ProxyReceivingTicketValidationFilter">
-        <property name="serverName" value="${portal.protocol.server.context}" />
+        <property name="serverName" value="${portal.allServerNames}" />
         <property name="encodeServiceUrl" value="false" />
         <property name="proxyReceptorUrl" value="${cas.ticketValidationFilter.proxyReceptorUrl:}" />
         <property name="ticketValidator">
