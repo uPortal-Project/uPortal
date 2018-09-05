@@ -42,6 +42,11 @@ public class PortalDialectResolver extends AbstractDialectResolver {
             return new PostgreSQL81Dialect();
         }
 
+        // Ensure long varchar columns are forced to clob instead of long.
+        if ("Oracle".equals(databaseName) && 12 >= databaseMajorVersion) {
+            return new Oracle12ForceClobDialect();
+        }
+
         // This is due to a jTDS not supporting SQL Server 2008+, hence does not support some new
         // types like TIME.
         if ("Microsoft SQL Server".equals(databaseName) && databaseMajorVersion > 9) {
