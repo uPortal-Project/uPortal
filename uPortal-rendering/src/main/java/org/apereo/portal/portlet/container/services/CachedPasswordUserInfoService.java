@@ -54,10 +54,6 @@ public class CachedPasswordUserInfoService implements UserInfoService {
     private IStringEncryptionService stringEncryptionService;
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
-    /** @return the portalRequestUtils */
-    public IPortalRequestUtils getPortalRequestUtils() {
-        return portalRequestUtils;
-    }
     /** @param portalRequestUtils the portalRequestUtils to set */
     @Autowired(required = true)
     public void setPortalRequestUtils(IPortalRequestUtils portalRequestUtils) {

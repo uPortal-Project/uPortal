@@ -34,9 +34,6 @@ public abstract class AbstractEntityCachingService implements IEntityCachingServ
     protected abstract IEntityCache getCache(Class<? extends IBasicEntity> entityType)
             throws CachingException;
 
-    /* (non-Javadoc)
-     * @see org.apereo.portal.concurrency.IEntityCachingService#add(org.apereo.portal.IBasicEntity)
-     */
     @Override
     public void add(IBasicEntity entity) throws CachingException {
         final EntityIdentifier entityIdentifier = entity.getEntityIdentifier();
@@ -46,9 +43,6 @@ public abstract class AbstractEntityCachingService implements IEntityCachingServ
         entityCache.add(entity);
     }
 
-    /* (non-Javadoc)
-     * @see org.apereo.portal.concurrency.IEntityCachingService#get(java.lang.Class, java.lang.String)
-     */
     @Override
     public IBasicEntity get(Class<? extends IBasicEntity> entityType, String key)
             throws CachingException {
@@ -56,9 +50,6 @@ public abstract class AbstractEntityCachingService implements IEntityCachingServ
         return entityCache.get(key);
     }
 
-    /* (non-Javadoc)
-     * @see org.apereo.portal.concurrency.IEntityCachingService#remove(java.lang.Class, java.lang.String)
-     */
     @Override
     public void remove(Class<? extends IBasicEntity> entityType, String key)
             throws CachingException {
@@ -66,9 +57,6 @@ public abstract class AbstractEntityCachingService implements IEntityCachingServ
         entityCache.remove(key);
     }
 
-    /* (non-Javadoc)
-     * @see org.apereo.portal.concurrency.IEntityCachingService#update(org.apereo.portal.IBasicEntity)
-     */
     @Override
     public void update(IBasicEntity entity) throws CachingException {
         this.add(entity);
