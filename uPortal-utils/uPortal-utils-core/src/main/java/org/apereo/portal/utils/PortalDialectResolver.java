@@ -17,6 +17,7 @@ package org.apereo.portal.utils;
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 import org.apereo.portal.utils.hibernate4.dialects.MySQL5InnoDBCompressedDialect;
+import org.apereo.portal.utils.hibernate4.dialects.Oracle12ForceClobDialect;
 import org.apereo.portal.utils.hibernate4.dialects.PostgreSQL81Dialect;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.dialect.SQLServer2005Dialect;
@@ -40,6 +41,11 @@ public class PortalDialectResolver extends AbstractDialectResolver {
                 && 8 == databaseMajorVersion
                 && databaseMinorVersion <= 1) {
             return new PostgreSQL81Dialect();
+        }
+
+        // Ensure long varchar columns are forced to clob instead of long.
+        if ("Oracle".equals(databaseName) && 12 >= databaseMajorVersion) {
+            return new Oracle12ForceClobDialect();
         }
 
         // This is due to a jTDS not supporting SQL Server 2008+, hence does not support some new
