@@ -72,9 +72,6 @@ public class AttributeSwapperHelperImpl implements IAttributeSwapperHelper {
         this.personManager = personManager;
     }
 
-    public IPortalRequestUtils getPortalRequestUtils() {
-        return portalRequestUtils;
-    }
     /** Utility class to access the original portal request */
     @Autowired
     public void setPortalRequestUtils(IPortalRequestUtils portalRequestUtils) {
