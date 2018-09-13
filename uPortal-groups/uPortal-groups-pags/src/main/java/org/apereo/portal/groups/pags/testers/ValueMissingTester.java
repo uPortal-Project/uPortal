@@ -40,15 +40,41 @@ public class ValueMissingTester extends BaseAttributeTester {
             // Loop through the values of the attribute, if one is equal
             // to the test case the test fails and returns false
             for (int i = 0; i < vals.length; i++) {
-                String val = (String) vals[i];
+                Object obj = (Object) vals[i];
 
-                if (val.equalsIgnoreCase(testValue)) {
-                    return false;
+                if (obj != null) {
+                    String val = getStringTransformedValue(obj);
+
+                    if (val.equalsIgnoreCase(testValue)) {
+                        return false;
+                    }
                 }
             }
 
             // None of the values equaled the test case, test passed
             return true;
         }
+    }
+
+    /**
+     * This method will transform all the basic primitive Data Type Wrapper class objects to String
+     *
+     * @param obj
+     * @return
+     */
+    private String getStringTransformedValue(Object obj) {
+        if (obj instanceof String) {
+            return (String) obj;
+        } else if (obj instanceof Long
+                || obj instanceof Double
+                || obj instanceof Boolean
+                || obj instanceof Byte
+                || obj instanceof Character
+                || obj instanceof Integer
+                || obj instanceof Float
+                || obj instanceof Short) {
+            return String.valueOf(obj);
+        }
+        return "";
     }
 }
