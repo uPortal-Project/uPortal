@@ -298,10 +298,10 @@ public class Authentication {
      * @param securityContext
      */
     public void setContextParameters(
-        Map<String, String> principals,
-        Map<String, String> credentials,
-        String ctxName,
-        ISecurityContext securityContext) {
+            Map<String, String> principals,
+            Map<String, String> credentials,
+            String ctxName,
+            ISecurityContext securityContext) {
 
         if (log.isDebugEnabled()) {
             final StringBuilder msg = new StringBuilder();
@@ -364,13 +364,12 @@ public class Authentication {
      * @throws PortalSecurityException
      */
     private void configureSecurityContextChain(
-        final Map<String, String> principals,
-        final Map<String, String> credentials,
-        final ISecurityContext securityContext,
-        final String baseContextName)
+            final Map<String, String> principals,
+            final Map<String, String> credentials,
+            final ISecurityContext securityContext,
+            final String baseContextName)
             throws PortalSecurityException {
-        this.setContextParameters(
-                principals, credentials, baseContextName, securityContext);
+        this.setContextParameters(principals, credentials, baseContextName, securityContext);
 
         // load principals and credentials for the subContexts
         for (final Enumeration<String> subCtxNames = securityContext.getSubContextNames();
