@@ -39,9 +39,6 @@ public class PersonManagerCurrentUserProvider implements ICurrentUserProvider {
         this.personManager = personManager;
     }
 
-    public IPortalRequestUtils getPortalRequestUtils() {
-        return portalRequestUtils;
-    }
     /** @param portalRequestUtils the portalRequestUtils to set */
     @Autowired
     public void setPortalRequestUtils(IPortalRequestUtils portalRequestUtils) {
