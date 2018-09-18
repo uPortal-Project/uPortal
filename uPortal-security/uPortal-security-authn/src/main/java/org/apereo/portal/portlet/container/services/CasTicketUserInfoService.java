@@ -54,6 +54,10 @@ public class CasTicketUserInfoService implements UserInfoService {
     private IPortalRequestUtils portalRequestUtils;
     protected final Log log = LogFactory.getLog(getClass());
 
+    /** @return the portalRequestUtils */
+    public IPortalRequestUtils getPortalRequestUtils() {
+        return portalRequestUtils;
+    }
     /** @param portalRequestUtils the portalRequestUtils to set */
     @Autowired
     public void setPortalRequestUtils(IPortalRequestUtils portalRequestUtils) {
