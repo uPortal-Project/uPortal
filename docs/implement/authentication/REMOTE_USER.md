@@ -6,19 +6,6 @@ uPortal can support a wide variety of authentication providers in this way, both
 source.  Some examples are [Shibboleth][]/SAML (using `mod_shib` in Apache HTTPD) and [CoSign][]
 (using `mod_cosign` in Apache HTTPD).
 
-## Enabling `RemoteUserSecurityContextFactory`
-
-To permit `REMOTE_USER` authentication in uPortal, add the following property to
-`uPortal.properties`:
-
-```properties
-org.apereo.portal.security.provider.RemoteUserSecurityContextFactory.enabled=true
-```
-
-This setting will instruct uPortal to honor `HttpServletRequest.getRemoteUser()`;  you will also
-need to implement some form of integration component in the container (depending on authentication
-provider) to make this value present in the request.
-
 ## Note on `RemoteUserPersonManager`
 
 :notebook: Beginning with uPortal 5.0.5, explicitly configuring `RemoteUserPersonManager` in Spring

@@ -27,27 +27,6 @@
            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 
-    <!--
-     | For uPortal 5, the various flavors of PersonManager were combined into a single class to
-     | avoid unnecessary bean tweaking on the part of deployers.  At some point in the future where
-     | we remove ExtendedPersonManager, it might be a good idea to remove this <bean> element and
-     | annotate RemoteUserPersonManager with @Component (or some such).
-     +-->
-    <bean id="personManager" class="org.apereo.portal.security.provider.RemoteUserPersonManager" />
-
-    <!--
-     | The ExtendedPersonManager, however, still requires bean tweaking, if you're actually going to
-     | use it.  As far as we know, no one is using it.  The ExtendedPersonManager class has been
-     | deprecated.  To enable it in uPortal 5, you'll need to overlay this file.
-     +-->
-   	<!--
-   	<bean id="personManager" class="org.apereo.portal.security.provider.ExtendedPersonManager" >
-   		<property name="merger">
-            <bean class="org.jasig.services.persondir.support.merger.ReplacingAttributeAdder" />
-        </property>
-   		<property name="descriptors" ref="requestAdditionalDescriptors" />
-   	</bean> -->
-
     <util:map id="profileKeyMappings">
         <entry key="desktop" value="default"/>
         <entry key="mobile" value="mobileDefault"/>
