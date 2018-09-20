@@ -34,16 +34,23 @@ public class CacheFactoryEntityCachingService extends AbstractEntityCachingServi
     private final EntityCacheCreator entityCacheCreator = new EntityCacheCreator();
     private CacheFactory cacheFactory;
 
+    /** @return the cacheFactory */
+    public CacheFactory getCacheFactory() {
+        return cacheFactory;
+    }
     /** @param cacheFactory the cacheFactory to set */
     @Autowired
     public void setCacheFactory(CacheFactory cacheFactory) {
         this.cacheFactory = cacheFactory;
     }
 
+    /* (non-Javadoc)
+     * @see org.apereo.portal.concurrency.caching.AbstractEntityCachingService#getCache(java.lang.Class)
+     */
     @Override
     protected IEntityCache getCache(Class<? extends IBasicEntity> entityType)
             throws CachingException {
-        return entityCacheCreator.get(entityType);
+        return this.entityCacheCreator.get(entityType);
     }
 
     private class EntityCacheCreator extends MapCachingDoubleCheckedCreator<String, IEntityCache> {
@@ -51,6 +58,9 @@ public class CacheFactoryEntityCachingService extends AbstractEntityCachingServi
             super(new ReferenceMap(ReferenceMap.HARD, ReferenceMap.SOFT));
         }
 
+        /* (non-Javadoc)
+         * @see org.apereo.portal.utils.threading.MapCachingDoubleCheckedCreator#getKey(java.lang.Object[])
+         */
         @SuppressWarnings("unchecked")
         @Override
         protected String getKey(Object... args) {
@@ -59,6 +69,9 @@ public class CacheFactoryEntityCachingService extends AbstractEntityCachingServi
             return entityType.getName();
         }
 
+        /* (non-Javadoc)
+         * @see org.apereo.portal.utils.threading.MapCachingDoubleCheckedCreator#createInternal(java.lang.Object, java.lang.Object[])
+         */
         @SuppressWarnings("unchecked")
         @Override
         protected IEntityCache createInternal(String typeName, Object... args) {
