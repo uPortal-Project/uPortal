@@ -182,4 +182,23 @@ public class MultivaluedPAGSTest {
                                 strAttributeName, Integer.toString(strNbValues - 1)));
         assertFalse(tester.test(person));
     }
+
+    @Test
+    public void testMissingAttributeFalse() {
+        IPersonTester tester =
+                new MissingAttributeTester(
+                        new TestPersonAttributesGroupTestDefinition(strAttributeName, "something"));
+
+        assertFalse(tester.test(person));
+    }
+
+    @Test
+    public void testMissingAttribute() {
+        IPersonTester tester =
+                new MissingAttributeTester(
+                        new TestPersonAttributesGroupTestDefinition(
+                                strAttributeName + "not", "something"));
+
+        assertTrue(tester.test(person));
+    }
 }

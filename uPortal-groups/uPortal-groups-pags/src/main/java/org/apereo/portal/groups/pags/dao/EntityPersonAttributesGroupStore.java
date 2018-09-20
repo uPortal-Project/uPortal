@@ -155,11 +155,15 @@ public class EntityPersonAttributesGroupStore
                     return false;
                 }
             }
-
             element = new Element(cacheKey, answer);
             membershipCache.put(element);
         }
-
+        logger.debug(
+                "Answering if group {} contains member {}/{} : {}",
+                group.getName(),
+                member.getKey(),
+                member.getLeafType().getSimpleName(),
+                (Boolean) element.getObjectValue());
         return (Boolean) element.getObjectValue();
     }
 
