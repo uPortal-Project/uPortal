@@ -21,5 +21,4 @@ public class HealthCheckController {
         // Do nothing, just return HTTP 200, OK
         logger.debug("Doing a health check. Returning HTTP 200, OK");
     }
-
 }
