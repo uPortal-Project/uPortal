@@ -57,3 +57,5 @@ include 'uPortal-hibernate:uPortal-hibernate4-dialects'
 
 include 'uPortal-utils:uPortal-utils-core'
 include 'uPortal-utils:uPortal-utils-jmx'
+include 'uPortal-health'
+

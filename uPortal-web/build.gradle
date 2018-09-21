@@ -8,6 +8,7 @@ ext {
 dependencies {
     compile project(':uPortal-api:uPortal-api-platform-impl')
     compile project(':uPortal-api:uPortal-api-rest')
+    compile project(':uPortal-health')
     compile project(':uPortal-events')
     compile project(':uPortal-layout:uPortal-layout-impl')
     compile project(':uPortal-rendering')

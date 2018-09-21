@@ -53,6 +53,7 @@
         <context:exclude-filter type="regex" expression="org\.apereo\.portal\.rest\..+"/>
         <context:exclude-filter type="regex" expression="org\.apereo\.portal\.security\.mvc\..+"/>
         <context:exclude-filter type="regex" expression="org\.apereo\.portal\.security\.remoting\..+"/>
+        <context:exclude-filter type="regex" expression="org\.apereo\.portal\.health\..+"/>
     </context:component-scan>
 
     <bean id="primaryPropertyPlaceholderConfigurer" class="org.springframework.context.support.PortalPropertySourcesPlaceholderConfigurer">
