@@ -29,6 +29,9 @@ import org.jasig.portal.layout.dlm.remoting.IGroupListHelper;
 import org.jasig.portal.layout.dlm.remoting.JsonEntityBean;
 import org.jasig.portal.permission.IPermissionActivity;
 import org.jasig.portal.permission.IPermissionOwner;
+import org.jasig.portal.permission.target.IPermissionTarget;
+import org.jasig.portal.permission.target.IPermissionTargetProvider;
+import org.jasig.portal.permission.target.IPermissionTargetProviderRegistry;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPermission;
 import org.jasig.portal.security.IPermissionStore;
@@ -51,17 +54,20 @@ public class PermissionAdministrationHelper implements IPermissionAdministration
     protected final Log log = LogFactory.getLog(getClass());
 
     private IGroupListHelper groupListHelper;
-    
+    private IPermissionStore permissionStore;
+    private IPermissionTargetProviderRegistry permissionTargetProviderRegistry;
+
     @Autowired(required = true)
     public void setGroupListHelper(IGroupListHelper groupListHelper) {
         this.groupListHelper = groupListHelper;
     }
-    
-    private IPermissionStore permissionStore;
-    
     @Autowired(required = true)
     public void setPermissionStore(IPermissionStore permissionStore) {
         this.permissionStore = permissionStore;
+    }
+    @Autowired(required = true)
+    public void setPermissionTargetProviderRegistry(IPermissionTargetProviderRegistry registry) {
+        this.permissionTargetProviderRegistry = registry;
     }
 
     public boolean canEditOwner(IPerson currentUser, String owner) {
@@ -145,6 +151,11 @@ public class PermissionAdministrationHelper implements IPermissionAdministration
         }
 
         return principals;
+    }
+
+    public IPermissionTarget getPermissionTarget(String targetProviderKey, String targetKey) {
+        final IPermissionTargetProvider provider = this.permissionTargetProviderRegistry.getTargetProvider(targetProviderKey);
+        return provider == null ? null : provider.getTarget(targetKey);
     }
 
 }
