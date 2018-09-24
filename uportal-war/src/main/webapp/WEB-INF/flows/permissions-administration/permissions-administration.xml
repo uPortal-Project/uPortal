@@ -76,8 +76,7 @@
             <evaluate expression="breadcrumbs.put('listActivities', owner.name)"/>
             <evaluate expression="breadcrumbs.put('showActivity', activity.name)"/>
             <set name="flashScope.principals" value="permissionAdministrationHelper.getCurrentPrincipals(owner, activity, requestParameters.target)"/>
-            <set name="flashScope.targetProvider" value="permissionTargetProviderRegistry.getTargetProvider(activity.targetProviderKey)"/>
-            <set name="flashScope.target" value="targetProvider.getTarget(requestParameters.target)"/>
+            <set name="flashScope.target" value="permissionAdministrationHelper.getPermissionTarget(activity.targetProviderKey, requestParameters.target)"/>
         </on-entry>
         
         <input name="owner" value="owner"/>
@@ -116,8 +115,7 @@
             <evaluate expression="breadcrumbs.put('listOwners', 'Categories')"/>
             <evaluate expression="breadcrumbs.put('listActivities', owner.name)"/>
             <evaluate expression="breadcrumbs.put('showActivity', activity.name)"/>
-            <set name="viewScope.targetProvider" value="permissionTargetProviderRegistry.getTargetProvider(activity.targetProviderKey)"/>
-            <set name="viewScope.target" value="targetProvider.getTarget(requestParameters.targetName)"/>
+            <set name="flowScope.target" value="permissionAdministrationHelper.getPermissionTarget(activity.targetProviderKey, requestParameters.targetName)"/>
         </on-entry>
         <transition on="remove" to="showActivity"/>
         <transition on="cancel" to="showActivity"/>
