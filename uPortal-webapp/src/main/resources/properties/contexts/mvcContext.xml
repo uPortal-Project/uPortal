@@ -24,7 +24,7 @@
        xmlns:p="http://www.springframework.org/schema/p"
        xsi:schemaLocation="
            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
-           
+
     <bean id="minimizedStateHandlerInterceptor" class="org.apereo.portal.portlets.MinimizedStateHandlerInterceptor" />
 
     <bean id="requireValidSessionFilter" class="org.apereo.portal.url.RequireValidSessionFilter" />
@@ -40,22 +40,37 @@
     </bean>
     <bean id="multipartResolver"
         class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
-    
+
         <!-- one of the properties available; the maximum file size in bytes -->
         <property name="maxUploadSize" value="100000"/>
     </bean>
 
-    <!-- The urlCanonicalizingFilter can (will) attempt to deep-link users, 
-         through authentication, to the content they are requesting, provided 
+    <!-- A Helper bean to update Cas login/logout url when the service can be accessed on different serverName -->
+    <bean id="authUrlCustomizer" class="org.apereo.portal.url.UrlAuthCustomizerRegistry">
+        <property name="registry">
+            <list>
+                <bean class="org.apereo.portal.url.UrlMultiServerNameCustomizer">
+                    <property name="allServerNames">
+                        <bean class="org.apereo.portal.utils.StringToSetUtils" factory-method="delimitedSpaceListToSet">
+                            <constructor-arg type="java.lang.String" value="${portal.allServerNames}"/>
+                        </bean>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <!-- The urlCanonicalizingFilter can (will) attempt to deep-link users,
+         through authentication, to the content they are requesting, provided
          that...
            - (1) the user is a guest
-           - (2) the canonicalUrl (place the portal wants to send the user) is 
+           - (2) the canonicalUrl (place the portal wants to send the user) is
                  not the requested content
-           - (3) there is a strategy for external login (LoginRefUrlEncoder 
+           - (3) there is a strategy for external login (LoginRefUrlEncoder
                  bean) configured
     -->
     <bean id="casRefUrlEncoder" class="org.apereo.portal.url.CasLoginRefUrlEncoder"
-        p:casLoginUrl="${org.apereo.portal.channels.CLogin.CasLoginUrl}" />
+        p:casLoginUrl="${org.apereo.portal.channels.CLogin.CasLoginUrl}" p:urlCustomizer-ref="authUrlCustomizer"/>
 
     <!--
      | Message source for this context, loaded from localized "messages_xx" files
@@ -74,7 +89,7 @@
                 <value>/WEB-INF/flows/person-lookup/person-lookup</value>
                 <value>/WEB-INF/flows/register-portal/register-portal</value>
             </list>
-        </property>                                     
+        </property>
     </bean>
 
     <!--
@@ -84,8 +99,8 @@
         <property name="order" value="1"/>
         <property name="location" value="classpath:properties/contexts/views/mvcViews.xml"/>
     </bean>
-    
-    <!-- 
+
+    <!--
      | Standard JSP view resolver
      +-->
     <bean id="jspViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
@@ -95,6 +110,6 @@
         <property name="suffix" value=".jsp"/>
         <property name="order" value="2"/>
     </bean>
-    
+
     <bean id="localeResolver" class="org.apereo.portal.i18n.LocaleManagerLocaleResolver" />
 </beans>

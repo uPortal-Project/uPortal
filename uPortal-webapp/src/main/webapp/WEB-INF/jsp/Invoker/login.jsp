@@ -19,12 +19,13 @@
 
 --%>
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
+<c:set var="request" value="${pageContext.request}" />
 
 <div id="webLoginContainer" class="fl-widget portal-login">
   <div class="fl-widget-inner">
     <div class="fl-widget-content">
         <div id="portalCASLogin" class="fl-widget-content">
-            <a id="portalCASLoginLink" class="btn" title="<spring:message code="sign.in.via.cas"/>" href="${casRefUrlEncoder.casLoginUrl}">
+            <a id="portalCASLoginLink" class="btn" title="<spring:message code="sign.in.via.cas"/>" href="${casRefUrlEncoder.getCasLoginUrl(request)}}">
                 <i class="fa fa-sign-in" aria-hidden="true"></i>
                 <spring:message code="sign.in"/>
             </a>

@@ -16,12 +16,15 @@ package org.apereo.portal.url;
 
 import static org.junit.Assert.assertEquals;
 
+import com.google.common.collect.Sets;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
-/** @Author James Wennmacher, jwennmacher@unicon.net */
+/** Some Testing on CasLoginRefUrlEncoder class. */
 public class CasLoginRefUrlEncoderTest {
 
     CasLoginRefUrlEncoder encoder;
@@ -30,9 +33,20 @@ public class CasLoginRefUrlEncoderTest {
     @Before
     public void setUp() throws UnsupportedEncodingException {
         encoder = new CasLoginRefUrlEncoder();
-        encoder.setCasLoginUrl("https://cas:80/cas/login?service=myhost:8080/uPortal/Login");
+        encoder.setCasLoginUrl(
+                "https://cas:80/cas/login?service=_CURRENT_SERVER_NAME_/uPortal/Login");
+        UrlMultiServerNameCustomizer urlCustomizer = new UrlMultiServerNameCustomizer();
+        urlCustomizer.setAllServerNames(Sets.newHashSet("myhost:8080", "theirhost:8443"));
+        List<IAuthUrlCustomizer> customizers = new ArrayList<>();
+        customizers.add(urlCustomizer);
+        UrlAuthCustomizerRegistry registry = new UrlAuthCustomizerRegistry();
+        registry.setRegistry(customizers);
+        encoder.setUrlCustomizer(registry);
         request = new MockHttpServletRequest("GET", "http://myhost:8080/uPortal/p/fname");
         request.setCharacterEncoding("UTF-8");
+        request.setServerName("myhost");
+        request.setServerPort(8080);
+        request.addHeader("Host", "myhost:8080");
     }
 
     @Test

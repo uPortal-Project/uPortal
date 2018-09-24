@@ -417,6 +417,8 @@ public class RenderingPipelineConfiguration {
         parameterExpressions.put("CONTEXT_PATH", "request.contextPath");
         parameterExpressions.put("HOST_NAME", "request.nativeRequest.serverName");
         parameterExpressions.put("AUTHENTICATED", "!person.guest");
+        parameterExpressions.put(
+                "EXTERNAL_LOGIN_URL", "@casRefUrlEncoder.getCasLoginUrl(request.nativeRequest)");
         parameterExpressions.put("userName", "person.fullName");
         parameterExpressions.put("USER_ID", "person.userName");
         parameterExpressions.put("SERVER_NAME", "@portalInfoProvider.serverName");

@@ -24,6 +24,7 @@ import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.IPersonManager;
 import org.apereo.portal.security.ISecurityContext;
 import org.apereo.portal.security.IdentitySwapperManager;
+import org.apereo.portal.url.UrlAuthCustomizerRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +48,7 @@ public class LogoutController {
     private IPortalAuthEventFactory portalEventFactory;
     private IPersonManager personManager;
     private IdentitySwapperManager identitySwapperManager;
+    private UrlAuthCustomizerRegistry urlCustomizer;
 
     @Autowired
     public void setIdentitySwapperManager(IdentitySwapperManager identitySwapperManager) {
@@ -61,6 +63,11 @@ public class LogoutController {
     @Autowired
     public void setPortalEventFactory(IPortalAuthEventFactory portalEventFactory) {
         this.portalEventFactory = portalEventFactory;
+    }
+
+    @Autowired
+    public void setUrlCustomizer(UrlAuthCustomizerRegistry urlCustomizer) {
+        this.urlCustomizer = urlCustomizer;
     }
 
     /**
@@ -127,6 +134,8 @@ public class LogoutController {
      */
     private String selectRedirectionUrl(HttpServletRequest request) {
 
+        final String defaultRedirect = request.getContextPath() + "/";
+
         String rslt = null; // default
 
         // Get the person object associated with the request
@@ -142,7 +151,10 @@ public class LogoutController {
         }
 
         // Otherwise use a sensible default...
-        rslt = rslt != null ? rslt : request.getContextPath() + "/";
+        rslt =
+                rslt != null
+                        ? urlCustomizer.customizeUrl(request, rslt)
+                        : urlCustomizer.customizeUrl(request, defaultRedirect);
 
         logger.debug("Calculated redirectionURL='{}' for user='{}'", rslt, username);
 
