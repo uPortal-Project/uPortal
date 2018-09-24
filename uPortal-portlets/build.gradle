@@ -10,7 +10,7 @@ dependencies {
     compile("net.sf.json-lib:json-lib-ext-spring:${jsonLibExtSpringVersion}") {
         exclude group: 'javax.servlet', module: 'servlet-api'
     }
-    compile "org.antlr:stringtemplate:${stringtemplateVersion}"
+    compile "org.antlr:ST4:${stringtemplateVersion}"
     compile("org.lesscss:lesscss:${lesscssVersion}") {
         exclude group: 'org.slf4j', module: 'slf4j-simple'
     }
