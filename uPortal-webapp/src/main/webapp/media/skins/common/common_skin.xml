@@ -42,7 +42,6 @@
   <js>javascript/uportal/up-parameter-editor.js</js>
   <js>javascript/uportal/flyout-nav.js</js>
   <js>javascript/uportal/up-translator.js</js>
-  <js>javascript/uportal/up-print-plugin.js</js>
   <js>javascript/uportal/up-ga.js</js>
   <js>javascript/uportal/up-rating-option.js</js>
   <js>javascript/uportal/up-favorite.js</js>
