@@ -448,7 +448,7 @@
           <ul class="dropdown-menu" style="right: 0; left: auto;">
           <!--
             Porlet Controls Display Order:
-            help, remove, maximize, minimize, info, print, settings, ...
+            help, remove, maximize, minimize, info, settings, ...
           -->
           <xsl:variable name="hasHelp">
             <xsl:if test="parameter[@name='hasHelp']/@value = 'true'">true</xsl:if>
@@ -463,9 +463,6 @@
           <xsl:variable name="canConfigure">
               <!-- This option is special in that it evaluates both whether (1) the portlet supports CONFIG mode and (2) this user is allowed to access it. -->
               <xsl:if test="parameter[@name='configurable']/@value = 'true' and upAuth:hasPermission('UP_PORTLET_PUBLISH', 'PORTLET_MODE_CONFIG', $permissionChannelId)">true</xsl:if>
-          </xsl:variable>
-          <xsl:variable name="printable">
-            <xsl:if test="parameter[@name='printable']/@value = 'true'">true</xsl:if>
           </xsl:variable>
           <xsl:variable name="hasFavorites">
             <xsl:if test="//content/@hasFavorites = 'true' and $AUTHENTICATED='true'">true</xsl:if>
@@ -675,23 +672,6 @@
             <a href="{$portletConfigureUrl}" title="{upMsg:getMessage('configure.portlet', $USER_LANG)}" class="up-portlet-control configure"><xsl:value-of select="upMsg:getMessage('configure', $USER_LANG)"/></a>
           </li>
         </xsl:if>
-      </xsl:if>
-
-      <!-- Print Icon -->
-      <xsl:if test="$printable='true'">
-        <xsl:variable name="portletPrintUrl">
-          <xsl:call-template name="portalUrl">
-            <xsl:with-param name="url">
-                <url:portal-url>
-                    <url:layoutId><xsl:value-of select="@ID"/></url:layoutId>
-                    <url:portlet-url mode="PRINT" copyCurrentRenderParameters="true" />
-                </url:portal-url>
-            </xsl:with-param>
-          </xsl:call-template>
-        </xsl:variable>
-        <li class="up-portlet-options-item print">
-          <a href="{$portletPrintUrl}#{@ID}" title="{upMsg:getMessage('print.portlet', $USER_LANG)}" class="up-portlet-control print"><xsl:value-of select="upMsg:getMessage('print', $USER_LANG)"/></a>
-        </li>
       </xsl:if>
 
           <!-- About Icon -->
