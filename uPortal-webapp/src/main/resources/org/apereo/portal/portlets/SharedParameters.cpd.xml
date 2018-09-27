@@ -94,17 +94,6 @@
         </parameter>
 
         <parameter>
-            <name>printable</name>
-            <label>portlet.print.enable</label>
-            <description>Print enabled</description>
-            <single-choice-parameter-input display="select">
-                <default>false</default>
-                <option value="false" label="false"/>
-                <option value="true" label="true"/>
-            </single-choice-parameter-input>
-        </parameter>
-
-        <parameter>
             <name>disableDynamicTitle</name>
             <label>disable.dynamic.title</label>
             <description>
