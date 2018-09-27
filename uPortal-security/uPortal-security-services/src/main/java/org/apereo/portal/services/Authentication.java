@@ -115,7 +115,7 @@ public class Authentication {
 
         // Set the principals and credentials for the security context chain
         this.configureSecurityContextChain(
-                principals, credentials, person, securityContext, BASE_CONTEXT_NAME);
+                principals, credentials, securityContext, BASE_CONTEXT_NAME);
 
         // NOTE: PortalPreAuthenticatedProcessingFilter looks in the security.properties file to
         // determine what tokens to look for that represent the principals and
@@ -179,7 +179,6 @@ public class Authentication {
                     for (final String attributeName : newPerson.getAttributeMap().keySet()) {
                         person.setAttribute(attributeName, newPerson.getAttribute(attributeName));
                     }
-                    this.resetEntityIdentifier(person, newPerson);
                 }
                 // If the additional descriptor is a map then we can
                 // simply copy all of these additional attributes into the IPerson
@@ -291,28 +290,18 @@ public class Authentication {
     }
 
     /**
-     * Reset the entity identifier in the final person object (exit hook)
-     *
-     * @param person
-     * @param newPerson
-     */
-    protected void resetEntityIdentifier(final IPerson person, final IPerson newPerson) {}
-
-    /**
      * Get the principal and credential for a specific context and store them in the context.
      *
      * @param principals
      * @param credentials
      * @param ctxName
      * @param securityContext
-     * @param person
      */
     public void setContextParameters(
             Map<String, String> principals,
             Map<String, String> credentials,
             String ctxName,
-            ISecurityContext securityContext,
-            IPerson person) {
+            ISecurityContext securityContext) {
 
         if (log.isDebugEnabled()) {
             final StringBuilder msg = new StringBuilder();
@@ -370,7 +359,6 @@ public class Authentication {
      *
      * @param principals
      * @param credentials
-     * @param person
      * @param securityContext
      * @param baseContextName
      * @throws PortalSecurityException
@@ -378,12 +366,10 @@ public class Authentication {
     private void configureSecurityContextChain(
             final Map<String, String> principals,
             final Map<String, String> credentials,
-            final IPerson person,
             final ISecurityContext securityContext,
             final String baseContextName)
             throws PortalSecurityException {
-        this.setContextParameters(
-                principals, credentials, baseContextName, securityContext, person);
+        this.setContextParameters(principals, credentials, baseContextName, securityContext);
 
         // load principals and credentials for the subContexts
         for (final Enumeration<String> subCtxNames = securityContext.getSubContextNames();
@@ -398,7 +384,7 @@ public class Authentication {
 
             final ISecurityContext sc = securityContext.getSubContext(localSubCtxName);
 
-            this.configureSecurityContextChain(principals, credentials, person, sc, fullSubCtxName);
+            this.configureSecurityContextChain(principals, credentials, sc, fullSubCtxName);
         }
     }
 }

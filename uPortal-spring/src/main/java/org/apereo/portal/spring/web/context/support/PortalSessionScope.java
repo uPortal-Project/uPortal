@@ -40,10 +40,6 @@ public class PortalSessionScope implements Scope {
 
     private IPortalRequestUtils portalRequestUtils;
 
-    public IPortalRequestUtils getPortalRequestUtils() {
-        return this.portalRequestUtils;
-    }
-
     @Autowired
     public void setPortalRequestUtils(IPortalRequestUtils portalRequestUtils) {
         this.portalRequestUtils = portalRequestUtils;

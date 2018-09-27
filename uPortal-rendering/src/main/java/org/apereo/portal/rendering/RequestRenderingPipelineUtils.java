@@ -23,5 +23,5 @@ public interface RequestRenderingPipelineUtils {
      *
      * @return
      */
-    public IPortletDefinition getPortletDefinitionFromServletRequest(HttpServletRequest request);
+    IPortletDefinition getPortletDefinitionFromServletRequest(HttpServletRequest request);
 }
