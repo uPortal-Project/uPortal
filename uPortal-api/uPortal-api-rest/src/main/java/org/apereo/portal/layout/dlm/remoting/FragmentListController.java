@@ -14,6 +14,8 @@
  */
 package org.apereo.portal.layout.dlm.remoting;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -21,6 +23,9 @@ import java.util.List;
 import java.util.Map;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathConstants;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.logging.Log;
@@ -30,6 +35,7 @@ import org.apereo.portal.layout.IUserLayoutStore;
 import org.apereo.portal.layout.dlm.ConfigurationLoader;
 import org.apereo.portal.layout.dlm.Evaluator;
 import org.apereo.portal.layout.dlm.FragmentDefinition;
+import org.apereo.portal.layout.dlm.IFragmentDefinitionDao;
 import org.apereo.portal.portlet.om.IPortletDefinition;
 import org.apereo.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.apereo.portal.security.AdminEvaluator;
@@ -38,11 +44,13 @@ import org.apereo.portal.security.IPersonManager;
 import org.apereo.portal.xml.xpath.XPathOperations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 /**
@@ -59,7 +67,7 @@ import org.w3c.dom.NodeList;
  * not implement support for user selection of sort order.
  */
 @Controller
-@RequestMapping("/fragmentList")
+@RequestMapping("/fragments")
 public class FragmentListController {
 
     private static final Sort DEFAULT_SORT = Sort.PRECEDENCE;
@@ -70,7 +78,13 @@ public class FragmentListController {
     private IUserLayoutStore userLayoutStore;
     private IPortletDefinitionRegistry portletRegistry;
     private XPathOperations xpathOperations;
+    private IFragmentDefinitionDao fragmentDefinitionDao;
     private final Log log = LogFactory.getLog(getClass());
+
+    @Autowired
+    public void setFragmentDefinitionDao(IFragmentDefinitionDao fragmentDefinitionDao) {
+        this.fragmentDefinitionDao = fragmentDefinitionDao;
+    }
 
     @Autowired
     public void setXpathOperations(XPathOperations xpathOperations) {
@@ -109,7 +123,7 @@ public class FragmentListController {
      * @throws AuthorizationException if request is for any user other than a Portal Administrator.
      * @throws IllegalArgumentException if sort parameter has an unrecognized value
      */
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping(value = "/list", method = RequestMethod.GET)
     public ModelAndView listFragments(
             HttpServletRequest req,
             @RequestParam(value = "sort", required = false) String sortParam)
@@ -168,6 +182,252 @@ public class FragmentListController {
         return new ModelAndView("jsonView", "fragments", fragments);
     }
 
+    @RequestMapping(value = "/v1/create", method = RequestMethod.POST)
+    public ModelAndView create(
+            HttpServletRequest req,
+            @RequestParam(value = "name", required = true) String name,
+            @RequestParam(value = "ownerID", required = false) String ownerID,
+            @RequestParam(value = "precedence", required = true) Double precedence) {
+
+        // Step 1:
+        // Verify that the user is allowed to use this service
+        IPerson user = personManager.getPerson(req);
+        ModelAndView mv = null;
+
+        if (AdminEvaluator.isAdmin(user)) {
+            try {
+                // Step 2:
+                // Create a Document Object with some basic information
+
+                DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
+                DocumentBuilder docBuilder = null;
+                try {
+                    docBuilder = dbfac.newDocumentBuilder();
+                } catch (ParserConfigurationException e) {
+                    log.debug("Exception in creating a document instance ", e);
+                }
+                Document doc = docBuilder.newDocument();
+
+                Element attribute = doc.createElement("attribute");
+                attribute.setAttribute("mode", "deepMemberOf");
+                attribute.setAttribute("name", "Everyone");
+
+                Element paren = doc.createElement("paren");
+                paren.setAttribute("mode", "OR");
+                paren.appendChild(attribute);
+
+                Element audience = doc.createElement("dlm:audience");
+                audience.setAttribute(
+                        "evaluatorFactory",
+                        "org.apereo.portal.layout.dlm.providers.GroupMembershipEvaluatorFactory");
+                audience.appendChild(paren);
+
+                Element fragment = doc.createElement("dlm:fragment");
+                fragment.setAttribute("name", name);
+                fragment.setAttribute("ownerID", (ownerID != null ? ownerID : user.getUserName()));
+                fragment.setAttribute("precedence", String.valueOf(precedence));
+                fragment.appendChild(audience);
+
+                Element fragmentDefinition = doc.createElement("fragment-definition");
+                fragmentDefinition.setAttribute(
+                        "script",
+                        "classpath://org/jasig/portal/io/import-fragment-definition_v3-1.crn");
+                fragmentDefinition.setAttribute(
+                        "xmlns:dlm", "http://org.apereo.portal.layout.dlm.config");
+                fragmentDefinition.appendChild(fragment);
+
+                doc.appendChild(fragmentDefinition);
+
+                // Step 3
+                // Check if the object exists
+
+                final Element fragmentDefElement =
+                        this.xpathOperations.evaluate(
+                                "//*[local-name() = 'fragment']", doc, XPathConstants.NODE);
+                final String fragmentName = fragmentDefElement.getAttribute("name");
+                FragmentDefinition fd =
+                        this.fragmentDefinitionDao.getFragmentDefinition(fragmentName);
+
+                // Step 4
+                // if the object doesn't exist in database
+                // Save data in UP_DLM_EVALUATOR and in UP_DLM_EVALUATOR_PAREN
+
+                if (fd == null) {
+                    fd = new FragmentDefinition(fragmentDefElement);
+                    fd.loadFromEelement(fragmentDefElement);
+                    this.fragmentDefinitionDao.updateFragmentDefinition(fd);
+                }
+                mv =
+                        new ModelAndView(
+                                "jsonView",
+                                "fragment",
+                                FragmentBean.create(fd, new ArrayList<String>()));
+
+            } catch (Exception e) {
+                mv =
+                        new ModelAndView(
+                                "jsonView",
+                                "error",
+                                ErrorBean.create(
+                                        "Error creating Fragment Definition for fragment: ["
+                                                + name
+                                                + "], "
+                                                + getStackTrace(e)));
+            }
+        } else {
+            mv =
+                    new ModelAndView(
+                            "jsonView",
+                            "error",
+                            ErrorBean.create(
+                                    "User " + user.getUserName() + " not an administrator."));
+        }
+
+        return mv;
+    }
+
+    @RequestMapping(value = "/v1/read", method = RequestMethod.GET)
+    public ModelAndView read(
+            HttpServletRequest req, @RequestParam(value = "name", required = true) String name) {
+
+        IPerson user = personManager.getPerson(req);
+        ModelAndView mv = null;
+
+        if (AdminEvaluator.isAdmin(user)) {
+            FragmentDefinition fd = this.fragmentDefinitionDao.getFragmentDefinition(name);
+
+            if (fd != null) {
+                mv =
+                        new ModelAndView(
+                                "jsonView",
+                                "fragment",
+                                FragmentBean.create(fd, new ArrayList<String>()));
+            } else {
+                mv =
+                        new ModelAndView(
+                                "jsonView",
+                                "error",
+                                ErrorBean.create(
+                                        "No Fragment Definition found for fragment: " + name));
+            }
+        } else {
+            mv =
+                    new ModelAndView(
+                            "jsonView",
+                            "error",
+                            ErrorBean.create(
+                                    "User " + user.getUserName() + " not an administrator."));
+        }
+        return mv;
+    }
+
+    @RequestMapping(value = "/v1/update", method = RequestMethod.PUT)
+    public ModelAndView update(HttpServletRequest req, @RequestBody FragmentBean fragment) {
+
+        IPerson user = personManager.getPerson(req);
+        ModelAndView mv = null;
+
+        if (AdminEvaluator.isAdmin(user)) {
+            FragmentDefinition fd =
+                    this.fragmentDefinitionDao.getFragmentDefinition(fragment.getName());
+
+            if (fd != null) {
+                try {
+                    fd.setPrecedence(fragment.getPrecedence());
+                    fd.setOwnerID(fragment.getOwnerId());
+                    this.fragmentDefinitionDao.updateFragmentDefinition(fd);
+                    mv =
+                            new ModelAndView(
+                                    "jsonView",
+                                    "fragment",
+                                    FragmentBean.create(fd, new ArrayList<String>()));
+
+                } catch (Exception e) {
+                    mv =
+                            new ModelAndView(
+                                    "jsonView",
+                                    "error",
+                                    ErrorBean.create(
+                                            "Error updating Fragment Definition for fragment: ["
+                                                    + fragment.getName()
+                                                    + "], "
+                                                    + getStackTrace(e)));
+                }
+            } else {
+                mv =
+                        new ModelAndView(
+                                "jsonView",
+                                "error",
+                                ErrorBean.create(
+                                        "No Fragment Definition found for fragment: "
+                                                + fragment.getName()));
+            }
+        } else {
+            mv =
+                    new ModelAndView(
+                            "jsonView",
+                            "error",
+                            ErrorBean.create(
+                                    "User " + user.getUserName() + " not an administrator."));
+        }
+
+        return mv;
+    }
+
+    @RequestMapping(value = "/v1/delete", method = RequestMethod.DELETE)
+    public ModelAndView delete(
+            HttpServletRequest req, @RequestParam(value = "name", required = true) String name) {
+
+        IPerson user = personManager.getPerson(req);
+        ModelAndView mv = null;
+
+        if (AdminEvaluator.isAdmin(user)) {
+            FragmentDefinition fd = this.fragmentDefinitionDao.getFragmentDefinition(name);
+            if (fd != null) {
+                try {
+                    this.fragmentDefinitionDao.removeFragmentDefinition(fd);
+                    mv =
+                            new ModelAndView(
+                                    "jsonView",
+                                    "fragment",
+                                    FragmentBean.create(fd, new ArrayList<String>()));
+                } catch (Exception e) {
+                    mv =
+                            new ModelAndView(
+                                    "jsonView",
+                                    "error",
+                                    ErrorBean.create(
+                                            "Error updating Fragment Definition for fragment: ["
+                                                    + name
+                                                    + "], "
+                                                    + getStackTrace(e)));
+                }
+            } else {
+                mv =
+                        new ModelAndView(
+                                "jsonView",
+                                "error",
+                                ErrorBean.create(
+                                        "No Fragment Definition found for fragment: " + name));
+            }
+        } else {
+            mv =
+                    new ModelAndView(
+                            "jsonView",
+                            "error",
+                            ErrorBean.create(
+                                    "User " + user.getUserName() + " not an administrator."));
+        }
+        return mv;
+    }
+
+    private String getStackTrace(Exception e) {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        e.printStackTrace(pw);
+        return sw.toString();
+    }
+
     /*
      * Nested Types
      */
@@ -204,20 +464,22 @@ public class FragmentListController {
     }
 
     /** Very simple class representing a DLM fragment. */
-    public static final class FragmentBean {
+    public static class FragmentBean {
 
         // Instance Members.
-        private final String name;
-        private final String ownerId;
-        private final Double precedence;
-        private final List<String> audience;
-        private final List<String> portlets;
+        private String name;
+        private String ownerId;
+        private Double precedence;
+        private List<String> audience;
+        private List<String> portlets;
+
+        public FragmentBean() {}
 
         public static FragmentBean create(FragmentDefinition frag, List<String> portlets) {
 
             Validate.notNull(frag, "Cannot create a FragmentBean for a null fragment.");
 
-            // NB:  'portlets' may be null
+            // NB: 'portlets' may be null
 
             return new FragmentBean(
                     frag.getName(),
@@ -247,7 +509,7 @@ public class FragmentListController {
             return portlets;
         }
 
-        private FragmentBean(
+        public FragmentBean(
                 String name,
                 String ownerId,
                 Double precedence,
@@ -268,6 +530,44 @@ public class FragmentListController {
             } else {
                 this.portlets = Collections.emptyList();
             }
+        }
+
+        @Override
+        public String toString() {
+            return "FragmentBean [name="
+                    + name
+                    + ", ownerId="
+                    + ownerId
+                    + ", precedence="
+                    + precedence
+                    + ", audience="
+                    + audience
+                    + ", portlets="
+                    + portlets
+                    + "]";
+        }
+    }
+
+    public static class ErrorBean {
+
+        private String message;
+
+        public ErrorBean() {}
+
+        public ErrorBean(String message) {
+            this.message = message;
+        }
+
+        public static ErrorBean create(String message) {
+            return new ErrorBean(message);
+        }
+
+        public String getMessage() {
+            return message;
+        }
+
+        public void setMessage(String message) {
+            this.message = message;
         }
     }
 }
