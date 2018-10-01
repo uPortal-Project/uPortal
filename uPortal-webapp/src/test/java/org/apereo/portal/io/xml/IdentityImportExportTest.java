@@ -212,16 +212,11 @@ public class IdentityImportExportTest extends BasePortalJpaDaoTest {
                 new ClassPathResource(
                         "/org/apereo/portal/io/xml/fragment-definition/academic-tab_5-0.fragment-definition.xml");
 
-        IdentityImportExportTestUtilities.<Tuple<String, Element>>testIdentityImportExport(
+        IdentityImportExportTestUtilities.testIdentityImportExport(
                 this.transactionOperations,
                 this.fragmentDefinitionImporter,
                 this.fragmentDefinitionExporter,
                 dataResource,
-                new Function<Tuple<String, Element>, String>() {
-                    @Override
-                    public String apply(Tuple<String, Element> input) {
-                        return "Academics Tab";
-                    }
-                });
+                input -> "Academics Tab");
     }
 }

@@ -267,14 +267,6 @@ public class Authentication {
             final boolean autocreate =
                     PropertiesManager.getPropertyAsBoolean(
                             "org.apereo.portal.services.Authentication.autoCreateUsers");
-            // If we are going to be auto creating accounts then we must find the default template
-            // to use
-            if (autocreate && person.getAttribute("uPortalTemplateUserName") == null) {
-                final String defaultTemplateUserName =
-                        PropertiesManager.getProperty(
-                                "org.apereo.portal.services.Authentication.defaultTemplateUserName");
-                person.setAttribute("uPortalTemplateUserName", defaultTemplateUserName);
-            }
             try {
                 // Attempt to retrieve the UID
                 final int newUID = this.userIdentityStore.getPortalUID(person, autocreate);

@@ -121,15 +121,6 @@
     </cache>
 
     <!--
-     | Caches if the user is a default user (generally only used during import/export)
-     | - 1 x user
-     | - not replicated
-     +-->
-    <cache name="org.apereo.portal.RDBMUserIdentityStore.isDefaultUser"
-        eternal="false" maxElementsInMemory="10000" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
-
-    <!--
      | Caches user specific lock
      | - 1 x user
      | - not replicated

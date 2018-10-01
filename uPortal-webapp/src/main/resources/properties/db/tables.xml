@@ -33,9 +33,6 @@
       <column> <name>USER_NAME</name>        <type>VARCHAR</type>   <param>100</param>
         <desc>Authentication prinicipal - Foreign key to up_person_dir</desc>
       </column>
-      <column> <name>USER_DFLT_USR_ID</name> <type>INTEGER</type>
-        <desc>use the information from this user id as a default, that is a backup to revert to if user makes mistakes changing content or profile, and the initial layout for a user.</desc>
-      </column>
       <column> <name>USER_DFLT_LAY_ID</name> <type>INTEGER</type>
         <desc>Portal uses the layout from this layout ID to revert back to, and the initial layout for a user.</desc>
       </column>
@@ -48,10 +45,6 @@
     </columns>
     <not-null>USER_ID</not-null>
     <primary-key>USER_ID</primary-key>
-    <index>
-        <name>UPU_DFLT_ID_IDX</name>
-        <column-ref>USER_DFLT_USR_ID</column-ref>
-    </index>
     <unique>
         <name>UPU_USER_NAME</name>
         <column-ref>USER_NAME</column-ref>

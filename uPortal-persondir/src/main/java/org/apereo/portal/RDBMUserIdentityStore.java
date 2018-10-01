@@ -14,7 +14,6 @@
  */
 package org.apereo.portal;
 
-import com.googlecode.ehcache.annotations.Cacheable;
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -25,13 +24,9 @@ import java.util.Set;
 import java.util.regex.Pattern;
 import javax.sql.DataSource;
 import net.sf.ehcache.Ehcache;
-import net.sf.ehcache.constructs.blocking.CacheEntryFactory;
 import net.sf.ehcache.constructs.blocking.SelfPopulatingCache;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apereo.portal.groups.IEntityGroup;
-import org.apereo.portal.groups.IGroupMember;
-import org.apereo.portal.groups.ILockableEntityGroup;
 import org.apereo.portal.jdbc.RDBMServices;
 import org.apereo.portal.jpa.BasePortalJpaDao;
 import org.apereo.portal.layout.dao.IStylesheetUserPreferencesDao;
@@ -44,12 +39,10 @@ import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.PersonFactory;
 import org.apereo.portal.security.provider.BrokenSecurityContext;
 import org.apereo.portal.security.provider.PersonImpl;
-import org.apereo.portal.services.GroupService;
 import org.apereo.portal.spring.locator.CounterStoreLocator;
 import org.apereo.portal.utils.SerializableObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.ConnectionCallback;
@@ -58,7 +51,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionOperations;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -74,26 +66,23 @@ public class RDBMUserIdentityStore implements IUserIdentityStore {
     private static final Log log = LogFactory.getLog(RDBMUserIdentityStore.class);
     private static final String PROFILE_TABLE = "UP_USER_PROFILE";
 
-    public static final String USERNAME_VALIDATOR_REGEX = "^[^\\s]{1,100}$";
+    private static final String USERNAME_VALIDATOR_REGEX = "^[^\\s]{1,100}$";
     private static final Pattern USERNAME_VALIDATOR_PATTERN =
             Pattern.compile(USERNAME_VALIDATOR_REGEX);
 
-    // *********************************************************************
-    // Constants
-    private static final String templateAttrName = "uPortalTemplateUserName";
+    /**
+     * This value used to come from the user's "template user," but was always 1 anyways.
+     *
+     * @since 5.3
+     */
+    private static final int USER_DFLT_LAY_ID = 1;
 
-    private String defaultTemplateUserName;
     private JdbcOperations jdbcOperations;
     private TransactionOperations transactionOperations;
     private IPortletEntityDao portletEntityDao;
     private IStylesheetUserPreferencesDao stylesheetUserPreferencesDao;
     private ILocalAccountDao localAccountDao;
     private Ehcache userLockCache;
-
-    @Value("${org.apereo.portal.services.Authentication.defaultTemplateUserName}")
-    public void setDefaultTemplateUserName(String defaultTemplateUserName) {
-        this.defaultTemplateUserName = defaultTemplateUserName;
-    }
 
     @Autowired
     public void setPortletEntityDao(@Qualifier("persistence") IPortletEntityDao portletEntityDao) {
@@ -115,15 +104,7 @@ public class RDBMUserIdentityStore implements IUserIdentityStore {
     @Qualifier("org.apereo.portal.RDBMUserIdentityStore.userLockCache")
     public void setUserLockCache(Ehcache userLockCache) {
         this.userLockCache =
-                new SelfPopulatingCache(
-                        userLockCache,
-                        new CacheEntryFactory() {
-
-                            @Override
-                            public Object createEntry(Object key) throws Exception {
-                                return new SerializableObject();
-                            }
-                        });
+                new SelfPopulatingCache(userLockCache, key -> new SerializableObject());
     }
 
     @Autowired
@@ -149,13 +130,10 @@ public class RDBMUserIdentityStore implements IUserIdentityStore {
      *
      * @param person the person object
      * @return uPortalUID number
-     * @throws Exception if no user is found.
      */
     @Override
     public int getPortalUID(IPerson person) throws AuthorizationException {
-        int uPortalUID = -1;
-        uPortalUID = this.getPortalUID(person, false);
-        return uPortalUID;
+        return getPortalUID(person, false);
     }
 
     @Override
@@ -251,7 +229,6 @@ public class RDBMUserIdentityStore implements IUserIdentityStore {
      * removeuPortalUID
      *
      * @param uPortalUID integer key to uPortal data for a user
-     * @throws SQLException exception if a sql error is encountered
      */
     @Override
     public void removePortalUID(final int uPortalUID) {
@@ -281,7 +258,7 @@ public class RDBMUserIdentityStore implements IUserIdentityStore {
     /**
      * Get the portal user ID for this person object.
      *
-     * @param person
+     * @param person The {@link IPerson} for whom a UID is requested
      * @param createPortalData indicating whether to try to create all uPortal data for this user
      *     from template prototype
      * @return uPortalUID number or -1 if unable to create user.
@@ -298,8 +275,7 @@ public class RDBMUserIdentityStore implements IUserIdentityStore {
         if (PersonFactory.getGuestUsernames().contains(username)) {
             uid = __getPortalUID(person, createPortalData);
         } else {
-            Object lock = getLock(person);
-            synchronized (lock) {
+            synchronized (getLock(person)) {
                 uid = __getPortalUID(person, createPortalData);
             }
         }
@@ -350,67 +326,24 @@ public class RDBMUserIdentityStore implements IUserIdentityStore {
         return USERNAME_VALIDATOR_PATTERN.matcher(username).matches();
     }
 
-    private static final String IS_DEFAULT_USER_QUERY =
-            "SELECT count(*)\n"
-                    + "FROM up_user upuA\n"
-                    + "	right join up_user upuB on upuA.USER_ID = upuB.USER_DFLT_USR_ID\n"
-                    + "WHERE upuA.user_name=?";
-
-    /* (non-Javadoc)
-     * @see org.apereo.portal.IUserIdentityStore#isDefaultUser(java.lang.String)
-     */
-    @Override
-    @Cacheable(cacheName = "org.apereo.portal.RDBMUserIdentityStore.isDefaultUser")
-    public boolean isDefaultUser(String username) {
-        final int defaultUserCount =
-                this.jdbcOperations.queryForObject(IS_DEFAULT_USER_QUERY, Integer.class, username);
-        return defaultUserCount > 0;
-    }
-
     private int __getPortalUID(IPerson person, boolean createPortalData)
             throws AuthorizationException {
-        PortalUser portalUser = null;
+
+        PortalUser portalUser;
 
         try {
             String userName = person.getUserName();
-            String templateName = getTemplateName(person);
             portalUser = getPortalUser(userName);
 
             if (createPortalData) {
                 // If we are allowed to modify the database
 
-                if (portalUser != null) {
-                    // If the user has logged in we may have to update their template user
-                    // information
-
-                    boolean hasSavedLayout = userHasSavedLayout(portalUser.getUserId());
-                    if (!hasSavedLayout) {
-
-                        TemplateUser templateUser = getTemplateUser(templateName);
-                        if (portalUser.getDefaultUserId() != templateUser.getUserId()) {
-                            // Update user data with new template user's data
-                            updateUser(portalUser.getUserId(), person, templateUser);
-                        }
-                    }
-                } else {
-                    // User hasn't logged in before, some data needs to be created for them based on
-                    // their template user
-
-                    // Retrieve the information for the template user
-                    TemplateUser templateUser = getTemplateUser(templateName);
-                    if (templateUser == null) {
-                        throw new AuthorizationException(
-                                "No information found for template user = "
-                                        + templateName
-                                        + ". Cannot create new account for "
-                                        + userName);
-                    }
-
+                if (portalUser == null) {
                     // Get a new user ID for this user
-                    int newUID = getNewPortalUID(person);
+                    int newUID = getNewPortalUID();
 
                     // Add new user to all appropriate tables
-                    int newPortalUID = addNewUser(newUID, person, templateUser);
+                    int newPortalUID = addNewUser(newUID, person);
                     portalUser = new PortalUser();
                     portalUser.setUserId(newPortalUID);
                 }
@@ -431,24 +364,8 @@ public class RDBMUserIdentityStore implements IUserIdentityStore {
         return portalUser.getUserId();
     }
 
-    protected int getNewPortalUID(IPerson person) throws Exception {
+    private int getNewPortalUID() {
         return CounterStoreLocator.getCounterStore().getNextId("UP_USER");
-    }
-
-    protected static final void commit(Connection connection) {
-        try {
-            if (RDBMServices.getDbMetaData().supportsTransactions()) connection.commit();
-        } catch (Exception e) {
-            log.error("RDBMUserIdentityStore::commit(): " + e);
-        }
-    }
-
-    protected static final void rollback(Connection connection) {
-        try {
-            if (RDBMServices.getDbMetaData().supportsTransactions()) connection.rollback();
-        } catch (Exception e) {
-            log.error("RDBMUserIdentityStore::rollback(): " + e);
-        }
     }
 
     /**
@@ -456,447 +373,80 @@ public class RDBMUserIdentityStore implements IUserIdentityStore {
      *
      * @param userName The user's name
      * @return A PortalUser object or null if the user doesn't exist.
-     * @throws Exception
      */
-    protected PortalUser getPortalUser(final String userName) throws Exception {
+    private PortalUser getPortalUser(final String userName) {
         return jdbcOperations.execute(
-                new ConnectionCallback<PortalUser>() {
-                    @Override
-                    public PortalUser doInConnection(Connection con)
-                            throws SQLException, DataAccessException {
+                (ConnectionCallback<PortalUser>)
+                        con -> {
+                            PortalUser portalUser = null;
+                            PreparedStatement pstmt = null;
 
-                        PortalUser portalUser = null;
-                        PreparedStatement pstmt = null;
-
-                        try {
-                            String query =
-                                    "SELECT USER_ID, USER_DFLT_USR_ID FROM UP_USER WHERE USER_NAME=?";
-
-                            pstmt = con.prepareStatement(query);
-                            pstmt.setString(1, userName);
-
-                            ResultSet rs = null;
                             try {
-                                if (log.isDebugEnabled())
-                                    log.debug(
-                                            "RDBMUserIdentityStore::getPortalUID(userName="
-                                                    + userName
-                                                    + "): "
-                                                    + query);
-                                rs = pstmt.executeQuery();
-                                if (rs.next()) {
-                                    portalUser = new PortalUser();
-                                    portalUser.setUserId(rs.getInt("USER_ID"));
-                                    portalUser.setUserName(userName);
-                                    portalUser.setDefaultUserId(rs.getInt("USER_DFLT_USR_ID"));
-                                }
-                            } finally {
+                                String query = "SELECT USER_ID FROM UP_USER WHERE USER_NAME=?";
+
+                                pstmt = con.prepareStatement(query);
+                                pstmt.setString(1, userName);
+
+                                ResultSet rs = null;
                                 try {
-                                    rs.close();
-                                } catch (Exception e) {
-                                }
-                            }
-                        } finally {
-                            try {
-                                pstmt.close();
-                            } catch (Exception e) {
-                            }
-                        }
-
-                        return portalUser;
-                    }
-                });
-    }
-
-    protected String getTemplateName(IPerson person) {
-        String templateName = (String) person.getAttribute(templateAttrName);
-        // Just use the default template if requested template not populated
-        if (templateName == null || templateName.equals("")) {
-            templateName = defaultTemplateUserName;
-        }
-        return templateName;
-    }
-
-    /**
-     * Gets the TemplateUser data store object for the specified template user name.
-     *
-     * @param templateUserName The template user's name
-     * @return A TemplateUser object or null if the user doesn't exist.
-     * @throws Exception
-     */
-    protected TemplateUser getTemplateUser(final String templateUserName) throws Exception {
-        return jdbcOperations.execute(
-                new ConnectionCallback<TemplateUser>() {
-                    @Override
-                    public TemplateUser doInConnection(Connection con)
-                            throws SQLException, DataAccessException {
-
-                        TemplateUser templateUser = null;
-                        PreparedStatement pstmt = null;
-                        try {
-                            String query =
-                                    "SELECT USER_ID, USER_DFLT_LAY_ID FROM UP_USER WHERE USER_NAME=?";
-
-                            pstmt = con.prepareStatement(query);
-                            pstmt.setString(1, templateUserName);
-
-                            ResultSet rs = null;
-                            try {
-                                if (log.isDebugEnabled())
-                                    log.debug(
-                                            "RDBMUserIdentityStore::getTemplateUser(templateUserName="
-                                                    + templateUserName
-                                                    + "): "
-                                                    + query);
-                                rs = pstmt.executeQuery();
-                                if (rs.next()) {
-                                    templateUser = new TemplateUser();
-                                    templateUser.setUserName(templateUserName);
-                                    templateUser.setUserId(rs.getInt("USER_ID"));
-                                    templateUser.setDefaultLayoutId(rs.getInt("USER_DFLT_LAY_ID"));
-                                } else {
-                                    if (!templateUserName.equals(defaultTemplateUserName)) {
-                                        try {
-                                            templateUser = getTemplateUser(defaultTemplateUserName);
-                                        } catch (Exception e) {
-                                            throw new SQLException(e);
+                                    if (log.isDebugEnabled())
+                                        log.debug(
+                                                "RDBMUserIdentityStore::getPortalUID(userName="
+                                                        + userName
+                                                        + "): "
+                                                        + query);
+                                    rs = pstmt.executeQuery();
+                                    if (rs.next()) {
+                                        portalUser = new PortalUser();
+                                        portalUser.setUserId(rs.getInt("USER_ID"));
+                                        portalUser.setUserName(userName);
+                                    }
+                                } finally {
+                                    try {
+                                        if (rs != null) {
+                                            rs.close();
                                         }
+                                    } catch (Exception e) {
                                     }
                                 }
                             } finally {
                                 try {
-                                    rs.close();
-                                } catch (Exception e) {
-                                }
-                            }
-                        } finally {
-                            try {
-                                pstmt.close();
-                            } catch (Exception e) {
-                            }
-                        }
-                        return templateUser;
-                    }
-                });
-    }
-
-    protected boolean userHasSavedLayout(final int userId) throws Exception {
-        return jdbcOperations.execute(
-                new ConnectionCallback<Boolean>() {
-                    @Override
-                    public Boolean doInConnection(Connection con)
-                            throws SQLException, DataAccessException {
-
-                        boolean userHasSavedLayout = false;
-                        PreparedStatement pstmt = null;
-                        try {
-                            String query =
-                                    "SELECT * FROM UP_USER_PROFILE WHERE USER_ID=? AND LAYOUT_ID IS NOT NULL AND LAYOUT_ID!=0";
-
-                            pstmt = con.prepareStatement(query);
-                            pstmt.setInt(1, userId);
-
-                            ResultSet rs = null;
-                            try {
-                                if (log.isDebugEnabled())
-                                    log.debug(
-                                            "RDBMUserIdentityStore::getTemplateUser(userId="
-                                                    + userId
-                                                    + "): "
-                                                    + query);
-                                rs = pstmt.executeQuery();
-                                if (rs.next()) {
-                                    userHasSavedLayout = true;
-                                }
-                            } finally {
-                                try {
-                                    rs.close();
-                                } catch (Exception e) {
-                                }
-                            }
-                        } finally {
-                            try {
-                                pstmt.close();
-                            } catch (Exception e) {
-                            }
-                        }
-                        return userHasSavedLayout;
-                    }
-                });
-    }
-
-    private ILockableEntityGroup getSafeLockableGroup(IEntityGroup eg, IGroupMember gm) {
-        if (log.isTraceEnabled()) {
-            log.trace("Creating lockable group for group/member: " + eg + "/" + gm);
-        }
-
-        ILockableEntityGroup leg = null;
-
-        try {
-            if (eg.isEditable()) {
-                leg = GroupService.findLockableGroup(eg.getKey(), gm.getKey());
-            }
-        } catch (Exception e) {
-            // Bummer.  but the only thing to do is to press on
-            log.error("Unable to create lockable group for group/member: " + eg + "/" + gm, e);
-        }
-
-        return leg;
-    }
-
-    /**
-     * Remove a person from a group. This method catches and logs exceptions exceptions encountered
-     * performing the removal.
-     *
-     * @param person person to be removed (used for logging)
-     * @param me member representing the person
-     * @param eg group from which the user should be removed
-     */
-    private void removePersonFromGroup(IPerson person, IGroupMember me, IEntityGroup eg) {
-        if (log.isTraceEnabled()) {
-            log.trace("Removing " + person + " from group " + eg);
-        }
-        try {
-            if (eg.isEditable()) {
-                eg.removeChild(me);
-                eg.updateMembers();
-            }
-        } catch (Exception e) {
-            // Bummer.  but the only thing to do is to press on
-            log.error("Unable to remove " + person + " from group " + eg, e);
-        }
-    }
-
-    /**
-     * Add a person to a group. This method catches and logs exceptions encountered performing the
-     * removal.
-     *
-     * @param person person to be added (used for logging)
-     * @param me member representing the person
-     * @param eg group to which the user should be added
-     */
-    private void addPersonToGroup(IPerson person, IGroupMember me, IEntityGroup eg) {
-        if (log.isTraceEnabled()) {
-            log.trace("Adding " + person + " to group " + eg);
-        }
-        try {
-            if (eg.isEditable()) {
-                eg.addChild(me);
-                eg.updateMembers();
-            }
-        } catch (Exception e) {
-            log.error("Unable to add " + person + " to group " + eg, e);
-        }
-    }
-
-    protected void updateUser(
-            final int userId, final IPerson person, final TemplateUser templateUser)
-            throws Exception {
-        // Remove my existing group memberships
-        IGroupMember me = GroupService.getGroupMember(person.getEntityIdentifier());
-        for (IEntityGroup eg : me.getParentGroups()) {
-            ILockableEntityGroup leg = getSafeLockableGroup(eg, me);
-            if (leg != null) {
-                removePersonFromGroup(person, me, leg);
-            }
-        }
-
-        // Copy template user's groups memberships
-        IGroupMember template = GroupService.getEntity(templateUser.getUserName(), IPerson.class);
-        for (IEntityGroup eg : template.getParentGroups()) {
-            ILockableEntityGroup leg = getSafeLockableGroup(eg, me);
-            if (leg != null) {
-                addPersonToGroup(person, me, leg);
-            }
-        }
-
-        this.transactionOperations.execute(
-                new TransactionCallback<Object>() {
-                    @Override
-                    public Object doInTransaction(TransactionStatus status) {
-                        return jdbcOperations.execute(
-                                new ConnectionCallback<Object>() {
-                                    @Override
-                                    public Object doInConnection(Connection con)
-                                            throws SQLException, DataAccessException {
-
-                                        PreparedStatement deleteStmt = null;
-                                        PreparedStatement queryStmt = null;
-                                        PreparedStatement insertStmt = null;
-                                        try {
-                                            // Update UP_USER
-                                            String update =
-                                                    "UPDATE UP_USER "
-                                                            + "SET USER_DFLT_USR_ID=?, "
-                                                            + "USER_DFLT_LAY_ID=?, "
-                                                            + "NEXT_STRUCT_ID=null "
-                                                            + "WHERE USER_ID=?";
-
-                                            insertStmt = con.prepareStatement(update);
-                                            insertStmt.setInt(1, templateUser.getUserId());
-                                            insertStmt.setInt(2, templateUser.getDefaultLayoutId());
-                                            insertStmt.setInt(3, userId);
-
-                                            if (log.isDebugEnabled())
-                                                log.debug(
-                                                        "RDBMUserIdentityStore::addNewUser(): "
-                                                                + update);
-                                            insertStmt.executeUpdate();
-                                            insertStmt.close();
-
-                                            // Start copying...
-                                            ResultSet rs = null;
-                                            String delete = null;
-                                            String query = null;
-                                            String insert = null;
-                                            try {
-                                                // Update UP_USER_PROFILE
-                                                delete =
-                                                        "DELETE FROM UP_USER_PROFILE "
-                                                                + "WHERE USER_ID=?";
-                                                deleteStmt = con.prepareStatement(delete);
-                                                deleteStmt.setInt(1, userId);
-                                                if (log.isDebugEnabled())
-                                                    log.debug(
-                                                            "RDBMUserIdentityStore::updateUser(USER_ID="
-                                                                    + userId
-                                                                    + "): "
-                                                                    + delete);
-                                                deleteStmt.executeUpdate();
-                                                deleteStmt.close();
-
-                                                query =
-                                                        "SELECT USER_ID, PROFILE_FNAME, PROFILE_NAME, DESCRIPTION, "
-                                                                + "STRUCTURE_SS_ID, THEME_SS_ID "
-                                                                + "FROM UP_USER_PROFILE "
-                                                                + "WHERE USER_ID=?";
-                                                queryStmt = con.prepareStatement(query);
-                                                queryStmt.setInt(1, templateUser.getUserId());
-                                                if (log.isDebugEnabled())
-                                                    log.debug(
-                                                            "RDBMUserIdentityStore::updateUser(USER_ID="
-                                                                    + templateUser.getUserId()
-                                                                    + "): "
-                                                                    + query);
-                                                rs = queryStmt.executeQuery();
-
-                                                insert =
-                                                        "INSERT INTO UP_USER_PROFILE (USER_ID, PROFILE_ID, PROFILE_FNAME, PROFILE_NAME, DESCRIPTION, LAYOUT_ID, STRUCTURE_SS_ID, THEME_SS_ID) "
-                                                                + "VALUES(?, ?, ?, ?, ?, NULL, ?, ?)";
-                                                insertStmt = con.prepareStatement(insert);
-                                                while (rs.next()) {
-                                                    int id = getNextKey();
-
-                                                    String profileFname =
-                                                            rs.getString("PROFILE_FNAME");
-                                                    String profileName =
-                                                            rs.getString("PROFILE_NAME");
-                                                    String description =
-                                                            rs.getString("DESCRIPTION");
-                                                    int structure = rs.getInt("STRUCTURE_SS_ID");
-                                                    int theme = rs.getInt("THEME_SS_ID");
-
-                                                    insertStmt.setInt(1, userId);
-                                                    insertStmt.setInt(2, id);
-                                                    insertStmt.setString(3, profileFname);
-                                                    insertStmt.setString(4, profileName);
-                                                    insertStmt.setString(5, description);
-                                                    insertStmt.setInt(6, structure);
-                                                    insertStmt.setInt(7, theme);
-
-                                                    if (log.isDebugEnabled())
-                                                        log.debug(
-                                                                "RDBMUserIdentityStore::updateUser(USER_ID="
-                                                                        + userId
-                                                                        + ", PROFILE_FNAME="
-                                                                        + profileFname
-                                                                        + ", PROFILE_NAME="
-                                                                        + profileName
-                                                                        + ", DESCRIPTION="
-                                                                        + description
-                                                                        + "): "
-                                                                        + insert);
-                                                    insertStmt.executeUpdate();
-                                                }
-                                                rs.close();
-                                                queryStmt.close();
-                                                insertStmt.close();
-
-                                                // If we made it all the way though, commit the
-                                                // transaction
-                                                if (RDBMServices.getDbMetaData()
-                                                        .supportsTransactions()) con.commit();
-
-                                            } finally {
-                                                try {
-                                                    rs.close();
-                                                } catch (Exception e) {
-                                                }
-                                            }
-                                        } finally {
-                                            try {
-                                                deleteStmt.close();
-                                            } catch (Exception e) {
-                                            }
-                                            try {
-                                                queryStmt.close();
-                                            } catch (Exception e) {
-                                            }
-                                            try {
-                                                insertStmt.close();
-                                            } catch (Exception e) {
-                                            }
-                                        }
-
-                                        return null;
+                                    if (pstmt != null) {
+                                        pstmt.close();
                                     }
-                                });
-                    }
-                });
+                                } catch (Exception e) {
+                                }
+                            }
+
+                            return portalUser;
+                        });
     }
 
-    protected int addNewUser(
-            final int newUID, final IPerson person, final TemplateUser templateUser)
-            throws Exception {
-        // Copy template user's groups memberships
-        IGroupMember me = GroupService.getGroupMember(person.getEntityIdentifier());
-        IGroupMember template =
-                GroupService.getEntity(
-                        templateUser.getUserName(),
-                        Class.forName("org.apereo.portal.security.IPerson"));
-        for (IEntityGroup eg : template.getParentGroups()) {
-            ILockableEntityGroup leg = getSafeLockableGroup(eg, me);
-            if (leg != null) {
-                addPersonToGroup(person, me, leg);
-            }
-        }
+    private int addNewUser(final int newUID, final IPerson person) {
 
         return this.transactionOperations.execute(
-                new TransactionCallback<Integer>() {
-                    @Override
-                    public Integer doInTransaction(TransactionStatus status) {
-                        return jdbcOperations.execute(
+                status ->
+                        jdbcOperations.execute(
                                 new ConnectionCallback<Integer>() {
                                     @Override
                                     public Integer doInConnection(Connection con)
                                             throws SQLException, DataAccessException {
 
-                                        int uPortalUID = -1;
+                                        int uPortalUID;
                                         PreparedStatement queryStmt = null;
                                         PreparedStatement insertStmt = null;
                                         try {
                                             // Add to UP_USER
                                             String insert =
-                                                    "INSERT INTO UP_USER (USER_ID, USER_NAME, USER_DFLT_USR_ID, USER_DFLT_LAY_ID, NEXT_STRUCT_ID, LST_CHAN_UPDT_DT)"
-                                                            + "VALUES (?, ?, ?, ?, null, null)";
+                                                    "INSERT INTO UP_USER (USER_ID, USER_NAME, USER_DFLT_LAY_ID, NEXT_STRUCT_ID, LST_CHAN_UPDT_DT)"
+                                                            + "VALUES (?, ?, ?, null, null)";
 
                                             String userName = person.getUserName();
 
                                             insertStmt = con.prepareStatement(insert);
                                             insertStmt.setInt(1, newUID);
                                             insertStmt.setString(2, userName);
-                                            insertStmt.setInt(3, templateUser.getUserId());
-                                            insertStmt.setInt(4, templateUser.getDefaultLayoutId());
+                                            insertStmt.setInt(4, USER_DFLT_LAY_ID);
 
                                             if (log.isDebugEnabled())
                                                 log.debug(
@@ -904,10 +454,8 @@ public class RDBMUserIdentityStore implements IUserIdentityStore {
                                                                 + newUID
                                                                 + ", USER_NAME="
                                                                 + userName
-                                                                + ", USER_DFLT_USR_ID="
-                                                                + templateUser.getUserId()
                                                                 + ", USER_DFLT_LAY_ID="
-                                                                + templateUser.getDefaultLayoutId()
+                                                                + USER_DFLT_LAY_ID
                                                                 + "): "
                                                                 + insert);
                                             insertStmt.executeUpdate();
@@ -916,20 +464,27 @@ public class RDBMUserIdentityStore implements IUserIdentityStore {
 
                                             // Start copying...
                                             ResultSet rs = null;
-                                            String query = null;
+                                            String query;
                                             try {
-                                                // Add to UP_USER_PROFILE
+
+                                                /*
+                                                 * NOTE:  in former times, we used a "template user" for this
+                                                 * purpose;  going forward we will use the system profile(s).
+                                                 */
+                                                final IPerson system =
+                                                        PersonFactory.createSystemPerson();
                                                 query =
-                                                        "SELECT USER_ID, PROFILE_FNAME, PROFILE_NAME, DESCRIPTION, "
-                                                                + "STRUCTURE_SS_ID, THEME_SS_ID "
-                                                                + "FROM UP_USER_PROFILE "
-                                                                + "WHERE USER_ID=?";
+                                                        "SELECT upup.USER_ID, upup.PROFILE_FNAME, upup.PROFILE_NAME, upup.DESCRIPTION, "
+                                                                + "upup.STRUCTURE_SS_ID, upup.THEME_SS_ID "
+                                                                + "FROM UP_USER upu, UP_USER_PROFILE upup "
+                                                                + "WHERE upup.USER_ID = upu.USER_ID "
+                                                                + "AND upu.USER_NAME = ?";
                                                 queryStmt = con.prepareStatement(query);
-                                                queryStmt.setInt(1, templateUser.getUserId());
+                                                queryStmt.setString(1, system.getUserName());
                                                 if (log.isDebugEnabled())
                                                     log.debug(
-                                                            "RDBMUserIdentityStore::addNewUser(USER_ID="
-                                                                    + templateUser.getUserId()
+                                                            "RDBMUserIdentityStore::addNewUser(USER_NAME="
+                                                                    + system.getUserName()
                                                                     + "): "
                                                                     + query);
                                                 rs = queryStmt.executeQuery();
@@ -1006,9 +561,7 @@ public class RDBMUserIdentityStore implements IUserIdentityStore {
 
                                         return uPortalUID;
                                     }
-                                });
-                    }
-                });
+                                }));
     }
 
     private int getNextKey() {
@@ -1018,7 +571,6 @@ public class RDBMUserIdentityStore implements IUserIdentityStore {
     protected static class PortalUser {
         String userName;
         int userId;
-        int defaultUserId;
 
         public String getUserName() {
             return userName;
@@ -1028,50 +580,12 @@ public class RDBMUserIdentityStore implements IUserIdentityStore {
             return userId;
         }
 
-        public int getDefaultUserId() {
-            return defaultUserId;
-        }
-
         public void setUserName(String userName) {
             this.userName = userName;
         }
 
         public void setUserId(int userId) {
             this.userId = userId;
-        }
-
-        public void setDefaultUserId(int defaultUserId) {
-            this.defaultUserId = defaultUserId;
-        }
-    }
-
-    protected static class TemplateUser {
-        String userName;
-        int userId;
-        int defaultLayoutId;
-
-        public String getUserName() {
-            return userName;
-        }
-
-        public int getUserId() {
-            return userId;
-        }
-
-        public int getDefaultLayoutId() {
-            return defaultLayoutId;
-        }
-
-        public void setUserName(String userName) {
-            this.userName = userName;
-        }
-
-        public void setUserId(int userId) {
-            this.userId = userId;
-        }
-
-        public void setDefaultLayoutId(int defaultLayoutId) {
-            this.defaultLayoutId = defaultLayoutId;
         }
     }
 }
