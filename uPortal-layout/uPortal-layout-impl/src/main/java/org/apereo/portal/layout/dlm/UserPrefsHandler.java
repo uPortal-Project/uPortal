@@ -39,13 +39,12 @@ public class UserPrefsHandler {
      * layout. This call gets that node into the PLF if not there already and prevents it from being
      * removed if no other changes were made to it or its children by the user.
      */
-    public static void setUserPreference(Element compViewNode, String attributeName, IPerson person)
-            throws Exception {
+    public static void setUserPreference(
+            Element compViewNode, String attributeName, IPerson person) {
         Document doc = compViewNode.getOwnerDocument();
         NodeList nodes = doc.getElementsByTagName("layout");
 
         boolean layoutOwner = false;
-        boolean templateUser = false;
         Attr attrib;
         Element e;
         // Search Elements in nodelist
@@ -54,15 +53,10 @@ public class UserPrefsHandler {
             attrib = e.getAttributeNodeNS(Constants.NS_URI, Constants.LCL_FRAGMENT_NAME);
             if (attrib != null) {
                 layoutOwner = true;
-            } else {
-                attrib = e.getAttributeNodeNS(Constants.NS_URI, Constants.LCL_IS_TEMPLATE_USER);
-                if (attrib != null) {
-                    templateUser = true;
-                }
             }
         }
 
-        if (!layoutOwner && !templateUser) {
+        if (!layoutOwner) {
             Element plfNode =
                     HandlerUtils.getPLFNode(
                             compViewNode,

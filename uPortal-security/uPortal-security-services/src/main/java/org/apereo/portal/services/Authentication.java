@@ -259,11 +259,7 @@ public class Authentication {
                             "Unrecognized person: " + person.getAttribute(IPerson.USERNAME));
                 }
             }
-            // Find the uPortal userid for this user or flunk authentication if not found
-            // The template username should actually be derived from directory information.
-            // The reference implementation sets the uPortalTemplateUserName to the default in
-            // the portal.properties file.
-            // A more likely template would be staff or faculty or undergraduate.
+            // Find the uPortal userid for this user or flunk authentication if not found.
             final boolean autocreate =
                     PropertiesManager.getPropertyAsBoolean(
                             "org.apereo.portal.services.Authentication.autoCreateUsers");

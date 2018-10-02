@@ -1266,7 +1266,6 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
                 logger.debug(
                         "User '{}' is owner of '{}' fragment.", userName, ownedFragment.getName());
             } else if (isLayoutOwnerDefault) {
-                layoutNode.setAttributeNS(Constants.NS_URI, Constants.ATT_IS_TEMPLATE_USER, "true");
                 layoutNode.setAttributeNS(
                         Constants.NS_URI,
                         Constants.ATT_TEMPLATE_LOGIN_ID,
@@ -1409,7 +1408,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
     }
 
     /**
-     * Returns true is the user is the owner of a layout which is copied as the default for any
+     * Returns true if the user is the owner of a layout which is copied as the default for any
      * fragment when first created.
      */
     private boolean isLayoutOwnerDefault(IPerson person) {

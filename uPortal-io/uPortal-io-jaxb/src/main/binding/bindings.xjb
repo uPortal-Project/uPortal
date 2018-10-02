@@ -57,9 +57,6 @@
         <jaxb:bindings node="//xs:element[@name='user']">
             <jaxb:class name="ExternalUser"/>
         </jaxb:bindings>
-        <jaxb:bindings node="//xs:element[@name='template-user']">
-            <jaxb:class name="ExternalTemplateUser"/>
-        </jaxb:bindings>
         <jaxb:schemaBindings>
             <jaxb:package name="org.apereo.portal.io.xml.user" />
         </jaxb:schemaBindings>

@@ -107,7 +107,7 @@ public class EntityTargetProviderImpl implements IPermissionTargetProvider, Seri
      * <p>Concrete examples of working keys:
      *
      * <ul>
-     *   <li>defaultTemplateUser (user)
+     *   <li>admin (user)
      *   <li>local.0 (group)
      *   <li>PORTLET_ID.82 (portlet)
      *   <li>local.1 (category)
