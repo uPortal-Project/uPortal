@@ -232,11 +232,6 @@ public class ExternalPortletDefinitionUnmarshallerTest {
         }
 
         @Override
-        public boolean isDefaultUser(String username) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
         public boolean validateUsername(String username) {
             throw new UnsupportedOperationException();
         }

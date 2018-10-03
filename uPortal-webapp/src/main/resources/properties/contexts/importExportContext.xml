@@ -33,7 +33,6 @@
      +-->
     <bean id="entityTypePortalDataType" class="org.apereo.portal.io.xml.entitytype.EntityTypePortalDataType"/>
     <bean id="stylesheetDescriptorPortalDataType" class="org.apereo.portal.io.xml.ssd.StylesheetDescriptorPortalDataType"/>
-    <bean id="templateUserPortalDataType" class="org.apereo.portal.io.xml.user.TemplateUserPortalDataType"/>
     <bean id="userPortalDataType" class="org.apereo.portal.io.xml.user.UserPortalDataType"/>
     <bean id="groupPortalDataType" class="org.apereo.portal.io.xml.group.GroupPortalDataType"/>
     <bean id="groupMembershipPortalDataType" class="org.apereo.portal.io.xml.group.GroupMembershipPortalDataType"/>
@@ -57,7 +56,6 @@
         <ref bean="personAttributesGroupStorePortalDataType" />
         <ref bean="entityTypePortalDataType" />
         <ref bean="stylesheetDescriptorPortalDataType" />
-        <ref bean="templateUserPortalDataType" />
         <ref bean="userPortalDataType" />
         <ref bean="groupPortalDataType" />
         <ref bean="groupMembershipPortalDataType" />
@@ -98,7 +96,6 @@
         <value>**/*.pags-group</value>
         <value>**/*.xml</value>
         <value>**/*.entity-type</value>
-        <value>**/*.template-user</value>
         <value>**/*.user</value>
         <value>**/*.group</value>
         <value>**/*.group_membership</value>
@@ -175,7 +172,6 @@
         <property name="dataKeys">
             <set>
                 <util:constant static-field="org.apereo.portal.io.xml.layout.LayoutPortalDataType.IMPORT_32_DATA_KEY"/>
-                <util:constant static-field="org.apereo.portal.io.xml.layout.LayoutPortalDataType.IMPORT_32_DEFAULT_USER_DATA_KEY"/>
                 <util:constant static-field="org.apereo.portal.io.xml.layout.FragmentLayoutPortalDataType.IMPORT_32_DATA_KEY"/>
             </set>
         </property>
@@ -296,16 +292,6 @@
         </property>
         <property name="xslResource" value="classpath:/org/apereo/portal/io/xml/user/upgrade-user_3-2.xsl" />
     </bean>
-    <bean id="templateUser26_32DataUpgrader" class="org.apereo.portal.io.xml.XsltDataUpgrader">
-        <property name="portalDataKeys">
-            <set>
-                <util:constant static-field="org.apereo.portal.io.xml.user.TemplateUserPortalDataType.IMPORT_26_DATA_KEY"/>
-                <util:constant static-field="org.apereo.portal.io.xml.user.TemplateUserPortalDataType.IMPORT_30_DATA_KEY"/>
-                <util:constant static-field="org.apereo.portal.io.xml.user.TemplateUserPortalDataType.IMPORT_32_DATA_KEY"/>
-            </set>
-        </property>
-        <property name="xslResource" value="classpath:/org/apereo/portal/io/xml/user/upgrade-template-user_3-2.xsl" />
-    </bean>
     <bean id="layoutDataUpgrader" class="org.apereo.portal.io.xml.XsltDataUpgrader">
         <property name="portalDataKeys">
             <set>
@@ -313,8 +299,6 @@
                 <util:constant static-field="org.apereo.portal.io.xml.layout.FragmentLayoutPortalDataType.IMPORT_30_DATA_KEY"/>
                 <util:constant static-field="org.apereo.portal.io.xml.layout.LayoutPortalDataType.IMPORT_26_DATA_KEY"/>
                 <util:constant static-field="org.apereo.portal.io.xml.layout.LayoutPortalDataType.IMPORT_30_DATA_KEY"/>
-                <util:constant static-field="org.apereo.portal.io.xml.layout.LayoutPortalDataType.IMPORT_26_DEFAULT_USER_DATA_KEY"/>
-                <util:constant static-field="org.apereo.portal.io.xml.layout.LayoutPortalDataType.IMPORT_30_DEFAULT_USER_DATA_KEY"/>
             </set>
         </property>
         <property name="xslResource" value="classpath:/org/apereo/portal/io/xml/layout/upgradeLayout_v3-2.xsl" />

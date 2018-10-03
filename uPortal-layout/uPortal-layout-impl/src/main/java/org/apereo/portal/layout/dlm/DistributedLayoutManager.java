@@ -73,12 +73,6 @@ import org.w3c.dom.NodeList;
  */
 public class DistributedLayoutManager implements IUserLayoutManager, InitializingBean {
 
-    /**
-     * The attribute used to convey a custom template account from which to copy the initial layout
-     * for a user.
-     */
-    public static final String TEMPLATE_USER_NAME_ATT = "uPortalTemplateUserName";
-
     private static final Log LOG = LogFactory.getLog(DistributedLayoutManager.class);
 
     private XmlUtilities xmlUtilities;
@@ -1412,18 +1406,6 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
         LOG.warn("Resetting user layout for: " + userName, new Throwable());
 
         boolean layoutWasReset = false;
-
-        /*
-         * is the person being reset a fragment owner? Can't use the
-         * isFramentOwner variable in this class since we could be resetting
-         * another user's layout.
-         */
-        if (this.distributedLayoutStore.isFragmentOwner(person)) {
-            // set template user override so reload of layout comes from
-            // fragment template user
-            person.setAttribute(
-                    TEMPLATE_USER_NAME_ATT, FragmentDefinition.getDefaultLayoutOwnerId());
-        }
 
         try {
             userIdentityStore.removePortalUID(person.getID());

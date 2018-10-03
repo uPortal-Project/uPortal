@@ -17,8 +17,6 @@ package org.apereo.portal.io.xml.user;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -28,7 +26,6 @@ import java.util.Set;
 import javax.annotation.Resource;
 import javax.sql.DataSource;
 import org.apereo.portal.ICounterStore;
-import org.apereo.portal.IUserIdentityStore;
 import org.apereo.portal.io.xml.AbstractJaxbDataHandler;
 import org.apereo.portal.io.xml.IPortalData;
 import org.apereo.portal.io.xml.IPortalDataType;
@@ -38,45 +35,24 @@ import org.apereo.portal.jpa.BasePortalJpaDao;
 import org.apereo.portal.persondir.ILocalAccountDao;
 import org.apereo.portal.persondir.ILocalAccountPerson;
 import org.apereo.portal.utils.SafeFilenameUtils;
-import org.apereo.portal.utils.Tuple;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.transaction.annotation.Transactional;
 
 /** */
 public class UserImporterExporter extends AbstractJaxbDataHandler<UserType> {
 
     private static final ImmutableSet<PortalDataKey> IMPORT_DATA_KEYS =
-            ImmutableSet.of(
-                    UserPortalDataType.IMPORT_40_DATA_KEY,
-                    TemplateUserPortalDataType.IMPORT_40_DATA_KEY);
+            ImmutableSet.of(UserPortalDataType.IMPORT_40_DATA_KEY);
 
     private JdbcOperations jdbcOperations;
 
     private UserPortalDataType userPortalDataType;
-    private boolean forceDefaultUserName = false;
-    private String defaultUserName;
     private DataSource dataSource;
     private ILocalAccountDao localAccountDao;
     private ICounterStore counterStore;
-    private IUserIdentityStore userIdentityStore;
-
-    public void setForceDefaultUserName(boolean forceDefaultUserName) {
-        this.forceDefaultUserName = forceDefaultUserName;
-    }
-
-    public void setDefaultUserName(String defaultUserName) {
-        this.defaultUserName = defaultUserName;
-    }
-
-    @Autowired
-    public void setUserIdentityStore(IUserIdentityStore userIdentityStore) {
-        this.userIdentityStore = userIdentityStore;
-    }
 
     @Autowired
     public void setUserPortalDataType(UserPortalDataType userPortalDataType) {
@@ -122,31 +98,22 @@ public class UserImporterExporter extends AbstractJaxbDataHandler<UserType> {
 
         return Lists.transform(
                 userList,
-                new Function<String, IPortalData>() {
-                    @Override
-                    public IPortalData apply(final String userName) {
-                        return new SimpleStringPortalData(userName, null, null);
-                    }
-                });
+                (Function<String, IPortalData>)
+                        userName -> new SimpleStringPortalData(userName, null, null));
     }
 
     @Transactional
     @Override
     public void importData(UserType userType) {
         final String username = userType.getUsername();
-        final String defaultUsername = getDefaultUsername(userType);
-        final Tuple<Integer, Long> defaultUserInfo = getDefaultUserInfo(defaultUsername);
-        final Long nextStructId = getNextStructId(username, defaultUserInfo);
-
-        final Integer defaultUserId = defaultUserInfo != null ? defaultUserInfo.first : null;
+        final Long nextStructId = getNextStructId(username);
 
         // Update or Insert
         final int rowsUpdated =
                 this.jdbcOperations.update(
                         "UPDATE UP_USER \n"
-                                + "SET USER_DFLT_USR_ID = ?, USER_DFLT_LAY_ID=1, NEXT_STRUCT_ID=? \n"
+                                + "SET USER_DFLT_LAY_ID=1, NEXT_STRUCT_ID=? \n"
                                 + "WHERE USER_NAME = ?",
-                        defaultUserId,
                         nextStructId,
                         username);
 
@@ -154,10 +121,9 @@ public class UserImporterExporter extends AbstractJaxbDataHandler<UserType> {
             final int userId = this.counterStore.getNextId("UP_USER");
 
             this.jdbcOperations.update(
-                    "INSERT INTO UP_USER(USER_ID, USER_DFLT_USR_ID, USER_DFLT_LAY_ID, NEXT_STRUCT_ID, USER_NAME) \n"
-                            + "VALUES(?, ?, 1, ?, ?)",
+                    "INSERT INTO UP_USER(USER_ID, USER_DFLT_LAY_ID, NEXT_STRUCT_ID, USER_NAME) \n"
+                            + "VALUES(?, 1, ?, ?)",
                     userId,
-                    defaultUserId,
                     nextStructId,
                     username);
         }
@@ -190,8 +156,8 @@ public class UserImporterExporter extends AbstractJaxbDataHandler<UserType> {
         }
     }
 
-    protected Long getNextStructId(
-            final String username, final Tuple<Integer, Long> defaultUserInfo) {
+    private Long getNextStructId(final String username) {
+
         final List<Long> maxStructIdResults =
                 this.jdbcOperations.queryForList(
                         "SELECT MAX(UPLS.STRUCT_ID) AS MAX_STRUCT_ID "
@@ -204,68 +170,16 @@ public class UserImporterExporter extends AbstractJaxbDataHandler<UserType> {
 
         if (maxStructId != null) {
             return maxStructId + 1;
-        } else if (defaultUserInfo != null) {
-            return defaultUserInfo.second;
         }
 
         return null;
     }
 
-    // TODO cache the lookup of default user data
-    protected Tuple<Integer, Long> getDefaultUserInfo(String defaultUsername) {
-        if (defaultUsername == null) {
-            return null;
-        }
-
-        final List<Tuple<Integer, Long>> defaultUserInfoResults =
-                this.jdbcOperations.query(
-                        "SELECT USER_ID, NEXT_STRUCT_ID " + "FROM UP_USER " + "WHERE USER_NAME = ?",
-                        new RowMapper<Tuple<Integer, Long>>() {
-                            @Override
-                            public Tuple<Integer, Long> mapRow(ResultSet rs, int rowNum)
-                                    throws SQLException {
-                                final int userId = rs.getInt("USER_ID");
-                                final Long nextStructId = rs.getLong("NEXT_STRUCT_ID");
-                                final boolean nullNextStructId = rs.wasNull();
-                                return new Tuple<Integer, Long>(
-                                        userId, nullNextStructId ? null : nextStructId);
-                            }
-                        },
-                        defaultUsername);
-        try {
-            return DataAccessUtils.requiredSingleResult(defaultUserInfoResults);
-        } catch (EmptyResultDataAccessException e) {
-            throw new RuntimeException(
-                    "No user data found for default-user: " + defaultUsername, e);
-        }
-    }
-
-    protected String getDefaultUsername(UserType data) {
-        final String defaultUser = data.getDefaultUser();
-        if (defaultUser == null || this.forceDefaultUserName) {
-            return this.defaultUserName;
-        }
-
-        return defaultUser;
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see org.apereo.portal.io.xml.IDataImporterExporter#exportData(java.lang.String)
-     */
     @Override
     public UserType exportData(String userName) {
-        final String defaultUserName = getDefaultUserName(userName);
 
-        final boolean isDefaultUser = this.userIdentityStore.isDefaultUser(userName);
-        final UserType userType;
-        if (isDefaultUser) {
-            userType = new ExternalTemplateUser();
-        } else {
-            userType = new ExternalUser();
-        }
+        final UserType userType = new ExternalUser();
         userType.setUsername(userName);
-        userType.setDefaultUser(defaultUserName);
 
         final ILocalAccountPerson localAccountPerson = this.localAccountDao.getPerson(userName);
         if (localAccountPerson != null) {
@@ -304,47 +218,14 @@ public class UserImporterExporter extends AbstractJaxbDataHandler<UserType> {
         return userType;
     }
 
-    protected String getDefaultUserName(String userName) {
-        final List<Integer> defaultUserIdResults =
-                this.jdbcOperations.queryForList(
-                        "SELECT user_dflt_usr_id FROM up_user WHERE user_name = ?",
-                        Integer.class,
-                        userName);
-        final Integer defaultUserId = DataAccessUtils.singleResult(defaultUserIdResults);
-
-        if (defaultUserId != null) {
-            final List<String> defaultUserNameResults =
-                    this.jdbcOperations.queryForList(
-                            "SELECT user_name FROM up_user WHERE user_id = ?",
-                            String.class,
-                            defaultUserId);
-            return DataAccessUtils.singleResult(defaultUserNameResults);
-        }
-
-        return null;
-    }
-
     @Override
     public String getFileName(UserType data) {
         return SafeFilenameUtils.makeSafeFilename(data.getUsername());
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.apereo.portal.io.xml.IDataImporterExporter#deleteData(java.lang.String)
-     */
     @Transactional
     @Override
     public ExternalUser deleteData(String id) {
-        //		IPortletType portletType =
-        // this.portletTypeRegistry.getPortletType(Integer.parseInt(id));
-        //		if(null == portletType) {
-        //			return null;
-        //		} else {
-        //			ExternalPortletType result = convert(portletType);
-        //			this.portletTypeRegistry.deleteChannelType(portletType);
-        //			return result;
-        //		}
         return null;
     }
 }

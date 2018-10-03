@@ -59,8 +59,6 @@ public class Constants {
 
     public static final String LCL_FRAGMENT_NAME = "fragmentName";
     public static final String ATT_FRAGMENT_NAME = NS + LCL_FRAGMENT_NAME;
-    public static final String LCL_IS_TEMPLATE_USER = "isTemplateUser";
-    public static final String ATT_IS_TEMPLATE_USER = NS + LCL_IS_TEMPLATE_USER;
     public static final String ATT_TEMPLATE_LOGIN_ID = NS + "templateLoginID";
     public static final String ATT_TARGET = NS + "target";
     public static final String ATT_USER_VALUE = NS + "userValue";

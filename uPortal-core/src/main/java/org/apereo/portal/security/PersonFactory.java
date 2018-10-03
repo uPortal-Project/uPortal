@@ -49,6 +49,8 @@ import org.springframework.stereotype.Component;
 @Lazy(false) // Force this bean to load in Import/Export via the CLI
 public class PersonFactory {
 
+    private static final String SYSTEM_USERNAME = "system";
+
     private String guestUsernamesProperty = "guest"; // default;  for unit tests
 
     private static List<String> guestUsernames = null;
@@ -93,7 +95,7 @@ public class PersonFactory {
      */
     public static IPerson createSystemPerson() {
         IPerson person = createPerson();
-        person.setAttribute(IPerson.USERNAME, "SYSTEM_USER");
+        person.setAttribute(IPerson.USERNAME, SYSTEM_USERNAME);
         person.setID(0);
         return person;
     }

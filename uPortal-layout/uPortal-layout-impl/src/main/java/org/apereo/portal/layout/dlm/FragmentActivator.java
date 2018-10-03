@@ -283,51 +283,15 @@ public class FragmentActivator {
     }
 
     private int createOwner(IPerson owner, FragmentDefinition fragment) {
-        String defaultUser = null;
-        int userID = -1;
-
-        if (fragment.defaultLayoutOwnerID != null) {
-            defaultUser = fragment.defaultLayoutOwnerID;
-        } else {
-            final String defaultLayoutOwner =
-                    PropertiesManager.getProperty(
-                            RDBMDistributedLayoutStore.DEFAULT_LAYOUT_OWNER_PROPERTY);
-            if (defaultLayoutOwner != null) {
-                defaultUser = defaultLayoutOwner;
-            } else {
-                try {
-                    defaultUser =
-                            PropertiesManager.getProperty(
-                                    RDBMDistributedLayoutStore.TEMPLATE_USER_NAME);
-                } catch (RuntimeException re) {
-                    throw new RuntimeException(
-                            "\n\n WARNING: defaultLayoutOwner is not specified"
-                                    + " in portal.properties and no default user is "
-                                    + "configured for the system. Owner '"
-                                    + fragment.getOwnerId()
-                                    + "' for fragment '"
-                                    + fragment.getName()
-                                    + "' can not be "
-                                    + "created. The fragment will not be available for "
-                                    + "inclusion into user layouts.\n",
-                            re);
-                }
-            }
-        }
+        int userID;
 
         if (LOG.isDebugEnabled()) {
             LOG.debug(
-                    "\n\nOwner '"
+                    "Owner '"
                             + fragment.getOwnerId()
                             + "' of fragment '"
                             + fragment.getName()
-                            + "' not found. Creating as copy of '"
-                            + defaultUser
-                            + "'\n");
-        }
-
-        if (defaultUser != null) {
-            owner.setAttribute("uPortalTemplateUserName", defaultUser);
+                            + "' not found.");
         }
 
         try {
@@ -342,6 +306,7 @@ public class FragmentActivator {
                             + "available for inclusion into user layouts.",
                     ae);
         }
+
         return userID;
     }
 

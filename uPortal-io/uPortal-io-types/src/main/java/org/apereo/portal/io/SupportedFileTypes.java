@@ -204,24 +204,6 @@ public enum SupportedFileTypes {
             return rslt;
         }
     },
-    TEMPLATE_USER("user", "@username", "template-user") {
-        private final XPath templateUserXPath = fac.createXPath("default-user");
-
-        @Override
-        protected boolean appliesTo(Element e, IUserLayoutStore rdbmdls) {
-            boolean rslt = false; // default
-            boolean isUser = e.getName().equals(rootElementNodeName);
-            if (isUser) {
-                Object defaultUserElement = templateUserXPath.evaluate(e);
-                if (defaultUserElement != null && defaultUserElement instanceof List<?>) {
-                    List<?> nodes = (List<?>) defaultUserElement;
-                    // evaluate() returns an empty list if there are no matches
-                    rslt = nodes.isEmpty();
-                }
-            }
-            return rslt;
-        }
-    },
     THEME("theme", "name"),
     STRUCTURE("structure", "name"),
     ENTITY_TYPE("entity-type", "name"),

@@ -17,7 +17,6 @@ package org.apereo.portal.io.xml.user;
 import java.util.Arrays;
 import java.util.List;
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLEventReader;
 import org.apereo.portal.io.xml.AbstractPortalDataType;
 import org.apereo.portal.io.xml.PortalDataKey;
 
@@ -77,24 +76,5 @@ public class UserPortalDataType extends AbstractPortalDataType {
     @Override
     public String getDescriptionCode() {
         return "Portal Users";
-    }
-
-    @SuppressWarnings("deprecation")
-    @Override
-    protected PortalDataKey postProcessSinglePortalDataKey(
-            String systemId, PortalDataKey portalDataKey, XMLEventReader reader) {
-        // If the filename ends in .template-user switch over to the TemplateUserPortalDataType data
-        // types
-        if (systemId.endsWith(".template-user")) {
-            if (IMPORT_32_DATA_KEY.equals(portalDataKey)) {
-                return TemplateUserPortalDataType.IMPORT_32_DATA_KEY;
-            } else if (IMPORT_30_DATA_KEY.equals(portalDataKey)) {
-                return TemplateUserPortalDataType.IMPORT_30_DATA_KEY;
-            } else if (IMPORT_26_DATA_KEY.equals(portalDataKey)) {
-                return TemplateUserPortalDataType.IMPORT_26_DATA_KEY;
-            }
-        }
-
-        return portalDataKey;
     }
 }

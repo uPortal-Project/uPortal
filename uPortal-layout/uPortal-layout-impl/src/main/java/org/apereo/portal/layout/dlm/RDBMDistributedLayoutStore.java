@@ -98,18 +98,12 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
     public static final String DEFAULT_LAYOUT_OWNER_PROPERTY =
             "org.apereo.portal.layout.dlm.defaultLayoutOwner";
 
-    private String systemDefaultUser = null;
-    private boolean systemDefaultUserLoaded = false;
-
     private FragmentActivator fragmentActivator;
 
     private Ehcache fragmentNodeInfoCache;
 
     private boolean errorOnMissingPortlet = true;
     private boolean errorOnMissingUser = true;
-
-    static final String TEMPLATE_USER_NAME =
-            "org.apereo.portal.services.Authentication.defaultTemplateUserName";
 
     // Used in Import/Export operations
     private final org.dom4j.DocumentFactory fac = new org.dom4j.DocumentFactory();
@@ -1272,7 +1266,6 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
                 logger.debug(
                         "User '{}' is owner of '{}' fragment.", userName, ownedFragment.getName());
             } else if (isLayoutOwnerDefault) {
-                layoutNode.setAttributeNS(Constants.NS_URI, Constants.ATT_IS_TEMPLATE_USER, "true");
                 layoutNode.setAttributeNS(
                         Constants.NS_URI,
                         Constants.ATT_TEMPLATE_LOGIN_ID,
@@ -1415,7 +1408,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
     }
 
     /**
-     * Returns true is the user is the owner of a layout which is copied as the default for any
+     * Returns true if the user is the owner of a layout which is copied as the default for any
      * fragment when first created.
      */
     private boolean isLayoutOwnerDefault(IPerson person) {
@@ -1433,18 +1426,6 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
         final String globalDefault = PropertiesManager.getProperty(DEFAULT_LAYOUT_OWNER_PROPERTY);
         if (globalDefault != null && globalDefault.equals(userName)) {
             return true;
-        }
-
-        if (!this.systemDefaultUserLoaded) {
-            this.systemDefaultUserLoaded = true;
-            try {
-                this.systemDefaultUser = PropertiesManager.getProperty(TEMPLATE_USER_NAME);
-            } catch (final RuntimeException re) {
-                logger.error("Property '{}' not defined.", TEMPLATE_USER_NAME, re);
-            }
-            if (this.systemDefaultUser != null && this.systemDefaultUser.equals(userName)) {
-                return true;
-            }
         }
 
         return false;
@@ -1581,12 +1562,12 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
                             .isEqualToOrAfter(PortletLifecycleState.APPROVED)) {
                 structure =
                         this.getElementForChannel(
-                                doc, channelPrefix + ls.getStructId(), channelDef, ls.getLocale());
+                                doc, CHANNEL_PREFIX + ls.getStructId(), channelDef, ls.getLocale());
             } else {
                 structure =
                         this.getElementForChannel(
                                 doc,
-                                channelPrefix + ls.getStructId(),
+                                CHANNEL_PREFIX + ls.getStructId(),
                                 MissingPortletDefinition.INSTANCE,
                                 null);
             }
@@ -1682,7 +1663,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
         }
         // finish setting up elements based on loaded params
         final String origin = structure.getAttribute(Constants.ATT_ORIGIN);
-        final String prefix = ls.isChannel() ? channelPrefix : folderPrefix;
+        final String prefix = ls.isChannel() ? CHANNEL_PREFIX : FOLDER_PREFIX;
 
         // if not null we are dealing with a node incorporated from another
         // layout and this node contains changes made by the user so handle
@@ -1699,11 +1680,11 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
             if (type != null && type.startsWith(Constants.NS)) {
                 structure.setAttribute("ID", Constants.DIRECTIVE_PREFIX + ls.getStructId());
             } else {
-                structure.setAttribute("ID", folderPrefix + ls.getStructId());
+                structure.setAttribute("ID", FOLDER_PREFIX + ls.getStructId());
             }
         } else {
-            logger.debug("Adding identifier {}{}", folderPrefix, ls.getStructId());
-            structure.setAttribute("ID", channelPrefix + ls.getStructId());
+            logger.debug("Adding identifier {}{}", FOLDER_PREFIX, ls.getStructId());
+            structure.setAttribute("ID", CHANNEL_PREFIX + ls.getStructId());
         }
         structure.setIdAttribute(Constants.ATT_ID, true);
         return structure;
