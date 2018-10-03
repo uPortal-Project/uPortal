@@ -44,10 +44,6 @@ public class PersonDirectoryUserInfoService implements UserInfoService {
     private IPortletDefinitionRegistry portletDefinitionRegistry;
     private IPortalRequestUtils portalRequestUtils;
 
-    /** @return the portalRequestUtils */
-    public IPortalRequestUtils getPortalRequestUtils() {
-        return portalRequestUtils;
-    }
     /** @param portalRequestUtils the portalRequestUtils to set */
     @Autowired
     public void setPortalRequestUtils(IPortalRequestUtils portalRequestUtils) {
