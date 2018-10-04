@@ -91,7 +91,7 @@ public class PortletDefinitionBeanTest {
                 buildMarketplacePortletDefinition(id, name, prefs, params);
 
         PortletDefinitionBean pdb =
-                PortletDefinitionBean.fromMarketplacePortletDefinition(mpd, Locale.ENGLISH);
+                PortletDefinitionBean.fromMarketplacePortletDefinition(mpd, Locale.ENGLISH, false);
         assertEquals(averageRating, pdb.getAverageRating());
         assertEquals(id, (Long) pdb.getId());
         assertEquals(fName, pdb.getFname());
@@ -120,7 +120,7 @@ public class PortletDefinitionBeanTest {
         MarketplacePortletDefinition mpd = buildMarketplacePortletDefinition(id, name, prefs, null);
 
         PortletDefinitionBean pdb =
-                PortletDefinitionBean.fromMarketplacePortletDefinition(mpd, Locale.ENGLISH);
+                PortletDefinitionBean.fromMarketplacePortletDefinition(mpd, Locale.ENGLISH, false);
         assertEquals(Collections.EMPTY_LIST, pdb.getKeywords());
     }
 
@@ -132,9 +132,9 @@ public class PortletDefinitionBeanTest {
                 buildMarketplacePortletDefinition(678L, "testName2", null, null);
 
         PortletDefinitionBean pdb1 =
-                PortletDefinitionBean.fromMarketplacePortletDefinition(mpd1, Locale.ENGLISH);
+                PortletDefinitionBean.fromMarketplacePortletDefinition(mpd1, Locale.ENGLISH, false);
         PortletDefinitionBean pdb2 =
-                PortletDefinitionBean.fromMarketplacePortletDefinition(mpd2, Locale.ENGLISH);
+                PortletDefinitionBean.fromMarketplacePortletDefinition(mpd2, Locale.ENGLISH, false);
 
         assertEquals(pdb1.hashCode(), pdb2.hashCode());
     }
@@ -149,9 +149,9 @@ public class PortletDefinitionBeanTest {
                 buildMarketplacePortletDefinition(678L, name2, null, null);
 
         PortletDefinitionBean pdb1 =
-                PortletDefinitionBean.fromMarketplacePortletDefinition(mpd1, Locale.ENGLISH);
+                PortletDefinitionBean.fromMarketplacePortletDefinition(mpd1, Locale.ENGLISH, false);
         PortletDefinitionBean pdb2 =
-                PortletDefinitionBean.fromMarketplacePortletDefinition(mpd2, Locale.ENGLISH);
+                PortletDefinitionBean.fromMarketplacePortletDefinition(mpd2, Locale.ENGLISH, false);
 
         assertEquals(name1.compareTo(name2), pdb1.compareTo(pdb2));
     }
@@ -166,9 +166,9 @@ public class PortletDefinitionBeanTest {
                 buildMarketplacePortletDefinition(678L, name2, null, null);
 
         PortletDefinitionBean pdb1 =
-                PortletDefinitionBean.fromMarketplacePortletDefinition(mpd1, Locale.ENGLISH);
+                PortletDefinitionBean.fromMarketplacePortletDefinition(mpd1, Locale.ENGLISH, false);
         PortletDefinitionBean pdb2 =
-                PortletDefinitionBean.fromMarketplacePortletDefinition(mpd2, Locale.ENGLISH);
+                PortletDefinitionBean.fromMarketplacePortletDefinition(mpd2, Locale.ENGLISH, false);
 
         assertEquals(name1.compareTo(name2), pdb1.compareTo(pdb2));
     }
@@ -184,9 +184,9 @@ public class PortletDefinitionBeanTest {
                 buildMarketplacePortletDefinition(id2, "testName", null, null);
 
         PortletDefinitionBean pdb1 =
-                PortletDefinitionBean.fromMarketplacePortletDefinition(mpd1, Locale.ENGLISH);
+                PortletDefinitionBean.fromMarketplacePortletDefinition(mpd1, Locale.ENGLISH, false);
         PortletDefinitionBean pdb2 =
-                PortletDefinitionBean.fromMarketplacePortletDefinition(mpd2, Locale.ENGLISH);
+                PortletDefinitionBean.fromMarketplacePortletDefinition(mpd2, Locale.ENGLISH, false);
 
         assertTrue(pdb1.equals(pdb2));
     }
@@ -202,9 +202,9 @@ public class PortletDefinitionBeanTest {
                 buildMarketplacePortletDefinition(id2, "testName", null, null);
 
         PortletDefinitionBean pdb1 =
-                PortletDefinitionBean.fromMarketplacePortletDefinition(mpd1, Locale.ENGLISH);
+                PortletDefinitionBean.fromMarketplacePortletDefinition(mpd1, Locale.ENGLISH, false);
         PortletDefinitionBean pdb2 =
-                PortletDefinitionBean.fromMarketplacePortletDefinition(mpd2, Locale.ENGLISH);
+                PortletDefinitionBean.fromMarketplacePortletDefinition(mpd2, Locale.ENGLISH, false);
 
         assertFalse(pdb1.equals(pdb2));
     }
@@ -215,7 +215,7 @@ public class PortletDefinitionBeanTest {
                 buildMarketplacePortletDefinition(45L, "testName", null, null);
 
         PortletDefinitionBean pdb1 =
-                PortletDefinitionBean.fromMarketplacePortletDefinition(mpd1, Locale.ENGLISH);
+                PortletDefinitionBean.fromMarketplacePortletDefinition(mpd1, Locale.ENGLISH, false);
 
         assertTrue(pdb1.equals(pdb1));
     }
@@ -226,7 +226,7 @@ public class PortletDefinitionBeanTest {
                 buildMarketplacePortletDefinition(45L, "testName", null, null);
 
         PortletDefinitionBean pdb1 =
-                PortletDefinitionBean.fromMarketplacePortletDefinition(mpd1, Locale.ENGLISH);
+                PortletDefinitionBean.fromMarketplacePortletDefinition(mpd1, Locale.ENGLISH, false);
 
         assertFalse(pdb1.equals("id1"));
     }
@@ -237,7 +237,7 @@ public class PortletDefinitionBeanTest {
                 buildMarketplacePortletDefinition(45L, "testName", null, null);
 
         PortletDefinitionBean pdb1 =
-                PortletDefinitionBean.fromMarketplacePortletDefinition(mpd1, Locale.ENGLISH);
+                PortletDefinitionBean.fromMarketplacePortletDefinition(mpd1, Locale.ENGLISH, false);
 
         assertFalse(pdb1.equals(null));
     }
