@@ -73,7 +73,7 @@
     function sitemapJsonCheck(jsonObj, pathChecks, errMsg) {
         _.forEach(pathChecks, function(pathCheck, errIndex) {
             if(!_.has(jsonObj, pathCheck)) {
-                var error = new Error(errMsg+pathCeck);
+                var error = new Error(errMsg + pathCheck);
                 throw error;
             }
         });
