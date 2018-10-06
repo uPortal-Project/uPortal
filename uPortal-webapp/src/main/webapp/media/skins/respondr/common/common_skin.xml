@@ -97,6 +97,14 @@
     <css included="plain" resource="true">/webjars/jstree/dist/themes/default/style.css</css>
     <css included="aggregated" resource="true">/webjars/jstree/dist/themes/default/style.min.css</css>
 
+    <!-- ES6&7 polyfill -->
+    <js included="plain" resource="true">/webjars/core-js-bundle/index.js</js>
+    <js included="aggregated" resource="true">/webjars/core-js-bundle/minified.js</js>
+
+    <!-- async await polyfill -->
+    <js included="plain" resource="true">/webjars/regenerator-runtime/runtime.js</js>
+    <js included="aggregated" resource="true">/webjars/regenerator-runtime/runtime.js</js>
+
     <!-- web component polyfill -->
     <js included="plain" resource="true">/webjars/webcomponents__webcomponentsjs/webcomponents-loader.js</js>
     <js included="aggregated" resource="true">/webjars/webcomponents__webcomponentsjs/webcomponents-loader.js</js>
