@@ -219,7 +219,11 @@
      -->
 
     <!-- FILTER ORDER IS VERY IMPORTANT. DO NOT CHANGE ORDER WITHOUT VERY GOOD REASON -->
-
+    <filter-mapping>
+        <filter-name>CharacterEncodingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    
     <filter-mapping>
         <filter-name>corsFilter</filter-name>
         <url-pattern>/*</url-pattern>
@@ -233,14 +237,6 @@
     <filter-mapping>
         <filter-name>ExceptionLoggingFilter</filter-name>
         <url-pattern>/*</url-pattern>
-    </filter-mapping>
-
-    <filter-mapping>
-        <filter-name>CharacterEncodingFilter</filter-name>
-        <servlet-name>AuthenticationDispatcherServlet</servlet-name>
-        <servlet-name>RenderingDispatcherServlet</servlet-name>
-        <servlet-name>JsonRenderingDispatcherServlet</servlet-name>
-        <servlet-name>MVCDispatcherServlet</servlet-name>
     </filter-mapping>
 
     <filter-mapping>
