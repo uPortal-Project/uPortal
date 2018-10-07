@@ -27,8 +27,9 @@ Using these scripts removes the need to run custom import and configuration to i
 ./gradlew eclipse
 ```
 4. Open eclipse
-6. Select file > import
-7. Search for "Existing Projects into Workspace"
+5. Select file > import
+6. Search for "Existing Projects into Workspace"
 ![open in eclipse](../../images/eclipse_import.png)
-7. Navigate to the uPortal folder
+7. Select the the uPortal folder as root directory
+8. Select the "Search for nested projects" option
 8. Open it
