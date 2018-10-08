@@ -71,11 +71,12 @@
 
     // If a path check fails, it'll throw an error.
     function sitemapJsonCheck(jsonObj, pathChecks, errMsg) {
-        _.forEach(pathChecks, function(pathCheck, errIndex) {
+        return !_.every(pathChecks, function(pathCheck) {
             if(!_.has(jsonObj, pathCheck)) {
-                var error = new Error(errMsg+pathCeck);
-                throw error;
+                console.log(errMsg + pathCheck);
+                return false;
             }
+            return true;
         });
     }
 
@@ -96,13 +97,17 @@
         })
         // Generate sitemap
         .then(function (response) {
-            sitemapJsonCheck(response, ['layout.navigation.tabs'], "Missing required object path ");
+            if (sitemapJsonCheck(response, ['layout.navigation.tabs'], "Missing required object path ")) {
+                throw new Error("Missing 'layout.navigation.tabs' in the layout.");
+            }
 
             // Begin tab row
             var tabRowTemplate = document.getElementById('sitemap-tab-row-template');
             var tabRow = document.importNode(tabRowTemplate.content, true).querySelector('div');
             _.forEach(response.layout.navigation.tabs, function (tab, tabIndex) {
-                sitemapJsonCheck(tab, ['name','ID','content'], "Missing required object path [layout.navigation.tabs] > ");
+                if (sitemapJsonCheck(tab, ['name','ID','content'], "Missing required object path [layout.navigation.tabs] > ")) {
+                    return;
+                }
 
                 // Setup tab link
                 var tabTemplate = document.getElementById('sitemap-tab-template');
@@ -114,10 +119,14 @@
                 var portletList = tabHeader.querySelector('ul');
 
                 _.forEach(tab.content, function (parentContent, parentContentIndex) {
-                    sitemapJsonCheck(parentContent, ['content'], "Missing required object path [layout.navigation.tabs] > content > ");
+                    if (sitemapJsonCheck(parentContent, ['content'], "Missing required object path [layout.navigation.tabs] > content > ")) {
+                        return;
+                    }
 
                     _.forEach(parentContent.content, function (portlet, portletIndex) {
-                        sitemapJsonCheck(portlet, ['name', 'fname', 'ID'], "Missing required object path [layout.navigation.tabs] > content > content > ");
+                        if (sitemapJsonCheck(portlet, ['name', 'fname', 'ID'], "Missing required object path [layout.navigation.tabs] > content > content > ")) {
+                            return;
+                        }
 
                         // Setup portlet link
                         var portletTemplate = document.getElementById('sitemap-tab-portlet-template');
