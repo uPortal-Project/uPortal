@@ -643,7 +643,7 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
                                     + portalDataKey
                                     + " entities failed to import.\n\n"
                                     + "\tPer entity exception logs and a full report can be found in "
-                                    + logDirectory
+                                    + logDirectory.toURI()
                                     + "\n");
                 }
 

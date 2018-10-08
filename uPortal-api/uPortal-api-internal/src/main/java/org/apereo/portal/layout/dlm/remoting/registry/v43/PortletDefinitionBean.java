@@ -22,10 +22,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
-
 import org.apache.commons.lang.builder.CompareToBuilder;
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apereo.portal.portlet.marketplace.MarketplacePortletDefinition;
 import org.apereo.portal.portlet.om.IPortletDefinitionParameter;
 
@@ -164,8 +161,7 @@ public final class PortletDefinitionBean
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         PortletDefinitionBean that = (PortletDefinitionBean) o;
-        return Objects.equals(fname, that.fname) &&
-            Objects.equals(favorite, that.favorite);
+        return Objects.equals(fname, that.fname) && Objects.equals(favorite, that.favorite);
     }
 
     @Override
