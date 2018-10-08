@@ -642,8 +642,8 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
                                     + " "
                                     + portalDataKey
                                     + " entities failed to import.\n\n"
-                                    + "\tPer entity exception logs and a full report can be found in "
-                                    + logDirectory
+                                    + "\tPer-entity exception logs and a full report can be found in "
+                                    + logDirectory.toURI() // location clickable in some shells
                                     + "\n");
                 }
 
@@ -1048,8 +1048,8 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
                                     + " "
                                     + typeId
                                     + " entities failed to export.\n"
-                                    + "\tPer entity exception logs and a full report can be found in "
-                                    + logDirectory);
+                                    + "\tPer-entity exception logs and a full report can be found in "
+                                    + logDirectory.toURI()); // location clickable in some shells
                 }
             }
         } catch (InterruptedException e) {

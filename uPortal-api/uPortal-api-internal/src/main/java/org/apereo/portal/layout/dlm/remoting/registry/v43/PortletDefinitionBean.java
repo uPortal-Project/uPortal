@@ -14,21 +14,21 @@
  */
 package org.apereo.portal.layout.dlm.remoting.registry.v43;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import org.apache.commons.lang.builder.CompareToBuilder;
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apereo.portal.portlet.marketplace.MarketplacePortletDefinition;
 import org.apereo.portal.portlet.om.IPortletDefinitionParameter;
 
 /**
  * Gets serialized into JSON representing a portlet for the 4.3 version of the portletRegistry.json
- * API.
+ * API. Objects of this type are not cached or shared across user accounts.
  *
  * @since 4.3
  */
@@ -51,9 +51,17 @@ public final class PortletDefinitionBean
     private final Map<String, IPortletDefinitionParameter> parameters;
     private final List<String> keywords;
 
+    /**
+     * This field is of type <code>Boolean</code> (uppercase B) in order to support circumstances
+     * where <code>null</code> might be the most appropriate value, such as within a list prepared
+     * for no particular user.
+     */
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private final Boolean favorite;
+
     public static PortletDefinitionBean fromMarketplacePortletDefinition(
-            final MarketplacePortletDefinition mpd, final Locale locale) {
-        return new PortletDefinitionBean(mpd, locale);
+            final MarketplacePortletDefinition mpd, final Locale locale, Boolean favorite) {
+        return new PortletDefinitionBean(mpd, locale, favorite);
     }
 
     public long getId() {
@@ -104,6 +112,10 @@ public final class PortletDefinitionBean
         return keywords;
     }
 
+    public Boolean getFavorite() {
+        return favorite;
+    }
+
     @Override
     public int compareTo(PortletDefinitionBean pdb) {
         return new CompareToBuilder().append(this.name, pdb.getName()).toComparison();
@@ -139,31 +151,32 @@ public final class PortletDefinitionBean
                 + parameters
                 + ", keywords="
                 + keywords
+                + ", favorite="
+                + favorite
                 + '}';
     }
 
+    /** Contract for this class requires that the comparison is based on <code>id</code> ONLY. */
     @Override
-    public boolean equals(Object object) {
-        if (object == this) {
-            return true;
-        }
-        if (!(object instanceof PortletDefinitionBean)) {
-            return false;
-        }
-        PortletDefinitionBean rhs = (PortletDefinitionBean) object;
-        return new EqualsBuilder().append(this.id, rhs.getId()).isEquals();
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PortletDefinitionBean that = (PortletDefinitionBean) o;
+        return id == that.id;
     }
 
+    /** Contract for this class requires that the value is based on <code>id</code> ONLY. */
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(464270933, -1074792143).append(this.id).toHashCode();
+        return Objects.hash(id);
     }
 
     /*
      * Implementation
      */
 
-    private PortletDefinitionBean(final MarketplacePortletDefinition mpd, final Locale locale) {
+    private PortletDefinitionBean(
+            final MarketplacePortletDefinition mpd, final Locale locale, Boolean favorite) {
         this.id = mpd.getPortletDefinitionId().getLongId();
         this.fname = mpd.getFName();
         this.title = mpd.getTitle(locale.toString());
@@ -178,5 +191,6 @@ public final class PortletDefinitionBean
                 mpd.getKeywords() != null
                         ? Collections.unmodifiableList(mpd.getKeywords())
                         : EMPTY_KEYWORDS;
+        this.favorite = favorite;
     }
 }

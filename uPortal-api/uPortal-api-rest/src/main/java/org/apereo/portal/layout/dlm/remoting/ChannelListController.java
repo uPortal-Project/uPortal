@@ -80,7 +80,7 @@ public class ChannelListController {
     private static final String UNCATEGORIZED_DESC = "uncategorized.description";
     private static final String ICON_URL_PARAMETER_NAME = "iconUrl";
 
-    /** @deprecated Moved to PortletRESTController under /api/portlets.json */
+    /** Moved to PortletRESTController under /api/portlets.json */
     private static final String TYPE_MANAGE = "manage";
 
     private IPortletDefinitionRegistry portletDefinitionRegistry;
@@ -220,16 +220,27 @@ public class ChannelListController {
         }
 
         final IPerson user = personManager.getPerson(request);
+
+        /*
+         * Gather the user's favorites
+         */
+        final Set<IPortletDefinition> favoritePortlets = calculateFavoritePortlets(request);
+
         Map<String, SortedSet<PortletCategoryBean>> rslt =
-                getRegistry43(webRequest, user, rootCategory, includeUncategorizedPortlets);
+                getRegistry43(
+                        webRequest,
+                        user,
+                        rootCategory,
+                        includeUncategorizedPortlets,
+                        favoritePortlets);
 
         /*
          * The 'favorite=true' option means return only portlets that this user has favorited.
          */
         if (Boolean.valueOf(favorite)) {
             logger.debug(
-                    "Filtering out non-favorite portlets because 'favorite=true' was included in the querystring");
-            rslt = filterRegistryFavoritesOnly(rslt, request);
+                    "Filtering out non-favorite portlets because 'favorite=true' was included in the query string");
+            rslt = filterRegistryFavoritesOnly(rslt);
         }
 
         return new ModelAndView("jsonView", "registry", rslt);
@@ -379,7 +390,8 @@ public class ChannelListController {
             WebRequest request,
             IPerson user,
             PortletCategory rootCategory,
-            boolean includeUncategorized) {
+            boolean includeUncategorized,
+            Set<IPortletDefinition> favorites) {
 
         /*
          * This collection of all the portlets in the portal is for the sake of
@@ -400,7 +412,7 @@ public class ChannelListController {
         final Locale locale = getUserLocale(user);
         categories.add(
                 preparePortletCategoryBean(
-                        request, rootCategory, portletsNotYetCategorized, user, locale));
+                        request, rootCategory, portletsNotYetCategorized, user, locale, favorites));
 
         if (includeUncategorized) {
             /*
@@ -420,7 +432,8 @@ public class ChannelListController {
             for (IPortletDefinition portlet : portletsNotYetCategorized) {
                 if (authorizationService.canPrincipalBrowse(ap, portlet)) {
                     PortletDefinitionBean pdb =
-                            preparePortletDefinitionBean(request, portlet, locale);
+                            preparePortletDefinitionBean(
+                                    request, portlet, locale, favorites.contains(portlet));
                     marketplacePortlets.add(pdb);
                 }
             }
@@ -450,7 +463,8 @@ public class ChannelListController {
             PortletCategory category,
             Set<IPortletDefinition> portletsNotYetCategorized,
             IPerson user,
-            Locale locale) {
+            Locale locale,
+            Set<IPortletDefinition> favorites) {
 
         /* Prepare child categories. */
         Set<PortletCategoryBean> subcategories = new HashSet<>();
@@ -458,7 +472,7 @@ public class ChannelListController {
                 this.portletCategoryRegistry.getChildCategories(category)) {
             PortletCategoryBean childBean =
                     preparePortletCategoryBean(
-                            req, childCategory, portletsNotYetCategorized, user, locale);
+                            req, childCategory, portletsNotYetCategorized, user, locale, favorites);
             subcategories.add(childBean);
         }
 
@@ -472,7 +486,9 @@ public class ChannelListController {
         for (IPortletDefinition portlet : portlets) {
 
             if (authorizationService.canPrincipalBrowse(ap, portlet)) {
-                PortletDefinitionBean pdb = preparePortletDefinitionBean(req, portlet, locale);
+                PortletDefinitionBean pdb =
+                        preparePortletDefinitionBean(
+                                req, portlet, locale, favorites.contains(portlet));
                 marketplacePortlets.add(pdb);
             }
 
@@ -494,11 +510,11 @@ public class ChannelListController {
     }
 
     private PortletDefinitionBean preparePortletDefinitionBean(
-            WebRequest req, IPortletDefinition portlet, Locale locale) {
+            WebRequest req, IPortletDefinition portlet, Locale locale, Boolean favorite) {
         MarketplacePortletDefinition mktpd =
                 marketplaceService.getOrCreateMarketplacePortletDefinition(portlet);
         PortletDefinitionBean rslt =
-                PortletDefinitionBean.fromMarketplacePortletDefinition(mktpd, locale);
+                PortletDefinitionBean.fromMarketplacePortletDefinition(mktpd, locale, favorite);
 
         // See api docs for postProcessIconUrlParameter() below
         IPortletDefinitionParameter iconParameter =
@@ -574,9 +590,7 @@ public class ChannelListController {
         };
     }
 
-    private Map<String, SortedSet<PortletCategoryBean>> filterRegistryFavoritesOnly(
-            Map<String, SortedSet<PortletCategoryBean>> registry, HttpServletRequest request) {
-
+    private Set<IPortletDefinition> calculateFavoritePortlets(HttpServletRequest request) {
         /*
          * It's not fantastic, but the storage strategy for favorites in the layout XML doc.  We
          * have to use it to know which portlets are favorites.
@@ -585,20 +599,23 @@ public class ChannelListController {
         final UserPreferencesManager upm = (UserPreferencesManager) ui.getPreferencesManager();
         final IUserLayoutManager ulm = upm.getUserLayoutManager();
         final IUserLayout layout = ulm.getUserLayout();
-        final Set<IPortletDefinition> favoritePortlets =
-                favoritesUtils.getFavoritePortletDefinitions(layout);
+        final Set<IPortletDefinition> rslt = favoritesUtils.getFavoritePortletDefinitions(layout);
 
         logger.debug(
                 "Found the following favoritePortlets for user='{}':  {}",
                 request.getRemoteUser(),
-                favoritePortlets);
+                rslt);
+        return rslt;
+    }
+
+    private Map<String, SortedSet<PortletCategoryBean>> filterRegistryFavoritesOnly(
+            Map<String, SortedSet<PortletCategoryBean>> registry) {
 
         final Set<PortletCategoryBean> inpt = registry.get(CATEGORIES_MAP_KEY);
         final SortedSet<PortletCategoryBean> otpt = new TreeSet<>();
         inpt.forEach(
                 categoryIn -> {
-                    final PortletCategoryBean categoryOut =
-                            filterCategoryFavoritesOnly(categoryIn, favoritePortlets);
+                    final PortletCategoryBean categoryOut = filterCategoryFavoritesOnly(categoryIn);
                     if (categoryOut != null) {
                         otpt.add(categoryOut);
                     }
@@ -613,8 +630,7 @@ public class ChannelListController {
      * Returns the filtered category, or <code>null</code> if there is no content remaining in the
      * category.
      */
-    private PortletCategoryBean filterCategoryFavoritesOnly(
-            PortletCategoryBean category, Set<IPortletDefinition> favoritePortlets) {
+    private PortletCategoryBean filterCategoryFavoritesOnly(PortletCategoryBean category) {
 
         // Subcategories
         final Set<PortletCategoryBean> subcategories = new HashSet<>();
@@ -622,7 +638,7 @@ public class ChannelListController {
                 .forEach(
                         sub -> {
                             final PortletCategoryBean filteredBean =
-                                    filterCategoryFavoritesOnly(sub, favoritePortlets);
+                                    filterCategoryFavoritesOnly(sub);
                             if (filteredBean != null) {
                                 subcategories.add(filteredBean);
                             }
@@ -633,7 +649,7 @@ public class ChannelListController {
         category.getPortlets()
                 .forEach(
                         child -> {
-                            if (isPortletAFavorite(child, favoritePortlets)) {
+                            if (child.getFavorite()) {
                                 logger.debug(
                                         "Including portlet '{}' because it is a favorite:  {}",
                                         child.getFname());
@@ -653,12 +669,5 @@ public class ChannelListController {
                         subcategories,
                         portlets)
                 : null;
-    }
-
-    private boolean isPortletAFavorite(
-            PortletDefinitionBean portlet, Set<IPortletDefinition> favoritePortlets) {
-        return favoritePortlets
-                .stream()
-                .anyMatch(pDef -> pDef.getFName().equals(portlet.getFname()));
     }
 }
