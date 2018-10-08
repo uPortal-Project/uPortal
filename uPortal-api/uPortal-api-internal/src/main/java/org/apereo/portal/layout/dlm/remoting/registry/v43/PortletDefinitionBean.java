@@ -156,17 +156,19 @@ public final class PortletDefinitionBean
                 + '}';
     }
 
+    /** Contract for this class requires that the comparison is based on <code>id</code> ONLY. */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         PortletDefinitionBean that = (PortletDefinitionBean) o;
-        return Objects.equals(fname, that.fname) && Objects.equals(favorite, that.favorite);
+        return id == that.id;
     }
 
+    /** Contract for this class requires that the value is based on <code>id</code> ONLY. */
     @Override
     public int hashCode() {
-        return Objects.hash(fname, favorite);
+        return Objects.hash(id);
     }
 
     /*
