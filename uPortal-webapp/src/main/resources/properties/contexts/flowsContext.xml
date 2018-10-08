@@ -29,7 +29,7 @@
            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd
            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <context:component-scan base-package="org.apereo.portal.portlets.groupadmin, org.apereo.portal.portlets.portletadmin, org.apereo.portal.portlets.fragmentadmin"/>
+    <context:component-scan base-package="org.apereo.portal.portlets.groupadmin, org.apereo.portal.portlets.portletadmin, org.apereo.portal.portlets.fragmentadmin, org.apereo.portal.portlets.permissionsadmin"/>
 
     <!-- Generic Web-Flow helper beans -->
     <bean id="portletUrlFlowHelper" class="org.apereo.portal.portlets.flow.PortletUrlFlowHelper" />
