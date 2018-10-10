@@ -34,9 +34,9 @@ import org.springframework.web.client.RestOperations;
  */
 public class GoogleCustomSearchService implements IPortalSearchService {
     public static final String QUERY_PARAM = "q";
-    public static final String VERSION_PARAM = "v";
-    public static final String USER_IP_PARAM = "userip";
-    public static final String RESULT_SIZE_PARAM = "rsz";
+    public static final String VERSION_PARAM = "v"; // in new url
+    public static final String USER_IP_PARAM = "userip"; // remove
+    public static final String RESULT_SIZE_PARAM = "rsz"; // num
     public static final String START_PARAM = "start";
     public static final String CUSTOM_SEARCH_PARAM = "cx";
     public static final String VERSION = "1.0";
