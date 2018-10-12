@@ -116,13 +116,11 @@ public class IdentityImportExportTest extends BasePortalJpaDaoTest {
                         + "(\n"
                         + "   USER_ID integer,\n"
                         + "   USER_NAME varchar(1000),\n"
-                        + "   USER_DFLT_USR_ID integer,\n"
                         + "   USER_DFLT_LAY_ID integer,\n"
                         + "   NEXT_STRUCT_ID integer,\n"
                         + "   LST_CHAN_UPDT_DT timestamp,\n"
                         + "   CONSTRAINT SYS_IDX_01 PRIMARY KEY (USER_ID)\n"
                         + ");");
-        runSql("CREATE INDEX UPU_DFLT_ID_IDX ON UP_USER(USER_DFLT_USR_ID);");
         runSql(
                 "CREATE TABLE UP_LAYOUT_STRUCT\n"
                         + "(\n"

@@ -446,7 +446,7 @@ public class RDBMUserIdentityStore implements IUserIdentityStore {
                                             insertStmt = con.prepareStatement(insert);
                                             insertStmt.setInt(1, newUID);
                                             insertStmt.setString(2, userName);
-                                            insertStmt.setInt(4, USER_DFLT_LAY_ID);
+                                            insertStmt.setInt(3, USER_DFLT_LAY_ID);
 
                                             if (log.isDebugEnabled())
                                                 log.debug(
