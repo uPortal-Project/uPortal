@@ -25,7 +25,7 @@
   <div class="fl-widget-inner">
     <div class="fl-widget-content">
         <div id="portalCASLogin" class="fl-widget-content">
-            <a id="portalCASLoginLink" class="btn" title="<spring:message code="sign.in.via.cas"/>" href="${casRefUrlEncoder.getCasLoginUrl(request)}}">
+            <a id="portalCASLoginLink" class="btn" title="<spring:message code="sign.in.via.cas"/>" href="${casRefUrlEncoder.getCasLoginUrl(request)}">
                 <i class="fa fa-sign-in" aria-hidden="true"></i>
                 <spring:message code="sign.in"/>
             </a>
