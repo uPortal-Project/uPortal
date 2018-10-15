@@ -105,6 +105,10 @@
     <js included="plain" resource="true">/webjars/regenerator-runtime/runtime.js</js>
     <js included="aggregated" resource="true">/webjars/regenerator-runtime/runtime.js</js>
 
+    <!-- whatwg fetch polyfill -->
+    <js included="plain" resource="true">/webjars/whatwg-fetch/dist/fetch.umd.js</js>
+    <js included="aggregated" resource="true">/webjars/whatwg-fetch/dist/fetch.umd.js</js>
+
     <!-- web component polyfill -->
     <js included="plain" resource="true">/webjars/webcomponents__webcomponentsjs/webcomponents-loader.js</js>
     <js included="aggregated" resource="true">/webjars/webcomponents__webcomponentsjs/webcomponents-loader.js</js>

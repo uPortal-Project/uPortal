@@ -53,9 +53,6 @@
 </template>
 
 <script src="<rs:resourceURL value="/rs/lodash/4.17.4/lodash.min.js"/>"></script>
-<script src="<rs:resourceURL value="/rs/fetch/2.0.3/fetch.js"/>"></script>
-<script src="<rs:resourceURL value="/rs/template/1.0.0/template.js"/>"></script>
-<script src="<rs:resourceURL value="/rs/promise-polyfill/6.0.2/promise.js"/>"></script>
 
 <%-- API URL for fetching layout details to build sitemap --%>
 <c:set value="${renderRequest.contextPath}" var="portalContextPath" />
