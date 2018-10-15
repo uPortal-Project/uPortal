@@ -72,6 +72,7 @@ dependencies {
     webjars "org.webjars.npm:jstree:${jstreeVersion}"
     webjars "org.webjars.npm:regenerator-runtime:${regeneratorRuntimeVersion}"
     webjars "org.webjars.npm:webcomponents__webcomponentsjs:${webComponentPolyfillVersion}"
+    webjars "org.webjars.npm:whatwg-fetch:${whatwgFetchPolyfillVersion}"
 }
 
 node {
