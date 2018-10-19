@@ -41,6 +41,7 @@ public class GoogleCustomSearchService implements IPortalSearchService {
     public static final String QUERY_PARAM = "q"; // required
     public static final String CUSTOM_SEARCH_PARAM = "cx"; // required
     public static final String KEY_PARAM = "key"; // required
+    public static final String USER_IP_PARAM = "userIp";
     public static final String START_PARAM = "start";
 
     private static final String BASE_SEARCH_URL =
@@ -52,6 +53,10 @@ public class GoogleCustomSearchService implements IPortalSearchService {
                     + KEY_PARAM
                     + "={"
                     + KEY_PARAM
+                    + "}&"
+                    + USER_IP_PARAM
+                    + "={"
+                    + USER_IP_PARAM
                     + "}&"
                     + START_PARAM
                     + "={"
@@ -98,6 +103,7 @@ public class GoogleCustomSearchService implements IPortalSearchService {
         parameters.put(KEY_PARAM, key);
         parameters.put(CUSTOM_SEARCH_PARAM, customSearchId);
         parameters.put(QUERY_PARAM, query.getSearchTerms());
+        parameters.put(USER_IP_PARAM, request.getProperty("REMOTE_ADDR"));
         parameters.put(START_PARAM, query.getStartIndex() != null ? query.getStartIndex() : 1);
 
         logger.debug("search parameters: {}", parameters);
