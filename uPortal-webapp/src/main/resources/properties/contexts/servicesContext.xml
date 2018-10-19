@@ -36,7 +36,7 @@
     <bean id="clientHttpRequestFactory" class="org.springframework.http.client.HttpComponentsClientHttpRequestFactory">
         <property name="httpClient" ref="httpClient" />
     </bean>
-    
+
     <bean id="httpClient" class="org.jasig.apache.http.impl.client.ResponseHeaderHandlingHttpClient" depends-on="httpConnectionParamBean, clientParamBean">
         <constructor-arg ref="httpConnectionManager" />
         <constructor-arg ref="httpParams"/>
@@ -60,7 +60,7 @@
         </constructor-arg>
         <property name="cookiePolicy" value="ignoreCookies"/>
     </bean>
-    
+
     <bean id="restTemplate" class="org.springframework.web.client.RestTemplate">
         <property name="messageConverters">
             <util:list>
@@ -84,47 +84,48 @@
         </property>
         <property name="requestFactory" ref="clientHttpRequestFactory" />
     </bean>
-    
+
     <util:set id="UsernameCacheTagPurger_IgnoredUsernames">
         <value>guest</value>
     </util:set>
-    
-    
+
+
     <util:list id="searchServices">
-        
-        <!-- Uncomment and fill in your Google Custom Search ID to use
+
+        <!-- Uncomment and fill in your Google Custom Search ID to use and key (both required).
         <bean class="org.apereo.portal.portlets.search.google.GoogleCustomSearchService">
             <property name="customSearchId" value="" />
+            <property name="key" value="" />
         </bean>
          -->
-         
+
         <!-- Uncomment and fill in your Google Search Appliance URL and Site to use
         <bean class="org.apereo.portal.portlets.search.gsa.GsaSearchService">
             <property name="baseUrl" value="http://search.example.com"/>
             <property name="site" value="Site"/>
         </bean>
         -->
-        
+
         <!--Toggle one of the next two via comment
-        	Marketplace and PortletRegistry search are very similar.  Marketplace provides searching of
-        	portlet preferences marked as screen_capture_x and will include a link to the marketplace
-        	entry and possibly more to come
+            Marketplace and PortletRegistry search are very similar.  Marketplace provides searching of
+            portlet preferences marked as screen_capture_x and will include a link to the marketplace
+            entry and possibly more to come
          -->
-        
+
         <!--
         <bean class="org.apereo.portal.portlets.search.portletregistry.PortletRegistrySearchService"/>
-        --> 
-         
+        -->
+
         <bean class="org.apereo.portal.portlet.marketplace.MarketplaceSearchService" />
-		
-        
+
+
     </util:list>
-    
-    <!-- 
+
+    <!--
      | Maps search resultType strings to tabs that are displayed in the results. If a resultType is not
      | mapped below its results go in the default tab.
      |
-     | The key is the Messages.properties key to use for the result tab name 
+     | The key is the Messages.properties key to use for the result tab name
      +-->
     <util:map id="searchTabs">
         <entry key="googleInstitution.results">

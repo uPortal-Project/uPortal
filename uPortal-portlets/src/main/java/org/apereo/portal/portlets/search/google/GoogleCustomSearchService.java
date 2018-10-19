@@ -24,6 +24,8 @@ import org.apereo.portal.portlets.search.IPortalSearchService;
 import org.apereo.portal.search.SearchRequest;
 import org.apereo.portal.search.SearchResult;
 import org.apereo.portal.search.SearchResults;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.client.RestOperations;
@@ -33,27 +35,28 @@ import org.springframework.web.client.RestOperations;
  * https://developers.google.com/custom-search/v1/overview
  */
 public class GoogleCustomSearchService implements IPortalSearchService {
-    public static final String QUERY_PARAM = "q";
-    public static final String VERSION_PARAM = "v"; // in new url
-    public static final String USER_IP_PARAM = "userip"; // remove
-    public static final String RESULT_SIZE_PARAM = "rsz"; // num
+
+    private static final Logger logger = LoggerFactory.getLogger(GoogleCustomSearchService.class);
+
+    public static final String QUERY_PARAM = "q"; // required
+    public static final String CUSTOM_SEARCH_PARAM = "cx"; // required
+    public static final String KEY_PARAM = "key"; // required
     public static final String START_PARAM = "start";
-    public static final String CUSTOM_SEARCH_PARAM = "cx";
-    public static final String VERSION = "1.0";
+    public static final String RESULT_SIZE_PARAM = "num"; // used to be rsz. Range 1 to 10
 
     private static final String BASE_SEARCH_URL =
-            "http://ajax.googleapis.com/ajax/services/search/web?"
+            "https://www.googleapis.com/customsearch/v1?"
                     + QUERY_PARAM
                     + "={"
                     + QUERY_PARAM
                     + "}&"
-                    + VERSION_PARAM
+                    + KEY_PARAM
                     + "={"
-                    + VERSION_PARAM
+                    + KEY_PARAM
                     + "}&"
-                    + USER_IP_PARAM
+                    + START_PARAM
                     + "={"
-                    + USER_IP_PARAM
+                    + START_PARAM
                     + "}&"
                     + RESULT_SIZE_PARAM
                     + "={"
@@ -64,20 +67,36 @@ public class GoogleCustomSearchService implements IPortalSearchService {
                     + CUSTOM_SEARCH_PARAM
                     + "}";
 
-    private String resultSize = "large";
+    private int resultSize = 10;
     private String customSearchId;
+    private String key;
 
     @Value("${org.apereo.portal.portlets.googleWebSearch.search.result.type:googleCustom}")
     private String resultType = "googleCustom";
 
     private RestOperations restOperations;
 
-    public void setResultSize(String resultSize) {
-        this.resultSize = resultSize;
+    public GoogleCustomSearchService() {
+        logger.debug("GoogleCustomSearchService bean instantiated.");
+    }
+
+    public void setResultSize(int resultSize) {
+        // search fails if this parameter is outside the range 1-10, inclusive
+        if (resultSize < 1) {
+            this.resultSize = 1;
+        } else if (resultSize > 10) {
+            this.resultSize = 10;
+        } else {
+            this.resultSize = resultSize;
+        }
     }
 
     public void setCustomSearchId(String customSearchId) {
         this.customSearchId = customSearchId;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
     }
 
     public void setResultType(String resultType) {
@@ -93,31 +112,38 @@ public class GoogleCustomSearchService implements IPortalSearchService {
     public SearchResults getSearchResults(PortletRequest request, SearchRequest query) {
         final Map<String, Object> parameters = new LinkedHashMap<>();
 
-        parameters.put(VERSION_PARAM, VERSION);
+        parameters.put(KEY_PARAM, key);
         parameters.put(RESULT_SIZE_PARAM, resultSize);
         parameters.put(CUSTOM_SEARCH_PARAM, customSearchId);
         parameters.put(QUERY_PARAM, query.getSearchTerms());
-        parameters.put(USER_IP_PARAM, request.getProperty("REMOTE_ADDR"));
-        parameters.put(START_PARAM, query.getStartIndex());
+        parameters.put(START_PARAM, query.getStartIndex() != null ? query.getStartIndex() : 1);
+
+        logger.debug("search parameters: {}", parameters);
 
         final JsonNode googleResponse =
                 this.restOperations.getForObject(BASE_SEARCH_URL, JsonNode.class, parameters);
+
+        logger.debug("response: {}", googleResponse);
 
         final SearchResults searchResults = new SearchResults();
         searchResults.setQueryId(query.getQueryId());
         final List<SearchResult> searchResultList = searchResults.getSearchResult();
 
-        final JsonNode results = googleResponse.get("responseData").get("results");
-        for (final Iterator<JsonNode> resultItr = results.elements(); resultItr.hasNext(); ) {
-            final JsonNode googleResult = resultItr.next();
+        final JsonNode items = googleResponse.get("items"); // .get("items");
+        logger.debug("response items: {}", items);
+        if (items != null) {
+            for (final Iterator<JsonNode> resultItr = items.elements(); resultItr.hasNext(); ) {
+                final JsonNode googleResult = resultItr.next();
 
-            final SearchResult searchResult = new SearchResult();
-            searchResult.setTitle(googleResult.get("title").asText());
-            searchResult.setSummary(googleResult.get("content").asText());
-            searchResult.setExternalUrl(googleResult.get("clicktrackUrl").asText());
-            searchResult.getType().add(resultType);
+                final SearchResult searchResult = new SearchResult();
+                searchResult.setTitle(googleResult.get("title").asText());
+                searchResult.setSummary(googleResult.get("snippet").asText());
+                searchResult.setExternalUrl(googleResult.get("link").asText());
+                searchResult.getType().add(resultType);
 
-            searchResultList.add(searchResult);
+                logger.debug("uPortal search result item: {}", searchResult);
+                searchResultList.add(searchResult);
+            }
         }
 
         return searchResults;
