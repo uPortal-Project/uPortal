@@ -42,7 +42,6 @@ public class GoogleCustomSearchService implements IPortalSearchService {
     public static final String CUSTOM_SEARCH_PARAM = "cx"; // required
     public static final String KEY_PARAM = "key"; // required
     public static final String START_PARAM = "start";
-    public static final String RESULT_SIZE_PARAM = "num"; // used to be rsz. Range 1 to 10
 
     private static final String BASE_SEARCH_URL =
             "https://www.googleapis.com/customsearch/v1?"
@@ -58,16 +57,11 @@ public class GoogleCustomSearchService implements IPortalSearchService {
                     + "={"
                     + START_PARAM
                     + "}&"
-                    + RESULT_SIZE_PARAM
-                    + "={"
-                    + RESULT_SIZE_PARAM
-                    + "}&"
                     + CUSTOM_SEARCH_PARAM
                     + "={"
                     + CUSTOM_SEARCH_PARAM
                     + "}";
 
-    private int resultSize = 10;
     private String customSearchId;
     private String key;
 
@@ -78,17 +72,6 @@ public class GoogleCustomSearchService implements IPortalSearchService {
 
     public GoogleCustomSearchService() {
         logger.debug("GoogleCustomSearchService bean instantiated.");
-    }
-
-    public void setResultSize(int resultSize) {
-        // search fails if this parameter is outside the range 1-10, inclusive
-        if (resultSize < 1) {
-            this.resultSize = 1;
-        } else if (resultSize > 10) {
-            this.resultSize = 10;
-        } else {
-            this.resultSize = resultSize;
-        }
     }
 
     public void setCustomSearchId(String customSearchId) {
@@ -113,7 +96,6 @@ public class GoogleCustomSearchService implements IPortalSearchService {
         final Map<String, Object> parameters = new LinkedHashMap<>();
 
         parameters.put(KEY_PARAM, key);
-        parameters.put(RESULT_SIZE_PARAM, resultSize);
         parameters.put(CUSTOM_SEARCH_PARAM, customSearchId);
         parameters.put(QUERY_PARAM, query.getSearchTerms());
         parameters.put(START_PARAM, query.getStartIndex() != null ? query.getStartIndex() : 1);
