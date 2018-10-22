@@ -92,7 +92,7 @@ public class GoogleCustomSearchServiceTest {
 
         when(clientHttpRequestFactory.createRequest(
                         new URI(
-                                "http://ajax.googleapis.com/ajax/services/search/web?q=news&v=1.0&userip=128.104.17.46&rsz=large&cx="),
+                                "https://www.googleapis.com/customsearch/v1?q=news&key=&userip=128.104.17.46&start=1&cx="),
                         HttpMethod.GET))
                 .thenReturn(clientHttpRequest);
         when(clientHttpResponse.getBody()).thenReturn(new ByteArrayInputStream(json.getBytes()));
