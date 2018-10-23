@@ -71,6 +71,7 @@ public class GoogleCustomSearchServiceTest {
         restTemplate.getMessageConverters().add(converter);
 
         this.googleSearchController.setRestOperations(restTemplate);
+        this.googleSearchController.setKey("12345");
 
         // Uncomment to make real requests
         // restTemplate.setRequestFactory(new CommonsClientHttpRequestFactory());
@@ -92,7 +93,7 @@ public class GoogleCustomSearchServiceTest {
 
         when(clientHttpRequestFactory.createRequest(
                         new URI(
-                                "http://ajax.googleapis.com/ajax/services/search/web?q=news&v=1.0&userip=128.104.17.46&rsz=large&cx="),
+                                "https://www.googleapis.com/customsearch/v1?q=news&key=12345&userIp=128.104.17.46&start=1&cx="),
                         HttpMethod.GET))
                 .thenReturn(clientHttpRequest);
         when(clientHttpResponse.getBody()).thenReturn(new ByteArrayInputStream(json.getBytes()));
@@ -106,6 +107,6 @@ public class GoogleCustomSearchServiceTest {
                 googleSearchController.getSearchResults(portletRequest, query);
 
         assertNotNull(results);
-        assertEquals(8, results.getSearchResult().size());
+        assertEquals(2, results.getSearchResult().size());
     }
 }
