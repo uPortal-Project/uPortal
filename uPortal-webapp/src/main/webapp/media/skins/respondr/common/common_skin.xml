@@ -110,8 +110,8 @@
     <js included="aggregated" resource="true">/webjars/whatwg-fetch/dist/fetch.umd.js</js>
 
     <!-- web component polyfill -->
-    <js included="plain" resource="true">/webjars/webcomponents__webcomponentsjs/webcomponents-loader.js</js>
-    <js included="aggregated" resource="true">/webjars/webcomponents__webcomponentsjs/webcomponents-loader.js</js>
+    <js included="plain" resource="true">/webjars/webcomponents__webcomponentsjs/webcomponents-bundle.js</js>
+    <js included="aggregated" resource="true">/webjars/webcomponents__webcomponentsjs/webcomponents-bundle.js</js>
 
     <js included="plain" resource="true">/rs/conflict-resolution/js/resolve-conflicts.js</js>
     <js included="aggregated" resource="true">/rs/conflict-resolution/js/resolve-conflicts.min.js</js>
