@@ -10,7 +10,10 @@
  - Daniel McCallum (dmccallum)
  - Drew Wills (drewwills)
  - [Jim Helwig] (jimhelwig)
+ - [Jonathan Tran][] (jonathanmtran)
  - Josh Helmer (jhelmer-unicon)
+ - [Julien Gribonvald][] (jgribonvald)
+ - [Mairi Fraiser][] (mairi)
  - Misagh Moayyed (mmoayyed)
  - Paul Spaude (pspaude)
  - Tim Levett (timlevett)
@@ -82,3 +85,6 @@ Apache Software Foundation on
 
 [Christian Cousquer]: https://groups.google.com/a/apereo.org/d/topic/uportal-dev/oMLYtLAo3zo/discussion
 [Jim Helwig]: https://groups.google.com/a/apereo.org/d/msg/uportal-dev/A5ok2Fiab_M/IQP5g9OvCgAJ
+[Jonathan Tran]: https://groups.google.com/a/apereo.org/d/msg/uportal-dev/SRhi4Ega-mk/RyPMPTwGAgAJ
+[Julien Gribonvald]: https://groups.google.com/a/apereo.org/d/msg/uportal-dev/bXZlOqaK0kE/othFUzwGAgAJ
+[Mairi Fraiser]: https://groups.google.com/a/apereo.org/d/msg/uportal-dev/GO76Me6ylF0/hYdLPjsGAgAJ
