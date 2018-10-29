@@ -119,6 +119,8 @@ public class PortalRootPersonAttributeDao extends AbstractFlatteningPersonAttrib
         return postProcessPerson(rslt, uid);
     }
 
+
+
     /**
      * This method is for matching a search query. Each matching item will subsequently be passed to
      * <code>getPerson(uid)</code> for "filling."
@@ -186,8 +188,10 @@ public class PortalRootPersonAttributeDao extends AbstractFlatteningPersonAttrib
          *
          * We need to do our best to provide these if the external data sources don't cover it.
          */
-        rslt = selectUsernameIfAbsent(rslt, uidInQuery);
+        rslt = selectUsernameIfAbsent(rslt);
         rslt = selectDisplayNameIfAbsent(rslt);
+
+        logger.debug("Post-processing of person with name='{}' produced the following person:  {}", person.getName(), rslt);
 
         return rslt;
     }
@@ -213,19 +217,17 @@ public class PortalRootPersonAttributeDao extends AbstractFlatteningPersonAttrib
         return rslt;
     }
 
-    protected IPersonAttributes selectUsernameIfAbsent(
-            IPersonAttributes person, String uidInQuery) {
+    protected IPersonAttributes selectUsernameIfAbsent(IPersonAttributes person) {
 
         IPersonAttributes rslt = person; // default -- won't normally need to do anything
 
         final String usernameAttribute = usernameAttributeProvider.getUsernameAttribute();
-        if (!rslt.getAttributes().containsKey(usernameAttribute) && uidInQuery != null) {
-            // Use the username specified in the query
-            logger.debug(
-                    "Selected new username of '{}' for user '{}'", uidInQuery, person.getName());
+        if (!rslt.getAttributes().containsKey(usernameAttribute) && person.getName() != null) {
+            // Alias the person.name property as the username attribute
+            logger.debug("Adding attribute username='{}' for person:  ", person.getName(), person);
             final Map<String, List<Object>> attributes = person.getAttributes();
             final Map<String, List<Object>> mutableMap = new LinkedHashMap<>(attributes);
-            mutableMap.put(usernameAttribute, Collections.singletonList(uidInQuery));
+            mutableMap.put(usernameAttribute, Collections.singletonList(person.getName()));
             rslt = new NamedPersonImpl(person.getName(), mutableMap);
         }
 
