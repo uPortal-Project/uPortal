@@ -119,8 +119,6 @@ public class PortalRootPersonAttributeDao extends AbstractFlatteningPersonAttrib
         return postProcessPerson(rslt, uid);
     }
 
-
-
     /**
      * This method is for matching a search query. Each matching item will subsequently be passed to
      * <code>getPerson(uid)</code> for "filling."
@@ -191,7 +189,10 @@ public class PortalRootPersonAttributeDao extends AbstractFlatteningPersonAttrib
         rslt = selectUsernameIfAbsent(rslt);
         rslt = selectDisplayNameIfAbsent(rslt);
 
-        logger.debug("Post-processing of person with name='{}' produced the following person:  {}", person.getName(), rslt);
+        logger.debug(
+                "Post-processing of person with name='{}' produced the following person:  {}",
+                person.getName(),
+                rslt);
 
         return rslt;
     }
