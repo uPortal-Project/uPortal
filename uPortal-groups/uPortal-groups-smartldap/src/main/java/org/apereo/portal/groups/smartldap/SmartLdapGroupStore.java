@@ -15,6 +15,7 @@
 package org.apereo.portal.groups.smartldap;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -48,6 +49,7 @@ import org.danann.cernunnos.runtime.RuntimeRequestResponse;
 import org.danann.cernunnos.runtime.ScriptRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.ldap.core.AttributesMapper;
 import org.springframework.ldap.core.ContextSource;
@@ -115,6 +117,9 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
     public void setAttributesMapper(AttributesMapper attributesMapper) {
         this.attributesMapper = attributesMapper;
     }
+
+    @Autowired(required = false)
+    private IChildKeyModifier childKeyModifier;
 
     /**
      * Period after which SmartLdap will drop and rebuild the groups tree. May be overridden in
@@ -235,53 +240,66 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
      */
     @Override
     public Iterator findParentGroups(IGroupMember gm) throws GroupsException {
-
         if (isTreeRefreshRequired()) {
             refreshTree();
         }
-
-        List<IEntityGroup> rslt = new ArrayList<>();
+        log.debug("Invoking findParentGroups() for group member: {}", gm.getKey());
+        Set<IEntityGroup> rslt = new HashSet<>();
         final IEntityGroup root = getRootGroup();
         if (gm.isGroup()) {
-            // Check the local indeces...
             IEntityGroup group = (IEntityGroup) gm;
-            List<String> list = groupsTree.getParents().get(group.getLocalKey());
-            if (list != null) {
-                // should only reach this code if its a SmartLdap managed group...
-                for (String s : list) {
-                    rslt.add(groupsTree.getGroups().get(s));
-                }
-            }
+            log.debug("Group member {} is group {}, {}", gm.getKey(),group.getLocalKey(), group.getName());
+            getParentGroups(group.getLocalKey(), rslt);
         } else if (!gm.isGroup() && gm.getLeafType().equals(root.getLeafType())) {
-
-            // Ask the individual...
-            EntityIdentifier ei = gm.getUnderlyingEntityIdentifier();
-            IPersonAttributes attr = personAttributeDao.getPerson(ei.getKey());
-            // avoid NPEs and unnecessary IPerson creation
-            if (attr != null && attr.getAttributes() != null && !attr.getAttributes().isEmpty()) {
-                IPerson p = PersonFactory.createPerson();
-                p.setAttributes(attr.getAttributes());
-
-                // Analyze its memberships...
-                Object[] groupKeys = p.getAttributeValues(memberOfAttributeName);
-                // IPerson returns null if no value is defined for this attribute...
-                if (groupKeys != null) {
-
-                    List<String> list = new ArrayList<>();
-                    for (Object o : groupKeys) {
-                        list.add((String) o);
-                    }
-
-                    for (String s : list) {
-                        if (groupsTree.getGroups().containsKey(s)) {
-                            rslt.add(groupsTree.getGroups().get(s));
-                        }
-                    }
-                }
+            Object[] groupKeys = getPersonGroupMemberKeys(gm);
+            for (Object o : groupKeys) {
+                String s = (String) o;
+                IEntityGroup group = groupsTree.getGroups().get(s);
+                rslt.add(group);
+                rslt.addAll(getParentGroups(s, new HashSet<>()));
             }
         }
-
         return rslt.iterator();
+    }
+
+    // gm should already be determined to be reference to person
+    private Object[] getPersonGroupMemberKeys(IGroupMember gm) {
+        Object[] keys = null;
+        EntityIdentifier ei = gm.getUnderlyingEntityIdentifier();
+        IPersonAttributes attr = personAttributeDao.getPerson(ei.getKey());
+        if (attr != null && attr.getAttributes() != null && !attr.getAttributes().isEmpty()) {
+            IPerson p = PersonFactory.createPerson();
+            p.setAttributes(attr.getAttributes());
+            keys = p.getAttributeValues(memberOfAttributeName);
+            log.debug("Groups for person {} is: {}", p.getUserName(), Arrays.toString(keys));
+        }
+        return keys != null ? keys : new Object[]{};
+    }
+
+    private Set<IEntityGroup> getParentGroups(String key, Set<IEntityGroup> groups) {
+        // groups is an ongoing collection to avoid recursion
+        log.debug("Getting parents of group: {}", key);
+        IEntityGroup group = groupsTree.getGroups().get(key);
+        if (group == null) {
+            log.warn("SmartLdap group not found for key: {}", key);
+            return groups;
+        }
+        List<String> parentKeys = groupsTree.getParents().get(key);
+        parentKeys = parentKeys != null ? parentKeys : Collections.emptyList();
+        log.debug("Parent keys for {}: {}", key, String.join(",", parentKeys));
+        for (String parentKey : parentKeys) {
+            IEntityGroup parent = groupsTree.getGroups().get(parentKey);
+            if (parent == null) {
+                log.warn("Group tree inconsistent -- missing parent: {}", parentKey);
+            }
+            else if (groups.contains(parent)) {
+                log.warn("Parent found multiple times, could be recursion group tree!");
+            } else {
+                groups.add(parent);
+                getParentGroups(parentKey, groups);
+            }
+        }
+        return groups;
     }
 
     /**
@@ -518,7 +536,9 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
         boolean rslt = false; // default
 
         for (String childKey : record.getKeysOfChildren()) {
-            if (childKey.endsWith(referenceDn)) {
+            log.debug("Comparing childKey {} against Dn {} while baseDn is {}", childKey, referenceDn, baseGroupDn);
+            log.debug("Real base DN: {}", this.ldapContext.getReadWriteContext());
+            if (childKey.contains(referenceDn)) {
                 // Make sure the one we found isn't already in the groupsSet;
                 // NOTE!... this test takes advantage of the implementation of
                 // equals() on LdapRecord, which states that 2 records with the
@@ -530,12 +550,12 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
                     rslt = true;
                     break;
                 } else {
-                    log.trace("Child group is already in collection:  {}", childKey);
+                    log.debug("Child group is already in collection:  {}", childKey);
                 }
             }
         }
 
-        log.trace(
+        log.debug(
                 "Query for children of parent group '{}':  {}",
                 record.getGroup().getLocalKey(),
                 rslt);
@@ -638,7 +658,7 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
 
         long timestamp = System.currentTimeMillis();
 
-        // Prepare the new local indeces...
+        // Prepare the new local indices...
         Map<String, IEntityGroup> newGroups =
                 Collections.synchronizedMap(new HashMap<String, IEntityGroup>());
         Map<String, List<String>> newParents =
@@ -687,6 +707,7 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
 
             // newGroups (me)...
             IEntityGroup g = r.getGroup();
+            log.debug("Adding LDAP group {}", g.getLocalKey());
             newGroups.put(g.getLocalKey(), g);
         }
 
@@ -734,31 +755,34 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
         // The new groups are added to the original ones.
         newGroups.putAll(newFolders);
 
-        // Do a second loop to build local indeces...
+        // Do a second loop to build local indices...
         for (LdapRecord r : set) {
 
             IEntityGroup g = r.getGroup();
+            log.debug("Adding relationships for {} ...", g.getLocalKey());
 
             // newParents (I am a parent for all my children)...
             for (String childKey : r.getKeysOfChildren()) {
+                log.debug("Parent-processing child {} for group {}", childKey, g.getLocalKey());
 
                 // NB:  We're only interested in relationships between
                 // objects in the main catalog (i.e. newGroups);
                 // discard everything else...
                 // childkey case of DN
-                final int keyStart = childKey.indexOf('=');
-                final int keyEnd = childKey.indexOf(',');
-                if (keyStart >= 0 && keyEnd >= 0 && keyStart < keyEnd) {
-                    childKey = childKey.substring(keyStart + 1, keyEnd);
+                if (childKeyModifier != null) {
+                    childKey = childKeyModifier.convertLdapKey(childKey);
                 }
                 if (newGroups.containsKey(childKey)) {
+                    log.debug("Found child {} in new groups", childKey);
 
                     List<String> parentsList = newParents.get(childKey);
                     if (parentsList == null) {
+                        log.debug("First parent for {}", childKey);
                         // first parent for this child...
                         parentsList = Collections.synchronizedList(new ArrayList<String>());
                         newParents.put(childKey, parentsList);
                     }
+                    log.debug("Adding {} to parent list for {}", g.getLocalKey(), childKey);
                     parentsList.add(g.getLocalKey());
                 }
             }
@@ -767,15 +791,15 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
             List<String> childrenList = Collections.synchronizedList(new ArrayList<String>());
             List<String> childrenPersonList = Collections.synchronizedList(new ArrayList<String>());
             for (String childKey : r.getKeysOfChildren()) {
+                log.debug("Child-processing child {} for group {}", childKey, g.getLocalKey());
                 // NB:  We're only interested in relationships between
                 // objects in the main catalog (i.e. newGroups);
                 // discard everything else...
-                final int keyStart = childKey.indexOf('=');
-                final int keyEnd = childKey.indexOf(',');
-                if (keyStart >= 0 && keyEnd >= 0 && keyStart < keyEnd) {
-                    childKey = childKey.substring(keyStart + 1, keyEnd);
+                if (childKeyModifier != null) {
+                    childKey = childKeyModifier.convertLdapKey(childKey);
                 }
                 if (newGroups.containsKey(childKey)) {
+                    log.debug("Found child {} in new groups ... adding to children list", childKey);
                     childrenList.add(childKey);
                 } else if (displayPersonMembers) {
                     childrenPersonList.add(childKey);
