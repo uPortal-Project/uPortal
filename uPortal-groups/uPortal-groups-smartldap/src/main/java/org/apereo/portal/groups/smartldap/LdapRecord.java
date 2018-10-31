@@ -45,8 +45,11 @@ public final class LdapRecord {
 
         if (logger.isDebugEnabled()) {
             String keys = String.join(",", keysOfChildren);
-            logger.debug("Instantiating LdapRecord for group: {}/{} with children: {}", group.getLocalKey(),
-                group.getName(), keys);
+            logger.debug(
+                    "Instantiating LdapRecord for group: {}/{} with children: {}",
+                    group.getLocalKey(),
+                    group.getName(),
+                    keys);
         }
         // Instance Members.
         this.group = group;

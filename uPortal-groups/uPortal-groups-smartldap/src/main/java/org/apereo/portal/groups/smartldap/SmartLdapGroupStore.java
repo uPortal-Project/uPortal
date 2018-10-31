@@ -248,7 +248,11 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
         final IEntityGroup root = getRootGroup();
         if (gm.isGroup()) {
             IEntityGroup group = (IEntityGroup) gm;
-            log.debug("Group member {} is group {}, {}", gm.getKey(),group.getLocalKey(), group.getName());
+            log.debug(
+                    "Group member {} is group {}, {}",
+                    gm.getKey(),
+                    group.getLocalKey(),
+                    group.getName());
             getParentGroups(group.getLocalKey(), rslt);
         } else if (!gm.isGroup() && gm.getLeafType().equals(root.getLeafType())) {
             Object[] groupKeys = getPersonGroupMemberKeys(gm);
@@ -273,7 +277,7 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
             keys = p.getAttributeValues(memberOfAttributeName);
             log.debug("Groups for person {} is: {}", p.getUserName(), Arrays.toString(keys));
         }
-        return keys != null ? keys : new Object[]{};
+        return keys != null ? keys : new Object[] {};
     }
 
     private Set<IEntityGroup> getParentGroups(String key, Set<IEntityGroup> groups) {
@@ -291,8 +295,7 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
             IEntityGroup parent = groupsTree.getGroups().get(parentKey);
             if (parent == null) {
                 log.warn("Group tree inconsistent -- missing parent: {}", parentKey);
-            }
-            else if (groups.contains(parent)) {
+            } else if (groups.contains(parent)) {
                 log.warn("Parent found multiple times, could be recursion group tree!");
             } else {
                 groups.add(parent);
@@ -536,7 +539,11 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
         boolean rslt = false; // default
 
         for (String childKey : record.getKeysOfChildren()) {
-            log.debug("Comparing childKey {} against Dn {} while baseDn is {}", childKey, referenceDn, baseGroupDn);
+            log.debug(
+                    "Comparing childKey {} against Dn {} while baseDn is {}",
+                    childKey,
+                    referenceDn,
+                    baseGroupDn);
             log.debug("Real base DN: {}", this.ldapContext.getReadWriteContext());
             if (childKey.contains(referenceDn)) {
                 // Make sure the one we found isn't already in the groupsSet;
