@@ -21,7 +21,7 @@
         <tr>
           <td>
             <a href="https://github.com/Jasig/uPortal/tree/master">
-              uPortal 5.3
+              uPortal 5
             </a>
           </td>
           <td>
@@ -37,72 +37,6 @@
           <td>
             <a href="https://coveralls.io/github/Jasig/uPortal?branch=master">
               <img src="https://coveralls.io/repos/github/Jasig/uPortal/badge.svg?branch=master" alt="Coverage Status">
-            </a>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <a href="https://github.com/Jasig/uPortal/tree/rel-5-2-patches">
-              uPortal 5.2
-            </a>
-          </td>
-          <td>
-            <a href="https://travis-ci.org/Jasig/uPortal">
-              <img src="https://travis-ci.org/Jasig/uPortal.svg?branch=rel-5-2-patches" alt="Linux Build Status">
-            </a>
-          </td>
-          <td>
-            <a href="https://ci.appveyor.com/project/drewwills/uportal/branch/rel-5-2-patches">
-              <img src="https://ci.appveyor.com/api/projects/status/8t95sjt090mf62dh/branch/rel-5-2-patches?svg=true" alt="Windows Build Status">
-            </a>
-          </td>
-          <td>
-            <a href="https://coveralls.io/github/Jasig/uPortal?branch=rel-5-2-patches">
-              <img src="https://coveralls.io/repos/github/Jasig/uPortal/badge.svg?branch=rel-5-2-patches" alt="Coverage Status">
-            </a>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <a href="https://github.com/Jasig/uPortal/tree/rel-5-1-patches">
-              uPortal 5.1
-            </a>
-          </td>
-          <td>
-            <a href="https://travis-ci.org/Jasig/uPortal">
-              <img src="https://travis-ci.org/Jasig/uPortal.svg?branch=rel-5-1-patches" alt="Linux Build Status">
-            </a>
-          </td>
-          <td>
-            <a href="https://ci.appveyor.com/project/drewwills/uportal/branch/rel-5-1-patches">
-              <img src="https://ci.appveyor.com/api/projects/status/8t95sjt090mf62dh/branch/rel-5-1-patches?svg=true" alt="Windows Build Status">
-            </a>
-          </td>
-          <td>
-            <a href="https://coveralls.io/github/Jasig/uPortal?branch=rel-5-1-patches">
-              <img src="https://coveralls.io/repos/github/Jasig/uPortal/badge.svg?branch=rel-5-1-patches" alt="Coverage Status">
-            </a>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <a href="https://github.com/Jasig/uPortal/tree/rel-5-0-patches">
-              uPortal 5.0
-            </a>
-          </td>
-          <td>
-            <a href="https://travis-ci.org/Jasig/uPortal">
-              <img src="https://travis-ci.org/Jasig/uPortal.svg?branch=rel-5-0-patches" alt="Linux Build Status">
-            </a>
-          </td>
-          <td>
-            <a href="https://ci.appveyor.com/project/drewwills/uportal/branch/rel-5-0-patches">
-              <img src="https://ci.appveyor.com/api/projects/status/8t95sjt090mf62dh/branch/rel-5-0-patches?svg=true" alt="Windows Build Status">
-            </a>
-          </td>
-          <td>
-            <a href="https://coveralls.io/github/Jasig/uPortal?branch=rel-5-0-patches">
-              <img src="https://coveralls.io/repos/github/Jasig/uPortal/badge.svg?branch=rel-5-0-patches" alt="Coverage Status">
             </a>
           </td>
         </tr>
