@@ -6,7 +6,7 @@
     "eslint-config-google": "^0.9.1",
     "prettier-eslint-cli": "^4.7.1",
     "prettier-stylelint": "^0.4.2",
-    "remark-cli": "^5.0.0",
+    "remark-cli": "^6.0.0",
     "remark-preset-lint-consistent": "^2.0.1",
     "remark-preset-lint-recommended": "^3.0.1",
     "remark-validate-links": "^7.0.0",
