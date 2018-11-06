@@ -19,6 +19,7 @@
 package org.jasig.portal.groups.smartldap;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -48,6 +49,7 @@ import org.jasig.portal.groups.ILockableEntityGroup;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.PersonFactory;
 import org.jasig.services.persondir.IPersonAttributeDao;
+import org.jasig.services.persondir.IPersonAttributes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
@@ -200,60 +202,73 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
      * @return java.util.Iterator
      * @param gm org.jasig.portal.groups.IEntityGroup
      */
+    @Override
     public Iterator findParentGroups(IGroupMember gm) throws GroupsException {
-
         if (isTreeRefreshRequired()) {
             refreshTree();
         }
-
-        List<IEntityGroup> rslt = new LinkedList<>();
+        log.debug("Invoking findParentGroups() for group member: {}", gm.getKey());
+        Set<IEntityGroup> rslt = new HashSet<>();
         final IEntityGroup root = getRootGroup();
         if (gm.isGroup()) {
-            // Check the local indeces...
             IEntityGroup group = (IEntityGroup) gm;
-            List<String> list = groupsTree.getParents().get(group.getLocalKey());
-            if (list != null) {
-                // should only reach this code if its a SmartLdap managed group...
-                for (String s : list) {
-                    rslt.add(groupsTree.getGroups().get(s));
-                }
-            }
+            log.debug("Group member {} is group {}, {}", gm.getKey(),group.getLocalKey(), group.getName());
+            getParentGroups(group.getLocalKey(), rslt);
         } else if (!gm.isGroup() && gm.getLeafType().equals(root.getLeafType())) {
-
-            // Ask the individual...
-            EntityIdentifier ei = gm.getUnderlyingEntityIdentifier();
-            Map<String,List<Object>> seed = new HashMap<>();
-            List<Object> seedValue = new LinkedList<>();
-            seedValue.add(ei.getKey());
-            seed.put(IPerson.USERNAME, seedValue);
-            Map<String,List<Object>> attr = personAttributeDao.getMultivaluedUserAttributes(seed);
-            // avoid NPEs and unnecessary IPerson creation
-            if (attr != null && !attr.isEmpty()) {
-                IPerson p = PersonFactory.createPerson();
-                p.setAttributes(attr);
-
-                // Analyze its memberships...
-                Object[] groupKeys = p.getAttributeValues(memberOfAttributeName);
-                // IPerson returns null if no value is defined for this attribute...
-                if (groupKeys != null) {
-
-                    List<String> list = new LinkedList<>();
-                    for (Object o : groupKeys) {
-                        list.add((String) o);
-                    }
-
-                    for (String s : list) {
-                        if (groupsTree.getGroups().containsKey(s)) {
-                            rslt.add(groupsTree.getGroups().get(s));
-                        }
-                    }
+            Object[] groupKeys = getPersonGroupMemberKeys(gm);
+            for (Object o : groupKeys) {
+                String s = (String) o;
+                IEntityGroup group = groupsTree.getGroups().get(s);
+                if (group != null) {
+                    // some memberOf entries are not groups
+                    rslt.add(group);
+                    Set<IEntityGroup> newSet = new HashSet<>();
+                    rslt.addAll(getParentGroups(s, newSet));
                 }
             }
-
         }
-
         return rslt.iterator();
+    }
 
+    // gm should already be determined to be reference to person
+    private Object[] getPersonGroupMemberKeys(IGroupMember gm) {
+        Object[] keys = null;
+        EntityIdentifier ei = gm.getUnderlyingEntityIdentifier();
+        IPersonAttributes attr = personAttributeDao.getPerson(ei.getKey());
+        if (attr != null && attr.getAttributes() != null && !attr.getAttributes().isEmpty()) {
+            IPerson p = PersonFactory.createPerson();
+            p.setAttributes(attr.getAttributes());
+            keys = p.getAttributeValues(memberOfAttributeName);
+            log.debug("Groups for person {} is: {}", p.getUserName(), Arrays.toString(keys));
+        }
+        return keys != null ? keys : new Object[]{};
+    }
+
+    private Set<IEntityGroup> getParentGroups(String key, Set<IEntityGroup> groups) {
+        // groups is an ongoing collection to avoid recursion
+        log.debug("Getting parents of group: {}", key);
+        IEntityGroup group = groupsTree.getGroups().get(key);
+        if (group == null) {
+            log.warn("SmartLdap group not found for key: {}", key);
+            return groups;
+        }
+        List<String> parentKeys = groupsTree.getParents().get(key);
+        List<String> emptyList = Collections.emptyList();
+        parentKeys = parentKeys != null ? parentKeys : emptyList;
+        log.debug("Parent keys for {}: {}", key, String.join(",", parentKeys));
+        for (String parentKey : parentKeys) {
+            IEntityGroup parent = groupsTree.getGroups().get(parentKey);
+            if (parent == null) {
+                log.warn("Group tree inconsistent -- missing parent: {}", parentKey);
+            }
+            else if (groups.contains(parent)) {
+                log.warn("Parent found multiple times, could be recursion group tree!");
+            } else {
+                groups.add(parent);
+                getParentGroups(parentKey, groups);
+            }
+        }
+        return groups;
     }
 
     /**
@@ -452,7 +467,7 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
         boolean rslt = false;  // default
 
         for (String childKey : record.getKeysOfChildren()) {
-            if (childKey.endsWith(referenceDn)) {
+            if (childKey.contains(referenceDn)) {
                 // Make sure the one we found isn't already in the groupsSet;  
                 // NOTE!... this test takes advantage of the implementation of 
                 // equals() on LdapRecord, which states that 2 records with the 
