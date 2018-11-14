@@ -18,10 +18,16 @@ import java.util.Arrays;
 import java.util.List;
 import javax.xml.namespace.QName;
 import org.apereo.portal.io.xml.AbstractPortalDataType;
+import org.apereo.portal.io.xml.IExportAllPortalDataType;
 import org.apereo.portal.io.xml.PortalDataKey;
+import org.springframework.stereotype.Component;
 
 /** Describes a fragment owner's layout in the portal */
-public class FragmentLayoutPortalDataType extends AbstractPortalDataType {
+@Component("fragmentLayoutPortalDataType")
+public class FragmentLayoutPortalDataType extends AbstractPortalDataType implements IExportAllPortalDataType {
+
+    public static final int ORDER = 150;
+
     public static final QName LEGACY_LAYOUT_QNAME = new QName("fragment-layout");
 
     public static final PortalDataKey IMPORT_32_DATA_KEY =
@@ -50,7 +56,7 @@ public class FragmentLayoutPortalDataType extends AbstractPortalDataType {
             Arrays.asList(IMPORT_26_DATA_KEY, IMPORT_30_DATA_KEY, IMPORT_32_DATA_KEY);
 
     public FragmentLayoutPortalDataType() {
-        super(LEGACY_LAYOUT_QNAME);
+        super(ORDER, LEGACY_LAYOUT_QNAME);
     }
 
     @Override

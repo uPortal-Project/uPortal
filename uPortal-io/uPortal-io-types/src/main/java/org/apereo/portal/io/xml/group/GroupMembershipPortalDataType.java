@@ -22,11 +22,18 @@ import java.util.Set;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
 import org.apereo.portal.io.xml.AbstractPortalDataType;
+import org.apereo.portal.io.xml.IExportAllPortalDataType;
 import org.apereo.portal.io.xml.PortalDataKey;
+import org.springframework.stereotype.Component;
 
 /** Describes a group with members in the portal */
-public class GroupMembershipPortalDataType extends AbstractPortalDataType {
+@Component("groupMembershipPortalDataType")
+public class GroupMembershipPortalDataType extends AbstractPortalDataType implements IExportAllPortalDataType {
+
+    public static final int ORDER = 60;
+
     public static final QName LEGACY_GROUP_QNAME = new QName("group");
+
     public static final String TYPE_ID = "group-membership";
 
     /** @deprecated used for importing old data files */
@@ -116,7 +123,7 @@ public class GroupMembershipPortalDataType extends AbstractPortalDataType {
             ImmutableSet.of(IMPORT_GROUP_50_DATA_KEY, IMPORT_MEMBERS_50_DATA_KEY);
 
     public GroupMembershipPortalDataType() {
-        super(LEGACY_GROUP_QNAME);
+        super(ORDER, LEGACY_GROUP_QNAME);
     }
 
     @Override

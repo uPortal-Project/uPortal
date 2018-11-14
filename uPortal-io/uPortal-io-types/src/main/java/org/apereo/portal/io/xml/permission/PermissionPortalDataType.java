@@ -19,9 +19,14 @@ import java.util.List;
 import javax.xml.namespace.QName;
 import org.apereo.portal.io.xml.AbstractPortalDataType;
 import org.apereo.portal.io.xml.PortalDataKey;
+import org.springframework.stereotype.Component;
 
 /** Describes a permission owner in the portal */
+@Component("permissionPortalDataType")
 public class PermissionPortalDataType extends AbstractPortalDataType {
+
+    public static final int ORDER = 100;
+
     public static final QName LEGACY_PERMISSION_QNAME = new QName("permission");
 
     public static final PortalDataKey IMPORT_26_DATA_KEY =
@@ -33,7 +38,7 @@ public class PermissionPortalDataType extends AbstractPortalDataType {
     private static final List<PortalDataKey> PORTAL_DATA_KEYS = Arrays.asList(IMPORT_26_DATA_KEY);
 
     public PermissionPortalDataType() {
-        super(LEGACY_PERMISSION_QNAME);
+        super(ORDER, LEGACY_PERMISSION_QNAME);
     }
 
     @Override

@@ -30,21 +30,21 @@ public interface IPortletType extends IPortalData {
      *
      * @return unique id
      */
-    public int getId();
+    int getId();
 
     /**
      * Get the name of this channel type
      *
      * @return channel type name
      */
-    public String getName();
+    String getName();
 
     /**
      * Get a description of this channel type
      *
      * @return channel type description
      */
-    public String getDescription();
+    String getDescription();
 
     /**
      * Get the URI of the ChannelPublishingDocument associated with this channel type. This CPD will
@@ -52,7 +52,7 @@ public interface IPortletType extends IPortalData {
      *
      * @return ChannelPublishingDocument URI
      */
-    public String getCpdUri();
+    String getCpdUri();
 
     // Setter methods
 
@@ -61,7 +61,7 @@ public interface IPortletType extends IPortalData {
      *
      * @param descr
      */
-    public void setDescription(String descr);
+    void setDescription(String descr);
 
     /**
      * Set the URI of the ChannelPublishingDocument associated with this channel type. This CPD will
@@ -69,5 +69,5 @@ public interface IPortletType extends IPortalData {
      *
      * @param cpdUri ChannelPublishingDocument URI
      */
-    public void setCpdUri(String cpdUri);
+    void setCpdUri(String cpdUri);
 }

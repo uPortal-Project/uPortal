@@ -18,9 +18,15 @@ import java.util.Arrays;
 import java.util.List;
 import javax.xml.namespace.QName;
 import org.apereo.portal.io.xml.AbstractPortalDataType;
+import org.apereo.portal.io.xml.IExportAllPortalDataType;
 import org.apereo.portal.io.xml.PortalDataKey;
+import org.springframework.stereotype.Component;
 
-public class PortletTypePortalDataType extends AbstractPortalDataType {
+@Component("portletTypePortalDataType")
+public class PortletTypePortalDataType extends AbstractPortalDataType implements IExportAllPortalDataType {
+
+    public static final int ORDER = 80;
+
     public static final QName PORTLET_TYPE_QNAME =
             new QName("https://source.jasig.org/schemas/uportal/io/portlet-type", "portlet-type");
 
@@ -30,7 +36,7 @@ public class PortletTypePortalDataType extends AbstractPortalDataType {
     private static final List<PortalDataKey> PORTAL_DATA_KEYS = Arrays.asList(IMPORT_40_DATA_KEY);
 
     public PortletTypePortalDataType() {
-        super(PORTLET_TYPE_QNAME);
+        super(ORDER, PORTLET_TYPE_QNAME);
     }
 
     @Override
@@ -38,17 +44,11 @@ public class PortletTypePortalDataType extends AbstractPortalDataType {
         return PORTAL_DATA_KEYS;
     }
 
-    /* (non-Javadoc)
-     * @see org.apereo.portal.io.xml.IPortalDataType#getTitle()
-     */
     @Override
     public String getTitleCode() {
         return "Portlet Type";
     }
 
-    /* (non-Javadoc)
-     * @see org.apereo.portal.io.xml.IPortalDataType#getDescription()
-     */
     @Override
     public String getDescriptionCode() {
         return "Types of portlets published in the portal";

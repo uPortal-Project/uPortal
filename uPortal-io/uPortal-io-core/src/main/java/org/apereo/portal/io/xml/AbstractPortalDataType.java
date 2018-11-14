@@ -24,42 +24,39 @@ import org.slf4j.LoggerFactory;
 
 /** Base IPortalDataType implementation that should simplify most implementations */
 public abstract class AbstractPortalDataType implements IPortalDataType {
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
+
+    private final int order;
 
     private final QName defaultQName;
 
-    public AbstractPortalDataType(QName defaultQName) {
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
+
+    public AbstractPortalDataType(int order, QName defaultQName) {
         Validate.notNull(defaultQName);
+        this.order = order;
         this.defaultQName = defaultQName;
     }
 
-    /* (non-Javadoc)
-     * @see org.apereo.portal.io.xml.IPortalDataType#getTypeId()
-     */
+    @Override
+    public int getOrder() {
+        return order;
+    }
+
     @Override
     public String getTypeId() {
         return this.defaultQName.getLocalPart();
     }
 
-    /* (non-Javadoc)
-     * @see org.apereo.portal.io.xml.IPortalDataType#getTitle()
-     */
     @Override
     public String getTitleCode() {
         return this.defaultQName.getLocalPart();
     }
 
-    /* (non-Javadoc)
-     * @see org.apereo.portal.io.xml.IPortalDataType#getDescription()
-     */
     @Override
     public String getDescriptionCode() {
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see org.apereo.portal.io.xml.IPortalDataType#postProcessPortalDataKey(org.springframework.core.io.Resource, org.apereo.portal.io.xml.PortalDataKey, javax.xml.stream.XMLEventReader)
-     */
     @Override
     public Set<PortalDataKey> postProcessPortalDataKey(
             String systemId, PortalDataKey portalDataKey, XMLEventReader reader) {

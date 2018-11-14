@@ -18,9 +18,15 @@ import java.util.Arrays;
 import java.util.List;
 import javax.xml.namespace.QName;
 import org.apereo.portal.io.xml.AbstractPortalDataType;
+import org.apereo.portal.io.xml.IExportAllPortalDataType;
 import org.apereo.portal.io.xml.PortalDataKey;
+import org.springframework.stereotype.Component;
 
-public class EventAggregationConfigurationPortalDataType extends AbstractPortalDataType {
+@Component("eventAggregationConfigurationPortalDataType")
+public class EventAggregationConfigurationPortalDataType extends AbstractPortalDataType implements IExportAllPortalDataType {
+
+    public static final int ORDER = 170;
+
     public static final QName EVENT_AGGREGATION_QNAME =
             new QName(
                     "https://source.jasig.org/schemas/uportal/io/event-aggregation",
@@ -32,7 +38,7 @@ public class EventAggregationConfigurationPortalDataType extends AbstractPortalD
     private static final List<PortalDataKey> PORTAL_DATA_KEYS = Arrays.asList(IMPORT_40_DATA_KEY);
 
     public EventAggregationConfigurationPortalDataType() {
-        super(EVENT_AGGREGATION_QNAME);
+        super(ORDER, EVENT_AGGREGATION_QNAME);
     }
 
     @Override

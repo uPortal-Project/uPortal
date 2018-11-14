@@ -193,8 +193,8 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
         this.maxWaitTimeUnit = maxWaitTimeUnit;
     }
 
-    /** Order in which data types should be imported. */
-    @javax.annotation.Resource(name = "dataTypeImportOrder")
+    /** The <code>@Autowired</code> list will reflect the order in which data types should be imported. */
+    @Autowired
     public void setDataTypeImportOrder(List<IPortalDataType> dataTypeImportOrder) {
         final ArrayList<PortalDataKey> dataKeyImportOrder =
                 new ArrayList<>(dataTypeImportOrder.size() * 2);
@@ -256,8 +256,8 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
      * Optional set of all portal data types to export. If not specified all available portal data
      * types will be listed.
      */
-    @javax.annotation.Resource(name = "exportAllPortalDataTypes")
-    public void setExportAllPortalDataTypes(Set<IPortalDataType> exportAllPortalDataTypes) {
+    @Autowired
+    public void setExportAllPortalDataTypes(Set<IExportAllPortalDataType> exportAllPortalDataTypes) {
         this.exportAllPortalDataTypes = ImmutableSet.copyOf(exportAllPortalDataTypes);
     }
 

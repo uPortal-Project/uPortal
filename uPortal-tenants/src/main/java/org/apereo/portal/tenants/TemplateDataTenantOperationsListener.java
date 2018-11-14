@@ -105,11 +105,11 @@ public final class TemplateDataTenantOperationsListener extends AbstractTenantOp
         this.reader.setMergeAdjacentText(true);
     }
 
-    /** Order in which data types should be imported. */
-    @javax.annotation.Resource(name = "dataTypeImportOrder")
+    /** The <code>@Autowired</code> list will reflect the order in which data types should be imported. */
+    @Autowired
     public void setDataTypeImportOrder(List<IPortalDataType> dataTypeImportOrder) {
         final ArrayList<PortalDataKey> dataKeyImportOrder =
-                new ArrayList<PortalDataKey>(dataTypeImportOrder.size() * 2);
+                new ArrayList<>(dataTypeImportOrder.size() * 2);
 
         for (final IPortalDataType portalDataType : dataTypeImportOrder) {
             final List<PortalDataKey> supportedDataKeys = portalDataType.getDataKeyImportOrder();
@@ -205,7 +205,7 @@ public final class TemplateDataTenantOperationsListener extends AbstractTenantOp
     @PostConstruct
     public void setup() throws Exception {
         entityResourcesToImportOnCreate =
-                new HashSet<Resource>(
+                new HashSet<>(
                         Arrays.asList(applicationContext.getResources(templateLocation)));
         this.entityResourcesToImportOnUpdate =
                 buildResourcesFromPaths(applicationContext, entityResourcePathsToImportOnUpdate);
@@ -370,7 +370,7 @@ public final class TemplateDataTenantOperationsListener extends AbstractTenantOp
     private Map<PortalDataKey, Set<BucketTuple>> prepareImportQueue(
             final ITenant tenant, final Set<Resource> templates) throws Exception {
         final Map<PortalDataKey, Set<BucketTuple>> rslt =
-                new HashMap<PortalDataKey, Set<BucketTuple>>();
+                new HashMap<>();
         Resource rsc = null;
         try {
             for (Resource r : templates) {
@@ -394,7 +394,7 @@ public final class TemplateDataTenantOperationsListener extends AbstractTenantOp
                         Set<BucketTuple> bucket = rslt.get(atLeastOneMatchingDataKey);
                         if (bucket == null) {
                             // First of these we've seen;  create the bucket;
-                            bucket = new HashSet<BucketTuple>();
+                            bucket = new HashSet<>();
                             rslt.put(atLeastOneMatchingDataKey, bucket);
                         }
                         BucketTuple tuple = new BucketTuple(rsc, doc);

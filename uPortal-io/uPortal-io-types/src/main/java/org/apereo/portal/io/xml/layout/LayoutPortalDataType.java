@@ -20,11 +20,17 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
 import org.apereo.portal.IUserIdentityStore;
 import org.apereo.portal.io.xml.AbstractPortalDataType;
+import org.apereo.portal.io.xml.IExportAllPortalDataType;
 import org.apereo.portal.io.xml.PortalDataKey;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /** Describes a user's layout */
-public class LayoutPortalDataType extends AbstractPortalDataType {
+@Component("layoutPortalDataType")
+public class LayoutPortalDataType extends AbstractPortalDataType implements IExportAllPortalDataType {
+
+    public static final int ORDER = 160;
+
     public static final QName LEGACY_LAYOUT_QNAME = new QName("layout");
 
     public static final PortalDataKey IMPORT_32_DATA_KEY =
@@ -59,7 +65,7 @@ public class LayoutPortalDataType extends AbstractPortalDataType {
     private IUserIdentityStore userIdentityStore;
 
     public LayoutPortalDataType() {
-        super(LEGACY_LAYOUT_QNAME);
+        super(ORDER, LEGACY_LAYOUT_QNAME);
     }
 
     @Autowired
