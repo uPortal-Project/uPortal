@@ -17,15 +17,6 @@ package org.apereo.portal.security.oauth;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-import javax.annotation.PostConstruct;
 import org.apereo.portal.groups.IEntityGroup;
 import org.apereo.portal.groups.IGroupMember;
 import org.apereo.portal.security.IPerson;
@@ -38,6 +29,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
+import java.math.BigDecimal;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Produces OIDC ID Tokens for the OIDC userinfo endpoint. Supports nearly all the Standard Claims
@@ -251,6 +247,10 @@ public class IdTokenFactory {
     }
 
     public String createUserInfo(String username) {
+        return this.createUserInfo(username, null, null);
+    }
+
+    public String createUserInfo(String username, List<String> overrideGroups, List<String> overrideCustomClaims) {
 
         final Date now = new Date();
         final Date expires = new Date(now.getTime() + (timeoutSeconds * 1000L));
@@ -283,8 +283,17 @@ public class IdTokenFactory {
         if (groupMember != null) {
             Set<IEntityGroup> ancestors = groupMember.getAncestorGroups();
             for (IEntityGroup g : ancestors) {
-                if (groupsWhitelist.contains(g.getName())) {
-                    groups.add(g.getName());
+                // Is an override set of groups provided?
+                if (overrideGroups != null) {
+                    // Does the override list contain the group currently being evaluated?
+                    if(overrideGroups.contains(g.getName())) {
+                        groups.add(g.getName());
+                    }
+                }
+                else {
+                    if (groupsWhitelist.contains(g.getName())) {
+                        groups.add(g.getName());
+                    }
                 }
             }
         }
@@ -296,15 +305,28 @@ public class IdTokenFactory {
             builder.claim("groups", groups);
         }
 
-        // Custom Claims
-        customClaims
+        // Is an override set of custom claim attributes provided?
+        if(overrideCustomClaims != null) {
+            overrideCustomClaims
                 .stream()
                 .map(
-                        attributeName ->
-                                new CustomClaim(
-                                        attributeName, person.getAttributeValues(attributeName)))
+                    attributeName ->
+                        new CustomClaim(
+                            attributeName, person.getAttributeValues(attributeName)))
                 .filter(claim -> claim.getClaimValue() != null)
                 .forEach(claim -> builder.claim(claim.getClaimName(), claim.getClaimValue()));
+        }
+        else {
+            // Default custom claims defined by uPortal.properties
+            customClaims
+                .stream()
+                .map(
+                    attributeName ->
+                        new CustomClaim(
+                            attributeName, person.getAttributeValues(attributeName)))
+                .filter(claim -> claim.getClaimValue() != null)
+                .forEach(claim -> builder.claim(claim.getClaimName(), claim.getClaimValue()));
+        }
 
         final String rslt = builder.signWith(SignatureAlgorithm.HS512, signatureKey).compact();
 
