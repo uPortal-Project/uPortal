@@ -17,6 +17,10 @@ package org.apereo.portal.security.oauth;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import java.math.BigDecimal;
+import java.util.*;
+import java.util.stream.Collectors;
+import javax.annotation.PostConstruct;
 import org.apereo.portal.groups.IEntityGroup;
 import org.apereo.portal.groups.IGroupMember;
 import org.apereo.portal.security.IPerson;
@@ -29,11 +33,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
-import javax.annotation.PostConstruct;
-import java.math.BigDecimal;
-import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Produces OIDC ID Tokens for the OIDC userinfo endpoint. Supports nearly all the Standard Claims
