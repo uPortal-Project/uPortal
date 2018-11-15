@@ -250,7 +250,8 @@ public class IdTokenFactory {
         return this.createUserInfo(username, null, null);
     }
 
-    public String createUserInfo(String username, List<String> overrideGroups, List<String> overrideCustomClaims) {
+    public String createUserInfo(
+            String username, List<String> overrideGroups, List<String> overrideCustomClaims) {
 
         final Date now = new Date();
         final Date expires = new Date(now.getTime() + (timeoutSeconds * 1000L));
@@ -286,11 +287,10 @@ public class IdTokenFactory {
                 // Is an override set of groups provided?
                 if (overrideGroups != null) {
                     // Does the override list contain the group currently being evaluated?
-                    if(overrideGroups.contains(g.getName())) {
+                    if (overrideGroups.contains(g.getName())) {
                         groups.add(g.getName());
                     }
-                }
-                else {
+                } else {
                     if (groupsWhitelist.contains(g.getName())) {
                         groups.add(g.getName());
                     }
@@ -306,26 +306,27 @@ public class IdTokenFactory {
         }
 
         // Is an override set of custom claim attributes provided?
-        if(overrideCustomClaims != null) {
+        if (overrideCustomClaims != null) {
             overrideCustomClaims
-                .stream()
-                .map(
-                    attributeName ->
-                        new CustomClaim(
-                            attributeName, person.getAttributeValues(attributeName)))
-                .filter(claim -> claim.getClaimValue() != null)
-                .forEach(claim -> builder.claim(claim.getClaimName(), claim.getClaimValue()));
-        }
-        else {
+                    .stream()
+                    .map(
+                            attributeName ->
+                                    new CustomClaim(
+                                            attributeName,
+                                            person.getAttributeValues(attributeName)))
+                    .filter(claim -> claim.getClaimValue() != null)
+                    .forEach(claim -> builder.claim(claim.getClaimName(), claim.getClaimValue()));
+        } else {
             // Default custom claims defined by uPortal.properties
             customClaims
-                .stream()
-                .map(
-                    attributeName ->
-                        new CustomClaim(
-                            attributeName, person.getAttributeValues(attributeName)))
-                .filter(claim -> claim.getClaimValue() != null)
-                .forEach(claim -> builder.claim(claim.getClaimName(), claim.getClaimValue()));
+                    .stream()
+                    .map(
+                            attributeName ->
+                                    new CustomClaim(
+                                            attributeName,
+                                            person.getAttributeValues(attributeName)))
+                    .filter(claim -> claim.getClaimValue() != null)
+                    .forEach(claim -> builder.claim(claim.getClaimName(), claim.getClaimValue()));
         }
 
         final String rslt = builder.signWith(SignatureAlgorithm.HS512, signatureKey).compact();

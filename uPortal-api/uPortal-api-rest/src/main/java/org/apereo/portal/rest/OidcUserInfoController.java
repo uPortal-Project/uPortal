@@ -59,26 +59,20 @@ public class OidcUserInfoController {
         final IPerson person = personManager.getPerson(request);
 
         List<String> overrideGroups = null;
-        if(request.getParameter("groups") != null) {
-            String[] tokens = request
-                .getParameter("groups")
-                .split("[,]");
+        if (request.getParameter("groups") != null) {
+            String[] tokens = request.getParameter("groups").split("[,]");
 
             overrideGroups = Arrays.asList(tokens);
         }
 
         List<String> overrideCustomClaims = null;
-        if(request.getParameter("customClaims") != null) {
-            String[] tokens = request
-                .getParameter("customClaims")
-                .split("[,]");
+        if (request.getParameter("customClaims") != null) {
+            String[] tokens = request.getParameter("customClaims").split("[,]");
 
             overrideCustomClaims = Arrays.asList(tokens);
         }
 
         return idTokenFactory.createUserInfo(
-            person.getUserName(),
-            overrideGroups,
-            overrideCustomClaims);
+                person.getUserName(), overrideGroups, overrideCustomClaims);
     }
 }
