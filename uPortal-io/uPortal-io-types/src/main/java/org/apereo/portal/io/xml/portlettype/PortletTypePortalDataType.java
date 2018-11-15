@@ -23,7 +23,8 @@ import org.apereo.portal.io.xml.PortalDataKey;
 import org.springframework.stereotype.Component;
 
 @Component("portletTypePortalDataType")
-public class PortletTypePortalDataType extends AbstractPortalDataType implements IExportAllPortalDataType {
+public class PortletTypePortalDataType extends AbstractPortalDataType
+        implements IExportAllPortalDataType {
 
     public static final int ORDER = 80;
 

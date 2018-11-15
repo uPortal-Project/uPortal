@@ -14,16 +14,15 @@
  */
 package org.apereo.portal.io.xml;
 
-import org.springframework.core.Ordered;
-
 import java.util.List;
 import java.util.Set;
 import javax.xml.stream.XMLEventReader;
+import org.springframework.core.Ordered;
 
 /**
  * Describes a type of portal data that can be imported, exported, or deleted via the {@link
- * IPortalDataHandlerService}.  Beans that implement this interface have a natural order based on
- * the sequence in which they must be imported into a "fresh" portal database.  This order preserves
+ * IPortalDataHandlerService}. Beans that implement this interface have a natural order based on the
+ * sequence in which they must be imported into a "fresh" portal database. This order preserves
  * foreign key relationships.
  */
 public interface IPortalDataType extends Ordered {

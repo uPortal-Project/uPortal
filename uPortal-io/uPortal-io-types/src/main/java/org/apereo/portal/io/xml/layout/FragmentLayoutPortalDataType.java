@@ -24,7 +24,8 @@ import org.springframework.stereotype.Component;
 
 /** Describes a fragment owner's layout in the portal */
 @Component("fragmentLayoutPortalDataType")
-public class FragmentLayoutPortalDataType extends AbstractPortalDataType implements IExportAllPortalDataType {
+public class FragmentLayoutPortalDataType extends AbstractPortalDataType
+        implements IExportAllPortalDataType {
 
     public static final int ORDER = 150;
 

@@ -27,7 +27,8 @@ import org.apereo.portal.io.xml.PortalDataKey;
 import org.springframework.stereotype.Component;
 
 @Component("personAttributesGroupStorePortalDataType")
-public class PersonAttributesGroupStorePortalDataType extends AbstractPortalDataType implements IExportAllPortalDataType {
+public class PersonAttributesGroupStorePortalDataType extends AbstractPortalDataType
+        implements IExportAllPortalDataType {
 
     public static final int ORDER = 10;
 

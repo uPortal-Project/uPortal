@@ -25,7 +25,8 @@ import org.springframework.stereotype.Component;
 
 /** Describes the {@link IStylesheetDescriptor} for import and export. */
 @Component("stylesheetDescriptorPortalDataType")
-public class StylesheetDescriptorPortalDataType extends AbstractPortalDataType implements IExportAllPortalDataType {
+public class StylesheetDescriptorPortalDataType extends AbstractPortalDataType
+        implements IExportAllPortalDataType {
 
     public static final int ORDER = 30;
 

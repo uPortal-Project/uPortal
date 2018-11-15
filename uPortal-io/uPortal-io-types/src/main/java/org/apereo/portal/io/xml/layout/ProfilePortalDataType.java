@@ -24,7 +24,8 @@ import org.springframework.stereotype.Component;
 
 /** Describes a portal group */
 @Component("profilePortalDataType")
-public class ProfilePortalDataType extends AbstractPortalDataType implements IExportAllPortalDataType {
+public class ProfilePortalDataType extends AbstractPortalDataType
+        implements IExportAllPortalDataType {
 
     public static final int ORDER = 130;
 

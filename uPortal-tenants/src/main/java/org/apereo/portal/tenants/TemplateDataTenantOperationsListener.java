@@ -105,7 +105,10 @@ public final class TemplateDataTenantOperationsListener extends AbstractTenantOp
         this.reader.setMergeAdjacentText(true);
     }
 
-    /** The <code>@Autowired</code> list will reflect the order in which data types should be imported. */
+    /**
+     * The <code>@Autowired</code> list will reflect the order in which data types should be
+     * imported.
+     */
     @Autowired
     public void setDataTypeImportOrder(List<IPortalDataType> dataTypeImportOrder) {
         final ArrayList<PortalDataKey> dataKeyImportOrder =
@@ -205,8 +208,7 @@ public final class TemplateDataTenantOperationsListener extends AbstractTenantOp
     @PostConstruct
     public void setup() throws Exception {
         entityResourcesToImportOnCreate =
-                new HashSet<>(
-                        Arrays.asList(applicationContext.getResources(templateLocation)));
+                new HashSet<>(Arrays.asList(applicationContext.getResources(templateLocation)));
         this.entityResourcesToImportOnUpdate =
                 buildResourcesFromPaths(applicationContext, entityResourcePathsToImportOnUpdate);
     }
@@ -369,8 +371,7 @@ public final class TemplateDataTenantOperationsListener extends AbstractTenantOp
     /** Loads dom4j Documents and sorts the entity files into the proper order for Import. */
     private Map<PortalDataKey, Set<BucketTuple>> prepareImportQueue(
             final ITenant tenant, final Set<Resource> templates) throws Exception {
-        final Map<PortalDataKey, Set<BucketTuple>> rslt =
-                new HashMap<>();
+        final Map<PortalDataKey, Set<BucketTuple>> rslt = new HashMap<>();
         Resource rsc = null;
         try {
             for (Resource r : templates) {

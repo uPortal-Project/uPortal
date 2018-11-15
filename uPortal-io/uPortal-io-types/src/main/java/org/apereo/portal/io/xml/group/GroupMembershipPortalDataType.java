@@ -28,7 +28,8 @@ import org.springframework.stereotype.Component;
 
 /** Describes a group with members in the portal */
 @Component("groupMembershipPortalDataType")
-public class GroupMembershipPortalDataType extends AbstractPortalDataType implements IExportAllPortalDataType {
+public class GroupMembershipPortalDataType extends AbstractPortalDataType
+        implements IExportAllPortalDataType {
 
     public static final int ORDER = 60;
 

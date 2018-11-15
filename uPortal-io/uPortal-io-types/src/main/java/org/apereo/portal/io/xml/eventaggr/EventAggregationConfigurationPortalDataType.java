@@ -23,7 +23,8 @@ import org.apereo.portal.io.xml.PortalDataKey;
 import org.springframework.stereotype.Component;
 
 @Component("eventAggregationConfigurationPortalDataType")
-public class EventAggregationConfigurationPortalDataType extends AbstractPortalDataType implements IExportAllPortalDataType {
+public class EventAggregationConfigurationPortalDataType extends AbstractPortalDataType
+        implements IExportAllPortalDataType {
 
     public static final int ORDER = 170;
 

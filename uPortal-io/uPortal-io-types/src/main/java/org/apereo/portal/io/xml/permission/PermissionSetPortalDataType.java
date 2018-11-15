@@ -24,7 +24,8 @@ import org.springframework.stereotype.Component;
 
 /** Describes a permission in the portal */
 @Component("permissionSetPortalDataType")
-public class PermissionSetPortalDataType extends AbstractPortalDataType implements IExportAllPortalDataType {
+public class PermissionSetPortalDataType extends AbstractPortalDataType
+        implements IExportAllPortalDataType {
 
     public static final int ORDER = 110;
 

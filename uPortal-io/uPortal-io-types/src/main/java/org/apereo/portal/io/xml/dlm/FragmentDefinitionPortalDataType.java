@@ -24,7 +24,8 @@ import org.springframework.stereotype.Component;
 
 /** Describes an entity-type data type in the portal */
 @Component("fragmentDefinitionPortalDataType")
-public class FragmentDefinitionPortalDataType extends AbstractPortalDataType implements IExportAllPortalDataType {
+public class FragmentDefinitionPortalDataType extends AbstractPortalDataType
+        implements IExportAllPortalDataType {
 
     public static final int ORDER = 140;
 

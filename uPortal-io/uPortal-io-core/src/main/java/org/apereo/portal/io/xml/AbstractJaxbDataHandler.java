@@ -55,7 +55,7 @@ public abstract class AbstractJaxbDataHandler<T>
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        final Map<String, Object> properties = new LinkedHashMap<String, Object>();
+        final Map<String, Object> properties = new LinkedHashMap<>();
         properties.put(javax.xml.bind.Marshaller.JAXB_ENCODING, "UTF-8");
         properties.put(javax.xml.bind.Marshaller.JAXB_FORMATTED_OUTPUT, true);
         if (this.schemaLocation != null) {

@@ -27,7 +27,8 @@ import org.springframework.stereotype.Component;
 
 /** Describes a user's layout */
 @Component("layoutPortalDataType")
-public class LayoutPortalDataType extends AbstractPortalDataType implements IExportAllPortalDataType {
+public class LayoutPortalDataType extends AbstractPortalDataType
+        implements IExportAllPortalDataType {
 
     public static final int ORDER = 160;
 

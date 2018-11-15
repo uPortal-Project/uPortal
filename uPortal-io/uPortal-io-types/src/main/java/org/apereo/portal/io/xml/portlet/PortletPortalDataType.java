@@ -25,7 +25,8 @@ import org.springframework.stereotype.Component;
 
 /** Describes the {@link IPortletDefinition} for import and export. */
 @Component("portletPortalDataType")
-public class PortletPortalDataType extends AbstractPortalDataType implements IExportAllPortalDataType {
+public class PortletPortalDataType extends AbstractPortalDataType
+        implements IExportAllPortalDataType {
 
     public static final int ORDER = 90;
 
