@@ -265,8 +265,8 @@ The specific configuration for this interceptor must be defined in uportal-war/s
 
 ```property
 # basic auth configuration...
-org.jasig.rest.interceptor.basic-auth.scorm-cloud-lrs.username=UsernameForProvider
-org.jasig.rest.interceptor.basic-auth.scorm-cloud-lrs.password=PasswordForProvider
+org.apereo.rest.interceptor.basic-auth.scorm-cloud-lrs.username=UsernameForProvider
+org.apereo.rest.interceptor.basic-auth.scorm-cloud-lrs.password=PasswordForProvider
 ```
 
 #### OAuth Authenication
@@ -291,16 +291,16 @@ The specific configuration for this interceptor must be defined in _uPortal.prop
 
 ```property
 # oauth configuration...
-org.jasig.rest.interceptor.oauth.scorm-cloud-lrs.realm=ProviderRealm  (optional)
-org.jasig.rest.interceptor.oauth.scorm-cloud-lrs.consumerKey=ConsumerKeyValueForProvider
-org.jasig.rest.interceptor.oauth.scorm-cloud-lrs.secretKey=SecretKeyValueForProvider
+org.apereo.rest.interceptor.oauth.scorm-cloud-lrs.realm=ProviderRealm  (optional)
+org.apereo.rest.interceptor.oauth.scorm-cloud-lrs.consumerKey=ConsumerKeyValueForProvider
+org.apereo.rest.interceptor.oauth.scorm-cloud-lrs.secretKey=SecretKeyValueForProvider
 ```
 
 ## Event Filtering
 
 The TinCan API support in uPortal works by converting uPortal events into LRS statements and the passing the statements to LRS providers. uPortal converters for most common uPortal events. The list of uPortal events are listed here. Every event that needs to be converted to an LRS statement must define a converter. Prebuilt converters have been added for LoginEvent, LogoutEvent, PortalRenderEvent and PortalExecutionEvent.
 
-Each of the predefined converters allows the verb in the LRS statement to be customized. To see the list of predefined/supported verbs see: _portal-war/src/main/java/org/jasig/portal/events/tincan/om/LrsVerb_.
+Each of the predefined converters allows the verb in the LRS statement to be customized. To see the list of predefined/supported verbs see: _portal-war/src/main/java/org/apereo/portal/events/tincan/om/LrsVerb_.
 
 The `PortalExecutionEvent` filter has additional filtering built in. Execution events can be further filtered by `type` and by `fname`. The uPortal TinCan API event filtering configuration can be found in _tincanAPIContext.xml_. And example configuration:
 
@@ -312,24 +312,24 @@ The `PortalExecutionEvent` filter has additional filtering built in. Execution e
   -->
 <util:list id="tinCanEventConverters">
     <!-- send xAPI events on login -->
-    <bean class="org.jasig.portal.events.tincan.converters.LoginEventConverter">
+    <bean class="org.apereo.portal.events.tincan.converters.LoginEventConverter">
         <property name="verb" value="INITIALIZED"/>
     </bean>
 
     <!-- send xAPI events on logout -->
-    <bean class="org.jasig.portal.events.tincan.converters.LogoutEventConverter">
+    <bean class="org.apereo.portal.events.tincan.converters.LogoutEventConverter">
         <property name="verb" value="EXITED"/>
     </bean>
 
     <!-- send xAPI events Action events, Event events and Resource events.  This filter
         excludes the portlets with fnames of "emergeny-alert" and "notification-icon" -->
-    <bean class="org.jasig.portal.events.tincan.converters.PortletExecutionEventConverter">
+    <bean class="org.apereo.portal.events.tincan.converters.PortletExecutionEventConverter">
         <!-- can filter by specific type of action -->
         <property name="supportedEventTypes">
             <util:list>
-                <value>org.jasig.portal.events.PortletActionExecutionEvent</value>
-                <value>org.jasig.portal.events.PortletEventExecutionEvent</value>
-                <value>org.jasig.portal.events.PortletResourceExecutionEvent</value>
+                <value>org.apereo.portal.events.PortletActionExecutionEvent</value>
+                <value>org.apereo.portal.events.PortletEventExecutionEvent</value>
+                <value>org.apereo.portal.events.PortletResourceExecutionEvent</value>
             </util:list>
         </property>
 
@@ -351,11 +351,11 @@ The `PortalExecutionEvent` filter has additional filtering built in. Execution e
 
     <!-- Example of using a different action for specific set of events.-->
     <!--
-    <bean class="org.jasig.portal.events.tincan.converters.PortletExecutionEventConverter">
+    <bean class="org.apereo.portal.events.tincan.converters.PortletExecutionEventConverter">
         <property name="supportedEventTypes">
             <util:list>
-                <value>org.jasig.portal.events.PortletRenderExecutionEvent</value>
-                <value>org.jasig.portal.events.PortletRenderHeaderExecutionEvent</value>
+                <value>org.apereo.portal.events.PortletRenderExecutionEvent</value>
+                <value>org.apereo.portal.events.PortletRenderHeaderExecutionEvent</value>
             </util:list>
         </property>
         <property name="fnameFilterType" value="Whitelist"/>
@@ -365,7 +365,7 @@ The `PortalExecutionEvent` filter has additional filtering built in. Execution e
 
     <!-- send xAPI events on portlet render -->
     <!--
-    <bean class="org.jasig.portal.events.tincan.converters.PortletRenderEventConverter">
+    <bean class="org.apereo.portal.events.tincan.converters.PortletRenderEventConverter">
         <property name="verb" value="EXPERIENCED"/>
     </bean>
     -->
@@ -377,7 +377,7 @@ The `PortalExecutionEvent` filter has additional filtering built in. Execution e
         for production use!
     -->
     <!--
-    <bean class="org.jasig.portal.events.tincan.converters.GeneralEventConverter">
+    <bean class="org.apereo.portal.events.tincan.converters.GeneralEventConverter">
         <property name="verb" value="INTERACTED"/>
     </bean>
     -->
