@@ -263,7 +263,7 @@ To add Basic Authentication, edit _tincanAPIContext.xml_ and to the `restTemplat
 
 The specific configuration for this interceptor must be defined in uportal-war/src/main/resources/properties/portal.properties or an override file. Example:
 
-```property
+```properties
 # basic auth configuration...
 org.apereo.rest.interceptor.basic-auth.scorm-cloud-lrs.username=UsernameForProvider
 org.apereo.rest.interceptor.basic-auth.scorm-cloud-lrs.password=PasswordForProvider
