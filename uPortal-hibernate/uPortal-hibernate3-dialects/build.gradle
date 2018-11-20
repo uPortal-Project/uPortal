@@ -6,7 +6,7 @@ ext {
 }
 
 dependencies {
-    compileOnly ('org.hibernate:hibernate:3.2.+') {
+    compileOnly ('org.hibernate:hibernate:3.6.0.Beta2') {
         transitive=false
     }
 }
