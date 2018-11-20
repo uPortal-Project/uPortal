@@ -74,7 +74,7 @@ public class PortalPermissionEvaluator implements PermissionEvaluator {
 
         // if the permission is already an AuthorizableActivity, go ahead and
         // use it
-        AuthorizableActivity activity = null;
+        AuthorizableActivity activity;
         if (permission instanceof AuthorizableActivity) {
             activity = (AuthorizableActivity) permission;
         }

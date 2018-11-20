@@ -24,6 +24,7 @@ import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.IPersonManager;
 import org.apereo.portal.security.ISecurityContext;
 import org.apereo.portal.security.IdentitySwapperManager;
+import org.apereo.portal.security.oauth.IdTokenFactory;
 import org.junit.Before;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -48,6 +49,7 @@ public abstract class PortalPreAuthenticatedProcessingFilterTestBase {
     @Mock Authentication auth;
     @Mock SecurityContext initialContext;
     @Mock AuthenticationManager authenticationManager;
+    @Mock IdTokenFactory idTokenFactory;
     @Mock ApplicationEventPublisher eventPublisher;
     @Mock IdentitySwapperManager identitySwapperManager;
 
@@ -60,6 +62,7 @@ public abstract class PortalPreAuthenticatedProcessingFilterTestBase {
         filter.setAuthenticationService(new org.apereo.portal.services.Authentication());
         filter.setApplicationEventPublisher(eventPublisher);
         filter.setIdentitySwapperManager(identitySwapperManager);
+        filter.setIdTokenFactory(idTokenFactory);
         filter.afterPropertiesSet();
 
         when(request.getSession(false)).thenReturn(session);

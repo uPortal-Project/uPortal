@@ -75,7 +75,7 @@ public class PortalPreAuthenticatedProcessingFilterTest
     }
 
     @Test
-    public void testAuth() throws IOException, ServletException {
+    public void testAuth() {
         PortalPersonUserDetails details =
                 (PortalPersonUserDetails) filter.getPreAuthenticatedPrincipal(request);
 

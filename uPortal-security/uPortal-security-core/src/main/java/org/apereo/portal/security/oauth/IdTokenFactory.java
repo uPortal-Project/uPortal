@@ -14,6 +14,8 @@
  */
 package org.apereo.portal.security.oauth;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -26,10 +28,13 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
+import javax.servlet.http.HttpServletRequest;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.portal.groups.IEntityGroup;
 import org.apereo.portal.groups.IGroupMember;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.services.GroupService;
+import org.apereo.portal.soffit.Headers;
 import org.apereo.portal.soffit.service.AbstractJwtService;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.IPersonAttributes;
@@ -37,6 +42,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 
 /**
@@ -48,7 +54,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class IdTokenFactory {
 
-    private final String LIST_SEPARATOR = ",";
+    private static final String LIST_SEPARATOR = ",";
 
     @Value("${portal.protocol.server.context}")
     private String issuer;
@@ -233,7 +239,7 @@ public class IdTokenFactory {
         groupsWhitelist =
                 Collections.unmodifiableList(
                         Arrays.stream(groupsWhitelistProperty.split(LIST_SEPARATOR))
-                                .map(item -> item.trim())
+                                .map(String::trim)
                                 .filter(item -> item.length() != 0)
                                 .collect(Collectors.toList()));
         logger.info(
@@ -244,7 +250,7 @@ public class IdTokenFactory {
         customClaims =
                 Collections.unmodifiableList(
                         Arrays.stream(customClaimsProperty.split(LIST_SEPARATOR))
-                                .map(item -> item.trim())
+                                .map(String::trim)
                                 .filter(item -> item.length() != 0)
                                 .collect(Collectors.toList()));
         logger.info("Using the following custom claims:  {}", customClaims);
@@ -311,6 +317,35 @@ public class IdTokenFactory {
         logger.debug("Produced the following JWT for username='{}':  {}", username, rslt);
 
         return rslt;
+    }
+
+    /**
+     * Convenience method for obtaining an OIDC Id Token from a request, if present.
+     *
+     * @return A fully-parsed JWT if a valid bearer token is present in the <code>Authorization
+     *     </code> header, otherwise <code>null</code>
+     */
+    public Jws<Claims> getUserInfo(HttpServletRequest request) {
+        final String bearerToken = getBearerToken(request);
+        return StringUtils.isNotBlank(bearerToken) ? parseBearerToken(bearerToken) : null;
+    }
+
+    public String getBearerToken(HttpServletRequest request) {
+        final String authorization = request.getHeader(HttpHeaders.AUTHORIZATION);
+        logger.debug("{} header value:  {}", HttpHeaders.AUTHORIZATION, authorization);
+        return StringUtils.isNotBlank(authorization)
+                        && authorization.length() > Headers.BEARER_TOKEN_PREFIX.length()
+                ? authorization.substring(Headers.BEARER_TOKEN_PREFIX.length())
+                : null;
+    }
+
+    public Jws<Claims> parseBearerToken(String bearerToken) {
+        try {
+            return Jwts.parser().setSigningKey(signatureKey).parseClaimsJws(bearerToken);
+        } catch (Exception e) {
+            logger.warn("Unsupported bearerToken:  {}", bearerToken);
+        }
+        return null;
     }
 
     /*
