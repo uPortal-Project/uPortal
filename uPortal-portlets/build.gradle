@@ -6,7 +6,7 @@ dependencies {
     compile project(':uPortal-web')
 
     compile "com.amazonaws:aws-java-sdk-s3:${awsVersion}"
-    compile "javax.mail:mail:${javaxMailVersion}"
+    compile "javax.mail:javax.mail-api:${javaxMailVersion}"
     compile("net.sf.json-lib:json-lib-ext-spring:${jsonLibExtSpringVersion}") {
         exclude group: 'javax.servlet', module: 'servlet-api'
     }
