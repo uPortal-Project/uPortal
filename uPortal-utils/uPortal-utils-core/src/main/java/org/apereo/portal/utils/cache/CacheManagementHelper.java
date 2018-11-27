@@ -55,7 +55,7 @@ public class CacheManagementHelper {
 
     public Map<String, CacheStatistics> getAllCacheStatistics() {
         final Map<String, CacheStatistics> allCacheStatistics =
-                new TreeMap<String, CacheStatistics>(CaseInsenstivieStringComparator.INSTANCE);
+                new TreeMap<>(CaseInsenstivieStringComparator.INSTANCE);
 
         for (final String cacheName : this.cacheManager.getCacheNames()) {
             final Cache cache = this.cacheManager.getCache(cacheName);
