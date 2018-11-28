@@ -52,7 +52,8 @@
         position:absolute;
         overflow-x: hidden;
         overflow-y: scroll;
-        z-index: 10000;
+        /* Needed as dropdown-menu - based on bootstrap variable @zindex-dropdown */
+        z-index: 1000;
         text-align: center;
         max-height: 515px;
     }
