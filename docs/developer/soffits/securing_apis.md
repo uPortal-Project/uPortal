@@ -88,7 +88,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST,"/api/**").authenticated()
                 .antMatchers(HttpMethod.DELETE,"/api/**").denyAll()
                 .antMatchers(HttpMethod.PUT,"/api/**").denyAll()
-                .anyRequest().permitAll();
+                .anyRequest().permitAll()
             .and()
             /*
              * Session fixation protection is provided by uPortal.  Since portlet tech requires
