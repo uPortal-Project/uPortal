@@ -149,7 +149,8 @@
 <xsl:variable name="ABSOLUTE_MEDIA_PATH" select="concat($CONTEXT_PATH,'/',$MEDIA_PATH)"/>
 <xsl:variable name="SKIN_RESOURCES_PATH" select="concat('/',$MEDIA_PATH,'/',$SKIN,'/skin.xml')"/>
 <xsl:variable name="SKIN_PATH" select="concat($ABSOLUTE_MEDIA_PATH,'/',$SKIN)"/>
-<xsl:variable name="PORTAL_SHORTCUT_ICON" select="concat($CONTEXT_PATH,'/favicon.ico')" />
+<xsl:variable name="SHORTCUT_ICON" select="concat($CONTEXT_PATH,'/favicon.ico')" />
+<xsl:param name="PORTAL_SHORTCUT_ICON"><xsl:value-of select="$SHORTCUT_ICON"/></xsl:param>
 <xsl:variable name="FOCUSED_CLASS">
     <xsl:choose>
         <xsl:when test="//content/focused">focused <xsl:value-of select="//content/focused/channel/@fname"/></xsl:when>
