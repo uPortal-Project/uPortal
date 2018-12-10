@@ -65,7 +65,7 @@ public class RemoteUserPersonManager extends BasePersonManager {
 
         try {
             // Create a new instance of a person
-            person = createGuestPerson(request);
+            person = createPersonForRequest(request);
 
             // If the user has authenticated with the server which has implemented web
             // authentication,
@@ -102,7 +102,7 @@ public class RemoteUserPersonManager extends BasePersonManager {
                 }
             }
 
-            // If a RemoteUserSecurityContext doesn't alreay exist, create one.
+            // If a RemoteUserSecurityContext doesn't already exist, create one.
             // This preserves the default behavior of this class.
             if (!remoteUserSecurityContextExists) {
                 RemoteUserSecurityContext remoteuserctx = new RemoteUserSecurityContext(remoteUser);
