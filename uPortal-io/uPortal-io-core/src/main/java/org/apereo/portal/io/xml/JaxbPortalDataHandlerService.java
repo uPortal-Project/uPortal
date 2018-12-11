@@ -131,9 +131,9 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
      * they will be wired by the Spring Application Context and then used in @PostConstruct
      * method(s) to build other member variables.
      */
-    private Collection<IDataImporter<? extends Object>> dataImporters = Collections.emptySet();
-    private Collection<IDataExporter<? extends Object>> dataExporters = Collections.emptySet();
-    private Collection<IDataDeleter<? extends Object>> dataDeleters = Collections.emptySet();
+    private Collection<IDataImporter<?>> dataImporters = Collections.emptySet();
+    private Collection<IDataExporter<?>> dataExporters = Collections.emptySet();
+    private Collection<IDataDeleter<?>> dataDeleters = Collections.emptySet();
     private Collection<IDataUpgrader> dataUpgraders = Collections.emptySet();
 
     // Order in which data must be imported
@@ -193,8 +193,11 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
         this.maxWaitTimeUnit = maxWaitTimeUnit;
     }
 
-    /** Order in which data types should be imported. */
-    @javax.annotation.Resource(name = "dataTypeImportOrder")
+    /**
+     * The <code>@Autowired</code> list will reflect the order in which data types should be
+     * imported.
+     */
+    @Autowired
     public void setDataTypeImportOrder(List<IPortalDataType> dataTypeImportOrder) {
         final ArrayList<PortalDataKey> dataKeyImportOrder =
                 new ArrayList<>(dataTypeImportOrder.size() * 2);
@@ -256,8 +259,9 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
      * Optional set of all portal data types to export. If not specified all available portal data
      * types will be listed.
      */
-    @javax.annotation.Resource(name = "exportAllPortalDataTypes")
-    public void setExportAllPortalDataTypes(Set<IPortalDataType> exportAllPortalDataTypes) {
+    @Autowired
+    public void setExportAllPortalDataTypes(
+            Set<IExportAllPortalDataType> exportAllPortalDataTypes) {
         this.exportAllPortalDataTypes = ImmutableSet.copyOf(exportAllPortalDataTypes);
     }
 
@@ -270,7 +274,7 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
     }
 
     @SuppressWarnings("unchecked")
-    public void initDataImporters() {
+    private void initDataImporters() {
         final Map<PortalDataKey, IDataImporter<Object>> dataImportersMap = new LinkedHashMap<>();
 
         for (final IDataImporter<?> dataImporter : dataImporters) {
@@ -289,7 +293,9 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
                     if (existing != null) {
                         this.logger.warn(
                                 "Duplicate IDataImporter PortalDataKey for {} Replacing {} with {}",
-                                new Object[] {importDataKey, existing, dataImporter});
+                                importDataKey,
+                                existing,
+                                dataImporter);
                     }
                 }
 
@@ -302,7 +308,7 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
     }
 
     @SuppressWarnings("unchecked")
-    public void initDataExporters() {
+    private void initDataExporters() {
         final Map<String, IDataExporter<Object>> dataExportersMap = new LinkedHashMap<>();
 
         final Set<IPortalDataType> portalDataTypes = new LinkedHashSet<>();
@@ -322,7 +328,9 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
                 if (existing != null) {
                     this.logger.warn(
                             "Duplicate IDataExporter typeId for {} Replacing {} with {}",
-                            new Object[] {typeId, existing, dataExporter});
+                            typeId,
+                            existing,
+                            dataExporter);
                 }
 
                 portalDataTypes.add(portalDataType);
@@ -337,7 +345,7 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
     }
 
     @SuppressWarnings("unchecked")
-    public void initDataDeleters() {
+    private void initDataDeleters() {
         final Map<String, IDataDeleter<Object>> dataDeletersMap = new LinkedHashMap<>();
 
         final Set<IPortalDataType> portalDataTypes = new LinkedHashSet<>();
@@ -357,7 +365,9 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
                 if (existing != null) {
                     this.logger.warn(
                             "Duplicate IDataDeleter typeId for {} Replacing {} with {}",
-                            new Object[] {typeId, existing, dataDeleter});
+                            typeId,
+                            existing,
+                            dataDeleter);
                 }
 
                 portalDataTypes.add(portalDataType);
@@ -372,7 +382,7 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
     }
 
     /** {@link IDataUpgrader} implementations to delegate upgrade operations to. */
-    public void initDataUpgraders() {
+    private void initDataUpgraders() {
         final Map<PortalDataKey, IDataUpgrader> dataUpgraderMap = new LinkedHashMap<>();
 
         for (final IDataUpgrader dataUpgrader : dataUpgraders) {
@@ -390,7 +400,9 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
                     if (existing != null) {
                         this.logger.warn(
                                 "Duplicate IDataUpgrader PortalDataKey for {} Replacing {} with {}",
-                                new Object[] {upgradeDataKey, existing, dataUpgrader});
+                                upgradeDataKey,
+                                existing,
+                                dataUpgrader);
                     }
                 }
 
@@ -411,7 +423,7 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
         }
     }
 
-    protected void importDataArchive(
+    private void importDataArchive(
             Resource archive, InputStream resourceStream, BatchImportOptions options) {
         BufferedInputStream bufferedResourceStream = null;
         try {
@@ -475,7 +487,7 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
     }
 
     /** Extracts the archive resource and then runs the batch-import process on it. */
-    protected void importDataArchive(
+    private void importDataArchive(
             final Resource resource,
             final ArchiveInputStream resourceStream,
             BatchImportOptions options) {
@@ -507,7 +519,7 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
         }
     }
 
-    protected MediaType getMediaType(BufferedInputStream inputStream, String fileName)
+    private MediaType getMediaType(BufferedInputStream inputStream, String fileName)
             throws IOException {
         final TikaInputStream tikaInputStreamStream =
                 TikaInputStream.get(new CloseShieldInputStream(inputStream));
@@ -762,7 +774,7 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
         }
     }
 
-    protected String getPartialSystemId(String systemId) {
+    private String getPartialSystemId(String systemId) {
         final String directoryUriStr = IMPORT_BASE_DIR.get();
         if (directoryUriStr == null) {
             return systemId;
@@ -776,7 +788,7 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
     }
 
     /** Run the import/update process on the data */
-    protected final void importOrUpgradeData(
+    private void importOrUpgradeData(
             String systemId, PortalDataKey portalDataKey, XMLEventReader xmlEventReader) {
         // See if there is a registered importer for the data, if so import
         final IDataImporter<Object> dataImporterExporter =
@@ -843,7 +855,7 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
                         + systemId);
     }
 
-    protected Object unmarshallData(
+    private Object unmarshallData(
             final XMLEventReader bufferedXmlEventReader,
             final IDataImporter<Object> dataImporterExporter) {
         final Unmarshaller unmarshaller = dataImporterExporter.getUnmarshaller();
@@ -860,7 +872,7 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
         }
     }
 
-    protected BufferedXMLEventReader createSourceXmlEventReader(final Source source) {
+    private BufferedXMLEventReader createSourceXmlEventReader(final Source source) {
         // If it is a StAXSource see if we can do better handling of it
         if (source instanceof StAXSource) {
             final StAXSource staxSource = (StAXSource) source;
@@ -1075,7 +1087,7 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
         this.exportAllDataOfType(typeIds, directory, options);
     }
 
-    protected IDataExporter<Object> getPortalDataExporter(String typeId) {
+    private IDataExporter<Object> getPortalDataExporter(String typeId) {
         final IDataExporter<Object> dataExporter = this.portalDataExporters.get(typeId);
         if (dataExporter == null) {
             throw new IllegalArgumentException("No IDataExporter exists for: " + typeId);
@@ -1108,7 +1120,7 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
      *     completed futures
      * @return a list of futures that either threw exceptions or timed out
      */
-    protected List<FutureHolder<?>> waitForFutures(
+    private List<FutureHolder<?>> waitForFutures(
             final Queue<? extends FutureHolder<?>> futures,
             final PrintWriter reportWriter,
             final File reportDirectory,

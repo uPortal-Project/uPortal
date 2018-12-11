@@ -18,11 +18,18 @@ import java.util.Arrays;
 import java.util.List;
 import javax.xml.namespace.QName;
 import org.apereo.portal.io.xml.AbstractPortalDataType;
+import org.apereo.portal.io.xml.IExportAllPortalDataType;
 import org.apereo.portal.io.xml.PortalDataKey;
 import org.apereo.portal.layout.om.IStylesheetDescriptor;
+import org.springframework.stereotype.Component;
 
 /** Describes the {@link IStylesheetDescriptor} for import and export. */
-public class StylesheetDescriptorPortalDataType extends AbstractPortalDataType {
+@Component("stylesheetDescriptorPortalDataType")
+public class StylesheetDescriptorPortalDataType extends AbstractPortalDataType
+        implements IExportAllPortalDataType {
+
+    public static final int ORDER = 30;
+
     public static final QName STYLESHEET_DESCRIPTOR_QNAME =
             new QName(
                     "https://source.jasig.org/schemas/uportal/io/stylesheet-descriptor",
@@ -58,7 +65,7 @@ public class StylesheetDescriptorPortalDataType extends AbstractPortalDataType {
                     IMPORT_26_THEME_DATA_KEY, IMPORT_26_STRUCTURE_DATA_KEY, IMPORT_40_DATA_KEY);
 
     public StylesheetDescriptorPortalDataType() {
-        super(STYLESHEET_DESCRIPTOR_QNAME);
+        super(ORDER, STYLESHEET_DESCRIPTOR_QNAME);
     }
 
     @Override

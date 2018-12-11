@@ -18,11 +18,18 @@ import java.util.Arrays;
 import java.util.List;
 import javax.xml.namespace.QName;
 import org.apereo.portal.io.xml.AbstractPortalDataType;
+import org.apereo.portal.io.xml.IExportAllPortalDataType;
 import org.apereo.portal.io.xml.PortalDataKey;
 import org.apereo.portal.portlet.om.IPortletDefinition;
+import org.springframework.stereotype.Component;
 
 /** Describes the {@link IPortletDefinition} for import and export. */
-public class PortletPortalDataType extends AbstractPortalDataType {
+@Component("portletPortalDataType")
+public class PortletPortalDataType extends AbstractPortalDataType
+        implements IExportAllPortalDataType {
+
+    public static final int ORDER = 90;
+
     public static final QName PORTLET_DEFINITION_QNAME =
             new QName(
                     "https://source.jasig.org/schemas/uportal/io/portlet-definition",
@@ -88,7 +95,7 @@ public class PortletPortalDataType extends AbstractPortalDataType {
                     IMPORT_50_DATA_KEY);
 
     public PortletPortalDataType() {
-        super(PORTLET_DEFINITION_QNAME);
+        super(ORDER, PORTLET_DEFINITION_QNAME);
     }
 
     @Override

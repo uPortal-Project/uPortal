@@ -18,10 +18,16 @@ import java.util.Arrays;
 import java.util.List;
 import javax.xml.namespace.QName;
 import org.apereo.portal.io.xml.AbstractPortalDataType;
+import org.apereo.portal.io.xml.IExportAllPortalDataType;
 import org.apereo.portal.io.xml.PortalDataKey;
+import org.springframework.stereotype.Component;
 
 /** Describes a User data type in the portal */
-public class UserPortalDataType extends AbstractPortalDataType {
+@Component("userPortalDataType")
+public class UserPortalDataType extends AbstractPortalDataType implements IExportAllPortalDataType {
+
+    public static final int ORDER = 40;
+
     public static final QName USER_QNAME =
             new QName("https://source.jasig.org/schemas/uportal/io/user", "user");
 
@@ -60,7 +66,7 @@ public class UserPortalDataType extends AbstractPortalDataType {
                     IMPORT_26_DATA_KEY, IMPORT_30_DATA_KEY, IMPORT_32_DATA_KEY, IMPORT_40_DATA_KEY);
 
     public UserPortalDataType() {
-        super(USER_QNAME);
+        super(ORDER, USER_QNAME);
     }
 
     @Override

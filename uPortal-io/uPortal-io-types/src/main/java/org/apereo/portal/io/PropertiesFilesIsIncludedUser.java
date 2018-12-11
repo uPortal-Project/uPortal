@@ -49,9 +49,6 @@ public class PropertiesFilesIsIncludedUser implements Function<String, Boolean> 
         this.allUsers = this.userNames.contains("*");
     }
 
-    /* (non-Javadoc)
-     * @see com.google.common.base.Function#apply(java.lang.Object)
-     */
     @Override
     public Boolean apply(String username) {
         if (this.allUsers) {

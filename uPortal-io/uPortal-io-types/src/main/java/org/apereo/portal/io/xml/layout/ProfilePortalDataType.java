@@ -18,10 +18,17 @@ import java.util.Arrays;
 import java.util.List;
 import javax.xml.namespace.QName;
 import org.apereo.portal.io.xml.AbstractPortalDataType;
+import org.apereo.portal.io.xml.IExportAllPortalDataType;
 import org.apereo.portal.io.xml.PortalDataKey;
+import org.springframework.stereotype.Component;
 
 /** Describes a portal group */
-public class ProfilePortalDataType extends AbstractPortalDataType {
+@Component("profilePortalDataType")
+public class ProfilePortalDataType extends AbstractPortalDataType
+        implements IExportAllPortalDataType {
+
+    public static final int ORDER = 130;
+
     public static final QName LEGACY_PROFILE_QNAME = new QName("profile");
 
     public static final PortalDataKey IMPORT_32_DATA_KEY =
@@ -33,7 +40,7 @@ public class ProfilePortalDataType extends AbstractPortalDataType {
     private static final List<PortalDataKey> PORTAL_DATA_KEYS = Arrays.asList(IMPORT_32_DATA_KEY);
 
     public ProfilePortalDataType() {
-        super(LEGACY_PROFILE_QNAME);
+        super(ORDER, LEGACY_PROFILE_QNAME);
     }
 
     @Override

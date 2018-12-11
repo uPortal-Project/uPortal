@@ -18,10 +18,17 @@ import java.util.Arrays;
 import java.util.List;
 import javax.xml.namespace.QName;
 import org.apereo.portal.io.xml.AbstractPortalDataType;
+import org.apereo.portal.io.xml.IExportAllPortalDataType;
 import org.apereo.portal.io.xml.PortalDataKey;
+import org.springframework.stereotype.Component;
 
 /** Describes a set of permissions in the portal */
-public class PermissionOwnerPortalDataType extends AbstractPortalDataType {
+@Component("permissionOwnerPortalDataType")
+public class PermissionOwnerPortalDataType extends AbstractPortalDataType
+        implements IExportAllPortalDataType {
+
+    public static final int ORDER = 120;
+
     public static final QName PERMISSION_OWNER_QNAME =
             new QName(
                     "https://source.jasig.org/schemas/uportal/io/permission-owner",
@@ -32,7 +39,7 @@ public class PermissionOwnerPortalDataType extends AbstractPortalDataType {
     private static final List<PortalDataKey> PORTAL_DATA_KEYS = Arrays.asList(IMPORT_40_DATA_KEY);
 
     public PermissionOwnerPortalDataType() {
-        super(PERMISSION_OWNER_QNAME);
+        super(ORDER, PERMISSION_OWNER_QNAME);
     }
 
     @Override

@@ -26,69 +26,6 @@
            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 
-
-
-    <!--
-     | The various portal data type descriptors
-     +-->
-    <bean id="entityTypePortalDataType" class="org.apereo.portal.io.xml.entitytype.EntityTypePortalDataType"/>
-    <bean id="stylesheetDescriptorPortalDataType" class="org.apereo.portal.io.xml.ssd.StylesheetDescriptorPortalDataType"/>
-    <bean id="userPortalDataType" class="org.apereo.portal.io.xml.user.UserPortalDataType"/>
-    <bean id="groupPortalDataType" class="org.apereo.portal.io.xml.group.GroupPortalDataType"/>
-    <bean id="groupMembershipPortalDataType" class="org.apereo.portal.io.xml.group.GroupMembershipPortalDataType"/>
-    <bean id="membershipPortalDataType" class="org.apereo.portal.io.xml.group.MembershipPortalDataType"/>
-    <bean id="portletTypePortalDataType" class="org.apereo.portal.io.xml.portlettype.PortletTypePortalDataType"/>
-    <bean id="portletPortalDataType" class="org.apereo.portal.io.xml.portlet.PortletPortalDataType"/>
-    <bean id="permissionPortalDataType" class="org.apereo.portal.io.xml.permission.PermissionPortalDataType"/>
-    <bean id="permissionSetPortalDataType" class="org.apereo.portal.io.xml.permission.PermissionSetPortalDataType"/>
-    <bean id="permissionOwnerPortalDataType" class="org.apereo.portal.io.xml.permission.PermissionOwnerPortalDataType"/>
-    <bean id="profilePortalDataType" class="org.apereo.portal.io.xml.layout.ProfilePortalDataType"/>
-    <bean id="fragmentLayoutPortalDataType" class="org.apereo.portal.io.xml.layout.FragmentLayoutPortalDataType"/>
-    <bean id="layoutPortalDataType" class="org.apereo.portal.io.xml.layout.LayoutPortalDataType"/>
-    <bean id="fragmentDefinitionPortalDataType" class="org.apereo.portal.io.xml.dlm.FragmentDefinitionPortalDataType"/>
-    <bean id="eventAggregationConfigurationPortalDataType" class="org.apereo.portal.io.xml.eventaggr.EventAggregationConfigurationPortalDataType" />
-    <bean id="personAttributesGroupStorePortalDataType" class="org.apereo.portal.io.xml.pags.PersonAttributesGroupStorePortalDataType" />
-
-    <!--
-     | Import order for portal data types
-     +-->
-    <util:list id="dataTypeImportOrder">
-        <ref bean="personAttributesGroupStorePortalDataType" />
-        <ref bean="entityTypePortalDataType" />
-        <ref bean="stylesheetDescriptorPortalDataType" />
-        <ref bean="userPortalDataType" />
-        <ref bean="groupPortalDataType" />
-        <ref bean="groupMembershipPortalDataType" />
-        <ref bean="membershipPortalDataType" />
-        <ref bean="portletTypePortalDataType" />
-        <ref bean="portletPortalDataType" />
-        <ref bean="permissionPortalDataType" />
-        <ref bean="permissionSetPortalDataType" />
-        <ref bean="permissionOwnerPortalDataType" />
-        <ref bean="profilePortalDataType" />
-        <ref bean="fragmentDefinitionPortalDataType" />
-        <ref bean="fragmentLayoutPortalDataType" />
-        <ref bean="layoutPortalDataType" />
-        <ref bean="eventAggregationConfigurationPortalDataType" />
-    </util:list>
-
-    <util:set id="exportAllPortalDataTypes">
-        <ref bean="personAttributesGroupStorePortalDataType" />
-        <ref bean="entityTypePortalDataType" />
-        <ref bean="fragmentDefinitionPortalDataType" />
-        <ref bean="fragmentLayoutPortalDataType" />
-        <ref bean="groupMembershipPortalDataType" />
-        <ref bean="layoutPortalDataType" />
-        <ref bean="permissionOwnerPortalDataType" />
-        <ref bean="permissionSetPortalDataType" />
-        <ref bean="portletTypePortalDataType" />
-        <ref bean="portletPortalDataType" />
-        <ref bean="profilePortalDataType" />
-        <ref bean="stylesheetDescriptorPortalDataType" />
-        <ref bean="userPortalDataType" />
-        <ref bean="eventAggregationConfigurationPortalDataType" />
-    </util:set>
-
     <!--
      | File-name patterns that a candidate file must match one of when doing a bulk import
      +-->

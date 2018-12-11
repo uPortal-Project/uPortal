@@ -17,26 +17,33 @@ package org.apereo.portal.io.xml;
 import java.util.List;
 import java.util.Set;
 import javax.xml.stream.XMLEventReader;
+import org.springframework.core.Ordered;
 
 /**
  * Describes a type of portal data that can be imported, exported, or deleted via the {@link
- * IPortalDataHandlerService}
+ * IPortalDataHandlerService}. Beans that implement this interface have a natural order based on the
+ * sequence in which they must be imported into a "fresh" portal database. This order preserves
+ * foreign key relationships.
  */
-public interface IPortalDataType {
+public interface IPortalDataType extends Ordered {
+
     /** @return The unique name of this portal data type, must be a valid XML element name. */
-    public String getTypeId();
+    String getTypeId();
+
     /** @return Message code to use for displaying the user readable title of this data type */
-    public String getTitleCode();
+    String getTitleCode();
+
     /**
      * @return Message code to use for displaying the user readable description of this data type
      */
-    public String getDescriptionCode();
+    String getDescriptionCode();
+
     /**
      * @return The {@link PortalDataKey}s that can be imported for this data type and the order that
      *     the must be imported in. All data for each {@link PortalDataKey} will be imported in
      *     parallel.
      */
-    public List<PortalDataKey> getDataKeyImportOrder();
+    List<PortalDataKey> getDataKeyImportOrder();
 
     /**
      * Post processes the resolved {@link PortalDataKey}, allows for data that needs to be retyped
@@ -50,6 +57,6 @@ public interface IPortalDataType {
      *     processing the input
      * @return One or more PortalDataKeys that represent the data
      */
-    public Set<PortalDataKey> postProcessPortalDataKey(
+    Set<PortalDataKey> postProcessPortalDataKey(
             String systemId, PortalDataKey portalDataKey, XMLEventReader reader);
 }

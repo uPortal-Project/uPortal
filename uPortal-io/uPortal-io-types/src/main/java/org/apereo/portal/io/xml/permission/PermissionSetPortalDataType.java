@@ -18,10 +18,16 @@ import java.util.Arrays;
 import java.util.List;
 import javax.xml.namespace.QName;
 import org.apereo.portal.io.xml.AbstractPortalDataType;
+import org.apereo.portal.io.xml.IExportAllPortalDataType;
 import org.apereo.portal.io.xml.PortalDataKey;
+import org.springframework.stereotype.Component;
 
 /** Describes a permission in the portal */
-public class PermissionSetPortalDataType extends AbstractPortalDataType {
+@Component("permissionSetPortalDataType")
+public class PermissionSetPortalDataType extends AbstractPortalDataType
+        implements IExportAllPortalDataType {
+
+    public static final int ORDER = 110;
 
     public static final QName LEGACY_PERMISSION_SET_QNAME = new QName("permission-set");
 
@@ -42,7 +48,7 @@ public class PermissionSetPortalDataType extends AbstractPortalDataType {
             Arrays.asList(new PortalDataKey[] {IMPORT_31_DATA_KEY, IMPORT_50_DATA_KEY});
 
     public PermissionSetPortalDataType() {
-        super(LEGACY_PERMISSION_SET_QNAME);
+        super(ORDER, LEGACY_PERMISSION_SET_QNAME);
     }
 
     @Override

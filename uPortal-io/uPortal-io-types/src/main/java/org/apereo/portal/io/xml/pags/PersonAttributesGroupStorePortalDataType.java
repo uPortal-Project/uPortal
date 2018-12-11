@@ -22,9 +22,16 @@ import java.util.Set;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
 import org.apereo.portal.io.xml.AbstractPortalDataType;
+import org.apereo.portal.io.xml.IExportAllPortalDataType;
 import org.apereo.portal.io.xml.PortalDataKey;
+import org.springframework.stereotype.Component;
 
-public class PersonAttributesGroupStorePortalDataType extends AbstractPortalDataType {
+@Component("personAttributesGroupStorePortalDataType")
+public class PersonAttributesGroupStorePortalDataType extends AbstractPortalDataType
+        implements IExportAllPortalDataType {
+
+    public static final int ORDER = 10;
+
     public static final QName PERSON_ATTRIBUTE_GROUP_STORE_TYPE_QNAME = new QName("pags-group");
 
     public static final PortalDataKey IMPORT_PAGS_41_DATA_KEY =
@@ -55,7 +62,7 @@ public class PersonAttributesGroupStorePortalDataType extends AbstractPortalData
             ImmutableSet.of(IMPORT_PAGS_GROUP_41_DATA_KEY, IMPORT_PAGS_MEMBERS_41_DATA_KEY);
 
     public PersonAttributesGroupStorePortalDataType() {
-        super(PERSON_ATTRIBUTE_GROUP_STORE_TYPE_QNAME);
+        super(ORDER, PERSON_ATTRIBUTE_GROUP_STORE_TYPE_QNAME);
     }
 
     @Override
@@ -63,17 +70,11 @@ public class PersonAttributesGroupStorePortalDataType extends AbstractPortalData
         return PERSON_ATTRIBUTE_GROUP_STORE_DATA_KEYS;
     }
 
-    /* (non-Javadoc)
-     * @see org.apereo.portal.io.xml.IPortalDataType#getTitle()
-     */
     @Override
     public String getTitleCode() {
         return "Person Attribute Group Store Type";
     }
 
-    /* (non-Javadoc)
-     * @see org.apereo.portal.io.xml.IPortalDataType#getDescription()
-     */
     @Override
     public String getDescriptionCode() {
         return "Person Attribute Group Store";

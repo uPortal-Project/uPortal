@@ -18,10 +18,17 @@ import java.util.Arrays;
 import java.util.List;
 import javax.xml.namespace.QName;
 import org.apereo.portal.io.xml.AbstractPortalDataType;
+import org.apereo.portal.io.xml.IExportAllPortalDataType;
 import org.apereo.portal.io.xml.PortalDataKey;
+import org.springframework.stereotype.Component;
 
 /** Describes an entity-type data type in the portal */
-public class EntityTypePortalDataType extends AbstractPortalDataType {
+@Component("entityTypePortalDataType")
+public class EntityTypePortalDataType extends AbstractPortalDataType
+        implements IExportAllPortalDataType {
+
+    public static final int ORDER = 20;
+
     public static final QName LEGACY_ENTITY_TYPE_QNAME = new QName("entity-type");
 
     /** @deprecated used for importing old data files */
@@ -42,7 +49,7 @@ public class EntityTypePortalDataType extends AbstractPortalDataType {
             Arrays.asList(IMPORT_26_DATA_KEY, IMPORT_32_DATA_KEY);
 
     public EntityTypePortalDataType() {
-        super(LEGACY_ENTITY_TYPE_QNAME);
+        super(ORDER, LEGACY_ENTITY_TYPE_QNAME);
     }
 
     @Override

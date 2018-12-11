@@ -19,9 +19,14 @@ import java.util.List;
 import javax.xml.namespace.QName;
 import org.apereo.portal.io.xml.AbstractPortalDataType;
 import org.apereo.portal.io.xml.PortalDataKey;
+import org.springframework.stereotype.Component;
 
 /** Describes a member of a group */
+@Component("membershipPortalDataType")
 public class MembershipPortalDataType extends AbstractPortalDataType {
+
+    public static final int ORDER = 70;
+
     public static final QName LEGACY_MEMBERSHIP_QNAME = new QName("membership");
 
     public static final PortalDataKey IMPORT_26_DATA_KEY =
@@ -33,7 +38,7 @@ public class MembershipPortalDataType extends AbstractPortalDataType {
     private static final List<PortalDataKey> PORTAL_DATA_KEYS = Arrays.asList(IMPORT_26_DATA_KEY);
 
     public MembershipPortalDataType() {
-        super(LEGACY_MEMBERSHIP_QNAME);
+        super(ORDER, LEGACY_MEMBERSHIP_QNAME);
     }
 
     @Override
