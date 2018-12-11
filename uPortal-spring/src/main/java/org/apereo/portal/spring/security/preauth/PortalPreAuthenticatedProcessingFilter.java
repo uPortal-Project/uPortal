@@ -14,6 +14,8 @@
  */
 package org.apereo.portal.spring.security.preauth;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
@@ -35,12 +37,15 @@ import org.apereo.portal.security.IPersonManager;
 import org.apereo.portal.security.ISecurityContextFactory;
 import org.apereo.portal.security.IdentitySwapperManager;
 import org.apereo.portal.security.mvc.LoginController;
+import org.apereo.portal.security.oauth.IdTokenFactory;
 import org.apereo.portal.services.Authentication;
+import org.apereo.portal.services.PersonService;
 import org.apereo.portal.spring.security.PortalPersonUserDetails;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.preauth.AbstractPreAuthenticatedProcessingFilter;
 
@@ -72,6 +77,7 @@ public class PortalPreAuthenticatedProcessingFilter
     private Authentication authenticationService = null;
 
     private IPersonManager personManager;
+    private PersonService personService;
     private IdentitySwapperManager identitySwapperManager;
     private ApplicationEventPublisher eventPublisher;
 
@@ -79,6 +85,8 @@ public class PortalPreAuthenticatedProcessingFilter
 
     // Empty set is the default for automated tests
     private Set<ISecurityContextFactory> securityContextFactories = Collections.emptySet();
+
+    private IdTokenFactory idTokenFactory;
 
     @Autowired
     public void setIdentitySwapperManager(IdentitySwapperManager identitySwapperManager) {
@@ -91,8 +99,18 @@ public class PortalPreAuthenticatedProcessingFilter
     }
 
     @Autowired
+    public void setPersonService(PersonService personService) {
+        this.personService = personService;
+    }
+
+    @Autowired
     public void setAuthenticationService(Authentication authenticationService) {
         this.authenticationService = authenticationService;
+    }
+
+    @Autowired
+    public void setIdTokenFactory(IdTokenFactory idTokenFactory) {
+        this.idTokenFactory = idTokenFactory;
     }
 
     /**
@@ -142,18 +160,21 @@ public class PortalPreAuthenticatedProcessingFilter
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
 
+        final HttpServletRequest httpServletRequest = (HttpServletRequest) request;
+
         // Set up some DEBUG logging for performance troubleshooting
         final long timestamp = System.currentTimeMillis();
         // Tagging with a UUID (instead of username) because username changes in the /Login process
         UUID uuid = null;
         if (logger.isDebugEnabled()) {
             uuid = UUID.randomUUID();
-            final HttpServletRequest httpr = (HttpServletRequest) request;
-            logger.debug("STARTING [{}] for URI='{}' #milestone", uuid, httpr.getRequestURI());
+            logger.debug(
+                    "STARTING [{}] for URI='{}' #milestone",
+                    uuid,
+                    httpServletRequest.getRequestURI());
         }
 
-        HttpServletRequest httpServletRequest = (HttpServletRequest) request;
-        String currentPath = httpServletRequest.getServletPath();
+        final String currentPath = httpServletRequest.getServletPath();
 
         /*
          * Override the base class's main filter method to bypass this filter if we're currently at
@@ -181,17 +202,25 @@ public class PortalPreAuthenticatedProcessingFilter
         }
 
         if (logger.isDebugEnabled()) {
-            final HttpServletRequest httpr = (HttpServletRequest) request;
             logger.debug(
                     "FINISHED [{}] for URI='{}' in {}ms #milestone",
                     uuid,
-                    httpr.getRequestURI(),
+                    httpServletRequest.getRequestURI(),
                     Long.toString(System.currentTimeMillis() - timestamp));
         }
     }
 
     @Override
     protected Object getPreAuthenticatedCredentials(HttpServletRequest request) {
+
+        /*
+         * First consult the Authorization header
+         */
+        final String bearerToken = idTokenFactory.getBearerToken(request);
+        if (StringUtils.isNotBlank(bearerToken)) {
+            return bearerToken;
+        }
+
         // if there's no session, the user hasn't yet visited the login servlet and we should just
         // give up
         HttpSession session = request.getSession(false);
@@ -206,16 +235,33 @@ public class PortalPreAuthenticatedProcessingFilter
 
     @Override
     protected Object getPreAuthenticatedPrincipal(HttpServletRequest request) {
-        // if there's no session, the user hasn't yet visited the login servlet and we should just
-        // give up
-        HttpSession session = request.getSession(false);
-        if (session == null) {
-            return null;
+
+        /*
+         * First consult the Authorization header
+         */
+        final Jws<Claims> userinfo = idTokenFactory.getUserInfo(request);
+        if (userinfo != null) {
+            final String username = userinfo.getBody().getSubject();
+            logger.debug(
+                    "Processing authentication for username='{}' based on OIDC Id token in the {} header",
+                    username,
+                    HttpHeaders.AUTHORIZATION);
+            final IPerson person = personService.getPerson(username);
+            return new PortalPersonUserDetails(person);
         }
-        // Otherwise, use the current IPerson as the UserDetails
-        final IPerson person = personManager.getPerson(request);
-        logger.debug("getPreAuthenticatedPrincipal -- person=[{}]", person);
-        return new PortalPersonUserDetails(person);
+
+        /*
+         * Next check the session
+         */
+        final HttpSession session = request.getSession(false);
+        if (session != null) {
+            final IPerson person = personManager.getPerson(request);
+            logger.debug("getPreAuthenticatedPrincipal -- person=[{}]", person);
+            return new PortalPersonUserDetails(person);
+        }
+
+        // Neither mechanism produced a principal
+        return null;
     }
 
     private void doPortalAuthentication(

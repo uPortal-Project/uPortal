@@ -17,7 +17,6 @@ package org.apereo.portal.rest;
 import java.util.Collections;
 import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import org.apereo.portal.api.groups.ApiGroupsService;
 import org.apereo.portal.api.groups.Entity;
 import org.apereo.portal.security.IPerson;
@@ -46,7 +45,7 @@ public class GroupRESTController {
     }
 
     @RequestMapping(value = "/groups", method = RequestMethod.GET)
-    public ModelAndView getUsersGroup(HttpServletRequest request, HttpServletResponse response) {
+    public ModelAndView getUsersGroup(HttpServletRequest request) {
         IPerson person = personManager.getPerson(request);
         Set<Entity> groups = Collections.EMPTY_SET;
         if (person != null) {

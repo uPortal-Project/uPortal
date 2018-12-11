@@ -14,11 +14,12 @@
  */
 package org.apereo.portal.security.provider;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import org.apereo.portal.IUserIdentityStore;
@@ -27,13 +28,19 @@ import org.apereo.portal.security.IPersonManager;
 import org.apereo.portal.security.InitialSecurityContextFactory;
 import org.apereo.portal.security.PersonFactory;
 import org.apereo.portal.security.PortalSecurityException;
+import org.apereo.portal.security.oauth.IdTokenFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.context.event.EventListener;
 
 public class BasePersonManager implements IPersonManager {
 
     private final Map<String, Integer> guestUserIds = new HashMap<>();
+
+    @Autowired private ApplicationContext context;
 
     @Autowired(required = false)
     private List<IGuestUsernameSelector> guestUsernameSelectors;
@@ -42,10 +49,18 @@ public class BasePersonManager implements IPersonManager {
 
     @Autowired private InitialSecurityContextFactory initialSecurityContextFactory;
 
+    private IdTokenFactory idTokenFactory;
+
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    @PostConstruct
-    public void init() {
+    /**
+     * To avoid circular reference issues, this bean obtains its dependencies when the context
+     * finishes starting.
+     */
+    @EventListener
+    public void init(ContextRefreshedEvent event) {
+        idTokenFactory = context.getBean(IdTokenFactory.class);
+
         // Make sure we have a guestUsernameSelectors collection & sort it
         if (guestUsernameSelectors == null) {
             guestUsernameSelectors = Collections.emptyList();
@@ -76,7 +91,7 @@ public class BasePersonManager implements IPersonManager {
         if (person == null) {
             try {
                 // Create a guest person
-                person = createGuestPerson(request);
+                person = createPersonForRequest(request);
                 logger.debug("getPerson -- created a new guest person [{}]", person);
             } catch (Exception e) {
                 // Log the exception
@@ -92,7 +107,8 @@ public class BasePersonManager implements IPersonManager {
     }
 
     /**
-     * Creates a new <i>guest</i> user based on the value of the <code>
+     * Creates a new {@link IPerson} to represent the user based on (1) an OIDC Id token specified
+     * in the Authorization header or (2) the value of the <code>
      * org.apereo.portal.security.PersonFactory.guest_user_names</code> property in
      * portal.properties and (optionally) any beans that implement {@link IGuestUsernameSelector}.
      * This approach supports pluggable, open-ended strategies for multiple guest users who may have
@@ -100,7 +116,25 @@ public class BasePersonManager implements IPersonManager {
      *
      * @since 5.0
      */
-    protected IPerson createGuestPerson(HttpServletRequest request) throws Exception {
+    protected IPerson createPersonForRequest(HttpServletRequest request) {
+
+        /*
+         * Is there an an identity specified by OIDC Id token?
+         */
+
+        final Jws<Claims> claims = idTokenFactory.getUserInfo(request);
+        if (claims != null) {
+            final String username = claims.getBody().getSubject();
+            logger.debug("Found OIDC Id token for username='{}'", username);
+            final IPerson rslt = new PersonImpl();
+            rslt.setAttribute(IPerson.USERNAME, username);
+            rslt.setID(userIdentityStore.getPortalUserId(username));
+            return rslt;
+        }
+
+        /*
+         * No identity specified;  create a 'guest person.'
+         */
 
         // First we need to know the guest username
         String username = PersonFactory.getGuestUsernames().get(0); // First item is the default

@@ -17,7 +17,6 @@ package org.apereo.portal.url;
 import java.io.IOException;
 import java.net.URLEncoder;
 import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -27,23 +26,34 @@ import org.springframework.web.filter.OncePerRequestFilter;
 /** Redirects the user to the Login servlet if they don't already have a session. */
 public class RequireValidSessionFilter extends OncePerRequestFilter {
 
+    private static final String REST_API_SERVLET_PATH = "/api";
+
     @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+
+        /*
+         * Since 5.4, there are two ways to avoid redirection
+         */
+
+        // (1) You have a valid session (original method)
         final HttpSession session = request.getSession(false);
         if (session != null && !session.isNew()) {
             // Session exists and is not new, don't bother filtering
             return true;
         }
 
-        return false;
+        // (2) You are attempting to invoke a REST API
+        return REST_API_SERVLET_PATH.equalsIgnoreCase(request.getServletPath());
     }
 
     @Override
     protected void doFilterInternal(
             HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-            throws ServletException, IOException {
-        // Assume shouldNotFilter was called first and returned false, session is invalid and user
-        // needs login
+            throws IOException {
+        /*
+         * Assume shouldNotFilter was called first and returned false;  the session is invalid and
+         * the user needs to login.
+         */
 
         final StringBuilder loginRedirect = new StringBuilder();
 
