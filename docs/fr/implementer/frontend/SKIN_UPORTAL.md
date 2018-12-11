@@ -87,6 +87,76 @@ Les variables de `@color` 1-6 sont des valeurs personnalisables via la portlet d
 
 ![Dynamic Respondr Skin Portlet Page](../../../images/dynamic-respondr-skin.png)
 
+### Skin par défaut
+
+**Sélectionner un skin par défaut basé sur les attributs utilisateur peut être réalisé en suivant ces étapes:**
+Tous les bean doivent être créé dans un fichier sous *uPortal-webapp/src/main/resources/properties/contextOverrides/\*.xml*
+
+***1. Créer un bean associé à un attribut utilisateur*** 
+```xml 
+ <bean id="customskinServerName" class="org.apereo.portal.rendering.xslt.UserAttributeSkinMappingTransformerConfigurationSource">
+    <property name="stylesheetDescriptorNames">
+      <set>
+        <value>Respondr</value>
+      </set>
+    </property>
+    <property name="skinAttributeName" value="serverName" />
+    <property name="attributeToSkinMap">
+        <map>
+            <entry key=".*\.example\.com" value="example.com" />
+        </map>
+    </property>
+</bean>
+```
+***2. Indiquer la feuille de style sur laquelle l'appliquer***
+
+Indiquer toutes les feuilles de style dans `stylesheetDescriptorNames` sur lesquelles appliquer l'association via la balise `<value></value>`.
+***3. Indiquer l'attribut utilisateur à utiliser***
+
+Modifier `<property name="skinAttributeName" value="serverName" />` changer la valeur pour le nom de l'attribut utilisateur sur lequel baser le choix du skin.
+***4. Associer une valeur modèle à un nom de skin***
+ 
+Ajouter une `<entry key=".*\.example\.com" value="example.com" />` dans la propriété `attributeToSkinMap` pour chaque skin à associer. La clé est un modèle d'expression régulière, la valeur est le nom du skin à associer sir le modèle correspond.
+
+
+**Pour sélectionner un skin de défaut basé sur un groupe utilisateur il sera nécessaire d'utiliser un bean de ce type**
+
+```xml
+  <bean class="org.apereo.portal.rendering.xslt.UserGroupSkinMappingTransformerConfigurationSource">
+    <property name="stylesheetDescriptorNames">
+        <set>
+          <value>Respondr</value>
+        </set>
+    </property>
+    <property name="groupToSkinMap">
+        <map>
+            <entry key="pags.studends" value="students" />
+            <entry key="pags.staff" value="staff" />
+            <entry key="pags.faculty" value="staff" />
+        </map>
+    </property>
+  </bean>
+```
+*Associer un groupe à un skin*
+
+Ajouter une `<entry key="pags.faculty" value="staff" />` dans la propriété `groupToSkinMap` pour chaque skin à associer. La clé est une cle d'un groupe uPortal, qualifiée avec le nom du `Group Store`, la valeur est le nom du skin a associer si l'utilisateur est membre (direct ou d'un sous-groupe) du groupe.
+
+**Vous pouvez réperter ces étapes afin d'avoir plusieurs bean permettant d'associer vos skin sur différents critères**
+
+**Dernière étape**
+Pour appliquer la personnalisation créer un bean pour référencer l'ensemble des bean et les intégrer au processus de `renderingPipeline` :
+```xml
+  <util:list id="customSkinsTransformers">
+    <ref bean="guestskinTransformer"/>
+    <ref bean="defaultskinTransformer"/>
+    <ref bean="agriSkinTransformer"/>
+  </util:list>
+```
+- L'id ne doit pas être modifié car il permet de surcharger la configuration par défaut qui est vide
+- Ajouter tous vos bean créés et référencés (Ils doiven,t avoir un ID unique) avec `<ref bean="ID"/>`
+- L'ordre est important car la propriété du nom du skin sera surchargée par chaque bean défini, l'ordre appliqué sera le même que leur position dans ce bean. 
+ 
+
 ### Effets de Page
 
 La couleur de fond et l'image de fond du portail peuvent recevoir des effets spéciaux.

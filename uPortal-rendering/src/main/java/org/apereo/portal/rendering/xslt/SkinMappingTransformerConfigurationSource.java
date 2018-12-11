@@ -31,6 +31,7 @@ import org.jasig.resourceserver.aggr.om.Included;
 import org.jasig.resourceserver.utils.aggr.ResourcesElementsProvider;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 
 /**
  * Maps a user attribute to a skin. The user's attribute named by {@link
@@ -53,11 +54,13 @@ public abstract class SkinMappingTransformerConfigurationSource
     }
 
     @Autowired
+    @Lazy
     public void setResourcesElementsProvider(ResourcesElementsProvider resourcesElementsProvider) {
         this.resourcesElementsProvider = resourcesElementsProvider;
     }
 
     @Autowired
+    @Lazy
     public void setStylesheetUserPreferencesService(
             IStylesheetUserPreferencesService stylesheetUserPreferencesService) {
         this.stylesheetUserPreferencesService = stylesheetUserPreferencesService;
