@@ -18,11 +18,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import org.apereo.portal.api.groups.ApiGroupsService;
 import org.apereo.portal.api.groups.Entity;
-import org.apereo.portal.api.groups.EntityFactory;
-import org.apereo.portal.portlets.groupselector.EntityEnum;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.IPersonManager;
 import org.apereo.portal.security.provider.PersonImpl;
@@ -46,10 +43,8 @@ public class GroupRESTControllerTest {
 
     @Mock private HttpServletRequest req;
 
-    @Mock private HttpServletResponse res;
-
     @Before
-    public void setup() throws Exception {
+    public void setup() {
         groupRESTController = new GroupRESTController();
         apiGroupsService = Mockito.mock(ApiGroupsService.class);
         req = new MockHttpServletRequest();
@@ -65,7 +60,7 @@ public class GroupRESTControllerTest {
         Mockito.when(personManager.getPerson(req)).thenReturn(person);
         Mockito.when(apiGroupsService.getGroupsForMember("john"))
                 .thenReturn(Collections.emptySet());
-        ModelAndView modelAndView = groupRESTController.getUsersGroup(req, res);
+        ModelAndView modelAndView = groupRESTController.getUsersGroup(req);
         Set<Entity> groups = (Set<Entity>) modelAndView.getModel().get("groups");
 
         Assert.assertEquals("json", modelAndView.getViewName());
@@ -78,13 +73,12 @@ public class GroupRESTControllerTest {
         person.setUserName("jdoe");
         person.setFullName("john doe");
 
-        Entity e = EntityFactory.createEntity(null, EntityEnum.GROUP);
-        Set<Entity> groups = new HashSet<Entity>();
-        groups.add(e);
+        Set<Entity> groups = new HashSet<>();
+        groups.add(null);
         Mockito.when(personManager.getPerson(req)).thenReturn(person);
         Mockito.when(apiGroupsService.getGroupsForMember("jdoe")).thenReturn(groups);
 
-        ModelAndView modelAndView = groupRESTController.getUsersGroup(req, res);
+        ModelAndView modelAndView = groupRESTController.getUsersGroup(req);
         Set<Entity> returnGroups = (Set<Entity>) modelAndView.getModel().get("groups");
 
         Assert.assertFalse(returnGroups.isEmpty());
@@ -96,13 +90,12 @@ public class GroupRESTControllerTest {
         person.setUserName("jdoe");
         person.setFullName("john doe");
 
-        org.apereo.portal.api.groups.Entity e = EntityFactory.createEntity(null, EntityEnum.GROUP);
-        Set<Entity> groups = new HashSet<Entity>();
-        groups.add(e);
+        Set<Entity> groups = new HashSet<>();
+        groups.add(null);
         Mockito.when(personManager.getPerson(req)).thenReturn(null);
         Mockito.when(apiGroupsService.getGroupsForMember("john")).thenReturn(groups);
 
-        ModelAndView modelAndView = groupRESTController.getUsersGroup(req, res);
+        ModelAndView modelAndView = groupRESTController.getUsersGroup(req);
         Set<Entity> returnGroups = (Set<Entity>) modelAndView.getModel().get("groups");
         Assert.assertTrue(returnGroups.isEmpty());
     }
