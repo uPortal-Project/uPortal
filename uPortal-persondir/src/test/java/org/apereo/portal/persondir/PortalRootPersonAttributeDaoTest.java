@@ -65,8 +65,7 @@ public class PortalRootPersonAttributeDaoTest extends PortalRootPersonAttributeD
         final IPersonAttributes person = new NamedPersonImpl(USERNAME, attributes);
 
         // Test
-        final IPersonAttributes rslt =
-                portalRootPersonAttributeDao.selectUsernameIfAbsent(person);
+        final IPersonAttributes rslt = portalRootPersonAttributeDao.selectUsernameIfAbsent(person);
         Assert.assertEquals(
                 USERNAME, rslt.getAttributeValue(usernameAttributeProvider.getUsernameAttribute()));
     }
