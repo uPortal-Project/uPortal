@@ -62,7 +62,7 @@ public class PeopleRESTController {
         }
 
         // build a search query from the request parameters
-        Map<String, Object> query = new HashMap<String, Object>();
+        Map<String, Object> query = new HashMap<>();
         for (String term : searchTerms) {
             String search = request.getParameter(term);
             if (StringUtils.isNotBlank(search)) {
