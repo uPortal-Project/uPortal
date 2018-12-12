@@ -75,10 +75,6 @@
                   <img src="https://www.w3.org/WAI/wcag2AA-blue-v.svg" alt="WCAG 2 AA Badge">
                 </a>
                 <br>
-                <a href="http://issuestats.com/github/Jasig/uPortal">
-                  <img src="http://issuestats.com/github/Jasig/uPortal/badge/pr" alt="Issue Stats">
-                </a>
-                <br>
                 <a href="https://source.android.com/setup/contribute/code-style">
                   <img src="https://img.shields.io/badge/code_style-AOSP-green.svg?style=flat" alt="AOSP Code Style">
                 </a>
