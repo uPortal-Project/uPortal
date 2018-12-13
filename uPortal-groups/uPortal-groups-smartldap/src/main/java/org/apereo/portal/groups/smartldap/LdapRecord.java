@@ -17,8 +17,12 @@ package org.apereo.portal.groups.smartldap;
 import java.util.Collections;
 import java.util.List;
 import org.apereo.portal.groups.IEntityGroup;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class LdapRecord {
+
+    private static final Logger logger = LoggerFactory.getLogger(LdapRecord.class);
 
     // Instance Members.
     private final IEntityGroup group;
@@ -29,7 +33,6 @@ public final class LdapRecord {
      */
 
     public LdapRecord(IEntityGroup group, List<String> keysOfChildren) {
-
         // Assertions.
         if (group == null) {
             String msg = "Argument 'group' cannot be null.";
@@ -40,6 +43,14 @@ public final class LdapRecord {
             throw new IllegalArgumentException(msg);
         }
 
+        if (logger.isDebugEnabled()) {
+            String keys = String.join(",", keysOfChildren);
+            logger.debug(
+                    "Instantiating LdapRecord for group: {}/{} with children: {}",
+                    group.getLocalKey(),
+                    group.getName(),
+                    keys);
+        }
         // Instance Members.
         this.group = group;
         this.keysOfChildren = Collections.unmodifiableList(keysOfChildren);
