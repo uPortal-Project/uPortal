@@ -296,7 +296,7 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
             if (parent == null) {
                 log.warn("Group tree inconsistent -- missing parent: {}", parentKey);
             } else if (groups.contains(parent)) {
-                log.warn("Parent found multiple times, could be recursion group tree!");
+                log.warn("Parent found multiple times, could be recursion group tree! key: {}, parent key: {}", key, parentKey);
             } else {
                 groups.add(parent);
                 getParentGroups(parentKey, groups);

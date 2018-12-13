@@ -35,7 +35,7 @@
 
                 Logger logger = org.slf4j.LoggerFactory.getLogger("org.apereo.portal.groups.smartldap.init");
 
-                logger.info("Start script");
+                logger.debug("Start script");
                 def req = ScriptAttributes.REQUEST;
 
                 // First we do a little post-processing to detect and remove
@@ -44,13 +44,13 @@
                 def chain = req.hasAttribute('groupChain') ? req.getAttribute('groupChain') : [];
                 record = smartLdapGroupStore.detectAndEliminateGroupReferences(record, chain);
                 ScriptAttributes.RESPONSE.setAttribute('record', record);
-                logger.info("record: {}", record.toString());
+                logger.debug("record: {}", record.toString());
                 def newChain = [];
                 newChain.addAll(chain);
                 newChain.push(record.getGroup().getLocalKey());
-                logger.info("key: {}", record.getGroup().getLocalKey());
+                logger.debug("key: {}", record.getGroup().getLocalKey());
                 ScriptAttributes.RESPONSE.setAttribute('groupChain', newChain);
-                logger.info("groupChain: {}", newChain.toString());
+                logger.debug("groupChain: {}", newChain.toString());
 
                 // Next transform 'resolveDn' into 'resolveDnList' if the first is
                 // present but not the later.  'resolveDn' came before 'resolveDnList,'
@@ -67,7 +67,7 @@
                 // if we have, there's no need to follow its tree of decendents.
                 boolean isNew = !GROUPS.contains(record);
                 ScriptAttributes.RESPONSE.setAttribute('isNew', isNew);
-                logger.info("isNew: {}", isNew);
+                logger.debug("isNew: {}", isNew);
                 if (isNew) {
 
                     // ESUP Modifications
@@ -77,7 +77,7 @@
                     //      - remove the entries that are not groups (eg users).
                     def CHILD_REGEX = "childGroupKeyRegex";
                     if (req.hasAttribute(CHILD_REGEX) &amp;&amp; req.getAttribute(CHILD_REGEX)) {
-                        logger.info("childGroupKeyRegex: {}", req.getAttribute(CHILD_REGEX));
+                        logger.debug("childGroupKeyRegex: {}", req.getAttribute(CHILD_REGEX));
                         def newChildren=[];
                         def pattern = req.hasAttribute('pattern') ? req.getAttribute('pattern') : java.util.regex.Pattern.compile(req.getAttribute(CHILD_REGEX));
                         ScriptAttributes.RESPONSE.setAttribute('pattern', pattern);
@@ -117,7 +117,7 @@
                          isGroup = false;
                     }
                 }
-                logger.info("End script");
+                logger.debug("End script");
             </script>
             <subtasks>
                 <log level="debug" logger-name="org.apereo.portal.groups.smartldap.init" >Start subtasks</log>
