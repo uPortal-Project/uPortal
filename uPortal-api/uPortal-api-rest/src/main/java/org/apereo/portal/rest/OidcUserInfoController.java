@@ -14,6 +14,10 @@
  */
 package org.apereo.portal.rest;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+import javax.servlet.http.HttpServletRequest;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.IPersonManager;
 import org.apereo.portal.security.oauth.IdTokenFactory;
@@ -22,10 +26,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.servlet.http.HttpServletRequest;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * This controller provides an endpoint through which clients can obtain an ID Token in a format
@@ -58,24 +58,24 @@ public class OidcUserInfoController {
             method = {RequestMethod.GET, RequestMethod.POST})
     public String userInfo(
             HttpServletRequest request,
-            @RequestParam(value = "groups", required = false) String overrideGroups,
-            @RequestParam(value = "customClaims", required = false) String overrideCustomClaims) {
+            @RequestParam(value = "claims", required = false) String claims,
+            @RequestParam(value = "groups", required = false) String groups) {
 
         final IPerson person = personManager.getPerson(request);
 
-        List<String> parsedGroups = null;
-        if (overrideGroups != null) {
-            String[] tokens = overrideGroups.split("[,]");
-            parsedGroups = Arrays.asList(tokens);
+        Set<String> claimsToInclude = null;
+        if (claims != null) {
+            String[] tokens = claims.split("[,]");
+            claimsToInclude = new HashSet<>(Arrays.asList(tokens));
         }
 
-        List<String> parsedCustomClaims = null;
-        if (overrideCustomClaims != null) {
-            String[] tokens = overrideCustomClaims.split("[,]");
-            parsedCustomClaims = Arrays.asList(tokens);
+        Set<String> groupsToInclude = null;
+        if (groups != null) {
+            String[] tokens = groups.split("[,]");
+            groupsToInclude = new HashSet<>(Arrays.asList(tokens));
         }
 
         return idTokenFactory.createUserInfo(
-                person.getUserName(), parsedGroups, parsedCustomClaims);
+                person.getUserName(), claimsToInclude, groupsToInclude);
     }
 }

@@ -19,12 +19,12 @@ import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -82,10 +82,6 @@ public class IdTokenFactory {
      * (http://software.internet2.edu/eduperson/internet2-mace-dir-eduperson-201310.html), except
      * 'username' and 'displayName' (which are a uPortal standards).
      */
-
-    /** JSON data type 'string' */
-    @Value("${org.apereo.portal.security.oauth.IdTokenFactory.mapping.sub:username}")
-    private String subAttr;
 
     /** JSON data type 'string' */
     @Value("${org.apereo.portal.security.oauth.IdTokenFactory.mapping.name:displayName}")
@@ -189,11 +185,11 @@ public class IdTokenFactory {
     @Value("${org.apereo.portal.security.oauth.IdTokenFactory.customClaims:}")
     private String customClaimsProperty;
 
-    private List<ClaimMapping> mappings;
+    private Set<ClaimMapping> mappings;
 
-    private List<String> groupsWhitelist;
+    private Set<String> groupsWhitelist;
 
-    private List<String> customClaims;
+    private Set<String> customClaims;
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -201,59 +197,58 @@ public class IdTokenFactory {
     public void init() {
 
         // Mappings for Standard Claims
-        final List<ClaimMapping> list = new ArrayList<>();
-        list.add(new ClaimMapping("sub", subAttr, DataTypeConverter.STRING));
-        list.add(new ClaimMapping("name", nameAttr, DataTypeConverter.STRING));
-        list.add(new ClaimMapping("given_name", givenNameAttr, DataTypeConverter.STRING));
-        list.add(new ClaimMapping("family_name", familyNameAttr, DataTypeConverter.STRING));
-        list.add(new ClaimMapping("middle_name", middleNameAttr, DataTypeConverter.STRING));
-        list.add(new ClaimMapping("nickname", nicknameAttr, DataTypeConverter.STRING));
-        list.add(
+        final Set<ClaimMapping> set = new HashSet<>();
+        set.add(new ClaimMapping("name", nameAttr, DataTypeConverter.STRING));
+        set.add(new ClaimMapping("given_name", givenNameAttr, DataTypeConverter.STRING));
+        set.add(new ClaimMapping("family_name", familyNameAttr, DataTypeConverter.STRING));
+        set.add(new ClaimMapping("middle_name", middleNameAttr, DataTypeConverter.STRING));
+        set.add(new ClaimMapping("nickname", nicknameAttr, DataTypeConverter.STRING));
+        set.add(
                 new ClaimMapping(
                         "preferred_username", preferredUsernameAttr, DataTypeConverter.STRING));
-        list.add(new ClaimMapping("profile", profileAttr, DataTypeConverter.STRING));
-        list.add(new ClaimMapping("picture", pictureAttr, DataTypeConverter.STRING));
-        list.add(new ClaimMapping("website", websiteAttr, DataTypeConverter.STRING));
-        list.add(new ClaimMapping("email", emailAttr, DataTypeConverter.STRING));
-        list.add(new ClaimMapping("email_verified", emailVerifiedAttr, DataTypeConverter.BOOLEAN));
-        list.add(new ClaimMapping("gender", genderAttr, DataTypeConverter.STRING));
-        list.add(new ClaimMapping("birthdate", birthdateAttr, DataTypeConverter.STRING));
-        list.add(new ClaimMapping("zoneinfo", zoneinfoAttr, DataTypeConverter.STRING));
-        list.add(new ClaimMapping("locale", localeAttr, DataTypeConverter.STRING));
-        list.add(new ClaimMapping("phone_number", phoneNumberAttr, DataTypeConverter.STRING));
-        list.add(
+        set.add(new ClaimMapping("profile", profileAttr, DataTypeConverter.STRING));
+        set.add(new ClaimMapping("picture", pictureAttr, DataTypeConverter.STRING));
+        set.add(new ClaimMapping("website", websiteAttr, DataTypeConverter.STRING));
+        set.add(new ClaimMapping("email", emailAttr, DataTypeConverter.STRING));
+        set.add(new ClaimMapping("email_verified", emailVerifiedAttr, DataTypeConverter.BOOLEAN));
+        set.add(new ClaimMapping("gender", genderAttr, DataTypeConverter.STRING));
+        set.add(new ClaimMapping("birthdate", birthdateAttr, DataTypeConverter.STRING));
+        set.add(new ClaimMapping("zoneinfo", zoneinfoAttr, DataTypeConverter.STRING));
+        set.add(new ClaimMapping("locale", localeAttr, DataTypeConverter.STRING));
+        set.add(new ClaimMapping("phone_number", phoneNumberAttr, DataTypeConverter.STRING));
+        set.add(
                 new ClaimMapping(
                         "phone_number_verified",
                         phoneNumberVerifiedAttr,
                         DataTypeConverter.BOOLEAN));
-        list.add(new ClaimMapping("updated_at", updatedAtAttributeName, DataTypeConverter.NUMBER));
-        mappings = Collections.unmodifiableList(list);
+        set.add(new ClaimMapping("updated_at", updatedAtAttributeName, DataTypeConverter.NUMBER));
+        mappings = Collections.unmodifiableSet(set);
 
         if (logger.isInfoEnabled()) {
             final StringBuilder msg = new StringBuilder();
             msg.append("Using the following mappings for OIDC Standard Claims:");
-            list.stream().forEach(mapping -> msg.append("\n\t").append(mapping));
+            set.forEach(mapping -> msg.append("\n\t").append(mapping));
             logger.info(msg.toString());
         }
 
         // Portal Groups ('groups' custom claim)
         groupsWhitelist =
-                Collections.unmodifiableList(
+                Collections.unmodifiableSet(
                         Arrays.stream(groupsWhitelistProperty.split(LIST_SEPARATOR))
                                 .map(String::trim)
                                 .filter(item -> item.length() != 0)
-                                .collect(Collectors.toList()));
+                                .collect(Collectors.toSet()));
         logger.info(
                 "Using the following portal groups to build the custom 'groups' claim:  {}",
                 groupsWhitelist);
 
         // Other Custom Claims (a.k.a user attributes)
         customClaims =
-                Collections.unmodifiableList(
+                Collections.unmodifiableSet(
                         Arrays.stream(customClaimsProperty.split(LIST_SEPARATOR))
                                 .map(String::trim)
                                 .filter(item -> item.length() != 0)
-                                .collect(Collectors.toList()));
+                                .collect(Collectors.toSet()));
         logger.info("Using the following custom claims:  {}", customClaims);
     }
 
@@ -262,7 +257,7 @@ public class IdTokenFactory {
     }
 
     public String createUserInfo(
-            String username, List<String> overrideGroups, List<String> overrideCustomClaims) {
+            String username, Set<String> claimsToInclude, Set<String> groupsToInclude) {
 
         final Date now = new Date();
         final Date expires = new Date(now.getTime() + (timeoutSeconds * 1000L));
@@ -279,6 +274,7 @@ public class IdTokenFactory {
 
         // Attribute mappings
         mappings.stream()
+                .filter(mapping -> includeClaim(mapping.getClaimName(), claimsToInclude))
                 .forEach(
                         item -> {
                             final Object value = person.getAttributeValue(item.getAttributeName());
@@ -293,18 +289,10 @@ public class IdTokenFactory {
         final List<String> groups = new ArrayList<>();
         final IGroupMember groupMember = GroupService.getGroupMember(username, IPerson.class);
         if (groupMember != null) {
-            Set<IEntityGroup> ancestors = groupMember.getAncestorGroups();
+            final Set<IEntityGroup> ancestors = groupMember.getAncestorGroups();
             for (IEntityGroup g : ancestors) {
-                // Is an override set of groups provided?
-                if (overrideGroups != null) {
-                    // Does the override list contain the group currently being evaluated?
-                    if (overrideGroups.contains(g.getName())) {
-                        groups.add(g.getName());
-                    }
-                } else {
-                    if (groupsWhitelist.contains(g.getName())) {
-                        groups.add(g.getName());
-                    }
+                if (includeGroup(g, groupsToInclude)) {
+                    groups.add(g.getName());
                 }
             }
         }
@@ -316,29 +304,16 @@ public class IdTokenFactory {
             builder.claim("groups", groups);
         }
 
-        // Is an override set of custom claim attributes provided?
-        if (overrideCustomClaims != null) {
-            overrideCustomClaims
-                    .stream()
-                    .map(
-                            attributeName ->
-                                    new CustomClaim(
-                                            attributeName,
-                                            person.getAttributeValues(attributeName)))
-                    .filter(claim -> claim.getClaimValue() != null)
-                    .forEach(claim -> builder.claim(claim.getClaimName(), claim.getClaimValue()));
-        } else {
-            // Default custom claims defined by uPortal.properties
-            customClaims
-                    .stream()
-                    .map(
-                            attributeName ->
-                                    new CustomClaim(
-                                            attributeName,
-                                            person.getAttributeValues(attributeName)))
-                    .filter(claim -> claim.getClaimValue() != null)
-                    .forEach(claim -> builder.claim(claim.getClaimName(), claim.getClaimValue()));
-        }
+        // Default custom claims defined by uPortal.properties
+        customClaims
+                .stream()
+                .filter(claimName -> includeClaim(claimName, claimsToInclude))
+                .map(
+                        attributeName ->
+                                new CustomClaim(
+                                        attributeName, person.getAttributeValues(attributeName)))
+                .filter(claim -> claim.getClaimValue() != null)
+                .forEach(claim -> builder.claim(claim.getClaimName(), claim.getClaimValue()));
 
         final String rslt = builder.signWith(SignatureAlgorithm.HS512, signatureKey).compact();
 
@@ -374,6 +349,30 @@ public class IdTokenFactory {
             logger.warn("Unsupported bearerToken:  {}", bearerToken);
         }
         return null;
+    }
+
+    private boolean includeClaim(String claimName, Set<String> claimsToInclude) {
+        boolean rslt = true; // default
+        if (claimsToInclude != null && !claimsToInclude.contains(claimName)) {
+            /*
+             * This group is included in the deployed configuration,
+             * but is not wanted by the REST request.
+             */
+            rslt = false;
+        }
+        return rslt;
+    }
+
+    private boolean includeGroup(IEntityGroup group, Set<String> groupsToInclude) {
+        boolean rslt = groupsWhitelist.contains(group.getName()); // default
+        if (rslt && groupsToInclude != null && !groupsToInclude.contains(group.getName())) {
+            /*
+             * This group is included in the deployed configuration,
+             * but is not wanted by the REST request.
+             */
+            rslt = false;
+        }
+        return rslt;
     }
 
     /*
