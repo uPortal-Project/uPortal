@@ -33,7 +33,11 @@ import org.springframework.context.ApplicationContext;
 /**
  * This Group tester checks the current session's user profile theme against the test value ignoring
  * case.
+ *
+ * @deprecated Avoid this PAGS tester because (1) it doesn't function outside of a container request
+ *     thread; and (2) it isn't necessary any longer (without Universality).
  */
+@Deprecated
 public class ThemeNameEqualsIgnoreCaseTester implements IPersonTester {
 
     protected Logger logger = LoggerFactory.getLogger(getClass());
@@ -77,23 +81,26 @@ public class ThemeNameEqualsIgnoreCaseTester implements IPersonTester {
         try {
             currentPortalRequest = portalRequestUtils.getCurrentPortalRequest();
         } catch (IllegalStateException e) {
-            logger.warn("No portal request to test ui theme");
+            logger.warn(
+                    "No HttpServletRequest is available for testing, which may lead to "
+                            + "surprising outcomes;  ThemeNameEqualsIgnoreCaseTester is deprecated and should "
+                            + "not be used.",
+                    e);
         }
         return currentPortalRequest;
     }
 
     private IStylesheetDescriptor getCurrentUserProfileStyleSheetDescriptor(
             IPerson person, HttpServletRequest currentPortalRequest) {
-        final String currentFname =
-                this.profileMapper.getProfileFname(person, currentPortalRequest);
-        IUserProfile profile = this.userLayoutStore.getSystemProfileByFname(currentFname);
+        final String currentFname = profileMapper.getProfileFname(person, currentPortalRequest);
+        IUserProfile profile = userLayoutStore.getSystemProfileByFname(currentFname);
         int profileId = profile.getThemeStylesheetId();
-        return this.stylesheetDescriptorDao.getStylesheetDescriptor(profileId);
+        return stylesheetDescriptorDao.getStylesheetDescriptor(profileId);
     }
 
     private void logDebugMessages(String uiTheme) {
         if (logger.isDebugEnabled()) {
-            logger.debug("themeTestValue: {}", this.themeTestValue);
+            logger.debug("themeTestValue: {}", themeTestValue);
             logger.debug("uiTheme: {}", uiTheme);
             logger.debug("getStringCompareResults(uiTheme): {}", getStringCompareResults(uiTheme));
         }

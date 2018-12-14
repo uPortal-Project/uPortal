@@ -63,7 +63,7 @@ public class PortalEventProcessingManagerImpl
             new ThreadLocal<Map<Class<?>, Collection<Serializable>>>() {
                 @Override
                 protected Map<Class<?>, Collection<Serializable>> initialValue() {
-                    return new HashMap<Class<?>, Collection<Serializable>>();
+                    return new HashMap<>();
                 }
             };
     private volatile boolean shutdown = false;
@@ -122,7 +122,7 @@ public class PortalEventProcessingManagerImpl
     }
 
     @Override
-    public void destroy() throws Exception {
+    public void destroy() {
         this.shutdown = true;
     }
 
@@ -426,7 +426,7 @@ public class PortalEventProcessingManagerImpl
         final Map<Class<?>, Collection<Serializable>> evictedEntities = evictedEntitiesHolder.get();
         Collection<Serializable> ids = evictedEntities.get(entityClass);
         if (ids == null) {
-            ids = new ArrayList<Serializable>();
+            ids = new ArrayList<>();
             evictedEntities.put(entityClass, ids);
         }
         ids.add(identifier);

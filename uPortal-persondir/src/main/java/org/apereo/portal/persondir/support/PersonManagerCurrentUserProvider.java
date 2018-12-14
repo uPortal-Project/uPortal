@@ -45,9 +45,6 @@ public class PersonManagerCurrentUserProvider implements ICurrentUserProvider {
         this.portalRequestUtils = portalRequestUtils;
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.services.persondir.support.ICurrentUserProvider#getCurrentUserName()
-     */
     @Override
     public String getCurrentUserName() {
         final HttpServletRequest portalRequest;
