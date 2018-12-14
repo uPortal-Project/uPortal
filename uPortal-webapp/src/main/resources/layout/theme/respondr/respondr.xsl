@@ -144,12 +144,12 @@
 <xsl:param name="userImpersonating">false</xsl:param>
 <xsl:param name="skin">defaultSkin</xsl:param>
 <xsl:param name="CONTEXT_PATH">/NOT_SET</xsl:param>
+<xsl:param name="PORTAL_SHORTCUT_ICON" select="concat($CONTEXT_PATH,'/favicon.ico')" />
 <xsl:variable name="SKIN" select="$skin"/>
 <xsl:variable name="MEDIA_PATH">media/skins/respondr</xsl:variable>
 <xsl:variable name="ABSOLUTE_MEDIA_PATH" select="concat($CONTEXT_PATH,'/',$MEDIA_PATH)"/>
 <xsl:variable name="SKIN_RESOURCES_PATH" select="concat('/',$MEDIA_PATH,'/',$SKIN,'/skin.xml')"/>
 <xsl:variable name="SKIN_PATH" select="concat($ABSOLUTE_MEDIA_PATH,'/',$SKIN)"/>
-<xsl:variable name="PORTAL_SHORTCUT_ICON" select="concat($CONTEXT_PATH,'/favicon.ico')" />
 <xsl:variable name="FOCUSED_CLASS">
     <xsl:choose>
         <xsl:when test="//content/focused">focused <xsl:value-of select="//content/focused/channel/@fname"/></xsl:when>
@@ -182,7 +182,6 @@
 <xsl:param name="UP_VERSION"><xsl:value-of select="$uP_productAndVersion"/></xsl:param>
 <xsl:param name="baseActionURL">render.uP</xsl:param>
 <xsl:variable name="BASE_ACTION_URL"><xsl:value-of select="$baseActionURL"/></xsl:variable>
-<xsl:param name="EXTERNAL_LOGIN_URL"></xsl:param>
 <xsl:variable name="IS_FRAGMENT_ADMIN_MODE">
   <xsl:choose>
     <!-- This is a strange thing to test;  is there no signal sent from the structure transform? -->

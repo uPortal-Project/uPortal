@@ -146,6 +146,9 @@ public class RenderingPipelineConfiguration {
     @Value("${org.apereo.portal.layout.useFlyoutMenus:false}")
     private String useFlyoutMenus;
 
+    @Value("${org.apereo.portal.layout.faviconPath:#{null}}")
+    private String faviconPath;
+
     @Resource(name = "org.apereo.portal.rendering.THEME_TRANSFORM")
     private Cache themeTransformCache;
 
@@ -411,6 +414,9 @@ public class RenderingPipelineConfiguration {
         parameters.put("useTabGroups", useTabGroups);
         parameters.put("UP_VERSION", uPortalVersion);
         parameters.put("USE_FLYOUT_MENUS", useFlyoutMenus);
+        if (faviconPath != null) {
+            parameters.put("PORTAL_SHORTCUT_ICON", faviconPath);
+        }
 
         final Map<String, String> parameterExpressions = new HashMap<>();
         parameterExpressions.put("CURRENT_REQUEST", "request.nativeRequest");
