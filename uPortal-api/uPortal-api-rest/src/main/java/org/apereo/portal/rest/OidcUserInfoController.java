@@ -14,6 +14,9 @@
  */
 package org.apereo.portal.rest;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.IPersonManager;
@@ -21,6 +24,7 @@ import org.apereo.portal.security.oauth.IdTokenFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -52,8 +56,26 @@ public class OidcUserInfoController {
             value = ENDPOINT_URI,
             produces = CONTENT_TYPE,
             method = {RequestMethod.GET, RequestMethod.POST})
-    public String userInfo(HttpServletRequest request) {
+    public String userInfo(
+            HttpServletRequest request,
+            @RequestParam(value = "claims", required = false) String claims,
+            @RequestParam(value = "groups", required = false) String groups) {
+
         final IPerson person = personManager.getPerson(request);
-        return idTokenFactory.createUserInfo(person.getUserName());
+
+        Set<String> claimsToInclude = null;
+        if (claims != null) {
+            String[] tokens = claims.split("[,]");
+            claimsToInclude = new HashSet<>(Arrays.asList(tokens));
+        }
+
+        Set<String> groupsToInclude = null;
+        if (groups != null) {
+            String[] tokens = groups.split("[,]");
+            groupsToInclude = new HashSet<>(Arrays.asList(tokens));
+        }
+
+        return idTokenFactory.createUserInfo(
+                person.getUserName(), claimsToInclude, groupsToInclude);
     }
 }
