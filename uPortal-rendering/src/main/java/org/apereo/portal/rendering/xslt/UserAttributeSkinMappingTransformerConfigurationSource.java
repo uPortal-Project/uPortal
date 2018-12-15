@@ -25,6 +25,7 @@ import org.apereo.portal.user.IUserInstanceManager;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.IPersonAttributes;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 
 /**
  * Maps a user attribute to a skin. The user's attribute named by {@link
@@ -41,11 +42,13 @@ public class UserAttributeSkinMappingTransformerConfigurationSource
     private Map<Pattern, String> attributeToSkinMap = Collections.emptyMap();
 
     @Autowired
+    @Lazy
     public void setUserInstanceManager(IUserInstanceManager userInstanceManager) {
         this.userInstanceManager = userInstanceManager;
     }
 
     @Autowired
+    @Lazy
     public void setPersonAttributeDao(IPersonAttributeDao personAttributeDao) {
         this.personAttributeDao = personAttributeDao;
     }

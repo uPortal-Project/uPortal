@@ -87,6 +87,75 @@ The color variables 1-6 are the values that the dynamic respondr skin portlet cu
 
 ![Dynamic Respondr Skin Portlet Page](images/dynamic-respondr-skin.png)
 
+### Default Skin
+
+**Selecting a default skin for a user based on a user attribute can be done by following these steps:**
+All bean should be creates into one file of *uPortal-webapp/src/main/resources/properties/contextOverrides/\*.xml*
+
+***1. Create a bean that will map to user attribute*** 
+```xml 
+ <bean id="customskinServerName" class="org.apereo.portal.rendering.xslt.UserAttributeSkinMappingTransformerConfigurationSource">
+    <property name="stylesheetDescriptorNames">
+      <set>
+        <value>Respondr</value>
+      </set>
+    </property>
+    <property name="skinAttributeName" value="serverName" />
+    <property name="attributeToSkinMap">
+        <map>
+            <entry key=".*\.example\.com" value="example.com" />
+        </map>
+    </property>
+</bean>
+```
+***2. Specify the Stylesheet to apply***
+
+List all stylesheet into `stylesheetDescriptorNames` to apply the skin customization in a tag `<value></value>`.
+***3. Specify the User Attribute Name***
+
+Modify `<property name="skinAttributeName" value="serverName" />` changing the value to the user attribute name to base the skin choice on.
+***4. Map Attribute Value Patterns to Skin Names***
+ 
+Add one `<entry key=".*\.example\.com" value="example.com" />` in the attributeToSkinMap for each mapped skin. The key is a regular expression pattern, the value is the name of the skin to set if the pattern matches.
+
+
+**To selecting a default skin for a user based on group memebership can be done by using a such bean**
+
+```xml
+  <bean class="org.apereo.portal.rendering.xslt.UserGroupSkinMappingTransformerConfigurationSource">
+    <property name="stylesheetDescriptorNames">
+        <set>
+          <value>Respondr</value>
+        </set>
+    </property>
+    <property name="groupToSkinMap">
+        <map>
+            <entry key="pags.studends" value="students" />
+            <entry key="pags.staff" value="staff" />
+            <entry key="pags.faculty" value="staff" />
+        </map>
+    </property>
+  </bean>
+```
+*Map Group Keys to Skin Names*
+
+Add one `<entry key="pags.faculty" value="staff" />` in the groupToSkinMap for each mapped skin. The key is a uPortal group key, qualified with the group store name, the value is the name of the skin to set if the user is a deep member of the specified group.
+
+**You can repeat theses steps to have several beans to map skin on different criteria**
+
+**Last Step**
+To apply your customization create a bean that will reference your beans and integrate them into the renderingPipeline process :
+```xml
+  <util:list id="customSkinsTransformers">
+    <ref bean="guestskinTransformer"/>
+    <ref bean="defaultskinTransformer"/>
+    <ref bean="agriSkinTransformer"/>
+  </util:list>
+```
+- The id should not be changed as it permit to override the default empty configuration
+- Add all your referenced bean created (they should have a unique id) as a `<ref bean="ID"/>`
+- The order is important as the skin name property will be overriden by each beans defined, the order follow their position into this bean. 
+ 
 ### Page Effects
 
 Portal background color and image can have special effects applied.

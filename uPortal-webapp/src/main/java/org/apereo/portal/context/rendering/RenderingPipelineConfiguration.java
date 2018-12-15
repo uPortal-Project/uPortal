@@ -37,32 +37,12 @@ import org.apereo.portal.character.stream.PortletNewItemCountPlaceholderEventSou
 import org.apereo.portal.character.stream.PortletTitlePlaceholderEventSource;
 import org.apereo.portal.character.stream.events.ChunkPointPlaceholderEventSource;
 import org.apereo.portal.layout.IUserLayoutManager;
-import org.apereo.portal.rendering.AnalyticsIncorporationComponent;
-import org.apereo.portal.rendering.CharacterPipelineComponent;
-import org.apereo.portal.rendering.DynamicRenderingPipeline;
-import org.apereo.portal.rendering.IPortalRenderingPipeline;
-import org.apereo.portal.rendering.LoggingCharacterComponent;
-import org.apereo.portal.rendering.LoggingStAXComponent;
-import org.apereo.portal.rendering.PageAnalyticsDataPlaceholderEventSource;
-import org.apereo.portal.rendering.PortletAnalyticsDataPlaceholderEventSource;
-import org.apereo.portal.rendering.PortletRenderingIncorporationComponent;
-import org.apereo.portal.rendering.PortletRenderingInitiationCharacterComponent;
-import org.apereo.portal.rendering.PortletRenderingInitiationStAXComponent;
-import org.apereo.portal.rendering.PortletWindowAttributeSource;
-import org.apereo.portal.rendering.RenderingPipelineBranchPoint;
-import org.apereo.portal.rendering.RenderingPipelineConfigurationException;
-import org.apereo.portal.rendering.StAXAttributeIncorporationComponent;
-import org.apereo.portal.rendering.StAXPipelineComponent;
-import org.apereo.portal.rendering.StAXPipelineComponentWrapper;
-import org.apereo.portal.rendering.StAXSerializingComponent;
-import org.apereo.portal.rendering.StructureAttributeSource;
-import org.apereo.portal.rendering.ThemeAttributeSource;
-import org.apereo.portal.rendering.UserLayoutStoreComponent;
-import org.apereo.portal.rendering.WindowStateSettingsStAXComponent;
+import org.apereo.portal.rendering.*;
 import org.apereo.portal.rendering.cache.CachingCharacterPipelineComponent;
 import org.apereo.portal.rendering.cache.CachingStAXPipelineComponent;
 import org.apereo.portal.rendering.xslt.LocaleTransformerConfigurationSource;
 import org.apereo.portal.rendering.xslt.MergingTransformerConfigurationSource;
+import org.apereo.portal.rendering.xslt.SkinMappingTransformerConfigurationSource;
 import org.apereo.portal.rendering.xslt.StaticTransformerConfigurationSource;
 import org.apereo.portal.rendering.xslt.StructureStylesheetDescriptorTransformerConfigurationSource;
 import org.apereo.portal.rendering.xslt.StructureStylesheetUserPreferencesTransformerConfigurationSource;
@@ -325,6 +305,32 @@ public class RenderingPipelineConfiguration {
         return new UserImpersonationTransformerConfigurationSource();
     }
 
+    /**
+     * This bean is not an element of the rendering pipeline. It is a DAO for reading and writing
+     * <code>Resources</code> objects to files.
+     */
+    @Bean(name = "resourcesDao")
+    public ResourcesDao getResourcesDao() {
+        return new ResourcesDaoImpl();
+    }
+
+    /** This bean is not an element of the rendering pipeline. */
+    @Bean(name = "resourcesElementsProvider")
+    public ResourcesElementsProvider getResourcesElementsProvider() {
+        ResourcesElementsProviderImpl rslt = new ResourcesElementsProviderImpl();
+        rslt.setResourcesDao(getResourcesDao());
+        return rslt;
+    }
+
+    /** A default empty bean that could be overriden by a custom one. */
+    @Bean(name = "customSkinsTransformers")
+    public List<? extends SkinMappingTransformerConfigurationSource> getCustomSkinTransformers() {
+        return new ArrayList<>();
+    }
+
+    @Resource(name = "customSkinsTransformers")
+    public List<? extends SkinMappingTransformerConfigurationSource> customSkinsTransformers;
+
     @Bean(name = "structureTransformComponent")
     public StAXPipelineComponentWrapper getStructureTransformComponent() {
         final XSLTComponent rslt = new XSLTComponent();
@@ -332,6 +338,9 @@ public class RenderingPipelineConfiguration {
         rslt.setTransformerSource(getStructureTransformSource());
         final List<TransformerConfigurationSource> sources = new ArrayList<>();
         sources.add(getStructureStylesheetDescriptorTransformerConfigurationSource());
+        if (customSkinsTransformers != null && !customSkinsTransformers.isEmpty()) {
+            sources.addAll(customSkinsTransformers);
+        }
         sources.add(getStructureStylesheetUserPreferencesTransformerConfigurationSource());
         sources.add(getStaticTransformerConfigurationSourceForStructure());
         sources.add(getUserImpersonationTransformerConfigurationSource());
@@ -464,6 +473,9 @@ public class RenderingPipelineConfiguration {
         rslt.setTransformerSource(getThemeTransformerSource());
         final List<TransformerConfigurationSource> sources = new ArrayList<>();
         sources.add(getThemeStylesheetDescriptorTransformerConfigurationSource());
+        if (customSkinsTransformers != null && !customSkinsTransformers.isEmpty()) {
+            sources.addAll(customSkinsTransformers);
+        }
         sources.add(getThemeStylesheetUserPreferencesTransformerConfigurationSource());
         sources.add(getStaticTransformerConfigurationSourceForTheme());
         sources.add(getLocaleTransformerConfigurationSource());
@@ -599,23 +611,6 @@ public class RenderingPipelineConfiguration {
     public CharacterPipelineComponent getAnalyticsIncorporationComponent() {
         final AnalyticsIncorporationComponent rslt = new AnalyticsIncorporationComponent();
         rslt.setWrappedComponent(getPortletRenderingIncorporationComponent());
-        return rslt;
-    }
-
-    /**
-     * This bean is not an element of the rendering pipeline. It is a DAO for reading and writing
-     * <code>Resources</code> objects to files.
-     */
-    @Bean(name = "resourcesDao")
-    public ResourcesDao getResourcesDao() {
-        return new ResourcesDaoImpl();
-    }
-
-    /** This bean is not an element of the rendering pipeline. */
-    @Bean(name = "resourcesElementsProvider")
-    public ResourcesElementsProvider getResourcesElementsProvider() {
-        ResourcesElementsProviderImpl rslt = new ResourcesElementsProviderImpl();
-        rslt.setResourcesDao(getResourcesDao());
         return rslt;
     }
 }
