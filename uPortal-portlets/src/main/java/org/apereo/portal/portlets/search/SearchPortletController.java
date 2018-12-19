@@ -627,6 +627,8 @@ public class SearchPortletController {
                     value.sort(Comparator.comparingInt(tuple -> tuple.first.getRank()));
                 });
 
+        logger.debug("Search results for query '{}' are:  {}", query, results);
+
         model.put("results", results);
         model.put("defaultTabKey", this.defaultTabKey);
         model.put("tabKeys", this.tabKeys);
