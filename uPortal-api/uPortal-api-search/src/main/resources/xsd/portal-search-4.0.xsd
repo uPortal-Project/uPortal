@@ -54,6 +54,7 @@
             <xs:element name="title" type="xs:string" />
             <xs:element name="summary" type="xs:string" />
             <xs:element name="type" type="xs:string" maxOccurs="unbounded" minOccurs="0" />
+            <xs:element name="rank" type="xs:int" /><!-- Added in uPortal 5.4.0 to support ranked search results -->
             <xs:choice minOccurs="0">
                 <xs:element name="portletUrl" type="portletUrl"/>
                 <xs:element name="externalUrl" type="xs:anyURI"/>

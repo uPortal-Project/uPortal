@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -298,6 +299,7 @@ public class SearchPortletController {
              */
 
             // send a search query event
+            logger.debug("Sending search event:  {}", queryObj);
             response.setEvent(SearchConstants.SEARCH_REQUEST_QNAME, queryObj);
         }
 
@@ -619,6 +621,14 @@ public class SearchPortletController {
         if (portalSearchResults != null) {
             results = portalSearchResults.getResults();
         }
+
+        results.forEach(
+                (key, value) -> {
+                    value.sort(Comparator.comparingInt(tuple -> tuple.first.getRank()));
+                });
+
+        logger.debug("Search results for query '{}' are:  {}", query, results);
+
         model.put("results", results);
         model.put("defaultTabKey", this.defaultTabKey);
         model.put("tabKeys", this.tabKeys);
