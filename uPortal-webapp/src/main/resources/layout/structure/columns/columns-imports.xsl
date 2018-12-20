@@ -69,8 +69,8 @@
      | queue. 
      +-->
     <xsl:template name="region">
-        <region name="{@type}">
-            <xsl:copy-of select="channel"/>
+        <region name="{@type}" title="{@name}">
+            <xsl:copy-of select="child::*"/>
         </region>
     </xsl:template>
 

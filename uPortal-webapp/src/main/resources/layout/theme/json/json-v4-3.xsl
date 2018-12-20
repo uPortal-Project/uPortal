@@ -271,9 +271,22 @@
         {
             <xsl:for-each select="@*">"<xsl:value-of select ="local-name()"/>": "<xsl:value-of select="."/>",
             </xsl:for-each>
+            "folders": [
+            <xsl:for-each select="folder">
+            {
+                <xsl:for-each select="@*">"<xsl:value-of select ="local-name()"/>": "<xsl:value-of select="upJsonTool:escapeForJson(.)"/>",
+                </xsl:for-each>
+                "content": [
+                <xsl:for-each select="channel">
+                    <xsl:call-template name="folderContent"/>
+                </xsl:for-each>
+                ]
+            }<xsl:if test="position() != last()">,</xsl:if>
+            </xsl:for-each>
+            ],
             "content": [
             <xsl:for-each select="key('regions-by-name', @name)">
-                <xsl:for-each select="*">
+                <xsl:for-each select="channel">
                     <xsl:call-template name="folderContent"/>
                 </xsl:for-each>
                 <xsl:if test="position() != last()">,</xsl:if>

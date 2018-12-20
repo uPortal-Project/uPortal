@@ -66,7 +66,7 @@
     <xsl:template name="regions">
             <regions>
                 <!-- Include all regions -->
-                <xsl:for-each select="child::folder[@type!='regular' and @type!='sidebar' and @type!='favorites' and @type!='favorite_collection' and channel]"><!-- Ignores empty folders -->
+                <xsl:for-each select="child::folder[@type!='regular' and @type!='sidebar' and @type!='favorites' and @type!='favorite_collection' and descendant::channel]"><!-- Ignores empty folders -->
                     <xsl:call-template name="region"/>
                 </xsl:for-each>
             </regions>
