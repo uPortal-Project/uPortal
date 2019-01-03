@@ -34,9 +34,6 @@ import org.springframework.web.portlet.context.PortletRequestAttributes;
 @Service("portalRequestUtils")
 public class PortalRequestUtilsImpl implements IPortalRequestUtils {
 
-    /* (non-Javadoc)
-     * @see org.apereo.portal.url.IPortalRequestUtils#getOriginalPortalRequest(javax.portlet.PortletRequest)
-     */
     @Override
     public HttpServletRequest getPortletHttpRequest(PortletRequest portletRequest) {
         final HttpServletRequest portalRequest =
@@ -53,9 +50,6 @@ public class PortalRequestUtilsImpl implements IPortalRequestUtils {
                         + "'");
     }
 
-    /* (non-Javadoc)
-     * @see org.apereo.portal.url.IPortalRequestUtils#getOriginalPortalRequest(javax.servlet.http.HttpServletRequest)
-     */
     @Override
     public HttpServletRequest getOriginalPortalRequest(HttpServletRequest portletRequest) {
         final HttpServletRequest portalRequest =
@@ -103,7 +97,7 @@ public class PortalRequestUtilsImpl implements IPortalRequestUtils {
         }
 
         throw new IllegalArgumentException(
-                "The orginal portal HttpServletRequest is not available from the WebRequest using attribute '"
+                "The original portal HttpServletRequest is not available from the WebRequest using attribute '"
                         + PortalHttpServletRequestWrapper.ATTRIBUTE__HTTP_SERVLET_REQUEST
                         + "'");
     }
@@ -140,9 +134,6 @@ public class PortalRequestUtilsImpl implements IPortalRequestUtils {
                         + "'");
     }
 
-    /* (non-Javadoc)
-     * @see org.apereo.portal.url.IPortalRequestUtils#getCurrentPortalRequest()
-     */
     @Override
     public HttpServletRequest getCurrentPortalRequest() {
         final RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
