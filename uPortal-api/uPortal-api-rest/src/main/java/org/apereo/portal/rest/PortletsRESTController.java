@@ -35,6 +35,7 @@ import org.apereo.portal.security.IAuthorizationPrincipal;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.IPersonManager;
 import org.apereo.portal.services.AuthorizationServiceFacade;
+import org.apereo.portal.url.PortalHttpServletFactoryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,6 +60,8 @@ public class PortletsRESTController {
     @Autowired private IPortletCategoryRegistry portletCategoryRegistry;
 
     @Autowired private IPersonManager personManager;
+
+    @Autowired private PortalHttpServletFactoryService servletFactoryService;
 
     @Autowired private IPortletWindowRegistry portletWindowRegistry;
 
@@ -114,8 +117,7 @@ public class PortletsRESTController {
      */
     @RequestMapping(value = "/v4-3/portlet/{fname}.html", method = RequestMethod.GET)
     public @ResponseBody String getRenderedPortlet(
-            HttpServletRequest req, HttpServletResponse res, @PathVariable String fname)
-            throws Exception {
+            HttpServletRequest req, HttpServletResponse res, @PathVariable String fname) {
 
         // Does the portlet exist in the registry?
         final IPortletDefinition portletDef =
@@ -134,12 +136,18 @@ public class PortletsRESTController {
 
         // Proceed...
         try {
+
+            final PortalHttpServletFactoryService.RequestAndResponseWrapper wrapper =
+                    servletFactoryService.createRequestAndResponseWrapper(req, res);
+
             final IPortletWindow portletWindow =
                     portletWindowRegistry.getOrCreateDefaultPortletWindow(
-                            req, portletDef.getPortletDefinitionId());
+                            wrapper.getRequest(), portletDef.getPortletDefinitionId());
             final String rslt =
                     portletExecutionManager.getPortletOutput(
-                            portletWindow.getPortletWindowId(), req, res);
+                            portletWindow.getPortletWindowId(),
+                            wrapper.getRequest(),
+                            wrapper.getResponse());
             return rslt;
         } catch (Exception e) {
             logger.error("Failed to render the requested portlet '{}'", fname, e);

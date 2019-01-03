@@ -23,7 +23,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.IPersonManager;
-import org.apereo.portal.user.IUserInstanceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +36,7 @@ public class UrlCanonicalizingFilter extends OncePerRequestFilter {
 
     private IUrlSyntaxProvider urlSyntaxProvider;
     private IPersonManager personManager;
-    private IUserInstanceManager userInstanceManager;
+    private PortalHttpServletFactoryService servletFactoryService;
     private int maximumRedirects = 5;
     private LoginRefUrlEncoder loginRefUrlEncoder;
 
@@ -52,8 +51,8 @@ public class UrlCanonicalizingFilter extends OncePerRequestFilter {
     }
 
     @Autowired
-    public void setUserInstanceManager(IUserInstanceManager userInstanceManager) {
-        this.userInstanceManager = userInstanceManager;
+    public void setServletFactoryService(PortalHttpServletFactoryService servletFactoryService) {
+        this.servletFactoryService = servletFactoryService;
     }
 
     @Autowired(required = false)
@@ -153,32 +152,13 @@ public class UrlCanonicalizingFilter extends OncePerRequestFilter {
             }
         }
 
-        final IPortalRequestInfo portalRequestInfo =
-                this.urlSyntaxProvider.getPortalRequestInfo(request);
-        final UrlType urlType = portalRequestInfo.getUrlType();
-        final UrlState urlState = portalRequestInfo.getUrlState();
+        final PortalHttpServletFactoryService.RequestAndResponseWrapper wrapper =
+                servletFactoryService.createRequestAndResponseWrapper(request, response);
 
-        final PortalHttpServletResponseWrapper httpServletResponseWrapper =
-                new PortalHttpServletResponseWrapper(response);
-        final PortalHttpServletRequestWrapper httpServletRequestWrapper =
-                new PortalHttpServletRequestWrapper(
-                        request, httpServletResponseWrapper, this.userInstanceManager);
-
-        httpServletRequestWrapper.setHeader(IPortalRequestInfo.URL_TYPE_HEADER, urlType.toString());
-        httpServletRequestWrapper.setHeader(
-                IPortalRequestInfo.URL_STATE_HEADER, urlState.toString());
-
-        // Hack to make PortalController work in light of
-        // https://jira.springsource.org/secure/attachment/18283/SPR7346.patch
-        httpServletRequestWrapper.setHeader(
-                IPortalRequestInfo.URL_TYPE_HEADER + "." + urlType, Boolean.TRUE.toString());
-        httpServletRequestWrapper.setHeader(
-                IPortalRequestInfo.URL_STATE_HEADER + "." + urlState, Boolean.TRUE.toString());
-
-        filterChain.doFilter(httpServletRequestWrapper, httpServletResponseWrapper);
+        filterChain.doFilter(wrapper.getRequest(), wrapper.getResponse());
     }
 
-    protected void clearRedirectCount(HttpServletRequest request, HttpServletResponse response) {
+    private void clearRedirectCount(HttpServletRequest request, HttpServletResponse response) {
         final Cookie cookie = new Cookie(COOKIE_NAME, "");
         cookie.setPath(request.getContextPath());
         cookie.setMaxAge(0);
@@ -187,7 +167,7 @@ public class UrlCanonicalizingFilter extends OncePerRequestFilter {
         response.addCookie(cookie);
     }
 
-    protected void setRedirectCount(
+    private void setRedirectCount(
             HttpServletRequest request, HttpServletResponse response, int count) {
         final Cookie cookie = new Cookie(COOKIE_NAME, Integer.toString(count));
         cookie.setPath(request.getContextPath());
@@ -197,7 +177,7 @@ public class UrlCanonicalizingFilter extends OncePerRequestFilter {
         response.addCookie(cookie);
     }
 
-    protected int getRedirectCount(HttpServletRequest request) {
+    private int getRedirectCount(HttpServletRequest request) {
         final Cookie[] cookies = request.getCookies();
         if (cookies == null) {
             return 0;
