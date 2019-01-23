@@ -347,6 +347,7 @@ public class IdTokenFactory {
             return Jwts.parser().setSigningKey(signatureKey).parseClaimsJws(bearerToken);
         } catch (Exception e) {
             logger.warn("Unsupported bearerToken:  {}", bearerToken);
+            logger.debug("Stack trace", e);
         }
         return null;
     }
