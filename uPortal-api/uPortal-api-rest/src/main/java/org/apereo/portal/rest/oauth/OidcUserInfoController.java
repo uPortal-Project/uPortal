@@ -25,7 +25,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.IPersonManager;
@@ -45,9 +44,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * This controller provides endpoints through which clients can obtain an ID Token in a format
- * that is aligned with OpenID Connect (OIDC). <i>Clients</i> in this case are normally content
- * objects embedded within the portal page itself (e.g. portlets, soffits, or JS bundles).
+ * This controller provides endpoints through which clients can obtain an ID Token in a format that
+ * is aligned with OpenID Connect (OIDC). <i>Clients</i> in this case are normally content objects
+ * embedded within the portal page itself (e.g. portlets, soffits, or JS bundles).
  *
  * <p>It is critical to point out that this endpoint is not a compliant OIDC Identity Provider. It
  * does not implement OAuth Authentication Flows of any sort.
@@ -71,7 +70,7 @@ public class OidcUserInfoController {
 
     @Autowired private List<OAuthClient> clientList;
 
-    private Map<String,OAuthClient> clientMap = Collections.emptyMap();
+    private Map<String, OAuthClient> clientMap = Collections.emptyMap();
 
     @Autowired private PersonService personService;
 
@@ -82,14 +81,14 @@ public class OidcUserInfoController {
 
     @PostConstruct
     public void init() {
-        final Map<String,OAuthClient> map = clientList.stream()
-            .collect(Collectors.toMap(OAuthClient::getClientId, Function.identity()));
+        final Map<String, OAuthClient> map =
+                clientList
+                        .stream()
+                        .collect(Collectors.toMap(OAuthClient::getClientId, Function.identity()));
         this.clientMap = Collections.unmodifiableMap(map);
     }
 
-    /**
-     * Obtain an OIDC Id token for the current user.
-     */
+    /** Obtain an OIDC Id token for the current user. */
     @RequestMapping(
             value = USERINFO_ENDPOINT_URI,
             produces = USERINFO_CONTENT_TYPE,
@@ -104,11 +103,11 @@ public class OidcUserInfoController {
     }
 
     /**
-     * Obtain an OIDC Id token for the specified <code>client_id</code>.  At least one bean of type
+     * Obtain an OIDC Id token for the specified <code>client_id</code>. At least one bean of type
      * {@link OAuthClient} is required to use this endpoint.
      *
      * <p>This token strategy supports Spring's <code>OAuth2RestTemplate</code> for accessing
-     * uPortal REST APIs from external systems.  Use a <code>ClientCredentialsResourceDetails</code>
+     * uPortal REST APIs from external systems. Use a <code>ClientCredentialsResourceDetails</code>
      * with <code>clientAuthenticationScheme=AuthenticationScheme.form</code>, together with a
      * <code>ClientCredentialsAccessTokenProvider</code>.
      *
@@ -116,12 +115,16 @@ public class OidcUserInfoController {
      */
     @PostMapping(value = TOKEN_ENDPOINT_URI, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity oauthToken(
-        @RequestParam(value = "client_id") String clientId,
-        @RequestParam(value = "client_secret") String clientSecret,
-        @RequestParam(value = "grant_type", required = false, defaultValue = "client_credentials") String grantType,
-        @RequestParam(value = "scope", required = false, defaultValue = "/all") String scope,
-        @RequestParam(value = "claims", required = false) String claims,
-        @RequestParam(value = "groups", required = false) String groups) {
+            @RequestParam(value = "client_id") String clientId,
+            @RequestParam(value = "client_secret") String clientSecret,
+            @RequestParam(
+                            value = "grant_type",
+                            required = false,
+                            defaultValue = "client_credentials")
+                    String grantType,
+            @RequestParam(value = "scope", required = false, defaultValue = "/all") String scope,
+            @RequestParam(value = "claims", required = false) String claims,
+            @RequestParam(value = "groups", required = false) String groups) {
 
         /*
          * NB:  Several of this method's parameters are not consumed (yet) in any way.  They are
@@ -129,59 +132,66 @@ public class OidcUserInfoController {
          */
 
         final String msg =
-            "Processing request for OAuth access token;  client_id='{}', client_secret='{}', " +
-                "grant_type='{}', scope='{}', claims='{}', groups='{}'";
-        logger.debug(msg,
-            clientId,
-            StringUtils.repeat("*", clientSecret.length()),
-            grantType,
-            scope,
-            claims,
-            groups);
+                "Processing request for OAuth access token;  client_id='{}', client_secret='{}', "
+                        + "grant_type='{}', scope='{}', claims='{}', groups='{}'";
+        logger.debug(
+                msg,
+                clientId,
+                StringUtils.repeat("*", clientSecret.length()),
+                grantType,
+                scope,
+                claims,
+                groups);
 
         // STEP 1:  identify the client
         final OAuthClient oAuthClient = clientMap.get(clientId);
         if (oAuthClient == null) {
-            return ResponseEntity
-                .status(HttpStatus.FORBIDDEN)
-                .body(Collections.singletonMap("message", "client_id not found"));
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(Collections.singletonMap("message", "client_id not found"));
         }
 
-        logger.debug("Selected known OAuthClient with client_id='{}' for access token request",
-            oAuthClient.getClientId());
+        logger.debug(
+                "Selected known OAuthClient with client_id='{}' for access token request",
+                oAuthClient.getClientId());
 
         // STEP 2:  validate the client_secret
         if (!oAuthClient.getClientSecret().equals(clientSecret)) {
-            return ResponseEntity
-                .status(HttpStatus.FORBIDDEN)
-                .body(Collections.singletonMap("message", "authentication failed"));
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(Collections.singletonMap("message", "authentication failed"));
         }
 
         // STEP 3:  obtain the specified user
         final IPerson person = personService.getPerson(oAuthClient.getPortalUserAccount());
         if (person == null) {
-            return ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(Collections.singletonMap("message", "portal user account not found: " +
-                    oAuthClient.getPortalUserAccount()));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(
+                            Collections.singletonMap(
+                                    "message",
+                                    "portal user account not found: "
+                                            + oAuthClient.getPortalUserAccount()));
         }
 
-        logger.debug("Selected portal Person with username='{}' for client_id='{}'",
-            person.getUserName(), oAuthClient.getClientId());
+        logger.debug(
+                "Selected portal Person with username='{}' for client_id='{}'",
+                person.getUserName(),
+                oAuthClient.getClientId());
 
         // STEP 4:  build a standard OAuth2 access token response
         final String token = createToken(person, claims, groups);
-        final Map<String,Object> rslt = new HashMap<>();
+        final Map<String, Object> rslt = new HashMap<>();
         rslt.put("access_token", token);
         rslt.put("token_type", "bearer");
-        rslt.put("expires_in", timeoutSeconds > 2 ? timeoutSeconds - 2L /* fudge factor */ : timeoutSeconds);
+        rslt.put(
+                "expires_in",
+                timeoutSeconds > 2 ? timeoutSeconds - 2L /* fudge factor */ : timeoutSeconds);
         rslt.put("scope", scope);
 
-        logger.debug("Produced the following access token for client_id='{}':  {}",
-            oAuthClient.getClientId(), rslt);
+        logger.debug(
+                "Produced the following access token for client_id='{}':  {}",
+                oAuthClient.getClientId(),
+                rslt);
 
         return ResponseEntity.ok(rslt);
-
     }
 
     private String createToken(IPerson person, String claims, String groups) {
@@ -199,8 +209,6 @@ public class OidcUserInfoController {
         }
 
         return idTokenFactory.createUserInfo(
-            person.getUserName(), claimsToInclude, groupsToInclude);
-
+                person.getUserName(), claimsToInclude, groupsToInclude);
     }
-
 }
