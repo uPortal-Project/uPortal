@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -60,14 +59,14 @@ public class PermissionsRESTController {
 
     private IPermissionOwnerDao permissionOwnerDao;
 
-    @Autowired(required = true)
+    @Autowired
     public void setPermissionOwnerDao(IPermissionOwnerDao permissionOwnerDao) {
         this.permissionOwnerDao = permissionOwnerDao;
     }
 
     private IPermissionTargetProviderRegistry targetProviderRegistry;
 
-    @Autowired(required = true)
+    @Autowired
     public void setPermissionTargetProviderRegistry(IPermissionTargetProviderRegistry registry) {
         this.targetProviderRegistry = registry;
     }
@@ -93,19 +92,11 @@ public class PermissionsRESTController {
         this.authorizationService = authorizationService;
     }
 
-    /**
-     * Provide a JSON view of all known permission owners registered with uPortal.
-     *
-     * @param req
-     * @param response
-     * @return
-     * @throws Exception
-     */
+    /** Provide a JSON view of all known permission owners registered with uPortal. */
     @PreAuthorize(
             "hasPermission('ALL', 'java.lang.String', new org.apereo.portal.spring.security.evaluator.AuthorizableActivity('UP_PERMISSIONS', 'VIEW_PERMISSIONS'))")
     @RequestMapping(value = "/permissions/owners.json", method = RequestMethod.GET)
-    public ModelAndView getOwners(HttpServletRequest req, HttpServletResponse response)
-            throws Exception {
+    public ModelAndView getOwners() {
 
         // get a list of all currently defined permission owners
         List<IPermissionOwner> owners = permissionOwnerDao.getAllPermissionOwners();
@@ -120,26 +111,17 @@ public class PermissionsRESTController {
     /**
      * Provide a detailed view of the specified IPermissionOwner. This view should contain a list of
      * the owner's defined activities.
-     *
-     * @param ownerParam
-     * @param req
-     * @param response
-     * @return
-     * @throws Exception
      */
     @PreAuthorize(
             "hasPermission('ALL', 'java.lang.String', new org.apereo.portal.spring.security.evaluator.AuthorizableActivity('UP_PERMISSIONS', 'VIEW_PERMISSIONS'))")
     @RequestMapping(value = "/permissions/owners/{owner}.json", method = RequestMethod.GET)
     public ModelAndView getOwners(
-            @PathVariable("owner") String ownerParam,
-            HttpServletRequest req,
-            HttpServletResponse response)
-            throws Exception {
+            @PathVariable("owner") String ownerParam, HttpServletResponse response) {
 
-        IPermissionOwner owner = null;
+        IPermissionOwner owner;
 
         if (StringUtils.isNumeric(ownerParam)) {
-            Long id = Long.valueOf(ownerParam);
+            long id = Long.valueOf(ownerParam);
             owner = permissionOwnerDao.getPermissionOwner(id);
         } else {
             owner = permissionOwnerDao.getPermissionOwner(ownerParam);
@@ -163,27 +145,17 @@ public class PermissionsRESTController {
     /**
      * Provide a list of all registered IPermissionActivities. If an optional search string is
      * provided, the returned list will be restricted to activities matching the query.
-     *
-     * @param query optional search query
-     * @param request
-     * @param response
-     * @return
-     * @throws Exception
      */
     @PreAuthorize(
             "hasPermission('ALL', 'java.lang.String', new org.apereo.portal.spring.security.evaluator.AuthorizableActivity('UP_PERMISSIONS', 'VIEW_PERMISSIONS'))")
     @RequestMapping(value = "/permissions/activities.json", method = RequestMethod.GET)
-    public ModelAndView getActivities(
-            @RequestParam(value = "q", required = false) String query,
-            HttpServletRequest request,
-            HttpServletResponse response)
-            throws Exception {
+    public ModelAndView getActivities(@RequestParam(value = "q", required = false) String query) {
 
         if (StringUtils.isNotBlank(query)) {
             query = query.toLowerCase();
         }
 
-        List<IPermissionActivity> activities = new ArrayList<IPermissionActivity>();
+        List<IPermissionActivity> activities = new ArrayList<>();
         Collection<IPermissionOwner> owners = permissionOwnerDao.getAllPermissionOwners();
 
         for (IPermissionOwner owner : owners) {
@@ -206,31 +178,20 @@ public class PermissionsRESTController {
     /**
      * Return a list of targets defined for a particular IPermissionActivity matching the specified
      * search query.
-     *
-     * @param activityId
-     * @param query
-     * @param req
-     * @param response
-     * @return
-     * @throws Exception
      */
     @PreAuthorize(
             "hasPermission('ALL', 'java.lang.String', new org.apereo.portal.spring.security.evaluator.AuthorizableActivity('UP_PERMISSIONS', 'VIEW_PERMISSIONS'))")
     @RequestMapping(value = "/permissions/{activity}/targets.json", method = RequestMethod.GET)
     public ModelAndView getTargets(
-            @PathVariable("activity") Long activityId,
-            @RequestParam("q") String query,
-            HttpServletRequest req,
-            HttpServletResponse response)
-            throws Exception {
+            @PathVariable("activity") Long activityId, @RequestParam("q") String query) {
 
         IPermissionActivity activity = permissionOwnerDao.getPermissionActivity(activityId);
-        Collection<IPermissionTarget> targets = Collections.EMPTY_LIST;
+        Collection<IPermissionTarget> targets = Collections.emptyList();
         if (activity != null) {
             IPermissionTargetProvider provider =
                     targetProviderRegistry.getTargetProvider(activity.getTargetProviderKey());
 
-            SortedSet<IPermissionTarget> matchingTargets = new TreeSet<IPermissionTarget>();
+            SortedSet<IPermissionTarget> matchingTargets = new TreeSet<>();
             // add matching results for this identifier provider to the set
             targets = provider.searchTargets(query);
             for (IPermissionTarget target : targets) {
@@ -253,14 +214,37 @@ public class PermissionsRESTController {
     @RequestMapping("/assignments/principal/{principal}.json")
     public ModelAndView getAssignmentsForPrincipal(
             @PathVariable("principal") String principal,
-            @RequestParam(value = "includeInherited", required = false) boolean includeInherited,
-            HttpServletRequest request,
-            HttpServletResponse response) {
+            @RequestParam(value = "includeInherited", required = false) boolean includeInherited) {
 
         JsonEntityBean entity = groupListHelper.getEntityForPrincipal(principal);
         List<JsonPermission> permissions = getPermissionsForEntity(entity, includeInherited);
 
         ModelAndView mv = new ModelAndView();
+        mv.addObject("assignments", permissions);
+        mv.setViewName("json");
+
+        return mv;
+    }
+
+    /**
+     * Provides the collection of permission assignments that apply to the specified user,
+     * optionally including inherited assignments.
+     *
+     * @since 5.5
+     */
+    @PreAuthorize(
+            "hasPermission('ALL', 'java.lang.String', new org.apereo.portal.spring.security.evaluator.AuthorizableActivity('UP_PERMISSIONS', 'VIEW_PERMISSIONS'))")
+    @RequestMapping("/v5-5/assignments/users/{username}")
+    public ModelAndView getAssignmentsForUser(
+            @PathVariable("username") String username,
+            @RequestParam(value = "includeInherited", required = false, defaultValue = "false")
+                    boolean includeInherited) {
+
+        final JsonEntityBean entity =
+                groupListHelper.getEntity(EntityEnum.PERSON.toString(), username, false);
+        final List<JsonPermission> permissions = getPermissionsForEntity(entity, includeInherited);
+
+        final ModelAndView mv = new ModelAndView();
         mv.addObject("assignments", permissions);
         mv.setViewName("json");
 
@@ -273,9 +257,7 @@ public class PermissionsRESTController {
     public ModelAndView getAssignmentsForEntity(
             @PathVariable("entityType") String entityType,
             @PathVariable("id") String id,
-            @RequestParam(value = "includeInherited", required = false) boolean includeInherited,
-            HttpServletRequest request,
-            HttpServletResponse response) {
+            @RequestParam(value = "includeInherited", required = false) boolean includeInherited) {
 
         JsonEntityBean entity = groupListHelper.getEntity(entityType, id, false);
         List<JsonPermission> permissions = getPermissionsForEntity(entity, includeInherited);
@@ -292,11 +274,9 @@ public class PermissionsRESTController {
     @RequestMapping("/assignments/target/{target}.json")
     public ModelAndView getAssignmentsOnTarget(
             @PathVariable("target") String target,
-            @RequestParam(value = "includeInherited", required = false) boolean includeInherited,
-            HttpServletRequest request,
-            HttpServletResponse response) {
+            @RequestParam(value = "includeInherited", required = false) boolean includeInherited) {
 
-        Set<UniquePermission> directAssignments = new HashSet<UniquePermission>();
+        Set<UniquePermission> directAssignments = new HashSet<>();
 
         // first get the permissions explicitly set for this principal
         IPermission[] directPermissions = permissionStore.select(null, null, null, target, null);
@@ -310,8 +290,8 @@ public class PermissionsRESTController {
         }
 
         JsonEntityBean entity = groupListHelper.getEntityForPrincipal(target);
-        Set<UniquePermission> inheritedAssignments = new HashSet<UniquePermission>();
-        List<JsonPermission> permissions = new ArrayList<JsonPermission>();
+        Set<UniquePermission> inheritedAssignments = new HashSet<>();
+        List<JsonPermission> permissions = new ArrayList<>();
         if (entity != null) {
             IAuthorizationPrincipal p =
                     this.authorizationService.newPrincipal(
@@ -380,13 +360,13 @@ public class PermissionsRESTController {
         return mv;
     }
 
-    protected List<JsonPermission> getPermissionsForEntity(
+    private List<JsonPermission> getPermissionsForEntity(
             JsonEntityBean entity, boolean includeInherited) {
 
-        Set<UniquePermission> directAssignments = new HashSet<UniquePermission>();
+        Set<UniquePermission> directAssignments = new HashSet<>();
 
         IAuthorizationPrincipal p =
-                this.authorizationService.newPrincipal(
+                authorizationService.newPrincipal(
                         entity.getId(), entity.getEntityType().getClazz());
 
         // first get the permissions explicitly set for this principal
@@ -401,7 +381,7 @@ public class PermissionsRESTController {
                             false));
         }
 
-        Set<UniquePermission> inheritedAssignments = new HashSet<UniquePermission>();
+        Set<UniquePermission> inheritedAssignments = new HashSet<>();
         if (includeInherited) {
             IGroupMember member = GroupService.getGroupMember(p.getKey(), p.getType());
             for (IEntityGroup parent : member.getAncestorGroups()) {
@@ -421,7 +401,7 @@ public class PermissionsRESTController {
             }
         }
 
-        List<JsonPermission> rslt = new ArrayList<JsonPermission>();
+        List<JsonPermission> rslt = new ArrayList<>();
 
         for (UniquePermission permission : directAssignments) {
             if (p.hasPermission(
@@ -441,7 +421,7 @@ public class PermissionsRESTController {
         return rslt;
     }
 
-    protected JsonPermission getPermissionForPrincipal(
+    private JsonPermission getPermissionForPrincipal(
             UniquePermission permission, JsonEntityBean entity) {
 
         JsonPermission perm = new JsonPermission();
@@ -481,7 +461,7 @@ public class PermissionsRESTController {
         return perm;
     }
 
-    protected JsonPermission getPermissionOnTarget(
+    private JsonPermission getPermissionOnTarget(
             UniquePermission permission, JsonEntityBean entity) {
 
         JsonPermission perm = new JsonPermission();

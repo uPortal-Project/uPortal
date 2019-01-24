@@ -55,7 +55,7 @@ public class GroupListHelperImpl implements IGroupListHelper {
     @Override
     public Set<JsonEntityBean> search(String entityType, String searchTerm) {
 
-        Set<JsonEntityBean> results = new HashSet<JsonEntityBean>();
+        Set<JsonEntityBean> results = new HashSet<>();
 
         EntityEnum entityEnum = EntityEnum.getEntityEnum(entityType);
         if (entityEnum == null) {
