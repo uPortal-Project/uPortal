@@ -193,14 +193,15 @@ ci-après.
 5.  [Navigateurs Web supportés](NAVIGATEURS_SUPPORTES.md)
 6.  [Accessibilité](ACCESSIBILITE.md)
 7.  [Contributeurs au projet](COMMITTERS.md)
-8.  [Glossaire](GLOSSAIRE.md)
+8.  [Historique](HISTORIQUE.md)
+9.  [Glossaire](GLOSSAIRE.md)
 
 ## Liens externes
 
 * [Foundation Apereo ](https://www.apereo.org/)
 * [Wiki uPortal](https://wiki.jasig.org/display/UPC/Home)
 
-## Documentation des précédentes versions
+## Documentation des versions précédentes
 
 * [Manuel uPortal 5.0](https://github.com/Jasig/uPortal/tree/v5.0.6/docs/fr)
 * [uPortal 4.3](https://wiki.jasig.org/display/UPM43/Home)
