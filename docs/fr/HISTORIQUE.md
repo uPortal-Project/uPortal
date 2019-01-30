@@ -21,16 +21,16 @@ uPortal est un projet mature en continuel développement depuis 1999. Cette page
 
 ### Spécifications de Servlet Requises
 
-|     | 3.1 | 3.0 | 2.5 | 2.4 | Tomcat Version  |
-| --- | --- | --- | --- | --- | --------------  |
-| 5.x |  O  |  N  |  N  |  N  | 8 or 8.5        |
-| 4.3 |  O  |  N  |  N  |  N  | 8               |
-| 4.2 |  ?  |  O  |  N  |  N  | 7 (peut-être 8) |
-| 4.1 |  N  |  O  |  N  |  N  | 7               |
-| 4.0 |  N  |  N  |  O  |  N  | 6 or 7          |
-| 3.2 |  N  |  N  |  O  |  N  |                 |
-| 3.1 |  N  |  N  |  O  |  N  |                 |
-| 3.0 |  N  |  N  |  O  |  O  |                 |
+|     | 3.1 | 3.0 | 2.5 | 2.4 | Version de Tomcat  |
+| --- | --- | --- | --- | --- | -----------------  |
+| 5.x |  O  |  N  |  N  |  N  | 8 ou 8.5           |
+| 4.3 |  O  |  N  |  N  |  N  | 8                  |
+| 4.2 |  ?  |  O  |  N  |  N  | 7 (peut-être 8)    |
+| 4.1 |  N  |  O  |  N  |  N  | 7                  |
+| 4.0 |  N  |  N  |  O  |  N  | 6 ou 7             |
+| 3.2 |  N  |  N  |  O  |  N  |                    |
+| 3.1 |  N  |  N  |  O  |  N  |                    |
+| 3.0 |  N  |  N  |  O  |  O  |                    |
 
 ### Spécifications de Portlet supportées
 
