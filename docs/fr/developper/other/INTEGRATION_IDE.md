@@ -27,8 +27,9 @@ L'utilisation de ces scripts supprime le besoin de faire un import et une config
 ./gradlew eclipse
 ```
 4. Ouvrir eclipse
-6. Selectionner file > import
-7. Rechercher  "Existing Projects into Workspace"
+5. Sélectionner file > import
+6. Rechercher  "Existing Projects into Workspace"
 ![open in eclipse](../../../images/eclipse_import.png)
-7. Naviguer vers le dossier uPortal
-8. Ouvrir le dossier
+7. Sélectionner le dossier uPortal comme dossier racine
+8. Sélectionner l'option "Recherche les projets imbriqués"
+9. L'ouvrir
