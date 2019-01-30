@@ -16,6 +16,7 @@
  - Tim Levett (timlevett)
  - Timothy A Vertein (vertein)
  - William G. Thompson, Jr. (wgthom)
+ - sanghu BANG (pwer21c)
 
 ## Committers Emeriti
 
