@@ -196,3 +196,6 @@ For a full list of Gradle tasks run `./gradlew tasks` from the root directory.
 
 [latest uportal manual]: https://jasig.github.io/uPortal
 [uportal-start]: https://github.com/Jasig/uPortal-start
+
+### Gradle tâches
+A faire...
