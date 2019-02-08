@@ -2,9 +2,7 @@
   "extends": [
     "config:base",
     ":rebaseStalePrs",
-    ":preserveSemverRanges",
-    ":semanticPrefixChore",
-    ":disableRateLimiting"
+    ":preserveSemverRanges"
   ],
   "gradle": {
     "enabled": true
