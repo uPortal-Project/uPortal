@@ -234,7 +234,7 @@ public class PermissionsRESTController {
      */
     @PreAuthorize(
             "hasPermission('ALL', 'java.lang.String', new org.apereo.portal.spring.security.evaluator.AuthorizableActivity('UP_PERMISSIONS', 'VIEW_PERMISSIONS'))")
-    @RequestMapping("/v5-5/assignments/users/{username}")
+    @RequestMapping("/v5-5/permissions/assignments/users/{username}")
     public ModelAndView getAssignmentsForUser(
             @PathVariable("username") String username,
             @RequestParam(value = "includeInherited", required = false, defaultValue = "false")
