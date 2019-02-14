@@ -14,13 +14,11 @@
  */
 package org.apereo.portal.portlet.container.services;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.Lock;
-import javax.portlet.ValidatorException;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.pluto.container.PortletRequestContext;
 import org.apache.pluto.container.om.portlet.PortletDefinition;
@@ -109,7 +107,7 @@ public class PortletEntityPreferencesImpl extends AbstractPortletPreferencesImpl
     }
 
     @Override
-    protected boolean storeInternal() throws IOException, ValidatorException {
+    protected boolean storeInternal() {
         final HttpServletRequest containerRequest = portletRequestContext.getContainerRequest();
 
         final IPortletEntity portletEntity =
@@ -149,8 +147,7 @@ public class PortletEntityPreferencesImpl extends AbstractPortletPreferencesImpl
                             final Collection<IPortletPreference> values =
                                     targetPortletPreferences.values();
                             final boolean modified =
-                                    portletEntity.setPortletPreferences(
-                                            new ArrayList<IPortletPreference>(values));
+                                    portletEntity.setPortletPreferences(new ArrayList<>(values));
                             if (!modified) {
                                 // Nothing actually changed, skip the store
                                 return Boolean.FALSE;

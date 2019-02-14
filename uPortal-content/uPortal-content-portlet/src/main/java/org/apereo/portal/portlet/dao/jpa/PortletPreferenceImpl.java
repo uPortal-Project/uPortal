@@ -90,7 +90,7 @@ public class PortletPreferenceImpl implements IPortletPreference, Cloneable {
     @Type(type = "org.hibernate.type.StringType")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @Fetch(FetchMode.JOIN)
-    private List<String> values = new ArrayList<String>(0);
+    private List<String> values = new ArrayList<>(0);
 
     @Column(name = "NULL_VALUES", nullable = false)
     private boolean nullValues = true;
@@ -214,7 +214,7 @@ public class PortletPreferenceImpl implements IPortletPreference, Cloneable {
             this.values = null;
             this.nullValues = true;
         } else if (this.values == null) {
-            this.values = new ArrayList<String>(Arrays.asList(values));
+            this.values = new ArrayList<>(Arrays.asList(values));
             this.nullValues = false;
             this.valuesArray = values.clone();
         } else {
