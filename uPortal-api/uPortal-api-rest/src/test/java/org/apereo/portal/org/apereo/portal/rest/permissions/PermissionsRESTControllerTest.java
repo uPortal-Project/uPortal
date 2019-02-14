@@ -58,7 +58,7 @@ public class PermissionsRESTControllerTest {
     private MockHttpServletResponse res;
 
     @Before
-    public void setup() throws Exception {
+    public void setup() {
         permissionsRESTController = new PermissionsRESTController();
         permissionOwnerDao = Mockito.mock(JpaPermissionOwnerDao.class);
         req = new MockHttpServletRequest();
@@ -67,18 +67,18 @@ public class PermissionsRESTControllerTest {
     }
 
     @Test
-    public void testGetOwnersNull() throws Exception {
+    public void testGetOwnersNull() {
         Mockito.when(permissionOwnerDao.getAllPermissionOwners()).thenReturn(null);
-        ModelAndView modelAndView = permissionsRESTController.getOwners(req, res);
+        ModelAndView modelAndView = permissionsRESTController.getOwners();
 
         Assert.assertNull(modelAndView.getModel().get("owners"));
     }
 
     @Test
-    public void testGetOwnersEmpty() throws Exception {
+    public void testGetOwnersEmpty() {
         Mockito.when(permissionOwnerDao.getAllPermissionOwners())
                 .thenReturn(Collections.emptyList());
-        ModelAndView modelAndView = permissionsRESTController.getOwners(req, res);
+        ModelAndView modelAndView = permissionsRESTController.getOwners();
         List<IPermissionOwner> owners =
                 (List<IPermissionOwner>) modelAndView.getModel().get("owners");
 
@@ -86,7 +86,7 @@ public class PermissionsRESTControllerTest {
     }
 
     @Test
-    public void testGetOwnersByOwnerParamString() throws Exception {
+    public void testGetOwnersByOwnerParamString() {
         String ownerParam = "test";
         IPermissionOwner owner = Mockito.mock(IPermissionOwner.class);
         owner.setFname("john");
@@ -94,7 +94,7 @@ public class PermissionsRESTControllerTest {
         owner.setName("john doe");
 
         Mockito.when(permissionOwnerDao.getPermissionOwner(ownerParam)).thenReturn(owner);
-        ModelAndView modelAndView = permissionsRESTController.getOwners(ownerParam, req, res);
+        ModelAndView modelAndView = permissionsRESTController.getOwners(ownerParam, res);
         IPermissionOwner returnOwner = (IPermissionOwner) modelAndView.getModel().get("owner");
 
         Assert.assertEquals(owner.getId(), returnOwner.getId());
@@ -102,7 +102,7 @@ public class PermissionsRESTControllerTest {
     }
 
     @Test
-    public void testGetOwnersByOwnerParamNumeric() throws Exception {
+    public void testGetOwnersByOwnerParamNumeric() {
         String ownerParam = "123";
 
         IPermissionOwner owner = Mockito.mock(IPermissionOwner.class);
@@ -113,7 +113,7 @@ public class PermissionsRESTControllerTest {
         Mockito.when(permissionOwnerDao.getPermissionOwner(Long.valueOf(ownerParam)))
                 .thenReturn(owner);
 
-        ModelAndView modelAndView = permissionsRESTController.getOwners(ownerParam, req, res);
+        ModelAndView modelAndView = permissionsRESTController.getOwners(ownerParam, res);
 
         IPermissionOwner returnOwner = (IPermissionOwner) modelAndView.getModel().get("owner");
 
@@ -122,12 +122,12 @@ public class PermissionsRESTControllerTest {
     }
 
     @Test
-    public void testGetActivitiesEmpty() throws Exception {
+    public void testGetActivitiesEmpty() {
         String query = "activity1";
 
         Mockito.when(permissionOwnerDao.getAllPermissionOwners())
                 .thenReturn(Collections.EMPTY_LIST);
-        ModelAndView modelAndView = permissionsRESTController.getActivities(query, req, res);
+        ModelAndView modelAndView = permissionsRESTController.getActivities(query);
         List<IPermissionActivity> activities =
                 (List<IPermissionActivity>) modelAndView.getModel().get("activities");
 
@@ -136,7 +136,7 @@ public class PermissionsRESTControllerTest {
     }
 
     @Test
-    public void testGetActivities() throws Exception {
+    public void testGetActivities() {
         String query = "activity1";
         IPermissionOwner owner = Mockito.mock(IPermissionOwner.class);
         owner.setFname("john");
@@ -151,7 +151,7 @@ public class PermissionsRESTControllerTest {
         owners.add(owner);
 
         Mockito.when(permissionOwnerDao.getAllPermissionOwners()).thenReturn(owners);
-        ModelAndView modelAndView = permissionsRESTController.getActivities(query, req, res);
+        ModelAndView modelAndView = permissionsRESTController.getActivities(query);
         List<IPermissionActivity> activities =
                 (List<IPermissionActivity>) modelAndView.getModel().get("activities");
 
@@ -159,7 +159,7 @@ public class PermissionsRESTControllerTest {
     }
 
     @Test
-    public void testGetTargetsEmpty() throws Exception {
+    public void testGetTargetsEmpty() {
         Long activityId = 2L;
         String query = "activity1";
 
@@ -175,8 +175,7 @@ public class PermissionsRESTControllerTest {
         Mockito.when(targetProviderRegistry.getTargetProvider(activity.getTargetProviderKey()))
                 .thenReturn(provider);
 
-        ModelAndView modelAndView =
-                permissionsRESTController.getTargets(activityId, query, req, res);
+        ModelAndView modelAndView = permissionsRESTController.getTargets(activityId, query);
         Collection<IPermissionTarget> targets =
                 (Collection<IPermissionTarget>) modelAndView.getModel().get("targets");
 
@@ -186,7 +185,7 @@ public class PermissionsRESTControllerTest {
     }
 
     @Test
-    public void testGetTargetsNullActivity() throws Exception {
+    public void testGetTargetsNullActivity() {
         Long activityId = 2L;
         String query = "activity1";
 
@@ -202,15 +201,14 @@ public class PermissionsRESTControllerTest {
         Mockito.when(targetProviderRegistry.getTargetProvider(activity.getTargetProviderKey()))
                 .thenReturn(null);
 
-        ModelAndView modelAndView =
-                permissionsRESTController.getTargets(activityId, query, req, res);
+        ModelAndView modelAndView = permissionsRESTController.getTargets(activityId, query);
         Collection<IPermissionTarget> targets =
                 (Collection<IPermissionTarget>) modelAndView.getModel().get("targets");
         Assert.assertTrue(targets.isEmpty());
     }
 
     @Test(expected = NullPointerException.class)
-    public void testGetgetAssignmentsForPrincipalNullPrincipal() throws Exception {
+    public void testGetgetAssignmentsForPrincipalNullPrincipal() {
         String principal = "principal";
         boolean includeInherited = true;
         JsonEntityBean entity = buildJsonPersonEntityBean();
@@ -220,8 +218,7 @@ public class PermissionsRESTControllerTest {
                                 entity.getId(), entity.getEntityType().getClazz()))
                 .thenReturn(null);
         ModelAndView modelAndView =
-                permissionsRESTController.getAssignmentsForPrincipal(
-                        principal, includeInherited, req, res);
+                permissionsRESTController.getAssignmentsForPrincipal(principal, includeInherited);
         Collection<IPermissionTarget> targets =
                 (Collection<IPermissionTarget>) modelAndView.getModel().get("assignments");
     }
@@ -237,7 +234,7 @@ public class PermissionsRESTControllerTest {
     }
 
     @Test
-    public void testGetgetAssignmentsForTargetNull() throws Exception {
+    public void testGetgetAssignmentsForTargetNull() {
         String target = "target";
         boolean includeInherited = false;
         JsonEntityBean entity = buildJsonPersonEntityBean();
@@ -251,8 +248,7 @@ public class PermissionsRESTControllerTest {
                 .thenReturn(null);
 
         ModelAndView modelAndView =
-                permissionsRESTController.getAssignmentsOnTarget(
-                        target, includeInherited, req, res);
+                permissionsRESTController.getAssignmentsOnTarget(target, includeInherited);
 
         Collection<IPermissionTarget> assignments =
                 (Collection<IPermissionTarget>) modelAndView.getModel().get("assignments");
