@@ -68,7 +68,8 @@ public class OidcUserInfoController {
 
     @Autowired private IdTokenFactory idTokenFactory;
 
-    @Autowired private List<OAuthClient> clientList;
+    @Autowired(required = false)
+    private List<OAuthClient> clientList = Collections.emptyList();
 
     private Map<String, OAuthClient> clientMap = Collections.emptyMap();
 
