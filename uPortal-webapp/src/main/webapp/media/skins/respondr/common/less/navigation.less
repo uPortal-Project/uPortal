@@ -16,596 +16,587 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-@media screen {
-    /**
-    * For the moment, please, do not remove `max-with: @screen-xs-max` media query, the desktop css rules won't be ok:
-    * to much do/undo rules / difference hierarchy in code. will fix that later
-    * This is a special case of mobile first and it can facilate customSkin, see comments in skin.less
-    */
-    @media (max-width: @screen-xs-max) {
 
-        .row-offcanvas {
-            position: relative;
-            top: 0;
+/**
+ * Menu accessed through a (typically) 'hamburger' icon;  traditionally for small displays.
+ */
+.use-hamburger-menu-mixin {
+    position: relative;
+    top: 0;
+    left: 0;
+    -webkit-backface-visibility: hidden;
+    -moz-backface-visibility: hidden;
+    -ms-backface-visibility: hidden;
+    -o-backface-visibility: hidden;
+    backface-visibility: hidden;
+    -webkit-transition: all 350ms ease-out;
+    -moz-transition: all 350ms ease-out;
+    -o-transition: all 350ms ease-out;
+    transition: all 350ms ease-out;
+
+    /* When the sidebar is active */
+    /* TODO Put translate3d, scale3d, transition, transform-origin, backface-visibility, etc. in uPortal mixin.less */
+    &.active {
+        -webkit-transform: translate3d(270px, 0, 0) scale3d(1, 1, 1);
+        -moz-transform: translate3d(270px, 0, 0) scale3d(1, 1, 1);
+        -ms-transform: translate3d(270px, 0, 0) scale3d(1, 1, 1);
+        -o-transform: translate3d(270px, 0, 0) scale3d(1, 1, 1);
+        transform: translate3d(270px, 0, 0) scale3d(1, 1, 1);
+
+        #portalNavigation {
+            filter: ~"progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
+            opacity: 1 !important;
+            -webkit-transform: translate3d(10px, 0, 0) !important;
+            -moz-transform: translate3d(10px, 0, 0) !important;
+            -ms-transform: translate3d(10px, 0, 0) !important;
+            -o-transform: translate3d(10px, 0, 0) !important;
+            transform: translate3d(10px, 0, 0) !important;
+            z-index:4 !important;
+        }
+    }
+
+    .portal-nav {
+        background: @navbar-background-color;
+        position: relative;
+        z-index:-1; /* do not change */
+
+        .sidebar-offcanvas {
+            position: absolute;
+            top: 10px;
             left: 0;
+            -webkit-transform: translate3d(-100%, 0, 0);
+            -moz-transform: translate3d(-100%, 0, 0);
+            -ms-transform: translate3d(-100%, 0, 0);
+            -o-transform: translate3d(-100%, 0, 0);
+            transform: translate3d(-100%, 0, 0);
             -webkit-backface-visibility: hidden;
             -moz-backface-visibility: hidden;
             -ms-backface-visibility: hidden;
             -o-backface-visibility: hidden;
             backface-visibility: hidden;
-            -webkit-transition: all 350ms ease-out;
-            -moz-transition: all 350ms ease-out;
-            -o-transition: all 350ms ease-out;
-            transition: all 350ms ease-out;
 
-            /* When the sidebar is active */
-            /* TODO Put translate3d, scale3d, transition, transform-origin, backface-visibility, etc. in uPortal mixin.less */
-            &.active {
-                -webkit-transform: translate3d(270px, 0, 0) scale3d(1, 1, 1);
-                -moz-transform: translate3d(270px, 0, 0) scale3d(1, 1, 1);
-                -ms-transform: translate3d(270px, 0, 0) scale3d(1, 1, 1);
-                -o-transform: translate3d(270px, 0, 0) scale3d(1, 1, 1);
-                transform: translate3d(270px, 0, 0) scale3d(1, 1, 1);
+            #portalNavigation {
+                top: @mobile-navbar-top-position;
+                filter: ~"progid:DXImageTransform.Microsoft.Alpha(Opacity=70)";
+                opacity: 0.7;
+                -webkit-transition: z-index 350ms ease,  opacity 350ms, -webkit-transform 350ms ease;
+                -webkit-transition-delay: ease, 0s;
+                -moz-transition: z-index 350ms ease,  opacity 350msease, -moz-transform 350ms ease;
+                -o-transition: z-index 350ms ease,  opacity 350ms ease, -o-transform 350ms ease;
+                transition: z-index 350ms ease, opacity 350ms ease, transform 350ms ease;
+                -webkit-transform: translate3d(270px, 0, 0) scale3d(0.9, 0.9, 0.9);
+                -moz-transform: translate3d(270px, 0, 0) scale3d(0.9, 0.9, 0.9);
+                -ms-transform: translate3d(270px, 0, 0) scale3d(0.9, 0.9, 0.9);
+                -o-transform: translate3d(270px, 0, 0) scale3d(0.9, 0.9, 0.9);
+                transform: translate3d(270px, 0, 0) scale3d(0.9, 0.9, 0.9);
+                -webkit-transform-origin: 50% 0%;
+                -moz-transform-origin: 50% 0%;
+                -ms-transform-origin: 50% 0%;
+                -o-transform-origin: 50% 0%;
+                transform-origin: 50% 0%;
+                position:relative;
+                z-index:-10; /* do not change */
 
-                #portalNavigation {
-                    filter: ~"progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
-                    opacity: 1 !important;
-                    -webkit-transform: translate3d(10px, 0, 0) !important;
-                    -moz-transform: translate3d(10px, 0, 0) !important;
-                    -ms-transform: translate3d(10px, 0, 0) !important;
-                    -o-transform: translate3d(10px, 0, 0) !important;
-                    transform: translate3d(10px, 0, 0) !important;
-                    z-index:4 !important;
-                }
-            }
+                ul.menu {
+                    .inline-block-list;
+                    background-color: transparent;
+                    width: 260px;
 
-            .portal-nav {
-                background: @navbar-background-color;
-                position: relative;
-                z-index:-1; /* do not change */
-
-                .sidebar-offcanvas {
-                    position: absolute;
-                    top: 10px;
-                    left: 0;
-                    -webkit-transform: translate3d(-100%, 0, 0);
-                    -moz-transform: translate3d(-100%, 0, 0);
-                    -ms-transform: translate3d(-100%, 0, 0);
-                    -o-transform: translate3d(-100%, 0, 0);
-                    transform: translate3d(-100%, 0, 0);
-                    -webkit-backface-visibility: hidden;
-                    -moz-backface-visibility: hidden;
-                    -ms-backface-visibility: hidden;
-                    -o-backface-visibility: hidden;
-                    backface-visibility: hidden;
-
-                    #portalNavigation {
-                        top: @mobile-navbar-top-position;
-                        filter: ~"progid:DXImageTransform.Microsoft.Alpha(Opacity=70)";
-                        opacity: 0.7;
-                        -webkit-transition: z-index 350ms ease,  opacity 350ms, -webkit-transform 350ms ease;
-                        -webkit-transition-delay: ease, 0s;
-                        -moz-transition: z-index 350ms ease,  opacity 350msease, -moz-transform 350ms ease;
-                        -o-transition: z-index 350ms ease,  opacity 350ms ease, -o-transform 350ms ease;
-                        transition: z-index 350ms ease, opacity 350ms ease, transform 350ms ease;
-                        -webkit-transform: translate3d(270px, 0, 0) scale3d(0.9, 0.9, 0.9);
-                        -moz-transform: translate3d(270px, 0, 0) scale3d(0.9, 0.9, 0.9);
-                        -ms-transform: translate3d(270px, 0, 0) scale3d(0.9, 0.9, 0.9);
-                        -o-transform: translate3d(270px, 0, 0) scale3d(0.9, 0.9, 0.9);
-                        transform: translate3d(270px, 0, 0) scale3d(0.9, 0.9, 0.9);
-                        -webkit-transform-origin: 50% 0%;
-                        -moz-transform-origin: 50% 0%;
-                        -ms-transform-origin: 50% 0%;
-                        -o-transform-origin: 50% 0%;
-                        transform-origin: 50% 0%;
-                        position:relative;
-                        z-index:-10; /* do not change */
-
-                        ul.menu {
-                            .inline-block-list;
-                            background-color: transparent;
-                            width: 260px;
-
-                            .list-group-item {
-                                padding: 0px;
-                                border-bottom: 1px solid lighten(@offcanvas-background-color, 25%);
-                                border-left: 0px solid lighten(@offcanvas-background-color, 25%);
-                                border-right: 0px solid lighten(@offcanvas-background-color, 25%);
-                                border-top: 1px solid lighten(@offcanvas-background-color, 25%);
-                                border-radius: 0 !important;
-                                background-color: @mobile-navbar-item-background-color;
+                    .list-group-item {
+                        padding: 0px;
+                        border-bottom: 1px solid lighten(@offcanvas-background-color, 25%);
+                        border-left: 0px solid lighten(@offcanvas-background-color, 25%);
+                        border-right: 0px solid lighten(@offcanvas-background-color, 25%);
+                        border-top: 1px solid lighten(@offcanvas-background-color, 25%);
+                        border-radius: 0 !important;
+                        background-color: @mobile-navbar-item-background-color;
 
 
-                                &.active, &.active:hover, &.active:focus {
-                                    z-index: 2;
-                                    color: @mobile-navbar-item-active-text-color;
-                                    background-color: @mobile-navbar-item-active-background-color;
-                                    border-color: transparent;
-                                }
+                        &.active, &.active:hover, &.active:focus {
+                            z-index: 2;
+                            color: @mobile-navbar-item-active-text-color;
+                            background-color: @mobile-navbar-item-active-background-color;
+                            border-color: transparent;
+                        }
 
-                                &.active {
-                                    z-index: 2;
-                                    color: @mobile-navbar-item-active-text-color;
-                                    background-color: @mobile-navbar-item-active-background-color;
-                                    border-color: transparent;
+                        &.active {
+                            z-index: 2;
+                            color: @mobile-navbar-item-active-text-color;
+                            background-color: @mobile-navbar-item-active-background-color;
+                            border-color: transparent;
 
-                                    &.open {
-                                        a.dropdown-toggle {
-                                            &:focus, &:active {
-                                                color: @navbar-controls-color;
-                                            }
-                                        }
-                                    }
-
-                                    a {
-                                        color: @mobile-navbar-item-active-text-color !important;
-                                        &.portal-navigation-gripper {
-                                            position: absolute;
-                                            background: none;
-                                            top: 0;
-                                            left: 2px;
-                                            font-size: 6pt;
-                                            padding: 2px;
-                                            color: @navbar-controls-color;
-                                            cursor: move;
-                                            line-height: normal;
-                                            display: inline;
-                                            opacity: .2;
-
-                                            &:hover {
-                                                color: @navbar-controls-hover-color;
-                                                opacity: .9;
-                                            }
-
-                                            span {
-                                                display: none;
-                                            }
-                                        }
-
-                                        &.portal-navigation-delete {
-                                            position: absolute;
-                                            background: none;
-                                            top: 0;
-                                            right: 0;
-                                            padding: 3px;
-                                            margin-right: -1px;
-                                            font-size: 8pt;
-                                            line-height: normal;
-                                            margin-top: -3px;
-                                            color: @navbar-controls-color;
-                                            display: inline;
-                                            opacity: .2;
-
-                                            &:hover {
-                                                color: @navbar-controls-hover-color;
-                                                opacity: .9;
-                                            }
-
-                                            span {
-                                                display: none;
-                                            }
-                                        }
+                            &.open {
+                                a.dropdown-toggle {
+                                    &:focus, &:active {
+                                        color: @navbar-controls-color;
                                     }
                                 }
+                            }
 
-                                &.portal-navigation-add-item {
-                                    padding: 8px 12px;
-                                }
+                            a {
+                                color: @mobile-navbar-item-active-text-color !important;
+                                &.portal-navigation-gripper {
+                                    position: absolute;
+                                    background: none;
+                                    top: 0;
+                                    left: 2px;
+                                    font-size: 6pt;
+                                    padding: 2px;
+                                    color: @navbar-controls-color;
+                                    cursor: move;
+                                    line-height: normal;
+                                    display: inline;
+                                    opacity: .2;
 
-                                &.useflyout {
-                                    a.portal-navigation-link, div.fl-inlineEditContainer {
-                                        padding-left: 29px !important;
-                                        margin-bottom: -24px; /* do not change */
-                                    }
-                                }
-
-                                a {
-                                    &.portal-navigation-link {
-                                        display: block;
-                                        color: @navbar-item-text-color;
-                                        background: @navbar-item-background-color;
-                                        font-weight: inherit;
-                                        text-decoration: none;
-                                        padding: 8px 24px;
-                                        width:100%;
-                                        min-width: 100%;
-
-                                        &.disabled {
-                                            pointer-events: none;
-                                            cursor: default;
-                                        }
-
-                                        &:hover, &:focus {
-                                            background: @navbar-item-hover-background-color;
-                                            color: @navbar-item-hover-text-color;
-
-                                            i {
-                                                opacity: 1;
-                                            }
-                                        }
-
-                                        i {
-                                            float: right;
-                                            margin-top: 2px;
-                                            margin-right: -6px;
-                                            opacity: .5;
-                                        }
-
+                                    &:hover {
+                                        color: @navbar-controls-hover-color;
+                                        opacity: .9;
                                     }
 
-                                    &.portal-navigation-gripper, &.portal-navigation-delete {
+                                    span {
                                         display: none;
                                     }
-
-                                    &.dropdown-toggle.portal-navigation-dropdown {
-                                        display: inline-block;
-                                        position: relative;
-                                        width: 26px;
-                                        top: -5px;
-
-                                        &:hover, &:focus, &:active {
-                                            background-color: transparent;
-                                        }
-
-                                        &:focus {
-                                            outline: dotted 1px;
-                                        }
-
-                                        .caret {
-                                            margin: 10px 7px;
-                                            -webkit-transform: rotate(-90deg);
-                                            -moz-transform: rotate(-90deg);
-                                            -o-transform: rotate(-90deg);
-                                            -ms-transform: rotate(-90deg);
-                                            transform: rotate(-90deg);
-                                            -webkit-transition: transform 150ms ease-out;
-                                            -moz-transition: transform 150ms ease-out;
-                                            -o-transition: transform 150ms ease-out;
-                                            transition: transform 150ms ease-out;
-                                        }
-
-                                    }
-
                                 }
 
-                                div.fl-inlineEditContainer {
-                                    background: @navbar-item-active-background-color;
-                                    padding: 2px 15px 3px;
+                                &.portal-navigation-delete {
+                                    position: absolute;
+                                    background: none;
+                                    top: 0;
+                                    right: 0;
+                                    padding: 3px;
+                                    margin-right: -1px;
+                                    font-size: 8pt;
+                                    line-height: normal;
+                                    margin-top: -3px;
+                                    color: @navbar-controls-color;
+                                    display: inline;
+                                    opacity: .2;
 
-                                    input.flc-inlineEdit-edit {
-                                        border: medium none;
-                                        color: @grayscale10;
-                                        margin-top: 8px;
-                                        margin-bottom: 7px;
-                                        margin-right: 5px;
+                                    &:hover {
+                                        color: @navbar-controls-hover-color;
+                                        opacity: .9;
                                     }
 
-                                    p.fl-inlineEdit-editModeInstruction {
-                                        height: 0;
-                                        overflow: hidden;
-                                        width: 0;
+                                    span {
+                                        display: none;
+                                    }
+                                }
+                            }
+                        }
+
+                        &.portal-navigation-add-item {
+                            padding: 8px 12px;
+                        }
+
+                        &.useflyout {
+                            a.portal-navigation-link, div.fl-inlineEditContainer {
+                                padding-left: 29px !important;
+                                margin-bottom: -24px; /* do not change */
+                            }
+                        }
+
+                        a {
+                            &.portal-navigation-link {
+                                display: block;
+                                color: @navbar-item-text-color;
+                                background: @navbar-item-background-color;
+                                font-weight: inherit;
+                                text-decoration: none;
+                                padding: 8px 24px;
+                                width:100%;
+                                min-width: 100%;
+
+                                &.disabled {
+                                    pointer-events: none;
+                                    cursor: default;
+                                }
+
+                                &:hover, &:focus {
+                                    background: @navbar-item-hover-background-color;
+                                    color: @navbar-item-hover-text-color;
+
+                                    i {
+                                        opacity: 1;
                                     }
                                 }
 
-                                ul.dropdown-menu {
-                                    position:relative;
-                                    top:0;
-                                    float:none;
-                                    min-width:160px;
-                                    padding:0px;
-                                    border-radius:0px;
-
-                                    li.portal-subnav {
-                                        border-bottom: 1px solid @black;
-                                        width: 100%;
-                                        min-width: 100%;
-                                        color: @black;
-
-                                        &:lastchild {
-                                            border-bottom: 0px solid @black;
-                                        }
-
-                                        a.portal-subnav-link {
-                                            width: 100%;
-                                            min-width: 100%;
-                                            color: @black !important;
-                                            background-color: @white;
-                                        }
-                                        a {
-                                            &:hover, &:focus {
-                                                background: @navbar-item-active-hover-background-color;
-                                                color: @mobile-navbar-flyout-item-active-hover-text-color !important;
-                                            }
-                                        }
-                                    }
+                                i {
+                                    float: right;
+                                    margin-top: 2px;
+                                    margin-right: -6px;
+                                    opacity: .5;
                                 }
 
                             }
-                            /* Rotate the caret if the subnav is open */
-                            .open {
-                                [aria-expanded="true"] {
-                                    .caret {
-                                        -webkit-transform: rotate(0deg) !important;
-                                        -moz-transform: rotate(0deg) !important;
-                                        -o-transform: rotate(0deg) !important;
-                                        -ms-transform: rotate(0deg) !important;
-                                        transform: rotate(0deg) !important;
+
+                            &.portal-navigation-gripper, &.portal-navigation-delete {
+                                display: none;
+                            }
+
+                            &.dropdown-toggle.portal-navigation-dropdown {
+                                display: inline-block;
+                                position: relative;
+                                width: 26px;
+                                top: -5px;
+
+                                &:hover, &:focus, &:active {
+                                    background-color: transparent;
+                                }
+
+                                &:focus {
+                                    outline: dotted 1px;
+                                }
+
+                                .caret {
+                                    margin: 10px 7px;
+                                    -webkit-transform: rotate(-90deg);
+                                    -moz-transform: rotate(-90deg);
+                                    -o-transform: rotate(-90deg);
+                                    -ms-transform: rotate(-90deg);
+                                    transform: rotate(-90deg);
+                                    -webkit-transition: transform 150ms ease-out;
+                                    -moz-transition: transform 150ms ease-out;
+                                    -o-transition: transform 150ms ease-out;
+                                    transition: transform 150ms ease-out;
+                                }
+
+                            }
+
+                        }
+
+                        div.fl-inlineEditContainer {
+                            background: @navbar-item-active-background-color;
+                            padding: 2px 15px 3px;
+
+                            input.flc-inlineEdit-edit {
+                                border: medium none;
+                                color: @grayscale10;
+                                margin-top: 8px;
+                                margin-bottom: 7px;
+                                margin-right: 5px;
+                            }
+
+                            p.fl-inlineEdit-editModeInstruction {
+                                height: 0;
+                                overflow: hidden;
+                                width: 0;
+                            }
+                        }
+
+                        ul.dropdown-menu {
+                            position:relative;
+                            top:0;
+                            float:none;
+                            min-width:160px;
+                            padding:0px;
+                            border-radius:0px;
+
+                            li.portal-subnav {
+                                border-bottom: 1px solid @black;
+                                width: 100%;
+                                min-width: 100%;
+                                color: @black;
+
+                                &:lastchild {
+                                    border-bottom: 0px solid @black;
+                                }
+
+                                a.portal-subnav-link {
+                                    width: 100%;
+                                    min-width: 100%;
+                                    color: @black !important;
+                                    background-color: @white;
+                                }
+                                a {
+                                    &:hover, &:focus {
+                                        background: @navbar-item-active-hover-background-color;
+                                        color: @mobile-navbar-flyout-item-active-hover-text-color !important;
                                     }
                                 }
+                            }
+                        }
+
+                    }
+                    /* Rotate the caret if the subnav is open */
+                    .open {
+                        [aria-expanded="true"] {
+                            .caret {
+                                -webkit-transform: rotate(0deg) !important;
+                                -moz-transform: rotate(0deg) !important;
+                                -o-transform: rotate(0deg) !important;
+                                -ms-transform: rotate(0deg) !important;
+                                transform: rotate(0deg) !important;
                             }
                         }
                     }
                 }
             }
         }
-
     }
+}
 
-    @media (min-width: @screen-sm-min) {
+/**
+ * Menu accessed through tabs;  traditionally for large displays.
+ */
+.use-tabs-menu-mixin {
+    /* Intended to undo the rules for small displays above */
+    position: initial;
+    left: initial;
+    -webkit-transition: initial;
+    -o-transition: initial;
+    transition: initial;
 
-        .row-offcanvas {
-            /* Intended to undo the rules for small displays above */
-            position: initial;
-            left: initial;
-            -webkit-transition: initial;
-            -o-transition: initial;
-            transition: initial;
+    /* Added to the hierarchy to insure that these rules are at least as specific as above */
+    #wrapper {
+        .menu-toggle {
+            display: none;
+        }
 
-            /* Added to the hierarchy to insure that these rules are at least as specific as above */
-            #wrapper {
-                .menu-toggle {
-                    display: none;
+        /*
+        * Convert navigation from toggled block menu to inline tabs.
+        */
+        .portal-nav {
+            background: @navbar-background-color;
+            border-top: @navbar-border-size solid @navbar-border-color;
+            border-bottom: @navbar-border-size solid @navbar-border-color;
+            font-weight: @navbar-item-font-weight;
+
+            .sidebar-offcanvas {
+                /* Intended to undo the rules for small displays above */
+                position: initial;
+                top: initial;
+                left: initial;
+                width: initial;
+                -webkit-transform: none !important;
+                -moz-transform: none !important;
+                -ms-transform: none !important;
+                -o-transform: none !important;
+                transform: none !important;
+
+                #portalNavigation {
+                    -webkit-transform: none !important;
+                    -moz-transform: none !important;
+                    -ms-transform: none !important;
+                    -o-transform: none !important;
+                    transform: none !important;
                 }
+                ul.menu {
+                    display: block;
+                    .inline-block-list;
+                    margin-left: 64px;
+                    width: initial;
 
-                /*
-                * Convert navigation from toggled block menu to inline tabs.
-                */
-                .portal-nav {
-                    background: @navbar-background-color;
-                    border-top: @navbar-border-size solid @navbar-border-color;
-                    border-bottom: @navbar-border-size solid @navbar-border-color;
-                    font-weight: @navbar-item-font-weight;
-
-                    .sidebar-offcanvas {
-                        /* Intended to undo the rules for small displays above */
-                        position: initial;
-                        top: initial;
-                        left: initial;
-                        width: initial;
-                        -webkit-transform: none !important;
-                        -moz-transform: none !important;
-                        -ms-transform: none !important;
-                        -o-transform: none !important;
-                        transform: none !important;
-
-                        #portalNavigation {
-                            -webkit-transform: none !important;
-                            -moz-transform: none !important;
-                            -ms-transform: none !important;
-                            -o-transform: none !important;
-                            transform: none !important;
+                    :not(.active).list-group-item {
+                        &:hover, &:focus {
+                            background-color: @navbar-item-hover-background-color;
+                            color: @navbar-item-hover-text-color;
                         }
-                        ul.menu {
-                            display: block;
-                            .inline-block-list;
-                            margin-left: 64px;
-                            width: initial;
+                    }
 
-                            :not(.active).list-group-item {
-                                &:hover, &:focus {
-                                    background-color: @navbar-item-hover-background-color;
-                                    color: @navbar-item-hover-text-color;
-                                }
-                            }
+                    .active {
+                        .portal-navigation-link {
+                            float: left;
+                        }
 
-                            .active {
-                                .portal-navigation-link {
-                                    float: left;
-                                }
+                    }
 
-                            }
+                    .caret {
+                        -webkit-transition: transform 150ms ease-out;
+                        -moz-transition: transform 150ms ease-out;
+                        -o-transition: transform 150ms ease-out;
+                        transition: transform 150ms ease-out;
+                        -webkit-transform: rotate(0deg);
+                        -moz-transform: rotate(0deg);
+                        -o-transform: rotate(0deg);
+                        -ms-transform: rotate(0deg);
+                        transform: rotate(0deg);
+                    }
 
+                    .open {
+                        [aria-expanded="true"] {
                             .caret {
-                                -webkit-transition: transform 150ms ease-out;
-                                -moz-transition: transform 150ms ease-out;
-                                -o-transition: transform 150ms ease-out;
-                                transition: transform 150ms ease-out;
+                              /* if you need to animate the caret of the flyout on desktop, put 180deg instead of 0deg */
                                 -webkit-transform: rotate(0deg);
                                 -moz-transform: rotate(0deg);
                                 -o-transform: rotate(0deg);
                                 -ms-transform: rotate(0deg);
                                 transform: rotate(0deg);
                             }
+                        }
+                    }
 
-                            .open {
-                                [aria-expanded="true"] {
-                                    .caret {
-                                      /* if you need to animate the caret of the flyout on desktop, put 180deg instead of 0deg */
-                                        -webkit-transform: rotate(0deg);
-                                        -moz-transform: rotate(0deg);
-                                        -o-transform: rotate(0deg);
-                                        -ms-transform: rotate(0deg);
-                                        transform: rotate(0deg);
-                                    }
+                    .list-group-item {
+                        display: inline-block;
+                        margin-bottom: 0;
+                        margin-left: -4px;
+                        margin-right: 0;
+                        border: none;
+                        border-radius: 0 !important;
+                        .float;
+                        border-width: 0px;
+                        background-color: transparent;
+
+                        &:last-child {
+                            border-bottom: initial;
+                        }
+
+                        a.portal-navigation-link {
+                            display: inline-block;
+                            /*line-height: 30px;*/
+                            margin: 0;
+                            padding: 1px 5px;
+
+                            &:hover, &:focus {
+                                background-color: transparent;
+                                color: @navbar-item-hover-text-color;
+                            }
+                        }
+
+                        a {
+                            &.portal-navigation-gripper {
+                                position: absolute;
+                                background: none;
+                                top: 0;
+                                left: 2px;
+                                font-size: 6pt;
+                                padding: 2px;
+                                color: @navbar-controls-color;
+                                cursor: move;
+                                line-height: normal;
+                                display: inline;
+                                opacity: .2;
+
+                                &:hover {
+                                    color: @navbar-controls-hover-color;
+                                    opacity: .9;
+                                }
+
+                                &:focus {
+                                    outline: dotted 1px;
+                                }
+
+                                span {
+                                    display: none;
                                 }
                             }
 
-                            .list-group-item {
-                                display: inline-block;
-                                margin-bottom: 0;
-                                margin-left: -4px;
-                                margin-right: 0;
-                                border: none;
-                                border-radius: 0 !important;
-                                .float;
-                                border-width: 0px;
-                                background-color: transparent;
+                            &.portal-navigation-delete {
+                                position: absolute;
+                                background: none;
+                                top: 0;
+                                right: 0;
+                                padding: 3px;
+                                margin-right: -1px;
+                                font-size: 8pt;
+                                line-height: normal;
+                                margin-top: -3px;
+                                color: @navbar-controls-color;
+                                display: inline;
+                                opacity: .2;
 
-                                &:last-child {
-                                    border-bottom: initial;
+                                &:hover {
+                                    color: @navbar-controls-hover-color;
+                                    opacity: .9;
                                 }
 
-                                a.portal-navigation-link {
-                                    display: inline-block;
-                                    /*line-height: 30px;*/
-                                    margin: 0;
-                                    padding: 1px 5px;
+                                &:focus {
+                                    outline: dotted 1px;
+                                }
 
-                                    &:hover, &:focus {
-                                        background-color: transparent;
-                                        color: @navbar-item-hover-text-color;
-                                    }
+                                span {
+                                    display: none;
+                                }
+                            }
+                        }
+
+                        div.fl-inlineEditContainer {
+                            background: @navbar-item-active-background-color;
+                            padding: 0px 4px;
+
+                            input.flc-inlineEdit-edit {
+                                border: medium none;
+                                color: @grayscale10;
+                                margin: 0 auto;
+                            }
+                            p.fl-inlineEdit-editModeInstruction {
+                                height: 0;
+                                overflow: hidden;
+                                width: 0;
+                            }
+                        }
+
+                        &.useflyout {
+                            a.portal-navigation-link, div.fl-inlineEditContainer {
+                                padding: 1px 5px;
+                                width: auto;
+                            }
+
+                            div.fl-inlineEditContainer {
+                                float:left;
+                            }
+                        }
+
+                        a.dropdown-toggle.portal-navigation-dropdown {
+                            float: right;
+                            left: 3px;
+                            position: relative;
+                            top: 0;
+                            /* increase clickable size of dropdown toggle */
+                            padding: 0 5px 5px;
+                            margin: 0 -5px -5px;
+
+                            &:focus {
+                                outline: dotted 1px;
+                            }
+                        }
+
+                        .dropdown-menu {
+                            position: absolute;
+                            top:100%;
+                            border-radius:0px;
+                            padding:0px;
+                            margin-top:-1px; /* do not remove */
+
+                            li.portal-subnav {
+                                border-bottom: 1px solid @black;
+                                width: 100%;
+                                min-width: 100%;
+                                color: @black;
+
+                                &:lastchild {
+                                    border-bottom: 0px solid @black;
+                                }
+
+                                a.portal-subnav-link {
+                                    width: 100%;
+                                    min-width: 100%;
+                                    color: @black;
+                                    background-color: @white;
+                                    z-index:6;
                                 }
 
                                 a {
-                                    &.portal-navigation-gripper {
-                                        position: absolute;
-                                        background: none;
-                                        top: 0;
-                                        left: 2px;
-                                        font-size: 6pt;
-                                        padding: 2px;
-                                        color: @navbar-controls-color;
-                                        cursor: move;
-                                        line-height: normal;
-                                        display: inline;
-                                        opacity: .2;
-
-                                        &:hover {
-                                            color: @navbar-controls-hover-color;
-                                            opacity: .9;
-                                        }
-
-                                        &:focus {
-                                            outline: dotted 1px;
-                                        }
-
-                                        span {
-                                            display: none;
-                                        }
-                                    }
-
-                                    &.portal-navigation-delete {
-                                        position: absolute;
-                                        background: none;
-                                        top: 0;
-                                        right: 0;
-                                        padding: 3px;
-                                        margin-right: -1px;
-                                        font-size: 8pt;
-                                        line-height: normal;
-                                        margin-top: -3px;
-                                        color: @navbar-controls-color;
-                                        display: inline;
-                                        opacity: .2;
-
-                                        &:hover {
-                                            color: @navbar-controls-hover-color;
-                                            opacity: .9;
-                                        }
-
-                                        &:focus {
-                                            outline: dotted 1px;
-                                        }
-
-                                        span {
-                                            display: none;
-                                        }
-                                    }
-                                }
-
-                                div.fl-inlineEditContainer {
-                                    background: @navbar-item-active-background-color;
-                                    padding: 0px 4px;
-
-                                    input.flc-inlineEdit-edit {
-                                        border: medium none;
-                                        color: @grayscale10;
-                                        margin: 0 auto;
-                                    }
-                                    p.fl-inlineEdit-editModeInstruction {
-                                        height: 0;
-                                        overflow: hidden;
-                                        width: 0;
-                                    }
-                                }
-
-                                &.useflyout {
-                                    a.portal-navigation-link, div.fl-inlineEditContainer {
-                                        padding: 1px 5px;
-                                        width: auto;
-                                    }
-
-                                    div.fl-inlineEditContainer {
-                                        float:left;
-                                    }
-                                }
-
-                                a.dropdown-toggle.portal-navigation-dropdown {
-                                    float: right;
-                                    left: 3px;
-                                    position: relative;
-                                    top: 0;
-                                    /* increase clickable size of dropdown toggle */
-                                    padding: 0 5px 5px;
-                                    margin: 0 -5px -5px;
-
-                                    &:focus {
-                                        outline: dotted 1px;
-                                    }
-                                }
-
-                                .dropdown-menu {
-                                    position: absolute;
-                                    top:100%;
-                                    border-radius:0px;
-                                    padding:0px;
-                                    margin-top:-1px; /* do not remove */
-
-                                    li.portal-subnav {
-                                        border-bottom: 1px solid @black;
-                                        width: 100%;
-                                        min-width: 100%;
-                                        color: @black;
-
-                                        &:lastchild {
-                                            border-bottom: 0px solid @black;
-                                        }
-
-                                        a.portal-subnav-link {
-                                            width: 100%;
-                                            min-width: 100%;
-                                            color: @black;
-                                            background-color: @white;
-                                            z-index:6;
-                                        }
-
-                                        a {
-                                            &:hover, &:focus {
-                                                background: @navbar-item-active-hover-background-color;
-                                                color: @white;
-                                            }
-                                        }
+                                    &:hover, &:focus {
+                                        background: @navbar-item-active-hover-background-color;
+                                        color: @white;
                                     }
                                 }
                             }
-
-                            .active {
-                                background-color: @navbar-item-active-background-color;
-                                color: @navbar-item-active-text-color;
-                                &:hover, &:focus {
-                                    .portal-navigation-gripper {
-                                        background-color: transparent;
-                                    }
-                                }
-                            }
-
-                            li.portal-navigation-add-item {
-                                padding: 11px 6px;
-                            }
-
                         }
+                    }
 
+                    .active {
+                        background-color: @navbar-item-active-background-color;
+                        color: @navbar-item-active-text-color;
+                        &:hover, &:focus {
+                            .portal-navigation-gripper {
+                                background-color: transparent;
+                            }
+                        }
+                    }
+
+                    li.portal-navigation-add-item {
+                        padding: 11px 6px;
                     }
 
                 }
@@ -615,4 +606,48 @@
         }
 
     }
+}
+
+@media screen {
+    /**
+    * For the moment, please, do not remove `max-with: @screen-xs-max` media query, the desktop css rules won't be ok:
+    * to much do/undo rules / difference hierarchy in code. will fix that later
+    * This is a special case of mobile first and it can facilitate customSkin, see comments in skin.less
+    */
+
+    /* Class 'up-use-tabs-none' and screens under @screen-sm-max are always hamburger */
+    .row-offcanvas.up-use-tabs-none {
+        .use-hamburger-menu-mixin();
+    }
+
+    /* Class 'up-use-tabs-sm' uses tabs above @screen-sm-min */
+    .row-offcanvas.up-use-tabs-sm {
+        @media (max-width: @screen-xs-max) {
+            .use-hamburger-menu-mixin();
+        }
+        @media (min-width: @screen-sm-min) {
+            .use-tabs-menu-mixin();
+        }
+    }
+
+    /* Class 'up-use-tabs-md' uses tabs above @screen-md-min */
+    .row-offcanvas.up-use-tabs-md {
+        @media (max-width: @screen-sm-max) {
+            .use-hamburger-menu-mixin();
+        }
+        @media (min-width: @screen-md-min) {
+            .use-tabs-menu-mixin();
+        }
+    }
+
+    /* Class 'up-use-tabs-lg' uses tabs above @screen-lg-min */
+    .row-offcanvas.up-use-tabs-lg {
+        @media (max-width: @screen-md-max) {
+            .use-hamburger-menu-mixin();
+        }
+        @media (min-width: @screen-lg-min) {
+            .use-tabs-menu-mixin();
+        }
+    }
+
 }

@@ -145,6 +145,7 @@
 <xsl:param name="skin">defaultSkin</xsl:param>
 <xsl:param name="CONTEXT_PATH">/NOT_SET</xsl:param>
 <xsl:param name="PORTAL_SHORTCUT_ICON" select="concat($CONTEXT_PATH,'/favicon.ico')" />
+<xsl:param name="USE_TABS_SIZE">sm</xsl:param><!-- Default:  show tabs (instead of hamburger) on sm and larger screens -->
 <xsl:variable name="SKIN" select="$skin"/>
 <xsl:variable name="MEDIA_PATH">media/skins/respondr</xsl:variable>
 <xsl:variable name="ABSOLUTE_MEDIA_PATH" select="concat($CONTEXT_PATH,'/',$MEDIA_PATH)"/>
@@ -643,22 +644,17 @@
             <xsl:for-each select="//header/descendant::channel-header">
                 <xsl:copy-of select="."/>
             </xsl:for-each>
-            <!-- Respondr:  Ignore channels in header section (legacy feature).  Respondr respects portlets
-                 using RENDER_HEADERS to include content in header area.
-            <xsl:for-each select="//header/descendant::channel">
-                <xsl:copy-of select="."/>
-            </xsl:for-each>
-            -->
             <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
         </head>
         <body>
           <xsl:attribute name="class">
             <xsl:text>up dashboard portal fl-theme-mist</xsl:text>
-            <xsl:if test="$PORTAL_VIEW='focused'"> up-focused</xsl:if>
-            <xsl:if test="$AUTHENTICATED!='true'"> up-guest</xsl:if>
+            <xsl:if test="$PORTAL_VIEW = 'focused'"> up-focused</xsl:if>
+            <xsl:if test="$AUTHENTICATED != 'true'"> up-guest</xsl:if>
           </xsl:attribute>
           <xsl:call-template name="skipnav" />
-          <div class="row-offcanvas">
+          <!-- Apply the 'row-offcanvas' class, and also a second class that indicates when to switch to the tabs (from the hamburger menu), if ever -->
+          <div class="row-offcanvas up-use-tabs-{$USE_TABS_SIZE}">
             <div id="up-notification"></div>
             <div id="wrapper">
                 <xsl:call-template name="region.hidden-top" />
