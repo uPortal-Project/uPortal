@@ -129,6 +129,9 @@ public class RenderingPipelineConfiguration {
     @Value("${org.apereo.portal.layout.faviconPath:#{null}}")
     private String faviconPath;
 
+    @Value("${org.apereo.portal.layout.useTabsSize:#{null}}")
+    private String useTabsSize;
+
     @Resource(name = "org.apereo.portal.rendering.THEME_TRANSFORM")
     private Cache themeTransformCache;
 
@@ -425,6 +428,9 @@ public class RenderingPipelineConfiguration {
         parameters.put("USE_FLYOUT_MENUS", useFlyoutMenus);
         if (faviconPath != null) {
             parameters.put("PORTAL_SHORTCUT_ICON", faviconPath);
+        }
+        if (useTabsSize != null) {
+            parameters.put("USE_TABS_SIZE", useTabsSize);
         }
 
         final Map<String, String> parameterExpressions = new HashMap<>();
