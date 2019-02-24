@@ -239,8 +239,7 @@ public class FavoritesUtils {
         final Set<IPortletDefinition> rslt = new HashSet<>();
         final List<IUserLayoutNodeDescription> favoriteLayoutNodes =
                 getFavoritePortletLayoutNodes(layout);
-        favoriteLayoutNodes
-                .stream()
+        favoriteLayoutNodes.stream()
                 .forEach(
                         node -> {
                             if (IUserLayoutChannelDescription.class.isInstance(node)) {

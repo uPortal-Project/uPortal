@@ -784,8 +784,7 @@ public class CorsFilter implements Filter {
     public void setAllowedHttpMethods(String allowedHttpMethods) {
         log.debug("setAllowedHttpMethods set to {}", allowedHttpMethods);
         Set<String> setAllowedHttpMethods =
-                parseStringToSet(allowedHttpMethods)
-                        .stream()
+                parseStringToSet(allowedHttpMethods).stream()
                         .map(x -> x.toUpperCase(Locale.ENGLISH))
                         .collect(Collectors.toSet());
         this.allowedHttpMethods.clear();
@@ -799,8 +798,7 @@ public class CorsFilter implements Filter {
         } else {
             this.anyOriginAllowed = false;
             Set<String> setAllowedOrigins =
-                    parseStringToSet(allowedOrigins)
-                            .stream()
+                    parseStringToSet(allowedOrigins).stream()
                             .map(x -> x.toLowerCase(Locale.ENGLISH))
                             .collect(Collectors.toSet());
             this.allowedOrigins.clear();

@@ -656,8 +656,7 @@ public class PortletDefinitionImpl implements IPortletDefinition {
 
         final Date now = new Date();
         final IPortletLifecycleEntry currentEntry =
-                lifecycleEntries
-                        .stream()
+                lifecycleEntries.stream()
                         .filter(entry -> entry.getDate().before(now)) // Not entries in the future
                         .reduce(
                                 (e1, e2) ->
@@ -687,8 +686,7 @@ public class PortletDefinitionImpl implements IPortletDefinition {
          * on or after the new entry must be cleared.
          */
         final Set<IPortletLifecycleEntry> canceledStateChanges =
-                lifecycleEntries
-                        .stream()
+                lifecycleEntries.stream()
                         // NB:  entry.getDate.equals(timestamp) does not work as expected.
                         .filter(entry -> entry.getDate().compareTo(timestamp) >= 0)
                         .collect(Collectors.toSet());

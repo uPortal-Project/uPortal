@@ -482,8 +482,7 @@ public class PortletDefinitionForm implements Serializable {
         principals.addAll(newPrincipals);
 
         if (initPermissionsForNew) {
-            principals
-                    .stream()
+            principals.stream()
                     .forEach(
                             bean -> {
                                 if (!previousPrincipals.contains(bean)) {
