@@ -305,8 +305,7 @@ public class IdTokenFactory {
         }
 
         // Default custom claims defined by uPortal.properties
-        customClaims
-                .stream()
+        customClaims.stream()
                 .filter(claimName -> includeClaim(claimName, claimsToInclude))
                 .map(
                         attributeName ->

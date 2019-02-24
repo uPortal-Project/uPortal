@@ -389,8 +389,7 @@ public class PortletMarketplaceController {
         String filter =
                 initialFilter == null
                         ? null
-                        : categoryList
-                                .stream()
+                        : categoryList.stream()
                                 .parallel()
                                 .map(PortletCategory::getName)
                                 .filter(cat -> cat.equals(initialFilter))

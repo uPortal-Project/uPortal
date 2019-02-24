@@ -83,8 +83,7 @@ public class OidcUserInfoController {
     @PostConstruct
     public void init() {
         final Map<String, OAuthClient> map =
-                clientList
-                        .stream()
+                clientList.stream()
                         .collect(Collectors.toMap(OAuthClient::getClientId, Function.identity()));
         this.clientMap = Collections.unmodifiableMap(map);
     }
