@@ -18,6 +18,11 @@
  */
 package org.apereo.portal.rest.search;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import javax.servlet.http.HttpServletRequest;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,12 +36,6 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
-import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 public class SearchRESTControllerTest {
     @InjectMocks private SearchRESTController searchRESTController;
@@ -52,8 +51,7 @@ public class SearchRESTControllerTest {
 
     private MockMvc mockMvc;
 
-    public SearchRESTControllerTest() {
-    }
+    public SearchRESTControllerTest() {}
 
     @Before
     public void setup() throws Exception {
@@ -61,41 +59,49 @@ public class SearchRESTControllerTest {
         res.setOutputStreamAccessAllowed(true);
         MockitoAnnotations.initMocks(this);
         mockMvc = MockMvcBuilders.standaloneSetup(searchRESTController).build();
-        searchStrategies.add(new ISearchStrategy() {
-            @Override
-            public String getResultTypeName() {
-                return "person";
-            }
+        searchStrategies.add(
+                new ISearchStrategy() {
+                    @Override
+                    public String getResultTypeName() {
+                        return "person";
+                    }
 
-            @Override
-            public List<?> search(String query, HttpServletRequest request) {
-                final List<String> someDefinedResults = new ArrayList<>();
-                someDefinedResults.add("test person data");
-                return someDefinedResults;
-            }
-        });
-        searchStrategies.add(new ISearchStrategy() {
-            @Override
-            public String getResultTypeName() {
-                return "portlets";
-            }
+                    @Override
+                    public List<?> search(String query, HttpServletRequest request) {
+                        final List<String> someDefinedResults = new ArrayList<>();
+                        someDefinedResults.add("test person data");
+                        return someDefinedResults;
+                    }
+                });
+        searchStrategies.add(
+                new ISearchStrategy() {
+                    @Override
+                    public String getResultTypeName() {
+                        return "portlets";
+                    }
 
-            @Override
-            public List<?> search(String query, HttpServletRequest request) {
-                final List<String> someDefinedResults = new ArrayList<>();
-                someDefinedResults.add("test portlets data");
-                return someDefinedResults;
-            }
-        });
+                    @Override
+                    public List<?> search(String query, HttpServletRequest request) {
+                        final List<String> someDefinedResults = new ArrayList<>();
+                        someDefinedResults.add("test portlets data");
+                        return someDefinedResults;
+                    }
+                });
     }
 
     @Test
     public void testSearchTypeMultiple() {
-        try{
-            ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/v5-0/portal/search").param("q", "bar").param("type", "portlets,person"));
+        try {
+            ResultActions resultActions =
+                    mockMvc.perform(
+                            MockMvcRequestBuilders.get("/v5-0/portal/search")
+                                    .param("q", "bar")
+                                    .param("type", "portlets,person"));
             MvcResult mvcResult = resultActions.andReturn();
             Assert.assertEquals(200, mvcResult.getResponse().getStatus());
-            Assert.assertEquals("{\"person\":[\"test person data\"],\"portlets\":[\"test portlets data\"]}", mvcResult.getResponse().getContentAsString());
+            Assert.assertEquals(
+                    "{\"person\":[\"test person data\"],\"portlets\":[\"test portlets data\"]}",
+                    mvcResult.getResponse().getContentAsString());
         } catch (Exception e) {
             Assert.fail("Exception occurred:  " + e.getMessage());
         }
@@ -103,11 +109,17 @@ public class SearchRESTControllerTest {
 
     @Test
     public void testSearchTypeMultipleReversedAndExtra() {
-        try{
-            ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/v5-0/portal/search").param("q", "bar").param("type", "person,portlets,frameworks"));
+        try {
+            ResultActions resultActions =
+                    mockMvc.perform(
+                            MockMvcRequestBuilders.get("/v5-0/portal/search")
+                                    .param("q", "bar")
+                                    .param("type", "person,portlets,frameworks"));
             MvcResult mvcResult = resultActions.andReturn();
             Assert.assertEquals(200, mvcResult.getResponse().getStatus());
-            Assert.assertEquals("{\"person\":[\"test person data\"],\"portlets\":[\"test portlets data\"]}", mvcResult.getResponse().getContentAsString());
+            Assert.assertEquals(
+                    "{\"person\":[\"test person data\"],\"portlets\":[\"test portlets data\"]}",
+                    mvcResult.getResponse().getContentAsString());
         } catch (Exception e) {
             Assert.fail("Exception occurred:  " + e.getMessage());
         }
@@ -115,21 +127,30 @@ public class SearchRESTControllerTest {
 
     @Test
     public void testSearchTypeSingle() {
-        try{
-            ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/v5-0/portal/search").param("q", "bar").param("type", "portlets,person"));
+        try {
+            ResultActions resultActions =
+                    mockMvc.perform(
+                            MockMvcRequestBuilders.get("/v5-0/portal/search")
+                                    .param("q", "bar")
+                                    .param("type", "portlets,person"));
             MvcResult mvcResult = resultActions.andReturn();
             Assert.assertEquals(200, mvcResult.getResponse().getStatus());
-            Assert.assertEquals("{\"person\":[\"test person data\"],\"portlets\":[\"test portlets data\"]}", mvcResult.getResponse().getContentAsString());
+            Assert.assertEquals(
+                    "{\"person\":[\"test person data\"],\"portlets\":[\"test portlets data\"]}",
+                    mvcResult.getResponse().getContentAsString());
         } catch (Exception e) {
             Assert.fail("Exception occurred:  " + e.getMessage());
         }
     }
 
-
     @Test
     public void testSearchTypeRandom() {
-        try{
-            ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/v5-0/portal/search").param("q", "bar").param("type", "a,b,c"));
+        try {
+            ResultActions resultActions =
+                    mockMvc.perform(
+                            MockMvcRequestBuilders.get("/v5-0/portal/search")
+                                    .param("q", "bar")
+                                    .param("type", "a,b,c"));
             MvcResult mvcResult = resultActions.andReturn();
             Assert.assertEquals(404, mvcResult.getResponse().getStatus());
         } catch (Exception e) {
@@ -137,14 +158,19 @@ public class SearchRESTControllerTest {
         }
     }
 
-
     @Test
     public void testSearchTypeRandomAndEmpty() {
-        try{
-            ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/v5-0/portal/search").param("q", "bar").param("type", "a,b,c,"));
+        try {
+            ResultActions resultActions =
+                    mockMvc.perform(
+                            MockMvcRequestBuilders.get("/v5-0/portal/search")
+                                    .param("q", "bar")
+                                    .param("type", "a,b,c,"));
             MvcResult mvcResult = resultActions.andReturn();
             Assert.assertEquals(200, mvcResult.getResponse().getStatus());
-            Assert.assertEquals("{\"person\":[\"test person data\"],\"portlets\":[\"test portlets data\"]}", mvcResult.getResponse().getContentAsString());
+            Assert.assertEquals(
+                    "{\"person\":[\"test person data\"],\"portlets\":[\"test portlets data\"]}",
+                    mvcResult.getResponse().getContentAsString());
         } catch (Exception e) {
             Assert.fail("Exception occurred:  " + e.getMessage());
         }
@@ -152,11 +178,15 @@ public class SearchRESTControllerTest {
 
     @Test
     public void testSearchTypeNone() {
-        try{
-            ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/v5-0/portal/search").param("q", "bar"));
+        try {
+            ResultActions resultActions =
+                    mockMvc.perform(
+                            MockMvcRequestBuilders.get("/v5-0/portal/search").param("q", "bar"));
             MvcResult mvcResult = resultActions.andReturn();
             Assert.assertEquals(200, mvcResult.getResponse().getStatus());
-            Assert.assertEquals("{\"person\":[\"test person data\"],\"portlets\":[\"test portlets data\"]}", mvcResult.getResponse().getContentAsString());
+            Assert.assertEquals(
+                    "{\"person\":[\"test person data\"],\"portlets\":[\"test portlets data\"]}",
+                    mvcResult.getResponse().getContentAsString());
         } catch (Exception e) {
             Assert.fail("Exception occurred:  " + e.getMessage());
         }
@@ -164,11 +194,17 @@ public class SearchRESTControllerTest {
 
     @Test
     public void testSearchTypeEmpty() {
-        try{
-            ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/v5-0/portal/search").param("q", "bar").param("type", ""));
+        try {
+            ResultActions resultActions =
+                    mockMvc.perform(
+                            MockMvcRequestBuilders.get("/v5-0/portal/search")
+                                    .param("q", "bar")
+                                    .param("type", ""));
             MvcResult mvcResult = resultActions.andReturn();
             Assert.assertEquals(200, mvcResult.getResponse().getStatus());
-            Assert.assertEquals("{\"person\":[\"test person data\"],\"portlets\":[\"test portlets data\"]}", mvcResult.getResponse().getContentAsString());
+            Assert.assertEquals(
+                    "{\"person\":[\"test person data\"],\"portlets\":[\"test portlets data\"]}",
+                    mvcResult.getResponse().getContentAsString());
         } catch (Exception e) {
             Assert.fail("Exception occurred:  " + e.getMessage());
         }
@@ -176,13 +212,13 @@ public class SearchRESTControllerTest {
 
     @Test
     public void testSearchQueryNone() {
-        try{
-            ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/v5-0/portal/search"));
+        try {
+            ResultActions resultActions =
+                    mockMvc.perform(MockMvcRequestBuilders.get("/v5-0/portal/search"));
             MvcResult mvcResult = resultActions.andReturn();
             Assert.assertEquals(400, mvcResult.getResponse().getStatus());
         } catch (Exception e) {
             Assert.fail("Exception occurred:  " + e.getMessage());
         }
     }
-
 }

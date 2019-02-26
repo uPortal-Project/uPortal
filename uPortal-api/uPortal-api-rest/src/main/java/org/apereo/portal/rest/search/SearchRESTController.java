@@ -22,7 +22,6 @@ import java.util.Set;
 import java.util.TreeMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.http.HttpHeaders;
 import org.slf4j.Logger;
@@ -143,11 +142,15 @@ public class SearchRESTController {
 
         final Map<String, List<?>> searchResults = new TreeMap<>();
         if (logger.isDebugEnabled()) {
-            logger.debug("Searching with q={}, type={}", query, ArrayUtils.toString(types.toArray()));
+            logger.debug(
+                    "Searching with q={}, type={}", query, ArrayUtils.toString(types.toArray()));
         }
 
         for (ISearchStrategy strategy : searchStrategies) {
-            if(types == null || types.isEmpty() || types.contains("") || types.contains(strategy.getResultTypeName())) {
+            if (types == null
+                    || types.isEmpty()
+                    || types.contains("")
+                    || types.contains(strategy.getResultTypeName())) {
                 searchResults.put(strategy.getResultTypeName(), strategy.search(query, request));
             }
         }
