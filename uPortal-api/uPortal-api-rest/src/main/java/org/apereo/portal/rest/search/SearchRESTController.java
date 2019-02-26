@@ -22,7 +22,6 @@ import java.util.Set;
 import java.util.TreeMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.http.HttpHeaders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -140,11 +139,9 @@ public class SearchRESTController {
             HttpServletResponse response)
             throws IOException {
 
+        logger.debug("Searching with q={}, type={}", query, types);
+
         final Map<String, List<?>> searchResults = new TreeMap<>();
-        if (logger.isDebugEnabled()) {
-            logger.debug(
-                    "Searching with q={}, type={}", query, ArrayUtils.toString(types.toArray()));
-        }
 
         for (ISearchStrategy strategy : searchStrategies) {
             if (types == null
