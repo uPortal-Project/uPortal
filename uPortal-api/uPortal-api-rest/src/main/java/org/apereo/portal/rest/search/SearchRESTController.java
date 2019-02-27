@@ -134,14 +134,22 @@ public class SearchRESTController {
     @RequestMapping(method = RequestMethod.GET)
     public void search(
             @RequestParam("q") String query,
+            @RequestParam(value = "type", required = false) Set<String> types,
             HttpServletRequest request,
             HttpServletResponse response)
             throws IOException {
 
+        logger.debug("Searching with q={}, type={}", query, types);
+
         final Map<String, List<?>> searchResults = new TreeMap<>();
 
         for (ISearchStrategy strategy : searchStrategies) {
-            searchResults.put(strategy.getResultTypeName(), strategy.search(query, request));
+            if (types == null
+                    || types.isEmpty()
+                    || types.contains("")
+                    || types.contains(strategy.getResultTypeName())) {
+                searchResults.put(strategy.getResultTypeName(), strategy.search(query, request));
+            }
         }
 
         if (searchResults.isEmpty()) {
