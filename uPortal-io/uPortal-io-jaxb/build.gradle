@@ -15,7 +15,7 @@ dependencies {
     jaxb 'javax.xml.bind:jaxb-api:2.2.7'
     jaxb 'org.jvnet.jaxb2_commons:jaxb2-basics-ant:1.11.1'
     jaxb 'org.jvnet.jaxb2_commons:jaxb2-basics:1.11.1'
-    jaxb 'org.jvnet.jaxb2_commons:jaxb2-basics-annotate:0.6.4'
+    jaxb 'org.jvnet.jaxb2_commons:jaxb2-basics-annotate:0.6.5'
 }
 
 /*
