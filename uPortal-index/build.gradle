@@ -1,0 +1,10 @@
+description = "Apereo uPortal Search Indexing"
+
+dependencies {
+    compile project(':uPortal-content:uPortal-content-portlet')
+
+    compile "org.apache.lucene:lucene-core:${luceneVersion}"
+
+    compileOnly "org.apache.portals.pluto:pluto-container-api:${plutoVersion}"
+    compileOnly "${servletApiDependency}"
+}
