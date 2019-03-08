@@ -1,5 +1,10 @@
 package org.apereo.portal.index;
 
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+import javax.annotation.PostConstruct;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -17,20 +22,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-
 @Component
 public class PortalSearchIndexer {
 
-    @Autowired
-    private IPortletDefinitionRegistry portletRegistry;
+    @Autowired private IPortletDefinitionRegistry portletRegistry;
 
-    @Autowired
-    private Directory directory;
+    @Autowired private Directory directory;
 
     @Autowired(required = false)
     private Set<ISearchContentExtractor> searchContentExtractors = Collections.emptySet();
@@ -39,8 +36,9 @@ public class PortalSearchIndexer {
 
     @PostConstruct
     public void init() {
-        logger.info("Search indexing is {} based on presence or absence of a Directory",
-            isEnabled() ? "ENABLED" : "DISABLED");
+        logger.info(
+                "Search indexing is {} based on presence or absence of a Directory",
+                isEnabled() ? "ENABLED" : "DISABLED");
     }
 
     public void updateIndex() {
@@ -51,8 +49,8 @@ public class PortalSearchIndexer {
 
         final IndexWriterConfig indexWriterConfig = new IndexWriterConfig(new StandardAnalyzer());
         indexWriterConfig
-            .setCommitOnClose(true)
-            .setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
+                .setCommitOnClose(true)
+                .setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
 
         try (IndexWriter indexWriter = new IndexWriter(directory, indexWriterConfig)) {
             final List<IPortletDefinition> portlets = portletRegistry.getAllPortletDefinitions();
@@ -60,7 +58,6 @@ public class PortalSearchIndexer {
         } catch (Exception e) {
             logger.error("Unable to update index", e);
         }
-
     }
 
     private boolean isEnabled() {
@@ -95,23 +92,26 @@ public class PortalSearchIndexer {
 
     private String extractContent(IPortletDefinition portlet) {
 
-        final ISearchContentExtractor contentExtractor = searchContentExtractors.stream()
-            .filter(extractor -> extractor.appliesTo(portlet))
-            .findFirst()
-            .orElse(null);
+        final ISearchContentExtractor contentExtractor =
+                searchContentExtractors.stream()
+                        .filter(extractor -> extractor.appliesTo(portlet))
+                        .findFirst()
+                        .orElse(null);
 
         if (contentExtractor == null) {
-            logger.debug("No ISearchContentExtractor bean found for portlet with fname='{}';  " +
-                "content will not be indexed", portlet.getFName());
+            logger.debug(
+                    "No ISearchContentExtractor bean found for portlet with fname='{}';  "
+                            + "content will not be indexed",
+                    portlet.getFName());
             return null;
         }
 
         final String rslt = contentExtractor.extractContent(portlet);
-        logger.debug("Extracted the following content for portlet with fname='{}'\n{}",
-            portlet.getFName(), rslt);
+        logger.debug(
+                "Extracted the following content for portlet with fname='{}'\n{}",
+                portlet.getFName(),
+                rslt);
 
         return rslt;
-
     }
-
 }

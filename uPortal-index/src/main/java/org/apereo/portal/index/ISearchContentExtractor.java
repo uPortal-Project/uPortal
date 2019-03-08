@@ -10,5 +10,4 @@ public interface ISearchContentExtractor {
     boolean appliesTo(IPortletDefinition portlet);
 
     String extractContent(IPortletDefinition portlet);
-
 }

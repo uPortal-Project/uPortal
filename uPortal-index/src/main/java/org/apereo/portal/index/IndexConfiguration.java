@@ -1,5 +1,9 @@
 package org.apereo.portal.index;
 
+import java.io.IOException;
+import java.nio.file.Paths;
+import javax.annotation.PostConstruct;
+import javax.servlet.ServletContext;
 import org.apache.lucene.store.ByteBuffersDirectory;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
@@ -9,11 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import javax.annotation.PostConstruct;
-import javax.servlet.ServletContext;
-import java.io.IOException;
-import java.nio.file.Paths;
 
 @Configuration
 public class IndexConfiguration {
@@ -33,9 +32,8 @@ public class IndexConfiguration {
 
     @Bean
     public Directory directory() throws IOException {
-        final String realPath = servletContext != null
-                ? servletContext.getRealPath(relativePath)
-                : null;
+        final String realPath =
+                servletContext != null ? servletContext.getRealPath(relativePath) : null;
         return realPath != null
                 ? FSDirectory.open(Paths.get(realPath))
                 : new ByteBuffersDirectory(); // Disables indexing
@@ -43,7 +41,7 @@ public class IndexConfiguration {
 
     @Bean
     public ISearchContentExtractor simpleContentPortletSearchContentExtractor() {
-        return new HtmlPortletPreferenceSearchContentExtractor("cms", "/SimpleContentPortlet", "content");
+        return new HtmlPortletPreferenceSearchContentExtractor(
+                "cms", "/SimpleContentPortlet", "content");
     }
-
 }
