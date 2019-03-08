@@ -72,10 +72,8 @@ public final class TemplateDataTenantOperationsListener extends AbstractTenantOp
     private static final Set<PortalDataKey> KEYS_TO_IGNORE =
             new HashSet<>(
                     Arrays.asList(
-                            new PortalDataKey[] {
-                                GroupMembershipPortalDataType.IMPORT_32_DATA_KEY,
-                                PersonAttributesGroupStorePortalDataType.IMPORT_PAGS_41_DATA_KEY
-                            }));
+                        GroupMembershipPortalDataType.IMPORT_32_DATA_KEY,
+                        PersonAttributesGroupStorePortalDataType.IMPORT_PAGS_41_DATA_KEY));
 
     private ApplicationContext applicationContext;
     private SAXReader reader;
