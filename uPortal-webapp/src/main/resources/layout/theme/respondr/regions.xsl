@@ -393,6 +393,36 @@
                 </div>
             </div>
         </div>
+        <div id='direct-url-modal' class="modal fade">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only"><xsl:value-of select="upMsg:getMessage('close', $USER_LANG)"/></span></button>
+                        <h4 class="modal-title"><xsl:value-of select="upMsg:getMessage('direct.url', $USER_LANG)"/></h4>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="form-group">
+                                <input type="text" class="form-control" id="direct-url-display"/>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal"><xsl:value-of select="upMsg:getMessage('close', $USER_LANG)"/></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script type="text/javascript">
+            up.jQuery(document).ready(function() {
+            var $ = up.jQuery;
+            $('#direct-url-modal').on('show.bs.modal', function (event) {
+            var widget = $(event.relatedTarget) // Widget that triggered the modal
+            var dUrl = widget.data('direct-url') // Extract info from data-* attributes
+            $('#direct-url-display').val(dUrl);
+            })
+            });
+        </script>
     </xsl:template>
 
 
