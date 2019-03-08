@@ -175,6 +175,7 @@
  | Portal Settings should generally not be (and not need to be) modified.
  -->
 <xsl:param name="AUTHENTICATED" select="'false'"/>
+<xsl:param name="PORTAL_PROTOCOL_AND_SERVER"></xsl:param>
 <xsl:param name="HOST_NAME"></xsl:param>
 <xsl:param name="USER_ID">guest</xsl:param>
 <xsl:param name="userName">Guest User</xsl:param>
