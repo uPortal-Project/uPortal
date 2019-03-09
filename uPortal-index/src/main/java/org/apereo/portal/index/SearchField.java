@@ -14,14 +14,26 @@
  */
 package org.apereo.portal.index;
 
-import org.apereo.portal.portlet.om.IPortletDefinition;
+public enum SearchField {
+    FNAME("fname"),
 
-/**
- * Beans of this type know how to access the content (for search indexing) of a subset of portlets.
- */
-public interface ISearchContentExtractor {
+    NAME("name"),
 
-    boolean appliesTo(IPortletDefinition portlet);
+    TITLE("title"),
 
-    String extractContent(IPortletDefinition portlet);
+    DESCRIPTION("description"),
+
+    KEYWORDS("keywords"),
+
+    CONTENT("content");
+
+    private final String value;
+
+    SearchField(String value) {
+        this.value = value;
+    }
+
+    public String getValue() {
+        return value;
+    }
 }

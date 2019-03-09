@@ -3,6 +3,7 @@ description = "Apereo uPortal REST APIs"
 dependencies {
     compile project(':uPortal-api:uPortal-api-platform-impl')
     compile project(':uPortal-groups:uPortal-groups-pags')
+    compile project(':uPortal-index')
     compile project(':uPortal-layout:uPortal-layout-impl')
     compile project(':uPortal-security:uPortal-security-permissions')
     compileOnly project(':uPortal-api:uPortal-api-platform')
@@ -11,7 +12,9 @@ dependencies {
     compile "commons-beanutils:commons-beanutils:${commonsBeanutilsVersion}"
     compile "io.springfox:springfox-swagger2:${springfoxSwaggerVersion}"
     compile "io.springfox:springfox-swagger-ui:${springfoxSwaggerVersion}"
+    compile "org.apache.lucene:lucene-queryparser:${luceneVersion}"
     compile "org.json:json:${orgJsonVersion}"
+
 
     compileOnly "${portletApiDependency}"
     compileOnly "${servletApiDependency}"
