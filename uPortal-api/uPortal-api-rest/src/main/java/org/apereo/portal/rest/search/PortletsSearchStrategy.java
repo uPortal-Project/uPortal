@@ -17,8 +17,10 @@ package org.apereo.portal.rest.search;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
@@ -78,12 +80,13 @@ public class PortletsSearchStrategy implements ISearchStrategy {
     public List<?> search(String query, HttpServletRequest request) {
 
         final List<Object> rslt = new ArrayList<>();
+        final Set<IPortletDefinition> seen = new HashSet<>();
 
         try {
             final Query q = queryParser.parse(query);
             final IndexReader indexReader = DirectoryReader.open(directory);
             final IndexSearcher searcher = new IndexSearcher(indexReader);
-            final TopDocs topDocs = searcher.search(q, 20);
+            final TopDocs topDocs = searcher.search(q, 50);
             Arrays.stream(topDocs.scoreDocs)
                     .forEach(
                             scoreDoc -> {
@@ -92,6 +95,11 @@ public class PortletsSearchStrategy implements ISearchStrategy {
                                     final IPortletDefinition portlet =
                                             portletDefinitionRegistry.getPortletDefinitionByFname(
                                                     document.get(SearchField.FNAME.getValue()));
+                                    if (seen.contains(portlet)) {
+                                        // Don't process a portlet more than once...
+                                        return;
+                                    }
+                                    seen.add(portlet);
                                     logger.debug(
                                             "Search query '{}' matches portlet: {}",
                                             query,

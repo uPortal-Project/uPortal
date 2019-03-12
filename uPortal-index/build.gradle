@@ -8,4 +8,7 @@ dependencies {
 
     compileOnly "org.apache.portals.pluto:pluto-container-api:${plutoVersion}"
     compileOnly "${servletApiDependency}"
+
+    testCompile "org.apache.portals.pluto:pluto-container-api:${plutoVersion}"
+    testCompile "${servletApiDependency}"
 }
