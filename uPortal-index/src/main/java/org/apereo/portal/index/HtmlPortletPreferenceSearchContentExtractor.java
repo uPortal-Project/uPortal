@@ -15,7 +15,6 @@
 package org.apereo.portal.index;
 
 import java.util.stream.Stream;
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apereo.portal.portlet.om.IPortletDefinition;
 import org.apereo.portal.portlet.om.IPortletPreference;
 import org.jsoup.Jsoup;
@@ -69,12 +68,7 @@ public class HtmlPortletPreferenceSearchContentExtractor implements ISearchConte
         }
 
         final StringBuilder stringBuilder = new StringBuilder();
-        Stream.of(preference.getValues())
-                .forEach(
-                        item ->
-                                stringBuilder
-                                        .append(StringEscapeUtils.unescapeHtml(item))
-                                        .append(" "));
+        Stream.of(preference.getValues()).forEach(item -> stringBuilder.append(item).append(" "));
 
         // There must be a single root element
         stringBuilder.insert(0, "<html><body>").append("</body></html>");

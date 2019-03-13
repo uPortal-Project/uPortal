@@ -44,7 +44,7 @@ public class IndexConfiguration {
         logger.info("Search indexing using relativePath='{}'", relativePath);
     }
 
-    @Bean
+    @Bean(destroyMethod = "close")
     public Directory directory() throws IOException {
         final String realPath =
                 servletContext != null ? servletContext.getRealPath(relativePath) : null;

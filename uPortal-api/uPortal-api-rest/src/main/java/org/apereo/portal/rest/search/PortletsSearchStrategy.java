@@ -82,9 +82,9 @@ public class PortletsSearchStrategy implements ISearchStrategy {
         final List<Object> rslt = new ArrayList<>();
         final Set<IPortletDefinition> seen = new HashSet<>();
 
-        try {
+        try (IndexReader indexReader = DirectoryReader.open(directory)) {
+
             final Query q = queryParser.parse(query);
-            final IndexReader indexReader = DirectoryReader.open(directory);
             final IndexSearcher searcher = new IndexSearcher(indexReader);
             final TopDocs topDocs = searcher.search(q, 50);
             Arrays.stream(topDocs.scoreDocs)
@@ -124,6 +124,7 @@ public class PortletsSearchStrategy implements ISearchStrategy {
                                             e);
                                 }
                             });
+
         } catch (Exception e) {
             // Log a warning, but don't prevent other search strategies from succeeding...
             logger.warn("Failed to search portal content for query='{}'", query, e);
