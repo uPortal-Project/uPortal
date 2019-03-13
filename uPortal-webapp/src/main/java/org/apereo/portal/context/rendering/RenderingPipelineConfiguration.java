@@ -117,6 +117,9 @@ public class RenderingPipelineConfiguration {
 
     @Autowired private XsltPortalUrlProvider xslPortalUrlProvider;
 
+    @Value("${portal.protocol}://${portal.server}")
+    private String portalProtocolAndServer;
+
     @Value("${org.apereo.portal.channels.CLogin.CasLoginUrl}")
     private String casLoginUrl;
 
@@ -423,6 +426,7 @@ public class RenderingPipelineConfiguration {
         final Map<String, Object> parameters = new HashMap<>();
         parameters.put(XsltPortalUrlProvider.XSLT_PORTAL_URL_PROVIDER, xslPortalUrlProvider);
         parameters.put("EXTERNAL_LOGIN_URL", casLoginUrl);
+        parameters.put("PORTAL_PROTOCOL_AND_SERVER", portalProtocolAndServer);
         parameters.put("useTabGroups", useTabGroups);
         parameters.put("UP_VERSION", uPortalVersion);
         parameters.put("USE_FLYOUT_MENUS", useFlyoutMenus);

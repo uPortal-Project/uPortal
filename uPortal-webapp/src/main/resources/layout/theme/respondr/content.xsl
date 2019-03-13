@@ -674,6 +674,14 @@
         </xsl:if>
       </xsl:if>
 
+      <!-- Direct URL Icon -->
+      <xsl:variable name="portletDirectUrl">
+          <xsl:value-of select="$PORTAL_PROTOCOL_AND_SERVER"/><xsl:value-of select="$CONTEXT_PATH"/>/p/<xsl:value-of select="@fname"/>
+      </xsl:variable>
+      <li class="up-portlet-options-item directUrl">
+          <a title="{upMsg:getMessage('direct.url', $USER_LANG)}" class="up-portlet-control directUrl"  data-toggle="modal" data-target="#direct-url-modal" data-direct-url="{$portletDirectUrl}"><xsl:value-of select="upMsg:getMessage('direct.url', $USER_LANG)"/></a>
+      </li>
+
           <!-- About Icon -->
           <xsl:if test="$hasAbout='true'">
               <xsl:variable name="portletAboutUrl">
