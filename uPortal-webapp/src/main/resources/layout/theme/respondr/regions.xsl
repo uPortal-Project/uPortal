@@ -414,13 +414,13 @@
             </div>
         </div>
         <script type="text/javascript">
-            up.jQuery(document).ready(function() {
-            var $ = up.jQuery;
-            $('#direct-url-modal').on('show.bs.modal', function (event) {
-            var widget = $(event.relatedTarget) // Widget that triggered the modal
-            var dUrl = widget.data('direct-url') // Extract info from data-* attributes
-            $('#direct-url-display').val(dUrl);
-            })
+            up.jQuery(function() {
+                var $ = up.jQuery;
+                $('#direct-url-modal').on('show.bs.modal', function (event) {
+                    var widget = $(event.relatedTarget); // Widget that triggered the modal
+                    var dUrl = widget.data('direct-url'); // Extract info from data-* attributes
+                    $('#direct-url-display').val(dUrl);
+                });
             });
         </script>
     </xsl:template>
