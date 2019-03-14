@@ -30,53 +30,53 @@ import org.w3c.dom.Node;
 
 /** Defines commonly used XML and XSLT utilities */
 public interface XmlUtilities {
+
     /** Get {@link Templates} for the specified stylesheet resource */
-    public Templates getTemplates(Resource stylesheet)
+    Templates getTemplates(Resource stylesheet)
             throws TransformerConfigurationException, IOException;
 
     /** Get a {@link Transformer} for the specified stylesheet resource */
-    public Transformer getTransformer(Resource stylesheet)
+    Transformer getTransformer(Resource stylesheet)
             throws TransformerConfigurationException, IOException;
 
     /** @return The identity transformer */
-    public Transformer getIdentityTransformer()
-            throws TransformerConfigurationException, IOException;
+    Transformer getIdentityTransformer() throws TransformerConfigurationException, IOException;
 
     /**
      * Gets an appropriate cache key for the specified stylesheet resource. The key should be valid
      * for both {@link Transformer}s and {@link Templates} based on this stylesheet.
      */
-    public Serializable getStylesheetCacheKey(Resource stylesheet)
+    Serializable getStylesheetCacheKey(Resource stylesheet)
             throws TransformerConfigurationException, IOException;
 
     /**
      * The standard shared XMLOutputFactory to be used by uPortal code. Clients should not set any
      * properties on this XMLOutputFactory.
      */
-    public XMLOutputFactory getXmlOutputFactory();
+    XMLOutputFactory getXmlOutputFactory();
 
     /**
      * The standard shared XMLOutputFactory to be used by uPortal code writing StAX to HTML. Clients
      * should not set any properties on this XMLOutputFactory
      */
-    public XMLOutputFactory getHtmlOutputFactory();
+    XMLOutputFactory getHtmlOutputFactory();
 
     /**
      * The standard shared XMLInputFactory to be used by uPortal code. Clients should not set any
      * properties on this XMLInputFactory, if they need to they should use {@link
      * XMLInputFactory#newFactory()} directly
      */
-    public XMLInputFactory getXmlInputFactory();
+    XMLInputFactory getXmlInputFactory();
 
     /** Serializes the List of XMLEvents into a XML String */
-    public String serializeXMLEvents(List<XMLEvent> xmlEvents);
+    String serializeXMLEvents(List<XMLEvent> xmlEvents);
 
     /** Serializes the List of XMLEvents into a XML String using HTML safe formatting */
-    public String serializeXMLEvents(List<XMLEvent> xmlEvents, boolean isHtml);
+    String serializeXMLEvents(List<XMLEvent> xmlEvents, boolean isHtml);
 
     /** Get the unique XPath for the specified Node */
-    public String getUniqueXPath(Node node);
+    String getUniqueXPath(Node node);
 
     /** Convert the data from an {@link XMLEventReader} into a DOM node */
-    public Node convertToDom(XMLEventReader xmlEventReader) throws XMLStreamException;
+    Node convertToDom(XMLEventReader xmlEventReader) throws XMLStreamException;
 }
