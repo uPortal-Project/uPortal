@@ -483,6 +483,9 @@ public class PortletPrefsRESTController {
                     throw new PreferenceException("ERROR: preferences must be strings, numbers, booleans, null, or arrays of strings, numbers, booleans, or nulls");
                 }
             }
+            if(tempMap.size()==0){
+                throw new PreferenceException("ERROR: invalid json. json must be in key:value pairs.");
+            }
             for(Map.Entry<String,String[]> entry : tempMap.entrySet()){
                 prefs.setValues(entry.getKey(),entry.getValue());
             }
