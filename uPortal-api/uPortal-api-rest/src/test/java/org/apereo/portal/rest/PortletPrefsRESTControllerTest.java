@@ -1,6 +1,8 @@
 package org.apereo.portal.rest;
 
 import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -20,7 +22,6 @@ import org.apereo.portal.portlet.om.IPortletDefinition;
 import org.apereo.portal.portlet.om.IPortletDefinitionId;
 import org.apereo.portal.portlet.om.IPortletEntity;
 import org.apereo.portal.portlet.om.IPortletEntityId;
-import org.apereo.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.apereo.portal.portlet.registry.IPortletEntityRegistry;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.IPersonManager;
@@ -35,7 +36,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockHttpSession;
-import org.springframework.transaction.support.TransactionOperations;
+
 
 
 public class PortletPrefsRESTControllerTest {
@@ -52,12 +53,6 @@ public class PortletPrefsRESTControllerTest {
 
     @Mock
     private IPortletEntityRegistry portletEntityRegistry;
-
-    @Mock
-    private IPortletDefinitionRegistry portletDefinitionRegistry;
-
-    @Mock
-    private TransactionOperations transactionOperations;
 
     @Mock
     private PortletPreferencesFactory portletPreferencesFactory;
@@ -391,7 +386,7 @@ public class PortletPrefsRESTControllerTest {
     }
 
     @Test
-    public void putDefinitionInvalidJson() {
+    public void putDefinitionInvalidJson() throws Exception{
         String body="{\"pref1\":\"bob\"";
         PortletPreferences prefs=mock(PortletPreferences.class);
 
@@ -401,7 +396,10 @@ public class PortletPrefsRESTControllerTest {
 
         ResponseEntity response = portletPrefsRESTController.putDefinitionPrefs(req,res,valid_name,body);
         Assert.assertEquals(400,response.getStatusCodeValue());
+        Mockito.verify(prefs, times(0)).setValues(anyString(), any());
+        Mockito.verify(prefs, times(0)).store();
     }
+
 
     @Test
     public void putDefinitionPrefsSessionNonConfig() {
@@ -438,7 +436,7 @@ public class PortletPrefsRESTControllerTest {
     }
 
     @Test
-    public void putEntityPrefsInvalidJson() {
+    public void putEntityPrefsInvalidJson() throws Exception {
         String body="{\"pref1\":\"bob\"";
         PortletPreferences prefs=mock(PortletPreferences.class);
 
@@ -448,11 +446,13 @@ public class PortletPrefsRESTControllerTest {
 
         ResponseEntity response = portletPrefsRESTController.putEntityPrefs(req,res,valid_name,body);
         Assert.assertEquals(400,response.getStatusCodeValue());
+        Mockito.verify(prefs, times(0)).setValues(anyString(), any());
+        Mockito.verify(prefs, times(0)).store();
     }
 
 
     @Test
-    public void putEntityPrefsObjectPref() {
+    public void putEntityPrefsObjectPref() throws Exception {
         String body="{\"pref1\":{\"name\":\"bob\"}}";
         PortletPreferences prefs=mock(PortletPreferences.class);
 
@@ -463,10 +463,12 @@ public class PortletPrefsRESTControllerTest {
         ResponseEntity response = portletPrefsRESTController.putEntityPrefs(req,res,valid_name,body);
         Assert.assertEquals(400,response.getStatusCodeValue());
         Assert.assertEquals("ERROR: preferences must be strings, numbers, booleans, null, or arrays of strings, numbers, booleans, or nulls",(String)response.getBody());
+        Mockito.verify(prefs, times(0)).setValues(anyString(), any());
+        Mockito.verify(prefs, times(0)).store();
     }
 
     @Test
-    public void putEntityPrefsMultipleArray() {
+    public void putEntityPrefsMultipleArray() throws Exception {
         String body="{\"pref1\":[\"bob\",[\"name\",\"bob\"]]}";
         PortletPreferences prefs=mock(PortletPreferences.class);
 
@@ -477,10 +479,12 @@ public class PortletPrefsRESTControllerTest {
         ResponseEntity response = portletPrefsRESTController.putEntityPrefs(req,res,valid_name,body);
         Assert.assertEquals(400,response.getStatusCodeValue());
         Assert.assertEquals("ERROR: preference arrays must only contain strings, numbers, booleans, or null",(String)response.getBody());
+        Mockito.verify(prefs, times(0)).setValues(anyString(), any());
+        Mockito.verify(prefs, times(0)).store();
     }
 
     @Test
-    public void putEntityPrefsObjectArray() {
+    public void putEntityPrefsObjectArray() throws Exception {
         String body="{\"pref1\":[{\"bob\":[\"name\",\"bob\"]}]}";
         PortletPreferences prefs=mock(PortletPreferences.class);
 
@@ -491,10 +495,12 @@ public class PortletPrefsRESTControllerTest {
         ResponseEntity response = portletPrefsRESTController.putEntityPrefs(req,res,valid_name,body);
         Assert.assertEquals(400,response.getStatusCodeValue());
         Assert.assertEquals("ERROR: preference arrays must only contain strings, numbers, booleans, or null",(String)response.getBody());
+        Mockito.verify(prefs, times(0)).setValues(anyString(), any());
+        Mockito.verify(prefs, times(0)).store();
     }
 
     @Test
-    public void putEntityPrefsReadOnly() throws Exception{
+    public void putEntityPrefsReadOnly() throws Exception {
         String body="{\"pref1\":\"bob\"}";
         String[] values= {"bob"};
         PortletPreferences prefs=mock(PortletPreferences.class);
@@ -508,7 +514,24 @@ public class PortletPrefsRESTControllerTest {
         ResponseEntity response = portletPrefsRESTController.putEntityPrefs(req,res,valid_name,body);
         Assert.assertEquals(400,response.getStatusCodeValue());
         Assert.assertEquals("Preference 'pref1' is read only",(String)response.getBody());
+        Mockito.verify(prefs, times(1)).setValues(anyString(), any());
+        Mockito.verify(prefs, times(0)).store();
+    }
 
+    @Test//regression test. found it returned true even though it stored nothing. make sure it rejects non-key-value-pairs
+    public void putEntityPrefsSingleValue() throws Exception{
+        String body="\"string\"";
+        PortletPreferences prefs=mock(PortletPreferences.class);
+
+        Mockito.when(portletPreferencesFactory.createAPIPortletPreferences(req,valid_entityMock,false,false))
+            .thenReturn(prefs);
+
+
+        ResponseEntity response = portletPrefsRESTController.putEntityPrefs(req,res,valid_name,body);
+        Assert.assertEquals(400,response.getStatusCodeValue());
+        Assert.assertEquals("ERROR: invalid json. json must be in key:value pairs.",(String)response.getBody());
+        Mockito.verify(prefs, times(0)).setValues(anyString(), any());
+        Mockito.verify(prefs, times(0)).store();
     }
 
     @Test
@@ -523,6 +546,7 @@ public class PortletPrefsRESTControllerTest {
 
         ResponseEntity response = portletPrefsRESTController.putEntityPrefs(req,res,valid_name,body);
         Mockito.verify(prefs, times(1)).setValues("pref1", values);
+        Mockito.verify(prefs, times(1)).setValues(anyString(), any());
         Mockito.verify(prefs, times(1)).store();
         Assert.assertEquals(200,response.getStatusCodeValue());
         Assert.assertEquals(true,(boolean)response.getBody());
@@ -542,6 +566,7 @@ public class PortletPrefsRESTControllerTest {
 
         ResponseEntity response = portletPrefsRESTController.putEntityPrefs(req,res,valid_name,body);
         Mockito.verify(prefs, times(1)).setValues("pref1", values);
+        Mockito.verify(prefs, times(1)).setValues(anyString(), any());
         Mockito.verify(prefs, times(1)).store();
         Assert.assertEquals(200,response.getStatusCodeValue());
         Assert.assertEquals(true,(boolean)response.getBody());
@@ -560,6 +585,7 @@ public class PortletPrefsRESTControllerTest {
 
         ResponseEntity response = portletPrefsRESTController.putEntityPrefs(req,res,valid_name,body);
         Mockito.verify(prefs, times(1)).setValues("pref1", values);
+        Mockito.verify(prefs, times(1)).setValues(anyString(), any());
         Mockito.verify(prefs, times(1)).store();
         Assert.assertEquals(200,response.getStatusCodeValue());
         Assert.assertEquals(true,(boolean)response.getBody());
@@ -580,6 +606,7 @@ public class PortletPrefsRESTControllerTest {
         ResponseEntity response = portletPrefsRESTController.putEntityPrefs(req,res,valid_name,body);
         Mockito.verify(prefs, times(1)).setValues("pref1", values1);
         Mockito.verify(prefs, times(1)).setValues("pref2", values2);
+        Mockito.verify(prefs, times(2)).setValues(anyString(), any());
         Mockito.verify(prefs, times(1)).store();
         Assert.assertEquals(200,response.getStatusCodeValue());
         Assert.assertEquals(true,(boolean)response.getBody());

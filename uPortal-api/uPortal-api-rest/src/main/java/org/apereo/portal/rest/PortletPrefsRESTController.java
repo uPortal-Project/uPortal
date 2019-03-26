@@ -18,14 +18,12 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apereo.portal.jpa.BasePortalJpaDao;
 import org.apereo.portal.portlet.container.services.PortletPreferencesFactory;
 import org.apereo.portal.portlet.dao.IPortletDefinitionDao;
 import org.apereo.portal.portlet.om.IPortletDefinition;
 import org.apereo.portal.portlet.om.IPortletDefinitionId;
 import org.apereo.portal.portlet.om.IPortletEntity;
 import org.apereo.portal.portlet.om.IPortletPreference;
-import org.apereo.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.apereo.portal.portlet.registry.IPortletEntityRegistry;
 import org.apereo.portal.security.AuthorizationPrincipalHelper;
 import org.apereo.portal.security.IAuthorizationPrincipal;
@@ -37,13 +35,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.support.TransactionOperations;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+/** PortletPrefsRESTController provides REST targets for preference operations for soffits and webcomponents. */
 @Controller
 public class PortletPrefsRESTController {
 
@@ -74,21 +72,6 @@ public class PortletPrefsRESTController {
         this.portletEntityRegistry = portletEntityRegistry;
     }
 
-    private IPortletDefinitionRegistry portletDefinitionRegistry;
-
-    @Autowired
-    public void setPortletDefinitionRegistry(IPortletDefinitionRegistry portletDefinitionRegistry){
-        this.portletDefinitionRegistry = portletDefinitionRegistry;
-    }
-
-    private TransactionOperations transactionOperations;
-
-    @Autowired
-    @Qualifier(BasePortalJpaDao.PERSISTENCE_UNIT_NAME)
-    public void setTransactionOperations(TransactionOperations transactionOperations) {
-        this.transactionOperations = transactionOperations;
-    }
-
     private PortletPreferencesFactory portletPreferencesFactory;
 
     @Autowired
@@ -103,6 +86,18 @@ public class PortletPrefsRESTController {
         this.mapper=new ObjectMapper();
     }
 
+
+    /**
+     * Get uPortal Entity information for portlet/soffit/webcomponent. This method provides a REST interface for obtaining uPortal
+     * portlet/soffit/webcomponent metadata
+     *
+     * <p>The path for this method is /prefs/getentity/fname. The fname is a string representing the fname of the
+     * portlet/soffit/webcomponent to find the entity information for
+     */
+    /*non-javadoc
+    * I used this primarily for testing, could be useful given that it returns the windowstate, etc
+    * up to you if you want to keep it or modify it
+    * */
     @RequestMapping(value = "/prefs/getentity/{fname}", method = RequestMethod.GET)
     public ResponseEntity getEntity(HttpServletRequest request, HttpServletResponse response,
                                     @ApiParam(value = "The portlet fname to get entity for")
@@ -148,10 +143,20 @@ public class PortletPrefsRESTController {
             return new ResponseEntity<>(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        //return ResponseEntity.badRequest().build();
     }
 
 
+    /**
+     * Get uPortal Preferecnces for portlet/soffit/webcomponent. This method provides a REST interface for uPortal for obtaining
+     * the entity preferences for the portlet/soffit/webcomponent
+     *
+     * <p>The path for this method is /prefs/getprefs/fname. The fname is a string representing the fname of the
+     * portlet/soffit/webcomponent to return the composite entity preferences. These are the per-user preferences for the given
+     * portlet/soffit/webcomponent including any non-overwritten definition and descriptor preferences for the given
+     * portlet/soffit/webcomponent. Basically every preference for the soffit with the current user's preferences set.
+     * Will include extra preferences for soffits including the url, so please set any of these to read-only
+     *
+     */
     //returns the entity composite preferences for the portlet in question
     @RequestMapping(value = "/prefs/getprefs/{fname}", method = RequestMethod.GET)
     public ResponseEntity getCompositePrefs(HttpServletRequest request, HttpServletResponse response,
@@ -187,7 +192,19 @@ public class PortletPrefsRESTController {
         }
     }
 
-    //maybe get rid of this one
+    /**
+     * Get uPortal Preferecnces for portlet/soffit/webcomponent. This method provides a REST interface for uPortal for obtaining
+     * only the entity preferences for the portlet/soffit/webcomponent
+     *
+     * <p>The path for this method is /prefs/getprefs/fname. The fname is a string representing the fname of the
+     * portlet/soffit/webcomponent to return the composite entity preferences. These are the per-user preferences for the given
+     * portlet/soffit/webcomponent. Includes only the user set preferences, does not include any defaults set in the definition
+     *
+     */
+    /*maybe get rid of this one? don't know if there is any specific use for it given that the preferences needed might be set in
+    * any of the entity, definition, or descriptor preferences. But is useful if you only need the user set preferences and are
+    * not relying on a default in the definition.
+    */
     @RequestMapping(value = "/prefs/getentityonlyprefs/{fname}", method = RequestMethod.GET)
     public ResponseEntity getEntityOnlyPrefs(HttpServletRequest request, HttpServletResponse response,
                                              @ApiParam(value = "The portlet fname to find preferences for")
@@ -220,6 +237,7 @@ public class PortletPrefsRESTController {
         }
 
     }
+
 
     //get the entity preferences by comparing the entity with the defintion and returning the entity ones that are different
     private Map<String, String[]> getEntityOnly(Map<String, String[]> entity, Map<String, String[]> definition){
@@ -258,7 +276,7 @@ public class PortletPrefsRESTController {
     */
     //without needing to do the compare
 
-    //get the discriptor only preferences by comparing the entity with the defintion and returning the discriptor ones that are missing
+    //get the discriptor only preferences by comparing the entity with the defintion and returning the descriptor ones that are missing
     private Map<String, String[]> getDescriptorOnly(Map<String, String[]> descriptor, List<IPortletPreference> definition) {
         Map<String, String[]> defprefs=new HashMap<>();
         Map<String, String[]> result= new HashMap<>();
@@ -273,9 +291,78 @@ public class PortletPrefsRESTController {
         return result;
     }
 
+    /**
+     * Get uPortal definition preferecnces for portlet/soffit/webcomponent. This method provides a REST interface for uPortal for obtaining
+     * the definition preferences for the portlet/soffit/webcomponent
+     *
+     * <p>The path for this method is /prefs/getdefinitionprefs/fname. The fname is a string representing the fname of the
+     * portlet/soffit/webcomponent to return the composite definition preferences. These are the default preferences for the given
+     * portlet/soffit/webcomponent including any non-overwritten descriptor preferences for the given
+     * portlet/soffit/webcomponent. Will include extra preferences for soffits including the url, so please set any of these to read-only
+     * when you define them.
+     * You must be logged in as a portal administrator or have configuration rights for the given portlet/soffit/webcomponent
+     * in uPortal to access these. Will return a 403 or 404 otherwise
+     *
+     */
     //must be authenticated and a portal administrator
     @RequestMapping(value = "/prefs/getdefinitionprefs/{fname}", method = RequestMethod.GET)
     public ResponseEntity getDefinitionPrefs(HttpServletRequest request, HttpServletResponse response,
+                                                 @ApiParam(value = "The portlet fname to find preferences for")
+                                                 @PathVariable(value = "fname") String fname) {
+        HttpSession session = request.getSession(false);
+        if(session == null){
+            return new ResponseEntity<>("",HttpStatus.NOT_FOUND);
+        }
+        final IPerson person = personManager.getPerson(request);
+        if(person.isGuest()){
+            logger.warn("Guest user tried to access getDefinitionPrefs. Possible hacking attempt.");
+            return new ResponseEntity<>("ERROR: guest cannot use this action.",HttpStatus.UNAUTHORIZED);
+        }
+        else if(!person.getSecurityContext().isAuthenticated()){
+            logger.warn("Person: {"+person.getUserName()+"} tried to access getDefinitionPrefs while not authenticated. Possible hacking attempt.");
+            return new ResponseEntity<>("ERROR: must be logged in to use this action.",HttpStatus.UNAUTHORIZED);
+        }
+
+        try {
+            IPortletDefinition portletDefinition = portletDao.getPortletDefinitionByFname(fname);
+            if(portletDefinition==null){
+                return new ResponseEntity<>("ERROR: Portlet not found", HttpStatus.NOT_FOUND);
+            }
+
+            if(!canConfigure(person,portletDefinition.getPortletDefinitionId())){
+                logger.warn("Person: {"+person.getUserName()+"} tried to access getDefinitionPrefs for portlet: {"+fname+"} without configuration permissions. Possible hacking attempt.");
+                return new ResponseEntity<>("ERROR: user is not authorized to perform this action",HttpStatus.UNAUTHORIZED);
+            }
+
+            IPortletEntity entity = portletEntityRegistry.getOrCreateDefaultPortletEntity(request, portletDefinition.getPortletDefinitionId());
+
+            PortletPreferences prefs=portletPreferencesFactory.createAPIPortletPreferences(request,entity,false,DEFINITION_MODE);
+
+            return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(mapper.writeValueAsString(prefs.getMap()));
+        }catch(Exception e){
+            e.printStackTrace();
+            logger.error(e.getMessage());
+            return new ResponseEntity<>(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+
+    }
+
+    /**
+     * Get uPortal definition preferecnces for portlet/soffit/webcomponent. This method provides a REST interface for uPortal for obtaining
+     * the definition preferences for the portlet/soffit/webcomponent
+     *
+     * <p>The path for this method is /prefs/getdefinitiononlyprefs/fname. The fname is a string representing the fname of the
+     * portlet/soffit/webcomponent to return the definition preferences. These are the default preferences for the given
+     * portlet/soffit/webcomponent. Will include extra preferences for soffits -including the url- so please set any of these to read-only
+     * when you define them.
+     * You must be logged in as a portal administrator or have configuration rights for the given portlet/soffit/webcomponent
+     * in uPortal to access these. Will return a 403 or 404 otherwise
+     *
+     */
+    //must be authenticated and a portal administrator
+    @RequestMapping(value = "/prefs/getdefinitiononlyprefs/{fname}", method = RequestMethod.GET)
+    public ResponseEntity getDefinitionOnlyPrefs(HttpServletRequest request, HttpServletResponse response,
                                              @ApiParam(value = "The portlet fname to find preferences for")
                                              @PathVariable(value = "fname") String fname) {
         HttpSession session = request.getSession(false);
@@ -303,7 +390,7 @@ public class PortletPrefsRESTController {
                 return new ResponseEntity<>("ERROR: user is not authorized to perform this action",HttpStatus.UNAUTHORIZED);
             }
 
-            List<IPortletPreference> prefs = portletDefinition.getPortletPreferences();//this should probably return the descriptor prefs too...
+            List<IPortletPreference> prefs = portletDefinition.getPortletPreferences();
 
             return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(mapper.writeValueAsString(prefMap(prefs)));
         }catch(Exception e){
@@ -311,16 +398,14 @@ public class PortletPrefsRESTController {
             logger.error(e.getMessage());
             return new ResponseEntity<>(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
         }
-//        final org.springframework.security.core.Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        final String username = (String) authentication.getPrincipal();
-//        final Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+
 
     }
 
     private boolean canConfigure(IPerson user, IPortletDefinitionId portletDefinitionId){
         final IAuthorizationPrincipal principal =
             AuthorizationPrincipalHelper.principalFromUser(user);
-        return principal.canConfigure(portletDefinitionId.toString());//this might backfire, will have to figure out exactly how it's figuring out if it can be configured
+        return principal.canConfigure(portletDefinitionId.toString());
     }
 
     private Map<String,String[]> prefMap(List<IPortletPreference> prefs){
@@ -331,7 +416,19 @@ public class PortletPrefsRESTController {
         return map;
     }
 
-
+    /**
+     * Set uPortal definition preferecnces for portlet/soffit/webcomponent. This method provides a REST interface for uPortal for obtaining
+     * the definition preferences for the portlet/soffit/webcomponent
+     *
+     * <p>The path for this method is /prefs/putdefinitionprefs/fname. The fname is a string representing the fname of the
+     * portlet/soffit/webcomponent to set definition preferences for. These are the default preferences for the given
+     * portlet/soffit/webcomponent. This will set the key:value(s) pairs provided into the defintion preferences
+     * overwriting any current definition preferences with the same key, adding a new key:value(s) pair if the key does not exits.
+     * You must be logged in as a portal administrator or have configuration rights for the given portlet/soffit/webcomponent
+     * in uPortal to access these. Will return a 403 or 404 otherwise
+     *
+     */
+    //need to be an administrator
     @RequestMapping(value = "/prefs/putdefinitionprefs", method = RequestMethod.PUT)
     public ResponseEntity putDefinitionPrefs(HttpServletRequest request, HttpServletResponse response,
                                              @ApiParam(value = "The portlet fname to store preferences for")
@@ -398,7 +495,16 @@ public class PortletPrefsRESTController {
     }
 
 
-
+    /**
+     * Set uPortal entity preferecnces for portlet/soffit/webcomponent. This method provides a REST interface for uPortal for obtaining
+     * the definition preferences for the portlet/soffit/webcomponent
+     *
+     * <p>The path for this method is /prefs/putprefs/fname. The fname is a string representing the fname of the
+     * portlet/soffit/webcomponent to set entity preferences for. These are the user preferences for the given
+     * portlet/soffit/webcomponent. This will set the key:value(s) pairs provided into the entity preferences
+     * overwriting any current entity preferences with the same key, adding a new key:value(s) pair if the key does not exits.
+     *
+     */
     @RequestMapping(value = "/prefs/putprefs", method = RequestMethod.PUT)
     public ResponseEntity putEntityPrefs(HttpServletRequest request, HttpServletResponse response,
                                          @ApiParam(value = "The portlet fname to store preferences for")
