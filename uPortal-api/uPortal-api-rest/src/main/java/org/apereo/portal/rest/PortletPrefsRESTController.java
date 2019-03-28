@@ -497,7 +497,7 @@ public class PortletPrefsRESTController {
 
     /**
      * Set uPortal entity preferecnces for portlet/soffit/webcomponent. This method provides a REST interface for uPortal for obtaining
-     * the definition preferences for the portlet/soffit/webcomponent
+     * the entity preferences for the portlet/soffit/webcomponent
      *
      * <p>The path for this method is /prefs/putprefs/fname. The fname is a string representing the fname of the
      * portlet/soffit/webcomponent to set entity preferences for. These are the user preferences for the given
