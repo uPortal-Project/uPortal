@@ -1557,6 +1557,8 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
                     this.portletDefinitionRegistry.getPortletDefinition(
                             String.valueOf(ls.getChanId()));
             if (channelDef != null
+                    && channelDef.getLifecycleState()
+                            != null // Unusual, but lifecycle state may apparently be null
                     && channelDef
                             .getLifecycleState()
                             .isEqualToOrAfter(PortletLifecycleState.APPROVED)) {
