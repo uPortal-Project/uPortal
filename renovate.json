@@ -68,6 +68,12 @@
       ]
     },
     {
+      "groupName": "AspectJ",
+      "packagePatterns": [
+        "^org.aspectj"
+      ]
+    },
+    {
       "packagePatterns": [
         "^com.amazonaws"
       ],
