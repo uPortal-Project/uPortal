@@ -2,10 +2,76 @@
   "extends": [
     "config:base",
     ":rebaseStalePrs",
-    ":preserveSemverRanges"
+    ":preserveSemverRanges",
+    ":disableRateLimiting"
   ],
   "gradle": {
     "enabled": true
   },
-  "renovateFork": true
+  "maven": {
+    "enabled": true
+  },
+  "renovateFork": true,
+  "packageRules": [
+    {
+      "groupName": "uPortal",
+      "packagePatterns": [
+        "^org.jasig.portal:"
+      ]
+    },
+    {
+      "groupName": "uPortal web components",
+      "packagePatterns": [
+        "^org.webjars.npm:uportal"
+      ]
+    },
+    {
+      "groupName": "Person Directory",
+      "packagePatterns": [
+        "^org.apereo.service.persondir"
+      ]
+    },
+    {
+      "groupName": "Lucene",
+      "packagePatterns": [
+        "^org.apache.lucene"
+      ]
+    },
+    {
+      "groupName": "Mockito",
+      "packagePatterns": [
+        "^org.mockito"
+      ]
+    },
+    {
+      "groupName": "User Type",
+      "packagePatterns": [
+        "^org.jadira.usertype:usertype.core"
+      ]
+    },
+    {
+      "groupName": "JAXB2",
+      "packagePatterns": [
+        "^org.jvnet.jaxb2_commons"
+      ]
+    },
+    {
+      "groupName": "Resource Server",
+      "packagePatterns": [
+        "^org.jasig.resourceserver"
+      ]
+    }
+    {
+      "groupName": "Notification Portlet",
+      "packagePatterns": [
+        "^org.jasig.portlet.notification"
+      ]
+    },
+    {
+      "packagePatterns": [
+        "^com.amazonaws"
+      ],
+      "schedule": "on Monday"
+    }
+  ]
 }
