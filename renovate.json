@@ -60,7 +60,7 @@
       "packagePatterns": [
         "^org.jasig.resourceserver"
       ]
-    }
+    },
     {
       "groupName": "Notification Portlet",
       "packagePatterns": [
