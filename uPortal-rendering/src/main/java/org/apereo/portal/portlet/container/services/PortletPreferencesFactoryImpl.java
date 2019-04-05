@@ -16,6 +16,7 @@ package org.apereo.portal.portlet.container.services;
 
 import javax.portlet.PortletPreferences;
 import javax.servlet.http.HttpServletRequest;
+
 import org.apache.pluto.container.PortletRequestContext;
 import org.apache.pluto.container.PortletWindow;
 import org.apereo.portal.jpa.BasePortalJpaDao;
@@ -113,38 +114,37 @@ public class PortletPreferencesFactoryImpl implements PortletPreferencesFactory 
         }
     }
 
-    /**
-     * method that creates REST API specific PortletPreferences
-     * */
+    /** method that creates REST API specific PortletPreferences */
     @Override
     public PortletPreferences createAPIPortletPreferences(
-        final HttpServletRequest requestContext, IPortletEntity portletEntity, boolean render, boolean configMode) {
+            final HttpServletRequest requestContext,
+            IPortletEntity portletEntity,
+            boolean render,
+            boolean configMode) {
         final HttpServletRequest containerRequest = requestContext;
-
 
         if (configMode) {
             final IPortletDefinitionId portletDefinitionId = portletEntity.getPortletDefinitionId();
             return new PortletDefinitionPreferencesImpl(
-                portletDefinitionRegistry, transactionOperations, portletDefinitionId, render);
+                    portletDefinitionRegistry, transactionOperations, portletDefinitionId, render);
         } else if (this.isStoreInMemory(containerRequest)) {
             final IPortletEntityId portletEntityId = portletEntity.getPortletEntityId();
             return new GuestPortletEntityPreferencesAPIImpl(
-                requestContext,
-                portletEntityRegistry,
-                portletDefinitionRegistry,
-                portletEntityId,
-                render);
+                    requestContext,
+                    portletEntityRegistry,
+                    portletDefinitionRegistry,
+                    portletEntityId,
+                    render);
         } else {
             final IPortletEntityId portletEntityId = portletEntity.getPortletEntityId();
             return new PortletEntityPreferencesAPIImpl(
-                requestContext,
-                portletEntityRegistry,
-                portletDefinitionRegistry,
-                transactionOperations,
-                portletEntityId);
+                    requestContext,
+                    portletEntityRegistry,
+                    portletDefinitionRegistry,
+                    transactionOperations,
+                    portletEntityId);
         }
     }
-
 
     protected boolean isStoreInMemory(HttpServletRequest containerRequest) {
         if (this.storeGuestPreferencesInMemory && isGuestUser(containerRequest)) {

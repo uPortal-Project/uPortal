@@ -16,6 +16,7 @@ package org.apereo.portal.portlet.container.services;
 
 import javax.portlet.PortletPreferences;
 import javax.servlet.http.HttpServletRequest;
+
 import org.apache.pluto.container.PortletRequestContext;
 import org.apereo.portal.portlet.om.IPortletEntity;
 
@@ -26,7 +27,13 @@ public interface PortletPreferencesFactory {
     PortletPreferences createPortletPreferences(
             final PortletRequestContext requestContext, boolean render);
 
-    /** Create portlet preferences for the specified portlet request context for the REST API calls (since they don't have access to the portletRequestContext (and technically don't need it)) */
+    /**
+     * Create portlet preferences for the specified portlet request context for the REST API calls
+     * (since they don't have access to the portletRequestContext (and technically don't need it))
+     */
     PortletPreferences createAPIPortletPreferences(
-        final HttpServletRequest requestContext, IPortletEntity portletEntity, boolean render, boolean configMode);
+            final HttpServletRequest requestContext,
+            IPortletEntity portletEntity,
+            boolean render,
+            boolean configMode);
 }
