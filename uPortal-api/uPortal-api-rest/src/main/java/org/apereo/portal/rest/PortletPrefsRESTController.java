@@ -1,6 +1,8 @@
 package org.apereo.portal.rest;
 
-
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.annotations.ApiParam;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -8,17 +10,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 import javax.portlet.PortletPreferences;
 import javax.portlet.ReadOnlyException;
 import javax.portlet.WindowState;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.swagger.annotations.ApiParam;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apereo.portal.portlet.container.services.PortletPreferencesFactory;
@@ -144,10 +141,10 @@ public class PortletPrefsRESTController {
                 logger.info(error);
                 return new ResponseEntity<>(error, HttpStatus.FORBIDDEN);
             }
-            logger.error(e.getMessage(),e);
+            logger.error(e.getMessage(), e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (Exception e) {
-            logger.error(e.getMessage(),e);
+            logger.error(e.getMessage(), e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -199,7 +196,7 @@ public class PortletPrefsRESTController {
                 return new ResponseEntity<>(error, HttpStatus.FORBIDDEN);
             }
 
-            logger.error(e.getMessage(),e);
+            logger.error(e.getMessage(), e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (Exception e) {
 
@@ -256,11 +253,11 @@ public class PortletPrefsRESTController {
                 return new ResponseEntity<>(error, HttpStatus.FORBIDDEN);
             }
 
-            logger.error(e.getMessage(),e);
+            logger.error(e.getMessage(), e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (Exception e) {
 
-            logger.error(e.getMessage(),e);
+            logger.error(e.getMessage(), e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -364,7 +361,7 @@ public class PortletPrefsRESTController {
                     .body(mapper.writeValueAsString(prefs.getMap()));
         } catch (Exception e) {
 
-            logger.error(e.getMessage(),e);
+            logger.error(e.getMessage(), e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -433,7 +430,7 @@ public class PortletPrefsRESTController {
                     .body(mapper.writeValueAsString(prefMap(prefs)));
         } catch (Exception e) {
 
-            logger.error(e.getMessage(),e);
+            logger.error(e.getMessage(), e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -529,7 +526,7 @@ public class PortletPrefsRESTController {
                 return new ResponseEntity<>(error, HttpStatus.FORBIDDEN);
             }
 
-            logger.error(e.getMessage(),e);
+            logger.error(e.getMessage(), e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 
         } catch (IOException e) {
@@ -597,7 +594,7 @@ public class PortletPrefsRESTController {
                 return new ResponseEntity<>(error, HttpStatus.FORBIDDEN);
             }
 
-            logger.error(e.getMessage(),e);
+            logger.error(e.getMessage(), e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 
         } catch (IOException e) {
