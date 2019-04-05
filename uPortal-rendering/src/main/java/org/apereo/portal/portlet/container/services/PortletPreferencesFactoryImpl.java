@@ -16,7 +16,6 @@ package org.apereo.portal.portlet.container.services;
 
 import javax.portlet.PortletPreferences;
 import javax.servlet.http.HttpServletRequest;
-
 import org.apache.pluto.container.PortletRequestContext;
 import org.apache.pluto.container.PortletWindow;
 import org.apereo.portal.jpa.BasePortalJpaDao;
