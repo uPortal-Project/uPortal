@@ -33,11 +33,14 @@ import org.apereo.portal.portlet.om.IPortletPreference;
 import org.apereo.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.apereo.portal.portlet.registry.IPortletEntityRegistry;
 
-/** Preferences impl that manipulates the portlet entity level preference data for Guests used only for the REST API */
+/**
+ * Preferences impl that manipulates the portlet entity level preference data for Guests used only
+ * for the REST API
+ */
 public class GuestPortletEntityPreferencesAPIImpl
-    extends AbstractPortletPreferencesImpl<IPortletEntity> {
+        extends AbstractPortletPreferencesImpl<IPortletEntity> {
     protected static final String PORTLET_PREFERENCES_MAP_ATTRIBUTE =
-        GuestPortletEntityPreferencesAPIImpl.class.getName() + ".PORTLET_PREFERENCES_MAP";
+            GuestPortletEntityPreferencesAPIImpl.class.getName() + ".PORTLET_PREFERENCES_MAP";
 
     private final HttpServletRequest portletRequest;
     private final IPortletEntityId portletEntityId;
@@ -46,11 +49,11 @@ public class GuestPortletEntityPreferencesAPIImpl
     private final IPortletDefinitionRegistry portletDefinitionRegistry;
 
     public GuestPortletEntityPreferencesAPIImpl(
-        HttpServletRequest portletRequest,
-        IPortletEntityRegistry portletEntityRegistry,
-        IPortletDefinitionRegistry portletDefinitionRegistry,
-        IPortletEntityId portletEntityId,
-        boolean render) {
+            HttpServletRequest portletRequest,
+            IPortletEntityRegistry portletEntityRegistry,
+            IPortletDefinitionRegistry portletDefinitionRegistry,
+            IPortletEntityId portletEntityId,
+            boolean render) {
         super(render);
 
         this.portletRequest = portletRequest;
@@ -71,10 +74,10 @@ public class GuestPortletEntityPreferencesAPIImpl
 
     @Override
     protected void loadTargetPortletPreferences(
-        IPortletEntity portletEntity,
-        Map<String, IPortletPreference> targetPortletPreferences) {
+            IPortletEntity portletEntity,
+            Map<String, IPortletPreference> targetPortletPreferences) {
         final Map<String, IPortletPreference> sessionPreferences =
-            this.getSessionPreferences(portletEntityId, portletRequest);
+                this.getSessionPreferences(portletEntityId, portletRequest);
         if (sessionPreferences != null) {
             targetPortletPreferences.putAll(sessionPreferences);
         }
@@ -83,13 +86,13 @@ public class GuestPortletEntityPreferencesAPIImpl
     @Override
     @SuppressWarnings("Duplicates")
     protected void loadBasePortletPreferences(
-        IPortletEntity portletEntity, Map<String, IPortletPreference> basePortletPreferences) {
+            IPortletEntity portletEntity, Map<String, IPortletPreference> basePortletPreferences) {
         final IPortletDefinition portletDefinition = portletEntity.getPortletDefinition();
 
         // Add descriptor prefs to base Map
         final IPortletDefinitionId portletDefinitionId = portletDefinition.getPortletDefinitionId();
         final PortletDefinition portletDescriptor =
-            this.portletDefinitionRegistry.getParentPortletDescriptor(portletDefinitionId);
+                this.portletDefinitionRegistry.getParentPortletDescriptor(portletDefinitionId);
         final Preferences descriptorPreferences = portletDescriptor.getPortletPreferences();
         for (final Preference preference : descriptorPreferences.getPortletPreferences()) {
             final IPortletPreference preferenceWrapper = new PortletPreferenceImpl(preference);
@@ -98,7 +101,7 @@ public class GuestPortletEntityPreferencesAPIImpl
 
         // Add definition prefs to base Map
         final List<IPortletPreference> definitionPreferences =
-            portletDefinition.getPortletPreferences();
+                portletDefinition.getPortletPreferences();
         for (final IPortletPreference preference : definitionPreferences) {
             basePortletPreferences.put(preference.getName(), preference);
         }
@@ -113,7 +116,7 @@ public class GuestPortletEntityPreferencesAPIImpl
     @Override
     protected boolean storeInternal() throws IOException, ValidatorException {
         final Map<String, IPortletPreference> targetPortletPreferences =
-            this.getTargetPortletPreferences();
+                this.getTargetPortletPreferences();
         if (targetPortletPreferences.isEmpty()) {
             return false;
         }
@@ -130,9 +133,9 @@ public class GuestPortletEntityPreferencesAPIImpl
      * @return Map of IPortletPreferences for the entity and session, may be null if no preferences
      *     have been set.
      */
-    @SuppressWarnings({"unchecked","Duplicates"})
+    @SuppressWarnings({"unchecked", "Duplicates"})
     protected Map<String, IPortletPreference> getSessionPreferences(
-        IPortletEntityId portletEntityId, HttpServletRequest httpServletRequest) {
+            IPortletEntityId portletEntityId, HttpServletRequest httpServletRequest) {
         final HttpSession session = httpServletRequest.getSession();
 
         final Map<IPortletEntityId, Map<String, IPortletPreference>> portletPreferences;
@@ -140,8 +143,8 @@ public class GuestPortletEntityPreferencesAPIImpl
         // Sync on the session to ensure the Map isn't in the process of being created
         synchronized (session) {
             portletPreferences =
-                (Map<IPortletEntityId, Map<String, IPortletPreference>>)
-                    session.getAttribute(PORTLET_PREFERENCES_MAP_ATTRIBUTE);
+                    (Map<IPortletEntityId, Map<String, IPortletPreference>>)
+                            session.getAttribute(PORTLET_PREFERENCES_MAP_ATTRIBUTE);
         }
 
         if (portletPreferences == null) {
@@ -151,11 +154,11 @@ public class GuestPortletEntityPreferencesAPIImpl
         return portletPreferences.get(portletEntityId);
     }
 
-    @SuppressWarnings({"unchecked","Duplicates"})
+    @SuppressWarnings({"unchecked", "Duplicates"})
     protected void storeSessionPreferences(
-        IPortletEntityId portletEntityId,
-        HttpServletRequest httpServletRequest,
-        Map<String, IPortletPreference> preferences) {
+            IPortletEntityId portletEntityId,
+            HttpServletRequest httpServletRequest,
+            Map<String, IPortletPreference> preferences) {
         final HttpSession session = httpServletRequest.getSession();
 
         Map<IPortletEntityId, Map<String, IPortletPreference>> portletPreferences;
@@ -163,11 +166,11 @@ public class GuestPortletEntityPreferencesAPIImpl
         // Sync on the session to ensure other threads aren't creating the Map at the same time
         synchronized (session) {
             portletPreferences =
-                (Map<IPortletEntityId, Map<String, IPortletPreference>>)
-                    session.getAttribute(PORTLET_PREFERENCES_MAP_ATTRIBUTE);
+                    (Map<IPortletEntityId, Map<String, IPortletPreference>>)
+                            session.getAttribute(PORTLET_PREFERENCES_MAP_ATTRIBUTE);
             if (portletPreferences == null) {
                 portletPreferences =
-                    new ConcurrentHashMap<IPortletEntityId, Map<String, IPortletPreference>>();
+                        new ConcurrentHashMap<IPortletEntityId, Map<String, IPortletPreference>>();
                 session.setAttribute(PORTLET_PREFERENCES_MAP_ATTRIBUTE, portletPreferences);
             }
         }
