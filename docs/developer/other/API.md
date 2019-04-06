@@ -115,7 +115,10 @@ Example response:
 These endpoints provide a way for soffits and web-components to access and store custom preferences for
 individual soffits and web-components. There are several different endpoints for the various ways to store
 and retrieve these preferences. This is an overview of the general uses. See the Swagger UI documentation 
-for specifics of each endpoint.
+for specifics of each endpoint. 
+
+NOTE: to use any of these endpoints the soffit/web-component must know its own fname as registered in uPortal. 
+This is essential to the functionality of the endpoints
 
 ####Regular preferences vs default preferences
 
