@@ -15,6 +15,7 @@
 package org.apereo.portal;
 
 import java.io.Serializable;
+import java.util.Objects;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.portal.i18n.LocaleManager;
 
@@ -191,12 +192,15 @@ public class UserProfile implements Serializable, IUserProfile {
 
     @Override
     public boolean equals(Object o) {
-        boolean retValue = false;
-        if (o instanceof UserProfile) {
-            UserProfile profile = (UserProfile) o;
-            retValue = this.id == profile.id && this.system == profile.system;
-        }
-        return retValue;
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UserProfile that = (UserProfile) o;
+        return id == that.id && system == that.system;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, system);
     }
 
     // uPortal i18n
