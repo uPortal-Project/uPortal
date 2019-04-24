@@ -12,19 +12,17 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apereo.portal.api.groups;
+package org.apereo.portal.rest.group;
 
-import org.apereo.portal.api.Principal;
-import org.apereo.portal.api.PrincipalImpl;
 import org.apereo.portal.groups.IEntityGroup;
 import org.apereo.portal.groups.IGroupMember;
 import org.apereo.portal.portlets.groupselector.EntityEnum;
 import org.apereo.portal.security.IAuthorizationPrincipal;
 
-public class EntityFactory {
+/* package-private */ class EntityFactory {
     private EntityFactory() {}
 
-    public static Entity createEntity(IGroupMember member, EntityEnum entityType) {
+    /* package-private */ static Entity createEntity(IGroupMember member, EntityEnum entityType) {
         if (member == null) {
             return null;
         }
@@ -35,7 +33,7 @@ public class EntityFactory {
         return entity;
     }
 
-    public static Entity createEntity(IEntityGroup group, EntityEnum entityType) {
+    /* package-private */ static Entity createEntity(IEntityGroup group, EntityEnum entityType) {
         if (group == null) {
             return null;
         }

@@ -12,21 +12,20 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apereo.portal.api.groups;
+package org.apereo.portal.rest.group;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.apereo.portal.api.Principal;
 
 public class EntityImpl implements Entity {
-    protected String entityType;
-    protected String id;
-    protected String name;
-    protected String creatorId;
-    protected String description;
-    protected Principal principal;
-    protected List<Entity> children = new ArrayList<Entity>();
-    protected boolean childrenInitialized;
+    private String entityType;
+    private String id;
+    private String name;
+    private String creatorId;
+    private String description;
+    private Principal principal;
+    private List<Entity> children = new ArrayList<>();
+    private boolean childrenInitialized;
 
     @Override
     public void setEntityType(String entityType) {

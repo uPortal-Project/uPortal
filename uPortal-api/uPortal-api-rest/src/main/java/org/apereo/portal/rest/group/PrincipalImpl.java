@@ -12,18 +12,18 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apereo.portal.api.permissions;
+package org.apereo.portal.rest.group;
 
 import org.springframework.util.Assert;
 
-/* package-private */ final class OwnerImpl implements Owner {
+public final class PrincipalImpl implements Principal {
 
     private static final long serialVersionUID = 1L;
 
     private final String key;
     private final String name;
 
-    public OwnerImpl(String key, String name) {
+    /* package-private */ PrincipalImpl(String key, String name) {
 
         Assert.notNull(key, "Argument 'key' cannot be null");
         Assert.notNull(name, "Argument 'name' cannot be null");
@@ -56,7 +56,7 @@ import org.springframework.util.Assert;
         if (this == obj) return true;
         if (obj == null) return false;
         if (getClass() != obj.getClass()) return false;
-        OwnerImpl other = (OwnerImpl) obj;
+        PrincipalImpl other = (PrincipalImpl) obj;
         if (key == null) {
             if (other.key != null) return false;
         } else if (!key.equals(other.key)) return false;
@@ -68,6 +68,6 @@ import org.springframework.util.Assert;
 
     @Override
     public String toString() {
-        return "OwnerImpl [key=" + key + ", name=" + name + "]";
+        return "PrincipalImpl [key=" + key + ", name=" + name + "]";
     }
 }
