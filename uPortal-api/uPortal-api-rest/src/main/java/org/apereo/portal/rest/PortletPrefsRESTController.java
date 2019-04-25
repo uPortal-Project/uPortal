@@ -304,7 +304,6 @@ public class PortletPrefsRESTController {
      * administrator or have configuration rights for the given portlet/soffit/webcomponent in
      * uPortal to access these. Will return a 403 or 404 otherwise
      */
-    // must be authenticated and a portal administrator
     @RequestMapping(value = "/prefs/getdefinitionprefs/{fname}", method = RequestMethod.GET)
     public ResponseEntity getDefinitionPrefs(
             HttpServletRequest request,
@@ -379,7 +378,6 @@ public class PortletPrefsRESTController {
      * configuration rights for the given portlet/soffit/webcomponent in uPortal to access these.
      * Will return a 403 or 404 otherwise
      */
-    // must be authenticated and a portal administrator
     @RequestMapping(value = "/prefs/getdefinitiononlyprefs/{fname}", method = RequestMethod.GET)
     public ResponseEntity getDefinitionOnlyPrefs(
             HttpServletRequest request,
