@@ -463,7 +463,6 @@ public class PortletPrefsRESTController {
      * given portlet/soffit/webcomponent in uPortal to access these. Will return a 403 or 404
      * otherwise
      */
-    // need to be an administrator
     @RequestMapping(value = "/prefs/putdefinitionprefs", method = RequestMethod.PUT)
     public ResponseEntity putDefinitionPrefs(
             HttpServletRequest request,
