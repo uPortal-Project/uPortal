@@ -106,7 +106,7 @@ Example response:
   }
 }
 ```
-###Portlet Preferences
+### Portlet Preferences
 
 `/api/prefs/{task}`
 
@@ -120,7 +120,7 @@ for specifics of each endpoint.
 NOTE: to use any of these endpoints the soffit/web-component must know its own fname as registered in uPortal. 
 This is essential to the functionality of the endpoints
 
-####Regular preferences vs default preferences
+#### Regular preferences vs default preferences
 
 To access the regular (entity) preferences of an individual soffit or web-component use the endpoints with 
 only prefs in the name. These will return or store the preferences associated with the specific user for the 
@@ -139,7 +139,7 @@ the internal call to the preferences for portlets.
 NOTE: These calls will be rejected if attempted by any user without administrative privileges. This prevents 
 unauthorized meddling of default preferences since these calls can allow one to overwrite readonly preferences.
 
-####Only calls
+#### Only calls
 
 There are two calls with only in their names. These are used to single out the preferences that are only associated 
 with the called level without any extra. These are included because the normal retrieve calls return every preference 
