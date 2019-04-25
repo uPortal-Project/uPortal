@@ -35,6 +35,8 @@ import org.apereo.portal.portlet.dao.IPortletCookieDao;
 import org.apereo.portal.portlet.om.IPortalCookie;
 import org.apereo.portal.portlet.om.IPortletCookie;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
@@ -50,11 +52,13 @@ public class JpaPortletCookieDaoImpl extends BasePortalJpaDao implements IPortle
     private CriteriaQuery<PortletCookieImpl> findExpiredByParentPortletCookiesQuery;
     private ParameterExpression<DateTime> nowParameter;
 
-    protected static final int DEFAULT_EMPTY_MAX_AGE = (int) TimeUnit.DAYS.toSeconds(1);
+    private static final int DEFAULT_EMPTY_MAX_AGE = (int) TimeUnit.DAYS.toSeconds(1);
     private int emptyCookieMaxAge = DEFAULT_EMPTY_MAX_AGE;
 
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         this.nowParameter = this.createParameterExpression(DateTime.class, "now");
 
         this.deletePortalCookieQueryString =
@@ -109,11 +113,7 @@ public class JpaPortletCookieDaoImpl extends BasePortalJpaDao implements IPortle
                         });
     }
 
-    /**
-     * Generates a 40 character unique value.
-     *
-     * @return
-     */
+    /** Generates a 40 character unique value. */
     private String generateNewCookieId() {
         final byte[] keyBytes = new byte[30];
         this.secureRandom.nextBytes(keyBytes);

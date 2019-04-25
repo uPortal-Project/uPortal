@@ -14,8 +14,8 @@
  */
 package org.apereo.portal.xml.stream;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import javax.xml.namespace.NamespaceContext;
@@ -26,8 +26,8 @@ import javax.xml.stream.events.XMLEvent;
 
 /** Caches events written to a List */
 public class XMLEventBufferWriter implements XMLEventWriter {
-    private final Map<String, String> prefixes = new LinkedHashMap<String, String>();
-    private final List<XMLEvent> eventBuffer = new LinkedList<XMLEvent>();
+    private final Map<String, String> prefixes = new LinkedHashMap<>();
+    private final List<XMLEvent> eventBuffer = new ArrayList<>();
     private NamespaceContext namespaceContext;
     private String defaultNamespace;
 
@@ -47,13 +47,13 @@ public class XMLEventBufferWriter implements XMLEventWriter {
     }
 
     @Override
-    public void flush() throws XMLStreamException {}
+    public void flush() {}
 
     @Override
-    public void close() throws XMLStreamException {}
+    public void close() {}
 
     @Override
-    public void add(XMLEvent event) throws XMLStreamException {
+    public void add(XMLEvent event) {
         this.eventBuffer.add(event);
     }
 
@@ -65,22 +65,22 @@ public class XMLEventBufferWriter implements XMLEventWriter {
     }
 
     @Override
-    public String getPrefix(String uri) throws XMLStreamException {
+    public String getPrefix(String uri) {
         return prefixes.get(uri);
     }
 
     @Override
-    public void setPrefix(String prefix, String uri) throws XMLStreamException {
+    public void setPrefix(String prefix, String uri) {
         this.prefixes.put(uri, prefix);
     }
 
     @Override
-    public void setDefaultNamespace(String uri) throws XMLStreamException {
+    public void setDefaultNamespace(String uri) {
         this.defaultNamespace = uri;
     }
 
     @Override
-    public void setNamespaceContext(NamespaceContext context) throws XMLStreamException {
+    public void setNamespaceContext(NamespaceContext context) {
         this.namespaceContext = context;
     }
 

@@ -27,6 +27,8 @@ import org.apereo.portal.jpa.cache.EntityManagerCache;
 import org.apereo.portal.portlet.dao.IPortletDefinitionDao;
 import org.apereo.portal.portlet.om.IPortletDefinition;
 import org.apereo.portal.utils.cache.CacheKey;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.TransactionStatus;
@@ -40,6 +42,8 @@ public class JpaAggregatedPortletLookupDao extends BaseAggrEventsJpaDao
 
     private EntityManagerCache entityManagerCache;
     private IPortletDefinitionDao portletDefinitionDao;
+
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
     public void setPortletDefinitionDao(IPortletDefinitionDao portletDefinitionDao) {

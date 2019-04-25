@@ -28,6 +28,8 @@ import org.apache.commons.lang.Validate;
 import org.apereo.portal.groups.pags.dao.IPersonAttributesGroupDefinition;
 import org.apereo.portal.groups.pags.dao.IPersonAttributesGroupDefinitionDao;
 import org.apereo.portal.jpa.BasePortalJpaDao;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 @Repository("personAttributesGroupDefinitionDao")
@@ -38,6 +40,8 @@ public class JpaPersonAttributesGroupDefinitionDao extends BasePortalJpaDao
     private CriteriaQuery<PersonAttributesGroupDefinitionImpl> groupDefinitionByNameQuery;
     private CriteriaQuery<PersonAttributesGroupDefinitionImpl> parentGroupDefinitionsQuery;
     private ParameterExpression<String> nameParameter;
+
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Override
     public void afterPropertiesSet() throws Exception {

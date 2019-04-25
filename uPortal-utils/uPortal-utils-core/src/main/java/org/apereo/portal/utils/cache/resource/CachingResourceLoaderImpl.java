@@ -162,7 +162,9 @@ public class CachingResourceLoaderImpl implements CachingResourceLoader {
             if (resourceLastLoadTime < lastModified) {
                 this.logger.trace(
                         "Additional resource {} for {} was modified at {}, reloading",
-                        new Object[] {additionalResource, resource, lastModified});
+                        additionalResource,
+                        resource,
+                        lastModified);
                 return true;
             }
         }

@@ -37,7 +37,7 @@ public final class PortalDataHandlerServiceUtils {
     public static void format(IPortalDataHandlerService dataHandlerService, Logger l) {
         final Formatter f = new Formatter(new AppendableLogger(l, LogLevel.INFO));
 
-        final Map<String, Set<Operations>> portalDataTypes = new TreeMap<String, Set<Operations>>();
+        final Map<String, Set<Operations>> portalDataTypes = new TreeMap<>();
 
         final Iterable<IPortalDataType> exportPortalDataTypes =
                 dataHandlerService.getExportPortalDataTypes();
@@ -49,18 +49,18 @@ public final class PortalDataHandlerServiceUtils {
 
         final TableFormatter tableFormatter =
                 new TableFormatter(
-                        new TableEntry<String>("Data Type", "-", "s"),
-                        new TableEntry<String>("Export", "-", "s"),
-                        new TableEntry<String>("Delete", "-", "s"));
+                        new TableEntry<>("Data Type", "-", "s"),
+                        new TableEntry<>("Export", "-", "s"),
+                        new TableEntry<>("Delete", "-", "s"));
 
         for (final Map.Entry<String, Set<Operations>> portalDataTypeEntry :
                 portalDataTypes.entrySet()) {
             final String typeId = portalDataTypeEntry.getKey();
             final Set<Operations> ops = portalDataTypeEntry.getValue();
             tableFormatter.addRow(
-                    new TableEntry<String>(typeId, "-", "s"),
-                    new TableEntry<Boolean>(ops.contains(Operations.EXPORT), "-", "b"),
-                    new TableEntry<Boolean>(ops.contains(Operations.DELETE), "-", "b"));
+                    new TableEntry<>(typeId, "-", "s"),
+                    new TableEntry<>(ops.contains(Operations.EXPORT), "-", "b"),
+                    new TableEntry<>(ops.contains(Operations.DELETE), "-", "b"));
         }
 
         tableFormatter.format(f);
@@ -71,8 +71,8 @@ public final class PortalDataHandlerServiceUtils {
 
         final TableFormatter tableFormatter =
                 new TableFormatter(
-                        new TableEntry<String>("sysid", "-", "s"),
-                        new TableEntry<String>("Description", "-", "s"));
+                        new TableEntry<>("sysid", "-", "s"),
+                        new TableEntry<>("Description", "-", "s"));
 
         for (final IPortalData it : data) {
             final String dataId = it.getDataId();
@@ -83,18 +83,12 @@ public final class PortalDataHandlerServiceUtils {
             }
 
             tableFormatter.addRow(
-                    new TableEntry<String>(dataId, "-", "s"),
-                    new TableEntry<String>(dataTitle, "-", "s"));
+                    new TableEntry<>(dataId, "-", "s"), new TableEntry<>(dataTitle, "-", "s"));
         }
 
         tableFormatter.format(f);
     }
 
-    /**
-     * @param portalDataTypes
-     * @param exportPortalDataTypes
-     * @param operation
-     */
     private static void addDataTypes(
             final Map<String, Set<Operations>> portalDataTypes,
             final Iterable<IPortalDataType> exportPortalDataTypes,

@@ -76,7 +76,7 @@ public abstract class InjectingXMLEventReader extends BaseXMLEventReader {
             return null;
         }
 
-        final Deque<XMLEvent> additionalEvents = new LinkedList<XMLEvent>();
+        final Deque<XMLEvent> additionalEvents = new LinkedList<>();
         additionalEvents.push(additionalEvent);
         return additionalEvents;
     }
@@ -86,7 +86,7 @@ public abstract class InjectingXMLEventReader extends BaseXMLEventReader {
      * there is a need to inject more than a single event override {@link
      * #getAdditionalEvents(XMLEvent)}
      */
-    protected XMLEvent getAdditionalEvent(XMLEvent event) {
+    private XMLEvent getAdditionalEvent(XMLEvent event) {
         throw new UnsupportedOperationException(
                 "Either 'Deque<XMLEvent> getAdditionalEvents(XMLEvent event)' or 'XMLEvent getAdditionalEvent(XMLEvent event must be implemented");
     }
