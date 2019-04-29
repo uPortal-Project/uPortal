@@ -32,7 +32,7 @@ import javax.portlet.Event;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.pluto.container.om.portlet.ContainerRuntimeOption;
 import org.apache.pluto.container.om.portlet.PortletDefinition;
 import org.apereo.portal.events.IPortletExecutionEventFactory;
@@ -963,9 +963,16 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
             if (portletDef.getLifecycleState().equals(PortletLifecycleState.MAINTENANCE)) {
                 // Prevent the portlet from rendering;  replace with a helpful "Out of Service"
                 // message
+                final IPortletDefinitionParameter messageParam =
+                        portletDef.getParameter(
+                                PortletLifecycleState.CUSTOM_MAINTENANCE_MESSAGE_PARAMETER_NAME);
+                final Exception mme =
+                        messageParam != null && StringUtils.isNotBlank(messageParam.getValue())
+                                ? new MaintenanceModeException(messageParam.getValue())
+                                : new MaintenanceModeException();
                 portletRenderExecutionWorker =
                         this.portletWorkerFactory.createFailureWorker(
-                                request, response, portletWindowId, new MaintenanceModeException());
+                                request, response, portletWindowId, mme);
             } else {
                 // Happy path
                 portletRenderExecutionWorker =

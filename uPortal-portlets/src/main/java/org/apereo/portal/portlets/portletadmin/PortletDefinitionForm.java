@@ -26,7 +26,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import org.apache.commons.collections.map.LazyMap;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -51,6 +51,8 @@ import org.apereo.portal.portlets.BooleanAttributeFactory;
 import org.apereo.portal.portlets.StringListAttribute;
 import org.apereo.portal.portlets.StringListAttributeFactory;
 import org.apereo.portal.xml.PortletDescriptor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PortletDefinitionForm implements Serializable {
 
@@ -84,6 +86,7 @@ public class PortletDefinitionForm implements Serializable {
     private int expirationHour = 12;
     private int expirationMinute = 0;
     private int expirationAmPm = 0;
+    private String customMaintenanceMessage;
 
     /** Portlet controls */
     private boolean editable;
@@ -112,6 +115,8 @@ public class PortletDefinitionForm implements Serializable {
     private Map<String, BooleanAttribute> portletPreferenceReadOnly =
             LazyMap.decorate(
                     new HashMap<String, BooleanAttribute>(), new BooleanAttributeFactory());
+
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     /** Default constructor */
     public PortletDefinitionForm() {}
@@ -174,6 +179,14 @@ public class PortletDefinitionForm implements Serializable {
                 default:
                     // Other lifecycle states are not affected by this consideration
             }
+        }
+        // MAINTENANCE lifecycle state may leverage additional metadata
+        final IPortletDefinitionParameter messageParam =
+                def.getParameter(PortletLifecycleState.CUSTOM_MAINTENANCE_MESSAGE_PARAMETER_NAME);
+        logger.debug(
+                "lastLifecycleEntry='{}'; messageParam='{}'", lastLifecycleEntry, messageParam);
+        if (messageParam != null && StringUtils.isNotBlank(messageParam.getValue())) {
+            setCustomMaintenanceMessage(messageParam.getValue());
         }
 
         for (IPortletDefinitionParameter param : def.getParameters()) {
@@ -592,6 +605,14 @@ public class PortletDefinitionForm implements Serializable {
 
     public void setExpirationAmPm(int expirationAmPm) {
         this.expirationAmPm = expirationAmPm;
+    }
+
+    public String getCustomMaintenanceMessage() {
+        return customMaintenanceMessage;
+    }
+
+    public void setCustomMaintenanceMessage(String customMaintenanceMessage) {
+        this.customMaintenanceMessage = customMaintenanceMessage;
     }
 
     /**

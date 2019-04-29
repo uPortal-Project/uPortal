@@ -19,11 +19,20 @@
 
 --%>
 <%@ include file="/WEB-INF/jsp/include.jsp"%>
-<div class="fl-widget portlet error view-detailed" role="section">
 
-  <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
-      <h3><spring:message code="errorportlet.maintenance.title"/></h3>
-      <p><spring:message code="errorportlet.maintenance.text"/></p>
-  </div> <!-- end sectionhead -->
-
-</div> <!--  end portlet -->
+<div class="jumbotron">
+  <h2 class="text-warning" style="font-size: 200%;">
+    <i class="fa fa-exclamation-circle"></i>
+    <spring:message code="errorportlet.maintenance.title"/>
+  </h2>
+  <p>
+    <c:choose>
+      <c:when test="${customMaintenanceMessage ne null}">
+        <c:out value="${customMaintenanceMessage}"/>
+      </c:when>
+      <c:otherwise>
+        <spring:message code="errorportlet.maintenance.text"/>
+      </c:otherwise>
+    </c:choose>
+  </p>
+</div>
