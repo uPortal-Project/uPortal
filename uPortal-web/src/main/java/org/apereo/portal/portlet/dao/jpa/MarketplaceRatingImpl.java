@@ -14,6 +14,7 @@
  */
 package org.apereo.portal.portlet.dao.jpa;
 
+import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
@@ -32,6 +33,9 @@ class MarketplaceRatingImpl implements IMarketplaceRating {
 
     @Column(name = "REVIEW", length = REVIEW_MAX_LENGTH)
     private String review;
+
+    @Column(name = "RATINGDATE")
+    private Date ratingDate;
 
     @Override
     public MarketplaceRatingPK getMarketplaceRatingPK() {
@@ -71,12 +75,21 @@ class MarketplaceRatingImpl implements IMarketplaceRating {
         this.rating = rating;
     }
 
+    public Date getRatingDate() {
+        return ratingDate;
+    }
+
+    public void setRatingDate(Date ratingDate) {
+        this.ratingDate = ratingDate;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this)
                 .append("RatingPK: ", this.marketplaceRatingPK)
                 .append("Rating: ", this.rating)
                 .append("Review: ", this.review)
+                .append("Date: ", this.ratingDate)
                 .toString();
     }
 }

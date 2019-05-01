@@ -165,4 +165,72 @@ public class MarketplaceRESTController {
         return new ModelAndView(
                 "json", "rating", new MarketplaceEntryRating(Integer.parseInt(rating), review));
     }
+
+    /**
+     * Get all ratings done on portlets since daysBack ago.
+     *
+     * @param request
+     * @param daysBack - number of days back to search for portlet ratings
+     * @return
+     */
+    @RequestMapping(value = "/marketplace/{daysBack}/getRatings", method = RequestMethod.GET)
+    public ModelAndView getPortletRatings(HttpServletRequest request, @PathVariable int daysBack) {
+
+        Set<IMarketplaceRating> portlets = marketplaceRatingDAO.getAllRatingsInLastXDays(daysBack);
+
+        List<MarketplaceEntryRating> ratings = new ArrayList<>();
+
+        for (IMarketplaceRating portlet : portlets) {
+
+            MarketplaceEntryRating portletRating =
+                    new MarketplaceEntryRating(
+                            portlet.getMarketplaceRatingPK().getUserName(),
+                            portlet.getMarketplaceRatingPK().getPortletDefinition().getName(),
+                            portlet.getMarketplaceRatingPK().getPortletDefinition().getFName(),
+                            portlet.getRating(),
+                            portlet.getReview(),
+                            portlet.getRatingDate());
+
+            ratings.add(portletRating);
+        }
+
+        return new ModelAndView("json", "ratings", ratings);
+    }
+
+    /**
+     * Get all ratings done on a specific portlet since daysBack ago.
+     *
+     * @param request
+     * @param fname - portlet fname
+     * @param daysBack - number of days back to search for portlet ratings
+     * @return
+     */
+    @RequestMapping(
+        value = "/marketplace/{fname}/{daysBack}/getRatings",
+        method = RequestMethod.GET
+    )
+    public ModelAndView getPortletRatings(
+            HttpServletRequest request, @PathVariable String fname, @PathVariable int daysBack) {
+
+        Set<IMarketplaceRating> portlets =
+                marketplaceRatingDAO.getAllRatingsForPortletInLastXDays(daysBack, fname);
+
+        List<MarketplaceEntryRating> ratings = new ArrayList<>();
+
+        for (IMarketplaceRating portlet : portlets) {
+
+            MarketplaceEntryRating portletRating =
+                    new MarketplaceEntryRating(
+                            portlet.getMarketplaceRatingPK().getUserName(),
+                            portlet.getMarketplaceRatingPK().getPortletDefinition().getName(),
+                            portlet.getMarketplaceRatingPK().getPortletDefinition().getFName(),
+                            portlet.getRating(),
+                            portlet.getReview(),
+                            portlet.getRatingDate());
+
+            ratings.add(portletRating);
+        }
+
+        return new ModelAndView("json", "ratings", ratings);
+    }
 }

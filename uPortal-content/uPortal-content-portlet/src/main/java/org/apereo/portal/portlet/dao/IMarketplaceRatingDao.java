@@ -62,4 +62,21 @@ public interface IMarketplaceRatingDao {
 
     /** Aggregates the IMarketplaceRating into IPortletDefinition */
     void aggregateMarketplaceRating();
+
+    /**
+     * Get all the ratings done in the last X days.
+     *
+     * @param numberOfDaysBack - number of days to go back to find ratings
+     * @return collection of IMarketplaceRating - can be null
+     */
+    Set<IMarketplaceRating> getAllRatingsInLastXDays(int numberOfDaysBack);
+
+    /**
+     * Get all the ratings done for a specific portlet in the last X days.
+     *
+     * @param numberOfDaysBack - number of days to go back to find ratings
+     * @param fname - portlet fname
+     * @return collection of IMarketplaceRating - can be null
+     */
+    Set<IMarketplaceRating> getAllRatingsForPortletInLastXDays(int numberOfDaysBack, String fname);
 }

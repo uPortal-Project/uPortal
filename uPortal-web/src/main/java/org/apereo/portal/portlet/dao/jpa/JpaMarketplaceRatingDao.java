@@ -15,6 +15,7 @@
 package org.apereo.portal.portlet.dao.jpa;
 
 import com.google.common.base.Function;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -34,6 +35,7 @@ import org.apereo.portal.portlet.dao.IMarketplaceRatingDao;
 import org.apereo.portal.portlet.dao.IPortletDefinitionDao;
 import org.apereo.portal.portlet.marketplace.IMarketplaceRating;
 import org.apereo.portal.portlet.om.IPortletDefinition;
+import org.joda.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
@@ -117,6 +119,7 @@ public class JpaMarketplaceRatingDao extends BasePortalJpaDao implements IMarket
         temp.setMarketplaceRatingPK(tempPK);
         temp.setRating(rating);
         temp.setReview(review);
+        temp.setRatingDate(new Date());
         return this.createOrUpdateRating(temp);
     }
 
@@ -302,5 +305,83 @@ public class JpaMarketplaceRatingDao extends BasePortalJpaDao implements IMarket
                 }
             }
         }
+    }
+
+    @Override
+    public Set<IMarketplaceRating> getAllRatingsForPortletInLastXDays(
+            int numberOfDaysBack, final String fname) {
+
+        LocalDateTime todayMinusNumberOfDaysBack = LocalDateTime.now().minusDays(numberOfDaysBack);
+
+        final TypedQuery<MarketplaceRatingImpl> query =
+                this.createQuery(
+                        this.createCriteriaQuery(
+                                new Function<
+                                        CriteriaBuilder, CriteriaQuery<MarketplaceRatingImpl>>() {
+                                    @Override
+                                    public CriteriaQuery<MarketplaceRatingImpl> apply(
+                                            CriteriaBuilder input) {
+                                        final CriteriaQuery<MarketplaceRatingImpl> criteriaQuery =
+                                                input.createQuery(MarketplaceRatingImpl.class);
+                                        final Root<MarketplaceRatingImpl> definitionRoot =
+                                                criteriaQuery.from(MarketplaceRatingImpl.class);
+                                        Predicate ratingDatePredicate =
+                                                input.greaterThanOrEqualTo(
+                                                        definitionRoot.<java.util.Date>get(
+                                                                "ratingDate"),
+                                                        todayMinusNumberOfDaysBack.toDate());
+                                        Predicate conditionPortlet =
+                                                input.equal(
+                                                        definitionRoot
+                                                                .get("marketplaceRatingPK")
+                                                                .get("portletDefinition"),
+                                                        portletDefinitionDao
+                                                                .getPortletDefinitionByFname(
+                                                                        fname));
+                                        Predicate allConditions =
+                                                input.and(conditionPortlet, ratingDatePredicate);
+                                        criteriaQuery.select(definitionRoot).where(allConditions);
+
+                                        return criteriaQuery;
+                                    }
+                                }));
+
+        return new HashSet<IMarketplaceRating>(query.getResultList());
+    }
+
+    @Override
+    @PortalTransactionalReadOnly
+    @OpenEntityManager(unitName = PERSISTENCE_UNIT_NAME)
+    public Set<IMarketplaceRating> getAllRatingsInLastXDays(int numberOfDaysBack) {
+
+        LocalDateTime todayMinusNumberOfDaysBack = LocalDateTime.now().minusDays(numberOfDaysBack);
+
+        final TypedQuery<MarketplaceRatingImpl> query =
+                this.createQuery(
+                        this.createCriteriaQuery(
+                                new Function<
+                                        CriteriaBuilder, CriteriaQuery<MarketplaceRatingImpl>>() {
+                                    @Override
+                                    public CriteriaQuery<MarketplaceRatingImpl> apply(
+                                            CriteriaBuilder input) {
+                                        final CriteriaQuery<MarketplaceRatingImpl> criteriaQuery =
+                                                input.createQuery(MarketplaceRatingImpl.class);
+                                        final Root<MarketplaceRatingImpl> definitionRoot =
+                                                criteriaQuery.from(MarketplaceRatingImpl.class);
+                                        Predicate ratingDatePredicate =
+                                                input.greaterThanOrEqualTo(
+                                                        definitionRoot.<java.util.Date>get(
+                                                                "ratingDate"),
+                                                        todayMinusNumberOfDaysBack.toDate());
+
+                                        criteriaQuery
+                                                .select(definitionRoot)
+                                                .where(ratingDatePredicate);
+
+                                        return criteriaQuery;
+                                    }
+                                }));
+
+        return new HashSet<IMarketplaceRating>(query.getResultList());
     }
 }

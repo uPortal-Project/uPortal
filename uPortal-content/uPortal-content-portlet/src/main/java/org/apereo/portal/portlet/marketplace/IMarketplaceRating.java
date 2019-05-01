@@ -14,6 +14,7 @@
  */
 package org.apereo.portal.portlet.marketplace;
 
+import java.util.Date;
 import org.apereo.portal.portlet.dao.jpa.MarketplaceRatingPK;
 
 public interface IMarketplaceRating {
@@ -39,4 +40,8 @@ public interface IMarketplaceRating {
      * @param review a text review of the portlet
      */
     public void setReview(String review);
+
+    public void setRatingDate(Date ratingDate);
+
+    public Date getRatingDate();
 }

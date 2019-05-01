@@ -112,6 +112,28 @@ public class MarketplaceRESTControllerTest {
     }
 
     @Test
+    public void testAllPortletRatingDaysBack() {
+
+        String remoteUser = "jdoe";
+        Mockito.when(req.getRemoteUser()).thenReturn("jdoe");
+        IPortletType portletType =
+                new PortletTypeImpl("John Doe", "http://localhost:8080/uportal/test");
+        portletType.setDescription("Portlet Type");
+
+        PortletDefinitionImpl tempPortlet =
+                new PortletDefinitionImpl(
+                        portletType, "John", "Doe", "Course", "app-id", "Courses", true);
+
+        Mockito.when(
+                        marketplaceService.getOrCreateMarketplacePortletDefinitionIfTheFnameExists(
+                                remoteUser))
+                .thenReturn(null);
+
+        ModelAndView modelAndView = marketplaceRESTController.getPortletRatings(req, F_NAME, 30);
+        Assert.assertNull(modelAndView.getModel().get("rating"));
+    }
+
+    @Test
     public void testSaveUserRating() {
         String rating = "3";
         String review = "Good job";
