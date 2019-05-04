@@ -12,20 +12,43 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apereo.portal.api.permissions;
+package org.apereo.portal.rest.group;
 
-import java.io.Serializable;
-import org.apereo.portal.api.Principal;
+import java.util.List;
 
-public interface Assignment extends Serializable {
+public interface Entity {
 
-    Owner getOwner();
+    void setEntityType(String entityType);
 
-    Activity getActivity();
+    String getEntityType();
+
+    void setId(String id);
+
+    String getId();
+
+    void setName(String name);
+
+    String getName();
+
+    void setCreatorId(String creatorId);
+
+    String getCreatorId();
+
+    void setDescription(String description);
+
+    String getDescription();
+
+    void setPrincipal(Principal principal);
 
     Principal getPrincipal();
 
-    Target getTarget();
+    void setChildren(List<Entity> children);
 
-    boolean isInherited();
+    List<Entity> getChildren();
+
+    void addChild(Entity entity);
+
+    void setChildrenInitialized(boolean childrenInitialized);
+
+    boolean isChildrenInitialized();
 }

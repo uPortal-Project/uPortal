@@ -12,31 +12,13 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apereo.portal.api.groups;
+package org.apereo.portal.rest.group;
 
-import java.util.Set;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import java.io.Serializable;
 
-public class ApiGroupsServiceTest {
+public interface Principal extends Serializable {
 
-    ApiGroupsService apiGroupsService;
+    String getKey();
 
-    @Before
-    public void setup() {
-        apiGroupsService = new ApiGroupsService();
-    }
-
-    @Test
-    public void testGetGroupsForMemberNull() {
-        Set<Entity> groups = apiGroupsService.getGroupsForMember(null);
-        Assert.assertTrue(groups.isEmpty());
-    }
-
-    @Test
-    public void testGetGroupsForMemberEmpty() {
-        Set<Entity> groups = apiGroupsService.getGroupsForMember("");
-        Assert.assertTrue(groups.isEmpty());
-    }
+    String getName();
 }

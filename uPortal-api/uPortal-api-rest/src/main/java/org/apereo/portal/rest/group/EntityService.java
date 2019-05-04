@@ -12,7 +12,7 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apereo.portal.api.groups;
+package org.apereo.portal.rest.group;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -21,8 +21,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apereo.portal.EntityIdentifier;
-import org.apereo.portal.api.Principal;
-import org.apereo.portal.api.PrincipalImpl;
 import org.apereo.portal.groups.IEntityGroup;
 import org.apereo.portal.groups.IEntityNameFinder;
 import org.apereo.portal.groups.IGroupMember;
@@ -53,13 +51,18 @@ public final class EntityService {
         if (StringUtils.isBlank(entityType) && StringUtils.isBlank(searchTerm)) {
             return null;
         }
-        Set<Entity> results = new HashSet<Entity>();
-        EntityEnum entityEnum = EntityEnum.getEntityEnum(entityType);
-        EntityIdentifier[] identifiers;
-        Class<?> identifierType;
+        final Set<Entity> results = new HashSet<>();
+
+        final EntityEnum entityEnum = EntityEnum.getEntityEnum(entityType);
+        if (entityEnum == null) {
+            throw new RuntimeException(
+                    "EntityEnum instance not found for specified type:  " + entityType);
+        }
 
         // if the entity type is a group, use the group service's findGroup method
         // to locate it
+        EntityIdentifier[] identifiers;
+        Class<?> identifierType;
         if (entityEnum.isGroup()) {
             identifiers =
                     GroupService.searchForGroups(
@@ -95,7 +98,12 @@ public final class EntityService {
         if (StringUtils.isBlank(entityType) && StringUtils.isBlank(entityId)) {
             return null;
         }
-        EntityEnum entityEnum = EntityEnum.getEntityEnum(entityType);
+
+        final EntityEnum entityEnum = EntityEnum.getEntityEnum(entityType);
+        if (entityEnum == null) {
+            throw new RuntimeException(
+                    "EntityEnum instance not found for specified type:  " + entityType);
+        }
 
         // if the entity type is a group, use the group service's findGroup method
         // to locate it
@@ -168,7 +176,7 @@ public final class EntityService {
         return entity;
     }
 
-    public EntityEnum getEntityType(IGroupMember entity) {
+    private EntityEnum getEntityType(IGroupMember entity) {
 
         if (IEntityGroup.class.isAssignableFrom(entity.getClass())) {
             return EntityEnum.getEntityEnum(entity.getLeafType(), true);
@@ -177,7 +185,7 @@ public final class EntityService {
         }
     }
 
-    public IAuthorizationPrincipal getPrincipalForEntity(Entity entity) {
+    /* package-private */ IAuthorizationPrincipal getPrincipalForEntity(Entity entity) {
 
         // attempt to determine the entity type class for this principal
         if (entity == null) {
@@ -192,8 +200,7 @@ public final class EntityService {
 
         // construct an authorization principal for this JsonEntityBean
         AuthorizationServiceFacade authService = AuthorizationServiceFacade.instance();
-        IAuthorizationPrincipal p = authService.newPrincipal(entity.getId(), entityType);
-        return p;
+        return authService.newPrincipal(entity.getId(), entityType);
     }
 
     /**
@@ -202,7 +209,7 @@ public final class EntityService {
      * @param entity Entity to look up
      * @return groupMember's name or null if there's an error
      */
-    public String lookupEntityName(Entity entity) {
+    private String lookupEntityName(Entity entity) {
         if (entity == null) {
             return null;
         }
@@ -210,7 +217,7 @@ public final class EntityService {
         return lookupEntityName(entityEnum, entity.getId());
     }
 
-    public String lookupEntityName(EntityEnum entityType, String entityId) {
+    private String lookupEntityName(EntityEnum entityType, String entityId) {
         if (entityType == null && (StringUtils.isBlank(entityId))) {
             return null;
         }

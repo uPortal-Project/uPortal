@@ -41,8 +41,6 @@ import org.apache.pluto.container.om.portlet.PortletApplicationDefinition;
 import org.apache.pluto.container.om.portlet.PortletDefinition;
 import org.apache.pluto.driver.container.DriverPortletConfigImpl;
 import org.apache.pluto.driver.container.DriverPortletContextImpl;
-import org.apereo.portal.api.PlatformApiBroker;
-import org.apereo.portal.api.PlatformApiBrokerImpl;
 import org.apereo.portal.portlet.dao.jpa.ThreadContextClassLoaderAspect;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -63,26 +61,22 @@ public class LocalPortletContextManager implements PortletRegistryService, Portl
      * The PortletContext cache map: key is servlet context, and value is the associated portlet
      * context.
      */
-    private Map<String, DriverPortletContext> portletContexts =
-            new ConcurrentHashMap<String, DriverPortletContext>();
+    private Map<String, DriverPortletContext> portletContexts = new ConcurrentHashMap<>();
 
     /**
      * The PortletContext cache map: key is servlet context, and value is the associated portlet
      * context.
      */
-    private final Map<String, DriverPortletConfig> portletConfigs =
-            new ConcurrentHashMap<String, DriverPortletConfig>();
+    private final Map<String, DriverPortletConfig> portletConfigs = new ConcurrentHashMap<>();
 
     /** The registered listeners that should be notified upon registry events. */
-    private final List<PortletRegistryListener> registryListeners =
-            new CopyOnWriteArrayList<PortletRegistryListener>();
+    private final List<PortletRegistryListener> registryListeners = new CopyOnWriteArrayList<>();
 
     /**
      * The classloader for the portal, key is portletWindow and value is the classloader. TODO this
      * looks like a horrible memory leak
      */
-    private final Map<String, ClassLoader> classLoaders =
-            new ConcurrentHashMap<String, ClassLoader>();
+    private final Map<String, ClassLoader> classLoaders = new ConcurrentHashMap<>();
 
     /**
      * Cache of descriptors. WeakHashMap is used so that once the context is destroyed (kinda), the
@@ -90,7 +84,7 @@ public class LocalPortletContextManager implements PortletRegistryService, Portl
      * wondering if we really want to add another config requirement in the servlet xml? Hmm. . .
      */
     private final Map<ServletContext, PortletApplicationDefinition> portletAppDefinitionCache =
-            new WeakHashMap<ServletContext, PortletApplicationDefinition>();
+            new WeakHashMap<>();
 
     private PortletAppDescriptorService portletAppDescriptorService =
             new PortletAppDescriptorServiceImpl();
@@ -106,13 +100,6 @@ public class LocalPortletContextManager implements PortletRegistryService, Portl
         this.portletAppDescriptorService = portletAppDescriptorService;
     }
 
-    private PlatformApiBrokerImpl platformApiBroker;
-
-    @Autowired
-    public void setPlatformApiBroker(PlatformApiBrokerImpl platformApiBroker) {
-        this.platformApiBroker = platformApiBroker;
-    }
-
     // Public Methods ----------------------------------------------------------
 
     /**
@@ -121,7 +108,6 @@ public class LocalPortletContextManager implements PortletRegistryService, Portl
      *
      * @param config the servlet config.
      * @return the InternalPortletContext associated with the ServletContext.
-     * @throws PortletContainerException
      */
     @Override
     public synchronized String register(ServletConfig config) throws PortletContainerException {
@@ -136,8 +122,6 @@ public class LocalPortletContextManager implements PortletRegistryService, Portl
                     new DriverPortletContextImpl(
                             servletContext, portletApp, requestDispatcherService);
 
-            portletContext.setAttribute(
-                    PlatformApiBroker.PORTLET_CONTEXT_ATTRIBUTE_NAME, platformApiBroker);
             portletContexts.put(contextPath, portletContext);
 
             fireRegistered(portletContext);
@@ -199,12 +183,12 @@ public class LocalPortletContextManager implements PortletRegistryService, Portl
 
     @Override
     public Iterator<String> getRegisteredPortletApplicationNames() {
-        return new HashSet<String>(portletContexts.keySet()).iterator();
+        return new HashSet<>(portletContexts.keySet()).iterator();
     }
 
     @Override
     public Iterator<DriverPortletContext> getPortletContexts() {
-        return new HashSet<DriverPortletContext>(portletContexts.values()).iterator();
+        return new HashSet<>(portletContexts.values()).iterator();
     }
 
     @Override
@@ -213,8 +197,7 @@ public class LocalPortletContextManager implements PortletRegistryService, Portl
     }
 
     @Override
-    public DriverPortletContext getPortletContext(PortletWindow portletWindow)
-            throws PortletContainerException {
+    public DriverPortletContext getPortletContext(PortletWindow portletWindow) {
         return portletContexts.get(portletWindow.getPortletDefinition().getApplication().getName());
     }
 
@@ -322,12 +305,11 @@ public class LocalPortletContextManager implements PortletRegistryService, Portl
      *
      * @param servletContext the servlet context for which the DD is requested.
      * @return the Portlet Application Deployment Descriptor.
-     * @throws PortletContainerException
      */
     private PortletApplicationDefinition createDefinition(
             ServletContext servletContext, String name, String contextPath)
             throws PortletContainerException {
-        PortletApplicationDefinition portletApp = null;
+        PortletApplicationDefinition portletApp;
         try {
             InputStream paIn = servletContext.getResourceAsStream(PORTLET_XML);
             InputStream webIn = servletContext.getResourceAsStream(WEB_XML);

@@ -12,15 +12,18 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apereo.portal.rest;
+package org.apereo.portal.rest.group;
 
 import java.util.Collections;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
-import org.apereo.portal.api.groups.ApiGroupsService;
-import org.apereo.portal.api.groups.Entity;
+import org.apereo.portal.groups.IEntityGroup;
+import org.apereo.portal.groups.IGroupMember;
+import org.apereo.portal.portlets.groupselector.EntityEnum;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.IPersonManager;
+import org.apereo.portal.services.GroupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,16 +33,9 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class GroupRESTController {
 
-    private ApiGroupsService groupService;
-
     private IPersonManager personManager;
 
-    @Autowired(required = true)
-    public void setGroupService(ApiGroupsService groupService) {
-        this.groupService = groupService;
-    }
-
-    @Autowired(required = true)
+    @Autowired
     public void setPersonManager(IPersonManager personManager) {
         this.personManager = personManager;
     }
@@ -47,11 +43,16 @@ public class GroupRESTController {
     @RequestMapping(value = "/groups", method = RequestMethod.GET)
     public ModelAndView getUsersGroup(HttpServletRequest request) {
         IPerson person = personManager.getPerson(request);
-        Set<Entity> groups = Collections.EMPTY_SET;
+        Set<Entity> groups = Collections.emptySet();
         if (person != null) {
             String username = person.getUserName();
             if (username != null) {
-                groups = groupService.getGroupsForMember(username);
+                final IGroupMember member = GroupService.getGroupMember(username, IPerson.class);
+                final Set<IEntityGroup> parents = member.getParentGroups();
+                groups =
+                        parents.stream()
+                                .map(group -> EntityFactory.createEntity(group, EntityEnum.GROUP))
+                                .collect(Collectors.toSet());
             }
         }
 
