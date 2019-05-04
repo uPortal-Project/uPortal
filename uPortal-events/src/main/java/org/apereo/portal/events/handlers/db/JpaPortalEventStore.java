@@ -34,6 +34,8 @@ import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.support.DataAccessUtils;
@@ -57,14 +59,16 @@ public class JpaPortalEventStore extends BaseRawEventsJpaDao implements IPortalE
     private ParameterExpression<DateTime> startTimeParameter;
     private ParameterExpression<DateTime> endTimeParameter;
 
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+
     @Autowired
     public void setMapper(ObjectMapper mapper) {
         this.mapper = mapper;
     }
 
     /**
-     * Frequency that updated events should be flushed during a call to {@link
-     * #aggregatePortalEvents(DateTime, DateTime, int, FunctionWithoutResult)}, defaults to 1000.
+     * Frequency that updated events should be flushed during a call to
+     * aggregatePortalEvents(DateTime, DateTime, int, FunctionWithoutResult), defaults to 1000.
      */
     @Value(
             "${org.apereo.portal.events.handlers.db.JpaPortalEventStore.aggregationFlushPeriod:1000}")

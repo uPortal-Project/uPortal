@@ -60,7 +60,8 @@ public class PropertiesManager {
      * not set in the properties file. This Set allows this class to report about missing properties
      * and to log each missing property only the first time it is requested.
      */
-    private static final Set missingProperties = Collections.synchronizedSet(new HashSet());
+    private static final Set<String> MISSING_PROPERTIES =
+            Collections.synchronizedSet(new HashSet<>());
 
     /**
      * Setter method to set the underlying Properties. This is a public method to allow poor-man's
@@ -306,7 +307,7 @@ public class PropertiesManager {
      * @return true if the property was previously registered, false otherwise
      */
     private static boolean registerMissingProperty(String name) {
-        final boolean previouslyReported = !PropertiesManager.missingProperties.add(name);
+        final boolean previouslyReported = !PropertiesManager.MISSING_PROPERTIES.add(name);
 
         if (!previouslyReported && log.isInfoEnabled()) {
             log.info("Property [" + name + "] was requested but not found.");
@@ -528,6 +529,6 @@ public class PropertiesManager {
      * @since 2.4
      */
     public static Set getMissingProperties() {
-        return PropertiesManager.missingProperties;
+        return PropertiesManager.MISSING_PROPERTIES;
     }
 }

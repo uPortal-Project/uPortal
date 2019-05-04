@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
@@ -61,9 +62,9 @@ public class PortletHttpServletResponseWrapper extends AbstractHttpServletRespon
                                 if (data.length > 0) {
                                     logger.warn(
                                             "Ignored {} bytes written to ServletOutputStream by {}\n\n{}",
-                                            new Object[] {
-                                                data.length, portletWindow, new String(data)
-                                            });
+                                            data.length,
+                                            portletWindow,
+                                            new String(data, StandardCharsets.UTF_8));
                                 }
                             }
                         };
@@ -104,9 +105,9 @@ public class PortletHttpServletResponseWrapper extends AbstractHttpServletRespon
                                         if (data.length() > 0) {
                                             logger.warn(
                                                     "Ignored {} chars written to PrintWriter by {}\n\n{}",
-                                                    new Object[] {
-                                                        data.length(), portletWindow, data
-                                                    });
+                                                    data.length(),
+                                                    portletWindow,
+                                                    data);
                                         }
                                     }
                                 });
@@ -128,7 +129,7 @@ public class PortletHttpServletResponseWrapper extends AbstractHttpServletRespon
                                     }
 
                                     @Override
-                                    protected void afterWrite(int n) throws IOException {
+                                    protected void afterWrite(int n) {
                                         count += n;
                                     }
                                 });
@@ -181,7 +182,9 @@ public class PortletHttpServletResponseWrapper extends AbstractHttpServletRespon
     public void setStatus(int sc, String sm) {
         this.logger.warn(
                 "Ignoring call to HttpServletResponse.setStatus({}, {}) from {}",
-                new Object[] {sc, sm, portletWindow});
+                sc,
+                sm,
+                portletWindow);
     }
 
     @Override
@@ -193,20 +196,22 @@ public class PortletHttpServletResponseWrapper extends AbstractHttpServletRespon
     }
 
     @Override
-    public void sendError(int sc, String msg) throws IOException {
+    public void sendError(int sc, String msg) {
         this.logger.warn(
                 "Ignoring call to HttpServletResponse.sendError({}, {}) from {}",
-                new Object[] {sc, msg, portletWindow});
+                sc,
+                msg,
+                portletWindow);
     }
 
     @Override
-    public void sendError(int sc) throws IOException {
+    public void sendError(int sc) {
         this.logger.warn(
                 "Ignoring call to HttpServletResponse.sendError({}) from {}", sc, portletWindow);
     }
 
     @Override
-    public void sendRedirect(String location) throws IOException {
+    public void sendRedirect(String location) {
         this.logger.warn(
                 "Ignoring call to HttpServletResponse.sendRedirect({}) from {}",
                 location,
@@ -225,21 +230,27 @@ public class PortletHttpServletResponseWrapper extends AbstractHttpServletRespon
     public void setDateHeader(String name, long date) {
         this.logger.warn(
                 "Ignoring call to HttpServletResponse.setDateHeader({}, {}) from {}",
-                new Object[] {name, date, portletWindow});
+                name,
+                date,
+                portletWindow);
     }
 
     @Override
     public void addDateHeader(String name, long date) {
         this.logger.warn(
                 "Ignoring call to HttpServletResponse.addDateHeader({}, {}) from {}",
-                new Object[] {name, date, portletWindow});
+                name,
+                date,
+                portletWindow);
     }
 
     @Override
     public void setHeader(String name, String value) {
         this.logger.warn(
                 "Ignoring call to HttpServletResponse.setHeader({}, {}) from {}",
-                new Object[] {name, value, portletWindow});
+                name,
+                value,
+                portletWindow);
     }
 
     @Override
@@ -254,21 +265,27 @@ public class PortletHttpServletResponseWrapper extends AbstractHttpServletRespon
     public void addHeader(String name, String value) {
         this.logger.warn(
                 "Ignoring call to HttpServletResponse.addHeader({}, {}) from {}",
-                new Object[] {name, value, portletWindow});
+                name,
+                value,
+                portletWindow);
     }
 
     @Override
     public void setIntHeader(String name, int value) {
         this.logger.warn(
                 "Ignoring call to HttpServletResponse.setIntHeader({}, {}) from {}",
-                new Object[] {name, value, portletWindow});
+                name,
+                value,
+                portletWindow);
     }
 
     @Override
     public void addIntHeader(String name, int value) {
         this.logger.warn(
                 "Ignoring call to HttpServletResponse.addIntHeader({}, {}) from {}",
-                new Object[] {name, value, portletWindow});
+                name,
+                value,
+                portletWindow);
     }
 
     @Override

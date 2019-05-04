@@ -18,7 +18,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import org.apereo.portal.security.IPerson;
 
 /**
  * Manages locales on behalf of a user. This class currently keeps track of locales at the following
@@ -40,7 +39,6 @@ import org.apereo.portal.security.IPerson;
  */
 public class LocaleManager implements ILocaleManager, Serializable {
 
-    private final IPerson person;
     private List<Locale> sessionLocales;
     private List<Locale> userLocales;
     private List<Locale> portalLocales;
@@ -50,9 +48,7 @@ public class LocaleManager implements ILocaleManager, Serializable {
      *
      * @param person the user
      */
-    /* package-private */ LocaleManager(
-            IPerson person, List<Locale> userLocales, List<Locale> portalLocales) {
-        this.person = person;
+    /* package-private */ LocaleManager(List<Locale> userLocales, List<Locale> portalLocales) {
         this.userLocales = userLocales;
         this.portalLocales = portalLocales;
     }
@@ -88,7 +84,7 @@ public class LocaleManager implements ILocaleManager, Serializable {
         // Need logic to construct ordered locale list.
         // Consider creating a separate ILocaleResolver
         // interface to do this work.
-        final List rslt = new ArrayList();
+        final List<Locale> rslt = new ArrayList<>();
         // Add highest priority locales first
         addToLocaleList(rslt, sessionLocales);
         addToLocaleList(rslt, userLocales);
@@ -100,17 +96,19 @@ public class LocaleManager implements ILocaleManager, Serializable {
     }
 
     /** Add locales to the locale list if they aren't in there already */
-    private void addToLocaleList(List localeList, List<Locale> locales) {
+    private void addToLocaleList(List<Locale> localeList, List<Locale> locales) {
         if (locales != null) {
             for (Locale locale : locales) {
-                if (locale != null && !localeList.contains(locale)) localeList.add(locale);
+                if (locale != null && !localeList.contains(locale)) {
+                    localeList.add(locale);
+                }
             }
         }
     }
 
     @Override
     public String toString() {
-        StringBuffer sb = new StringBuffer(1024);
+        StringBuilder sb = new StringBuilder(1024);
         sb.append("LocaleManager's locales").append("\n");
         sb.append("-----------------------").append("\n");
         sb.append("Session locales: ");
@@ -145,7 +143,7 @@ public class LocaleManager implements ILocaleManager, Serializable {
      * @return a string representing the list of locales
      */
     private String stringValueOf(List<Locale> locales) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (Locale locale : locales) {
             if (sb.length() > 0) {
                 sb.append(",");

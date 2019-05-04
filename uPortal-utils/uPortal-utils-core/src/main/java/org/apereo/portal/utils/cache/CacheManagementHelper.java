@@ -70,8 +70,8 @@ public class CacheManagementHelper {
                 cacheStatistics.misses = statistics.getCacheMisses();
                 cacheStatistics.size = statistics.getObjectCount();
                 cacheStatistics.maxSize =
-                        cacheConfiguration.getMaxElementsInMemory()
-                                + cacheConfiguration.getMaxElementsOnDisk();
+                        (long) cacheConfiguration.getMaxElementsInMemory()
+                                + (long) cacheConfiguration.getMaxElementsOnDisk();
 
                 allCacheStatistics.put(cacheName, cacheStatistics);
             }

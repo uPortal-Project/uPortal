@@ -16,7 +16,6 @@ package org.apereo.portal.utils;
 
 import java.util.ArrayList;
 import java.util.Formatter;
-import java.util.LinkedList;
 import java.util.List;
 import org.jvnet.jaxb2_commons.lang.Validate;
 
@@ -27,10 +26,6 @@ public class TableFormatter {
         private final String flags;
         private final String conversion;
 
-        public TableEntry(T value, String conversion) {
-            this(value, "", conversion);
-        }
-
         public TableEntry(T value, String flags, String conversion) {
             Validate.notNull(flags);
             Validate.notNull(conversion);
@@ -40,11 +35,11 @@ public class TableFormatter {
             this.conversion = conversion;
         }
 
-        protected String getFormatString() {
+        /* package-private */ String getFormatString() {
             return this.getFormatString(1);
         }
 
-        protected String getFormatString(int padding) {
+        /* package-private */ String getFormatString(int padding) {
             return "%" + this.flags + padding + this.conversion;
         }
 
@@ -81,21 +76,21 @@ public class TableFormatter {
 
     private final List<Integer> columnWidths;
     private final List<TableEntry<?>> headerRow;
-    private final List<List<TableEntry<?>>> rows = new LinkedList<List<TableEntry<?>>>();
+    private final List<List<TableEntry<?>>> rows = new ArrayList<>();
 
     public TableFormatter(TableEntry<?> heading, TableEntry<?>... headings) {
         this(null, heading, headings);
     }
 
-    public TableFormatter(Formatter f, TableEntry<?> firstHeading, TableEntry<?>... headings) {
+    private TableFormatter(Formatter f, TableEntry<?> firstHeading, TableEntry<?>... headings) {
         Validate.notNull(firstHeading);
 
         // Setup scratch objects used for formatting data
         this.scratchBuilder = new StringBuilder();
         this.scratchFormatter = new Formatter(scratchBuilder, f != null ? f.locale() : null);
 
-        this.columnWidths = new ArrayList<Integer>(1 + headings.length);
-        this.headerRow = new ArrayList<TableEntry<?>>(1 + headings.length);
+        this.columnWidths = new ArrayList<>(1 + headings.length);
+        this.headerRow = new ArrayList<>(1 + headings.length);
 
         this.updateColumnSize(0, firstHeading);
         this.headerRow.add(firstHeading);
@@ -116,7 +111,7 @@ public class TableFormatter {
                             + (1 + values.length));
         }
 
-        final List<TableEntry<?>> row = new ArrayList<TableEntry<?>>(this.columnWidths.size());
+        final List<TableEntry<?>> row = new ArrayList<>(this.columnWidths.size());
 
         updateColumnSize(row.size(), firstValue);
         row.add(firstValue);

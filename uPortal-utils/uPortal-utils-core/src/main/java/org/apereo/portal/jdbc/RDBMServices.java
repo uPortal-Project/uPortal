@@ -359,7 +359,7 @@ public class RDBMServices {
             return sql;
         }
 
-        final StringBuffer sb = new StringBuffer(sql.length() + 4);
+        final StringBuilder sb = new StringBuilder(sql.length() + 4);
         int startPos = 0;
 
         do {

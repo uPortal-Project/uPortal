@@ -215,7 +215,7 @@ public class DatabaseMetaDataImpl implements IDatabaseMetadata, InitializingBean
     /** @see IDatabaseMetadata#sqlTimeStamp(long) */
     @Override
     public String sqlTimeStamp(final long date) {
-        final StringBuffer sqlTS = new StringBuffer();
+        final StringBuilder sqlTS = new StringBuilder();
 
         if (useToDate) {
             final SimpleDateFormat oracleToDate = new SimpleDateFormat("yyyy MM dd HH:mm:ss");
