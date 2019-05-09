@@ -38,7 +38,7 @@ import javax.portlet.WindowState;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.JAXBElement;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.pluto.container.PortletContainerException;
 import org.apache.pluto.container.driver.PortalDriverContainerServices;
@@ -141,7 +141,7 @@ public final class PortletAdministrationHelper implements ServletContextAware {
         public String getActivity() {
             return activity;
         }
-    };
+    }
 
     /*
      * Autowired beans listed alphabetically by type
@@ -292,7 +292,7 @@ public final class PortletAdministrationHelper implements ServletContextAware {
      * @return new {@code PortletDefinitionForm} for this portlet ID
      */
     public PortletDefinitionForm savePortletRegistration(
-            IPerson publisher, PortletDefinitionForm form) throws Exception {
+            IPerson publisher, PortletDefinitionForm form) {
         logger.trace("In savePortletRegistration() - for: {}", form.getPortletName());
         /* TODO:  Service-Layer Security Reboot (great need of refactoring with a community-approved plan in place) */
 
@@ -445,7 +445,7 @@ public final class PortletAdministrationHelper implements ServletContextAware {
         for (String key : form.getPortletPreferences().keySet()) {
             List<String> prefValues = form.getPortletPreferences().get(key).getValue();
             if (prefValues != null && prefValues.size() > 0) {
-                String[] values = prefValues.toArray(new String[prefValues.size()]);
+                String[] values = prefValues.toArray(new String[0]);
                 BooleanAttribute readOnly = form.getPortletPreferenceReadOnly().get(key);
                 preferenceList.add(new PortletPreferenceImpl(key, readOnly.getValue(), values));
             }
@@ -513,7 +513,6 @@ public final class PortletAdministrationHelper implements ServletContextAware {
      * Delete the portlet with the given portlet ID.
      *
      * @param person the person removing the portlet
-     * @param form
      */
     public void removePortletRegistration(IPerson person, PortletDefinitionForm form) {
 
@@ -894,9 +893,6 @@ public final class PortletAdministrationHelper implements ServletContextAware {
      * Get a portlet descriptor matching the current portlet definition form. If the current form
      * does not represent a portlet, the application or portlet name fields are blank, or the
      * portlet description cannot be retrieved, the method will return <code>null</code>.
-     *
-     * @param form
-     * @return
      */
     public PortletDefinition getPortletDescriptor(PortletDefinitionForm form) {
         final Tuple<String, String> portletDescriptorKeys = this.getPortletDescriptorKeys(form);
@@ -972,7 +968,7 @@ public final class PortletAdministrationHelper implements ServletContextAware {
 
     public Set<PortletLifecycleState> getAllowedLifecycleStates(
             IPerson person, SortedSet<JsonEntityBean> categories) {
-        Set<PortletLifecycleState> states = new TreeSet<PortletLifecycleState>();
+        Set<PortletLifecycleState> states = new TreeSet<>();
         if (hasLifecyclePermission(person, PortletLifecycleState.MAINTENANCE, categories)) {
             states.add(PortletLifecycleState.CREATED);
             states.add(PortletLifecycleState.APPROVED);
@@ -1101,8 +1097,6 @@ public final class PortletAdministrationHelper implements ServletContextAware {
      * updates the editPortlet form with the portletType of the first (and only) portletDefinition
      * passed in through the Map of portlet definitions.
      *
-     * @param portletDefinitions
-     * @param form
      * @return PortletPublishingDefinition of the first portlet definition in the list, null if the
      *     list is empty or has more than one element.
      */
@@ -1234,6 +1228,20 @@ public final class PortletAdministrationHelper implements ServletContextAware {
                     // expiration...
                     portletDef.updateLifecycleState(
                             PortletLifecycleState.EXPIRED, publisher, form.getExpirationDateTime());
+                }
+                break;
+            case MAINTENANCE:
+                // Persist the custom message (if provided) as a publishing parameter...
+                final String customMessage = form.getCustomMaintenanceMessage();
+                if (StringUtils.isNotBlank(customMessage)) {
+                    // Update the message
+                    portletDef.addParameter(
+                            PortletLifecycleState.CUSTOM_MAINTENANCE_MESSAGE_PARAMETER_NAME,
+                            customMessage);
+                } else {
+                    // Clear any previous message
+                    portletDef.removeParameter(
+                            PortletLifecycleState.CUSTOM_MAINTENANCE_MESSAGE_PARAMETER_NAME);
                 }
                 break;
             default:

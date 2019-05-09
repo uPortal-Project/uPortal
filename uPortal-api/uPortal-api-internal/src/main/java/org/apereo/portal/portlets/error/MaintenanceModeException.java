@@ -23,4 +23,19 @@ package org.apereo.portal.portlets.error;
  *
  * @since 4.2
  */
-public class MaintenanceModeException extends RuntimeException {}
+public class MaintenanceModeException extends RuntimeException {
+
+    private final String customMaintenanceMessage;
+
+    public MaintenanceModeException() {
+        this(null);
+    }
+
+    public MaintenanceModeException(String customMaintenanceMessage) {
+        this.customMaintenanceMessage = customMaintenanceMessage;
+    }
+
+    public String getCustomMaintenanceMessage() {
+        return customMaintenanceMessage;
+    }
+}

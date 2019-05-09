@@ -99,8 +99,7 @@ public class PortletErrorController {
      * @throws Exception
      */
     @RequestMapping("VIEW")
-    public String renderError(RenderRequest request, RenderResponse response, ModelMap model)
-            throws Exception {
+    public String renderError(RenderRequest request, RenderResponse response, ModelMap model) {
 
         HttpServletRequest httpRequest = this.portalRequestUtils.getPortletHttpRequest(request);
         IPortletWindowId currentFailedPortletWindowId =
@@ -115,6 +114,9 @@ public class PortletErrorController {
 
         // Maintenance Mode?
         if (cause != null && cause instanceof MaintenanceModeException) {
+            model.addAttribute(
+                    "customMaintenanceMessage",
+                    ((MaintenanceModeException) cause).getCustomMaintenanceMessage());
             return "/jsp/PortletError/maintenance";
         }
 
