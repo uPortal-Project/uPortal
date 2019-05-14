@@ -360,10 +360,10 @@
           </xsl:choose>
           <xsl:value-of select="@title"/>
         </xsl:element>
-        <xsl:call-template name="controls">
-          <xsl:with-param name="STYLE">standard</xsl:with-param>
-        </xsl:call-template>
       </h2>
+      <xsl:call-template name="controls">
+        <xsl:with-param name="STYLE">standard</xsl:with-param>
+      </xsl:call-template>
     </div>
   </xsl:template>
 
