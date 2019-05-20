@@ -74,7 +74,6 @@ import org.slf4j.LoggerFactory;
  */
 public class CorsFilter implements Filter {
 
-    private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(CorsFilter.class);
 
     /** {@link FilterConfig} reference to {@code init()} parameter. */

@@ -105,7 +105,7 @@
         <!-- allowedOrigins should include protocol. For example, "https://idp.myschool.edu, https://cas.myschool.edu" -->
         <property name="allowedOrigins" value="${cors.allowed.origins:}" />
         <property name="allowedHttpMethods" value="${cors.allowed.methods:GET,HEAD}" />
-        <property name="allowedHttpHeaders" value="${cors.allowed.headers:Origin,Accept,X-Requested-With,Content-Type,Access-Control-Request-Method,Access-Control-Request-Headers}" />
+        <property name="allowedHttpHeaders" value="${cors.allowed.headers:Origin,Accept,Authorization,X-Requested-With,Content-Type,Access-Control-Request-Method,Access-Control-Request-Headers}" />
         <property name="exposedHeaders" value="${cors.exposed.headers:}" />
         <property name="supportsCredentials" value="${cors.support.credentials:true}" />
         <property name="preflightMaxAge" value="${cors.preflight.maxage:1800}" />
