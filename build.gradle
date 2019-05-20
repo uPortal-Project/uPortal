@@ -59,7 +59,7 @@ allprojects {
     }
 
     // Version has to be set directly here, using a variable does not set Java compatability version
-    sourceCompatibility = 1.8
+    sourceCompatibility = JavaVersion.VERSION_11
 
     gradleLint.criticalRules = [
       'overridden-dependency-version',
@@ -84,6 +84,9 @@ allprojects {
                 stylesheet = 'fancy-hist.xsl'
             }
         }
+    }
+    tasks.withType(JavaCompile).configureEach {
+        options.errorprone.disableWarningsInGeneratedCode = true
     }
     googleJavaFormat {
         toolVersion '1.7'
