@@ -8,13 +8,13 @@ matrix:
       jdk: openjdk8
     - os: osx
       osx_image: xcode9.2 # OSX 10.12, Oracle Java 8
-      script: ./gradlew -u -S --no-daemon --no-parallel build # skip coveralls on MacOS
+      script: ./gradlew -S --no-daemon --no-parallel build # skip coveralls on MacOS
 
 # The 'build' task runs most things, including test, check, & static analysis
 install: true
 script:
-  - ./gradlew -u -S --no-daemon --no-parallel build jacocoAggregateReport coveralls
-  - ./gradlew -u -S --no-daemon --no-parallel :npm_run_lint-js
+  - ./gradlew -S --no-daemon --no-parallel build jacocoAggregateReport coveralls
+  - ./gradlew -S --no-daemon --no-parallel :npm_run_lint-js
 
 cache:
   directories:

@@ -6,7 +6,7 @@ install:
   - gradlew.bat --version
 # The 'build' task runs most things, including test, check, & static analysis
 build: off
-test_script: gradlew.bat -u -S --no-daemon --no-parallel build
+test_script: gradlew.bat -S --no-daemon --no-parallel build
 cache:
   - C:\Users\appveyor\.npm
   - C:\Users\appveyor\.gradle
