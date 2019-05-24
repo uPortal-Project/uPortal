@@ -82,7 +82,6 @@ public abstract class BaseXsltDataUpgraderTest {
         xsltDataUpgrader.setPortalDataKey(dataKey);
         xsltDataUpgrader.setXslResource(xslResource);
         xsltDataUpgrader.setXmlUtilities(xmlUtilities);
-        xsltDataUpgrader.afterPropertiesSet();
 
         // Create XmlEventReader (what the JaxbPortalDataHandlerService has)
         final XMLInputFactory xmlInputFactory = xmlUtilities.getXmlInputFactory();
