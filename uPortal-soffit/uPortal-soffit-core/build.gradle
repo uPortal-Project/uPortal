@@ -7,6 +7,7 @@ dependencies {
             "io.jsonwebtoken:jjwt-jackson:${jjwtVersion}"
     compile "org.apache.commons:commons-lang3:${commonsLang3Version}"
     compile "org.jasypt:jasypt:${jasyptVersion}"
+    compile "javax.annotation:javax.annotation-api:${javaxAnnotationVersion}"
     compile "org.slf4j:slf4j-api:${slf4jVersion}"
     compile "org.springframework:spring-web:${springVersion}"
     compileOnly "org.projectlombok:lombok:${lombokVersion}"
