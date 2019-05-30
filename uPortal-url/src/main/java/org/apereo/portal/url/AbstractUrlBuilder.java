@@ -16,6 +16,7 @@ package org.apereo.portal.url;
 
 import com.google.common.collect.ObjectArrays;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,7 +32,7 @@ public abstract class AbstractUrlBuilder implements IUrlBuilder {
 
     @Override
     public final Map<String, String[]> getParameters() {
-        return this.parameters;
+        return Collections.unmodifiableMap(this.parameters);
     }
 
     @Override
