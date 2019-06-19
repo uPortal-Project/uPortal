@@ -3,6 +3,7 @@ language: java
 matrix:
   include:
     - os: linux
+      dist: trusty
       jdk: oraclejdk8
     - os: linux
       jdk: openjdk8
