@@ -26,7 +26,7 @@
 <c:set var="n"><portlet:namespace/></c:set>
 
 <!-- START: VALUES BEING PASSED FROM BACKEND -->
-<portlet:actionURL var="queryUrl">
+<portlet:actionURL var="queryUrl" escapeXml="false">
     <portlet:param name="execution" value="${flowExecutionKey}"/>
 </portlet:actionURL>
 <!-- END: VALUES BEING PASSED FROM BACKEND -->
