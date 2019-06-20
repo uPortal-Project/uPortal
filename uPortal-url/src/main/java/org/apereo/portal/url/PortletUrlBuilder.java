@@ -15,7 +15,6 @@
 package org.apereo.portal.url;
 
 import com.google.common.base.Preconditions;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import javax.portlet.PortletMode;
@@ -164,7 +163,7 @@ class PortletUrlBuilder extends AbstractUrlBuilder implements IPortletUrlBuilder
 
     @Override
     public Map<String, String[]> getPublicRenderParameters() {
-        return Collections.unmodifiableMap(this.publicRenderParameters);
+        return this.publicRenderParameters;
     }
 
     @Override
