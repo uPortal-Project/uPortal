@@ -4,7 +4,7 @@
   "devDependencies": {
     "eslint": "^5.16.0",
     "eslint-config-google": "^0.13.0",
-    "prettier-eslint-cli": "^4.7.1",
+    "prettier-eslint-cli": "^5.0.0",
     "prettier-stylelint": "^0.4.2",
     "remark-cli": "^6.0.1",
     "remark-preset-lint-consistent": "^2.0.1",
