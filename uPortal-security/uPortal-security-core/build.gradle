@@ -6,7 +6,10 @@ dependencies {
     compile project(':uPortal-i18n')
     compile project(':uPortal-soffit:uPortal-soffit-core')
 
-    compile "io.jsonwebtoken:jjwt:${jjwtVersion}"
+    compile "io.jsonwebtoken:jjwt-api:${jjwtVersion}"
+    runtime "io.jsonwebtoken:jjwt-impl:${jjwtVersion}",
+            "org.bouncycastle:bcprov-jdk15on:${bouncyVersion}",  // for RSASSA-PSS
+            "io.jsonwebtoken:jjwt-jackson:${jjwtVersion}"
     compile "org.jasypt:jasypt:${jasyptVersion}"
 
     testCompile "${servletApiDependency}"

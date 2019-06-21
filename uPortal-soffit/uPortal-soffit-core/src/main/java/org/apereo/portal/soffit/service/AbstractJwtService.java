@@ -38,7 +38,8 @@ public class AbstractJwtService {
     public static final String JWT_ISSUER = "Soffit";
 
     public static final String SIGNATURE_KEY_PROPERTY = "org.apereo.portal.soffit.jwt.signatureKey";
-    public static final String DEFAULT_SIGNATURE_KEY = "CHANGEME";
+    public static final String DEFAULT_SIGNATURE_KEY =
+            "CHANGEMEBx0myZ/pv/e7+xrdDLYGC1iIzSa6Uw5CPpH0KCCS1deESk3v+b+LYMz1ks57tjFb9vudpSCyRKXO5TeEBc45rfMyGtkRa1zri+hukZIAfgrvCbFixpCBxBusRs+uhXRuLxOe6k77VE+EMM4jVJArtNBgVPyV7iOC05kHNiYIGgs=";
 
     public static final String ENCRYPTION_PASSWORD_PROPERTY =
             "org.apereo.portal.soffit.jwt.encryptionPassword";
