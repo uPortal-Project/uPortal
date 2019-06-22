@@ -11,5 +11,5 @@ dependencies {
     compileOnly "${portletApiDependency}"
     compileOnly "${servletApiDependency}"
 
-    testCompile "org.apache.portals.pluto:pluto-container-api:${plutoVersion}"
+    compileOnly "org.apache.portals.pluto:pluto-container-api:${plutoVersion}"
 }

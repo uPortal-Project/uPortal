@@ -34,6 +34,7 @@ import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Version;
 import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.portal.EntityIdentifier;
 import org.apereo.portal.groups.pags.dao.IPersonAttributesGroupDefinition;
@@ -182,6 +183,11 @@ public class PersonAttributesGroupDefinitionImpl implements IPersonAttributesGro
     @Override
     public boolean equals(Object that) {
         return EqualsBuilder.reflectionEquals(this, that);
+    }
+
+    @Override
+    public int hashCode() {
+        return HashCodeBuilder.reflectionHashCode(this);
     }
 
     @Override

@@ -23,10 +23,13 @@ sourceSets {
     main {
         java {
             srcDir 'src/main/java'
-            srcDir generatedSourcesDir
         }
     }
-}
+    generated {
+        java {
+            srcDir generatedSourcesDir
+        }
+    }}
 
 tasks.withType(JavaCompile) {
     options.annotationProcessorGeneratedSourcesDirectory = file(generatedSourcesDir)
