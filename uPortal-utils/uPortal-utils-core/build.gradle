@@ -86,10 +86,6 @@ sourceSets {
     main {
         java {
             srcDir 'src/main/java'
-        }
-    }
-    generated {
-        java {
             srcDir generatedSourcesDir
         }
     }
