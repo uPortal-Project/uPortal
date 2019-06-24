@@ -2,7 +2,7 @@
   "name": "uportal",
   "private": true,
   "devDependencies": {
-    "eslint": "^5.16.0",
+    "eslint": "^6.0.0",
     "eslint-config-google": "^0.13.0",
     "prettier-eslint-cli": "^5.0.0",
     "prettier-stylelint": "^0.4.2",
