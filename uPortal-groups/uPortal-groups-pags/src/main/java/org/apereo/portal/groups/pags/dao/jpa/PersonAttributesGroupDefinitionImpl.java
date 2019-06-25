@@ -168,21 +168,17 @@ public class PersonAttributesGroupDefinitionImpl implements IPersonAttributesGro
     @Override
     public Set<IPersonAttributesGroupDefinition> getDeepMembers() {
         assert (!this.members.contains(this));
-        Set<IPersonAttributesGroupDefinition> processing =
-                new HashSet<IPersonAttributesGroupDefinition>();
-        processing.add(this);
         Set<IPersonAttributesGroupDefinition> seen =
                 new HashSet<IPersonAttributesGroupDefinition>();
-        return getDeepMembers(processing, seen);
+        return getDeepMembers(seen);
     }
 
     /* Adding deep members to passed parameter and passing collection as return value. */
     @Override
     public Set<IPersonAttributesGroupDefinition> getDeepMembers(
-            Set<IPersonAttributesGroupDefinition> processing,
             Set<IPersonAttributesGroupDefinition> seen) {
         assert (!this.members.contains(this));
-        if (processing.contains(this) || seen.contains(this)) {
+        if (seen.contains(this)) {
             log.debug("already processing/visited this {}", this.name);
             return seen;
         }
@@ -195,14 +191,12 @@ public class PersonAttributesGroupDefinitionImpl implements IPersonAttributesGro
                 membersNotSeen.stream()
                         .flatMap(
                                 e -> {
-                                    processing.add(e);
                                     Stream<IPersonAttributesGroupDefinition> p =
-                                            e.getDeepMembers(processing, seen).stream();
-                                    processing.remove(e);
+                                            e.getDeepMembers(seen).stream();
+                                    seen.add(e);
                                     return p;
                                 })
                         .collect(Collectors.toSet()));
-        seen.addAll(membersNotSeen);
         return seen;
     }
 
@@ -211,7 +205,7 @@ public class PersonAttributesGroupDefinitionImpl implements IPersonAttributesGro
         // We need to replace the contents of the collection, not the reference
         // to the collection itself;  otherwise we mess with Hibernate.
         assert (this.name != null);
-        assert (!this.members.contains(this));
+        assert (!members.contains(this));
         Set<IPersonAttributesGroupDefinition> checkedMembers =
                 new HashSet<IPersonAttributesGroupDefinition>();
         for (IPersonAttributesGroupDefinition group : members) {

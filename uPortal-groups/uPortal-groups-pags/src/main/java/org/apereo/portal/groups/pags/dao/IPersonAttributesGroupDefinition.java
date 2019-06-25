@@ -47,7 +47,6 @@ public interface IPersonAttributesGroupDefinition {
     Set<IPersonAttributesGroupDefinition> getDeepMembers();
 
     Set<IPersonAttributesGroupDefinition> getDeepMembers(
-            Set<IPersonAttributesGroupDefinition> processing,
             Set<IPersonAttributesGroupDefinition> seen);
 
     void setMembers(Set<IPersonAttributesGroupDefinition> members);
