@@ -19,6 +19,8 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -33,9 +35,9 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Version;
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.portal.EntityIdentifier;
 import org.apereo.portal.groups.pags.dao.IPersonAttributesGroupDefinition;
 import org.apereo.portal.groups.pags.dao.IPersonAttributesGroupTestGroupDefinition;
@@ -49,6 +51,9 @@ import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 import org.hibernate.annotations.NaturalIdCache;
 
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@ToString
+@Slf4j
 @Entity
 @Table(name = "UP_PAGS_GROUP")
 @SequenceGenerator(
@@ -85,6 +90,7 @@ public class PersonAttributesGroupDefinitionImpl implements IPersonAttributesGro
      * Per rules for groups and entities in general, the name needs to be unique and non-null. (In
      * face it needs to be unique across all groups, not merely this table.)
      */
+    @EqualsAndHashCode.Include
     @Column(name = "NAME", length = 500, unique = true, nullable = false)
     private String name;
 
@@ -155,15 +161,74 @@ public class PersonAttributesGroupDefinitionImpl implements IPersonAttributesGro
     @Override
     public Set<IPersonAttributesGroupDefinition> getMembers() {
         // Defensive copy...
+        assert (!this.members.contains(this));
         return new HashSet<IPersonAttributesGroupDefinition>(members);
+    }
+
+    @Override
+    public Set<IPersonAttributesGroupDefinition> getDeepMembers() {
+        assert (!this.members.contains(this));
+        Set<IPersonAttributesGroupDefinition> processing =
+                new HashSet<IPersonAttributesGroupDefinition>();
+        processing.add(this);
+        Set<IPersonAttributesGroupDefinition> seen =
+                new HashSet<IPersonAttributesGroupDefinition>();
+        return getDeepMembers(processing, seen);
+    }
+
+    /* Adding deep members to passed parameter and passing collection as return value. */
+    @Override
+    public Set<IPersonAttributesGroupDefinition> getDeepMembers(
+            Set<IPersonAttributesGroupDefinition> processing,
+            Set<IPersonAttributesGroupDefinition> seen) {
+        assert (!this.members.contains(this));
+        if (processing.contains(this) || seen.contains(this)) {
+            log.debug("already processing/visited this {}", this.name);
+            return seen;
+        }
+
+        /* set of members NOT in alreadySeen */
+        Set<IPersonAttributesGroupDefinition> membersNotSeen =
+                members.stream().filter(e -> !seen.contains(e)).collect(Collectors.toSet());
+        /* get deep members not in alreadySeen */
+        seen.addAll(
+                membersNotSeen.stream()
+                        .flatMap(
+                                e -> {
+                                    processing.add(e);
+                                    Stream<IPersonAttributesGroupDefinition> p =
+                                            e.getDeepMembers(processing, seen).stream();
+                                    processing.remove(e);
+                                    return p;
+                                })
+                        .collect(Collectors.toSet()));
+        seen.addAll(membersNotSeen);
+        return seen;
     }
 
     @Override
     public void setMembers(Set<IPersonAttributesGroupDefinition> members) {
         // We need to replace the contents of the collection, not the reference
         // to the collection itself;  otherwise we mess with Hibernate.
+        assert (this.name != null);
+        assert (!this.members.contains(this));
+        Set<IPersonAttributesGroupDefinition> checkedMembers =
+                new HashSet<IPersonAttributesGroupDefinition>();
+        for (IPersonAttributesGroupDefinition group : members) {
+            if (group.getDeepMembers().contains(this)) {
+                final String message =
+                        "Recursion of group member found for "
+                                + name
+                                + ", member "
+                                + group.getName();
+                log.error(message);
+                throw new IllegalArgumentException(message);
+            } else {
+                checkedMembers.add(group);
+            }
+        }
         this.members.clear();
-        this.members.addAll(members);
+        this.members.addAll(checkedMembers);
     }
 
     @Override
@@ -178,21 +243,6 @@ public class PersonAttributesGroupDefinitionImpl implements IPersonAttributesGro
         // to the collection itself;  otherwise we mess with Hibernate.
         this.testGroups.clear();
         this.testGroups.addAll(testGroups);
-    }
-
-    @Override
-    public boolean equals(Object that) {
-        return EqualsBuilder.reflectionEquals(this, that);
-    }
-
-    @Override
-    public int hashCode() {
-        return HashCodeBuilder.reflectionHashCode(this);
-    }
-
-    @Override
-    public String toString() {
-        return ToStringBuilder.reflectionToString(this);
     }
 
     @Override

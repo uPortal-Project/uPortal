@@ -32,8 +32,9 @@ public class JwtSignatureAlgorithmFactory {
 
     public static final String SIGNATURE_ALGORITHM_PROPERTY =
             "org.apereo.portal.soffit.jwt.signatureAlgorithm";
+    public static final String SIGNATURE_ALGORITHM_DEFAULT = "HS512";
 
-    @Value("${" + SIGNATURE_ALGORITHM_PROPERTY + "}")
+    @Value("${" + SIGNATURE_ALGORITHM_PROPERTY + ":" + SIGNATURE_ALGORITHM_DEFAULT + "}")
     private String algorithmStr;
 
     private SignatureAlgorithm algorithm = SignatureAlgorithm.HS512;
@@ -44,6 +45,7 @@ public class JwtSignatureAlgorithmFactory {
             algorithm = SignatureAlgorithm.forName(algorithmStr);
         } catch (Exception e) {
             log.warn(e.getMessage());
+            log.warn("Default JWT signature algorithm is {}", SIGNATURE_ALGORITHM_DEFAULT);
         }
     }
 
