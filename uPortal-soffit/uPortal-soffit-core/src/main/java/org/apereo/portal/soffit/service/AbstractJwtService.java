@@ -17,7 +17,6 @@ package org.apereo.portal.soffit.service;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import java.util.Date;
 import java.util.UUID;
 import javax.annotation.PostConstruct;
@@ -26,6 +25,7 @@ import org.apereo.portal.soffit.ITokenizable;
 import org.jasypt.util.text.BasicTextEncryptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
 /**
@@ -52,6 +52,8 @@ public class AbstractJwtService {
 
     @Value("${" + ENCRYPTION_PASSWORD_PROPERTY + ":" + DEFAULT_ENCRYPTION_PASSWORD + "}")
     private String encryptionPassword;
+
+    @Autowired private JwtSignatureAlgorithmFactory algorithmFactory;
 
     /*
      * NOTE:  There is also a StrongTextEncryptor, but it requires each deployment
@@ -111,7 +113,7 @@ public class AbstractJwtService {
         final String jwt =
                 Jwts.builder()
                         .setClaims(claims)
-                        .signWith(SignatureAlgorithm.HS512, signatureKey)
+                        .signWith(algorithmFactory.getAlgorithm(), signatureKey)
                         .compact();
 
         // Encryption

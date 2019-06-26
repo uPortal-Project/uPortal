@@ -18,7 +18,6 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,6 +36,7 @@ import org.apereo.portal.security.IPerson;
 import org.apereo.portal.services.GroupService;
 import org.apereo.portal.soffit.Headers;
 import org.apereo.portal.soffit.service.AbstractJwtService;
+import org.apereo.portal.soffit.service.JwtSignatureAlgorithmFactory;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.IPersonAttributes;
 import org.slf4j.Logger;
@@ -193,6 +193,8 @@ public class IdTokenFactory {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
+    @Autowired private JwtSignatureAlgorithmFactory algorithmFactory;
+
     @PostConstruct
     public void init() {
 
@@ -314,7 +316,8 @@ public class IdTokenFactory {
                 .filter(claim -> claim.getClaimValue() != null)
                 .forEach(claim -> builder.claim(claim.getClaimName(), claim.getClaimValue()));
 
-        final String rslt = builder.signWith(SignatureAlgorithm.HS512, signatureKey).compact();
+        final String rslt =
+                builder.signWith(algorithmFactory.getAlgorithm(), signatureKey).compact();
 
         logger.debug("Produced the following JWT for username='{}':  {}", username, rslt);
 

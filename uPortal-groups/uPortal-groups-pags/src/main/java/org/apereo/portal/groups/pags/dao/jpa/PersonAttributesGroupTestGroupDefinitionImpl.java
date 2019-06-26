@@ -33,8 +33,8 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Version;
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.apereo.portal.groups.pags.dao.IPersonAttributesGroupDefinition;
 import org.apereo.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
 import org.apereo.portal.groups.pags.dao.IPersonAttributesGroupTestGroupDefinition;
@@ -44,6 +44,8 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.NaturalIdCache;
 
+@EqualsAndHashCode
+@ToString
 @Entity
 @Table(name = "UP_PAGS_TEST_GROUP")
 @SequenceGenerator(
@@ -73,12 +75,16 @@ public class PersonAttributesGroupTestGroupDefinitionImpl
     @Id
     @GeneratedValue(generator = "UP_PAGS_TEST_GROUP_GEN")
     @Column(name = "PAGS_TEST_GROUP_ID")
+    @EqualsAndHashCode.Exclude
     private long id = -1L;
 
     @Version
     @Column(name = "ENTITY_VERSION")
+    @EqualsAndHashCode.Exclude
     private long entityVersion;
 
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     @ManyToOne(fetch = FetchType.EAGER, targetEntity = PersonAttributesGroupDefinitionImpl.class)
     @JoinColumn(name = "PAGS_GROUP_ID", nullable = false)
     @JsonBackReference // Addresses infinite recursion by excluding from serialization
@@ -124,16 +130,6 @@ public class PersonAttributesGroupTestGroupDefinitionImpl
     @Override
     public void setGroup(IPersonAttributesGroupDefinition group) {
         this.group = group;
-    }
-
-    @Override
-    public boolean equals(Object that) {
-        return EqualsBuilder.reflectionEquals(this, that);
-    }
-
-    @Override
-    public String toString() {
-        return ToStringBuilder.reflectionToString(this);
     }
 
     @Override

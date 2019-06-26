@@ -65,6 +65,11 @@ public class GroupsTester extends TestCase {
         }
 
         @Override
+        public int hashCode() {
+            return getEntityIdentifier().getKey().hashCode();
+        }
+
+        @Override
         public String toString() {
             return "TestEntity(" + getEntityIdentifier().getKey() + ")";
         }

@@ -28,8 +28,8 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Version;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.apereo.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
 import org.apereo.portal.groups.pags.dao.IPersonAttributesGroupTestGroupDefinition;
 import org.dom4j.DocumentHelper;
@@ -38,6 +38,8 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.NaturalIdCache;
 
+@EqualsAndHashCode
+@ToString
 @Entity
 @Table(name = "UP_PAGS_TEST")
 @SequenceGenerator(name = "UP_PAGS_TEST_GEN", sequenceName = "UP_PAGS_TEST_SEQ", allocationSize = 5)
@@ -68,9 +70,11 @@ public class PersonAttributesGroupTestDefinitionImpl
     @Id
     @GeneratedValue(generator = "UP_PAGS_TEST_GEN")
     @Column(name = "PAGS_TEST_ID")
+    @EqualsAndHashCode.Exclude
     private long id = -1L;
 
     @Version
+    @EqualsAndHashCode.Exclude
     @Column(name = "ENTITY_VERSION")
     private long entityVersion;
 
@@ -83,6 +87,8 @@ public class PersonAttributesGroupTestDefinitionImpl
     @Column(name = "TEST_VALUE", length = 500, nullable = true)
     private String testValue;
 
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     @ManyToOne(
             fetch = FetchType.EAGER,
             targetEntity = PersonAttributesGroupTestGroupDefinitionImpl.class)
@@ -129,16 +135,6 @@ public class PersonAttributesGroupTestDefinitionImpl
     @Override
     public IPersonAttributesGroupTestGroupDefinition getTestGroup() {
         return testGroup;
-    }
-
-    @Override
-    public boolean equals(Object that) {
-        return EqualsBuilder.reflectionEquals(this, that);
-    }
-
-    @Override
-    public String toString() {
-        return ToStringBuilder.reflectionToString(this);
     }
 
     @Override
