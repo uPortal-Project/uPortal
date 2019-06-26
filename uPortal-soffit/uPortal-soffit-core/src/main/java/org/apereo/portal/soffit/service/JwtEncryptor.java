@@ -17,11 +17,9 @@ package org.apereo.portal.soffit.service;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.jasypt.util.text.BasicTextEncryptor;
-// UNCOMMENT when Lombok PR fix merged
-//import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -31,7 +29,7 @@ import org.springframework.stereotype.Component;
  *
  * @since 5.6.1
  */
-//@Slf4j
+@Slf4j
 @Component
 public class JwtEncryptor {
     public static final String ENCRYPT_JWT_YN = "org.apereo.portal.soffit.jwt.encrypt";
@@ -63,16 +61,16 @@ public class JwtEncryptor {
     @PostConstruct
     public void init() {
         if (encryptJwtYN) {
-            //log.info("Encrypting Soffit JWTs");
+            // log.info("Encrypting Soffit JWTs");
             // Encryption Password
             if (StringUtils.isBlank(encryptionPassword)) {
-                //log.error(
-                        //"The value of required property {} is blank", ENCRYPTION_PASSWORD_PROPERTY);
+                log.error(
+                        "The value of required property {} is blank", ENCRYPTION_PASSWORD_PROPERTY);
                 throw new IllegalStateException("Missing property " + ENCRYPTION_PASSWORD_PROPERTY);
             } else if (DEFAULT_ENCRYPTION_PASSWORD.equals(encryptionPassword)) {
-                //log.warn(
-                        //"Property {} is using the deafult value;  please change it",
-                        //ENCRYPTION_PASSWORD_PROPERTY);
+                log.warn(
+                        "Property {} is using the deafult value;  please change it",
+                        ENCRYPTION_PASSWORD_PROPERTY);
             }
             textEncryptor.setPassword(encryptionPassword);
         }

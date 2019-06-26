@@ -53,6 +53,8 @@ public class AbstractJwtService {
 
     @Autowired private JwtEncryptor jwtEncryptor;
 
+    @Autowired private JwtSignatureAlgorithmFactory algorithmFactory;
+
     @PostConstruct
     public void init() {
 

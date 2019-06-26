@@ -22,11 +22,9 @@ import org.junit.Test;
 
 public class JwtEncryptorTest {
 
-    private static final String VALID_JWT =
-        "sdfSDFSD4345.sdfsdf2342534fsadf/++.sdf3w4tvav==";
+    private static final String VALID_JWT = "sdfSDFSD4345.sdfsdf2342534fsadf/++.sdf3w4tvav==";
 
-    private static final String INVALID_JWT1 =
-        "tqqgq5vtbyn65mutyu756muyum567mm7m";
+    private static final String INVALID_JWT1 = "tqqgq5vtbyn65mutyu756muyum567mm7m";
 
     @Test
     public void testJwtPatternMatcher() {
@@ -36,5 +34,4 @@ public class JwtEncryptorTest {
         m = JwtEncryptor.JWT_PATTERN.matcher(INVALID_JWT1);
         assertFalse("Invalid JWT matches", m.matches());
     }
-
 }
