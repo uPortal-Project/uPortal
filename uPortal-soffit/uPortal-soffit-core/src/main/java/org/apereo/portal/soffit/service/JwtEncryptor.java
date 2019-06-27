@@ -42,7 +42,8 @@ public class JwtEncryptor {
     @Value("${" + ENCRYPTION_PASSWORD_PROPERTY + ":" + DEFAULT_ENCRYPTION_PASSWORD + "}")
     private String encryptionPassword;
 
-    public static final String BASE64_REGEX = "[\\p{Alnum}+/=]+";
+    // BASE64url encoding, per RFC7519
+    public static final String BASE64_REGEX = "[\\p{Alnum}-_=]+";
     public static final Pattern JWT_PATTERN =
             Pattern.compile("^" + BASE64_REGEX + "\\." + BASE64_REGEX + "\\." + BASE64_REGEX + "$");
 

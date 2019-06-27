@@ -22,7 +22,8 @@ import org.junit.Test;
 
 public class JwtEncryptorTest {
 
-    private static final String VALID_JWT = "sdfSDFSD4345.sdfsdf2342534fsadf/++.sdf3w4tvav==";
+    private static final String VALID_JWT =
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
 
     private static final String INVALID_JWT1 = "tqqgq5vtbyn65mutyu756muyum567mm7m";
 
