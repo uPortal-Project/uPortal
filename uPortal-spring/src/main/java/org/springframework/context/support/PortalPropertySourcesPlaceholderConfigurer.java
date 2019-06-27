@@ -51,7 +51,8 @@ public class PortalPropertySourcesPlaceholderConfigurer
 
     public static final String EXTENDED_PROPERTIES_SOURCE = "extendedPropertiesSource";
     public static final String JAYSYPT_ENCRYPTION_KEY_VARIABLE = "UP_JASYPT_KEY";
-    public static final String CLUSTER_PREFIX_VARIABLE = "UP_CLUSTER";
+    public static final String CLUSTER_ENV_VARIABLE = "UP_CLUSTER";
+    public static final String CLUSTER_JVM_VARIABLE = "cluster";
 
     private PropertyResolver propertyResolver;
 
@@ -208,7 +209,10 @@ public class PortalPropertySourcesPlaceholderConfigurer
     }
 
     public static void honorClusterOverrides(Properties properties) {
-        final String cluster = System.getenv(CLUSTER_PREFIX_VARIABLE);
+        String cluster = System.getenv(CLUSTER_ENV_VARIABLE);
+        if (cluster == null || cluster.length() == 0) {
+            cluster = System.getProperty(CLUSTER_JVM_VARIABLE, "");
+        }
         honorClusterOverrides(cluster, properties);
     }
 
