@@ -54,10 +54,10 @@ public class SimpleSecurityContext extends ChainingSecurityContext implements IS
         if (this.myPrincipal.UID != null && this.myOpaqueCredentials.credentialstring != null) {
 
             // Logs if an attempt is made to log into a local account
-            StringBuilder msg = new StringBuilder();
-            msg.append("An attempt to log into the local login has occurred. ");
-            msg.append("user=" + this.myPrincipal.UID);
-            if (log.isWarnEnabled()) log.warn(msg.toString()); 
+            if (log.isWarnEnabled())
+                log.warn(
+                        "An attempt to log into the local login has occurred. user="
+                                + this.myPrincipal.UID);
 
             try {
 
