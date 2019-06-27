@@ -36,6 +36,7 @@ import org.apereo.portal.security.IPerson;
 import org.apereo.portal.services.GroupService;
 import org.apereo.portal.soffit.Headers;
 import org.apereo.portal.soffit.service.AbstractJwtService;
+import org.apereo.portal.soffit.service.JwtEncryptor;
 import org.apereo.portal.soffit.service.JwtSignatureAlgorithmFactory;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.IPersonAttributes;
@@ -195,6 +196,8 @@ public class IdTokenFactory {
 
     @Autowired private JwtSignatureAlgorithmFactory algorithmFactory;
 
+    @Autowired private JwtEncryptor jwtEncryptor;
+
     @PostConstruct
     public void init() {
 
@@ -346,7 +349,8 @@ public class IdTokenFactory {
 
     public Jws<Claims> parseBearerToken(String bearerToken) {
         try {
-            return Jwts.parser().setSigningKey(signatureKey).parseClaimsJws(bearerToken);
+            final String jwt = jwtEncryptor.decryptIfInvalidFormat(bearerToken);
+            return Jwts.parser().setSigningKey(signatureKey).parseClaimsJws(jwt);
         } catch (Exception e) {
             logger.warn("Unsupported bearerToken:  {}", bearerToken);
             logger.debug("Stack trace", e);
