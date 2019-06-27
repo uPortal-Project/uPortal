@@ -70,7 +70,7 @@ public class JwtEncryptor {
                 throw new IllegalStateException("Missing property " + ENCRYPTION_PASSWORD_PROPERTY);
             } else if (DEFAULT_ENCRYPTION_PASSWORD.equals(encryptionPassword)) {
                 log.warn(
-                        "Property {} is using the deafult value;  please change it",
+                        "Property {} is using the default value;  please change it",
                         ENCRYPTION_PASSWORD_PROPERTY);
             }
             textEncryptor.setPassword(encryptionPassword);
