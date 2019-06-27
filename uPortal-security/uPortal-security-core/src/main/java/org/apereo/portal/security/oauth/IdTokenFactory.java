@@ -349,7 +349,7 @@ public class IdTokenFactory {
 
     public Jws<Claims> parseBearerToken(String bearerToken) {
         try {
-            final String jwt = jwtEncryptor.decryptIfTokenEncrypted(bearerToken);
+            final String jwt = jwtEncryptor.decryptIfInvalidFormat(bearerToken);
             return Jwts.parser().setSigningKey(signatureKey).parseClaimsJws(jwt);
         } catch (Exception e) {
             logger.warn("Unsupported bearerToken:  {}", bearerToken);

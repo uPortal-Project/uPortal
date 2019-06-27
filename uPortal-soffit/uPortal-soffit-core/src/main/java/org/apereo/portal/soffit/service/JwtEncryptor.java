@@ -85,7 +85,25 @@ public class JwtEncryptor {
         }
     }
 
-    public String decryptIfTokenEncrypted(String jwt) {
+    public String decryptIfConfigured(String jwt) {
+        if (encryptJwtYN) {
+            return textEncryptor.decrypt(jwt);
+        }
+        return jwt;
+    }
+
+    /**
+     * Special decrypt testing method used by OIDC code that does not support encryption but may
+     * receive Soffit JWTs that do support encryption.
+     *
+     * <p>OIDC code will support encryption in a future patch. This is to address retain
+     * compatibility before the next major release.
+     *
+     * @param jwt the {code String} from AUTHORIZATION header
+     * @return jwt string if it matches the spec; otherwise an attempt to decrypt the string is made
+     *     before returning the value
+     */
+    public String decryptIfInvalidFormat(String jwt) {
         if (encryptJwtYN) {
             Matcher m = JWT_PATTERN.matcher(jwt);
             if (!m.matches()) {

@@ -101,8 +101,7 @@ public class AbstractJwtService {
     protected Jws<Claims> parseEncryptedToken(
             String encryptedToken, Class<? extends ITokenizable> clazz) {
 
-        // Decryption
-        String jwt = jwtEncryptor.decryptIfTokenEncrypted(encryptedToken);
+        String jwt = jwtEncryptor.decryptIfConfigured(encryptedToken);
 
         final Jws<Claims> rslt = Jwts.parser().setSigningKey(signatureKey).parseClaimsJws(jwt);
 
