@@ -68,6 +68,9 @@ public class Authentication {
 
     @Autowired private Set<IAuthenticationListener> authenticationListeners;
 
+    @Autowired(required = false)
+    private IAuthenticationExt authenticationExt;
+
     @Autowired
     public void setUsernameTaggedCacheEntryPurger(
             UsernameTaggedCacheEntryPurger usernameTaggedCacheEntryPurger) {
@@ -242,6 +245,12 @@ public class Authentication {
                     person.setAttributes(personAttributes.getAttributes());
                 }
             }
+
+            // Call extensions if present
+            if (authenticationExt != null) {
+                authenticationExt.postAttributeResolution(request, person);
+            }
+
             // Make sure the the user's fullname is set
             if (person.getFullName() == null) {
                 // Use portal display name if one exists
