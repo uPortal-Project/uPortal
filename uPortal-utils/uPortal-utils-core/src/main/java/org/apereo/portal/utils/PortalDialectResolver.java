@@ -44,7 +44,7 @@ public class PortalDialectResolver extends AbstractDialectResolver {
         }
 
         // Ensure long varchar columns are forced to clob instead of long.
-        if ("Oracle".equals(databaseName) && 12 >= databaseMajorVersion) {
+        if ("Oracle".equals(databaseName) && databaseMajorVersion >= 12) {
             return new Oracle12ForceClobDialect();
         }
 
