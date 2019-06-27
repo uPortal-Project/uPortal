@@ -27,7 +27,7 @@ import org.springframework.stereotype.Component;
  * Wrapper for code to encrypt and decrypt JWT tokens. The spec is evolving, so this implementation
  * is expected to change.
  *
- * @since 5.6.1
+ * @since 5.7.0
  */
 @Slf4j
 @Component
