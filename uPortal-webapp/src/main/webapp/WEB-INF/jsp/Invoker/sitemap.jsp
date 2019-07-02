@@ -111,7 +111,7 @@
                 var tabHeader = document.importNode(tabTemplate.content, true).querySelector('div');
                 // Add content to tab header template
                 var tabHeaderLink = tabHeader.querySelector('a');
-                tabHeaderLink.textContent = tab.name;
+                tabHeaderLink.textContent = _.unescape(tab.name);
                 tabHeaderLink.href = '${portalContextPath}/f/' + tab.ID + '/normal/render.uP';
                 var portletList = tabHeader.querySelector('ul');
 
@@ -130,7 +130,7 @@
                         var portletListItem = document.importNode(portletTemplate.content, true).querySelector('li');
                         // Add content to portlet template
                         var portletTitle = portletListItem.querySelector('span');
-                        portletTitle.textContent = portlet.name;
+                        portletTitle.textContent = _.unescape(portlet.name);
                         var portletLink = portletListItem.querySelector('a');
                         portletLink.href = '${portalContextPath}/f/' + tab.ID + '/p/' + portlet.fname + '.' + portlet.ID + '/max/render.uP';
                         // Add portlet to tab list
