@@ -16,15 +16,19 @@ package org.apereo.portal.url;
 
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.time.Instant;
 import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+//import lombok.extern.slf4j.Slf4j;
 import org.apereo.portal.security.mvc.LoginController;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 /** Redirects the user to the Login servlet if they don't already have a session. */
+//@Slf4j
 public class RequireValidSessionFilter extends OncePerRequestFilter {
+  private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(RequireValidSessionFilter.class);
 
     private static final String REST_API_SERVLET_PATH = "/api";
 
@@ -39,7 +43,14 @@ public class RequireValidSessionFilter extends OncePerRequestFilter {
         final HttpSession session = request.getSession(false);
         if (session != null && !session.isNew()) {
             // Session exists and is not new, don't bother filtering
+            log.error("User {} has a session: {}", request.getRemoteUser(), session.getId());
+            log.error("Max inactive interval: {}", session.getMaxInactiveInterval());
+            final Instant ctime = Instant.ofEpochMilli(session.getCreationTime());
+            final Instant atime = Instant.ofEpochMilli(session.getLastAccessedTime());
+            log.error("Session creation time: {}, last access time: {}", ctime, atime);
             return true;
+        } else {
+            log.error("User {} does not have a session", request.getRemoteUser());
         }
 
         // (2) You are attempting to invoke a REST API
