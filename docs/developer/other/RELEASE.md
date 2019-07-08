@@ -4,20 +4,20 @@
 
 There are 3 prerequisites to cutting releases:
 
-1. [JIRA Account at at Sonatype](https://issues.sonatype.org/secure/Signup!default.jspa)
+1. [JIRA Account at Sonatype](https://issues.sonatype.org/secure/Signup!default.jspa)
 2. Permissions to release projects
     - This is granted via a Jira ticket from a uPortal committer
 3. [Set up public PGP key on a server](https://central.sonatype.org/pages/working-with-pgp-signatures.html)
-    - Generate a key pair `gpg --gen-key`
-    - Determine the key ID and keyring file `gpg2 --list-secret-keys`
+    - Generate a key pair `gpg2 --gen-key`
+    - If you choose to have an expiration date, edit the key via `gpg2 --edit-key {key ID}`
+    - Determine the key ID and keyring file `gpg2 --list-keys` (the key ID is the `pub` ID)
     - Distribute your public key `gpg2 --keyserver hkp://pool.sks-keyservers.net --send-keys {key ID}`
 
 ## Setup
 
-in `$HOME/.gradle/gradle.properties` your credentials for Sonatype OSS
-Repository Hosting and your configuration information for signing artifacts with
-GNU Privacy Guard (GnuPG), from above prerequisites.
-([details](https://docs.gradle.org/current/userguide/signing_plugin.html#sec:signatory_credentials)).
+Export your secret keyring via `gpg2 --keyring secring.gpg --export-secret-keys > ~/.gnupg/secring.gpg`
+
+In `$HOME/.gradle/gradle.properties` place your credentials for the Sonatype OSS Repository Hosting and your configuration information for signing artifacts with GNU Privacy Guard (GnuPG).  Use the key ID from the PGP prerequisite and the keyring file. ([details](https://docs.gradle.org/current/userguide/signing_plugin.html#sec:signatory_credentials)).
 
 ```properties
 ossrhUsername={username}
@@ -29,57 +29,80 @@ signing.secretKeyRingFile={keyring file}
 ```
 Setup is only required to be done once.
 
-## Which repo?
+## Which Repo?
 
 We encourage performing releases directly from a clone of the official repository rather than a fork to avoid extra steps.
 
-This means building `uPortal-start` with the only difference being the use of this `uPortal` release.
+This means when testing on `uPortal-start` for the release, you should use the `apereo` repository but configure the `uPortalVersion` to be the SNAPSHOT version that you'll build in the following steps.
 
 ## Testing
 
-Build a clean version of quickstart and perform at least light testing, especially around features that have been fixed or enhanced.
+Build a clean version of `uPortal-start` with the quickstart data set and perform at least light testing, especially around features that have been fixed or enhanced.
 
-## Running a release
+### Prepare For Testing
 
-Run the following command:
-
-```sh
-./gradlew clean release --no-parallel
+Build uPortal locally:
+```bash
+~.../apereo/uPortal$ ./gradlew clean install
 ```
 
-:warning: During the `release` task, you will be prompted for a release version
-(e.g. `5.0.3`) and a new version number for the branch (e.g. `5.0.4-SNAPSHOT`)
+Point your uPortal-start to the local uPortal build:
+Using the uPortal version, `.../apereo/uPortal/gradle.properties` > `version=XYZ` , add it into `.../apereo/uPortal-start/gradle.properties` > `uPortalVersion=XYZ`
+
+Run uPortal-start with the local build
+```sh
+~.../apereo/uPortal-start$ ./gradlew clean portalInit
+```
+
+### Verify
+
+* Unit tests are automatically run on commits, so ensure the latest commit's CI build passed.
+* FUTURE - Need to run the cross browser platform tests and the performance tests
+* Smoke test the UI manually
+  * Login as different users
+  * Enable alerts
+  * Pay attention to new changes
+
+## Cut Release
+
+Run the following command in the uPortal clone's directory:
+
+```sh
+~.../apereo/uPortal$ ./gradlew clean release --no-parallel
+```
+
+:Note: During the `release` task, you will be prompted for a release version (e.g. `5.0.3`).  Press `Enter` for the default.  The release process will then create two commits - a commit to set the new version (`5.0.3`), and a commit to set the version to the new snapshot (`5.0.4-SNAPSHOT`)
 
 ## Close and Release from Nexus Staging Repository
 
-Close the release in Sonatype to ensure the pushed Maven artifacts pass checks.
+Close the release in Sonatype to ensure the pushed Maven artifacts pass checks:
 1. Log into https://oss.sonatype.org 
-2. Search among _Staging Repositories_ for your username
-3. Select the uPortal artifact you staged and hit "Close"
-  - the lifecycle is Open --> Closed --> Released
-4. Wait a few minutes for the uPortal artifact to close
-5. Release the artifact
+2. Search among `Build Promotion` > `Staging Repositories` for your username
+3. Review the release for the expected artifacts
+4. Select the uPortal artifact you staged and hit "Close"
+  - The lifecycle is `Open --> Closed --> Released`
+5. Wait a few minutes for the uPortal artifact to close
+6. Release the artifact, and put the tag name in the description
 
 ## Create Release Notes
 
-1. Use Git to inspect the incremental commits since the last release (e.g. $ git log v5.0.5 ^v5.0.4 --no-merges)
-2. Review the issue tracker and confirm that referenced issues have been Resolved
+1. Use Git to inspect the incremental commits since the last release (e.g. $ git log v5.0.2..v5.0.3 --no-merges)
+2. Review the issue tracker and confirm that the referenced issues have been Resolved
 3. Enter the release notes on the GitHub releases page in the `uPortal` repo
-  - Each commit type goes into a sub section with the type as a header
-4. Upload binaries from `./gradlew tomcatZip` and `./gradlew tomcatTar` in `uPortal-start
-  - Postpone this step until this version is added to `uPortal-start`
+  - It's helpful to use the previous release notes as a guide
+  - Each commit type goes into a sub section with the type as a header (Fixes, Chores, Features, etc...).
 
 ## Update uPortal-start
 
-Open a Pull Request on uPortal-start to update uPortalVersion to the new release.
+Open a Pull Request on `uPortal-start` to update `uPortalVersion` to the new release.
 
 ## Publish new docker demo of Quickstart
 
-Publish a new apereo/uPortal-demo Docker image and update the :latest tag.
+Publish a new apereo/uPortal-demo Docker image and update the `:latest` tag.
 Prerequisites:
   - Docker Cloud account (https://cloud.docker.com)
-  - Access to post to apereo group
-  - This version has been added to `uPortal-start`
+  - Access to post to the apereo Docker group
+  - The uPortal version has been added to `uPortal-start`
 
 ```sh
 $ cd {uPortal-start repo}
@@ -90,13 +113,11 @@ $ docker push apereo/uportal-demo:latest
 ```
 
 ## Update Community
-For a Milestone or RC release, email to uportal-dev is needed.  Be sure to acknowledge those who contributed to the release.
+For a patch release, email to `uportal-dev`.  Be sure to acknowledge those who contributed to the release.
 
-For a GA release also email uportal-user .  Be sure to put the release into context for an existing adopter to understand.
+For a minor release also email `uportal-user`.  Be sure to put the release into context for existing adopters to understand.
 
-For a GA release also email jasig-announce , announcing the release to a general public audience.
-
-Finally, have someone with access to the uPortal Twitter account announce the GA release.
+For a major release also email `jasig-announce`, announcing the release to a general public audience.  Finally, have someone with access to the uPortal Twitter account announce the major release.
 
 ## References
 
