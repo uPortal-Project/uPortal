@@ -113,11 +113,11 @@ $ docker push apereo/uportal-demo:latest
 ```
 
 ## Update Community
-For a patch release, email to `uportal-dev`.  Be sure to acknowledge those who contributed to the release.
+For any non-snapshot release, email an announcement to `uportal-dev`, `uportal-user`, and `jasig-announce`.
+  - Be sure to acknowledge those who contributed to the release.
+  - Be sure to put the release into context for existing adopters to understand.
 
-For a minor release also email `uportal-user`.  Be sure to put the release into context for existing adopters to understand.
-
-For a major release also email `jasig-announce`, announcing the release to a general public audience.  Finally, have someone with access to the uPortal Twitter account announce the major release.
+Have someone with access to the uPortal Twitter account announce the release.
 
 ## References
 
