@@ -52,7 +52,8 @@ Using the uPortal version, `.../apereo/uPortal/gradle.properties` > `version=XYZ
 
 Run uPortal-start with the local build
 ```sh
-~.../apereo/uPortal-start$ ./gradlew clean portalInit
+cd ./uPortal-start
+./gradlew clean portalInit
 ```
 
 ### Verify
