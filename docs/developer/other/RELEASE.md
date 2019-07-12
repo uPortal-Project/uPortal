@@ -43,7 +43,8 @@ Build a clean version of `uPortal-start` with the quickstart data set and perfor
 
 Build uPortal locally:
 ```bash
-~.../apereo/uPortal$ ./gradlew clean install
+cd ./uPortal
+./gradlew clean install
 ```
 
 Point your uPortal-start to the local uPortal build:
