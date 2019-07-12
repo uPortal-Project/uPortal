@@ -88,7 +88,7 @@ Close the release in Sonatype to ensure the pushed Maven artifacts pass checks:
 
 ## Create Release Notes
 
-1. Use Git to inspect the incremental commits since the last release (e.g. $ git log v5.0.2..v5.0.3 --no-merges)
+1. Use Git to inspect the incremental commits since the last release (e.g. `$ git log v5.0.2..v5.0.3 --no-merges`)
 2. Review the issue tracker and confirm that the referenced issues have been Resolved
 3. Enter the release notes on the GitHub releases page in the `uPortal` repo
   - It's helpful to use the previous release notes as a guide
