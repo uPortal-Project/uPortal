@@ -78,7 +78,7 @@ Run the following command in the uPortal clone's directory:
 ## Close and Release from Nexus Staging Repository
 
 Close the release in Sonatype to ensure the pushed Maven artifacts pass checks:
-1. Log into https://oss.sonatype.org 
+1. Log into <https://oss.sonatype.org>
 2. Search among `Build Promotion` > `Staging Repositories` for your username
 3. Review the release for the expected artifacts
 4. Select the uPortal artifact you staged and hit "Close"
