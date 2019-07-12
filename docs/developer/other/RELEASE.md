@@ -102,7 +102,7 @@ Open a Pull Request on `uPortal-start` to update `uPortalVersion` to the new rel
 
 Publish a new apereo/uPortal-demo Docker image and update the `:latest` tag.
 Prerequisites:
-  - Docker Cloud account (https://cloud.docker.com)
+  - Docker Cloud account (<https://cloud.docker.com>)
   - Access to post to the apereo Docker group
   - The uPortal version has been added to `uPortal-start`
 
