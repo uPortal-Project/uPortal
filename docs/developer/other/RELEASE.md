@@ -63,7 +63,7 @@ cd ./uPortal-start
 * Smoke test the UI manually
   * Login as different users
   * Enable alerts
-  * Pay attention to new changes
+  * Pay attention to new changes since last release
 
 ## Cut Release
 
