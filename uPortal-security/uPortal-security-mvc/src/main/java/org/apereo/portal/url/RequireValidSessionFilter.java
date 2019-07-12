@@ -21,14 +21,15 @@ import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-//import lombok.extern.slf4j.Slf4j;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.portal.security.mvc.LoginController;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 /** Redirects the user to the Login servlet if they don't already have a session. */
-//@Slf4j
+@Slf4j
 public class RequireValidSessionFilter extends OncePerRequestFilter {
-  private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(RequireValidSessionFilter.class);
+    //  private static final org.slf4j.Logger log =
+    // org.slf4j.LoggerFactory.getLogger(RequireValidSessionFilter.class);
 
     private static final String REST_API_SERVLET_PATH = "/api";
 

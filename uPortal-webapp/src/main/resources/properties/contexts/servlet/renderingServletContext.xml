@@ -20,7 +20,7 @@
 
 -->
 <beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns="http://www.springframework.org/schema/beans" 
+       xmlns="http://www.springframework.org/schema/beans"
        xmlns:context="http://www.springframework.org/schema/context"
        xsi:schemaLocation="
            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
@@ -30,11 +30,10 @@
         <property name="interceptors">
             <list>
                 <bean class="org.apereo.portal.url.GuestSessionExpirationInterceptor">
-                    <!-- 
+                    <!--
                     <property name="unauthenticatedUserSessionTimeout" value="${org.apereo.portal.PortalSessionManager.unauthenticatedUserSessionTimeout}" />
                      -->
                 </bean>
-                <bean class="org.apereo.portal.url.MaxInactiveInterceptor"/>
                 <ref bean="requestParameterProcessorInterceptor"/>
                 <bean class="org.apereo.portal.i18n.LocaleManagementInterceptor" />
                 <ref bean="portletExecutionManager"/>
@@ -42,7 +41,7 @@
         </property>
     </bean>
     <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter"/>
-    
+
     <!-- even though context:component-scan is defined in applicationContext, we need an additional reference
     for this context as it's unique to the DispatcherServlet -->
     <context:component-scan base-package="org.apereo.portal.rendering"/>
