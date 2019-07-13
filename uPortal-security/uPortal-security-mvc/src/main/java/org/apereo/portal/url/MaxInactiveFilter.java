@@ -15,6 +15,8 @@
 package org.apereo.portal.url;
 
 import java.io.IOException;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -49,6 +51,8 @@ public class MaxInactiveFilter implements Filter {
 
     @Autowired private IAuthorizationService authorizationService;
 
+    private int refreshMinutes = 5;
+
     @Override
     public void init(FilterConfig filterConfig) {}
 
@@ -60,31 +64,43 @@ public class MaxInactiveFilter implements Filter {
             throws IOException, ServletException {
         log.info("Entering MaxInactiveFilter");
         final HttpServletRequest request = (HttpServletRequest) req;
+        checkMaxInactive(request);
 
+        log.info("Continuing on to other filters from MaxInactiveFilter");
+        filterChain.doFilter(req, resp);
+    }
+
+    private void checkMaxInactive(HttpServletRequest request) {
         // Check for an existing session
         final HttpSession session = request.getSession(false);
         if (session == null) {
             log.debug("No session found");
-        } else {
-            // Now see if authentication was successful...
-            final IPerson person = this.personManager.getPerson(request);
-            if (person == null) {
-                log.debug("Person not found in Person Manager");
-            } else {
-                // Check if the session max inactive value has already been set
-                Boolean isAlreadySet = (Boolean) person.getAttribute(SESSION_MAX_INACTIVE_SET_ATTR);
-                if (isAlreadySet != null && isAlreadySet.equals(Boolean.TRUE)) {
-                    log.debug(
-                            "Session.setMaxInactiveInterval() has already been set for user '{}'",
-                            person.getAttribute(IPerson.USERNAME));
-                } else {
-                    setMaxInactive(session, person);
-                }
+            return;
+        }
+
+        // Now see if authentication was successful...
+        final IPerson person = this.personManager.getPerson(request);
+        if (person == null) {
+            log.debug("Person not found in Person Manager");
+            return;
+        }
+
+        // Check if the session max inactive value has been set more recent than the refresh time
+        LocalDateTime lastSetTime =
+                (LocalDateTime) person.getAttribute(SESSION_MAX_INACTIVE_SET_ATTR);
+        if (lastSetTime != null) {
+            long sinceLastSetMin = Duration.between(lastSetTime, LocalDateTime.now()).toMinutes();
+            log.debug("Since max inactive last set in min: {}", sinceLastSetMin);
+            if (refreshMinutes > sinceLastSetMin) {
+                log.debug(
+                        "Session.setMaxInactiveInterval() was set for user '{}' {} minutes ago",
+                        person.getAttribute(IPerson.USERNAME),
+                        sinceLastSetMin);
+                return;
             }
         }
 
-        log.info("Continuing on to other filters from MaxInactiveFilter");
-        filterChain.doFilter(req, resp);
+        setMaxInactive(session, person);
     }
 
     private void setMaxInactive(HttpSession session, IPerson person) {
@@ -108,7 +124,7 @@ public class MaxInactiveFilter implements Filter {
                                     + person.getAttribute(IPerson.USERNAME)
                                     + "'");
                 }
-                person.setAttribute(SESSION_MAX_INACTIVE_SET_ATTR, Boolean.TRUE);
+                person.setAttribute(SESSION_MAX_INACTIVE_SET_ATTR, LocalDateTime.now());
                 return;
             }
             for (IPermission p : permissions) {
@@ -182,7 +198,7 @@ public class MaxInactiveFilter implements Filter {
                 }
                 // Apply the specified setting...
                 session.setMaxInactiveInterval(maxInactive);
-                person.setAttribute(SESSION_MAX_INACTIVE_SET_ATTR, Boolean.TRUE);
+                person.setAttribute(SESSION_MAX_INACTIVE_SET_ATTR, LocalDateTime.now());
                 if (log.isInfoEnabled()) {
                     log.info(
                             "Setting maxInactive to '"
