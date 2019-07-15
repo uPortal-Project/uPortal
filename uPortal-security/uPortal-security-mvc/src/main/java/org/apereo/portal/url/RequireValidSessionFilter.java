@@ -28,8 +28,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 /** Redirects the user to the Login servlet if they don't already have a session. */
 @Slf4j
 public class RequireValidSessionFilter extends OncePerRequestFilter {
-    //  private static final org.slf4j.Logger log =
-    // org.slf4j.LoggerFactory.getLogger(RequireValidSessionFilter.class);
 
     private static final String REST_API_SERVLET_PATH = "/api";
 
