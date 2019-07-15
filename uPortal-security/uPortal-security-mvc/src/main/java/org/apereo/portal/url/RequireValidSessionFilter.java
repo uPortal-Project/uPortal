@@ -42,14 +42,14 @@ public class RequireValidSessionFilter extends OncePerRequestFilter {
         final HttpSession session = request.getSession(false);
         if (session != null && !session.isNew()) {
             // Session exists and is not new, don't bother filtering
-            log.error("User {} has a session: {}", request.getRemoteUser(), session.getId());
-            log.error("Max inactive interval: {}", session.getMaxInactiveInterval());
+            log.debug("User {} has a session: {}", request.getRemoteUser(), session.getId());
+            log.debug("Max inactive interval: {}", session.getMaxInactiveInterval());
             final Instant ctime = Instant.ofEpochMilli(session.getCreationTime());
             final Instant atime = Instant.ofEpochMilli(session.getLastAccessedTime());
-            log.error("Session creation time: {}, last access time: {}", ctime, atime);
+            log.debug("Session creation time: {}, last access time: {}", ctime, atime);
             return true;
         } else {
-            log.error("User {} does not have a session", request.getRemoteUser());
+            log.debug("User {} does not have a session", request.getRemoteUser());
         }
 
         // (2) You are attempting to invoke a REST API
