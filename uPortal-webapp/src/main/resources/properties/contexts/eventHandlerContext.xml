@@ -137,10 +137,6 @@
     <!-- Useful for debugging, logs each event as it is processed by the aggregation system 
     <bean id="loggingPortalEventAggregator" class="org.apereo.portal.events.aggr.LoggingPortalEventAggregator" />
      -->
-    <bean id="loginPortalEventAggregator" class="org.apereo.portal.events.aggr.login.LoginPortalEventAggregator"/>
-    <bean id="concurrentUserAggregator" class="org.apereo.portal.events.aggr.concuser.ConcurrentUserAggregator"/>
-    <bean id="tabRenderAggregator" class="org.apereo.portal.events.aggr.tabrender.TabRenderAggregator"/>
-    <bean id="portletAddAggregator" class="org.apereo.portal.events.aggr.portletlayout.PortletLayoutAggregator"/>
     <bean id="portletExecutionAggregatorAll" class="org.apereo.portal.events.aggr.portletexec.PortletExecutionAggregator"/>
     <bean id="portletExecutionAggregatorAction" class="org.apereo.portal.events.aggr.portletexec.PortletExecutionAggregator">
         <property name="executionType" value="ACTION" />
@@ -153,9 +149,5 @@
     </bean>
     <bean id="portletExecutionAggregatorResource" class="org.apereo.portal.events.aggr.portletexec.PortletExecutionAggregator">
         <property name="executionType" value="RESOURCE" />
-    </bean>
-    <bean id="searchRequestAggregator" class="org.apereo.portal.events.aggr.action.SearchRequestAggregator"/>
-    <bean id="tinCanEventAggregator" class="org.apereo.portal.events.tincan.TinCanPortalEventAggregator">
-        <property name="tinCanEventScheduler" ref="tinCanEventScheduler"/>
     </bean>
 </beans>

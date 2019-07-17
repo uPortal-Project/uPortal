@@ -126,4 +126,8 @@ public class PortletExecutionAggregator
                 mappedPortlet,
                 executionType);
     }
+
+    public String toString() {
+        return "PortletExecutionAggregator: type=" + this.executionType;
+    }
 }
