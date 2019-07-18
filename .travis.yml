@@ -15,7 +15,7 @@ matrix:
 install: true
 script:
   - ./gradlew -S --no-daemon --no-parallel build jacocoAggregateReport coveralls
-  - ./gradlew -S --no-daemon --no-parallel :npm_run_lint-js
+  - ./gradlew -S --no-daemon --no-parallel :npm_run_lint-ci
 
 cache:
   directories:

@@ -4,28 +4,45 @@
   "devDependencies": {
     "eslint": "^6.0.0",
     "eslint-config-google": "^0.13.0",
-    "prettier-eslint-cli": "^5.0.0",
-    "prettier-stylelint": "^0.4.2",
+    "eslint-config-prettier": "^6.0.0",
+    "eslint-plugin-prettier": "^3.1.0",
+    "npm-run-all": "^4.1.5",
+    "prettier": "^1.18.2",
     "remark-cli": "^6.0.1",
     "remark-preset-lint-consistent": "^2.0.3",
     "remark-preset-lint-recommended": "^3.0.3",
     "remark-validate-links": "^8.0.3",
     "stylelint": "^10.1.0",
-    "stylelint-config-standard": "^18.3.0"
+    "stylelint-config-standard": "^18.3.0",
+    "stylelint-prettier": "^1.1.1"
   },
   "scripts": {
-    "lint-js": "eslint . --ignore-path .gitignore --ignore-pattern *.min.js",
-    "lint-less": "stylelint --syntax less **/*.less !**/bootstrap/**/*.less",
-    "lint-md": "remark -f *.md docs/**",
-    "format-js": "prettier-eslint --write \"uPortal-webapp/src/**/*.js\"",
-    "format-less": "prettier-stylelint --write \"uPortal-webapp/src/**/*.{css,less}\""
+    "lint": "run-s lint:*",
+    "lint-ci": "npm run lint:js",
+    "lint:js": "eslint . --ignore-path .gitignore --ignore-pattern *.min.js",
+    "lint:less": "stylelint **/*.less !**/bootstrap/**/*.less",
+    "lint:md": "remark -f *.md docs/**",
+    "format": "run-p -c format:*",
+    "format:js": "eslint . --fix --ignore-path .gitignore --ignore-pattern *.min.js",
+    "format:less": "stylelint --fix **/*.less !**/bootstrap/**/*.less"
   },
   "eslintConfig": {
-    "extends": "google",
+    "extends": [
+      "google",
+      "prettier"
+    ],
+    "plugins": [
+      "prettier"
+    ],
     "rules": {
-      "indent": [
+      "prettier/prettier": [
         "error",
-        4
+        {
+          "tabWidth": 4,
+          "singleQuote": true,
+          "trailingComma": "es5",
+          "bracketSpacing": false
+        }
       ],
       "max-len": [
         "warn",
@@ -59,7 +76,17 @@
     ]
   },
   "stylelint": {
-    "extends": "stylelint-config-standard"
+    "extends": "stylelint-config-standard",
+    "plugins": [
+      "stylelint-prettier"
+    ],
+    "rules": {
+      "prettier/prettier": true,
+      "no-descending-specificity": null,
+      "at-rule-no-unknown": null
+    }
   },
-  "prettier": {}
+  "prettier": {
+    "tabWidth": 4
+  }
 }
