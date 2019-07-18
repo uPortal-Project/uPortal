@@ -17,89 +17,153 @@
  * under the License.
  */
 html {
-    background-color: @body-background-color;
-    overflow-x: hidden; /* prevent horizontal scrollbar on desktop */
-    min-height: 100%; /* do not use height and width properties on both html and body elements -> bug on chrome and safari with scrollTop effect with overflow-x: hidden */
-    min-width: 100%;
+  background-color: @body-background-color;
+  overflow-x: hidden; /* prevent horizontal scrollbar on desktop */
+  min-height: 100%; /* do not use height and width properties on both html and body elements -> bug on chrome and safari with scrollTop effect with overflow-x: hidden */
+  min-width: 100%;
 
-    &.touch {
-        .portal-navigation-dropdown:after {
-            content:'';
-            position:absolute;
-            top:0; bottom:-10px;
-            left:-10px; right:-10px;
-        }
-        @media screen {
-            @media (min-width: @screen-sm-min) {
-                .portal-navigation-gripper:after {
-                     content:'';
-                     position:absolute;
-                     top:-10px; bottom:0px;
-                     left:0px; right:-10px;
-                }
-                .portal-navigation-delete:after {
-                     content:'';
-                     position:absolute;
-                     top:-10px; bottom:0px;
-                     left:-10px; right:0px;
-                }
-            }
-        }
+  &.touch {
+    .portal-navigation-dropdown::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: -10px;
+      left: -10px;
+      right: -10px;
     }
 
-    body {
-        // background-color: @offcanvas-background-color;
-        background: -moz-linear-gradient(left, @offcanvas-background-color 0%, darken(@offcanvas-background-color, 10%) 260px, darken(@offcanvas-background-color, 50%) 270px, @offcanvas-background-color 271px, @offcanvas-background-color 100%); /* FF3.6+ */
-        background: -webkit-gradient(left top, right top, color-stop(0%, @offcanvas-background-color), color-stop(260px, darken(@offcanvas-background-color, 10%)), color-stop(270px, darken(@offcanvas-background-color, 50%)), color-stop(271px, @offcanvas-background-color), color-stop(100%, @offcanvas-background-color));/* Chrome, Safari4+ */
-        background: -webkit-linear-gradient(left, @offcanvas-background-color 0%, darken(@offcanvas-background-color, 10%) 260px, darken(@offcanvas-background-color, 50%) 270px, @offcanvas-background-color 271px, @offcanvas-background-color 100%); /* Chrome10+,Safari5.1+ */
-        background: -o-linear-gradient(left, @offcanvas-background-color 0%, darken(@offcanvas-background-color, 10%) 260px, darken(@offcanvas-background-color, 50%) 270px, @offcanvas-background-color 271px, @offcanvas-background-color 100%); /* Opera 11.10+ */
-        background: -ms-linear-gradient(left, @offcanvas-background-color 0%, darken(@offcanvas-background-color, 10%) 260px, darken(@offcanvas-background-color, 50%) 270px, @offcanvas-background-color 271px, @offcanvas-background-color 100%); /* IE 10+ */
-        background: linear-gradient(to right, @offcanvas-background-color 0%, darken(@offcanvas-background-color, 10%) 260px, darken(@offcanvas-background-color, 50%) 270px, @offcanvas-background-color 271px, @offcanvas-background-color 100%);/* W3C */
-        overflow-x: hidden;
-
-        #wrapper {
-            background-color: @body-background-color;
-            background-image: @body-background-image;
+    @media screen {
+      @media (min-width: @screen-sm-min) {
+        .portal-navigation-gripper::after {
+          content: "";
+          position: absolute;
+          top: -10px;
+          bottom: 0;
+          left: 0;
+          right: -10px;
         }
+
+        .portal-navigation-delete::after {
+          content: "";
+          position: absolute;
+          top: -10px;
+          bottom: 0;
+          left: -10px;
+          right: 0;
+        }
+      }
     }
+  }
+
+  body {
+    // background-color: @offcanvas-background-color;
+    background:
+      -moz-linear-gradient(
+        left,
+        @offcanvas-background-color 0%,
+        darken(@offcanvas-background-color, 10%) 260px,
+        darken(@offcanvas-background-color, 50%) 270px,
+        @offcanvas-background-color 271px,
+        @offcanvas-background-color 100%
+      ); /* FF3.6+ */
+
+    background:
+      -webkit-gradient(
+        left top,
+        right top,
+        color-stop(0%, @offcanvas-background-color),
+        color-stop(260px, darken(@offcanvas-background-color, 10%)),
+        color-stop(270px, darken(@offcanvas-background-color, 50%)),
+        color-stop(271px, @offcanvas-background-color),
+        color-stop(100%, @offcanvas-background-color)
+      ); /* Chrome, Safari4+ */
+
+    background:
+      -webkit-linear-gradient(
+        left,
+        @offcanvas-background-color 0%,
+        darken(@offcanvas-background-color, 10%) 260px,
+        darken(@offcanvas-background-color, 50%) 270px,
+        @offcanvas-background-color 271px,
+        @offcanvas-background-color 100%
+      ); /* Chrome10+,Safari5.1+ */
+
+    background:
+      -o-linear-gradient(
+        left,
+        @offcanvas-background-color 0%,
+        darken(@offcanvas-background-color, 10%) 260px,
+        darken(@offcanvas-background-color, 50%) 270px,
+        @offcanvas-background-color 271px,
+        @offcanvas-background-color 100%
+      ); /* Opera 11.10+ */
+
+    background:
+      -ms-linear-gradient(
+        left,
+        @offcanvas-background-color 0%,
+        darken(@offcanvas-background-color, 10%) 260px,
+        darken(@offcanvas-background-color, 50%) 270px,
+        @offcanvas-background-color 271px,
+        @offcanvas-background-color 100%
+      ); /* IE 10+ */
+
+    background:
+      linear-gradient(
+        to right,
+        @offcanvas-background-color 0%,
+        darken(@offcanvas-background-color, 10%) 260px,
+        darken(@offcanvas-background-color, 50%) 270px,
+        @offcanvas-background-color 271px,
+        @offcanvas-background-color 100%
+      ); /* W3C */
+
+    overflow-x: hidden;
+
+    #wrapper {
+      background-color: @body-background-color;
+      background-image: @body-background-image;
+    }
+  }
 }
 
 /* ie9 fix */
 @media (max-width: @screen-xs-max) {
-    html.no-csstransforms3d {
-      body {
-        background-color: @offcanvas-background-color;
-        .row-offcanvas {
-            /* When the sidebar is active */
-            &.active {
-                left: 270px;
-               .portal-nav {
-                   z-index:1;
-                   #portalNavigation {
-                      left: -280px;
-                      z-index:4 !important;
-                   }
-               }
+  html.no-csstransforms3d {
+    body {
+      background-color: @offcanvas-background-color;
+
+      .row-offcanvas {
+        /* When the sidebar is active */
+        &.active {
+          left: 270px;
+
+          .portal-nav {
+            z-index: 1;
+
+            #portalNavigation {
+              left: -280px;
+              z-index: 4 !important;
             }
+          }
         }
-     }
-   }
+      }
+    }
+  }
 }
 
 /* ie9, ie10, ie11 fix */
 @media (max-width: @screen-xs-max) {
-    html.no-flexboxlegacy {
-        .row-offcanvas {
-            /* When the sidebar is active */
-            &.active {
-                #up-sticky-nav {
-                      left: 270px;
-
-                }
-
-            }
+  html.no-flexboxlegacy {
+    .row-offcanvas {
+      /* When the sidebar is active */
+      &.active {
+        #up-sticky-nav {
+          left: 270px;
         }
+      }
     }
+  }
 }
 
 /* Link color - uses defaultSkin/less/variables.less, not common/bootstrap/variables.less */

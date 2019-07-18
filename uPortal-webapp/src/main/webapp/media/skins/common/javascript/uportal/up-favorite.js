@@ -134,14 +134,14 @@ var up = up || {};
         var nextId =
             $(item).next().length != 0
                 ? $(item)
-                    .next()
-                    .attr('sourceid')
+                      .next()
+                      .attr('sourceid')
                 : '';
         var prevId =
             $(item).prev().length != 0
                 ? $(item)
-                    .prev()
-                    .attr('sourceid')
+                      .prev()
+                      .attr('sourceid')
                 : '';
 
         if ('Tab' === tabOrPortlet) {

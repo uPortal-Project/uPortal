@@ -22,20 +22,20 @@ var up = up || {};
     var getParameterPath = function(name, that) {
         return (
             that.options.parameterBindName +
-            '[\'' +
+            "['" +
             that.options.parameterNamePrefix +
             name +
-            '\'].value'
+            "'].value"
         );
     };
 
     var getAuxiliaryPath = function(name, that) {
         return (
             that.options.auxiliaryBindName +
-            '[\'' +
+            "['" +
             that.options.parameterNamePrefix +
             name +
-            '\'].value'
+            "'].value"
         );
     };
 

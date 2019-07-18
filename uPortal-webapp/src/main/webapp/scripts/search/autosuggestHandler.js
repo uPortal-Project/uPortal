@@ -156,7 +156,7 @@
              * a problem. &, quote, and single quote are handled by jQuery so
              * only need to deal with < and >
              * @param {string} str - unescaped input
-             * @returns {string} escaped output
+             * @return {string} escaped output
              */
             function htmlEscape(str) {
                 return String(str)
@@ -196,10 +196,10 @@
                     },
                 })
                 .data('ui-autocomplete')._renderItem = function(ul, item) {
-                    return $('<li>')
-                        .append(formatOutput(item))
-                        .appendTo(ul);
-                };
+                return $('<li>')
+                    .append(formatOutput(item))
+                    .appendTo(ul);
+            };
             if (prepopulateAutoSuggestUrl.length > 0) {
                 $.get(prepopulateAutoSuggestUrl).done(function(data) {
                     var autoCompleteData = autoSuggestResultsProcessor(

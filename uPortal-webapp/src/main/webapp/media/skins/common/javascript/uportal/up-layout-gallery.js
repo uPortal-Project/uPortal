@@ -190,9 +190,9 @@ var up = up || {};
                 overallThat.state.currentCategory &&
                 overallThat.state.currentCategory !== ''
                     ? overallThat.registry.getMemberPortlets(
-                        overallThat.state.currentCategory,
-                        true
-                    )
+                          overallThat.state.currentCategory,
+                          true
+                      )
                     : overallThat.registry.getAllPortlets();
             $(members).each(function(idx, portlet) {
                 if (
@@ -406,8 +406,7 @@ var up = up || {};
 
         that.hidePaneLink = function() {
             that.locate('pane').hide();
-            that
-                .locate('paneLink')
+            that.locate('paneLink')
                 .hide()
                 .removeClass('active');
         };

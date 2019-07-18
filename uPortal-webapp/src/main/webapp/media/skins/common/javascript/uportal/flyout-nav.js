@@ -99,8 +99,7 @@ var uportal = uportal || {};
         if ($.browser.msie) {
             if ($.browser.version === '7.0') {
                 // Iterate over the parents of the flyout containers
-                that
-                    .locate('flyoutMenu')
+                that.locate('flyoutMenu')
                     .parents()
                     .each(function() {
                         var p = $(this);
@@ -113,9 +112,9 @@ var uportal = uportal || {};
                             pos == 'fixed'
                         ) {
                             /*
-                         * Add the "on-top" class name This class is defined in:
-                         * uportal-war/src/main/webapp/media/skins/universality/common/css/layout-portal.css
-                         */
+                             * Add the "on-top" class name This class is defined in:
+                             * uportal-war/src/main/webapp/media/skins/universality/common/css/layout-portal.css
+                             */
                             $(this).addClass(that.options.styles.onTop);
                         }
                     });

@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 /*
  * This file is for LESS rules that apply to "framework portlets," which are
  * portlets implemented in the uPortal webapp itself.  (Styles that apply
@@ -26,164 +27,165 @@
 
 /* fragment-admin-exit */
 #portalFragAdminExit {
-    /* These colors are a bit drab, but safe
+  /* These colors are a bit drab, but safe
        given the current system in variables.less */
-    background-color: @footer-background-color;
-    color: @footer-text-color;
-    padding: 8px;
+  background-color: @footer-background-color;
+  color: @footer-text-color;
+  padding: 8px;
 
-    h2 {
-        font-variant: small-caps;
-    }
-    #exitFragment {
-        margin-left: 12px;
-    }
+  h2 {
+    font-variant: small-caps;
+  }
+
+  #exitFragment {
+    margin-left: 12px;
+  }
 }
 
 /* Permissions Admin */
 .permission-owner {
-    min-height: 10em;
+  min-height: 10em;
 }
 
 /* Permissions by Category */
 .permission-lookup {
-    background: #eee;
+  background: #eee;
+  border: 1px solid @grayscale4;
+  padding: 15px;
+  margin: 10px;
+  border-radius: 5px;
+
+  .punctuation {
+    font-weight: bold;
+    margin: 0 20px 0 5px;
+  }
+
+  .up-autocomplete-dropdown {
+    background: @white;
     border: 1px solid @grayscale4;
-    padding: 15px;
-    margin: 10px;
-    border-radius: 5px;
+    border-radius: 4px;
+    width: 160px;
+    box-shadow: 0 0 5px 0 @grayscale6;
+    position: absolute;
+    z-index: @zindex-dropdown;
+    display: none;
 
-    .punctuation {
-        font-weight: bold;
-        margin: 0 20px 0 5px;
+    .alert {
+      padding: 5px;
+      margin-bottom: 0;
+      border: none;
+      border-radius: 4px 4px 0 0;
+      display: none;
     }
 
-    .up-autocomplete-dropdown {
-        background: @white;
-        border: 1px solid @grayscale4;
-        border-radius: 4px;
-        width: 160px;
-        box-shadow: 0 0 5px 0 @grayscale6;
-        position: absolute;
-        z-index: @zindex-dropdown;
-        display: none;
+    .up-autocomplete-matches {
+      list-style: none;
+      padding-left: 0;
+      padding-top: 0;
+      margin-bottom: 0;
 
-        .alert {
-            padding: 5px;
-            margin-bottom: 0;
-            border: none;
-            border-radius: 4px 4px 0 0;
-            display: none;
+      .up-autocomplete-match {
+        border-bottom: 1px solid @gray-lighter;
+        padding: 5px;
+
+        &:hover {
+          cursor: pointer;
+          background: @gray-lighter;
+          color: @black;
         }
 
-        .up-autocomplete-matches {
-            list-style: none;
-            padding-left: 0;
-            padding-top: 0;
-            margin-bottom: 0;
+        a {
+          color: #222;
 
-            .up-autocomplete-match {
-                border-bottom: 1px solid @gray-lighter;
-                padding: 5px;
-
-                &:hover {
-                    cursor: pointer;
-                    background: @gray-lighter;
-                    color: @black;
-                }
-
-                a {
-                    color: #222;
-                    &:hover {
-                        text-decoration: none;
-                    }
-                }
-            }
+          &:hover {
+            text-decoration: none;
+          }
         }
-
-        .up-autocomplete-close {
-            padding: 5px;
-            border-radius: 0 0 4px 4px;
-            background: #ddd;
-            &:hover {
-                cursor: pointer;
-                background: @gray-lighter;
-                color: @black;
-            }
-
-            a {
-                color: @grayscale6;
-                font-size: 11px;
-                &:hover {
-                    text-decoration: none;
-                }
-            }
-        }
+      }
     }
 
-    .principal-input {
-        > .up-autocomplete-dropdown {
-            margin-left: 38px;
+    .up-autocomplete-close {
+      padding: 5px;
+      border-radius: 0 0 4px 4px;
+      background: #ddd;
+
+      &:hover {
+        cursor: pointer;
+        background: @gray-lighter;
+        color: @black;
+      }
+
+      a {
+        color: @grayscale6;
+        font-size: 11px;
+
+        &:hover {
+          text-decoration: none;
         }
+      }
     }
+  }
+
+  .principal-input {
+    > .up-autocomplete-dropdown {
+      margin-left: 38px;
+    }
+  }
 }
 
 /* Favorites Portlet */
 .favorites {
+  .navbar {
+    background: none;
+    border: none;
+    margin: 0;
 
-    .navbar {
-        background: none;
-        border: none;
-        margin: 0;
+    .navbar-collapse {
+      padding: 0;
+      max-height: 100%; // Else it will get cut off if the list grows enough
 
-        .navbar-collapse {
-            padding: 0;
-            max-height: 100%;  // Else it will get cut off if the list grows enough
-
-            .list-group {
-                margin-bottom: 0;
-
-                .fa-star {
-                    color: #ffd700; // Gold
-                }
-
-                .favorites-icon {
-                    margin-right: 2px;
-                    font-size: 2em;
-
-                    img {
-                        display: inline;
-                        height: 1em;
-                    }
-                }
-            }
-        }
-    }
-
-    .up-favorite-info {
-        margin-top: 2rem;
+      .list-group {
         margin-bottom: 0;
+
+        .fa-star {
+          color: #ffd700; // Gold
+        }
+
+        .favorites-icon {
+          margin-right: 2px;
+          font-size: 2em;
+
+          img {
+            display: inline;
+            height: 1em;
+          }
+        }
+      }
     }
+  }
+
+  .up-favorite-info {
+    margin-top: 2rem;
+    margin-bottom: 0;
+  }
 }
 
 /* Display only for desktop */
 @media only screen and (min-width: @screen-sm-min) {
-    .favorites {
-
-        /* Hide the navbar-brand text */
-        .navbar-brand {
-            display: none;
-        }
+  .favorites {
+    /* Hide the navbar-brand text */
+    .navbar-brand {
+      display: none;
     }
+  }
 }
 
 /* Display only for mobile */
 @media only screen and (max-width: @screen-sm-max) {
-    .favorites {
-
-        /* Show a border around the navbar */
-        .navbar {
-            border: 1px solid @grayscale2;
-        }
+  .favorites {
+    /* Show a border around the navbar */
+    .navbar {
+      border: 1px solid @grayscale2;
     }
+  }
 }

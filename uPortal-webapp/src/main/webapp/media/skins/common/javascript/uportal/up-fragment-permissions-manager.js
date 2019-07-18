@@ -188,8 +188,7 @@ var up = up || {};
             populateForm(that, element);
 
             // initialize the permission form submission actions
-            that
-                .locate('permissionsForm')
+            that.locate('permissionsForm')
                 .unbind('submit')
                 .submit(function() {
                     return updatePermissions(that, element);
@@ -234,9 +233,11 @@ var up = up || {};
         that.menus = {};
 
         // tabs permissions manager
-        that
-            .locate('pageDialog')
-            .dialog({width: 550, modal: true, autoOpen: false});
+        that.locate('pageDialog').dialog({
+            width: 550,
+            modal: true,
+            autoOpen: false,
+        });
         that.menus.pagePermissionsManager = up.FragmentPermissionsMenu(
             that.locate('pageDialog'),
             {
@@ -261,9 +262,11 @@ var up = up || {};
         // TODO: on update, refresh tab name, editing, delete
 
         // columns permissions manager
-        that
-            .locate('columnDialog')
-            .dialog({width: 550, modal: true, autoOpen: false});
+        that.locate('columnDialog').dialog({
+            width: 550,
+            modal: true,
+            autoOpen: false,
+        });
         that.menus.columnPermissionsManager = up.FragmentPermissionsMenu(
             that.locate('columnDialog'),
             {
@@ -288,9 +291,11 @@ var up = up || {};
         // TODO: on update, refresh layout options
 
         // portlet permissions manager
-        that
-            .locate('portletDialog')
-            .dialog({width: 550, modal: true, autoOpen: false});
+        that.locate('portletDialog').dialog({
+            width: 550,
+            modal: true,
+            autoOpen: false,
+        });
         that.menus.portletPermissionsManager = up.FragmentPermissionsMenu(
             that.locate('portletDialog'),
             {

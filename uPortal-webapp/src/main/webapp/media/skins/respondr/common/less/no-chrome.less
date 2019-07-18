@@ -18,34 +18,37 @@
  */
 // No-chrome portlet setting
 .no-chrome {
-    .up-portlet-content-wrapper {
-        border: none;
-        background: none;
-    }
+  .up-portlet-content-wrapper {
+    border: none;
+    background: none;
+  }
 
-    .hover-toolbar {
+  .hover-toolbar {
+    position: relative;
+    text-align: right;
+
+    .portlet-controls {
+      position: absolute; /* Place on top */
+      width: 100%; /* Hamburger on the right */
+
+      .locked-icon {
+        /* These are the same rules as for standard chrome */
+        display: inline-block;
+        font-size: 1.75rem;
+      }
+
+      .grab-handle {
+        display: inline-block;
         position: relative;
-        text-align: right;
+        top: 3px;
+        font-size: 18px;
+        margin-left: 3px;
+      }
 
-        .portlet-controls {
-            position: absolute;  /* Place on top */
-            width: 100%;         /* Hamburger on the right */
-
-            .locked-icon { /* These are the same rules as for standard chrome */
-                display: inline-block;
-                font-size: 1.75rem;
-            }
-            .grab-handle {
-                display: inline-block;
-                position: relative;
-                top: 3px;
-                font-size: 18px;
-                margin-left: 3px;
-            }
-            .portlet-options-menu > a {
-                color: @grayscale10;
-                opacity: 0.8;
-            }
-        }
+      .portlet-options-menu > a {
+        color: @grayscale10;
+        opacity: 0.8;
+      }
     }
+  }
 }

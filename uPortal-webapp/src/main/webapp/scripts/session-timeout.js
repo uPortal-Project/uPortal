@@ -42,7 +42,7 @@ up.SessionTimeout =
 
         /**
          * Load the logout time from the browser's localStorage.
-         * @returns the logoutTime previously saved.
+         * @return the logoutTime previously saved.
          */
         getSavedLogoutTime = function() {
             return localStorage.getItem(LOCAL_STORAGE_LOGOUT_KEY);
@@ -51,7 +51,7 @@ up.SessionTimeout =
         /**
          * Factory for timeoutDialog instances.
          * @param config
-         * @returns the timeoutDialog instance
+         * @return the timeoutDialog instance
          */
         timeoutDialog = function(config) {
             var display;
@@ -186,7 +186,7 @@ up.SessionTimeout =
          * Factory for creating the sessionTimeout instance.
          *
          * @param config object.
-         * @returns {{startTimer: startTimer}}
+         * @return {{startTimer: startTimer}}
          * @constructor
          */
         that = function(config) {

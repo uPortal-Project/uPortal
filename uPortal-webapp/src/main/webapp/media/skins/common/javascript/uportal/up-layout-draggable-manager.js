@@ -226,8 +226,8 @@ var up = up || {};
 
         // Reveal gallery loader.
         loader.css({
-            'margin': '7px 0 0 0',
-            'opacity': '.70',
+            margin: '7px 0 0 0',
+            opacity: '.70',
             'background-color': '#000',
         });
         up.showLoader(loader);

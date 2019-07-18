@@ -31,16 +31,14 @@
  * </fieldset>
  */
 
-
-
 .rating,
 .rating-readonly {
   padding: 0; // to prevent flicker when mousing over padding
-  border: none;  // to prevent flicker when mousing over border
+  border: none; // to prevent flicker when mousing over border
   unicode-bidi: bidi-override;
-  direction: rtl;  // for CSS-only style change on hover
-  text-align: left;  // revert the RTL direction
-  user-select: none;  // disable mouse/touch selection */
+  direction: rtl; // for CSS-only style change on hover
+  text-align: left; // revert the RTL direction
+  user-select: none; // disable mouse/touch selection */
   cursor: pointer;
 
   > label {
@@ -58,34 +56,33 @@
 
 .rating {
   /* the stars */
-  &
-  > *:hover,
+  & > *:hover,
   > *:hover ~ label,
   &:not(:hover) > input:checked ~ label {
-    color: transparent;  // reveal the contour star from the HTML markup
+    color: transparent; // reveal the contour star from the HTML markup
     cursor: inherit; // avoid a cursor transition from arrow/pointer to text selection
   }
 
-  > *:hover:before,
-  > *:hover ~ label:before,
-  &:not(:hover) > input:checked ~ label:before {
-     content: '★';
-     position: absolute;
-     left: 0;
-     color: @rating-selected-color;
+  > *:hover::before,
+  > *:hover ~ label::before,
+  &:not(:hover) > input:checked ~ label::before {
+    content: "★";
+    position: absolute;
+    left: 0;
+    color: @rating-selected-color;
   }
 }
 
 .rating-readonly {
   > input:checked ~ label {
-    color: transparent;  // reveal the contour star from the HTML markup
+    color: transparent; // reveal the contour star from the HTML markup
     cursor: inherit; // avoid a cursor transition from arrow/pointer to text selection
   }
 
-  > input:checked ~ label:before {
-     content: '★';
-     position: absolute;
-     left: 0;
-     color: @rating-selected-color;
+  > input:checked ~ label::before {
+    content: "★";
+    position: absolute;
+    left: 0;
+    color: @rating-selected-color;
   }
 }

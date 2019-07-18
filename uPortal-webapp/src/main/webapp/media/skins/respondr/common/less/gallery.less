@@ -30,87 +30,163 @@
  * $dgraydark=@grayscale8 | $dgraydarker=@grayscale9 | $dgraydarkest=@grayscale10
  * Colors
  */
-@galleryBackground              : @grayscale10;
-@galleryBorder                  : 1px solid @grayscale4;
-@galleryHandleBackground        : @black url("./common/images/gallery-bar.png") bottom left repeat-x;
-@galleryHandleBorder            : 1px solid @grayscale7;
-@galleryHandleLinkBackround     : @white scroll url("./common/images/gallery-handle.png") 0 0 repeat-x;
-@galleryHandleLink              : @grayscale9;
-@galleryHandleRound             : 3px;
-@galleryHandleShadow            : 0 1px 2px @grayscale4;
-@galleryHandleIconClosed        : url("./common/images/gallery-handle-arrow-down.png");
-@galleryHandleIconOpen          : url("./common/images/gallery-handle-arrow-up.png") !important;
-@galleryBarBackground           : transparent url("./common/images/gallery-bar.png") top left repeat-x;
-@galleryMenuBackground          : @grayscale9;
-@galleryMenuItemBackground      : @grayscale8;
-@galleryMenuItemLink            : @grayscale3;
-@galleryMenuItemBackgroundHover : @color1-darker;
-@galleryMenuItemLinkHover       : @white;
+@gallerybackground : @grayscale10;
+
+@galleryborder : 1px solid @grayscale4;
+
+@galleryhandlebackground : @black url("./common/images/gallery-bar.png") bottom left repeat-x;
+
+@galleryhandleborder : 1px solid @grayscale7;
+
+@galleryhandlelinkbackround : @white scroll url("./common/images/gallery-handle.png") 0 0 repeat-x;
+
+@galleryhandlelink : @grayscale9;
+
+@galleryhandleround : 3px;
+
+@galleryhandleshadow : 0 1px 2px @grayscale4;
+
+@galleryhandleiconclosed : url("./common/images/gallery-handle-arrow-down.png");
+
+@galleryhandleiconopen : url("./common/images/gallery-handle-arrow-up.png") !important;
+
+@gallerybarbackground : transparent url("./common/images/gallery-bar.png") top left repeat-x;
+
+@gallerymenubackground : @grayscale9;
+
+@gallerymenuitembackground : @grayscale8;
+
+@gallerymenuitemlink : @grayscale3;
+
+@gallerymenuitembackgroundhover : @color1-darker;
+
+@gallerymenuitemlinkhover : @white;
 @galleryMenuItemActiveBackground: @grayscale10;
-@galleryMenuItemActiveLink      : @white;
-@galleryMenuItemActiveIcon      : transparent url("./common/images/gallery-arrow-right.png") 90% 50% no-repeat;
-@galleryCloseButtonType         : default;
-@galleryFilterBackground        : @grayscale7;
-@galleryFilterBorder            : 1px solid @grayscale8;
-@galleryFilterRound             : 5px;
-@galleryFilterTitleRound        : 5px;
-@galleryFilterTitleBackground   : @grayscale10;
-@galleryFilterTitle             : @color1;
-@galleryFilterTitleHover        : @color1-lighter;
-@galleryFilterTitleActive       : @white;
-@galleryFilterTitleActiveHover  : @color1-lighter;
-@galleryFilterTitleActiveBgd    : @grayscale9;
-@galleryFilterSubtitle          : @grayscale2;
-@galleryFilterSubtitleLine      : 1px dotted @grayscale9;
-@galleryFSearchInputBackground  : @grayscale8;
-@galleryFSearchInputText        : @grayscale10;
-@galleryFSearchInputPadding     : 0.3em;
-@galleryFSearchInputHover       : @grayscale7;
-@galleryFSearchInputFocus       : @white;
-@galleryCatLink                 : @grayscale3;
-@galleryCatLinkHover            : @color1;
-@galleryCatActiveLink           : @white;
-@galleryResultsBottomPadding    : 5px;
-@galleryResultsText             : @grayscale4;
-@galleryRIBackground            : @grayscale8;
-@galleryRIBorder                : 1px solid @grayscale5;
-@galleryRIRound                 : 5px;
-@galleryRIShadow                : 1px 1px 2px #000;
-@galleryRIUtilityHeight         : 16px;
-@galleryRIUtilityRound          : 5px;
-@galleryRIGripper               : @grayscale9 url("./common/images/gripper.png") 5px 0px no-repeat;
-@galleryRITitle                 : @white;
-@galleryRIDescription           : @grayscale3;
-@galleryRIBackgroundHover       : @grayscale9;
-@galleryRIBorderHover           : 1px soild @color1;
-@galleryRIGradient1Hover        : @grayscale10;
-@galleryRIGradient2Hover        : #060606;
-@galleryRILink                  : #000;
-@galleryRILinkBackground        : @grayscale8;
-@galleryRILinkGradient1         : @grayscale4;
-@galleryRILinkGradient2         : @grayscale9;
-@galleryRILinkRound             : 5px;
-@galleryRILinkBackgroundHover   : @color1-dark;
-@galleryRILinkGradient1Hover    : @color1-light;
-@galleryRILinkGradient2Hover    : @color1-dark;
-@galleryRISelectedBackground    : @grayscale8;
-@galleryRISelectedBorderWidth   : 3px;
-@galleryRISelectedBorderStyle   : solid;
-@galleryRISelectedBorderColor   : @color1;
-@galleryPagerText               : @white;
-@galleryPagerButtonBackground   : @grayscale7;
-@galleryPagerButtonBorder       : 1px solid @grayscale5;
-@galleryPagerButtonGradient1    : @grayscale8;
-@galleryPagerButtonGradient2    : @grayscale10;
-@galleryPagerButtonRound        : 5px;
-@galleryPagerBtnBackgroundHover : @grayscale5;
-@galleryPagerBtnGradient1Hover  : @grayscale6;
-@galleryPagerBtnGradient2Hover  : @grayscale10;
-@galleryPagerBtnBgdDisabled     : @grayscale8 !important;
-@galleryPagerBtnBorderDisabled  : 1px solid @grayscale7 !important;
+
+@gallerymenuitemactivelink : @white;
+
+@gallerymenuitemactiveicon : transparent url("./common/images/gallery-arrow-right.png") 90% 50% no-repeat;
+
+@galleryclosebuttontype : default;
+
+@galleryfilterbackground : @grayscale7;
+
+@galleryfilterborder : 1px solid @grayscale8;
+
+@galleryfilterround : 5px;
+
+@galleryfiltertitleround : 5px;
+
+@galleryfiltertitlebackground : @grayscale10;
+
+@galleryfiltertitle : @color1;
+
+@galleryfiltertitlehover : @color1-lighter;
+
+@galleryfiltertitleactive : @white;
+
+@galleryfiltertitleactivehover : @color1-lighter;
+
+@galleryfiltertitleactivebgd : @grayscale9;
+
+@galleryfiltersubtitle : @grayscale2;
+
+@galleryfiltersubtitleline : 1px dotted @grayscale9;
+
+@galleryfsearchinputbackground : @grayscale8;
+
+@galleryfsearchinputtext : @grayscale10;
+
+@galleryfsearchinputpadding : 0.3em;
+
+@galleryfsearchinputhover : @grayscale7;
+
+@galleryfsearchinputfocus : @white;
+
+@gallerycatlink : @grayscale3;
+
+@gallerycatlinkhover : @color1;
+
+@gallerycatactivelink : @white;
+
+@galleryresultsbottompadding : 5px;
+
+@galleryresultstext : @grayscale4;
+
+@galleryribackground : @grayscale8;
+
+@galleryriborder : 1px solid @grayscale5;
+
+@galleryriround : 5px;
+
+@galleryrishadow : 1px 1px 2px #000;
+
+@galleryriutilityheight : 16px;
+
+@galleryriutilityround : 5px;
+
+@galleryrigripper : @grayscale9 url("./common/images/gripper.png") 5px 0 no-repeat;
+
+@galleryrititle : @white;
+
+@galleryridescription : @grayscale3;
+
+@galleryribackgroundhover : @grayscale9;
+
+@galleryriborderhover : 1px soild @color1;
+
+@galleryrigradient1hover : @grayscale10;
+
+@galleryrigradient2hover : #060606;
+
+@galleryrilink : #000;
+
+@galleryrilinkbackground : @grayscale8;
+
+@galleryrilinkgradient1 : @grayscale4;
+
+@galleryrilinkgradient2 : @grayscale9;
+
+@galleryrilinkround : 5px;
+
+@galleryrilinkbackgroundhover : @color1-dark;
+
+@galleryrilinkgradient1hover : @color1-light;
+
+@galleryrilinkgradient2hover : @color1-dark;
+
+@galleryriselectedbackground : @grayscale8;
+
+@galleryriselectedborderwidth : 3px;
+
+@galleryriselectedborderstyle : solid;
+
+@galleryriselectedbordercolor : @color1;
+
+@gallerypagertext : @white;
+
+@gallerypagerbuttonbackground : @grayscale7;
+
+@gallerypagerbuttonborder : 1px solid @grayscale5;
+
+@gallerypagerbuttongradient1 : @grayscale8;
+
+@gallerypagerbuttongradient2 : @grayscale10;
+
+@gallerypagerbuttonround : 5px;
+
+@gallerypagerbtnbackgroundhover : @grayscale5;
+
+@gallerypagerbtngradient1hover : @grayscale6;
+
+@gallerypagerbtngradient2hover : @grayscale10;
+
+@gallerypagerbtnbgddisabled : @grayscale8 !important;
+
+@gallerypagerbtnborderdisabled : 1px solid @grayscale7 !important;
 
 .gallery-handle-round(@galleryHandleRound) when (@galleryHandleRound) {
-  .border-radiuses(0 ,0, @galleryHandleRound, @galleryHandleRound);
+  .border-radiuses(0, 0, @galleryHandleRound, @galleryHandleRound);
 }
 
 .gallery-handle-shadow(@galleryHandleShadow) when (@galleryHandleShadow) {
@@ -121,11 +197,18 @@
   .border-radius(@galleryFilterRound);
 }
 
-.gallery-filter-title-round(@galleryFilterTitleRound) when (@galleryFilterTitleRound) {
+.gallery-filter-title-round(@galleryFilterTitleRound)
+when
+(@galleryFilterTitleRound) {
   .border-radiuses(5px, 0, 0, 5px);
 
   span {
-    .border-radiuses(@galleryFilterTitleRound, @galleryFilterTitleRound, 0, 0);
+    .border-radiuses(
+      @galleryFilterTitleRound,
+            @galleryFilterTitleRound,
+            0,
+            0
+        );
   }
 }
 
@@ -137,32 +220,53 @@
   .box-shadow(@galleryRIShadow);
 }
 
-.gallery-ri-utility-round(@galleryRIUtilityRound) when (@galleryRIUtilityRound) {
-  .border-radiuses(@galleryRIUtilityRound,@galleryRIUtilityRound,0,0);
+.gallery-ri-utility-round(@galleryRIUtilityRound)
+when
+(@galleryRIUtilityRound) {
+  .border-radiuses(@galleryRIUtilityRound, @galleryRIUtilityRound, 0, 0);
 }
 
-.gallery-ri-link-gradient(@galleryRILinkGradient1) when (@galleryRILinkGradient1) {
-  .vertical-gradient(@galleryRILinkGradient1,@galleryRILinkGradient2);
+.gallery-ri-link-gradient(@galleryRILinkGradient1)
+when
+(@galleryRILinkGradient1) {
+  .vertical-gradient(@galleryRILinkGradient1, @galleryRILinkGradient2);
 }
 
 .gallery-ri-link-round(@galleryRILinkRound) when (@galleryRILinkRound) {
-  .border-radiuses(0,@galleryRILinkRound,0,0);
+  .border-radiuses(0, @galleryRILinkRound, 0, 0);
 }
 
-.gallery-ri-link-gradient-hover(@galleryRILinkGradient1Hover) when (@galleryRILinkGradient1Hover) {
-  .vertical-gradient(@galleryRILinkGradient1Hover,@galleryRILinkGradient2Hover);
+.gallery-ri-link-gradient-hover(@galleryRILinkGradient1Hover)
+when
+(@galleryRILinkGradient1Hover) {
+  .vertical-gradient(
+    @galleryRILinkGradient1Hover,
+        @galleryRILinkGradient2Hover
+    );
 }
 
-.gallery-pager-button-gradient(@galleryPagerButtonGradient1) when (@galleryPagerButtonGradient1) {
-  .vertical-gradient(@galleryPagerButtonGradient1,@galleryPagerButtonGradient2);
+.gallery-pager-button-gradient(@galleryPagerButtonGradient1)
+when
+(@galleryPagerButtonGradient1) {
+  .vertical-gradient(
+    @galleryPagerButtonGradient1,
+        @galleryPagerButtonGradient2
+    );
 }
 
-.gallery-pager-button-round(@galleryPagerButtonRound) when (@galleryPagerButtonRound) {
+.gallery-pager-button-round(@galleryPagerButtonRound)
+when
+(@galleryPagerButtonRound) {
   .border-radius(@galleryPagerButtonRound);
 }
 
-.gallery-pager-button-gradient-hover(@galleryPagerBtnGradient1Hover) when (@galleryPagerBtnGradient1Hover) {
-  .vertical-gradient(@galleryPagerBtnGradient1Hover,@galleryPagerBtnGradient2Hover);
+.gallery-pager-button-gradient-hover(@galleryPagerBtnGradient1Hover)
+when
+(@galleryPagerBtnGradient1Hover) {
+  .vertical-gradient(
+    @galleryPagerBtnGradient1Hover,
+        @galleryPagerBtnGradient2Hover
+    );
 }
 
 .portal {
@@ -294,7 +398,8 @@
 
         .border-radius();
 
-        h3 { /* Filter titles */
+        h3 {
+          /* Filter titles */
           background: @galleryFilterTitleBackground;
           color: @galleryFilterTitle;
           margin: 0;
@@ -366,7 +471,7 @@
             color: @galleryCatActiveLink;
           }
         }
-      } /* end .content-filters-wrapper*/
+      } /* end .content-filters-wrapper */
 
       .results-wrapper {
         /* Results section of the gallery. Lists portlets, skins, or layout options. */
@@ -388,7 +493,10 @@
             background: @galleryRIBackgroundHover;
             border: @galleryRIBorderHover;
 
-            .vertical-gradient(@galleryRIGradient1Hover, @galleryRIGradient2Hover);
+            .vertical-gradient(
+              @galleryRIGradient1Hover,
+                            @galleryRIGradient2Hover
+                        );
           }
         }
 
@@ -482,7 +590,10 @@
             background: @galleryPagerButtonBackground;
             border: @galleryPagerButtonBorder;
 
-            .vertical-gradient(@galleryPagerButtonGradient1,@galleryPagerButtonGradient2);
+            .vertical-gradient(
+              @galleryPagerButtonGradient1,
+                            @galleryPagerButtonGradient2
+                        );
             .border-radius();
           }
 
@@ -539,8 +650,8 @@
       overflow: hidden;
       padding-right: 1px;
     }
-  }  // end .up-gallery
-}  // end .portal
+  } // end .up-gallery
+} // end .portal
 
 /**
  * Additional styles
@@ -747,21 +858,25 @@
 .up-gallery .pager-button-up-inner {
   display: block;
   height: 59px;
-  background: url('./common/images/gallery-pager-up-active.png') center 85% no-repeat;
+  background:
+    url("./common/images/gallery-pager-up-active.png") center 85%
+    no-repeat;
 }
 
 .up-gallery .pager-button-down-inner {
   display: block;
   height: 59px;
-  background: url('./common/images/gallery-pager-down-active.png') center 15% no-repeat;
+  background:
+    url("./common/images/gallery-pager-down-active.png") center 15%
+    no-repeat;
 }
 
 .up-gallery .pager-button-up.fl-pager-disabled .pager-button-up-inner {
-  background-image: url('./common/images/gallery-pager-up-inactive.png');
+  background-image: url("./common/images/gallery-pager-up-inactive.png");
 }
 
 .up-gallery .pager-button-down.fl-pager-disabled .pager-button-down-inner {
-  background-image: url('./common/images/gallery-pager-down-inactive.png');
+  background-image: url("./common/images/gallery-pager-down-inactive.png");
 }
 
 .up-gallery .pager-button-up,
@@ -899,7 +1014,7 @@
 // .up-gallery .portlet-thumb-gripper {display: block; cursor: move;}
 // .up-gallery .portlet-thumb-gripper span {display: block; width: 16px; height: 16px; overflow: hidden; visibility: hidden;}
 
-/* IE7 adjustments*/
+/* IE7 adjustments */
 *:first-child + html .up-gallery .results-wrapper .portlet-list li {
   width: 24%;
 }
@@ -947,7 +1062,14 @@
   background: #333;
   position: relative;
   background-image: -moz-linear-gradient(90deg, #000, #333);
-  background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#000), to(#333));
+  background-image:
+    -webkit-gradient(
+      linear,
+      0% 0%,
+      0% 100%,
+      from(#000),
+      to(#333)
+    );
   height: 90px;
   width: 270px;
   overflow: hidden;
@@ -972,7 +1094,14 @@
   cursor: move;
   background: #f68923;
   background-image: -moz-linear-gradient(90deg, #f68923, @white);
-  background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#f68923), to(@white));
+  background-image:
+    -webkit-gradient(
+      linear,
+      0% 0%,
+      0% 100%,
+      from(#f68923),
+      to(@white)
+    );
   height: 16px;
   overflow: hidden;
 }

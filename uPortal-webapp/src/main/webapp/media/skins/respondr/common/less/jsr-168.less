@@ -1,307 +1,326 @@
 ///@import "../bootstrap/variables.less";
-/*variables */
 
-/*font vars */
+/* variables */
+
+/* font vars */
 
 @dim-font-by-this-percentage: 10%;
 
 /* dropdown's which occur within portlet menu variables. */
-@dropdown-inside-of-menu-top:0px;
-@dropdown-inside-of-menu-position:relative;
-@dropdown-inside-of-menu-margin:0px;
-@dropdown-inside-of-menu-padding:0px;
-@dropdown-inside-of-menu-shadow:none;
-@dropdown-inside-of-menu-list-style:none;
-@dropdown-inside-of-menu-border:none;
-@dropdown-inside-of-menu-width:100%;
+@dropdown-inside-of-menu-top: 0px;
+@dropdown-inside-of-menu-position: relative;
+@dropdown-inside-of-menu-margin: 0px;
+@dropdown-inside-of-menu-padding: 0px;
+@dropdown-inside-of-menu-shadow: none;
+@dropdown-inside-of-menu-list-style: none;
+@dropdown-inside-of-menu-border: none;
+@dropdown-inside-of-menu-width: 100%;
 
-/*dropdown which occurs stand alone */
+/* dropdown which occurs stand alone */
 
-@stand-along-dropdown-float:left;
+@stand-along-dropdown-float: left;
 @stand-along-dropdown-list-style: outside none none;
 @stand-along-dropdown-margin: 2px 0 0;
-@stand-along-dropdown-min-width:160px;
-@stand-along-dropdown-padding:5px 0;
+@stand-along-dropdown-min-width: 160px;
+@stand-along-dropdown-padding: 5px 0;
 @stand-along-dropdown-position: absolute;
-@stand-along-dropdown-text-align:left;
-@stand-along-dropdown-top:100%;
-@stand-along-dropdown-box-shadow:0 6px 12px rgba(0, 0, 0, 0.176);
-@stand-along-dropdown-border:1px solid @dropdown-border;
-@stand-along-dropdown-background-clip:padding-box;
-@stand-along-dropdown-left:0px;
+@stand-along-dropdown-text-align: left;
+@stand-along-dropdown-top: 100%;
+@stand-along-dropdown-box-shadow: 0 6px 12px rgba(0, 0, 0, 0.176);
+@stand-along-dropdown-border: 1px solid @dropdown-border;
+@stand-along-dropdown-background-clip: padding-box;
+@stand-along-dropdown-left: 0px;
 
 /* end defined vars */
 
-
-
-.portlet-font{
-    font-family: @font-family-base;
-    font-size: @font-size-base;
-    color: @text-color;
-    line-height:@line-height-base;
+.portlet-font {
+  font-family: @font-family-base;
+  font-size: @font-size-base;
+  color: @text-color;
+  line-height: @line-height-base;
 }
 
-.portlet-font-dim{
-    color: lighten(@text-color, @dim-font-by-this-percentage);
-    font-family: @font-family-base;
-    font-size: @font-size-base;
-    line-height:@line-height-base;
+.portlet-font-dim {
+  color: lighten(@text-color, @dim-font-by-this-percentage);
+  font-family: @font-family-base;
+  font-size: @font-size-base;
+  line-height: @line-height-base;
 }
 
 /* extend seems more sensible than defining each mixen and css rule here */
 
-.portlet-msg-status{
-	//bootstrap api should be utilised as this is for progress bars, but one html class would be insufficient.
+.portlet-msg-status {
+  //bootstrap api should be utilised as this is for progress bars, but one html class would be insufficient.
 }
 
-.portlet-msg-info{
-    &:extend(.alert,.alert-info);
+.portlet-msg-info {
+  &:extend(.alert, .alert-info);
 }
 
-.portlet-msg-error{
-    &:extend(.alert,.alert-danger);
+.portlet-msg-error {
+  &:extend(.alert, .alert-danger);
 }
 
-.portlet-msg-alert{
-    &:extend(.alert,.alert-warning);
-
+.portlet-msg-alert {
+  &:extend(.alert, .alert-warning);
 }
 
-.portlet-msg-success{
-    &:extend(.alert,.alert-success);
+.portlet-msg-success {
+  &:extend(.alert, .alert-success);
 }
 
-/*table and section sections*/
+/* table and section sections */
 
 .portlet-section-header,
-.portlet-table-header{
-    &:extend(h3);
+.portlet-table-header {
+  &:extend(h3);
 }
 
 .portlet-section-body,
-.portlet-table-body{
-
+.portlet-table-body {
 }
 
 .portlet-section-alternate,
-.portlet-table-alternate{
-    background:@table-bg-accent;
+.portlet-table-alternate {
+  background: @table-bg-accent;
 }
 
 .portlet-section-selected,
-.portlet-table-selected{
-    background:@table-bg-active;
+.portlet-table-selected {
+  background: @table-bg-active;
 }
 
 .portlet-section-subheader,
-.portlet-table-subheader{
-    &:extend(h4);
+.portlet-table-subheader {
+  &:extend(h4);
 }
 
 .portlet-section-footer,
-.portlet-table-footer{
-    &:extend(h5);
+.portlet-table-footer {
+  &:extend(h5);
 }
 
 .portlet-section-text,
-.portlet-table-text{
-    color:@brand-info;
+.portlet-table-text {
+  color: @brand-info;
 }
 
+/* forms */
 
-/*forms */
-
-.portlet-form-label{
-    &:extend(h3);
+.portlet-form-label {
+  &:extend(h3);
 }
 
-.portlet-form-input-field{
-    &:extend(.form-control);
+.portlet-form-input-field {
+  &:extend(.form-control);
 }
 
-.portlet-form-button{
-    &:extend(.btn);
-    .button-variant(@btn-primary-color; @btn-primary-bg; @btn-primary-border);
-    &:hover{
-        text-decoration:none;
-    }
+.portlet-form-button {
+  &:extend(.btn);
+  .button-variant(@btn-primary-color; @btn-primary-bg; @btn-primary-border);
+
+  &:hover {
+    text-decoration: none;
+  }
 }
 
-.portlet-icon-label{
-    &:extend(label);
+.portlet-icon-label {
+  &:extend(label);
 }
 
-.portlet-form-field-label{
-    &:extend(label);
+.portlet-form-field-label {
+  &:extend(label);
 }
 
-.portlet-form-field{
-    &:extend(.checkbox input[type="checkbox"],
-    .checkbox-inline input[type="checkbox"],
-    .radio input[type="radio"],
-    .radio-inline input[type="radio"]
+.portlet-form-field {
+  &:
+    extend(
+      .checkbox input[type="checkbox"],
+      .checkbox-inline
+      input[type="checkbox"],
+      .radio input[type="radio"],
+      .radio-inline
+      input[type="radio"]
     );
 }
 
 /* portlet menus */
 
+.portlet-menu {
+  &:extend(.nav);
+  &:extend(.nav-pills);
+  &:extend(.nav-stacked);
 
-.portlet-menu{
-    &:extend(.nav);
-    &:extend(.nav-pills);
-    &:extend(.nav-stacked);
-
-    li.portlet-menu-item{
+  li.portlet-menu-item {
     &:extend(.nav-stacked > li + li);
     &:extend(.nav-stacked > li);
     &:extend(.nav > li);
-        &.active,
-        .portlet-menu-item-selected{
-            &:hover,
-            &:focus{
-                background-color:@nav-pills-active-link-hover-bg;
-                color:@nav-pills-active-link-hover-color;
-                border-radius:@nav-pills-border-radius;
-                    > a
-                        {
-                            &:hover,
-                            &:focus{
-                                background:inherit;
-                                color:@white;
-                                border-radius:@nav-pills-border-radius;
-                            }
-                        }
-                }
-            > a{
-                background-color:@nav-pills-active-link-hover-bg;
-                color:@nav-pills-active-link-hover-color;
-                }
-        }
-        a{
-            border-radius:@nav-pills-border-radius;
-            display: block;
-            padding: @nav-link-padding;
-            position: relative;
-            text-decoration:none;
-            color:@link-color;
-            &:hover,
-            &:focus{
-                background-color:@navbar-default-bg;
-                color:@navbar-default-color;
-            }
-        }
 
-
-        .dropdown-menu,
-        .portlet-menu-cascade,
-        .portlet-menu-cascade-item-selected{
-            top: @dropdown-inside-of-menu-top;
-            position: @dropdown-inside-of-menu-position;
-            margin: @dropdown-inside-of-menu-margin;
-            padding:@dropdown-inside-of-menu-padding;
-            box-shadow:@dropdown-inside-of-menu-shadow;
-            list-style: @dropdown-inside-of-menu-list-style;
-            border:@dropdown-inside-of-menu-border;
-            width: @dropdown-inside-of-menu-width;
-            background:@dropdown-bg;
-            color:@dropdown-header-color;
-                li,
-                .portlet-menu-cascade-item{
-                    a{
-                        &.disabled{
-                            color:@dropdown-link-disabled-color;
-                        }
-                        &:hover,
-                        &.portlet-menu-item-hover,
-                        &.portlet-menu-cascade-item-hover{
-                            color:@navbar-default-link-hover-color;
-                        }
-                    }
-                    &:active,
-                    &.portlet-menu-cascade-item-selected{
-                        background-color:@nav-pills-active-link-hover-bg;
-                        color:@nav-pills-active-link-hover-color;
-                            > a{
-                                background-color:@nav-pills-active-link-hover-bg;
-                                color:@nav-pills-active-link-hover-color;
-                            }
-                    }
-                    .portlet-menu-item-hover-selected,
-                    .portlet-menu-cascade-item-hover-selected{
-                        background:@nav-pills-active-link-hover-bg !important;
-                        color:@nav-pills-active-link-hover-color;
-                            &:hover,
-                            &:focus{
-                                background-color:@nav-pills-active-link-hover-bg !important;
-                                color:@nav-pills-active-link-hover-color;
-                            }
-                    }
-                }
-                .portlet-menu-separator,
-                .portlet-menu-cascade-separator{
-                    &:extend(.divider);
-                }
-        }
-    }
-
-    .portlet-menu-description{
-        color:@brand-info;
-    }
-
-    .portlet-menu-caption{
-        &:extend(h3);
-    }
-}
-    .dropdown-menu{
-        background-clip: @stand-along-dropdown-background-clip;
-        background:@dropdown-bg;
-        border: @stand-along-dropdown-border;
+    &.active,
+    .portlet-menu-item-selected {
+      &:hover,
+      &:focus {
+        background-color: @nav-pills-active-link-hover-bg;
+        color: @nav-pills-active-link-hover-color;
         border-radius: @nav-pills-border-radius;
-        box-shadow: @stand-along-dropdown-box-shadow;
-        float:  @stand-along-dropdown-float;
-        font-size: @font-size-base;
-        left: @stand-along-dropdown-left;
-        list-style:  @stand-along-dropdown-list-style;
-        margin: @stand-along-dropdown-margin;
-        min-width: @stand-along-dropdown-min-width;
-        padding: @stand-along-dropdown-padding;
-        position: @stand-along-dropdown-position;
-        text-align: @stand-along-dropdown-text-align;
-        top:  @stand-along-dropdown-top;
-        z-index: @zindex-dropdown;
-        color:@dropdown-header-color;
-            li{
-                a{
-                    color:@dropdown-link-color;
-                        &.disabled{
-                            color:@dropdown-link-disabled-color;
-                        }
-                        &:hover,
-                        &.portlet-menu-item-hover,
-                        &.portlet-menu-cascade-item-hover{
-                            background:@dropdown-link-hover-bg;
-                            color:@dropdown-link-hover-color;
-                        }
-                    }
-                    &:active{
-                        background-color:@nav-pills-active-link-hover-bg;
-                        color:@nav-pills-active-link-hover-color;
-                            > a{
-                                background-color:@nav-pills-active-link-hover-bg;
-                                color:@nav-pills-active-link-hover-color;
-                            }
-                    }
-                    .portlet-menu-item-hover-selected{
-                        background:@nav-pills-active-link-hover-bg !important;
-                        color:@nav-pills-active-link-hover-color;
-                            &:hover,
-                            &:focus{
-                                background-color:@nav-pills-active-link-hover-bg !important;
-                                color:@nav-pills-active-link-hover-color;
-                            }
-                        }
-                }
-                .portlet-menu-separator{
-                    &:extend(.divider);
-                }
+
+        > a {
+          &:hover,
+          &:focus {
+            background: inherit;
+            color: @white;
+            border-radius: @nav-pills-border-radius;
+          }
         }
+      }
+
+      > a {
+        background-color: @nav-pills-active-link-hover-bg;
+        color: @nav-pills-active-link-hover-color;
+      }
+    }
+
+    a {
+      border-radius: @nav-pills-border-radius;
+      display: block;
+      padding: @nav-link-padding;
+      position: relative;
+      text-decoration: none;
+      color: @link-color;
+
+      &:hover,
+      &:focus {
+        background-color: @navbar-default-bg;
+        color: @navbar-default-color;
+      }
+    }
+
+    .dropdown-menu,
+    .portlet-menu-cascade,
+    .portlet-menu-cascade-item-selected {
+      top: @dropdown-inside-of-menu-top;
+      position: @dropdown-inside-of-menu-position;
+      margin: @dropdown-inside-of-menu-margin;
+      padding: @dropdown-inside-of-menu-padding;
+      box-shadow: @dropdown-inside-of-menu-shadow;
+      list-style: @dropdown-inside-of-menu-list-style;
+      border: @dropdown-inside-of-menu-border;
+      width: @dropdown-inside-of-menu-width;
+      background: @dropdown-bg;
+      color: @dropdown-header-color;
+
+      li,
+      .portlet-menu-cascade-item {
+        a {
+          &.disabled {
+            color: @dropdown-link-disabled-color;
+          }
+
+          &:hover,
+          &.portlet-menu-item-hover,
+          &.portlet-menu-cascade-item-hover {
+            color: @navbar-default-link-hover-color;
+          }
+        }
+
+        &:active,
+        &.portlet-menu-cascade-item-selected {
+          background-color: @nav-pills-active-link-hover-bg;
+          color: @nav-pills-active-link-hover-color;
+
+          > a {
+            background-color: @nav-pills-active-link-hover-bg;
+            color: @nav-pills-active-link-hover-color;
+          }
+        }
+
+        .portlet-menu-item-hover-selected,
+        .portlet-menu-cascade-item-hover-selected {
+          background: @nav-pills-active-link-hover-bg !important;
+          color: @nav-pills-active-link-hover-color;
+
+          &:hover,
+          &:focus {
+            background-color: @nav-pills-active-link-hover-bg !important;
+            color: @nav-pills-active-link-hover-color;
+          }
+        }
+      }
+
+      .portlet-menu-separator,
+      .portlet-menu-cascade-separator {
+        &:extend(.divider);
+      }
+    }
+  }
+
+  .portlet-menu-description {
+    color: @brand-info;
+  }
+
+  .portlet-menu-caption {
+    &:extend(h3);
+  }
+}
+
+.dropdown-menu {
+  background-clip: @stand-along-dropdown-background-clip;
+  background: @dropdown-bg;
+  border: @stand-along-dropdown-border;
+  border-radius: @nav-pills-border-radius;
+  box-shadow: @stand-along-dropdown-box-shadow;
+  float: @stand-along-dropdown-float;
+  font-size: @font-size-base;
+  left: @stand-along-dropdown-left;
+  list-style: @stand-along-dropdown-list-style;
+  margin: @stand-along-dropdown-margin;
+  min-width: @stand-along-dropdown-min-width;
+  padding: @stand-along-dropdown-padding;
+  position: @stand-along-dropdown-position;
+  text-align: @stand-along-dropdown-text-align;
+  top: @stand-along-dropdown-top;
+  z-index: @zindex-dropdown;
+  color: @dropdown-header-color;
+
+  li {
+    a {
+      color: @dropdown-link-color;
+
+      &.disabled {
+        color: @dropdown-link-disabled-color;
+      }
+
+      &:hover,
+      &.portlet-menu-item-hover,
+      &.portlet-menu-cascade-item-hover {
+        background: @dropdown-link-hover-bg;
+        color: @dropdown-link-hover-color;
+      }
+    }
+
+    &:active {
+      background-color: @nav-pills-active-link-hover-bg;
+      color: @nav-pills-active-link-hover-color;
+
+      > a {
+        background-color: @nav-pills-active-link-hover-bg;
+        color: @nav-pills-active-link-hover-color;
+      }
+    }
+
+    .portlet-menu-item-hover-selected {
+      background: @nav-pills-active-link-hover-bg !important;
+      color: @nav-pills-active-link-hover-color;
+
+      &:hover,
+      &:focus {
+        background-color: @nav-pills-active-link-hover-bg !important;
+        color: @nav-pills-active-link-hover-color;
+      }
+    }
+  }
+
+  .portlet-menu-separator {
+    &:extend(.divider);
+  }
+}

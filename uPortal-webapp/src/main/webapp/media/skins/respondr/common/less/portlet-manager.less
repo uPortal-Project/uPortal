@@ -17,92 +17,90 @@
  * under the License.
  */
 .portlet-config {
+  .portlet-content {
+    padding-bottom: 0;
 
-    .portlet-content {
-        padding-bottom: 0;
+    .portlet-section {
+      margin-bottom: 0;
 
-        .portlet-section {
-            margin-bottom: 0;
-
-            .titlebar {
-                margin: 1em 0;
-
-                .title {
-                    background-color: @color4-light;
-                    border-bottom: 2px solid @color4-lighter;
-                    color: @grayscale9;
-                    border-radius: 4px;
-                    font-weight: 400;
-                    margin: 0;
-                    padding: 0.25em 1em;
-                }
-            }
-
-            .content {
-
-                .note {
-                    padding: 0.25em 1em;
-                }
-
-                .portlet-table {
-                    padding: 0.25em 1em;
-                }
-            }
-        }
-    }
-
-    .form-group {
-        label {
-            color: @grayscale10;
-        }
-    }
-
-    .view-groups-cats {
-        .content {
-            margin-top: 30px;
-
-            .h4 {
-                margin-top: 5px;
-                padding-top: 2px;
-            }
-
-            .permissions-options-table {
-                thead {
-                    font-size: 90%;
-                    font-weight: bold;
-                }
-            }
-
-            .config-list {
-                margin-top: 10px;
-                padding-left: 15px;
-                list-style: none;
-            }
-        }
-    }
-
-    .buttons {
-        border-top: 1px dotted @grayscale4;
-        border-bottom: 1px dotted @grayscale4;
+      .titlebar {
         margin: 1em 0;
-        padding: 1em 0;
-    }
 
-    .glyphicon-info-sign {
-        color: @color1;
-    }
-
-    .parameter-editor-value {
-        display: inline-block;
-        width: 75%;
-    }
-
-    .name-title-mismatch-warn {
-        display: none;
-        margin-bottom: 0;
-
-        .alert {
-            padding: 5px 15px;
+        .title {
+          background-color: @color4-light;
+          border-bottom: 2px solid @color4-lighter;
+          color: @grayscale9;
+          border-radius: 4px;
+          font-weight: 400;
+          margin: 0;
+          padding: 0.25em 1em;
         }
+      }
+
+      .content {
+        .note {
+          padding: 0.25em 1em;
+        }
+
+        .portlet-table {
+          padding: 0.25em 1em;
+        }
+      }
     }
+  }
+
+  .form-group {
+    label {
+      color: @grayscale10;
+    }
+  }
+
+  .view-groups-cats {
+    .content {
+      margin-top: 30px;
+
+      .h4 {
+        margin-top: 5px;
+        padding-top: 2px;
+      }
+
+      .permissions-options-table {
+        thead {
+          font-size: 90%;
+          font-weight: bold;
+        }
+      }
+
+      .config-list {
+        margin-top: 10px;
+        padding-left: 15px;
+        list-style: none;
+      }
+    }
+  }
+
+  .buttons {
+    border-top: 1px dotted @grayscale4;
+    border-bottom: 1px dotted @grayscale4;
+    margin: 1em 0;
+    padding: 1em 0;
+  }
+
+  .glyphicon-info-sign {
+    color: @color1;
+  }
+
+  .parameter-editor-value {
+    display: inline-block;
+    width: 75%;
+  }
+
+  .name-title-mismatch-warn {
+    display: none;
+    margin-bottom: 0;
+
+    .alert {
+      padding: 5px 15px;
+    }
+  }
 }

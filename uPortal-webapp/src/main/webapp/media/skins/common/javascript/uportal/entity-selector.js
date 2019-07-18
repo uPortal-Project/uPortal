@@ -59,16 +59,16 @@ var up = up || {};
         var markup = undefined;
 
         switch (selected) {
-        case false:
-            markup =
+            case false:
+                markup =
                     '<span class="selection" title="' +
                     that.options.messages.nothingSelected +
                     '">' +
                     that.options.messages.nothingSelected +
                     '</span>';
-            break;
-        case true:
-            markup =
+                break;
+            case true:
+                markup =
                     '<a href="#" title="' +
                     that.options.messages.removeSelection +
                     '" key="' +
@@ -81,7 +81,7 @@ var up = up || {};
                     '<input type="hidden" name="groups" value="' +
                     getKey(entity) +
                     '"/>';
-            break;
+                break;
         } // end:switch.
 
         return markup;
@@ -98,10 +98,10 @@ var up = up || {};
      */
     var updateButtonState = function(button, selectionBasket, that, key) {
         button.unbind('click');
-        if (selectionBasket.find('a[key=\'' + key + '\']').size() > 0) {
+        if (selectionBasket.find("a[key='" + key + "']").size() > 0) {
             button
                 .text('Remove from Selection ')
-                .append('<i class=\'fa fa-minus-circle\'></i>');
+                .append("<i class='fa fa-minus-circle'></i>");
             button.removeClass('btn-success').addClass('btn-danger');
             button.bind('click', function(e) {
                 deselectEntity(that, key);
@@ -109,7 +109,7 @@ var up = up || {};
         } else {
             button
                 .text('Add to Selection ')
-                .append('<i class=\'fa fa-plus-circle\'></i>');
+                .append("<i class='fa fa-plus-circle'></i>");
             button.removeClass('btn-danger').addClass('btn-success');
             button.bind('click', function(e) {
                 selectEntity(that, key);
@@ -168,25 +168,25 @@ var up = up || {};
 
         // Check component selection mode.
         switch (that.selectMultiple) {
-        case false: // Single.
-            that.options.selected = [];
-            selectionBasket.html(
-                buildSingleSelectionSnippet(that, entity, false)
-            );
-            break;
-        case true: // Multiple.
-            // Generate a new list of selected entities. Remove the requested
-            // entity from the selection basket.
-            selectionBasket.find('a').each(function() {
-                var a = $(this);
-                if (a.attr('key') !== key) {
-                    newselections.push(a.attr('key'));
-                } else {
-                    a.parent().remove();
-                } // end:if.
-            }); // end:loop.
-            that.options.selected = newselections;
-            break;
+            case false: // Single.
+                that.options.selected = [];
+                selectionBasket.html(
+                    buildSingleSelectionSnippet(that, entity, false)
+                );
+                break;
+            case true: // Multiple.
+                // Generate a new list of selected entities. Remove the requested
+                // entity from the selection basket.
+                selectionBasket.find('a').each(function() {
+                    var a = $(this);
+                    if (a.attr('key') !== key) {
+                        newselections.push(a.attr('key'));
+                    } else {
+                        a.parent().remove();
+                    } // end:if.
+                }); // end:loop.
+                that.options.selected = newselections;
+                break;
         } // end:switch.
 
         updateSelectionStates(that);
@@ -219,48 +219,48 @@ var up = up || {};
 
         // Check component selection mode.
         switch (that.selectMultiple) {
-        case false: // Single.
-            that.options.selected = [];
-            that.options.selected.push(key);
-            selectionBasket.html(
-                buildSingleSelectionSnippet(that, entity, true)
-            );
-
-            // Assign click event.
-            selectionBasket.find('a').click(function() {
+            case false: // Single.
                 that.options.selected = [];
-                selectionBasket.html(
-                    buildSingleSelectionSnippet(that, entity, false)
-                );
-                deselectEntity(that, $(this).attr('key'));
-            }); // end:click.
-            break;
-        case true: // Multiple.
-            // If 'key' does not exist within 'selected' arrary.
-            if ($.inArray(key, that.options.selected) < 0) {
-                // Add the key to our selected list.
                 that.options.selected.push(key);
+                selectionBasket.html(
+                    buildSingleSelectionSnippet(that, entity, true)
+                );
 
-                // Add an element to the user-visible select list.
-                li = $(
-                    '<li><a href="#" key="' +
+                // Assign click event.
+                selectionBasket.find('a').click(function() {
+                    that.options.selected = [];
+                    selectionBasket.html(
+                        buildSingleSelectionSnippet(that, entity, false)
+                    );
+                    deselectEntity(that, $(this).attr('key'));
+                }); // end:click.
+                break;
+            case true: // Multiple.
+                // If 'key' does not exist within 'selected' arrary.
+                if ($.inArray(key, that.options.selected) < 0) {
+                    // Add the key to our selected list.
+                    that.options.selected.push(key);
+
+                    // Add an element to the user-visible select list.
+                    li = $(
+                        '<li><a href="#" key="' +
                             getKey(entity) +
                             '">' +
                             entity.name +
                             '</a><input type="hidden" name="groups" value="' +
                             getKey(entity) +
                             '"/></li>'
-                );
+                    );
 
-                // Append li to selectionBasket.
-                selectionBasket.find('ul').append(li);
+                    // Append li to selectionBasket.
+                    selectionBasket.find('ul').append(li);
 
-                // Assign click event.
-                li.find('a').click(function() {
-                    deselectEntity(that, $(this).attr('key'));
-                }); // end:click.
-            } // end:if.
-            break;
+                    // Assign click event.
+                    li.find('a').click(function() {
+                        deselectEntity(that, $(this).attr('key'));
+                    }); // end:click.
+                } // end:if.
+                break;
         } // end:switch.
 
         updateSelectionStates(that);
@@ -499,15 +499,14 @@ var up = up || {};
 
         // Cache.
         list = that.searchDropDown.find(that.options.selectors.searchResults);
-        list
-            .find('.' + that.options.styles.selected)
-            .removeClass(that.options.styles.selected);
+        list.find('.' + that.options.styles.selected).removeClass(
+            that.options.styles.selected
+        );
 
         // Loop through selected array.
         $.each(that.options.selected, function(idx, obj) {
             var span = list.find('span[key="' + obj + '"]');
-            span
-                .parent()
+            span.parent()
                 .parent()
                 .addClass(that.options.styles.selected);
         }); // end:loop.
@@ -678,8 +677,7 @@ var up = up || {};
         // Initialize search drop-down.
         searchEntity(that);
 
-        that
-            .locate('selectionBasket')
+        that.locate('selectionBasket')
             .find('a')
             .click(function() {
                 deselectEntity(that, $(this).attr('key'));
@@ -741,24 +739,24 @@ var up = up || {};
                 console.log('display response message');
                 console.log(xmlhttp.responseText);
                 switch (xmlhttp.status) {
-                case 200: // SC_OK
-                case 201: // SC_CREATED
-                case 202: // SC_ACCEPTED
-                    $(that.options.selectors.alertSuccess).show();
-                    break;
-                case 400: // SC_BAD_REQUEST -> bad parent
-                    $(that.options.selectors.alertInvalidParent).show();
-                    break;
-                case 409: // SC_CONFLICT -> group exists
-                    $(that.options.selectors.alertGroupExists).show();
-                    break;
-                case 401: // SC_UNAUTHORIZED
-                case 403: // SC_FORBIDDEN
-                    $(that.options.selectors.alertUnauthorized).show();
-                    break;
-                default:
-                    $(that.options.selectors.alertUnknown).show();
-                    break;
+                    case 200: // SC_OK
+                    case 201: // SC_CREATED
+                    case 202: // SC_ACCEPTED
+                        $(that.options.selectors.alertSuccess).show();
+                        break;
+                    case 400: // SC_BAD_REQUEST -> bad parent
+                        $(that.options.selectors.alertInvalidParent).show();
+                        break;
+                    case 409: // SC_CONFLICT -> group exists
+                        $(that.options.selectors.alertGroupExists).show();
+                        break;
+                    case 401: // SC_UNAUTHORIZED
+                    case 403: // SC_FORBIDDEN
+                        $(that.options.selectors.alertUnauthorized).show();
+                        break;
+                    default:
+                        $(that.options.selectors.alertUnknown).show();
+                        break;
                 }
             };
 
@@ -774,15 +772,13 @@ var up = up || {};
                 parentKey = that.locate('currentEntityName').attr('key');
                 parentName = that.locate('currentEntityName').text();
                 includes = [];
-                that
-                    .locate('dataIncludesList')
+                that.locate('dataIncludesList')
                     .find('li')
                     .each(function() {
                         includes.push($(this).text());
                     });
                 excludes = [];
-                that
-                    .locate('dataExcludesList')
+                that.locate('dataExcludesList')
                     .find('li')
                     .each(function() {
                         excludes.push($(this).text());

@@ -19,144 +19,150 @@
 
 /* Hide the "Skip to page content" button offscreen until it's brought into focus */
 .portal-header-skip-nav {
-    position: absolute;
-    top: -1000px;
-    left: -1000px;
-    height: 1px;
-    width: 1px;
-    text-align: left;
-    color: @header-link-color;
-    overflow: hidden;
+  position: absolute;
+  top: -1000px;
+  left: -1000px;
+  height: 1px;
+  width: 1px;
+  text-align: left;
+  color: @header-link-color;
+  overflow: hidden;
 
-    &:active, &:focus, &:hover {
-        left: 0;
-        top: .5rem;
-        z-index: 1;
-        width: auto;
-        height: auto;
-        overflow: visible;
-   }
+  &:active,
+  &:focus,
+  &:hover {
+    left: 0;
+    top: 0.5rem;
+    z-index: 1;
+    width: auto;
+    height: auto;
+    overflow: visible;
+  }
 }
 
 .portal-header {
-    background: @header-background-color;
-    color: @header-text-color;
+  background: @header-background-color;
+  color: @header-text-color;
 
-    a {
-        color: @header-link-color;
-        text-decoration: none;
+  a {
+    color: @header-link-color;
+    text-decoration: none;
+  }
+
+  .menu-toggle {
+    margin: 2px 0 2px 12px;
+    padding: 0.25rem 1rem;
+    background: @menu-toggle-background-color;
+    border: 1px solid @menu-toggle-border-color;
+    color: @menu-toggle-text-color;
+    .border-radius;
+
+    &:hover,
+    &:focus {
+      background: @menu-toggle-hover-background-color;
+      color: @menu-toggle-hover-text-color;
+      border: 1px solid @menu-toggle-hover-border-color;
     }
 
-    .menu-toggle {
-        margin: 2px 0 2px 12px;
-        padding: 0.25rem 1rem;
-        background: @menu-toggle-background-color;
-        border: 1px solid @menu-toggle-border-color;
-        color: @menu-toggle-text-color;
-        .border-radius;
-
-        &:hover, &:focus {
-            background: @menu-toggle-hover-background-color;
-            color: @menu-toggle-hover-text-color;
-            border: 1px solid @menu-toggle-hover-border-color;
-        }
-
-        i {
-            /* padding-right: 0.35em;*/
-        }
+    i {
+      /* padding-right: 0.35em; */
     }
+  }
 
-    .portal-header-main {
-        /* Need a bit off padding because the eyebrow will float on top */
-        padding-top: 24px;
-    }
+  .portal-header-main {
+    /* Need a bit off padding because the eyebrow will float on top */
+    padding-top: 24px;
+  }
 
-    .portal-nav {
-        .container {
-            padding: 0;
-        }
+  .portal-nav {
+    .container {
+      padding: 0;
     }
+  }
 }
 
 .portal-global {
-    /* TODO:  Convert the div.portal-global to be the div.region-eyebrow
+  /* TODO:  Convert the div.portal-global to be the div.region-eyebrow
        (in the XSL) and move these styles to regions.less */
-    padding: 6px 2px 2px 2px;
-    .gradient(@portal-global-background-color, @portal-global-background-gradient);
-    border-bottom: 1px solid @portal-global-border-color;
-    .drop-shadow;
-    text-align: right;
+  padding: 6px 2px 2px 2px;
+  .gradient(
+    @portal-global-background-color,
+        @portal-global-background-gradient
+    );
+
+  border-bottom: 1px solid @portal-global-border-color;
+  .drop-shadow;
+
+  text-align: right;
 }
 
 .portal-editing {
-    .inline-block-list;
+  .inline-block-list;
 
-    li {
-        .float;
-    }
+  li {
+    .float;
+  }
 }
 
 h1.portal-logo {
-    font-size: 400%;
-    text-rendering: optimizelegibility;
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4), 0 0 30px rgba(0, 0, 0, 0.075);
-    margin: 30px 0 10px 0;
+  font-size: 400%;
+  text-rendering: optimizelegibility;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4), 0 0 30px rgba(0, 0, 0, 0.075);
+  margin: 30px 0 10px 0;
 }
 
 h1.portal-logo a {
-    color: @header-text-color;
+  color: @header-text-color;
 }
 
 h1.portal-logo a:hover {
-    text-decoration: none;
+  text-decoration: none;
 }
 
 #webSearchContainer {
-    margin: 12px 0 8px 0;
+  margin: 12px 0 8px 0;
 }
 
 #webSearchSubmit {
-    span {
-        display: none;
-    }
+  span {
+    display: none;
+  }
 }
-
 
 /* ==========================================================================
    Responsive Design
    ========================================================================== */
+
 /*
  * Breakpoints: are defined in bootstrap/variables.less
  */
 
 @media only screen and (min-width: @screen-sm-min) {
-    .portal-header {
+  .portal-header {
+    .container {
+      padding: 0;
 
-        .container {
-            padding: 0;
-
-            .portal-user {
-                a {
-                    margin-left: 10px;
-                }
-                .notification-icon {
-                    margin-right: 10px;
-                }
-            }
+      .portal-user {
+        a {
+          margin-left: 10px;
         }
 
-        #webSearchContainer {
-            margin-top: 48px;
+        .notification-icon {
+          margin-right: 10px;
         }
-
-        .portal-header-main {
-            /* Undo padding from above */
-            padding-top: 0;
-        }
-
+      }
     }
-}
 
+    #webSearchContainer {
+      margin-top: 48px;
+    }
+
+    .portal-header-main {
+      /* Undo padding from above */
+      padding-top: 0;
+    }
+  }
+}
 
 #up-notification {
   position: fixed;
@@ -165,5 +171,5 @@ h1.portal-logo a:hover {
 }
 
 div.global-container {
-    padding: 0;
+  padding: 0;
 }

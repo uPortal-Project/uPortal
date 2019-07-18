@@ -53,11 +53,9 @@ var up = up || {};
                                         that.locate('input').val(result.text);
                                         that.state.currentValue = result.value;
                                         that.locate('dropdown').hide();
-                                        that
-                                            .locate('input')
-                                            .addClass(
-                                                'up-autocomplete-validinput'
-                                            );
+                                        that.locate('input').addClass(
+                                            'up-autocomplete-validinput'
+                                        );
                                     },
                                 },
                             ],

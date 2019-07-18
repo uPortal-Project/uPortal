@@ -16,24 +16,25 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 /* ==========================================================================
    Variables
    ========================================================================== */
-@white: #FFFFFF;
+@white: #ffffff;
 @black: #000000;
 
 /*
  * Grayscale colors. 1 is lightest, 10 is darkest.
  */
-@grayscale1:  #F5F5F5;
-@grayscale2:  #E5E5E5;
-@grayscale3:  #D8D8D8;
-@grayscale4:  #CCCCCC;
-@grayscale5:  #ADADAD;
-@grayscale6:  #999999;
-@grayscale7:  #8C8C8C;
-@grayscale8:  #696969;
-@grayscale9:  #404040;
+@grayscale1: #f5f5f5;
+@grayscale2: #e5e5e5;
+@grayscale3: #d8d8d8;
+@grayscale4: #cccccc;
+@grayscale5: #adadad;
+@grayscale6: #999999;
+@grayscale7: #8c8c8c;
+@grayscale8: #696969;
+@grayscale9: #404040;
 @grayscale10: #333333;
 
 /*
@@ -45,7 +46,7 @@
  * 2) The value must be on the same line as the variable name and be terminated with a semicolon due to
  *    regex searches by skin manager.
  */
-@color1: #4065B0; // medium blue
+@color1: #4065b0; // medium blue
 @color1-light: lighten(@color1, 10%);
 @color1-lighter: lighten(@color1, 25%);
 @color1-lightest: lighten(@color1, 50%);
@@ -62,7 +63,7 @@
  * 2) The value must be on the same line as the variable name and be terminated with a semicolon due to
  *    regex searches by skin manager.
  */
-@color2: #F68923;  // muted orange
+@color2: #f68923; // muted orange
 @color2-light: lighten(@color2, 10%);
 @color2-lighter: lighten(@color2, 25%);
 @color2-lightest: lighten(@color2, 50%);
@@ -79,7 +80,7 @@
  * 2) The value must be on the same line as the variable name and be terminated with a semicolon due to
  *    regex searches by skin manager.
  */
-@color3: #005aA9;  // light muted blue
+@color3: #005aa9; // light muted blue
 @color3-light: lighten(@color3, 15%);
 @color3-dark: darken(@color3, 15%);
 
@@ -92,7 +93,7 @@
  * 2) The value must be on the same line as the variable name and be terminated with a semicolon due to
  *    regex searches by skin manager.
  */
-@color4: #ADADAD;  // light gray
+@color4: #adadad; // light gray
 @color4-light: lighten(@color4, 15%);
 @color4-lighter: lighten(@color4, 30%);
 
@@ -105,7 +106,7 @@
  * 2) The value must be on the same line as the variable name and be terminated with a semicolon due to
  *    regex searches by skin manager.
  */
-@color5: #333333;  // dark gray
+@color5: #333333; // dark gray
 
 /*
  * Portlet border color.
@@ -116,7 +117,7 @@
  * 2) The value must be on the same line as the variable name and be terminated with a semicolon due to
  *    regex searches by skin manager.
  */
-@color6: #E5E5E5;  // lighter gray
+@color6: #e5e5e5; // lighter gray
 
 @border: 1px solid @grayscale2;
 
@@ -152,7 +153,7 @@
 /**
  * Page-level styles
  */
-@body-background-color: @footer-secondary-background-color;  // default to match footer-second;  prevents 'gaps' at the bottom of short pages
+@body-background-color: @footer-secondary-background-color; // default to match footer-second;  prevents 'gaps' at the bottom of short pages
 @body-background-image: none;
 @portal-page-body-background-image: url(./common/images/furley_bg.png); // Using the furley pattern from http://subtlepatterns.com
 @portal-page-body-background-image-filter: none; // for full list of filter effects see: https://developer.mozilla.org/en-US/docs/Web/CSS/filter
@@ -167,11 +168,11 @@
 /**
  * Theme based button styles
  */
-@btn-skin-text-color:             @white;
-@btn-skin-background-color:       @color2;
+@btn-skin-text-color: @white;
+@btn-skin-background-color: @color2;
 
-@btn-skin-alt-text-color:         @grayscale10;
-@btn-skin-alt-background-color:   @color3;
+@btn-skin-alt-text-color: @grayscale10;
+@btn-skin-alt-background-color: @color3;
 
 /**
  * Nav
@@ -196,7 +197,10 @@
 @navbar-item-hover-background-color: @color1-light;
 
 @navbar-item-active-background-color: @color1-darker;
-@navbar-item-active-hover-background-color: lighten(@navbar-item-active-background-color, 50%);
+@navbar-item-active-hover-background-color: lighten(
+    @navbar-item-active-background-color,
+    50%
+);
 
 @navbar-item-active-text-color: @white;
 @navbar-item-active-hover-text-color: inherit;
@@ -258,7 +262,7 @@
  */
 
 .float (@direction: left) {
-    float: @direction;
+  float: @direction;
 }
 
 /*
@@ -266,7 +270,7 @@
  */
 
 .inline-block-list {
-    padding: 0;
-    margin: 0;
-    list-style: none;
+  padding: 0;
+  margin: 0;
+  list-style: none;
 }

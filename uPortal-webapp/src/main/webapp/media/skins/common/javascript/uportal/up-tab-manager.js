@@ -63,7 +63,7 @@ var up = up || {};
         var eContainer = $(editContainer);
         eContainer = eContainer.length
             ? eContainer
-            : $('<div class=\'fl-inlineEditContainer\'></div>');
+            : $("<div class='fl-inlineEditContainer'></div>");
         displayContainer.parent().after(eContainer);
         eContainer.append(editField);
 
@@ -82,7 +82,7 @@ var up = up || {};
 
         if (textEditButton.length === 0) {
             var markup = $(
-                '<span class=\'flc-inlineEdit-textEditButton\'></span>'
+                "<span class='flc-inlineEdit-textEditButton'></span>"
             );
             markup.addClass(opts.styles.textEditButton);
 
@@ -322,26 +322,22 @@ var up = up || {};
 
                         if (listItems.length === 1) {
                             // Apply & remove styles for a single tab.
-                            li
-                                .removeClass(that.options.styles.firstTab)
+                            li.removeClass(that.options.styles.firstTab)
                                 .removeClass(that.options.styles.lastTab)
                                 .addClass(that.options.styles.singleTab);
                         } else if (idx === 0) {
                             // Apply & remove styles for the first tab.
-                            li
-                                .removeClass(that.options.styles.singleTab)
+                            li.removeClass(that.options.styles.singleTab)
                                 .removeClass(that.options.styles.lastTab)
                                 .addClass(that.options.styles.firstTab);
                         } else if (idx === listItems.length - 1) {
                             // Apply & remove styles for the last tab.
-                            li
-                                .removeClass(that.options.styles.singleTab)
+                            li.removeClass(that.options.styles.singleTab)
                                 .removeClass(that.options.styles.firstTab)
                                 .addClass(that.options.styles.lastTab);
                         } else {
                             // Apply & remove styles for all other tabs.
-                            li
-                                .removeClass(that.options.styles.singleTab)
+                            li.removeClass(that.options.styles.singleTab)
                                 .removeClass(that.options.styles.lastTab)
                                 .removeClass(that.options.styles.firstTab);
                         } // end:if.
