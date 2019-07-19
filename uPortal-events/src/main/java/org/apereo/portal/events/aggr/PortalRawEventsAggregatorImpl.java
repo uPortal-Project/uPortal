@@ -82,10 +82,9 @@ public class PortalRawEventsAggregatorImpl extends BaseAggrEventsJpaDao
     private AggregationIntervalHelper intervalHelper;
     private EventSessionDao eventSessionDao;
     private DateDimensionDao dateDimensionDao;
-    private Set<IntervalAwarePortalEventAggregator<PortalEvent>>
-            intervalAwarePortalEventAggregators = Collections.emptySet();
-    private Set<SimplePortalEventAggregator<PortalEvent>> simplePortalEventAggregators =
+    private Set<IntervalAwarePortalEventAggregator> intervalAwarePortalEventAggregators =
             Collections.emptySet();
+    private Set<SimplePortalEventAggregator> simplePortalEventAggregators = Collections.emptySet();
     private List<ApplicationEventFilter<PortalEvent>> applicationEventFilters =
             Collections.emptyList();
 
@@ -150,23 +149,25 @@ public class PortalRawEventsAggregatorImpl extends BaseAggrEventsJpaDao
 
     @Autowired
     @SuppressWarnings({"rawtypes", "unchecked"})
-    public void setPortalEventAggregators(
-            Set<IPortalEventAggregator<PortalEvent>> portalEventAggregators) {
-        final com.google.common.collect.ImmutableSet.Builder<
-                        IntervalAwarePortalEventAggregator<PortalEvent>>
+    public void setPortalEventAggregators(Set<IPortalEventAggregator> portalEventAggregators) {
+        final com.google.common.collect.ImmutableSet.Builder<IntervalAwarePortalEventAggregator>
                 intervalAwarePortalEventAggregatorsBuilder = ImmutableSet.builder();
-        final com.google.common.collect.ImmutableSet.Builder<
-                        SimplePortalEventAggregator<PortalEvent>>
+        final com.google.common.collect.ImmutableSet.Builder<SimplePortalEventAggregator>
                 simplePortalEventAggregatorsBuilder = ImmutableSet.builder();
 
-        for (final IPortalEventAggregator<PortalEvent> portalEventAggregator :
-                portalEventAggregators) {
+        for (final IPortalEventAggregator portalEventAggregator : portalEventAggregators) {
             if (portalEventAggregator instanceof IntervalAwarePortalEventAggregator) {
                 intervalAwarePortalEventAggregatorsBuilder.add(
                         (IntervalAwarePortalEventAggregator) portalEventAggregator);
+                logger.debug("Found an interval aware aggregator - {}", portalEventAggregator);
             } else if (portalEventAggregator instanceof SimplePortalEventAggregator) {
                 simplePortalEventAggregatorsBuilder.add(
                         (SimplePortalEventAggregator) portalEventAggregator);
+                logger.debug("Found a simple aggregator - {}", portalEventAggregator);
+            } else {
+                logger.debug(
+                        "Found an unknown type of aggregator, not including - {}",
+                        portalEventAggregator);
             }
         }
 

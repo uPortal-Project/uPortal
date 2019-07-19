@@ -29,8 +29,10 @@ import org.apereo.portal.events.aggr.groups.AggregatedGroupMapping;
 import org.apereo.portal.events.aggr.tabs.AggregatedTabLookupDao;
 import org.apereo.portal.events.aggr.tabs.AggregatedTabMapping;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /** Event aggregator that uses {@link TabRenderAggregationPrivateDao} to aggregate tab renders */
+@Component
 public class TabRenderAggregator
         extends BaseIntervalAwarePortalEventAggregator<
                 PortalRenderEvent, TabRenderAggregationImpl, TabRenderAggregationKey> {

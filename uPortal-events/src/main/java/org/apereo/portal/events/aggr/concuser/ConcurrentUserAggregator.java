@@ -24,11 +24,13 @@ import org.apereo.portal.events.aggr.EventAggregationContext;
 import org.apereo.portal.events.aggr.TimeDimension;
 import org.apereo.portal.events.aggr.groups.AggregatedGroupMapping;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  * Event aggregator that uses {@link ConcurrentUserAggregationPrivateDao} to aggregate concurrent
  * user data
  */
+@Component
 public class ConcurrentUserAggregator
         extends BaseIntervalAwarePortalEventAggregator<
                 PortalEvent, ConcurrentUserAggregationImpl, ConcurrentUserAggregationKey> {
