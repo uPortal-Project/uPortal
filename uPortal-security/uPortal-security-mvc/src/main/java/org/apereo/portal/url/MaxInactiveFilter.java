@@ -17,6 +17,7 @@ package org.apereo.portal.url;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -26,9 +27,6 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.portal.security.IAuthorizationPrincipal;
-import org.apereo.portal.security.IAuthorizationService;
-import org.apereo.portal.security.IPermission;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.IPersonManager;
 import org.apereo.portal.security.ISecurityContext;
@@ -44,14 +42,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Slf4j
 public class MaxInactiveFilter implements Filter {
 
+    private static final ZoneId tz = ZoneId.systemDefault();
+
     // IPerson attribute key to flag if this value has already been set
-    private static final String SESSION_MAX_INACTIVE_SET_ATTR = "MAX_INACTIVE_SET";
+    public static final String SESSION_MAX_INACTIVE_SET_ATTR = "MAX_INACTIVE_SET";
 
     @Autowired private IPersonManager personManager;
 
-    @Autowired private IAuthorizationService authorizationService;
+    @Autowired private IMaxInactiveStrategy maxInactiveStrategy;
 
-    private int refreshMinutes = 5;
+    public static final int REFRESH_MINUTES = 5;
 
     @Override
     public void init(FilterConfig filterConfig) {}
@@ -85,129 +85,43 @@ public class MaxInactiveFilter implements Filter {
             return;
         }
 
+        final ISecurityContext securityContext = person.getSecurityContext();
+        if (securityContext == null || !securityContext.isAuthenticated()) {
+            log.debug("{} not authenticated", person.getAttribute(IPerson.USERNAME));
+            return;
+        }
+
         // Check if the session max inactive value has been set more recent than the refresh time
         LocalDateTime lastSetTime =
                 (LocalDateTime) person.getAttribute(SESSION_MAX_INACTIVE_SET_ATTR);
         if (lastSetTime != null) {
-            long sinceLastSetMin = Duration.between(lastSetTime, LocalDateTime.now()).toMinutes();
+            long sinceLastSetMin = Duration.between(lastSetTime, LocalDateTime.now(tz)).toMinutes();
             log.debug("Since max inactive last set in min: {}", sinceLastSetMin);
-            if (refreshMinutes > sinceLastSetMin) {
+            if (REFRESH_MINUTES > sinceLastSetMin) {
                 log.debug(
                         "Session.setMaxInactiveInterval() was set for user '{}' {} minutes ago",
                         person.getAttribute(IPerson.USERNAME),
                         sinceLastSetMin);
                 return;
+            } else {
+                log.debug(
+                        "Session.setMaxInactiveInterval() refresh time up for'{}' -- continuing ...",
+                        person.getAttribute(IPerson.USERNAME));
             }
+        } else {
+            log.debug(
+                    "Session.setMaxInactiveInterval() was not set for user '{}' -- continuing ...",
+                    person.getAttribute(IPerson.USERNAME));
         }
 
-        setMaxInactive(session, person);
-    }
-
-    private void setMaxInactive(HttpSession session, IPerson person) {
-        final ISecurityContext securityContext = person.getSecurityContext();
-        if (securityContext != null && securityContext.isAuthenticated()) {
-            // We have an authenticated user... let's see if any MAX_INACTIVE settings apply...
-            IAuthorizationPrincipal principal =
-                    authorizationService.newPrincipal(
-                            (String) person.getAttribute(IPerson.USERNAME), IPerson.class);
-            Integer rulingGrant = null;
-            Integer rulingDeny = null;
-            IPermission[] permissions =
-                    authorizationService.getAllPermissionsForPrincipal(
-                            principal, IPermission.PORTAL_SYSTEM, "MAX_INACTIVE", null);
-            assert (permissions != null);
-            if (permissions.length == 0) {
-                // No max inactive permission set for this user
-                if (log.isInfoEnabled()) {
-                    log.info(
-                            "No MAX_INACTIVE permissions apply to user '"
-                                    + person.getAttribute(IPerson.USERNAME)
-                                    + "'");
-                }
-                person.setAttribute(SESSION_MAX_INACTIVE_SET_ATTR, LocalDateTime.now());
-                return;
-            }
-            for (IPermission p : permissions) {
-                // First be sure the record applies currently...
-                long now = System.currentTimeMillis();
-                if (p.getEffective() != null && p.getEffective().getTime() > now) {
-                    // It's *TOO EARLY* for this record... move on.
-                    continue;
-                }
-                if (p.getExpires() != null && p.getExpires().getTime() < now) {
-                    // It's *TOO LATE* for this record... move on.
-                    continue;
-                }
-                if (p.getType().equals(IPermission.PERMISSION_TYPE_GRANT)) {
-                    try {
-                        Integer grantEntry = Integer.valueOf(p.getTarget());
-                        if (rulingGrant == null
-                                || grantEntry < 0 /* Any negative number trumps all */
-                                || rulingGrant < grantEntry) {
-                            rulingGrant = grantEntry;
-                        }
-                    } catch (NumberFormatException nfe) {
-                        log.warn(
-                                "Invalid MAX_INACTIVE permission grant '"
-                                        + p.getTarget()
-                                        + "';  target must be an integer value.");
-                    }
-                } else if (p.getType().equals(IPermission.PERMISSION_TYPE_DENY)) {
-                    try {
-                        Integer denyEntry = Integer.valueOf(p.getTarget());
-                        if (rulingDeny == null || rulingDeny > denyEntry) {
-                            rulingDeny = denyEntry;
-                        }
-                    } catch (NumberFormatException nfe) {
-                        log.warn(
-                                "Invalid MAX_INACTIVE permission deny '"
-                                        + p.getTarget()
-                                        + "';  target must be an integer value.");
-                    }
-                } else {
-                    log.warn("Unknown permission type:  " + p.getType());
-                }
-            }
-
-            if (rulingDeny != null && rulingDeny < 0) {
-                // Negative MaxInactiveInterval values mean the session never
-                // times out, so a negative DENY is somewhat nonsensical... just
-                // clear it.
-                log.warn(
-                        "A MAX_INACTIVE DENY entry improperly specified a negative target:  "
-                                + rulingDeny);
-                rulingDeny = null;
-            }
-            if (rulingGrant != null || rulingDeny != null) {
-                // We only want to intervene if there's some actual value
-                // specified... otherwise we'll just let the container settings
-                // govern.
-                int maxInactive =
-                        rulingGrant != null
-                                ? rulingGrant
-                                : 0; // If rulingGrant is null, rulingDeny won't be...
-                if (rulingDeny != null) {
-                    // Applying DENY entries is tricky b/c GRANT entries may be negative...
-                    int limit = rulingDeny;
-                    if (maxInactive >= 0) {
-                        maxInactive = limit < maxInactive ? limit : maxInactive;
-                    } else {
-                        // The best grant was negative (unlimited), so go with limit...
-                        maxInactive = limit;
-                    }
-                }
-                // Apply the specified setting...
-                session.setMaxInactiveInterval(maxInactive);
-                person.setAttribute(SESSION_MAX_INACTIVE_SET_ATTR, LocalDateTime.now());
-                if (log.isInfoEnabled()) {
-                    log.info(
-                            "Setting maxInactive to '"
-                                    + maxInactive
-                                    + "' for user '"
-                                    + person.getAttribute(IPerson.USERNAME)
-                                    + "'");
-                }
-            }
+        Integer maxInactive = maxInactiveStrategy.calcMaxInactive(person);
+        if (maxInactive != null) {
+            session.setMaxInactiveInterval(maxInactive);
+            log.info(
+                    "Setting maxInactive to '{}' for user '{}'",
+                    maxInactive,
+                    person.getAttribute(IPerson.USERNAME));
         }
+        person.setAttribute(SESSION_MAX_INACTIVE_SET_ATTR, LocalDateTime.now(tz));
     }
 }
