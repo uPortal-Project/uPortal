@@ -89,14 +89,22 @@ public class ClassicMaxInactiveStrategyTest {
         assertNull("", strategy.calcMaxInactive(person));
     }
 
+    private IPermission createMockPermission(
+            Date future, Date past, String permissionTypeGrant, String s) {
+        IPermission permission = mock(IPermission.class);
+        when(permission.getEffective()).thenReturn(past);
+        when(permission.getExpires()).thenReturn(future);
+        when(permission.getType()).thenReturn(permissionTypeGrant);
+        when(permission.getTarget()).thenReturn(s);
+        return permission;
+    }
+
     @Test
     public void tooEarly() {
-        IPermission permission = mock(IPermission.class);
         final LocalDateTime localDateTime = LocalDateTime.now(tz).plusHours(1);
         final Date future = Date.from(localDateTime.atZone(tz).toInstant());
-        when(permission.getEffective()).thenReturn(future);
-        when(permission.getExpires()).thenReturn(null);
-        when(permission.getType()).thenReturn(IPermission.PERMISSION_TYPE_GRANT);
+        IPermission permission =
+                createMockPermission(future, null, IPermission.PERMISSION_TYPE_GRANT, null);
 
         permissions = new IPermission[] {permission};
         when(authorizationService.getAllPermissionsForPrincipal(
@@ -108,12 +116,10 @@ public class ClassicMaxInactiveStrategyTest {
 
     @Test
     public void tooLate() {
-        IPermission permission = mock(IPermission.class);
         final LocalDateTime localDateTime = LocalDateTime.now(tz).minusHours(1);
         final Date past = Date.from(localDateTime.atZone(tz).toInstant());
-        when(permission.getEffective()).thenReturn(null);
-        when(permission.getExpires()).thenReturn(past);
-        when(permission.getType()).thenReturn(IPermission.PERMISSION_TYPE_GRANT);
+        IPermission permission =
+                createMockPermission(null, past, IPermission.PERMISSION_TYPE_GRANT, null);
 
         permissions = new IPermission[] {permission};
         when(authorizationService.getAllPermissionsForPrincipal(
@@ -125,15 +131,12 @@ public class ClassicMaxInactiveStrategyTest {
 
     @Test
     public void effectiveTime() {
-        IPermission permission = mock(IPermission.class);
         final LocalDateTime localDateTime = LocalDateTime.now(tz).plusHours(1);
         final Date future = Date.from(localDateTime.atZone(tz).toInstant());
         final LocalDateTime localDateTime2 = LocalDateTime.now(tz).minusHours(1);
         final Date past = Date.from(localDateTime2.atZone(tz).toInstant());
-        when(permission.getEffective()).thenReturn(past);
-        when(permission.getExpires()).thenReturn(future);
-        when(permission.getType()).thenReturn(IPermission.PERMISSION_TYPE_GRANT);
-        when(permission.getTarget()).thenReturn("5");
+        IPermission permission =
+                createMockPermission(future, past, IPermission.PERMISSION_TYPE_GRANT, "5");
 
         permissions = new IPermission[] {permission};
         when(authorizationService.getAllPermissionsForPrincipal(
@@ -143,353 +146,172 @@ public class ClassicMaxInactiveStrategyTest {
         assertEquals("", Integer.valueOf(5), strategy.calcMaxInactive(person));
     }
 
-    @Test
-    public void nonNumberGrantTarget() {
-        IPermission permission = mock(IPermission.class);
-        when(permission.getEffective()).thenReturn(null);
-        when(permission.getExpires()).thenReturn(null);
-        when(permission.getType()).thenReturn(IPermission.PERMISSION_TYPE_GRANT);
-        when(permission.getTarget()).thenReturn("sdfsd");
+    private void testSinglePermission(String type, String returnValue, Integer calcValue) {
+        IPermission permission = createMockPermission(null, null, type, returnValue);
 
         permissions = new IPermission[] {permission};
         when(authorizationService.getAllPermissionsForPrincipal(
                         principal, IPermission.PORTAL_SYSTEM, MAX_INACTIVE_ATTR, null))
                 .thenReturn(permissions);
 
-        assertNull("", strategy.calcMaxInactive(person));
+        assertEquals("", calcValue, strategy.calcMaxInactive(person));
+    }
+
+    @Test
+    public void nonNumberGrantTarget() {
+        testSinglePermission(IPermission.PERMISSION_TYPE_GRANT, "sdfsd", null);
     }
 
     @Test
     public void nonNumberDenyTarget() {
-        IPermission permission = mock(IPermission.class);
-        when(permission.getEffective()).thenReturn(null);
-        when(permission.getExpires()).thenReturn(null);
-        when(permission.getType()).thenReturn(IPermission.PERMISSION_TYPE_DENY);
-        when(permission.getTarget()).thenReturn("sdfsd");
-
-        permissions = new IPermission[] {permission};
-        when(authorizationService.getAllPermissionsForPrincipal(
-                        principal, IPermission.PORTAL_SYSTEM, MAX_INACTIVE_ATTR, null))
-                .thenReturn(permissions);
-
-        assertNull("", strategy.calcMaxInactive(person));
+        testSinglePermission(IPermission.PERMISSION_TYPE_DENY, "sdfsd", null);
     }
 
     @Test
     public void validGrant() {
-        IPermission permission = mock(IPermission.class);
-        when(permission.getEffective()).thenReturn(null);
-        when(permission.getExpires()).thenReturn(null);
-        when(permission.getType()).thenReturn(IPermission.PERMISSION_TYPE_GRANT);
-        when(permission.getTarget()).thenReturn("10");
-
-        permissions = new IPermission[] {permission};
-        when(authorizationService.getAllPermissionsForPrincipal(
-                        principal, IPermission.PORTAL_SYSTEM, MAX_INACTIVE_ATTR, null))
-                .thenReturn(permissions);
-
-        assertEquals("", Integer.valueOf(10), strategy.calcMaxInactive(person));
+        testSinglePermission(IPermission.PERMISSION_TYPE_GRANT, "10", Integer.valueOf(10));
     }
 
     @Test
     public void validNegativeGrant() {
-        IPermission permission = mock(IPermission.class);
-        when(permission.getEffective()).thenReturn(null);
-        when(permission.getExpires()).thenReturn(null);
-        when(permission.getType()).thenReturn(IPermission.PERMISSION_TYPE_GRANT);
-        when(permission.getTarget()).thenReturn("-10");
-
-        permissions = new IPermission[] {permission};
-        when(authorizationService.getAllPermissionsForPrincipal(
-                        principal, IPermission.PORTAL_SYSTEM, MAX_INACTIVE_ATTR, null))
-                .thenReturn(permissions);
-
-        assertEquals("", Integer.valueOf(-10), strategy.calcMaxInactive(person));
+        testSinglePermission(IPermission.PERMISSION_TYPE_GRANT, "-10", Integer.valueOf(-10));
     }
 
     @Test
     public void validZeroGrant() {
-        IPermission permission = mock(IPermission.class);
-        when(permission.getEffective()).thenReturn(null);
-        when(permission.getExpires()).thenReturn(null);
-        when(permission.getType()).thenReturn(IPermission.PERMISSION_TYPE_GRANT);
-        when(permission.getTarget()).thenReturn("0");
-
-        permissions = new IPermission[] {permission};
-        when(authorizationService.getAllPermissionsForPrincipal(
-                        principal, IPermission.PORTAL_SYSTEM, MAX_INACTIVE_ATTR, null))
-                .thenReturn(permissions);
-
-        assertEquals("", Integer.valueOf(0), strategy.calcMaxInactive(person));
+        testSinglePermission(IPermission.PERMISSION_TYPE_GRANT, "0", Integer.valueOf(0));
     }
 
     @Test
     public void validDeny() {
-        IPermission permission = mock(IPermission.class);
-        when(permission.getEffective()).thenReturn(null);
-        when(permission.getExpires()).thenReturn(null);
-        when(permission.getType()).thenReturn(IPermission.PERMISSION_TYPE_DENY);
-        when(permission.getTarget()).thenReturn("104");
-
-        permissions = new IPermission[] {permission};
-        when(authorizationService.getAllPermissionsForPrincipal(
-                        principal, IPermission.PORTAL_SYSTEM, MAX_INACTIVE_ATTR, null))
-                .thenReturn(permissions);
-
-        assertEquals("", Integer.valueOf(0), strategy.calcMaxInactive(person));
+        testSinglePermission(IPermission.PERMISSION_TYPE_DENY, "104", Integer.valueOf(0));
     }
 
     @Test
     public void validNegativeDeny() {
-        IPermission permission = mock(IPermission.class);
-        when(permission.getEffective()).thenReturn(null);
-        when(permission.getExpires()).thenReturn(null);
-        when(permission.getType()).thenReturn(IPermission.PERMISSION_TYPE_DENY);
-        when(permission.getTarget()).thenReturn("-10");
-
-        permissions = new IPermission[] {permission};
-        when(authorizationService.getAllPermissionsForPrincipal(
-                        principal, IPermission.PORTAL_SYSTEM, MAX_INACTIVE_ATTR, null))
-                .thenReturn(permissions);
-
-        // negative deny permissions make no sense
-        assertNull("", strategy.calcMaxInactive(person));
+        testSinglePermission(IPermission.PERMISSION_TYPE_DENY, "-10", null);
     }
 
     @Test
     public void validZeroDeny() {
-        IPermission permission = mock(IPermission.class);
-        when(permission.getEffective()).thenReturn(null);
-        when(permission.getExpires()).thenReturn(null);
-        when(permission.getType()).thenReturn(IPermission.PERMISSION_TYPE_DENY);
-        when(permission.getTarget()).thenReturn("0");
+        testSinglePermission(IPermission.PERMISSION_TYPE_DENY, "0", Integer.valueOf(0));
+    }
 
-        permissions = new IPermission[] {permission};
+    private void testTwoPermissions(
+            String type1,
+            String returnValue1,
+            String type2,
+            String returnValue2,
+            Integer calcValue) {
+        IPermission permission = createMockPermission(null, null, type1, returnValue1);
+
+        IPermission permission2 = createMockPermission(null, null, type2, returnValue2);
+
+        permissions = new IPermission[] {permission, permission2};
         when(authorizationService.getAllPermissionsForPrincipal(
                         principal, IPermission.PORTAL_SYSTEM, MAX_INACTIVE_ATTR, null))
                 .thenReturn(permissions);
 
-        assertEquals("", Integer.valueOf(0), strategy.calcMaxInactive(person));
+        assertEquals("", calcValue, strategy.calcMaxInactive(person));
     }
 
     @Test
     public void valid2Grants() {
-        IPermission permission = mock(IPermission.class);
-        when(permission.getEffective()).thenReturn(null);
-        when(permission.getExpires()).thenReturn(null);
-        when(permission.getType()).thenReturn(IPermission.PERMISSION_TYPE_GRANT);
-        when(permission.getTarget()).thenReturn("10");
-
-        IPermission permission2 = mock(IPermission.class);
-        when(permission2.getEffective()).thenReturn(null);
-        when(permission2.getExpires()).thenReturn(null);
-        when(permission2.getType()).thenReturn(IPermission.PERMISSION_TYPE_GRANT);
-        when(permission2.getTarget()).thenReturn("100");
-
-        permissions = new IPermission[] {permission, permission2};
-        when(authorizationService.getAllPermissionsForPrincipal(
-                        principal, IPermission.PORTAL_SYSTEM, MAX_INACTIVE_ATTR, null))
-                .thenReturn(permissions);
-
-        assertEquals("", Integer.valueOf(100), strategy.calcMaxInactive(person));
+        testTwoPermissions(
+                IPermission.PERMISSION_TYPE_GRANT,
+                "10",
+                IPermission.PERMISSION_TYPE_GRANT,
+                "100",
+                Integer.valueOf(100));
     }
 
     @Test
     public void valid2GrantsOneNegative() {
-        IPermission permission = mock(IPermission.class);
-        when(permission.getEffective()).thenReturn(null);
-        when(permission.getExpires()).thenReturn(null);
-        when(permission.getType()).thenReturn(IPermission.PERMISSION_TYPE_GRANT);
-        when(permission.getTarget()).thenReturn("10");
-
-        IPermission permission2 = mock(IPermission.class);
-        when(permission2.getEffective()).thenReturn(null);
-        when(permission2.getExpires()).thenReturn(null);
-        when(permission2.getType()).thenReturn(IPermission.PERMISSION_TYPE_GRANT);
-        when(permission2.getTarget()).thenReturn("-100");
-
-        permissions = new IPermission[] {permission, permission2};
-        when(authorizationService.getAllPermissionsForPrincipal(
-                        principal, IPermission.PORTAL_SYSTEM, MAX_INACTIVE_ATTR, null))
-                .thenReturn(permissions);
-
-        // Negative value means to never timeout
-        assertEquals("", Integer.valueOf(-100), strategy.calcMaxInactive(person));
+        testTwoPermissions(
+                IPermission.PERMISSION_TYPE_GRANT,
+                "10",
+                IPermission.PERMISSION_TYPE_GRANT,
+                "-100",
+                Integer.valueOf(-100));
     }
 
     @Test
     public void valid2Denys() {
-        IPermission permission = mock(IPermission.class);
-        when(permission.getEffective()).thenReturn(null);
-        when(permission.getExpires()).thenReturn(null);
-        when(permission.getType()).thenReturn(IPermission.PERMISSION_TYPE_DENY);
-        when(permission.getTarget()).thenReturn("10");
-
-        IPermission permission2 = mock(IPermission.class);
-        when(permission2.getEffective()).thenReturn(null);
-        when(permission2.getExpires()).thenReturn(null);
-        when(permission2.getType()).thenReturn(IPermission.PERMISSION_TYPE_DENY);
-        when(permission2.getTarget()).thenReturn("100");
-
-        permissions = new IPermission[] {permission, permission2};
-        when(authorizationService.getAllPermissionsForPrincipal(
-                        principal, IPermission.PORTAL_SYSTEM, MAX_INACTIVE_ATTR, null))
-                .thenReturn(permissions);
-
-        assertEquals("", Integer.valueOf(0), strategy.calcMaxInactive(person));
+        testTwoPermissions(
+                IPermission.PERMISSION_TYPE_DENY,
+                "10",
+                IPermission.PERMISSION_TYPE_DENY,
+                "100",
+                Integer.valueOf(0));
     }
 
     @Test
     public void valid2DenysOneNegative() {
-        IPermission permission = mock(IPermission.class);
-        when(permission.getEffective()).thenReturn(null);
-        when(permission.getExpires()).thenReturn(null);
-        when(permission.getType()).thenReturn(IPermission.PERMISSION_TYPE_DENY);
-        when(permission.getTarget()).thenReturn("10");
-
-        IPermission permission2 = mock(IPermission.class);
-        when(permission2.getEffective()).thenReturn(null);
-        when(permission2.getExpires()).thenReturn(null);
-        when(permission2.getType()).thenReturn(IPermission.PERMISSION_TYPE_DENY);
-        when(permission2.getTarget()).thenReturn("-100");
-
-        permissions = new IPermission[] {permission, permission2};
-        when(authorizationService.getAllPermissionsForPrincipal(
-                        principal, IPermission.PORTAL_SYSTEM, MAX_INACTIVE_ATTR, null))
-                .thenReturn(permissions);
-
-        assertNull("", strategy.calcMaxInactive(person));
+        testTwoPermissions(
+                IPermission.PERMISSION_TYPE_DENY,
+                "10",
+                IPermission.PERMISSION_TYPE_DENY,
+                "-100",
+                null);
     }
 
     @Test
     public void validGrantGTDeny() {
-        IPermission permission = mock(IPermission.class);
-        when(permission.getEffective()).thenReturn(null);
-        when(permission.getExpires()).thenReturn(null);
-        when(permission.getType()).thenReturn(IPermission.PERMISSION_TYPE_GRANT);
-        when(permission.getTarget()).thenReturn("10");
-
-        IPermission permission2 = mock(IPermission.class);
-        when(permission2.getEffective()).thenReturn(null);
-        when(permission2.getExpires()).thenReturn(null);
-        when(permission2.getType()).thenReturn(IPermission.PERMISSION_TYPE_DENY);
-        when(permission2.getTarget()).thenReturn("3");
-
-        permissions = new IPermission[] {permission, permission2};
-        when(authorizationService.getAllPermissionsForPrincipal(
-                        principal, IPermission.PORTAL_SYSTEM, MAX_INACTIVE_ATTR, null))
-                .thenReturn(permissions);
-
-        assertEquals("", Integer.valueOf(3), strategy.calcMaxInactive(person));
+        testTwoPermissions(
+                IPermission.PERMISSION_TYPE_GRANT,
+                "10",
+                IPermission.PERMISSION_TYPE_DENY,
+                "3",
+                Integer.valueOf(3));
     }
 
     @Test
     public void validGrantLTDeny() {
-        IPermission permission = mock(IPermission.class);
-        when(permission.getEffective()).thenReturn(null);
-        when(permission.getExpires()).thenReturn(null);
-        when(permission.getType()).thenReturn(IPermission.PERMISSION_TYPE_GRANT);
-        when(permission.getTarget()).thenReturn("10");
-
-        IPermission permission2 = mock(IPermission.class);
-        when(permission2.getEffective()).thenReturn(null);
-        when(permission2.getExpires()).thenReturn(null);
-        when(permission2.getType()).thenReturn(IPermission.PERMISSION_TYPE_DENY);
-        when(permission2.getTarget()).thenReturn("34");
-
-        permissions = new IPermission[] {permission, permission2};
-        when(authorizationService.getAllPermissionsForPrincipal(
-                        principal, IPermission.PORTAL_SYSTEM, MAX_INACTIVE_ATTR, null))
-                .thenReturn(permissions);
-
-        assertEquals("", Integer.valueOf(10), strategy.calcMaxInactive(person));
+        testTwoPermissions(
+                IPermission.PERMISSION_TYPE_GRANT,
+                "10",
+                IPermission.PERMISSION_TYPE_DENY,
+                "34",
+                Integer.valueOf(10));
     }
 
     @Test
     public void validNegGrantPosDeny() {
-        IPermission permission = mock(IPermission.class);
-        when(permission.getEffective()).thenReturn(null);
-        when(permission.getExpires()).thenReturn(null);
-        when(permission.getType()).thenReturn(IPermission.PERMISSION_TYPE_GRANT);
-        when(permission.getTarget()).thenReturn("-11");
-
-        IPermission permission2 = mock(IPermission.class);
-        when(permission2.getEffective()).thenReturn(null);
-        when(permission2.getExpires()).thenReturn(null);
-        when(permission2.getType()).thenReturn(IPermission.PERMISSION_TYPE_DENY);
-        when(permission2.getTarget()).thenReturn("3");
-
-        permissions = new IPermission[] {permission, permission2};
-        when(authorizationService.getAllPermissionsForPrincipal(
-                        principal, IPermission.PORTAL_SYSTEM, MAX_INACTIVE_ATTR, null))
-                .thenReturn(permissions);
-
-        assertEquals("", Integer.valueOf(3), strategy.calcMaxInactive(person));
+        testTwoPermissions(
+                IPermission.PERMISSION_TYPE_GRANT,
+                "-11",
+                IPermission.PERMISSION_TYPE_DENY,
+                "3",
+                Integer.valueOf(3));
     }
 
     @Test
     public void validPosGrantNegDeny() {
-        IPermission permission = mock(IPermission.class);
-        when(permission.getEffective()).thenReturn(null);
-        when(permission.getExpires()).thenReturn(null);
-        when(permission.getType()).thenReturn(IPermission.PERMISSION_TYPE_GRANT);
-        when(permission.getTarget()).thenReturn("12");
-
-        IPermission permission2 = mock(IPermission.class);
-        when(permission2.getEffective()).thenReturn(null);
-        when(permission2.getExpires()).thenReturn(null);
-        when(permission2.getType()).thenReturn(IPermission.PERMISSION_TYPE_DENY);
-        when(permission2.getTarget()).thenReturn("-34");
-
-        permissions = new IPermission[] {permission, permission2};
-        when(authorizationService.getAllPermissionsForPrincipal(
-                        principal, IPermission.PORTAL_SYSTEM, MAX_INACTIVE_ATTR, null))
-                .thenReturn(permissions);
-
-        assertEquals("", Integer.valueOf(12), strategy.calcMaxInactive(person));
+        testTwoPermissions(
+                IPermission.PERMISSION_TYPE_GRANT,
+                "12",
+                IPermission.PERMISSION_TYPE_DENY,
+                "-34",
+                Integer.valueOf(12));
     }
 
     @Test
     public void validNegGrantMoreNegDeny() {
-        IPermission permission = mock(IPermission.class);
-        when(permission.getEffective()).thenReturn(null);
-        when(permission.getExpires()).thenReturn(null);
-        when(permission.getType()).thenReturn(IPermission.PERMISSION_TYPE_GRANT);
-        when(permission.getTarget()).thenReturn("-11");
-
-        IPermission permission2 = mock(IPermission.class);
-        when(permission2.getEffective()).thenReturn(null);
-        when(permission2.getExpires()).thenReturn(null);
-        when(permission2.getType()).thenReturn(IPermission.PERMISSION_TYPE_DENY);
-        when(permission2.getTarget()).thenReturn("-30");
-
-        permissions = new IPermission[] {permission, permission2};
-        when(authorizationService.getAllPermissionsForPrincipal(
-                        principal, IPermission.PORTAL_SYSTEM, MAX_INACTIVE_ATTR, null))
-                .thenReturn(permissions);
-
-        assertEquals("", Integer.valueOf(-11), strategy.calcMaxInactive(person));
+        testTwoPermissions(
+                IPermission.PERMISSION_TYPE_GRANT,
+                "-11",
+                IPermission.PERMISSION_TYPE_DENY,
+                "-30",
+                Integer.valueOf(-11));
     }
 
     @Test
     public void validMoreNegGrantNegDeny() {
-        IPermission permission = mock(IPermission.class);
-        when(permission.getEffective()).thenReturn(null);
-        when(permission.getExpires()).thenReturn(null);
-        when(permission.getType()).thenReturn(IPermission.PERMISSION_TYPE_GRANT);
-        when(permission.getTarget()).thenReturn("-112");
-
-        IPermission permission2 = mock(IPermission.class);
-        when(permission2.getEffective()).thenReturn(null);
-        when(permission2.getExpires()).thenReturn(null);
-        when(permission2.getType()).thenReturn(IPermission.PERMISSION_TYPE_DENY);
-        when(permission2.getTarget()).thenReturn("-34");
-
-        permissions = new IPermission[] {permission, permission2};
-        when(authorizationService.getAllPermissionsForPrincipal(
-                        principal, IPermission.PORTAL_SYSTEM, MAX_INACTIVE_ATTR, null))
-                .thenReturn(permissions);
-
-        assertEquals("", Integer.valueOf(-112), strategy.calcMaxInactive(person));
+        testTwoPermissions(
+                IPermission.PERMISSION_TYPE_GRANT,
+                "-112",
+                IPermission.PERMISSION_TYPE_DENY,
+                "-34",
+                Integer.valueOf(-112));
     }
 }
