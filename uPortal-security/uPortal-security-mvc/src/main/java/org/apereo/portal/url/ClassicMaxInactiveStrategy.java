@@ -41,7 +41,7 @@ public class ClassicMaxInactiveStrategy implements IMaxInactiveStrategy {
                 authorizationService.getAllPermissionsForPrincipal(
                         principal, IPermission.PORTAL_SYSTEM, MAX_INACTIVE_ATTR, null);
 
-        assert (permissions != null);
+        assert permissions != null;
         if (permissions.length == 0) {
             // No max inactive permission set for this user
             log.info(

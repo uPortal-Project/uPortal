@@ -44,9 +44,11 @@ public class RequireValidSessionFilter extends OncePerRequestFilter {
             // Session exists and is not new, don't bother filtering
             log.debug("User {} has a session: {}", request.getRemoteUser(), session.getId());
             log.debug("Max inactive interval: {}", session.getMaxInactiveInterval());
-            final Instant ctime = Instant.ofEpochMilli(session.getCreationTime());
-            final Instant atime = Instant.ofEpochMilli(session.getLastAccessedTime());
-            log.debug("Session creation time: {}, last access time: {}", ctime, atime);
+            if (log.isDebugEnabled()) {
+                final Instant ctime = Instant.ofEpochMilli(session.getCreationTime());
+                final Instant atime = Instant.ofEpochMilli(session.getLastAccessedTime());
+                log.debug("Session creation time: {}, last access time: {}", ctime, atime);
+            }
             return true;
         } else {
             log.debug("User {} does not have a session", request.getRemoteUser());

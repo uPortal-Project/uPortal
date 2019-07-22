@@ -62,11 +62,11 @@ public class MaxInactiveFilter implements Filter {
     @Override
     public void doFilter(ServletRequest req, ServletResponse resp, FilterChain filterChain)
             throws IOException, ServletException {
-        log.info("Entering MaxInactiveFilter");
+        log.debug("Entering MaxInactiveFilter");
         final HttpServletRequest request = (HttpServletRequest) req;
         checkMaxInactive(request);
 
-        log.info("Continuing on to other filters from MaxInactiveFilter");
+        log.debug("Continuing on to other filters from MaxInactiveFilter");
         filterChain.doFilter(req, resp);
     }
 
@@ -117,7 +117,7 @@ public class MaxInactiveFilter implements Filter {
         Integer maxInactive = maxInactiveStrategy.calcMaxInactive(person);
         if (maxInactive != null) {
             session.setMaxInactiveInterval(maxInactive);
-            log.info(
+            log.debug(
                     "Setting maxInactive to '{}' for user '{}'",
                     maxInactive,
                     person.getAttribute(IPerson.USERNAME));
