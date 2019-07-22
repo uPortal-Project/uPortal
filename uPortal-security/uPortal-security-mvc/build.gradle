@@ -7,4 +7,10 @@ dependencies {
     testCompile "${servletApiDependency}"
 
     compileOnly "${servletApiDependency}"
+    compileOnly "org.springframework:spring-web:${springVersion}"
+    compileOnly "org.springframework:spring-test:${springVersion}"
+
+    compile "org.slf4j:slf4j-api:${slf4jVersion}"
+    compileOnly "org.projectlombok:lombok:${lombokVersion}"
+    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
 }

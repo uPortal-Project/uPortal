@@ -28,6 +28,7 @@
     <bean id="minimizedStateHandlerInterceptor" class="org.apereo.portal.portlets.MinimizedStateHandlerInterceptor" />
 
     <bean id="requireValidSessionFilter" class="org.apereo.portal.url.RequireValidSessionFilter" />
+    <bean id="maxInactiveFilter" class="org.apereo.portal.url.MaxInactiveFilter" />
     <bean id="urlCanonicalizingFilter" class="org.apereo.portal.url.UrlCanonicalizingFilter" />
     <bean id="createPortletCookieFilter" class="org.apereo.portal.utils.web.CreatePortletCookieFilter"/>
 
