@@ -1,7 +1,7 @@
 plugins {
     // Top level plugins
     id 'build-announcements'
-    id 'com.github.kt3k.coveralls' version '2.8.2'
+    id 'com.github.kt3k.coveralls' version '2.8.4'
     id 'com.moowork.node' version '1.3.1'
     id 'net.researchgate.release' version '2.8.1'
     // Records all tasks in task graph, generates `build/reports/visteg.dot`
