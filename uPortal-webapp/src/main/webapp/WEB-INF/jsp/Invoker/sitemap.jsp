@@ -102,7 +102,7 @@
             var tabRowTemplate = document.getElementById('sitemap-tab-row-template');
             var tabRow = document.importNode(tabRowTemplate.content, true).querySelector('div');
             _.forEach(response.layout.navigation.tabs, function (tab, tabIndex) {
-                if (sitemapJsonCheck(tab, ['name','ID','content'], "Missing required object path [layout.navigation.tabs] > ")) {
+                if (sitemapJsonCheck(tab, ['name','externalId','content'], "Missing required object path [layout.navigation.tabs] > ")) {
                     return;
                 }
 
@@ -112,7 +112,7 @@
                 // Add content to tab header template
                 var tabHeaderLink = tabHeader.querySelector('a');
                 tabHeaderLink.textContent = _.unescape(tab.name);
-                tabHeaderLink.href = '${portalContextPath}/f/' + tab.ID + '/normal/render.uP';
+                tabHeaderLink.href = '${portalContextPath}/f/' + tab.externalId + '/normal/render.uP';
                 var portletList = tabHeader.querySelector('ul');
 
                 _.forEach(tab.content, function (parentContent, parentContentIndex) {
@@ -132,7 +132,7 @@
                         var portletTitle = portletListItem.querySelector('span');
                         portletTitle.textContent = _.unescape(portlet.name);
                         var portletLink = portletListItem.querySelector('a');
-                        portletLink.href = '${portalContextPath}/f/' + tab.ID + '/p/' + portlet.fname + '.' + portlet.ID + '/max/render.uP';
+                        portletLink.href = '${portalContextPath}/f/' + tab.externalId + '/p/' + portlet.fname + '.' + portlet.ID + '/max/render.uP';
                         // Add portlet to tab list
                         portletList.appendChild(portletListItem);
                     });
