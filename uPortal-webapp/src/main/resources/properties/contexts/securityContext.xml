@@ -119,7 +119,7 @@
      +-->
     <bean name="ticketValidationFilter" class="org.jasig.cas.client.validation.Cas20ProxyReceivingTicketValidationFilter">
         <property name="serverName" value="${portal.allServerNames}" />
-        <property name="encodeServiceUrl" value="false" />
+        <property name="encodeServiceUrl" value="true" />
         <property name="proxyReceptorUrl" value="${cas.ticketValidationFilter.proxyReceptorUrl:}" />
         <property name="ticketValidator">
             <bean class="org.jasig.cas.client.validation.Cas20ServiceTicketValidator">
