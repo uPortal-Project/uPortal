@@ -100,7 +100,7 @@
     <div class="fl-widget-content content portlet-content">
 
         <div class="portlet-content">
-            <form id="${n}searchForm" action="javascript:;">
+            <form id="${n}searchForm" action="javascript:;" class="clearfix">
                 <div class="col-md-6">
                     <select id="${n}queryAttribute" class="form-control" name="queryAttribute" aria-label="<spring:message code="type"/>">
                         <option value="">
