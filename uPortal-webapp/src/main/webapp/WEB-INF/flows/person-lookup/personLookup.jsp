@@ -130,144 +130,144 @@
                 </div>
             </form>
 
-        <div id="${n}searchResults" class="portlet-section" style="display:none" role="region">
-            <div class="titlebar">
-                <h3 role="heading" class="title">Search Results</h3>
+            <div id="${n}searchResults" class="portlet-section" style="display:none" role="region">
+                <div class="titlebar">
+                    <h3 role="heading" class="title">Search Results</h3>
+                </div>
+                <table id="${n}resultsTable" class="portlet-table table table-bordered table-hover" style="width:100%;">
+                    <thead>
+                        <tr>
+                            <th><spring:message code="name"/></th>
+                            <th><spring:message code="username"/></th>
+                        </tr>
+                    </thead>
+                </table>
             </div>
-            <table id="${n}resultsTable" class="portlet-table table table-bordered table-hover" style="width:100%;">
-                <thead>
-                    <tr>
-                        <th><spring:message code="name"/></th>
-                        <th><spring:message code="username"/></th>
-                    </tr>
-                </thead>
-            </table>
+
         </div>
-
     </div>
-</div>
 
-<script type="text/javascript">
-up.jQuery(function() {
-    var $ = up.jQuery;
+    <script type="text/javascript">
+    up.jQuery(function() {
+        var $ = up.jQuery;
 
-    var attrs = ${up:json(queryAttributes)};
-    var personList_configuration = {
-        column: {
-            name: 0,
-            username: 1
-        },
-        main: {
-            table : null,
-            pageSize: 10
-        }
-    };
-    // Url generating helper functions
-    var getSelectPersonAnchorTag = function(displayName, userName) {
-        var url = '${selectPersonUrl}'.replace("USERNAME", userName);
-        return '<a href="' + url + '">' + displayName + '</a>';
-    };
-    var showSearchResults = function (queryData) {
-        personList_configuration.main.table = $("#${n}resultsTable").dataTable({
-            iDisplayLength: personList_configuration.main.pageSize,
-            aLengthMenu: [5, 10, 20, 50],
-            bServerSide: false,
-            sAjaxSource: '<c:url value="/api/people.json"/>',
-            sAjaxDataProp: "people",
-            bDeferRender: false,
-            bProcessing: true,
-            bAutoWidth:false,
-            sPaginationType: 'full_numbers',
-            oLanguage: {
-                sLengthMenu: '<spring:message code="datatables.length-menu.message" htmlEscape="false" javaScriptEscape="true"/>',
-                oPaginate: {
-                    sPrevious: '<spring:message code="datatables.paginate.previous" htmlEscape="false" javaScriptEscape="true"/>',
-                    sNext: '<spring:message code="datatables.paginate.next" htmlEscape="false" javaScriptEscape="true"/>'
-                }
+        var attrs = ${up:json(queryAttributes)};
+        var personList_configuration = {
+            column: {
+                name: 0,
+                username: 1
             },
-            aoColumns: [
-                { mData: 'attributes.displayName', sType: 'string', sWidth: '50%' },  // Name
-                { mData: 'attributes.username', sType: 'string', sWidth: '50%' }  // User Name
-            ],
-            fnInitComplete: function (oSettings) {
-                personList_configuration.main.table.fnDraw();
-            },
-            fnServerData: function (sUrl, aoData, fnCallback, oSettings) {
-                oSettings.jqXHR = $.ajax({
-                    url: sUrl,
-                    data: queryData,
-                    dataType: "json",
-                    cache: false,
-                    type: oSettings.sServerMethod,
-                    success: function (json) {
-                        if (json.sError) {
-                            oSettings.oApi._fnLog(oSettings, 0, json.sError);
-                        }
-
-                        $(oSettings.oInstance).trigger('xhr', [oSettings, json]);
-                        fnCallback(json);
-                    },
-                    error: function (xhr, error, thrown) {
-                        lib.handleError(xhr, error, thrown);
+            main: {
+                table : null,
+                pageSize: 10
+            }
+        };
+        // Url generating helper functions
+        var getSelectPersonAnchorTag = function(displayName, userName) {
+            var url = '${selectPersonUrl}'.replace("USERNAME", userName);
+            return '<a href="' + url + '">' + displayName + '</a>';
+        };
+        var showSearchResults = function (queryData) {
+            personList_configuration.main.table = $("#${n}resultsTable").dataTable({
+                iDisplayLength: personList_configuration.main.pageSize,
+                aLengthMenu: [5, 10, 20, 50],
+                bServerSide: false,
+                sAjaxSource: '<c:url value="/api/people.json"/>',
+                sAjaxDataProp: "people",
+                bDeferRender: false,
+                bProcessing: true,
+                bAutoWidth:false,
+                sPaginationType: 'full_numbers',
+                oLanguage: {
+                    sLengthMenu: '<spring:message code="datatables.length-menu.message" htmlEscape="false" javaScriptEscape="true"/>',
+                    oPaginate: {
+                        sPrevious: '<spring:message code="datatables.paginate.previous" htmlEscape="false" javaScriptEscape="true"/>',
+                        sNext: '<spring:message code="datatables.paginate.next" htmlEscape="false" javaScriptEscape="true"/>'
                     }
-                });
-            },
-            fnInfoCallback: function( oSettings, iStart, iEnd, iMax, iTotal, sPre ) {
-                var infoMessage = '<spring:message code="datatables.info.message" htmlEscape="false" javaScriptEscape="true"/>';
-                var iCurrentPage = Math.ceil(oSettings._iDisplayStart / oSettings._iDisplayLength) + 1;
-                infoMessage = infoMessage.replace(/_START_/g, iStart).
-                                      replace(/_END_/g, iEnd).
-                                      replace(/_TOTAL_/g, iTotal).
-                                      replace(/_CURRENT_PAGE_/g, iCurrentPage);
-                return infoMessage;
-            },
-            // Add links to the proper columns after we get the data
-            fnRowCallback: function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-                // Create links to user
-                $('td:eq(0)', nRow).html( getSelectPersonAnchorTag(aData.attributes.displayName, aData.attributes.username) );
-                $('td:eq(1)', nRow).html( getSelectPersonAnchorTag(aData.attributes.username, aData.attributes.username) );
-            },
-            // Setting the top and bottom controls
-            sDom: 'r<"row alert alert-info view-filter"<"toolbar-filter"><W><"toolbar-br"><"dataTables-inline dataTables-left"p><"dataTables-inline dataTables-left"i><"dataTables-inline dataTables-left"l>><"row"<"span12"t>>>'
-        });
-        $("#${n}searchResults").show();
-        // Adding formatting to sDom
-        $("div.toolbar-br").html('<BR>');
-        $("div.toolbar-filter").html('<B><spring:message code="filters" htmlEscape="false" javaScriptEscape="true"/></B>:');
-    };
+                },
+                aoColumns: [
+                    { mData: 'attributes.displayName', sType: 'string', sWidth: '50%' },  // Name
+                    { mData: 'attributes.username', sType: 'string', sWidth: '50%' }  // User Name
+                ],
+                fnInitComplete: function (oSettings) {
+                    personList_configuration.main.table.fnDraw();
+                },
+                fnServerData: function (sUrl, aoData, fnCallback, oSettings) {
+                    oSettings.jqXHR = $.ajax({
+                        url: sUrl,
+                        data: queryData,
+                        dataType: "json",
+                        cache: false,
+                        type: oSettings.sServerMethod,
+                        success: function (json) {
+                            if (json.sError) {
+                                oSettings.oApi._fnLog(oSettings, 0, json.sError);
+                            }
 
-    $(document).ready(function(){
-        $("#${n}searchForm").submit(function() {
-            var queryData = { searchTerms: [] };
-            var searchTerm = $("#${n}queryValue").val();
-            var queryTerm = $("#${n}queryAttribute").val();
+                            $(oSettings.oInstance).trigger('xhr', [oSettings, json]);
+                            fnCallback(json);
+                        },
+                        error: function (xhr, error, thrown) {
+                            lib.handleError(xhr, error, thrown);
+                        }
+                    });
+                },
+                fnInfoCallback: function( oSettings, iStart, iEnd, iMax, iTotal, sPre ) {
+                    var infoMessage = '<spring:message code="datatables.info.message" htmlEscape="false" javaScriptEscape="true"/>';
+                    var iCurrentPage = Math.ceil(oSettings._iDisplayStart / oSettings._iDisplayLength) + 1;
+                    infoMessage = infoMessage.replace(/_START_/g, iStart).
+                                        replace(/_END_/g, iEnd).
+                                        replace(/_TOTAL_/g, iTotal).
+                                        replace(/_CURRENT_PAGE_/g, iCurrentPage);
+                    return infoMessage;
+                },
+                // Add links to the proper columns after we get the data
+                fnRowCallback: function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                    // Create links to user
+                    $('td:eq(0)', nRow).html( getSelectPersonAnchorTag(aData.attributes.displayName, aData.attributes.username) );
+                    $('td:eq(1)', nRow).html( getSelectPersonAnchorTag(aData.attributes.username, aData.attributes.username) );
+                },
+                // Setting the top and bottom controls
+                sDom: 'r<"row alert alert-info view-filter"<"toolbar-filter"><W><"toolbar-br"><"dataTables-inline dataTables-left"p><"dataTables-inline dataTables-left"i><"dataTables-inline dataTables-left"l>><"row"<"span12"t>>>'
+            });
+            $("#${n}searchResults").show();
+            // Adding formatting to sDom
+            $("div.toolbar-br").html('<BR>');
+            $("div.toolbar-filter").html('<B><spring:message code="filters" htmlEscape="false" javaScriptEscape="true"/></B>:');
+        };
 
-            // if no search term present do not submit form
-            if (searchTerm.length == 0) {
-                $("#${n}searchResults").hide();
+        $(document).ready(function(){
+            $("#${n}searchForm").submit(function() {
+                var queryData = { searchTerms: [] };
+                var searchTerm = $("#${n}queryValue").val();
+                var queryTerm = $("#${n}queryAttribute").val();
+
+                // if no search term present do not submit form
+                if (searchTerm.length == 0) {
+                    $("#${n}searchResults").hide();
+                    return false;
+                }
+
+                if (!queryTerm) {
+                    $(attrs).each(function (idx, attr) {
+                        queryData.searchTerms.push(attr);
+                        queryData[attr] = searchTerm;
+                    });
+                } else {
+                    queryData.searchTerms.push(queryTerm);
+                    queryData[queryTerm] = searchTerm;
+                }
+                // To allow the datatable to be repopulated to search multiple times
+                // clear and destroy the original
+                if (personList_configuration.main.table != undefined && typeof personList_configuration.main.table.fnClearTable !== 'undefined') {
+                    $("#${n}searchResults").hide();
+                    personList_configuration.main.table.fnClearTable();
+                    personList_configuration.main.table.fnDestroy();
+                }
+                showSearchResults(queryData);
                 return false;
-            }
-
-            if (!queryTerm) {
-                $(attrs).each(function (idx, attr) {
-                    queryData.searchTerms.push(attr);
-                    queryData[attr] = searchTerm;
-                });
-            } else {
-                queryData.searchTerms.push(queryTerm);
-                queryData[queryTerm] = searchTerm;
-            }
-            // To allow the datatable to be repopulated to search multiple times
-            // clear and destroy the original
-            if (personList_configuration.main.table != undefined && typeof personList_configuration.main.table.fnClearTable !== 'undefined') {
-                $("#${n}searchResults").hide();
-                personList_configuration.main.table.fnClearTable();
-                personList_configuration.main.table.fnDestroy();
-            }
-            showSearchResults(queryData);
-            return false;
+            });
         });
     });
-});
-</script>
+    </script>
 </div>
