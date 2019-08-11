@@ -78,6 +78,24 @@
         "^com.amazonaws"
       ],
       "schedule": "on Monday"
+    },
+    {
+      "groupName": "SLF4J",
+      "packagePatterns": [
+        "^org.slf4j"
+      ]
+    },
+    {
+      "groupName": "Groovy",
+      "packagePatterns": [
+        "^org.codehaus.groovy"
+      ]
+    },
+    {
+      "groupName": "JSON Web Token",
+      "packagePatterns": [
+        "^io.jsonwebtoken"
+      ]
     }
   ]
 }
