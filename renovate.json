@@ -72,6 +72,10 @@
     {
       "groupName": "JAXB",
       "packagePatterns": ["^com.sun.xml.bind"]
-    }
+    },
+    {
+      "groupName": "Jadira Usertype",
+      "packagePatterns": ["^org.jadira.usertype"]
+    },
   ]
 }
