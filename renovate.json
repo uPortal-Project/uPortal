@@ -76,6 +76,6 @@
     {
       "groupName": "Jadira Usertype",
       "packagePatterns": ["^org.jadira.usertype"]
-    },
+    }
   ]
 }
