@@ -64,6 +64,14 @@
     {
       "groupName": "JSON Web Token",
       "packagePatterns": ["^io.jsonwebtoken"]
+    },
+    {
+      "groupName": "Apache Pluto",
+      "packagePatterns": ["^org.apache.portals.pluto"]
+    },
+    {
+      "groupName": "JAXB",
+      "packagePatterns": ["^com.sun.xml.bind"]
     }
   ]
 }
