@@ -3,99 +3,67 @@
     "config:base",
     ":rebaseStalePrs",
     ":preserveSemverRanges",
-    ":disableRateLimiting"
+    ":disableRateLimiting",
+    ":masterIssue"
   ],
-  "gradle": {
-    "enabled": true
-  },
-  "maven": {
-    "enabled": true
-  },
+  "major": { "masterIssueApproval": true },
   "renovateFork": true,
   "packageRules": [
     {
       "groupName": "uPortal",
-      "packagePatterns": [
-        "^org.jasig.portal:"
-      ]
+      "packagePatterns": ["^org.jasig.portal:"]
     },
     {
       "groupName": "uPortal web components",
-      "packagePatterns": [
-        "^org.webjars.npm:uportal"
-      ]
+      "packagePatterns": ["^org.webjars.npm:uportal"]
     },
     {
       "groupName": "Person Directory",
-      "packagePatterns": [
-        "^org.apereo.service.persondir"
-      ]
+      "packagePatterns": ["^org.apereo.service.persondir"]
     },
     {
       "groupName": "Lucene",
-      "packagePatterns": [
-        "^org.apache.lucene"
-      ]
+      "packagePatterns": ["^org.apache.lucene"]
     },
     {
       "groupName": "Mockito",
-      "packagePatterns": [
-        "^org.mockito"
-      ]
+      "packagePatterns": ["^org.mockito"]
     },
     {
       "groupName": "User Type",
-      "packagePatterns": [
-        "^org.jadira.usertype:usertype.core"
-      ]
+      "packagePatterns": ["^org.jadira.usertype:usertype.core"]
     },
     {
       "groupName": "JAXB2",
-      "packagePatterns": [
-        "^org.jvnet.jaxb2_commons"
-      ]
+      "packagePatterns": ["^org.jvnet.jaxb2_commons"]
     },
     {
       "groupName": "Resource Server",
-      "packagePatterns": [
-        "^org.jasig.resourceserver"
-      ]
+      "packagePatterns": ["^org.jasig.resourceserver"]
     },
     {
       "groupName": "Notification Portlet",
-      "packagePatterns": [
-        "^org.jasig.portlet.notification"
-      ]
+      "packagePatterns": ["^org.jasig.portlet.notification"]
     },
     {
       "groupName": "AspectJ",
-      "packagePatterns": [
-        "^org.aspectj"
-      ]
+      "packagePatterns": ["^org.aspectj"]
     },
     {
-      "packagePatterns": [
-        "^com.amazonaws"
-      ],
+      "packagePatterns": ["^com.amazonaws"],
       "schedule": "on Monday"
     },
     {
       "groupName": "SLF4J",
-      "packagePatterns": [
-        "^org.slf4j"
-      ]
+      "packagePatterns": ["^org.slf4j"]
     },
     {
       "groupName": "Groovy",
-      "packagePatterns": [
-        "^org.codehaus.groovy"
-      ]
+      "packagePatterns": ["^org.codehaus.groovy"]
     },
     {
       "groupName": "JSON Web Token",
-      "packagePatterns": [
-        "^io.jsonwebtoken"
-      ]
+      "packagePatterns": ["^io.jsonwebtoken"]
     }
   ]
 }
