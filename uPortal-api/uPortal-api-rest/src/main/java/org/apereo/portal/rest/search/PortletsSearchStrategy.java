@@ -40,6 +40,7 @@ import org.apereo.portal.portlets.search.PortletRegistryUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 /**
@@ -54,11 +55,19 @@ public class PortletsSearchStrategy implements ISearchStrategy {
 
     private MultiFieldQueryParser queryParser;
 
+    private boolean displayScore;
+
     @Autowired private Directory directory;
 
     @Autowired private IPortletDefinitionRegistry portletDefinitionRegistry;
 
     @Autowired private PortletRegistryUtil portletRegistryUtil;
+
+    /** Set if the score should be provided in the search results */
+    @Value("${org.apereo.portal.rest.search.PortletsSearchStrategy.displayScore:true}")
+    public void setDisplayScore(boolean displayScore) {
+        this.displayScore = displayScore;
+    }
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -95,24 +104,32 @@ public class PortletsSearchStrategy implements ISearchStrategy {
                                     final IPortletDefinition portlet =
                                             portletDefinitionRegistry.getPortletDefinitionByFname(
                                                     document.get(SearchField.FNAME.getValue()));
+                                    final String scoreStr = Float.toString(scoreDoc.score);
                                     if (seen.contains(portlet)) {
                                         // Don't process a portlet more than once...
+                                        logger.debug(
+                                                "Using query '{}', found a duplicate portlet '{}' with score '{}'.  ",
+                                                query,
+                                                portlet,
+                                                scoreStr);
                                         return;
                                     }
                                     seen.add(portlet);
                                     logger.debug(
-                                            "Search query '{}' matches portlet: {}",
+                                            "Search query '{}' matches portlet: {} with score '{}'",
                                             query,
-                                            portlet);
+                                            portlet,
+                                            scoreStr);
                                     /* requester permissions checked in buildPortletUrl() */
                                     final String url =
                                             portletRegistryUtil.buildPortletUrl(request, portlet);
                                     if (url != null) {
                                         logger.debug(
-                                                "Adding portlet with fname='{}' to search results for query='{}'",
+                                                "Adding portlet with fname='{}', score='{}' to search results for query='{}'",
                                                 portlet.getFName(),
+                                                scoreStr,
                                                 query);
-                                        rslt.add(getPortletAttrs(portlet, url));
+                                        rslt.add(getPortletAttrs(portlet, url, scoreStr));
                                     }
                                 } catch (IOException e) {
                                     // Log a warning, but don't prevent other matches from
@@ -133,13 +150,17 @@ public class PortletsSearchStrategy implements ISearchStrategy {
         return rslt;
     }
 
-    private Map<String, String> getPortletAttrs(IPortletDefinition portlet, String url) {
+    private Map<String, String> getPortletAttrs(
+            IPortletDefinition portlet, String url, String score) {
         final Map<String, String> rslt = new TreeMap<>();
         rslt.put("name", portlet.getName());
         rslt.put("fname", portlet.getFName());
         rslt.put("title", portlet.getTitle());
         rslt.put("description", portlet.getDescription());
         rslt.put("url", url);
+        if (displayScore) {
+            rslt.put("score", score);
+        }
         return rslt;
     }
 }
