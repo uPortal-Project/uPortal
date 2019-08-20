@@ -401,11 +401,7 @@
                         <h4 class="modal-title"><xsl:value-of select="upMsg:getMessage('direct.url', $USER_LANG)"/></h4>
                     </div>
                     <div class="modal-body">
-                        <form>
-                            <div class="form-group">
-                                <input type="text" class="form-control" id="direct-url-display"/>
-                            </div>
-                        </form>
+                        <p id="direct-url-display"></p>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal"><xsl:value-of select="upMsg:getMessage('close', $USER_LANG)"/></button>
@@ -419,7 +415,7 @@
                 $('#direct-url-modal').on('show.bs.modal', function (event) {
                     var widget = $(event.relatedTarget); // Widget that triggered the modal
                     var dUrl = widget.data('direct-url'); // Extract info from data-* attributes
-                    $('#direct-url-display').val(dUrl);
+                    $('#direct-url-display').text(dUrl);
                 });
             });
         </script>
