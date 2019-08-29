@@ -17,10 +17,8 @@ package org.apereo.portal.rest.search;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
@@ -33,6 +31,7 @@ import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
+import org.apereo.portal.index.PortalSearchIndexer;
 import org.apereo.portal.index.SearchField;
 import org.apereo.portal.portlet.om.IPortletDefinition;
 import org.apereo.portal.portlet.registry.IPortletDefinitionRegistry;
@@ -89,7 +88,6 @@ public class PortletsSearchStrategy implements ISearchStrategy {
     public List<?> search(String query, HttpServletRequest request) {
 
         final List<Object> rslt = new ArrayList<>();
-        final Set<IPortletDefinition> seen = new HashSet<>();
 
         try (IndexReader indexReader = DirectoryReader.open(directory)) {
 
@@ -105,29 +103,25 @@ public class PortletsSearchStrategy implements ISearchStrategy {
                                             portletDefinitionRegistry.getPortletDefinitionByFname(
                                                     document.get(SearchField.FNAME.getValue()));
                                     final String scoreStr = Float.toString(scoreDoc.score);
-                                    if (seen.contains(portlet)) {
-                                        // Don't process a portlet more than once...
-                                        logger.debug(
-                                                "Using query '{}', found a duplicate portlet '{}' with score '{}'.  ",
-                                                query,
-                                                portlet,
-                                                scoreStr);
-                                        return;
-                                    }
-                                    seen.add(portlet);
+                                    final String hashKey =
+                                            document.getField(
+                                                            PortalSearchIndexer.LUCENE_DOC_ID_FIELD)
+                                                    .stringValue();
                                     logger.debug(
-                                            "Search query '{}' matches portlet: {} with score '{}'",
+                                            "Search query '{}' matches portlet: '{}', score='{}', hashId='{}'",
                                             query,
                                             portlet,
-                                            scoreStr);
+                                            scoreStr,
+                                            hashKey);
                                     /* requester permissions checked in buildPortletUrl() */
                                     final String url =
                                             portletRegistryUtil.buildPortletUrl(request, portlet);
                                     if (url != null) {
                                         logger.debug(
-                                                "Adding portlet with fname='{}', score='{}' to search results for query='{}'",
+                                                "Adding portlet with fname='{}', score='{}', hash='{}' to search results for query='{}'",
                                                 portlet.getFName(),
                                                 scoreStr,
+                                                hashKey,
                                                 query);
                                         rslt.add(getPortletAttrs(portlet, url, scoreStr));
                                     }

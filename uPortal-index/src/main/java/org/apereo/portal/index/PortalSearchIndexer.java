@@ -42,6 +42,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class PortalSearchIndexer {
 
+    public static final String LUCENE_DOC_ID_FIELD = "id";
+
     @Autowired private IPortletDefinitionRegistry portletRegistry;
 
     @Autowired private Directory directory;
@@ -90,10 +92,9 @@ public class PortalSearchIndexer {
         // Unique identifier, hashed to eliminate special character concerns, such as hyphens
         final String fnameHash =
                 Hashing.sha256().hashString(portlet.getFName(), StandardCharsets.UTF_8).toString();
-        final String fnameHashKey = "id";
         try {
             final Document doc = new Document();
-            doc.add(new TextField(fnameHashKey, fnameHash, Field.Store.YES));
+            doc.add(new TextField(LUCENE_DOC_ID_FIELD, fnameHash, Field.Store.YES));
             doc.add(
                     new TextField(
                             SearchField.FNAME.getValue(), portlet.getFName(), Field.Store.YES));
@@ -120,7 +121,7 @@ public class PortalSearchIndexer {
                 doc.add(new TextField(SearchField.CONTENT.getValue(), content, Field.Store.YES));
             }
 
-            indexWriter.updateDocument(new Term(fnameHashKey, fnameHash), doc);
+            indexWriter.updateDocument(new Term(LUCENE_DOC_ID_FIELD, fnameHash), doc);
         } catch (IOException ioe) {
             logger.warn(
                     "Unable to index portlet with fname='{}' and hash='{}'",
