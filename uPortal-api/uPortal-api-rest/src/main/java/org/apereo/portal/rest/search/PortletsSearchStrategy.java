@@ -17,10 +17,8 @@ package org.apereo.portal.rest.search;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
@@ -33,6 +31,7 @@ import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
+import org.apereo.portal.index.PortalSearchIndexer;
 import org.apereo.portal.index.SearchField;
 import org.apereo.portal.portlet.om.IPortletDefinition;
 import org.apereo.portal.portlet.registry.IPortletDefinitionRegistry;
@@ -40,6 +39,7 @@ import org.apereo.portal.portlets.search.PortletRegistryUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 /**
@@ -54,11 +54,19 @@ public class PortletsSearchStrategy implements ISearchStrategy {
 
     private MultiFieldQueryParser queryParser;
 
+    private boolean displayScore;
+
     @Autowired private Directory directory;
 
     @Autowired private IPortletDefinitionRegistry portletDefinitionRegistry;
 
     @Autowired private PortletRegistryUtil portletRegistryUtil;
+
+    /** Set if the score should be provided in the search results */
+    @Value("${org.apereo.portal.rest.search.PortletsSearchStrategy.displayScore:true}")
+    public void setDisplayScore(boolean displayScore) {
+        this.displayScore = displayScore;
+    }
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -80,7 +88,6 @@ public class PortletsSearchStrategy implements ISearchStrategy {
     public List<?> search(String query, HttpServletRequest request) {
 
         final List<Object> rslt = new ArrayList<>();
-        final Set<IPortletDefinition> seen = new HashSet<>();
 
         try (IndexReader indexReader = DirectoryReader.open(directory)) {
 
@@ -95,24 +102,28 @@ public class PortletsSearchStrategy implements ISearchStrategy {
                                     final IPortletDefinition portlet =
                                             portletDefinitionRegistry.getPortletDefinitionByFname(
                                                     document.get(SearchField.FNAME.getValue()));
-                                    if (seen.contains(portlet)) {
-                                        // Don't process a portlet more than once...
-                                        return;
-                                    }
-                                    seen.add(portlet);
+                                    final String scoreStr = Float.toString(scoreDoc.score);
+                                    final String hashKey =
+                                            document.getField(
+                                                            PortalSearchIndexer.LUCENE_DOC_ID_FIELD)
+                                                    .stringValue();
                                     logger.debug(
-                                            "Search query '{}' matches portlet: {}",
+                                            "Search query '{}' matches portlet: '{}', score='{}', hashId='{}'",
                                             query,
-                                            portlet);
+                                            portlet,
+                                            scoreStr,
+                                            hashKey);
                                     /* requester permissions checked in buildPortletUrl() */
                                     final String url =
                                             portletRegistryUtil.buildPortletUrl(request, portlet);
                                     if (url != null) {
                                         logger.debug(
-                                                "Adding portlet with fname='{}' to search results for query='{}'",
+                                                "Adding portlet with fname='{}', score='{}', hash='{}' to search results for query='{}'",
                                                 portlet.getFName(),
+                                                scoreStr,
+                                                hashKey,
                                                 query);
-                                        rslt.add(getPortletAttrs(portlet, url));
+                                        rslt.add(getPortletAttrs(portlet, url, scoreStr));
                                     }
                                 } catch (IOException e) {
                                     // Log a warning, but don't prevent other matches from
@@ -133,13 +144,17 @@ public class PortletsSearchStrategy implements ISearchStrategy {
         return rslt;
     }
 
-    private Map<String, String> getPortletAttrs(IPortletDefinition portlet, String url) {
+    private Map<String, String> getPortletAttrs(
+            IPortletDefinition portlet, String url, String score) {
         final Map<String, String> rslt = new TreeMap<>();
         rslt.put("name", portlet.getName());
         rslt.put("fname", portlet.getFName());
         rslt.put("title", portlet.getTitle());
         rslt.put("description", portlet.getDescription());
         rslt.put("url", url);
+        if (displayScore) {
+            rslt.put("score", score);
+        }
         return rslt;
     }
 }

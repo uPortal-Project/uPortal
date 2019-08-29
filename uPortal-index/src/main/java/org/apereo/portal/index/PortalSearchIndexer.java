@@ -14,7 +14,9 @@
  */
 package org.apereo.portal.index;
 
+import com.google.common.hash.Hashing;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -39,6 +41,8 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class PortalSearchIndexer {
+
+    public static final String LUCENE_DOC_ID_FIELD = "id";
 
     @Autowired private IPortletDefinitionRegistry portletRegistry;
 
@@ -85,10 +89,15 @@ public class PortalSearchIndexer {
     }
 
     private void indexPortlet(IPortletDefinition portlet, IndexWriter indexWriter) {
-        final String fname = portlet.getFName(); // Unique identifier
+        // Unique identifier, hashed to eliminate special character concerns, such as hyphens
+        final String fnameHash =
+                Hashing.sha256().hashString(portlet.getFName(), StandardCharsets.UTF_8).toString();
         try {
             final Document doc = new Document();
-            doc.add(new TextField(SearchField.FNAME.getValue(), fname, Field.Store.YES));
+            doc.add(new TextField(LUCENE_DOC_ID_FIELD, fnameHash, Field.Store.YES));
+            doc.add(
+                    new TextField(
+                            SearchField.FNAME.getValue(), portlet.getFName(), Field.Store.YES));
             doc.add(new TextField(SearchField.NAME.getValue(), portlet.getName(), Field.Store.YES));
             doc.add(
                     new TextField(
@@ -111,12 +120,16 @@ public class PortalSearchIndexer {
             if (StringUtils.isNotBlank(content)) {
                 doc.add(new TextField(SearchField.CONTENT.getValue(), content, Field.Store.YES));
             }
-            indexWriter.updateDocument(new Term("fname", fname), doc);
+
+            indexWriter.updateDocument(new Term(LUCENE_DOC_ID_FIELD, fnameHash), doc);
         } catch (IOException ioe) {
-            logger.warn("Unable to index portlet with fname='{}'", fname);
+            logger.warn(
+                    "Unable to index portlet with fname='{}' and hash='{}'",
+                    portlet.getFName(),
+                    fnameHash);
             return;
         }
-        logger.debug("Indexed portlet '{}'", fname);
+        logger.debug("Indexed portlet '{}' (hash='{}')", portlet.getFName(), fnameHash);
     }
 
     private String extractContent(IPortletDefinition portlet) {
