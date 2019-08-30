@@ -199,6 +199,11 @@ subprojects {
         }
     }
     afterReleaseBuild.dependsOn uploadArchives
+
+    def jacocoExecutionDataFiles = fileTree(buildDir).include("/jacoco/*.exec")
+    jacocoTestReport {
+        executionData = jacocoExecutionDataFiles
+    }
 }
 
 /*
@@ -213,11 +218,11 @@ release {
 
 
 task jacocoAggregateReport(type: org.gradle.testing.jacoco.tasks.JacocoReport) {
-    dependsOn = allprojects.test
-    additionalSourceDirs = files(allprojects.sourceSets.main.allSource.srcDirs)
-    sourceDirectories = files(allprojects.sourceSets.main.allSource.srcDirs)
-    classDirectories = files(allprojects.sourceSets.main.output)
-    executionData = files(allprojects.jacocoTestReport.executionData)
+    dependsOn = subprojects.test
+    additionalSourceDirs = files(subprojects.sourceSets.main.allSource.srcDirs)
+    sourceDirectories = files(subprojects.sourceSets.main.allSource.srcDirs)
+    classDirectories = files(subprojects.sourceSets.main.output)
+    executionData = files(subprojects.jacocoTestReport.executionData)
     reports {
         xml.enabled = true
         html.enabled = true
