@@ -23,14 +23,19 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apereo.portal.EntityIdentifier;
 import org.apereo.portal.jdbc.RDBMServices;
 import org.apereo.portal.services.GroupService;
+import org.apereo.portal.spring.locator.ApplicationContextLocator;
 import org.apereo.portal.spring.locator.CounterStoreLocator;
 import org.apereo.portal.spring.locator.EntityTypesLocator;
 import org.apereo.portal.utils.SqlTransaction;
+import org.springframework.context.ApplicationContext;
 
 /** Store for <code>EntityGroupImpl</code>. */
 public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants {
@@ -128,6 +133,7 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
     private static String deleteMemberGroupSql;
     private static String deleteMemberEntitySql;
     private static String insertMemberSql;
+    private Cache groupSearchCache;
 
     /** RDBMEntityGroupStore constructor. */
     public RDBMEntityGroupStore() {
@@ -149,6 +155,18 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
         if (LOG.isDebugEnabled()) {
             LOG.debug("RDBMEntityGroupStore.initialize(): Node separator set to " + sep);
         }
+
+        // Cache for group search
+        this.groupSearchCache = getGroupSearchCache();
+        assert this.groupSearchCache != null;
+    }
+
+    private Cache getGroupSearchCache() {
+        final ApplicationContext context = ApplicationContextLocator.getApplicationContext();
+        assert context != null;
+        final CacheManager cacheManager = context.getBean("cacheManager", CacheManager.class);
+        assert cacheManager != null;
+        return cacheManager.getCache("org.apereo.portal.groups.RDBMEntityGroupStore.search");
     }
 
     /**
@@ -1351,8 +1369,26 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
     @Override
     public EntityIdentifier[] searchForGroups(String query, SearchMethod method, Class leaftype)
             throws GroupsException {
-        EntityIdentifier[] r = new EntityIdentifier[0];
+        assert query != null;
+        assert method != null;
+        assert leaftype != null;
+        final EntityIdentifier[] r = new EntityIdentifier[0];
         ArrayList ar = new ArrayList();
+
+        final String cacheKey = query + ":" + method.name() + ":" + leaftype.getSimpleName();
+        Element el = null;
+        assert this.groupSearchCache != null;
+        try {
+            el = this.groupSearchCache.get(cacheKey);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (el != null) {
+            ar = (ArrayList) el.getObjectValue();
+            assert ar != null;
+            return (EntityIdentifier[]) ar.toArray(r);
+        }
+
         Connection conn = null;
         PreparedStatement ps = null;
         int type = EntityTypesLocator.getEntityTypes().getEntityIDFromType(leaftype).intValue();
@@ -1425,6 +1461,9 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
         } finally {
             RDBMServices.releaseConnection(conn);
         }
+        el = new Element(cacheKey, ar);
+        assert this.groupSearchCache != null;
+        this.groupSearchCache.put(el);
         return (EntityIdentifier[]) ar.toArray(r);
     }
 
