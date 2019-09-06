@@ -414,6 +414,16 @@
     </cache>
 
     <!--
+     | Caches search results from searchForGroups() in RDBMEntityGroupStore.
+     | - 1 x search criteria
+     +-->
+    <cache name="org.apereo.portal.groups.RDBMEntityGroupStore.search"
+        eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory class="org.apereo.portal.utils.cache.SpringCacheEventListenerFactory" properties="beanName=insufficientSizeCacheEventListener" listenFor="local" />
+    </cache>
+
+    <!--
      | Caches IPermissionSet objects
      | - 1 x per permissions owner (channel manager, user, ...)
      | - replicated by invalidation
