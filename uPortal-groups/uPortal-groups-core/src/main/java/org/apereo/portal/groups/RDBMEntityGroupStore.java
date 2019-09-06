@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import net.sf.ehcache.Cache;
+import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 import org.apache.commons.logging.Log;
@@ -67,6 +67,8 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
     private static final String MEMBER_IS_GROUP_COLUMN = "MEMBER_IS_GROUP";
     private static final String MEMBER_IS_ENTITY = "F";
     private static final String MEMBER_IS_GROUP = "T";
+
+    private static final String CACHE_NAME = "org.apereo.portal.groups.RDBMEntityGroupStore.search";
 
     // SQL group search string
     private static final String SEARCH_GROUPS_PARTIAL_CASE_INSENSITIVE =
@@ -133,7 +135,9 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
     private static String deleteMemberGroupSql;
     private static String deleteMemberEntitySql;
     private static String insertMemberSql;
-    private Cache groupSearchCache;
+
+    // Group search cache
+    private Ehcache groupSearchCache;
 
     /** RDBMEntityGroupStore constructor. */
     public RDBMEntityGroupStore() {
@@ -157,16 +161,18 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
         }
 
         // Cache for group search
-        this.groupSearchCache = getGroupSearchCache();
-        assert this.groupSearchCache != null;
+        groupSearchCache = getGroupSearchCache();
     }
 
-    private Cache getGroupSearchCache() {
+    private Ehcache getGroupSearchCache() {
         final ApplicationContext context = ApplicationContextLocator.getApplicationContext();
         assert context != null;
         final CacheManager cacheManager = context.getBean("cacheManager", CacheManager.class);
         assert cacheManager != null;
-        return cacheManager.getCache("org.apereo.portal.groups.RDBMEntityGroupStore.search");
+        if (!cacheManager.cacheExists(CACHE_NAME)) {
+            cacheManager.addCache(CACHE_NAME);
+        }
+        return cacheManager.getCache(CACHE_NAME);
     }
 
     /**
@@ -1376,13 +1382,7 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
         ArrayList ar = new ArrayList();
 
         final String cacheKey = query + ":" + method.name() + ":" + leaftype.getSimpleName();
-        Element el = null;
-        assert this.groupSearchCache != null;
-        try {
-            el = this.groupSearchCache.get(cacheKey);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        Element el = groupSearchCache.get(cacheKey);
         if (el != null) {
             ar = (ArrayList) el.getObjectValue();
             assert ar != null;
@@ -1462,8 +1462,7 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
             RDBMServices.releaseConnection(conn);
         }
         el = new Element(cacheKey, ar);
-        assert this.groupSearchCache != null;
-        this.groupSearchCache.put(el);
+        groupSearchCache.put(el);
         return (EntityIdentifier[]) ar.toArray(r);
     }
 
