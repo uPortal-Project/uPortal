@@ -3,7 +3,7 @@
   "private": true,
   "devDependencies": {
     "eslint": "^6.0.0",
-    "eslint-config-google": "^0.13.0",
+    "eslint-config-google": "^0.14.0",
     "prettier-eslint-cli": "^5.0.0",
     "prettier-stylelint": "^0.4.2",
     "remark-cli": "^7.0.0",
