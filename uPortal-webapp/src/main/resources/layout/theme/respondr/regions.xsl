@@ -401,7 +401,7 @@
                         <h4 class="modal-title"><xsl:value-of select="upMsg:getMessage('direct.url', $USER_LANG)"/></h4>
                     </div>
                     <div class="modal-body">
-                        <p id="direct-url-display"></p>
+                        <p id="direct-url-display" tabindex="0"></p>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal"><xsl:value-of select="upMsg:getMessage('close', $USER_LANG)"/></button>
