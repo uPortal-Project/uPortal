@@ -1,9 +1,7 @@
 {
   "extends": [
     "config:base",
-    ":rebaseStalePrs",
     ":preserveSemverRanges",
-    ":disableRateLimiting",
     ":masterIssue"
   ],
   "major": { "masterIssueApproval": true },
