@@ -280,6 +280,7 @@ var up = up || {};
                     var tab;
                     var tabShortId;
                     var method;
+                    var targetTab;
                     var targetTabShortId;
                     var tabPosition;
                     var listItems;
