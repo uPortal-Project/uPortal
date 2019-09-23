@@ -4,6 +4,7 @@
     ":preserveSemverRanges",
     ":masterIssue"
   ],
+  "gradle": { "enabled": true },
   "major": { "masterIssueApproval": true },
   "renovateFork": true,
   "packageRules": [
