@@ -288,22 +288,19 @@ var up = up || {};
                     tab = $(item);
                     tabShortId = up.defaultNodeIdExtractor(tab);
                     method = that.options.insertBefore;
-                    targetTab = null;
                     targetTabShortId = null;
                     tabPosition = 1;
                     listItems = that.locate('tabListItems');
 
                     // Determine when tab is the last tab and
-                    // calculate the targetTab and targetTabShortId.
+                    // calculate the targetTabShortId.
                     if (tab.is(':last-child')) {
                         method = that.options.appendAfter;
-                        targetTab = tab.prev();
                         targetTabShortId = tab
                             .prev()
                             .attr('id')
                             .split('_')[1];
                     } else {
-                        targetTab = tab.next();
                         targetTabShortId = tab
                             .next()
                             .attr('id')
