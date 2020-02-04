@@ -21,7 +21,7 @@
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
 
 <!-- START: VALUES BEING PASSED FROM BACKEND -->
-<portlet:actionURL var="submitUrl">
+<portlet:actionURL var="submitUrl" escapeXml="false">
 	<portlet:param name="execution" value="${flowExecutionKey}" />
 </portlet:actionURL>
 <!-- END: VALUES BEING PASSED FROM BACKEND -->
