@@ -14,8 +14,7 @@
  */
 package org.apereo.portal.rest;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import javax.portlet.WindowState;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
@@ -105,7 +104,7 @@ public class LayoutRESTController {
     public ModelAndView getRESTController(
             HttpServletRequest request, @RequestParam(value = "tab", required = false) String tab) {
         final IPerson person = personManager.getPerson(request);
-        List<LayoutPortlet> portlets = new ArrayList<LayoutPortlet>();
+        final List<LayoutPortlet> portlets = new ArrayList<LayoutPortlet>();
 
         try {
 
@@ -115,57 +114,23 @@ public class LayoutRESTController {
 
             final IUserProfile profile = upm.getUserProfile();
             final DistributedUserLayout userLayout = userLayoutStore.getUserLayout(person, profile);
-            Document document = userLayout.getLayout();
+            final Document document = userLayout.getLayout();
 
-            NodeList portletNodes = null;
-            if (tab != null) {
-                NodeList folders = document.getElementsByTagName("folder");
-                for (int i = 0; i < folders.getLength(); i++) {
-                    Node node = folders.item(i);
-                    if (tab.equalsIgnoreCase(
-                            node.getAttributes().getNamedItem("name").getNodeValue())) {
-                        TabListOfNodes tabNodes = new TabListOfNodes();
-                        tabNodes.addAllChannels(node.getChildNodes());
-                        portletNodes = tabNodes;
-                        break;
-                    }
-                }
-            } else {
-                portletNodes = document.getElementsByTagName("channel");
-            }
+            final NodeList portletNodes = getNodeList(tab, document);
+
             for (int i = 0; i < portletNodes.getLength(); i++) {
                 try {
 
-                    NamedNodeMap attributes = portletNodes.item(i).getAttributes();
-                    IPortletDefinition def =
+                    final NamedNodeMap attributes = portletNodes.item(i).getAttributes();
+                    final IPortletDefinition def =
                             portletDao.getPortletDefinitionByFname(
                                     attributes.getNamedItem("fname").getNodeValue());
-                    LayoutPortlet portlet = new LayoutPortlet(def);
+                    final LayoutPortlet portlet = new LayoutPortlet(def, person);
 
                     portlet.setNodeId(attributes.getNamedItem("ID").getNodeValue());
 
                     // get alt max URL
-                    String alternativeMaximizedLink = def.getAlternativeMaximizedLink();
-                    if (alternativeMaximizedLink != null) {
-                        portlet.setUrl(alternativeMaximizedLink);
-                        portlet.setAltMaxUrl(true);
-                    } else {
-                        // get the maximized URL for this portlet
-                        final IPortalUrlBuilder portalUrlBuilder =
-                                urlProvider.getPortalUrlBuilderByLayoutNode(
-                                        request,
-                                        attributes.getNamedItem("ID").getNodeValue(),
-                                        UrlType.RENDER);
-                        final IPortletWindowId targetPortletWindowId =
-                                portalUrlBuilder.getTargetPortletWindowId();
-                        if (targetPortletWindowId != null) {
-                            final IPortletUrlBuilder portletUrlBuilder =
-                                    portalUrlBuilder.getPortletUrlBuilder(targetPortletWindowId);
-                            portletUrlBuilder.setWindowState(WindowState.MAXIMIZED);
-                        }
-                        portlet.setUrl(portalUrlBuilder.getUrlString());
-                        portlet.setAltMaxUrl(false);
-                    }
+                    setAltMaxURL(request, attributes, def, portlet);
                     portlets.add(portlet);
 
                 } catch (Exception e) {
@@ -173,7 +138,7 @@ public class LayoutRESTController {
                 }
             }
 
-            ModelAndView mv = new ModelAndView();
+            final ModelAndView mv = new ModelAndView();
             mv.addObject("layout", portlets);
             mv.setViewName("json");
             return mv;
@@ -182,5 +147,48 @@ public class LayoutRESTController {
         }
 
         return null;
+    }
+
+    private void setAltMaxURL(
+            HttpServletRequest request,
+            NamedNodeMap attributes,
+            IPortletDefinition def,
+            LayoutPortlet portlet) {
+        final String alternativeMaximizedLink = def.getAlternativeMaximizedLink();
+        if (alternativeMaximizedLink != null) {
+            portlet.setUrl(alternativeMaximizedLink);
+            portlet.setAltMaxUrl(true);
+        } else {
+            // get the maximized URL for this portlet
+            final IPortalUrlBuilder portalUrlBuilder =
+                    urlProvider.getPortalUrlBuilderByLayoutNode(
+                            request, attributes.getNamedItem("ID").getNodeValue(), UrlType.RENDER);
+            final IPortletWindowId targetPortletWindowId =
+                    portalUrlBuilder.getTargetPortletWindowId();
+            if (targetPortletWindowId != null) {
+                final IPortletUrlBuilder portletUrlBuilder =
+                        portalUrlBuilder.getPortletUrlBuilder(targetPortletWindowId);
+                portletUrlBuilder.setWindowState(WindowState.MAXIMIZED);
+            }
+            portlet.setUrl(portalUrlBuilder.getUrlString());
+            portlet.setAltMaxUrl(false);
+        }
+    }
+
+    private NodeList getNodeList(
+            @RequestParam(value = "tab", required = false) String tab, Document document) {
+        if (tab != null) {
+            NodeList folders = document.getElementsByTagName("folder");
+            for (int i = 0; i < folders.getLength(); i++) {
+                Node node = folders.item(i);
+                if (tab.equalsIgnoreCase(
+                        node.getAttributes().getNamedItem("name").getNodeValue())) {
+                    TabListOfNodes tabNodes = new TabListOfNodes();
+                    tabNodes.addAllChannels(node.getChildNodes());
+                    return tabNodes;
+                }
+            }
+        }
+        return document.getElementsByTagName("channel");
     }
 }

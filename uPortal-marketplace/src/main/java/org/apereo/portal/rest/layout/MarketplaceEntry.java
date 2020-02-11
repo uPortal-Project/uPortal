@@ -65,7 +65,7 @@ public class MarketplaceEntry implements Serializable {
         this.pdef = pdef;
         this.maxURL = pdef.getRenderUrl();
         this.user = user;
-        this.layoutObject = new LayoutPortlet(pdef);
+        this.layoutObject = new LayoutPortlet(pdef, user);
         if (this.layoutObject.getUrl() == null) {
             this.layoutObject.setUrl(this.maxURL);
         }
@@ -75,7 +75,7 @@ public class MarketplaceEntry implements Serializable {
         this.pdef = pdef;
         this.maxURL = maxURL;
         this.user = user;
-        this.layoutObject = new LayoutPortlet(pdef);
+        this.layoutObject = new LayoutPortlet(pdef, user);
         if (this.layoutObject.getUrl() == null) {
             this.layoutObject.setUrl(this.maxURL);
         }
@@ -89,7 +89,7 @@ public class MarketplaceEntry implements Serializable {
         this.maxURL = pdef.getRenderUrl();
         this.generateRelatedPortlets = generateRelatedPortlets;
         this.user = user;
-        this.layoutObject = new LayoutPortlet(pdef);
+        this.layoutObject = new LayoutPortlet(pdef, user);
         if (this.layoutObject.getUrl() == null) {
             this.layoutObject.setUrl(this.maxURL);
         }

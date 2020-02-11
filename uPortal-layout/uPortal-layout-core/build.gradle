@@ -20,7 +20,10 @@ dependencies {
     compileOnly "org.apache.portals.pluto:pluto-container-api:${plutoVersion}"
     annotationProcessor "org.hibernate:hibernate-jpamodelgen:${hibernateJpamodelgenVersion}"
     compileOnly "${servletApiDependency}"
-}
+
+    compile "org.slf4j:slf4j-api:${slf4jVersion}"
+    compileOnly "org.projectlombok:lombok:${lombokVersion}"
+    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"}
 
 /*
  * This section is the key to IDE integration.  IDE will look for source files in both...
