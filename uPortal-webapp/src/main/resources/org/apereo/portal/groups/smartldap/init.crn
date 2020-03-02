@@ -24,7 +24,9 @@
         base-dn="${baseGroupDn}"
         filter="${filter}"
         scope="${groovy(javax.naming.directory.SearchControls.SUBTREE_SCOPE)}"
+        mapper-type="${mapperType}"
         attributes-mapper="${attributesMapper}"
+        context-mapper="${contextMapper}"
         resolveMemberGroups="${resolveMemberGroups}"
         attribute-name="record"
         >
