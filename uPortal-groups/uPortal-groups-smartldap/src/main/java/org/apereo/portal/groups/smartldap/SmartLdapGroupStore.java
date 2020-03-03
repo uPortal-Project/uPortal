@@ -50,7 +50,6 @@ import org.danann.cernunnos.runtime.ScriptRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Required;
 import org.springframework.ldap.core.AttributesMapper;
 import org.springframework.ldap.core.ContextMapper;
 import org.springframework.ldap.core.ContextSource;
@@ -716,7 +715,8 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
 
         if (attributesMapper != null) {
             if (contextMapper != null) {
-                log.warn("Both attributesMapper and contextMapper are set -- attributesMapper will be used");
+                log.warn(
+                        "Both attributesMapper and contextMapper are set -- attributesMapper will be used");
             }
             req.setAttribute("mapperType", "attributes");
             req.setAttribute("attributesMapper", attributesMapper);
@@ -724,7 +724,8 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
             req.setAttribute("mapperType", "context");
             req.setAttribute("contextMapper", contextMapper);
         } else {
-            throw new IllegalStateException("Either an AttributesMapper or a ContextMapper must be specified");
+            throw new IllegalStateException(
+                    "Either an AttributesMapper or a ContextMapper must be specified");
         }
 
         runner.run(initTask, req);
