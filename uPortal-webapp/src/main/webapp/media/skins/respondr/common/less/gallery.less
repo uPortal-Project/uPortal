@@ -43,7 +43,7 @@
 @galleryBarBackground           : transparent url("./common/images/gallery-bar.png") top left repeat-x;
 @galleryMenuBackground          : @grayscale9;
 @galleryMenuItemBackground      : @grayscale8;
-@galleryMenuItemLink            : @grayscale3;
+@galleryMenuItemLink            : @white;
 @galleryMenuItemBackgroundHover : @color1-darker;
 @galleryMenuItemLinkHover       : @white;
 @galleryMenuItemActiveBackground: @grayscale10;
@@ -63,10 +63,11 @@
 @galleryFilterSubtitle          : @grayscale2;
 @galleryFilterSubtitleLine      : 1px dotted @grayscale9;
 @galleryFSearchInputBackground  : @grayscale8;
-@galleryFSearchInputText        : @grayscale10;
+@galleryFSearchInputText        : @white;
 @galleryFSearchInputPadding     : 0.3em;
 @galleryFSearchInputHover       : @grayscale7;
-@galleryFSearchInputFocus       : @white;
+@galleryFSearchInputFocusText   : @black;
+@galleryFSearchInputFocusBackground : @white;
 @galleryCatLink                 : @grayscale3;
 @galleryCatLinkHover            : @color1;
 @galleryCatActiveLink           : @white;
@@ -347,7 +348,8 @@
           }
 
           &:focus {
-            background: @galleryFSearchInputFocus;
+            color: @galleryFSearchInputFocusText;
+            background: @galleryFSearchInputFocusBackground;
           }
         }
 
