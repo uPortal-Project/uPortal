@@ -17,15 +17,14 @@ package org.apereo.portal.soffit.service;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import java.util.Date;
 import java.util.UUID;
 import javax.annotation.PostConstruct;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.portal.soffit.ITokenizable;
-import org.jasypt.util.text.BasicTextEncryptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
 /**
@@ -38,28 +37,23 @@ public class AbstractJwtService {
     public static final String JWT_ISSUER = "Soffit";
 
     public static final String SIGNATURE_KEY_PROPERTY = "org.apereo.portal.soffit.jwt.signatureKey";
-    public static final String DEFAULT_SIGNATURE_KEY = "CHANGEME";
+    public static final String DEFAULT_SIGNATURE_KEY =
+            "CHANGEMEBx0myZ/pv/e7+xrdDLYGC1iIzSa6Uw5CPpH0KCCS1deESk3v+b+LYMz1ks57tjFb9vudpSCyRKXO5TeEBc45rfMyGtkRa1zri+hukZIAfgrvCbFixpCBxBusRs+uhXRuLxOe6k77VE+EMM4jVJArtNBgVPyV7iOC05kHNiYIGgs=";
 
+    // Kept for backwards compatibility -- this is part of an API
     public static final String ENCRYPTION_PASSWORD_PROPERTY =
-            "org.apereo.portal.soffit.jwt.encryptionPassword";
-    public static final String DEFAULT_ENCRYPTION_PASSWORD = "CHANGEME";
+            JwtEncryptor.ENCRYPTION_PASSWORD_PROPERTY;
+    public static final String DEFAULT_ENCRYPTION_PASSWORD =
+            JwtEncryptor.DEFAULT_ENCRYPTION_PASSWORD;
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Value("${" + SIGNATURE_KEY_PROPERTY + ":" + DEFAULT_SIGNATURE_KEY + "}")
     private String signatureKey;
 
-    @Value("${" + ENCRYPTION_PASSWORD_PROPERTY + ":" + DEFAULT_ENCRYPTION_PASSWORD + "}")
-    private String encryptionPassword;
+    @Autowired private JwtEncryptor jwtEncryptor;
 
-    /*
-     * NOTE:  There is also a StrongTextEncryptor, but it requires each deployment
-     * to download and install the "Java Cryptography Extension (JCE) Unlimited
-     * Strength Jurisdiction Policy Files," which sounds like a tremendous PITA.
-     * The BasicTextEncryptor supports "normal-strength encryption of texts,"
-     * which should be satisfactory for our needs.
-     */
-    final BasicTextEncryptor textEncryptor = new BasicTextEncryptor();
+    @Autowired private JwtSignatureAlgorithmFactory algorithmFactory;
 
     @PostConstruct
     public void init() {
@@ -73,18 +67,6 @@ public class AbstractJwtService {
                     "Property {} is using the deafult value;  please change it",
                     SIGNATURE_KEY_PROPERTY);
         }
-
-        // Encryption Passowrd
-        if (StringUtils.isBlank(encryptionPassword)) {
-            logger.error(
-                    "The value of required property {} is blank", ENCRYPTION_PASSWORD_PROPERTY);
-            throw new IllegalStateException("Missing property " + ENCRYPTION_PASSWORD_PROPERTY);
-        } else if (DEFAULT_ENCRYPTION_PASSWORD.equals(encryptionPassword)) {
-            logger.warn(
-                    "Property {} is using the deafult value;  please change it",
-                    ENCRYPTION_PASSWORD_PROPERTY);
-        }
-        textEncryptor.setPassword(encryptionPassword);
     }
 
     protected Claims createClaims(
@@ -110,20 +92,16 @@ public class AbstractJwtService {
         final String jwt =
                 Jwts.builder()
                         .setClaims(claims)
-                        .signWith(SignatureAlgorithm.HS512, signatureKey)
+                        .signWith(algorithmFactory.getAlgorithm(), signatureKey)
                         .compact();
 
-        // Encryption
-        final String rslt = textEncryptor.encrypt(jwt);
-
-        return rslt;
+        return jwtEncryptor.encryptIfConfigured(jwt);
     }
 
     protected Jws<Claims> parseEncryptedToken(
             String encryptedToken, Class<? extends ITokenizable> clazz) {
 
-        // Decryption
-        final String jwt = textEncryptor.decrypt(encryptedToken);
+        String jwt = jwtEncryptor.decryptIfConfigured(encryptedToken);
 
         final Jws<Claims> rslt = Jwts.parser().setSigningKey(signatureKey).parseClaimsJws(jwt);
 

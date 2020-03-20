@@ -14,15 +14,32 @@
  */
 package org.apereo.portal.rest.search;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.index.DirectoryReader;
+import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
+import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.Query;
+import org.apache.lucene.search.TopDocs;
+import org.apache.lucene.store.Directory;
+import org.apereo.portal.index.PortalSearchIndexer;
+import org.apereo.portal.index.SearchField;
 import org.apereo.portal.portlet.om.IPortletDefinition;
 import org.apereo.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.apereo.portal.portlets.search.PortletRegistryUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 /**
@@ -35,9 +52,32 @@ public class PortletsSearchStrategy implements ISearchStrategy {
 
     private static final String RESULT_TYPE_NAME = "portlets";
 
+    private MultiFieldQueryParser queryParser;
+
+    private boolean displayScore;
+
+    @Autowired private Directory directory;
+
     @Autowired private IPortletDefinitionRegistry portletDefinitionRegistry;
 
     @Autowired private PortletRegistryUtil portletRegistryUtil;
+
+    /** Set if the score should be provided in the search results */
+    @Value("${org.apereo.portal.rest.search.PortletsSearchStrategy.displayScore:true}")
+    public void setDisplayScore(boolean displayScore) {
+        this.displayScore = displayScore;
+    }
+
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+
+    @PostConstruct
+    public void init() {
+        final String[] fields =
+                Arrays.stream(SearchField.values())
+                        .map(SearchField::getValue)
+                        .toArray(String[]::new);
+        queryParser = new MultiFieldQueryParser(fields, new StandardAnalyzer());
+    }
 
     @Override
     public String getResultTypeName() {
@@ -46,29 +86,75 @@ public class PortletsSearchStrategy implements ISearchStrategy {
 
     @Override
     public List<?> search(String query, HttpServletRequest request) {
+
         final List<Object> rslt = new ArrayList<>();
 
-        final List<IPortletDefinition> portlets =
-                portletDefinitionRegistry.getAllPortletDefinitions();
-        for (IPortletDefinition portlet : portlets) {
-            if (portletRegistryUtil.matches(query, portlet)) {
-                /* requester permissions checked in buildPortletUrl() */
-                final String url = portletRegistryUtil.buildPortletUrl(request, portlet);
-                if (url != null) {
-                    rslt.add(getPortletAttrs(portlet, url));
-                }
-            }
+        try (IndexReader indexReader = DirectoryReader.open(directory)) {
+
+            final Query q = queryParser.parse(query);
+            final IndexSearcher searcher = new IndexSearcher(indexReader);
+            final TopDocs topDocs = searcher.search(q, 50);
+            Arrays.stream(topDocs.scoreDocs)
+                    .forEach(
+                            scoreDoc -> {
+                                try {
+                                    final Document document = searcher.doc(scoreDoc.doc);
+                                    final IPortletDefinition portlet =
+                                            portletDefinitionRegistry.getPortletDefinitionByFname(
+                                                    document.get(SearchField.FNAME.getValue()));
+                                    final String scoreStr = Float.toString(scoreDoc.score);
+                                    final String hashKey =
+                                            document.getField(
+                                                            PortalSearchIndexer.LUCENE_DOC_ID_FIELD)
+                                                    .stringValue();
+                                    logger.debug(
+                                            "Search query '{}' matches portlet: '{}', score='{}', hashId='{}'",
+                                            query,
+                                            portlet,
+                                            scoreStr,
+                                            hashKey);
+                                    /* requester permissions checked in buildPortletUrl() */
+                                    final String url =
+                                            portletRegistryUtil.buildPortletUrl(request, portlet);
+                                    if (url != null) {
+                                        logger.debug(
+                                                "Adding portlet with fname='{}', score='{}', hash='{}' to search results for query='{}'",
+                                                portlet.getFName(),
+                                                scoreStr,
+                                                hashKey,
+                                                query);
+                                        rslt.add(getPortletAttrs(portlet, url, scoreStr));
+                                    }
+                                } catch (IOException e) {
+                                    // Log a warning, but don't prevent other matches from
+                                    // succeeding...
+                                    logger.warn(
+                                            "Failed to process the following search result for query='{}': {}",
+                                            query,
+                                            scoreDoc,
+                                            e);
+                                }
+                            });
+
+        } catch (Exception e) {
+            // Log a warning, but don't prevent other search strategies from succeeding...
+            logger.warn("Failed to search portal content for query='{}'", query, e);
         }
+
         return rslt;
     }
 
-    private Map<String, String> getPortletAttrs(IPortletDefinition portlet, String url) {
+    private Map<String, String> getPortletAttrs(
+            IPortletDefinition portlet, String url, String score) {
         final Map<String, String> rslt = new TreeMap<>();
         rslt.put("name", portlet.getName());
         rslt.put("fname", portlet.getFName());
         rslt.put("title", portlet.getTitle());
         rslt.put("description", portlet.getDescription());
         rslt.put("url", url);
+        if (displayScore) {
+            rslt.put("score", score);
+        }
         return rslt;
     }
 }

@@ -41,7 +41,7 @@ import org.springframework.transaction.support.TransactionOperations;
 public abstract class BaseJpaDao implements InitializingBean, ApplicationContextAware {
     private static final String QUERY_SUFFIX = ".Query";
 
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private ApplicationContext applicationContext;
 
@@ -73,7 +73,7 @@ public abstract class BaseJpaDao implements InitializingBean, ApplicationContext
     /**
      * Factory method for creating a {@link CriteriaQuery} employing standards and best practices in
      * general use within the portal. Query objects returned from this method should normally be
-     * passed to {@link createCachedQuery}; this step is important for the sake of scalability.
+     * passed to createCachedQuery; this step is important for the sake of scalability.
      */
     protected final <T> CriteriaQuery<T> createCriteriaQuery(
             Function<CriteriaBuilder, CriteriaQuery<T>> builder) {
@@ -137,7 +137,7 @@ public abstract class BaseJpaDao implements InitializingBean, ApplicationContext
                     e);
         }
         final NaturalIdLoadAccess naturalIdLoadAccess = session.byNaturalId(entityType);
-        return new NaturalIdQuery<T>(entityType, naturalIdLoadAccess);
+        return new NaturalIdQuery<>(entityType, naturalIdLoadAccess);
     }
 
     /**
@@ -145,7 +145,7 @@ public abstract class BaseJpaDao implements InitializingBean, ApplicationContext
      *
      * @param criteriaQuery The criteria to create the cache name for
      */
-    protected final <T> String getCacheRegionName(CriteriaQuery<T> criteriaQuery) {
+    private <T> String getCacheRegionName(CriteriaQuery<T> criteriaQuery) {
         final Set<Root<?>> roots = criteriaQuery.getRoots();
         final Class<?> cacheRegionType = roots.iterator().next().getJavaType();
         final String cacheRegion = cacheRegionType.getName() + QUERY_SUFFIX;

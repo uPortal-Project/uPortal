@@ -21,6 +21,9 @@ public enum PortletLifecycleState {
     EXPIRED(3),
     MAINTENANCE(4);
 
+    public static final String CUSTOM_MAINTENANCE_MESSAGE_PARAMETER_NAME =
+            "customMaintenanceMessage";
+
     private final int order;
 
     PortletLifecycleState(int order) {

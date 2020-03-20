@@ -66,11 +66,7 @@ public class RDBMEntityLockStore implements IEntityLockStore {
         initialize();
     }
 
-    /**
-     * Adds the lock to the underlying store.
-     *
-     * @param lock
-     */
+    /** Adds the lock to the underlying store. */
     @Override
     public void add(IEntityLock lock) throws LockingException {
         Connection conn = null;
@@ -85,11 +81,7 @@ public class RDBMEntityLockStore implements IEntityLockStore {
         }
     }
 
-    /**
-     * If this IEntityLock exists, delete it.
-     *
-     * @param lock
-     */
+    /** If this IEntityLock exists, delete it. */
     @Override
     public void delete(IEntityLock lock) throws LockingException {
         Connection conn = null;
@@ -130,11 +122,7 @@ public class RDBMEntityLockStore implements IEntityLockStore {
         }
     }
 
-    /**
-     * Delete all expired IEntityLocks from the underlying store.
-     *
-     * @param expiration
-     */
+    /** Delete all expired IEntityLocks from the underlying store. */
     @Override
     public void deleteExpired(Date expiration) throws LockingException {
         deleteExpired(expiration, null, null);
@@ -221,7 +209,7 @@ public class RDBMEntityLockStore implements IEntityLockStore {
     /** @return java.lang.String */
     private static java.lang.String getAllLockColumns() {
         if (allLockColumns == null) {
-            StringBuffer buff = new StringBuffer(100);
+            StringBuilder buff = new StringBuilder(100);
             buff.append(ENTITY_TYPE_COLUMN);
             buff.append(", ");
             buff.append(ENTITY_KEY_COLUMN);
@@ -357,7 +345,7 @@ public class RDBMEntityLockStore implements IEntityLockStore {
         try {
             PreparedStatement ps = conn.prepareStatement(getAddSql());
             try {
-                ps.setInt(1, typeID.intValue()); // entity type
+                ps.setInt(1, typeID); // entity type
                 ps.setString(2, key); // entity key
                 ps.setInt(3, lockType); // lock type
                 ps.setTimestamp(4, ts); // lock expiration
@@ -398,7 +386,7 @@ public class RDBMEntityLockStore implements IEntityLockStore {
         try {
             PreparedStatement ps = conn.prepareStatement(getDeleteLockSql());
             try {
-                ps.setInt(1, typeID.intValue()); // entity type
+                ps.setInt(1, typeID); // entity type
                 ps.setString(2, key); // entity key
                 ps.setTimestamp(3, ts); // lock expiration
                 ps.setInt(4, lockType); // lock type
@@ -433,7 +421,7 @@ public class RDBMEntityLockStore implements IEntityLockStore {
         Statement stmnt = null;
         Timestamp ts = new Timestamp(expiration.getTime());
 
-        StringBuffer buff = new StringBuffer(100);
+        StringBuilder buff = new StringBuilder(100);
         buff.append("DELETE FROM " + LOCK_TABLE + " WHERE " + EXPIRATION_TIME_COLUMN + LT);
         buff.append(printTimestamp(ts));
         if (entityType != null) {
@@ -516,7 +504,7 @@ public class RDBMEntityLockStore implements IEntityLockStore {
                 EntityTypesLocator.getEntityTypes().getEntityIDFromType(lock.getEntityType());
         String key = lock.getEntityKey();
         int oldLockType = lock.getLockType();
-        int newLockType = (newType == null) ? oldLockType : newType.intValue();
+        int newLockType = (newType == null) ? oldLockType : newType;
         java.sql.Timestamp oldTs = new java.sql.Timestamp(lock.getExpirationTime().getTime());
         java.sql.Timestamp newTs = new java.sql.Timestamp(newExpiration.getTime());
         String owner = lock.getLockOwner();
@@ -526,7 +514,7 @@ public class RDBMEntityLockStore implements IEntityLockStore {
             try {
                 ps.setTimestamp(1, newTs); // new expiration
                 ps.setInt(2, newLockType); // new lock type
-                ps.setInt(3, typeID.intValue()); // entity type
+                ps.setInt(3, typeID); // entity type
                 ps.setString(4, key); // entity key
                 ps.setString(5, owner); // lock owner
                 ps.setTimestamp(6, oldTs); // old expiration
@@ -561,7 +549,7 @@ public class RDBMEntityLockStore implements IEntityLockStore {
     private IEntityLock[] select(
             Class entityType, String entityKey, Integer lockType, Date expiration, String lockOwner)
             throws LockingException {
-        StringBuffer sqlQuery = new StringBuffer(getSelectSql() + " WHERE 1 = 1");
+        StringBuilder sqlQuery = new StringBuilder(getSelectSql() + " WHERE 1 = 1");
 
         if (entityType != null) {
             Integer typeID = EntityTypesLocator.getEntityTypes().getEntityIDFromType(entityType);
@@ -599,7 +587,7 @@ public class RDBMEntityLockStore implements IEntityLockStore {
     private IEntityLock[] selectUnexpired(
             Timestamp ts, Class entityType, String entityKey, Integer lockType, String lockOwner)
             throws LockingException {
-        StringBuffer sqlQuery = new StringBuffer(getSelectSql());
+        StringBuilder sqlQuery = new StringBuilder(getSelectSql());
 
         sqlQuery.append(" WHERE " + EXPIRATION_TIME_COLUMN + GT + printTimestamp(ts));
 
@@ -645,7 +633,6 @@ public class RDBMEntityLockStore implements IEntityLockStore {
      * Updates the lock's <code>expiration</code> and <code>lockType</code> in the underlying store.
      * Param <code>lockType</code> may be null.
      *
-     * @param lock
      * @param newExpiration java.util.Date
      * @param newLockType Integer
      */

@@ -15,16 +15,16 @@
 package org.apereo.portal.jdbc;
 
 import java.sql.SQLException;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Partial implemenation of {@link IJoinQueryString} which provides the implemention of storing and
- * retrieving join queries. It also requires a test query be specified.
+ * Partial implementation of {@link IJoinQueryString} which provides the implementation of storing
+ * and retrieving join queries. It also requires a test query be specified.
  */
 public abstract class JoinQueryString implements IJoinQueryString {
 
-    private final Map queryStrings = new Hashtable();
+    private final Map<String, String> queryStrings = new HashMap<>();
 
     private final String testJoin;
 
@@ -33,7 +33,7 @@ public abstract class JoinQueryString implements IJoinQueryString {
      *
      * @param testQuery The query to use to test if joins in the class are supported.
      */
-    protected JoinQueryString(final String testQuery) {
+    /* package-private */ JoinQueryString(final String testQuery) {
         if (testQuery == null) throw new IllegalArgumentException("testQuery must not be null");
 
         testJoin = testQuery;
@@ -44,14 +44,14 @@ public abstract class JoinQueryString implements IJoinQueryString {
      *
      * @return The query to use to test if joins in this class are supported.
      */
-    protected String getTestJoin() {
+    /* package-private */ String getTestJoin() {
         return testJoin;
     }
 
     /** @see IJoinQueryString#getQuery(java.lang.String) */
     @Override
     public String getQuery(final String key) throws SQLException {
-        final String query = (String) queryStrings.get(key);
+        final String query = queryStrings.get(key);
 
         if (query == null) {
             throw new SQLException("Missing query");

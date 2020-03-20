@@ -117,6 +117,9 @@ public class RenderingPipelineConfiguration {
 
     @Autowired private XsltPortalUrlProvider xslPortalUrlProvider;
 
+    @Value("${portal.protocol}://${portal.server}")
+    private String portalProtocolAndServer;
+
     @Value("${org.apereo.portal.channels.CLogin.CasLoginUrl}")
     private String casLoginUrl;
 
@@ -128,6 +131,9 @@ public class RenderingPipelineConfiguration {
 
     @Value("${org.apereo.portal.layout.faviconPath:#{null}}")
     private String faviconPath;
+
+    @Value("${org.apereo.portal.layout.useTabsSize:#{null}}")
+    private String useTabsSize;
 
     @Resource(name = "org.apereo.portal.rendering.THEME_TRANSFORM")
     private Cache themeTransformCache;
@@ -420,11 +426,15 @@ public class RenderingPipelineConfiguration {
         final Map<String, Object> parameters = new HashMap<>();
         parameters.put(XsltPortalUrlProvider.XSLT_PORTAL_URL_PROVIDER, xslPortalUrlProvider);
         parameters.put("EXTERNAL_LOGIN_URL", casLoginUrl);
+        parameters.put("PORTAL_PROTOCOL_AND_SERVER", portalProtocolAndServer);
         parameters.put("useTabGroups", useTabGroups);
         parameters.put("UP_VERSION", uPortalVersion);
         parameters.put("USE_FLYOUT_MENUS", useFlyoutMenus);
         if (faviconPath != null) {
             parameters.put("PORTAL_SHORTCUT_ICON", faviconPath);
+        }
+        if (useTabsSize != null) {
+            parameters.put("USE_TABS_SIZE", useTabsSize);
         }
 
         final Map<String, String> parameterExpressions = new HashMap<>();

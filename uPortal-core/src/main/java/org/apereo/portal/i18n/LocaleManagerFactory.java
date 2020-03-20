@@ -51,6 +51,7 @@ public class LocaleManagerFactory {
      * "en_US,ja_JP"
      */
     @PostConstruct
+    @SuppressWarnings("StringSplitter")
     public void init() {
         logger.info("Using localeAware={}", localeAware);
         logger.info("Using portalLocalesProperty='{}'", portalLocalesProperty);
@@ -74,7 +75,7 @@ public class LocaleManagerFactory {
 
     public LocaleManager createLocaleManager(IPerson person, List<Locale> userLocales) {
         logger.debug("Creating LocalManager for user '{}'", person.getUserName());
-        return new LocaleManager(person, userLocales, portalLocales);
+        return new LocaleManager(userLocales, portalLocales);
     }
 
     /**

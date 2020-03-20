@@ -14,9 +14,9 @@
  */
 package org.apereo.portal.character.stream;
 
+import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.Deque;
-import java.util.LinkedList;
 import java.util.regex.MatchResult;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.namespace.QName;
@@ -65,7 +65,7 @@ public abstract class BasePlaceholderEventSource implements CharacterEventSource
      */
     protected final void readToEndElement(XMLEventReader eventReader, StartElement event)
             throws XMLStreamException {
-        final Deque<QName> elementStack = new LinkedList<QName>();
+        final Deque<QName> elementStack = new ArrayDeque<>();
         elementStack.push(event.getName());
 
         while (!elementStack.isEmpty()) {

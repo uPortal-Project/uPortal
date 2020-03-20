@@ -30,6 +30,6 @@ Using these scripts removes the need to run custom import and configuration to i
 5. Select file > import
 6. Search for "Existing Projects into Workspace"
 ![open in eclipse](../../images/eclipse_import.png)
-7. Select the the uPortal folder as root directory
+7. Select the uPortal folder as root directory
 8. Select the "Search for nested projects" option
-8. Open it
+9. Open it

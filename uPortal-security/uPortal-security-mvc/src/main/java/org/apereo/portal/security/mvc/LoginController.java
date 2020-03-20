@@ -63,6 +63,9 @@ public class LoginController {
         this.portalUrlProvider = portalUrlProvider;
     }
 
+    @Autowired(required = false)
+    private ILoginRedirect loginRedirect;
+
     /**
      * Process the incoming HttpServletRequest. Note that this processing occurs after
      * PortalPreAuthenticatedProcessingFilter has run and performed pre-processing.
@@ -82,61 +85,69 @@ public class LoginController {
         // create the redirect URL, adding fname and args parameters if necessary
         String redirectTarget = null;
 
-        final String refUrl = request.getParameter(REFERER_URL_PARAM);
-        final URL redirectLocation = parseLocalRefUrl(request, refUrl);
-        if (redirectLocation != null) {
-            redirectTarget = redirectLocation.toString();
+        // check for custom redirect strategies
+        if (loginRedirect != null) {
+            redirectTarget = loginRedirect.redirectTarget(request);
         }
 
         if (redirectTarget == null) {
-            /* Grab the target functional name, if any, off the login request.
-             * Also any arguments for the target. We will pass them  along after authentication.
-             */
-            String targetFname = request.getParameter("uP_fname");
+            final String refUrl = request.getParameter(REFERER_URL_PARAM);
+            final URL redirectLocation = parseLocalRefUrl(request, refUrl);
+            if (redirectLocation != null) {
+                redirectTarget = redirectLocation.toString();
+            }
 
-            if (targetFname == null) {
-                final IPortalUrlBuilder defaultUrl = this.portalUrlProvider.getDefaultUrl(request);
-                redirectTarget = defaultUrl.getUrlString();
-            } else {
-                try {
-                    final IPortalUrlBuilder urlBuilder =
-                            this.portalUrlProvider.getPortalUrlBuilderByPortletFName(
-                                    request, targetFname, UrlType.RENDER);
+            if (redirectTarget == null) {
+                /* Grab the target functional name, if any, off the login request.
+                 * Also any arguments for the target. We will pass them  along after authentication.
+                 */
+                String targetFname = request.getParameter("uP_fname");
 
-                    Enumeration<String> e = request.getParameterNames();
-                    while (e.hasMoreElements()) {
-                        String paramName = e.nextElement();
-                        if (!paramName.equals("uP_fname")) {
-                            urlBuilder.addParameter(
-                                    paramName, request.getParameterValues(paramName));
-                        }
-                    }
-
-                    redirectTarget = urlBuilder.getUrlString();
-                } catch (IllegalArgumentException e) {
+                if (targetFname == null) {
                     final IPortalUrlBuilder defaultUrl =
                             this.portalUrlProvider.getDefaultUrl(request);
                     redirectTarget = defaultUrl.getUrlString();
+                } else {
+                    try {
+                        final IPortalUrlBuilder urlBuilder =
+                                this.portalUrlProvider.getPortalUrlBuilderByPortletFName(
+                                        request, targetFname, UrlType.RENDER);
+
+                        Enumeration<String> e = request.getParameterNames();
+                        while (e.hasMoreElements()) {
+                            String paramName = e.nextElement();
+                            if (!paramName.equals("uP_fname")) {
+                                urlBuilder.addParameter(
+                                        paramName, request.getParameterValues(paramName));
+                            }
+                        }
+
+                        redirectTarget = urlBuilder.getUrlString();
+                    } catch (IllegalArgumentException e) {
+                        final IPortalUrlBuilder defaultUrl =
+                                this.portalUrlProvider.getDefaultUrl(request);
+                        redirectTarget = defaultUrl.getUrlString();
+                    }
                 }
             }
-        }
 
-        IPerson person = null;
+            IPerson person = null;
 
-        final Object authError =
-                request.getSession(false).getAttribute(LoginController.AUTH_ERROR_KEY);
-        if (authError == null || !((Boolean) authError)) {
-            person = this.personManager.getPerson(request);
-        }
+            final Object authError =
+                    request.getSession(false).getAttribute(LoginController.AUTH_ERROR_KEY);
+            if (authError == null || !((Boolean) authError)) {
+                person = this.personManager.getPerson(request);
+            }
 
-        if (person == null || !person.getSecurityContext().isAuthenticated()) {
-            if (request.getMethod().equals("POST"))
-                request.getSession(false).setAttribute(AUTH_ATTEMPTED_KEY, "true");
-            // Preserve the attempted username so it can be redisplayed to the user
-            String attemptedUserName = request.getParameter("userName");
-            if (attemptedUserName != null)
-                request.getSession(false)
-                        .setAttribute(ATTEMPTED_USERNAME_KEY, request.getParameter("userName"));
+            if (person == null || !person.getSecurityContext().isAuthenticated()) {
+                if (request.getMethod().equals("POST"))
+                    request.getSession(false).setAttribute(AUTH_ATTEMPTED_KEY, "true");
+                // Preserve the attempted username so it can be redisplayed to the user
+                String attemptedUserName = request.getParameter("userName");
+                if (attemptedUserName != null)
+                    request.getSession(false)
+                            .setAttribute(ATTEMPTED_USERNAME_KEY, request.getParameter("userName"));
+            }
         }
 
         final String encodedRedirectURL = response.encodeRedirectURL(redirectTarget);

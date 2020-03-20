@@ -24,17 +24,17 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import org.apereo.portal.xml.XmlUtilities;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 
 /** */
-public class XsltDataUpgrader implements IDataUpgrader, InitializingBean {
+public class XsltDataUpgrader implements IDataUpgrader {
     private Set<PortalDataKey> portalDataKeys;
     private Resource xslResource;
     private XmlUtilities xmlUtilities;
 
-    private Templates upgradeTemplates;
+    // volatile because it's initialized in a synchronized method
+    private volatile Templates upgradeTemplates;
 
     public void setPortalDataKey(PortalDataKey portalDataKey) {
         this.portalDataKeys = Collections.singleton(portalDataKey);
@@ -54,30 +54,23 @@ public class XsltDataUpgrader implements IDataUpgrader, InitializingBean {
     }
 
     @Override
-    public void afterPropertiesSet() throws Exception {
-        this.upgradeTemplates = this.xmlUtilities.getTemplates(xslResource);
-    }
-
-    /* (non-Javadoc)
-     * @see org.apereo.portal.io.xml.IDataUpgrader#getSourceDataType()
-     */
-    @Override
     public Set<PortalDataKey> getSourceDataTypes() {
-        return this.portalDataKeys;
+        return portalDataKeys;
     }
 
-    /* (non-Javadoc)
-     * @see org.apereo.portal.io.xml.IDataUpgrader#upgradeData(javax.xml.transform.Source, javax.xml.transform.Result)
-     */
     @Override
     public boolean upgradeData(Source source, Result result) {
+        if (upgradeTemplates == null) {
+            initializeUpgradeTemplates();
+        }
+
         final Transformer transformer;
         try {
-            transformer = this.upgradeTemplates.newTransformer();
+            transformer = upgradeTemplates.newTransformer();
         } catch (TransformerConfigurationException e) {
             throw new RuntimeException(
                     "Failed to create new Transformer from the configured templates: "
-                            + this.xslResource,
+                            + xslResource,
                     e);
         }
 
@@ -85,9 +78,23 @@ public class XsltDataUpgrader implements IDataUpgrader, InitializingBean {
             transformer.transform(source, result);
         } catch (TransformerException e) {
             throw new RuntimeException(
-                    "Failed to upgrade data using XSLT transformation: " + this.xslResource, e);
+                    "Failed to upgrade data using XSLT transformation: " + xslResource, e);
         }
 
         return true;
+    }
+
+    private synchronized void initializeUpgradeTemplates() {
+        /*
+         * Lazy-initialize the upgradeTemplates because of a potential race condition in the Spring
+         * application context.
+         */
+        if (upgradeTemplates == null) {
+            try {
+                upgradeTemplates = xmlUtilities.getTemplates(xslResource);
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to initialize upgrade templates", e);
+            }
+        }
     }
 }

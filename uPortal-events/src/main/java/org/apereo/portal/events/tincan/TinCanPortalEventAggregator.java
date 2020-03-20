@@ -26,8 +26,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 /** Event aggregator that processes events and converts them to xAPI events. */
+@Component
 public class TinCanPortalEventAggregator extends BasePortalEventAggregator<PortalEvent>
         implements SimplePortalEventAggregator<PortalEvent> {
     private static final Logger log = LoggerFactory.getLogger(TinCanPortalEventAggregator.class);

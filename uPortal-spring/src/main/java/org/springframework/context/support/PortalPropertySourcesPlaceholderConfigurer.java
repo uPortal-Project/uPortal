@@ -17,11 +17,12 @@ package org.springframework.context.support;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
+import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 import org.jasypt.properties.EncryptableProperties;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -44,14 +45,16 @@ import org.springframework.util.CollectionUtils;
  *   <li>Provide support for encrypted property values based on Jasypt
  * </ul>
  */
+@Slf4j
 public class PortalPropertySourcesPlaceholderConfigurer
         extends PropertySourcesPlaceholderConfigurer {
 
     public static final String EXTENDED_PROPERTIES_SOURCE = "extendedPropertiesSource";
     public static final String JAYSYPT_ENCRYPTION_KEY_VARIABLE = "UP_JASYPT_KEY";
+    public static final String CLUSTER_ENV_VARIABLE = "UP_CLUSTER";
+    public static final String CLUSTER_JVM_VARIABLE = "cluster";
 
     private PropertyResolver propertyResolver;
-    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     public PortalPropertySourcesPlaceholderConfigurer() {
         /*
@@ -86,7 +89,7 @@ public class PortalPropertySourcesPlaceholderConfigurer
                 list.add(r);
             } else {
                 // In our case this event is worth a DEBUG note.
-                logger.debug(
+                log.debug(
                         "The following Resource was not present (it may be "
                                 + "optional, or it's absence may lead to issues):  ",
                         r);
@@ -157,7 +160,7 @@ public class PortalPropertySourcesPlaceholderConfigurer
         final String encryptionKey = System.getenv(JAYSYPT_ENCRYPTION_KEY_VARIABLE);
         if (encryptionKey != null) {
 
-            logger.info("Jasypt support for encrypted property values ENABLED");
+            log.info("Jasypt support for encrypted property values ENABLED");
 
             StandardPBEStringEncryptor encryptor = new StandardPBEStringEncryptor();
             encryptor.setPassword(encryptionKey);
@@ -189,7 +192,7 @@ public class PortalPropertySourcesPlaceholderConfigurer
 
         } else {
 
-            logger.info(
+            log.info(
                     "Jasypt support for encrypted property values DISABLED;  "
                             + "specify environment variable {} to use this feature",
                     JAYSYPT_ENCRYPTION_KEY_VARIABLE);
@@ -198,9 +201,41 @@ public class PortalPropertySourcesPlaceholderConfigurer
              * The feature is not in use;  defer to the Spring-provided
              * implementation of this method.
              */
-            return super.mergeProperties();
+            rslt = super.mergeProperties();
         }
 
+        honorClusterOverrides(rslt);
         return rslt;
+    }
+
+    public static void honorClusterOverrides(Properties properties) {
+        String cluster = System.getenv(CLUSTER_ENV_VARIABLE);
+        if (cluster == null || cluster.length() == 0) {
+            cluster = System.getProperty(CLUSTER_JVM_VARIABLE, "");
+        }
+        honorClusterOverrides(cluster, properties);
+    }
+
+    // This class is mainly here because JUnit/Mockito/PowerMock cannot mock System.class
+    public static void honorClusterOverrides(String cluster, Properties properties) {
+        assert (properties != null);
+
+        if (cluster != null && cluster.length() > 0) {
+            log.info("Cluster prefix filtering for {}", cluster);
+            final String clusterPrefix = cluster + ".";
+            final Map<String, Object> clusterEntries =
+                    properties.entrySet().stream()
+                            .filter(e -> e.getKey().toString().startsWith(clusterPrefix))
+                            .collect(
+                                    Collectors.toMap(
+                                            e ->
+                                                    e.getKey()
+                                                            .toString()
+                                                            .substring(clusterPrefix.length()),
+                                            e -> e.getValue()));
+            final Properties clusterProps = new Properties();
+            clusterProps.putAll(clusterEntries);
+            CollectionUtils.mergePropertiesIntoMap(clusterProps, properties);
+        }
     }
 }

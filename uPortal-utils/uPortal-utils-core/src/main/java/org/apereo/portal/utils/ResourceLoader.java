@@ -14,17 +14,11 @@
  */
 package org.apereo.portal.utils;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-
-import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
-import java.util.Properties;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -33,7 +27,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apereo.portal.ResourceMissingException;
 import org.apereo.portal.properties.PropertiesManager;
 import org.w3c.dom.Document;
-import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 /**
@@ -81,19 +74,11 @@ public class ResourceLoader {
         }
     }
 
-    /** @return the resourceUrlCache */
-    public Map<Tuple<Class<?>, String>, URL> getResourceUrlCache() {
-        return resourceUrlCache;
-    }
     /** @param resourceUrlCache the resourceUrlCache to set */
     public void setResourceUrlCache(Map<Tuple<Class<?>, String>, URL> resourceUrlCache) {
         ResourceLoader.resourceUrlCache = resourceUrlCache;
     }
 
-    /** @return the resourceUrlNotFoundCache */
-    public Map<Tuple<Class<?>, String>, ResourceMissingException> getResourceUrlNotFoundCache() {
-        return resourceUrlNotFoundCache;
-    }
     /** @param resourceUrlNotFoundCache the resourceUrlNotFoundCache to set */
     public void setResourceUrlNotFoundCache(
             Map<Tuple<Class<?>, String>, ResourceMissingException> resourceUrlNotFoundCache) {
@@ -112,12 +97,10 @@ public class ResourceLoader {
      *     resource
      * @param resource a String describing the full or partial URL of the resource to load
      * @return a URL identifying the requested resource
-     * @throws ResourceMissingException
      */
-    public static URL getResourceAsURL(Class<?> requestingClass, String resource)
+    private static URL getResourceAsURL(Class<?> requestingClass, String resource)
             throws ResourceMissingException {
-        final Tuple<Class<?>, String> cacheKey =
-                new Tuple<Class<?>, String>(requestingClass, resource);
+        final Tuple<Class<?>, String> cacheKey = new Tuple<>(requestingClass, resource);
 
         // Look for a cached URL
         final Map<Tuple<Class<?>, String>, URL> resourceUrlCache = ResourceLoader.resourceUrlCache;
@@ -142,7 +125,7 @@ public class ResourceLoader {
             resourceURL = requestingClass.getResource(resource);
 
             if (resourceURL == null) {
-                String resourceRelativeToClasspath = null;
+                String resourceRelativeToClasspath;
                 if (resource.startsWith("/")) resourceRelativeToClasspath = resource;
                 else
                     resourceRelativeToClasspath =
@@ -169,67 +152,16 @@ public class ResourceLoader {
     }
 
     /**
-     * Returns the requested resource as a URL string.
-     *
-     * @param requestingClass the java.lang.Class object of the class that is attempting to load the
-     *     resource
-     * @param resource a String describing the full or partial URL of the resource to load
-     * @return the requested resource as a URL string
-     * @throws ResourceMissingException
-     */
-    public static String getResourceAsURLString(Class<?> requestingClass, String resource)
-            throws ResourceMissingException {
-        return getResourceAsURL(requestingClass, resource).toString();
-    }
-
-    public static long getResourceLastModified(Class<?> requestingClass, String resource) {
-        final URL contentUrl = getResourceAsURL(requestingClass, resource);
-        final String contentFileName = contentUrl.getFile();
-
-        // Use JAR modified time if the resource is in a .jar file denoted by ! delimeter
-        final int delimIndex = contentFileName.indexOf('!');
-
-        final File contentFile;
-        if (delimIndex > 0) {
-            contentFile = new File(contentFileName.substring(0, delimIndex));
-        } else {
-            contentFile = new File(contentFileName);
-        }
-
-        return contentFile.lastModified();
-    }
-
-    /**
      * Returns the requested resource as a stream.
      *
      * @param requestingClass the java.lang.Class object of the class that is attempting to load the
      *     resource
      * @param resource a String describing the full or partial URL of the resource to load
      * @return the requested resource as a stream
-     * @throws ResourceMissingException
-     * @throws java.io.IOException
      */
     public static InputStream getResourceAsStream(Class<?> requestingClass, String resource)
             throws ResourceMissingException, IOException {
         return getResourceAsURL(requestingClass, resource).openStream();
-    }
-
-    /**
-     * Returns the requested resource as a SAX input source.
-     *
-     * @param requestingClass the java.lang.Class object of the class that is attempting to load the
-     *     resource
-     * @param resource a String describing the full or partial URL of the resource to load
-     * @return the requested resource as a SAX input source
-     * @throws ResourceMissingException
-     * @throws java.io.IOException
-     */
-    public static InputSource getResourceAsSAXInputSource(Class<?> requestingClass, String resource)
-            throws ResourceMissingException, IOException {
-        URL url = getResourceAsURL(requestingClass, resource);
-        InputSource source = new InputSource(url.openStream());
-        source.setPublicId(url.toExternalForm());
-        return source;
     }
 
     /**
@@ -242,21 +174,17 @@ public class ResourceLoader {
      * @param validate boolean. True if the document builder factory should validate, false
      *     otherwise.
      * @return the actual contents of the resource as an XML Document
-     * @throws ResourceMissingException
-     * @throws java.io.IOException
-     * @throws javax.xml.parsers.ParserConfigurationException
-     * @throws org.xml.sax.SAXException
      */
     public static Document getResourceAsDocument(
             Class<?> requestingClass, String resource, boolean validate)
             throws ResourceMissingException, IOException, ParserConfigurationException,
                     SAXException {
-        Document document = null;
+        Document document;
         InputStream inputStream = null;
 
         try {
 
-            DocumentBuilderFactory factoryToUse = null;
+            DocumentBuilderFactory factoryToUse;
 
             if (validate) {
                 factoryToUse = ResourceLoader.validatingDocumentBuilderFactory;
@@ -274,81 +202,5 @@ public class ResourceLoader {
             if (inputStream != null) inputStream.close();
         }
         return document;
-    }
-
-    /**
-     * Get the contents of a URL as an XML Document, first trying to read the Document with
-     * validation turned on, and falling back to reading it with validation turned off.
-     *
-     * @param requestingClass the java.lang.Class object of the class that is attempting to load the
-     *     resource
-     * @param resource a String describing the full or partial URL of the resource whose contents to
-     *     load
-     * @return the actual contents of the resource as an XML Document
-     * @throws ResourceMissingException
-     * @throws java.io.IOException
-     * @throws javax.xml.parsers.ParserConfigurationException
-     * @throws org.xml.sax.SAXException
-     */
-    public static Document getResourceAsDocument(Class<?> requestingClass, String resource)
-            throws ResourceMissingException, IOException, ParserConfigurationException,
-                    SAXException {
-
-        // Default is non-validating...
-        return getResourceAsDocument(requestingClass, resource, false);
-    }
-
-    /**
-     * Get the contents of a URL as a java.util.Properties object
-     *
-     * @param requestingClass the java.lang.Class object of the class that is attempting to load the
-     *     resource
-     * @param resource a String describing the full or partial URL of the resource whose contents to
-     *     load
-     * @return the actual contents of the resource as a Properties object
-     * @throws ResourceMissingException
-     * @throws java.io.IOException
-     */
-    public static Properties getResourceAsProperties(Class<?> requestingClass, String resource)
-            throws ResourceMissingException, IOException {
-        InputStream inputStream = null;
-        Properties props = null;
-        try {
-            inputStream = getResourceAsStream(requestingClass, resource);
-            props = new Properties();
-            props.load(inputStream);
-        } finally {
-            if (inputStream != null) inputStream.close();
-        }
-        return props;
-    }
-
-    /**
-     * Get the contents of a URL as a String
-     *
-     * @param requestingClass the java.lang.Class object of the class that is attempting to load the
-     *     resource
-     * @param resource a String describing the full or partial URL of the resource whose contents to
-     *     load
-     * @return the actual contents of the resource as a String
-     * @throws ResourceMissingException
-     * @throws java.io.IOException
-     */
-    public static String getResourceAsString(Class<?> requestingClass, String resource)
-            throws ResourceMissingException, IOException {
-        String line = null;
-        BufferedReader in = null;
-        StringBuffer sbText = null;
-        try {
-            in =
-                    new BufferedReader(
-                            new InputStreamReader(
-                                    getResourceAsStream(requestingClass, resource), UTF_8));
-            sbText = new StringBuffer(1024);
-            while ((line = in.readLine()) != null) sbText.append(line).append("\n");
-        } finally {
-            if (in != null) in.close();
-        }
-        return sbText.toString();
     }
 }

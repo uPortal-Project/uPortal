@@ -46,7 +46,7 @@ public class JpaClusterLockDao extends BasePortalJpaDao implements IClusterLockD
     private static final String CLUSTER_MUTEX_SOURCE =
             JpaClusterLockDao.class.getName() + "_CLUSTER_MUTEX";
 
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private ReadableDuration abandonedLockAge = Duration.standardSeconds(5);
     private IPortalInfoProvider portalInfoProvider;

@@ -26,7 +26,7 @@
 <c:set var="n"><portlet:namespace/></c:set>
 
 <!-- START: VALUES BEING PASSED FROM BACKEND -->
-<portlet:actionURL var="queryUrl">
+<portlet:actionURL var="queryUrl" escapeXml="false">
     <portlet:param name="execution" value="${flowExecutionKey}"/>
 </portlet:actionURL>
 <!-- END: VALUES BEING PASSED FROM BACKEND -->
@@ -613,12 +613,12 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                         <tbody>
                         <tr>
                             <td class="fl-text-align-right">
-                                <label for="expirationDate">
+                                <label for="autoPublishDate">
                                     <spring:message code="auto.publish.date.time"/>
                                 </label>
                             </td>
                             <td>
-                                <form:input id="expirationDate" type="datetime" path="publishDateString" size="10" cssClass="cal-datepicker"/>
+                                <form:input id="autoPublishDate" type="datetime" path="publishDateString" size="10" cssClass="cal-datepicker"/>
                                 <span style="${ portlet.publishDate == null ? 'display:none' : '' }">
                                     <form:select path="publishHour">
                                        <c:forEach begin="1" end="12" var="hour">
@@ -664,9 +664,12 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                         </thead>
                         <tbody>
                             <tr>
-                                <td class="fl-text-align-right"><spring:message code="auto.expire.date.time"/></td>
+                                <td class="fl-text-align-right">
+                                    <label for="autoExpireDate">
+                                        <spring:message code="auto.expire.date.time"/></td>
+                                    </label>
                                 <td>
-                                    <form:input path="expirationDateString" size="10" cssClass="cal-datepicker"/>
+                                    <form:input id="autoExpireDate" path="expirationDateString" size="10" cssClass="cal-datepicker"/>
                                     <span style="${ portlet.expirationDate == null ? 'display:none' : '' }">
                                         <form:select path="expirationHour">
                                             <c:forEach begin="1" end="12" var="hour">
@@ -685,6 +688,36 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                                         </form:select>
                                         (<a class="clear-date" href="javascript:void(0)"><spring:message code="reset"/></a>)
                                     </span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div> <!-- end: portlet-section -->
+
+            <!-- Portlet Section -->
+            <div class="portlet-section" id="customMaintenanceMessageSection" style="display: none;">
+                <div class="titlebar">
+                    <h3 class="title" role="heading"><spring:message code="custom.maintenance.message"/></h3>
+                </div>
+                <div class="content">
+
+                    <table class="portlet-table table table-hover"
+                           summary="<spring:message code='custom.maintenance.message'/>">
+                        <thead>
+                            <tr>
+                                <th><spring:message code="option"/></th>
+                                <th><spring:message code="setting"/></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="fl-text-align-right">
+                                    <label for="customMaintenanceMessage">
+                                        <spring:message code="custom.message"/></td>
+                                    </label>
+                                <td>
+                                    <form:input id="customMaintenanceMessage" path="customMaintenanceMessage" size="80" />
                                 </td>
                             </tr>
                         </tbody>
@@ -976,6 +1009,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                 var lifecycle = $('#${n}PortletLifecycle .lifecycle-state:checked').val();
                 $('#${n}PortletLifecycle #publishingDateSection').css('display', lifecycle == "APPROVED" ? "block" : "none");
                 $('#${n}PortletLifecycle #expirationDateSection').css('display', lifecycle == "PUBLISHED" ? "block" : "none");
+                $('#${n}PortletLifecycle #customMaintenanceMessageSection').css('display', lifecycle == "MAINTENANCE" ? "block" : "none");
             };
             $("#${n}PortletLifecycle .cal-datepicker").datepicker().change(function () {
                 if ($(this).val()) $(this).next().css("display", "inline");

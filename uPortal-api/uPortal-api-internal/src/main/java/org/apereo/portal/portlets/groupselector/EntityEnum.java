@@ -32,7 +32,7 @@ public enum EntityEnum {
     private String stringValue;
     private boolean isGroup;
 
-    private EntityEnum(Class<?> clazz, String stringValue, boolean isGroup) {
+    EntityEnum(Class<?> clazz, String stringValue, boolean isGroup) {
         this.clazz = clazz;
         this.stringValue = stringValue;
         this.isGroup = isGroup;

@@ -142,6 +142,8 @@ below.
 
 ## Documentation for Previous Releases
 
+-   [uPortal 5.4 Manual](https://github.com/jasig/uportal/tree/v5.4.1/docs)
+-   [uPortal 5.3 Manual](https://github.com/jasig/uportal/tree/v5.3.2/docs)
 -   [uPortal 5.2 Manual](https://github.com/jasig/uportal/tree/v5.2.0/docs)
 -   [uPortal 5.1 Manual](https://github.com/Jasig/uPortal/tree/v5.1.2/docs)
 -   [uPortal 5.0 Manual](https://github.com/Jasig/uPortal/tree/v5.0.7/docs)

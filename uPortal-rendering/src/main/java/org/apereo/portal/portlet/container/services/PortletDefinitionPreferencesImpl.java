@@ -14,12 +14,10 @@
  */
 package org.apereo.portal.portlet.container.services;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import javax.portlet.ValidatorException;
 import org.apache.pluto.container.om.portlet.PortletDefinition;
 import org.apache.pluto.container.om.portlet.Preference;
 import org.apache.pluto.container.om.portlet.Preferences;
@@ -96,7 +94,7 @@ public class PortletDefinitionPreferencesImpl
     }
 
     @Override
-    protected boolean storeInternal() throws IOException, ValidatorException {
+    protected boolean storeInternal() {
 
         return this.transactionOperations.execute(
                 new TransactionCallback<Boolean>() {
@@ -111,8 +109,7 @@ public class PortletDefinitionPreferencesImpl
                         final Collection<IPortletPreference> values =
                                 targetPortletPreferences.values();
                         final boolean modified =
-                                portletDefinition.setPortletPreferences(
-                                        new ArrayList<IPortletPreference>(values));
+                                portletDefinition.setPortletPreferences(new ArrayList<>(values));
                         if (!modified) {
                             // Nothing actually changed, skip the store
                             return Boolean.FALSE;

@@ -15,12 +15,10 @@
 package org.apereo.portal.url;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.MapConstraint;
-import com.google.common.collect.MapConstraints;
+import java.util.HashMap;
 import java.util.Map;
 import javax.portlet.PortletMode;
 import javax.portlet.WindowState;
-import org.apache.commons.lang.Validate;
 import org.apereo.portal.portlet.om.IPortletWindowId;
 
 /** Builds a portlet URL */
@@ -44,17 +42,7 @@ class PortletUrlBuilder extends AbstractUrlBuilder implements IPortletUrlBuilder
         this.portalUrlBuilder = portalUrlBuilder;
         this.urlType = this.portalUrlBuilder.getUrlType();
 
-        this.publicRenderParameters =
-                MapConstraints.constrainedMap(
-                        new ParameterMap(),
-                        new MapConstraint<String, String[]>() {
-                            @Override
-                            public void checkKeyValue(String key, String[] value) {
-                                Validate.notNull(key, "name can not be null");
-                                Validate.noNullElements(
-                                        value, "values can not be null or contain null elements");
-                            }
-                        });
+        this.publicRenderParameters = new HashMap<>();
     }
 
     /* (non-Javadoc)

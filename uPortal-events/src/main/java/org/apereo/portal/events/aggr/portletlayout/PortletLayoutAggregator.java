@@ -32,10 +32,12 @@ import org.apereo.portal.events.aggr.groups.AggregatedGroupMapping;
 import org.apereo.portal.events.aggr.portlets.AggregatedPortletLookupDao;
 import org.apereo.portal.events.aggr.portlets.AggregatedPortletMapping;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  * Event aggregator that uses {@link PortletLayoutAggregationPrivateDao} to aggregate portlet adds
  */
+@Component
 public class PortletLayoutAggregator
         extends BaseIntervalAwarePortalEventAggregator<
                 PortletLayoutPortalEvent,

@@ -113,6 +113,9 @@
 <%-- API URL for fetching search results --%>
 <c:url value="/api/v5-0/portal/search" var="searchApiUrl">
     <c:param name="q" value="${param.query}" />
+    <c:forEach items="${renderRequest.preferences.map['RESTSearch.type']}" var="value">
+        <c:param name="type" value="${value}" />
+    </c:forEach>
 </c:url>
 
 <%--
@@ -128,6 +131,7 @@
 <spring:message var="i18n_telephoneNumber" code="attribute.displayName.telephoneNumber" />
 <spring:message var="i18n_name" code="name" />
 <spring:message var="i18n_description" code="description" />
+<spring:message var="i18n_score" code="search.score" />
 
 <script language="javascript" type="text/javascript">
 // This metadata object tells us which avatar (icon) and which
@@ -151,7 +155,8 @@ var i18n = {
     'mail': '${i18n_mail}',
     'telephoneNumber': '${i18n_telephoneNumber}',
     'name': '${i18n_name}',
-    'description': '${i18n_description}'
+    'description': '${i18n_description}',
+    'score': '${i18n_score}'
 };
 
 fetch('${searchApiUrl}', {credentials: 'same-origin'})

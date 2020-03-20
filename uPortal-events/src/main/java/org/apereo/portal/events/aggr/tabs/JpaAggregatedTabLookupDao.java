@@ -32,6 +32,8 @@ import org.apereo.portal.jpa.OpenEntityManager;
 import org.apereo.portal.jpa.cache.EntityManagerCache;
 import org.apereo.portal.utils.Tuple;
 import org.apereo.portal.utils.cache.CacheKey;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcOperations;
@@ -50,6 +52,8 @@ public class JpaAggregatedTabLookupDao extends BaseAggrEventsJpaDao
     private EntityManagerCache entityManagerCache;
     private JdbcOperations portalJdbcOperations;
     private Ehcache layoutNodeIdNameResolutionCache;
+
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
     @Qualifier(

@@ -1,14 +1,80 @@
 {
   "extends": [
     "config:base",
-    ":rebaseStalePrs",
     ":preserveSemverRanges",
-    ":semanticPrefixChore",
-    ":disableRateLimiting"
+    ":masterIssue"
   ],
-  "gradle": {
-    "enabled": true
-  },
+  "gradle": { "enabled": true },
+  "major": { "masterIssueApproval": true },
   "renovateFork": true,
-  "prConcurrentLimit": 5
+  "packageRules": [
+    {
+      "groupName": "uPortal",
+      "packagePatterns": ["^org.jasig.portal:"]
+    },
+    {
+      "groupName": "uPortal web components",
+      "packagePatterns": ["^org.webjars.npm:uportal"]
+    },
+    {
+      "groupName": "Person Directory",
+      "packagePatterns": ["^org.apereo.service.persondir"]
+    },
+    {
+      "groupName": "Lucene",
+      "packagePatterns": ["^org.apache.lucene"]
+    },
+    {
+      "groupName": "Mockito",
+      "packagePatterns": ["^org.mockito"]
+    },
+    {
+      "groupName": "User Type",
+      "packagePatterns": ["^org.jadira.usertype:usertype.core"]
+    },
+    {
+      "groupName": "JAXB2",
+      "packagePatterns": ["^org.jvnet.jaxb2_commons"]
+    },
+    {
+      "groupName": "Resource Server",
+      "packagePatterns": ["^org.jasig.resourceserver"]
+    },
+    {
+      "groupName": "Notification Portlet",
+      "packagePatterns": ["^org.jasig.portlet.notification"]
+    },
+    {
+      "groupName": "AspectJ",
+      "packagePatterns": ["^org.aspectj"]
+    },
+    {
+      "packagePatterns": ["^com.amazonaws"],
+      "schedule": "on Monday"
+    },
+    {
+      "groupName": "SLF4J",
+      "packagePatterns": ["^org.slf4j"]
+    },
+    {
+      "groupName": "Groovy",
+      "packagePatterns": ["^org.codehaus.groovy"]
+    },
+    {
+      "groupName": "JSON Web Token",
+      "packagePatterns": ["^io.jsonwebtoken"]
+    },
+    {
+      "groupName": "Apache Pluto",
+      "packagePatterns": ["^org.apache.portals.pluto"]
+    },
+    {
+      "groupName": "JAXB",
+      "packagePatterns": ["^com.sun.xml.bind"]
+    },
+    {
+      "groupName": "Jadira Usertype",
+      "packagePatterns": ["^org.jadira.usertype"]
+    }
+  ]
 }

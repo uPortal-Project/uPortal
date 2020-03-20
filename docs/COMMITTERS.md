@@ -5,8 +5,9 @@
  - Anthony Colebourne (acolebourne)
  - Andrew Petro (apetro)
  - Benito Gonzalez (bjagg)
+ - [Chris Beach][] (cbeach47)
  - [Christian Cousquer][] (cousquer)
- - Christian Murphy (ChristianMurphy)
+ - [Christian Murphy][] (ChristianMurphy)
  - Daniel McCallum (dmccallum)
  - Drew Wills (drewwills)
  - [Jim Helwig] (jimhelwig)
@@ -16,6 +17,7 @@
  - [Mairi Fraiser][] (mairi)
  - Misagh Moayyed (mmoayyed)
  - Paul Spaude (pspaude)
+ - [Ryan Mathis][] (rmathis)
  - Tim Levett (timlevett)
  - Timothy A Vertein (vertein)
  - William G. Thompson, Jr. (wgthom)
@@ -88,3 +90,6 @@ Apache Software Foundation on
 [Jonathan Tran]: https://groups.google.com/a/apereo.org/d/msg/uportal-dev/SRhi4Ega-mk/RyPMPTwGAgAJ
 [Julien Gribonvald]: https://groups.google.com/a/apereo.org/d/msg/uportal-dev/bXZlOqaK0kE/othFUzwGAgAJ
 [Mairi Fraiser]: https://groups.google.com/a/apereo.org/d/msg/uportal-dev/GO76Me6ylF0/hYdLPjsGAgAJ
+[Chris Beach]: https://groups.google.com/a/apereo.org/d/msg/uportal-dev/MY4o0pEkuog/LP7CZCOaAwAJ
+[Christian Murphy]: https://groups.google.com/a/apereo.org/d/msg/uportal-dev/N9vxp2Bz9J4/Dmih3VNTBAAJ
+[Ryan Mathis]: https://groups.google.com/a/apereo.org/d/msg/uportal-dev/B87VkKHHnls/zOCNvHTuCgAJ

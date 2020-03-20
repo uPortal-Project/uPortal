@@ -28,8 +28,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 /**
@@ -131,17 +131,25 @@ public class SearchRESTController {
 
     @Autowired private Set<ISearchStrategy> searchStrategies;
 
-    @RequestMapping(method = RequestMethod.GET)
+    @GetMapping
     public void search(
             @RequestParam("q") String query,
+            @RequestParam(value = "type", required = false) Set<String> types,
             HttpServletRequest request,
             HttpServletResponse response)
             throws IOException {
 
+        logger.debug("Searching with q={}, type={}", query, types);
+
         final Map<String, List<?>> searchResults = new TreeMap<>();
 
         for (ISearchStrategy strategy : searchStrategies) {
-            searchResults.put(strategy.getResultTypeName(), strategy.search(query, request));
+            if (types == null
+                    || types.isEmpty()
+                    || types.contains("")
+                    || types.contains(strategy.getResultTypeName())) {
+                searchResults.put(strategy.getResultTypeName(), strategy.search(query, request));
+            }
         }
 
         if (searchResults.isEmpty()) {

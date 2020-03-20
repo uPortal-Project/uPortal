@@ -704,6 +704,11 @@
                 <name>RESTSearch</name>
                 <value>true</value>
             </preference>
+            <!-- Optional.  In the REST Search UI, this preference controls which type(s) (search strategies)
+                 will appear in the results.  If empty, all available types will be shown. -->
+            <preference>
+                <name>RESTSearch.type</name>
+            </preference>
             <!-- Max number of characters returned for title or description for auto-complete search results.
                  92 found to be a good fit for keeping most description text at 2 lines. -->
             <preference>

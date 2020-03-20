@@ -30,6 +30,8 @@ import org.apereo.portal.jpa.BaseAggrEventsJpaDao;
 import org.apereo.portal.jpa.OpenEntityManager;
 import org.apereo.portal.jpa.cache.EntityManagerCache;
 import org.apereo.portal.utils.cache.CacheKey;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.TransactionStatus;
@@ -43,6 +45,8 @@ public class JpaAggregatedGroupLookupDao extends BaseAggrEventsJpaDao
 
     private EntityManagerCache entityManagerCache;
     private ICompositeGroupService compositeGroupService;
+
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
     public void setEntityManagerCache(EntityManagerCache entityManagerCache) {

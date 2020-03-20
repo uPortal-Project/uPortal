@@ -105,7 +105,7 @@
         <!-- allowedOrigins should include protocol. For example, "https://idp.myschool.edu, https://cas.myschool.edu" -->
         <property name="allowedOrigins" value="${cors.allowed.origins:}" />
         <property name="allowedHttpMethods" value="${cors.allowed.methods:GET,HEAD}" />
-        <property name="allowedHttpHeaders" value="${cors.allowed.headers:Origin,Accept,X-Requested-With,Content-Type,Access-Control-Request-Method,Access-Control-Request-Headers}" />
+        <property name="allowedHttpHeaders" value="${cors.allowed.headers:Origin,Accept,Authorization,X-Requested-With,Content-Type,Access-Control-Request-Method,Access-Control-Request-Headers}" />
         <property name="exposedHeaders" value="${cors.exposed.headers:}" />
         <property name="supportsCredentials" value="${cors.support.credentials:true}" />
         <property name="preflightMaxAge" value="${cors.preflight.maxage:1800}" />
@@ -119,7 +119,7 @@
      +-->
     <bean name="ticketValidationFilter" class="org.jasig.cas.client.validation.Cas20ProxyReceivingTicketValidationFilter">
         <property name="serverName" value="${portal.allServerNames}" />
-        <property name="encodeServiceUrl" value="false" />
+        <property name="encodeServiceUrl" value="${cas.ticketValidationFilter.encodeServiceUrl:true}" />
         <property name="proxyReceptorUrl" value="${cas.ticketValidationFilter.proxyReceptorUrl:}" />
         <property name="ticketValidator">
             <bean class="org.jasig.cas.client.validation.Cas20ServiceTicketValidator">
@@ -151,6 +151,6 @@
         <property name="casServerLoginUrl" value="${cas.authenticationFilter.cas.login.url}" />
         <property name="serverName" value="${portal.allServerNames}" />
         <property name="gateway" value="false" />
-        <property name="encodeServiceUrl" value="false" />
+        <property name="encodeServiceUrl" value="${cas.ticketValidationFilter.encodeServiceUrl:true}" />
     </bean>
 </beans>

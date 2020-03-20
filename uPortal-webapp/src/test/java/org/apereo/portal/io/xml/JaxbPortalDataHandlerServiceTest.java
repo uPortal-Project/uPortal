@@ -348,7 +348,6 @@ public class JaxbPortalDataHandlerServiceTest {
         xsltDataUpgrader.setPortalDataKey(dataKey);
         xsltDataUpgrader.setXslResource(xslResource);
         xsltDataUpgrader.setXmlUtilities(xmlUtilities);
-        xsltDataUpgrader.afterPropertiesSet();
 
         return xsltDataUpgrader;
     }

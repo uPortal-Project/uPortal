@@ -14,8 +14,8 @@
  */
 package org.apereo.portal.utils;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -30,20 +30,12 @@ public class MultivaluedMapPopulator<K, V> implements Populator<K, V> {
     private final Map<? super K, List<V>> map;
 
     public MultivaluedMapPopulator() {
-        this.map = new LinkedHashMap<K, List<V>>();
-    }
-
-    public MultivaluedMapPopulator(Map<? super K, List<V>> map) {
-        this.map = map;
+        this.map = new LinkedHashMap<>();
     }
 
     @Override
     public Populator<K, V> put(K k, V v) {
-        List<V> values = this.map.get(k);
-        if (values == null) {
-            values = new LinkedList<V>();
-            this.map.put(k, values);
-        }
+        List<V> values = this.map.computeIfAbsent(k, k1 -> new ArrayList<>());
         values.add(v);
 
         return this;

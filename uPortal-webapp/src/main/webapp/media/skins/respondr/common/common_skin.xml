@@ -29,12 +29,12 @@
     <!--
     | NOTE:  The following order is important!
     +-->
-    <js included="plain">/ResourceServingWebapp/rs/jquery/1.11.0/jquery-1.11.0.js</js>
-    <js included="aggregated">/ResourceServingWebapp/rs/jquery/1.11.0/jquery-1.11.0.min.js</js>
+    <js included="plain">/ResourceServingWebapp/rs/jquery/1.12.4/jquery-1.12.4.js</js>
+    <js included="aggregated">/ResourceServingWebapp/rs/jquery/1.12.4/jquery-1.12.4.min.js</js>
 
     <!-- Must follow loading of jQuery -->
-    <js included="plain">/ResourceServingWebapp/rs/jquery-migrate/jquery-migrate-1.2.1.js</js>
-    <js included="aggregated">/ResourceServingWebapp/rs/jquery-migrate/jquery-migrate-1.2.1.min.js</js>
+    <js included="plain">/ResourceServingWebapp/rs/jquery-migrate/jquery-migrate-1.4.1.js</js>
+    <js included="aggregated">/ResourceServingWebapp/rs/jquery-migrate/jquery-migrate-1.4.1.min.js</js>
 
     <js included="plain" resource="true">/rs/jqueryui/1.10.3/jquery-ui-1.10.3.js</js>
     <js included="aggregated" resource="true">/rs/jqueryui/1.10.3/jquery-ui-1.10.3.min.js</js>

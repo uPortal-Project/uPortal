@@ -14,10 +14,9 @@
  */
 package org.apereo.portal.url;
 
-import com.google.common.collect.MapConstraint;
-import com.google.common.collect.MapConstraints;
 import com.google.common.collect.ObjectArrays;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang.Validate;
@@ -27,17 +26,7 @@ public abstract class AbstractUrlBuilder implements IUrlBuilder {
     private final Map<String, String[]> parameters;
 
     public AbstractUrlBuilder() {
-        this.parameters =
-                MapConstraints.constrainedMap(
-                        new ParameterMap(),
-                        new MapConstraint<String, String[]>() {
-                            @Override
-                            public void checkKeyValue(String key, String[] value) {
-                                Validate.notNull(key, "name can not be null");
-                                Validate.noNullElements(
-                                        value, "values can not be null or contain null elements");
-                            }
-                        });
+        this.parameters = new HashMap<>();
     }
 
     @Override

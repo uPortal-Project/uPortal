@@ -34,6 +34,8 @@ import org.apereo.portal.portlet.dao.IMarketplaceRatingDao;
 import org.apereo.portal.portlet.dao.IPortletDefinitionDao;
 import org.apereo.portal.portlet.marketplace.IMarketplaceRating;
 import org.apereo.portal.portlet.om.IPortletDefinition;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
@@ -55,8 +57,10 @@ public class JpaMarketplaceRatingDao extends BasePortalJpaDao implements IMarket
 
     private CriteriaQuery<MarketplaceRatingImpl> findAllMarketPlaceRating;
 
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         this.findAllMarketPlaceRating =
                 this.createCriteriaQuery(
                         new Function<CriteriaBuilder, CriteriaQuery<MarketplaceRatingImpl>>() {
@@ -76,7 +80,6 @@ public class JpaMarketplaceRatingDao extends BasePortalJpaDao implements IMarket
     /**
      * This method will either create a new rating or update an existing rating
      *
-     * @param Must not be null
      * @return the attached entity
      */
     @Override
@@ -127,12 +130,11 @@ public class JpaMarketplaceRatingDao extends BasePortalJpaDao implements IMarket
     public Set<IMarketplaceRating> getAllRatings() {
         final TypedQuery<MarketplaceRatingImpl> query =
                 this.createCachedQuery(this.findAllMarketPlaceRating);
-        return new HashSet<IMarketplaceRating>(query.getResultList());
+        return new HashSet<>(query.getResultList());
     }
 
     /**
      * @since 5.0
-     * @param marketplaceRatingPK the primary key of the entity you want
      * @return Set of ratings per portlet definition
      */
     @Override
@@ -158,8 +160,7 @@ public class JpaMarketplaceRatingDao extends BasePortalJpaDao implements IMarket
         TypedQuery<IMarketplaceRating> tq = entityManager.createQuery(getByPortlet);
         tq.setParameter("portletFName", fname);
         List<IMarketplaceRating> resultList = tq.getResultList();
-        Set<IMarketplaceRating> resultSet = new HashSet<IMarketplaceRating>(resultList);
-        return resultSet;
+        return new HashSet<>(resultList);
     }
 
     @Override
@@ -236,7 +237,6 @@ public class JpaMarketplaceRatingDao extends BasePortalJpaDao implements IMarket
         }
     }
 
-    /** @param entity to delete - can not be null */
     @Override
     @PortalTransactional
     public void deleteRating(IMarketplaceRating marketplaceRatingImplementation) {

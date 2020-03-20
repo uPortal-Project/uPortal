@@ -193,20 +193,25 @@ ci-après.
 5.  [Navigateurs Web supportés](NAVIGATEURS_SUPPORTES.md)
 6.  [Accessibilité](ACCESSIBILITE.md)
 7.  [Contributeurs au projet](COMMITTERS.md)
-8.  [Glossaire](GLOSSAIRE.md)
+8.  [Historique](HISTORIQUE.md)
+9.  [Glossaire](GLOSSAIRE.md)
 
 ## Liens externes
 
 * [Foundation Apereo ](https://www.apereo.org/)
 * [Wiki uPortal](https://wiki.jasig.org/display/UPC/Home)
 
-## Documentation des précédentes versions
+## Documentation des versions précédentes
 
-* [Manuel uPortal 5.0](https://github.com/Jasig/uPortal/tree/v5.0.6/docs/fr)
-* [uPortal 4.3](https://wiki.jasig.org/display/UPM43/Home)
-* [uPortal 4.2](https://wiki.jasig.org/display/UPM42/Home)
-* [uPortal 4.1](https://wiki.jasig.org/display/UPM41/Home)
-* [uPortal 4.0](https://wiki.jasig.org/display/UPM40/Home)
-* [uPortal 3.2](https://wiki.jasig.org/display/UPM32/Home)
-* [uPortal 3.1](https://wiki.jasig.org/display/UPM31/Home)
-* [uPortal 3.0](https://wiki.jasig.org/display/UPM30/Home)
+-   [Manuel uPortal 5.4](https://github.com/jasig/uportal/tree/v5.4.1/docs/fr)
+-   [Manuel uPortal 5.3](https://github.com/jasig/uportal/tree/v5.3.2/docs/fr)
+-   [Manuel uPortal 5.2](https://github.com/jasig/uportal/tree/v5.2.0/docs/fr)
+-   [Manuel uPortal 5.1](https://github.com/Jasig/uPortal/tree/v5.1.2/docs/fr)
+-   [Manuel uPortal 5.0](https://github.com/Jasig/uPortal/tree/v5.0.7/docs/fr)
+-   [Manuel uPortal 4.3](https://wiki.jasig.org/display/UPM43/Home)
+-   [Manuel uPortal 4.2](https://wiki.jasig.org/display/UPM42/Home)
+-   [Manuel uPortal 4.1](https://wiki.jasig.org/display/UPM41/Home)
+-   [Manuel uPortal 4.0](https://wiki.jasig.org/display/UPM40/Home)
+-   [Manuel uPortal 3.2](https://wiki.jasig.org/display/UPM32/Home)
+-   [Manuel uPortal 3.1](https://wiki.jasig.org/display/UPM31/Home)
+-   [Manuel uPortal 3.0](https://wiki.jasig.org/display/UPM30/Home)

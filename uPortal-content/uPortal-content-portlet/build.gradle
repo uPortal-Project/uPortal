@@ -1,7 +1,6 @@
 description = "Apereo uPortal Portlet Support"
 
 ext {
-    // Solution for JPA Modelgen based on http://stackoverflow.com/a/23218255/1651116
     generatedSourcesDir = file("${buildDir}/generated-sources/javac/main/java")
 }
 
@@ -10,7 +9,7 @@ dependencies {
     compile project(':uPortal-rdbm')
 
     compileOnly "org.apache.portals.pluto:pluto-container-api:${plutoVersion}"
-    compileOnly "org.hibernate:hibernate-jpamodelgen:${hibernateJpamodelgenVersion}" // Required for javac -s
+    annotationProcessor "org.hibernate:hibernate-jpamodelgen:${hibernateJpamodelgenVersion}"
     compileOnly "${portletApiDependency}"
     compileOnly "${servletApiDependency}"
 
@@ -32,12 +31,6 @@ sourceSets {
     }
 }
 
-// These are the only modifications to build process that are required.
-compileJava {
-    doFirst {
-        // Generated sources directory should be present & empty before compilation
-        generatedSourcesDir.deleteDir()
-        generatedSourcesDir.mkdirs()
-    }
-    options.compilerArgs += ['-s', generatedSourcesDir]
+tasks.withType(JavaCompile) {
+    options.annotationProcessorGeneratedSourcesDirectory = file(generatedSourcesDir)
 }

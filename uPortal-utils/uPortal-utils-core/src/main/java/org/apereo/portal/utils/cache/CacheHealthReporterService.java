@@ -70,8 +70,7 @@ public class CacheHealthReporterService {
             }
         };
 
-        private final List<ReportTuple> entries =
-                Collections.synchronizedList(new ArrayList<ReportTuple>());
+        private final List<ReportTuple> entries = Collections.synchronizedList(new ArrayList<>());
 
         public final void add(ReportTuple tuple) {
             entries.add(tuple);

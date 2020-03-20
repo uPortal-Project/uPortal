@@ -24,7 +24,7 @@ import javax.xml.stream.events.XMLEvent;
 
 /** Buffers XML events for later re-reading */
 public class BufferedXMLEventReader extends BaseXMLEventReader {
-    private final LinkedList<XMLEvent> eventBuffer = new LinkedList<XMLEvent>();
+    private final LinkedList<XMLEvent> eventBuffer = new LinkedList<>();
     private int eventLimit = 0;
     private ListIterator<XMLEvent> bufferReader = null;
 
@@ -45,12 +45,9 @@ public class BufferedXMLEventReader extends BaseXMLEventReader {
 
     /** @return A copy of the current buffer */
     public List<XMLEvent> getBuffer() {
-        return new ArrayList<XMLEvent>(this.eventBuffer);
+        return new ArrayList<>(this.eventBuffer);
     }
 
-    /* (non-Javadoc)
-     * @see org.apereo.portal.xml.stream.BaseXMLEventReader#internalNextEvent()
-     */
     @Override
     protected XMLEvent internalNextEvent() throws XMLStreamException {
         // If there is an iterator to read from reset was called, use the iterator
@@ -153,11 +150,6 @@ public class BufferedXMLEventReader extends BaseXMLEventReader {
     public void close() throws XMLStreamException {
         this.mark(0);
         super.close();
-    }
-
-    /** @return The number of events in the buffer. */
-    public int bufferSize() {
-        return this.eventBuffer.size();
     }
 
     /**

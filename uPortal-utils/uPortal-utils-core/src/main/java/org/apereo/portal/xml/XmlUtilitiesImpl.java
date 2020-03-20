@@ -82,7 +82,7 @@ public class XmlUtilitiesImpl implements XmlUtilities {
     @Override
     public Templates getTemplates(Resource stylesheet)
             throws TransformerConfigurationException, IOException {
-        final CachedResource<Templates> templates = this.getStylesheetCachedResource(stylesheet);
+        final CachedResource<Templates> templates = getStylesheetCachedResource(stylesheet);
         return templates.getCachedResource();
     }
 
@@ -216,7 +216,7 @@ public class XmlUtilitiesImpl implements XmlUtilities {
 
     private CachedResource<Templates> getStylesheetCachedResource(Resource stylesheet)
             throws IOException {
-        return this.cachingResourceLoader.getResource(stylesheet, this.templatesBuilder);
+        return cachingResourceLoader.getResource(stylesheet, templatesBuilder);
     }
 
     public static String getElementText(Element e) {

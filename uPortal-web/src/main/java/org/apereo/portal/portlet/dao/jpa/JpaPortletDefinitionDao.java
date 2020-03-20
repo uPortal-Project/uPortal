@@ -32,6 +32,8 @@ import org.apereo.portal.portlet.om.IPortletDefinition;
 import org.apereo.portal.portlet.om.IPortletDefinitionId;
 import org.apereo.portal.spring.tx.DialectAwareTransactional;
 import org.hibernate.dialect.PostgreSQL81Dialect;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 
@@ -46,8 +48,10 @@ public class JpaPortletDefinitionDao extends BasePortalJpaDao implements IPortle
     private ParameterExpression<String> nameParameter;
     private ParameterExpression<String> titleParameter;
 
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         this.nameParameter = this.createParameterExpression(String.class, "name");
         this.titleParameter = this.createParameterExpression(String.class, "title");
 
@@ -144,11 +148,9 @@ public class JpaPortletDefinitionDao extends BasePortalJpaDao implements IPortle
         Validate.notNull(portletDefinitionId, "portletDefinitionId can not be null");
 
         final long internalPortletDefinitionId = getNativePortletDefinitionId(portletDefinitionId);
-        final PortletDefinitionImpl portletDefinition =
-                this.getEntityManager()
-                        .find(PortletDefinitionImpl.class, internalPortletDefinitionId);
 
-        return portletDefinition;
+        return this.getEntityManager()
+                .find(PortletDefinitionImpl.class, internalPortletDefinitionId);
     }
 
     @Override
@@ -213,7 +215,7 @@ public class JpaPortletDefinitionDao extends BasePortalJpaDao implements IPortle
         query.setParameter("title", term);
 
         final List<PortletDefinitionImpl> portletDefinitions = query.getResultList();
-        return new ArrayList<IPortletDefinition>(portletDefinitions);
+        return new ArrayList<>(portletDefinitions);
     }
 
     @Override
@@ -241,8 +243,7 @@ public class JpaPortletDefinitionDao extends BasePortalJpaDao implements IPortle
                 this.createCachedQuery(this.findAllPortletDefinitions);
 
         final List<PortletDefinitionImpl> portletDefinitions = query.getResultList();
-        return new ArrayList<IPortletDefinition>(
-                new LinkedHashSet<IPortletDefinition>(portletDefinitions));
+        return new ArrayList<>(new LinkedHashSet<IPortletDefinition>(portletDefinitions));
     }
 
     @Override
@@ -258,11 +259,11 @@ public class JpaPortletDefinitionDao extends BasePortalJpaDao implements IPortle
         return portletDefinition;
     }
 
-    protected long getNativePortletDefinitionId(IPortletDefinitionId portletDefinitionId) {
+    private long getNativePortletDefinitionId(IPortletDefinitionId portletDefinitionId) {
         return Long.parseLong(portletDefinitionId.getStringId());
     }
 
-    protected Long getNativePortletDefinitionId(String portletDefinitionId) {
+    private Long getNativePortletDefinitionId(String portletDefinitionId) {
         Long rslt = null; // default
         try {
             rslt = Long.parseLong(portletDefinitionId);

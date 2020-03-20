@@ -27,6 +27,8 @@ import org.apereo.portal.jpa.OpenEntityManager;
 import org.apereo.portal.version.dao.VersionDao;
 import org.apereo.portal.version.om.Version;
 import org.hibernate.exception.SQLGrammarException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 
@@ -36,8 +38,10 @@ public class JpaVersionDao extends BasePortalJpaDao implements VersionDao {
     private CriteriaQuery<Integer> findLocalVersionNumber;
     private ParameterExpression<String> productParameter;
 
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         this.productParameter = this.createParameterExpression(String.class, "product");
 
         this.findCoreVersionNumbers =

@@ -53,6 +53,12 @@ public class SimpleSecurityContext extends ChainingSecurityContext implements IS
         this.isauth = false;
         if (this.myPrincipal.UID != null && this.myOpaqueCredentials.credentialstring != null) {
 
+            // Logs if an attempt is made to log into a local account
+            if (log.isWarnEnabled())
+                log.warn(
+                        "An attempt to log into the local login has occurred. user="
+                                + this.myPrincipal.UID);
+
             try {
 
                 ILocalAccountDao accountStore = LocalAccountDaoLocator.getLocalAccountDao();

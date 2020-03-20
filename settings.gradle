@@ -18,8 +18,6 @@ include 'uPortal-web'
 include 'uPortal-webapp'
 
 include 'uPortal-api:uPortal-api-internal'
-include 'uPortal-api:uPortal-api-platform'
-include 'uPortal-api:uPortal-api-platform-impl'
 include 'uPortal-api:uPortal-api-rest'
 include 'uPortal-api:uPortal-api-search'
 
@@ -33,6 +31,8 @@ include 'uPortal-groups:uPortal-groups-local'
 include 'uPortal-groups:uPortal-groups-grouper'
 include 'uPortal-groups:uPortal-groups-pags'
 include 'uPortal-groups:uPortal-groups-smartldap'
+
+include 'uPortal-index'
 
 include 'uPortal-io:uPortal-io-core'
 include 'uPortal-io:uPortal-io-jaxb'

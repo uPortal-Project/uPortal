@@ -12,7 +12,7 @@ plugins {
     id 'war'
 }
 
-apply plugin: 'com.moowork.node'
+apply plugin: 'com.github.node-gradle.node'
 
 description = "Apereo uPortal Webapp (WAR)"
 
@@ -31,6 +31,7 @@ dependencies {
     compile project(':uPortal-groups:uPortal-groups-ldap')
     compile project(':uPortal-groups:uPortal-groups-local')
     compile project(':uPortal-groups:uPortal-groups-smartldap')
+    compile project(':uPortal-index')
     compile project(':uPortal-portlets')
     compile project(':uPortal-security:uPortal-security-authn')
     compile project(':uPortal-security:uPortal-security-xslt')
