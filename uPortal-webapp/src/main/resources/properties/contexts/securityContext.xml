@@ -149,7 +149,7 @@
 
     <bean name="casInnerAuthenticationFilter" class="org.jasig.cas.client.authentication.AuthenticationFilter">
         <property name="casServerLoginUrl" value="${cas.authenticationFilter.cas.login.url}" />
-        <property name="service" value="${cas.authenticationFilter.service}" />
+        <property name="serverName" value="${portal.allServerNames}" />
         <property name="gateway" value="false" />
         <property name="encodeServiceUrl" value="${cas.ticketValidationFilter.encodeServiceUrl:true}" />
     </bean>
