@@ -58,10 +58,14 @@ public class PortalSearchIndexer {
         logger.info(
                 "Search indexing is {} based on presence or absence of a Directory",
                 isEnabled() ? "ENABLED" : "DISABLED");
+        if (isEnabled()) {
+            updateIndex();
+        }
     }
 
     /** Called by Quatrz. */
     public void updateIndex() {
+        logger.debug("Updating Lucene index files ...");
 
         if (!isEnabled()) {
             return;

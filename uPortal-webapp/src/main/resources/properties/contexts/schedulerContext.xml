@@ -63,7 +63,7 @@
         <task:scheduled ref="portalEventDaoQueuingEventHandler" method="flush" fixed-delay="997"/> <!-- ~1 second period -->
         <task:scheduled ref="cacheManagerExpiredElementEvictor" method="evictExpiredElements" fixed-delay="61900"/> <!-- ~1 minute period -->
         <task:scheduled ref="cacheHealthReporterService" method="generateReports" fixed-delay="60013"/> <!-- ~1 minute period -->
-        <task:scheduled ref="portalSearchIndexer" method="updateIndex" fixed-delay="${org.apereo.portal.index.portalSearchIndexer.updateIndexPeriod:180001}"/> <!-- ~3 minute period -->
+        <task:scheduled ref="portalSearchIndexer" method="updateIndex" fixed-delay="${org.apereo.portal.index.portalSearchIndexer.updateIndexPeriod:58001}"/> <!-- ~1 minute period -->
 
         <!-- clustered tasks -->
         <task:scheduled ref="portletCookieService" method="purgeExpiredCookies" fixed-delay="${org.apereo.portal.portlet.container.services.PortletCookieServiceImpl.purgeExpiredCookiesPeriod}"/>

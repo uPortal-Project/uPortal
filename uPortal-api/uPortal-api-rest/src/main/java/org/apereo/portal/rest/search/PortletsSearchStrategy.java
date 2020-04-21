@@ -86,12 +86,12 @@ public class PortletsSearchStrategy implements ISearchStrategy {
 
     @Override
     public List<?> search(String query, HttpServletRequest request) {
-
+        logger.debug("Entering search() with query={}", query);
         final List<Object> rslt = new ArrayList<>();
 
         try (IndexReader indexReader = DirectoryReader.open(directory)) {
-
-            final Query q = queryParser.parse(query);
+            final String queryString = query.endsWith(" ") ? query : query + "*";
+            final Query q = queryParser.parse(queryString);
             final IndexSearcher searcher = new IndexSearcher(indexReader);
             final TopDocs topDocs = searcher.search(q, 50);
             Arrays.stream(topDocs.scoreDocs)
