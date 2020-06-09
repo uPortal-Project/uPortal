@@ -188,12 +188,12 @@ var up = up || {};
             portlets = [];
             members =
                 overallThat.state.currentCategory &&
-                overallThat.state.currentCategory !== ''
-                    ? overallThat.registry.getMemberPortlets(
+                overallThat.state.currentCategory !== '' ?
+                    overallThat.registry.getMemberPortlets(
                         overallThat.state.currentCategory,
                         true
-                    )
-                    : overallThat.registry.getAllPortlets();
+                    ) :
+                    overallThat.registry.getAllPortlets();
             $(members).each(function(idx, portlet) {
                 if (
                     !overallThat.state.portletRegex ||

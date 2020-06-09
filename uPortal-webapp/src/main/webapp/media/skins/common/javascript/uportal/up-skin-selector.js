@@ -132,9 +132,9 @@ var up = up || {};
                     {
                         type: 'addClass',
                         classes:
-                            obj.key === that.options.currentSkin
-                                ? that.options.activeSkin
-                                : '',
+                            obj.key === that.options.currentSkin ?
+                                that.options.activeSkin :
+                                '',
                     },
                 ],
                 children: [
