@@ -61,9 +61,9 @@ var up = up || {};
         editContainer
     ) {
         var eContainer = $(editContainer);
-        eContainer = eContainer.length
-            ? eContainer
-            : $('<div class=\'fl-inlineEditContainer\'></div>');
+        eContainer = eContainer.length ?
+            eContainer :
+            $('<div class=\'fl-inlineEditContainer\'></div>');
         displayContainer.parent().after(eContainer);
         eContainer.append(editField);
 
@@ -246,9 +246,9 @@ var up = up || {};
                 modules: that.options.selectors.modules,
                 lockedModules: that.options.selectors.lockedModules,
                 grabHandle:
-                    that.options.tabContext === 'header'
-                        ? that.options.selectors.grabHandle
-                        : '',
+                    that.options.tabContext === 'header' ?
+                        that.options.selectors.grabHandle :
+                        '',
             },
             styles: {
                 defaultStyle:

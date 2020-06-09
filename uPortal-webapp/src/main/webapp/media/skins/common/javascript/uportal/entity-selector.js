@@ -347,9 +347,9 @@ var up = up || {};
         if (breadcrumbs.find('span').length > 0) {
             // Breadcrumbs do exist.
             isKey =
-                breadcrumbs.find('span a[key="' + key + '"]').length > 0
-                    ? true
-                    : false;
+                breadcrumbs.find('span a[key="' + key + '"]').length > 0 ?
+                    true :
+                    false;
             if (!isKey) {
                 buildBreadCrumb(that, key, entity.name, breadcrumbs, browseFn);
             } // end:if.

@@ -73,9 +73,9 @@ var up = up || {};
                             layout.columns.length +
                             ' ' +
                             that.options.strings[
-                                layout.columns.length == 1
-                                    ? 'column'
-                                    : 'columns'
+                                layout.columns.length == 1 ?
+                                    'column' :
+                                    'columns'
                             ],
                     },
                     {
