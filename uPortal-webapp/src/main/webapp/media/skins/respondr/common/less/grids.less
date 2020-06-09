@@ -33,7 +33,8 @@
 
   &.up-col-@{screen-size}-@{number-of-columns} {
     .up-portlet-wrapper,
-    .fl-reorderer-dropMarker { // required for drag and drop styling to work
+    .fl-reorderer-dropMarker {
+      // required for drag and drop styling to work
       @media (min-width: @@interpolate-media-query) {
         width: percentage(1 / @number-of-columns);
       }
