@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 /*!
  * Useful CSS3 LESS Mixins
  * http://css-tricks.com/snippets/css/useful-css3-less-mixins/
@@ -23,202 +24,210 @@
  */
 
 .text-shadow (@string: 0 1px 3px rgba(0, 0, 0, 0.25)) {
-    text-shadow: @string;
+  text-shadow: @string;
 }
 .box-shadow (@string) {
-    -webkit-box-shadow: @string;
-    -moz-box-shadow:    @string;
-    box-shadow:         @string;
+  -webkit-box-shadow: @string;
+  -moz-box-shadow: @string;
+  box-shadow: @string;
 }
 .drop-shadow (@x: 0, @y: 1px, @blur: 2px, @spread: 0, @alpha: 0.25) {
-    -webkit-box-shadow:    @x @y @blur @spread rgba(0, 0, 0, @alpha);
-    -moz-box-shadow:    @x @y @blur @spread rgba(0, 0, 0, @alpha);
-    box-shadow:        @x @y @blur @spread rgba(0, 0, 0, @alpha);
+  -webkit-box-shadow: @x @y @blur @spread rgba(0, 0, 0, @alpha);
+  -moz-box-shadow: @x @y @blur @spread rgba(0, 0, 0, @alpha);
+  box-shadow: @x @y @blur @spread rgba(0, 0, 0, @alpha);
 }
 .inner-shadow (@x: 0, @y: 1px, @blur: 2px, @spread: 0, @alpha: 0.25) {
-    -webkit-box-shadow: inset @x @y @blur @spread rgba(0, 0, 0, @alpha);
-    -moz-box-shadow:    inset @x @y @blur @spread rgba(0, 0, 0, @alpha);
-    box-shadow:         inset @x @y @blur @spread rgba(0, 0, 0, @alpha);
+  -webkit-box-shadow: inset @x @y @blur @spread rgba(0, 0, 0, @alpha);
+  -moz-box-shadow: inset @x @y @blur @spread rgba(0, 0, 0, @alpha);
+  box-shadow: inset @x @y @blur @spread rgba(0, 0, 0, @alpha);
 }
 
 .box-sizing (@type: border-box) {
-    -webkit-box-sizing: @type;
-    -moz-box-sizing:    @type;
-    box-sizing:         @type;
+  -webkit-box-sizing: @type;
+  -moz-box-sizing: @type;
+  box-sizing: @type;
 }
 
 .border-radius (@radius: 5px) {
-    -webkit-border-radius: @radius;
-    -moz-border-radius:    @radius;
-    border-radius:         @radius;
-
-    -moz-background-clip:    padding;
-    -webkit-background-clip: padding-box;
-    background-clip:         padding-box;
+  -webkit-border-radius: @radius;
+  -moz-border-radius: @radius;
+  border-radius: @radius;
+  -moz-background-clip: padding;
+  -webkit-background-clip: padding-box;
+  background-clip: padding-box;
 }
 .border-radiuses (@topright: 0, @bottomright: 0, @bottomleft: 0, @topleft: 0) {
-    -webkit-border-top-right-radius:    @topright;
-    -webkit-border-bottom-right-radius: @bottomright;
-    -webkit-border-bottom-left-radius:  @bottomleft;
-    -webkit-border-top-left-radius:     @topleft;
-
-    -moz-border-radius-topright:        @topright;
-    -moz-border-radius-bottomright:     @bottomright;
-    -moz-border-radius-bottomleft:      @bottomleft;
-    -moz-border-radius-topleft:         @topleft;
-
-    border-top-right-radius:            @topright;
-    border-bottom-right-radius:         @bottomright;
-    border-bottom-left-radius:          @bottomleft;
-    border-top-left-radius:             @topleft;
-
-    -moz-background-clip:    padding; 
-    -webkit-background-clip: padding-box; 
-    background-clip:         padding-box; 
+  -webkit-border-top-right-radius: @topright;
+  -webkit-border-bottom-right-radius: @bottomright;
+  -webkit-border-bottom-left-radius: @bottomleft;
+  -webkit-border-top-left-radius: @topleft;
+  -moz-border-radius-topright: @topright;
+  -moz-border-radius-bottomright: @bottomright;
+  -moz-border-radius-bottomleft: @bottomleft;
+  -moz-border-radius-topleft: @topleft;
+  border-top-right-radius: @topright;
+  border-bottom-right-radius: @bottomright;
+  border-bottom-left-radius: @bottomleft;
+  border-top-left-radius: @topleft;
+  -moz-background-clip: padding;
+  -webkit-background-clip: padding-box;
+  background-clip: padding-box;
 }
 .border-radiuses-top (@top: 0) {
-    -webkit-border-top-right-radius:    @top;
-    -webkit-border-top-left-radius:     @top;
-    -moz-border-radius-topright:        @top;
-    -moz-border-radius-topleft:         @top;
-    border-top-right-radius:            @top;
-    border-top-left-radius:             @top;
+  -webkit-border-top-right-radius: @top;
+  -webkit-border-top-left-radius: @top;
+  -moz-border-radius-topright: @top;
+  -moz-border-radius-topleft: @top;
+  border-top-right-radius: @top;
+  border-top-left-radius: @top;
 }
 .border-radiuses-bottom (@bottom: 0) {
-    -webkit-border-bottom-right-radius:    @bottom;
-    -webkit-border-bottom-left-radius:     @bottom;
-    -moz-border-radius-bottomright:        @bottom;
-    -moz-border-radius-bottomleft:         @bottom;
-    border-bottom-right-radius:            @bottom;
-    border-bottom-left-radius:             @bottom;
+  -webkit-border-bottom-right-radius: @bottom;
+  -webkit-border-bottom-left-radius: @bottom;
+  -moz-border-radius-bottomright: @bottom;
+  -moz-border-radius-bottomleft: @bottom;
+  border-bottom-right-radius: @bottom;
+  border-bottom-left-radius: @bottom;
 }
- .border (@color: @grayscale3, @size: 1px) {
-        border: @size solid @color;
+.border (@color: @grayscale3, @size: 1px) {
+  border: @size solid @color;
 }
-
 
 .opacity (@opacity: 0.5) {
-    -webkit-opacity:     @opacity;
-    -moz-opacity:         @opacity;
-    opacity:         @opacity;
+  -webkit-opacity: @opacity;
+  -moz-opacity: @opacity;
+  opacity: @opacity;
 }
-
-
 
 .vertical-gradient (@startColor: #eee, @endColor: white) {
-    background-color: @startColor;
-    background: -webkit-gradient(linear, left top, left bottom, from(@startColor), to(@endColor));
-    background: -webkit-linear-gradient(top, @startColor, @endColor);
-    background: -moz-linear-gradient(top, @startColor, @endColor);
-    background: -ms-linear-gradient(top, @startColor, @endColor);
-    background: -o-linear-gradient(top, @startColor, @endColor);
+  background-color: @startColor;
+  background: -webkit-gradient(
+    linear,
+    left top,
+    left bottom,
+    from(@startColor),
+    to(@endColor)
+  );
+  background: -webkit-linear-gradient(top, @startColor, @endColor);
+  background: -moz-linear-gradient(top, @startColor, @endColor);
+  background: -ms-linear-gradient(top, @startColor, @endColor);
+  background: -o-linear-gradient(top, @startColor, @endColor);
 }
 .horizontal-gradient (@startColor: #eee, @endColor: white) {
-    background-color: @startColor;
-    background-image: -webkit-gradient(linear, left top, right top, from(@startColor), to(@endColor));
-    background-image: -webkit-linear-gradient(left, @startColor, @endColor);
-    background-image: -moz-linear-gradient(left, @startColor, @endColor);
-    background-image: -ms-linear-gradient(left, @startColor, @endColor);
-    background-image: -o-linear-gradient(left, @startColor, @endColor);
+  background-color: @startColor;
+  background-image: -webkit-gradient(
+    linear,
+    left top,
+    right top,
+    from(@startColor),
+    to(@endColor)
+  );
+  background-image: -webkit-linear-gradient(left, @startColor, @endColor);
+  background-image: -moz-linear-gradient(left, @startColor, @endColor);
+  background-image: -ms-linear-gradient(left, @startColor, @endColor);
+  background-image: -o-linear-gradient(left, @startColor, @endColor);
 }
 
 .gradient(@background, @_) {
-    background-color: @background;
+  background-color: @background;
 }
-.gradient(@background, @gradient) when (@gradient = true) { // Only applies solid background
-  #gradient > .vertical(darken(@background, 0), darken(@background, 10%), 0%, 100%);
+.gradient(@background, @gradient) when (@gradient = true) {
+  // Only applies solid background
+  #gradient > .vertical(darken(@background, 0), darken(@background, 10%), 0%, 100%);;;
 }
 
 .animation (@name, @duration: 300ms, @delay: 0, @ease: ease) {
-    -webkit-animation: @name @duration @delay @ease;
-    -moz-animation:    @name @duration @delay @ease;
-    -ms-animation:     @name @duration @delay @ease;
+  -webkit-animation: @name @duration @delay @ease;
+  -moz-animation: @name @duration @delay @ease;
+  -ms-animation: @name @duration @delay @ease;
 }
 
 .transition (@transition) {
-    -webkit-transition: @transition;  
-    -moz-transition:    @transition;
-    -ms-transition:     @transition; 
-    -o-transition:      @transition;  
+  -webkit-transition: @transition;
+  -moz-transition: @transition;
+  -ms-transition: @transition;
+  -o-transition: @transition;
 }
-.transform (@string){
-    -webkit-transform: @string;
-    -moz-transform:      @string;
-    -ms-transform:          @string;
-    -o-transform:          @string;
+.transform (@string) {
+  -webkit-transform: @string;
+  -moz-transform: @string;
+  -ms-transform: @string;
+  -o-transform: @string;
 }
 .scale (@factor) {
-    -webkit-transform: scale(@factor);
-    -moz-transform:      scale(@factor);
-    -ms-transform:          scale(@factor);
-    -o-transform:          scale(@factor);
+  -webkit-transform: scale(@factor);
+  -moz-transform: scale(@factor);
+  -ms-transform: scale(@factor);
+  -o-transform: scale(@factor);
 }
 .rotate (@deg) {
-    -webkit-transform: rotate(@deg);
-    -moz-transform:      rotate(@deg);
-    -ms-transform:          rotate(@deg);
-    -o-transform:          rotate(@deg);
+  -webkit-transform: rotate(@deg);
+  -moz-transform: rotate(@deg);
+  -ms-transform: rotate(@deg);
+  -o-transform: rotate(@deg);
 }
 .skew (@deg, @deg2) {
-    -webkit-transform:       skew(@deg, @deg2);
-    -moz-transform:      skew(@deg, @deg2);
-    -ms-transform:          skew(@deg, @deg2);
-    -o-transform:          skew(@deg, @deg2);
+  -webkit-transform: skew(@deg, @deg2);
+  -moz-transform: skew(@deg, @deg2);
+  -ms-transform: skew(@deg, @deg2);
+  -o-transform: skew(@deg, @deg2);
 }
 .translate (@x, @y:0) {
-    -webkit-transform:       translate(@x, @y);
-    -moz-transform:      translate(@x, @y);
-    -ms-transform:          translate(@x, @y);
-    -o-transform:          translate(@x, @y);
+  -webkit-transform: translate(@x, @y);
+  -moz-transform: translate(@x, @y);
+  -ms-transform: translate(@x, @y);
+  -o-transform: translate(@x, @y);
 }
 .translate3d (@x, @y: 0, @z: 0) {
-    -webkit-transform:       translate3d(@x, @y, @z);
-    -moz-transform:      translate3d(@x, @y, @z);
-    -ms-transform:          translate3d(@x, @y, @z);
-    -o-transform:          translate3d(@x, @y, @z);
+  -webkit-transform: translate3d(@x, @y, @z);
+  -moz-transform: translate3d(@x, @y, @z);
+  -ms-transform: translate3d(@x, @y, @z);
+  -o-transform: translate3d(@x, @y, @z);
 }
 .perspective (@value: 1000) {
-    -webkit-perspective:     @value;
-    -moz-perspective:     @value;
-    -ms-perspective:     @value;
-    perspective:         @value;
+  -webkit-perspective: @value;
+  -moz-perspective: @value;
+  -ms-perspective: @value;
+  perspective: @value;
 }
 .transform-origin (@x:center, @y:center) {
-    -webkit-transform-origin: @x @y;
-    -moz-transform-origin:    @x @y;
-    -ms-transform-origin:     @x @y;
-    -o-transform-origin:      @x @y;
+  -webkit-transform-origin: @x @y;
+  -moz-transform-origin: @x @y;
+  -ms-transform-origin: @x @y;
+  -o-transform-origin: @x @y;
 }
 
 .pretty-buttons(@color, @background, @text-shadow: none) {
-    .contrasted(lighten(@background, 5%), @light: @color);
-    #gradient > .vertical(lighten(@background, 5%), darken(@background, 10%), 0%, 100%);
-    border-color: darken(@background, 10%);
-    border-bottom-color: darken(@background, 20%);
-    text-shadow: @text-shadow;
-    .box-shadow(inset 0 1px 0 rgba(255, 255, 255, .1));
+  .contrasted(lighten(@background, 5%), @light: @color);
+  #gradient > .vertical(lighten(@background, 5%), darken(@background, 10%), 0%, 100%);;;
 
+  border-color: darken(@background, 10%);
+  border-bottom-color: darken(@background, 20%);
+  text-shadow: @text-shadow;
+  .box-shadow(inset 0 1px 0 rgba(255, 255, 255, 0.1));
+
+  &:hover,
+  &:focus,
+  &:active,
+  &.active {
+    #gradient > .vertical(darken(@background, 0), darken(@background, 10%), 0%, 100%);;;
+
+    border-color: darken(@background, 20%);
+    color: @color;
+  }
+
+  &.disabled,
+  &[disabled],
+  fieldset[disabled] & {
+    &,
     &:hover,
     &:focus,
     &:active,
     &.active {
-        #gradient > .vertical(darken(@background, 0), darken(@background, 10%), 0%, 100%);
-        border-color: darken(@background, 20%);
-        color: @color;
+      background-color: @background;
+      border-color: darken(@background, 5%);
     }
-
-    &.disabled,
-    &[disabled],
-    fieldset[disabled] & {
-        &,
-        &:hover,
-        &:focus,
-        &:active,
-        &.active {
-            background-color: @background;
-            border-color: darken(@background, 5%);
-        }
-    }
+  }
 }
 
 .contrasted(@background-color, @dark: @contrasted-dark-default, @light: @contrasted-light-default, @threshold: @contrasted-lightness-threshold) {
