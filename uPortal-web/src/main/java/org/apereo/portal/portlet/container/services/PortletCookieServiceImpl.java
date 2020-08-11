@@ -41,7 +41,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.orm.hibernate3.HibernateOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.ServletContextAware;
 import org.springframework.web.util.WebUtils;
@@ -178,7 +177,7 @@ public class PortletCookieServiceImpl implements IPortletCookieService, ServletC
             try {
                 this.portletCookieDao.updatePortalCookieExpiration(
                         portalCookie, cookie.getMaxAge());
-            } catch (HibernateOptimisticLockingFailureException e) {
+            } catch (RuntimeException e) {
                 // Especially with ngPortal UI multiple requests for individual portlet content may
                 // come at
                 // the same time.  Sometimes another thread updated the portal cookie between our
