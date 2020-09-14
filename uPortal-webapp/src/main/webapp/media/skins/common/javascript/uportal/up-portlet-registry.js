@@ -237,9 +237,9 @@ var up = up || {};
          *          <code>false</code> for solely the direct members
          */
         that.getMemberPortlets = function(key, deepMembers) {
-            return deepMembers
-                ? that.state.categories[key].deepPortlets
-                : that.state.categories[key].portlets;
+            return deepMembers ?
+                that.state.categories[key].deepPortlets :
+                that.state.categories[key].portlets;
         };
 
         /**
@@ -252,9 +252,9 @@ var up = up || {};
          *           <code>false</code> for solely the direct members
          */
         that.getMemberCategories = function(key, deepMembers) {
-            return deepMembers
-                ? that.state.categories[key].deepCategories
-                : that.state.categories[key].categories;
+            return deepMembers ?
+                that.state.categories[key].deepCategories :
+                that.state.categories[key].categories;
         };
 
         /**

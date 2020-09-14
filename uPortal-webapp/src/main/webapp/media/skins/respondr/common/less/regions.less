@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 /* ==========================================================================
    Namespace: .portal
    ========================================================================== */
@@ -27,297 +28,301 @@
  */
 
 .portal {
-
-    /* ==========================================================================
+  /* ==========================================================================
        General-purpose styles that apply to all regions
        ========================================================================== */
-    [id^="region-"] {
-
-        [id^="portlet_"] {
-            position: relative;
-        }
-
-        .hover-chrome {
-            display:none;
-            position: absolute;
-            opacity: .5;
-            list-style:none;
-            padding: 0 4px;
-            top: -1em;
-            background-color: @grayscale2;
-
-            .hover-option {
-                display: inline-block;
-
-                a {
-                    color: @grayscale9;
-                }
-            }
-        }
-
+  [id^="region-"] {
+    [id^="portlet_"] {
+      position: relative;
     }
 
-    /* ==========================================================================
+    .hover-chrome {
+      display: none;
+      position: absolute;
+      opacity: 0.5;
+      list-style: none;
+      padding: 0 4px;
+      top: -1em;
+      background-color: @grayscale2;
+
+      .hover-option {
+        display: inline-block;
+
+        a {
+          color: @grayscale9;
+        }
+      }
+    }
+  }
+
+  /* ==========================================================================
        Namespace: .region-eyebrow
        ========================================================================== */
-    #up-sticky-nav {
-        -webkit-transition: all .25s ease-out;
-        -o-transition: all .25s ease-out;
-        transition: all .25s ease-out;
-        position: fixed;
-        top: 0;
-        left: 0;
-        z-index: @zindex-navbar-fixed;
-        width: 100%;
+  #up-sticky-nav {
+    -webkit-transition: all 0.25s ease-out;
+    -o-transition: all 0.25s ease-out;
+    transition: all 0.25s ease-out;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: @zindex-navbar-fixed;
+    width: 100%;
 
-        #region-eyebrow {
-            padding: 2px 0;
+    #region-eyebrow {
+      padding: 2px 0;
 
-            .up-portlet-wrapper {
-                display: inline-block;
-                margin-left: .75rem;
-            }
-        }
+      .up-portlet-wrapper {
+        display: inline-block;
+        margin-left: 0.75rem;
+      }
     }
+  }
 
-    /* =================================================================================================================
+  /* =================================================================================================================
        Namespace: .region-eyebrow #up-sticky-nav : Animated Hamburger Toggle button for mobile offcanvas navigation
        ================================================================================================================= */
 
-    .hamburger {
-        background-color: transparent;
-        border: 0;
-        color: inherit;
-        cursor: pointer;
-        display: inline-block;
-        font: inherit;
-        margin: 0;
-        overflow: visible;
-        padding-top: 5px;
-        text-transform: none;
-        transition-duration: 0.15s;
-        transition-property: opacity, -webkit-filter;
-        transition-property: opacity, filter;
-        transition-property: opacity, filter, -webkit-filter;
-        transition-timing-function: linear;
+  .hamburger {
+    background-color: transparent;
+    border: 0;
+    color: inherit;
+    cursor: pointer;
+    display: inline-block;
+    font: inherit;
+    margin: 0;
+    overflow: visible;
+    padding-top: 5px;
+    text-transform: none;
+    transition-duration: 0.15s;
+    transition-property: opacity, -webkit-filter;
+    transition-property: opacity, filter;
+    transition-property: opacity, filter, -webkit-filter;
+    transition-timing-function: linear;
 
-        &:hover {
-            opacity: 0.7;
-        }
+    &:hover {
+      opacity: 0.7;
+    }
+  }
+
+  .hamburger-box {
+    display: inline-block;
+    height: 15px;
+    position: relative;
+    width: 15px;
+  }
+
+  .hamburger-inner {
+    background-color: @menu-toggle-text-color; // Middle line of the hamburger
+    border-radius: 4px;
+    display: block;
+    height: 2px;
+    margin-top: -2px;
+    position: absolute;
+    top: 50%;
+    transition-duration: 0.15s;
+    transition-property: -webkit-transform;
+    transition-property: transform;
+    transition-property: transform, -webkit-transform;
+    transition-timing-function: ease;
+    -webkit-transition-delay: 350ms; /* Safari */
+    transition-delay: 350ms;
+    width: 15px;
+
+    &::before {
+      background-color: @menu-toggle-text-color; // Top line of the hamburger
+      border-radius: 4px;
+      content: "";
+      display: block;
+      height: 2px;
+      position: absolute;
+      top: -5px;
+      transition-duration: 0.15s;
+      transition-property: -webkit-transform;
+      transition-property: transform;
+      transition-property: transform, -webkit-transform;
+      transition-timing-function: ease;
+      -webkit-transition-delay: 350ms; /* Safari */
+      transition-delay: 350ms;
+      width: 15px;
     }
 
-    .hamburger-box {
-        display: inline-block;
-        height: 15px;
-        position: relative;
-        width: 15px;
+    &::after {
+      background-color: @menu-toggle-text-color; // Bottom line of the hamburger
+      border-radius: 4px;
+      bottom: -5px;
+      content: "";
+      display: block;
+      height: 2px;
+      position: absolute;
+      transition-duration: 0.15s;
+      transition-property: -webkit-transform;
+      transition-property: transform;
+      transition-property: transform, -webkit-transform;
+      transition-timing-function: ease;
+      -webkit-transition-delay: 350ms; /* Safari */
+      transition-delay: 350ms;
+      width: 15px;
     }
+  }
 
+  .hamburger-arrow {
     .hamburger-inner {
-        background-color: @menu-toggle-text-color; // Middle line of the hamburger
-        border-radius: 4px;
-        display: block;
-        height: 2px;
-        margin-top: -2px;
-        position: absolute;
-        top: 50%;
-        transition-duration: 0.15s;
-        transition-property: -webkit-transform;
-        transition-property: transform;
-        transition-property: transform, -webkit-transform;
-        transition-timing-function: ease;
-        -webkit-transition-delay: 350ms; /* Safari */
-        transition-delay: 350ms;
-        width: 15px;
+      &::before {
+        transition: top 0.1s 0.15s ease,
+          -webkit-transform 0.15s cubic-bezier(0.165, 0.84, 0.44, 1);
+        transition: top 0.1s 0.15s ease,
+          transform 0.15s cubic-bezier(0.165, 0.84, 0.44, 1);
+        transition: top 0.1s 0.15s ease,
+          transform 0.15s cubic-bezier(0.165, 0.84, 0.44, 1),
+          -webkit-transform 0.15s cubic-bezier(0.165, 0.84, 0.44, 1);
+      }
 
-        &::before {
-            background-color: @menu-toggle-text-color; // Top line of the hamburger
-            border-radius: 4px;
-            content: "";
-            display: block;
-            height: 2px;
-            position: absolute;
-            top: -5px;
-            transition-duration: 0.15s;
-            transition-property: -webkit-transform;
-            transition-property: transform;
-            transition-property: transform, -webkit-transform;
-            transition-timing-function: ease;
-            -webkit-transition-delay: 350ms; /* Safari */
-            transition-delay: 350ms;
-            width: 15px;
-        }
-
-        &::after {
-            background-color: @menu-toggle-text-color; // Bottom line of the hamburger
-            border-radius: 4px;
-            bottom: -5px;
-            content: "";
-            display: block;
-            height: 2px;
-            position: absolute;
-            transition-duration: 0.15s;
-            transition-property: -webkit-transform;
-            transition-property: transform;
-            transition-property: transform, -webkit-transform;
-            transition-timing-function: ease;
-            -webkit-transition-delay: 350ms; /* Safari */
-            transition-delay: 350ms;
-            width: 15px;
-        }
+      &::after {
+        transition: bottom 0.1s 0.15s ease,
+          -webkit-transform 0.15s cubic-bezier(0.165, 0.84, 0.44, 1);
+        transition: bottom 0.1s 0.15s ease,
+          transform 0.15s cubic-bezier(0.165, 0.84, 0.44, 1);
+        transition: bottom 0.1s 0.15s ease,
+          transform 0.15s cubic-bezier(0.165, 0.84, 0.44, 1),
+          -webkit-transform 0.15s cubic-bezier(0.165, 0.84, 0.44, 1);
+      }
     }
+  }
 
-    .hamburger-arrow {
-
-        .hamburger-inner {
-
-            &::before {
-                transition: top 0.1s 0.15s ease, -webkit-transform 0.15s cubic-bezier(0.165, 0.84, 0.44, 1);
-                transition: top 0.1s 0.15s ease, transform 0.15s cubic-bezier(0.165, 0.84, 0.44, 1);
-                transition: top 0.1s 0.15s ease, transform 0.15s cubic-bezier(0.165, 0.84, 0.44, 1), -webkit-transform 0.15s cubic-bezier(0.165, 0.84, 0.44, 1);
-            }
-
-            &::after {
-                transition: bottom 0.1s 0.15s ease, -webkit-transform 0.15s cubic-bezier(0.165, 0.84, 0.44, 1);
-                transition: bottom 0.1s 0.15s ease, transform 0.15s cubic-bezier(0.165, 0.84, 0.44, 1);
-                transition: bottom 0.1s 0.15s ease, transform 0.15s cubic-bezier(0.165, 0.84, 0.44, 1), -webkit-transform 0.15s cubic-bezier(0.165, 0.84, 0.44, 1);
-            }
-        }
-    }
-
-    .hamburger-arrow.is-active {
+  .hamburger-arrow.is-active {
     /* Transform the hamburger to an Arrow left */
-        .hamburger-inner {
+    .hamburger-inner {
+      &::before {
+        -webkit-transform: translate3d(-3px, -4px, 0) rotate(-45deg)
+          scale(0.7, 1);
+        top: 0;
+        transform: translate3d(-3px, -4px, 0) rotate(-45deg) scale(0.7, 1);
+        transition: top 0.35s ease,
+          -webkit-transform 0.15s 0.1s cubic-bezier(0.895, 0.03, 0.685, 0.22);
+        transition: top 0.35s ease,
+          transform 0.15s 0.1s cubic-bezier(0.895, 0.03, 0.685, 0.22);
+        transition: top 0.35s ease,
+          transform 0.15s 0.1s cubic-bezier(0.895, 0.03, 0.685, 0.22),
+          -webkit-transform 0.15s 0.1s cubic-bezier(0.895, 0.03, 0.685, 0.22);
+      }
 
-            &::before {
-                -webkit-transform: translate3d(-3px, -4px, 0) rotate(-45deg) scale(0.7, 1);
-                top: 0;
-                transform: translate3d(-3px, -4px, 0) rotate(-45deg) scale(0.7, 1);
-                transition: top 0.35s ease, -webkit-transform 0.15s 0.1s cubic-bezier(0.895, 0.03, 0.685, 0.22);
-                transition: top 0.35s ease, transform 0.15s 0.1s cubic-bezier(0.895, 0.03, 0.685, 0.22);
-                transition: top 0.35s ease, transform 0.15s 0.1s cubic-bezier(0.895, 0.03, 0.685, 0.22), -webkit-transform 0.15s 0.1s cubic-bezier(0.895, 0.03, 0.685, 0.22);
-            }
-
-            &::after {
-                -webkit-transform: translate3d(-3px, 4px, 0) rotate(45deg) scale(0.7, 1);
-                bottom: 0;
-                transform: translate3d(-3px, 4px, 0) rotate(45deg) scale(0.7, 1);
-                transition: bottom 0.35s ease, -webkit-transform 0.15s 0.1s cubic-bezier(0.895, 0.03, 0.685, 0.22);
-                transition: bottom 0.35s ease, transform 0.15s 0.1s cubic-bezier(0.895, 0.03, 0.685, 0.22);
-                transition: bottom 0.35s ease, transform 0.15s 0.1s cubic-bezier(0.895, 0.03, 0.685, 0.22), -webkit-transform 0.15s 0.1s cubic-bezier(0.895, 0.03, 0.685, 0.22);
-            }
-        }
+      &::after {
+        -webkit-transform: translate3d(-3px, 4px, 0) rotate(45deg) scale(0.7, 1);
+        bottom: 0;
+        transform: translate3d(-3px, 4px, 0) rotate(45deg) scale(0.7, 1);
+        transition: bottom 0.35s ease,
+          -webkit-transform 0.15s 0.1s cubic-bezier(0.895, 0.03, 0.685, 0.22);
+        transition: bottom 0.35s ease,
+          transform 0.15s 0.1s cubic-bezier(0.895, 0.03, 0.685, 0.22);
+        transition: bottom 0.35s ease,
+          transform 0.15s 0.1s cubic-bezier(0.895, 0.03, 0.685, 0.22),
+          -webkit-transform 0.15s 0.1s cubic-bezier(0.895, 0.03, 0.685, 0.22);
+      }
     }
+  }
 
-    .active {
-        #up-sticky-nav {
-            border-left: thin solid @grayscale7; // little 3D effect when the offcanvas is open
-        }
+  .active {
+    #up-sticky-nav {
+      border-left: thin solid @grayscale7; // little 3D effect when the offcanvas is open
     }
+  }
 
-
-    /* ==========================================================================
+  /* ==========================================================================
        Namespace: .region-header-bottom
        ========================================================================== */
-    #region-header-bottom  {
-        .up-portlet-wrapper {
-            color: @white;
+  #region-header-bottom {
+    .up-portlet-wrapper {
+      color: @white;
 
-            a {
-                color: #B2CCE1;
-            }
-            a:hover {
-                color: @white;
-            }
-        }
+      a {
+        color: #b2cce1;
+      }
+      a:hover {
+        color: @white;
+      }
     }
+  }
 
-    /* ==========================================================================
+  /* ==========================================================================
        Namespace: region-customizeDrawer
        ========================================================================== */
-    #region-customize {
-        position: relative;
+  #region-customize {
+    position: relative;
 
-        button {
-            margin-top: -1px;
-            border-top-left-radius: 0;
-            border-top-right-radius: 0;
-            margin-left: 0;
-            padding: 6px 15px 0;
-            font-size: 12px;
+    button {
+      margin-top: -1px;
+      border-top-left-radius: 0;
+      border-top-right-radius: 0;
+      margin-left: 0;
+      padding: 6px 15px 0;
+      font-size: 12px;
 
-            button:focus {
-                outline: none;
-            }
-            i {
-                margin-left: 5px;
-            }
-
-        }
-
-        #customizeOptionsWrapper {
-            margin-top: 1px;
-        }
-
-        #customizeOptions {
-            background-color: rgb(239, 239, 239);
-            .border(@grayscale4);
-        }
-
-        #customizeOptions + button i:after {
-            content: "\f0d7";
-        }
-
-        #customizeOptions.in + button i:after {
-            content: "\f0d8";
-        }
+      button:focus {
+        outline: none;
+      }
+      i {
+        margin-left: 5px;
+      }
     }
 
-    /* ==========================================================================
+    #customizeOptionsWrapper {
+      margin-top: 1px;
+    }
+
+    #customizeOptions {
+      background-color: rgb(239, 239, 239);
+      .border(@grayscale4);
+    }
+
+    #customizeOptions + button i::after {
+      content: "\f0d7";
+    }
+
+    #customizeOptions.in + button i::after {
+      content: "\f0d8";
+    }
+  }
+
+  /* ==========================================================================
        Namespace: .region-pre-content
        ========================================================================== */
-    #region-pre-content {
-        margin-top: 8px;
-    }
+  #region-pre-content {
+    margin-top: 8px;
+  }
 
-    /* ==========================================================================
+  /* ==========================================================================
        Namespace: .region-post-content
        ========================================================================== */
-    #region-post-content {
-      margin-bottom: 8px;
-    }
-
+  #region-post-content {
+    margin-bottom: 8px;
+  }
 }
 
 @media only screen and (min-width: @screen-sm-min) {
-
-    .portal {
-
-        /* Undo sticky header styles */
-        #up-sticky-nav {
-            position: relative;
-            z-index: auto;
-        }
-
-        #region-header-left {
-            padding-left: 32px;
-
-            section.up-portlet-wrapper {
-                display : inline-block;
-                margin-top: 16px;
-                margin-left: 4px;
-                margin-right: 4px;
-            }
-        }
-
-        #region-header-right {
-            padding-right: 32px;
-
-            section.up-portlet-wrapper {
-                margin-top: 16px;
-            }
-        }
-
+  .portal {
+    /* Undo sticky header styles */
+    #up-sticky-nav {
+      position: relative;
+      z-index: auto;
     }
 
+    #region-header-left {
+      padding-left: 32px;
+
+      section.up-portlet-wrapper {
+        display: inline-block;
+        margin-top: 16px;
+        margin-left: 4px;
+        margin-right: 4px;
+      }
+    }
+
+    #region-header-right {
+      padding-right: 32px;
+
+      section.up-portlet-wrapper {
+        margin-top: 16px;
+      }
+    }
+  }
 }

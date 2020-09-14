@@ -132,17 +132,17 @@ var up = up || {};
         };
         var sourceID = $(item).attr('sourceid');
         var nextId =
-            $(item).next().length != 0
-                ? $(item)
+            $(item).next().length != 0 ?
+                $(item)
                     .next()
-                    .attr('sourceid')
-                : '';
+                    .attr('sourceid') :
+                '';
         var prevId =
-            $(item).prev().length != 0
-                ? $(item)
+            $(item).prev().length != 0 ?
+                $(item)
                     .prev()
-                    .attr('sourceid')
-                : '';
+                    .attr('sourceid') :
+                '';
 
         if ('Tab' === tabOrPortlet) {
             moveFavoriteGroup(sourceID, prevId, nextId);

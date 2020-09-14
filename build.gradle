@@ -1,16 +1,15 @@
 plugins {
     // Top level plugins
-    id 'build-announcements'
-    id 'com.github.kt3k.coveralls' version '2.8.4'
-    id 'com.moowork.node' version '1.3.1'
+    id 'com.github.kt3k.coveralls' version '2.10.2'
+    id 'com.github.node-gradle.node' version '2.2.4'
     id 'net.researchgate.release' version '2.8.1'
     // Records all tasks in task graph, generates `build/reports/visteg.dot`
     // dot file can be converted to an image using graphviz. `dot -Tsvg -O -v visteg.dot`
-    id 'cz.malohlava.visteg' version '1.0.5'
+    // id 'cz.malohlava.visteg' version '1.0.5'
 
     // Sub project plugins
-    id 'com.github.sherter.google-java-format' version '0.8' apply false
-    id 'nebula.lint' version '12.0.1' apply false
+    id 'com.github.sherter.google-java-format' version '0.9' apply false
+    id 'nebula.lint' version '16.9.1' apply false
     id 'net.ltgt.errorprone' version '0.8.1' apply false
 }
 
@@ -32,7 +31,6 @@ allprojects {
     apply plugin: 'java'
     apply plugin: 'jacoco'
     apply plugin: 'eclipse'
-    apply plugin: 'findbugs'
     apply plugin: 'idea'
     apply plugin: 'nebula.lint'
     apply plugin: 'groovy'
@@ -54,7 +52,7 @@ allprojects {
     }
 
     codenarc {
-        toolVersion = '1.4'
+        toolVersion = '1.5'
         reportFormat = 'console'
     }
 
@@ -70,13 +68,6 @@ allprojects {
     ]
 
     /*======== Static Analysis ========*/
-    findbugs {
-        toolVersion = '3.0.1'
-        ignoreFailures = true
-    }
-    tasks.withType(FindBugs) {
-        enabled = gradle.startParameter.taskNames.contains(it.name)
-    }
     googleJavaFormat {
         toolVersion '1.7'
         options style: 'AOSP'
@@ -199,6 +190,11 @@ subprojects {
         }
     }
     afterReleaseBuild.dependsOn uploadArchives
+
+    def jacocoExecutionDataFiles = fileTree(buildDir).include("/jacoco/*.exec")
+    jacocoTestReport {
+        getExecutionData().setFrom(jacocoExecutionDataFiles)
+    }
 }
 
 /*
@@ -213,11 +209,12 @@ release {
 
 
 task jacocoAggregateReport(type: org.gradle.testing.jacoco.tasks.JacocoReport) {
-    dependsOn = allprojects.test
-    additionalSourceDirs = files(allprojects.sourceSets.main.allSource.srcDirs)
-    sourceDirectories = files(allprojects.sourceSets.main.allSource.srcDirs)
-    classDirectories = files(allprojects.sourceSets.main.output)
-    executionData = files(allprojects.jacocoTestReport.executionData)
+    dependsOn = subprojects.test
+    getAdditionalSourceDirs().setFrom(files(subprojects.sourceSets.main.allSource.srcDirs))
+    getSourceDirectories().setFrom(files(subprojects.sourceSets.main.allSource.srcDirs))
+    getClassDirectories().setFrom(files(subprojects.sourceSets.main.output))
+    getExecutionData().setFrom(files(subprojects.jacocoTestReport.executionData))
+
     reports {
         xml.enabled = true
         html.enabled = true
@@ -226,9 +223,9 @@ task jacocoAggregateReport(type: org.gradle.testing.jacoco.tasks.JacocoReport) {
         true
     }
     doFirst {
-        executionData = files(executionData.findAll {
+        getExecutionData().setFrom(files(getExecutionData().findAll {
             it.exists()
-        })
+        }))
     }
 }
 

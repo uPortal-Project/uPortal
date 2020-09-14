@@ -160,7 +160,7 @@
 
                 <!-- Action buttons -->
                 <div class="fl-uploader-btns btn-inline-group">
-                    <button type="submit" class="flc-uploader-button-upload fl-uploader-upload fl-uploader-button-default fl-uploader-dim btn btn-success" disabled="disabled">
+                    <button type="submit" class="flc-uploader-button-upload fl-uploader-upload fl-uploader-button-default fl-uploader-dim btn btn-success" disabled="disabled" onclick="return false;">
                         <spring:message code="import.button.submit.upload"/>
                         <i class="fa fa-upload"></i>
                     </button>

@@ -293,9 +293,9 @@ var up = up || {};
             onPortletSearch: function(that, searchTerm, submitted) {
                 searchTerm = $.trim(searchTerm);
                 that.state.portletRegex =
-                    searchTerm.length > 0
-                        ? new RegExp(up.escapeSpecialChars(searchTerm), 'i')
-                        : undefined;
+                    searchTerm.length > 0 ?
+                        new RegExp(up.escapeSpecialChars(searchTerm), 'i') :
+                        undefined;
                 that.portletListView.refresh();
             },
             onPortletSelect: function(that, portlet) {
