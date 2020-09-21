@@ -24,6 +24,8 @@
     .fl-uploader-queue-footer td {
         padding: 6px;
     }
+
+
 </style>
 
 <!-- Portlet -->
@@ -93,7 +95,7 @@
                                         <td class="flc-uploader-file-size fl-uploader-file-size">0 KB</td>
                                         <td class="fl-uploader-file-actions">
                                             <button type="button" class="flc-uploader-file-action fl-uploader-file-action btn btn-default" tabindex="-1">
-                                                <span class="fl-uploader-button-text fl-uploader-hidden"><spring:message code="remove.from.queue"/></span> <i class="fa fa-close"></i>
+                                                <span class="fl-uploader-button-text"><spring:message code="remove.from.queue"/></span> <i class="fa fa-close"></i>
                                             </button>
                                         </td>
                                     </tr>
@@ -166,7 +168,7 @@
                     </button>
                     <button type="button" class="flc-uploader-button-pause fl-uploader-pause fl-uploader-hidden btn btn-danger">
                         <spring:message code="import.button.submit.stop.upload"/>
-                        <i class="fa fa-stop"></i>
+                                                <i class="fa fa-stop"></i>
                     </button>
                 </div>
 
