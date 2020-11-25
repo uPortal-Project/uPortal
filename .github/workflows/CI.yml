@@ -13,8 +13,8 @@ jobs:
       matrix:
         platform:
           - ubuntu-latest
-          - windows-latest
-          - macos-latest
+          # - windows-latest
+          # - macos-latest
         java-version:
           - 8.0.275.open-adpt
           - 8.0.275-amzn
