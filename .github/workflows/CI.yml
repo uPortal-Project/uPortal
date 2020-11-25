@@ -7,14 +7,12 @@ on:
     branches:
       - master
 jobs:
-  build-and-test:
-    name: '${{ matrix.platform }}: Java ${{ matrix.java-version }}'
+  test-across-jdk:
+    name: 'ubuntu-latest with Java ${{ matrix.java-version }}'
     strategy:
       matrix:
         platform:
           - ubuntu-latest
-          # - windows-latest
-          # - macos-latest
         java-version:
           - 8.0.275.open-adpt
           - 8.0.275-amzn
@@ -34,6 +32,27 @@ jobs:
         with:
           java-version: 8
           jdkFile: ${{ steps.sdkman.outputs.file }}
+      - name: Build and Test
+        run: ./gradlew -S --no-daemon --no-parallel build jacocoAggregateReport coveralls
+      - name: Lint JavaScript
+        run: ./gradlew -S --no-daemon --no-parallel :npm_run_lint-js
+  # TODO merge with SDKMAN version if possible
+  test-across-os:
+    name: '${{ matrix.platform }} with Java 8'
+    strategy:
+      matrix:
+        platform:
+          - ubuntu-latest
+          - windows-latest
+          - macos-latest
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: 8
       - name: Build and Test
         run: ./gradlew -S --no-daemon --no-parallel build jacocoAggregateReport coveralls
       - name: Lint JavaScript
