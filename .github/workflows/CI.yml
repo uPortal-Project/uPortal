@@ -28,12 +28,11 @@ jobs:
         id: sdkman
         with:
           candidate: java
-          version: 15.0.0-amzn
+          version: ${{ matrix.java-version }}
       - name: Setup Java
         uses: actions/setup-java@v1
-        id: setup-java
         with:
-          java-version: 15.0.0
+          java-version: 8
           jdkFile: ${{ steps.sdkman.outputs.file }}
       - name: Build and Test
         run: ./gradlew -S --no-daemon --no-parallel build jacocoAggregateReport coveralls
