@@ -1,0 +1,41 @@
+name: CI
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+jobs:
+  build-and-test:
+    name: '${{ matrix.platform }}: Java ${{ matrix.java-version }}'
+    strategy:
+      matrix:
+        platform:
+          - ubuntu-latest
+          - windows-latest
+          - macos-latest
+        java-version:
+          - 8.0.275.open-adpt
+          - 8.0.275-amzn
+          - 8.0.265-open
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Download Java
+        uses: sdkman/sdkman-action@master
+        id: sdkman
+        with:
+          candidate: java
+          version: 15.0.0-amzn
+      - name: Setup Java
+        uses: actions/setup-java@v1
+          id: setup-java
+          with:
+            java-version: 15.0.0
+            jdkFile: ${{ steps.sdkman.outputs.file }}
+      - name: Build and Test
+        run: ./gradlew -S --no-daemon --no-parallel build jacocoAggregateReport coveralls
+      - name: Lint JavaScript
+        run: ./gradlew -S --no-daemon --no-parallel :npm_run_lint-js
