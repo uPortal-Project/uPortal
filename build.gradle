@@ -72,9 +72,18 @@ allprojects {
     /*======== Static Analysis ========*/
     spotbugs {
         toolVersion = '4.1.1'
+        // allow build to continue to other sub projects
+        ignoreFailures = true
     }
     tasks.withType(com.github.spotbugs.snom.SpotBugsTask) {
         enabled = gradle.startParameter.taskNames.contains(it.name)
+        reports {
+            html {
+                enabled = true
+                destination = file("$buildDir/reports/spotbugs/main/spotbugs.html")
+                stylesheet = 'fancy-hist.xsl'
+            }
+        }
     }
     googleJavaFormat {
         toolVersion '1.7'
