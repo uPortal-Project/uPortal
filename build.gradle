@@ -11,6 +11,7 @@ plugins {
     id 'com.github.sherter.google-java-format' version '0.9' apply false
     id 'nebula.lint' version '16.17.0' apply false
     id 'net.ltgt.errorprone' version '1.3.0' apply false
+    id 'com.github.spotbugs' version '4.6.0' apply false
 }
 
 description = "Apereo uPortal $version"
@@ -31,6 +32,7 @@ allprojects {
     apply plugin: 'java'
     apply plugin: 'jacoco'
     apply plugin: 'eclipse'
+    apply plugin: 'com.github.spotbugs'
     apply plugin: 'idea'
     apply plugin: 'nebula.lint'
     apply plugin: 'groovy'
@@ -68,6 +70,21 @@ allprojects {
     ]
 
     /*======== Static Analysis ========*/
+    spotbugs {
+        toolVersion = '4.1.1'
+        // allow build to continue to other sub projects
+        ignoreFailures = true
+    }
+    tasks.withType(com.github.spotbugs.snom.SpotBugsTask) {
+        enabled = gradle.startParameter.taskNames.contains(it.name)
+        reports {
+            html {
+                enabled = true
+                destination = file("$buildDir/reports/spotbugs/main/spotbugs.html")
+                stylesheet = 'fancy-hist.xsl'
+            }
+        }
+    }
     googleJavaFormat {
         toolVersion '1.7'
         options style: 'AOSP'
@@ -104,6 +121,7 @@ subprojects {
         testCompile "org.mockito:mockito-core:${mockitoVersion}"
         testCompile "org.springframework:spring-test:${springVersion}"
         testCompile "org.xmlunit:xmlunit-legacy:${xmlunitVersion}"
+        spotbugsPlugins 'com.h3xstream.findsecbugs:findsecbugs-plugin:1.11.0'
     }
 
     /* Release Management
