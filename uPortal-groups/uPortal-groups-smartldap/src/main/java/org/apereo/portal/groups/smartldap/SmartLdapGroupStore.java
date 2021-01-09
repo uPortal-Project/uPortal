@@ -260,17 +260,17 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
                     group.getName());
             getParentGroups(group.getLocalKey(), rslt);
         } else if (!gm.isGroup() && gm.getLeafType().equals(root.getLeafType())) {
-			if((groupsTree != null) && (groupsTree.getGroups() != null)) {
-		        Object[] groupKeys = getPersonGroupMemberKeys(gm);
-		        for (Object o : groupKeys) {
-		            String s = (String) o;
-		            IEntityGroup group = groupsTree.getGroups().get(s);
-		            rslt.add(group);
-		            rslt.addAll(getParentGroups(s, new HashSet<>()));
-		        }
-			} else if (log.isDebugEnabled()) {
-				log.debug("Unable to find groups for member: [{}]", gm.getKey());
-			}
+            if ((groupsTree != null) && (groupsTree.getGroups() != null)) {
+                Object[] groupKeys = getPersonGroupMemberKeys(gm);
+                for (Object o : groupKeys) {
+                    String s = (String) o;
+                    IEntityGroup group = groupsTree.getGroups().get(s);
+                    rslt.add(group);
+                    rslt.addAll(getParentGroups(s, new HashSet<>()));
+                }
+            } else if (log.isDebugEnabled()) {
+                log.debug("Unable to find groups for member: [{}]", gm.getKey());
+            }
         }
         return rslt.iterator();
     }
@@ -496,18 +496,19 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
         }
 
         List<EntityIdentifier> rslt = new ArrayList<>();
-		if(groupsTree != null) {
-			for (Map.Entry<String, List<String>> y : groupsTree.getKeysByUpperCaseName().entrySet()) {
-			    if (y.getKey().matches(regex)) {
-			        List<String> keys = y.getValue();
-			        for (String k : keys) {
-			            rslt.add(new EntityIdentifier(k, IEntityGroup.class));
-			        }
-			    }
-			}
-		} else if (log.isDebugEnabled()) {
-			log.debug("Unable to find groups for query: [{}]", query);
-		}
+        if (groupsTree != null) {
+            for (Map.Entry<String, List<String>> y :
+                    groupsTree.getKeysByUpperCaseName().entrySet()) {
+                if (y.getKey().matches(regex)) {
+                    List<String> keys = y.getValue();
+                    for (String k : keys) {
+                        rslt.add(new EntityIdentifier(k, IEntityGroup.class));
+                    }
+                }
+            }
+        } else if (log.isDebugEnabled()) {
+            log.debug("Unable to find groups for query: [{}]", query);
+        }
 
         return rslt.toArray(new EntityIdentifier[rslt.size()]);
     }
