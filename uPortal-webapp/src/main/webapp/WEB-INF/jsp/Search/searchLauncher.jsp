@@ -37,8 +37,9 @@
             <spring:message code="search" var="searchPlaceholder" />
             <spring:message code="search.terms" var="searchTitle" />
             <spring:message code="search.submit" var="searchSubmit" />
+            <label for="${n}webSearchInput" class="sr-only">${searchTitle}</label>
             <input id="${n}webSearchInput" class="searchInput input-large search-query form-control" value="" name="query"
-             type="search" aria-label="${searchTitle}" placeholder="${searchPlaceholder}" title="${searchTitle}"/>
+             type="search" placeholder="${searchPlaceholder}" title="${searchTitle}"/>
             <span class="input-group-btn">
               <button id="webSearchSubmit" type="submit" name="submit" aria-label="${searchSubmit}" class="btn btn-default"
                value="${searchSubmit}">
