@@ -77,7 +77,10 @@ public final class SimpleAttributesMapper implements AttributesMapper {
         LdapRecord rslt;
 
         try {
-
+            if (log.isDebugEnabled()) {
+                log.debug("Attribute data set: " + attr);
+                log.debug("Attribute's value of keyAttributeName: " + attr.get(keyAttributeName));
+            }
             String key = (String) attr.get(keyAttributeName).get();
             String groupName = (String) attr.get(groupNameAttributeName).get();
 

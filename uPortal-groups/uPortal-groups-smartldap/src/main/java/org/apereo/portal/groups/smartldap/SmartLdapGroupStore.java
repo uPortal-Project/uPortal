@@ -260,12 +260,16 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
                     group.getName());
             getParentGroups(group.getLocalKey(), rslt);
         } else if (!gm.isGroup() && gm.getLeafType().equals(root.getLeafType())) {
-            Object[] groupKeys = getPersonGroupMemberKeys(gm);
-            for (Object o : groupKeys) {
-                String s = (String) o;
-                IEntityGroup group = groupsTree.getGroups().get(s);
-                rslt.add(group);
-                rslt.addAll(getParentGroups(s, new HashSet<>()));
+            if ((groupsTree != null) && (groupsTree.getGroups() != null)) {
+                Object[] groupKeys = getPersonGroupMemberKeys(gm);
+                for (Object o : groupKeys) {
+                    String s = (String) o;
+                    IEntityGroup group = groupsTree.getGroups().get(s);
+                    rslt.add(group);
+                    rslt.addAll(getParentGroups(s, new HashSet<>()));
+                }
+            } else if (log.isDebugEnabled()) {
+                log.debug("Unable to find groups for member: [{}]", gm.getKey());
             }
         }
         return rslt.iterator();
@@ -492,13 +496,18 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
         }
 
         List<EntityIdentifier> rslt = new ArrayList<>();
-        for (Map.Entry<String, List<String>> y : groupsTree.getKeysByUpperCaseName().entrySet()) {
-            if (y.getKey().matches(regex)) {
-                List<String> keys = y.getValue();
-                for (String k : keys) {
-                    rslt.add(new EntityIdentifier(k, IEntityGroup.class));
+        if (groupsTree != null) {
+            for (Map.Entry<String, List<String>> y :
+                    groupsTree.getKeysByUpperCaseName().entrySet()) {
+                if (y.getKey().matches(regex)) {
+                    List<String> keys = y.getValue();
+                    for (String k : keys) {
+                        rslt.add(new EntityIdentifier(k, IEntityGroup.class));
+                    }
                 }
             }
+        } else if (log.isDebugEnabled()) {
+            log.debug("Unable to find groups for query: [{}]", query);
         }
 
         return rslt.toArray(new EntityIdentifier[rslt.size()]);
@@ -718,7 +727,7 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
                 log.warn(
                         "Both attributesMapper and contextMapper are set -- attributesMapper will be used");
             }
-            req.setAttribute("mapperType", "attributes");
+            req.setAttribute("mapperType", "attribute");
             req.setAttribute("attributesMapper", attributesMapper);
         } else if (contextMapper != null) {
             req.setAttribute("mapperType", "context");
