@@ -41,7 +41,7 @@
             <input id="${n}webSearchInput" class="searchInput input-large search-query form-control" value="" name="query"
              type="search" placeholder="${searchPlaceholder}" title="${searchTitle}"/>
             <span class="input-group-btn">
-              <button id="webSearchSubmit" type="submit" name="submit" aria-label="${searchSubmit}" class="btn btn-default"
+              <button id="webSearchSubmit" type="submit" name="submit" class="btn btn-default"
                value="${searchSubmit}">
                 <span>${searchSubmit}</span>
                 <i class="fa fa-search" aria-hidden="true"></i>
