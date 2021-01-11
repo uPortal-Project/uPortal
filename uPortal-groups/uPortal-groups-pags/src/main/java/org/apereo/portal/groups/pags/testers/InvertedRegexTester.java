@@ -14,8 +14,8 @@
  */
 package org.apereo.portal.groups.pags.testers;
 
-import java.util.regex.Pattern;
 import org.apereo.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
+import org.apereo.portal.security.IPerson;
 
 /**
  * A tester for matching the possibly multiple values of an attribute against a regular expression
@@ -49,27 +49,15 @@ import org.apereo.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
  * </table>
  * </code>
  */
-public class InvertedRegexTester extends AbstractStringTester {
-
-    protected Pattern pattern;
+public class InvertedRegexTester extends RegexTester {
 
     /** @since 4.3 */
     public InvertedRegexTester(IPersonAttributesGroupTestDefinition definition) {
         super(definition);
-        this.pattern = Pattern.compile(definition.getTestValue());
-    }
-
-    /**
-     * Sets the pattern string to use for the regex test.
-     *
-     * @param patternString regex pattern string
-     */
-    protected void setPattern(String patternString) {
-        pattern = Pattern.compile(patternString);
     }
 
     @Override
-    public boolean test(String att) {
-        return !pattern.matcher(att).matches();
+    public boolean test(IPerson person) {
+        return !super.test(person);
     }
 }

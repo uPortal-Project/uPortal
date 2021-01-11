@@ -112,6 +112,19 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
                     + GROUP_NAME_COLUMN
                     + " = ?";
 
+    private static final String SEARCH_ENTITIES_FOR_GROUP =
+            "SELECT "
+                    + MEMBER_MEMBER_KEY_COLUMN
+                    + " FROM "
+                    + MEMBER_TABLE
+                    + " WHERE "
+                    + MEMBER_GROUP_ID_COLUMN
+                    + "=? AND "
+                    + MEMBER_IS_GROUP_COLUMN
+                    + " = '"
+                    + MEMBER_IS_ENTITY
+                    + "'";
+
     private static final Log LOG = LogFactory.getLog(RDBMEntityGroupStore.class);
 
     private static String groupNodeSeparator;
@@ -471,30 +484,19 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
     public Iterator findEntitiesForGroup(IEntityGroup group) throws GroupsException {
         Collection entities = new ArrayList();
         Connection conn = null;
+        PreparedStatement ps = null;
         String groupID = group.getLocalKey();
         Class cls = group.getLeafType();
 
         try {
             conn = RDBMServices.getConnection();
-            Statement stmnt = conn.createStatement();
+            ps = conn.prepareStatement(SEARCH_ENTITIES_FOR_GROUP);
             try {
 
-                String query =
-                        "SELECT "
-                                + MEMBER_MEMBER_KEY_COLUMN
-                                + " FROM "
-                                + MEMBER_TABLE
-                                + " WHERE "
-                                + MEMBER_GROUP_ID_COLUMN
-                                + " = '"
-                                + groupID
-                                + "' AND "
-                                + MEMBER_IS_GROUP_COLUMN
-                                + " = '"
-                                + MEMBER_IS_ENTITY
-                                + "'";
+                ps.clearParameters();
+                ps.setString(1, groupID);
 
-                ResultSet rs = stmnt.executeQuery(query);
+                ResultSet rs = ps.executeQuery();
                 try {
                     while (rs.next()) {
                         String key = rs.getString(1);
@@ -505,7 +507,7 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
                     rs.close();
                 }
             } finally {
-                stmnt.close();
+                ps.close();
             }
         } catch (SQLException sqle) {
             LOG.error("Problem retrieving Entities for Group: " + group, sqle);

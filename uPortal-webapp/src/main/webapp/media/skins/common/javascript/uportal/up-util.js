@@ -146,7 +146,7 @@ var up = up || {};
      *
      * @param {String} message - message string.
      * @param {Array} args - array of string objects.
-     * @returns Formatted message string.
+     * @return Formatted message string.
      */
     up.formatMessage = function(message, args) {
         var s = message;

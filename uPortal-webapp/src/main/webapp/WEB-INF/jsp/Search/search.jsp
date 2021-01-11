@@ -44,7 +44,7 @@
 
                 <form id="${n}searchForm" action="${ formUrl }" class="form-inline" style="margin-bottom:10px;" method="POST">
                     <div class="form-group">
-                        <input id="${n}searchInput" type="search" class="searchInput form-control" name="query" value="${ fn:escapeXml(query )}" aria-label="<spring:message code="search"/>"/>
+                        <input id="${n}searchInput" type="search" class="searchInput form-control" name="query" value="${ fn:escapeXml(query )}" aria-label="<spring:message code="search"/>" maxlength="200"/>
                         <input id="${n}searchButton" type="submit" class="btn btn-default" value="<spring:message code="search.submit"/>"/>
                     </div>
                 </form>

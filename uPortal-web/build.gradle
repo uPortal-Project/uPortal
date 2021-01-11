@@ -11,7 +11,8 @@ dependencies {
     compile project(':uPortal-layout:uPortal-layout-impl')
     compile project(':uPortal-rendering')
 
-    compile "com.google.visualization:visualization-datasource:${googleVisualizationVersion}"
+    compile "com.github.ci-rt:google-visualization-java:${googleVisualizationVersion}"
+    compile "joda-time:joda-time:${jodaTimeVersion}"
 
     testCompile "org.apache.portals.pluto:pluto-container-api:${plutoVersion}"
     testCompile "${servletApiDependency}"

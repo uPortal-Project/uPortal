@@ -18,12 +18,14 @@
     under the License.
 
 -->
+<!-- If using a ContextMapper, include an attribute of `context-mapper` without an `attributes-mapper` -->
 <with-attribute key="FOLDERS" value="${groovy([:])}">
     <ldap-search
         context-source="${ldapContext}"
         base-dn="${baseGroupDn}"
         filter="${filter}"
         scope="${groovy(javax.naming.directory.SearchControls.SUBTREE_SCOPE)}"
+        mapper-type="${mapperType}"
         attributes-mapper="${attributesMapper}"
         resolveMemberGroups="${resolveMemberGroups}"
         attribute-name="record"

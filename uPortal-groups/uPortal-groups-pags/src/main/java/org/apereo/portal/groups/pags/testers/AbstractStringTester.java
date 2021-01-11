@@ -26,7 +26,7 @@ public abstract class AbstractStringTester extends BaseAttributeTester {
     }
 
     @Override
-    public final boolean test(IPerson person) {
+    public boolean test(IPerson person) {
         boolean result = false;
         Object[] atts = person.getAttributeValues(getAttributeName());
         if (atts != null) {

@@ -25,13 +25,13 @@
             </a>
           </td>
           <td>
-            <a href="https://travis-ci.org/Jasig/uPortal">
-              <img src="https://travis-ci.org/Jasig/uPortal.svg?branch=master" alt="Linux Build Status">
+            <a href="https://github.com/Jasig/uPortal/actions?query=branch%3Amaster">
+              <img src="https://github.com/Jasig/uPortal/workflows/CI/badge.svg?branch=master" alt="Linux Build Status">
             </a>
           </td>
           <td>
-            <a href="https://ci.appveyor.com/project/drewwills/uportal/branch/master">
-              <img src="https://ci.appveyor.com/api/projects/status/8t95sjt090mf62dh/branch/master?svg=true" alt="Windows Build Status">
+            <a href="https://github.com/Jasig/uPortal/actions?query=branch%3Amaster">
+              <img src="https://github.com/Jasig/uPortal/workflows/CI/badge.svg?branch=master" alt="Windows Build Status">
             </a>
           </td>
           <td>

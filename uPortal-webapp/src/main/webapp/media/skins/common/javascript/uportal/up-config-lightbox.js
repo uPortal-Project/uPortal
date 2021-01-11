@@ -38,7 +38,7 @@ up.lightboxConfig =
          * retain that.  Otherwise, it will switch back the normal state.
          *
          * @param url the url to update
-         * @returns the updated URL as a string.
+         * @return the updated URL as a string.
          */
         convertExclusiveUrlToPageUrl = function(url) {
             var newUrl;

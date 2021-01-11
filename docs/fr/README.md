@@ -48,17 +48,17 @@ ci-après.
         <tr>
           <td>
             <a href="https://github.com/Jasig/uPortal/tree/master">
-              uPortal 5.1
+              uPortal 5
             </a>
           </td>
           <td>
-            <a href="https://travis-ci.org/Jasig/uPortal">
-              <img src="https://travis-ci.org/Jasig/uPortal.svg?branch=master" alt="Linux Build Status">
+            <a href="https://github.com/Jasig/uPortal/actions?query=branch%3Amaster">
+              <img src="https://github.com/Jasig/uPortal/workflows/CI/badge.svg?branch=master" alt="Linux Build Status">
             </a>
           </td>
           <td>
-            <a href="https://ci.appveyor.com/project/drewwills/uportal/branch/master">
-              <img src="https://ci.appveyor.com/api/projects/status/8t95sjt090mf62dh/branch/master?svg=true" alt="Windows Build Status">
+            <a href="https://github.com/Jasig/uPortal/actions?query=branch%3Amaster">
+              <img src="https://github.com/Jasig/uPortal/workflows/CI/badge.svg?branch=master" alt="Windows Build Status">
             </a>
           </td>
           <td>
@@ -69,28 +69,6 @@ ci-après.
           <td>
             <a href='https://www.versioneye.com/user/projects/59e525762de28c000f9188ae'>
               <img src='https://www.versioneye.com/user/projects/59e525762de28c000f9188ae/badge.svg?style=flat-square' alt="Dependency Status" />
-            </a>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <a href="https://github.com/Jasig/uPortal/tree/rel-5-0-patches">
-              uPortal 5.0
-            </a>
-          </td>
-          <td>
-            <a href="https://travis-ci.org/Jasig/uPortal">
-              <img src="https://travis-ci.org/Jasig/uPortal.svg?branch=rel-5-0-patches" alt="Linux Build Status">
-            </a>
-          </td>
-          <td>
-            <a href="https://ci.appveyor.com/project/drewwills/uportal/branch/rel-5-0-patches">
-              <img src="https://ci.appveyor.com/api/projects/status/8t95sjt090mf62dh/branch/rel-5-0-patches?svg=true" alt="Windows Build Status">
-            </a>
-          </td>
-          <td>
-            <a href="https://coveralls.io/github/Jasig/uPortal?branch=rel-5-0-patches">
-              <img src="https://coveralls.io/repos/github/Jasig/uPortal/badge.svg?branch=rel-5-0-patches" alt="Coverage Status">
             </a>
           </td>
         </tr>
