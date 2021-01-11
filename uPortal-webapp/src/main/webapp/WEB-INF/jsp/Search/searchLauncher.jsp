@@ -32,16 +32,18 @@
 <div id="webSearchContainer" class="fl-widget">
     <div class="fl-widget-inner">
       <div class="fl-widget-content">
-        <c:set var="searchLabel"><spring:message code="search"/></c:set>
         <form class="form-search" role="form" method="POST" action="${searchLaunchUrl}" id="${n}webSearchForm">
           <div class="input-group">
             <spring:message code="search" var="searchPlaceholder" />
             <spring:message code="search.terms" var="searchTitle" />
-            <spring:message code="submit" var="searchSubmit" />
-            <input id="${n}webSearchInput" class="searchInput input-large search-query form-control" value="" name="query" type="search" placeholder="${searchPlaceholder}" title="${searchTitle}" maxlength="200"/>
+            <spring:message code="search.submit" var="searchSubmit" />
+            <label for="${n}webSearchInput" class="sr-only">${searchTitle}</label>
+            <input id="${n}webSearchInput" class="searchInput input-large search-query form-control" value="" name="query"
+             type="search" placeholder="${searchPlaceholder}" title="${searchTitle}" maxlength="200"/>
             <span class="input-group-btn">
-              <button id="webSearchSubmit" type="submit" name="submit" aria-label="${searchSubmit}" class="btn btn-default" value="${searchLabel}">
-                <span>${searchLabel}</span>
+              <button id="webSearchSubmit" type="submit" name="submit" class="btn btn-default"
+               value="${searchSubmit}">
+                <span>${searchSubmit}</span>
                 <i class="fa fa-search" aria-hidden="true"></i>
               </button>
             </span>
