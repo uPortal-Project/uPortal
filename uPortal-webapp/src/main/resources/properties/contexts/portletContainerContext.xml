@@ -42,7 +42,7 @@
     <bean id="portletThreadPool" class="org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean">
         <property name="corePoolSize" value="${org.apereo.portal.portlet.worker.threadPool.initialThreads:100}" />
         <property name="maxPoolSize" value="${org.apereo.portal.portlet.worker.threadPool.maxThreads:1200}" />
-        <property name="queueCapacity" value="0" />
+        <property name="queueCapacity" value="${org.apereo.portal.portlet.worker.threadPool.queueSize:0}" />
         <property name="threadGroupName" value="uP-PortletExecTG" />
         <property name="threadNamePrefix" value="uP-PortletExec-" />
         <property name="threadPriority" value="${org.apereo.portal.portlet.worker.threadPool.threadPriority:5}" />

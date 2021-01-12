@@ -32,7 +32,7 @@
     <bean id="uPortalTaskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean">
         <property name="corePoolSize" value="${org.apereo.portal.task.exec.threadPool.initialThreads}" />
         <property name="maxPoolSize" value="${org.apereo.portal.task.exec.threadPool.maxThreads}" />
-        <property name="queueCapacity" value="0" />
+        <property name="queueCapacity" value="${org.apereo.portal.task.exec.threadPool.queueSize:0}" />
         <property name="threadGroupName" value="uP-TaskExecTG" />
         <property name="threadNamePrefix" value="uP-TaskExec-" />
         <property name="threadPriority" value="${org.apereo.portal.task.exec.threadPool.threadPriority}" />
