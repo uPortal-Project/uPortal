@@ -100,14 +100,6 @@
                         <!-- <span id="activeTabGroup" style="display:none;"><xsl:value-of select="/layout/navigation/tabGroupsList/@activeTabGroup"/></span> -->
                         <ul id="portalNavigationTabGroupsList" class="menu fl-tabs list-group list-group-horizontal">
                             <xsl:for-each select="tabGroupsList/tabGroup">
-                                <xsl:variable name="TABGROUP_POSITION"> <!-- Determine the position of the navigation option within the whole navigation list and add css hooks for the first and last positions. -->
-                                    <xsl:choose>
-                                        <xsl:when test="position()=1 and position()=last()">single singleTabGroup</xsl:when>
-                                        <xsl:when test="position()=1">first</xsl:when>
-                                        <xsl:when test="position()=last()">last</xsl:when>
-                                        <xsl:otherwise></xsl:otherwise>
-                                    </xsl:choose>
-                                </xsl:variable>
                                 <xsl:variable name="TABGROUP_ACTIVE">
                                     <xsl:choose>
                                         <xsl:when test="/layout/navigation/tabGroupsList/@activeTabGroup=.">active</xsl:when>
@@ -129,7 +121,7 @@
                                         </xsl:with-param>
                                     </xsl:call-template>
                                 </xsl:variable>
-                                <li class="{$TABGROUP_POSITION} {$TABGROUP_ACTIVE} portal-navigation-tabgroup fl-tabs-active list-group-item portal-navigation">
+                                <li class="{$TABGROUP_ACTIVE} portal-navigation-tabgroup fl-tabs-active list-group-item portal-navigation">
                                     <a href="{$TABGROUP_URL}" title="{.}" class="portal-tabGroup-link portal-navigation-link">
                                         <span class="portal-tabGroup-label portal-navigation-label"><xsl:value-of select="$TABGROUP_LABEL"/></span></a>
                                 </li>
