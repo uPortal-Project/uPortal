@@ -91,11 +91,6 @@
             <div id="portalNavigation" class="fl-widget" aria-selected="false">
                 <!-- Optional Tab Groups -->
                 <xsl:if test="$USE_TAB_GROUPS='true'">
-                    <!--
-                    <span id="activeTabGroup" style="display:none;"><xsl:value-of select="/layout/navigation/tabGroupsList/@activeTabGroup"/></span>
-                    <span id="useTabGroup" style="display:none;"><xsl:value-of select="$USE_TAB_GROUPS"/></span>
-                    <h3 class="fl-offScreen-hidden">Tab Groups</h3>
-                    -->
                     <div id="portalNavigationTabGroup" class="fl-widget-inner header">
                         <!-- <span id="activeTabGroup" style="display:none;"><xsl:value-of select="/layout/navigation/tabGroupsList/@activeTabGroup"/></span> -->
                         <ul id="portalNavigationTabGroupsList" class="menu fl-tabs list-group list-group-horizontal">
