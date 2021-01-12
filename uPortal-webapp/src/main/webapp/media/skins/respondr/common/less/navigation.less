@@ -390,6 +390,73 @@
           -o-transform: none !important;
           transform: none !important;
         }
+        #portalNavigationTabGroup {
+          background-color: @tabgroup-background-color;
+          margin-left: -15px;
+          padding-left: 15px;
+          margin-right: -15px;
+          padding-right: 15px;
+
+          #portalNavigationTabGroupsList {
+            display: inline-block;
+            .inline-block-list;
+
+            margin-left: 64px;
+            margin-bottom: -4px;
+            width: 100%;
+
+            :not(.active).list-group-item {
+              &:hover,
+              &:focus {
+                background-color: @tabgroup-item-hover-background-color;
+                color: @tabgroup-item-hover-text-color;
+              }
+            }
+
+            .list-group-item {
+              display: inline-block;
+              margin-bottom: 0;
+              margin-left: -4px;
+              margin-right: 0;
+              border: none;
+              border-radius: 0 !important;
+              .float;
+
+              border-width: 0;
+              background-color: @tabgroup-item-background-color;
+
+              &:last-child {
+                border-bottom: initial;
+              }
+
+              a.portal-navigation-link {
+                display: inline-block;
+                color: @tabgroup-item-text-color;
+
+                margin: 0;
+                padding: 1px 5px;
+
+                &:hover,
+                &:focus {
+                  background-color: transparent;
+                  color: @tabgroup-item-hover-text-color;
+                }
+              }
+
+            }
+
+            .active {
+              background-color: @tabgroup-item-active-background-color;
+              color: @tabgroup-item-active-text-color;
+
+              &:hover,
+              &:focus {
+                background-color: @tabgroup-item-active-hover-background-color;
+                color: @tabgroup-item-active-hover-text-color;
+              }
+            }
+          }
+        }
         ul.menu {
           display: block;
           .inline-block-list;
