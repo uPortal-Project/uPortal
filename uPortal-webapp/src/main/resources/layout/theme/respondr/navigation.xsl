@@ -53,9 +53,9 @@
 
 <xsl:param name="TAB_CONTEXT" select="'header'"/><!-- Sets the location of the navigation. Values are 'header' or 'sidebar'. -->
 <xsl:param name="CONTEXT" select="'header'"/>
-<xsl:param name="subscriptionsSupported">false</xsl:param>
+<xsl:param name="subscriptionsSupported">true</xsl:param>
 <xsl:param name="USE_FLYOUT_MENUS">false</xsl:param> <!-- Moved to parameter in renderingPipelineContext.xml with configuration in portal.properties. -->
-<xsl:param name="useTabGroups">true</xsl:param>
+<xsl:param name="useTabGroups">false</xsl:param>
 <xsl:param name="PORTAL_VIEW">
   <xsl:choose>
     <xsl:when test="//layout_fragment">detached</xsl:when>
