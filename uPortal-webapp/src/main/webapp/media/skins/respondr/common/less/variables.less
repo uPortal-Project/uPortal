@@ -217,6 +217,26 @@
 @menu-toggle-hover-text-color: @white;
 
 /**
+ * Tab Groups
+ */
+@tabgroup-background-color: @color2;
+
+@tabgroup-item-background-color: transparent;
+@tabgroup-item-text-color: @grayscale3;
+
+@tabgroup-item-hover-text-color: lighten(@navbar-item-text-color, 50%);
+@tabgroup-item-hover-background-color: @color1-light;
+
+@tabgroup-item-active-background-color: @color1-darker;
+@tabgroup-item-active-text-color: @white;
+
+@tabgroup-item-active-hover-background-color: lighten(
+  @tabgroup-item-active-background-color,
+  50%
+);
+@tabgroup-item-active-hover-text-color: inherit;
+
+/**
  * Search field
  */
 @search-button-text-color: @white;

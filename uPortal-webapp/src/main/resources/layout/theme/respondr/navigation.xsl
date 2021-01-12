@@ -55,7 +55,7 @@
 <xsl:param name="CONTEXT" select="'header'"/>
 <xsl:param name="subscriptionsSupported">true</xsl:param>
 <xsl:param name="USE_FLYOUT_MENUS">false</xsl:param> <!-- Moved to parameter in renderingPipelineContext.xml with configuration in portal.properties. -->
-<xsl:param name="useTabGroups">false</xsl:param>
+<xsl:param name="useTabGroups">true</xsl:param>
 <xsl:param name="PORTAL_VIEW">
   <xsl:choose>
     <xsl:when test="//layout_fragment">detached</xsl:when>
@@ -89,6 +89,54 @@
       <nav class="portal-nav">
         <div id="sidebar" class="sidebar-offcanvas container-fluid">
             <div id="portalNavigation" class="fl-widget" aria-selected="false">
+                <!-- Optional Tab Groups -->
+                <xsl:if test="$USE_TAB_GROUPS='true'">
+                    <!--
+                    <span id="activeTabGroup" style="display:none;"><xsl:value-of select="/layout/navigation/tabGroupsList/@activeTabGroup"/></span>
+                    <span id="useTabGroup" style="display:none;"><xsl:value-of select="$USE_TAB_GROUPS"/></span>
+                    <h3 class="fl-offScreen-hidden">Tab Groups</h3>
+                    -->
+                    <div id="portalNavigationTabGroup" class="fl-widget-inner header">
+                        <!-- <span id="activeTabGroup" style="display:none;"><xsl:value-of select="/layout/navigation/tabGroupsList/@activeTabGroup"/></span> -->
+                        <ul id="portalNavigationTabGroupsList" class="menu fl-tabs list-group list-group-horizontal">
+                            <xsl:for-each select="tabGroupsList/tabGroup">
+                                <xsl:variable name="TABGROUP_POSITION"> <!-- Determine the position of the navigation option within the whole navigation list and add css hooks for the first and last positions. -->
+                                    <xsl:choose>
+                                        <xsl:when test="position()=1 and position()=last()">single singleTabGroup</xsl:when>
+                                        <xsl:when test="position()=1">first</xsl:when>
+                                        <xsl:when test="position()=last()">last</xsl:when>
+                                        <xsl:otherwise></xsl:otherwise>
+                                    </xsl:choose>
+                                </xsl:variable>
+                                <xsl:variable name="TABGROUP_ACTIVE">
+                                    <xsl:choose>
+                                        <xsl:when test="/layout/navigation/tabGroupsList/@activeTabGroup=.">active</xsl:when>
+                                        <xsl:otherwise></xsl:otherwise>
+                                    </xsl:choose>
+                                </xsl:variable>
+                                <xsl:variable name="TABGROUP_LABEL">
+                                    <xsl:choose>
+                                        <xsl:when test="@name='DEFAULT_TABGROUP'"><xsl:value-of select="upMsg:getMessage('navigation.tabgroup.default', $USER_LANG)"/></xsl:when>
+                                        <xsl:otherwise><xsl:value-of select="."/></xsl:otherwise>
+                                    </xsl:choose>
+                                </xsl:variable>
+                                <xsl:variable name="TABGROUP_URL">
+                                    <xsl:call-template name="portalUrl">
+                                        <xsl:with-param name="url">
+                                            <url:portal-url>
+                                                <url:layoutId><xsl:value-of select="@firstTabId"/></url:layoutId>
+                                            </url:portal-url>
+                                        </xsl:with-param>
+                                    </xsl:call-template>
+                                </xsl:variable>
+                                <li class="{$TABGROUP_POSITION} {$TABGROUP_ACTIVE} portal-navigation-tabgroup fl-tabs-active list-group-item portal-navigation">
+                                    <a href="{$TABGROUP_URL}" title="{.}" class="portal-tabGroup-link portal-navigation-link">
+                                        <span class="portal-tabGroup-label portal-navigation-label"><xsl:value-of select="$TABGROUP_LABEL"/></span></a>
+                                </li>
+                            </xsl:for-each>
+                        </ul>
+                    </div>
+                </xsl:if>
               <div id="portalNavigationInner" class="fl-widget-inner header">
                   <ul id="portalNavigationList" class="menu fl-tabs flc-reorderer-column list-group list-group-horizontal">
                      <xsl:apply-templates select="tab[$USE_TAB_GROUPS!='true' or @tabGroup=$ACTIVE_TAB_GROUP]">
