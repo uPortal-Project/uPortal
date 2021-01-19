@@ -11,7 +11,7 @@ import org.apereo.portal.security.IPerson;
 /**
  * Class that helps personalize portlet definitions by replacing tokens with user attributes.
  *
- * TODO: Includes a cache to facilitate reuse of same data.
+ * <p>TODO: Includes a cache to facilitate reuse of same data.
  */
 @Slf4j
 public class LayoutPortletPersonalizer {
