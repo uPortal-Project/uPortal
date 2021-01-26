@@ -14,13 +14,6 @@
  */
 package org.apereo.portal.groups;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 import org.apereo.portal.EntityIdentifier;
 import org.apereo.portal.concurrency.CachingException;
 import org.apereo.portal.concurrency.IEntityLock;
@@ -30,6 +23,14 @@ import org.apereo.portal.services.EntityLockService;
 import org.apereo.portal.services.GroupService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /** Reference individual, or leaf, group service. */
 public class ReferenceIndividualGroupService extends ReferenceCompositeGroupService
@@ -175,17 +176,22 @@ public class ReferenceIndividualGroupService extends ReferenceCompositeGroupServ
         log.debug("Finding containing groups for member {}", gm.getKey());
         Collection groups = new ArrayList(10);
         IEntityGroup group = null;
-        for (Iterator it = getGroupStore().findParentGroups(gm); it.hasNext(); ) {
+        Iterator it = getGroupStore().findParentGroups(gm);
+        while (it.hasNext()) {
             group = (IEntityGroup) it.next();
-            group.setLocalGroupService(this);
-            groups.add(group);
-            if (cacheInUse()) {
-                try {
-                    if (getGroupFromCache(group.getEntityIdentifier().getKey()) == null) {
-                        cacheAdd(group);
+            if (group == null) {
+                log.error("null parent for group {}", gm.getKey());
+            } else {
+                group.setLocalGroupService(this);
+                groups.add(group);
+                if (cacheInUse()) {
+                    try {
+                        if (getGroupFromCache(group.getEntityIdentifier().getKey()) == null) {
+                            cacheAdd(group);
+                        }
+                    } catch (CachingException ce) {
+                        throw new GroupsException("Problem finding containing groups", ce);
                     }
-                } catch (CachingException ce) {
-                    throw new GroupsException("Problem finding containing groups", ce);
                 }
             }
         }
@@ -268,7 +274,8 @@ public class ReferenceIndividualGroupService extends ReferenceCompositeGroupServ
     protected Iterator findLocalMemberGroups(IEntityGroup eg) throws GroupsException {
         Collection groups = new ArrayList(10);
         IEntityGroup group = null;
-        for (Iterator it = getGroupStore().findMemberGroups(eg); it.hasNext(); ) {
+        Iterator it = getGroupStore().findMemberGroups(eg);
+        while (it.hasNext()) {
             group = (IEntityGroup) it.next();
             if (group == null) {
                 log.warn(
@@ -306,7 +313,8 @@ public class ReferenceIndividualGroupService extends ReferenceCompositeGroupServ
     public Iterator findMemberGroups(IEntityGroup eg) throws GroupsException {
         Map groups = new HashMap();
         IEntityGroup group = null;
-        for (Iterator itr = findLocalMemberGroups(eg); itr.hasNext(); ) {
+        Iterator itr = findLocalMemberGroups(eg);
+        while (itr.hasNext()) {
             group = (IEntityGroup) itr.next();
             groups.put(group.getKey(), group);
         }
@@ -418,8 +426,7 @@ public class ReferenceIndividualGroupService extends ReferenceCompositeGroupServ
         if (log.isDebugEnabled()) log.debug("Service descriptor attributes: " + svcName);
 
         // print service descriptor attributes:
-        for (Iterator i = getServiceDescriptor().keySet().iterator(); i.hasNext(); ) {
-            String descriptorKey = (String) i.next();
+        for (String descriptorKey : getServiceDescriptor().keySet()) {
             Object descriptorValue = getServiceDescriptor().get(descriptorKey);
             if (descriptorValue != null) {
                 if (log.isDebugEnabled()) log.debug("  " + descriptorKey + " : " + descriptorValue);
@@ -703,8 +710,8 @@ public class ReferenceIndividualGroupService extends ReferenceCompositeGroupServ
     protected void synchronizeGroupMembersOnDelete(IEntityGroup group) throws GroupsException {
         GroupMemberImpl gmi = null;
 
-        for (Iterator it = group.getChildren().iterator(); it.hasNext(); ) {
-            gmi = (GroupMemberImpl) it.next();
+        for (IGroupMember iGroupMember : group.getChildren()) {
+            gmi = (GroupMemberImpl) iGroupMember;
             gmi.invalidateInParentGroupsCache(Collections.singleton((IGroupMember) gmi));
             if (cacheInUse()) {
                 cacheUpdate(gmi);
@@ -722,16 +729,16 @@ public class ReferenceIndividualGroupService extends ReferenceCompositeGroupServ
         EntityGroupImpl egi = (EntityGroupImpl) group;
         GroupMemberImpl gmi = null;
 
-        for (Iterator it = egi.getAddedMembers().values().iterator(); it.hasNext(); ) {
-            gmi = (GroupMemberImpl) it.next();
+        for (IGroupMember iGroupMember : egi.getAddedMembers().values()) {
+            gmi = (GroupMemberImpl) iGroupMember;
             gmi.invalidateInParentGroupsCache(Collections.singleton((IGroupMember) gmi));
             if (cacheInUse()) {
                 cacheUpdate(gmi);
             }
         }
 
-        for (Iterator it = egi.getRemovedMembers().values().iterator(); it.hasNext(); ) {
-            gmi = (GroupMemberImpl) it.next();
+        for (IGroupMember iGroupMember : egi.getRemovedMembers().values()) {
+            gmi = (GroupMemberImpl) iGroupMember;
             gmi.invalidateInParentGroupsCache(Collections.singleton((IGroupMember) gmi));
             if (cacheInUse()) {
                 cacheUpdate(gmi);
