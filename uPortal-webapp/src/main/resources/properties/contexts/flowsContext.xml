@@ -33,56 +33,56 @@
 
     <!-- Generic Web-Flow helper beans -->
     <bean id="portletUrlFlowHelper" class="org.apereo.portal.portlets.flow.PortletUrlFlowHelper" />
-                      
 
-    <!-- Beans for the person-lookup flow -->       
+
+    <!-- Beans for the person-lookup flow -->
     <bean id="personLookupHelper" class="org.apereo.portal.portlets.lookup.PersonLookupHelperImpl">
         <property name="personAttributeDao" ref="personAttributeDao" />
         <property name="maxResults" value="${org.apereo.portal.portlets.lookup.PersonLookup.maxResults}"/>
     </bean>
-    
+
     <bean id="personQueryValidator" class="org.apereo.portal.portlets.lookup.PersonQueryValidator" />
-    
+
     <!--  Beans for the group-selector flow -->
     <bean name="groupListHelper"
         class="org.apereo.portal.layout.dlm.remoting.GroupListHelperImpl"/>
 
     <bean id="userLocaleHelper" class="org.apereo.portal.portlets.localization.UserLocaleHelper"/>
 
-    
-    <!-- Beans for the attribute-swapper flow -->       
+
+    <!-- Beans for the attribute-swapper flow -->
     <bean id="attributeSwapperHelper" class="org.apereo.portal.portlets.swapper.AttributeSwapperHelperImpl">
         <property name="personAttributeDao" ref="personAttributeDao" />
-    </bean>   
+    </bean>
     <bean id="attributeSwapRequestValidator" class="org.apereo.portal.portlets.swapper.AttributeSwapRequestValidator">
         <property name="attributeSwapperHelper" ref="attributeSwapperHelper" />
     </bean>
-     
+
     <bean id="personValidator" class="org.apereo.portal.portlets.account.PersonFormValidator"/>
 
     <bean id="groupValidator" class="org.apereo.portal.portlets.groupadmin.GroupFormValidator"/>
 
     <bean id="portalConversionService"
         class="org.apereo.portal.utils.web.flow.PortalConversionService"/>
-    
+
     <!-- bean for reset-user-layout flow -->
     <bean id="userLayoutHelper" class="org.apereo.portal.layout.UserLayoutHelperImpl">
         <property name="dataSource" ref="PortalDb"/>
-    </bean>   
-    
+    </bean>
+
     <webflow:flow-executor id="flowExecutor">
         <webflow:flow-execution-attributes>
             <webflow:always-redirect-on-pause value="false" />
         </webflow:flow-execution-attributes>
     </webflow:flow-executor>
-    
+
     <!-- The registry of executable flow definitions -->
     <webflow:flow-registry id="flowRegistry" flow-builder-services="flowBuilderServices">
         <webflow:flow-location-pattern value="WEB-INF/flows/**/*.xml" />
     </webflow:flow-registry>
-    
+
     <!-- The flow-builder-service to set our custom conversion service -->
-    <webflow:flow-builder-services id="flowBuilderServices" 
+    <webflow:flow-builder-services id="flowBuilderServices"
         view-factory-creator="viewFactoryCreator"
         conversion-service="portalConversionService" />
 
@@ -92,5 +92,5 @@
             <ref bean="xmlViewResolver" />
         </property>
     </bean>
-    
+
 </beans>

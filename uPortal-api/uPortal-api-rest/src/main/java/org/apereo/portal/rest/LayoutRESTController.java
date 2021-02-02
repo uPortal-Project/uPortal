@@ -17,8 +17,7 @@ package org.apereo.portal.rest;
 import java.util.*;
 import javax.portlet.WindowState;
 import javax.servlet.http.HttpServletRequest;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.portal.IUserPreferencesManager;
 import org.apereo.portal.IUserProfile;
 import org.apereo.portal.layout.IUserLayoutStore;
@@ -47,10 +46,9 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+@Slf4j
 @Controller
 public class LayoutRESTController {
-
-    protected final Log log = LogFactory.getLog(getClass());
 
     private IUserLayoutStore userLayoutStore;
 
@@ -125,7 +123,7 @@ public class LayoutRESTController {
                     final IPortletDefinition def =
                             portletDao.getPortletDefinitionByFname(
                                     attributes.getNamedItem("fname").getNodeValue());
-                    final LayoutPortlet portlet = new LayoutPortlet(def, person);
+                    final LayoutPortlet portlet = new LayoutPortlet(def);
 
                     portlet.setNodeId(attributes.getNamedItem("ID").getNodeValue());
 
@@ -175,8 +173,7 @@ public class LayoutRESTController {
         }
     }
 
-    private NodeList getNodeList(
-            @RequestParam(value = "tab", required = false) String tab, Document document) {
+    private NodeList getNodeList(String tab, Document document) {
         if (tab != null) {
             NodeList folders = document.getElementsByTagName("folder");
             for (int i = 0; i < folders.getLength(); i++) {

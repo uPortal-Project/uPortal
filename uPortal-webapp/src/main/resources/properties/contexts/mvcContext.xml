@@ -29,6 +29,8 @@
 
     <bean id="requireValidSessionFilter" class="org.apereo.portal.url.RequireValidSessionFilter" />
     <bean id="maxInactiveFilter" class="org.apereo.portal.url.MaxInactiveFilter" />
+    <bean id="personalizationFilter" class="org.apereo.portal.utils.web.PersonalizationFilter" />
+    <bean id="personalizationLogic" class="org.apereo.portal.utils.personalize.PersonalizerImpl" />
     <bean id="urlCanonicalizingFilter" class="org.apereo.portal.url.UrlCanonicalizingFilter" />
     <bean id="createPortletCookieFilter" class="org.apereo.portal.utils.web.CreatePortletCookieFilter"/>
 

@@ -18,13 +18,11 @@ import com.fasterxml.jackson.annotation.JsonRawValue;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Map;
-import java.util.stream.Collectors;
 import org.apache.commons.lang.StringUtils;
 import org.apereo.portal.portlet.om.IPortletDefinition;
 import org.apereo.portal.portlet.om.IPortletDefinitionParameter;
 import org.apereo.portal.portlet.om.IPortletPreference;
 import org.apereo.portal.portlet.om.PortletParameterUtility;
-import org.apereo.portal.security.IPerson;
 
 public class LayoutPortlet {
 
@@ -61,14 +59,8 @@ public class LayoutPortlet {
     /** Pithy static content that you might display on a dashboard mosaic view or so. */
     private String pithyStaticContent;
 
-    private LayoutPortletPersonalizer personalizer;
-
-    public LayoutPortlet() {}
-
-    public LayoutPortlet(IPortletDefinition portletDef, IPerson person) {
+    public LayoutPortlet(IPortletDefinition portletDef) {
         if (portletDef != null) {
-            this.personalizer = new LayoutPortletPersonalizer(person);
-
             nodeId = "-1";
             title = portletDef.getTitle();
             description = portletDef.getDescription();
@@ -89,12 +81,6 @@ public class LayoutPortlet {
             this.parameterMap =
                     PortletParameterUtility.parameterMapToStringStringMap(
                             portletDef.getParametersAsUnmodifiableMap());
-            this.parameterMap =
-                    this.parameterMap.entrySet().stream()
-                            .collect(
-                                    Collectors.toMap(
-                                            Map.Entry::getKey,
-                                            e -> personalizer.personalize(e.getValue())));
 
             // This single-loop
             // solution traverses the list one time handling each
@@ -153,7 +139,7 @@ public class LayoutPortlet {
     }
 
     public String getTitle() {
-        return personalizer.personalize(title);
+        return title;
     }
 
     public void setTitle(String title) {
@@ -161,7 +147,7 @@ public class LayoutPortlet {
     }
 
     public String getDescription() {
-        return personalizer.personalize(description);
+        return description;
     }
 
     public void setDescription(String description) {
@@ -169,7 +155,7 @@ public class LayoutPortlet {
     }
 
     public String getUrl() {
-        return personalizer.personalize(url);
+        return url;
     }
 
     public void setUrl(String url) {
@@ -177,7 +163,7 @@ public class LayoutPortlet {
     }
 
     public String getIconUrl() {
-        return personalizer.personalize(iconUrl);
+        return iconUrl;
     }
 
     public void setIconUrl(String iconUrl) {
@@ -209,7 +195,7 @@ public class LayoutPortlet {
     }
 
     public String getStaticContent() {
-        return personalizer.personalize(staticContent);
+        return staticContent;
     }
 
     public void setStaticContent(String staticContent) {
@@ -217,7 +203,7 @@ public class LayoutPortlet {
     }
 
     public String getPithyStaticContent() {
-        return personalizer.personalize(this.pithyStaticContent);
+        return this.pithyStaticContent;
     }
 
     public void setPithyStaticContent(final String pithyStaticContent) {
@@ -233,7 +219,7 @@ public class LayoutPortlet {
     }
 
     public String getWidgetURL() {
-        return personalizer.personalize(widgetURL);
+        return widgetURL;
     }
 
     public void setWidgetURL(String widgetURL) {
@@ -249,7 +235,7 @@ public class LayoutPortlet {
     }
 
     public String getWidgetConfig() {
-        return personalizer.personalize((String) widgetConfig);
+        return (String) widgetConfig;
     }
 
     public void setWidgetConfig(String widgetConfig) {
@@ -257,7 +243,7 @@ public class LayoutPortlet {
     }
 
     public String getWidgetTemplate() {
-        return personalizer.personalize(widgetTemplate);
+        return widgetTemplate;
     }
 
     public void setWidgetTemplate(String widgetTemplate) {

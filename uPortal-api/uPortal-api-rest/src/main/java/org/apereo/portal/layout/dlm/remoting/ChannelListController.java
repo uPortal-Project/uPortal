@@ -23,6 +23,7 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import javax.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.portal.EntityIdentifier;
 import org.apereo.portal.UserPreferencesManager;
@@ -51,8 +52,7 @@ import org.apereo.portal.services.AuthorizationServiceFacade;
 import org.apereo.portal.spring.spel.IPortalSpELService;
 import org.apereo.portal.user.IUserInstance;
 import org.apereo.portal.user.IUserInstanceManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apereo.portal.utils.personalize.IPersonalizer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
@@ -72,6 +72,7 @@ import org.springframework.web.servlet.ModelAndView;
  * the marketplace and uses the BROWSE permission properly without overloading the meaning of
  * categories).
  */
+@Slf4j
 @Controller
 public class ChannelListController {
 
@@ -86,6 +87,7 @@ public class ChannelListController {
     private IPortletDefinitionRegistry portletDefinitionRegistry;
     private IPortletCategoryRegistry portletCategoryRegistry;
     private IPersonManager personManager;
+    private IPersonalizer personalizer;
     private IPortalSpELService spELService;
     private ILocaleStore localeStore;
     private LocaleManagerFactory localeManagerFactory;
@@ -95,8 +97,6 @@ public class ChannelListController {
     private FavoritesUtils favoritesUtils;
 
     @Autowired private IMarketplaceService marketplaceService;
-
-    private Logger logger = LoggerFactory.getLogger(getClass());
 
     /** @param portletDefinitionRegistry The portlet registry bean */
     @Autowired
@@ -152,6 +152,11 @@ public class ChannelListController {
     @Autowired
     public void setFavoritesUtils(FavoritesUtils favoritesUtils) {
         this.favoritesUtils = favoritesUtils;
+    }
+
+    @Autowired
+    public void setPersonalizer(IPersonalizer personalizer) {
+        this.personalizer = personalizer;
     }
 
     /**
@@ -238,7 +243,7 @@ public class ChannelListController {
          * The 'favorite=true' option means return only portlets that this user has favorited.
          */
         if (Boolean.valueOf(favorite)) {
-            logger.debug(
+            log.debug(
                     "Filtering out non-favorite portlets because 'favorite=true' was included in the query string");
             rslt = filterRegistryFavoritesOnly(rslt);
         }
@@ -299,7 +304,7 @@ public class ChannelListController {
         for (IPortletDefinition portlet : portletsNotYetCategorized) {
             if (authorizationService.canPrincipalBrowse(ap, portlet)) {
                 // construct a new channel bean from this channel
-                ChannelBean channel = getChannel(portlet, request, locale);
+                ChannelBean channel = getChannel(portlet, request, locale, user);
                 uncategorizedPortletsBean.addChannel(channel);
             }
         }
@@ -331,7 +336,7 @@ public class ChannelListController {
 
             if (authorizationService.canPrincipalBrowse(ap, portlet)) {
                 // construct a new channel bean from this channel
-                ChannelBean channel = getChannel(portlet, request, locale);
+                ChannelBean channel = getChannel(portlet, request, locale, user);
                 categoryBean.addChannel(channel);
             }
 
@@ -356,7 +361,7 @@ public class ChannelListController {
     }
 
     private ChannelBean getChannel(
-            IPortletDefinition definition, WebRequest request, Locale locale) {
+            IPortletDefinition definition, WebRequest request, Locale locale, IPerson user) {
         ChannelBean channel = new ChannelBean();
         channel.setId(definition.getPortletDefinitionId().getStringId());
         channel.setDescription(definition.getDescription(locale.toString()));
@@ -601,7 +606,7 @@ public class ChannelListController {
         final IUserLayout layout = ulm.getUserLayout();
         final Set<IPortletDefinition> rslt = favoritesUtils.getFavoritePortletDefinitions(layout);
 
-        logger.debug(
+        log.debug(
                 "Found the following favoritePortlets for user='{}':  {}",
                 request.getRemoteUser(),
                 rslt);
@@ -650,12 +655,12 @@ public class ChannelListController {
                 .forEach(
                         child -> {
                             if (child.getFavorite()) {
-                                logger.debug(
+                                log.debug(
                                         "Including portlet '{}' because it is a favorite:  {}",
                                         child.getFname());
                                 portlets.add(child);
                             } else {
-                                logger.debug(
+                                log.debug(
                                         "Skipping portlet '{}' because it IS NOT a favorite:  {}",
                                         child.getFname());
                             }

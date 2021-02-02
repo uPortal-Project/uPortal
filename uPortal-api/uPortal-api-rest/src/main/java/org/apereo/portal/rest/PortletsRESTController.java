@@ -104,7 +104,7 @@ public class PortletsRESTController {
                 portletDefinitionRegistry.getPortletDefinitionByFname(fname);
         if (portletDef != null && ap.canRender(portletDef.getPortletDefinitionId().getStringId())) {
             final IPerson person = personManager.getPerson(request);
-            LayoutPortlet portlet = new LayoutPortlet(portletDef, person);
+            LayoutPortlet portlet = new LayoutPortlet(portletDef);
             return new ModelAndView("json", "portlet", portlet);
         } else {
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);

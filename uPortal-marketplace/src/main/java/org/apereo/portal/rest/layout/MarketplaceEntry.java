@@ -30,6 +30,8 @@ import org.apereo.portal.portlet.marketplace.ScreenShot;
 import org.apereo.portal.portlet.om.IPortletDefinitionParameter;
 import org.apereo.portal.portlet.om.PortletCategory;
 import org.apereo.portal.security.IPerson;
+import org.apereo.portal.spring.locator.ApplicationContextLocator;
+import org.apereo.portal.utils.personalize.IPersonalizer;
 
 /**
  * User-specific representation of a Marketplace portlet definition suitable for JSON serialization
@@ -57,6 +59,7 @@ public class MarketplaceEntry implements Serializable {
     private Set<MarketplaceEntry> relatedEntries;
     private boolean generateRelatedPortlets = true;
     private boolean canAdd;
+    private IPersonalizer personalizer;
 
     /** User for whom this MarketplaceEntity is tailored. */
     private IPerson user;
@@ -65,17 +68,19 @@ public class MarketplaceEntry implements Serializable {
         this.pdef = pdef;
         this.maxURL = pdef.getRenderUrl();
         this.user = user;
-        this.layoutObject = new LayoutPortlet(pdef, user);
+        this.layoutObject = new LayoutPortlet(pdef);
         if (this.layoutObject.getUrl() == null) {
             this.layoutObject.setUrl(this.maxURL);
         }
+        this.personalizer =
+                ApplicationContextLocator.getApplicationContext().getBean(IPersonalizer.class);
     }
 
     public MarketplaceEntry(MarketplacePortletDefinition pdef, String maxURL, final IPerson user) {
         this.pdef = pdef;
         this.maxURL = maxURL;
         this.user = user;
-        this.layoutObject = new LayoutPortlet(pdef, user);
+        this.layoutObject = new LayoutPortlet(pdef);
         if (this.layoutObject.getUrl() == null) {
             this.layoutObject.setUrl(this.maxURL);
         }
@@ -89,7 +94,7 @@ public class MarketplaceEntry implements Serializable {
         this.maxURL = pdef.getRenderUrl();
         this.generateRelatedPortlets = generateRelatedPortlets;
         this.user = user;
-        this.layoutObject = new LayoutPortlet(pdef, user);
+        this.layoutObject = new LayoutPortlet(pdef);
         if (this.layoutObject.getUrl() == null) {
             this.layoutObject.setUrl(this.maxURL);
         }
@@ -104,7 +109,7 @@ public class MarketplaceEntry implements Serializable {
     }
 
     public String getTitle() {
-        return pdef.getTitle();
+        return personalizer.personalize(this.user, pdef.getTitle());
     }
 
     public String getName() {
@@ -116,7 +121,7 @@ public class MarketplaceEntry implements Serializable {
     }
 
     public String getDescription() {
-        return pdef.getDescription();
+        return personalizer.personalize(this.user, pdef.getDescription());
     }
 
     public String getType() {
