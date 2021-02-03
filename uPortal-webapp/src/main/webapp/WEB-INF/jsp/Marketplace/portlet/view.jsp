@@ -495,37 +495,71 @@
             $("#${n}featured").insertAfter($("#${n}marketplace .top"));
 
             var setFilter = function(text){
-                myDataTable.fnFilter(text);
+                myDataTable.fnFilter(text.trim());
             };
 
             var sortColumns = function(column){
                 myDataTable.fnSort([[column, 'asc']]);
             }
 
+            var clearFilter = function(){
+                myDataTable.fnFilter("");
+                clearKeywordFilter();
+                $("#${n}portletTable_filter").focus();
+            }
+
+            var clearKeywordFilter = function(){
+                $("#${n}portletTable_filter").val("");
+            }
+
+            var disableCategoriesWidgets = function(){
+                $("#${n}category-sort-button").removeClass("active");
+                $("#${n}categoryListContainer").hide();
+            }
+
+            var enableCategoriesWidgets = function(){
+                $("#${n}category-sort-button").addClass("active");
+                $("#${n}categoryListContainer").show();
+            }
+
+            var enableAZIndexWidgets = function() {
+                $("#${n}alphabetical-sort-button").addClass("active");
+            } 
+
+            var disableAZIndexWidgets = function() {
+                $("#${n}alphabetical-sort-button").removeClass("active");
+            } 
+
             $(".${n}marketplace_category_link").click(function(){
                 setFilter(this.textContent);
+                clearKeywordFilter();
             });
 
-            $("#${n}alphabetical-sort-button").addClass("active");
-            $("#${n}category-sort-button").removeClass("active");
+            disableCategoriesWidgets();
+            enableAZIndexWidgets();
 
             $("#${n}alphabetical-sort-button").click(function(){
+                disableCategoriesWidgets();
+                enableAZIndexWidgets();
+                clearFilter();
                 sortColumns(0);
-                $(this).toggleClass("active");
             });
 
             $("#${n}category-sort-button").click(function(){
-                $("#${n}categoryListContainer").toggle();
-                $(this).toggleClass("active");
+                disableAZIndexWidgets();
+                enableCategoriesWidgets();
             });
 
             $("#${n}portletTable_filter").keyup(function(e) {
+                disableCategoriesWidgets();
+                enableAZIndexWidgets();
                 setFilter(this.value);
             });
 
             $("#${n}clear_filter_button").click(function(){
-                myDataTable.fnFilter("");
-                $("#${n}portletTable_filter").val("").focus();
+                disableCategoriesWidgets();
+                enableAZIndexWidgets();
+                clearFilter();						
             });
 
             if("${initialFilter}"){
