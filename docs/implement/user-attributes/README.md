@@ -82,3 +82,31 @@ of the more common ways is to declare them in a Spring XML configuration file wi
 
 [independent project with its own source code called PersonDirectory]: https://github.com/apereo/person-directory
 [uPortal-start]: https://github.com/Jasig/uPortal-start
+
+## Personalization
+
+As of uPortal `5.10.0`, uPortal supports token replacement in various portlet definition fields of user attributes (known as 'personalization'). Personalization consists of a filter for all `/api` JSON GET requests, and targeted areas of the UX that leverage endpoints outside of the `/api` context. The exception to the `/api` coverage is `/layoutDoc`, which is deprecated.
+
+By default, the filter is enabled.  To disable, add the following into `uPortal.properties`:
+```
+org.apereo.portal.utils.web.PersonalizationFilter.enable=false
+```
+
+To configure the personalization, adopters can choose a prefix for the personalization tokens, and a regex pattern, and then use these tokens in their portlet definitions.
+
+uPortal-wide configuration of the token / pattern can be set in the `uPortal.properties` file (default is shown):
+```
+org.apereo.portal.utils.personalize.PersonalizerImpl.prefix=apereo.
+org.apereo.portal.utils.personalize.PersonalizerImpl.pattern=@up@(.*?)@up@
+```
+
+Then in a given portlet definition, adopters can specify something like:
+```
+...
+  <desc>Bookmarks for @up@apereo.displayName@up@</desc>
+...
+```
+
+To see a list of available tokens, enable debug logging on the `PersonalizationImpl` class.
+
+It is recommended to avoid use of curly braces for personalization configuration (such as a `regex` pattern of `{{(.*?)}}`).

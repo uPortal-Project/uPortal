@@ -37,6 +37,7 @@ import org.apereo.portal.security.IAuthorizationPrincipal;
 import org.apereo.portal.security.IAuthorizationService;
 import org.apereo.portal.security.IPermission;
 import org.apereo.portal.security.IPerson;
+import org.apereo.portal.utils.personalize.IPersonalizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,6 +64,8 @@ public class MarketplaceService implements IMarketplaceService, ApplicationListe
     private IPortletCategoryRegistry portletCategoryRegistry;
 
     private IAuthorizationService authorizationService;
+
+    private IPersonalizer personalizer;
     private boolean enableMarketplacePreloading = false;
 
     @Autowired
@@ -70,6 +73,10 @@ public class MarketplaceService implements IMarketplaceService, ApplicationListe
         this.authorizationService = service;
     }
 
+    @Autowired
+    public void setPersonalizer(IPersonalizer personalizer) {
+        this.personalizer = personalizer;
+    }
     /** Used to store individual MarketplacePortletDefinition instances. */
     @Autowired
     @Qualifier(
@@ -195,6 +202,7 @@ public class MarketplaceService implements IMarketplaceService, ApplicationListe
                         getOrCreateMarketplacePortletDefinition(portletDefinition);
                 final MarketplaceEntry entry =
                         new MarketplaceEntry(marketplacePortletDefinition, user);
+                entry.setPersonalizer(this.personalizer);
 
                 // flag whether this use can add the portlet...
                 boolean canAdd = mayAddPortlet(user, portletDefinition);
