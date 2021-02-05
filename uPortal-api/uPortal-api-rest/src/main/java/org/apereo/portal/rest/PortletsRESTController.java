@@ -103,7 +103,6 @@ public class PortletsRESTController {
         IPortletDefinition portletDef =
                 portletDefinitionRegistry.getPortletDefinitionByFname(fname);
         if (portletDef != null && ap.canRender(portletDef.getPortletDefinitionId().getStringId())) {
-            final IPerson person = personManager.getPerson(request);
             LayoutPortlet portlet = new LayoutPortlet(portletDef);
             return new ModelAndView("json", "portlet", portlet);
         } else {

@@ -25,11 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.portal.security.IPerson;
 import org.springframework.beans.factory.annotation.Value;
 
-/**
- * Class that helps personalize text by replacing tokens with user attributes.
- *
- * <p>TODO - enable ehcache for mapped user attributes
- */
+/** Class that helps personalize text by replacing tokens with user attributes. */
 @Slf4j
 public class PersonalizerImpl implements IPersonalizer {
     @Value("${org.apereo.portal.utils.personalize.PersonalizerImpl.prefix:apereo.}")

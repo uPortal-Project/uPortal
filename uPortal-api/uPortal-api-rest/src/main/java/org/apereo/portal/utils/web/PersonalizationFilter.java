@@ -32,10 +32,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
 
-/** */
+/**
+ * Personalize every /api GET request that returns JSON
+ *
+ * <p>See {@link IPersonalizer for further details}
+ */
 @Slf4j
 public class PersonalizationFilter implements Filter {
-    @Value("${org.apereo.portal.utils.web.PersonalizationFilter.enable:true}")
+    @Value("${org.apereo.portal.utils.web.PersonalizationFilter.enable:false}")
     private boolean enableFilter;
 
     private IPersonManager personManager;
@@ -111,7 +115,7 @@ public class PersonalizationFilter implements Filter {
                     personalizer.personalize(person, originalContent, request.getSession());
             if (originalContent.equals(personalizedContent)) {
                 log.debug(
-                        "No personalizations made to the content. Request URL: [{}] {}",
+                        "No personalization made to the content. Request URL: [{}] {}",
                         request.getMethod(),
                         request.getRequestURI());
             } else {

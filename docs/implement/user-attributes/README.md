@@ -87,9 +87,9 @@ of the more common ways is to declare them in a Spring XML configuration file wi
 
 As of uPortal `5.10.0`, uPortal supports token replacement in various portlet definition fields of user attributes (known as 'personalization'). Personalization consists of a filter for all `/api` JSON GET requests, and targeted areas of the UX that leverage endpoints outside of the `/api` context. The exception to the `/api` coverage is `/layoutDoc`, which is deprecated.
 
-By default, the filter is enabled.  To disable, add the following into `uPortal.properties`:
+By default, the filter is disabled for backwards compatibility.  To enable, set the following in `uPortal.properties` to true:
 ```
-org.apereo.portal.utils.web.PersonalizationFilter.enable=false
+org.apereo.portal.utils.web.PersonalizationFilter.enable=true
 ```
 
 To configure the personalization, adopters can choose a prefix for the personalization tokens, and a regex pattern, and then use these tokens in their portlet definitions.
