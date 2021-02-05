@@ -19,6 +19,7 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -30,11 +31,19 @@ import org.apereo.portal.portlet.marketplace.ScreenShot;
 import org.apereo.portal.portlet.om.IPortletDefinitionParameter;
 import org.apereo.portal.portlet.om.PortletCategory;
 import org.apereo.portal.security.IPerson;
+import org.apereo.portal.utils.personalize.IPersonalizer;
 
 /**
  * User-specific representation of a Marketplace portlet definition suitable for JSON serialization
  * and for use in view implementations.
+ *
+ * <p>If you want to hook in personalization, call `setPersonalizer` with an {@link IPersonalizer}
+ * implementation
+ *
+ * <p>Note: if configured, personalization will be run for all `/api` endpoints for json GET
+ * requests, so eventually, one-off personalization efforts can be eliminated.
  */
+@Slf4j
 public class MarketplaceEntry implements Serializable {
 
     private Set<String> getPortletCategories(MarketplacePortletDefinition pdef) {
@@ -57,6 +66,7 @@ public class MarketplaceEntry implements Serializable {
     private Set<MarketplaceEntry> relatedEntries;
     private boolean generateRelatedPortlets = true;
     private boolean canAdd;
+    private IPersonalizer personalizer;
 
     /** User for whom this MarketplaceEntity is tailored. */
     private IPerson user;
@@ -95,6 +105,21 @@ public class MarketplaceEntry implements Serializable {
         }
     }
 
+    private String personalizeIfAvailable(String text) {
+        if (this.personalizer == null) {
+            if (log.isDebugEnabled()) {
+                log.debug("Personalizer is null.  Passing through [{}]", text);
+            }
+            return text;
+        }
+
+        return this.personalizer.personalize(this.user, text);
+    }
+
+    public void setPersonalizer(IPersonalizer personalizer) {
+        this.personalizer = personalizer;
+    }
+
     public LayoutPortlet getLayoutObject() {
         return layoutObject;
     }
@@ -104,7 +129,7 @@ public class MarketplaceEntry implements Serializable {
     }
 
     public String getTitle() {
-        return pdef.getTitle();
+        return personalizeIfAvailable(pdef.getTitle());
     }
 
     public String getName() {
@@ -116,7 +141,7 @@ public class MarketplaceEntry implements Serializable {
     }
 
     public String getDescription() {
-        return pdef.getDescription();
+        return personalizeIfAvailable(pdef.getDescription());
     }
 
     public String getType() {

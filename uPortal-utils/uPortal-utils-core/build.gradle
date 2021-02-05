@@ -65,6 +65,9 @@ dependencies {
         exclude group: 'opensymphony', module: 'oscache'
         exclude group: 'ehcache', module: 'ehcache'
     }
+    compile "org.slf4j:slf4j-api:${slf4jVersion}"
+    compileOnly "org.projectlombok:lombok:${lombokVersion}"
+    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
 
     testCompile project(':uPortal-events')
     testCompile "${portletApiDependency}"

@@ -608,7 +608,8 @@ public class UpdatePreferencesServlet {
         final UserPreferencesManager upm = (UserPreferencesManager) ui.getPreferencesManager();
         final IUserLayoutManager ulm = upm.getUserLayoutManager();
 
-        final IUserLayoutChannelDescription channel = new UserLayoutChannelDescription(pdef);
+        final IUserLayoutChannelDescription channel =
+                new UserLayoutChannelDescription(person, pdef, request.getSession());
 
         // get favorite tab
         final String favoriteTabNodeId = favoritesUtils.getFavoriteTabNodeId(ulm.getUserLayout());
@@ -787,7 +788,9 @@ public class UpdatePreferencesServlet {
                     "jsonView", Collections.singletonMap("error", "SourceId or fname invalid"));
         }
 
-        IUserLayoutChannelDescription channel = new UserLayoutChannelDescription(definition);
+        IUserLayoutChannelDescription channel =
+                new UserLayoutChannelDescription(
+                        getPerson(ui, response), definition, request.getSession());
 
         IUserLayoutNodeDescription node;
         if (isTab(ulm, destinationId)) {

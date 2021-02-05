@@ -19,10 +19,14 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Map;
+import javax.servlet.http.HttpSession;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.portal.PortalException;
 import org.apereo.portal.portlet.om.IPortletDefinition;
 import org.apereo.portal.portlet.om.IPortletDefinitionParameter;
+import org.apereo.portal.security.IPerson;
+import org.apereo.portal.spring.locator.ApplicationContextLocator;
+import org.apereo.portal.utils.personalize.IPersonalizer;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -44,6 +48,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription
     private boolean hasHelp = false;
     private boolean hasAbout = false;
     private boolean isSecure = false;
+    private IPersonalizer personalizer;
 
     public UserLayoutChannelDescription() {
         super();
@@ -52,20 +57,26 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription
     /**
      * Construct channel information from a Channel Definition object.
      *
+     * @param person personalization details
      * @param definition
+     * @param session lightweight caching
      */
-    public UserLayoutChannelDescription(IPortletDefinition definition) {
-        this.title = definition.getTitle();
+    public UserLayoutChannelDescription(
+            IPerson person, IPortletDefinition definition, HttpSession session) {
+        this.personalizer =
+                ApplicationContextLocator.getApplicationContext().getBean(IPersonalizer.class);
+
+        this.title = personalizer.personalize(person, definition.getTitle(), session);
         this.name = definition.getName();
-        this.name = definition.getName();
-        this.description = definition.getDescription();
+        this.description = personalizer.personalize(person, definition.getDescription(), session);
         this.channelPublishId = String.valueOf(definition.getPortletDefinitionId().getStringId());
         this.channelTypeId = String.valueOf(definition.getType().getId());
         this.functionalName = definition.getFName();
         this.timeout = definition.getTimeout();
 
         for (IPortletDefinitionParameter param : definition.getParameters()) {
-            this.setParameterValue(param.getName(), param.getValue());
+            this.setParameterValue(
+                    param.getName(), personalizer.personalize(person, param.getValue(), session));
         }
     }
 

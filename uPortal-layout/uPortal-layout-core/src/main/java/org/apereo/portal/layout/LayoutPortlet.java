@@ -59,11 +59,8 @@ public class LayoutPortlet {
     /** Pithy static content that you might display on a dashboard mosaic view or so. */
     private String pithyStaticContent;
 
-    public LayoutPortlet() {}
-
     public LayoutPortlet(IPortletDefinition portletDef) {
         if (portletDef != null) {
-
             nodeId = "-1";
             title = portletDef.getTitle();
             description = portletDef.getDescription();

@@ -69,6 +69,7 @@ import org.apereo.portal.services.GroupService;
 import org.apereo.portal.url.IPortalRequestUtils;
 import org.apereo.portal.user.IUserInstance;
 import org.apereo.portal.user.IUserInstanceManager;
+import org.apereo.portal.utils.personalize.IPersonalizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -124,6 +125,7 @@ public class PortletMarketplaceController {
     private IUserInstanceManager userInstanceManager;
     private IUserLayoutStore userLayoutStore;
     private FavoritesUtils favoritesUtils;
+    private IPersonalizer personalizer;
 
     @Autowired
     public void setMarketplaceService(IMarketplaceService marketplaceService) {
@@ -173,6 +175,11 @@ public class PortletMarketplaceController {
     @Autowired
     public void setFavoritesUtils(FavoritesUtils favoritesUtils) {
         this.favoritesUtils = favoritesUtils;
+    }
+
+    @Autowired
+    public void setPersonalizer(IPersonalizer personalizer) {
+        this.personalizer = personalizer;
     }
 
     /**
@@ -231,6 +238,7 @@ public class PortletMarketplaceController {
                         portletRequest.getRemoteUser(),
                         portletDefinitionDao.getPortletDefinitionByFname(result.getFName()));
         final MarketplaceEntry marketplaceEntry = new MarketplaceEntry(mpDefinition, user);
+        marketplaceEntry.setPersonalizer(personalizer);
         model.addAttribute("marketplaceRating", tempRatingImpl);
         model.addAttribute("reviewMaxLength", IMarketplaceRating.REVIEW_MAX_LENGTH);
         model.addAttribute("marketplaceEntry", marketplaceEntry);

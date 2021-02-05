@@ -12,7 +12,9 @@ dependencies {
     compile "io.springfox:springfox-swagger-ui:${springfoxSwaggerVersion}"
     compile "org.apache.lucene:lucene-queryparser:${luceneVersion}"
     compile "org.json:json:${orgJsonVersion}"
-
+    compile "org.slf4j:slf4j-api:${slf4jVersion}"
+    compileOnly "org.projectlombok:lombok:${lombokVersion}"
+    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
 
     compileOnly "${portletApiDependency}"
     compileOnly "${servletApiDependency}"
