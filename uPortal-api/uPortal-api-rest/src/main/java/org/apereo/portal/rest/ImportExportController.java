@@ -86,13 +86,13 @@ public class ImportExportController {
         final BufferedXMLEventReader bufferedXmlEventReader =
                 createSourceXmlEventReader(entityFile);
         final PortalDataKey portalDataKey = getPortalDataKey(bufferedXmlEventReader);
+        String target = determineTarget(portalDataKey);
 
         final IPerson person = personManager.getPerson(request);
         final EntityIdentifier ei = person.getEntityIdentifier();
         final IAuthorizationPrincipal ap =
                 AuthorizationServiceFacade.instance().newPrincipal(ei.getKey(), ei.getType());
-        if (!ap.hasPermission(
-                "UP_SYSTEM", "IMPORT_ENTITY", portalDataKey.getName().getLocalPart())) {
+        if (!ap.hasPermission("UP_SYSTEM", "IMPORT_ENTITY", target)) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
@@ -100,6 +100,19 @@ public class ImportExportController {
         portalDataHandlerService.importData(new StAXSource(bufferedXmlEventReader));
 
         response.setStatus(HttpServletResponse.SC_OK);
+    }
+
+    private String determineTarget(PortalDataKey key) {
+        String target = key.getName().getLocalPart();
+        log.debug("portal data key local part:" + target);
+        // Old groups and members datafile were combined into groupmemberships,
+        // but the main node is still 'group'.
+        // Can be determined by looking for 'membership' in the script text.
+        if ("group".equals(target) && key.getScript().contains("membership")) {
+            target = "group-membership";
+        }
+        log.debug("import target:" + target);
+        return target;
     }
 
     protected BufferedXMLEventReader createSourceXmlEventReader(MultipartFile multipartFile)
