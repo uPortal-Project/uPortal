@@ -30,7 +30,7 @@
       </portlet-descriptor>
 
     <step>
-    
+
         <name>rss.feed</name>
 
         <description>
@@ -59,6 +59,18 @@
             <description></description>
             <example>http://feeds.nytimes.com/nyt/rss/HomePage</example>
             <single-text-preference-input display="text"/>
+        </preference>
+
+        <preference>
+            <name>feedView</name>
+            <label>feed.View</label>
+            <description>How to select the feed to display</description>
+            <single-choice-preference-input display="select">
+                <default>select</default>
+                <option value="all" label="All Combined"/>
+                <option value="select" label="Select Menu"/>
+                <option value="tab" label="Tabs"/>
+            </single-choice-preference-input>
         </preference>
 
         <preference>
