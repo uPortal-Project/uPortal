@@ -16,6 +16,7 @@ package org.apereo.portal.portlets.favorites;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 import javax.portlet.PortletPreferences;
 import javax.portlet.PortletRequest;
 import org.apereo.portal.UserPreferencesManager;
@@ -133,7 +134,16 @@ public class FavoritesController extends AbstractFavoritesController {
             }
         }
 
-        model.addAttribute("favorites", favorites);
+        List<IUserLayoutNodeDescription> uniqueFavorites = new ArrayList<>();
+        Predicate<IUserLayoutNodeDescription> predicate;
+        predicate = FavoritesUtils.distinctByKey(p -> p.getName());
+        for (IUserLayoutNodeDescription favorite : favorites) {
+            if (predicate.test(favorite)) {
+                uniqueFavorites.add(favorite);
+            }
+        }
+
+        model.addAttribute("favorites", uniqueFavorites);
 
         // default to the regular old view
         String viewName = "jsp/Favorites/view";

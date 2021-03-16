@@ -22,7 +22,11 @@ import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import org.apache.commons.lang3.Validate;
 import org.apereo.portal.layout.IUserLayout;
 import org.apereo.portal.layout.node.IUserLayoutChannelDescription;
@@ -284,5 +288,17 @@ public class FavoritesUtils {
         // portlets
         return (!getFavoritePortletLayoutNodes(layout).isEmpty()
                 || !getFavoriteCollections(layout).isEmpty());
+    }
+
+    /**
+     * A helper method introduced to filter out duplicates by key
+     *
+     * @param keyExtractor
+     * @param <T>
+     * @return
+     */
+    public static <T> Predicate<T> distinctByKey(Function<? super T, Object> keyExtractor) {
+        Map<Object, Boolean> map = new ConcurrentHashMap<>();
+        return t -> map.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
     }
 }
