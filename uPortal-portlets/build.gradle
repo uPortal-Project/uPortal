@@ -16,6 +16,9 @@ dependencies {
     }
     compile "org.springframework:spring-context-support:${springVersion}"
 
+    // needed for stats portlet
+    compile "com.fasterxml.jackson.datatype:jackson-datatype-joda:${jacksonVersion}"
+
     testCompile "org.apache.portals.pluto:pluto-container-api:${plutoVersion}"
     testCompile "${portletApiDependency}"
     testCompile "${servletApiDependency}"
