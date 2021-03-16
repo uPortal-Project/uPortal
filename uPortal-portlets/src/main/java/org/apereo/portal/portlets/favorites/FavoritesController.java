@@ -134,6 +134,9 @@ public class FavoritesController extends AbstractFavoritesController {
             }
         }
 
+        /*
+           Filter returned favorites list to unique list.
+        */
         List<IUserLayoutNodeDescription> uniqueFavorites = new ArrayList<>();
         Predicate<IUserLayoutNodeDescription> predicate;
         predicate = FavoritesUtils.distinctByKey(p -> p.getName());
