@@ -124,7 +124,7 @@
                                 </xsl:variable>
                                 <li class="{$TABGROUP_ACTIVE} portal-navigation-tabgroup fl-tabs-active list-group-item portal-navigation">
                                     <a href="{$TABGROUP_URL}" title="{.}" class="portal-tabGroup-link portal-navigation-link">
-                                        <span id ="{$ACTIVE_TABGROUP}" class="portal-tabGroup-label portal-navigation-label"><xsl:value-of select="$TABGROUP_LABEL"/></span></a>
+                                        <span id="{$ACTIVE_TABGROUP}" class="portal-tabGroup-label portal-navigation-label"><xsl:value-of select="$TABGROUP_LABEL"/></span></a>
                                 </li>
                             </xsl:for-each>
                         </ul>
