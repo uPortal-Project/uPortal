@@ -100,6 +100,13 @@
                                         <xsl:otherwise></xsl:otherwise>
                                     </xsl:choose>
                                 </xsl:variable>
+                                <xsl:variable name="ACTIVE_TABGROUP">
+                                    <!-- used by tabManager.js for text -->
+                                    <xsl:choose>
+                                        <xsl:when test="/layout/navigation/tabGroupsList/@activeTabGroup=.">activeTabGroup</xsl:when>
+                                        <xsl:otherwise></xsl:otherwise>
+                                    </xsl:choose>
+                                </xsl:variable>
                                 <xsl:variable name="TABGROUP_LABEL">
                                     <xsl:choose>
                                         <xsl:when test="@name='DEFAULT_TABGROUP'"><xsl:value-of select="upMsg:getMessage('navigation.tabgroup.default', $USER_LANG)"/></xsl:when>
@@ -117,7 +124,7 @@
                                 </xsl:variable>
                                 <li class="{$TABGROUP_ACTIVE} portal-navigation-tabgroup fl-tabs-active list-group-item portal-navigation">
                                     <a href="{$TABGROUP_URL}" title="{.}" class="portal-tabGroup-link portal-navigation-link">
-                                        <span class="portal-tabGroup-label portal-navigation-label"><xsl:value-of select="$TABGROUP_LABEL"/></span></a>
+                                        <span id ="{$ACTIVE_TABGROUP}" class="portal-tabGroup-label portal-navigation-label"><xsl:value-of select="$TABGROUP_LABEL"/></span></a>
                                 </li>
                             </xsl:for-each>
                         </ul>
