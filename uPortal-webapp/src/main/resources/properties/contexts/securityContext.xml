@@ -113,6 +113,13 @@
     </bean>
 
     <!--
+     | Spring-managed instance of EhcacheBackedProxyGrantingTicketStorageImpl.  This setup allows us
+     | to configure CAS authentication in the preferred approach. This bean is needed to share the proxyGrantingTicket
+     | strategy for the ProxyTicketValidationFilter following.
+     +-->
+    <bean id="proxyGrantingTicketStorage" class="org.jasig.cas.client.proxy.ProxyGrantingTicketStorageImpl" />
+
+    <!--
      | Spring-managed instance of Cas20ProxyReceivingTicketValidationFilter.  This setup allows us
      | to configure CAS authentication in the preferred, externalizable way.  (It means we can
      | source configuration settings from the primaryPropertyPlaceholderConfigurer.)
@@ -124,6 +131,7 @@
         <property name="ticketValidator">
             <bean class="org.jasig.cas.client.validation.Cas20ServiceTicketValidator">
                 <constructor-arg index="0" value="${cas.ticketValidationFilter.ticketValidator.server}" />
+                <property name="proxyGrantingTicketStorage" ref="proxyGrantingTicketStorage" />
                 <property name="proxyCallbackUrl" value="${cas.ticketValidationFilter.ticketValidator.proxyCallbackUrl:}" />
             </bean>
         </property>
@@ -133,9 +141,7 @@
          | https://wiki.jasig.org/display/CASC/Configuring+the+Jasig+CAS+Client+for+Java+in+the+web.xml.
          | If CAS ClearPass is not enabled in security.properties, this parameter has no effect.
          +-->
-        <property name="proxyGrantingTicketStorage">
-            <bean class="org.jasig.cas.client.proxy.EhcacheBackedProxyGrantingTicketStorageImpl" />
-        </property>
+        <property name="proxyGrantingTicketStorage" ref="proxyGrantingTicketStorage" />
     </bean>
 
     <!--

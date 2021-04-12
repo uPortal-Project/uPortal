@@ -14,7 +14,7 @@ jobs:
         platform:
           - ubuntu-latest
         java-version:
-          - 8.0.275.open-adpt
+          - 8.0.275.hs-adpt
           - 8.0.275-amzn
           - 8.0.265-open
     runs-on: ${{ matrix.platform }}
