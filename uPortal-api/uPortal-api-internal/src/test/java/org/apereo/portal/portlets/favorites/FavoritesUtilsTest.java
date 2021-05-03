@@ -67,37 +67,23 @@ public class FavoritesUtilsTest extends TestCase {
 
         // Confirms a list which is already unique will return the same
         // list
-        Assert.assertEquals(
-                3,
-                favoritesReturnedFromUniqueFavoritesFilter
-                        .size());
+        Assert.assertEquals(3, favoritesReturnedFromUniqueFavoritesFilter.size());
 
         // Confirms duplicate array contains 4 items, first two items
         // being duplicates.
-        Assert.assertEquals(
-                4,
-                favArrayWithDuplicate
-                        .size());
+        Assert.assertEquals(4, favArrayWithDuplicate.size());
 
         // Confirms the new count of 3 after passing duplicate favorite
         // list to filterFavoritesToUnique method
-        Assert.assertEquals(
-                3,
-                uniqueFavorites
-                        .size());
+        Assert.assertEquals(3, uniqueFavorites.size());
 
         // Gets id of second element in duplicate array which before
         // removing duplicate was "n18" and after it should be "n28"
-        String ObjectIdOfSecondItem =
-                uniqueFavorites
-                        .get(1)
-                        .getId();
+        String ObjectIdOfSecondItem = uniqueFavorites.get(1).getId();
 
         // Confirms the first duplicate item was removed from the
         // list
-        Assert.assertEquals(
-                "n28",
-                ObjectIdOfSecondItem);
+        Assert.assertEquals("n28", ObjectIdOfSecondItem);
 
         Assert.assertEquals(0, emptyArray.size());
         Assert.assertEquals(0, emptyFavoritesListReturnedFromFavoritesFilter.size());

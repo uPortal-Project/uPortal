@@ -16,7 +16,6 @@ package org.apereo.portal.portlets.favorites;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Predicate;
 import javax.portlet.PortletPreferences;
 import javax.portlet.PortletRequest;
 import org.apereo.portal.UserPreferencesManager;
@@ -134,14 +133,12 @@ public class FavoritesController extends AbstractFavoritesController {
             }
         }
 
-
         /*
            Filter returned favorites list to unique list.
         */
 
         final List<IUserLayoutNodeDescription> uniqueFavorites =
                 FavoritesUtils.filterFavoritesToUnique(favorites);
-
 
         model.addAttribute("favorites", uniqueFavorites);
 

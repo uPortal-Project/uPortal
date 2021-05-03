@@ -309,5 +309,4 @@ public class FavoritesUtils {
         }
         return uniqueFavorites;
     }
-
 }
