@@ -18,12 +18,7 @@ import static org.apereo.portal.layout.node.IUserLayoutFolderDescription.FAVORIT
 import static org.apereo.portal.layout.node.IUserLayoutFolderDescription.FAVORITE_COLLECTION_TYPE;
 import static org.apereo.portal.layout.node.IUserLayoutNodeDescription.LayoutNodeType.FOLDER;
 
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -301,4 +296,18 @@ public class FavoritesUtils {
         Map<Object, Boolean> map = new ConcurrentHashMap<>();
         return t -> map.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
     }
+
+    public static List<IUserLayoutNodeDescription> filterFavoritesToUnique(
+            List<IUserLayoutNodeDescription> originalFavoritesList) {
+        List<IUserLayoutNodeDescription> uniqueFavorites = new ArrayList<>();
+        Predicate<IUserLayoutNodeDescription> predicate;
+        predicate = FavoritesUtils.distinctByKey(p -> p.getName());
+        for (IUserLayoutNodeDescription favorite : originalFavoritesList) {
+            if (predicate.test(favorite)) {
+                uniqueFavorites.add(favorite);
+            }
+        }
+        return uniqueFavorites;
+    }
+
 }
