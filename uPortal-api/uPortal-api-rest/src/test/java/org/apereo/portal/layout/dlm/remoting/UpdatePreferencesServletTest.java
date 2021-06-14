@@ -22,7 +22,9 @@ import org.apereo.portal.layout.IStylesheetUserPreferencesService;
 import org.apereo.portal.layout.IUserLayoutStore;
 import org.apereo.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.apereo.portal.portlet.registry.IPortletWindowRegistry;
+import org.apereo.portal.portlets.favorites.FavoritesUtils;
 import org.apereo.portal.security.IPerson;
+import org.apereo.portal.security.ISecurityContext;
 import org.apereo.portal.security.provider.PersonImpl;
 import org.apereo.portal.user.IUserInstance;
 import org.apereo.portal.user.IUserInstanceManager;
@@ -32,6 +34,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -47,6 +51,9 @@ public class UpdatePreferencesServletTest {
     @Mock private MessageSource messageSource;
     @Mock private IPortletWindowRegistry portletWindowRegistry;
     @Mock private WindowState addedWindowState;
+    @Mock private FavoritesUtils favoritesUtils;
+    @Mock protected final Logger logger = LoggerFactory.getLogger(getClass());
+    @Mock protected ISecurityContext m_securityContext = null;
     private MockHttpServletRequest req;
     private MockHttpServletResponse res;
 
@@ -94,5 +101,16 @@ public class UpdatePreferencesServletTest {
         Mockito.when(userInstanceManager.getUserInstance(req)).thenReturn(null);
         ModelAndView modelAndView =
                 updatePreferencesServlet.moveElement(req, res, "sourceId", "get", "elementId");
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testRemoveFavorite() throws IOException {
+        req.setLocalName("en-US");
+        IPerson person = new PersonImpl();
+        person.setUserName("jdoe");
+        person.setFullName("john doe");
+        IUserInstance userInstance = new UserInstance(person, null, null);
+        Mockito.when(userInstanceManager.getUserInstance(req)).thenReturn(userInstance);
+        ModelAndView modelAndView = updatePreferencesServlet.removeFavorite("channelId", req, res);
     }
 }
