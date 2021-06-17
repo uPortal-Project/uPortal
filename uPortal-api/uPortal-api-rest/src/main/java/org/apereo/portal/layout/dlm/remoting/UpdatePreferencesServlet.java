@@ -16,6 +16,7 @@ package org.apereo.portal.layout.dlm.remoting;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -695,7 +696,6 @@ public class UpdatePreferencesServlet {
                             favoritePortlets, functionalName);
 
             String resp = new String();
-            // String nodeId = new String();
 
             for (IUserLayoutChannelDescription deleteNode : favoritesToDelete) {
                 if (deleteNode != null && deleteNode instanceof UserLayoutChannelDescription) {
@@ -703,13 +703,15 @@ public class UpdatePreferencesServlet {
                             (UserLayoutChannelDescription) deleteNode;
                     try {
                         if (!ulm.deleteNode(channelDescription.getChannelSubscribeId())) {
+
                             logger.warn(
-                                    "Error deleting the node"
-                                            + channelId
-                                            + "from favorites for user "
-                                            + (upm.getPerson() == null
+                                    MessageFormat.format(
+                                            "Error deleting the node {0} from favorites for user {1}",
+                                            channelId,
+                                            (upm.getPerson() == null
                                                     ? "unknown"
-                                                    : upm.getPerson().getID()));
+                                                    : upm.getPerson().getID())));
+
                             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                             // load fail message
                             resp =
@@ -718,8 +720,8 @@ public class UpdatePreferencesServlet {
                                             "Can''t remove favorite",
                                             locale);
                         } else {
-                            // nodeId = deleteNode.getId();
                             // load success message
+
                             resp =
                                     getMessage(
                                             "success.remove.portlet",
@@ -733,9 +735,7 @@ public class UpdatePreferencesServlet {
                     }
                 }
             }
-            //            final Map<String, String> model = new HashMap<>();
-            //            model.put("response", resp);
-            //            model.put("newNodeId", nodeId);
+
             return new ModelAndView("jsonView", Collections.singletonMap("response", resp));
         }
 
