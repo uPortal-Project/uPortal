@@ -703,11 +703,12 @@ public class UpdatePreferencesServlet {
                     try {
                         if (!ulm.deleteNode(channelDescription.getChannelSubscribeId())) {
 
-                            logger.warn("Error deleting the node {} from favorites for user {}",
-                                            channelId,
-                                            (upm.getPerson() == null
-                                                    ? "unknown"
-                                                    : upm.getPerson().getID()));
+                            logger.warn(
+                                    "Error deleting the node {} from favorites for user {}",
+                                    channelId,
+                                    (upm.getPerson() == null
+                                            ? "unknown"
+                                            : upm.getPerson().getID()));
 
                             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                             // load fail message
