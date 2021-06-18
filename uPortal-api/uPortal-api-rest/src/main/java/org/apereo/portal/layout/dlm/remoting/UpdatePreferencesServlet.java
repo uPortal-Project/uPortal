@@ -16,7 +16,6 @@ package org.apereo.portal.layout.dlm.remoting;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -704,13 +703,11 @@ public class UpdatePreferencesServlet {
                     try {
                         if (!ulm.deleteNode(channelDescription.getChannelSubscribeId())) {
 
-                            logger.warn(
-                                    MessageFormat.format(
-                                            "Error deleting the node {0} from favorites for user {1}",
+                            logger.warn("Error deleting the node {} from favorites for user {}",
                                             channelId,
                                             (upm.getPerson() == null
                                                     ? "unknown"
-                                                    : upm.getPerson().getID())));
+                                                    : upm.getPerson().getID()));
 
                             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                             // load fail message
