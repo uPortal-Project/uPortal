@@ -47,18 +47,18 @@ ci-après.
         </tr>
         <tr>
           <td>
-            <a href="https://github.com/Jasig/uPortal/tree/master">
+            <a href="https://github.com/uPortal-project/uPortal/tree/master">
               uPortal 5
             </a>
           </td>
           <td>
-            <a href="https://github.com/Jasig/uPortal/actions?query=branch%3Amaster">
-              <img src="https://github.com/Jasig/uPortal/workflows/CI/badge.svg?branch=master" alt="Linux Build Status">
+            <a href="https://github.com/uPortal-project/uPortal/actions?query=branch%3Amaster">
+              <img src="https://github.com/uPortal-project/uPortal/workflows/CI/badge.svg?branch=master" alt="Linux Build Status">
             </a>
           </td>
           <td>
-            <a href="https://github.com/Jasig/uPortal/actions?query=branch%3Amaster">
-              <img src="https://github.com/Jasig/uPortal/workflows/CI/badge.svg?branch=master" alt="Windows Build Status">
+            <a href="https://github.com/uPortal-project/uPortal/actions?query=branch%3Amaster">
+              <img src="https://github.com/uPortal-project/uPortal/workflows/CI/badge.svg?branch=master" alt="Windows Build Status">
             </a>
           </td>
           <td>
@@ -74,7 +74,7 @@ ci-après.
         </tr>
         <tr>
           <td>
-            <a href="https://github.com/Jasig/uPortal/tree/rel-4-3-patches">
+            <a href="https://github.com/uPortal-project/uPortal/tree/rel-4-3-patches">
               uPortal 4.3
             </a>
           </td>
@@ -181,11 +181,11 @@ ci-après.
 
 ## Documentation des versions précédentes
 
--   [Manuel uPortal 5.4](https://github.com/jasig/uportal/tree/v5.4.1/docs/fr)
--   [Manuel uPortal 5.3](https://github.com/jasig/uportal/tree/v5.3.2/docs/fr)
--   [Manuel uPortal 5.2](https://github.com/jasig/uportal/tree/v5.2.0/docs/fr)
--   [Manuel uPortal 5.1](https://github.com/Jasig/uPortal/tree/v5.1.2/docs/fr)
--   [Manuel uPortal 5.0](https://github.com/Jasig/uPortal/tree/v5.0.7/docs/fr)
+-   [Manuel uPortal 5.4](https://github.com/uPortal-project/uportal/tree/v5.4.1/docs/fr)
+-   [Manuel uPortal 5.3](https://github.com/uPortal-project/uportal/tree/v5.3.2/docs/fr)
+-   [Manuel uPortal 5.2](https://github.com/uPortal-project/uportal/tree/v5.2.0/docs/fr)
+-   [Manuel uPortal 5.1](https://github.com/uPortal-project/uPortal/tree/v5.1.2/docs/fr)
+-   [Manuel uPortal 5.0](https://github.com/uPortal-project/uPortal/tree/v5.0.7/docs/fr)
 -   [Manuel uPortal 4.3](https://wiki.jasig.org/display/UPM43/Home)
 -   [Manuel uPortal 4.2](https://wiki.jasig.org/display/UPM42/Home)
 -   [Manuel uPortal 4.1](https://wiki.jasig.org/display/UPM41/Home)

@@ -5,7 +5,7 @@ uPortal utilise Gradle pour la configuration du projet et comme système de mont
 ## uPortal-start
 
 Sauf si vous avez une raison spécifique de construire uPortal directement depuis
-ce repo, [uPortal-start](https://github.com/Jasig/uPortal-start) est recommandé pour déployer uPortal. En utilisant uPortal-start, vous disposez de tâches gradle qui permettent l'import et la consommation de données xml, utilisées pour personnaliser uPortal.
+ce repo, [uPortal-start](https://github.com/uPortal-project/uPortal-start) est recommandé pour déployer uPortal. En utilisant uPortal-start, vous disposez de tâches gradle qui permettent l'import et la consommation de données xml, utilisées pour personnaliser uPortal.
 
 ## Installation d'uPortal sur un Maven Local
 

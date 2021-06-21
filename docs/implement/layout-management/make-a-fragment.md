@@ -194,7 +194,7 @@ hierarchy.  Structure attributes have the form:
 </structure-attribute>
 
 For a structure attribute name to be valid, it must be defined in the structure
-stylesheet definition file.  See https://github.com/Jasig/uPortal/blob/uportal-4.2.1/uportal-war/src/main/data/required_entities/stylesheet-descriptor/DLMTabsColumns.stylesheet-descriptor.xml#L49-L67 as an
+stylesheet definition file.  See https://github.com/uPortal-project/uPortal/blob/uportal-4.2.1/uportal-war/src/main/data/required_entities/stylesheet-descriptor/DLMTabsColumns.stylesheet-descriptor.xml#L49-L67 as an
 example.
 
 New with uPortal 4.3:  The value field can be a Spring Expression Langugage
@@ -222,8 +222,8 @@ Additional References
 
 Overview
 
-Don't forget that in addition to creating the *-fragment-layout.xml file (like https://github.com/Jasig/uPortal/blob/uportal-4.2.0/uportal-war/src/main/data/quickstart_entities/fragment-layout/academics-lo.fragment-layout.xml), you also need to:
+Don't forget that in addition to creating the *-fragment-layout.xml file (like https://github.com/uPortal-project/uPortal/blob/uportal-4.2.0/uportal-war/src/main/data/quickstart_entities/fragment-layout/academics-lo.fragment-layout.xml), you also need to:
 
-    Create a corresponding *-fragment-definition.xml file (see https://github.com/Jasig/uPortal/blob/uportal-4.2.0/uportal-war/src/main/data/quickstart_entities/fragment-definition/academics-lo.fragment-definition.xml for an example)
-    Create a user corresponding to the username attribute in your fragment layout XML file (see https://github.com/Jasig/uPortal/blob/uportal-4.2.0/uportal-war/src/main/data/quickstart_entities/user/academics-lo.user.xml for an example)
-    Add the user to either the 'Fragment Owners' group or 'Subscribable Fragments' group. (see https://github.com/Jasig/uPortal/blob/uportal-4.2.0/uportal-war/src/main/data/quickstart_entities/group_membership/Fragment_Owners.group-membership.xml for an example).
+    Create a corresponding *-fragment-definition.xml file (see https://github.com/uPortal-project/uPortal/blob/uportal-4.2.0/uportal-war/src/main/data/quickstart_entities/fragment-definition/academics-lo.fragment-definition.xml for an example)
+    Create a user corresponding to the username attribute in your fragment layout XML file (see https://github.com/uPortal-project/uPortal/blob/uportal-4.2.0/uportal-war/src/main/data/quickstart_entities/user/academics-lo.user.xml for an example)
+    Add the user to either the 'Fragment Owners' group or 'Subscribable Fragments' group. (see https://github.com/uPortal-project/uPortal/blob/uportal-4.2.0/uportal-war/src/main/data/quickstart_entities/group_membership/Fragment_Owners.group-membership.xml for an example).

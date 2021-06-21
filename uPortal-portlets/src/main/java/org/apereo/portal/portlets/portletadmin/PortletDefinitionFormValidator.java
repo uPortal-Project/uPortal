@@ -150,7 +150,7 @@ public class PortletDefinitionFormValidator {
                          *
                          * Further Reading:
                          *   - https://issues.jasig.org/browse/UP-2973
-                         *   - https://github.com/Jasig/uPortal/commit/a21bdb181b7e03aabd926d96f3cea66dcdf2d979#diff-41ca747cf5d1a6b00f0ab31ee88d49d7L111
+                         *   - https://github.com/uPortal-project/uPortal/commit/a21bdb181b7e03aabd926d96f3cea66dcdf2d979#diff-41ca747cf5d1a6b00f0ab31ee88d49d7L111
                          */
 
                     }
