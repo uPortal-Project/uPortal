@@ -8,14 +8,13 @@ Les documentations pour les versions antérieures sont disponibles dans
 [Confluence](https://wiki.jasig.org).  Référez vous à *Documentation des précédentes versions* \[en\]
 ci-après.
 
+
+
 <table border="0">
   <tr>
     <td>
       <a href="https://www.w3.org/TR/WCAG20/">
         <img src="https://www.w3.org/WAI/wcag2AA-blue-v.svg" alt="WCAG 2 AA Badge">
-      </a>
-      <a href="http://issuestats.com/github/Jasig/uPortal">
-        <img src="http://issuestats.com/github/Jasig/uPortal/badge/pr" alt="Statistiques des Issues">
       </a>
       <a href="https://source.android.com/setup/contribute/code-style">
         <img src="https://img.shields.io/badge/code_style-AOSP-green.svg?style=flat" alt="AOSP Code Style">
