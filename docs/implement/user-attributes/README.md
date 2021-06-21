@@ -81,7 +81,7 @@ of the more common ways is to declare them in a Spring XML configuration file wi
  * [JDBC User Attribute Sources](jdbc.md)
 
 [independent project with its own source code called PersonDirectory]: https://github.com/apereo/person-directory
-[uPortal-start]: https://github.com/Jasig/uPortal-start
+[uPortal-start]: https://github.com/uPortal-Project/uPortal-start
 
 ## Personalization
 

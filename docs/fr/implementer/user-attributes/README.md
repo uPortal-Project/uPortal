@@ -10,7 +10,7 @@ Cette section décrit comment configurer vos propres sources d'attributs utilisa
  * `username`
  * `user.login.id`
 
-La configuration par défaut (démarrage) fournira ces attributs pour tous les utilisateurs via le bean `uPortalJdbcUserSource`. 
+La configuration par défaut (démarrage) fournira ces attributs pour tous les utilisateurs via le bean `uPortalJdbcUserSource`.
 Ce bean, cependant, **ne reconnaît que les utilisateurs qui se sont connectés au
 portail au moins une fois** ou qui ont été importés via Import / Export. Il est très important de mapper ces mêmes attributs à une source externe, telle que LDAP ou SAML.
 
@@ -71,4 +71,4 @@ Il existe plusieurs façons d'ajouter des beans au contexte d'application uPorta
  * [Source de données JDBC des attributs utilisateur](jdbc.md)
 
 [projet indépendant avec son propre code source appelé PersonDirectory]: https://github.com/apereo/person-directory
-[uPortal-start]: https://github.com/Jasig/uPortal-start
+[uPortal-start]: https://github.com/uPortal-Project/uPortal-start
