@@ -61,8 +61,8 @@ ci-après.
             </a>
           </td>
           <td>
-            <a href="https://coveralls.io/github/Jasig/uPortal?branch=master">
-              <img src="https://coveralls.io/repos/github/Jasig/uPortal/badge.svg?branch=master" alt="Coverage Status">
+            <a href="https://coveralls.io/github/uPortal-Project/uPortal?branch=master">
+              <img src="https://coveralls.io/repos/github/uPortal-Project/uPortal/badge.svg?branch=master" alt="Coverage Status">
             </a>
           </td>
           <td>
@@ -78,8 +78,8 @@ ci-après.
             </a>
           </td>
           <td>
-            <a href="https://travis-ci.org/Jasig/uPortal">
-              <img src="https://travis-ci.org/Jasig/uPortal.svg?branch=rel-4-3-patches" alt="Linux Build Status">
+            <a href="https://travis-ci.org/uPortal-Project/uPortal">
+              <img src="https://travis-ci.org/uPortal-Project/uPortal.svg?branch=rel-4-3-patches" alt="Linux Build Status">
             </a>
           </td>
           <td>
@@ -88,8 +88,8 @@ ci-après.
             </a>
           </td>
           <td>
-            <a href="https://coveralls.io/github/Jasig/uPortal?branch=rel-4-3-patches">
-              <img src="https://coveralls.io/repos/github/Jasig/uPortal/badge.svg?branch=rel-4-3-patches" alt="Coverage Status">
+            <a href="https://coveralls.io/github/uPortal-Project/uPortal?branch=rel-4-3-patches">
+              <img src="https://coveralls.io/repos/github/uPortal-Project/uPortal/badge.svg?branch=rel-4-3-patches" alt="Coverage Status">
             </a>
           </td>
           <td>
