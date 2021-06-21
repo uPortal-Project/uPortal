@@ -184,11 +184,11 @@ subprojects {
                     packaging 'jar'
                     // optionally artifactId can be defined here
                     description 'Enterprise open source portal built by and for the higher education community.'
-                    url 'https://github.com/Jasig/uPortal'
+                    url 'https://github.com/uPortal-project/uPortal'
 
                     scm {
                         connection 'scm:git@github.com:Jasig/uPortal.git'
-                        url 'https://github.com/Jasig/uPortal'
+                        url 'https://github.com/uPortal-project/uPortal'
                     }
 
                     licenses {
@@ -201,7 +201,7 @@ subprojects {
                     developers {
                         developer {
                             organization 'uPortal Developers'
-                            organizationUrl 'https://github.com/Jasig/uPortal/graphs/contributors'
+                            organizationUrl 'https://github.com/uPortal-project/uPortal/graphs/contributors'
                         }
                     }
                 }
