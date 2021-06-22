@@ -4,7 +4,7 @@ uPortal uses Gradle for its project configuration and build system.  uPortal com
 
 ## uPortal-start
 
-Unless you have a specific reason to build uPortal directly from the repo, [uPortal-start](https://github.com/Jasig/uPortal-start) is the recommended way to deploy uPortal builds.  By using uPortal-start, there are gradle tasks that allow ingestion of the data xml files used to customize uPortal.
+Unless you have a specific reason to build uPortal directly from the repo, [uPortal-start](https://github.com/uPortal-Project/uPortal-start) is the recommended way to deploy uPortal builds.  By using uPortal-start, there are gradle tasks that allow ingestion of the data xml files used to customize uPortal.
 
 ## Install uPortal to Maven Local
 

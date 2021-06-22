@@ -8,14 +8,13 @@ Les documentations pour les versions antérieures sont disponibles dans
 [Confluence](https://wiki.jasig.org).  Référez vous à *Documentation des précédentes versions* \[en\]
 ci-après.
 
+
+
 <table border="0">
   <tr>
     <td>
       <a href="https://www.w3.org/TR/WCAG20/">
         <img src="https://www.w3.org/WAI/wcag2AA-blue-v.svg" alt="WCAG 2 AA Badge">
-      </a>
-      <a href="http://issuestats.com/github/Jasig/uPortal">
-        <img src="http://issuestats.com/github/Jasig/uPortal/badge/pr" alt="Statistiques des Issues">
       </a>
       <a href="https://source.android.com/setup/contribute/code-style">
         <img src="https://img.shields.io/badge/code_style-AOSP-green.svg?style=flat" alt="AOSP Code Style">
@@ -47,23 +46,23 @@ ci-après.
         </tr>
         <tr>
           <td>
-            <a href="https://github.com/Jasig/uPortal/tree/master">
+            <a href="https://github.com/uPortal-Project/uPortal/tree/master">
               uPortal 5
             </a>
           </td>
           <td>
-            <a href="https://github.com/Jasig/uPortal/actions?query=branch%3Amaster">
-              <img src="https://github.com/Jasig/uPortal/workflows/CI/badge.svg?branch=master" alt="Linux Build Status">
+            <a href="https://github.com/uPortal-Project/uPortal/actions?query=branch%3Amaster">
+              <img src="https://github.com/uPortal-Project/uPortal/workflows/CI/badge.svg?branch=master" alt="Linux Build Status">
             </a>
           </td>
           <td>
-            <a href="https://github.com/Jasig/uPortal/actions?query=branch%3Amaster">
-              <img src="https://github.com/Jasig/uPortal/workflows/CI/badge.svg?branch=master" alt="Windows Build Status">
+            <a href="https://github.com/uPortal-Project/uPortal/actions?query=branch%3Amaster">
+              <img src="https://github.com/uPortal-Project/uPortal/workflows/CI/badge.svg?branch=master" alt="Windows Build Status">
             </a>
           </td>
           <td>
-            <a href="https://coveralls.io/github/Jasig/uPortal?branch=master">
-              <img src="https://coveralls.io/repos/github/Jasig/uPortal/badge.svg?branch=master" alt="Coverage Status">
+            <a href="https://coveralls.io/github/uPortal-Project/uPortal?branch=master">
+              <img src="https://coveralls.io/repos/github/uPortal-Project/uPortal/badge.svg?branch=master" alt="Coverage Status">
             </a>
           </td>
           <td>
@@ -74,13 +73,13 @@ ci-après.
         </tr>
         <tr>
           <td>
-            <a href="https://github.com/Jasig/uPortal/tree/rel-4-3-patches">
+            <a href="https://github.com/uPortal-Project/uPortal/tree/rel-4-3-patches">
               uPortal 4.3
             </a>
           </td>
           <td>
-            <a href="https://travis-ci.org/Jasig/uPortal">
-              <img src="https://travis-ci.org/Jasig/uPortal.svg?branch=rel-4-3-patches" alt="Linux Build Status">
+            <a href="https://travis-ci.org/uPortal-Project/uPortal">
+              <img src="https://travis-ci.org/uPortal-Project/uPortal.svg?branch=rel-4-3-patches" alt="Linux Build Status">
             </a>
           </td>
           <td>
@@ -89,8 +88,8 @@ ci-après.
             </a>
           </td>
           <td>
-            <a href="https://coveralls.io/github/Jasig/uPortal?branch=rel-4-3-patches">
-              <img src="https://coveralls.io/repos/github/Jasig/uPortal/badge.svg?branch=rel-4-3-patches" alt="Coverage Status">
+            <a href="https://coveralls.io/github/uPortal-Project/uPortal?branch=rel-4-3-patches">
+              <img src="https://coveralls.io/repos/github/uPortal-Project/uPortal/badge.svg?branch=rel-4-3-patches" alt="Coverage Status">
             </a>
           </td>
           <td>
@@ -144,8 +143,8 @@ ci-après.
             Rejoignez nos conversations
           </td>
           <td>
-            <a href="https://gitter.im/Jasig/uPortal?utm_source=badge&amp;utm_medium=badge&amp;utm_campaign=pr-badge">
-              <img src="https://badges.gitter.im/Jasig/uPortal.svg" alt="Gitter">
+            <a href="https://gitter.im/uPortal-Project/uPortal?utm_source=badge&amp;utm_medium=badge&amp;utm_campaign=pr-badge">
+              <img src="https://badges.gitter.im/uPortal-Project/uPortal.svg" alt="Gitter">
             </a>
             <br>
             <a href="https://www.irccloud.com/invite?channel=%23jasig-uportal&amp;hostname=irc.freenode.net&amp;port=6697&amp;ssl=1">
@@ -181,11 +180,16 @@ ci-après.
 
 ## Documentation des versions précédentes
 
--   [Manuel uPortal 5.4](https://github.com/jasig/uportal/tree/v5.4.1/docs/fr)
--   [Manuel uPortal 5.3](https://github.com/jasig/uportal/tree/v5.3.2/docs/fr)
--   [Manuel uPortal 5.2](https://github.com/jasig/uportal/tree/v5.2.0/docs/fr)
--   [Manuel uPortal 5.1](https://github.com/Jasig/uPortal/tree/v5.1.2/docs/fr)
--   [Manuel uPortal 5.0](https://github.com/Jasig/uPortal/tree/v5.0.7/docs/fr)
+-   [Manuel uPortal 5.9](https://github.com/uPortal-Project/uPortal/tree/v5.9.0/docs)
+-   [Manuel uPortal 5.8](https://github.com/uPortal-Project/uPortal/tree/v5.8.2/docs)
+-   [Manuel uPortal 5.7](https://github.com/uPortal-Project/uPortal/tree/v5.7.1/docs)
+-   [Manuel uPortal 5.6](https://github.com/uPortal-Project/uPortal/tree/v5.6.1/docs)
+-   [Manuel uPortal 5.5](https://github.com/uPortal-Project/uPortal/tree/v5.5.1/docs)
+-   [Manuel uPortal 5.4](https://github.com/uPortal-Project/uportal/tree/v5.4.1/docs/fr)
+-   [Manuel uPortal 5.3](https://github.com/uPortal-Project/uportal/tree/v5.3.2/docs/fr)
+-   [Manuel uPortal 5.2](https://github.com/uPortal-Project/uportal/tree/v5.2.0/docs/fr)
+-   [Manuel uPortal 5.1](https://github.com/uPortal-Project/uPortal/tree/v5.1.2/docs/fr)
+-   [Manuel uPortal 5.0](https://github.com/uPortal-Project/uPortal/tree/v5.0.7/docs/fr)
 -   [Manuel uPortal 4.3](https://wiki.jasig.org/display/UPM43/Home)
 -   [Manuel uPortal 4.2](https://wiki.jasig.org/display/UPM42/Home)
 -   [Manuel uPortal 4.1](https://wiki.jasig.org/display/UPM41/Home)
