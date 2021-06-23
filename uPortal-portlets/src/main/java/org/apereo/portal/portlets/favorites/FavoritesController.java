@@ -122,23 +122,35 @@ public class FavoritesController extends AbstractFavoritesController {
                         : PersonFactory.getGuestUsernames().get(0); // First item is the default
         final IAuthorizationPrincipal principal =
                 authorizationService.newPrincipal(username, IPerson.class);
-        final List<IUserLayoutNodeDescription> favorites = new ArrayList<>();
+        // final List<IUserLayoutNodeDescription> favorites = new ArrayList<>();
+        final List<IUserLayoutChannelDescription> favoriteChannelDescriptions = new ArrayList<>();
+
         for (IUserLayoutNodeDescription nodeDescription : rawFavorites) {
             if (nodeDescription instanceof IUserLayoutChannelDescription) {
                 final IUserLayoutChannelDescription channelDescription =
                         (IUserLayoutChannelDescription) nodeDescription;
                 if (principal.canRender(channelDescription.getChannelPublishId())) {
-                    favorites.add(nodeDescription);
+                    // favorites.add(nodeDescription);
+                    favoriteChannelDescriptions.add(channelDescription);
                 }
             }
         }
 
-        model.addAttribute("favorites", favorites);
+        // Filter list of IUserLayoutChannelDescription by FunctionalName
+        final List<IUserLayoutChannelDescription> uniqueFavoritesChannel =
+                FavoritesUtils.filterChannelFavoritesToUnique(favoriteChannelDescriptions);
+
+        // Cast List of IUserLayoutChannelDescription to List of IUserLayoutNodeDescription
+        final List<IUserLayoutNodeDescription> uniqueFavorites =
+                FavoritesUtils.castListChannelDescriptionToListNodeDescription(
+                        uniqueFavoritesChannel);
+
+        model.addAttribute("favorites", uniqueFavorites);
 
         // default to the regular old view
         String viewName = "jsp/Favorites/view";
 
-        if (collections.isEmpty() && favorites.isEmpty()) {
+        if (collections.isEmpty() && uniqueFavorites.isEmpty()) {
             // special edge case of zero favorites, switch to special view
             viewName = "jsp/Favorites/view_zero";
         }

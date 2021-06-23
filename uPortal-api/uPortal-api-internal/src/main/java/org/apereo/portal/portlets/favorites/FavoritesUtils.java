@@ -18,11 +18,17 @@ import static org.apereo.portal.layout.node.IUserLayoutFolderDescription.FAVORIT
 import static org.apereo.portal.layout.node.IUserLayoutFolderDescription.FAVORITE_COLLECTION_TYPE;
 import static org.apereo.portal.layout.node.IUserLayoutNodeDescription.LayoutNodeType.FOLDER;
 
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import org.apache.commons.lang3.Validate;
 import org.apereo.portal.layout.IUserLayout;
 import org.apereo.portal.layout.node.IUserLayoutChannelDescription;
@@ -284,5 +290,57 @@ public class FavoritesUtils {
         // portlets
         return (!getFavoritePortletLayoutNodes(layout).isEmpty()
                 || !getFavoriteCollections(layout).isEmpty());
+    }
+
+    /**
+     * A helper method introduced to filter out duplicates by key
+     *
+     * @param keyExtractor
+     * @param <T>
+     * @return
+     */
+    public static <T> Predicate<T> distinctByKey(Function<? super T, Object> keyExtractor) {
+        Map<Object, Boolean> map = new ConcurrentHashMap<>();
+        return t -> map.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
+    }
+
+    public static List<IUserLayoutChannelDescription> filterChannelFavoritesToUnique(
+            List<IUserLayoutChannelDescription> originalFavoritesList) {
+
+        Predicate<IUserLayoutChannelDescription> predicate;
+        predicate = FavoritesUtils.distinctByKey(p -> p.getFunctionalName());
+
+        List<IUserLayoutChannelDescription> uniqueFavorites =
+                originalFavoritesList.stream().filter(predicate).collect(Collectors.toList());
+
+        return uniqueFavorites;
+    }
+
+    public static List<IUserLayoutNodeDescription> castListChannelDescriptionToListNodeDescription(
+            List<IUserLayoutChannelDescription> nodeList) {
+        List<IUserLayoutNodeDescription> nodeDescriptionList = new ArrayList<>();
+        for (IUserLayoutNodeDescription nodeDescription : nodeList) {
+            if (nodeDescription instanceof IUserLayoutChannelDescription) {
+                final IUserLayoutChannelDescription channelDescription =
+                        (IUserLayoutChannelDescription) nodeDescription;
+                nodeDescriptionList.add(channelDescription);
+            }
+        }
+        return nodeDescriptionList;
+    }
+
+    public static List<IUserLayoutChannelDescription> getDuplicateFavoritesByFNameToDelete(
+            List<IUserLayoutNodeDescription> favorites, String functionalName) {
+        List<IUserLayoutChannelDescription> matchingFavorites = new ArrayList<>();
+
+        for (IUserLayoutNodeDescription nodeDescription : favorites) {
+            if (nodeDescription instanceof IUserLayoutChannelDescription) {
+                if (((IUserLayoutChannelDescription) nodeDescription).getFunctionalName()
+                        == functionalName) {
+                    matchingFavorites.add((IUserLayoutChannelDescription) nodeDescription);
+                }
+            }
+        }
+        return matchingFavorites;
     }
 }
