@@ -102,45 +102,43 @@
             var tabRowTemplate = document.getElementById('sitemap-tab-row-template');
             var tabRow = document.importNode(tabRowTemplate.content, true).querySelector('div');
             _.forEach(response.layout.navigation.tabs, function (tab, tabIndex) {
-                if (sitemapJsonCheck(tab, ['name','externalId','content'], "Missing required object path [layout.navigation.tabs] > ")) {
-                    return;
-                }
+                if (!sitemapJsonCheck(tab, ['name','externalId','content'], "Missing required object path [layout.navigation.tabs] > ")) {
+                    // Setup tab link
+                    var tabTemplate = document.getElementById('sitemap-tab-template');
+                    var tabHeader = document.importNode(tabTemplate.content, true).querySelector('div');
+                    // Add content to tab header template
+                    var tabHeaderLink = tabHeader.querySelector('a');
+                    tabHeaderLink.textContent = _.unescape(tab.name);
+                    tabHeaderLink.href = '${portalContextPath}/f/' + tab.externalId + '/normal/render.uP';
+                    var portletList = tabHeader.querySelector('ul');
 
-                // Setup tab link
-                var tabTemplate = document.getElementById('sitemap-tab-template');
-                var tabHeader = document.importNode(tabTemplate.content, true).querySelector('div');
-                // Add content to tab header template
-                var tabHeaderLink = tabHeader.querySelector('a');
-                tabHeaderLink.textContent = _.unescape(tab.name);
-                tabHeaderLink.href = '${portalContextPath}/f/' + tab.externalId + '/normal/render.uP';
-                var portletList = tabHeader.querySelector('ul');
-
-                _.forEach(tab.content, function (parentContent, parentContentIndex) {
-                    if (sitemapJsonCheck(parentContent, ['content'], "Missing required object path [layout.navigation.tabs] > content > ")) {
-                        return;
-                    }
-
-                    _.forEach(parentContent.content, function (portlet, portletIndex) {
-                        if (sitemapJsonCheck(portlet, ['name', 'fname', 'ID'], "Missing required object path [layout.navigation.tabs] > content > content > ")) {
+                    _.forEach(tab.content, function (parentContent, parentContentIndex) {
+                        if (sitemapJsonCheck(parentContent, ['content'], "Missing required object path [layout.navigation.tabs] > content > ")) {
                             return;
                         }
 
-                        // Setup portlet link
-                        var portletTemplate = document.getElementById('sitemap-tab-portlet-template');
-                        var portletListItem = document.importNode(portletTemplate.content, true).querySelector('li');
-                        // Add content to portlet template
-                        var portletTitle = portletListItem.querySelector('span');
-                        portletTitle.textContent = _.unescape(portlet.name);
-                        var portletLink = portletListItem.querySelector('a');
-                        portletLink.href = '${portalContextPath}/f/' + tab.externalId + '/p/' + portlet.fname + '.' + portlet.ID + '/max/render.uP';
-                        // Add portlet to tab list
-                        portletList.appendChild(portletListItem);
+                        _.forEach(parentContent.content, function (portlet, portletIndex) {
+                            if (sitemapJsonCheck(portlet, ['name', 'fname', 'ID'], "Missing required object path [layout.navigation.tabs] > content > content > ")) {
+                                return;
+                            }
+
+                            // Setup portlet link
+                            var portletTemplate = document.getElementById('sitemap-tab-portlet-template');
+                            var portletListItem = document.importNode(portletTemplate.content, true).querySelector('li');
+                            // Add content to portlet template
+                            var portletTitle = portletListItem.querySelector('span');
+                            portletTitle.textContent = _.unescape(portlet.name);
+                            var portletLink = portletListItem.querySelector('a');
+                            portletLink.href = '${portalContextPath}/f/' + tab.externalId + '/p/' + portlet.fname + '.' + portlet.ID + '/max/render.uP';
+                            // Add portlet to tab list
+                            portletList.appendChild(portletListItem);
+                        });
                     });
-                });
 
-                tabRow.appendChild(tabHeader);
+                    tabRow.appendChild(tabHeader);
+                }
 
-                if(tabIndex === (response.layout.globals.tabsInTabGroup - 1)) {
+                if(tabIndex === (response.layout.navigation.tabs.length - 1)) {
                     // Add final tab row to page
                     document.getElementById('sitemap-holder').appendChild(tabRow);
                 } else if (tabIndex % 4 === 3) { // Four per row
