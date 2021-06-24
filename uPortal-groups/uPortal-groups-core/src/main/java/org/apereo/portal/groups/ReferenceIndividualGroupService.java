@@ -14,6 +14,13 @@
  */
 package org.apereo.portal.groups;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import org.apereo.portal.EntityIdentifier;
 import org.apereo.portal.concurrency.CachingException;
 import org.apereo.portal.concurrency.IEntityLock;
@@ -23,14 +30,6 @@ import org.apereo.portal.services.EntityLockService;
 import org.apereo.portal.services.GroupService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
 /** Reference individual, or leaf, group service. */
 public class ReferenceIndividualGroupService extends ReferenceCompositeGroupService
