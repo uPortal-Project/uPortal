@@ -138,7 +138,7 @@
                     tabRow.appendChild(tabHeader);
                 }
 
-                if(tabIndex === (response.layout.navigation.tabs.length - 1)) {
+                if (tabIndex === (response.layout.navigation.tabs.length - 1)) {
                     // Add final tab row to page
                     document.getElementById('sitemap-holder').appendChild(tabRow);
                 } else if (tabIndex % 4 === 3) { // Four per row
