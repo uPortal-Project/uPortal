@@ -102,7 +102,7 @@
             var tabRowTemplate = document.getElementById('sitemap-tab-row-template');
             var tabRow = document.importNode(tabRowTemplate.content, true).querySelector('div');
             _.forEach(response.layout.navigation.tabs, function (tab, tabIndex) {
-                if (!sitemapJsonCheck(tab, ['name','externalId','content'], "Missing required object path [layout.navigation.tabs] > ")) {
+                if (!sitemapJsonCheck(tab, ['name', 'externalId', 'content'], "Missing required object path [layout.navigation.tabs] > ")) {
                     // Setup tab link
                     var tabTemplate = document.getElementById('sitemap-tab-template');
                     var tabHeader = document.importNode(tabTemplate.content, true).querySelector('div');
