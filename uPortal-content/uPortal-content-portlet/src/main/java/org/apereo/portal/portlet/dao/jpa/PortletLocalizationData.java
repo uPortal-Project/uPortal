@@ -28,7 +28,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
  * of its data model.
  */
 @Embeddable
-@Table(name = "UP_PORTLET_MDATA")
+@Table(name = "UP_PORTLET_DEF_MDATA")
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class PortletLocalizationData implements Serializable {
