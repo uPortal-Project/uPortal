@@ -25,6 +25,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Embedded;
@@ -33,7 +34,6 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapKey;
 import javax.persistence.MapKeyColumn;
@@ -198,8 +198,8 @@ public class PortletDefinitionImpl implements IPortletDefinition {
     private Map<String, IPortletDefinitionParameter> parameters = new LinkedHashMap<>();
 
     @ElementCollection(fetch = FetchType.EAGER, targetClass = PortletLocalizationData.class)
-    @JoinTable(name = "UP_PORTLET_DEF_MDATA", joinColumns = @JoinColumn(name = "PORTLET_ID"))
-    @MapKeyColumn(name = "LOCALE", length = 64, nullable = false)
+    @CollectionTable(name = "UP_PORTLET_DEF_MDATA", joinColumns = @JoinColumn(name = "PORTLET_ID"))
+    @MapKeyColumn(name = "LOCALE", length = 64)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @Fetch(FetchMode.JOIN)
     private final Map<String, PortletLocalizationData> localizations = new LinkedHashMap<>();
