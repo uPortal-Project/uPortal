@@ -106,8 +106,7 @@ class PortletEntityImpl implements IPortletEntity {
     @Column(name = "WINDOW_STATE")
     @Type(type = "windowState")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-    private final Map<StylesheetDescriptorImpl, WindowState> windowStates =
-        new HashMap<>(0);
+    private final Map<StylesheetDescriptorImpl, WindowState> windowStates = new HashMap<>(0);
 
     @OneToOne(
             cascade = {CascadeType.ALL},
