@@ -56,7 +56,6 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.NaturalId;
-import org.hibernate.annotations.Type;
 
 /** */
 @Entity
@@ -104,9 +103,8 @@ class PortletEntityImpl implements IPortletEntity {
             joinColumns = @JoinColumn(name = "PORTLET_ENT_ID"))
     @MapKeyJoinColumn(name = "STYLESHEET_DESCRIPTOR_ID")
     @Column(name = "WINDOW_STATE")
-    @Type(type = "windowState")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-    private final Map<StylesheetDescriptorImpl, WindowState> windowStates = new HashMap<>(0);
+    private final Map<StylesheetDescriptorImpl, String> windowStates = new HashMap<>(0);
 
     @OneToOne(
             cascade = {CascadeType.ALL},
@@ -187,14 +185,16 @@ class PortletEntityImpl implements IPortletEntity {
 
     @Override
     public Map<Long, WindowState> getWindowStates() {
-        final Map<Long, WindowState> simpleWindowStates = new LinkedHashMap<Long, WindowState>();
+        final Map<Long, WindowState> simpleWindowStates = new LinkedHashMap<>();
         synchronized (this.windowStates) {
-            for (Map.Entry<StylesheetDescriptorImpl, WindowState> windowStateEntry :
+            for (Map.Entry<StylesheetDescriptorImpl, String> windowStateEntry :
                     windowStates.entrySet()) {
                 final StylesheetDescriptorImpl stylesheetDescriptor = windowStateEntry.getKey();
                 final long stylesheetDescriptorId = stylesheetDescriptor.getId();
-                final WindowState windowState = windowStateEntry.getValue();
-                simpleWindowStates.put(stylesheetDescriptorId, windowState);
+                if (windowStateEntry.getValue() != null) {
+                    final WindowState windowState = new WindowState(windowStateEntry.getValue());
+                    simpleWindowStates.put(stylesheetDescriptorId, windowState);
+                }
             }
         }
         return Collections.unmodifiableMap(simpleWindowStates);
@@ -202,18 +202,27 @@ class PortletEntityImpl implements IPortletEntity {
 
     @Override
     public WindowState getWindowState(IStylesheetDescriptor stylesheetDescriptor) {
+        StylesheetDescriptorImpl stylesheetDescriptorImpl =
+                (StylesheetDescriptorImpl) stylesheetDescriptor;
         synchronized (this.windowStates) {
-            return this.windowStates.get(stylesheetDescriptor);
+            String state = this.windowStates.get(stylesheetDescriptorImpl);
+            if (state == null) {
+                return null;
+            } else {
+                return new WindowState(state);
+            }
         }
     }
 
     @Override
     public void setWindowState(IStylesheetDescriptor stylesheetDescriptor, WindowState state) {
+        StylesheetDescriptorImpl stylesheetDescriptorImpl =
+                (StylesheetDescriptorImpl) stylesheetDescriptor;
         synchronized (this.windowStates) {
             if (state == null) {
-                this.windowStates.remove(stylesheetDescriptor);
+                this.windowStates.remove(stylesheetDescriptorImpl);
             } else {
-                this.windowStates.put((StylesheetDescriptorImpl) stylesheetDescriptor, state);
+                this.windowStates.put(stylesheetDescriptorImpl, state.toString());
             }
         }
     }
