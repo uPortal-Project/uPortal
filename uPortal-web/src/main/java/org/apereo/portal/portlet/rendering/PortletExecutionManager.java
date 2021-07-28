@@ -721,7 +721,7 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
             try {
                 final PortletRenderResult portletRenderResult =
                         getPortletRenderResult(portletWindowId, request, response);
-                
+
                 if (portletRenderResult != null) {
                     titleToReturn = portletRenderResult.getTitle();
                 }
@@ -731,16 +731,18 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
                                 + portletWindowId);
             }
         }
-        
+
         if (titleToReturn == null) {
             // we assume that response locale has been set to correct value
-           String locale = response.getLocale().toString();
-           titleToReturn = portletDefinition.getTitle(locale);
+            String locale = response.getLocale().toString();
+            titleToReturn = portletDefinition.getTitle(locale);
         }
 
         // Personalize the title
-        titleToReturn = this.personalizer.personalize(this.personManager.getPerson(request), titleToReturn, request.getSession());
-        
+        titleToReturn =
+                this.personalizer.personalize(
+                        this.personManager.getPerson(request), titleToReturn, request.getSession());
+
         // return portlet title from channel definition
         return titleToReturn;
     }
