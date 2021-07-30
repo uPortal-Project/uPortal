@@ -45,7 +45,7 @@ public class HealthCheckController {
             throws DbQueryTimeoutException {
         Map<String, Long> map = new HashMap<>();
 
-        if (detail == null && detail.isEmpty()) {
+        if (detail == null || detail.isEmpty()) {
             // Do nothing, just return HTTP 200, OK
             logger.debug("Doing a health check...");
         } else {
@@ -72,11 +72,9 @@ public class HealthCheckController {
                             DataSource dataSource = dataSourceFactory.getObject();
                             try (Connection connection = dataSource.getConnection()) {
                                 Statement statement = connection.createStatement();
-                                long startTime = System.currentTimeMillis();
-                                startTime = System.nanoTime();
+                                long startTime = System.nanoTime();
                                 statement.execute(query);
-                                long endTime = System.currentTimeMillis();
-                                endTime = System.nanoTime();
+                                long endTime = System.nanoTime();
                                 return endTime - startTime;
                             } catch (SQLException e) {
                                 logger.warn("Timed DB Query failed", e);
