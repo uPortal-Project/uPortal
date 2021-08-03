@@ -7,6 +7,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,14 +39,19 @@ public class HealthCheckController {
             // Do nothing, just return HTTP 200, OK
             logger.debug("Doing a health check...");
         } else {
-            if (detail.contains("ALL")) {
+            List<String> checkerIDs =
+                    detail.parallelStream().map(String::toUpperCase).collect(Collectors.toList());
+            if (checkerIDs.contains("ALL")) {
                 map =
                         checkers.parallelStream()
                                 .collect(toMap(IHealthChecker::getName, IHealthChecker::runCheck));
             } else {
                 map =
                         checkers.parallelStream()
-                                .filter(c -> detail.contains(c.getDetailIdentifier()))
+                                .filter(
+                                        c ->
+                                                checkerIDs.contains(
+                                                        c.getDetailIdentifier().toUpperCase()))
                                 .collect(toMap(IHealthChecker::getName, IHealthChecker::runCheck));
             }
             map.put("Time", getTime());
