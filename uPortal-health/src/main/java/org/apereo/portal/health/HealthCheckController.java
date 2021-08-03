@@ -58,7 +58,6 @@ public class HealthCheckController {
         Map<String, Object> map = new HashMap<>();
         long ms = System.currentTimeMillis();
         map.put("Current Time (ms)", Long.valueOf(ms));
-        // Instant instant = Instant.ofEpochMilli(ms);
         String time = DateTimeFormatter.RFC_1123_DATE_TIME.format(ZonedDateTime.now());
         map.put("Current Time", time);
         return map;
