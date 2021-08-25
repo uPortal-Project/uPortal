@@ -7,52 +7,30 @@ on:
     branches:
       - master
 jobs:
-  test-across-jdk:
-    name: 'ubuntu-latest with Java ${{ matrix.java-version }}'
-    strategy:
-      matrix:
-        platform:
-          - ubuntu-latest
-        java-version:
-          - 8.0.275.hs-adpt
-          - 8.0.275-amzn
-          - 8.0.265-open
-    runs-on: ${{ matrix.platform }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Download Java
-        uses: sdkman/sdkman-action@master
-        id: sdkman
-        with:
-          candidate: java
-          version: ${{ matrix.java-version }}
-      - name: Setup Java
-        uses: actions/setup-java@v1
-        with:
-          java-version: 8
-          jdkFile: ${{ steps.sdkman.outputs.file }}
-      - name: Build and Test
-        run: ./gradlew -S --no-daemon --no-parallel build jacocoAggregateReport coveralls
-      - name: Lint JavaScript
-        run: ./gradlew -S --no-daemon --no-parallel :npm_run_lint-js
-  # TODO merge with SDKMAN version if possible
-  test-across-os:
-    name: '${{ matrix.platform }} with Java 8'
+  test:
+    name: '${{ matrix.platform }} with Java ${{ matrix.java-distribution }} version ${{ matrix.java-version }}'
     strategy:
       matrix:
         platform:
           - ubuntu-latest
           - windows-latest
           - macos-latest
+        java-distribution:
+          - adopt-hotspot
+          - temurin
+          - zulu
+        java-version:
+          - 8
     runs-on: ${{ matrix.platform }}
+    timeout-minutes: 20
     steps:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Setup Java
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v2
         with:
-          java-version: 8
+          distribution: ${{ matrix.java-distribution }}
+          java-version: ${{ matrix.java-version }}
       - name: Build and Test
         run: ./gradlew -S --no-daemon --no-parallel build jacocoAggregateReport coveralls
       - name: Lint JavaScript
