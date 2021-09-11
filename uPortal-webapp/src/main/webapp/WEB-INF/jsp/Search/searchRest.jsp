@@ -112,7 +112,7 @@
 
 <%-- API URL for fetching search results --%>
 <c:url value="/api/v5-0/portal/search" var="searchApiUrl">
-    <c:param name="q" value="${param.query}" />
+    <c:param name="q" value="${fn:escapeXml(param.query)}" />
     <c:forEach items="${renderRequest.preferences.map['RESTSearch.type']}" var="value">
         <c:param name="type" value="${value}" />
     </c:forEach>
