@@ -39,7 +39,7 @@
     <bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean"
           depends-on="systemPropertySetter, authDao"
           p:shared="true"
-          p:configLocation="classpath:/properties/ehcache.xml" />
+          p:configLocation="classpath:/properties/${org.apereo.portal.ehcache.filename:ehcache.xml}" />
     <bean id="cacheManagerExpiredElementEvictor" class="org.apereo.portal.utils.cache.ExpiredElementEvictor">
         <property name="cacheManager" ref="cacheManager"></property>
     </bean>
