@@ -48,10 +48,10 @@ import org.apereo.portal.xml.xpath.XPathOperations;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 /** Test harness for {@link UrlSyntaxProviderImpl}. */
@@ -1166,10 +1166,10 @@ public class UrlSyntaxProviderImplTest {
 
         when(this.portalRequestUtils.getOriginalPortalRequest(request)).thenReturn(request);
         when(this.xpathOperations.doWithExpression(
-                        Mockito.eq(
+                        ArgumentMatchers.eq(
                                 "/layout/folder/folder[@type='regular' and @hidden='false'][position() = $activeTabId]/@ID"),
-                        Mockito.eq(Collections.singletonMap("activeTabId", "1")),
-                        Mockito.<Function>anyObject()))
+                        ArgumentMatchers.eq(Collections.singletonMap("activeTabId", "1")),
+                        ArgumentMatchers.<Function>any()))
                 .thenReturn("n12");
 
         when(this.userInstanceManager.getUserInstance(request)).thenReturn(userInstance);

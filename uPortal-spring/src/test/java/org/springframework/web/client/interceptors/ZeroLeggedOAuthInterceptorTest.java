@@ -28,7 +28,7 @@ import java.util.Collections;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
-import org.mockito.Matchers;
+import org.mockito.ArgumentMatchers;
 import org.springframework.core.env.PropertyResolver;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -50,13 +50,16 @@ public class ZeroLeggedOAuthInterceptorTest {
         final String secretKey = "secretKey";
 
         PropertyResolver resolver = mock(PropertyResolver.class);
-        when(resolver.getProperty(Matchers.eq("org.jasig.rest.interceptor.oauth." + id + ".realm")))
+        when(resolver.getProperty(
+                        ArgumentMatchers.eq("org.jasig.rest.interceptor.oauth." + id + ".realm")))
                 .thenReturn(realm);
         when(resolver.getProperty(
-                        Matchers.eq("org.jasig.rest.interceptor.oauth." + id + ".consumerKey")))
+                        ArgumentMatchers.eq(
+                                "org.jasig.rest.interceptor.oauth." + id + ".consumerKey")))
                 .thenReturn(consumerKey);
         when(resolver.getProperty(
-                        Matchers.eq("org.jasig.rest.interceptor.oauth." + id + ".secretKey")))
+                        ArgumentMatchers.eq(
+                                "org.jasig.rest.interceptor.oauth." + id + ".secretKey")))
                 .thenReturn(secretKey);
 
         // holder for the headers...
@@ -74,7 +77,8 @@ public class ZeroLeggedOAuthInterceptorTest {
         when(client.execute()).thenReturn(resp);
 
         ClientHttpRequestFactory factory = mock(ClientHttpRequestFactory.class);
-        when(factory.createRequest(Matchers.any(URI.class), Matchers.any(HttpMethod.class)))
+        when(factory.createRequest(
+                        ArgumentMatchers.any(URI.class), ArgumentMatchers.any(HttpMethod.class)))
                 .thenReturn(client);
 
         // add the new interceptor...
