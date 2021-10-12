@@ -130,7 +130,7 @@ public class StickyProfileMapperImplTest {
 
         stickyMapper.onApplicationEvent(selectionEvent);
 
-        verifyZeroInteractions(registry);
+        verifyNoMoreInteractions(registry);
     }
 
     /**
@@ -164,7 +164,7 @@ public class StickyProfileMapperImplTest {
 
         stickyMapper.onApplicationEvent(selectionEvent);
 
-        verifyZeroInteractions(registry);
+        verifyNoMoreInteractions(registry);
     }
 
     /**
@@ -178,7 +178,7 @@ public class StickyProfileMapperImplTest {
 
         stickyMapper.onApplicationEvent(selectionEvent);
 
-        verifyZeroInteractions(registry);
+        verifyNoMoreInteractions(registry);
     }
 
     /**

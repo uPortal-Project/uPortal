@@ -14,9 +14,9 @@
  */
 package org.apereo.portal.events.aggr;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -38,10 +38,10 @@ import org.joda.time.Period;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
-import org.mockito.Matchers;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 @Ignore // Breaks on move to Gradlde
 @RunWith(MockitoJUnitRunner.class)
@@ -82,7 +82,7 @@ public class PortalEventDimensionPopulatorImplTest {
 
         verify(timeDimensionDao).getTimeDimensions();
         verify(timeDimensionDao, times(60 * 24))
-                .createTimeDimension(Matchers.<LocalTime>anyObject());
+                .createTimeDimension(ArgumentMatchers.<LocalTime>any());
         verifyNoMoreInteractions(timeDimensionDao, dateDimensionDao);
     }
 
@@ -112,7 +112,7 @@ public class PortalEventDimensionPopulatorImplTest {
 
         verify(timeDimensionDao).getTimeDimensions();
         verify(timeDimensionDao, times((60 * 24) - existingTimeDimensions.size()))
-                .createTimeDimension(Matchers.<LocalTime>anyObject());
+                .createTimeDimension(ArgumentMatchers.<LocalTime>any());
         verifyNoMoreInteractions(timeDimensionDao, dateDimensionDao);
     }
 
@@ -154,7 +154,7 @@ public class PortalEventDimensionPopulatorImplTest {
                 .getDateDimensionsBetween(any(DateMidnight.class), any(DateMidnight.class));
 
         verify(dateDimensionDao, times(365))
-                .createDateDimension(Matchers.<DateMidnight>anyObject(), anyInt(), anyString());
+                .createDateDimension(ArgumentMatchers.<DateMidnight>any(), anyInt(), anyString());
         verifyNoMoreInteractions(timeDimensionDao, dateDimensionDao);
     }
 }
