@@ -91,7 +91,7 @@ public class PersonalizationFilter implements Filter {
 
         PrintWriter responseWriter = response.getWriter();
 
-        if (wrapper.getContentType().contains("application/json")) {
+        if ((wrapper != null) && (wrapper.getContentType() != null) && wrapper.getContentType().contains("application/json")) {
             final IPerson person = this.personManager.getPerson(request);
             if (person == null) {
                 log.warn(
