@@ -89,7 +89,7 @@ As of uPortal `5.10.0`, uPortal supports token replacement in various portlet de
 
 For targeted areas of the UX, personalization is supported for the title, description, and `portlet-preference` for 'content' such as:
 
-```
+```xml
     <portlet-preference>
         <name>content</name>
         <readOnly>false</readOnly>
