@@ -686,7 +686,11 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
         final long timeout = getPortletRenderTimeout(portletWindowId, request);
 
         try {
-            final String output = tracker.getOutput(timeout);
+            final String output =
+                    this.personalizer.personalize(
+                            this.personManager.getPerson(request),
+                            tracker.getOutput(timeout),
+                            request.getSession());
             return output == null ? "" : output;
         } catch (Exception e) {
             final IPortletFailureExecutionWorker failureWorker =
