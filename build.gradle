@@ -121,7 +121,7 @@ subprojects {
         testCompile "org.mockito:mockito-core:${mockitoVersion}"
         testCompile "org.springframework:spring-test:${springVersion}"
         testCompile "org.xmlunit:xmlunit-legacy:${xmlunitVersion}"
-        spotbugsPlugins 'com.h3xstream.findsecbugs:findsecbugs-plugin:1.11.0'
+        spotbugsPlugins 'com.h3xstream.findsecbugs:findsecbugs-plugin:1.12.0'
     }
 
     /* Release Management
