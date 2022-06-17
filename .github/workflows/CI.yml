@@ -23,7 +23,7 @@ jobs:
           - 8
           - 11
     runs-on: ${{ matrix.platform }}
-    timeout-minutes: 20
+    timeout-minutes: 45
     steps:
       - name: Checkout
         uses: actions/checkout@v3
