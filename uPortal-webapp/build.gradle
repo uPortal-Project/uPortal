@@ -5,7 +5,7 @@ buildscript {
     }
     dependencies {
         classpath "org.jasig.resourceserver:resource-server-core:${resourceServerVersion}"
-        classpath 'javax.xml.bind:jaxb-api:2.3.1'
+        classpath "javax.xml.bind:jaxb-api:${jaxbApiVersion}"
         classpath 'com.sun.xml.bind:jaxb-xjc:2.3.4'
         classpath 'com.sun.xml.bind:jaxb-impl:2.3.4'
     }
