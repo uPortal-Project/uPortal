@@ -44,8 +44,10 @@ public class PortalCsrfSecurityRequestMatcher implements RequestMatcher {
 
     private static final String API_PATTERN = "/api.*";
 
+    private static final String API_DOCS_PATTERN = "/api/swagger-ui.html";
+
     private static final String[] IGNORED_PATTERNS =
-            new String[] {LOGIN_PATTERN, LOGOUT_PATTERN, API_PATTERN};
+            new String[] {LOGIN_PATTERN, LOGOUT_PATTERN, API_PATTERN, API_DOCS_PATTERN};
 
     private final Set<RequestMatcher> ignoredMatchers = new HashSet<>();
 
