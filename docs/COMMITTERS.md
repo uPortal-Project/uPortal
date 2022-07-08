@@ -14,7 +14,7 @@
  - [Jonathan Tran][] (jonathanmtran)
  - Josh Helmer (jhelmer-unicon)
  - [Julien Gribonvald][] (jgribonvald)
- - Laura McCord [loulou2u](https://github.com/loulou2u)
+ - [Laura McCord][] [loulou2u](https://github.com/loulou2u)
  - [Mairi Fraiser][] (mairi)
  - Misagh Moayyed (mmoayyed)
  - Paul Spaude (pspaude)
