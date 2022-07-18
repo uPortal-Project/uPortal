@@ -81,11 +81,26 @@ of the more common ways is to declare them in a Spring XML configuration file wi
  * [JDBC User Attribute Sources](jdbc.md)
 
 [independent project with its own source code called PersonDirectory]: https://github.com/apereo/person-directory
-[uPortal-start]: https://github.com/Jasig/uPortal-start
+[uPortal-start]: https://github.com/uPortal-Project/uPortal-start
 
 ## Personalization
 
 As of uPortal `5.10.0`, uPortal supports token replacement in various portlet definition fields of user attributes (known as 'personalization'). Personalization consists of a filter for all `/api` JSON GET requests, and targeted areas of the UX that leverage endpoints outside of the `/api` context. The exception to the `/api` coverage is `/layoutDoc`, which is deprecated.
+
+For targeted areas of the UX, personalization is supported for the title, description, and `portlet-preference` for 'content' such as:
+
+```xml
+    <portlet-preference>
+        <name>content</name>
+        <readOnly>false</readOnly>
+        <value>
+            <![CDATA[
+                <h2>Personalization Test</h2>
+                <h4>@up@apereo.user.login.id@up@</h4>
+            ]]>
+        </value>
+    </portlet-preference>
+```
 
 By default, the filter is disabled for backwards compatibility.  To enable, uncomment and set the following in `uPortal.properties` to true:
 

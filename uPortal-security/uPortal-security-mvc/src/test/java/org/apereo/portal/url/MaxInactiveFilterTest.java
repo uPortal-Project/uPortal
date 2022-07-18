@@ -22,7 +22,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
@@ -78,8 +78,8 @@ public class MaxInactiveFilterTest {
         verify(person, times(1)).getAttribute(SESSION_MAX_INACTIVE_SET_ATTR);
         verify(person, times(1)).getAttribute(IPerson.USERNAME);
         verify(personManager, times(1)).getPerson(req);
-        verifyZeroInteractions(resp);
-        verifyZeroInteractions(session);
+        verifyNoMoreInteractions(resp);
+        verifyNoMoreInteractions(session);
         verify(chain, only()).doFilter(req, resp);
     }
 
@@ -119,7 +119,7 @@ public class MaxInactiveFilterTest {
         verify(person, times(1)).getAttribute(SESSION_MAX_INACTIVE_SET_ATTR);
         verify(person, times(2)).getAttribute(IPerson.USERNAME);
         verify(personManager, times(1)).getPerson(req);
-        verifyZeroInteractions(resp);
+        verifyNoMoreInteractions(resp);
         verify(chain, only()).doFilter(req, resp);
     }
 
@@ -154,9 +154,9 @@ public class MaxInactiveFilterTest {
         verify(person, times(1)).getAttribute(SESSION_MAX_INACTIVE_SET_ATTR);
         verify(person, times(1)).getAttribute(IPerson.USERNAME);
         verify(personManager, times(1)).getPerson(req);
-        verifyZeroInteractions(maxInactiveStrategy);
-        verifyZeroInteractions(resp);
-        verifyZeroInteractions(session);
+        verifyNoMoreInteractions(maxInactiveStrategy);
+        verifyNoMoreInteractions(resp);
+        verifyNoMoreInteractions(session);
         verify(chain, only()).doFilter(req, resp);
     }
 
@@ -188,9 +188,9 @@ public class MaxInactiveFilterTest {
         verify(person, times(1)).getSecurityContext();
         verify(person, times(1)).getAttribute(IPerson.USERNAME);
         verify(personManager, times(1)).getPerson(req);
-        verifyZeroInteractions(maxInactiveStrategy);
-        verifyZeroInteractions(resp);
-        verifyZeroInteractions(session);
+        verifyNoMoreInteractions(maxInactiveStrategy);
+        verifyNoMoreInteractions(resp);
+        verifyNoMoreInteractions(session);
         verify(chain, only()).doFilter(req, resp);
     }
 
@@ -219,9 +219,9 @@ public class MaxInactiveFilterTest {
         verify(person, times(1)).getSecurityContext();
         verify(person, times(1)).getAttribute(IPerson.USERNAME);
         verify(personManager, times(1)).getPerson(req);
-        verifyZeroInteractions(maxInactiveStrategy);
-        verifyZeroInteractions(resp);
-        verifyZeroInteractions(session);
+        verifyNoMoreInteractions(maxInactiveStrategy);
+        verifyNoMoreInteractions(resp);
+        verifyNoMoreInteractions(session);
         verify(chain, only()).doFilter(req, resp);
     }
 
@@ -245,9 +245,9 @@ public class MaxInactiveFilterTest {
         filter.doFilter(req, resp, chain);
 
         verify(personManager, times(1)).getPerson(req);
-        verifyZeroInteractions(maxInactiveStrategy);
-        verifyZeroInteractions(resp);
-        verifyZeroInteractions(session);
+        verifyNoMoreInteractions(maxInactiveStrategy);
+        verifyNoMoreInteractions(resp);
+        verifyNoMoreInteractions(session);
         verify(chain, only()).doFilter(req, resp);
     }
 
@@ -268,9 +268,9 @@ public class MaxInactiveFilterTest {
 
         filter.doFilter(req, resp, chain);
 
-        verifyZeroInteractions(personManager);
-        verifyZeroInteractions(maxInactiveStrategy);
-        verifyZeroInteractions(resp);
+        verifyNoMoreInteractions(personManager);
+        verifyNoMoreInteractions(maxInactiveStrategy);
+        verifyNoMoreInteractions(resp);
         verify(req, only()).getSession(false);
         verify(chain, only()).doFilter(req, resp);
     }

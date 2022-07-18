@@ -4,7 +4,7 @@
 
  - Anthony Colebourne (acolebourne)
  - Andrew Petro (apetro)
- - Benito Gonzalez (bjagg)
+ - Benito Gonzalez [bjagg](https://github.com/bjagg)
  - [Chris Beach][] (cbeach47)
  - [Christian Cousquer][] (cousquer)
  - [Christian Murphy][] (ChristianMurphy)
@@ -14,6 +14,7 @@
  - [Jonathan Tran][] (jonathanmtran)
  - Josh Helmer (jhelmer-unicon)
  - [Julien Gribonvald][] (jgribonvald)
+ - [Laura McCord][] [loulou2u](https://github.com/loulou2u)
  - [Mairi Fraiser][] (mairi)
  - Misagh Moayyed (mmoayyed)
  - Paul Spaude (pspaude)

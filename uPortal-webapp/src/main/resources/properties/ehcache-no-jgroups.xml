@@ -1,0 +1,1383 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to Apereo under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Apereo licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://ehcache.org/ehcache.xsd" updateCheck="false" name="uPortal.cacheManager">
+
+    <!--
+     | General direct-access portal caches are in the first section
+     | Hibernate entity caches are in the second section
+     | Portal Event Hibernate caches are in the third section
+     | Miscellaneous caches are in the fourth section
+     |
+     | Please see http://ehcache.sourceforge.net/documentation/configuration.html for detailed information on
+     | how to configurigure caches in this file
+     +-->
+
+    <!-- Location of persistent caches on disk -->
+    <diskStore path="java.io.tmpdir/uPortal" />
+
+    <!-- Use jGroups for Peer discovery.  For more information, see
+     | http://jasig.275507.n4.nabble.com/Re-uportal-dev-EhCache-and-jgroups-question-td4661918.html
+     | https://wiki.jasig.org/display/UPM40/Clustering
+     + -->
+    <!--
+    <cacheManagerPeerProviderFactory
+        class="net.sf.ehcache.distribution.jgroups.JGroupsCacheManagerPeerProviderFactory"
+        properties="file=properties/jgroups.xml" />
+    -->
+
+    <!--
+     | Start of RMI Replicated Caching for CAS ClearPass in uPortal.
+     |
+     | The RMI Peer provider/listener is required for using CAS ClearPass in a clustered uPortal
+     | environment.  If you are not using CAS ClearPass, or if you don't have your uPortal servers clustered
+     | you do not need RMI Replicated Caching.  Either the automatic or manual peer discovery peer provide factory
+     | must be uncommented, along with the RMI Peer Listener.
+     +-->
+
+    <!--
+     | RMI Replicated Caching Automatic Peer Discovery.  If it works in your network environment, it is a simpler
+     | configuration.
+     | Need to verify it with someone who can test it though. Couldn't on my home network (see UP-4108 notes).
+     | When testing it, suggest enabling debug logging as indicated in UP-4108.
+     +-->
+     <!--
+     <cacheManagerPeerProviderFactory
+        class="net.sf.ehcache.distribution.RMICacheManagerPeerProviderFactory"
+        properties="peerDiscovery=automatic, multicastGroupAddress=230.0.0.1, multicastGroupPort=4446, timeToLive=32"
+        propertySeparator="," />
+     -->
+
+    <!--
+     | RMI Replicated Caching Manual Peer Discovery.  Use if automatic does not work for you or you don't want to
+     | allow multicast on your network.  You must also set the IP addresses of the machines in the uPortal cluster
+     | in the filters/*.properties files.
+     +-->
+    <!--
+    <cacheManagerPeerProviderFactory
+        class="net.sf.ehcache.distribution.RMICacheManagerPeerProviderFactory"
+        properties="peerDiscovery=manual,rmiUrls=${environment.build.cas.clearpass.cache.rmi.urls}" />
+    -->
+    <!--
+     | Required if using Manual or Automatic RMI Replicated Caching Peer Discovery for CAS ClearPass in clustered
+     | uPortal environment.
+     +-->
+    <!--
+    <cacheManagerPeerListenerFactory
+        class="net.sf.ehcache.distribution.RMICacheManagerPeerListenerFactory"
+        properties="port=${environment.build.cas.clearpass.cache.rmi.listenerPort}" />
+    -->
+
+    <!-- End of RMI Replicated Caching for CAS ClearPass in uPortal. -->
+
+    <defaultCache eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" statistics="true" />
+
+    <!-- ****************************************************************** -->
+    <!-- ******************** uPortal Framework Caches ******************** -->
+    <!-- ****************************************************************** -->
+
+    <!--
+     | Caches username -> LrsActor resolution
+     | - not replicated
+     +-->
+    <cache name="org.apereo.portal.events.tincan.LrsActorCache"
+        eternal="false" maxElementsInMemory="10000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+
+    <!--
+     | Caches layout node id -> tab name resolutions done by the tab renderer aggregator
+     | - not replicated
+     +-->
+    <cache name="org.apereo.portal.events.aggr.tabrender.TabRenderAggregator.layoutNodeIdNameResolver"
+        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" />
+
+    <!--
+     | Caches data scoped to an active EntityManager. Entries in this cache are short lived (duration of a thread of execution)
+     | - not replicated
+     +-->
+    <cache name="org.apereo.portal.jpa.cache.EntityManagerCache"
+        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="300" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
+        <cacheEventListenerFactory class="org.apereo.portal.utils.cache.SpringCacheEventListenerFactory" properties="beanName=tagTrackingCacheEventListener" listenFor="local" />
+    </cache>
+
+    <!--
+     | Caches user specific lock
+     | - 1 x user
+     | - not replicated
+     +-->
+    <cache name="org.apereo.portal.RDBMUserIdentityStore.userLockCache"
+        eternal="false" maxElementsInMemory="10000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+
+    <!--
+     | Caches Skin Resource instances
+     | - 1 x skin
+     | - not replicated - represents local file system data
+     +-->
+    <cache name="org.apereo.portal.web.skin.Resources"
+        eternal="false" maxElementsInMemory="50" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="28800" memoryStoreEvictionPolicy="LRU" statistics="true" />
+
+    <!--
+     | Caches Skin Resource DocumentFragment instances, the XML chunk added to the <head>
+     | - 1 x skin
+     | - not replicated - represents local file system data
+     +-->
+    <cache name="org.apereo.portal.web.skin.Resources_DocumentFragment"
+        eternal="false" maxElementsInMemory="50" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="28800" memoryStoreEvictionPolicy="LRU" statistics="true" />
+
+    <!--
+     | Caches AuthorizationPrincipalImpl instances
+     | - 1 x user
+     | - 1 x channel
+     | - 1 x group
+     | - not replicated - doesn't represent an updatable data store
+     +-->
+    <cache name="org.apereo.portal.security.provider.AuthorizationImpl.AUTH_PRINCIPAL_CACHE"
+        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="900" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory class="org.apereo.portal.utils.cache.SpringCacheEventListenerFactory" properties="beanName=tagTrackingCacheEventListener" listenFor="local" />
+    </cache>
+
+    <!--
+     | Caches containing group keys for a permissions target
+     | 1 x group x group members
+     | - not replicated - doesn't represent an updatable data store
+     +-->
+    <cache name="org.apereo.portal.security.provider.AuthorizationImpl.ENTITY_PARENTS_CACHE"
+        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="180" memoryStoreEvictionPolicy="LRU" statistics="true" />
+
+    <!--
+     | Caches user-specific permission checks in AuthorizationImpl
+     | 1 x user x permission
+     | - not replicated - doesn't represent an updatable data store
+     +-->
+    <cache name="org.apereo.portal.security.provider.AuthorizationImpl.PRINCIPAL_HAS_PERMISSION"
+        eternal="false" maxElementsInMemory="50000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="180" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory class="org.apereo.portal.utils.cache.SpringCacheEventListenerFactory" properties="beanName=tagTrackingCacheEventListener" listenFor="local" />
+    </cache>
+
+    <!--
+     | Caches low-level permission checks in AnyUnblockedGrantPermissionPolicy.  Not replicated.
+     | 1 x principal x permission x target (potentially very large)
+     | - not replicated - doesn't represent an updatable data store
+     +-->
+    <cache name="org.apereo.portal.security.provider.AnyUnblockedGrantPermissionPolicy.HAS_UNBLOCKED_GRANT"
+        eternal="false" maxElementsInMemory="250000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory class="org.apereo.portal.utils.cache.SpringCacheEventListenerFactory" properties="beanName=tagTrackingCacheEventListener" listenFor="local" />
+    </cache>
+
+    <!--
+     | Caches fragment layouts
+     | - 1 x fragment layout
+     | - replicated by invalidation
+     +-->
+    <cache name="org.apereo.portal.layout.dlm.FragmentActivator.userViews"
+        eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory class="org.apereo.portal.utils.cache.SpringCacheEventListenerFactory" properties="beanName=insufficientSizeCacheEventListener" listenFor="local" />
+    </cache>
+
+
+    <!--
+     | Caches exceptions from loading fragment layout
+     | - 1 x fragment layout that fails to load
+     | - not replicated
+     +-->
+    <cache name="org.apereo.portal.layout.dlm.FragmentActivator.userViewErrors"
+        eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="30" memoryStoreEvictionPolicy="LRU" statistics="true" />
+
+     <!--
+     | Caches node descriptor objects for fragment layouts
+     | - 1 x fragment layout node
+     | - not replicated
+     +-->
+    <cache name="org.apereo.portal.layout.dlm.RDBMDistributedLayoutStore.fragmentNodeInfoCache"
+        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true">
+        <cacheEventListenerFactory class="org.apereo.portal.utils.cache.SpringCacheEventListenerFactory" properties="beanName=insufficientSizeCacheEventListener" listenFor="local" />
+    </cache>
+
+    <!--
+     | Caches layout DOM
+     | - 1 x user
+     | - replicated by invalidation
+     +-->
+    <cache name="org.apereo.portal.layout.dlm.LAYOUT_CACHE"
+        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="900" timeToLiveSeconds="7200" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory class="org.apereo.portal.utils.cache.SpringCacheEventListenerFactory" properties="beanName=tagTrackingCacheEventListener" listenFor="local" />
+    </cache>
+
+    <!--
+     | Caches layout node reference resolution, only used during import and export
+     | - 1 x layout x dlm reference node
+     | - not replicated - only used by a command line tool
+     +-->
+    <cache name="org.apereo.portal.layout.dlm.NODEREF_CACHE"
+        eternal="false" maxElementsInMemory="2000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="180" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+
+    <!--
+     | Caches resolved resource URLs
+     | - 1 x classpath resource (framework XSL files and such)
+     | - not replicated - pertains to local file system data
+     +-->
+    <cache name="org.apereo.portal.utils.ResourceLoader.RESOURCE_URL_CACHE"
+        eternal="false" maxElementsInMemory="250" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="28800" memoryStoreEvictionPolicy="LRU" statistics="true" />
+
+    <!--
+     | Caches failed resource URL resolution
+     | - 1 x classpath resource that does not exist (framework XSL files and such)
+     | - not replicated - pertains to local file system data
+     +-->
+    <cache name="org.apereo.portal.utils.ResourceLoader.RESOURCE_URL_NOT_FOUND_CACHE"
+        eternal="false" maxElementsInMemory="250" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" statistics="true" />
+
+    <!--
+     | Caches parsed CPD files
+     | - 1 x .cpd file
+     | - not replicated - pertains to local file system data
+     +-->
+    <cache name="org.apereo.portal.portlets.portletadmin.PortletAdministrationHelper.CPD_CACHE"
+        eternal="false" maxElementsInMemory="250" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="28800" memoryStoreEvictionPolicy="LRU" statistics="true" />
+
+    <!--
+     | Caches EntityType data
+     | - 1 x Entity type
+     | - replicated by invalidation
+     +-->
+    <cache name="org.apereo.portal.EntityTypes.CLASS_BY_ID"
+        eternal="false" maxElementsInMemory="50" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="28800" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory class="org.apereo.portal.utils.cache.SpringCacheEventListenerFactory" properties="beanName=insufficientSizeCacheEventListener" listenFor="local" />
+    </cache>
+    <cache name="org.apereo.portal.EntityTypes.ID_BY_CLASS"
+        eternal="false" maxElementsInMemory="50" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="28800" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory class="org.apereo.portal.utils.cache.SpringCacheEventListenerFactory" properties="beanName=insufficientSizeCacheEventListener" listenFor="local" />
+    </cache>
+    <cache name="org.apereo.portal.EntityTypes.ALL"
+        eternal="false" maxElementsInMemory="1" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="28800" memoryStoreEvictionPolicy="LRU" statistics="true" >
+    </cache>
+
+
+
+    <!-- ******************** Person Directory Caches ******************** -->
+
+    <!--
+     | Caches the final merge results of a person directory query.
+     | - 1 x user
+     | - not replicated - doesn't represent an updatable data store
+     +-->
+    <cache name="org.apereo.services.persondir.USER_INFO.merged"
+        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory class="org.apereo.portal.utils.cache.SpringCacheEventListenerFactory" properties="beanName=tagTrackingCacheEventListener" listenFor="local" />
+    </cache>
+
+
+
+    <!-- ******************** uPortal IBasicEntity Caches ******************** -->
+
+    <!--
+     | Caches IEntityGroup objects
+     | - 1 x group across all group stores
+     | - replicated by invalidation
+     +-->
+    <cache name="org.apereo.portal.groups.IEntityGroup"
+        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory class="org.apereo.portal.utils.cache.SpringCacheEventListenerFactory" properties="beanName=insufficientSizeCacheEventListener" listenFor="local" />
+    </cache>
+
+    <!--
+     | Caches IEntity objects
+     | - 1 x group member (channels, users, groups)
+     | - replicated by invalidation
+     +-->
+    <cache name="org.apereo.portal.groups.IEntity"
+        eternal="false" maxElementsInMemory="2500" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
+    </cache>
+
+    <!--
+     | Caches containing groups for GroupMemberImpl objects.  There is code to
+     | invalidate (and replicate) them when they change, but the GaP code is
+     | bloated and hard to follow.  TTL is set to 5 min in case invalidation
+     | doesn't cover all paths that make changes to relationships.
+     | - 1 x group member (channels, users, groups)
+     | - replicated by invalidation
+     +-->
+    <cache name="org.apereo.portal.groups.GroupMemberImpl.parentGroups"
+        eternal="false" maxElementsInMemory="5000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory class="org.apereo.portal.utils.cache.SpringCacheEventListenerFactory" properties="beanName=tagTrackingCacheEventListener" listenFor="local" />
+    </cache>
+
+    <!--
+     | Caches members for EntityGroupImpl objects.  (This cache is the
+     | opposite of parentGroups, above) There is code to invalidate (and
+     | replicate) them when they change, but the GaP code is bloated and hard to
+     | follow.  TTL is set to 5 min in case invalidation doesn't cover all paths
+     | that make changes to relationships.
+     | - 1 x group (both of users and channels)
+     | - replicated by invalidation
+     +-->
+    <cache name="org.apereo.portal.groups.EntityGroupImpl.children"
+        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory class="org.apereo.portal.utils.cache.SpringCacheEventListenerFactory" properties="beanName=insufficientSizeCacheEventListener" listenFor="local" />
+    </cache>
+
+    <!--
+     | Caches search results from searchForGroups() in RDBMEntityGroupStore.
+     | - 1 x search criteria
+     +-->
+    <cache name="org.apereo.portal.groups.RDBMEntityGroupStore.search"
+        eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory class="org.apereo.portal.utils.cache.SpringCacheEventListenerFactory" properties="beanName=insufficientSizeCacheEventListener" listenFor="local" />
+    </cache>
+
+    <!--
+     | Caches IPermissionSet objects
+     | - 1 x per permissions owner (channel manager, user, ...)
+     | - replicated by invalidation
+     +-->
+    <cache name="org.apereo.portal.security.IPermissionSet"
+        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory class="org.apereo.portal.utils.cache.SpringCacheEventListenerFactory" properties="beanName=insufficientSizeCacheEventListener" listenFor="local" />
+    </cache>
+
+
+
+    <!--
+     | Caches output from portlets rendering in the HEADER part of the render request
+     | - 1 per portlet cached header rendering see PrivatePortletCacheKey for the key definition
+     +-->
+    <cache name="org.apereo.portal.portlet.container.cache.PortletCacheControlServiceImpl.privateScopePortletRenderHeaderOutputCache"
+        eternal="false" maxElementsInMemory="2500" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="300" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
+        <cacheEventListenerFactory class="org.apereo.portal.utils.cache.SpringCacheEventListenerFactory" properties="beanName=tagTrackingCacheEventListener" listenFor="local" />
+    </cache>
+
+    <!--
+     | Caches output from portlets rendering in the MARKUP part of the render request
+     | - 1 per portlet cached rendering see PrivatePortletCacheKey for the key definition
+     +-->
+    <cache name="org.apereo.portal.portlet.container.cache.PortletCacheControlServiceImpl.privateScopePortletRenderOutputCache"
+        eternal="false" maxElementsInMemory="2500" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="300" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
+        <cacheEventListenerFactory class="org.apereo.portal.utils.cache.SpringCacheEventListenerFactory" properties="beanName=tagTrackingCacheEventListener" listenFor="local" />
+    </cache>
+
+    <!--
+     | Caches output from portlets serving resources
+     | - 1 per portlet cached resource response see PrivatePortletCacheKey for the key definition
+     +-->
+    <cache name="org.apereo.portal.portlet.container.cache.PortletCacheControlServiceImpl.privateScopePortletResourceOutputCache"
+        eternal="false" maxElementsInMemory="2500" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="300" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
+        <cacheEventListenerFactory class="org.apereo.portal.utils.cache.SpringCacheEventListenerFactory" properties="beanName=tagTrackingCacheEventListener" listenFor="local" />
+    </cache>
+
+    <!--
+     | Caches PUBLIC output from portlets rendering in the HEADER part of the render request
+     | - 1 per portlet cached header rendering see PublicPortletCacheKey for the key definition
+     +-->
+    <cache name="org.apereo.portal.portlet.container.cache.PortletCacheControlServiceImpl.publicScopePortletRenderHeaderOutputCache"
+        eternal="false" maxElementsInMemory="2500" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
+        <cacheEventListenerFactory class="org.apereo.portal.utils.cache.SpringCacheEventListenerFactory" properties="beanName=tagTrackingCacheEventListener" listenFor="local" />
+    </cache>
+
+    <!--
+     | Caches PUBLIC output from portlets rendering in the MARKUP part of the render request
+     | - 1 per portlet cached rendering see PublicPortletCacheKey for the key definition
+     +-->
+    <cache name="org.apereo.portal.portlet.container.cache.PortletCacheControlServiceImpl.publicScopePortletRenderOutputCache"
+        eternal="false" maxElementsInMemory="2500" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
+        <cacheEventListenerFactory class="org.apereo.portal.utils.cache.SpringCacheEventListenerFactory" properties="beanName=tagTrackingCacheEventListener" listenFor="local" />
+    </cache>
+
+    <!--
+     | Caches PUBLIC output from portlets serving resources
+     | - 1 per portlet cached header response response see PublicPortletCacheKey for the key definition
+     +-->
+    <cache name="org.apereo.portal.portlet.container.cache.PortletCacheControlServiceImpl.publicScopePortletResourceOutputCache"
+        eternal="false" maxElementsInMemory="2500" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
+        <cacheEventListenerFactory class="org.apereo.portal.utils.cache.SpringCacheEventListenerFactory" properties="beanName=tagTrackingCacheEventListener" listenFor="local" />
+    </cache>
+
+
+    <!--
+     | Caches parsing entity id strings into entity ids
+     | - 1 x subscribed portlet x user
+     | - not replicated
+     +-->
+    <cache name="org.apereo.portal.portlet.dao.jpa.PortletEntityImpl.idParseCache"
+        eternal="false" maxElementsInMemory="15000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="60" memoryStoreEvictionPolicy="LRU" statistics="true" />
+
+
+    <!-- Portal javascript and css gzipping filter cache -->
+
+    <cache name="org.apereo.portal.utils.cache.ConfigurablePageCachingFilter.PAGE_CACHE"
+        eternal="false" maxElementsInMemory="250" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="900" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+
+    <!-- XSLT caches -->
+    <!--
+     | Note: overflowToDisk MUST be false for XSLT caches as these caches store "javax.xml.transform.Templates" or
+     | "org.apereo.portal.StylesheetSet" instances which are not Serializable
+     +-->
+    <cache name="org.apereo.portal.utils.cache.resource.CachingResourceLoader"
+        eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="900" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+
+    <!--
+     | Caches compiled SpEL Expression objects
+     | - 1 x expression used in the portal
+     | - not replicated
+     +-->
+    <cache name="SpELExpressionCache"
+        eternal="false" maxElementsInMemory="5000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="900" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+
+    <!--
+     | Caches compiled portlet SpEL Expression objects
+     | - 1 x expression used in the portal
+     | - not replicated
+     +-->
+    <cache name="portletSpELExpressionCache"
+           eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false"
+           timeToIdleSeconds="900" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+
+    <!--
+     | Caches post-layout pipeline events
+     | - 1 x user x navigational state
+     | - not replicated
+     +-->
+    <cache name="org.apereo.portal.rendering.STRUCTURE_TRANSFORM"
+        eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="300" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+
+    <!--
+     | Caches post-layout pipeline events
+     | - 1 x user x navigational state
+     | - not replicated
+     +-->
+    <cache name="org.apereo.portal.rendering.THEME_TRANSFORM"
+        eternal="false" maxElementsInMemory="10000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="300" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+
+    <!--
+     | Caches resolution of events that are supported by the portlet deployment
+     | - 1 x portlet deployment x portlet event
+     +-->
+    <cache name="org.apereo.portal.portlet.rendering.SupportedEventCache"
+        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="300" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+
+
+
+
+    <!-- *********************************************************** -->
+    <!-- ***************** Portal Hibernate Caches ***************** -->
+    <!-- *********************************************************** -->
+
+    <!--
+     | Caches last updated timestamp for each hibernate managed table
+     | - 1 x hibernate managed table
+     | - not replicated - used to track local modifications to tables
+     +-->
+    <cache name="org.hibernate.cache.spi.UpdateTimestampsCache"
+        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+    <!--
+     | Caches SQL query level results for entity queries that don't specify an explicit cache region
+     | - 1 x managed query result
+     | - not replicated - used to track local query results
+     +-->
+    <cache name="org.hibernate.cache.internal.StandardQueryCache"
+        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" />
+
+    <!-- Only ID Cached -->
+    <cache name="org.apereo.portal.concurrency.locking.ClusterMutex-NaturalId"
+        eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
+    </cache>
+    <cache name="org.apereo.portal.version.dao.jpa.VersionImpl-NaturalId"
+        eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
+    </cache>
+
+    <!--
+     | Caches message
+     | - 1 per each translated message (max = messages * supported locales)
+     +-->
+    <cache name="org.apereo.portal.i18n.dao.jpa.MessageImpl"
+        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="60" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
+    </cache>
+    <cache name="org.apereo.portal.i18n.dao.jpa.MessageImpl.Query"
+        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="60" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
+    </cache>
+
+    <!--
+     | Caches StylesheetDescriptor
+     | - 1 per stylesheet used in the rendering pipeline
+     +-->
+    <cache name="org.apereo.portal.layout.dao.jpa.StylesheetDescriptorImpl"
+        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="300" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
+    </cache>
+    <cache name="org.apereo.portal.layout.dao.jpa.StylesheetDescriptorImpl-NaturalId"
+        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
+    </cache>
+    <cache name="org.apereo.portal.layout.dao.jpa.StylesheetDescriptorImpl.Query"
+        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="300" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
+    </cache>
+    <cache name="org.apereo.portal.layout.dao.jpa.StylesheetDescriptorImpl.outputProperties"
+        eternal="false" maxElementsInMemory="10000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="300" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
+    </cache>
+    <cache name="org.apereo.portal.layout.dao.jpa.StylesheetDescriptorImpl.stylesheetParameters"
+        eternal="false" maxElementsInMemory="10000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="300" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
+    </cache>
+    <cache name="org.apereo.portal.layout.dao.jpa.StylesheetDescriptorImpl.layoutAttributes"
+        eternal="false" maxElementsInMemory="10000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="300" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
+    </cache>
+
+    <!--
+     | Caches StylesheetUserPreferences
+     | - 1 per customization per user
+     | - replicated by invalidation
+     +-->
+    <cache name="org.apereo.portal.layout.dao.jpa.StylesheetUserPreferencesImpl"
+        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
+    </cache>
+    <cache name="org.apereo.portal.layout.dao.jpa.StylesheetUserPreferencesImpl.Query"
+        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
+    </cache>
+    <cache name="org.apereo.portal.layout.dao.jpa.StylesheetUserPreferencesImpl.layoutAttributes"
+        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
+    </cache>
+    <cache name="org.apereo.portal.layout.dao.jpa.StylesheetUserPreferencesImpl.outputProperties"
+        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
+    </cache>
+    <cache name="org.apereo.portal.layout.dao.jpa.StylesheetUserPreferencesImpl.parameters"
+        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
+    </cache>
+    <cache name="org.apereo.portal.layout.dao.jpa.OutputPropertyDescriptorImpl"
+        eternal="false" maxElementsInMemory="10000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
+    </cache>
+    <cache name="org.apereo.portal.layout.dao.jpa.StylesheetParameterDescriptorImpl"
+        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
+    </cache>
+    <cache name="org.apereo.portal.layout.dao.jpa.LayoutNodeAttributesImpl"
+        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
+    </cache>
+    <cache name="org.apereo.portal.layout.dao.jpa.LayoutNodeAttributesImpl.attributes"
+        eternal="false" maxElementsInMemory="10000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
+    </cache>
+    <cache name="org.apereo.portal.layout.dao.jpa.LayoutAttributeDescriptorImpl"
+        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
+    </cache>
+    <cache name="org.apereo.portal.layout.dao.jpa.LayoutAttributeDescriptorImpl.targetElementNames"
+        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
+    </cache>
+
+    <!--
+     | Caches DLM Evaluator object
+     | - 1 x per DLM layout fragment
+     | - replicated by invalidation
+     +-->
+    <cache name="org.apereo.portal.layout.dlm.Evaluator"
+        eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory class="org.apereo.portal.utils.cache.SpringCacheEventListenerFactory" properties="beanName=insufficientSizeCacheEventListener" listenFor="local" />
+    </cache>
+    <cache name="org.apereo.portal.layout.dlm.FragmentDefinition.evaluators"
+        eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
+    </cache>
+    <cache name="org.apereo.portal.layout.dlm.FragmentDefinition.Query"
+        eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
+    </cache>
+    <cache name="org.apereo.portal.layout.dlm.providers.Paren.evaluators"
+        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
+    </cache>
+    <cache name="org.apereo.portal.layout.dlm.providers.EvaluatorGroup.evaluators"
+        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
+    </cache>
+    <cache name="org.apereo.portal.layout.dlm.providers.AllUsersEvaluatorFactory"
+        eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
+    </cache>
+    <cache name="org.apereo.portal.layout.dlm.providers.AttributeEvaluator"
+        eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
+    </cache>
+    <cache name="org.apereo.portal.layout.dlm.providers.GroupMembershipEvaluator"
+        eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
+    </cache>
+    <cache name="org.apereo.portal.layout.dlm.providers.GuestUserEvaluatorFactory"
+        eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
+    </cache>
+    <cache name="org.apereo.portal.layout.dlm.providers.ProfileEvaluator"
+        eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
+    </cache>
+
+    <!--
+     | Caches PermissionOwner objects
+     | - 1 x permission owner type
+     | - replicated by invalidation
+     +-->
+    <cache name="org.apereo.portal.permission.dao.jpa.PermissionOwnerImpl"
+        eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory class="org.apereo.portal.utils.cache.SpringCacheEventListenerFactory" properties="beanName=insufficientSizeCacheEventListener" listenFor="local" />
+    </cache>
+    <cache name="org.apereo.portal.permission.dao.jpa.PermissionOwnerImpl-NaturalId"
+        eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
+    </cache>
+    <cache name="org.apereo.portal.permission.dao.jpa.PermissionOwnerImpl.Query"
+        eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
+    </cache>
+    <cache name="org.apereo.portal.permission.dao.jpa.PermissionOwnerImpl.activities"
+        eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
+    </cache>
+    <cache name="org.apereo.portal.permission.dao.jpa.PermissionActivityImpl"
+        eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
+    </cache>
+
+    <!--
+     | Caches local users
+     | - 1 x local user
+     | - replicated by invalidation
+     +-->
+    <cache name="org.apereo.portal.persondir.dao.jpa.LocalAccountPersonImpl"
+        eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" >
+    </cache>
+    <cache name="org.apereo.portal.persondir.dao.jpa.LocalAccountPersonImpl.Query"
+        eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" >
+    </cache>
+    <cache name="org.apereo.portal.persondir.dao.jpa.LocalAccountPersonImpl.attributes"
+        eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" >
+    </cache>
+    <cache name="org.apereo.portal.persondir.dao.jpa.LocalAccountPersonAttributeImpl"
+        eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" >
+    </cache>
+    <cache name="org.apereo.portal.persondir.dao.jpa.LocalAccountPersonAttributeImpl.Query"
+        eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" >
+    </cache>
+    <cache name="org.apereo.portal.persondir.dao.jpa.LocalAccountPersonAttributeImpl.values"
+        eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" >
+    </cache>
+
+    <!--
+     | Caches PortalCookieImpl objects
+     | - 1 per "customer" per "year" (by default, or until they clear their cookies)
+     +-->
+    <cache name="org.apereo.portal.portlet.dao.jpa.PortalCookieImpl"
+        eternal="false" maxElementsInMemory="2500" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" >
+    </cache>
+    <cache name="org.apereo.portal.portlet.dao.jpa.PortalCookieImpl-NaturalId"
+        eternal="false" maxElementsInMemory="2500" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="900" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
+    </cache>
+    <cache name="org.apereo.portal.portlet.dao.jpa.PortalCookieImpl.Query"
+        eternal="false" maxElementsInMemory="2500" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" >
+    </cache>
+    <cache name="org.apereo.portal.portlet.dao.jpa.PortalCookieImpl.portletCookies"
+        eternal="false" maxElementsInMemory="2500" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" >
+    </cache>
+    <cache name="org.apereo.portal.portlet.dao.jpa.PortletCookieImpl"
+        eternal="false" maxElementsInMemory="25000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" >
+    </cache>
+
+    <!--
+     | Caches PortletDefinitionImpl objects
+     | - 1 x published portlet
+     | - replicated by invalidation
+     +-->
+    <cache name="org.apereo.portal.portlet.dao.jpa.PortletDefinitionImpl"
+        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LFU" statistics="true" >
+        <cacheEventListenerFactory class="org.apereo.portal.utils.cache.SpringCacheEventListenerFactory" properties="beanName=insufficientSizeCacheEventListener" listenFor="local" />
+    </cache>
+    <cache name="org.apereo.portal.portlet.dao.jpa.PortletDefinitionImpl-NaturalId"
+        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LFU" statistics="true" >
+    </cache>
+    <cache name="org.apereo.portal.portlet.dao.jpa.PortletDefinitionImpl.Query"
+        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LFU" statistics="true" >
+    </cache>
+    <cache name="org.apereo.portal.portlet.dao.jpa.PortletDefinitionImpl.localizations"
+        eternal="false" maxElementsInMemory="10000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LFU" statistics="true" >
+    </cache>
+    <cache name="org.apereo.portal.portlet.dao.jpa.PortletDefinitionImpl.parameters"
+        eternal="false" maxElementsInMemory="10000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LFU" statistics="true" >
+    </cache>
+    <cache name="org.apereo.portal.portlet.dao.jpa.PortletDefinitionParameterImpl"
+        eternal="false" maxElementsInMemory="10000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LFU" statistics="true" >
+    </cache>
+
+    <!--
+     | Caches PortletEntityImpl objects
+     | - 1 x subscribed portlet x user
+     | - replicated by invalidation
+     +-->
+    <cache name="org.apereo.portal.portlet.dao.jpa.PortletEntityImpl"
+        eternal="false" maxElementsInMemory="15000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" >
+    </cache>
+    <cache name="org.apereo.portal.portlet.dao.jpa.PortletEntityImpl.Query"
+        eternal="false" maxElementsInMemory="1500" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" >
+    </cache>
+    <cache name="org.apereo.portal.portlet.dao.jpa.PortletEntityImpl.windowStates"
+        eternal="false" maxElementsInMemory="15000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" >
+    </cache>
+
+    <!--
+     | Caches PortletPreferencesImpl objects
+     | - 1 x subscribed portlet x user
+     | - 1 x published portlet
+     | - replicated by invalidation
+     +-->
+    <cache name="org.apereo.portal.portlet.dao.jpa.PortletPreferencesImpl"
+        eternal="false" maxElementsInMemory="15500" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" >
+    </cache>
+    <cache name="org.apereo.portal.portlet.dao.jpa.PortletPreferencesImpl.portletPreferences"
+        eternal="false" maxElementsInMemory="15500" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" >
+    </cache>
+    <cache name="org.apereo.portal.portlet.dao.jpa.PortletPreferenceImpl"
+        eternal="false" maxElementsInMemory="2200" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" >
+    </cache>
+    <cache name="org.apereo.portal.portlet.dao.jpa.PortletPreferenceImpl.values"
+        eternal="false" maxElementsInMemory="2200" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" >
+    </cache>
+
+    <!--
+     | Caches PortletType objects
+     | - 1 x portlet type
+     | - replicated by invalidation
+     +-->
+    <cache name="org.apereo.portal.portlet.dao.jpa.PortletTypeImpl"
+        eternal="false" maxElementsInMemory="250" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory class="org.apereo.portal.utils.cache.SpringCacheEventListenerFactory" properties="beanName=insufficientSizeCacheEventListener" listenFor="local" />
+    </cache>
+    <cache name="org.apereo.portal.portlet.dao.jpa.PortletTypeImpl-NaturalId"
+        eternal="false" maxElementsInMemory="250" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
+    </cache>
+    <cache name="org.apereo.portal.portlet.dao.jpa.PortletTypeImpl.Query"
+        eternal="false" maxElementsInMemory="250" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
+    </cache>
+
+    <!--
+     | Caches for tenancies
+     +-->
+    <cache name="org.apereo.portal.tenants.JpaTenant"
+        eternal="false" maxElementsInMemory="25" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" >
+    </cache>
+    <cache name="org.apereo.portal.tenants.JpaTenant.attributes"
+        eternal="false" maxElementsInMemory="250" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" >
+    </cache>
+    <cache name="org.apereo.portal.tenants.JpaTenant.Query"
+        eternal="false" maxElementsInMemory="10" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true">
+    </cache>
+
+    <cache name="org.apereo.portal.portlet.dao.jpa.MarketplaceRatingImpl"
+        eternal="false" maxElementsInMemory="250" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
+    </cache>
+
+    <cache name="org.apereo.portal.portlet.dao.jpa.MarketplaceRatingImpl.Query"
+        eternal="false" maxElementsInMemory="250" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
+    </cache>
+
+    <!-- Caches MarketplacePortletDefinition instances;  not replicated -->
+    <cache name="org.apereo.portal.portlet.marketplace.MarketplaceService.marketplacePortletDefinitionCache"
+           eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
+           timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" />
+
+    <!-- Caches MarketplacePortletDefinitions by user.  not replicated.  This cache holds Futures that are
+        not serializable, so don't overflow to disk.  -->
+    <cache name="org.apereo.portal.portlet.marketplace.MarketplaceService.marketplaceUserPortletDefinitionCache"
+           eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
+           timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" />
+
+    <!-- Caches a few odds and ends related to limiting which categories are
+         displayed in a single publication of the Marketplace;  not replicated -->
+    <cache name="org.apereo.portal.portlet.marketplace.MarketplaceService.marketplaceCategoryCache"
+           eternal="false" maxElementsInMemory="20" overflowToDisk="false" diskPersistent="false"
+           timeToIdleSeconds="0" timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" statistics="true" />
+
+
+    <!-- ********************************************************** -->
+    <!-- ***************** Event Hibernate Caches ***************** -->
+    <!-- ********************************************************** -->
+
+    <!--
+     | Caches SQL query level results for entity queries that don't specify an explicit cache region
+     | - 1 x managed query result
+     | - not replicated - used to track local query results
+     +-->
+    <cache name="AggrEvents.org.hibernate.cache.internal.StandardQueryCache"
+        eternal="false" overflowToDisk="false" diskPersistent="false"
+        maxElementsInMemory="100" timeToIdleSeconds="300" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+
+    <!--
+     | Caches last updated timestamp for each hibernate managed table
+     | - 1 x hibernate managed table
+     | - not replicated - used to track local modifications to tables
+     +-->
+    <cache name="AggrEvents.org.hibernate.cache.spi.UpdateTimestampsCache"
+        eternal="false" overflowToDisk="false" diskPersistent="false"
+        maxElementsInMemory="100" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
+    </cache>
+
+    <!--
+     | Caches academic terms configured for aggregation intervals
+     | - 1 x configured academic term
+     +-->
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.dao.jpa.AcademicTermDetailImpl"
+        eternal="false" overflowToDisk="false" diskPersistent="false"
+        maxElementsInMemory="100" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
+    </cache>
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.dao.jpa.AcademicTermDetailImpl.Query"
+        eternal="false" overflowToDisk="false" diskPersistent="false"
+        maxElementsInMemory="100" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
+    </cache>
+
+    <!--
+     | Caches quarters configured for aggregation intervals
+     | - 1 x quarter
+     +-->
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.dao.jpa.QuarterDetailImpl"
+        eternal="false" overflowToDisk="false" diskPersistent="false"
+        maxElementsInMemory="4" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
+    </cache>
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.dao.jpa.QuarterDetailImpl.Query"
+        eternal="false" overflowToDisk="false" diskPersistent="false"
+        maxElementsInMemory="5" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
+    </cache>
+
+    <!--
+     | Caches aggregated group configuration
+     | - 1 x aggregator config
+     +-->
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.dao.jpa.AggregatedGroupConfigImpl"
+        eternal="false" overflowToDisk="false" diskPersistent="false"
+        maxElementsInMemory="1000" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
+    </cache>
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.dao.jpa.AggregatedGroupConfigImpl.Query"
+        eternal="false" overflowToDisk="false" diskPersistent="false"
+        maxElementsInMemory="1000" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
+    </cache>
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.dao.jpa.AggregatedGroupConfigImpl.includedGroups"
+        eternal="false" overflowToDisk="false" diskPersistent="false"
+        maxElementsInMemory="1000" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
+    </cache>
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.dao.jpa.AggregatedGroupConfigImpl.excludedGroups"
+        eternal="false" overflowToDisk="false" diskPersistent="false"
+        maxElementsInMemory="1000" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
+    </cache>
+
+    <!--
+     | Caches aggregated interval configuration
+     | - 1 x aggregator config
+     +-->
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.dao.jpa.AggregatedIntervalConfigImpl"
+        eternal="false" overflowToDisk="false" diskPersistent="false"
+        maxElementsInMemory="1000" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
+    </cache>
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.dao.jpa.AggregatedIntervalConfigImpl.includedIntervals"
+        eternal="false" overflowToDisk="false" diskPersistent="false"
+        maxElementsInMemory="1000" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
+    </cache>
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.dao.jpa.AggregatedIntervalConfigImpl.excludedIntervals"
+        eternal="false" overflowToDisk="false" diskPersistent="false"
+        maxElementsInMemory="1000" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
+    </cache>
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.dao.jpa.AggregatedIntervalConfigImpl.Query"
+        eternal="false" overflowToDisk="false" diskPersistent="false"
+        maxElementsInMemory="1000" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
+    </cache>
+
+    <!--
+     | Caches date dimensions used for aggregations
+     | - 1 x date in event range (plus 1 year to either side)
+     +-->
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.dao.jpa.DateDimensionImpl"
+        eternal="false" overflowToDisk="false" diskPersistent="false"
+        maxElementsInMemory="3660" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
+    </cache>
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.dao.jpa.DateDimensionImpl-NaturalId"
+        eternal="false" overflowToDisk="false" diskPersistent="false"
+        maxElementsInMemory="3660" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
+    </cache>
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.dao.jpa.DateDimensionImpl.Query"
+        eternal="false" overflowToDisk="false" diskPersistent="false"
+        maxElementsInMemory="3660" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
+    </cache>
+
+    <!--
+     | Caches time dimensions used for aggregations
+     | - 1 x minute in day
+     +-->
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.dao.jpa.TimeDimensionImpl"
+        eternal="false" overflowToDisk="false" diskPersistent="false"
+        maxElementsInMemory="1440" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
+    </cache>
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.dao.jpa.TimeDimensionImpl-NaturalId"
+        eternal="false" overflowToDisk="false" diskPersistent="false"
+        maxElementsInMemory="1440" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
+    </cache>
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.dao.jpa.TimeDimensionImpl.Query"
+        eternal="false" overflowToDisk="false" diskPersistent="false"
+        maxElementsInMemory="1440" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
+    </cache>
+
+    <!-- NOT CACHED: org.apereo.portal.events.aggr.dao.jpa.EventAggregatorStatusImpl -->
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.dao.jpa.EventAggregatorStatusImpl-NaturalId"
+        eternal="false" overflowToDisk="false" diskPersistent="false"
+        maxElementsInMemory="10" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
+    </cache>
+
+    <!--
+     | Caches mapping from uPortal group into long-term consistent event aggregate group, cache forever as this table
+     | is only ever added to and entries are immutable
+     | - 1 x portal group
+     +-->
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.groups.AggregatedGroupMappingImpl"
+        eternal="false" overflowToDisk="false" diskPersistent="false"
+        maxElementsInMemory="1000" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
+    </cache>
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.groups.AggregatedGroupMappingImpl-NaturalId"
+        eternal="false" overflowToDisk="false" diskPersistent="false"
+        maxElementsInMemory="1000" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
+    </cache>
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.groups.AggregatedGroupMappingImpl.Query"
+        eternal="false" overflowToDisk="false" diskPersistent="false"
+        maxElementsInMemory="1000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
+    </cache>
+
+    <!--
+     | Caches mapping from uPortal Portlet into long-term consistent event aggregate portlet, cache forever as this table
+     | is only ever added to and entries are immutable
+     | - 1 x portal portlet
+     +-->
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.portlets.AggregatedPortletMappingImpl"
+        eternal="false" overflowToDisk="false" diskPersistent="false"
+        maxElementsInMemory="1000" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
+    </cache>
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.portlets.AggregatedPortletMappingImpl-NaturalId"
+        eternal="false" overflowToDisk="false" diskPersistent="false"
+        maxElementsInMemory="1000" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
+    </cache>
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.portlets.AggregatedPortletMappingImpl.Query"
+        eternal="false" overflowToDisk="false" diskPersistent="false"
+        maxElementsInMemory="1000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
+    </cache>
+
+    <!--
+     | Caches mapping from uPortal Tab Name into long-term consistent event aggregate tab name, cache forever as this table
+     | is only ever added to and entries are immutable
+     | - 1 x portal tab
+     +-->
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.tabs.AggregatedTabMappingImpl"
+        eternal="false" overflowToDisk="false" diskPersistent="false"
+        maxElementsInMemory="500" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
+    </cache>
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.tabs.AggregatedTabMappingImpl-NaturalId"
+        eternal="false" overflowToDisk="false" diskPersistent="false"
+        maxElementsInMemory="500" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
+    </cache>
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.tabs.AggregatedTabMappingImpl.Query"
+        eternal="false" overflowToDisk="false" diskPersistent="false"
+        maxElementsInMemory="500" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
+    </cache>
+
+    <!--
+     | Caches unique string tracking data
+     | - 1 x aggregation that counts unique strings
+     +-->
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.UniqueStrings"
+        eternal="false" overflowToDisk="false" diskPersistent="false"
+        maxElementsInMemory="10000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
+    </cache>
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.UniqueStrings.uniqueStringSegments"
+        eternal="false" overflowToDisk="false" diskPersistent="false"
+        maxElementsInMemory="10000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
+    </cache>
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.UniqueStringsSegment"
+        eternal="false" overflowToDisk="false" diskPersistent="false"
+        maxElementsInMemory="100000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
+    </cache>
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.UniqueStringsSegment.uniqueStrings"
+        eternal="false" overflowToDisk="false" diskPersistent="false"
+        maxElementsInMemory="100000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
+    </cache>
+
+
+    <!--
+     | Caches login aggregations, primarily used during event aggregation
+     | - 1 x group x interval
+     +-->
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.login.LoginAggregationImpl"
+        eternal="false" overflowToDisk="false" diskPersistent="false"
+        maxElementsInMemory="5000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.login.LoginAggregationImpl-NaturalId"
+        eternal="false" overflowToDisk="false" diskPersistent="false"
+        maxElementsInMemory="5000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.login.LoginAggregationImpl.Query"
+        eternal="false" overflowToDisk="false" diskPersistent="false"
+        maxElementsInMemory="5000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+
+    <!--
+     | Caches concurrent user aggregations, primarily used during event aggregation
+     | - 1 x group x interval
+     +-->
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.concuser.ConcurrentUserAggregationImpl"
+        eternal="false" overflowToDisk="false" diskPersistent="false"
+        maxElementsInMemory="5000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.concuser.ConcurrentUserAggregationImpl-NaturalId"
+        eternal="false" overflowToDisk="false" diskPersistent="false"
+        maxElementsInMemory="5000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.concuser.ConcurrentUserAggregationImpl.Query"
+        eternal="false" overflowToDisk="false" diskPersistent="false"
+        maxElementsInMemory="5000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+
+    <!--
+     | Caches tab render aggregations, primarily used during event aggregation
+     | - 1 x tab x group x interval
+     +-->
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.tabrender.TabRenderAggregationImpl"
+        eternal="false" overflowToDisk="false" diskPersistent="false"
+        maxElementsInMemory="10000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.tabrender.TabRenderAggregationImpl-NaturalId"
+        eternal="false" overflowToDisk="false" diskPersistent="false"
+        maxElementsInMemory="10000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.tabrender.TabRenderAggregationImpl.Query"
+        eternal="false" overflowToDisk="false" diskPersistent="false"
+        maxElementsInMemory="10000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+
+    <!--
+     | Caches portlet execution aggregations, primarily used during event aggregation
+     | - 1 x portlet x request type x group x interval
+     +-->
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.portletexec.PortletExecutionAggregationImpl"
+        eternal="false" overflowToDisk="false" diskPersistent="false"
+        maxElementsInMemory="100000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.portletexec.PortletExecutionAggregationImpl-NaturalId"
+        eternal="false" overflowToDisk="false" diskPersistent="false"
+        maxElementsInMemory="100000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.portletexec.PortletExecutionAggregationImpl.Query"
+        eternal="false" overflowToDisk="false" diskPersistent="false"
+        maxElementsInMemory="100000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+
+    <!--
+     | Caches event session data, primarily used during aggregation
+     | - 1 x concurrent user event
+     +-->
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.session.EventSessionImpl"
+        eternal="false" overflowToDisk="false" diskPersistent="false"
+        maxElementsInMemory="100000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.session.EventSessionImpl-NaturalId"
+        eternal="false" overflowToDisk="false" diskPersistent="false"
+        maxElementsInMemory="100000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.session.EventSessionImpl.groupMappings"
+        eternal="false" overflowToDisk="false" diskPersistent="false"
+        maxElementsInMemory="100000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.session.EventSessionImpl.Query"
+        eternal="false" overflowToDisk="false" diskPersistent="false"
+        maxElementsInMemory="100000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+
+    <!-- ********************************************************** -->
+    <!-- ***************** Miscellaneous Caches ******************* -->
+    <!-- ********************************************************** -->
+
+    <!--
+     | Caches CAS Proxy-Granting Tickets (PGT) for CAS Clearpass support in a clustered uPortal environment, allowing
+     | a CAS server to make the Clearpass PGT callback to any uPortal server, not just the uPortal server that initiated
+     | the Clearpass PGT Request call to CAS.  Note that this cache data is replicated synchronously (really fired
+     | synchronously - you don't know when the nodes in the cluster actually process the replication) to lessen the
+     | chance that the uPortal node needing the PGT to request the user's password doesn't have it.  The PGT ticket
+     | needs to be retained until requested by the portal to provide to a portlet, then it is not needed anymore since
+     | the password is cached in the SecurityContext.
+     |
+     | Additional configuration steps needed:
+     | - https://wiki.jasig.org/display/CASC/Configuring+the+Jasig+CAS+Client+for+Java+in+the+web.xml,
+     |          section Replicating PGT using "proxyGrantingTicketStorageClass" and Distributed Caching
+     | - https://wiki.jasig.org/display/CASUM/uPortal+ClearPass+Extension
+     | - https://wiki.jasig.org/display/UPM40/Caching+and+Re-playing+Credentials
+     |
+     | For more information, see:
+     | - https://wiki.jasig.org/display/UPM40/Clustering
+     | - http://jasig.275507.n4.nabble.com/Re-uportal-dev-EhCache-and-jgroups-question-td4661918.html
+     |
+     | - 1 x user logins
+     | - CAS PGT replicated synchronously
+     +-->
+    <cache name="org.jasig.cas.client.proxy.EhcacheBackedProxyGrantingTicketStorageImpl.cache"
+           eternal="false" overflowToDisk="false" diskPersistent="false"
+           maxElementsInMemory="10000" timeToIdleSeconds="600" timeToLiveSeconds="0"
+           memoryStoreEvictionPolicy="LRU" statistics="true">
+        <!-- Uncomment when enabling CAS Clearpass in clustered environment
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.RMICacheReplicatorFactory"
+            properties="replicateAsynchronously=false,
+                replicatePuts=true,
+                replicateUpdates=true, replicateUpdatesViaCopy=true,
+                replicateRemovals=true "/>
+        -->
+    </cache>
+
+
+    <!-- Caches failures with skin manager less CSS compilations. -->
+    <cache name="org.apereo.portal.skinManager.failureCache"
+           eternal="false" overflowToDisk="false" diskPersistent="false"
+           maxElementsInMemory="100" timeToIdleSeconds="60" timeToLiveSeconds="60" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+
+    <!--
+     | A NOTE about caching for Groups+Permissions
+     | ===========================================
+     | The Apereo-provided settings in this area are based on the following assumptions:
+     |   - 1000 Portlets
+     |   - 500 PAGS groups
+     |   - 250 Non-PAGS groups
+     |   - 5 min TTL for portal objects in this area
+     |   - JGroups replication not required (updates within TTL are sufficient)
+     |   - 500 Users active (per web server) within the TTL
+     |   - 25% Additional cache capacity as a buffer
+     |
+     | If your portal contains more objects than this model, you may need to tune your caches accordingly.
+     +-->
+
+    <!--
+     | Stores objects of type IEntityGroup (concrete class EntityGroupImpl), which are
+     | the things emitted by this flavor of GaP (or any flavor) and used by the rest
+     | of the portal.  Historically, it was a big problem if multiple copies of the same
+     | logical group existed simultaneously in memory.  Due to recent changes, that
+     | shouldn't be a major issue (but it's still a good idea to cache them).  Not
+     | replicated.
+     |
+     | - 1 x PAGS groups in the portal
+     +-->
+    <cache name="org.apereo.portal.groups.pags.dao.EntityPersonAttributesGroupStore.entityGroup"
+           eternal="false" overflowToDisk="false" diskPersistent="false"
+           maxElementsInMemory="625" timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true">
+        <cacheEventListenerFactory class="org.apereo.portal.utils.cache.SpringCacheEventListenerFactory" properties="beanName=insufficientSizeCacheEventListener" listenFor="local" />
+    </cache>
+
+    <!--
+     | Stores objects of type PagsGroup, which are used to test users' attributes for
+     | membership.  (It may make sense to refactor this class out of the picture when
+     | we have an opportunity.)  Not replicated.
+     |
+     | - 1 x PAGS groups in the portal
+     +-->
+    <cache name="org.apereo.portal.groups.pags.dao.EntityPersonAttributesGroupStore.pagsGroup"
+           eternal="false" overflowToDisk="false" diskPersistent="false"
+           maxElementsInMemory="625" timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true">
+        <cacheEventListenerFactory class="org.apereo.portal.utils.cache.SpringCacheEventListenerFactory" properties="beanName=insufficientSizeCacheEventListener" listenFor="local" />
+    </cache>
+
+    <!--
+     | Remembers membership decisions calculated by EntityPersonAttributesGroupStore
+     |
+     | - Roughly 1 x PAGS groups in the portal x concurrent users since TTL
+     +-->
+    <cache name="org.apereo.portal.groups.pags.dao.EntityPersonAttributesGroupStore.membership"
+           eternal="false" overflowToDisk="false" diskPersistent="false"
+           maxElementsInMemory="312500" timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true">
+        <searchable>
+            <searchAttribute name="memberId" class="org.apereo.portal.groups.pags.dao.EhcacheMemberIdAttributeExtractor"/>
+        </searchable>
+    </cache>
+
+    <!--
+     | Stores objects of type PagsGroup, which are the Hibernate/JPA-managed
+     | representations of PAGS groups.  Not replicated.
+     |
+     | - 1 x PAGS groups in the portal
+     +-->
+    <cache name="org.apereo.portal.groups.pags.dao.jpa.PersonAttributesGroupDefinitionImpl"
+           eternal="false" overflowToDisk="false" diskPersistent="false"
+           maxElementsInMemory="625" timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" />
+
+    <cache name="org.apereo.portal.groups.pags.dao.jpa.PersonAttributesGroupDefinitionImpl.Query"
+           eternal="false" overflowToDisk="false" diskPersistent="false"
+           maxElementsInMemory="625" timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" />
+
+    <!--
+     | Stores a collection of child groups for each PAGS group.  Not replicated.
+     |
+     | - 1 x PAGS groups in the portal
+     +-->
+    <cache name="org.apereo.portal.groups.pags.dao.jpa.PersonAttributesGroupDefinitionImpl.members"
+           eternal="false" overflowToDisk="false" diskPersistent="false"
+           maxElementsInMemory="625" timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" />
+
+    <!--
+     | Stores a collection of the Test Group objects that are children of PAGS groups.  Not replicated.
+     |
+     | - Roughly 1 x PAGS groups in the portal, though perhaps a bit more
+     +-->
+    <cache name="org.apereo.portal.groups.pags.dao.jpa.PersonAttributesGroupDefinitionImpl.testGroups"
+           eternal="false" overflowToDisk="false" diskPersistent="false"
+           maxElementsInMemory="1000" timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" />
+
+    <!--
+     | Stores the Test Definition objects that are children of Test Groups.  Not replicated.
+     |
+     | - Roughly 1 x PAGS groups in the portal, though perhaps a bit more
+     +-->
+    <cache name="org.apereo.portal.groups.pags.dao.jpa.PersonAttributesGroupTestDefinitionImpl"
+           eternal="false" overflowToDisk="false" diskPersistent="false"
+           maxElementsInMemory="1000" timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" />
+
+    <!--
+     | Stores the Test Group objects that are children of PAGS groups.  Not replicated.
+     |
+     | - Roughly 1 x PAGS groups in the portal, though perhaps a bit more
+     +-->
+    <cache name="org.apereo.portal.groups.pags.dao.jpa.PersonAttributesGroupTestGroupDefinitionImpl"
+           eternal="false" overflowToDisk="false" diskPersistent="false"
+           maxElementsInMemory="1000" timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" />
+
+    <!--
+     | Stores a collection of the Test objects that are children of Test Groups.  Not replicated.
+     |
+     | - Roughly 1 x PAGS groups in the portal, though perhaps a bit more
+     +-->
+    <cache name="org.apereo.portal.groups.pags.dao.jpa.PersonAttributesGroupTestGroupDefinitionImpl.tests"
+           eternal="false" overflowToDisk="false" diskPersistent="false"
+           maxElementsInMemory="1000" timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" />
+
+    <!--
+     | Caches hash strings representing thread calls into the AdHocGroupTester test() method. This is part
+     | of the check for recursion. Leveraging TTL to handle any strings that become orphaned due to exceptions, etc.
+     | - 1 x thread x ad hoc test
+     -->
+    <cache name="org.apereo.portal.groups.pags.testers.AdHocGroupTester"
+           eternal="false" overflowToDisk="false" diskPersistent="false"
+           maxElementsInMemory="1000" timeToIdleSeconds="0" timeToLiveSeconds="60" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+
+    <!-- ****************************************************************** -->
+    <!-- ******************** uPortal Portlet Caches ******************** -->
+    <!-- ****************************************************************** -->
+
+    <!--
+     | Default cache for query results from SqlQueryPortletController. May be per-user (configurable with portlet
+     | preferences).  If using multiple SqlQueryPortlet instances, though not required, you typically would create
+     | a separate cache for each instance to reduce filling the cache and to adjust timeToLive.
+     | - 1 x expression used in the portal
+     | - not replicated
+     +-->
+    <cache name="org.apereo.portal.portlets.sqlquery.SqlQueryPortletController.queryResults"
+           eternal="false" maxElementsInMemory="2000" overflowToDisk="false" diskPersistent="false"
+           timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" />
+
+    <!--
+     | Caches out output of remote soffits;  timeToLiveSeconds will be set on
+     | each Element according to the cache-control header send by the remote soffit.
+     | - 1 x unique combination of (soffit+mode+windowState) [x user for private scope]
+     | - not replicated
+     +-->
+    <cache name="org.apereo.portlet.soffit.connector.SoffitConnectorController.RESPONSE_CACHE"
+        eternal="false" maxElementsInMemory="2000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+
+</ehcache>

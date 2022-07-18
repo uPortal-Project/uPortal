@@ -53,10 +53,10 @@ import org.apereo.portal.utils.cache.CacheKey;
 import org.apereo.portal.xml.XmlUtilities;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
-import org.mockito.Matchers;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -83,10 +83,10 @@ public class StAXSerializingComponentTest {
 
         final IPortletWindow portletWindow = mock(IPortletWindow.class);
         when(portletWindowRegistry.getPortletWindow(
-                        Matchers.eq(request), Matchers.any(StartElement.class)))
+                        ArgumentMatchers.eq(request), ArgumentMatchers.any(StartElement.class)))
                 .thenReturn(new Tuple<IPortletWindow, StartElement>(portletWindow, null));
         when(portletWindowRegistry.getOrCreateDefaultPortletWindowByLayoutNodeId(
-                        Matchers.eq(request), Matchers.anyString()))
+                        ArgumentMatchers.eq(request), ArgumentMatchers.anyString()))
                 .thenReturn(portletWindow);
 
         final PortletContentPlaceholderEventSource contentPlaceholderEventSource =

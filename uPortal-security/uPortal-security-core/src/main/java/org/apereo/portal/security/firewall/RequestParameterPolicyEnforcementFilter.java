@@ -30,7 +30,7 @@ import javax.servlet.http.HttpServletRequest;
  * do not meet configured rules.
  *
  * <p>This is a fork of the Filter offered at
- * https://github.com/Jasig/cas-server-security-filter/pull/6 .
+ * https://github.com/apereo/cas-server-security-filter/pull/6 .
  *
  * <p>This is forked into the uPortal project source code directly so that it can be used to patch
  * the uPortal usage of the Java CAS Client against CVE-2014-4172 without requiring upgrade of the

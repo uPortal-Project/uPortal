@@ -1,15 +1,15 @@
 RequestParameterPolicyEnforcementFilter
 =======================================
 
-The `RequestParameterPolicyEnforcementFilter` is a blunt generic Java Servlet Filter suitable for 
+The `RequestParameterPolicyEnforcementFilter` is a blunt generic Java Servlet Filter suitable for
 
  * in general, blocking malicious requests involving unexpectedly duplicate request parameters or request parameters with unexpected and poorly handled characters in their values.
- * in specific, blocking the malicious requests involved in `CVE-2014-4172`, to which certain Java CAS Client versions 
+ * in specific, blocking the malicious requests involved in `CVE-2014-4172`, to which certain Java CAS Client versions
 are vulnerable, including Java CAS Client versions that have been included in uPortal releases.
 
-It is a fork of that offered to the `cas-server-security-filter` project at https://github.com/Jasig/cas-server-security-filter/pull/6 .
+It is a fork of that offered to the `cas-server-security-filter` project at https://github.com/apereo/cas-server-security-filter/pull/6 .
 
-It is optionally configurable as to what parameters it checks, what characters it forbids in those checked parameters, 
+It is optionally configurable as to what parameters it checks, what characters it forbids in those checked parameters,
 and whether it allows those checked parameters to be multi-valued.
 
 It has no dependencies.
@@ -31,24 +31,24 @@ In general the Filter is very persnickety about init-params, such that if you gi
 ### parametersToCheck init-param
 
 
-The _optional_ init-param `parametersToCheck` is a whitespace-delimited set of the names of request parameters the 
+The _optional_ init-param `parametersToCheck` is a whitespace-delimited set of the names of request parameters the
 Filter will check.
 
 The special value `*` instructs the Filter to check all parameters, and is the default behavior.
 
 ### charactersToForbid init-param
 
-The _optional_ init-param `charactersToForbid` is a whitespace-delimited set of the individual characters the Filter 
+The _optional_ init-param `charactersToForbid` is a whitespace-delimited set of the individual characters the Filter
 will forbid.
 
-The special magic value of exactly `none` instructs the Filter not to forbid any characters. (This is useful for 
+The special magic value of exactly `none` instructs the Filter not to forbid any characters. (This is useful for
 using the Filter to block multi-valued-ness of parameters without sniffing on any characters.)
 
 If not present, the Filter will default to forbidding the characters `? # & %` .
 
 ### allowMultiValuedParameters init-param
 
-The _optional_ init-param `allowMultiValuedParameters` indicates whether the Filter should allow multi-valued 
+The _optional_ init-param `allowMultiValuedParameters` indicates whether the Filter should allow multi-valued
 parameters.
 
 If present the value of this parameter must be exactly `true` or `false`, with `false` as the default.
@@ -61,9 +61,9 @@ Configuration Examples
 ### The recommended and included configuration
 
 This filter is wired up in the included `web.xml` to block illicit characters in values of and multiple values of the
- request parameters involved in using the Java CAS Client, since these characters should not be in CAS ticket 
+ request parameters involved in using the Java CAS Client, since these characters should not be in CAS ticket
  identifiers and there is no legitimate use case for submission of CAS protocol parameters as multi-valued.
- 
+
      <filter>
        <filter-name>requestParameterFilter</filter-name>
        <filter-class>org.apereo.portal.security.firewall.RequestParameterPolicyEnforcementFilter</filter-class>
@@ -72,7 +72,7 @@ This filter is wired up in the included `web.xml` to block illicit characters in
         <param-value>ticket SAMLArt pgtIou pgtId</param-value>
       </init-param>
      </filter>
-     
+
      ...
 
     <filter-mapping>
@@ -102,10 +102,10 @@ This configuration is not appropriate in uPortal, where multi-valued parameters 
 
 ### Allow multi-valued parameters
 
-Multi-valued parameters are essential for supporting forms with multi-choice selectors where the form submission is 
+Multi-valued parameters are essential for supporting forms with multi-choice selectors where the form submission is
 legitimately represented as repeated parameter names with different values.
 
-So, if you want to scrutinize the characters in all parameters, you might have to relax the requirement that those 
+So, if you want to scrutinize the characters in all parameters, you might have to relax the requirement that those
 parameters not be multi-valued.
 
     <filter>
@@ -121,13 +121,13 @@ parameters not be multi-valued.
       <filter-name>requestParameterFilter</filter-name>
       <url-pattern>/*</url-pattern>
     </filter-mapping>
-    
+
 This configuration isn't necessary in the included `web.xml` configuration because the CAS protocol parameters do not need to be multi-valued.
 
 
 ### Restrictions suitable for fronting a CAS Server
 
-Likewise, you could use this Filter in front of a CAS Server to prevent unexpected multi-valued submissions of CAS 
+Likewise, you could use this Filter in front of a CAS Server to prevent unexpected multi-valued submissions of CAS
 protocol parameters.
 
     <filter>
@@ -147,16 +147,16 @@ protocol parameters.
       <filter-name>requestParameterFilter</filter-name>
       <url-pattern>/*</url-pattern>
     </filter-mapping>
-    
-This approach has the advantage of only blocking specific CAS protocol parameters, 
-so that if you were to map the Filter in front of say the services management UI you can block unexpectedly 
-multi-valued CAS protocol parameters without blocking submission of the services management edit screen where 
+
+This approach has the advantage of only blocking specific CAS protocol parameters,
+so that if you were to map the Filter in front of say the services management UI you can block unexpectedly
+multi-valued CAS protocol parameters without blocking submission of the services management edit screen where
 multiple user attributes are selected for release to a service (a legitimate case of a multi-valued attribute).
 
 ### An entirely novel configuration
 
 So, a neat thing about this Filter is that it has nothing to do with CAS and it has no dependencies at all other than the Servlet API, so on that fateful day when you discover that some Java web application has some problem involving illicit submissions of the semicolon character in a request parameter named `query`, you can plop this Filter in front of it and get back to safety.  Doing so will almost certainly just work, since this Filter has no external dependencies whatsoever except on the Servlet API that had to be present for that Web Application to be a Java web app anyway.
- 
+
 
      <filter>
        <filter-name>requestParameterFilter</filter-name>

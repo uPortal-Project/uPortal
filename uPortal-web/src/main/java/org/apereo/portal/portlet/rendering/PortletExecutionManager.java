@@ -51,7 +51,9 @@ import org.apereo.portal.portlet.rendering.worker.IPortletFailureExecutionWorker
 import org.apereo.portal.portlet.rendering.worker.IPortletRenderExecutionWorker;
 import org.apereo.portal.portlet.rendering.worker.IPortletWorkerFactory;
 import org.apereo.portal.portlets.error.MaintenanceModeException;
+import org.apereo.portal.security.IPersonManager;
 import org.apereo.portal.utils.ConcurrentMapUtils;
+import org.apereo.portal.utils.personalize.IPersonalizer;
 import org.apereo.portal.utils.web.PortalWebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -114,6 +116,8 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
     private int extendedTimeoutExecutions = 5;
     private long extendedTimeoutMultiplier = 20;
     private int maxEventIterations = 100;
+    private IPersonalizer personalizer;
+    private IPersonManager personManager;
     private IPortletWindowRegistry portletWindowRegistry;
     private IPortletEventCoordinationService eventCoordinationService;
     private IPortletWorkerFactory portletWorkerFactory;
@@ -179,6 +183,16 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
         }
 
         return counts;
+    }
+
+    @Autowired
+    public void setPersonalizer(IPersonalizer personalizer) {
+        this.personalizer = personalizer;
+    }
+
+    @Autowired
+    public void setPersonManager(IPersonManager personManager) {
+        this.personManager = personManager;
     }
 
     @Autowired
@@ -672,7 +686,11 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
         final long timeout = getPortletRenderTimeout(portletWindowId, request);
 
         try {
-            final String output = tracker.getOutput(timeout);
+            final String output =
+                    this.personalizer.personalize(
+                            this.personManager.getPerson(request),
+                            tracker.getOutput(timeout),
+                            request.getSession());
             return output == null ? "" : output;
         } catch (Exception e) {
             final IPortletFailureExecutionWorker failureWorker =
@@ -701,15 +719,15 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
         final IPortletDefinitionParameter disableDynamicTitle =
                 portletDefinition.getParameter("disableDynamicTitle");
 
+        String titleToReturn = null;
+
         if (disableDynamicTitle == null || !Boolean.parseBoolean(disableDynamicTitle.getValue())) {
             try {
                 final PortletRenderResult portletRenderResult =
                         getPortletRenderResult(portletWindowId, request, response);
+
                 if (portletRenderResult != null) {
-                    final String title = portletRenderResult.getTitle();
-                    if (title != null) {
-                        return title;
-                    }
+                    titleToReturn = portletRenderResult.getTitle();
                 }
             } catch (Exception e) {
                 logger.warn(
@@ -718,11 +736,19 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
             }
         }
 
-        // we assume that response locale has been set to correct value
-        String locale = response.getLocale().toString();
+        if (titleToReturn == null) {
+            // we assume that response locale has been set to correct value
+            String locale = response.getLocale().toString();
+            titleToReturn = portletDefinition.getTitle(locale);
+        }
+
+        // Personalize the title
+        titleToReturn =
+                this.personalizer.personalize(
+                        this.personManager.getPerson(request), titleToReturn, request.getSession());
 
         // return portlet title from channel definition
-        return portletDefinition.getTitle(locale);
+        return titleToReturn;
     }
 
     @Override

@@ -85,7 +85,7 @@ public class RenderingPipelineBranchPointTest {
         boolean outcome = renderingPipelineBranchPoint.renderStateIfApplicable(request, response);
 
         assertFalse("Expected outcome == true", outcome);
-        verifyZeroInteractions(alternatePipe);
+        verifyNoMoreInteractions(alternatePipe);
     }
 
     /** Test that RenderingPipelineBranchPoint has a friendly toString() implementation. */

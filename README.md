@@ -20,35 +20,35 @@
         </tr>
         <tr>
           <td>
-            <a href="https://github.com/Jasig/uPortal/tree/master">
+            <a href="https://github.com/uPortal-Project/uPortal/tree/master">
               uPortal 5
             </a>
           </td>
           <td>
-            <a href="https://github.com/Jasig/uPortal/actions?query=branch%3Amaster">
-              <img src="https://github.com/Jasig/uPortal/workflows/CI/badge.svg?branch=master" alt="Linux Build Status">
+            <a href="https://github.com/uPortal-Project/uPortal/actions?query=branch%3Amaster">
+              <img src="https://github.com/uPortal-Project/uPortal/workflows/CI/badge.svg?branch=master" alt="Linux Build Status">
             </a>
           </td>
           <td>
-            <a href="https://github.com/Jasig/uPortal/actions?query=branch%3Amaster">
-              <img src="https://github.com/Jasig/uPortal/workflows/CI/badge.svg?branch=master" alt="Windows Build Status">
+            <a href="https://github.com/uPortal-Project/uPortal/actions?query=branch%3Amaster">
+              <img src="https://github.com/uPortal-Project/uPortal/workflows/CI/badge.svg?branch=master" alt="Windows Build Status">
             </a>
           </td>
           <td>
-            <a href="https://coveralls.io/github/Jasig/uPortal?branch=master">
-              <img src="https://coveralls.io/repos/github/Jasig/uPortal/badge.svg?branch=master" alt="Coverage Status">
+            <a href="https://coveralls.io/github/uPortal-Project/uPortal?branch=master">
+              <img src="https://coveralls.io/repos/github/uPortal-Project/uPortal/badge.svg?branch=master" alt="Coverage Status">
             </a>
           </td>
         </tr>
         <tr>
           <td>
-            <a href="https://github.com/Jasig/uPortal/tree/rel-4-3-patches">
+            <a href="https://github.com/uPortal-Project/uPortal/tree/rel-4-3-patches">
               uPortal 4.3
             </a>
           </td>
           <td>
-            <a href="https://travis-ci.org/Jasig/uPortal">
-              <img src="https://travis-ci.org/Jasig/uPortal.svg?branch=rel-4-3-patches" alt="Linux Build Status">
+            <a href="https://travis-ci.org/uPortal-Project/uPortal">
+              <img src="https://travis-ci.org/uPortal-Project/uPortal.svg?branch=rel-4-3-patches" alt="Linux Build Status">
             </a>
           </td>
           <td>
@@ -57,8 +57,8 @@
             </a>
           </td>
           <td>
-            <a href="https://coveralls.io/github/Jasig/uPortal?branch=rel-4-3-patches">
-              <img src="https://coveralls.io/repos/github/Jasig/uPortal/badge.svg?branch=rel-4-3-patches" alt="Coverage Status">
+            <a href="https://coveralls.io/github/uPortal-Project/uPortal?branch=rel-4-3-patches">
+              <img src="https://coveralls.io/repos/github/uPortal-Project/uPortal/badge.svg?branch=rel-4-3-patches" alt="Coverage Status">
             </a>
           </td>
         </tr>
@@ -130,12 +130,12 @@ specific local needs.
 
 ### Forever Free!
 
-You may [download uPortal](https://github.com/Jasig/uPortal/releases) and use it
+You may [download uPortal](https://github.com/uPortal-Project/uPortal/releases) and use it
 on your site at no cost. Unlike our competitors, uPortal is 100% free open
 source software managed by [Apereo](https://www.apereo.org/content/about). Our
 community has access to all releases of the uPortal software with absolutely no
 costs. We welcome
-[contributions from our community](https://github.com/Jasig/uPortal/graphs/contributors)
+[contributions from our community](https://github.com/uPortal-Project/uPortal/graphs/contributors)
 of all types and sizes.
 
 ### Accessible
@@ -158,12 +158,16 @@ detailed documentation for each uPortal release.
 
 Additional information about uPortal is available in the Manual.
 
--   [uPortal 5.5 Manual][latest uportal manual]
--   [uPortal 5.4 Manual](https://github.com/Jasig/uPortal/tree/v5.4.1/docs)
--   [uPortal 5.3 Manual](https://github.com/Jasig/uPortal/tree/v5.3.2/docs)
--   [uPortal 5.2 Manual](https://github.com/Jasig/uPortal/tree/v5.2.3/docs)
--   [uPortal 5.1 Manual](https://github.com/Jasig/uPortal/tree/v5.1.2/docs)
--   [uPortal 5.0 Manual](https://github.com/Jasig/uPortal/tree/v5.0.7/docs)
+-   [uPortal 5.9 Manual][latest uportal manual]
+-   [uPortal 5.8 Manual](https://github.com/uPortal-Project/uPortal/tree/v5.8.2/docs)
+-   [uPortal 5.7 Manual](https://github.com/uPortal-Project/uPortal/tree/v5.7.1/docs)
+-   [uPortal 5.6 Manual](https://github.com/uPortal-Project/uPortal/tree/v5.6.1/docs)
+-   [uPortal 5.5 Manual](https://github.com/uPortal-Project/uPortal/tree/v5.5.1/docs)
+-   [uPortal 5.4 Manual](https://github.com/uPortal-Project/uPortal/tree/v5.4.1/docs)
+-   [uPortal 5.3 Manual](https://github.com/uPortal-Project/uPortal/tree/v5.3.2/docs)
+-   [uPortal 5.2 Manual](https://github.com/uPortal-Project/uPortal/tree/v5.2.3/docs)
+-   [uPortal 5.1 Manual](https://github.com/uPortal-Project/uPortal/tree/v5.1.2/docs)
+-   [uPortal 5.0 Manual](https://github.com/uPortal-Project/uPortal/tree/v5.0.7/docs)
 -   [uPortal 4.3 Manual](https://wiki.jasig.org/display/UPM43/Home)
 -   [uPortal 4.2 Manual](https://wiki.jasig.org/display/UPM42/Home)
 -   [uPortal 4.1 Manual](https://wiki.jasig.org/display/UPM41/Home)
@@ -196,5 +200,5 @@ comes with a Gradle wrapper if you don't want to install the build tool
 
 For a full list of Gradle tasks run `./gradlew tasks` from the root directory.
 
-[latest uportal manual]: https://jasig.github.io/uPortal
-[uportal-start]: https://github.com/Jasig/uPortal-start
+[latest uportal manual]: https://uportal-project.github.io/uPortal
+[uportal-start]: https://github.com/uPortal-Project/uPortal-start
