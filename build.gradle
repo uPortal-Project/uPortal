@@ -182,8 +182,8 @@ subprojects {
 
                     developers {
                         developer {
-                            organization 'uPortal Developers'
-                            organizationUrl 'https://github.com/uPortal-Project/uPortal/graphs/contributors'
+                            organization = 'uPortal Developers'
+                            organizationUrl = 'https://github.com/uPortal-Project/uPortal/graphs/contributors'
                         }
                     }
                 }
