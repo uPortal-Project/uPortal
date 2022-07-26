@@ -156,6 +156,7 @@ public class LayoutRESTController {
         if (alternativeMaximizedLink != null) {
             portlet.setUrl(alternativeMaximizedLink);
             portlet.setAltMaxUrl(true);
+            portlet.setTarget(def.getAlternativeMaximizedLinkTarget());
         } else {
             // get the maximized URL for this portlet
             final IPortalUrlBuilder portalUrlBuilder =

@@ -495,6 +495,11 @@ public class PortletDefinitionBeanTest {
         }
 
         @Override
+        public String getAlternativeMaximizedLinkTarget() {
+            return null;
+        }
+
+        @Override
         public String getTarget() {
             return null;
         }

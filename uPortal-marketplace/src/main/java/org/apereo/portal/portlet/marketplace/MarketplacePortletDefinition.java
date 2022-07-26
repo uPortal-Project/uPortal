@@ -553,6 +553,11 @@ public class MarketplacePortletDefinition implements IPortletDefinition {
     }
 
     @Override
+    public String getAlternativeMaximizedLinkTarget() {
+        return this.portletDefinition.getAlternativeMaximizedLinkTarget();
+    }
+
+    @Override
     public void setFName(String fname) {
         this.portletDefinition.setFName(fname);
     }

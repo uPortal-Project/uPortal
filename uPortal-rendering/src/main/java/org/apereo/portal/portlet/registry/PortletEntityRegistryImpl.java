@@ -966,6 +966,11 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
                 }
 
                 @Override
+                public String getAlternativeMaximizedLinkTarget() {
+                    return null;
+                }
+
+                @Override
                 public String getTitle() {
                     return null;
                 }

@@ -508,6 +508,23 @@ public class PortletDefinitionImpl implements IPortletDefinition {
     }
 
     @Override
+    public String getAlternativeMaximizedLinkTarget() {
+        final IPortletDefinitionParameter alternativeMaximizedLinkTargetParameter =
+                getParameter(ALT_MAX_LINK_TARGET_PARAM);
+
+        if (null != alternativeMaximizedLinkTargetParameter) {
+            final String alternativeMaximizedLinkTarget =
+                    alternativeMaximizedLinkTargetParameter.getValue();
+
+            if (StringUtils.hasText(alternativeMaximizedLinkTarget)) {
+                return alternativeMaximizedLinkTarget;
+            }
+        }
+
+        return null;
+    }
+
+    @Override
     public String getTarget() {
         final IPortletDefinitionParameter targetParameter = getParameter(TARGET_PARAM);
 
