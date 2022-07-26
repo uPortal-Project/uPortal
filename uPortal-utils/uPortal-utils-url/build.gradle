@@ -1,0 +1,11 @@
+description = "Apereo uPortal Utilities Url"
+
+dependencies {
+    compile "org.slf4j:slf4j-api:${slf4jVersion}"
+    compile "org.springframework:spring-beans:${springVersion}"
+    compile "org.springframework:spring-core:${springVersion}"
+
+    compileOnly "org.apache.portals.pluto:pluto-container:${plutoVersion}"
+    compileOnly "${portletApiDependency}"
+    compileOnly "${servletApiDependency}"
+}

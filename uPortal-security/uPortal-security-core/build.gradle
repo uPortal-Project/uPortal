@@ -5,6 +5,7 @@ dependencies {
     compile project(':uPortal-groups:uPortal-groups-core')
     compile project(':uPortal-i18n')
     compile project(':uPortal-soffit:uPortal-soffit-core')
+    compile project(':uPortal-utils:uPortal-utils-url')
 
     compile "io.jsonwebtoken:jjwt-api:${jjwtVersion}"
     runtime "io.jsonwebtoken:jjwt-impl:${jjwtVersion}",

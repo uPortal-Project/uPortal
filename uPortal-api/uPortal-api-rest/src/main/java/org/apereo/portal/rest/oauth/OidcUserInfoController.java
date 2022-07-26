@@ -99,7 +99,7 @@ public class OidcUserInfoController {
             @RequestParam(value = "groups", required = false) String groups) {
 
         final IPerson person = personManager.getPerson(request);
-        return createToken(person, claims, groups);
+        return createToken(request, person, claims, groups);
     }
 
     /**
@@ -124,7 +124,8 @@ public class OidcUserInfoController {
                     String grantType,
             @RequestParam(value = "scope", required = false, defaultValue = "/all") String scope,
             @RequestParam(value = "claims", required = false) String claims,
-            @RequestParam(value = "groups", required = false) String groups) {
+            @RequestParam(value = "groups", required = false) String groups,
+            HttpServletRequest request) {
 
         /*
          * NB:  Several of this method's parameters are not consumed (yet) in any way.  They are
@@ -177,7 +178,7 @@ public class OidcUserInfoController {
                 oAuthClient.getClientId());
 
         // STEP 4:  build a standard OAuth2 access token response
-        final String token = createToken(person, claims, groups);
+        final String token = createToken(request, person, claims, groups);
         final Map<String, Object> rslt = new HashMap<>();
         rslt.put("access_token", token);
         rslt.put("token_type", "bearer");
@@ -194,7 +195,8 @@ public class OidcUserInfoController {
         return ResponseEntity.ok(rslt);
     }
 
-    private String createToken(IPerson person, String claims, String groups) {
+    private String createToken(
+            HttpServletRequest request, IPerson person, String claims, String groups) {
 
         Set<String> claimsToInclude = null;
         if (claims != null) {
@@ -209,6 +211,6 @@ public class OidcUserInfoController {
         }
 
         return idTokenFactory.createUserInfo(
-                person.getUserName(), claimsToInclude, groupsToInclude);
+                request, person.getUserName(), claimsToInclude, groupsToInclude);
     }
 }
