@@ -130,6 +130,12 @@
                             portletTitle.textContent = _.unescape(portlet.name);
                             var portletLink = portletListItem.querySelector('a');
                             portletLink.href = '${portalContextPath}/f/' + tab.externalId + '/p/' + portlet.fname + '.' + portlet.ID + '/max/render.uP';
+                            if (portlet.parameters && portlet.parameters.alternativeMaximizedLink) {
+                              portletLink.href = portlet.parameters.alternativeMaximizedLink
+                              if (portlet.parameters.alternativeMaximizedLinkTarget) {
+                                portletLink.target = portlet.parameters.alternativeMaximizedLinkTarget;
+                              }
+                            }
                             // Add portlet to tab list
                             portletList.appendChild(portletListItem);
                         });
