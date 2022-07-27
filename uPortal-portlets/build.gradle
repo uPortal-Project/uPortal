@@ -6,6 +6,11 @@ dependencies {
     compile project(':uPortal-web')
 
     compile "com.amazonaws:aws-java-sdk-s3:${awsVersion}"
+//    constraints {
+//        implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:${jacksonVersion}") {
+//            because 'previous versions have security problems'
+//        }
+//    }
     compile "javax.mail:mail:${javaxMailVersion}"
     compile("net.sf.json-lib:json-lib-ext-spring:${jsonLibExtSpringVersion}") {
         exclude group: 'javax.servlet', module: 'servlet-api'
