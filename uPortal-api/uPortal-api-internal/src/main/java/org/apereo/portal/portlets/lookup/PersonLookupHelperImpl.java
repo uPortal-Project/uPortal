@@ -41,6 +41,7 @@ import org.apereo.portal.security.IPermission;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.services.AuthorizationServiceFacade;
 import org.apereo.services.persondir.IPersonAttributeDao;
+import org.apereo.services.persondir.IPersonAttributeDaoFilter;
 import org.apereo.services.persondir.IPersonAttributes;
 import org.apereo.services.persondir.support.NamedPersonImpl;
 import org.slf4j.Logger;
@@ -128,7 +129,8 @@ public class PersonLookupHelperImpl implements IPersonLookupHelper {
         // Otherwise provide all available attributes from the IPersonAttributeDao
         else {
             final Set<String> availableAttributes =
-                    this.personAttributeDao.getAvailableQueryAttributes();
+                    this.personAttributeDao.getAvailableQueryAttributes(
+                            IPersonAttributeDaoFilter.alwaysChoose());
             queryAttributes = new TreeSet<>(availableAttributes);
         }
 
@@ -164,7 +166,10 @@ public class PersonLookupHelperImpl implements IPersonLookupHelper {
         }
         // Otherwise provide all available attributes from the IPersonAttributes
         else {
-            displayAttributes = new TreeSet<>(personAttributeDao.getPossibleUserAttributeNames());
+            displayAttributes =
+                    new TreeSet<>(
+                            personAttributeDao.getPossibleUserAttributeNames(
+                                    IPersonAttributeDaoFilter.alwaysChoose()));
         }
 
         // Remove any excluded attributes
@@ -186,7 +191,8 @@ public class PersonLookupHelperImpl implements IPersonLookupHelper {
         final PortletRequest portletRequest = (PortletRequest) externalContext.getNativeRequest();
         final String username = portletRequest.getRemoteUser();
 
-        return this.personAttributeDao.getPerson(username);
+        return this.personAttributeDao.getPerson(
+                username, IPersonAttributeDaoFilter.alwaysChoose());
     }
 
     /* (non-Javadoc)
@@ -226,7 +232,9 @@ public class PersonLookupHelperImpl implements IPersonLookupHelper {
         }
 
         // get the set of people matching the search query
-        final Set<IPersonAttributes> people = this.personAttributeDao.getPeople(inUseQuery);
+        final Set<IPersonAttributes> people =
+                this.personAttributeDao.getPeople(
+                        inUseQuery, IPersonAttributeDaoFilter.alwaysChoose());
         if (people == null) {
             return Collections.emptyList();
         }
@@ -389,7 +397,9 @@ public class PersonLookupHelperImpl implements IPersonLookupHelper {
         final Set<String> permittedAttributes = getPermittedAttributes(principal);
 
         // get the set of people matching the search query
-        final IPersonAttributes person = this.personAttributeDao.getPerson(username);
+        final IPersonAttributes person =
+                this.personAttributeDao.getPerson(
+                        username, IPersonAttributeDaoFilter.alwaysChoose());
 
         if (person == null) {
             logger.info("No user found with username matching " + username);
@@ -421,7 +431,9 @@ public class PersonLookupHelperImpl implements IPersonLookupHelper {
      * @return
      */
     protected Set<String> getPermittedAttributes(final IAuthorizationPrincipal principal) {
-        final Set<String> attributeNames = personAttributeDao.getPossibleUserAttributeNames();
+        final Set<String> attributeNames =
+                personAttributeDao.getPossibleUserAttributeNames(
+                        IPersonAttributeDaoFilter.alwaysChoose());
         return getPermittedAttributes(principal, attributeNames);
     }
 
@@ -464,7 +476,9 @@ public class PersonLookupHelperImpl implements IPersonLookupHelper {
         // The permttedOwnAttributes collection includes all the generallyPermittedAttributes
         final Set<String> rslt = new HashSet<>(generallyPermittedAttributes);
 
-        for (String attr : personAttributeDao.getPossibleUserAttributeNames()) {
+        for (String attr :
+                personAttributeDao.getPossibleUserAttributeNames(
+                        IPersonAttributeDaoFilter.alwaysChoose())) {
             if (principal.hasPermission(
                     IPermission.PORTAL_USERS, IPermission.VIEW_OWN_USER_ATTRIBUTE_ACTIVITY, attr)) {
                 rslt.add(attr);

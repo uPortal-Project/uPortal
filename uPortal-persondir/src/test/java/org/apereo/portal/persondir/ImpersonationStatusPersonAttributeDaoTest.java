@@ -28,6 +28,7 @@ import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.IPersonManager;
 import org.apereo.portal.security.IdentitySwapperManager;
 import org.apereo.portal.url.IPortalRequestUtils;
+import org.apereo.services.persondir.IPersonAttributeDaoFilter;
 import org.apereo.services.persondir.IPersonAttributes;
 import org.apereo.services.persondir.support.IUsernameAttributeProvider;
 import org.junit.Before;
@@ -75,7 +76,8 @@ public class ImpersonationStatusPersonAttributeDaoTest {
     @Test
     public void testGetAvailableQueryAttributes() {
         Set<String> attributes =
-                impersonationStatusPersonAttributeDao.getAvailableQueryAttributes();
+                impersonationStatusPersonAttributeDao.getAvailableQueryAttributes(
+                        IPersonAttributeDaoFilter.alwaysChoose());
         assertNotNull(attributes);
         String attribute = attributes.iterator().next();
         assertEquals(attribute, "attrs");
@@ -84,7 +86,8 @@ public class ImpersonationStatusPersonAttributeDaoTest {
     @Test
     public void testGetPeopleWithMultivaluedAttributes() {
         Set<IPersonAttributes> attributes =
-                impersonationStatusPersonAttributeDao.getPeopleWithMultivaluedAttributes(query);
+                impersonationStatusPersonAttributeDao.getPeopleWithMultivaluedAttributes(
+                        query, IPersonAttributeDaoFilter.alwaysChoose());
         assertNotNull(attributes);
         IPersonAttributes personAttributes = attributes.iterator().next();
         String uname = personAttributes.getName();

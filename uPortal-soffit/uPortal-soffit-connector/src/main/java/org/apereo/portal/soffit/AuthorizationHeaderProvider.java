@@ -35,6 +35,7 @@ import org.apereo.portal.soffit.connector.SoffitConnectorController;
 import org.apereo.portal.soffit.model.v1_0.Bearer;
 import org.apereo.portal.soffit.service.BearerService;
 import org.apereo.services.persondir.IPersonAttributeDao;
+import org.apereo.services.persondir.IPersonAttributeDaoFilter;
 import org.apereo.services.persondir.IPersonAttributes;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -66,7 +67,8 @@ public class AuthorizationHeaderProvider extends AbstractHeaderProvider {
 
         // Attributes
         final Map<String, List<String>> attributes = new HashMap<>();
-        final IPersonAttributes person = personAttributeDao.getPerson(username);
+        final IPersonAttributes person =
+                personAttributeDao.getPerson(username, IPersonAttributeDaoFilter.alwaysChoose());
         if (person != null) {
             for (Entry<String, List<Object>> y : person.getAttributes().entrySet()) {
                 final List<String> values = new ArrayList<>();

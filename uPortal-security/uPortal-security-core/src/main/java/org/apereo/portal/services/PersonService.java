@@ -19,6 +19,7 @@ import org.apereo.portal.IUserIdentityStore;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.provider.PersonImpl;
 import org.apereo.services.persondir.IPersonAttributeDao;
+import org.apereo.services.persondir.IPersonAttributeDaoFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -41,7 +42,10 @@ public class PersonService {
         final IPerson rslt = new PersonImpl();
         rslt.setAttribute(IPerson.USERNAME, username);
         rslt.setID(userIdentityStore.getPortalUserId(username));
-        rslt.setAttributes(personAttributeDao.getPerson(username).getAttributes());
+        rslt.setAttributes(
+                personAttributeDao
+                        .getPerson(username, IPersonAttributeDaoFilter.alwaysChoose())
+                        .getAttributes());
         return rslt;
     }
 }

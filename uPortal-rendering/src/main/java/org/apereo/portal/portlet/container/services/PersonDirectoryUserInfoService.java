@@ -33,6 +33,7 @@ import org.apereo.portal.portlet.registry.IPortletEntityRegistry;
 import org.apereo.portal.portlet.registry.IPortletWindowRegistry;
 import org.apereo.portal.url.IPortalRequestUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
+import org.apereo.services.persondir.IPersonAttributeDaoFilter;
 import org.apereo.services.persondir.IPersonAttributes;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -123,7 +124,9 @@ public class PersonDirectoryUserInfoService implements UserInfoService {
             String remoteUser, HttpServletRequest httpServletRequest, IPortletWindow portletWindow)
             throws PortletContainerException {
         // Get the list of user attributes the portal knows about the user
-        final IPersonAttributes personAttributes = this.personAttributeDao.getPerson(remoteUser);
+        final IPersonAttributes personAttributes =
+                this.personAttributeDao.getPerson(
+                        remoteUser, IPersonAttributeDaoFilter.alwaysChoose());
         if (personAttributes == null) {
             return Collections.emptyMap();
         }

@@ -45,6 +45,7 @@ import org.apereo.portal.spring.locator.ApplicationContextLocator;
 import org.apereo.portal.spring.locator.EntityTypesLocator;
 import org.apereo.portal.spring.locator.PersonAttributeDaoLocator;
 import org.apereo.services.persondir.IPersonAttributeDao;
+import org.apereo.services.persondir.IPersonAttributeDaoFilter;
 import org.apereo.services.persondir.IPersonAttributes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -137,7 +138,8 @@ public class EntityPersonAttributesGroupStore
                 try {
                     final IPersonAttributeDao pa =
                             PersonAttributeDaoLocator.getPersonAttributeDao();
-                    final IPersonAttributes personAttributes = pa.getPerson(member.getKey());
+                    final IPersonAttributes personAttributes =
+                            pa.getPerson(member.getKey(), IPersonAttributeDaoFilter.alwaysChoose());
 
                     if (personAttributes != null) {
                         final RestrictedPerson rp = PersonFactory.createRestrictedPerson();

@@ -10,6 +10,7 @@ import java.util.Set;
 import org.apereo.portal.security.IAuthorizationPrincipal;
 import org.apereo.portal.security.IPermission;
 import org.apereo.services.persondir.IPersonAttributeDao;
+import org.apereo.services.persondir.IPersonAttributeDaoFilter;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -41,7 +42,9 @@ public class PersonLookupHelperImplTest extends PersonLookupHelperImpl {
 
         // Must make the superclass use our collection of attribute names
         IPersonAttributeDao personAttributeDao = mock(IPersonAttributeDao.class);
-        when(personAttributeDao.getPossibleUserAttributeNames()).thenReturn(ALL_ATTRIBUTES);
+        when(personAttributeDao.getPossibleUserAttributeNames(
+                        IPersonAttributeDaoFilter.alwaysChoose()))
+                .thenReturn(ALL_ATTRIBUTES);
         setPersonAttributeDao(personAttributeDao);
 
         principal = mock(IAuthorizationPrincipal.class);

@@ -27,6 +27,7 @@ import org.apereo.portal.groups.GroupsException;
 import org.apereo.portal.groups.local.ITypedEntitySearcher;
 import org.apereo.portal.security.IPerson;
 import org.apereo.services.persondir.IPersonAttributeDao;
+import org.apereo.services.persondir.IPersonAttributeDaoFilter;
 import org.apereo.services.persondir.IPersonAttributes;
 import org.apereo.services.persondir.support.IUsernameAttributeProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,7 +91,9 @@ public class PersonDirectorySearcher implements ITypedEntitySearcher {
         final String usernameAttribute = this.usernameAttributeProvider.getUsernameAttribute();
         final Map<String, Object> queryMap =
                 Collections.<String, Object>singletonMap(usernameAttribute, query);
-        final Set<IPersonAttributes> results = this.personAttributeDao.getPeople(queryMap);
+        final Set<IPersonAttributes> results =
+                this.personAttributeDao.getPeople(
+                        queryMap, IPersonAttributeDaoFilter.alwaysChoose());
 
         // create an array of EntityIdentifiers from the search results
         final List<EntityIdentifier> entityIdentifiers =

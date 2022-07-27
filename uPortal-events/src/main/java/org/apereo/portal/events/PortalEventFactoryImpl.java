@@ -55,6 +55,7 @@ import org.apereo.portal.utils.IncludeExcludeUtils;
 import org.apereo.portal.utils.RandomTokenGenerator;
 import org.apereo.portal.utils.SerializableObject;
 import org.apereo.services.persondir.IPersonAttributeDao;
+import org.apereo.services.persondir.IPersonAttributeDaoFilter;
 import org.apereo.services.persondir.IPersonAttributes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -745,7 +746,8 @@ public class PortalEventFactoryImpl implements IPortalEventFactory, ApplicationE
 
     protected Map<String, List<String>> getAttributesForUser(IPerson person) {
         final IPersonAttributes personAttributes =
-                this.personAttributeDao.getPerson(person.getUserName());
+                this.personAttributeDao.getPerson(
+                        person.getUserName(), IPersonAttributeDaoFilter.alwaysChoose());
 
         final Map<String, List<String>> attributes = new LinkedHashMap<String, List<String>>();
 

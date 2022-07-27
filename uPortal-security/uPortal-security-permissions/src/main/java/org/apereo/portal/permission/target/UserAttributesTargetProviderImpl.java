@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Set;
 import org.apereo.portal.permission.target.IPermissionTarget.TargetType;
 import org.apereo.services.persondir.IPersonAttributeDao;
+import org.apereo.services.persondir.IPersonAttributeDaoFilter;
 
 public class UserAttributesTargetProviderImpl implements IPermissionTargetProvider {
 
@@ -37,7 +38,9 @@ public class UserAttributesTargetProviderImpl implements IPermissionTargetProvid
     @Override
     public Collection<IPermissionTarget> searchTargets(String term) {
         term = term.toLowerCase();
-        final Set<String> attributes = personAttributeDao.getAvailableQueryAttributes();
+        final Set<String> attributes =
+                personAttributeDao.getAvailableQueryAttributes(
+                        IPersonAttributeDaoFilter.alwaysChoose());
         final List<IPermissionTarget> matches = new ArrayList<IPermissionTarget>();
         for (String attribute : attributes) {
             if (attribute.toLowerCase().contains(term)) {

@@ -33,6 +33,7 @@ import org.apereo.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.apereo.portal.portlet.registry.IPortletWindowRegistry;
 import org.apereo.portal.portlet.rendering.IPortletRenderer;
 import org.apereo.services.persondir.IPersonAttributeDao;
+import org.apereo.services.persondir.IPersonAttributeDaoFilter;
 import org.apereo.services.persondir.support.NamedPersonImpl;
 import org.junit.Assert;
 import org.junit.Test;
@@ -75,7 +76,8 @@ public class RequestAttributeServiceImplTest {
         when(portletDefinition.getPortletDefinitionId()).thenReturn(portletDefinitionId);
 
         IPersonAttributeDao personAttributeDao = mock(IPersonAttributeDao.class);
-        when(personAttributeDao.getPerson("username")).thenReturn(personAttributes);
+        when(personAttributeDao.getPerson("username", IPersonAttributeDaoFilter.alwaysChoose()))
+                .thenReturn(personAttributes);
 
         IPortletWindowRegistry portletWindowRegistry = mock(IPortletWindowRegistry.class);
         when(portletWindowRegistry.convertPortletWindow(httpServletRequest, plutoPortletWindow))

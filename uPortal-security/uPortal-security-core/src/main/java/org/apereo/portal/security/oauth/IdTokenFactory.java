@@ -39,6 +39,7 @@ import org.apereo.portal.soffit.service.AbstractJwtService;
 import org.apereo.portal.soffit.service.JwtEncryptor;
 import org.apereo.portal.soffit.service.JwtSignatureAlgorithmFactory;
 import org.apereo.services.persondir.IPersonAttributeDao;
+import org.apereo.services.persondir.IPersonAttributeDaoFilter;
 import org.apereo.services.persondir.IPersonAttributes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -275,7 +276,8 @@ public class IdTokenFactory {
                         .setExpiration(expires)
                         .setIssuedAt(now);
 
-        final IPersonAttributes person = personAttributeDao.getPerson(username);
+        final IPersonAttributes person =
+                personAttributeDao.getPerson(username, IPersonAttributeDaoFilter.alwaysChoose());
 
         // Attribute mappings
         mappings.stream()

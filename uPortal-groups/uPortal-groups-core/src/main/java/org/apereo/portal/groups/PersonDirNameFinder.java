@@ -19,6 +19,7 @@ import org.apache.commons.collections.map.ReferenceMap;
 import org.apache.commons.lang.StringUtils;
 import org.apereo.portal.security.IPerson;
 import org.apereo.services.persondir.IPersonAttributeDao;
+import org.apereo.services.persondir.IPersonAttributeDaoFilter;
 import org.apereo.services.persondir.IPersonAttributes;
 
 /**
@@ -69,7 +70,8 @@ public class PersonDirNameFinder implements IEntityNameFinder {
      */
     private String primGetName(String key) {
         String name = key;
-        final IPersonAttributes personAttributes = this.paDao.getPerson(name);
+        final IPersonAttributes personAttributes =
+                this.paDao.getPerson(name, IPersonAttributeDaoFilter.alwaysChoose());
         if (personAttributes != null) {
             Object displayName = personAttributes.getAttributeValue("displayName");
             String displayNameStr = "";

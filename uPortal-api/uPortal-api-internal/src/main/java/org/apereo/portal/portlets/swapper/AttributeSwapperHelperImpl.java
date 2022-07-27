@@ -37,6 +37,7 @@ import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.IPersonManager;
 import org.apereo.portal.url.IPortalRequestUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
+import org.apereo.services.persondir.IPersonAttributeDaoFilter;
 import org.apereo.services.persondir.IPersonAttributes;
 import org.apereo.services.persondir.support.MultivaluedPersonAttributeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -100,7 +101,8 @@ public class AttributeSwapperHelperImpl implements IAttributeSwapperHelper {
         } else {
             // If no prefs try the 'possibleUserAttributeNames' from the IPersonAttributeDao
             final Set<String> possibleAttributes =
-                    this.portalRootPersonAttributeDao.getPossibleUserAttributeNames();
+                    this.portalRootPersonAttributeDao.getPossibleUserAttributeNames(
+                            IPersonAttributeDaoFilter.alwaysChoose());
             if (possibleAttributes != null) {
                 swappableAttributes = new TreeSet<String>(possibleAttributes);
             }
@@ -135,7 +137,7 @@ public class AttributeSwapperHelperImpl implements IAttributeSwapperHelper {
     public IPersonAttributes getOriginalUserAttributes(String uid) {
         final IPersonAttributeDao delegatePersonAttributeDao =
                 this.portalRootPersonAttributeDao.getDelegatePersonAttributeDao();
-        return delegatePersonAttributeDao.getPerson(uid);
+        return delegatePersonAttributeDao.getPerson(uid, IPersonAttributeDaoFilter.alwaysChoose());
     }
 
     /* (non-Javadoc)
@@ -146,7 +148,9 @@ public class AttributeSwapperHelperImpl implements IAttributeSwapperHelper {
             ExternalContext externalContext, AttributeSwapRequest attributeSwapRequest) {
         final Principal currentUser = externalContext.getCurrentUser();
         final String uid = currentUser.getName();
-        final IPersonAttributes person = this.portalRootPersonAttributeDao.getPerson(uid);
+        final IPersonAttributes person =
+                this.portalRootPersonAttributeDao.getPerson(
+                        uid, IPersonAttributeDaoFilter.alwaysChoose());
 
         final Map<String, Attribute> currentAttributes =
                 attributeSwapRequest.getCurrentAttributes();

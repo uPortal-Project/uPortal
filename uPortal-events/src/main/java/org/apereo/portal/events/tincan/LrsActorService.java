@@ -18,6 +18,7 @@ import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.Element;
 import org.apereo.portal.events.tincan.om.LrsActor;
 import org.apereo.services.persondir.IPersonAttributeDao;
+import org.apereo.services.persondir.IPersonAttributeDaoFilter;
 import org.apereo.services.persondir.IPersonAttributes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -64,7 +65,8 @@ public class LrsActorService implements ILrsActorService {
 
         final String email;
         final String name;
-        final IPersonAttributes person = personAttributeDao.getPerson(userName);
+        final IPersonAttributes person =
+                personAttributeDao.getPerson(userName, IPersonAttributeDaoFilter.alwaysChoose());
         if (person == null) {
             email = userName;
             name = userName + "@example.com";

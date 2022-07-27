@@ -23,6 +23,7 @@ import org.apereo.portal.security.IPerson;
 import org.apereo.portal.user.IUserInstance;
 import org.apereo.portal.user.IUserInstanceManager;
 import org.apereo.services.persondir.IPersonAttributeDao;
+import org.apereo.services.persondir.IPersonAttributeDaoFilter;
 import org.apereo.services.persondir.IPersonAttributes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -70,7 +71,8 @@ public class UserAttributeSkinMappingTransformerConfigurationSource
         final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
         final IPerson person = userInstance.getPerson();
         final IPersonAttributes personAttrs =
-                this.personAttributeDao.getPerson(person.getUserName());
+                this.personAttributeDao.getPerson(
+                        person.getUserName(), IPersonAttributeDaoFilter.alwaysChoose());
         if (personAttrs == null) {
             logger.debug(
                     "No user attributes found for {} no skin override will be done",

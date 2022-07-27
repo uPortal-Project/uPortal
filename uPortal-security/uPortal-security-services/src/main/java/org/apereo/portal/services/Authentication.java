@@ -37,6 +37,7 @@ import org.apereo.portal.utils.MovingAverage;
 import org.apereo.portal.utils.MovingAverageSample;
 import org.apereo.portal.utils.cache.UsernameTaggedCacheEntryPurger;
 import org.apereo.services.persondir.IPersonAttributeDao;
+import org.apereo.services.persondir.IPersonAttributeDaoFilter;
 import org.apereo.services.persondir.IPersonAttributes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -224,7 +225,8 @@ public class Authentication {
                 }
 
                 final IPersonAttributes personAttributes =
-                        this.personAttributeDao.getPerson(username);
+                        this.personAttributeDao.getPerson(
+                                username, IPersonAttributeDaoFilter.alwaysChoose());
 
                 if (log.isDebugEnabled()) {
                     log.debug(

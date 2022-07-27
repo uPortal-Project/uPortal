@@ -29,6 +29,7 @@ import org.apereo.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.apereo.portal.portlet.registry.IPortletWindowRegistry;
 import org.apereo.portal.portlet.rendering.IPortletRenderer;
 import org.apereo.services.persondir.IPersonAttributeDao;
+import org.apereo.services.persondir.IPersonAttributeDaoFilter;
 import org.apereo.services.persondir.IPersonAttributes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -97,7 +98,9 @@ public class RequestAttributeServiceImpl implements RequestAttributeService {
      */
     protected Map<String, List<Object>> getMultiValuedUserInfoMap(
             String remoteUser, List<? extends UserAttribute> expectedUserAttributes) {
-        final IPersonAttributes personAttributes = this.personAttributeDao.getPerson(remoteUser);
+        final IPersonAttributes personAttributes =
+                this.personAttributeDao.getPerson(
+                        remoteUser, IPersonAttributeDaoFilter.alwaysChoose());
         if (personAttributes == null) {
             return Collections.emptyMap();
         }
