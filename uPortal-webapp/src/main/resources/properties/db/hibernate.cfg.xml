@@ -80,5 +80,6 @@
         <mapping class="org.apereo.portal.concurrency.locking.ClusterMutex"/>
         <mapping class="org.apereo.portal.version.dao.jpa.VersionImpl"/>
         <mapping class="org.apereo.portal.jgroups.auth.JdbcAuthDao$Table"/>
+        <mapping class="org.apereo.portal.dao.portletlist.jpa.PortletList"/>
     </session-factory>
 </hibernate-configuration>
