@@ -2,6 +2,9 @@ package org.apereo.portal.services.portletlist;
 
 import org.apereo.portal.dao.portletlist.IPortletListDao;
 import org.apereo.portal.dao.portletlist.IPortletList;
+import org.apereo.portal.security.AuthorizationPrincipalHelper;
+import org.apereo.portal.security.IAuthorizationService;
+import org.apereo.portal.security.IPermission;
 import org.apereo.portal.security.IPerson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,6 +25,29 @@ public final class PortletListService implements IPortletListService {
     @Autowired
     private IPortletListDao portletListDao;
 
+    @Autowired
+    private IAuthorizationService authorizationService;
+
+    public boolean isPortletListAdmin(IPerson person) {
+        return authorizationService.doesPrincipalHavePermission(
+            AuthorizationPrincipalHelper.principalFromUser(person),
+            IPermission.PORTAL_SYSTEM,
+            IPermission.ALL_PERMISSIONS_ACTIVITY,
+            IPermission.ALL_TARGET);
+    }
+
+    /**
+     * All the definitions, filtered by the user's access rights.
+     *
+     * @return
+     */
+    @Override
+    public List<IPortletList> getPortletLists() {
+        List<IPortletList> rslt = portletListDao.getPortletLists();
+        log.debug("Returning {} portlet lists", rslt.size());
+        return rslt;
+    }
+
     /**
      * All the definitions, filtered by the user's access rights.
      *
@@ -31,38 +57,25 @@ public final class PortletListService implements IPortletListService {
     @Override
     public List<IPortletList> getPortletLists(IPerson person) {
         List<IPortletList> rslt = portletListDao.getPortletLists("" + person.getID());
-//        for (IPortletList pList :
-//            portletListDao.getPortletLists("" + person.getID())) {
-            // TODO - getPortletLists only returns lists for that user, so no permissions needed... however - need to implement admin access
-//            if (hasPermission(
-//                person,
-//                IPermission.VIEW_GROUP_ACTIVITY,
-//                def.getCompositeEntityIdentifierForGroup().getKey())) {
-//                rslt.add(def);
-//            }
-//            rslt.add(pList);
-//        }
         log.debug("Returning portlet lists '{}' for user '{}'", rslt, person.getUserName());
         return rslt;
     }
 
     /**
-     * All the definitions, filtered by the user's access rights.
+     * Retrieve a specific portlet list
      *
-     * @param person
+     * @param portletListUuid
      * @return
      */
     @Override
-    public IPortletList getPortletList(IPerson person, String portletListUuid) {
-        IPortletList rslt = portletListDao.getPortletList("" + person.getID(), portletListUuid);
-        log.debug("Returning portlet list '{}' for user '{}'", rslt, person.getUserName());
-        return rslt;
+    public IPortletList getPortletList(String portletListUuid) {
+        return portletListDao.getPortletList(portletListUuid);
     }
 
     /** TODO docs Verifies permissions and that the group doesn't already exist (case insensitive) */
 
     @Override
-    public IPortletList createPortletList(IPerson owner, IPortletList toCreate) {
+    public IPortletList createPortletList(IPerson creater, IPortletList toCreate) {
 //        // What's the target of the upcoming permissions check?
 //        String target =
 //            parent != null
@@ -108,6 +121,12 @@ public final class PortletListService implements IPortletListService {
 //        }
         log.debug("Using DAO to create portlet list [{}] for user [{}]", toCreate.getName(), toCreate.getUserId());
         return portletListDao.createPortletList(toCreate);
+    }
+
+    @Override
+    public IPortletList updatePortletList(IPerson updater, IPortletList toUpdate, String portletListUuid) {
+        log.debug("Using DAO to update portlet list [{}] for user [{}]", portletListUuid, updater.getUserName());
+        return portletListDao.updatePortletList(toUpdate, portletListUuid);
     }
 //
 //    /**

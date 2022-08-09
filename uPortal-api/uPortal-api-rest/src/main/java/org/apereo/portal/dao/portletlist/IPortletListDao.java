@@ -1,7 +1,6 @@
 package org.apereo.portal.dao.portletlist;
 
 import java.util.List;
-import java.util.Set;
 
 public interface IPortletListDao {
 
@@ -12,7 +11,11 @@ public interface IPortletListDao {
 
     public List<IPortletList> getPortletLists(String userId);
 
-    public IPortletList getPortletList(String userId, String portletListUuid);
+    public List<IPortletList> getPortletLists();
+
+    public IPortletList getPortletList(String portletListUuid);
 
     public IPortletList createPortletList(IPortletList toCreate);
+
+    public IPortletList updatePortletList(IPortletList toUpdate, String portletListUuid);
 }

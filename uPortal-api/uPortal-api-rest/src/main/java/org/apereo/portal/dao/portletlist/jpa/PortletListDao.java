@@ -4,27 +4,22 @@ import com.google.common.base.Function;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.portal.dao.portletlist.IPortletList;
 import org.apereo.portal.dao.portletlist.IPortletListDao;
-import org.apereo.portal.groups.pags.dao.IPersonAttributesGroupDefinition;
-import org.apereo.portal.groups.pags.dao.jpa.PersonAttributesGroupDefinitionImpl;
-import org.apereo.portal.groups.pags.dao.jpa.PersonAttributesGroupDefinitionImpl_;
 import org.apereo.portal.jpa.BasePortalJpaDao;
-import org.dom4j.Element;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
-import javax.portlet.Portlet;
 import java.util.*;
 
 @Slf4j
 @Repository("portletListDao")
 public class PortletListDao extends BasePortalJpaDao implements IPortletListDao {
 
+    private CriteriaQuery<PortletList> portletListsQuery;
+
     private CriteriaQuery<PortletList> portletListsByUserIdQuery;
 
-    private CriteriaQuery<PortletList> portletListByUserIdAndPortletListUuidQuery;
+    private CriteriaQuery<PortletList> portletListByPortletListUuidQuery;
 
     private ParameterExpression<String> userIdParameter;
 
@@ -52,6 +47,27 @@ public class PortletListDao extends BasePortalJpaDao implements IPortletListDao 
 //                    }
 //                });
 
+        this.portletListsQuery =
+            this.createCriteriaQuery(
+                new Function<
+                    CriteriaBuilder,
+                    CriteriaQuery<PortletList>>() {
+                    @Override
+                    public CriteriaQuery<PortletList> apply(
+                        CriteriaBuilder cb) {
+                        final CriteriaQuery<PortletList>
+                            criteriaQuery =
+                            cb.createQuery(
+                                PortletList.class);
+                        Root<PortletList> root =
+                            criteriaQuery.from(
+                                PortletList.class);
+                        criteriaQuery
+                            .select(root);
+                        return criteriaQuery;
+                    }
+                });
+
         this.portletListsByUserIdQuery =
             this.createCriteriaQuery(
                 new Function<
@@ -74,7 +90,7 @@ public class PortletListDao extends BasePortalJpaDao implements IPortletListDao 
                     }
                 });
 
-        this.portletListByUserIdAndPortletListUuidQuery =
+        this.portletListByPortletListUuidQuery =
             this.createCriteriaQuery(
                 new Function<
                     CriteriaBuilder,
@@ -91,42 +107,10 @@ public class PortletListDao extends BasePortalJpaDao implements IPortletListDao 
                                 PortletList.class);
                         criteriaQuery
                             .select(root)
-                            .where(cb.and(cb.equal(root.get("userId"), userIdParameter),
-                                cb.equal(root.get("id"), portletListUuidParameter)));
+                            .where(cb.equal(root.get("id"), portletListUuidParameter));
                         return criteriaQuery;
                     }
                 });
-//
-//        this.parentGroupDefinitionsQuery =
-//            this.createCriteriaQuery(
-//                new Function<
-//                    CriteriaBuilder,
-//                    CriteriaQuery<PersonAttributesGroupDefinitionImpl>>() {
-//                    @Override
-//                    public CriteriaQuery<PersonAttributesGroupDefinitionImpl> apply(
-//                        CriteriaBuilder cb) {
-//                        final CriteriaQuery<PersonAttributesGroupDefinitionImpl>
-//                            criteriaQuery =
-//                            cb.createQuery(
-//                                PersonAttributesGroupDefinitionImpl.class);
-//                        Root<PersonAttributesGroupDefinitionImpl> root =
-//                            criteriaQuery.from(
-//                                PersonAttributesGroupDefinitionImpl.class);
-//                        Join<
-//                            PersonAttributesGroupDefinitionImpl,
-//                            PersonAttributesGroupDefinitionImpl>
-//                            members =
-//                            root.join(
-//                                PersonAttributesGroupDefinitionImpl_
-//                                    .members);
-//                        criteriaQuery.where(
-//                            cb.equal(
-//                                members.get(
-//                                    PersonAttributesGroupDefinitionImpl_.name),
-//                                nameParameter));
-//                        return criteriaQuery;
-//                    }
-//                });
     }
 
     @PortalTransactionalReadOnly
@@ -142,19 +126,26 @@ public class PortletListDao extends BasePortalJpaDao implements IPortletListDao 
 
     @PortalTransactionalReadOnly
     @Override
+    public List<IPortletList> getPortletLists() {
+        TypedQuery<PortletList> query =
+            this.createCachedQuery(portletListsQuery);
+        List<IPortletList> entities = new ArrayList<>(query.getResultList());
+        return entities;
+    }
+
+    @PortalTransactionalReadOnly
+    @Override
     public IPortletList getPortletList(
-        String userId,
         String portletListUuid) {
         TypedQuery<PortletList> query =
-            this.createCachedQuery(portletListByUserIdAndPortletListUuidQuery);
-        query.setParameter(userIdParameter, userId);
+            this.createCachedQuery(portletListByPortletListUuidQuery);
         query.setParameter(portletListUuidParameter, portletListUuid);
 
         List<PortletList> lists = query.getResultList();
         if(lists.size() < 1) {
             return null;
         } else if(lists.size() > 1) {
-            log.error("Expected to up to 1 portlet list for user [{}] and portlet list uuid [{}], but found [{}].", userId, portletListUuid, lists.size());
+            log.error("Expected to up to 1 portlet list for portlet list uuid [{}], but found [{}].", portletListUuid, lists.size());
             return null;
         }
 
@@ -174,5 +165,32 @@ public class PortletListDao extends BasePortalJpaDao implements IPortletListDao 
         }
         log.debug("Finished persisting portlet list [{}] for user [{}]. ID = [{}]", toCreate.getName(), toCreate.getUserId(), toCreate.getId().toString());
         return toCreate;
+    }
+
+    @PortalTransactional
+    @Override
+    public IPortletList updatePortletList(IPortletList toUpdate, String portletListUuid) {
+        log.debug("Persisting changes for portlet list [{}] for user [{}]", toUpdate.getName(), toUpdate.getUserId());
+        try {
+            IPortletList ref = this.getEntityManager().find(PortletList.class, portletListUuid);
+            if (ref == null) {
+                log.warn("Unable to find portlet list [{}] to update.", portletListUuid);
+                return null;
+            }
+            ref.overrideItems(toUpdate.getItems());
+
+//            List<PortletListItem> originalItems = toUpdate.getItems();
+//            toUpdate.setItems(null);
+//            log.debug("Safe updating - removing items on portlet list [{}] for user [{}]", toUpdate.getName(), toUpdate.getUserId());
+//            this.getEntityManager().persist(toUpdate);
+//            toUpdate.setItems(originalItems);
+            //log.debug("Safe updating - updating with current items on portlet list [{}] for user [{}]", toUpdate.getName(), toUpdate.getUserId());
+            //this.getEntityManager().merge(toUpdate);
+            log.debug("Finished persisting changes for portlet list [{}] for user [{}]. ID = [{}]", toUpdate.getName(), toUpdate.getUserId(), portletListUuid);
+        } catch (Exception e) {
+            log.debug("Failed to persist changes for portlet list", e);
+            throw e;
+        }
+        return toUpdate;
     }
 }
