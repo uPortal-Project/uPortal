@@ -10,7 +10,9 @@ import java.util.Set;
 public interface IPortletListService {
     public List<IPortletList> getPortletLists();
 
-    public List<IPortletList> getPortletLists(IPerson owner);
+    public List<IPortletList> getPortletLists(IPerson requester);
+
+    public boolean removePortletList(IPerson requester, String portletListUuid);
 
     /**
      * Returns null if not found
@@ -19,9 +21,9 @@ public interface IPortletListService {
      */
     public IPortletList getPortletList(String portletListUuid);
 
-    public IPortletList createPortletList(IPerson creater, IPortletList toCreate);
+    public IPortletList createPortletList(IPerson requester, IPortletList toCreate);
 
-    public IPortletList updatePortletList(IPerson updater, IPortletList toCreate, String portletListUuid);
+    public IPortletList updatePortletList(IPerson requester, IPortletList toUpdate);
 
     public boolean isPortletListAdmin(IPerson person);
 

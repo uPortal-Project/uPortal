@@ -1,13 +1,16 @@
 package org.apereo.portal.dao.portletlist;
 
-import org.apereo.portal.dao.portletlist.jpa.PortletListItemPK;
-import org.dom4j.Element;
+import org.apereo.portal.dao.portletlist.jpa.PortletList;
 
 public interface IPortletListItem {
 
-    PortletListItemPK getPortletListItemPK();
+    PortletList getPortletList();
 
-    void setPortletListItemPK(PortletListItemPK portletListItemPK);
+    void setPortletList(PortletList portletList);
+
+    int getListOrder();
+
+    void setListOrder(int listOrder);
 
     String getEntityId();
 

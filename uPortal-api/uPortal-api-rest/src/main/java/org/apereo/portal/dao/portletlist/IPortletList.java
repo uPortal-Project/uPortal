@@ -1,6 +1,7 @@
 package org.apereo.portal.dao.portletlist;
 
 import org.apereo.portal.dao.portletlist.jpa.PortletListItem;
+import org.apereo.portal.security.IPerson;
 import org.dom4j.Element;
 
 import java.util.List;
@@ -9,9 +10,9 @@ public interface IPortletList {
 
     String getId();
 
-    String getUserId();
+    String getOwnerUsername();
 
-    void setUserId(String userId);
+    void setOwnerUsername(String username);
 
     String getName();
 
@@ -19,16 +20,15 @@ public interface IPortletList {
 
     List<PortletListItem> getItems();
 
+    // Don't use this setter - instead use clearAndSetItems(...) to let hibernate handle its own List management
     void setItems(List<PortletListItem> items);
-
-    //Set<IPersonPortletListItem> getListItems();
-
-    //void setListItems(Set<IPersonPortletListItem> items);
 
     /** Supports exporting. */
     void toElement(Element parent);
 
     String toString();
 
-    void overrideItems(List<PortletListItem> items);
+    void clearAndSetItems(List<PortletListItem> items);
+
+    void prepareForPersistence(IPerson requester);
 }

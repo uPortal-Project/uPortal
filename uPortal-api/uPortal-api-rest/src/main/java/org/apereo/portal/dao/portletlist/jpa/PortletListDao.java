@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.portal.dao.portletlist.IPortletList;
 import org.apereo.portal.dao.portletlist.IPortletListDao;
 import org.apereo.portal.jpa.BasePortalJpaDao;
+import org.apereo.portal.security.IPerson;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.TypedQuery;
@@ -21,31 +22,14 @@ public class PortletListDao extends BasePortalJpaDao implements IPortletListDao 
 
     private CriteriaQuery<PortletList> portletListByPortletListUuidQuery;
 
-    private ParameterExpression<String> userIdParameter;
+    private ParameterExpression<String> ownerUsernameParameter;
 
     private ParameterExpression<String> portletListUuidParameter;
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        this.userIdParameter = this.createParameterExpression(String.class, "user_id");
-        this.portletListUuidParameter = this.createParameterExpression(String.class, "id");
-
-//        this.findAllDefinitionsQuery =
-//            this.createCriteriaQuery(
-//                new Function<
-//                    CriteriaBuilder,
-//                    CriteriaQuery<PersonAttributesGroupDefinitionImpl>>() {
-//                    @Override
-//                    public CriteriaQuery<PersonAttributesGroupDefinitionImpl> apply(
-//                        CriteriaBuilder cb) {
-//                        final CriteriaQuery<PersonAttributesGroupDefinitionImpl>
-//                            criteriaQuery =
-//                            cb.createQuery(
-//                                PersonAttributesGroupDefinitionImpl.class);
-//                        criteriaQuery.from(PersonAttributesGroupDefinitionImpl.class);
-//                        return criteriaQuery;
-//                    }
-//                });
+        this.ownerUsernameParameter = this.createParameterExpression(String.class, "OWNER_USERNAME");
+        this.portletListUuidParameter = this.createParameterExpression(String.class, "ID");
 
         this.portletListsQuery =
             this.createCriteriaQuery(
@@ -85,7 +69,7 @@ public class PortletListDao extends BasePortalJpaDao implements IPortletListDao 
                                 PortletList.class);
                         criteriaQuery
                             .select(root)
-                            .where(cb.equal(root.get("userId"), userIdParameter));
+                            .where(cb.equal(root.get("ownerUsername"), ownerUsernameParameter));
                         return criteriaQuery;
                     }
                 });
@@ -116,10 +100,10 @@ public class PortletListDao extends BasePortalJpaDao implements IPortletListDao 
     @PortalTransactionalReadOnly
     @Override
     public List<IPortletList> getPortletLists(
-        String userId) {
+        String ownerUsername) {
         TypedQuery<PortletList> query =
             this.createCachedQuery(portletListsByUserIdQuery);
-        query.setParameter(userIdParameter, userId);
+        query.setParameter(ownerUsernameParameter, ownerUsername);
         List<IPortletList> entities = new ArrayList<>(query.getResultList());
         return entities;
     }
@@ -145,7 +129,7 @@ public class PortletListDao extends BasePortalJpaDao implements IPortletListDao 
         if(lists.size() < 1) {
             return null;
         } else if(lists.size() > 1) {
-            log.error("Expected to up to 1 portlet list for portlet list uuid [{}], but found [{}].", portletListUuid, lists.size());
+            log.error("Expected up to 1 portlet list for portlet list uuid [{}], but found [{}].", portletListUuid, lists.size());
             return null;
         }
 
@@ -155,42 +139,77 @@ public class PortletListDao extends BasePortalJpaDao implements IPortletListDao 
     @SuppressWarnings("unused")
     @PortalTransactional
     @Override
-    public IPortletList createPortletList(IPortletList toCreate) {
-        log.debug("Persisting portlet list [{}] for user [{}]", toCreate.getName(), toCreate.getUserId());
+    public IPortletList createPortletList(IPortletList toCreate, IPerson requester) {
+        log.debug("Persisting portlet list [{}] with owner [{}]", toCreate.getName(), toCreate.getOwnerUsername());
         try {
+            toCreate.prepareForPersistence(requester);
             this.getEntityManager().persist(toCreate);
         } catch (Exception e) {
             log.debug("Failed to persist portlet list", e);
             throw e;
         }
-        log.debug("Finished persisting portlet list [{}] for user [{}]. ID = [{}]", toCreate.getName(), toCreate.getUserId(), toCreate.getId().toString());
+        log.debug("Finished persisting portlet list [{}] for owner [{}]. ID = [{}]", toCreate.getName(), toCreate.getOwnerUsername(), toCreate.getId().toString());
         return toCreate;
     }
 
     @PortalTransactional
     @Override
-    public IPortletList updatePortletList(IPortletList toUpdate, String portletListUuid) {
-        log.debug("Persisting changes for portlet list [{}] for user [{}]", toUpdate.getName(), toUpdate.getUserId());
+    public IPortletList updatePortletList(IPortletList toUpdate, IPerson requester) {
+        log.debug("Persisting changes for portlet list [{}]", toUpdate.getId());
         try {
-            IPortletList ref = this.getEntityManager().find(PortletList.class, portletListUuid);
-            if (ref == null) {
-                log.warn("Unable to find portlet list [{}] to update.", portletListUuid);
-                return null;
+            toUpdate.prepareForPersistence(requester);
+            if(log.isDebugEnabled()) {
+                StringBuffer sb = new StringBuffer();
+                sb.append("PortletList items to update: ");
+                if(toUpdate.getItems().size() < 1) {
+                    sb.append("[Currently no items]");
+                } else {
+                    final int size = toUpdate.getItems().size();
+                    for (int i = 0; i < size; i++) {
+                        PortletListItem item = toUpdate.getItems().get(i);
+                        sb.append(item);
+                        if(i < size - 1) {
+                            sb.append("; ");
+                        }
+                    }
+                }
+                log.debug(sb.toString());
             }
-            ref.overrideItems(toUpdate.getItems());
-
-//            List<PortletListItem> originalItems = toUpdate.getItems();
-//            toUpdate.setItems(null);
-//            log.debug("Safe updating - removing items on portlet list [{}] for user [{}]", toUpdate.getName(), toUpdate.getUserId());
-//            this.getEntityManager().persist(toUpdate);
-//            toUpdate.setItems(originalItems);
-            //log.debug("Safe updating - updating with current items on portlet list [{}] for user [{}]", toUpdate.getName(), toUpdate.getUserId());
-            //this.getEntityManager().merge(toUpdate);
-            log.debug("Finished persisting changes for portlet list [{}] for user [{}]. ID = [{}]", toUpdate.getName(), toUpdate.getUserId(), portletListUuid);
+            this.getEntityManager().merge(toUpdate);
+            log.debug("Finished persisting changes for portlet list [{}]", toUpdate.getId());
         } catch (Exception e) {
             log.debug("Failed to persist changes for portlet list", e);
             throw e;
         }
         return toUpdate;
+    }
+
+    @PortalTransactional
+    @Override
+    public boolean removePortletListAsAdmin(String portletListUuid, IPerson requester) {
+        IPortletList list = this.getPortletList(portletListUuid);
+        if(list == null) {
+            log.warn("Admin user [{}] tried to remove a non-existent list [{}]. Failing request.", requester.getUserName(), portletListUuid);
+            return false;
+        }
+        this.getEntityManager().remove(list);
+        return true;
+    }
+
+    @PortalTransactional
+    @Override
+    public boolean removePortletListAsOwner(String portletListUuid, IPerson requester) {
+        IPortletList list = this.getPortletList(portletListUuid);
+        if(list == null) {
+            log.warn("Non-admin user [{}] tried to remove a non-existent list [{}]. Failing request.", requester.getUserName(), portletListUuid);
+            return false;
+        } else if (!list.getOwnerUsername().equals(requester.getUserName())) {
+            log.warn("Non-admin user [{}] tried to remove a list they didn't own [{}]. Failing request.", requester.getUserName(), portletListUuid);
+            return false;
+        }
+
+        log.debug("Non-admin user [{}] requested to remove a list they own [{}]. Allowing request.", requester.getUserName(), portletListUuid);
+        this.getEntityManager().remove(list);
+        return true;
     }
 }

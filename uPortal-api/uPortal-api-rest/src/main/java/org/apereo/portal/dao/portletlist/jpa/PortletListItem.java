@@ -8,6 +8,7 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.portal.dao.portletlist.IPortletListItem;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 
@@ -22,7 +23,7 @@ import javax.persistence.*;
     name = "UP_PORTLET_LIST_ITEM",
     uniqueConstraints = {
         // These are sets of lists
-        @UniqueConstraint(columnNames = { "LIST_ID", "ENTITY_ID" }),
+        @UniqueConstraint(columnNames = { "LIST_ID", "LIST_ORDER", "ENTITY_ID" }),
     })
 @Cacheable
 @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
@@ -30,8 +31,29 @@ import javax.persistence.*;
 public class PortletListItem implements IPortletListItem {
 
     @JsonIgnore
-    @EmbeddedId
-    private PortletListItemPK portletListItemPK;
+    @Id
+    @GeneratedValue(generator = "UUID")
+    @GenericGenerator(
+        name = "UUID",
+        strategy = "org.hibernate.id.UUIDGenerator"
+    )
+    @Column(name = "ID", updatable = false, nullable = false)
+    private String id;
+
+    @JsonIgnore
+    @ManyToOne(optional = false)
+    @JoinColumn(
+        name = "LIST_ID",
+        referencedColumnName = "ID")
+    private PortletList portletList;
+
+    @JsonIgnore
+    @Column(
+        name = "LIST_ORDER",
+        unique = false,
+        nullable = false,
+        updatable = true)
+    private int listOrder;
 
     // This is generally the portlet fname, but could be adjusted in the future
     @Column(name = "ENTITY_ID", updatable = true, nullable = false)
@@ -43,5 +65,13 @@ public class PortletListItem implements IPortletListItem {
 
     public PortletListItem(String entityId) {
         this.entityId = entityId;
+    }
+
+    public String toString() {
+        return "PortletListItem: id=[" + id +
+        "], portlet-list=[" + (portletList == null ? "NULL" : portletList.getId()) +
+        "], order=[" + listOrder +
+        "], entity-id=[" + entityId +
+        "]";
     }
 }

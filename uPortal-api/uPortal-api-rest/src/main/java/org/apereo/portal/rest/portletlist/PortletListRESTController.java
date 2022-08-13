@@ -2,12 +2,8 @@ package org.apereo.portal.rest.portletlist;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.ArrayUtils;
 import org.apereo.portal.dao.portletlist.IPortletList;
-import org.apereo.portal.dao.portletlist.IPortletListItem;
 import org.apereo.portal.dao.portletlist.jpa.PortletList;
-import org.apereo.portal.dao.portletlist.jpa.PortletListItem;
-import org.apereo.portal.dao.portletlist.jpa.PortletListItemPK;
 import org.apereo.portal.rest.utils.ErrorResponse;
 import org.apereo.portal.security.RuntimeAuthorizationException;
 import org.apereo.portal.services.portletlist.IPortletListService;
@@ -23,9 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
@@ -55,7 +49,9 @@ public class PortletListRESTController {
         produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody String getPortletLists(HttpServletRequest request, HttpServletResponse response) {
         final IPerson person = personManager.getPerson(request);
-        debugPerson("getAllPortletLists", person);
+        if(log.isDebugEnabled()) {
+            debugPerson("getAllPortletLists", person);
+        }
 
         if(person.isGuest()) {
             log.warn("Guest is trying to access portlet-list API, which is not allowed.");
@@ -79,7 +75,9 @@ public class PortletListRESTController {
         produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody String getPortletList(HttpServletRequest request, HttpServletResponse response, @PathVariable String portletListUuid) {
         final IPerson person = personManager.getPerson(request);
-        debugPerson("getSpecificPortletList", person);
+        if(log.isDebugEnabled()) {
+            debugPerson("getSpecificPortletList", person);
+        }
 
         if(person.isGuest()) {
             log.warn("Guest is trying to access portlet-list API, which is not allowed.");
@@ -91,9 +89,9 @@ public class PortletListRESTController {
         if(pList == null) {
             log.warn("User [{}] tried to access portlet-list [{}], but list was not found.", person.getUserName(), portletListUuid);
             return prepareResponse(response, null, "Entity not found", HttpServletResponse.SC_NOT_FOUND);
-        } else if(!portletListService.isPortletListAdmin(person) && !pList.getUserId().equals("" + person.getID())) {
+        } else if(!portletListService.isPortletListAdmin(person) && !pList.getOwnerUsername().equals(person.getUserName())) {
             // Not an admin, and not the owner
-            log.warn("Non-admin user [{}][{}] tried to access portlet-list [{}] with owner [{}], but was blocked since they aren't the owner.", person.getID(), person.getUserName(), portletListUuid, pList.getUserId());
+            log.warn("Non-admin user [{}] tried to access portlet-list [{}] with owner [{}], but was blocked since they aren't the owner.", person.getUserName(), portletListUuid, pList.getOwnerUsername());
             return prepareResponse(response, null, "Entity not found", HttpServletResponse.SC_NOT_FOUND);
         }
 
@@ -110,8 +108,10 @@ public class PortletListRESTController {
         @RequestBody String json) {
 
         final IPerson person = personManager.getPerson(request);
-        debugPerson("createPortletList", person);
-        log.debug("createPortletList > JSON body is = {}", json);
+        if(log.isDebugEnabled()) {
+            debugPerson("createPortletList", person);
+            log.debug("createPortletList > JSON body is = {}", json);
+        }
 
         if(person.isGuest()) {
             log.warn("createPortletList > Guest is trying to access portlet-list API, which is not allowed.");
@@ -124,19 +124,17 @@ public class PortletListRESTController {
             input = objectMapper.readValue(json, PortletList.class);
             if(!portletListService.isPortletListAdmin(person)) {
                 // Default - non-admins can only create lists for themselves.
-                input.setUserId("" + person.getID());
-            } else if (StringUtils.isEmpty(input.getUserId())) {
+                input.setOwnerUsername(person.getUserName());
+            } else if (StringUtils.isEmpty(input.getOwnerUsername())) {
                 // Default - admins don't have to specify a user name
-                input.setUserId("" + person.getID());
+                input.setOwnerUsername(person.getUserName());
             }
         } catch (Exception e) {
-            log.warn("User [{}][{}] tried to create a portlet-list with bad json - {}", person.getID(), person.getUserName(), e.getMessage());
+            log.warn("User [{}] tried to create a portlet-list with bad json - {}", person.getUserName(), e.getMessage());
             return prepareResponse(response, null, "Unparsable portlet-list JSON", HttpServletResponse.SC_BAD_REQUEST);
         }
 
         try {
-            // Sets the parent-child relationships
-            input.overrideItems(input.getItems());
             final IPortletList created = portletListService.createPortletList(
                 person, input);
             response.setHeader("Location", created.getId());
@@ -167,11 +165,13 @@ public class PortletListRESTController {
         @PathVariable String portletListUuid) {
 
         final IPerson person = personManager.getPerson(request);
-        debugPerson("updatePortletList", person);
-        log.debug("updatePortletList > JSON body is = {}", json);
+        if(log.isDebugEnabled()) {
+            debugPerson("updatePortletList", person);
+            log.debug("updatePortletList > JSON body is = {}", json);
+        }
 
         if(person.isGuest()) {
-            log.warn("updatePortletList > Guest is trying to access portlet-list API, which is not allowed.");
+            log.warn("Guest user is trying to access portlet-list PUT API, which is not allowed.");
             return prepareResponse(response, null, "Not authorized", HttpServletResponse.SC_UNAUTHORIZED);
         }
 
@@ -179,54 +179,48 @@ public class PortletListRESTController {
         try {
             input = objectMapper.readValue(json, PortletList.class);
         } catch (Exception e) {
-            log.warn("User [{}][{}] tried to create a portlet-list with bad json - {}", person.getID(), person.getUserName(), e.getMessage());
+            log.warn("User [{}] tried to update a portlet-list with bad json - {}", person.getUserName(), e.getMessage());
             return prepareResponse(response, null, "Unparsable portlet-list JSON", HttpServletResponse.SC_BAD_REQUEST);
         }
 
-//        // Overlay changes onto a known entity, and then persist that entity.
-//        IPortletList toUpdate = portletListService.getPortletList(portletListUuid);
-//
-//        if(toUpdate == null) {
-//            return prepareResponse(response, null, "Unknown portlet-list", HttpServletResponse.SC_NOT_FOUND);
-//        }
-//
-//        if(portletListService.isPortletListAdmin(person)) {
-//            // If admin, allow admin-level changes
-//            if(!StringUtils.isEmpty(input.getUserId())) {
-//                toUpdate.setUserId(input.getUserId());
-//            }
-//
-//            if(!StringUtils.isEmpty(input.getName())) {
-//                toUpdate.setName(input.getName());
-//            }
-//        } else if (toUpdate.getUserId().equals("" + person.getID())) {
-//            // If owner of portlet-list, allow only owner-level changes
-//
-//            if(!StringUtils.isEmpty(input.getUserId())) {
-//                log.warn("updatePortletList - non-admin user [{}][{}] tried to update portlet-list [{}][{}] with a new owner [{}], which is not allowed.", person.getID(), person.getUserName(), toUpdate.getId(), toUpdate.getName(), input.getUserId());
-//                return prepareResponse(response, null, "Non-admin user cannot change portlet-list owner", HttpServletResponse.SC_BAD_REQUEST);
-//            }
-//        } else {
-//            // Otherwise, disallow changes
-//            log.warn("updatePortletList - user [{}][{}] tried to update portlet-list [{}][{}], but was not the owner.", person.getID(), person.getUserName(), toUpdate.getId(), toUpdate.getName());
-//            return prepareResponse(response, null, "Unknown portlet-list", HttpServletResponse.SC_UNAUTHORIZED);
-//        }
-//
-//        // Either an owner or an admin. allow general-level changes:
-//        if(!StringUtils.isEmpty(input.getName())) {
-//            toUpdate.setName(input.getName());
-//        }
-//
-//        if(input.getItems() != null) {
-//            toUpdate.overrideItems(input.getItems());
-//        }
+        // Overlay changes onto a known entity, and then persist that entity.
+        IPortletList toUpdate = portletListService.getPortletList(portletListUuid);
+
+        if(toUpdate == null) {
+            return prepareResponse(response, null, "Unknown portlet-list", HttpServletResponse.SC_NOT_FOUND);
+        }
+
+        if(portletListService.isPortletListAdmin(person)) {
+            // If admin, allow admin-level changes
+            if(!StringUtils.isEmpty(input.getOwnerUsername())) {
+                toUpdate.setOwnerUsername(input.getOwnerUsername());
+            }
+        } else if (toUpdate.getOwnerUsername().equals(person.getUserName())) {
+            // If owner of portlet-list, allow only owner-level changes
+            if(!StringUtils.isEmpty(input.getOwnerUsername())) {
+                log.warn("non-admin user [{}] tried to update portlet-list [{}][{}] with a new owner [{}], which is not allowed.", person.getUserName(), toUpdate.getId(), toUpdate.getName(), input.getOwnerUsername());
+                return prepareResponse(response, null, "Non-admin user cannot change portlet-list owner", HttpServletResponse.SC_BAD_REQUEST);
+            }
+        } else {
+            // Otherwise, disallow changes
+            log.warn("user [{}] tried to update portlet-list [{}][{}], but was not the owner nor an admin.", person.getUserName(), toUpdate.getId(), toUpdate.getName());
+            return prepareResponse(response, null, "Unknown portlet-list", HttpServletResponse.SC_UNAUTHORIZED);
+        }
+
+        // Either an owner or an admin. allow general-level changes:
+        if(!StringUtils.isEmpty(input.getName())) {
+            toUpdate.setName(input.getName());
+        }
+
+        if(input.getItems() != null) {
+            toUpdate.clearAndSetItems(input.getItems());
+        }
 
         try {
-            final IPortletList updated = portletListService.updatePortletList(
-                person, input, portletListUuid);
+            final IPortletList updated = portletListService.updatePortletList(person, toUpdate);
             if(updated == null) {
                 log.warn("update returned null for portlet-list uuid [{}]. Failing request.", portletListUuid);
-                return prepareResponse(response, null, "Unable to update portlet list.", HttpServletResponse.SC_BAD_REQUEST);
+                return prepareResponse(response, null, "Error occurred while updating portlet list. Please check your System Administrator", HttpServletResponse.SC_BAD_REQUEST);
             } else {
                 return prepareResponse(response, null, null, HttpServletResponse.SC_OK);
             }
@@ -241,7 +235,41 @@ public class PortletListRESTController {
             return prepareResponse(response, null, "Data integrity issue - such as specifying a non-unique name.", HttpServletResponse.SC_BAD_REQUEST);
         } catch (Exception e) {
             log.warn("Just hit an exception of type {}", e.getClass().getCanonicalName(), e);
-            return prepareResponse(response, null, "Something unexpected occurred. Please check with your System Administrator", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return prepareResponse(response, null, "Something unexpected occurred. Please check with your System Administrator.", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * Provide a JSON view of a given portlet list.
+     *
+     * If an administrator makes the request, the portlet list will be returned, regardless of ownership.
+     * If anyone else makes the request, the portlet list will only be returned if the requester is the owner.
+     */
+    @RequestMapping(
+        value = CONTEXT + "{portletListUuid}",
+        method = DELETE,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody String removePortletList(HttpServletRequest request, HttpServletResponse response, @PathVariable String portletListUuid) {
+        final IPerson person = personManager.getPerson(request);
+        if(log.isDebugEnabled()) {
+            debugPerson("removePortletList", person);
+        }
+
+        if(person.isGuest()) {
+            log.warn("Guest is trying to access portlet-list API, which is not allowed.");
+            return prepareResponse(response, null, "Not authorized", HttpServletResponse.SC_UNAUTHORIZED);
+        }
+
+        try {
+            if(portletListService.removePortletList(person, portletListUuid)) {
+                return prepareResponse(response, null, null, HttpServletResponse.SC_OK);
+            } else {
+                return prepareResponse(response, null, "Unable to remove portlet list. Please check with your System Administrator.", HttpServletResponse.SC_BAD_REQUEST);
+            }
+        } catch (Exception e) {
+            log.error("Unable to delete portlet list. Returning a 500.", e);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return null;
         }
     }
 
