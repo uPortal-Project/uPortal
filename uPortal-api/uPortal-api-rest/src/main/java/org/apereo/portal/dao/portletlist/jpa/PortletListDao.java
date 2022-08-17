@@ -158,23 +158,7 @@ public class PortletListDao extends BasePortalJpaDao implements IPortletListDao 
         log.debug("Persisting changes for portlet list [{}]", toUpdate.getId());
         try {
             toUpdate.prepareForPersistence(requester);
-            if(log.isDebugEnabled()) {
-                StringBuffer sb = new StringBuffer();
-                sb.append("PortletList items to update: ");
-                if(toUpdate.getItems().size() < 1) {
-                    sb.append("[Currently no items]");
-                } else {
-                    final int size = toUpdate.getItems().size();
-                    for (int i = 0; i < size; i++) {
-                        PortletListItem item = toUpdate.getItems().get(i);
-                        sb.append(item);
-                        if(i < size - 1) {
-                            sb.append("; ");
-                        }
-                    }
-                }
-                log.debug(sb.toString());
-            }
+            log.debug("Portlet List to update: {}", toUpdate);
             this.getEntityManager().merge(toUpdate);
             log.debug("Finished persisting changes for portlet list [{}]", toUpdate.getId());
         } catch (Exception e) {

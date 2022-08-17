@@ -32,7 +32,6 @@ import java.util.List;
 @Getter
 @Setter
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-@ToString
 @Slf4j
 @Entity
 @Table(
@@ -90,7 +89,7 @@ public class PortletList implements IPortletList {
     @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @Fetch(FetchMode.SELECT) // FM JOIN does BAD things to collections that support duplicates
     @OrderBy("LIST_ORDER ASC")
-    private List<PortletListItem> items = new ArrayList<>();
+    private List<PortletListItem> items;
 
     @Override
     public void toElement(Element parent) {
@@ -107,6 +106,10 @@ public class PortletList implements IPortletList {
     }
 
     public void clearAndSetItems(List<PortletListItem> items) {
+        if(this.items == null) {
+            this.items = new ArrayList<>();
+        }
+
         // Index all current items
         HashMap<String, PortletListItem> existingItems = new HashMap<>();
         for(PortletListItem existingItem : this.items) {
@@ -143,11 +146,13 @@ public class PortletList implements IPortletList {
             InputValidator.validateAsWordCharacters(this.ownerUsername, "ownerUsername");
         }
 
-        int order = 0;
-        for(PortletListItem item : this.items) {
-            InputValidator.validateAsWordCharacters(item.getEntityId(), "items > entityId");
-            item.setPortletList(this);
-            item.setListOrder(order++);
+        if(this.items != null) {
+            int order = 0;
+            for (PortletListItem item : this.items) {
+                InputValidator.validateAsWordCharacters(item.getEntityId(), "items > entityId");
+                item.setPortletList(this);
+                item.setListOrder(order++);
+            }
         }
 
         // Set / Update audit fields
@@ -158,6 +163,29 @@ public class PortletList implements IPortletList {
             this.updatedOn = Timestamp.valueOf(LocalDateTime.now(tz));
             this.updatedBy = requester.getUserName();
         }
+    }
 
+    public String toString() {
+        StringBuffer sb = new StringBuffer();
+        sb.append("PortletList id=[");
+        sb.append(id);
+        sb.append("], name=[");
+        sb.append(name);
+        sb.append("], owner=[");
+        sb.append(ownerUsername);
+        sb.append("], items=: ");
+        if(this.items.size() < 1) {
+            sb.append("[Currently no items]");
+        } else {
+            final int size = items.size();
+            for (int i = 0; i < size; i++) {
+                PortletListItem item = items.get(i);
+                sb.append(item);
+                if(i < size - 1) {
+                    sb.append("; ");
+                }
+            }
+        }
+        return sb.toString();
     }
 }

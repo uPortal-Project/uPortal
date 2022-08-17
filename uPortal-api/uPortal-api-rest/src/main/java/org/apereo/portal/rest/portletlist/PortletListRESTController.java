@@ -29,6 +29,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 @Slf4j
 public class PortletListRESTController {
     public static final String CONTEXT = "/portlet-list/";
+    public static final String FAVORITES_KEYWORD = "favorites";
     @Autowired
     private IPortletListService portletListService;
 
@@ -122,13 +123,29 @@ public class PortletListRESTController {
 
         try {
             input = objectMapper.readValue(json, PortletList.class);
-            if(!portletListService.isPortletListAdmin(person)) {
-                // Default - non-admins can only create lists for themselves.
-                input.setOwnerUsername(person.getUserName());
-            } else if (StringUtils.isEmpty(input.getOwnerUsername())) {
-                // Default - admins don't have to specify a user name
-                input.setOwnerUsername(person.getUserName());
+
+            if(portletListService.isPortletListAdmin(person)) {
+                if (StringUtils.isEmpty(input.getOwnerUsername())) {
+                    // Default - admins don't have to specify a user name
+                    input.setOwnerUsername(person.getUserName());
+                }
+            } else {
+                if (StringUtils.isEmpty(input.getOwnerUsername())) {
+                    // non-admins can only create lists for themselves.
+                    input.setOwnerUsername(person.getUserName());
+                } else {
+                    if(!StringUtils.isEmpty(input.getOwnerUsername()) && !person.getUserName().equals(input.getOwnerUsername())) {
+                        log.warn("non-admin user [{}] tried to create a portlet-list [{}] with a different owner [{}], which is not allowed.", person.getUserName(), input.getName(), input.getOwnerUsername());
+                        return prepareResponse(response, null, "Non-admin user cannot set portlet-list owner", HttpServletResponse.SC_BAD_REQUEST);
+                    }
+                }
+
+                if(FAVORITES_KEYWORD.equals(input.getName())) {
+                    log.warn("non-admin user [{}] tried to create a portlet-list [{}], which is a reserved keyword, which is not allowed.", person.getUserName(), input.getName(), FAVORITES_KEYWORD);
+                    return prepareResponse(response, null, "Non-admin user cannot set portlet-list name to " + FAVORITES_KEYWORD, HttpServletResponse.SC_BAD_REQUEST);
+                }
             }
+
         } catch (Exception e) {
             log.warn("User [{}] tried to create a portlet-list with bad json - {}", person.getUserName(), e.getMessage());
             return prepareResponse(response, null, "Unparsable portlet-list JSON", HttpServletResponse.SC_BAD_REQUEST);
@@ -201,6 +218,12 @@ public class PortletListRESTController {
                 log.warn("non-admin user [{}] tried to update portlet-list [{}][{}] with a new owner [{}], which is not allowed.", person.getUserName(), toUpdate.getId(), toUpdate.getName(), input.getOwnerUsername());
                 return prepareResponse(response, null, "Non-admin user cannot change portlet-list owner", HttpServletResponse.SC_BAD_REQUEST);
             }
+
+            // Only admins can change a portlet list name to the reserved keyword 'favorites'.
+            if(FAVORITES_KEYWORD.equals(input.getName()) && !FAVORITES_KEYWORD.equals(toUpdate.getName())) {
+                log.warn("non-admin user [{}] tried to update portlet-list [{}][{}] with a name to the reserved keyword of [{}], which is not allowed.", person.getUserName(), toUpdate.getId(), toUpdate.getName(), FAVORITES_KEYWORD);
+                return prepareResponse(response, null, "Non-admin user cannot change portlet-list name to " + FAVORITES_KEYWORD, HttpServletResponse.SC_BAD_REQUEST);
+            }
         } else {
             // Otherwise, disallow changes
             log.warn("user [{}] tried to update portlet-list [{}][{}], but was not the owner nor an admin.", person.getUserName(), toUpdate.getId(), toUpdate.getName());
@@ -213,7 +236,11 @@ public class PortletListRESTController {
         }
 
         if(input.getItems() != null) {
+            log.debug("Updating portlet list {} with new list of items, number of items: {}", toUpdate, input.getItems().size());
             toUpdate.clearAndSetItems(input.getItems());
+            log.debug("Updated portlet list {} with new list of items", toUpdate);
+        } else {
+            log.debug("Not updating portlet list items (request items were null: {}", toUpdate);
         }
 
         try {
