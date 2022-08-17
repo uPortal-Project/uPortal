@@ -117,7 +117,6 @@ public class PortletListRESTController {
         final IPerson person = personManager.getPerson(request);
         if (log.isDebugEnabled()) {
             debugPerson("createPortletList", person);
-            log.debug("createPortletList > JSON body is = {}", json);
         }
 
         if (person.isGuest()) {
@@ -228,7 +227,6 @@ public class PortletListRESTController {
         final IPerson person = personManager.getPerson(request);
         if (log.isDebugEnabled()) {
             debugPerson("updatePortletList", person);
-            log.debug("updatePortletList > JSON body is = {}", json);
         }
 
         if (person.isGuest()) {
