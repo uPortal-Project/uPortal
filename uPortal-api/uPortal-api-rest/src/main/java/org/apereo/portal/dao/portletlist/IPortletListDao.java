@@ -1,8 +1,7 @@
 package org.apereo.portal.dao.portletlist;
 
-import org.apereo.portal.security.IPerson;
-
 import java.util.List;
+import org.apereo.portal.security.IPerson;
 
 public interface IPortletListDao {
 

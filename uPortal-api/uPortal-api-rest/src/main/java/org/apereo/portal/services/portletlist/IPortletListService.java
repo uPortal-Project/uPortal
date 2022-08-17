@@ -1,11 +1,8 @@
 package org.apereo.portal.services.portletlist;
 
-import org.apereo.portal.dao.portletlist.IPortletList;
-import org.apereo.portal.security.IAuthorizationPrincipal;
-import org.apereo.portal.security.IPerson;
-
 import java.util.List;
-import java.util.Set;
+import org.apereo.portal.dao.portletlist.IPortletList;
+import org.apereo.portal.security.IPerson;
 
 public interface IPortletListService {
     public List<IPortletList> getPortletLists();
@@ -16,6 +13,7 @@ public interface IPortletListService {
 
     /**
      * Returns null if not found
+     *
      * @param portletListUuid
      * @return
      */
@@ -26,5 +24,4 @@ public interface IPortletListService {
     public IPortletList updatePortletList(IPerson requester, IPortletList toUpdate);
 
     public boolean isPortletListAdmin(IPerson person);
-
 }
