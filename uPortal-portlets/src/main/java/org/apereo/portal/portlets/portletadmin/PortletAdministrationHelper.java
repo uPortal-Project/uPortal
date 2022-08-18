@@ -177,7 +177,7 @@ public final class PortletAdministrationHelper implements ServletContextAware {
      *     category and principal if no definition is found
      */
     public PortletDefinitionForm createPortletDefinitionForm(IPerson person, String portletId) {
-
+        logger.error("in createPortletDefinitionForm");
         IPortletDefinition def = portletDefinitionRegistry.getPortletDefinition(portletId);
 
         // create the new form
@@ -294,6 +294,8 @@ public final class PortletAdministrationHelper implements ServletContextAware {
     public PortletDefinitionForm savePortletRegistration(
             IPerson publisher, PortletDefinitionForm form) {
         logger.trace("In savePortletRegistration() - for: {}", form.getPortletName());
+        logger.error("form stopDate [" + form.getStopDate() + "]");
+        logger.error("form stopImmediately [" + form.getStopImmediately() + "]");
         /* TODO:  Service-Layer Security Reboot (great need of refactoring with a community-approved plan in place) */
 
         // User must have the selected lifecycle permission over AT LEAST ONE

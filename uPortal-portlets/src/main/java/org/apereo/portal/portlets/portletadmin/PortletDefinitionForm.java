@@ -16,6 +16,7 @@ package org.apereo.portal.portlets.portletadmin;
 
 import java.io.Serializable;
 import java.text.ParseException;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -88,6 +89,14 @@ public class PortletDefinitionForm implements Serializable {
     private int expirationAmPm = 0;
     private String customMaintenanceMessage;
 
+    /** Maintenance Scheduler information */
+    private boolean stopImmediately;
+    private String stopDate;
+    private String stopTime;
+    private boolean restartManually;
+    private String restartDate;
+    private String restartTime;
+
     /** Portlet controls */
     private boolean editable;
 
@@ -123,6 +132,12 @@ public class PortletDefinitionForm implements Serializable {
 
     /** Construct a new PortletDefinitionForm from a PortletDefinition */
     public PortletDefinitionForm(IPortletDefinition def) {
+        logger.error("In PortletDefinitionForm");
+        StackTraceElement[] abc = Thread.currentThread().getStackTrace();
+        Arrays.stream(abc).forEach(e -> log.error(e));
+        logger.error("stopImmediately [" + this.stopImmediately + "]");
+        logger.error("restartManually [" + this.restartManually + "]");
+        logger.error("parameters [" + def.getParameters() + "]");
         this.setId(def.getPortletDefinitionId().getStringId());
         this.setFname(def.getFName());
         this.setName(def.getName());
@@ -613,6 +628,54 @@ public class PortletDefinitionForm implements Serializable {
 
     public void setCustomMaintenanceMessage(String customMaintenanceMessage) {
         this.customMaintenanceMessage = customMaintenanceMessage;
+    }
+
+    public boolean getStopImmediately() {
+        return stopImmediately;
+    }
+
+    public void setStopImmediately(boolean stopImmediately) {
+        this.stopImmediately = stopImmediately;
+    }
+
+    public String getStopDate() {
+        return stopDate;
+    }
+
+    public void setStopDate(String stopDate) {
+        this.stopDate = stopDate;
+    }
+
+    public String getStopTime() {
+        return stopTime;
+    }
+
+    public void setStopTime(String stopTime) {
+        this.stopTime = stopTime;
+    }
+
+    public boolean getRestartManually() {
+        return restartManually;
+    }
+
+    public void setRestartManually(boolean restartManually) {
+        this.restartManually = restartManually;
+    }
+
+    public String getRestartDate() {
+        return restartDate;
+    }
+
+    public void setRestartDate(String restartDate) {
+        this.restartDate = restartDate;
+    }
+
+    public String getRestartTime() {
+        return restartTime;
+    }
+
+    public void setRestartTime(String restartTime) {
+        this.restartTime = restartTime;
     }
 
     /**

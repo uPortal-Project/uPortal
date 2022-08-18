@@ -586,6 +586,28 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                                     <td>
                                         <spring:message code="lifecycle.description.${ lifecycleState }"/>
                                     </td>
+                                    <td>
+                                        <c:if test="${lifecycleState == 'MAINTENANCE'}">
+                                            <div id="maintenance-scheduler">
+                                                <div>
+                                                    <label for="stopImmediately">Stop Immediately</label>
+                                                    <form:checkbox path="stopImmediately" id="stopImmediately" checked="checked" />
+                                                    <label for="stopDate">Stop Date</label>
+                                                    <form:input type="text" path="stopDate" id="stopDate" disabled="true" />
+                                                    <label for="stopTime">Stop Time</label>
+                                                    <form:input type="text" path="stopTime" id="stopTime" disabled="true" />
+                                                </div>
+                                                <div>
+                                                    <label for="restartManually">Restart Manually</label>
+                                                    <form:checkbox path="restartManually" id="restartManually" checked="checked" />
+                                                    <label for="restartDate">Restart Date</label>
+                                                    <form:input type="text" path="restartDate" id="restartDate" disabled="true" />
+                                                    <label for="restartTime">Restart Time</label>
+                                                    <form:input type="text" path="restartTime" id="restartTime" disabled="true" />
+                                                </div>
+                                            </div>
+                                        </c:if>
+                                    </td>
                                 </tr>
                             </c:forEach>
                             </tbody>
@@ -1001,6 +1023,59 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
         });
     });
 
+    // maintenance scheduler rendering
+    up.jQuery(function($) {
+        const maintenanceSchedulerDiv = "#maintenance-scheduler";
+        const stopImmediatelyFieldName = "#stopImmediately";
+        const stopDateFieldName = "#stopDate";
+        const stopTimeFieldName = "#stopTime";
+        const restartManuallyFieldName = "#restartManually";
+        const restartDateFieldName = "#restartDate";
+        const restartTimeFieldName = "#restartTime";
+
+        const changeFieldState = (fieldName, fieldState) => $(fieldName).prop("disabled", fieldState);
+
+        const resetStopImmediately = isChecked => {
+            changeFieldState(stopDateFieldName, isChecked);
+            changeFieldState(stopTimeFieldName, isChecked);
+			if (isChecked) {
+				$(stopDateFieldName).val('');
+				$(stopTimeFieldName).val('');
+			}
+		}
+        const resetRestartManually = isChecked => {
+            changeFieldState(restartDateFieldName, isChecked);
+            changeFieldState(restartTimeFieldName, isChecked);
+            if (isChecked) {
+                $(restartDateFieldName).val('');
+                $(restartTimeFieldName).val('');
+            }
+        }
+
+        $('.lifecycle-state').click(function() {
+            if ($('#lifecycle-MAINTENANCE').is(":checked")) {
+                $(maintenanceSchedulerDiv).show();
+                return;
+			}
+			$(maintenanceSchedulerDiv).hide();
+			$(stopImmediatelyFieldName).prop("checked", true);
+			resetStopImmediately(true);
+			$(restartManuallyFieldName).prop("checked", true);
+			resetRestartManually(true);
+        });
+
+        $(stopImmediatelyFieldName).click(function() {
+            resetStopImmediately($(stopImmediatelyFieldName).is(':checked'));
+        })
+
+        $(restartManuallyFieldName).click(function() {
+            resetRestartManually($(restartManuallyFieldName).is(':checked'));
+        });
+
+        if (!$('#lifecycle-MAINTENANCE').is(":checked")) {
+            $(maintenanceSchedulerDiv).hide();
+        }
+    })(up.jQuery);
 
     up.jQuery(function () {
         var $ = up.jQuery;
