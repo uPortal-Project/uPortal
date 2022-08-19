@@ -19,7 +19,8 @@ public interface IPortletList {
 
     List<PortletListItem> getItems();
 
-    // Don't use this setter - instead use clearAndSetItems(...) to let hibernate handle its own
+    // Don't use this setter directly - instead use clearAndSetItems(...). Hibernate uses this
+    // method to handle its own
     // List management
     void setItems(List<PortletListItem> items);
 
