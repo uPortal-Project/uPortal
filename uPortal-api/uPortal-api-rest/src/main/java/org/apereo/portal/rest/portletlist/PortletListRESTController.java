@@ -34,7 +34,7 @@ public class PortletListRESTController {
     @Autowired private ObjectMapper objectMapper;
 
     /**
-     * Provide a JSON view of all portlet lists.
+     * Provide a JSON view of all portlet lists
      *
      * <p>If an administrator makes this call, ALL portlet lists will be returned. Otherwise, only
      * the portlet lists that the requester owns will be returned.
@@ -61,7 +61,7 @@ public class PortletListRESTController {
     }
 
     /**
-     * Provide a JSON view of a given portlet list.
+     * Provide a JSON view of a given portlet list
      *
      * <p>If an administrator makes the request, the portlet list will be returned, regardless of
      * ownership. If anyone else makes the request, the portlet list will only be returned if the
@@ -110,6 +110,12 @@ public class PortletListRESTController {
         return prepareResponse(response, pList, null, HttpServletResponse.SC_OK);
     }
 
+    /**
+     * Create a portlet list
+     *
+     * <p>If an administrator makes the request: - The owner can be specified. Owner will default to
+     * the current logged in user. - The name can be 'favorites'
+     */
     @RequestMapping(value = CONTEXT, method = POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody String createPortletList(
             HttpServletRequest request, HttpServletResponse response, @RequestBody String json) {
@@ -214,6 +220,12 @@ public class PortletListRESTController {
         }
     }
 
+    /**
+     * Update a portlet list.
+     *
+     * <p>If an administrator makes the request: - the owner can be specified - the name can be
+     * updated to 'favorites' - any list in the system can be updated
+     */
     @RequestMapping(
             value = CONTEXT + "{portletListUuid}",
             method = PUT,
@@ -364,11 +376,10 @@ public class PortletListRESTController {
     }
 
     /**
-     * Provide a JSON view of a given portlet list.
+     * Remove a portlet list
      *
-     * <p>If an administrator makes the request, the portlet list will be returned, regardless of
-     * ownership. If anyone else makes the request, the portlet list will only be returned if the
-     * requester is the owner.
+     * <p>If an administrator makes the request, they can remove any portlet list. Otherwise, only
+     * an owner can remove their portlet list.
      */
     @RequestMapping(
             value = CONTEXT + "{portletListUuid}",

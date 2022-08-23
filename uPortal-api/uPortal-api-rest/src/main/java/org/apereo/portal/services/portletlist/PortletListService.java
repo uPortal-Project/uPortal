@@ -32,11 +32,6 @@ public final class PortletListService implements IPortletListService {
                 IPermission.ALL_TARGET);
     }
 
-    /**
-     * All the definitions, filtered by the user's access rights.
-     *
-     * @return
-     */
     @Override
     public List<IPortletList> getPortletLists() {
         List<IPortletList> rslt = portletListDao.getPortletLists();
@@ -44,12 +39,6 @@ public final class PortletListService implements IPortletListService {
         return rslt;
     }
 
-    /**
-     * All the definitions, filtered by the user's access rights.
-     *
-     * @param requester
-     * @return
-     */
     @Override
     public List<IPortletList> getPortletLists(IPerson requester) {
         List<IPortletList> rslt = portletListDao.getPortletLists(requester.getUserName());
@@ -57,12 +46,6 @@ public final class PortletListService implements IPortletListService {
         return rslt;
     }
 
-    /**
-     * Retrieve a specific portlet list
-     *
-     * @param portletListUuid
-     * @return
-     */
     @Override
     public IPortletList getPortletList(String portletListUuid) {
         return portletListDao.getPortletList(portletListUuid);
@@ -77,9 +60,6 @@ public final class PortletListService implements IPortletListService {
         }
     }
 
-    /**
-     * TODO docs Verifies permissions and that the group doesn't already exist (case insensitive)
-     */
     @Override
     public IPortletList createPortletList(IPerson requester, IPortletList toCreate) {
         log.debug(

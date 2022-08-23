@@ -13,7 +13,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 @Getter
 @Setter
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@EqualsAndHashCode
 @ToString
 @Slf4j
 @Entity

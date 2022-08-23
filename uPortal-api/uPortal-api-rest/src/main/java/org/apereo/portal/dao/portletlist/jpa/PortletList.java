@@ -20,13 +20,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.portal.dao.portletlist.IPortletList;
 import org.apereo.portal.rest.utils.InputValidator;
 import org.apereo.portal.security.IPerson;
-import org.dom4j.Element;
 import org.hibernate.annotations.*;
 import org.springframework.util.StringUtils;
 
 @Getter
 @Setter
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@EqualsAndHashCode
 @Slf4j
 @Entity
 @Table(
@@ -80,19 +79,6 @@ public class PortletList implements IPortletList {
     @Fetch(FetchMode.SELECT) // FM JOIN does BAD things to collections that support duplicates
     @OrderBy("LIST_ORDER ASC")
     private List<PortletListItem> items;
-
-    @Override
-    public void toElement(Element parent) {
-        if (parent == null) {
-            String msg = "Argument 'parent' cannot be null.";
-            throw new IllegalArgumentException(msg);
-        }
-
-        parent.addElement("id").addText(this.getId().toString());
-        parent.addElement("name").addText(this.getName());
-        parent.addElement("ownerUsername").addText(this.getOwnerUsername());
-        parent.addElement("items").addText("" + this.getItems().size());
-    }
 
     public void clearAndSetItems(List<PortletListItem> items) {
         if (this.items == null) {
