@@ -109,6 +109,7 @@ public class PortletList implements IPortletList {
 
         for (PortletListItem item : items) {
             PortletListItem existingItem = existingItems.get(item.getEntityId());
+
             if (existingItem != null) {
                 // If any item specific attributes are configured, specifically copy them over here.
                 // Order will be set in prepareForPersistence()
@@ -140,6 +141,9 @@ public class PortletList implements IPortletList {
             int order = 0;
             for (PortletListItem item : this.items) {
                 InputValidator.validateAsWordCharacters(item.getEntityId(), "items > entityId");
+
+                InputValidator.validateUniqueEntityId(this.items, item);
+
                 item.setPortletList(this);
                 item.setListOrder(order++);
             }

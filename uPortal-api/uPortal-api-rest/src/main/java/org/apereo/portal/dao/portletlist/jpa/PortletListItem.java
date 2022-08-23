@@ -21,8 +21,10 @@ import org.hibernate.annotations.GenericGenerator;
         // This is ONLY to be used as part of a portlet list, so not specifying a PK
         name = "UP_PORTLET_LIST_ITEM",
         uniqueConstraints = {
-            // These are sets of lists
+            // Only allow sets of lists
             @UniqueConstraint(columnNames = {"LIST_ID", "LIST_ORDER", "ENTITY_ID"}),
+            // Only allow sets of portlets in the list
+            @UniqueConstraint(columnNames = {"LIST_ID", "ENTITY_ID"}),
         })
 @Cacheable
 @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
