@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.portal.dao.portletlist.IPortletList;
 import org.apereo.portal.dao.portletlist.jpa.PortletList;
 import org.apereo.portal.rest.utils.ErrorResponse;
+import org.apereo.portal.rest.utils.InputValidator;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.IPersonManager;
 import org.apereo.portal.security.RuntimeAuthorizationException;
@@ -86,6 +87,16 @@ public class PortletListRESTController {
                     response, null, "Not authorized", HttpServletResponse.SC_UNAUTHORIZED);
         }
 
+        // Input validation prior to logging any values to protect against logging security attacks
+        try {
+            if (!StringUtils.isEmpty(portletListUuid))
+                InputValidator.validateAsWordCharacters(portletListUuid, "Portlet List UUID");
+        } catch (IllegalArgumentException iae) {
+            log.warn("IllegalArgumentException thrown - {}", iae.getMessage(), iae);
+            return prepareResponse(
+                    response, null, iae.getMessage(), HttpServletResponse.SC_CONFLICT);
+        }
+
         IPortletList pList = portletListService.getPortletList(portletListUuid);
 
         if (pList == null) {
@@ -137,6 +148,20 @@ public class PortletListRESTController {
         try {
             input = objectMapper.readValue(json, PortletList.class);
 
+            // Input validation prior to logging any values to protect against logging security
+            // attacks
+            try {
+                if (!StringUtils.isEmpty(input.getOwnerUsername()))
+                    InputValidator.validateAsWordCharacters(
+                            input.getOwnerUsername(), "ownerUsername");
+                if (!StringUtils.isEmpty(input.getName()))
+                    InputValidator.validateAsWordCharacters(input.getName(), "name");
+            } catch (IllegalArgumentException iae) {
+                log.warn("IllegalArgumentException thrown - {}", iae.getMessage(), iae);
+                return prepareResponse(
+                        response, null, iae.getMessage(), HttpServletResponse.SC_CONFLICT);
+            }
+
             if (portletListService.isPortletListAdmin(person)) {
                 if (StringUtils.isEmpty(input.getOwnerUsername())) {
                     // Default - admins don't have to specify a user name
@@ -178,9 +203,9 @@ public class PortletListRESTController {
 
         } catch (Exception e) {
             log.warn(
-                    "User [{}] tried to create a portlet-list with bad json - {}",
+                    "User [{}] tried to create a portlet-list with bad json.",
                     person.getUserName(),
-                    e.getMessage());
+                    e);
             return prepareResponse(
                     response,
                     null,
@@ -190,6 +215,7 @@ public class PortletListRESTController {
 
         try {
             final IPortletList created = portletListService.createPortletList(person, input);
+            // Safe soft redirect since the id is system generated
             response.setHeader("Location", created.getId());
             return prepareResponse(response, null, null, HttpServletResponse.SC_CREATED);
         } catch (RuntimeAuthorizationException rae) {
@@ -252,14 +278,28 @@ public class PortletListRESTController {
             input = objectMapper.readValue(json, PortletList.class);
         } catch (Exception e) {
             log.warn(
-                    "User [{}] tried to update a portlet-list with bad json - {}",
+                    "User [{}] tried to update a portlet-list with bad json",
                     person.getUserName(),
-                    e.getMessage());
+                    e);
             return prepareResponse(
                     response,
                     null,
                     "Unparsable portlet-list JSON",
                     HttpServletResponse.SC_BAD_REQUEST);
+        }
+
+        // Input validation prior to logging any values to protect against logging security attacks
+        try {
+            if (!StringUtils.isEmpty(portletListUuid))
+                InputValidator.validateAsWordCharacters(portletListUuid, "Portlet List UUID");
+            if (!StringUtils.isEmpty(input.getOwnerUsername()))
+                InputValidator.validateAsWordCharacters(input.getOwnerUsername(), "ownerUsername");
+            if (!StringUtils.isEmpty(input.getName()))
+                InputValidator.validateAsWordCharacters(input.getName(), "name");
+        } catch (IllegalArgumentException iae) {
+            log.warn("IllegalArgumentException thrown - {}", iae.getMessage(), iae);
+            return prepareResponse(
+                    response, null, iae.getMessage(), HttpServletResponse.SC_CONFLICT);
         }
 
         // Overlay changes onto a known entity, and then persist that entity.
@@ -398,6 +438,16 @@ public class PortletListRESTController {
             log.warn("Guest is trying to access portlet-list API, which is not allowed.");
             return prepareResponse(
                     response, null, "Not authorized", HttpServletResponse.SC_UNAUTHORIZED);
+        }
+
+        // Input validation prior to logging any values to protect against logging security attacks
+        try {
+            if (!StringUtils.isEmpty(portletListUuid))
+                InputValidator.validateAsWordCharacters(portletListUuid, "Portlet List UUID");
+        } catch (IllegalArgumentException iae) {
+            log.warn("IllegalArgumentException thrown - {}", iae.getMessage(), iae);
+            return prepareResponse(
+                    response, null, iae.getMessage(), HttpServletResponse.SC_CONFLICT);
         }
 
         try {
