@@ -132,12 +132,6 @@ public class PortletDefinitionForm implements Serializable {
 
     /** Construct a new PortletDefinitionForm from a PortletDefinition */
     public PortletDefinitionForm(IPortletDefinition def) {
-        logger.error("In PortletDefinitionForm");
-        StackTraceElement[] abc = Thread.currentThread().getStackTrace();
-        Arrays.stream(abc).forEach(e -> log.error(e));
-        logger.error("stopImmediately [" + this.stopImmediately + "]");
-        logger.error("restartManually [" + this.restartManually + "]");
-        logger.error("parameters [" + def.getParameters() + "]");
         this.setId(def.getPortletDefinitionId().getStringId());
         this.setFname(def.getFName());
         this.setName(def.getName());
@@ -202,6 +196,35 @@ public class PortletDefinitionForm implements Serializable {
                 "lastLifecycleEntry='{}'; messageParam='{}'", lastLifecycleEntry, messageParam);
         if (messageParam != null && StringUtils.isNotBlank(messageParam.getValue())) {
             setCustomMaintenanceMessage(messageParam.getValue());
+        }
+
+        final IPortletDefinitionParameter stopImmediatelyParam = def.getParameter("stopImmediately");
+        if (stopImmediatelyParam != null) {
+            setStopImmediately(StringUtils.equals(stopImmediatelyParam.getValue(), "true"));
+        } else {
+            setStopImmediately(true);
+        }
+        final IPortletDefinitionParameter stopDateParam = def.getParameter("stopDate");
+        if (stopDateParam != null) {
+            setStopDate(stopDateParam.getValue());
+        }
+        final IPortletDefinitionParameter stopTimeParam = def.getParameter("stopTime");
+        if (stopTimeParam != null) {
+            setStopTime(stopTimeParam.getValue());
+        }
+        final IPortletDefinitionParameter restartManuallyParam = def.getParameter("restartManually");
+        if (restartManuallyParam != null) {
+            setRestartManually(StringUtils.equals(restartManuallyParam.getValue(), "true"));
+        } else {
+            setRestartManually(true);
+        }
+        final IPortletDefinitionParameter restartDateParam = def.getParameter("restartDate");
+        if (restartDateParam != null) {
+            setRestartDate(restartDateParam.getValue());
+        }
+        final IPortletDefinitionParameter restartTimeParam = def.getParameter("restartTime");
+        if (restartTimeParam != null) {
+            setRestartTime(restartTimeParam.getValue());
         }
 
         for (IPortletDefinitionParameter param : def.getParameters()) {

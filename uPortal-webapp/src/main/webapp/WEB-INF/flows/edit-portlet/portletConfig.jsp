@@ -586,28 +586,6 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                                     <td>
                                         <spring:message code="lifecycle.description.${ lifecycleState }"/>
                                     </td>
-                                    <td>
-                                        <c:if test="${lifecycleState == 'MAINTENANCE'}">
-                                            <div id="maintenance-scheduler">
-                                                <div>
-                                                    <label for="stopImmediately">Stop Immediately</label>
-                                                    <form:checkbox path="stopImmediately" id="stopImmediately" checked="checked" />
-                                                    <label for="stopDate">Stop Date</label>
-                                                    <form:input type="text" path="stopDate" id="stopDate" disabled="true" />
-                                                    <label for="stopTime">Stop Time</label>
-                                                    <form:input type="text" path="stopTime" id="stopTime" disabled="true" />
-                                                </div>
-                                                <div>
-                                                    <label for="restartManually">Restart Manually</label>
-                                                    <form:checkbox path="restartManually" id="restartManually" checked="checked" />
-                                                    <label for="restartDate">Restart Date</label>
-                                                    <form:input type="text" path="restartDate" id="restartDate" disabled="true" />
-                                                    <label for="restartTime">Restart Time</label>
-                                                    <form:input type="text" path="restartTime" id="restartTime" disabled="true" />
-                                                </div>
-                                            </div>
-                                        </c:if>
-                                    </td>
                                 </tr>
                             </c:forEach>
                             </tbody>
@@ -742,6 +720,54 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                                     <form:input id="customMaintenanceMessage" path="customMaintenanceMessage" size="80" />
                                 </td>
                             </tr>
+                            <tr>
+                                <td>
+                                    <label for="stopImmediately">Stop Immediately</label>
+                                </td>
+                                <td>
+                                    <form:checkbox path="stopImmediately" id="stopImmediately"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label for="stopDate">Stop Date</label>
+                                </td>
+                                <td>
+                                    <form:input type="text" path="stopDate" id="stopDate" cssClass="cal-datepicker"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label for="stopTime">Stop Time</label>
+                                </td>
+                                <td>
+                                    <form:input type="text" path="stopTime" id="stopTime"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label for="restartManually">Restart Manually</label>
+                                </td>
+                                <td>
+                                    <form:checkbox path="restartManually" id="restartManually"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label for="restartDate">Restart Date</label>
+                                </td>
+                                <td>
+                                    <form:input type="text" path="restartDate" id="restartDate" cssClass="cal-datepicker"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label for="restartTime">Restart Time</label>
+                                </td>
+                                <td>
+                                    <form:input type="text" path="restartTime" id="restartTime"/>
+                                </td>
+                             </tr>
                         </tbody>
                     </table>
                 </div>
@@ -1023,9 +1049,32 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
         });
     });
 
-    // maintenance scheduler rendering
-    up.jQuery(function($) {
-        const maintenanceSchedulerDiv = "#maintenance-scheduler";
+    up.jQuery(function () {
+        var $ = up.jQuery;
+        $(document).ready(function () {
+            var updateOptionalInputs = function () {
+                var lifecycle = $('#${n}PortletLifecycle .lifecycle-state:checked').val();
+                $('#${n}PortletLifecycle #publishingDateSection').css('display', lifecycle == "APPROVED" ? "block" : "none");
+                $('#${n}PortletLifecycle #expirationDateSection').css('display', lifecycle == "PUBLISHED" ? "block" : "none");
+                $('#${n}PortletLifecycle #customMaintenanceMessageSection').css('display', lifecycle == "MAINTENANCE" ? "block" : "none");
+            };
+            $("#${n}PortletLifecycle .cal-datepicker").datepicker().change(function () {
+                if ($(this).val()) $(this).next().css("display", "inline");
+                else $(this).next().css("display", "none");
+            });
+            $("#${n}PortletLifecycle .clear-date").click(function (e) {
+                e.preventDefault();
+                $(this).parent().css("display", "none").prev().val("");
+            });
+            $("#${n}PortletLifecycle .lifecycle-state").click(function () {
+                updateOptionalInputs();
+            });
+            updateOptionalInputs();
+
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+
+        // maintenance scheduler rendering
         const stopImmediatelyFieldName = "#stopImmediately";
         const stopDateFieldName = "#stopDate";
         const stopTimeFieldName = "#stopTime";
@@ -1054,10 +1103,8 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 
         $('.lifecycle-state').click(function() {
             if ($('#lifecycle-MAINTENANCE').is(":checked")) {
-                $(maintenanceSchedulerDiv).show();
                 return;
 			}
-			$(maintenanceSchedulerDiv).hide();
 			$(stopImmediatelyFieldName).prop("checked", true);
 			resetStopImmediately(true);
 			$(restartManuallyFieldName).prop("checked", true);
@@ -1072,35 +1119,8 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
             resetRestartManually($(restartManuallyFieldName).is(':checked'));
         });
 
-        if (!$('#lifecycle-MAINTENANCE').is(":checked")) {
-            $(maintenanceSchedulerDiv).hide();
-        }
-    })(up.jQuery);
-
-    up.jQuery(function () {
-        var $ = up.jQuery;
-        $(document).ready(function () {
-            var updateOptionalInputs = function () {
-                var lifecycle = $('#${n}PortletLifecycle .lifecycle-state:checked').val();
-                $('#${n}PortletLifecycle #publishingDateSection').css('display', lifecycle == "APPROVED" ? "block" : "none");
-                $('#${n}PortletLifecycle #expirationDateSection').css('display', lifecycle == "PUBLISHED" ? "block" : "none");
-                $('#${n}PortletLifecycle #customMaintenanceMessageSection').css('display', lifecycle == "MAINTENANCE" ? "block" : "none");
-            };
-            $("#${n}PortletLifecycle .cal-datepicker").datepicker().change(function () {
-                if ($(this).val()) $(this).next().css("display", "inline");
-                else $(this).next().css("display", "none");
-            });
-            $("#${n}PortletLifecycle .clear-date").click(function (e) {
-                e.preventDefault();
-                $(this).parent().css("display", "none").prev().val("");
-            });
-            $("#${n}PortletLifecycle .lifecycle-state").click(function () {
-                updateOptionalInputs();
-            });
-            updateOptionalInputs();
-
-            $('[data-toggle="tooltip"]').tooltip();
-        });
+        resetStopImmediately($(stopImmediatelyFieldName).is(':checked'));
+        resetRestartManually($(restartManuallyFieldName).is(':checked'));
 
         function toggleChevron(e) {
             $(e.target)
