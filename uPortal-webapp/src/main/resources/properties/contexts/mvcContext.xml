@@ -48,17 +48,23 @@
         <property name="maxUploadSize" value="100000"/>
     </bean>
 
+    <!-- A general bean to apply a customizing multi tenant URL -->
+    <bean id="multiTenantUrlCustomizer" class="org.apereo.portal.url.UrlMultiServerNameCustomizer">
+        <property name="allServerNames">
+            <bean class="org.apereo.portal.utils.StringToSetUtils" factory-method="delimitedSpaceListToSet">
+                <constructor-arg type="java.lang.String" value="${portal.allServerNames}"/>
+            </bean>
+        </property>
+    </bean>
+
+    <!-- A Helper bean to update the issuer url on JWT when using multi-tenant URL -->
+    <alias name="multiTenantUrlCustomizer" alias="oidcIssuerUrlCustomizer"/>
+
     <!-- A Helper bean to update Cas login/logout url when the service can be accessed on different serverName -->
     <bean id="authUrlCustomizer" class="org.apereo.portal.url.UrlAuthCustomizerRegistry">
         <property name="registry">
             <list>
-                <bean class="org.apereo.portal.url.UrlMultiServerNameCustomizer">
-                    <property name="allServerNames">
-                        <bean class="org.apereo.portal.utils.StringToSetUtils" factory-method="delimitedSpaceListToSet">
-                            <constructor-arg type="java.lang.String" value="${portal.allServerNames}"/>
-                        </bean>
-                    </property>
-                </bean>
+                <ref bean="multiTenantUrlCustomizer" />
             </list>
         </property>
     </bean>

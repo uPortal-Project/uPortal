@@ -37,6 +37,7 @@ dependencies {
     compile project(':uPortal-security:uPortal-security-xslt')
     compile project(':uPortal-soffit:uPortal-soffit-connector')
     compile project(':uPortal-utils:uPortal-utils-jmx')
+    compile project(':uPortal-utils:uPortal-utils-url')
 
     compileOnly "org.apereo.service.persondir:person-directory-api:${personDirectoryVersion}"
     compileOnly "${servletApiDependency}"
