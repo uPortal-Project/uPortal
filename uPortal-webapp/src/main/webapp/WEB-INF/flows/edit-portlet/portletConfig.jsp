@@ -690,6 +690,10 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                                     </span>
                                 </td>
                             </tr>
+                            <tr id="publishedFutureMaintenance">
+                                <td>Scheduled Maintenance Start</td>
+                                <td>${portlet.stopDate} ${portlet.stopTime} <button type="button" id="cancelStopDate">Cancel</button></td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -733,7 +737,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                                     <label for="stopDate">Stop Date</label>
                                 </td>
                                 <td>
-                                    <form:input type="text" path="stopDate" id="stopDate" cssClass="cal-datepicker"/>
+                                    <form:input title="mm/dd/yyyy" type="text" path="stopDate" id="stopDate" cssClass="cal-datepicker"/>
                                 </td>
                             </tr>
                             <tr>
@@ -741,7 +745,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                                     <label for="stopTime">Stop Time</label>
                                 </td>
                                 <td>
-                                    <form:input type="text" path="stopTime" id="stopTime"/>
+                                    <form:input title="hh:mm 24 hour UTC" type="text" path="stopTime" id="stopTime"/>
                                 </td>
                             </tr>
                             <tr>
@@ -757,7 +761,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                                     <label for="restartDate">Restart Date</label>
                                 </td>
                                 <td>
-                                    <form:input type="text" path="restartDate" id="restartDate" cssClass="cal-datepicker"/>
+                                    <form:input title="mm/dd/yyyy" type="text" path="restartDate" id="restartDate" cssClass="cal-datepicker"/>
                                 </td>
                             </tr>
                             <tr>
@@ -765,7 +769,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                                     <label for="restartTime">Restart Time</label>
                                 </td>
                                 <td>
-                                    <form:input type="text" path="restartTime" id="restartTime"/>
+                                    <form:input title="hh:mm 24 hour UTC" type="text" path="restartTime" id="restartTime"/>
                                 </td>
                              </tr>
                         </tbody>
@@ -1118,6 +1122,14 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
         $(restartManuallyFieldName).click(function() {
             resetRestartManually($(restartManuallyFieldName).is(':checked'));
         });
+
+        $("#cancelStopDate").click(function() {
+			$(stopImmediatelyFieldName).prop("checked", true);
+			resetStopImmediately(true);
+	        $("#publishedFutureMaintenance").css("display", "none");
+        })
+
+        $("#publishedFutureMaintenance").css("display", $('#lifecycle-PUBLISHED').is(":checked") && $(stopDateFieldName).val() ? "block" : "none");
 
         resetStopImmediately($(stopImmediatelyFieldName).is(':checked'));
         resetRestartManually($(restartManuallyFieldName).is(':checked'));

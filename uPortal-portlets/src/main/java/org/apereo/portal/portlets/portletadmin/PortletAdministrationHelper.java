@@ -294,8 +294,6 @@ public final class PortletAdministrationHelper implements ServletContextAware {
     public PortletDefinitionForm savePortletRegistration(
             IPerson publisher, PortletDefinitionForm form) {
         logger.trace("In savePortletRegistration() - for: {}", form.getPortletName());
-        logger.error("form stopDate [" + form.getStopDate() + "]");
-        logger.error("form stopImmediately [" + form.getStopImmediately() + "]");
         /* TODO:  Service-Layer Security Reboot (great need of refactoring with a community-approved plan in place) */
 
         // User must have the selected lifecycle permission over AT LEAST ONE
@@ -1204,8 +1202,44 @@ public final class PortletAdministrationHelper implements ServletContextAware {
          *
          * NOTE 2:  permissions for this step have already been checked in savePortletRegistration.
          */
-        portletDef.updateLifecycleState(selectedLifecycleState, publisher);
+        if (StringUtils.isBlank(form.getStopDate())) {
+            portletDef.updateLifecycleState(selectedLifecycleState, publisher);
+        }
 
+        final Boolean stopImmediately = form.getStopImmediately();
+        final Boolean restartManually = form.getRestartManually();
+        portletDef.addParameter("stopImmediately", stopImmediately ? "true" : "false");
+        if (stopImmediately) {
+            portletDef.removeParameter(
+                    PortletLifecycleState.MAINTENANCE_STOP_DATE);
+            portletDef.removeParameter(
+                    PortletLifecycleState.MAINTENANCE_STOP_TIME);
+        } else {
+            final String stopDate = form.getStopDate();
+            final String stopTime = form.getStopTime();
+            portletDef.addParameter(
+                    PortletLifecycleState.MAINTENANCE_STOP_DATE,
+                    stopDate);
+            portletDef.addParameter(
+                    PortletLifecycleState.MAINTENANCE_STOP_TIME,
+                    stopTime);
+        }
+        portletDef.addParameter("restartManually", restartManually ? "true" : "false");
+        if (restartManually) {
+            portletDef.removeParameter(
+                    PortletLifecycleState.MAINTENANCE_RESTART_DATE);
+            portletDef.removeParameter(
+                    PortletLifecycleState.MAINTENANCE_RESTART_TIME);
+        } else {
+            final String restartDate = form.getRestartDate();
+            final String restartTime = form.getRestartTime();
+            portletDef.addParameter(
+                    PortletLifecycleState.MAINTENANCE_RESTART_DATE,
+                    restartDate);
+            portletDef.addParameter(
+                    PortletLifecycleState.MAINTENANCE_RESTART_TIME,
+                    restartTime);
+        }
         /*
          * Step Two:  depending on which state was selected, we may have extra work to do.
          */
@@ -1244,42 +1278,6 @@ public final class PortletAdministrationHelper implements ServletContextAware {
                     // Clear any previous message
                     portletDef.removeParameter(
                             PortletLifecycleState.CUSTOM_MAINTENANCE_MESSAGE_PARAMETER_NAME);
-                }
-                final Boolean stopImmediately = form.getStopImmediately();
-                portletDef.addParameter("stopImmediately", stopImmediately ? "true" : "false");
-                if (stopImmediately) {
-                    portletDef.removeParameter(
-                            PortletLifecycleState.MAINTENANCE_STOP_DATE);
-                    portletDef.removeParameter(
-                            PortletLifecycleState.MAINTENANCE_STOP_TIME);
-                } else {
-                    final String stopDate = form.getStopDate();
-                    final String stopTime = form.getStopTime();
-                    portletDef.addParameter(
-                            PortletLifecycleState.MAINTENANCE_STOP_DATE,
-                            stopDate);
-                    portletDef.addParameter(
-                            PortletLifecycleState.MAINTENANCE_STOP_TIME,
-                            stopTime);
-                }
-                final Boolean restartManually = form.getRestartManually();
-                portletDef.addParameter("restartManually", restartManually ? "true" : "false");
-                logger.error("restartManually from form (" + restartManually + "]");
-                logger.error("restartManually  portlet def param [" + portletDef.getParameter("restartManually") + "]");
-                if (restartManually) {
-                    portletDef.removeParameter(
-                            PortletLifecycleState.MAINTENANCE_RESTART_DATE);
-                    portletDef.removeParameter(
-                            PortletLifecycleState.MAINTENANCE_RESTART_TIME);
-                } else {
-                    final String restartDate = form.getRestartDate();
-                    final String restartTime = form.getRestartTime();
-                    portletDef.addParameter(
-                            PortletLifecycleState.MAINTENANCE_RESTART_DATE,
-                            restartDate);
-                    portletDef.addParameter(
-                            PortletLifecycleState.MAINTENANCE_RESTART_TIME,
-                            restartTime);
                 }
                 break;
             default:

@@ -15,14 +15,20 @@
 package org.apereo.portal.portlet.rendering;
 
 import com.google.common.base.Function;
+import java.text.ParseException;
 import java.io.IOException;
+import java.time.Instant;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.TimeZone;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentMap;
@@ -33,6 +39,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.FastDateFormat;
 import org.apache.pluto.container.om.portlet.ContainerRuntimeOption;
 import org.apache.pluto.container.om.portlet.PortletDefinition;
 import org.apereo.portal.events.IPortletExecutionEventFactory;
@@ -90,6 +97,8 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
 
     protected static final String SESSION_ATTRIBUTE__PORTLET_FAILURE_CAUSE_MAP =
             PortletExecutionManager.class.getName() + ".PORTLET_FAILURE_CAUSE_MAP";
+
+    private static final FastDateFormat df = FastDateFormat.getInstance("M/d/yyyy HH:mmZ");
 
     /**
      * 'javax.portlet.renderHeaders' is the name of a container runtime option a JSR-286 portlet can
@@ -967,6 +976,39 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
         return portletHeaderRenderWorker;
     }
 
+    public Optional<Date> retrieveMaintenanceStopDate(IPortletDefinition portletDef, Date now) {
+        IPortletDefinitionParameter stopDateParam = portletDef.getParameter(PortletLifecycleState.MAINTENANCE_STOP_DATE);
+        IPortletDefinitionParameter stopTimeParam = portletDef.getParameter(PortletLifecycleState.MAINTENANCE_STOP_TIME);
+        if (stopDateParam != null && stopTimeParam != null) {
+            String stopDateStr = stopDateParam.getValue() + " " + stopTimeParam.getValue() + "+0000";
+            try {
+                Date stopDate = df.parse(stopDateStr);
+                logger.error("stopDateStr [" + stopDateStr + "]");
+                logger.error("now [" + df.format(now) + "]");
+                return Optional.of(stopDate);
+            } catch (ParseException e) {
+                logger.error(e.getMessage(), e);
+            }
+        }
+	    return Optional.empty();
+    }
+
+    public Optional<Date> retrieveMaintenanceRestartDate(IPortletDefinition portletDef, Date now) {
+        IPortletDefinitionParameter restartDateParam = portletDef.getParameter(PortletLifecycleState.MAINTENANCE_RESTART_DATE);
+        IPortletDefinitionParameter restartTimeParam = portletDef.getParameter(PortletLifecycleState.MAINTENANCE_RESTART_TIME);
+        if (restartDateParam != null && restartTimeParam != null) {
+            String restartDateStr = restartDateParam.getValue() + " " + restartTimeParam.getValue() + "+0000";
+            try {
+                Date restartDate = df.parse(restartDateStr);
+                logger.error("restartDateStr [" + restartDateStr + "]");
+                return Optional.of(restartDate);
+            } catch (ParseException e) {
+                logger.error(e.getMessage(), e);
+            }
+        }
+		return Optional.empty();
+    }
+
     /** create and submit the portlet content rendering job to the thread pool */
     protected IPortletRenderExecutionWorker startPortletRenderInternal(
             IPortletWindowId portletWindowId,
@@ -975,8 +1017,11 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
         // first check to see if there is a Throwable in the session for this IPortletWindowId
         final Map<IPortletWindowId, Exception> portletFailureMap = getPortletErrorMap(request);
         final Exception cause = portletFailureMap.remove(portletWindowId);
+        Date now = Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTime();
+        logger.error("now (UTC) [" + now + "]");
 
-        final IPortletRenderExecutionWorker portletRenderExecutionWorker;
+//        final IPortletRenderExecutionWorker portletRenderExecutionWorker;
+        IPortletRenderExecutionWorker portletRenderExecutionWorker = null;
         if (null != cause) {
             // previous action failed, dispatch to errorPortlet immediately
             portletRenderExecutionWorker =
@@ -986,25 +1031,53 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
             IPortletWindow portletWindow =
                     portletWindowRegistry.getPortletWindow(request, portletWindowId);
             IPortletDefinition portletDef = portletWindow.getPortletEntity().getPortletDefinition();
-            if (portletDef.getLifecycleState().equals(PortletLifecycleState.MAINTENANCE)) {
-                // Prevent the portlet from rendering;  replace with a helpful "Out of Service"
-                // message
-                final IPortletDefinitionParameter messageParam =
-                        portletDef.getParameter(
-                                PortletLifecycleState.CUSTOM_MAINTENANCE_MESSAGE_PARAMETER_NAME);
-                final Exception mme =
-                        messageParam != null && StringUtils.isNotBlank(messageParam.getValue())
-                                ? new MaintenanceModeException(messageParam.getValue())
-                                : new MaintenanceModeException();
-                portletRenderExecutionWorker =
-                        this.portletWorkerFactory.createFailureWorker(
-                                request, response, portletWindowId, mme);
-            } else {
-                // Happy path
-                portletRenderExecutionWorker =
-                        this.portletWorkerFactory.createRenderWorker(
-                                request, response, portletWindowId);
+            if (portletDef.getLifecycleState().equals(PortletLifecycleState.PUBLISHED)) {
+                // if we're in the PUBLISHED phase, look for scheduled maintenance
+                Optional<Date> stopDate = this.retrieveMaintenanceStopDate(portletDef, now);
+                Optional<Date> restartDate = this.retrieveMaintenanceRestartDate(portletDef, now);
+                if (stopDate.isPresent() && stopDate.get().before(now)) {
+                    if (!restartDate.isPresent() || (restartDate.isPresent() && restartDate.get().after(now))) {
+                        // we're also in maintenance phase
+                        // DRY (above)
+                        final IPortletDefinitionParameter messageParam =
+                                portletDef.getParameter(
+                                        PortletLifecycleState.CUSTOM_MAINTENANCE_MESSAGE_PARAMETER_NAME);
+                        final Exception mme =
+                                messageParam != null && StringUtils.isNotBlank(messageParam.getValue())
+                                        ? new MaintenanceModeException(messageParam.getValue())
+                                        : new MaintenanceModeException();
+                        portletRenderExecutionWorker =
+                                this.portletWorkerFactory.createFailureWorker(
+                                        request, response, portletWindowId, mme);
+                    }
+                }
             }
+            if (portletRenderExecutionWorker == null) {
+	            if (portletDef.getLifecycleState().equals(PortletLifecycleState.MAINTENANCE)) {
+	                Optional<Date> restartDate = this.retrieveMaintenanceRestartDate(portletDef, now);
+	                if (!restartDate.isPresent() || (restartDate.isPresent() && restartDate.get().after(now))) {
+	                // Prevent the portlet from rendering;  replace with a helpful "Out of Service"
+	                // message
+		                final IPortletDefinitionParameter messageParam =
+		                        portletDef.getParameter(
+		                                PortletLifecycleState.CUSTOM_MAINTENANCE_MESSAGE_PARAMETER_NAME);
+		                final Exception mme =
+		                        messageParam != null && StringUtils.isNotBlank(messageParam.getValue())
+		                                ? new MaintenanceModeException(messageParam.getValue())
+		                                : new MaintenanceModeException();
+		                portletRenderExecutionWorker =
+		                        this.portletWorkerFactory.createFailureWorker(
+		                                request, response, portletWindowId, mme);
+	                }
+	            }
+            }
+        }
+
+        if (portletRenderExecutionWorker == null) {
+            // Happy path
+            portletRenderExecutionWorker =
+                    this.portletWorkerFactory.createRenderWorker(
+                            request, response, portletWindowId);
         }
 
         portletRenderExecutionWorker.submit();

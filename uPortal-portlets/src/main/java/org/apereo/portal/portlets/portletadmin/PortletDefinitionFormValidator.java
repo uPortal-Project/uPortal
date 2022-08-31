@@ -16,7 +16,11 @@ package org.apereo.portal.portlets.portletadmin;
 
 import java.text.ParseException;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.Optional;
+import java.util.TimeZone;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.apache.commons.logging.Log;
@@ -36,6 +40,9 @@ import org.springframework.stereotype.Service;
 @Service("portletValidator")
 public class PortletDefinitionFormValidator {
     protected final transient Log log = LogFactory.getLog(getClass());
+    private static final FastDateFormat edf = FastDateFormat.getInstance("M/d/yyyy HH:mmZ");
+    private static final String MIDNIGHT = "00:00";
+    private static final String UTC_OFFSET = "+0000";
 
     private IChannelPublishingDefinitionDao channelPublishingDefinitionDao;
     private IPortletDefinitionRegistry portletDefinitionRegistry;
@@ -174,7 +181,7 @@ public class PortletDefinitionFormValidator {
                             .code("please.select.lifecycle.stage")
                             .build());
         }
-        Date now = new Date();
+        final Date now = Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTime();
         if (def.getPublishDate() != null) {
             if (def.getPublishDateTime().before(now)) {
                 context.addMessage(
@@ -205,55 +212,79 @@ public class PortletDefinitionFormValidator {
                                 .build());
             }
         }
-        final FastDateFormat df = FastDateFormat.getInstance("M/d/yyyy");
-        final FastDateFormat tf = FastDateFormat.getInstance("HH:mm");
+
+        if (def.getStopImmediately()) {
+            def.setStopDate(null);
+            def.setStopTime(null);
+        }
+        if (def.getRestartManually()) {
+            def.setRestartDate(null);
+            def.setRestartTime(null);
+        }
+
+        // set a default time if date is set but time isn't set
         if (StringUtils.isNotBlank(def.getStopDate())) {
-            try {
-                Date d = df.parse(def.getStopDate());
-                def.setStopDate(df.format(d));
-            } catch (ParseException e) {
-                context.addMessage(new MessageBuilder()
-                    .error()
-                    .source("stopDate")
-                    .code("maintenance.scheduler.invalid.date.format")
-                    .build());
+            if (StringUtils.isBlank(def.getStopTime())) {
+                def.setStopTime(MIDNIGHT);
             }
         }
-        if (StringUtils.isNotBlank(def.getStopTime())) {
-            try {
-                Date d = tf.parse(def.getStopTime());
-                def.setStopTime(tf.format(d));
-            } catch (ParseException e) {
-                context.addMessage(new MessageBuilder()
-                        .error()
-                        .source("stopTime")
-                        .code("maintenance.scheduler.invalid.time.format")
-                        .build());
-            }
-        }
+
         if (StringUtils.isNotBlank(def.getRestartDate())) {
-            try {
-                Date d = df.parse(def.getRestartDate());
-                def.setRestartDate(df.format(d));
-            } catch (ParseException e) {
-                context.addMessage(new MessageBuilder()
-                        .error()
-                        .source("restartDate")
-                        .code("maintenance.scheduler.invalid.date.format")
-                        .build());
+            if (StringUtils.isBlank(def.getRestartTime())) {
+                def.setRestartTime(MIDNIGHT);
             }
         }
-        if (StringUtils.isNotBlank(def.getRestartTime())) {
+
+        Date stopDate = null;
+        if (StringUtils.isNotBlank(def.getStopDate())) {
+            String stopDateStr = def.getStopDate() + " " + def.getStopTime() + UTC_OFFSET;
             try {
-                Date d = tf.parse(def.getRestartTime());
-                def.setRestartTime(tf.format(d));
+                stopDate = edf.parse(stopDateStr);
+                if (stopDate.before(now)) {
+                    context.addMessage(new MessageBuilder()
+                            .error()
+                            .source("stopDate")
+                            .code("maintenance.scheduler.stop.date.must.be.after.now")
+                            .build());
+                }
             } catch (ParseException e) {
-                context.addMessage(new MessageBuilder()
-                        .error()
-                        .source("restartTime")
-                        .code("maintenance.scheduler.invalid.time.format")
-                        .build());
+                   context.addMessage(new MessageBuilder()
+                           .error()
+                            .source("stopDate")
+                            .code("maintenance.scheduler.stop.date.invalid.date.format")
+                            .build());
             }
+        }
+
+        Date restartDate = null;
+        if (StringUtils.isNotBlank(def.getRestartDate())) {
+            String restartDateStr = def.getRestartDate() + " " + def.getRestartTime() + UTC_OFFSET;
+            try {
+                restartDate = edf.parse(restartDateStr);
+                if (restartDate.before(now)) {
+                    context.addMessage(new MessageBuilder()
+                            .error()
+                            .source("restartDate")
+                            .code("maintenance.scheduler.restart.date.must.be.after.now")
+                            .build());
+                }
+           } catch (ParseException e) {
+                   context.addMessage(new MessageBuilder()
+                           .error()
+                           .source("restartDate")
+                           .code("maintenance.scheduler.restart.date.invalid.date.format")
+                           .build());
+            }
+        }
+        log.error("now [" + now + "]");
+        log.error("stopDate [" + stopDate + "]");
+        log.error("restartDate [" + restartDate + "]");
+        if (stopDate != null && restartDate != null && stopDate.after(restartDate)) {
+            context.addMessage(new MessageBuilder()
+                    .error()
+                    .source("restartDate")
+                    .code("maintenance.scheduler.restart.date.must.be.after.stop.date")
+                    .build());
         }
     }
 }
