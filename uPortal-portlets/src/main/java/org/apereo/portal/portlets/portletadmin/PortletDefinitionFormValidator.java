@@ -276,9 +276,6 @@ public class PortletDefinitionFormValidator {
                            .build());
             }
         }
-        log.error("now [" + now + "]");
-        log.error("stopDate [" + stopDate + "]");
-        log.error("restartDate [" + restartDate + "]");
         if (stopDate != null && restartDate != null && stopDate.after(restartDate)) {
             context.addMessage(new MessageBuilder()
                     .error()

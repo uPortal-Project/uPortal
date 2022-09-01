@@ -99,6 +99,7 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
             PortletExecutionManager.class.getName() + ".PORTLET_FAILURE_CAUSE_MAP";
 
     private static final FastDateFormat df = FastDateFormat.getInstance("M/d/yyyy HH:mmZ");
+    private static final String UTC_OFFSET = "+0000";
 
     /**
      * 'javax.portlet.renderHeaders' is the name of a container runtime option a JSR-286 portlet can
@@ -980,11 +981,9 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
         IPortletDefinitionParameter stopDateParam = portletDef.getParameter(PortletLifecycleState.MAINTENANCE_STOP_DATE);
         IPortletDefinitionParameter stopTimeParam = portletDef.getParameter(PortletLifecycleState.MAINTENANCE_STOP_TIME);
         if (stopDateParam != null && stopTimeParam != null) {
-            String stopDateStr = stopDateParam.getValue() + " " + stopTimeParam.getValue() + "+0000";
+            String stopDateStr = stopDateParam.getValue() + " " + stopTimeParam.getValue() + UTC_OFFSET;
             try {
                 Date stopDate = df.parse(stopDateStr);
-                logger.error("stopDateStr [" + stopDateStr + "]");
-                logger.error("now [" + df.format(now) + "]");
                 return Optional.of(stopDate);
             } catch (ParseException e) {
                 logger.error(e.getMessage(), e);
@@ -997,10 +996,9 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
         IPortletDefinitionParameter restartDateParam = portletDef.getParameter(PortletLifecycleState.MAINTENANCE_RESTART_DATE);
         IPortletDefinitionParameter restartTimeParam = portletDef.getParameter(PortletLifecycleState.MAINTENANCE_RESTART_TIME);
         if (restartDateParam != null && restartTimeParam != null) {
-            String restartDateStr = restartDateParam.getValue() + " " + restartTimeParam.getValue() + "+0000";
+            String restartDateStr = restartDateParam.getValue() + " " + restartTimeParam.getValue() + UTC_OFFSET;
             try {
                 Date restartDate = df.parse(restartDateStr);
-                logger.error("restartDateStr [" + restartDateStr + "]");
                 return Optional.of(restartDate);
             } catch (ParseException e) {
                 logger.error(e.getMessage(), e);
@@ -1018,9 +1016,7 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
         final Map<IPortletWindowId, Exception> portletFailureMap = getPortletErrorMap(request);
         final Exception cause = portletFailureMap.remove(portletWindowId);
         Date now = Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTime();
-        logger.error("now (UTC) [" + now + "]");
 
-//        final IPortletRenderExecutionWorker portletRenderExecutionWorker;
         IPortletRenderExecutionWorker portletRenderExecutionWorker = null;
         if (null != cause) {
             // previous action failed, dispatch to errorPortlet immediately
@@ -1037,8 +1033,6 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
                 Optional<Date> restartDate = this.retrieveMaintenanceRestartDate(portletDef, now);
                 if (stopDate.isPresent() && stopDate.get().before(now)) {
                     if (!restartDate.isPresent() || (restartDate.isPresent() && restartDate.get().after(now))) {
-                        // we're also in maintenance phase
-                        // DRY (above)
                         final IPortletDefinitionParameter messageParam =
                                 portletDef.getParameter(
                                         PortletLifecycleState.CUSTOM_MAINTENANCE_MESSAGE_PARAMETER_NAME);

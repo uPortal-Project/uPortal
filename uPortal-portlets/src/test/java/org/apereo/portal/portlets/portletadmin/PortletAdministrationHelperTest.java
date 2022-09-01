@@ -14,10 +14,18 @@
  */
 package org.apereo.portal.portlets.portletadmin;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
+import java.text.ParseException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.apache.commons.lang3.time.FastDateFormat;
 import org.apereo.portal.portlet.dao.jpa.PortletTypeImpl;
 import org.apereo.portal.portlet.om.IPortletType;
 import org.apereo.portal.portletpublishing.xml.PortletPublishingDefinition;
@@ -58,4 +66,23 @@ public class PortletAdministrationHelperTest {
      * is an upfront call to hasLifecyclePermission() which relies on the authorizationService to be
      * available.
      */
+
+    @Test
+    public void testIsInMaintenanceRange() {
+        PortletAdministrationHelper helper = new PortletAdministrationHelper();
+        FastDateFormat edf = FastDateFormat.getInstance("M/d/yyyy HH:mmZ");
+        try {
+            Date now = edf.parse("1/15/2022 10:30+0000");
+            Date nullDate = null;
+            Date beforeNow = edf.parse("1/15/2022 10:00+0000");
+            Date afterNow = edf.parse("1/15/2022 11:00+0000");
+            assertFalse(helper.isInMaintenanceRange(nullDate, nullDate, now));
+            assertFalse(helper.isInMaintenanceRange(nullDate, beforeNow, now));
+            assertFalse(helper.isInMaintenanceRange(afterNow, nullDate, now));
+            assertTrue(helper.isInMaintenanceRange(beforeNow, nullDate, now));
+            assertTrue(helper.isInMaintenanceRange(nullDate, afterNow, now));
+        } catch (ParseException e) {
+            fail("ParseException");
+        }
+    }
 }
