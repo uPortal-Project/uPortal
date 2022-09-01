@@ -1126,6 +1126,8 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
         $("#cancelStopDate").click(function() {
 			$(stopImmediatelyFieldName).prop("checked", true);
 			resetStopImmediately(true);
+            $(restartManuallyFieldName).prop("checked", true);
+            resetRestartManually(true);
 	        $("#publishedFutureMaintenance").css("display", "none");
         })
 

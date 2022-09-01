@@ -1288,7 +1288,7 @@ public final class PortletAdministrationHelper implements ServletContextAware {
                 }
                 if (isInMaintenanceRange(stopDate, restartDate, now)) {
                     portletDef.updateLifecycleState(
-                            PortletLifecycleState.MAINTENANCE, publisher, form.getExpirationDateTime());
+                            PortletLifecycleState.MAINTENANCE, publisher, form.getPublishDateTime());
                 }
                 break;
             case MAINTENANCE:
@@ -1306,7 +1306,7 @@ public final class PortletAdministrationHelper implements ServletContextAware {
                 }
                 if (!isInMaintenanceRange(null, restartDate, now)) {
                     portletDef.updateLifecycleState(
-                            PortletLifecycleState.PUBLISHED, publisher, form.getExpirationDateTime());
+                            PortletLifecycleState.PUBLISHED, publisher, now);
                 }
                 break;
             default:
