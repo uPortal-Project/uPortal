@@ -89,6 +89,11 @@ public class DynamicRenderingPipeline implements IPortalRenderingPipeline {
             }
 
             final String data = ((CharacterDataEvent) event).getData();
+            if (data.startsWith("<html ")) {
+                // Workaround for the Java 8 doctype issue -
+                // https://github.com/uPortal-Project/uPortal-start/issues/570
+                writer.print("<!DOCTYPE html SYSTEM \"EMPTY\">\n");
+            }
             writer.print(data);
             writer.flush();
             res.flushBuffer();
