@@ -54,14 +54,28 @@ public class PortletDefinitionImplTest {
 
         assertEquals("http://www.google.com", portletDefinition.getAlternativeMaximizedLink());
 
+        portletDefinition.addParameter("alternativeMaximizedLinkTarget", "_self");
+
+        assertEquals("_self", portletDefinition.getAlternativeMaximizedLinkTarget());
+
         portletDefinition.removeParameter("alternativeMaximizedLink");
 
         assertNull(portletDefinition.getAlternativeMaximizedLink());
+
+        portletDefinition.removeParameter("alternativeMaximizedLinkTarget");
+
+        assertNull(portletDefinition.getAlternativeMaximizedLinkTarget());
 
         portletDefinition.addParameter("alternativeMaximizedLink", "  \t  ");
 
         assertNull(
                 "Whitespace value should have been interpreted as no parameter value.",
                 portletDefinition.getAlternativeMaximizedLink());
+
+        portletDefinition.addParameter("alternativeMaximizedLinkTarget", "  \t  ");
+
+        assertNull(
+                "Whitespace value should have been interpreted as no parameter value.",
+                portletDefinition.getAlternativeMaximizedLinkTarget());
     }
 }

@@ -282,6 +282,18 @@
                                         </xsl:attribute>
                                     </xsl:when>
                                 </xsl:choose>
+                                <xsl:choose>
+                                  <xsl:when test="parameter[@name='PORTLET.alternativeMaximizedLinkTarget']">
+                                    <xsl:attribute name="alternativeMaximizedLinkTarget">
+                                      <xsl:value-of select="parameter[@name='PORTLET.alternativeMaximizedLinkTarget']/@value"/>
+                                    </xsl:attribute>
+                                  </xsl:when>
+                                  <xsl:when test="parameter[@name='alternativeMaximizedLinkTarget']">
+                                    <xsl:attribute name="alternativeMaximizedLinkTarget">
+                                      <xsl:value-of select="parameter[@name='alternativeMaximizedLinkTarget']/@value"/>
+                                    </xsl:attribute>
+                                  </xsl:when>
+                                </xsl:choose>
                             </sidebarChannel>
                         </xsl:for-each>
                     </xsl:for-each>
@@ -413,6 +425,18 @@
                         <xsl:when test="parameter[@name='alternativeMaximizedLink']">
                             <xsl:attribute name="alternativeMaximizedLink">
                                 <xsl:value-of select="parameter[@name='alternativeMaximizedLink']/@value"/>
+                            </xsl:attribute>
+                        </xsl:when>
+                    </xsl:choose>
+                    <xsl:choose>
+                        <xsl:when test="parameter[@name='PORTLET.alternativeMaximizedLinkTarget']">
+                            <xsl:attribute name="alternativeMaximizedLinkTarget">
+                                <xsl:value-of select="parameter[@name='PORTLET.alternativeMaximizedLinkTarget']/@value"/>
+                            </xsl:attribute>
+                        </xsl:when>
+                        <xsl:when test="parameter[@name='alternativeMaximizedLinkTarget']">
+                            <xsl:attribute name="alternativeMaximizedLinkTarget">
+                                <xsl:value-of select="parameter[@name='alternativeMaximizedLinkTarget']/@value"/>
                             </xsl:attribute>
                         </xsl:when>
                     </xsl:choose>

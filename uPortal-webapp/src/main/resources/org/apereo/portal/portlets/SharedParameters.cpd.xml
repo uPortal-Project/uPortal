@@ -52,6 +52,13 @@
         </parameter>
 
         <parameter>
+            <name>alternativeMaximizedLinkTarget</name>
+            <label>open.alternative.url.target.in.maximized.view</label>
+            <description>Window target of alternate URL to display when the portlet is in MAXIMIZED mode.</description>
+            <single-text-parameter-input display="text"/>
+        </parameter>
+
+        <parameter>
             <name>chromeStyle</name>
             <label>chrome.style</label>
             <description>The display style for the portlet border.</description>

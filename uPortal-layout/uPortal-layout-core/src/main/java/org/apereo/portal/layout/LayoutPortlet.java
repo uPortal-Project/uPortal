@@ -68,6 +68,7 @@ public class LayoutPortlet {
             url = portletDef.getAlternativeMaximizedLink();
             target = portletDef.getTarget();
             isAltMaxUrl = StringUtils.isNotBlank(url);
+            if (isAltMaxUrl) target = portletDef.getAlternativeMaximizedLinkTarget();
             IPortletDefinitionParameter iconParam = portletDef.getParameter("iconUrl");
             if (iconParam != null) {
                 this.setIconUrl(iconParam.getValue());

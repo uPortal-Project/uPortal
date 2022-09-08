@@ -21,14 +21,18 @@ public class PortletParameterUtilityTest {
         IPortletDefinitionParameter altMaxUrlParam =
                 new PortletDefinitionParameter(
                         "alternativeMaximizedLink", "https://public.my.wisc.edu");
+        IPortletDefinitionParameter altMaxUrlTargetParam =
+                new PortletDefinitionParameter("alternativeMaximizedLinkTarget", "_self");
 
         input.put("icon", iconParam);
         input.put("alternativeMaximizedLink", altMaxUrlParam);
+        input.put("alternativeMaximizedLinkTarget", altMaxUrlTargetParam);
 
         Map<String, String> expected = new HashMap<>(2);
 
         expected.put("icon", "dashboard");
         expected.put("alternativeMaximizedLink", "https://public.my.wisc.edu");
+        expected.put("alternativeMaximizedLinkTarget", "_self");
 
         assertEquals(expected, PortletParameterUtility.parameterMapToStringStringMap(input));
     }
