@@ -15,20 +15,14 @@
 package org.apereo.portal.portlet.rendering;
 
 import com.google.common.base.Function;
-import java.text.ParseException;
 import java.io.IOException;
-import java.time.Instant;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.TimeZone;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentMap;
@@ -39,7 +33,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.FastDateFormat;
 import org.apache.pluto.container.om.portlet.ContainerRuntimeOption;
 import org.apache.pluto.container.om.portlet.PortletDefinition;
 import org.apereo.portal.events.IPortletExecutionEventFactory;
@@ -97,9 +90,6 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
 
     protected static final String SESSION_ATTRIBUTE__PORTLET_FAILURE_CAUSE_MAP =
             PortletExecutionManager.class.getName() + ".PORTLET_FAILURE_CAUSE_MAP";
-
-    private static final FastDateFormat df = FastDateFormat.getInstance("M/d/yyyy HH:mmZ");
-    private static final String UTC_OFFSET = "+0000";
 
     /**
      * 'javax.portlet.renderHeaders' is the name of a container runtime option a JSR-286 portlet can
@@ -985,7 +975,6 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
         // first check to see if there is a Throwable in the session for this IPortletWindowId
         final Map<IPortletWindowId, Exception> portletFailureMap = getPortletErrorMap(request);
         final Exception cause = portletFailureMap.remove(portletWindowId);
-        Date now = Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTime();
 
         final IPortletRenderExecutionWorker portletRenderExecutionWorker;
         if (null != cause) {
