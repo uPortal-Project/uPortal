@@ -28,6 +28,8 @@ public interface IPortletDefinitionDao {
      */
     IPortletDefinition savePortletDefinition(IPortletDefinition portletDefinition);
 
+    IPortletDefinition mergePortletDefinition(IPortletDefinition portletDefinition);
+
     void deletePortletDefinition(IPortletDefinition definition);
 
     /**

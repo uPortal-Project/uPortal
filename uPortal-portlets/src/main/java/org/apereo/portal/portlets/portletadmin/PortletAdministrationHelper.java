@@ -1304,9 +1304,11 @@ public final class PortletAdministrationHelper implements ServletContextAware {
                     portletDef.removeParameter(
                             PortletLifecycleState.CUSTOM_MAINTENANCE_MESSAGE_PARAMETER_NAME);
                 }
-                if (!isInMaintenanceRange(null, restartDate, now)) {
-                    portletDef.updateLifecycleState(
-                            PortletLifecycleState.PUBLISHED, publisher, now);
+                if (stopDate != null || restartDate != null) {
+	                if (!isInMaintenanceRange(null, restartDate, now)) {
+	                    portletDef.updateLifecycleState(
+	                            PortletLifecycleState.PUBLISHED, publisher, now);
+	                }
                 }
                 break;
             default:

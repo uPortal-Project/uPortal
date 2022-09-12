@@ -977,36 +977,6 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
         return portletHeaderRenderWorker;
     }
 
-    public Optional<Date> retrieveMaintenanceStopDate(IPortletDefinition portletDef, Date now) {
-        IPortletDefinitionParameter stopDateParam = portletDef.getParameter(PortletLifecycleState.MAINTENANCE_STOP_DATE);
-        IPortletDefinitionParameter stopTimeParam = portletDef.getParameter(PortletLifecycleState.MAINTENANCE_STOP_TIME);
-        if (stopDateParam != null && stopTimeParam != null) {
-            String stopDateStr = stopDateParam.getValue() + " " + stopTimeParam.getValue() + UTC_OFFSET;
-            try {
-                Date stopDate = df.parse(stopDateStr);
-                return Optional.of(stopDate);
-            } catch (ParseException e) {
-                logger.error(e.getMessage(), e);
-            }
-        }
-	    return Optional.empty();
-    }
-
-    public Optional<Date> retrieveMaintenanceRestartDate(IPortletDefinition portletDef, Date now) {
-        IPortletDefinitionParameter restartDateParam = portletDef.getParameter(PortletLifecycleState.MAINTENANCE_RESTART_DATE);
-        IPortletDefinitionParameter restartTimeParam = portletDef.getParameter(PortletLifecycleState.MAINTENANCE_RESTART_TIME);
-        if (restartDateParam != null && restartTimeParam != null) {
-            String restartDateStr = restartDateParam.getValue() + " " + restartTimeParam.getValue() + UTC_OFFSET;
-            try {
-                Date restartDate = df.parse(restartDateStr);
-                return Optional.of(restartDate);
-            } catch (ParseException e) {
-                logger.error(e.getMessage(), e);
-            }
-        }
-		return Optional.empty();
-    }
-
     /** create and submit the portlet content rendering job to the thread pool */
     protected IPortletRenderExecutionWorker startPortletRenderInternal(
             IPortletWindowId portletWindowId,
@@ -1017,7 +987,7 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
         final Exception cause = portletFailureMap.remove(portletWindowId);
         Date now = Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTime();
 
-        IPortletRenderExecutionWorker portletRenderExecutionWorker = null;
+        final IPortletRenderExecutionWorker portletRenderExecutionWorker;
         if (null != cause) {
             // previous action failed, dispatch to errorPortlet immediately
             portletRenderExecutionWorker =
@@ -1027,51 +997,25 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
             IPortletWindow portletWindow =
                     portletWindowRegistry.getPortletWindow(request, portletWindowId);
             IPortletDefinition portletDef = portletWindow.getPortletEntity().getPortletDefinition();
-            if (portletDef.getLifecycleState().equals(PortletLifecycleState.PUBLISHED)) {
-                // if we're in the PUBLISHED phase, look for scheduled maintenance
-                Optional<Date> stopDate = this.retrieveMaintenanceStopDate(portletDef, now);
-                Optional<Date> restartDate = this.retrieveMaintenanceRestartDate(portletDef, now);
-                if (stopDate.isPresent() && stopDate.get().before(now)) {
-                    if (!restartDate.isPresent() || (restartDate.isPresent() && restartDate.get().after(now))) {
-                        final IPortletDefinitionParameter messageParam =
-                                portletDef.getParameter(
-                                        PortletLifecycleState.CUSTOM_MAINTENANCE_MESSAGE_PARAMETER_NAME);
-                        final Exception mme =
-                                messageParam != null && StringUtils.isNotBlank(messageParam.getValue())
-                                        ? new MaintenanceModeException(messageParam.getValue())
-                                        : new MaintenanceModeException();
-                        portletRenderExecutionWorker =
-                                this.portletWorkerFactory.createFailureWorker(
-                                        request, response, portletWindowId, mme);
-                    }
-                }
+            if (portletDef.getLifecycleState().equals(PortletLifecycleState.MAINTENANCE)) {
+                // Prevent the portlet from rendering;  replace with a helpful "Out of Service"
+                // message
+                final IPortletDefinitionParameter messageParam =
+                        portletDef.getParameter(
+                                PortletLifecycleState.CUSTOM_MAINTENANCE_MESSAGE_PARAMETER_NAME);
+                final Exception mme =
+                        messageParam != null && StringUtils.isNotBlank(messageParam.getValue())
+                                ? new MaintenanceModeException(messageParam.getValue())
+                                : new MaintenanceModeException();
+                portletRenderExecutionWorker =
+                        this.portletWorkerFactory.createFailureWorker(
+                                request, response, portletWindowId, mme);
+            } else {
+                // Happy path
+                portletRenderExecutionWorker =
+                        this.portletWorkerFactory.createRenderWorker(
+                                request, response, portletWindowId);
             }
-            if (portletRenderExecutionWorker == null) {
-	            if (portletDef.getLifecycleState().equals(PortletLifecycleState.MAINTENANCE)) {
-	                Optional<Date> restartDate = this.retrieveMaintenanceRestartDate(portletDef, now);
-	                if (!restartDate.isPresent() || (restartDate.isPresent() && restartDate.get().after(now))) {
-	                // Prevent the portlet from rendering;  replace with a helpful "Out of Service"
-	                // message
-		                final IPortletDefinitionParameter messageParam =
-		                        portletDef.getParameter(
-		                                PortletLifecycleState.CUSTOM_MAINTENANCE_MESSAGE_PARAMETER_NAME);
-		                final Exception mme =
-		                        messageParam != null && StringUtils.isNotBlank(messageParam.getValue())
-		                                ? new MaintenanceModeException(messageParam.getValue())
-		                                : new MaintenanceModeException();
-		                portletRenderExecutionWorker =
-		                        this.portletWorkerFactory.createFailureWorker(
-		                                request, response, portletWindowId, mme);
-	                }
-	            }
-            }
-        }
-
-        if (portletRenderExecutionWorker == null) {
-            // Happy path
-            portletRenderExecutionWorker =
-                    this.portletWorkerFactory.createRenderWorker(
-                            request, response, portletWindowId);
         }
 
         portletRenderExecutionWorker.submit();

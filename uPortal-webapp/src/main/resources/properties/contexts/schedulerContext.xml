@@ -72,6 +72,7 @@
         <task:scheduled ref="portalEventAggregationManager" method="populateDimensions" fixed-delay="${org.apereo.portal.events.aggr.PortalEventProcessingManagerImpl.populateDimensionsPeriod}"/>
         <task:scheduled ref="portalEventAggregationManager" method="purgeEventSessions" fixed-delay="${org.apereo.portal.events.aggr.PortalEventProcessingManagerImpl.purgeEventSessionsPeriod}"/>
         <task:scheduled ref="portalEventAggregationManager" method="purgeRawEvents"     fixed-delay="${org.apereo.portal.events.aggr.PortalEventProcessingManagerImpl.purgeRawEventsPeriod}"/>
+        <task:scheduled ref="portletMaintenanceScheduler" method="updateLifecycleStatus" fixed-delay="${org.apereo.portal.portlets.portletadmin.PortletMaintenanceScheduler.updateLifecyclePeriod}"/>
 
     </task:scheduled-tasks>
 </beans>
