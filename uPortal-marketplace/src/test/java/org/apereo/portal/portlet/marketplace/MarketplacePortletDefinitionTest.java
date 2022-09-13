@@ -68,6 +68,18 @@ public class MarketplacePortletDefinitionTest {
         assertEquals("http://apereo.org", marketplacePortletDefinition.getRenderUrl());
     }
 
+    /**
+     * Test that a MarketplacePortletDefinition passes through the alternativeMaximizedLinkTarget of
+     * the IPortletDefinition it wraps.
+     */
+    @Test
+    public void testReflectsWrappedDefinitionAlternativeMaximizedLinkTarget() {
+
+        when(portletDefinition.getAlternativeMaximizedLinkTarget()).thenReturn("_self");
+
+        assertEquals("_self", marketplacePortletDefinition.getAlternativeMaximizedLinkTarget());
+    }
+
     /** Test implementation of equals(). */
     @Test
     public void testEquals() {

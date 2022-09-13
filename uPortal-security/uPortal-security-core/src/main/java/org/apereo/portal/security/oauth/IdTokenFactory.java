@@ -38,11 +38,13 @@ import org.apereo.portal.soffit.Headers;
 import org.apereo.portal.soffit.service.AbstractJwtService;
 import org.apereo.portal.soffit.service.JwtEncryptor;
 import org.apereo.portal.soffit.service.JwtSignatureAlgorithmFactory;
+import org.apereo.portal.url.IAuthUrlCustomizer;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.IPersonAttributes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
@@ -198,6 +200,10 @@ public class IdTokenFactory {
 
     @Autowired private JwtEncryptor jwtEncryptor;
 
+    @Autowired
+    @Qualifier("oidcIssuerUrlCustomizer")
+    private IAuthUrlCustomizer issuerUrlCustomizer;
+
     @PostConstruct
     public void init() {
 
@@ -257,21 +263,26 @@ public class IdTokenFactory {
         logger.info("Using the following custom claims:  {}", customClaims);
     }
 
-    public String createUserInfo(String username) {
-        return this.createUserInfo(username, null, null);
+    public String createUserInfo(HttpServletRequest request, String username) {
+        return this.createUserInfo(request, username, null, null);
     }
 
     public String createUserInfo(
-            String username, Set<String> claimsToInclude, Set<String> groupsToInclude) {
+            HttpServletRequest request,
+            String username,
+            Set<String> claimsToInclude,
+            Set<String> groupsToInclude) {
 
         final Date now = new Date();
         final Date expires = new Date(now.getTime() + (timeoutSeconds * 1000L));
 
+        final String iss = issuerUrlCustomizer.customizeUrl(request, issuer);
+
         final JwtBuilder builder =
                 Jwts.builder()
-                        .setIssuer(issuer)
+                        .setIssuer(iss)
                         .setSubject(username)
-                        .setAudience(issuer)
+                        .setAudience(iss)
                         .setExpiration(expires)
                         .setIssuedAt(now);
 

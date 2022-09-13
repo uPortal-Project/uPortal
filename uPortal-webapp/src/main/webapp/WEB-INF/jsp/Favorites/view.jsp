@@ -62,9 +62,15 @@
                     <a class="up-favorite-remove pull-right" data-portlet-id="${favorite.channelPublishId}" title="<spring:message code="remove.from.my.favorites" />" href="javascript:void(0);">
                         <i class="fa fa-star" aria-hidden="true"></i>
                     </a>
+                    <c:set var="favoriteAnchorContentTarget">
+                        <c:choose>
+                            <c:when test="${not empty favorite.parameterMap['alternativeMaximizedLinkTarget']}">${favorite.parameterMap['alternativeMaximizedLinkTarget']}</c:when>
+                            <c:otherwise>_blank</c:otherwise>
+                        </c:choose>
+                    </c:set>
                     <c:set var="favoriteAnchorContent">
                         <c:choose>
-                            <c:when test="${not empty favorite.parameterMap['alternativeMaximizedLink']}">href="${favorite.parameterMap['alternativeMaximizedLink']}" target="_blank" rel="noopener noreferrer"</c:when>
+                            <c:when test="${not empty favorite.parameterMap['alternativeMaximizedLink']}">href="${favorite.parameterMap['alternativeMaximizedLink']}" target="${favoriteAnchorContentTarget}" rel="noopener noreferrer"</c:when>
                             <c:otherwise>href="${renderRequest.contextPath}/p/${favorite.functionalName}/render.uP"</c:otherwise>
                         </c:choose>
                     </c:set>

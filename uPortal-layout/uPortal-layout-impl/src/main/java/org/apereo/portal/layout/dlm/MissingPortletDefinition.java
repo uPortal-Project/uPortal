@@ -76,6 +76,11 @@ public class MissingPortletDefinition implements IPortletDefinition {
     }
 
     @Override
+    public String getAlternativeMaximizedLinkTarget() {
+        return null;
+    }
+
+    @Override
     public String getTarget() {
         return null;
     }

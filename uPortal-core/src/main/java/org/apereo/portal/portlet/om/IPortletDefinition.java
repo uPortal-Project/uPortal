@@ -41,6 +41,15 @@ public interface IPortletDefinition extends IBasicEntity, IPortalData {
      */
     String ALT_MAX_LINK_PARAM = "alternativeMaximizedLink";
 
+    /**
+     * The name of the portlet parameter that if present represents an alternative URL target that
+     * ought to be used to "maximize" the defined portlet, eg: _blank, _self, etc...
+     *
+     * <p>This is useful for portlets that when maximized ought to instead be the external URL or
+     * web application that they're representing in the portal.
+     */
+    String ALT_MAX_LINK_TARGET_PARAM = "alternativeMaximizedLinkTarget";
+
     /** A portlet parameter that specifies a target for the flyout, eg : _blank */
     String TARGET_PARAM = "target";
 
@@ -148,6 +157,17 @@ public interface IPortletDefinition extends IBasicEntity, IPortalData {
      * @since 4.2
      */
     String getAlternativeMaximizedLink();
+
+    /**
+     * Returns the alternative maximized link window target associated with this portlet definition,
+     * or null if none.
+     *
+     * <p>Syntactic sugar for parsing potential alternative maximized link window target
+     *
+     * @return String representing the window target, or null if none.
+     * @since 4.2
+     */
+    String getAlternativeMaximizedLinkTarget();
 
     /**
      * Syntactic sugar for getting the target parameter from the portlet parameters.

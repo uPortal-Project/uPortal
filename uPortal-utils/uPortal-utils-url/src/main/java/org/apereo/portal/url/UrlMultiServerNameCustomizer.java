@@ -1,6 +1,5 @@
 package org.apereo.portal.url;
 
-import com.google.common.collect.Sets;
 import java.util.HashSet;
 import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
@@ -21,7 +20,7 @@ public class UrlMultiServerNameCustomizer implements IAuthUrlCustomizer {
 
     @Required
     public void setAllServerNames(final Set<String> serverNames) {
-        this.allServerNames = Sets.newHashSet(serverNames);
+        this.allServerNames = new HashSet<>(serverNames);
         Assert.notEmpty(this.allServerNames, "The attribute serverNames should not be empty");
     }
 

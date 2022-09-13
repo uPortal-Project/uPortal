@@ -340,7 +340,14 @@
           <xsl:choose>
             <xsl:when test="parameter[@name='alternativeMaximizedLink'] and string-length(parameter[@name='alternativeMaximizedLink']/@value) > 0">
               <xsl:attribute name="href"><xsl:value-of select="parameter[@name='alternativeMaximizedLink']/@value" /></xsl:attribute>
-              <xsl:attribute name="target">_blank</xsl:attribute>
+              <xsl:choose>
+                <xsl:when test="parameter[@name='alternativeMaximizedLinkTarget'] and string-length(parameter[@name='alternativeMaximizedLinkTarget']/@value) > 0">
+                  <xsl:attribute name="target"><xsl:value-of select="parameter[@name='alternativeMaximizedLinkTarget']/@value" /></xsl:attribute>
+                </xsl:when>
+                <xsl:otherwise>
+                  <xsl:attribute name="target">_blank</xsl:attribute>
+                </xsl:otherwise>
+              </xsl:choose>
               <xsl:attribute name="rel">noopener noreferrer</xsl:attribute>
               <xsl:attribute name="class">externalLink</xsl:attribute>
             </xsl:when>
@@ -559,7 +566,14 @@
             <xsl:choose>
               <xsl:when test="parameter[@name='alternativeMaximizedLink'] and string-length(parameter[@name='alternativeMaximizedLink']/@value) > 0">
                 <xsl:attribute name="href"><xsl:value-of select="parameter[@name='alternativeMaximizedLink']/@value" /></xsl:attribute>
-                <xsl:attribute name="target">_blank</xsl:attribute>
+                <xsl:choose>
+                  <xsl:when test="parameter[@name='alternativeMaximizedLinkTarget'] and string-length(parameter[@name='alternativeMaximizedLinkTarget']/@value) > 0">
+                    <xsl:attribute name="target"><xsl:value-of select="parameter[@name='alternativeMaximizedLinkTarget']/@value" /></xsl:attribute>
+                  </xsl:when>
+                  <xsl:otherwise>
+                    <xsl:attribute name="target">_blank</xsl:attribute>
+                  </xsl:otherwise>
+                </xsl:choose>
                 <xsl:attribute name="rel">noopener noreferrer</xsl:attribute>
                 <xsl:attribute name="class">up-portlet-control focus externalLink</xsl:attribute>
               </xsl:when>
