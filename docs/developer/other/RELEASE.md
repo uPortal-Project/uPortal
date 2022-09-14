@@ -35,6 +35,30 @@ We encourage performing releases directly from a clone of the official repositor
 
 This means when testing on `uPortal-start` for the release, you should use the `apereo` repository but configure the `uPortalVersion` to be the SNAPSHOT version that you'll build in the following steps.
 
+## Send Pre-Release Notice to Community
+For any non-snapshot release, email a notice to `uportal-dev` a couple of working days prior to cutting the release.
+- Request any in-progress Pull Requests be merged by a certain date/time
+- Request adopters test the tip of `master`
+
+## Review Dependencies
+
+Before releasing uPortal and updating uPortal-start with the latest uPortal version, review the dependencies and update dependencies where appropriate.
+
+Assuming adopters use the community build of uPortal, there are three primary sets of dependencies to be considered:
+- uPortal
+- uPortal-start (community version)
+- uPortal-start (customized)
+
+Ideally, dependencies in all of the above areas should be at the latest versions.  In reality, dependencies may lag, and be out of sync with each other.
+
+### Specific Dependencies
+
+- `nodejsVersion` - uPortal and uPortal-start use NodeJS for building artifacts and Gradle tasks. They are not required to be in sync.
+- `lombokVersion` - Should stay in sync across the dependency areas
+- `slf4jVersion` - Should stay in sync across the dependency areas
+- `resourceServerVersion` / `resourceServer13Version` - Only in uPortal-start. These two resource server versions are due to uPortal needing some older dependencies.  In the community properties file `resourceServerVersion` is for the older dependencies, and generally should be left at 1.0.48. `resourceServer13Version` should always be at the latest available.
+- `personDirectoryVersion` - Only in uPortal-start. Generally, if you're on the latest uPortal version, you should be on the latest `personDirectoryVersion`
+
 ## Testing
 
 Build a clean version of `uPortal-start` with the quickstart data set and perform at least light testing, especially around features that have been fixed or enhanced.
