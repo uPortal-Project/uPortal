@@ -53,11 +53,11 @@ Ideally, dependencies in all of the above areas should be at the latest versions
 
 ### Specific Dependencies
 
-- `nodejsVersion` - uPortal and uPortal-start use NodeJS for building artifacts and Gradle tasks. They are not required to be in sync.
+- `nodejsVersion` - uPortal and uPortal-start use NodeJS for building artifacts and Gradle tasks. They are not required to be in sync. Ideally they should be on the same major version, but minor and patch version don't need to match.
 - `lombokVersion` - Should stay in sync across the dependency areas
 - `slf4jVersion` - Should stay in sync across the dependency areas
 - `resourceServerVersion` / `resourceServer13Version` - Only in uPortal-start. These two resource server versions are due to uPortal needing some older dependencies.  In the community properties file `resourceServerVersion` is for the older dependencies, and generally should be left at 1.0.48. `resourceServer13Version` should always be at the latest available.
-- `personDirectoryVersion` - Only in uPortal-start. Generally, if you're on the latest uPortal version, you should be on the latest `personDirectoryVersion`
+- `personDirectoryVersion` - Should stay in sync across the dependency areas
 
 ## Testing
 
