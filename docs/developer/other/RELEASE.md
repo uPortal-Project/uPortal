@@ -36,6 +36,7 @@ We encourage performing releases directly from a clone of the official repositor
 This means when testing on `uPortal-start` for the release, you should use the `apereo` repository but configure the `uPortalVersion` to be the SNAPSHOT version that you'll build in the following steps.
 
 ## Send Pre-Release Notice to Community
+
 For any non-snapshot release, email a notice to `uportal-dev` a couple of working days prior to cutting the release.
 - Request any in-progress Pull Requests be merged by a certain date/time
 - Request adopters test the tip of `master`
@@ -53,10 +54,11 @@ Ideally, dependencies in all of the above areas should be at the latest versions
 
 ### Specific Dependencies
 
-- `nodejsVersion` - uPortal and uPortal-start use NodeJS for building artifacts and Gradle tasks. They are not required to be in sync. Ideally they should be on the same major version, but minor and patch version don't need to match.
+- `nodejsVersion` - uPortal and uPortal-start use NodeJS for building artifacts and Gradle tasks. They are not required to be in sync. Ideally they should be on the same major version, but minor and patch version don't need to match
 - `lombokVersion` - Should stay in sync across the dependency areas
 - `slf4jVersion` - Should stay in sync across the dependency areas
-- `resourceServerVersion` / `resourceServer13Version` - Only in uPortal-start. These two resource server versions are due to uPortal needing some older dependencies.  In the community properties file `resourceServerVersion` is for the older dependencies, and generally should be left at 1.0.48. `resourceServer13Version` should always be at the latest available.
+- `resourceServerVersion` - Should use the latest version in uPortal, and should generally stay at `1.0.48` in uPortal-start. These two resource server versions are due to uPortal-start needing some older dependencies to run a portal with the included UX.
+- `resourceServer13Version` - Only in uPortal-start. Should always be at the latest version
 - `personDirectoryVersion` - Should stay in sync across the dependency areas
 
 ## Testing
