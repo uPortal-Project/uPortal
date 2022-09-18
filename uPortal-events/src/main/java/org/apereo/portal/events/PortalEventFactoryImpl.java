@@ -17,6 +17,10 @@ package org.apereo.portal.events;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
+
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -26,7 +30,9 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TimeZone;
 import java.util.concurrent.atomic.AtomicReference;
+
 import javax.portlet.PortletMode;
 import javax.portlet.WindowState;
 import javax.servlet.http.HttpServletRequest;
@@ -54,6 +60,7 @@ import org.apereo.portal.url.ParameterMap;
 import org.apereo.portal.utils.IncludeExcludeUtils;
 import org.apereo.portal.utils.RandomTokenGenerator;
 import org.apereo.portal.utils.SerializableObject;
+import org.apereo.portal.utils.validators.InputValidator;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.IPersonAttributes;
 import org.slf4j.Logger;
@@ -560,6 +567,24 @@ public class PortalEventFactoryImpl implements IPortalEventFactory, ApplicationE
         final TenantRemovedTenantEvent event = new TenantRemovedTenantEvent(eventBuilder, tenant);
         this.applicationEventPublisher.publishEvent(event);
     }
+
+    /*
+     * Analytics Events
+     */
+
+	@Override
+	public void publishAnalyticsPortalEvents(HttpServletRequest request, Object source, Map<String, Object> analyticsData, IPerson person) {
+        final PortalEvent.PortalEventBuilder eventBuilder =
+                this.createPortalEventBuilder(source, request);
+        Date eventDate = Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTime();
+        String rawEventType = (String) analyticsData.computeIfAbsent("type", key -> "UNKNOWN");
+        // throws IllegalArgumentException
+        String eventType = InputValidator.validateAsWordCharacters(rawEventType, "String");
+        String rawEventUrl = (String) analyticsData.computeIfAbsent("url", key -> "UNKNOWN");
+        String eventUrl = InputValidator.validateAsURL(rawEventUrl);
+        final AnalyticsPortalEvent event = new AnalyticsPortalEvent(eventBuilder, person, eventDate, eventType, eventUrl);
+        this.applicationEventPublisher.publishEvent(event);
+	}
 
     /*
      * Implementation

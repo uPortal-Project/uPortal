@@ -387,6 +387,16 @@
     </servlet>
 
     <servlet>
+        <servlet-name>AnalyticsEventsServlet</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>classpath:properties/contexts/servlet/analyticsEventsServletContext.xml</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet>
         <servlet-name>RenderingDispatcherServlet</servlet-name>
         <servlet-class>org.apereo.portal.spring.web.servlet.NoMultipartDispatcherServlet</servlet-class>
         <init-param>
@@ -468,6 +478,11 @@
     <servlet-mapping>
         <servlet-name>HealthCheckServlet</servlet-name>
         <url-pattern>/health-check</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>AnalyticsEventsServlet</servlet-name>
+        <url-pattern>/api/analytics</url-pattern>
     </servlet-mapping>
 
     <mime-mapping>
