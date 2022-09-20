@@ -17,10 +17,6 @@ package org.apereo.portal.events;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
-
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -32,7 +28,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
 import java.util.concurrent.atomic.AtomicReference;
-
 import javax.portlet.PortletMode;
 import javax.portlet.WindowState;
 import javax.servlet.http.HttpServletRequest;
@@ -572,19 +567,24 @@ public class PortalEventFactoryImpl implements IPortalEventFactory, ApplicationE
      * Analytics Events
      */
 
-	@Override
-	public void publishAnalyticsPortalEvents(HttpServletRequest request, Object source, Map<String, Object> analyticsData, IPerson person) {
+    @Override
+    public void publishAnalyticsPortalEvents(
+            HttpServletRequest request,
+            Object source,
+            Map<String, Object> analyticsData,
+            IPerson person) {
         final PortalEvent.PortalEventBuilder eventBuilder =
                 this.createPortalEventBuilder(source, request);
         Date eventDate = Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTime();
         String rawEventType = (String) analyticsData.computeIfAbsent("type", key -> "UNKNOWN");
         // throws IllegalArgumentException
-        String eventType = InputValidator.validateAsWordCharacters(rawEventType, "String");
+        String eventType = InputValidator.validateAsWordCharacters(rawEventType, "eventType");
         String rawEventUrl = (String) analyticsData.computeIfAbsent("url", key -> "UNKNOWN");
         String eventUrl = InputValidator.validateAsURL(rawEventUrl);
-        final AnalyticsPortalEvent event = new AnalyticsPortalEvent(eventBuilder, person, eventDate, eventType, eventUrl);
+        final AnalyticsPortalEvent event =
+                new AnalyticsPortalEvent(eventBuilder, person, eventDate, eventType, eventUrl);
         this.applicationEventPublisher.publishEvent(event);
-	}
+    }
 
     /*
      * Implementation

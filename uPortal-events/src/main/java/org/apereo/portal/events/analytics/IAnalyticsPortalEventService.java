@@ -12,17 +12,12 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apereo.portal.events;
+package org.apereo.portal.events.analytics;
 
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
-import org.apereo.portal.security.IPerson;
 
-public interface IPortalAnalyticsEventFactory {
+public interface IAnalyticsPortalEventService {
 
-    void publishAnalyticsPortalEvents(
-            HttpServletRequest request,
-            Object source,
-            Map<String, Object> analyticsData,
-            IPerson person);
+    void publishEvent(HttpServletRequest request, Map<String, Object> analyticsData);
 }

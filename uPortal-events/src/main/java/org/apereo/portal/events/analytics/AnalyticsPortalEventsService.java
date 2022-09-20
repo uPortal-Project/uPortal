@@ -12,17 +12,28 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apereo.portal.events;
+package org.apereo.portal.events.analytics;
 
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
+import org.apereo.portal.events.IPortalAnalyticsEventFactory;
 import org.apereo.portal.security.IPerson;
+import org.apereo.portal.security.IPersonManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-public interface IPortalAnalyticsEventFactory {
+@Service
+public class AnalyticsPortalEventsService implements IAnalyticsPortalEventService {
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-    void publishAnalyticsPortalEvents(
-            HttpServletRequest request,
-            Object source,
-            Map<String, Object> analyticsData,
-            IPerson person);
+    @Autowired private IPortalAnalyticsEventFactory portalEventFactory;
+    @Autowired private IPersonManager personManager;
+
+    @Override
+    public void publishEvent(HttpServletRequest request, Map<String, Object> analyticsData) {
+        final IPerson user = personManager.getPerson(request);
+        portalEventFactory.publishAnalyticsPortalEvents(request, this, analyticsData, user);
+    }
 }
