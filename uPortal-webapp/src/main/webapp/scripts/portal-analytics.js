@@ -49,18 +49,12 @@
       target: anchorForEvent.target,
     }
 
-    console.log("MILESTONE - would be capturing outbound link for: ");
+    console.log("MILESTONE - would be capturing outbound link for: " + eventDetails.href);
     // mem leak - do not merge this!
     console.log(anchorForEvent);
     console.log(eventDetails);
     console.log(event);
     console.log(event.target);
-
-// TODO - this will likely need to be rejigged. GA must still work when configured.
-//    ga('send', 'event', 'outbound', 'click', title, {
-//      'transport': 'beacon',
-//      'hitCallback': () => {}
-//    })
   }
 
   const addPageLevelListeners = () => {
@@ -68,56 +62,7 @@
     document.addEventListener("beforeunload", (event) => {
       document.removeEventListener('click', outboundClick);
     });
-    //addAnchorListeners('page', document.links);
   }
-
-  // TODO - review, this may not be needed anymore.
-  const addWebComponentListeners = () => {
-    const startTime = new Date().getTime();
-    // TODO - add other web component names...
-    const webComponentNames = ["esco-content-grid", "waffle-menu", "notification-icon"]
-
-    webComponentNames.forEach(webComponentName => {
-      // If there is at least one web component on the page with that name...
-      if ((document.querySelector(webComponentName))) {
-        // Supports multiple web components of the same name
-        const webComponents = document.querySelectorAll(webComponentName);
-        webComponents.forEach(webComponent => {
-          webComponent.addEventListener('click', outboundClick);
-          webComponent.addEventListener("beforeunload", (event) => {
-            webComponent.removeEventListener('click', outboundClick);
-          });
-          //addAnchorListeners(webComponentName, webComponent.shadowRoot.querySelectorAll("a"));
-        });
-      } else {
-        console.log(webComponentName + " - no links found")
-      }
-    })
-
-    console.log("Added web component listeners in " + ((new Date().getTime())-startTime) + "ms");
-  }
-
-  // TODO - can remove once the .addEventListener flow is confirmed to work.
-//  // handle: name of web component or 'page'
-//  // links: Array of anchor elements
-//  const addAnchorListeners = (handle, links) => {
-//    console.log(handle + " - adding listeners with hrefs.");
-//    [...links].filter(a => {
-//      // Filter the format of links to capture analytics on, optionally based on the web component name
-//      return (a.href !== undefined) &&
-//        (
-//         // a.href.startsWith('http') ||
-//          !a.href.startsWith('javascript')
-//        );
-//    }).forEach(a => {
-//      if (a.onclick == outboundClick) {
-//        //console.log(handle + " > " + a.href + " already configured")
-//      } else {
-//        a.onclick = outboundClick
-//        //console.log(handle + " > " + a.href + " configured")
-//      }
-//    })
-//  }
 
   window.onload = () => {
     console.log(
@@ -126,9 +71,4 @@
     observer.observe(document.body, {attributeFilter: ["href"], childList: true, subtree: true});
 
     addPageLevelListeners();
-
-    // TODO - review if this is even needed... The shadow doms are picked up with just the page level listeners...
-    //addWebComponentListeners();
-    // Because web components can be loaded without a page load, check every 5 seconds
-    //setInterval(addWebComponentListeners, 5000);
   }
