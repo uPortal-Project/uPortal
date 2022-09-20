@@ -18,18 +18,18 @@
  */
 "use strict";
 
-/**
-  * Function that captures a click on an outbound link in Analytics.
-  */
+// Wrapped in an IIFE to remove the global scope of the functions
+(function () {
+  // Function that captures a click on an outbound link in Analytics.
   const outboundClick = (event) => {
-    if((event === undefined) || (event === null)) {
+    if ((event === undefined) || (event === null)) {
       //console.log("Tried to process an outbound click, but there was no originating event");
       return;
     }
 
     // Both path and composedPath need to be checked due to browser support
     const anchorForEvent = (event.path || (event.composedPath && event.composedPath()))[0].closest('a');
-    if((anchorForEvent === undefined) || (anchorForEvent === null)) {
+    if ((anchorForEvent === undefined) || (anchorForEvent === null)) {
       //console.log("Tried to process an outbound click, but there was no originating event anchor");
       return;
     }
@@ -72,3 +72,4 @@
 
     addPageLevelListeners();
   }
+})();
