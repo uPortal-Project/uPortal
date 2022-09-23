@@ -22,18 +22,56 @@ import org.apereo.portal.security.IPersonManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
 public class AnalyticsPortalEventsService implements IAnalyticsPortalEventService {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
+    private static final String ANALYTICS_LOG_LEVEL_NONE = "NONE";
+    private static final String ANALYTICS_LOG_LEVEL_AUTHENTICATED = "AUTHENTICATED";
+    private static final String ANALYTICS_LOG_LEVEL_ALL = "ALL";
 
     @Autowired private IPortalAnalyticsEventFactory portalEventFactory;
     @Autowired private IPersonManager personManager;
 
+    @Value("${events.analytics.log.level:NONE}")
+    private String eventLogLevel;
+
+    @Override
+    public String getLogLevel() {
+        return eventLogLevel;
+    }
+
     @Override
     public void publishEvent(HttpServletRequest request, Map<String, Object> analyticsData) {
         final IPerson user = personManager.getPerson(request);
-        portalEventFactory.publishAnalyticsPortalEvents(request, this, analyticsData, user);
+        if (isLogEventEnabled(user)) {
+            portalEventFactory.publishAnalyticsPortalEvents(request, this, analyticsData, user);
+        }
+    }
+
+    private boolean isLogEventEnabled(IPerson user) {
+        if (ANALYTICS_LOG_LEVEL_ALL.equals(eventLogLevel)) {
+            return true;
+        }
+        if (ANALYTICS_LOG_LEVEL_NONE.equals(eventLogLevel)) {
+            return false;
+        }
+        if (ANALYTICS_LOG_LEVEL_AUTHENTICATED.equals(eventLogLevel)) {
+            return !user.isGuest();
+        }
+        logger.warn(
+                "events.analytics.log.level is set to "
+                        + eventLogLevel
+                        + " which is invalid.  "
+                        + "Use "
+                        + ANALYTICS_LOG_LEVEL_NONE
+                        + ", "
+                        + ANALYTICS_LOG_LEVEL_AUTHENTICATED
+                        + ", or "
+                        + ANALYTICS_LOG_LEVEL_ALL
+                        + " instead.  No analytics events will be captured");
+        return false;
     }
 }

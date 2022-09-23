@@ -14,8 +14,10 @@
  */
 package org.apereo.portal.events.analytics;
 
+import java.util.HashMap;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
+import org.apereo.portal.rest.utils.ErrorResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,21 +34,29 @@ import org.springframework.web.bind.annotation.RestController;
 public class AnalyticsPortalEventsController {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-    @Autowired private AnalyticsPortalEventsService service;
+    @Autowired private IAnalyticsPortalEventService service;
 
     public AnalyticsPortalEventsController(AnalyticsPortalEventsService service) {
         this.service = service;
     }
 
+    @RequestMapping(value = "/level", method = RequestMethod.GET)
+    public ResponseEntity<Map<String, String>> getAnalyticsLevel() {
+        Map<String, String> response = new HashMap<>();
+        response.put("level", service.getLogLevel());
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<String> postAnalytics(
+    public ResponseEntity<Map<String, String>> postAnalytics(
             @RequestBody Map<String, Object> analyticsData, HttpServletRequest request) {
         service.publishEvent(request, analyticsData);
-        return new ResponseEntity<>("CREATED", HttpStatus.CREATED);
+        return new ResponseEntity<>(new HashMap<>(), HttpStatus.CREATED);
     }
 
     @ExceptionHandler({IllegalArgumentException.class})
-    public ResponseEntity<String> handleException(IllegalArgumentException e) {
-        return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+    public ResponseEntity<ErrorResponse> handleException(IllegalArgumentException e) {
+        final ErrorResponse response = new ErrorResponse(e.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 }

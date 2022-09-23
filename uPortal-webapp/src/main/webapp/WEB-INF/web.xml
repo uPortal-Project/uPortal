@@ -483,6 +483,7 @@
     <servlet-mapping>
         <servlet-name>AnalyticsEventsServlet</servlet-name>
         <url-pattern>/api/analytics</url-pattern>
+        <url-pattern>/api/analytics/level</url-pattern>
     </servlet-mapping>
 
     <mime-mapping>

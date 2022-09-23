@@ -20,4 +20,6 @@ import javax.servlet.http.HttpServletRequest;
 public interface IAnalyticsPortalEventService {
 
     void publishEvent(HttpServletRequest request, Map<String, Object> analyticsData);
+
+    String getLogLevel();
 }
