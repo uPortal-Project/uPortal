@@ -14,16 +14,15 @@
  */
 package org.apereo.portal.events;
 
+import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import org.apereo.portal.security.IPerson;
 
-/** Used to create and publish portal events */
-public interface IPortalEventFactory
-        extends IPortalAuthEventFactory,
-                IPortalLayoutEventFactory,
-                IPortletExecutionEventFactory,
-                IPortalTenantEventFactory,
-                IPortalAnalyticsEventFactory {
+public interface IPortalAnalyticsEventFactory {
 
-    public String getPortalEventSessionId(HttpServletRequest request, IPerson person);
+    void publishAnalyticsPortalEvents(
+            HttpServletRequest request,
+            Object source,
+            Map<String, Object> analyticsData,
+            IPerson person);
 }

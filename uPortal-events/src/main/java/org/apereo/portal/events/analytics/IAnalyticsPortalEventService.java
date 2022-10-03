@@ -12,18 +12,14 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apereo.portal.events;
+package org.apereo.portal.events.analytics;
 
+import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
-import org.apereo.portal.security.IPerson;
 
-/** Used to create and publish portal events */
-public interface IPortalEventFactory
-        extends IPortalAuthEventFactory,
-                IPortalLayoutEventFactory,
-                IPortletExecutionEventFactory,
-                IPortalTenantEventFactory,
-                IPortalAnalyticsEventFactory {
+public interface IAnalyticsPortalEventService {
 
-    public String getPortalEventSessionId(HttpServletRequest request, IPerson person);
+    void publishEvent(HttpServletRequest request, Map<String, Object> analyticsData);
+
+    String getLogLevel();
 }
