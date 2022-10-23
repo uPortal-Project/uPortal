@@ -10,7 +10,7 @@ plugins {
     // Sub project plugins
     id 'com.github.sherter.google-java-format' version '0.9' apply false
     id 'nebula.lint' version '17.7.0' apply false
-    id 'net.ltgt.errorprone' version '2.0.2' apply false
+    id 'net.ltgt.errorprone' version '3.0.1' apply false
     id 'com.github.spotbugs' version '4.8.0' apply false
 }
 
