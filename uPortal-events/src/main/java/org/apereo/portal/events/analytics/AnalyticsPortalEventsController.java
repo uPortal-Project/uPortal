@@ -14,12 +14,11 @@
  */
 package org.apereo.portal.events.analytics;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.HashMap;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
-
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apereo.portal.rest.utils.ErrorResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,19 +50,27 @@ public class AnalyticsPortalEventsController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @RequestMapping(method = RequestMethod.POST, consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_JSON_UTF8_VALUE, MediaType.TEXT_PLAIN_VALUE})
+    @RequestMapping(
+            method = RequestMethod.POST,
+            consumes = {
+                MediaType.APPLICATION_JSON_VALUE,
+                MediaType.APPLICATION_JSON_UTF8_VALUE,
+                MediaType.TEXT_PLAIN_VALUE
+            })
     public ResponseEntity postAnalytics(
-        @RequestBody String analyticsData, HttpServletRequest request) {
+            @RequestBody String analyticsData, HttpServletRequest request) {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
-            Map<String, Object> map
-                = objectMapper.readValue(analyticsData, new TypeReference<Map<String, Object>>() {
-            });
+            Map<String, Object> map =
+                    objectMapper.readValue(
+                            analyticsData, new TypeReference<Map<String, Object>>() {});
             service.publishEvent(request, map);
             return new ResponseEntity<>(new HashMap<>(), HttpStatus.CREATED);
         } catch (Exception e) {
             logger.warn("Failed to parse analytics data: " + e.getMessage());
-            final ErrorResponse response = new ErrorResponse("Post data was not in a JSON format, or the required attributes were not present.");
+            final ErrorResponse response =
+                    new ErrorResponse(
+                            "Post data was not in a JSON format, or the required attributes were not present.");
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
     }
