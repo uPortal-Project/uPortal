@@ -23,14 +23,14 @@
   // Function that captures a click on an outbound link in Analytics.
   const outboundClick = (event) => {
     if ((event === undefined) || (event === null)) {
-      //console.log("Tried to process an outbound click, but there was no originating event");
+      // Tried to process an outbound click, but there was no originating event
       return;
     }
 
     // Both path and composedPath need to be checked due to browser support
     const anchorForEvent = (event.path || (event.composedPath && event.composedPath()))[0].closest('a');
     if ((anchorForEvent === undefined) || (anchorForEvent === null)) {
-      //console.log("Tried to process an outbound click, but there was no originating event anchor");
+      // Tried to process an outbound click, but there was no originating event anchor
       return;
     }
 
@@ -38,23 +38,16 @@
         (
           anchorForEvent.href.startsWith('javascript')
         )) {
-      //console.log("Not firing an analytic event due to href condition: " + eventDetails.href);
-      //console.log(anchorForEvent);
+      // Not firing an analytic event due to href condition
       return;
     }
 
     const eventDetails = {
       type: 'link',
-      href: anchorForEvent.href,
-      target: anchorForEvent.target,
+      url: anchorForEvent.href,
     }
 
-    console.log("MILESTONE - would be capturing outbound link for: " + eventDetails.href);
-    // mem leak - do not merge this!
-    console.log(anchorForEvent);
-    console.log(eventDetails);
-    console.log(event);
-    console.log(event.target);
+    navigator.sendBeacon('/uPortal/api/analytics', JSON.stringify(eventDetails));
   }
 
   const addPageLevelListeners = () => {
