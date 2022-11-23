@@ -16,6 +16,8 @@ package org.apereo.portal.events.analytics;
 
 import java.text.ParseException;
 import java.util.Date;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -59,11 +62,29 @@ public class AnalyticsPortalEventsController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<Map<String, String>> postAnalytics(
-            @RequestBody Map<String, Object> analyticsData, HttpServletRequest request) {
-        service.publishEvent(request, analyticsData);
-        return new ResponseEntity<>(new HashMap<>(), HttpStatus.CREATED);
+    @RequestMapping(
+            method = RequestMethod.POST,
+            consumes = {
+                MediaType.APPLICATION_JSON_VALUE,
+                MediaType.APPLICATION_JSON_UTF8_VALUE,
+                MediaType.TEXT_PLAIN_VALUE
+            })
+    public ResponseEntity postAnalytics(
+            @RequestBody String analyticsData, HttpServletRequest request) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            Map<String, Object> map =
+                    objectMapper.readValue(
+                            analyticsData, new TypeReference<Map<String, Object>>() {});
+            service.publishEvent(request, map);
+            return new ResponseEntity<>(new HashMap<>(), HttpStatus.CREATED);
+        } catch (Exception e) {
+            logger.warn("Failed to parse analytics data: " + e.getMessage());
+            final ErrorResponse response =
+                    new ErrorResponse(
+                            "Post data was not in a JSON format, or the required attributes were not present.");
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PreAuthorize(
