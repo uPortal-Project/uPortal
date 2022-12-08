@@ -581,8 +581,13 @@ public class PortalEventFactoryImpl implements IPortalEventFactory, ApplicationE
         String eventType = InputValidator.validateAsWordCharacters(rawEventType, "eventType");
         String rawEventUrl = (String) analyticsData.computeIfAbsent("url", key -> "UNKNOWN");
         String eventUrl = InputValidator.validateAsURL(rawEventUrl);
+        String ipAddress = request.getHeader("X-FORWARDED-FOR");
+        if (ipAddress == null) {
+            ipAddress = request.getRemoteAddr();
+        }
         final AnalyticsPortalEvent event =
-                new AnalyticsPortalEvent(eventBuilder, person, eventDate, eventType, eventUrl);
+                new AnalyticsPortalEvent(
+                        eventBuilder, person, eventDate, eventType, eventUrl, ipAddress);
         this.applicationEventPublisher.publishEvent(event);
     }
 

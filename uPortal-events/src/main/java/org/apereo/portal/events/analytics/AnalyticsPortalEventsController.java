@@ -14,10 +14,17 @@
  */
 package org.apereo.portal.events.analytics;
 
+import java.text.ParseException;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 import javax.servlet.http.HttpServletRequest;
+import org.apache.commons.lang3.time.FastDateFormat;
+import org.apereo.portal.events.AnalyticsPortalEvent;
 import org.apereo.portal.rest.utils.ErrorResponse;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,16 +34,20 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/analytics")
 public class AnalyticsPortalEventsController {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
+    private static final String DATE_FORMAT = "yyyy-MM-dd";
+    private static final FastDateFormat df =
+            FastDateFormat.getInstance(DATE_FORMAT, TimeZone.getTimeZone("UTC"));
 
     @Autowired private IAnalyticsPortalEventService service;
 
-    public AnalyticsPortalEventsController(AnalyticsPortalEventsService service) {
+    public AnalyticsPortalEventsController(IAnalyticsPortalEventService service) {
         this.service = service;
     }
 
@@ -54,9 +65,36 @@ public class AnalyticsPortalEventsController {
         return new ResponseEntity<>(new HashMap<>(), HttpStatus.CREATED);
     }
 
+    @RequestMapping(method = RequestMethod.GET)
+    public ResponseEntity<List<AnalyticsPortalEvent>> getAnalytics(
+            @RequestParam(name = "startDate") String startDateStr,
+            @RequestParam(name = "endDate") String endDateStr,
+            @RequestParam(name = "eventType", required = false) String eventType,
+            @RequestParam(name = "broncoId", required = false) String broncoId) {
+        DateTime startDate = parseDateTime(startDateStr);
+        DateTime endDate = parseDateTime(endDateStr);
+        List<AnalyticsPortalEvent> response =
+                service.getAnalytics(startDate, endDate, eventType, broncoId);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
     @ExceptionHandler({IllegalArgumentException.class})
     public ResponseEntity<ErrorResponse> handleException(IllegalArgumentException e) {
         final ErrorResponse response = new ErrorResponse(e.getMessage());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    private DateTime parseDateTime(String dateTimeStr) {
+        try {
+            Date date = df.parse(dateTimeStr);
+            return new DateTime(date);
+        } catch (ParseException e) {
+            throw new IllegalArgumentException(
+                    "Query Date ["
+                            + dateTimeStr
+                            + "] is formatted incorrectly, correct format is ["
+                            + DATE_FORMAT
+                            + "]");
+        }
     }
 }

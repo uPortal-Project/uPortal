@@ -1,0 +1,302 @@
+diff --git a/uPortal-events/src/main/java/org/apereo/portal/events/AnalyticsPortalEvent.java b/uPortal-events/src/main/java/org/apereo/portal/events/AnalyticsPortalEvent.java
+new file mode 100644
+index 000000000..ad69e39e0
+--- /dev/null
++++ b/uPortal-events/src/main/java/org/apereo/portal/events/AnalyticsPortalEvent.java
+@@ -0,0 +1,54 @@
++package org.apereo.portal.events;
++
++import java.util.Calendar;
++import java.util.Date;
++import java.util.TimeZone;
++
++import org.apereo.portal.security.IPerson;
++
++public class AnalyticsPortalEvent extends PortalEvent {
++	private static final long serialVersionUID = 1L;
++
++	private final String user;
++	private final Date eventDate;
++	private final String type;
++	private final String url;
++
++	AnalyticsPortalEvent() {
++		super();
++		user = "UNKNOWN";
++		eventDate = Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTime();
++		type = "UNKNOWN";
++		url = "";
++	}
++
++	AnalyticsPortalEvent(PortalEventBuilder portalEventBuilder, IPerson user, Date eventDate, String type, String url) {
++		super(portalEventBuilder);
++		this.user = user.getUserName();
++		this.eventDate = eventDate;
++		this.type = type;
++		this.url = url;
++	}
++
++	public Date getEventDate() {
++		return eventDate;
++	}
++
++	public String getType() {
++		return type;
++	}
++
++	public String getUrl() {
++		return url;
++	}
++
++	public String getUser() {
++		return this.user;
++	}
++
++	@Override
++	public String toString() {
++		return super.toString() + ", eventDate=" + this.eventDate + ", type=" + type + ", url=" + url + ", user="
++				+ user;
++	}
++}
+diff --git a/uPortal-events/src/main/java/org/apereo/portal/events/IPortalAnalyticsEventFactory.java b/uPortal-events/src/main/java/org/apereo/portal/events/IPortalAnalyticsEventFactory.java
+new file mode 100644
+index 000000000..87d318406
+--- /dev/null
++++ b/uPortal-events/src/main/java/org/apereo/portal/events/IPortalAnalyticsEventFactory.java
+@@ -0,0 +1,12 @@
++package org.apereo.portal.events;
++
++import java.util.Map;
++
++import javax.servlet.http.HttpServletRequest;
++
++import org.apereo.portal.security.IPerson;
++
++public interface IPortalAnalyticsEventFactory {
++
++	void publishAnalyticsPortalEvents(HttpServletRequest request, Object source, Map<String, Object> analyticsData, IPerson person);
++}
+diff --git a/uPortal-events/src/main/java/org/apereo/portal/events/IPortalEventFactory.java b/uPortal-events/src/main/java/org/apereo/portal/events/IPortalEventFactory.java
+index a21a2e31d..7f2d3d366 100644
+--- a/uPortal-events/src/main/java/org/apereo/portal/events/IPortalEventFactory.java
++++ b/uPortal-events/src/main/java/org/apereo/portal/events/IPortalEventFactory.java
+@@ -22,7 +22,8 @@ public interface IPortalEventFactory
+         extends IPortalAuthEventFactory,
+                 IPortalLayoutEventFactory,
+                 IPortletExecutionEventFactory,
+-                IPortalTenantEventFactory {
++                IPortalTenantEventFactory,
++                IPortalAnalyticsEventFactory {
+ 
+     public String getPortalEventSessionId(HttpServletRequest request, IPerson person);
+ }
+diff --git a/uPortal-events/src/main/java/org/apereo/portal/events/PortalEventFactoryImpl.java b/uPortal-events/src/main/java/org/apereo/portal/events/PortalEventFactoryImpl.java
+index 871989bbd..b739077bf 100644
+--- a/uPortal-events/src/main/java/org/apereo/portal/events/PortalEventFactoryImpl.java
++++ b/uPortal-events/src/main/java/org/apereo/portal/events/PortalEventFactoryImpl.java
+@@ -26,7 +26,9 @@ import java.util.LinkedHashSet;
+ import java.util.List;
+ import java.util.Map;
+ import java.util.Set;
++import java.util.TimeZone;
+ import java.util.concurrent.atomic.AtomicReference;
++
+ import javax.portlet.PortletMode;
+ import javax.portlet.WindowState;
+ import javax.servlet.http.HttpServletRequest;
+@@ -561,6 +563,21 @@ public class PortalEventFactoryImpl implements IPortalEventFactory, ApplicationE
+         this.applicationEventPublisher.publishEvent(event);
+     }
+ 
++    /*
++     * Analytics Events
++     */
++
++	@Override
++	public void publishAnalyticsPortalEvents(HttpServletRequest request, Object source, Map<String, Object> analyticsData, IPerson person) {
++        final PortalEvent.PortalEventBuilder eventBuilder =
++                this.createPortalEventBuilder(source, request);
++        Date eventDate = Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTime();
++        String eventType = (String) analyticsData.computeIfAbsent("type", key -> "UNKNOWN");
++        String eventUrl = (String) analyticsData.computeIfAbsent("url", key -> "UNKNOWN");
++        final AnalyticsPortalEvent event = new AnalyticsPortalEvent(eventBuilder, person, eventDate, eventType, eventUrl);
++        this.applicationEventPublisher.publishEvent(event);
++	}
++
+     /*
+      * Implementation
+      */
+diff --git a/uPortal-events/src/main/java/org/apereo/portal/events/rest/AnalyticsPortalEventsController.java b/uPortal-events/src/main/java/org/apereo/portal/events/rest/AnalyticsPortalEventsController.java
+new file mode 100644
+index 000000000..087f229ba
+--- /dev/null
++++ b/uPortal-events/src/main/java/org/apereo/portal/events/rest/AnalyticsPortalEventsController.java
+@@ -0,0 +1,44 @@
++package org.apereo.portal.events.rest;
++
++import java.util.HashMap;
++import java.util.Map;
++
++import javax.servlet.http.HttpServletRequest;
++
++import org.slf4j.Logger;
++import org.slf4j.LoggerFactory;
++import org.springframework.beans.factory.annotation.Autowired;
++import org.springframework.web.bind.annotation.RequestBody;
++import org.springframework.web.bind.annotation.RequestMapping;
++import org.springframework.web.bind.annotation.RequestMethod;
++import org.springframework.web.bind.annotation.ResponseBody;
++import org.springframework.web.bind.annotation.RestController;
++
++@RestController
++@RequestMapping("/api/analytics")
++public class AnalyticsPortalEventsController {
++	protected final Logger logger = LoggerFactory.getLogger(getClass());
++
++	@Autowired
++	private AnalyticsPortalEventsService service;
++
++	public AnalyticsPortalEventsController(AnalyticsPortalEventsService service) {
++		this.service = service;
++	}
++
++	@RequestMapping(method = RequestMethod.GET)
++	public @ResponseBody Map<String, Object> getAnalytics() {
++		Map<String, Object> response = new HashMap<>();
++		response.put("status", "SUCCESS");
++		return response;
++	}
++
++	@RequestMapping(method = RequestMethod.POST)
++	public @ResponseBody Map<String, Object> postAnalytics(@RequestBody Map<String, Object> analyticsData,
++			HttpServletRequest request) {
++		service.publishEvent(request, analyticsData);
++		Map<String, Object> response = new HashMap<>();
++		response.put("status", "SUCCESS");
++		return response;
++	}
++}
+diff --git a/uPortal-events/src/main/java/org/apereo/portal/events/rest/AnalyticsPortalEventsService.java b/uPortal-events/src/main/java/org/apereo/portal/events/rest/AnalyticsPortalEventsService.java
+new file mode 100644
+index 000000000..7093cf02d
+--- /dev/null
++++ b/uPortal-events/src/main/java/org/apereo/portal/events/rest/AnalyticsPortalEventsService.java
+@@ -0,0 +1,28 @@
++package org.apereo.portal.events.rest;
++
++import java.util.Map;
++
++import javax.servlet.http.HttpServletRequest;
++
++import org.apereo.portal.events.IPortalAnalyticsEventFactory;
++import org.apereo.portal.security.IPerson;
++import org.apereo.portal.security.IPersonManager;
++import org.slf4j.Logger;
++import org.slf4j.LoggerFactory;
++import org.springframework.beans.factory.annotation.Autowired;
++import org.springframework.stereotype.Service;
++
++@Service
++public class AnalyticsPortalEventsService {
++	protected final Logger logger = LoggerFactory.getLogger(getClass());
++
++	@Autowired
++	private IPortalAnalyticsEventFactory portalEventFactory;
++	@Autowired
++	private IPersonManager personManager;
++
++	public void publishEvent(HttpServletRequest request, Map<String, Object> analyticsData) {
++		final IPerson user = personManager.getPerson(request);
++		portalEventFactory.publishAnalyticsPortalEvents(request, this, analyticsData, user);
++	}
++}
+diff --git a/uPortal-webapp/src/main/resources/properties/contexts/servlet/analyticsEventsServletContext.xml b/uPortal-webapp/src/main/resources/properties/contexts/servlet/analyticsEventsServletContext.xml
+new file mode 100644
+index 000000000..14bc871f5
+--- /dev/null
++++ b/uPortal-webapp/src/main/resources/properties/contexts/servlet/analyticsEventsServletContext.xml
+@@ -0,0 +1,51 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<!--
++
++    Licensed to Apereo under one or more contributor license
++    agreements. See the NOTICE file distributed with this work
++    for additional information regarding copyright ownership.
++    Apereo licenses this file to you under the Apache License,
++    Version 2.0 (the "License"); you may not use this file
++    except in compliance with the License.  You may obtain a
++    copy of the License at the following location:
++
++      http://www.apache.org/licenses/LICENSE-2.0
++
++    Unless required by applicable law or agreed to in writing,
++    software distributed under the License is distributed on an
++    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
++    KIND, either express or implied.  See the License for the
++    specific language governing permissions and limitations
++    under the License.
++
++-->
++<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
++       xmlns="http://www.springframework.org/schema/beans"
++       xmlns:context="http://www.springframework.org/schema/context"
++       xmlns:mvc="http://www.springframework.org/schema/mvc"
++       xsi:schemaLocation="
++           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
++           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd
++           http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd">
++
++    <!--
++     | Registers a RequestMappingHandlerMapping, a RequestMappingHandlerAdapter, and an
++     | ExceptionHandlerExceptionResolver (among others) in support of processing requests with
++     | annotated controller methods using annotations such as @RequestMapping, @ExceptionHandler,
++     | etc.
++     +-->
++    <mvc:annotation-driven />
++
++    <!--
++     | For access to properties in *.properties files (see applicationContext.xml):
++     | portal.properties, rdbm.properties, security.properties, global.properties, uPortal.properties
++     +-->
++    <bean parent="primaryPropertyPlaceholderConfigurer" />
++
++    <!--
++     | Even though context:component-scan is defined in applicationContext, we need an additional
++     | reference for this context as it's unique to the DispatcherServlet
++     +-->
++    <context:component-scan base-package="org.apereo.portal.events.rest"/>
++
++</beans>
+diff --git a/uPortal-webapp/src/main/webapp/WEB-INF/web.xml b/uPortal-webapp/src/main/webapp/WEB-INF/web.xml
+index 1403f59d0..e58e4e5c1 100644
+--- a/uPortal-webapp/src/main/webapp/WEB-INF/web.xml
++++ b/uPortal-webapp/src/main/webapp/WEB-INF/web.xml
+@@ -386,6 +386,16 @@
+         <load-on-startup>1</load-on-startup>
+     </servlet>
+ 
++    <servlet>
++        <servlet-name>AnalyticsEventsServlet</servlet-name>
++        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
++        <init-param>
++            <param-name>contextConfigLocation</param-name>
++            <param-value>classpath:properties/contexts/servlet/analyticsEventsServletContext.xml</param-value>
++        </init-param>
++        <load-on-startup>1</load-on-startup>
++    </servlet>
++
+     <servlet>
+         <servlet-name>RenderingDispatcherServlet</servlet-name>
+         <servlet-class>org.apereo.portal.spring.web.servlet.NoMultipartDispatcherServlet</servlet-class>
+@@ -470,6 +480,11 @@
+         <url-pattern>/health-check</url-pattern>
+     </servlet-mapping>
+ 
++    <servlet-mapping>
++        <servlet-name>AnalyticsEventsServlet</servlet-name>
++        <url-pattern>/api/analytics</url-pattern>
++    </servlet-mapping>
++
+     <mime-mapping>
+         <extension>wbmp</extension>
+         <mime-type>image/vnd.wap.wbmp</mime-type>

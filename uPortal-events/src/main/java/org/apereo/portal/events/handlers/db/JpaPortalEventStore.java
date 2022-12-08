@@ -27,6 +27,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Root;
 import org.apereo.portal.concurrency.FunctionWithoutResult;
+import org.apereo.portal.events.AnalyticsPortalEvent;
 import org.apereo.portal.events.PortalEvent;
 import org.apereo.portal.jpa.BaseRawEventsJpaDao;
 import org.hibernate.FlushMode;
@@ -341,6 +342,34 @@ public class JpaPortalEventStore extends BaseRawEventsJpaDao implements IPortalE
             persistentPortalEvent.setAggregated(true);
             session.evict(persistentPortalEvent);
         }
+    }
+
+    @Override
+    public void getAnalyticsEvents(
+            DateTime startTime,
+            DateTime endTime,
+            int maxEvents,
+            String eventType,
+            String broncoId,
+            FunctionWithoutResult<AnalyticsPortalEvent> handler) {
+        final TypedQuery<PersistentPortalEvent> query =
+                this.getEntityManager().createQuery(this.selectQuery, PersistentPortalEvent.class);
+        query.setParameter(this.startTimeParameter.getName(), startTime);
+        query.setParameter(this.endTimeParameter.getName(), endTime);
+        if (maxEvents > 0) {
+            query.setMaxResults(maxEvents);
+        }
+        List<PersistentPortalEvent> r = query.getResultList();
+        r.forEach(
+                e -> {
+                    final PortalEvent portalEvent =
+                            this.toPortalEvent(e.getEventData(), e.getEventType());
+                    if (portalEvent instanceof AnalyticsPortalEvent) {
+                        AnalyticsPortalEvent analyticsPortalEvent =
+                                (AnalyticsPortalEvent) portalEvent;
+                        handler.apply(analyticsPortalEvent);
+                    }
+                });
     }
 
     @Override
