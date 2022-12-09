@@ -23,10 +23,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.apache.commons.lang.Validate;
+import org.springframework.beans.factory.annotation.Value;
 
 /** @since 2.6 */
 public final class LoginEvent extends PortalEvent {
     private static final long serialVersionUID = 2L;
+
+    @Value("${org.apereo.portal.events.LoginEvent.captureUserIpAddresses:false}")
+    private boolean captureUserIpAddresses;
 
     private final Set<String> groups;
 
@@ -58,7 +62,11 @@ public final class LoginEvent extends PortalEvent {
                     attributeEntry.getKey(), ImmutableList.copyOf(attributeEntry.getValue()));
         }
         this.attributes = attributesBuilder.build();
-        this.ipAddress = eventBuilder.getPortalRequest().getRemoteAddr();
+
+        this.ipAddress =
+                this.captureUserIpAddresses
+                        ? eventBuilder.getPortalRequest().getRemoteAddr()
+                        : "0.0.0.0";
     }
 
     /** @return The groups the user was in at login */
@@ -86,7 +94,7 @@ public final class LoginEvent extends PortalEvent {
                 + this.groups.size()
                 + ", attributes="
                 + this.attributes.size()
-                + ", ipAddress=MASKED"
+                + ", ipAddress=MASKED" // never log
                 + "]";
     }
 }
