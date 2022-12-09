@@ -26,17 +26,20 @@ import org.apache.commons.lang.Validate;
 
 /** @since 2.6 */
 public final class LoginEvent extends PortalEvent {
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
 
     private final Set<String> groups;
 
     private final Map<String, List<String>> attributes;
+
+    private final String ipAddress;
 
     @SuppressWarnings("unused")
     private LoginEvent() {
         super();
         this.groups = Collections.emptySet();
         this.attributes = Collections.emptyMap();
+        this.ipAddress = "0.0.0.0";
     }
 
     LoginEvent(
@@ -55,6 +58,7 @@ public final class LoginEvent extends PortalEvent {
                     attributeEntry.getKey(), ImmutableList.copyOf(attributeEntry.getValue()));
         }
         this.attributes = attributesBuilder.build();
+        this.ipAddress = eventBuilder.getPortalRequest().getRemoteAddr();
     }
 
     /** @return The groups the user was in at login */
@@ -67,6 +71,11 @@ public final class LoginEvent extends PortalEvent {
         return this.attributes;
     }
 
+    /** @return The IP Address for the user */
+    public String getIpAddress() {
+        return this.ipAddress;
+    }
+
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
@@ -77,6 +86,7 @@ public final class LoginEvent extends PortalEvent {
                 + this.groups.size()
                 + ", attributes="
                 + this.attributes.size()
+                + ", ipAddress=MASKED"
                 + "]";
     }
 }
