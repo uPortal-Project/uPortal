@@ -16,7 +16,6 @@ package org.apereo.portal.events.handlers.db;
 
 import com.google.common.base.Function;
 import org.apereo.portal.concurrency.FunctionWithoutResult;
-import org.apereo.portal.events.AnalyticsPortalEvent;
 import org.apereo.portal.events.PortalEvent;
 import org.joda.time.DateTime;
 
@@ -53,7 +52,7 @@ public interface IPortalEventDao {
             int maxEvents,
             String eventType,
             String broncoId,
-            FunctionWithoutResult<AnalyticsPortalEvent> handler);
+            FunctionWithoutResult<PortalEvent> handler);
 
     /**
      * Gets all un-aggregated persisted events in the time range. After the handler is called on

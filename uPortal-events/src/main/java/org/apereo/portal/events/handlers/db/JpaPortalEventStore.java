@@ -27,7 +27,6 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Root;
 import org.apereo.portal.concurrency.FunctionWithoutResult;
-import org.apereo.portal.events.AnalyticsPortalEvent;
 import org.apereo.portal.events.PortalEvent;
 import org.apereo.portal.jpa.BaseRawEventsJpaDao;
 import org.hibernate.FlushMode;
@@ -351,7 +350,7 @@ public class JpaPortalEventStore extends BaseRawEventsJpaDao implements IPortalE
             int maxEvents,
             String eventType,
             String broncoId,
-            FunctionWithoutResult<AnalyticsPortalEvent> handler) {
+            FunctionWithoutResult<PortalEvent> handler) {
         final TypedQuery<PersistentPortalEvent> query =
                 this.getEntityManager().createQuery(this.selectQuery, PersistentPortalEvent.class);
         query.setParameter(this.startTimeParameter.getName(), startTime);
@@ -364,11 +363,7 @@ public class JpaPortalEventStore extends BaseRawEventsJpaDao implements IPortalE
                 e -> {
                     final PortalEvent portalEvent =
                             this.toPortalEvent(e.getEventData(), e.getEventType());
-                    if (portalEvent instanceof AnalyticsPortalEvent) {
-                        AnalyticsPortalEvent analyticsPortalEvent =
-                                (AnalyticsPortalEvent) portalEvent;
-                        handler.apply(analyticsPortalEvent);
-                    }
+                    handler.apply(portalEvent);
                 });
     }
 

@@ -17,7 +17,7 @@ package org.apereo.portal.events.analytics;
 import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
-import org.apereo.portal.events.AnalyticsPortalEvent;
+import org.apereo.portal.events.PortalEvent;
 import org.joda.time.DateTime;
 
 public interface IAnalyticsPortalEventService {
@@ -26,6 +26,6 @@ public interface IAnalyticsPortalEventService {
 
     String getLogLevel();
 
-    List<AnalyticsPortalEvent> getAnalytics(
+    List<PortalEvent> getAnalytics(
             DateTime startDate, DateTime endDate, String eventType, String broncoId);
 }

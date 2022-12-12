@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.TimeZone;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.time.FastDateFormat;
-import org.apereo.portal.events.AnalyticsPortalEvent;
+import org.apereo.portal.events.PortalEvent;
 import org.apereo.portal.rest.utils.ErrorResponse;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -66,15 +66,14 @@ public class AnalyticsPortalEventsController {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<List<AnalyticsPortalEvent>> getAnalytics(
+    public ResponseEntity<List<PortalEvent>> getAnalytics(
             @RequestParam(name = "startDate") String startDateStr,
             @RequestParam(name = "endDate") String endDateStr,
             @RequestParam(name = "eventType", required = false) String eventType,
             @RequestParam(name = "broncoId", required = false) String broncoId) {
         DateTime startDate = parseDateTime(startDateStr);
         DateTime endDate = parseDateTime(endDateStr);
-        List<AnalyticsPortalEvent> response =
-                service.getAnalytics(startDate, endDate, eventType, broncoId);
+        List<PortalEvent> response = service.getAnalytics(startDate, endDate, eventType, broncoId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

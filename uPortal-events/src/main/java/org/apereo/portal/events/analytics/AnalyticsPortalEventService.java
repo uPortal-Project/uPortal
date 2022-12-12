@@ -20,8 +20,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.portal.concurrency.FunctionWithoutResult;
-import org.apereo.portal.events.AnalyticsPortalEvent;
 import org.apereo.portal.events.IPortalAnalyticsEventFactory;
+import org.apereo.portal.events.PortalEvent;
 import org.apereo.portal.events.handlers.db.IPortalEventDao;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.IPersonManager;
@@ -84,23 +84,23 @@ public class AnalyticsPortalEventService implements IAnalyticsPortalEventService
     }
 
     @Override
-    public List<AnalyticsPortalEvent> getAnalytics(
+    public List<PortalEvent> getAnalytics(
             DateTime startDate, DateTime endDate, String eventType, String broncoId) {
-        final List<AnalyticsPortalEvent> portalEvents = new LinkedList<AnalyticsPortalEvent>();
+        final List<PortalEvent> portalEvents = new LinkedList<PortalEvent>();
         portalEventDao.getAnalyticsEvents(
                 startDate,
                 endDate,
                 -1,
                 eventType,
                 broncoId,
-                new FunctionWithoutResult<AnalyticsPortalEvent>() {
+                new FunctionWithoutResult<PortalEvent>() {
                     @Override
-                    protected void applyWithoutResult(AnalyticsPortalEvent analyticsPortalEvent) {
+                    protected void applyWithoutResult(PortalEvent portalEvent) {
                         if ((StringUtils.isBlank(eventType)
-                                        || analyticsPortalEvent.getType().equals(eventType))
+                                        || portalEvent.getClass().getName().equals(eventType))
                                 && (StringUtils.isBlank(broncoId)
-                                        || analyticsPortalEvent.getUserName().equals(broncoId))) {
-                            portalEvents.add(analyticsPortalEvent);
+                                        || portalEvent.getUserName().equals(broncoId))) {
+                            portalEvents.add(portalEvent);
                         }
                     }
                 });
