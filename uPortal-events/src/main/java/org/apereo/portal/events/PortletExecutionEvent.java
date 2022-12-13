@@ -15,9 +15,9 @@
 package org.apereo.portal.events;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -29,7 +29,6 @@ import org.apereo.portal.dao.usertype.FunctionalNameType;
 import org.apereo.portal.portlet.om.IPortletWindowId;
 
 /** Constructor assumes that Map passed in is completely immutable */
-@JsonIgnoreProperties({"windowState", "portletMode"})
 public abstract class PortletExecutionEvent extends PortalEvent {
     private static final long serialVersionUID = 1L;
 
@@ -105,10 +104,14 @@ public abstract class PortletExecutionEvent extends PortalEvent {
         return Collections.unmodifiableMap(this.parameters);
     }
 
+    // Jackson does not classes that have no public getters
+    @JsonSerialize(converter = WindowStateJsonConverter.class)
     public WindowState getWindowState() {
         return windowState;
     }
 
+    // Jackson does not classes that have no public getters
+    @JsonSerialize(converter = PortletModeJsonConverter.class)
     public PortletMode getPortletMode() {
         return portletMode;
     }
