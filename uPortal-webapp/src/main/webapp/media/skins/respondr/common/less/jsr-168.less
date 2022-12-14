@@ -47,26 +47,30 @@
   line-height: @line-height-base;
 }
 
-/* extend seems more sensible than defining each mixen and css rule here */
+/* extend seems more sensible than defining each mixin and css rule here */
 
 .portlet-msg-status {
-  //bootstrap api should be utilised as this is for progress bars, but one html class would be insufficient.
+  // bootstrap api should be utilized as this is for progress bars, but one html class would be insufficient.
 }
 
 .portlet-msg-info {
-  &:extend(.alert, .alert-info);
+  &:extend(.alert,
+  .alert-info);
 }
 
 .portlet-msg-error {
-  &:extend(.alert, .alert-danger);
+  &:extend(.alert,
+  .alert-danger);
 }
 
 .portlet-msg-alert {
-  &:extend(.alert, .alert-warning);
+  &:extend(.alert,
+  .alert-warning);
 }
 
 .portlet-msg-success {
-  &:extend(.alert, .alert-success);
+  &:extend(.alert,
+  .alert-success);
 }
 
 /* table and section sections */
@@ -74,10 +78,6 @@
 .portlet-section-header,
 .portlet-table-header {
   &:extend(h3);
-}
-
-.portlet-section-body,
-.portlet-table-body {
 }
 
 .portlet-section-alternate,
@@ -118,6 +118,7 @@
 .portlet-form-button {
   &:extend(.btn);
   .button-variant(@btn-primary-color; @btn-primary-bg; @btn-primary-border);
+
   &:hover {
     text-decoration: none;
   }
@@ -132,12 +133,10 @@
 }
 
 .portlet-form-field {
-  &:extend(
-    .checkbox input[type= "checkbox" ],
-    .checkbox-inline input[type= "checkbox" ],
-    .radio input[type= "radio" ],
-    .radio-inline input[type= "radio" ]
-  );
+  &:extend(.checkbox input[type="checkbox"],
+  .checkbox-inline input[type="checkbox"],
+  .radio input[type="radio"],
+  .radio-inline input[type="radio"]);
 }
 
 /* portlet menus */
@@ -151,6 +150,7 @@
     &:extend(.nav-stacked > li + li);
     &:extend(.nav-stacked > li);
     &:extend(.nav > li);
+
     &.active,
     .portlet-menu-item-selected {
       &:hover,
@@ -158,6 +158,7 @@
         background-color: @nav-pills-active-link-hover-bg;
         color: @nav-pills-active-link-hover-color;
         border-radius: @nav-pills-border-radius;
+
         > a {
           &:hover,
           &:focus {
@@ -167,11 +168,13 @@
           }
         }
       }
+
       > a {
         background-color: @nav-pills-active-link-hover-bg;
         color: @nav-pills-active-link-hover-color;
       }
     }
+
     a {
       border-radius: @nav-pills-border-radius;
       display: block;
@@ -179,6 +182,7 @@
       position: relative;
       text-decoration: none;
       color: @link-color;
+
       &:hover,
       &:focus {
         background-color: @navbar-default-bg;
@@ -199,31 +203,37 @@
       width: @dropdown-inside-of-menu-width;
       background: @dropdown-bg;
       color: @dropdown-header-color;
+
       li,
       .portlet-menu-cascade-item {
         a {
           &.disabled {
             color: @dropdown-link-disabled-color;
           }
+
           &:hover,
           &.portlet-menu-item-hover,
           &.portlet-menu-cascade-item-hover {
             color: @navbar-default-link-hover-color;
           }
         }
+
         &:active,
         &.portlet-menu-cascade-item-selected {
           background-color: @nav-pills-active-link-hover-bg;
           color: @nav-pills-active-link-hover-color;
+
           > a {
             background-color: @nav-pills-active-link-hover-bg;
             color: @nav-pills-active-link-hover-color;
           }
         }
+
         .portlet-menu-item-hover-selected,
         .portlet-menu-cascade-item-hover-selected {
           background: @nav-pills-active-link-hover-bg !important;
           color: @nav-pills-active-link-hover-color;
+
           &:hover,
           &:focus {
             background-color: @nav-pills-active-link-hover-bg !important;
@@ -231,6 +241,7 @@
           }
         }
       }
+
       .portlet-menu-separator,
       .portlet-menu-cascade-separator {
         &:extend(.divider);
@@ -246,6 +257,7 @@
     &:extend(h3);
   }
 }
+
 .dropdown-menu {
   background-clip: @stand-along-dropdown-background-clip;
   background: @dropdown-bg;
@@ -264,12 +276,15 @@
   top: @stand-along-dropdown-top;
   z-index: @zindex-dropdown;
   color: @dropdown-header-color;
+
   li {
     a {
       color: @dropdown-link-color;
+
       &.disabled {
         color: @dropdown-link-disabled-color;
       }
+
       &:hover,
       &.portlet-menu-item-hover,
       &.portlet-menu-cascade-item-hover {
@@ -277,17 +292,21 @@
         color: @dropdown-link-hover-color;
       }
     }
+
     &:active {
       background-color: @nav-pills-active-link-hover-bg;
       color: @nav-pills-active-link-hover-color;
+
       > a {
         background-color: @nav-pills-active-link-hover-bg;
         color: @nav-pills-active-link-hover-color;
       }
     }
+
     .portlet-menu-item-hover-selected {
       background: @nav-pills-active-link-hover-bg !important;
       color: @nav-pills-active-link-hover-color;
+
       &:hover,
       &:focus {
         background-color: @nav-pills-active-link-hover-bg !important;
@@ -295,6 +314,7 @@
       }
     }
   }
+
   .portlet-menu-separator {
     &:extend(.divider);
   }

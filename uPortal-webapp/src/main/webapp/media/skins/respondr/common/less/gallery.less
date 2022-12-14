@@ -117,7 +117,7 @@
 @galleryPagerBtnBorderDisabled: 1px solid @grayscale7 !important;
 
 .gallery-handle-round(@galleryHandleRound) when (@galleryHandleRound) {
-  .border-radiuses(0 ,0, @galleryHandleRound, @galleryHandleRound);
+  .border-radiuses(0, 0, @galleryHandleRound, @galleryHandleRound);
 }
 
 .gallery-handle-shadow(@galleryHandleShadow) when (@galleryHandleShadow) {
@@ -149,29 +149,29 @@
 .gallery-ri-utility-round(@galleryRIUtilityRound)
   when
   (@galleryRIUtilityRound) {
-  .border-radiuses(@galleryRIUtilityRound,@galleryRIUtilityRound,0,0);
+  .border-radiuses(@galleryRIUtilityRound, @galleryRIUtilityRound, 0, 0);
 }
 
 .gallery-ri-link-gradient(@galleryRILinkGradient1)
   when
   (@galleryRILinkGradient1) {
-  .vertical-gradient(@galleryRILinkGradient1,@galleryRILinkGradient2);
+  .vertical-gradient(@galleryRILinkGradient1, @galleryRILinkGradient2);
 }
 
 .gallery-ri-link-round(@galleryRILinkRound) when (@galleryRILinkRound) {
-  .border-radiuses(0,@galleryRILinkRound,0,0);
+  .border-radiuses(0, @galleryRILinkRound, 0, 0);
 }
 
 .gallery-ri-link-gradient-hover(@galleryRILinkGradient1Hover)
   when
   (@galleryRILinkGradient1Hover) {
-  .vertical-gradient(@galleryRILinkGradient1Hover,@galleryRILinkGradient2Hover);
+  .vertical-gradient(@galleryRILinkGradient1Hover, @galleryRILinkGradient2Hover);
 }
 
 .gallery-pager-button-gradient(@galleryPagerButtonGradient1)
   when
   (@galleryPagerButtonGradient1) {
-  .vertical-gradient(@galleryPagerButtonGradient1,@galleryPagerButtonGradient2);
+  .vertical-gradient(@galleryPagerButtonGradient1, @galleryPagerButtonGradient2);
 }
 
 .gallery-pager-button-round(@galleryPagerButtonRound)
@@ -183,7 +183,7 @@
 .gallery-pager-button-gradient-hover(@galleryPagerBtnGradient1Hover)
   when
   (@galleryPagerBtnGradient1Hover) {
-  .vertical-gradient(@galleryPagerBtnGradient1Hover,@galleryPagerBtnGradient2Hover);
+  .vertical-gradient(@galleryPagerBtnGradient1Hover, @galleryPagerBtnGradient2Hover);
 }
 
 .portal {
@@ -362,7 +362,7 @@
           background: @galleryFSearchInputBackground;
           color: @galleryFSearchInputText;
           padding: @galleryFSearchInputPadding;
-          .border-radius;
+          .border-radius();
 
           &:hover {
             background: @galleryFSearchInputHover;
@@ -699,9 +699,6 @@
 
 .up-gallery .categories-column {
   padding: 0;
-}
-
-.up-gallery .categories-column {
   clear: both;
 }
 
@@ -958,20 +955,15 @@
 .portlet.ui-draggable-dragging {
   border: 1px solid #f68923;
   border-radius: 5px;
-  -moz-border-radius: 5px;
-  -webkit-border-radius: 5px;
-  border-top-right-radius: 0;
   -moz-border-radius-topright: 0;
-  -webkit-border-top-right-radius: 0;
+  border-top-right-radius: 0;
   padding: 0;
   margin: 0;
   list-style: none;
-  -moz-box-shadow: 0 0 4px 0 #333;
-  -webkit-box-shadow: 0 0 4px 0 #333;
   box-shadow: 0 0 4px 0 #333;
   background: #333;
   position: relative;
-  background-image: -moz-linear-gradient(90deg, #000, #333);
+  background-image: linear-gradient(90deg, #000, #333);
   background-image: -webkit-gradient(
     linear,
     0% 0%,
@@ -982,7 +974,7 @@
   height: 90px;
   width: 270px;
   overflow: hidden;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=80)";
+  filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=80)";
   filter: alpha(opacity=80);
 }
 
@@ -1002,7 +994,7 @@
   text-align: center;
   cursor: move;
   background: #f68923;
-  background-image: -moz-linear-gradient(90deg, #f68923, @white);
+  background-image: linear-gradient(90deg, #f68923, @white);
   background-image: -webkit-gradient(
     linear,
     0% 0%,
@@ -1019,7 +1011,6 @@
   background: #444 url("./common/images/gripper.png") 5px 0 no-repeat;
   cursor: move;
   -moz-border-radius-topleft: 5px;
-  -webkit-border-top-left-radius: 5px;
   border-top-left-radius: 5px;
 }
 

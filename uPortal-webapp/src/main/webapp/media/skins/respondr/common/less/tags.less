@@ -55,15 +55,7 @@ html {
   }
 
   body {
-    // background-color: @offcanvas-background-color;
-    background: linear-gradient(
-      left,
-      @offcanvas-background-color 0%,
-      darken(@offcanvas-background-color, 10%) 260px,
-      darken(@offcanvas-background-color, 50%) 270px,
-      @offcanvas-background-color 271px,
-      @offcanvas-background-color 100%
-    ); /* FF3.6+ */
+    // background-color: @offcanvas-background-color; /* FF3.6+ */
 
     background: -webkit-gradient(
       left top,
@@ -76,7 +68,7 @@ html {
     ); /* Chrome, Safari4+ */
 
     background: linear-gradient(
-      left,
+      to left,
       @offcanvas-background-color 0%,
       darken(@offcanvas-background-color, 10%) 260px,
       darken(@offcanvas-background-color, 50%) 270px,
@@ -85,7 +77,7 @@ html {
     ); /* Chrome10+,Safari5.1+ */
 
     background: linear-gradient(
-      left,
+      to left,
       @offcanvas-background-color 0%,
       darken(@offcanvas-background-color, 10%) 260px,
       darken(@offcanvas-background-color, 50%) 270px,
@@ -94,7 +86,7 @@ html {
     ); /* Opera 11.10+ */
 
     background: linear-gradient(
-      left,
+      to left,
       @offcanvas-background-color 0%,
       darken(@offcanvas-background-color, 10%) 260px,
       darken(@offcanvas-background-color, 50%) 270px,
