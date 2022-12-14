@@ -41,6 +41,7 @@ html {
           left: 0;
           right: -10px;
         }
+
         .portal-navigation-delete::after {
           content: "";
           position: absolute;
@@ -55,7 +56,7 @@ html {
 
   body {
     // background-color: @offcanvas-background-color;
-    background: -moz-linear-gradient(
+    background: linear-gradient(
       left,
       @offcanvas-background-color 0%,
       darken(@offcanvas-background-color, 10%) 260px,
@@ -74,7 +75,7 @@ html {
       color-stop(100%, @offcanvas-background-color)
     ); /* Chrome, Safari4+ */
 
-    background: -webkit-linear-gradient(
+    background: linear-gradient(
       left,
       @offcanvas-background-color 0%,
       darken(@offcanvas-background-color, 10%) 260px,
@@ -83,7 +84,7 @@ html {
       @offcanvas-background-color 100%
     ); /* Chrome10+,Safari5.1+ */
 
-    background: -o-linear-gradient(
+    background: linear-gradient(
       left,
       @offcanvas-background-color 0%,
       darken(@offcanvas-background-color, 10%) 260px,
@@ -92,7 +93,7 @@ html {
       @offcanvas-background-color 100%
     ); /* Opera 11.10+ */
 
-    background: -ms-linear-gradient(
+    background: linear-gradient(
       left,
       @offcanvas-background-color 0%,
       darken(@offcanvas-background-color, 10%) 260px,
@@ -124,12 +125,15 @@ html {
   html.no-csstransforms3d {
     body {
       background-color: @offcanvas-background-color;
+
       .row-offcanvas {
         /* When the sidebar is active */
         &.active {
           left: 270px;
+
           .portal-nav {
             z-index: 1;
+
             #portalNavigation {
               left: -280px;
               z-index: 4 !important;
