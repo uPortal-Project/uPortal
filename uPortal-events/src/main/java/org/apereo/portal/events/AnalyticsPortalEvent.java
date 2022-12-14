@@ -26,7 +26,6 @@ public class AnalyticsPortalEvent extends PortalEvent {
     private final Date eventDate;
     private final String type;
     private final String url;
-    private final String ipAddress;
 
     AnalyticsPortalEvent() {
         super();
@@ -34,7 +33,6 @@ public class AnalyticsPortalEvent extends PortalEvent {
         eventDate = Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTime();
         type = "UNKNOWN";
         url = "";
-        ipAddress = "";
     }
 
     AnalyticsPortalEvent(
@@ -42,14 +40,12 @@ public class AnalyticsPortalEvent extends PortalEvent {
             IPerson user,
             Date eventDate,
             String type,
-            String url,
-            String ipAddress) {
+            String url) {
         super(portalEventBuilder);
         this.user = user.getUserName();
         this.eventDate = eventDate;
         this.type = type;
         this.url = url;
-        this.ipAddress = ipAddress;
     }
 
     public String getUser() {
@@ -68,10 +64,6 @@ public class AnalyticsPortalEvent extends PortalEvent {
         return url;
     }
 
-    public String getIpAddress() {
-        return ipAddress;
-    }
-
     @Override
     public String toString() {
         return super.toString()
@@ -82,8 +74,6 @@ public class AnalyticsPortalEvent extends PortalEvent {
                 + ", type="
                 + type
                 + ", url="
-                + url
-                + ", ipAddress="
-                + ipAddress;
+                + url;
     }
 }
