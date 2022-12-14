@@ -5,19 +5,19 @@
     "eslint": "^8.0.0",
     "eslint-config-google": "^0.14.0",
     "eslint-config-prettier": "^8.0.0",
-    "prettier": "^2.0.5",
+    "prettier": "~2.8.0",
     "remark-cli": "^11.0.0",
     "remark-preset-lint-consistent": "^5.0.0",
     "remark-preset-lint-recommended": "^6.0.0",
     "remark-validate-links": "^12.0.0",
-    "stylelint": "^13.0.0",
+    "stylelint": "^14.0.0",
     "stylelint-config-prettier": "^9.0.0",
-    "stylelint-config-standard": "^22.0.0",
-    "stylelint-prettier": "^1.0.0"
+    "stylelint-config-standard-scss": "^6.0.0",
+    "stylelint-prettier": "^2.0.0"
   },
   "scripts": {
     "lint-js": "eslint . --ignore-path .gitignore --ignore-pattern *.min.js",
-    "lint-less": "stylelint --syntax less **/*.less !**/bootstrap/**/*.less",
+    "lint-less": "stylelint **/*.less !**/bootstrap/**/*.less",
     "lint-md": "remark -f *.md docs/**",
     "format-js": "npm run lint-js -- --fix",
     "format-less": "npm run lint-less -- --fix"
@@ -65,7 +65,7 @@
   },
   "stylelint": {
     "extends": [
-      "stylelint-config-standard",
+      "stylelint-config-standard-scss",
       "stylelint-prettier/recommended"
     ]
   },
