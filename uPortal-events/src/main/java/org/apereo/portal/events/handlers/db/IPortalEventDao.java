@@ -51,7 +51,7 @@ public interface IPortalEventDao {
             DateTime endTime,
             int maxEvents,
             String eventType,
-            String broncoId,
+            String userId,
             FunctionWithoutResult<PortalEvent> handler);
 
     /**

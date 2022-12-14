@@ -349,7 +349,7 @@ public class JpaPortalEventStore extends BaseRawEventsJpaDao implements IPortalE
             DateTime endTime,
             int maxEvents,
             String eventType,
-            String broncoId,
+            String userId,
             FunctionWithoutResult<PortalEvent> handler) {
         final TypedQuery<PersistentPortalEvent> query =
                 this.getEntityManager().createQuery(this.selectQuery, PersistentPortalEvent.class);

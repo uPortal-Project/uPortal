@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -65,15 +66,18 @@ public class AnalyticsPortalEventsController {
         return new ResponseEntity<>(new HashMap<>(), HttpStatus.CREATED);
     }
 
+    @PreAuthorize(
+            "hasPermission('ALL', 'java.lang.String', new org.apereo.portal.spring.security.evaluator.AuthorizableActivity('UP_SYSTEM', 'ALL_PERMISSIONS'))")
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<List<PortalEvent>> getAnalytics(
             @RequestParam(name = "startDate") String startDateStr,
             @RequestParam(name = "endDate") String endDateStr,
             @RequestParam(name = "eventType", required = false) String eventType,
-            @RequestParam(name = "broncoId", required = false) String broncoId) {
+            @RequestParam(name = "userId", required = false) String userId) {
         DateTime startDate = parseDateTime(startDateStr);
-        DateTime endDate = parseDateTime(endDateStr);
-        List<PortalEvent> response = service.getAnalytics(startDate, endDate, eventType, broncoId);
+        // by default a new date will be midnight; this goes to the last second of the day instead
+        DateTime endDate = parseDateTime(endDateStr).plusDays(1).minusSeconds(1);
+        List<PortalEvent> response = service.getAnalytics(startDate, endDate, eventType, userId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

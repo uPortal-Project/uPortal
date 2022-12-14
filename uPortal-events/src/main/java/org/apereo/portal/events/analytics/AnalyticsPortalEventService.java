@@ -85,21 +85,21 @@ public class AnalyticsPortalEventService implements IAnalyticsPortalEventService
 
     @Override
     public List<PortalEvent> getAnalytics(
-            DateTime startDate, DateTime endDate, String eventType, String broncoId) {
+            DateTime startDate, DateTime endDate, String eventType, String userId) {
         final List<PortalEvent> portalEvents = new LinkedList<PortalEvent>();
         portalEventDao.getAnalyticsEvents(
                 startDate,
                 endDate,
                 -1,
                 eventType,
-                broncoId,
+                userId,
                 new FunctionWithoutResult<PortalEvent>() {
                     @Override
                     protected void applyWithoutResult(PortalEvent portalEvent) {
                         if ((StringUtils.isBlank(eventType)
                                         || portalEvent.getClass().getName().equals(eventType))
-                                && (StringUtils.isBlank(broncoId)
-                                        || portalEvent.getUserName().equals(broncoId))) {
+                                && (StringUtils.isBlank(userId)
+                                        || portalEvent.getUserName().equals(userId))) {
                             portalEvents.add(portalEvent);
                         }
                     }

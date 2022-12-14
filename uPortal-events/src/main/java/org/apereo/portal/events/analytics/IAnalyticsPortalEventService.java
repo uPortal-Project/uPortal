@@ -27,5 +27,5 @@ public interface IAnalyticsPortalEventService {
     String getLogLevel();
 
     List<PortalEvent> getAnalytics(
-            DateTime startDate, DateTime endDate, String eventType, String broncoId);
+            DateTime startDate, DateTime endDate, String eventType, String userId);
 }

@@ -23,10 +23,12 @@
        xmlns="http://www.springframework.org/schema/beans"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:security="http://www.springframework.org/schema/security"
        xsi:schemaLocation="
            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
-           http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+           http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+           http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.2.xsd">
 
     <!--
      | Registers a RequestMappingHandlerMapping, a RequestMappingHandlerAdapter, and an
@@ -35,7 +37,16 @@
      | etc.
      +-->
     <mvc:annotation-driven />
-
+    <!-- Enable annotation-based Spring Security permission evaluation -->
+    <security:global-method-security pre-post-annotations="enabled">
+        <security:expression-handler ref="expressionHandler" />
+    </security:global-method-security>
+    <bean id="expressionHandler"
+          class="org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler">
+        <property name="permissionEvaluator">
+            <bean class="org.apereo.portal.spring.security.evaluator.PortalPermissionEvaluator"/>
+        </property>
+    </bean>
     <!--
      | For access to properties in *.properties files (see applicationContext.xml):
      | portal.properties, rdbm.properties, security.properties, global.properties, uPortal.properties
