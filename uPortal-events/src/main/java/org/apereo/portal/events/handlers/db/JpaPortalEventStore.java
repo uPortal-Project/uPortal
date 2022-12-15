@@ -344,6 +344,30 @@ public class JpaPortalEventStore extends BaseRawEventsJpaDao implements IPortalE
     }
 
     @Override
+    public void getAnalyticsEvents(
+            DateTime startTime,
+            DateTime endTime,
+            int maxEvents,
+            String eventType,
+            String userId,
+            FunctionWithoutResult<PortalEvent> handler) {
+        final TypedQuery<PersistentPortalEvent> query =
+                this.getEntityManager().createQuery(this.selectQuery, PersistentPortalEvent.class);
+        query.setParameter(this.startTimeParameter.getName(), startTime);
+        query.setParameter(this.endTimeParameter.getName(), endTime);
+        if (maxEvents > 0) {
+            query.setMaxResults(maxEvents);
+        }
+        List<PersistentPortalEvent> r = query.getResultList();
+        r.forEach(
+                e -> {
+                    final PortalEvent portalEvent =
+                            this.toPortalEvent(e.getEventData(), e.getEventType());
+                    handler.apply(portalEvent);
+                });
+    }
+
+    @Override
     @RawEventsTransactional
     public int deletePortalEventsBefore(DateTime time) {
         final Query query = this.getEntityManager().createQuery(this.deleteQuery);

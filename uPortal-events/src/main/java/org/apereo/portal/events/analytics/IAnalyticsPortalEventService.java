@@ -14,12 +14,18 @@
  */
 package org.apereo.portal.events.analytics;
 
+import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
+import org.apereo.portal.events.PortalEvent;
+import org.joda.time.DateTime;
 
 public interface IAnalyticsPortalEventService {
 
     void publishEvent(HttpServletRequest request, Map<String, Object> analyticsData);
 
     String getLogLevel();
+
+    List<PortalEvent> getAnalytics(
+            DateTime startDate, DateTime endDate, String eventType, String userId);
 }

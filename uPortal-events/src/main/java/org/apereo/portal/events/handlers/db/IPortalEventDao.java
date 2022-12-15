@@ -46,6 +46,14 @@ public interface IPortalEventDao {
     void getPortalEvents(
             DateTime startTime, DateTime endTime, FunctionWithoutResult<PortalEvent> handler);
 
+    void getAnalyticsEvents(
+            DateTime startTime,
+            DateTime endTime,
+            int maxEvents,
+            String eventType,
+            String userId,
+            FunctionWithoutResult<PortalEvent> handler);
+
     /**
      * Gets all un-aggregated persisted events in the time range. After the handler is called on
      * each event it is marked as aggregated. To deal with memory and data access issues the results

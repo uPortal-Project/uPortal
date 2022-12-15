@@ -48,6 +48,10 @@ public class AnalyticsPortalEvent extends PortalEvent {
         this.url = url;
     }
 
+    public String getUser() {
+        return this.user;
+    }
+
     public Date getEventDate() {
         return eventDate;
     }
@@ -60,20 +64,16 @@ public class AnalyticsPortalEvent extends PortalEvent {
         return url;
     }
 
-    public String getUser() {
-        return this.user;
-    }
-
     @Override
     public String toString() {
         return super.toString()
+                + ", user="
+                + user
                 + ", eventDate="
                 + this.eventDate
                 + ", type="
                 + type
                 + ", url="
-                + url
-                + ", user="
-                + user;
+                + url;
     }
 }
