@@ -4,6 +4,7 @@ dependencies {
     compile("com.googlecode.ehcache-spring-annotations:ehcache-spring-annotations:${ehcacheSpringAnnotationsVersion}") {
         exclude group: 'com.google.guava', module: 'guava'
     }
+    compile 'javax.annotation:javax.annotation-api:1.3.2'
     compile "commons-lang:commons-lang:${commonsLangVersion}"
     compile "joda-time:joda-time:${jodaTimeVersion}"
     compile "org.apache.commons:commons-lang3:${commonsLang3Version}"
