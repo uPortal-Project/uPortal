@@ -69,9 +69,9 @@ dependencies {
     compileOnly "org.projectlombok:lombok:${lombokVersion}"
     annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
 
-    testCompile project(':uPortal-events')
-    testCompile "${portletApiDependency}"
-    testCompile "${servletApiDependency}"
+    testImplementation project(':uPortal-events')
+    testImplementation "${portletApiDependency}"
+    testImplementation "${servletApiDependency}"
 
     compileOnly "org.apache.portals.pluto:pluto-container-api:${plutoVersion}"
     annotationProcessor "org.hibernate:hibernate-jpamodelgen:${hibernateJpamodelgenVersion}"

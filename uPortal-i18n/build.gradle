@@ -7,7 +7,7 @@ ext {
 dependencies {
     compile project(':uPortal-rdbm')
 
-    compile "org.slf4j:log4j-over-slf4j:${slf4jVersion}"
+    implementation "org.slf4j:log4j-over-slf4j:${slf4jVersion}"
 
     annotationProcessor "org.hibernate:hibernate-jpamodelgen:${hibernateJpamodelgenVersion}"
     compileOnly "${servletApiDependency}"

@@ -13,12 +13,12 @@ dependencies {
         exclude group: 'org.hibernate', module: 'hibernate-entitymanager'
     }
     compile "org.jadira.usertype:usertype.spi:${usertypeVersion}"
-    compile "org.slf4j:log4j-over-slf4j:${slf4jVersion}"
-    compile "org.slf4j:jcl-over-slf4j:${slf4jVersion}"
-    compile "org.slf4j:slf4j-api:${slf4jVersion}"
-    compile "org.springframework:spring-context:${springVersion}"
-    compile "org.springframework:spring-jdbc:${springVersion}"
-    compile "org.springframework.security:spring-security-core:${springSecurityVersion}"
+    implementation "org.slf4j:log4j-over-slf4j:${slf4jVersion}"
+    implementation "org.slf4j:jcl-over-slf4j:${slf4jVersion}"
+    implementation "org.slf4j:slf4j-api:${slf4jVersion}"
+    implementation "org.springframework:spring-context:${springVersion}"
+    implementation "org.springframework:spring-jdbc:${springVersion}"
+    implementation "org.springframework.security:spring-security-core:${springSecurityVersion}"
 
     compileOnly "org.apache.portals.pluto:pluto-container-api:${plutoVersion}"
     compileOnly "${portletApiDependency}"

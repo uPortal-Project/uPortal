@@ -18,8 +18,8 @@ dependencies {
     compileOnly "${portletApiDependency}"
     compileOnly "${servletApiDependency}"
 
-    testCompile "${portletApiDependency}"
-    testCompile "${servletApiDependency}"
+    testImplementation "${portletApiDependency}"
+    testImplementation "${servletApiDependency}"
 
     compileOnly "org.projectlombok:lombok:${lombokVersion}"
     annotationProcessor "org.projectlombok:lombok:${lombokVersion}"}

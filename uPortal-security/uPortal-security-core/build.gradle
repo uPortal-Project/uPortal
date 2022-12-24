@@ -7,13 +7,13 @@ dependencies {
     compile project(':uPortal-soffit:uPortal-soffit-core')
     compile project(':uPortal-utils:uPortal-utils-url')
 
-    compile "io.jsonwebtoken:jjwt-api:${jjwtVersion}"
+    implementation "io.jsonwebtoken:jjwt-api:${jjwtVersion}"
     runtime "io.jsonwebtoken:jjwt-impl:${jjwtVersion}",
             "org.bouncycastle:bcprov-jdk15on:${bouncyVersion}",  // for RSASSA-PSS
             "io.jsonwebtoken:jjwt-jackson:${jjwtVersion}"
-    compile "org.jasypt:jasypt:${jasyptVersion}"
+    implementation "org.jasypt:jasypt:${jasyptVersion}"
 
-    testCompile "${servletApiDependency}"
+    testImplementation "${servletApiDependency}"
 
     compileOnly "${portletApiDependency}"
     compileOnly "${servletApiDependency}"

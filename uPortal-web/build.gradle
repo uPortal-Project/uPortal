@@ -14,8 +14,8 @@ dependencies {
     compile "com.github.ci-rt:google-visualization-java:${googleVisualizationVersion}"
     compile "joda-time:joda-time:${jodaTimeVersion}"
 
-    testCompile "org.apache.portals.pluto:pluto-container-api:${plutoVersion}"
-    testCompile "${servletApiDependency}"
+    testImplementation "org.apache.portals.pluto:pluto-container-api:${plutoVersion}"
+    testImplementation "${servletApiDependency}"
 
     compileOnly "org.apache.portals.pluto:pluto-container-api:${plutoVersion}"
     compileOnly "org.apache.portals.pluto:pluto-container-driver-api:${plutoVersion}"

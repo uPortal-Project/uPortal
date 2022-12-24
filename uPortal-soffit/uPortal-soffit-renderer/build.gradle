@@ -8,9 +8,9 @@ dependencies {
     compile "org.springframework:spring-webmvc:${springVersion}"
     compile "org.springframework.security:spring-security-web:${springSecurityVersion}"
 
-    testCompile "junit:junit:${junitVersion}"
-    testCompile "org.mockito:mockito-core:${mockitoVersion}"
-    testCompile "${servletApiDependency}"
+    testImplementation "junit:junit:${junitVersion}"
+    testImplementation "org.mockito:mockito-core:${mockitoVersion}"
+    testImplementation "${servletApiDependency}"
 
     compileOnly "${servletApiDependency}"
 }

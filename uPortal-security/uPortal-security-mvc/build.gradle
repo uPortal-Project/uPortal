@@ -4,7 +4,7 @@ dependencies {
     compile project(':uPortal-core')
     compile project(':uPortal-events')
 
-    testCompile "${servletApiDependency}"
+    testImplementation "${servletApiDependency}"
 
     compileOnly "${servletApiDependency}"
     compileOnly "org.springframework:spring-web:${springVersion}"
