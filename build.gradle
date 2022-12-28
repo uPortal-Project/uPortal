@@ -71,7 +71,7 @@ allprojects {
 
     /*======== Static Analysis ========*/
     spotbugs {
-        toolVersion = '4.1.1'
+        toolVersion = '4.7.3'
         // allow build to continue to other sub projects
         ignoreFailures = true
     }
