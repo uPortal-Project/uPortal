@@ -5,14 +5,14 @@ ext {
 }
 
 dependencies {
-    compile project(':uPortal-hibernate')
-    compile project(':uPortal-io:uPortal-io-core')
-    compile project(':uPortal-persondir')
-    compile project(':uPortal-rdbm')
+    api project(':uPortal-hibernate')
+    api project(':uPortal-io:uPortal-io-core')
+    api project(':uPortal-persondir')
+    api project(':uPortal-rdbm')
 
-    compile "commons-cli:commons-cli:${commonsCliVersion}"
-    compile "org.apache.ant:ant:${antVersion}"
-    compile "org.codehaus.groovy:groovy:${groovyVersion}"
+    implementation "commons-cli:commons-cli:${commonsCliVersion}"
+    implementation "org.apache.ant:ant:${antVersion}"
+    implementation "org.codehaus.groovy:groovy:${groovyVersion}"
 
     annotationProcessor "org.hibernate:hibernate-jpamodelgen:${hibernateJpamodelgenVersion}" // Required for javac -s
     compileOnly "${servletApiDependency}"
