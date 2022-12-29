@@ -7,7 +7,7 @@ ext {
 dependencies {
     implementation project(':uPortal-io:uPortal-io-core')
     implementation project(':uPortal-i18n')
-    compile project(':uPortal-utils:uPortal-utils-core')
+    api project(':uPortal-utils:uPortal-utils-core')
 
     implementation "com.google.guava:guava:${guavaVersion}"
     implementation("dom4j:dom4j:${dom4jVersion}"){
