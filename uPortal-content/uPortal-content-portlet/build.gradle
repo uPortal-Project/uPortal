@@ -5,7 +5,7 @@ ext {
 }
 
 dependencies {
-    compile project(':uPortal-layout:uPortal-layout-core')
+    api project(':uPortal-layout:uPortal-layout-core')
     implementation project(':uPortal-rdbm')
 
     compileOnly "org.apache.portals.pluto:pluto-container-api:${plutoVersion}"

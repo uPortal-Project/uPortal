@@ -4,7 +4,7 @@ dependencies {
     implementation project(':uPortal-groups:uPortal-groups-pags')
     implementation project(':uPortal-index')
     implementation project(':uPortal-layout:uPortal-layout-impl')
-    compile project(':uPortal-security:uPortal-security-permissions')
+    api project(':uPortal-security:uPortal-security-permissions')
     compileOnly "org.apache.portals.pluto:pluto-container-api:${plutoVersion}"
 
     implementation "commons-beanutils:commons-beanutils:${commonsBeanutilsVersion}"
