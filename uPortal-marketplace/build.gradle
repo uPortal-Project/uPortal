@@ -2,7 +2,7 @@ description = "Apereo uPortal Marketplace"
 
 dependencies {
     implementation project(':uPortal-layout:uPortal-layout-core')
-    compile project(':uPortal-security:uPortal-security-core')
+    api project(':uPortal-security:uPortal-security-core')
 
     testImplementation "org.apache.portals.pluto:pluto-container-api:${plutoVersion}"
 

@@ -5,7 +5,7 @@ ext {
 }
 
 dependencies {
-    compile project(':uPortal-security:uPortal-security-core')
+    api project(':uPortal-security:uPortal-security-core')
 
     annotationProcessor "org.hibernate:hibernate-jpamodelgen:${hibernateJpamodelgenVersion}"
     compileOnly "${portletApiDependency}"
