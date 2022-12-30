@@ -5,14 +5,14 @@ ext {
 }
 
 dependencies {
-    compile project(':uPortal-api:uPortal-api-rest')
-    compile project(':uPortal-health')
-    compile project(':uPortal-events')
-    compile project(':uPortal-layout:uPortal-layout-impl')
-    compile project(':uPortal-rendering')
+    api project(':uPortal-api:uPortal-api-rest')
+    api project(':uPortal-health')
+    api project(':uPortal-events')
+    api project(':uPortal-layout:uPortal-layout-impl')
+    api project(':uPortal-rendering')
 
-    compile "com.github.ci-rt:google-visualization-java:${googleVisualizationVersion}"
-    compile "joda-time:joda-time:${jodaTimeVersion}"
+    api "com.github.ci-rt:google-visualization-java:${googleVisualizationVersion}"
+    api "joda-time:joda-time:${jodaTimeVersion}"
 
     testImplementation "org.apache.portals.pluto:pluto-container-api:${plutoVersion}"
     testImplementation "${servletApiDependency}"

@@ -26,18 +26,18 @@ configurations {
 }
 
 dependencies {
-    compile project(':uPortal-groups:uPortal-groups-filesystem')
-    compile project(':uPortal-groups:uPortal-groups-grouper')
-    compile project(':uPortal-groups:uPortal-groups-ldap')
-    compile project(':uPortal-groups:uPortal-groups-local')
-    compile project(':uPortal-groups:uPortal-groups-smartldap')
-    compile project(':uPortal-index')
-    compile project(':uPortal-portlets')
-    compile project(':uPortal-security:uPortal-security-authn')
-    compile project(':uPortal-security:uPortal-security-xslt')
-    compile project(':uPortal-soffit:uPortal-soffit-connector')
-    compile project(':uPortal-utils:uPortal-utils-jmx')
-    compile project(':uPortal-utils:uPortal-utils-url')
+    api project(':uPortal-groups:uPortal-groups-filesystem')
+    api project(':uPortal-groups:uPortal-groups-grouper')
+    api project(':uPortal-groups:uPortal-groups-ldap')
+    api project(':uPortal-groups:uPortal-groups-local')
+    api project(':uPortal-groups:uPortal-groups-smartldap')
+    api project(':uPortal-index')
+    api project(':uPortal-portlets')
+    api project(':uPortal-security:uPortal-security-authn')
+    api project(':uPortal-security:uPortal-security-xslt')
+    api project(':uPortal-soffit:uPortal-soffit-connector')
+    api project(':uPortal-utils:uPortal-utils-jmx')
+    api project(':uPortal-utils:uPortal-utils-url')
 
     compileOnly "org.apereo.service.persondir:person-directory-api:${personDirectoryVersion}"
     compileOnly "${servletApiDependency}"

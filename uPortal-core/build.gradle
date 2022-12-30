@@ -1,18 +1,18 @@
 description = "Apereo uPortal Core"
 
 dependencies {
-    compile("com.googlecode.ehcache-spring-annotations:ehcache-spring-annotations:${ehcacheSpringAnnotationsVersion}") {
+    api("com.googlecode.ehcache-spring-annotations:ehcache-spring-annotations:${ehcacheSpringAnnotationsVersion}") {
         exclude group: 'com.google.guava', module: 'guava'
     }
-    compile "commons-lang:commons-lang:${commonsLangVersion}"
-    compile "joda-time:joda-time:${jodaTimeVersion}"
-    compile "org.apache.commons:commons-lang3:${commonsLang3Version}"
-    compile "org.hibernate:hibernate-core:${hibernateVersion}"
-    compile("org.jadira.usertype:usertype.core:${usertypeVersion}") {
+    api "commons-lang:commons-lang:${commonsLangVersion}"
+    api "joda-time:joda-time:${jodaTimeVersion}"
+    api "org.apache.commons:commons-lang3:${commonsLang3Version}"
+    api "org.hibernate:hibernate-core:${hibernateVersion}"
+    api("org.jadira.usertype:usertype.core:${usertypeVersion}") {
         exclude group: 'org.hibernate', module: 'hibernate-core'
         exclude group: 'org.hibernate', module: 'hibernate-entitymanager'
     }
-    compile "org.jadira.usertype:usertype.spi:${usertypeVersion}"
+    api "org.jadira.usertype:usertype.spi:${usertypeVersion}"
     implementation "org.slf4j:log4j-over-slf4j:${slf4jVersion}"
     implementation "org.slf4j:jcl-over-slf4j:${slf4jVersion}"
     implementation "org.slf4j:slf4j-api:${slf4jVersion}"
