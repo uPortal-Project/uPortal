@@ -8,7 +8,7 @@ dependencies {
     api project(':uPortal-utils:uPortal-utils-url')
 
     implementation "io.jsonwebtoken:jjwt-api:${jjwtVersion}"
-    runtime "io.jsonwebtoken:jjwt-impl:${jjwtVersion}",
+    runtimeOnly "io.jsonwebtoken:jjwt-impl:${jjwtVersion}",
             "org.bouncycastle:bcprov-jdk15on:${bouncyVersion}",  // for RSASSA-PSS
             "io.jsonwebtoken:jjwt-jackson:${jjwtVersion}"
     implementation "org.jasypt:jasypt:${jasyptVersion}"
