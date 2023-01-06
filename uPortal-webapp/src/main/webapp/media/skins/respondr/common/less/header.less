@@ -55,7 +55,7 @@
     background: @menu-toggle-background-color;
     border: 1px solid @menu-toggle-border-color;
     color: @menu-toggle-text-color;
-    .border-radius;
+    .border-radius();
 
     &:hover,
     &:focus {
@@ -84,11 +84,11 @@
 .portal-global {
   /* TODO:  Convert the div.portal-global to be the div.region-eyebrow
        (in the XSL) and move these styles to regions.less */
-  padding: 6px 2px 2px 2px;
+  padding: 6px 2px 2px;
   .gradient(@portal-global-background-color, @portal-global-background-gradient);
 
   border-bottom: 1px solid @portal-global-border-color;
-  .drop-shadow;
+  .drop-shadow();
 
   text-align: right;
 }
@@ -103,9 +103,9 @@
 
 h1.portal-logo {
   font-size: 400%;
-  text-rendering: optimizeLegibility;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4), 0 0 30px rgba(0, 0, 0, 0.075);
-  margin: 30px 0 10px 0;
+  text-rendering: optimizelegibility;
+  text-shadow: 0 1px 3px rgb(0 0 0 / 40%), 0 0 30px rgb(0 0 0 / 7.5%);
+  margin: 30px 0 10px;
 }
 
 h1.portal-logo a {
@@ -117,7 +117,7 @@ h1.portal-logo a:hover {
 }
 
 #webSearchContainer {
-  margin: 12px 0 8px 0;
+  margin: 12px 0 8px;
 }
 
 #webSearchSubmit {
@@ -143,6 +143,7 @@ h1.portal-logo a:hover {
         a {
           margin-left: 10px;
         }
+
         .notification-icon {
           margin-right: 10px;
         }

@@ -25,6 +25,7 @@ import org.apache.commons.lang.builder.ToStringStyle;
  *
  * @since 3.3
  */
+@SuppressWarnings("ComparableType")
 public class PermissionTargetImpl
         implements IPermissionTarget, Comparable<IPermissionTarget>, Serializable {
 

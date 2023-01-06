@@ -1,8 +1,14 @@
 description = "Apereo uPortal Soffit Core"
 
 dependencies {
+//<<<<<<< HEAD
+//    api "io.jsonwebtoken:jjwt-api:${jjwtVersion}"
+//    runtimeOnly "io.jsonwebtoken:jjwt-impl:${jjwtVersion}",
+//=======
     api "io.jsonwebtoken:jjwt-api:${jjwtVersion}"
+    api 'javax.annotation:javax.annotation-api:1.3.2'
     runtimeOnly "io.jsonwebtoken:jjwt-impl:${jjwtVersion}",
+//>>>>>>> master
             "org.bouncycastle:bcprov-jdk15on:${bouncyVersion}",  // for RSASSA-PSS
             "io.jsonwebtoken:jjwt-jackson:${jjwtVersion}"
     api "org.apache.commons:commons-lang3:${commonsLang3Version}"

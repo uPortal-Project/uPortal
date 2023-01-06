@@ -50,12 +50,12 @@ allprojects {
     }
 
     dependencies {
-        errorprone 'com.google.errorprone:error_prone_core:2.3.3'
+        errorprone 'com.google.errorprone:error_prone_core:2.3.4'
         errorproneJavac "com.google.errorprone:javac:9+181-r4173-1"
     }
 
     codenarc {
-        toolVersion = '1.5'
+        toolVersion = '3.1.0'
         reportFormat = 'console'
     }
 

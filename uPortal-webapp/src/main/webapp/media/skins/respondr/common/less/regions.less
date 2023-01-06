@@ -59,8 +59,6 @@
        Namespace: .region-eyebrow
        ========================================================================== */
   #up-sticky-nav {
-    -webkit-transition: all 0.25s ease-out;
-    -o-transition: all 0.25s ease-out;
     transition: all 0.25s ease-out;
     position: fixed;
     top: 0;
@@ -123,8 +121,7 @@
     transition-property: -webkit-transform;
     transition-property: transform;
     transition-property: transform, -webkit-transform;
-    transition-timing-function: ease;
-    -webkit-transition-delay: 350ms; /* Safari */
+    transition-timing-function: ease; /* Safari */
     transition-delay: 350ms;
     width: 15px;
 
@@ -140,8 +137,7 @@
       transition-property: -webkit-transform;
       transition-property: transform;
       transition-property: transform, -webkit-transform;
-      transition-timing-function: ease;
-      -webkit-transition-delay: 350ms; /* Safari */
+      transition-timing-function: ease; /* Safari */
       transition-delay: 350ms;
       width: 15px;
     }
@@ -158,8 +154,7 @@
       transition-property: -webkit-transform;
       transition-property: transform;
       transition-property: transform, -webkit-transform;
-      transition-timing-function: ease;
-      -webkit-transition-delay: 350ms; /* Safari */
+      transition-timing-function: ease; /* Safari */
       transition-delay: 350ms;
       width: 15px;
     }
@@ -193,8 +188,6 @@
     /* Transform the hamburger to an Arrow left */
     .hamburger-inner {
       &::before {
-        -webkit-transform: translate3d(-3px, -4px, 0) rotate(-45deg)
-          scale(0.7, 1);
         top: 0;
         transform: translate3d(-3px, -4px, 0) rotate(-45deg) scale(0.7, 1);
         transition: top 0.35s ease,
@@ -207,7 +200,6 @@
       }
 
       &::after {
-        -webkit-transform: translate3d(-3px, 4px, 0) rotate(45deg) scale(0.7, 1);
         bottom: 0;
         transform: translate3d(-3px, 4px, 0) rotate(45deg) scale(0.7, 1);
         transition: bottom 0.35s ease,
@@ -237,6 +229,7 @@
       a {
         color: #b2cce1;
       }
+
       a:hover {
         color: @white;
       }
@@ -260,6 +253,7 @@
       button:focus {
         outline: none;
       }
+
       i {
         margin-left: 5px;
       }

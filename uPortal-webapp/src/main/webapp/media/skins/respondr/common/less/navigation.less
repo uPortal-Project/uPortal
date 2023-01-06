@@ -24,33 +24,18 @@
   position: relative;
   top: 0;
   left: 0;
-  -webkit-backface-visibility: hidden;
-  -moz-backface-visibility: hidden;
-  -ms-backface-visibility: hidden;
-  -o-backface-visibility: hidden;
   backface-visibility: hidden;
-  -webkit-transition: all 350ms ease-out;
-  -moz-transition: all 350ms ease-out;
-  -o-transition: all 350ms ease-out;
   transition: all 350ms ease-out;
 
   /* When the sidebar is active */
 
   /* TODO Put translate3d, scale3d, transition, transform-origin, backface-visibility, etc. in uPortal mixin.less */
   &.active {
-    -webkit-transform: translate3d(270px, 0, 0) scale3d(1, 1, 1);
-    -moz-transform: translate3d(270px, 0, 0) scale3d(1, 1, 1);
-    -ms-transform: translate3d(270px, 0, 0) scale3d(1, 1, 1);
-    -o-transform: translate3d(270px, 0, 0) scale3d(1, 1, 1);
     transform: translate3d(270px, 0, 0) scale3d(1, 1, 1);
 
     #portalNavigation {
       filter: ~"progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
       opacity: 1 !important;
-      -webkit-transform: translate3d(10px, 0, 0) !important;
-      -moz-transform: translate3d(10px, 0, 0) !important;
-      -ms-transform: translate3d(10px, 0, 0) !important;
-      -o-transform: translate3d(10px, 0, 0) !important;
       transform: translate3d(10px, 0, 0) !important;
       z-index: 4 !important;
     }
@@ -65,38 +50,19 @@
       position: absolute;
       top: 10px;
       left: 0;
-      -webkit-transform: translate3d(-100%, 0, 0);
-      -moz-transform: translate3d(-100%, 0, 0);
-      -ms-transform: translate3d(-100%, 0, 0);
-      -o-transform: translate3d(-100%, 0, 0);
       transform: translate3d(-100%, 0, 0);
-      -webkit-backface-visibility: hidden;
-      -moz-backface-visibility: hidden;
-      -ms-backface-visibility: hidden;
-      -o-backface-visibility: hidden;
       backface-visibility: hidden;
 
       #portalNavigation {
         top: @mobile-navbar-top-position;
         filter: ~"progid:DXImageTransform.Microsoft.Alpha(Opacity=70)";
         opacity: 0.7;
-        -webkit-transition: z-index 350ms ease, opacity 350ms,
-          -webkit-transform 350ms ease;
-        -webkit-transition-delay: ease, 0s;
-        -moz-transition: z-index 350ms ease, opacity 350msease,
+        transition: z-index 350ms ease, opacity 350ms ease,
           -moz-transform 350ms ease;
-        -o-transition: z-index 350ms ease, opacity 350ms ease,
+        transition: z-index 350ms ease, opacity 350ms ease,
           -o-transform 350ms ease;
         transition: z-index 350ms ease, opacity 350ms ease, transform 350ms ease;
-        -webkit-transform: translate3d(270px, 0, 0) scale3d(0.9, 0.9, 0.9);
-        -moz-transform: translate3d(270px, 0, 0) scale3d(0.9, 0.9, 0.9);
-        -ms-transform: translate3d(270px, 0, 0) scale3d(0.9, 0.9, 0.9);
-        -o-transform: translate3d(270px, 0, 0) scale3d(0.9, 0.9, 0.9);
         transform: translate3d(270px, 0, 0) scale3d(0.9, 0.9, 0.9);
-        -webkit-transform-origin: 50% 0%;
-        -moz-transform-origin: 50% 0%;
-        -ms-transform-origin: 50% 0%;
-        -o-transform-origin: 50% 0%;
         transform-origin: 50% 0%;
         position: relative;
         z-index: -10; /* do not change */
@@ -142,6 +108,7 @@
 
               a {
                 color: @mobile-navbar-item-active-text-color !important;
+
                 &.portal-navigation-gripper {
                   position: absolute;
                   background: none;
@@ -260,14 +227,7 @@
 
                 .caret {
                   margin: 10px 7px;
-                  -webkit-transform: rotate(-90deg);
-                  -moz-transform: rotate(-90deg);
-                  -o-transform: rotate(-90deg);
-                  -ms-transform: rotate(-90deg);
                   transform: rotate(-90deg);
-                  -webkit-transition: transform 150ms ease-out;
-                  -moz-transition: transform 150ms ease-out;
-                  -o-transition: transform 150ms ease-out;
                   transition: transform 150ms ease-out;
                 }
               }
@@ -306,7 +266,7 @@
                 min-width: 100%;
                 color: @black;
 
-                &:lastchild {
+                &:last-child {
                   border-bottom: 0 solid @black;
                 }
 
@@ -316,6 +276,7 @@
                   color: @black !important;
                   background-color: @white;
                 }
+
                 a {
                   &:hover,
                   &:focus {
@@ -331,10 +292,6 @@
           .open {
             [aria-expanded="true"] {
               .caret {
-                -webkit-transform: rotate(0deg) !important;
-                -moz-transform: rotate(0deg) !important;
-                -o-transform: rotate(0deg) !important;
-                -ms-transform: rotate(0deg) !important;
                 transform: rotate(0deg) !important;
               }
             }
@@ -352,8 +309,6 @@
   /* Intended to undo the rules for small displays above */
   position: initial;
   left: initial;
-  -webkit-transition: initial;
-  -o-transition: initial;
   transition: initial;
 
   /* Added to the hierarchy to insure that these rules are at least as specific as above */
@@ -377,19 +332,12 @@
         top: initial;
         left: initial;
         width: initial;
-        -webkit-transform: none !important;
-        -moz-transform: none !important;
-        -ms-transform: none !important;
-        -o-transform: none !important;
         transform: none !important;
 
         #portalNavigation {
-          -webkit-transform: none !important;
-          -moz-transform: none !important;
-          -ms-transform: none !important;
-          -o-transform: none !important;
           transform: none !important;
         }
+
         #portalNavigationTabGroup {
           background-color: @tabgroup-background-color;
           margin-left: -15px;
@@ -432,7 +380,6 @@
               a.portal-navigation-link {
                 display: inline-block;
                 color: @tabgroup-item-text-color;
-
                 margin: 0;
                 padding: 1px 5px;
 
@@ -442,7 +389,6 @@
                   color: @tabgroup-item-hover-text-color;
                 }
               }
-
             }
 
             .active {
@@ -457,6 +403,7 @@
             }
           }
         }
+
         ul.menu {
           display: block;
           .inline-block-list;
@@ -479,14 +426,7 @@
           }
 
           .caret {
-            -webkit-transition: transform 150ms ease-out;
-            -moz-transition: transform 150ms ease-out;
-            -o-transition: transform 150ms ease-out;
             transition: transform 150ms ease-out;
-            -webkit-transform: rotate(0deg);
-            -moz-transform: rotate(0deg);
-            -o-transform: rotate(0deg);
-            -ms-transform: rotate(0deg);
             transform: rotate(0deg);
           }
 
@@ -494,10 +434,6 @@
             [aria-expanded="true"] {
               .caret {
                 /* if you need to animate the caret of the flyout on desktop, put 180deg instead of 0deg */
-                -webkit-transform: rotate(0deg);
-                -moz-transform: rotate(0deg);
-                -o-transform: rotate(0deg);
-                -ms-transform: rotate(0deg);
                 transform: rotate(0deg);
               }
             }
@@ -599,6 +535,7 @@
                 color: @grayscale10;
                 margin: 0 auto;
               }
+
               p.fl-inlineEdit-editModeInstruction {
                 height: 0;
                 overflow: hidden;
@@ -646,7 +583,7 @@
                 min-width: 100%;
                 color: @black;
 
-                &:lastchild {
+                &:last-child {
                   border-bottom: 0 solid @black;
                 }
 
@@ -672,6 +609,7 @@
           .active {
             background-color: @navbar-item-active-background-color;
             color: @navbar-item-active-text-color;
+
             &:hover,
             &:focus {
               .portal-navigation-gripper {
