@@ -4,20 +4,12 @@ dependencies {
     api("com.googlecode.ehcache-spring-annotations:ehcache-spring-annotations:${ehcacheSpringAnnotationsVersion}") {
         exclude group: 'com.google.guava', module: 'guava'
     }
-//<<<<<<< HEAD
-//    api "commons-lang:commons-lang:${commonsLangVersion}"
-//    api "joda-time:joda-time:${jodaTimeVersion}"
-//    api "org.apache.commons:commons-lang3:${commonsLang3Version}"
-//    api "org.hibernate:hibernate-core:${hibernateVersion}"
-//    api("org.jadira.usertype:usertype.core:${usertypeVersion}") {
-//=======
     api 'javax.annotation:javax.annotation-api:1.3.2'
     api "commons-lang:commons-lang:${commonsLangVersion}"
     api "joda-time:joda-time:${jodaTimeVersion}"
     api "org.apache.commons:commons-lang3:${commonsLang3Version}"
     api "org.hibernate:hibernate-core:${hibernateVersion}"
     api("org.jadira.usertype:usertype.core:${usertypeVersion}") {
-//>>>>>>> master
         exclude group: 'org.hibernate', module: 'hibernate-core'
         exclude group: 'org.hibernate', module: 'hibernate-entitymanager'
     }
