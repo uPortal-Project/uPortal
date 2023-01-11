@@ -9,13 +9,14 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+@Slf4j
+@Data
 public class WebSecurityFilter implements Filter {
 
-    private static final Logger log = LoggerFactory.getLogger(WebSecurityFilter.class);
     private FilterConfig config;
 
     // Parameters
@@ -120,8 +121,7 @@ public class WebSecurityFilter implements Filter {
             String options = null;
             if (!antiJackClickingOptions.equals("allow-from")) {
                 options = antiJackClickingOptions.toUpperCase();
-            } else if (antiJackClickingOptions.equals("allow-from")
-                    && !antiJackClickingUri.isEmpty()) {
+            } else if (!antiJackClickingUri.isEmpty()) {
                 options = antiJackClickingOptions.toUpperCase() + "'" + antiJackClickingUri + "'";
             }
             response.setHeader(DEFAULT_ANTI_JACK_CLICKING_HEADER, options);
@@ -134,7 +134,7 @@ public class WebSecurityFilter implements Filter {
         }
 
         if (xContentTypeEnabled) {
-            log.debug("Content Type Options: " + request.getHeader("Content-Type"));
+            log.debug("Content Type Options: " + response.getHeader("Content-Type-Options"));
             response.setHeader(DEFAULT_X_CONTENT_TYPE_HEADER, "nosniff");
         }
 
@@ -161,35 +161,18 @@ public class WebSecurityFilter implements Filter {
             final String referrerPolicy)
             throws ServletException {
 
-        setHstsEnabled(hstsEnabled);
+        setHstsEnabled(Boolean.parseBoolean(hstsEnabled));
         setHstsMaxAgeSeconds(hstsMaxAgeSeconds);
-        setHstsIncludeSubDomains(hstsIncludeSubDomains);
-        setHstsPreload(hstsPreload);
-        setAntiJackClickingEnabled(antiJackClickingEnabled);
+        setHstsIncludeSubDomains(Boolean.parseBoolean(hstsIncludeSubDomains));
+        setHstsPreload(Boolean.parseBoolean(hstsPreload));
+        setAntiJackClickingEnabled(Boolean.parseBoolean(antiJackClickingEnabled));
         setAntiJackClickingOptions(antiJackClickingOptions);
         setAntiJackClickingUri(antiJackClickingUri);
-        setXContentTypeEnabled(xContentTypeEnabled);
-        setContentSecurityPolicyEnabled(contentSecurityPolicyEnabled);
+        setXContentTypeEnabled(Boolean.parseBoolean(xContentTypeEnabled));
+        setContentSecurityPolicyEnabled(Boolean.parseBoolean(contentSecurityPolicyEnabled));
         setContentSecurityPolicy(contentSecurityPolicy);
-        setReferrerPolicyEnabled(referrerPolicyEnabled);
+        setReferrerPolicyEnabled(Boolean.parseBoolean(referrerPolicyEnabled));
         setReferrerPolicy(referrerPolicy);
-    }
-
-    public void setHstsIncludeSubDomains(String hstsIncludeSubDomains) {
-        log.debug("setHstsIncludeSubDomains set to {}", hstsIncludeSubDomains);
-        // For any value other then 'true' this will be false.
-        this.hstsIncludeSubDomains = Boolean.parseBoolean(hstsIncludeSubDomains);
-    }
-
-    public void setHstsPreload(String hstsPreload) {
-        log.debug("setHstsPreload set to {}", hstsPreload);
-        // For any value other then 'true' this will be false.
-        this.hstsPreload = Boolean.parseBoolean(hstsPreload);
-    }
-
-    public void setHstsEnabled(String hstsEnabled) {
-        log.debug("setHstsEnabled set to {}", hstsEnabled);
-        this.hstsEnabled = Boolean.parseBoolean(hstsEnabled);
     }
 
     public void setHstsMaxAgeSeconds(String hstsMaxAgeSeconds) throws ServletException {
@@ -203,94 +186,6 @@ public class WebSecurityFilter implements Filter {
         } catch (NumberFormatException e) {
             throw new ServletException("Unable to parse hstsMaxAgeSeconds", e);
         }
-    }
-
-    public void setAntiJackClickingEnabled(String antiJackClickingEnabled) {
-        log.debug("setAntiJackClickingEnabled set to {}", antiJackClickingEnabled);
-        this.antiJackClickingEnabled = Boolean.parseBoolean(antiJackClickingEnabled);
-    }
-
-    public void setAntiJackClickingOptions(String antiJackClickingOptions) {
-        log.debug("setAntiJackClickingOptions set to {}", antiJackClickingOptions);
-        this.antiJackClickingOptions = antiJackClickingOptions;
-    }
-
-    public void setAntiJackClickingUri(String antiJackClickingUri) {
-        log.debug("setAntiJackClickingUri set to {}", antiJackClickingUri);
-        this.antiJackClickingUri = antiJackClickingUri;
-    }
-
-    public void setXContentTypeEnabled(String xContentTypeEnabled) {
-        log.debug("setXContentTypeEnabled set to {}", xContentTypeEnabled);
-        this.xContentTypeEnabled = Boolean.parseBoolean(xContentTypeEnabled);
-    }
-
-    public void setContentSecurityPolicyEnabled(String contentSecurityPolicyEnabled) {
-        log.debug("setContentSecurityPolicyEnabled set to {}", contentSecurityPolicyEnabled);
-        this.contentSecurityPolicyEnabled = Boolean.parseBoolean(contentSecurityPolicyEnabled);
-    }
-
-    public void setContentSecurityPolicy(String contentSecurityPolicy) {
-        log.debug("setContentSecurityPolicy set to {}", contentSecurityPolicy);
-        this.contentSecurityPolicy = contentSecurityPolicy;
-    }
-
-    public void setReferrerPolicyEnabled(String referrerPolicyEnabled) {
-        log.debug("setReferrerPolicyEnabled set to {}", referrerPolicyEnabled);
-        this.referrerPolicyEnabled = Boolean.parseBoolean(referrerPolicyEnabled);
-    }
-
-    public void setReferrerPolicy(String referrerPolicy) {
-        log.debug("setReferrerPolicy set to {}", referrerPolicy);
-        this.referrerPolicy = referrerPolicy;
-    }
-
-    public boolean isHstsPreload() {
-        return hstsPreload;
-    }
-
-    public boolean isHstsEnabled() {
-        return hstsEnabled;
-    }
-
-    public long getHstsMaxAgeSeconds() {
-        return hstsMaxAgeSeconds;
-    }
-
-    public boolean isHstsIncludeSubDomains() {
-        return hstsIncludeSubDomains;
-    }
-
-    public boolean isAntiJackClickingEnabled() {
-        return antiJackClickingEnabled;
-    }
-
-    public String getAntiJackClickingOptions() {
-        return antiJackClickingOptions;
-    }
-
-    public String getAntiJackClickingUri() {
-        return antiJackClickingUri;
-    }
-
-    public boolean isXContentTypeEnabled() {
-        return xContentTypeEnabled;
-    }
-
-    public boolean isContentSecurityPolicyEnabled() {
-        return contentSecurityPolicyEnabled;
-    }
-
-    public String getContentSecurityPolicy() {
-        return contentSecurityPolicy;
-    }
-
-    public boolean isReferrerPolicyEnabled() {
-        return referrerPolicyEnabled;
-    }
-
-    public String getReferrerPolicy() {
-        return referrerPolicy;
     }
 
     @Override
