@@ -112,6 +112,21 @@
         <property name="decorateRequest" value="${cors.request.decorate:true}" />
     </bean>
 
+    <bean id="webSecurityFilter" class="org.apereo.portal.security.filter.WebSecurityFilter">
+        <property name="hstsEnabled" value="${sec.hsts.enabled:false}" />
+        <property name="hstsMaxAgeSeconds" value="${sec.hsts.maxage.seconds:0}" />
+        <property name="hstsIncludeSubDomains" value="${sec.hsts.include.subdomains:false}" />
+        <property name="hstsPreload" value="${sec.hsts.preload:false}" />
+        <property name="antiJackClickingEnabled" value="${sec.anti.click.jacking.enabled:false}" />
+        <property name="antiJackClickingOptions" value="${sec.anti.click.jacking.options:}" />
+        <property name="antiJackClickingUri" value="${sec.anti.click.jacking.uri:}" />
+        <property name="xContentTypeEnabled" value="${sec.x.content.type.enabled:false}" />
+        <property name="contentSecurityPolicyEnabled" value="${sec.content.sec.policy.enabled:false}" />
+        <property name="contentSecurityPolicy" value="${sec.content.sec.policy:}" />
+        <property name="referrerPolicyEnabled" value="${sec.referrer.policy.enabled:false}" />
+        <property name="referrerPolicy" value="${sec.referrer.policy:}" />
+    </bean>
+
     <!--
      | Spring-managed instance of EhcacheBackedProxyGrantingTicketStorageImpl.  This setup allows us
      | to configure CAS authentication in the preferred approach. This bean is needed to share the proxyGrantingTicket
