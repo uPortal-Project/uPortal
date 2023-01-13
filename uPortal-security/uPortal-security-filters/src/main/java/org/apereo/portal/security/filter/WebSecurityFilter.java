@@ -41,16 +41,16 @@ public class WebSecurityFilter implements Filter {
     public static final String DEFAULT_HSTS_INCLUDE_SUBDOMAINS = "false";
     public static final String DEFAULT_HSTS_PRELOAD = "false";
     public static final String DEFAULT_ANTI_JACK_CLICKING_HEADER = "X-Frame-Options";
-    public static final String DEFAULT_ANTI_JACK_CLICKING_ENABLED = "false";
+    public static final String DEFAULT_ANTI_JACK_CLICKING_ENABLED = "true";
     public static final String DEFAULT_ANTI_JACK_CLICKING_OPTIONS = "deny,sameorigin,allow-from";
     public static final String DEFAULT_ANTI_JACK_CLICKING_URI = "";
     public static final String DEFAULT_X_CONTENT_TYPE_HEADER = "X-Content-Type-Options";
-    public static final String DEFAULT_X_CONTENT_TYPE_ENABLED = "false";
+    public static final String DEFAULT_X_CONTENT_TYPE_ENABLED = "true";
     public static final String DEFAULT_CONTENT_SECURITY_POLICY_HEADER = "Content-Security-Policy";
     public static final String DEFAULT_CONTENT_SECURITY_POLICY_ENABLED = "false";
     public static final String DEFAULT_CONTENT_SECURITY_POLICY = "";
-    public static final String DEFAULT_REFERRER_POLICY_ENABLED = "false";
-    public static final String DEFAULT_REFERRER_POLICY = "";
+    public static final String DEFAULT_REFERRER_POLICY_ENABLED = "true";
+    public static final String DEFAULT_REFERRER_POLICY = "no-referrer";
 
     private boolean hstsEnabled;
     private long hstsMaxAgeSeconds;
