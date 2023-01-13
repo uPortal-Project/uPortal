@@ -47,6 +47,7 @@ include 'uPortal-security:uPortal-security-mvc'
 include 'uPortal-security:uPortal-security-permissions'
 include 'uPortal-security:uPortal-security-services'
 include 'uPortal-security:uPortal-security-xslt'
+include 'uPortal-security:uPortal-security-filters'
 
 include 'uPortal-soffit:uPortal-soffit-core'
 include 'uPortal-soffit:uPortal-soffit-connector'
