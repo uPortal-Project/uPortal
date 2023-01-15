@@ -30,6 +30,7 @@ node {
 
 allprojects {
     apply plugin: 'java'
+    apply plugin: 'java-library'
     apply plugin: 'jacoco'
     apply plugin: 'eclipse'
     apply plugin: 'com.github.spotbugs'
@@ -115,12 +116,12 @@ subprojects {
     }
 
     dependencies {
-        testCompile "junit:junit:${junitVersion}"
-        testCompile "org.easymock:easymock:${easymockVersion}"
-        testCompile "org.hamcrest:hamcrest-all:${hamcrestVersion}"
-        testCompile "org.mockito:mockito-core:${mockitoVersion}"
-        testCompile "org.springframework:spring-test:${springVersion}"
-        testCompile "org.xmlunit:xmlunit-legacy:${xmlunitVersion}"
+        testImplementation "junit:junit:${junitVersion}"
+        testImplementation "org.easymock:easymock:${easymockVersion}"
+        testImplementation "org.hamcrest:hamcrest-all:${hamcrestVersion}"
+        testImplementation "org.mockito:mockito-core:${mockitoVersion}"
+        testImplementation "org.springframework:spring-test:${springVersion}"
+        testImplementation "org.xmlunit:xmlunit-legacy:${xmlunitVersion}"
         spotbugsPlugins 'com.h3xstream.findsecbugs:findsecbugs-plugin:1.12.0'
     }
 
