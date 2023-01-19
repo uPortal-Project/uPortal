@@ -16,7 +16,6 @@ package org.apereo.portal.portlets.portletadmin;
 
 import java.io.Serializable;
 import java.text.ParseException;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -91,6 +90,7 @@ public class PortletDefinitionForm implements Serializable {
 
     /** Maintenance Scheduler information */
     private boolean stopImmediately;
+
     private String stopDate;
     private String stopTime;
     private boolean restartManually;
@@ -198,7 +198,8 @@ public class PortletDefinitionForm implements Serializable {
             setCustomMaintenanceMessage(messageParam.getValue());
         }
 
-        final IPortletDefinitionParameter stopImmediatelyParam = def.getParameter("stopImmediately");
+        final IPortletDefinitionParameter stopImmediatelyParam =
+                def.getParameter("stopImmediately");
         if (stopImmediatelyParam != null) {
             setStopImmediately(StringUtils.equals(stopImmediatelyParam.getValue(), "true"));
         } else {
@@ -212,7 +213,8 @@ public class PortletDefinitionForm implements Serializable {
         if (stopTimeParam != null) {
             setStopTime(stopTimeParam.getValue());
         }
-        final IPortletDefinitionParameter restartManuallyParam = def.getParameter("restartManually");
+        final IPortletDefinitionParameter restartManuallyParam =
+                def.getParameter("restartManually");
         if (restartManuallyParam != null) {
             setRestartManually(StringUtils.equals(restartManuallyParam.getValue(), "true"));
         } else {

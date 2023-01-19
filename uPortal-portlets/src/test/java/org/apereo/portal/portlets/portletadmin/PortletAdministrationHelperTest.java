@@ -14,7 +14,6 @@
  */
 package org.apereo.portal.portlets.portletadmin;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -24,7 +23,6 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.apereo.portal.portlet.dao.jpa.PortletTypeImpl;
 import org.apereo.portal.portlet.om.IPortletType;
@@ -66,7 +64,6 @@ public class PortletAdministrationHelperTest {
      * is an upfront call to hasLifecyclePermission() which relies on the authorizationService to be
      * available.
      */
-
     @Test
     public void testIsInMaintenanceRange() {
         PortletAdministrationHelper helper = new PortletAdministrationHelper();

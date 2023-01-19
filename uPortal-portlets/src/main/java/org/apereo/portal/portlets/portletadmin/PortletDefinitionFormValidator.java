@@ -15,12 +15,9 @@
 package org.apereo.portal.portlets.portletadmin;
 
 import java.text.ParseException;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Optional;
 import java.util.TimeZone;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.apache.commons.logging.Log;
@@ -241,18 +238,20 @@ public class PortletDefinitionFormValidator {
             try {
                 stopDate = edf.parse(stopDateStr);
                 if (stopDate.before(now)) {
-                    context.addMessage(new MessageBuilder()
-                            .error()
-                            .source("stopDate")
-                            .code("maintenance.scheduler.stop.date.must.be.after.now")
-                            .build());
+                    context.addMessage(
+                            new MessageBuilder()
+                                    .error()
+                                    .source("stopDate")
+                                    .code("maintenance.scheduler.stop.date.must.be.after.now")
+                                    .build());
                 }
             } catch (ParseException e) {
-                   context.addMessage(new MessageBuilder()
-                           .error()
-                            .source("stopDate")
-                            .code("maintenance.scheduler.stop.date.invalid.date.format")
-                            .build());
+                context.addMessage(
+                        new MessageBuilder()
+                                .error()
+                                .source("stopDate")
+                                .code("maintenance.scheduler.stop.date.invalid.date.format")
+                                .build());
             }
         }
 
@@ -262,26 +261,29 @@ public class PortletDefinitionFormValidator {
             try {
                 restartDate = edf.parse(restartDateStr);
                 if (restartDate.before(now)) {
-                    context.addMessage(new MessageBuilder()
-                            .error()
-                            .source("restartDate")
-                            .code("maintenance.scheduler.restart.date.must.be.after.now")
-                            .build());
+                    context.addMessage(
+                            new MessageBuilder()
+                                    .error()
+                                    .source("restartDate")
+                                    .code("maintenance.scheduler.restart.date.must.be.after.now")
+                                    .build());
                 }
-           } catch (ParseException e) {
-                   context.addMessage(new MessageBuilder()
-                           .error()
-                           .source("restartDate")
-                           .code("maintenance.scheduler.restart.date.invalid.date.format")
-                           .build());
+            } catch (ParseException e) {
+                context.addMessage(
+                        new MessageBuilder()
+                                .error()
+                                .source("restartDate")
+                                .code("maintenance.scheduler.restart.date.invalid.date.format")
+                                .build());
             }
         }
         if (stopDate != null && restartDate != null && stopDate.after(restartDate)) {
-            context.addMessage(new MessageBuilder()
-                    .error()
-                    .source("restartDate")
-                    .code("maintenance.scheduler.restart.date.must.be.after.stop.date")
-                    .build());
+            context.addMessage(
+                    new MessageBuilder()
+                            .error()
+                            .source("restartDate")
+                            .code("maintenance.scheduler.restart.date.must.be.after.stop.date")
+                            .build());
         }
     }
 }

@@ -17,7 +17,6 @@ package org.apereo.portal.portlets.portletadmin;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -1220,19 +1219,13 @@ public final class PortletAdministrationHelper implements ServletContextAware {
         Date restartDate = null;
         portletDef.addParameter("stopImmediately", stopImmediately ? "true" : "false");
         if (stopImmediately) {
-            portletDef.removeParameter(
-                    PortletLifecycleState.MAINTENANCE_STOP_DATE);
-            portletDef.removeParameter(
-                    PortletLifecycleState.MAINTENANCE_STOP_TIME);
+            portletDef.removeParameter(PortletLifecycleState.MAINTENANCE_STOP_DATE);
+            portletDef.removeParameter(PortletLifecycleState.MAINTENANCE_STOP_TIME);
         } else {
             final String stopDateStr = form.getStopDate();
             final String stopTimeStr = form.getStopTime();
-            portletDef.addParameter(
-                    PortletLifecycleState.MAINTENANCE_STOP_DATE,
-                    stopDateStr);
-            portletDef.addParameter(
-                    PortletLifecycleState.MAINTENANCE_STOP_TIME,
-                    stopTimeStr);
+            portletDef.addParameter(PortletLifecycleState.MAINTENANCE_STOP_DATE, stopDateStr);
+            portletDef.addParameter(PortletLifecycleState.MAINTENANCE_STOP_TIME, stopTimeStr);
             try {
                 stopDate = edf.parse(stopDateStr + " " + stopTimeStr + UTC_OFFSET);
             } catch (ParseException e) {
@@ -1241,19 +1234,13 @@ public final class PortletAdministrationHelper implements ServletContextAware {
         }
         portletDef.addParameter("restartManually", restartManually ? "true" : "false");
         if (restartManually) {
-            portletDef.removeParameter(
-                    PortletLifecycleState.MAINTENANCE_RESTART_DATE);
-            portletDef.removeParameter(
-                    PortletLifecycleState.MAINTENANCE_RESTART_TIME);
+            portletDef.removeParameter(PortletLifecycleState.MAINTENANCE_RESTART_DATE);
+            portletDef.removeParameter(PortletLifecycleState.MAINTENANCE_RESTART_TIME);
         } else {
             final String restartDateStr = form.getRestartDate();
             final String restartTimeStr = form.getRestartTime();
-            portletDef.addParameter(
-                    PortletLifecycleState.MAINTENANCE_RESTART_DATE,
-                    restartDateStr);
-            portletDef.addParameter(
-                    PortletLifecycleState.MAINTENANCE_RESTART_TIME,
-                    restartTimeStr);
+            portletDef.addParameter(PortletLifecycleState.MAINTENANCE_RESTART_DATE, restartDateStr);
+            portletDef.addParameter(PortletLifecycleState.MAINTENANCE_RESTART_TIME, restartTimeStr);
             try {
                 restartDate = edf.parse(restartDateStr + " " + restartTimeStr + UTC_OFFSET);
             } catch (ParseException e) {
@@ -1288,7 +1275,9 @@ public final class PortletAdministrationHelper implements ServletContextAware {
                 }
                 if (isInMaintenanceRange(stopDate, restartDate, now)) {
                     portletDef.updateLifecycleState(
-                            PortletLifecycleState.MAINTENANCE, publisher, form.getPublishDateTime());
+                            PortletLifecycleState.MAINTENANCE,
+                            publisher,
+                            form.getPublishDateTime());
                 }
                 break;
             case MAINTENANCE:
@@ -1305,10 +1294,10 @@ public final class PortletAdministrationHelper implements ServletContextAware {
                             PortletLifecycleState.CUSTOM_MAINTENANCE_MESSAGE_PARAMETER_NAME);
                 }
                 if (stopDate != null || restartDate != null) {
-	                if (!isInMaintenanceRange(null, restartDate, now)) {
-	                    portletDef.updateLifecycleState(
-	                            PortletLifecycleState.PUBLISHED, publisher, now);
-	                }
+                    if (!isInMaintenanceRange(null, restartDate, now)) {
+                        portletDef.updateLifecycleState(
+                                PortletLifecycleState.PUBLISHED, publisher, now);
+                    }
                 }
                 break;
             default:
@@ -1318,34 +1307,33 @@ public final class PortletAdministrationHelper implements ServletContextAware {
     }
 
     /**
-     * isInMaintenanceRange checks for scheduled maintenance dates against the current time.  If the
-     * current time is between the stop and restart dates, it is in the range for maintenance, regardless
-     * of the current lifecycle state.
-     * <p>It is possible to set only the stop or restart date as well.  If we're in the PUBLISHED state,
-     * the stopDate must be set, otherwise, it would never enter the MAINTENANCE state.  If we're in the
-     * MAINTENANCE state, we don't care what the stopDate is and can ignore it by setting the stopDate to null
+     * isInMaintenanceRange checks for scheduled maintenance dates against the current time. If the
+     * current time is between the stop and restart dates, it is in the range for maintenance,
+     * regardless of the current lifecycle state.
+     *
+     * <p>It is possible to set only the stop or restart date as well. If we're in the PUBLISHED
+     * state, the stopDate must be set, otherwise, it would never enter the MAINTENANCE state. If
+     * we're in the MAINTENANCE state, we don't care what the stopDate is and can ignore it by
+     * setting the stopDate to null
+     *
      * @param stopDate
      * @param restartDate
      * @param now
      * @return
      */
     public boolean isInMaintenanceRange(Date stopDate, Date restartDate, Date now) {
-        if (stopDate != null &&
-                stopDate.before(now) &&
-                restartDate == null) {
+        if (stopDate != null && stopDate.before(now) && restartDate == null) {
             return true;
         }
 
-        if (stopDate != null &&
-                stopDate.before(now) &&
-                restartDate != null &&
-                restartDate.after(now)) {
+        if (stopDate != null
+                && stopDate.before(now)
+                && restartDate != null
+                && restartDate.after(now)) {
             return true;
         }
 
-        if (stopDate == null &&
-                restartDate != null &&
-                restartDate.after(now)) {
+        if (stopDate == null && restartDate != null && restartDate.after(now)) {
             return true;
         }
         return false;
