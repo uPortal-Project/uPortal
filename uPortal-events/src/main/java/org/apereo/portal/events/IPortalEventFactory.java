@@ -22,7 +22,8 @@ public interface IPortalEventFactory
         extends IPortalAuthEventFactory,
                 IPortalLayoutEventFactory,
                 IPortletExecutionEventFactory,
-                IPortalTenantEventFactory {
+                IPortalTenantEventFactory,
+                IPortalAnalyticsEventFactory {
 
     public String getPortalEventSessionId(HttpServletRequest request, IPerson person);
 }

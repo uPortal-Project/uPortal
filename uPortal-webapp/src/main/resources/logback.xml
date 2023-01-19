@@ -119,6 +119,10 @@
     <appender-ref ref="TINCAN"/>
   </logger>
 
+  <logger name="org.apereo.portal.security.filter" additivity="false" level="DEBUG">
+    <appender-ref ref="PORTAL"/>
+  </logger>
+
   <!-- Debug CAS Clearpass
   <logger name="org.apereo.portal.security.provider.cas" additivity="false" level="TRACE">
     <appender-ref ref="PORTAL"/>
