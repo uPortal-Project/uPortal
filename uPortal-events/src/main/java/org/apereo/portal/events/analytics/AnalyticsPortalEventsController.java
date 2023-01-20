@@ -14,10 +14,10 @@
  */
 package org.apereo.portal.events.analytics;
 
-import java.text.ParseException;
-import java.util.Date;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.text.ParseException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
