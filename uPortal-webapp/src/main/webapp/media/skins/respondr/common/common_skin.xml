@@ -116,6 +116,8 @@
     <js included="plain" resource="true">/rs/conflict-resolution/js/resolve-conflicts.js</js>
     <js included="aggregated" resource="true">/rs/conflict-resolution/js/resolve-conflicts.min.js</js>
 
+    <js included="aggregated" resource="true">/scripts/portal-analytics.js</js>
+
     <js import="true">../../common/common_skin.xml</js>
 
 </resources>
