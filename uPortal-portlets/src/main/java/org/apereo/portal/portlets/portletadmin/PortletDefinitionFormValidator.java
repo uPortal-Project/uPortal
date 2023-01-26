@@ -39,7 +39,6 @@ public class PortletDefinitionFormValidator {
     protected final transient Log log = LogFactory.getLog(getClass());
     private static final FastDateFormat edf = FastDateFormat.getInstance("M/d/yyyy HH:mmZ");
     private static final String MIDNIGHT = "00:00";
-    private static final String UTC_OFFSET = "+0000";
 
     private IChannelPublishingDefinitionDao channelPublishingDefinitionDao;
     private IPortletDefinitionRegistry portletDefinitionRegistry;
@@ -170,6 +169,8 @@ public class PortletDefinitionFormValidator {
     }
 
     private void doLifecycle(PortletDefinitionForm def, MessageContext context) {
+        String timezoneOffset =
+                String.format("-%2s00", def.getTimezoneOffsetInHours()).replace(" ", "0");
         if (def.getLifecycleState() == null) {
             context.addMessage(
                     new MessageBuilder()
@@ -234,7 +235,7 @@ public class PortletDefinitionFormValidator {
 
         Date stopDate = null;
         if (StringUtils.isNotBlank(def.getStopDate())) {
-            String stopDateStr = def.getStopDate() + " " + def.getStopTime() + UTC_OFFSET;
+            String stopDateStr = def.getStopDate() + " " + def.getStopTime() + timezoneOffset;
             try {
                 stopDate = edf.parse(stopDateStr);
                 if (stopDate.before(now)) {
@@ -257,7 +258,8 @@ public class PortletDefinitionFormValidator {
 
         Date restartDate = null;
         if (StringUtils.isNotBlank(def.getRestartDate())) {
-            String restartDateStr = def.getRestartDate() + " " + def.getRestartTime() + UTC_OFFSET;
+            String restartDateStr =
+                    def.getRestartDate() + " " + def.getRestartTime() + timezoneOffset;
             try {
                 restartDate = edf.parse(restartDateStr);
                 if (restartDate.before(now)) {

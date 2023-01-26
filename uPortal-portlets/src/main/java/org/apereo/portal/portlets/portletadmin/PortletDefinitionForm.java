@@ -96,6 +96,7 @@ public class PortletDefinitionForm implements Serializable {
     private boolean restartManually;
     private String restartDate;
     private String restartTime;
+    private String timezoneOffsetInHours;
 
     /** Portlet controls */
     private boolean editable;
@@ -229,6 +230,11 @@ public class PortletDefinitionForm implements Serializable {
             setRestartTime(restartTimeParam.getValue());
         }
 
+        final IPortletDefinitionParameter timezoneOffsetInHoursParam =
+                def.getParameter(PortletLifecycleState.MAINTENANCE_TIMEZONE_OFFSET_IN_HOURS);
+        if (timezoneOffsetInHoursParam != null) {
+            setTimezoneOffsetInHours(timezoneOffsetInHoursParam.getValue());
+        }
         for (IPortletDefinitionParameter param : def.getParameters()) {
             if (param.getName().startsWith("PORTLET.")) {
                 this.portletPreferences.put(
@@ -701,6 +707,14 @@ public class PortletDefinitionForm implements Serializable {
 
     public void setRestartTime(String restartTime) {
         this.restartTime = restartTime;
+    }
+
+    public String getTimezoneOffsetInHours() {
+        return timezoneOffsetInHours;
+    }
+
+    public void setTimezoneOffsetInHours(String timezoneOffsetInHours) {
+        this.timezoneOffsetInHours = timezoneOffsetInHours;
     }
 
     /**

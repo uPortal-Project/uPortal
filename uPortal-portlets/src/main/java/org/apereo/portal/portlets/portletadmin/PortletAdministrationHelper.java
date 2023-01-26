@@ -1247,6 +1247,9 @@ public final class PortletAdministrationHelper implements ServletContextAware {
                 logger.warn("Invalid restartDate");
             }
         }
+        portletDef.addParameter(
+                PortletLifecycleState.MAINTENANCE_TIMEZONE_OFFSET_IN_HOURS,
+                form.getTimezoneOffsetInHours());
 
         /*
          * Step Two:  depending on which state was selected, we may have extra work to do.

@@ -25,7 +25,6 @@ import org.springframework.stereotype.Service;
 public class PortletMaintenanceScheduler {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     private static final FastDateFormat df = FastDateFormat.getInstance("M/d/yyyy HH:mmZ");
-    private static final String UTC_OFFSET = "+0000";
 
     @Autowired private IPortletDefinitionDao portletDefinitionDao;
     @Autowired private IUserIdentityStore userIdentityStore;
@@ -33,7 +32,6 @@ public class PortletMaintenanceScheduler {
 
     public boolean updateLifecycleStatus() {
         final Date now = Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTime();
-
         List<IPortletDefinition> portletDefinitions = portletDefinitionDao.getPortletDefinitions();
         portletDefinitions.forEach(
                 portletDef -> {
@@ -148,9 +146,10 @@ public class PortletMaintenanceScheduler {
                 portletDef.getParameter(PortletLifecycleState.MAINTENANCE_STOP_DATE);
         IPortletDefinitionParameter stopTimeParam =
                 portletDef.getParameter(PortletLifecycleState.MAINTENANCE_STOP_TIME);
+        final String timezoneOffset = getTimezoneOffset(portletDef);
         if (stopDateParam != null && stopTimeParam != null) {
             String stopDateStr =
-                    stopDateParam.getValue() + " " + stopTimeParam.getValue() + UTC_OFFSET;
+                    stopDateParam.getValue() + " " + stopTimeParam.getValue() + timezoneOffset;
             try {
                 Date stopDate = df.parse(stopDateStr);
                 return Optional.of(stopDate);
@@ -166,9 +165,13 @@ public class PortletMaintenanceScheduler {
                 portletDef.getParameter(PortletLifecycleState.MAINTENANCE_RESTART_DATE);
         IPortletDefinitionParameter restartTimeParam =
                 portletDef.getParameter(PortletLifecycleState.MAINTENANCE_RESTART_TIME);
+        final String timezoneOffset = getTimezoneOffset(portletDef);
         if (restartDateParam != null && restartTimeParam != null) {
             String restartDateStr =
-                    restartDateParam.getValue() + " " + restartTimeParam.getValue() + UTC_OFFSET;
+                    restartDateParam.getValue()
+                            + " "
+                            + restartTimeParam.getValue()
+                            + timezoneOffset;
             try {
                 Date restartDate = df.parse(restartDateStr);
                 return Optional.of(restartDate);
@@ -177,5 +180,16 @@ public class PortletMaintenanceScheduler {
             }
         }
         return Optional.empty();
+    }
+
+    public String getTimezoneOffset(IPortletDefinition portletDef) {
+        IPortletDefinitionParameter timezoneOffsetInHours =
+                portletDef.getParameter(PortletLifecycleState.MAINTENANCE_TIMEZONE_OFFSET_IN_HOURS);
+        if (timezoneOffsetInHours == null) {
+            return "+0000"; // UTC time
+        }
+        final String timezoneOffset =
+                String.format("-%2s00", timezoneOffsetInHours.getValue()).replace(" ", "0");
+        return timezoneOffset;
     }
 }

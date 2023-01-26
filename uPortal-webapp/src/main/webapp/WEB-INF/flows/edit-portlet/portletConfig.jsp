@@ -745,7 +745,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                                     <label for="stopTime">Stop Time</label>
                                 </td>
                                 <td>
-                                    <form:input title="hh:mm 24 hour UTC" type="text" path="stopTime" id="stopTime"/>
+                                    <form:input type="time" path="stopTime" id="stopTime"/>
                                 </td>
                             </tr>
                             <tr>
@@ -769,8 +769,11 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                                     <label for="restartTime">Restart Time</label>
                                 </td>
                                 <td>
-                                    <form:input title="hh:mm 24 hour UTC" type="text" path="restartTime" id="restartTime"/>
+                                    <form:input type="time" path="restartTime" id="restartTime"/>
                                 </td>
+                             </tr>
+                             <tr style="display: none;">
+                                 <td><form:input type="text" path="timezoneOffsetInHours" id="timezoneOffsetInHours"/>
                              </tr>
                         </tbody>
                     </table>
@@ -1066,6 +1069,10 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                 if ($(this).val()) $(this).next().css("display", "inline");
                 else $(this).next().css("display", "none");
             });
+            if (!$("#${n}PortletLifecycle #timezoneOffsetInHours").val()) {
+                const curDate = new Date();
+                $("#${n}PortletLifecycle #timezoneOffsetInHours").val(curDate.getTimezoneOffset() / 60);
+            }
             $("#${n}PortletLifecycle .clear-date").click(function (e) {
                 e.preventDefault();
                 $(this).parent().css("display", "none").prev().val("");
