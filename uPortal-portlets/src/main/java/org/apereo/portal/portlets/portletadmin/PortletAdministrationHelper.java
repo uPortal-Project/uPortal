@@ -15,8 +15,11 @@
 package org.apereo.portal.portlets.portletadmin;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -26,6 +29,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.TimeZone;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -40,6 +44,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.JAXBElement;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
+import org.apache.commons.lang3.time.FastDateFormat;
 import org.apache.pluto.container.PortletContainerException;
 import org.apache.pluto.container.driver.PortalDriverContainerServices;
 import org.apache.pluto.container.driver.PortletRegistryService;
@@ -115,6 +120,8 @@ public final class PortletAdministrationHelper implements ServletContextAware {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private static final String PORTLET_FNAME_FRAGMENT_ADMIN_PORTLET = "fragment-admin";
+    private static final FastDateFormat edf = FastDateFormat.getInstance("M/d/yyyy HH:mmZ");
+    private static final String UTC_OFFSET = "+0000";
 
     /**
      * Enumeration of the portlet-related permissions that may be managed in the Portlet Manager.
@@ -177,7 +184,6 @@ public final class PortletAdministrationHelper implements ServletContextAware {
      *     category and principal if no definition is found
      */
     public PortletDefinitionForm createPortletDefinitionForm(IPerson person, String portletId) {
-
         IPortletDefinition def = portletDefinitionRegistry.getPortletDefinition(portletId);
 
         // create the new form
@@ -1202,7 +1208,48 @@ public final class PortletAdministrationHelper implements ServletContextAware {
          *
          * NOTE 2:  permissions for this step have already been checked in savePortletRegistration.
          */
-        portletDef.updateLifecycleState(selectedLifecycleState, publisher);
+        if (StringUtils.isBlank(form.getStopDate())) {
+            portletDef.updateLifecycleState(selectedLifecycleState, publisher);
+        }
+
+        final Boolean stopImmediately = form.getStopImmediately();
+        final Boolean restartManually = form.getRestartManually();
+        Date now = Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTime();
+        Date stopDate = null;
+        Date restartDate = null;
+        portletDef.addParameter("stopImmediately", stopImmediately ? "true" : "false");
+        if (stopImmediately) {
+            portletDef.removeParameter(PortletLifecycleState.MAINTENANCE_STOP_DATE);
+            portletDef.removeParameter(PortletLifecycleState.MAINTENANCE_STOP_TIME);
+        } else {
+            final String stopDateStr = form.getStopDate();
+            final String stopTimeStr = form.getStopTime();
+            portletDef.addParameter(PortletLifecycleState.MAINTENANCE_STOP_DATE, stopDateStr);
+            portletDef.addParameter(PortletLifecycleState.MAINTENANCE_STOP_TIME, stopTimeStr);
+            try {
+                stopDate = edf.parse(stopDateStr + " " + stopTimeStr + UTC_OFFSET);
+            } catch (ParseException e) {
+                logger.warn("Invalid stopDate");
+            }
+        }
+        portletDef.addParameter("restartManually", restartManually ? "true" : "false");
+        if (restartManually) {
+            portletDef.removeParameter(PortletLifecycleState.MAINTENANCE_RESTART_DATE);
+            portletDef.removeParameter(PortletLifecycleState.MAINTENANCE_RESTART_TIME);
+        } else {
+            final String restartDateStr = form.getRestartDate();
+            final String restartTimeStr = form.getRestartTime();
+            portletDef.addParameter(PortletLifecycleState.MAINTENANCE_RESTART_DATE, restartDateStr);
+            portletDef.addParameter(PortletLifecycleState.MAINTENANCE_RESTART_TIME, restartTimeStr);
+            try {
+                restartDate = edf.parse(restartDateStr + " " + restartTimeStr + UTC_OFFSET);
+            } catch (ParseException e) {
+                logger.warn("Invalid restartDate");
+            }
+        }
+        portletDef.addParameter(
+                PortletLifecycleState.MAINTENANCE_TIMEZONE_OFFSET_IN_HOURS,
+                form.getTimezoneOffsetInHours());
 
         /*
          * Step Two:  depending on which state was selected, we may have extra work to do.
@@ -1229,6 +1276,12 @@ public final class PortletAdministrationHelper implements ServletContextAware {
                     portletDef.updateLifecycleState(
                             PortletLifecycleState.EXPIRED, publisher, form.getExpirationDateTime());
                 }
+                if (isInMaintenanceRange(stopDate, restartDate, now)) {
+                    portletDef.updateLifecycleState(
+                            PortletLifecycleState.MAINTENANCE,
+                            publisher,
+                            form.getPublishDateTime());
+                }
                 break;
             case MAINTENANCE:
                 // Persist the custom message (if provided) as a publishing parameter...
@@ -1243,10 +1296,49 @@ public final class PortletAdministrationHelper implements ServletContextAware {
                     portletDef.removeParameter(
                             PortletLifecycleState.CUSTOM_MAINTENANCE_MESSAGE_PARAMETER_NAME);
                 }
+                if (stopDate != null || restartDate != null) {
+                    if (!isInMaintenanceRange(null, restartDate, now)) {
+                        portletDef.updateLifecycleState(
+                                PortletLifecycleState.PUBLISHED, publisher, now);
+                    }
+                }
                 break;
             default:
                 // No extra work
                 break;
         }
+    }
+
+    /**
+     * isInMaintenanceRange checks for scheduled maintenance dates against the current time. If the
+     * current time is between the stop and restart dates, it is in the range for maintenance,
+     * regardless of the current lifecycle state.
+     *
+     * <p>It is possible to set only the stop or restart date as well. If we're in the PUBLISHED
+     * state, the stopDate must be set, otherwise, it would never enter the MAINTENANCE state. If
+     * we're in the MAINTENANCE state, we don't care what the stopDate is and can ignore it by
+     * setting the stopDate to null
+     *
+     * @param stopDate
+     * @param restartDate
+     * @param now
+     * @return
+     */
+    public boolean isInMaintenanceRange(Date stopDate, Date restartDate, Date now) {
+        if (stopDate != null && stopDate.before(now) && restartDate == null) {
+            return true;
+        }
+
+        if (stopDate != null
+                && stopDate.before(now)
+                && restartDate != null
+                && restartDate.after(now)) {
+            return true;
+        }
+
+        if (stopDate == null && restartDate != null && restartDate.after(now)) {
+            return true;
+        }
+        return false;
     }
 }

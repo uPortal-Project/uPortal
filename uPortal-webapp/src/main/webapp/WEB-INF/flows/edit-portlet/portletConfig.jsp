@@ -690,6 +690,10 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                                     </span>
                                 </td>
                             </tr>
+                            <tr id="publishedFutureMaintenance">
+                                <td>Scheduled Maintenance Start</td>
+                                <td>${portlet.stopDate} ${portlet.stopTime} <button type="button" id="cancelStopDate">Cancel</button></td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -720,6 +724,57 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                                     <form:input id="customMaintenanceMessage" path="customMaintenanceMessage" size="80" />
                                 </td>
                             </tr>
+                            <tr>
+                                <td>
+                                    <label for="stopImmediately">Stop Immediately</label>
+                                </td>
+                                <td>
+                                    <form:checkbox path="stopImmediately" id="stopImmediately"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label for="stopDate">Stop Date</label>
+                                </td>
+                                <td>
+                                    <form:input title="mm/dd/yyyy" type="text" path="stopDate" id="stopDate" cssClass="cal-datepicker"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label for="stopTime">Stop Time</label>
+                                </td>
+                                <td>
+                                    <form:input type="time" path="stopTime" id="stopTime"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label for="restartManually">Restart Manually</label>
+                                </td>
+                                <td>
+                                    <form:checkbox path="restartManually" id="restartManually"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label for="restartDate">Restart Date</label>
+                                </td>
+                                <td>
+                                    <form:input title="mm/dd/yyyy" type="text" path="restartDate" id="restartDate" cssClass="cal-datepicker"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label for="restartTime">Restart Time</label>
+                                </td>
+                                <td>
+                                    <form:input type="time" path="restartTime" id="restartTime"/>
+                                </td>
+                             </tr>
+                             <tr style="display: none;">
+                                 <td><form:input type="text" path="timezoneOffsetInHours" id="timezoneOffsetInHours"/>
+                             </tr>
                         </tbody>
                     </table>
                 </div>
@@ -1001,7 +1056,6 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
         });
     });
 
-
     up.jQuery(function () {
         var $ = up.jQuery;
         $(document).ready(function () {
@@ -1015,6 +1069,10 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                 if ($(this).val()) $(this).next().css("display", "inline");
                 else $(this).next().css("display", "none");
             });
+            if (!$("#${n}PortletLifecycle #timezoneOffsetInHours").val()) {
+                const curDate = new Date();
+                $("#${n}PortletLifecycle #timezoneOffsetInHours").val(curDate.getTimezoneOffset() / 60);
+            }
             $("#${n}PortletLifecycle .clear-date").click(function (e) {
                 e.preventDefault();
                 $(this).parent().css("display", "none").prev().val("");
@@ -1026,6 +1084,64 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 
             $('[data-toggle="tooltip"]').tooltip();
         });
+
+        // maintenance scheduler rendering
+        const stopImmediatelyFieldName = "#stopImmediately";
+        const stopDateFieldName = "#stopDate";
+        const stopTimeFieldName = "#stopTime";
+        const restartManuallyFieldName = "#restartManually";
+        const restartDateFieldName = "#restartDate";
+        const restartTimeFieldName = "#restartTime";
+
+        const changeFieldState = (fieldName, fieldState) => $(fieldName).prop("disabled", fieldState);
+
+        const resetStopImmediately = isChecked => {
+            changeFieldState(stopDateFieldName, isChecked);
+            changeFieldState(stopTimeFieldName, isChecked);
+			if (isChecked) {
+				$(stopDateFieldName).val('');
+				$(stopTimeFieldName).val('');
+			}
+		}
+        const resetRestartManually = isChecked => {
+            changeFieldState(restartDateFieldName, isChecked);
+            changeFieldState(restartTimeFieldName, isChecked);
+            if (isChecked) {
+                $(restartDateFieldName).val('');
+                $(restartTimeFieldName).val('');
+            }
+        }
+
+        $('.lifecycle-state').click(function() {
+            if ($('#lifecycle-MAINTENANCE').is(":checked")) {
+                return;
+			}
+			$(stopImmediatelyFieldName).prop("checked", true);
+			resetStopImmediately(true);
+			$(restartManuallyFieldName).prop("checked", true);
+			resetRestartManually(true);
+        });
+
+        $(stopImmediatelyFieldName).click(function() {
+            resetStopImmediately($(stopImmediatelyFieldName).is(':checked'));
+        })
+
+        $(restartManuallyFieldName).click(function() {
+            resetRestartManually($(restartManuallyFieldName).is(':checked'));
+        });
+
+        $("#cancelStopDate").click(function() {
+			$(stopImmediatelyFieldName).prop("checked", true);
+			resetStopImmediately(true);
+            $(restartManuallyFieldName).prop("checked", true);
+            resetRestartManually(true);
+	        $("#publishedFutureMaintenance").css("display", "none");
+        })
+
+        $("#publishedFutureMaintenance").css("display", $('#lifecycle-PUBLISHED').is(":checked") && $(stopDateFieldName).val() ? "block" : "none");
+
+        resetStopImmediately($(stopImmediatelyFieldName).is(':checked'));
+        resetRestartManually($(restartManuallyFieldName).is(':checked'));
 
         function toggleChevron(e) {
             $(e.target)
