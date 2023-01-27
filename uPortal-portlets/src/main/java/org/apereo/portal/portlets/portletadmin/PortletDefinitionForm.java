@@ -88,6 +88,16 @@ public class PortletDefinitionForm implements Serializable {
     private int expirationAmPm = 0;
     private String customMaintenanceMessage;
 
+    /** Maintenance Scheduler information */
+    private boolean stopImmediately;
+
+    private String stopDate;
+    private String stopTime;
+    private boolean restartManually;
+    private String restartDate;
+    private String restartTime;
+    private String timezoneOffsetInHours;
+
     /** Portlet controls */
     private boolean editable;
 
@@ -189,6 +199,42 @@ public class PortletDefinitionForm implements Serializable {
             setCustomMaintenanceMessage(messageParam.getValue());
         }
 
+        final IPortletDefinitionParameter stopImmediatelyParam =
+                def.getParameter("stopImmediately");
+        if (stopImmediatelyParam != null) {
+            setStopImmediately(StringUtils.equals(stopImmediatelyParam.getValue(), "true"));
+        } else {
+            setStopImmediately(true);
+        }
+        final IPortletDefinitionParameter stopDateParam = def.getParameter("stopDate");
+        if (stopDateParam != null) {
+            setStopDate(stopDateParam.getValue());
+        }
+        final IPortletDefinitionParameter stopTimeParam = def.getParameter("stopTime");
+        if (stopTimeParam != null) {
+            setStopTime(stopTimeParam.getValue());
+        }
+        final IPortletDefinitionParameter restartManuallyParam =
+                def.getParameter("restartManually");
+        if (restartManuallyParam != null) {
+            setRestartManually(StringUtils.equals(restartManuallyParam.getValue(), "true"));
+        } else {
+            setRestartManually(true);
+        }
+        final IPortletDefinitionParameter restartDateParam = def.getParameter("restartDate");
+        if (restartDateParam != null) {
+            setRestartDate(restartDateParam.getValue());
+        }
+        final IPortletDefinitionParameter restartTimeParam = def.getParameter("restartTime");
+        if (restartTimeParam != null) {
+            setRestartTime(restartTimeParam.getValue());
+        }
+
+        final IPortletDefinitionParameter timezoneOffsetInHoursParam =
+                def.getParameter(PortletLifecycleState.MAINTENANCE_TIMEZONE_OFFSET_IN_HOURS);
+        if (timezoneOffsetInHoursParam != null) {
+            setTimezoneOffsetInHours(timezoneOffsetInHoursParam.getValue());
+        }
         for (IPortletDefinitionParameter param : def.getParameters()) {
             if (param.getName().startsWith("PORTLET.")) {
                 this.portletPreferences.put(
@@ -613,6 +659,62 @@ public class PortletDefinitionForm implements Serializable {
 
     public void setCustomMaintenanceMessage(String customMaintenanceMessage) {
         this.customMaintenanceMessage = customMaintenanceMessage;
+    }
+
+    public boolean getStopImmediately() {
+        return stopImmediately;
+    }
+
+    public void setStopImmediately(boolean stopImmediately) {
+        this.stopImmediately = stopImmediately;
+    }
+
+    public String getStopDate() {
+        return stopDate;
+    }
+
+    public void setStopDate(String stopDate) {
+        this.stopDate = stopDate;
+    }
+
+    public String getStopTime() {
+        return stopTime;
+    }
+
+    public void setStopTime(String stopTime) {
+        this.stopTime = stopTime;
+    }
+
+    public boolean getRestartManually() {
+        return restartManually;
+    }
+
+    public void setRestartManually(boolean restartManually) {
+        this.restartManually = restartManually;
+    }
+
+    public String getRestartDate() {
+        return restartDate;
+    }
+
+    public void setRestartDate(String restartDate) {
+        this.restartDate = restartDate;
+    }
+
+    public String getRestartTime() {
+        return restartTime;
+    }
+
+    public void setRestartTime(String restartTime) {
+        this.restartTime = restartTime;
+    }
+
+    public String getTimezoneOffsetInHours() {
+        return timezoneOffsetInHours;
+    }
+
+    public void setTimezoneOffsetInHours(String timezoneOffsetInHours) {
+        this.timezoneOffsetInHours = timezoneOffsetInHours;
     }
 
     /**

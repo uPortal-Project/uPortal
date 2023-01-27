@@ -259,6 +259,19 @@ public class JpaPortletDefinitionDao extends BasePortalJpaDao implements IPortle
         return portletDefinition;
     }
 
+    @Override
+    @PortalTransactional
+    public IPortletDefinition mergePortletDefinition(IPortletDefinition portletDefinition) {
+        Validate.notNull(portletDefinition, "portletDefinition can not be null");
+        Validate.notNull(
+                portletDefinition.getType(), "portletDefinition portlet type can not be null");
+        Validate.notEmpty(portletDefinition.getFName(), "portletDefinition fname can not be null");
+        Validate.notEmpty(portletDefinition.getName(), "portletDefinition name can not be null");
+        Validate.notEmpty(portletDefinition.getTitle(), "portletDefinition title can not be null");
+        this.getEntityManager().merge(portletDefinition);
+        return portletDefinition;
+    }
+
     private long getNativePortletDefinitionId(IPortletDefinitionId portletDefinitionId) {
         return Long.parseLong(portletDefinitionId.getStringId());
     }

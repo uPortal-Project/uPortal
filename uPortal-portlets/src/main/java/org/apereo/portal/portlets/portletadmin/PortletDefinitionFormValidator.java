@@ -14,8 +14,14 @@
  */
 package org.apereo.portal.portlets.portletadmin;
 
+import java.text.ParseException;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.time.FastDateFormat;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apereo.portal.dao.usertype.FunctionalNameType;
 import org.apereo.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.apereo.portal.portletpublishing.xml.Parameter;
@@ -30,6 +36,9 @@ import org.springframework.stereotype.Service;
 
 @Service("portletValidator")
 public class PortletDefinitionFormValidator {
+    protected final transient Log log = LogFactory.getLog(getClass());
+    private static final FastDateFormat edf = FastDateFormat.getInstance("M/d/yyyy HH:mmZ");
+    private static final String MIDNIGHT = "00:00";
 
     private IChannelPublishingDefinitionDao channelPublishingDefinitionDao;
     private IPortletDefinitionRegistry portletDefinitionRegistry;
@@ -160,6 +169,8 @@ public class PortletDefinitionFormValidator {
     }
 
     private void doLifecycle(PortletDefinitionForm def, MessageContext context) {
+        String timezoneOffset =
+                String.format("-%2s00", def.getTimezoneOffsetInHours()).replace(" ", "0");
         if (def.getLifecycleState() == null) {
             context.addMessage(
                     new MessageBuilder()
@@ -168,7 +179,7 @@ public class PortletDefinitionFormValidator {
                             .code("please.select.lifecycle.stage")
                             .build());
         }
-        Date now = new Date();
+        final Date now = Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTime();
         if (def.getPublishDate() != null) {
             if (def.getPublishDateTime().before(now)) {
                 context.addMessage(
@@ -198,6 +209,83 @@ public class PortletDefinitionFormValidator {
                                 .code("auto.expire.date.must.be.after.publish")
                                 .build());
             }
+        }
+
+        if (def.getStopImmediately()) {
+            def.setStopDate(null);
+            def.setStopTime(null);
+        }
+        if (def.getRestartManually()) {
+            def.setRestartDate(null);
+            def.setRestartTime(null);
+        }
+
+        // set a default time if date is set but time isn't set
+        if (StringUtils.isNotBlank(def.getStopDate())) {
+            if (StringUtils.isBlank(def.getStopTime())) {
+                def.setStopTime(MIDNIGHT);
+            }
+        }
+
+        if (StringUtils.isNotBlank(def.getRestartDate())) {
+            if (StringUtils.isBlank(def.getRestartTime())) {
+                def.setRestartTime(MIDNIGHT);
+            }
+        }
+
+        Date stopDate = null;
+        if (StringUtils.isNotBlank(def.getStopDate())) {
+            String stopDateStr = def.getStopDate() + " " + def.getStopTime() + timezoneOffset;
+            try {
+                stopDate = edf.parse(stopDateStr);
+                if (stopDate.before(now)) {
+                    context.addMessage(
+                            new MessageBuilder()
+                                    .error()
+                                    .source("stopDate")
+                                    .code("maintenance.scheduler.stop.date.must.be.after.now")
+                                    .build());
+                }
+            } catch (ParseException e) {
+                context.addMessage(
+                        new MessageBuilder()
+                                .error()
+                                .source("stopDate")
+                                .code("maintenance.scheduler.stop.date.invalid.date.format")
+                                .build());
+            }
+        }
+
+        Date restartDate = null;
+        if (StringUtils.isNotBlank(def.getRestartDate())) {
+            String restartDateStr =
+                    def.getRestartDate() + " " + def.getRestartTime() + timezoneOffset;
+            try {
+                restartDate = edf.parse(restartDateStr);
+                if (restartDate.before(now)) {
+                    context.addMessage(
+                            new MessageBuilder()
+                                    .error()
+                                    .source("restartDate")
+                                    .code("maintenance.scheduler.restart.date.must.be.after.now")
+                                    .build());
+                }
+            } catch (ParseException e) {
+                context.addMessage(
+                        new MessageBuilder()
+                                .error()
+                                .source("restartDate")
+                                .code("maintenance.scheduler.restart.date.invalid.date.format")
+                                .build());
+            }
+        }
+        if (stopDate != null && restartDate != null && stopDate.after(restartDate)) {
+            context.addMessage(
+                    new MessageBuilder()
+                            .error()
+                            .source("restartDate")
+                            .code("maintenance.scheduler.restart.date.must.be.after.stop.date")
+                            .build());
         }
     }
 }

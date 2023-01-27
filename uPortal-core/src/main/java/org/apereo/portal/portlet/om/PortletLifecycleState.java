@@ -23,6 +23,11 @@ public enum PortletLifecycleState {
 
     public static final String CUSTOM_MAINTENANCE_MESSAGE_PARAMETER_NAME =
             "customMaintenanceMessage";
+    public static final String MAINTENANCE_STOP_DATE = "stopDate";
+    public static final String MAINTENANCE_STOP_TIME = "stopTime";
+    public static final String MAINTENANCE_RESTART_DATE = "restartDate";
+    public static final String MAINTENANCE_RESTART_TIME = "restartTime";
+    public static final String MAINTENANCE_TIMEZONE_OFFSET_IN_HOURS = "timezoneOffsetInHours";
 
     private final int order;
 
