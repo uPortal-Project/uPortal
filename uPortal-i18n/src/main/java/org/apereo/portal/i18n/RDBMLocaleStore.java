@@ -70,7 +70,9 @@ public class RDBMLocaleStore implements ILocaleStore {
     }
 
     @Override
-    @Cacheable(key="#person.ID", cacheNames="org.apereo.portal.i18n.RDBMLocaleStore.userLocales")
+    @Cacheable(
+            key = "#person.ID",
+            cacheNames = "org.apereo.portal.i18n.RDBMLocaleStore.userLocales")
     public Locale[] getUserLocales(final IPerson person) {
         return jdbcOperations.execute(
                 new ConnectionCallback<Locale[]>() {
@@ -107,7 +109,7 @@ public class RDBMLocaleStore implements ILocaleStore {
     }
 
     @Override
-    @CachePut(key="#person.ID", cacheNames="org.apereo.portal.i18n.RDBMLocaleStore.userLocales")
+    @CachePut(key = "#person.ID", cacheNames = "org.apereo.portal.i18n.RDBMLocaleStore.userLocales")
     public Locale[] updateUserLocales(final IPerson person, final Locale[] locales) {
         this.transactionOperations.execute(
                 new TransactionCallback<Object>() {
