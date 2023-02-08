@@ -1,9 +1,6 @@
 description = "Apereo uPortal Core"
 
 dependencies {
-    api("com.googlecode.ehcache-spring-annotations:ehcache-spring-annotations:${ehcacheSpringAnnotationsVersion}") {
-        exclude group: 'com.google.guava', module: 'guava'
-    }
     api 'javax.annotation:javax.annotation-api:1.3.2'
     api "commons-lang:commons-lang:${commonsLangVersion}"
     api "joda-time:joda-time:${jodaTimeVersion}"

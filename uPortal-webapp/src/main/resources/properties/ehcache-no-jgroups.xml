@@ -549,6 +549,14 @@
     </cache>
 
     <!--
+     | Caches person locale
+     | - 1 per person
+     +-->
+    <cache name="org.apereo.portal.i18n.RDBMLocaleStore.userLocales"
+           eternal="false" maxElementsInMemory="2000" overflowToDisk="false" diskPersistent="false"
+           timeToIdleSeconds="0" timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+
+    <!--
      | Caches message
      | - 1 per each translated message (max = messages * supported locales)
      +-->

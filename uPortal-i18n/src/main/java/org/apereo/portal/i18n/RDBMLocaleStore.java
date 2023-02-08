@@ -29,6 +29,8 @@ import org.apereo.portal.jpa.BasePortalJpaDao;
 import org.apereo.portal.security.IPerson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.jdbc.core.JdbcOperations;
@@ -68,6 +70,7 @@ public class RDBMLocaleStore implements ILocaleStore {
     }
 
     @Override
+    @Cacheable(key="#person.ID", cacheNames="org.apereo.portal.i18n.RDBMLocaleStore.userLocales")
     public Locale[] getUserLocales(final IPerson person) {
         return jdbcOperations.execute(
                 new ConnectionCallback<Locale[]>() {
@@ -104,7 +107,8 @@ public class RDBMLocaleStore implements ILocaleStore {
     }
 
     @Override
-    public void updateUserLocales(final IPerson person, final Locale[] locales) {
+    @CachePut(key="#person.ID", cacheNames="org.apereo.portal.i18n.RDBMLocaleStore.userLocales")
+    public Locale[] updateUserLocales(final IPerson person, final Locale[] locales) {
         this.transactionOperations.execute(
                 new TransactionCallback<Object>() {
                     @Override
@@ -151,5 +155,6 @@ public class RDBMLocaleStore implements ILocaleStore {
                                 });
                     }
                 });
+        return locales;
     }
 }
