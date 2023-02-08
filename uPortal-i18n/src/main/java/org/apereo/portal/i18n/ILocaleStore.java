@@ -34,7 +34,8 @@ public interface ILocaleStore {
      *
      * @param person the user
      * @param locales the user's new locale preferences
+     * @return the user's locale preferences
      * @throws Exception
      */
-    public void updateUserLocales(IPerson person, Locale[] locales);
+    public Locale[] updateUserLocales(IPerson person, Locale[] locales);
 }
