@@ -1,3 +1,16 @@
+## Next Release
+
+- new cache, org.apereo.portal.i18n.RDBMLocaleStore.userLocales in `ehcache.xml`/`ehcache-no-jgroups.xml`
+    ```xml
+        <!--
+         | Caches person locale
+         | - 1 per person
+         +-->
+        <cache name="org.apereo.portal.i18n.RDBMLocaleStore.userLocales"
+               eternal="false" maxElementsInMemory="2000" overflowToDisk="false" diskPersistent="false"
+               timeToIdleSeconds="0" timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+    ```
+
 ## v5.14.0
 
 - new properties, HTTP Security Headers in `security.properties`
