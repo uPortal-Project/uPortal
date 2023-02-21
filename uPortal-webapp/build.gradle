@@ -13,6 +13,7 @@ buildscript {
 
 plugins {
     id 'war'
+    id "io.freefair.aspectj.post-compile-weaving" version "5.3.3.3"
 }
 
 apply plugin: 'com.github.node-gradle.node'
@@ -56,7 +57,6 @@ dependencies {
 
     runtimeOnly "ch.qos.logback:logback-classic:${logbackVersion}"
     runtimeOnly "joda-time:joda-time-jsptags:${jodaTimeJsptagsVersion}"
-    runtimeOnly "org.aspectj:aspectjweaver:${aspectjVersion}"
     runtimeOnly "org.codehaus.groovy:groovy-jsr223:${groovyVersion}"
     runtimeOnly "org.hibernate:hibernate-entitymanager:${hibernateVersion}"
     runtimeOnly "org.jasig.cas.client:cas-client-support-distributed-ehcache:${casClientVersion}"
@@ -79,6 +79,9 @@ dependencies {
     webjars "org.webjars.npm:regenerator-runtime:${regeneratorRuntimeVersion}"
     webjars "org.webjars.npm:webcomponents__webcomponentsjs:${webComponentPolyfillVersion}"
     webjars "org.webjars.npm:whatwg-fetch:${whatwgFetchPolyfillVersion}"
+
+	// needed for the post-compile weaving of the HttpSession aspect
+	inpath 'org.apache.tomcat.embed:tomcat-embed-core:9.0.70'
 }
 
 node {
