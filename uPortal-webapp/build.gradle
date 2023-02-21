@@ -29,6 +29,16 @@ configurations {
     webjars
 }
 
+// Needed by aspectjweaver to prevent lint dependency failure
+configurations.testImplementation {
+	exclude(group: "org.aspectj", module: "aspectjrt")
+}
+
+// Needed by aspectjweaver to prevent lint dependency failure
+configurations.runtimeOnly {
+	exclude(group: "org.aspectj", module: "aspectjrt")
+}
+
 dependencies {
     api project(':uPortal-groups:uPortal-groups-filesystem')
     api project(':uPortal-groups:uPortal-groups-grouper')
@@ -54,6 +64,7 @@ dependencies {
     testImplementation "org.spockframework:spock-core:${spockVersion}"
     testImplementation "${portletApiDependency}"
     testImplementation "${servletApiDependency}"
+    testImplementation "org.aspectj:aspectjweaver:${aspectjVersion}")
 
     runtimeOnly "ch.qos.logback:logback-classic:${logbackVersion}"
     runtimeOnly "joda-time:joda-time-jsptags:${jodaTimeJsptagsVersion}"
