@@ -2,34 +2,35 @@
 
 ## Who are the committers? (GitHub Username)
 
- - Anthony Colebourne (acolebourne)
- - Andrew Petro (apetro)
+ - Andrew Petro [apetro](https://github.com/apetro)
  - Benito Gonzalez [bjagg](https://github.com/bjagg)
- - [Chris Beach][] (cbeach47)
- - [Christian Cousquer][] (cousquer)
- - [Christian Murphy][] (ChristianMurphy)
- - Daniel McCallum (dmccallum)
- - Drew Wills (drewwills)
- - [Jim Helwig] (jimhelwig)
- - [Jonathan Tran][] (jonathanmtran)
- - Josh Helmer (jhelmer-unicon)
- - [Julien Gribonvald][] (jgribonvald)
- - [Laura McCord][] [loulou2u](https://github.com/loulou2u)
- - [Mairi Fraiser][] (mairi)
- - Misagh Moayyed (mmoayyed)
- - Paul Spaude (pspaude)
- - [Ryan Mathis][] (rmathis)
- - Tim Levett (timlevett)
- - Timothy A Vertein (vertein)
- - William G. Thompson, Jr. (wgthom)
+ - Chris Beach [cbeach47](https://github.com/cbeach47)
+ - Christian Murphy [ChristianMurphy](https://github.com/ChristianMurphy)
+ - Jim Helwig [jimhelwig](https://github.com/jimhelwig)
+ - Jonathan Tran [jonathanmtran](https://github.com/jonathanmtran)
+ - Julien Gribonvald [jgribonvald](https://github.com/jgribonvald)
+ - Laura McCord [loulou2u](https://github.com/loulou2u)
+ - Michael Gillian [mgillian](https://github.com/mgillian)
+ - Ryan Mathis [rmathis](https://github.com/rmathis)
 
 ## Committers Emeriti
 
+ - Anthony Colebourne (acolebourne)
+ - Christian Cousquer (cousquer)
+ - Daniel McCallum (dmccallum)
+ - Drew Wills (drewwills)
  - Eric Dalquist (edalquist)
  - James Wennmacher (jameswennmacher)
  - Jeff Cross (jeffbcross)
  - Jen Bourey (bourey)
+ - Josh Helmer (jhelmer-unicon)
+ - Mairi Fraiser (mairi)
+ - Misagh Moayyed (mmoayyed)
  - Nicholas Blair (nblair)
+ - Paul Spaude (pspaude)
+ - Tim Levett (timlevett)
+ - Timothy A Vertein (vertein)
+ - William G. Thompson, Jr. (wgthom)
 
 ## What's a Committer?
 
@@ -52,6 +53,8 @@ Committership is for life. If you once acted as a steward of the project, you co
 Inactive committers tend to lose access privileges, through entropy and through minimizing unneeded security exposure. This doesn't mean Committers stop being Committers - it just means they may need infrastructure to be fixed up if and when they are again active.
 
 Inactive committers may be characterized as "emeriti" by request or by vote of the Committers. This is a convenient label for managing expectations about who is likely to be active. Votes that have heard from all active Committers need not wait for emeriti, for instance. Committers emeriti will be restored as regular Committers upon request.
+In addition, committers that have not authored a commit to any uPortal related repos for two or more years are
+automatically "emeriti". Again, their privileges shall be restored upon request.
 
 ## Rules?
 

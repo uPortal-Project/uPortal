@@ -14,9 +14,6 @@
  */
 package org.apereo.portal;
 
-import com.googlecode.ehcache.annotations.Cacheable;
-import com.googlecode.ehcache.annotations.TriggersRemove;
-import com.googlecode.ehcache.annotations.key.ListCacheKeyGenerator;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashSet;
@@ -27,6 +24,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.RowMapper;
@@ -80,9 +79,7 @@ public class EntityTypes {
         this.counterStore = counterStore;
     }
 
-    @Cacheable(
-            cacheName = "org.apereo.portal.EntityTypes.CLASS_BY_ID",
-            keyGeneratorName = ListCacheKeyGenerator.DEFAULT_BEAN_NAME)
+    @Cacheable("org.apereo.portal.EntityTypes.CLASS_BY_ID")
     public Class<? extends IBasicEntity> getEntityTypeFromID(Integer id) {
         final List<Class<?>> result =
                 this.jdbcOperations.query(
@@ -97,9 +94,7 @@ public class EntityTypes {
         return rslt;
     }
 
-    @Cacheable(
-            cacheName = "org.apereo.portal.EntityTypes.ID_BY_CLASS",
-            keyGeneratorName = ListCacheKeyGenerator.DEFAULT_BEAN_NAME)
+    @Cacheable(cacheNames = "org.apereo.portal.EntityTypes.ID_BY_CLASS", key = "#type.Name")
     public Integer getEntityIDFromType(Class<? extends IBasicEntity> type) {
         return DataAccessUtils.singleResult(
                 this.jdbcOperations.queryForList(
@@ -108,9 +103,7 @@ public class EntityTypes {
                         type.getName()));
     }
 
-    @Cacheable(
-            cacheName = "org.apereo.portal.EntityTypes.ALL",
-            keyGeneratorName = ListCacheKeyGenerator.DEFAULT_BEAN_NAME)
+    @Cacheable("org.apereo.portal.EntityTypes.ALL")
     public Iterator<Class<?>> getAllEntityTypes() {
         final List<Class<?>> entityTypes =
                 this.jdbcOperations.query(
@@ -125,9 +118,7 @@ public class EntityTypes {
         return rslt.iterator();
     }
 
-    @TriggersRemove(
-            cacheName = {"org.apereo.portal.EntityTypes.ALL"},
-            removeAll = true)
+    @CacheEvict(value = "org.apereo.portal.EntityTypes.ALL", allEntries = true)
     @Transactional
     public void addEntityTypeIfNecessary(Class<? extends IBasicEntity> newType, String description)
             throws java.lang.Exception {
@@ -145,13 +136,13 @@ public class EntityTypes {
                 description);
     }
 
-    @TriggersRemove(
-            cacheName = {
+    @CacheEvict(
+            cacheNames = {
                 "org.apereo.portal.EntityTypes.CLASS_BY_ID",
                 "org.apereo.portal.EntityTypes.ID_BY_CLASS",
                 "org.apereo.portal.EntityTypes.ALL"
             },
-            removeAll = true)
+            allEntries = true)
     @Transactional
     public void deleteEntityType(Class<?> type) throws SQLException {
         this.jdbcOperations.update(

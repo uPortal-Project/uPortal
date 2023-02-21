@@ -13,6 +13,9 @@ Contributors guide: https://github.com/Jasig/uPortal/blob/master/CONTRIBUTING.md
 -   [ ] commit message follows [commit guidelines][]
 -   [ ] tests are included
 -   [ ] documentation is changed or added
+-   [ ] new security keys and comments added to `security.properties`
+-   [ ] new general keys and comments added to `portal.properties`
+-   [ ] any changes that impact configuration or the database DDL added to `CHANGES.md`
 -   [ ] [message properties][] have been updated with new phrases
 -   [ ] view conforms with [WCAG 2.0 AA][]
 
