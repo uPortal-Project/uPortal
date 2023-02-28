@@ -64,7 +64,7 @@ dependencies {
     testImplementation "org.spockframework:spock-core:${spockVersion}"
     testImplementation "${portletApiDependency}"
     testImplementation "${servletApiDependency}"
-    testImplementation "org.aspectj:aspectjweaver:${aspectjVersion}")
+    testImplementation "org.aspectj:aspectjweaver:${aspectjVersion}"
 
     runtimeOnly "ch.qos.logback:logback-classic:${logbackVersion}"
     runtimeOnly "joda-time:joda-time-jsptags:${jodaTimeJsptagsVersion}"
@@ -91,8 +91,16 @@ dependencies {
     webjars "org.webjars.npm:webcomponents__webcomponentsjs:${webComponentPolyfillVersion}"
     webjars "org.webjars.npm:whatwg-fetch:${whatwgFetchPolyfillVersion}"
 
-	// needed for the post-compile weaving of the HttpSession aspect
-	inpath 'org.apache.tomcat.embed:tomcat-embed-core:9.0.70'
+	// needed for the post-compile weaving of HttpSessionAspect
+	// we assume that tomcat version for uPortal and uPortal-start projects
+	// are the same.  inpath() will create an exploded version of tomcat-embed-core
+	// within the WEB-INFO/classes directory.  The only class that is modified
+	// is org.apache.catalina.session.StandardSessionFacade, which implements
+	// HttpSession and is the primary class that calls HttpSession.setAttributes
+	// uPortal-start will copy that class into the appropriate location for
+	// uPortal-start's tomcat location
+	compileOnly "org.apache.tomcat.embed:tomcat-embed-core:${tomcatVersion}"
+	inpath "org.apache.tomcat.embed:tomcat-embed-core:${tomcatVersion}"
 }
 
 node {
