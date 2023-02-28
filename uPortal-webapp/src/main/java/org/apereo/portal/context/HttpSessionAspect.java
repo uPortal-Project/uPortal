@@ -22,20 +22,18 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 
 /**
- * HttpSessionAspect is responsible for instrumenting classes that implement HttpSession
- * with logging data, to determine if the instance of HttpSession is trying to add
- * a class that is not serialzable to the session.  HttpSessionAspect is not needed
- * at this point for any production functionality; it is only used to identify
- * classes that need to be modified to be serializable.
+ * HttpSessionAspect is responsible for instrumenting classes that implement HttpSession with
+ * logging data, to determine if the instance of HttpSession is trying to add a class that is not
+ * serialzable to the session. HttpSessionAspect is not needed at this point for any production
+ * functionality; it is only used to identify classes that need to be modified to be serializable.
  *
- * This is class is being included in the uPortal-webapp package so that as part
- * of the uPortal gradle build, the needed classes are available as part of the
- * uPortal packaging.  uPortal-start will then pull needed instrumented classes
- * and include them in the appropriate place within the tomcat instance.  This assumes
- * that uPortal-start is being used to manage the installation into the appropriate
- * tomcat server.
+ * <p>This is class is being included in the uPortal-webapp package so that as part of the uPortal
+ * gradle build, the needed classes are available as part of the uPortal packaging. uPortal-start
+ * will then pull needed instrumented classes and include them in the appropriate place within the
+ * tomcat instance. This assumes that uPortal-start is being used to manage the installation into
+ * the appropriate tomcat server.
+ *
  * @author mgillian
- *
  */
 @Aspect
 public class HttpSessionAspect {
