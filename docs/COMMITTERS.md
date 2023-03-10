@@ -97,3 +97,4 @@ Apache Software Foundation on
 [Chris Beach]: https://groups.google.com/a/apereo.org/d/msg/uportal-dev/MY4o0pEkuog/LP7CZCOaAwAJ
 [Christian Murphy]: https://groups.google.com/a/apereo.org/d/msg/uportal-dev/N9vxp2Bz9J4/Dmih3VNTBAAJ
 [Ryan Mathis]: https://groups.google.com/a/apereo.org/d/msg/uportal-dev/B87VkKHHnls/zOCNvHTuCgAJ
+[Michael Gillian]: https://groups.google.com/a/apereo.org/g/uportal-dev/c/jHNrpSSsLSs/m/kjYzo4YYBQAJ
