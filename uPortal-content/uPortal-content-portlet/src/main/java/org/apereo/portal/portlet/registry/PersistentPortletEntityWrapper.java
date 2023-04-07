@@ -23,6 +23,8 @@ import org.apereo.portal.portlet.om.IPortletDefinitionId;
 import org.apereo.portal.portlet.om.IPortletEntity;
 import org.apereo.portal.portlet.om.IPortletEntityId;
 import org.apereo.portal.portlet.om.IPortletPreference;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 
 /**
  * Wrapper for portlet entities that are persistent. Overrides the entity ID to be a consistent
@@ -69,7 +71,12 @@ class PersistentPortletEntityWrapper implements IPortletEntity {
     }
 
     @Override
+    @Cacheable(
+            key = "windowStates",
+            cacheNames =
+                    "org.apereo.portal.portlet.registry.PersistentPortletEntityWrapper.windowStates")
     public Map<Long, WindowState> getWindowStates() {
+        // https://github.com/uPortal-Project/uPortal/issues/1903 #1
         return this.persistentEntity.getWindowStates();
     }
 
@@ -79,6 +86,10 @@ class PersistentPortletEntityWrapper implements IPortletEntity {
     }
 
     @Override
+    @CachePut(
+            key = "windowStates",
+            cacheNames =
+                    "org.apereo.portal.portlet.registry.PersistentPortletEntityWrapper.windowStates")
     public void setWindowState(IStylesheetDescriptor stylesheetDescriptor, WindowState state) {
         this.persistentEntity.setWindowState(stylesheetDescriptor, state);
     }
