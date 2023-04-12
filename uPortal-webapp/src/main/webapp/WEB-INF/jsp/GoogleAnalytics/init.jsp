@@ -21,12 +21,48 @@
 <%@ include file="/WEB-INF/jsp/include.jsp"%>
 
 <script type="text/javascript">
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-  
-  var up = up || {};
-  up.analytics = up.analytics || {};
-  up.analytics.model = ${up:json(data)};
+var up = up || {};
+
+(function($, _) {
+
+    up.analytics = up.analytics || {};
+    up.analytics.model = ${up:json(data)};
+
+    // copied directly from up-ga.js, need in order to include
+    // tag information in script parameter
+    var findPropertyConfig = function() {
+        if (up.analytics.model == null) {
+            return null;
+        }
+
+        if (_.isArray(up.analytics.model.hosts)) {
+            var propertyConfig = _.find(up.analytics.model.hosts, function(
+                propertyConfig
+            ) {
+                if (propertyConfig.name == up.analytics.host) {
+                    return propertyConfig;
+                }
+            });
+
+            if (propertyConfig != null) {
+                return propertyConfig;
+            }
+        }
+        return up.analytics.model.defaultConfig;
+    };
+
+    var props = findPropertyConfig();
+    var tagId = props.propertyId;
+
+    var s = document.createElement( 'script' );
+    s.setAttribute( 'src', "https://www.googletagmanager.com/gtag/js?id=" + tagId );
+    s.async = true;
+    document.body.appendChild( s );
+
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    up.gtag = gtag;
+
+})(up.jQuery, up._);
 </script>
