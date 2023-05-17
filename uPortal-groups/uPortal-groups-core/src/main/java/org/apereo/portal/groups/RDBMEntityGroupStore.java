@@ -69,6 +69,10 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
     private static final String MEMBER_IS_GROUP = "T";
 
     private static final String CACHE_NAME = "org.apereo.portal.groups.RDBMEntityGroupStore.search";
+    private static final String PARENT_GROUP_BY_ENTITY_CACHE_NAME =
+            "org.apereo.portal.groups.RDBMEntityGroupStore.parentGroupEntity";
+    private static final String PARENT_GROUP_BY_ENTTITY_GROUP_CACHE_NAME =
+            "org.apereo.portal.groups.RDBMEntityGroupStore.parentGroupEntityGroup";
 
     // SQL group search string
     private static final String SEARCH_GROUPS_PARTIAL_CASE_INSENSITIVE =
@@ -151,6 +155,8 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
 
     // Group search cache
     private Ehcache groupSearchCache;
+    private Ehcache parentGroupEntityCache;
+    private Ehcache parentGroupEntityGroupCache;
 
     /** RDBMEntityGroupStore constructor. */
     public RDBMEntityGroupStore() {
@@ -174,18 +180,20 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
         }
 
         // Cache for group search
-        groupSearchCache = getGroupSearchCache();
+        groupSearchCache = getGroupSearchCache(CACHE_NAME);
+        parentGroupEntityCache = getGroupSearchCache(PARENT_GROUP_BY_ENTITY_CACHE_NAME);
+        parentGroupEntityGroupCache = getGroupSearchCache(PARENT_GROUP_BY_ENTTITY_GROUP_CACHE_NAME);
     }
 
-    private Ehcache getGroupSearchCache() {
+    private Ehcache getGroupSearchCache(String cacheName) {
         final ApplicationContext context = ApplicationContextLocator.getApplicationContext();
         assert context != null;
         final CacheManager cacheManager = context.getBean("cacheManager", CacheManager.class);
         assert cacheManager != null;
-        if (!cacheManager.cacheExists(CACHE_NAME)) {
-            cacheManager.addCache(CACHE_NAME);
+        if (!cacheManager.cacheExists(cacheName)) {
+            cacheManager.addCache(cacheName);
         }
-        return cacheManager.getCache(CACHE_NAME);
+        return cacheManager.getCache(cacheName);
     }
 
     /**
@@ -333,9 +341,19 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
      * @return java.util.Iterator
      */
     public java.util.Iterator findParentGroups(IEntity ent) throws GroupsException {
+        // https://github.com/uPortal-Project/uPortal/issues/1903 #2
         String memberKey = ent.getKey();
+        Element el = parentGroupEntityCache.get(memberKey);
+        if (el != null) {
+            java.util.Iterator it = (java.util.Iterator) el.getObjectValue();
+            assert it != null;
+            return it;
+        }
+
         Integer type = EntityTypesLocator.getEntityTypes().getEntityIDFromType(ent.getLeafType());
-        return findParentGroupsForEntity(memberKey, type.intValue());
+        java.util.Iterator it = findParentGroupsForEntity(memberKey, type.intValue());
+        parentGroupEntityCache.put(new Element(memberKey, it));
+        return it;
     }
 
     /**
@@ -345,10 +363,20 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
      * @return java.util.Iterator
      */
     public java.util.Iterator findParentGroups(IEntityGroup group) throws GroupsException {
+        // https://github.com/uPortal-Project/uPortal/issues/1903 #8
         String memberKey = group.getLocalKey();
+        Element el = parentGroupEntityGroupCache.get(memberKey);
+        if (el != null) {
+            java.util.Iterator it = (java.util.Iterator) el.getObjectValue();
+            assert it != null;
+            return it;
+        }
+
         String serviceName = group.getServiceName().toString();
         Integer type = EntityTypesLocator.getEntityTypes().getEntityIDFromType(group.getLeafType());
-        return findParentGroupsForGroup(serviceName, memberKey, type.intValue());
+        java.util.Iterator it = findParentGroupsForGroup(serviceName, memberKey, type.intValue());
+        parentGroupEntityGroupCache.put(new Element(memberKey, it));
+        return it;
     }
 
     /**
