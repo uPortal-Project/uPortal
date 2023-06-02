@@ -27,6 +27,8 @@ public interface IPortalEventDao {
 
     void storePortalEvents(Iterable<PortalEvent> portalEvents);
 
+    void storeAnalyticsEvent(PortalEvent portalEvent);
+
     /**
      * Gets all persisted events in the time range. To deal with memory and data access issues the
      * results are not returned but passed in order to the provided {@link FunctionWithoutResult}

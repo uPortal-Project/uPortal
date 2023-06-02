@@ -185,6 +185,14 @@ public class JpaPortalEventStore extends BaseRawEventsJpaDao implements IPortalE
 
     @Override
     @RawEventsTransactional
+    public void storeAnalyticsEvent(PortalEvent portalEvent) {
+        final PersistentAnalyticsEvent persistentAnalyticsEvent =
+                this.wrapAnalyticsEvent(portalEvent);
+        this.getEntityManager().persist(persistentAnalyticsEvent);
+    }
+
+    @Override
+    @RawEventsTransactional
     public void storePortalEvents(PortalEvent... portalEvents) {
         for (final PortalEvent portalEvent : portalEvents) {
             try {
@@ -378,6 +386,11 @@ public class JpaPortalEventStore extends BaseRawEventsJpaDao implements IPortalE
     protected PersistentPortalEvent wrapPortalEvent(PortalEvent event) {
         final String portalEventData = this.toString(event);
         return new PersistentPortalEvent(event, portalEventData);
+    }
+
+    protected PersistentAnalyticsEvent wrapAnalyticsEvent(PortalEvent event) {
+        final String portalEventData = this.toString(event);
+        return new PersistentAnalyticsEvent(event, portalEventData);
     }
 
     protected <E extends PortalEvent> E toPortalEvent(final String eventData, Class<E> eventType) {
