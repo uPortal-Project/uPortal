@@ -80,16 +80,6 @@ public class PersistentAnalyticsEvent implements Serializable {
     @Lob
     private final String eventData;
 
-    // TODO not needed
-    @Index(name = "IDX_UP_ANALYTICS_EVENTS_AGGREGATED")
-    @Column(name = "AGGREGATED")
-    private Boolean aggregated = false;
-
-    // TODO not needed
-    @Index(name = "IDX_UP_ANALYTICS_EVENTS_ERR_AGGR")
-    @Column(name = "ERROR_AGGR")
-    private Boolean errorAggregating = false;
-
     /** no-arg needed by hibernate */
     @SuppressWarnings("unused")
     private PersistentAnalyticsEvent() {
@@ -120,32 +110,6 @@ public class PersistentAnalyticsEvent implements Serializable {
     /** @return the eventData */
     public String getEventData() {
         return this.eventData;
-    }
-
-    public boolean isAggregated() {
-        Boolean a = this.aggregated;
-        if (a == null) {
-            a = false;
-            this.aggregated = a;
-        }
-        return a;
-    }
-
-    void setAggregated(boolean aggregated) {
-        this.aggregated = aggregated;
-    }
-
-    public boolean isErrorAggregating() {
-        Boolean a = this.errorAggregating;
-        if (a == null) {
-            a = false;
-            this.errorAggregating = a;
-        }
-        return a;
-    }
-
-    void setErrorAggregating(boolean errorAggregating) {
-        this.errorAggregating = errorAggregating;
     }
 
     /* (non-Javadoc)
