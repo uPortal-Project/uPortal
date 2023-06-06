@@ -52,7 +52,7 @@ var uportal = uportal || {};
         _.each(propertyConfig.dimensionGroups || [], function(setting) {
             dimensions['dimension' + setting.name] = setting.value;
         });
-		return dimensions;
+        return dimensions;
     };
 
     /**
@@ -257,10 +257,10 @@ var uportal = uportal || {};
         up.gtag('event', 'page_view',
             $.extend({
                 event_callback: clickFunction
-                },
-                eventOpts
+            },
+            eventOpts
             )
-		);
+        );
 
         // If not opening a new window prevent the event and set the fallback
         // to make sure the page navigates even if the hitCallback
