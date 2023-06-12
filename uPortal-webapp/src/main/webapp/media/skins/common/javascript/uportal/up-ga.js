@@ -45,6 +45,17 @@ var uportal = uportal || {};
     };
 
     /**
+     * Set the dimensions that apply to the current user
+     */
+    var getDimensions = function(propertyConfig) {
+        var dimensions = {};
+        _.each(propertyConfig.dimensionGroups || [], function(setting) {
+            dimensions['dimension' + setting.name] = setting.value;
+        });
+        return dimensions;
+    };
+
+    /**
      * Create the tracker with the propertyId and configuration from the
      * specified propertyConfig
      */
@@ -57,19 +68,14 @@ var uportal = uportal || {};
                 createSettings[setting.name] = setting.value;
             }
         });
-        ga('create', propertyConfig.propertyId, createSettings); // Create the
-    };
-
-    /**
-     * Set the dimensions that apply to the current user
-     */
-    var setDimensions = function(propertyConfig) {
-        var dimensions = {};
-        _.each(propertyConfig.dimensionGroups || [], function(setting) {
-            dimensions['dimension' + setting.name] = setting.value;
+        var dimensions = getDimensions(propertyConfig);
+        var dimensionKeys = [];
+        $.each(dimensions, function(key, value) {
+            dimensionKeys.push(key);
         });
-
-        ga('set', dimensions);
+        up.gtag('config', propertyConfig.propertyId, {
+            send_page_view: false,
+        });
     };
 
     /**
@@ -98,7 +104,7 @@ var uportal = uportal || {};
     /**
      * Set variables specific to the current page
      */
-    var setPageVariables = function(fragmentName, tabName) {
+    var getPageVariables = function(fragmentName, tabName) {
         if (up.analytics.pageData.tab != null) {
             fragmentName =
                 fragmentName || up.analytics.pageData.tab.fragmentName;
@@ -113,11 +119,10 @@ var uportal = uportal || {};
         } else {
             title = 'No Tab';
         }
-
-        ga('set', {
-            page: getTabUri(fragmentName, tabName),
-            title: title,
-        });
+        return {
+            page_location: getTabUri(fragmentName, tabName),
+            page_title: title
+        };
     };
 
     /**
@@ -171,17 +176,16 @@ var uportal = uportal || {};
     /**
      * Set variables specific to the specified portlet
      */
-    var setPortletVariables = function(windowId, portletData) {
+    var getPortletVariables = function(windowId, portletData) {
         var portletTitle = getRenderedPortletTitle(windowId);
 
         if (portletData == null) {
             portletData = up.analytics.portletData[windowId];
         }
-
-        ga('set', {
-            page: getPortletUri(portletData.fname),
-            title: 'Portlet: ' + portletTitle,
-        });
+        return {
+            page_title: 'Portlet: ' + portletTitle,
+            page_location: getPortletUri(portletData.fname)
+        };
     };
 
     /**
@@ -250,16 +254,11 @@ var uportal = uportal || {};
             };
         }
 
-        // Send the event
-        setPageVariables();
-        ga(
-            'send',
-            $.extend(
-                {
-                    hitType: 'event',
-                    hitCallback: clickFunction,
-                },
-                eventOpts
+        up.gtag('event', 'page_view',
+            $.extend({
+                event_callback: clickFunction
+            },
+            eventOpts
             )
         );
 
@@ -293,14 +292,16 @@ var uportal = uportal || {};
                 var fname = getFlyoutFname(clickedLink);
 
                 // Setup the page level state
-                setPageVariables();
+                var pageVariables = getPageVariables();
 
                 // Send the event and deal with the click
-                handleLinkClickEvent(event, clickedLink, {
-                    eventCategory: 'Flyout Link',
-                    eventAction: getPortletUri(fname),
-                    eventLabel: portletFlyoutTitle,
-                });
+                handleLinkClickEvent(event, clickedLink,
+                    $.extend({
+                        event_category: 'Flyout Link',
+                        event_action: getPortletUri(fname),
+                        event_label: portletFlyoutTitle,
+                    },
+                    pageVariables));
             }
         );
     };
@@ -316,18 +317,20 @@ var uportal = uportal || {};
             var linkHost = clickedLink.prop('hostname');
             if (linkHost != '' && linkHost != document.domain) {
                 var windowId = getExternaLinkWindowId(clickedLink);
+                var eventVariables = null;
                 if (windowId != null) {
-                    setPortletVariables(windowId);
+                    eventVariables = getPortletVariables(windowId);
                 } else {
-                    setPageVariables();
+                    eventVariables = getPageVariables();
                 }
 
                 // Send the event and deal with the click
-                handleLinkClickEvent(event, clickedLink, {
-                    eventCategory: 'Outbound Link',
-                    eventAction: clickedLink.prop('href'),
-                    eventLabel: clickedLink.text(),
-                });
+                handleLinkClickEvent(event, clickedLink,
+                    $.extend({
+                        event_category: 'Outbound Link',
+                        event_action: clickedLink.prop('href'),
+                        event_label: clickedLink.text(),
+                    }, eventVariables));
             }
         });
     };
@@ -350,15 +353,13 @@ var uportal = uportal || {};
                 .text()
                 .trim();
 
-            setPageVariables(fragmentName, tabName);
-            ga('send', 'pageview');
+            var pageVariables = getPageVariables(fragmentName, tabName);
+
+            up.gtag('event', 'page_view', pageVariables);
         });
     };
 
     $(document).ready(function() {
-        // Fail safe, if the analytics library isn't loaded make sure the function
-        // exists
-        window['ga'] = window['ga'] || function() {};
 
         var propertyConfig = findPropertyConfig();
 
@@ -371,20 +372,25 @@ var uportal = uportal || {};
         createTracker(propertyConfig);
 
         // Set Dimensions
-        setDimensions(propertyConfig);
+        var dimensions = getDimensions(propertyConfig);
+
+        up.gtag('event', 'page_view', dimensions);
 
         // Page Event
-        setPageVariables();
+        var pageVariables = getPageVariables();
+
         // Don't bother sending the view in MAX WindowState
         if (up.analytics.pageData.urlState != 'MAX') {
-            ga('send', 'pageview');
+	        up.gtag('event', 'page_view',
+	        $.extend(pageVariables, dimensions));
         }
-        ga('send', {
-            hitType: 'timing',
-            timingCategory: 'tab',
-            timingVar: getTabUri(),
-            timingValue: up.analytics.pageData.executionTimeNano / 1000000,
-        });
+
+        up.gtag('event', 'timing_complete',
+            $.extend({
+                event_category: 'tab',
+                name: getTabUri(),
+                value: up.analytics.pageData.executionTimeNano
+            }, pageVariables, dimensions));
 
         // Portlet Events
         _.each(up.analytics.portletData, function(portletData, windowId) {
@@ -393,14 +399,15 @@ var uportal = uportal || {};
                 return;
             }
 
-            setPortletVariables(windowId, portletData);
-            ga('send', 'pageview');
-            ga('send', {
-                hitType: 'timing',
-                timingCategory: 'portlet',
-                timingVar: getPortletUri(portletData.fname),
-                timingValue: portletData.executionTimeNano / 1000000,
-            });
+            var portletVariables = getPortletVariables(windowId, portletData);
+            up.gtag('event', 'page_view', portletVariables);
+            up.gtag('event', 'timing_complete',
+                $.extend({
+                    event_category: 'tab',
+                    name: getTabUri(),
+                    value: up.analytics.pageData.executionTimeNano
+                }, portletVariables, dimensions));
+
         });
 
         // Add handlers to deal with click events on flyouts
