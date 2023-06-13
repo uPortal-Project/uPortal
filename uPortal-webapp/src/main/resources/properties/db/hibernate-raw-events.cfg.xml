@@ -43,5 +43,6 @@
         <mapping resource="properties/db/global.hbm.xml"/>
         
         <mapping class="org.apereo.portal.events.handlers.db.PersistentPortalEvent"/>
+        <mapping class="org.apereo.portal.events.handlers.db.PersistentAnalyticsEvent"/>
     </session-factory>
 </hibernate-configuration>
