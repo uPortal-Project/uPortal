@@ -107,7 +107,7 @@ public class PersistentAnalyticsEvent implements Serializable {
         return this.eventType;
     }
 
-    /** @return the eventData */
+    /** Rreturn the eventData as a JSON-encoded string */
     public String getEventData() {
         return this.eventData;
     }
