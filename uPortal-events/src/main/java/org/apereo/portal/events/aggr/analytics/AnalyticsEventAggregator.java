@@ -7,11 +7,15 @@ import org.apereo.portal.events.aggr.SimplePortalEventAggregator;
 import org.apereo.portal.events.aggr.session.EventSession;
 import org.apereo.portal.events.handlers.db.IPortalEventDao;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
 public class AnalyticsEventAggregator extends BasePortalEventAggregator<PortalEvent>
         implements SimplePortalEventAggregator<PortalEvent> {
+
+    @Value("${org.apereo.portal.events.aggr.analytics.AnalyticsEventAggregator.status:DISABLED}")
+    private String status;
 
     @Autowired private IPortalEventDao store;
 
@@ -22,6 +26,8 @@ public class AnalyticsEventAggregator extends BasePortalEventAggregator<PortalEv
 
     @Override
     public void aggregateEvent(PortalEvent e, EventSession eventSession) {
-        store.storeAnalyticsEvent(e);
+        if ("ENABLED".equalsIgnoreCase(status)) {
+            store.storeAnalyticsEvent(e);
+        }
     }
 }
