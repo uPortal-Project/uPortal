@@ -11,6 +11,14 @@
                timeToIdleSeconds="0" timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" statistics="true"/>
     ```
 
+- new property, org.apereo.portal.rest.search.PortletsSearchStrategy.displayFavoriteFlag in `portal.properties`
+    ```properties
+    ##
+    ## Flag to enable or disable the display of the favorite flag in the results
+    ##
+    org.apereo.portal.rest.search.PortletsSearchStrategy.displayFavoriteFlag:true
+    ```
+
 ## v5.14.0
 
 - new properties, HTTP Security Headers in `security.properties`

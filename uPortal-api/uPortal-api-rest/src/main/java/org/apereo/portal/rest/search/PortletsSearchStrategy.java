@@ -17,8 +17,10 @@ package org.apereo.portal.rest.search;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
@@ -31,11 +33,17 @@ import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
+import org.apereo.portal.UserPreferencesManager;
 import org.apereo.portal.index.PortalSearchIndexer;
 import org.apereo.portal.index.SearchField;
+import org.apereo.portal.layout.IUserLayout;
+import org.apereo.portal.layout.IUserLayoutManager;
 import org.apereo.portal.portlet.om.IPortletDefinition;
 import org.apereo.portal.portlet.registry.IPortletDefinitionRegistry;
+import org.apereo.portal.portlets.favorites.FavoritesUtils;
 import org.apereo.portal.portlets.search.PortletRegistryUtil;
+import org.apereo.portal.user.IUserInstance;
+import org.apereo.portal.user.IUserInstanceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,16 +64,28 @@ public class PortletsSearchStrategy implements ISearchStrategy {
 
     private boolean displayScore;
 
+    private boolean displayFavoriteFlag;
+
     @Autowired private Directory directory;
 
     @Autowired private IPortletDefinitionRegistry portletDefinitionRegistry;
 
     @Autowired private PortletRegistryUtil portletRegistryUtil;
 
+    @Autowired private IUserInstanceManager userInstanceManager;
+
+    @Autowired private FavoritesUtils favoritesUtils;
+
     /** Set if the score should be provided in the search results */
     @Value("${org.apereo.portal.rest.search.PortletsSearchStrategy.displayScore:true}")
     public void setDisplayScore(boolean displayScore) {
         this.displayScore = displayScore;
+    }
+
+    /** Set if the favorite flag should be provided in the search results */
+    @Value("${org.apereo.portal.rest.search.PortletsSearchStrategy.displayFavoriteFlag:true}")
+    public void setDisplayFavoriteFlag(boolean b) {
+        this.displayFavoriteFlag = b;
     }
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
@@ -88,6 +108,7 @@ public class PortletsSearchStrategy implements ISearchStrategy {
     public List<?> search(String query, HttpServletRequest request) {
         logger.debug("Entering search() with query={}", query);
         final List<Object> rslt = new ArrayList<>();
+        final Set<IPortletDefinition> favorites = getFavorites(request);
 
         try (IndexReader indexReader = DirectoryReader.open(directory)) {
             final String queryString = query.endsWith(" ") ? query : query + "*";
@@ -123,7 +144,8 @@ public class PortletsSearchStrategy implements ISearchStrategy {
                                                 scoreStr,
                                                 hashKey,
                                                 query);
-                                        rslt.add(getPortletAttrs(portlet, url, scoreStr));
+                                        rslt.add(
+                                                getPortletAttrs(portlet, url, scoreStr, favorites));
                                     }
                                 } catch (IOException e) {
                                     // Log a warning, but don't prevent other matches from
@@ -144,17 +166,39 @@ public class PortletsSearchStrategy implements ISearchStrategy {
         return rslt;
     }
 
-    private Map<String, String> getPortletAttrs(
-            IPortletDefinition portlet, String url, String score) {
-        final Map<String, String> rslt = new TreeMap<>();
+    private Map<String, Object> getPortletAttrs(
+            IPortletDefinition portlet,
+            String url,
+            String score,
+            Set<IPortletDefinition> favorites) {
+        final Map<String, Object> rslt = new TreeMap<>();
         rslt.put("name", portlet.getName());
         rslt.put("fname", portlet.getFName());
         rslt.put("title", portlet.getTitle());
         rslt.put("description", portlet.getDescription());
         rslt.put("url", url);
+        if (displayFavoriteFlag) {
+            rslt.put("favorite", favorites.contains(portlet) ? true : false);
+        }
         if (displayScore) {
             rslt.put("score", score);
         }
         return rslt;
+    }
+
+    private Set<IPortletDefinition> getFavorites(HttpServletRequest request) {
+        if (displayFavoriteFlag) {
+            final IUserInstance ui = userInstanceManager.getUserInstance(request);
+            final UserPreferencesManager upm = (UserPreferencesManager) ui.getPreferencesManager();
+            final IUserLayoutManager ulm = upm.getUserLayoutManager();
+            final IUserLayout layout = ulm.getUserLayout();
+            final Set<IPortletDefinition> rslt =
+                    displayFavoriteFlag
+                            ? favoritesUtils.getFavoritePortletDefinitions(layout)
+                            : Collections.emptySet();
+            return rslt;
+        } else {
+            return Collections.emptySet();
+        }
     }
 }
