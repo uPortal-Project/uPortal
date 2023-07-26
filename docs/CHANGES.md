@@ -2,6 +2,35 @@
 
 - new cache, org.apereo.portal.i18n.RDBMLocaleStore.userLocales in `ehcache.xml`/`ehcache-no-jgroups.xml`
     ```xml
+         <!--
+         | Caches Window State Collection -
+         | - Many-to-One join of StyleSheet and Window State
+         | - not replicated - represents local file system data
+         +-->
+        <cache name="org.apereo.portal.portlet.registry.PersistentPortletEntityWrapper.windowStates"
+            eternal="false" maxElementsInMemory="50" overflowToDisk="false" diskPersistent="false"
+            timeToIdleSeconds="0" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" />
+
+        <!--
+         | Caches search results from findParentGroups() in RDBMEntityGroupStore.
+         | - 1 x search criteria
+         +-->
+        <cache name="org.apereo.portal.groups.RDBMEntityGroupStore.parentGroupEntity"
+            eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false"
+            timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" >
+            <cacheEventListenerFactory class="org.apereo.portal.utils.cache.SpringCacheEventListenerFactory" properties="beanName=insufficientSizeCacheEventListener" listenFor="local" />
+        </cache>
+
+        <!--
+         | Caches search results from findParentGroups() in RDBMEntityGroupStore.
+         | - 1 x search criteria
+         +-->
+        <cache name="org.apereo.portal.groups.RDBMEntityGroupStore.parentGroupEntityGroup"
+            eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false"
+            timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" >
+            <cacheEventListenerFactory class="org.apereo.portal.utils.cache.SpringCacheEventListenerFactory" properties="beanName=insufficientSizeCacheEventListener" listenFor="local" />
+        </cache>
+
         <!--
          | Caches person locale
          | - 1 per person
