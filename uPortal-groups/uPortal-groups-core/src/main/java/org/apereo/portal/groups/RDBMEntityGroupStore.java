@@ -21,6 +21,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import net.sf.ehcache.CacheManager;
@@ -68,7 +69,8 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
     private static final String MEMBER_IS_ENTITY = "F";
     private static final String MEMBER_IS_GROUP = "T";
 
-    private static final String CACHE_NAME = "org.apereo.portal.groups.RDBMEntityGroupStore.search";
+    private static final String SEARCH_CACHE_NAME =
+            "org.apereo.portal.groups.RDBMEntityGroupStore.search";
     private static final String PARENT_GROUP_BY_ENTITY_CACHE_NAME =
             "org.apereo.portal.groups.RDBMEntityGroupStore.parentGroupEntity";
     private static final String PARENT_GROUP_BY_ENTTITY_GROUP_CACHE_NAME =
@@ -180,7 +182,7 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
         }
 
         // Cache for group search
-        groupSearchCache = getGroupSearchCache(CACHE_NAME);
+        groupSearchCache = getGroupSearchCache(SEARCH_CACHE_NAME);
         parentGroupEntityCache = getGroupSearchCache(PARENT_GROUP_BY_ENTITY_CACHE_NAME);
         parentGroupEntityGroupCache = getGroupSearchCache(PARENT_GROUP_BY_ENTTITY_GROUP_CACHE_NAME);
     }
@@ -340,20 +342,22 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
      * @param ent the entity in question
      * @return java.util.Iterator
      */
-    public java.util.Iterator findParentGroups(IEntity ent) throws GroupsException {
+    public java.util.Iterator<IEntityGroup> findParentGroups(IEntity ent) throws GroupsException {
         // https://github.com/uPortal-Project/uPortal/issues/1903 #2
         String memberKey = ent.getKey();
-        Element el = parentGroupEntityCache.get(memberKey);
-        if (el != null) {
-            java.util.Iterator it = (java.util.Iterator) el.getObjectValue();
-            assert it != null;
-            return it;
-        }
-
         Integer type = EntityTypesLocator.getEntityTypes().getEntityIDFromType(ent.getLeafType());
-        java.util.Iterator it = findParentGroupsForEntity(memberKey, type.intValue());
-        parentGroupEntityCache.put(new Element(memberKey, it));
-        return it;
+        String cacheKey = memberKey + ":" + type.intValue();
+        List<IEntityGroup> list;
+        Element el = parentGroupEntityCache.get(cacheKey);
+        if (el == null) {
+            list = findParentGroupsForEntity(memberKey, type.intValue());
+            list = Collections.unmodifiableList(list);
+            parentGroupEntityCache.put(new Element(cacheKey, list));
+        } else {
+            list = (List) el.getObjectValue();
+            assert list != null;
+        }
+        return list.iterator();
     }
 
     /**
@@ -362,21 +366,24 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
      * @param group IEntityGroup
      * @return java.util.Iterator
      */
-    public java.util.Iterator findParentGroups(IEntityGroup group) throws GroupsException {
+    public java.util.Iterator<IEntityGroup> findParentGroups(IEntityGroup group)
+            throws GroupsException {
         // https://github.com/uPortal-Project/uPortal/issues/1903 #8
         String memberKey = group.getLocalKey();
-        Element el = parentGroupEntityGroupCache.get(memberKey);
-        if (el != null) {
-            java.util.Iterator it = (java.util.Iterator) el.getObjectValue();
-            assert it != null;
-            return it;
-        }
-
         String serviceName = group.getServiceName().toString();
         Integer type = EntityTypesLocator.getEntityTypes().getEntityIDFromType(group.getLeafType());
-        java.util.Iterator it = findParentGroupsForGroup(serviceName, memberKey, type.intValue());
-        parentGroupEntityGroupCache.put(new Element(memberKey, it));
-        return it;
+        String cacheKey = memberKey + ":" + type.intValue() + ":" + serviceName;
+        Element el = parentGroupEntityGroupCache.get(cacheKey);
+        List<IEntityGroup> list;
+        if (el == null) {
+            list = findParentGroupsForGroup(serviceName, memberKey, type.intValue());
+            list = Collections.unmodifiableList(list);
+            parentGroupEntityGroupCache.put(new Element(cacheKey, list));
+        } else {
+            list = (List) el.getObjectValue();
+            assert list != null;
+        }
+        return list.iterator();
     }
 
     /**
@@ -401,12 +408,12 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
      *
      * @param memberKey
      * @param type
-     * @return java.util.Iterator
+     * @return list of groups (IEntityGroup)
      */
-    private java.util.Iterator findParentGroupsForEntity(String memberKey, int type)
+    private List<IEntityGroup> findParentGroupsForEntity(String memberKey, int type)
             throws GroupsException {
         Connection conn = null;
-        Collection groups = new ArrayList();
+        List<IEntityGroup> groups = new ArrayList<>();
         IEntityGroup eg = null;
 
         try {
@@ -444,7 +451,7 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
             RDBMServices.releaseConnection(conn);
         }
 
-        return groups.iterator();
+        return groups;
     }
 
     /**
@@ -453,12 +460,12 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
      * @param serviceName
      * @param memberKey
      * @param type
-     * @return java.util.Iterator
+     * @return list of groups (IEntityGroup)
      */
-    private java.util.Iterator findParentGroupsForGroup(
+    private List<IEntityGroup> findParentGroupsForGroup(
             String serviceName, String memberKey, int type) throws GroupsException {
         Connection conn = null;
-        Collection groups = new ArrayList();
+        List<IEntityGroup> groups = new ArrayList<>();
         IEntityGroup eg = null;
 
         try {
@@ -499,7 +506,7 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
             RDBMServices.releaseConnection(conn);
         }
 
-        return groups.iterator();
+        return groups;
     }
 
     /**
