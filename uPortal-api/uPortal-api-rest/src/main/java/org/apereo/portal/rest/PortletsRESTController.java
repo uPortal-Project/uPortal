@@ -15,14 +15,19 @@
 package org.apereo.portal.rest;
 
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
 import org.apereo.portal.EntityIdentifier;
+import org.apereo.portal.UserPreferencesManager;
+import org.apereo.portal.layout.IUserLayout;
+import org.apereo.portal.layout.IUserLayoutManager;
 import org.apereo.portal.layout.LayoutPortlet;
 import org.apereo.portal.portlet.om.IPortletDefinition;
 import org.apereo.portal.portlet.om.IPortletWindow;
@@ -31,18 +36,20 @@ import org.apereo.portal.portlet.registry.IPortletCategoryRegistry;
 import org.apereo.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.apereo.portal.portlet.registry.IPortletWindowRegistry;
 import org.apereo.portal.portlet.rendering.IPortletExecutionManager;
+import org.apereo.portal.portlets.favorites.FavoritesUtils;
 import org.apereo.portal.security.IAuthorizationPrincipal;
+import org.apereo.portal.security.IAuthorizationService;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.IPersonManager;
-import org.apereo.portal.services.AuthorizationServiceFacade;
 import org.apereo.portal.url.PortalHttpServletFactoryService;
+import org.apereo.portal.user.IUserInstance;
+import org.apereo.portal.user.IUserInstanceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -54,6 +61,11 @@ import org.springframework.web.servlet.ModelAndView;
  */
 @Controller
 public class PortletsRESTController {
+
+    public static final String FAVORITE_FLAG = "favorite";
+    public static final String REQUIRED_PERMISSION_TYPE = "requiredPermissionType";
+
+    @Autowired private IAuthorizationService authorizationService;
 
     @Autowired private IPortletDefinitionRegistry portletDefinitionRegistry;
 
@@ -67,35 +79,86 @@ public class PortletsRESTController {
 
     @Autowired private IPortletExecutionManager portletExecutionManager;
 
+    @Autowired private IUserInstanceManager userInstanceManager;
+
+    @Autowired private FavoritesUtils favoritesUtils;
+
     private final Logger logger = LoggerFactory.getLogger(getClass());
+
+    public enum PortletPermissionType {
+        BROWSE,
+        CONFIGURE,
+        MANAGE,
+        RENDER,
+        SUBSCRIBE
+    }
 
     /**
      * Provides information about all portlets in the portlet registry. NOTE: The response is
      * governed by the <code>IPermission.PORTLET_MANAGER_xyz</code> series of permissions. The
      * actual level of permission required is based on the current lifecycle state of the portlet.
      */
-    @RequestMapping(value = "/portlets.json", method = RequestMethod.GET)
-    public ModelAndView getManageablePortlets(
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
-        // get a list of all channels
-        List<IPortletDefinition> allPortlets = portletDefinitionRegistry.getAllPortletDefinitions();
-        IAuthorizationPrincipal ap = getAuthorizationPrincipal(request);
+    @GetMapping(value = "/portlets.json")
+    public ModelAndView getPortlets(HttpServletRequest request) {
+        final boolean limitByFavoriteFlag = request.getParameter(FAVORITE_FLAG) != null;
+        final boolean favoriteValueToMatch =
+                Boolean.parseBoolean(request.getParameter(FAVORITE_FLAG));
+        final String requiredPermissionTypeParameter =
+                request.getParameter(REQUIRED_PERMISSION_TYPE);
+        final PortletPermissionType requiredPermissionType =
+                (requiredPermissionTypeParameter == null)
+                        ? PortletPermissionType.MANAGE
+                        : PortletPermissionType.valueOf(
+                                requiredPermissionTypeParameter.toUpperCase());
 
-        List<PortletTuple> rslt = new ArrayList<PortletTuple>();
-        for (IPortletDefinition pdef : allPortlets) {
-            if (ap.canManage(pdef.getPortletDefinitionId().getStringId())) {
-                rslt.add(new PortletTuple(pdef));
-            }
+        final Set<IPortletDefinition> favorites =
+                limitByFavoriteFlag ? getFavorites(request) : Collections.emptySet();
+        final List<IPortletDefinition> allPortlets =
+                portletDefinitionRegistry.getAllPortletDefinitions();
+        final IAuthorizationPrincipal ap = getAuthorizationPrincipal(request);
+
+        final Predicate<IPortletDefinition> favoritesPredicate =
+                p -> !limitByFavoriteFlag || favorites.contains(p) == favoriteValueToMatch;
+        final Predicate<IPortletDefinition> permissionsPredicate =
+                p -> this.doesUserHavePermissionToViewPortlet(ap, p, requiredPermissionType);
+        final List<PortletTuple> results =
+                allPortlets.stream()
+                        .filter(favoritesPredicate.and(permissionsPredicate))
+                        .map(PortletTuple::new)
+                        .collect(Collectors.toList());
+        return new ModelAndView("json", "portlets", results);
+    }
+
+    private boolean doesUserHavePermissionToViewPortlet(
+            IAuthorizationPrincipal ap,
+            IPortletDefinition portletDefinition,
+            PortletPermissionType requiredPermissionType) {
+        switch (requiredPermissionType) {
+            case BROWSE:
+                return this.authorizationService.canPrincipalBrowse(ap, portletDefinition);
+            case CONFIGURE:
+                return this.authorizationService.canPrincipalConfigure(
+                        ap, portletDefinition.getPortletDefinitionId().getStringId());
+            case MANAGE:
+                return this.authorizationService.canPrincipalManage(
+                        ap, portletDefinition.getPortletDefinitionId().getStringId());
+            case RENDER:
+                return this.authorizationService.canPrincipalRender(
+                        ap, portletDefinition.getPortletDefinitionId().getStringId());
+            case SUBSCRIBE:
+                return this.authorizationService.canPrincipalSubscribe(
+                        ap, portletDefinition.getPortletDefinitionId().getStringId());
+            default:
+                throw new IllegalArgumentException(
+                        "Unknown requiredPermissionType: " + requiredPermissionType);
         }
-
-        return new ModelAndView("json", "portlets", rslt);
     }
 
     /**
-     * Provides information about a single portlet in the registry. NOTE: Access to this API enpoint
-     * requires only <code>IPermission.PORTAL_SUBSCRIBE</code> permission.
+     * Provides information about a single portlet in the registry. NOTE: Access to this API
+     * endpoint requires only <code>IPermission.PORTAL_SUBSCRIBE</code> permission.
      */
-    @RequestMapping(value = "/portlet/{fname}.json", method = RequestMethod.GET)
+    @GetMapping(value = "/portlet/{fname}.json")
     public ModelAndView getPortlet(
             HttpServletRequest request, HttpServletResponse response, @PathVariable String fname)
             throws Exception {
@@ -112,10 +175,10 @@ public class PortletsRESTController {
     }
 
     /**
-     * Provides a single, fully-rendered portlet. NOTE: Access to this API enpoint requires only
+     * Provides a single, fully-rendered portlet. NOTE: Access to this API endpoint requires only
      * <code>IPermission.PORTAL_SUBSCRIBE</code> permission.
      */
-    @RequestMapping(value = "/v4-3/portlet/{fname}.html", method = RequestMethod.GET)
+    @GetMapping(value = "/v4-3/portlet/{fname}.html")
     public @ResponseBody String getRenderedPortlet(
             HttpServletRequest req, HttpServletResponse res, @PathVariable String fname) {
 
@@ -163,8 +226,7 @@ public class PortletsRESTController {
     private IAuthorizationPrincipal getAuthorizationPrincipal(HttpServletRequest req) {
         IPerson user = personManager.getPerson(req);
         EntityIdentifier ei = user.getEntityIdentifier();
-        IAuthorizationPrincipal rslt =
-                AuthorizationServiceFacade.instance().newPrincipal(ei.getKey(), ei.getType());
+        IAuthorizationPrincipal rslt = authorizationService.newPrincipal(ei.getKey(), ei.getType());
         return rslt;
     }
 
@@ -177,12 +239,20 @@ public class PortletsRESTController {
         return rslt;
     }
 
+    private Set<IPortletDefinition> getFavorites(HttpServletRequest request) {
+        final IUserInstance ui = userInstanceManager.getUserInstance(request);
+        final UserPreferencesManager upm = (UserPreferencesManager) ui.getPreferencesManager();
+        final IUserLayoutManager ulm = upm.getUserLayoutManager();
+        final IUserLayout layout = ulm.getUserLayout();
+        return favoritesUtils.getFavoritePortletDefinitions(layout);
+    }
+
     /*
      * Nested Types
      */
 
     @SuppressWarnings("unused")
-    private /* non-static */ final class PortletTuple implements Serializable {
+    protected /* non-static */ final class PortletTuple implements Serializable {
 
         private static final long serialVersionUID = 1L;
 
