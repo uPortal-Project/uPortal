@@ -2,7 +2,7 @@
   "name": "uportal",
   "private": true,
   "devDependencies": {
-    "eslint": "^8.0.0",
+    "eslint": "^8.43.0",
     "eslint-config-google": "^0.14.0",
     "eslint-config-prettier": "^8.0.0",
     "postcss-less": "^6.0.0",
@@ -28,6 +28,10 @@
       "google",
       "prettier"
     ],
+    "env": {
+      "es2023": true,
+      "browser": true
+    },
     "rules": {
       "indent": [
         "error",
