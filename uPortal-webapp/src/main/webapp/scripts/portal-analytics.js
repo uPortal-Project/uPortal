@@ -42,9 +42,16 @@
             return;
         }
 
+        const tab = document.querySelector('li.fl-tabs-active span');
+        const portletWrapper = event.target.closest('section.up-portlet-wrapper');
+        const portletTitleA = portletWrapper ? portletWrapper.querySelector('h2.portlet-title a') : null;
+
         var eventDetails = {
             type: 'link',
             url: anchorForEvent.href,
+            tab_name: tab ? tab.textContent : null,
+            portlet_id: portletWrapper ? portletWrapper.id : null,
+            portlet_name: portletTitleA ? portletTitleA.title : null,
         }
 
         fetch('/uPortal/api/analytics', {
