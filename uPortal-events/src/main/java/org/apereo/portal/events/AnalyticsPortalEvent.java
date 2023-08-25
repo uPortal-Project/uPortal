@@ -14,10 +14,8 @@
  */
 package org.apereo.portal.events;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.TimeZone;
 import java.time.ZonedDateTime;
+import java.util.Date;
 import org.apereo.portal.security.IPerson;
 
 public class AnalyticsPortalEvent extends PortalEvent {
@@ -78,7 +76,7 @@ public class AnalyticsPortalEvent extends PortalEvent {
     }
 
     public String getTabName() {
-    return tabName;
+        return tabName;
     }
 
     public String getPortletId() {

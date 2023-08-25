@@ -17,6 +17,7 @@ package org.apereo.portal.events;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -26,8 +27,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TimeZone;
-import java.time.ZonedDateTime;
 import java.util.concurrent.atomic.AtomicReference;
 import javax.portlet.PortletMode;
 import javax.portlet.WindowState;
@@ -581,15 +580,26 @@ public class PortalEventFactoryImpl implements IPortalEventFactory, ApplicationE
         // throws IllegalArgumentException
         String eventType = InputValidator.validateAsWordCharacters(rawEventType, "eventType");
         String rawEventUrl = (String) analyticsData.computeIfAbsent("url", key -> "");
-        String eventUrl = StringUtils.isBlank(rawEventUrl) ? "" : InputValidator.validateAsURL(rawEventUrl);
+        String eventUrl =
+                StringUtils.isBlank(rawEventUrl) ? "" : InputValidator.validateAsURL(rawEventUrl);
         String rawTabName = (String) analyticsData.computeIfAbsent("tab_name", key -> "UNKNOWN");
         String tabName = rawTabName;
-        String rawPortletId = (String) analyticsData.computeIfAbsent("portlet_id", key -> "UNKNOWN");
+        String rawPortletId =
+                (String) analyticsData.computeIfAbsent("portlet_id", key -> "UNKNOWN");
         String portletId = rawPortletId;
-        String rawPortletName = (String) analyticsData.computeIfAbsent("portlet_name", key -> "UNKNOWN");
+        String rawPortletName =
+                (String) analyticsData.computeIfAbsent("portlet_name", key -> "UNKNOWN");
         String portletName = rawPortletName;
-        final AnalyticsPortalEvent event = new AnalyticsPortalEvent(eventBuilder, person, eventDate, eventType,
-            eventUrl, tabName, portletId, portletName);
+        final AnalyticsPortalEvent event =
+                new AnalyticsPortalEvent(
+                        eventBuilder,
+                        person,
+                        eventDate,
+                        eventType,
+                        eventUrl,
+                        tabName,
+                        portletId,
+                        portletName);
         this.applicationEventPublisher.publishEvent(event);
     }
 
