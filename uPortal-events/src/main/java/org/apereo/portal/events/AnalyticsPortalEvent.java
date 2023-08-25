@@ -17,6 +17,7 @@ package org.apereo.portal.events;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
+import java.time.ZonedDateTime;
 import org.apereo.portal.security.IPerson;
 
 public class AnalyticsPortalEvent extends PortalEvent {
@@ -26,13 +27,19 @@ public class AnalyticsPortalEvent extends PortalEvent {
     private final Date eventDate;
     private final String type;
     private final String url;
+    private final String tabName;
+    private final String portletId;
+    private final String portletName;
 
     AnalyticsPortalEvent() {
         super();
         user = "UNKNOWN";
-        eventDate = Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTime();
+        eventDate = Date.from(ZonedDateTime.now().toInstant());
         type = "UNKNOWN";
         url = "";
+        tabName = "";
+        portletId = "";
+        portletName = "";
     }
 
     AnalyticsPortalEvent(
@@ -40,12 +47,18 @@ public class AnalyticsPortalEvent extends PortalEvent {
             IPerson user,
             Date eventDate,
             String type,
-            String url) {
+            String url,
+            String tabName,
+            String portletId,
+            String portletName) {
         super(portalEventBuilder);
         this.user = user.getUserName();
         this.eventDate = eventDate;
         this.type = type;
         this.url = url;
+        this.tabName = tabName;
+        this.portletId = portletId;
+        this.portletName = portletName;
     }
 
     public String getUser() {
@@ -64,6 +77,18 @@ public class AnalyticsPortalEvent extends PortalEvent {
         return url;
     }
 
+    public String getTabName() {
+    return tabName;
+    }
+
+    public String getPortletId() {
+        return portletId;
+    }
+
+    public String getPortletName() {
+        return portletName;
+    }
+
     @Override
     public String toString() {
         return super.toString()
@@ -74,6 +99,12 @@ public class AnalyticsPortalEvent extends PortalEvent {
                 + ", type="
                 + type
                 + ", url="
-                + url;
+                + url
+                + ", tabName="
+                + tabName
+                + ", portletId="
+                + portletId
+                + ", portletName="
+                + portletName;
     }
 }
