@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import org.apereo.portal.IUserIdentityStore;
@@ -35,6 +36,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sun.org.apache.xerces.internal.dom.DocumentImpl;
 
 public class BasePersonManager implements IPersonManager {
 
@@ -52,6 +58,7 @@ public class BasePersonManager implements IPersonManager {
     private IdTokenFactory idTokenFactory;
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
+    private ObjectMapper mapper = new ObjectMapper();
 
     /**
      * To avoid circular reference issues, this bean obtains its dependencies when the context
@@ -67,7 +74,69 @@ public class BasePersonManager implements IPersonManager {
         }
         Collections.sort(guestUsernameSelectors);
     }
+    
+    // TODO this is identical to UserInstanceManager.convertIPersonToMap
+    // DRY this one out
+    public Map<String, Object> convertIPersonToMap(IPerson person) {
+    	Map<String, Object> personMap = new ConcurrentHashMap<>();
+    	Map<String, List<Object>> attributeMap = person.getAttributeMap();    	
+    	Map<String, List<Object>> filteredMap = new ConcurrentHashMap<>();
+    	attributeMap.forEach((k, v) -> {
+    		if ("UserProfile".equals(k)) {
+    			// ignore, we'll rebuild it
+    			return;
+    		}
+    		if ("RDBMDistributedLayoutStore.PLF".equals(k)) {
+    			logger.error("RDBMDistributedLayoutStore.PLF [" + v.getClass() + ":" + v + "]");
+    			try {
+					String documentStr = mapper.writeValueAsString(v.get(0));
+		    		filteredMap.put(k, Collections.singletonList(documentStr));
+				} catch (JsonProcessingException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+    			return;
+    		}
+    		if ("remoteUser".equals(k) && k == null) {
+    			// can't handle nulls, we'll rebuild
+    			return;
+    		}
+    		filteredMap.put(k, v);
+    	});
+    	personMap.put("id", person.getID());
+    	personMap.put("attributeMap", filteredMap);
+    	return personMap;
+    }
 
+    // TODO this is identical to UserInstanceManager.convertMapToIPerson
+    // DRY this one out
+    public IPerson convertMapToIPerson(Map<String, Object> personMap) {
+    	PersonImpl person = new PersonImpl();
+    	int id = (Integer) personMap.get("id");
+    	Map<String, Object> attributeMap = (Map<String, Object>) personMap.get("attributeMap");
+    	person.setID(id);
+    	person.setSecurityContext(initialSecurityContextFactory.getInitialContext());
+    	attributeMap.forEach((k, v) -> {
+    		if ("RDBMDistributedLayoutStore.PLF".equals(k)) {
+				try {
+					List<Object> vList = (List<Object>) v;
+					DocumentImpl document = mapper.readValue((String) vList.get(0), DocumentImpl.class);
+					logger.error("document after readValue [" + document + "]");
+	    			person.setAttribute(k, document);
+	    			return;
+				} catch (JsonMappingException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (JsonProcessingException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+    		}
+    		person.setAttribute(k, v);
+    	});       
+    	return person;
+    }
+    
     /**
      * This is a basic implementation of <code>getPerson</code> that formerly appeared in <code>
      * SimplePersonManager</code>. For uPortal 5, it's better to avoid unnecessary bean tweaking on
@@ -84,8 +153,10 @@ public class BasePersonManager implements IPersonManager {
 
         // Return the person object if it exists in the user's session
         if (session != null) {
-            person = (IPerson) session.getAttribute(PERSON_SESSION_KEY);
-            logger.debug("getPerson -- person object retrieved from session is [{}]", person);
+        	if (session.getAttribute(PERSON_SESSION_KEY) != null) {
+        		Map<String, Object> personMap = (Map<String, Object>) session.getAttribute(PERSON_SESSION_KEY);
+        		person = convertMapToIPerson(personMap);
+        	}
         }
 
         if (person == null) {
@@ -99,7 +170,8 @@ public class BasePersonManager implements IPersonManager {
             }
             // Add this person object to the user's session
             if (person != null && session != null) {
-                session.setAttribute(PERSON_SESSION_KEY, person);
+            	Map<String, Object> personMap = convertIPersonToMap(person);
+        		session.setAttribute(PERSON_SESSION_KEY, personMap);
             }
         }
 

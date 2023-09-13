@@ -15,6 +15,8 @@
 package org.apereo.portal.security.provider;
 
 import java.util.Enumeration;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import org.apereo.portal.security.IPerson;
@@ -57,7 +59,24 @@ public class RemoteUserPersonManager extends BasePersonManager {
         final HttpSession session = request.getSession(false);
         IPerson person = null;
         if (session != null) {
-            person = (IPerson) session.getAttribute(PERSON_SESSION_KEY);
+        	Map<String, Object> personMap = (Map<String, Object>) session.getAttribute(PERSON_SESSION_KEY);
+//        	Map<String,Object> personAttributeMap = (Map<String, Object>) session.getAttribute(PERSON_SESSION_KEY);
+//        	PersonImpl personImpl = new PersonImpl();
+//        	personAttributeMap.forEach((k, v) -> {
+//        		personImpl.setAttribute(k, v);
+//        	});
+
+        	String personString = (String) session.getAttribute(PERSON_SESSION_KEY);
+//        	logger.error("getAttribute personString [" + personString + "]");
+        	if (personString != null) {
+//        		person = this.convertJsonToIPerson(personString);
+        		person = this.convertMapToIPerson(personMap);
+        	}
+//        	person = personImpl;
+//	        person.setSecurityContext(initialSecurityContextFactory.getInitialContext());
+//        	person = getIPersonFromSession(request, PERSON_SESSION_KEY);
+
+//            person = (IPerson) session.getAttribute(PERSON_SESSION_KEY);
             if (person != null) {
                 return person;
             }
@@ -114,7 +133,12 @@ public class RemoteUserPersonManager extends BasePersonManager {
         }
         if (session != null) {
             // Add this person object to the user's session
-            session.setAttribute(PERSON_SESSION_KEY, person);
+//            session.setAttribute(PERSON_SESSION_KEY, person);
+//        	String personString = this.convertIPersonToJson(person);
+//        	session.setAttribute(PERSON_SESSION_KEY, personString);
+        	session.setAttribute(PERSON_SESSION_KEY, person.getAttributeMap());
+
+
         }
         // Return the new person object
         return (person);

@@ -115,9 +115,13 @@ public class PersonImpl implements IPerson {
     public void setAttribute(String key, Object value) {
         if (value == null) {
             setAttribute(key, null);
-        } else {
-            setAttribute(key, Collections.singletonList(value));
+            return;
         }
+        if (value instanceof List) {
+        	setAttribute(key, (List) value);
+        	return;
+        }
+        setAttribute(key, Collections.singletonList(value));
     }
 
     @Override
