@@ -51,4 +51,23 @@ class PortletDefinitionIdImpl extends AbstractObjectId implements IPortletDefini
     public long getLongId() {
         return this.longId;
     }
+
+    // TODO this matches PortletWindowDataDeserializer.InternalPortletDefinitionId
+    // May want to make this class publicly available and delete the InternalPortletDefinitionId
+    // to DRY out the code
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + (int) longId;
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null) return false;
+        IPortletDefinitionId other = (IPortletDefinitionId) obj;
+        return getStringId().equals(other.getStringId());
+    }
 }

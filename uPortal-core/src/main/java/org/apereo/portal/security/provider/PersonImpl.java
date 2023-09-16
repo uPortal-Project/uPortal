@@ -118,8 +118,8 @@ public class PersonImpl implements IPerson {
             return;
         }
         if (value instanceof List) {
-        	setAttribute(key, (List) value);
-        	return;
+            setAttribute(key, (List) value);
+            return;
         }
         setAttribute(key, Collections.singletonList(value));
     }

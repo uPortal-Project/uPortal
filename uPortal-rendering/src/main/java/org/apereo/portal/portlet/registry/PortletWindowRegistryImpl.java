@@ -14,8 +14,14 @@
  */
 package org.apereo.portal.portlet.registry;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Sets;
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -29,6 +35,7 @@ import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.Namespace;
 import javax.xml.stream.events.StartElement;
 import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.pluto.container.PortletWindow;
 import org.apache.pluto.container.PortletWindowID;
 import org.apache.pluto.container.om.portlet.PortletDefinition;
@@ -57,6 +64,7 @@ import org.apereo.portal.utils.Tuple;
 import org.apereo.portal.utils.web.PortalWebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.WebUtils;
@@ -66,7 +74,7 @@ import org.springframework.web.util.WebUtils;
  * IPortletWindow objects is a Map stored in the HttpSession for the user.
  */
 @Service
-public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
+public class PortletWindowRegistryImpl implements IPortletWindowRegistry, InitializingBean {
     public static final QName PORTLET_WINDOW_ID_ATTR_NAME = new QName("portletWindowId");
 
     private static final String STATELESS_PORTLET_WINDOW_ID = "tw";
@@ -88,6 +96,7 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
     private IUserInstanceManager userInstanceManager;
     private IPortalRequestUtils portalRequestUtils;
     private IUrlSyntaxProvider urlSyntaxProvider;
+    private ObjectMapper mapper;
 
     /**
      * The set of WindowStates that should be copied to the {@link IPortletEntity} when {@link
@@ -125,6 +134,15 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
     @Autowired
     public void setPortalRequestUtils(IPortalRequestUtils portalRequestUtils) {
         this.portalRequestUtils = portalRequestUtils;
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        mapper = new ObjectMapper();
+        SimpleModule module = new SimpleModule();
+        module.addSerializer(PortletWindowData.class, new PortletWindowDataSerializer());
+        module.addDeserializer(PortletWindowData.class, new PortletWindowDataDeserializer());
+        mapper.registerModule(module);
     }
 
     /* (non-Javadoc)
@@ -237,6 +255,7 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
         }
 
         // Cache the wrapped window in the request
+        storeWindowDataMapToSession(request, portletWindowData);
         return portletWindowMap.storeIfAbsentWindow(portletWindow);
     }
 
@@ -280,6 +299,7 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
             return null;
         }
 
+        storeWindowDataMapToSession(request, portletWindowData);
         portletWindow = this.wrapPortletWindowData(request, portletWindowData);
 
         // Cache the wrapped window in the request
@@ -514,6 +534,27 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
         }
     }
 
+    // This method must be called any time PortletWindowData is stored to the cache.
+    // This way, when the cache is needed, it can rebuild the PortletWindowData objects
+    // from the session
+    private void storeWindowDataMapToSession(
+            HttpServletRequest request, PortletWindowData portletWindowData) {
+        if (portletWindowData == null) {
+            logger.warn("portletWindowData is null, returning");
+            return;
+        }
+        final IPortletEntityId portletEntityId = portletWindowData.getPortletEntityId();
+        String portletEntityIdStr = portletEntityId.getStringId();
+        try {
+            String key = PORTLET_WINDOW_DATA_ATTRIBUTE + ":" + portletEntityIdStr;
+            String portletWindowDataStr = mapper.writeValueAsString(portletWindowData);
+            HttpSession session = request.getSession();
+            session.setAttribute(key, portletWindowDataStr);
+        } catch (JsonProcessingException e) {
+            logger.error("unable to convert windowDataMap to string [" + e.getMessage(), e);
+        }
+    }
+
     @Override
     public IPortletWindow getOrCreateStatelessPortletWindow(
             HttpServletRequest request, IPortletWindowId basePortletWindowId) {
@@ -566,6 +607,7 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
 
             final PortletWindowData portletWindowData =
                     new PortletWindowData(statelessPortletWindowId, portletEntityId);
+            storeWindowDataMapToSession(request, portletWindowData);
             statelessPortletWindowDataMap.storeWindow(portletWindowData);
 
             statelessPortletWindow =
@@ -583,6 +625,7 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
                     basePortletWindow.getPublicRenderParameters());
             portletWindowData.setRenderParameters(basePortletWindow.getRenderParameters());
 
+            storeWindowDataMapToSession(request, portletWindowData);
             statelessPortletWindowDataMap.storeWindow(portletWindowData);
 
             final IPortletEntity portletEntity = basePortletWindow.getPortletEntity();
@@ -770,6 +813,24 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
         return this.getPortletWindowDataMap(request, true);
     }
 
+    private PortletWindowData convertPortletWindowDataStrToPortletWindowData(
+            String portletWindowDataStr) {
+        if (StringUtils.isBlank(portletWindowDataStr)) {
+            return null;
+        }
+
+        try {
+            TypeReference<PortletWindowData> typeRef = new TypeReference<PortletWindowData>() {};
+            PortletWindowData windowData = mapper.readValue(portletWindowDataStr, typeRef);
+            return windowData;
+        } catch (JsonMappingException e1) {
+            logger.error("JsonMappingException [" + e1.getMessage() + "]", e1);
+        } catch (JsonProcessingException e1) {
+            logger.error("JsonProcessingException [" + e1.getMessage() + "]", e1);
+        }
+        return null;
+    }
+
     @SuppressWarnings("unchecked")
     protected PortletWindowCache<PortletWindowData> getPortletWindowDataMap(
             HttpServletRequest request, boolean create) {
@@ -780,15 +841,37 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
         }
 
         PortletWindowCache<PortletWindowData> windowCache;
-
+        // set to true to use redisson, false to use sticky sessions since cache
+        // cannot be serialized
+        boolean enableRedisson = true;
         final Object mutex = WebUtils.getSessionMutex(session);
         synchronized (mutex) {
-            windowCache =
-                    (PortletWindowCache<PortletWindowData>)
-                            session.getAttribute(PORTLET_WINDOW_DATA_ATTRIBUTE);
-            if (windowCache == null) {
+            if (!enableRedisson) {
+                // current working version, stores the Cache in a session attribute,
+                // cannot be used with redisson session caching
+                windowCache =
+                        (PortletWindowCache<PortletWindowData>)
+                                session.getAttribute(PORTLET_WINDOW_DATA_ATTRIBUTE);
+                if (windowCache == null) {
+                    windowCache = new PortletWindowCache<>();
+                    session.setAttribute(PORTLET_WINDOW_DATA_ATTRIBUTE, windowCache);
+                }
+            } else {
+                // new version, works but not completely tested,
+                // can be used with redisson session caching
                 windowCache = new PortletWindowCache<>();
-                session.setAttribute(PORTLET_WINDOW_DATA_ATTRIBUTE, windowCache);
+                Enumeration<String> windowDataStrings = session.getAttributeNames();
+                while (windowDataStrings.hasMoreElements()) {
+                    String name = windowDataStrings.nextElement();
+                    if (name.startsWith(PORTLET_WINDOW_DATA_ATTRIBUTE + ":")) {
+                        String windowDataStr = (String) session.getAttribute(name);
+                        PortletWindowData windowData =
+                                convertPortletWindowDataStrToPortletWindowData(windowDataStr);
+                        if (windowData != null) {
+                            windowCache.storeWindow(windowData);
+                        }
+                    }
+                }
             }
         }
 
@@ -820,7 +903,11 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
             HttpServletRequest request,
             IPortletEntityId portletEntityId,
             IPortletWindowId portletWindowId) {
-        return getOrCreateDefaultPortletWindowData(request, portletEntityId, portletWindowId, null);
+        PortletWindowData portletWindowData =
+                getOrCreateDefaultPortletWindowData(
+                        request, portletEntityId, portletWindowId, null);
+        storeWindowDataMapToSession(request, portletWindowData);
+        return portletWindowData;
     }
 
     protected PortletWindowData getOrCreateDefaultPortletWindowData(
@@ -847,6 +934,7 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
 
         // Store in the session cache
         portletWindowData = portletWindowDataMap.storeIfAbsentWindow(portletWindowData);
+        storeWindowDataMapToSession(request, portletWindowData);
         logger.trace(
                 "Created PortletWindowData {} and stored session cache, wrapping as IPortletWindow and returning",
                 portletWindowData.getPortletWindowId());
