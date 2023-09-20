@@ -14,8 +14,14 @@
  */
 package org.apereo.portal.portlet.registry;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.google.common.base.Function;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -28,6 +34,7 @@ import javax.servlet.http.HttpSession;
 import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.Element;
 import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.portal.EntityIdentifier;
 import org.apereo.portal.IUserPreferencesManager;
 import org.apereo.portal.PortalException;
@@ -60,6 +67,7 @@ import org.apereo.portal.utils.ConcurrentMapUtils;
 import org.apereo.portal.utils.web.PortalWebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.orm.hibernate3.HibernateOptimisticLockingFailureException;
@@ -75,7 +83,7 @@ import org.springframework.web.util.WebUtils;
  * cleaning up entity objects
  */
 @Service
-public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
+public class PortletEntityRegistryImpl implements IPortletEntityRegistry, InitializingBean {
 
     private static final String PORTLET_ENTITY_DATA_ATTRIBUTE =
             PortletEntityRegistryImpl.class.getName() + ".PORTLET_ENTITY_DATA";
@@ -94,6 +102,7 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
     private IPortalRequestUtils portalRequestUtils;
     private IStylesheetDescriptorDao stylesheetDescriptorDao;
     private Ehcache entityIdParseCache;
+    private ObjectMapper mapper;
 
     @Autowired
     public void setStylesheetDescriptorDao(IStylesheetDescriptorDao stylesheetDescriptorDao) {
@@ -125,6 +134,15 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
     @Autowired
     public void setPortalRequestUtils(IPortalRequestUtils portalRequestUtils) {
         this.portalRequestUtils = portalRequestUtils;
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        mapper = new ObjectMapper();
+        SimpleModule module = new SimpleModule();
+        module.addSerializer(PortletEntityData.class, new PortletEntityDataSerializer());
+        module.addDeserializer(PortletEntityData.class, new PortletEntityDataDeserializer());
+        mapper.registerModule(module);
     }
 
     /* (non-Javadoc)
@@ -262,6 +280,8 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
                 this.createConsistentPortletEntityId(portletDefinitionId, layoutNodeId, userId);
         PortletEntityData portletEntityData =
                 new PortletEntityData(portletEntityId, portletDefinitionId, layoutNodeId, userId);
+        // TODO store data
+        storeEntityDataMapToSession(request, portletEntityData);
         portletEntityData = portletEntityDataMap.storeIfAbsentEntity(portletEntityData);
 
         portletEntity = wrapPortletEntityData(portletEntityData);
@@ -433,6 +453,10 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
                         // Add to session cache
                         final PortletEntityCache<PortletEntityData> portletEntityDataMap =
                                 this.getPortletEntityDataMap(request);
+                        // TODO store data
+                        storeEntityDataMapToSession(
+                                request,
+                                ((SessionPortletEntityImpl) portletEntity).getPortletEntityData());
                         portletEntityDataMap.storeIfAbsentEntity(
                                 ((SessionPortletEntityImpl) portletEntity).getPortletEntityData());
                     }
@@ -589,8 +613,9 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
         // Remove from session cache
         final PortletEntityCache<PortletEntityData> portletEntityDataMap =
                 this.getPortletEntityDataMap(request);
+        // TODO store data
         portletEntityDataMap.removeEntity(portletEntityId);
-
+        removePortletEntityDataFromSesssion(request, portletEntityId);
         if (!cacheOnly && portletEntity instanceof PersistentPortletEntityWrapper) {
             final IPortletEntity persistentEntity =
                     ((PersistentPortletEntityWrapper) portletEntity).getPersistentEntity();
@@ -639,12 +664,13 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
         final PortletEntityCache<PortletEntityData> portletEntityDataMap =
                 this.getPortletEntityDataMap(request);
         final PortletEntityData portletEntityData;
+        // TODO store data
         if (portletEntityId != null) {
             portletEntityData = portletEntityDataMap.getEntity(portletEntityId);
         } else {
             portletEntityData = portletEntityDataMap.getEntity(layoutNodeId, userId);
         }
-
+        storeEntityDataMapToSession(request, portletEntityData);
         if (portletEntityData != null) {
 
             // Stick the entity wrapper in the request map (if it wasn't already added by another
@@ -850,21 +876,95 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
         return cache;
     }
 
+    private PortletEntityData convertPortletEntityDataStrToPortletEntityData(
+            String portletEntityDataStr) {
+        if (StringUtils.isBlank(portletEntityDataStr)) {
+            return null;
+        }
+
+        try {
+            TypeReference<PortletEntityData> typeRef = new TypeReference<PortletEntityData>() {};
+            PortletEntityData portletEntityData = mapper.readValue(portletEntityDataStr, typeRef);
+            return portletEntityData;
+        } catch (JsonMappingException e1) {
+            logger.error("JsonMappingException [" + e1.getMessage() + "]", e1);
+        } catch (JsonProcessingException e1) {
+            logger.error("JsonProcessingException [" + e1.getMessage() + "]", e1);
+        }
+        return null;
+    }
+
+    // This method must be called any time PortletEntityData is removed from the cache.
+    // This way, when the cache is needed, the removed entity won't be added back into
+    // the cache.
+    private void removePortletEntityDataFromSesssion(
+            HttpServletRequest request, IPortletEntityId portletEntityId) {
+        if (portletEntityId == null) {
+            logger.debug("portletEntityId is null, returning");
+            return;
+        }
+        String portletEntityIdStr = portletEntityId.getStringId();
+        String key = PORTLET_ENTITY_DATA_ATTRIBUTE + ":" + portletEntityIdStr;
+        HttpSession session = request.getSession();
+        session.removeAttribute(key);
+    }
+
+    // This method must be called any time PortletEntityData is stored to the cache.
+    // This way, when the cache is needed, it can rebuild the PortletWindowData objects
+    // from the session
+    private void storeEntityDataMapToSession(
+            HttpServletRequest request, PortletEntityData portletEntityData) {
+        if (portletEntityData == null) {
+            logger.warn("portletEntityData is null, returning without saving to session");
+            return;
+        }
+        final IPortletEntityId portletEntityId = portletEntityData.getPortletEntityId();
+        String portletEntityIdStr = portletEntityId.getStringId();
+        try {
+            String key = PORTLET_ENTITY_DATA_ATTRIBUTE + ":" + portletEntityIdStr;
+            String portletEntityDataStr = mapper.writeValueAsString(portletEntityData);
+            HttpSession session = request.getSession();
+            session.setAttribute(key, portletEntityDataStr);
+        } catch (JsonProcessingException e) {
+            logger.error("unable to convert portletEntityData to string [" + e.getMessage(), e);
+        }
+    }
+
     protected PortletEntityCache<PortletEntityData> getPortletEntityDataMap(
             HttpServletRequest request) {
         request = portalRequestUtils.getOriginalPortalRequest(request);
         final HttpSession session = request.getSession();
+        boolean enableRedisson = true;
         final Object mutex = WebUtils.getSessionMutex(session);
         synchronized (mutex) {
-            @SuppressWarnings("unchecked")
-            PortletEntityCache<PortletEntityData> cache =
-                    (PortletEntityCache<PortletEntityData>)
-                            session.getAttribute(PORTLET_ENTITY_DATA_ATTRIBUTE);
-            if (cache == null) {
-                cache = new PortletEntityCache<PortletEntityData>();
-                session.setAttribute(PORTLET_ENTITY_DATA_ATTRIBUTE, cache);
+            if (!enableRedisson) {
+                @SuppressWarnings("unchecked")
+                PortletEntityCache<PortletEntityData> cache =
+                        (PortletEntityCache<PortletEntityData>)
+                                session.getAttribute(PORTLET_ENTITY_DATA_ATTRIBUTE);
+                if (cache == null) {
+                    cache = new PortletEntityCache<PortletEntityData>();
+                    session.setAttribute(PORTLET_ENTITY_DATA_ATTRIBUTE, cache);
+                }
+                return cache;
+            } else {
+                PortletEntityCache<PortletEntityData> cache =
+                        new PortletEntityCache<PortletEntityData>();
+                Enumeration<String> portletEntityStrings = session.getAttributeNames();
+                while (portletEntityStrings.hasMoreElements()) {
+                    String name = portletEntityStrings.nextElement();
+                    if (name.startsWith(PORTLET_ENTITY_DATA_ATTRIBUTE + ":")) {
+                        String portletEntityDataStr = (String) session.getAttribute(name);
+                        PortletEntityData windowData =
+                                convertPortletEntityDataStrToPortletEntityData(
+                                        portletEntityDataStr);
+                        if (windowData != null) {
+                            cache.storeEntity(windowData);
+                        }
+                    }
+                }
+                return cache;
             }
-            return cache;
         }
     }
 
