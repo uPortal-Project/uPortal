@@ -56,6 +56,17 @@
         <context:exclude-filter type="regex" expression="org\.apereo\.portal\.health\..+"/>
     </context:component-scan>
 
+    <!--
+    These two configurations would normally be handled by Spring Boot with the annotations
+    @EnableSpringHttpSession and @EnableRedisHttpSession
+    Since we're not running spring boot, these two configurations are manually added so that the
+    required beans are created.
+    NOTE - there's also a sessionContext.xml that creates an additional bean, which also might go
+    away during a migration to Spring Boot
+     -->
+    <context:component-scan base-package="org.springframework.session.config.annotation.web.http"/>
+    <context:component-scan base-package="org.springframework.session.data.redis.config"/>
+
     <bean id="primaryPropertyPlaceholderConfigurer" class="org.springframework.context.support.PortalPropertySourcesPlaceholderConfigurer">
         <property name="locations">
             <list>
