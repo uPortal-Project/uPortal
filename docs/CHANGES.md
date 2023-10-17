@@ -1,5 +1,9 @@
 ## Next Release
 
+## v5.15.2
+
+- new external storage option (Redis) for sessions; see `README.md` under new uPortal-session submodule
+
 ## v5.15.0
 
 - new cache, org.apereo.portal.i18n.RDBMLocaleStore.userLocales in `ehcache.xml`/`ehcache-no-jgroups.xml`
