@@ -25,7 +25,7 @@ Contributors guide: https://github.com/Jasig/uPortal/blob/master/CONTRIBUTING.md
 
 <!-- Reference Links -->
 
-[individual contributor license agreement]: https://github.com/Jasig/uPortal/blob/master/CONTRIBUTING.md#individual-contributor-license-agreement
-[commit guidelines]: https://github.com/Jasig/uPortal/blob/master/CONTRIBUTING.md#commit
+[individual contributor license agreement]: https://github.com/Jasig/uPortal/blob/master/.github/CONTRIBUTING.md#individual-contributor-license-agreement
+[commit guidelines]: https://github.com/Jasig/uPortal/blob/master/.github/CONTRIBUTING.md#commit
 [message properties]: https://github.com/Jasig/uPortal/tree/master/uportal-war/src/main/resources/properties/i18n
 [WCAG 2.0 AA]: https://www.w3.org/WAI/WCAG20/quickref/?levels=aaa&technologies=smil%2Cpdf%2Cflash%2Csl
