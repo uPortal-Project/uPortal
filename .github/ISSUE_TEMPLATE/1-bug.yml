@@ -1,0 +1,70 @@
+name: 🐛 Bug report
+description: Describe a problem
+
+body:
+  - type: textarea
+    id: describe-the-bug
+    attributes:
+      label: Describe the bug
+      description: A clear and concise description of what the bug is.
+    validations:
+      required: true
+  - type: textarea
+    id: steps-to-reproduce
+    attributes:
+      label: Steps to reproduce
+      description: Steps to reproduce the behavior.
+      placeholder: |
+        1. Go to '...'
+        2. Click on '....'
+        3. Scroll down to '....'
+        4. See error
+    validations:
+      required: true
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: Expected behavior
+      description: A clear and concise description of what you expected to happen.
+    validations:
+      required: true
+  - type: textarea
+    id: stacktrace
+    attributes:
+      label: Stacktrace
+      description: If applicable, a stacktrace to help explain your problem.
+  - type: input
+    id: uportal-version
+    attributes:
+      label: uPortal version
+      description: What version of uPortal are you using?
+      placeholder: uPortal 5.15.0
+    validations:
+      required: true
+  - type: dropdown
+    id: operating-system
+    attributes:
+      label: OS
+      description: What operating system are you using?
+      multiple: true
+      options:
+        - Windows
+        - Linux
+        - macOS
+        - Other (please specify in steps to reproduce)
+    validations:
+      required: false
+  - type: dropdown
+    id: browser
+    attributes:
+      label: Browser
+      description: What browser are you using?
+      multiple: true
+      options:
+        - Chrome
+        - Safari
+        - Edge
+        - FireFox
+        - Other (please specify in steps to reproduce)
+    validations:
+      required: false

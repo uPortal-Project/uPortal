@@ -1,5 +1,7 @@
 ## Next Release
 
+## v5.15.0
+
 - new cache, org.apereo.portal.i18n.RDBMLocaleStore.userLocales in `ehcache.xml`/`ehcache-no-jgroups.xml`
     ```xml
          <!--
