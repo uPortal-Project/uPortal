@@ -78,7 +78,11 @@ public class AnalyticsIncorporationComponentEventSerializationTest {
         final String result =
                 analyticsIncorporationComponent.serializePortletRenderExecutionEvents(portalEvents);
 
-        assertEquals("{\"pw1\":{\"fname\":\"fname1\",\"executionTimeNano\":123450000}}", result);
+        ObjectMapper objectMapper = new ObjectMapper();
+        assertEquals(
+                objectMapper.readTree(
+                        "{\"pw1\":{\"fname\":\"fname1\",\"executionTimeNano\":123450000}}"),
+                objectMapper.readTree(result));
     }
 
     private static class TestableAnalyticsIncorporationComponent
@@ -136,9 +140,11 @@ public class AnalyticsIncorporationComponentEventSerializationTest {
 
         final String result = portletEventWriter.writeValueAsString(createEvent());
 
+        ObjectMapper objectMapper = new ObjectMapper();
         assertEquals(
-                "{\"@c\":\".PortletRenderExecutionEvent\",\"fname\":\"fname1\",\"executionTimeNano\":123450000,\"parameters\":{}}",
-                result);
+                objectMapper.readTree(
+                        "{\"@c\":\".PortletRenderExecutionEvent\",\"fname\":\"fname1\",\"executionTimeNano\":123450000,\"parameters\":{}}"),
+                objectMapper.readTree(result));
     }
 
     /**
