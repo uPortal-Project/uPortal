@@ -139,9 +139,9 @@ subprojects {
         required { gradle.taskGraph.hasTask('uploadArchives') }
         sign configurations.archives
     }
-    tasks.withType(Javadoc) {
-        // FIXME: Fix errors rather than supressing them
-        failOnError = false
+    tasks.withType(Javadoc).all {
+        // disable JavaDocs until we start using them again in our website
+        enabled = false
     }
     tasks.withType(Jar) {
         from(project.projectDir) {
