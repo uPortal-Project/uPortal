@@ -28,11 +28,6 @@
 
     <display-name>uPortal</display-name>
 
-    <context-param>
-        <param-name>contextConfigLocation</param-name>
-        <param-value>classpath:/properties/contexts/*.xml,classpath:/properties/contextOverrides/*.xml</param-value>
-    </context-param>
-
     <!-- Needed to remove JMX registration and allow for classloader GC. Should be first listener per http://logback.qos.ch/manual/loggingSeparation.html#hotDeploy -->
     <listener>
         <listener-class>ch.qos.logback.classic.selector.servlet.ContextDetachingSCL</listener-class>
@@ -43,13 +38,6 @@
      +-->
     <listener>
         <listener-class>org.apereo.portal.utils.PortalApplicationContextLocator</listener-class>
-    </listener>
-
-    <!--
-     | Loads/Unloads the Spring WebApplicationContext
-     +-->
-    <listener>
-        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
 
     <!--

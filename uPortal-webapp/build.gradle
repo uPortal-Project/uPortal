@@ -39,6 +39,7 @@ dependencies {
     api project(':uPortal-security:uPortal-security-authn')
     api project(':uPortal-security:uPortal-security-xslt')
     api project(':uPortal-security:uPortal-security-filters')
+    api project(':uPortal-session')
     api project(':uPortal-soffit:uPortal-soffit-connector')
     api project(':uPortal-utils:uPortal-utils-jmx')
     api project(':uPortal-utils:uPortal-utils-url')
