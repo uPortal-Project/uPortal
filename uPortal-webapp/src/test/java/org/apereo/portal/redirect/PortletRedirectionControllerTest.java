@@ -19,6 +19,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import org.junit.Before;
@@ -45,7 +46,7 @@ public class PortletRedirectionControllerTest {
         ExternalRedirectionUrl url = new ExternalRedirectionUrl();
         url.setUrl("http://somewhere.com/something");
 
-        Map<String, String[]> additionalParameters = new HashMap<String, String[]>();
+        Map<String, String[]> additionalParameters = new LinkedHashMap<String, String[]>();
         additionalParameters.put("action", new String[] {"show"});
         additionalParameters.put("list", new String[] {"v1", "v2"});
         url.setAdditionalParameters(additionalParameters);
