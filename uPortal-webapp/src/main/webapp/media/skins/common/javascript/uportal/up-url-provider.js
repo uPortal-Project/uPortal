@@ -19,33 +19,33 @@
 var uportal = uportal || {};
 
 (function ($, fluid) {
-  /**
-   * Instantiate a LayoutPersistence component
-   *
-   * @param {Object} component Container the element containing the fragment browser
-   * @param {Object} options configuration options for the components
-   */
-  up.UrlProvider = function (container, options) {
-    // construct the new component
-    var that = fluid.initView('up.UrlProvider', container, options);
+    /**
+     * Instantiate a LayoutPersistence component
+     *
+     * @param {Object} component Container the element containing the fragment browser
+     * @param {Object} options configuration options for the components
+     */
+    up.UrlProvider = function (container, options) {
+        // construct the new component
+        var that = fluid.initView('up.UrlProvider', container, options);
 
-    that.getPortletUrl = function (fname) {
-      return that.options.portalContext + '/p/' + fname;
+        that.getPortletUrl = function (fname) {
+            return that.options.portalContext + '/p/' + fname;
+        };
+
+        that.getTabUrl = function (tabId) {
+            return that.options.portalContext + '/f/' + tabId;
+        };
+
+        that.getPortalHomeUrl = function () {
+            return that.options.portalContext + '/';
+        };
+
+        return that;
     };
 
-    that.getTabUrl = function (tabId) {
-      return that.options.portalContext + '/f/' + tabId;
-    };
-
-    that.getPortalHomeUrl = function () {
-      return that.options.portalContext + '/';
-    };
-
-    return that;
-  };
-
-  // defaults
-  fluid.defaults('up.UrlProvider', {
-    portalContext: '/uPortal'
-  });
+    // defaults
+    fluid.defaults('up.UrlProvider', {
+        portalContext: '/uPortal',
+    });
 })(jQuery, fluid);

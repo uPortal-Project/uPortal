@@ -19,130 +19,133 @@
 var uportal = uportal || {};
 
 (function ($, fluid) {
-  /**
-   * Initialize the flyout menu item
-   */
-  var init = function (that) {
-    zIndexWorkaround(that);
+    /**
+     * Initialize the flyout menu item
+     */
+    var init = function (that) {
+        zIndexWorkaround(that);
 
-    // set the mouseover event
-    $(that.container).mouseover(function () {
-      var tab;
-      var flyout;
-      var flyoutList;
-      var foTop;
-      var foLeft;
+        // set the mouseover event
+        $(that.container).mouseover(function () {
+            var tab;
+            var flyout;
+            var flyoutList;
+            var foTop;
+            var foLeft;
 
-      // Cache DOM elements.
-      tab = $(this);
-      flyout = that.locate('flyoutMenu');
-      flyoutList = that.locate('flyoutList');
+            // Cache DOM elements.
+            tab = $(this);
+            flyout = that.locate('flyoutMenu');
+            flyoutList = that.locate('flyoutList');
 
-      // Only open flyout if it contains content.
-      if (flyoutList.html() !== '') {
-        that.openFlyout();
-      } // end:if.
+            // Only open flyout if it contains content.
+            if (flyoutList.html() !== '') {
+                that.openFlyout();
+            } // end:if.
 
-      // Horizontal.
-      if (that.options.orientation === 'horizontal') {
-        // Left.
-        foLeft =
-          that.options.horzalign === 'left'
-            ? 0
-            : tab.outerWidth() - flyout.outerWidth(); // end:if.
+            // Horizontal.
+            if (that.options.orientation === 'horizontal') {
+                // Left.
+                foLeft =
+                    that.options.horzalign === 'left'
+                        ? 0
+                        : tab.outerWidth() - flyout.outerWidth(); // end:if.
 
-        // Bottom.
-        foTop =
-          that.options.vertalign === 'bottom'
-            ? tab.outerHeight() - that.options.offset
-            : flyout.outerHeight() * -1; // end:if.
-      } else {
-        // Left.
-        foLeft =
-          that.options.horzalign === 'left'
-            ? flyout.outerWidth() * -1
-            : tab.outerWidth(); // end:if.
+                // Bottom.
+                foTop =
+                    that.options.vertalign === 'bottom'
+                        ? tab.outerHeight() - that.options.offset
+                        : flyout.outerHeight() * -1; // end:if.
+            } else {
+                // Left.
+                foLeft =
+                    that.options.horzalign === 'left'
+                        ? flyout.outerWidth() * -1
+                        : tab.outerWidth(); // end:if.
 
-        // Bottom.
-        foTop =
-          that.options.vertalign === 'bottom'
-            ? 0
-            : (flyout.outerHeight() - tab.outerHeight()) * -1; // end:if.
-      } // end:if.
+                // Bottom.
+                foTop =
+                    that.options.vertalign === 'bottom'
+                        ? 0
+                        : (flyout.outerHeight() - tab.outerHeight()) * -1; // end:if.
+            } // end:if.
 
-      // set the mouseout event
-      $(that.container).mouseout(function () {
-        that.closeFlyout();
-      });
+            // set the mouseout event
+            $(that.container).mouseout(function () {
+                that.closeFlyout();
+            });
 
-      // use the bgiframe plugin to ensure flyouts appear on top of
-      // form elements in earlier versions of IE
-      flyout
-        .css({
-          top: foTop,
-          left: foLeft
-        })
-        .bgiframe();
-    });
-  };
-
-  /**
-   * Provide fix for z-index layering issues in older IE browsers
-   *
-   * From http://richa.avasthi.name/blogs/tepumpkin/2008/01/11/ie7-lessons-learned/
-   */
-  var zIndexWorkaround = function (that) {
-    if ($.browser.msie && $.browser.version === '7.0') {
-      // Iterate over the parents of the flyout containers
-      that
-        .locate('flyoutMenu')
-        .parents()
-        .each(function () {
-          var p = $(this);
-          var pos = p.css('position');
-
-          // If it's positioned,
-          if (pos == 'relative' || pos == 'absolute' || pos == 'fixed') {
-            /*
-             * Add the "on-top" class name This class is defined in:
-             * uportal-war/src/main/webapp/media/skins/universality/common/css/layout-portal.css
-             */
-            $(this).addClass(that.options.styles.onTop);
-          }
+            // use the bgiframe plugin to ensure flyouts appear on top of
+            // form elements in earlier versions of IE
+            flyout
+                .css({
+                    top: foTop,
+                    left: foLeft,
+                })
+                .bgiframe();
         });
-    } // end:if. // end:if.
-  };
-
-  /**
-   * Create a new flyout menu component
-   */
-  uportal.flyoutmenu = function (container, options) {
-    var that = fluid.initView('uportal.flyoutmenu', container, options);
-
-    // initialize the flyout menu
-    init(that);
-
-    that.openFlyout = function () {
-      that.locate('flyoutMenu').show();
     };
 
-    that.closeFlyout = function () {
-      that.locate('flyoutMenu').hide();
-    };
-  };
+    /**
+     * Provide fix for z-index layering issues in older IE browsers
+     *
+     * From http://richa.avasthi.name/blogs/tepumpkin/2008/01/11/ie7-lessons-learned/
+     */
+    var zIndexWorkaround = function (that) {
+        if ($.browser.msie && $.browser.version === '7.0') {
+            // Iterate over the parents of the flyout containers
+            that.locate('flyoutMenu')
+                .parents()
+                .each(function () {
+                    var p = $(this);
+                    var pos = p.css('position');
 
-  // defaults
-  fluid.defaults('uportal.flyoutmenu', {
-    orientation: 'horizontal',
-    horzalign: 'left',
-    vertalign: 'bottom',
-    offset: 0,
-    selectors: {
-      flyoutMenu: '.portal-flyout-container',
-      flyoutList: '.portal-subnav-list'
-    },
-    styles: {
-      onTop: 'on-top'
-    }
-  });
+                    // If it's positioned,
+                    if (
+                        pos == 'relative' ||
+                        pos == 'absolute' ||
+                        pos == 'fixed'
+                    ) {
+                        /*
+                         * Add the "on-top" class name This class is defined in:
+                         * uportal-war/src/main/webapp/media/skins/universality/common/css/layout-portal.css
+                         */
+                        $(this).addClass(that.options.styles.onTop);
+                    }
+                });
+        } // end:if. // end:if.
+    };
+
+    /**
+     * Create a new flyout menu component
+     */
+    uportal.flyoutmenu = function (container, options) {
+        var that = fluid.initView('uportal.flyoutmenu', container, options);
+
+        // initialize the flyout menu
+        init(that);
+
+        that.openFlyout = function () {
+            that.locate('flyoutMenu').show();
+        };
+
+        that.closeFlyout = function () {
+            that.locate('flyoutMenu').hide();
+        };
+    };
+
+    // defaults
+    fluid.defaults('uportal.flyoutmenu', {
+        orientation: 'horizontal',
+        horzalign: 'left',
+        vertalign: 'bottom',
+        offset: 0,
+        selectors: {
+            flyoutMenu: '.portal-flyout-container',
+            flyoutList: '.portal-subnav-list',
+        },
+        styles: {
+            onTop: 'on-top',
+        },
+    });
 })(jQuery, fluid);

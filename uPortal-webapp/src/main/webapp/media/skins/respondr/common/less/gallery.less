@@ -32,18 +32,18 @@
  */
 @galleryBackground: @grayscale10;
 @galleryBorder: 1px solid @grayscale4;
-@galleryHandleBackground: @black url('./common/images/gallery-bar.png') bottom
+@galleryHandleBackground: @black url("./common/images/gallery-bar.png") bottom
   left repeat-x;
 @galleryHandleBorder: 1px solid @grayscale7;
 @galleryHandleLinkBackround: @white scroll
-  url('./common/images/gallery-handle.png') 0 0 repeat-x;
+  url("./common/images/gallery-handle.png") 0 0 repeat-x;
 @galleryHandleLink: @grayscale9;
 @galleryHandleRound: 3px;
 @galleryHandleShadow: 0 1px 2px @grayscale4;
-@galleryHandleIconClosed: url('./common/images/gallery-handle-arrow-down.png');
-@galleryHandleIconOpen: url('./common/images/gallery-handle-arrow-up.png')
+@galleryHandleIconClosed: url("./common/images/gallery-handle-arrow-down.png");
+@galleryHandleIconOpen: url("./common/images/gallery-handle-arrow-up.png")
   !important;
-@galleryBarBackground: transparent url('./common/images/gallery-bar.png') top
+@galleryBarBackground: transparent url("./common/images/gallery-bar.png") top
   left repeat-x;
 @galleryMenuBackground: @grayscale9;
 @galleryMenuItemBackground: @grayscale8;
@@ -53,7 +53,7 @@
 @galleryMenuItemActiveBackground: @grayscale10;
 @galleryMenuItemActiveLink: @white;
 @galleryMenuItemActiveIcon: transparent
-  url('./common/images/gallery-arrow-right.png') 90% 50% no-repeat;
+  url("./common/images/gallery-arrow-right.png") 90% 50% no-repeat;
 @galleryCloseButtonType: default;
 @galleryFilterBackground: @grayscale7;
 @galleryFilterBorder: 1px solid @grayscale8;
@@ -84,7 +84,7 @@
 @galleryRIShadow: 1px 1px 2px #000;
 @galleryRIUtilityHeight: 16px;
 @galleryRIUtilityRound: 5px;
-@galleryRIGripper: @grayscale9 url('./common/images/gripper.png') 5px 0px
+@galleryRIGripper: @grayscale9 url("./common/images/gripper.png") 5px 0px
   no-repeat;
 @galleryRITitle: @white;
 @galleryRIDescription: @grayscale3;
@@ -660,7 +660,7 @@
   margin: 7px 0 0 127px;
   position: absolute;
   inset: 0;
-  background-image: url('./common/images/gallery-content-preloader.gif');
+  background-image: url("./common/images/gallery-content-preloader.gif");
   background-position: 50% 50%;
   background-repeat: no-repeat;
 }
@@ -736,11 +736,11 @@
 }
 
 .up-gallery .categories li::after {
-  content: ', ';
+  content: ", ";
 }
 
 .up-gallery .categories li:last-child::after {
-  content: '';
+  content: "";
 }
 
 .up-gallery .categories li.active a {
@@ -764,23 +764,23 @@
 .up-gallery .pager-button-up-inner {
   display: block;
   height: 59px;
-  background: url('./common/images/gallery-pager-up-active.png') center 85%
+  background: url("./common/images/gallery-pager-up-active.png") center 85%
     no-repeat;
 }
 
 .up-gallery .pager-button-down-inner {
   display: block;
   height: 59px;
-  background: url('./common/images/gallery-pager-down-active.png') center 15%
+  background: url("./common/images/gallery-pager-down-active.png") center 15%
     no-repeat;
 }
 
 .up-gallery .pager-button-up.fl-pager-disabled .pager-button-up-inner {
-  background-image: url('./common/images/gallery-pager-up-inactive.png');
+  background-image: url("./common/images/gallery-pager-up-inactive.png");
 }
 
 .up-gallery .pager-button-down.fl-pager-disabled .pager-button-down-inner {
-  background-image: url('./common/images/gallery-pager-down-inactive.png');
+  background-image: url("./common/images/gallery-pager-down-inactive.png");
 }
 
 .up-gallery .pager-button-up,
@@ -971,7 +971,7 @@
   height: 90px;
   width: 270px;
   overflow: hidden;
-  filter: 'progid:DXImageTransform.Microsoft.Alpha(Opacity=80)';
+  filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=80)";
   filter: alpha(opacity=80);
 }
 
@@ -1005,7 +1005,7 @@
 
 .portlet.ui-draggable-dragging .portlet-thumb-gripper {
   display: block;
-  background: #444 url('./common/images/gripper.png') 5px 0 no-repeat;
+  background: #444 url("./common/images/gripper.png") 5px 0 no-repeat;
   cursor: move;
   -moz-border-radius-topleft: 5px;
   border-top-left-radius: 5px;
@@ -1071,7 +1071,7 @@
 
 .layout-draggable-target-dropped {
   border: 1px solid #ccc;
-  background: #efefef url('./common/images/loading.gif') 50% 50% no-repeat;
+  background: #efefef url("./common/images/loading.gif") 50% 50% no-repeat;
 }
 
 .layout-draggable-target-dropped span {

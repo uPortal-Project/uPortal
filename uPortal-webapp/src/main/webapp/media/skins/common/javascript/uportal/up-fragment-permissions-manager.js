@@ -19,320 +19,335 @@
 var up = up || {};
 
 (function ($, fluid) {
-  /**
-   * Populate a permissions form according to the presence or absence of
-   * CSS classes on the specified element.
-   *
-   * @param that      layout manager instance
-   * @param element   HTML element with permission CSS classes
-   */
-  var populateForm = function (that, element) {
-    // set the hidden portlet ID attribute
-    var form = that.locate('permissionsDialog').find('form');
-    form.find('[name=nodeId]').val(that.options.nodeIdExtractor(element));
+    /**
+     * Populate a permissions form according to the presence or absence of
+     * CSS classes on the specified element.
+     *
+     * @param that      layout manager instance
+     * @param element   HTML element with permission CSS classes
+     */
+    var populateForm = function (that, element) {
+        // set the hidden portlet ID attribute
+        var form = that.locate('permissionsDialog').find('form');
+        form.find('[name=nodeId]').val(that.options.nodeIdExtractor(element));
 
-    // set the movable permission
-    if (element.hasClass(that.options.cssClassNames.movable)) {
-      form.find('[name=movable]').attr('checked', 'checked');
-    } else {
-      form.find('[name=movable]').removeAttr('checked');
-    }
-
-    // set the deletable permission
-    if (element.hasClass(that.options.cssClassNames.deletable)) {
-      form.find('[name=deletable]').attr('checked', 'checked');
-    } else {
-      form.find('[name=deletable]').removeAttr('checked');
-    }
-
-    // set the movable permission
-    if (element.hasClass(that.options.cssClassNames.editable)) {
-      form.find('[name=editable]').attr('checked', 'checked');
-    } else {
-      form.find('[name=editable]').removeAttr('checked');
-    }
-
-    // set the movable permission
-    if (element.hasClass(that.options.cssClassNames.addChildAllowed)) {
-      form.find('[name=addChildAllowed]').attr('checked', 'checked');
-    } else {
-      form.find('[name=addChildAllowed]').removeAttr('checked');
-    }
-
-    var title = that.options.titleExtractor(element);
-    that.locate('formTitle').html(title);
-  };
-
-  /**
-   * Update the persisted permissions for a portal page according to the
-   * selections in the submitted form.
-   *
-   * @param that      layout manager instance
-   * @param form      permissions form
-   * @return
-   */
-  var updatePermissions = function (that, element) {
-    var newPermissions = persistPermissions(
-      that,
-      that.locate('permissionsDialog').find('form')[0]
-    );
-    updatePermissionClasses(that, element, newPermissions);
-
-    that.locate('permissionsDialog').dialog('close');
-    that.events.onUpdatePermissions.fire(element, newPermissions);
-    return false;
-  };
-
-  /**
-   * Save the permissions from the supplied form to the layout
-   *
-   * @param that      layout manager instance
-   * @param form      permissions form
-   * @return array of newly-persisted permissions
-   */
-  var persistPermissions = function (that, form) {
-    // construct an appropriate data object from the form
-    var data = {
-      elementID: $(form).find('[name=nodeId]').val(),
-      action: 'updatePermissions',
-      deletable: $(form.deletable).is(':checked'),
-      movable: $(form.movable).is(':checked')
-    };
-
-    if (form.editable) {
-      data.editable = $(form.editable).is(':checked');
-    }
-    if (form.addChildAllowed) {
-      data.addChildAllowed = $(form.addChildAllowed).is(':checked');
-    }
-
-    $.post(that.options.savePermissionsUrl, data, null, 'json');
-
-    return {
-      deletable: data.deletable,
-      movable: data.movable,
-      editable: data.editable,
-      addChildAllowed: data.addChildAllowed
-    };
-  };
-
-  /**
-   * Update the permission-related classes on an element, according to the
-   * supplied array of permissions.
-   *
-   * @param element
-   * @param permissions
-   * @return
-   */
-  var updatePermissionClasses = function (that, element, permissions) {
-    setClass(
-      element,
-      permissions.deletable,
-      that.options.cssClassNames.deletable
-    );
-    setClass(element, permissions.movable, that.options.cssClassNames.movable);
-    setClass(
-      element,
-      permissions.editable,
-      that.options.cssClassNames.editable
-    );
-    setClass(
-      element,
-      permissions.addChildAllowed,
-      that.options.cssClassNames.addChildAllowed
-    );
-  };
-
-  /**
-   * Add or remove a classname on an element depending on the value of the
-   * supplied permission.  A permission of <code>true</code> will cause this
-   * method to add the CSS class, which a value of <code>false</code> will
-   * result in the CSS class being removed.  If the permission is undefined,
-   * the method will exit without making any modifications.
-   *
-   * @param element
-   * @param permission
-   * @param className
-   * @return
-   */
-  var setClass = function (element, permission, className) {
-    // if no permission is set, just return without modifying any classes
-    if (permission == undefined) return;
-
-    // otherwise, add or remove the class as appropriate
-    if (permission) {
-      $(element).addClass(className);
-    } else {
-      $(element).removeClass(className);
-    }
-  };
-
-  up.FragmentPermissionsMenu = function (container, options) {
-    var that = fluid.initView('up.FragmentPermissionsMenu', container, options);
-
-    that.state = {};
-
-    that.refresh = function (link) {
-      var element = that.options.elementExtractor(that, link);
-      populateForm(that, element);
-
-      // initialize the permission form submission actions
-      that
-        .locate('permissionsForm')
-        .unbind('submit')
-        .submit(function () {
-          return updatePermissions(that, element);
-        });
-
-      return false;
-    };
-
-    return that;
-  };
-
-  // defaults
-  fluid.defaults('up.FragmentPermissionsMenu', {
-    savePermissionsUrl: 'mvc/layout',
-    elementExtractor: null,
-    titleExtractor: null,
-    nodeIdExtractor: up.defaultNodeIdExtractor,
-    cssClassNames: {
-      movable: 'movable',
-      editable: 'editable',
-      deletable: 'deletable',
-      addChildAllowed: 'canAddChildren'
-    },
-    selectors: {
-      formTitle: null
-    },
-    events: {
-      onUpdatePermissions: null
-    },
-    listeners: {
-      onUpdatePermissions: null
-    }
-  });
-
-  up.FragmentPermissionsManager = function (container, options) {
-    var that = fluid.initView(
-      'up.FragmentPermissionsManager',
-      container,
-      options
-    );
-
-    that.menus = {};
-
-    // tabs permissions manager
-    that
-      .locate('pageDialog')
-      .dialog({width: 550, modal: true, autoOpen: false});
-    that.menus.pagePermissionsManager = up.FragmentPermissionsMenu(
-      that.locate('pageDialog'),
-      {
-        savePermissionsUrl: that.options.savePermissionsUrl,
-        elementExtractor: function () {
-          return $('#portalNavigationList li.active');
-        },
-        titleExtractor: function () {
-          return $(
-            '#portalNavigationList li.active a.portal-navigation-link'
-          ).attr('title');
-        },
-        selectors: {
-          formTitle: 'h2'
+        // set the movable permission
+        if (element.hasClass(that.options.cssClassNames.movable)) {
+            form.find('[name=movable]').attr('checked', 'checked');
+        } else {
+            form.find('[name=movable]').removeAttr('checked');
         }
-      }
-    );
-    that.locate('pageDialogLink').click(function () {
-      that.menus.pagePermissionsManager.refresh($(this));
-      that.locate('pageDialog').dialog('open');
-    });
-    // TODO: on update, refresh tab name, editing, delete
 
-    // columns permissions manager
-    that
-      .locate('columnDialog')
-      .dialog({width: 550, modal: true, autoOpen: false});
-    that.menus.columnPermissionsManager = up.FragmentPermissionsMenu(
-      that.locate('columnDialog'),
-      {
-        savePermissionsUrl: that.options.savePermissionsUrl,
-        elementExtractor: function (that, link) {
-          return $(link).parents('.portal-page-column');
-        },
-        titleExtractor: function (element) {
-          return up.formatMessage(that.options.messages.columnX, [
-            $('.portal-page-column').index(element) + 1
-          ]);
-        },
-        selectors: {
-          formTitle: 'h2'
+        // set the deletable permission
+        if (element.hasClass(that.options.cssClassNames.deletable)) {
+            form.find('[name=deletable]').attr('checked', 'checked');
+        } else {
+            form.find('[name=deletable]').removeAttr('checked');
         }
-      }
-    );
-    that.locate('columnDialogLink').click(function () {
-      that.menus.columnPermissionsManager.refresh($(this));
-      that.locate('columnDialog').dialog('open');
-    });
-    // TODO: on update, refresh layout options
 
-    // portlet permissions manager
-    that
-      .locate('portletDialog')
-      .dialog({width: 550, modal: true, autoOpen: false});
-    that.menus.portletPermissionsManager = up.FragmentPermissionsMenu(
-      that.locate('portletDialog'),
-      {
-        savePermissionsUrl: that.options.savePermissionsUrl,
-        elementExtractor: function (that, link) {
-          return $(link).parents('.up-portlet-wrapper');
-        },
-        titleExtractor: function (element) {
-          // The h2 is the portlet header.  First link is the title and subsequent links
-          // are the items in the "Options" menu, so make sure to only select the first one.
-          return element.find('.up-portlet-wrapper-inner h2 a:eq(0)').text();
+        // set the movable permission
+        if (element.hasClass(that.options.cssClassNames.editable)) {
+            form.find('[name=editable]').attr('checked', 'checked');
+        } else {
+            form.find('[name=editable]').removeAttr('checked');
+        }
+
+        // set the movable permission
+        if (element.hasClass(that.options.cssClassNames.addChildAllowed)) {
+            form.find('[name=addChildAllowed]').attr('checked', 'checked');
+        } else {
+            form.find('[name=addChildAllowed]').removeAttr('checked');
+        }
+
+        var title = that.options.titleExtractor(element);
+        that.locate('formTitle').html(title);
+    };
+
+    /**
+     * Update the persisted permissions for a portal page according to the
+     * selections in the submitted form.
+     *
+     * @param that      layout manager instance
+     * @param form      permissions form
+     * @return
+     */
+    var updatePermissions = function (that, element) {
+        var newPermissions = persistPermissions(
+            that,
+            that.locate('permissionsDialog').find('form')[0]
+        );
+        updatePermissionClasses(that, element, newPermissions);
+
+        that.locate('permissionsDialog').dialog('close');
+        that.events.onUpdatePermissions.fire(element, newPermissions);
+        return false;
+    };
+
+    /**
+     * Save the permissions from the supplied form to the layout
+     *
+     * @param that      layout manager instance
+     * @param form      permissions form
+     * @return array of newly-persisted permissions
+     */
+    var persistPermissions = function (that, form) {
+        // construct an appropriate data object from the form
+        var data = {
+            elementID: $(form).find('[name=nodeId]').val(),
+            action: 'updatePermissions',
+            deletable: $(form.deletable).is(':checked'),
+            movable: $(form.movable).is(':checked'),
+        };
+
+        if (form.editable) {
+            data.editable = $(form.editable).is(':checked');
+        }
+        if (form.addChildAllowed) {
+            data.addChildAllowed = $(form.addChildAllowed).is(':checked');
+        }
+
+        $.post(that.options.savePermissionsUrl, data, null, 'json');
+
+        return {
+            deletable: data.deletable,
+            movable: data.movable,
+            editable: data.editable,
+            addChildAllowed: data.addChildAllowed,
+        };
+    };
+
+    /**
+     * Update the permission-related classes on an element, according to the
+     * supplied array of permissions.
+     *
+     * @param element
+     * @param permissions
+     * @return
+     */
+    var updatePermissionClasses = function (that, element, permissions) {
+        setClass(
+            element,
+            permissions.deletable,
+            that.options.cssClassNames.deletable
+        );
+        setClass(
+            element,
+            permissions.movable,
+            that.options.cssClassNames.movable
+        );
+        setClass(
+            element,
+            permissions.editable,
+            that.options.cssClassNames.editable
+        );
+        setClass(
+            element,
+            permissions.addChildAllowed,
+            that.options.cssClassNames.addChildAllowed
+        );
+    };
+
+    /**
+     * Add or remove a classname on an element depending on the value of the
+     * supplied permission.  A permission of <code>true</code> will cause this
+     * method to add the CSS class, which a value of <code>false</code> will
+     * result in the CSS class being removed.  If the permission is undefined,
+     * the method will exit without making any modifications.
+     *
+     * @param element
+     * @param permission
+     * @param className
+     * @return
+     */
+    var setClass = function (element, permission, className) {
+        // if no permission is set, just return without modifying any classes
+        if (permission == undefined) return;
+
+        // otherwise, add or remove the class as appropriate
+        if (permission) {
+            $(element).addClass(className);
+        } else {
+            $(element).removeClass(className);
+        }
+    };
+
+    up.FragmentPermissionsMenu = function (container, options) {
+        var that = fluid.initView(
+            'up.FragmentPermissionsMenu',
+            container,
+            options
+        );
+
+        that.state = {};
+
+        that.refresh = function (link) {
+            var element = that.options.elementExtractor(that, link);
+            populateForm(that, element);
+
+            // initialize the permission form submission actions
+            that.locate('permissionsForm')
+                .unbind('submit')
+                .submit(function () {
+                    return updatePermissions(that, element);
+                });
+
+            return false;
+        };
+
+        return that;
+    };
+
+    // defaults
+    fluid.defaults('up.FragmentPermissionsMenu', {
+        savePermissionsUrl: 'mvc/layout',
+        elementExtractor: null,
+        titleExtractor: null,
+        nodeIdExtractor: up.defaultNodeIdExtractor,
+        cssClassNames: {
+            movable: 'movable',
+            editable: 'editable',
+            deletable: 'deletable',
+            addChildAllowed: 'canAddChildren',
         },
         selectors: {
-          formTitle: 'h2'
+            formTitle: null,
         },
         events: {
-          onUpdatePermissions: null
+            onUpdatePermissions: null,
         },
         listeners: {
-          onUpdatePermissions: function (element, newPermissions) {
-            if (newPermissions.movable) {
-              element.removeClass('locked');
-            } else {
-              element.addClass('locked');
-            }
-            // TODO: Apply portlet permissions:
-            // includes refreshing reorderer and displaying/hiding delete
-          }
-        }
-      }
-    );
-    that.locate('portletDialogLink').click(function () {
-      that.menus.portletPermissionsManager.refresh($(this));
-      that.locate('portletDialog').dialog('open');
+            onUpdatePermissions: null,
+        },
     });
 
-    return that;
-  };
+    up.FragmentPermissionsManager = function (container, options) {
+        var that = fluid.initView(
+            'up.FragmentPermissionsManager',
+            container,
+            options
+        );
 
-  // defaults
-  fluid.defaults('up.FragmentPermissionsManager', {
-    savePermissionsUrl: 'mvc/layout',
-    selectors: {
-      formTitle: null,
-      pageDialog: '.edit-page-permissions-dialog',
-      pageDialogLink: '#editPagePermissionsLink',
-      columnDialog: '.edit-column-permissions-dialog',
-      columnDialogLink: '.portal-column-permissions-link',
-      portletDialog: '.edit-portlet-permissions-dialog',
-      portletDialogLink: '.portlet-permissions-link'
-    },
-    messages: {
-      columnX: 'Column {0}'
-    }
-  });
+        that.menus = {};
+
+        // tabs permissions manager
+        that.locate('pageDialog').dialog({
+            width: 550,
+            modal: true,
+            autoOpen: false,
+        });
+        that.menus.pagePermissionsManager = up.FragmentPermissionsMenu(
+            that.locate('pageDialog'),
+            {
+                savePermissionsUrl: that.options.savePermissionsUrl,
+                elementExtractor: function () {
+                    return $('#portalNavigationList li.active');
+                },
+                titleExtractor: function () {
+                    return $(
+                        '#portalNavigationList li.active a.portal-navigation-link'
+                    ).attr('title');
+                },
+                selectors: {
+                    formTitle: 'h2',
+                },
+            }
+        );
+        that.locate('pageDialogLink').click(function () {
+            that.menus.pagePermissionsManager.refresh($(this));
+            that.locate('pageDialog').dialog('open');
+        });
+        // TODO: on update, refresh tab name, editing, delete
+
+        // columns permissions manager
+        that.locate('columnDialog').dialog({
+            width: 550,
+            modal: true,
+            autoOpen: false,
+        });
+        that.menus.columnPermissionsManager = up.FragmentPermissionsMenu(
+            that.locate('columnDialog'),
+            {
+                savePermissionsUrl: that.options.savePermissionsUrl,
+                elementExtractor: function (that, link) {
+                    return $(link).parents('.portal-page-column');
+                },
+                titleExtractor: function (element) {
+                    return up.formatMessage(that.options.messages.columnX, [
+                        $('.portal-page-column').index(element) + 1,
+                    ]);
+                },
+                selectors: {
+                    formTitle: 'h2',
+                },
+            }
+        );
+        that.locate('columnDialogLink').click(function () {
+            that.menus.columnPermissionsManager.refresh($(this));
+            that.locate('columnDialog').dialog('open');
+        });
+        // TODO: on update, refresh layout options
+
+        // portlet permissions manager
+        that.locate('portletDialog').dialog({
+            width: 550,
+            modal: true,
+            autoOpen: false,
+        });
+        that.menus.portletPermissionsManager = up.FragmentPermissionsMenu(
+            that.locate('portletDialog'),
+            {
+                savePermissionsUrl: that.options.savePermissionsUrl,
+                elementExtractor: function (that, link) {
+                    return $(link).parents('.up-portlet-wrapper');
+                },
+                titleExtractor: function (element) {
+                    // The h2 is the portlet header.  First link is the title and subsequent links
+                    // are the items in the "Options" menu, so make sure to only select the first one.
+                    return element
+                        .find('.up-portlet-wrapper-inner h2 a:eq(0)')
+                        .text();
+                },
+                selectors: {
+                    formTitle: 'h2',
+                },
+                events: {
+                    onUpdatePermissions: null,
+                },
+                listeners: {
+                    onUpdatePermissions: function (element, newPermissions) {
+                        if (newPermissions.movable) {
+                            element.removeClass('locked');
+                        } else {
+                            element.addClass('locked');
+                        }
+                        // TODO: Apply portlet permissions:
+                        // includes refreshing reorderer and displaying/hiding delete
+                    },
+                },
+            }
+        );
+        that.locate('portletDialogLink').click(function () {
+            that.menus.portletPermissionsManager.refresh($(this));
+            that.locate('portletDialog').dialog('open');
+        });
+
+        return that;
+    };
+
+    // defaults
+    fluid.defaults('up.FragmentPermissionsManager', {
+        savePermissionsUrl: 'mvc/layout',
+        selectors: {
+            formTitle: null,
+            pageDialog: '.edit-page-permissions-dialog',
+            pageDialogLink: '#editPagePermissionsLink',
+            columnDialog: '.edit-column-permissions-dialog',
+            columnDialogLink: '.portal-column-permissions-link',
+            portletDialog: '.edit-portlet-permissions-dialog',
+            portletDialogLink: '.portlet-permissions-link',
+        },
+        messages: {
+            columnX: 'Column {0}',
+        },
+    });
 })(jQuery, fluid);

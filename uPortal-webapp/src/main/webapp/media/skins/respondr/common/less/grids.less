@@ -29,7 +29,7 @@
  *  // that applys 50% width, for bootstrap xs and larger screen sizes
  */
 .fn-set-width-column-for-size(@number-of-columns; @screen-size) {
-  @interpolate-media-query: 'screen-@{screen-size}-min';
+  @interpolate-media-query: "screen-@{screen-size}-min";
 
   &.up-col-@{screen-size}-@{number-of-columns} {
     .up-portlet-wrapper,
@@ -84,7 +84,7 @@
 
         .up-portlet-content-wrapper {
           // total height of wrapper inner - titlebar height
-          height: calc(~'100% - 34px');
+          height: calc(~"100% - 34px");
         }
       }
     }

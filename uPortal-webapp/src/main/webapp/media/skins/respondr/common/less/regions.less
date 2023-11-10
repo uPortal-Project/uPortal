@@ -31,8 +31,8 @@
   /* ==========================================================================
        General-purpose styles that apply to all regions
        ========================================================================== */
-  [id^='region-'] {
-    [id^='portlet_'] {
+  [id^="region-"] {
+    [id^="portlet_"] {
       position: relative;
     }
 
@@ -129,7 +129,7 @@
     &::before {
       background-color: @menu-toggle-text-color; // Top line of the hamburger
       border-radius: 4px;
-      content: '';
+      content: "";
       display: block;
       height: 2px;
       position: absolute;
@@ -149,7 +149,7 @@
       background-color: @menu-toggle-text-color; // Bottom line of the hamburger
       border-radius: 4px;
       bottom: -5px;
-      content: '';
+      content: "";
       display: block;
       height: 2px;
       position: absolute;
@@ -286,11 +286,11 @@
     }
 
     #customizeOptions + button i::after {
-      content: '\f0d7';
+      content: "\f0d7";
     }
 
     #customizeOptions.in + button i::after {
-      content: '\f0d8';
+      content: "\f0d8";
     }
   }
 

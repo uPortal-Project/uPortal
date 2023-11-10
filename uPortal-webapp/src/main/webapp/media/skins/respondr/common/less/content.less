@@ -31,7 +31,7 @@
   // add background image in a pseudo dom tag
   &::before {
     // empty content
-    content: '';
+    content: "";
 
     // background positioning and sizing
     display: block;
@@ -97,7 +97,7 @@
     display: block;
     width: 80%; // fallback for browsers that don't support calc
     width: calc(
-      ~'100% - 85px'
+      ~"100% - 85px"
     ); // tilde is used to escape string, preventing less from mangling math
 
     overflow: hidden;
@@ -293,7 +293,7 @@ section.emergency-alert {
 #config-lightbox .loading {
   width: 100%;
   height: 100px;
-  background-image: url('../common/images/loading.gif');
+  background-image: url("../common/images/loading.gif");
   background-repeat: no-repeat;
   background-position: center;
   background-size: 100px;

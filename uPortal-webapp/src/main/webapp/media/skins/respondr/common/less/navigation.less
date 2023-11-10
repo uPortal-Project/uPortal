@@ -34,7 +34,7 @@
     transform: translate3d(270px, 0, 0) scale3d(1, 1, 1);
 
     #portalNavigation {
-      filter: ~'progid:DXImageTransform.Microsoft.Alpha(Opacity=100)';
+      filter: ~"progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
       opacity: 1 !important;
       transform: translate3d(10px, 0, 0) !important;
       z-index: 4 !important;
@@ -55,7 +55,7 @@
 
       #portalNavigation {
         top: @mobile-navbar-top-position;
-        filter: ~'progid:DXImageTransform.Microsoft.Alpha(Opacity=70)';
+        filter: ~"progid:DXImageTransform.Microsoft.Alpha(Opacity=70)";
         opacity: 0.7;
         transition:
           z-index 350ms ease,
@@ -297,7 +297,7 @@
 
           /* Rotate the caret if the subnav is open */
           .open {
-            [aria-expanded='true'] {
+            [aria-expanded="true"] {
               .caret {
                 transform: rotate(0deg) !important;
               }
@@ -448,7 +448,7 @@
           }
 
           .open {
-            [aria-expanded='true'] {
+            [aria-expanded="true"] {
               .caret {
                 /* if you need to animate the caret of the flyout on desktop, put 180deg instead of 0deg */
                 transform: rotate(0deg);

@@ -46,7 +46,12 @@
       "fluid": false
     },
     "rules": {
-      "no-redeclare": ["error",{"builtinGlobals": false}],
+      "no-redeclare": [
+        "error",
+        {
+          "builtinGlobals": false
+        }
+      ],
       "sonarjs/cognitive-complexity": "off",
       "sonarjs/no-duplicate-string": "off",
       "unicorn/filename-case": "off",
@@ -77,6 +82,13 @@
       "media-query-no-invalid": null,
       "no-descending-specificity": null,
       "no-invalid-position-at-import-rule": null,
+      "prettier/prettier": [
+        true,
+        {
+          "singleQuote": false,
+          "tabWidth": 2
+        }
+      ],
       "property-no-unknown": null,
       "selector-class-pattern": null,
       "selector-id-pattern": null
@@ -85,6 +97,7 @@
   "prettier": {
     "singleQuote": true,
     "bracketSpacing": false,
-    "trailingComma": "none"
+    "trailingComma": "es5",
+    "tabWidth": 4
   }
 }
