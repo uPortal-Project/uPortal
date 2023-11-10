@@ -18,14 +18,14 @@
  */
 var up = up || {};
 
-(function($, fluid) {
+(function ($, fluid) {
     /**
      * Instantiate a LayoutPersistence component
      *
      * @param {Object} component Container the element containing the fragment browser
      * @param {Object} options configuration options for the components
      */
-    up.LayoutPreferencesPersistence = function(container, options) {
+    up.LayoutPreferencesPersistence = function (container, options) {
         // construct the new component
         var that = fluid.initView(
             'up.LayoutPreferencesPersistence',
@@ -33,7 +33,7 @@ var up = up || {};
             options
         );
 
-        that.update = function(data, success) {
+        that.update = function (data, success) {
             $.ajax({
                 url: that.options.saveLayoutUrl,
                 type: 'POST',
@@ -41,7 +41,7 @@ var up = up || {};
                 dataType: 'json',
                 async: false,
                 success: success,
-                error: function(request, text, error) {
+                error: function (request, text, error) {
                     that.events.onError.fire(that, request, text, error);
                 },
             });
@@ -65,7 +65,7 @@ var up = up || {};
         },
         listeners: {
             onSuccess: null,
-            onError: function(that, request, text, error) {
+            onError: function (that, request, text, error) {
                 if (console) console.log(request, text, error);
                 that.locate('errorMessage').text(that.options.messages.error);
             },

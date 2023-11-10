@@ -19,8 +19,8 @@
 'use strict';
 var up = up || {};
 
-(function($, fluid) {
-    up.Autocomplete = function(container, options) {
+(function ($, fluid) {
+    up.Autocomplete = function (container, options) {
         var that = fluid.initView('up.Autocomplete', container, options);
         that.state = that.state || {};
 
@@ -30,7 +30,7 @@ var up = up || {};
             {id: 'matchText', selector: that.options.selectors.matchText},
         ];
 
-        that.search = function() {
+        that.search = function () {
             that.locate('input').removeClass('up-autocomplete-validinput');
             that.locate('dropdown').show();
 
@@ -39,7 +39,7 @@ var up = up || {};
             );
 
             var tree = {children: []};
-            $(results).each(function(idx, result) {
+            $(results).each(function (index, result) {
                 tree.children.push({
                     ID: 'match:',
                     children: [
@@ -49,15 +49,13 @@ var up = up || {};
                                 {
                                     type: 'jQuery',
                                     func: 'click',
-                                    args: function() {
+                                    args: function () {
                                         that.locate('input').val(result.text);
                                         that.state.currentValue = result.value;
                                         that.locate('dropdown').hide();
-                                        that
-                                            .locate('input')
-                                            .addClass(
-                                                'up-autocomplete-validinput'
-                                            );
+                                        that.locate('input').addClass(
+                                            'up-autocomplete-validinput'
+                                        );
                                     },
                                 },
                             ],
@@ -72,29 +70,33 @@ var up = up || {};
                     that.state.templates,
                     that.locate('matches'),
                     tree,
-                    {cutpoints: cutpoints}
+                    {
+                        cutpoints: cutpoints,
+                    }
                 );
             } else {
                 that.state.templates = fluid.selfRender(
                     that.locate('matches'),
                     tree,
-                    {cutpoints: cutpoints}
+                    {
+                        cutpoints: cutpoints,
+                    }
                 );
             }
             that.locate('loadingMessage').hide();
         };
 
-        that.getValue = function() {
+        that.getValue = function () {
             return that.state.currentValue;
         };
 
-        that.locate('close').click(function() {
+        that.locate('close').click(function () {
             that.locate('dropdown').hide();
         });
         that.locate('input').keyup(that.search);
 
         // remove the initial instructional text when the input is focused
-        that.locate('input').focus(function() {
+        that.locate('input').focus(function () {
             var text = that.locate('input').val();
             if (text == that.options.initialText) {
                 that.locate('input').val('');
@@ -102,7 +104,7 @@ var up = up || {};
         });
 
         // replace the initial instruction text if no option is selected
-        that.locate('input').blur(function() {
+        that.locate('input').blur(function () {
             var text = that.locate('input').val();
             if (text == '') {
                 that.locate('input').val(that.options.initialText);

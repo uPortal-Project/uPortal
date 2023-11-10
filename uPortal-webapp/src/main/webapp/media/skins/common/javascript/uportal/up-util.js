@@ -23,7 +23,7 @@ var up = up || {};
  * This file contains a number of general utility methods for use within
  * uPortal.
  */
-(function($, fluid) {
+(function ($, fluid) {
     /**
      * Extracts a uPortal DLM element ID from an HTML node.  This default
      * implementation assumes that any submitted HTML element has an ID of
@@ -33,10 +33,8 @@ var up = up || {};
      * @param element HTML element for which to determine the ID
      * @return {String} DLM node ID associated with the supplied HTML node
      */
-    up.defaultNodeIdExtractor = function(element) {
-        return $(element)
-            .attr('id')
-            .split('_')[1];
+    up.defaultNodeIdExtractor = function (element) {
+        return $(element).attr('id').split('_')[1];
     };
 
     /**
@@ -51,8 +49,8 @@ var up = up || {};
      * @param firstValue {String} property value which should always be sorted
      *          first.  May be left undefined.
      */
-    up.getStringPropertySortFunction = function(propertyName, firstValue) {
-        return function(a, b) {
+    up.getStringPropertySortFunction = function (propertyName, firstValue) {
+        return function (a, b) {
             // get the values for the configured property from
             // each object and transform them to lower case
             var aprop = a[propertyName].toLowerCase();
@@ -75,11 +73,7 @@ var up = up || {};
             }
 
             // otherwise perform a normal alphabetic sort
-            if (aprop > bprop) {
-                return 1;
-            } else {
-                return -1;
-            }
+            return aprop > bprop ? 1 : -1;
         };
     };
 
@@ -89,9 +83,9 @@ var up = up || {};
      *
      * @param str {String} String to be cleaned
      */
-    up.escapeSpecialChars = function(str) {
+    up.escapeSpecialChars = function (string_) {
         var specials = new RegExp('[.*+?|()\\[\\]{}\\\\]', 'g'); // .*+?|()[]{}\
-        return str.replace(specials, '\\$&');
+        return string_.replaceAll(specials, '\\$&');
     };
 
     /**
@@ -101,7 +95,7 @@ var up = up || {};
      * @param pager  {Object}  pager to be refreshed
      * @param data   {Object}  new data model
      */
-    up.refreshPager = function(pager, data) {
+    up.refreshPager = function (pager, data) {
         var newModel = fluid.copy(pager.model);
         newModel.totalRange = data.length;
         newModel.pageIndex = 0;
@@ -121,7 +115,7 @@ var up = up || {};
      *
      * @param {Object} selector - reference to jQuery selector.
      */
-    up.showLoader = function(selector) {
+    up.showLoader = function (selector) {
         selector.show();
     }; // end:function.
 
@@ -130,12 +124,12 @@ var up = up || {};
      *
      * @param {Object} selector - reference to jQuery selector.
      */
-    up.hideLoader = function(selector, time) {
+    up.hideLoader = function (selector, time) {
         var t;
         var duration;
 
         duration = time === undefined ? 1000 : time;
-        t = setTimeout(function() {
+        t = setTimeout(function () {
             selector.fadeOut('slow');
             clearTimeout(t);
         }, duration);
@@ -148,11 +142,12 @@ var up = up || {};
      * @param {Array} args - array of string objects.
      * @return Formatted message string.
      */
-    up.formatMessage = function(message, args) {
+    up.formatMessage = function (message, arguments_) {
         var s = message;
-        for (var i = 0; i < args.length; i++) {
-            var reg = new RegExp('\\{' + i + '\\}', 'gm');
-            s = s.replace(reg, args[i]);
+
+        for (var index = 0; index < arguments_.length; index++) {
+            var reg = new RegExp('\\{' + index + '\\}', 'gm');
+            s = s.replace(reg, arguments_[index]);
         }
         return s;
     }; // end:function

@@ -57,11 +57,18 @@
         top: @mobile-navbar-top-position;
         filter: ~"progid:DXImageTransform.Microsoft.Alpha(Opacity=70)";
         opacity: 0.7;
-        transition: z-index 350ms ease, opacity 350ms ease,
+        transition:
+          z-index 350ms ease,
+          opacity 350ms ease,
           -moz-transform 350ms ease;
-        transition: z-index 350ms ease, opacity 350ms ease,
+        transition:
+          z-index 350ms ease,
+          opacity 350ms ease,
           -o-transform 350ms ease;
-        transition: z-index 350ms ease, opacity 350ms ease, transform 350ms ease;
+        transition:
+          z-index 350ms ease,
+          opacity 350ms ease,
+          transform 350ms ease;
         transform: translate3d(270px, 0, 0) scale3d(0.9, 0.9, 0.9);
         transform-origin: 50% 0%;
         position: relative;
@@ -411,17 +418,27 @@
           margin-left: 64px;
           width: initial;
 
+          .active {
+            background-color: @navbar-item-active-background-color;
+            color: @navbar-item-active-text-color;
+
+            &:hover,
+            &:focus {
+              .portal-navigation-gripper {
+                background-color: transparent;
+              }
+            }
+
+            .portal-navigation-link {
+              float: left;
+            }
+          }
+
           :not(.active).list-group-item {
             &:hover,
             &:focus {
               background-color: @navbar-item-hover-background-color;
               color: @navbar-item-hover-text-color;
-            }
-          }
-
-          .active {
-            .portal-navigation-link {
-              float: left;
             }
           }
 
@@ -606,18 +623,6 @@
             }
           }
 
-          .active {
-            background-color: @navbar-item-active-background-color;
-            color: @navbar-item-active-text-color;
-
-            &:hover,
-            &:focus {
-              .portal-navigation-gripper {
-                background-color: transparent;
-              }
-            }
-          }
-
           li.portal-navigation-add-item {
             padding: 11px 6px;
           }
@@ -644,6 +649,7 @@
     @media (max-width: @screen-xs-max) {
       .use-hamburger-menu-mixin();
     }
+
     @media (min-width: @screen-sm-min) {
       .use-tabs-menu-mixin();
     }
@@ -654,6 +660,7 @@
     @media (max-width: @screen-sm-max) {
       .use-hamburger-menu-mixin();
     }
+
     @media (min-width: @screen-md-min) {
       .use-tabs-menu-mixin();
     }
@@ -664,6 +671,7 @@
     @media (max-width: @screen-md-max) {
       .use-hamburger-menu-mixin();
     }
+
     @media (min-width: @screen-lg-min) {
       .use-tabs-menu-mixin();
     }
