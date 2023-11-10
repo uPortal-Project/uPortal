@@ -19,87 +19,82 @@
 'use strict';
 var up = up || {};
 
-(function($, fluid) {
-    /**
-     * Instantiate a PortletRegistry component
-     *
-     * @param {Object} container Container the element containing the fragment browser
-     * @param {Object} options configuration options for the components
-     */
-    up.EntityRegistry = function(container, options) {
-        // construct the new component
-        var that = fluid.initView('up.EntityRegistry', container, options);
+(function ($, fluid) {
+  /**
+   * Instantiate a PortletRegistry component
+   *
+   * @param {Object} container Container the element containing the fragment browser
+   * @param {Object} options configuration options for the components
+   */
+  up.EntityRegistry = function (container, options) {
+    // construct the new component
+    var that = fluid.initView('up.EntityRegistry', container, options);
 
-        that.state = that.state || {};
-        that.state.entityCache = [];
+    that.state = that.state || {};
+    that.state.entityCache = [];
 
-        // --------------------------------------------------
-        // PUBLIC METHODS
-        // --------------------------------------------------
+    // --------------------------------------------------
+    // PUBLIC METHODS
+    // --------------------------------------------------
 
-        that.searchEntities = function(entityTypes, searchTerm) {
-            var url;
-            var entities;
-            url = that.options.entitiesUrl + '.json';
+    that.searchEntities = function (entityTypes, searchTerm) {
+      var url;
+      var entities;
+      url = that.options.entitiesUrl + '.json';
 
-            $.ajax({
-                async: false,
-                url: url,
-                type: 'GET',
-                dataType: 'json',
-                data: {entityType: entityTypes, q: searchTerm},
-                success: function(json) {
-                    entities = json.jsonEntityBeanList;
-                },
-            });
+      $.ajax({
+        async: false,
+        url: url,
+        type: 'GET',
+        dataType: 'json',
+        data: {entityType: entityTypes, q: searchTerm},
+        success: function (json) {
+          entities = json.jsonEntityBeanList;
+        }
+      });
 
-            return entities;
-        };
-
-        that.getEntity = function(entityType, entityId) {
-            var fullId;
-            var url;
-            var entity;
-
-            // first check to see if this entity is already in the local cache
-            fullId = entityType + ':' + entityId;
-            if (that.state.entityCache[fullId]) {
-                entity = that.state.entityCache[fullId];
-            }
-
-            // otherwise attempt to locate the entity on the server
-            url =
-                that.options.entitiesUrl +
-                '/' +
-                entityType +
-                '/' +
-                entityId +
-                '.json';
-            $.ajax({
-                async: false,
-                url: url,
-                type: 'GET',
-                dataType: 'json',
-                success: function(json) {
-                    that.state.entityCache[fullId] = json.jsonEntityBean;
-                    entity = json.jsonEntityBean;
-                },
-            });
-
-            return entity;
-        };
-
-        that.removeEntity = function(key) {
-            if (that.state.entityCache[key]) {
-                delete that.state.entityCache[key];
-            }
-        };
-
-        return that;
+      return entities;
     };
 
-    // defaults
-    fluid.defaults('up.EntityRegistry', {
-        entitiesUrl: '/uPortal/api/entities',
-    });
+    that.getEntity = function (entityType, entityId) {
+      var fullId;
+      var url;
+      var entity;
+
+      // first check to see if this entity is already in the local cache
+      fullId = entityType + ':' + entityId;
+      if (that.state.entityCache[fullId]) {
+        entity = that.state.entityCache[fullId];
+      }
+
+      // otherwise attempt to locate the entity on the server
+      url =
+        that.options.entitiesUrl + '/' + entityType + '/' + entityId + '.json';
+      $.ajax({
+        async: false,
+        url: url,
+        type: 'GET',
+        dataType: 'json',
+        success: function (json) {
+          that.state.entityCache[fullId] = json.jsonEntityBean;
+          entity = json.jsonEntityBean;
+        }
+      });
+
+      return entity;
+    };
+
+    that.removeEntity = function (key) {
+      if (that.state.entityCache[key]) {
+        delete that.state.entityCache[key];
+      }
+    };
+
+    return that;
+  };
+
+  // defaults
+  fluid.defaults('up.EntityRegistry', {
+    entitiesUrl: '/uPortal/api/entities'
+  });
 })(jQuery, fluid);

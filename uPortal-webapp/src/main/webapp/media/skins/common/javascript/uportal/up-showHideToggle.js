@@ -18,45 +18,45 @@
  */
 var up = up || {};
 
-(function($, fluid) {
-    var initialHide = function(that) {
-        $(that.locate('stacktracediv')).hide();
-    };
+(function ($, fluid) {
+  var initialHide = function (that) {
+    $(that.locate('stacktracediv')).hide();
+  };
 
-    var addToggle = function(that) {
-        var toggleHandle = $(that.locate('stacktracetoggle'));
-        var stacktracediv = $(that.locate('stacktracediv'));
-        var hideMesg = that.options.hidemessage;
-        var showMesg = that.options.showmessage;
-        toggleHandle.toggle(
-            function() {
-                stacktracediv.show('fast', function() {
-                    toggleHandle.text(hideMesg);
-                });
-            },
-            function() {
-                stacktracediv.hide('fast', function() {
-                    toggleHandle.text(showMesg);
-                });
-            }
-        );
-    };
+  var addToggle = function (that) {
+    var toggleHandle = $(that.locate('stacktracetoggle'));
+    var stacktracediv = $(that.locate('stacktracediv'));
+    var hideMesg = that.options.hidemessage;
+    var showMesg = that.options.showmessage;
+    toggleHandle.toggle(
+      function () {
+        stacktracediv.show('fast', function () {
+          toggleHandle.text(hideMesg);
+        });
+      },
+      function () {
+        stacktracediv.hide('fast', function () {
+          toggleHandle.text(showMesg);
+        });
+      }
+    );
+  };
 
-    up.showHideToggle = function(container, options) {
-        var that = fluid.initView('up.showHideToggle', container, options);
+  up.showHideToggle = function (container, options) {
+    var that = fluid.initView('up.showHideToggle', container, options);
 
-        initialHide(that);
-        addToggle(that);
+    initialHide(that);
+    addToggle(that);
 
-        return that;
-    };
+    return that;
+  };
 
-    fluid.defaults('up.showHideToggle', {
-        showmessage: 'Show Stack Trace',
-        hidemessage: 'Hide Stack Trace',
-        selectors: {
-            stacktracediv: '.stacktrace',
-            stacktracetoggle: '.stacktracetoggle',
-        },
-    });
+  fluid.defaults('up.showHideToggle', {
+    showmessage: 'Show Stack Trace',
+    hidemessage: 'Hide Stack Trace',
+    selectors: {
+      stacktracediv: '.stacktrace',
+      stacktracetoggle: '.stacktracetoggle'
+    }
+  });
 })(jQuery, fluid);

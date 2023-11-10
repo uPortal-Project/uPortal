@@ -114,297 +114,287 @@
 'use strict';
 var up = up || {};
 
-(function($, fluid) {
-    /**
-     * Private. Utility function that returns a boolean if the passed selector
-     * is found within the passed container.
-     *
-     * @param {Object} container - reference to jQuery DOM object.
-     * @param {Object} selector - reference to a jQuery selector that may exist within the container.
-     */
-    var doesContain = function(container, selector) {
-        var value;
+(function ($, fluid) {
+  /**
+   * Private. Utility function that returns a boolean if the passed selector
+   * is found within the passed container.
+   *
+   * @param {Object} container - reference to jQuery DOM object.
+   * @param {Object} selector - reference to a jQuery selector that may exist within the container.
+   */
+  var doesContain = function (container, selector) {
+    var value;
 
-        if (container.find(selector).length > 0) {
-            value = true;
+    value = container.find(selector).length > 0 ? true : false; // end:if.
+
+    return value;
+  }; // end:function.
+
+  /**
+   * Private. This function handles the placement of the dropTarget within the portal's columns.
+   * This function is triggered when a gallery list item is dragged over a portal column.
+   *
+   * @param {Object} that - reference to LayoutDraggableManager instance.
+   * @param {Object} target - reference to a DOM element. Specifically, a portal column.
+   */
+  var dragOverHandler = function (that, target) {
+    var column;
+    var portlets;
+    var portletLocked;
+    var firstMovablePortlet;
+    var children;
+    var dropTarget;
+
+    // Obtain reference to column, contained portlets and the dropTarget.
+    column = $(target);
+    portlets = column.find(that.options.selectors.portlet);
+    dropTarget = $(that.elem.pseudoDropTargetMarkUp);
+
+    // Determine the contents of a column. Does the column contain any portlets?
+    if (portlets.length > 0) {
+      // Column contains portlets. Are any portlets locked?
+      portletLocked = column.find(that.options.selectors.lastPortletLocked);
+      if (portletLocked.length > 0) {
+        // Insert drop target after last instance of locked portlet.
+        dropTarget.insertAfter(portletLocked);
+      } else {
+        // Insert drop target before the first movable portlet.
+        firstMovablePortlet = column
+          .find(that.options.selectors.portletMovable)
+          .first();
+        dropTarget.insertBefore(firstMovablePortlet);
+      } // end:if.
+    } else {
+      // Column does not contain portlets. Does the column contain any children
+      // such as a permissions header?
+      children = column.children();
+      if (children.length > 0) {
+        // Column contains children. Insert drop target after last child in column.
+        dropTarget.insertAfter(children.get(children.length - 1));
+      } else {
+        // Column does not contain children. Insert dropTarget at top of column.
+        column.prepend(dropTarget);
+      } // end:if.
+    } // end:if.
+
+    // Reveal dropTarget.
+    dropTarget.show();
+  }; // end:function.
+
+  /**
+   * Private. Removes dropTarget from portal columns.
+   *
+   * @param {Object} that - reference to LayoutDraggableManager instance.
+   * @param {Object} target - reference to a DOM element. Specifically, a portal column.
+   */
+  var dragOutHandler = function (that, target) {
+    var column;
+    var dropTarget;
+
+    // Obtain reference to the column & contained dropTarget.
+    column = $(target);
+    dropTarget = column.find(that.options.selectors.pseudoDropTarget);
+    dropTarget.remove();
+  }; // end:function.
+
+  /**
+   * Private. Manages the UI when a gallery list item is dropped onto a dropTarget.
+   *
+   * @param {Object} that - reference to LayoutDraggableManager instance.
+   * @param {Object} target - reference to a DOM element. Specifically, a portal column.
+   */
+  var dragDropHandler = function (that, target) {
+    var loader;
+    var column;
+    var isPortlets;
+    var isPortletsMovable;
+    var dropTarget;
+    var sibling;
+    var targetID;
+    var method;
+
+    // Obtain reference to the loading screen, column and contained dropTarget.
+    loader = that.elem.loader;
+    column = $(target);
+    dropTarget = column.find(that.options.selectors.pseudoDropTarget);
+
+    // Reveal gallery loader.
+    loader.css({
+      margin: '7px 0 0 0',
+      opacity: '.70',
+      'background-color': '#000'
+    });
+    up.showLoader(loader);
+
+    // Apply visual loading to dropTarget.
+    dropTarget.addClass(that.options.styles.targetDropped);
+
+    // The logic below determines the value of the 'targetID' and 'method' variables,
+    // which are then broadcast to the onDropTarget event. The logic below is as follows:
+    //
+    // 1. If a column contains no portlets. (targetID = column id, method = 'appendAfter').
+    // 2. If all portlets within a column are locked. (targetID = column id, method = 'appendAfter').
+    // 3. If a column contains movable portlets.
+    //    a] Detect portlet siblings around the drop target.
+    //       1) If previous sibling: (targetID = previous portlet id, method = 'appendAfter').
+    //       2) If next sibling: (targetID = next portlet id, method = 'insertBefore').
+
+    // Determine the contents of a column. Does the column contain any portlets?
+    isPortlets = doesContain(column, that.options.selectors.portlet);
+    if (isPortlets) {
+      // When portlets exist, are any of them movable?
+      isPortletsMovable = doesContain(
+        column,
+        that.options.selectors.portletMovable
+      );
+      if (isPortletsMovable) {
+        // Movable portlets exist. Detect placement of dropTarget.
+        sibling = dropTarget.prev(that.options.selectors.portlet + ':first');
+        if (sibling.length > 0) {
+          targetID = up.defaultNodeIdExtractor(sibling[0]);
+          method = that.options.appendAfter;
         } else {
-            value = false;
+          sibling = dropTarget.next(that.options.selectors.portlet + ':first');
+          targetID = up.defaultNodeIdExtractor(sibling[0]);
+          method = that.options.insertBefore;
         } // end:if.
+      } else {
+        // All portlets are locked. Pass the column ID.
+        targetID = up.defaultNodeIdExtractor(target);
+        method = that.options.appendAfter;
+      } // end:if.
+    } else {
+      // No portlets exist. Pass the column ID.
+      targetID = up.defaultNodeIdExtractor(target);
+      method = that.options.appendAfter;
+    } // end:if.
 
-        return value;
+    // Fire onDropTarget event.
+    that.events.onDropTarget.fire(method, targetID);
+  }; // end:function.
+
+  /**
+   * Initializes elem object that stores references to DOM containers that
+   * are used through out the component.
+   *
+   * @param {Object} that - reference to LayoutDraggableManager instance.
+   */
+  var initialize = function (that) {
+    // Element mapping. Caches elements that mostly exist outside the realm of the component's scope.
+    that.elem = {};
+    that.elem.columnContainer = $(that.options.selectors.body).find(
+      that.options.selectors.columnContainer
+    );
+    that.elem.pseudoDropTargetMarkUp =
+      '<div class="' +
+      that.options.styles.pseudoDropTarget +
+      '"><span>' +
+      that.options.pseudoDropTargetLabel +
+      '</span></div>';
+    that.elem.loader = $(that.options.selectors.loader);
+  }; // end:function.
+
+  /**
+   * Creator function for the LayoutDraggableManager component.
+   *
+   * @param {Object} container - reference to HTML DOM element by ID.
+   * @param {Object} options - reference to object containing all configurations.
+   */
+  up.LayoutDraggableManager = function (container, options) {
+    var that;
+    that = fluid.initView('up.LayoutDraggableManager', container, options);
+
+    /**
+     * This function inserts a <div> at the top each of the portal's columns.
+     * The inserted <div> acts as a drop target.
+     *
+     * @param {Object} that - reference to an instance of the LayoutDraggableManager component.
+     */
+    that.enableEligibleColumns = function () {
+      var eligibleColumns;
+      var droppableInnerColumns;
+
+      // Obtain a reference to all eligible or "droppable" columns.
+      eligibleColumns = that.elem.columnContainer.find(
+        that.options.selectors.canAddChildren
+      );
+      droppableInnerColumns = eligibleColumns.find(
+        that.options.selectors.innerColumn
+      );
+
+      // Make columns droppable.
+      that.makeDroppable(droppableInnerColumns);
     }; // end:function.
 
     /**
-     * Private. This function handles the placement of the dropTarget within the portal's columns.
-     * This function is triggered when a gallery list item is dragged over a portal column.
+     * This function takes a jQuery selector and applies the jQuery UI
+     * droppable object to the passed selector. It also makes use of
+     * droppable's over, out, and drop callback functions.
      *
-     * @param {Object} that - reference to LayoutDraggableManager instance.
-     * @param {Object} target - reference to a DOM element. Specifically, a portal column.
+     * @param {Object} selector - reference to jQuery selector.
+     * The passed selector should be a reference to a portal column.
      */
-    var dragOverHandler = function(that, target) {
-        var column;
-        var portlets;
-        var portletLocked;
-        var firstMovablePortlet;
-        var children;
-        var dropTarget;
-
-        // Obtain reference to column, contained portlets and the dropTarget.
-        column = $(target);
-        portlets = column.find(that.options.selectors.portlet);
-        dropTarget = $(that.elem.pseudoDropTargetMarkUp);
-
-        // Determine the contents of a column. Does the column contain any portlets?
-        if (portlets.length > 0) {
-            // Column contains portlets. Are any portlets locked?
-            portletLocked = column.find(
-                that.options.selectors.lastPortletLocked
-            );
-            if (portletLocked.length > 0) {
-                // Insert drop target after last instance of locked portlet.
-                dropTarget.insertAfter(portletLocked);
-            } else {
-                // Insert drop target before the first movable portlet.
-                firstMovablePortlet = column
-                    .find(that.options.selectors.portletMovable)
-                    .first();
-                dropTarget.insertBefore(firstMovablePortlet);
-            } // end:if.
-        } else {
-            // Column does not contain portlets. Does the column contain any children
-            // such as a permissions header?
-            children = column.children();
-            if (children.length > 0) {
-                // Column contains children. Insert drop target after last child in column.
-                dropTarget.insertAfter(children.get(children.length - 1));
-            } else {
-                // Column does not contain children. Insert dropTarget at top of column.
-                column.prepend(dropTarget);
-            } // end:if.
-        } // end:if.
-
-        // Reveal dropTarget.
-        dropTarget.show();
+    that.makeDroppable = function (selector) {
+      selector.droppable({
+        accept: that.options.selectors.accept,
+        over: function (event) {
+          dragOverHandler(that, event.target);
+        },
+        out: function (event) {
+          dragOutHandler(that, event.target);
+        },
+        drop: function (event) {
+          dragDropHandler(that, event.target);
+        }
+      });
     }; // end:function.
 
     /**
-     * Private. Removes dropTarget from portal columns.
+     * This function takes a jQuery selector and applies the jQuery UI
+     * draggable object to the passed selector.
      *
-     * @param {Object} that - reference to LayoutDraggableManager instance.
-     * @param {Object} target - reference to a DOM element. Specifically, a portal column.
+     * @param {Object} selector - reference to jQuery selector.
+     * The passed selector should be a reference to gallery list items.
      */
-    var dragOutHandler = function(that, target) {
-        var column;
-        var dropTarget;
+    that.makeDraggable = function (selector) {
+      var dragHandle;
 
-        // Obtain reference to the column & contained dropTarget.
-        column = $(target);
-        dropTarget = column.find(that.options.selectors.pseudoDropTarget);
-        dropTarget.remove();
+      dragHandle = selector.find(that.options.selectors.dragHandle);
+
+      // The position style definition has been added to the body
+      // to accommodate a FireFox/jQuery UI specific bug. We are using
+      // jQuery UI Draggable to drag portlets from the gallery to the
+      // portal's columns. Firefox has an issue placing the cursor
+      // correctly on the dragged element. Adding a position of relative
+      // fixes this issue. A fix for this is schedule for jQuery UI 1.11.
+      // This fix has been added using JavaScript due to the fact that
+      // adding the position definition breaks the functionality in
+      // Chrome, Safari and IE.
+      //
+      // http://stackoverflow.com/questions/18008657/jquery-ui-draggable-1-10-3-issue-with-firefox-not-finding-cursor-center-when-win
+      if ($.browser.mozilla) {
+        $(that.options.selectors.body).css({position: 'relative'});
+      }
+
+      selector.draggable({
+        handle: dragHandle,
+        appendTo: that.options.selectors.body,
+        iframeFix: that.options.iframeFix,
+        opacity: that.options.opacity,
+        helper: that.options.helper,
+        revert: that.options.revert,
+        cursor: that.options.cursor,
+        cursorAt: that.options.cursorAt,
+        stack: that.options.stack,
+        zIndex: 99_999,
+        containment: that.options.selectors.body,
+        start: function (event, ui) {
+          that.enableEligibleColumns(event, ui);
+        }
+      });
     }; // end:function.
 
     /**
-     * Private. Manages the UI when a gallery list item is dropped onto a dropTarget.
-     *
-     * @param {Object} that - reference to LayoutDraggableManager instance.
-     * @param {Object} target - reference to a DOM element. Specifically, a portal column.
-     */
-    var dragDropHandler = function(that, target) {
-        var loader;
-        var column;
-        var isPortlets;
-        var isPortletsMovable;
-        var dropTarget;
-        var sibling;
-        var targetID;
-        var method;
-
-        // Obtain reference to the loading screen, column and contained dropTarget.
-        loader = that.elem.loader;
-        column = $(target);
-        dropTarget = column.find(that.options.selectors.pseudoDropTarget);
-
-        // Reveal gallery loader.
-        loader.css({
-            'margin': '7px 0 0 0',
-            'opacity': '.70',
-            'background-color': '#000',
-        });
-        up.showLoader(loader);
-
-        // Apply visual loading to dropTarget.
-        dropTarget.addClass(that.options.styles.targetDropped);
-
-        // The logic below determines the value of the 'targetID' and 'method' variables,
-        // which are then broadcast to the onDropTarget event. The logic below is as follows:
-        //
-        // 1. If a column contains no portlets. (targetID = column id, method = 'appendAfter').
-        // 2. If all portlets within a column are locked. (targetID = column id, method = 'appendAfter').
-        // 3. If a column contains movable portlets.
-        //    a] Detect portlet siblings around the drop target.
-        //       1) If previous sibling: (targetID = previous portlet id, method = 'appendAfter').
-        //       2) If next sibling: (targetID = next portlet id, method = 'insertBefore').
-
-        // Determine the contents of a column. Does the column contain any portlets?
-        isPortlets = doesContain(column, that.options.selectors.portlet);
-        if (isPortlets) {
-            // When portlets exist, are any of them movable?
-            isPortletsMovable = doesContain(
-                column,
-                that.options.selectors.portletMovable
-            );
-            if (isPortletsMovable) {
-                // Movable portlets exist. Detect placement of dropTarget.
-                sibling = dropTarget.prev(
-                    that.options.selectors.portlet + ':first'
-                );
-                if (sibling.length > 0) {
-                    targetID = up.defaultNodeIdExtractor(sibling[0]);
-                    method = that.options.appendAfter;
-                } else {
-                    sibling = dropTarget.next(
-                        that.options.selectors.portlet + ':first'
-                    );
-                    targetID = up.defaultNodeIdExtractor(sibling[0]);
-                    method = that.options.insertBefore;
-                } // end:if.
-            } else {
-                // All portlets are locked. Pass the column ID.
-                targetID = up.defaultNodeIdExtractor(target);
-                method = that.options.appendAfter;
-            } // end:if.
-        } else {
-            // No portlets exist. Pass the column ID.
-            targetID = up.defaultNodeIdExtractor(target);
-            method = that.options.appendAfter;
-        } // end:if.
-
-        // Fire onDropTarget event.
-        that.events.onDropTarget.fire(method, targetID);
-    }; // end:function.
-
-    /**
-     * Initializes elem object that stores references to DOM containers that
-     * are used through out the component.
-     *
-     * @param {Object} that - reference to LayoutDraggableManager instance.
-     */
-    var initialize = function(that) {
-        // Element mapping. Caches elements that mostly exist outside the realm of the component's scope.
-        that.elem = {};
-        that.elem.columnContainer = $(that.options.selectors.body).find(
-            that.options.selectors.columnContainer
-        );
-        that.elem.pseudoDropTargetMarkUp =
-            '<div class="' +
-            that.options.styles.pseudoDropTarget +
-            '"><span>' +
-            that.options.pseudoDropTargetLabel +
-            '</span></div>';
-        that.elem.loader = $(that.options.selectors.loader);
-    }; // end:function.
-
-    /**
-     * Creator function for the LayoutDraggableManager component.
-     *
-     * @param {Object} container - reference to HTML DOM element by ID.
-     * @param {Object} options - reference to object containing all configurations.
-     */
-    up.LayoutDraggableManager = function(container, options) {
-        var that;
-        that = fluid.initView('up.LayoutDraggableManager', container, options);
-
-        /**
-         * This function inserts a <div> at the top each of the portal's columns.
-         * The inserted <div> acts as a drop target.
-         *
-         * @param {Object} that - reference to an instance of the LayoutDraggableManager component.
-         */
-        that.enableEligibleColumns = function() {
-            var eligibleColumns;
-            var droppableInnerColumns;
-
-            // Obtain a reference to all eligible or "droppable" columns.
-            eligibleColumns = that.elem.columnContainer.find(
-                that.options.selectors.canAddChildren
-            );
-            droppableInnerColumns = eligibleColumns.find(
-                that.options.selectors.innerColumn
-            );
-
-            // Make columns droppable.
-            that.makeDroppable(droppableInnerColumns);
-        }; // end:function.
-
-        /**
-         * This function takes a jQuery selector and applies the jQuery UI
-         * droppable object to the passed selector. It also makes use of
-         * droppable's over, out, and drop callback functions.
-         *
-         * @param {Object} selector - reference to jQuery selector.
-         * The passed selector should be a reference to a portal column.
-         */
-        that.makeDroppable = function(selector) {
-            selector.droppable({
-                accept: that.options.selectors.accept,
-                over: function(event) {
-                    dragOverHandler(that, event.target);
-                },
-                out: function(event) {
-                    dragOutHandler(that, event.target);
-                },
-                drop: function(event) {
-                    dragDropHandler(that, event.target);
-                },
-            });
-        }; // end:function.
-
-        /**
-         * This function takes a jQuery selector and applies the jQuery UI
-         * draggable object to the passed selector.
-         *
-         * @param {Object} selector - reference to jQuery selector.
-         * The passed selector should be a reference to gallery list items.
-         */
-        that.makeDraggable = function(selector) {
-            var dragHandle;
-
-            dragHandle = selector.find(that.options.selectors.dragHandle);
-
-            // The position style definition has been added to the body
-            // to accommodate a FireFox/jQuery UI specific bug. We are using
-            // jQuery UI Draggable to drag portlets from the gallery to the
-            // portal's columns. Firefox has an issue placing the cursor
-            // correctly on the dragged element. Adding a position of relative
-            // fixes this issue. A fix for this is schedule for jQuery UI 1.11.
-            // This fix has been added using JavaScript due to the fact that
-            // adding the position definition breaks the functionality in
-            // Chrome, Safari and IE.
-            //
-            // http://stackoverflow.com/questions/18008657/jquery-ui-draggable-1-10-3-issue-with-firefox-not-finding-cursor-center-when-win
-            if ($.browser.mozilla) {
-                $(that.options.selectors.body).css({position: 'relative'});
-            }
-
-            selector.draggable({
-                handle: dragHandle,
-                appendTo: that.options.selectors.body,
-                iframeFix: that.options.iframeFix,
-                opacity: that.options.opacity,
-                helper: that.options.helper,
-                revert: that.options.revert,
-                cursor: that.options.cursor,
-                cursorAt: that.options.cursorAt,
-                stack: that.options.stack,
-                zIndex: 99999,
-                containment: that.options.selectors.body,
-                start: function(event, ui) {
-                    that.enableEligibleColumns(event, ui);
-                },
-            });
-        }; // end:function.
-
-        /**
          * This function initializes drag and drop functionality.
          * It applies the jQuery UI draggable object to a collection
          * of list items passed over from a fluid.pager implementation.
@@ -413,72 +403,66 @@ var up = up || {};
          * @param {Object} oldModel - reference to the old state of the pager model.
          * @param {Object} pager - reference to an instance of the pager component.
          */
-        that.initDragAndDrop = function(newModel, oldModel, pager) {
-            var galleryList;
-            var listItem;
+    that.initDragAndDrop = function (newModel, oldModel, pager) {
+      var galleryList;
+      var listItem;
 
-            // DOM Caching.
-            galleryList = pager.container.find(
-                that.options.selectors.galleryList
-            );
+      // DOM Caching.
+      galleryList = pager.container.find(that.options.selectors.galleryList);
 
-            // Enforce constraint. Only list items on the 'Add Stuff' tab should be draggable.
-            if (
-                galleryList.attr('id') !== that.options.useContentPortletListID
-            ) {
-                // Set gallery items as draggable. Delay setting columns
-                // as droppable until an item is dragged.
-                listItem = galleryList.find('li');
-                that.makeDraggable(listItem);
-            } // end:if.
-        }; // end:function.
+      // Enforce constraint. Only list items on the 'Add Stuff' tab should be draggable.
+      if (galleryList.attr('id') !== that.options.useContentPortletListID) {
+        // Set gallery items as draggable. Delay setting columns
+        // as droppable until an item is dragged.
+        listItem = galleryList.find('li');
+        that.makeDraggable(listItem);
+      } // end:if.
+    }; // end:function.
 
-        initialize(that);
-        return that;
-    }; // end:component.
+    initialize(that);
+    return that;
+  }; // end:component.
 
-    /**
+  /**
      * LayoutDraggableManager
      * Defaults function for the LayoutDroppables component.
      ---------------------------------*/
-    fluid.defaults('up.LayoutDraggableManager', {
-        selectors: {
-            body: 'body',
-            galleryList: '.portlet-list',
-            columnContainer: '#portalPageBodyColumns',
-            column: '.portal-page-column',
-            innerColumn: '.portal-page-column-inner',
-            dragHandle: '.portlet-thumb-gripper',
-            pseudoDropTarget: '.layout-draggable-drop-target',
-            loader: '#galleryLoader',
-            accept: '.portlet',
-            canAddChildren: '.canAddChildren,.up-fragment-admin',
-            portlet: '[id*=portlet_]',
-            lastPortletLocked:
-                '[id*=portlet_].locked:not(.up-fragment-admin):last', // Fragment owners get the up-fragment-admin class,
-            portletMovable:
-                '[id*=portlet_].movable,[id*=portlet_].up-fragment-admin', // which allows them to bypass the restrictions.
-        },
-        styles: {
-            pseudoDropTarget: 'layout-draggable-drop-target',
-            targetDropped: 'layout-draggable-target-dropped',
-            canAddChildren: 'canAddChildren',
-        },
-        events: {
-            onDropTarget: null,
-        },
-        pseudoDropTargetLabel: 'Drop Here',
-        iframeFix: true,
-        opacity: '.80',
-        helper: 'clone',
-        revert: 'invalid',
-        cursor: 'move',
-        cursorAt: {top: 8, left: 10},
-        stack: '.portlet .ui-draggable',
-        tolerance: 'intersect',
-        insertBefore: 'insertBefore',
-        appendAfter: 'appendAfter',
-        nbsp: '&nbsp;',
-        useContentPortletListID: 'useContentPortletList',
-    });
+  fluid.defaults('up.LayoutDraggableManager', {
+    selectors: {
+      body: 'body',
+      galleryList: '.portlet-list',
+      columnContainer: '#portalPageBodyColumns',
+      column: '.portal-page-column',
+      innerColumn: '.portal-page-column-inner',
+      dragHandle: '.portlet-thumb-gripper',
+      pseudoDropTarget: '.layout-draggable-drop-target',
+      loader: '#galleryLoader',
+      accept: '.portlet',
+      canAddChildren: '.canAddChildren,.up-fragment-admin',
+      portlet: '[id*=portlet_]',
+      lastPortletLocked: '[id*=portlet_].locked:not(.up-fragment-admin):last', // Fragment owners get the up-fragment-admin class,
+      portletMovable: '[id*=portlet_].movable,[id*=portlet_].up-fragment-admin' // which allows them to bypass the restrictions.
+    },
+    styles: {
+      pseudoDropTarget: 'layout-draggable-drop-target',
+      targetDropped: 'layout-draggable-target-dropped',
+      canAddChildren: 'canAddChildren'
+    },
+    events: {
+      onDropTarget: null
+    },
+    pseudoDropTargetLabel: 'Drop Here',
+    iframeFix: true,
+    opacity: '.80',
+    helper: 'clone',
+    revert: 'invalid',
+    cursor: 'move',
+    cursorAt: {top: 8, left: 10},
+    stack: '.portlet .ui-draggable',
+    tolerance: 'intersect',
+    insertBefore: 'insertBefore',
+    appendAfter: 'appendAfter',
+    nbsp: '&nbsp;',
+    useContentPortletListID: 'useContentPortletList'
+  });
 })(jQuery, fluid);

@@ -4,6 +4,7 @@
   "devDependencies": {
     "eslint": "^8.53.0",
     "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-prettier": "^5.0.1",
     "eslint-plugin-sonarjs": "^0.23.0",
     "eslint-plugin-unicorn": "^49.0.0",
     "postcss-less": "^6.0.0",
@@ -29,7 +30,9 @@
   "eslintConfig": {
     "extends": [
       "eslint:recommended",
-      "prettier"
+      "plugin:sonarjs/recommended",
+      "plugin:unicorn/recommended",
+      "plugin:prettier/recommended"
     ],
     "env": {
       "es2023": true,
@@ -48,7 +51,15 @@
         {
           "builtinGlobals": false
         }
-      ]
+      ],
+      "unicorn/no-null": "off",
+      "unicorn/prefer-module": "off",
+      "unicorn/no-array-callback-reference": "off",
+      "sonarjs/no-duplicate-string": "off",
+      "unicorn/prefer-spread": "off",
+      "sonarjs/cognitive-complexity": "off",
+      "unicorn/no-this-assignment": "off",
+      "unicorn/filename-case": "off"
     }
   },
   "remarkConfig": {
@@ -71,5 +82,9 @@
       "function-no-unknown": null
     }
   },
-  "prettier": {}
+  "prettier": {
+    "singleQuote": true,
+    "bracketSpacing": false,
+    "trailingComma": "none"
+  }
 }
