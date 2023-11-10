@@ -142,7 +142,7 @@ var up = up || {};
         return false;
     };
 
-    var removeParameter = function(link, that) {
+    var removeParameter = function(link) {
         $(link)
             .parent()
             .parent()
@@ -183,7 +183,7 @@ var up = up || {};
         );
     };
 
-    var removeValue = function(link, that) {
+    var removeValue = function(link) {
         $(link)
             .parent()
             .remove();

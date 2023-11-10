@@ -40,8 +40,7 @@
         ) {
             uniqueItems = uniqueItems || {};
             var channels = $.map(categoriesArr.channels, function(
-                channel,
-                index
+                channel
             ) {
                 // Keep an associative array of IDs we've found.  If we have already processed this portlet earlier in
                 // the list, skip it so we don't have duplicates in the list.
@@ -66,7 +65,7 @@
                 };
             });
             return channels.concat(
-                $.map(categoriesArr.categories, function(category, index) {
+                $.map(categoriesArr.categories, function(category) {
                     return portletListProcessorFunc(
                         category,
                         urlPattern,
@@ -82,8 +81,8 @@
              * json - auto-suggest query response JSON
              * urlPattern - Not used. Required for general API signature. The resulting data contains the URL to use.
              */
-            default: function(json, urlPattern) {
-                return $.map(json, function(value, key) {
+            default: function(json) {
+                return $.map(json, function(value) {
                     return {
                         label:
                             value.title +
@@ -173,7 +172,7 @@
                         $.get(actionUrl, {
                             query: request.term,
                             ajax: 'true',
-                        }).done(function(data) {
+                        }).done(function() {
                             /**
                              * Make a second AJAX request to get the actual values.
                              */

@@ -320,7 +320,7 @@ var up = up || {};
          *
          * @param {Object} that - reference to an instance of the LayoutDraggableManager component.
          */
-        that.enableEligibleColumns = function(event, ui) {
+        that.enableEligibleColumns = function() {
             var eligibleColumns;
             var droppableInnerColumns;
 
@@ -347,13 +347,13 @@ var up = up || {};
         that.makeDroppable = function(selector) {
             selector.droppable({
                 accept: that.options.selectors.accept,
-                over: function(event, ui) {
+                over: function(event) {
                     dragOverHandler(that, event.target);
                 },
-                out: function(event, ui) {
+                out: function(event) {
                     dragOutHandler(that, event.target);
                 },
-                drop: function(event, ui) {
+                drop: function(event) {
                     dragDropHandler(that, event.target);
                 },
             });

@@ -244,7 +244,7 @@ var uportal = uportal || {};
             });
 
             // remove any deleted columns from the page
-            $(deletes).each(function(idx, del) {
+            $(deletes).each(function() {
                 $(this)
                     .find('[id^=portlet_]')
                     .each(function(idx, portlet) {
@@ -502,7 +502,7 @@ var uportal = uportal || {};
                     skinPane: {
                         options: {
                             listeners: {
-                                onInitialize: function(overallThat) {
+                                onInitialize: function() {
                                     // add a SkinSelector component to the skin pane
                                     up.SkinSelector('.skins', {
                                         listeners: {
@@ -515,7 +515,7 @@ var uportal = uportal || {};
                                                         action: 'chooseSkin',
                                                         skinName: skin.key,
                                                     },
-                                                    function(data) {
+                                                    function() {
                                                         window.location = that.urlProvider.getTabUrl(
                                                             getActiveTabId()
                                                         );
@@ -538,7 +538,7 @@ var uportal = uportal || {};
                     layoutPane: {
                         options: {
                             listeners: {
-                                onInitialize: function(overallThat) {
+                                onInitialize: function() {
                                     // add a LayoutSelector component to the
                                     // layouts pane
                                     up.LayoutSelector('.layouts-list', {
@@ -552,8 +552,7 @@ var uportal = uportal || {};
                                             // the locally-defined column update
                                             // method
                                             onLayoutSelect: function(
-                                                layout,
-                                                componentThat
+                                                layout
                                             ) {
                                                 updateColumns(layout, that);
                                             },
@@ -570,7 +569,7 @@ var uportal = uportal || {};
 
         that.components.tabManager = up.TabManager('#portalNavigation', {
             listeners: {
-                onTabEdit: function(newValue, oldValue, editNode, viewNode) {
+                onTabEdit: function(newValue) {
                     that.persistence.update({
                         action: 'renameTab',
                         tabId: getActiveTabId(),
@@ -591,7 +590,7 @@ var uportal = uportal || {};
                             action: 'removeElement',
                             elementID: id,
                         },
-                        function(data) {
+                        function() {
                             window.location = that.urlProvider.getPortalHomeUrl();
                         }
                     );
@@ -732,12 +731,12 @@ var uportal = uportal || {};
         isFragmentMode: false,
         gallerySelector: '.up-gallery', // Pass null/false to disable
         columnWidthClassPattern: 'col-md-',
-        columnWidthClassFunction: function(column) {
+        columnWidthClassFunction: function() {
             console.error(
                 'The columnWidthClassFunction option must be specified.'
             );
         },
-        innerColumnClassesFunction: function(column) {
+        innerColumnClassesFunction: function() {
             console.error(
                 'The innerColumnClassesFunction option must be specified.'
             );
@@ -800,7 +799,7 @@ var uportal = uportal || {};
                         position: 'insertBefore',
                         elementID: tabId,
                     },
-                    function(xml) {
+                    function() {
                         window.location = that.urlProvider.getTabUrl(tabId);
                     }
                 );

@@ -296,7 +296,7 @@ var up = up || {};
                 url: $form.attr('action'),
                 type: 'POST',
                 data: $form.serialize(),
-                success: function(data) {
+                success: function() {
                     // if this is a new key (selected entity was null), then we must reload entity list
                     if (that.options.entity == null) {
                         entityTypeSelectionChangedHandler();

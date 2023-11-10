@@ -290,7 +290,7 @@ var up = up || {};
                 that.state.currentState = state;
                 that.portletListView.refresh();
             },
-            onPortletSearch: function(that, searchTerm, submitted) {
+            onPortletSearch: function(that, searchTerm) {
                 searchTerm = $.trim(searchTerm);
                 that.state.portletRegex =
                     searchTerm.length > 0 ?
@@ -298,7 +298,7 @@ var up = up || {};
                         undefined;
                 that.portletListView.refresh();
             },
-            onPortletSelect: function(that, portlet) {
+            onPortletSelect: function(that) {
                 that.portletListView.refresh();
             },
             onPortletDrag: null,

@@ -241,10 +241,10 @@ var up = up || {};
             that.locate('pageDialog'),
             {
                 savePermissionsUrl: that.options.savePermissionsUrl,
-                elementExtractor: function(that, link) {
+                elementExtractor: function() {
                     return $('#portalNavigationList li.active');
                 },
-                titleExtractor: function(element) {
+                titleExtractor: function() {
                     return $(
                         '#portalNavigationList li.active a.portal-navigation-link'
                     ).attr('title');

@@ -103,7 +103,7 @@ var up = up || {};
                 .text('Remove from Selection ')
                 .append('<i class=\'fa fa-minus-circle\'></i>');
             button.removeClass('btn-success').addClass('btn-danger');
-            button.bind('click', function(e) {
+            button.bind('click', function() {
                 deselectEntity(that, key);
             });
         } else {
@@ -111,7 +111,7 @@ var up = up || {};
                 .text('Add to Selection ')
                 .append('<i class=\'fa fa-plus-circle\'></i>');
             button.removeClass('btn-danger').addClass('btn-success');
-            button.bind('click', function(e) {
+            button.bind('click', function() {
                 selectEntity(that, key);
             });
         }
@@ -546,7 +546,7 @@ var up = up || {};
      * @param {Object} that - reference to an instance of the up.entityselection component.
      * @param {String} searchTerm - reference to search term.
      */
-    var search = function(that, searchTerm, form) {
+    var search = function(that, searchTerm) {
         var entities;
         var list;
         var listItem;
@@ -762,7 +762,7 @@ var up = up || {};
                 }
             };
 
-            that.locate('saveAdHocButton').bind('click', function(e) {
+            that.locate('saveAdHocButton').bind('click', function() {
                 var parentKey;
                 var parentName;
                 var includes;

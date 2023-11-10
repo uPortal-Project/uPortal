@@ -616,7 +616,7 @@ var up = up || {};
             });
         };
 
-        that.refreshPaneLink = function(key) {
+        that.refreshPaneLink = function() {
             if (
                 $('#portalPageBodyColumns .portal-page-column').filter(
                     '.canAddChildren,.up-fragment-admin'
@@ -708,7 +708,7 @@ var up = up || {};
                     paneLink: '.layout-link',
                 },
                 listeners: {
-                    onInitialize: function(overallThat) {
+                    onInitialize: function() {
                         up.LayoutSelector('.layouts-list', {});
                     },
                 },

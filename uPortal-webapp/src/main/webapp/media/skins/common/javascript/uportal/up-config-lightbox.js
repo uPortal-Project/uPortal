@@ -47,12 +47,12 @@ up.lightboxConfig =
             var portletId;
             var state;
 
-            matches = /\/p\/([^\/]+)\//.exec(window.location.pathname);
+            matches = /\/p\/([^/]+)\//.exec(window.location.pathname);
             if (matches && matches[1]) {
                 currentPagePortletId = matches[1];
             }
 
-            matches = /\/p\/([^\/]+)\//.exec(url);
+            matches = /\/p\/([^/]+)\//.exec(url);
             if (matches && matches[1]) {
                 portletId = matches[1];
             }

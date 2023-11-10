@@ -276,7 +276,7 @@ var up = up || {};
                 avatar: 'fl-reorderer-' + that.options.tabContext + '-avatar',
             },
             listeners: {
-                afterMove: function(item, requestedPosition, movables) {
+                afterMove: function(item) {
                     var tab;
                     var tabShortId;
                     var method;

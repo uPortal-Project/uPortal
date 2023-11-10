@@ -70,7 +70,7 @@
 
     var addPageLevelListeners = function() {
         document.addEventListener('click', outboundClick);
-        document.addEventListener("beforeunload", function(event) {
+        document.addEventListener("beforeunload", function() {
             document.removeEventListener('click', outboundClick);
         });
     }

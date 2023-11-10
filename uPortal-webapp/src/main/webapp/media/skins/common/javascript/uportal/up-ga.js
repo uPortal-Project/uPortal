@@ -70,7 +70,7 @@ var uportal = uportal || {};
         });
         var dimensions = getDimensions(propertyConfig);
         var dimensionKeys = [];
-        $.each(dimensions, function(key, value) {
+        $.each(dimensions, function(key) {
             dimensionKeys.push(key);
         });
         up.gtag('config', propertyConfig.propertyId, {
@@ -132,7 +132,7 @@ var uportal = uportal || {};
      */
     var getPortletFname = function(windowId) {
         var portletData = up.analytics.portletData[windowId];
-        if (portletDate == null) {
+        if (portletData == null) {
             return windowId;
         }
 
@@ -336,7 +336,7 @@ var uportal = uportal || {};
     };
 
     var addMobileListTabHandlers = function() {
-        $('ul.up-portal-nav li.up-tab').click(function(event) {
+        $('ul.up-portal-nav li.up-tab').click(function() {
             var clickedTab = $(this);
 
             // Ignore clicks on already open tabs

@@ -125,7 +125,7 @@ var up = up || {};
         var skinRows;
 
         treeChildren = [];
-        skinRows = fluid.transform(that.state.model, function(obj, index) {
+        skinRows = fluid.transform(that.state.model, function(obj) {
             return {
                 ID: 'listItem-row:',
                 decorators: [
@@ -260,7 +260,6 @@ var up = up || {};
 
                 root = $(xml);
                 skinNodes = root.find('skin');
-                skinList = that.locate('skinList');
 
                 // Parse skinList.xml & construct ui.
                 $.each(skinNodes, function(idx, obj) {

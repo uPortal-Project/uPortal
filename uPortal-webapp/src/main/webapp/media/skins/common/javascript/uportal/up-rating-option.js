@@ -85,7 +85,7 @@ var up = up || {};
         $(this).modal('hide');
         $(this)
             .find('.ratingModalSaveButton')
-            .click(function(e) {
+            .click(function() {
                 var portletRating = $(that)
                     .find('input')
                     .val();
@@ -122,7 +122,7 @@ var up = up || {};
                     },
                 });
             });
-        $(this).on('show.bs.modal', function(e) {
+        $(this).on('show.bs.modal', function() {
             $(that)
                 .find('.ratingModalSaveButton')
                 .addClass('disabled');
@@ -159,7 +159,7 @@ var up = up || {};
                             .text($(that).data('rating.instructions.rated'));
                     }
                 },
-                error: function(data) {
+                error: function() {
                     up.notify(
                         $(that).data('get.rating.unsucessful'),
                         'TopCenter',
