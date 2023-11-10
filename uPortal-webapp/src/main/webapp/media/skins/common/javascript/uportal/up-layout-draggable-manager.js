@@ -125,7 +125,7 @@ var up = up || {};
     var doesContain = function (container, selector) {
         var value;
 
-        value = container.find(selector).length > 0 ? true : false; // end:if.
+        value = container.find(selector).length > 0;
 
         return value;
     }; // end:function.
