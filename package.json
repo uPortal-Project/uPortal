@@ -79,6 +79,9 @@
       "declaration-block-no-shorthand-property-overrides": null,
       "function-no-unknown": null,
       "less/no-duplicate-variables": null,
+      "media-feature-range-notation": [
+        "prefix"
+      ],
       "media-query-no-invalid": null,
       "no-descending-specificity": null,
       "no-invalid-position-at-import-rule": null,
