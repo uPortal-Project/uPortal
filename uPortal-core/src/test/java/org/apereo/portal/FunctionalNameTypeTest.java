@@ -1,13 +1,11 @@
 package org.apereo.portal;
 
+import static org.junit.Assert.*;
+
 import org.apereo.portal.dao.usertype.FunctionalNameType;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
-
-/**
- * @author snehitroda
- */
+/** @author snehitroda */
 public class FunctionalNameTypeTest {
 
     @Test
