@@ -56,8 +56,10 @@
       "sonarjs/no-duplicate-string": "off",
       "unicorn/filename-case": "off",
       "unicorn/no-array-callback-reference": "off",
+      "unicorn/no-for-loop": "off",
       "unicorn/no-null": "off",
       "unicorn/no-this-assignment": "off",
+      "unicorn/numeric-separators-style": "off",
       "unicorn/prefer-module": "off",
       "unicorn/prefer-spread": "off"
     }

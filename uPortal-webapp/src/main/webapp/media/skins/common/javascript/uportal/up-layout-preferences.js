@@ -168,8 +168,10 @@ var uportal = uportal || {};
                 minColumns = columns.length - deletableColumns.length;
             } else {
                 var separateAcceptor = false;
-                for (const acceptorColumn of acceptorColumns) {
-                    if ($.inArray(acceptorColumn, deletableColumns) < 0) {
+                for (var index = 0; index < acceptorColumns.length; index++) {
+                    if (
+                        $.inArray(acceptorColumns[index], deletableColumns) < 0
+                    ) {
                         separateAcceptor = true;
                         break;
                     }

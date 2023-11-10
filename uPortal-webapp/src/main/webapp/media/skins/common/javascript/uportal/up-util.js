@@ -144,9 +144,10 @@ var up = up || {};
      */
     up.formatMessage = function (message, arguments_) {
         var s = message;
-        for (const [index, element] of arguments_.entries()) {
+
+        for (var index = 0; index < arguments_.length; index++) {
             var reg = new RegExp('\\{' + index + '\\}', 'gm');
-            s = s.replace(reg, element);
+            s = s.replace(reg, arguments_[index]);
         }
         return s;
     }; // end:function

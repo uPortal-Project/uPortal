@@ -392,7 +392,7 @@ var up = up || {};
                 cursor: that.options.cursor,
                 cursorAt: that.options.cursorAt,
                 stack: that.options.stack,
-                zIndex: 99_999,
+                zIndex: 99999,
                 containment: that.options.selectors.body,
                 start: function (event, ui) {
                     that.enableEligibleColumns(event, ui);
