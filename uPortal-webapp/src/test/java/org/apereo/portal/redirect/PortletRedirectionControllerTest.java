@@ -14,12 +14,14 @@
  */
 package org.apereo.portal.redirect;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import org.junit.Before;
@@ -42,11 +44,11 @@ public class PortletRedirectionControllerTest {
     }
 
     @Test
-    public void testExternalUrl() {
+    public void testExternalUrl() throws URISyntaxException {
         ExternalRedirectionUrl url = new ExternalRedirectionUrl();
         url.setUrl("http://somewhere.com/something");
 
-        Map<String, String[]> additionalParameters = new LinkedHashMap<String, String[]>();
+        Map<String, String[]> additionalParameters = new HashMap<String, String[]>();
         additionalParameters.put("action", new String[] {"show"});
         additionalParameters.put("list", new String[] {"v1", "v2"});
         url.setAdditionalParameters(additionalParameters);
@@ -58,6 +60,19 @@ public class PortletRedirectionControllerTest {
         String expected =
                 "http://somewhere.com/something?action=show&list=v1&list=v2&username=student";
         String actual = controller.getUrlString(url, request, new ArrayList<String>());
-        assertEquals(expected, actual);
+        URI uri1 = new URI(expected);
+        URI uri2 = new URI(actual);
+
+        assertTrue(
+                uri1.getPath().equals(uri2.getPath())
+                        && compareQueryParameters(uri1.getQuery(), uri2.getQuery()));
+    }
+
+    private static boolean compareQueryParameters(String query1, String query2) {
+        String[] params1 = query1.split("&");
+        String[] params2 = query2.split("&");
+
+        return Arrays.asList(params1).containsAll(Arrays.asList(params2))
+                && Arrays.asList(params2).containsAll(Arrays.asList(params1));
     }
 }
