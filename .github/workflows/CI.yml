@@ -11,17 +11,36 @@ jobs:
     name: '${{ matrix.platform }} with Java ${{ matrix.java-distribution }} version ${{ matrix.java-version }}'
     strategy:
       matrix:
-        platform:
-          - ubuntu-latest
-          - windows-latest
-          - macos-latest
-        java-distribution:
-          - adopt-hotspot
-          - temurin
-          - zulu
-        java-version:
-          - 8
-          - 11
+        include:
+          # test across Java distributions
+          - platform: ubuntu-latest
+            java-distribution: adopt-hotspot
+            java-version: 11
+          - platform: ubuntu-latest
+            java-distribution: temurin
+            java-version: 11
+          - platform: ubuntu-latest
+            java-distribution: zulu
+            java-version: 11
+          - platform: ubuntu-latest
+            java-distribution: corretto
+            java-version: 11
+          - platform: ubuntu-latest
+            java-distribution: microsoft
+            java-version: 11
+
+          # test across Java versions
+          - platform: ubuntu-latest
+            java-distribution: adopt-hotspot
+            java-version: 8
+      
+          # test across operating systems
+          - platform: windows-latest
+            java-distribution: adopt-hotspot
+            java-version: 11
+          - platform: macos-latest
+            java-distribution: adopt-hotspot
+            java-version: 11
     runs-on: ${{ matrix.platform }}
     timeout-minutes: 45
     steps:
