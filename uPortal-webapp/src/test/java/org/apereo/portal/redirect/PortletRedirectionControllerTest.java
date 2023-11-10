@@ -23,6 +23,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import org.junit.Before;
 import org.junit.Test;
@@ -69,10 +71,8 @@ public class PortletRedirectionControllerTest {
     }
 
     private static boolean compareQueryParameters(String query1, String query2) {
-        String[] params1 = query1.split("&");
-        String[] params2 = query2.split("&");
-
-        return Arrays.asList(params1).containsAll(Arrays.asList(params2))
-                && Arrays.asList(params2).containsAll(Arrays.asList(params1));
+        Set<String> params1 = new HashSet<>(Arrays.asList(query1.split("&")));
+        Set<String> params2 = new HashSet<>(Arrays.asList(query2.split("&")));
+        return params1.equals(params2);
     }
 }
