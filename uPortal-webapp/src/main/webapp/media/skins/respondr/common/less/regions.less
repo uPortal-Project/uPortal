@@ -31,8 +31,8 @@
   /* ==========================================================================
        General-purpose styles that apply to all regions
        ========================================================================== */
-  [id^="region-"] {
-    [id^="portlet_"] {
+  [id^='region-'] {
+    [id^='portlet_'] {
       position: relative;
     }
 
@@ -92,9 +92,8 @@
     padding-top: 5px;
     text-transform: none;
     transition-duration: 0.15s;
-    transition-property: opacity, -webkit-filter;
     transition-property: opacity, filter;
-    transition-property: opacity, filter, -webkit-filter;
+    transition-property: opacity, filter, filter;
     transition-timing-function: linear;
 
     &:hover {
@@ -120,7 +119,9 @@
     transition-duration: 0.15s;
     transition-property: -webkit-transform;
     transition-property: transform;
-    transition-property: transform, -webkit-transform;
+    transition-property:
+      transform,
+      -webkit-transform;
     transition-timing-function: ease; /* Safari */
     transition-delay: 350ms;
     width: 15px;
@@ -128,7 +129,7 @@
     &::before {
       background-color: @menu-toggle-text-color; // Top line of the hamburger
       border-radius: 4px;
-      content: "";
+      content: '';
       display: block;
       height: 2px;
       position: absolute;
@@ -136,7 +137,9 @@
       transition-duration: 0.15s;
       transition-property: -webkit-transform;
       transition-property: transform;
-      transition-property: transform, -webkit-transform;
+      transition-property:
+        transform,
+        -webkit-transform;
       transition-timing-function: ease; /* Safari */
       transition-delay: 350ms;
       width: 15px;
@@ -146,14 +149,16 @@
       background-color: @menu-toggle-text-color; // Bottom line of the hamburger
       border-radius: 4px;
       bottom: -5px;
-      content: "";
+      content: '';
       display: block;
       height: 2px;
       position: absolute;
       transition-duration: 0.15s;
       transition-property: -webkit-transform;
       transition-property: transform;
-      transition-property: transform, -webkit-transform;
+      transition-property:
+        transform,
+        -webkit-transform;
       transition-timing-function: ease; /* Safari */
       transition-delay: 350ms;
       width: 15px;
@@ -163,21 +168,27 @@
   .hamburger-arrow {
     .hamburger-inner {
       &::before {
-        transition: top 0.1s 0.15s ease,
+        transition:
+          top 0.1s 0.15s ease,
           -webkit-transform 0.15s cubic-bezier(0.165, 0.84, 0.44, 1);
-        transition: top 0.1s 0.15s ease,
+        transition:
+          top 0.1s 0.15s ease,
           transform 0.15s cubic-bezier(0.165, 0.84, 0.44, 1);
-        transition: top 0.1s 0.15s ease,
+        transition:
+          top 0.1s 0.15s ease,
           transform 0.15s cubic-bezier(0.165, 0.84, 0.44, 1),
           -webkit-transform 0.15s cubic-bezier(0.165, 0.84, 0.44, 1);
       }
 
       &::after {
-        transition: bottom 0.1s 0.15s ease,
+        transition:
+          bottom 0.1s 0.15s ease,
           -webkit-transform 0.15s cubic-bezier(0.165, 0.84, 0.44, 1);
-        transition: bottom 0.1s 0.15s ease,
+        transition:
+          bottom 0.1s 0.15s ease,
           transform 0.15s cubic-bezier(0.165, 0.84, 0.44, 1);
-        transition: bottom 0.1s 0.15s ease,
+        transition:
+          bottom 0.1s 0.15s ease,
           transform 0.15s cubic-bezier(0.165, 0.84, 0.44, 1),
           -webkit-transform 0.15s cubic-bezier(0.165, 0.84, 0.44, 1);
       }
@@ -190,11 +201,14 @@
       &::before {
         top: 0;
         transform: translate3d(-3px, -4px, 0) rotate(-45deg) scale(0.7, 1);
-        transition: top 0.35s ease,
+        transition:
+          top 0.35s ease,
           -webkit-transform 0.15s 0.1s cubic-bezier(0.895, 0.03, 0.685, 0.22);
-        transition: top 0.35s ease,
+        transition:
+          top 0.35s ease,
           transform 0.15s 0.1s cubic-bezier(0.895, 0.03, 0.685, 0.22);
-        transition: top 0.35s ease,
+        transition:
+          top 0.35s ease,
           transform 0.15s 0.1s cubic-bezier(0.895, 0.03, 0.685, 0.22),
           -webkit-transform 0.15s 0.1s cubic-bezier(0.895, 0.03, 0.685, 0.22);
       }
@@ -202,11 +216,14 @@
       &::after {
         bottom: 0;
         transform: translate3d(-3px, 4px, 0) rotate(45deg) scale(0.7, 1);
-        transition: bottom 0.35s ease,
+        transition:
+          bottom 0.35s ease,
           -webkit-transform 0.15s 0.1s cubic-bezier(0.895, 0.03, 0.685, 0.22);
-        transition: bottom 0.35s ease,
+        transition:
+          bottom 0.35s ease,
           transform 0.15s 0.1s cubic-bezier(0.895, 0.03, 0.685, 0.22);
-        transition: bottom 0.35s ease,
+        transition:
+          bottom 0.35s ease,
           transform 0.15s 0.1s cubic-bezier(0.895, 0.03, 0.685, 0.22),
           -webkit-transform 0.15s 0.1s cubic-bezier(0.895, 0.03, 0.685, 0.22);
       }
@@ -264,16 +281,16 @@
     }
 
     #customizeOptions {
-      background-color: rgb(239, 239, 239);
+      background-color: rgb(239 239 239);
       .border(@grayscale4);
     }
 
     #customizeOptions + button i::after {
-      content: "\f0d7";
+      content: '\f0d7';
     }
 
     #customizeOptions.in + button i::after {
-      content: "\f0d8";
+      content: '\f0d8';
     }
   }
 
