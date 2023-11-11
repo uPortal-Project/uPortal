@@ -17,6 +17,7 @@ package org.apereo.portal.portlet.rendering;
 import java.io.IOException;
 import java.util.concurrent.Callable;
 import javax.servlet.ServletOutputStream;
+import javax.servlet.WriteListener;
 
 public class LazyServletOutputStream extends ServletOutputStream {
     private final Callable<ServletOutputStream> servletOutputStreamCreator;
@@ -138,5 +139,15 @@ public class LazyServletOutputStream extends ServletOutputStream {
     @Override
     public void println(double d) throws IOException {
         getServletOutputStream().println(d);
+    }
+
+    @Override
+    public boolean isReady() {
+        return this.servletOutputStream != null && this.servletOutputStream.isReady();
+    }
+
+    @Override
+    public void setWriteListener(WriteListener writeListener) {
+        getServletOutputStream().setWriteListener(writeListener);
     }
 }
