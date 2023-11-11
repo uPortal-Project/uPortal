@@ -35,6 +35,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpUpgradeHandler;
 import javax.servlet.http.Part;
 import org.apache.commons.lang.Validate;
 
@@ -386,5 +387,21 @@ public abstract class AbstractHttpServletRequestWrapper implements HttpServletRe
     @Override
     public void logout() throws ServletException {
         this.httpServletRequest.logout();
+    }
+
+    @Override
+    public long getContentLengthLong() {
+        return this.httpServletRequest.getContentLengthLong();
+    }
+
+    @Override
+    public String changeSessionId() {
+        return this.httpServletRequest.changeSessionId();
+    }
+
+    @Override
+    public <T extends HttpUpgradeHandler> T upgrade(Class<T> aClass)
+            throws IOException, ServletException {
+        return this.httpServletRequest.upgrade(aClass);
     }
 }
