@@ -15,12 +15,11 @@
 package org.apereo.portal.utils;
 
 import com.sun.istack.NotNull;
-import org.apache.commons.lang.NotImplementedException;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.WriteListener;
+import org.apache.commons.lang.NotImplementedException;
 
 /** {@link ServletOutputStream} impl that delegates to an {@link OutputStream} */
 public class DelegatingServletOutputStream extends ServletOutputStream {
