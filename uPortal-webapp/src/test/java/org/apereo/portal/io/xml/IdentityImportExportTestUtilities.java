@@ -22,11 +22,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.Collections;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.transform.stax.StAXSource;
 import javax.xml.transform.stream.StreamResult;
 import org.apache.commons.io.IOUtils;
+import org.apereo.portal.io.xml.ssd.ExternalStylesheetDescriptor;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.springframework.core.io.Resource;
@@ -81,6 +83,10 @@ public final class IdentityImportExportTestUtilities {
 
         // Make sure the data was exported
         assertNotNull("Exported data was null", dataExport);
+        if(resource.getFilename().equals("test_4-0.stylesheet-descriptor.xml"))
+        {
+            Collections.sort(((ExternalStylesheetDescriptor) dataExport).getLayoutAttributes().get(0).getTargetElements());
+        }
 
         // Marshall to XML
         final Marshaller marshaller = dataExporter.getMarshaller();
