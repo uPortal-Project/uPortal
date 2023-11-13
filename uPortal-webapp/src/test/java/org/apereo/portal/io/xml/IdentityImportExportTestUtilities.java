@@ -83,9 +83,12 @@ public final class IdentityImportExportTestUtilities {
 
         // Make sure the data was exported
         assertNotNull("Exported data was null", dataExport);
-        if(resource.getFilename().equals("test_4-0.stylesheet-descriptor.xml"))
-        {
-            Collections.sort(((ExternalStylesheetDescriptor) dataExport).getLayoutAttributes().get(0).getTargetElements());
+        if (resource.getFilename().equals("test_4-0.stylesheet-descriptor.xml")) {
+            Collections.sort(
+                    ((ExternalStylesheetDescriptor) dataExport)
+                            .getLayoutAttributes()
+                            .get(0)
+                            .getTargetElements());
         }
 
         // Marshall to XML
