@@ -19,14 +19,14 @@
 'use strict';
 var up = up || {};
 
-(function($, fluid) {
+(function ($, fluid) {
     /**
      * Instantiate a PortletRegistry component
      *
      * @param {Object} container Container the element containing the fragment browser
      * @param {Object} options configuration options for the components
      */
-    up.EntityRegistry = function(container, options) {
+    up.EntityRegistry = function (container, options) {
         // construct the new component
         var that = fluid.initView('up.EntityRegistry', container, options);
 
@@ -37,7 +37,7 @@ var up = up || {};
         // PUBLIC METHODS
         // --------------------------------------------------
 
-        that.searchEntities = function(entityTypes, searchTerm) {
+        that.searchEntities = function (entityTypes, searchTerm) {
             var url;
             var entities;
             url = that.options.entitiesUrl + '.json';
@@ -48,7 +48,7 @@ var up = up || {};
                 type: 'GET',
                 dataType: 'json',
                 data: {entityType: entityTypes, q: searchTerm},
-                success: function(json) {
+                success: function (json) {
                     entities = json.jsonEntityBeanList;
                 },
             });
@@ -56,7 +56,7 @@ var up = up || {};
             return entities;
         };
 
-        that.getEntity = function(entityType, entityId) {
+        that.getEntity = function (entityType, entityId) {
             var fullId;
             var url;
             var entity;
@@ -80,7 +80,7 @@ var up = up || {};
                 url: url,
                 type: 'GET',
                 dataType: 'json',
-                success: function(json) {
+                success: function (json) {
                     that.state.entityCache[fullId] = json.jsonEntityBean;
                     entity = json.jsonEntityBean;
                 },
@@ -89,7 +89,7 @@ var up = up || {};
             return entity;
         };
 
-        that.removeEntity = function(key) {
+        that.removeEntity = function (key) {
             if (that.state.entityCache[key]) {
                 delete that.state.entityCache[key];
             }

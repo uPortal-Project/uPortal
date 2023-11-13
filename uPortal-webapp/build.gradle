@@ -6,8 +6,8 @@ buildscript {
     dependencies {
         classpath "org.jasig.resourceserver:resource-server-core:${resourceServerVersion}"
         classpath "javax.xml.bind:jaxb-api:${jaxbApiVersion}"
-        classpath 'com.sun.xml.bind:jaxb-xjc:2.3.7'
-        classpath 'com.sun.xml.bind:jaxb-impl:2.3.7'
+        classpath 'com.sun.xml.bind:jaxb-xjc:2.3.9'
+        classpath 'com.sun.xml.bind:jaxb-impl:2.3.9'
     }
 }
 
@@ -39,6 +39,7 @@ dependencies {
     api project(':uPortal-security:uPortal-security-authn')
     api project(':uPortal-security:uPortal-security-xslt')
     api project(':uPortal-security:uPortal-security-filters')
+    api project(':uPortal-session')
     api project(':uPortal-soffit:uPortal-soffit-connector')
     api project(':uPortal-utils:uPortal-utils-jmx')
     api project(':uPortal-utils:uPortal-utils-url')

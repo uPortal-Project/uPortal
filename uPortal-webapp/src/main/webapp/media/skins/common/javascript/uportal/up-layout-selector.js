@@ -19,8 +19,8 @@
 'use strict';
 var up = up || {};
 
-(function($, fluid) {
-    var getComponentTree = function(that) {
+(function ($, fluid) {
+    var getComponentTree = function (that) {
         var currentLayoutString;
         var tree;
 
@@ -28,7 +28,7 @@ var up = up || {};
         currentLayoutString = that.options.currentLayout.join('-');
 
         tree = {children: []};
-        $(that.options.layouts).each(function(idx, layout) {
+        $(that.options.layouts).each(function (index, layout) {
             var layoutString = layout.columns.join('-');
             var classes = '';
 
@@ -53,7 +53,7 @@ var up = up || {};
                             {
                                 type: 'jQuery',
                                 func: 'click',
-                                args: function() {
+                                args: function () {
                                     if (!layout.disabled) {
                                         that.options.currentLayout =
                                             layout.columns;
@@ -73,9 +73,9 @@ var up = up || {};
                             layout.columns.length +
                             ' ' +
                             that.options.strings[
-                                layout.columns.length == 1 ?
-                                    'column' :
-                                    'columns'
+                                layout.columns.length == 1
+                                    ? 'column'
+                                    : 'columns'
                             ],
                     },
                     {
@@ -106,7 +106,7 @@ var up = up || {};
         return tree;
     };
 
-    up.LayoutSelector = function(container, options) {
+    up.LayoutSelector = function (container, options) {
         var that;
         var cutpoints;
 
@@ -130,7 +130,7 @@ var up = up || {};
         /**
          * Refresh the rendered skin selector view
          */
-        that.refresh = function() {
+        that.refresh = function () {
             var tree = getComponentTree(that);
             fluid.reRender(that.templates, $(container), tree, {
                 cutpoints: cutpoints,
@@ -140,7 +140,9 @@ var up = up || {};
         that.templates = fluid.selfRender(
             $(container),
             getComponentTree(that),
-            {cutpoints: cutpoints}
+            {
+                cutpoints: cutpoints,
+            }
         );
 
         return that;

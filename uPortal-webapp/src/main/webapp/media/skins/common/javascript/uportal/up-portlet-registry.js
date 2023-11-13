@@ -41,11 +41,11 @@ var up = up || {};
  *     Name of the pseudo "All Categories" category
  *
  */
-(function($, fluid) {
+(function ($, fluid) {
     /**
      * Construct a new portlet from the backend-provided JSON.
      */
-    var Portlet = function(json) {
+    var Portlet = function (json) {
         return {
             id: json.id,
             description: json.description,
@@ -61,7 +61,7 @@ var up = up || {};
     /**
      * Construct a new category from the backend-provided JSON.
      */
-    var Category = function(json) {
+    var Category = function (json) {
         return {
             id: json.id,
             name: json.name,
@@ -73,48 +73,48 @@ var up = up || {};
         };
     };
 
-    var processCategory = function(that, category) {
+    var processCategory = function (that, category) {
         // If this category isn't already present in the array,
         // perform all necessary processing for it and its children,
         // then return the category
-        if (!that.state.categories[category.id]) {
+        if (that.state.categories[category.id]) {
+            // otherwise just return the already-cached category
+            return that.state.categories[category.id];
+        } else {
             var c = new Category(category);
 
             // Process each of the member categories.  First add each
             // category and its deep members to the list of deep members
             // for this category, then do the same for each of its deep
             // member portlets.
-            $(category.categories).each(function(idx, subCategory) {
+            $(category.categories).each(function (index, subCategory) {
                 subCategory = processCategory(that, subCategory);
 
                 c.categories.push(subCategory);
-                c.categories[subCategory.id] =
-                    c.categories[c.categories.length - 1];
+                c.categories[subCategory.id] = c.categories.at(-1);
 
                 // add the subcategory to the deep categories array
                 if (!c.deepCategories[subCategory.id]) {
                     c.deepCategories.push(subCategory);
-                    c.deepCategories[subCategory.id] =
-                        c.deepCategories[c.deepCategories.length - 1];
+                    c.deepCategories[subCategory.id] = c.deepCategories.at(-1);
                 }
 
                 // add all deep member categories of this subcategory
                 // to the deep members array
-                $(subCategory.deepCategories).each(function(idx, member) {
+                $(subCategory.deepCategories).each(function (index, member) {
                     if (!c.deepCategories[member.id]) {
                         c.deepCategories.push(member);
-                        c.deepCategories[member.id] =
-                            c.deepCategories[c.deepCategories.length - 1];
+                        c.deepCategories[member.id] = c.deepCategories.at(-1);
                     }
                 });
 
                 // add all deep member portlets of this subcategory to the
                 // deep members array
-                $(subCategory.deepPortlets).each(function(idx, member) {
+                $(subCategory.deepPortlets).each(function (index, member) {
                     if (!c.deepPortlets['portlet.' + member.id]) {
                         c.deepPortlets.push(member);
                         c.deepPortlets['portlet.' + member.id] =
-                            c.deepPortlets[c.deepPortlets.length - 1];
+                            c.deepPortlets.at(-1);
                     }
                 });
             });
@@ -122,18 +122,17 @@ var up = up || {};
             // Process each of the direct member portlets.  First add
             // each portlet to the cached portlet list, then add it
             // to the list of deep members for this portlet category.
-            $(category.channels).each(function(idx, json) {
+            $(category.channels).each(function (index, json) {
                 var portlet = new Portlet(json);
 
                 c.portlets.push(portlet);
-                c.portlets['portlet.' + portlet.id] =
-                    c.portlets[c.portlets.length - 1];
+                c.portlets['portlet.' + portlet.id] = c.portlets.at(-1);
 
                 // add the portlet to the cached list
                 if (!that.state.portlets['portlet.' + portlet.id]) {
                     that.state.portlets.push(portlet);
                     that.state.portlets['portlet.' + portlet.id] =
-                        that.state.portlets[that.state.portlets.length - 1];
+                        that.state.portlets.at(-1);
                 }
                 // add it to the list of deep members
                 if (!c.deepPortlets['portlet.' + portlet.id]) {
@@ -145,26 +144,22 @@ var up = up || {};
 
             // add this category to the cached category list
             that.state.categories.push(c);
-            that.state.categories[c.id] =
-                that.state.categories[that.state.categories.length - 1];
+            that.state.categories[c.id] = that.state.categories.at(-1);
             return c;
-        } else {
-            // otherwise just return the already-cached category
-            return that.state.categories[category.id];
         }
     };
 
-    var getRegistry = function(that) {
+    var getRegistry = function (that) {
         $.ajax({
             url: that.options.portletListUrl,
-            success: function(data) {
+            success: function (data) {
                 // add the reported fragments to the state array, indexing
                 // each by fragment owner username to expedite future lookups
                 that.state = that.state || {};
                 that.state.portlets = [];
                 that.state.categories = [];
 
-                $(data.registry.categories).each(function(idx, category) {
+                $(data.registry.categories).each(function (index, category) {
                     processCategory(that, category);
                 });
 
@@ -191,7 +186,7 @@ var up = up || {};
      * @param {Object} component Container the element containing the fragment browser
      * @param {Object} options configuration options for the components
      */
-    up.PortletRegistry = function(container, options) {
+    up.PortletRegistry = function (container, options) {
         // construct the new component
         var that = fluid.initView('up.PortletRegistry', container, options);
 
@@ -203,7 +198,7 @@ var up = up || {};
          * Refresh the cached category and portlet information by
          * making a fresh request to the backend portlet registry service.
          */
-        that.refreshRegistry = function() {
+        that.refreshRegistry = function () {
             getRegistry(that);
         };
 
@@ -213,7 +208,7 @@ var up = up || {};
          * @param id {Number} portlet ID
          * @return {Object} portlet
          */
-        that.getPortlet = function(id) {
+        that.getPortlet = function (id) {
             return that.state.portlets['portlet.' + id];
         };
 
@@ -223,7 +218,7 @@ var up = up || {};
          *
          * @param key {String} category key
          */
-        that.getCategory = function(key) {
+        that.getCategory = function (key) {
             return that.state.categories[key];
         };
 
@@ -236,10 +231,10 @@ var up = up || {};
          *          deep member portlets of the specified category, and
          *          <code>false</code> for solely the direct members
          */
-        that.getMemberPortlets = function(key, deepMembers) {
-            return deepMembers ?
-                that.state.categories[key].deepPortlets :
-                that.state.categories[key].portlets;
+        that.getMemberPortlets = function (key, deepMembers) {
+            return deepMembers
+                ? that.state.categories[key].deepPortlets
+                : that.state.categories[key].portlets;
         };
 
         /**
@@ -251,17 +246,17 @@ var up = up || {};
          *           deep member categories of the specified category, and
          *           <code>false</code> for solely the direct members
          */
-        that.getMemberCategories = function(key, deepMembers) {
-            return deepMembers ?
-                that.state.categories[key].deepCategories :
-                that.state.categories[key].categories;
+        that.getMemberCategories = function (key, deepMembers) {
+            return deepMembers
+                ? that.state.categories[key].deepCategories
+                : that.state.categories[key].categories;
         };
 
         /**
          * Return an array of all categories retrieved for the current
          * portlet registry request.
          */
-        that.getAllCategories = function() {
+        that.getAllCategories = function () {
             return that.state.categories;
         };
 
@@ -269,7 +264,7 @@ var up = up || {};
          * Return an array of all portlets retrieved for the current
          * portlet registry request.
          */
-        that.getAllPortlets = function() {
+        that.getAllPortlets = function () {
             return that.state.portlets;
         };
 

@@ -19,15 +19,15 @@
 'use strict';
 var up = up || {};
 
-(function($, fluid) {
+(function ($, fluid) {
     /**
      * Private. Returns type from key.
      *
      * @param {String} key - reference to entity key.
      */
-    var getTypeFromKey = function(key) {
+    var getTypeFromKey = function (key) {
         var separatorIndex = key.indexOf(':');
-        return key.substring(0, separatorIndex);
+        return key.slice(0, Math.max(0, separatorIndex));
     }; // end:function.
 
     /**
@@ -35,8 +35,9 @@ var up = up || {};
      *
      * @param {String} key
      */
-    var getIdFromKey = function(key) {
+    var getIdFromKey = function (key) {
         var separatorIndex = key.indexOf(':');
+        // eslint-disable-next-line unicorn/prefer-string-slice
         return key.substring(separatorIndex + 1, key.length);
     }; // end:function.
 
@@ -45,7 +46,7 @@ var up = up || {};
      *
      * @param {Entity} entity - entity from entity registry
      */
-    var getKey = function(entity) {
+    var getKey = function (entity) {
         return entity.entityType + ':' + entity.id;
     };
 
@@ -55,20 +56,21 @@ var up = up || {};
      * @param {Object} that - reference to an instance of the up.entityselection component.
      * @param {Object} entity - reference to currently selected entity object.
      */
-    var buildSingleSelectionSnippet = function(that, entity, selected) {
-        var markup = undefined;
+    var buildSingleSelectionSnippet = function (that, entity, selected) {
+        var markup;
 
         switch (selected) {
-        case false:
-            markup =
+            case false: {
+                markup =
                     '<span class="selection" title="' +
                     that.options.messages.nothingSelected +
                     '">' +
                     that.options.messages.nothingSelected +
                     '</span>';
-            break;
-        case true:
-            markup =
+                break;
+            }
+            case true: {
+                markup =
                     '<a href="#" title="' +
                     that.options.messages.removeSelection +
                     '" key="' +
@@ -81,7 +83,8 @@ var up = up || {};
                     '<input type="hidden" name="groups" value="' +
                     getKey(entity) +
                     '"/>';
-            break;
+                break;
+            }
         } // end:switch.
 
         return markup;
@@ -96,22 +99,22 @@ var up = up || {};
      * @param {Object} that - reference to an instance of the up.entityselection component.
      * @param {string} key - key to find in selection Basket for match
      */
-    var updateButtonState = function(button, selectionBasket, that, key) {
+    var updateButtonState = function (button, selectionBasket, that, key) {
         button.unbind('click');
-        if (selectionBasket.find('a[key=\'' + key + '\']').size() > 0) {
+        if (selectionBasket.find("a[key='" + key + "']").size() > 0) {
             button
                 .text('Remove from Selection ')
-                .append('<i class=\'fa fa-minus-circle\'></i>');
+                .append("<i class='fa fa-minus-circle'></i>");
             button.removeClass('btn-success').addClass('btn-danger');
-            button.bind('click', function(e) {
+            button.bind('click', function () {
                 deselectEntity(that, key);
             });
         } else {
             button
                 .text('Add to Selection ')
-                .append('<i class=\'fa fa-plus-circle\'></i>');
+                .append("<i class='fa fa-plus-circle'></i>");
             button.removeClass('btn-danger').addClass('btn-success');
-            button.bind('click', function(e) {
+            button.bind('click', function () {
                 selectEntity(that, key);
             });
         }
@@ -123,7 +126,7 @@ var up = up || {};
      *
      * @param {Object} that - reference to an instance of the up.entityselection component.
      */
-    var updateSelectionStates = function(that) {
+    var updateSelectionStates = function (that) {
         var content;
         var selectionBasket;
         var button;
@@ -139,7 +142,7 @@ var up = up || {};
 
         // Check ad hoc groups table.
         content = that.locate('entityBrowserContent');
-        content.find('button.btn-select').each(function() {
+        content.find('button.btn-select').each(function () {
             key = $(this).attr('key');
             updateButtonState($(this), selectionBasket, that, key);
         });
@@ -151,7 +154,7 @@ var up = up || {};
      * @param {Object} that - reference to an instance of the up.entityselection component.
      * @param {String} key - reference to passed anchor tag attribute. ex: group:local.17
      */
-    var deselectEntity = function(that, key) {
+    var deselectEntity = function (that, key) {
         var selectionBasket;
         var entity;
         var buttonPrimary;
@@ -168,31 +171,38 @@ var up = up || {};
 
         // Check component selection mode.
         switch (that.selectMultiple) {
-        case false: // Single.
-            that.options.selected = [];
-            selectionBasket.html(
-                buildSingleSelectionSnippet(that, entity, false)
-            );
-            break;
-        case true: // Multiple.
-            // Generate a new list of selected entities. Remove the requested
-            // entity from the selection basket.
-            selectionBasket.find('a').each(function() {
-                var a = $(this);
-                if (a.attr('key') !== key) {
-                    newselections.push(a.attr('key'));
-                } else {
-                    a.parent().remove();
-                } // end:if.
-            }); // end:loop.
-            that.options.selected = newselections;
-            break;
+            case false: {
+                // Single.
+                that.options.selected = [];
+                selectionBasket.html(
+                    buildSingleSelectionSnippet(that, entity, false)
+                );
+                break;
+            }
+            case true: {
+                // Multiple.
+                // Generate a new list of selected entities. Remove the requested
+                // entity from the selection basket.
+                selectionBasket.find('a').each(function () {
+                    var a = $(this);
+                    if (a.attr('key') === key) {
+                        a.parent().remove();
+                    } else {
+                        newselections.push(a.attr('key'));
+                    } // end:if.
+                }); // end:loop.
+                that.options.selected = newselections;
+                break;
+            }
         } // end:switch.
 
         updateSelectionStates(that);
 
         // Enable submit.
-        if (that.options.selected.length < 1 && that.options.requireSelection) {
+        if (
+            that.options.selected.length === 0 &&
+            that.options.requireSelection
+        ) {
             buttonPrimary.attr('disabled', 'disabled');
         } // end:if.
     }; // end:function.
@@ -203,7 +213,7 @@ var up = up || {};
      * @param {Object} that - reference to an instance of the up.entityselection component.
      * @param {String} key - reference to currrently 'selected' entity. ex: group:local.17
      */
-    var selectEntity = function(that, key) {
+    var selectEntity = function (that, key) {
         var selectionBasket;
         var buttonPrimary;
         var li;
@@ -219,48 +229,52 @@ var up = up || {};
 
         // Check component selection mode.
         switch (that.selectMultiple) {
-        case false: // Single.
-            that.options.selected = [];
-            that.options.selected.push(key);
-            selectionBasket.html(
-                buildSingleSelectionSnippet(that, entity, true)
-            );
-
-            // Assign click event.
-            selectionBasket.find('a').click(function() {
+            case false: {
+                // Single.
                 that.options.selected = [];
-                selectionBasket.html(
-                    buildSingleSelectionSnippet(that, entity, false)
-                );
-                deselectEntity(that, $(this).attr('key'));
-            }); // end:click.
-            break;
-        case true: // Multiple.
-            // If 'key' does not exist within 'selected' arrary.
-            if ($.inArray(key, that.options.selected) < 0) {
-                // Add the key to our selected list.
                 that.options.selected.push(key);
+                selectionBasket.html(
+                    buildSingleSelectionSnippet(that, entity, true)
+                );
 
-                // Add an element to the user-visible select list.
-                li = $(
-                    '<li><a href="#" key="' +
+                // Assign click event.
+                selectionBasket.find('a').click(function () {
+                    that.options.selected = [];
+                    selectionBasket.html(
+                        buildSingleSelectionSnippet(that, entity, false)
+                    );
+                    deselectEntity(that, $(this).attr('key'));
+                }); // end:click.
+                break;
+            }
+            case true: {
+                // Multiple.
+                // If 'key' does not exist within 'selected' arrary.
+                if ($.inArray(key, that.options.selected) < 0) {
+                    // Add the key to our selected list.
+                    that.options.selected.push(key);
+
+                    // Add an element to the user-visible select list.
+                    li = $(
+                        '<li><a href="#" key="' +
                             getKey(entity) +
                             '">' +
                             entity.name +
                             '</a><input type="hidden" name="groups" value="' +
                             getKey(entity) +
                             '"/></li>'
-                );
+                    );
 
-                // Append li to selectionBasket.
-                selectionBasket.find('ul').append(li);
+                    // Append li to selectionBasket.
+                    selectionBasket.find('ul').append(li);
 
-                // Assign click event.
-                li.find('a').click(function() {
-                    deselectEntity(that, $(this).attr('key'));
-                }); // end:click.
-            } // end:if.
-            break;
+                    // Assign click event.
+                    li.find('a').click(function () {
+                        deselectEntity(that, $(this).attr('key'));
+                    }); // end:click.
+                } // end:if.
+                break;
+            }
         } // end:switch.
 
         updateSelectionStates(that);
@@ -276,7 +290,7 @@ var up = up || {};
      * @param {Object} anchor - reference to <a> element.
      @ @param {Function} browseFn - function to associate with anchor
      */
-    var removeBreadCrumb = function(that, anchor, browseFn) {
+    var removeBreadCrumb = function (that, anchor, browseFunction) {
         var crumb;
         var next;
 
@@ -288,7 +302,7 @@ var up = up || {};
         next.remove();
 
         // Render view associated with the 'clicked' crumb.
-        browseFn(that, anchor.attr('key'));
+        browseFunction(that, anchor.attr('key'));
     }; // end:function.
 
     /**
@@ -299,12 +313,12 @@ var up = up || {};
      * @param {Object} breadcrumbs - DOM object of breadcrumbs
      @ @param {Function} browseFn - function to associate with anchor
      */
-    var buildBreadCrumb = function(
+    var buildBreadCrumb = function (
         that,
         key,
         entityName,
         breadcrumbs,
-        browseFn
+        browseFunction
     ) {
         var breadcrumb;
         breadcrumb =
@@ -321,8 +335,8 @@ var up = up || {};
         breadcrumbs
             .find('a')
             .unbind('click')
-            .click(function() {
-                removeBreadCrumb(that, $(this), browseFn);
+            .click(function () {
+                removeBreadCrumb(that, $(this), browseFunction);
             }); // end:click.
     }; // end:function.
 
@@ -334,7 +348,12 @@ var up = up || {};
      * @param {String} breadcrumbsSel - selector name of breadcrumb
      @ @param {Function} browseFn - function to associate with anchor
      */
-    var updateBreadcrumbs = function(that, entity, breadcrumbsSel, browseFn) {
+    var updateBreadcrumbs = function (
+        that,
+        entity,
+        breadcrumbsSel,
+        browseFunction
+    ) {
         var breadcrumbs;
         var key;
         var isKey;
@@ -347,15 +366,27 @@ var up = up || {};
         if (breadcrumbs.find('span').length > 0) {
             // Breadcrumbs do exist.
             isKey =
-                breadcrumbs.find('span a[key="' + key + '"]').length > 0 ?
-                    true :
-                    false;
+                breadcrumbs.find('span a[key="' + key + '"]').length > 0
+                    ? true
+                    : false;
             if (!isKey) {
-                buildBreadCrumb(that, key, entity.name, breadcrumbs, browseFn);
+                buildBreadCrumb(
+                    that,
+                    key,
+                    entity.name,
+                    breadcrumbs,
+                    browseFunction
+                );
             } // end:if.
         } else {
             // No breadcrumbs exist.
-            buildBreadCrumb(that, key, entity.name, breadcrumbs, browseFn);
+            buildBreadCrumb(
+                that,
+                key,
+                entity.name,
+                breadcrumbs,
+                browseFunction
+            );
         } // end:if.
 
         // Add the '.last' class name to the last availble breadcrumb.
@@ -375,7 +406,7 @@ var up = up || {};
      * @param {Object} that - reference to an instance of the up.entityselection component.
      * @param {String} key - reference to currently 'focused' group key. ex: group:pags.Ad%20Hoc%20Groups
      */
-    var browseEntity = function(that, key) {
+    var browseEntity = function (that, key) {
         console.log('browse ad hoc');
         var entity;
         var currentEntityName;
@@ -396,14 +427,12 @@ var up = up || {};
 
         // Clear member tables.
         content = that.locate('entityBrowserContent');
-        content.find('table').each(function() {
-            $(this)
-                .html('')
-                .hide();
+        content.find('table').each(function () {
+            $(this).html('').hide();
         });
 
         // For each entity, create a member list item.
-        $.each(entity.children, function(idx, obj) {
+        $.each(entity.children, function (index, object) {
             var tdChild;
             var tdButtons;
             var divButtons;
@@ -412,40 +441,40 @@ var up = up || {};
             var tr;
             var table;
             var a;
-            var objType;
+            var objectType;
 
-            objType = obj.entityType.toLowerCase();
+            objectType = object.entityType.toLowerCase();
 
             // Create entity name/link.
-            if (objType == 'person' || objType == 'portlet') {
+            if (objectType == 'person' || objectType == 'portlet') {
                 a = document.createElement('span');
-                a.textContent = obj.name;
+                a.textContent = object.name;
             } else {
                 a = document.createElement('a');
                 a.href = 'javascript:;';
-                a.text = obj.name;
-                a.setAttribute('key', getKey(obj));
+                a.text = object.name;
+                a.setAttribute('key', getKey(object));
             }
             a.className = that.options.styles.memberLink;
 
             // Create entity td.
             tdChild = document.createElement('td');
-            tdChild.appendChild(a);
+            tdChild.append(a);
 
             // Create buttons, div and td.
             selButton = document.createElement('button');
             selButton.className = 'btn btn-select btn-success btn-xs';
-            selButton.setAttribute('key', getKey(obj));
-            selButton.appendChild(document.createTextNode('Add to Selection '));
+            selButton.setAttribute('key', getKey(object));
+            selButton.append(document.createTextNode('Add to Selection '));
             selIcon = document.createElement('i');
             selIcon.className = 'fa fa-plus-circle';
-            selButton.appendChild(selIcon);
+            selButton.append(selIcon);
             divButtons = document.createElement('div');
             divButtons.className = 'btn-group pull-right';
             divButtons.role = 'group';
-            divButtons.appendChild(selButton);
+            divButtons.append(selButton);
             tdButtons = document.createElement('td');
-            tdButtons.appendChild(divButtons);
+            tdButtons.append(divButtons);
             /*
                  <button type="button" class="btn btn-info btn-xs">Edit Group <i class="fa fa-pencil"></i></button>
                  <button type="button" class="btn btn-danger btn-xs">Delete Group <i class="fa fa-trash-o"></i></button>
@@ -453,27 +482,22 @@ var up = up || {};
 
             // Create row and add to table.
             tr = document.createElement('tr');
-            tr.appendChild(tdChild);
-            tr.appendChild(tdButtons);
+            tr.append(tdChild);
+            tr.append(tdButtons);
             table = content
-                .find('.' + objType)
+                .find('.' + objectType)
                 .find('.' + that.options.styles.memberList);
             table.append(tr);
             table.show();
         }); // end:loop.
 
         // Reset no-members.
-        that.container.find('.no-members').each(function(idx, obj) {
-            obj = $(obj);
-            if (
-                obj
-                    .parent()
-                    .find('tr')
-                    .size() > 0
-            ) {
-                obj.hide();
+        that.container.find('.no-members').each(function (index, object) {
+            object = $(object);
+            if (object.parent().find('tr').size() > 0) {
+                object.hide();
             } else {
-                obj.show();
+                object.show();
             }
         });
 
@@ -481,7 +505,7 @@ var up = up || {};
         content
             .find('table')
             .find('a')
-            .click(function() {
+            .click(function () {
                 browseEntity(that, $(this).attr('key'));
             }); // end:click.
 
@@ -494,22 +518,19 @@ var up = up || {};
      *
      * @param {Object} that - reference to an instance of the up.entityselection component.
      */
-    var updateSearchView = function(that) {
+    var updateSearchView = function (that) {
         var list;
 
         // Cache.
         list = that.searchDropDown.find(that.options.selectors.searchResults);
-        list
-            .find('.' + that.options.styles.selected)
-            .removeClass(that.options.styles.selected);
+        list.find('.' + that.options.styles.selected).removeClass(
+            that.options.styles.selected
+        );
 
         // Loop through selected array.
-        $.each(that.options.selected, function(idx, obj) {
-            var span = list.find('span[key="' + obj + '"]');
-            span
-                .parent()
-                .parent()
-                .addClass(that.options.styles.selected);
+        $.each(that.options.selected, function (index, object) {
+            var span = list.find('span[key="' + object + '"]');
+            span.parent().parent().addClass(that.options.styles.selected);
         }); // end:loop.
     }; // end:function.
 
@@ -519,7 +540,7 @@ var up = up || {};
      * @param {Object} that - reference to an instance of the up.entityselection component.
      * @param {String} key - reference to key attribute passed over when search link is clicked.
      */
-    var itemSelectionHandler = function(that, key) {
+    var itemSelectionHandler = function (that, key) {
         // Cache.
         var entity = that.registry.getEntity(
             getTypeFromKey(key),
@@ -528,12 +549,12 @@ var up = up || {};
         console.log(entity);
 
         // Selection.
-        if ($.inArray(key, that.options.selected) !== -1) {
-            // Key exists.
-            deselectEntity(that, getKey(entity));
-        } else {
+        if ($.inArray(key, that.options.selected) === -1) {
             // Key does not exist.
             selectEntity(that, getKey(entity));
+        } else {
+            // Key exists.
+            deselectEntity(that, getKey(entity));
         } // end:if.
 
         // Update UI.
@@ -546,7 +567,7 @@ var up = up || {};
      * @param {Object} that - reference to an instance of the up.entityselection component.
      * @param {String} searchTerm - reference to search term.
      */
-    var search = function(that, searchTerm, form) {
+    var search = function (that, searchTerm) {
         var entities;
         var list;
         var listItem;
@@ -569,22 +590,22 @@ var up = up || {};
         listItem = '';
 
         // Loop through each entity. Build list items.
-        $.each(entities, function(idx, obj) {
+        $.each(entities, function (index, object) {
             listItem +=
                 '<li class="' +
-                obj.entityType +
+                object.entityType +
                 '"><a href="#" title="' +
-                obj.name +
+                object.name +
                 '"><span key="' +
-                getKey(obj) +
+                getKey(object) +
                 '">' +
-                obj.name +
+                object.name +
                 '</span></a></li>';
         }); // end:loop.
         list.html(listItem);
 
         // Assign default 'click' event.
-        list.find('a').bind('click', function() {
+        list.find('a').bind('click', function () {
             var span = $(this).find('span');
             console.log(span.attr('key'));
             itemSelectionHandler(that, span.attr('key'));
@@ -592,7 +613,7 @@ var up = up || {};
 
         // Render 'No Members' when list is empty.
         members = list.find('li');
-        if (members.length < 1) {
+        if (members.length === 0) {
             searchResultsNoMembers.show();
             list.hide();
         } else {
@@ -612,7 +633,7 @@ var up = up || {};
      *
      * @param {Object} that - reference to an instance of the up.entityselection component.
      */
-    var searchEntity = function(that) {
+    var searchEntity = function (that) {
         var closeSearch;
         var searchForm;
         var searchField;
@@ -630,25 +651,25 @@ var up = up || {};
         searchDropDown.css({top: searchField.outerHeight()});
 
         // Binds 'submit' event.
-        searchForm.submit(function() {
+        searchForm.submit(function () {
             up.showLoader(loader);
-            search(that, searchField.val(), searchForm);
+            search(that, searchField.val());
             searchDropDown.show();
             up.hideLoader(loader);
             return false;
         }); // end:listener.
 
         // Binds 'click' event to close button.
-        closeSearch.find('a').bind('click', function() {
+        closeSearch.find('a').bind('click', function () {
             searchDropDown.hide();
         }); // end:listener.
 
         // Binds 'click' event listener to the document. Detects a 'click'
         // that occurs outside of the component.
-        $(document).bind('click', function(e) {
+        $(document).bind('click', function (event) {
             if (
                 that.isEmptyArray(
-                    $(e.target).parents('.' + that.options.styles.search)
+                    $(event.target).parents('.' + that.options.styles.search)
                 )
             ) {
                 searchDropDown.hide();
@@ -656,12 +677,12 @@ var up = up || {};
         }); // end:function.
     }; // end:function.
 
-    var createTestMaps = function(groupNames, testAttr) {
+    var createTestMaps = function (groupNames, testAttribute) {
         var tests = [];
-        $.each(groupNames, function(i, name) {
+        $.each(groupNames, function (index, name) {
             tests.push({
                 testValue: name,
-                attributeName: testAttr,
+                attributeName: testAttribute,
                 testerClassName:
                     'org.apereo.portal.groups.pags.testers.AdHocGroupTester',
             });
@@ -674,14 +695,13 @@ var up = up || {};
      *
      * @param {Object} that - reference to an instance of the up.entityselection component.
      */
-    var initialize = function(that) {
+    var initialize = function (that) {
         // Initialize search drop-down.
         searchEntity(that);
 
-        that
-            .locate('selectionBasket')
+        that.locate('selectionBasket')
             .find('a')
-            .click(function() {
+            .click(function () {
                 deselectEntity(that, $(this).attr('key'));
             }); // end:click.
 
@@ -692,9 +712,9 @@ var up = up || {};
             var jsTreeIncludes = false;
             var jsTreeExcludes = false;
 
-            var entityToJSTreeNode = function(entity) {
+            var entityToJSTreeNode = function (entity) {
                 var childNodes = [];
-                $.each(entity.children, function(idx, child) {
+                $.each(entity.children, function (index, child) {
                     if (child.entityType == 'GROUP') {
                         childNodes.push({
                             id: getKey(child),
@@ -710,11 +730,11 @@ var up = up || {};
                 };
             };
 
-            var callback = function(obj, cb) {
+            var callback = function (object, callback_) {
                 var key;
                 var entity;
                 var childNodes = [];
-                if (obj.id === '#') {
+                if (object.id === '#') {
                     // root tree node, so send back initial node
                     key = that.options.initialFocusedEntity;
                     entity = that.registry.getEntity(
@@ -723,46 +743,55 @@ var up = up || {};
                     );
                     childNodes.push(entityToJSTreeNode(entity));
                 } else {
-                    key = obj.id;
+                    key = object.id;
                     entity = that.registry.getEntity(
                         getTypeFromKey(key),
                         getIdFromKey(key)
                     );
-                    $.each(entity.children, function(idx, child) {
+                    $.each(entity.children, function (index, child) {
                         if (child.entityType == 'GROUP') {
                             childNodes.push(entityToJSTreeNode(child));
                         }
                     });
                 }
-                cb.call(this, childNodes);
+                callback_.call(this, childNodes);
             };
 
-            var displayResponseMessage = function(xmlhttp) {
+            var displayResponseMessage = function (xmlhttp) {
                 console.log('display response message');
                 console.log(xmlhttp.responseText);
                 switch (xmlhttp.status) {
-                case 200: // SC_OK
-                case 201: // SC_CREATED
-                case 202: // SC_ACCEPTED
-                    $(that.options.selectors.alertSuccess).show();
-                    break;
-                case 400: // SC_BAD_REQUEST -> bad parent
-                    $(that.options.selectors.alertInvalidParent).show();
-                    break;
-                case 409: // SC_CONFLICT -> group exists
-                    $(that.options.selectors.alertGroupExists).show();
-                    break;
-                case 401: // SC_UNAUTHORIZED
-                case 403: // SC_FORBIDDEN
-                    $(that.options.selectors.alertUnauthorized).show();
-                    break;
-                default:
-                    $(that.options.selectors.alertUnknown).show();
-                    break;
+                    case 200: // SC_OK
+                    case 201: // SC_CREATED
+                    case 202: {
+                        // SC_ACCEPTED
+                        $(that.options.selectors.alertSuccess).show();
+                        break;
+                    }
+                    case 400: {
+                        // SC_BAD_REQUEST -> bad parent
+                        $(that.options.selectors.alertInvalidParent).show();
+                        break;
+                    }
+                    case 409: {
+                        // SC_CONFLICT -> group exists
+                        $(that.options.selectors.alertGroupExists).show();
+                        break;
+                    }
+                    case 401: // SC_UNAUTHORIZED
+                    case 403: {
+                        // SC_FORBIDDEN
+                        $(that.options.selectors.alertUnauthorized).show();
+                        break;
+                    }
+                    default: {
+                        $(that.options.selectors.alertUnknown).show();
+                        break;
+                    }
                 }
             };
 
-            that.locate('saveAdHocButton').bind('click', function(e) {
+            that.locate('saveAdHocButton').bind('click', function () {
                 var parentKey;
                 var parentName;
                 var includes;
@@ -774,17 +803,15 @@ var up = up || {};
                 parentKey = that.locate('currentEntityName').attr('key');
                 parentName = that.locate('currentEntityName').text();
                 includes = [];
-                that
-                    .locate('dataIncludesList')
+                that.locate('dataIncludesList')
                     .find('li')
-                    .each(function() {
+                    .each(function () {
                         includes.push($(this).text());
                     });
                 excludes = [];
-                that
-                    .locate('dataExcludesList')
+                that.locate('dataExcludesList')
                     .find('li')
-                    .each(function() {
+                    .each(function () {
                         excludes.push($(this).text());
                     });
 
@@ -800,7 +827,7 @@ var up = up || {};
                 console.log(json);
 
                 xmlhttp = new XMLHttpRequest();
-                xmlhttp.onreadystatechange = function() {
+                xmlhttp.addEventListener('readystatechange', function () {
                     if (xmlhttp.readyState == 4) {
                         if (xmlhttp.status >= 200 && xmlhttp.status <= 202) {
                             that.registry.removeEntity(parentKey);
@@ -808,7 +835,7 @@ var up = up || {};
                         }
                         displayResponseMessage(xmlhttp);
                     }
-                };
+                });
                 xmlhttp.open(
                     'POST',
                     that.options.pagsApiUrl + parentName + '.json',
@@ -819,7 +846,7 @@ var up = up || {};
 
             $(that.options.selectors.adHocGroupsModal).on(
                 'show.bs.modal',
-                function() {
+                function () {
                     $(that.options.selectors.alerts).hide();
 
                     // Initialize jsTree widgets within this dialog only when shown and only once
@@ -854,7 +881,10 @@ var up = up || {};
         }
 
         // Disable primary button.
-        if (that.options.selected.length < 1 && that.options.requireSelection) {
+        if (
+            that.options.selected.length === 0 &&
+            that.options.requireSelection
+        ) {
             that.locate('buttonPrimary').attr('disabled', 'disabled');
         } // end:if.
     }; // end:function.
@@ -865,7 +895,7 @@ var up = up || {};
      * @param {Object} container - reference to DOM container.
      * @param {Object} options - reference to configuration object.
      */
-    up.entityselection = function(container, options) {
+    up.entityselection = function (container, options) {
         var that;
 
         // Initialize component & cache globals.
@@ -885,8 +915,8 @@ var up = up || {};
          *
          * @param {Object} arr - reference to passed array object.
          */
-        that.isEmptyArray = function(arr) {
-            return arr.length > 0 ? false : true;
+        that.isEmptyArray = function (array) {
+            return array.length > 0 ? false : true;
         }; // end:function.
 
         initialize(that);

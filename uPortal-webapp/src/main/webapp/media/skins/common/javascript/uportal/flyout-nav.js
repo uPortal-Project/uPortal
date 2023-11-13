@@ -18,15 +18,15 @@
  */
 var uportal = uportal || {};
 
-(function($, fluid) {
+(function ($, fluid) {
     /**
      * Initialize the flyout menu item
      */
-    var init = function(that) {
+    var init = function (that) {
         zIndexWorkaround(that);
 
         // set the mouseover event
-        $(that.container).mouseover(function() {
+        $(that.container).mouseover(function () {
             var tab;
             var flyout;
             var flyoutList;
@@ -46,36 +46,32 @@ var uportal = uportal || {};
             // Horizontal.
             if (that.options.orientation === 'horizontal') {
                 // Left.
-                if (that.options.horzalign === 'left') {
-                    foLeft = 0;
-                } else {
-                    foLeft = tab.outerWidth() - flyout.outerWidth();
-                } // end:if.
+                foLeft =
+                    that.options.horzalign === 'left'
+                        ? 0
+                        : tab.outerWidth() - flyout.outerWidth(); // end:if.
 
                 // Bottom.
-                if (that.options.vertalign === 'bottom') {
-                    foTop = tab.outerHeight() - that.options.offset;
-                } else {
-                    foTop = flyout.outerHeight() * -1;
-                } // end:if.
+                foTop =
+                    that.options.vertalign === 'bottom'
+                        ? tab.outerHeight() - that.options.offset
+                        : flyout.outerHeight() * -1; // end:if.
             } else {
                 // Left.
-                if (that.options.horzalign === 'left') {
-                    foLeft = flyout.outerWidth() * -1;
-                } else {
-                    foLeft = tab.outerWidth();
-                } // end:if.
+                foLeft =
+                    that.options.horzalign === 'left'
+                        ? flyout.outerWidth() * -1
+                        : tab.outerWidth(); // end:if.
 
                 // Bottom.
-                if (that.options.vertalign === 'bottom') {
-                    foTop = 0;
-                } else {
-                    foTop = (flyout.outerHeight() - tab.outerHeight()) * -1;
-                } // end:if.
+                foTop =
+                    that.options.vertalign === 'bottom'
+                        ? 0
+                        : (flyout.outerHeight() - tab.outerHeight()) * -1; // end:if.
             } // end:if.
 
             // set the mouseout event
-            $(that.container).mouseout(function() {
+            $(that.container).mouseout(function () {
                 that.closeFlyout();
             });
 
@@ -95,50 +91,45 @@ var uportal = uportal || {};
      *
      * From http://richa.avasthi.name/blogs/tepumpkin/2008/01/11/ie7-lessons-learned/
      */
-    var zIndexWorkaround = function(that) {
-        if ($.browser.msie) {
-            if ($.browser.version === '7.0') {
-                // Iterate over the parents of the flyout containers
-                that
-                    .locate('flyoutMenu')
-                    .parents()
-                    .each(function() {
-                        var p = $(this);
-                        var pos = p.css('position');
+    var zIndexWorkaround = function (that) {
+        if ($.browser.msie && $.browser.version === '7.0') {
+            // Iterate over the parents of the flyout containers
+            that.locate('flyoutMenu')
+                .parents()
+                .each(function () {
+                    var p = $(this);
+                    var pos = p.css('position');
 
-                        // If it's positioned,
-                        if (
-                            pos == 'relative' ||
-                            pos == 'absolute' ||
-                            pos == 'fixed'
-                        ) {
-                            /*
+                    // If it's positioned,
+                    if (
+                        pos == 'relative' ||
+                        pos == 'absolute' ||
+                        pos == 'fixed'
+                    ) {
+                        /*
                          * Add the "on-top" class name This class is defined in:
                          * uportal-war/src/main/webapp/media/skins/universality/common/css/layout-portal.css
                          */
-                            $(this).addClass(that.options.styles.onTop);
-                        }
-                    });
-
-                return;
-            } // end:if.
-        } // end:if.
+                        $(this).addClass(that.options.styles.onTop);
+                    }
+                });
+        } // end:if. // end:if.
     };
 
     /**
      * Create a new flyout menu component
      */
-    uportal.flyoutmenu = function(container, options) {
+    uportal.flyoutmenu = function (container, options) {
         var that = fluid.initView('uportal.flyoutmenu', container, options);
 
         // initialize the flyout menu
         init(that);
 
-        that.openFlyout = function() {
+        that.openFlyout = function () {
             that.locate('flyoutMenu').show();
         };
 
-        that.closeFlyout = function() {
+        that.closeFlyout = function () {
             that.locate('flyoutMenu').hide();
         };
     };

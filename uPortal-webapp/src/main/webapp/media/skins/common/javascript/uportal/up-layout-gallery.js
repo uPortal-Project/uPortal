@@ -19,8 +19,8 @@
 'use strict';
 var up = up || {};
 
-(function($, fluid) {
-    up.AjaxLayoutCategoryListView = function(container, overallThat, options) {
+(function ($, fluid) {
+    up.AjaxLayoutCategoryListView = function (container, overallThat, options) {
         // construct the new component
         var that = fluid.initView(
             'up.AjaxLayoutCategoryListView',
@@ -41,7 +41,7 @@ var up = up || {};
             {id: 'categoryName', selector: '.category-choice-name'},
         ];
 
-        that.refresh = function() {
+        that.refresh = function () {
             // Build an array of all categories containing at least
             // one deep member, sorted by name
             var categories = [];
@@ -54,17 +54,16 @@ var up = up || {};
                 portlets: [],
                 deepPortlets: [],
             });
-            $(overallThat.registry.getAllCategories()).each(function(
-                idx,
-                category
-            ) {
-                if (
-                    category.deepPortlets.length > 0 &&
-                    category.id !== 'local.1'
-                ) {
-                    categories.push(category);
+            $(overallThat.registry.getAllCategories()).each(
+                function (index, category) {
+                    if (
+                        category.deepPortlets.length > 0 &&
+                        category.id !== 'local.1'
+                    ) {
+                        categories.push(category);
+                    }
                 }
-            });
+            );
             categories.sort(
                 up.getStringPropertySortFunction(
                     'name',
@@ -76,7 +75,7 @@ var up = up || {};
 
             var s = overallThat.state.currentCategory || '';
 
-            $(categories).each(function(idx, category) {
+            $(categories).each(function (index, category) {
                 tree.children.push({
                     ID: 'categoryContainer:',
                     children: [
@@ -95,7 +94,7 @@ var up = up || {};
                                 {
                                     type: 'jQuery',
                                     func: 'click',
-                                    args: function() {
+                                    args: function () {
                                         overallThat.events.onCategorySelect.fire(
                                             overallThat,
                                             category
@@ -135,7 +134,7 @@ var up = up || {};
         rootCategoryDescription: 'All Categories',
     });
 
-    up.AjaxLayoutPortletListView = function(container, overallThat, options) {
+    up.AjaxLayoutPortletListView = function (container, overallThat, options) {
         var that;
         var cutpoints;
 
@@ -153,16 +152,15 @@ var up = up || {};
         ]);
 
         // DragManger 'onDropTarget' callback.
-        that.dragManager.events.onDropTarget.addListener(function(
-            method,
-            targetID
-        ) {
-            that.state.drag.overall.events.onPortletDrag.fire(
-                that.state.drag.data,
-                method,
-                targetID
-            );
-        });
+        that.dragManager.events.onDropTarget.addListener(
+            function (method, targetID) {
+                that.state.drag.overall.events.onPortletDrag.fire(
+                    that.state.drag.data,
+                    method,
+                    targetID
+                );
+            }
+        );
 
         // initialize a state map for this component
         that.state = {};
@@ -179,7 +177,7 @@ var up = up || {};
             {id: 'portletIcon', selector: '.portlet-thumb-icon'},
         ];
 
-        that.refresh = function() {
+        that.refresh = function () {
             var portlets;
             var members;
 
@@ -188,13 +186,13 @@ var up = up || {};
             portlets = [];
             members =
                 overallThat.state.currentCategory &&
-                overallThat.state.currentCategory !== '' ?
-                    overallThat.registry.getMemberPortlets(
-                        overallThat.state.currentCategory,
-                        true
-                    ) :
-                    overallThat.registry.getAllPortlets();
-            $(members).each(function(idx, portlet) {
+                overallThat.state.currentCategory !== ''
+                    ? overallThat.registry.getMemberPortlets(
+                          overallThat.state.currentCategory,
+                          true
+                      )
+                    : overallThat.registry.getAllPortlets();
+            $(members).each(function (index, portlet) {
                 if (
                     !overallThat.state.portletRegex ||
                     overallThat.state.portletRegex.test(portlet.title) ||
@@ -218,13 +216,13 @@ var up = up || {};
                     {
                         key: 'portletWrapper',
                         valuebinding: '*.id',
-                        components: function(row) {
+                        components: function (row) {
                             return {
                                 decorators: [
                                     {
                                         type: 'jQuery',
                                         func: 'mousedown',
-                                        args: function() {
+                                        args: function () {
                                             // Update drag state. This state object is read
                                             // when a thumbnail is dropped into a portal column.
                                             that.state.drag = {
@@ -250,13 +248,13 @@ var up = up || {};
                     {
                         key: 'portletLink',
                         valuebinding: '*.id',
-                        components: function(row) {
+                        components: function (row) {
                             return {
                                 decorators: [
                                     {
                                         type: 'jQuery',
                                         func: 'click',
-                                        args: function() {
+                                        args: function () {
                                             overallThat.events.onPortletSelect.fire(
                                                 overallThat,
                                                 row
@@ -278,7 +276,7 @@ var up = up || {};
                     {
                         key: 'portletIcon',
                         valuebinding: '*.id',
-                        components: function(row) {
+                        components: function (row) {
                             return {
                                 decorators: [
                                     {
@@ -327,7 +325,7 @@ var up = up || {};
                         },
                     },
                     listeners: {
-                        onModelChange: function(newModel, oldModel, pager) {
+                        onModelChange: function (newModel, oldModel, pager) {
                             // Temporary solution. The initDragAndDrop() method call has been wrapped
                             // within a setTimeout to resolve a fluid.pager bug (i.e. UP-4000). When
                             // the onModelChange event fires the DOM contained within the pager.container
@@ -339,7 +337,7 @@ var up = up || {};
                             // draggable. Wrapping this method call within a setTimeout with the duration set to
                             // 0 forces the initDragAndDrop() method to be the last JavaScript function executed,
                             // giving time for the DOM to be redrawn.
-                            var timer = setTimeout(function() {
+                            var timer = setTimeout(function () {
                                 that.dragManager.initDragAndDrop(
                                     newModel,
                                     oldModel,
@@ -378,12 +376,12 @@ var up = up || {};
             '/ResourceServingWebapp/rs/tango/0.8.90/32x32/categories/applications-other.png',
     });
 
-    up.BrowseContentPane = function(container, overallThat, options) {
+    up.BrowseContentPane = function (container, overallThat, options) {
         var that = fluid.initView('up.BrowseContentPane', container, options);
 
         var initialized = false;
 
-        that.showPane = function() {
+        that.showPane = function () {
             if (!initialized) {
                 overallThat.showLoading();
                 initialized = true;
@@ -399,34 +397,31 @@ var up = up || {};
             that.events.onShow.fire(that);
         };
 
-        that.hidePane = function() {
+        that.hidePane = function () {
             that.locate('pane').hide();
             that.locate('paneLink').removeClass('active');
         };
 
-        that.hidePaneLink = function() {
+        that.hidePaneLink = function () {
             that.locate('pane').hide();
-            that
-                .locate('paneLink')
-                .hide()
-                .removeClass('active');
+            that.locate('paneLink').hide().removeClass('active');
         };
 
-        that.showPaneLink = function() {
+        that.showPaneLink = function () {
             that.locate('paneLink').show();
         };
 
-        that.showLoading = function() {
+        that.showLoading = function () {
             that.locate('ui').hide();
             that.locate('loading').show();
         };
 
-        that.hideLoading = function() {
+        that.hideLoading = function () {
             that.locate('loading').hide();
             that.locate('ui').show();
         };
 
-        that.locate('paneLink').click(function() {
+        that.locate('paneLink').click(function () {
             overallThat.showPane(that.options.key);
         });
 
@@ -447,7 +442,7 @@ var up = up || {};
                     type: 'up.AjaxLayoutPortletListView',
                 },
                 listeners: {
-                    onLoad: function(portletBrowser, gallery) {
+                    onLoad: function (portletBrowser, gallery) {
                         gallery.hideLoading();
                     },
                 },
@@ -475,7 +470,7 @@ var up = up || {};
         },
     });
 
-    up.PortalGalleryPane = function(container, overallThat, options) {
+    up.PortalGalleryPane = function (container, overallThat, options) {
         var that;
         var initialized;
 
@@ -488,7 +483,7 @@ var up = up || {};
          * called, show the loading screen, initialize the pane, and then
          * hide the loading pane when done.
          */
-        that.showPane = function() {
+        that.showPane = function () {
             // if the pane has not yet been initialized, show the loading
             // screen while we initialize it
             if (!initialized) {
@@ -506,13 +501,13 @@ var up = up || {};
         /**
          * Hide this pane
          */
-        that.hidePane = function() {
+        that.hidePane = function () {
             that.locate('pane').hide();
             that.locate('paneLink').removeClass('active');
         };
 
         // wire the pane link to display the appropriate pane
-        that.locate('paneLink').click(function() {
+        that.locate('paneLink').click(function () {
             overallThat.showPane(that.options.key);
         });
 
@@ -535,40 +530,33 @@ var up = up || {};
         },
     });
 
-    up.PortalGallery = function(container, options) {
+    up.PortalGallery = function (container, options) {
         var that = fluid.initView('up.PortalGallery', container, options);
 
-        that.panes = [];
-        that.panes.push(
+        that.panes = [
             fluid.initSubcomponent(that, 'browseContentPane', [
                 container,
                 that,
                 fluid.COMPONENT_OPTIONS,
-            ])
-        );
-        that.panes.push(
+            ]),
             fluid.initSubcomponent(that, 'useContentPane', [
                 container,
                 that,
                 fluid.COMPONENT_OPTIONS,
-            ])
-        );
-        that.panes.push(
+            ]),
             fluid.initSubcomponent(that, 'skinPane', [
                 container,
                 that,
                 fluid.COMPONENT_OPTIONS,
-            ])
-        );
-        that.panes.push(
+            ]),
             fluid.initSubcomponent(that, 'layoutPane', [
                 container,
                 that,
                 fluid.COMPONENT_OPTIONS,
-            ])
-        );
+            ]),
+        ];
 
-        that.openGallery = function() {
+        that.openGallery = function () {
             that.options.isOpen = true;
             that.locate('galleryHandle').addClass('handle-arrow-up');
             that.locate('galleryInner').slideDown(that.options.openSpeed);
@@ -584,14 +572,14 @@ var up = up || {};
             }
         };
 
-        that.closeGallery = function() {
+        that.closeGallery = function () {
             that.options.isOpen = false;
             that.locate('galleryHandle').removeClass('handle-arrow-up');
             that.locate('galleryInner').slideUp(that.options.closeSpeed);
         };
 
-        that.showPane = function(key) {
-            $(that.panes).each(function(idx, pane) {
+        that.showPane = function (key) {
+            $(that.panes).each(function (index, pane) {
                 if (pane.options.key === key) {
                     pane.showPane();
                 } else {
@@ -600,23 +588,23 @@ var up = up || {};
             });
         };
 
-        that.hidePaneLink = function(key) {
-            $(that.panes).each(function(idx, pane) {
+        that.hidePaneLink = function (key) {
+            $(that.panes).each(function (index, pane) {
                 if (pane.options.key === key) {
                     pane.hidePaneLink();
                 }
             });
         };
 
-        that.showPaneLink = function(key) {
-            $(that.panes).each(function(idx, pane) {
+        that.showPaneLink = function (key) {
+            $(that.panes).each(function (index, pane) {
                 if (pane.options.key === key) {
                     pane.showPaneLink();
                 }
             });
         };
 
-        that.refreshPaneLink = function(key) {
+        that.refreshPaneLink = function () {
             if (
                 $('#portalPageBodyColumns .portal-page-column').filter(
                     '.canAddChildren,.up-fragment-admin'
@@ -628,12 +616,12 @@ var up = up || {};
             }
         };
 
-        that.showLoading = function() {
+        that.showLoading = function () {
             that.locate('ui').hide();
             that.locate('loading').show();
         };
 
-        that.hideLoading = function() {
+        that.hideLoading = function () {
             var modal;
             var ui;
 
@@ -646,7 +634,7 @@ var up = up || {};
 
         // wire the gallery handle to open and close the gallery panel
         // as appropriate
-        that.locate('galleryHandle').click(function() {
+        that.locate('galleryHandle').click(function () {
             if (that.options.isOpen) {
                 that.closeGallery();
             } else {
@@ -708,7 +696,7 @@ var up = up || {};
                     paneLink: '.layout-link',
                 },
                 listeners: {
-                    onInitialize: function(overallThat) {
+                    onInitialize: function () {
                         up.LayoutSelector('.layouts-list', {});
                     },
                 },

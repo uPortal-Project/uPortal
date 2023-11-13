@@ -18,8 +18,8 @@
  */
 var up = up || {};
 
-(function($) {
-    up.notify = function(messageText, messageLayout, messageType) {
+(function ($) {
+    up.notify = function (messageText, messageLayout, messageType) {
         $('#up-notification').noty({
             text: messageText,
             layout: messageLayout,
@@ -27,7 +27,7 @@ var up = up || {};
         });
     };
 
-    $.fn.createRatingModal = function() {
+    $.fn.createRatingModal = function () {
         var that = this;
         var modalTitle = [
             '<h4 class="modal-title" style="white-space: nowrap"><strong>',
@@ -85,16 +85,14 @@ var up = up || {};
         $(this).modal('hide');
         $(this)
             .find('.ratingModalSaveButton')
-            .click(function(e) {
-                var portletRating = $(that)
-                    .find('input')
-                    .val();
+            .click(function () {
+                var portletRating = $(that).find('input').val();
                 var saveUrl = $(that).data('saveurl');
                 $.ajax({
                     url: saveUrl,
                     data: {rating: portletRating},
                     type: 'POST',
-                    success: function() {
+                    success: function () {
                         // hide the modal first to prevent flicker on updating the instructions in the modal
                         $(that).modal('hide');
                         up.notify(
@@ -103,7 +101,7 @@ var up = up || {};
                             'success'
                         );
                         // delay adjusting instructions to afford time for the modal to have actually hidden first
-                        setTimeout(function() {
+                        setTimeout(function () {
                             $(that)
                                 .find('.ratingModalInstruct')
                                 .text(
@@ -111,7 +109,7 @@ var up = up || {};
                                 );
                         }, 1000);
                     },
-                    error: function() {
+                    error: function () {
                         // Dismiss the modal even on error.
                         $(that).modal('hide');
                         up.notify(
@@ -122,10 +120,8 @@ var up = up || {};
                     },
                 });
             });
-        $(this).on('show.bs.modal', function(e) {
-            $(that)
-                .find('.ratingModalSaveButton')
-                .addClass('disabled');
+        $(this).on('show.bs.modal', function () {
+            $(that).find('.ratingModalSaveButton').addClass('disabled');
             var getUrl = $(that).data('geturl');
             $.ajax({
                 url: getUrl,
@@ -133,14 +129,10 @@ var up = up || {};
                 cache: false,
                 dataType: 'json',
                 contentType: 'application/json; charset=utf-8',
-                success: function(data) {
+                success: function (data) {
                     if (data.rating === null) {
-                        $(that)
-                            .find('input')
-                            .val(0);
-                        $(that)
-                            .find('input')
-                            .redraw(0);
+                        $(that).find('input').val(0);
+                        $(that).find('input').redraw(0);
                         $(that)
                             .find('.ratingModalInstruct')
                             .text($(that).data('rating.instructions.unrated'));
@@ -148,18 +140,14 @@ var up = up || {};
                         $(that)
                             .find('.ratingModalSaveButton')
                             .removeClass('disabled');
-                        $(that)
-                            .find('input')
-                            .val(data.rating);
-                        $(that)
-                            .find('input')
-                            .redraw(data.rating);
+                        $(that).find('input').val(data.rating);
+                        $(that).find('input').redraw(data.rating);
                         $(that)
                             .find('.ratingModalInstruct')
                             .text($(that).data('rating.instructions.rated'));
                     }
                 },
-                error: function(data) {
+                error: function () {
                     up.notify(
                         $(that).data('get.rating.unsucessful'),
                         'TopCenter',
@@ -167,9 +155,7 @@ var up = up || {};
                     );
                 },
             });
-            $(that)
-                .find('.modal-dialog')
-                .css('transform', 'translate(0, 50%)');
+            $(that).find('.modal-dialog').css('transform', 'translate(0, 50%)');
             $(that)
                 .find('.modal-dialog')
                 .css('-ms-transform', 'translate(0, 50%)'); // IE 9
@@ -178,7 +164,7 @@ var up = up || {};
                 .css('-webkit-transform', 'translate(0, 50%)'); // Safari and Chrome
             $(that)
                 .find('input')
-                .change(function() {
+                .change(function () {
                     $(that)
                         .find('.ratingModalSaveButton')
                         .removeClass('disabled');

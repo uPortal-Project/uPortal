@@ -26,29 +26,21 @@ html {
     .portal-navigation-dropdown::after {
       content: "";
       position: absolute;
-      top: 0;
-      bottom: -10px;
-      left: -10px;
-      right: -10px;
+      inset: 0 -10px -10px;
     }
+
     @media screen {
       @media (min-width: @screen-sm-min) {
         .portal-navigation-gripper::after {
           content: "";
           position: absolute;
-          top: -10px;
-          bottom: 0;
-          left: 0;
-          right: -10px;
+          inset: -10px -10px 0 0;
         }
 
         .portal-navigation-delete::after {
           content: "";
           position: absolute;
-          top: -10px;
-          bottom: 0;
-          left: -10px;
-          right: 0;
+          inset: -10px 0 0 -10px;
         }
       }
     }

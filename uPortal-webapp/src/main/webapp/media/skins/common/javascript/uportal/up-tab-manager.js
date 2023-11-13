@@ -44,7 +44,7 @@
 'use strict';
 var up = up || {};
 
-(function($, fluid) {
+(function ($, fluid) {
     /**
      * Set up the edit container and append the edit field to the container.  If an edit container
      * is not provided, default markup is created.
@@ -55,15 +55,17 @@ var up = up || {};
      *
      * @return eContainer The edit container containing the edit field
      */
-    fluid.inlineEdit.setupEditContainer = function(
+    fluid.inlineEdit.setupEditContainer = function (
         displayContainer,
         editField,
         editContainer
     ) {
+        // eslint-disable-next-line unicorn/prevent-abbreviations
         var eContainer = $(editContainer);
-        eContainer = eContainer.length ?
-            eContainer :
-            $('<div class=\'fl-inlineEditContainer\'></div>');
+        eContainer =
+            eContainer.length > 0
+                ? eContainer
+                : $("<div class='fl-inlineEditContainer'></div>");
         displayContainer.parent().after(eContainer);
         eContainer.append(editField);
 
@@ -76,15 +78,15 @@ var up = up || {};
      *
      * @return {jQuery} The accessible button located after the display text
      */
-    fluid.inlineEdit.setupTextEditButton = function(that) {
-        var opts = that.options;
+    fluid.inlineEdit.setupTextEditButton = function (that) {
+        var options = that.options;
         var textEditButton = that.locate('textEditButton');
 
         if (textEditButton.length === 0) {
             var markup = $(
-                '<span class=\'flc-inlineEdit-textEditButton\'></span>'
+                "<span class='flc-inlineEdit-textEditButton'></span>"
             );
-            markup.addClass(opts.styles.textEditButton);
+            markup.addClass(options.styles.textEditButton);
 
             /**
              * Set text for the button and listen
@@ -93,14 +95,14 @@ var up = up || {};
 
             fluid.inlineEdit.updateTextEditButton(
                 markup,
-                that.model.value || opts.defaultViewText,
-                opts.strings.textEditButton
+                that.model.value || options.defaultViewText,
+                options.strings.textEditButton
             );
-            that.events.modelChanged.addListener(function() {
+            that.events.modelChanged.addListener(function () {
                 fluid.inlineEdit.updateTextEditButton(
                     markup,
-                    that.model.value || opts.defaultViewText,
-                    opts.strings.textEditButton
+                    that.model.value || options.defaultViewText,
+                    options.strings.textEditButton
                 );
             });
 
@@ -118,12 +120,12 @@ var up = up || {};
      *
      * @param {Object} that- reference to an instance of the TabManger component.
      */
-    var editTabHandler = function(that) {
+    var editTabHandler = function (that) {
         var edit;
         var remove;
         var text;
         var gripper;
-        var numOfPortlets;
+        var numberOfPortlets;
 
         // Cache DOM elements.
         edit = that.locate('edit');
@@ -138,13 +140,13 @@ var up = up || {};
                     edit: that.options.selectors.edit,
                 },
                 listeners: {
-                    afterBeginEdit: function() {
+                    afterBeginEdit: function () {
                         // Hide gripper & remove icon.
                         remove.hide();
                         gripper.hide();
                         edit.hide();
                     },
-                    afterFinishEdit: function(
+                    afterFinishEdit: function (
                         newValue,
                         oldValue,
                         editNode,
@@ -173,7 +175,7 @@ var up = up || {};
             // only triggers its handler on the element to which
             // it is bound.
             text = that.locate('text');
-            text.bind('mouseenter', function() {
+            text.bind('mouseenter', function () {
                 text.css('cursor', 'text');
                 text.focus();
             });
@@ -182,15 +184,15 @@ var up = up || {};
             // the tab name on mouseleave. The mouseleave event
             // only triggers its handler on the element to which
             // it is bound.
-            text.bind('mouseleave', function() {
+            text.bind('mouseleave', function () {
                 text.css('cursor', 'pointer');
                 text.blur();
             });
 
             // Trigger edit mode.
-            numOfPortlets = parseInt(that.options.numberOfPortlets);
+            numberOfPortlets = Number.parseInt(that.options.numberOfPortlets);
             if (
-                numOfPortlets === 0 &&
+                numberOfPortlets === 0 &&
                 text.text() === that.options.addTabLabel
             ) {
                 text.trigger('click');
@@ -204,10 +206,10 @@ var up = up || {};
      *
      * @param {Object} that- reference to an instance of the TabManger component.
      */
-    var removeTabHandler = function(that) {
+    var removeTabHandler = function (that) {
         var remove;
         remove = that.locate('remove');
-        remove.bind('click', function() {
+        remove.bind('click', function () {
             that.events.onTabRemove.fire(this);
         });
     }; // end: function.
@@ -218,12 +220,12 @@ var up = up || {};
      *
      * @param {Object} that- reference to an instance of the TabManger component.
      */
-    var addTabHandler = function(that) {
+    var addTabHandler = function (that) {
         var add;
         var tabGroup;
         add = that.locate('add');
         tabGroup = that.container.find(that.options.selectors.tabGroup).text();
-        add.bind('click', function() {
+        add.bind('click', function () {
             that.events.onTabAdd.fire(
                 that.options.addTabLabel,
                 that.options.addTabWidths,
@@ -238,7 +240,7 @@ var up = up || {};
      *
      * @param {Object} that- reference to an instance of the TabManger component.
      */
-    var moveTabHandler = function(that) {
+    var moveTabHandler = function (that) {
         // Initialize & configure fluid.reorderLayout component.
         that.reorderLayout = fluid.reorderLayout(that.container, {
             selectors: {
@@ -246,9 +248,9 @@ var up = up || {};
                 modules: that.options.selectors.modules,
                 lockedModules: that.options.selectors.lockedModules,
                 grabHandle:
-                    that.options.tabContext === 'header' ?
-                        that.options.selectors.grabHandle :
-                        '',
+                    that.options.tabContext === 'header'
+                        ? that.options.selectors.grabHandle
+                        : '',
             },
             styles: {
                 defaultStyle:
@@ -276,7 +278,7 @@ var up = up || {};
                 avatar: 'fl-reorderer-' + that.options.tabContext + '-avatar',
             },
             listeners: {
-                afterMove: function(item, requestedPosition, movables) {
+                afterMove: function (item) {
                     var tab;
                     var tabShortId;
                     var method;
@@ -296,49 +298,39 @@ var up = up || {};
                     // calculate the targetTabShortId.
                     if (tab.is(':last-child')) {
                         method = that.options.appendAfter;
-                        targetTabShortId = tab
-                            .prev()
-                            .attr('id')
-                            .split('_')[1];
+                        targetTabShortId = tab.prev().attr('id').split('_')[1];
                     } else {
-                        targetTabShortId = tab
-                            .next()
-                            .attr('id')
-                            .split('_')[1];
+                        targetTabShortId = tab.next().attr('id').split('_')[1];
                     } // end:if.
 
                     // Calculate tab position and apply styles based upon
                     // tab position.
-                    $.each(listItems, function(idx, obj) {
-                        var li = $(obj);
+                    $.each(listItems, function (index, object) {
+                        var li = $(object);
 
                         // Find position of moved item.
                         if (li.attr('id') === tab.attr('id')) {
-                            tabPosition = idx + 1;
+                            tabPosition = index + 1;
                         } // end:if.
 
                         if (listItems.length === 1) {
                             // Apply & remove styles for a single tab.
-                            li
-                                .removeClass(that.options.styles.firstTab)
+                            li.removeClass(that.options.styles.firstTab)
                                 .removeClass(that.options.styles.lastTab)
                                 .addClass(that.options.styles.singleTab);
-                        } else if (idx === 0) {
+                        } else if (index === 0) {
                             // Apply & remove styles for the first tab.
-                            li
-                                .removeClass(that.options.styles.singleTab)
+                            li.removeClass(that.options.styles.singleTab)
                                 .removeClass(that.options.styles.lastTab)
                                 .addClass(that.options.styles.firstTab);
-                        } else if (idx === listItems.length - 1) {
+                        } else if (index === listItems.length - 1) {
                             // Apply & remove styles for the last tab.
-                            li
-                                .removeClass(that.options.styles.singleTab)
+                            li.removeClass(that.options.styles.singleTab)
                                 .removeClass(that.options.styles.firstTab)
                                 .addClass(that.options.styles.lastTab);
                         } else {
                             // Apply & remove styles for all other tabs.
-                            li
-                                .removeClass(that.options.styles.singleTab)
+                            li.removeClass(that.options.styles.singleTab)
                                 .removeClass(that.options.styles.lastTab)
                                 .removeClass(that.options.styles.firstTab);
                         } // end:if.
@@ -363,7 +355,7 @@ var up = up || {};
      *
      * @param {Object} that- reference to an instance of the TabManger component.
      */
-    var manageLockedTabs = function(that) {
+    var manageLockedTabs = function (that) {
         var tabList;
         var lastLockedTab;
 
@@ -392,7 +384,7 @@ var up = up || {};
      *
      * @param {Object} that- reference to an instance of the TabManger component.
      */
-    var initialize = function(that) {
+    var initialize = function (that) {
         editTabHandler(that);
         removeTabHandler(that);
         addTabHandler(that);
@@ -405,7 +397,7 @@ var up = up || {};
      * @param {Object} container - reference to HTML DOM element by ID.
      * @param {Object} options - reference to object containing all configurations.
      -------------------------------------------------------*/
-    up.TabManager = function(container, options) {
+    up.TabManager = function (container, options) {
         var that;
         that = fluid.initView('up.TabManager', container, options);
 

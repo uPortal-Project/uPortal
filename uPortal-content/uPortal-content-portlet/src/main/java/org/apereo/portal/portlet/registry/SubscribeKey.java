@@ -14,7 +14,12 @@
  */
 package org.apereo.portal.portlet.registry;
 
-final class SubscribeKey {
+import java.io.Serializable;
+
+final class SubscribeKey implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
     private final int userId;
     private final String layoutNodeId;
 

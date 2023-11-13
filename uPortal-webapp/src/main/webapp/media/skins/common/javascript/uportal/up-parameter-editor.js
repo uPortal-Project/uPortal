@@ -18,42 +18,40 @@
  */
 var up = up || {};
 
-(function($, fluid) {
-    var getParameterPath = function(name, that) {
+(function ($, fluid) {
+    var getParameterPath = function (name, that) {
         return (
             that.options.parameterBindName +
-            '[\'' +
+            "['" +
             that.options.parameterNamePrefix +
             name +
-            '\'].value'
+            "'].value"
         );
     };
 
-    var getAuxiliaryPath = function(name, that) {
+    var getAuxiliaryPath = function (name, that) {
         return (
             that.options.auxiliaryBindName +
-            '[\'' +
+            "['" +
             that.options.parameterNamePrefix +
             name +
-            '\'].value'
+            "'].value"
         );
     };
 
     /**
      * Add a new parameter to the table.  This method will add a row to the
      */
-    var addParameter = function(form, that) {
+    var addParameter = function (form, that) {
         var tr;
         var td;
         var name;
-        var paramPath;
+        var parameterPath;
         var checkbox;
 
         // get the new parameter name from the form
-        name = $(form)
-            .find('input[name=name]')
-            .val();
-        paramPath = getAuxiliaryPath(name, that);
+        name = $(form).find('input[name=name]').val();
+        parameterPath = getAuxiliaryPath(name, that);
 
         // create a new row in our parameters table
         tr = $(document.createElement('tr'));
@@ -77,7 +75,7 @@ var up = up || {};
                         that.options.displayClasses.addValueLinkExtraClass
                     )
                     .text(that.options.messages.addValue)
-                    .click(function() {
+                    .click(function () {
                         addValue($(this), that);
                     })
                     .append('&nbsp;&nbsp;<i class="fa fa-plus-circle"></i>')
@@ -103,7 +101,7 @@ var up = up || {};
         } else {
             td.append(
                 $(document.createElement('input'))
-                    .attr({name: paramPath, type: 'text'})
+                    .attr({name: parameterPath, type: 'text'})
                     .addClass(
                         that.options.displayClasses.inputElementExtraClass
                     )
@@ -130,8 +128,8 @@ var up = up || {};
                     )
                     .attr('href', 'javascript:;')
                     .append('&nbsp;&nbsp;<i class="fa fa-trash-o"></i>')
-                    .click(function() {
-                        removeParameter($(this), that);
+                    .click(function () {
+                        removeParameter($(this));
                     })
             )
         );
@@ -142,23 +140,20 @@ var up = up || {};
         return false;
     };
 
-    var removeParameter = function(link, that) {
-        $(link)
-            .parent()
-            .parent()
-            .remove();
+    var removeParameter = function (link) {
+        $(link).parent().parent().remove();
     };
 
-    var addValue = function(link, that) {
-        var paramPath;
+    var addValue = function (link, that) {
+        var parameterPath;
 
         link = $(link);
-        paramPath = getParameterPath(link.attr('paramName'), that);
+        parameterPath = getParameterPath(link.attr('paramName'), that);
         link.before(
             $(document.createElement('div'))
                 .append(
                     $(document.createElement('input'))
-                        .attr({name: paramPath, type: 'text'})
+                        .attr({name: parameterPath, type: 'text'})
                         .addClass(
                             that.options.displayClasses.inputElementExtraClass
                         )
@@ -176,35 +171,30 @@ var up = up || {};
                         .append(
                             '&nbsp;&nbsp;<i class="fa fa-minus-circle"></i>'
                         )
-                        .click(function() {
-                            removeValue($(this), that);
+                        .click(function () {
+                            removeValue($(this));
                         })
                 )
         );
     };
 
-    var removeValue = function(link, that) {
-        $(link)
-            .parent()
-            .remove();
+    var removeValue = function (link) {
+        $(link).parent().remove();
     };
 
     /**
      * Display the parameter adding dialog.  We ask a user to choose a parameter
      * name so we can appropriately set the name of the new input element.
      */
-    var showAddParameterDialog = function(that) {
+    var showAddParameterDialog = function (that) {
         var dialog = that.options.dialog;
         if (that.options.dialogInitialized) {
             // if the dialog has already been initialized, clear the previous value and open it
-            dialog
-                .find('form')
-                .get(0)
-                .reset();
+            dialog.find('form').get(0).reset();
             dialog.dialog('open');
         } else {
             // set the dialog form to add the appropriate parameter
-            dialog.find('form').submit(function() {
+            dialog.find('form').submit(function () {
                 return addParameter(this, that);
             });
 
@@ -214,31 +204,31 @@ var up = up || {};
         }
     };
 
-    up.ParameterEditor = function(container, options) {
+    up.ParameterEditor = function (container, options) {
         var that = fluid.initView('up.ParameterEditor', container, options);
         container = $(container);
 
         // initialize actions for parameter value adding and deletion
         container
             .find('.' + that.options.displayClasses.deleteItemLink)
-            .click(function() {
-                removeParameter(this, that);
+            .click(function () {
+                removeParameter(this);
             });
         container
             .find('.' + that.options.displayClasses.deleteValueLink)
-            .click(function() {
-                removeValue(this, that);
+            .click(function () {
+                removeValue(this);
             });
         container
             .find('.' + that.options.displayClasses.addValueLink)
-            .click(function() {
+            .click(function () {
                 addValue(this, that);
             });
 
         // initialize the action to add a new parameter
         container
             .find('.' + that.options.displayClasses.addItemLink)
-            .click(function() {
+            .click(function () {
                 showAddParameterDialog(that);
             });
 

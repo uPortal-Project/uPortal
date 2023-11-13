@@ -20,7 +20,7 @@ var up = up || {};
 
 up.SessionTimeout =
     up.SessionTimeout ||
-    (function($) {
+    (function ($) {
         'use strict';
 
         var SECONDS = 1000;
@@ -36,7 +36,7 @@ up.SessionTimeout =
          * Save the logout time to the browser's localStorage.
          * @param logoutTime to save.
          */
-        saveLogoutTime = function(logoutTime) {
+        saveLogoutTime = function (logoutTime) {
             localStorage.setItem(LOCAL_STORAGE_LOGOUT_KEY, logoutTime);
         };
 
@@ -44,7 +44,7 @@ up.SessionTimeout =
          * Load the logout time from the browser's localStorage.
          * @return the logoutTime previously saved.
          */
-        getSavedLogoutTime = function() {
+        getSavedLogoutTime = function () {
             return localStorage.getItem(LOCAL_STORAGE_LOGOUT_KEY);
         };
 
@@ -53,7 +53,7 @@ up.SessionTimeout =
          * @param config
          * @return the timeoutDialog instance
          */
-        timeoutDialog = function(config) {
+        timeoutDialog = function (config) {
             var display;
             var updateCountdown;
             var doLogout;
@@ -65,14 +65,14 @@ up.SessionTimeout =
             /**
              * Log out of the app.
              */
-            doLogout = function() {
+            doLogout = function () {
                 window.location = config.logoutURL;
             };
 
             /**
              * Refresh the session
              */
-            doRefresh = function() {
+            doRefresh = function () {
                 var promise;
                 var success;
                 var fail;
@@ -81,12 +81,12 @@ up.SessionTimeout =
                     url: config.resetSessionURL,
                 });
 
-                success = function() {
+                success = function () {
                     hideDialog();
                     config.restartTimer();
                 };
 
-                fail = function() {
+                fail = function () {
                     alert('Error resetting your session!');
                 };
 
@@ -96,7 +96,7 @@ up.SessionTimeout =
             /**
              * Hide the timeout dialog.
              */
-            hideDialog = function() {
+            hideDialog = function () {
                 config.dialogEl.dialog('close');
                 if (countdownTimerId) {
                     clearTimeout(countdownTimerId);
@@ -107,7 +107,7 @@ up.SessionTimeout =
              *    Checks if a newer timer instance exists (from another browser tab).
              *    If so, restart this instance of the timer using the newer logoutTime.
              */
-            newerTimerExists = function() {
+            newerTimerExists = function () {
                 var savedLogoutTime = getSavedLogoutTime();
 
                 if (savedLogoutTime > config.logoutTime) {
@@ -122,8 +122,8 @@ up.SessionTimeout =
              * Update the countdown time on the dialog.  If countdown
              * reaches 0, will auto-logout.
              */
-            updateCountdown = function() {
-                var now = new Date().getTime();
+            updateCountdown = function () {
+                var now = Date.now();
                 var remaining;
 
                 // Bail out if a newer timer exists.
@@ -151,7 +151,7 @@ up.SessionTimeout =
             /**
              * Display the timeout dialog.
              */
-            display = function() {
+            display = function () {
                 // Bail out if a newer timer exists.
                 if (newerTimerExists()) {
                     return;
@@ -189,17 +189,17 @@ up.SessionTimeout =
          * @return {{startTimer: startTimer}}
          * @constructor
          */
-        that = function(config) {
+        that = function (config) {
             var startTimer;
 
             // start the timer that tracks when a session has expired.
-            startTimer = function(newLogoutTime) {
+            startTimer = function (newLogoutTime) {
                 var showTimeoutDialog;
                 var sessionTimeoutMS;
                 var dialogDisplayMS;
                 var sleepMS;
                 var bufferMS;
-                var now = new Date().getTime();
+                var now = Date.now();
                 var logoutTime;
 
                 // Load timeout values from config.
@@ -228,7 +228,7 @@ up.SessionTimeout =
                     saveLogoutTime(logoutTime);
                 }
 
-                showTimeoutDialog = function() {
+                showTimeoutDialog = function () {
                     timeoutDialog({
                         logoutTime: logoutTime,
                         dialogEl: $('#' + config.dialogId),
@@ -242,10 +242,7 @@ up.SessionTimeout =
                     clearTimeout(timerId);
                 }
 
-                if (
-                    typeof config.enabled === 'undefined' ||
-                    config.enabled === true
-                ) {
+                if (config.enabled === undefined || config.enabled === true) {
                     timerId = setTimeout(showTimeoutDialog, sleepMS);
                 }
             };

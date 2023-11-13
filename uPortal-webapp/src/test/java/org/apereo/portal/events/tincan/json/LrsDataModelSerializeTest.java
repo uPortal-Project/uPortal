@@ -50,10 +50,10 @@ public class LrsDataModelSerializeTest {
         final LrsActor lrsActor = new LrsActor("user@example.com", "John Doe");
 
         final String result = this.objectMapper.writeValueAsString(lrsActor);
-
         assertEquals(
-                "{\"mbox\":\"user@example.com\",\"name\":\"John Doe\",\"objectType\":\"Agent\"}",
-                result);
+                objectMapper.readTree(
+                        "{\"mbox\":\"user@example.com\",\"name\":\"John Doe\",\"objectType\":\"Agent\"}"),
+                objectMapper.readTree(result));
     }
 
     @Test
@@ -75,8 +75,9 @@ public class LrsDataModelSerializeTest {
         final String result = this.objectMapper.writeValueAsString(lrsObject);
 
         assertEquals(
-                "{\"id\":\"urn:tincan:uportal:activities:portlet:fname\",\"objectType\":\"Activity\",\"definition\":{\"name\":{\"en-US\":\"Portlet Name\"},\"description\":{\"en-US\":\"Portlet Description\"}}}",
-                result);
+                objectMapper.readTree(
+                        "{\"id\":\"urn:tincan:uportal:activities:portlet:fname\",\"objectType\":\"Activity\",\"definition\":{\"name\":{\"en-US\":\"Portlet Name\"},\"description\":{\"en-US\":\"Portlet Description\"}}}"),
+                objectMapper.readTree(result));
     }
 
     @Test
@@ -103,7 +104,8 @@ public class LrsDataModelSerializeTest {
         final String result = this.objectMapper.writeValueAsString(lrsStatement);
 
         assertEquals(
-                "{\"actor\":{\"mbox\":\"user@example.com\",\"name\":\"John Doe\",\"objectType\":\"Agent\"},\"verb\":{\"id\":\"http://adlnet.gov/expapi/verbs/initialized\",\"display\":{\"en-us\":\"initialized\"}},\"object\":{\"id\":\"urn:tincan:uportal:activities:portlet:fname\",\"objectType\":\"Activity\",\"definition\":{\"name\":{\"en-US\":\"Portlet Name\"},\"description\":{\"en-US\":\"Portlet Description\"}}}}",
-                result);
+                objectMapper.readTree(
+                        "{\"actor\":{\"mbox\":\"user@example.com\",\"name\":\"John Doe\",\"objectType\":\"Agent\"},\"verb\":{\"id\":\"http://adlnet.gov/expapi/verbs/initialized\",\"display\":{\"en-us\":\"initialized\"}},\"object\":{\"id\":\"urn:tincan:uportal:activities:portlet:fname\",\"objectType\":\"Activity\",\"definition\":{\"name\":{\"en-US\":\"Portlet Name\"},\"description\":{\"en-US\":\"Portlet Description\"}}}}"),
+                objectMapper.readTree(result));
     }
 }

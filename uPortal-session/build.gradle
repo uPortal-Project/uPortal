@@ -1,0 +1,14 @@
+description = "Apereo uPortal Session"
+
+dependencies {
+    implementation "org.springframework:spring-web:${springVersion}"
+    implementation "org.springframework.session:spring-session-data-redis:${springSessionVersion}"
+
+    compileOnly "${servletApiDependency}"
+
+    testImplementation "${servletApiDependency}"
+    testImplementation "com.github.stefanbirkner:system-rules:1.19.0"
+
+    testRuntimeOnly "org.slf4j:jcl-over-slf4j:${slf4jVersion}"
+    testRuntimeOnly "org.slf4j:slf4j-api:${slf4jVersion}"
+}

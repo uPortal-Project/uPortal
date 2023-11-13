@@ -19,7 +19,7 @@
 'use strict';
 var up = up || {};
 
-(function($, fluid) {
+(function ($, fluid) {
     /**
      * DefaultPortletSearchView component provides a generic portlet searching
      * interface to serve as a view subcomponent of PortletBrowser.  This
@@ -50,7 +50,11 @@ var up = up || {};
      * @param {Object} parent PortletBrowser component (overall that)
      * @param {Object} options configuration options for the components
      */
-    up.DefaultPortletSearchView = function(container, portletBrowser, options) {
+    up.DefaultPortletSearchView = function (
+        container,
+        portletBrowser,
+        options
+    ) {
         var that;
         var cutpoints;
         var tree;
@@ -80,7 +84,7 @@ var up = up || {};
                         {
                             type: 'jQuery',
                             func: 'submit',
-                            args: function() {
+                            args: function () {
                                 // Upon form submission, fire the portlet search
                                 // event on the parent component
                                 portletBrowser.events.onPortletSearch.fire(
@@ -100,7 +104,7 @@ var up = up || {};
                         {
                             type: 'jQuery',
                             func: 'keyup',
-                            args: function() {
+                            args: function () {
                                 // As the user updates the search field, fire
                                 // the portlet search event on the parent
                                 // component
@@ -115,7 +119,7 @@ var up = up || {};
                         {
                             type: 'jQuery',
                             func: 'focus',
-                            args: function() {
+                            args: function () {
                                 // When the search input field is focused, check
                                 // if the input value matches the search
                                 // invitation message.  If it does, clear out
@@ -131,14 +135,14 @@ var up = up || {};
                         {
                             type: 'jQuery',
                             func: 'blur',
-                            args: function() {
+                            args: function () {
                                 // When the search input field loses focus, check
                                 // if the input value is empty.  If it is, set
                                 // the value back to the search invitation message.
 
-                                var str;
-                                str = $.trim($(this).val());
-                                if (str === '') {
+                                var string_;
+                                string_ = $.trim($(this).val());
+                                if (string_ === '') {
                                     $(this).val(
                                         that.options.searchInvitationMessage
                                     );
@@ -210,7 +214,7 @@ var up = up || {};
      * @param {Object} component Container the element containing the fragment browser
      * @param {Object} options configuration options for the components
      */
-    up.PortletBrowser = function(container, overallThat, options) {
+    up.PortletBrowser = function (container, overallThat, options) {
         // construct the new component
         var that = fluid.initView('up.PortletBrowser', container, options);
 
@@ -219,7 +223,7 @@ var up = up || {};
             that.options.portletRegistry.options || {};
         that.options.portletRegistry.options.listeners =
             that.options.portletRegistry.options.listeners || {};
-        that.options.portletRegistry.options.listeners.onLoad = function() {
+        that.options.portletRegistry.options.listeners.onLoad = function () {
             initializePortletBrowser(that, overallThat, container);
         };
         that.registry = fluid.initSubcomponent(that, 'portletRegistry', [
@@ -231,7 +235,7 @@ var up = up || {};
         return that;
     };
 
-    var initializePortletBrowser = function(that, overallThat, container) {
+    var initializePortletBrowser = function (that, overallThat, container) {
         // initialize a state map for this component
         that.state = {};
 
@@ -281,24 +285,24 @@ var up = up || {};
         },
         listeners: {
             onLoad: null,
-            onCategorySelect: function(that, category) {
+            onCategorySelect: function (that, category) {
                 that.state.currentCategory = category.id;
                 that.categoryListView.refresh();
                 that.portletListView.refresh();
             },
-            onStateSelect: function(that, state) {
+            onStateSelect: function (that, state) {
                 that.state.currentState = state;
                 that.portletListView.refresh();
             },
-            onPortletSearch: function(that, searchTerm, submitted) {
+            onPortletSearch: function (that, searchTerm) {
                 searchTerm = $.trim(searchTerm);
                 that.state.portletRegex =
-                    searchTerm.length > 0 ?
-                        new RegExp(up.escapeSpecialChars(searchTerm), 'i') :
-                        undefined;
+                    searchTerm.length > 0
+                        ? new RegExp(up.escapeSpecialChars(searchTerm), 'i')
+                        : undefined;
                 that.portletListView.refresh();
             },
-            onPortletSelect: function(that, portlet) {
+            onPortletSelect: function (that) {
                 that.portletListView.refresh();
             },
             onPortletDrag: null,

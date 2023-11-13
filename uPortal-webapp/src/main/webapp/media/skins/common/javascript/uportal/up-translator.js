@@ -19,8 +19,8 @@
 'use strict';
 var up = up || {};
 
-(function($, fluid) {
-    up.TranslatorPortlet = function(container, options) {
+(function ($, fluid) {
+    up.TranslatorPortlet = function (container, options) {
         var that = fluid.initView('up.TranslatorPortlet', container, options);
 
         // this will hold the entity template in order to enable later reloading
@@ -29,7 +29,7 @@ var up = up || {};
         /**
          * Shows the form of new message (message code will be fillable field).
          */
-        var addMessageHandler = function() {
+        var addMessageHandler = function () {
             that.options.entity = null;
             var data = [
                 {ID: 'code', value: ''},
@@ -52,7 +52,7 @@ var up = up || {};
          * Fills the message form with currently available message of specified
          * locale (loaded via AJAX call).
          */
-        var fillMessageForm = function() {
+        var fillMessageForm = function () {
             $.ajax({
                 url: that.options.resourceUrl,
                 dataType: 'json',
@@ -62,7 +62,7 @@ var up = up || {};
                     locale: that.options.locale,
                     entity: that.options.entityType,
                 },
-                success: function(json) {
+                success: function (json) {
                     var message = json.message;
                     // if there was no message, then initialize with empty values
                     if (message == null) {
@@ -98,19 +98,21 @@ var up = up || {};
         /**
          * Posts the form contents to the resource URL using AJAX call.
          */
-        var portletFormSubmitHandler = function() {
+        var portletFormSubmitHandler = function () {
             var $form = $(this);
             $.ajax({
                 url: $form.attr('action'),
                 type: 'POST',
                 data: $form.serialize(),
-                success: function() {
-                    var $msg = that
+                success: function () {
+                    var $message = that
                         .locate('formContainer')
                         .find('.portlet-msg-success');
-                    $msg.html(that.options.messages.portletTranslationSaved);
-                    $msg.show();
-                    $msg.fadeOut(4000);
+                    $message.html(
+                        that.options.messages.portletTranslationSaved
+                    );
+                    $message.show();
+                    $message.fadeOut(4000);
                 },
             });
             return false;
@@ -120,7 +122,7 @@ var up = up || {};
          * Fills the portlet form with currently available portlet definition of
          * specified locale (loaded via AJAX call).
          */
-        var fillPortletForm = function() {
+        var fillPortletForm = function () {
             $.ajax({
                 url: that.options.resourceUrl,
                 dataType: 'json',
@@ -130,7 +132,7 @@ var up = up || {};
                     locale: that.options.locale,
                     entity: that.options.entityType,
                 },
-                success: function(json) {
+                success: function (json) {
                     var portlet = json.portlet;
                     var data = [
                         {ID: 'id', value: portlet.id},
@@ -193,7 +195,7 @@ var up = up || {};
         /**
          * Updates form contents depending on selected entity type and locale.
          */
-        var updateForm = function() {
+        var updateForm = function () {
             // if no entity is selected, then there's no need to show the form
             if (that.options.entity) {
                 if (that.options.entityType == 'portlet') {
@@ -207,7 +209,7 @@ var up = up || {};
         /**
          * Reload translateable entity list.
          */
-        var refreshEntities = function(data) {
+        var refreshEntities = function (data) {
             that.locate('formContainer').hide();
             if (that.options.entityType == 'message') {
                 that.locate('addMessage').show();
@@ -217,7 +219,7 @@ var up = up || {};
             var entities = [];
             $(
                 data.entities.sort(up.getStringPropertySortFunction('title'))
-            ).each(function(idx, entity) {
+            ).each(function (index, entity) {
                 entities.push({
                     ID: that.options.namespace + 'data:',
                     value: entity.title,
@@ -225,7 +227,7 @@ var up = up || {};
                         {
                             type: 'jQuery',
                             func: 'click',
-                            args: function() {
+                            args: function () {
                                 that.options.entity = entity;
                                 updateForm();
                             },
@@ -233,7 +235,7 @@ var up = up || {};
                         {
                             type: 'jQuery',
                             func: 'keydown',
-                            args: function() {
+                            args: function () {
                                 // enter key has been clicked
                                 if (event.keyCode == 13) {
                                     that.options.entity = entity;
@@ -256,14 +258,18 @@ var up = up || {};
                 entityTemplate = fluid.selfRender(
                     that.locate('entities'),
                     entities,
-                    {cutpoints: selectorMap}
+                    {
+                        cutpoints: selectorMap,
+                    }
                 );
             } else {
                 fluid.reRender(
                     entityTemplate,
                     that.locate('entities'),
                     entities,
-                    {cutpoints: selectorMap}
+                    {
+                        cutpoints: selectorMap,
+                    }
                 );
             }
         };
@@ -271,7 +277,7 @@ var up = up || {};
         /**
          * Load entities to be translated in specified locale using AJAX.
          */
-        var entityTypeSelectionChangedHandler = function() {
+        var entityTypeSelectionChangedHandler = function () {
             var entity = that.locate('entityType').val();
             that.options.entityType = that.locate('entityType').val();
             that.options.entity = null;
@@ -290,23 +296,25 @@ var up = up || {};
         /**
          * Submits a message form to a resource URL using AJAX.
          */
-        var messageFormSubmitHandler = function() {
+        var messageFormSubmitHandler = function () {
             var $form = $(this);
             $.ajax({
                 url: $form.attr('action'),
                 type: 'POST',
                 data: $form.serialize(),
-                success: function(data) {
+                success: function () {
                     // if this is a new key (selected entity was null), then we must reload entity list
                     if (that.options.entity == null) {
                         entityTypeSelectionChangedHandler();
                     }
-                    var $msg = that
+                    var $message = that
                         .locate('formContainer')
                         .find('.portlet-msg-success');
-                    $msg.html(that.options.messages.messageTranslationSaved);
-                    $msg.show();
-                    $msg.fadeOut(4000);
+                    $message.html(
+                        that.options.messages.messageTranslationSaved
+                    );
+                    $message.show();
+                    $message.fadeOut(4000);
                 },
             });
             return false;
@@ -316,13 +324,13 @@ var up = up || {};
         that.locate('entityType').change(entityTypeSelectionChangedHandler);
         that.locate('portletForm').submit(portletFormSubmitHandler);
         that.locate('messageForm').submit(messageFormSubmitHandler);
-        that.locate('entityForm').submit(function() {
+        that.locate('entityForm').submit(function () {
             return false;
         });
         that.locate('addMessage').click(addMessageHandler);
 
         var localeSelector = that.locate('locale');
-        localeSelector.change(function() {
+        localeSelector.change(function () {
             that.options.locale = localeSelector.val();
             updateForm();
         });
