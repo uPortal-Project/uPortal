@@ -18,6 +18,7 @@ import static org.junit.Assert.assertEquals;
 
 import com.google.common.collect.Sets;
 import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.Before;
@@ -36,7 +37,7 @@ public class CasLoginRefUrlEncoderTest {
         encoder.setCasLoginUrl(
                 "https://cas:80/cas/login?service=_CURRENT_SERVER_NAME_/uPortal/Login");
         UrlMultiServerNameCustomizer urlCustomizer = new UrlMultiServerNameCustomizer();
-        urlCustomizer.setAllServerNames(Sets.newHashSet("myhost:8080", "theirhost:8443"));
+        urlCustomizer.setAllServerNames(Sets.newLinkedHashSet(Arrays.asList("myhost:8080", "theirhost:8443")));
         List<IAuthUrlCustomizer> customizers = new ArrayList<>();
         customizers.add(urlCustomizer);
         UrlAuthCustomizerRegistry registry = new UrlAuthCustomizerRegistry();
