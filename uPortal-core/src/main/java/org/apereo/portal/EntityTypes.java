@@ -81,7 +81,7 @@ public class EntityTypes {
 
     @Cacheable("org.apereo.portal.EntityTypes.CLASS_BY_ID")
     public Class<? extends IBasicEntity> getEntityTypeFromID(Integer id) {
-        final List<Class<?>> result =
+        final List<Class<?>> queryResult =
                 this.jdbcOperations.query(
                         "SELECT ENTITY_TYPE_NAME FROM UP_ENTITY_TYPE WHERE ENTITY_TYPE_ID = ?",
                         CLASS_ROW_MAPPER,
@@ -89,9 +89,9 @@ public class EntityTypes {
         @SuppressWarnings(
                 "unchecked") // There is an unused(?) row for java.lang.Object that looks as though
         // it will fail here
-        Class<? extends IBasicEntity> result =
-                (Class<? extends IBasicEntity>) DataAccessUtils.singleResult(result);
-        return result;
+        Class<? extends IBasicEntity> dataResult =
+                (Class<? extends IBasicEntity>) DataAccessUtils.singleResult(queryResult);
+        return dataResult;
     }
 
     @Cacheable(cacheNames = "org.apereo.portal.EntityTypes.ID_BY_CLASS", key = "#type.Name")
