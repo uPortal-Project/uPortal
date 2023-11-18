@@ -41,6 +41,21 @@ public interface IUserLayoutStore {
     DistributedUserLayout getUserLayout(IPerson Person, IUserProfile profile);
 
     /**
+     * Provides a {@link Tuple} containing the &quot;fragmentized&quot; version of a DLM fragment
+     * owner's layout, together with the username. This version of the layout consistent with what
+     * DLM uses internally for fragments, and is created by FragmentActivator.fragmentizeLayout.
+     * It's important that the version returned by this method matches what DLM uses internally
+     * because it will be used to establish relationships between fragment layout nodes and user
+     * customizations of DLM fragments.
+     *
+     * @param userName The username of the user for whom the layout is retrieved.
+     * @param userId The unique identifier of the user.
+     * @return A {@link Tuple} containing the username and the "fragmentized" version of the DLM
+     *     fragment owner's layout.
+     */
+    Tuple<String, DistributedUserLayout> getUserLayoutTuple(String userName, int userId);
+
+    /**
      * Returns an <code>Element</code> representing the user's layout and <code>UserPreferences
      * </code> (but not portlet preferences) formatted for export. This element <em>must</em> have
      * an element name of &lt;layout&gt;. Exported documents <em>must not</em> reference database
