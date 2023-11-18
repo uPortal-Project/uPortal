@@ -129,17 +129,79 @@ public class MemoryEntityLockStore implements IEntityLockStore {
             keyIterator = keys.iterator();
             while (keyIterator.hasNext()) {
                 lock = getLockFromCache(keyIterator.next(), cache);
-                if ((lock != null)
-                        && ((entityKey == null) || (entityKey.equals(lock.getEntityKey())))
-                        && ((lockType == null) || (lockType.intValue() == lock.getLockType()))
-                        && ((lockOwner == null) || (lockOwner.equals(lock.getLockOwner())))
-                        && ((expiration == null)
-                                || (expiration.equals(lock.getExpirationTime())))) {
+                if (isMatchingLock(entityKey, lockType, expiration, lockOwner, lock)) {
                     locks.add(lock);
                 }
             }
         }
         return ((IEntityLock[]) locks.toArray(new IEntityLock[locks.size()]));
+    }
+
+    /**
+     * Checks if the given IEntityLock matches the specified criteria.
+     *
+     * @param entityKey The entity key to match, or null to ignore this criterion.
+     * @param lockType The lock type to match, or null to ignore this criterion.
+     * @param expiration The expiration time to match, or null to ignore this criterion.
+     * @param lockOwner The lock owner to match, or null to ignore this criterion.
+     * @param lock The IEntityLock to be checked for matching criteria.
+     * @return True if the lock matches all specified criteria, false otherwise.
+     */
+    private boolean isMatchingLock(
+            String entityKey,
+            Integer lockType,
+            Date expiration,
+            String lockOwner,
+            IEntityLock lock) {
+        return (lock != null)
+                && isEntityKeyMatch(entityKey, lock)
+                && isLockTypeMatch(lockType, lock)
+                && isLockOwnerMatch(lockOwner, lock)
+                && isExpirationMatch(expiration, lock);
+    }
+
+    /**
+     * Checks if the expiration time of the IEntityLock matches the specified criterion.
+     *
+     * @param expiration The expiration time to match, or null to ignore this criterion.
+     * @param lock The IEntityLock to be checked for expiration time match.
+     * @return True if the expiration time matches the specified criterion, false otherwise.
+     */
+    private boolean isExpirationMatch(Date expiration, IEntityLock lock) {
+        return (expiration == null) || (expiration.equals(lock.getExpirationTime()));
+    }
+
+    /**
+     * Checks if the lock owner of the IEntityLock matches the specified criterion.
+     *
+     * @param lockOwner The lock owner to match, or null to ignore this criterion.
+     * @param lock The IEntityLock to be checked for lock owner match.
+     * @return True if the lock owner matches the specified criterion, false otherwise.
+     */
+    private boolean isLockOwnerMatch(String lockOwner, IEntityLock lock) {
+        return (lockOwner == null) || (lockOwner.equals(lock.getLockOwner()));
+    }
+
+    /**
+     * Checks if the lock type of the IEntityLock matches the specified criterion.
+     *
+     * @param lockType The lock type to match, or null to ignore this criterion.
+     * @param lock The IEntityLock to be checked for lock type match.
+     * @return True if the lock type matches the specified criterion, false otherwise.
+     */
+    private boolean isLockTypeMatch(Integer lockType, IEntityLock lock) {
+        return (lockType == null) || (lockType.intValue() == lock.getLockType());
+    }
+
+    /**
+     * Checks if the entity key of the IEntityLock matches the specified criterion.
+     *
+     * @param entityKey The entity key to match, or null to ignore this criterion.
+     * @param lock The IEntityLock to be checked for entity key match.
+     * @return True if the entity key matches the specified criterion, false otherwise.
+     */
+    private boolean isEntityKeyMatch(String entityKey, IEntityLock lock) {
+        return (entityKey == null) || (entityKey.equals(lock.getEntityKey()));
     }
 
     /**
