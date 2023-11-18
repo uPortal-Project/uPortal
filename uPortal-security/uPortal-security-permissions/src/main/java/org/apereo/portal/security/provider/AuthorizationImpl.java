@@ -46,16 +46,7 @@ import org.apereo.portal.portlet.om.IPortletLifecycleEntry;
 import org.apereo.portal.portlet.om.PortletCategory;
 import org.apereo.portal.portlet.om.PortletLifecycleState;
 import org.apereo.portal.portlet.registry.IPortletDefinitionRegistry;
-import org.apereo.portal.security.IAuthorizationPrincipal;
-import org.apereo.portal.security.IAuthorizationService;
-import org.apereo.portal.security.IPermission;
-import org.apereo.portal.security.IPermissionManager;
-import org.apereo.portal.security.IPermissionPolicy;
-import org.apereo.portal.security.IPermissionSet;
-import org.apereo.portal.security.IPermissionStore;
-import org.apereo.portal.security.IPerson;
-import org.apereo.portal.security.IUpdatingPermissionManager;
-import org.apereo.portal.security.PermissionHelper;
+import org.apereo.portal.security.*;
 import org.apereo.portal.services.EntityCachingService;
 import org.apereo.portal.services.GroupService;
 import org.apereo.portal.spring.locator.EntityTypesLocator;
@@ -633,6 +624,34 @@ public class AuthorizationImpl implements IAuthorizationService {
         this.doesPrincipalHavePermissionCache.put(new Element(key, rslt));
 
         return rslt;
+    }
+
+    /**
+     * Retrieves a specific {@code IPortletPermissionHandler} based on the provided {@code
+     * PortletPermissionType}.
+     *
+     * @param requiredPermissionType The type of portlet permission required.
+     * @return An implementation of {@code IPortletPermissionHandler} corresponding to the provided
+     *     permission type.
+     * @throws IllegalArgumentException If the provided permission type is unknown.
+     */
+    @Override
+    public IPortletPermissionHandler getPermission(PortletPermissionType requiredPermissionType) {
+        switch (requiredPermissionType) {
+            case BROWSE:
+                return new BrowsePermissionHandler(this);
+            case CONFIGURE:
+                return new ConfigurePermissionHandler(this);
+            case MANAGE:
+                return new ManagePermissionHandler(this);
+            case RENDER:
+                return new RenderPermissionHandler(this);
+            case SUBSCRIBE:
+                return new SubscribePermissionHandler(this);
+            default:
+                throw new IllegalArgumentException(
+                        "Unknown requiredPermissionType: " + requiredPermissionType);
+        }
     }
 
     /**
