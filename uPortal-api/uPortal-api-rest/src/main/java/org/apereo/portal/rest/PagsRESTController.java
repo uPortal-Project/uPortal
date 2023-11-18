@@ -208,6 +208,7 @@ public class PagsRESTController {
 
         IPerson person = personManager.getPerson(httpServletRequest);
         IPersonAttributesGroupDefinition updatedGroupDefinition;
+
         try {
             IPersonAttributesGroupDefinition currentGroupDefinition =
                     pagsService.getPagsDefinitionByName(person, decodedGroupName);
