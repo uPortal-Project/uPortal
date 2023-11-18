@@ -170,48 +170,49 @@ public class PagsRESTController {
             produces = MediaType.APPLICATION_JSON_VALUE,
             method = RequestMethod.PUT)
     public @ResponseBody String updatePagsGroup(
-            HttpServletRequest req,
-            HttpServletResponse res,
+            HttpServletRequest httpServletRequest,
+            HttpServletResponse httpServletResponse,
             @PathVariable("pagsGroupName") String pagsGroupName,
             @RequestBody String json) {
 
-        res.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        httpServletResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
         /*
          * This step is necessary;  the incoming URLs will sometimes have '+'
          * characters for spaces, and the @PathVariable magic doesn't convert them.
          */
-        String name;
+        String decodedGroupName;
         try {
-            name = URLDecoder.decode(pagsGroupName, "UTF-8");
+            decodedGroupName = URLDecoder.decode(pagsGroupName, "UTF-8");
         } catch (UnsupportedEncodingException e) {
-            res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            httpServletResponse.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return "{ 'error': '" + e.toString() + "' }";
         }
 
-        IPersonAttributesGroupDefinition inpt;
+        IPersonAttributesGroupDefinition personAttributesGroupDefinition;
         try {
-            inpt = objectMapper.readValue(json, PersonAttributesGroupDefinitionImpl.class);
+            personAttributesGroupDefinition =
+                    objectMapper.readValue(json, PersonAttributesGroupDefinitionImpl.class);
         } catch (Exception e) {
-            res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            httpServletResponse.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return "{ 'error': '" + e.toString() + "' }"; // should be escaped
         }
-        if (inpt == null) {
-            res.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        if (personAttributesGroupDefinition == null) {
+            httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return "{ 'error': 'Not found' }";
         }
-        if (!name.equals(inpt.getName())) {
-            res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        if (!decodedGroupName.equals(personAttributesGroupDefinition.getName())) {
+            httpServletResponse.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return "{ 'error': 'Group name in URL parameter must match name in JSON payload' }";
         }
 
-        IPerson person = personManager.getPerson(req);
-        IPersonAttributesGroupDefinition rslt;
+        IPerson person = personManager.getPerson(httpServletRequest);
+        IPersonAttributesGroupDefinition updatedGroupDefinition;
         try {
-            IPersonAttributesGroupDefinition currentDef =
-                    pagsService.getPagsDefinitionByName(person, name);
-            if (currentDef == null) {
-                res.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            IPersonAttributesGroupDefinition currentGroupDefinition =
+                    pagsService.getPagsDefinitionByName(person, decodedGroupName);
+            if (currentGroupDefinition == null) {
+                httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
                 return "{ 'error': 'Not found' }";
             }
             /*
@@ -220,27 +221,35 @@ public class PagsRESTController {
              *   - Name
              *   - Members
              */
-            currentDef.setDescription(inpt.getDescription());
+            currentGroupDefinition.setDescription(personAttributesGroupDefinition.getDescription());
             // NOTE:  We are also obligated to establish the backlink
             // testGroupDef --> groupDef;  arguably this backlink serves
             // little purpose and could be removed.
-            for (IPersonAttributesGroupTestGroupDefinition testGroupDef : inpt.getTestGroups()) {
+            for (IPersonAttributesGroupTestGroupDefinition testGroupDef :
+                    personAttributesGroupDefinition.getTestGroups()) {
                 // NOTE:  The deserializer handles testDef --> testGroupDef
-                testGroupDef.setGroup(currentDef);
+                testGroupDef.setGroup(currentGroupDefinition);
             }
-            currentDef.setTestGroups(inpt.getTestGroups());
-            rslt = pagsService.updatePagsDefinition(person, currentDef);
-        } catch (IllegalArgumentException iae) {
-            res.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            return "{ 'error': '" + iae.getMessage() + "' }"; // should be escaped
-        } catch (RuntimeAuthorizationException rae) {
-            res.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            currentGroupDefinition.setTestGroups(personAttributesGroupDefinition.getTestGroups());
+            updatedGroupDefinition =
+                    pagsService.updatePagsDefinition(person, currentGroupDefinition);
+        } catch (IllegalArgumentException illegalArgumentException) {
+            httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return "{ 'error': '"
+                    + illegalArgumentException.getMessage()
+                    + "' }"; // should be escaped
+        } catch (RuntimeAuthorizationException runtimeAuthorizationException) {
+            httpServletResponse.setStatus(HttpServletResponse.SC_FORBIDDEN);
             return "{ 'error': 'not authorized' }";
         } catch (Exception e) {
-            res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            return "{ 'error': '" + e.toString() + "' }";
+            httpServletResponse.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return "{ 'error': '" + e + "' }";
         }
-        return respondPagsGroupJson(res, rslt, person, HttpServletResponse.SC_ACCEPTED);
+        return respondPagsGroupJson(
+                httpServletResponse,
+                updatedGroupDefinition,
+                person,
+                HttpServletResponse.SC_ACCEPTED);
     }
 
     /*
