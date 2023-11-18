@@ -2,20 +2,24 @@
   "name": "uportal",
   "private": true,
   "devDependencies": {
-    "eslint": "^8.0.0",
-    "eslint-config-google": "^0.14.0",
-    "eslint-config-prettier": "^8.0.0",
+    "eslint": "^8.53.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-prettier": "^5.0.1",
+    "eslint-plugin-sonarjs": "^0.23.0",
+    "eslint-plugin-unicorn": "^49.0.0",
     "postcss-less": "^6.0.0",
-    "prettier": "~2.8.0",
+    "prettier": "~3.0.0",
     "remark-cli": "^11.0.0",
     "remark-preset-lint-consistent": "^5.0.0",
     "remark-preset-lint-recommended": "^6.0.0",
     "remark-validate-links": "^12.0.0",
-    "stylelint": "^14.0.0",
-    "stylelint-config-prettier": "^9.0.0",
-    "stylelint-config-standard": "^29.0.0",
-    "stylelint-prettier": "^2.0.0"
+    "stylelint": "^15.0.0",
+    "stylelint-config-standard-less": "^2.0.0",
+    "stylelint-prettier": "^4.0.0"
   },
+  "workspaces": [
+    "uPortal-webapp/"
+  ],
   "scripts": {
     "lint-js": "eslint . --ignore-path .gitignore --ignore-pattern *.min.js",
     "lint-less": "stylelint **/*.less !**/bootstrap/**/*.less !**/build/**/*.less",
@@ -25,37 +29,39 @@
   },
   "eslintConfig": {
     "extends": [
-      "google",
-      "prettier"
+      "eslint:recommended",
+      "plugin:sonarjs/recommended",
+      "plugin:unicorn/recommended",
+      "plugin:prettier/recommended"
     ],
+    "env": {
+      "es2023": true,
+      "browser": true
+    },
+    "globals": {
+      "jQuery": false,
+      "$": false,
+      "_": false,
+      "up": false,
+      "fluid": false
+    },
     "rules": {
-      "indent": [
+      "no-redeclare": [
         "error",
-        4
-      ],
-      "max-len": [
-        "warn",
         {
-          "code": 80,
-          "tabWidth": 4,
-          "ignoreUrls": true,
-          "ignoreComments": true,
-          "ignoreStrings": true
+          "builtinGlobals": false
         }
       ],
-      "new-cap": "warn",
-      "arrow-parens": "off",
-      "constructor-super": "off",
-      "generator-star-spacing": "off",
-      "no-new-symbol": "off",
-      "no-this-before-super": "off",
-      "no-invalid-this": "off",
-      "no-var": "off",
-      "prefer-rest-params": "off",
-      "prefer-spread": "off",
-      "valid-jsdoc": "warn",
-      "rest-spread-spacing": "off",
-      "yield-star-spacing": "off"
+      "sonarjs/cognitive-complexity": "off",
+      "sonarjs/no-duplicate-string": "off",
+      "unicorn/filename-case": "off",
+      "unicorn/no-array-callback-reference": "off",
+      "unicorn/no-for-loop": "off",
+      "unicorn/no-null": "off",
+      "unicorn/no-this-assignment": "off",
+      "unicorn/numeric-separators-style": "off",
+      "unicorn/prefer-module": "off",
+      "unicorn/prefer-spread": "off"
     }
   },
   "remarkConfig": {
@@ -67,16 +73,36 @@
   "stylelint": {
     "customSyntax": "postcss-less",
     "extends": [
-      "stylelint-config-standard",
+      "stylelint-config-standard-less",
       "stylelint-prettier/recommended"
     ],
     "rules": {
-      "no-invalid-position-at-import-rule": null,
+      "at-rule-no-unknown": null,
+      "declaration-block-no-shorthand-property-overrides": null,
+      "function-no-unknown": null,
+      "less/no-duplicate-variables": null,
+      "media-feature-range-notation": [
+        "prefix"
+      ],
+      "media-query-no-invalid": null,
       "no-descending-specificity": null,
-      "selector-id-pattern": null,
+      "no-invalid-position-at-import-rule": null,
+      "prettier/prettier": [
+        true,
+        {
+          "singleQuote": false,
+          "tabWidth": 2
+        }
+      ],
+      "property-no-unknown": null,
       "selector-class-pattern": null,
-      "function-no-unknown": null
+      "selector-id-pattern": null
     }
   },
-  "prettier": {}
+  "prettier": {
+    "singleQuote": true,
+    "bracketSpacing": false,
+    "trailingComma": "es5",
+    "tabWidth": 4
+  }
 }

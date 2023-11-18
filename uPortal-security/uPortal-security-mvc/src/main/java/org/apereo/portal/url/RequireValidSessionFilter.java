@@ -40,8 +40,8 @@ public class RequireValidSessionFilter extends OncePerRequestFilter {
 
         // (1) You have a valid session (original method)
         final HttpSession session = request.getSession(false);
-        if (session != null && !session.isNew()) {
-            // Session exists and is not new, don't bother filtering
+        if (session != null) {
+            // Session exists, don't bother filtering
             log.debug("User {} has a session: {}", request.getRemoteUser(), session.getId());
             log.debug("Max inactive interval: {}", session.getMaxInactiveInterval());
             if (log.isDebugEnabled()) {

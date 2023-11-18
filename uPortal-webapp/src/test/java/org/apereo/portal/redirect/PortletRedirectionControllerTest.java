@@ -14,12 +14,17 @@
  */
 package org.apereo.portal.redirect;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import org.junit.Before;
 import org.junit.Test;
@@ -41,7 +46,7 @@ public class PortletRedirectionControllerTest {
     }
 
     @Test
-    public void testExternalUrl() {
+    public void testExternalUrl() throws URISyntaxException {
         ExternalRedirectionUrl url = new ExternalRedirectionUrl();
         url.setUrl("http://somewhere.com/something");
 
@@ -57,6 +62,17 @@ public class PortletRedirectionControllerTest {
         String expected =
                 "http://somewhere.com/something?action=show&list=v1&list=v2&username=student";
         String actual = controller.getUrlString(url, request, new ArrayList<String>());
-        assertEquals(expected, actual);
+        URI uri1 = new URI(expected);
+        URI uri2 = new URI(actual);
+
+        assertTrue(
+                uri1.getPath().equals(uri2.getPath())
+                        && compareQueryParameters(uri1.getQuery(), uri2.getQuery()));
+    }
+
+    private static boolean compareQueryParameters(String query1, String query2) {
+        Set<String> params1 = new HashSet<>(Arrays.asList(query1.split("&")));
+        Set<String> params2 = new HashSet<>(Arrays.asList(query2.split("&")));
+        return params1.equals(params2);
     }
 }

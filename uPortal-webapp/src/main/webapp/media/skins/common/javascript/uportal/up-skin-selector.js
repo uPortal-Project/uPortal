@@ -76,7 +76,7 @@
 'use strict';
 var up = up || {};
 
-(function($, fluid) {
+(function ($, fluid) {
     /**
      * Private. Builds and returns dataModel object based upon parsed
      * skinList.xml values.
@@ -86,7 +86,7 @@ var up = up || {};
      * @param {String} description - references the value of the <skin-description> node, found within the skinList.xml file.
      * @param {String} thumbnailPath - references the media path to the skin's thumbnail image.
      */
-    var buildDataModel = function(key, name, description, thumbnailPath) {
+    var buildDataModel = function (key, name, description, thumbnailPath) {
         return {
             key: key,
             name: name,
@@ -102,7 +102,7 @@ var up = up || {};
      *
      * @param {Object} that - reference to up.SkinSelector component.
      */
-    var buildCutPoints = function(that) {
+    var buildCutPoints = function (that) {
         return [
             {id: 'listItem-row:', selector: that.options.selectors.listItem},
             {id: 'skinWrapper', selector: that.options.selectors.skinWrapper},
@@ -120,21 +120,19 @@ var up = up || {};
      *
      * @param {Object} that - reference to up.SkinSelector component.
      */
-    var buildSkinListTree = function(that) {
-        var treeChildren;
+    var buildSkinListTree = function (that) {
         var skinRows;
 
-        treeChildren = [];
-        skinRows = fluid.transform(that.state.model, function(obj, index) {
+        skinRows = fluid.transform(that.state.model, function (object) {
             return {
                 ID: 'listItem-row:',
                 decorators: [
                     {
                         type: 'addClass',
                         classes:
-                            obj.key === that.options.currentSkin ?
-                                that.options.activeSkin :
-                                '',
+                            object.key === that.options.currentSkin
+                                ? that.options.activeSkin
+                                : '',
                     },
                 ],
                 children: [
@@ -147,7 +145,7 @@ var up = up || {};
                             {
                                 type: 'jQuery',
                                 func: 'click',
-                                args: function() {
+                                args: function () {
                                     var skinList;
                                     var li;
 
@@ -162,19 +160,19 @@ var up = up || {};
                                     li.addClass(that.options.activeSkin);
 
                                     // Fire onSelectSkin event.
-                                    that.events.onSelectSkin.fire(obj);
+                                    that.events.onSelectSkin.fire(object);
                                 },
                             },
                         ],
                     },
                     {
                         ID: 'skinName',
-                        value: obj.name,
+                        value: object.name,
                         decorators: [
                             {
                                 type: 'attrs',
                                 attributes: {
-                                    title: obj.name,
+                                    title: object.name,
                                 },
                             },
                         ],
@@ -187,7 +185,7 @@ var up = up || {};
                                 attributes: {
                                     style:
                                         'background: url(' +
-                                        obj.thumbnailPath +
+                                        object.thumbnailPath +
                                         ') top left no-repeat;',
                                 },
                             },
@@ -196,7 +194,7 @@ var up = up || {};
                 ],
             };
         });
-        return treeChildren.concat(skinRows);
+        return skinRows;
     }; // end:function.
 
     /**
@@ -204,7 +202,7 @@ var up = up || {};
      *
      * @param {Object} that - reference to up.SkinSelector component.
      */
-    var buildComponentTree = function(that) {
+    var buildComponentTree = function (that) {
         return {
             children: buildSkinListTree(that),
         };
@@ -215,7 +213,7 @@ var up = up || {};
      *
      * @param {Object} that - reference to up.SkinSelector component.
      */
-    var doRender = function(that) {
+    var doRender = function (that) {
         var skinList;
         var options;
 
@@ -247,30 +245,29 @@ var up = up || {};
      *
      * @param {Object} that - reference to up.SkinSelector component.
      */
-    var parseSkinListXML = function(that) {
+    var parseSkinListXML = function (that) {
         // Obtain skinList.xml.
         $.ajax({
             url: that.options.skinListURL,
             async: true,
             dataType: 'xml',
             type: 'GET',
-            success: function(xml) {
+            success: function (xml) {
                 var root;
                 var skinNodes;
 
                 root = $(xml);
                 skinNodes = root.find('skin');
-                skinList = that.locate('skinList');
 
                 // Parse skinList.xml & construct ui.
-                $.each(skinNodes, function(idx, obj) {
+                $.each(skinNodes, function (index, object) {
                     var skin;
                     var key;
                     var name;
                     var description;
                     var thumbnailPath;
 
-                    skin = $(obj);
+                    skin = $(object);
                     key = skin.children('skin-key').text();
                     name = skin.children('skin-name').text();
                     description = skin.children('skin-description').text();
@@ -286,10 +283,10 @@ var up = up || {};
                 // Render UI.
                 doRender(that);
             },
-            error: function(XMLHttpRequest, textStatus, errorThrown) {
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
                 if (console) {
                     console.log(
-                        'AJAX Failure: ',
+                        'AJAX Failure:',
                         XMLHttpRequest,
                         textStatus,
                         errorThrown
@@ -306,7 +303,7 @@ var up = up || {};
      *
      * @param {Object} that - reference to up.SkinSelector component.
      */
-    var initialize = function(that) {
+    var initialize = function (that) {
         // Initialize state map & model array.
         that.state = {};
         that.state.model = [];
@@ -321,14 +318,14 @@ var up = up || {};
      * @param {Object} container - reference to HTML DOM element by ID.
      * @param {Object} options - reference to object containing all configurations.
      */
-    up.SkinSelector = function(container, options) {
+    up.SkinSelector = function (container, options) {
         var that;
         that = fluid.initView('up.SkinSelector', container, options);
 
         /**
          * Refresh.
          */
-        that.refresh = function() {
+        that.refresh = function () {
             var options;
 
             options = {

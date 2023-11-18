@@ -18,23 +18,24 @@
  */
 var uportal = uportal || {};
 
-(function($, _) {
+(function ($, _) {
     /**
      * Finds the appropriate property configuration for the current institution
      */
-    var findPropertyConfig = function() {
+    var findPropertyConfig = function () {
         if (up.analytics.model == null) {
             return null;
         }
 
         if (_.isArray(up.analytics.model.hosts)) {
-            var propertyConfig = _.find(up.analytics.model.hosts, function(
-                propertyConfig
-            ) {
-                if (propertyConfig.name == up.analytics.host) {
-                    return propertyConfig;
+            var propertyConfig = _.find(
+                up.analytics.model.hosts,
+                function (propertyConfig) {
+                    if (propertyConfig.name == up.analytics.host) {
+                        return propertyConfig;
+                    }
                 }
-            });
+            );
 
             if (propertyConfig != null) {
                 return propertyConfig;
@@ -47,9 +48,9 @@ var uportal = uportal || {};
     /**
      * Set the dimensions that apply to the current user
      */
-    var getDimensions = function(propertyConfig) {
+    var getDimensions = function (propertyConfig) {
         var dimensions = {};
-        _.each(propertyConfig.dimensionGroups || [], function(setting) {
+        _.each(propertyConfig.dimensionGroups || [], function (setting) {
             dimensions['dimension' + setting.name] = setting.value;
         });
         return dimensions;
@@ -59,19 +60,14 @@ var uportal = uportal || {};
      * Create the tracker with the propertyId and configuration from the
      * specified propertyConfig
      */
-    var createTracker = function(propertyConfig) {
+    var createTracker = function (propertyConfig) {
         var createSettings = {};
-        _.each(propertyConfig.config || [], function(setting) {
+        _.each(propertyConfig.config || [], function (setting) {
             // Name isn't supported, we assume the default tracker is used in other
             // places
             if (setting.name != 'name') {
                 createSettings[setting.name] = setting.value;
             }
-        });
-        var dimensions = getDimensions(propertyConfig);
-        var dimensionKeys = [];
-        $.each(dimensions, function(key, value) {
-            dimensionKeys.push(key);
         });
         up.gtag('config', propertyConfig.propertyId, {
             send_page_view: false,
@@ -81,7 +77,7 @@ var uportal = uportal || {};
     /**
      * Build the page URI for a tab
      */
-    var getTabUri = function(fragmentName, tabName) {
+    var getTabUri = function (fragmentName, tabName) {
         if (up.analytics.pageData.tab != null) {
             fragmentName =
                 fragmentName || up.analytics.pageData.tab.fragmentName;
@@ -104,7 +100,7 @@ var uportal = uportal || {};
     /**
      * Set variables specific to the current page
      */
-    var getPageVariables = function(fragmentName, tabName) {
+    var getPageVariables = function (fragmentName, tabName) {
         if (up.analytics.pageData.tab != null) {
             fragmentName =
                 fragmentName || up.analytics.pageData.tab.fragmentName;
@@ -121,7 +117,7 @@ var uportal = uportal || {};
         }
         return {
             page_location: getTabUri(fragmentName, tabName),
-            page_title: title
+            page_title: title,
         };
     };
 
@@ -130,9 +126,9 @@ var uportal = uportal || {};
      * just using the portlet's windowId as the value if no fname is found in the
      * portletData
      */
-    var getPortletFname = function(windowId) {
+    var getPortletFname = function (windowId) {
         var portletData = up.analytics.portletData[windowId];
-        if (portletDate == null) {
+        if (portletData == null) {
             return windowId;
         }
 
@@ -143,7 +139,7 @@ var uportal = uportal || {};
      * Safe way to resolve the portlet's title from the windowId, falls back to
      * just using getPortletFname(windowId) if the title can't be found
      */
-    var getRenderedPortletTitle = function(windowId) {
+    var getRenderedPortletTitle = function (windowId) {
         var portletWindowWrapper = $(
             'div.up-portlet-windowId-content-wrapper.' + windowId
         );
@@ -169,14 +165,14 @@ var uportal = uportal || {};
     /**
      * Build the portlet URI for the specified portlet
      */
-    var getPortletUri = function(fname) {
+    var getPortletUri = function (fname) {
         return '/portlet/' + fname;
     };
 
     /**
      * Set variables specific to the specified portlet
      */
-    var getPortletVariables = function(windowId, portletData) {
+    var getPortletVariables = function (windowId, portletData) {
         var portletTitle = getRenderedPortletTitle(windowId);
 
         if (portletData == null) {
@@ -184,7 +180,7 @@ var uportal = uportal || {};
         }
         return {
             page_title: 'Portlet: ' + portletTitle,
-            page_location: getPortletUri(portletData.fname)
+            page_location: getPortletUri(portletData.fname),
         };
     };
 
@@ -193,19 +189,19 @@ var uportal = uportal || {};
      * class element that is not equal to excludedClasses or contained in the
      * excludedClasses array
      */
-    var getInfoClass = function(selectorFunction, excludedClasses) {
+    var getInfoClass = function (selectorFunction, excludedClasses) {
         // Convert excludedClasses to an array for simpler code below
         if (!_.isArray(excludedClasses)) {
             excludedClasses = [excludedClasses];
         }
 
-        var classAttr = selectorFunction().attr('class');
-        if (classAttr == null) {
+        var classAttribute = selectorFunction().attr('class');
+        if (classAttribute == null) {
             return null;
         }
 
-        var classes = classAttr.split(/\s+/);
-        return _.find(classes, function(cls) {
+        var classes = classAttribute.split(/\s+/);
+        return _.find(classes, function (cls) {
             if (!_.contains(excludedClasses, cls)) {
                 return cls;
             }
@@ -215,8 +211,8 @@ var uportal = uportal || {};
     /**
      * Determine the fname of the portle the clicked flyout was rendered for
      */
-    var getFlyoutFname = function(clickedLink) {
-        return getInfoClass(function() {
+    var getFlyoutFname = function (clickedLink) {
+        return getInfoClass(function () {
             return clickedLink.parents('div.up-portlet-fname-subnav-wrapper');
         }, 'up-portlet-fname-subnav-wrapper');
     };
@@ -224,8 +220,8 @@ var uportal = uportal || {};
     /**
      * Determine the fname of the portle the clicked flyout was rendered for
      */
-    var getExternaLinkWindowId = function(clickedLink) {
-        return getInfoClass(function() {
+    var getExternaLinkWindowId = function (clickedLink) {
+        return getInfoClass(function () {
             return clickedLink.parents(
                 'div.up-portlet-windowId-content-wrapper'
             );
@@ -236,7 +232,7 @@ var uportal = uportal || {};
      * Handler for sending an analytics event when a link is clicked and then
      * dealing with opening a new window or emulating the click
      */
-    var handleLinkClickEvent = function(event, clickedLink, eventOpts) {
+    var handleLinkClickEvent = function (event, clickedLink, eventOptions) {
         // Click will open in a new window if it is the middle button or the
         // meta or control keys are held
         var newWindow =
@@ -246,19 +242,20 @@ var uportal = uportal || {};
             clickedLink.attr('target') != null;
 
         var clickFunction;
-        if (newWindow) {
-            clickFunction = function() {};
-        } else {
-            clickFunction = function() {
-                document.location = clickedLink.attr('href');
-            };
-        }
+        clickFunction = newWindow
+            ? function () {}
+            : function () {
+                  document.location = clickedLink.attr('href');
+              };
 
-        up.gtag('event', 'page_view',
-            $.extend({
-                event_callback: clickFunction
-            },
-            eventOpts
+        up.gtag(
+            'event',
+            'page_view',
+            $.extend(
+                {
+                    event_callback: clickFunction,
+                },
+                eventOptions
             )
         );
 
@@ -278,9 +275,9 @@ var uportal = uportal || {};
      * Add click handlers to all of the flyout menus to fire flyout events when
      * they are used
      */
-    var addFlyoutHandlers = function() {
+    var addFlyoutHandlers = function () {
         $('ul.fl-tabs li.portal-navigation a.portal-subnav-link').click(
-            function(event) {
+            function (event) {
                 var clickedLink = $(this);
 
                 // Find the target portlet's title
@@ -295,13 +292,18 @@ var uportal = uportal || {};
                 var pageVariables = getPageVariables();
 
                 // Send the event and deal with the click
-                handleLinkClickEvent(event, clickedLink,
-                    $.extend({
-                        event_category: 'Flyout Link',
-                        event_action: getPortletUri(fname),
-                        event_label: portletFlyoutTitle,
-                    },
-                    pageVariables));
+                handleLinkClickEvent(
+                    event,
+                    clickedLink,
+                    $.extend(
+                        {
+                            event_category: 'Flyout Link',
+                            event_action: getPortletUri(fname),
+                            event_label: portletFlyoutTitle,
+                        },
+                        pageVariables
+                    )
+                );
             }
         );
     };
@@ -310,33 +312,38 @@ var uportal = uportal || {};
      * Inspects all clicks on links, any of the clicks that result in existing to
      * a different host are tracked as Outbound Link events
      */
-    var addExternalLinkHandlers = function() {
-        $('a').click(function(event) {
+    var addExternalLinkHandlers = function () {
+        $('a').click(function (event) {
             var clickedLink = $(this);
 
             var linkHost = clickedLink.prop('hostname');
             if (linkHost != '' && linkHost != document.domain) {
                 var windowId = getExternaLinkWindowId(clickedLink);
                 var eventVariables = null;
-                if (windowId != null) {
-                    eventVariables = getPortletVariables(windowId);
-                } else {
-                    eventVariables = getPageVariables();
-                }
+                eventVariables =
+                    windowId == null
+                        ? getPageVariables()
+                        : getPortletVariables(windowId);
 
                 // Send the event and deal with the click
-                handleLinkClickEvent(event, clickedLink,
-                    $.extend({
-                        event_category: 'Outbound Link',
-                        event_action: clickedLink.prop('href'),
-                        event_label: clickedLink.text(),
-                    }, eventVariables));
+                handleLinkClickEvent(
+                    event,
+                    clickedLink,
+                    $.extend(
+                        {
+                            event_category: 'Outbound Link',
+                            event_action: clickedLink.prop('href'),
+                            event_label: clickedLink.text(),
+                        },
+                        eventVariables
+                    )
+                );
             }
         });
     };
 
-    var addMobileListTabHandlers = function() {
-        $('ul.up-portal-nav li.up-tab').click(function(event) {
+    var addMobileListTabHandlers = function () {
+        $('ul.up-portal-nav li.up-tab').click(function () {
             var clickedTab = $(this);
 
             // Ignore clicks on already open tabs
@@ -344,14 +351,11 @@ var uportal = uportal || {};
                 return;
             }
 
-            var fragmentName = getInfoClass(function() {
+            var fragmentName = getInfoClass(function () {
                 return clickedTab.find('div.up-tab-owner');
             }, 'up-tab-owner');
 
-            var tabName = clickedTab
-                .find('span.up-tab-name')
-                .text()
-                .trim();
+            var tabName = clickedTab.find('span.up-tab-name').text().trim();
 
             var pageVariables = getPageVariables(fragmentName, tabName);
 
@@ -359,8 +363,7 @@ var uportal = uportal || {};
         });
     };
 
-    $(document).ready(function() {
-
+    $(document).ready(function () {
         var propertyConfig = findPropertyConfig();
 
         // No property config means nothing to do
@@ -381,19 +384,25 @@ var uportal = uportal || {};
 
         // Don't bother sending the view in MAX WindowState
         if (up.analytics.pageData.urlState != 'MAX') {
-	        up.gtag('event', 'page_view',
-	        $.extend(pageVariables, dimensions));
+            up.gtag('event', 'page_view', $.extend(pageVariables, dimensions));
         }
 
-        up.gtag('event', 'timing_complete',
-            $.extend({
-                event_category: 'tab',
-                name: getTabUri(),
-                value: up.analytics.pageData.executionTimeNano
-            }, pageVariables, dimensions));
+        up.gtag(
+            'event',
+            'timing_complete',
+            $.extend(
+                {
+                    event_category: 'tab',
+                    name: getTabUri(),
+                    value: up.analytics.pageData.executionTimeNano,
+                },
+                pageVariables,
+                dimensions
+            )
+        );
 
         // Portlet Events
-        _.each(up.analytics.portletData, function(portletData, windowId) {
+        _.each(up.analytics.portletData, function (portletData, windowId) {
             // TODO configure portlet analytics include/exclude list
             if (portletData.fname == 'google-analytics-config') {
                 return;
@@ -401,13 +410,19 @@ var uportal = uportal || {};
 
             var portletVariables = getPortletVariables(windowId, portletData);
             up.gtag('event', 'page_view', portletVariables);
-            up.gtag('event', 'timing_complete',
-                $.extend({
-                    event_category: 'tab',
-                    name: getTabUri(),
-                    value: up.analytics.pageData.executionTimeNano
-                }, portletVariables, dimensions));
-
+            up.gtag(
+                'event',
+                'timing_complete',
+                $.extend(
+                    {
+                        event_category: 'tab',
+                        name: getTabUri(),
+                        value: up.analytics.pageData.executionTimeNano,
+                    },
+                    portletVariables,
+                    dimensions
+                )
+            );
         });
 
         // Add handlers to deal with click events on flyouts

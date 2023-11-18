@@ -18,7 +18,7 @@
  */
 var up = up || {};
 
-(function($, fluid) {
+(function ($, fluid) {
     /**
      * Populate a permissions form according to the presence or absence of
      * CSS classes on the specified element.
@@ -26,7 +26,7 @@ var up = up || {};
      * @param that      layout manager instance
      * @param element   HTML element with permission CSS classes
      */
-    var populateForm = function(that, element) {
+    var populateForm = function (that, element) {
         // set the hidden portlet ID attribute
         var form = that.locate('permissionsDialog').find('form');
         form.find('[name=nodeId]').val(that.options.nodeIdExtractor(element));
@@ -71,7 +71,7 @@ var up = up || {};
      * @param form      permissions form
      * @return
      */
-    var updatePermissions = function(that, element) {
+    var updatePermissions = function (that, element) {
         var newPermissions = persistPermissions(
             that,
             that.locate('permissionsDialog').find('form')[0]
@@ -90,16 +90,14 @@ var up = up || {};
      * @param form      permissions form
      * @return array of newly-persisted permissions
      */
-    var persistPermissions = function(that, form) {
-        var data = {};
-
+    var persistPermissions = function (that, form) {
         // construct an appropriate data object from the form
-        data.elementID = $(form)
-            .find('[name=nodeId]')
-            .val();
-        data.action = 'updatePermissions';
-        data.deletable = $(form.deletable).is(':checked');
-        data.movable = $(form.movable).is(':checked');
+        var data = {
+            elementID: $(form).find('[name=nodeId]').val(),
+            action: 'updatePermissions',
+            deletable: $(form.deletable).is(':checked'),
+            movable: $(form.movable).is(':checked'),
+        };
 
         if (form.editable) {
             data.editable = $(form.editable).is(':checked');
@@ -110,13 +108,12 @@ var up = up || {};
 
         $.post(that.options.savePermissionsUrl, data, null, 'json');
 
-        var permissions = {
+        return {
             deletable: data.deletable,
             movable: data.movable,
             editable: data.editable,
             addChildAllowed: data.addChildAllowed,
         };
-        return permissions;
     };
 
     /**
@@ -127,7 +124,7 @@ var up = up || {};
      * @param permissions
      * @return
      */
-    var updatePermissionClasses = function(that, element, permissions) {
+    var updatePermissionClasses = function (that, element, permissions) {
         setClass(
             element,
             permissions.deletable,
@@ -162,7 +159,7 @@ var up = up || {};
      * @param className
      * @return
      */
-    var setClass = function(element, permission, className) {
+    var setClass = function (element, permission, className) {
         // if no permission is set, just return without modifying any classes
         if (permission == undefined) return;
 
@@ -174,7 +171,7 @@ var up = up || {};
         }
     };
 
-    up.FragmentPermissionsMenu = function(container, options) {
+    up.FragmentPermissionsMenu = function (container, options) {
         var that = fluid.initView(
             'up.FragmentPermissionsMenu',
             container,
@@ -183,15 +180,14 @@ var up = up || {};
 
         that.state = {};
 
-        that.refresh = function(link) {
+        that.refresh = function (link) {
             var element = that.options.elementExtractor(that, link);
             populateForm(that, element);
 
             // initialize the permission form submission actions
-            that
-                .locate('permissionsForm')
+            that.locate('permissionsForm')
                 .unbind('submit')
-                .submit(function() {
+                .submit(function () {
                     return updatePermissions(that, element);
                 });
 
@@ -224,7 +220,7 @@ var up = up || {};
         },
     });
 
-    up.FragmentPermissionsManager = function(container, options) {
+    up.FragmentPermissionsManager = function (container, options) {
         var that = fluid.initView(
             'up.FragmentPermissionsManager',
             container,
@@ -234,17 +230,19 @@ var up = up || {};
         that.menus = {};
 
         // tabs permissions manager
-        that
-            .locate('pageDialog')
-            .dialog({width: 550, modal: true, autoOpen: false});
+        that.locate('pageDialog').dialog({
+            width: 550,
+            modal: true,
+            autoOpen: false,
+        });
         that.menus.pagePermissionsManager = up.FragmentPermissionsMenu(
             that.locate('pageDialog'),
             {
                 savePermissionsUrl: that.options.savePermissionsUrl,
-                elementExtractor: function(that, link) {
+                elementExtractor: function () {
                     return $('#portalNavigationList li.active');
                 },
-                titleExtractor: function(element) {
+                titleExtractor: function () {
                     return $(
                         '#portalNavigationList li.active a.portal-navigation-link'
                     ).attr('title');
@@ -254,24 +252,26 @@ var up = up || {};
                 },
             }
         );
-        that.locate('pageDialogLink').click(function() {
+        that.locate('pageDialogLink').click(function () {
             that.menus.pagePermissionsManager.refresh($(this));
             that.locate('pageDialog').dialog('open');
         });
         // TODO: on update, refresh tab name, editing, delete
 
         // columns permissions manager
-        that
-            .locate('columnDialog')
-            .dialog({width: 550, modal: true, autoOpen: false});
+        that.locate('columnDialog').dialog({
+            width: 550,
+            modal: true,
+            autoOpen: false,
+        });
         that.menus.columnPermissionsManager = up.FragmentPermissionsMenu(
             that.locate('columnDialog'),
             {
                 savePermissionsUrl: that.options.savePermissionsUrl,
-                elementExtractor: function(that, link) {
+                elementExtractor: function (that, link) {
                     return $(link).parents('.portal-page-column');
                 },
-                titleExtractor: function(element) {
+                titleExtractor: function (element) {
                     return up.formatMessage(that.options.messages.columnX, [
                         $('.portal-page-column').index(element) + 1,
                     ]);
@@ -281,24 +281,26 @@ var up = up || {};
                 },
             }
         );
-        that.locate('columnDialogLink').click(function() {
+        that.locate('columnDialogLink').click(function () {
             that.menus.columnPermissionsManager.refresh($(this));
             that.locate('columnDialog').dialog('open');
         });
         // TODO: on update, refresh layout options
 
         // portlet permissions manager
-        that
-            .locate('portletDialog')
-            .dialog({width: 550, modal: true, autoOpen: false});
+        that.locate('portletDialog').dialog({
+            width: 550,
+            modal: true,
+            autoOpen: false,
+        });
         that.menus.portletPermissionsManager = up.FragmentPermissionsMenu(
             that.locate('portletDialog'),
             {
                 savePermissionsUrl: that.options.savePermissionsUrl,
-                elementExtractor: function(that, link) {
+                elementExtractor: function (that, link) {
                     return $(link).parents('.up-portlet-wrapper');
                 },
-                titleExtractor: function(element) {
+                titleExtractor: function (element) {
                     // The h2 is the portlet header.  First link is the title and subsequent links
                     // are the items in the "Options" menu, so make sure to only select the first one.
                     return element
@@ -312,11 +314,11 @@ var up = up || {};
                     onUpdatePermissions: null,
                 },
                 listeners: {
-                    onUpdatePermissions: function(element, newPermissions) {
-                        if (!newPermissions.movable) {
-                            element.addClass('locked');
-                        } else {
+                    onUpdatePermissions: function (element, newPermissions) {
+                        if (newPermissions.movable) {
                             element.removeClass('locked');
+                        } else {
+                            element.addClass('locked');
                         }
                         // TODO: Apply portlet permissions:
                         // includes refreshing reorderer and displaying/hiding delete
@@ -324,7 +326,7 @@ var up = up || {};
                 },
             }
         );
-        that.locate('portletDialogLink').click(function() {
+        that.locate('portletDialogLink').click(function () {
             that.menus.portletPermissionsManager.refresh($(this));
             that.locate('portletDialog').dialog('open');
         });

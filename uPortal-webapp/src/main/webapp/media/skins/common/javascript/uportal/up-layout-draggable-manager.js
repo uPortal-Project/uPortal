@@ -114,7 +114,7 @@
 'use strict';
 var up = up || {};
 
-(function($, fluid) {
+(function ($, fluid) {
     /**
      * Private. Utility function that returns a boolean if the passed selector
      * is found within the passed container.
@@ -122,14 +122,10 @@ var up = up || {};
      * @param {Object} container - reference to jQuery DOM object.
      * @param {Object} selector - reference to a jQuery selector that may exist within the container.
      */
-    var doesContain = function(container, selector) {
+    var doesContain = function (container, selector) {
         var value;
 
-        if (container.find(selector).length > 0) {
-            value = true;
-        } else {
-            value = false;
-        } // end:if.
+        value = container.find(selector).length > 0;
 
         return value;
     }; // end:function.
@@ -141,7 +137,7 @@ var up = up || {};
      * @param {Object} that - reference to LayoutDraggableManager instance.
      * @param {Object} target - reference to a DOM element. Specifically, a portal column.
      */
-    var dragOverHandler = function(that, target) {
+    var dragOverHandler = function (that, target) {
         var column;
         var portlets;
         var portletLocked;
@@ -193,7 +189,7 @@ var up = up || {};
      * @param {Object} that - reference to LayoutDraggableManager instance.
      * @param {Object} target - reference to a DOM element. Specifically, a portal column.
      */
-    var dragOutHandler = function(that, target) {
+    var dragOutHandler = function (that, target) {
         var column;
         var dropTarget;
 
@@ -209,7 +205,7 @@ var up = up || {};
      * @param {Object} that - reference to LayoutDraggableManager instance.
      * @param {Object} target - reference to a DOM element. Specifically, a portal column.
      */
-    var dragDropHandler = function(that, target) {
+    var dragDropHandler = function (that, target) {
         var loader;
         var column;
         var isPortlets;
@@ -226,8 +222,8 @@ var up = up || {};
 
         // Reveal gallery loader.
         loader.css({
-            'margin': '7px 0 0 0',
-            'opacity': '.70',
+            margin: '7px 0 0 0',
+            opacity: '.70',
             'background-color': '#000',
         });
         up.showLoader(loader);
@@ -289,7 +285,7 @@ var up = up || {};
      *
      * @param {Object} that - reference to LayoutDraggableManager instance.
      */
-    var initialize = function(that) {
+    var initialize = function (that) {
         // Element mapping. Caches elements that mostly exist outside the realm of the component's scope.
         that.elem = {};
         that.elem.columnContainer = $(that.options.selectors.body).find(
@@ -310,7 +306,7 @@ var up = up || {};
      * @param {Object} container - reference to HTML DOM element by ID.
      * @param {Object} options - reference to object containing all configurations.
      */
-    up.LayoutDraggableManager = function(container, options) {
+    up.LayoutDraggableManager = function (container, options) {
         var that;
         that = fluid.initView('up.LayoutDraggableManager', container, options);
 
@@ -320,7 +316,7 @@ var up = up || {};
          *
          * @param {Object} that - reference to an instance of the LayoutDraggableManager component.
          */
-        that.enableEligibleColumns = function(event, ui) {
+        that.enableEligibleColumns = function () {
             var eligibleColumns;
             var droppableInnerColumns;
 
@@ -344,16 +340,16 @@ var up = up || {};
          * @param {Object} selector - reference to jQuery selector.
          * The passed selector should be a reference to a portal column.
          */
-        that.makeDroppable = function(selector) {
+        that.makeDroppable = function (selector) {
             selector.droppable({
                 accept: that.options.selectors.accept,
-                over: function(event, ui) {
+                over: function (event) {
                     dragOverHandler(that, event.target);
                 },
-                out: function(event, ui) {
+                out: function (event) {
                     dragOutHandler(that, event.target);
                 },
-                drop: function(event, ui) {
+                drop: function (event) {
                     dragDropHandler(that, event.target);
                 },
             });
@@ -366,7 +362,7 @@ var up = up || {};
          * @param {Object} selector - reference to jQuery selector.
          * The passed selector should be a reference to gallery list items.
          */
-        that.makeDraggable = function(selector) {
+        that.makeDraggable = function (selector) {
             var dragHandle;
 
             dragHandle = selector.find(that.options.selectors.dragHandle);
@@ -398,7 +394,7 @@ var up = up || {};
                 stack: that.options.stack,
                 zIndex: 99999,
                 containment: that.options.selectors.body,
-                start: function(event, ui) {
+                start: function (event, ui) {
                     that.enableEligibleColumns(event, ui);
                 },
             });
@@ -413,7 +409,7 @@ var up = up || {};
          * @param {Object} oldModel - reference to the old state of the pager model.
          * @param {Object} pager - reference to an instance of the pager component.
          */
-        that.initDragAndDrop = function(newModel, oldModel, pager) {
+        that.initDragAndDrop = function (newModel, oldModel, pager) {
             var galleryList;
             var listItem;
 

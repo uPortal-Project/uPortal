@@ -20,11 +20,11 @@ var up = up || {};
 
 up.lightboxConfig =
     up.lightboxConfig ||
-    (function(window, $) {
+    (function (window, $) {
         'use strict';
 
         var init;
-        var defaultOpts;
+        var defaultOptions;
         var processAjaxResponse;
         var convertExclusiveUrlToPageUrl;
 
@@ -40,19 +40,19 @@ up.lightboxConfig =
          * @param url the url to update
          * @return the updated URL as a string.
          */
-        convertExclusiveUrlToPageUrl = function(url) {
+        convertExclusiveUrlToPageUrl = function (url) {
             var newUrl;
             var matches;
             var currentPagePortletId;
             var portletId;
             var state;
 
-            matches = /\/p\/([^\/]+)\//.exec(window.location.pathname);
+            matches = /\/p\/([^/]+)\//.exec(window.location.pathname);
             if (matches && matches[1]) {
                 currentPagePortletId = matches[1];
             }
 
-            matches = /\/p\/([^\/]+)\//.exec(url);
+            matches = /\/p\/([^/]+)\//.exec(url);
             if (matches && matches[1]) {
                 portletId = matches[1];
             }
@@ -62,9 +62,10 @@ up.lightboxConfig =
             // portlet in a region, have to switch back to normal mode.  This is
             // not ideal, but it's very similar to what the happens now anyhow.
             if (currentPagePortletId && portletId === currentPagePortletId) {
-                matches = /\/(normal|maximized|exclusive|detached)\/render.uP/.exec(
-                    window.location.pathname
-                );
+                matches =
+                    /\/(normal|maximized|exclusive|detached)\/render.uP/.exec(
+                        window.location.pathname
+                    );
                 if (matches && matches[1]) {
                     state = matches[1];
                 }
@@ -82,13 +83,13 @@ up.lightboxConfig =
          * @param conf the lightbox configuration
          * @param content the portlet content as a string.
          */
-        processAjaxResponse = function(conf, content) {
-            var tempHtml = $('<div/>').html(content);
+        processAjaxResponse = function (config, content) {
+            var temporaryHtml = $('<div/>').html(content);
 
             // rewrite action URL on all forms...
-            $(tempHtml)
+            $(temporaryHtml)
                 .find('form')
-                .each(function(idx, form) {
+                .each(function (index, form) {
                     var action;
                     var $form;
 
@@ -98,9 +99,9 @@ up.lightboxConfig =
                 });
 
             // rewrite href attr on all links.
-            $(tempHtml)
+            $(temporaryHtml)
                 .find('a')
-                .each(function(idx, a) {
+                .each(function (index, a) {
                     var href;
                     var $a;
 
@@ -113,15 +114,13 @@ up.lightboxConfig =
                 });
 
             // once URLS are fixed, attach the content.
-            $(conf.selectors.content)
-                .empty()
-                .append(tempHtml);
+            $(config.selectors.content).empty().append(temporaryHtml);
         };
 
         /**
          * Overridable options that can be passed to init.
          */
-        defaultOpts = {
+        defaultOptions = {
             selectors: {
                 editLinks: '[data-lightbox-url]',
                 lightbox: '#config-lightbox',
@@ -140,51 +139,51 @@ up.lightboxConfig =
          *
          * @param config custom options (optional)
          */
-        init = function(config) {
-            var conf;
-            var pageLoadedFn;
-            var pageLoadErrorFn;
+        init = function (config) {
+            var config_;
+            var pageLoadedFunction;
+            var pageLoadErrorFunction;
 
-            conf = $.extend(true, defaultOpts, config);
+            config_ = $.extend(true, defaultOptions, config);
 
-            $(conf.selectors.editLinks).click(function(evt) {
+            $(config_.selectors.editLinks).click(function (event_) {
                 var url;
                 var title;
                 var promise;
 
-                evt.preventDefault();
-                evt.stopPropagation();
+                event_.preventDefault();
+                event_.stopPropagation();
 
-                url = $(evt.currentTarget).data('lightboxUrl');
-                title = $(evt.currentTarget).data('lightboxTitle');
+                url = $(event_.currentTarget).data('lightboxUrl');
+                title = $(event_.currentTarget).data('lightboxTitle');
 
-                pageLoadedFn = function(content) {
-                    processAjaxResponse(conf, content);
+                pageLoadedFunction = function (content) {
+                    processAjaxResponse(config_, content);
 
-                    $(conf.selectors.loading).fadeOut();
-                    $(conf.selectors.content).fadeIn();
+                    $(config_.selectors.loading).fadeOut();
+                    $(config_.selectors.content).fadeIn();
                 };
 
-                pageLoadErrorFn = function() {
+                pageLoadErrorFunction = function () {
                     // if the ajax call fails, revert to the classic, inline method
                     // for handling configuration
-                    window.location.href = $(evt.currentTarget).attr('href');
+                    window.location.href = $(event_.currentTarget).attr('href');
                 };
 
                 if (title) {
-                    $(conf.selectors.title).text(title);
+                    $(config_.selectors.title).text(title);
                 }
 
-                $(conf.selectors.content).hide();
-                $(conf.selectors.loading).show();
-                $(conf.selectors.lightbox).modal(conf.lightboxOptions);
+                $(config_.selectors.content).hide();
+                $(config_.selectors.loading).show();
+                $(config_.selectors.lightbox).modal(config_.lightboxOptions);
 
                 promise = $.ajax({
                     url: url,
                     contentType: 'text/html',
                 });
 
-                promise.then(pageLoadedFn, pageLoadErrorFn);
+                promise.then(pageLoadedFunction, pageLoadErrorFunction);
 
                 return false;
             });

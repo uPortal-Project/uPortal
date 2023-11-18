@@ -18,7 +18,7 @@
  */
 var up = up || {};
 
-(function($) {
+(function ($) {
     up.addToFavorite = function addToFavoritesFunction(event) {
         var portletId = event.data.portletId;
         var context = event.data.context;
@@ -31,13 +31,13 @@ var up = up || {};
             data: null,
             dataType: 'json',
             async: true,
-            success: function(request, text) {
+            success: function (request) {
                 $('#up-notification').noty({
                     text: request.response,
                     type: 'success',
                 });
             },
-            error: function(request, text, error) {
+            error: function (request) {
                 $('#up-notification').noty({
                     text: request.responseJSON.response,
                     type: 'error',
@@ -58,13 +58,13 @@ var up = up || {};
             data: null,
             dataType: 'json',
             async: true,
-            success: function(request, text) {
+            success: function (request) {
                 $('#up-notification').noty({
                     text: request.response,
                     type: 'success',
                 });
             },
-            error: function(request, text, error) {
+            error: function (request) {
                 $('#up-notification').noty({
                     text: request.response,
                     type: 'error',
@@ -74,7 +74,7 @@ var up = up || {};
     };
 
     up.moveStuff = function moveStuffFunction(tabOrPortlet, item, context) {
-        var insertNode = function(sourceId, previousNodeId, nextNodeId) {
+        var insertNode = function (sourceId, previousNodeId, nextNodeId) {
             var saveOrderURL =
                 context +
                 '/api/layout?action=movePortletAjax' +
@@ -91,16 +91,20 @@ var up = up || {};
                 data: null,
                 dataType: 'json',
                 async: true,
-                success: function() {
+                success: function () {
                     console.log('layout move successful.');
                 },
-                error: function(request, text, error) {
+                error: function () {
                     console.error('Error persisting move ' + saveOrderURL);
                 },
             });
         };
 
-        var moveFavoriteGroup = function(sourceId, previousNodeId, nextNodeId) {
+        var moveFavoriteGroup = function (
+            sourceId,
+            previousNodeId,
+            nextNodeId
+        ) {
             var method = '' === nextNodeId ? 'appendAfter' : 'insertBefore';
             var elementId = '' === nextNodeId ? previousNodeId : nextNodeId;
             var saveOrderURL =
@@ -119,10 +123,10 @@ var up = up || {};
                 data: null,
                 dataType: 'json',
                 async: true,
-                success: function() {
+                success: function () {
                     console.log('favorite group move successful.');
                 },
-                error: function(request, text, error) {
+                error: function () {
                     console.error(
                         'Error persisting favorite group reorder ' +
                             saveOrderURL
@@ -132,23 +136,15 @@ var up = up || {};
         };
         var sourceID = $(item).attr('sourceid');
         var nextId =
-            $(item).next().length != 0 ?
-                $(item)
-                    .next()
-                    .attr('sourceid') :
-                '';
-        var prevId =
-            $(item).prev().length != 0 ?
-                $(item)
-                    .prev()
-                    .attr('sourceid') :
-                '';
+            $(item).next().length > 0 ? $(item).next().attr('sourceid') : '';
+        var previousId =
+            $(item).prev().length > 0 ? $(item).prev().attr('sourceid') : '';
 
         if ('Tab' === tabOrPortlet) {
-            moveFavoriteGroup(sourceID, prevId, nextId);
+            moveFavoriteGroup(sourceID, previousId, nextId);
         } else {
             // We need to insert item both before and after
-            insertNode(sourceID, prevId, nextId);
+            insertNode(sourceID, previousId, nextId);
         }
     };
 })(jQuery);
