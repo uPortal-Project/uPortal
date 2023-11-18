@@ -1156,97 +1156,49 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
         final UrlType urlType = portalUrlBuilder.getUrlType();
         final UrlState urlState;
         final String resourceId;
+
         if (targetedPortletWindowId != null) {
             final IPortletWindow portletWindow =
                     this.portletWindowRegistry.getPortletWindow(request, targetedPortletWindowId);
-            final IPortletEntity portletEntity = portletWindow.getPortletEntity();
-
-            // Add folder information if available: /f/tabId
-            final String channelSubscribeId = portletEntity.getLayoutNodeId();
-            final List<String> folderNames =
-                    urlNodeSyntaxHelper.getFolderNamesForLayoutNode(request, channelSubscribeId);
-            if (!folderNames.isEmpty()) {
-                url.addPath(FOLDER_PATH_PREFIX);
-                for (final String folderName : folderNames) {
-                    url.addPath(folderName);
-                }
-            }
-
             final IPortletUrlBuilder targetedPortletUrlBuilder =
                     portletUrlBuilders.get(targetedPortletWindowId);
 
+            // Add folder information if available: /f/tabId
+            this.addFolderInformationToUrl(request, urlNodeSyntaxHelper, url, portletWindow);
             // Determine the resourceId for resource requests
-            if (urlType == UrlType.RESOURCE && targetedPortletUrlBuilder != null) {
-                resourceId = targetedPortletUrlBuilder.getResourceId();
-            } else {
-                resourceId = null;
-            }
-
+            resourceId = this.getResourceId(urlType, targetedPortletUrlBuilder);
             // Resource requests will never have a requested window state
             urlState = this.determineUrlState(portletWindow, targetedPortletUrlBuilder);
 
-            final String targetedPortletString =
-                    urlNodeSyntaxHelper.getFolderNameForPortlet(request, targetedPortletWindowId);
-
-            // If a non-normal render url or an action/resource url stick the portlet info in the
-            // path
-            if ((urlType == UrlType.RENDER && urlState != UrlState.NORMAL)
-                    || urlType == UrlType.ACTION
-                    || urlType == UrlType.RESOURCE) {
-                url.addPath(PORTLET_PATH_PREFIX);
-                url.addPath(targetedPortletString);
-            }
-            // For normal render requests (generally multiple portlets on a page) add the targeted
-            // portlet as a parameter
-            else {
-                url.addParameter(PARAM_TARGET_PORTLET, targetedPortletString);
-            }
-
-            /*
-             * CSRF Prevention
-             *
-             * Add the Spring-managed CSRF token to requests that need them.  This list _should_
-             * include Action URLs only, but several Resource URLs are currently being used with
-             * POST requests in Apereo portlets.  We need to include Resource URLs as well, since
-             * (just now) we don't have the time to correct all those usages.  We should work to
-             * correct those cases, and remove handling of Resource URLs when we can.
-             */
-            if (UrlType.ACTION.equals(urlType) || UrlType.RESOURCE.equals(urlType)) {
-                final CsrfToken token = (CsrfToken) request.getAttribute(CSRF_PARAMETER_NAME);
-                if (token != null) {
-                    url.setParameter(token.getParameterName(), token.getToken());
-                }
-            }
+            this.populateUrlFields(
+                    url, urlType, urlState, request, urlNodeSyntaxHelper, targetedPortletWindowId);
 
         } else {
-            final String targetFolderId = portalUrlBuilder.getTargetFolderId();
-            final List<String> folderNames =
-                    urlNodeSyntaxHelper.getFolderNamesForLayoutNode(request, targetFolderId);
-            if (folderNames != null && !folderNames.isEmpty()) {
-                url.addPath(FOLDER_PATH_PREFIX);
-                for (final String folderName : folderNames) {
-                    url.addPath(folderName);
-                }
-            }
-
+            this.addFolderInformationForTargetFolder(
+                    request, portalUrlBuilder, urlNodeSyntaxHelper, url);
             urlState = UrlState.NORMAL;
             resourceId = null;
         }
 
-        // Add the state of the URL
-        url.addPath(urlState.toLowercaseString());
+        this.addUrlStateAndTypeToUrl(url, urlType, urlState, resourceId);
+        this.addPortalParametersToUrl(portalUrlBuilder, url);
+        this.addPortletsParametersForEachUrl(
+                request, url, portletUrlBuilders, targetedPortletWindowId, urlType, urlState);
 
-        // File part specifying the type of URL, resource URLs include the resourceId
-        if (urlType == UrlType.RESOURCE && resourceId != null) {
-            url.addPath(resourceId + "." + urlType.toLowercaseString() + REQUEST_TYPE_SUFFIX);
-        } else {
-            url.addPath(urlType.toLowercaseString() + REQUEST_TYPE_SUFFIX);
+        if (logger.isDebugEnabled()) {
+            logger.debug("Generated '" + url + "' from '" + portalUrlBuilder);
         }
 
-        // Add all portal parameters
-        final Map<String, String[]> portalParameters = portalUrlBuilder.getParameters();
-        url.addParametersArray(PORTAL_PARAM_PREFIX, portalParameters);
+        return url.toString();
+    }
 
+    private void addPortletsParametersForEachUrl(
+            HttpServletRequest request,
+            UrlStringBuilder url,
+            Map<IPortletWindowId, IPortletUrlBuilder> portletUrlBuilders,
+            IPortletWindowId targetedPortletWindowId,
+            UrlType urlType,
+            UrlState urlState) {
         // Is this URL stateless
         final boolean statelessUrl = statelessUrlStates.contains(urlState);
 
@@ -1260,12 +1212,127 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                     targetedPortletWindowId,
                     statelessUrl);
         }
+    }
 
-        if (logger.isDebugEnabled()) {
-            logger.debug("Generated '" + url + "' from '" + portalUrlBuilder);
+    private void addPortalParametersToUrl(
+            IPortalUrlBuilder portalUrlBuilder, UrlStringBuilder url) {
+        // Add all portal parameters
+        final Map<String, String[]> portalParameters = portalUrlBuilder.getParameters();
+        url.addParametersArray(PORTAL_PARAM_PREFIX, portalParameters);
+    }
+
+    private void addUrlStateAndTypeToUrl(
+            UrlStringBuilder url, UrlType urlType, UrlState urlState, String resourceId) {
+        // Add the state of the URL
+        url.addPath(urlState.toLowercaseString());
+
+        // File part specifying the type of URL, resource URLs include the resourceId
+        if (urlType == UrlType.RESOURCE && resourceId != null) {
+            url.addPath(resourceId + "." + urlType.toLowercaseString() + REQUEST_TYPE_SUFFIX);
+        } else {
+            url.addPath(urlType.toLowercaseString() + REQUEST_TYPE_SUFFIX);
+        }
+    }
+
+    private void addFolderInformationForTargetFolder(
+            HttpServletRequest request,
+            IPortalUrlBuilder portalUrlBuilder,
+            IUrlNodeSyntaxHelper urlNodeSyntaxHelper,
+            UrlStringBuilder url) {
+        final String targetFolderId = portalUrlBuilder.getTargetFolderId();
+        final List<String> folderNames =
+                urlNodeSyntaxHelper.getFolderNamesForLayoutNode(request, targetFolderId);
+        addFolderNamesToUrl(url, folderNames);
+    }
+
+    private void addFolderNamesToUrl(UrlStringBuilder url, List<String> folderNames) {
+        if (folderNames != null && !folderNames.isEmpty()) {
+            url.addPath(FOLDER_PATH_PREFIX);
+            for (final String folderName : folderNames) {
+                url.addPath(folderName);
+            }
+        }
+    }
+
+    /**
+     * @param url the url in which the fields will be populated
+     * @param urlType The type of URL
+     * @param urlState the {@link UrlState} to use for the targeted portlet window
+     * @param request the HttpServletRequest
+     * @param urlNodeSyntaxHelper
+     * @param targetedPortletWindowId
+     */
+    private void populateUrlFields(
+            UrlStringBuilder url,
+            UrlType urlType,
+            UrlState urlState,
+            HttpServletRequest request,
+            IUrlNodeSyntaxHelper urlNodeSyntaxHelper,
+            IPortletWindowId targetedPortletWindowId) {
+        final String targetedPortletString =
+                urlNodeSyntaxHelper.getFolderNameForPortlet(request, targetedPortletWindowId);
+        // If a non-normal render url or an action/resource url stick the portlet info in the
+        // path
+        if ((urlType == UrlType.RENDER && urlState != UrlState.NORMAL)
+                || urlType == UrlType.ACTION
+                || urlType == UrlType.RESOURCE) {
+            url.addPath(PORTLET_PATH_PREFIX);
+            url.addPath(targetedPortletString);
+        }
+        // For normal render requests (generally multiple portlets on a page) add the targeted
+        // portlet as a parameter
+        else {
+            url.addParameter(PARAM_TARGET_PORTLET, targetedPortletString);
         }
 
-        return url.toString();
+        // sets the CSRF token parameter attribute
+        this.populateCSRFTokenParameter(url, urlType, request);
+    }
+
+    private void populateCSRFTokenParameter(
+            UrlStringBuilder url, UrlType urlType, HttpServletRequest request) {
+        /*
+         * CSRF Prevention
+         *
+         * Add the Spring-managed CSRF token to requests that need them.  This list _should_
+         * include Action URLs only, but several Resource URLs are currently being used with
+         * POST requests in Apereo portlets.  We need to include Resource URLs as well, since
+         * (just now) we don't have the time to correct all those usages.  We should work to
+         * correct those cases, and remove handling of Resource URLs when we can.
+         */
+        if (UrlType.ACTION.equals(urlType) || UrlType.RESOURCE.equals(urlType)) {
+            final CsrfToken token = (CsrfToken) request.getAttribute(CSRF_PARAMETER_NAME);
+            if (token != null) {
+                url.setParameter(token.getParameterName(), token.getToken());
+            }
+        }
+    }
+
+    private String getResourceId(UrlType urlType, IPortletUrlBuilder targetedPortletUrlBuilder) {
+        final String resourceId;
+        if (urlType == UrlType.RESOURCE && targetedPortletUrlBuilder != null) {
+            resourceId = targetedPortletUrlBuilder.getResourceId();
+        } else {
+            resourceId = null;
+        }
+        return resourceId;
+    }
+
+    private void addFolderInformationToUrl(
+            HttpServletRequest request,
+            IUrlNodeSyntaxHelper urlNodeSyntaxHelper,
+            UrlStringBuilder url,
+            IPortletWindow portletWindow) {
+        final IPortletEntity portletEntity = portletWindow.getPortletEntity();
+        final String channelSubscribeId = portletEntity.getLayoutNodeId();
+        final List<String> folderNames =
+                urlNodeSyntaxHelper.getFolderNamesForLayoutNode(request, channelSubscribeId);
+        if (!folderNames.isEmpty()) {
+            url.addPath(FOLDER_PATH_PREFIX);
+            for (final String folderName : folderNames) {
+                url.addPath(folderName);
+            }
+        }
     }
 
     /** Add the provided portlet url builder data to the url string builder */
@@ -1399,7 +1466,7 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
     }
 
     /** Determine the {@link UrlState} to use for the targeted portlet window */
-    protected UrlState determineUrlState(
+    private UrlState determineUrlState(
             final IPortletWindow portletWindow,
             final IPortletUrlBuilder targetedPortletUrlBuilder) {
         final WindowState requestedWindowState;
