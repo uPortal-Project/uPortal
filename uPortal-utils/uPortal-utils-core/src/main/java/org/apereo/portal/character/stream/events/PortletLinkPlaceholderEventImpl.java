@@ -22,7 +22,6 @@ public final class PortletLinkPlaceholderEventImpl extends PortletPlaceholderEve
     private static final long serialVersionUID = 1L;
 
     private final String defaultPortletUrl;
-    private int hash = 0;
 
     public PortletLinkPlaceholderEventImpl(
             IPortletWindowId portletWindowId, String defaultPortletUrl) {
@@ -44,26 +43,9 @@ public final class PortletLinkPlaceholderEventImpl extends PortletPlaceholderEve
     }
 
     @Override
-    public int hashCode() {
-        int h = hash;
-        if (h == 0) {
-            h = internalHashCode();
-            hash = h;
-        }
-        return h;
-    }
-
-    private int internalHashCode() {
+    protected int internalHashCode() {
         final int prime = 31;
-        int result = 1;
-        result =
-                prime * result
-                        + ((this.getPortletWindowId() == null)
-                                ? 0
-                                : this.getPortletWindowId().hashCode());
-        result =
-                prime * result
-                        + ((this.getEventType() == null) ? 0 : this.getEventType().hashCode());
+        int result = super.internalHashCode();
         result =
                 prime * result
                         + ((this.getDefaultPortletUrl() == null)
