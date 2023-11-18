@@ -24,7 +24,7 @@ import javax.portlet.CacheControl;
 import javax.servlet.http.HttpServletResponse;
 import org.apereo.portal.portlet.rendering.PortletResourceOutputHandler;
 
-/** Extention of {@link CachingPortletOutputHandler} that adds support for resource requests */
+/** Extension of {@link CachingPortletOutputHandler} that adds support for resource requests */
 public class CachingPortletResourceOutputHandler extends CachingPortletOutputHandler
         implements PortletResourceOutputHandler {
 

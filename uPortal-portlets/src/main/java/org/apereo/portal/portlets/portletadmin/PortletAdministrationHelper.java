@@ -841,9 +841,9 @@ public final class PortletAdministrationHelper implements ServletContextAware {
                         portletRegistryService.getRegisteredPortletApplicationNames();
                 iter.hasNext(); ) {
             final String applicationName = iter.next();
-            final PortletApplicationDefinition applicationDefninition;
+            final PortletApplicationDefinition applicationDefinition;
             try {
-                applicationDefninition =
+                applicationDefinition =
                         portletRegistryService.getPortletApplication(applicationName);
             } catch (PortletContainerException e) {
                 throw new RuntimeException(
@@ -852,7 +852,7 @@ public final class PortletAdministrationHelper implements ServletContextAware {
                                 + "'");
             }
 
-            final List<? extends PortletDefinition> portlets = applicationDefninition.getPortlets();
+            final List<? extends PortletDefinition> portlets = applicationDefinition.getPortlets();
             portlets.sort(
                     new ComparableExtractingComparator<PortletDefinition, String>(
                             String.CASE_INSENSITIVE_ORDER) {
@@ -867,7 +867,7 @@ public final class PortletAdministrationHelper implements ServletContextAware {
                         }
                     });
 
-            contexts.add(applicationDefninition);
+            contexts.add(applicationDefinition);
         }
 
         contexts.sort(
@@ -1074,7 +1074,7 @@ public final class PortletAdministrationHelper implements ServletContextAware {
         final IPortletWindowId portletWindowId = this.getDelegateWindowId(externalContext, fname);
         if (portletWindowId == null) {
             throw new IllegalStateException(
-                    "Cannot execute configModeAciton without a delegate window ID in the session for key: "
+                    "Cannot execute configModeAction without a delegate window ID in the session for key: "
                             + RenderPortletTag.DEFAULT_SESSION_KEY_PREFIX
                             + fname);
         }
@@ -1149,7 +1149,7 @@ public final class PortletAdministrationHelper implements ServletContextAware {
     public Map<IPortletType, PortletPublishingDefinition> getAllowableChannelPublishingDefinitions(
             IPerson user) {
 
-        Map<IPortletType, PortletPublishingDefinition> rslt;
+        Map<IPortletType, PortletPublishingDefinition> result;
 
         final Map<IPortletType, PortletPublishingDefinition> rawMap =
                 portletPublishingDefinitionDao.getChannelPublishingDefinitions();
@@ -1160,21 +1160,21 @@ public final class PortletAdministrationHelper implements ServletContextAware {
                 IPermission.PORTLET_MANAGER_SELECT_PORTLET_TYPE,
                 IPermission.ALL_PORTLET_TYPES)) {
             // Send the whole collection back...
-            rslt = rawMap;
+            result = rawMap;
         } else {
             // Filter the collection by permissions...
-            rslt = new HashMap<>();
+            result = new HashMap<>();
             for (Map.Entry<IPortletType, PortletPublishingDefinition> y : rawMap.entrySet()) {
                 if (principal.hasPermission(
                         IPermission.PORTAL_PUBLISH,
                         IPermission.PORTLET_MANAGER_SELECT_PORTLET_TYPE,
                         y.getKey().getName())) {
-                    rslt.put(y.getKey(), y.getValue());
+                    result.put(y.getKey(), y.getValue());
                 }
             }
         }
 
-        return rslt;
+        return result;
     }
 
     protected Tuple<String, String> getPortletDescriptorKeys(PortletDefinitionForm form) {

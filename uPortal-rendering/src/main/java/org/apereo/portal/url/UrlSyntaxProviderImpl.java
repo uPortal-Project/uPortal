@@ -408,7 +408,7 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                                             // If a state was added to the folder list remove it and
                                             // step back one so
                                             // other code can handle it
-                                            if (UrlState.valueOfIngoreCase(pathPart, null)
+                                            if (UrlState.valueOfIgnoreCase(pathPart, null)
                                                     != null) {
                                                 logger.trace(
                                                         "A state was added to the end of folder list {};"
@@ -478,7 +478,7 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                                 break;
                             }
 
-                            requestedUrlState = UrlState.valueOfIngoreCase(pathPart, null);
+                            requestedUrlState = UrlState.valueOfIgnoreCase(pathPart, null);
 
                             // Set the URL state
                             if (requestedUrlState != null) {
@@ -552,7 +552,7 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                                 if (lastPeriod >= 0 && lastPeriod < urlTypePart.length()) {
                                     final String urlTypePartSuffix =
                                             urlTypePart.substring(lastPeriod + 1);
-                                    urlType = UrlType.valueOfIngoreCase(urlTypePartSuffix, null);
+                                    urlType = UrlType.valueOfIgnoreCase(urlTypePartSuffix, null);
                                     if (urlType == UrlType.RESOURCE
                                             && targetedPortletRequestInfo != null) {
                                         final String resourceId =
@@ -560,7 +560,7 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                                         targetedPortletRequestInfo.setResourceId(resourceId);
                                     }
                                 } else {
-                                    urlType = UrlType.valueOfIngoreCase(urlTypePart, null);
+                                    urlType = UrlType.valueOfIgnoreCase(urlTypePart, null);
                                 }
 
                                 if (urlType != null) {

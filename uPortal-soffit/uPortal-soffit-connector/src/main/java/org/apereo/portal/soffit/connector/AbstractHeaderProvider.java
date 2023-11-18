@@ -32,26 +32,26 @@ public abstract class AbstractHeaderProvider implements IHeaderProvider {
 
     protected final boolean isIncluded(RenderRequest renderRequest, String preferenceName) {
         final PortletPreferences preferences = renderRequest.getPreferences();
-        final String rslt = preferences.getValue(preferenceName, Boolean.FALSE.toString());
-        return Boolean.valueOf(rslt);
+        final String result = preferences.getValue(preferenceName, Boolean.FALSE.toString());
+        return Boolean.valueOf(result);
     }
 
     protected final String getUsername(RenderRequest renderRequest) {
-        final String rslt =
+        final String result =
                 renderRequest.getRemoteUser() != null
                         ? renderRequest.getRemoteUser()
                         : guestUserName;
-        return rslt;
+        return result;
     }
 
     /** Point at which the JWT expires */
     protected final Date getExpiration(RenderRequest renderRequest) {
         // Expiration of the JWT
         final PortletSession portletSession = renderRequest.getPortletSession();
-        final Date rslt =
+        final Date result =
                 new Date(
                         portletSession.getLastAccessedTime()
                                 + ((long) portletSession.getMaxInactiveInterval() * 1000L));
-        return rslt;
+        return result;
     }
 }

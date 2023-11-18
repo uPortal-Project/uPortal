@@ -152,12 +152,12 @@ public class PortalSearchIndexer {
             return null;
         }
 
-        final String rslt = contentExtractor.extractContent(portlet);
+        final String result = contentExtractor.extractContent(portlet);
         logger.debug(
                 "Extracted the following content for portlet with fname='{}'\n{}",
                 portlet.getFName(),
-                rslt);
+                result);
 
-        return rslt;
+        return result;
     }
 }

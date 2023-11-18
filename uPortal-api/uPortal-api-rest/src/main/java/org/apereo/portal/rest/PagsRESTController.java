@@ -134,11 +134,11 @@ public class PagsRESTController {
                 (IEntityGroup) GroupService.getGroupMember(eids[0]); // Names must be unique
 
         IPerson person = personManager.getPerson(request);
-        IPersonAttributesGroupDefinition rslt;
+        IPersonAttributesGroupDefinition result;
         try {
             // A little weird that we need to do both;
             // need some PAGS DAO/Service refactoring
-            rslt =
+            result =
                     pagsService.createPagsDefinition(
                             person, parentGroup, inpt.getName(), inpt.getDescription());
             // NOTE:  We are also obligated to establish the backlink
@@ -146,11 +146,11 @@ public class PagsRESTController {
             // little purpose and could be removed.
             for (IPersonAttributesGroupTestGroupDefinition testGroupDef : inpt.getTestGroups()) {
                 // NOTE:  The deserializer handles testDef --> testGroupDef
-                testGroupDef.setGroup(rslt);
+                testGroupDef.setGroup(result);
             }
-            rslt.setTestGroups(inpt.getTestGroups());
-            rslt.setMembers(inpt.getMembers());
-            pagsService.updatePagsDefinition(person, rslt);
+            result.setTestGroups(inpt.getTestGroups());
+            result.setMembers(inpt.getMembers());
+            pagsService.updatePagsDefinition(person, result);
         } catch (RuntimeAuthorizationException rae) {
             res.setStatus(HttpServletResponse.SC_FORBIDDEN);
             return "{ 'error': 'not authorized' }";
@@ -162,7 +162,7 @@ public class PagsRESTController {
             res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return "{ 'error': '" + e.getMessage() + "' }";
         }
-        return respondPagsGroupJson(res, rslt, person, HttpServletResponse.SC_CREATED);
+        return respondPagsGroupJson(res, result, person, HttpServletResponse.SC_CREATED);
     }
 
     @RequestMapping(
@@ -230,6 +230,7 @@ public class PagsRESTController {
                 // NOTE:  The deserializer handles testDef --> testGroupDef
                 testGroupDef.setGroup(currentGroupDefinition);
             }
+
             currentGroupDefinition.setTestGroups(personAttributesGroupDefinition.getTestGroups());
             updatedGroupDefinition =
                     pagsService.updatePagsDefinition(person, currentGroupDefinition);
@@ -240,11 +241,13 @@ public class PagsRESTController {
                     + "' }"; // should be escaped
         } catch (RuntimeAuthorizationException runtimeAuthorizationException) {
             httpServletResponse.setStatus(HttpServletResponse.SC_FORBIDDEN);
+
             return "{ 'error': 'not authorized' }";
         } catch (Exception e) {
             httpServletResponse.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return "{ 'error': '" + e + "' }";
         }
+
         return respondPagsGroupJson(
                 httpServletResponse,
                 updatedGroupDefinition,

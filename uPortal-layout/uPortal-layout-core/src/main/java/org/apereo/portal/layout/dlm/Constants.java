@@ -21,7 +21,7 @@ package org.apereo.portal.layout.dlm;
  */
 public class Constants {
 
-    // define the namespace prefixe on dlm elements and attributes.
+    // define the namespace prefix on dlm elements and attributes.
     public static final String NS = "dlm:";
     public static final String NS_DECL = "xmlns:dlm";
     public static final String NS_URI = "http://www.uportal.org/layout/dlm";

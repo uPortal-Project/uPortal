@@ -188,7 +188,7 @@ public class PortletMarketplaceController {
      * @param webRequest
      * @param portletRequest
      * @param model
-     * @param initialFilter - optional request paramter. Use to init filter on initial view
+     * @param initialFilter - optional request parameter. Use to init filter on initial view
      * @return a string representing the initial view.
      */
     @RenderMapping
@@ -557,7 +557,7 @@ public class PortletMarketplaceController {
 
     private Set<PortletCategory> getPermittedCategories(PortletRequest req) {
 
-        Set<PortletCategory> rslt = Collections.emptySet(); // default
+        Set<PortletCategory> result = Collections.emptySet(); // default
         final PortletPreferences prefs = req.getPreferences();
         final String[] permittedCategories =
                 prefs.getValues(PERMITTED_CATEGORIES_PREFERENCE, new String[0]);
@@ -607,8 +607,8 @@ public class PortletMarketplaceController {
                 cacheElement = new net.sf.ehcache.Element(cacheKey, portletCategories);
                 this.marketplaceCategoryCache.put(cacheElement);
             }
-            rslt = (Set<PortletCategory>) cacheElement.getObjectValue();
+            result = (Set<PortletCategory>) cacheElement.getObjectValue();
         }
-        return rslt;
+        return result;
     }
 }

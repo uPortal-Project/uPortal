@@ -187,7 +187,7 @@ final class PortletFailureExecutionWorker implements IPortletFailureExecutionWor
         } catch (Exception e) {
             doPostExecution(e);
             this.logger.error("Exception while dispatching to error handling portlet", e);
-            this.output = "Error Portlet Unavailable. Please contact your portal adminstrators.";
+            this.output = "Error Portlet Unavailable. Please contact your portal administrators.";
         }
 
         this.completed = System.currentTimeMillis();

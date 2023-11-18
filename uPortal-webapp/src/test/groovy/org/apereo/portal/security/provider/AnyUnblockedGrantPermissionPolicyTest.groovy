@@ -31,34 +31,34 @@ class AnyUnblockedGrantPermissionPolicyTest extends AnyUnblockedGrantPermissionP
     private static final long TWENTY_FOUR_HOURS_IN_MILLIS = 24L * 60L * 60L * 1000L;
 
     private IPermission activeGrantPermission = {
-        IPermission rslt = new PermissionImpl('UP_SYSTEM');
-        rslt.setPrincipal('local.0');
-        rslt.setActivity('CUSTOMIZE');
-        rslt.setType('GRANT');
-        return rslt;
+        IPermission result = new PermissionImpl('UP_SYSTEM');
+        result.setPrincipal('local.0');
+        result.setActivity('CUSTOMIZE');
+        result.setType('GRANT');
+        return result;
     }();
     private IPermission activeDenyPermission = {
-        IPermission rslt = new PermissionImpl('UP_SYSTEM');
-        rslt.setPrincipal('local.0');
-        rslt.setActivity('CUSTOMIZE');
-        rslt.setType('DENY');
-        return rslt;
+        IPermission result = new PermissionImpl('UP_SYSTEM');
+        result.setPrincipal('local.0');
+        result.setActivity('CUSTOMIZE');
+        result.setType('DENY');
+        return result;
     }();
     private IPermission expiredGrantPermission = {
-        IPermission rslt = new PermissionImpl('UP_SYSTEM');
-        rslt.setPrincipal('local.0');
-        rslt.setActivity('CUSTOMIZE');
-        rslt.setType('GRANT');
-        rslt.setExpires(new Date(System.currentTimeMillis() - TWENTY_FOUR_HOURS_IN_MILLIS));
-        return rslt;
+        IPermission result = new PermissionImpl('UP_SYSTEM');
+        result.setPrincipal('local.0');
+        result.setActivity('CUSTOMIZE');
+        result.setType('GRANT');
+        result.setExpires(new Date(System.currentTimeMillis() - TWENTY_FOUR_HOURS_IN_MILLIS));
+        return result;
     }();
     private IPermission futureGrantPermission = {
-        IPermission rslt = new PermissionImpl('UP_SYSTEM');
-        rslt.setPrincipal('local.0');
-        rslt.setActivity('CUSTOMIZE');
-        rslt.setType('GRANT');
-        rslt.setEffective(new Date(System.currentTimeMillis() + TWENTY_FOUR_HOURS_IN_MILLIS));
-        return rslt;
+        IPermission result = new PermissionImpl('UP_SYSTEM');
+        result.setPrincipal('local.0');
+        result.setActivity('CUSTOMIZE');
+        result.setType('GRANT');
+        result.setEffective(new Date(System.currentTimeMillis() + TWENTY_FOUR_HOURS_IN_MILLIS));
+        return result;
     }();
 
     @Test

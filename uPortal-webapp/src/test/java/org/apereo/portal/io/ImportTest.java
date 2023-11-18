@@ -27,7 +27,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.core.io.Resource;
 
-@Ignore // Breaks on move to Gradlde
+@Ignore // Breaks on move to Gradle
 public class ImportTest extends TestCase {
 
     // Instance Members.

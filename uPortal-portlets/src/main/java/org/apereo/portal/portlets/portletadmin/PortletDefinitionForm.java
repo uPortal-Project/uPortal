@@ -718,7 +718,7 @@ public class PortletDefinitionForm implements Serializable {
     }
 
     /**
-     * Return the full date and time at which this portlet shoudl be automatically published. This
+     * Return the full date and time at which this portlet should be automatically published. This
      * value is built from the individual date/time fields.
      *
      * @return
@@ -739,7 +739,7 @@ public class PortletDefinitionForm implements Serializable {
     }
 
     /**
-     * Return the full date and time at which this portlet shoudl be automatically expired. This
+     * Return the full date and time at which this portlet should be automatically expired. This
      * value is built from the individual date/time fields.
      *
      * @return

@@ -184,9 +184,9 @@ public class ExternalPortletDefinitionUnmarshallerTest {
     }
 
     private Calendar getCalendarForMillis(long millis) {
-        final Calendar rslt = Calendar.getInstance();
-        rslt.setTimeInMillis(millis);
-        return rslt;
+        final Calendar result = Calendar.getInstance();
+        result.setTimeInMillis(millis);
+        return result;
     }
 
     private static final class MockUserIdentityStore implements IUserIdentityStore {
@@ -204,11 +204,11 @@ public class ExternalPortletDefinitionUnmarshallerTest {
         @Override
         public IPerson getPerson(String userName, boolean createPortalData)
                 throws AuthorizationException {
-            final IPerson rslt = new PersonImpl();
-            rslt.setUserName(userName);
-            rslt.setID(userName.hashCode());
-            rslt.setSecurityContext(new BrokenSecurityContext());
-            return rslt;
+            final IPerson result = new PersonImpl();
+            result.setUserName(userName);
+            result.setID(userName.hashCode());
+            result.setSecurityContext(new BrokenSecurityContext());
+            return result;
         }
 
         @Override

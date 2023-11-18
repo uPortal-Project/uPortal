@@ -192,7 +192,7 @@ public class SoffitConnectorController implements ApplicationContextAware {
     private ResponseWrapper fetchContentFromCacheIfAvailable(
             final RenderRequest req, final String serviceUrl) {
 
-        ResponseWrapper rslt = null; // default
+        ResponseWrapper result = null; // default
 
         final List<CacheTuple> cacheKeysToTry = new ArrayList<>();
         // Don't use private-scope caching for anonymous users
@@ -215,12 +215,12 @@ public class SoffitConnectorController implements ApplicationContextAware {
         for (CacheTuple key : cacheKeysToTry) {
             final Element cacheElement = this.responseCache.get(key);
             if (cacheElement != null) {
-                rslt = (ResponseWrapper) cacheElement.getObjectValue();
+                result = (ResponseWrapper) cacheElement.getObjectValue();
                 break;
             }
         }
 
-        return rslt;
+        return result;
     }
 
     private ResponseWrapper extractResponseAndCacheIfAppropriate(
@@ -228,9 +228,9 @@ public class SoffitConnectorController implements ApplicationContextAware {
 
         // Extract
         final HttpEntity entity = httpResponse.getEntity();
-        ResponseWrapper rslt;
+        ResponseWrapper result;
         try {
-            rslt = new ResponseWrapper(IOUtils.toByteArray(entity.getContent()));
+            result = new ResponseWrapper(IOUtils.toByteArray(entity.getContent()));
         } catch (UnsupportedOperationException | IOException e) {
             throw new RuntimeException("Failed to read the response", e);
         }
@@ -292,7 +292,7 @@ public class SoffitConnectorController implements ApplicationContextAware {
                                     cacheTuple,
                                     cacheControlValue);
                             if (cacheTuple != null) {
-                                final Element element = new Element(cacheTuple, rslt);
+                                final Element element = new Element(cacheTuple, result);
                                 element.setTimeToLive(timeToLive);
                                 responseCache.put(element);
                             } else {
@@ -306,7 +306,7 @@ public class SoffitConnectorController implements ApplicationContextAware {
             }
         }
 
-        return rslt;
+        return result;
     }
 
     /*

@@ -95,11 +95,11 @@ public class PermissionsListController extends AbstractPermissionsController {
             return null;
         }
 
-        IPermission[] rslt =
+        IPermission[] result =
                 permissionStore.select(
                         ownerParam, principalParam, activityParam, targetParam, null);
 
-        return new ModelAndView("jsonView", "permissionsList", marshall(rslt));
+        return new ModelAndView("jsonView", "permissionsList", marshall(result));
     }
 
     /*
@@ -114,7 +114,7 @@ public class PermissionsListController extends AbstractPermissionsController {
             throw new IllegalArgumentException(msg);
         }
 
-        List<Map<String, String>> rslt = new ArrayList<Map<String, String>>(data.length);
+        List<Map<String, String>> result = new ArrayList<Map<String, String>>(data.length);
         for (IPermission p : data) {
             JsonEntityBean bean = getEntityBean(p.getPrincipal());
 
@@ -161,10 +161,10 @@ public class PermissionsListController extends AbstractPermissionsController {
             }
             entry.put("targetName", targetName);
 
-            rslt.add(entry);
+            result.add(entry);
         }
 
-        return rslt;
+        return result;
     }
 
     protected JsonEntityBean getEntityBean(String principalString) {

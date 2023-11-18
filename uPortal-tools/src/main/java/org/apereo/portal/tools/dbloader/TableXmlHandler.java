@@ -34,7 +34,7 @@ import org.xml.sax.SAXException;
 
 /**
  * Builds an object model of Hibernate mapping objects for tables based on an XML definition file.
- * Once parsing is complete the generated objects are availabe via {@link #getTables()}
+ * Once parsing is complete the generated objects are available via {@link #getTables()}
  */
 public class TableXmlHandler extends BaseDbXmlHandler implements ITableDataProvider {
     private final Mappings mappings = new Configuration().createMappings();

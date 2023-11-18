@@ -39,7 +39,7 @@ class LocalizedPortletDefinition implements Serializable {
      * Initialize the state using portlet definition. Class fields will be retrieved from portlet
      * definition using specified locale.
      *
-     * @param definition portelt definition to use (must not be null).
+     * @param definition portlet definition to use (must not be null).
      * @param locale specifies the localization to use.
      */
     public LocalizedPortletDefinition(IPortletDefinition definition, String locale) {

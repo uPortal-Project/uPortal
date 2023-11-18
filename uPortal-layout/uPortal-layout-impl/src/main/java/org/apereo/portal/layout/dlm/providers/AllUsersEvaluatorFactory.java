@@ -55,11 +55,11 @@ public class AllUsersEvaluatorFactory extends Evaluator implements EvaluatorFact
             throw new IllegalArgumentException(msg);
         }
 
-        Element rslt = null;
+        Element result = null;
         QName q = new QName("audience", FragmentDefinition.NAMESPACE);
-        rslt = DocumentHelper.createElement(q);
-        rslt.addAttribute("evaluatorFactory", this.getFactoryClass().getName());
-        parent.add(rslt);
+        result = DocumentHelper.createElement(q);
+        result.addAttribute("evaluatorFactory", this.getFactoryClass().getName());
+        parent.add(result);
     }
 
     @Override

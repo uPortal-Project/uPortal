@@ -57,7 +57,7 @@ public final class IFramePortletController {
                             /** link to long description (complements title) */
                             put("longDescription", null);
 
-                            /** name of frame for targetting */
+                            /** name of frame for targeting */
                             put("name", null);
 
                             /** source of frame content */

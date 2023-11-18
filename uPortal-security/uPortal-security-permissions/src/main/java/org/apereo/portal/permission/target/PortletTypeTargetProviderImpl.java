@@ -47,16 +47,16 @@ public class PortletTypeTargetProviderImpl implements IPermissionTargetProvider 
     public IPermissionTarget getTarget(String key) {
         Validate.notBlank(key, "Argument 'key' cannot be blank");
 
-        IPermissionTarget rslt = null; // defualt
+        IPermissionTarget result = null; // defualt
         if (key.equals(IPermission.ALL_PORTLET_TYPES)) {
-            rslt = ALL_PORTLET_TYPES_TARGET;
+            result = ALL_PORTLET_TYPES_TARGET;
         } else {
             // Search database-defined cpds...
             final Map<IPortletType, PortletPublishingDefinition> cpds =
                     channelPublishingDefinitionDao.getChannelPublishingDefinitions();
             for (Map.Entry<IPortletType, PortletPublishingDefinition> y : cpds.entrySet()) {
                 if (y.getKey().getName().equals(key)) {
-                    rslt =
+                    result =
                             new PermissionTargetImpl(
                                     y.getKey().getName(),
                                     y.getKey().getName(),
@@ -65,19 +65,19 @@ public class PortletTypeTargetProviderImpl implements IPermissionTargetProvider 
             }
         }
 
-        return rslt;
+        return result;
     }
 
     @Override
     public Collection<IPermissionTarget> searchTargets(String term) {
         Validate.notBlank(term, "Argument 'term' cannot be blank");
 
-        Set<IPermissionTarget> rslt = new HashSet<IPermissionTarget>();
+        Set<IPermissionTarget> result = new HashSet<IPermissionTarget>();
 
         // Search case-insensitive
         final String lowerTerm = term.toLowerCase();
         if (IPermission.ALL_PORTLET_TYPES.toLowerCase().contains(lowerTerm)) {
-            rslt.add(ALL_PORTLET_TYPES_TARGET);
+            result.add(ALL_PORTLET_TYPES_TARGET);
         }
         final Map<IPortletType, PortletPublishingDefinition> cpds =
                 channelPublishingDefinitionDao.getChannelPublishingDefinitions();
@@ -88,10 +88,10 @@ public class PortletTypeTargetProviderImpl implements IPermissionTargetProvider 
                                 y.getKey().getName(),
                                 y.getKey().getName(),
                                 TargetType.PORTLET_TYPE);
-                rslt.add(target);
+                result.add(target);
             }
         }
 
-        return rslt;
+        return result;
     }
 }

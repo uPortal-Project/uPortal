@@ -57,7 +57,7 @@ public class ActivityController {
     private static final String PREFERENCE_DISPLAY_GROUPS = PREFERENCE_PREFIX + "displayGroups";
     private static final String PREFERENCE_DISPLAY_OTHER = PREFERENCE_PREFIX + "displayOther";
     private static final String PREFERENCE_UNIQUE_LOGINS = PREFERENCE_PREFIX + "uniqueLogins";
-    private static final String PREFERENCE_SHOW_SEACHES = PREFERENCE_PREFIX + "showSearches";
+    private static final String PREFERENCE_SHOW_SEARCHES = PREFERENCE_PREFIX + "showSearches";
     private static final String DEFAULT_PREFERENCE_MASTER_GROUP = "Everyone";
     private static final String[] DEFAULT_PREFERENCE_DISPLAY_GROUPS = new String[] {};
     private static final String DEFAULT_PREFERENCE_DISPLAY_OTHER = "true";
@@ -110,7 +110,7 @@ public class ActivityController {
         final PortletPreferences prefs = request.getPreferences();
         final Boolean showSearches =
                 Boolean.valueOf(
-                        prefs.getValue(PREFERENCE_SHOW_SEACHES, DEFAULT_PREFERENCE_SHOW_SEARCHES));
+                        prefs.getValue(PREFERENCE_SHOW_SEARCHES, DEFAULT_PREFERENCE_SHOW_SEARCHES));
         if (showSearches) {
             popularSearchTerms = getPopularSearchTerms();
         }

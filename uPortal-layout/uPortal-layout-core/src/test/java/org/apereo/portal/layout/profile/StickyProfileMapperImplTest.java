@@ -123,7 +123,7 @@ public class StickyProfileMapperImplTest {
 
     /** Test that does not store selections by guest user to registry. */
     @Test
-    public void testIngoresGuestUserProfileSelections() {
+    public void testIgnoresGuestUserProfileSelections() {
 
         final ProfileSelectionEvent selectionEvent =
                 new ProfileSelectionEvent(this, "validKey1", guestPerson, request);

@@ -81,12 +81,12 @@ public class PersonForm implements Serializable {
      * @return The user's attributes that are not listed in <code>accountEditAttributes</code>
      */
     public Map<String, StringListAttribute> getCustomAttributes() {
-        Map<String, StringListAttribute> rslt =
+        Map<String, StringListAttribute> result =
                 new HashMap<String, StringListAttribute>(attributes);
         for (Preference p : accountEditAttributes) {
-            rslt.remove(p.getName());
+            result.remove(p.getName());
         }
-        return Collections.unmodifiableMap(rslt);
+        return Collections.unmodifiableMap(result);
     }
 
     public String getPassword() {

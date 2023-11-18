@@ -169,7 +169,7 @@ public class LoginController {
      */
     /* package-private */ URL parseLocalRefUrl(
             final HttpServletRequest request, final String refUrl) {
-        URL rslt = null; // default
+        URL result = null; // default
         if (StringUtils.isNotBlank(refUrl)) {
             try {
                 final URL context = new URL(request.getRequestURL().toString());
@@ -178,7 +178,7 @@ public class LoginController {
                 if (location.getProtocol().equals(context.getProtocol())
                         && location.getHost().equals(context.getHost())
                         && location.getPort() == context.getPort()) {
-                    rslt = location;
+                    result = location;
                 } else {
                     log.warn("The specified refUrl is not local:  " + refUrl);
                 }
@@ -187,6 +187,6 @@ public class LoginController {
                 log.debug(e);
             }
         }
-        return rslt;
+        return result;
     }
 }

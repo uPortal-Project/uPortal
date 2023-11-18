@@ -55,7 +55,7 @@ public interface IAuthorizationPrincipal {
     boolean canConfigure(String channelPublishId) throws AuthorizationException;
 
     /**
-     * Answers if this <code>IAuthoriztionPrincipal</code> has permission to render this channel.
+     * Answers if this <code>IAuthorizationPrincipal</code> has permission to render this channel.
      *
      * @return boolean
      * @param channelPublishId int - the Channel publish Id

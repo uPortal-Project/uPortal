@@ -228,19 +228,19 @@ public class EntityPersonAttributesGroupStore
         logger.debug("finding containing groups for member key {}", member.getKey());
 
         final Set<IEntityGroup> set = Collections.emptySet();
-        Iterator<IEntityGroup> rslt = set.iterator(); // default
+        Iterator<IEntityGroup> result = set.iterator(); // default
 
         if (member.isGroup()) {
             // PAGS groups may only contain other PAGS groups (and people, of course)
             final IEntityGroup ieg = (IEntityGroup) member;
             if (PagsService.SERVICE_NAME_PAGS.equals(ieg.getServiceName().toString())) {
-                rslt = findParentGroupsForGroup((IEntityGroup) member);
+                result = findParentGroupsForGroup((IEntityGroup) member);
             }
         } else {
-            rslt = findParentGroupsForEntity((IEntity) member);
+            result = findParentGroupsForEntity((IEntity) member);
         }
 
-        return rslt;
+        return result;
     }
 
     private Iterator<IEntityGroup> findParentGroupsForGroup(IEntityGroup group) {
@@ -517,8 +517,8 @@ public class EntityPersonAttributesGroupStore
         if (pagsGroups.size() > 1) {
             logger.error("More than one PAGS group with name {} found.", name);
         }
-        final IPersonAttributesGroupDefinition rslt =
+        final IPersonAttributesGroupDefinition result =
                 pagsGroups.isEmpty() ? null : pagsGroups.iterator().next();
-        return rslt;
+        return result;
     }
 }

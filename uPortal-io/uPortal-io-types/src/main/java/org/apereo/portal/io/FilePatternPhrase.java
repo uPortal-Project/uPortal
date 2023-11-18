@@ -66,13 +66,13 @@ public class FilePatternPhrase implements Phrase {
     @Override
     public Object evaluate(TaskRequest req, TaskResponse res) {
 
-        String rslt = DEFAULT_VALUE;
+        String result = DEFAULT_VALUE;
 
         String p = ((String) pattern.evaluate(req, res)).trim();
         if (p != null && p.length() != 0 && !p.equals(USE_DEFAULT_VALUE)) {
-            rslt = p;
+            result = p;
         }
 
-        return rslt;
+        return result;
     }
 }

@@ -34,7 +34,7 @@ import org.springframework.web.portlet.bind.annotation.ResourceMapping;
  * entities and post those entities after form submission. Typical scenario is that entity list is
  * loaded using {@link #getEntityList()} and user can select one to translate. Upon selection, exact
  * entity must be retrieved using {@link #getEntity(String, String)} in order to fill in the form.
- * Upon form sumission, another AJAX call submits form values and {@link #postTranslation(String,
+ * Upon form submission, another AJAX call submits form values and {@link #postTranslation(String,
  * String, String)} updates the message.
  */
 @Controller

@@ -68,9 +68,9 @@ public class ProfileEvaluator extends Evaluator {
             throw new IllegalArgumentException(msg);
         }
 
-        Element rslt = DocumentHelper.createElement("profile");
-        rslt.addAttribute("fname", this.profileFname);
-        parent.add(rslt);
+        Element result = DocumentHelper.createElement("profile");
+        result.addAttribute("fname", this.profileFname);
+        parent.add(result);
     }
 
     @Override
