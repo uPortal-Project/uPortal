@@ -40,17 +40,17 @@ public enum UrlState {
         return this.lowercase;
     }
 
-    public static UrlState valueOfIngoreCase(String name) {
+    public static UrlState valueOfIgnoreCase(String name) {
         return UrlState.valueOf(name.toUpperCase());
     }
 
-    public static UrlState valueOfIngoreCase(String name, UrlState defaultValue) {
+    public static UrlState valueOfIgnoreCase(String name, UrlState defaultValue) {
         if (name == null) {
             return defaultValue;
         }
 
         try {
-            return valueOfIngoreCase(name);
+            return valueOfIgnoreCase(name);
         } catch (IllegalArgumentException e) {
             return defaultValue;
         }

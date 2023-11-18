@@ -107,7 +107,7 @@ public class PortletsSearchStrategy implements ISearchStrategy {
     @Override
     public List<?> search(String query, HttpServletRequest request) {
         logger.debug("Entering search() with query={}", query);
-        final List<Object> rslt = new ArrayList<>();
+        final List<Object> result = new ArrayList<>();
         final Set<IPortletDefinition> favorites = getFavorites(request);
 
         try (IndexReader indexReader = DirectoryReader.open(directory)) {
@@ -144,7 +144,7 @@ public class PortletsSearchStrategy implements ISearchStrategy {
                                                 scoreStr,
                                                 hashKey,
                                                 query);
-                                        rslt.add(
+                                        result.add(
                                                 getPortletAttrs(portlet, url, scoreStr, favorites));
                                     }
                                 } catch (IOException e) {
@@ -163,7 +163,7 @@ public class PortletsSearchStrategy implements ISearchStrategy {
             logger.warn("Failed to search portal content for query='{}'", query, e);
         }
 
-        return rslt;
+        return result;
     }
 
     private Map<String, Object> getPortletAttrs(
@@ -171,19 +171,19 @@ public class PortletsSearchStrategy implements ISearchStrategy {
             String url,
             String score,
             Set<IPortletDefinition> favorites) {
-        final Map<String, Object> rslt = new TreeMap<>();
-        rslt.put("name", portlet.getName());
-        rslt.put("fname", portlet.getFName());
-        rslt.put("title", portlet.getTitle());
-        rslt.put("description", portlet.getDescription());
-        rslt.put("url", url);
+        final Map<String, Object> result = new TreeMap<>();
+        result.put("name", portlet.getName());
+        result.put("fname", portlet.getFName());
+        result.put("title", portlet.getTitle());
+        result.put("description", portlet.getDescription());
+        result.put("url", url);
         if (displayFavoriteFlag) {
-            rslt.put("favorite", favorites.contains(portlet) ? true : false);
+            result.put("favorite", favorites.contains(portlet) ? true : false);
         }
         if (displayScore) {
-            rslt.put("score", score);
+            result.put("score", score);
         }
-        return rslt;
+        return result;
     }
 
     private Set<IPortletDefinition> getFavorites(HttpServletRequest request) {
@@ -192,11 +192,11 @@ public class PortletsSearchStrategy implements ISearchStrategy {
             final UserPreferencesManager upm = (UserPreferencesManager) ui.getPreferencesManager();
             final IUserLayoutManager ulm = upm.getUserLayoutManager();
             final IUserLayout layout = ulm.getUserLayout();
-            final Set<IPortletDefinition> rslt =
+            final Set<IPortletDefinition> result =
                     displayFavoriteFlag
                             ? favoritesUtils.getFavoritePortletDefinitions(layout)
                             : Collections.emptySet();
-            return rslt;
+            return result;
         } else {
             return Collections.emptySet();
         }

@@ -93,22 +93,22 @@ public abstract class GroupMemberImpl implements IGroupMember {
         }
 
         @SuppressWarnings("unchecked")
-        final Set<IEntityGroup> rslt = (Set<IEntityGroup>) element.getObjectValue();
-        return rslt;
+        final Set<IEntityGroup> result = (Set<IEntityGroup>) element.getObjectValue();
+        return result;
     }
 
     private synchronized Set<IEntityGroup> buildParentGroupsSet() throws GroupsException {
         logger.debug(
                 "Constructing containingGroups for member='{}'", getUnderlyingEntityIdentifier());
 
-        final Set<IEntityGroup> rslt = new HashSet<>();
+        final Set<IEntityGroup> result = new HashSet<>();
         for (Iterator it = GroupService.getCompositeGroupService().findParentGroups(this);
                 it.hasNext(); ) {
             final IEntityGroup eg = (IEntityGroup) it.next();
-            rslt.add(eg);
+            result.add(eg);
         }
 
-        return Collections.unmodifiableSet(rslt);
+        return Collections.unmodifiableSet(result);
     }
 
     /** @return String */
@@ -167,19 +167,19 @@ public abstract class GroupMemberImpl implements IGroupMember {
      *
      * @param member org.apereo.portal.groups.IGroupMember - The current group member in the
      *     recursive execution.
-     * @param rslt Set - A Set that groups are added to.
+     * @param result Set - A Set that groups are added to.
      * @return Set
      */
-    protected Set<IEntityGroup> primGetAncestorGroups(IGroupMember member, Set<IEntityGroup> rslt)
+    protected Set<IEntityGroup> primGetAncestorGroups(IGroupMember member, Set<IEntityGroup> result)
             throws GroupsException {
         for (IEntityGroup group : member.getParentGroups()) {
             // avoid stack overflow in case of circular group dependencies
-            if (!rslt.contains(group)) {
-                rslt.add(group);
-                primGetAncestorGroups(group, rslt);
+            if (!result.contains(group)) {
+                result.add(group);
+                primGetAncestorGroups(group, result);
             }
         }
-        return rslt;
+        return result;
     }
 
     @Override

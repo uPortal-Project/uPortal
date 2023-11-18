@@ -182,8 +182,8 @@ public class RoleBasedBackgroundSetSelectionStrategy implements BackgroundSetSel
         final Expression x =
                 portalSpELService.parseExpression(
                         pathBeforeProcessing, PortalSpELServiceImpl.TemplateParserContext.INSTANCE);
-        final String rslt = x.getValue(evaluationContext, String.class);
-        return rslt;
+        final String result = x.getValue(evaluationContext, String.class);
+        return result;
     }
 
     /*

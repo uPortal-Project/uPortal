@@ -136,7 +136,7 @@ public class LogoutController {
 
         final String defaultRedirect = request.getContextPath() + "/";
 
-        String rslt = null; // default
+        String result = null; // default
 
         // Get the person object associated with the request
         final IPerson person = this.personManager.getPerson(request);
@@ -146,18 +146,18 @@ public class LogoutController {
             // Analyze the user's authentication status
             final ISecurityContext securityContext = person.getSecurityContext();
             if (securityContext.isAuthenticated() && StringUtils.isNotBlank(logoutRedirect)) {
-                rslt = logoutRedirect;
+                result = logoutRedirect;
             }
         }
 
         // Otherwise use a sensible default...
-        rslt =
-                rslt != null
-                        ? urlCustomizer.customizeUrl(request, rslt)
+        result =
+                result != null
+                        ? urlCustomizer.customizeUrl(request, result)
                         : urlCustomizer.customizeUrl(request, defaultRedirect);
 
-        logger.debug("Calculated redirectionURL='{}' for user='{}'", rslt, username);
+        logger.debug("Calculated redirectionURL='{}' for user='{}'", result, username);
 
-        return rslt;
+        return result;
     }
 }

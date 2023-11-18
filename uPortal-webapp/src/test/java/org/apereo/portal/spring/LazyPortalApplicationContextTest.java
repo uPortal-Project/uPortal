@@ -18,7 +18,7 @@ import org.apereo.portal.utils.PortalApplicationContextLocator;
 import org.junit.Ignore;
 import org.junit.Test;
 
-@Ignore // Breaks on move to Gradlde
+@Ignore // Breaks on move to Gradle
 public class LazyPortalApplicationContextTest {
 
     @Test(expected = IllegalStateException.class)

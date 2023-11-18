@@ -242,7 +242,7 @@ public class FavoritesUtils {
     }
 
     public Set<IPortletDefinition> getFavoritePortletDefinitions(IUserLayout layout) {
-        final Set<IPortletDefinition> rslt = new HashSet<>();
+        final Set<IPortletDefinition> result = new HashSet<>();
         final List<IUserLayoutNodeDescription> favoriteLayoutNodes =
                 getFavoritePortletLayoutNodes(layout);
         favoriteLayoutNodes.stream()
@@ -267,11 +267,11 @@ public class FavoritesUtils {
                                 final IPortletDefinition pDef =
                                         portletRegistry.getPortletDefinition(pId);
                                 if (pDef != null) {
-                                    rslt.add(pDef);
+                                    result.add(pDef);
                                 }
                             }
                         });
-        return rslt;
+        return result;
     }
 
     /**

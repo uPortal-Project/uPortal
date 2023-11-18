@@ -22,7 +22,7 @@
 <% org.apache.commons.logging.Log logger = org.apache.commons.logging.LogFactory.getLog("org.apereo.portal.jsp.Error"); %>
 <html>
 <head>
-<title>Portal: An error has occured</title>
+<title>Portal: An error has occurred</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 
 <body>

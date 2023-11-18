@@ -150,7 +150,7 @@ public class PortalPropertySourcesPlaceholderConfigurer
     @Override
     protected Properties mergeProperties() throws IOException {
 
-        Properties rslt = null;
+        Properties result = null;
 
         /*
          * If properties file encryption is used in this deployment, the
@@ -164,7 +164,7 @@ public class PortalPropertySourcesPlaceholderConfigurer
 
             StandardPBEStringEncryptor encryptor = new StandardPBEStringEncryptor();
             encryptor.setPassword(encryptionKey);
-            rslt = new EncryptableProperties(encryptor);
+            result = new EncryptableProperties(encryptor);
 
             /*
              * BEGIN copied from PropertiesLoaderSupport.mergeProperties()
@@ -172,18 +172,18 @@ public class PortalPropertySourcesPlaceholderConfigurer
 
             if (this.localOverride) {
                 // Load properties from file upfront, to let local properties override.
-                loadProperties(rslt);
+                loadProperties(result);
             }
 
             if (this.localProperties != null) {
                 for (int i = 0; i < this.localProperties.length; i++) {
-                    CollectionUtils.mergePropertiesIntoMap(this.localProperties[i], rslt);
+                    CollectionUtils.mergePropertiesIntoMap(this.localProperties[i], result);
                 }
             }
 
             if (!this.localOverride) {
                 // Load properties from file afterwards, to let those properties override.
-                loadProperties(rslt);
+                loadProperties(result);
             }
 
             /*
@@ -201,11 +201,11 @@ public class PortalPropertySourcesPlaceholderConfigurer
              * The feature is not in use;  defer to the Spring-provided
              * implementation of this method.
              */
-            rslt = super.mergeProperties();
+            result = super.mergeProperties();
         }
 
-        honorClusterOverrides(rslt);
-        return rslt;
+        honorClusterOverrides(result);
+        return result;
     }
 
     public static void honorClusterOverrides(Properties properties) {

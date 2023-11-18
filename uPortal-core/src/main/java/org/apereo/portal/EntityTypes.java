@@ -81,7 +81,7 @@ public class EntityTypes {
 
     @Cacheable("org.apereo.portal.EntityTypes.CLASS_BY_ID")
     public Class<? extends IBasicEntity> getEntityTypeFromID(Integer id) {
-        final List<Class<?>> result =
+        final List<Class<?>> queryResult =
                 this.jdbcOperations.query(
                         "SELECT ENTITY_TYPE_NAME FROM UP_ENTITY_TYPE WHERE ENTITY_TYPE_ID = ?",
                         CLASS_ROW_MAPPER,
@@ -89,9 +89,9 @@ public class EntityTypes {
         @SuppressWarnings(
                 "unchecked") // There is an unused(?) row for java.lang.Object that looks as though
         // it will fail here
-        Class<? extends IBasicEntity> rslt =
-                (Class<? extends IBasicEntity>) DataAccessUtils.singleResult(result);
-        return rslt;
+        Class<? extends IBasicEntity> dataResult =
+                (Class<? extends IBasicEntity>) DataAccessUtils.singleResult(queryResult);
+        return dataResult;
     }
 
     @Cacheable(cacheNames = "org.apereo.portal.EntityTypes.ID_BY_CLASS", key = "#type.Name")
@@ -109,13 +109,13 @@ public class EntityTypes {
                 this.jdbcOperations.query(
                         "SELECT ENTITY_TYPE_NAME FROM UP_ENTITY_TYPE", CLASS_ROW_MAPPER);
         // Filter null values
-        final Set<Class<?>> rslt = new HashSet<>();
+        final Set<Class<?>> result = new HashSet<>();
         for (Class<?> clazz : entityTypes) {
             if (clazz != null) {
-                rslt.add(clazz);
+                result.add(clazz);
             }
         }
-        return rslt.iterator();
+        return result.iterator();
     }
 
     @CacheEvict(value = "org.apereo.portal.EntityTypes.ALL", allEntries = true)

@@ -174,9 +174,9 @@ public class JpaPersonAttributesGroupDefinitionDao extends BasePortalJpaDao
         TypedQuery<PersonAttributesGroupDefinitionImpl> query =
                 this.createCachedQuery(parentGroupDefinitionsQuery);
         query.setParameter(nameParameter, group.getName());
-        Set<IPersonAttributesGroupDefinition> rslt =
+        Set<IPersonAttributesGroupDefinition> result =
                 new HashSet<IPersonAttributesGroupDefinition>(query.getResultList());
-        return rslt;
+        return result;
     }
 
     @PortalTransactionalReadOnly

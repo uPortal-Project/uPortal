@@ -58,7 +58,7 @@ public final class InjectAttributeRegexTester extends BaseAttributeTester {
     @Override
     public boolean test(IPerson person) {
 
-        boolean rslt = false; // default
+        boolean result = false; // default
 
         /*
          * First replace all instances of @{attrName}@ with
@@ -87,12 +87,12 @@ public final class InjectAttributeRegexTester extends BaseAttributeTester {
             for (Object secondValue : values) {
                 if (secondValue instanceof String
                         && secondPattern.matcher((String) secondValue).matches()) {
-                    rslt = true;
+                    result = true;
                     break;
                 }
             }
         }
 
-        return rslt;
+        return result;
     }
 }

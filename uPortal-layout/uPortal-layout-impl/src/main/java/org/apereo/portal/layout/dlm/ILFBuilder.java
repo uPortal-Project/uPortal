@@ -85,7 +85,7 @@ public class ILFBuilder {
 
     /**
      * Passes the layout root of each of these documents to mergeChildren causing all children of
-     * newLayout to be merged into compositeLayout following merging protocal for distributed layout
+     * newLayout to be merged into compositeLayout following merging protocol for distributed layout
      * management.
      *
      * @throws AuthorizationException

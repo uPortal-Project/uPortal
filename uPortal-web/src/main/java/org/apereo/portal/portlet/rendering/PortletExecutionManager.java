@@ -511,7 +511,7 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
                     this.portletWindowRegistry.getPortletWindow(request, portletWindowId);
             logger.warn(
                     portletWindow
-                            + " threw an execption while executing an event. This chain of event handling will terminate.",
+                            + " threw an exception while executing an event. This chain of event handling will terminate.",
                     e);
         }
 

@@ -22,7 +22,7 @@ import org.apache.commons.lang.StringUtils;
 
 public class StringListAttribute implements Serializable {
     private static final long serialVersionUID = 1L;
-    public static final List<String> LIST_EMTPY_ITEMS = Arrays.asList("", null);
+    public static final List<String> LIST_EMPTY_ITEMS = Arrays.asList("", null);
     private List<String> value = new ArrayList<String>();
 
     public StringListAttribute() {}
@@ -51,16 +51,16 @@ public class StringListAttribute implements Serializable {
      * @return
      */
     public boolean isBlank() {
-        boolean rslt = true; // default
+        boolean result = true; // default
         if (value != null) {
             for (String v : value) {
                 if (StringUtils.isNotBlank(v)) {
-                    rslt = false;
+                    result = false;
                     break;
                 }
             }
         }
-        return rslt;
+        return result;
     }
 
     /** @param value the value to set */
@@ -77,7 +77,7 @@ public class StringListAttribute implements Serializable {
     }
 
     private void removeAllEmptyItems(List<String> value) {
-        value.removeAll(LIST_EMTPY_ITEMS);
+        value.removeAll(LIST_EMPTY_ITEMS);
     }
 
     @Override

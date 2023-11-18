@@ -61,7 +61,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 /** Tests for {@link PortletRendererImpl}. */
-@Ignore // Breaks on move to Gradlde
+@Ignore // Breaks on move to Gradle
 @RunWith(MockitoJUnitRunner.class)
 public class PortletRendererImplTest {
     @InjectMocks private PortletRendererImpl portletRenderer = new PortletRendererImpl();

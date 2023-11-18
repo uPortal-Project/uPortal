@@ -77,14 +77,14 @@ public class Attributes {
 
     @SoffitModelAttribute("bearerJson")
     public String getBearerJson(Bearer bearer) {
-        String rslt = null;
+        String result = null;
         try {
-            rslt = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(bearer);
+            result = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(bearer);
         } catch (JsonProcessingException e) {
             final String msg = "Unable to write the Bearer object to JSON";
             throw new RuntimeException(msg, e);
         }
-        return rslt;
+        return result;
     }
 
 }

@@ -53,7 +53,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 public class JpaPortalEventStoreTest extends BaseRawEventsJpaDaoTest {
     @Autowired private IPortalEventDao portalEventDao;
 
-    @Ignore // Breaks on move to Gradlde
+    @Ignore // Breaks on move to Gradle
     @Test
     public void testStoreSingleEvents() throws Exception {
         final DateTime startDate = DateTime.now().minusDays(1);
@@ -79,7 +79,7 @@ public class JpaPortalEventStoreTest extends BaseRawEventsJpaDaoTest {
         verifyAggregateEvents(Collections.<PortalEvent>emptyList(), startDate, endDate);
     }
 
-    @Ignore // Breaks on move to Gradlde
+    @Ignore // Breaks on move to Gradle
     @Test
     public void testStoreBatchEvents() throws Exception {
         final DateTime startDate = DateTime.now().minusDays(1);

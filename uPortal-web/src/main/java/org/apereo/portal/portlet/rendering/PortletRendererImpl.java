@@ -938,7 +938,7 @@ public class PortletRendererImpl implements IPortletRenderer {
         final PortletHttpServletRequestWrapper portletHttpServletRequestWrapper =
                 new PortletHttpServletRequestWrapper(httpServletRequest);
         portletHttpServletRequestWrapper.setAttribute(
-                PortletDelegationLocator.PORTLET_DELECATION_LOCATOR_ATTR,
+                PortletDelegationLocator.PORTLET_DELEGATION_LOCATOR_ATTR,
                 this.portletDelegationLocator);
 
         return portletHttpServletRequestWrapper;

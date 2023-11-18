@@ -121,7 +121,7 @@ public class RenderPortletTag extends TagSupport {
         final PortletDelegationLocator portletDelegationLocator =
                 (PortletDelegationLocator)
                         renderRequest.getAttribute(
-                                PortletDelegationLocator.PORTLET_DELECATION_LOCATOR_ATTR);
+                                PortletDelegationLocator.PORTLET_DELEGATION_LOCATOR_ATTR);
 
         final String sessionKey = this.sessionKeyPrefix + this.fname;
 

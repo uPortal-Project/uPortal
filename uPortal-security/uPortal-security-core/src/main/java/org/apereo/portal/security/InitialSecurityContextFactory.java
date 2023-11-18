@@ -24,7 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * This class provides a "factory" method that returns a security context constracted based on
+ * This class provides a "factory" method that returns a security context constructed based on
  * application configuration, including all relevant subcontexts.
  */
 @Component
@@ -51,11 +51,11 @@ public class InitialSecurityContextFactory {
     }
 
     public ISecurityContext getInitialContext() throws PortalSecurityException {
-        final ISecurityContext rslt = new UnionSecurityContext();
+        final ISecurityContext result = new UnionSecurityContext();
         for (ISecurityContextFactory fac : enabledSecurityContextFactories) {
             ISecurityContext ctx = fac.getSecurityContext();
-            rslt.addSubContext(fac.getName(), ctx);
+            result.addSubContext(fac.getName(), ctx);
         }
-        return rslt;
+        return result;
     }
 }

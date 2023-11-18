@@ -39,20 +39,20 @@ public class PortalRootPersonAttributeDaoTest extends PortalRootPersonAttributeD
         portalRootPersonAttributeDao.setUserAttributeOverride(
                 "somebody.else",
                 Collections.singletonMap(CUSTOMARY_FIRST_NAME_ATTRIBUTE, "something"));
-        final IPersonAttributes rsltWithout =
+        final IPersonAttributes resultWithout =
                 portalRootPersonAttributeDao.applyOverridesIfPresent(person);
         Assert.assertEquals(
-                FIRST_NAME, rsltWithout.getAttributeValue(CUSTOMARY_FIRST_NAME_ATTRIBUTE));
+                FIRST_NAME, resultWithout.getAttributeValue(CUSTOMARY_FIRST_NAME_ATTRIBUTE));
 
         // Then with overrides
         final String overriddenFirstName = "Nebby";
         portalRootPersonAttributeDao.setUserAttributeOverride(
                 USERNAME,
                 Collections.singletonMap(CUSTOMARY_FIRST_NAME_ATTRIBUTE, overriddenFirstName));
-        final IPersonAttributes rsltWith =
+        final IPersonAttributes resultWith =
                 portalRootPersonAttributeDao.applyOverridesIfPresent(person);
         Assert.assertEquals(
-                overriddenFirstName, rsltWith.getAttributeValue(CUSTOMARY_FIRST_NAME_ATTRIBUTE));
+                overriddenFirstName, resultWith.getAttributeValue(CUSTOMARY_FIRST_NAME_ATTRIBUTE));
     }
 
     @Test
@@ -65,9 +65,11 @@ public class PortalRootPersonAttributeDaoTest extends PortalRootPersonAttributeD
         final IPersonAttributes person = new NamedPersonImpl(USERNAME, attributes);
 
         // Test
-        final IPersonAttributes rslt = portalRootPersonAttributeDao.selectUsernameIfAbsent(person);
+        final IPersonAttributes result =
+                portalRootPersonAttributeDao.selectUsernameIfAbsent(person);
         Assert.assertEquals(
-                USERNAME, rslt.getAttributeValue(usernameAttributeProvider.getUsernameAttribute()));
+                USERNAME,
+                result.getAttributeValue(usernameAttributeProvider.getUsernameAttribute()));
     }
 
     @Test
@@ -80,10 +82,10 @@ public class PortalRootPersonAttributeDaoTest extends PortalRootPersonAttributeD
         final IPersonAttributes person = new NamedPersonImpl(USERNAME, attributes);
 
         // Test
-        final IPersonAttributes rslt =
+        final IPersonAttributes result =
                 portalRootPersonAttributeDao.selectDisplayNameIfAbsent(person);
         Assert.assertEquals(
                 FIRST_NAME + " " + LAST_NAME,
-                rslt.getAttributeValue(ILocalAccountPerson.ATTR_DISPLAY_NAME));
+                result.getAttributeValue(ILocalAccountPerson.ATTR_DISPLAY_NAME));
     }
 }

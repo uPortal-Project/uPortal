@@ -64,7 +64,7 @@ public class GroupKeyOrLiteralPhrase implements Phrase {
     @Override
     public Object evaluate(TaskRequest req, TaskResponse res) {
 
-        String rslt = null;
+        String result = null;
 
         Element e = (Element) element.evaluate(req, res);
         if (e.getName().equals("group")) {
@@ -80,7 +80,7 @@ public class GroupKeyOrLiteralPhrase implements Phrase {
                     switch (eis.length) {
                         case 1:
                             // This is good -- what we hope for...
-                            rslt = GroupService.findGroup(eis[0].getKey()).getKey();
+                            result = GroupService.findGroup(eis[0].getKey()).getKey();
                             break;
                         case 0:
                             // This is ok -- try the next type...
@@ -92,7 +92,7 @@ public class GroupKeyOrLiteralPhrase implements Phrase {
                 }
 
                 // We better have a match by now...
-                if (rslt == null) {
+                if (result == null) {
                     String msg = "No group with the specified name was found:  " + e.getText();
                     throw new RuntimeException(msg);
                 }
@@ -102,12 +102,12 @@ public class GroupKeyOrLiteralPhrase implements Phrase {
                 throw new RuntimeException(msg, t);
             }
         } else if (e.getName().equals("literal")) {
-            rslt = e.getText();
+            result = e.getText();
         } else {
             String msg = "Unsupported element type:  " + e.getName();
             throw new RuntimeException(msg);
         }
 
-        return rslt;
+        return result;
     }
 }

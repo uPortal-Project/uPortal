@@ -48,14 +48,14 @@ public class MarketplaceEntry implements Serializable {
 
     private Set<String> getPortletCategories(MarketplacePortletDefinition pdef) {
         Set<PortletCategory> categories = pdef.getCategories();
-        Set<String> rslt = new HashSet<String>();
+        Set<String> result = new HashSet<String>();
         for (PortletCategory category : categories) {
             String lowerCase = category.getName().toLowerCase();
             if (!"all categories".equals(lowerCase)) {
-                rslt.add(StringUtils.capitalize(category.getName().toLowerCase()));
+                result.add(StringUtils.capitalize(category.getName().toLowerCase()));
             }
         }
-        return rslt;
+        return result;
     }
 
     private static final long serialVersionUID = 1L;

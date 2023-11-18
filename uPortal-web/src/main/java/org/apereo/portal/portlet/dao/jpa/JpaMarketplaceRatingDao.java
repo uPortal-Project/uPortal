@@ -242,14 +242,14 @@ public class JpaMarketplaceRatingDao extends BasePortalJpaDao implements IMarket
     public void deleteRating(IMarketplaceRating marketplaceRatingImplementation) {
         Validate.notNull(
                 marketplaceRatingImplementation, "marketplaceRatingImplementation can not be null");
-        final IMarketplaceRating persistantMarketplaceRatingImpl;
+        final IMarketplaceRating persistentMarketplaceRatingImpl;
         final EntityManager entityManager = this.getEntityManager();
         if (entityManager.contains(marketplaceRatingImplementation)) {
-            persistantMarketplaceRatingImpl = marketplaceRatingImplementation;
+            persistentMarketplaceRatingImpl = marketplaceRatingImplementation;
         } else {
-            persistantMarketplaceRatingImpl = entityManager.merge(marketplaceRatingImplementation);
+            persistentMarketplaceRatingImpl = entityManager.merge(marketplaceRatingImplementation);
         }
-        entityManager.remove(persistantMarketplaceRatingImpl);
+        entityManager.remove(persistentMarketplaceRatingImpl);
     }
 
     @Override

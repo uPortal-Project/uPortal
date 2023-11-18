@@ -55,7 +55,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 /** Test harness for {@link UrlSyntaxProviderImpl}. */
-@Ignore // Breaks on move to Gradlde
+@Ignore // Breaks on move to Gradle
 @RunWith(MockitoJUnitRunner.class)
 public class UrlSyntaxProviderImplTest {
     @InjectMocks private UrlSyntaxProviderImpl urlSyntaxProvider = new UrlSyntaxProviderImpl();

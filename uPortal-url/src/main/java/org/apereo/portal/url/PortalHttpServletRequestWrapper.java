@@ -248,14 +248,14 @@ public class PortalHttpServletRequestWrapper extends AbstractHttpServletRequestW
         final EntityIdentifier personEntityId = person.getEntityIdentifier();
         final IGroupMember personGroupMember = GroupService.getGroupMember(personEntityId);
 
-        final boolean rslt = personGroupMember.isDeepMemberOf(groupForRole);
+        final boolean result = personGroupMember.isDeepMemberOf(groupForRole);
         logger.trace(
                 "Answering {} for isUserInRole where user='{}', role='{}', and groupForRole='{}'",
-                rslt,
+                result,
                 person.getUserName(),
                 role,
                 groupForRole.getName());
-        return rslt;
+        return result;
     }
 
     /* (non-Javadoc)

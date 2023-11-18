@@ -80,8 +80,8 @@ public class RenderingPipelineBranchPoint implements Comparable<RenderingPipelin
             final HttpServletRequest request, final HttpServletResponse response)
             throws ServletException, IOException {
 
-        final boolean rslt = predicate.test(request);
-        if (rslt) {
+        final boolean result = predicate.test(request);
+        if (result) {
             logger.debug(
                     "Using alternate pipe [{}] for branch point with order={}",
                     alternatePipe,
@@ -93,7 +93,7 @@ public class RenderingPipelineBranchPoint implements Comparable<RenderingPipelin
                     alternatePipe,
                     order);
         }
-        return rslt;
+        return result;
     }
 
     @Override

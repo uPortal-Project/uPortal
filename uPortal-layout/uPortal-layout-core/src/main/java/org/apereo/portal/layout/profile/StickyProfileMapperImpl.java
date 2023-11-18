@@ -196,7 +196,7 @@ public class StickyProfileMapperImpl
      * <p>Typically, this will be the value "default". "default" will typically both map to whatever
      * profile fname is your default (so, "resopndr") AND a user selecting "default" (rather than
      * "respondr") is saying "I have no selection and want to accept the default behavior", NOT "I
-     * prefer whatever default maps to right now forver even if default changes in the future."
+     * prefer whatever default maps to right now forever even if default changes in the future."
      *
      * @param profileKeyForNoSelection potentially null key that you want to mean apathy about
      *     profile selection

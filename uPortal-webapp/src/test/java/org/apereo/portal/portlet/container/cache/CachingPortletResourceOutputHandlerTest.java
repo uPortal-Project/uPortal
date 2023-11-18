@@ -25,7 +25,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 /** Test CachingPortletResourceOutputHandler */
-@Ignore // Breaks on move to Gradlde
+@Ignore // Breaks on move to Gradle
 @RunWith(MockitoJUnitRunner.class)
 public class CachingPortletResourceOutputHandlerTest {
     @Mock private PortletResourceOutputHandler portletResourceOutputHandler;

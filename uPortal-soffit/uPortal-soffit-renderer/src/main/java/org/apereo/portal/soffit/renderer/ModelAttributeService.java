@@ -85,7 +85,7 @@ public class ModelAttributeService {
             Preferences preferences,
             Definition definition) {
 
-        final Map<String, Object> rslt = new HashMap<>();
+        final Map<String, Object> result = new HashMap<>();
 
         logger.debug("Processing model attributes for viewName='{}'", viewName);
 
@@ -103,7 +103,7 @@ public class ModelAttributeService {
                 // Are we looking at a class or a method?
                 if (annotatedElement instanceof Class) {
                     // The bean itself is the model attribute
-                    rslt.put(modelAttributeName, bean);
+                    result.put(modelAttributeName, bean);
                 } else if (annotatedElement instanceof Method) {
                     final Method m = (Method) annotatedElement;
                     final Object modelAttribute =
@@ -116,7 +116,7 @@ public class ModelAttributeService {
                                     bearer,
                                     preferences,
                                     definition);
-                    rslt.put(modelAttributeName, modelAttribute);
+                    result.put(modelAttributeName, modelAttribute);
                 } else {
                     final String msg =
                             "Unsupported AnnotatedElement type:  "
@@ -127,9 +127,11 @@ public class ModelAttributeService {
         }
 
         logger.debug(
-                "Calculated the following model attributes for viewName='{}':  {}", viewName, rslt);
+                "Calculated the following model attributes for viewName='{}':  {}",
+                viewName,
+                result);
 
-        return rslt;
+        return result;
     }
 
     protected Object getModelAttributeFromMethod(
@@ -153,8 +155,8 @@ public class ModelAttributeService {
                 prepareMethodParameters(
                         method, req, res, portalRequest, bearer, preferences, definition);
         try {
-            final Object rslt = method.invoke(bean, parameters);
-            return rslt;
+            final Object result = method.invoke(bean, parameters);
+            return result;
         } catch (IllegalAccessException | InvocationTargetException e) {
             final String msg =
                     "Failed to generate a model attribute by invoking '"
@@ -176,22 +178,22 @@ public class ModelAttributeService {
 
         // Examine the parameters this Method declares and try to match them.
         final Class<?>[] parameterTypes = method.getParameterTypes();
-        final Object[] rslt = new Object[parameterTypes.length];
-        for (int i = 0; i < rslt.length; i++) {
+        final Object[] result = new Object[parameterTypes.length];
+        for (int i = 0; i < result.length; i++) {
             final Class<?> pType = parameterTypes[i];
             // At present, these are the parameter types we support...
             if (HttpServletRequest.class.equals(pType)) {
-                rslt[i] = req;
+                result[i] = req;
             } else if (HttpServletResponse.class.equals(pType)) {
-                rslt[i] = res;
+                result[i] = res;
             } else if (PortalRequest.class.equals(pType)) {
-                rslt[i] = portalRequest;
+                result[i] = portalRequest;
             } else if (Bearer.class.equals(pType)) {
-                rslt[i] = bearer;
+                result[i] = bearer;
             } else if (Preferences.class.equals(pType)) {
-                rslt[i] = preferences;
+                result[i] = preferences;
             } else if (Definition.class.equals(pType)) {
-                rslt[i] = definition;
+                result[i] = definition;
             } else {
                 final String msg =
                         "Unsupported parameter type for SoffitModelAttribute method:  " + pType;
@@ -199,7 +201,7 @@ public class ModelAttributeService {
             }
         }
 
-        return rslt;
+        return result;
     }
 
     protected boolean attributeAppliesToView(

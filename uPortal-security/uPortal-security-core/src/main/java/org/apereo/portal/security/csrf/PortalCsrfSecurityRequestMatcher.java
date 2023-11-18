@@ -69,21 +69,21 @@ public class PortalCsrfSecurityRequestMatcher implements RequestMatcher {
     public boolean matches(HttpServletRequest request) {
 
         // Check the method
-        boolean rslt =
+        boolean result =
                 Arrays.stream(IGNORED_METHODS)
                         .noneMatch(s -> s.equalsIgnoreCase(request.getMethod()));
 
         // Check URI
-        if (rslt) {
-            rslt = ignoredMatchers.stream().noneMatch(matcher -> matcher.matches(request));
+        if (result) {
+            result = ignoredMatchers.stream().noneMatch(matcher -> matcher.matches(request));
         }
 
         logger.trace(
                 "Spring CSRF protection for method='{}', URI='{}' is {}",
                 request.getMethod(),
                 request.getRequestURI(),
-                rslt ? "ENABLED" : "DISABLED");
+                result ? "ENABLED" : "DISABLED");
 
-        return rslt;
+        return result;
     }
 }

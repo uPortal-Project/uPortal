@@ -126,10 +126,10 @@ public class BasePersonManager implements IPersonManager {
         if (claims != null) {
             final String username = claims.getBody().getSubject();
             logger.debug("Found OIDC Id token for username='{}'", username);
-            final IPerson rslt = new PersonImpl();
-            rslt.setAttribute(IPerson.USERNAME, username);
-            rslt.setID(userIdentityStore.getPortalUserId(username));
-            return rslt;
+            final IPerson result = new PersonImpl();
+            result.setAttribute(IPerson.USERNAME, username);
+            result.setID(userIdentityStore.getPortalUserId(username));
+            return result;
         }
 
         /*
@@ -162,12 +162,12 @@ public class BasePersonManager implements IPersonManager {
             guestUserId = guestUserIds.get(username);
         }
 
-        final IPerson rslt = PersonFactory.createPerson();
-        rslt.setAttribute(IPerson.USERNAME, username);
-        rslt.setID(guestUserId);
-        rslt.setSecurityContext(initialSecurityContextFactory.getInitialContext());
+        final IPerson result = PersonFactory.createPerson();
+        result.setAttribute(IPerson.USERNAME, username);
+        result.setID(guestUserId);
+        result.setSecurityContext(initialSecurityContextFactory.getInitialContext());
 
-        return rslt;
+        return result;
     }
 
     private synchronized void loadGuestUserId(String username, Map<String, Integer> map) {

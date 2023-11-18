@@ -153,13 +153,13 @@ public class EntityGroupImpl extends GroupMemberImpl implements IEntityGroup {
     private synchronized Set<IGroupMember> buildChildrenSet() throws GroupsException {
         logger.debug("Constructing children for group='{}'", getUnderlyingEntityIdentifier());
 
-        final Set<IGroupMember> rslt = new HashSet<>();
+        final Set<IGroupMember> result = new HashSet<>();
         for (Iterator it = getLocalGroupService().findMembers(this); it.hasNext(); ) {
             final IGroupMember member = (IGroupMember) it.next();
-            rslt.add(member);
+            result.add(member);
         }
 
-        return Collections.unmodifiableSet(rslt);
+        return Collections.unmodifiableSet(result);
     }
 
     /**
@@ -276,14 +276,14 @@ public class EntityGroupImpl extends GroupMemberImpl implements IEntityGroup {
      */
     private Iterator<IEntityGroup> getMemberGroups() throws GroupsException {
 
-        Set<IEntityGroup> rslt = new HashSet<>();
+        Set<IEntityGroup> result = new HashSet<>();
         for (IGroupMember child : getChildren()) {
             if (child.isGroup()) {
-                rslt.add((IEntityGroup) child);
+                result.add((IEntityGroup) child);
             }
         }
 
-        return rslt.iterator();
+        return result.iterator();
     }
 
     /**
@@ -305,8 +305,8 @@ public class EntityGroupImpl extends GroupMemberImpl implements IEntityGroup {
         }
 
         @SuppressWarnings("unchecked")
-        final Set<IGroupMember> rslt = (Set<IGroupMember>) element.getObjectValue();
-        return rslt;
+        final Set<IGroupMember> result = (Set<IGroupMember>) element.getObjectValue();
+        return result;
     }
 
     /** @return String */
@@ -410,17 +410,17 @@ public class EntityGroupImpl extends GroupMemberImpl implements IEntityGroup {
      * Returns the <code>Set</code> of <code>IGroupMembers</code> in our member <code>Collection
      * </code> and, recursively, in the <code>Collections</code> of our members.
      *
-     * @param rslt Set - a Set that members are added to.
+     * @param result Set - a Set that members are added to.
      * @return Set
      */
-    private Set<IGroupMember> primGetAllMembers(Set<IGroupMember> rslt) throws GroupsException {
+    private Set<IGroupMember> primGetAllMembers(Set<IGroupMember> result) throws GroupsException {
         for (IGroupMember gm : getChildren()) {
-            rslt.add(gm);
+            result.add(gm);
             if (gm.isGroup()) {
-                ((EntityGroupImpl) gm).primGetAllMembers(rslt);
+                ((EntityGroupImpl) gm).primGetAllMembers(result);
             }
         }
-        return rslt;
+        return result;
     }
 
     /**

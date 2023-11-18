@@ -262,7 +262,7 @@ public class LayoutPortlet {
     /**
      * Get a read-only view on the portlet publishing parameters for this portlet.
      *
-     * @return potentially null read-only Map from paramter name to parameter object
+     * @return potentially null read-only Map from parameter name to parameter object
      * @since uPortal 5.2
      */
     public Map<String, String> getParameters() {

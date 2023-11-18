@@ -34,16 +34,16 @@ public final class PortletListService implements IPortletListService {
 
     @Override
     public List<IPortletList> getPortletLists() {
-        List<IPortletList> rslt = portletListDao.getPortletLists();
-        log.debug("Returning {} portlet lists", rslt.size());
-        return rslt;
+        List<IPortletList> result = portletListDao.getPortletLists();
+        log.debug("Returning {} portlet lists", result.size());
+        return result;
     }
 
     @Override
     public List<IPortletList> getPortletLists(IPerson requester) {
-        List<IPortletList> rslt = portletListDao.getPortletLists(requester.getUserName());
-        log.debug("Returning portlet lists '{}' for user '{}'", rslt, requester.getUserName());
-        return rslt;
+        List<IPortletList> result = portletListDao.getPortletLists(requester.getUserName());
+        log.debug("Returning portlet lists '{}' for user '{}'", result, requester.getUserName());
+        return result;
     }
 
     @Override
