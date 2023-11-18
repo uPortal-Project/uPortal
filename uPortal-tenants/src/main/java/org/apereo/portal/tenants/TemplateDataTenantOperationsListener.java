@@ -287,17 +287,17 @@ public final class TemplateDataTenantOperationsListener extends AbstractTenantOp
         successfulEntitiesMessage.append("\n</ul>");
         failedEntitiesMessage.append("\n</ul>");
 
-        final TenantOperationResponse result = new TenantOperationResponse(this, result);
+        final TenantOperationResponse response = new TenantOperationResponse(this, result);
 
         // Did we succeed at all?
         if (didAtLeastOneCommandSucceed) {
-            result.addMessage(successfulEntitiesMessage.toString());
+            response.addMessage(successfulEntitiesMessage.toString());
         }
 
         switch (result) {
                 // Did we fail at all?
             case FAIL:
-                result.addMessage(failedEntitiesMessage.toString());
+                response.addMessage(failedEntitiesMessage.toString());
                 break;
                 // Or succeed completely?
             default:
@@ -305,7 +305,7 @@ public final class TemplateDataTenantOperationsListener extends AbstractTenantOp
                 break;
         }
 
-        return result;
+        return response;
     }
 
     /*
