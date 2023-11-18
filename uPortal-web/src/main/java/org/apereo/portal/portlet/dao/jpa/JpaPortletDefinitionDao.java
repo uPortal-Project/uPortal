@@ -160,17 +160,17 @@ public class JpaPortletDefinitionDao extends BasePortalJpaDao implements IPortle
     public IPortletDefinition getPortletDefinition(String portletDefinitionIdString) {
         Validate.notNull(portletDefinitionIdString, "portletDefinitionIdString can not be null");
 
-        PortletDefinitionImpl rslt = null; // default
+        PortletDefinitionImpl result = null; // default
 
         final Long internalPortletDefinitionId =
                 getNativePortletDefinitionId(portletDefinitionIdString);
         if (internalPortletDefinitionId != null) {
-            rslt =
+            result =
                     this.getEntityManager()
                             .find(PortletDefinitionImpl.class, internalPortletDefinitionId);
         }
 
-        return rslt;
+        return result;
     }
 
     @Override
@@ -277,14 +277,14 @@ public class JpaPortletDefinitionDao extends BasePortalJpaDao implements IPortle
     }
 
     private Long getNativePortletDefinitionId(String portletDefinitionId) {
-        Long rslt = null; // default
+        Long result = null; // default
         try {
-            rslt = Long.parseLong(portletDefinitionId);
+            result = Long.parseLong(portletDefinitionId);
         } catch (NumberFormatException nfe) {
             logger.warn(
                     "The portletDefinitionId '{}' is not parsable to a valid portletId (long);  null will be returned",
                     portletDefinitionId);
         }
-        return rslt;
+        return result;
     }
 }

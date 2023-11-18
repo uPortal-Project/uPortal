@@ -277,9 +277,9 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
 
         final XMLInputFactory xmlInputFactory = this.xmlUtilities.getXmlInputFactory();
 
-        final DOMSource layoutSoure = new DOMSource(ul);
+        final DOMSource layoutSource = new DOMSource(ul);
         try {
-            return xmlInputFactory.createXMLEventReader(layoutSoure);
+            return xmlInputFactory.createXMLEventReader(layoutSource);
         } catch (XMLStreamException e) {
             throw new RuntimeException(
                     "Failed to create Layout XMLStreamReader for user: " + owner.getUserName(), e);

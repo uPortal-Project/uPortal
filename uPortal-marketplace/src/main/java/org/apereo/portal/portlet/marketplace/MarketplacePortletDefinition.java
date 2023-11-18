@@ -362,19 +362,20 @@ public class MarketplacePortletDefinition implements IPortletDefinition {
         Collections.shuffle(tempList);
         final int count = Math.min(QUANTITY_RELATED_PORTLETS_TO_SHOW, tempList.size());
 
-        final Set<MarketplacePortletDefinition> rslt = new HashSet<MarketplacePortletDefinition>();
+        final Set<MarketplacePortletDefinition> result =
+                new HashSet<MarketplacePortletDefinition>();
 
         for (final MarketplacePortletDefinition relatedPortlet : tempList) {
 
             if (marketplaceService.mayBrowsePortlet(principal, relatedPortlet)) {
-                rslt.add(relatedPortlet);
+                result.add(relatedPortlet);
             }
 
-            if (rslt.size() >= count) break; // escape the loop if we've hit our target quantity
+            if (result.size() >= count) break; // escape the loop if we've hit our target quantity
             // of related portlets
         }
 
-        return rslt;
+        return result;
     }
 
     /**

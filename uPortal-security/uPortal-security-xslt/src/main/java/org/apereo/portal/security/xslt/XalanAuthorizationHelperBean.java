@@ -111,7 +111,7 @@ public class XalanAuthorizationHelperBean implements IXalanAuthorizationHelper {
         final IAuthorizationPrincipal authPrincipal =
                 this.getUserPrincipal(currentUser.getUserName());
 
-        final boolean rslt =
+        final boolean result =
                 authPrincipal != null
                         ? authPrincipal.hasPermission(owner, activity, target)
                         : false;
@@ -119,9 +119,9 @@ public class XalanAuthorizationHelperBean implements IXalanAuthorizationHelper {
             logger.trace(
                     String.format(
                             "In hasPermission() - owner=[%s], activity=[%s], target=[%s], result=[%s] ",
-                            owner, activity, target, rslt));
+                            owner, activity, target, result));
         }
-        return rslt;
+        return result;
     }
 
     protected IAuthorizationPrincipal getUserPrincipal(final String userName) {

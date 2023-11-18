@@ -179,20 +179,20 @@ public class OidcUserInfoController {
 
         // STEP 4:  build a standard OAuth2 access token response
         final String token = createToken(request, person, claims, groups);
-        final Map<String, Object> rslt = new HashMap<>();
-        rslt.put("access_token", token);
-        rslt.put("token_type", "bearer");
-        rslt.put(
+        final Map<String, Object> result = new HashMap<>();
+        result.put("access_token", token);
+        result.put("token_type", "bearer");
+        result.put(
                 "expires_in",
                 timeoutSeconds > 2 ? timeoutSeconds - 2L /* fudge factor */ : timeoutSeconds);
-        rslt.put("scope", scope);
+        result.put("scope", scope);
 
         logger.debug(
                 "Produced the following access token for client_id='{}':  {}",
                 oAuthClient.getClientId(),
-                rslt);
+                result);
 
-        return ResponseEntity.ok(rslt);
+        return ResponseEntity.ok(result);
     }
 
     private String createToken(

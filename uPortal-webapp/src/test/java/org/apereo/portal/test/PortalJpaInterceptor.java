@@ -104,7 +104,7 @@ public class PortalJpaInterceptor extends EntityManagerFactoryAccessor
      *
      * <p>Default implementation delegates to the JpaDialect. May be overridden in subclasses.
      *
-     * @param ex runtime exception that occured, which may or may not be JPA-related
+     * @param ex runtime exception that occurred, which may or may not be JPA-related
      * @return the corresponding DataAccessException instance if wrapping should occur, otherwise
      *     the raw exception
      * @see org.springframework.dao.support.DataAccessUtils#translateIfNecessary

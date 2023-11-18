@@ -78,7 +78,7 @@ public class CachingResourceLoaderImpl implements CachingResourceLoader {
             Resource resource, Loader<T> builder, long checkInterval) throws IOException {
         if (Included.PLAIN == this.resourcesElementsProvider.getDefaultIncludedType()) {
             this.logger.trace(
-                    "Resoure Aggregation Disabled, ignoring resource cache and loading '"
+                    "ReSource Aggregation Disabled, ignoring resource cache and loading '"
                             + resource
                             + "' directly");
             return this.loadResource(resource, builder);

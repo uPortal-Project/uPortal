@@ -98,16 +98,16 @@ public class PersonDirectoryConfiguration {
     /** Provides the default username attribute to use to the rest of the DAOs. */
     @Bean(name = "usernameAttributeProvider")
     public IUsernameAttributeProvider getUsernameAttributeProvider() {
-        final SimpleUsernameAttributeProvider rslt = new SimpleUsernameAttributeProvider();
-        rslt.setUsernameAttribute(USERNAME_ATTRIBUTE);
-        return rslt;
+        final SimpleUsernameAttributeProvider result = new SimpleUsernameAttributeProvider();
+        result.setUsernameAttribute(USERNAME_ATTRIBUTE);
+        return result;
     }
 
     @Bean(name = "userAttributeCacheKeyGenerator")
     public CacheKeyGenerator getUserAttributeCacheKeyGenerator() {
-        final PersonDirectoryCacheKeyGenerator rslt = new PersonDirectoryCacheKeyGenerator();
-        rslt.setIgnoreEmptyAttributes(true);
-        return rslt;
+        final PersonDirectoryCacheKeyGenerator result = new PersonDirectoryCacheKeyGenerator();
+        result.setIgnoreEmptyAttributes(true);
+        return result;
     }
 
     @Bean(name = "sessionScopeAdditionalDescriptors")
@@ -130,22 +130,22 @@ public class PersonDirectoryConfiguration {
      */
     @Bean(name = "requestAdditionalDescriptors")
     public IAdditionalDescriptors getRequestAdditionalDescriptors() {
-        final MediatingAdditionalDescriptors rslt = new MediatingAdditionalDescriptors();
+        final MediatingAdditionalDescriptors result = new MediatingAdditionalDescriptors();
         final List<IAdditionalDescriptors> delegateDescriptors = new ArrayList<>();
         delegateDescriptors.add(getSessionScopeAdditionalDescriptors());
         delegateDescriptors.add(getRequestScopeAdditionalDescriptors());
-        rslt.setDelegateDescriptors(delegateDescriptors);
-        return rslt;
+        result.setDelegateDescriptors(delegateDescriptors);
+        return result;
     }
 
     /** Servlet filter that creates an attribute for the serverName */
     @Bean(name = "requestAttributeSourceFilter")
     public Filter getRequestAttributeSourceFilter() {
-        final RequestAttributeSourceFilter rslt = new RequestAttributeSourceFilter();
-        rslt.setAdditionalDescriptors(getRequestAdditionalDescriptors());
-        rslt.setUsernameAttribute(REMOTE_USER_ATTRIBUTE); // Looks wrong, but correct
-        rslt.setRemoteUserAttribute(REMOTE_USER_ATTRIBUTE);
-        rslt.setServerNameAttribute(SERVER_NAME_ATTRIBUTE);
+        final RequestAttributeSourceFilter result = new RequestAttributeSourceFilter();
+        result.setAdditionalDescriptors(getRequestAdditionalDescriptors());
+        result.setUsernameAttribute(REMOTE_USER_ATTRIBUTE); // Looks wrong, but correct
+        result.setRemoteUserAttribute(REMOTE_USER_ATTRIBUTE);
+        result.setServerNameAttribute(SERVER_NAME_ATTRIBUTE);
 
         /*
          * The processing position should be set to BOTH for uPortal because the session-scoped bean
@@ -155,15 +155,15 @@ public class PersonDirectoryConfiguration {
          * attributes to the session-scoped bean. See
          * http://permalink.gmane.org/gmane.comp.java.jasig.uportal/10771 for more information.
          */
-        rslt.setProcessingPosition(RequestAttributeSourceFilter.ProcessingPosition.BOTH);
+        result.setProcessingPosition(RequestAttributeSourceFilter.ProcessingPosition.BOTH);
 
         Set<String> userAgent = new HashSet<>();
         userAgent.add(AGENT_DEVICE_ATTRIBUTE);
         Map<String, Set<String>> headerAttributeMapping = new HashMap<>();
         headerAttributeMapping.put(USER_AGENT_KEY, userAgent);
-        rslt.setHeaderAttributeMapping(headerAttributeMapping);
+        result.setHeaderAttributeMapping(headerAttributeMapping);
 
-        return rslt;
+        return result;
     }
 
     /**
@@ -183,24 +183,24 @@ public class PersonDirectoryConfiguration {
     @Bean(name = "personAttributeDao")
     @Qualifier("personAttributeDao")
     public IPersonAttributeDao getPersonAttributeDao() {
-        final PortalRootPersonAttributeDao rslt = new PortalRootPersonAttributeDao();
-        rslt.setDelegatePersonAttributeDao(getRequestAttributeMergingDao());
-        rslt.setAttributeOverridesMap(getSessionAttributesOverridesMap());
-        return rslt;
+        final PortalRootPersonAttributeDao result = new PortalRootPersonAttributeDao();
+        result.setDelegatePersonAttributeDao(getRequestAttributeMergingDao());
+        result.setAttributeOverridesMap(getSessionAttributesOverridesMap());
+        return result;
     }
 
     /** Merges attributes from the request with those from other DAOs. */
     @Bean(name = "requestAttributeMergingDao")
     @Qualifier("uPortalInternal")
     public IPersonAttributeDao getRequestAttributeMergingDao() {
-        final MergingPersonAttributeDaoImpl rslt = new MergingPersonAttributeDaoImpl();
-        rslt.setUsernameAttributeProvider(getUsernameAttributeProvider());
-        rslt.setMerger(new ReplacingAttributeAdder());
+        final MergingPersonAttributeDaoImpl result = new MergingPersonAttributeDaoImpl();
+        result.setUsernameAttributeProvider(getUsernameAttributeProvider());
+        result.setMerger(new ReplacingAttributeAdder());
         final List<IPersonAttributeDao> daos = new ArrayList<>();
         daos.add(getRequestAttributesDao());
         daos.add(getCachingPersonAttributeDao());
-        rslt.setPersonAttributeDaos(daos);
-        return rslt;
+        result.setPersonAttributeDaos(daos);
+        return result;
     }
 
     /**
@@ -210,12 +210,12 @@ public class PersonDirectoryConfiguration {
     @Bean(name = "requestAttributesDao")
     @Qualifier("uPortalInternal")
     public IPersonAttributeDao getRequestAttributesDao() {
-        final AdditionalDescriptorsPersonAttributeDao rslt =
+        final AdditionalDescriptorsPersonAttributeDao result =
                 new AdditionalDescriptorsPersonAttributeDao();
-        rslt.setDescriptors(getRequestAdditionalDescriptors());
-        rslt.setUsernameAttributeProvider(getUsernameAttributeProvider());
-        rslt.setCurrentUserProvider(getCurrentUserProvider());
-        return rslt;
+        result.setDescriptors(getRequestAdditionalDescriptors());
+        result.setUsernameAttributeProvider(getUsernameAttributeProvider());
+        result.setCurrentUserProvider(getCurrentUserProvider());
+        return result;
     }
 
     /**
@@ -225,20 +225,20 @@ public class PersonDirectoryConfiguration {
     @Bean(name = "cachingPersonAttributeDao")
     @Qualifier("uPortalInternal")
     public IPersonAttributeDao getCachingPersonAttributeDao() {
-        final CachingPersonAttributeDaoImpl rslt = new CachingPersonAttributeDaoImpl();
-        rslt.setUsernameAttributeProvider(getUsernameAttributeProvider());
-        rslt.setCacheNullResults(true);
-        rslt.setCacheKeyGenerator(getUserAttributeCacheKeyGenerator());
-        rslt.setUserInfoCache(new MapCacheProvider<>(userInfoCache));
-        rslt.setCachedPersonAttributesDao(getMergingPersonAttributeDao());
-        return rslt;
+        final CachingPersonAttributeDaoImpl result = new CachingPersonAttributeDaoImpl();
+        result.setUsernameAttributeProvider(getUsernameAttributeProvider());
+        result.setCacheNullResults(true);
+        result.setCacheKeyGenerator(getUserAttributeCacheKeyGenerator());
+        result.setUserInfoCache(new MapCacheProvider<>(userInfoCache));
+        result.setCachedPersonAttributesDao(getMergingPersonAttributeDao());
+        return result;
     }
 
     @Bean(name = "mergingPersonAttributeDao")
     @Qualifier("uPortalInternal")
     public IPersonAttributeDao getMergingPersonAttributeDao() {
-        final MergingPersonAttributeDaoImpl rslt = new MergingPersonAttributeDaoImpl();
-        rslt.setUsernameAttributeProvider(getUsernameAttributeProvider());
+        final MergingPersonAttributeDaoImpl result = new MergingPersonAttributeDaoImpl();
+        result.setUsernameAttributeProvider(getUsernameAttributeProvider());
 
         /*
          * This is a "first one wins" strategy. I.e. the first value found for any given result
@@ -252,7 +252,7 @@ public class PersonDirectoryConfiguration {
          *   - ReplacingAttributeAdder - "Last one wins" strategy. I.e. the opposite of
          *     NoncollidingAttributeAdder.
          */
-        rslt.setMerger(new NoncollidingAttributeAdder());
+        result.setMerger(new NoncollidingAttributeAdder());
 
         /*
          * NB:  The beans in the  innerMergedPersonAttributeDaoList -- together with adopter-defined
@@ -260,7 +260,7 @@ public class PersonDirectoryConfiguration {
          * AdopterDataSourcesIncorporator.
          */
 
-        return rslt;
+        return result;
     }
 
     /**
@@ -269,11 +269,11 @@ public class PersonDirectoryConfiguration {
      */
     @Bean(name = "innerMergedPersonAttributeDaoList")
     public List<IPersonAttributeDao> getInnerMergedPersonAttributeDaoList() {
-        final List<IPersonAttributeDao> rslt = new ArrayList<>();
-        rslt.add(getImpersonationStatusPersonAttributeDao());
-        rslt.add(getUPortalAccountUserSource());
-        rslt.add(getUPortalJdbcUserSource());
-        return rslt;
+        final List<IPersonAttributeDao> result = new ArrayList<>();
+        result.add(getImpersonationStatusPersonAttributeDao());
+        result.add(getUPortalAccountUserSource());
+        result.add(getUPortalJdbcUserSource());
+        return result;
     }
 
     /**
@@ -294,24 +294,24 @@ public class PersonDirectoryConfiguration {
     @Bean(name = "uPortalAccountUserSource")
     @Qualifier("uPortalInternal")
     public IPersonAttributeDao getUPortalAccountUserSource() {
-        final LocalAccountPersonAttributeDao rslt = new LocalAccountPersonAttributeDao();
-        rslt.setLocalAccountDao(localAccountDao);
-        rslt.setUsernameAttributeProvider(getUsernameAttributeProvider());
+        final LocalAccountPersonAttributeDao result = new LocalAccountPersonAttributeDao();
+        result.setLocalAccountDao(localAccountDao);
+        result.setUsernameAttributeProvider(getUsernameAttributeProvider());
 
         final Map<String, String> queryAttributeMapping = new HashMap<>();
         queryAttributeMapping.put(USERNAME_ATTRIBUTE, USERNAME_ATTRIBUTE);
         queryAttributeMapping.put(GIVEN_NAME_ATTRIBUTE, GIVEN_NAME_ATTRIBUTE);
         queryAttributeMapping.put(SIR_NAME_ATTRIBUTE, SIR_NAME_ATTRIBUTE);
-        rslt.setQueryAttributeMapping(queryAttributeMapping);
+        result.setQueryAttributeMapping(queryAttributeMapping);
 
         final Map<String, Set<String>> resultAttributeMapping = new HashMap<>();
         resultAttributeMapping.put(
                 USERNAME_ATTRIBUTE,
                 Stream.of(USERNAME_ATTRIBUTE, UID_ATTRIBUTE, USER_LOGIN_ID_ATTRIBUTE)
                         .collect(Collectors.toSet()));
-        rslt.setResultAttributeMapping(resultAttributeMapping);
+        result.setResultAttributeMapping(resultAttributeMapping);
 
-        return rslt;
+        return result;
     }
 
     /**
@@ -323,17 +323,17 @@ public class PersonDirectoryConfiguration {
     @Qualifier("uPortalInternal")
     public IPersonAttributeDao getUPortalJdbcUserSource() {
         final String sql = "SELECT USER_NAME FROM UP_USER WHERE {0}";
-        final SingleRowJdbcPersonAttributeDao rslt =
+        final SingleRowJdbcPersonAttributeDao result =
                 new SingleRowJdbcPersonAttributeDao(personDb, sql);
-        rslt.setUsernameAttributeProvider(getUsernameAttributeProvider());
-        rslt.setQueryAttributeMapping(
+        result.setUsernameAttributeProvider(getUsernameAttributeProvider());
+        result.setQueryAttributeMapping(
                 Collections.singletonMap(USERNAME_ATTRIBUTE, USERNAME_COLUMN_NAME));
         final Map<String, Set<String>> resultAttributeMapping = new HashMap<>();
         resultAttributeMapping.put(
                 USERNAME_COLUMN_NAME,
                 Stream.of(USERNAME_ATTRIBUTE, UID_ATTRIBUTE, USER_LOGIN_ID_ATTRIBUTE)
                         .collect(Collectors.toSet()));
-        rslt.setResultAttributeMapping(resultAttributeMapping);
-        return rslt;
+        result.setResultAttributeMapping(resultAttributeMapping);
+        return result;
     }
 }

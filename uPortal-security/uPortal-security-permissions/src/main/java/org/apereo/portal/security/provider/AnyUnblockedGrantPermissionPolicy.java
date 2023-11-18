@@ -182,11 +182,11 @@ public class AnyUnblockedGrantPermissionPolicy implements IPermissionPolicy {
         }
 
         // Search ourselves and all ancestors for an unblocked GRANT.
-        boolean rslt;
+        boolean result;
         try {
             // Track groups we've already explored to avoid infinite loop
             final Set<IGroupMember> seenGroups = new HashSet<>();
-            rslt =
+            result =
                     hasUnblockedPathToGrantWithCache(
                             service, principal, owner, activity, target, seenGroups);
         } catch (Exception e) {
@@ -198,7 +198,7 @@ public class AnyUnblockedGrantPermissionPolicy implements IPermissionPolicy {
         }
 
         if (log.isTraceEnabled()) {
-            if (rslt) {
+            if (result) {
                 log.trace(
                         "Principal '{}' is granted permission to perform activity "
                                 + "'{}' on target '{}' under permission owning system '{}' "
@@ -219,7 +219,7 @@ public class AnyUnblockedGrantPermissionPolicy implements IPermissionPolicy {
             }
         }
 
-        return rslt;
+        return result;
     }
 
     private boolean hasUnblockedPathToGrantWithCache(
@@ -360,18 +360,18 @@ public class AnyUnblockedGrantPermissionPolicy implements IPermissionPolicy {
     private Set<IPermission> removeInactivePermissions(final IPermission[] perms) {
         Date now = new Date();
 
-        Set<IPermission> rslt = new HashSet<>(1);
+        Set<IPermission> result = new HashSet<>(1);
 
         for (int i = 0; i < perms.length; i++) {
             IPermission p = perms[i];
 
             if ((p.getEffective() == null || !p.getEffective().after(now))
                     && (p.getExpires() == null || p.getExpires().after(now))) {
-                rslt.add(p);
+                result.add(p);
             }
         }
 
-        return rslt;
+        return result;
     }
 
     /**
@@ -392,15 +392,15 @@ public class AnyUnblockedGrantPermissionPolicy implements IPermissionPolicy {
             throw new IllegalArgumentException("Cannot search for type null.");
         }
 
-        boolean rslt = false; // default
+        boolean result = false; // default
 
         for (IPermission p : permissions) {
             if (soughtType.equals(p.getType())) {
-                rslt = true;
+                result = true;
             }
         }
 
-        return rslt;
+        return result;
     }
 
     protected CacheKey getCacheKey(
@@ -409,12 +409,12 @@ public class AnyUnblockedGrantPermissionPolicy implements IPermissionPolicy {
             IPermissionActivity activity,
             IPermissionTarget target) {
 
-        CacheKey rslt;
+        CacheKey result;
         if (principal.isGroup()) {
             /*
              * Untagged keys for groups...
              */
-            rslt =
+            result =
                     CacheKey.build(
                             AnyUnblockedGrantPermissionPolicy.class.getName(),
                             principal.getPrincipalString(),
@@ -426,7 +426,7 @@ public class AnyUnblockedGrantPermissionPolicy implements IPermissionPolicy {
              * Keys tagged with the username for users;  this practice
              * will cause them to be purged if the user re-authenticates.
              */
-            rslt =
+            result =
                     CacheKey.buildTagged(
                             AnyUnblockedGrantPermissionPolicy.class.getName(),
                             UsernameTaggedCacheEntryPurger.createCacheEntryTag(principal.getKey()),
@@ -436,6 +436,6 @@ public class AnyUnblockedGrantPermissionPolicy implements IPermissionPolicy {
                             target.getKey());
         }
 
-        return rslt;
+        return result;
     }
 }

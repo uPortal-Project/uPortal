@@ -17,9 +17,9 @@ package org.apereo.portal.security.provider;
 import org.apereo.portal.security.IOpaqueCredentials;
 
 /**
- * This is a provider-specific extention to the standard opaque credentials that is designed to work
+ * This is a provider-specific extension to the standard opaque credentials that is designed to work
  * with the caching security context. This interface adds a method that removes a bit of the opacity
- * of the original by providing means of retreiving a stored credential. See the warnings and
+ * of the original by providing means of retrieving a stored credential. See the warnings and
  * caveats associated with the CacheSecurityContext provider.
  */
 public interface NotSoOpaqueCredentials extends IOpaqueCredentials {
@@ -27,7 +27,7 @@ public interface NotSoOpaqueCredentials extends IOpaqueCredentials {
     /**
      * Returns the stored credentials as a String.
      *
-     * @return the strored credentials.
+     * @return the stored credentials.
      */
     public String getCredentials();
 }

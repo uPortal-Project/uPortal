@@ -46,11 +46,11 @@ import org.springframework.stereotype.Repository;
                         new Function<CriteriaBuilder, CriteriaQuery<JpaTenant>>() {
                             @Override
                             public CriteriaQuery<JpaTenant> apply(CriteriaBuilder cb) {
-                                final CriteriaQuery<JpaTenant> rslt =
+                                final CriteriaQuery<JpaTenant> result =
                                         cb.createQuery(JpaTenant.class);
-                                Root<JpaTenant> root = rslt.from(JpaTenant.class);
-                                rslt.orderBy(cb.asc(root.get(JpaTenant_.name)));
-                                return rslt;
+                                Root<JpaTenant> root = result.from(JpaTenant.class);
+                                result.orderBy(cb.asc(root.get(JpaTenant_.name)));
+                                return result;
                             }
                         });
         tenantByNameQuery =
@@ -58,11 +58,11 @@ import org.springframework.stereotype.Repository;
                         new Function<CriteriaBuilder, CriteriaQuery<JpaTenant>>() {
                             @Override
                             public CriteriaQuery<JpaTenant> apply(CriteriaBuilder cb) {
-                                final CriteriaQuery<JpaTenant> rslt =
+                                final CriteriaQuery<JpaTenant> result =
                                         cb.createQuery(JpaTenant.class);
-                                Root<JpaTenant> root = rslt.from(JpaTenant.class);
-                                rslt.where(cb.equal(root.get(JpaTenant_.name), nameParameter));
-                                return rslt;
+                                Root<JpaTenant> root = result.from(JpaTenant.class);
+                                result.where(cb.equal(root.get(JpaTenant_.name), nameParameter));
+                                return result;
                             }
                         });
         tenantByFNameQuery =
@@ -70,11 +70,11 @@ import org.springframework.stereotype.Repository;
                         new Function<CriteriaBuilder, CriteriaQuery<JpaTenant>>() {
                             @Override
                             public CriteriaQuery<JpaTenant> apply(CriteriaBuilder cb) {
-                                final CriteriaQuery<JpaTenant> rslt =
+                                final CriteriaQuery<JpaTenant> result =
                                         cb.createQuery(JpaTenant.class);
-                                Root<JpaTenant> root = rslt.from(JpaTenant.class);
-                                rslt.where(cb.equal(root.get(JpaTenant_.fname), fnameParameter));
-                                return rslt;
+                                Root<JpaTenant> root = result.from(JpaTenant.class);
+                                result.where(cb.equal(root.get(JpaTenant_.fname), fnameParameter));
+                                return result;
                             }
                         });
     }
@@ -123,13 +123,13 @@ import org.springframework.stereotype.Repository;
 
         // Assertions
         if (tenant instanceof JpaTenant) {
-            final ITenant persistantTenant;
+            final ITenant persistentTenant;
             if (entityManager.contains(tenant)) {
-                persistantTenant = tenant;
+                persistentTenant = tenant;
             } else {
-                persistantTenant = entityManager.merge(tenant);
+                persistentTenant = entityManager.merge(tenant);
             }
-            entityManager.persist(persistantTenant);
+            entityManager.persist(persistentTenant);
         } else {
             // This object is not supported by this DAO
             final String msg =

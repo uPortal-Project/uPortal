@@ -427,7 +427,7 @@ public class PortletEventCoordinatationService implements IPortletEventCoordinat
 
         // now test if object is jaxb
         final EventDefinition eventDefinitionDD =
-                getEventDefintion(portletWindow, event.getQName());
+                getEventDefinition(portletWindow, event.getQName());
 
         final PortletDefinition portletDefinition =
                 portletWindow.getPlutoPortletWindow().getPortletDefinition();
@@ -475,7 +475,7 @@ public class PortletEventCoordinatationService implements IPortletEventCoordinat
     }
 
     // TODO cache this resolution
-    protected EventDefinition getEventDefintion(IPortletWindow portletWindow, QName name) {
+    protected EventDefinition getEventDefinition(IPortletWindow portletWindow, QName name) {
         PortletApplicationDefinition appDD =
                 portletWindow.getPlutoPortletWindow().getPortletDefinition().getApplication();
         for (EventDefinition def : appDD.getEventDefinitions()) {

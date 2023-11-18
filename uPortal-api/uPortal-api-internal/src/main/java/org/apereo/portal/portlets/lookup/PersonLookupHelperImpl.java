@@ -462,16 +462,16 @@ public class PersonLookupHelperImpl implements IPersonLookupHelper {
             final Set<String> generallyPermittedAttributes) {
 
         // The permttedOwnAttributes collection includes all the generallyPermittedAttributes
-        final Set<String> rslt = new HashSet<>(generallyPermittedAttributes);
+        final Set<String> result = new HashSet<>(generallyPermittedAttributes);
 
         for (String attr : personAttributeDao.getPossibleUserAttributeNames()) {
             if (principal.hasPermission(
                     IPermission.PORTAL_USERS, IPermission.VIEW_OWN_USER_ATTRIBUTE_ACTIVITY, attr)) {
-                rslt.add(attr);
+                result.add(attr);
             }
         }
 
-        return rslt;
+        return result;
     }
 
     /**

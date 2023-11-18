@@ -280,7 +280,7 @@ public class LocalPortletContextManager implements PortletRegistryService, Portl
 
     /**
      * Retrieve the Portlet Application Deployment Descriptor for the given servlet context. Create
-     * it if it does not allready exist.
+     * it if it does not already exist.
      *
      * @param servletContext the servlet context.
      * @return The portlet application deployment descriptor.

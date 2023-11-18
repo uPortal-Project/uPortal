@@ -89,7 +89,7 @@ public class GenerateEntityFileNameTask implements Task {
         final IUserLayoutStore rdbmdls = (IUserLayoutStore) layoutStore.evaluate(req, res);
         SupportedFileTypes y = SupportedFileTypes.getApplicableFileType(rootElement, rdbmdls);
         String entityFileName = y.getSafeFileNameWithExtension(rootElement);
-        ReturnValue rslt = (ReturnValue) req.getAttribute(Attributes.RETURN_VALUE);
-        rslt.setValue(entityFileName);
+        ReturnValue result = (ReturnValue) req.getAttribute(Attributes.RETURN_VALUE);
+        result.setValue(entityFileName);
     }
 }

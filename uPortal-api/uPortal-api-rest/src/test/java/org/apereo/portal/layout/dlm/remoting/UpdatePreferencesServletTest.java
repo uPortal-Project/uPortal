@@ -81,9 +81,9 @@ public class UpdatePreferencesServletTest {
         IPerson person = new PersonImpl();
         person.setUserName("jDoe");
         person.setFullName("john doe");
-        IUserInstance userInstace = new UserInstance(person, null, null);
+        IUserInstance userInstance = new UserInstance(person, null, null);
 
-        Mockito.when(userInstanceManager.getUserInstance(req)).thenReturn(userInstace);
+        Mockito.when(userInstanceManager.getUserInstance(req)).thenReturn(userInstance);
         ModelAndView modelAndView = updatePreferencesServlet.removeByFName(req, res, "fname");
     }
 

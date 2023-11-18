@@ -1,0 +1,18 @@
+{
+  "$schema": "https://raw.githubusercontent.com/streetsidesoftware/cspell/main/cspell.schema.json",
+  "words": [
+    "Apereo",
+    "Cacheable",
+    "ClassPath",
+    "Gradle",
+    "Jasig",
+    "JDBC",
+    "Portlet",
+    "Portlets",
+    "RDBM",
+    "Respondr",
+    "Servlet",
+    "SpringFramework",
+    "uPortal"
+  ]
+}

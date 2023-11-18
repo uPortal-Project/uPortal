@@ -401,24 +401,24 @@ public class PermissionsRESTController {
             }
         }
 
-        List<JsonPermission> rslt = new ArrayList<>();
+        List<JsonPermission> result = new ArrayList<>();
 
         for (UniquePermission permission : directAssignments) {
             if (p.hasPermission(
                     permission.getOwner(), permission.getActivity(), permission.getIdentifier())) {
-                rslt.add(getPermissionForPrincipal(permission, entity));
+                result.add(getPermissionForPrincipal(permission, entity));
             }
         }
 
         for (UniquePermission permission : inheritedAssignments) {
             if (p.hasPermission(
                     permission.getOwner(), permission.getActivity(), permission.getIdentifier())) {
-                rslt.add(getPermissionForPrincipal(permission, entity));
+                result.add(getPermissionForPrincipal(permission, entity));
             }
         }
-        Collections.sort(rslt);
+        Collections.sort(result);
 
-        return rslt;
+        return result;
     }
 
     private JsonPermission getPermissionForPrincipal(

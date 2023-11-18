@@ -73,7 +73,7 @@ public class AbstractJwtService {
             Class<? extends ITokenizable> clazz, String username, Date expires) {
 
         // Registered claims
-        final Claims rslt =
+        final Claims result =
                 Jwts.claims()
                         .setIssuer(JWT_ISSUER)
                         .setSubject(username)
@@ -82,9 +82,9 @@ public class AbstractJwtService {
                         .setId(UUID.randomUUID().toString());
 
         // Deserialization class
-        rslt.put(JwtClaims.CLASS.getName(), clazz.getName());
+        result.put(JwtClaims.CLASS.getName(), clazz.getName());
 
-        return rslt;
+        return result;
     }
 
     protected String generateEncryptedToken(Claims claims) {
@@ -103,17 +103,17 @@ public class AbstractJwtService {
 
         String jwt = jwtEncryptor.decryptIfConfigured(encryptedToken);
 
-        final Jws<Claims> rslt = Jwts.parser().setSigningKey(signatureKey).parseClaimsJws(jwt);
+        final Jws<Claims> result = Jwts.parser().setSigningKey(signatureKey).parseClaimsJws(jwt);
 
         // Token expired?
-        final Date expires = rslt.getBody().getExpiration();
+        final Date expires = result.getBody().getExpiration();
         if (expires.before(new Date())) {
-            final String msg = "The specified token is expired:  " + rslt;
+            final String msg = "The specified token is expired:  " + result;
             throw new SecurityException(msg);
         }
 
         // Sanity check
-        final String s = (String) rslt.getBody().get(JwtClaims.CLASS.getName());
+        final String s = (String) result.getBody().get(JwtClaims.CLASS.getName());
         if (!clazz.getName().equals(s)) {
             // Opportunity for future versioning of the data model... needs work
             String msg =
@@ -121,6 +121,6 @@ public class AbstractJwtService {
             throw new RuntimeException(msg);
         }
 
-        return rslt;
+        return result;
     }
 }

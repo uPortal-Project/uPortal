@@ -165,7 +165,7 @@ public class FavoritesController extends AbstractFavoritesController {
     @ModelAttribute("maxHeightPixels")
     public Integer getMaxHeightPixels(PortletPreferences prefs) {
         final String value = prefs.getValue(MAX_HEIGHT_PIXELS_PREFERENCE, null);
-        final Integer rslt = value != null ? Integer.valueOf(value) : null;
-        return rslt;
+        final Integer result = value != null ? Integer.valueOf(value) : null;
+        return result;
     }
 }

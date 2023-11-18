@@ -261,7 +261,7 @@ public class PermissionAssignmentMapController extends AbstractPermissionsContro
         // Don't add another node if the specified Assignment
         // is already in the hierarchy somewhere...
         for (Assignment root : hierarchy) {
-            Assignment duplicate = root.findDecendentOrSelfIfExists(a.getPrincipal());
+            Assignment duplicate = root.findDescendantOrSelfIfExists(a.getPrincipal());
             if (duplicate != null) {
                 return;
             }
@@ -289,7 +289,7 @@ public class PermissionAssignmentMapController extends AbstractPermissionsContro
                 JsonEntityBean bean = new JsonEntityBean(group, beanType);
                 Assignment parent = null;
                 for (Assignment root : hierarchy) {
-                    parent = root.findDecendentOrSelfIfExists(bean);
+                    parent = root.findDescendantOrSelfIfExists(bean);
                     if (parent != null) {
                         // We found one...
                         parent.addChild(a);

@@ -92,8 +92,8 @@ public class BearerService extends AbstractJwtService {
         @SuppressWarnings("unchecked")
         final List<String> groups = (List<String>) claims.getBody().get(JwtClaims.GROUPS.getName());
 
-        Bearer rslt = new Bearer(bearerToken, username, attributes, groups);
-        logger.debug("Produced the following Bearer for user '{}':  {}", username, rslt);
-        return rslt;
+        Bearer result = new Bearer(bearerToken, username, attributes, groups);
+        logger.debug("Produced the following Bearer for user '{}':  {}", username, result);
+        return result;
     }
 }

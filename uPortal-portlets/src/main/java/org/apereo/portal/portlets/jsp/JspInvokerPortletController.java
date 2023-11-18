@@ -106,44 +106,44 @@ public final class JspInvokerPortletController implements ApplicationContextAwar
     }
 
     private Map<String, Object> getBeans(PortletRequest req) {
-        Map<String, Object> rslt = new HashMap<String, Object>(); // default
+        Map<String, Object> result = new HashMap<String, Object>(); // default
         PortletPreferences prefs = req.getPreferences();
         String[] beanNames = prefs.getValues(BEANS_PREFERENCE, new String[] {});
         for (String name : beanNames) {
             Object bean = applicationContext.getBean(name);
-            rslt.put(name, bean);
+            result.put(name, bean);
         }
         logger.debug("Invoking with beans={}", (Object[]) beanNames);
-        return rslt;
+        return result;
     }
 
     private Map<String, List<String>> getPreferences(PortletRequest req) {
-        Map<String, List<String>> rslt = new HashMap<String, List<String>>(); // default
+        Map<String, List<String>> result = new HashMap<String, List<String>>(); // default
         PortletPreferences prefs = req.getPreferences();
         List<String> names = Collections.list(prefs.getNames());
         for (String name : names) {
             if (!name.startsWith(CONTROLLER_PREFERENCE_PREFIX)) {
                 // Pass it along in the model
                 List<String> values = Arrays.asList(prefs.getValues(name, new String[] {}));
-                rslt.put(name, values);
+                result.put(name, values);
             }
         }
-        logger.debug("Invoking with preferences={}", rslt);
-        return rslt;
+        logger.debug("Invoking with preferences={}", result);
+        return result;
     }
 
     private String getViewLocation(PortletRequest req) {
-        String rslt;
+        String result;
         PortletPreferences prefs = req.getPreferences();
         String preferenceViewLocation = prefs.getValue(VIEW_LOCATION_PREFERENCE, null);
         if (StringUtils.isNotBlank(preferenceViewLocation)) {
-            rslt = preferenceViewLocation;
+            result = preferenceViewLocation;
         } else {
             throw new RuntimeException(
                     "Portlet preference '" + VIEW_LOCATION_PREFERENCE + "' not set");
         }
-        logger.debug("Invoking with viewLocation={}", rslt);
-        return rslt;
+        logger.debug("Invoking with viewLocation={}", result);
+        return result;
     }
 
     /**

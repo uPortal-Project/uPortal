@@ -58,14 +58,14 @@ public enum EntityEnum {
     }
 
     public static EntityEnum getEntityEnum(Class<?> entityTypeClazz, boolean isGroup) {
-        EntityEnum rslt = null;
+        EntityEnum result = null;
         for (EntityEnum val : EntityEnum.values()) {
             if (val.getClazz().equals(entityTypeClazz) && val.isGroup() == isGroup) {
-                rslt = val;
+                result = val;
                 break;
             }
         }
-        return rslt;
+        return result;
     }
 
     /**

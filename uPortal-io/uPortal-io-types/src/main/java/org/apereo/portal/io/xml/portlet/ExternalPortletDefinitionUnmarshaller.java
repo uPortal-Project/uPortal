@@ -128,9 +128,9 @@ import org.springframework.stereotype.Component;
         }
 
         final String fname = epd.getFname();
-        IPortletDefinition rslt = portletDefinitionDao.getPortletDefinitionByFname(fname);
-        if (rslt == null) {
-            rslt =
+        IPortletDefinition result = portletDefinitionDao.getPortletDefinitionByFname(fname);
+        if (result == null) {
+            result =
                     new PortletDefinitionImpl(
                             portletType,
                             fname,
@@ -140,7 +140,7 @@ import org.springframework.stereotype.Component;
                             portletDescriptor.getPortletName(),
                             isFramework != null ? isFramework : false);
         } else {
-            final IPortletDescriptorKey portletDescriptorKey = rslt.getPortletDescriptorKey();
+            final IPortletDescriptorKey portletDescriptorKey = result.getPortletDescriptorKey();
             portletDescriptorKey.setPortletName(portletDescriptor.getPortletName());
             if (isFramework != null && isFramework) {
                 portletDescriptorKey.setFrameworkPortlet(true);
@@ -149,40 +149,40 @@ import org.springframework.stereotype.Component;
                 portletDescriptorKey.setFrameworkPortlet(false);
                 portletDescriptorKey.setWebAppName(portletDescriptor.getWebAppName());
             }
-            rslt.setName(epd.getName());
-            rslt.setTitle(epd.getTitle());
-            rslt.setType(portletType);
+            result.setName(epd.getName());
+            result.setTitle(epd.getTitle());
+            result.setType(portletType);
         }
 
-        rslt.setDescription(epd.getDesc());
+        result.setDescription(epd.getDesc());
         final BigInteger timeout = epd.getTimeout();
         if (timeout != null) {
-            rslt.setTimeout(timeout.intValue());
+            result.setTimeout(timeout.intValue());
         }
         final BigInteger actionTimeout = epd.getActionTimeout();
         if (actionTimeout != null) {
-            rslt.setActionTimeout(actionTimeout.intValue());
+            result.setActionTimeout(actionTimeout.intValue());
         }
         final BigInteger eventTimeout = epd.getEventTimeout();
         if (eventTimeout != null) {
-            rslt.setEventTimeout(eventTimeout.intValue());
+            result.setEventTimeout(eventTimeout.intValue());
         }
         final BigInteger renderTimeout = epd.getRenderTimeout();
         if (renderTimeout != null) {
-            rslt.setRenderTimeout(renderTimeout.intValue());
+            result.setRenderTimeout(renderTimeout.intValue());
         }
         final BigInteger resourceTimeout = epd.getResourceTimeout();
         if (resourceTimeout != null) {
-            rslt.setResourceTimeout(resourceTimeout.intValue());
+            result.setResourceTimeout(resourceTimeout.intValue());
         }
 
-        unmarshallLifecycle(epd.getLifecycle(), rslt);
+        unmarshallLifecycle(epd.getLifecycle(), result);
 
         final Set<IPortletDefinitionParameter> parameters = new LinkedHashSet<>();
         for (ExternalPortletParameter param : epd.getParameters()) {
             parameters.add(new PortletDefinitionParameterImpl(param.getName(), param.getValue()));
         }
-        rslt.setParameters(parameters);
+        result.setParameters(parameters);
 
         final ArrayList<IPortletPreference> preferenceList = new ArrayList<>();
         for (ExternalPortletPreference pref : epd.getPortletPreferences()) {
@@ -194,9 +194,9 @@ import org.springframework.stereotype.Component;
                     new PortletPreferenceImpl(
                             pref.getName(), readOnly != null ? readOnly : false, values));
         }
-        rslt.setPortletPreferences(preferenceList);
+        result.setPortletPreferences(preferenceList);
 
-        return rslt;
+        return result;
     }
 
     /* package-private */ void unmarshallLifecycle(
@@ -262,11 +262,11 @@ import org.springframework.stereotype.Component;
 
                             @Override
                             public int compareTo(IPortletLifecycleEntry o) {
-                                int rslt = date.compareTo(o.getDate());
-                                if (rslt == 0) {
-                                    rslt = state.getOrder() - o.getLifecycleState().getOrder();
+                                int result = date.compareTo(o.getDate());
+                                if (result == 0) {
+                                    result = state.getOrder() - o.getLifecycleState().getOrder();
                                 }
-                                return rslt;
+                                return result;
                             }
                         },
                         user);

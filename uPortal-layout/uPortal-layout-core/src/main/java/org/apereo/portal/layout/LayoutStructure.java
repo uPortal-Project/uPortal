@@ -63,7 +63,7 @@ public final class LayoutStructure {
      * A List of StructureParameter instances representing parameters to this LayoutStructure.
      *
      * <p>Prior to uPortal 2.5, this field was null when there were no parameters. Now this field is
-     * never null and no parameters are repreesented by an empty list.
+     * never null and no parameters are represented by an empty list.
      */
     private final List parameters = new ArrayList();
 

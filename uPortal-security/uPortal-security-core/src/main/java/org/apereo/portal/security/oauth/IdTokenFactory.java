@@ -330,12 +330,12 @@ public class IdTokenFactory {
                 .filter(claim -> claim.getClaimValue() != null)
                 .forEach(claim -> builder.claim(claim.getClaimName(), claim.getClaimValue()));
 
-        final String rslt =
+        final String result =
                 builder.signWith(algorithmFactory.getAlgorithm(), signatureKey).compact();
 
-        logger.debug("Produced the following JWT for username='{}':  {}", username, rslt);
+        logger.debug("Produced the following JWT for username='{}':  {}", username, result);
 
-        return rslt;
+        return result;
     }
 
     /**
@@ -370,27 +370,27 @@ public class IdTokenFactory {
     }
 
     private boolean includeClaim(String claimName, Set<String> claimsToInclude) {
-        boolean rslt = true; // default
+        boolean result = true; // default
         if (claimsToInclude != null && !claimsToInclude.contains(claimName)) {
             /*
              * This group is included in the deployed configuration,
              * but is not wanted by the REST request.
              */
-            rslt = false;
+            result = false;
         }
-        return rslt;
+        return result;
     }
 
     private boolean includeGroup(IEntityGroup group, Set<String> groupsToInclude) {
-        boolean rslt = groupsWhitelist.contains(group.getName()); // default
-        if (rslt && groupsToInclude != null && !groupsToInclude.contains(group.getName())) {
+        boolean result = groupsWhitelist.contains(group.getName()); // default
+        if (result && groupsToInclude != null && !groupsToInclude.contains(group.getName())) {
             /*
              * This group is included in the deployed configuration,
              * but is not wanted by the REST request.
              */
-            rslt = false;
+            result = false;
         }
-        return rslt;
+        return result;
     }
 
     /*

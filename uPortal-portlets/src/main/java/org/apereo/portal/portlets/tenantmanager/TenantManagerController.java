@@ -58,7 +58,7 @@ public class TenantManagerController {
     private static final String OPTIONAL_LISTENER_PARAMETER = "optionalListener";
     private static final String OPERATION_NAME_CODE = "operationNameCode";
     private static final String OPERATIONS_LISTENER_RESPONSES = "operationsListenerResponses";
-    private static final String OPERATIONS_LINTENER_AVAILABLE_ACTIONS =
+    private static final String OPERATIONS_LISTENER_AVAILABLE_ACTIONS =
             "operationsListenerAvailableActions";
     private static final String INVALID_FIELDS = "invalidFields";
     private static final String PREVIOUS_RESPONSES = "previousResponses";
@@ -151,7 +151,7 @@ public class TenantManagerController {
         Map<String, Object> model = new HashMap<String, Object>();
         model.put("tenant", tenant);
         model.put("tenantManagerAttributes", Collections.unmodifiableMap(tenantManagerAttributes));
-        model.put(OPERATIONS_LINTENER_AVAILABLE_ACTIONS, tenantService.getAllAvaialableActions());
+        model.put(OPERATIONS_LISTENER_AVAILABLE_ACTIONS, tenantService.getAllAvailableActions());
 
         /*
          * The following 2 items are empty the first time you visit the screen,
@@ -334,7 +334,7 @@ public class TenantManagerController {
     /** Returns a collection of invalid fields, if any. */
     private Set<String> detectInvalidFields(
             final String name, final String fname, final Map<String, String> attributes) {
-        final Set<String> rslt = new HashSet<>();
+        final Set<String> result = new HashSet<>();
 
         // Name & Fname
         try {
@@ -344,7 +344,7 @@ public class TenantManagerController {
             tenantService.validateFname(fname);
         } catch (Exception e) {
             log.warn("Validation failure for tenant name={}", name, e);
-            rslt.add("name");
+            result.add("name");
         }
 
         // Attributes
@@ -354,11 +354,11 @@ public class TenantManagerController {
                 tenantService.validateAttribute(attributeName, value);
             } catch (Exception e) {
                 log.warn("Validation failure for tenant name={}", name, e);
-                rslt.add(attributeName);
+                result.add(attributeName);
             }
         }
 
-        return rslt;
+        return result;
     }
 
     private String calculateFnameFromName(final String name) {
@@ -366,15 +366,15 @@ public class TenantManagerController {
     }
 
     private Map<String, String> gatherAttributesFromPortletRequest(ActionRequest req) {
-        Map<String, String> rslt = new HashMap<String, String>();
+        Map<String, String> result = new HashMap<String, String>();
         for (Map.Entry<String, String> y : tenantManagerAttributes.entrySet()) {
             final String key = y.getKey();
             final String value = req.getParameter(key);
             if (StringUtils.isNotBlank(value)) {
-                rslt.put(key, value);
+                result.put(key, value);
             }
         }
-        return rslt;
+        return result;
     }
 
     private void clearState(final PortletRequest req) {

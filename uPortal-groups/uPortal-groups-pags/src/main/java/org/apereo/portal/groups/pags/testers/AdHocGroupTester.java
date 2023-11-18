@@ -103,14 +103,14 @@ public final class AdHocGroupTester implements IPersonTester {
         // method that potentially recurs
         boolean isPersonGroupMember = gmPerson.isDeepMemberOf(entityGroup);
         currentTests.remove(personHash);
-        final boolean rslt = isPersonGroupMember ^ isNotTest;
+        final boolean result = isPersonGroupMember ^ isNotTest;
         logger.debug(
                 "Returning '{}' from test() for '{}' {} a (deep) member of '{}'",
-                rslt,
+                result,
                 person.getUserName(),
                 isNotTest ? "is not" : "is",
                 entityGroup.getName());
-        return rslt;
+        return result;
     }
 
     /**

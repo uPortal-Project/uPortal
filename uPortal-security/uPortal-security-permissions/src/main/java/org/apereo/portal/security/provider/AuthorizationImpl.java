@@ -572,7 +572,7 @@ public class AuthorizationImpl implements IAuthorizationService {
             return (Boolean) element.getValue();
         }
 
-        boolean rslt = false; // fail closed
+        boolean result = false; // fail closed
 
         /*
          * Convert to (strongly-typed) Java objects based on interfaces in
@@ -589,7 +589,7 @@ public class AuthorizationImpl implements IAuthorizationService {
             final IPermissionTargetProvider targetProvider =
                     targetProviderRegistry.getTargetProvider(ipActivity.getTargetProviderKey());
             final IPermissionTarget ipTarget = targetProvider.getTarget(target);
-            rslt =
+            result =
                     policy.doesPrincipalHavePermission(
                             this, principal, ipOwner, ipActivity, ipTarget);
         } else {
@@ -621,7 +621,7 @@ public class AuthorizationImpl implements IAuthorizationService {
                 missingDataLogTracker.put(missingDataTrackerKey, now);
             }
             // This pass becomes a check for superuser (Portal Administrators)
-            rslt =
+            result =
                     doesPrincipalHavePermission(
                             principal,
                             IPermission.PORTAL_SYSTEM,
@@ -630,9 +630,9 @@ public class AuthorizationImpl implements IAuthorizationService {
                             policy);
         }
 
-        this.doesPrincipalHavePermissionCache.put(new Element(key, rslt));
+        this.doesPrincipalHavePermissionCache.put(new Element(key, result));
 
-        return rslt;
+        return result;
     }
 
     /**

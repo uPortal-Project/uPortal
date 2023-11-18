@@ -55,17 +55,17 @@ public class Paren extends EvaluatorGroup {
 
     @Override
     public boolean isApplicable(IPerson toPerson) {
-        boolean rslt = false;
+        boolean result = false;
         if (LOG.isDebugEnabled())
             LOG.debug(" >>>> calling paren[" + this + ", op=" + type + "].isApplicable()");
 
         switch (this.type) {
             case OR:
                 {
-                    rslt = false; // presume false in this case...
+                    result = false; // presume false in this case...
                     for (Evaluator v : this.evaluators) {
                         if (v.isApplicable(toPerson)) {
-                            rslt = true;
+                            result = true;
                             break;
                         }
                     }
@@ -74,10 +74,10 @@ public class Paren extends EvaluatorGroup {
 
             case AND:
                 {
-                    rslt = true; // presume true in this case...
+                    result = true; // presume true in this case...
                     for (Evaluator v : this.evaluators) {
                         if (v.isApplicable(toPerson) == false) {
-                            rslt = false;
+                            result = false;
                             break;
                         }
                     }
@@ -86,21 +86,21 @@ public class Paren extends EvaluatorGroup {
 
             case NOT:
                 {
-                    rslt = false; // presume false in this case... until later...
+                    result = false; // presume false in this case... until later...
                     for (Evaluator v : this.evaluators) {
                         if (v.isApplicable(toPerson)) {
-                            rslt = true;
+                            result = true;
                             break;
                         }
                     }
-                    rslt = !rslt;
+                    result = !result;
                 }
                 break;
         }
 
         if (LOG.isDebugEnabled())
-            LOG.debug(" ---- paren[" + this + ", op=" + type + "].isApplicable()=" + rslt);
-        return rslt;
+            LOG.debug(" ---- paren[" + this + ", op=" + type + "].isApplicable()=" + result);
+        return result;
     }
 
     @Override
@@ -114,30 +114,30 @@ public class Paren extends EvaluatorGroup {
 
         // NB:  This method behaves vastly different depending on whether
         // the parent of this Paren is an instance of FragmentDefinition.
-        Element rslt = null;
+        Element result = null;
         if (parent.getName().equals("fragment")) {
 
             // The parent is a fragment, so we render as a <dlm:audience> element...
             QName q = new QName("audience", FragmentDefinition.NAMESPACE);
-            rslt = DocumentHelper.createElement(q);
+            result = DocumentHelper.createElement(q);
 
             // Discover the EvaluatorFactory class...
-            rslt.addAttribute("evaluatorFactory", this.getFactoryClass().getName());
+            result.addAttribute("evaluatorFactory", this.getFactoryClass().getName());
 
         } else {
 
             // The parent is *not* a fragment, so we render as a <paren> element...
-            rslt = DocumentHelper.createElement("paren");
-            rslt.addAttribute("mode", this.type.toString());
+            result = DocumentHelper.createElement("paren");
+            result.addAttribute("mode", this.type.toString());
         }
 
         // Serialize our children...
         for (Evaluator v : this.evaluators) {
-            v.toElement(rslt);
+            v.toElement(result);
         }
 
         // Append ourself...
-        parent.add(rslt);
+        parent.add(result);
     }
 
     @Override
@@ -148,7 +148,7 @@ public class Paren extends EvaluatorGroup {
     @Override
     public String getSummary() {
 
-        StringBuilder rslt = new StringBuilder();
+        StringBuilder result = new StringBuilder();
 
         switch (type) {
             case AND:
@@ -156,27 +156,27 @@ public class Paren extends EvaluatorGroup {
                 String operator = type.equals(Type.AND) ? " && " : " || ";
                 for (int i = 0; i < evaluators.size(); i++) {
                     if (i > 0) {
-                        rslt.append(operator);
+                        result.append(operator);
                     }
                     Evaluator ev = evaluators.get(i);
-                    rslt.append(ev.getSummary());
+                    result.append(ev.getSummary());
                 }
                 if (evaluators.size() > 1) {
-                    rslt.insert(0, "(").append(")");
+                    result.insert(0, "(").append(")");
                 }
                 break;
             case NOT:
-                rslt.append("!");
+                result.append("!");
                 if (!evaluators.isEmpty()) {
-                    rslt.append(evaluators.get(0).getSummary());
+                    result.append(evaluators.get(0).getSummary());
                 } else {
-                    rslt.append("()");
+                    result.append("()");
                 }
                 break;
             default:
                 throw new RuntimeException("Unrecognized Type: " + type);
         }
 
-        return rslt.toString();
+        return result.toString();
     }
 }
