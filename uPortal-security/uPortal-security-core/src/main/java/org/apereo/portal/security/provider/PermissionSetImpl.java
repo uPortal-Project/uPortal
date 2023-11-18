@@ -57,7 +57,7 @@ public class PermissionSetImpl implements IPermissionSet {
     @Override
     public String toString() {
         StringBuffer sb = new StringBuffer();
-        sb.append("PermissionSetImpl: entitityIdentifier=[" + this.entityIdentifier + "]");
+        sb.append("PermissionSetImpl: entityIdentifier=[" + this.entityIdentifier + "]");
         sb.append(" permissions: [" + Arrays.toString(permissions) + "]");
         return sb.toString();
     }

@@ -64,7 +64,7 @@ public class ClusterLockServiceImplTest {
         this.lockMonitorExecutorService.shutdownNow();
     }
 
-    @Ignore // Breaks on move to Gradlde
+    @Ignore // Breaks on move to Gradle
     @Test
     public void testWithinLastRunDelay() throws InterruptedException {
         final String mutexName = "TEST";
@@ -143,7 +143,7 @@ public class ClusterLockServiceImplTest {
         assertTrue(result.isExecuted());
     }
 
-    @Ignore // Breaks on move to Gradlde
+    @Ignore // Breaks on move to Gradle
     @Test
     public void testWithinServerBiasDelayDifferentServer() throws InterruptedException {
         final String mutexName = "TEST";
@@ -300,7 +300,7 @@ public class ClusterLockServiceImplTest {
         assertTrue(result.isExecuted());
     }
 
-    @Ignore // Breaks on move to Gradlde
+    @Ignore // Breaks on move to Gradle
     @Test
     public void testLockThreadPoolDead() throws InterruptedException {
         final String mutexName = "TEST";

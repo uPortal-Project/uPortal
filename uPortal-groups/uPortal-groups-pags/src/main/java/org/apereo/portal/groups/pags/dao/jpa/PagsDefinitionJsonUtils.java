@@ -131,7 +131,7 @@ public final class PagsDefinitionJsonUtils {
         public Set<IPersonAttributesGroupTestGroupDefinition> deserialize(
                 JsonParser jsonParser, DeserializationContext ctx)
                 throws JsonProcessingException, IOException {
-            Set<IPersonAttributesGroupTestGroupDefinition> rslt = new HashSet<>();
+            Set<IPersonAttributesGroupTestGroupDefinition> result = new HashSet<>();
             ObjectCodec oc = jsonParser.getCodec();
             JsonNode json = oc.readTree(jsonParser);
             for (Iterator<JsonNode> testGroupNodes = json.elements(); testGroupNodes.hasNext(); ) {
@@ -154,9 +154,9 @@ public final class PagsDefinitionJsonUtils {
                     testDef.setTestGroup(testGroupDef);
                 }
                 testGroupDef.setTests(testDefs);
-                rslt.add(testGroupDef);
+                result.add(testGroupDef);
             }
-            return rslt;
+            return result;
         }
     }
 }

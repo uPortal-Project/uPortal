@@ -186,7 +186,7 @@ public class GroupListHelperImpl implements IGroupListHelper {
 
         // So much for the easy path -- see if the user has any records at all for this specific
         // owner/activity
-        JsonEntityBean rslt = null; // Default
+        JsonEntityBean result = null; // Default
         final List<IPermission> permissionsOfRelevantActivity = new ArrayList<IPermission>();
         for (String activity : permissionActivities) {
             permissionsOfRelevantActivity.addAll(
@@ -219,18 +219,18 @@ public class GroupListHelperImpl implements IGroupListHelper {
                     if (!candidate.getEntityTypeAsString().equalsIgnoreCase(groupType)) {
                         continue;
                     }
-                    if (rslt == null) {
+                    if (result == null) {
                         // First allowable selection;  run with this one
                         // unless/until we're forced to make a choice.
-                        rslt = candidate;
+                        result = candidate;
                     } else {
                         // For the present we'll assume the match with the most
                         // children is the best;  this approach should work
                         // decently unless folks start putting redundant
                         // permissions records in the DB for multiple levels of
                         // the same rich hierarchy.
-                        if (candidate.getChildren().size() > rslt.getChildren().size()) {
-                            rslt = candidate;
+                        if (candidate.getChildren().size() > result.getChildren().size()) {
+                            result = candidate;
                         }
                     }
                 }
@@ -248,10 +248,10 @@ public class GroupListHelperImpl implements IGroupListHelper {
                             + "', permissionActivities='"
                             + Arrays.toString(permissionActivities)
                             + "' the following best root group:  "
-                            + rslt);
+                            + result);
         }
 
-        return rslt;
+        return result;
     }
 
     /*

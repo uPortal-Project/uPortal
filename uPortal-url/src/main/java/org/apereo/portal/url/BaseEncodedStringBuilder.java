@@ -47,7 +47,7 @@ public abstract class BaseEncodedStringBuilder implements Serializable, Cloneabl
             throw new IllegalStateException(
                     "Encoding '"
                             + this.encoding
-                            + "' is not supported. This should have been caught in the consructor.",
+                            + "' is not supported. This should have been caught in the constructor.",
                     e);
         }
     }

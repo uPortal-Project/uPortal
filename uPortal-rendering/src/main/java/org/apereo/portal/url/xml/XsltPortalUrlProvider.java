@@ -72,7 +72,7 @@ public class XsltPortalUrlProvider {
             if (StringUtils.isEmpty(type)) {
                 urlType = UrlType.RENDER;
             } else {
-                urlType = UrlType.valueOfIngoreCase(type);
+                urlType = UrlType.valueOfIgnoreCase(type);
             }
 
             if (StringUtils.isNotEmpty(fname)) {

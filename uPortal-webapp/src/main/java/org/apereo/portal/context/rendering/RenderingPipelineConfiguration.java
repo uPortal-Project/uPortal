@@ -169,10 +169,10 @@ public class RenderingPipelineConfiguration {
                 branches.stream()
                         .anyMatch(
                                 branchPoint -> {
-                                    final boolean rslt =
+                                    final boolean result =
                                             usedOderValues.contains(branchPoint.getOrder());
                                     usedOderValues.add(branchPoint.getOrder());
-                                    return rslt;
+                                    return result;
                                 });
         if (hasCollision) {
             throw new RenderingPipelineConfigurationException(
@@ -210,9 +210,9 @@ public class RenderingPipelineConfiguration {
 
     @Bean(name = "standardRenderingPipeline")
     public IPortalRenderingPipeline getStandardRenderingPipeline() {
-        final DynamicRenderingPipeline rslt = new DynamicRenderingPipeline();
-        rslt.setPipeline(getAnalyticsIncorporationComponent());
-        return rslt;
+        final DynamicRenderingPipeline result = new DynamicRenderingPipeline();
+        result.setPipeline(getAnalyticsIncorporationComponent());
+        return result;
     }
 
     @Bean(name = "userLayoutStoreComponent")
@@ -222,13 +222,13 @@ public class RenderingPipelineConfiguration {
 
     @Bean(name = "postUserLayoutStoreLogger")
     public StAXPipelineComponent getPostUserLayoutStoreLogger() {
-        final LoggingStAXComponent rslt = new LoggingStAXComponent();
-        rslt.setWrappedComponent(getUserLayoutStoreComponent());
-        rslt.setLoggerName(POST_USER_LAYOUT_STORE_LOGGER_NAME);
-        rslt.setLogEvents(false);
-        rslt.setLogFullDocument(true);
-        rslt.setStepIdentifier(POST_USER_LAYOUT_STORE_LOGGER_STEP_IDENTIFIER);
-        return rslt;
+        final LoggingStAXComponent result = new LoggingStAXComponent();
+        result.setWrappedComponent(getUserLayoutStoreComponent());
+        result.setLoggerName(POST_USER_LAYOUT_STORE_LOGGER_NAME);
+        result.setLogEvents(false);
+        result.setLogFullDocument(true);
+        result.setStepIdentifier(POST_USER_LAYOUT_STORE_LOGGER_STEP_IDENTIFIER);
+        return result;
     }
 
     @Bean(name = "themeAttributeSource")
@@ -238,10 +238,10 @@ public class RenderingPipelineConfiguration {
 
     @Bean(name = "dashboardWindowStateSettingsStAXComponent")
     public StAXPipelineComponent getDashboardWindowStateSettingsStAXComponent() {
-        final WindowStateSettingsStAXComponent rslt = new WindowStateSettingsStAXComponent();
-        rslt.setWrappedComponent(getPostUserLayoutStoreLogger());
-        rslt.setStylesheetAttributeSource(getThemeAttributeSource());
-        return rslt;
+        final WindowStateSettingsStAXComponent result = new WindowStateSettingsStAXComponent();
+        result.setWrappedComponent(getPostUserLayoutStoreLogger());
+        result.setStylesheetAttributeSource(getThemeAttributeSource());
+        return result;
     }
 
     @Bean(name = "attributeSource")
@@ -251,10 +251,11 @@ public class RenderingPipelineConfiguration {
 
     @Bean(name = "portletWindowAttributeIncorporationComponent")
     public StAXPipelineComponent getPortletWindowAttributeIncorporationComponent() {
-        final StAXAttributeIncorporationComponent rslt = new StAXAttributeIncorporationComponent();
-        rslt.setWrappedComponent(getDashboardWindowStateSettingsStAXComponent());
-        rslt.setAttributeSource(getPortletWindowAttributeSource());
-        return rslt;
+        final StAXAttributeIncorporationComponent result =
+                new StAXAttributeIncorporationComponent();
+        result.setWrappedComponent(getDashboardWindowStateSettingsStAXComponent());
+        result.setAttributeSource(getPortletWindowAttributeSource());
+        return result;
     }
 
     @Bean(name = "structureAttributeSource")
@@ -264,21 +265,22 @@ public class RenderingPipelineConfiguration {
 
     @Bean(name = "structureAttributeIncorporationComponent")
     public StAXPipelineComponent getStructureAttributeIncorporationComponent() {
-        final StAXAttributeIncorporationComponent rslt = new StAXAttributeIncorporationComponent();
-        rslt.setWrappedComponent(getPortletWindowAttributeIncorporationComponent());
-        rslt.setAttributeSource(getStructureAttributeSource());
-        return rslt;
+        final StAXAttributeIncorporationComponent result =
+                new StAXAttributeIncorporationComponent();
+        result.setWrappedComponent(getPortletWindowAttributeIncorporationComponent());
+        result.setAttributeSource(getStructureAttributeSource());
+        return result;
     }
 
     @Bean(name = "preStructureTransformLogger")
     public StAXPipelineComponent getPreStructureTransformLogger() {
-        final LoggingStAXComponent rslt = new LoggingStAXComponent();
-        rslt.setWrappedComponent(getStructureAttributeIncorporationComponent());
-        rslt.setLoggerName(PRE_STRUCTURE_TRANSFORM_LOGGER_NAME);
-        rslt.setLogEvents(false);
-        rslt.setLogFullDocument(true);
-        rslt.setStepIdentifier(PRE_STRUCTURE_TRANSFORM_LOGGER_STEP_IDENTIFIER);
-        return rslt;
+        final LoggingStAXComponent result = new LoggingStAXComponent();
+        result.setWrappedComponent(getStructureAttributeIncorporationComponent());
+        result.setLoggerName(PRE_STRUCTURE_TRANSFORM_LOGGER_NAME);
+        result.setLogEvents(false);
+        result.setLogFullDocument(true);
+        result.setStepIdentifier(PRE_STRUCTURE_TRANSFORM_LOGGER_STEP_IDENTIFIER);
+        return result;
     }
 
     @Bean(name = "structureTransformSource")
@@ -300,10 +302,10 @@ public class RenderingPipelineConfiguration {
 
     @Bean
     public TransformerConfigurationSource getStaticTransformerConfigurationSourceForStructure() {
-        final StaticTransformerConfigurationSource rslt =
+        final StaticTransformerConfigurationSource result =
                 new StaticTransformerConfigurationSource();
-        rslt.setParameters(Collections.singletonMap("version-UP_FRAMEWORK", uPortalVersion));
-        return rslt;
+        result.setParameters(Collections.singletonMap("version-UP_FRAMEWORK", uPortalVersion));
+        return result;
     }
 
     @Bean
@@ -323,9 +325,9 @@ public class RenderingPipelineConfiguration {
     /** This bean is not an element of the rendering pipeline. */
     @Bean(name = "resourcesElementsProvider")
     public ResourcesElementsProvider getResourcesElementsProvider() {
-        ResourcesElementsProviderImpl rslt = new ResourcesElementsProviderImpl();
-        rslt.setResourcesDao(getResourcesDao());
-        return rslt;
+        ResourcesElementsProviderImpl result = new ResourcesElementsProviderImpl();
+        result.setResourcesDao(getResourcesDao());
+        return result;
     }
 
     /** A default empty bean that could be overriden by a custom one. */
@@ -339,9 +341,9 @@ public class RenderingPipelineConfiguration {
 
     @Bean(name = "structureTransformComponent")
     public StAXPipelineComponentWrapper getStructureTransformComponent() {
-        final XSLTComponent rslt = new XSLTComponent();
-        rslt.setWrappedComponent(getPreStructureTransformLogger());
-        rslt.setTransformerSource(getStructureTransformSource());
+        final XSLTComponent result = new XSLTComponent();
+        result.setWrappedComponent(getPreStructureTransformLogger());
+        result.setTransformerSource(getStructureTransformSource());
         final List<TransformerConfigurationSource> sources = new ArrayList<>();
         sources.add(getStructureStylesheetDescriptorTransformerConfigurationSource());
         if (customSkinsTransformers != null && !customSkinsTransformers.isEmpty()) {
@@ -353,54 +355,55 @@ public class RenderingPipelineConfiguration {
         final MergingTransformerConfigurationSource mtcs =
                 new MergingTransformerConfigurationSource();
         mtcs.setSources(sources);
-        rslt.setXsltParameterSource(mtcs);
-        return rslt;
+        result.setXsltParameterSource(mtcs);
+        return result;
     }
 
     @Bean(name = "postStructureTransformLogger")
     public StAXPipelineComponent getPostStructureTransformLogger() {
-        final LoggingStAXComponent rslt = new LoggingStAXComponent();
-        rslt.setWrappedComponent(getStructureTransformComponent());
-        rslt.setLoggerName(POST_STRUCTURE_TRANSFORM_LOGGER_NAME);
-        rslt.setLogEvents(false);
-        rslt.setLogFullDocument(true);
-        rslt.setStepIdentifier(POST_STRUCTURE_TRANSFORM_LOGGER_STEP_IDENTIFIER);
-        return rslt;
+        final LoggingStAXComponent result = new LoggingStAXComponent();
+        result.setWrappedComponent(getStructureTransformComponent());
+        result.setLoggerName(POST_STRUCTURE_TRANSFORM_LOGGER_NAME);
+        result.setLogEvents(false);
+        result.setLogFullDocument(true);
+        result.setStepIdentifier(POST_STRUCTURE_TRANSFORM_LOGGER_STEP_IDENTIFIER);
+        return result;
     }
 
     @Bean(name = "structureCachingComponent")
     public StAXPipelineComponent getStructureCachingComponent() {
-        final CachingStAXPipelineComponent rslt = new CachingStAXPipelineComponent();
-        rslt.setWrappedComponent(getPostStructureTransformLogger());
-        rslt.setCache(structureTransformCache);
-        return rslt;
+        final CachingStAXPipelineComponent result = new CachingStAXPipelineComponent();
+        result.setWrappedComponent(getPostStructureTransformLogger());
+        result.setCache(structureTransformCache);
+        return result;
     }
 
     @Bean(name = "portletRenderingInitiationComponent")
     public StAXPipelineComponentWrapper getPortletRenderingInitiationComponent() {
-        final PortletRenderingInitiationStAXComponent rslt =
+        final PortletRenderingInitiationStAXComponent result =
                 new PortletRenderingInitiationStAXComponent();
-        rslt.setWrappedComponent(getStructureCachingComponent());
-        return rslt;
+        result.setWrappedComponent(getStructureCachingComponent());
+        return result;
     }
 
     @Bean(name = "themeAttributeIncorporationComponent")
     public StAXPipelineComponent getThemeAttributeIncorporationComponent() {
-        final StAXAttributeIncorporationComponent rslt = new StAXAttributeIncorporationComponent();
-        rslt.setWrappedComponent(getPortletRenderingInitiationComponent());
-        rslt.setAttributeSource(getThemeAttributeSource());
-        return rslt;
+        final StAXAttributeIncorporationComponent result =
+                new StAXAttributeIncorporationComponent();
+        result.setWrappedComponent(getPortletRenderingInitiationComponent());
+        result.setAttributeSource(getThemeAttributeSource());
+        return result;
     }
 
     @Bean(name = "preThemeTransformLogger")
     public StAXPipelineComponent getPreThemeTransformLogger() {
-        final LoggingStAXComponent rslt = new LoggingStAXComponent();
-        rslt.setWrappedComponent(getThemeAttributeIncorporationComponent());
-        rslt.setLoggerName(PRE_THEME_TRANSFORM_LOGGER_NAME);
-        rslt.setLogEvents(false);
-        rslt.setLogFullDocument(true);
-        rslt.setStepIdentifier(PRE_THEME_TRANSFORM_LOGGER_STEP_IDENTIFIER);
-        return rslt;
+        final LoggingStAXComponent result = new LoggingStAXComponent();
+        result.setWrappedComponent(getThemeAttributeIncorporationComponent());
+        result.setLoggerName(PRE_THEME_TRANSFORM_LOGGER_NAME);
+        result.setLogEvents(false);
+        result.setLogFullDocument(true);
+        result.setStepIdentifier(PRE_THEME_TRANSFORM_LOGGER_STEP_IDENTIFIER);
+        return result;
     }
 
     @Bean(name = "themeTransformSource")
@@ -458,12 +461,12 @@ public class RenderingPipelineConfiguration {
         cacheKeyExcludedParameters.add(
                 org.apereo.portal.url.xml.XsltPortalUrlProvider.XSLT_PORTAL_URL_PROVIDER);
 
-        final StaticTransformerConfigurationSource rslt =
+        final StaticTransformerConfigurationSource result =
                 new StaticTransformerConfigurationSource();
-        rslt.setParameters(parameters);
-        rslt.setParameterExpressions(parameterExpressions);
-        rslt.setCacheKeyExcludedParameters(cacheKeyExcludedParameters);
-        return rslt;
+        result.setParameters(parameters);
+        result.setParameterExpressions(parameterExpressions);
+        result.setCacheKeyExcludedParameters(cacheKeyExcludedParameters);
+        return result;
     }
 
     @Bean
@@ -478,9 +481,9 @@ public class RenderingPipelineConfiguration {
 
     @Bean(name = "themeTransformComponent")
     public StAXPipelineComponentWrapper getThemeTransformComponent() {
-        final XSLTComponent rslt = new XSLTComponent();
-        rslt.setWrappedComponent(getPreThemeTransformLogger());
-        rslt.setTransformerSource(getThemeTransformerSource());
+        final XSLTComponent result = new XSLTComponent();
+        result.setWrappedComponent(getPreThemeTransformLogger());
+        result.setTransformerSource(getThemeTransformerSource());
         final List<TransformerConfigurationSource> sources = new ArrayList<>();
         sources.add(getThemeStylesheetDescriptorTransformerConfigurationSource());
         if (customSkinsTransformers != null && !customSkinsTransformers.isEmpty()) {
@@ -493,20 +496,20 @@ public class RenderingPipelineConfiguration {
         final MergingTransformerConfigurationSource mtcs =
                 new MergingTransformerConfigurationSource();
         mtcs.setSources(sources);
-        rslt.setXsltParameterSource(mtcs);
-        return rslt;
+        result.setXsltParameterSource(mtcs);
+        return result;
     }
 
     @Bean(name = "postThemeTransformLogger")
     public StAXPipelineComponent getPostThemeTransformLogger() {
-        final LoggingStAXComponent rslt = new LoggingStAXComponent();
-        rslt.setWrappedComponent(getThemeTransformComponent());
-        rslt.setLoggerName(POST_THEME_TRANSFORM_LOGGER_NAME);
-        rslt.setLogEvents(false);
-        rslt.setLogFullDocument(true);
-        rslt.setLogFullDocumentAsHtml(true);
-        rslt.setStepIdentifier(POST_THEME_TRANSFORM_LOGGER_STEP_IDENTIFIER);
-        return rslt;
+        final LoggingStAXComponent result = new LoggingStAXComponent();
+        result.setWrappedComponent(getThemeTransformComponent());
+        result.setLoggerName(POST_THEME_TRANSFORM_LOGGER_NAME);
+        result.setLogEvents(false);
+        result.setLogFullDocument(true);
+        result.setLogFullDocumentAsHtml(true);
+        result.setStepIdentifier(POST_THEME_TRANSFORM_LOGGER_STEP_IDENTIFIER);
+        return result;
     }
 
     @Bean
@@ -556,8 +559,8 @@ public class RenderingPipelineConfiguration {
 
     @Bean(name = "staxSerializingComponent")
     public CharacterPipelineComponent getStAXSerializingComponent() {
-        final StAXSerializingComponent rslt = new StAXSerializingComponent();
-        rslt.setWrappedComponent(getPostThemeTransformLogger());
+        final StAXSerializingComponent result = new StAXSerializingComponent();
+        result.setWrappedComponent(getPostThemeTransformLogger());
 
         final Map<String, CharacterEventSource> chunkingElements = new HashMap<>();
         chunkingElements.put(IUserLayoutManager.CHANNEL, getPortletContentPlaceholderEventSource());
@@ -572,7 +575,7 @@ public class RenderingPipelineConfiguration {
         chunkingElements.put(
                 PageAnalyticsDataPlaceholderEventSource.PAGE_ANALYTICS_SCRIPT,
                 getPageAnalyticsDataPlaceholderEventSource());
-        rslt.setChunkingElements(chunkingElements);
+        result.setChunkingElements(chunkingElements);
 
         final Map<String, CharacterEventSource> chunkingPatterns = new HashMap<>();
         chunkingPatterns.put(PORTLET_TITLE_PATTERN, getPortletTitlePlaceholderEventSource());
@@ -580,47 +583,48 @@ public class RenderingPipelineConfiguration {
         chunkingPatterns.put(
                 PORTLET_NEW_ITEM_COUNT_PATTERN, getPortletNewItemCountPlaceholderEventSource());
         chunkingPatterns.put(PORTLET_LINK_PATTERN, getPortletLinkPlaceholderEventSource());
-        rslt.setChunkingPatterns(chunkingPatterns);
+        result.setChunkingPatterns(chunkingPatterns);
 
-        return rslt;
+        return result;
     }
 
     @Bean(name = "postSerializerLogger")
     public CharacterPipelineComponent getPostSerializerLogger() {
-        final LoggingCharacterComponent rslt = new LoggingCharacterComponent();
-        rslt.setWrappedComponent(getStAXSerializingComponent());
-        rslt.setLoggerName("org.apereo.portal.rendering.LoggingCharacterComponent.POST_SERIALIZER");
-        return rslt;
+        final LoggingCharacterComponent result = new LoggingCharacterComponent();
+        result.setWrappedComponent(getStAXSerializingComponent());
+        result.setLoggerName(
+                "org.apereo.portal.rendering.LoggingCharacterComponent.POST_SERIALIZER");
+        return result;
     }
 
     @Bean(name = "themeCachingComponent")
     public CharacterPipelineComponent getThemeCachingComponent() {
-        final CachingCharacterPipelineComponent rslt = new CachingCharacterPipelineComponent();
-        rslt.setWrappedComponent(getPostSerializerLogger());
-        rslt.setCache(themeTransformCache);
-        return rslt;
+        final CachingCharacterPipelineComponent result = new CachingCharacterPipelineComponent();
+        result.setWrappedComponent(getPostSerializerLogger());
+        result.setCache(themeTransformCache);
+        return result;
     }
 
     @Bean(name = "portletRenderingInitiationCharacterComponent")
     public CharacterPipelineComponent getPortletRenderingInitiationCharacterComponent() {
-        final PortletRenderingInitiationCharacterComponent rslt =
+        final PortletRenderingInitiationCharacterComponent result =
                 new PortletRenderingInitiationCharacterComponent();
-        rslt.setWrappedComponent(getThemeCachingComponent());
-        return rslt;
+        result.setWrappedComponent(getThemeCachingComponent());
+        return result;
     }
 
     @Bean(name = "portletRenderingIncorporationComponent")
     public CharacterPipelineComponent getPortletRenderingIncorporationComponent() {
-        final PortletRenderingIncorporationComponent rslt =
+        final PortletRenderingIncorporationComponent result =
                 new PortletRenderingIncorporationComponent();
-        rslt.setWrappedComponent(getPortletRenderingInitiationCharacterComponent());
-        return rslt;
+        result.setWrappedComponent(getPortletRenderingInitiationCharacterComponent());
+        return result;
     }
 
     @Bean(name = "analyticsIncorporationComponent")
     public CharacterPipelineComponent getAnalyticsIncorporationComponent() {
-        final AnalyticsIncorporationComponent rslt = new AnalyticsIncorporationComponent();
-        rslt.setWrappedComponent(getPortletRenderingIncorporationComponent());
-        return rslt;
+        final AnalyticsIncorporationComponent result = new AnalyticsIncorporationComponent();
+        result.setWrappedComponent(getPortletRenderingIncorporationComponent());
+        return result;
     }
 }

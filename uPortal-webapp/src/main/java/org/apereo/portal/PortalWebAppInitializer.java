@@ -25,7 +25,7 @@ import org.springframework.web.context.support.XmlWebApplicationContext;
  *
  * }</pre>
  *
- * This new approach allows us to dynamically update the servlet context programatically with
+ * This new approach allows us to dynamically update the servlet context programmatically with
  * Spring, which was needed in order support Spring Session handling as a feature that could be
  * enabled/disabled with configuration.
  */

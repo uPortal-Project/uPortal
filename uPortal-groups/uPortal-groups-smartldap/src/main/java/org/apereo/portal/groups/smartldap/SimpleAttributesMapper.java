@@ -74,7 +74,7 @@ public final class SimpleAttributesMapper implements AttributesMapper {
             log.debug(msg);
         }
 
-        LdapRecord rslt;
+        LdapRecord result;
 
         try {
             if (log.isDebugEnabled()) {
@@ -95,7 +95,7 @@ public final class SimpleAttributesMapper implements AttributesMapper {
                     membership.add((String) en.nextElement());
                 }
             }
-            rslt = new LdapRecord(g, membership);
+            result = new LdapRecord(g, membership);
 
             if (log.isDebugEnabled()) {
                 StringBuilder msg = new StringBuilder();
@@ -120,7 +120,7 @@ public final class SimpleAttributesMapper implements AttributesMapper {
             throw new RuntimeException(msg, t);
         }
 
-        return rslt;
+        return result;
     }
 
     public void setKeyAttributeName(String keyAttributeName) {

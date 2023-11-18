@@ -77,7 +77,7 @@ public class ContextSourceLdapServerImpl implements ILdapServer {
         try {
             conn.close();
         } catch (NamingException ne) {
-            this.logger.warn("An exception occured while closing DirContext='" + conn + "'", ne);
+            this.logger.warn("An exception occurred while closing DirContext='" + conn + "'", ne);
         }
     }
 }

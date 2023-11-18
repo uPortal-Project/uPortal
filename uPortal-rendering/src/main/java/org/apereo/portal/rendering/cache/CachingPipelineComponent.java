@@ -71,7 +71,7 @@ public abstract class CachingPipelineComponent<R, E> extends PipelineComponentWr
             HttpServletRequest request, HttpServletResponse response) {
         if (Included.PLAIN == this.resourcesElementsProvider.getDefaultIncludedType()) {
             this.logger.trace(
-                    "{} - Resoure Aggregation Disabled, ignoring event cache and returning parent event reader directly",
+                    "{} - ReSource Aggregation Disabled, ignoring event cache and returning parent event reader directly",
                     this.beanName);
             return this.wrappedComponent.getEventReader(request, response);
         }

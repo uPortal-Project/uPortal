@@ -59,7 +59,7 @@ public class ImpersonationStatusPersonAttributeDao
     public Set<IPersonAttributes> getPeopleWithMultivaluedAttributes(
             Map<String, List<Object>> query) {
 
-        Set<IPersonAttributes> rslt = null; // default (per spec?)
+        Set<IPersonAttributes> result = null; // default (per spec?)
 
         if (this.logger.isDebugEnabled()) {
             this.logger.debug("invoking getPeopleWithMultivaluedAttributes(" + query + ")");
@@ -88,11 +88,11 @@ public class ImpersonationStatusPersonAttributeDao
                 final Map<String, List<Object>> attrs =
                         Collections.singletonMap(IMPERSONATING_ATTRIBUTE_NAME, values);
                 final IPersonAttributes ipa = new CaseInsensitiveNamedPersonImpl(currentUid, attrs);
-                rslt = Collections.singleton(ipa);
+                result = Collections.singleton(ipa);
             }
         }
 
-        return rslt;
+        return result;
     }
 
     /**

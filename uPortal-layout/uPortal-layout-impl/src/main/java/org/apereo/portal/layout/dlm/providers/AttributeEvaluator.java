@@ -142,11 +142,11 @@ public class AttributeEvaluator extends Evaluator {
                 throw new IllegalStateException("Unrecognized mode constant:  " + this.mode);
         }
 
-        Element rslt = DocumentHelper.createElement("attribute");
-        rslt.addAttribute("name", this.name);
-        rslt.addAttribute("mode", mde);
-        rslt.addAttribute("value", this.value);
-        parent.add(rslt);
+        Element result = DocumentHelper.createElement("attribute");
+        result.addAttribute("name", this.name);
+        result.addAttribute("mode", mde);
+        result.addAttribute("value", this.value);
+        parent.add(result);
     }
 
     @Override
@@ -178,13 +178,13 @@ public class AttributeEvaluator extends Evaluator {
                 throw new RuntimeException("Unsupported MODE: " + mode);
         }
 
-        StringBuilder rslt = new StringBuilder();
-        rslt.append("(");
-        rslt.append("person attribute '").append(name).append("' ").append(relationship);
+        StringBuilder result = new StringBuilder();
+        result.append("(");
+        result.append("person attribute '").append(name).append("' ").append(relationship);
         if (mode != EXISTS) {
-            rslt.append(" '").append(value).append("'");
+            result.append(" '").append(value).append("'");
         }
-        rslt.append(")");
-        return rslt.toString();
+        result.append(")");
+        return result.toString();
     }
 }

@@ -28,7 +28,7 @@ import org.apache.commons.lang.Validate;
  * <ul>
  *   <li>userId of the fragment owner (e.g. 'u13')
  *   <li>layoutId of the fragment layout (currently this will always be 'l1')
- *   <li>structureId of the node within the fragment layout (e.g. 's2' but the preceeding character
+ *   <li>structureId of the node within the fragment layout (e.g. 's2' but the preceding character
  *       is not always an 's')
  * </ul>
  *
@@ -84,7 +84,7 @@ public final class Noderef {
 
     @Override
     public String toString() {
-        String rslt = null;
+        String result = null;
         if (userId != 0 && layoutId != 0) {
             // An intra-layout Noderef
             StringBuilder sb = new StringBuilder();
@@ -93,12 +93,12 @@ public final class Noderef {
                     .append(LAYOUT_ID_PREFIX)
                     .append(layoutId)
                     .append(structureId);
-            rslt = sb.toString();
+            result = sb.toString();
         } else {
             // An extra-layout Noderef
-            rslt = structureId;
+            result = structureId;
         }
-        return rslt;
+        return result;
     }
 
     @Override

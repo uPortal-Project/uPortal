@@ -219,8 +219,8 @@ public class SoffitRendererController {
         }
 
         final ViewTuple viewTuple = new ViewTuple(modulePath, modeLowercase, windowStateLowercase);
-        String rslt = availableViews.get(viewTuple);
-        if (rslt == null) {
+        String result = availableViews.get(viewTuple);
+        if (result == null) {
             /*
              * This circumstance means that we haven't looked (yet);
              * check for a file named to match all 3.
@@ -230,7 +230,7 @@ public class SoffitRendererController {
             if (moduleResources.contains(pathBasedOnModeAndState)) {
                 // We have a winner!
                 availableViews.put(viewTuple, pathBasedOnModeAndState);
-                rslt = pathBasedOnModeAndState;
+                result = pathBasedOnModeAndState;
             } else {
                 // Widen the search (within this module) based on Mode only
                 final String pathBasedOnModeOnly =
@@ -238,7 +238,7 @@ public class SoffitRendererController {
                 if (moduleResources.contains(pathBasedOnModeOnly)) {
                     // We still need to store the choice so we're not constantly looking
                     availableViews.put(viewTuple, pathBasedOnModeOnly);
-                    rslt = pathBasedOnModeOnly;
+                    result = pathBasedOnModeOnly;
                 } else {
                     throw new IllegalStateException(
                             "Unable to select a view for Mode="
@@ -251,30 +251,30 @@ public class SoffitRendererController {
 
         logger.info(
                 "Selected viewName='{}' for Mode='{}' and WindowState='{}'",
-                rslt,
+                result,
                 modeLowercase,
                 windowStateLowercase);
 
-        return rslt;
+        return result;
     }
 
     private String getCompletePathforParts(final String... parts) {
 
-        StringBuilder rslt = new StringBuilder();
+        StringBuilder result = new StringBuilder();
 
         for (String part : parts) {
-            rslt.append(part);
+            result.append(part);
             if (!part.endsWith("/")) {
                 // First part will be a directory
-                rslt.append(".");
+                result.append(".");
             }
         }
 
-        rslt.append("jsp"); // TODO:  support more options
+        result.append("jsp"); // TODO:  support more options
 
-        logger.debug("Calculated path '{}' for parts={}", rslt, parts);
+        logger.debug("Calculated path '{}' for parts={}", result, parts);
 
-        return rslt.toString();
+        return result.toString();
     }
 
     private void configureCacheHeaders(final HttpServletResponse res, final String module) {

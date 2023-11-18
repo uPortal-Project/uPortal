@@ -68,12 +68,12 @@ import org.springframework.beans.factory.annotation.Required;
  *
  * <br>
  *
- * <p><b>IMPORTNANT NOTE</b> Using this bean starts an RMI server. If this bean is used in a JVM
- * that is long running and has any sort of generational garbage collector configured the system
+ * <p><b>IMPORTANT NOTE</b> Using this bean starts an RMI server. If this bean is used in a JVM that
+ * is long running and has any sort of generational garbage collector configured the system
  * properties sun.rmi.dgc.client.gcInterval and sun.rmi.dgc.server.gcInterval need to be set to some
  * high value. They configure how often the RMI server requests a full GC. To disable the RMI
  * induced GCs set the properties to '0x7ffffffffffffffe' Only do this if you can rely on the
- * generational GC to reguarly clean up RMI objects.
+ * generational GC to regularly clean up RMI objects.
  */
 public class JavaManagementServerBean {
     // System properties

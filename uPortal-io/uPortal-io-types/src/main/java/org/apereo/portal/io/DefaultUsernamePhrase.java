@@ -58,13 +58,13 @@ public class DefaultUsernamePhrase implements Phrase {
     @Override
     public Object evaluate(TaskRequest req, TaskResponse res) {
 
-        String rslt = null;
+        String result = null;
 
         Element e = (Element) element.evaluate(req, res);
         if (e != null) {
-            rslt = e.getText();
+            result = e.getText();
         }
 
-        return rslt;
+        return result;
     }
 }

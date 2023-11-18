@@ -36,7 +36,7 @@ import org.apereo.portal.spring.locator.AuthorizationServiceLocator;
 import org.junit.Ignore;
 
 /** Tests the authorization framework. */
-@Ignore // Breaks on move to Gradlde
+@Ignore // Breaks on move to Gradle
 public class AuthorizationTester extends TestCase {
     private String OWNER = "UP_FRAMEWORK";
     private String TEST_TARGET = "Test_Target.";

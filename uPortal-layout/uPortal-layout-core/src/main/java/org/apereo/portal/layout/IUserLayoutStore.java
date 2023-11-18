@@ -189,7 +189,7 @@ public interface IUserLayoutStore {
 
     /**
      * Generates a new struct id for directive elements that dlm places in the PLF version of the
-     * layout tree. These elements are atifacts of the dlm storage model and used during merge but
+     * layout tree. These elements are artifacts of the dlm storage model and used during merge but
      * do not appear in the user's composite view.
      */
     String getNextStructDirectiveId(IPerson person);
