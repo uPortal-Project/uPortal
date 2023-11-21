@@ -65,18 +65,18 @@ public final class PagsService {
      * @return
      */
     public Set<IPersonAttributesGroupDefinition> getPagsDefinitions(IPerson person) {
-        Set<IPersonAttributesGroupDefinition> rslt = new HashSet<>();
+        Set<IPersonAttributesGroupDefinition> result = new HashSet<>();
         for (IPersonAttributesGroupDefinition def :
                 pagsGroupDefDao.getPersonAttributesGroupDefinitions()) {
             if (hasPermission(
                     person,
                     IPermission.VIEW_GROUP_ACTIVITY,
                     def.getCompositeEntityIdentifierForGroup().getKey())) {
-                rslt.add(def);
+                result.add(def);
             }
         }
-        logger.debug("Returning PAGS definitions '{}' for user '{}'", rslt, person.getUserName());
-        return rslt;
+        logger.debug("Returning PAGS definitions '{}' for user '{}'", result, person.getUserName());
+        return result;
     }
 
     /**
@@ -86,19 +86,19 @@ public final class PagsService {
      * @return
      */
     public IPersonAttributesGroupDefinition getPagsDefinitionByName(IPerson person, String name) {
-        IPersonAttributesGroupDefinition rslt = getPagsGroupDefByName(name);
-        if (rslt == null) {
+        IPersonAttributesGroupDefinition result = getPagsGroupDefByName(name);
+        if (result == null) {
             // Better to produce exception?  I'm thinking not, but open-minded.
             return null;
         }
         if (!hasPermission(
                 person,
                 IPermission.VIEW_GROUP_ACTIVITY,
-                rslt.getCompositeEntityIdentifierForGroup().getKey())) {
+                result.getCompositeEntityIdentifierForGroup().getKey())) {
             throw new RuntimeAuthorizationException(person, IPermission.VIEW_GROUP_ACTIVITY, name);
         }
-        logger.debug("Returning PAGS definition '{}' for user '{}'", rslt, person.getUserName());
-        return rslt;
+        logger.debug("Returning PAGS definition '{}' for user '{}'", result, person.getUserName());
+        return result;
     }
 
     /** Verifies permissions and that the group doesn't already exist (case insensitive) */
@@ -149,7 +149,7 @@ public final class PagsService {
             throw new IllegalArgumentException("Specified groupName already in use:  " + groupName);
         }
 
-        IPersonAttributesGroupDefinition rslt =
+        IPersonAttributesGroupDefinition result =
                 pagsGroupDefDao.createPersonAttributesGroupDefinition(groupName, description);
         if (parent != null) {
             // Should refactor this switch to instead choose a service and invoke a method on it
@@ -157,11 +157,11 @@ public final class PagsService {
                 case SERVICE_NAME_LOCAL:
                     IEntityGroup member =
                             GroupService.findGroup(
-                                    rslt.getCompositeEntityIdentifierForGroup().getKey());
+                                    result.getCompositeEntityIdentifierForGroup().getKey());
                     if (member == null) {
                         String msg =
                                 "The specified group was created, but is not present in the store:  "
-                                        + rslt.getName();
+                                        + result.getName();
                         throw new RuntimeException(msg);
                     }
                     parent.addChild(member);
@@ -172,7 +172,7 @@ public final class PagsService {
                             getPagsGroupDefByName(parent.getName());
                     Set<IPersonAttributesGroupDefinition> members =
                             new HashSet<>(parentDef.getMembers());
-                    members.add(rslt);
+                    members.add(result);
                     parentDef.setMembers(members);
                     pagsGroupDefDao.updatePersonAttributesGroupDefinition(parentDef);
                     break;
@@ -184,7 +184,7 @@ public final class PagsService {
             }
         }
 
-        return rslt;
+        return result;
     }
 
     /** NOTE -- This method assumes that pagsDef is an existing JPA-managed entity. */
@@ -202,9 +202,9 @@ public final class PagsService {
                     pagsDef.getCompositeEntityIdentifierForGroup().getKey());
         }
 
-        IPersonAttributesGroupDefinition rslt =
+        IPersonAttributesGroupDefinition result =
                 pagsGroupDefDao.updatePersonAttributesGroupDefinition(pagsDef);
-        return rslt;
+        return result;
     }
 
     /** NOTE -- This method assumes that pagsDef is an existing JPA-managed entity. */

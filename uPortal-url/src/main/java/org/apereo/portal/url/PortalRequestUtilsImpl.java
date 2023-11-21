@@ -45,7 +45,7 @@ public class PortalRequestUtilsImpl implements IPortalRequestUtils {
         }
 
         throw new IllegalArgumentException(
-                "The orginal portlet HttpServletRequest is not available from the PortletRequest using attribute '"
+                "The original portlet HttpServletRequest is not available from the PortletRequest using attribute '"
                         + PortletHttpServletRequestWrapper.ATTRIBUTE__HTTP_SERVLET_REQUEST
                         + "'");
     }
@@ -113,7 +113,7 @@ public class PortalRequestUtilsImpl implements IPortalRequestUtils {
         }
 
         throw new IllegalArgumentException(
-                "The orginal portal HttpServletResponse is not available from the PortletRequest using attribute '"
+                "The original portal HttpServletResponse is not available from the PortletRequest using attribute '"
                         + PortalHttpServletRequestWrapper.ATTRIBUTE__HTTP_SERVLET_RESPONSE
                         + "'");
     }
@@ -129,7 +129,7 @@ public class PortalRequestUtilsImpl implements IPortalRequestUtils {
         }
 
         throw new IllegalArgumentException(
-                "The orginal portal HttpServletResponse is not available from the HttpServletRequest using attribute '"
+                "The original portal HttpServletResponse is not available from the HttpServletRequest using attribute '"
                         + PortalHttpServletRequestWrapper.ATTRIBUTE__HTTP_SERVLET_RESPONSE
                         + "'");
     }

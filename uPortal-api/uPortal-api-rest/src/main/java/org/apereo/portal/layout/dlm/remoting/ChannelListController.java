@@ -231,7 +231,7 @@ public class ChannelListController {
          */
         final Set<IPortletDefinition> favoritePortlets = calculateFavoritePortlets(request);
 
-        Map<String, SortedSet<PortletCategoryBean>> rslt =
+        Map<String, SortedSet<PortletCategoryBean>> result =
                 getRegistry43(
                         webRequest,
                         user,
@@ -245,10 +245,10 @@ public class ChannelListController {
         if (Boolean.valueOf(favorite)) {
             log.debug(
                     "Filtering out non-favorite portlets because 'favorite=true' was included in the query string");
-            rslt = filterRegistryFavoritesOnly(rslt);
+            result = filterRegistryFavoritesOnly(result);
         }
 
-        return new ModelAndView("jsonView", "registry", rslt);
+        return new ModelAndView("jsonView", "registry", result);
     }
 
     /*
@@ -269,7 +269,7 @@ public class ChannelListController {
                 new HashSet<>(portletDefinitionRegistry.getAllPortletDefinitions());
 
         // construct a new channel registry
-        Map<String, SortedSet<?>> rslt = new TreeMap<>();
+        Map<String, SortedSet<?>> result = new TreeMap<>();
         SortedSet<ChannelCategoryBean> categories = new TreeSet<>();
 
         // add the root category and all its children to the registry
@@ -311,8 +311,8 @@ public class ChannelListController {
         // Add even if no portlets in category
         categories.add(uncategorizedPortletsBean);
 
-        rslt.put(CATEGORIES_MAP_KEY, categories);
-        return rslt;
+        result.put(CATEGORIES_MAP_KEY, categories);
+        return result;
     }
 
     private ChannelCategoryBean prepareCategoryBean(
@@ -410,7 +410,7 @@ public class ChannelListController {
         // tracking them
 
         // construct a new channel registry
-        Map<String, SortedSet<PortletCategoryBean>> rslt = new TreeMap<>();
+        Map<String, SortedSet<PortletCategoryBean>> result = new TreeMap<>();
         SortedSet<PortletCategoryBean> categories = new TreeSet<>();
 
         // add the root category and all its children to the registry
@@ -459,8 +459,8 @@ public class ChannelListController {
             categories.add(unc);
         }
 
-        rslt.put(CATEGORIES_MAP_KEY, categories);
-        return rslt;
+        result.put(CATEGORIES_MAP_KEY, categories);
+        return result;
     }
 
     private PortletCategoryBean preparePortletCategoryBean(
@@ -518,18 +518,18 @@ public class ChannelListController {
             WebRequest req, IPortletDefinition portlet, Locale locale, Boolean favorite) {
         MarketplacePortletDefinition mktpd =
                 marketplaceService.getOrCreateMarketplacePortletDefinition(portlet);
-        PortletDefinitionBean rslt =
+        PortletDefinitionBean result =
                 PortletDefinitionBean.fromMarketplacePortletDefinition(mktpd, locale, favorite);
 
         // See api docs for postProcessIconUrlParameter() below
         IPortletDefinitionParameter iconParameter =
-                rslt.getParameters().get(ICON_URL_PARAMETER_NAME);
+                result.getParameters().get(ICON_URL_PARAMETER_NAME);
         if (iconParameter != null) {
             IPortletDefinitionParameter evaluated = postProcessIconUrlParameter(iconParameter, req);
-            rslt.putParameter(evaluated);
+            result.putParameter(evaluated);
         }
 
-        return rslt;
+        return result;
     }
 
     /*
@@ -604,13 +604,13 @@ public class ChannelListController {
         final UserPreferencesManager upm = (UserPreferencesManager) ui.getPreferencesManager();
         final IUserLayoutManager ulm = upm.getUserLayoutManager();
         final IUserLayout layout = ulm.getUserLayout();
-        final Set<IPortletDefinition> rslt = favoritesUtils.getFavoritePortletDefinitions(layout);
+        final Set<IPortletDefinition> result = favoritesUtils.getFavoritePortletDefinitions(layout);
 
         log.debug(
                 "Found the following favoritePortlets for user='{}':  {}",
                 request.getRemoteUser(),
-                rslt);
-        return rslt;
+                result);
+        return result;
     }
 
     private Map<String, SortedSet<PortletCategoryBean>> filterRegistryFavoritesOnly(
@@ -626,9 +626,9 @@ public class ChannelListController {
                     }
                 });
 
-        final Map<String, SortedSet<PortletCategoryBean>> rslt = new TreeMap<>();
-        rslt.put(CATEGORIES_MAP_KEY, otpt);
-        return rslt;
+        final Map<String, SortedSet<PortletCategoryBean>> result = new TreeMap<>();
+        result.put(CATEGORIES_MAP_KEY, otpt);
+        return result;
     }
 
     /**

@@ -128,7 +128,7 @@ public class DatabaseMetaDataImpl implements IDatabaseMetadata, InitializingBean
                 conn.close();
             }
         } catch (Exception e) {
-            LOG.warn("An error occured while closing a connection.", e);
+            LOG.warn("An error occurred while closing a connection.", e);
         }
     }
 

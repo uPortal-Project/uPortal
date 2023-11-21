@@ -255,7 +255,7 @@ public class AttributeSwapperHelperImpl implements IAttributeSwapperHelper {
         final Principal currentUser = externalContext.getCurrentUser();
         final String uid = currentUser.getName();
 
-        this.logger.warn("User '" + uid + "' reseting to default attributes");
+        this.logger.warn("User '" + uid + "' resetting to default attributes");
 
         // Remove the person directory override
         this.portalRootPersonAttributeDao.removeUserAttributeOverride(uid);

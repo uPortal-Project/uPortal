@@ -75,11 +75,13 @@ public class PreferencesHeaderProvider extends AbstractHeaderProvider {
         final Preferences preferences =
                 preferencesService.createPreferences(
                         preferencesMap, username, getExpiration(renderRequest));
-        final Header rslt =
+        final Header result =
                 new BasicHeader(Headers.PREFERECES.getName(), preferences.getEncryptedToken());
         logger.debug(
-                "Produced the following Preferences header for username='{}':  {}", username, rslt);
+                "Produced the following Preferences header for username='{}':  {}",
+                username,
+                result);
 
-        return rslt;
+        return result;
     }
 }

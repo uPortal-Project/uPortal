@@ -86,8 +86,8 @@ public final class ResetPasswordTenantOperationsListener extends AbstractTenantO
 
     /** @since 4.3 */
     @Override
-    public Set<ITenantManagementAction> getAvaialableActions() {
-        ITenantManagementAction rslt =
+    public Set<ITenantManagementAction> getAvailableActions() {
+        ITenantManagementAction result =
                 new ITenantManagementAction() {
                     @Override
                     public String getFname() {
@@ -104,7 +104,7 @@ public final class ResetPasswordTenantOperationsListener extends AbstractTenantO
                         return prepareResponse(tenant);
                     }
                 };
-        return Collections.singleton(rslt);
+        return Collections.singleton(result);
     }
 
     @Override
@@ -146,13 +146,13 @@ public final class ResetPasswordTenantOperationsListener extends AbstractTenantO
                             new String[] {tenant.getAttribute(ADMIN_CONTACT_EMAIL)}));
             return error;
         }
-        final TenantOperationResponse rslt =
+        final TenantOperationResponse result =
                 new TenantOperationResponse(this, TenantOperationResponse.Result.SUCCESS);
-        rslt.addMessage(
+        result.addMessage(
                 createLocalizedMessage(
                         TENANT_ADMIN_EMAIL_SENT,
                         new String[] {tenant.getAttribute(ADMIN_CONTACT_EMAIL)}));
-        return rslt;
+        return result;
     }
 
     private void sendResetPasswordEmail(final ITenant tenant) {

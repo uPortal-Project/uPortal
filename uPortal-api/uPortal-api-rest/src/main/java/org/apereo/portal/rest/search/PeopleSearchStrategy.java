@@ -51,7 +51,7 @@ public class PeopleSearchStrategy implements ISearchStrategy {
 
     @Override
     public List<?> search(String query, HttpServletRequest request) {
-        final List<Object> rslt = new ArrayList<>();
+        final List<Object> result = new ArrayList<>();
 
         final IPerson user = personManager.getPerson(request);
 
@@ -63,9 +63,9 @@ public class PeopleSearchStrategy implements ISearchStrategy {
         final List<IPersonAttributes> people = lookupHelper.searchForPeople(user, queryPplAttrMap);
         if (people != null) {
             for (IPersonAttributes p : people) {
-                rslt.add(p.getAttributes());
+                result.add(p.getAttributes());
             }
         }
-        return rslt;
+        return result;
     }
 }

@@ -193,7 +193,7 @@ public class ClusterLockServiceImpl implements IClusterLockService {
 
                 // Return skipped result
                 this.logger.trace(
-                        "failed to aquire database lock due to DatabaseLockWorker not executing, returning notExecuted result for: {}",
+                        "failed to acquire database lock due to DatabaseLockWorker not executing, returning notExecuted result for: {}",
                         mutexName);
                 return TryLockFunctionResultImpl.getSkippedInstance(LockStatus.SKIPPED_LOCKED);
             }
@@ -202,7 +202,7 @@ public class ClusterLockServiceImpl implements IClusterLockService {
             if (mutex == null) {
                 // Failed to get DB lock, stop now
                 this.logger.trace(
-                        "failed to aquire database lock, returning notExecuted result for: {}",
+                        "failed to acquire database lock, returning notExecuted result for: {}",
                         mutexName);
                 return TryLockFunctionResultImpl.getSkippedInstance(LockStatus.SKIPPED_LOCKED);
             }

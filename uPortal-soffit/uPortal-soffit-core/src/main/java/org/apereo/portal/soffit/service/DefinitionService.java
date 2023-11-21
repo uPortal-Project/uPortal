@@ -85,9 +85,9 @@ public class DefinitionService extends AbstractJwtService {
         final Map<String, List<String>> parameters =
                 (Map<String, List<String>>) claims.getBody().get(JwtClaims.PARAMETERS.getName());
 
-        Definition rslt =
+        Definition result =
                 new Definition(definitionToken, title, fname, description, categories, parameters);
-        logger.debug("Produced the following Definition for user '{}':  {}", username, rslt);
-        return rslt;
+        logger.debug("Produced the following Definition for user '{}':  {}", username, result);
+        return result;
     }
 }

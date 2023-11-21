@@ -150,7 +150,7 @@ public class XSLTComponent extends StAXPipelineComponentWrapper
 
         final SAXResult outputTarget = new SAXResult(contentHandler);
         try {
-            this.logger.debug("{} - Begining XML Transformation", this.beanName);
+            this.logger.debug("{} - Beginning XML Transformation", this.beanName);
             transformer.transform(xmlReaderSource, outputTarget);
             this.logger.debug("{} - XML Transformation complete", this.beanName);
         } catch (TransformerException e) {

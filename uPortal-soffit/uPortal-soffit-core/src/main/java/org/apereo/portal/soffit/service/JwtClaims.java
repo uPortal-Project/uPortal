@@ -90,13 +90,13 @@ public enum JwtClaims {
     }
 
     public static JwtClaims forName(String name) {
-        JwtClaims rslt = null; // default
+        JwtClaims result = null; // default
         for (JwtClaims claim : JwtClaims.values()) {
             if (claim.getName().equals(name)) {
-                rslt = claim;
+                result = claim;
             }
         }
-        return rslt;
+        return result;
     }
 
     public String getName() {

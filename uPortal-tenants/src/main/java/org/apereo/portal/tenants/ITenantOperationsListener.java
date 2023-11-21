@@ -62,7 +62,7 @@ public interface ITenantOperationsListener {
      *
      * @since 4.3
      */
-    Set<ITenantManagementAction> getAvaialableActions();
+    Set<ITenantManagementAction> getAvailableActions();
 
     /**
      * Throws an exception if the specified value isn't allowable for the specified attribute.

@@ -26,11 +26,11 @@ public interface ITenantManagementAction {
     String getFname();
 
     /**
-     * The key used with the Spring messageSurce to obtain the internationalized UI string for this
+     * The key used with the Spring messageSource to obtain the internationalized UI string for this
      * operation.
      */
     String getMessageCode();
 
-    /** Invoke the intended behavior on the specified tenent. */
+    /** Invoke the intended behavior on the specified tenant. */
     TenantOperationResponse invoke(ITenant tenant);
 }

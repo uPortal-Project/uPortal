@@ -17,7 +17,7 @@ package org.apereo.portal.portlets;
 import java.io.Serializable;
 
 /**
- * Simple class that wraps a string and provides a getter/setter. Nessescary for binding into the
+ * Simple class that wraps a string and provides a getter/setter. Necessary for binding into the
  * value of a Map in WebFlow
  */
 public class Attribute implements Serializable {

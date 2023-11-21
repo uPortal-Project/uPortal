@@ -66,7 +66,7 @@
 
                 // Finally attempt to add this one to the collection of records.  The
                 // 'isNew' flag indicates whether we have seen this group before;
-                // if we have, there's no need to follow its tree of decendents.
+                // if we have, there's no need to follow its tree of descendants.
                 boolean isNew = !GROUPS.contains(record);
                 ScriptAttributes.RESPONSE.setAttribute('isNew', isNew);
                 logger.debug("isNew: {}", isNew);

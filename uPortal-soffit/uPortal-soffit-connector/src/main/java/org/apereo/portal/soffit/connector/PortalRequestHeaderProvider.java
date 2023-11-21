@@ -95,14 +95,14 @@ public class PortalRequestHeaderProvider extends AbstractHeaderProvider {
         final PortalRequest portalRequest =
                 portalRequestService.createPortalRequest(
                         properties, attributes, parameters, username, getExpiration(renderRequest));
-        final Header rslt =
+        final Header result =
                 new BasicHeader(
                         Headers.PORTAL_REQUEST.getName(), portalRequest.getEncryptedToken());
         logger.debug(
                 "Produced the following PortalRequest header for username='{}':  {}",
                 username,
-                rslt);
+                result);
 
-        return rslt;
+        return result;
     }
 }

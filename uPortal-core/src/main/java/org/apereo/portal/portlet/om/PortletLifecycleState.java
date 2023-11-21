@@ -36,19 +36,19 @@ public enum PortletLifecycleState {
     }
 
     public static PortletLifecycleState forOrderValue(int orderValue) {
-        PortletLifecycleState rslt = null;
+        PortletLifecycleState result = null;
         for (PortletLifecycleState state : PortletLifecycleState.values()) {
             if (state.getOrder() == orderValue) {
-                rslt = state;
+                result = state;
                 break;
             }
         }
-        if (rslt == null) {
+        if (result == null) {
             final String msg =
                     "PortletLifecycleState not found for the specified order value:  " + orderValue;
             throw new IllegalArgumentException(msg);
         }
-        return rslt;
+        return result;
     }
 
     public int getOrder() {

@@ -358,18 +358,18 @@ public class FragmentDefinition extends EvaluatorGroup {
         }
 
         QName q = new QName("fragment", FragmentDefinition.NAMESPACE);
-        org.dom4j.Element rslt = DocumentHelper.createElement(q);
-        rslt.addAttribute("name", this.getName());
-        rslt.addAttribute("ownerID", this.getOwnerId());
-        rslt.addAttribute("precedence", Double.toString(this.getPrecedence()));
-        rslt.addAttribute("description", this.getDescription());
+        org.dom4j.Element result = DocumentHelper.createElement(q);
+        result.addAttribute("name", this.getName());
+        result.addAttribute("ownerID", this.getOwnerId());
+        result.addAttribute("precedence", Double.toString(this.getPrecedence()));
+        result.addAttribute("description", this.getDescription());
 
         // Serialize our children...
         for (Evaluator v : this.evaluators) {
-            v.toElement(rslt);
+            v.toElement(result);
         }
 
-        parent.add(rslt);
+        parent.add(result);
     }
 
     @Override

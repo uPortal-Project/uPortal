@@ -286,11 +286,11 @@ public class RDBMUserIdentityStore implements IUserIdentityStore {
     public IPerson getPerson(String userName, boolean createPortalData)
             throws AuthorizationException {
 
-        final IPerson rslt = new PersonImpl();
-        rslt.setUserName(userName);
-        rslt.setID(getPortalUID(rslt, createPortalData));
-        rslt.setSecurityContext(new BrokenSecurityContext());
-        return rslt;
+        final IPerson result = new PersonImpl();
+        result.setUserName(userName);
+        result.setID(getPortalUID(result, createPortalData));
+        result.setSecurityContext(new BrokenSecurityContext());
+        return result;
     }
 
     /* (non-javadoc)

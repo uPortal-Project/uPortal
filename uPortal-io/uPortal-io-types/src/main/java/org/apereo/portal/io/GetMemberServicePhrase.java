@@ -69,7 +69,7 @@ public class GetMemberServicePhrase implements Phrase {
 
     // Internal search, thus case sensitive.
     public static String getPhrase(String name, String memberValue) {
-        String rslt = null;
+        String result = null;
 
         // We can (and must) cut & run if the element is a <literal> or a <channel>...
         if (name.equals("literal") || name.equals("channel")) {
@@ -79,7 +79,7 @@ public class GetMemberServicePhrase implements Phrase {
         try {
 
             Class[] leafTypes = new Class[] {IPerson.class, IPortletDefinition.class};
-            for (int i = 0; i < leafTypes.length && rslt == null; i++) {
+            for (int i = 0; i < leafTypes.length && result == null; i++) {
                 EntityIdentifier[] eis =
                         GroupService.searchForGroups(
                                 memberValue, IGroupConstants.SearchMethod.DISCRETE, leafTypes[i]);
@@ -87,7 +87,7 @@ public class GetMemberServicePhrase implements Phrase {
                     // Match!
                     if (eis[0].getType() == IEntityGroup.class) {
                         IEntityGroup g = GroupService.findGroup(eis[0].getKey());
-                        rslt = g.getServiceName().toString();
+                        result = g.getServiceName().toString();
                     } else {
                         String msg = "The specified entity is not a group:  " + memberValue;
                         throw new RuntimeException(msg);
@@ -104,11 +104,11 @@ public class GetMemberServicePhrase implements Phrase {
             throw new RuntimeException(msg, t);
         }
 
-        if (rslt == null) {
+        if (result == null) {
             String msg = "The specified member was not found:  " + memberValue;
             throw new RuntimeException(msg);
         }
 
-        return rslt;
+        return result;
     }
 }

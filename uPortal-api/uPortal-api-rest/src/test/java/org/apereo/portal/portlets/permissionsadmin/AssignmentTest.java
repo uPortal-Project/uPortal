@@ -55,14 +55,14 @@ public class AssignmentTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testFindDecendentOrSelfIfExistsForNull() {
-        Assignment assignment = this.assignment.findDecendentOrSelfIfExists(null);
+    public void testFindDescendantOrSelfIfExistsForNull() {
+        Assignment assignment = this.assignment.findDescendantOrSelfIfExists(null);
     }
 
     @Test
-    public void testFindDecendentOrSelfIfExists() {
+    public void testFindDescendantOrSelfIfExists() {
         JsonEntityBean bean = buildJsonGroupEntityBean();
-        Assignment newAssignment = this.assignment.findDecendentOrSelfIfExists(bean);
+        Assignment newAssignment = this.assignment.findDescendantOrSelfIfExists(bean);
         Assert.assertNotNull(newAssignment);
     }
 }

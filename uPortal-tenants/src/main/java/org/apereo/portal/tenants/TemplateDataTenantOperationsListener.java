@@ -230,7 +230,7 @@ public final class TemplateDataTenantOperationsListener extends AbstractTenantOp
             return super.onDelete(tenant);
         }
 
-        TenantOperationResponse.Result result = TenantOperationResponse.Result.SUCCESS; // detault
+        TenantOperationResponse.Result result = TenantOperationResponse.Result.SUCCESS; // default
 
         // We will prepare a list of items that succeeded...
         final StringBuilder successfulEntitiesMessage = new StringBuilder();
@@ -287,17 +287,17 @@ public final class TemplateDataTenantOperationsListener extends AbstractTenantOp
         successfulEntitiesMessage.append("\n</ul>");
         failedEntitiesMessage.append("\n</ul>");
 
-        final TenantOperationResponse rslt = new TenantOperationResponse(this, result);
+        final TenantOperationResponse response = new TenantOperationResponse(this, result);
 
         // Did we succeed at all?
         if (didAtLeastOneCommandSucceed) {
-            rslt.addMessage(successfulEntitiesMessage.toString());
+            response.addMessage(successfulEntitiesMessage.toString());
         }
 
         switch (result) {
                 // Did we fail at all?
             case FAIL:
-                rslt.addMessage(failedEntitiesMessage.toString());
+                response.addMessage(failedEntitiesMessage.toString());
                 break;
                 // Or succeed completely?
             default:
@@ -305,7 +305,7 @@ public final class TemplateDataTenantOperationsListener extends AbstractTenantOp
                 break;
         }
 
-        return rslt;
+        return response;
     }
 
     /*
@@ -358,18 +358,18 @@ public final class TemplateDataTenantOperationsListener extends AbstractTenantOp
             return error;
         }
 
-        TenantOperationResponse rslt =
+        TenantOperationResponse result =
                 new TenantOperationResponse(this, TenantOperationResponse.Result.SUCCESS);
-        rslt.addMessage(finalizeImportReport(importReport));
-        rslt.addMessage(
+        result.addMessage(finalizeImportReport(importReport));
+        result.addMessage(
                 createLocalizedMessage(TENANT_ENTITIES_IMPORTED, new String[] {tenant.getName()}));
-        return rslt;
+        return result;
     }
 
     /** Loads dom4j Documents and sorts the entity files into the proper order for Import. */
     private Map<PortalDataKey, Set<BucketTuple>> prepareImportQueue(
             final ITenant tenant, final Set<Resource> templates) throws Exception {
-        final Map<PortalDataKey, Set<BucketTuple>> rslt = new HashMap<>();
+        final Map<PortalDataKey, Set<BucketTuple>> result = new HashMap<>();
         Resource rsc = null;
         try {
             for (Resource r : templates) {
@@ -390,11 +390,11 @@ public final class TemplateDataTenantOperationsListener extends AbstractTenantOp
                         // Found the right bucket...
                         log.debug("Found PortalDataKey '{}' for data document {}", pdk, r.getURI());
                         atLeastOneMatchingDataKey = pdk;
-                        Set<BucketTuple> bucket = rslt.get(atLeastOneMatchingDataKey);
+                        Set<BucketTuple> bucket = result.get(atLeastOneMatchingDataKey);
                         if (bucket == null) {
                             // First of these we've seen;  create the bucket;
                             bucket = new HashSet<>();
-                            rslt.put(atLeastOneMatchingDataKey, bucket);
+                            result.put(atLeastOneMatchingDataKey, bucket);
                         }
                         BucketTuple tuple = new BucketTuple(rsc, doc);
                         bucket.add(tuple);
@@ -419,7 +419,7 @@ public final class TemplateDataTenantOperationsListener extends AbstractTenantOp
                     e);
             throw e;
         }
-        return rslt;
+        return result;
     }
 
     /** Imports the specified entities in the proper order. */
@@ -510,15 +510,15 @@ public final class TemplateDataTenantOperationsListener extends AbstractTenantOp
 
     private String createImportReportLineItem(PortalDataKey pdk, BucketTuple tuple) {
         final String versionPart = pdk.getVersion() != null ? " (" + pdk.getVersion() + ")" : "";
-        StringBuilder rslt = new StringBuilder();
-        rslt.append("\n  <li><span class=\"label label-info\">")
+        StringBuilder result = new StringBuilder();
+        result.append("\n  <li><span class=\"label label-info\">")
                 .append(pdk.getName().getLocalPart())
                 .append(versionPart)
                 .append("</span>")
                 .append(" ")
                 .append(tuple.getResource().getFilename())
                 .append("</li>");
-        return rslt.toString();
+        return result.toString();
     }
 
     private String finalizeImportReport(StringBuilder message) {

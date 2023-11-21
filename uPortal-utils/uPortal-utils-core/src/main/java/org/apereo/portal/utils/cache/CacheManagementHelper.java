@@ -33,9 +33,9 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class CacheManagementHelper {
-    private static final class CaseInsenstivieStringComparator implements Comparator<String> {
-        public static final CaseInsenstivieStringComparator INSTANCE =
-                new CaseInsenstivieStringComparator();
+    private static final class CaseInsensitiveStringComparator implements Comparator<String> {
+        public static final CaseInsensitiveStringComparator INSTANCE =
+                new CaseInsensitiveStringComparator();
 
         @Override
         public int compare(String o1, String o2) {
@@ -55,7 +55,7 @@ public class CacheManagementHelper {
 
     public Map<String, CacheStatistics> getAllCacheStatistics() {
         final Map<String, CacheStatistics> allCacheStatistics =
-                new TreeMap<>(CaseInsenstivieStringComparator.INSTANCE);
+                new TreeMap<>(CaseInsensitiveStringComparator.INSTANCE);
 
         for (final String cacheName : this.cacheManager.getCacheNames()) {
             final Cache cache = this.cacheManager.getCache(cacheName);

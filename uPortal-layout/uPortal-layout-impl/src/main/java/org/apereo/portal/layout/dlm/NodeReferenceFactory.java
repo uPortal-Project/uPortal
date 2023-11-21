@@ -220,7 +220,7 @@ public final class NodeReferenceFactory {
             log.trace(msg.toString());
         }
 
-        Pathref rslt = null; // default;  signifies we can't match a node
+        Pathref result = null; // default;  signifies we can't match a node
 
         final Matcher dlmNodeMatcher = DLM_NODE_PATTERN.matcher(dlmNoderef);
         if (dlmNodeMatcher.matches()) {
@@ -261,7 +261,7 @@ public final class NodeReferenceFactory {
                     fname = fnameAttr.getTextContent();
                 }
 
-                rslt = new Pathref(userLayoutInfo.first, xpath, fname);
+                result = new Pathref(userLayoutInfo.first, xpath, fname);
             }
         }
 
@@ -286,10 +286,10 @@ public final class NodeReferenceFactory {
                 fname = target.valueOf("@fname");
             }
 
-            rslt = new Pathref(layoutOwnerUsername, target.getUniquePath(), fname);
+            result = new Pathref(layoutOwnerUsername, target.getUniquePath(), fname);
         }
 
-        return rslt;
+        return result;
     }
 
     /*

@@ -180,12 +180,12 @@ public class PortletsRESTController {
             final IPortletWindow portletWindow =
                     portletWindowRegistry.getOrCreateDefaultPortletWindow(
                             wrapper.getRequest(), portletDef.getPortletDefinitionId());
-            final String rslt =
+            final String result =
                     portletExecutionManager.getPortletOutput(
                             portletWindow.getPortletWindowId(),
                             wrapper.getRequest(),
                             wrapper.getResponse());
-            return rslt;
+            return result;
         } catch (Exception e) {
             logger.error("Failed to render the requested portlet '{}'", fname, e);
             res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -200,17 +200,18 @@ public class PortletsRESTController {
     private IAuthorizationPrincipal getAuthorizationPrincipal(HttpServletRequest req) {
         IPerson user = personManager.getPerson(req);
         EntityIdentifier ei = user.getEntityIdentifier();
-        IAuthorizationPrincipal rslt = authorizationService.newPrincipal(ei.getKey(), ei.getType());
-        return rslt;
+        IAuthorizationPrincipal result =
+                authorizationService.newPrincipal(ei.getKey(), ei.getType());
+        return result;
     }
 
     private Set<String> getPortletCategories(IPortletDefinition pdef) {
         Set<PortletCategory> categories = portletCategoryRegistry.getParentCategories(pdef);
-        Set<String> rslt = new HashSet<String>();
+        Set<String> result = new HashSet<String>();
         for (PortletCategory category : categories) {
-            rslt.add(StringUtils.capitalize(category.getName().toLowerCase()));
+            result.add(StringUtils.capitalize(category.getName().toLowerCase()));
         }
-        return rslt;
+        return result;
     }
 
     private Set<IPortletDefinition> getFavorites(HttpServletRequest request) {

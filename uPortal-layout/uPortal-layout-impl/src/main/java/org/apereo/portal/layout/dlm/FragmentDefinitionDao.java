@@ -95,8 +95,8 @@ public class FragmentDefinitionDao extends BasePortalJpaDao implements IFragment
     public List<FragmentDefinition> getAllFragments() {
         final TypedQuery<FragmentDefinition> query =
                 this.createCachedQuery(this.findAllFragmentsQuery);
-        final List<FragmentDefinition> rslt = query.getResultList();
-        return rslt;
+        final List<FragmentDefinition> result = query.getResultList();
+        return result;
     }
 
     @Override
@@ -106,8 +106,8 @@ public class FragmentDefinitionDao extends BasePortalJpaDao implements IFragment
         query.setParameter(this.nameParameter, name);
 
         final List<FragmentDefinition> list = query.getResultList();
-        final FragmentDefinition rslt = DataAccessUtils.uniqueResult(list);
-        return rslt;
+        final FragmentDefinition result = DataAccessUtils.uniqueResult(list);
+        return result;
     }
 
     @Override
@@ -117,8 +117,8 @@ public class FragmentDefinitionDao extends BasePortalJpaDao implements IFragment
         query.setParameter(this.ownerParameter, ownerId);
 
         final List<FragmentDefinition> list = query.getResultList();
-        final FragmentDefinition rslt = DataAccessUtils.uniqueResult(list);
-        return rslt;
+        final FragmentDefinition result = DataAccessUtils.uniqueResult(list);
+        return result;
     }
 
     @Override

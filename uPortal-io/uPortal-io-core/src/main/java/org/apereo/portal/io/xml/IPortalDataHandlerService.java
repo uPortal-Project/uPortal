@@ -60,7 +60,7 @@ public interface IPortalDataHandlerService {
             return this.recursive;
         }
         /** @return defaults to true */
-        public final boolean isIngoreNonDataFiles() {
+        public final boolean isIgnoreNonDataFiles() {
             return this.ignoreNonDataFiles;
         }
     }

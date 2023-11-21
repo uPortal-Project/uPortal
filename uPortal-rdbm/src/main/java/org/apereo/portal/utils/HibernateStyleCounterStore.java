@@ -177,10 +177,10 @@ public class HibernateStyleCounterStore implements ICounterStore {
                             @Override
                             public IntegralDataTypeHolder getNextValue() {
 
-                                IntegralDataTypeHolder rslt = null;
-                                for (int i = 0; rslt == null && i < MAX_ATTEMPTS; i++) {
+                                IntegralDataTypeHolder result = null;
+                                for (int i = 0; result == null && i < MAX_ATTEMPTS; i++) {
 
-                                    rslt =
+                                    result =
                                             transactionOperations.execute(
                                                     new TransactionCallback<
                                                             IntegralDataTypeHolder>() {
@@ -287,14 +287,14 @@ public class HibernateStyleCounterStore implements ICounterStore {
                                                     });
                                 } // End for loop
 
-                                if (rslt == null) {
+                                if (result == null) {
                                     throw new RuntimeException(
                                             "Failed to fetch a new batch of sequence values after "
                                                     + MAX_ATTEMPTS
                                                     + " tries");
                                 }
 
-                                return rslt;
+                                return result;
                             }
                         });
     }

@@ -1,4 +1,4 @@
-description = "Apereo uPortal Usefull Dialects for hibernate 3"
+description = "Apereo uPortal Useful Dialects for hibernate 3"
 
 ext {
     // Solution for JPA Modelgen based on http://stackoverflow.com/a/23218255/1651116

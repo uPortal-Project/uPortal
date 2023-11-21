@@ -154,7 +154,7 @@ public class UserLocaleHelper {
                     localeManager.setUserLocales(Collections.singletonList(userLocale));
                     localeStore.updateUserLocales(person, new Locale[] {userLocale});
 
-                    // remove person layout framgent from session since it contains some of the data
+                    // remove person layout fragment from session since it contains some of the data
                     // in previous
                     // translation and won't be cleared until next logout-login (applies when using
                     // RDBMDistributedLayoutStore as user layout store).

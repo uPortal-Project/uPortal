@@ -56,12 +56,12 @@ public final class JpaPersistenceTenantOperationsListener extends AbstractTenant
                             FAILED_TO_CREATE_TENANT, new String[] {tenant.getName()}));
             return error;
         }
-        final TenantOperationResponse rslt =
+        final TenantOperationResponse result =
                 new TenantOperationResponse(this, TenantOperationResponse.Result.SUCCESS);
-        rslt.addMessage(
+        result.addMessage(
                 createLocalizedMessage(
                         TENANT_CREATED_SUCCESSFULLY, new String[] {tenant.getName()}));
-        return rslt;
+        return result;
     }
 
     @Override
@@ -77,12 +77,12 @@ public final class JpaPersistenceTenantOperationsListener extends AbstractTenant
                             FAILED_TO_UPDATE_TENANT, new String[] {tenant.getName()}));
             return error;
         }
-        final TenantOperationResponse rslt =
+        final TenantOperationResponse result =
                 new TenantOperationResponse(this, TenantOperationResponse.Result.SUCCESS);
-        rslt.addMessage(
+        result.addMessage(
                 createLocalizedMessage(
                         TENANT_UPDATED_SUCCESSFULLY, new String[] {tenant.getName()}));
-        return rslt;
+        return result;
     }
 
     @Override
@@ -98,11 +98,11 @@ public final class JpaPersistenceTenantOperationsListener extends AbstractTenant
                             FAILED_TO_DELETE_TENANT, new String[] {tenant.getName()}));
             return error;
         }
-        final TenantOperationResponse rslt =
+        final TenantOperationResponse result =
                 new TenantOperationResponse(this, TenantOperationResponse.Result.SUCCESS);
-        rslt.addMessage(
+        result.addMessage(
                 createLocalizedMessage(
                         TENANT_DELETED_SUCCESSFULLY, new String[] {tenant.getName()}));
-        return rslt;
+        return result;
     }
 }
