@@ -170,12 +170,12 @@ public class PagsRESTController {
             produces = MediaType.APPLICATION_JSON_VALUE,
             method = RequestMethod.PUT)
     public @ResponseBody String updatePagsGroup(
-            HttpServletRequest httpServletRequest,
-            HttpServletResponse httpServletResponse,
+            HttpServletRequest request,
+            HttpServletResponse response,
             @PathVariable("pagsGroupName") String pagsGroupName,
             @RequestBody String json) {
 
-        httpServletResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
         /*
          * This step is necessary;  the incoming URLs will sometimes have '+'
@@ -185,7 +185,7 @@ public class PagsRESTController {
         try {
             decodedGroupName = URLDecoder.decode(pagsGroupName, "UTF-8");
         } catch (UnsupportedEncodingException e) {
-            httpServletResponse.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return "{ 'error': '" + e.toString() + "' }";
         }
 
@@ -194,26 +194,26 @@ public class PagsRESTController {
             personAttributesGroupDefinition =
                     objectMapper.readValue(json, PersonAttributesGroupDefinitionImpl.class);
         } catch (Exception e) {
-            httpServletResponse.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return "{ 'error': '" + e.toString() + "' }"; // should be escaped
         }
         if (personAttributesGroupDefinition == null) {
-            httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return "{ 'error': 'Not found' }";
         }
         if (!decodedGroupName.equals(personAttributesGroupDefinition.getName())) {
-            httpServletResponse.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return "{ 'error': 'Group name in URL parameter must match name in JSON payload' }";
         }
 
-        IPerson person = personManager.getPerson(httpServletRequest);
+        IPerson person = personManager.getPerson(request);
         IPersonAttributesGroupDefinition updatedGroupDefinition;
 
         try {
             IPersonAttributesGroupDefinition currentGroupDefinition =
                     pagsService.getPagsDefinitionByName(person, decodedGroupName);
             if (currentGroupDefinition == null) {
-                httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
                 return "{ 'error': 'Not found' }";
             }
             /*
@@ -236,24 +236,21 @@ public class PagsRESTController {
             updatedGroupDefinition =
                     pagsService.updatePagsDefinition(person, currentGroupDefinition);
         } catch (IllegalArgumentException illegalArgumentException) {
-            httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return "{ 'error': '"
                     + illegalArgumentException.getMessage()
                     + "' }"; // should be escaped
         } catch (RuntimeAuthorizationException runtimeAuthorizationException) {
-            httpServletResponse.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 
             return "{ 'error': 'not authorized' }";
         } catch (Exception e) {
-            httpServletResponse.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return "{ 'error': '" + e + "' }";
         }
 
         return respondPagsGroupJson(
-                httpServletResponse,
-                updatedGroupDefinition,
-                person,
-                HttpServletResponse.SC_ACCEPTED);
+                response, updatedGroupDefinition, person, HttpServletResponse.SC_ACCEPTED);
     }
 
     /*
