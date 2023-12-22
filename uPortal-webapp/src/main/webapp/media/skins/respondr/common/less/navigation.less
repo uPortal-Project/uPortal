@@ -418,22 +418,6 @@
           margin-left: 64px;
           width: initial;
 
-          .active {
-            background-color: @navbar-item-active-background-color;
-            color: @navbar-item-active-text-color;
-
-            &:hover,
-            &:focus {
-              .portal-navigation-gripper {
-                background-color: transparent;
-              }
-            }
-
-            .portal-navigation-link {
-              float: left;
-            }
-          }
-
           :not(.active).list-group-item {
             &:hover,
             &:focus {
@@ -620,6 +604,22 @@
                   }
                 }
               }
+            }
+          }
+
+          .active {
+            background-color: @navbar-item-active-background-color;
+            color: @navbar-item-active-text-color;
+
+            &:hover,
+            &:focus {
+              .portal-navigation-gripper {
+                background-color: transparent;
+              }
+            }
+
+            .portal-navigation-link {
+              float: left;
             }
           }
 

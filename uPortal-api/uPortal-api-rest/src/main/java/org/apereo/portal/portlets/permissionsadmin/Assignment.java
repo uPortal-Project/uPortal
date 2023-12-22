@@ -108,7 +108,7 @@ public class Assignment implements Comparable<Assignment>, Serializable {
         this.type = type;
     }
 
-    public Assignment findDecendentOrSelfIfExists(JsonEntityBean principal) {
+    public Assignment findDescendantOrSelfIfExists(JsonEntityBean principal) {
 
         // Assertions.
         if (principal == null) {
@@ -116,23 +116,23 @@ public class Assignment implements Comparable<Assignment>, Serializable {
             throw new IllegalArgumentException(msg);
         }
 
-        Assignment rslt = null; // default...
+        Assignment result = null; // default...
 
         if (principal.getId().equals(this.principal.getId())
                 && principal
                         .getEntityTypeAsString()
                         .equals(this.principal.getEntityTypeAsString())) {
-            rslt = this;
+            result = this;
         } else {
             for (Assignment a : children) {
-                rslt = a.findDecendentOrSelfIfExists(principal);
-                if (rslt != null) {
+                result = a.findDescendantOrSelfIfExists(principal);
+                if (result != null) {
                     break;
                 }
             }
         }
 
-        return rslt;
+        return result;
     }
 
     public String getPrincipalId() {

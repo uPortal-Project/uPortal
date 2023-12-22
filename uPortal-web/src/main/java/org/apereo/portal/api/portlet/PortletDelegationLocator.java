@@ -24,7 +24,7 @@ import org.apereo.portal.portlet.om.IPortletWindowId;
  */
 public interface PortletDelegationLocator {
     /** The PortletDelegationLocator instance will be available in the request under this key */
-    public static final String PORTLET_DELECATION_LOCATOR_ATTR =
+    public static final String PORTLET_DELEGATION_LOCATOR_ATTR =
             PortletDelegationLocator.class.getName();
 
     /**

@@ -173,10 +173,10 @@ public class GroupMembershipEvaluator extends Evaluator {
                         "Unrecognized evaluatorMode constant:  " + this.evaluatorMode);
         }
 
-        Element rslt = DocumentHelper.createElement("attribute");
-        rslt.addAttribute("mode", mde);
-        rslt.addAttribute("name", this.groupName);
-        parent.add(rslt);
+        Element result = DocumentHelper.createElement("attribute");
+        result.addAttribute("mode", mde);
+        result.addAttribute("name", this.groupName);
+        parent.add(result);
     }
 
     @Override
@@ -187,13 +187,13 @@ public class GroupMembershipEvaluator extends Evaluator {
     @Override
     public String getSummary() {
 
-        StringBuilder rslt = new StringBuilder();
-        rslt.append("(");
-        rslt.append("MEMBER OF '").append(this.groupName).append("'");
+        StringBuilder result = new StringBuilder();
+        result.append("(");
+        result.append("MEMBER OF '").append(this.groupName).append("'");
         if (evaluatorMode == DEEP_MEMBER_OF_MODE) {
-            rslt.append(" OR ANY DESCENDANT GROUP");
+            result.append(" OR ANY DESCENDANT GROUP");
         }
-        rslt.append(")");
-        return rslt.toString();
+        result.append(")");
+        return result.toString();
     }
 }

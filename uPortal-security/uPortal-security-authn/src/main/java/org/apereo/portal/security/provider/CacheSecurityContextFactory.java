@@ -34,7 +34,7 @@ public class CacheSecurityContextFactory implements ISecurityContextFactory {
     public boolean isEnabled() {
         final String msg =
                 "CacheSecurityContextFactory must not be used directly by "
-                        + "InitalSecurityContextFactory";
+                        + "InitialSecurityContextFactory";
         throw new UnsupportedOperationException(msg);
     }
 

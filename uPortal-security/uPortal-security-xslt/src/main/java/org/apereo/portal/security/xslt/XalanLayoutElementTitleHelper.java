@@ -51,7 +51,7 @@ public class XalanLayoutElementTitleHelper {
      *
      * @param id - layout structure element's identifier.
      * @param language - locale identifier.
-     * @param name - default layout strucute element's name.
+     * @param name - default layout structure element's name.
      * @return localized title in case of layout owner's element or default name otherwise.
      */
     public static String getTitle(String id, String language, String name) {

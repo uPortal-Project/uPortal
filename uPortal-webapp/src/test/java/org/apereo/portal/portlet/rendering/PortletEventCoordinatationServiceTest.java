@@ -39,7 +39,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 /** */
-@Ignore // Breaks on move to Gradlde
+@Ignore // Breaks on move to Gradle
 @RunWith(MockitoJUnitRunner.class)
 public class PortletEventCoordinatationServiceTest {
     @InjectMocks

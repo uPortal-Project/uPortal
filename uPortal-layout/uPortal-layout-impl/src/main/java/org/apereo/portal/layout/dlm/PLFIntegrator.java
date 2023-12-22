@@ -210,7 +210,7 @@ public class PLFIntegrator {
         Element copy = (Element) document.importNode(plfChild, false);
         parent.appendChild(copy);
 
-        // set the identifier for the doc if warrented
+        // set the identifier for the doc if warranted
         String id = copy.getAttribute(Constants.ATT_ID);
         if (id != null && !id.equals("")) copy.setIdAttribute(Constants.ATT_ID, true);
 

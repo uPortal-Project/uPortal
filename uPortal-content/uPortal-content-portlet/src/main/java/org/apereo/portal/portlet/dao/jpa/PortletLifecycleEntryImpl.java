@@ -92,11 +92,11 @@ public class PortletLifecycleEntryImpl implements IPortletLifecycleEntry {
 
     @Override
     public int compareTo(IPortletLifecycleEntry o) {
-        int rslt = date.compareTo(o.getDate());
-        if (rslt == 0) {
-            rslt = lifecycleStateId - o.getLifecycleState().getOrder();
+        int result = date.compareTo(o.getDate());
+        if (result == 0) {
+            result = lifecycleStateId - o.getLifecycleState().getOrder();
         }
-        return rslt;
+        return result;
     }
 
     @Override

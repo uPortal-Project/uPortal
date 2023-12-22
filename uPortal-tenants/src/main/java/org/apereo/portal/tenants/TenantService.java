@@ -73,7 +73,7 @@ public class TenantService {
             if (listener.isOptional()) {
                 optional.add(listener);
             }
-            for (ITenantManagementAction action : listener.getAvaialableActions()) {
+            for (ITenantManagementAction action : listener.getAvailableActions()) {
                 map.put(action.getFname(), action);
             }
         }
@@ -96,9 +96,9 @@ public class TenantService {
      * (alphabetically by name).
      */
     public List<ITenant> getTenantsList() {
-        List<ITenant> rslt = new ArrayList<ITenant>(tenantDao.getAllTenants());
-        Collections.sort(rslt);
-        return rslt;
+        List<ITenant> result = new ArrayList<ITenant>(tenantDao.getAllTenants());
+        Collections.sort(result);
+        return result;
     }
 
     public ITenant createTenant(
@@ -128,14 +128,14 @@ public class TenantService {
                 TENANT_FNAME_VALIDATOR_REGEX);
 
         // Create the concrete tenant object
-        final ITenant rslt = tenantDao.instantiate();
-        rslt.setName(name);
-        rslt.setFname(fname);
+        final ITenant result = tenantDao.instantiate();
+        result.setName(name);
+        result.setFname(fname);
         for (Map.Entry<String, String> y : attributes.entrySet()) {
-            rslt.setAttribute(y.getKey(), y.getValue());
+            result.setAttribute(y.getKey(), y.getValue());
         }
 
-        log.info("Creating new tenant:  {}", rslt.toString());
+        log.info("Creating new tenant:  {}", result.toString());
 
         // Invoke the listeners
         for (ITenantOperationsListener listener : this.tenantOperationsListeners) {
@@ -147,7 +147,7 @@ public class TenantService {
             }
             TenantOperationResponse res = null; // default
             try {
-                res = listener.onCreate(rslt);
+                res = listener.onCreate(result);
                 if (!TenantOperationResponse.Result.IGNORE.equals(res.getResult())) {
                     responses.add(res);
                 }
@@ -156,14 +156,14 @@ public class TenantService {
                         "Error invoking ITenantOperationsListener '"
                                 + listener.toString()
                                 + "' for tenant:  "
-                                + rslt.toString();
+                                + result.toString();
                 throw new RuntimeException(msg, e);
             }
             if (res.getResult().equals(TenantOperationResponse.Result.ABORT)) {
                 log.warn(
                         "ITenantOperationsListener {} aborted the creation of tenant:  ",
                         listener.toString(),
-                        rslt.toString());
+                        result.toString());
                 // TODO:  Can we rollback somehow?
                 break;
             }
@@ -171,9 +171,9 @@ public class TenantService {
 
         // Fire an appropriate PortalEvent
         final HttpServletRequest request = portalRequestUtils.getCurrentPortalRequest();
-        tenantEventFactory.publishTenantCreatedTenantEvent(request, this, rslt);
+        tenantEventFactory.publishTenantCreatedTenantEvent(request, this, result);
 
-        return rslt;
+        return result;
     }
 
     public ITenant updateTenant(
@@ -283,7 +283,7 @@ public class TenantService {
      *
      * @since 4.3
      */
-    public Set<ITenantManagementAction> getAllAvaialableActions() {
+    public Set<ITenantManagementAction> getAllAvailableActions() {
         return new HashSet<ITenantManagementAction>(operationsListenerAvailableActions.values());
     }
 
@@ -294,12 +294,12 @@ public class TenantService {
             String msg = "Argument 'fname' cannot be blank";
             throw new IllegalArgumentException(msg);
         }
-        ITenantManagementAction rslt = this.operationsListenerAvailableActions.get(fname);
-        if (rslt == null) {
+        ITenantManagementAction result = this.operationsListenerAvailableActions.get(fname);
+        if (result == null) {
             String msg = "Action not found:  " + fname;
             throw new RuntimeException(msg);
         }
-        return rslt;
+        return result;
     }
 
     /**
@@ -308,16 +308,16 @@ public class TenantService {
      * @since 4.3
      */
     public boolean nameExists(final String name) {
-        boolean rslt = false; // default
+        boolean result = false; // default
         try {
             final ITenant tenant = this.tenantDao.getTenantByName(name);
-            rslt = tenant != null;
+            result = tenant != null;
         } catch (IllegalArgumentException iae) {
             // This exception is completely fine;  it simply
             // means there is no tenant with this name.
-            rslt = false;
+            result = false;
         }
-        return rslt;
+        return result;
     }
 
     /**
@@ -326,16 +326,16 @@ public class TenantService {
      * @since 4.3
      */
     public boolean fnameExists(final String fname) {
-        boolean rslt = false; // default
+        boolean result = false; // default
         try {
             final ITenant tenant = getTenantByFName(fname);
-            rslt = tenant != null;
+            result = tenant != null;
         } catch (IllegalArgumentException iae) {
             // This exception is completely fine;  it simply
             // means there is no tenant with this fname.
-            rslt = false;
+            result = false;
         }
-        return rslt;
+        return result;
     }
 
     /**

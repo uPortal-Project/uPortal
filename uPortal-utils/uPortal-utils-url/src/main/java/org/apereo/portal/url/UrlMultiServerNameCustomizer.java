@@ -1,6 +1,6 @@
 package org.apereo.portal.url;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
@@ -14,13 +14,13 @@ public class UrlMultiServerNameCustomizer implements IAuthUrlCustomizer {
     /** Logger. */
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    private Set<String> allServerNames = new HashSet<>();
+    private Set<String> allServerNames = new LinkedHashSet<>();
 
     private String serverNameTextReplacement = "_CURRENT_SERVER_NAME_";
 
     @Required
     public void setAllServerNames(final Set<String> serverNames) {
-        this.allServerNames = new HashSet<>(serverNames);
+        this.allServerNames = new LinkedHashSet<>(serverNames);
         Assert.notEmpty(this.allServerNames, "The attribute serverNames should not be empty");
     }
 

@@ -33,7 +33,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 /** Test CachingPortletOutputHandler */
-@Ignore // Breaks on move to Gradlde
+@Ignore // Breaks on move to Gradle
 @RunWith(MockitoJUnitRunner.class)
 public class CachingPortletOutputHandlerTest {
     @Mock private PortletOutputHandler portletOutputHandler;

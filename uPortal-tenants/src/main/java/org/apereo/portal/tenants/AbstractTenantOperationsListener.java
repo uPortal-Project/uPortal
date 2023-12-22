@@ -89,7 +89,7 @@ public abstract class AbstractTenantOperationsListener implements ITenantOperati
 
     /** @since 4.3 */
     @Override
-    public Set<ITenantManagementAction> getAvaialableActions() {
+    public Set<ITenantManagementAction> getAvailableActions() {
         return Collections.emptySet();
     }
 
@@ -118,8 +118,8 @@ public abstract class AbstractTenantOperationsListener implements ITenantOperati
     }
 
     private TenantOperationResponse getDefaultResponse() {
-        TenantOperationResponse rslt =
+        TenantOperationResponse result =
                 new TenantOperationResponse(this, TenantOperationResponse.Result.IGNORE);
-        return rslt;
+        return result;
     }
 }

@@ -67,8 +67,8 @@ public class PreferencesService extends AbstractJwtService {
             }
         }
 
-        Preferences rslt = new Preferences(preferencesToken, preferencesMap);
-        logger.debug("Produced the following Preferences for user '{}':  {}", username, rslt);
-        return rslt;
+        Preferences result = new Preferences(preferencesToken, preferencesMap);
+        logger.debug("Produced the following Preferences for user '{}':  {}", username, result);
+        return result;
     }
 }

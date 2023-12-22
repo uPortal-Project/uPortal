@@ -102,15 +102,15 @@ public class AuthorizationHeaderProvider extends AbstractHeaderProvider {
 
         // Authorization header
         final Bearer bearer = bearerService.createBearer(username, attributes, groups, expires);
-        final Header rslt =
+        final Header result =
                 new BasicHeader(
                         Headers.AUTHORIZATION.getName(),
                         Headers.BEARER_TOKEN_PREFIX + bearer.getEncryptedToken());
         logger.debug(
                 "Produced the following Authorization header for username='{}':  {}",
                 username,
-                rslt);
+                result);
 
-        return rslt;
+        return result;
     }
 }

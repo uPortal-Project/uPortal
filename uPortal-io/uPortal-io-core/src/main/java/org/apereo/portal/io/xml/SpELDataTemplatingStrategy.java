@@ -93,9 +93,9 @@ public class SpELDataTemplatingStrategy implements IDataTemplatingStrategy {
             }
         }
 
-        final SAXSource rslt = new DocumentSource(data);
-        rslt.setSystemId(filename); // must be set, else import chokes
-        return rslt;
+        final SAXSource result = new DocumentSource(data);
+        result.setSystemId(filename); // must be set, else import chokes
+        return result;
     }
 
     /*
@@ -103,11 +103,11 @@ public class SpELDataTemplatingStrategy implements IDataTemplatingStrategy {
      */
 
     private String processText(String text) {
-        String rslt = text; // default
+        String result = text; // default
         Expression x =
                 portalSpELService.parseExpression(
                         text, PortalSpELServiceImpl.TemplateParserContext.INSTANCE);
-        rslt = x.getValue(ctx, String.class);
-        return rslt;
+        result = x.getValue(ctx, String.class);
+        return result;
     }
 }

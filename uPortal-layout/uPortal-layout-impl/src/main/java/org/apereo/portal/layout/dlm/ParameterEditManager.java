@@ -39,7 +39,7 @@ public class ParameterEditManager {
 
     /**
      * Hands back the single instance of RDBMDistributedLayoutStore. There is already a method for
-     * aquiring a single instance of the configured layout store so we delegate over there so that
+     * acquiring a single instance of the configured layout store so we delegate over there so that
      * all references refer to the same instance. This method is solely for convenience so that we
      * don't have to keep calling UserLayoutStoreFactory and casting the resulting class.
      */
@@ -62,7 +62,7 @@ public class ParameterEditManager {
         try {
             pSet = getParmEditSet(plf, null, false);
         } catch (Exception e) {
-            LOG.error("Exception occurred while getting user's DLM " + "paramter-edit-set.", e);
+            LOG.error("Exception occurred while getting user's DLM " + "parameter-edit-set.", e);
         }
 
         if (pSet == null) return;

@@ -649,17 +649,17 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
      */
     private boolean isLayoutCorrupt(org.dom4j.Document layoutDoc) {
 
-        boolean rslt = false; // until we find otherwise...
+        boolean result = false; // until we find otherwise...
 
         for (FormOfLayoutCorruption form : KNOWN_FORMS_OF_LAYOUT_CORRUPTION) {
             if (form.detect(layoutDoc)) {
                 logger.warn("Corrupt layout detected: {}", form.getMessage());
-                rslt = true;
+                result = true;
                 break;
             }
         }
 
-        return rslt;
+        return result;
     }
 
     private void addStylesheetUserPreferencesAttributes(
@@ -1367,7 +1367,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
 
     /**
      * Generates a new struct id for directive elements that dlm places in the PLF version of the
-     * layout tree. These elements are atifacts of the dlm storage model and used during merge but
+     * layout tree. These elements are artifacts of the dlm storage model and used during merge but
      * do not appear in the user's composite view.
      */
     @Override
@@ -1439,19 +1439,19 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
     @Override
     public boolean isFragmentOwner(String username) {
 
-        boolean rslt = false; // default
+        boolean result = false; // default
 
         final List<FragmentDefinition> definitions = this.fragmentUtils.getFragmentDefinitions();
         if (definitions != null) {
             for (final FragmentDefinition fragmentDefinition : definitions) {
                 if (fragmentDefinition.getOwnerId().equals(username)) {
-                    rslt = true;
+                    result = true;
                     break;
                 }
             }
         }
 
-        return rslt;
+        return result;
     }
 
     /**

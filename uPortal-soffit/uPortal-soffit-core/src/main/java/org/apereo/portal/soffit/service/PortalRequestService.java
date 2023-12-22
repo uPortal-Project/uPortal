@@ -73,9 +73,9 @@ public class PortalRequestService extends AbstractJwtService {
         final Map<String, List<String>> parameters =
                 (Map<String, List<String>>) claims.getBody().get(JwtClaims.PARAMETERS.getName());
 
-        PortalRequest rslt =
+        PortalRequest result =
                 new PortalRequest(portalRequestToken, properties, attributes, parameters);
-        logger.debug("Produced the following PortalRequest for user '{}':  {}", username, rslt);
-        return rslt;
+        logger.debug("Produced the following PortalRequest for user '{}':  {}", username, result);
+        return result;
     }
 }

@@ -54,7 +54,7 @@ public class UrlCasParamAppenderFromPortalRequestCustomizer
         StringBuilder requestURL;
         HttpServletRequest portalRequest = request;
 
-        // Usefull in case of request passed from the xslt/portlet context, we don't have the portal
+        // Useful in case of request passed from the xslt/portlet context, we don't have the portal
         // request passed
         if (request instanceof HttpServletPortletRequestWrapper) {
             portalRequest =

@@ -125,15 +125,15 @@ public class DefinitionHeaderProvider extends AbstractHeaderProvider {
                         parameters,
                         username,
                         getExpiration(renderRequest));
-        final Header rslt =
+        final Header result =
                 new BasicHeader(Headers.DEFINITION.getName(), definition.getEncryptedToken());
         logger.debug(
                 "Produced the following {} header for username='{}':  {}",
                 Headers.DEFINITION.getName(),
                 username,
-                rslt);
+                result);
 
-        return rslt;
+        return result;
     }
 
     /*

@@ -21,7 +21,7 @@ import org.w3c.dom.Element;
 
 /**
  * Extends the Spring DefaultBeanDefinitionDocumentReader to set the {@link
- * BeanDefinitionParserDelegate#DEFAULT_LAZY_INIT_ATTRIBUTE} to true, usefull when loading a context
+ * BeanDefinitionParserDelegate#DEFAULT_LAZY_INIT_ATTRIBUTE} to true, useful when loading a context
  * during testing or with command line tools.
  */
 public class LazyInitByDefaultBeanDefinitionDocumentReader

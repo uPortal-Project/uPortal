@@ -30,25 +30,25 @@ public enum SupportedFileTypes {
     LAYOUT("layout", "@username") {
         @Override
         protected boolean appliesTo(Element e, IUserLayoutStore rdbmdls) {
-            boolean rslt = false; // default
+            boolean result = false; // default
             boolean isLayout = e.getName().equals(rootElementNodeName);
             if (isLayout) {
                 String username = ((Node) documentNameXPath.evaluate(e)).getText();
-                rslt = !rdbmdls.isFragmentOwner(username);
+                result = !rdbmdls.isFragmentOwner(username);
             }
-            return rslt;
+            return result;
         }
     },
     FRAGMENT_LAYOUT("layout", "@username", "fragment-layout") {
         @Override
         protected boolean appliesTo(Element e, IUserLayoutStore rdbmdls) {
-            boolean rslt = false; // default
+            boolean result = false; // default
             boolean isLayout = e.getName().equals(rootElementNodeName);
             if (isLayout) {
                 String username = ((Node) documentNameXPath.evaluate(e)).getText();
-                rslt = rdbmdls.isFragmentOwner(username);
+                result = rdbmdls.isFragmentOwner(username);
             }
-            return rslt;
+            return result;
         }
     },
     PROFILE("profile", "@username") {
@@ -75,13 +75,13 @@ public enum SupportedFileTypes {
                                 + e.getName();
                 throw new RuntimeException(msg);
             }
-            StringBuilder rslt = new StringBuilder();
-            rslt.append(makeSafe(namePart))
+            StringBuilder result = new StringBuilder();
+            result.append(makeSafe(namePart))
                     .append("-")
                     .append(makeSafe(fNamePart))
                     .append(".")
                     .append(fileExtension);
-            return rslt.toString();
+            return result.toString();
         }
     },
     PERMISSION("permission", null) {
@@ -130,15 +130,15 @@ public enum SupportedFileTypes {
                                 + e.getName();
                 throw new RuntimeException(msg);
             }
-            StringBuilder rslt = new StringBuilder();
-            rslt.append(makeSafe(principalPart))
+            StringBuilder result = new StringBuilder();
+            result.append(makeSafe(principalPart))
                     .append("__")
                     .append(makeSafe(activityPart))
                     .append("__")
                     .append(makeSafe(ownerPart))
                     .append(".")
                     .append(fileExtension);
-            return rslt.toString();
+            return result.toString();
         }
     },
     MEMBERSHIP("membership", null) {
@@ -159,17 +159,17 @@ public enum SupportedFileTypes {
 
         @Override
         protected boolean appliesTo(Element e, IUserLayoutStore rdbmdls) {
-            boolean rslt = false; // default
+            boolean result = false; // default
             boolean isGroup = e.getName().equals(rootElementNodeName);
             if (isGroup) {
                 Object childrenElement = childrenXPath.evaluate(e);
                 if (childrenElement != null && childrenElement instanceof List<?>) {
                     List<?> nodes = (List<?>) childrenElement;
                     // evaluate() returns an empty list if there are no matches
-                    rslt = nodes.isEmpty();
+                    result = nodes.isEmpty();
                 }
             }
-            return rslt;
+            return result;
         }
     },
     GROUP_MEMBERSHIP("group", "name", "group_membership") {
@@ -177,15 +177,15 @@ public enum SupportedFileTypes {
 
         @Override
         protected boolean appliesTo(Element e, IUserLayoutStore rdbmdls) {
-            boolean rslt = false; // default
+            boolean result = false; // default
             boolean isGroup = e.getName().equals(rootElementNodeName);
             if (isGroup) {
                 Object childrenElement = childrenXPath.evaluate(e);
                 if (childrenElement != null && childrenElement instanceof Node) {
-                    rslt = true;
+                    result = true;
                 }
             }
-            return rslt;
+            return result;
         }
     },
     USER("user", "@username") {
@@ -193,15 +193,15 @@ public enum SupportedFileTypes {
 
         @Override
         protected boolean appliesTo(Element e, IUserLayoutStore rdbmdls) {
-            boolean rslt = false; // default
+            boolean result = false; // default
             boolean isUser = e.getName().equals(rootElementNodeName);
             if (isUser) {
                 Object defaultUserElement = templateUserXPath.evaluate(e);
                 if (defaultUserElement != null && defaultUserElement instanceof Node) {
-                    rslt = true;
+                    result = true;
                 }
             }
-            return rslt;
+            return result;
         }
     },
     THEME("theme", "name"),
@@ -252,20 +252,20 @@ public enum SupportedFileTypes {
             throw new IllegalArgumentException(msg);
         }
 
-        SupportedFileTypes rslt = null;
+        SupportedFileTypes result = null;
         for (SupportedFileTypes y : SupportedFileTypes.values()) {
             if (y.appliesTo(e, rdbmdls)) {
-                rslt = y;
+                result = y;
                 break;
             }
         }
-        if (rslt == null) {
+        if (result == null) {
             String msg =
                     "SupportedFileTypes instance not found for the specified element:  "
                             + e.getName();
             throw new RuntimeException(msg);
         }
-        return rslt;
+        return result;
     }
 
     public String getSafeFileNameWithExtension(Element e) {

@@ -84,15 +84,15 @@ public class LocaleManager implements ILocaleManager, Serializable {
         // Need logic to construct ordered locale list.
         // Consider creating a separate ILocaleResolver
         // interface to do this work.
-        final List<Locale> rslt = new ArrayList<>();
+        final List<Locale> result = new ArrayList<>();
         // Add highest priority locales first
-        addToLocaleList(rslt, sessionLocales);
-        addToLocaleList(rslt, userLocales);
+        addToLocaleList(result, sessionLocales);
+        addToLocaleList(result, userLocales);
         // We will ignore browser locales until we know how to
         // translate them into proper java.util.Locales
         // addToLocaleList(locales, browserLocales);
-        addToLocaleList(rslt, portalLocales);
-        return rslt;
+        addToLocaleList(result, portalLocales);
+        return result;
     }
 
     /** Add locales to the locale list if they aren't in there already */

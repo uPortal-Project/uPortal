@@ -38,10 +38,10 @@ public class PersonService {
 
     /** Obtain the fully-constructed {@link IPerson} associated witth the specified username. */
     public IPerson getPerson(String username) {
-        final IPerson rslt = new PersonImpl();
-        rslt.setAttribute(IPerson.USERNAME, username);
-        rslt.setID(userIdentityStore.getPortalUserId(username));
-        rslt.setAttributes(personAttributeDao.getPerson(username).getAttributes());
-        return rslt;
+        final IPerson result = new PersonImpl();
+        result.setAttribute(IPerson.USERNAME, username);
+        result.setID(userIdentityStore.getPortalUserId(username));
+        result.setAttributes(personAttributeDao.getPerson(username).getAttributes());
+        return result;
     }
 }

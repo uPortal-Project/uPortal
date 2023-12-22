@@ -71,7 +71,7 @@ public class GetMemberKeyPhrase implements Phrase {
     // Internal search, thus case sensitive.
     public static String getPhrase(String name, String memberValue) {
 
-        String rslt = null;
+        String result = null;
 
         // We can cut & run now if the element is a <literal>...
         if (name.equals("literal")) {
@@ -90,14 +90,14 @@ public class GetMemberKeyPhrase implements Phrase {
 
             // Must be a group...
             Class[] leafTypes = new Class[] {IPerson.class, IPortletDefinition.class};
-            for (int i = 0; i < leafTypes.length && rslt == null; i++) {
+            for (int i = 0; i < leafTypes.length && result == null; i++) {
                 EntityIdentifier[] eis =
                         GroupService.searchForGroups(
                                 memberValue, IGroupConstants.SearchMethod.DISCRETE, leafTypes[i]);
                 if (eis.length == 1) {
                     // Match!
                     IEntityGroup g = GroupService.findGroup(eis[0].getKey());
-                    rslt = g.getLocalKey();
+                    result = g.getLocalKey();
                     break;
                 } else if (eis.length > 1) {
                     String msg = "Ambiguous member name:  " + memberValue;
@@ -110,11 +110,11 @@ public class GetMemberKeyPhrase implements Phrase {
             throw new RuntimeException(msg, t);
         }
 
-        if (rslt == null) {
+        if (result == null) {
             String msg = "The specified member was not found:  " + memberValue;
             throw new RuntimeException(msg);
         }
 
-        return rslt;
+        return result;
     }
 }

@@ -44,38 +44,38 @@ public class PortletCategoryRegistryImpl implements IPortletCategoryRegistry {
 
     @Override
     public Set<PortletCategory> getAllChildCategories(PortletCategory parent) {
-        Set<PortletCategory> rslt = new HashSet<>();
+        Set<PortletCategory> result = new HashSet<>();
 
         for (PortletCategory child : getChildCategories(parent)) {
             // recurse
-            rslt.add(child);
-            rslt.addAll(getAllChildCategories(child));
+            result.add(child);
+            result.addAll(getAllChildCategories(child));
         }
 
-        return rslt;
+        return result;
     }
 
     @Override
     public Set<PortletCategory> getAllParentCategories(PortletCategory child) {
-        Set<PortletCategory> rslt = new HashSet<>();
+        Set<PortletCategory> result = new HashSet<>();
         for (PortletCategory parent : getParentCategories(child)) {
             // recurse
-            rslt.add(parent);
-            rslt.addAll(getAllParentCategories(parent));
+            result.add(parent);
+            result.addAll(getAllParentCategories(parent));
         }
-        return rslt;
+        return result;
     }
 
     @Override
     public Set<IPortletDefinition> getAllChildPortlets(PortletCategory parent) {
 
-        Set<IPortletDefinition> rslt;
+        Set<IPortletDefinition> result;
 
         try {
-            rslt = new HashSet<>(getChildPortlets(parent));
+            result = new HashSet<>(getChildPortlets(parent));
             for (PortletCategory category : getAllChildCategories(parent)) {
                 // Append portlets to list for each child category in the tree
-                rslt.addAll(getChildPortlets(category));
+                result.addAll(getChildPortlets(category));
             }
 
         } catch (Exception e) {
@@ -87,7 +87,7 @@ public class PortletCategoryRegistryImpl implements IPortletCategoryRegistry {
             throw new PortalException(msg, e);
         }
 
-        return rslt;
+        return result;
     }
 
     @Override

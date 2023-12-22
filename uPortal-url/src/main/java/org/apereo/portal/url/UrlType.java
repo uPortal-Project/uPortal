@@ -79,17 +79,17 @@ public enum UrlType {
         throw new IllegalStateException("Unknown TYPE: " + t);
     }
 
-    public static UrlType valueOfIngoreCase(String name) {
+    public static UrlType valueOfIgnoreCase(String name) {
         return UrlType.valueOf(name.toUpperCase());
     }
 
-    public static UrlType valueOfIngoreCase(String name, UrlType defaultValue) {
+    public static UrlType valueOfIgnoreCase(String name, UrlType defaultValue) {
         if (name == null) {
             return defaultValue;
         }
 
         try {
-            return valueOfIngoreCase(name);
+            return valueOfIgnoreCase(name);
         } catch (IllegalArgumentException e) {
             return defaultValue;
         }
