@@ -2,6 +2,7 @@ package org.apereo.portal.dao.usertype;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
+
 import static org.junit.Assert.assertThrows;
 import static org.springframework.test.util.AssertionErrors.assertEquals;
 
