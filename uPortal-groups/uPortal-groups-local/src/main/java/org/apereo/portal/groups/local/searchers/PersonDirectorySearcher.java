@@ -42,13 +42,16 @@ public class PersonDirectorySearcher implements ITypedEntitySearcher {
     private final IUsernameAttributeProvider usernameAttributeProvider;
 
     @Autowired
-    public PersonDirectorySearcher(IPersonAttributeDao personAttributeDao, IUsernameAttributeProvider usernameAttributeProvider) {
+    public PersonDirectorySearcher(
+            IPersonAttributeDao personAttributeDao,
+            IUsernameAttributeProvider usernameAttributeProvider) {
         this.personAttributeDao = personAttributeDao;
         this.usernameAttributeProvider = usernameAttributeProvider;
     }
 
     @Override
-    public EntityIdentifier[] searchForEntities(String query, SearchMethod method) throws GroupsException {
+    public EntityIdentifier[] searchForEntities(String query, SearchMethod method)
+            throws GroupsException {
         query = transformQuery(query, method);
         log.debug("Searching for a person directory account matching query string " + query);
 
@@ -58,7 +61,8 @@ public class PersonDirectorySearcher implements ITypedEntitySearcher {
         // create an array of EntityIdentifiers from the search results
         final List<EntityIdentifier> entityIdentifiers = new ArrayList<>(results.size());
         for (final IPersonAttributes personAttributes : results) {
-            entityIdentifiers.add(new EntityIdentifier(personAttributes.getName(), this.personEntityType));
+            entityIdentifiers.add(
+                    new EntityIdentifier(personAttributes.getName(), this.personEntityType));
         }
 
         return entityIdentifiers.toArray(new EntityIdentifier[entityIdentifiers.size()]);
