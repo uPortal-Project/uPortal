@@ -38,69 +38,50 @@ public class PersonDirectorySearcher implements ITypedEntitySearcher {
     private static final Log log = LogFactory.getLog(PersonDirectorySearcher.class);
 
     private final Class<? extends IBasicEntity> personEntityType = IPerson.class;
-    private IPersonAttributeDao personAttributeDao;
-    private IUsernameAttributeProvider usernameAttributeProvider;
+    private final IPersonAttributeDao personAttributeDao;
+    private final IUsernameAttributeProvider usernameAttributeProvider;
 
     @Autowired
-    public void setUsernameAttributeProvider(IUsernameAttributeProvider usernameAttributeProvider) {
+    public PersonDirectorySearcher(IPersonAttributeDao personAttributeDao, IUsernameAttributeProvider usernameAttributeProvider) {
+        this.personAttributeDao = personAttributeDao;
         this.usernameAttributeProvider = usernameAttributeProvider;
     }
 
-    @Autowired
-    public void setPersonAttributeDao(IPersonAttributeDao personAttributeDao) {
-        this.personAttributeDao = personAttributeDao;
+    @Override
+    public EntityIdentifier[] searchForEntities(String query, SearchMethod method) throws GroupsException {
+        query = transformQuery(query, method);
+        log.debug("Searching for a person directory account matching query string " + query);
+
+        final String usernameAttribute = this.usernameAttributeProvider.getUsernameAttribute();
+        final Map<String, Object> queryMap = Collections.singletonMap(usernameAttribute, query);
+        final Set<IPersonAttributes> results = this.personAttributeDao.getPeople(queryMap);
+        // create an array of EntityIdentifiers from the search results
+        final List<EntityIdentifier> entityIdentifiers = new ArrayList<>(results.size());
+        for (final IPersonAttributes personAttributes : results) {
+            entityIdentifiers.add(new EntityIdentifier(personAttributes.getName(), this.personEntityType));
+        }
+
+        return entityIdentifiers.toArray(new EntityIdentifier[entityIdentifiers.size()]);
     }
 
-    @Override
-    public EntityIdentifier[] searchForEntities(String query, SearchMethod method)
-            throws GroupsException {
+    private String transformQuery(String query, SearchMethod method) throws GroupsException {
         // Ignores CS / CI
         switch (method) {
             case DISCRETE:
             case DISCRETE_CI:
-                {
-                    break;
-                }
+                return query;
             case STARTS_WITH:
             case STARTS_WITH_CI:
-                {
-                    query = query + IPersonAttributeDao.WILDCARD;
-                    break;
-                }
+                return query + IPersonAttributeDao.WILDCARD;
             case ENDS_WITH:
             case ENDS_WITH_CI:
-                {
-                    query = IPersonAttributeDao.WILDCARD + query;
-                    break;
-                }
+                return IPersonAttributeDao.WILDCARD + query;
             case CONTAINS:
             case CONTAINS_CI:
-                {
-                    query = IPersonAttributeDao.WILDCARD + query + IPersonAttributeDao.WILDCARD;
-                    break;
-                }
+                return IPersonAttributeDao.WILDCARD + query + IPersonAttributeDao.WILDCARD;
             default:
-                {
-                    throw new GroupsException("Unknown search type");
-                }
+                throw new GroupsException("Unknown search type");
         }
-
-        log.debug("Searching for a person directory account matching query string " + query);
-
-        final String usernameAttribute = this.usernameAttributeProvider.getUsernameAttribute();
-        final Map<String, Object> queryMap =
-                Collections.<String, Object>singletonMap(usernameAttribute, query);
-        final Set<IPersonAttributes> results = this.personAttributeDao.getPeople(queryMap);
-
-        // create an array of EntityIdentifiers from the search results
-        final List<EntityIdentifier> entityIdentifiers =
-                new ArrayList<EntityIdentifier>(results.size());
-        for (final IPersonAttributes personAttributes : results) {
-            entityIdentifiers.add(
-                    new EntityIdentifier(personAttributes.getName(), this.personEntityType));
-        }
-
-        return entityIdentifiers.toArray(new EntityIdentifier[entityIdentifiers.size()]);
     }
 
     @Override
