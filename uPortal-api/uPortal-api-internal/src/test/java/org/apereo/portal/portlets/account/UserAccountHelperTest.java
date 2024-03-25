@@ -162,7 +162,7 @@ public class UserAccountHelperTest {
     }
 
     @Test(expected = NullPointerException.class)
-    public void testGetForm1() {
+    public void testGetFormWithNullUserName() {
         PersonForm personForm = userAccountHelper.getForm(null);
     }
 
