@@ -39,7 +39,7 @@ import org.springframework.stereotype.Service;
 @Service("portalInfoProvider")
 public class PortalInfoProviderImpl implements IPortalInfoProvider, ReadWriteCallback<String> {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
-
+    private static final int TOKEN_LENGTH = 4;
     private String serverName;
     private String networkInterfaceName;
 
@@ -89,7 +89,7 @@ public class PortalInfoProviderImpl implements IPortalInfoProvider, ReadWriteCal
         this.resolvedUniqueServerName =
                 this.resolvedServerName
                         + "_"
-                        + RandomTokenGenerator.INSTANCE.generateRandomToken(4);
+                        + RandomTokenGenerator.INSTANCE.generateRandomToken(TOKEN_LENGTH);
         return this.resolvedServerName;
     }
 

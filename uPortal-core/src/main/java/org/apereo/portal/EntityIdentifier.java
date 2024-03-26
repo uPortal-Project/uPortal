@@ -30,6 +30,9 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  */
 public class EntityIdentifier implements Serializable {
     private static final long serialVersionUID = 1L;
+    // Named constants for HashCodeBuilder
+    private static final int INITIAL_NON_ZERO_ODD_NUMBER = -646446001;
+    private static final int MULTIPLIER_NON_ZERO_ODD_NUMBER = 994968607;
 
     protected final String key;
     protected final Class<? extends IBasicEntity> type;
@@ -66,7 +69,7 @@ public class EntityIdentifier implements Serializable {
     /** @see java.lang.Object#hashCode() */
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(-646446001, 994968607)
+        return new HashCodeBuilder(INITIAL_NON_ZERO_ODD_NUMBER, MULTIPLIER_NON_ZERO_ODD_NUMBER)
                 .append(this.type)
                 .append(this.key)
                 .toHashCode();

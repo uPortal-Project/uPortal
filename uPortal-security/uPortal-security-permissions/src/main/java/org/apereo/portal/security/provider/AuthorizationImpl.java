@@ -1093,18 +1093,14 @@ public class AuthorizationImpl implements IAuthorizationService {
         for (int i = 0; i < perms.length; i++) {
             String permissionTarget = perms[i].getTarget();
 
-            if (
-            // owner matches
-            (owner == null || owner.equals(perms[i].getOwner()))
-                    &&
-                    // activity matches
-                    (activity == null || activity.equals(perms[i].getActivity()))
-                    &&
-                    // target matches or is a member of the current permission target
-                    (target == null
+            boolean isOwnerMatch = owner == null || owner.equals(perms[i].getOwner());
+            boolean isActivityMatch = activity == null || activity.equals(perms[i].getActivity());
+            boolean isTargetMatch =
+                    target == null
                             || target.equals(permissionTarget)
-                            || containingGroups.contains(permissionTarget))) {
+                            || containingGroups.contains(permissionTarget);
 
+            if (isOwnerMatch && isActivityMatch && isTargetMatch) {
                 al.add(perms[i]);
             }
         }
