@@ -37,10 +37,8 @@ import org.apereo.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.apereo.portal.portlet.registry.IPortletWindowRegistry;
 import org.apereo.portal.portlet.rendering.IPortletExecutionManager;
 import org.apereo.portal.portlets.favorites.FavoritesUtils;
-import org.apereo.portal.security.IAuthorizationPrincipal;
-import org.apereo.portal.security.IAuthorizationService;
-import org.apereo.portal.security.IPerson;
-import org.apereo.portal.security.IPersonManager;
+import org.apereo.portal.security.*;
+import org.apereo.portal.security.provider.*;
 import org.apereo.portal.url.PortalHttpServletFactoryService;
 import org.apereo.portal.user.IUserInstance;
 import org.apereo.portal.user.IUserInstanceManager;
@@ -85,14 +83,6 @@ public class PortletsRESTController {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    public enum PortletPermissionType {
-        BROWSE,
-        CONFIGURE,
-        MANAGE,
-        RENDER,
-        SUBSCRIBE
-    }
-
     /**
      * Provides information about all portlets in the portlet registry. NOTE: The response is
      * governed by the <code>IPermission.PORTLET_MANAGER_xyz</code> series of permissions. The
@@ -105,10 +95,10 @@ public class PortletsRESTController {
                 Boolean.parseBoolean(request.getParameter(FAVORITE_FLAG));
         final String requiredPermissionTypeParameter =
                 request.getParameter(REQUIRED_PERMISSION_TYPE);
-        final PortletPermissionType requiredPermissionType =
+        final IAuthorizationService.PortletPermissionType requiredPermissionType =
                 (requiredPermissionTypeParameter == null)
-                        ? PortletPermissionType.MANAGE
-                        : PortletPermissionType.valueOf(
+                        ? IAuthorizationService.PortletPermissionType.MANAGE
+                        : IAuthorizationService.PortletPermissionType.valueOf(
                                 requiredPermissionTypeParameter.toUpperCase());
 
         final Set<IPortletDefinition> favorites =
@@ -129,29 +119,13 @@ public class PortletsRESTController {
         return new ModelAndView("json", "portlets", results);
     }
 
-    private boolean doesUserHavePermissionToViewPortlet(
+    protected boolean doesUserHavePermissionToViewPortlet(
             IAuthorizationPrincipal ap,
             IPortletDefinition portletDefinition,
-            PortletPermissionType requiredPermissionType) {
-        switch (requiredPermissionType) {
-            case BROWSE:
-                return this.authorizationService.canPrincipalBrowse(ap, portletDefinition);
-            case CONFIGURE:
-                return this.authorizationService.canPrincipalConfigure(
-                        ap, portletDefinition.getPortletDefinitionId().getStringId());
-            case MANAGE:
-                return this.authorizationService.canPrincipalManage(
-                        ap, portletDefinition.getPortletDefinitionId().getStringId());
-            case RENDER:
-                return this.authorizationService.canPrincipalRender(
-                        ap, portletDefinition.getPortletDefinitionId().getStringId());
-            case SUBSCRIBE:
-                return this.authorizationService.canPrincipalSubscribe(
-                        ap, portletDefinition.getPortletDefinitionId().getStringId());
-            default:
-                throw new IllegalArgumentException(
-                        "Unknown requiredPermissionType: " + requiredPermissionType);
-        }
+            IAuthorizationService.PortletPermissionType requiredPermissionType) {
+        IPortletPermissionHandler portletPermissionHandler =
+                authorizationService.getPermission(requiredPermissionType);
+        return portletPermissionHandler.checkPermission(ap, portletDefinition);
     }
 
     /**
