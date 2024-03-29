@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class PagsGroupService {
+    public static final String SERVICE_NAME_PAGS = "pags";
     @Autowired private IPersonAttributesGroupDefinitionDao pagsGroupDefDao;
     private final Logger logger = LoggerFactory.getLogger(getClass());
 

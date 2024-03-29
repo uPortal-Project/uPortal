@@ -15,6 +15,7 @@
 package org.apereo.portal.groups.pags.dao;
 
 import static org.apereo.portal.groups.pags.dao.jpa.LocalGroupService.SERVICE_NAME_LOCAL;
+import static org.apereo.portal.groups.pags.dao.jpa.PagsGroupService.SERVICE_NAME_PAGS;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -45,10 +46,6 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public final class PagsService {
-
-    // These 2 should be (public) constants on their respective service classes, not here
-
-    public static final String SERVICE_NAME_PAGS = "pags";
 
     @Autowired private PagsGroupService pagsGroupService;
     @Autowired private LocalGroupService localGroupService;

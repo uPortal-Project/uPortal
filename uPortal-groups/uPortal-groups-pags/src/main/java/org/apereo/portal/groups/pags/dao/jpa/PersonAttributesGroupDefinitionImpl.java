@@ -41,7 +41,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.portal.EntityIdentifier;
 import org.apereo.portal.groups.pags.dao.IPersonAttributesGroupDefinition;
 import org.apereo.portal.groups.pags.dao.IPersonAttributesGroupTestGroupDefinition;
-import org.apereo.portal.groups.pags.dao.PagsService;
 import org.apereo.portal.security.IPerson;
 import org.dom4j.DocumentHelper;
 import org.dom4j.QName;
@@ -135,7 +134,7 @@ public class PersonAttributesGroupDefinitionImpl implements IPersonAttributesGro
     @JsonIgnore
     public EntityIdentifier getCompositeEntityIdentifierForGroup() {
         return new EntityIdentifier(
-                PagsService.SERVICE_NAME_PAGS + "." + this.getName(), IPerson.class);
+                PagsGroupService.SERVICE_NAME_PAGS + "." + this.getName(), IPerson.class);
     }
 
     @Override
