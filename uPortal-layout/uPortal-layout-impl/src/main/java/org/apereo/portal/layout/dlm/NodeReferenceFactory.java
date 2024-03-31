@@ -22,11 +22,7 @@ import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apereo.portal.IUserIdentityStore;
-import org.apereo.portal.IUserProfile;
-import org.apereo.portal.UserProfile;
 import org.apereo.portal.layout.IUserLayoutStore;
-import org.apereo.portal.security.provider.BrokenSecurityContext;
-import org.apereo.portal.security.provider.PersonImpl;
 import org.apereo.portal.utils.Tuple;
 import org.apereo.portal.xml.XmlUtilities;
 import org.apereo.portal.xml.xpath.XPathOperations;
@@ -47,7 +43,7 @@ public final class NodeReferenceFactory {
     private static final Pattern DLM_PATH_REF_DELIM = Pattern.compile("\\:");
     private static final Pattern USER_NODE_PATTERN = Pattern.compile("\\A([a-zA-Z]\\d*)\\z");
     private static final Pattern DLM_NODE_PATTERN = Pattern.compile("u(\\d+)l\\d+([ns]\\d+)");
-
+    private static final int LAYOUT_ID_FIRST_NODE = 1;
     private final Log log = LogFactory.getLog(getClass());
 
     @Autowired private IUserLayoutStore layoutStore;
@@ -142,7 +138,7 @@ public final class NodeReferenceFactory {
         }
 
         final Tuple<String, DistributedUserLayout> userLayoutInfo =
-                getUserLayoutTuple(layoutOwnerName, layoutOwnerUserId);
+                layoutStore.getUserLayoutTuple(layoutOwnerName, layoutOwnerUserId);
         final Document userLayout = userLayoutInfo.second.getLayout();
 
         final Node targetNode =
@@ -178,21 +174,14 @@ public final class NodeReferenceFactory {
             final String structId = structIdAttr.getTextContent();
 
             if (isStructRef) {
-                return new Noderef(
-                        layoutOwnerUserId,
-                        1 /* TODO:  remove hard-coded layoutId=1 */,
-                        "s" + structId);
+                return new Noderef(layoutOwnerUserId, LAYOUT_ID_FIRST_NODE, "s" + structId);
             }
 
-            return new Noderef(
-                    layoutOwnerUserId, 1 /* TODO:  remove hard-coded layoutId=1 */, "n" + structId);
+            return new Noderef(layoutOwnerUserId, LAYOUT_ID_FIRST_NODE, "n" + structId);
         }
 
         final Node idAttr = attributes.getNamedItem("ID");
-        return new Noderef(
-                layoutOwnerUserId,
-                1 /* TODO:  remove hard-coded layoutId=1 */,
-                idAttr.getTextContent());
+        return new Noderef(layoutOwnerUserId, LAYOUT_ID_FIRST_NODE, idAttr.getTextContent());
     }
 
     /**
@@ -229,7 +218,7 @@ public final class NodeReferenceFactory {
 
             final String userName = this.userIdentityStore.getPortalUserName(userId);
             final Tuple<String, DistributedUserLayout> userLayoutInfo =
-                    getUserLayoutTuple(userName, userId);
+                    layoutStore.getUserLayoutTuple(userName, userId);
 
             if (userLayoutInfo.second == null) {
                 this.log.warn(
@@ -290,36 +279,5 @@ public final class NodeReferenceFactory {
         }
 
         return result;
-    }
-
-    /*
-     * Implementation.
-     */
-
-    /**
-     * Provides a {@link Tuple} containing the &quot;fragmentized&quot; version of a DLM fragment
-     * owner's layout, together with the username. This version of the layout consistent with what
-     * DLM uses internally for fragments, and is created by FragmentActivator.fragmentizeLayout.
-     * It's important that the version returned by this method matches what DLM uses internally
-     * because it will be used to establish relationships between fragment layout nodes and user
-     * customizations of DLM fragments.
-     *
-     * @param userId
-     * @return
-     */
-    /* TODO:  make private */ Tuple<String, DistributedUserLayout> getUserLayoutTuple(
-            String userName, int userId) {
-
-        final PersonImpl person = new PersonImpl();
-        person.setUserName(userName);
-        person.setID(userId);
-        person.setSecurityContext(new BrokenSecurityContext());
-
-        final IUserProfile profile =
-                layoutStore.getUserProfileByFname(person, UserProfile.DEFAULT_PROFILE_FNAME);
-        final DistributedUserLayout userLayout =
-                layoutStore.getUserLayout(person, (UserProfile) profile);
-
-        return new Tuple<String, DistributedUserLayout>(userName, userLayout);
     }
 }
