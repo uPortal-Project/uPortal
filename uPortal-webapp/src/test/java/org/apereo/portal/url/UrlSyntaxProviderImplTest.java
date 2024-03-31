@@ -14,11 +14,7 @@
  */
 package org.apereo.portal.url;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.when;
 
 import com.google.common.base.Function;
@@ -986,22 +982,20 @@ public class UrlSyntaxProviderImplTest {
         IPortletWindowId portletWindowId =
                 this.urlSyntaxProvider.parsePortletWindowIdSuffix(
                         request,
-                        UrlSyntaxProviderImpl.PARAM_WINDOW_STATE,
+                        PortalConstants.PARAM_WINDOW_STATE,
                         ids,
-                        UrlSyntaxProviderImpl.PARAM_WINDOW_STATE
-                                + UrlSyntaxProviderImpl.SEPARATOR
-                                + "pw2");
+                        PortalConstants.PARAM_WINDOW_STATE + PortalConstants.SEPARATOR + "pw2");
 
         assertEquals(expectedPortletWindowId, portletWindowId);
 
         portletWindowId =
                 this.urlSyntaxProvider.parsePortletWindowIdSuffix(
                         request,
-                        UrlSyntaxProviderImpl.PARAM_WINDOW_STATE,
+                        PortalConstants.PARAM_WINDOW_STATE,
                         ids,
-                        UrlSyntaxProviderImpl.PARAM_WINDOW_STATE
-                                + UrlSyntaxProviderImpl.SEPARATOR
-                                + UrlSyntaxProviderImpl.SEPARATOR
+                        PortalConstants.PARAM_WINDOW_STATE
+                                + PortalConstants.SEPARATOR
+                                + PortalConstants.SEPARATOR
                                 + "pw2");
 
         assertNull(portletWindowId);
@@ -1009,9 +1003,9 @@ public class UrlSyntaxProviderImplTest {
         portletWindowId =
                 this.urlSyntaxProvider.parsePortletWindowIdSuffix(
                         request,
-                        UrlSyntaxProviderImpl.PARAM_WINDOW_STATE,
+                        PortalConstants.PARAM_WINDOW_STATE,
                         ids,
-                        UrlSyntaxProviderImpl.PARAM_WINDOW_STATE);
+                        PortalConstants.PARAM_WINDOW_STATE);
 
         assertNull(portletWindowId);
     }
@@ -1029,9 +1023,9 @@ public class UrlSyntaxProviderImplTest {
         Tuple<String, IPortletWindowId> portletParameterInfo =
                 this.urlSyntaxProvider.parsePortletParameterName(
                         request,
-                        UrlSyntaxProviderImpl.PORTLET_PARAM_PREFIX
+                        PortalConstants.PORTLET_PARAM_PREFIX
                                 + "pw2"
-                                + UrlSyntaxProviderImpl.SEPARATOR
+                                + PortalConstants.SEPARATOR
                                 + "foo",
                         ids);
 
@@ -1042,9 +1036,7 @@ public class UrlSyntaxProviderImplTest {
         portletParameterInfo =
                 this.urlSyntaxProvider.parsePortletParameterName(
                         request,
-                        UrlSyntaxProviderImpl.PORTLET_PARAM_PREFIX
-                                + UrlSyntaxProviderImpl.SEPARATOR
-                                + "foo",
+                        PortalConstants.PORTLET_PARAM_PREFIX + PortalConstants.SEPARATOR + "foo",
                         ids);
 
         assertNotNull(portletParameterInfo);
@@ -1054,9 +1046,9 @@ public class UrlSyntaxProviderImplTest {
         portletParameterInfo =
                 this.urlSyntaxProvider.parsePortletParameterName(
                         request,
-                        UrlSyntaxProviderImpl.PORTLET_PARAM_PREFIX
+                        PortalConstants.PORTLET_PARAM_PREFIX
                                 + "pw1"
-                                + UrlSyntaxProviderImpl.SEPARATOR
+                                + PortalConstants.SEPARATOR
                                 + "foo",
                         ids);
 
