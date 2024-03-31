@@ -75,9 +75,9 @@ public class PagsRESTController {
          * This step is necessary;  the incoming URLs will sometimes have '+'
          * characters for spaces, and the @PathVariable magic doesn't convert them.
          */
-        String name;
+        String decodedPagsGroupName;
         try {
-            name = URLDecoder.decode(pagsGroupName, "UTF-8");
+            decodedPagsGroupName = URLDecoder.decode(pagsGroupName, "UTF-8");
         } catch (UnsupportedEncodingException e) {
             res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return "{ 'error': '" + e.toString() + "' }";
@@ -85,7 +85,7 @@ public class PagsRESTController {
 
         IPerson person = personManager.getPerson(request);
         IPersonAttributesGroupDefinition pagsGroup =
-                this.pagsService.getPagsDefinitionByName(person, name);
+                this.pagsService.getPagsDefinitionByName(person, decodedPagsGroupName);
         return respondPagsGroupJson(res, pagsGroup, person, HttpServletResponse.SC_FOUND);
     }
 
