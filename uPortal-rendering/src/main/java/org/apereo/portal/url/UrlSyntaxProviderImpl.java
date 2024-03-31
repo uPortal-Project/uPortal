@@ -14,9 +14,21 @@
  */
 package org.apereo.portal.url;
 
+import static org.apereo.portal.url.PortalConstants.*;
+
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import javax.portlet.PortletMode;
+import javax.portlet.WindowState;
+import javax.servlet.http.HttpServletRequest;
+import javax.xml.xpath.XPathExpression;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.apereo.portal.IUserPreferencesManager;
@@ -39,19 +51,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UrlPathHelper;
-
-import javax.portlet.PortletMode;
-import javax.portlet.WindowState;
-import javax.servlet.http.HttpServletRequest;
-import javax.xml.xpath.XPathExpression;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.*;
-import java.util.Map.Entry;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import static org.apereo.portal.url.PortalConstants.*;
 
 /**
  * {@link IPortalUrlProvider} and {@link IUrlSyntaxProvider} implementation that uses a consistent
