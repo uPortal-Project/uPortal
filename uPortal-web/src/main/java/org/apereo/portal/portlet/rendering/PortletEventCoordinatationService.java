@@ -115,7 +115,7 @@ public class PortletEventCoordinatationService implements IPortletEventCoordinat
         this.portletEntityRegistry = portletEntityRegistry;
     }
 
-    private final PortletEventCoordinationHelper portletEventCoordinationHelper =
+    protected final PortletEventCoordinationHelper portletEventCoordinationHelper =
             new PortletEventCoordinationHelper(
                     this.xmlUtilities,
                     this.portletContextService,

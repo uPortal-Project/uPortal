@@ -105,7 +105,8 @@ public class PortletEventCoordinatationServiceTest {
                 .thenReturn((List) supportedProcessingEvents);
 
         final boolean supportsEvent =
-                portletEventCoordinatationService.supportsEvent(event, portletDefinitionId);
+                portletEventCoordinatationService.portletEventCoordinationHelper.supportsEvent(
+                        event, portletDefinitionId);
         assertTrue(supportsEvent);
     }
 }
