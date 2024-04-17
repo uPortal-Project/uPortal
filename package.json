@@ -2,7 +2,7 @@
   "name": "uportal",
   "private": true,
   "devDependencies": {
-    "eslint": "^8.53.0",
+    "eslint": "^9.0.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-prettier": "^5.0.1",
     "eslint-plugin-sonarjs": "^0.25.0",
