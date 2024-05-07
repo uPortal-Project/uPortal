@@ -14,6 +14,7 @@
 *.less       text eol=lf
 *.md         text eol=lf
 *.MF         text eol=lf
+*.mjs        text eol=lf
 *.Module     text eol=lf
 *.pl         text eol=lf
 *.pom        text eol=lf

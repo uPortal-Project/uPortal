@@ -2,11 +2,13 @@
   "name": "uportal",
   "private": true,
   "devDependencies": {
-    "eslint": "^8.53.0",
+    "@eslint/js": "^9.2.0",
+    "eslint": "^9.0.0",
     "eslint-config-prettier": "^9.0.0",
-    "eslint-plugin-prettier": "^5.0.1",
-    "eslint-plugin-sonarjs": "^0.25.0",
+    "eslint-plugin-prettier": "^5.0.0",
+    "eslint-plugin-sonarjs": "^1.0.0",
     "eslint-plugin-unicorn": "^52.0.0",
+    "globals": "^15.1.0",
     "postcss-less": "^6.0.0",
     "prettier": "~3.2.0",
     "remark-cli": "^12.0.0",
@@ -21,48 +23,11 @@
     "uPortal-webapp/"
   ],
   "scripts": {
-    "lint-js": "eslint . --ignore-path .gitignore --ignore-pattern *.min.js",
+    "lint-js": "eslint . --report-unused-disable-directives --max-warnings 0",
     "lint-less": "stylelint **/*.less !**/bootstrap/**/*.less !**/build/**/*.less",
     "lint-md": "remark -f *.md docs/**",
     "format-js": "npm run lint-js -- --fix",
     "format-less": "npm run lint-less -- --fix"
-  },
-  "eslintConfig": {
-    "extends": [
-      "eslint:recommended",
-      "plugin:sonarjs/recommended",
-      "plugin:unicorn/recommended",
-      "plugin:prettier/recommended"
-    ],
-    "env": {
-      "es2023": true,
-      "browser": true
-    },
-    "globals": {
-      "jQuery": false,
-      "$": false,
-      "_": false,
-      "up": false,
-      "fluid": false
-    },
-    "rules": {
-      "no-redeclare": [
-        "error",
-        {
-          "builtinGlobals": false
-        }
-      ],
-      "sonarjs/cognitive-complexity": "off",
-      "sonarjs/no-duplicate-string": "off",
-      "unicorn/filename-case": "off",
-      "unicorn/no-array-callback-reference": "off",
-      "unicorn/no-for-loop": "off",
-      "unicorn/no-null": "off",
-      "unicorn/no-this-assignment": "off",
-      "unicorn/numeric-separators-style": "off",
-      "unicorn/prefer-module": "off",
-      "unicorn/prefer-spread": "off"
-    }
   },
   "remarkConfig": {
     "plugins": [
