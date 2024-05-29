@@ -25,7 +25,6 @@ import org.apereo.portal.PortalException;
 import org.apereo.portal.portlet.om.IPortletDefinition;
 import org.apereo.portal.portlet.om.IPortletDefinitionParameter;
 import org.apereo.portal.security.IPerson;
-import org.apereo.portal.spring.locator.ApplicationContextLocator;
 import org.apereo.portal.utils.personalize.IPersonalizer;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -48,7 +47,6 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription
     private boolean hasHelp = false;
     private boolean hasAbout = false;
     private boolean isSecure = false;
-    private IPersonalizer personalizer;
 
     public UserLayoutChannelDescription() {
         super();
@@ -60,12 +58,13 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription
      * @param person personalization details
      * @param definition
      * @param session lightweight caching
+     * @param personalizer
      */
     public UserLayoutChannelDescription(
-            IPerson person, IPortletDefinition definition, HttpSession session) {
-        this.personalizer =
-                ApplicationContextLocator.getApplicationContext().getBean(IPersonalizer.class);
-
+            IPerson person,
+            IPortletDefinition definition,
+            HttpSession session,
+            IPersonalizer personalizer) {
         this.title = personalizer.personalize(person, definition.getTitle(), session);
         this.name = definition.getName();
         this.description = personalizer.personalize(person, definition.getDescription(), session);

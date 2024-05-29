@@ -39,6 +39,7 @@ import org.apereo.portal.layout.IUserLayout;
 import org.apereo.portal.layout.IUserLayoutManager;
 import org.apereo.portal.layout.IUserLayoutStore;
 import org.apereo.portal.layout.PortletSubscribeIdResolver;
+import org.apereo.portal.layout.dlm.MissingPortletDefinition;
 import org.apereo.portal.layout.dlm.UserPrefsHandler;
 import org.apereo.portal.layout.node.IUserLayoutChannelDescription;
 import org.apereo.portal.layout.node.IUserLayoutFolderDescription;
@@ -51,13 +52,14 @@ import org.apereo.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.apereo.portal.portlet.registry.IPortletWindowRegistry;
 import org.apereo.portal.portlets.favorites.FavoritesUtils;
 import org.apereo.portal.security.IAuthorizationPrincipal;
+import org.apereo.portal.security.IAuthorizationService;
 import org.apereo.portal.security.IPermission;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.PermissionHelper;
-import org.apereo.portal.services.AuthorizationServiceFacade;
 import org.apereo.portal.services.GroupService;
 import org.apereo.portal.user.IUserInstance;
 import org.apereo.portal.user.IUserInstanceManager;
+import org.apereo.portal.utils.personalize.IPersonalizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,6 +88,7 @@ public class UpdatePreferencesServlet {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
+    private IAuthorizationService authorizationService;
     private IPortletDefinitionRegistry portletDefinitionRegistry;
     private IUserIdentityStore userIdentityStore;
     private IUserInstanceManager userInstanceManager;
@@ -94,6 +97,7 @@ public class UpdatePreferencesServlet {
     private MessageSource messageSource;
     private IPortletWindowRegistry portletWindowRegistry;
     private FavoritesUtils favoritesUtils;
+    private IPersonalizer personalizer;
 
     @Value("${org.apereo.portal.layout.dlm.remoting.addedWindowState:null}")
     private String addedPortletWindowState;
@@ -107,6 +111,11 @@ public class UpdatePreferencesServlet {
                 && !addedPortletWindowState.isEmpty()) {
             addedWindowState = new WindowState(addedPortletWindowState);
         }
+    }
+
+    @Autowired
+    public void setAuthorizationService(IAuthorizationService authorizationService) {
+        this.authorizationService = authorizationService;
     }
 
     @Autowired
@@ -148,6 +157,11 @@ public class UpdatePreferencesServlet {
     @Autowired
     public void setFavoritesUtils(FavoritesUtils favoritesUtils) {
         this.favoritesUtils = favoritesUtils;
+    }
+
+    @Autowired
+    public void setPersonalizer(IPersonalizer personalizer) {
+        this.personalizer = personalizer;
     }
 
     /** Default name given to newly created tabs. */
@@ -606,13 +620,15 @@ public class UpdatePreferencesServlet {
         final IUserLayoutManager ulm = upm.getUserLayoutManager();
 
         final IUserLayoutChannelDescription channel =
-                new UserLayoutChannelDescription(person, pdef, request.getSession());
+                new UserLayoutChannelDescription(person, pdef, request.getSession(), personalizer);
 
         // get favorite tab
         final String favoriteTabNodeId = favoritesUtils.getFavoriteTabNodeId(ulm.getUserLayout());
 
         if (favoriteTabNodeId != null) {
-            // add portlet to favorite tab
+            removeOrphanedFavoritesFromLayout(ulm);
+
+            // add new favorite portlet to favorite tab
             final IUserLayoutNodeDescription node = addNodeToTab(ulm, channel, favoriteTabNodeId);
 
             if (node == null) {
@@ -696,12 +712,13 @@ public class UpdatePreferencesServlet {
 
             String resp = new String();
 
+            removeOrphanedFavoritesFromLayout(ulm, favoritePortlets);
+
+            boolean saveNeeded = false;
             for (IUserLayoutChannelDescription deleteNode : favoritesToDelete) {
-                if (deleteNode != null && deleteNode instanceof UserLayoutChannelDescription) {
-                    UserLayoutChannelDescription channelDescription =
-                            (UserLayoutChannelDescription) deleteNode;
+                if (deleteNode != null) {
                     try {
-                        if (!ulm.deleteNode(channelDescription.getChannelSubscribeId())) {
+                        if (!ulm.deleteNode(deleteNode.getChannelSubscribeId())) {
 
                             logger.warn(
                                     "Error deleting the node {} from favorites for user {}",
@@ -718,27 +735,30 @@ public class UpdatePreferencesServlet {
                                             "Can''t remove favorite",
                                             locale);
                         } else {
+                            saveNeeded = true;
                             // load success message
-
-                            resp =
-                                    getMessage(
-                                            "success.remove.portlet",
-                                            "Removed from Favorites successfully",
-                                            locale);
                         }
-                        // save the user's layout
+                    } catch (PortalException e) {
+                        return handlePersistError(request, response, e);
+                    }
+                }
+                if (saveNeeded) {
+                    try {
                         ulm.saveUserLayout();
                     } catch (PortalException e) {
                         return handlePersistError(request, response, e);
                     }
+                    resp =
+                            getMessage(
+                                    "success.remove.portlet",
+                                    "Removed from Favorites successfully",
+                                    locale);
                 }
             }
 
             return new ModelAndView("jsonView", Collections.singletonMap("response", resp));
         }
 
-        // save the user's layout
-        ulm.saveUserLayout();
         return new ModelAndView(
                 "jsonView",
                 Collections.singletonMap(
@@ -789,7 +809,7 @@ public class UpdatePreferencesServlet {
 
         IUserLayoutChannelDescription channel =
                 new UserLayoutChannelDescription(
-                        getPerson(ui, response), definition, request.getSession());
+                        getPerson(ui, response), definition, request.getSession(), personalizer);
 
         IUserLayoutNodeDescription node;
         if (isTab(ulm, destinationId)) {
@@ -1453,13 +1473,12 @@ public class UpdatePreferencesServlet {
     }
 
     private IAuthorizationPrincipal getUserPrincipal(final String userName) {
-        final IEntity user = GroupService.getEntity(userName, IPerson.class);
+        final IEntity user = this.personEntityService.getPersonEntity(userName);
         if (user == null) {
             return null;
         }
 
-        final AuthorizationServiceFacade authService = AuthorizationServiceFacade.instance();
-        return authService.newPrincipal(user);
+        return authorizationService.newPrincipal(user);
     }
 
     private String getTabIdFromName(IUserLayout userLayout, String tabName) {
@@ -1595,4 +1614,49 @@ public class UpdatePreferencesServlet {
     private boolean isFolder(IUserLayoutManager ulm, String id) {
         return ulm.getNode(id).getType().equals(IUserLayoutNodeDescription.LayoutNodeType.FOLDER);
     }
+
+    private void removeOrphanedFavoritesFromLayout(IUserLayoutManager ulm) {
+        List<IUserLayoutNodeDescription> favoritesPortlets =
+                favoritesUtils.getFavoritePortletLayoutNodes(ulm.getUserLayout());
+        removeOrphanedFavoritesFromLayout(ulm, favoritesPortlets);
+    }
+
+    private void removeOrphanedFavoritesFromLayout(
+            IUserLayoutManager ulm, List<IUserLayoutNodeDescription> favoritesPortlets) {
+        // remove orphaned favorites (meaning they are favorites for portlets that have been
+        // removed/deleted) ...keep in mind that ulm.saveLayout() will need to be called
+        // in order to actually save the changes to the layout
+        for (IUserLayoutNodeDescription node : favoritesPortlets) {
+            if (node instanceof IUserLayoutChannelDescription) {
+                IUserLayoutChannelDescription channelDescription =
+                        (IUserLayoutChannelDescription) node;
+                if (channelDescription
+                        .getChannelPublishId()
+                        .equals(MissingPortletDefinition.CHANNEL_ID)) {
+                    ulm.deleteNode(channelDescription.getChannelSubscribeId());
+                }
+            }
+        }
+    }
+
+    // for unit testing begin
+
+    public interface IPersonEntityService {
+        IEntity getPersonEntity(String userName);
+    }
+
+    public class GroupServiceBasedPersonEntityService implements IPersonEntityService {
+        @Override
+        public IEntity getPersonEntity(String userName) {
+            return GroupService.getEntity(userName, IPerson.class);
+        }
+    }
+
+    private IPersonEntityService personEntityService = new GroupServiceBasedPersonEntityService();
+
+    public void setPersonEntityService(IPersonEntityService personEntityService) {
+        this.personEntityService = personEntityService;
+    }
+
+    // for unit testing end
 }
