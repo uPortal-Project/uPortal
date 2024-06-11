@@ -54,6 +54,10 @@ public class FavoritesUtils {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
+    public void setPortletDefinitionRegistry(IPortletDefinitionRegistry registry) {
+        this.portletRegistry = registry;
+    }
+
     /**
      * Get the favorite collections of portlets (i.e. suitable folders ("tabs") in the user layout.)
      * Suitable layout nodes are of type folder with @type attribute favorite_collection.

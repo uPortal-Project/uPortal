@@ -36,8 +36,8 @@ import org.apereo.portal.security.IPerson;
  */
 public class MissingPortletDefinition implements IPortletDefinition {
 
-    private static final String FNAME = "DLMStaticMissingChannel";
-    /* package-private */ static final String CHANNEL_ID = "-1";
+    public static final String FNAME = "DLMStaticMissingChannel";
+    public static final String CHANNEL_ID = "-1";
 
     public static final IPortletDefinition INSTANCE = new MissingPortletDefinition();
 
