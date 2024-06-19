@@ -34,13 +34,17 @@ export default [
             'sonarjs/cognitive-complexity': 'off',
             'sonarjs/no-duplicate-string': 'off',
             'unicorn/filename-case': 'off',
+            'unicorn/no-this-assignment': 'off',
             'unicorn/no-array-callback-reference': 'off',
             'unicorn/no-for-loop': 'off',
             'unicorn/no-null': 'off',
-            'unicorn/no-this-assignment': 'off',
+            // disabled for js compressor compatibility
+            // it does not support new JS features
+            // TODO: find a replacement for compressor
             'unicorn/numeric-separators-style': 'off',
             'unicorn/prefer-module': 'off',
             'unicorn/prefer-spread': 'off',
+            'unicorn/prefer-string-raw': 'off',
         },
     },
 ];
