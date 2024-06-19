@@ -4,8 +4,10 @@
 
  - Andrew Petro [apetro](https://github.com/apetro)
  - Benito Gonzalez [bjagg](https://github.com/bjagg)
+ - Bill Smith [Naenyn](https://github.com/Naenyn)
  - Chris Beach [cbeach47](https://github.com/cbeach47)
  - Christian Murphy [ChristianMurphy](https://github.com/ChristianMurphy)
+ - Gary Roybal [groybal](https://github.com/groybal)
  - Jim Helwig [jimhelwig](https://github.com/jimhelwig)
  - Jonathan Tran [jonathanmtran](https://github.com/jonathanmtran)
  - Julien Gribonvald [jgribonvald](https://github.com/jgribonvald)
@@ -98,3 +100,5 @@ Apache Software Foundation on
 [Christian Murphy]: https://groups.google.com/a/apereo.org/d/msg/uportal-dev/N9vxp2Bz9J4/Dmih3VNTBAAJ
 [Ryan Mathis]: https://groups.google.com/a/apereo.org/d/msg/uportal-dev/B87VkKHHnls/zOCNvHTuCgAJ
 [Michael Gillian]: https://groups.google.com/a/apereo.org/g/uportal-dev/c/jHNrpSSsLSs/m/kjYzo4YYBQAJ
+[Gary Roybal]: https://groups.google.com/a/apereo.org/g/uportal-dev/c/ulwX4Azegdc/m/BP3x-FuOAAAJ
+[Bill Smith]: https://groups.google.com/a/apereo.org/g/uportal-dev/c/oSyul_3LvJI/m/waAtsoiMAAAJ
