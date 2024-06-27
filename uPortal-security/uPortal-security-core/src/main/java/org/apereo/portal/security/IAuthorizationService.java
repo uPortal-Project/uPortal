@@ -25,6 +25,15 @@ import org.apereo.portal.portlet.om.PortletLifecycleState;
  * for authorization activities ultimately come here.
  */
 public interface IAuthorizationService {
+
+    enum PortletPermissionType {
+        BROWSE,
+        CONFIGURE,
+        MANAGE,
+        RENDER,
+        SUBSCRIBE
+    }
+
     /**
      * Adds <code>IPermissions</code> to the service.
      *
@@ -264,4 +273,15 @@ public interface IAuthorizationService {
             String target,
             IPermissionPolicy policy)
             throws AuthorizationException;
+
+    /**
+     * Retrieves a specific {@code IPortletPermissionHandler} based on the provided {@code
+     * PortletPermissionType}.
+     *
+     * @param requiredPermissionType The type of portlet permission required.
+     * @return An implementation of {@code IPortletPermissionHandler} corresponding to the provided
+     *     permission type.
+     * @throws IllegalArgumentException If the provided permission type is unknown.
+     */
+    IPortletPermissionHandler getPermission(PortletPermissionType requiredPermissionType);
 }
