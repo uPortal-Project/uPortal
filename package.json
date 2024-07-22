@@ -17,7 +17,7 @@
     "remark-validate-links": "^13.0.0",
     "stylelint": "^15.0.0",
     "stylelint-config-standard-less": "^2.0.0",
-    "stylelint-prettier": "^4.0.0"
+    "stylelint-prettier": "^5.0.0"
   },
   "workspaces": [
     "uPortal-webapp/"
