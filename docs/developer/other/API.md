@@ -108,9 +108,9 @@ Example response:
 ```
 ### Portlet Preferences
 
-`/api/prefs/{task}`
+`/api/preferences/{fname}`
 
-(example: `http://localhost:8080/uPortal/api/prefs/getprefs/weather` )
+(example: `http://localhost:8080/uPortal/api/preferences/weather` )
 
 These endpoints provide a way for soffits and web-components to access and store custom preferences for
 individual soffits and web-components. There are several different endpoints for the various ways to store

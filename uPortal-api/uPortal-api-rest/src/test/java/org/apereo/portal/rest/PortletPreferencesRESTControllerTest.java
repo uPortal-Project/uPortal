@@ -37,71 +37,77 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockHttpSession;
 
-public class PortletPrefsRESTControllerTest {
+public class PortletPreferencesRESTControllerTest {
 
-    @InjectMocks private PortletPrefsRESTController portletPrefsRESTController;
+    @InjectMocks private PortletPreferencesRESTController portletPreferencesRESTController;
 
-    @Mock private IPersonManager personManager;
+    @Mock private IPersonManager personManagerMock;
 
-    @Mock private IPortletDefinitionDao portletDao;
+    @Mock private IPortletDefinitionDao portletDaoMock;
 
-    @Mock private IPortletEntityRegistry portletEntityRegistry;
+    @Mock private IPortletEntityRegistry portletEntityRegistryMock;
 
-    @Mock private PortletPreferencesFactory portletPreferencesFactory;
+    @Mock private PortletPreferencesFactory portletPreferencesFactoryMock;
 
-    private MockHttpServletRequest req;
+    private MockHttpServletRequest requestMock;
 
-    private MockHttpServletResponse res;
+    private MockHttpServletResponse responseMock;
 
-    private String non_existant_name = "non-existent-portlet";
-    private String not_authorized_name = "not-authorized-portlet";
-    private String valid_name = "bob-portlet";
-    private IPortletDefinition valid_portletDefinitionMock = mock(PortletDefinitionImpl.class);
-    private IPortletDefinitionId valid_portletDefIDMock = mock(IPortletDefinitionId.class);
-    private IPortletEntity valid_entityMock = mock(IPortletEntity.class);
+    private static final String NON_EXISTANT_NAME = "non-existent-portlet";
+    private static final String NOT_AUTHORIZED_NAME = "not-authorized-portlet";
+    private static final String VALID_NAME = "bob-portlet";
+    private static final String COMPOSITE_METHOD = "composite";
+    private static final String SINGLE_ONLY_METHOD = "singleonly";
+    private static final String MISSING_METHOD = "";
+    private static final String UNKNOWN_METHOD = "unknown";
+
+    private IPortletDefinition validPortletDefinitionMock = mock(PortletDefinitionImpl.class);
+    private IPortletDefinitionId validPortletDefIDMock = mock(IPortletDefinitionId.class);
+    private IPortletEntity validEntityMock = mock(IPortletEntity.class);
     private ObjectMapper mapper = new ObjectMapper();
-    private IPerson valid_person = mock(IPerson.class, RETURNS_DEEP_STUBS);
+    private IPerson validPersonMock = mock(IPerson.class, RETURNS_DEEP_STUBS);
 
     @Before
     public void setUp() throws Exception {
 
-        portletPrefsRESTController = new PortletPrefsRESTController();
-        res = new MockHttpServletResponse();
-        req = new MockHttpServletRequest();
+        portletPreferencesRESTController = new PortletPreferencesRESTController();
+        responseMock = new MockHttpServletResponse();
+        requestMock = new MockHttpServletRequest();
         MockHttpSession session = new MockHttpSession();
         session.setAttribute("session", "true");
-        req.setSession(session);
-        MockitoAnnotations.initMocks(this);
+        requestMock.setSession(session);
+        MockitoAnnotations.openMocks(this);
 
         // non-existant mocks
-        Mockito.when(portletDao.getPortletDefinitionByFname(non_existant_name)).thenReturn(null);
+        Mockito.when(portletDaoMock.getPortletDefinitionByFname(NON_EXISTANT_NAME))
+                .thenReturn(null);
 
         // not-authorized to subscribe mocks
         IPortletDefinitionId not_authorized_portletDefIDMock = mock(IPortletDefinitionId.class);
         IPortletDefinition not_authorized_portletDefinitionMock = mock(PortletDefinitionImpl.class);
-        Mockito.when(portletDao.getPortletDefinitionByFname(not_authorized_name))
+        Mockito.when(portletDaoMock.getPortletDefinitionByFname(NOT_AUTHORIZED_NAME))
                 .thenReturn(not_authorized_portletDefinitionMock);
         Mockito.when(not_authorized_portletDefinitionMock.getPortletDefinitionId())
                 .thenReturn(not_authorized_portletDefIDMock);
         Mockito.when(
-                        portletEntityRegistry.getOrCreateDefaultPortletEntity(
-                                req, not_authorized_portletDefIDMock))
+                        portletEntityRegistryMock.getOrCreateDefaultPortletEntity(
+                                requestMock, not_authorized_portletDefIDMock))
                 .thenThrow(
                         new IllegalArgumentException("No portlet definition found for id '200'."));
 
         // authorized to subscribe common methods
-        Mockito.when(portletDao.getPortletDefinitionByFname(valid_name))
-                .thenReturn(valid_portletDefinitionMock);
-        Mockito.when(valid_portletDefinitionMock.getPortletDefinitionId())
-                .thenReturn(valid_portletDefIDMock);
+        Mockito.when(portletDaoMock.getPortletDefinitionByFname(VALID_NAME))
+                .thenReturn(validPortletDefinitionMock);
+        Mockito.when(validPortletDefinitionMock.getPortletDefinitionId())
+                .thenReturn(validPortletDefIDMock);
         Mockito.when(
-                        portletEntityRegistry.getOrCreateDefaultPortletEntity(
-                                req, valid_portletDefIDMock))
-                .thenReturn(valid_entityMock);
+                        portletEntityRegistryMock.getOrCreateDefaultPortletEntity(
+                                requestMock, validPortletDefIDMock))
+                .thenReturn(validEntityMock);
 
-        Mockito.when(personManager.getPerson(req)).thenReturn(valid_person);
-        Mockito.when(valid_person.isGuest()).thenReturn(false);
-        Mockito.when(valid_person.getSecurityContext().isAuthenticated()).thenReturn(true);
+        Mockito.when(personManagerMock.getPerson(requestMock)).thenReturn(validPersonMock);
+        Mockito.when(validPersonMock.isGuest()).thenReturn(false);
+        Mockito.when(validPersonMock.getSecurityContext().isAuthenticated()).thenReturn(true);
     }
 
     @Test // test that it returns the correct json when the fname is present in the database
@@ -116,35 +122,36 @@ public class PortletPrefsRESTControllerTest {
         Map<Long, WindowState> windowStateMock = new HashMap<>();
         windowStateMock.put(new Long(90), new WindowState("bob-state"));
         // test specific mock methods
-        Mockito.when(valid_portletDefinitionMock.getFName()).thenReturn(valid_name);
-        Mockito.when(valid_entityMock.getLayoutNodeId()).thenReturn(valid_layoutid);
-        Mockito.when(valid_entityMock.getUserId()).thenReturn(userid);
-        Mockito.when(valid_entityMock.getPortletEntityId()).thenReturn(entityIDMock);
+        Mockito.when(validPortletDefinitionMock.getFName()).thenReturn(VALID_NAME);
+        Mockito.when(validEntityMock.getLayoutNodeId()).thenReturn(valid_layoutid);
+        Mockito.when(validEntityMock.getUserId()).thenReturn(userid);
+        Mockito.when(validEntityMock.getPortletEntityId()).thenReturn(entityIDMock);
         Mockito.when(entityIDMock.toString()).thenReturn(valid_entityid);
-        Mockito.when(valid_entityMock.getWindowStates()).thenReturn(windowStateMock);
+        Mockito.when(validEntityMock.getWindowStates()).thenReturn(windowStateMock);
 
         // test specific json result
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("{\"" + valid_name + "\": {");
+        stringBuilder.append("{\"" + VALID_NAME + "\": {");
         stringBuilder.append(" \"layoutNodeID\": \"" + valid_layoutid + "\",");
         stringBuilder.append(" \"userID\": \"" + userid + "\",");
         stringBuilder.append(" \"entityID\": \"" + valid_entityid + "\",");
         stringBuilder.append(" \"windowStates\": [");
-        boolean comma = false;
+        boolean hasComma = false;
         for (Map.Entry<Long, WindowState> entry : windowStateMock.entrySet()) {
             stringBuilder.append(" { \"stylesheetID\": \"");
             stringBuilder.append(entry.getKey());
             stringBuilder.append("\", \"windowState\": \"");
             stringBuilder.append(entry.getValue().toString());
             stringBuilder.append("\"},");
-            comma = true;
+            hasComma = true;
         }
-        if (comma) {
+        if (hasComma) {
             stringBuilder.setLength(stringBuilder.length() - 1);
         }
         stringBuilder.append(" ] } }");
 
-        ResponseEntity response = portletPrefsRESTController.getEntity(req, res, valid_name);
+        ResponseEntity<String> response =
+                portletPreferencesRESTController.getEntity(requestMock, responseMock, VALID_NAME);
         Assert.assertEquals(200, response.getStatusCodeValue());
 
         Assert.assertEquals(stringBuilder.toString(), (String) response.getBody());
@@ -152,7 +159,9 @@ public class PortletPrefsRESTControllerTest {
 
     @Test // test that it returns a 400 when the portlet fname does not exits
     public void getEntityNonExistent() {
-        ResponseEntity response = portletPrefsRESTController.getEntity(req, res, non_existant_name);
+        ResponseEntity<String> response =
+                portletPreferencesRESTController.getEntity(
+                        requestMock, responseMock, NON_EXISTANT_NAME);
         Assert.assertEquals(404, response.getStatusCodeValue());
         Assert.assertEquals("ERROR: Portlet not found", (String) response.getBody());
     }
@@ -160,19 +169,21 @@ public class PortletPrefsRESTControllerTest {
     @Test
     public void getEntityNotAuthorized() {
 
-        ResponseEntity response =
-                portletPrefsRESTController.getEntity(req, res, not_authorized_name);
+        ResponseEntity<String> response =
+                portletPreferencesRESTController.getEntity(
+                        requestMock, responseMock, NOT_AUTHORIZED_NAME);
         Assert.assertEquals(403, response.getStatusCodeValue());
         Assert.assertEquals(
-                "ERROR: User not authorized to access portlet '" + not_authorized_name + "'.",
+                "ERROR: User not authorized to access portlet '" + NOT_AUTHORIZED_NAME + "'.",
                 (String) response.getBody());
     }
 
     @Test
     public void getCompositePrefsNonExistent() {
 
-        ResponseEntity response =
-                portletPrefsRESTController.getCompositePrefs(req, res, non_existant_name);
+        ResponseEntity<String> response =
+                portletPreferencesRESTController.getPreferences(
+                        COMPOSITE_METHOD, NON_EXISTANT_NAME, requestMock, responseMock);
         Assert.assertEquals(404, response.getStatusCodeValue());
         Assert.assertEquals("ERROR: Portlet not found", (String) response.getBody());
     }
@@ -180,11 +191,12 @@ public class PortletPrefsRESTControllerTest {
     @Test
     public void getCompositePrefsNotAuthorized() {
 
-        ResponseEntity response =
-                portletPrefsRESTController.getCompositePrefs(req, res, not_authorized_name);
+        ResponseEntity<String> response =
+                portletPreferencesRESTController.getPreferences(
+                        COMPOSITE_METHOD, NOT_AUTHORIZED_NAME, requestMock, responseMock);
         Assert.assertEquals(403, response.getStatusCodeValue());
         Assert.assertEquals(
-                "ERROR: User not authorized to access portlet '" + not_authorized_name + "'.",
+                "ERROR: User not authorized to access portlet '" + NOT_AUTHORIZED_NAME + "'.",
                 (String) response.getBody());
     }
 
@@ -200,13 +212,14 @@ public class PortletPrefsRESTControllerTest {
         JsonNode jsonmap = mapper.valueToTree(map);
 
         Mockito.when(
-                        portletPreferencesFactory.createAPIPortletPreferences(
-                                req, valid_entityMock, false, false))
+                        portletPreferencesFactoryMock.createAPIPortletPreferences(
+                                requestMock, validEntityMock, false, false))
                 .thenReturn(prefs);
         Mockito.when(prefs.getMap()).thenReturn(map);
 
-        ResponseEntity response =
-                portletPrefsRESTController.getCompositePrefs(req, res, valid_name);
+        ResponseEntity<String> response =
+                portletPreferencesRESTController.getPreferences(
+                        COMPOSITE_METHOD, VALID_NAME, requestMock, responseMock);
         Assert.assertEquals(200, response.getStatusCodeValue());
         JsonNode body = null;
         try {
@@ -224,8 +237,9 @@ public class PortletPrefsRESTControllerTest {
 
     @Test
     public void getEntityOnlyPrefsNonExistant() {
-        ResponseEntity response =
-                portletPrefsRESTController.getEntityOnlyPrefs(req, res, non_existant_name);
+        ResponseEntity<String> response =
+                portletPreferencesRESTController.getPreferences(
+                        SINGLE_ONLY_METHOD, NON_EXISTANT_NAME, requestMock, responseMock);
         Assert.assertEquals(404, response.getStatusCodeValue());
         Assert.assertEquals("ERROR: Portlet not found", (String) response.getBody());
     }
@@ -233,11 +247,12 @@ public class PortletPrefsRESTControllerTest {
     @Test
     public void getEntityOnlyPrefsNotAuthorized() {
 
-        ResponseEntity response =
-                portletPrefsRESTController.getEntityOnlyPrefs(req, res, not_authorized_name);
+        ResponseEntity<String> response =
+                portletPreferencesRESTController.getPreferences(
+                        SINGLE_ONLY_METHOD, NOT_AUTHORIZED_NAME, requestMock, responseMock);
         Assert.assertEquals(403, response.getStatusCodeValue());
         Assert.assertEquals(
-                "ERROR: User not authorized to access portlet '" + not_authorized_name + "'.",
+                "ERROR: User not authorized to access portlet '" + NOT_AUTHORIZED_NAME + "'.",
                 (String) response.getBody());
     }
 
@@ -264,18 +279,19 @@ public class PortletPrefsRESTControllerTest {
         JsonNode jsonmap = mapper.valueToTree(entOnlyMap);
 
         Mockito.when(
-                        portletPreferencesFactory.createAPIPortletPreferences(
-                                req, valid_entityMock, false, true))
+                        portletPreferencesFactoryMock.createAPIPortletPreferences(
+                                requestMock, validEntityMock, false, true))
                 .thenReturn(defPrefs);
         Mockito.when(defPrefs.getMap()).thenReturn(defMap);
         Mockito.when(
-                        portletPreferencesFactory.createAPIPortletPreferences(
-                                req, valid_entityMock, false, false))
+                        portletPreferencesFactoryMock.createAPIPortletPreferences(
+                                requestMock, validEntityMock, false, false))
                 .thenReturn(entPrefs);
         Mockito.when(entPrefs.getMap()).thenReturn(entMap);
 
-        ResponseEntity response =
-                portletPrefsRESTController.getEntityOnlyPrefs(req, res, valid_name);
+        ResponseEntity<String> response =
+                portletPreferencesRESTController.getPreferences(
+                        SINGLE_ONLY_METHOD, VALID_NAME, requestMock, responseMock);
         Assert.assertEquals(200, response.getStatusCodeValue());
         JsonNode body = null;
         try {
@@ -293,26 +309,28 @@ public class PortletPrefsRESTControllerTest {
 
     @Test
     public void getDefinitionPrefsNoSession() {
-        MockHttpServletRequest req2 = new MockHttpServletRequest();
-        req2.setSession(null);
+        MockHttpServletRequest requestMock2 = new MockHttpServletRequest();
+        requestMock2.setSession(null);
 
-        ResponseEntity response =
-                portletPrefsRESTController.getDefinitionPrefs(req2, res, valid_name);
+        ResponseEntity<String> response =
+                portletPreferencesRESTController.getDefinitionPreferences(
+                        COMPOSITE_METHOD, VALID_NAME, requestMock2, responseMock);
         Assert.assertEquals(404, response.getStatusCodeValue());
     }
 
     @Test
     public void getDefinitionPrefsGuest() {
         IPerson person = mock(IPerson.class);
-        MockHttpServletRequest req2 = new MockHttpServletRequest();
+        MockHttpServletRequest requestMock2 = new MockHttpServletRequest();
         MockHttpSession session = new MockHttpSession();
         session.setAttribute("session", "true");
-        req2.setSession(session);
-        Mockito.when(personManager.getPerson(req2)).thenReturn(person);
+        requestMock2.setSession(session);
+        Mockito.when(personManagerMock.getPerson(requestMock2)).thenReturn(person);
         Mockito.when(person.isGuest()).thenReturn(true);
 
-        ResponseEntity response =
-                portletPrefsRESTController.getDefinitionPrefs(req2, res, valid_name);
+        ResponseEntity<String> response =
+                portletPreferencesRESTController.getDefinitionPreferences(
+                        COMPOSITE_METHOD, VALID_NAME, requestMock2, responseMock);
         Assert.assertEquals(401, response.getStatusCodeValue());
         Assert.assertEquals("ERROR: guest cannot use this action.", (String) response.getBody());
     }
@@ -320,16 +338,17 @@ public class PortletPrefsRESTControllerTest {
     @Test
     public void getDefinitionPrefsSessionNotAuthenticated() {
         IPerson person = mock(IPerson.class, RETURNS_DEEP_STUBS);
-        MockHttpServletRequest req2 = new MockHttpServletRequest();
+        MockHttpServletRequest requestMock2 = new MockHttpServletRequest();
         MockHttpSession session = new MockHttpSession();
         session.setAttribute("session", "false");
-        req2.setSession(session);
-        Mockito.when(personManager.getPerson(req2)).thenReturn(person);
+        requestMock2.setSession(session);
+        Mockito.when(personManagerMock.getPerson(requestMock2)).thenReturn(person);
         Mockito.when(person.isGuest()).thenReturn(false);
         Mockito.when(person.getSecurityContext().isAuthenticated()).thenReturn(false);
 
-        ResponseEntity response =
-                portletPrefsRESTController.getDefinitionPrefs(req2, res, valid_name);
+        ResponseEntity<String> response =
+                portletPreferencesRESTController.getDefinitionPreferences(
+                        COMPOSITE_METHOD, VALID_NAME, requestMock2, responseMock);
         Assert.assertEquals(401, response.getStatusCodeValue());
         Assert.assertEquals(
                 "ERROR: must be logged in to use this action.", (String) response.getBody());
@@ -338,8 +357,9 @@ public class PortletPrefsRESTControllerTest {
     @Test
     public void getDefinitionPrefsSessionNonExistant() {
 
-        ResponseEntity response =
-                portletPrefsRESTController.getDefinitionPrefs(req, res, non_existant_name);
+        ResponseEntity<String> response =
+                portletPreferencesRESTController.getDefinitionPreferences(
+                        COMPOSITE_METHOD, NON_EXISTANT_NAME, requestMock, responseMock);
         Assert.assertEquals(404, response.getStatusCodeValue());
         Assert.assertEquals("ERROR: Portlet not found", (String) response.getBody());
     }
@@ -369,11 +389,12 @@ public class PortletPrefsRESTControllerTest {
     @Test
     public void putDefinitionPrefsNoSession() {
         String body = "{\"pref1\":\"value1\"}";
-        MockHttpServletRequest req2 = new MockHttpServletRequest();
-        req2.setSession(null);
+        MockHttpServletRequest requestMock2 = new MockHttpServletRequest();
+        requestMock2.setSession(null);
 
-        ResponseEntity response =
-                portletPrefsRESTController.putDefinitionPrefs(req2, res, valid_name, body);
+        ResponseEntity<String> response =
+                portletPreferencesRESTController.putDefinitionPreferences(
+                        requestMock2, responseMock, VALID_NAME, body);
         Assert.assertEquals(404, response.getStatusCodeValue());
     }
 
@@ -381,15 +402,16 @@ public class PortletPrefsRESTControllerTest {
     public void putDefinitionPrefsGuest() {
         String body = "{\"pref1\":\"value1\"}";
         IPerson person = mock(IPerson.class);
-        MockHttpServletRequest req2 = new MockHttpServletRequest();
+        MockHttpServletRequest requestMock2 = new MockHttpServletRequest();
         MockHttpSession session = new MockHttpSession();
         session.setAttribute("session", "true");
-        req2.setSession(session);
-        Mockito.when(personManager.getPerson(req2)).thenReturn(person);
+        requestMock2.setSession(session);
+        Mockito.when(personManagerMock.getPerson(requestMock2)).thenReturn(person);
         Mockito.when(person.isGuest()).thenReturn(true);
 
-        ResponseEntity response =
-                portletPrefsRESTController.putDefinitionPrefs(req2, res, valid_name, body);
+        ResponseEntity<String> response =
+                portletPreferencesRESTController.putDefinitionPreferences(
+                        requestMock2, responseMock, VALID_NAME, body);
         Assert.assertEquals(403, response.getStatusCodeValue());
         Assert.assertEquals("ERROR: guests may not use this action.", (String) response.getBody());
     }
@@ -398,16 +420,17 @@ public class PortletPrefsRESTControllerTest {
     public void putDefinitionPrefsSessionNotAuthenticated() {
         String body = "{\"pref1\":\"value1\"}";
         IPerson person = mock(IPerson.class, RETURNS_DEEP_STUBS);
-        MockHttpServletRequest req2 = new MockHttpServletRequest();
+        MockHttpServletRequest requestMock2 = new MockHttpServletRequest();
         MockHttpSession session = new MockHttpSession();
         session.setAttribute("session", "false");
-        req2.setSession(session);
-        Mockito.when(personManager.getPerson(req2)).thenReturn(person);
+        requestMock2.setSession(session);
+        Mockito.when(personManagerMock.getPerson(requestMock2)).thenReturn(person);
         Mockito.when(person.isGuest()).thenReturn(false);
         Mockito.when(person.getSecurityContext().isAuthenticated()).thenReturn(false);
 
-        ResponseEntity response =
-                portletPrefsRESTController.putDefinitionPrefs(req2, res, valid_name, body);
+        ResponseEntity<String> response =
+                portletPreferencesRESTController.putDefinitionPreferences(
+                        requestMock2, responseMock, VALID_NAME, body);
         Assert.assertEquals(401, response.getStatusCodeValue());
         Assert.assertEquals(
                 "ERROR: must be logged in to use this action.", (String) response.getBody());
@@ -416,8 +439,9 @@ public class PortletPrefsRESTControllerTest {
     @Test
     public void putDefinitionPrefsSessionNonExistant() {
         String body = "{\"pref1\":\"value1\"}";
-        ResponseEntity response =
-                portletPrefsRESTController.putDefinitionPrefs(req, res, non_existant_name, body);
+        ResponseEntity<String> response =
+                portletPreferencesRESTController.putDefinitionPreferences(
+                        requestMock, responseMock, NON_EXISTANT_NAME, body);
         Assert.assertEquals(404, response.getStatusCodeValue());
         Assert.assertEquals("ERROR: Portlet not found", (String) response.getBody());
     }
@@ -428,12 +452,13 @@ public class PortletPrefsRESTControllerTest {
         PortletPreferences prefs = mock(PortletPreferences.class);
 
         Mockito.when(
-                        portletPreferencesFactory.createAPIPortletPreferences(
-                                req, valid_entityMock, false, true))
+                        portletPreferencesFactoryMock.createAPIPortletPreferences(
+                                requestMock, validEntityMock, false, true))
                 .thenReturn(prefs);
 
-        ResponseEntity response =
-                portletPrefsRESTController.putDefinitionPrefs(req, res, valid_name, body);
+        ResponseEntity<String> response =
+                portletPreferencesRESTController.putDefinitionPreferences(
+                        requestMock, responseMock, VALID_NAME, body);
         Assert.assertEquals(400, response.getStatusCodeValue());
         Mockito.verify(prefs, times(0)).setValues(anyString(), any());
         Mockito.verify(prefs, times(0)).store();
@@ -464,8 +489,9 @@ public class PortletPrefsRESTControllerTest {
     @Test
     public void putEntityPrefsNonExistant() {
         String body = "{\"pref1\":\"bob\"}";
-        ResponseEntity response =
-                portletPrefsRESTController.putEntityPrefs(req, res, non_existant_name, body);
+        ResponseEntity<String> response =
+                portletPreferencesRESTController.putEntityPreferences(
+                        requestMock, responseMock, NON_EXISTANT_NAME, body);
         Assert.assertEquals(404, response.getStatusCodeValue());
         Assert.assertEquals("ERROR: Portlet not found", (String) response.getBody());
     }
@@ -473,11 +499,12 @@ public class PortletPrefsRESTControllerTest {
     @Test
     public void putEntityPrefsNotAuthorized() {
         String body = "{\"pref1\":\"bob\"}";
-        ResponseEntity response =
-                portletPrefsRESTController.putEntityPrefs(req, res, not_authorized_name, body);
+        ResponseEntity<String> response =
+                portletPreferencesRESTController.putEntityPreferences(
+                        requestMock, responseMock, NOT_AUTHORIZED_NAME, body);
         Assert.assertEquals(403, response.getStatusCodeValue());
         Assert.assertEquals(
-                "ERROR: User not authorized to access portlet '" + not_authorized_name + "'.",
+                "ERROR: User not authorized to access portlet '" + NOT_AUTHORIZED_NAME + "'.",
                 (String) response.getBody());
     }
 
@@ -487,12 +514,13 @@ public class PortletPrefsRESTControllerTest {
         PortletPreferences prefs = mock(PortletPreferences.class);
 
         Mockito.when(
-                        portletPreferencesFactory.createAPIPortletPreferences(
-                                req, valid_entityMock, false, false))
+                        portletPreferencesFactoryMock.createAPIPortletPreferences(
+                                requestMock, validEntityMock, false, false))
                 .thenReturn(prefs);
 
-        ResponseEntity response =
-                portletPrefsRESTController.putEntityPrefs(req, res, valid_name, body);
+        ResponseEntity<String> response =
+                portletPreferencesRESTController.putEntityPreferences(
+                        requestMock, responseMock, VALID_NAME, body);
         Assert.assertEquals(400, response.getStatusCodeValue());
         Mockito.verify(prefs, times(0)).setValues(anyString(), any());
         Mockito.verify(prefs, times(0)).store();
@@ -504,12 +532,13 @@ public class PortletPrefsRESTControllerTest {
         PortletPreferences prefs = mock(PortletPreferences.class);
 
         Mockito.when(
-                        portletPreferencesFactory.createAPIPortletPreferences(
-                                req, valid_entityMock, false, false))
+                        portletPreferencesFactoryMock.createAPIPortletPreferences(
+                                requestMock, validEntityMock, false, false))
                 .thenReturn(prefs);
 
-        ResponseEntity response =
-                portletPrefsRESTController.putEntityPrefs(req, res, valid_name, body);
+        ResponseEntity<String> response =
+                portletPreferencesRESTController.putEntityPreferences(
+                        requestMock, responseMock, VALID_NAME, body);
         Assert.assertEquals(400, response.getStatusCodeValue());
         Assert.assertEquals(
                 "ERROR: preferences must be strings, numbers, booleans, null, or arrays of strings, numbers, booleans, or nulls",
@@ -524,12 +553,13 @@ public class PortletPrefsRESTControllerTest {
         PortletPreferences prefs = mock(PortletPreferences.class);
 
         Mockito.when(
-                        portletPreferencesFactory.createAPIPortletPreferences(
-                                req, valid_entityMock, false, false))
+                        portletPreferencesFactoryMock.createAPIPortletPreferences(
+                                requestMock, validEntityMock, false, false))
                 .thenReturn(prefs);
 
-        ResponseEntity response =
-                portletPrefsRESTController.putEntityPrefs(req, res, valid_name, body);
+        ResponseEntity<String> response =
+                portletPreferencesRESTController.putEntityPreferences(
+                        requestMock, responseMock, VALID_NAME, body);
         Assert.assertEquals(400, response.getStatusCodeValue());
         Assert.assertEquals(
                 "ERROR: preference arrays must only contain strings, numbers, booleans, or null",
@@ -544,12 +574,13 @@ public class PortletPrefsRESTControllerTest {
         PortletPreferences prefs = mock(PortletPreferences.class);
 
         Mockito.when(
-                        portletPreferencesFactory.createAPIPortletPreferences(
-                                req, valid_entityMock, false, false))
+                        portletPreferencesFactoryMock.createAPIPortletPreferences(
+                                requestMock, validEntityMock, false, false))
                 .thenReturn(prefs);
 
-        ResponseEntity response =
-                portletPrefsRESTController.putEntityPrefs(req, res, valid_name, body);
+        ResponseEntity<String> response =
+                portletPreferencesRESTController.putEntityPreferences(
+                        requestMock, responseMock, VALID_NAME, body);
         Assert.assertEquals(400, response.getStatusCodeValue());
         Assert.assertEquals(
                 "ERROR: preference arrays must only contain strings, numbers, booleans, or null",
@@ -565,35 +596,38 @@ public class PortletPrefsRESTControllerTest {
         PortletPreferences prefs = mock(PortletPreferences.class);
 
         Mockito.when(
-                        portletPreferencesFactory.createAPIPortletPreferences(
-                                req, valid_entityMock, false, false))
+                        portletPreferencesFactoryMock.createAPIPortletPreferences(
+                                requestMock, validEntityMock, false, false))
                 .thenReturn(prefs);
 
         Mockito.doThrow(new ReadOnlyException("Preference '" + "pref1" + "' is read only"))
                 .when(prefs)
                 .setValues("pref1", values);
 
-        ResponseEntity response =
-                portletPrefsRESTController.putEntityPrefs(req, res, valid_name, body);
+        ResponseEntity<String> response =
+                portletPreferencesRESTController.putEntityPreferences(
+                        requestMock, responseMock, VALID_NAME, body);
         Assert.assertEquals(400, response.getStatusCodeValue());
         Assert.assertEquals("Preference 'pref1' is read only", (String) response.getBody());
         Mockito.verify(prefs, times(1)).setValues(anyString(), any());
         Mockito.verify(prefs, times(0)).store();
     }
 
-    @Test // regression test. found it returned true even though it stored nothing. make sure it
+    @Test // regresponseMocksion test. found it returned true even though it stored nothing. make
+    // sure it
     // rejects non-key-value-pairs
     public void putEntityPrefsSingleValue() throws Exception {
         String body = "\"string\"";
         PortletPreferences prefs = mock(PortletPreferences.class);
 
         Mockito.when(
-                        portletPreferencesFactory.createAPIPortletPreferences(
-                                req, valid_entityMock, false, false))
+                        portletPreferencesFactoryMock.createAPIPortletPreferences(
+                                requestMock, validEntityMock, false, false))
                 .thenReturn(prefs);
 
-        ResponseEntity response =
-                portletPrefsRESTController.putEntityPrefs(req, res, valid_name, body);
+        ResponseEntity<String> response =
+                portletPreferencesRESTController.putEntityPreferences(
+                        requestMock, responseMock, VALID_NAME, body);
         Assert.assertEquals(400, response.getStatusCodeValue());
         Assert.assertEquals(
                 "ERROR: invalid json. json must be in key:value pairs.",
@@ -609,17 +643,17 @@ public class PortletPrefsRESTControllerTest {
         PortletPreferences prefs = mock(PortletPreferences.class);
 
         Mockito.when(
-                        portletPreferencesFactory.createAPIPortletPreferences(
-                                req, valid_entityMock, false, false))
+                        portletPreferencesFactoryMock.createAPIPortletPreferences(
+                                requestMock, validEntityMock, false, false))
                 .thenReturn(prefs);
 
-        ResponseEntity response =
-                portletPrefsRESTController.putEntityPrefs(req, res, valid_name, body);
+        ResponseEntity<String> response =
+                portletPreferencesRESTController.putEntityPreferences(
+                        requestMock, responseMock, VALID_NAME, body);
         Mockito.verify(prefs, times(1)).setValues("pref1", values);
         Mockito.verify(prefs, times(1)).setValues(anyString(), any());
         Mockito.verify(prefs, times(1)).store();
         Assert.assertEquals(200, response.getStatusCodeValue());
-        Assert.assertEquals(true, (boolean) response.getBody());
     }
 
     @Test
@@ -629,17 +663,17 @@ public class PortletPrefsRESTControllerTest {
         PortletPreferences prefs = mock(PortletPreferences.class);
 
         Mockito.when(
-                        portletPreferencesFactory.createAPIPortletPreferences(
-                                req, valid_entityMock, false, false))
+                        portletPreferencesFactoryMock.createAPIPortletPreferences(
+                                requestMock, validEntityMock, false, false))
                 .thenReturn(prefs);
 
-        ResponseEntity response =
-                portletPrefsRESTController.putEntityPrefs(req, res, valid_name, body);
+        ResponseEntity<String> response =
+                portletPreferencesRESTController.putEntityPreferences(
+                        requestMock, responseMock, VALID_NAME, body);
         Mockito.verify(prefs, times(1)).setValues("pref1", values);
         Mockito.verify(prefs, times(1)).setValues(anyString(), any());
         Mockito.verify(prefs, times(1)).store();
         Assert.assertEquals(200, response.getStatusCodeValue());
-        Assert.assertEquals(true, (boolean) response.getBody());
     }
 
     @Test
@@ -649,17 +683,17 @@ public class PortletPrefsRESTControllerTest {
         PortletPreferences prefs = mock(PortletPreferences.class);
 
         Mockito.when(
-                        portletPreferencesFactory.createAPIPortletPreferences(
-                                req, valid_entityMock, false, false))
+                        portletPreferencesFactoryMock.createAPIPortletPreferences(
+                                requestMock, validEntityMock, false, false))
                 .thenReturn(prefs);
 
-        ResponseEntity response =
-                portletPrefsRESTController.putEntityPrefs(req, res, valid_name, body);
+        ResponseEntity<String> response =
+                portletPreferencesRESTController.putEntityPreferences(
+                        requestMock, responseMock, VALID_NAME, body);
         Mockito.verify(prefs, times(1)).setValues("pref1", values);
         Mockito.verify(prefs, times(1)).setValues(anyString(), any());
         Mockito.verify(prefs, times(1)).store();
         Assert.assertEquals(200, response.getStatusCodeValue());
-        Assert.assertEquals(true, (boolean) response.getBody());
     }
 
     @Test
@@ -670,17 +704,17 @@ public class PortletPrefsRESTControllerTest {
         PortletPreferences prefs = mock(PortletPreferences.class);
 
         Mockito.when(
-                        portletPreferencesFactory.createAPIPortletPreferences(
-                                req, valid_entityMock, false, false))
+                        portletPreferencesFactoryMock.createAPIPortletPreferences(
+                                requestMock, validEntityMock, false, false))
                 .thenReturn(prefs);
 
-        ResponseEntity response =
-                portletPrefsRESTController.putEntityPrefs(req, res, valid_name, body);
+        ResponseEntity<String> response =
+                portletPreferencesRESTController.putEntityPreferences(
+                        requestMock, responseMock, VALID_NAME, body);
         Mockito.verify(prefs, times(1)).setValues("pref1", values1);
         Mockito.verify(prefs, times(1)).setValues("pref2", values2);
         Mockito.verify(prefs, times(2)).setValues(anyString(), any());
         Mockito.verify(prefs, times(1)).store();
         Assert.assertEquals(200, response.getStatusCodeValue());
-        Assert.assertEquals(true, (boolean) response.getBody());
     }
 }
