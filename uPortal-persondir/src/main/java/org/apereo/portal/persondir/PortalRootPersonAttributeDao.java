@@ -24,6 +24,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
+import org.apereo.services.persondir.IPersonAttributeDaoFilter;
 import org.apereo.services.persondir.IPersonAttributes;
 import org.apereo.services.persondir.support.AbstractFlatteningPersonAttributeDao;
 import org.apereo.services.persondir.support.IUsernameAttributeProvider;
@@ -108,9 +109,9 @@ public class PortalRootPersonAttributeDao extends AbstractFlatteningPersonAttrib
      *     is unknown
      */
     @Override
-    public IPersonAttributes getPerson(String uid) {
+    public IPersonAttributes getPerson(String uid, IPersonAttributeDaoFilter filter) {
 
-        final IPersonAttributes result = delegatePersonAttributeDao.getPerson(uid);
+        final IPersonAttributes result = delegatePersonAttributeDao.getPerson(uid, null);
         if (result == null) {
             // Nothing we can do with that
             return null;
@@ -125,9 +126,9 @@ public class PortalRootPersonAttributeDao extends AbstractFlatteningPersonAttrib
      */
     @Override
     public Set<IPersonAttributes> getPeopleWithMultivaluedAttributes(
-            Map<String, List<Object>> query) {
+            Map<String, List<Object>> query, IPersonAttributeDaoFilter filter) {
         final Set<IPersonAttributes> people =
-                delegatePersonAttributeDao.getPeopleWithMultivaluedAttributes(query);
+                delegatePersonAttributeDao.getPeopleWithMultivaluedAttributes(query, filter);
         if (people == null) {
             return null;
         }
@@ -147,13 +148,13 @@ public class PortalRootPersonAttributeDao extends AbstractFlatteningPersonAttrib
     }
 
     @Override
-    public Set<String> getPossibleUserAttributeNames() {
-        return delegatePersonAttributeDao.getPossibleUserAttributeNames();
+    public Set<String> getPossibleUserAttributeNames(IPersonAttributeDaoFilter filter) {
+        return delegatePersonAttributeDao.getPossibleUserAttributeNames(filter);
     }
 
     @Override
-    public Set<String> getAvailableQueryAttributes() {
-        return delegatePersonAttributeDao.getAvailableQueryAttributes();
+    public Set<String> getAvailableQueryAttributes(IPersonAttributeDaoFilter filter) {
+        return delegatePersonAttributeDao.getAvailableQueryAttributes(filter);
     }
 
     /**

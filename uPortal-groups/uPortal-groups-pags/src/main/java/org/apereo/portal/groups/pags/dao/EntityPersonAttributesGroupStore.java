@@ -138,7 +138,7 @@ public class EntityPersonAttributesGroupStore
                 try {
                     final IPersonAttributeDao pa =
                             PersonAttributeDaoLocator.getPersonAttributeDao();
-                    final IPersonAttributes personAttributes = pa.getPerson(member.getKey());
+                    final IPersonAttributes personAttributes = pa.getPerson(member.getKey(), null);
 
                     if (personAttributes != null) {
                         final RestrictedPerson rp = PersonFactory.createRestrictedPerson();
