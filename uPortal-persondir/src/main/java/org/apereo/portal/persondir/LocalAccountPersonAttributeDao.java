@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
+import org.apereo.services.persondir.IPersonAttributeDaoFilter;
 import org.apereo.services.persondir.IPersonAttributes;
 import org.apereo.services.persondir.support.AbstractDefaultAttributePersonAttributeDao;
 import org.apereo.services.persondir.support.AttributeNamedPersonImpl;
@@ -128,7 +129,7 @@ public class LocalAccountPersonAttributeDao extends AbstractDefaultAttributePers
      * @return Set
      */
     @Override
-    public Set<String> getPossibleUserAttributeNames() {
+    public Set<String> getPossibleUserAttributeNames(IPersonAttributeDaoFilter filter) {
         final Set<String> names = new HashSet<String>();
         names.addAll(this.possibleUserAttributes);
         names.addAll(localAccountDao.getCurrentAttributeNames());
@@ -144,7 +145,7 @@ public class LocalAccountPersonAttributeDao extends AbstractDefaultAttributePers
      * @return Set
      */
     @Override
-    public Set<String> getAvailableQueryAttributes() {
+    public Set<String> getAvailableQueryAttributes(IPersonAttributeDaoFilter filter) {
         if (this.queryAttributeMapping == null) {
             return Collections.emptySet();
         }
@@ -157,7 +158,7 @@ public class LocalAccountPersonAttributeDao extends AbstractDefaultAttributePers
      */
     @Override
     public final Set<IPersonAttributes> getPeopleWithMultivaluedAttributes(
-            Map<String, List<Object>> query) {
+            Map<String, List<Object>> query, IPersonAttributeDaoFilter filter) {
         Validate.notNull(query, "query may not be null.");
 
         // Generate the query to pass to the subclass

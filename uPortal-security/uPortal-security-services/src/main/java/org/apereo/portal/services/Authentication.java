@@ -224,7 +224,7 @@ public class Authentication {
                 }
 
                 final IPersonAttributes personAttributes =
-                        this.personAttributeDao.getPerson(username);
+                        this.personAttributeDao.getPerson(username, null);
 
                 if (log.isDebugEnabled()) {
                     log.debug(

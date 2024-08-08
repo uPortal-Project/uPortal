@@ -75,7 +75,7 @@ public class RequestAttributeServiceImplTest {
         when(portletDefinition.getPortletDefinitionId()).thenReturn(portletDefinitionId);
 
         IPersonAttributeDao personAttributeDao = mock(IPersonAttributeDao.class);
-        when(personAttributeDao.getPerson("username")).thenReturn(personAttributes);
+        when(personAttributeDao.getPerson("username", null)).thenReturn(personAttributes);
 
         IPortletWindowRegistry portletWindowRegistry = mock(IPortletWindowRegistry.class);
         when(portletWindowRegistry.convertPortletWindow(httpServletRequest, plutoPortletWindow))
