@@ -279,7 +279,7 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
     private Object[] getPersonGroupMemberKeys(IGroupMember gm) {
         Object[] keys = null;
         EntityIdentifier ei = gm.getUnderlyingEntityIdentifier();
-        IPersonAttributes attr = personAttributeDao.getPerson(ei.getKey());
+        IPersonAttributes attr = personAttributeDao.getPerson(ei.getKey(), null);
         if (attr != null && attr.getAttributes() != null && !attr.getAttributes().isEmpty()) {
             IPerson p = PersonFactory.createPerson();
             p.setAttributes(attr.getAttributes());

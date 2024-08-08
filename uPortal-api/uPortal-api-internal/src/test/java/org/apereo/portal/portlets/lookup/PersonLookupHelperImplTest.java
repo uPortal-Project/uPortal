@@ -41,7 +41,7 @@ public class PersonLookupHelperImplTest extends PersonLookupHelperImpl {
 
         // Must make the superclass use our collection of attribute names
         IPersonAttributeDao personAttributeDao = mock(IPersonAttributeDao.class);
-        when(personAttributeDao.getPossibleUserAttributeNames()).thenReturn(ALL_ATTRIBUTES);
+        when(personAttributeDao.getPossibleUserAttributeNames(null)).thenReturn(ALL_ATTRIBUTES);
         setPersonAttributeDao(personAttributeDao);
 
         principal = mock(IAuthorizationPrincipal.class);

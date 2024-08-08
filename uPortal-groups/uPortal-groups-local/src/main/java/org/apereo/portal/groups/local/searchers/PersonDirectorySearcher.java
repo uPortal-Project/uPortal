@@ -57,7 +57,7 @@ public class PersonDirectorySearcher implements ITypedEntitySearcher {
 
         final String usernameAttribute = this.usernameAttributeProvider.getUsernameAttribute();
         final Map<String, Object> queryMap = Collections.singletonMap(usernameAttribute, query);
-        final Set<IPersonAttributes> results = this.personAttributeDao.getPeople(queryMap);
+        final Set<IPersonAttributes> results = this.personAttributeDao.getPeople(queryMap, null);
         // create an array of EntityIdentifiers from the search results
         final List<EntityIdentifier> entityIdentifiers = new ArrayList<>(results.size());
         for (final IPersonAttributes personAttributes : results) {

@@ -41,7 +41,7 @@ public class PersonService {
         final IPerson result = new PersonImpl();
         result.setAttribute(IPerson.USERNAME, username);
         result.setID(userIdentityStore.getPortalUserId(username));
-        result.setAttributes(personAttributeDao.getPerson(username).getAttributes());
+        result.setAttributes(personAttributeDao.getPerson(username, null).getAttributes());
         return result;
     }
 }
