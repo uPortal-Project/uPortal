@@ -37,7 +37,7 @@ public class UserAttributesTargetProviderImpl implements IPermissionTargetProvid
     @Override
     public Collection<IPermissionTarget> searchTargets(String term) {
         term = term.toLowerCase();
-        final Set<String> attributes = personAttributeDao.getAvailableQueryAttributes();
+        final Set<String> attributes = personAttributeDao.getAvailableQueryAttributes(null);
         final List<IPermissionTarget> matches = new ArrayList<IPermissionTarget>();
         for (String attribute : attributes) {
             if (attribute.toLowerCase().contains(term)) {

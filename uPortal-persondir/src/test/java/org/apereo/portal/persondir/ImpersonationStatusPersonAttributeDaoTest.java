@@ -75,7 +75,7 @@ public class ImpersonationStatusPersonAttributeDaoTest {
     @Test
     public void testGetAvailableQueryAttributes() {
         Set<String> attributes =
-                impersonationStatusPersonAttributeDao.getAvailableQueryAttributes();
+                impersonationStatusPersonAttributeDao.getAvailableQueryAttributes(null);
         assertNotNull(attributes);
         String attribute = attributes.iterator().next();
         assertEquals(attribute, "attrs");
@@ -84,7 +84,8 @@ public class ImpersonationStatusPersonAttributeDaoTest {
     @Test
     public void testGetPeopleWithMultivaluedAttributes() {
         Set<IPersonAttributes> attributes =
-                impersonationStatusPersonAttributeDao.getPeopleWithMultivaluedAttributes(query);
+                impersonationStatusPersonAttributeDao.getPeopleWithMultivaluedAttributes(
+                        query, null);
         assertNotNull(attributes);
         IPersonAttributes personAttributes = attributes.iterator().next();
         String uname = personAttributes.getName();

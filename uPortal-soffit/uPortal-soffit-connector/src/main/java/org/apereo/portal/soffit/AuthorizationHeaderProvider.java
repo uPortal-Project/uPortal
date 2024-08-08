@@ -66,7 +66,7 @@ public class AuthorizationHeaderProvider extends AbstractHeaderProvider {
 
         // Attributes
         final Map<String, List<String>> attributes = new HashMap<>();
-        final IPersonAttributes person = personAttributeDao.getPerson(username);
+        final IPersonAttributes person = personAttributeDao.getPerson(username, null);
         if (person != null) {
             for (Entry<String, List<Object>> y : person.getAttributes().entrySet()) {
                 final List<String> values = new ArrayList<>();

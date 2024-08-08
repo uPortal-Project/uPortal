@@ -70,7 +70,7 @@ public class UserAttributeSkinMappingTransformerConfigurationSource
         final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
         final IPerson person = userInstance.getPerson();
         final IPersonAttributes personAttrs =
-                this.personAttributeDao.getPerson(person.getUserName());
+                this.personAttributeDao.getPerson(person.getUserName(), null);
         if (personAttrs == null) {
             logger.debug(
                     "No user attributes found for {} no skin override will be done",

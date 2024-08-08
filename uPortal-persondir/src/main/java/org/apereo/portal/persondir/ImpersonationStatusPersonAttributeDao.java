@@ -23,6 +23,7 @@ import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.IPersonManager;
 import org.apereo.portal.security.IdentitySwapperManager;
 import org.apereo.portal.url.IPortalRequestUtils;
+import org.apereo.services.persondir.IPersonAttributeDaoFilter;
 import org.apereo.services.persondir.IPersonAttributes;
 import org.apereo.services.persondir.support.AbstractDefaultAttributePersonAttributeDao;
 import org.apereo.services.persondir.support.CaseInsensitiveNamedPersonImpl;
@@ -49,7 +50,7 @@ public class ImpersonationStatusPersonAttributeDao
      * attributes in queries.
      */
     @Override
-    public Set<String> getAvailableQueryAttributes() {
+    public Set<String> getAvailableQueryAttributes(IPersonAttributeDaoFilter filter) {
         final IUsernameAttributeProvider usernameAttributeProvider =
                 super.getUsernameAttributeProvider();
         return Collections.singleton(usernameAttributeProvider.getUsernameAttribute());
@@ -57,7 +58,7 @@ public class ImpersonationStatusPersonAttributeDao
 
     @Override
     public Set<IPersonAttributes> getPeopleWithMultivaluedAttributes(
-            Map<String, List<Object>> query) {
+            Map<String, List<Object>> query, IPersonAttributeDaoFilter filter) {
 
         Set<IPersonAttributes> result = null; // default (per spec?)
 
@@ -100,7 +101,7 @@ public class ImpersonationStatusPersonAttributeDao
      * may be available.
      */
     @Override
-    public Set<String> getPossibleUserAttributeNames() {
+    public Set<String> getPossibleUserAttributeNames(IPersonAttributeDaoFilter filter) {
         return null;
     }
 }

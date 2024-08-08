@@ -787,7 +787,7 @@ public class PortalEventFactoryImpl implements IPortalEventFactory, ApplicationE
 
     protected Map<String, List<String>> getAttributesForUser(IPerson person) {
         final IPersonAttributes personAttributes =
-                this.personAttributeDao.getPerson(person.getUserName());
+                this.personAttributeDao.getPerson(person.getUserName(), null);
 
         final Map<String, List<String>> attributes = new LinkedHashMap<String, List<String>>();
 

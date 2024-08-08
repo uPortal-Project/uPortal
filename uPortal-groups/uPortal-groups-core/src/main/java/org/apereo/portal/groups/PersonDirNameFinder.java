@@ -69,7 +69,7 @@ public class PersonDirNameFinder implements IEntityNameFinder {
      */
     private String primGetName(String key) {
         String name = key;
-        final IPersonAttributes personAttributes = this.paDao.getPerson(name);
+        final IPersonAttributes personAttributes = this.paDao.getPerson(name, null);
         if (personAttributes != null) {
             Object displayName = personAttributes.getAttributeValue("displayName");
             String displayNameStr = "";

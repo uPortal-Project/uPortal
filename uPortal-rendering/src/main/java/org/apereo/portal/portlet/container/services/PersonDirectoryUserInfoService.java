@@ -123,7 +123,8 @@ public class PersonDirectoryUserInfoService implements UserInfoService {
             String remoteUser, HttpServletRequest httpServletRequest, IPortletWindow portletWindow)
             throws PortletContainerException {
         // Get the list of user attributes the portal knows about the user
-        final IPersonAttributes personAttributes = this.personAttributeDao.getPerson(remoteUser);
+        final IPersonAttributes personAttributes =
+                this.personAttributeDao.getPerson(remoteUser, null);
         if (personAttributes == null) {
             return Collections.emptyMap();
         }
@@ -139,7 +140,7 @@ public class PersonDirectoryUserInfoService implements UserInfoService {
      * Using the Map of portal user attributes and a List of expected attributes generate the
      * USER_INFO map for the portlet
      *
-     * @param portalUserAttributes All the attributes the portal knows about the user
+     * @param personAttributes All the attributes the portal knows about the user
      * @param expectedUserAttributes The attributes the portlet expects to get
      * @return The Map to use for the USER_INFO attribute
      */
